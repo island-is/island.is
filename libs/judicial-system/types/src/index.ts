@@ -9,6 +9,7 @@ export {
   ServiceStatus,
   PunishmentType,
   VerdictAppealDecision,
+  InformationForDefendant,
   isSuccessfulServiceStatus,
   isFailedServiceStatus,
 } from './lib/defendant'
@@ -51,6 +52,7 @@ export {
   DefenderSubRole,
   prosecutionRoles,
   isProsecutionUser,
+  getContactInformation,
   publicProsecutionOfficeRoles,
   isPublicProsecutionOfficeUser,
   districtCourtRoles,
@@ -69,7 +71,7 @@ export {
   getAdminUserInstitutionScope,
   getAdminUserInstitutionUserRoles,
 } from './lib/user'
-export type { User } from './lib/user'
+export type { User, UserDescriptor } from './lib/user'
 
 export {
   CaseOrigin,

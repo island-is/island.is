@@ -209,7 +209,12 @@ export const userNotificationBirthdayWorkerSetup = (services: {
     .codeOwner(CodeOwners.Juni)
     .db({ name: 'user-notification' })
     .command('node')
-    .args('--no-experimental-fetch', 'main.js', '--job=worker')
+    .args(
+      '--no-experimental-fetch',
+      'main.js',
+      '--job=worker',
+      '--isBirthdayWorker',
+    )
     .redis()
     .env({ ...getEnv(services) })
     .secrets({
@@ -219,6 +224,16 @@ export const userNotificationBirthdayWorkerSetup = (services: {
       IDENTITY_SERVER_CLIENT_SECRET: `/k8s/${serviceName}/USER_NOTIFICATION_CLIENT_SECRET`,
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
+    })
+    .resources({
+      limits: {
+        cpu: '400m',
+        memory: '384Mi',
+      },
+      requests: {
+        cpu: '150m',
+        memory: '256Mi',
+      },
     })
     .xroad(Base, Client, NationalRegistryB2C, RskCompanyInfo)
     .extraAttributes({

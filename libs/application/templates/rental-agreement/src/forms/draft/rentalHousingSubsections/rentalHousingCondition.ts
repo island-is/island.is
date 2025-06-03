@@ -6,10 +6,8 @@ import {
   buildTextField,
   buildFileUploadField,
 } from '@island.is/application/core'
-import {
-  extractApplicationAnswers,
-  getInspectorOptions,
-} from '../../../utils/utils'
+import { applicationAnswers } from '../../../shared'
+import { getInspectorOptions } from '../../../utils/utils'
 import { Routes, RentalHousingConditionInspector } from '../../../utils/enums'
 import { housingCondition } from '../../../lib/messages'
 
@@ -41,10 +39,9 @@ export const RentalHousingCondition = buildSubSection({
           title: housingCondition.independentInspectorNameLabel,
           placeholder: housingCondition.independentInspectorNamePlaceholder,
           condition: (answers) => {
-            const { inspectorOptions } = extractApplicationAnswers(answers)
+            const { inspector } = applicationAnswers(answers)
             return (
-              inspectorOptions ===
-              RentalHousingConditionInspector.INDEPENDENT_PARTY
+              inspector === RentalHousingConditionInspector.INDEPENDENT_PARTY
             )
           },
           required: true,

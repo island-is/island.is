@@ -9,7 +9,7 @@ defaults:
     shell: bash
 env:
   S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-  RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+  RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
   AWS_REGION: eu-west-1
   YARN_ENABLE_HARDENED_MODE: '0'
 jobs:
@@ -18,9 +18,6 @@ jobs:
     if: github.event.pull_request.merged == true
     runs-on: arc-shared
     timeout-minutes: 10
-    outputs:
-      IS_UNICORN: ${{ steps.unicorn_affected.outputs.IS_UNICORN }}
-      LATEST_RELEASE: ${{ steps.get_latest_release.outputs.LATEST_RELEASE }}
     steps:
       - uses: actions/checkout@v4
         with:
@@ -29,19 +26,21 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
         with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: Derive appropriate SHAs
         uses: nrwl/nx-set-shas@v4
 
-      - run: |
-          echo "BASE: ${{ env.NX_BASE }}"
-          echo "HEAD: ${{ env.NX_HEAD }}"
+      - name: Debug HEAD/BASE
+        run: |
+          echo "BASE: $NX_BASE"
+          echo "HEAD: $NX_HEAD"
+
       - name: Check unicorn affected
         id: unicorn_affected
         run: |
-          echo "Comparing nx affected for ${{ env.NX_HEAD }} using ${{ env.NX_BASE }} as base branch"
-          echo IS_UNICORN=$(node scripts/ci/unicorn-utils.mjs is-unicorn "{\"head\": \"${{ env.NX_HEAD }}\", \"base\": \"${{ env.NX_BASE }}\" }") >> "$GITHUB_OUTPUT"
+          echo "Comparing nx affected for \"${NX_HEAD}\" using \"${NX_BASE}\" as base branch"
+          echo "IS_UNICORN=$(node scripts/ci/unicorn-utils.mjs is-unicorn "{\"head\": \"${NX_HEAD}\", \"base\": \"${NX_BASE}\" }")" >> "$GITHUB_OUTPUT"
 
       - name: Results
         run: |
@@ -51,8 +50,8 @@ jobs:
         if: ${{ steps.unicorn_affected.outputs.IS_UNICORN == 'true' }}
         id: get_latest_release
         run: |
-          LATEST_RELEASE="$(node scripts/ci/get-last-release.mjs $(git branch -r))"
-          echo LATEST_RELEASE=$LATEST_RELEASE >> "$GITHUB_OUTPUT"
+          LATEST_RELEASE="$(node scripts/ci/get-last-release.mjs "$(git branch -r)")"
+          echo "LATEST_RELEASE=$LATEST_RELEASE" >> "$GITHUB_OUTPUT"
 
       - run: "echo 'latest release: ${{ steps.get_latest_release.outputs.LATEST_RELEASE }}'"
 
@@ -60,23 +59,26 @@ jobs:
         if: ${{ steps.unicorn_affected.outputs.IS_UNICORN == 'true' }}
         id: create_pr
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          PR_BRANCH: cherry-picks/${{ github.head_ref}}
+          GITHUB_TOKEN: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
+          PR_BRANCH: cherry-picks/${{ github.head_ref }}
           TARGET_BRANCH: release/${{ steps.get_latest_release.outputs.LATEST_RELEASE }}
+          HEAD_REF: ${{ github.head_ref }}
+          MERGE_COMMIT_SHA: ${{ github.event.pull_request.merge_commit_sha }}
+          ACTOR: ${{ github.actor }}
         run: |
-          git config --global user.email "${{ github.actor }}@users.noreply.github.com"
-          git config --global user.name "${{ github.actor }} (automated)"
-          echo ${{ github.event.pull_request.merge_commit_sha }}
-          echo ${{ github.head_ref}}
-          git checkout $TARGET_BRANCH
-          git checkout -b $PR_BRANCH
-          git cherry-pick -x ${{ github.event.pull_request.merge_commit_sha }}
-          git commit --allow-empty -am "chore: automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}"
-          git push --set-upstream origin $PR_BRANCH
+          git config --global user.email "${ACTOR}@users.noreply.github.com"
+          git config --global user.name "${ACTOR} (automated)"
+          echo "${MERGE_COMMIT_SHA}"
+          echo "${HEAD_REF}"
+          git checkout "${TARGET_BRANCH}"
+          git checkout -b "${PR_BRANCH}"
+          git cherry-pick -x "${MERGE_COMMIT_SHA}"
+          git commit --allow-empty -am "chore: automated cherry-pick of ${MERGE_COMMIT_SHA}"
+          git push --set-upstream origin "${PR_BRANCH}"
           echo "new branch created"
-          PR=$(gh pr create -B $TARGET_BRANCH -H $PR_BRANCH --title "chore: automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}" --body "Automated cherry-pick of ${{ github.event.pull_request.merge_commit_sha }}")
-          echo "$PR created"
-          echo PR=$PR >> "$GITHUB_OUTPUT"
+          PR=$(gh pr create -B "${TARGET_BRANCH}" -H "${PR_BRANCH}" --title "chore: automated cherry-pick of ${MERGE_COMMIT_SHA}" --body "Automated cherry-pick of ${MERGE_COMMIT_SHA}")
+          echo "${PR} created"
+          echo "PR=${PR}" >> "$GITHUB_OUTPUT"
 
       - name: Send slack message
         if: ${{ steps.unicorn_affected.outputs.IS_UNICORN == 'true' }}
