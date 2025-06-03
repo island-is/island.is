@@ -32,7 +32,7 @@ const ListActions = () => {
 
       <Stack space={8}>
         <DownloadReports areas={[]} collectionId={''} />
-        <ActionLockList listId={list?.id} />
+        <ActionLockList list={list} />
         <ActionReviewComplete listId={list?.id} listStatus={listStatus} />
         <ActionExtendDeadline listId={list?.id} endTime={list?.endTime} />
         <RemoveCandidate />

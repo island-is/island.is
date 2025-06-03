@@ -78,7 +78,9 @@ export const Municipality = () => {
             <GridColumn span="12/12">
               <Box display="flex" justifyContent="flexEnd" marginBottom={3}>
                 <Text variant="eyebrow">
-                  {formatMessage(m.totalListResults) + ': ' + allLists.length}
+                  {formatMessage(m.totalListResults) +
+                    ': ' +
+                    municipalityLists.length}
                 </Text>
               </Box>
               <Stack space={3}>
@@ -90,7 +92,7 @@ export const Municipality = () => {
                     text={
                       formatMessage(m.totalListResults) +
                       ': ' +
-                      municipality.length
+                      list.numberOfSignatures
                     }
                     cta={{
                       label: formatMessage(m.viewList),

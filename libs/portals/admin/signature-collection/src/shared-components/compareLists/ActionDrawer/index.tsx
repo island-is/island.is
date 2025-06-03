@@ -4,7 +4,7 @@ import ListManagers from './ListManagers'
 
 const ActionDrawer = () => {
   return (
-    <Box marginTop={3} display="flex">
+    <Box marginTop={3} display="flex" columnGap={2}>
       <ListActions />
       <ListManagers />
     </Box>
