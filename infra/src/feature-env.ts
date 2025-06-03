@@ -377,7 +377,10 @@ yargs(process.argv.slice(2))
         affectedServices,
       )
 
-      if (featureYaml.spec.template.spec.containers.length <= 0 || affectedServices.length <= 0) {
+      if (
+        featureYaml.spec.template.spec.containers.length <= 0 ||
+        affectedServices.length <= 0
+      ) {
         return
       }
 
