@@ -21,6 +21,7 @@ import {
 } from './identityAndCanSignLookup.generated'
 import { useSignatureCollectionAdminUploadPaperSignatureMutation } from './uploadPaperSignee.generated'
 import { useRevalidator } from 'react-router-dom'
+import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 
 export const PaperSignees = ({ listId }: { listId: string }) => {
   useNamespaces('sp.signatureCollection')
@@ -39,16 +40,19 @@ export const PaperSignees = ({ listId }: { listId: string }) => {
     onCompleted: (data) => setName(data.identity?.name || ''),
   })
 
-  const { data: canSign, loading: loadingCanSign } =
-    useSignatureCollectionAdminCanSignInfoQuery({
-      variables: {
-        input: {
-          signeeNationalId: nationalIdInput,
-          listId,
-        },
+  const {
+    data: canSign,
+    loading: loadingCanSign,
+  } = useSignatureCollectionAdminCanSignInfoQuery({
+    variables: {
+      input: {
+        collectionType: SignatureCollectionCollectionType.Parliamentary,
+        signeeNationalId: nationalIdInput,
+        listId,
       },
-      skip: !nationalId.isValid(nationalIdInput) || !name,
-    })
+    },
+    skip: !nationalId.isValid(nationalIdInput) || !name,
+  })
 
   useEffect(() => {
     if (nationalIdInput.length === 10) {
@@ -62,36 +66,38 @@ export const PaperSignees = ({ listId }: { listId: string }) => {
     }
   }, [nationalIdInput, loading, data])
 
-  const [uploadPaperSignee, { loading: uploadingPaperSignature }] =
-    useSignatureCollectionAdminUploadPaperSignatureMutation({
-      variables: {
-        input: {
-          listId: listId,
-          nationalId: nationalIdInput,
-          pageNumber: Number(page),
-        },
+  const [
+    uploadPaperSignee,
+    { loading: uploadingPaperSignature },
+  ] = useSignatureCollectionAdminUploadPaperSignatureMutation({
+    variables: {
+      input: {
+        listId: listId,
+        nationalId: nationalIdInput,
+        pageNumber: Number(page),
       },
-      onCompleted: (res) => {
-        if (res.signatureCollectionAdminUploadPaperSignature?.success) {
-          toast.success(formatMessage(m.paperSigneeSuccess))
-        } else {
-          if (
-            res.signatureCollectionAdminUploadPaperSignature?.reasons?.includes(
-              'alreadySigned',
-            )
-          ) {
-            toast.error(formatMessage(m.paperSigneeErrorAlreadySigned))
-          }
+    },
+    onCompleted: (res) => {
+      if (res.signatureCollectionAdminUploadPaperSignature?.success) {
+        toast.success(formatMessage(m.paperSigneeSuccess))
+      } else {
+        if (
+          res.signatureCollectionAdminUploadPaperSignature?.reasons?.includes(
+            'alreadySigned',
+          )
+        ) {
+          toast.error(formatMessage(m.paperSigneeErrorAlreadySigned))
         }
-        reset()
-        revalidate()
-        setNationalIdTypo(false)
-        setName('')
-      },
-      onError: () => {
-        toast.error(formatMessage(m.paperSigneeError))
-      },
-    })
+      }
+      reset()
+      revalidate()
+      setNationalIdTypo(false)
+      setName('')
+    },
+    onError: () => {
+      toast.error(formatMessage(m.paperSigneeError))
+    },
+  })
 
   const onClearForm = () => {
     reset() // resets nationalId field

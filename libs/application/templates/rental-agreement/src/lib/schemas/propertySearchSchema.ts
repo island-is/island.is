@@ -1,7 +1,7 @@
 import { z } from 'zod'
+import { RentalHousingCategoryClass } from '../../shared'
 import { maxChangedUnitSize, minChangedUnitSize } from '../../utils/utils'
 import {
-  RentalHousingCategoryClass,
   RentalHousingCategoryClassGroup,
   RentalHousingCategoryTypes,
 } from '../../utils/enums'
@@ -70,6 +70,14 @@ export const registerProperty = z
           code: z.ZodIssueCode.custom,
           message: 'Custom error message',
           params: m.registerProperty.search.numOfRoomsMinimumError,
+          path: ['searchresults.units'],
+        })
+      }
+      if (totalRooms > 20) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.registerProperty.search.numOfRoomsMaximumError,
           path: ['searchresults.units'],
         })
       }

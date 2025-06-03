@@ -6,7 +6,11 @@ import { Inject, Injectable } from '@nestjs/common'
 import { type ConfigType } from '@island.is/nest/config'
 import { ProblemError } from '@island.is/nest/problem'
 
-import { DateType, type User } from '@island.is/judicial-system/types'
+import {
+  CaseTableType,
+  DateType,
+  type User,
+} from '@island.is/judicial-system/types'
 
 import {
   Case,
@@ -15,6 +19,7 @@ import {
   SignatureConfirmationResponse,
 } from '../case'
 import { CaseListEntry, CaseStatistics } from '../case-list'
+import { CaseTableResponse } from '../case-table'
 import {
   CivilClaimant,
   Defendant,
@@ -27,6 +32,7 @@ import {
   PresignedPost,
   SignedUrl,
   UpdateFilesResponse,
+  UploadCriminalRecordFileResponse,
   UploadFileToCourtResponse,
 } from '../file'
 import {
@@ -47,8 +53,7 @@ import {
   UploadPoliceCaseFileResponse,
 } from '../police'
 import { Subpoena } from '../subpoena'
-import { Victim } from '../victim'
-import { DeleteVictimResponse } from '../victim/models/deleteVictim.response'
+import { DeleteVictimResponse, Victim } from '../victim'
 import { backendModuleConfig } from './backend.config'
 
 @Injectable()
@@ -195,6 +200,14 @@ export class BackendService extends DataSource<{ req: Request }> {
   getCase(id: string): Promise<Case> {
     return this.get<Case>(`case/${id}`, this.caseTransformer)
   }
+
+  getCaseTable(type: CaseTableType): Promise<CaseTableResponse> {
+    return this.get<CaseTableResponse>(
+      `case-table?type=${type}`,
+      this.caseTransformer,
+    )
+  }
+
   getCaseStatistics(
     fromDate?: Date,
     toDate?: Date,
@@ -287,6 +300,15 @@ export class BackendService extends DataSource<{ req: Request }> {
     createPresignedPost: unknown,
   ): Promise<PresignedPost> {
     return this.post(`case/${id}/file/url`, createPresignedPost)
+  }
+
+  uploadCriminalRecordFile(
+    caseId: string,
+    defendantId: string,
+  ): Promise<UploadCriminalRecordFileResponse> {
+    return this.post(
+      `case/${caseId}/defendant/${defendantId}/criminalRecordFile`,
+    )
   }
 
   createCaseFile(id: string, createFile: unknown): Promise<CaseFile> {

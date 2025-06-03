@@ -13,11 +13,6 @@ export enum Roles {
   INSTITUTION = 'institution',
 }
 
-export enum UserRole {
-  LANDLORD = 'landlord',
-  TENANT = 'tenant',
-}
-
 export enum Routes {
   LANDLORDINFORMATION = 'landlordInfo',
   TENANTINFORMATION = 'tenantInfo',
@@ -34,28 +29,35 @@ export enum Routes {
   SUMMARY = 'summary',
 }
 
-export enum RentalHousingCategoryTypes {
-  ENTIRE_HOME = 'entireHome',
-  ROOM = 'room',
-  COMMERCIAL = 'commercial',
+export enum NextStepInReviewOptions {
+  GO_TO_SIGNING = 'goToSigning',
+  EDIT_APPLICATION = 'editApplication',
 }
 
-export enum RentalHousingCategoryClass {
-  GENERAL_MARKET = 'generalMarket',
-  SPECIAL_GROUPS = 'specialGroups',
+export enum PropertyPart {
+  WHOLE = 'Whole',
+  PART = 'Part',
+}
+
+// If any of the below enums are changed, make sure to update any references
+// in the rental-agreement template and the rental-agreement template-api-modules if needed
+export enum RentalHousingCategoryTypes {
+  ENTIRE_HOME = 'House_Apartment',
+  ROOM = 'Room',
+  COMMERCIAL = 'Commercial',
 }
 
 export enum RentalHousingCategoryClassGroup {
-  STUDENT_HOUSING = 'studentHousing',
-  SENIOR_CITIZEN_HOUSING = 'seniorCitizenHousing',
-  COMMUNE = 'commune',
-  HALFWAY_HOUSE = 'halfwayHouse',
-  INCOME_BASED_HOUSING = 'incomeBasedHousing',
+  STUDENT_HOUSING = 'Student',
+  SENIOR_CITIZEN_HOUSING = 'Elderly',
+  COMMUNE = 'Disabled',
+  HALFWAY_HOUSE = 'HalfwayHouse',
+  INCOME_BASED_HOUSING = 'IncomeRestricted',
 }
 
 export enum RentalHousingConditionInspector {
-  CONTRACT_PARTIES = 'contractParties',
-  INDEPENDENT_PARTY = 'independentParty',
+  CONTRACT_PARTIES = 'ContractParties',
+  INDEPENDENT_PARTY = 'Indipendant',
 }
 
 export enum RentalAmountIndexTypes {
@@ -63,40 +65,39 @@ export enum RentalAmountIndexTypes {
 }
 
 export enum RentalAmountPaymentDateOptions {
-  FIRST_DAY = 'firstDay',
-  LAST_DAY = 'lastDay',
-  OTHER = 'other',
+  FIRST_DAY = 'First',
+  LAST_DAY = 'Last',
+  OTHER = 'Other',
 }
 
 export enum RentalPaymentMethodOptions {
-  BANK_TRANSFER = 'bankTransfer',
-  PAYMENT_SLIP = 'paymentSlip',
-  OTHER = 'other',
+  BANK_TRANSFER = 'BankTransfer',
+  PAYMENT_SLIP = 'PaymentSlip',
+  OTHER = 'Other',
 }
 
 export enum SecurityDepositTypeOptions {
-  BANK_GUARANTEE = 'bankGuarantee',
-  CAPITAL = 'capital',
-  THIRD_PARTY_GUARANTEE = 'thirdPartyGuarantee',
-  INSURANCE_COMPANY = 'insuranceCompany',
-  LANDLORDS_MUTUAL_FUND = 'tenantsMutualFund',
-  OTHER = 'other',
+  BANK_GUARANTEE = 'BankGuarantee',
+  CAPITAL = 'Capital',
+  THIRD_PARTY_GUARANTEE = 'ThirdPartyGuarantee',
+  INSURANCE_COMPANY = 'InsuranceCompany',
+  LANDLORDS_MUTUAL_FUND = 'LandlordMutualFund',
+  OTHER = 'Other',
 }
 
 export enum SecurityDepositAmountOptions {
-  ONE_MONTH = '1 month',
-  TWO_MONTHS = '2 months',
-  THREE_MONTHS = '3 months',
-  OTHER = 'other',
+  ONE_MONTH = 'OneMonth',
+  TWO_MONTHS = 'TwoMonths',
+  THREE_MONTHS = 'ThreeMonths',
+  OTHER = 'Other',
 }
 
 export enum OtherFeesPayeeOptions {
-  LANDLORD_OR_NOT_APPLICABLE = 'landlordPaysOrNotApplicable',
-  LANDLORD = 'landlordPays',
-  TENANT = 'tenantPays',
+  LANDLORD = 'Landlord',
+  TENANT = 'Tenant',
 }
 
-export enum NextStepInReviewOptions {
-  GO_TO_SIGNING = 'goToSigning',
-  EDIT_APPLICATION = 'editApplication',
+export enum EmergencyExitOptions {
+  YES = '1',
+  NO = '0',
 }

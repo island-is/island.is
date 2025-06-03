@@ -79,6 +79,8 @@ export const extraInformationSection = buildSection({
           rows: 5,
           title: extraInformation.other.textareaLabel,
           placeholder: extraInformation.other.textareaPlaceholder,
+          maxLength: 3000,
+          showMaxLength: true,
         }),
 
         // Supporting documents
