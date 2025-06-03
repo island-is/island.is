@@ -2,6 +2,8 @@ import { defineConfig } from '@playwright/test'
 import { nxE2EPreset } from '@nx/playwright/preset'
 import { workspaceRoot } from '@nx/devkit'
 
+const MINUTE = 60_000
+
 export type BaseConfig = {
   /** The `__filename` of the calling file. */
   filename: string
@@ -30,10 +32,12 @@ export const baseConfig = ({
     },
     /* Run your local dev server before starting the tests */
     webServer: {
-      command: `yarn nx serve ${project}`,
+      command: `yarn dev-init ${project} && yarn dev ${project}`,
       url: baseURL,
       reuseExistingServer: !process.env.CI,
       stdout: 'pipe',
+      timeout: 3 * MINUTE,
       cwd: workspaceRoot,
     },
+    reporter: process.env.CI ? 'line' : 'html',
   })
