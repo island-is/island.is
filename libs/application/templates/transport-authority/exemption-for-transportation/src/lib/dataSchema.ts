@@ -4,7 +4,6 @@ import { coreErrorMessages, YES } from '@island.is/application/core'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { DollyType, ExemptionFor, ExemptionType } from '../shared'
 import { error } from './messages'
-import { getInvalidFreightItemIndex } from '../utils'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
@@ -156,125 +155,53 @@ const FreightSchema = z
       }),
     ),
   })
-  .refine(
-    ({ limit, items }) => {
-      const invalidItemIndex = getInvalidFreightItemIndex(
-        items.map((x) => x.length),
-        limit?.maxLength,
-      )
-      return invalidItemIndex === -1
-    },
-    ({ limit, items }) => {
-      const invalidItemIndex = getInvalidFreightItemIndex(
-        items.map((x) => x.length),
-        limit?.maxLength,
-      )
-      return {
-        path: ['items', invalidItemIndex, 'length'],
-        params: {
-          ...error.numberValueIsNotWithinLimit,
-          values: { min: '0', max: limit?.maxLength },
-        },
-      }
-    },
-  )
-  .refine(
-    ({ limit, items }) => {
-      const invalidItemIndex = getInvalidFreightItemIndex(
-        items.map((x) => x.weight),
-        limit?.maxWeight,
-      )
-      return invalidItemIndex === -1
-    },
-    ({ limit, items }) => {
-      const invalidItemIndex = getInvalidFreightItemIndex(
-        items.map((x) => x.weight),
-        limit?.maxWeight,
-      )
-      return {
-        path: ['items', invalidItemIndex, 'weight'],
-        params: {
-          ...error.numberValueIsNotWithinLimit,
-          values: { min: '0', max: limit?.maxWeight },
-        },
-      }
-    },
-  )
-  .refine(
-    ({ exemptionPeriodType, limit, items }) => {
-      // Since this field is validated in the pairing part for long-term
-      if (exemptionPeriodType === ExemptionType.LONG_TERM) return true
+  .superRefine(({ items, limit, exemptionPeriodType }, ctx) => {
+    if (!limit) return
 
-      const invalidItemIndex = getInvalidFreightItemIndex(
-        items.map((x) => x.height),
-        limit?.maxHeight,
-      )
-      return invalidItemIndex === -1
-    },
-    ({ limit, items }) => {
-      const invalidItemIndex = getInvalidFreightItemIndex(
-        items.map((x) => x.height),
-        limit?.maxHeight,
-      )
-      return {
-        path: ['items', invalidItemIndex, 'height'],
-        params: {
-          ...error.numberValueIsNotWithinLimit,
-          values: { min: '0', max: limit?.maxHeight },
-        },
-      }
-    },
-  )
-  .refine(
-    ({ exemptionPeriodType, limit, items }) => {
-      // Since this field is validated in the pairing part for long-term
-      if (exemptionPeriodType === ExemptionType.LONG_TERM) return true
+    let keysToCheck: {
+      key: keyof NonNullable<typeof items[number]>
+      limitKey: keyof NonNullable<typeof limit>
+    }[] = []
 
-      const invalidItemIndex = getInvalidFreightItemIndex(
-        items.map((x) => x.width),
-        limit?.maxWidth,
-      )
-      return invalidItemIndex === -1
-    },
-    ({ limit, items }) => {
-      const invalidItemIndex = getInvalidFreightItemIndex(
-        items.map((x) => x.width),
-        limit?.maxWidth,
-      )
-      return {
-        path: ['items', invalidItemIndex, 'width'],
-        params: {
-          ...error.numberValueIsNotWithinLimit,
-          values: { min: '0', max: limit?.maxWidth },
-        },
-      }
-    },
-  )
-  .refine(
-    ({ exemptionPeriodType, limit, items }) => {
-      // Since this field is validated in the pairing part for long-term
-      if (exemptionPeriodType === ExemptionType.LONG_TERM) return true
+    if (exemptionPeriodType === ExemptionType.SHORT_TERM) {
+      keysToCheck = [
+        { key: 'length', limitKey: 'maxLength' },
+        { key: 'weight', limitKey: 'maxWeight' },
+        { key: 'height', limitKey: 'maxHeight' },
+        { key: 'width', limitKey: 'maxWidth' },
+        { key: 'totalLength', limitKey: 'maxTotalLength' },
+      ]
+    } else if (exemptionPeriodType === ExemptionType.LONG_TERM) {
+      keysToCheck = [
+        { key: 'length', limitKey: 'maxLength' },
+        { key: 'weight', limitKey: 'maxWeight' },
+        // Note: Exclude height, width and totalLength, since those fields are validated in the pairing part for long-term
+      ]
+    }
 
-      const invalidItemIndex = getInvalidFreightItemIndex(
-        items.map((x) => x.totalLength),
-        limit?.maxTotalLength,
-      )
-      return invalidItemIndex === -1
-    },
-    ({ limit, items }) => {
-      const invalidItemIndex = getInvalidFreightItemIndex(
-        items.map((x) => x.totalLength),
-        limit?.maxTotalLength,
-      )
-      return {
-        path: ['items', invalidItemIndex, 'totalLength'],
-        params: {
-          ...error.numberValueIsNotWithinLimit,
-          values: { min: '0', max: limit?.maxTotalLength },
-        },
-      }
-    },
-  )
+    keysToCheck.forEach(({ key, limitKey }) => {
+      const max = limit[limitKey]
+      if (max === undefined) return
+
+      items.forEach((item, index) => {
+        const valueStr = item[key]
+        if (valueStr === undefined) return
+
+        const valueNum = Number(valueStr)
+
+        if (isNaN(valueNum) || valueNum <= 0 || valueNum > max) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            params: {
+              ...error.numberValueIsNotWithinLimit,
+              values: { min: '0', max },
+            },
+            path: ['items', index, key],
+          })
+        }
+      })
+    })
+  })
 
 const FreightPairingSchema = z
   .object({
@@ -308,81 +235,43 @@ const FreightPairingSchema = z
         .nullable(),
     ),
   })
-  .refine(
-    ({ exemptionPeriodType, limit, items }) => {
-      // Since this field is validated in the pairing part for long-term
-      if (exemptionPeriodType !== ExemptionType.LONG_TERM) return true
+  .superRefine(({ exemptionPeriodType, limit, items }, ctx) => {
+    // Note: Skipping if not long-term, since these fields are validated in the freight part of the schema
+    if (exemptionPeriodType !== ExemptionType.LONG_TERM || !limit) return
 
-      const invalidItemIndex = getInvalidFreightItemIndex(
-        items.map((x) => x?.height),
-        limit?.maxHeight,
-      )
-      return invalidItemIndex === -1
-    },
-    ({ limit, items }) => {
-      const invalidItemIndex = getInvalidFreightItemIndex(
-        items.map((x) => x?.height),
-        limit?.maxHeight,
-      )
-      return {
-        path: ['items', invalidItemIndex, 'height'],
-        params: {
-          ...error.numberValueIsNotWithinLimit,
-          values: { min: '0', max: limit?.maxHeight },
-        },
-      }
-    },
-  )
-  .refine(
-    ({ exemptionPeriodType, limit, items }) => {
-      // Since this field is validated in the pairing part for long-term
-      if (exemptionPeriodType !== ExemptionType.LONG_TERM) return true
+    const keysToCheck: {
+      key: keyof NonNullable<typeof items[number]>
+      limitKey: keyof NonNullable<typeof limit>
+    }[] = [
+      { key: 'height', limitKey: 'maxHeight' },
+      { key: 'width', limitKey: 'maxWidth' },
+      { key: 'totalLength', limitKey: 'maxTotalLength' },
+    ]
+    keysToCheck.forEach(({ key, limitKey }) => {
+      const max = limit[limitKey]
+      if (max === undefined) return
 
-      const invalidItemIndex = getInvalidFreightItemIndex(
-        items.map((x) => x?.width),
-        limit?.maxWidth,
-      )
-      return invalidItemIndex === -1
-    },
-    ({ limit, items }) => {
-      const invalidItemIndex = getInvalidFreightItemIndex(
-        items.map((x) => x?.width),
-        limit?.maxWidth,
-      )
-      return {
-        path: ['items', invalidItemIndex, 'width'],
-        params: {
-          ...error.numberValueIsNotWithinLimit,
-          values: { min: '0', max: limit?.maxWidth },
-        },
-      }
-    },
-  )
-  .refine(
-    ({ exemptionPeriodType, limit, items }) => {
-      // Since this field is validated in the pairing part for long-term
-      if (exemptionPeriodType !== ExemptionType.LONG_TERM) return true
+      items.forEach((item, index) => {
+        if (!item) return
 
-      const invalidItemIndex = getInvalidFreightItemIndex(
-        items.map((x) => x?.totalLength),
-        limit?.maxTotalLength,
-      )
-      return invalidItemIndex === -1
-    },
-    ({ limit, items }) => {
-      const invalidItemIndex = getInvalidFreightItemIndex(
-        items.map((x) => x?.totalLength),
-        limit?.maxTotalLength,
-      )
-      return {
-        path: ['items', invalidItemIndex, 'totalLength'],
-        params: {
-          ...error.numberValueIsNotWithinLimit,
-          values: { min: '0', max: limit?.maxTotalLength },
-        },
-      }
-    },
-  )
+        const valueStr = item[key]
+        if (valueStr === undefined) return
+
+        const valueNum = Number(valueStr)
+
+        if (isNaN(valueNum) || valueNum <= 0 || valueNum > max) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            params: {
+              ...error.numberValueIsNotWithinLimit,
+              values: { min: '0', max },
+            },
+            path: ['items', index, key],
+          })
+        }
+      })
+    })
+  })
 
 const AxleSpacingSchema = z
   .object({
