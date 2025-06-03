@@ -65,10 +65,12 @@ export class VehiclesResolver {
           totalPages: res.totalPages,
           totalRecords: res.totalRecords,
         },
-        downloadServiceUrls: !input?.type ?  {
-          excel: `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/excel`,
-          pdf: `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/pdf/${user.nationalId}`
-        } : null,
+        downloadServiceUrls: !input?.type
+          ? {
+              excel: `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/excel`,
+              pdf: `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/pdf/${user.nationalId}`,
+            }
+          : null,
       }
     } else {
       const res = await this.vehiclesService.getVehiclesForUserOldService(
@@ -98,7 +100,7 @@ export class VehiclesResolver {
       }),
       downloadServiceUrls: {
         excel: `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/excel`,
-        pdf: `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/pdf/${user.nationalId}`
+        pdf: `${this.downloadServiceConfig.baseUrl}/download/v1/vehicles/ownership/pdf/${user.nationalId}`,
       },
       paging: {
         pageNumber: res.pageNumber,
@@ -108,7 +110,6 @@ export class VehiclesResolver {
       },
     }
   }
-
 
   @Scopes(ApiScope.vehicles, ApiScope.samgongustofaVehicles)
   @Query(() => VehiclesDetail, { name: 'vehiclesDetail', nullable: true })

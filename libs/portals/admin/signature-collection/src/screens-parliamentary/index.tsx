@@ -39,11 +39,8 @@ const ParliamentaryRoot = ({
   const { formatMessage } = useLocale()
 
   const navigate = useNavigate()
-  const {
-    collection,
-    collectionStatus,
-    allLists,
-  } = useLoaderData() as ListsLoaderReturn
+  const { collection, collectionStatus, allLists } =
+    useLoaderData() as ListsLoaderReturn
 
   const [searchTerm, setSearchTerm] = useState('')
 
