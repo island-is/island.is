@@ -1,6 +1,5 @@
 import { BrowserContext, expect, test } from '@playwright/test'
-import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
-import { session } from '../../../../support/session'
+import { icelandicAndNoPopupUrl, urls, session } from '@island.is/testing/e2e'
 
 test.describe('Consultation portal unathenticated', () => {
   let context: BrowserContext
