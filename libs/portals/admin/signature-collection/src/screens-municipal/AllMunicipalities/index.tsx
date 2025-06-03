@@ -27,38 +27,30 @@ const AllMunicipalities = () => {
   const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
 
-  const municipalityBuckets: Record<string, SignatureCollectionList> = {}
   const areaCounts: Record<string, number> = {}
-  for (const list of allLists) {
+  const municipalityMap = new Map<string, SignatureCollectionList>()
+
+  // Group lists by municipality
+  allLists.forEach((list) => {
     const key = list?.area?.name
-    if (!key) {
-      continue
-    }
+    if (!key) return
 
-    if (areaCounts[key]) {
-      areaCounts[key] += 1
-    } else {
-      areaCounts[key] = 1
-    }
+    areaCounts[key] = (areaCounts[key] || 0) + 1
 
-    // TODO: Map what needs to be mapped here for each collection.
-    // example of if collectors matter
-    if (!municipalityBuckets[key]) {
-      municipalityBuckets[key] = list
-    } else {
-      if (
-        municipalityBuckets[key].collectors?.length &&
-        list?.collectors?.length
-      ) {
-        municipalityBuckets[key]?.collectors?.push(...list.collectors)
-      } else if (list?.collectors?.length) {
-        municipalityBuckets[key].collectors = list.collectors
+    if (!municipalityMap.has(key)) {
+      municipalityMap.set(key, list)
+    } else if (list.collectors?.length) {
+      const existing = municipalityMap.get(key)
+      if (existing) {
+        existing.collectors = [
+          ...(existing.collectors || []),
+          ...list.collectors,
+        ]
       }
     }
-  }
-  const municipalityLists = Object.keys(municipalityBuckets).map(
-    (municipalityBucketKey) => municipalityBuckets[municipalityBucketKey],
-  )
+  })
+
+  const municipalityLists = Array.from(municipalityMap.values())
 
   return (
     <GridContainer>
@@ -114,7 +106,7 @@ const AllMunicipalities = () => {
           </Box>
           <Box marginBottom={3} display="flex" justifyContent="flexEnd">
             <Text variant="eyebrow">
-              {formatMessage(m.totalListResults) + ': ' + allLists.length}
+              {formatMessage(m.totalListResults) + ': ' + municipalityLists.length}
             </Text>
           </Box>
           <Stack space={3}>
