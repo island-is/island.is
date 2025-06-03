@@ -9,7 +9,7 @@ import {
 import { format as formatNationalId } from 'kennitala'
 import { m } from '../../lib/messages'
 import { Application } from '@island.is/api/schema'
-import { IndividualDto } from '@island.is/clients/national-registry-v2'
+import { Signee } from '@island.is/clients/signature-collection'
 
 export const information = buildSection({
   id: 'listInformationSection',
@@ -31,11 +31,11 @@ export const information = buildSection({
           width: 'full',
           readOnly: true,
           defaultValue: ({ externalData }: Application) => {
-            const municipalIdentity = getValueViaPath<IndividualDto>(
+            const signee = getValueViaPath<Signee>(
               externalData,
-              'municipalIdentity.data',
+              'candidate.data',
             )
-            return municipalIdentity?.legalDomicile?.locality
+            return signee?.area?.name ?? ''
           },
         }),
         buildTextField({

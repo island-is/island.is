@@ -49,16 +49,14 @@ export class SignatureCollectionSharedClientService {
         }),
     )
 
-    const orderedCollections = (
-      collections
-        .flatMap((_) => _)
-        .map(mapCollection)
-        .filter(
-          (collection) =>
-            collection?.isSignatureCollection &&
-            collection.startTime < new Date(),
-        ) as Collection[]
-    ).sort((a, b) => (a.endTime < b.endTime ? 1 : -1))
+    const orderedCollections = (collections
+      .flatMap((_) => _)
+      .map(mapCollection)
+      .filter(
+        (collection) =>
+          collection?.isSignatureCollection &&
+          collection.startTime < new Date(),
+      ) as Collection[]).sort((a, b) => (a.endTime < b.endTime ? 1 : -1))
 
     if (!orderedCollections.length) {
       throw new Error('No current collection for selected type')
@@ -73,7 +71,6 @@ export class SignatureCollectionSharedClientService {
       hasSofnun: true,
       onlyActive: true,
     })
-
     const collections = await Promise.all(
       baseRes
         .filter((election) => Boolean(election.id))
