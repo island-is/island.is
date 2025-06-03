@@ -8,12 +8,26 @@ const main = async () => {
 
   const { AppModule } = require('../' + args._[0])
 
+  console.log('Before createApp')
+  console.time('createApp')
   const app = await createApp({
     appModule: AppModule,
     name: 'graphql-generator',
   })
+  console.timeEnd('createApp')
+  console.log('After createApp')
+
+  console.log('Before app.init')
+  console.time('app.init')
   await app.init()
+  console.timeEnd('app.init')
+  console.log('After app.init')
+
+  console.log('Before app.close')
+  console.time('app.close')
   await app.close()
+  console.timeEnd('app.close')
+  console.log('After app.close')
 }
 
 main()
