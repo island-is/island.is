@@ -16,6 +16,7 @@ generates:
         JSON: '{ [key: string]: any }'
       namingConvention:
         typeNames: change-case#pascalCase
+        enumValues: keep
       withHOC: false
       withComponent: false
       withHooks: true

@@ -1131,6 +1131,7 @@ export class UserProfileService {
       }
 
       return {
+        emailsId: emailRecord?.id ?? '',
         email: emailRecord?.email ?? '',
         emailStatus,
         needsNudge: false,

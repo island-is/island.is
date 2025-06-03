@@ -18,8 +18,11 @@ import { IdentityClientService } from '@island.is/clients/identity'
 import { ActorProfile, ActorProfileResponse } from './dto/actorProfile'
 import { ActorProfileDetails } from './dto/actorProfileDetails'
 import { SetActorProfileEmailInput } from './dto/setActorProfileEmail.input'
-import { UpdateActorProfileInput } from './dto/updateActorProfileInput'
 import { UserProfileService } from './userProfile.service'
+import { UpdateActorProfileEmailInput } from './dto/updateActorProfileEmail.input'
+import { ActorProfileEmail } from './dto/actorProfileEmail'
+import { UserProfileUpdateActorProfileInput } from './dto/userProfileUpdateActorProfile.input'
+import { ActorProfileEmailDto } from '@island.is/clients/user-profile'
 
 @UseGuards(IdsUserGuard)
 @Resolver(() => ActorProfile)
@@ -43,10 +46,21 @@ export class ActorProfileResolver {
     name: 'userProfileUpdateActorProfile',
   })
   async updateActorProfile(
-    @Args('input') input: UpdateActorProfileInput,
+    @Args('input') input: UserProfileUpdateActorProfileInput,
     @CurrentUser() user: User,
   ): Promise<ActorProfile> {
     return this.userProfileService.updateActorProfile(input, user)
+  }
+
+  @Mutation(() => ActorProfileEmail, {
+    name: 'updateActorProfileEmail',
+  })
+  async updateActorProfileEmail(
+    @Args('input') input: UpdateActorProfileEmailInput,
+    @CurrentUser() user: User,
+    // TODO: This is a hax and we should fix the root cause of the code generated enum. The Return type should be ActorProfileEmail and not ActorProfileEmailDto
+  ): Promise<ActorProfileEmailDto> {
+    return this.userProfileService.updateActorProfileEmail(input, user)
   }
 
   @Mutation(() => ActorProfileDetails, {

@@ -1,6 +1,7 @@
 import { Box, Button, Option, Select, toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
+  DataStatus,
   Email,
   UserProfile,
   UserProfileActorProfile,
@@ -8,16 +9,17 @@ import {
 import { useCallback, useEffect, useMemo, useState } from 'react'
 import { emailsMsg } from '../../../lib/messages'
 import { ProfileEmailForm } from '../../emails/ProfileEmailForm/ProfileEmailForm'
-import { AddEmailMutation } from '../../emails/ProfileEmailForm/addEmail.mutation.generated'
+import { VerifyEmailModal } from '../../verify/VerifyEmailModal'
 import * as styles from './ActorProfileEmails.css'
 import { useUserProfileSetActorProfileEmailMutation } from './userProfileSetActorProfileEmail.mutation.generated'
 
-type EmailOption = Option<string> & { id: string }
+type EmailOption = Option<string> & Pick<Email, 'id' | 'emailStatus'>
 
 const mapEmailsToOptions = (email: Email): EmailOption => ({
   id: email.id,
   label: email.email ?? '',
   value: email.email ?? '',
+  emailStatus: email.emailStatus,
 })
 
 type IdFilter = { id: string; email?: never }
@@ -52,7 +54,11 @@ export const ActorProfileEmails = ({
   const { formatMessage } = useLocale()
   const [showEmailForm, setShowEmailForm] = useState(false)
   const emails = userProfile.emails
+  const [previousOption, setPreviousOption] = useState<EmailOption | null>(null)
   const [selectedOption, setSelectedOption] = useState<EmailOption | null>(null)
+  const [verifyEmailModalEmail, setVerifyEmailModalEmail] = useState<
+    string | undefined
+  >()
 
   const [userProfileSetActorProfileEmail, { data: setActorProfileEmailData }] =
     useUserProfileSetActorProfileEmailMutation({
@@ -97,7 +103,15 @@ export const ActorProfileEmails = ({
       return
     }
 
+    setPreviousOption(selectedOption)
     setSelectedOption(option)
+
+    if (option.emailStatus === DataStatus.NOT_VERIFIED) {
+      setVerifyEmailModalEmail(option.value)
+
+      return
+    }
+
     userProfileSetActorProfileEmail({
       variables: {
         input: {
@@ -112,12 +126,12 @@ export const ActorProfileEmails = ({
     setShowEmailForm(false)
   }, [])
 
-  const onAddSuccess = useCallback(
-    (data: AddEmailMutation['userEmailsAddEmail']) => {
+  const onSuccess = useCallback(
+    (emailId: string) => {
       userProfileSetActorProfileEmail({
         variables: {
           input: {
-            emailId: data.id,
+            emailId,
             fromNationalId: actorProfile.fromNationalId,
           },
         },
@@ -127,37 +141,50 @@ export const ActorProfileEmails = ({
     [actorProfile.fromNationalId],
   )
 
+  const onModalClose = useCallback(() => {
+    setVerifyEmailModalEmail(undefined)
+    setSelectedOption(previousOption)
+  }, [previousOption])
+
   const hasEmails = options && options.length > 0
 
   return (
-    <Box>
-      {showEmailForm ? (
-        <ProfileEmailForm
-          onCancel={hideEmailForm}
-          onAddSuccess={onAddSuccess}
+    <>
+      <Box>
+        {showEmailForm ? (
+          <ProfileEmailForm onCancel={hideEmailForm} onAddSuccess={onSuccess} />
+        ) : (
+          <div className={styles.selectWrapper}>
+            {hasEmails && (
+              <Select
+                options={options}
+                value={selectedOption}
+                size="sm"
+                onChange={(option) => handleEmailChange(option as EmailOption)}
+              />
+            )}
+            <Box marginTop={hasEmails ? 2 : 0}>
+              <Button
+                variant="text"
+                size="small"
+                icon="add"
+                onClick={() => setShowEmailForm(true)}
+              >
+                {formatMessage(emailsMsg.addEmail)}
+              </Button>
+            </Box>
+          </div>
+        )}
+      </Box>
+      {verifyEmailModalEmail && (
+        <VerifyEmailModal
+          type="update"
+          open={!!verifyEmailModalEmail}
+          email={verifyEmailModalEmail}
+          onClose={onModalClose}
+          onSuccess={onSuccess}
         />
-      ) : (
-        <div className={styles.selectWrapper}>
-          {hasEmails && (
-            <Select
-              options={options}
-              value={selectedOption}
-              size="sm"
-              onChange={(option) => handleEmailChange(option as EmailOption)}
-            />
-          )}
-          <Box marginTop={hasEmails ? 2 : 0}>
-            <Button
-              variant="text"
-              size="small"
-              icon="add"
-              onClick={() => setShowEmailForm(true)}
-            >
-              {formatMessage(emailsMsg.addEmail)}
-            </Button>
-          </Box>
-        </div>
       )}
-    </Box>
+    </>
   )
 }

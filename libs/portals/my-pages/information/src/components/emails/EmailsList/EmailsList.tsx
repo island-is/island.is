@@ -1,10 +1,10 @@
-import { Email } from '@island.is/api/schema'
 import { Box, toast } from '@island.is/island-ui/core'
 import {
-  DataStatus,
   USER_PROFILE,
+  DataStatus,
   client,
 } from '@island.is/portals/my-pages/graphql'
+import { Email } from '@island.is/api/schema'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { useIntl } from 'react-intl'
 import { useActorProfile } from '../../../hooks/useActorProfile'
@@ -144,7 +144,7 @@ export const EmailsList = ({ items }: EmailsListProps) => {
       tags.push('connected_to_delegation')
     }
 
-    if (email.emailStatus === DataStatus.NotVerified) {
+    if (email.emailStatus === DataStatus.NOT_VERIFIED) {
       tags.push('not_verified')
     }
 

@@ -3,9 +3,9 @@ import {
   Body,
   Controller,
   Get,
+  Headers,
   Param,
   Patch,
-  Headers,
   Post,
   UseGuards,
 } from '@nestjs/common'
@@ -31,7 +31,6 @@ import {
   ActorProfileDetailsDto,
   PaginatedActorProfileDto,
 } from './dto/actor-profile.dto'
-import { CreateVerificationDto } from './dto/create-verification.dto'
 import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
 import { PostNudgeDto } from './dto/post-nudge.dto'
 import { SetActorProfileEmailDto } from './dto/set-actor-profile-email.dto'
