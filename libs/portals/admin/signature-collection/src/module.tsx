@@ -2,25 +2,37 @@ import { PortalModule } from '@island.is/portals/core'
 import { lazy } from 'react'
 import { m } from './lib/messages'
 import { SignatureCollectionPaths } from './lib/paths'
-import { AdminPortalScope } from '@island.is/auth/scopes'
-import { listsLoader } from './loaders/AllLists.loader'
-import { listLoader } from './loaders/List.loader'
+import {
+  municipalListsLoader,
+  parliamentaryListsLoader,
+  presidentialListsLoader,
+} from './loaders/AllLists.loader'
+import {
+  parliamentaryListLoader,
+  presidentialListLoader,
+  municipalListLoader,
+} from './loaders/List.loader'
+import { allowedScopes } from './lib/utils'
 
-/* parliamentary */
-const ParliamentaryRoot = lazy(() => import('./screens-parliamentary'))
+/* Parliamentary */
+const ParliamentaryRoot = lazy(() =>
+  import('./screens-parliamentary/AllConstituencies'),
+)
 const ParliamentaryConstituency = lazy(() =>
   import('./screens-parliamentary/Constituency'),
 )
 const ParliamentaryList = lazy(() => import('./screens-parliamentary/List'))
 
-/* presidential */
+/* Presidential */
 const AllLists = lazy(() => import('./screens-presidential/AllLists'))
 const List = lazy(() => import('./screens-presidential/List'))
 
-const allowedScopes: string[] = [
-  AdminPortalScope.signatureCollectionManage,
-  AdminPortalScope.signatureCollectionProcess,
-]
+/* Municipal */
+const AllMunicipalities = lazy(() =>
+  import('./screens-municipal/AllMunicipalities'),
+)
+const Municipality = lazy(() => import('./screens-municipal/Municipality'))
+const MunicipalList = lazy(() => import('./screens-municipal/List'))
 
 export const signatureCollectionModule: PortalModule = {
   name: m.signatureCollection,
@@ -32,64 +44,54 @@ export const signatureCollectionModule: PortalModule = {
     {
       name: m.signatureListsTitle,
       path: SignatureCollectionPaths.ParliamentaryRoot,
-      element: (
-        <ParliamentaryRoot
-          allowedToProcess={props.userInfo.scopes.some(
-            (scope) => scope === AdminPortalScope.signatureCollectionProcess,
-          )}
-        />
-      ),
-      loader: listsLoader(props),
+      element: <ParliamentaryRoot />,
+      loader: parliamentaryListsLoader(props),
     },
     {
       name: m.signatureListsConstituencyTitle,
       path: SignatureCollectionPaths.ParliamentaryConstituency,
-      element: (
-        <ParliamentaryConstituency
-          allowedToProcess={props.userInfo.scopes.some(
-            (scope) => scope === AdminPortalScope.signatureCollectionProcess,
-          )}
-        />
-      ),
-      loader: listsLoader(props),
+      element: <ParliamentaryConstituency />,
+      loader: parliamentaryListsLoader(props),
     },
     {
       name: m.singleList,
       path: SignatureCollectionPaths.ParliamentaryConstituencyList,
-      element: (
-        <ParliamentaryList
-          allowedToProcess={props.userInfo.scopes.some(
-            (scope) => scope === AdminPortalScope.signatureCollectionProcess,
-          )}
-        />
-      ),
-      loader: listLoader(props),
+      element: <ParliamentaryList />,
+      loader: parliamentaryListLoader(props),
     },
 
     /* ------ Presidential ------ */
     {
       name: m.signatureListsTitle,
       path: SignatureCollectionPaths.PresidentialLists,
-      element: (
-        <AllLists
-          allowedToProcess={props.userInfo.scopes.some(
-            (scope) => scope === AdminPortalScope.signatureCollectionProcess,
-          )}
-        />
-      ),
-      loader: listsLoader(props),
+      element: <AllLists />,
+      loader: presidentialListsLoader(props),
     },
     {
       name: m.singleList,
       path: SignatureCollectionPaths.PresidentialList,
-      element: (
-        <List
-          allowedToProcess={props.userInfo.scopes.some(
-            (scope) => scope === AdminPortalScope.signatureCollectionProcess,
-          )}
-        />
-      ),
-      loader: listLoader(props),
+      element: <List />,
+      loader: presidentialListLoader(props),
+    },
+
+    /* ------ Municipal ------ */
+    {
+      name: m.municipalCollectionTitle,
+      path: SignatureCollectionPaths.MunicipalRoot,
+      element: <AllMunicipalities />,
+      loader: municipalListsLoader(props),
+    },
+    {
+      name: m.municipalCollectionTitle,
+      path: SignatureCollectionPaths.SingleMunicipality,
+      element: <Municipality />,
+      loader: municipalListsLoader(props),
+    },
+    {
+      name: m.municipalCollectionTitle,
+      path: SignatureCollectionPaths.MunicipalList,
+      element: <MunicipalList />,
+      loader: municipalListLoader(props),
     },
   ],
 }
