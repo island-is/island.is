@@ -46,9 +46,10 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
   }
 
   async municipalCollection({ auth }: TemplateApiModuleActionProps) {
-    const currentCollection = await this.signatureCollectionClientService.getLatestCollectionForType(
-      this.collectionType,
-    )
+    const currentCollection =
+      await this.signatureCollectionClientService.getLatestCollectionForType(
+        this.collectionType,
+      )
     //Todo: adjust this check to municipal once available
     if (currentCollection.collectionType !== CollectionType.Parliamentary) {
       throw new TemplateApiError(

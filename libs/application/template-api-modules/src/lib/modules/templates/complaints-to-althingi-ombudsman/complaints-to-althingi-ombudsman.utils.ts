@@ -35,19 +35,22 @@ export const applicationToCaseRequest = async (
     template: 'Kvörtun',
     contacts,
     documents: attachments,
-    metadata: [{
-      name: 'GenderMod',
-      value: contacts[0].gender,
-    }]
+    metadata: [
+      {
+        name: 'GenderMod',
+        value: contacts[0].gender,
+      },
+    ],
   }
 }
 
 const getContactInfo = (
   answers: ComplaintsToAlthingiOmbudsmanAnswers,
 ): ComplainerContactInfo => {
-  const contact = answers.complainedFor.decision === ComplainedForTypes.SOMEONEELSE
-    ? answers.complainedForInformation
-    : answers.applicant
+  const contact =
+    answers.complainedFor.decision === ComplainedForTypes.SOMEONEELSE
+      ? answers.complainedForInformation
+      : answers.applicant
 
   return {
     name: contact.name,
@@ -58,7 +61,7 @@ const getContactInfo = (
     phone: contact.phoneNumber ?? '',
     postalCode: contact.postalCode,
     city: contact.city,
-    gender: 'gender' in contact ? contact.gender : undefined
+    gender: 'gender' in contact ? contact.gender : undefined,
   }
 }
 
@@ -79,7 +82,7 @@ export const gatherContacts = (
     role: ContactRole.COMPLAINTANT,
     primary: 'true',
     webPage: '',
-    gender: contact.gender
+    gender: contact.gender,
   }
 
   return [complaintant]
