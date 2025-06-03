@@ -46,15 +46,6 @@ export class EmailsController {
   @Documentation({
     description: 'Get email list for national id',
     response: { status: 200, type: [EmailsDto] },
-    request: {
-      query: {
-        nationalId: {
-          required: true,
-          type: 'string',
-          description: 'National ID of the user',
-        },
-      },
-    },
   })
   @Audit<EmailsDto[]>({
     resources: (emails) => emails.map((email) => email.id),
