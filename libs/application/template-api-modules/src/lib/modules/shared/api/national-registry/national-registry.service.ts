@@ -14,7 +14,12 @@ import {
   NationalRegistrySpouseV3,
 } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
-import { NationalRegistryV3ApplicationsClientService } from '@island.is/clients/national-registry-v3-applications'
+import {
+  NationalRegistryV3ApplicationsClientService,
+  CitizenshipDto,
+  CohabitationDto,
+  IndividualDto,
+} from '@island.is/clients/national-registry-v3-applications'
 import { AssetsXRoadService } from '@island.is/api/domains/assets'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { coreErrorMessages } from '@island.is/application/core'
@@ -193,6 +198,41 @@ export class NationalRegistryService extends BaseTemplateApiService {
     return age
   }
 
+  private async formatNationalRegistryIndividual(
+    person: IndividualDto,
+    cohabitationInfo: CohabitationDto | null,
+    citizenship: CitizenshipDto | null,
+  ): Promise<NationalRegistryIndividual> {
+    return (
+      person && {
+        nationalId: person.nationalId,
+        givenName: person.givenName,
+        familyName: person.familyName,
+        fullName: person.name,
+        age: this.getAgeFromDateOfBirth(person.birthdate),
+        citizenship: citizenship
+          ? {
+              code: citizenship.countryCode,
+              name: citizenship.countryName,
+            }
+          : null,
+        address: person.legalDomicile && {
+          streetAddress: person.legalDomicile.streetAddress,
+          postalCode: person.legalDomicile.postalCode,
+          locality: person.legalDomicile.locality,
+          city: person.legalDomicile.locality,
+          municipalityCode: person.legalDomicile.municipalityNumber,
+        },
+        genderCode: person.genderCode,
+        maritalTitle: {
+          code: cohabitationInfo?.cohabitationCode,
+          description: cohabitationInfo?.cohabitationCodeDescription,
+        },
+        birthDate: person.birthdate,
+      }
+    )
+  }
+
   async getIndividual(
     nationalId: string,
     auth: User,
@@ -227,32 +267,13 @@ export class NationalRegistryService extends BaseTemplateApiService {
       }
     }
 
-    return (
-      person && {
-        nationalId: person.nationalId,
-        givenName: person.givenName,
-        familyName: person.familyName,
-        fullName: person.name,
-        age: this.getAgeFromDateOfBirth(person.birthdate),
-        citizenship: citizenship && {
-          code: citizenship.countryCode,
-          name: citizenship.countryName,
-        },
-        address: person.legalDomicile && {
-          streetAddress: person.legalDomicile.streetAddress,
-          postalCode: person.legalDomicile.postalCode,
-          locality: person.legalDomicile.locality,
-          city: person.legalDomicile.locality,
-          municipalityCode: person.legalDomicile.municipalityNumber,
-        },
-        genderCode: person.genderCode,
-        maritalTitle: {
-          code: cohabitationInfo?.cohabitationCode,
-          description: cohabitationInfo?.cohabitationCodeDescription,
-        },
-        birthDate: person.birthdate,
-      }
-    )
+    return person
+      ? this.formatNationalRegistryIndividual(
+          person,
+          cohabitationInfo,
+          citizenship,
+        )
+      : null
   }
 
   async getParents({
@@ -551,9 +572,25 @@ export class NationalRegistryService extends BaseTemplateApiService {
 
   async getCohabitantsDetailed(
     props: TemplateApiModuleActionProps,
-    auth: User,
   ): Promise<(NationalRegistryIndividual | null)[]> {
     const cohabitants = await this.getCohabitants(props)
+    const auth = props.auth
+
+    console.log('--------------------------------')
+    console.log('getCohabitantsDetailed cohabitants')
+    console.dir(cohabitants, { depth: null })
+    console.log('--------------------------------')
+
+    const detailedCohabitants =
+      await this.nationalRegistryV3Api.getCohabitantsDetailed(
+        auth.nationalId,
+        auth,
+      )
+
+    console.log('--------------------------------')
+    console.log('getCohabitantsDetailed detailedCohabitants')
+    console.dir(detailedCohabitants, { depth: null })
+    console.log('--------------------------------')
 
     if (!cohabitants) {
       throw new TemplateApiError(
@@ -565,14 +602,21 @@ export class NationalRegistryService extends BaseTemplateApiService {
       )
     }
 
-    const cohabitantsDetails = await Promise.all(
-      cohabitants.map(async (cohabitant) => {
-        const individual = await this.getIndividual(cohabitant, auth)
-        return individual
-      }),
+    return await Promise.all(
+      detailedCohabitants?.cohabitants
+        .filter((cohabitant) => cohabitant != null)
+        .map(async (cohabitant) => {
+          if (cohabitant) {
+            const individual = await this.formatNationalRegistryIndividual(
+              cohabitant,
+              null,
+              null,
+            )
+            return individual
+          }
+          return null
+        }) ?? [],
     )
-
-    return cohabitantsDetails
   }
 
   async getCustodians({

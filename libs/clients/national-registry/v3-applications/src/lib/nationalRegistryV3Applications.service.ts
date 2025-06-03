@@ -5,6 +5,8 @@ import { EinstaklingarApi, IslandIsApi } from '../../gen/fetch'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
   CohabitationDto,
+  CohabitantsDetailedDto,
+  formatCohabitantsDetailedDto,
   formatCohabitationDtoV3FromHju,
   formatCohabitationDtoV3FromSam,
 } from './types/cohabitation.dto'
@@ -17,7 +19,6 @@ import { formatBirthplaceDto, BirthplaceDto } from './types/birthplace.dto'
 import { formatCitizenshipDto, CitizenshipDto } from './types/citizenship.dto'
 import { formatIndividualDto } from './types/individual.dto'
 import { IndividualDto } from './types/individual.dto'
-
 
 @Injectable()
 export class NationalRegistryV3ApplicationsClientService {
@@ -170,6 +171,19 @@ export class NationalRegistryV3ApplicationsClientService {
         ?.map((x) => x.kennitala || '')
         ?.filter((x) => !!x) || []
     )
+  }
+
+  async getCohabitantsDetailed(
+    nationalId: string,
+    auth: User,
+  ): Promise<CohabitantsDetailedDto | null> {
+    const res = await this.einstaklingarApiWithAuth(
+      auth,
+    ).einstaklingarKennitalaLogheimilistengslItarGet({
+      kennitala: nationalId,
+    })
+
+    return formatCohabitantsDetailedDto(res.logheimiliseinstaklingar)
   }
 
   async getCurrentResidence(
