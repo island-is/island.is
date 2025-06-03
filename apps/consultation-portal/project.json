@@ -106,7 +106,6 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "yarn get-secrets consultation-portal api",
           "echo 'NEXTAUTH_URL=http://localhost:4200/samradsgatt/api/auth' >> apps/consultation-portal/.env"
         ],
         "parallel": true
