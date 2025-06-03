@@ -3,7 +3,11 @@ import { nxE2EPreset } from '@nx/playwright/preset'
 import { workspaceRoot } from '@nx/devkit'
 
 export type BaseConfig = {
+  /** The `__filename` of the calling file. */
+  filename: string
+  /** The name of the project this config belongs to. */
   project: string
+  /** (Optional) The base URL for API calls or similar use cases. */
   baseURL?: string
 }
 
@@ -11,12 +15,13 @@ export type BaseConfig = {
  * See https://playwright.dev/docs/test-configuration.
  */
 export const baseConfig = ({
+  filename = __filename,
   project,
   baseURL = process.env['BASE_URL'] ||
     `http://localhost:${process.env.PORT || 4200}`,
 }: BaseConfig) =>
   defineConfig({
-    ...nxE2EPreset(__filename, { testDir: './e2e' }),
+    ...nxE2EPreset(filename, { testDir: './e2e' }),
     /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
     use: {
       baseURL,
