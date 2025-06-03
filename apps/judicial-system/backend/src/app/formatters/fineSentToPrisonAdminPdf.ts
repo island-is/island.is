@@ -14,7 +14,7 @@ import {
   setTitle,
 } from './pdfHelpers'
 
-export const createRulingSentToPrisonAdminAndProsecutorInstutionPdf = (
+export const createFineSentToPrisonAdminPdf = (
   theCase: Case,
 ): Promise<Buffer> => {
   const doc = new PDFDocument({
@@ -132,7 +132,7 @@ export const createRulingSentToPrisonAdminAndProsecutorInstutionPdf = (
     addNormalPlusText(doc, 'Ákvörðun saksóknara: ', 'Times-Bold', true)
     // This file shouldn't really ever be made unless the public prosecutor
     // reviwing the indictment has accepted the verdict
-    addNormalPlusText(doc, 'Una viðurlagaákvörðun', 'Times-Roman')
+    addNormalPlusText(doc, 'Unir viðurlagaákvörðun', 'Times-Roman')
 
     if (theCase.defendants && index < theCase.defendants.length - 1) {
       addEmptyLines(doc, 3)

@@ -22,8 +22,8 @@ import {
 import {
   Confirmation,
   createCaseFilesRecord,
+  createFineSentToPrisonAdminPdf,
   createIndictment,
-  createRulingSentToPrisonAdminAndProsecutorInstutionPdf,
   createRulingSentToPrisonAdminPdf,
   createServiceCertificate,
   createSubpoena,
@@ -371,16 +371,9 @@ export class PdfService {
     if (
       theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
     ) {
-      return await createRulingSentToPrisonAdminAndProsecutorInstutionPdf(
-        theCase,
-      )
+      return await createFineSentToPrisonAdminPdf(theCase)
     } else {
       return await createRulingSentToPrisonAdminPdf(theCase)
     }
-  }
-  async getRulingSentToPrisonAdminAndProsecutorInstutionPdf(
-    theCase: Case,
-  ): Promise<Buffer> {
-    return await createRulingSentToPrisonAdminAndProsecutorInstutionPdf(theCase)
   }
 }
