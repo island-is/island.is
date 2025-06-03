@@ -25,6 +25,7 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 import { UpdateSubpoenaDto } from './dto/subpoena.dto'
 import { CaseResponse } from './models/case.response'
 import { CasesResponse } from './models/cases.response'
+import { RulingResponse } from './models/ruling.response'
 import { SubpoenaResponse } from './models/subpoena.response'
 import { CaseService } from './case.service'
 
@@ -145,5 +146,26 @@ export class CaseController {
       defenderAssignment,
       query?.locale,
     )
+  }
+
+  @Get('case/:caseId/ruling')
+  @ApiOkResponse({
+    type: () => RulingResponse,
+    description: 'Returns ruling by case id',
+  })
+  @CommonApiResponses
+  @ApiResponse({
+    status: 404,
+    description: 'Ruling for given case id and authenticated user not found',
+  })
+  @ApiLocaleQuery
+  getRuling(
+    @Param('caseId', new ParseUUIDPipe()) caseId: string,
+    @CurrentUser() user: User,
+    @Query() query?: { locale: string },
+  ): Promise<RulingResponse> {
+    this.logger.debug(`Getting ruling by case id ${caseId}`)
+
+    return this.caseService.getRuling(user.nationalId, caseId, query?.locale)
   }
 }
