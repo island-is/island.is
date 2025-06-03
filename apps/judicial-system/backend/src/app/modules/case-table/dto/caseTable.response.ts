@@ -12,6 +12,12 @@ export class StringValue {
 export class StringGroupValue {
   @ApiProperty({ type: [String], description: 'The string values' })
   readonly strList!: string[]
+
+  @ApiPropertyOptional({
+    type: Boolean,
+    description: 'Indicates if the group should have a check mark',
+  })
+  readonly hasCheckMark?: boolean
 }
 
 export class TagValue {
