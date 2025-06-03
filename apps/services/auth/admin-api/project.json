@@ -45,7 +45,12 @@
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn start --project services-auth-admin-api"
+        "commands": [
+          {
+            "command": "yarn start --project services-auth-admin-api"
+          }
+        ],
+        "parallel": true
       }
     },
     "codegen/backend-schema": {
@@ -57,17 +62,6 @@
     },
     "docker-express": {
       "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
-    },
-    "dev": {
-      "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          {
-            "command": "yarn start --project services-auth-admin-api"
-          }
-        ],
-        "parallel": true
-      }
     }
   }
 }
