@@ -37,12 +37,14 @@ import {
   generateChargeFJSPayload,
   mapFjsErrorToCode,
 } from '../../utils/fjsCharge'
+import { processCharges } from '../../utils/chargeUtils'
 import { PaymentFlowPaymentConfirmation } from './models/paymentFlowPaymentConfirmation.model'
 import { ChargeResponse } from '../cardPayment/cardPayment.types'
 import { PaymentTrackingData } from '../../types/cardPayment'
 import { onlyReturnKnownErrorCode } from '../../utils/paymentErrors'
 import { generateWebhookJwt } from '../../utils/webhookAuth.utils'
 import { JwtConfigService } from '../jwks/jwt-config.service'
+import { ChargeItem } from '../../utils/chargeUtils'
 
 interface PaymentFlowUpdateConfig {
   /**
@@ -83,10 +85,11 @@ export class PaymentFlowService {
   ): Promise<CreatePaymentFlowDTO> {
     try {
       const paymentFlowId = uuid()
+      const processedCharges = processCharges(paymentInfo.charges)
 
       const chargeDetails = await this.getPaymentFlowChargeDetails(
         paymentInfo.organisationId,
-        paymentInfo.charges,
+        processedCharges,
       )
 
       await this.chargeFjsV2ClientService.validateCharge(
@@ -112,10 +115,17 @@ export class PaymentFlowService {
       })
 
       await this.paymentFlowChargeModel.bulkCreate(
-        paymentInfo.charges.map((charge) => ({
+        processedCharges.map((charge) => ({
           ...charge,
           paymentFlowId,
         })),
+      )
+
+      this.logger.info(
+        `[${paymentFlow.id}] Payment flow created [${paymentFlow.organisationId}]`,
+        {
+          charges: processedCharges.map((c) => c.chargeItemCode),
+        },
       )
 
       return {
@@ -145,7 +155,7 @@ export class PaymentFlowService {
 
   async getPaymentFlowChargeDetails(
     organisationId: string,
-    charges: Pick<PaymentFlowCharge, 'chargeItemCode' | 'price' | 'quantity'>[],
+    charges: ChargeItem[],
   ) {
     const { item } =
       await this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
@@ -154,25 +164,41 @@ export class PaymentFlowService {
 
     const filteredChargeInformation: CatalogItemWithQuantity[] = []
 
-    for (const product of item) {
-      const matchingCharge = charges.find(
-        (c) => c.chargeItemCode === product.chargeItemCode,
+    for (const charge of charges) {
+      const catalogProduct = item.find(
+        (p) => p.chargeItemCode === charge.chargeItemCode,
       )
 
-      if (!matchingCharge) {
+      if (!catalogProduct) {
         continue
       }
 
-      const price = matchingCharge.price ?? product.priceAmount
+      const price = charge.price ?? catalogProduct.priceAmount
 
       filteredChargeInformation.push({
-        ...product,
+        ...catalogProduct,
         priceAmount: price,
-        quantity: matchingCharge.quantity,
+        quantity: charge.quantity,
+        chargeItemCode: catalogProduct.chargeItemCode,
       })
     }
 
     if (filteredChargeInformation.length !== charges.length) {
+      this.logger.error(
+        `[${organisationId}] Failed to create payment flow: charge item codes not found in FJS catalog or other mismatch.`,
+        {
+          inputCharges: charges.map((c) => c.chargeItemCode),
+          filteredCharges: filteredChargeInformation.map(
+            (c) => c.chargeItemCode,
+          ),
+          missingCharges: charges.filter(
+            (c) =>
+              !filteredChargeInformation.some(
+                (i) => i.chargeItemCode === c.chargeItemCode,
+              ),
+          ),
+        },
+      )
       throw new BadRequestException(PaymentServiceCode.ChargeItemCodesNotFound)
     }
 

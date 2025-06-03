@@ -184,6 +184,7 @@ export interface UpdateCase
     | 'mergeCaseId'
     | 'mergeCaseNumber'
     | 'isCompletedWithoutRuling'
+    | 'hasCivilClaims'
     | 'isRegisteredInPrisonSystem'
   > {
   type?: CaseType
@@ -2287,6 +2288,9 @@ export class CaseService {
             creatingProsecutorId: user.id,
             prosecutorId: user.id,
             prosecutorsOfficeId: user.institution?.id,
+            demands: isInvestigationCase(theCase.type)
+              ? theCase.demands
+              : undefined,
           } as CreateCaseDto,
           transaction,
         )
