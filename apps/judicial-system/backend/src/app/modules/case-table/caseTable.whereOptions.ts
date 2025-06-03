@@ -92,9 +92,7 @@ const districtCourtIndictmentsSharedWhereOptions = {
 
 const districtCourtIndictmentsNewWhereOptions = {
   ...districtCourtIndictmentsSharedWhereOptions,
-  state: {
-    [Op.or]: [CaseState.SUBMITTED, CaseState.RECEIVED],
-  },
+  state: [CaseState.SUBMITTED, CaseState.RECEIVED],
   judge_id: null,
 }
 
@@ -125,12 +123,10 @@ const districtCourtIndictmentsInProgressWhereOptions = {
 const districtCourtIndictmentsFinalizingWhereOptions = {
   ...districtCourtIndictmentsSharedWhereOptions,
   state: CaseState.COMPLETED,
-  indictment_ruling_decision: {
-    [Op.or]: [
-      CaseIndictmentRulingDecision.RULING,
-      CaseIndictmentRulingDecision.FINE,
-    ],
-  },
+  indictment_ruling_decision: [
+    CaseIndictmentRulingDecision.RULING,
+    CaseIndictmentRulingDecision.FINE,
+  ],
   [Op.and]: [
     buildEventLogExistsCondition(
       EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
@@ -142,6 +138,18 @@ const districtCourtIndictmentsFinalizingWhereOptions = {
 const districtCourtIndictmentsCompletedWhereOptions = {
   ...districtCourtIndictmentsSharedWhereOptions,
   state: CaseState.COMPLETED,
+  [Op.not]: {
+    indictment_ruling_decision: [
+      CaseIndictmentRulingDecision.RULING,
+      CaseIndictmentRulingDecision.FINE,
+    ],
+    [Op.and]: [
+      buildEventLogExistsCondition(
+        EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+        false,
+      ),
+    ],
+  },
 }
 
 // Court of Appeals Cases
@@ -158,10 +166,8 @@ const courtOfAppealsInProgressWhereOptions = {
   [Op.or]: [
     { appeal_state: CaseAppealState.RECEIVED },
     {
-      [Op.and]: [
-        { appeal_state: [CaseAppealState.WITHDRAWN] },
-        { appeal_received_by_court_date: { [Op.not]: null } },
-      ],
+      appeal_state: [CaseAppealState.WITHDRAWN],
+      appeal_received_by_court_date: { [Op.not]: null },
     },
   ],
 }
@@ -216,12 +222,10 @@ const prisonAdminIndictmentSharedWhereOptions = {
   is_archived: false,
   type: indictmentCases,
   state: CaseState.COMPLETED,
-  indictment_ruling_decision: {
-    [Op.or]: [
-      CaseIndictmentRulingDecision.RULING,
-      CaseIndictmentRulingDecision.FINE,
-    ],
-  },
+  indictment_ruling_decision: [
+    CaseIndictmentRulingDecision.RULING,
+    CaseIndictmentRulingDecision.FINE,
+  ],
   indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
   id: {
     [Op.in]: Sequelize.literal(`
@@ -248,12 +252,10 @@ const prosecutorsOfficeIndictmentSharedWhereOptions = {
   is_archived: false,
   type: indictmentCases,
   state: CaseState.COMPLETED,
-  indictment_ruling_decision: {
-    [Op.or]: [
-      CaseIndictmentRulingDecision.RULING,
-      CaseIndictmentRulingDecision.FINE,
-    ],
-  },
+  indictment_ruling_decision: [
+    CaseIndictmentRulingDecision.RULING,
+    CaseIndictmentRulingDecision.FINE,
+  ],
   id: {
     [Op.in]: Sequelize.literal(`
       (SELECT case_id
