@@ -36,8 +36,8 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
       auth,
       this.collectionType,
     )
-    console.log('Candidate', JSON.stringify(candidate))
 
+    // TODO: Is this relevant for LocalGovernmental/Municipal Elections?
     if (!candidate.hasPartyBallotLetter) {
       throw new TemplateApiError(errorMessages.partyBallotLetter, 405)
     }
@@ -53,13 +53,13 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
 
     const currentCollection = (
       await this.signatureCollectionClientService.currentCollection()
-    ).filter(
-      (collection) =>
-        collection.collectionType === this.collectionType &&
-        collection.areas.some((area) => area.id === candidate.area?.id),
     )
-
-    console.log(JSON.stringify(currentCollection))
+      .filter((collection) => collection.isActive)
+      .filter(
+        (collection) =>
+          collection.collectionType === this.collectionType &&
+          collection.areas.some((area) => area.id === candidate.area?.id),
+      )
 
     if (!currentCollection.length) {
       throw new TemplateApiError(
