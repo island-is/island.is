@@ -8,7 +8,6 @@ import {
   buildHiddenInput,
   YesOrNoEnum,
   buildDisplayField,
-  formatText,
 } from '@island.is/application/core'
 import {
   getPaymentMethodOptions,
