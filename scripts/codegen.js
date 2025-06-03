@@ -28,8 +28,10 @@ const fileExists = async (path) =>
 
 const main = async () => {
   const schemaExists = await fileExists(SCHEMA_PATH)
-  const nxMaxParallel = process.env.NX_MAX_PARALLEL ?? '2'
-  const nxParallel = process.env.NX_PARALLEL ?? '2'
+  const nxParallel = parseInt(process.env.NX_PARALLEL ?? '6', 10)
+  const nxMaxParallel = Math.round(
+    parseInt(process.env.NX_MAX_PARALLEL, 10) ?? nxParallel / 2,
+  )
 
   if (!schemaExists) {
     await promisify(writeFile)(SCHEMA_PATH, 'export default () => {}')
@@ -43,7 +45,10 @@ const main = async () => {
         `nx run-many --target=${target} --all --parallel=${nxParallel} --maxParallel=${nxMaxParallel} $NX_OPTIONS`,
         {
           env: skipCache
-            ? { ...process.env, NX_OPTIONS: '--skip-nx-cache' }
+            ? {
+                ...process.env,
+                NX_OPTIONS: `${process.env.NX_OPTIONS || ''} --skip-nx-cache`,
+              }
             : process.env,
         },
       )
