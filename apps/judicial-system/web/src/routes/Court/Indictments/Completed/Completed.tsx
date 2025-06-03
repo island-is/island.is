@@ -429,7 +429,7 @@ const Completed: FC = () => {
                           dómfellda um við birtingu dómsins.
                         </Text>
                         <BlueBox>
-                          {defendantCheckboxes.map((checkbox) => (
+                          {defendantCheckboxes.map((checkbox, indexChecbox) => (
                             <React.Fragment key={checkbox.value}>
                               <Checkbox
                                 label={checkbox.label}
@@ -464,7 +464,10 @@ const Completed: FC = () => {
                                   )
                                 }}
                               />
-                              <Box marginBottom={marginSpaceBetweenButtons} />
+                              {defendantCheckboxes.length - 1 !==
+                                indexChecbox && (
+                                <Box marginBottom={marginSpaceBetweenButtons} />
+                              )}
                             </React.Fragment>
                           ))}
                         </BlueBox>
