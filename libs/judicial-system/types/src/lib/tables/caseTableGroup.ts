@@ -12,7 +12,7 @@ import {
   CaseTableRoutes,
   CaseTableType,
 } from './caseTableTypes'
-import { prosecutorTableGroups } from './tableGroups'
+import { publicProsecutorTableGroups } from './tableGroups'
 
 const districtCourtTableGroups: CaseTableGroup[] = [
   {
@@ -205,7 +205,7 @@ export const getCaseTableGroups = (
   }
 
   if (isProsecutionUser(user)) {
-    return prosecutorTableGroups
+    return publicProsecutorTableGroups
   }
 
   return []

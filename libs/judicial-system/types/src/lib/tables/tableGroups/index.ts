@@ -1,1 +1,1 @@
-export * from './prosecutorTableGroups'
+export * from './publicProsecutorTableGroups'

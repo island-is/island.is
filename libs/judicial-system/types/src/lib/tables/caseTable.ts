@@ -11,12 +11,12 @@ import { CaseTableColumnKey } from './caseTableColumnTypes'
 import {
   prosecutorIndictmentCompleted,
   prosecutorIndictmentInProgress,
-  prosecutorIndictmentInReview,
   prosecutorIndictmentWaitingForConfirmation,
   prosecutorRequestCasesActive,
   prosecutorRequestCasesAppealed,
   prosecutorRequestCasesCompleted,
   prosecutorRequestCasesInProgress,
+  publicProsecutorIndictmentInReview,
 } from './caseTables'
 import {
   CaseTable,
@@ -111,7 +111,9 @@ export const getCaseTableType = (
       case CaseTableRoutes.COMPLETED:
         return CaseTableType.PROSECUTOR_REQUEST_CASES_COMPLETED
       case CaseTableRoutes.IN_REVIEW:
-        return CaseTableType.PROSECUTOR_INDICTMENT_IN_REVIEW
+        return CaseTableType.PUBLIC_PROSECUTOR_INDICTMENT_IN_REVIEW
+      case CaseTableRoutes.REVIEWED:
+        return CaseTableType.PUBLIC_PROSECUTOR_INDICTMENT_REVIEWED
       case CaseTableRoutes.WAITING_FOR_CONFIRMATION:
         return CaseTableType.PROSECUTOR_INDICTMENT_WAITING_FOR_CONFIRMATION
       case CaseTableRoutes.INDICTMENT_IN_PROGRESS:
@@ -440,7 +442,8 @@ export const caseTables: { [key in CaseTableType]: CaseTable } = {
   PROSECUTOR_REQUEST_CASES_ACTIVE: prosecutorRequestCasesActive,
   PROSECUTOR_REQUEST_CASES_APPEALED: prosecutorRequestCasesAppealed,
   PROSECUTOR_REQUEST_CASES_COMPLETED: prosecutorRequestCasesCompleted,
-  PROSECUTOR_INDICTMENT_IN_REVIEW: prosecutorIndictmentInReview,
+  PUBLIC_PROSECUTOR_INDICTMENT_IN_REVIEW: publicProsecutorIndictmentInReview,
+  PUBLIC_PROSECUTOR_INDICTMENT_REVIEWED: prosecutorIndictmentCompleted,
   PROSECUTOR_INDICTMENT_WAITING_FOR_CONFIRMATION:
     prosecutorIndictmentWaitingForConfirmation,
   PROSECUTOR_INDICTMENT_IN_PROGRESS: prosecutorIndictmentInProgress,

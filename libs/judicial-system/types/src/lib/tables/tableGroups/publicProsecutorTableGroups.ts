@@ -4,7 +4,7 @@ import {
   CaseTableType,
 } from '../caseTableTypes'
 
-const prosecutorRequestCasesTableGroup: CaseTableGroup = {
+const publicProsecutorRequestCasesTableGroup: CaseTableGroup = {
   title: 'Rannsóknarmál',
   tables: [
     {
@@ -33,13 +33,19 @@ const prosecutorRequestCasesTableGroup: CaseTableGroup = {
     },
   ],
 }
-const prosecutorIndictmentsTableGroup: CaseTableGroup = {
+const publicProsecutorIndictmentsTableGroup: CaseTableGroup = {
   title: 'Sakamál',
   tables: [
     {
-      type: CaseTableType.PROSECUTOR_INDICTMENT_IN_REVIEW,
+      type: CaseTableType.PUBLIC_PROSECUTOR_INDICTMENT_IN_REVIEW,
       route: CaseTableRoutes.IN_REVIEW,
       title: 'Þín mál til yfirlestrar',
+      description: 'Dómar og viðurlagaákvarðanir.',
+    },
+    {
+      type: CaseTableType.PUBLIC_PROSECUTOR_INDICTMENT_REVIEWED,
+      route: CaseTableRoutes.REVIEWED,
+      title: 'Yfirlesin mál',
       description: 'Dómar og viðurlagaákvarðanir.',
     },
     {
@@ -62,7 +68,7 @@ const prosecutorIndictmentsTableGroup: CaseTableGroup = {
     },
   ],
 }
-export const prosecutorTableGroups: CaseTableGroup[] = [
-  prosecutorRequestCasesTableGroup,
-  prosecutorIndictmentsTableGroup,
+export const publicProsecutorTableGroups: CaseTableGroup[] = [
+  publicProsecutorRequestCasesTableGroup,
+  publicProsecutorIndictmentsTableGroup,
 ]

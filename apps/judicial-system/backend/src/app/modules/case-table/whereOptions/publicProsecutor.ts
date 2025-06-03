@@ -1,10 +1,9 @@
-import { fn, Op, WhereOptions } from 'sequelize'
+import { fn, Op } from 'sequelize'
 
 import {
   CaseAppealState,
   CaseIndictmentRulingDecision,
   CaseState,
-  completedIndictmentCaseStates,
   completedRequestCaseStates,
   EventType,
   indictmentCases,
@@ -49,14 +48,13 @@ export const prosecutorRequestCasesCompletedWhereOptions = {
   appeal_state: { [Op.not]: CaseAppealState.APPEALED },
 }
 
-// Indictments
-
 const indictmentSharedWhereOptions = {
   is_archived: false,
   type: indictmentCases,
 }
 
-// public prosecutor
+// public prosecutor indictments
+// specific for prosecutors at the public prosecutor office
 
 const publicProsecutorIndictmentSharedWhereOptions = (user: TUser) => ({
   ...indictmentSharedWhereOptions,
@@ -77,30 +75,8 @@ const publicProsecutorIndictmentInReviewWhereOptions = {
   indictment_review_decision: null,
 }
 
-const publicProsecutorIndictmentCompletedWhereOptions = {
-  state: CaseState.COMPLETED,
-}
-
-// prosecutor
-
-const prosecutorIndictmentSharedWhereOptions = (user: TUser) => ({
-  ...indictmentSharedWhereOptions,
-  [Op.or]: [{ creating_prosecutor_id: user.id }, { prosecutor_id: user.id }],
-})
-
-const prosecutorIndictmentInProgressWhereOptions = {
-  state: {
-    [Op.notIn]: [
-      ...completedIndictmentCaseStates,
-      CaseState.DELETED,
-      CaseState.WAITING_FOR_CANCELLATION,
-      CaseState.WAITING_FOR_CONFIRMATION,
-    ],
-  },
-}
-
-const prosecutorIndictmentWaitingForConfirmationWhereOptions = {
-  state: [CaseState.WAITING_FOR_CONFIRMATION],
+const publicProsecutorIndictmentReviewedWhereOptions = {
+  indictment_review_decision: { [Op.not]: null },
 }
 
 export const getPublicProsecutorIndictmentInReviewWhereOptions = (
@@ -110,23 +86,9 @@ export const getPublicProsecutorIndictmentInReviewWhereOptions = (
   ...publicProsecutorIndictmentInReviewWhereOptions,
 })
 
-export const getPublicProsecutorIndictmentCompletedWhereOptions = (
+export const getPublicProsecutorIndictmentReviewedWhereOptions = (
   user: TUser,
 ) => ({
   ...publicProsecutorIndictmentSharedWhereOptions(user),
-  ...publicProsecutorIndictmentCompletedWhereOptions,
+  ...publicProsecutorIndictmentReviewedWhereOptions,
 })
-
-export const getProsecutorIndictmentWaitingForConfirmationWhereOptions = (
-  user: TUser,
-) => ({
-  ...prosecutorIndictmentSharedWhereOptions(user),
-  ...prosecutorIndictmentWaitingForConfirmationWhereOptions,
-})
-
-export const getProsecutorIndictmentInProgressWhereOptions = (user: TUser) => ({
-  ...prosecutorIndictmentSharedWhereOptions(user),
-  ...prosecutorIndictmentInProgressWhereOptions,
-})
-
-// TODO: add prosecutor completed cases

@@ -22,10 +22,11 @@ import {
   buildSubpoenaExistsCondition,
 } from './whereOptions/conditions'
 import {
+  getProsecutorIndictmentCompletedWhereOptions,
   getProsecutorIndictmentInProgressWhereOptions,
   getProsecutorIndictmentWaitingForConfirmationWhereOptions,
-  getPublicProsecutorIndictmentCompletedWhereOptions,
   getPublicProsecutorIndictmentInReviewWhereOptions,
+  getPublicProsecutorIndictmentReviewedWhereOptions,
   prosecutorRequestCasesActiveWhereOptions,
   prosecutorRequestCasesAppealedWhereOptions,
   prosecutorRequestCasesCompletedWhereOptions,
@@ -415,13 +416,14 @@ export const caseTableWhereOptions: Record<
     prosecutorRequestCasesAppealedWhereOptions,
   [CaseTableType.PROSECUTOR_REQUEST_CASES_COMPLETED]: (_user) =>
     prosecutorRequestCasesCompletedWhereOptions,
-  [CaseTableType.PROSECUTOR_INDICTMENT_IN_REVIEW]: (user) =>
+  [CaseTableType.PUBLIC_PROSECUTOR_INDICTMENT_IN_REVIEW]: (user) =>
     getPublicProsecutorIndictmentInReviewWhereOptions(user),
+  [CaseTableType.PUBLIC_PROSECUTOR_INDICTMENT_REVIEWED]: (user) =>
+    getPublicProsecutorIndictmentReviewedWhereOptions(user),
   [CaseTableType.PROSECUTOR_INDICTMENT_WAITING_FOR_CONFIRMATION]: (user) =>
     getProsecutorIndictmentWaitingForConfirmationWhereOptions(user),
   [CaseTableType.PROSECUTOR_INDICTMENT_IN_PROGRESS]: (user) =>
     getProsecutorIndictmentInProgressWhereOptions(user),
-  // TODO: update this to: review decision completed
   [CaseTableType.PROSECUTOR_INDICTMENT_COMPLETED]: (user) =>
-    getPublicProsecutorIndictmentCompletedWhereOptions(user),
+    getProsecutorIndictmentCompletedWhereOptions(user),
 }

@@ -67,27 +67,37 @@ export const prosecutorRequestCasesCompleted: CaseTable = {
   columns: pickColumns(prosecutorRequestCasesCompletedColumnKeys),
 }
 
-const prosecutorIndictmentInReviewColumnKeys: CaseTableColumnKey[] = [
+const publicProsecutorIndictmentInReviewColumnKeys: CaseTableColumnKey[] = [
   'caseNumber',
   'defendants',
   'caseType',
   'indictmentAppealDeadline',
 ]
 
-export const prosecutorIndictmentInReview: CaseTable = {
+export const publicProsecutorIndictmentInReview: CaseTable = {
   title: 'Þín mál til yfirlestrar',
-  hasMyCasesFilter: true,
-  columnKeys: prosecutorIndictmentInReviewColumnKeys,
-  columns: pickColumns(prosecutorIndictmentInReviewColumnKeys),
+  hasMyCasesFilter: false,
+  columnKeys: publicProsecutorIndictmentInReviewColumnKeys,
+  columns: pickColumns(publicProsecutorIndictmentInReviewColumnKeys),
+}
+
+const publicProsecutorIndictmentReviewedColumnKeys: CaseTableColumnKey[] = [
+  'caseNumber',
+  'defendants',
+  'caseType',
+  'caseSentToCourtDate',
+  'indictmentRulingDecision',
+]
+
+export const publicProsecutorIndictmentReviewed: CaseTable = {
+  title: 'Yfirlesin mál',
+  hasMyCasesFilter: false,
+  columnKeys: publicProsecutorIndictmentReviewedColumnKeys,
+  columns: pickColumns(publicProsecutorIndictmentReviewedColumnKeys),
 }
 
 const prosecutorIndictmentWaitingForConfirmationColumnKeys: CaseTableColumnKey[] =
-  [
-    'caseNumber',
-    'defendants',
-    'caseType',
-    'created', // TODO: populate?
-  ]
+  ['caseNumber', 'defendants', 'caseType', 'created']
 
 export const prosecutorIndictmentWaitingForConfirmation: CaseTable = {
   title: 'Ákærur sem bíða staðfestingar',
