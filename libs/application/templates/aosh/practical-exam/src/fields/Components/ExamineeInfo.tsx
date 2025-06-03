@@ -25,7 +25,10 @@ export const ExamineeInfo: FC<
     <Box>
       <GridContainer>
         <GridRow>
-          <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+          <GridColumn
+            span={['12/12', '12/12', '12/12', '6/12']}
+            paddingBottom={2}
+          >
             <Input
               label={formatMessage(shared.labels.name)}
               name={'name'}
