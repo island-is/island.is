@@ -17,9 +17,7 @@ export const getChargeItems = (
   let needsToPayForLicenseCounter = 0
   examCategories?.forEach((item) => {
     if (!item.doesntHaveToPayLicenseFee) needsToPayForLicenseCounter += 1
-    item.categories.forEach(() => {
-      examCounter += item.categories.length
-    })
+    examCounter += item.categories.length
   })
 
   const items: Array<BasicChargeItem> = [
