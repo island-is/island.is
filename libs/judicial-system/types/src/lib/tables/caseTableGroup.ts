@@ -4,9 +4,11 @@ import {
   isDistrictCourtUser,
   isPrisonAdminUser,
   isPrisonStaffUser,
+  isProsecutionUser,
   isPublicProsecutionOfficeUser,
   isPublicProsecutionUser,
 } from '../user'
+import { prosecutorTableGroups } from './tableGroups/prosecutorTableGroups'
 import { CaseTableGroup, CaseTableType } from './caseTableTypes'
 import { publicProsecutorTableGroups } from './tableGroups'
 
@@ -218,6 +220,10 @@ export const getCaseTableGroups = (
 
   if (isPublicProsecutionUser(user)) {
     return publicProsecutorTableGroups
+  }
+
+  if (isProsecutionUser(user)) {
+    return prosecutorTableGroups
   }
 
   return []
