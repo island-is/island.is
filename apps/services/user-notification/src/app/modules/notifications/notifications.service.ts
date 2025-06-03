@@ -41,6 +41,12 @@ const ALLOWED_REPLACE_PROPS: Array<keyof HnippTemplate> = [
   'clickActionUrl',
 ]
 
+type HnippCollection = {
+  hnippTemplateCollection: { items: HnippTemplate[] }
+}
+type OrganizationCollection = {
+  organizationCollection: { items: SenderOrganization[] }
+}
 type SenderOrganization = {
   title: string
 }
@@ -64,7 +70,7 @@ export class NotificationsService {
       nationalId: senderId,
       locale: mapToContentfulLocale(locale),
     }
-    const res = await this.cmsService.fetchData(
+    const res = await this.cmsService.fetchData<OrganizationCollection>(
       GetOrganizationByNationalId,
       queryVariables,
     )
@@ -122,7 +128,10 @@ export class NotificationsService {
   async getTemplates(locale?: Locale): Promise<HnippTemplate[]> {
     locale = mapToLocale(locale as Locale)
     const queryVariables = { locale: mapToContentfulLocale(locale) }
-    const res = await this.cmsService.fetchData(GetTemplates, queryVariables)
+    const res = await this.cmsService.fetchData<HnippCollection>(
+      GetTemplates,
+      queryVariables,
+    )
 
     return res.hnippTemplateCollection.items.map((template: HnippTemplate) => ({
       ...template,
@@ -139,7 +148,7 @@ export class NotificationsService {
       templateId,
       locale: mapToContentfulLocale(locale),
     }
-    const res = await this.cmsService.fetchData(
+    const res = await this.cmsService.fetchData<HnippCollection>(
       GetTemplateByTemplateId,
       queryVariables,
     )
@@ -324,14 +333,16 @@ export class NotificationsService {
     locale?: Locale,
   ): Promise<RenderedNotificationDto> {
     locale = mapToLocale(locale as Locale)
-    const [numberOfAffectedRows, [updatedNotification]] =
-      await this.notificationModel.update(updateNotificationDto, {
-        where: {
-          id: id,
-          recipient: user.nationalId,
-        },
-        returning: true,
-      })
+    const [
+      numberOfAffectedRows,
+      [updatedNotification],
+    ] = await this.notificationModel.update(updateNotificationDto, {
+      where: {
+        id: id,
+        recipient: user.nationalId,
+      },
+      returning: true,
+    })
 
     if (numberOfAffectedRows === 0) {
       throw new NoContentException()
