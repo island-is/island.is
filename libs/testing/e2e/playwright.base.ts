@@ -32,8 +32,9 @@ export const baseConfig = ({
     use: {
       baseURL,
       /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
-      trace: process.env.CI ? 'on' : 'on-first-retry',
+      trace: 'on',
     },
+    fullyParallel: true,
     /* Run your local dev server before starting the tests */
     webServer: {
       command: `yarn dev-init ${project} && . ./.env.secret && yarn dev ${project}`,
