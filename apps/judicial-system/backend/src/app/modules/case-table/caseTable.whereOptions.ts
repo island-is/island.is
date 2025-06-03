@@ -18,7 +18,7 @@ import {
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
-const buildSubpoenaExistsCondition = (exists = true) =>
+const buildSubpoenaExistsCondition = (exists: boolean) =>
   Sequelize.literal(`
     ${exists ? '' : 'NOT'} EXISTS (
       SELECT 1
@@ -27,7 +27,17 @@ const buildSubpoenaExistsCondition = (exists = true) =>
     )
   `)
 
-const buildEventLogExistsCondition = (eventType: EventType, exists = true) =>
+const buildAlternativeServiceExistsCondition = (exists: boolean) =>
+  Sequelize.literal(`
+    ${exists ? '' : 'NOT'} EXISTS (
+      SELECT 1
+      FROM defendant
+      WHERE defendant.case_id = "Case".id
+        AND defendant.is_alternative_service = true
+    )
+  `)
+
+const buildEventLogExistsCondition = (eventType: EventType, exists: boolean) =>
   Sequelize.literal(`
      ${exists ? '' : 'NOT'} EXISTS (
         SELECT 1
@@ -91,18 +101,24 @@ const districtCourtIndictmentsNewWhereOptions = {
 const districtCourtIndictmentsReceivedWhereOptions = {
   ...districtCourtIndictmentsSharedWhereOptions,
   state: CaseState.RECEIVED,
-  [Op.and]: [buildSubpoenaExistsCondition(false)],
+  judge_id: { [Op.not]: null },
+  [Op.and]: [
+    buildSubpoenaExistsCondition(false),
+    buildAlternativeServiceExistsCondition(false),
+  ],
 }
+
 const districtCourtIndictmentsInProgressWhereOptions = {
   ...districtCourtIndictmentsSharedWhereOptions,
   [Op.or]: [
     {
       state: CaseState.RECEIVED,
-      [Op.and]: [buildSubpoenaExistsCondition(true)],
+      [Op.or]: [
+        buildSubpoenaExistsCondition(true),
+        buildAlternativeServiceExistsCondition(true),
+      ],
     },
-    {
-      state: CaseState.WAITING_FOR_CANCELLATION,
-    },
+    { state: CaseState.WAITING_FOR_CANCELLATION },
   ],
 }
 
