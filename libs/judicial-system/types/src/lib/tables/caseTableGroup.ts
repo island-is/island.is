@@ -28,7 +28,7 @@ const districtCourtTableGroups: CaseTableGroup[] = [
         type: CaseTableType.DISTRICT_COURT_REQUEST_CASES_IN_PROGRESS,
         route: 'mal-i-vinnslu',
         title: 'Rannsóknarmál í vinnslu',
-        description: 'Ný mál, móttekin mál og mál á dagskrá.',
+        description: 'Drög, ný mál, móttekin mál og mál á dagskrá.',
       },
       {
         type: CaseTableType.DISTRICT_COURT_REQUEST_CASES_APPEALED,
@@ -90,7 +90,7 @@ const courtOfAppealsTableGroups: CaseTableGroup[] = [
       {
         type: CaseTableType.COURT_OF_APPEALS_IN_PROGRESS,
         route: 'mal-i-vinnslu',
-        title: 'Mál í vinnslu',
+        title: 'Rannsóknarmál mál í vinnslu',
         description: 'Kærð sakamál sem eru til meðferðar.',
       },
       {
