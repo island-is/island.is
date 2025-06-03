@@ -31,8 +31,6 @@ node_modules/
 *.sublime-workspace
 TODO
 *.todo
-.env
-.env.*
 .envrc.private
 .nvmrc
 .node-version
@@ -63,9 +61,10 @@ Thumbs.db
 .cache
 
 # Used to store local secrets
+.env.local
+.env.*.local
 .env.secret
 .env.secret.*
-.env
 helm/**/*.tgz
 /cache*
 
