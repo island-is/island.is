@@ -173,7 +173,7 @@ export const DocumentProviderOrganisationForm: FC<
           />
           <DocumentProviderInput
             control={control}
-            name="zendesk"
+            name="zendeskId"
             defaultValue={organisation?.zendeskId || ''}
             label={formatMessage(m.SingleProviderInstitutionZendeskIdLabel)}
             placeholder={formatMessage(
