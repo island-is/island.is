@@ -23,6 +23,18 @@ interface Props {
   isBottomComponent?: boolean
 }
 
+export const createPreviewUrlFiles = (acceptedFiles: File[]) => {
+  const toFileWithPreview = (file: File): FileWithPreviewURL => {
+    const previewUrl = URL.createObjectURL(file)
+    return Object.assign(file, { previewUrl })
+  }
+
+  const acceptedFilesWithPreviewURL = acceptedFiles.map((file) =>
+    toFileWithPreview(file),
+  )
+  return acceptedFilesWithPreviewURL
+}
+
 const UploadFiles: FC<Props> = (props) => {
   const {
     files,
@@ -37,16 +49,7 @@ const UploadFiles: FC<Props> = (props) => {
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
-      const toFileWithPreview = (file: File): FileWithPreviewURL => {
-        const previewUrl = URL.createObjectURL(file)
-        return Object.assign(file, { previewUrl })
-      }
-
-      const acceptedFilesWithPreviewURL = acceptedFiles.map((file) =>
-        toFileWithPreview(file),
-      )
-
-      onChange(acceptedFilesWithPreviewURL)
+      onChange(createPreviewUrlFiles(acceptedFiles))
     },
     [onChange],
   )
