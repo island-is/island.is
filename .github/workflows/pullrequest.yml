@@ -138,7 +138,7 @@ jobs:
   e2e:
     needs:
       - prepare
-    if: ${{ needs.prepare.outputs.E2E_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
+    if: ${{ needs.prepare.outputs.E2E_CHUNKS && contains(github.event.pull_request.labels.*.name, 'e2e') }}
     runs-on: arc-shared
     timeout-minutes: 45
     env:
