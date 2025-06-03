@@ -249,7 +249,7 @@ export const modules = [
   ExampleAuthDelegationModule,
   RentalAgreementModule,
   FireCompensationAppraisalModule,
-            ]
+]
 
 export const services = [
   ExampleCommonActionsService,
@@ -334,4 +334,4 @@ export const services = [
   ExampleAuthDelegationService,
   RentalAgreementService,
   FireCompensationAppraisalService,
-            ]
+]

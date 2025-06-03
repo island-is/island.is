@@ -12,6 +12,10 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { getValueViaPath } from '@island.is/application/core'
 import { paymentForAppraisal } from './utils'
+import {
+  HmsApplicationSystemService,
+  ApplicationDto,
+} from '@island.is/clients/hms-application-system'
 
 @Injectable()
 export class FireCompensationAppraisalService extends BaseTemplateApiService {
@@ -20,6 +24,7 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly notificationsService: NotificationsService,
     private propertiesApi: FasteignirApi,
+    private hmsApplicationSystemService: HmsApplicationSystemService,
   ) {
     super(ApplicationTypes.FIRE_COMPENSATION_APPRAISAL)
   }
@@ -100,12 +105,31 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
     }
   }
 
-  async createApplication() {
-    // TODO: Implement this
-    await new Promise((resolve) => setTimeout(resolve, 2000))
+  async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
+    try {
+      console.log('--------------------------------')
+      console.log('SUBMITTING APPLICATION')
+      console.log('--------------------------------')
+      const res =
+        await this.hmsApplicationSystemService.submitBrunabotamatApplication(
+          auth,
+          {} as ApplicationDto,
+        )
 
-    return {
-      id: 1337,
+      console.log('--------------------------------')
+      console.log('APPLICATION SUBMITTED')
+      console.log('--------------------------------')
+      console.log(res)
+      console.log('--------------------------------')
+
+      return res
+    } catch (e) {
+      console.log('--------------------------------')
+      console.log('FAILED TO SUBMIT APPLICATION')
+      console.log('--------------------------------')
+      console.log(e)
+      console.log('--------------------------------')
+      this.logger.error('Failed to submit application:', e)
     }
   }
 }

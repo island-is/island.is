@@ -6,4 +6,5 @@ export type FileType = {
 
 export enum TemplateApiActions {
   calculateAmount = 'calculateAmount',
+  submitApplication = 'submitApplication',
 }

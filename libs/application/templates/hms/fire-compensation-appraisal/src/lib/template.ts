@@ -123,6 +123,11 @@ const template: ApplicationTemplate<
           progress: 1,
           status: FormModes.COMPLETED,
           lifecycle: DefaultStateLifeCycle,
+          onEntry: [
+            defineTemplateApi({
+              action: TemplateApiActions.submitApplication,
+            }),
+          ],
           roles: [
             {
               id: Roles.APPLICANT,
