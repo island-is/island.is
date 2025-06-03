@@ -420,7 +420,6 @@ export class InternalCaseController {
     )
   }
 
-
   @UseGuards(
     CaseExistsGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
