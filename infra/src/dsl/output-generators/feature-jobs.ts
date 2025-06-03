@@ -97,3 +97,102 @@ export const generateJobsForFeature = async (
     },
   }
 }
+
+export const generateCleanUpForFeature = async (
+  image: string,
+  services: ServiceDefinitionForEnv[],
+  env: EnvironmentConfig,
+): Promise<FeatureKubeJob> => {
+  const feature = env.feature
+  if (typeof feature === 'undefined') {
+    throw new Error('Feature jobs with a feature name not defined')
+  }
+  const securityContext = {
+    privileged: false,
+    allowPrivilegeEscalation: false,
+  }
+  const containers = Object.values(services)
+    .map((service) =>
+      [service.postgres, service.initContainers?.postgres]
+        .filter((id) => id)
+        .map((info) => {
+          const host = resolveDbHost(service, env, info?.host)
+          const feature = env.feature
+          const extensions = getPostgresExtensions(
+            service.initContainers?.postgres?.extensions,
+          )
+            return {
+            command: [`/app/destroy-dbs.sh ${feature}`],
+            image,
+            name: `${info!.username!.replace(/_/g, '-').substr(0, 60)}1`,
+            securityContext,
+            env: [
+              {
+              name: 'PGHOST',
+              value: host.writer,
+              },
+              {
+              name: 'PGDATABASE',
+              value: 'postgres',
+              },
+              {
+              name: 'PGUSER',
+              value: 'root',
+              },
+              {
+              name: 'PGPASSWORD_KEY',
+              value: '/rds/vidspyrna/masterpassword',
+              },
+              {
+              name: 'DB_USER',
+              value: info!.username!,
+              },
+              {
+              name: 'DB_NAME',
+              value: info!.name!,
+              },
+              {
+              name: 'DB_PASSWORD_KEY',
+              value: info!.passwordSecret!,
+              },
+              {
+              name: 'DB_EXTENSIONS',
+              value: extensions,
+              },
+            ],
+            }
+        }),
+    )
+    .reduce((acc, cur) => {
+      let result = acc
+      cur.forEach((c) => {
+        if (result.map((a) => a.name).indexOf(c.name) === -1) {
+          result = result.concat([c])
+        }
+      })
+      return result
+    }, [])
+  return {
+    apiVersion: 'batch/v1',
+    kind: 'Job',
+    metadata: {
+      name: resolveWithMaxLength(
+        `destroy-fd-${feature}-${new Date().getTime()}`,
+        62,
+      ),
+      annotations: {
+        'argocd.argoproj.io/hook': 'PostDelete',
+        'argocd.argoproj.io/hook-delete-policy': 'Keep'
+      }
+    },
+    spec: {
+      template: {
+        spec: {
+          serviceAccountName: 'feature-deployment',
+          containers,
+          restartPolicy: 'Never',
+        },
+      },
+    },
+  }
+}

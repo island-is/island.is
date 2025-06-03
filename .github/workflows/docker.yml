@@ -255,6 +255,15 @@ jobs:
         with:
           registry: ${{ steps.ecr-login.outputs.registry }}
 
+      - name: Check if cached buildx image exists
+        id: cache-check
+        run: |
+          if ! docker pull ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1 ; then
+            docker pull docker.io/moby/buildkit:buildx-stable-1
+            docker tag docker.io/moby/buildkit:buildx-stable-1 ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
+            docker push ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
+          fi
+
       - name: Set up Docker Buildx
         id: buildx
         uses: docker/setup-buildx-action@v3

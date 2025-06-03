@@ -110,19 +110,41 @@ yargs(hideBin(process.argv))
     builder: (yargs) => yargs,
     handler: async (argv) => {
       const { prefix } = argv as DeleteArguments
-      const { Parameters } = await ssm
-        .describeParameters({
-          ParameterFilters: [
-            { Key: 'Name', Option: 'BeginsWith', Values: [prefix] },
-          ],
-        })
-        .promise()
-      if (Parameters && Parameters.length > 0) {
+      let NextToken
+      let ParameterList: any = []
+
+      while (true) {
+        let response: any = await ssm
+          .describeParameters({
+            ParameterFilters: [
+              { Key: 'Name', Option: 'BeginsWith', Values: [prefix] },
+            ],
+            NextToken,
+          })
+          .promise()
+
+        NextToken = response.NextToken
+
+        if (response.Parameters && response.Parameters.length > 0) {
+          ParameterList = ParameterList.concat(response.Parameters)
+        }
+        if (
+          !NextToken ||
+          NextToken == undefined ||
+          NextToken == null ||
+          NextToken == ''
+        ) {
+          break
+        }
+      }
+      if (ParameterList && ParameterList.length > 0) {
         logger.debug(
-          `Parameters to destroy: ${Parameters.map(({ Name }) => Name)}`,
+          `Parameters to destroy: ${ParameterList.map(
+            ({ Name }: any) => Name,
+          )}`,
         )
         await Promise.all(
-          Parameters.map(({ Name }) =>
+          ParameterList.map(({ Name }: any) =>
             Name
               ? ssm.deleteParameter({ Name }).promise()
               : new Promise((resolve) => resolve(true)),
