@@ -503,6 +503,11 @@ jobs:
         with:
           matrix-step-name: docker-build
 
+      - name: Debug docker-build output
+        run: |
+          echo "docker-build output:"
+          echo "${{ steps.read.outputs.result }}"
+
       - name: Setup yarn
         uses: ./monorepo/.github/actions/setup-yarn
         with:
