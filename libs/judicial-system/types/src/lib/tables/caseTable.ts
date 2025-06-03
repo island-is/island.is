@@ -17,6 +17,7 @@ import {
   prosecutorRequestCasesCompleted,
   prosecutorRequestCasesInProgress,
   publicProsecutorIndictmentInReview,
+  publicProsecutorIndictmentReviewed,
 } from './caseTables'
 import {
   CaseTable,
@@ -443,7 +444,7 @@ export const caseTables: { [key in CaseTableType]: CaseTable } = {
   PROSECUTOR_REQUEST_CASES_APPEALED: prosecutorRequestCasesAppealed,
   PROSECUTOR_REQUEST_CASES_COMPLETED: prosecutorRequestCasesCompleted,
   PUBLIC_PROSECUTOR_INDICTMENT_IN_REVIEW: publicProsecutorIndictmentInReview,
-  PUBLIC_PROSECUTOR_INDICTMENT_REVIEWED: prosecutorIndictmentCompleted,
+  PUBLIC_PROSECUTOR_INDICTMENT_REVIEWED: publicProsecutorIndictmentReviewed,
   PROSECUTOR_INDICTMENT_WAITING_FOR_CONFIRMATION:
     prosecutorIndictmentWaitingForConfirmation,
   PROSECUTOR_INDICTMENT_IN_PROGRESS: prosecutorIndictmentInProgress,

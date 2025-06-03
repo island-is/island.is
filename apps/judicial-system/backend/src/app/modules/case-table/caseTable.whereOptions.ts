@@ -22,15 +22,15 @@ import {
   buildSubpoenaExistsCondition,
 } from './whereOptions/conditions'
 import {
-  getProsecutorIndictmentCompletedWhereOptions,
-  getProsecutorIndictmentInProgressWhereOptions,
-  getProsecutorIndictmentWaitingForConfirmationWhereOptions,
-  getPublicProsecutorIndictmentInReviewWhereOptions,
-  getPublicProsecutorIndictmentReviewedWhereOptions,
+  prosecutorIndictmentCompletedWhereOptions,
+  prosecutorIndictmentInProgressWhereOptions,
+  prosecutorIndictmentWaitingForConfirmationWhereOptions,
   prosecutorRequestCasesActiveWhereOptions,
   prosecutorRequestCasesAppealedWhereOptions,
   prosecutorRequestCasesCompletedWhereOptions,
   prosecutorRequestCasesInProgressWhereOptions,
+  publicProsecutorIndictmentInReviewWhereOptions,
+  publicProsecutorIndictmentReviewedWhereOptions,
 } from './whereOptions'
 
 // District Court Request Cases
@@ -408,22 +408,22 @@ export const caseTableWhereOptions: Record<
     prosecutorsOfficeIndictmentSentToPrisonAdminWhereOptions,
   [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_APPEALED]: (_user) =>
     prosecutorsOfficeIndictmentAppealedWhereOptions,
-  [CaseTableType.PROSECUTOR_REQUEST_CASES_IN_PROGRESS]: (_user) =>
-    prosecutorRequestCasesInProgressWhereOptions,
-  [CaseTableType.PROSECUTOR_REQUEST_CASES_ACTIVE]: (_user) =>
-    prosecutorRequestCasesActiveWhereOptions,
-  [CaseTableType.PROSECUTOR_REQUEST_CASES_APPEALED]: (_user) =>
-    prosecutorRequestCasesAppealedWhereOptions,
-  [CaseTableType.PROSECUTOR_REQUEST_CASES_COMPLETED]: (_user) =>
-    prosecutorRequestCasesCompletedWhereOptions,
+  [CaseTableType.PROSECUTOR_REQUEST_CASES_IN_PROGRESS]: (user) =>
+    prosecutorRequestCasesInProgressWhereOptions(user),
+  [CaseTableType.PROSECUTOR_REQUEST_CASES_ACTIVE]: (user) =>
+    prosecutorRequestCasesActiveWhereOptions(user),
+  [CaseTableType.PROSECUTOR_REQUEST_CASES_APPEALED]: (user) =>
+    prosecutorRequestCasesAppealedWhereOptions(user),
+  [CaseTableType.PROSECUTOR_REQUEST_CASES_COMPLETED]: (user) =>
+    prosecutorRequestCasesCompletedWhereOptions(user),
   [CaseTableType.PUBLIC_PROSECUTOR_INDICTMENT_IN_REVIEW]: (user) =>
-    getPublicProsecutorIndictmentInReviewWhereOptions(user),
+    publicProsecutorIndictmentInReviewWhereOptions(user),
   [CaseTableType.PUBLIC_PROSECUTOR_INDICTMENT_REVIEWED]: (user) =>
-    getPublicProsecutorIndictmentReviewedWhereOptions(user),
+    publicProsecutorIndictmentReviewedWhereOptions(user),
   [CaseTableType.PROSECUTOR_INDICTMENT_WAITING_FOR_CONFIRMATION]: (user) =>
-    getProsecutorIndictmentWaitingForConfirmationWhereOptions(user),
+    prosecutorIndictmentWaitingForConfirmationWhereOptions(user),
   [CaseTableType.PROSECUTOR_INDICTMENT_IN_PROGRESS]: (user) =>
-    getProsecutorIndictmentInProgressWhereOptions(user),
+    prosecutorIndictmentInProgressWhereOptions(user),
   [CaseTableType.PROSECUTOR_INDICTMENT_COMPLETED]: (user) =>
-    getProsecutorIndictmentCompletedWhereOptions(user),
+    prosecutorIndictmentCompletedWhereOptions(user),
 }
