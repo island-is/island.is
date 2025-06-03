@@ -31,6 +31,7 @@ const ListActions = () => {
       </Text>
 
       <Stack space={8}>
+        {/*Todo: check with the insent data */}
         <DownloadReports areas={[]} collectionId={''} />
         <ActionLockList list={list} />
         <ActionReviewComplete listId={list?.id} listStatus={listStatus} />

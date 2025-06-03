@@ -128,7 +128,6 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
     }
 
     const result = await this.signatureCollectionClientService
-      //Todo: switch to municipal once available
       .createMunicipalCandidacy(input, auth)
       .catch((error) => {
         throw new TemplateApiError(
