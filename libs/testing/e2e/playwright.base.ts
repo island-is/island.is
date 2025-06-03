@@ -19,7 +19,7 @@ export type BaseConfig = {
  * See https://playwright.dev/docs/test-configuration.
  */
 export const baseConfig = ({
-  filename = __filename,
+  filename,
   project,
   baseURL = process.env['BASE_URL'] ||
     `http://localhost:${process.env.PORT || 4200}`,
@@ -37,7 +37,7 @@ export const baseConfig = ({
     fullyParallel: true,
     /* Run your local dev server before starting the tests */
     webServer: {
-      command: `yarn dev-init ${project} && . ./.env.secret && yarn dev ${project}`,
+      command: `yarn dev ${project}`,
       url: baseURL,
       reuseExistingServer: !process.env.CI,
       stdout: 'pipe',
