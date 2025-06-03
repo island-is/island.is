@@ -180,7 +180,8 @@ const Completed: FC = () => {
     {
       label: 'Upplýsingar um áfrýjun til Landsréttar og áfrýjunarfresti',
       value: InformationForDefendant.INFORMATION_ON_APPEAL_TO_COURT_OF_APPEALS,
-      tooltip: 'TODO',
+      tooltip:
+        'Einstaklingur getur áfrýjað dómi til Landsréttar ef viðkomandi hefur verið dæmdur í fangelsi eða til að greiða sekt eða sæta upptöku eigna sem nær áfrýjunarfjárhæð í einkamáli, kr. 1.420.488.',
     },
     {
       label: 'Þýðing skilorðsbundinnar refsingar og skilorðsrofs',
