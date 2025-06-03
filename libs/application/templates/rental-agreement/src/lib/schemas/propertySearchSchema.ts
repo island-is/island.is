@@ -1,7 +1,7 @@
 import { z } from 'zod'
+import { RentalHousingCategoryClass } from '../../shared'
 import { maxChangedUnitSize, minChangedUnitSize } from '../../utils/utils'
 import {
-  RentalHousingCategoryClass,
   RentalHousingCategoryClassGroup,
   RentalHousingCategoryTypes,
 } from '../../utils/enums'

@@ -52,6 +52,12 @@ export const shared = {
         'Gögn vantar í umsókn, athugaðu hvort allt hefur verið fyllt út, reyndu aftur síðar eða hafðu samband við þjónustuaðila',
       description: 'Submission error description',
     },
+    chargeCodeMissing: {
+      id: 'aosh.pe.application:chargeCodeMissing',
+      defaultMessage:
+        'Greiðslukóði ekki til staðar, vinsamlegar reyndu aftur síðar',
+      description: 'Submission error description',
+    },
   }),
   labels: defineMessages({
     ssn: {

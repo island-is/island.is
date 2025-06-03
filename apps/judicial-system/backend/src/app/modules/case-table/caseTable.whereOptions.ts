@@ -2,6 +2,7 @@ import { fn, literal, Op, Sequelize, where, WhereOptions } from 'sequelize'
 
 import {
   CaseAppealState,
+  CaseDecision,
   CaseIndictmentRulingDecision,
   CaseState,
   CaseTableType,
@@ -139,12 +140,17 @@ const courtOfAppealsCompletedWhereOptions = {
   appeal_state: CaseAppealState.COMPLETED,
 }
 
-// Prison System Request Cases
+// Prison Staff Request Cases
 
 const prisonSharedWhereOptions = {
   is_archived: false,
-  type: [...restrictionCases, CaseType.PAROLE_REVOCATION],
+  type: [
+    CaseType.CUSTODY,
+    CaseType.ADMISSION_TO_FACILITY,
+    CaseType.PAROLE_REVOCATION,
+  ],
   state: CaseState.ACCEPTED,
+  decision: [CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY],
 }
 
 const prisonActiveWhereOptions = {
@@ -158,6 +164,22 @@ const prisonDoneWhereOptions = {
 }
 
 // Prison Admin Indictments
+
+const prisonAdminSharedWhereOptions = {
+  is_archived: false,
+  type: [...restrictionCases, CaseType.PAROLE_REVOCATION],
+  state: CaseState.ACCEPTED,
+}
+
+const prisonAdminActiveWhereOptions = {
+  ...prisonAdminSharedWhereOptions,
+  valid_to_date: { [Op.or]: [null, { [Op.gte]: fn('NOW') }] },
+}
+
+const prisonAdminDoneWhereOptions = {
+  ...prisonAdminSharedWhereOptions,
+  valid_to_date: { [Op.lt]: fn('NOW') },
+}
 
 const prisonAdminIndictmentSharedWhereOptions = {
   is_archived: false,
@@ -391,6 +413,8 @@ export const caseTableWhereOptions: Record<
     courtOfAppealsCompletedWhereOptions,
   [CaseTableType.PRISON_ACTIVE]: (_user) => prisonActiveWhereOptions,
   [CaseTableType.PRISON_DONE]: (_user) => prisonDoneWhereOptions,
+  [CaseTableType.PRISON_ADMIN_ACTIVE]: (_user) => prisonAdminActiveWhereOptions,
+  [CaseTableType.PRISON_ADMIN_DONE]: (_user) => prisonAdminDoneWhereOptions,
   [CaseTableType.PRISON_ADMIN_INDICTMENT_SENT_TO_PRISON_ADMIN]: (_user) =>
     prisonAdminIndictmentSentToPrisonAdminWhereOptions,
   [CaseTableType.PRISON_ADMIN_INDICTMENT_REGISTERED_RULING]: (_user) =>

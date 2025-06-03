@@ -11,8 +11,8 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useFormContext } from 'react-hook-form'
+import { CostField } from '../../shared'
 import { isCostItemValid, parseCurrency } from '../../utils/utils'
-import { CostField } from '../../utils/types'
 import { otherFees as tOtherFees } from '../../lib/messages'
 
 const MAX_COST_ITEMS = 3

@@ -26,14 +26,11 @@ import {
   pickColumns,
 } from './caseTableTypes'
 
-// TODO: we don't need to re=map everything again here.
-// Lets use a map in case table group and use the route to fetch the type
 export const getCaseTableType = (
   user: InstitutionUser | undefined,
   route: string | undefined,
 ): CaseTableType | undefined => {
   if (isDistrictCourtUser(user)) {
-    // we know which map / table group to use here instead of these massive switch statements
     switch (route) {
       case CaseTableRoutes.IN_PROGRESS:
         return CaseTableType.DISTRICT_COURT_REQUEST_CASES_IN_PROGRESS
@@ -65,9 +62,9 @@ export const getCaseTableType = (
   if (isPrisonAdminUser(user)) {
     switch (route) {
       case CaseTableRoutes.ACTIVE:
-        return CaseTableType.PRISON_ACTIVE
+        return CaseTableType.PRISON_ADMIN_ACTIVE
       case CaseTableRoutes.DONE:
-        return CaseTableType.PRISON_DONE
+        return CaseTableType.PRISON_ADMIN_DONE
       case CaseTableRoutes.SENT_TO_PRISON:
         return CaseTableType.PRISON_ADMIN_INDICTMENT_SENT_TO_PRISON_ADMIN
       case CaseTableRoutes.REGISTERED_RULING:
@@ -272,7 +269,7 @@ const courtOfAppealsCompleted: CaseTable = {
   columns: pickColumns(courtOfAppealsCompletedColumnKeys),
 }
 
-const prisonAdminActiveColumnKeys: CaseTableColumnKey[] = [
+const prisonColumnKeys: CaseTableColumnKey[] = [
   'caseNumber',
   'defendants',
   'caseType',
@@ -285,8 +282,42 @@ const prisonAdminActiveColumnKeys: CaseTableColumnKey[] = [
 const prisonActive: CaseTable = {
   title: 'Virk mál',
   hasMyCasesFilter: false,
-  columnKeys: prisonAdminActiveColumnKeys,
-  columns: pickColumns(prisonAdminActiveColumnKeys),
+  columnKeys: prisonColumnKeys,
+  columns: pickColumns(prisonColumnKeys),
+}
+
+const prisonDoneColumnKeys: CaseTableColumnKey[] = [
+  'caseNumber',
+  'defendants',
+  'caseType',
+  'rulingDate',
+  'requestCaseState',
+  'appealCaseState',
+  'validFromTo',
+]
+
+const prisonDone: CaseTable = {
+  title: 'Lokið',
+  hasMyCasesFilter: false,
+  columnKeys: prisonDoneColumnKeys,
+  columns: pickColumns(prisonDoneColumnKeys),
+}
+
+const prisonAdminColumnKeys: CaseTableColumnKey[] = [
+  'caseNumber',
+  'defendants',
+  'caseType',
+  'rulingDate',
+  'requestCaseState',
+  'appealCaseState',
+  'validFromTo',
+]
+
+const prisonAdminActive: CaseTable = {
+  title: 'Virk mál',
+  hasMyCasesFilter: false,
+  columnKeys: prisonAdminColumnKeys,
+  columns: pickColumns(prisonAdminColumnKeys),
 }
 
 const prisonAdminDoneColumnKeys: CaseTableColumnKey[] = [
@@ -299,7 +330,7 @@ const prisonAdminDoneColumnKeys: CaseTableColumnKey[] = [
   'validFromTo',
 ]
 
-const prisonDone: CaseTable = {
+const prisonAdminDone: CaseTable = {
   title: 'Lokið',
   hasMyCasesFilter: false,
   columnKeys: prisonAdminDoneColumnKeys,
@@ -427,6 +458,8 @@ export const caseTables: { [key in CaseTableType]: CaseTable } = {
   DISTRICT_COURT_INDICTMENTS_COMPLETED: districtCourtIndictmentsCompleted,
   PRISON_ACTIVE: prisonActive,
   PRISON_DONE: prisonDone,
+  PRISON_ADMIN_ACTIVE: prisonAdminActive,
+  PRISON_ADMIN_DONE: prisonAdminDone,
   PRISON_ADMIN_INDICTMENT_SENT_TO_PRISON_ADMIN:
     prisonAdminIndictmentSentToPrisonAdmin,
   PRISON_ADMIN_INDICTMENT_REGISTERED_RULING:

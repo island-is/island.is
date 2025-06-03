@@ -8,7 +8,10 @@ import { registerProperty } from './schemas/propertySearchSchema'
 import { otherFees } from './schemas/otherFeesSchema'
 import { securityDeposit } from './schemas/securityDepositSchema'
 import { rentalAmount } from './schemas/rentalAmountSchema'
+import { getRentalPropertySize } from '../utils/utils'
+
 import * as m from './messages'
+import { PropertyUnit } from '../shared'
 
 const approveExternalData = z.boolean().refine((v) => v)
 
@@ -144,12 +147,21 @@ const fireProtections = z
     fireExtinguisher: z.string().optional(),
     emergencyExits: z.string().optional(),
     fireBlanket: z.string().optional(),
-    propertySize: z.string().optional(),
+    propertySize: z
+      .array(
+        z.object({
+          size: z.number().optional(),
+          changedSize: z.number().optional(),
+        }),
+      )
+      .optional(),
   })
   .superRefine((data, ctx) => {
-    const propertySizeString = data.propertySize?.replace(',', '.') || ''
+    const propertySize = getRentalPropertySize(
+      (data.propertySize as PropertyUnit[]) || [],
+    )
     const numberOfSmokeDetectors = Number(data.smokeDetectors)
-    const requiredSmokeDetectors = Math.ceil(Number(propertySizeString) / 80)
+    const requiredSmokeDetectors = Math.ceil(Number(propertySize) / 80)
     if (
       data.smokeDetectors &&
       numberOfSmokeDetectors < requiredSmokeDetectors
@@ -168,15 +180,6 @@ const fireProtections = z
         message: 'Custom error message',
         params: m.housingFireProtections.fireExtinguisherNullError,
         path: ['fireExtinguisher'],
-      })
-    }
-
-    if (data.emergencyExits && Number(data.emergencyExits) < 1) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Custom error message',
-        params: m.housingFireProtections.emergencyExitNullError,
-        path: ['emergencyExits'],
       })
     }
   })

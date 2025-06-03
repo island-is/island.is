@@ -12,6 +12,7 @@ query CaseTable($input: CaseTableQueryInput!) {
           }
           ... on StringGroupValue {
             strList
+            hasCheckMark
           }
           ... on TagValue {
             color
