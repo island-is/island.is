@@ -1,6 +1,5 @@
 import winston from 'winston'
 import WinstonCloudWatch from 'winston-cloudwatch'
-import { TransformableInfo } from 'logform'
 import { createHash } from 'crypto'
 import { Inject, Injectable } from '@nestjs/common'
 import type { Logger } from '@island.is/logging'
@@ -55,7 +54,7 @@ export class AuditService {
           new WinstonCloudWatch({
             name: 'CloudWatch',
             logGroupName: options.groupName,
-            messageFormatter: (info: TransformableInfo) => {
+            messageFormatter: (info) => {
               // Flatten message to avoid top level object with "level" and "message".
               return JSON.stringify(info.message)
             },
@@ -137,29 +136,29 @@ export class AuditService {
     }
   }
 
-  auditPromise<T>(template: AuditTemplate<T>, promise: Promise<T>): Promise<T> {
-    return promise.then((result) => {
-      const commonFields = {
-        action: template.action,
-        namespace: template.namespace,
-        resources: this.unwrap(template.resources, result),
-        meta: this.unwrap(template.meta, result),
-        ...(template.alsoLog && { alsoLog: template.alsoLog }),
-      }
-
-      if (isDefaultAuditTemplate(template)) {
-        this.audit({
-          ...commonFields,
-          auth: template.auth,
-        })
-      } else {
-        this.audit({
-          ...commonFields,
-          system: template.system,
-        })
-      }
-
-      return result
-    })
+  async auditPromise<T>(
+    template: AuditTemplate<T>,
+    promise: Promise<T>,
+  ): Promise<T> {
+    const result = await promise
+    const commonFields = {
+      action: template.action,
+      namespace: template.namespace,
+      resources: this.unwrap(template.resources, result),
+      meta: this.unwrap(template.meta, result),
+      ...(template.alsoLog && { alsoLog: template.alsoLog }),
+    }
+    if (isDefaultAuditTemplate(template)) {
+      this.audit({
+        ...commonFields,
+        auth: template.auth,
+      })
+    } else {
+      this.audit({
+        ...commonFields,
+        system: template.system,
+      })
+    }
+    return result
   }
 }
