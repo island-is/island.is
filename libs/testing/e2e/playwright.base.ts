@@ -32,7 +32,7 @@ export const baseConfig = ({
     },
     /* Run your local dev server before starting the tests */
     webServer: {
-      command: `yarn dev-init ${project} && yarn dev ${project}`,
+      command: `yarn dev-init ${project} && . ./.env.secret && yarn dev ${project}`,
       url: baseURL,
       reuseExistingServer: !process.env.CI,
       stdout: 'pipe',
