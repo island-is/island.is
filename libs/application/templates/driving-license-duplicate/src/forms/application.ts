@@ -22,7 +22,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
         condition: () => allowFakeData,
         children: [sectionFakeData],
       }),
-      sectionDataProviders,
+      sectionDataProviders(allowFakeData),
       sectionReasonForApplication,
       sectionInformation,
       sectionPhoto,
