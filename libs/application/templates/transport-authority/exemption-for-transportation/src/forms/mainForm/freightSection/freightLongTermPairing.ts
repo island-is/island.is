@@ -8,7 +8,6 @@ import {
   buildSubSection,
   buildTextField,
   getValueViaPath,
-  YES,
 } from '@island.is/application/core'
 import { freight } from '../../../lib/messages'
 import { Application, SubSection } from '@island.is/application/types'

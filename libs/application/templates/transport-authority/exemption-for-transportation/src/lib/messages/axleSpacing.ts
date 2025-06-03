@@ -40,6 +40,11 @@ export const axleSpacing = {
       defaultMessage: 'Fjöldi öxla: {numberOfAxles}',
       description: 'Number of axles label',
     },
+    axleSpaceAll: {
+      id: 'ta.eft.application:axleSpacing.labels.axleSpaceAll',
+      defaultMessage: 'Bil milli öxla',
+      description: 'Axle space all label',
+    },
     axleSpaceFromTo: {
       id: 'ta.eft.application:axleSpacing.labels.axleSpaceFromTo',
       defaultMessage: 'Bil milli öxla {axleNumberFrom} og {axleNumberTo}',
@@ -49,6 +54,11 @@ export const axleSpacing = {
       id: 'ta.eft.application:axleSpacing.labels.metersSuffix',
       defaultMessage: ' metrar',
       description: 'Meters suffix',
+    },
+    useSameSpacing: {
+      id: 'ta.eft.application:axleSpacing.labels.useSameSpacing',
+      defaultMessage: 'Bil milli allra öxla er það sama',
+      description: 'Use same spacing between all axles',
     },
   }),
 }

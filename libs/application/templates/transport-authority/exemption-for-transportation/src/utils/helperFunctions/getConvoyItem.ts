@@ -1,4 +1,4 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 import { ExemptionForTransportationAnswers } from '../..'
 
@@ -56,4 +56,17 @@ export const hasDuplicateConvoyItems = (answers: FormValue) => {
   }
 
   return false // No duplicates
+}
+
+export const shouldUseSameSpacingForTrailer = (
+  answers: FormValue,
+  convoyIndex: number,
+) => {
+  const axleSpacing = getValueViaPath<
+    ExemptionForTransportationAnswers['axleSpacing']
+  >(answers, 'axleSpacing')
+
+  return (
+    axleSpacing?.[convoyIndex]?.useSameSpacingForTrailer?.includes(YES) || false
+  )
 }

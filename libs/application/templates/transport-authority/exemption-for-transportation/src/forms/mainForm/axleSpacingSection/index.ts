@@ -1,19 +1,25 @@
 import {
+  buildCheckboxField,
   buildDescriptionField,
+  buildHiddenInput,
   buildMultiField,
   buildSection,
   buildTextField,
+  YES,
 } from '@island.is/application/core'
 import { axleSpacing } from '../../../lib/messages'
-import { getConvoyItem } from '../../../utils'
+import {
+  getConvoyItem,
+  getExemptionType,
+  isExemptionTypeShortTerm,
+  MAX_CNT_AXLE,
+  shouldUseSameSpacingForTrailer,
+} from '../../../utils'
 import { DollyType } from '../../../shared'
+import { Application } from '@island.is/application/types'
 
+//TODOx repeat per convoy
 const convoyIndex = 0
-const axleSubIndex0 = 0
-const axleSubIndex1 = 1
-const axleSubIndex2 = 2
-const axleSubIndex3 = 3
-const axleSubIndex4 = 4
 
 export const axleSpacingSection = buildSection({
   id: 'axleSpacingSection',
@@ -24,6 +30,27 @@ export const axleSpacingSection = buildSection({
       title: axleSpacing.general.pageTitle,
       description: axleSpacing.general.description,
       children: [
+        buildHiddenInput({
+          id: `axleSpacing.${convoyIndex}.exemptionPeriodType`,
+          defaultValue: (application: Application) => {
+            return getExemptionType(application.answers)
+          },
+        }),
+        buildHiddenInput({
+          id: `axleSpacing.${convoyIndex}.dollyType`,
+          defaultValue: (application: Application) => {
+            const convoyItem = getConvoyItem(application.answers, convoyIndex)
+            return convoyItem?.dollyType
+          },
+        }),
+        buildHiddenInput({
+          id: `axleSpacing.${convoyIndex}.convoyId`,
+          defaultValue: (application: Application) => {
+            const convoyItem = getConvoyItem(application.answers, convoyIndex)
+            return convoyItem?.convoyId
+          },
+        }),
+
         // Vehicle
         buildDescriptionField({
           id: `axleSpacingInfo.vehicleSubtitle.${convoyIndex}`,
@@ -43,88 +70,40 @@ export const axleSpacingSection = buildSection({
           },
           titleVariant: 'h5',
         }),
-        //TODOx repeat per axle
-        buildTextField({
-          id: `axleSpacing.${convoyIndex}.vehicle.${axleSubIndex0}`,
-          title: {
-            ...axleSpacing.labels.axleSpaceFromTo,
-            values: {
-              axleNumberFrom: axleSubIndex0 + 1,
-              axleNumberTo: axleSubIndex0 + 2,
-            },
-          },
-          backgroundColor: 'blue',
-          width: 'full',
-          required: true,
-          variant: 'number',
-          suffix: axleSpacing.labels.metersSuffix,
-        }),
-        buildTextField({
-          id: `axleSpacing.${convoyIndex}.vehicle.${axleSubIndex1}`,
-          title: {
-            ...axleSpacing.labels.axleSpaceFromTo,
-            values: {
-              axleNumberFrom: axleSubIndex1 + 1,
-              axleNumberTo: axleSubIndex1 + 2,
-            },
-          },
-          backgroundColor: 'blue',
-          width: 'full',
-          required: true,
-          variant: 'number',
-          suffix: axleSpacing.labels.metersSuffix,
-        }),
-        buildTextField({
-          id: `axleSpacing.${convoyIndex}.vehicle.${axleSubIndex2}`,
-          title: {
-            ...axleSpacing.labels.axleSpaceFromTo,
-            values: {
-              axleNumberFrom: axleSubIndex2 + 1,
-              axleNumberTo: axleSubIndex2 + 2,
-            },
-          },
-          backgroundColor: 'blue',
-          width: 'full',
-          required: true,
-          variant: 'number',
-          suffix: axleSpacing.labels.metersSuffix,
-        }),
-        buildTextField({
-          id: `axleSpacing.${convoyIndex}.vehicle.${axleSubIndex3}`,
-          title: {
-            ...axleSpacing.labels.axleSpaceFromTo,
-            values: {
-              axleNumberFrom: axleSubIndex3 + 1,
-              axleNumberTo: axleSubIndex3 + 2,
-            },
-          },
-          backgroundColor: 'blue',
-          width: 'full',
-          required: true,
-          variant: 'number',
-          suffix: axleSpacing.labels.metersSuffix,
-        }),
-        buildTextField({
-          id: `axleSpacing.${convoyIndex}.vehicle.${axleSubIndex4}`,
-          title: {
-            ...axleSpacing.labels.axleSpaceFromTo,
-            values: {
-              axleNumberFrom: axleSubIndex4 + 1,
-              axleNumberTo: axleSubIndex4 + 2,
-            },
-          },
-          backgroundColor: 'blue',
-          width: 'full',
-          required: true,
-          variant: 'number',
-          suffix: axleSpacing.labels.metersSuffix,
-        }),
+        ...Array(MAX_CNT_AXLE)
+          .fill(null)
+          .flatMap((_, axleIndex) => {
+            return [
+              buildTextField({
+                id: `axleSpacing.${convoyIndex}.vehicle.${axleIndex}`,
+                condition: (answers) => {
+                  const convoyItem = getConvoyItem(answers, convoyIndex)
+                  const numberOfAxles = convoyItem?.vehicle?.numberOfAxles || 0
+                  return axleIndex < numberOfAxles - 1
+                },
+                title: {
+                  ...axleSpacing.labels.axleSpaceFromTo,
+                  values: {
+                    axleNumberFrom: axleIndex + 1,
+                    axleNumberTo: axleIndex + 2,
+                  },
+                },
+                backgroundColor: 'blue',
+                width: 'full',
+                required: true,
+                variant: 'number',
+                suffix: axleSpacing.labels.metersSuffix,
+              }),
+            ]
+          }),
 
         // Double dolly (if applies)
         // Note: No axle space if single dolly / no dolly
         buildDescriptionField({
           id: `axleSpacingInfo.dollySubtitle.${convoyIndex}`,
           condition: (answers) => {
+            if (!isExemptionTypeShortTerm(answers)) return false
+
             const convoyItem = getConvoyItem(answers, convoyIndex)
             return convoyItem?.dollyType === DollyType.DOUBLE
           },
@@ -138,6 +117,8 @@ export const axleSpacingSection = buildSection({
         buildTextField({
           id: `axleSpacing.${convoyIndex}.dolly.0`,
           condition: (answers) => {
+            if (!isExemptionTypeShortTerm(answers)) return false
+
             const convoyItem = getConvoyItem(answers, convoyIndex)
             return convoyItem?.dollyType === DollyType.DOUBLE
           },
@@ -153,9 +134,13 @@ export const axleSpacingSection = buildSection({
         }),
 
         // Trailer
-        //TODOx condition if trailer included
         buildDescriptionField({
           id: `axleSpacingInfo.trailerSubtitle.${convoyIndex}`,
+          condition: (answers) => {
+            const convoyItem = getConvoyItem(answers, convoyIndex)
+            const hasTrailer = !!convoyItem?.trailer?.permno
+            return hasTrailer
+          },
           title: (application) => {
             const convoyItem = getConvoyItem(application.answers, convoyIndex)
             return {
@@ -172,47 +157,66 @@ export const axleSpacingSection = buildSection({
           },
           titleVariant: 'h5',
         }),
-        //TODOx checkbox if should be same value for all
-        //TODOx repeat per axle
-        buildTextField({
-          id: `axleSpacing.${convoyIndex}.trailer.${axleSubIndex0}`,
-          title: {
-            ...axleSpacing.labels.axleSpaceFromTo,
-            values: {
-              axleNumberFrom: axleSubIndex0 + 1,
-              axleNumberTo: axleSubIndex0 + 2,
-            },
+        buildCheckboxField({
+          id: `axleSpacing.${convoyIndex}.useSameSpacingForTrailer`,
+          condition: (answers) => {
+            const convoyItem = getConvoyItem(answers, convoyIndex)
+            const hasTrailer = !!convoyItem?.trailer?.permno
+            return hasTrailer
           },
-          backgroundColor: 'blue',
-          width: 'full',
-          required: true,
-          variant: 'number',
-          suffix: axleSpacing.labels.metersSuffix,
+          large: false,
+          backgroundColor: 'white',
+          options: [
+            {
+              value: YES,
+              label: axleSpacing.labels.useSameSpacing,
+            },
+          ],
+          defaultValue: [],
+          marginBottom: 0,
         }),
+
+        ...Array(MAX_CNT_AXLE)
+          .fill(null)
+          .flatMap((_, axleIndex) => {
+            return [
+              buildTextField({
+                id: `axleSpacing.${convoyIndex}.trailer.${axleIndex}`,
+                condition: (answers) => {
+                  const convoyItem = getConvoyItem(answers, convoyIndex)
+                  const numberOfAxles = convoyItem?.trailer?.numberOfAxles || 0
+                  const hasTrailer = !!convoyItem?.trailer?.permno
+                  return (
+                    axleIndex < numberOfAxles - 1 &&
+                    hasTrailer &&
+                    !shouldUseSameSpacingForTrailer(answers, convoyIndex)
+                  )
+                },
+                title: {
+                  ...axleSpacing.labels.axleSpaceFromTo,
+                  values: {
+                    axleNumberFrom: axleIndex + 1,
+                    axleNumberTo: axleIndex + 2,
+                  },
+                },
+                backgroundColor: 'blue',
+                width: 'full',
+                required: true,
+                variant: 'number',
+                suffix: axleSpacing.labels.metersSuffix,
+              }),
+            ]
+          }),
         buildTextField({
-          id: `axleSpacing.${convoyIndex}.trailer.${axleSubIndex1}`,
-          title: {
-            ...axleSpacing.labels.axleSpaceFromTo,
-            values: {
-              axleNumberFrom: axleSubIndex1 + 1,
-              axleNumberTo: axleSubIndex1 + 2,
-            },
+          id: `axleSpacing.${convoyIndex}.trailer.0`,
+          condition: (answers) => {
+            const convoyItem = getConvoyItem(answers, convoyIndex)
+            const hasTrailer = !!convoyItem?.trailer?.permno
+            return (
+              hasTrailer && shouldUseSameSpacingForTrailer(answers, convoyIndex)
+            )
           },
-          backgroundColor: 'blue',
-          width: 'full',
-          required: true,
-          variant: 'number',
-          suffix: axleSpacing.labels.metersSuffix,
-        }),
-        buildTextField({
-          id: `axleSpacing.${convoyIndex}.trailer.${axleSubIndex2}`,
-          title: {
-            ...axleSpacing.labels.axleSpaceFromTo,
-            values: {
-              axleNumberFrom: axleSubIndex2 + 1,
-              axleNumberTo: axleSubIndex2 + 2,
-            },
-          },
+          title: axleSpacing.labels.axleSpaceAll,
           backgroundColor: 'blue',
           width: 'full',
           required: true,

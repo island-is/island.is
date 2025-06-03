@@ -1,6 +1,6 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
-import { YES } from '@island.is/application/core'
+import { coreErrorMessages, YES } from '@island.is/application/core'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { DollyType, ExemptionFor, ExemptionType } from '../shared'
 import { error } from './messages'
@@ -384,12 +384,54 @@ const FreightPairingSchema = z
     },
   )
 
-const AxleSpacingSchema = z.object({
-  convoyId: z.string(),
-  vehicle: z.array(z.string()),
-  dolly: z.array(z.string()).optional(),
-  trailer: z.array(z.string()),
-})
+const AxleSpacingSchema = z
+  .object({
+    exemptionPeriodType: z.string(),
+    dollyType: z.nativeEnum(DollyType),
+    convoyId: z.string(),
+    vehicle: z.array(z.string().min(1)),
+    dolly: z.array(z.string()).optional(),
+    trailer: z.array(z.string().optional()),
+    useSameSpacingForTrailer: z.array(z.enum([YES])).optional(),
+  })
+  .refine(
+    ({ exemptionPeriodType, dollyType, dolly }) => {
+      // Since dolly is only allowed in short-term
+      if (exemptionPeriodType !== ExemptionType.SHORT_TERM) return true
+      // Since there is only axle space for double dolly
+      if (dollyType !== DollyType.DOUBLE) return true
+
+      return !!dolly?.[0]
+    },
+    { path: ['dolly', '0'] },
+  )
+  .refine(
+    ({ trailer }) => {
+      return !!trailer?.[0]
+    },
+    { path: ['trailer', '0'] },
+  )
+  .superRefine((data, ctx) => {
+    if (data.useSameSpacingForTrailer?.includes(YES)) {
+      if (!data.trailer?.[0]) {
+        ctx.addIssue({
+          path: ['trailer', 0],
+          code: z.ZodIssueCode.custom,
+          params: coreErrorMessages.defaultError,
+        })
+      }
+    } else {
+      data.trailer?.forEach((item, index) => {
+        if (!item) {
+          ctx.addIssue({
+            path: ['trailer', index],
+            code: z.ZodIssueCode.custom,
+            params: coreErrorMessages.defaultError,
+          })
+        }
+      })
+    }
+  })
 
 const FileDocumentSchema = z.object({
   name: z.string(),
