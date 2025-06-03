@@ -34,31 +34,27 @@ export const prosecutorRequestCasesInProgressWhereOptions = (user: TUser) => ({
   state: [CaseState.DRAFT, CaseState.SUBMITTED, CaseState.RECEIVED],
 })
 
-export const prosecutorRequestCasesActiveWhereOptions = (user: TUser) => {
-  const test = {
-    [Op.and]: [
-      prosecutorRequestCasesSharedWhereOptions(user),
-      {
-        [Op.or]: [
-          {
-            initial_ruling_date: {
-              [Op.or]: [null, { [Op.lte]: fn('NOW') }],
-            },
+export const prosecutorRequestCasesActiveWhereOptions = (user: TUser) => ({
+  [Op.and]: [
+    prosecutorRequestCasesSharedWhereOptions(user),
+    {
+      [Op.or]: [
+        {
+          initial_ruling_date: {
+            [Op.or]: [null, { [Op.lte]: fn('NOW') }],
           },
-          {
-            ruling_date: {
-              [Op.or]: [null, { [Op.lte]: fn('NOW') }],
-            },
+        },
+        {
+          ruling_date: {
+            [Op.or]: [null, { [Op.lte]: fn('NOW') }],
           },
-        ],
-      },
-    ],
-    state: [CaseState.ACCEPTED],
-    valid_to_date: { [Op.or]: [null, { [Op.gte]: fn('NOW') }] },
-  }
-  console.log({ test })
-  return test
-}
+        },
+      ],
+    },
+  ],
+  state: [CaseState.ACCEPTED],
+  valid_to_date: { [Op.or]: [null, { [Op.gte]: fn('NOW') }] },
+})
 
 export const prosecutorRequestCasesAppealedWhereOptions = (user: TUser) => ({
   ...prosecutorRequestCasesSharedWhereOptions(user),
