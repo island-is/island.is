@@ -3,9 +3,13 @@ schema:
 documents: apps/web/screens/queries/*.{ts,tsx}
 generates:
   apps/web/graphql/schema.ts:
+    preset: near-operation-file
+    presetConfig:
+      baseTypesPath: graphql/schema.ts
+      extension: .generated.ts
     plugins:
-      - typescript
       - typescript-operations
+      - typescript
     config:
       exportFragmentSpreadSubTypes: true
       scalars:
