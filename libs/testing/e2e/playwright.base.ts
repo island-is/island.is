@@ -24,12 +24,13 @@ export const baseConfig = ({
   baseURL = process.env['BASE_URL'] ||
     `http://localhost:${process.env.PORT || 4200}`,
   basePath = process.env.BASE_PATH || '/',
-}: BaseConfig) =>
-  defineConfig({
+}: BaseConfig) => {
+  baseURL = `${baseURL}/${basePath.replace(/^\//, '')}`
+  return defineConfig({
     ...nxE2EPreset(filename, { testDir: './e2e' }),
     /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
     use: {
-      baseURL: `${baseURL}/${basePath.replace(/^\//, '')}`,
+      baseURL,
       /* Collect trace when retrying the failed test. See https://playwright.dev/docs/trace-viewer */
       trace: process.env.CI ? 'on' : 'on-first-retry',
     },
@@ -44,3 +45,4 @@ export const baseConfig = ({
     },
     reporter: process.env.CI ? 'line' : 'html',
   })
+}
