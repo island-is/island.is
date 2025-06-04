@@ -3,6 +3,7 @@
   "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/social-insurance-administration/income-plan/src",
   "projectType": "library",
+  "tags": ["scope:application-system", "lib:application-system"],
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",
@@ -41,6 +42,5 @@
         "command": "graphql-codegen --config libs/application/templates/social-insurance-administration/income-plan/codegen.yml"
       }
     }
-  },
-  "tags": ["scope:application-system", "lib:application-system"]
+  }
 }
