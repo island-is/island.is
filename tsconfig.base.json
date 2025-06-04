@@ -123,6 +123,9 @@
       "@island.is/api/domains/hms-loans": [
         "libs/api/domains/hms-loans/src/index.ts"
       ],
+      "@island.is/api/domains/hms-rental-agreement": [
+        "libs/api/domains/hms-rental-agreement/src/index.ts"
+      ],
       "@island.is/api/domains/housing-benefit-calculator": [
         "libs/api/domains/housing-benefit-calculator/src/index.ts"
       ],
@@ -188,6 +191,9 @@
       ],
       "@island.is/api/domains/powerbi": [
         "libs/api/domains/powerbi/src/index.ts"
+      ],
+      "@island.is/api/domains/practical-exams": [
+        "libs/api/domains/practical-exams/src/index.ts"
       ],
       "@island.is/api/domains/regulations": [
         "libs/api/domains/regulations/src/index.ts"
@@ -300,6 +306,9 @@
       ],
       "@island.is/application/templates/aosh/deregister-machine": [
         "libs/application/templates/aosh/deregister-machine/src/index.ts"
+      ],
+      "@island.is/application/templates/aosh/practical-exam": [
+        "libs/application/templates/aosh/practical-exam/src/index.ts"
       ],
       "@island.is/application/templates/aosh/register-new-machine": [
         "libs/application/templates/aosh/register-new-machine/src/index.ts"
@@ -462,6 +471,9 @@
       ],
       "@island.is/application/templates/institution-collaboration": [
         "libs/application/templates/institution-collaboration/src/index.ts"
+      ],
+      "@island.is/application/templates/legal-gazette": [
+        "libs/application/templates/legal-gazette/src/index.ts"
       ],
       "@island.is/application/templates/login-service": [
         "libs/application/templates/login-service/src/index.ts"
@@ -711,6 +723,9 @@
         "libs/clients/hms-housing-benefits/src/index.ts"
       ],
       "@island.is/clients/hms-loans": ["libs/clients/hms-loans/src/index.ts"],
+      "@island.is/clients/hms-rental-agreement": [
+        "libs/clients/hms-rental-agreement/src/index.ts"
+      ],
       "@island.is/clients/housing-benefit-calculator": [
         "libs/clients/housing-benefit-calculator/src/index.ts"
       ],
@@ -737,6 +752,9 @@
       ],
       "@island.is/clients/judicial-system-sp": [
         "libs/clients/judicial-system-sp/src/index.ts"
+      ],
+      "@island.is/clients/legal-gazette": [
+        "libs/clients/legal-gazette/src/index.ts"
       ],
       "@island.is/clients/license-client": [
         "libs/clients/license-client/src/index.ts"
@@ -774,6 +792,9 @@
         "libs/clients/payment-schedule/src/index.ts"
       ],
       "@island.is/clients/payments": ["libs/clients/payments/src/index.ts"],
+      "@island.is/clients/practical-exams-ver": [
+        "libs/clients/practical-exams-ver/src/index.ts"
+      ],
       "@island.is/clients/regulations": [
         "libs/clients/regulations/src/index.ts"
       ],
@@ -1187,6 +1208,9 @@
       "@island.is/web/component*": ["apps/web/component*/real.ts"],
       "api/domains/financial-statement-cemetery": [
         "libs/api/domains/financial-statement-cemetery/src/index.ts"
+      ],
+      "application/templates/examples/example-no-inputs": [
+        "libs/application/templates/examples/example-no-inputs/src/index.ts"
       ],
       "application/templates/inao/financial-statement-political-party": [
         "libs/application/templates/inao/financial-statement-political-party/src/index.ts"

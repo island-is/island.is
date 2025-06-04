@@ -34,6 +34,7 @@ import {
 import { SignatureCollectionListSummary } from './models/areaSummaryReport.model'
 import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.input'
 import { SignatureCollectionCollectionTypeInput } from './dto/collectionType.input'
+import { SignatureCollectionListIdWithTypeInput } from './dto/listId.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard, UserAccessGuard)
 @Resolver()
@@ -168,7 +169,7 @@ export class SignatureCollectionResolver {
   @Audit()
   async signatureCollectionUnsign(
     @CurrentUser() user: User,
-    @Args('input') input: SignatureCollectionListIdInput,
+    @Args('input') input: SignatureCollectionListIdWithTypeInput,
   ): Promise<SignatureCollectionSuccess> {
     return this.signatureCollectionService.unsign(
       input.listId,

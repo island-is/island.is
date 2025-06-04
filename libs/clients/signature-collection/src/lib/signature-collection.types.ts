@@ -13,6 +13,7 @@ export interface GetListInput {
   nationalId?: string
   candidateId?: string
   collectionId?: string
+  collectionType?: CollectionType
   onlyActive?: boolean
 }
 
