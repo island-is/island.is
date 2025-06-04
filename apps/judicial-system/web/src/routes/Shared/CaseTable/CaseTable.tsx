@@ -4,7 +4,9 @@ import { useRouter } from 'next/router'
 import {
   AlertMessage,
   Box,
+  Button,
   Checkbox,
+  Icon,
   Tag,
   TagVariant,
   Text,
@@ -30,91 +32,15 @@ import {
   TagPairValue,
   TagValue,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import { useCaseList } from '@island.is/judicial-system-web/src/utils/hooks'
 import { compareLocaleIS } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
 import { useCaseTableQuery } from './caseTable.generated'
 import * as styles from './CaseTable.css'
 
-const hasCellValue = (cell: CaseTableCell): boolean => {
-  return cell.value !== null && cell.value !== undefined
-}
-
-const compareString = (
-  a: string | undefined | null,
-  b: string | undefined | null,
-) => {
-  return compareLocaleIS(a, b)
-}
-
-const compareStringGroup = (a: StringGroupValue, b: StringGroupValue) => {
-  const aValue = a.strList
-  const bValue = b.strList
-
-  for (let i = 0; i < aValue.length; i++) {
-    if (aValue[i] === bValue[i]) {
-      continue
-    }
-
-    return compareLocaleIS(aValue[i], bValue[i])
-  }
-
-  return 0
-}
-
-const compareTag = (a: TagValue, b: TagValue) => {
-  return compareLocaleIS(a.text, b.text)
-}
-
-const compareTagPair = (a: TagPairValue, b: TagPairValue) => {
-  const comp = compareTag(a.firstTag, b.firstTag)
-
-  if (comp !== 0) {
-    return comp
-  }
-
-  const aSecondTag = a.secondTag
-  const bSecondTag = b.secondTag
-
-  if (!aSecondTag) {
-    return bSecondTag ? -1 : 0
-  } else if (!bSecondTag) {
-    return 1
-  }
-
-  return compareTag(aSecondTag, bSecondTag)
-}
-
 const compare = (a: CaseTableCell, b: CaseTableCell): number => {
-  if (!hasCellValue(a)) {
-    return hasCellValue(b) ? -1 : 0
-  } else if (!hasCellValue(b)) {
-    return 1
-  }
-
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const aValue = a.value!
-  // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
-  const bValue = b.value!
-
-  // Cannot compare different types
-  if (aValue.__typename !== bValue.__typename) {
-    return 0
-  }
-
-  switch (aValue.__typename) {
-    case 'StringValue':
-      return compareString(a.sortValue, b.sortValue)
-    case 'StringGroupValue':
-      return compareStringGroup(aValue, bValue as StringGroupValue)
-    case 'TagValue':
-      return compareTag(aValue, bValue as TagValue)
-    case 'TagPairValue':
-      return compareTagPair(aValue, bValue as TagPairValue)
-    // This should never happen, but if it does, we return 0
-    default:
-      return 0
-  }
+  return compareLocaleIS(a.sortValue, b.sortValue)
 }
 
 const renderString = (value: StringValue) => {
@@ -131,20 +57,25 @@ const renderStringGroup = (value: StringGroupValue) => {
 
   return (
     <Box display="flex" flexDirection="column">
-      {strings.map((s, idx) =>
-        length < 3 && idx === 0 ? (
-          <Text key={idx}>{s}</Text>
-        ) : (
-          <Text key={idx} as="span" variant="small">
-            {s}
-          </Text>
-        ),
-      )}
+      {strings.map((s, idx) => (
+        <Box key={idx} className={styles.stringGroupItem}>
+          {idx === length - 1 && value.hasCheckMark && (
+            <Icon icon="checkmark" color="blue400" size="medium" />
+          )}
+          {length < 3 && idx === 0 ? (
+            <Text>{s}</Text>
+          ) : (
+            <Text as="span" variant="small">
+              {s}
+            </Text>
+          )}
+        </Box>
+      ))}
     </Box>
   )
 }
 
-const renderTag = (value: { color: string; text: string }) => {
+const renderTag = (value: TagValue) => {
   return (
     <Tag variant={value.color as TagVariant} outlined disabled truncate>
       {value.text}
@@ -221,6 +152,21 @@ const CaseTable: FC = () => {
   return (
     <CasesLayout>
       <PageHeader title="Málatafla" />
+      <Box marginBottom={5}>
+        <Button
+          colorScheme="default"
+          iconType="filled"
+          onClick={() => {
+            router.push('/malalistar')
+          }}
+          preTextIcon="arrowBack"
+          preTextIconType="filled"
+          type="button"
+          variant="text"
+        >
+          Til baka á yfirlitsskjá
+        </Button>
+      </Box>
       <div className={styles.logoContainer}>
         <Logo />
       </div>
@@ -231,7 +177,7 @@ const CaseTable: FC = () => {
           <>
             <Box display="flex" alignItems="center">
               <SectionHeading title={table.title} />
-              {table.hasMyCasesFilter && (
+              {table.hasMyCasesFilter && isNonEmptyArray(caseTableData?.rows) && (
                 <Box marginBottom={3} marginLeft={'auto'}>
                   <Checkbox
                     label="Mín mál"

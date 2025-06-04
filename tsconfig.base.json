@@ -123,6 +123,7 @@
       "@island.is/api/domains/hms-loans": [
         "libs/api/domains/hms-loans/src/index.ts"
       ],
+      "@island.is/api/domains/hms-rental-agreement": ["libs/api/domains/hms-rental-agreement/src/index.ts"],
       "@island.is/api/domains/housing-benefit-calculator": [
         "libs/api/domains/housing-benefit-calculator/src/index.ts"
       ],
@@ -721,6 +722,9 @@
       "@island.is/clients/hms": ["libs/clients/hms/src/index.ts"],
       "@island.is/clients/hms-application-system": [
         "libs/clients/hms-application-system/src/index.ts"
+      ],
+      "@island.is/clients/hms-rental-agreement": [
+        "libs/clients/hms-rental-agreement/src/index.ts"
       ],
       "@island.is/clients/hms-housing-benefits": [
         "libs/clients/hms-housing-benefits/src/index.ts"

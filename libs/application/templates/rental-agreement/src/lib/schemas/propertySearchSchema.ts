@@ -1,7 +1,7 @@
 import { z } from 'zod'
+import { RentalHousingCategoryClass } from '../../shared'
 import { maxChangedUnitSize, minChangedUnitSize } from '../../utils/utils'
 import {
-  RentalHousingCategoryClass,
   RentalHousingCategoryClassGroup,
   RentalHousingCategoryTypes,
 } from '../../utils/enums'
@@ -52,10 +52,7 @@ export const registerProperty = z
       .optional(),
   })
   .superRefine((data, ctx) => {
-    if (
-      !data?.searchresults?.units ||
-      (data?.searchresults?.units && data.searchresults.units.length < 1)
-    ) {
+    if (data?.searchresults?.units && data.searchresults.units.length < 1) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Custom error message',

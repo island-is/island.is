@@ -2,6 +2,7 @@ import { ModelStatic } from 'sequelize-typescript'
 
 import {
   capitalize,
+  districtCourtAbbreviation,
   formatCaseType,
   formatDate,
   getAllReadableIndictmentSubtypes,
@@ -25,6 +26,8 @@ import {
   IndictmentSubtypeMap,
   isCourtOfAppealsUser,
   isDistrictCourtUser,
+  isPrisonSystemUser,
+  isProsecutionUser,
   isPublicProsecutionOfficeUser,
   isRestrictionCase,
   PunishmentType,
@@ -36,6 +39,7 @@ import { Case } from '../case/models/case.model'
 import { DateLog } from '../case/models/dateLog.model'
 import { Defendant, DefendantEventLog } from '../defendant'
 import { EventLog } from '../event-log/models/eventLog.model'
+import { Institution } from '../institution'
 import { User } from '../user'
 import {
   CaseTableCellValue,
@@ -119,42 +123,69 @@ const generateAppealStateTag = (
   c: Case,
   user: TUser,
 ): CaseTableCell<TagValue> => {
+  const getCompletedColor = (): string => {
+    switch (c.appealRulingDecision) {
+      case CaseAppealRulingDecision.ACCEPTING:
+        return 'mint'
+      case CaseAppealRulingDecision.CHANGED:
+      case CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY:
+      case CaseAppealRulingDecision.REPEAL:
+      case CaseAppealRulingDecision.DISCONTINUED:
+        return 'rose'
+      default:
+        return 'blueberry'
+    }
+  }
+
+  const getCompletedOrder = (): string => {
+    switch (c.appealRulingDecision) {
+      case CaseAppealRulingDecision.ACCEPTING:
+        return 'E'
+      case CaseAppealRulingDecision.REPEAL:
+        return 'F'
+      case CaseAppealRulingDecision.CHANGED:
+      case CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY:
+        return 'G'
+      case CaseAppealRulingDecision.DISMISSED_FROM_COURT_OF_APPEAL:
+      case CaseAppealRulingDecision.DISMISSED_FROM_COURT:
+        return 'H'
+      case CaseAppealRulingDecision.REMAND:
+        return 'I'
+      case CaseAppealRulingDecision.DISCONTINUED:
+        return 'J'
+      default:
+        return 'K'
+    }
+  }
+
   switch (c.appealState) {
     case CaseAppealState.WITHDRAWN:
-      return generateCell({ color: 'red', text: 'Afturkallað' })
+      return generateCell({ color: 'red', text: 'Afturkallað' }, 'L')
     case CaseAppealState.APPEALED:
-      return generateCell({ color: 'red', text: 'Kært' })
+      return generateCell({ color: 'red', text: 'Kært' }, 'A')
     case CaseAppealState.RECEIVED:
       if (isCourtOfAppealsUser(user)) {
         if (!c.appealCaseNumber) {
-          return generateCell({ color: 'purple', text: 'Nýtt' })
+          return generateCell({ color: 'purple', text: 'Nýtt' }, 'B')
         }
 
         if (
           c.appealReceivedByCourtDate &&
           Date.now() >= c.appealReceivedByCourtDate.getTime() + getDays(1)
         ) {
-          return generateCell({ color: 'mint', text: 'Frestir liðnir' })
+          return generateCell({ color: 'mint', text: 'Frestir liðnir' }, 'D')
         }
       }
 
-      return generateCell({ color: 'darkerBlue', text: 'Móttekið' })
+      return generateCell({ color: 'darkerBlue', text: 'Móttekið' }, 'C')
     case CaseAppealState.COMPLETED:
-      return {
-        value: {
-          color:
-            c.appealRulingDecision === CaseAppealRulingDecision.ACCEPTING
-              ? 'mint'
-              : c.appealRulingDecision === CaseAppealRulingDecision.CHANGED ||
-                c.appealRulingDecision ===
-                  CaseAppealRulingDecision.CHANGED_SIGNIFICANTLY ||
-                c.appealRulingDecision === CaseAppealRulingDecision.REPEAL ||
-                c.appealRulingDecision === CaseAppealRulingDecision.DISCONTINUED
-              ? 'rose'
-              : 'blueberry',
+      return generateCell(
+        {
+          color: getCompletedColor(),
           text: getAppealResultTextByValue(c.appealRulingDecision),
         },
-      }
+        getCompletedOrder(),
+      )
     default:
       return generateCell()
   }
@@ -167,50 +198,33 @@ const generateRequestCaseStateTag = (
   switch (c.state) {
     case CaseState.NEW:
     case CaseState.DRAFT:
-      return generateCell({ color: 'red', text: 'Drög' })
+      return generateCell({ color: 'red', text: 'Drög' }, 'A')
     case CaseState.SUBMITTED:
-      return generateCell({
-        color: 'purple',
-        text: isDistrictCourtUser(user) ? 'Nýtt' : 'Sent',
-      })
+      return generateCell(
+        { color: 'purple', text: isDistrictCourtUser(user) ? 'Nýtt' : 'Sent' },
+        'B',
+      )
     case CaseState.RECEIVED: {
       return DateLog.arraignmentDate(c.dateLogs)?.date
-        ? generateCell({ color: 'mint', text: 'Á dagskrá' })
-        : generateCell({ color: 'blueberry', text: 'Móttekið' })
+        ? generateCell({ color: 'mint', text: 'Á dagskrá' }, 'D')
+        : generateCell({ color: 'blueberry', text: 'Móttekið' }, 'C')
     }
     case CaseState.ACCEPTED:
       return c.validToDate && c.validToDate < new Date()
-        ? generateCell({ color: 'darkerBlue', text: 'Lokið' })
-        : generateCell({
-            color: 'blue',
-            text: isRestrictionCase(c.type) ? 'Virkt' : 'Samþykkt',
-          })
+        ? generateCell({ color: 'darkerBlue', text: 'Lokið' }, 'G')
+        : generateCell(
+            {
+              color: 'blue',
+              text: isRestrictionCase(c.type) ? 'Virkt' : 'Samþykkt',
+            },
+            isRestrictionCase(c.type) ? 'F' : 'E',
+          )
     case CaseState.REJECTED:
-      return generateCell({ color: 'rose', text: 'Hafnað' })
+      return generateCell({ color: 'rose', text: 'Hafnað' }, 'H')
     case CaseState.DISMISSED:
-      return generateCell({ color: 'dark', text: 'Vísað frá' })
+      return generateCell({ color: 'dark', text: 'Vísað frá' }, 'I')
     default:
-      return generateCell({ color: 'white', text: 'Óþekkt' })
-  }
-}
-
-const generateReceivedIndictmentStateTag = (
-  indictmentDecision: IndictmentDecision | undefined,
-  courtDate: Date | undefined,
-): CaseTableCell<TagValue> => {
-  switch (indictmentDecision) {
-    case IndictmentDecision.POSTPONING:
-    case IndictmentDecision.SCHEDULING:
-    case IndictmentDecision.COMPLETING:
-      return generateCell({ color: 'mint', text: 'Á dagskrá' })
-    case IndictmentDecision.POSTPONING_UNTIL_VERDICT:
-      return generateCell({ color: 'mint', text: 'Dómtekið' })
-    case IndictmentDecision.REDISTRIBUTING:
-      return generateCell({ color: 'blue', text: 'Endurúthlutun' })
-    default:
-      return courtDate
-        ? generateCell({ color: 'mint', text: 'Á dagskrá' })
-        : generateCell({ color: 'blueberry', text: 'Móttekið' })
+      return generateCell({ color: 'white', text: 'Óþekkt' }, 'J')
   }
 }
 
@@ -219,35 +233,20 @@ const generateIndictmentRulingDecisionTag = (
 ): CaseTableCell<TagValue> => {
   switch (indictmentRulingDecision) {
     case CaseIndictmentRulingDecision.FINE:
-      return generateCell({ color: 'mint', text: 'Viðurlagaákvörðun' })
+      return generateCell({ color: 'mint', text: 'Viðurlagaákvörðun' }, 'G')
     case CaseIndictmentRulingDecision.CANCELLATION:
-      return generateCell({ color: 'rose', text: 'Niðurfelling' })
+      return generateCell({ color: 'rose', text: 'Niðurfelling' }, 'H')
     case CaseIndictmentRulingDecision.MERGE:
-      return generateCell({ color: 'rose', text: 'Sameinað' })
+      return generateCell({ color: 'rose', text: 'Sameinað' }, 'I')
     case CaseIndictmentRulingDecision.DISMISSAL:
-      return generateCell({ color: 'blue', text: 'Frávísun' })
+      return generateCell({ color: 'blue', text: 'Frávísun' }, 'J')
     case CaseIndictmentRulingDecision.RULING:
-      return generateCell({ color: 'darkerBlue', text: 'Dómur' })
+      return generateCell({ color: 'darkerBlue', text: 'Dómur' }, 'K')
     case CaseIndictmentRulingDecision.WITHDRAWAL:
-      return generateCell({ color: 'rose', text: 'Afturkallað' })
+      return generateCell({ color: 'rose', text: 'Afturkallað' }, 'L')
     default:
-      return generateCell({ color: 'darkerBlue', text: 'Lokið' })
+      return generateCell({ color: 'darkerBlue', text: 'Lokið' }, 'M')
   }
-}
-
-const generateCompletedIndictmentStateTag = (
-  user: TUser,
-  indictmentRulingDecision: CaseIndictmentRulingDecision | undefined,
-  isInReview: boolean,
-): CaseTableCell<TagValue> => {
-  if (isPublicProsecutionOfficeUser(user)) {
-    return generateCell({
-      color: isInReview ? 'mint' : 'purple',
-      text: isInReview ? 'Í yfirlestri' : 'Nýtt',
-    })
-  }
-
-  return generateIndictmentRulingDecisionTag(indictmentRulingDecision)
 }
 
 const generateIndictmentCaseStateTag = (
@@ -263,28 +262,60 @@ const generateIndictmentCaseStateTag = (
 
   const courtDate = getIndictmentCourtDate(c)
 
+  const generateReceivedIndictmentStateTag = (): CaseTableCell<TagValue> => {
+    switch (indictmentDecision) {
+      case IndictmentDecision.POSTPONING:
+      case IndictmentDecision.SCHEDULING:
+      case IndictmentDecision.COMPLETING:
+        return generateCell({ color: 'mint', text: 'Á dagskrá' }, 'D')
+      case IndictmentDecision.POSTPONING_UNTIL_VERDICT:
+        return generateCell({ color: 'mint', text: 'Dómtekið' }, 'E')
+      case IndictmentDecision.REDISTRIBUTING:
+        return generateCell({ color: 'blue', text: 'Endurúthlutun' }, 'F')
+      default:
+        return courtDate
+          ? generateCell({ color: 'mint', text: 'Á dagskrá' }, 'D')
+          : generateCell({ color: 'blueberry', text: 'Móttekið' }, 'C')
+    }
+  }
+
+  const generateCompletedIndictmentStateTag = (): CaseTableCell<TagValue> => {
+    if (isPublicProsecutionOfficeUser(user)) {
+      const isInReview = Boolean(indictmentReviewerId)
+
+      return generateCell(
+        {
+          color: isInReview ? 'mint' : 'purple',
+          text: isInReview ? 'Í yfirlestri' : 'Nýtt',
+        },
+        isInReview ? 'H' : 'G',
+      )
+    }
+
+    return generateIndictmentRulingDecisionTag(indictmentRulingDecision)
+  }
+
   switch (state) {
     case CaseState.NEW:
     case CaseState.DRAFT:
     case CaseState.WAITING_FOR_CONFIRMATION:
-      return generateCell({ color: 'red', text: 'Drög' })
+      return generateCell({ color: 'red', text: 'Drög' }, 'A')
     case CaseState.SUBMITTED:
-      return generateCell({
-        color: 'purple',
-        text: isDistrictCourtUser(user) ? 'Nýtt' : 'Sent',
-      })
-    case CaseState.RECEIVED:
-      return generateReceivedIndictmentStateTag(indictmentDecision, courtDate)
-    case CaseState.COMPLETED:
-      return generateCompletedIndictmentStateTag(
-        user,
-        indictmentRulingDecision,
-        Boolean(indictmentReviewerId),
+      return generateCell(
+        {
+          color: 'purple',
+          text: isDistrictCourtUser(user) ? 'Nýtt' : 'Sent',
+        },
+        'B',
       )
+    case CaseState.RECEIVED:
+      return generateReceivedIndictmentStateTag()
+    case CaseState.COMPLETED:
+      return generateCompletedIndictmentStateTag()
     case CaseState.WAITING_FOR_CANCELLATION:
-      return generateCell({ color: 'rose', text: 'Afturkallað' })
+      return generateCell({ color: 'rose', text: 'Afturkallað' }, 'L')
     default:
-      return generateCell({ color: 'white', text: 'Óþekkt' })
+      return generateCell({ color: 'white', text: 'Óþekkt' }, 'N')
   }
 }
 
@@ -319,18 +350,138 @@ const generateRequestCaseType = (
   return [formatted, parentCaseId ? 'Framlenging' : ''].filter(Boolean)
 }
 
+const getAppealCaseNumberSortValue = (appealCaseNumber: string): string => {
+  const [num, year] = appealCaseNumber.split('/') // Assume the number is of the form xxxxx/yyyy
+
+  if (!num || !year) {
+    // Either the case does not yet have an appeal case number or it is malformed
+    // In both cases we return a default value
+    return '000000000'
+  }
+
+  // Assume year is 4 digits
+  // Assume num is no more than 5 digits
+  const number = num.padStart(5, '0')
+
+  return `${year}${number}`
+}
+
+const getCourtCaseNumberSortValue = (courtCaseNumber: string): string => {
+  // Retrive the court prefix if it is included
+  const [head, tail] = courtCaseNumber.split(': ')
+  const court = tail ? head : ''
+  const caseNumber = tail ?? head
+
+  // Assume the number starts with 'R-' or 'S-'
+  const [num, year] = caseNumber.slice(2).split('/')
+
+  if (!num || !year) {
+    // Either the case does not yet have a court case number or it is malformed
+    // In both cases we return a default value
+    return '000000000'
+  }
+
+  // Assume year is 4 digits
+  // Assume num is no more than 5 digits
+  const number = num.padStart(5, '0')
+
+  return `${court}${year}${number}`
+}
+
+const getPoliceCaseNumberSortValue = (policeCaseNumber: string): string => {
+  const [prefix, year, numParts] = policeCaseNumber.split('-')
+
+  if (!prefix || !year || !numParts) {
+    // Either the case does not yet have a police case number or it is malformed
+    // In both cases we return a default value
+    return '0000000000000000'
+  }
+
+  const [num, post] = numParts.split(' +') // Check for additional police case numbers
+
+  // Assume prefix 3 digits
+  // Assume year 4 digits
+  // Assume num is no more than 6 digits
+  // Assume no more than 999 additional police case numbers
+  const number = num.padStart(6, '0') // Assume its no more than 6 digits
+  const postfix = post ? post.padStart(3, '0') : '000'
+
+  return `${year}${prefix}${number}${postfix}`
+}
+
+const generateCaseNumberSortValue = (
+  appealCaseNumber: string,
+  courtCaseNumber: string,
+  policeCaseNumber: string,
+  user: TUser,
+): string | undefined => {
+  if (isProsecutionUser(user) || isDistrictCourtUser(user)) {
+    return `${getCourtCaseNumberSortValue(
+      courtCaseNumber,
+    )}${getPoliceCaseNumberSortValue(policeCaseNumber)}`
+  }
+
+  if (isPublicProsecutionOfficeUser(user) || isPrisonSystemUser(user)) {
+    return getCourtCaseNumberSortValue(courtCaseNumber)
+  }
+
+  if (isCourtOfAppealsUser(user)) {
+    return `${getAppealCaseNumberSortValue(
+      appealCaseNumber,
+    )}${getCourtCaseNumberSortValue(courtCaseNumber)}`
+  }
+
+  return undefined
+}
+
 const caseNumber: CaseTableCellGenerator<StringGroupValue> = {
-  attributes: ['policeCaseNumbers', 'courtCaseNumber', 'appealCaseNumber'],
-  generate: (c: Case): CaseTableCell<StringGroupValue> =>
-    generateCell({
-      strList: [
-        c.appealCaseNumber ?? '',
-        c.courtCaseNumber ?? '',
-        c.policeCaseNumbers.length > 1
+  attributes: [
+    'policeCaseNumbers',
+    'courtCaseNumber',
+    'appealCaseNumber',
+    'publicProsecutorIsRegisteredInPoliceSystem',
+  ],
+  includes: {
+    court: {
+      model: Institution,
+      attributes: ['name'],
+    },
+  },
+  generate: (c: Case, user: TUser): CaseTableCell<StringGroupValue> => {
+    const court = !isDistrictCourtUser(user)
+      ? districtCourtAbbreviation(c.court?.name)
+      : ''
+    const appealCaseNumber = c.appealCaseNumber ?? ''
+    const courtCaseNumber =
+      court && c.courtCaseNumber
+        ? `${court}: ${c.courtCaseNumber}`
+        : c.courtCaseNumber ?? ''
+    const policeCaseNumber =
+      c.policeCaseNumbers.length > 0
+        ? c.policeCaseNumbers.length > 1
           ? `${c.policeCaseNumbers[0]} +${c.policeCaseNumbers.length - 1}`
-          : c.policeCaseNumbers[0],
-      ],
-    }),
+          : c.policeCaseNumbers[0]
+        : ''
+
+    const sortValue = generateCaseNumberSortValue(
+      appealCaseNumber,
+      courtCaseNumber,
+      policeCaseNumber,
+      user,
+    )
+
+    const hasCheckMark =
+      isPublicProsecutionOfficeUser(user) &&
+      c.publicProsecutorIsRegisteredInPoliceSystem
+
+    return generateCell(
+      {
+        strList: [appealCaseNumber, courtCaseNumber, policeCaseNumber],
+        hasCheckMark,
+      },
+      sortValue,
+    )
+  },
 }
 
 const defendants: CaseTableCellGenerator<StringGroupValue> = {
@@ -342,31 +493,40 @@ const defendants: CaseTableCellGenerator<StringGroupValue> = {
       separate: true,
     },
   },
-  generate: (c: Case): CaseTableCell<StringGroupValue> =>
-    c.defendants && c.defendants.length > 0
-      ? generateCell({
-          strList: [
-            c.defendants[0].name ?? '',
-            c.defendants.length > 1
-              ? `+ ${c.defendants.length - 1}`
-              : c.defendants[0].nationalId ?? '',
-          ],
-        })
-      : generateCell(),
+  generate: (c: Case): CaseTableCell<StringGroupValue> => {
+    if (!c.defendants || c.defendants.length === 0) {
+      return generateCell()
+    }
+
+    const strList = [
+      c.defendants[0].name ?? '',
+      c.defendants.length > 1
+        ? `+ ${c.defendants.length - 1}`
+        : c.defendants[0].nationalId ?? '',
+    ]
+
+    return generateCell({ strList }, strList.join(''))
+  },
 }
 
 export const caseType: CaseTableCellGenerator<StringGroupValue> = {
   attributes: ['type', 'decision', 'parentCaseId', 'indictmentSubtypes'],
   generate: (c: Case): CaseTableCell<StringGroupValue> => {
     if (c.type === CaseType.INDICTMENT) {
-      const display = generateIndictmentCaseType(c.indictmentSubtypes)
+      const indictmentType = generateIndictmentCaseType(c.indictmentSubtypes)
 
-      return display ? generateCell({ strList: display }) : generateCell()
+      return indictmentType
+        ? generateCell({ strList: indictmentType }, indictmentType.join(''))
+        : generateCell()
     }
 
-    return generateCell({
-      strList: generateRequestCaseType(c.type, c.decision, c.parentCaseId),
-    })
+    const requestType = generateRequestCaseType(
+      c.type,
+      c.decision,
+      c.parentCaseId,
+    )
+
+    return generateCell({ strList: requestType }, requestType.join(''))
   },
 }
 
@@ -439,7 +599,7 @@ const courtOfAppealsHead: CaseTableCellGenerator<StringValue> = {
       return generateCell()
     }
 
-    return generateCell({ str: initials, sortValue: initials })
+    return generateCell({ str: initials }, initials)
   },
 }
 
@@ -531,8 +691,9 @@ const indictmentArraignmentDate: CaseTableCellGenerator<StringGroupValue> = {
     const courtDate = getIndictmentCourtDate(c)
 
     const datePart = formatDate(courtDate, 'EEE d. MMMM yyyy')
+    const sortValue = formatDate(courtDate, 'yyyyMMddHHmm')
 
-    if (!datePart) {
+    if (!datePart || !sortValue) {
       // No date part, so we return undefined
       return generateCell()
     }
@@ -541,12 +702,13 @@ const indictmentArraignmentDate: CaseTableCellGenerator<StringGroupValue> = {
 
     if (!timePart) {
       // This should never happen, but if it does, we return the court date only
-      return generateCell({ strList: [`${capitalize(datePart)}`] })
+      return generateCell({ strList: [`${capitalize(datePart)}`] }, sortValue)
     }
 
-    return generateCell({
-      strList: [`${capitalize(datePart)}`, `kl. ${timePart}`],
-    })
+    return generateCell(
+      { strList: [`${capitalize(datePart)}`, `kl. ${timePart}`] },
+      sortValue,
+    )
   },
 }
 
@@ -555,9 +717,12 @@ const rulingType: CaseTableCellGenerator<TagValue> = {
   generate: (c: Case): CaseTableCell<TagValue> => {
     switch (c.indictmentRulingDecision) {
       case CaseIndictmentRulingDecision.FINE:
-        return generateCell({ color: 'darkerBlue', text: 'Viðurlagaákvörðun' })
+        return generateCell(
+          { color: 'darkerBlue', text: 'Viðurlagaákvörðun' },
+          'Viðurlagaákvörðun',
+        )
       case CaseIndictmentRulingDecision.RULING:
-        return generateCell({ color: 'darkerBlue', text: 'Dómur' })
+        return generateCell({ color: 'darkerBlue', text: 'Dómur' }, 'Dómur')
       default:
         return generateCell()
     }
@@ -603,7 +768,9 @@ const punishmentType: CaseTableCellGenerator<TagValue> = {
       }
     }
 
-    return generateCell({ color: 'red', text: getPunishmentTypeLabel() })
+    const label = getPunishmentTypeLabel()
+
+    return generateCell({ color: 'red', text: label }, label)
   },
 }
 
@@ -617,9 +784,7 @@ const prisonAdminReceivalDate: CaseTableCellGenerator<StringValue> = {
           model: DefendantEventLog,
           attributes: ['created', 'eventType'],
           order: [['created', 'DESC']],
-          where: {
-            eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN,
-          },
+          where: { eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN },
           separate: true,
         },
       },
@@ -650,9 +815,7 @@ const prisonAdminState: CaseTableCellGenerator<TagValue> = {
           model: DefendantEventLog,
           attributes: ['created', 'eventType'],
           order: [['created', 'DESC']],
-          where: {
-            eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN,
-          },
+          where: { eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN },
           separate: true,
         },
       },
@@ -661,7 +824,7 @@ const prisonAdminState: CaseTableCellGenerator<TagValue> = {
   },
   generate: (c: Case): CaseTableCell<TagValue> => {
     if (!c.defendants || c.defendants.length === 0) {
-      return generateCell({ color: 'red', text: 'Óþekkt' }) // This should never happen
+      return generateCell({ color: 'red', text: 'Óþekkt' }, 'C') // This should never happen
     }
 
     const dateOpened = DefendantEventLog.getDefendantEventLogTypeDate(
@@ -670,10 +833,10 @@ const prisonAdminState: CaseTableCellGenerator<TagValue> = {
     )
 
     if (dateOpened) {
-      return generateCell({ color: 'blue', text: 'Móttekið' })
+      return generateCell({ color: 'blue', text: 'Móttekið' }, 'B')
     }
 
-    return generateCell({ color: 'purple', text: 'Nýtt' })
+    return generateCell({ color: 'purple', text: 'Nýtt' }, 'A')
   },
 }
 
@@ -720,14 +883,14 @@ const subpoenaServiceState: CaseTableCellGenerator<TagValue> = {
     ] = getIndictmentVerdictAppealDeadlineStatus(verdictInfo, false)
 
     if (!indictmentVerdictViewedByAll) {
-      return generateCell({ color: 'red', text: 'Óbirt' })
+      return generateCell({ color: 'red', text: 'Óbirt' }, 'A')
     }
 
     if (indictmentVerdictAppealDeadlineExpired) {
-      return generateCell({ color: 'mint', text: 'Frestur liðinn' })
+      return generateCell({ color: 'mint', text: 'Frestur liðinn' }, 'B')
     }
 
-    return generateCell({ color: 'blue', text: 'Á fresti' })
+    return generateCell({ color: 'blue', text: 'Á fresti' }, 'C')
   },
 }
 
@@ -745,10 +908,7 @@ const indictmentReviewer: CaseTableCellGenerator<StringValue> = {
       return generateCell()
     }
 
-    return generateCell({
-      str: indictmentReviewerName,
-      sortValue: indictmentReviewerName,
-    })
+    return generateCell({ str: indictmentReviewerName }, indictmentReviewerName)
   },
 }
 
@@ -762,9 +922,7 @@ const sentToPrisonAdminDate: CaseTableCellGenerator<StringValue> = {
           model: DefendantEventLog,
           attributes: ['created', 'eventType'],
           order: [['created', 'DESC']],
-          where: {
-            eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
-          },
+          where: { eventType: DefendantEventType.SENT_TO_PRISON_ADMIN },
           separate: true,
         },
       },
@@ -826,7 +984,11 @@ const indictmentReviewDecision: CaseTableCellGenerator<TagPairValue> = {
       ? { color: 'red', text: 'Ákærði áfrýjar' }
       : undefined
 
-    return generateCell({ firstTag, secondTag })
+    const sortValue = secondTag
+      ? `${firstTag.text}${secondTag.text}`
+      : firstTag.text
+
+    return generateCell({ firstTag, secondTag }, sortValue)
   },
 }
 
