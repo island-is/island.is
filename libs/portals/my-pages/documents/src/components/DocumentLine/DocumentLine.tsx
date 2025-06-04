@@ -77,6 +77,8 @@ export const DocumentLine: FC<Props> = ({
     bookmarkSuccess,
   } = useMailAction()
 
+  const k = 8
+
   const { fetchObject, refetch } = useDocumentList()
 
   const {
