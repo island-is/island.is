@@ -1,7 +1,7 @@
-import { defineTemplateApi } from '../../TemplateApi'
+// import { defineTemplateApi } from '../../TemplateApi'
 
-export const NationalRegistryRealEstateApi = defineTemplateApi({
-  action: 'getMyRealEstates',
-  namespace: 'NationalRegistry',
-  externalDataId: 'nationalRegistryRealEstate',
-})
+// export const NationalRegistryRealEstateApi = defineTemplateApi({
+//   action: 'getMyRealEstates',
+//   namespace: 'NationalRegistry',
+//   externalDataId: 'nationalRegistryRealEstate',
+// })
