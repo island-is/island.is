@@ -13,8 +13,10 @@ import { Audit, AuditService } from '@island.is/nest/audit'
 
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import {
+  FeatureFlag,
   FeatureFlagGuard,
   FeatureFlagService,
+  Features,
 } from '@island.is/nest/feature-flags'
 import type { Locale } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
@@ -79,7 +81,7 @@ export class DocumentResolverV2 {
           },
         },
         this.documentServiceV2.findDocumentById(
-          user.nationalId,
+          user,
           input.id,
           locale,
           input.includeDocument,
@@ -298,6 +300,7 @@ export class DocumentResolverV2 {
     name: 'documentsV2Reply',
   })
   @Audit()
+  @FeatureFlag(Features.isServicePortal2WayMailboxEnabled)
   async postReply(
     @CurrentUser() user: User,
     @Args('input') input: ReplyInput,
