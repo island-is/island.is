@@ -1,15 +1,20 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { YesOrNoEnum } from '@island.is/application/core'
-import { RentalHousingConditionInspector } from '../utils/enums'
+import { PropertyUnit, RentalHousingCategoryClass } from '../shared'
+import { getRentalPropertySize } from '../utils/utils'
+import {
+  RentalHousingCategoryClassGroup,
+  RentalHousingCategoryTypes,
+  RentalHousingConditionInspector,
+} from '../utils/enums'
 import { landlordInfo } from './schemas/landlordSchema'
 import { tenantInfo } from './schemas/tenantSchema'
 import { registerProperty } from './schemas/propertySearchSchema'
 import { otherFees } from './schemas/otherFeesSchema'
 import { securityDeposit } from './schemas/securityDepositSchema'
 import { rentalAmount } from './schemas/rentalAmountSchema'
-import { getRentalPropertySize } from '../utils/utils'
-import { Unit } from '../utils/types'
+
 import * as m from './messages'
 
 const approveExternalData = z.boolean().refine((v) => v)
@@ -86,6 +91,28 @@ const condition = z
     }
   })
 
+const propertyInfo = z
+  .object({
+    categoryType: z.nativeEnum(RentalHousingCategoryTypes),
+    categoryClass: z.nativeEnum(RentalHousingCategoryClass).optional(),
+    categoryClassGroup: z
+      .nativeEnum(RentalHousingCategoryClassGroup)
+      .optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (
+      data.categoryClass === RentalHousingCategoryClass.SPECIAL_GROUPS &&
+      !data.categoryClassGroup
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Custom error message',
+        params: m.registerProperty.category.classGroupRequiredError,
+        path: ['categoryClassGroup'],
+      })
+    }
+  })
+
 const rentalPeriod = z
   .object({
     startDate: z
@@ -157,7 +184,7 @@ const fireProtections = z
   })
   .superRefine((data, ctx) => {
     const propertySize = getRentalPropertySize(
-      (data.propertySize as Unit[]) || [],
+      (data.propertySize as PropertyUnit[]) || [],
     )
     const numberOfSmokeDetectors = Number(data.smokeDetectors)
     const requiredSmokeDetectors = Math.ceil(Number(propertySize) / 80)
@@ -198,6 +225,7 @@ export const dataSchema = z.object({
   landlordInfo,
   tenantInfo,
   registerProperty,
+  propertyInfo,
   rentalPeriod,
   rentalAmount,
   securityDeposit,
