@@ -76,9 +76,9 @@ const OJOITemplate: ApplicationTemplate<
   ],
   dataSchema: partialSchema,
   allowedDelegations: [
-    // {
-    //   type: AuthDelegationType.ProcurationHolder,
-    // },
+    {
+      type: AuthDelegationType.ProcurationHolder,
+    },
     {
       type: AuthDelegationType.Custom,
     },

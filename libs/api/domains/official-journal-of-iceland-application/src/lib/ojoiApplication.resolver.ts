@@ -37,7 +37,7 @@ import { OJOIApplicationAdvertTemplateTypesResponse } from '../models/applicatio
 import { OJOIApplicationAdvertTemplateResponse } from '../models/applicationAdvertTemplate.response'
 import { GetAdvertTemplateInput } from '../models/getAdvertTemplate.input'
 
-@Scopes(ApiScope.ojoiAdverts)
+@Scopes(ApiScope.ojoiAdverts, ApiScope.internal)
 @UseGuards(IdsUserGuard, ScopesGuard)
 @FeatureFlag(Features.officialJournalOfIceland)
 @Resolver()
