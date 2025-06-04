@@ -18,7 +18,7 @@ import {
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
 
 import { siaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/graphql/queries'
-import { SiaUnionsQuery } from '../../../../../core/src/types/schema'
+import { SiaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/types/schema'
 
 export const unionSickPaySubSection = buildSubSection({
   id: 'unionSickPaySubSection',
