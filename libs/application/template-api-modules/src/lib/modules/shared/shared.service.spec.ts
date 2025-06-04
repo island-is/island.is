@@ -42,7 +42,7 @@ describe('SharedTemplateApiService', () => {
     applicant: 'user123',
     assignees: ['reviewer1', 'reviewer2'],
     applicantActors: ['user123'],
-    typeId: ApplicationTypes.EXAMPLE,
+    typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
     modified: new Date('2024-03-20T10:30:00'),
     created: new Date('2024-03-19T15:45:00'),
     answers: {

@@ -10,6 +10,7 @@ import {
 import { TemplateApiError } from '@island.is/nest/problem'
 import { ProviderErrorReason } from '@island.is/shared/problem'
 import { errorMessages } from '@island.is/application/templates/signature-collection/municipal-list-signing'
+import { getCollectionTypeFromApplicationType } from '../shared/utils'
 
 @Injectable()
 export class MunicipalListSigningService extends BaseTemplateApiService {
@@ -19,6 +20,10 @@ export class MunicipalListSigningService extends BaseTemplateApiService {
     super(ApplicationTypes.MUNICIPAL_LIST_SIGNING)
   }
 
+  private collectionType = getCollectionTypeFromApplicationType(
+    ApplicationTypes.MUNICIPAL_LIST_SIGNING,
+  )
+
   async signList({ auth, application }: TemplateApiModuleActionProps) {
     const listId = application.answers.listId
       ? (application.answers.listId as string)
@@ -26,6 +31,7 @@ export class MunicipalListSigningService extends BaseTemplateApiService {
 
     const signature = await this.signatureCollectionClientService.signList(
       listId,
+      this.collectionType,
       auth,
     )
     if (signature) {
@@ -38,7 +44,10 @@ export class MunicipalListSigningService extends BaseTemplateApiService {
   async canSign({ auth }: TemplateApiModuleActionProps) {
     let signee
     try {
-      signee = await this.signatureCollectionClientService.getSignee(auth)
+      signee = await this.signatureCollectionClientService.getSignee(
+        auth,
+        this.collectionType,
+      )
     } catch (e) {
       throw new TemplateApiError(errorMessages.singeeNotFound, 404)
     }
@@ -78,7 +87,9 @@ export class MunicipalListSigningService extends BaseTemplateApiService {
   async getList({ auth, application }: TemplateApiModuleActionProps) {
     // Returns the list user is trying to sign, in the apporiate area
     const areaId = (
-      application.externalData.canSign.data as { area: { id: string } }
+      application.externalData.canSign.data as {
+        area: { id: string }
+      }
     ).area?.id
 
     if (!areaId) {

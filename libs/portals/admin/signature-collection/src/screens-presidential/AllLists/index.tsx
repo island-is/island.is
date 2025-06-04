@@ -10,6 +10,7 @@ import {
   Pagination,
   Filter,
   FilterMultiChoice,
+  Breadcrumbs,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
@@ -27,20 +28,19 @@ import {
   CollectionStatus,
   FiltersOverview,
   countryAreas,
+  getTagConfig,
   pageSize,
 } from '../../lib/utils'
 import { format as formatNationalId } from 'kennitala'
-import electionsCommitteeLogo from '../../../assets/electionsCommittee.svg'
-import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
-import ListInfo from '../../shared-components/listInfoAlert'
 import EmptyState from '../../shared-components/emptyState'
-import ReviewCandidates from './components/reviewCandidates'
+import ReviewCandidates from './reviewCandidates'
 import CompareLists from '../../shared-components/compareLists'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import CreateCollection from '../../shared-components/createCollection'
 import ActionCompleteCollectionProcessing from '../../shared-components/completeCollectionProcessing'
+import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 
-const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
+const Lists = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
@@ -127,38 +127,22 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
           offset={['0', '0', '0', '1/12']}
           span={['12/12', '12/12', '12/12', '8/12']}
         >
+          <Box marginBottom={2}>
+            <Breadcrumbs
+              items={[
+                {
+                  title: formatMessage(m.signatureListsTitlePresidential),
+                },
+              ]}
+            />
+          </Box>
           <IntroHeader
             title={formatMessage(m.signatureListsTitlePresidential)}
             intro={formatMessage(m.signatureListsIntro)}
-            img={
-              allowedToProcess ? electionsCommitteeLogo : nationalRegistryLogo
-            }
+            img={nationalRegistryLogo}
             imgPosition="right"
             imgHiddenBelow="sm"
           />
-          {collectionStatus !== CollectionStatus.InitialActive && (
-            <ListInfo
-              type={
-                collectionStatus === CollectionStatus.InReview && !hasInReview
-                  ? 'success'
-                  : undefined
-              }
-              message={formatMessage(
-                collectionStatus === CollectionStatus.InInitialReview
-                  ? hasInReview
-                    ? m.signatureCollectionInInitialReview
-                    : m.signatureCollectionProcessing
-                  : collectionStatus === CollectionStatus.Processed
-                  ? m.signatureCollectionProcessed
-                  : collectionStatus === CollectionStatus.Active
-                  ? m.signatureCollectionActive
-                  : collectionStatus === CollectionStatus.InReview &&
-                    hasInReview
-                  ? m.signatureCollectionInReview
-                  : m.signatureCollectionReviewDone,
-              )}
-            />
-          )}
           <GridRow marginBottom={5}>
             <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
               <FilterInput
@@ -222,10 +206,12 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                   />
                 </Filter>
                 {lists?.length > 0 &&
-                  allowedToProcess &&
                   collectionStatus === CollectionStatus.InInitialReview && (
                     <CreateCollection
                       collectionId={collection?.id}
+                      collectionType={
+                        SignatureCollectionCollectionType.Presidential
+                      }
                       areaId={undefined}
                     />
                   )}
@@ -236,7 +222,7 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
           collection.collectionType ===
             SignatureCollectionCollectionType.Presidential ? (
             <>
-              <Box marginBottom={2}>
+              <Box marginBottom={2} display="flex" justifyContent="flexEnd">
                 {filters.input.length > 0 ||
                 filters.area.length > 0 ||
                 filters.candidate.length > 0
@@ -270,35 +256,22 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                           maxProgress: list.area.min,
                           withLabel: true,
                         }}
-                        tag={
-                          list.reviewed
-                            ? {
-                                label: formatMessage(m.confirmListReviewed),
-                                variant: 'mint',
-                                outlined: false,
-                              }
-                            : undefined
-                        }
-                        cta={
-                          (allowedToProcess &&
-                            collectionStatus !==
-                              CollectionStatus.InitialActive) ||
-                          !allowedToProcess
-                            ? {
-                                label: formatMessage(m.viewList),
-                                variant: 'text',
-                                icon: 'arrowForward',
-                                onClick: () => {
-                                  navigate(
-                                    SignatureCollectionPaths.PresidentialList.replace(
-                                      ':listId',
-                                      list.id,
-                                    ),
-                                  )
-                                },
-                              }
-                            : undefined
-                        }
+                        tag={{
+                          ...getTagConfig(list),
+                        }}
+                        cta={{
+                          label: formatMessage(m.viewList),
+                          variant: 'text',
+                          icon: 'arrowForward',
+                          onClick: () => {
+                            navigate(
+                              SignatureCollectionPaths.PresidentialList.replace(
+                                ':listId',
+                                list.id,
+                              ),
+                            )
+                          },
+                        }}
                       />
                     )
                   })}
@@ -340,7 +313,7 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
                 />
               </Box>
             )}
-          {lists?.length > 0 && allowedToProcess && (
+          {lists?.length > 0 && (
             <Box>
               {(collectionStatus === CollectionStatus.InInitialReview ||
                 collectionStatus === CollectionStatus.InReview) && (
@@ -350,17 +323,18 @@ const Lists = ({ allowedToProcess }: { allowedToProcess: boolean }) => {
               {!hasInReview &&
                 collectionStatus === CollectionStatus.InInitialReview && (
                   <ActionCompleteCollectionProcessing
+                    collectionType={
+                      SignatureCollectionCollectionType.Presidential
+                    }
                     collectionId={collection?.id}
                   />
                 )}
             </Box>
           )}
-
-          {lists?.length > 0 &&
-            collection.collectionType ===
-              SignatureCollectionCollectionType.Presidential && (
-              <ReviewCandidates candidates={collection?.candidates ?? []} />
-            )}
+          <CompareLists collectionId={collection?.id} />
+          {lists?.length > 0 && (
+            <ReviewCandidates candidates={collection?.candidates ?? []} />
+          )}
         </GridColumn>
       </GridRow>
     </GridContainer>
