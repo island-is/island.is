@@ -336,9 +336,21 @@ export class NationalRegistryService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps<ChildrenCustodyInformationParameters>): Promise<
     ApplicantChildCustodyInformation[]
   > {
+    console.log('--------------------------------')
+    console.log('childrenCustodyInformation auth')
+    console.dir(auth, { depth: null })
+    console.log('--------------------------------')
+    console.log('childrenCustodyInformation params')
+    console.dir(params, { depth: null })
+    console.log('--------------------------------')
     const parentUser = auth
     const childrenNationalIds =
       await this.nationalRegistryV3Api.getCustodyChildren(parentUser)
+
+    console.log('--------------------------------')
+    console.log('childrenCustodyInformation childrenNationalIds')
+    console.dir(childrenNationalIds, { depth: null })
+    console.log('--------------------------------')
 
     if (params?.validateHasChildren) {
       if (!childrenNationalIds || childrenNationalIds.length === 0) {
@@ -434,9 +446,9 @@ export class NationalRegistryService extends BaseTemplateApiService {
     return filteredChildren
   }
 
-  async getMyRealEstates({ auth }: TemplateApiModuleActionProps) {
-    return await this.assetsXRoadService.getRealEstatesWithDetail(auth, '1')
-  }
+  // async getMyRealEstates({ auth }: TemplateApiModuleActionProps) {
+  //   return await this.assetsXRoadService.getRealEstatesWithDetail(auth, '1')
+  // }
 
   async getSpouse({
     auth,
