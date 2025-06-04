@@ -8,7 +8,7 @@ defaults:
   run:
     shell: bash
 env:
-  S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+  S3_DOCKER_CACHE_BUCKET: ${{ vars.S3_DOCKER_CACHE_BUCKET }}
   AWS_REGION: eu-west-1
   YARN_ENABLE_HARDENED_MODE: '0'
 jobs:
