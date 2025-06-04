@@ -96,6 +96,20 @@ export const publicProsecutorIndictmentReviewed: CaseTable = {
   columns: pickColumns(publicProsecutorIndictmentReviewedColumnKeys),
 }
 
+const prosecutorIndictmentInDraftColumnKeys: CaseTableColumnKey[] = [
+  'caseNumber',
+  'defendants',
+  'caseType',
+  'created',
+]
+
+export const prosecutorIndictmentInDraft: CaseTable = {
+  title: 'Ákærur í drögum',
+  hasMyCasesFilter: true,
+  columnKeys: prosecutorIndictmentInDraftColumnKeys,
+  columns: pickColumns(prosecutorIndictmentInDraftColumnKeys),
+}
+
 const prosecutorIndictmentWaitingForConfirmationColumnKeys: CaseTableColumnKey[] =
   ['caseNumber', 'defendants', 'caseType', 'created']
 

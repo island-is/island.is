@@ -76,6 +76,11 @@ const prosecutorIndictmentSharedWhereOptions = (user: TUser) => ({
   ...prosecutorSharedWhereOptions(user),
 })
 
+export const prosecutorIndictmentInDraftWhereOptions = (user: TUser) => ({
+  ...prosecutorIndictmentSharedWhereOptions(user),
+  state: [CaseState.DRAFT],
+})
+
 export const prosecutorIndictmentWaitingForConfirmationWhereOptions = (
   user: TUser,
 ) => ({
