@@ -69,7 +69,7 @@ export class SocialInsuranceAdministrationClientService {
   private incomePlanApiWithAuth = (user: User) =>
     this.incomePlanApi.withMiddleware(new AuthMiddleware(user as Auth))
 
-  private genaralApiWithAuth = (user: User) =>
+  private generalApiWithAuth = (user: User) =>
     this.generalApi.withMiddleware(new AuthMiddleware(user as Auth))
 
   private medicalDocumentsApiWithAuth = (user: User) =>
@@ -211,7 +211,7 @@ export class SocialInsuranceAdministrationClientService {
   async getUnions(
     user: User,
   ): Promise<Array<TrWebApiServicesDomainUnionsModelsUnionDto>> {
-    return this.genaralApiWithAuth(user).apiProtectedV1GeneralUnionsGet()
+    return this.generalApiWithAuth(user).apiProtectedV1GeneralUnionsGet()
   }
 
   async getRehabilitationPlan(
