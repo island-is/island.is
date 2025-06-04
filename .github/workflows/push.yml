@@ -302,7 +302,6 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-        with:
 
       - name: Set id for matrix
         run: |
@@ -360,7 +359,6 @@ jobs:
           fi
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-        with:
 
       - name: Building Docker images
         continue-on-error: true
@@ -430,7 +428,6 @@ jobs:
           aws-region: eu-west-1
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-        with:
 
       - name: Docker build image
         working-directory: infra
