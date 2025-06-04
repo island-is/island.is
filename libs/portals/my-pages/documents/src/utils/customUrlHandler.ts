@@ -9,11 +9,11 @@ const customDocument = {
 }
 
 export const customUrl = (doc: ActiveDocumentType) => {
-  if (
-    doc.senderNatReg === customDocument.senderNatReg &&
-    doc.subject.includes(customDocument.subjectContains)
-  ) {
-    return customDocument.url
-  }
+  // if (
+  //   doc.senderNatReg === customDocument.senderNatReg &&
+  //   doc.subject.includes(customDocument.subjectContains)
+  // ) {
+  //   return customDocument.url
+  // }
   return doc.document.url
 }
