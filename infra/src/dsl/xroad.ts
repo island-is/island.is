@@ -297,6 +297,17 @@ export const WorkMachines = new XroadConf({
   },
 })
 
+export const PracticalExams = new XroadConf({
+  env: {
+    XROAD_PRACTICAL_EXAMS_PATH: {
+      dev: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/verkleg-prof-token',
+      staging:
+        'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/verkleg-prof-token',
+      prod: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/verkleg-prof-token',
+    },
+  },
+})
+
 export const JudicialAdministration = new XroadConf({
   env: {
     XROAD_COURT_BANKRUPTCY_CERT_PATH: {
@@ -945,6 +956,16 @@ export const OfficialJournalOfIcelandApplication = new XroadConf({
       dev: 'IS-DEV/GOV/10014/DMR-Protected/official-journal-application',
       staging: 'IS-TEST/GOV/10014/DMR-Protected/official-journal-application',
       prod: 'IS/GOV/5804170510/DMR-Protected/official-journal-application',
+    },
+  },
+})
+
+export const LegalGazette = new XroadConf({
+  env: {
+    XROAD_LEGAL_GAZETTE_PATH: {
+      dev: 'IS-DEV/GOV/10014/DMR-Protected/legal-gazette-api',
+      staging: 'IS-TEST/GOV/10014/DMR-Protected/legal-gazette-api',
+      prod: 'IS/GOV/5804170510/DMR-Protected/legal-gazette-api',
     },
   },
 })
