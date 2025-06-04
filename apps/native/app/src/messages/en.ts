@@ -258,6 +258,7 @@ export const en: TranslatedMessages = {
   'documentDetail.screenTitle': 'Document',
   'documentDetail.loadingText': 'Loading document',
   'documentDetail.errorUnknown': 'Error occurred while loading document',
+  'documentDetail.replyButton': 'Reply',
 
   // wallet
   'wallet.screenTitle': 'Wallet',

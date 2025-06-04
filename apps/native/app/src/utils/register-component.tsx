@@ -1,4 +1,5 @@
 import { ApolloProvider } from '@apollo/client'
+import { SafeAreaProvider } from 'react-native-safe-area-context'
 import {
   Navigation,
   NavigationFunctionComponent,
@@ -26,7 +27,9 @@ export function registerComponent<Props>(
               <FeatureFlagProvider>
                 <ApolloProvider client={client}>
                   <OfflineHoc>
-                    <Component {...props} />
+                    <SafeAreaProvider>
+                      <Component {...props} />
+                    </SafeAreaProvider>
                   </OfflineHoc>
                 </ApolloProvider>
               </FeatureFlagProvider>

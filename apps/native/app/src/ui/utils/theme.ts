@@ -112,3 +112,4 @@ export const theme = {
 
 export type Theme = typeof theme
 export type Colors = keyof typeof color
+export type Spacing = keyof typeof spacing

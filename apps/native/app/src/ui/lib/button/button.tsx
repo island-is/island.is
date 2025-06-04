@@ -18,6 +18,7 @@ interface ButtonBaseProps extends TouchableHighlightProps {
   textProps?: TextProps
   iconStyle?: ImageStyle
   ellipsis?: boolean
+  iconPosition?: 'left' | 'right'
 }
 
 interface IconButtonProps extends ButtonBaseProps {
@@ -101,10 +102,16 @@ const Text = styled.Text<{
   text-align: ${(props) => (props.isUtilityButton ? 'left' : 'center')};
 `
 
-const Icon = styled.Image<{ noMargin?: boolean }>`
+const Icon = styled.Image<{
+  noMargin?: boolean
+  iconPosition?: 'left' | 'right'
+}>`
   width: 16px;
   height: 16px;
-  margin-left: ${(props) => (props.noMargin ? '0' : '8px')};
+  margin-left: ${({ noMargin, iconPosition }) =>
+    noMargin ? '0' : iconPosition === 'left' ? '0' : '8px'};
+  margin-right: ${({ noMargin, iconPosition }) =>
+    noMargin ? '0' : iconPosition === 'right' ? '0' : '8px'};
 `
 
 export function Button({
@@ -117,9 +124,22 @@ export function Button({
   textProps,
   iconStyle,
   ellipsis,
+  iconPosition = 'right',
   ...rest
 }: ButtonProps) {
   const theme = useTheme()
+
+  const renderIcon = () => {
+    return (
+      <Icon
+        source={icon}
+        resizeMode="center"
+        style={iconStyle}
+        noMargin={!title}
+      />
+    )
+  }
+
   return (
     <Host
       underlayColor={
@@ -133,6 +153,7 @@ export function Button({
       {...rest}
     >
       <>
+        {icon && iconPosition === 'left' && renderIcon()}
         {title && (
           <Text
             {...textProps}
@@ -147,14 +168,7 @@ export function Button({
             {title}
           </Text>
         )}
-        {icon && (
-          <Icon
-            source={icon}
-            resizeMode="center"
-            style={iconStyle}
-            noMargin={!title}
-          />
-        )}
+        {icon && iconPosition === 'right' && renderIcon()}
       </>
     </Host>
   )

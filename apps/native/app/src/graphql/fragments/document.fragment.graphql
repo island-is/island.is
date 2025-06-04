@@ -1,5 +1,24 @@
 directive @client on FIELD
 
+fragment DocumentTiket on DocumentV2 {
+  ticket {
+    id
+    authorId
+    createdDate
+    updatedDate
+    subject
+    status
+    authorId
+    comments {
+      id
+      authorId
+      author
+      body
+      createdDate
+    }
+  }
+}
+
 fragment ListDocument on DocumentV2 {
   id
   subject
@@ -9,6 +28,8 @@ fragment ListDocument on DocumentV2 {
   categoryId
   bookmarked
   isUrgent
+  replyable
+  closedForMoreReplies
   actions {
     type
     title

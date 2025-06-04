@@ -258,6 +258,7 @@ export const is = {
   'documentDetail.screenTitle': 'Skjal',
   'documentDetail.loadingText': 'Sæki skjal',
   'documentDetail.errorUnknown': 'Villa kom upp við að sækja skjal',
+  'documentDetail.replyButton': 'Svara pósti',
 
   // profile
   'profile.screenTitle': 'Meira',
