@@ -44,17 +44,11 @@ const extractPropertyInfo = (
       answers,
       'registerProperty.searchresults.units',
     ) ?? [],
-  categoryType: getValueViaPath<string>(
-    answers,
-    'registerProperty.categoryType',
-  ),
-  categoryClass: getValueViaPath<string>(
-    answers,
-    'registerProperty.categoryClass',
-  ),
+  categoryType: getValueViaPath<string>(answers, 'propertyInfo.categoryType'),
+  categoryClass: getValueViaPath<string>(answers, 'propertyInfo.categoryClass'),
   categoryClassGroup: getValueViaPath<string>(
     answers,
-    'registerProperty.categoryClassGroup',
+    'propertyInfo.categoryClassGroup',
   ),
 })
 
