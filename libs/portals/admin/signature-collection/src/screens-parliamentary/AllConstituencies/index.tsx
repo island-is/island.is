@@ -13,37 +13,28 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
-import { signatureCollectionNavigation } from '../lib/navigation'
-import { m } from '../lib/messages'
+import { signatureCollectionNavigation } from '../../lib/navigation'
+import { m } from '../../lib/messages'
 import { useLoaderData, useNavigate } from 'react-router-dom'
-import { SignatureCollectionPaths } from '../lib/paths'
-import CompareLists from '../shared-components/compareLists'
-import { ListsLoaderReturn } from '../loaders/AllLists.loader'
-import DownloadReports from './DownloadReports'
-import electionsCommitteeLogo from '../../assets/electionsCommittee.svg'
-import nationalRegistryLogo from '../../assets/nationalRegistry.svg'
+import { SignatureCollectionPaths } from '../../lib/paths'
+import CompareLists from '../../shared-components/compareLists'
+import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import { useState } from 'react'
 import { useSignatureCollectionSignatureLookupQuery } from './findSignature.generated'
-import { SkeletonSingleRow } from '../shared-components/compareLists/skeleton'
+import { SkeletonSingleRow } from '../../shared-components/compareLists/skeleton'
 import {
   CollectionStatus,
   SignatureCollectionCollectionType,
 } from '@island.is/api/schema'
-import ActionCompleteCollectionProcessing from '../shared-components/completeCollectionProcessing'
+import ActionCompleteCollectionProcessing from '../../shared-components/completeCollectionProcessing'
+import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 
-const ParliamentaryRoot = ({
-  allowedToProcess,
-}: {
-  allowedToProcess: boolean
-}) => {
+const ParliamentaryRoot = () => {
   const { formatMessage } = useLocale()
 
   const navigate = useNavigate()
-  const {
-    collection,
-    collectionStatus,
-    allLists,
-  } = useLoaderData() as ListsLoaderReturn
+  const { collection, collectionStatus, allLists } =
+    useLoaderData() as ListsLoaderReturn
 
   const [searchTerm, setSearchTerm] = useState('')
 
@@ -88,9 +79,7 @@ const ParliamentaryRoot = ({
             intro={formatMessage(m.parliamentaryCollectionIntro)}
             imgPosition="right"
             imgHiddenBelow="sm"
-            img={
-              allowedToProcess ? electionsCommitteeLogo : nationalRegistryLogo
-            }
+            img={nationalRegistryLogo}
           />
           <Box
             width="full"
@@ -109,12 +98,6 @@ const ParliamentaryRoot = ({
                 backgroundColor="blue"
               />
             </Box>
-            {allowedToProcess && (
-              <DownloadReports
-                areas={collection.areas}
-                collectionId={collection?.id}
-              />
-            )}
           </Box>
           {loading && (
             <Box marginBottom={6}>
@@ -227,24 +210,14 @@ const ParliamentaryRoot = ({
               )
             })}
           </Stack>
-          {allowedToProcess && (
-            <Box>
-              <CompareLists collectionId={collection?.id} />
-              {(collectionStatus === CollectionStatus.InitialActive ||
-                collectionStatus === CollectionStatus.InInitialReview) && (
-                <ActionCompleteCollectionProcessing
-                  collectionType={
-                    SignatureCollectionCollectionType.Parliamentary
-                  }
-                  collectionId={collection?.id}
-                  canProcess={
-                    !!allLists.length &&
-                    allLists.every((l) => l.reviewed === true)
-                  }
-                />
-              )}
-            </Box>
-          )}
+          <CompareLists collectionId={collection?.id} />
+          <ActionCompleteCollectionProcessing
+            collectionType={SignatureCollectionCollectionType.Parliamentary}
+            collectionId={collection?.id}
+            canProcess={
+              !!allLists.length && allLists.every((l) => l.reviewed === true)
+            }
+          />
           {collectionStatus === CollectionStatus.Processed && (
             <Box marginTop={8}>
               <AlertMessage
