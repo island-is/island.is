@@ -9,7 +9,11 @@ import {
   isPublicProsecutionUser,
 } from '../user'
 import { prosecutorTableGroups } from './tableGroups/prosecutorTableGroups'
-import { CaseTableGroup, CaseTableType } from './caseTableTypes'
+import {
+  CaseTableGroup,
+  CaseTableRoutes,
+  CaseTableType,
+} from './caseTableTypes'
 import { publicProsecutorTableGroups } from './tableGroups'
 
 const districtCourtTableGroups: CaseTableGroup[] = [
@@ -18,20 +22,20 @@ const districtCourtTableGroups: CaseTableGroup[] = [
     tables: [
       {
         type: CaseTableType.DISTRICT_COURT_REQUEST_CASES_IN_PROGRESS,
-        route: 'mal-i-vinnslu',
+        route: CaseTableRoutes.IN_PROGRESS,
         title: 'Rannsóknarmál í vinnslu',
         description: 'Drög, ný mál, móttekin mál og mál á dagskrá.',
       },
       {
         type: CaseTableType.DISTRICT_COURT_REQUEST_CASES_APPEALED,
-        route: 'kaerd-mal',
+        route: CaseTableRoutes.REQUEST_APPEALED,
         title: 'Kærur til Landsréttar',
         description:
           'Úrskurðir sem búið er að kæra en á eftir að senda til Landsréttar.',
       },
       {
         type: CaseTableType.DISTRICT_COURT_REQUEST_CASES_COMPLETED,
-        route: 'afgreidd-mal',
+        route: CaseTableRoutes.COMPLETED,
         title: 'Afgreidd rannsóknarmál',
         description: 'Rannsóknarmál sem búið er að ljúka.',
       },
@@ -42,32 +46,32 @@ const districtCourtTableGroups: CaseTableGroup[] = [
     tables: [
       {
         type: CaseTableType.DISTRICT_COURT_INDICTMENTS_NEW,
-        route: 'ny-sakamal',
+        route: CaseTableRoutes.INDICTMENT_NEW,
         title: 'Bíða úthlutunar',
         description: 'Ný sakamál sem á eftir að úthluta.',
       },
       {
         type: CaseTableType.DISTRICT_COURT_INDICTMENTS_RECEIVED,
-        route: 'mottekin-sakamal',
+        route: CaseTableRoutes.INDICTMENT_RECEIVED,
         title: 'Móttekin sakamál',
         description: 'Sakamál sem bíða þess að fyrirkall sé gefið út.',
       },
       {
         type: CaseTableType.DISTRICT_COURT_INDICTMENTS_IN_PROGRESS,
-        route: 'sakamal-i-vinnslu',
+        route: CaseTableRoutes.INDICTMENT_IN_PROGRESS,
         title: 'Sakamál í vinnslu',
         description:
           'Sakamál sem eru í frestum, á dagskrá eða búið er að dómtaka.',
       },
       {
         type: CaseTableType.DISTRICT_COURT_INDICTMENTS_FINALIZING,
-        route: 'sakamal-i-fragangi',
+        route: CaseTableRoutes.INDICTMENT_FINALIZING,
         title: 'Sakamál í frágangi',
         description: 'Sakamál sem á eftir að senda til ríkissaksóknara.',
       },
       {
         type: CaseTableType.DISTRICT_COURT_INDICTMENTS_COMPLETED,
-        route: 'afgreidd-sakamal',
+        route: CaseTableRoutes.COMPLETED,
         title: 'Afgreidd sakamál',
         description: 'Sakamál sem búið er að ljúka.',
       },
@@ -81,13 +85,13 @@ const courtOfAppealsTableGroups: CaseTableGroup[] = [
     tables: [
       {
         type: CaseTableType.COURT_OF_APPEALS_IN_PROGRESS,
-        route: 'mal-i-vinnslu',
+        route: CaseTableRoutes.IN_PROGRESS,
         title: 'Rannsóknarmál mál í vinnslu',
         description: 'Kærð sakamál sem eru til meðferðar.',
       },
       {
         type: CaseTableType.COURT_OF_APPEALS_COMPLETED,
-        route: 'afgreidd-mal',
+        route: CaseTableRoutes.COMPLETED,
         title: 'Afgreidd mál',
         description: 'Mál sem búið er að ljúka.',
       },
@@ -101,13 +105,13 @@ const prisonAdminTableGroups: CaseTableGroup[] = [
     tables: [
       {
         type: CaseTableType.PRISON_ADMIN_ACTIVE,
-        route: 'virk-mal',
+        route: CaseTableRoutes.ACTIVE,
         title: 'Virk mál',
         description: 'Virk gæsluvarðhöld og farbönn.',
       },
       {
         type: CaseTableType.PRISON_ADMIN_DONE,
-        route: 'lokid',
+        route: CaseTableRoutes.DONE,
         title: 'Lokið',
         description: 'Gæsluvarðhöld og farbönn sem er lokið.',
       },
@@ -118,13 +122,13 @@ const prisonAdminTableGroups: CaseTableGroup[] = [
     tables: [
       {
         type: CaseTableType.PRISON_ADMIN_INDICTMENT_SENT_TO_PRISON_ADMIN,
-        route: 'mal-til-fullnustu',
+        route: CaseTableRoutes.SENT_TO_PRISON,
         title: 'Mál til fullnustu',
         description: 'Ný og móttekin mál.',
       },
       {
         type: CaseTableType.PRISON_ADMIN_INDICTMENT_REGISTERED_RULING,
-        route: 'skradir-domar',
+        route: CaseTableRoutes.REGISTERED_RULING,
         title: 'Skráðir dómar',
         description: 'Mál sem hafa verið skráð.',
       },
@@ -138,13 +142,13 @@ const prisonStaffTableGroups: CaseTableGroup[] = [
     tables: [
       {
         type: CaseTableType.PRISON_ACTIVE,
-        route: 'virk-mal',
+        route: CaseTableRoutes.ACTIVE,
         title: 'Virk mál',
         description: 'Virk gæsluvarðhöld.',
       },
       {
         type: CaseTableType.PRISON_DONE,
-        route: 'lokid',
+        route: CaseTableRoutes.DONE,
         title: 'Lokið',
         description: 'Gæsluvarðhöld sem er lokið.',
       },
@@ -158,37 +162,37 @@ const publicProsecutorsOfficeTableGroups: CaseTableGroup[] = [
     tables: [
       {
         type: CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_NEW,
-        route: 'ny-mal',
+        route: CaseTableRoutes.NEW,
         title: 'Ný mál',
         description: 'Ný mál sem á eftir að úthluta í yfirlestur.',
       },
       {
         type: CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_IN_REVIEW,
-        route: 'mal-i-yfirlestri',
+        route: CaseTableRoutes.IN_REVIEW,
         title: 'Mál í yfirlestri',
         description: 'Mál sem eru í yfirlestri hjá saksóknara.',
       },
       {
         type: CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_REVIEWED,
-        route: 'yfirlesin-mal',
+        route: CaseTableRoutes.REVIEWED,
         title: 'Yfirlesin mál',
         description: 'Mál sem hafa verið lesin yfir og eru óbirt eða á fresti.',
       },
       {
         type: CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_APPEAL_PERIOD_EXPIRED,
-        route: 'frestur-lidinn',
+        route: CaseTableRoutes.APPEALED_EXPIRED,
         title: 'Frestur liðinn',
         description: 'Áfrýjunarfrestur liðinn.',
       },
       {
         type: CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_SENT_TO_PRISON_ADMIN,
-        route: 'mal-i-fullnustu',
+        route: CaseTableRoutes.SENT_TO_PRISON,
         title: 'Mál í fullnustu',
         description: 'Mál sem hafa verið send í fullnustu.',
       },
       {
         type: CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_APPEALED,
-        route: 'afryjud-mal',
+        route: CaseTableRoutes.INDICTMENT_APPEALED,
         title: 'Áfrýjuð mál',
         description: 'Mál sem hefur verið áfrýjað.',
       },

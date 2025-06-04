@@ -55,7 +55,7 @@ export enum CaseTableRoutes {
   REQUEST_APPEALED = 'kaerd-mal',
   INDICTMENT_APPEALED = 'afryjud-mal',
   APPEALED_EXPIRED = 'frestur-lidinn',
-  SENT_TO_PRISON = 'mal-i-fullnustu',
+  SENT_TO_PRISON = 'mal-til-fullnustu',
   REGISTERED_RULING = 'skradir-domar',
   COMPLETED = 'afgreidd-mal',
   INDICTMENT_COMPLETED = 'afgreidd-sakamal',
