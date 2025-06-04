@@ -27,7 +27,6 @@ env:
   NX_MAX_PARALLEL: '4'
   NX_TASKS_RUNNER: ci
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
-
   AWS_REGION: eu-west-1
   GENERATED_FILES: ${{ github.sha }}.tar.gz
   AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
@@ -39,6 +38,7 @@ env:
   DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
   CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache
   YARN_ENABLE_HARDENED_MODE: '0'
+  RUNS_ON_BUCKET_NAME: ${{ vars.RUNS_ON_BUCKET_NAME }}
 
 jobs:
   prepare:
@@ -68,6 +68,7 @@ jobs:
 
       - name: load-deps
         uses: ./.github/actions/load-deps
+
       - name: Run unit tests
         uses: ./.github/actions/unit-test
         with:

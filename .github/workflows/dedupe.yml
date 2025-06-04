@@ -28,6 +28,7 @@ concurrency:
 
 env:
   AWS_REGION: eu-west-1
+  RUNS_ON_BUCKET_NAME: ${{ vars.RUNS_ON_BUCKET_NAME }}
 
 jobs:
   dedupe:
@@ -55,8 +56,6 @@ jobs:
       - name: Setup yarn
         if: ${{ steps.dedupe.outputs.should == 'true' }}
         uses: ./.github/actions/setup-yarn
-        with:
-          
 
       - name: Deduplicate (check)
         if: ${{ !inputs.write && steps.dedupe.outputs.should == 'true' }}

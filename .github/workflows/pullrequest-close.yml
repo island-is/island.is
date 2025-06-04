@@ -10,6 +10,8 @@ defaults:
 env:
   AWS_REGION: eu-west-1
   YARN_ENABLE_HARDENED_MODE: '0'
+  RUNS_ON_BUCKET_NAME: ${{ vars.RUNS_ON_BUCKET_NAME }}
+
 jobs:
   check-unicorn:
     name: Is this a unicorn PR
