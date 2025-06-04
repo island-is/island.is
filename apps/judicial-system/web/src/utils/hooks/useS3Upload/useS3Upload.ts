@@ -4,6 +4,7 @@ import { uuid } from 'uuidv4'
 
 import { FileUploadStatus, toast, UploadFile } from '@island.is/island-ui/core'
 import { UserContext } from '@island.is/judicial-system-web/src/components'
+import { FileWithPreviewURL } from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
 import {
   CaseFile,
   CaseFileCategory,
@@ -11,6 +12,7 @@ import {
   Defendant,
   PresignedPost,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { api } from '@island.is/judicial-system-web/src/services'
 
 import {
   CreateCivilClaimantFileMutation,
@@ -68,6 +70,7 @@ export interface TUploadFile extends UploadFile {
   userGeneratedFilename?: string | null
   submissionDate?: string | null
   fileRepresentative?: string | null
+  previewUrl?: string | null
 }
 
 export interface UploadFileState {
@@ -116,7 +119,7 @@ export const useUploadFiles = (files?: CaseFile[] | null) => {
     setUploadFiles((previous) => [file, ...previous])
 
   const addUploadFiles = (
-    files: File[],
+    files: FileWithPreviewURL[],
     overRides?: Partial<TUploadFile>,
     setUserGeneratedFilename = false,
   ) => {
@@ -131,6 +134,7 @@ export const useUploadFiles = (files?: CaseFile[] | null) => {
       percent: 0,
       originalFileObj: file,
       userGeneratedFilename: setUserGeneratedFilename ? file.name : undefined,
+      previewUrl: file.previewUrl,
       ...overRides,
     }))
 
@@ -448,6 +452,7 @@ const useS3Upload = (
           id: `${name}-${uuid()}`,
           name,
           category: CaseFileCategory.CRIMINAL_RECORD,
+          status: FileUploadStatus.uploading,
           percent: 0,
         }
 
@@ -456,13 +461,18 @@ const useS3Upload = (
         }
 
         try {
+          // TEMP: this is a temp step while we incorporate required token handling
+          // for criminal record endpoint asa middleware
+          const { success } = await api.prepareRequest()
+          if (!success) {
+            throw Error('Failed to prepare upload criminal record request')
+          }
           // fetch criminal record and upload it to S3 in the backend
           const { data: criminalRecordFile } = await uploadCriminalRecordFile({
             variables: {
               input: { caseId, defendantId: id },
             },
           })
-
           if (!criminalRecordFile) {
             throw Error('Failed to upload criminal record to S3')
           }
