@@ -1179,7 +1179,7 @@ export const excludedOrganizationWatsonConfig: string[] = [
   '145ctmpqLPrOM7rHZIpC6F',
 
   // Sýslumaðurinn á Suðurnesjum
-  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/cRCuTTXXSrpBj27nBiLbc?focusedField=title&focusedLocale=is-IS
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/cRCuTTXXSrpBj27nBiLbc
   'cRCuTTXXSrpBj27nBiLbc',
 
   // Sýslumaðurinn á Suðurlandi
