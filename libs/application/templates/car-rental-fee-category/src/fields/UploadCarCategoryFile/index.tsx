@@ -40,7 +40,7 @@ const sanitizeNumber = (n: string) => n.replace(new RegExp(/[.,]/g), '')
 const parseFileToCarCategory = async (
   file: File,
   type: 'csv' | 'xlsx',
-  rate: CategorySelection
+  rateToChangeTo: CategorySelection
 ): Promise<Array<CarCategoryRecord> | Array<CarCategoryError>> => {
   const parsedLines: Array<Array<string>> = await (type === 'csv'
     ? parseCsv(file)
@@ -89,7 +89,7 @@ const parseFileToCarCategory = async (
       // no change to the rate for this line, so we dont care about it
       // maybe we should do this filter in the actual request to skatturinn
       // so that this line stays in in the error generated file
-      if(category.toLowerCase() === rate.toString().toLowerCase())
+      if(category.toLowerCase() === rateToChangeTo.toString().toLowerCase())
         return undefined
 
       return {
