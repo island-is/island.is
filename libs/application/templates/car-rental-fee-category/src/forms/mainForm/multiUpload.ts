@@ -8,7 +8,7 @@ import {
     getValueViaPath,
   } from '@island.is/application/core'
 import { generateExcelSheet } from '../../utils/generateExcelSheet'
-import { CategorySelection, RateCategory, UploadSelection } from '../../utils/constants'
+import { RateCategory, UploadSelection } from '../../utils/constants'
 import { CarCategoryRecord } from '../../utils/types'
   
 export const multiUploadSection = buildSection({
@@ -50,7 +50,7 @@ export const multiUploadSection = buildSection({
               'categorySelectionRadio',
             )
 
-            return rateToChangeTo ? rateToChangeTo === CategorySelection.DAYRATE : false
+            return rateToChangeTo ? rateToChangeTo === RateCategory.DAYRATE : false
           }
         },
         {
@@ -66,7 +66,7 @@ export const multiUploadSection = buildSection({
               'categorySelectionRadio',
             )
 
-            return rateToChangeTo ? rateToChangeTo === CategorySelection.KMRATE : false
+            return rateToChangeTo ? rateToChangeTo === RateCategory.KMRATE : false
           }
         },
         {

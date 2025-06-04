@@ -21,11 +21,6 @@ export enum UploadSelection {
   SINGLE = 'singleSelection'
 }
 
-export enum CategorySelection {
-  DAYRATE = 'dayRate',
-  KMRATE = 'KmRate'
-}
-
 export enum RateCategory {
   DAYRATE = 'Daggjald',
   KMRATE = 'Kilometragjald'

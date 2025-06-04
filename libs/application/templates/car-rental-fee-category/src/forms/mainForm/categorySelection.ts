@@ -4,7 +4,7 @@ import {
   buildRadioField,
   buildSection,
 } from '@island.is/application/core'
-import { CategorySelection } from '../../utils/constants'
+import { RateCategory } from '../../utils/constants'
 
 export const categorySelection = buildSection({
   id: 'categorySelectionSection',
@@ -23,11 +23,11 @@ export const categorySelection = buildSection({
           options: [
             {
               label: 'Færa bifreiðar á daggjald',
-              value: CategorySelection.DAYRATE,
+              value: RateCategory.DAYRATE,
             },
             {
               label: 'Færa bifreiðar á kílómetragjald',
-              value: CategorySelection.KMRATE,
+              value: RateCategory.KMRATE,
             },
           ],
         }),

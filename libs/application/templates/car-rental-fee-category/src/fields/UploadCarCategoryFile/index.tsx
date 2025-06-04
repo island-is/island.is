@@ -9,7 +9,7 @@ import XLSX from 'xlsx'
 import { parse } from 'csv-parse'
 import { FieldBaseProps } from '@island.is/application/types'
 import { CarCategoryError, CarCategoryRecord } from '../../utils/types'
-import { CategorySelection, RateCategory } from '../../utils/constants'
+import { RateCategory } from '../../utils/constants'
 
 const extensionToType = {
   [fileExtensionWhitelist['.csv']]: 'csv',
@@ -40,7 +40,7 @@ const sanitizeNumber = (n: string) => n.replace(new RegExp(/[.,]/g), '')
 const parseFileToCarCategory = async (
   file: File,
   type: 'csv' | 'xlsx',
-  rateToChangeTo: CategorySelection
+  rateToChangeTo: RateCategory
 ): Promise<Array<CarCategoryRecord> | Array<CarCategoryError>> => {
   const parsedLines: Array<Array<string>> = await (type === 'csv'
     ? parseCsv(file)
@@ -192,7 +192,7 @@ interface Props {
   field: {
     props: {
       postParseAction: (records: CarCategoryRecord[]) => boolean
-      rateCategory: CategorySelection
+      rateCategory: RateCategory
     }
   }
 }
@@ -255,18 +255,20 @@ export const UploadCarCategoryFile = ({ field }: Props & FieldBaseProps) => {
   }
 
   return (
-    <InputFileUpload
-      files={uploadedFile ? [uploadedFile] : []}
-      title={'Dragðu skjöl hingað til að hlaða upp'}
-      name={'inputFileUploadName'}
-      description={'Tekið er við skjölum með endingum: .csv, .xlsx'}
-      buttonLabel={'Hlaða upp skjali'}
-      accept={['.csv', '.xlsx']}
-      multiple={false}
-      onRemove={handleOnInputFileUploadRemove}
-      onChange={handleOnInputFileUploadChange}
-      onUploadRejection={handleOnInputFileUploadError}
-      errorMessage={uploadErrorMessage ?? undefined}
-    />
-  )
+    <>
+      <InputFileUpload
+        files={uploadedFile ? [uploadedFile] : []}
+        title={'Dragðu skjöl hingað til að hlaða upp'}
+        name={'inputFileUploadName'}
+        description={'Tekið er við skjölum með endingum: .csv, .xlsx'}
+        buttonLabel={'Hlaða upp skjali'}
+        accept={['.csv', '.xlsx']}
+        multiple={false}
+        onRemove={handleOnInputFileUploadRemove}
+        onChange={handleOnInputFileUploadChange}
+        onUploadRejection={handleOnInputFileUploadError}
+        errorMessage={uploadErrorMessage ?? undefined}
+      />
+      {uploadErrorMessage ? <>Download another file with errors</> : null} 
+    </>)
 }
