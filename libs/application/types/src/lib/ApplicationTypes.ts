@@ -439,10 +439,6 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.MEDICAL_AND_REHABILITATION_PAYMENTS]: {
     slug: 'sjukra-og-endurhaefingargreidslur',
-    translation: [
-      'marp.application',
-      'sia.application',
-      'uiForms.application',
-    ],
+    translation: ['marp.application', 'sia.application', 'uiForms.application'],
   },
 }
