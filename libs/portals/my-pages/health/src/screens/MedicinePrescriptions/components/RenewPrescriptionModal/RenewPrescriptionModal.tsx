@@ -83,39 +83,35 @@ const RenewPrescriptionModal: React.FC<Props> = ({
       activePrescription.id === undefined
     ) {
       setError('Please select a valid prescription.')
+      return
     }
 
-    postRenewal({
-      variables: {
-        input: {
-          id: activePrescription.id,
-          medCardDrugCategory: activePrescription.category ?? '',
-          medCardDrugId: activePrescription.medCardDrugId ?? '',
-          prescribedItemId: activePrescription.id,
+    try {
+      const data = await postRenewal({
+        variables: {
+          input: {
+            id: activePrescription.id,
+            medCardDrugCategory: activePrescription.category ?? '',
+            medCardDrugId: activePrescription.medCardDrugId ?? '',
+            prescribedItemId: activePrescription.id,
+          },
         },
-      },
-    })
-      .catch(() => {
-        setError(
-          'Ekki tókst að senda endurnýjunarbeiðni. Vinsamlegast reynið aftur síðar.',
-        )
-        toast.error(
-          'Ekki tókst að senda endurnýjunarbeiðni. Vinsamlegast reynið aftur síðar.',
-        )
       })
-      .then(() => {
-        if (renewalData) {
-          setError('')
-          closeModal()
-          toast.success(
-            'Endurnýjunarbeiðni hefur verið send. Vinsamlegast hafið samband við heilsugæsly ef þörf er á frekari upplýsingum.',
-          )
-        } else if (renewalError) {
-          setError(
-            'Ekki tókst að senda endurnýjunarbeiðni. Vinsamlegast reynið aftur síðar.',
-          )
-        }
-      })
+      if (data) {
+        setError('')
+        closeModal()
+        toast.success(
+          'Endurnýjunarbeiðni hefur verið send. Vinsamlegast hafið samband við heilsugæslu ef þörf er á frekari upplýsingum.',
+        )
+      }
+    } catch (error) {
+      setError(
+        'Ekki tókst að senda endurnýjunarbeiðni. Vinsamlegast reynið aftur síðar.',
+      )
+      toast.error(
+        'Ekki tókst að senda endurnýjunarbeiðni. Vinsamlegast reynið aftur síðar.',
+      )
+    }
   }
 
   return (
