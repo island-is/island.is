@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { Application } from './models/application.model'
@@ -60,6 +64,22 @@ export class ApplicationsService {
 
     if (!form) {
       throw new NotFoundException(`Form with slug '${slug}' not found`)
+    }
+
+    // Check if at least one of the user's delegationTypes is allowed for this form
+    if (
+      form.allowedDelegationTypes.length > 0 &&
+      (!user.delegationType || user.delegationType.length === 0
+        ? !form.allowedDelegationTypes.includes('Individual')
+        : !user.delegationType.some((type) =>
+            form.allowedDelegationTypes.includes(type),
+          ))
+    ) {
+      throw new BadRequestException(
+        `User delegationTypes '${
+          user.delegationType ? user.delegationType.join(', ') : 'none'
+        }' are not allowed for this form`,
+      )
     }
 
     let newApplicationId = ''
@@ -338,6 +358,113 @@ export class ApplicationsService {
     applicationDto.organizationName = organization?.name
 
     return applicationDto
+  }
+
+  async findAllBySlugAndUser(
+    slug: string,
+    user: User,
+    isTest: boolean,
+  ): Promise<ApplicationResponseDto> {
+    const form: Form = await this.getForm(slug)
+
+    if (!form) {
+      throw new NotFoundException(`Form with slug '${slug}' not found`)
+    }
+
+    // Check if at least one of the user's delegationTypes is allowed for this form
+    if (
+      form.allowedDelegationTypes.length > 0 &&
+      (!user.delegationType || user.delegationType.length === 0
+        ? !form.allowedDelegationTypes.includes('Individual')
+        : !user.delegationType.some((type) =>
+            form.allowedDelegationTypes.includes(type),
+          ))
+    ) {
+      throw new BadRequestException(
+        `User delegationTypes '${
+          user.delegationType ? user.delegationType.join(', ') : 'none'
+        }' are not allowed for this form`,
+      )
+    }
+
+    // Check if the user has applications for this form
+    const existingApplications = await this.findAllByUserAndForm(
+      user,
+      form.id,
+      isTest,
+    )
+
+    const responseDto = new ApplicationResponseDto()
+    responseDto.applications = existingApplications
+    return responseDto
+  }
+
+  private async findAllByUserAndForm(
+    user: User,
+    formId: string,
+    isTest: boolean,
+  ): Promise<ApplicationDto[]> {
+    const delegationType = user.delegationType
+    const nationalId = delegationType ? user.actor?.nationalId : user.nationalId
+    const delegatorNationalId = delegationType ? user.nationalId : null
+
+    // 1. Find all applicants by nationalId
+    const applicants = await this.applicantModel.findAll({
+      where: { nationalId },
+      attributes: ['applicationId', 'nationalId'],
+    })
+
+    let applicationIds = applicants.map((a) => a.applicationId)
+
+    if (delegatorNationalId) {
+      // If delegatorNationalId is present, find applicants for delegatorNationalId as well
+      const delegatorApplicants = await this.applicantModel.findAll({
+        where: { nationalId: delegatorNationalId },
+        attributes: ['applicationId', 'nationalId'],
+      })
+      const delegatorApplicationIds = delegatorApplicants.map(
+        (a) => a.applicationId,
+      )
+      // Only include applications that have both applicants (intersection)
+      applicationIds = applicationIds.filter((id) =>
+        delegatorApplicationIds.includes(id),
+      )
+    } else {
+      // If no delegator, exclude applications that have more than one applicant
+      // Find all applicants for these applicationIds
+      const allApplicants = await this.applicantModel.findAll({
+        where: { applicationId: applicationIds },
+        attributes: ['applicationId'],
+      })
+      // Count applicants per applicationId
+      const counts = allApplicants.reduce((acc, a) => {
+        acc[a.applicationId] = (acc[a.applicationId] || 0) + 1
+        return acc
+      }, {} as Record<string, number>)
+      // Only keep applications with a single applicant
+      applicationIds = applicationIds.filter((id) => counts[id] === 1)
+    }
+
+    // 2. Find all applications that match the formId and filtered applicationIds
+    const applications = applicationIds.length
+      ? await this.applicationModel.findAll({
+          where: {
+            formId,
+            id: applicationIds,
+            status: ApplicationStatus.IN_PROGRESS,
+            isTest: isTest,
+          },
+        })
+      : []
+
+    // 3. Map the applications to ApplicationDto
+    const applicationDtos = await Promise.all(
+      applications.map(async (application) => {
+        return this.getApplication(application.id)
+      }),
+    )
+
+    return applicationDtos
   }
 
   private async getApplicationForm(

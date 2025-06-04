@@ -28,7 +28,8 @@ export const sectionOverview = buildSection({
           label: m.applicantsName,
           width: 'half',
           value: ({ externalData }: Application) =>
-            getValueViaPath(externalData, 'nationalRegistry.data.fullName'),
+            getValueViaPath(externalData, 'nationalRegistry.data.fullName') ??
+            '',
         }),
         buildKeyValueField({
           label: m.applicantsNationalId,
@@ -39,30 +40,6 @@ export const sectionOverview = buildSection({
         buildCustomField({
           id: 'overview.currentLicense',
           component: 'CurrentLicense',
-        }),
-        buildDividerField({}),
-        buildDescriptionField({
-          id: 'overview.signatureTitle',
-          title: m.signature,
-          titleVariant: 'h4',
-          description: '',
-          space: 'gutter',
-        }),
-        buildCustomField({
-          id: 'qsignatureOverview',
-          component: 'QualitySignature',
-        }),
-        buildDividerField({}),
-        buildDescriptionField({
-          id: 'overview.imageTitle',
-          title: m.image,
-          titleVariant: 'h4',
-          description: '',
-          space: 'gutter',
-        }),
-        buildCustomField({
-          id: 'qphotoOverview',
-          component: 'QualityPhoto',
         }),
         buildDividerField({}),
         buildDescriptionField({
@@ -96,12 +73,12 @@ export const sectionOverview = buildSection({
           titleVariant: 'h4',
         }),
         buildCheckboxField({
-          id: 'overview.confirmationCheckbox',
+          id: 'overviewConfirmationCheckbox',
           defaultValue: [],
           options: [
             {
               value: YES,
-              label: m.confirmSignatureAndPhoto,
+              label: m.confirmPhoto,
             },
           ],
           required: true,
