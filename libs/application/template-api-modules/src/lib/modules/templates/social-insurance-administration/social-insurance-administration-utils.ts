@@ -445,7 +445,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
         hasUtilizedUnionSickPayRights,
       ),
       ...((hasUtilizedUnionSickPayRights === YES ||
-        hasUtilizedEmployeeSickPayRights === NO) && {
+        hasUtilizedUnionSickPayRights === NO) && {
         unionNationalId,
         unionSickPayEndDate,
       }),
