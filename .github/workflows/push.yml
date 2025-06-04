@@ -236,6 +236,8 @@ jobs:
 
       - name: Prepare docker deps
         id: docker-deps
+        env:
+          S3_DOCKER_CACHE_BUCKET: ${{ vars.S3_DOCKER_CACHE_BUCKET }}
         run: |
           ./scripts/ci/10_prepare-docker-deps.sh
 
@@ -266,6 +268,7 @@ jobs:
       DISABLE_CHUNKS: true
       MAX_JOBS: 3
       NX_PARALLEL: 1
+      S3_DOCKER_CACHE_BUCKET: ${{ vars.S3_DOCKER_CACHE_BUCKET }}
     strategy:
       fail-fast: false
       matrix:
