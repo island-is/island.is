@@ -42,17 +42,15 @@ runs:
       if: ${{ !github.event.localrun }}
       run: echo "RUNS_ON_S3_BUCKET_CACHE=${{ env.RUNS_ON_BUCKET_NAME }}" >> $GITHUB_ENV
 
-    - name: Restore Dependencies Cache
+    - name: Cache Dependencies
       uses: runs-on/cache@v4
       id: restore-cache
       with:
         path: |
           ${{ steps.yarn-cache-dir-path.outputs.dir }}
           ${{ inputs.working-directory }}/node_modules
-          ${{ env.CYPRESS_CACHE_FOLDER }}
+          ${{ github.workspace }}/.cypress-cache
         key: ${{ steps.set-cache-key.outputs.CACHE_KEY }}-node_modules
-      env:
-        CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache
 
     - name: Yarn install
       working-directory: ${{ inputs.working-directory }}

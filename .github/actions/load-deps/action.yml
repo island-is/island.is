@@ -31,8 +31,8 @@ runs:
       run: |
         echo "generated files: ${{ env.GENERATED_FILES_PATH }}"
 
-    - name: Restore generated files
-      uses: runs-on/cache/restore@v4
+    - name: Cache generated files
+      uses: runs-on/cache@v4
       id: restore-codegen-cache
       with:
         path: |
@@ -52,11 +52,3 @@ runs:
       shell: bash
       run: |
         tar -xzvf ${{ env.GENERATED_FILES_PATH }}
-
-    - name: Cache Generated files
-      if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
-      uses: runs-on/cache/save@v4
-      with:
-        path: |
-          ${{ env.GENERATED_FILES_PATH }}
-        key: generated-files-${{ github.sha }}
