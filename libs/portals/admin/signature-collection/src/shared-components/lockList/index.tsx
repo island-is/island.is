@@ -1,35 +1,33 @@
 import { useLocale } from '@island.is/localization'
-import { Box, Button, Text, toast } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  GridColumn,
+  GridRow,
+  Icon,
+  Tag,
+  Text,
+  toast,
+} from '@island.is/island-ui/core'
 import { useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import { useRevalidator } from 'react-router-dom'
-import { m } from '../../../lib/messages'
-import {
-  ListStatus,
-  SignatureCollectionCollectionType,
-} from '@island.is/api/schema'
 import { useSignatureCollectionLockListMutation } from './lockList.generated'
+import { m } from '../../lib/messages'
+import { SignatureCollectionList } from '@island.is/api/schema'
 
-const ActionLockList = ({
-  listId,
-  listStatus,
-  collectionType,
-}: {
-  listId: string
-  listStatus: string
-  collectionType: SignatureCollectionCollectionType
-}) => {
+const ActionLockList = ({ list }: { list: SignatureCollectionList }) => {
   const { formatMessage } = useLocale()
   const { revalidate } = useRevalidator()
 
   const [modalLockListIsOpen, setModalLockListIsOpen] = useState(false)
+  const listId = list?.id ?? ''
 
   const [lockList, { loading: loadingLockList }] =
     useSignatureCollectionLockListMutation({
       variables: {
         input: {
           listId,
-          collectionType,
         },
       },
       onCompleted: () => {
@@ -44,16 +42,30 @@ const ActionLockList = ({
 
   return (
     <Box>
-      <Button
-        iconType="outline"
-        variant="ghost"
-        icon="lockClosed"
-        colorScheme="destructive"
-        onClick={() => setModalLockListIsOpen(true)}
-        disabled={listStatus !== ListStatus.Active}
-      >
-        {formatMessage(m.lockList)}
-      </Button>
+      <GridRow>
+        <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
+          <Box display="flex">
+            <Tag>
+              <Box display="flex" justifyContent="center">
+                <Icon icon="lockClosed" type="outline" color="blue600" />
+              </Box>
+            </Tag>
+            <Box marginLeft={5}>
+              <Text variant="h4">{formatMessage(m.lockList)}</Text>
+              <Text marginBottom={2}>
+                {formatMessage(m.lockListDescription)}
+              </Text>
+              <Button
+                variant="text"
+                size="small"
+                onClick={() => setModalLockListIsOpen(true)}
+              >
+                {formatMessage(m.lockList)}
+              </Button>
+            </Box>
+          </Box>
+        </GridColumn>
+      </GridRow>
       <Modal
         id="toggleLockList"
         isVisible={modalLockListIsOpen}
