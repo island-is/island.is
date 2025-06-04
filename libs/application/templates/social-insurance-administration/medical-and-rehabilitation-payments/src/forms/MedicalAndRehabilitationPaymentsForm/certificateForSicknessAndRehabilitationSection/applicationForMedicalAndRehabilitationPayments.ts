@@ -56,7 +56,7 @@ export const applicationForMedicalAndRehabilitationPayments = [
     label:
       medicalAndRehabilitationPaymentsFormMessage
         .certificateForSicknessAndRehabilitation.applicationStartOfTreatment,
-    value: format(new Date('2022-12-20'), 'dd.MM.yyy'),
+    value: format(new Date('2022-12-20'), 'dd.MM.yyyy'),
     colSpan: ['12/12', '12/12', '12/12', '4/12'],
     marginBottom: 3,
   }),
