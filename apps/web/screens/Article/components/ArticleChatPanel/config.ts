@@ -1153,4 +1153,44 @@ export const excludedOrganizationWatsonConfig: string[] = [
   // HMS
   // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/53jrbgxPKpbNtordSfEZUK
   '53jrbgxPKpbNtordSfEZUK',
+
+  // Sýslumenn - Organization
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/kENblMMMvZ3DlyXw1dwxQ
+  'kENblMMMvZ3DlyXw1dwxQ',
+
+  // Sýslumaðurinn á Austurlandi
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/Xnes7x1ccvBvuZxInRXDm
+  'Xnes7x1ccvBvuZxInRXDm',
+
+  // Sýslumaðurinn á höfuðborgarsvæðinu
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/6puIJvhGxFBzxExVHxi5sr
+  '6puIJvhGxFBzxExVHxi5sr',
+
+  // Sýslumaðurinn á Norðurlandi eystra
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/12JLsyDmODBfZedYPOQXtX
+  '12JLsyDmODBfZedYPOQXtX',
+
+  // Sýslumaðurinn á Vestfjörðum
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/5MDZoq1DGsJospUnQz4y98
+  '5MDZoq1DGsJospUnQz4y98',
+
+  // Sýslumaðurinn í Vestmannaeyjum
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/145ctmpqLPrOM7rHZIpC6F
+  '145ctmpqLPrOM7rHZIpC6F',
+
+  // Sýslumaðurinn á Suðurnesjum
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/cRCuTTXXSrpBj27nBiLbc?focusedField=title&focusedLocale=is-IS
+  'cRCuTTXXSrpBj27nBiLbc',
+
+  // Sýslumaðurinn á Suðurlandi
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/2uyNnLcRooCNk7u6CMpsIv
+  '2uyNnLcRooCNk7u6CMpsIv',
+
+  // Sýslumaðurinn á Norðurlandi vestra
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/ZefqpCw4y5oy9lREilQY3
+  'ZefqpCw4y5oy9lREilQY3',
+
+  // Sýslumaðurinn á Vesturlandi
+  // https://app.contentful.com/spaces/8k0h54kbe6bj/entries/43KqapFNoM9m4MNXXc8UPU
+  '43KqapFNoM9m4MNXXc8UPU',
 ]
