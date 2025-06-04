@@ -6,8 +6,8 @@ import {
   buildSubmitField,
   coreMessages,
 } from '@island.is/application/core'
-import { DefaultEvents } from '@island.is/application/types'
-import { FormModes, UserProfileApi } from '@island.is/application/types'
+import { DefaultEvents, NationalRegistryUserApi, FormModes, UserProfileApi } from '@island.is/application/types'
+import { SkatturApi, VehiclesApi } from '../../dataProviders'
 
 export const Prerequisites = buildForm({
   id: 'PrerequisitesDraft',
@@ -24,31 +24,25 @@ export const Prerequisites = buildForm({
           checkboxLabel: 'Ég skil að ofangreinda upplýsinga verður aflað',
           dataProviders: [
             buildDataProviderItem({
-              provider: undefined, // Skatturinn
+              provider: SkatturApi, // Skatturinn
               title: 'Upplýsingar úr Skattinum',
               subTitle: 'Upplýsingar úr skattinum - Upplýsingar um gjaldflokksstöðu bifreiða',
             }),
             buildDataProviderItem({
-              provider: undefined, // Samgöngustofan
+              provider: VehiclesApi, // Samgöngustofan
               title: 'Upplýsingar úr Samgöngustofunni',
               subTitle: 'Upplýsingar úr ökutækjaskrá - Upplýsingar um þínar bifreiðar og stöðu þeirra',
             }),
             buildDataProviderItem({
-              provider: undefined, // Þjóðskrá
+              provider: NationalRegistryUserApi, // Þjóðskrá
               title: 'Upplýsingar úr Þjóðskrá',
               subTitle: 'Til þess að auðvelda fyrir, sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina',
             }),
             buildDataProviderItem({
-              provider: undefined, // Mínar síður
+              provider: UserProfileApi, // Mínar síður
               title: 'Netfang og símanúmer úr þínum stillingum',
               subTitle: 'Til að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum',
             }),
-            // buildDataProviderItem({
-            //   provider: UserProfileApi,
-            //   title: 'User profile',
-            //   subTitle: 'User profile',
-            // }),
-            // Add more data providers as needed
           ],
           submitField: buildSubmitField({
             id: 'submit',

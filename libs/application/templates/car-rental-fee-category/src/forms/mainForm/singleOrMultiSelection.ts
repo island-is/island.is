@@ -20,7 +20,8 @@ export const singleOrMultiSelection = buildSection({
         }),
 
         buildRadioField({
-          id: 'singleOrMultiSelectionRadio', 
+          id: 'singleOrMultiSelectionRadio',
+          required: true,
           options: [
             {
               label: 'Magnskráning',

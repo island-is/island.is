@@ -58,4 +58,4 @@ const downloadFile = (
 const base64ToBlob = (base64: string, mimeType: string) => {
     const buffer = Buffer.from(base64, 'base64')
     return new Blob([buffer], { type: mimeType })
-  }
+}

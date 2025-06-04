@@ -10,6 +10,7 @@ import {
   UserProfileApi,
   ApplicationConfigurations,
   defineTemplateApi,
+  NationalRegistryUserApi,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -19,6 +20,7 @@ import {
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import { assign } from 'xstate'
+import { SkatturApi, VehiclesApi } from '../dataProviders'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -52,7 +54,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [UserProfileApi],
+              api: [UserProfileApi, NationalRegistryUserApi, VehiclesApi, SkatturApi],
               delete: true,
             },
           ],
@@ -69,12 +71,6 @@ const template: ApplicationTemplate<
           progress: 0.4,
           status: FormModes.DRAFT,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: [
-            defineTemplateApi({
-              action: 'createApplication',
-              order: 1,
-            }),
-          ],
           roles: [
             {
               id: Roles.APPLICANT,

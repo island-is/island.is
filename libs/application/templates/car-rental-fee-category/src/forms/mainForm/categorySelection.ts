@@ -20,6 +20,7 @@ export const categorySelection = buildSection({
         }),
         buildRadioField({
           id: 'categorySelectionRadio',
+          required: true,
           options: [
             {
               label: 'Færa bifreiðar á daggjald',

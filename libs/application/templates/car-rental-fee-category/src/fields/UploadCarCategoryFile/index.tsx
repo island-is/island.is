@@ -1,5 +1,7 @@
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import {
+  Box,
+  Button,
   fileToObjectDeprecated,
   InputFileUpload,
 } from '@island.is/island-ui/core'
@@ -10,6 +12,7 @@ import { parse } from 'csv-parse'
 import { FieldBaseProps } from '@island.is/application/types'
 import { CarCategoryError, CarCategoryRecord } from '../../utils/types'
 import { RateCategory } from '../../utils/constants'
+import { getValueViaPath } from '@island.is/application/core'
 
 const extensionToType = {
   [fileExtensionWhitelist['.csv']]: 'csv',
@@ -193,11 +196,16 @@ interface Props {
     props: {
       postParseAction: (records: CarCategoryRecord[]) => boolean
       rateCategory: RateCategory
+      getFileContent: () => {
+        base64Content: string
+        fileType: string
+        filename: string
+      }
     }
   }
 }
 
-export const UploadCarCategoryFile = ({ field }: Props & FieldBaseProps) => {
+export const UploadCarCategoryFile = ({ application, field }: Props & FieldBaseProps) => {
   const [uploadedFile, setUploadedFile] = useState<File | null>()
   const [uploadErrorMessage, setUploadErrorMessage] = useState<string | null>(
     null,
@@ -221,10 +229,16 @@ export const UploadCarCategoryFile = ({ field }: Props & FieldBaseProps) => {
     }
 
     // At this point records is guaranteed to be CarCategoryRecord[]
+    // Send request to skatturinn with car data
     const success = field.props.postParseAction(records as CarCategoryRecord[])
     console.log('does it work', success)
 
-    // Send request to skatturinn with car data
+    const x = getValueViaPath<string>(
+      application.answers,
+      'categorySelectionRadio',
+    )
+    const y = application.externalData
+
   }
 
   const handleOnInputFileUploadError = (files: FileRejection[]) => {
@@ -254,8 +268,28 @@ export const UploadCarCategoryFile = ({ field }: Props & FieldBaseProps) => {
     }
   }
 
+  const fileData = field.props.getFileContent?.()
+  if (!fileData) {
+    throw Error('No valid file data recieved!')
+  }
+
   return (
     <>
+      <Box display="flex" justifyContent="spaceBetween" alignItems="center" paddingTop={2} paddingBottom={2}>
+        <Button
+          variant="utility"
+          icon="document"
+          onClick={() =>
+            downloadFile(
+              fileData?.filename,
+              fileData?.base64Content,
+              fileData?.fileType,
+            )
+          }
+        >
+          {'Sniðmát'}
+        </Button>
+      </Box>
       <InputFileUpload
         files={uploadedFile ? [uploadedFile] : []}
         title={'Dragðu skjöl hingað til að hlaða upp'}
@@ -269,6 +303,43 @@ export const UploadCarCategoryFile = ({ field }: Props & FieldBaseProps) => {
         onUploadRejection={handleOnInputFileUploadError}
         errorMessage={uploadErrorMessage ?? undefined}
       />
-      {uploadErrorMessage ? <>Download another file with errors</> : null} 
+      {uploadErrorMessage ?
+        <Box display="flex" justifyContent="spaceBetween" alignItems="center" paddingTop={2} paddingBottom={2}>
+          <Button
+            variant="utility"
+            icon="document"
+            onClick={() =>
+              downloadFile(
+                fileData?.filename,
+                fileData?.base64Content,
+                fileData?.fileType,
+              )
+            }
+          >
+            {'Sniðmát með villum'}
+          </Button>
+      </Box>
+     : null} 
     </>)
+}
+
+const downloadFile = (
+  name: string,
+  base64Content: string,
+  mimeType: string,
+) => {
+    const blob = base64ToBlob(base64Content, mimeType)
+    const url = URL.createObjectURL(blob)
+    const link = document.createElement('a')
+    link.href = url
+    link.download = name
+    document.body.appendChild(link)
+    link.click()
+    document.body.removeChild(link)
+    URL.revokeObjectURL(url)
+}
+
+const base64ToBlob = (base64: string, mimeType: string) => {
+    const buffer = Buffer.from(base64, 'base64')
+    return new Blob([buffer], { type: mimeType })
 }

@@ -36,43 +36,20 @@ export const multiUploadSection = buildSection({
             alertType: 'info',
             message: '1. Sæktu sniðmátið \n2. Gerðu viðeigandi breytingar á skjalinu \n3. Hleður upp skjalinu hér að neðan'
         }),
-        buildDownloadFileButtonField({
-          id: 'multiUploadDownloadFileButtonField',
-          getFileContent: () => generateExcelSheet('pass in data from external sources here'),
-          buttonTitle: 'Sniðmát'
-        }),
+        // buildDownloadFileButtonField({
+        //   id: 'multiUploadDownloadFileButtonField',
+        //   getFileContent: () => generateExcelSheet('pass in data from external sources here'),
+        //   buttonTitle: 'Sniðmát'
+        // }),
         buildCustomField({
           id: 'multiUploadUploadCatCategoryField',
+          doesNotRequireAnswer: false,
           component: 'UploadCarCategoryFile',
-          condition: (answers) => {
-            const rateToChangeTo = getValueViaPath<string>(
-              answers,
-              'categorySelectionRadio',
-            )
-
-            return rateToChangeTo ? rateToChangeTo === RateCategory.DAYRATE : false
-          }
         },
         {
           postParseAction: (records: CarCategoryRecord[]) => true,
-          rateCategory: RateCategory.DAYRATE
+          getFileContent: () => generateExcelSheet('pass in data from external sources here')
         }),
-        buildCustomField({
-          id: 'multiUploadUploadCatCategoryField',
-          component: 'UploadCarCategoryFile',
-          condition: (answers) => {
-            const rateToChangeTo = getValueViaPath<string>(
-              answers,
-              'categorySelectionRadio',
-            )
-
-            return rateToChangeTo ? rateToChangeTo === RateCategory.KMRATE : false
-          }
-        },
-        {
-          postParseAction: (records: CarCategoryRecord[]) => true,
-          rateCategory: RateCategory.KMRATE
-        })
       ],
     }),
   ],
