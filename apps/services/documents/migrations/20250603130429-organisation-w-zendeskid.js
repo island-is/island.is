@@ -17,7 +17,7 @@ module.exports = {
     )
   },
 
-  down: (queryInterface, Sequelize) => {
+  down: (queryInterface) => {
     return queryInterface.sequelize.transaction((t) =>
       Promise.all([
         queryInterface.removeColumn('organisation', 'zendesk_id', {
