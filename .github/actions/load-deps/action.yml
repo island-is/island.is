@@ -31,13 +31,20 @@ runs:
       run: |
         echo "generated files: ${{ env.GENERATED_FILES_PATH }}"
 
+    - name: Generate hash for generated files list
+      id: generate-files-hash
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        node ./scripts/ci/generate-files.mjs /dev/null --skip-codegen
+
     - name: Cache generated files
       uses: runs-on/cache@v4
       id: restore-codegen-cache
       with:
         path: |
           ${{ env.GENERATED_FILES_PATH }}
-        key: generated-files-${{ github.sha }}
+        key: generated-files-${{ hashFiles('generated_files_list.txt') }}
 
     - name: Prepare generated files
       if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
