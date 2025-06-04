@@ -1,0 +1,36 @@
+query CaseTable($input: CaseTableQueryInput!) {
+  caseTable(input: $input) {
+    rowCount
+    rows {
+      caseId
+      isMyCase
+      cells {
+        value {
+          __typename
+          ... on StringValue {
+            str
+          }
+          ... on StringGroupValue {
+            strList
+            hasCheckMark
+          }
+          ... on TagValue {
+            color
+            text
+          }
+          ... on TagPairValue {
+            firstTag {
+              color
+              text
+            }
+            secondTag {
+              color
+              text
+            }
+          }
+        }
+        sortValue
+      }
+    }
+  }
+}

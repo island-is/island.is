@@ -115,7 +115,6 @@ export class HealthDirectorateHealthService {
     const referrals = await this.referralsApiWithAuth(auth)
       .meReferralControllerGetReferralsV1({ locale: this.mapLocale(locale) })
       .catch(handle404)
-
     if (!referrals) {
       this.logger.debug('No referrals returned', {
         category: LOG_CATEGORY,

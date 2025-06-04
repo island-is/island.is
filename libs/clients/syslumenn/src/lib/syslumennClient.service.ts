@@ -83,6 +83,7 @@ import {
 } from './syslumennClient.utils'
 import type { ConfigType } from '@island.is/nest/config'
 import { IdsClientConfig } from '@island.is/nest/config'
+import { logger } from '@island.is/logging'
 
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 @Injectable()
@@ -716,6 +717,7 @@ export class SyslumennService {
     uploadDataName: string,
     uploadDataId?: string,
   ): Promise<DataUploadResponse> {
+    logger.info('AfgreidaSakavottord Starting uploadProcess')
     const { api } = await this.createApiWithAuth(auth)
 
     const payload = constructUploadDataObject(

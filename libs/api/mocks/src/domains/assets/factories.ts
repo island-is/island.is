@@ -8,7 +8,7 @@ import {
   PropertyDetail,
   PropertyOwnersModel,
   UnitsOfUseModel,
-} from '@island.is/api/schema'
+} from '../../types'
 
 const townArray = [
   'Reykjavík',

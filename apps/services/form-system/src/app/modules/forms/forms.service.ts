@@ -87,19 +87,11 @@ export class FormsService {
       user.authorization,
     )
 
-    console.log('organizationNationalId', nationalId)
-
     // the loader is not sending the nationalId
     if (nationalId === '0') {
       console.log('changing nationalId')
       nationalId = token.nationalId
     }
-
-    // const res = await this.cmsService.fetchData(GetOrganizationByNationalId, {
-    //   nationalId: nationalId,
-    //   locale: 'en',
-    // })
-    // console.log('res', res)
 
     let organization = await this.organizationModel.findOne({
       where: { nationalId: nationalId },
@@ -113,8 +105,12 @@ export class FormsService {
     }
 
     // If Admin is logged in for SÍ and chooses a different organization we don't want to change the name
+    // if Admin is logged in then the token.nationalId is always the nationalId of the admin organization
     if (nationalId === token.nationalId) {
-      organization.name = { is: token.name, en: organization.name.en }
+      organization.name = {
+        is: token.name ?? 'unknown',
+        en: organization.name.en,
+      }
       await organization.save()
     }
 

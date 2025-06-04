@@ -18,6 +18,7 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import { SignatureCollection } from './types'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { getCollectionTypeFromApplicationType } from '../shared/utils'
 
 @Injectable()
 export class SignatureListCreationService extends BaseTemplateApiService {
@@ -31,6 +32,9 @@ export class SignatureListCreationService extends BaseTemplateApiService {
 
   async createLists({ auth, application }: TemplateApiModuleActionProps) {
     const answers = application.answers as CreateListSchema
+    const collectionType = getCollectionTypeFromApplicationType(
+      application.typeId,
+    )
     const currentCollection: SignatureCollection = application.externalData
       .currentCollection?.data as SignatureCollection
     const collectionId = currentCollection.id
@@ -39,11 +43,11 @@ export class SignatureListCreationService extends BaseTemplateApiService {
       ...answers.applicant,
       nationalId: answers.applicant.nationalId.replace('-', ''),
     }
-    // Pretend to be doing stuff for a short while
     const slug = await this.signatureCollectionClientService.createLists(
       {
         collectionId,
         owner,
+        collectionType,
       },
       auth,
     )
@@ -64,9 +68,16 @@ export class SignatureListCreationService extends BaseTemplateApiService {
     return slug
   }
 
-  async ownerRequirements({ auth }: TemplateApiModuleActionProps) {
+  async ownerRequirements({ auth, application }: TemplateApiModuleActionProps) {
+    const collectionType = getCollectionTypeFromApplicationType(
+      application.typeId,
+    )
     const { canCreate, canCreateInfo } =
-      await this.signatureCollectionClientService.getSignee(auth)
+      await this.signatureCollectionClientService.getSignee(
+        auth,
+        collectionType,
+      )
+
     if (canCreate) {
       return true
     }
