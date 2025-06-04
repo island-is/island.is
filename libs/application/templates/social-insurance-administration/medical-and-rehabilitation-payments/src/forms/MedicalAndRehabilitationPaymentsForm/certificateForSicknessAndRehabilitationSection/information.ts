@@ -20,7 +20,7 @@ export const information = [
       medicalAndRehabilitationPaymentsFormMessage
         .certificateForSicknessAndRehabilitation
         .informationDateOfLastExamination,
-    value: format(new Date('2024-11-08'), 'dd.MM.yyy'),
+    value: format(new Date('2024-11-08'), 'dd.MM.yyyy'),
     width: 'half',
     marginBottom: 3,
   }),
@@ -28,7 +28,7 @@ export const information = [
     label:
       medicalAndRehabilitationPaymentsFormMessage
         .certificateForSicknessAndRehabilitation.informationDateOfCertificate,
-    value: format(new Date('2024-11-25'), 'dd.MM.yyy'),
+    value: format(new Date('2024-11-25'), 'dd.MM.yyyy'),
     width: 'half',
     marginBottom: 3,
   }),
