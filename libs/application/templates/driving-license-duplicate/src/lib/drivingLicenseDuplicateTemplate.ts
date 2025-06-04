@@ -8,7 +8,7 @@ import {
   DefaultEvents,
   defineTemplateApi,
   CurrentLicenseApi,
-  QualitySignatureApi,
+  AllPhotosFromThjodskraApi,
   QualityPhotoApi,
   NationalRegistryUserApi,
   UserProfileApi,
@@ -78,10 +78,11 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.DRIVING_LICENSE_DUPLICATE,
-  name: m.applicationTitle,
   codeOwner: CodeOwners.Juni,
   dataSchema: dataSchema,
   translationNamespaces: [configuration.translation],
+  institution: m.applicantInstitution,
+  name: m.applicationTitle,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
@@ -139,7 +140,7 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
                 }),
                 SyslumadurPaymentCatalogApi,
                 MockableSyslumadurPaymentCatalogApi,
-                QualitySignatureApi,
+                AllPhotosFromThjodskraApi,
                 QualityPhotoApi,
                 UserProfileApi,
                 DuplicateEligibilityApi,
