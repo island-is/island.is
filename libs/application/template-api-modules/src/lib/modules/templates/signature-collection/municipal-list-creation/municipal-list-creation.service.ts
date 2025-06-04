@@ -113,18 +113,19 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
 
   async submit({ application, auth }: TemplateApiModuleActionProps) {
     const answers = application.answers as CreateListSchema
-    const municipalCollection = application.externalData.municipalCollection
-      .data as Collection
+    const municipalCollection = (application.externalData.municipalCollection
+      .data as Array<Collection>)[0]
 
     const input = {
       collectionType: this.collectionType,
+      collectionId: municipalCollection.id,
       owner: {
         ...answers.applicant,
         nationalId: application?.applicantActors?.[0]
           ? application.applicant
           : answers.applicant.nationalId,
       },
-      collectionId: municipalCollection.id,
+      listName: answers?.list?.name ?? '',
     }
 
     const result = await this.signatureCollectionClientService
