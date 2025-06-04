@@ -55,6 +55,7 @@ const Nutrition = ({ data }: Props) => {
             nextAvailableRefund: rowItem.nextAllowedMonth ?? '',
             children: (
               <NestedInfoLines
+                backgroundColor="blue"
                 data={[
                   {
                     title: formatMessage(messages.availableTo),
