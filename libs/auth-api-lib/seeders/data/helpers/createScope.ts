@@ -71,7 +71,7 @@ const getScopeFields = (options: ScopeOptions): DbScope => ({
   show_in_discovery_document: true,
   required: false,
   emphasize: false,
-  allow_explicit_delegation_grant: false,
+  allow_explicit_delegation_grant: options.delegation?.custom === true,
   automatic_delegation_grant: false,
 })
 
