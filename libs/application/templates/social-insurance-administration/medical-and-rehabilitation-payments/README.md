@@ -1,7 +1,6 @@
-# medical-and-rehabilitation-payments
+# Medical and Rehabilitation Payments Application Template
 
-This template for an application was generated with the `nx generate-template medical-and-rehabilitation-payments` command.
-
+This template was generated via `nx generate-template medical-and-rehabilitation-payments` and provides a scaffold for submitting medical and rehabilitation payment requests to the Social Insurance Administration (TR).
 Write documentation here.
 
 - What gervimenn can use this template
