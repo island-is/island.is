@@ -1,5 +1,5 @@
 import { useQuery } from '@apollo/client'
-import { coreErrorMessages, formatText, YES } from '@island.is/application/core'
+import { coreErrorMessages } from '@island.is/application/core'
 import { siaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/graphql/queries'
 import { SiaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/types/schema'
 import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
@@ -14,6 +14,7 @@ import { useMemo } from 'react'
 import { NOT_APPLICABLE } from '../../../lib/constants'
 import {
   getApplicationAnswers,
+  getSickPayEndDateLabel,
   getYesNoNotApplicableTranslation,
 } from '../../../lib/medicalAndRehabilitationPaymentsUtils'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
@@ -46,17 +47,15 @@ export const UnionSickPay = ({
       editAction={() => goToScreen?.('unionSickPay')}
     >
       <Stack space={3}>
-        <GridRow rowGap={3}>
+        <GridRow>
           <GridColumn span={['9/12', '9/12', '9/12', '12/12']}>
             <DataValue
               label={formatMessage(
                 medicalAndRehabilitationPaymentsFormMessage.generalInformation
                   .unionSickPayTitle,
               )}
-              value={formatText(
+              value={formatMessage(
                 getYesNoNotApplicableTranslation(hasUtilizedUnionSickPayRights),
-                application,
-                formatMessage,
               )}
             />
           </GridColumn>
@@ -82,17 +81,9 @@ export const UnionSickPay = ({
               </GridColumn>
               <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
                 <DataValue
-                  label={
-                    hasUtilizedUnionSickPayRights === YES
-                      ? formatMessage(
-                          medicalAndRehabilitationPaymentsFormMessage.shared
-                            .sickPayDidEndDate,
-                        )
-                      : formatMessage(
-                          medicalAndRehabilitationPaymentsFormMessage.shared
-                            .sickPayDoesEndDate,
-                        )
-                  }
+                  label={formatMessage(
+                    getSickPayEndDateLabel(hasUtilizedUnionSickPayRights),
+                  )}
                   value={formatDate(unionSickPayEndDate)}
                 />
               </GridColumn>

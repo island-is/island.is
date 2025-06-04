@@ -357,3 +357,9 @@ export const getYesNoNotApplicableTranslation = (value: string) => {
   }
   return socialInsuranceAdministrationMessage.shared.no
 }
+
+export const getSickPayEndDateLabel = (hasUtilizedSickPayRights: YesOrNo) => {
+  return hasUtilizedSickPayRights === YES
+    ? medicalAndRehabilitationPaymentsFormMessage.shared.sickPayDidEndDate
+    : medicalAndRehabilitationPaymentsFormMessage.shared.sickPayDoesEndDate
+}
