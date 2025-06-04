@@ -74,7 +74,7 @@ export const Municipality = () => {
               <ActionDrawer
                 allowedActions={[
                   Actions.DownloadReports,
-                  Actions.CreateCollection
+                  Actions.CreateCollection,
                 ]}
               />
             }
@@ -117,9 +117,7 @@ export const Municipality = () => {
                         )
                       },
                     }}
-                    tag={{
-                      ...getTagConfig(list),
-                    }}
+                    tag={getTagConfig(list)}
                   />
                 ))}
               </Stack>

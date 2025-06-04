@@ -13,6 +13,7 @@ import {
 import { useEffect, useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import {
+  SignatureCollection,
   SignatureCollectionAreaSummaryReport,
 } from '@island.is/api/schema'
 import { m } from '../../lib/messages'
@@ -20,11 +21,12 @@ import { usePDF } from '@react-pdf/renderer'
 import MyPdfDocument from './MyPdfDocument'
 import { SignatureCollectionAreaSummaryReportDocument } from './MyPdfDocument/areaSummary.generated'
 import { useLazyQuery } from '@apollo/client'
-import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
-import { useLoaderData } from 'react-router-dom'
 
-export const DownloadReports = () => {
-  const { collection } = useLoaderData() as ListsLoaderReturn
+export const DownloadReports = ({
+  collection,
+}: {
+  collection: SignatureCollection
+}) => {
   const { formatMessage } = useLocale()
   const [modalDownloadReportsIsOpen, setModalDownloadReportsIsOpen] =
     useState(false)

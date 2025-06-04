@@ -115,9 +115,7 @@ export const Constituency = () => {
                         )
                       },
                     }}
-                    tag={{
-                      ...getTagConfig(list),
-                    }}
+                    tag={getTagConfig(list)}
                   />
                 ))}
               </Stack>

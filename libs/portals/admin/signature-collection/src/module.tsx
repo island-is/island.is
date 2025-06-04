@@ -59,7 +59,7 @@ export const signatureCollectionModule: PortalModule = {
       element: <MunicipalList />,
       loader: municipalListLoader(props),
     },
-    
+
     /* ------ Parliamentary ------ */
     {
       name: m.signatureListsTitle,

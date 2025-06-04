@@ -37,7 +37,6 @@ import EmptyState from '../../shared-components/emptyState'
 import ReviewCandidates from './reviewCandidates'
 import CompareLists from '../../shared-components/compareLists'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
-import CreateCollection from '../../shared-components/createCollection'
 import ActionCompleteCollectionProcessing from '../../shared-components/completeCollectionProcessing'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import ActionDrawer from '../../shared-components/compareLists/ActionDrawer'
@@ -260,9 +259,7 @@ const Lists = () => {
                           maxProgress: list.area.min,
                           withLabel: true,
                         }}
-                        tag={{
-                          ...getTagConfig(list),
-                        }}
+                        tag={getTagConfig(list)}
                         cta={{
                           label: formatMessage(m.viewList),
                           variant: 'text',

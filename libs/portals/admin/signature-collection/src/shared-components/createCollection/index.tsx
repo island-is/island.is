@@ -22,10 +22,17 @@ import { useCreateCollectionMutation } from './createCollection.generated'
 import { m } from '../../lib/messages'
 import { useLoaderData, useParams, useRevalidator } from 'react-router-dom'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
-import { SignatureCollectionCollectionType } from '@island.is/api/schema'
+import {
+  SignatureCollection,
+  SignatureCollectionCollectionType,
+} from '@island.is/api/schema'
 
-const CreateCollection = () => {
-  const { collection, allLists } = useLoaderData() as ListsLoaderReturn
+const CreateCollection = ({
+  collection,
+}: {
+  collection: SignatureCollection
+}) => {
+  const { allLists } = useLoaderData() as ListsLoaderReturn
   const { id, collectionType } = collection
 
   const params = useParams() as {
@@ -40,11 +47,14 @@ const CreateCollection = () => {
       : params.municipality
 
   // Find the area by name if we have an area name
-  const currentArea = collectionType === SignatureCollectionCollectionType.Parliamentary && areaName
-    ? collection.areas.find((area) => area.name === areaName)
-    : collectionType === SignatureCollectionCollectionType.LocalGovernmental && areaName
-    ? allLists.find(list => list.area.name === areaName)?.area || null
-    : null
+  const currentArea =
+    collectionType === SignatureCollectionCollectionType.Parliamentary &&
+    areaName
+      ? collection.areas.find((area) => area.name === areaName)
+      : collectionType ===
+          SignatureCollectionCollectionType.LocalGovernmental && areaName
+      ? allLists.find((list) => list.area.name === areaName)?.area || null
+      : null
 
   const { formatMessage } = useLocale()
   const { revalidate } = useRevalidator()

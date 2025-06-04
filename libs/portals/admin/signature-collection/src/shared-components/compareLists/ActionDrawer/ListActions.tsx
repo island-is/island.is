@@ -9,6 +9,7 @@ import RemoveCandidate from '../../../shared-components/removeCandidate'
 import { m } from '../../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import CreateCollection from '../../createCollection'
+import { ListsLoaderReturn } from '../../../loaders/AllLists.loader'
 
 export enum Actions {
   DownloadReports = 'downloadReports',
@@ -16,7 +17,7 @@ export enum Actions {
   LockList = 'lockList',
   ReviewComplete = 'reviewComplete',
   ExtendDeadline = 'extendDeadline',
-  RemoveCandidate = 'removeCandidate', 
+  RemoveCandidate = 'removeCandidate',
 }
 
 interface ListActionsProps {
@@ -28,6 +29,7 @@ const ListActions = ({ allowedActions }: ListActionsProps = {}) => {
     list: SignatureCollectionList
     listStatus: string
   }
+  const { collection } = useLoaderData() as ListsLoaderReturn
   const { formatMessage } = useLocale()
 
   return (
@@ -46,13 +48,13 @@ const ListActions = ({ allowedActions }: ListActionsProps = {}) => {
 
       <Stack space={8}>
         {allowedActions?.includes(Actions.DownloadReports) && (
-          <DownloadReports />
+          <DownloadReports collection={collection} />
         )}
         {allowedActions?.includes(Actions.CreateCollection) && (
-          <CreateCollection />
+          <CreateCollection collection={collection} />
         )}
         {allowedActions?.includes(Actions.LockList) && (
-          <ActionLockList list={list} />
+          <ActionLockList listId={list.id} />
         )}
         {allowedActions?.includes(Actions.ReviewComplete) && (
           <ActionReviewComplete listId={list?.id} listStatus={listStatus} />
