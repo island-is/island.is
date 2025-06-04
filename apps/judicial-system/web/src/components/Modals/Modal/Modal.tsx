@@ -1,4 +1,10 @@
-import { FC, isValidElement, PropsWithChildren, ReactNode } from 'react'
+import {
+  FC,
+  isValidElement,
+  PropsWithChildren,
+  ReactNode,
+  useEffect,
+} from 'react'
 import ReactDOM from 'react-dom'
 import FocusLock from 'react-focus-lock'
 import { motion } from 'motion/react'
@@ -132,6 +138,68 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
               </Text>
             </Box>
           )}
+        </motion.div>
+      </motion.div>
+    </FocusLock>
+  )
+}
+
+export const ModalContainer = ({ children, onClose }: ModalProps) => {
+  const modalVariants = {
+    open: {
+      translateY: 0,
+      opacity: 1,
+    },
+    closed: {
+      translateY: 50,
+      opacity: 0,
+      transition: { duration: 0.2 },
+    },
+  }
+
+  useEffect(() => {
+    const handleKeyDown = (e: { key: string }) => {
+      if (e.key === 'Escape') {
+        onClose && onClose()
+      }
+    }
+
+    // Attach the event listener
+    document.addEventListener('keydown', handleKeyDown)
+
+    // Cleanup the event listener on component unmount
+    return () => {
+      document.removeEventListener('keydown', handleKeyDown)
+    }
+  }, [onClose])
+
+  return (
+    <FocusLock autoFocus={false}>
+      <motion.div
+        key="modal"
+        className={styles.container}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        role="dialog"
+        aria-modal="true"
+        data-testid="modal"
+        onClick={() => {
+          onClose && onClose()
+        }}
+      >
+        <motion.div
+          className={styles.modalContainerBare}
+          initial="closed"
+          animate="open"
+          exit="closed"
+          variants={modalVariants}
+          onClick={(e) => {
+            // Prevent click events from bubbling up to the container
+            e.stopPropagation()
+          }}
+        >
+          {children}
         </motion.div>
       </motion.div>
     </FocusLock>

@@ -26,3 +26,8 @@ export const dropdownItem = style({
   borderTop: `2px solid ${theme.color.blue200}`,
   paddingTop: `${theme.spacing[3]}px`,
 })
+
+export const searchButton = style({
+  minWidth: '134px',
+  padding: `10px ${theme.spacing[2]}px`,
+})
