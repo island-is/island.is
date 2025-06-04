@@ -22,7 +22,7 @@ const prosecutorRequestCasesActiveColumnKeys: CaseTableColumnKey[] = [
   'defendants',
   'caseType',
   'caseSentToCourtDate',
-  'appealCaseState',
+  'requestCaseState',
   'validFromTo',
 ]
 
@@ -38,7 +38,7 @@ const prosecutorRequestCasesAppealedColumnKeys: CaseTableColumnKey[] = [
   'defendants',
   'caseType',
   'caseSentToCourtDate',
-  'appealState',
+  'requestCaseState',
   'appealCaseState',
   'validFromTo',
 ]
@@ -55,7 +55,7 @@ const prosecutorRequestCasesCompletedColumnKeys: CaseTableColumnKey[] = [
   'defendants',
   'caseType',
   'caseSentToCourtDate',
-  'appealState',
+  'requestCaseState',
   'appealCaseState',
   'validFromTo',
 ]

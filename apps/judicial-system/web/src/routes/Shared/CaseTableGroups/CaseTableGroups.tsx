@@ -59,7 +59,7 @@ const CaseTableGroups: FC = () => {
               <SectionHeading title={'Stofna mál'} marginBottom={1} />
               <Text marginBottom={3}>
                 Ef ekki er hægt að stofna mál í kerfi lögreglunnar er hægt að
-                stofna nýtt mál hér
+                stofna nýtt mál hér.
               </Text>
               <CreateCaseButton user={user} />
             </>
