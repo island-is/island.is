@@ -18,7 +18,6 @@ import { signatureCollectionNavigation } from '../../lib/navigation'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import { SignatureCollectionPaths } from '../../lib/paths'
-import StartAreaCollection from './StartAreaCollection'
 import { SignatureCollectionList } from '@island.is/api/schema'
 import { useState } from 'react'
 
@@ -40,14 +39,6 @@ const AllMunicipalities = () => {
 
     if (!municipalityMap.has(key)) {
       municipalityMap.set(key, list)
-    } else if (list.collectors?.length) {
-      const existing = municipalityMap.get(key)
-      if (existing) {
-        existing.collectors = [
-          ...(existing.collectors || []),
-          ...list.collectors,
-        ]
-      }
     }
   })
 
@@ -110,7 +101,9 @@ const AllMunicipalities = () => {
           </Box>
           <Box marginBottom={3} display="flex" justifyContent="flexEnd">
             <Text variant="eyebrow">
-              {formatMessage(m.totalListResults) + ': ' + municipalityLists.length}
+              {formatMessage(m.totalListResults) +
+                ': ' +
+                municipalityLists.length}
             </Text>
           </Box>
           <Stack space={3}>
@@ -137,11 +130,12 @@ const AllMunicipalities = () => {
                       )
                     },
                   }}
+                  /* Todo: this is still a discussion
                   tag={{
                     label: 'Tag',
                     variant: 'blue',
                     renderTag: () => <StartAreaCollection />,
-                  }}
+                  }}*/
                 />
               )
             })}

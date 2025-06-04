@@ -25,16 +25,32 @@ import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 
 const CreateCollection = () => {
-  const { collection } = useLoaderData() as ListsLoaderReturn
+  const { collection, allLists } = useLoaderData() as ListsLoaderReturn
   const { id, collectionType } = collection
+
+  const params = useParams() as {
+    constituencyName?: string
+    municipality?: string
+  }
+
+  // Get the right area name based on collection type
+  const areaName =
+    collectionType === SignatureCollectionCollectionType.Parliamentary
+      ? params.constituencyName
+      : params.municipality
+
+  // Find the area by name if we have an area name
+  const currentArea = collectionType === SignatureCollectionCollectionType.Parliamentary && areaName
+    ? collection.areas.find((area) => area.name === areaName)
+    : collectionType === SignatureCollectionCollectionType.LocalGovernmental && areaName
+    ? allLists.find(list => list.area.name === areaName)?.area || null
+    : null
 
   const { formatMessage } = useLocale()
   const { revalidate } = useRevalidator()
 
   const { control } = useForm()
-  const { constituencyName } = useParams() as {
-    constituencyName: string | undefined
-  }
+
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const [nationalIdInput, setNationalIdInput] = useState('')
   const [nationalIdNotFound, setNationalIdNotFound] = useState(false)
@@ -55,8 +71,7 @@ const CreateCollection = () => {
           phone: '',
           email: '',
         },
-        // Todo: update areas
-        areas: null,
+        areas: currentArea?.id ? [{ areaId: currentArea.id }] : [],
       },
     },
     onCompleted: () => {
@@ -180,23 +195,23 @@ const CreateCollection = () => {
                 readOnly
                 value={name}
               />
-              {collectionType ===
-                SignatureCollectionCollectionType.Parliamentary && (
+              {currentArea?.id && (
                 <Input
                   name="candidateArea"
-                  label={formatMessage(m.signatureListsConstituencyTitle)}
+                  label={
+                    collectionType ===
+                    SignatureCollectionCollectionType.Parliamentary
+                      ? formatMessage(m.signatureListsConstituencyTitle)
+                      : formatMessage(m.municipality)
+                  }
                   readOnly
-                  value={constituencyName}
+                  value={areaName}
                 />
               )}
             </Stack>
             {!canCreate && (
               <Box marginTop={3}>
-                <AlertMessage
-                  type="error"
-                  title={''}
-                  message={canCreateErrorReason}
-                />
+                <AlertMessage type="error" message={canCreateErrorReason} />
               </Box>
             )}
             <Box display="flex" justifyContent="center" marginY={5}>

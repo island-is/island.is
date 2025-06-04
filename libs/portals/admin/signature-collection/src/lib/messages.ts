@@ -163,6 +163,11 @@ export const m = defineMessages({
     defaultMessage: 'Skoða kjördæmi',
     description: '',
   },
+  municipality: {
+    id: 'admin-portal.signature-collection:municipality',
+    defaultMessage: 'Sveitarfélag',
+    description: '',
+  },
   viewMunicipality: {
     id: 'admin-portal.signature-collection:viewMunicipality',
     defaultMessage: 'Skoða sveitarfélag',
