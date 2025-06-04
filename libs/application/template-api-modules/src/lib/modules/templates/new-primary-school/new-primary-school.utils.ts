@@ -29,7 +29,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     reasonForApplicationPostalCode,
     siblings,
     languageEnvironment,
-    selectedLanguages,
+    //selectedLanguages,
     preferredLanguage,
     signLanguage,
     guardianRequiresInterpreter,
