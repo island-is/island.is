@@ -10,8 +10,10 @@ import {
 import { Application } from '@island.is/application/types'
 import {
   AgentDto,
+  AgentDtoTypeEnum,
   FormDto,
   FormDtoTypeEnum,
+  LanguageDtoLanguageEnvironmentEnum,
 } from '@island.is/clients/mms/frigg'
 
 export const transformApplicationToNewPrimarySchoolDTO = (
@@ -58,6 +60,8 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     ...guardians.map((guardian) => ({
       name: guardian.fullName,
       nationalId: guardian.nationalId,
+      nationality: '', //TODO
+      type: AgentDtoTypeEnum.Guardian, //TODO
       domicile: {
         address: guardian.address.streetAddress,
         postCode: guardian.address.postalCode,
@@ -69,6 +73,8 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     ...contacts.map((contact) => ({
       name: contact.fullName,
       nationalId: contact.nationalId,
+      nationality: '', //TODO
+      type: AgentDtoTypeEnum.Guardian, //TODO
       phone: contact.phoneNumber,
       role: contact.relation,
     })),
@@ -77,6 +83,8 @@ export const transformApplicationToNewPrimarySchoolDTO = (
       ? siblings.map((sibling) => ({
           name: sibling.fullName,
           nationalId: sibling.nationalId,
+          nationality: '', //TODO
+          type: AgentDtoTypeEnum.Guardian, //TODO
           role: 'sibling',
         }))
       : []),
@@ -87,6 +95,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     user: {
       name: childInfo.name,
       nationalId: childInfo.nationalId,
+      nationality: '', //TODO
       ...(childInfo.usePronounAndPreferredName?.includes(YES)
         ? {
             preferredName: childInfo.preferredName,
@@ -109,8 +118,8 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     },
     agents,
     registration: {
-      defaultOrg: primaryOrgId,
-      selectedOrg: selectedSchool,
+      defaultOrganizationId: primaryOrgId,
+      selectedOrganizationId: selectedSchool,
       requestingMeeting: requestingMeeting === YES,
       ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
         ? {
@@ -178,22 +187,23 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         : {}),
     },
     language: {
-      languageEnvironment,
+      languageEnvironment: LanguageDtoLanguageEnvironmentEnum.OnlyIcelandic, //TODO
       signLanguage: signLanguage === YES,
       ...(languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
         ? {
             preferredLanguage,
             guardianRequiresInterpreter: guardianRequiresInterpreter === YES,
-            firstLanguage: selectedLanguages[0]?.code,
-            secondLanguage: selectedLanguages[1]?.code,
-            thirdLanguage: selectedLanguages[2]?.code,
-            fourthLanguage: selectedLanguages[3]?.code,
+            // firstLanguage: selectedLanguages[0]?.code,//TODO
+            // secondLanguage: selectedLanguages[1]?.code,//TODO
+            // thirdLanguage: selectedLanguages[2]?.code,//TODO
+            // fourthLanguage: selectedLanguages[3]?.code,//TODO
           }
         : {
             preferredLanguage: 'is',
             guardianRequiresInterpreter: false,
-            firstLanguage: 'is',
+            // firstLanguage: 'is', //TODO
           }),
+      languages: [], //TODO
     },
   }
 
