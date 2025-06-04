@@ -4,6 +4,7 @@ import {
   MedmaelalistarApi,
   KosningApi,
   MedmaelasofnunApi,
+  MedmaelalistiDTO,
 } from '../../gen/fetch'
 import { CanCreateInput, GetListInput } from './signature-collection.types'
 import {
@@ -48,14 +49,16 @@ export class SignatureCollectionSharedClientService {
         }),
     )
 
-    const orderedCollections = (collections
-      .flatMap((_) => _)
-      .map(mapCollection)
-      .filter(
-        (collection) =>
-          collection?.isSignatureCollection &&
-          collection.startTime < new Date(),
-      ) as Collection[]).sort((a, b) => (a.endTime < b.endTime ? 1 : -1))
+    const orderedCollections = (
+      collections
+        .flatMap((_) => _)
+        .map(mapCollection)
+        .filter(
+          (collection) =>
+            collection?.isSignatureCollection &&
+            collection.startTime < new Date(),
+        ) as Collection[]
+    ).sort((a, b) => (a.endTime < b.endTime ? 1 : -1))
 
     if (!orderedCollections.length) {
       throw new Error('No current collection for selected type')
@@ -70,7 +73,6 @@ export class SignatureCollectionSharedClientService {
       hasSofnun: true,
       onlyActive: true,
     })
-
     const collections = await Promise.all(
       baseRes
         .filter((election) => Boolean(election.id))
@@ -87,14 +89,45 @@ export class SignatureCollectionSharedClientService {
   }
 
   async getLists(
-    { collectionId, areaId, candidateId, onlyActive }: GetListInput,
-    api: ListApi,
+    {
+      collectionId,
+      areaId,
+      candidateId,
+      onlyActive,
+      collectionType,
+    }: GetListInput,
+    listApi: ListApi,
+    electionApi: ElectionApi,
   ): Promise<List[]> {
-    const lists = await api.medmaelalistarGet({
-      sofnunID: collectionId ? parseInt(collectionId) : undefined,
-      svaediID: areaId ? parseInt(areaId) : undefined,
-      frambodID: candidateId ? parseInt(candidateId) : undefined,
-    })
+    let lists: Array<MedmaelalistiDTO>
+    if (collectionType && collectionType === CollectionType.LocalGovernmental) {
+      const electionIds = (
+        await electionApi.kosningGet({
+          onlyActive: true,
+          hasSofnun: true,
+        })
+      )
+        .filter(
+          (election) =>
+            getCollectionTypeFromNumber(election.kosningTegundNr) ===
+            CollectionType.LocalGovernmental,
+        )
+        .map((election) => election.id)
+      lists = []
+
+      for (const electionId of electionIds) {
+        const electionLists = await listApi.medmaelalistarGet({
+          kosningID: electionId,
+        })
+        lists.push(...electionLists)
+      }
+    } else {
+      lists = await listApi.medmaelalistarGet({
+        sofnunID: collectionId ? parseInt(collectionId) : undefined,
+        svaediID: areaId ? parseInt(areaId) : undefined,
+        frambodID: candidateId ? parseInt(candidateId) : undefined,
+      })
+    }
 
     const listsMapped = lists.map((list) => mapList(list))
     return onlyActive ? listsMapped.filter((list) => list.active) : listsMapped
