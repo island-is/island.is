@@ -1945,7 +1945,15 @@ export const m = defineMessages({
   showResults: {
     id: 'service.portal:show-results',
     defaultMessage: 'Sýna niðurstöður',
+},
+  expand: {
+    id: 'service.portal:expand',
+    defaultMessage: 'Útvíkka',
   },
+  collapse: {
+    id: 'service.portal:collapse',
+    defaultMessage: 'Fella saman',
+  }
 })
 
 export const searchTagsMessages = defineMessages({
