@@ -7,8 +7,9 @@ interface Props {
   data: {
     title: string
     value?: string | number | React.ReactElement
-    type?: 'text' | 'link'
+    type?: 'text' | 'link' | 'action'
     href?: string
+    action?: () => void
   }[]
   width?: 'full' | 'half'
   backgroundColor?: 'blue' | 'white'

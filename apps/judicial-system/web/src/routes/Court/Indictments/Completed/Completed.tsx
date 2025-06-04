@@ -180,6 +180,8 @@ const Completed: FC = () => {
     {
       label: 'Upplýsingar um áfrýjun til Landsréttar og áfrýjunarfresti',
       value: InformationForDefendant.INFORMATION_ON_APPEAL_TO_COURT_OF_APPEALS,
+      tooltip:
+        'Einstaklingur getur áfrýjað dómi til Landsréttar ef viðkomandi hefur verið dæmdur í fangelsi eða til að greiða sekt eða sæta upptöku eigna sem nær áfrýjunarfjárhæð í einkamáli, kr. 1.420.488.',
     },
     {
       label: 'Þýðing skilorðsbundinnar refsingar og skilorðsrofs',
@@ -427,7 +429,7 @@ const Completed: FC = () => {
                           dómfellda um við birtingu dómsins.
                         </Text>
                         <BlueBox>
-                          {defendantCheckboxes.map((checkbox) => (
+                          {defendantCheckboxes.map((checkbox, indexChecbox) => (
                             <React.Fragment key={checkbox.value}>
                               <Checkbox
                                 label={checkbox.label}
@@ -436,6 +438,7 @@ const Completed: FC = () => {
                                 checked={defendant?.informationForDefendant?.includes(
                                   checkbox.value,
                                 )}
+                                tooltip={checkbox?.tooltip}
                                 large
                                 filled
                                 onChange={(target) => {
@@ -461,7 +464,10 @@ const Completed: FC = () => {
                                   )
                                 }}
                               />
-                              <Box marginBottom={marginSpaceBetweenButtons} />
+                              {defendantCheckboxes.length - 1 !==
+                                indexChecbox && (
+                                <Box marginBottom={marginSpaceBetweenButtons} />
+                              )}
                             </React.Fragment>
                           ))}
                         </BlueBox>
@@ -474,7 +480,7 @@ const Completed: FC = () => {
           </Box>
         )}
         {features?.includes(Feature.SERVICE_PORTAL) && (
-          <Box marginBottom={5}>
+          <Box>
             <SectionHeading title={'Dómsorð'} marginBottom={2} heading="h4" />
             <RulingInput
               workingCase={workingCase}
@@ -482,6 +488,7 @@ const Completed: FC = () => {
               rows={8}
               label="Dómsorð"
               placeholder="Hvert er dómsorðið?"
+              required
             />
           </Box>
         )}

@@ -24,7 +24,10 @@ import {
   PdfButton,
   RenderFiles,
 } from '@island.is/judicial-system-web/src/components'
-import { useSentToPrisonAdminDate } from '@island.is/judicial-system-web/src/components/IndictmentCaseFilesList/IndictmentCaseFilesList'
+import {
+  getIdAndTitleForPdfButtonForRulingSentToPrisonPdf,
+  useSentToPrisonAdminDate,
+} from '@island.is/judicial-system-web/src/components/IndictmentCaseFilesList/IndictmentCaseFilesList'
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
@@ -76,11 +79,15 @@ const IndictmentOverview = () => {
   )
 
   const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
-  const isCompletedWithRuling =
-    workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+
+  const { pdfTitle, pdfElementId, isCompletedWithRulingOrFine } =
+    getIdAndTitleForPdfButtonForRulingSentToPrisonPdf(
+      workingCase.indictmentRulingDecision ?? undefined,
+      sentToPrisonAdminDate,
+    )
 
   const displaySentToPrisonAdminFiles =
-    (isCompletedWithRuling && sentToPrisonAdminDate) ||
+    (isCompletedWithRulingOrFine && sentToPrisonAdminDate) ||
     isNonEmptyArray(sentToPrisonAdminFiles)
 
   const hasPunishmentType = (punishmentType: PunishmentType) =>
@@ -210,14 +217,13 @@ const IndictmentOverview = () => {
                 caseFiles={sentToPrisonAdminFiles}
               />
             )}
-            {isCompletedWithRuling && sentToPrisonAdminDate && (
+
+            {isCompletedWithRulingOrFine && sentToPrisonAdminDate && (
               <PdfButton
                 caseId={workingCase.id}
-                title={`Dómur til fullnustu ${formatDate(
-                  sentToPrisonAdminDate,
-                )}.pdf`}
+                title={pdfTitle}
                 pdfType="rulingSentToPrisonAdmin"
-                elementId={'Dómur til fullnustu'}
+                elementId={pdfElementId}
                 renderAs="row"
               />
             )}
