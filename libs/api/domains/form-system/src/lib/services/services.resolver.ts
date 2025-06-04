@@ -1,6 +1,6 @@
 import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
-import { Mutation, Args, Resolver, Query } from '@nestjs/graphql'
+import { Mutation, Args, Resolver } from '@nestjs/graphql'
 import {
   CurrentUser,
   IdsUserGuard,
