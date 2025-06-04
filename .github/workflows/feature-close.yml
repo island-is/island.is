@@ -30,7 +30,7 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
         with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
+          
 
       - name: Generate feature name
         id: git-feature-name

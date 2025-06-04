@@ -1,0 +1,75 @@
+name: Test Cache
+
+on:
+  workflow_dispatch:
+
+env:
+  
+  FOO: bar
+
+jobs:
+  cache-test:
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        shell: bash
+
+    steps:
+      - name: Checkout repo
+        uses: actions/checkout@v4
+
+      - name: Print GitHub Actor
+        run: echo "Actor is ${{ github.actor }}"
+
+      - name: Generate test file
+        run: |
+          mkdir -p .test-cache
+          echo "hello at $(date)" > .test-cache/hello.txt
+
+      ######################################################
+      # Using runs-on/cache (fallback to actions/cache mode)
+      ######################################################
+      - name: Restore cache (runs-on/cache)
+        id: runs-on-restore
+        uses: runs-on/cache/restore@v4
+        with:
+          path: .test-cache
+          key: test-cache-${{ runner.os }}-runs-on
+        # env:
+        #   RUNS_ON_CACHE_USE_LOCAL: false
+
+      - name: Save cache (runs-on/cache)
+        if: steps.runs-on-restore.outputs.cache-hit != 'true'
+        uses: runs-on/cache/save@v4
+        with:
+          path: .test-cache
+          key: test-cache-${{ runner.os }}-runs-on
+        # env:
+        #   RUNS_ON_CACHE_USE_LOCAL: false
+
+      - name: Print cache result (runs-on/cache)
+        run: |
+          echo "Cache hit: ${{ steps.runs-on-restore.outputs.cache-hit }}"
+          cat .test-cache/hello.txt || echo "No cache content"
+
+      ######################################################
+      # Using actions/cache directly
+      ######################################################
+      - name: Restore cache (actions/cache)
+        id: actions-restore
+        uses: actions/cache@v4
+        with:
+          path: .test-cache
+          key: test-cache-${{ runner.os }}-actions
+
+      - name: Save cache (actions/cache)
+        if: steps.actions-restore.outputs.cache-hit != 'true'
+        uses: actions/cache/save@v4
+        with:
+          path: .test-cache
+          key: test-cache-${{ runner.os }}-actions
+
+      - name: Print cache result (actions/cache)
+        run: |
+          echo "Cache hit: ${{ steps.actions-restore.outputs.cache-hit }}"
+          cat .test-cache/hello.txt || echo "No cache content"

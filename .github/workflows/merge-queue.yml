@@ -32,7 +32,6 @@ env:
   NX_MAX_PARALLEL: '4'
   NODE_IMAGE_VERSION: 20
   S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-  RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
   AWS_REGION: eu-west-1
   AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
   SERVERSIDE_FEATURES_ON: ''
@@ -99,7 +98,6 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
         with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
       - name: Set id for matrix
         run: |
           node ./scripts/ci/docker/create-id.mjs
@@ -205,7 +203,6 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
         with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -246,7 +243,6 @@ jobs:
         uses: ./.github/actions/setup-yarn
         if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
         with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps

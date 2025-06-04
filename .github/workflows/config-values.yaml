@@ -63,7 +63,6 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
         with:
-          RUNS_ON_S3_BUCKET_CACHE: true
 
       - name: Install yarn in infra
         working-directory: infra
@@ -96,7 +95,6 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
         with:
-          RUNS_ON_S3_BUCKET_CACHE: true
 
       - name: Install yarn in infra
         working-directory: infra
