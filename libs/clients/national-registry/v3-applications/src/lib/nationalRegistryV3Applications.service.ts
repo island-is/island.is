@@ -53,19 +53,11 @@ export class NationalRegistryV3ApplicationsClientService {
     nationalId: string,
     auth: User,
   ): Promise<IndividualDto | null> {
-    console.log('--------------------------------')
-    console.log('getIndividual nationalId', nationalId)
-    // console.dir(auth, { depth: null })
-    console.log('--------------------------------')
     const res = await this.einstaklingarApiWithAuth(
       auth,
     ).einstaklingarKennitalaGet({
       kennitala: nationalId,
     })
-    console.log('--------------------------------')
-    console.log('getIndividual')
-    console.dir(formatIndividualDto(res), { depth: null })
-    console.log('--------------------------------')
 
     return formatIndividualDto(res)
   }
@@ -76,11 +68,6 @@ export class NationalRegistryV3ApplicationsClientService {
     ).einstaklingarKennitalaForsjaUndirGet({
       kennitala: user.nationalId,
     })
-
-    console.log('--------------------------------')
-    console.log('getCustodyChildren res')
-    console.dir(res, { depth: null })
-    console.log('--------------------------------')
 
     return (
       res.forsjaBornList?.map((x) => x.barnKt || '')?.filter((x) => !!x) || []
@@ -208,25 +195,11 @@ export class NationalRegistryV3ApplicationsClientService {
     nationalId: string,
     auth: User,
   ): Promise<ResidenceEntryDto[] | null> {
-    console.log('--------------------------------')
-    console.log('getResidenceHistory nationalId', nationalId)
-    console.dir(auth, { depth: null })
-    console.log('--------------------------------')
     const res = await this.einstaklingarApiWithAuth(
       auth,
     ).einstaklingarKennitalaBusetusagaGet({
       kennitala: nationalId,
     })
-
-    console.log('--------------------------------')
-    console.log('getResidenceHistory')
-    console.dir(
-      res
-        .map((x) => formatResidenceEntryDto(x))
-        .filter((x): x is ResidenceEntryDto => x !== null),
-      { depth: null },
-    )
-    console.log('--------------------------------')
 
     return res
       .map((x) => formatResidenceEntryDto(x))
@@ -247,10 +220,6 @@ export class NationalRegistryV3ApplicationsClientService {
     nationalId: string,
     auth: User,
   ): Promise<BirthplaceDto | null> {
-    console.log('--------------------------------')
-    console.log('getBirthplace nationalId', nationalId)
-    console.dir(auth, { depth: null })
-    console.log('--------------------------------')
     const res = await this.einstaklingarApiWithAuth(
       auth,
     ).einstaklingarKennitalaFaedingarstadurGet({

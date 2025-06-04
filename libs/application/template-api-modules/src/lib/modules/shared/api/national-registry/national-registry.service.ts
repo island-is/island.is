@@ -337,18 +337,9 @@ export class NationalRegistryService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps<ChildrenCustodyInformationParameters>): Promise<
     ApplicantChildCustodyInformation[]
   > {
-    console.log('--------------------------------')
-    console.log('childrenCustodyInformation params')
-    console.dir(params, { depth: null })
-    console.log('--------------------------------')
     const parentUser = auth
     const childrenNationalIds =
       await this.nationalRegistryV3Api.getCustodyChildren(parentUser)
-
-    console.log('--------------------------------')
-    console.log('childrenCustodyInformation childrenNationalIds')
-    console.dir(childrenNationalIds, { depth: null })
-    console.log('--------------------------------')
 
     if (params?.validateHasChildren) {
       if (!childrenNationalIds || childrenNationalIds.length === 0) {
@@ -443,10 +434,6 @@ export class NationalRegistryService extends BaseTemplateApiService {
 
     return filteredChildren
   }
-
-  // async getMyRealEstates({ auth }: TemplateApiModuleActionProps) {
-  //   return await this.assetsXRoadService.getRealEstatesWithDetail(auth, '1')
-  // }
 
   async getSpouse({
     auth,
@@ -586,21 +573,11 @@ export class NationalRegistryService extends BaseTemplateApiService {
     const cohabitants = await this.getCohabitants(props)
     const auth = props.auth
 
-    console.log('--------------------------------')
-    console.log('getCohabitantsDetailed cohabitants')
-    console.dir(cohabitants, { depth: null })
-    console.log('--------------------------------')
-
     const detailedCohabitants =
       await this.nationalRegistryV3Api.getCohabitantsDetailed(
         auth.nationalId,
         auth,
       )
-
-    console.log('--------------------------------')
-    console.log('getCohabitantsDetailed detailedCohabitants')
-    console.dir(detailedCohabitants, { depth: null })
-    console.log('--------------------------------')
 
     if (!cohabitants) {
       throw new TemplateApiError(
