@@ -65,9 +65,9 @@ const ListManagers = () => {
             </Row>
           </Head>
           <Body>
-            {list.collectors?.map((collector) => {
+            {list.collectors?.map((collector, key) => {
               return (
-                <Row>
+                <Row key={key}>
                   <Data>{formatNationalId(collector.nationalId)}</Data>
                   <Data>{collector.name}</Data>
                 </Row>
