@@ -420,7 +420,10 @@ const generateCaseNumberSortValue = (
   policeCaseNumber: string,
   user: TUser,
 ): string | undefined => {
-  if (isProsecutionUser(user) || isDistrictCourtUser(user)) {
+  if (isProsecutionUser(user)) {
+    return getPoliceCaseNumberSortValue(policeCaseNumber)
+  }
+  if (isDistrictCourtUser(user)) {
     return `${getCourtCaseNumberSortValue(
       courtCaseNumber,
     )}${getPoliceCaseNumberSortValue(policeCaseNumber)}`
