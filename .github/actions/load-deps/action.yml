@@ -58,4 +58,6 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
+        echo "::group::Extract generated files"
         tar -xzvf ${{ env.GENERATED_FILES_PATH }}
+        echo "::endgroup::"
