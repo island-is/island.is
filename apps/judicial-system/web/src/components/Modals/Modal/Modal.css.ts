@@ -33,6 +33,16 @@ export const modalContainer = style({
   },
 })
 
+export const modalContainerBare = style({
+  position: 'relative',
+  background: theme.color.white,
+  maxWidth: '90vw',
+  maxHeight: '90vh',
+  overflowY: 'auto',
+  borderRadius: theme.border.radius.standard,
+  zIndex: 100,
+})
+
 export const closeButton = style({
   padding: theme.spacing[4],
 })
