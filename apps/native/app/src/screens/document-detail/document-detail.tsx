@@ -1,13 +1,7 @@
 import { useApolloClient, useFragment_experimental } from '@apollo/client'
 import React, { useEffect, useRef, useState } from 'react'
-import { FormattedDate, useIntl } from 'react-intl'
-import {
-  Alert as RNAlert,
-  Animated,
-  Platform,
-  StyleSheet,
-  View,
-} from 'react-native'
+import { useIntl } from 'react-intl'
+import { Animated, Alert as RNAlert, StyleSheet, View } from 'react-native'
 import {
   Navigation,
   NavigationFunctionComponent,
@@ -17,28 +11,39 @@ import {
   useNavigationButtonPress,
   useNavigationComponentDidAppear,
 } from 'react-native-navigation-hooks/dist'
-import Pdf, { Source } from 'react-native-pdf'
+import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import WebView from 'react-native-webview'
 import styled, { useTheme } from 'styled-components/native'
 
-import { Alert, blue400, dynamicColor, Header, Loader, Problem } from '../../ui'
 import {
   DocumentV2,
   DocumentV2Action,
   ListDocumentFragmentDoc,
-  useGetDocumentQuery,
   useDocumentConfirmActionsLazyQuery,
+  useGetDocumentQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { useLocale } from '../../hooks/use-locale'
+import { navigateTo } from '../../lib/deep-linking'
 import { toggleAction } from '../../lib/post-mail-action'
+import { useBrowser } from '../../lib/use-browser'
 import { authStore } from '../../stores/auth-store'
 import { useOrganizationsStore } from '../../stores/organizations-store'
+import {
+  Alert,
+  Button,
+  Header,
+  Loader,
+  Problem,
+  blue400,
+  dynamicColor,
+} from '../../ui'
 import { ButtonRegistry } from '../../utils/component-registry'
+import { ListParams } from '../inbox/inbox'
 import { getButtonsForActions } from './utils/get-buttons-for-actions'
-import { useBrowser } from '../../lib/use-browser'
 import { shareFile } from './utils/share-file'
+import { PdfViewer } from '../../components/pdf-viewer/pdf-viewer'
 
 const Host = styled.SafeAreaView`
   margin-left: ${({ theme }) => theme.spacing[2]}px;
@@ -46,11 +51,8 @@ const Host = styled.SafeAreaView`
 `
 
 const Border = styled.View`
-  height: 1px;
-  background-color: ${dynamicColor((props) => ({
-    dark: props.theme.shades.dark.shade200,
-    light: props.theme.color.blue100,
-  }))};
+  border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
+  border-bottom-color: ${({ theme }) => theme.color.blue200};
 `
 
 const ActionsWrapper = styled.View`
@@ -69,6 +71,29 @@ const DocumentWrapper = styled.View<{ hasMarginTop?: boolean }>`
   margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
   padding-top: ${({ theme }) => theme.spacing[2]}px;
 `
+
+const FloatingTwoWayFooter = styled(SafeAreaView)`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  background-color: ${({ theme }) => theme.color.white};
+
+  /* iOS shadow */
+  shadow-color: ${({ theme }) => theme.color.blue400};
+  shadow-offset: 0px -4px;
+  shadow-opacity: 0.08;
+  shadow-radius: 12px;
+
+  /* Android shadow */
+  elevation: 1;
+`
+
+const FloatingTwoWayContent = styled.View`
+  padding-horizontal: ${({ theme }) => theme.spacing.p4}px;
+  padding-top: ${({ theme }) => theme.spacing.p2}px;
+`
+
 const regexForBr = /<br\s*\/>/gi
 
 // Styles for html documents
@@ -160,7 +185,7 @@ function getRightButtonsForDocumentDetail({
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
-    (theme, intl) => ({
+    (_theme, intl) => ({
       topBar: {
         title: {
           text: intl.formatMessage({ id: 'documentDetail.screenTitle' }),
@@ -179,63 +204,15 @@ const { useNavigationOptions, getNavigationOptions } =
     },
   )
 
-interface PdfViewerProps {
-  url: string
-  body: string
-  onLoaded: (path: string) => void
-  onError: (err: Error) => void
-}
-
-const PdfViewer = React.memo(
-  ({ url, body, onLoaded, onError }: PdfViewerProps) => {
-    const extraProps = {
-      activityIndicatorProps: {
-        color: '#0061ff',
-        progressTintColor: '#ccdfff',
-      },
-    }
-
-    return (
-      <Pdf
-        source={
-          {
-            uri: url,
-            headers: {
-              'content-type': 'application/x-www-form-urlencoded',
-            },
-            body,
-            method: 'POST',
-          } as Source
-        }
-        onLoadComplete={(_, filePath) => {
-          onLoaded?.(filePath)
-        }}
-        onError={(err) => {
-          onError?.(err as Error)
-        }}
-        trustAllCerts={Platform.select({ android: false, ios: undefined })}
-        style={{
-          flex: 1,
-          backgroundColor: 'transparent',
-        }}
-        {...extraProps}
-      />
-    )
-  },
-  (prevProps, nextProps) => {
-    if (prevProps.url === nextProps.url && prevProps.body === nextProps.body) {
-      return true
-    }
-    return false
-  },
-)
-
 export const DocumentDetailScreen: NavigationFunctionComponent<{
   docId: string
   isUrgent?: boolean
-}> = ({ componentId, docId, isUrgent }) => {
+  listParams: ListParams
+}> = ({ componentId, docId, isUrgent, listParams }) => {
   useNavigationOptions(componentId)
 
+  const insets = useSafeAreaInsets()
+  const theme = useTheme()
   const client = useApolloClient()
   const intl = useIntl()
   const htmlStyles = useHtmlStyles()
@@ -248,6 +225,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   const [loaded, setLoaded] = useState(false)
   const [pdfUrl, setPdfUrl] = useState('')
   const [refetching, setRefetching] = useState(false)
+  const [buttonHeight, setButtonHeight] = useState(48) // Default button height
 
   const [logConfirmedAction] = useDocumentConfirmActionsLazyQuery({
     fetchPolicy: 'no-cache',
@@ -452,19 +430,24 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     }
   }, [loaded])
 
+  const isReplyable = Document.replyable ?? false
+
+  const onReplyPress = () => {
+    navigateTo(`/inbox/${docId}/reply`, {
+      title: Document.sender?.name ?? '',
+      listParams,
+    })
+  }
+
   return (
     <>
       <Host>
         <Header
           title={Document.sender?.name ?? ''}
-          date={
-            Document.publicationDate ? (
-              <FormattedDate value={Document.publicationDate} />
-            ) : undefined
-          }
+          date={Document.publicationDate ?? undefined}
+          category={listParams?.category?.name}
           message={Document.subject}
           isLoading={loading && !Document.subject}
-          hasBorder={false}
           logo={getOrganizationLogoUrl(Document.sender?.name ?? '', 75)}
           label={isUrgent ? intl.formatMessage({ id: 'inbox.urgent' }) : ''}
         />
@@ -490,7 +473,14 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
         </ActionsWrapper>
       )}
       <Border />
-      <DocumentWrapper hasMarginTop={true}>
+      <DocumentWrapper
+        hasMarginTop={true}
+        {...(isReplyable && {
+          style: {
+            paddingBottom: insets.bottom + theme.spacing.p2 + buttonHeight,
+          },
+        })}
+      >
         <Animated.View
           style={{
             flex: 1,
@@ -522,7 +512,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
                   <PdfViewer
                     url={`data:application/pdf;base64,${Document.content?.value}`}
                     body={`documentId=${Document.id}&__accessToken=${accessToken}`}
-                    onLoaded={(filePath: any) => {
+                    onLoaded={(filePath) => {
                       setPdfUrl(filePath)
                       setLoaded(true)
                     }}
@@ -568,6 +558,23 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
           </View>
         )}
       </DocumentWrapper>
+      {isReplyable && (
+        <FloatingTwoWayFooter>
+          <FloatingTwoWayContent>
+            <Button
+              onLayout={(event) => {
+                setButtonHeight(event.nativeEvent.layout.height)
+              }}
+              title={intl.formatMessage({ id: 'documentDetail.replyButton' })}
+              isTransparent
+              isOutlined
+              iconPosition="left"
+              icon={require('../../assets/icons/reply.png')}
+              onPress={onReplyPress}
+            />
+          </FloatingTwoWayContent>
+        </FloatingTwoWayFooter>
+      )}
     </>
   )
 }
