@@ -9,6 +9,7 @@ import {
   FileType,
   IncomePlanConditions,
   IncomePlanRow,
+  PaymentInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { Application } from '@island.is/application/types'
 import {
@@ -29,7 +30,13 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'applicantInfo.phonenumber',
   ) as string
 
+  const applicantEmail = getValueViaPath(
+    answers,
+    'applicantInfo.email',
+  ) as string
+
   const bank = getValueViaPath(answers, 'paymentInfo.bank') as string
+  const paymentInfo = getValueViaPath(answers, 'paymentInfo') as PaymentInfo
 
   const personalAllowance = getValueViaPath(
     answers,
@@ -154,7 +161,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   return {
     applicantPhonenumber,
+    applicantEmail,
     bank,
+    paymentInfo,
     personalAllowance,
     personalAllowanceUsage,
     taxLevel,

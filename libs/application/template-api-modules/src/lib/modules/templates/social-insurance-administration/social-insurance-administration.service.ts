@@ -38,6 +38,7 @@ import {
   transformApplicationToDeathBenefitsDTO,
   transformApplicationToHouseholdSupplementDTO,
   transformApplicationToIncomePlanDTO,
+  transformApplicationToMedicalAndRehabilitationPaymentsDTO,
   transformApplicationToOldAgePensionDTO,
   transformApplicationToPensionSupplementDTO,
 } from './social-insurance-administration-utils'
@@ -485,6 +486,22 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
         incomePlanDTO,
         application.typeId.toLowerCase(),
       )
+      return response
+    }
+
+    if (
+      application.typeId ===
+      ApplicationTypes.MEDICAL_AND_REHABILITATION_PAYMENTS
+    ) {
+      const marpDTO =
+        transformApplicationToMedicalAndRehabilitationPaymentsDTO(application)
+
+      const response = await this.siaClientService.sendApplication(
+        auth,
+        marpDTO,
+        application.typeId.toLowerCase(),
+      )
+
       return response
     }
   }

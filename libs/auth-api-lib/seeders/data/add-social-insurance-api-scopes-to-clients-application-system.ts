@@ -12,7 +12,6 @@ export const up = compose(
       '@tr.is/tekjuaetlun:read',
       '@tr.is/greidsluaetlun:read',
       '@tr.is/stadgreidsla:read',
-      '@tr.is/sjukraogendurhaefingargreidslur:read',
     ],
   }),
 )
