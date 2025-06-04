@@ -113,6 +113,7 @@ export class SignatureCollectionAdminClientService {
     return await this.sharedService.getLists(
       input,
       this.getApiWithAuth(this.listsApi, auth),
+      this.getApiWithAuth(this.electionsApi, auth),
     )
   }
 
