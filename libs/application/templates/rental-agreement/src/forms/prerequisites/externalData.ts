@@ -29,11 +29,11 @@ export const externalData = buildSection({
         ],
       }),
       dataProviders: [
-        buildDataProviderItem({
-          provider: UserProfileApi,
-          title: prerequisites.externalData.currentApplicationTitle,
-          subTitle: prerequisites.externalData.currentApplicationSubTitle,
-        }),
+        // buildDataProviderItem({
+        //   provider: UserProfileApi,
+        //   title: prerequisites.externalData.currentApplicationTitle,
+        //   subTitle: prerequisites.externalData.currentApplicationSubTitle,
+        // }),
         buildDataProviderItem({
           provider: NationalRegistryUserApi,
           title: prerequisites.externalData.nationalRegistryTitle,
