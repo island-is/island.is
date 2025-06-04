@@ -224,6 +224,7 @@ export class NationalRegistryService extends BaseTemplateApiService {
           municipalityCode: person.legalDomicile.municipalityNumber,
         },
         genderCode: person.genderCode,
+        genderDescription: person.genderDescription,
         maritalTitle: {
           code: cohabitationInfo?.cohabitationCode,
           description: cohabitationInfo?.cohabitationCodeDescription,
@@ -336,9 +337,6 @@ export class NationalRegistryService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps<ChildrenCustodyInformationParameters>): Promise<
     ApplicantChildCustodyInformation[]
   > {
-    console.log('--------------------------------')
-    console.log('childrenCustodyInformation auth')
-    console.dir(auth, { depth: null })
     console.log('--------------------------------')
     console.log('childrenCustodyInformation params')
     console.dir(params, { depth: null })
