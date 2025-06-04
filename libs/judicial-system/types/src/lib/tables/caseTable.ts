@@ -132,7 +132,7 @@ const districtCourtRequestCasesInProgressColumnKeys: CaseTableColumnKey[] = [
 ]
 
 const districtCourtRequestCasesInProgress: CaseTable = {
-  title: 'Mál í vinnslu',
+  title: 'Rannsóknarmál í vinnslu',
   hasMyCasesFilter: true,
   columnKeys: districtCourtRequestCasesInProgressColumnKeys,
   columns: pickColumns(districtCourtRequestCasesInProgressColumnKeys),

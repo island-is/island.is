@@ -14,14 +14,15 @@ import { useLoaderData } from 'react-router-dom'
 import { SignatureCollectionList } from '@island.is/api/schema'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import Signees from '../../shared-components/signees'
-import ActionDrawer from '../../shared-components/compareLists/ActionDrawer'
-import { PaperSignees } from '../../shared-components/paperSignees'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
+import { PaperSignees } from '../../shared-components/paperSignees'
+import ActionDrawer from '../../shared-components/compareLists/ActionDrawer'
 
 const List = () => {
   const { formatMessage } = useLocale()
   const { list } = useLoaderData() as {
     list: SignatureCollectionList
+    listStatus: string
   }
 
   return (
@@ -41,21 +42,21 @@ const List = () => {
           offset={['0', '0', '0', '1/12']}
           span={['12/12', '12/12', '12/12', '8/12']}
         >
-          <Box marginBottom={3}>
+          <Box marginBottom={3} display="flex" justifyContent="spaceBetween">
             <Breadcrumbs
               items={[
                 {
-                  title: formatMessage(m.parliamentaryCollectionTitle),
-                  href: `/stjornbord${SignatureCollectionPaths.ParliamentaryRoot}`,
+                  title: formatMessage(m.municipalCollectionTitle),
+                  href: `/stjornbord${SignatureCollectionPaths.MunicipalRoot}`,
                 },
                 {
                   title: list.area.name,
-                  href: `/stjornbord${SignatureCollectionPaths.ParliamentaryConstituency.replace(
-                    ':constituencyName',
+                  href: `/stjornbord${SignatureCollectionPaths.SingleMunicipality.replace(
+                    ':municipality',
                     list.area.name,
                   )}`,
                 },
-                { title: list.candidate.name },
+                { title: list.title },
               ]}
             />
           </Box>
@@ -71,7 +72,7 @@ const List = () => {
           <Divider />
           <Box marginTop={9} />
           <Signees list={list} />
-          <PaperSignees listId={list.id} />
+          <PaperSignees listId={list?.id} />
         </GridColumn>
       </GridRow>
     </GridContainer>

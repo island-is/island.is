@@ -5,29 +5,32 @@ import { m } from '../../lib/messages'
 import {
   ActionCard,
   Box,
-  Breadcrumbs,
   GridColumn,
   GridContainer,
   GridRow,
   Stack,
   Text,
+  Breadcrumbs,
   Divider,
 } from '@island.is/island-ui/core'
 import { useLoaderData, useNavigate, useParams } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
-import format from 'date-fns/format'
-import { getTagConfig } from '../../lib/utils'
-import ActionDrawer from '../../shared-components/compareLists/ActionDrawer'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
+import { replaceParams } from '@island.is/react-spa/shared'
+import { getTagConfig } from '../../lib/utils'
+import CompareLists from '../../shared-components/compareLists'
+import ActionDrawer from '../../shared-components/compareLists/ActionDrawer'
 
-export const Constituency = () => {
+export const Municipality = () => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
-  const { allLists } = useLoaderData() as ListsLoaderReturn
-  const { constituencyName } = useParams() as { constituencyName: string }
-  const constituencyLists = allLists.filter(
-    (list) => list.area.name === constituencyName,
+
+  const { collection, allLists } = useLoaderData() as ListsLoaderReturn
+  const params = useParams()
+  const municipality = params.municipality ?? ''
+  const municipalityLists = allLists.filter(
+    (list) => list.area.name === municipality,
   )
 
   return (
@@ -47,26 +50,22 @@ export const Constituency = () => {
           offset={['0', '0', '0', '1/12']}
           span={['12/12', '12/12', '12/12', '8/12']}
         >
-          <Box marginBottom={3}>
+          <Box marginBottom={2}>
             <Breadcrumbs
               items={[
                 {
-                  title: formatMessage(m.parliamentaryCollectionTitle),
-                  href: `/stjornbord${SignatureCollectionPaths.ParliamentaryRoot}`,
+                  title: formatMessage(m.municipalCollectionTitle),
+                  href: `/stjornbord${SignatureCollectionPaths.MunicipalRoot}`,
                 },
                 {
-                  title: constituencyName,
+                  title: municipality,
                 },
               ]}
             />
           </Box>
           <IntroHeader
-            title={constituencyName}
-            intro={
-              formatMessage(m.parliamentaryConstituencyIntro) +
-              ' ' +
-              constituencyName
-            }
+            title={formatMessage(m.municipalCollectionTitle)}
+            intro={formatMessage(m.municipalCollectionIntro)}
             imgPosition="right"
             imgHiddenBelow="sm"
             img={nationalRegistryLogo}
@@ -77,33 +76,36 @@ export const Constituency = () => {
           <Box marginTop={9} />
           <GridRow>
             <GridColumn span="12/12">
-              <Box marginBottom={3} display="flex" justifyContent="flexEnd">
+              <Box display="flex" justifyContent="flexEnd" marginBottom={3}>
                 <Text variant="eyebrow">
                   {formatMessage(m.totalListResults) +
                     ': ' +
-                    constituencyLists.length}
+                    municipalityLists.length}
                 </Text>
               </Box>
               <Stack space={3}>
-                {constituencyLists.map((list) => (
+                {municipalityLists.map((list) => (
                   <ActionCard
                     key={list.id}
-                    date={format(new Date(list.endTime), 'dd.MM.yyyy HH:mm')}
+                    eyebrow={municipality}
                     heading={list.candidate.name}
-                    progressMeter={{
-                      currentProgress: list.numberOfSignatures ?? 0,
-                      maxProgress: list.area.min,
-                      withLabel: true,
-                    }}
+                    text={
+                      formatMessage(m.totalListResults) +
+                      ': ' +
+                      list.numberOfSignatures
+                    }
                     cta={{
                       label: formatMessage(m.viewList),
                       variant: 'text',
                       onClick: () => {
                         navigate(
-                          SignatureCollectionPaths.ParliamentaryConstituencyList.replace(
-                            ':constituencyName',
-                            constituencyName,
-                          ).replace(':listId', list.id),
+                          replaceParams({
+                            href: SignatureCollectionPaths.MunicipalList,
+                            params: {
+                              municipality: municipality,
+                              listId: list.id,
+                            },
+                          }),
                         )
                       },
                     }}
@@ -115,10 +117,11 @@ export const Constituency = () => {
               </Stack>
             </GridColumn>
           </GridRow>
+          <CompareLists collectionId={collection?.id} />
         </GridColumn>
       </GridRow>
     </GridContainer>
   )
 }
 
-export default Constituency
+export default Municipality
