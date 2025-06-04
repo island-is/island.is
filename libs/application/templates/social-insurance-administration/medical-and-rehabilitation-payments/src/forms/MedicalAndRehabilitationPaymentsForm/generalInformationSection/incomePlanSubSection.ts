@@ -556,7 +556,7 @@ export const incomePlanSubSection = buildSubSection({
         },
         december: {
           component: 'input',
-          label: socialInsuranceAdministrationMessage.months.december,
+          label: socialInsuranceAdministrationMessage.months.desember,
           width: 'third',
           type: 'number',
           backgroundColor: 'blue',
