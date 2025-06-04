@@ -14,6 +14,11 @@ export const HmsApplicationSystemConfig = defineConfig({
         'HMS_APPLICATION_SYSTEM_SERVICE_PATH',
         'IS-DEV/GOV/10033/HMS-Protected/formbuilder-v1',
       ),
+      xRoadClientHeader: env.required(
+        'XROAD_HMS_PROPERTY_SEARCH_CLIENT_HEADER',
+        'IS-DEV/GOV/10000/island-is-client',
+      ),
+      tokenExchangeScope: [],
     }
   },
 })
