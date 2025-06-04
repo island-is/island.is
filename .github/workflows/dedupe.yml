@@ -27,8 +27,8 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  AWS_REGION: eu-west-1
   RUNS_ON_BUCKET_NAME: ${{ vars.RUNS_ON_BUCKET_NAME }}
+  AWS_REGION: eu-west-1
 
 jobs:
   dedupe:

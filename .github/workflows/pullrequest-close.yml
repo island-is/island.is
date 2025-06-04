@@ -8,9 +8,9 @@ defaults:
   run:
     shell: bash
 env:
+  RUNS_ON_BUCKET_NAME: ${{ vars.RUNS_ON_BUCKET_NAME }}
   AWS_REGION: eu-west-1
   YARN_ENABLE_HARDENED_MODE: '0'
-  RUNS_ON_BUCKET_NAME: ${{ vars.RUNS_ON_BUCKET_NAME }}
 
 jobs:
   check-unicorn:
