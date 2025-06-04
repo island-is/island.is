@@ -114,7 +114,9 @@
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["yarn nx run-many -t serve api consultation-portal"],
+        "commands": [
+          "yarn nx run-many -t serve --projects api consultation-portal"
+        ],
         "parallel": true
       }
     },
