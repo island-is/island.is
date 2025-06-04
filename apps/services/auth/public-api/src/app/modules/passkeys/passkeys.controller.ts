@@ -36,6 +36,9 @@ import { AuthenticationOptions } from './dto/authenticationOptions.dto'
 
 const namespace = '@island.is/auth/public-api/passkeys'
 
+//dummy
+const k = 8
+
 @ApiTags('passkeys')
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Scopes(AuthScope.passkeys)
