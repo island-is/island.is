@@ -7,10 +7,10 @@ import {
 import { Locale } from '@island.is/shared/types'
 import { MessageDescriptor } from 'react-intl'
 import {
+  Affiliation,
   Child,
   ChildInformation,
   FriggChildInformation,
-  Membership,
   Person,
   RelativesRow,
   SelectOption,
@@ -311,11 +311,11 @@ export const getApplicationExternalData = (
     '',
   ) as string
 
-  const childMemberships = getValueViaPath(
+  const childAffiliations = getValueViaPath(
     externalData,
-    'childInformation.data.memberships',
+    'childInformation.data.affiliations',
     [],
-  ) as Membership[]
+  ) as Affiliation[]
 
   return {
     children,
@@ -328,7 +328,7 @@ export const getApplicationExternalData = (
     childInformation,
     childGradeLevel,
     primaryOrgId,
-    childMemberships,
+    childAffiliations,
   }
 }
 
@@ -395,17 +395,17 @@ export const formatGrade = (gradeLevel: string, lang: Locale) => {
 }
 
 export const getCurrentSchoolName = (application: Application) => {
-  const { primaryOrgId, childMemberships } = getApplicationExternalData(
+  const { primaryOrgId, childAffiliations } = getApplicationExternalData(
     application.externalData,
   )
 
-  if (!primaryOrgId || !childMemberships) {
+  if (!primaryOrgId || !childAffiliations) {
     return undefined
   }
 
   // Find the school name since we only have primary org id
-  return childMemberships
-    .map((membership) => membership.organization)
+  return childAffiliations
+    .map((affiliation) => affiliation.organization)
     .find((organization) => organization?.id === primaryOrgId)?.name
 }
 
@@ -448,19 +448,19 @@ export const showPreferredLanguageFields = (answers: FormValue) => {
 }
 
 export const getNeighbourhoodSchoolName = (application: Application) => {
-  const { primaryOrgId, childMemberships } = getApplicationExternalData(
+  const { primaryOrgId, childAffiliations } = getApplicationExternalData(
     application.externalData,
   )
 
-  if (!primaryOrgId || !childMemberships) {
+  if (!primaryOrgId || !childAffiliations) {
     return undefined
   }
 
   // This function needs to be improved when Juni is ready with the neighbourhood school data
 
   // Find the school name since we only have primary org id
-  return childMemberships
-    .map((membership) => membership.organization)
+  return childAffiliations
+    .map((affiliation) => affiliation.organization)
     .find((organization) => organization?.id === primaryOrgId)?.name
 }
 
