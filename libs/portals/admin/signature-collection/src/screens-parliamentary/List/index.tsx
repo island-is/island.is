@@ -17,6 +17,7 @@ import Signees from '../../shared-components/signees'
 import ActionDrawer from '../../shared-components/compareLists/ActionDrawer'
 import { PaperSignees } from '../../shared-components/paperSignees'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
+import { Actions } from '../../shared-components/compareLists/ActionDrawer/ListActions'
 
 const List = () => {
   const { formatMessage } = useLocale()
@@ -65,7 +66,16 @@ const List = () => {
             imgPosition="right"
             imgHiddenBelow="sm"
             img={nationalRegistryLogo}
-            buttonGroup={<ActionDrawer />}
+            buttonGroup={
+              <ActionDrawer
+                allowedActions={[
+                  Actions.LockList,
+                  Actions.ReviewComplete,
+                  Actions.ExtendDeadline,
+                  Actions.RemoveCandidate,
+                ]}
+              />
+            }
             marginBottom={4}
           />
           <Divider />

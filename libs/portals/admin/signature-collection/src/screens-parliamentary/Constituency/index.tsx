@@ -19,6 +19,7 @@ import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import format from 'date-fns/format'
 import { getTagConfig } from '../../lib/utils'
 import ActionDrawer from '../../shared-components/compareLists/ActionDrawer'
+import { Actions } from '../../shared-components/compareLists/ActionDrawer/ListActions'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 
 export const Constituency = () => {
@@ -70,7 +71,14 @@ export const Constituency = () => {
             imgPosition="right"
             imgHiddenBelow="sm"
             img={nationalRegistryLogo}
-            buttonGroup={<ActionDrawer />}
+            buttonGroup={
+              <ActionDrawer
+                allowedActions={[
+                  Actions.DownloadReports,
+                  Actions.CreateCollection,
+                ]}
+              />
+            }
             marginBottom={4}
           />
           <Divider />

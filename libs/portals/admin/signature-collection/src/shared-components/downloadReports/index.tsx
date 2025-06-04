@@ -13,7 +13,6 @@ import {
 import { useEffect, useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import {
-  SignatureCollectionArea,
   SignatureCollectionAreaSummaryReport,
 } from '@island.is/api/schema'
 import { m } from '../../lib/messages'
@@ -21,14 +20,11 @@ import { usePDF } from '@react-pdf/renderer'
 import MyPdfDocument from './MyPdfDocument'
 import { SignatureCollectionAreaSummaryReportDocument } from './MyPdfDocument/areaSummary.generated'
 import { useLazyQuery } from '@apollo/client'
+import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
+import { useLoaderData } from 'react-router-dom'
 
-export const DownloadReports = ({
-  areas,
-  collectionId,
-}: {
-  areas: SignatureCollectionArea[]
-  collectionId: string
-}) => {
+export const DownloadReports = () => {
+  const { collection } = useLoaderData() as ListsLoaderReturn
   const { formatMessage } = useLocale()
   const [modalDownloadReportsIsOpen, setModalDownloadReportsIsOpen] =
     useState(false)
@@ -55,7 +51,7 @@ export const DownloadReports = ({
         variables: {
           input: {
             areaId: area,
-            collectionId: collectionId,
+            collectionId: collection?.id,
           },
         },
       })
@@ -120,7 +116,7 @@ export const DownloadReports = ({
         <Text>{formatMessage(m.downloadReportsDescription)}</Text>
         <Box marginY={5}>
           <Stack space={3}>
-            {areas.map((area) => (
+            {collection?.areas.map((area) => (
               <ActionCard
                 key={area.id}
                 heading={formatMessage(area.name)}

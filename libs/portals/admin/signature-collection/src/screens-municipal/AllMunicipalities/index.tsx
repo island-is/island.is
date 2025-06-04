@@ -8,6 +8,7 @@ import {
   Stack,
   Breadcrumbs,
   FilterInput,
+  Divider,
 } from '@island.is/island-ui/core'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import { useLocale } from '@island.is/localization'
@@ -84,10 +85,13 @@ const AllMunicipalities = () => {
             imgPosition="right"
             imgHiddenBelow="sm"
             img={nationalRegistryLogo}
+            marginBottom={4}
           />
+          <Divider />
+          <Box marginTop={9} />
           <Box
             width="full"
-            marginBottom={6}
+            marginBottom={3}
             display="flex"
             justifyContent="spaceBetween"
           >

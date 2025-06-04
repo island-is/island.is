@@ -117,7 +117,7 @@ export const m = defineMessages({
   },
   collectionTitle: {
     id: 'admin-portal.signature-collection:collectionTitle',
-    defaultMessage: 'Forsetakosningar 2024',
+    defaultMessage: 'Forsetakosningar',
     description: '',
   },
   municipalCollectionTitle: {

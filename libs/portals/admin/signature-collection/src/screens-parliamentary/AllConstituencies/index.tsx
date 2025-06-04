@@ -10,6 +10,7 @@ import {
   Table as T,
   Text,
   AlertMessage,
+  Divider,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
@@ -80,7 +81,10 @@ const ParliamentaryRoot = () => {
             imgPosition="right"
             imgHiddenBelow="sm"
             img={nationalRegistryLogo}
+            marginBottom={4}
           />
+          <Divider />
+          <Box marginTop={9} />
           <Box
             width="full"
             marginBottom={6}

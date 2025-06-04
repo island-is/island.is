@@ -8,6 +8,8 @@ import {
   toast,
   GridRow,
   GridColumn,
+  Tag,
+  Icon,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useEffect, useState } from 'react'
@@ -18,21 +20,14 @@ import { useCandidateLookupLazyQuery } from './candidateLookup.generated'
 import { setReason } from './utils'
 import { useCreateCollectionMutation } from './createCollection.generated'
 import { m } from '../../lib/messages'
-import { useParams, useRevalidator } from 'react-router-dom'
-import { SignatureCollectionCollectionType } from '@island.is/api/schema'
+import { useLoaderData, useParams, useRevalidator } from 'react-router-dom'
+import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 
-const CreateCollection = ({
-  collectionId,
-  areaId,
-  collectionType,
-}: {
-  collectionId: string
-  collectionType: SignatureCollectionCollectionType
-  areaId: string | undefined
-}) => {
+const CreateCollection = () => {
   const { formatMessage } = useLocale()
   const { control } = useForm()
   const { revalidate } = useRevalidator()
+  const { collection } = useLoaderData() as ListsLoaderReturn
   const { constituencyName } = useParams() as {
     constituencyName: string | undefined
   }
@@ -49,15 +44,16 @@ const CreateCollection = ({
   const [createCollection, { loading }] = useCreateCollectionMutation({
     variables: {
       input: {
-        collectionType,
-        collectionId,
+        collectionType: collection.collectionType,
+        collectionId: collection.id,
         owner: {
           name: name,
           nationalId: nationalIdInput,
           phone: '',
           email: '',
         },
-        areas: areaId ? [{ areaId }] : null,
+        // Todo: update
+        areas: null,
       },
     },
     onCompleted: () => {
@@ -85,7 +81,7 @@ const CreateCollection = ({
         variables: {
           input: {
             nationalId: nationalIdInput,
-            collectionType: collectionType,
+            collectionType: collection.collectionType,
           },
         },
       }).then((res) => {
@@ -113,24 +109,30 @@ const CreateCollection = ({
 
   return (
     <Box>
-      <Box
-        display="flex"
-        justifyContent="flexEnd"
-        alignItems="flexEnd"
-        style={{ minWidth: '150px' }}
-      >
-        <Button
-          variant="utility"
-          size="small"
-          nowrap
-          icon="add"
-          onClick={() => {
-            setModalIsOpen(true)
-          }}
-        >
-          {formatMessage(m.createCollection)}
-        </Button>
-      </Box>
+      <GridRow>
+        <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
+          <Box display="flex">
+            <Tag>
+              <Box display="flex" justifyContent="center">
+                <Icon icon="add" type="outline" color="blue600" />
+              </Box>
+            </Tag>
+            <Box marginLeft={5}>
+              <Text variant="h4">{formatMessage(m.createCollection)}</Text>
+              <Text marginBottom={2}>
+                Texti sem útskýrir þessa aðgerð betur kemur hér.
+              </Text>
+              <Button
+                variant="text"
+                size="small"
+                onClick={() => setModalIsOpen(true)}
+              >
+                {formatMessage(m.createCollection)}
+              </Button>
+            </Box>
+          </Box>
+        </GridColumn>
+      </GridRow>
       <Modal
         id="createCollection"
         isVisible={modalIsOpen}
@@ -174,14 +176,14 @@ const CreateCollection = ({
                 readOnly
                 value={name}
               />
-              {areaId && (
+              {/*areaId && (
                 <Input
                   name="candidateArea"
                   label={formatMessage(m.signatureListsConstituencyTitle)}
                   readOnly
                   value={constituencyName}
                 />
-              )}
+              )*/}
             </Stack>
             {!canCreate && (
               <Box marginTop={3}>
