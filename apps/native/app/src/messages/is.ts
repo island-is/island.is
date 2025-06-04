@@ -260,6 +260,14 @@ export const is = {
   'documentDetail.errorUnknown': 'Villa kom upp við að sækja skjal',
   'documentDetail.replyButton': 'Svara pósti',
 
+  // document reply
+  'documentReply.to': 'Til',
+  'documentReply.from': 'Frá',
+  'documentReply.message': 'Skilaboð',
+  'documentReply.messagePlaceholder': 'Skrifaðu skilaboð hér',
+  'documentReply.uploadAttachment': 'Hlaða upp skjali',
+  'documentReply.sendMessage': 'Senda skilaboð',
+
   // profile
   'profile.screenTitle': 'Meira',
   'profile.bottomTabText': 'Meira',

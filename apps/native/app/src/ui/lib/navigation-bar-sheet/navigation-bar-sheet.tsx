@@ -6,7 +6,7 @@ import {
   useWindowDimensions,
   ViewStyle,
 } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import styled, { css, useTheme } from 'styled-components/native'
 import { LoadingIcon } from '../../../components/nav-loading-spinner/loading-icon'
 import { OfflineIcon } from '../../../components/offline/offline-icon'
 import { useOfflineStore } from '../../../stores/offline-store'
@@ -14,12 +14,19 @@ import closeIcon from '../../assets/icons/close.png'
 import { dynamicColor } from '../../utils/dynamic-color'
 import { font } from '../../utils/font'
 
-const Header = styled.View`
+const Header = styled.View<{ includeContainer?: boolean }>`
   padding-top: 20px;
   padding-bottom: ${({ theme }) => theme.spacing[1]}px;
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-start;
+
+  ${({ includeContainer }) =>
+    includeContainer &&
+    css`
+      padding-left: ${({ theme }) => theme.spacing[2]}px;
+      padding-right: ${({ theme }) => theme.spacing[2]}px;
+    `}
 `
 
 const HeaderTitle = styled.Text`
@@ -45,6 +52,7 @@ const Handle = styled.View`
 `
 
 const IconsWrapper = styled.View`
+  margin-left: auto;
   flex-direction: row;
   align-items: center;
   gap: ${({ theme }) => theme.spacing[1]}px;
@@ -67,20 +75,24 @@ const CloseIcon = styled.Image`
   height: ${({ theme }) => theme.spacing[3]}px;
 `
 
-export function NavigationBarSheet({
-  title,
-  onClosePress,
-  style,
-  showLoading,
-  closable = true,
-}: {
+type NavigationBarSheetProps = {
   title?: React.ReactNode
   componentId: string
   onClosePress(): void
   style?: ViewStyle
   showLoading?: boolean
   closable?: boolean
-}) {
+  includeContainer?: boolean
+}
+
+export function NavigationBarSheet({
+  title,
+  onClosePress,
+  style,
+  showLoading,
+  closable = true,
+  includeContainer = false,
+}: NavigationBarSheetProps) {
   const isConnected = useOfflineStore(({ isConnected }) => isConnected)
   const wd = useWindowDimensions()
   const theme = useTheme()
@@ -95,7 +107,7 @@ export function NavigationBarSheet({
       {isHandle && closable && <Handle />}
       <SafeAreaView>
         {(closable || title) && (
-          <Header style={style}>
+          <Header style={style} includeContainer={includeContainer}>
             {typeof title === 'string' ? (
               <HeaderTitle>{title}</HeaderTitle>
             ) : (

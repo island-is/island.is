@@ -260,6 +260,13 @@ export const en: TranslatedMessages = {
   'documentDetail.errorUnknown': 'Error occurred while loading document',
   'documentDetail.replyButton': 'Reply',
 
+  // document reply
+  'documentReply.to': 'To',
+  'documentReply.from': 'From',
+  'documentReply.message': 'Message',
+  'documentReply.uploadAttachment': 'Upload document',
+  'documentReply.sendMessage': 'Send message',
+
   // wallet
   'wallet.screenTitle': 'Wallet',
   'wallet.bottomTabText': 'Wallet',
