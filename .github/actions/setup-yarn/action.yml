@@ -24,20 +24,13 @@ runs:
         yarn --version
         ls -l "$(which node)"
 
-    - name: Set cache key
-      working-directory: ${{ inputs.working-directory }}
-      shell: bash
-      id: set-cache-key
-      run: |
-        echo "CACHE_KEY=${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-1" >> $GITHUB_OUTPUT
-
     - name: Get Yarn Cache Directory Path
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       id: yarn-cache-dir-path
       run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
-    - name: Set RUNS_ON_S3_BUCKET_CACHE
+    - name: Set env for RunsOn
       shell: bash
       if: ${{ !github.event.localrun }}
       run: echo "RUNS_ON_S3_BUCKET_CACHE=${{ env.RUNS_ON_BUCKET_NAME }}" >> $GITHUB_ENV
@@ -50,7 +43,7 @@ runs:
           ${{ steps.yarn-cache-dir-path.outputs.dir }}
           ${{ inputs.working-directory }}/node_modules
           ${{ github.workspace }}/.cypress-cache
-        key: ${{ steps.set-cache-key.outputs.CACHE_KEY }}-node_modules
+        key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-1-node_modules
 
     - name: Yarn install
       working-directory: ${{ inputs.working-directory }}
