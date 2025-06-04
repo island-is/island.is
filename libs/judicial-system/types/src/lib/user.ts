@@ -208,17 +208,13 @@ export const isCoreUser = (user?: InstitutionUser): boolean => {
 // TEMP: Use this check to gradually rollout case group to users
 // Once a case group list is ready for a role we include it here to release
 export const hasCaseGroupListsEnabled = (user?: InstitutionUser): boolean => {
-  const institutionType = user?.institution?.type
   return (
-    // institutionType === InstitutionType.NATIONAL_COMMISSIONERS_OFFICE || // Rikislogreglustjori
-    // institutionType === InstitutionType.COURT_ADMINISTRATION_OFFICE || // Domstolasyslan
-    // institutionType === InstitutionType.DISTRICT_PROSECUTORS_OFFICE || // Heradssaksoknari
-    // institutionType === InstitutionType.POLICE_PROSECUTORS_OFFICE || // Logreglan
-    // institutionType === InstitutionType.DISTRICT_COURT || // Heradsdomur
-    institutionType === InstitutionType.PUBLIC_PROSECUTORS_OFFICE || // Skrifstofa rikissaksoknara
-    institutionType === InstitutionType.COURT_OF_APPEALS || // Landsrettur
-    institutionType === InstitutionType.PRISON_ADMIN || // Fangelsismalastofnun
-    institutionType === InstitutionType.PRISON // Fangelsi
+    // isProsecutionUser(user) // saksoknarar
+    // isDistrictCourtUser(user) || // Heradsdomur
+    isPublicProsecutionOfficeUser(user) || // Skrifstofa rikissaksoknara
+    isCourtOfAppealsUser(user) || // Landsrettur
+    isPrisonAdminUser(user) || // Fangelsismalastofnun
+    isPrisonStaffUser(user) // Fangelsi
   )
 }
 
