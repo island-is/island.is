@@ -37,8 +37,14 @@ export const ListItem = ({
   setConnecting,
   toggleSelected,
 }: Props) => {
-  const { control, controlDispatch, setFocus, focus, setSelectStatus } =
-    useContext(ControlContext)
+  const {
+    control,
+    controlDispatch,
+    setFocus,
+    focus,
+    setSelectStatus,
+    getTranslation,
+  } = useContext(ControlContext)
   const { activeItem } = control
   const currentItem = activeItem.data as FormSystemField
   const isRadio = currentItem.fieldType === FieldTypesEnum.RADIO_BUTTONS
@@ -176,7 +182,23 @@ export const ListItem = ({
             size="sm"
             value={listItem?.label?.is ?? ''}
             onFocus={(e) => setFocus(e.target.value)}
-            onBlur={(e) => e.target.value !== focus && listItemUpdate()}
+            onBlur={async (e) => {
+              if (e.target.value !== focus) {
+                if (!listItem?.label?.en) {
+                  const translation = await getTranslation(e.target.value)
+                  controlDispatch({
+                    type: 'CHANGE_LIST_ITEM',
+                    payload: {
+                      property: 'label',
+                      lang: 'en',
+                      value: translation.translation,
+                      id: listItem.id ?? '',
+                    },
+                  })
+                }
+                listItemUpdate()
+              }
+            }}
             onChange={(e) =>
               controlDispatch({
                 type: 'CHANGE_LIST_ITEM',
@@ -210,26 +232,6 @@ export const ListItem = ({
                 },
               })
             }
-            buttons={[
-              {
-                label: 'Translate',
-                name: 'reader',
-                onClick: async () => {
-                  const translation = await getTranslation(
-                    listItem?.label?.is ?? '',
-                  )
-                  controlDispatch({
-                    type: 'CHANGE_LIST_ITEM',
-                    payload: {
-                      property: 'label',
-                      lang: 'en',
-                      value: translation ?? '',
-                      id: listItem.id ?? '',
-                    },
-                  })
-                },
-              },
-            ]}
           />
         </Column>
       </Row>
@@ -244,7 +246,23 @@ export const ListItem = ({
               size="sm"
               value={listItem?.description?.is ?? ''}
               onFocus={(e) => setFocus(e.target.value)}
-              onBlur={(e) => e.target.value !== focus && listItemUpdate()}
+              onBlur={async (e) => {
+                if (e.target.value !== focus) {
+                  if (!listItem?.description?.en) {
+                    const translation = await getTranslation(e.target.value)
+                    controlDispatch({
+                      type: 'CHANGE_LIST_ITEM',
+                      payload: {
+                        property: 'description',
+                        lang: 'en',
+                        value: translation.translation,
+                        id: listItem.id ?? '',
+                      },
+                    })
+                  }
+                  listItemUpdate()
+                }
+              }}
               onChange={(e) =>
                 controlDispatch({
                   type: 'CHANGE_LIST_ITEM',
@@ -260,7 +278,7 @@ export const ListItem = ({
           </Column>
           <Column span="5/10">
             <Input
-              name="info"
+              name="infoEn"
               label={formatMessage(m.infoEnglish)}
               backgroundColor="blue"
               size="sm"
@@ -278,26 +296,6 @@ export const ListItem = ({
                   },
                 })
               }
-              buttons={[
-                {
-                  label: 'Translate',
-                  name: 'reader',
-                  onClick: async () => {
-                    const translation = await getTranslation(
-                      listItem?.description?.is ?? '',
-                    )
-                    controlDispatch({
-                      type: 'CHANGE_LIST_ITEM',
-                      payload: {
-                        property: 'description',
-                        lang: 'en',
-                        value: translation ?? '',
-                        id: listItem.id ?? '',
-                      },
-                    })
-                  },
-                },
-              ]}
             />
           </Column>
         </Row>

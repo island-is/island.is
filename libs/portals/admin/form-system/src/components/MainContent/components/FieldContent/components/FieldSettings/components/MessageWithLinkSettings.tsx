@@ -12,8 +12,14 @@ import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
 
 export const MessageWithLinkSettings = () => {
-  const { control, controlDispatch, focus, setFocus, updateActiveItem } =
-    useContext(ControlContext)
+  const {
+    control,
+    controlDispatch,
+    focus,
+    setFocus,
+    updateActiveItem,
+    getTranslation,
+  } = useContext(ControlContext)
   const currentItem = control.activeItem.data as FormSystemField
   const { fieldSettings } = currentItem
   const { formatMessage } = useIntl()
@@ -57,13 +63,28 @@ export const MessageWithLinkSettings = () => {
                   })
                 }
                 onFocus={(e) => setFocus(e.target.value)}
-                onBlur={(e) => e.target.value !== focus && updateActiveItem()}
+                onBlur={async (e) => {
+                  if (e.target.value !== focus) {
+                    if (!fieldSettings.buttonText?.en) {
+                      const translation = await getTranslation(e.target.value)
+                      controlDispatch({
+                        type: 'SET_MESSAGE_WITH_LINK_SETTINGS',
+                        payload: {
+                          property: 'buttonText',
+                          lang: 'en',
+                          value: translation.translation,
+                        },
+                      })
+                    }
+                    updateActiveItem()
+                  }
+                }}
               />
             </Column>
             <Column span="5/10">
               <Input
                 label={formatMessage(m.buttonTextEnglish)}
-                name="buttonTitle"
+                name="buttonTitleEn"
                 backgroundColor="blue"
                 value={fieldSettings.buttonText?.en ?? ''}
                 onChange={(e) =>

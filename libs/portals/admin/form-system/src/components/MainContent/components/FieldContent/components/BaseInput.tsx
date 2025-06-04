@@ -23,6 +23,7 @@ export const BaseInput = () => {
     focus,
     fieldTypes,
     updateActiveItem,
+    getTranslation,
   } = useContext(ControlContext)
   const { activeItem } = control
   const currentItem = activeItem.data as FormSystemField
@@ -79,7 +80,21 @@ export const BaseInput = () => {
               })
             }
             onFocus={(e) => setFocus(e.target.value)}
-            onBlur={(e) => e.target.value !== focus && updateActiveItem()}
+            onBlur={async (e) => {
+              if (e.target.value !== focus) {
+                if (!currentItem?.name?.en) {
+                  const translation = await getTranslation(e.target.value)
+                  controlDispatch({
+                    type: 'CHANGE_NAME',
+                    payload: {
+                      lang: 'en',
+                      newValue: translation.translation,
+                    },
+                  })
+                }
+                updateActiveItem()
+              }
+            }}
           />
         </Column>
       </Row>
@@ -117,7 +132,21 @@ export const BaseInput = () => {
                 textarea
                 backgroundColor="blue"
                 onFocus={(e) => setFocus(e.target.value)}
-                onBlur={(e) => e.target.value !== focus && updateActiveItem()}
+                onBlur={async (e) => {
+                  if (e.target.value !== focus) {
+                    if (!currentItem?.description?.en) {
+                      const translation = await getTranslation(e.target.value)
+                      controlDispatch({
+                        type: 'CHANGE_DESCRIPTION',
+                        payload: {
+                          lang: 'en',
+                          newValue: translation.translation,
+                        },
+                      })
+                    }
+                    updateActiveItem()
+                  }
+                }}
                 onChange={(e) =>
                   controlDispatch({
                     type: 'CHANGE_DESCRIPTION',

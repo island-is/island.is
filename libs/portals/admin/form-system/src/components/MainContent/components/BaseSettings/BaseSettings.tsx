@@ -121,12 +121,14 @@ export const BaseSettings = () => {
             backgroundColor="blue"
             onFocus={(e) => setFocus(e.target.value)}
             onBlur={async (e) => {
-              if (e.target.value !== focus && !form.name?.en) {
-                const translation = await getTranslation(e.target.value)
-                controlDispatch({
-                  type: 'CHANGE_FORM_NAME',
-                  payload: { lang: 'en', newValue: translation.translation },
-                })
+              if (e.target.value !== focus) {
+                if (!form.name?.en) {
+                  const translation = await getTranslation(e.target.value)
+                  controlDispatch({
+                    type: 'CHANGE_FORM_NAME',
+                    payload: { lang: 'en', newValue: translation.translation },
+                  })
+                }
                 formUpdate()
               }
             }}
