@@ -17,7 +17,7 @@ runs:
     - name: Set RUNS_ON_S3_BUCKET_CACHE
       shell: bash
       if: ${{ !github.event.localrun }}
-      run: echo "RUNS_ON_S3_BUCKET_CACHE=${{ vars.RUNS_ON_S3_BUCKET_CACHE }}" >> $GITHUB_ENV
+      run: echo "RUNS_ON_S3_BUCKET_CACHE=${{ env.RUNS_ON_BUCKET_NAME }}" >> $GITHUB_ENV
 
     - name: Set env
       shell: bash
