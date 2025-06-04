@@ -1,5 +1,6 @@
 import { Auth } from '@island.is/auth-nest-tools'
 import {
+  DispensationHistoryItemDto,
   HealthDirectorateOrganDonationService,
   HealthDirectorateVaccinationsService,
   OrganDonorDto,
@@ -413,7 +414,9 @@ export class HealthDirectorateService {
     } else return null
   }
 
-  private mapDispensationItem = (item: any): MedicineHistoryDispensation => {
+  private mapDispensationItem = (
+    item: DispensationHistoryItemDto,
+  ): MedicineHistoryDispensation => {
     const quantity = item.productQuantity ?? 0
 
     return {

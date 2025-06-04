@@ -140,7 +140,8 @@ const MedicinePrescriptionHistory = () => {
                       }
                     })}
                   />
-                  {dispensations?.data.length &&
+                  {(dispensations?.data.length ??
+                    MAX_DISPENSATIONS < MAX_DISPENSATIONS + 1) &&
                     item.atcCode &&
                     (item.dispensationCount || 0) > MAX_DISPENSATIONS && (
                       <Box
