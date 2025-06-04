@@ -10,8 +10,6 @@ import {
 import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import {
   BlueBox,
-  DefenderNotFound,
-  InputAdvocate,
   InputName,
   InputNationalId,
   RequiredStar,
@@ -23,6 +21,8 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useVictim } from '@island.is/judicial-system-web/src/utils/hooks'
 import { useNationalRegistry } from '@island.is/judicial-system-web/src/utils/hooks'
+
+import { LegalRightsProtectorInputFields } from './LegalRightsProtectorInputFields'
 
 interface Props {
   victim: Victim
@@ -37,10 +37,8 @@ export const VictimInfo: React.FC<Props> = ({
   setWorkingCase,
   onDelete,
 }) => {
-  const { updateVictimAndSetState, updateVictimState, updateVictim } =
-    useVictim()
+  const { updateVictimAndSetState, updateVictimState } = useVictim()
 
-  const [lawyerNotFound, setLawyerNotFound] = useState(false)
   const [victimNationalIdUpdate, setVictimNationalIdUpdate] = useState<
     string | null
   >(null)
@@ -167,76 +165,12 @@ export const VictimInfo: React.FC<Props> = ({
             </Box>
           </Box>
         </Box>
-
         <Box marginTop={4}>
-          <Box marginBottom={2}>
-            <Text as="h3" variant="h4">
-              Réttargæslumaður
-            </Text>
-          </Box>
-
-          {lawyerNotFound && <DefenderNotFound />}
-
-          <InputAdvocate
-            advocateType="legalRightsProtector"
-            name={victim.lawyerName}
-            email={victim.lawyerEmail}
-            phoneNumber={victim.lawyerPhoneNumber}
-            onAdvocateChange={(
-              lawyerName,
-              lawyerNationalId,
-              lawyerEmail,
-              lawyerPhoneNumber,
-            ) =>
-              updateVictimAndSetState(
-                {
-                  caseId: workingCase.id,
-                  victimId: victim.id,
-                  lawyerName,
-                  lawyerNationalId,
-                  lawyerEmail,
-                  lawyerPhoneNumber,
-                },
-                setWorkingCase,
-              )
-            }
-            onAdvocateNotFound={setLawyerNotFound}
-            onEmailChange={(lawyerEmail) =>
-              updateVictimState(
-                {
-                  caseId: workingCase.id,
-                  victimId: victim.id,
-                  lawyerEmail,
-                },
-                setWorkingCase,
-              )
-            }
-            onEmailSave={(lawyerEmail) =>
-              updateVictim({
-                caseId: workingCase.id,
-                victimId: victim.id,
-                lawyerEmail,
-              })
-            }
-            onPhoneNumberChange={(lawyerPhoneNumber) =>
-              updateVictimState(
-                {
-                  caseId: workingCase.id,
-                  victimId: victim.id,
-                  lawyerPhoneNumber,
-                },
-                setWorkingCase,
-              )
-            }
-            onPhoneNumberSave={(lawyerPhoneNumber) =>
-              updateVictim({
-                caseId: workingCase.id,
-                victimId: victim.id,
-                lawyerPhoneNumber,
-              })
-            }
+          <LegalRightsProtectorInputFields
+            victim={victim}
+            workingCase={workingCase}
+            setWorkingCase={setWorkingCase}
           />
-
           <>
             <Text variant="h4" marginTop={2} marginBottom={2}>
               Aðgangur réttargæslumanns að kröfu

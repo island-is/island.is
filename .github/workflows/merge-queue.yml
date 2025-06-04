@@ -32,11 +32,11 @@ env:
   NX_MAX_PARALLEL: '4'
   NODE_IMAGE_VERSION: 20
   S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-  RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+  RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
   AWS_REGION: eu-west-1
   AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
   SERVERSIDE_FEATURES_ON: ''
-  GENERATED_FILES: ${{ github.workspace }}/${{ github.sha }}.tar.gz
+  GENERATED_FILES: ${{ github.sha }}.tar.gz
   CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache
   YARN_ENABLE_HARDENED_MODE: '0'
 
@@ -57,13 +57,11 @@ jobs:
     needs:
       - prepare
       - pre-checks
-    runs-on: arc-docker
+    runs-on: arc-shared
     if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS }}
     permissions:
       actions: read
       contents: read
-    outputs:
-      json: ${{ steps.matrix-output.outputs.json }}
     env:
       # Just so this is not an unassigned variable
       AFFECTED_ALL: ''
@@ -89,17 +87,19 @@ jobs:
           DOCKER_TYPE="$(echo '${{ matrix.chunk }}' | jq -r '.docker_type')"
           APP_HOME="$(echo '${{ matrix.chunk }}' | jq -r '.home')"
           APP_DIST_HOME="$(echo '${{ matrix.chunk }}' | jq -r '.dist')"
-          echo AFFECTED_PROJECTS="$AFFECTED_PROJECTS" >> "$GITHUB_ENV"
-          echo DOCKER_TYPE="$DOCKER_TYPE" >> "$GITHUB_ENV"
-          echo APP_HOME="$APP_HOME" >> "$GITHUB_ENV"
-          echo APP_DIST_HOME="$APP_DIST_HOME" >> "$GITHUB_ENV"
+          {
+            echo "AFFECTED_PROJECTS=$AFFECTED_PROJECTS"
+            echo "DOCKER_TYPE=$DOCKER_TYPE"
+            echo "APP_HOME=$APP_HOME"
+            echo "APP_DIST_HOME=$APP_DIST_HOME"
+          } >> "$GITHUB_ENV"
         continue-on-error: true
       - name: checkout
         uses: actions/checkout@v4
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
         with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
       - name: Set id for matrix
         run: |
           node ./scripts/ci/docker/create-id.mjs
@@ -189,7 +189,7 @@ jobs:
     needs:
       - prepare
     if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
-    runs-on: arc-docker
+    runs-on: arc-shared
     timeout-minutes: 45
     env:
       AFFECTED_PROJECTS: ${{ matrix.projects }}
@@ -205,7 +205,7 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
         with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -220,7 +220,7 @@ jobs:
           docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
 
   success:
-    runs-on: arc-docker
+    runs-on: arc-shared
     if: ${{ !cancelled() }}
     needs:
       - prepare
@@ -246,7 +246,7 @@ jobs:
         uses: ./.github/actions/setup-yarn
         if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
         with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -305,7 +305,7 @@ jobs:
   # Remove this as a required status check and switch to something more meaningful
   codeowners-check:
     name: Lint CODEOWNERS
-    runs-on: arc-docker
+    runs-on: arc-shared
     env:
       CHECK: 'false'
     steps:

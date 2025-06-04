@@ -4,10 +4,8 @@ import {
   buildMultiField,
   buildOverviewField,
   buildSection,
-  buildSubmitField,
 } from '@island.is/application/core'
 import { overview } from '../../lib/messages'
-import { DefaultEvents } from '@island.is/application/types'
 import {
   getApplicantOverviewInformation,
   getAssigneeOverviewInformation,
@@ -17,58 +15,51 @@ import { getMachineTenureOverviewInformation } from '../../utils/getMachineTenur
 
 export const reviewOverviewSection = buildSection({
   id: 'reviewOverviewSection',
-  title: overview.general.sectionTitle,
+  title: '',
   children: [
     buildMultiField({
       id: 'reviewOverviewSection.multiField',
-      title: overview.general.pageTitle,
+      title: overview.general.pageTitleAssignee,
       description: overview.general.descriptionAssignee,
       children: [
         buildOverviewField({
           id: 'overviewApplicant',
           title: '',
           bottomLine: false,
-          items: (answers, externalData) =>
-            getApplicantOverviewInformation(answers, externalData, true),
+          items: (answers) => getApplicantOverviewInformation(answers, true),
         }),
         buildOverviewField({
           id: 'overviewMachineTenure',
           title: '',
           bottomLine: false,
-          items: getMachineTenureOverviewInformation,
+          items: (answers, externalData, userNationalId) =>
+            getMachineTenureOverviewInformation(
+              answers,
+              externalData,
+              userNationalId,
+              true,
+            ),
         }),
         buildOverviewField({
           id: 'overviewAssignee',
           title: '',
           bottomLine: false,
-          items: getAssigneeOverviewInformation,
+          items: (answers, externalData, userNationalId) =>
+            getAssigneeOverviewInformation(
+              answers,
+              externalData,
+              userNationalId,
+              true,
+            ),
           condition: (answers) => !isContractor(answers),
         }),
         buildHiddenInput({
           id: 'rejected',
         }),
         buildCustomField({
-          id: 'reviewOverviewSection.handleReject',
+          id: 'reviewOverviewSection.handleApprove',
           title: '',
-          component: 'HandleReject',
-        }),
-        buildSubmitField({
-          id: 'submitReview',
-          placement: 'footer',
-          title: overview.general.approveButton,
-          refetchApplicationAfterSubmit: true,
-          actions: [
-            {
-              event: DefaultEvents.REJECT,
-              name: overview.general.rejectButton,
-              type: 'reject',
-            },
-            {
-              event: DefaultEvents.SUBMIT,
-              name: overview.general.agreeButton,
-              type: 'primary',
-            },
-          ],
+          component: 'HandleApproveOrReject',
         }),
       ],
     }),

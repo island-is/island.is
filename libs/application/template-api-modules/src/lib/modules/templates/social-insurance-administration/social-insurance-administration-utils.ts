@@ -15,7 +15,10 @@ import {
   getApplicationExternalData as getOAPApplicationExternalData,
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
 import { getValueViaPath, YES, YesOrNo } from '@island.is/application/core'
-import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import {
+  BankAccountType,
+  INCOME,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
   formatBank,
   shouldNotUpdateBankAccount,
@@ -40,7 +43,6 @@ import {
 } from '@island.is/application/templates/social-insurance-administration/death-benefits'
 
 import {
-  INCOME,
   getApplicationAnswers as getIPApplicationAnswers,
   getApplicationExternalData as getIPApplicationExternalData,
 } from '@island.is/application/templates/social-insurance-administration/income-plan'
@@ -183,6 +185,7 @@ export const transformApplicationToAdditionalSupportForTheElderlyDTO = (
     personalAllowance,
     personalAllowanceUsage,
     taxLevel,
+    higherPayments,
   } = getASFTEApplicationAnswers(application.answers)
   const { bankInfo, userProfileEmail } = getASFTEApplicationExternalData(
     application.externalData,
@@ -205,6 +208,8 @@ export const transformApplicationToAdditionalSupportForTheElderlyDTO = (
         YES === personalAllowance ? +personalAllowanceUsage : 0,
       taxLevel: +taxLevel,
     },
+    livesAloneUserReply: YES === higherPayments,
+    livesAloneNationalRegistryData: livesAlone(application),
     period: {
       year: +selectedYear,
       month: getMonthNumber(selectedMonth),
@@ -430,6 +435,13 @@ export const shouldDistributeIncomeByMonth = (application: Application) => {
     (i) => i?.unevenIncomePerYear?.[0] === YES && i?.incomeCategory === INCOME,
   )
   return hasUnevenIncome
+}
+
+export const livesAlone = (application: Application) => {
+  const { cohabitants } = getASFTEApplicationExternalData(
+    application.externalData,
+  )
+  return cohabitants.length === 0
 }
 
 export const getMonthNumber = (monthName: string): number => {

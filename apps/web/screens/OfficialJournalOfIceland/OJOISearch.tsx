@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 import debounce from 'lodash/debounce'
 import { useRouter } from 'next/router'
 
+import { useTypes } from '@island.is/application/templates/official-journal-of-iceland'
 import {
   AlertMessage,
   Box,
@@ -31,7 +32,6 @@ import {
   QueryOfficialJournalOfIcelandCategoriesArgs,
   QueryOfficialJournalOfIcelandDepartmentsArgs,
   QueryOfficialJournalOfIcelandInstitutionsArgs,
-  QueryOfficialJournalOfIcelandTypesArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -56,7 +56,6 @@ import {
   CATEGORIES_QUERY,
   DEPARTMENTS_QUERY,
   INSTITUTIONS_QUERY,
-  TYPES_QUERY,
 } from '../queries/OfficialJournalOfIceland'
 import { ORGANIZATION_SLUG } from './constants'
 import { useAdverts } from './hooks'
@@ -80,7 +79,6 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
   categories,
   departments,
   defaultSearchParams,
-  types,
   institutions,
   organization,
   locale,
@@ -143,16 +141,22 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
           ? value
           : undefined
 
-      setSearchState((prev) => ({
-        ...prev,
+      const shouldClearType = key === 'deild' && parsed !== searchState.deild
+
+      const newSearchState = {
+        tegund: shouldClearType ? '' : searchState.tegund,
         sida: 1,
         [key]: parsed,
+      }
+
+      setSearchState((prev) => ({
+        ...prev,
+        ...newSearchState,
       }))
 
       const searchValues = {
         ...searchState,
-        sida: 1,
-        [key]: parsed,
+        ...newSearchState,
       }
 
       router.replace(
@@ -175,7 +179,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
           department: [searchValues.deild],
           category: [searchValues.malaflokkur],
           involvedParty: [searchValues.stofnun],
-          type: [searchValues.tegund],
+          type: searchValues.tegund.split(','),
           dateFrom: searchValues.dagsFra,
           dateTo: searchValues.dagsTil,
           search: searchValues.q,
@@ -220,6 +224,9 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
 
     setResetTimestamp(getTimestamp())
   }
+  const { types } = useTypes({
+    initalDepartmentId: searchState.deild,
+  })
 
   const categoriesOptions = mapEntityToOptions(categories)
   const departmentsOptions = mapEntityToOptions(departments)
@@ -329,7 +336,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
                 ...typesOptions,
               ]}
               isClearable
-              defaultValue={findValueOption(typesOptions, searchState.tegund)}
+              value={findValueOption(typesOptions, searchState.tegund)}
               onChange={(v) =>
                 updateSearchStateHandler('tegund', v?.value ?? '')
               }
@@ -599,9 +606,6 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
       data: { officialJournalOfIcelandDepartments },
     },
     {
-      data: { officialJournalOfIcelandTypes },
-    },
-    {
       data: { officialJournalOfIcelandInstitutions },
     },
     {
@@ -638,14 +642,7 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
         params: {},
       },
     }),
-    apolloClient.query<Query, QueryOfficialJournalOfIcelandTypesArgs>({
-      query: TYPES_QUERY,
-      variables: {
-        params: {
-          pageSize: 1000,
-        },
-      },
-    }),
+
     apolloClient.query<Query, QueryOfficialJournalOfIcelandInstitutionsArgs>({
       query: INSTITUTIONS_QUERY,
       variables: {
@@ -673,7 +670,7 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
     initialAdverts: officialJournalOfIcelandAdverts?.adverts,
     categories: officialJournalOfIcelandCategories?.categories,
     departments: officialJournalOfIcelandDepartments?.departments,
-    types: officialJournalOfIcelandTypes?.types,
+
     institutions: officialJournalOfIcelandInstitutions?.institutions,
     organization: getOrganization,
     locale: locale as Locale,

@@ -29,7 +29,7 @@ env:
 
 jobs:
   prepare:
-    runs-on: arc-runners
+    runs-on: arc-shared
     outputs:
       ENVS: ${{ steps.select_envs.outputs.ENVS }}
     steps:
@@ -48,7 +48,7 @@ jobs:
           echo "ENVS={\"env\":$ENVS_JSON}" >> "$GITHUB_OUTPUT"
 
   helm-values-validation:
-    runs-on: arc-runners
+    runs-on: arc-shared
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
@@ -62,6 +62,8 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: true
 
       - name: Install yarn in infra
         working-directory: infra
@@ -85,15 +87,16 @@ jobs:
     needs:
       - prepare
       - helm-values-validation # waiting on this job so the cache would be prepared
-    runs-on: arc-runners
+    runs-on: arc-shared
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.ENVS) }}
     steps:
       - uses: actions/checkout@v4
-
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: true
 
       - name: Install yarn in infra
         working-directory: infra

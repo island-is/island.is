@@ -18,13 +18,12 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
-  ServiceAnnouncement,
+  ServiceAnnouncements,
   // useIndictmentsLawsBroken, NOTE: Temporarily hidden while list of laws broken is not complete
 } from '@island.is/judicial-system-web/src/components'
 import { IndictmentDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { SubpoenaType } from '../../components'
 import ReturnIndictmentModal from '../ReturnIndictmentCaseModal/ReturnIndictmentCaseModal'
 import { strings } from './Overview.strings'
 // onNavigationTo?: (destination: keyof stepValidationsType) => Promise<unknown>
@@ -38,15 +37,12 @@ const OverviewBody = ({
 
   const { workingCase, isLoadingWorkingCase, setWorkingCase } =
     useContext(FormContext)
-  const { updateDefendantState } = useDefendants()
 
   const { formatMessage } = useIntl()
   // const lawsBroken = useIndictmentsLawsBroken(workingCase) NOTE: Temporarily hidden while list of laws broken is not complete
   const [modalVisible, setModalVisible] = useState<'RETURN_INDICTMENT'>()
 
   const latestDate = workingCase.courtDate ?? workingCase.arraignmentDate
-  const isArraignmentScheduled = Boolean(workingCase.arraignmentDate)
-
   // const caseHasBeenReceivedByCourt = workingCase.state === CaseState.RECEIVED
 
   return (
@@ -55,15 +51,7 @@ const OverviewBody = ({
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.inProgressTitle)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        {workingCase.defendants?.map((defendant) =>
-          defendant.subpoenas?.map((subpoena) => (
-            <ServiceAnnouncement
-              key={`${subpoena.id}-${subpoena.created}`}
-              subpoena={subpoena}
-              defendantName={defendant.name}
-            />
-          )),
-        )}
+        <ServiceAnnouncements defendants={workingCase.defendants} />
         {workingCase.court &&
           latestDate?.date &&
           workingCase.indictmentDecision !== IndictmentDecision.COMPLETING &&
@@ -95,16 +83,19 @@ const OverviewBody = ({
       </Box>
     )} */}
         {workingCase.mergedCases && workingCase.mergedCases.length > 0 && (
-          <Accordion>
-            {workingCase.mergedCases.map((mergedCase) => (
-              <Box marginBottom={5} key={mergedCase.id}>
-                <ConnectedCaseFilesAccordionItem
-                  connectedCaseParentId={workingCase.id}
-                  connectedCase={mergedCase}
-                />
-              </Box>
-            ))}
-          </Accordion>
+          <>
+            <Accordion>
+              {workingCase.mergedCases.map((mergedCase) => (
+                <Box marginBottom={5} key={mergedCase.id}>
+                  <ConnectedCaseFilesAccordionItem
+                    connectedCaseParentId={workingCase.id}
+                    connectedCase={mergedCase}
+                  />
+                </Box>
+              ))}
+            </Accordion>
+            <Box marginBottom={5} />
+          </>
         )}
         <Box component="section" marginBottom={10}>
           <IndictmentCaseFilesList workingCase={workingCase} />
@@ -112,6 +103,7 @@ const OverviewBody = ({
             <Button
               variant="primary"
               icon="add"
+              size="small"
               onClick={() => {
                 router.push(
                   `${constants.INDICTMENTS_ADD_FILES_IN_COURT_ROUTE}/${workingCase.id}`,
@@ -123,22 +115,6 @@ const OverviewBody = ({
             </Button>
           </Box>
         </Box>
-        {workingCase.defendants && (
-          <Box component="section" marginBottom={5}>
-            {
-              <SubpoenaType
-                subpoenaItems={workingCase.defendants.map((defendant) => ({
-                  defendant,
-                  disabled: isArraignmentScheduled,
-                }))}
-                workingCase={workingCase}
-                setWorkingCase={setWorkingCase}
-                updateDefendantState={updateDefendantState}
-                required={false}
-              />
-            }
-          </Box>
-        )}
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter

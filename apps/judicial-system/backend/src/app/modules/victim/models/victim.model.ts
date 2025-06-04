@@ -10,6 +10,7 @@ import {
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
+import { normalizeAndFormatNationalId } from '@island.is/judicial-system/formatters'
 import { RequestSharedWhen } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case/models/case.model'
@@ -19,6 +20,18 @@ import { Case } from '../../case/models/case.model'
   timestamps: true,
 })
 export class Victim extends Model {
+  static getVictimWithLawyer(lawyerNationalId: string, victims?: Victim[]) {
+    // NOTE: victims per case can have the same lawyer but we intentionally return the first victim
+    return victims?.find(
+      (victim) =>
+        victim.lawyerNationalId &&
+        normalizeAndFormatNationalId(lawyerNationalId).includes(
+          victim.lawyerNationalId,
+        ) &&
+        victim.lawyerAccessToRequest !== RequestSharedWhen.OBLIGATED,
+    )
+  }
+
   @Column({
     type: DataType.UUID,
     primaryKey: true,

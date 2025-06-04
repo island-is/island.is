@@ -20,6 +20,8 @@ const ZENDESK_CUSTOM_FIELDS = {
   Link: 24596286118546,
 }
 
+const ZENDESK_AUTHOR_ID = 372464383959
+
 @Injectable()
 export class IdentityConfirmationService {
   constructor(
@@ -34,6 +36,7 @@ export class IdentityConfirmationService {
     id,
     type,
     number,
+    lang = 'is',
   }: IdentityConfirmationInputDto): Promise<string> {
     if (type === IdentityConfirmationType.PHONE && !number) {
       throw new BadRequestException('Phone number is required')
@@ -49,7 +52,7 @@ export class IdentityConfirmationService {
 
     switch (type) {
       case IdentityConfirmationType.EMAIL:
-        await this.sendViaEmail(id, link)
+        await this.sendViaEmail(id, link, lang)
         break
       case IdentityConfirmationType.PHONE:
         await this.sendViaSms(number, link)
@@ -65,11 +68,16 @@ export class IdentityConfirmationService {
     return link
   }
 
-  async sendViaEmail(id: string, link: string) {
+  async sendViaEmail(id: string, link: string, lang: 'is' | 'en' = 'is') {
+    console.log('sendViaEmail', id, link, lang)
     try {
       await this.zendeskService.updateTicket(id, {
         comment: {
-          html_body: `Vinsamlegast opnaðu <a href="${link}">þennan hlekk</a> til að staðfesta þína auðkenningu`,
+          author_id: ZENDESK_AUTHOR_ID,
+          html_body:
+            lang === 'is'
+              ? `Við þurfum að staðfesta hver þú ert til að geta afgreitt fyrirspurnina þína.<br><br>Hér er hlekkur svo þú getir auðkennt þig í gegnum innskráningu hjá Ísland.is.<br><br><a href="${link}">Smelltu hér til að auðkenna þig</a>`
+              : `We need to authenticate you to process your query.<br><br>Use this link to authenticate yourself through Ísland.is.<br><br><a href="${link}">Click here to authenticate:</a>`,
           public: true,
         },
       })
@@ -150,6 +158,7 @@ export class IdentityConfirmationService {
 
     await this.zendeskService.updateTicket(identityConfirmation.ticketId, {
       comment: {
+        author_id: ZENDESK_AUTHOR_ID,
         html_body: `
           <b>Auðkenning hefur verið staðfest</b>
           <p>Umsækjandi: ${person.nafn}, kennitala: ${user.nationalId}</p>

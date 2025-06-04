@@ -68,6 +68,18 @@ export const sizes = styleVariants({
       },
     }),
   },
+  'semi-large': {
+    paddingRight: 40,
+    height: 56,
+    fontSize: 16,
+    ...themeUtils.responsiveStyle({
+      md: {
+        paddingRight: 56,
+        height: 64,
+        fontSize: 18,
+      },
+    }),
+  },
   large: {
     paddingRight: 72,
     height: 72,
@@ -120,6 +132,30 @@ export const blueberry = style({
   },
   '::placeholder': {
     color: theme.color.blueberry600,
+  },
+  selectors: {
+    [`&:focus:hover`]: {
+      boxShadow: 'none',
+      border: 'none',
+    },
+  },
+})
+
+export const blue = style({
+  backgroundColor: theme.color.transparent,
+  boxShadow: `inset 0 0 0 1px ${theme.color.blue600}`,
+  border: 'none',
+  color: theme.color.blue600,
+  transition: 'box-shadow .25s',
+  ':focus': {
+    boxShadow: 'none',
+    border: 'none',
+  },
+  ':hover': {
+    boxShadow: `inset 0 0 0 ${2}px ${theme.color.blue600}`,
+  },
+  '::placeholder': {
+    color: theme.color.blue600,
   },
   selectors: {
     [`&:focus:hover`]: {

@@ -1,10 +1,13 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { m } from '@island.is/portals/my-pages/core'
+import { m, searchTagsMessages as s } from '@island.is/portals/my-pages/core'
 import { messages } from './messages'
 import { HealthPaths } from './paths'
 
 export const healthNavigation: PortalNavigationItem = {
   name: m.health,
+  description: m.healthDescription,
+  intro: m.healthIntro,
+  searchTags: [s.healthShorter],
   path: HealthPaths.HealthRoot,
   icon: {
     icon: 'heart',
@@ -13,14 +16,17 @@ export const healthNavigation: PortalNavigationItem = {
     {
       name: m.health,
       navHide: true,
+      searchHide: true,
       path: HealthPaths.HealthRoot,
     },
     {
       name: messages.overviewTitle,
+      searchHide: true,
       path: HealthPaths.HealthOverview,
     },
     {
       name: m.therapies,
+      description: m.therapiesIntro,
       path: HealthPaths.HealthTherapies,
       children: [
         {
@@ -42,6 +48,7 @@ export const healthNavigation: PortalNavigationItem = {
     },
     {
       name: m.payments,
+      description: m.paymentsIntro,
       path: HealthPaths.HealthPayments,
       children: [
         {
@@ -58,10 +65,12 @@ export const healthNavigation: PortalNavigationItem = {
     },
     {
       name: m.aidsAndNutrition,
+      description: m.aidsAndNutritionIntro,
       path: HealthPaths.HealthAidsAndNutrition,
     },
     {
       name: m.dentists,
+      description: m.dentistsIntro,
       path: HealthPaths.HealthDentists,
       children: [
         {
@@ -73,6 +82,7 @@ export const healthNavigation: PortalNavigationItem = {
     },
     {
       name: m.healthCenter,
+      description: m.healthCenterIntro,
       path: HealthPaths.HealthCenter,
       children: [
         {
@@ -83,30 +93,32 @@ export const healthNavigation: PortalNavigationItem = {
       ],
     },
     {
-      name: messages.medicineTitle,
+      name: m.medicine,
       path: HealthPaths.HealthMedicine,
       children: [
         {
-          name: messages.medicinePrescriptions,
+          name: m.medicinePrescriptions,
+          description: m.medicinePrescriptionsIntro,
           path: HealthPaths.HealthMedicinePrescription,
         },
 
         {
-          name: messages.medicineDelegation,
+          name: m.medicineDelegation,
           path: HealthPaths.HealthMedicineDelegation,
         },
         {
-          name: messages.medicinePaymentParticipation,
+          name: m.medicinePaymentParticipation,
+          description: m.medicinePaymentParticipationIntro,
           path: HealthPaths.HealthMedicinePaymentParticipation,
           children: [
             {
-              name: messages.medicinePurchaseTitle,
+              name: m.medicinePurchaseTitle,
               path: HealthPaths.HealthMedicinePurchase,
               activeIfExact: true,
               navHide: true,
             },
             {
-              name: messages.medicineCalculatorTitle,
+              name: m.medicineCalculatorTitle,
               path: HealthPaths.HealthMedicineCalculator,
               activeIfExact: true,
               navHide: true,
@@ -114,11 +126,12 @@ export const healthNavigation: PortalNavigationItem = {
           ],
         },
         {
-          name: messages.medicineLicenseTitle,
+          name: m.medicineLicenseTitle,
+          description: m.medicineLicenseIntro,
           path: HealthPaths.HealthMedicineCertificates,
           children: [
             {
-              name: messages.medicineLicenseTitle,
+              name: m.medicineLicenseTitle,
               path: HealthPaths.HealthMedicineCertificate,
               navHide: true,
               breadcrumbHide: true,
@@ -126,13 +139,15 @@ export const healthNavigation: PortalNavigationItem = {
           ],
         },
         {
-          name: messages.medicinePrescriptionHistory,
+          name: m.medicinePrescriptionHistory,
+          description: m.medicinePrescriptionHistoryIntro,
           path: HealthPaths.HealthMedicinePrescriptionHistory,
         },
       ],
     },
     {
-      name: messages.vaccinations,
+      name: m.vaccinations,
+      description: m.vaccinationsIntro,
       path: HealthPaths.HealthVaccinations,
       children: [
         {
@@ -148,7 +163,8 @@ export const healthNavigation: PortalNavigationItem = {
       ],
     },
     {
-      name: messages.organDonation,
+      name: m.organDonation,
+      description: m.organDonationIntro,
       path: HealthPaths.HealthOrganDonation,
       children: [
         {
@@ -158,6 +174,29 @@ export const healthNavigation: PortalNavigationItem = {
         },
       ],
     },
+    {
+      name: messages.referrals,
+      path: HealthPaths.HealthReferrals,
+      searchTags: [s.healthReferrals],
+      children: [
+        {
+          name: messages.singleReferral,
+          path: HealthPaths.HealthReferralsDetail,
+          navHide: true,
+        },
+      ],
+    },
+    {
+      name: messages.waitlists,
+      path: HealthPaths.HealthWaitlists,
+      searchTags: [s.healthWaiting],
+      children: [
+        {
+          name: messages.singleWaitlist,
+          path: HealthPaths.HealthWaitlistsDetail,
+          navHide: true,
+        },
+      ],
+    },
   ],
-  description: m.healthDescription,
 }

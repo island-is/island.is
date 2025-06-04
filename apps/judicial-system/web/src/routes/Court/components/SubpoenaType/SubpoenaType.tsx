@@ -76,7 +76,7 @@ const SubpoenaType: FC<SubpoenaTypeProps> = ({
                 <>
                   <Box marginBottom={2}>
                     <Checkbox
-                      name="alternativeService"
+                      id={`alternativeService-${item.defendant.id}`}
                       label={strings.alternativeService}
                       checked={Boolean(item.defendant.isAlternativeService)}
                       onChange={() => {

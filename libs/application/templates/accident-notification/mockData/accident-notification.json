@@ -13,7 +13,7 @@
       "type": "http",
       "documentation": "",
       "method": "get",
-      "endpoint": "r1/IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1/api/v1/einstaklingar/0101302399",
+      "endpoint": "r1/IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1/api/v1/einstaklingar/0101302399",
       "responses": [
         {
           "uuid": "6133acb8-d9b3-435f-b4da-ac94678af423",
@@ -72,7 +72,7 @@
             },
             {
               "key": "x-road-service",
-              "value": "IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1"
+              "value": "IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1"
             },
             {
               "key": "content-length",
@@ -99,7 +99,7 @@
       "type": "http",
       "documentation": "",
       "method": "get",
-      "endpoint": "r1/IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1/api/v1/einstaklingar/0101302399/rikisfang",
+      "endpoint": "r1/IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1/api/v1/einstaklingar/0101302399/rikisfang",
       "responses": [
         {
           "uuid": "50f3665d-7a2c-4ad7-a037-ddb2e4f86246",
@@ -158,7 +158,7 @@
             },
             {
               "key": "x-road-service",
-              "value": "IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1"
+              "value": "IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1"
             },
             {
               "key": "content-length",
@@ -185,7 +185,7 @@
       "type": "http",
       "documentation": "",
       "method": "get",
-      "endpoint": "r1/IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1/api/v1/einstaklingar/0101302399/hjuskapur",
+      "endpoint": "r1/IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1/api/v1/einstaklingar/0101302399/hjuskapur",
       "responses": [
         {
           "uuid": "eb329673-6a49-40b5-9575-be05ea1569e5",
@@ -244,7 +244,7 @@
             },
             {
               "key": "x-road-service",
-              "value": "IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1"
+              "value": "IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1"
             },
             {
               "key": "content-length",
@@ -271,7 +271,7 @@
       "type": "http",
       "documentation": "",
       "method": "get",
-      "endpoint": "r1/IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1/api/v1/lyklar/hjuskaparkodar/3/2",
+      "endpoint": "r1/IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1/api/v1/lyklar/hjuskaparkodar/3/2",
       "responses": [
         {
           "uuid": "ed6235bb-5bc2-4dd1-ab1d-2e0ce7f1cba9",
@@ -330,7 +330,7 @@
             },
             {
               "key": "x-road-service",
-              "value": "IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1"
+              "value": "IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1"
             },
             {
               "key": "content-length",

@@ -1,7 +1,6 @@
 import { FC, ReactNode, useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
-import { SingleValue } from 'react-select'
-import { AnimatePresence } from 'motion/react'
+import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
 
 import {
@@ -17,6 +16,7 @@ import { capitalize } from '@island.is/judicial-system/formatters'
 import {
   isDistrictCourtUser,
   isInvestigationCase,
+  isPrisonAdminUser,
   isPrisonSystemUser,
   isProsecutionUser,
   isRestrictionCase,
@@ -59,12 +59,11 @@ import {
   CaseDecision,
   CaseState,
   CaseTransition,
-  InstitutionType,
+  Institution,
   RequestSignatureResponse,
   SignatureConfirmationResponse,
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import {
   UpdateCase,
   useAppealAlertBanner,
@@ -73,7 +72,7 @@ import {
 
 import CaseDocuments from './Components/CaseDocuments/CaseDocuments'
 import ModifyDatesModal from './Components/ModifyDatesModal/ModifyDatesModal'
-import ShareCase from './Components/ShareCase/ShareCase'
+import ShareCase, { InstitutionOption } from './Components/ShareCase/ShareCase'
 import { useCourtRecordSignatureConfirmationLazyQuery } from './courtRecordSignatureConfirmation.generated'
 import { useRequestCourtRecordSignatureMutation } from './requestCourtRecordSignature.generated'
 import { strings } from './SignedVerdictOverview.strings'
@@ -189,6 +188,8 @@ export const SignedVerdictOverview: FC = () => {
     appealCaseNumber,
     appealAssistant,
     appealJudges,
+    victims,
+    showItem,
   } = useInfoCardItems()
 
   const [isModifyingDates, setIsModifyingDates] = useState<boolean>(false)
@@ -196,8 +197,10 @@ export const SignedVerdictOverview: FC = () => {
   const [isReopeningCase, setIsReopeningCase] = useState<boolean>(false)
   const [modalVisible, setModalVisible] = useState<availableModals>('NoModal')
 
-  const [selectedSharingInstitutionId, setSelectedSharingInstitutionId] =
-    useState<SingleValue<ReactSelectOption>>(null)
+  const [
+    selectedSharingInstitutionOption,
+    setSelectedSharingInstitutionOption,
+  ] = useState<InstitutionOption>(null)
 
   const [
     requestCourtRecordSignatureResponse,
@@ -248,7 +251,9 @@ export const SignedVerdictOverview: FC = () => {
    */
   const canModifyCaseDates = useCallback(() => {
     return (
-      (isProsecutionUser(user) || isDistrictCourtUser(user)) &&
+      (isProsecutionUser(user) ||
+        isDistrictCourtUser(user) ||
+        isPrisonAdminUser(user)) &&
       isRestrictionCase(workingCase.type)
     )
   }, [workingCase.type, user])
@@ -343,9 +348,7 @@ export const SignedVerdictOverview: FC = () => {
     })
   }
 
-  const shareCaseWithAnotherInstitution = (
-    institution?: SingleValue<ReactSelectOption>,
-  ) => {
+  const shareCaseWithAnotherInstitution = (institution?: Institution) => {
     if (workingCase) {
       if (workingCase.sharedWithProsecutorsOffice) {
         setSharedCaseModal({
@@ -366,7 +369,7 @@ export const SignedVerdictOverview: FC = () => {
           ...prevWorkingCase,
           sharedWithProsecutorsOffice: undefined,
         }))
-        setSelectedSharingInstitutionId(null)
+        setSelectedSharingInstitutionOption(null)
 
         updateCase(workingCase.id, {
           sharedWithProsecutorsOfficeId: null,
@@ -380,30 +383,22 @@ export const SignedVerdictOverview: FC = () => {
           text: (
             <MarkdownWrapper
               markdown={formatMessage(m.sections.shareCaseModal.openText, {
-                prosecutorsOffice: institution?.label,
+                prosecutorsOffice: institution?.name,
               })}
             />
           ),
         })
 
-        // TODO: Pass the real insitution into shareCaseWithAnotherInstitution, no nned for faking values here.
         setWorkingCase((prevWorkingCase) => ({
           ...prevWorkingCase,
-          sharedWithProsecutorsOffice: {
-            id: institution?.value as string,
-            name: institution?.label as string,
-            type: InstitutionType.PROSECUTORS_OFFICE,
-            created: new Date().toString(),
-            modified: new Date().toString(),
-            active: true,
-          },
+          sharedWithProsecutorsOffice: institution,
           isHeightenedSecurityLevel: prevWorkingCase.isHeightenedSecurityLevel
             ? false
             : prevWorkingCase.isHeightenedSecurityLevel,
         }))
 
         updateCase(workingCase.id, {
-          sharedWithProsecutorsOfficeId: institution?.value as string,
+          sharedWithProsecutorsOfficeId: institution?.id,
           isHeightenedSecurityLevel: workingCase.isHeightenedSecurityLevel
             ? false
             : workingCase.isHeightenedSecurityLevel,
@@ -534,6 +529,14 @@ export const SignedVerdictOverview: FC = () => {
                   id: 'defendants-section',
                   items: [defendants(workingCase.type)],
                 },
+                ...(showItem(victims)
+                  ? [
+                      {
+                        id: 'victims-section',
+                        items: [victims],
+                      },
+                    ]
+                  : []),
                 {
                   id: 'case-info-section',
                   items: [
@@ -623,9 +626,11 @@ export const SignedVerdictOverview: FC = () => {
             user?.institution?.id === workingCase.prosecutorsOffice?.id &&
             isRestrictionCase(workingCase.type) && (
               <ShareCase
-                selectedSharingInstitutionId={selectedSharingInstitutionId}
-                setSelectedSharingInstitutionId={
-                  setSelectedSharingInstitutionId
+                selectedSharingInstitutionOption={
+                  selectedSharingInstitutionOption
+                }
+                setSelectedSharingInstitutionOption={
+                  setSelectedSharingInstitutionOption
                 }
                 shareCaseWithAnotherInstitution={
                   shareCaseWithAnotherInstitution
@@ -651,15 +656,22 @@ export const SignedVerdictOverview: FC = () => {
             onPrimaryButtonClick={() => setSharedCaseModal(undefined)}
           />
         )}
-        <AnimatePresence mode="wait">
+        <AnimatePresence>
           {isModifyingDates && (
-            <ModifyDatesModal
-              workingCase={workingCase}
-              onSubmit={onModifyDatesSubmit}
-              isSendingNotification={isSendingNotification}
-              isUpdatingCase={isUpdatingCase}
-              setIsModifyingDates={setIsModifyingDates}
-            />
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{ opacity: 0 }}
+              key="modify-dates-modal"
+            >
+              <ModifyDatesModal
+                workingCase={workingCase}
+                onSubmit={onModifyDatesSubmit}
+                isSendingNotification={isSendingNotification}
+                isUpdatingCase={isUpdatingCase}
+                closeModal={() => setIsModifyingDates(false)}
+              />
+            </motion.div>
           )}
         </AnimatePresence>
         {requestCourtRecordSignatureResponse && (

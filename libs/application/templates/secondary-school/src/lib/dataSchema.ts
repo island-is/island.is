@@ -13,18 +13,8 @@ const FileDocumentSchema = z.object({
 
 const CustodianSchema = z.object({
   person: z.object({
-    nationalId: z
-      .string()
-      .min(1)
-      .refine((nationalId) => kennitala.isValid(nationalId)),
-    name: z.string().min(1),
     email: z.string().min(1),
     phone: z.string().min(1),
-  }),
-  legalDomicile: z.object({
-    streetAddress: z.string().min(1),
-    postalCode: z.string().min(1),
-    city: z.string().optional(),
   }),
 })
 

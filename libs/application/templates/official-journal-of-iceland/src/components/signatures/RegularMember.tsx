@@ -4,7 +4,6 @@ import {
   GridRow,
   Input,
   Stack,
-  Text,
 } from '@island.is/island-ui/core'
 import * as styles from './SignaturesTab.css'
 import { signatures } from '../../lib/messages/signatures'

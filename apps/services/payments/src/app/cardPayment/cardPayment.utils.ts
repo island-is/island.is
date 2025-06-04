@@ -21,6 +21,7 @@ import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
 import { CardPaymentModuleConfigType } from './cardPayment.config'
 import { generateChargeFJSPayload } from '../../utils/fjsCharge'
 import { CatalogItemWithQuantity } from '../../types/charges'
+import { PaymentTrackingData } from '../../types/cardPayment'
 
 const MdSerializedSchema = z.object({
   c: z.string().length(36, 'Correlation ID must be 36 characters long'),
@@ -95,10 +96,12 @@ export const generateChargeRequestOptions = ({
   chargeCardInput,
   verificationData,
   paymentApiConfig,
+  paymentTrackingData,
 }: {
   chargeCardInput: ChargeCardInput
   verificationData: SavedVerificationCompleteData
   paymentApiConfig: CardPaymentModuleConfigType['paymentGateway']
+  paymentTrackingData: PaymentTrackingData
 }) => {
   const { cardNumber, expiryMonth, expiryYear, cvc, amount } = chargeCardInput
   const {
@@ -126,6 +129,10 @@ export const generateChargeRequestOptions = ({
       amount: iskToAur(amount),
       systemCalling,
       cardVerificationData: verificationData,
+      additionalData: {
+        merchantReferenceData: paymentTrackingData.merchantReferenceData,
+      },
+      correlationId: paymentTrackingData.correlationId,
     }),
   }
 
@@ -191,6 +198,9 @@ export const getPayloadFromMd = ({
 }
 
 export function mapToCardErrorCode(originalCode: string): CardErrorCode {
+  // Only the first two characters are used to map the error code
+  const firstTwoCharacters = originalCode?.slice(0, 2)
+
   const errorCodeMap: Record<string, CardErrorCode> = {
     '51': CardErrorCode.InsufficientFunds,
     '54': CardErrorCode.ExpiredCard,
@@ -215,7 +225,7 @@ export function mapToCardErrorCode(originalCode: string): CardErrorCode {
   }
 
   // Return the mapped value or the default
-  return errorCodeMap[originalCode] || CardErrorCode.GenericDecline
+  return errorCodeMap[firstTwoCharacters] || CardErrorCode.GenericDecline
 }
 
 export const generateCardChargeFJSPayload = ({
@@ -224,12 +234,14 @@ export const generateCardChargeFJSPayload = ({
   chargeResponse,
   totalPrice,
   systemId,
+  merchantReferenceData,
 }: {
   paymentFlow: PaymentFlowAttributes
   charges: CatalogItemWithQuantity[]
   chargeResponse: ChargeResponse
   totalPrice: number
   systemId: string
+  merchantReferenceData: string
 }): Charge => {
   return generateChargeFJSPayload({
     paymentFlow,
@@ -237,7 +249,7 @@ export const generateCardChargeFJSPayload = ({
     systemId,
     payInfo: {
       PAN: chargeResponse.maskedCardNumber,
-      RRN: chargeResponse.acquirerReferenceNumber,
+      RRN: merchantReferenceData,
       authCode: chargeResponse.authorizationCode,
       cardType: chargeResponse.cardInformation.cardScheme,
       payableAmount: totalPrice,

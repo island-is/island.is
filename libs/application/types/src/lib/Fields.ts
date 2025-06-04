@@ -5,7 +5,7 @@ import type {
   DatePickerProps,
   IconProps,
   InputBackgroundColor,
-  ResponsiveProp,
+  InputProps,
   SpanType,
 } from '@island.is/island-ui/core/types'
 import {
@@ -18,13 +18,13 @@ import {
 import { ApolloClient } from '@apollo/client'
 import { Application, ExternalData, FormValue } from './Application'
 import { CallToAction } from './StateMachine'
-import { Colors, theme } from '@island.is/island-ui/theme'
+import { Colors } from '@island.is/island-ui/theme'
 import { Condition } from './Condition'
 import { FormatInputValueFunction } from 'react-number-format'
 import React, { CSSProperties } from 'react'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { MessageDescriptor } from 'react-intl'
-import { Locale } from '@island.is/shared/types'
+import { BffUser, Locale } from '@island.is/shared/types'
 
 export type RecordObject<T = unknown> = Record<string, T>
 export type MaybeWithApplication<T> = T | ((application: Application) => T)
@@ -44,6 +44,7 @@ export type TextFieldVariant =
   | 'tel'
   | 'textarea'
   | 'currency'
+type AlertType = 'default' | 'warning' | 'error' | 'info' | 'success'
 
 export type Context = {
   application: Application
@@ -82,6 +83,7 @@ export type RepeaterFields =
   | 'phone'
   | 'selectAsync'
   | 'hiddenInput'
+  | 'alertMessage'
 
 type RepeaterOption = { label: StaticText; value: string; tooltip?: StaticText }
 
@@ -114,6 +116,8 @@ export type RepeaterItem = {
   label?: StaticText
   phoneLabel?: StaticText
   emailLabel?: StaticText
+  customNameLabel?: StaticText
+  customNationalIdLabel?: StaticText
   placeholder?: StaticText
   options?: TableRepeaterOptions
   filterOptions?: (
@@ -156,7 +160,9 @@ export type RepeaterItem = {
         application: Application,
         index: number,
         activeField?: Record<string, string>,
-      ) => { key: string; value: any }[])
+        apolloClient?: ApolloClient<object>,
+        lang?: Locale,
+      ) => Promise<{ key: string; value: any }[]>)
 } & (
   | {
       component: 'input'
@@ -178,8 +184,8 @@ export type RepeaterItem = {
       component: 'date'
       label: StaticText
       locale?: Locale
-      maxDate?: DatePickerProps['maxDate']
-      minDate?: DatePickerProps['minDate']
+      maxDate?: MaybeWithApplicationAndActiveField<Date>
+      minDate?: MaybeWithApplicationAndActiveField<Date>
       minYear?: number
       maxYear?: number
       excludeDates?: DatePickerProps['excludeDates']
@@ -219,6 +225,14 @@ export type RepeaterItem = {
       updateOnSelect?: MaybeWithIndex<string[]>
     }
   | { component: 'hiddenInput' }
+  | {
+      component: 'alertMessage'
+      title?: MaybeWithApplicationAndActiveField<StaticText>
+      message?: MaybeWithApplicationAndActiveField<StaticText>
+      alertType?: AlertType
+      marginBottom?: BoxProps['marginBottom']
+      marginTop?: BoxProps['marginTop']
+    }
 )
 
 export type AlertMessageLink = {
@@ -265,7 +279,9 @@ export interface BaseField extends FormItem {
   clearOnChange?: string[]
   setOnChange?:
     | { key: string; value: any }[]
-    | ((optionValue: RepeaterOptionValue) => { key: string; value: any }[])
+    | ((
+        optionValue: RepeaterOptionValue,
+      ) => Promise<{ key: string; value: any }[]>)
 
   // TODO use something like this for non-schema validation?
   // validate?: (formValue: FormValue, context?: object) => boolean
@@ -385,6 +401,7 @@ export interface DateField extends InputField {
   backgroundColor?: DatePickerBackgroundColor
   onChange?(date: string): void
   readOnly?: boolean
+  tempDisabled?: (application: Application) => boolean
 }
 
 export interface DescriptionField extends BaseField {
@@ -395,6 +412,7 @@ export interface DescriptionField extends BaseField {
   titleTooltip?: FormText
   space?: BoxProps['paddingTop']
   titleVariant?: TitleVariants
+  showFieldName?: boolean
 }
 
 export interface RadioField extends InputField {
@@ -585,9 +603,10 @@ export interface ExpandableDescriptionField extends BaseField {
 export interface AlertMessageField extends BaseField {
   readonly type: FieldTypes.ALERT_MESSAGE
   component: FieldComponents.ALERT_MESSAGE
-  alertType?: 'default' | 'warning' | 'error' | 'info' | 'success'
+  alertType?: AlertType
   message?: FormTextWithLocale
   links?: AlertMessageLink[]
+  shouldBlockInSetBeforeSubmitCallback?: boolean
 }
 
 export interface LinkField extends BaseField {
@@ -673,6 +692,7 @@ export type ActionCardListField = BaseField & {
   items: (
     application: Application,
     lang: Locale,
+    userNationalId: string,
   ) => ApplicationActionCardProps[]
   space?: BoxProps['paddingTop']
 }
@@ -725,8 +745,16 @@ export type TableRepeaterField = BaseField & {
      * if not provided it will be auto generated from the fields
      */
     rows?: string[]
-    format?: Record<string, (value: string) => string | StaticText>
+    format?: Record<
+      string,
+      (
+        value: string,
+        index: number,
+        application?: Application,
+      ) => string | StaticText
+    >
   }
+  initActiveFieldIfEmpty?: boolean
 }
 
 export type FieldsRepeaterField = BaseField & {
@@ -931,6 +959,7 @@ export interface OverviewField extends BaseField {
   items?: (
     answers: FormValue,
     externalData: ExternalData,
+    userNationalId: string,
   ) => Array<KeyValueItem>
   attachments?: (
     answers: FormValue,

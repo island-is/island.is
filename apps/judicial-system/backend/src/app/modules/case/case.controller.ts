@@ -17,7 +17,12 @@ import {
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common'
-import { ApiCreatedResponse, ApiOkResponse, ApiTags } from '@nestjs/swagger'
+import {
+  ApiCreatedResponse,
+  ApiOkResponse,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger'
 
 import {
   DokobitError,
@@ -50,6 +55,7 @@ import {
 
 import { nowFactory } from '../../factories'
 import {
+  adminRule,
   courtOfAppealsAssistantRule,
   courtOfAppealsJudgeRule,
   courtOfAppealsRegistrarRule,
@@ -62,6 +68,7 @@ import {
   prosecutorRule,
   publicProsecutorStaffRule,
 } from '../../guards'
+import { CivilClaimantService } from '../defendant'
 import { EventService } from '../event'
 import { UserService } from '../user'
 import { CreateCaseDto } from './dto/createCase.dto'
@@ -102,6 +109,7 @@ import {
 import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
 import { Case } from './models/case.model'
+import { CaseStatistics } from './models/caseStatistics.response'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
 import { CaseService, UpdateCase } from './case.service'
@@ -115,6 +123,7 @@ export class CaseController {
     private readonly userService: UserService,
     private readonly eventService: EventService,
     private readonly pdfService: PdfService,
+    private readonly civilClaimantService: CivilClaimantService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -270,6 +279,14 @@ export class CaseController {
       throw new BadRequestException(
         'Cannot merge case that is not in a received state',
       )
+    }
+
+    if (update.hasCivilClaims !== undefined) {
+      if (update.hasCivilClaims) {
+        await this.civilClaimantService.create(theCase)
+      } else {
+        await this.civilClaimantService.deleteAll(theCase.id)
+      }
     }
 
     // If the case comes from LOKE then we don't want to allow the removal or
@@ -892,5 +909,25 @@ export class CaseController {
     this.logger.debug(`Creating a court case for case ${caseId}`)
 
     return this.caseService.createCourtCase(theCase, user)
+  }
+
+  @UseGuards(JwtAuthUserGuard, RolesGuard)
+  @RolesRules(adminRule)
+  @Get('cases/statistics')
+  @ApiOkResponse({
+    type: CaseStatistics,
+    description: 'Gets court centered statistics for cases',
+  })
+  @ApiQuery({ name: 'fromDate', required: false, type: String })
+  @ApiQuery({ name: 'toDate', required: false, type: String })
+  @ApiQuery({ name: 'institutionId', required: false, type: String })
+  getStatistics(
+    @Query('fromDate') fromDate?: Date,
+    @Query('toDate') toDate?: Date,
+    @Query('institutionId') institutionId?: string,
+  ): Promise<CaseStatistics> {
+    this.logger.debug('Getting statistics for all cases')
+
+    return this.caseService.getCaseStatistics(fromDate, toDate, institutionId)
   }
 }

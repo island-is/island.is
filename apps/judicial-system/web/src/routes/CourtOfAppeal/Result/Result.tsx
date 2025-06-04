@@ -22,8 +22,7 @@ import useInfoCardItems from '@island.is/judicial-system-web/src/components/Info
 import { useAppealAlertBanner } from '@island.is/judicial-system-web/src/utils/hooks'
 import { titleForCase } from '@island.is/judicial-system-web/src/utils/titleForCase/titleForCase'
 
-import CaseFilesOverview from '../components/CaseFilesOverview/CaseFilesOverview'
-import CaseOverviewHeader from '../components/CaseOverviewHeader/CaseOverviewHeader'
+import { CaseFilesOverview, CaseOverviewHeader } from '../components'
 import { result as strings } from './Result.strings'
 
 type modalTypes = 'reopenCase' | 'none'
@@ -51,6 +50,8 @@ const CourtOfAppealResult = () => {
     appealCaseNumber,
     appealAssistant,
     appealJudges,
+    victims,
+    showItem,
   } = useInfoCardItems()
 
   return (
@@ -104,6 +105,14 @@ const CourtOfAppealResult = () => {
                   id: 'defendants-section',
                   items: [defendants(workingCase.type)],
                 },
+                ...(showItem(victims)
+                  ? [
+                      {
+                        id: 'victims-section',
+                        items: [victims],
+                      },
+                    ]
+                  : []),
                 {
                   id: 'case-info-section',
                   items: [

@@ -1,9 +1,9 @@
 import { DocumentBuilder } from '@nestjs/swagger'
 
 export const openApi = new DocumentBuilder()
-  .setTitle('Payments Microservice')
+  .setTitle('Payments API')
   .setDescription(
-    'This microservice handles API requests for the payments web application.',
+    'This service handles and encapsulates all lgoic related to payment flows, from creation to payment. It handles communication with FJS for the payments.',
   )
   .setVersion('1.0')
   .addTag('reference')

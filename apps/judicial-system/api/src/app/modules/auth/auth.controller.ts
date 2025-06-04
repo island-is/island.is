@@ -23,7 +23,7 @@ import {
 } from '@island.is/judicial-system/audit-trail'
 import {
   CurrentHttpUser,
-  EligibleHttpUsers,
+  CurrentHttpUserNationalId,
   JwtAuthGuard,
   SharedAuthService,
 } from '@island.is/judicial-system/auth'
@@ -35,8 +35,11 @@ import {
   CSRF_COOKIE_NAME,
   DEFENDER_CASES_ROUTE,
   EXPIRES_IN_MILLISECONDS,
+  IDS_ACCESS_TOKEN_NAME,
   IDS_ID_TOKEN_NAME,
+  IDS_REFRESH_TOKEN_NAME,
   PRISON_CASES_ROUTE,
+  REFRESH_TOKEN_EXPIRES_IN_MILLISECONDS,
   USERS_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
@@ -47,11 +50,10 @@ import {
   isDistrictCourtUser,
   isPrisonSystemUser,
   isProsecutionUser,
-  isPublicProsecutorUser,
+  isPublicProsecutionOfficeUser,
   type User,
 } from '@island.is/judicial-system/types'
 
-import { BackendService } from '../backend'
 import { authModuleConfig } from './auth.config'
 import { AuthService } from './auth.service'
 import { Cookie } from './auth.types'
@@ -96,10 +98,21 @@ export class AuthController {
     options: this.defaultCookieOptions,
   }
 
+  // TEMP: To begin with we will store the two tokens in the session cookie as we do with other tokens.
+  // In the future based on usage, we might consider storing it not in the session cookie
+  private readonly accessToken: Cookie = {
+    name: IDS_ACCESS_TOKEN_NAME,
+    options: this.defaultCookieOptions,
+  }
+
+  private readonly refreshToken: Cookie = {
+    name: IDS_REFRESH_TOKEN_NAME,
+    options: this.defaultCookieOptions,
+  }
+
   constructor(
     private readonly auditTrailService: AuditTrailService,
     private readonly authService: AuthService,
-    private readonly backendService: BackendService,
     private readonly sharedAuthService: SharedAuthService,
 
     @Inject(LOGGER_PROVIDER)
@@ -124,12 +137,12 @@ export class AuthController {
       if (this.config.allowAuthBypass && nationalId) {
         this.logger.debug(`Logging in using development mode`)
 
-        await this.redirectAuthenticatedUser(
+        await this.redirectAuthenticatedUser({
           nationalId,
           res,
           userId,
-          redirectRoute,
-        )
+          requestedRedirectRoute: redirectRoute,
+        })
 
         return
       }
@@ -211,14 +224,16 @@ export class AuthController {
       if (verifiedUserToken) {
         this.logger.debug('Token verification successful')
 
-        await this.redirectAuthenticatedUser(
-          verifiedUserToken.nationalId,
+        await this.redirectAuthenticatedUser({
+          nationalId: verifiedUserToken.nationalId,
           res,
           userId,
-          redirectRoute,
-          idsTokens.id_token,
-          new Entropy({ bits: 128 }).string(),
-        )
+          requestedRedirectRoute: redirectRoute,
+          idToken: idsTokens.id_token,
+          csrfToken: new Entropy({ bits: 128 }).string(),
+          accessToken: idsTokens.access_token,
+          refreshToken: idsTokens.refresh_token,
+        })
 
         return
       }
@@ -237,6 +252,52 @@ export class AuthController {
     res.redirect('/?villa=innskraning-ogild')
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get('token-refresh')
+  async tokenRefresh(@Res() res: Response, @Req() req: Request) {
+    try {
+      this.logger.debug('Handling token expiry')
+
+      const accessToken = req.cookies[this.idToken.name]
+      if (!this.authService.isTokenExpired(accessToken)) {
+        this.logger.debug('Token is valid')
+        res.status(200).send()
+        return
+      }
+      const refreshToken = req.cookies[this.refreshToken.name]
+      const idsTokens = await this.authService.refreshToken(refreshToken)
+
+      const verifiedUserToken = await this.authService.verifyIdsToken(
+        idsTokens.id_token,
+      )
+      if (!verifiedUserToken) {
+        throw new Error('Invalid id token')
+      }
+
+      const newAccessToken = idsTokens.access_token
+      const newRefreshToken = idsTokens.refresh_token
+      if (newAccessToken && newRefreshToken) {
+        res.cookie(this.accessToken.name, newAccessToken, {
+          ...this.accessToken.options,
+        })
+        res.cookie(this.refreshToken.name, newRefreshToken, {
+          ...this.refreshToken.options,
+          maxAge: EXPIRES_IN_MILLISECONDS,
+        })
+      }
+      this.logger.debug('Token refresh successful')
+      res.status(200).send()
+    } catch (error) {
+      this.logger.error('Handling token expiry failed:', { error })
+
+      this.clearCookies(res)
+
+      res.redirect('/?villa=innskraning-villa')
+
+      return
+    }
+  }
+
   @Get('callback')
   deprecatedAuth(@Res() res: Response) {
     this.logger.debug(
@@ -253,6 +314,9 @@ export class AuthController {
     this.logger.debug('Received logout request')
 
     const idToken = req.cookies[this.idToken.name]
+    const refreshToken = req.cookies[this.refreshToken.name]
+
+    this.authService.revokeRefreshToken(refreshToken)
 
     this.clearCookies(res)
 
@@ -271,7 +335,7 @@ export class AuthController {
   @Get('activate/:userId')
   async activateUser(
     @Param('userId') userId: string,
-    @EligibleHttpUsers() eligibleUsers: User[],
+    @CurrentHttpUserNationalId() nationalId: string,
     @Res() res: Response,
     @Req() req: Request,
     @CurrentHttpUser() user?: User,
@@ -289,12 +353,14 @@ export class AuthController {
       const csrfToken =
         csrfCookieToken === 'undefined' ? undefined : csrfCookieToken
 
+      const eligibleUsers =
+        await this.authService.findEligibleUsersByNationalId(nationalId)
       const currentUser = eligibleUsers.find((user) => user.id === userId)
 
       if (!currentUser) {
         this.logger.info('Blocking illegal user activation attempt')
 
-        await this.backendService.createEventLog({
+        await this.authService.createEventLog({
           eventType: csrfToken
             ? EventType.LOGIN_UNAUTHORIZED
             : EventType.LOGIN_BYPASS_UNAUTHORIZED,
@@ -313,8 +379,8 @@ export class AuthController {
       const { redirectRoute } = req.cookies[this.redirectCookie.name] ?? {}
       const useRedirectRoute = !user
 
-      this.redirectAuthorizeUser(
-        eligibleUsers,
+      await this.redirectAuthorizeUser(
+        nationalId,
         res,
         currentUser,
         csrfToken,
@@ -347,36 +413,40 @@ export class AuthController {
     cookies.forEach((cookie) => clearCookie(cookie))
   }
 
-  private async findEligibleUsersByNationalId(nationalId: string) {
-    const users = await this.authService.findUsersByNationalId(nationalId)
-
-    if (users) {
-      return users
-    }
-
-    const defender = await this.authService.findDefender(nationalId)
-
-    if (defender) {
-      return [defender]
-    }
-
-    return []
-  }
-
-  private async redirectAuthenticatedUser(
-    nationalId: string,
-    res: Response,
-    userId?: string,
-    requestedRedirectRoute?: string,
-    idToken?: string,
-    csrfToken?: string,
-  ) {
-    const eligibleUsers = await this.findEligibleUsersByNationalId(nationalId)
+  private async redirectAuthenticatedUser({
+    nationalId,
+    res,
+    userId,
+    requestedRedirectRoute,
+    idToken,
+    csrfToken,
+    accessToken,
+    refreshToken,
+  }: {
+    nationalId: string
+    res: Response
+    userId?: string
+    requestedRedirectRoute?: string
+    idToken?: string
+    csrfToken?: string
+    accessToken?: string
+    refreshToken?: string
+  }) {
+    const eligibleUsers = await this.authService.findEligibleUsersByNationalId(
+      nationalId,
+    )
 
     if (eligibleUsers.length === 0) {
       this.logger.info('Blocking login attempt from an unauthorized user')
 
       this.clearCookies(res)
+
+      this.authService.createEventLog({
+        eventType: csrfToken
+          ? EventType.LOGIN_UNAUTHORIZED
+          : EventType.LOGIN_BYPASS_UNAUTHORIZED,
+        nationalId,
+      })
 
       res.redirect('/?villa=innskraning-ekki-notandi')
 
@@ -402,12 +472,20 @@ export class AuthController {
         ...this.idToken.options,
         maxAge: EXPIRES_IN_MILLISECONDS,
       })
+      // expires in 5 minutes, can't be overridden
+      res.cookie(this.accessToken.name, accessToken, {
+        ...this.accessToken.options,
+      })
+      res.cookie(this.refreshToken.name, refreshToken, {
+        ...this.refreshToken.options,
+        maxAge: REFRESH_TOKEN_EXPIRES_IN_MILLISECONDS,
+      })
     } else {
       this.clearCookies(res, [this.idToken])
     }
 
-    this.redirectAuthorizeUser(
-      eligibleUsers,
+    return this.redirectAuthorizeUser(
+      nationalId,
       res,
       currentUser,
       csrfToken,
@@ -415,15 +493,15 @@ export class AuthController {
     )
   }
 
-  private redirectAuthorizeUser(
-    eligibleUsers: User[], // eligibleUsers is an array of one or more users
+  private async redirectAuthorizeUser(
+    currentUserNationalId: string,
     res: Response,
     currentUser?: User,
     csrfToken?: string,
     requestedRedirectRoute?: string,
   ) {
     if (currentUser) {
-      this.backendService.createEventLog({
+      await this.authService.createEventLog({
         eventType: csrfToken ? EventType.LOGIN : EventType.LOGIN_BYPASS,
         nationalId: currentUser.nationalId,
         userRole: currentUser.role,
@@ -434,7 +512,7 @@ export class AuthController {
     }
 
     const jwtToken = this.sharedAuthService.signJwt(
-      eligibleUsers,
+      currentUserNationalId,
       currentUser,
       csrfToken,
     )
@@ -482,7 +560,7 @@ export class AuthController {
       ])
     }
 
-    if (isPublicProsecutorUser(currentUser)) {
+    if (isPublicProsecutionOfficeUser(currentUser)) {
       return getRedirectRoute(CASES_ROUTE, [
         '/beinir',
         '/krafa/yfirlit',

@@ -72,6 +72,11 @@ export const m = {
       defaultMessage: 'Hæstiréttur',
       description: 'Hæstiréttur',
     },
+    showRetrialCourt: {
+      id: 'web.verdicts:listPage.showRetrialCourt',
+      defaultMessage: 'Endurupptökudómur',
+      description: 'Endurupptökudómur',
+    },
     searchInputPlaceholder: {
       id: 'web.verdicts:listPage.searchInputPlaceholder',
       defaultMessage: 'Sláðu inn orð, málsnúmer, málsaðila',
@@ -126,6 +131,16 @@ export const m = {
       id: 'web.verdicts:listPage.clearAllFiltersLabel',
       defaultMessage: 'Hreinsa allar síur',
       description: 'Label á "Hreinsa allar síur" takka',
+    },
+    closeAllFiltersLabel: {
+      id: 'web.verdicts:listPage.closeAllFiltersLabel',
+      defaultMessage: 'Loka öllum síum',
+      description: 'Label á "Loka öllum síum" takka',
+    },
+    openAllFiltersLabel: {
+      id: 'web.verdicts:listPage.openAllFiltersLabel',
+      defaultMessage: 'Opna allar síur',
+      description: 'Label á "Opna allar síur" takka',
     },
     dateToLabel: {
       id: 'web.verdicts:listPage.dateToLabel',

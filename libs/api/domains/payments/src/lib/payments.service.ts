@@ -34,15 +34,6 @@ export class PaymentsService {
     return this.paymentsApi.paymentFlowControllerGetPaymentFlow(input)
   }
 
-  // TODO: Remove after testing on feature deployment
-  createPaymentFlow(
-    input: CreatePaymentFlowInput,
-  ): Promise<CreatePaymentFlowResponse> {
-    return this.paymentsApi.paymentFlowControllerCreatePaymentUrl({
-      createPaymentFlowInput: input,
-    })
-  }
-
   getVerificationStatus(
     input: GetPaymentFlowInput,
   ): Promise<VerificationStatusResponse> {

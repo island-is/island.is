@@ -6,6 +6,7 @@ import {
   MedmaeliApi,
   FrambodApi,
   AdminApi as AdminClient,
+  KosningApi,
 } from '../../gen/fetch'
 import { SignatureCollectionClientConfig } from './signature-collection.config'
 import { IdsClientConfig, XRoadConfig } from '@island.is/nest/config'
@@ -50,27 +51,31 @@ const configFactory = (
 })
 
 export const exportedApis = [
-  ...[MedmaelalistarApi, MedmaelasofnunApi, MedmaeliApi, FrambodApi].map(
-    (Api) => ({
-      provide: Api,
-      useFactory: (
-        config: ConfigType<typeof SignatureCollectionClientConfig>,
-        idsClientConfig: ConfigType<typeof IdsClientConfig>,
-        xroadConfig: ConfigType<typeof XRoadConfig>,
-      ) => {
-        return new Api(
-          new Configuration(
-            configFactory(config, idsClientConfig, xroadConfig, config.scope),
-          ),
-        )
-      },
-      inject: [
-        SignatureCollectionClientConfig.KEY,
-        IdsClientConfig.KEY,
-        XRoadConfig.KEY,
-      ],
-    }),
-  ),
+  ...[
+    MedmaelalistarApi,
+    MedmaelasofnunApi,
+    MedmaeliApi,
+    FrambodApi,
+    KosningApi,
+  ].map((Api) => ({
+    provide: Api,
+    useFactory: (
+      config: ConfigType<typeof SignatureCollectionClientConfig>,
+      idsClientConfig: ConfigType<typeof IdsClientConfig>,
+      xroadConfig: ConfigType<typeof XRoadConfig>,
+    ) => {
+      return new Api(
+        new Configuration(
+          configFactory(config, idsClientConfig, xroadConfig, config.scope),
+        ),
+      )
+    },
+    inject: [
+      SignatureCollectionClientConfig.KEY,
+      IdsClientConfig.KEY,
+      XRoadConfig.KEY,
+    ],
+  })),
   ...[
     AdminListApi,
     AdminCollectionApi,

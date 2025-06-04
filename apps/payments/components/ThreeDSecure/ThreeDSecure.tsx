@@ -1,11 +1,6 @@
 import React, { useEffect, useRef } from 'react'
 
-import {
-  Box,
-  Button,
-  ModalBase,
-  SkeletonLoader,
-} from '@island.is/island-ui/core'
+import { Box, ModalBase, SkeletonLoader } from '@island.is/island-ui/core'
 
 import { generateFormHtml } from '../../utils/3ds'
 import * as styles from './ThreeDSecure.css'
@@ -25,7 +20,6 @@ export const ThreeDSecure: React.FC<ThreeDSecureProps> = ({
   scriptPath,
   verificationFields,
   hasData,
-  // onClose,
 }) => {
   const iframeContainerRef = useRef<HTMLIFrameElement>(null)
   const iframeRef = useRef<HTMLIFrameElement>(null)
@@ -102,15 +96,12 @@ export const ThreeDSecure: React.FC<ThreeDSecureProps> = ({
                 }}
                 style={{
                   width: '100%',
-                  height: iframeContainerRef.current?.offsetWidth ?? '500px',
+                  height: '100%',
                   border: 'none',
                   zIndex: 2,
                 }}
               />
             )}
-            {/* <Button variant="text" onClick={onClose} fluid>
-            Close
-          </Button> */}
           </Box>
         </Box>
       </Box>

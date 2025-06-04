@@ -1,10 +1,10 @@
-query collection {
-  signatureCollectionAdminCurrent {
+query collection($input: SignatureCollectionCollectionTypeInput!) {
+  signatureCollectionAdminCurrent(input: $input) {
     id
     endTime
     startTime
     isActive
-    isPresidential
+    collectionType
     name
     status
     areas {

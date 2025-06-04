@@ -10,7 +10,6 @@ import {
   buildKeyValueField,
   YES,
   NO,
-  buildCheckboxField,
   buildDividerField,
   coreMessages,
   buildAlertMessageField,

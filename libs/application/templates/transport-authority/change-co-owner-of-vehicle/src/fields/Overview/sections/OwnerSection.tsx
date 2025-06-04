@@ -5,12 +5,10 @@ import { Text, GridRow, GridColumn } from '@island.is/island-ui/core'
 import { getValueViaPath } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
 import { information, review } from '../../../lib/messages'
-import {
-  formatPhoneNumber,
-  ReviewGroup,
-} from '@island.is/application/ui-components'
+import { ReviewGroup } from '@island.is/application/ui-components'
 import kennitala from 'kennitala'
 import { ReviewScreenProps } from '../../../shared'
+import { formatPhoneNumber } from '../../../utils'
 
 export const OwnerSection: FC<
   React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
