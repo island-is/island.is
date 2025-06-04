@@ -60,8 +60,8 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     ...guardians.map((guardian) => ({
       name: guardian.fullName,
       nationalId: guardian.nationalId,
-      nationality: '', //TODO
-      type: AgentDtoTypeEnum.Guardian, //TODO
+      nationality: '', // LAGA
+      type: AgentDtoTypeEnum.Guardian, // LAGA
       domicile: {
         address: guardian.address.streetAddress,
         postCode: guardian.address.postalCode,
@@ -73,8 +73,8 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     ...contacts.map((contact) => ({
       name: contact.fullName,
       nationalId: contact.nationalId,
-      nationality: '', //TODO
-      type: AgentDtoTypeEnum.Guardian, //TODO
+      nationality: '', // LAGA
+      type: AgentDtoTypeEnum.Guardian, // LAGA
       phone: contact.phoneNumber,
       role: contact.relation,
     })),
@@ -83,8 +83,8 @@ export const transformApplicationToNewPrimarySchoolDTO = (
       ? siblings.map((sibling) => ({
           name: sibling.fullName,
           nationalId: sibling.nationalId,
-          nationality: '', //TODO
-          type: AgentDtoTypeEnum.Guardian, //TODO
+          nationality: '', // LAGA
+          type: AgentDtoTypeEnum.Guardian, // LAGA
           role: 'sibling',
         }))
       : []),
@@ -95,7 +95,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     user: {
       name: childInfo.name,
       nationalId: childInfo.nationalId,
-      nationality: '', //TODO
+      nationality: '', // LAGA
       ...(childInfo.usePronounAndPreferredName?.includes(YES)
         ? {
             preferredName: childInfo.preferredName,
@@ -132,7 +132,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         : {
             expectedStartDate: new Date(), // Temporary until we start working on the "Enrollment in primary school" application
           }),
-      reason: reasonForApplication, // TODO: Add a condition for this when Júní has added school type
+      reason: reasonForApplication, //LAGA: Add a condition for this when Júní has added school type
       ...(reasonForApplication ===
       ReasonForApplicationOptions.MOVING_MUNICIPALITY
         ? {
@@ -187,23 +187,23 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         : {}),
     },
     language: {
-      languageEnvironment: LanguageDtoLanguageEnvironmentEnum.OnlyIcelandic, //TODO
+      languageEnvironment: LanguageDtoLanguageEnvironmentEnum.OnlyIcelandic, // LAGA
       signLanguage: signLanguage === YES,
       ...(languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
         ? {
             preferredLanguage,
             guardianRequiresInterpreter: guardianRequiresInterpreter === YES,
-            // firstLanguage: selectedLanguages[0]?.code,//TODO
-            // secondLanguage: selectedLanguages[1]?.code,//TODO
-            // thirdLanguage: selectedLanguages[2]?.code,//TODO
-            // fourthLanguage: selectedLanguages[3]?.code,//TODO
+            // firstLanguage: selectedLanguages[0]?.code,// LAGA
+            // secondLanguage: selectedLanguages[1]?.code,// LAGA
+            // thirdLanguage: selectedLanguages[2]?.code,// LAGA
+            // fourthLanguage: selectedLanguages[3]?.code,// LAGA
           }
         : {
             preferredLanguage: 'is',
             guardianRequiresInterpreter: false,
-            // firstLanguage: 'is', //TODO
+            // firstLanguage: 'is', // LAGA
           }),
-      languages: [], //TODO
+      languages: [], // LAGA
     },
   }
 
