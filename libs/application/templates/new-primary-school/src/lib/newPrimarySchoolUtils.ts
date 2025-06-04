@@ -9,10 +9,10 @@ import { MessageDescriptor } from 'react-intl'
 import {
   Child,
   ChildInformation,
-  ContactsRow,
   FriggChildInformation,
   Membership,
   Person,
+  RelativesRow,
   SelectOption,
   SiblingsRow,
 } from '../types'
@@ -38,7 +38,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const guardians = getValueViaPath(answers, 'guardians') as Person[]
 
-  const contacts = getValueViaPath(answers, 'contacts') as ContactsRow[]
+  const relatives = getValueViaPath(answers, 'relatives') as RelativesRow[]
 
   const reasonForApplication = getValueViaPath(
     answers,
@@ -216,7 +216,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     childNationalId,
     childInfo,
     guardians,
-    contacts,
+    relatives,
     reasonForApplication,
     reasonForApplicationStreetAddress,
     reasonForApplicationPostalCode,
