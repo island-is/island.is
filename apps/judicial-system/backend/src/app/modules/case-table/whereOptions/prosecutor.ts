@@ -93,6 +93,7 @@ export const prosecutorIndictmentInProgressWhereOptions = (user: TUser) => ({
   state: {
     [Op.notIn]: [
       ...completedIndictmentCaseStates,
+      CaseState.DRAFT,
       CaseState.DELETED,
       CaseState.WAITING_FOR_CANCELLATION,
       CaseState.WAITING_FOR_CONFIRMATION,

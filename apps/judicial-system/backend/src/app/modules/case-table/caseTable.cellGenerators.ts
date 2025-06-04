@@ -609,6 +609,7 @@ const courtOfAppealsHead: CaseTableCellGenerator<StringValue> = {
 }
 
 const created: CaseTableCellGenerator<StringValue> = {
+  attributes: ['created'],
   generate: (c: Case): CaseTableCell<StringValue> => {
     return generateDate(c.created)
   },

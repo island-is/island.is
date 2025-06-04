@@ -4,7 +4,7 @@ import {
   CaseTableType,
 } from '../caseTableTypes'
 
-const prosecutorRequestCasesTableGroup: CaseTableGroup = {
+export const prosecutorRequestCasesTableGroup: CaseTableGroup = {
   title: 'Rannsóknarmál',
   tables: [
     {
@@ -34,7 +34,7 @@ const prosecutorRequestCasesTableGroup: CaseTableGroup = {
   ],
 }
 
-const prosecutorIndictmentsTableGroup: CaseTableGroup = {
+export const prosecutorIndictmentsTableGroup: CaseTableGroup = {
   title: 'Sakamál',
   tables: [
     {
