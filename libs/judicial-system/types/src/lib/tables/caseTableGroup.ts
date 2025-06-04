@@ -90,7 +90,7 @@ const courtOfAppealsTableGroups: CaseTableGroup[] = [
       {
         type: CaseTableType.COURT_OF_APPEALS_IN_PROGRESS,
         route: 'mal-i-vinnslu',
-        title: 'Rannsóknarmál mál í vinnslu',
+        title: 'Mál í vinnslu',
         description: 'Kærð sakamál sem eru til meðferðar.',
       },
       {
