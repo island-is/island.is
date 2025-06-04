@@ -2,7 +2,8 @@ import { Inject, Injectable } from '@nestjs/common'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { ApolloError } from '@apollo/client'
 import { User } from '@island.is/auth-nest-tools'
-import { GoogleTranslation, Translation } from '../../models/services.model'
+import { Translation } from '../../models/services.model'
+import { GoogleTranslation } from '@island.is/form-system/shared'
 import { handle4xx } from '../../utils/errorHandler'
 import {
   GetGoogleTranslationInput,
@@ -84,6 +85,7 @@ export class ServicesService {
     input: GetGoogleTranslationInput,
   ): Promise<GoogleTranslation> {
     const { FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY } = process.env
+
     if (!FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY) {
       throw new Error(
         'Api key for Google translation service is not configured',
@@ -100,8 +102,8 @@ export class ServicesService {
           },
           body: JSON.stringify({
             q: input.q,
-            source: input.source,
-            target: input.target,
+            source: 'is',
+            target: 'en',
             format: 'text',
           }),
         },
@@ -115,7 +117,7 @@ export class ServicesService {
 
       const result = await response.json()
       return {
-        data: result.data.translations ?? [],
+        translation: result.data.translations[0].translatedText || '',
       } as GoogleTranslation
     } catch (error) {
       handle4xx(error, this.handleError, 'failed to get Google translation')

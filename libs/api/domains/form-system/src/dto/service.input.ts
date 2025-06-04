@@ -9,14 +9,5 @@ export class GetTranslationInput {
 @InputType('FormSystemGoogleTranslationInput')
 export class GetGoogleTranslationInput {
   @Field(() => String, { nullable: false })
-  key!: string
-
-  @Field(() => String, { nullable: false })
   q!: string
-
-  @Field(() => String, { nullable: false })
-  source!: string
-
-  @Field(() => String, { nullable: false })
-  target!: string
 }

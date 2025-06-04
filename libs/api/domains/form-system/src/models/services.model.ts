@@ -31,9 +31,3 @@ export class Translation {
     this.model = ''
   }
 }
-
-@ObjectType('FormSystemGoogleTranslation')
-export class GoogleTranslation {
-  @Field(() => [graphqlTypeJson])
-  data: object[] = []
-}

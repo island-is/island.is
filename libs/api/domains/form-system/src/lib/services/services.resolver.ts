@@ -1,13 +1,14 @@
 import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
-import { Mutation, Args, Resolver } from '@nestjs/graphql'
+import { Mutation, Args, Resolver, Query } from '@nestjs/graphql'
 import {
   CurrentUser,
   IdsUserGuard,
   type User,
 } from '@island.is/auth-nest-tools'
 import { ServicesService } from './services.service'
-import { GoogleTranslation, Translation } from '../../models/services.model'
+import { Translation } from '../../models/services.model'
+import { GoogleTranslation } from '@island.is/form-system/shared'
 import { UseGuards } from '@nestjs/common'
 import {
   GetGoogleTranslationInput,
