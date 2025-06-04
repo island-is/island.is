@@ -1,13 +1,9 @@
 import { Module } from '@nestjs/common'
-import { HmsApplicationSystemService } from './hms-application-system.service'
-import { ApplicationApi, ApplicationManagerApi } from '../../gen/fetch'
+import { exportedApis } from './apis'
+import { ApiConfiguration } from './apiConfiguration'
 
 @Module({
-  providers: [
-    ApplicationApi,
-    ApplicationManagerApi,
-    HmsApplicationSystemService,
-  ],
-  exports: [HmsApplicationSystemService],
+  providers: [ApiConfiguration, ...exportedApis],
+  exports: [...exportedApis],
 })
 export class HmsApplicationSystemModule {}

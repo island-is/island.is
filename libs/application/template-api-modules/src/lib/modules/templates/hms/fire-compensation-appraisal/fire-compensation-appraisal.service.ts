@@ -11,12 +11,8 @@ import { mockGetProperties } from './mockedFasteign'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { getValueViaPath } from '@island.is/application/core'
-import { paymentForAppraisal } from './utils'
-import {
-  HmsApplicationSystemService,
-  ApplicationDto,
-} from '@island.is/clients/hms-application-system'
-
+import { mapAnswersToApplicationDto, paymentForAppraisal } from './utils'
+import { ApplicationApi } from '@island.is/clients/hms-application-system'
 @Injectable()
 export class FireCompensationAppraisalService extends BaseTemplateApiService {
   constructor(
@@ -24,7 +20,7 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly notificationsService: NotificationsService,
     private propertiesApi: FasteignirApi,
-    private hmsApplicationSystemService: HmsApplicationSystemService,
+    private hmsApplicationSystemService: ApplicationApi,
   ) {
     super(ApplicationTypes.FIRE_COMPENSATION_APPRAISAL)
   }
@@ -110,11 +106,11 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
       console.log('--------------------------------')
       console.log('SUBMITTING APPLICATION')
       console.log('--------------------------------')
-      const res =
-        await this.hmsApplicationSystemService.submitBrunabotamatApplication(
-          auth,
-          {} as ApplicationDto,
-        )
+      const applicationDto = mapAnswersToApplicationDto(application.answers)
+
+      const res = await this.hmsApplicationSystemService.apiApplicationPost({
+        applicationDto,
+      })
 
       console.log('--------------------------------')
       console.log('APPLICATION SUBMITTED')

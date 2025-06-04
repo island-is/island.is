@@ -28,17 +28,16 @@ const descriptionSchema = z.string().min(1)
 
 export const dataSchema = z.object({
   // Prerequisites
-  confirmReadPrivacyPolicy: readPrivacyPolicy,
-  confirmReadFireCompensationInfo: readFireCompensationInfo,
-  approveExternalData: z.boolean().refine((v) => v),
-
-  // Main form
-  applicant: applicantSchema,
-  realEstate: realEstateSchema,
-  usageUnits: usageUnitsSchema,
-  photos: z.array(fileSchema).min(3),
-  appraisalMethod: appraisalMethodSchema,
-  description: descriptionSchema,
+  // confirmReadPrivacyPolicy: readPrivacyPolicy,
+  // confirmReadFireCompensationInfo: readFireCompensationInfo,
+  // approveExternalData: z.boolean().refine((v) => v),
+  // // Main form
+  // applicant: applicantSchema,
+  // realEstate: realEstateSchema,
+  // usageUnits: usageUnitsSchema,
+  // photos: z.array(fileSchema).min(3),
+  // appraisalMethod: appraisalMethodSchema,
+  // description: descriptionSchema,
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

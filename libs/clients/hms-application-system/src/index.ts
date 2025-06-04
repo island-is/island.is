@@ -1,4 +1,3 @@
-export * from './lib/hms-application-system.module'
-export * from './lib/hms-application-system.service'
-export * from './lib/hms-application-system.config'
+export { HmsApplicationSystemConfig } from './lib/hms-application-system.config'
+export { HmsApplicationSystemModule } from './lib/hms-application-system.module'
 export * from '../gen/fetch'

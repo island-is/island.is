@@ -2,21 +2,18 @@ import { defineConfig } from '@island.is/nest/config'
 import { z } from 'zod'
 
 const schema = z.object({
-  xRoadPath: z.string(),
-  fetchTimeout: z.number().int(),
+  servicePath: z.string(),
 })
 
-export const HmsApplicationSystemConfig = defineConfig<z.infer<typeof schema>>({
+export const HmsApplicationSystemConfig = defineConfig({
   name: 'HmsApplicationSystemClient',
   schema,
   load(env) {
     return {
-      xRoadPath: env.required(
-        'XROAD_HMS_APPLICATION_SYSTEM_PATH',
+      servicePath: env.required(
+        'HMS_APPLICATION_SYSTEM_SERVICE_PATH',
         'IS-DEV/GOV/10033/HMS-Protected/formbuilder-v1',
       ),
-      fetchTimeout:
-        env.optionalJSON('XROAD_HMS_APPLICATION_SYSTEM_TIMEOUT') ?? 15000,
     }
   },
 })
