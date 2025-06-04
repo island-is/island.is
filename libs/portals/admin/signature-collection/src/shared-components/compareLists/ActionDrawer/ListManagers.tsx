@@ -7,11 +7,17 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../lib/messages'
+import { useLoaderData } from 'react-router-dom'
+import { SignatureCollectionList } from '@island.is/api/schema'
+import { formatNationalId } from '@island.is/portals/core'
 
 const { Table, Row, Head, HeadData, Body, Data } = T
 
 const ListManagers = () => {
   const { formatMessage } = useLocale()
+  const { list } = useLoaderData() as {
+    list: SignatureCollectionList
+  }
   return (
     <Box>
       <Drawer
@@ -40,12 +46,8 @@ const ListManagers = () => {
           </Head>
           <Body>
             <Row>
-              <Data>010130-3019</Data>
-              <Data>Gervimaður Afríka</Data>
-            </Row>
-            <Row>
-              <Data>010130-2399</Data>
-              <Data>Gervimaður Færeyjar</Data>
+              <Data>{formatNationalId(list.candidate.nationalId)}</Data>
+              <Data>{list.candidate.name}</Data>
             </Row>
           </Body>
         </Table>
@@ -63,18 +65,14 @@ const ListManagers = () => {
             </Row>
           </Head>
           <Body>
-            <Row>
-              <Data>012345-3799</Data>
-              <Data>Nafni Nafnasson</Data>
-            </Row>
-            <Row>
-              <Data>012345-3799</Data>
-              <Data>Nafni Nafnasson</Data>
-            </Row>
-            <Row>
-              <Data>012345-3799</Data>
-              <Data>Nafni Nafnasson</Data>
-            </Row>
+            {list.collectors?.map((collector) => {
+              return (
+                <Row>
+                  <Data>{formatNationalId(collector.nationalId)}</Data>
+                  <Data>{collector.name}</Data>
+                </Row>
+              )
+            })}
           </Body>
         </Table>
       </Drawer>

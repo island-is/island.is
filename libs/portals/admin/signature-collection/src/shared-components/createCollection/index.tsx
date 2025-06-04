@@ -22,16 +22,19 @@ import { useCreateCollectionMutation } from './createCollection.generated'
 import { m } from '../../lib/messages'
 import { useLoaderData, useParams, useRevalidator } from 'react-router-dom'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
+import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 
 const CreateCollection = () => {
-  const { formatMessage } = useLocale()
-  const { control } = useForm()
-  const { revalidate } = useRevalidator()
   const { collection } = useLoaderData() as ListsLoaderReturn
+  const { id, collectionType } = collection
+
+  const { formatMessage } = useLocale()
+  const { revalidate } = useRevalidator()
+
+  const { control } = useForm()
   const { constituencyName } = useParams() as {
     constituencyName: string | undefined
   }
-
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const [nationalIdInput, setNationalIdInput] = useState('')
   const [nationalIdNotFound, setNationalIdNotFound] = useState(false)
@@ -44,15 +47,15 @@ const CreateCollection = () => {
   const [createCollection, { loading }] = useCreateCollectionMutation({
     variables: {
       input: {
-        collectionType: collection.collectionType,
-        collectionId: collection.id,
+        collectionType: collectionType,
+        collectionId: id,
         owner: {
           name: name,
           nationalId: nationalIdInput,
           phone: '',
           email: '',
         },
-        // Todo: update
+        // Todo: update areas
         areas: null,
       },
     },
@@ -81,7 +84,7 @@ const CreateCollection = () => {
         variables: {
           input: {
             nationalId: nationalIdInput,
-            collectionType: collection.collectionType,
+            collectionType: collectionType,
           },
         },
       }).then((res) => {
@@ -105,7 +108,7 @@ const CreateCollection = () => {
       setNationalIdNotFound(false)
       setCanCreate(true)
     }
-  }, [nationalIdInput, modalIsOpen, candidateLookup])
+  }, [nationalIdInput, modalIsOpen, collectionType, candidateLookup])
 
   return (
     <Box>
@@ -155,6 +158,7 @@ const CreateCollection = () => {
             <Stack space={3}>
               <InputController
                 control={control as unknown as Control}
+                backgroundColor="blue"
                 type="tel"
                 id="candidateNationalId"
                 label={formatMessage(m.candidateNationalId)}
@@ -176,14 +180,15 @@ const CreateCollection = () => {
                 readOnly
                 value={name}
               />
-              {/*areaId && (
+              {collectionType ===
+                SignatureCollectionCollectionType.Parliamentary && (
                 <Input
                   name="candidateArea"
                   label={formatMessage(m.signatureListsConstituencyTitle)}
                   readOnly
                   value={constituencyName}
                 />
-              )*/}
+              )}
             </Stack>
             {!canCreate && (
               <Box marginTop={3}>

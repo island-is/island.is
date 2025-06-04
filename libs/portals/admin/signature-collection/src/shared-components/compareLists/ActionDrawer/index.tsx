@@ -1,16 +1,21 @@
 import { Box } from '@island.is/island-ui/core'
 import ListActions from './ListActions'
 import { Actions } from './ListActions'
+import ListManagers from './ListManagers'
 
 interface ActionDrawerProps {
-  allowedActions?: Actions[];
+  allowedActions?: Actions[]
+  withManagers?: boolean
 }
 
-const ActionDrawer = ({ allowedActions }: ActionDrawerProps = {}) => {
+const ActionDrawer = ({
+  allowedActions,
+  withManagers,
+}: ActionDrawerProps = {}) => {
   return (
     <Box marginTop={3} display="flex" columnGap={2}>
       <ListActions allowedActions={allowedActions} />
-      {/*<ListManagers />*/}
+      {withManagers && <ListManagers />}
     </Box>
   )
 }

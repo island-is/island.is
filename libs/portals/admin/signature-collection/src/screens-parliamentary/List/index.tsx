@@ -74,6 +74,7 @@ const List = () => {
                   Actions.ExtendDeadline,
                   Actions.RemoveCandidate,
                 ]}
+                withManagers
               />
             }
             marginBottom={4}

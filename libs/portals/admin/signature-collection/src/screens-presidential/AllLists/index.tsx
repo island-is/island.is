@@ -219,16 +219,6 @@ const Lists = () => {
                     }
                   />
                 </Filter>
-                {lists?.length > 0 &&
-                  collectionStatus === CollectionStatus.InInitialReview && (
-                    <CreateCollection
-                      collectionId={collection?.id}
-                      collectionType={
-                        SignatureCollectionCollectionType.Presidential
-                      }
-                      areaId={undefined}
-                    />
-                  )}
               </Box>
             </GridColumn>
           </GridRow>
