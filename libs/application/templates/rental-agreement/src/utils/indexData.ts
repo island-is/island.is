@@ -16,6 +16,10 @@ export const indexData = [
     indexRate: '641,3',
   },
   {
+    date: '2024M12',
+    indexRate: '634,1',
+  },
+  {
     date: '2025M03',
     indexRate: '635,5',
   },
@@ -26,9 +30,5 @@ export const indexData = [
   {
     date: '2025M01',
     indexRate: '634,7',
-  },
-  {
-    date: '2024M12',
-    indexRate: '634,1',
   },
 ]

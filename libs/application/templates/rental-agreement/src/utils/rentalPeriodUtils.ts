@@ -232,14 +232,28 @@ export const formatIndexRateDateToIcelandic = (dateString: string): string => {
 export const getIndexDateOptions = () => {
   const { indexData } = require('./indexData')
 
-  return indexData.map((item: { date: string }) => ({
+  const sortedIndexData = [...indexData].sort((a, b) =>
+    b.date.localeCompare(a.date),
+  )
+
+  console.log('Sorted index data:', sortedIndexData)
+
+  return sortedIndexData.map((item: { date: string }) => ({
     value: item.date,
     label: formatIndexRateDateToIcelandic(item.date),
   }))
 }
 export const getIndexRateForDate = (answers: FormValue) => {
-  const selectedDate = answers.rentalAmount as FormValue['indexDate']
+  const selectedDate = getValueViaPath<string>(
+    answers,
+    'rentalAmount.indexDate',
+  )
   if (!selectedDate) return ''
-  const selectedIndex = indexData.find((item) => item.date === selectedDate)
+  const { indexData } = require('./indexData')
+  const selectedIndex = indexData.find(
+    (item: { date: string; indexRate: string }) => item.date === selectedDate,
+  )
+
+  console.log('Selected index:', selectedIndex)
   return selectedIndex ? selectedIndex.indexRate : ''
 }

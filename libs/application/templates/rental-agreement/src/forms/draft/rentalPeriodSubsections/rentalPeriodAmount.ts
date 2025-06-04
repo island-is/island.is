@@ -64,14 +64,17 @@ export const RentalPeriodAmount = buildSubSection({
             },
           ],
           spacing: 0,
+          marginTop: 1,
         }),
         buildSelectField({
           id: 'rentalAmount.indexDate',
           title: rentalAmount.indexDateLabel,
           // TODO: Replace hardcoded with dynamic options from index api when available
           options: getIndexDateOptions(),
+          defaultValue: getIndexDateOptions()[0]?.value || '',
           condition: rentalAmountConnectedToIndex,
           width: 'half',
+          marginTop: 1,
         }),
         buildDisplayField({
           id: 'rentalAmount.indexRate',
