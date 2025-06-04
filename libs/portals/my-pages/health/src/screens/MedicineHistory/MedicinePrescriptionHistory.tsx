@@ -1,5 +1,5 @@
 import { HealthDirectorateMedicineHistoryDispensation } from '@island.is/api/schema'
-import { Box, Button, Icon, Stack } from '@island.is/island-ui/core'
+import { Box, Button, Icon } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   EmptyTable,
@@ -14,8 +14,8 @@ import DispensingContainer from '../../components/DispensingContainer/Dispensing
 import DispensingDetailModal from '../../components/DispensingContainer/DispensingDetailModal'
 import { messages } from '../../lib/messages'
 import {
-  useGetMedicineHistoryQuery,
   useGetMedicineDispensationForAtcLazyQuery,
+  useGetMedicineHistoryQuery,
 } from './MedicineHistory.generated'
 
 const MAX_DISPENSATIONS = 3
@@ -42,12 +42,10 @@ const MedicinePrescriptionHistory = () => {
     variables: { locale: lang },
   })
 
-  const [
-    getMedicineDispensationsATC,
-    { loading: atcLoading, error: atcError, data: atcData },
-  ] = useGetMedicineDispensationForAtcLazyQuery({
-    fetchPolicy: 'no-cache',
-  })
+  const [getMedicineDispensationsATC, { loading: atcLoading, data: atcData }] =
+    useGetMedicineDispensationForAtcLazyQuery({
+      fetchPolicy: 'no-cache',
+    })
 
   const history = data?.healthDirectorateMedicineHistory.medicineHistory ?? []
 
@@ -58,6 +56,7 @@ const MedicinePrescriptionHistory = () => {
         data: atcData.healthDirectorateMedicineDispensationsATC.dispensations,
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [atcData])
 
   return (

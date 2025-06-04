@@ -15,7 +15,6 @@ import { Problem } from '@island.is/react-spa/shared'
 import cn from 'classnames'
 import React, { useState } from 'react'
 import { messages } from '../../../../lib/messages'
-import { HealthCenter } from '../../../../utils/mockData'
 import { PrescriptionItem } from '../../../../utils/types'
 import { usePostPrescriptionRenewalMutation } from '../../Prescriptions.generated'
 import * as styles from './RenewPrescriptionModal.css'
@@ -30,7 +29,6 @@ interface Props {
 }
 
 const RenewPrescriptionModal: React.FC<Props> = ({
-  id,
   activePrescription,
   toggleClose,
   isVisible,

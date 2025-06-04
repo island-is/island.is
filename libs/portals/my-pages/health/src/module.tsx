@@ -54,9 +54,9 @@ const MedicineCertificate = lazy(() =>
   import('./screens/MedicineCertificate/MedicineCertificate'),
 )
 
-const MedicineDelegation = lazy(() =>
-  import('./screens/MedicineDelegation/MedicineDelegation'),
-)
+// const MedicineDelegation = lazy(() =>
+//   import('./screens/MedicineDelegation/MedicineDelegation'),
+// )
 
 const PaymentParticipation = lazy(() =>
   import('./screens/Payments/PaymentParticipation'),

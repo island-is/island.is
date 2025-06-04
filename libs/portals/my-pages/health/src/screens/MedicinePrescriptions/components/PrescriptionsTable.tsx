@@ -23,6 +23,8 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
     useState<PrescriptionItem | null>(null)
   const [openModal, setOpenModal] = useState(false)
   const [pdfLoading, setPdfLoading] = useState(false)
+  // This state is used to handle errors, but currently not displayed in the UI. Will be after service fixes
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [error, setError] = useState<string | null>(null)
   const [prescriptions, setPrescriptions] = useState<
     Array<PrescriptionItem> | undefined
@@ -96,10 +98,7 @@ const PrescriptionsTable: React.FC<Props> = ({ data, loading }) => {
             process: item?.amountRemaining ?? '',
             validTo: formatDate(item?.expiryDate) ?? '',
             status: undefined,
-            // ------------------------------------- //
-            // TODO: Add this back when the API is ready
-            // ------------------------------------- //
-            lastNode: true //item?.isRenewable
+            lastNode: item?.isRenewable
               ? {
                   type: 'action',
                   label: formatMessage(messages.renew),
