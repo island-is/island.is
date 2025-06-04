@@ -11,7 +11,7 @@ import { rehabilitationPlanSection } from './rehabilitationPlanSection'
 import { selfAssessmentSection } from './selfAssessmentSection'
 
 export const MedicalAndRehabilitationPaymentsForm: Form = buildForm({
-  id: 'MedicalAndrehabilitationPaymentsDraft',
+  id: 'MedicalAndRehabilitationPaymentsDraft',
   title: socialInsuranceAdministrationMessage.shared.formTitle,
   logo: Logo,
   mode: FormModes.DRAFT,

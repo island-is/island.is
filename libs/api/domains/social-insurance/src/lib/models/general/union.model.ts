@@ -6,5 +6,5 @@ export class UnionModel {
   nationalId!: string | null | undefined
 
   @Field({ nullable: true })
-  name!: string
+  name!: string | null | undefined
 }

@@ -130,10 +130,12 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
             )}
           </Label>
           <Text>
-            {format(
-              new Date(data?.siaGetRehabilitationPlan?.startDate),
-              'dd.MM.yyy',
-            )}
+            {data?.siaGetRehabilitationPlan?.startDate
+              ? format(
+                  new Date(data.siaGetRehabilitationPlan.startDate),
+                  'dd.MM.yyyy',
+                )
+              : '-'}
           </Text>
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
@@ -144,10 +146,12 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
             )}
           </Label>
           <Text>
-            {format(
-              new Date(data?.siaGetRehabilitationPlan?.plannedEndDate),
-              'dd.MM.yyy',
-            )}
+            {data?.siaGetRehabilitationPlan?.plannedEndDate
+              ? format(
+                  new Date(data.siaGetRehabilitationPlan.plannedEndDate),
+                  'dd.MM.yyyy',
+                )
+              : '-'}
           </Text>
         </GridColumn>
         <GridColumn span="1/1">
