@@ -417,9 +417,16 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   const isReplyable = Document.replyable ?? false
 
   const onReplyPress = () => {
+    const senderName = Document.sender?.name
+
+    if (!senderName) {
+      return
+    }
+
     navigateTo(`/inbox/${docId}/reply`, {
-      title: Document.sender?.name ?? '',
-      listParams,
+      senderName,
+      documentId: docId,
+      subject: Document.subject,
     })
   }
 
