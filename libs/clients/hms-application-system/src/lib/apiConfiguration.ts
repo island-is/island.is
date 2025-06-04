@@ -12,8 +12,8 @@ export const ApiConfiguration = {
   ) => {
     return new Configuration({
       fetchApi: createEnhancedFetch({
-        name: 'clients-workpoint-arborg',
-        organizationSlug: 'samband-islenskra-sveitafelaga',
+        name: 'clients-hms-application-system',
+        organizationSlug: 'hms',
       }),
       basePath: `${xroadConfig.xRoadBasePath}/r1/${config.servicePath}`,
       headers: {
