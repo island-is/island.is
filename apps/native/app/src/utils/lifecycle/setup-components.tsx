@@ -11,10 +11,12 @@ import { AssetsDetailScreen } from '../../screens/assets/assets-detail'
 import { AssetsOverviewScreen } from '../../screens/assets/assets-overview'
 import { CognitoAuthScreen } from '../../screens/cognito-auth/cognito-auth'
 import { DocumentDetailScreen } from '../../screens/document-detail/document-detail'
+import { DocumentReplyScreen } from '../../screens/document-detail/document-reply'
 import { FamilyDetailScreen } from '../../screens/family/family-details'
 import { FamilyOverviewScreen } from '../../screens/family/family-overview'
 import { FinanceScreen } from '../../screens/finance/finance'
 import { FinanceStatusDetailScreen } from '../../screens/finance/finance-status-detail'
+import { HealthOverviewScreen } from '../../screens/health/health-overview'
 import { HomeScreen } from '../../screens/home/home'
 import { HomeOptionsScreen } from '../../screens/home/home-options'
 import { InboxScreen } from '../../screens/inbox/inbox'
@@ -24,20 +26,19 @@ import { LicenseScannerScreen } from '../../screens/license-scanner/license-scan
 import { LoginScreen } from '../../screens/login/login'
 import { TestingLoginScreen } from '../../screens/login/testing-login'
 import { MoreScreen } from '../../screens/more/more'
-import { PasskeyScreen } from '../../screens/passkey/passkey'
-import { UpdateAppScreen } from '../../screens/update-app/update-app'
-import { HealthOverviewScreen } from '../../screens/health/health-overview'
-import { VaccinationsScreen } from '../../screens/vaccinations/vaccinations'
 import { PersonalInfoScreen } from '../../screens/more/personal-info'
 import { NotificationsScreen } from '../../screens/notifications/notifications'
 import { OnboardingBiometricsScreen } from '../../screens/onboarding/onboarding-biometrics'
 import { OnboardingNotificationsScreen } from '../../screens/onboarding/onboarding-notifications'
 import { OnboardingPinCodeScreen } from '../../screens/onboarding/onboarding-pin-code'
+import { PasskeyScreen } from '../../screens/passkey/passkey'
 import { EditBankInfoScreen } from '../../screens/settings/edit-bank-info'
 import { EditConfirmScreen } from '../../screens/settings/edit-confirm'
 import { EditEmailScreen } from '../../screens/settings/edit-email'
 import { EditPhoneScreen } from '../../screens/settings/edit-phone'
 import { SettingsScreen } from '../../screens/settings/settings'
+import { UpdateAppScreen } from '../../screens/update-app/update-app'
+import { VaccinationsScreen } from '../../screens/vaccinations/vaccinations'
 import { VehicleMileageScreen } from '../../screens/vehicles/vehicle-mileage.screen'
 import { VehiclesScreen } from '../../screens/vehicles/vehicles'
 import { VehicleDetailScreen } from '../../screens/vehicles/vehicles-detail'
@@ -80,7 +81,6 @@ export function registerAllComponents() {
 
   registerComponent(CR.AppLockScreen, AppLockScreen)
   registerComponent(CR.WalletPassScreen, WalletPassScreen)
-  registerComponent(CR.DocumentDetailScreen, DocumentDetailScreen)
   registerComponent(CR.NotificationsScreen, NotificationsScreen)
   registerComponent(CR.WebViewScreen, WebViewScreen)
   registerComponent(CR.LicenseScannerScreen, LicenseScannerScreen)
@@ -123,4 +123,8 @@ export function registerAllComponents() {
 
   // Navigation buttons
   registerComponent(BR.LoadingButton, LoadingIcon)
+
+  // Document screens
+  registerComponent(CR.DocumentDetailScreen, DocumentDetailScreen)
+  registerComponent(CR.DocumentReplyScreen, DocumentReplyScreen)
 }
