@@ -1,17 +1,22 @@
 import { FC, useContext } from 'react'
 import { useRouter } from 'next/router'
 
-import { AlertMessage } from '@island.is/island-ui/core'
-import { getCaseTableGroups } from '@island.is/judicial-system/types'
+import { AlertMessage, Text } from '@island.is/island-ui/core'
+import {
+  getCaseTableGroups,
+  isProsecutionUser,
+} from '@island.is/judicial-system/types'
 import {
   CasesLayout,
   Logo,
   PageHeader,
+  SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import CasesCard from '@island.is/judicial-system-web/src/components/Cards/CasesCard'
 import CasesDashboardLayout from '@island.is/judicial-system-web/src/components/Layouts/CasesDashboardLayout'
 
+import { CreateCaseButton } from '../Cases/CreateCaseButton'
 import * as styles from './CaseTableGroups.css'
 
 const CaseTableGroups: FC = () => {
@@ -49,6 +54,16 @@ const CaseTableGroups: FC = () => {
               ))}
             </CasesDashboardLayout>
           ))}
+          {user && isProsecutionUser(user) ? (
+            <>
+              <SectionHeading title={'Stofna mál'} marginBottom={1} />
+              <Text marginBottom={3}>
+                Ef ekki er hægt að stofna mál í kerfi lögreglunnar er hægt að
+                stofna nýtt mál hér
+              </Text>
+              <CreateCaseButton user={user} />
+            </>
+          ) : null}
         </>
       )}
     </CasesLayout>
