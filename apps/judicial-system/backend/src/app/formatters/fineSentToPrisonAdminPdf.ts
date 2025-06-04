@@ -34,7 +34,9 @@ export const createFineSentToPrisonAdminPdf = (
 
   setTitle(
     doc,
-    `Viðurlagaákvörðun til fullnustu ${formatDate(theCase.rulingDate)}`,
+    `Viðurlagaákvörðun til fullnustu ${
+      theCase.rulingDate ? formatDate(theCase.rulingDate) : ''
+    }`,
   )
 
   addLargeHeading(
@@ -70,7 +72,9 @@ export const createFineSentToPrisonAdminPdf = (
 
   addMediumCenteredText(
     doc,
-    `Sent til fullnustu ${formatDate(sentToPrisonAdminDate)}`,
+    `Sent til fullnustu ${
+      sentToPrisonAdminDate ? formatDate(sentToPrisonAdminDate) : ''
+    }`,
     'Times-Bold',
   )
 
