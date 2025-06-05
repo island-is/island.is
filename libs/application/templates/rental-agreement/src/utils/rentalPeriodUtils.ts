@@ -7,7 +7,7 @@ import {
   SecurityDepositAmountOptions,
   SecurityDepositTypeOptions,
 } from './enums'
-import { indexData } from './indexData'
+import { applicationAnswers } from '../shared'
 
 // Amount utils
 export const rentalAmountConnectedToIndex = (answers: FormValue) => {
@@ -213,17 +213,17 @@ export const formatIndexRateDateToIcelandic = (dateString: string): string => {
 
   const icelandicMonths: Record<string, string> = {
     '01': 'Janúar',
-    '02': 'febrúar',
-    '03': 'mars',
-    '04': 'apríl',
-    '05': 'maí',
-    '06': 'júní',
-    '07': 'júlí',
-    '08': 'ágúst',
-    '09': 'september',
-    '10': 'október',
-    '11': 'nóvember',
-    '12': 'desember',
+    '02': 'Febrúar',
+    '03': 'Mars',
+    '04': 'Apríl',
+    '05': 'Maí',
+    '06': 'Júní',
+    '07': 'Júlí',
+    '08': 'Ágúst',
+    '09': 'September',
+    '10': 'Október',
+    '11': 'Nóvember',
+    '12': 'Desember',
   }
 
   return `${icelandicMonths[month]} ${year}`
@@ -236,24 +236,19 @@ export const getIndexDateOptions = () => {
     b.date.localeCompare(a.date),
   )
 
-  console.log('Sorted index data:', sortedIndexData)
-
-  return sortedIndexData.map((item: { date: string }) => ({
+  return sortedIndexData.map((item: { date: string }, index: number) => ({
     value: item.date,
     label: formatIndexRateDateToIcelandic(item.date),
   }))
 }
 export const getIndexRateForDate = (answers: FormValue) => {
-  const selectedDate = getValueViaPath<string>(
-    answers,
-    'rentalAmount.indexDate',
-  )
-  if (!selectedDate) return ''
+  const { indexDate } = applicationAnswers(answers)
   const { indexData } = require('./indexData')
   const selectedIndex = indexData.find(
-    (item: { date: string; indexRate: string }) => item.date === selectedDate,
+    (item: { date: string; indexRate: string }) => item.date === indexDate,
   )
 
-  console.log('Selected index:', selectedIndex)
+  if (!indexDate) return ''
+
   return selectedIndex ? selectedIndex.indexRate : ''
 }

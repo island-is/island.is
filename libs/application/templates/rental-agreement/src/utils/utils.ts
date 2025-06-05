@@ -180,13 +180,6 @@ export const getInspectorOptions = () => [
   },
 ]
 
-export const getRentalAmountIndexTypes = () => [
-  {
-    value: RentalAmountIndexTypes.CONSUMER_PRICE_INDEX,
-    label: m.rentalAmount.indexOptionConsumerPriceIndex,
-  },
-]
-
 export const getRentalAmountPaymentDateOptions = () => [
   {
     value: RentalAmountPaymentDateOptions.FIRST_DAY,

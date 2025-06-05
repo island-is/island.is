@@ -68,7 +68,7 @@ export const RentalPeriodAmount = buildSubSection({
         buildSelectField({
           id: 'rentalAmount.indexDate',
           title: rentalAmount.indexDateLabel,
-          // TODO: Replace hardcoded with dynamic options from index api when available
+          // TODO: Replace hardcoded with dynamic options from indexation api when available
           options: getIndexDateOptions(),
           defaultValue: getIndexDateOptions()[0]?.value || '',
           condition: rentalAmountConnectedToIndex,
