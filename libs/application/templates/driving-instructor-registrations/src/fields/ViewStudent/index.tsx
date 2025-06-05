@@ -108,12 +108,8 @@ const ViewStudent = ({
   const studentRegistrations = student?.book
     ?.teachersAndLessons as Array<DrivingBookLesson>
 
-  // TODO: CHANGE THIS BACK
-  // During testing the allotted fake data did not adhere do this restriction for displaying
-  // the relevant information. Do not commit this change.
-  //const doesStudentBelongToUser =
-  //  userNationalId === student?.book?.teacherNationalId
-  const doesStudentBelongToUser = true
+  const doesStudentBelongToUser =
+    userNationalId === student?.book?.teacherNationalId
 
   useEffect(() => {
     setStudent(
