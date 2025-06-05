@@ -86,7 +86,9 @@ export const createFineSentToPrisonAdminPdf = (
   addEmptyLines(doc, 2)
 
   const signatureDateText = `Dagsetning áritunar: `
-  const signatureDate = `${formatDate(getSignatureDate)}`
+  const signatureDate = `${
+    getSignatureDate ? formatDate(getSignatureDate) : ''
+  }`
 
   const reviewedByText = 'Yfirlestur: '
   const reviewerNameText = theCase.indictmentReviewer?.name || ''
