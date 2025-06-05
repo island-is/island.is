@@ -58,7 +58,7 @@ export const unionSickPaySubSection = buildSubSection({
             medicalAndRehabilitationPaymentsFormMessage.shared.datePlaceholder,
           width: 'half',
           disabled: true,
-          defaultValue: '2024-11-25',
+          defaultValue: '', //Use the data from TR when the TR API is ready
         }),
       ],
     }),
