@@ -1,5 +1,6 @@
 import { ApplicationState, FieldTypesEnum } from '@island.is/form-system/ui'
 import { FormSystemField, FormSystemValue } from '@island.is/api/schema'
+import _ from 'lodash'
 
 export const validateScreen = (state: ApplicationState): string[] => {
   const { currentScreen } = state
@@ -101,12 +102,6 @@ const validateNationalId = (nationalId?: string, name?: string) => {
 
 const validatePropertyNumber = (value: FormSystemValue) => {
   const { propertyNumber, address, municipality } = value
-  return (
-    !propertyNumber ||
-    !address ||
-    !municipality ||
-    propertyNumber === '' ||
-    address === '' ||
-    municipality === ''
-  )
+  const isEmpty = (value: string | undefined) => !value || value === '';
+  return _.some([propertyNumber, address, municipality], isEmpty);
 }

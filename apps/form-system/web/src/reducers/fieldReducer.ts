@@ -1,6 +1,7 @@
 import { Action, ApplicationState } from '@island.is/form-system/ui'
 import { setFieldValue } from './reducerUtils'
 
+//TODO: You could create a map between the action type and field type value, since most of these call the same function just with different "type". Then you you could combine most of these cases, exempt the date one
 export const fieldReducer = (
   state: ApplicationState,
   action: Action,

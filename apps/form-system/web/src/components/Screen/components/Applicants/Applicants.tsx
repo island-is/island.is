@@ -10,7 +10,7 @@ import { useLocale } from '@island.is/localization'
 interface Props {
   applicantTypes: FormSystemApplicant[]
 }
-
+//TODO: This might be cleaner in a switch case
 export const Applicants = ({ applicantTypes }: Props) => {
   const { lang } = useLocale()
   const agentType =
