@@ -442,6 +442,7 @@ export class DocumentServiceV2 {
           requesterName: input.reguesterName,
         },
       )
+      // if no ticket id is returned we handle error client side
       if (!res.ticketId) {
         return null
       }
@@ -452,7 +453,7 @@ export class DocumentServiceV2 {
         error: error,
         documentId: input.documentId,
       })
-      throw error
+      return null
     }
   }
 

@@ -31,7 +31,7 @@ const ReplyForm: React.FC<Props> = ({ successfulSubmit }) => {
       toast.error(formatMessage(messages.replySentError))
     },
     onCompleted: (response) => {
-      if (!response) {
+      if (!response.documentsV2Reply) {
         toast.error(formatMessage(messages.replySentError))
         return
       }
