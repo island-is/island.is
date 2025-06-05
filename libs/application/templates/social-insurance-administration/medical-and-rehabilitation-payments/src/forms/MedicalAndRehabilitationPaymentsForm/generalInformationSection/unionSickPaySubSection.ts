@@ -111,9 +111,13 @@ export const unionSickPaySubSection = buildSubSection({
             )
           },
           loadOptions: async ({ apolloClient }) => {
-            const { data } = await apolloClient.query<SiaUnionsQuery>({
+            const { data, error } = await apolloClient.query<SiaUnionsQuery>({
               query: siaUnionsQuery,
             })
+
+            if (error) {
+              return []
+            }
 
             return (
               data?.socialInsuranceUnions
