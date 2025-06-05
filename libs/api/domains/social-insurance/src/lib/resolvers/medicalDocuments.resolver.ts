@@ -3,7 +3,7 @@ import {
   IdsUserGuard,
   Scopes,
   ScopesGuard,
-  User,
+  type User,
 } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'

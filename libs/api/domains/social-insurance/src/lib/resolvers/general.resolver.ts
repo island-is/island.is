@@ -3,7 +3,7 @@ import {
   IdsUserGuard,
   Scopes,
   ScopesGuard,
-  User,
+  type User,
 } from '@island.is/auth-nest-tools'
 import { Audit } from '@island.is/nest/audit'
 import { FeatureFlagGuard } from '@island.is/nest/feature-flags'
