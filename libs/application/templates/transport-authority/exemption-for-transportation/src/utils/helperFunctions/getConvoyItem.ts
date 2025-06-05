@@ -1,20 +1,30 @@
 import { getValueViaPath, YES } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 import { ExemptionForTransportationAnswers } from '../..'
+import { Convoy, Vehicle } from '../types'
 
-export const getConvoyItems = (answers: FormValue) => {
-  return (
+const isVehicle = (value: unknown): value is Vehicle => {
+  return typeof value === 'object' && value !== null && 'permno' in value
+}
+
+export const getConvoyItems = (answers: FormValue): Convoy[] => {
+  const items =
     getValueViaPath<ExemptionForTransportationAnswers['convoy']['items']>(
       answers,
       'convoy.items',
     ) || []
-  )
+
+  return items.map((item) => ({
+    ...item,
+    trailer: isVehicle(item.trailer) ? item.trailer : undefined,
+  }))
 }
 
-export const getConvoyItem = (answers: FormValue, index: number) => {
-  return getValueViaPath<
-    ExemptionForTransportationAnswers['convoy']['items'][0]
-  >(answers, `convoy.items.${index}`)
+export const getConvoyItem = (
+  answers: FormValue,
+  convoyIndex: number,
+): Convoy | undefined => {
+  return getConvoyItems(answers)[convoyIndex]
 }
 
 export const isConvoySelected = (
@@ -30,16 +40,14 @@ export const isConvoySelected = (
   return convoyIdList.indexOf(convoyId) !== -1
 }
 
-export const getConvoyShortName = (
-  convoyItem: ExemptionForTransportationAnswers['convoy']['items'][0],
-) => {
+export const getConvoyShortName = (convoyItem: Convoy): string => {
   return (
     convoyItem.vehicle.permno +
     (convoyItem.trailer?.permno ? ' / ' + convoyItem.trailer.permno : '')
   )
 }
 
-export const hasDuplicateConvoyItems = (answers: FormValue) => {
+export const hasDuplicateConvoyItems = (answers: FormValue): boolean => {
   const convoyItems = getConvoyItems(answers)
 
   const keys: string[] = []
@@ -58,15 +66,58 @@ export const hasDuplicateConvoyItems = (answers: FormValue) => {
   return false // No duplicates
 }
 
-export const shouldUseSameSpacingForTrailer = (
+const uniqueAndSortByPermno = (items: Vehicle[]): Vehicle[] => {
+  const uniqueMap: Record<string, Vehicle> = {}
+
+  for (const item of items) {
+    uniqueMap[item.permno] = item // keeps last occurrence
+  }
+
+  return Object.values(uniqueMap).sort((a, b) =>
+    a.permno.localeCompare(b.permno),
+  )
+}
+
+const getAllConvoyVehicles = (answers: FormValue): Vehicle[] => {
+  const convoyItems = getConvoyItems(answers)
+  const vehicles: Vehicle[] = convoyItems.map((x) => x.vehicle)
+  return uniqueAndSortByPermno(vehicles)
+}
+
+const getAllConvoyTrailers = (answers: FormValue): Vehicle[] => {
+  const convoyItems = getConvoyItems(answers)
+  const trailers: Vehicle[] = convoyItems
+    .map((x) => x.trailer)
+    .filter((x): x is Vehicle => !!x?.permno)
+  return uniqueAndSortByPermno(trailers)
+}
+
+export const getConvoyVehicle = (
   answers: FormValue,
-  convoyIndex: number,
-) => {
+  vehicleIndex: number,
+): Vehicle | undefined => {
+  const vehicles = getAllConvoyVehicles(answers)
+  return vehicles?.[vehicleIndex]
+}
+
+export const getConvoyTrailer = (
+  answers: FormValue,
+  trailerIndex: number,
+): Vehicle | undefined => {
+  const trailers = getAllConvoyTrailers(answers)
+  return trailers?.[trailerIndex]
+}
+
+export const shouldUseSameValuesForTrailer = (
+  answers: FormValue,
+  trailerIndex: number,
+): boolean => {
   const axleSpacing = getValueViaPath<
     ExemptionForTransportationAnswers['axleSpacing']
   >(answers, 'axleSpacing')
 
   return (
-    axleSpacing?.[convoyIndex]?.useSameSpacingForTrailer?.includes(YES) || false
+    axleSpacing?.trailerList?.[trailerIndex]?.useSameValues?.includes(YES) ||
+    false
   )
 }

@@ -40,6 +40,11 @@ export const axleSpacing = {
       defaultMessage: 'Fjöldi öxla: {numberOfAxles}',
       description: 'Number of axles label',
     },
+    numberOfAxlesDoubleDolly: {
+      id: 'ta.eft.application:axleSpacing.labels.numberOfAxlesDoubleDolly',
+      defaultMessage: 'Fjöldi öxla: 2',
+      description: 'Number of axles for double dolly label',
+    },
     axleSpaceAll: {
       id: 'ta.eft.application:axleSpacing.labels.axleSpaceAll',
       defaultMessage: 'Bil milli öxla',

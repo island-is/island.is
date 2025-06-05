@@ -4,7 +4,7 @@ import { isCompany } from 'kennitala'
 import { isSameAsApplicant } from '..'
 
 // Should hide responsible person field if transporter is a company nationalId
-export const shouldShowResponsiblePerson = (answers: FormValue) => {
+export const shouldShowResponsiblePerson = (answers: FormValue): boolean => {
   // If transporter is same as applicant, then it is not a company nationalId
   if (isSameAsApplicant(answers, 'transporter')) {
     return false
