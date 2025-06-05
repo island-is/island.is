@@ -286,7 +286,7 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
             updateUploadFile,
           )
         }
-        onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
+        onOpenFile={(file) => onOpen(file)}
         onRemove={(file) => handleRemove(file, removeFileCB)}
         onRetry={(file) => handleRetry(file, updateUploadFile)}
         errorMessage={errorMessage}

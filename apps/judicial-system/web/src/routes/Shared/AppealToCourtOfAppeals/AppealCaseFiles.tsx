@@ -183,7 +183,7 @@ const AppealFiles = () => {
             onRemove={handleRemoveFile}
             hideIcons={!allFilesDoneOrError}
             disabled={!allFilesDoneOrError}
-            onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
+            onOpenFile={(file) => onOpen(file)}
           />
         </Box>
         {isProsecutionUser(user) && (

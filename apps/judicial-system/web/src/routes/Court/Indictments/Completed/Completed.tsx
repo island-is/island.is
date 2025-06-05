@@ -269,7 +269,7 @@ const Completed: FC = () => {
               })}
               onChange={handleCriminalRecordUpdateUpload}
               onRemove={handleRemoveFile}
-              onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
+              onOpenFile={(file) => onOpen(file)}
             />
           </Box>
         )}

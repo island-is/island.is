@@ -30,16 +30,13 @@ import {
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
-  createPreviewUrlFiles,
-  FileWithPreviewURL,
-} from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
-import {
   CaseAppealDecision,
   CaseFileCategory,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCase,
+  useFileList,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -62,6 +59,10 @@ const Statement = () => {
     updateUploadFile,
     removeUploadFile,
   } = useUploadFiles(workingCase.caseFiles)
+
+  const { onOpen } = useFileList({
+    caseId: workingCase.id,
+  })
 
   const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
 
@@ -122,17 +123,10 @@ const Statement = () => {
   }
 
   const handleChange = (files: File[], category: CaseFileCategory) => {
-    addUploadFiles(createPreviewUrlFiles(files), {
+    addUploadFiles(files, {
       category,
       status: FileUploadStatus.done,
     })
-  }
-
-  const openFileWithPreview = (file: UploadFile) => {
-    const isFileWithPreviewUrl = file as FileWithPreviewURL
-    if (isFileWithPreviewUrl.previewUrl) {
-      window.open(isFileWithPreviewUrl.previewUrl)
-    }
   }
 
   return (
@@ -185,7 +179,7 @@ const Statement = () => {
                 buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
                 onChange={(files) => handleChange(files, appealStatementType)}
                 onRemove={(file) => handleRemoveFile(file)}
-                onOpenFile={openFileWithPreview}
+                onOpenFile={(file) => onOpen(file)}
                 hideIcons={!allFilesDoneOrError}
                 disabled={!allFilesDoneOrError}
               />
@@ -217,7 +211,7 @@ const Statement = () => {
                 buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
                 onChange={(files) => handleChange(files, appealCaseFilesType)}
                 onRemove={(file) => handleRemoveFile(file)}
-                onOpenFile={openFileWithPreview}
+                onOpenFile={(file) => onOpen(file)}
                 hideIcons={!allFilesDoneOrError}
                 disabled={!allFilesDoneOrError}
               />

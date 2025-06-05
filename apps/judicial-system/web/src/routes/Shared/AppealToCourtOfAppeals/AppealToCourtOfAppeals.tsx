@@ -144,7 +144,7 @@ const AppealToCourtOfAppeals = () => {
             onRemove={(file) => {
               handleRemoveFile(file)
             }}
-            onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
+            onOpenFile={(file) => onOpen(file)}
             hideIcons={!allFilesDoneOrError}
             disabled={!allFilesDoneOrError}
           />
@@ -176,7 +176,7 @@ const AppealToCourtOfAppeals = () => {
             buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
             onChange={(files) => handleChange(files, appealCaseFilesType)}
             onRemove={(file) => handleRemoveFile(file)}
-            onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
+            onOpenFile={(file) => onOpen(file)}
             hideIcons={!allFilesDoneOrError}
             disabled={!allFilesDoneOrError}
           />

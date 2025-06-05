@@ -1,15 +1,17 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { toast } from '@island.is/island-ui/core'
+import { toast, UploadFile } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
 import {
   FormContext,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
+import { FileWithPreviewURL } from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
 import { CaseFileState } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import useIsMobile from '../useIsMobile/useIsMobile'
+import { TUploadFile } from '../useS3Upload/useS3Upload'
 import { useGetSignedUrlLazyQuery } from './getSigendUrl.generated'
 import { useLimitedAccessGetSignedUrlLazyQuery } from './limitedAccessGetSigendUrl.generated'
 
@@ -24,6 +26,9 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
   const { formatMessage } = useIntl()
   const isMobile = useIsMobile()
   const [fileNotFound, setFileNotFound] = useState<boolean>()
+  const [currentFile, setCurrentFile] = useState<TUploadFile | undefined>(
+    undefined,
+  )
 
   const openFile = (url: string) => {
     window.open(url, isMobile ? '_self' : '_blank', 'noopener, noreferrer')
@@ -41,7 +46,15 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
       }
     },
     onError: () => {
-      toast.error(formatMessage(errors.openDocument))
+      if (
+        currentFile &&
+        currentFile.previewUrl &&
+        currentFile.id === fullAccessVariables?.input.id
+      ) {
+        openFile(currentFile.previewUrl)
+      } else {
+        toast.error(formatMessage(errors.openDocument))
+      }
     },
   })
 
@@ -57,7 +70,15 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
       }
     },
     onError: () => {
-      toast.error(formatMessage(errors.openDocument))
+      if (
+        currentFile &&
+        currentFile.previewUrl &&
+        currentFile.id === fullAccessVariables?.input.id
+      ) {
+        openFile(currentFile.previewUrl)
+      } else {
+        toast.error(formatMessage(errors.openDocument))
+      }
     },
   })
 
@@ -104,13 +125,18 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
   ])
 
   const onOpen = useMemo(
-    () => (fileId: string) => {
+    () => (file: UploadFile) => {
+      if (!file.id) {
+        return
+      }
+      setCurrentFile(file as FileWithPreviewURL)
+
       const query = limitedAccess ? limitedAccessGetSignedUrl : getSignedUrl
 
       query({
         variables: {
           input: {
-            id: fileId,
+            id: file.id,
             caseId: connectedCaseParentId ?? caseId,
             mergedCaseId: connectedCaseParentId && caseId,
           },

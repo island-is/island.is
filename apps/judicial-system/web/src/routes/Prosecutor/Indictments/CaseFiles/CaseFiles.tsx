@@ -108,7 +108,7 @@ const CaseFiles = () => {
                 updateUploadFile,
               )
             }
-            onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
+            onOpenFile={(file) => onOpen(file)}
             onRemove={(file) => handleRemove(file, removeUploadFile)}
             onRetry={(file) => handleRetry(file, updateUploadFile)}
           />
@@ -134,7 +134,7 @@ const CaseFiles = () => {
                 updateUploadFile,
               )
             }
-            onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
+            onOpenFile={(file) => onOpen(file)}
             onRemove={(file) => handleRemove(file, removeUploadFile)}
             onRetry={(file) => handleRetry(file, updateUploadFile)}
           />
@@ -158,7 +158,7 @@ const CaseFiles = () => {
                 updateUploadFile,
               )
             }
-            onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
+            onOpenFile={(file) => onOpen(file)}
             onRemove={(file) => handleRemove(file, removeUploadFile)}
             onRetry={(file) => handleRetry(file, updateUploadFile)}
           />

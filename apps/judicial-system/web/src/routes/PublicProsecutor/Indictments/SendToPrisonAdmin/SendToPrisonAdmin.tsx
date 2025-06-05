@@ -144,7 +144,7 @@ const SendToPrisonAdmin: FC = () => {
             buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
             onChange={handleFileUpload}
             onRemove={handleRemoveFile}
-            onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
+            onOpenFile={(file) => onOpen(file)}
           />
         </Box>
       </FormContentContainer>

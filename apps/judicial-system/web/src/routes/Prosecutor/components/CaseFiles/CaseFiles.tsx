@@ -240,7 +240,7 @@ export const CaseFiles = () => {
               onRetry={(file) => handleRetry(file, updateUploadFile)}
               errorMessage={uploadErrorMessage}
               disabled={isUploadingPoliceCaseFiles}
-              onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
+              onOpenFile={(file) => onOpen(file)}
             />
           </ContentBlock>
         </Box>
