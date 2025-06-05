@@ -91,9 +91,6 @@ export class SignatureCollectionResolver {
     @Args('input') input: SignatureCollectionIdInput,
     @CurrentUser() user: User,
   ): Promise<SignatureCollectionList[]> {
-    console.log(
-      `CALLLING SIGNATURECOLLECTIONLISTSFOROWNER WITH ${input.collectionType}`,
-    )
     return this.signatureCollectionService.listsForOwner(input, signee, user)
   }
 

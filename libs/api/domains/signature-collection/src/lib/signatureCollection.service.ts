@@ -130,7 +130,6 @@ export class SignatureCollectionService {
     collectionType: CollectionType,
     nationalId?: string,
   ): Promise<SignatureCollectionSignee> {
-    console.log(`SIGNEE CALLED WITH COLLECTION TYPE ${collectionType}`)
     return await this.signatureCollectionClientService.getSignee(
       user,
       collectionType,
