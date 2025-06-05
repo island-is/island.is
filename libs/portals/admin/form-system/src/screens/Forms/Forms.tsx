@@ -46,6 +46,8 @@ export const Forms = () => {
     }
   }, [])
 
+  console.log(control)
+
   if (forms) {
     return (
       <>

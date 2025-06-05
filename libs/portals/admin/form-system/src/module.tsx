@@ -9,6 +9,8 @@ import { Admin } from './screens/Admin/Admin'
 import { adminLoader } from './screens/Admin/Admin.loader'
 import { applicationsLoader } from './screens/Applications/Applications.loader'
 import { Applications } from './screens/Applications/Applications'
+import { FormsNew } from './screens/Forms/FormsNew'
+import { FormsLayout } from './components/FormsLayout/FormsLayout'
 
 const Forms = lazy(() => import('./screens/Forms/Forms'))
 
@@ -29,7 +31,7 @@ export const formSystemModule: PortalModule = {
       {
         name: m.rootName,
         path: FormSystemPaths.FormSystemRoot,
-        element: <Forms />,
+        element: <FormsNew />,
         loader: formsLoader(props),
       },
       {
@@ -37,19 +39,7 @@ export const formSystemModule: PortalModule = {
         path: FormSystemPaths.Form,
         element: <Form />,
         loader: formLoader(props),
-      },
-      {
-        name: m.rootName,
-        path: FormSystemPaths.Admin,
-        element: <Admin />,
-        loader: adminLoader(props),
-      },
-      {
-        name: m.rootName,
-        path: FormSystemPaths.Applications,
-        element: <Applications />,
-        loader: applicationsLoader(props),
-      },
+      }
     ]
   },
 }

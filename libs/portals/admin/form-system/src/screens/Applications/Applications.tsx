@@ -58,11 +58,11 @@ export const Applications = () => {
 
   return (
     <>
-      <ApplicationsHeader
+      {/* <ApplicationsHeader
         organizations={organizationsState}
         onOrganizationChange={handleOrganizationChange}
         isAdmin={isAdmin}
-      />
+      /> */}
       <Box marginTop={5}></Box>
       <ApplicationsTableHeader />
       {applicationsState &&

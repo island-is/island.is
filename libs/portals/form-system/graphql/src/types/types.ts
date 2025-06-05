@@ -7,14 +7,22 @@ import {
   FormSystemOrganizationUrl,
   FormSystemPermissionType,
   FormSystemApplication,
+  FormSystemOption,
 } from '@island.is/api/schema'
 import { Option } from '@island.is/island-ui/core'
 
 export interface FormsLoaderResponse {
   forms: FormSystemForm[]
-  organizations: Option<string>[]
+  organizations: FormSystemOption[]
   isAdmin: boolean
   organizationNationalId: string
+  applications: FormSystemApplication[]
+  selectedCertificationTypes: string[]
+  selectedListTypes: string[]
+  selectedFieldTypes: string[]
+  certficationTypes: FormSystemPermissionType[]
+  listTypes: FormSystemPermissionType[]
+  fieldTypes: FormSystemPermissionType[]
 }
 
 export interface FormLoaderResponse {
