@@ -217,6 +217,7 @@ export const NationalIdWithName: FC<
     if (kennitala.isValid(nationalIdInput)) {
       setInvalidNationalId(false)
       searchPersons &&
+        kennitala.isPerson(nationalIdInput) &&
         getIdentity({
           variables: {
             input: {
