@@ -1,4 +1,4 @@
-import { Field, ObjectType, GraphQLISODateTime } from '@nestjs/graphql'
+import { Field, GraphQLISODateTime, Int, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('SocialInsuranceMedicalDocumentsServiceProvider')
 class ServiceProvider {
@@ -18,19 +18,97 @@ class ServiceProvider {
   phoneNumber?: string
 }
 
+@ObjectType('SocialInsuranceMedicalDocumentsEnumType')
+class EnumType {
+  @Field(() => Int, { nullable: true })
+  value?: number
+
+  @Field({ nullable: true })
+  name?: string
+
+  @Field({ nullable: true })
+  display?: string
+}
+
+@ObjectType('SocialInsuranceMedicalDocumentsFollowUpEvaluation')
+class FollowUpEvaluation {
+  @Field(() => EnumType, { nullable: true })
+  rehabilitationProgress?: EnumType
+
+  @Field({ nullable: true })
+  rehabilitationProgressDetails?: string
+
+  @Field(() => EnumType, { nullable: true })
+  rehabilitationMeasuresProgress?: EnumType
+
+  @Field({ nullable: true })
+  rehabilitationMeasuresProgressDetails?: string
+
+  @Field(() => EnumType, { nullable: true })
+  rehabilitationChanges?: EnumType
+
+  @Field({ nullable: true })
+  rehabilitationChangesDetails?: string
+
+  @Field(() => EnumType, { nullable: true })
+  applicantCircumstancesChanges?: EnumType
+
+  @Field({ nullable: true })
+  applicantCircumstancesChangesDetails?: string
+}
+
+@ObjectType('SocialInsuranceMedicalDocumentsComprehensiveEvaluation')
+class ComprehensiveEvaluation {
+  @Field(() => [EnumType], { nullable: true })
+  evaluationScale?: Array<EnumType>
+
+  @Field(() => Int, { nullable: true })
+  learningAndApplyingKnowledge?: number
+
+  @Field(() => Int, { nullable: true })
+  generalTasksAndDemands?: number
+
+  @Field(() => Int, { nullable: true })
+  communicationAndRelationships?: number
+
+  @Field(() => Int, { nullable: true })
+  mobility?: number
+
+  @Field(() => Int, { nullable: true })
+  selfCare?: number
+
+  @Field(() => Int, { nullable: true })
+  domesticLife?: number
+
+  @Field(() => Int, { nullable: true })
+  mainDailyLifeAreas?: number
+
+  @Field(() => Int, { nullable: true })
+  leisureAndHobbies?: number
+}
+
 @ObjectType('SocialInsuranceMedicalDocumentsHealthGoals')
 class HealthGoals {
   @Field({ nullable: true })
   goalDescription?: string
 
-  @Field({ nullable: true })
-  measures?: string
+  @Field(() => [String], { nullable: true })
+  measures?: Array<string>
 }
 
 @ObjectType('SocialInsuranceMedicalDocumentsRehabilitationPlan')
 export class RehabilitationPlan {
   @Field(() => ServiceProvider, { nullable: true })
   serviceProvider?: ServiceProvider
+
+  @Field(() => EnumType, { nullable: true })
+  applicantEmploymentStatus?: EnumType
+
+  @Field(() => FollowUpEvaluation, { nullable: true })
+  followUpEvaluation?: FollowUpEvaluation
+
+  @Field(() => ComprehensiveEvaluation, { nullable: true })
+  comprehensiveEvaluation?: ComprehensiveEvaluation
 
   @Field(() => GraphQLISODateTime, { nullable: true })
   startDate?: Date
