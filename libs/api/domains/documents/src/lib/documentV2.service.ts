@@ -99,23 +99,23 @@ export class DocumentServiceV2 {
       (action) => action.type !== 'alert' && action.type !== 'confirmation',
     )
 
-    const ticket = {
-      id: document.ticket?.id?.toString(),
-      authorId: document.ticket?.authorId?.toString(),
-      createdDate: document.ticket?.createdAt,
-      updatedDate: document.ticket?.updatedAt,
-      status: document.ticket?.status,
-      subject: document.ticket?.subject,
-      comments: use2Way
-        ? document.ticket?.comments?.map((c) => ({
+    const ticket = use2Way
+      ? {
+          id: document.ticket?.id?.toString(),
+          authorId: document.ticket?.authorId?.toString(),
+          createdDate: document.ticket?.createdAt,
+          updatedDate: document.ticket?.updatedAt,
+          status: document.ticket?.status,
+          subject: document.ticket?.subject,
+          comments: document.ticket?.comments?.map((c) => ({
             id: c.id?.toString(),
             body: c.body,
             createdDate: c.createdAt,
             authorId: c.authorId?.toString(),
             author: c.author,
-          }))
-        : null,
-    }
+          })),
+        }
+      : null
 
     return {
       ...document,
@@ -139,11 +139,11 @@ export class DocumentServiceV2 {
       alert: alert,
       replyable: use2Way ? document.replyable : false,
       closedForMoreReplies: use2Way
-        ? ticket.status?.toLowerCase() === 'closed'
+        ? ticket?.status?.toLowerCase() === 'closed'
           ? true
           : false
         : null,
-      ticket: use2Way ? ticket : null,
+      ticket: ticket,
     }
   }
 
@@ -432,14 +432,6 @@ export class DocumentServiceV2 {
 
   async postReply(user: User, input: ReplyInput): Promise<Reply | null> {
     try {
-      const use2Way = await this.featureService.getValue(
-        Features.isServicePortal2WayMailboxEnabled,
-        false,
-        user,
-      )
-      if (use2Way) {
-        return null
-      }
       const res = await this.documentService.postTicket(
         user.nationalId,
         input.documentId,
