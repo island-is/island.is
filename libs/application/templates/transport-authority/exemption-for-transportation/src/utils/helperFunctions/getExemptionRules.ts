@@ -1,6 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { ExternalData, FormValue } from '@island.is/application/types'
-import { isExemptionTypeShortTerm } from './getExemptionType'
+import { checkIfExemptionTypeShortTerm } from './getExemptionType'
 import {
   ExemptionRules,
   ExemptionRulesLimitations,
@@ -21,7 +21,7 @@ export const getExemptionRulesLimitations = (
   answers: FormValue,
 ): ExemptionRulesLimitations | undefined => {
   const rules = getExemptionRules(externalData)
-  return isExemptionTypeShortTerm(answers)
+  return checkIfExemptionTypeShortTerm(answers)
     ? rules?.shortTermMeasurementLimitations
     : rules?.longTermMeasurementLimitations
 }

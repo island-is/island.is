@@ -19,7 +19,7 @@ import {
   getFreightItem,
   getFreightPairingItems,
   isConvoySelected,
-  isExemptionTypeLongTerm,
+  checkIfExemptionTypeLongTerm,
   MAX_CNT_CONVOY,
   MAX_CNT_FREIGHT,
 } from '../../../utils'
@@ -31,7 +31,7 @@ const FreightPairingSubSection = (freightIndex: number) =>
     id: `freightLongTermPairingSubSection.${freightIndex}`,
     condition: (answers) => {
       return (
-        isExemptionTypeLongTerm(answers) &&
+        checkIfExemptionTypeLongTerm(answers) &&
         !!getFreightItem(answers, freightIndex)
       )
     },

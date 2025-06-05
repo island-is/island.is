@@ -13,8 +13,8 @@ import {
   FILE_SIZE_LIMIT,
   FILE_TYPES_ALLOWED,
   getExemptionType,
-  isExemptionTypeLongTerm,
-  isExemptionTypeShortTerm,
+  checkIfExemptionTypeLongTerm,
+  checkIfExemptionTypeShortTerm,
 } from '../../../utils'
 import { ExemptionType } from '../../../shared'
 import { Application } from '@island.is/application/types'
@@ -22,7 +22,7 @@ import { Application } from '@island.is/application/types'
 export const locationSection = buildSection({
   id: 'locationSection',
   title: (application: Application) => {
-    return isExemptionTypeShortTerm(application.answers)
+    return checkIfExemptionTypeShortTerm(application.answers)
       ? location.general.sectionTitleShortTerm
       : location.general.sectionTitleLongTerm
   },
@@ -50,7 +50,7 @@ export const locationSection = buildSection({
           title: location.shortTerm.fromSubtitle,
           titleVariant: 'h5',
           condition: (answers) => {
-            return isExemptionTypeShortTerm(answers)
+            return checkIfExemptionTypeShortTerm(answers)
           },
         }),
         buildTextField({
@@ -59,7 +59,7 @@ export const locationSection = buildSection({
           width: 'half',
           required: true,
           condition: (answers) => {
-            return isExemptionTypeShortTerm(answers)
+            return checkIfExemptionTypeShortTerm(answers)
           },
         }),
         buildTextField({
@@ -68,7 +68,7 @@ export const locationSection = buildSection({
           width: 'half',
           required: true,
           condition: (answers) => {
-            return isExemptionTypeShortTerm(answers)
+            return checkIfExemptionTypeShortTerm(answers)
           },
         }),
 
@@ -78,7 +78,7 @@ export const locationSection = buildSection({
           title: location.shortTerm.toSubtitle,
           titleVariant: 'h5',
           condition: (answers) => {
-            return isExemptionTypeShortTerm(answers)
+            return checkIfExemptionTypeShortTerm(answers)
           },
         }),
         buildTextField({
@@ -87,7 +87,7 @@ export const locationSection = buildSection({
           width: 'half',
           required: true,
           condition: (answers) => {
-            return isExemptionTypeShortTerm(answers)
+            return checkIfExemptionTypeShortTerm(answers)
           },
         }),
         buildTextField({
@@ -96,7 +96,7 @@ export const locationSection = buildSection({
           width: 'half',
           required: true,
           condition: (answers) => {
-            return isExemptionTypeShortTerm(answers)
+            return checkIfExemptionTypeShortTerm(answers)
           },
         }),
 
@@ -109,7 +109,7 @@ export const locationSection = buildSection({
           title: location.shortTerm.directions,
           placeholder: location.shortTerm.directionsPlaceholder,
           condition: (answers) => {
-            return isExemptionTypeShortTerm(answers)
+            return checkIfExemptionTypeShortTerm(answers)
           },
         }),
 
@@ -120,7 +120,7 @@ export const locationSection = buildSection({
           title: location.longTerm.regionsSubtitle,
           titleVariant: 'h5',
           condition: (answers) => {
-            return isExemptionTypeLongTerm(answers)
+            return checkIfExemptionTypeLongTerm(answers)
           },
         }),
         buildSelectField({
@@ -133,7 +133,7 @@ export const locationSection = buildSection({
             return EXEMPTION_REGIONS.map((x) => ({ value: x, label: x }))
           },
           condition: (answers) => {
-            return isExemptionTypeLongTerm(answers)
+            return checkIfExemptionTypeLongTerm(answers)
           },
         }),
 
@@ -145,7 +145,7 @@ export const locationSection = buildSection({
           title: location.longTerm.directions,
           placeholder: location.longTerm.directionsPlaceholder,
           condition: (answers) => {
-            return isExemptionTypeLongTerm(answers)
+            return checkIfExemptionTypeLongTerm(answers)
           },
         }),
 
@@ -163,7 +163,7 @@ export const locationSection = buildSection({
           },
           uploadButtonLabel: location.longTerm.fileUploadButtonLabel,
           condition: (answers) => {
-            return isExemptionTypeLongTerm(answers)
+            return checkIfExemptionTypeLongTerm(answers)
           },
         }),
       ],

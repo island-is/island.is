@@ -3,6 +3,7 @@ import { FormValue } from '@island.is/application/types'
 import { ExemptionForTransportationAnswers } from '../..'
 import { Freight, FreightPairing } from '../types'
 import { ExemptionFor } from '../../shared'
+import { checkIfExemptionTypeShortTerm } from './getExemptionType'
 
 export const getFreightItems = (answers: FormValue): Freight[] => {
   const items =
@@ -44,4 +45,25 @@ export const getFreightPairingItems = (
       ...item,
       exemptionFor: item.exemptionFor?.filter((x) => !!x) || [],
     }))
+}
+
+export const hasFreightItemWithExemptionForWeight = (
+  answers: FormValue,
+): boolean => {
+  const isExemptionTypeShortTerm = checkIfExemptionTypeShortTerm(answers)
+
+  // Short-term - look at freight
+  if (isExemptionTypeShortTerm) {
+    const freightItems = getFreightItems(answers)
+    return freightItems.some((item) =>
+      item.exemptionFor?.includes(ExemptionFor.WEIGHT),
+    )
+  }
+  // Long-term - look at freightPairing
+  else {
+    const freightPairingAllItems = getFreightPairingItems(answers)
+    return freightPairingAllItems.some((item) =>
+      item?.exemptionFor?.includes(ExemptionFor.WEIGHT),
+    )
+  }
 }

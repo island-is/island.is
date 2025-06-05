@@ -8,10 +8,10 @@ export const getExemptionType = (
   return getValueViaPath<ExemptionType>(answers, 'exemptionPeriod.type')
 }
 
-export const isExemptionTypeShortTerm = (answers: FormValue): boolean => {
+export const checkIfExemptionTypeShortTerm = (answers: FormValue): boolean => {
   return getExemptionType(answers) === ExemptionType.SHORT_TERM
 }
 
-export const isExemptionTypeLongTerm = (answers: FormValue): boolean => {
+export const checkIfExemptionTypeLongTerm = (answers: FormValue): boolean => {
   return getExemptionType(answers) === ExemptionType.LONG_TERM
 }

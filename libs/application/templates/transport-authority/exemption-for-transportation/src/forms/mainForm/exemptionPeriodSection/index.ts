@@ -10,8 +10,8 @@ import { exemptionPeriod } from '../../../lib/messages'
 import { ExemptionType } from '../../../shared'
 import {
   getExemptionType,
-  isExemptionTypeLongTerm,
-  isExemptionTypeShortTerm,
+  checkIfExemptionTypeLongTerm,
+  checkIfExemptionTypeShortTerm,
   LONG_TERM_MAX_DAYS,
   LONG_TERM_MIN_DAYS,
   MS_IN_DAY,
@@ -50,7 +50,7 @@ export const exemptionPeriodSection = buildSection({
           title: exemptionPeriod.type.alertTitle,
           message: exemptionPeriod.type.alertMessage,
           condition: (answers) => {
-            return isExemptionTypeLongTerm(answers)
+            return checkIfExemptionTypeLongTerm(answers)
           },
         }),
         buildDateField({
@@ -72,7 +72,7 @@ export const exemptionPeriodSection = buildSection({
             const today = new Date()
             if (!dateTo) return today
 
-            const offset = isExemptionTypeShortTerm(application.answers)
+            const offset = checkIfExemptionTypeShortTerm(application.answers)
               ? SHORT_TERM_MAX_DAYS
               : LONG_TERM_MAX_DAYS
 
@@ -89,7 +89,7 @@ export const exemptionPeriodSection = buildSection({
 
             if (!dateTo) return undefined
 
-            const offset = isExemptionTypeShortTerm(application.answers)
+            const offset = checkIfExemptionTypeShortTerm(application.answers)
               ? SHORT_TERM_MIN_DAYS
               : LONG_TERM_MIN_DAYS
 
@@ -115,7 +115,7 @@ export const exemptionPeriodSection = buildSection({
             )
             const dateFrom = dateFromStr ? new Date(dateFromStr) : new Date()
 
-            const offset = isExemptionTypeShortTerm(application.answers)
+            const offset = checkIfExemptionTypeShortTerm(application.answers)
               ? SHORT_TERM_MIN_DAYS
               : LONG_TERM_MIN_DAYS
 
@@ -128,7 +128,7 @@ export const exemptionPeriodSection = buildSection({
             )
             const dateFrom = dateFromStr ? new Date(dateFromStr) : new Date()
 
-            const offset = isExemptionTypeShortTerm(application.answers)
+            const offset = checkIfExemptionTypeShortTerm(application.answers)
               ? SHORT_TERM_MAX_DAYS
               : LONG_TERM_MAX_DAYS
 

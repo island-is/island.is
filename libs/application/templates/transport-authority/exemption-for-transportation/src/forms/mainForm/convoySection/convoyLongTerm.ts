@@ -8,7 +8,7 @@ import {
   getConvoyItems,
   getRandomId,
   hasDuplicateConvoyItems,
-  isExemptionTypeLongTerm,
+  checkIfExemptionTypeLongTerm,
   loadValidation,
   MAX_CNT_CONVOY,
 } from '../../../utils'
@@ -17,7 +17,7 @@ import { DollyType } from '../../../shared'
 export const ConvoyLongTermMultiField = buildMultiField({
   id: 'convoyLongTermMultiField',
   condition: (answers) => {
-    return isExemptionTypeLongTerm(answers)
+    return checkIfExemptionTypeLongTerm(answers)
   },
   title: convoy.general.pageTitle,
   description: convoy.general.description,

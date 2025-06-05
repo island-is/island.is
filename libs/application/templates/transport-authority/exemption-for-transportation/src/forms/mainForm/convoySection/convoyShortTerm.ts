@@ -7,7 +7,7 @@ import {
 import { convoy } from '../../../lib/messages'
 import {
   getRandomId,
-  isExemptionTypeShortTerm,
+  checkIfExemptionTypeShortTerm,
   loadValidation,
 } from '../../../utils'
 import { DollyType } from '../../../shared'
@@ -15,7 +15,7 @@ import { DollyType } from '../../../shared'
 export const ConvoyShortTermMultiField = buildMultiField({
   id: 'convoyShortTermMultiField',
   condition: (answers) => {
-    return isExemptionTypeShortTerm(answers)
+    return checkIfExemptionTypeShortTerm(answers)
   },
   title: convoy.general.pageTitle,
   description: convoy.general.description,

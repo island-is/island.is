@@ -13,14 +13,14 @@ import {
   formatNumber,
   getExemptionRules,
   getRandomId,
-  isExemptionTypeShortTerm,
+  checkIfExemptionTypeShortTerm,
 } from '../../../utils'
 import { FreightCommonHiddenInputs } from './freightCommonHiddenInputs'
 
 export const FreightShortTermCreateMultiField = buildMultiField({
   id: 'freightShortTermCreateMultiField',
   condition: (answers) => {
-    return isExemptionTypeShortTerm(answers)
+    return checkIfExemptionTypeShortTerm(answers)
   },
   title: freight.create.pageTitle,
   description: freight.create.description,

@@ -9,7 +9,7 @@ import {
   getExemptionRules,
   getFreightItems,
   getRandomId,
-  isExemptionTypeLongTerm,
+  checkIfExemptionTypeLongTerm,
   MAX_CNT_FREIGHT,
 } from '../../../utils'
 import { FreightCommonHiddenInputs } from './freightCommonHiddenInputs'
@@ -17,7 +17,7 @@ import { FreightCommonHiddenInputs } from './freightCommonHiddenInputs'
 export const FreightLongTermCreateSubSection = buildSubSection({
   id: 'freightLongTermCreateSubSection',
   condition: (answers) => {
-    return isExemptionTypeLongTerm(answers)
+    return checkIfExemptionTypeLongTerm(answers)
   },
   title: freight.create.subSectionTitle,
   children: [

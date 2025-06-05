@@ -13,38 +13,23 @@ import {
   getConvoyTrailer,
   getConvoyVehicle,
   getExemptionType,
-  getFreightItems,
-  getFreightPairingItems,
-  isExemptionTypeLongTerm,
-  isExemptionTypeShortTerm,
+  checkIfExemptionTypeShortTerm,
   MAX_CNT_AXLE,
   MAX_CNT_CONVOY,
   shouldUseSameValuesForTrailer,
+  hasFreightItemWithExemptionForWeight,
 } from '../../../utils'
-import { DollyType, ExemptionFor } from '../../../shared'
+import { DollyType } from '../../../shared'
 import { Application } from '@island.is/application/types'
 
 // Note: Since dolly is only allowed in short-term, then there is only one convoy
 const convoyIndexForDolly = 0
-// Note: We can have max double dolly, which means only one axle spacing required to input, but keeping this as array in case we allow triple dolly in the future
-const dollyAxleIndex = 0
 
 export const axleSpacingSection = buildSection({
   id: 'axleSpacingSection',
   title: axleSpacing.general.sectionTitle,
   condition: (answers) => {
-    if (isExemptionTypeShortTerm(answers)) {
-      const freightItems = getFreightItems(answers)
-      return freightItems.some((item) =>
-        item.exemptionFor?.includes(ExemptionFor.WEIGHT),
-      )
-    } else if (isExemptionTypeLongTerm(answers)) {
-      const freightPairingAllItems = getFreightPairingItems(answers)
-      return freightPairingAllItems.some((item) =>
-        item?.exemptionFor?.includes(ExemptionFor.WEIGHT),
-      )
-    }
-    return false
+    return hasFreightItemWithExemptionForWeight(answers)
   },
   children: [
     buildMultiField({
@@ -56,6 +41,12 @@ export const axleSpacingSection = buildSection({
           id: `axleSpacing.exemptionPeriodType`,
           defaultValue: (application: Application) => {
             return getExemptionType(application.answers)
+          },
+        }),
+        buildHiddenInput({
+          id: `axleSpacing.hasExemptionForWeight`,
+          defaultValue: (application: Application) => {
+            return hasFreightItemWithExemptionForWeight(application.answers)
           },
         }),
 
@@ -143,7 +134,7 @@ export const axleSpacingSection = buildSection({
         buildDescriptionField({
           id: `axleSpacingInfo.dollySubtitle`,
           condition: (answers) => {
-            if (!isExemptionTypeShortTerm(answers)) return false
+            if (!checkIfExemptionTypeShortTerm(answers)) return false
 
             const convoyItem = getConvoyItem(answers, convoyIndexForDolly)
             return convoyItem?.dollyType === DollyType.DOUBLE
@@ -163,20 +154,14 @@ export const axleSpacingSection = buildSection({
           },
         }),
         buildTextField({
-          id: `axleSpacing.dolly.values.${dollyAxleIndex}`,
+          id: `axleSpacing.dolly.value`,
           condition: (answers) => {
-            if (!isExemptionTypeShortTerm(answers)) return false
+            if (!checkIfExemptionTypeShortTerm(answers)) return false
 
             const convoyItem = getConvoyItem(answers, convoyIndexForDolly)
             return convoyItem?.dollyType === DollyType.DOUBLE
           },
-          title: {
-            ...axleSpacing.labels.axleSpaceFromTo,
-            values: {
-              axleNumberFrom: dollyAxleIndex + 1,
-              axleNumberTo: dollyAxleIndex + 2,
-            },
-          },
+          title: axleSpacing.labels.axleSpaceAll,
           backgroundColor: 'blue',
           width: 'full',
           required: true,

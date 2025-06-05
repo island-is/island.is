@@ -115,3 +115,8 @@ export const shouldUseSameValuesForTrailer = (
     false
   )
 }
+
+export const hasConvoyItemWithTrailer = (answers: FormValue): boolean => {
+  const convoyItems = getConvoyItems(answers)
+  return convoyItems.some((item) => item.trailer?.permno)
+}

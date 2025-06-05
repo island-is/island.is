@@ -275,6 +275,7 @@ const FreightPairingSchema = z
 
 const AxleSpacingSchema = z
   .object({
+    hasExemptionForWeight: z.boolean(),
     exemptionPeriodType: z.string(),
     vehicleList: z.array(
       z.object({
@@ -283,9 +284,8 @@ const AxleSpacingSchema = z
       }),
     ),
     dolly: z.object({
-      type: z.nativeEnum(DollyType),
-      // Note: keeping this as array in case we want to allow triple dolly in the future
-      values: z.array(z.string().optional()).optional(),
+      type: z.nativeEnum(DollyType).optional(),
+      value: z.string().optional(),
     }),
     trailerList: z.array(
       z.object({
@@ -297,40 +297,97 @@ const AxleSpacingSchema = z
     ),
   })
   .refine(
-    ({ exemptionPeriodType, dolly }) => {
+    ({ hasExemptionForWeight, exemptionPeriodType, dolly }) => {
+      if (!hasExemptionForWeight) return true
+
       // Since dolly is only allowed in short-term
       if (exemptionPeriodType !== ExemptionType.SHORT_TERM) return true
+
       // Since there is only axle space for double dolly
       if (dolly.type !== DollyType.DOUBLE) return true
 
-      return !!dolly?.values?.[0]
+      return !!dolly?.value
     },
-    { path: ['dolly', 'values', '0'] },
+    { path: ['dolly', 'value'] },
   )
   .superRefine((data, ctx) => {
-    data.trailerList.forEach((trailer, index) => {
-      if (trailer.permno) {
-        if (trailer.useSameValues?.includes(YES)) {
-          if (!trailer.singleValue) {
-            ctx.addIssue({
-              path: ['trailerList', index, 'singleValue'],
-              code: z.ZodIssueCode.custom,
-              params: coreErrorMessages.defaultError,
-            })
-          }
-        } else {
-          trailer.values?.forEach((value, valueIndex) => {
-            if (!value) {
+    if (data.hasExemptionForWeight) {
+      data.trailerList.forEach((trailer, index) => {
+        if (trailer.permno) {
+          if (trailer.useSameValues?.includes(YES)) {
+            if (!trailer.singleValue) {
               ctx.addIssue({
-                path: ['trailerList', index, 'values', valueIndex],
+                path: ['trailerList', index, 'singleValue'],
                 code: z.ZodIssueCode.custom,
                 params: coreErrorMessages.defaultError,
               })
             }
-          })
+          } else {
+            trailer.values?.forEach((value, valueIndex) => {
+              if (!value) {
+                ctx.addIssue({
+                  path: ['trailerList', index, 'values', valueIndex],
+                  code: z.ZodIssueCode.custom,
+                  params: coreErrorMessages.defaultError,
+                })
+              }
+            })
+          }
         }
-      }
-    })
+      })
+    }
+  })
+
+const VehicleSpacingSchema = z
+  .object({
+    hasExemptionForWeight: z.boolean(),
+    exemptionPeriodType: z.string(),
+    convoyList: z.array(
+      z.object({
+        convoyId: z.string(),
+        hasTrailer: z.boolean(),
+        dollyType: z.nativeEnum(DollyType).optional(),
+        vehicleToDollyValue: z.string().optional(),
+        dollyToTrailerValue: z.string().optional(),
+        vehicleToTrailerValue: z.string().optional(),
+      }),
+    ),
+  })
+  .superRefine((data, ctx) => {
+    if (data.hasExemptionForWeight) {
+      data.convoyList.forEach((convoy, index) => {
+        if (convoy.hasTrailer) {
+          const hasDolly =
+            data.exemptionPeriodType === ExemptionType.SHORT_TERM &&
+            (convoy.dollyType === DollyType.SINGLE ||
+              convoy.dollyType === DollyType.DOUBLE)
+
+          if (hasDolly) {
+            if (!convoy.vehicleToDollyValue) {
+              ctx.addIssue({
+                path: ['convoyList', index, 'vehicleToDollyValue'],
+                code: z.ZodIssueCode.custom,
+                params: coreErrorMessages.defaultError,
+              })
+            } else if (!convoy.dollyToTrailerValue) {
+              ctx.addIssue({
+                path: ['convoyList', index, 'dollyToTrailerValue'],
+                code: z.ZodIssueCode.custom,
+                params: coreErrorMessages.defaultError,
+              })
+            }
+          } else {
+            if (!convoy.vehicleToTrailerValue) {
+              ctx.addIssue({
+                path: ['convoyList', index, 'vehicleToTrailerValue'],
+                code: z.ZodIssueCode.custom,
+                params: coreErrorMessages.defaultError,
+              })
+            }
+          }
+        }
+      })
+    }
   })
 
 const FileDocumentSchema = z.object({
@@ -424,6 +481,7 @@ export const ExemptionForTransportationSchema = z.object({
     .array(FreightPairingSchema.optional().nullable())
     .optional(),
   axleSpacing: AxleSpacingSchema,
+  vehicleSpacing: VehicleSpacingSchema,
   location: LocationSchema,
   supportingDocuments: z.object({
     files: z.array(FileDocumentSchema).optional(),

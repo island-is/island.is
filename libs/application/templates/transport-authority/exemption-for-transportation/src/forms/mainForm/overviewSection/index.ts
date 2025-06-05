@@ -14,8 +14,8 @@ import {
   getSupportingDocumentsOverviewAttachments,
   getSupportingDocumentsOverviewItems,
   getUserInformationOverviewItems,
-  isExemptionTypeLongTerm,
-  isExemptionTypeShortTerm,
+  checkIfExemptionTypeLongTerm,
+  checkIfExemptionTypeShortTerm,
 } from '../../../utils'
 import { overview } from '../../../lib/messages'
 import { DefaultEvents } from '@island.is/application/types'
@@ -49,7 +49,7 @@ export const overviewSection = buildSection({
           bottomLine: true,
           items: getShortTermLocationOverviewItems,
           condition: (answers) => {
-            return isExemptionTypeShortTerm(answers)
+            return checkIfExemptionTypeShortTerm(answers)
           },
         }),
         buildOverviewField({
@@ -60,7 +60,7 @@ export const overviewSection = buildSection({
           items: getLongTermLocationOverviewItems,
           attachments: getLongTermLocationOverviewAttachments,
           condition: (answers) => {
-            return isExemptionTypeLongTerm(answers)
+            return checkIfExemptionTypeLongTerm(answers)
           },
         }),
         buildOverviewField({
