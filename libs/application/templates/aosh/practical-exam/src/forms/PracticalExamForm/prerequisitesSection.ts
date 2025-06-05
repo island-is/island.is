@@ -45,9 +45,6 @@ export const prerequisitesSection = buildSection({
           provider: getExamCategoriesApi,
         }),
         buildDataProviderItem({
-          provider: getPostcodesApi,
-        }),
-        buildDataProviderItem({
           provider: MockableVinnueftirlitidPaymentCatalogApi,
         }),
         buildDataProviderItem({
@@ -59,6 +56,11 @@ export const prerequisitesSection = buildSection({
           provider: UserProfileApi,
           title: externalData.userProfile.title,
           subTitle: externalData.userProfile.subTitle,
+        }),
+        buildDataProviderItem({
+          provider: getPostcodesApi,
+          title: externalData.ver.prereqTitle,
+          subTitle: externalData.ver.prereqMessage,
         }),
       ],
     }),
