@@ -1,5 +1,4 @@
 import { Field, GraphQLISODateTime, Int, ObjectType } from '@nestjs/graphql'
-import { EnumType } from './enumType.model'
 
 @ObjectType('SocialInsuranceMedicalDocumentsServiceProvider')
 class ServiceProvider {
@@ -17,6 +16,18 @@ class ServiceProvider {
 
   @Field({ nullable: true })
   phoneNumber?: string
+}
+
+@ObjectType('SocialInsuranceMedicalDocumentsEnumType')
+class EnumType {
+  @Field(() => Int, { nullable: true })
+  value?: number
+
+  @Field({ nullable: true })
+  name?: string
+
+  @Field({ nullable: true })
+  display?: string
 }
 
 @ObjectType('SocialInsuranceMedicalDocumentsFollowUpEvaluation')
@@ -82,13 +93,22 @@ class HealthGoals {
   goalDescription?: string
 
   @Field(() => [String], { nullable: true })
-  measures?: string[] | null
+  measures?: Array<string>
 }
 
 @ObjectType('SocialInsuranceMedicalDocumentsRehabilitationPlan')
 export class RehabilitationPlan {
   @Field(() => ServiceProvider, { nullable: true })
   serviceProvider?: ServiceProvider
+
+  @Field(() => EnumType, { nullable: true })
+  applicantEmploymentStatus?: EnumType
+
+  @Field(() => FollowUpEvaluation, { nullable: true })
+  followUpEvaluation?: FollowUpEvaluation
+
+  @Field(() => ComprehensiveEvaluation, { nullable: true })
+  comprehensiveEvaluation?: ComprehensiveEvaluation
 
   @Field(() => GraphQLISODateTime, { nullable: true })
   startDate?: Date

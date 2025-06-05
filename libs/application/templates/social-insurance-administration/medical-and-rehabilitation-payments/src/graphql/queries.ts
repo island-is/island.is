@@ -10,6 +10,52 @@ export const siaRehabilitationPlanQuery = gql`
         workplace
         phoneNumber
       }
+      applicantEmploymentStatus {
+        value
+        name
+        display
+      }
+      followUpEvaluation {
+        rehabilitationProgress {
+          value
+          name
+          display
+        }
+        rehabilitationProgressDetails
+        rehabilitationMeasuresProgress {
+          value
+          name
+          display
+        }
+        rehabilitationMeasuresProgressDetails
+        rehabilitationChanges {
+          value
+          name
+          display
+        }
+        rehabilitationChangesDetails
+        applicantCircumstancesChanges {
+          value
+          name
+          display
+        }
+        applicantCircumstancesChangesDetails
+      }
+      comprehensiveEvaluation {
+        evaluationScale {
+          value
+          name
+          display
+        }
+        learningAndApplyingKnowledge
+        generalTasksAndDemands
+        communicationAndRelationships
+        mobility
+        selfCare
+        domesticLife
+        mainDailyLifeAreas
+        leisureAndHobbies
+      }
       startDate
       plannedEndDate
       rehabilitationFocusAndStrategy

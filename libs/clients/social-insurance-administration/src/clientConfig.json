@@ -4309,6 +4309,32 @@
         },
         "additionalProperties": false
       },
+      "TrWeb.Commons.ExternalPortals.Api.Models.Applicant.NationalRegistryAddress": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "type": "string",
+            "description": "The address e.g. Suðurgata 1",
+            "nullable": true
+          },
+          "municipality": {
+            "type": "string",
+            "description": "The municipality of residence",
+            "nullable": true
+          },
+          "postalCode": {
+            "type": "string",
+            "description": "The postal code of residence",
+            "nullable": true
+          },
+          "apartmentNumber": {
+            "type": "string",
+            "description": "The apartment number of residence, especially relevant when living in block.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
       "TrWeb.Commons.ExternalPortals.Api.Models.Applications.IsEligibleForApplicationReturn": {
         "type": "object",
         "properties": {
