@@ -207,6 +207,7 @@ export const calculateSecurityDepositAmount = (answers: FormValue) => {
   return (parseInt(rentalAmount ?? '0') * months).toString()
 }
 
+// TODO: Replace mock data with API when available
 const indexData = [
   {
     date: '2025M07',
@@ -277,11 +278,13 @@ export const getIndexDateOptions = () => {
 export const getIndexRateForDate = (answers: FormValue) => {
   const { indexDate } = applicationAnswers(answers)
 
+  if (!indexDate) {
+    return ''
+  }
+
   const selectedIndex = indexData.find(
     (item: { date: string; indexRate: string }) => item.date === indexDate,
   )
 
-  if (!indexDate) return ''
-
-  return selectedIndex ? selectedIndex.indexRate : ''
+  return selectedIndex?.indexRate || ''
 }

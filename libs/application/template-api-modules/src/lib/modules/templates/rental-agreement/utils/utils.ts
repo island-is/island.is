@@ -6,7 +6,7 @@ import { SecurityDepositType } from '@island.is/clients/hms-rental-agreement'
 
 export const parseToNumber = (value: string): number => {
   const normalizedValue = value.replace(',', '.')
-  const parsed = parseInt(normalizedValue)
+  const parsed = parseFloat(normalizedValue)
   return isNaN(parsed) ? 0 : parsed
 }
 

@@ -121,11 +121,6 @@ export const summary = defineMessages({
     defaultMessage: 'Gjalddagi leigu',
     description: 'Payment date options label',
   },
-  indexTypeLabel: {
-    id: 'ra.application:summary.indexTypeLabel',
-    defaultMessage: 'Vísitala',
-    description: 'Indexation type label',
-  },
   indexRateLabel: {
     id: 'ra.application:summary.indexRateLabel',
     defaultMessage: 'Vísitölugildi',

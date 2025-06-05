@@ -94,7 +94,7 @@ const condition = z
 const propertyInfo = z
   .object({
     categoryType: z.nativeEnum(RentalHousingCategoryTypes),
-    categoryClass: z.string().optional(),
+    categoryClass: z.nativeEnum(RentalHousingCategoryClass).optional(),
     categoryClassGroup: z
       .nativeEnum(RentalHousingCategoryClassGroup)
       .optional(),

@@ -5,7 +5,7 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
-import { UserProfileApi, NationalRegistryUserApi } from '../../dataProviders'
+import { NationalRegistryUserApi } from '../../dataProviders'
 import { prerequisites } from '../../lib/messages'
 
 export const externalData = buildSection({
@@ -29,11 +29,11 @@ export const externalData = buildSection({
         ],
       }),
       dataProviders: [
-        buildDataProviderItem({
-          provider: UserProfileApi,
-          title: prerequisites.externalData.currentApplicationTitle,
-          subTitle: prerequisites.externalData.currentApplicationSubTitle,
-        }),
+        // buildDataProviderItem({
+        //   provider: UserProfileApi,
+        //   title: prerequisites.externalData.currentApplicationTitle,
+        //   subTitle: prerequisites.externalData.currentApplicationSubTitle,
+        // }),
         buildDataProviderItem({
           provider: NationalRegistryUserApi,
           title: prerequisites.externalData.nationalRegistryTitle,

@@ -102,7 +102,6 @@ export interface RentalAmountSection {
   isIndexConnected: string | undefined
   indexDate: string | undefined
   indexRate: string | undefined
-  indexType: string | undefined
   paymentMethod: string | undefined
   paymentMethodOther: string | undefined
   paymentDay: string | undefined
