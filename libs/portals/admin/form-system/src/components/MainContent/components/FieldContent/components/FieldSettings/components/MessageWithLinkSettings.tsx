@@ -83,9 +83,13 @@ export const MessageWithLinkSettings = () => {
                   })
                 }
                 onFocus={async (e) => {
-                  if (!fieldSettings.buttonText?.en) {
+                  if (
+                    !fieldSettings.buttonText?.en &&
+                    fieldSettings?.buttonText?.is &&
+                    fieldSettings?.buttonText?.is !== ''
+                  ) {
                     const translation = await getTranslation(
-                      fieldSettings?.buttonText?.is ?? '',
+                      fieldSettings.buttonText.is,
                     )
                     controlDispatch({
                       type: 'SET_MESSAGE_WITH_LINK_SETTINGS',

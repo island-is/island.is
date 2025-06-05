@@ -204,10 +204,12 @@ export const ListItem = ({
             size="sm"
             value={listItem?.label?.en ?? ''}
             onFocus={async (e) => {
-              if (!listItem?.label?.en) {
-                const translation = await getTranslation(
-                  listItem?.label?.is ?? '',
-                )
+              if (
+                !listItem?.label?.en &&
+                listItem?.label?.is &&
+                listItem.label.is !== ''
+              ) {
+                const translation = await getTranslation(listItem.label.is)
                 controlDispatch({
                   type: 'CHANGE_LIST_ITEM',
                   payload: {
@@ -268,9 +270,13 @@ export const ListItem = ({
               size="sm"
               value={listItem?.description?.en ?? ''}
               onFocus={async (e) => {
-                if (!listItem?.description?.en) {
+                if (
+                  !listItem?.description?.en &&
+                  listItem?.description?.is &&
+                  listItem.description.is !== ''
+                ) {
                   const translation = await getTranslation(
-                    listItem?.description?.is ?? '',
+                    listItem.description.is,
                   )
                   controlDispatch({
                     type: 'CHANGE_LIST_ITEM',

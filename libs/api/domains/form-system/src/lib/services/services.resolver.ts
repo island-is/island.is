@@ -9,7 +9,7 @@ import {
 import { ServicesService } from './services.service'
 import { Translation } from '../../models/services.model'
 import { GoogleTranslation } from '@island.is/form-system/shared'
-import { UseGuards } from '@nestjs/common'
+import { UseGuards, BadRequestException } from '@nestjs/common'
 import {
   GetGoogleTranslationInput,
   GetTranslationInput,
@@ -40,6 +40,19 @@ export class ServicesResolver {
     input: GetGoogleTranslationInput,
     @CurrentUser() user: User,
   ): Promise<GoogleTranslation> {
+    // Input validation
+    if (
+      !input.q ||
+      typeof input.q !== 'string' ||
+      input.q.trim().length === 0
+    ) {
+      throw new BadRequestException('Input "q" must be a non-empty string.')
+    }
+    if (input.q.length > 500) {
+      throw new BadRequestException(
+        'Input "q" is too long (max 500 characters).',
+      )
+    }
     return this.formSystemServices.getGoogleTranslation(user, input)
   }
 }

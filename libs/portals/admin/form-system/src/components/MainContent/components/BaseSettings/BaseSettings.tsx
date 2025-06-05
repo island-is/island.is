@@ -139,8 +139,8 @@ export const BaseSettings = () => {
             value={form?.name?.en ?? ''}
             backgroundColor="blue"
             onFocus={async (e) => {
-              if (!form.name?.en) {
-                const translation = await getTranslation(form.name?.is ?? '')
+              if (!form.name?.en && form?.name?.is && form.name.is !== '') {
+                const translation = await getTranslation(form.name.is)
                 console.log('translation', translation)
                 controlDispatch({
                   type: 'CHANGE_FORM_NAME',
