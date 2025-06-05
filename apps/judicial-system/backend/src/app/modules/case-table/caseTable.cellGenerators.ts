@@ -2,6 +2,7 @@ import { ModelStatic } from 'sequelize-typescript'
 
 import {
   capitalize,
+  districtCourtAbbreviation,
   formatCaseType,
   formatDate,
   getAllReadableIndictmentSubtypes,
@@ -38,6 +39,7 @@ import { Case } from '../case/models/case.model'
 import { DateLog } from '../case/models/dateLog.model'
 import { Defendant, DefendantEventLog } from '../defendant'
 import { EventLog } from '../event-log/models/eventLog.model'
+import { Institution } from '../institution'
 import { User } from '../user'
 import {
   CaseTableCellValue,
@@ -365,8 +367,13 @@ const getAppealCaseNumberSortValue = (appealCaseNumber: string): string => {
 }
 
 const getCourtCaseNumberSortValue = (courtCaseNumber: string): string => {
+  // Retrive the court prefix if it is included
+  const [head, tail] = courtCaseNumber.split(': ')
+  const court = tail ? head : ''
+  const caseNumber = tail ?? head
+
   // Assume the number starts with 'R-' or 'S-'
-  const [num, year] = courtCaseNumber.slice(2).split('/')
+  const [num, year] = caseNumber.slice(2).split('/')
 
   if (!num || !year) {
     // Either the case does not yet have a court case number or it is malformed
@@ -378,7 +385,7 @@ const getCourtCaseNumberSortValue = (courtCaseNumber: string): string => {
   // Assume num is no more than 5 digits
   const number = num.padStart(5, '0')
 
-  return `${year}${number}`
+  return `${court}${year}${number}`
 }
 
 const getPoliceCaseNumberSortValue = (policeCaseNumber: string): string => {
@@ -399,7 +406,7 @@ const getPoliceCaseNumberSortValue = (policeCaseNumber: string): string => {
   const number = num.padStart(6, '0') // Assume its no more than 6 digits
   const postfix = post ? post.padStart(3, '0') : '000'
 
-  return `${year}${prefix}${number}${postfix}`
+  return `${prefix}${year}${number}${postfix}`
 }
 
 const generateCaseNumberSortValue = (
@@ -428,10 +435,27 @@ const generateCaseNumberSortValue = (
 }
 
 const caseNumber: CaseTableCellGenerator<StringGroupValue> = {
-  attributes: ['policeCaseNumbers', 'courtCaseNumber', 'appealCaseNumber'],
+  attributes: [
+    'policeCaseNumbers',
+    'courtCaseNumber',
+    'appealCaseNumber',
+    'publicProsecutorIsRegisteredInPoliceSystem',
+  ],
+  includes: {
+    court: {
+      model: Institution,
+      attributes: ['name'],
+    },
+  },
   generate: (c: Case, user: TUser): CaseTableCell<StringGroupValue> => {
+    const court = !isDistrictCourtUser(user)
+      ? districtCourtAbbreviation(c.court?.name)
+      : ''
     const appealCaseNumber = c.appealCaseNumber ?? ''
-    const courtCaseNumber = c.courtCaseNumber ?? ''
+    const courtCaseNumber =
+      court && c.courtCaseNumber
+        ? `${court}: ${c.courtCaseNumber}`
+        : c.courtCaseNumber ?? ''
     const policeCaseNumber =
       c.policeCaseNumbers.length > 0
         ? c.policeCaseNumbers.length > 1
@@ -446,8 +470,15 @@ const caseNumber: CaseTableCellGenerator<StringGroupValue> = {
       user,
     )
 
+    const hasCheckMark =
+      isPublicProsecutionOfficeUser(user) &&
+      c.publicProsecutorIsRegisteredInPoliceSystem
+
     return generateCell(
-      { strList: [appealCaseNumber, courtCaseNumber, policeCaseNumber] },
+      {
+        strList: [appealCaseNumber, courtCaseNumber, policeCaseNumber],
+        hasCheckMark,
+      },
       sortValue,
     )
   },

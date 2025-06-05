@@ -24,12 +24,12 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
   title: messagesInfo.subsectionName,
   children: [
     buildMultiField({
-      id: Routes.PROPERTYCATEGORY,
+      id: Routes.PROPERTYINFORMATION,
       title: messagesCategory.pageTitle,
       description: messagesCategory.pageDescription,
       children: [
         buildDescriptionField({
-          id: 'registerProperty.propertyInfoAddress',
+          id: 'propertyInfo.propertyInfoAddress',
           title: ({ answers }) => {
             const { searchResultLabel } = applicationAnswers(answers)
             return {
@@ -63,12 +63,12 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
         }),
 
         buildDescriptionField({
-          id: 'registerProperty.categoryTitle',
+          id: 'propertyInfo.categoryTitle',
           title: messagesCategory.typeTitle,
           titleVariant: 'h3',
         }),
         buildSelectField({
-          id: 'registerProperty.categoryType',
+          id: 'propertyInfo.categoryType',
           title: messagesCategory.typeTitle,
           description: messagesCategory.typeDescription,
           options: getPropertyTypeOptions(),
@@ -77,22 +77,22 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
           marginBottom: 5,
         }),
         buildDescriptionField({
-          id: 'registerProperty.categoryClassTitle',
+          id: 'propertyInfo.categoryClassTitle',
           title: messagesCategory.classTitle,
           titleVariant: 'h3',
         }),
         buildRadioField({
-          id: 'registerProperty.categoryClass',
+          id: 'propertyInfo.categoryClass',
           description: messagesCategory.classDescription,
           options: getPropertyClassOptions(),
-          clearOnChange: ['registerProperty.categoryClassGroup'],
+          clearOnChange: ['propertyInfo.categoryClassGroup'],
           defaultValue: RentalHousingCategoryClass.GENERAL_MARKET,
           required: true,
           width: 'half',
           space: 0,
         }),
         buildSelectField({
-          id: 'registerProperty.categoryClassGroup',
+          id: 'propertyInfo.categoryClassGroup',
           title: messagesCategory.classGroupLabel,
           placeholder: messagesCategory.classGroupPlaceholder,
           condition: (answers) => {

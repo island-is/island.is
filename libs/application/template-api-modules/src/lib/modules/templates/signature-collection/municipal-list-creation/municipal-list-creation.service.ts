@@ -11,7 +11,6 @@ import { errorMessages } from '@island.is/application/templates/signature-collec
 import { TemplateApiError } from '@island.is/nest/problem'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
-import { CollectionType } from '@island.is/clients/signature-collection'
 import { CreateListSchema } from '@island.is/application/templates/signature-collection/municipal-list-creation'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { isCompany } from 'kennitala'
@@ -38,6 +37,7 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
       this.collectionType,
     )
 
+    // TODO: Is this relevant for LocalGovernmental/Municipal Elections?
     if (!candidate.hasPartyBallotLetter) {
       throw new TemplateApiError(errorMessages.partyBallotLetter, 405)
     }
@@ -46,21 +46,35 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
   }
 
   async municipalCollection({ auth }: TemplateApiModuleActionProps) {
-    const currentCollection = await this.signatureCollectionClientService.getLatestCollectionForType(
+    const candidate = await this.signatureCollectionClientService.getSignee(
+      auth,
       this.collectionType,
     )
-    //Todo: adjust this check to municipal once available
-    if (currentCollection.collectionType !== CollectionType.Parliamentary) {
+
+    const currentCollection = (
+      await this.signatureCollectionClientService.currentCollection()
+    )
+      .filter((collection) => collection.isActive)
+      .filter(
+        (collection) =>
+          collection.collectionType === this.collectionType &&
+          collection.areas.some((area) => area.id === candidate.area?.id),
+      )
+
+    if (!currentCollection.length) {
       throw new TemplateApiError(
         errorMessages.currentCollectionNotMunicipal,
         405,
       )
     }
-    // Candidates are stored on user national id never the actors so should be able to check just the auth national id
 
+    // Candidates are stored on user national id never the actors so should be able to check just the auth national id
     if (
-      currentCollection.candidates.some(
-        (c) => c.nationalId.replace('-', '') === auth.nationalId,
+      currentCollection.some((collection) =>
+        collection.candidates.some(
+          (candidate) =>
+            candidate.nationalId.replace('-', '') === auth.nationalId,
+        ),
       )
     ) {
       throw new TemplateApiError(errorMessages.alreadyCandidate, 412)
@@ -114,8 +128,7 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
     }
 
     const result = await this.signatureCollectionClientService
-      //Todo: switch to municipal once available
-      .createParliamentaryCandidacy(input, auth)
+      .createMunicipalCandidacy(input, auth)
       .catch((error) => {
         throw new TemplateApiError(
           {
