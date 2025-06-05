@@ -118,16 +118,24 @@ const Completed: FC = () => {
   )
 
   const handleCriminalRecordUpdateUpload = useCallback(
-    (files: File[]) => {
+    async (files: File[]) => {
       // If the case has been sent to the public prosecutor
       // we want to complete these uploads straight away
       if (isSentToPublicProsecutor) {
-        handleUpload(
+        await handleUpload(
           addUploadFiles(files, {
             category: CaseFileCategory.CRIMINAL_RECORD_UPDATE,
           }),
           updateUploadFile,
         )
+
+        const eventLogCreated = createEventLog({
+          caseId: workingCase.id,
+          eventType: EventType.INDICTMENT_CRIMINAL_RECORD_UPDATED_BY_COURT,
+        })
+        if (!eventLogCreated) {
+          return
+        }
       }
       // Otherwise we don't complete uploads until
       // we handle the next button click
@@ -138,7 +146,14 @@ const Completed: FC = () => {
         })
       }
     },
-    [addUploadFiles, handleUpload, isSentToPublicProsecutor, updateUploadFile],
+    [
+      workingCase.id,
+      addUploadFiles,
+      handleUpload,
+      isSentToPublicProsecutor,
+      updateUploadFile,
+      createEventLog,
+    ],
   )
 
   const handleNavigationTo = useCallback(
@@ -267,7 +282,10 @@ const Completed: FC = () => {
               })}
               onChange={handleCriminalRecordUpdateUpload}
               onRemove={handleRemoveFile}
-              onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
+              onOpenFile={(file) => {
+                console.log({ file })
+                return file.id ? onOpen(file.id) : undefined
+              }}
             />
           </Box>
         )}
