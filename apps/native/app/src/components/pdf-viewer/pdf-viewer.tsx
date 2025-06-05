@@ -1,4 +1,5 @@
-import { memo } from 'react'
+import { DdLogs } from '@datadog/mobile-react-native'
+import { memo, useState } from 'react'
 import { Platform } from 'react-native'
 import Pdf from 'react-native-pdf'
 

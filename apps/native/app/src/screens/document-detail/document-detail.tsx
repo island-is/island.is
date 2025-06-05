@@ -15,6 +15,7 @@ import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
 import WebView from 'react-native-webview'
 import styled, { useTheme } from 'styled-components/native'
 
+import { PdfViewer } from '../../components/pdf-viewer/pdf-viewer'
 import {
   DocumentV2,
   DocumentV2Action,
@@ -25,9 +26,9 @@ import {
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { useLocale } from '../../hooks/use-locale'
+import { useNavigation } from '../../hooks/use-navigation'
 import { toggleAction } from '../../lib/post-mail-action'
 import { useBrowser } from '../../lib/use-browser'
-import { authStore } from '../../stores/auth-store'
 import { useOrganizationsStore } from '../../stores/organizations-store'
 import {
   Alert,
@@ -45,8 +46,6 @@ import {
 import { ListParams } from '../inbox/inbox'
 import { getButtonsForActions } from './utils/get-buttons-for-actions'
 import { shareFile } from './utils/share-file'
-import { PdfViewer } from '../../components/pdf-viewer/pdf-viewer'
-import { useNavigation } from '../../hooks/use-navigation'
 
 const Host = styled.SafeAreaView`
   margin-left: ${({ theme }) => theme.spacing[2]}px;
@@ -509,8 +508,8 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
                 {visible && (
                   <PdfViewer
                     url={`data:application/pdf;base64,${Document.content?.value}`}
-                    subject={Document.subject}
-                    senderName={Document.sender?.name}
+                    subject={Document.subject ?? ''}
+                    senderName={Document.sender?.name ?? ''}
                     onLoaded={(filePath) => {
                       setPdfUrl(filePath)
                       setLoaded(true)
