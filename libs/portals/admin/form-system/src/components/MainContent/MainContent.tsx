@@ -67,21 +67,7 @@ export const MainContent = () => {
                   })
                 }
                 onFocus={(e) => setFocus(e.target.value)}
-                onBlur={async (e) => {
-                  if (e.target.value !== focus) {
-                    if (!activeItem?.data?.name?.en) {
-                      const translation = await getTranslation(e.target.value)
-                      controlDispatch({
-                        type: 'CHANGE_NAME',
-                        payload: {
-                          lang: 'en',
-                          newValue: translation.translation,
-                        },
-                      })
-                    }
-                    updateActiveItem()
-                  }
-                }}
+                onBlur={(e) => e.target.value !== focus && updateActiveItem()}
               />
             </Column>
           </Row>
@@ -101,7 +87,21 @@ export const MainContent = () => {
                     },
                   })
                 }
-                onFocus={(e) => setFocus(e.target.value)}
+                onFocus={async (e) => {
+                  if (!activeItem?.data?.name?.en) {
+                    const translation = await getTranslation(
+                      activeItem?.data?.name?.is ?? '',
+                    )
+                    controlDispatch({
+                      type: 'CHANGE_NAME',
+                      payload: {
+                        lang: 'en',
+                        newValue: translation.translation,
+                      },
+                    })
+                  }
+                  setFocus(e.target.value)
+                }}
                 onBlur={(e) => e.target.value !== focus && updateActiveItem()}
               />
             </Column>

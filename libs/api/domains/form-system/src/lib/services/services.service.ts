@@ -117,7 +117,7 @@ export class ServicesService {
 
       const result = await response.json()
       return {
-        translation: result.data.translations[0].translatedText || '',
+        translation: result?.data?.translations[0]?.translatedText || '',
       } as GoogleTranslation
     } catch (error) {
       handle4xx(error, this.handleError, 'failed to get Google translation')

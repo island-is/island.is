@@ -63,22 +63,7 @@ export const MessageWithLinkSettings = () => {
                   })
                 }
                 onFocus={(e) => setFocus(e.target.value)}
-                onBlur={async (e) => {
-                  if (e.target.value !== focus) {
-                    if (!fieldSettings.buttonText?.en) {
-                      const translation = await getTranslation(e.target.value)
-                      controlDispatch({
-                        type: 'SET_MESSAGE_WITH_LINK_SETTINGS',
-                        payload: {
-                          property: 'buttonText',
-                          lang: 'en',
-                          value: translation.translation,
-                        },
-                      })
-                    }
-                    updateActiveItem()
-                  }
-                }}
+                onBlur={(e) => e.target.value !== focus && updateActiveItem()}
               />
             </Column>
             <Column span="5/10">
@@ -97,7 +82,22 @@ export const MessageWithLinkSettings = () => {
                     },
                   })
                 }
-                onFocus={(e) => setFocus(e.target.value)}
+                onFocus={async (e) => {
+                  if (!fieldSettings.buttonText?.en) {
+                    const translation = await getTranslation(
+                      fieldSettings?.buttonText?.is ?? '',
+                    )
+                    controlDispatch({
+                      type: 'SET_MESSAGE_WITH_LINK_SETTINGS',
+                      payload: {
+                        property: 'buttonText',
+                        lang: 'en',
+                        value: translation.translation,
+                      },
+                    })
+                  }
+                  setFocus(e.target.value)
+                }}
                 onBlur={(e) => e.target.value !== focus && updateActiveItem()}
               />
             </Column>

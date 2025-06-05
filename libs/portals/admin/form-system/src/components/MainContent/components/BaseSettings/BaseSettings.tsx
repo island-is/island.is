@@ -120,18 +120,7 @@ export const BaseSettings = () => {
             value={form?.name?.is ?? ''}
             backgroundColor="blue"
             onFocus={(e) => setFocus(e.target.value)}
-            onBlur={async (e) => {
-              if (e.target.value !== focus) {
-                if (!form.name?.en) {
-                  const translation = await getTranslation(e.target.value)
-                  controlDispatch({
-                    type: 'CHANGE_FORM_NAME',
-                    payload: { lang: 'en', newValue: translation.translation },
-                  })
-                }
-                formUpdate()
-              }
-            }}
+            onBlur={(e) => e.target.value !== focus && formUpdate()}
             onChange={(e) => {
               controlDispatch({
                 type: 'CHANGE_FORM_NAME',
@@ -149,7 +138,17 @@ export const BaseSettings = () => {
             name="formNameEn"
             value={form?.name?.en ?? ''}
             backgroundColor="blue"
-            onFocus={(e) => setFocus(e.target.value)}
+            onFocus={async (e) => {
+              if (!form.name?.en) {
+                const translation = await getTranslation(form.name?.is ?? '')
+                console.log('translation', translation)
+                controlDispatch({
+                  type: 'CHANGE_FORM_NAME',
+                  payload: { lang: 'en', newValue: translation.translation },
+                })
+              }
+              setFocus(e.target.value)
+            }}
             onBlur={(e) => e.target.value !== focus && formUpdate()}
             onChange={(e) =>
               controlDispatch({

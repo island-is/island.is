@@ -182,23 +182,7 @@ export const ListItem = ({
             size="sm"
             value={listItem?.label?.is ?? ''}
             onFocus={(e) => setFocus(e.target.value)}
-            onBlur={async (e) => {
-              if (e.target.value !== focus) {
-                if (!listItem?.label?.en) {
-                  const translation = await getTranslation(e.target.value)
-                  controlDispatch({
-                    type: 'CHANGE_LIST_ITEM',
-                    payload: {
-                      property: 'label',
-                      lang: 'en',
-                      value: translation.translation,
-                      id: listItem.id ?? '',
-                    },
-                  })
-                }
-                listItemUpdate()
-              }
-            }}
+            onBlur={(e) => e.target.value !== focus && listItemUpdate()}
             onChange={(e) =>
               controlDispatch({
                 type: 'CHANGE_LIST_ITEM',
@@ -219,7 +203,23 @@ export const ListItem = ({
             backgroundColor="blue"
             size="sm"
             value={listItem?.label?.en ?? ''}
-            onFocus={(e) => setFocus(e.target.value)}
+            onFocus={async (e) => {
+              if (!listItem?.label?.en) {
+                const translation = await getTranslation(
+                  listItem?.label?.is ?? '',
+                )
+                controlDispatch({
+                  type: 'CHANGE_LIST_ITEM',
+                  payload: {
+                    property: 'label',
+                    lang: 'en',
+                    value: translation.translation,
+                    id: listItem.id ?? '',
+                  },
+                })
+              }
+              setFocus(e.target.value)
+            }}
             onBlur={(e) => e.target.value !== focus && listItemUpdate()}
             onChange={(e) =>
               controlDispatch({
@@ -246,23 +246,7 @@ export const ListItem = ({
               size="sm"
               value={listItem?.description?.is ?? ''}
               onFocus={(e) => setFocus(e.target.value)}
-              onBlur={async (e) => {
-                if (e.target.value !== focus) {
-                  if (!listItem?.description?.en) {
-                    const translation = await getTranslation(e.target.value)
-                    controlDispatch({
-                      type: 'CHANGE_LIST_ITEM',
-                      payload: {
-                        property: 'description',
-                        lang: 'en',
-                        value: translation.translation,
-                        id: listItem.id ?? '',
-                      },
-                    })
-                  }
-                  listItemUpdate()
-                }
-              }}
+              onBlur={(e) => e.target.value !== focus && listItemUpdate()}
               onChange={(e) =>
                 controlDispatch({
                   type: 'CHANGE_LIST_ITEM',
@@ -283,7 +267,23 @@ export const ListItem = ({
               backgroundColor="blue"
               size="sm"
               value={listItem?.description?.en ?? ''}
-              onFocus={(e) => setFocus(e.target.value)}
+              onFocus={async (e) => {
+                if (!listItem?.description?.en) {
+                  const translation = await getTranslation(
+                    listItem?.description?.is ?? '',
+                  )
+                  controlDispatch({
+                    type: 'CHANGE_LIST_ITEM',
+                    payload: {
+                      property: 'description',
+                      lang: 'en',
+                      value: translation.translation,
+                      id: listItem.id ?? '',
+                    },
+                  })
+                }
+                setFocus(e.target.value)
+              }}
               onBlur={(e) => e.target.value !== focus && listItemUpdate()}
               onChange={(e) =>
                 controlDispatch({
