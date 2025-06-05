@@ -11,7 +11,6 @@ import {
   RentalHousingCategoryClass,
 } from '../shared'
 import {
-  RentalAmountIndexTypes,
   RentalHousingCategoryClassGroup,
   RentalHousingCategoryTypes,
   RentalHousingConditionInspector,

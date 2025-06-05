@@ -269,7 +269,7 @@ export const getIndexDateOptions = () => {
     b.date.localeCompare(a.date),
   )
 
-  return sortedIndexData.map((item: { date: string }, index: number) => ({
+  return sortedIndexData.map((item: { date: string }) => ({
     value: item.date,
     label: formatIndexRateDateToIcelandic(item.date),
   }))
