@@ -7,7 +7,6 @@ export const isCurrentlyStudying = (answers: FormValue) => {
     answers,
     'education.typeOfEducation',
   )
-  console.log(educationType)
   return educationType === EducationType.CURRENT
 }
 
@@ -24,5 +23,14 @@ export const wasStudyingLastSemester = (answers: FormValue) => {
     answers,
     'education.typeOfEducation',
   )
+  console.log(educationType)
   return educationType === EducationType.LAST_SEMESTER
+}
+
+export const didYouFinishLastSemester = (answers: FormValue) => {
+  return getValueViaPath<string>(answers, 'education.didFinishLastSemester')
+}
+
+export const appliedForNextSemester = (answers: FormValue) => {
+  return getValueViaPath<string>(answers, 'education.appliedForNextSemester')
 }

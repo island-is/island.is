@@ -1,10 +1,13 @@
 import {
+  buildAlertMessageField,
   buildCheckboxField,
+  buildDateField,
   buildDescriptionField,
   buildFileUploadField,
   buildMultiField,
   buildRadioField,
   buildSection,
+  buildSelectField,
   buildTextField,
   coreMessages,
   getValueViaPath,
@@ -13,7 +16,14 @@ import {
 } from '@island.is/application/core'
 import { education as educationMessages } from '../../../lib/messages'
 import { EducationType } from '../../../shared'
-import { isCurrentlyStudying } from '../../../utils/educationInformation'
+import {
+  appliedForNextSemester,
+  didYouFinishLastSemester,
+  isCurrentlyStudying,
+  wasStudyingInTheLastYear,
+  wasStudyingLastSemester,
+} from '../../../utils/educationInformation'
+import { GaldurDomainModelsEducationItem } from '@island.is/clients/vmst-unemployment'
 
 export const educationSection = buildSection({
   id: 'educationSection',
@@ -23,10 +33,15 @@ export const educationSection = buildSection({
       title: educationMessages.general.pageTitle,
       description: educationMessages.general.pageDescription,
       children: [
+        buildDescriptionField({
+          id: 'education.lastTwelveMonthsDescription',
+          title: educationMessages.labels.lastTvelveMonthsLabel,
+          titleVariant: 'h5',
+        }),
         buildRadioField({
           id: 'education.lastTwelveMonths',
-          title: educationMessages.labels.lastTvelveMonthsLabel,
           width: 'half',
+          space: 0,
           options: [
             {
               value: YES,
@@ -38,10 +53,15 @@ export const educationSection = buildSection({
             },
           ],
         }),
-        buildCheckboxField({
-          id: 'education.typeOfEducation',
+        buildDescriptionField({
+          id: 'education.typeOfEducationDescription',
           title: educationMessages.labels.typeOfEducationLabel,
-          marginTop: 4,
+          marginTop: 2,
+          titleVariant: 'h5',
+        }),
+        buildRadioField({
+          id: 'education.typeOfEducation',
+          space: 0,
           options: [
             {
               value: EducationType.CURRENT,
@@ -60,47 +80,168 @@ export const educationSection = buildSection({
             getValueViaPath<string>(answers, 'education.lastTwelveMonths') ===
             YES,
         }),
-        buildTextField({
-          id: 'education.currentEducation.schoolName',
-          title: educationMessages.labels.schoolNameLabel,
-          condition: isCurrentlyStudying,
+        buildDescriptionField({
+          id: 'education.lastSemester.didYouFinishDescription',
+          title: educationMessages.labels.lastSemesterQuestion,
+          titleVariant: 'h5',
+          marginTop: 2,
+          condition: (answers) => wasStudyingLastSemester(answers),
         }),
-        buildTextField({
+        buildRadioField({
+          id: 'education.didFinishLastSemester',
+          width: 'half',
+          space: 0,
+          options: [
+            {
+              value: YES,
+              label: coreMessages.radioYes,
+            },
+            {
+              value: NO,
+              label: coreMessages.radioNo,
+            },
+          ],
+          condition: (answers) => wasStudyingLastSemester(answers),
+        }),
+        buildAlertMessageField({
+          id: 'education.lastSemester.alertMessage',
+          message: educationMessages.labels.lastSemesterAlertMessage,
+          alertType: 'info',
+          marginBottom: 0,
+          condition: (answers) =>
+            (wasStudyingLastSemester(answers) &&
+              didYouFinishLastSemester(answers) === YES) ||
+            wasStudyingInTheLastYear(answers),
+        }),
+        buildDescriptionField({
+          id: 'education.lastSemester.appliedForNextSemesterDescription',
+          title: educationMessages.labels.appliedForNextSemesterQuestion,
+          titleVariant: 'h5',
+          marginTop: 2,
+          condition: (answers) =>
+            wasStudyingLastSemester(answers) &&
+            didYouFinishLastSemester(answers) === NO,
+        }),
+        buildRadioField({
+          id: 'education.appliedForNextSemester',
+          width: 'half',
+          space: 0,
+          options: [
+            {
+              value: YES,
+              label: coreMessages.radioYes,
+            },
+            {
+              value: NO,
+              label: coreMessages.radioNo,
+            },
+          ],
+          condition: (answers) =>
+            wasStudyingLastSemester(answers) &&
+            didYouFinishLastSemester(answers) === NO,
+        }),
+        buildDescriptionField({
+          id: 'education.currentEducation.typeOfEducationDescription',
+          title: educationMessages.labels.typeOfEducationDescription,
+          titleVariant: 'h5',
+          marginTop: 2,
+          condition: (answers) =>
+            isCurrentlyStudying(answers) ||
+            wasStudyingInTheLastYear(answers) ||
+            (wasStudyingLastSemester(answers) &&
+              appliedForNextSemester(answers) !== NO),
+        }),
+        buildSelectField({
           id: 'education.currentEducation.programName',
           title: educationMessages.labels.schoolProgramLabel,
           width: 'half',
-          condition: isCurrentlyStudying,
+          options: (application, _field, locale) => {
+            const education = getValueViaPath<
+              GaldurDomainModelsEducationItem[]
+            >(
+              application.externalData,
+              'unemploymentApplication.data.supportData.education',
+            )
+            return (
+              education?.map(({ name, english }) => {
+                return {
+                  label: locale === 'is' ? name ?? '' : english ?? '',
+                  value: name ?? '',
+                }
+              }) ?? []
+            )
+          },
+          condition: (answers) =>
+            isCurrentlyStudying(answers) ||
+            wasStudyingInTheLastYear(answers) ||
+            (wasStudyingLastSemester(answers) &&
+              appliedForNextSemester(answers) !== NO),
         }),
         buildTextField({
           id: 'education.currentEducation.programUnits',
           title: educationMessages.labels.schoolProgramUnitsLabel,
           width: 'half',
-          condition: isCurrentlyStudying,
+          variant: 'number',
+          condition: (answers) =>
+            isCurrentlyStudying(answers) ||
+            wasStudyingInTheLastYear(answers) ||
+            (wasStudyingLastSemester(answers) &&
+              appliedForNextSemester(answers) !== NO),
         }),
         buildTextField({
           id: 'education.currentEducation.programDegree',
           title: educationMessages.labels.schoolDegreeLabel,
           width: 'half',
-          condition: isCurrentlyStudying,
+          condition: (answers) =>
+            isCurrentlyStudying(answers) ||
+            wasStudyingInTheLastYear(answers) ||
+            (wasStudyingLastSemester(answers) &&
+              appliedForNextSemester(answers) !== NO),
         }),
-        buildTextField({
+        buildDateField({
           id: 'education.currentEducation.programEnd',
           title: educationMessages.labels.currentSchoolEndDateLabel,
           width: 'half',
-          condition: isCurrentlyStudying,
+          condition: (answers) =>
+            isCurrentlyStudying(answers) ||
+            wasStudyingInTheLastYear(answers) ||
+            (wasStudyingLastSemester(answers) &&
+              appliedForNextSemester(answers) !== NO),
         }),
         buildDescriptionField({
           id: 'education.currentEducation.description',
           title: educationMessages.labels.currentSchoolDegreeFileLabel,
           titleVariant: 'h5',
-          condition: isCurrentlyStudying,
+          marginTop: 2,
+          condition: (answers) =>
+            isCurrentlyStudying(answers) ||
+            wasStudyingInTheLastYear(answers) ||
+            (wasStudyingLastSemester(answers) &&
+              appliedForNextSemester(answers) !== NO),
         }),
         buildFileUploadField({
           id: 'education.currentEducation.degreeFile',
           title: educationMessages.labels.currentSchoolDegreeFileNameLabel,
           uploadHeader:
             educationMessages.labels.currentSchoolDegreeFileNameLabel,
-          condition: isCurrentlyStudying,
+          uploadDescription:
+            educationMessages.labels.currentSchoolDegreeFileNameDescription,
+          uploadAccept: '.pdf, .docx, .rtf',
+          condition: (answers) =>
+            isCurrentlyStudying(answers) ||
+            wasStudyingInTheLastYear(answers) ||
+            (wasStudyingLastSemester(answers) &&
+              appliedForNextSemester(answers) !== NO),
+        }),
+        buildTextField({
+          id: 'education.notAppliedForNextSemesterExplanation',
+          title: educationMessages.labels.appliedForNextSemesterTextarea,
+          variant: 'textarea',
+          rows: 6,
+          condition: (answers) =>
+            wasStudyingLastSemester(answers) &&
+            appliedForNextSemester(answers) === NO &&
+            didYouFinishLastSemester(answers) === NO,
         }),
       ],
     }),

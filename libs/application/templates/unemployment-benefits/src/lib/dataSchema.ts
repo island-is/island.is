@@ -1,6 +1,7 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { NO, YES, YesOrNoEnum } from '@island.is/application/core'
+import { EducationType } from '../shared'
 
 const FileSchema = z.object({
   name: z.string(),
@@ -108,13 +109,14 @@ const EmploymentHistorySchema = z.object({
     startDate: z.string().optional(),
     endDate: z.string().optional(),
   }),
-  workOnOwnSSN: z.nativeEnum(YesOrNoEnum).optional(),
-  ownSSNJob: z.object({
-    title: z.string().optional(),
-    percentage: z.string().optional(),
-    startDate: z.string().optional(),
-    endDate: z.string().optional(),
-  }),
+  ownSSNJob: z
+    .object({
+      title: z.string().optional(),
+      percentage: z.string().optional(),
+      startDate: z.string().optional(),
+      endDate: z.string().optional(),
+    })
+    .optional(),
   previousJobs: z.array(
     z.object({
       company: z.object({
@@ -150,6 +152,58 @@ const educationHistorySchema = z
     studyNotCompleted: z.array(z.string()).optional(),
   })
   .optional()
+
+const educationSchema = z
+  .object({
+    lastTwelveMonths: z
+      .nativeEnum(YesOrNoEnum)
+      .refine((v) => Object.values(YesOrNoEnum).includes(v)),
+    typeOfEducation: z.nativeEnum(EducationType).optional(),
+    didFinishLastSemester: z.nativeEnum(YesOrNoEnum).optional(),
+    appliedForNextSemester: z.nativeEnum(YesOrNoEnum).optional(),
+    currentEducation: z.object({
+      programName: z.string().optional(),
+      programUnits: z.string().optional(),
+      programDegree: z.string().optional(),
+      programEnd: z.string().optional(),
+      degreeFile: z.array(FileSchema).optional(),
+    }),
+    notAppliedForNextSemesterExplanation: z.string().optional(),
+  })
+  .refine(
+    ({ lastTwelveMonths, typeOfEducation }) => {
+      if (lastTwelveMonths === YES) {
+        return typeOfEducation !== undefined
+      }
+      return true
+    },
+    {
+      path: ['typeOfEducation'],
+    },
+  )
+  .refine(
+    ({
+      lastTwelveMonths,
+      typeOfEducation,
+      didFinishLastSemester,
+      appliedForNextSemester,
+      currentEducation,
+    }) => {
+      if (
+        lastTwelveMonths === YES &&
+        (typeOfEducation === EducationType.CURRENT ||
+          (typeOfEducation === EducationType.LAST_SEMESTER &&
+            didFinishLastSemester === NO &&
+            appliedForNextSemester !== NO))
+      ) {
+        return currentEducation && currentEducation.programName
+      }
+      return true
+    },
+    {
+      path: ['currentEducation', 'programName'],
+    },
+  )
 
 const drivingLicenseSchema = z.object({
   drivingLicenseType: z.array(z.string()).optional(),
@@ -190,6 +244,7 @@ export const dataSchema = z.object({
   jobWishes: jobWishesSchema,
   currentStudies: currentStudiesSchema,
   educationHistory: z.array(educationHistorySchema),
+  education: educationSchema,
   drivingLicense: drivingLicenseSchema,
   languageSkills: z.array(languageSkillsSchema),
   euresJobSearch: euresSchema,

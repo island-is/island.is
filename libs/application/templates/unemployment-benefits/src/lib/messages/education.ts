@@ -45,6 +45,12 @@ export const education = {
       defaultMessage: 'Ég lauk námi á síðustu 12 mánuðum',
       description: 'Last twelve months education label',
     },
+    typeOfEducationDescription: {
+      id: 'vmst.ub.application:education.labels.typeOfEducationDescription',
+      defaultMessage:
+        'Vinsamlegast skráðu inn eftirfarandi upplýsingar um námið',
+      description: 'Type of education description',
+    },
     schoolNameLabel: {
       id: 'vmst.ub.application:education.labels.schoolNameLabel',
       defaultMessage: 'Skóli',
@@ -52,7 +58,7 @@ export const education = {
     },
     schoolProgramLabel: {
       id: 'vmst.ub.application:education.labels.schoolProgramLabel',
-      defaultMessage: 'Námsbraut',
+      defaultMessage: 'Námsstig',
       description: 'School program label',
     },
     schoolProgramUnitsLabel: {
@@ -80,6 +86,32 @@ export const education = {
       id: 'vmst.ub.application:education.labels.schoolDegreeFileNameLabel',
       defaultMessage: 'Staðfesting á námi/prófgráðu',
       description: 'School degree file name label',
+    },
+    currentSchoolDegreeFileNameDescription: {
+      id: 'vmst.ub.application:education.labels.currentSchoolDegreeFileNameDescription',
+      defaultMessage: 'Tekið er við skjölum með endingu: .pdf, .docx, .rtf',
+      description: 'Upload description for school degree file',
+    },
+    lastSemesterQuestion: {
+      id: 'vmst.ub.application:education.labels.lastSemesterQuestion',
+      defaultMessage: 'Lauk því námi með prófgráðu?',
+      description: 'Last semester question label',
+    },
+    lastSemesterAlertMessage: {
+      id: 'vmst.ub.application:education.labels.lastSemesterAlertMessage',
+      defaultMessage:
+        'Hafir þú lokið námi með prófgráðu á síðustu tólf mánuðum kann það að hækka bótarétt þinn og jafngildir þremur mánuðum í 100% starfshlutfalli. Þú þarft þá að hlaða inn útskriftarvottorði t.d. prófskírteini hér að neðan.',
+      description: 'Last semester alert message',
+    },
+    appliedForNextSemesterQuestion: {
+      id: 'vmst.ub.application:education.labels.appliedForNextSemesterQuestion',
+      defaultMessage: 'Ertu skráð/ur í nám á næstu önn?',
+      description: 'Applied for next semester question label',
+    },
+    appliedForNextSemesterTextarea: {
+      id: 'vmst.ub.application:education.labels.appliedForNextSemesterTextarea',
+      defaultMessage: 'Skýringar á námslokum',
+      description: 'Applied for next semester textarea label',
     },
   }),
 }
