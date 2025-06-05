@@ -2,13 +2,6 @@ import { DocumentDTO, MessageAction } from '../..'
 import sanitizeHtml from 'sanitize-html'
 import { svgAttr, svgTags } from '../../utils/htmlConfig'
 
-const customDocument = {
-  senderName: 'Ríkisskattstjóri',
-  senderNatReg: '5402696029',
-  subjectContains: 'Niðurstaða álagningar',
-  url: 'https://thjonustusidur.rsk.is/alagningarsedill',
-}
-
 export type FileType = 'pdf' | 'html' | 'url'
 
 export type DocumentDto = {
@@ -48,19 +41,6 @@ export const mapToDocument = (
     content = document.content
   } else if (document.url) {
     fileType = 'url'
-
-    // // Handling edge case for documents that can't be presented due to requiring authentication through rsk.is
-    // if (
-    //   document.senderKennitala === customDocument.senderNatReg &&
-    //   document?.subject?.includes(customDocument.subjectContains)
-    // ) {
-    //   content = customDocument.url
-    // } else {
-    //   content = document.url
-    // }
-    //
-
-    // This is just a test - may be reverted or cleaned up before prod
     content = document.url
   } else if (document.htmlContent) {
     fileType = 'html'
