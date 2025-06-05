@@ -122,12 +122,15 @@ const Completed: FC = () => {
       // If the case has been sent to the public prosecutor
       // we want to complete these uploads straight away
       if (isSentToPublicProsecutor) {
-        await handleUpload(
+        const uploadResult = await handleUpload(
           addUploadFiles(files, {
             category: CaseFileCategory.CRIMINAL_RECORD_UPDATE,
           }),
           updateUploadFile,
         )
+        if (uploadResult !== 'ALL_SUCCEEDED') {
+          return
+        }
 
         const eventLogCreated = createEventLog({
           caseId: workingCase.id,
