@@ -25,7 +25,6 @@ import {
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { useLocale } from '../../hooks/use-locale'
-import { navigateTo } from '../../lib/deep-linking'
 import { toggleAction } from '../../lib/post-mail-action'
 import { useBrowser } from '../../lib/use-browser'
 import { authStore } from '../../stores/auth-store'
@@ -39,11 +38,15 @@ import {
   blue400,
   dynamicColor,
 } from '../../ui'
-import { ButtonRegistry } from '../../utils/component-registry'
+import {
+  ButtonRegistry,
+  ComponentRegistry,
+} from '../../utils/component-registry'
 import { ListParams } from '../inbox/inbox'
 import { getButtonsForActions } from './utils/get-buttons-for-actions'
 import { shareFile } from './utils/share-file'
 import { PdfViewer } from '../../components/pdf-viewer/pdf-viewer'
+import { useNavigation } from '../../hooks/use-navigation'
 
 const Host = styled.SafeAreaView`
   margin-left: ${({ theme }) => theme.spacing[2]}px;
@@ -210,6 +213,8 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   listParams: ListParams
 }> = ({ componentId, docId, isUrgent, listParams }) => {
   useNavigationOptions(componentId)
+
+  const { showModal } = useNavigation()
 
   const insets = useSafeAreaInsets()
   const theme = useTheme()
@@ -423,10 +428,12 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
       return
     }
 
-    navigateTo(`/inbox/${docId}/reply`, {
-      senderName,
-      documentId: docId,
-      subject: Document.subject,
+    showModal(ComponentRegistry.DocumentReplyScreen, {
+      passProps: {
+        senderName,
+        documentId: docId,
+        subject: Document.subject,
+      },
     })
   }
 
