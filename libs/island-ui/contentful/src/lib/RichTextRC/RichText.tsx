@@ -22,7 +22,7 @@ import { TellUsAStoryFormProps } from '../TellUsAStoryForm/TellUsAStoryForm'
 import { defaultRenderNodeObject } from './defaultRenderNode'
 import { defaultRenderMarkObject } from './defaultRenderMark'
 import { defaultRenderComponentObject } from './defaultRenderComponents'
-import { Box } from '@island.is/island-ui/core'
+import { Box, type ResponsiveSpace } from '@island.is/island-ui/core'
 
 type HtmlSlice = { __typename: 'Html'; id: string; document: Document }
 type FaqListSlice = { __typename: 'FaqList'; id: string } & FaqListProps
@@ -118,12 +118,16 @@ type RichText = (
       }
     | { renderNode?: {}; renderMark?: {}; renderComponent?: {} },
   locale?: Locale,
+  marginBottom?: ResponsiveSpace ,
+  marginTop?: ResponsiveSpace ,
 ) => React.ReactNode
 
 export const richText: RichText = (
   documents,
   opt = { renderNode: {}, renderMark: {}, renderComponent: {} },
   locale = 'is',
+  marginBottom = [5, 5, 5, 6],
+  marginTop = [5, 5, 5, 6],
 ) => {
   const options = {
     renderText: (text: string) => {
@@ -157,8 +161,8 @@ export const richText: RichText = (
       <Box
         key={slice.id}
         id={slice.id}
-        marginBottom={[5, 5, 5, 6]}
-        marginTop={[5, 5, 5, 6]}
+        marginBottom={marginBottom}
+        marginTop={marginTop}
       >
         {
           // eslint-disable-next-line @typescript-eslint/ban-ts-comment

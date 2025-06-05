@@ -104,8 +104,8 @@ export const AccordionSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
           ))}
 
         {slice.type === 'category_card' &&
-          (slice.accordionItems ?? []).map((item, index) => (
-            <Box marginTop={index ? 4 : 0} key={item.id}>
+          (slice.accordionItems ?? []).map((item) => (
+            <Box marginTop={4} key={item.id}>
               <CategoryCard
                 href={item.link?.url}
                 heading={item.title}

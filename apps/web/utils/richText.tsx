@@ -363,5 +363,7 @@ export const webRichText = (
       },
     },
     activeLocale,
+    0,
+    0,
   )
 }
