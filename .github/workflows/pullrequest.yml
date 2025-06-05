@@ -301,13 +301,10 @@ jobs:
           lints=$(mktemp -t lint-head.XXXXXX)
           echo "lints-file=$lints" | tee -a "$GITHUB_OUTPUT"
           yarn nx run-many -t lint --output-style=static --projects "$AFFECTED_PROJECTS" |
-            tee -a "$lints" | # Show output when running, but preserve pipe-chaining
-            (grep -oP '(?<=✖ )(\d+)(?= problems)' || echo '0') | # Find number of problems
-            awk '{ SUM += $1} END { SUM /= 2; printf "lint-count=%d", SUM }' | # sum number of problems, divide by 2 because each problem summary occurs twice
+            tee "$lints"
+          (grep -oP '(?<=✖ )(\d+)(?= problems)' "$lints" || echo '0') | # Find number of problems
+            awk '{ SUM += $1} END { SUM /= 2; printf "lint-count=%d\n", SUM }' | # sum number of problems, divide by 2 because each problem summary occurs twice
             tee -a "$GITHUB_OUTPUT" # Finally create output
-          echo "::group::Lints"
-          cat "$lints"
-          echo "::endgroup::"
 
       # Checkout for linting base
       - uses: actions/checkout@v4
@@ -324,13 +321,10 @@ jobs:
           lints=$(mktemp -t lint-base.XXXXXX)
           echo "lints-file=$lints" | tee -a "$GITHUB_OUTPUT"
           yarn nx run-many -t lint --output-style=static --projects "$AFFECTED_PROJECTS" |
-            tee -a "$lints" | # Show output when running, but preserve pipe-chaining
-            (grep -oP '(?<=✖ )(\d+)(?= problems)' || echo '0') | # Find number of problems
-            awk '{ SUM += $1} END { SUM /= 2; printf "lint-count=%d", SUM }' | # sum number of problems, divide by 2 because each problem summary occurs twice
+            tee "$lints"
+          (grep -oP '(?<=✖ )(\d+)(?= problems)' "$lints" || echo '0') | # Find number of problems
+            awk '{ SUM += $1} END { SUM /= 2; printf "lint-count=%d\n", SUM }' | # sum number of problems, divide by 2 because each problem summary occurs twice
             tee -a "$GITHUB_OUTPUT" # Finally create output
-          echo "::group::Lints"
-          cat "$lints"
-          echo "::endgroup::"
 
       - name: No new lints
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
@@ -404,7 +398,7 @@ jobs:
       - name: Notify about deploy-feature label
         if: ${{ github.event.pull_request.auto_merge && needs.prepare.outputs.DEPLOY_FEATURE == 'true' }}
         run: |
-          echo "- 👉 Remove the \`deploy-feature\` label if you want this PR to be merged automatically" >> $GITHUB_STEP_SUMMARY
+          echo "- 👉 Remove the \`deploy-feature\` label if you want this PR to be merged automatically" >> "$GITHUB_STEP_SUMMARY"
           exit 1
 
       - name: Collect

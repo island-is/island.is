@@ -29,26 +29,28 @@ import { ReplyInput } from './models/v2/reply.input'
 import { Reply } from './models/v2/reply.model'
 import { Sender } from './models/v2/sender.model'
 import { Type } from './models/v2/type.model'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 
 const LOG_CATEGORY = 'documents-api-v2'
 
 @Injectable()
 export class DocumentServiceV2 {
   constructor(
-    private documentService: DocumentsClientV2Service,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+    private readonly featureService: FeatureFlagService,
+    private documentService: DocumentsClientV2Service,
     @Inject(DownloadServiceConfig.KEY)
     private downloadServiceConfig: ConfigType<typeof DownloadServiceConfig>,
   ) {}
 
   async findDocumentById(
-    nationalId: string,
+    user: User,
     documentId: string,
     locale?: Locale,
     includeDocument?: boolean,
   ): Promise<Document | null> {
     const document = await this.documentService.getCustomersDocument(
-      nationalId,
+      user.nationalId,
       documentId,
       includeDocument,
     )
@@ -56,6 +58,12 @@ export class DocumentServiceV2 {
     if (!document) {
       return null // Null document logged in clients-documents-v2
     }
+
+    const use2Way = await this.featureService.getValue(
+      Features.isServicePortal2WayMailboxEnabled,
+      false,
+      user,
+    )
 
     let type: FileType
     switch (document.fileType) {
@@ -91,21 +99,23 @@ export class DocumentServiceV2 {
       (action) => action.type !== 'alert' && action.type !== 'confirmation',
     )
 
-    const ticket = {
-      id: document.ticket?.id?.toString(),
-      authorId: document.ticket?.authorId?.toString(),
-      createdDate: document.ticket?.createdAt,
-      updatedDate: document.ticket?.updatedAt,
-      status: document.ticket?.status,
-      subject: document.ticket?.subject,
-      comments: document.ticket?.comments?.map((c) => ({
-        id: c.id?.toString(),
-        body: c.body,
-        createdDate: c.createdAt,
-        authorId: c.authorId?.toString(),
-        author: c.author,
-      })),
-    }
+    const ticket = use2Way
+      ? {
+          id: document.ticket?.id?.toString(),
+          authorId: document.ticket?.authorId?.toString(),
+          createdDate: document.ticket?.createdAt,
+          updatedDate: document.ticket?.updatedAt,
+          status: document.ticket?.status,
+          subject: document.ticket?.subject,
+          comments: document.ticket?.comments?.map((c) => ({
+            id: c.id?.toString(),
+            body: c.body,
+            createdDate: c.createdAt,
+            authorId: c.authorId?.toString(),
+            author: c.author,
+          })),
+        }
+      : null
 
     return {
       ...document,
@@ -127,9 +137,12 @@ export class DocumentServiceV2 {
       actions: this.actionMapper(documentId, actions),
       confirmation: confirmation,
       alert: alert,
-      replyable: document.replyable,
-      closedForMoreReplies:
-        ticket.status?.toLowerCase() === 'closed' ? true : false,
+      replyable: use2Way ? document.replyable : false,
+      closedForMoreReplies: use2Way
+        ? ticket?.status?.toLowerCase() === 'closed'
+          ? true
+          : false
+        : null,
       ticket: ticket,
     }
   }
@@ -169,7 +182,11 @@ export class DocumentServiceV2 {
         totalCount: documents?.totalCount,
       })
     }
-
+    const use2Way = await this.featureService.getValue(
+      Features.isServicePortal2WayMailboxEnabled,
+      false,
+      user,
+    )
     const documentData: Array<Document> =
       documents?.documents
         .map((d) => {
@@ -186,7 +203,7 @@ export class DocumentServiceV2 {
               id: d.senderNationalId,
             },
             isUrgent: d.urgent,
-            replyable: d.replyable,
+            replyable: use2Way ? d.replyable : false,
             ticket: undefined,
           }
         })
@@ -425,6 +442,7 @@ export class DocumentServiceV2 {
           requesterName: input.reguesterName,
         },
       )
+      // if no ticket id is returned we handle error client side
       if (!res.ticketId) {
         return null
       }
@@ -435,7 +453,7 @@ export class DocumentServiceV2 {
         error: error,
         documentId: input.documentId,
       })
-      throw error
+      return null
     }
   }
 

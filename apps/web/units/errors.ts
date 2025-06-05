@@ -9,3 +9,13 @@ export class CustomNextError extends Error {
     this.title = title
   }
 }
+
+export class CustomNextRedirect extends Error {
+  destination: string
+  permanent: boolean
+  constructor(destination: string, permanent = false) {
+    super(`Redirecting to ${destination}`)
+    this.destination = destination
+    this.permanent = permanent
+  }
+}

@@ -27,6 +27,7 @@ import {
 import {
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
+  NationalRegistryCohabitantsApi,
 } from '../dataProviders'
 import {
   Actions,
@@ -87,6 +88,7 @@ const AdditionalSupportForTheElderlyTemplate: ApplicationTemplate<
               write: 'all',
               api: [
                 NationalRegistryUserApi,
+                NationalRegistryCohabitantsApi,
                 UserProfileApi.configure({
                   params: {
                     validateEmail: true,

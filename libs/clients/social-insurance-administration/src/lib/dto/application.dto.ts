@@ -31,4 +31,6 @@ export interface ApplicationDTO {
   childrenNationalIds?: string[]
   spouseTaxCardUsage?: SpouseTaxCardUsage
   incomePlan?: IncomePlanInfo
+  livesAloneUserReply?: boolean
+  livesAloneNationalRegistryData?: boolean
 }

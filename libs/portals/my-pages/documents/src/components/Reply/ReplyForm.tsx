@@ -31,6 +31,10 @@ const ReplyForm: React.FC<Props> = ({ successfulSubmit }) => {
       toast.error(formatMessage(messages.replySentError))
     },
     onCompleted: (response) => {
+      if (!response.documentsV2Reply) {
+        toast.error(formatMessage(messages.replySentError))
+        return
+      }
       toast.success('Skilaboð send')
       successfulSubmit()
       setReplyState((prev) => ({

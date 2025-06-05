@@ -3,7 +3,7 @@ set -euo pipefail
 
 DIR="$(cd "$(dirname "${BASH_SOURCE[0]}")" >/dev/null 2>&1 && pwd)"
 
-# shellcheck disable=SC1091
+# shellcheck source-path=SCRIPTDIR
 source "$DIR"/_common.sh
 
 COVERAGE_DIR=$(yarn nx show project "$APP" | jq '.targets.test.outputs[0] | sub("{workspaceRoot}/";"")' -r)

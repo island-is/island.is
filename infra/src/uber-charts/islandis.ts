@@ -162,11 +162,11 @@ const downloadService = downloadServiceSetup({
 const userNotificationWorkerService = userNotificationWorkerSetup({
   userProfileApi: servicePortalApi,
 })
-const userNotificationCleanupWorkerService = userNotificationCleanUpWorkerSetup()
+const userNotificationCleanupWorkerService =
+  userNotificationCleanUpWorkerSetup()
 
-const userNotificationBirthdayWorkerService = userNotificationBirthdayWorkerSetup(
-  { userProfileApi: servicePortalApi },
-)
+const userNotificationBirthdayWorkerService =
+  userNotificationBirthdayWorkerSetup({ userProfileApi: servicePortalApi })
 
 const unicornApp = unicornAppSetup()
 

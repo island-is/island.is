@@ -39,6 +39,7 @@ export const tableRepeaterSubsection = buildSubSection({
           getStaticTableData: (_application) => {
             // Possibility to populate the table with data from the answers or external data
             // Populated data will not be editable or deletable
+            // The prepopulated data will not be automatically run through the format function
             return [
               {
                 input: 'John Doe',
@@ -159,8 +160,11 @@ export const tableRepeaterSubsection = buildSubSection({
           },
           table: {
             // Format values for display in the table
+            // In the format function, you can use the value, index in the repeater and the application object
             format: {
-              input: (value) => `${value} - custom format`,
+              input: (value, _i, _application) => {
+                return `${value} - custom format`
+              },
               nationalIdWithName: (value) => {
                 return `${value} - custom format`
               },

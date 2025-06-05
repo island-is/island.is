@@ -4,6 +4,7 @@ import { useLocale } from '@island.is/localization'
 import { FieldBaseProps } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import { Routes } from '../../utils/enums'
+import { ApplicantsInfo } from '../../shared'
 import {
   filterRepresentativesFromApplicants,
   formatNationalId,
@@ -13,7 +14,6 @@ import { KeyValue } from './components/KeyValue'
 import { SummaryCard } from './components/SummaryCard'
 import { SummaryCardRow } from './components/SummaryCardRow'
 import { summary } from '../../lib/messages'
-import { ApplicantsInfo } from '../../utils/types'
 
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void

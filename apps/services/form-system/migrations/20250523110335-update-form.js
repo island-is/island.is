@@ -9,12 +9,16 @@ module.exports = {
     })
     // 2. Copy/cast data from old column to new column (as string JSON)
     await queryInterface.sequelize.query(
-      `UPDATE form SET organization_display_name_json = to_jsonb(organization_display_name)`
+      `UPDATE form SET organization_display_name_json = to_jsonb(organization_display_name)`,
     )
     // 3. Remove the old column
     await queryInterface.removeColumn('form', 'organization_display_name')
     // 4. Rename the new column to the original name
-    await queryInterface.renameColumn('form', 'organization_display_name_json', 'organization_display_name')
+    await queryInterface.renameColumn(
+      'form',
+      'organization_display_name_json',
+      'organization_display_name',
+    )
   },
 
   async down(queryInterface, Sequelize) {
@@ -25,11 +29,15 @@ module.exports = {
     })
     // 2. Copy data from JSON column to STRING column (as text)
     await queryInterface.sequelize.query(
-      `UPDATE form SET organization_display_name_str = organization_display_name::text`
+      `UPDATE form SET organization_display_name_str = organization_display_name::text`,
     )
     // 3. Remove the JSON column
     await queryInterface.removeColumn('form', 'organization_display_name')
     // 4. Rename the string column back to the original name
-    await queryInterface.renameColumn('form', 'organization_display_name_str', 'organization_display_name')
+    await queryInterface.renameColumn(
+      'form',
+      'organization_display_name_str',
+      'organization_display_name',
+    )
   },
 }

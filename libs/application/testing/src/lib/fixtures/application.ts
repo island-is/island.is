@@ -26,7 +26,7 @@ export const createApplication = (
   externalData: {},
   id: faker.random.word(),
   state: 'DRAFT',
-  typeId: ApplicationTypes.EXAMPLE,
+  typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
   name: '',
   status: ApplicationStatus.IN_PROGRESS,
   ...overrides,
@@ -51,7 +51,7 @@ export const createApplicationTemplate = (
     }
     return 'reviewer'
   },
-  type: ApplicationTypes.EXAMPLE,
+  type: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
   name: 'Test application',
   codeOwner: CodeOwners.NordaApplications,
   institution: 'Test institution',

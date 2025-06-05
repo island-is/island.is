@@ -44,11 +44,13 @@ export const renderConnectedComponent = (slice) => {
     case 'Lögmenn/Lawyers':
       return <LawyersList slice={slice} />
     case 'Meðmælalistar/SignatureLists':
-      // TODO: Urgent! Determine how to propagate the type
       return (
         <SignatureLists
           slice={slice}
-          collectionType={SignatureCollectionCollectionType.OtherUnknown}
+          collectionType={
+            (slice?.configJson?.collectionType ??
+              (SignatureCollectionCollectionType.OtherUnknown as unknown)) as SignatureCollectionCollectionType
+          }
         />
       )
     default:

@@ -33,7 +33,7 @@ export class CaseTableController {
     type: CaseTableResponse,
     description: 'Gets a case table of a specific type',
   })
-  async getCaseTable(
+  getCaseTable(
     @CurrentHttpUser() user: User,
     @Query('type') type: CaseTableType,
   ): Promise<CaseTableResponse> {

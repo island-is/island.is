@@ -7,9 +7,9 @@ import { m } from '../../lib/messages'
 import {
   CurrentLicenseApi,
   JurisdictionApi,
-  NationalRegistryUserApi,
   QualityPhotoApi,
-  QualitySignatureApi,
+  AllPhotosFromThjodskraApi,
+  NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
 import {
@@ -18,52 +18,54 @@ import {
   SyslumadurPaymentCatalogApi,
 } from '../../dataProviders'
 
-export const sectionDataProviders = buildSection({
-  id: 'externalData',
-  title: m.dataCollectionTitle,
-  children: [
-    buildExternalDataProvider({
-      id: 'approveExternalData',
-      title: m.dataCollectionTitle,
-      subTitle: m.dataCollectionSubtitle,
-      description: m.dataCollectionDescription,
-      checkboxLabel: m.dataCollectionCheckboxLabel,
-      enableMockPayment: true,
-      dataProviders: [
-        buildDataProviderItem({
-          provider: NationalRegistryUserApi,
-          title: m.dataCollectionNationalRegistryTitle,
-          subTitle: m.dataCollectionNationalRegistrySubtitle,
-        }),
-        buildDataProviderItem({
-          provider: QualityPhotoApi,
-          title: m.dataCollectionQualityPhotoTitle,
-          subTitle: m.dataCollectionQualityPhotoSubtitle,
-        }),
-        buildDataProviderItem({
-          provider: QualitySignatureApi,
-        }),
-        buildDataProviderItem({
-          provider: DuplicateEligibilityApi,
-        }),
-        buildDataProviderItem({
-          provider: UserProfileApi,
-          title: m.dataCollectionUserProfileTitle,
-          subTitle: m.dataCollectionUserProfileSubtitle,
-        }),
-        buildDataProviderItem({
-          provider: JurisdictionApi,
-        }),
-        buildDataProviderItem({
-          provider: CurrentLicenseApi,
-        }),
-        buildDataProviderItem({
-          provider: SyslumadurPaymentCatalogApi,
-        }),
-        buildDataProviderItem({
-          provider: MockableSyslumadurPaymentCatalogApi,
-        }),
-      ],
-    }),
-  ],
-})
+export const sectionDataProviders = (allowFakeData: boolean) =>
+  buildSection({
+    id: 'externalData',
+    title: m.dataCollectionTitle,
+    children: [
+      buildExternalDataProvider({
+        id: 'approveExternalData',
+        title: m.dataCollectionTitle,
+        subTitle: m.dataCollectionSubtitle,
+        description: m.dataCollectionDescription,
+        checkboxLabel: m.dataCollectionCheckboxLabel,
+        enableMockPayment: true,
+        dataProviders: [
+          buildDataProviderItem({
+            // on dev, skip this data provider for test purposes
+            provider: allowFakeData ? undefined : NationalRegistryUserApi,
+            title: m.dataCollectionNationalRegistryTitle,
+            subTitle: m.dataCollectionNationalRegistrySubtitle,
+          }),
+          buildDataProviderItem({
+            provider: QualityPhotoApi,
+            title: m.dataCollectionQualityPhotoTitle,
+            subTitle: m.dataCollectionQualityPhotoSubtitle,
+          }),
+          buildDataProviderItem({
+            provider: AllPhotosFromThjodskraApi,
+          }),
+          buildDataProviderItem({
+            provider: DuplicateEligibilityApi,
+          }),
+          buildDataProviderItem({
+            provider: allowFakeData ? undefined : UserProfileApi,
+            title: m.dataCollectionUserProfileTitle,
+            subTitle: m.dataCollectionUserProfileSubtitle,
+          }),
+          buildDataProviderItem({
+            provider: JurisdictionApi,
+          }),
+          buildDataProviderItem({
+            provider: CurrentLicenseApi,
+          }),
+          buildDataProviderItem({
+            provider: SyslumadurPaymentCatalogApi,
+          }),
+          buildDataProviderItem({
+            provider: MockableSyslumadurPaymentCatalogApi,
+          }),
+        ],
+      }),
+    ],
+  })

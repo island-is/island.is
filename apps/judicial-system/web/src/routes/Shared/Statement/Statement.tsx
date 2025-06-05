@@ -36,6 +36,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCase,
+  useFileList,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -59,6 +60,10 @@ const Statement = () => {
     removeUploadFile,
   } = useUploadFiles(workingCase.caseFiles)
   const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
+
+  const { onOpen } = useFileList({
+    caseId: workingCase.id,
+  })
 
   const appealStatementType = !isDefenceUser(user)
     ? CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT
@@ -164,6 +169,7 @@ const Statement = () => {
                 buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
                 onChange={(files) => handleChange(files, appealStatementType)}
                 onRemove={(file) => handleRemoveFile(file)}
+                onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
                 hideIcons={!allFilesDoneOrError}
                 disabled={!allFilesDoneOrError}
               />
@@ -195,6 +201,7 @@ const Statement = () => {
                 buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
                 onChange={(files) => handleChange(files, appealCaseFilesType)}
                 onRemove={(file) => handleRemoveFile(file)}
+                onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
                 hideIcons={!allFilesDoneOrError}
                 disabled={!allFilesDoneOrError}
               />

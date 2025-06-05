@@ -1,7 +1,7 @@
 import { FieldBaseProps } from '@island.is/application/types'
 import { FC, useEffect, useState } from 'react'
 import { MultiSelectDropdown } from './MultiSelectDropdown'
-import { Option } from '../Components/types'
+import { Option } from './types'
 import { useFormContext } from 'react-hook-form'
 import { getValueViaPath } from '@island.is/application/core'
 

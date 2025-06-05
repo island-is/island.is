@@ -238,11 +238,9 @@ const useCase = () => {
     [createCourtCaseMutation, isCreatingCourtCase],
   )
 
-  const updateCase = useMemo(
+  const updateLimitedAccessCase = useMemo(
     () => async (id: string, updateCase: UpdateCase) => {
-      const mutation = limitedAccess
-        ? limitedAccessUpdateCaseMutation
-        : updateCaseMutation
+      const mutation = limitedAccessUpdateCaseMutation
 
       try {
         if (!id || Object.keys(updateCase).length === 0) {
@@ -253,19 +251,46 @@ const useCase = () => {
           variables: { input: { id, ...updateCase } },
         })
 
-        const res = data as UpdateCaseMutation & LimitedAccessUpdateCaseMutation
+        const res = data as LimitedAccessUpdateCaseMutation
 
-        return res?.[limitedAccess ? 'limitedAccessUpdateCase' : 'updateCase']
+        return res.limitedAccessUpdateCase
       } catch (error) {
         toast.error(formatMessage(errors.updateCase))
       }
     },
-    [
-      formatMessage,
-      limitedAccess,
-      limitedAccessUpdateCaseMutation,
-      updateCaseMutation,
-    ],
+    [formatMessage, limitedAccessUpdateCaseMutation],
+  )
+
+  const updateUnlimitedAccessCase = useMemo(
+    () => async (id: string, updateCase: UpdateCase) => {
+      const mutation = updateCaseMutation
+
+      try {
+        if (!id || Object.keys(updateCase).length === 0) {
+          return
+        }
+
+        const { data } = await mutation({
+          variables: { input: { id, ...updateCase } },
+        })
+
+        const res = data as UpdateCaseMutation
+
+        return res.updateCase
+      } catch (error) {
+        toast.error(formatMessage(errors.updateCase))
+      }
+    },
+    [formatMessage, updateCaseMutation],
+  )
+
+  const updateCase = useMemo(
+    () => async (id: string, updateCase: UpdateCase) => {
+      return limitedAccess
+        ? updateLimitedAccessCase(id, updateCase)
+        : updateUnlimitedAccessCase(id, updateCase)
+    },
+    [limitedAccess, updateLimitedAccessCase, updateUnlimitedAccessCase],
   )
 
   const transitionCase = useMemo(
@@ -405,6 +430,8 @@ const useCase = () => {
     createCourtCase,
     isCreatingCourtCase,
     updateCase,
+    updateLimitedAccessCase,
+    updateUnlimitedAccessCase,
     isUpdatingCase: isUpdatingCase || isLimitedAccessUpdatingCase,
     transitionCase,
     isTransitioningCase:

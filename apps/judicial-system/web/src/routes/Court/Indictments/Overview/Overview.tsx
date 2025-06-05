@@ -83,16 +83,19 @@ const OverviewBody = ({
       </Box>
     )} */}
         {workingCase.mergedCases && workingCase.mergedCases.length > 0 && (
-          <Accordion>
-            {workingCase.mergedCases.map((mergedCase) => (
-              <Box marginBottom={5} key={mergedCase.id}>
-                <ConnectedCaseFilesAccordionItem
-                  connectedCaseParentId={workingCase.id}
-                  connectedCase={mergedCase}
-                />
-              </Box>
-            ))}
-          </Accordion>
+          <>
+            <Accordion>
+              {workingCase.mergedCases.map((mergedCase) => (
+                <Box marginBottom={5} key={mergedCase.id}>
+                  <ConnectedCaseFilesAccordionItem
+                    connectedCaseParentId={workingCase.id}
+                    connectedCase={mergedCase}
+                  />
+                </Box>
+              ))}
+            </Accordion>
+            <Box marginBottom={5} />
+          </>
         )}
         <Box component="section" marginBottom={10}>
           <IndictmentCaseFilesList workingCase={workingCase} />

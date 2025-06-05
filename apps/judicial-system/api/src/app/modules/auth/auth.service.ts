@@ -50,6 +50,68 @@ export class AuthService {
     }
   }
 
+  async refreshToken(refreshToken: string) {
+    const requestBody = new URLSearchParams({
+      client_id: this.config.clientId,
+      client_secret: this.config.clientSecret,
+      redirect_uri: this.config.redirectUri,
+      grant_type: 'refresh_token',
+      refresh_token: refreshToken,
+    })
+
+    const response = await fetch(`${this.config.issuer}/connect/token`, {
+      method: 'POST',
+      body: requestBody,
+    })
+
+    if (response.ok) {
+      return await response.json()
+    } else {
+      throw new UnauthorizedException(
+        `Authorization request failed with status ${response.status} - ${response.statusText}`,
+      )
+    }
+  }
+
+  async revokeRefreshToken(token: string) {
+    const requestBody = new URLSearchParams({
+      client_id: this.config.clientId,
+      client_secret: this.config.clientSecret,
+      redirect_uri: this.config.redirectUri,
+      token,
+      token_type_hint: 'refresh_token',
+    })
+
+    const response = await fetch(`${this.config.issuer}/connect/revocation`, {
+      method: 'POST',
+      body: requestBody,
+    })
+
+    if (!response.ok) {
+      throw new UnauthorizedException(
+        `Failed to revoke refresh token: ${response.status} - ${response.statusText}`,
+      )
+    }
+  }
+
+  getExpiry(token: string) {
+    const decodedToken = jwt.decode(token, { complete: true })
+    if (decodedToken && typeof decodedToken === 'object') {
+      const payload = decodedToken.payload
+      if (payload && 'exp' in payload) {
+        const expiredTimestamp = payload['exp']
+        return expiredTimestamp
+      }
+    }
+    return undefined
+  }
+
+  isTokenExpired(token: string) {
+    const currentTime = Math.floor(Date.now() / 1000)
+    const expiredTimestamp = this.getExpiry(token)
+    return expiredTimestamp && expiredTimestamp < currentTime
+  }
+
   async verifyIdsToken(token: string) {
     try {
       const secretClient = jwksClient({

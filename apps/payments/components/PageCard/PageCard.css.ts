@@ -81,4 +81,5 @@ export const linkSeparator = style({
 export const link = style({
   fontWeight: theme.typography.semiBold,
   fontSize: 16,
+  color: theme.color.blue400,
 })

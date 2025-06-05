@@ -68,9 +68,7 @@ export const PoliceReport = () => {
             <Input
               name="demands"
               label={formatMessage(rcReportForm.sections.demands.label)}
-              placeholder={formatMessage(
-                rcReportForm.sections.demands.placeholder,
-              )}
+              placeholder={'Hverjar eru kröfur ákæruvaldsins?'}
               value={workingCase.demands || ''}
               errorMessage={demandsErrorMessage}
               hasError={demandsErrorMessage !== ''}

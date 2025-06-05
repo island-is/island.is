@@ -467,6 +467,18 @@ export const readableIndictmentSubtypes = (
   return _uniq(returnValue)
 }
 
+export const getAllReadableIndictmentSubtypes = (
+  subtypeMap: IndictmentSubtypeMap,
+): string[] => {
+  if (!subtypeMap) {
+    return []
+  }
+
+  const allSubtypes = Object.values(subtypeMap).flat()
+
+  return _uniq(allSubtypes.map((subtype) => indictmentSubtypes[subtype]))
+}
+
 export const sanitize = (str: string) => {
   return str.replace(/"/g, '')
 }

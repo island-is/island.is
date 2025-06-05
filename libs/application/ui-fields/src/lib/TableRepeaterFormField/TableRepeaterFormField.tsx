@@ -4,6 +4,7 @@ import {
   formatTextWithLocale,
 } from '@island.is/application/core'
 import {
+  Application,
   FieldBaseProps,
   TableRepeaterField,
 } from '@island.is/application/types'
@@ -151,10 +152,17 @@ export const TableRepeaterFormField: FC<Props> = ({
     setIsEditing(true)
   }
 
-  const formatTableValue = (key: string, item: Record<string, string>) => {
+  const formatTableValue = (
+    key: string,
+    item: Record<string, string>,
+    index: number,
+    application: Application,
+  ) => {
     item[key] = item[key] ?? ''
     const formatFn = table?.format?.[key]
-    const formatted = formatFn ? formatFn(item[key]) : item[key]
+    const formatted = formatFn
+      ? formatFn(item[key], index, application)
+      : item[key]
     return typeof formatted === 'string'
       ? formatted
       : Array.isArray(formatted)
@@ -213,10 +221,8 @@ export const TableRepeaterFormField: FC<Props> = ({
                 staticData.map((item, index) => (
                   <T.Row key={index}>
                     <T.Data></T.Data>
-                    {Object.keys(item).map((key, index) => (
-                      <T.Data key={`static-${key}-${index}`}>
-                        {formatTableValue(key, item)}
-                      </T.Data>
+                    {Object.keys(item).map((key, idx) => (
+                      <T.Data key={`static-${key}-${idx}`}>{item[key]}</T.Data>
                     ))}
                   </T.Row>
                 ))}
@@ -277,6 +283,8 @@ export const TableRepeaterFormField: FC<Props> = ({
                           customMappedValues.length
                             ? customMappedValues[index]
                             : values[index],
+                          index,
+                          application,
                         )}
                       </T.Data>
                     ))}

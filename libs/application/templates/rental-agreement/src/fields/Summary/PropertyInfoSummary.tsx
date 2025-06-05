@@ -2,19 +2,15 @@ import { FC } from 'react'
 import { Box, Button, GridColumn, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps } from '@island.is/application/types'
+import { applicationAnswers, RentalHousingCategoryClass } from '../../shared'
 import {
   getPropertyTypeOptions,
   getPropertyClassGroupOptions,
+  getEmergencyExitOptions,
+  getRentalPropertySize,
 } from '../../utils/utils'
-import {
-  Routes,
-  RentalHousingCategoryClass,
-  RentalHousingConditionInspector,
-} from '../../utils/enums'
-import {
-  extractPropertyInfoData,
-  getOptionLabel,
-} from '../../utils/summaryUtils'
+import { Routes, RentalHousingConditionInspector } from '../../utils/enums'
+import { getOptionLabel } from '../../utils/summaryUtils'
 import { KeyValue } from './components/KeyValue'
 import { SummaryCardRow } from './components/SummaryCardRow'
 import { SummaryCard } from './components/SummaryCard'
@@ -57,36 +53,27 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
   }
 
   const {
-    uploadedFiles,
+    files,
     categoryClass,
     categoryType,
     categoryClassGroup,
-    searchResultUnits,
+    units,
     inspector,
     inspectorName,
-    resultsDescription,
-    descriptionInput,
-    rulesInput,
+    conditionDescription,
+    description,
+    rules,
     smokeDetectors,
     fireExtinguisher,
     emergencyExits,
     fireBlanket,
-  } = extractPropertyInfoData(answers)
+  } = applicationAnswers(answers)
 
-  const numOfRooms = searchResultUnits
+  const numOfRooms = units
     ?.reduce((total, unit) => total + (unit.numOfRooms || 0), 0)
     .toString()
 
-  const propertySize = searchResultUnits
-    ?.reduce(
-      (total, unit) =>
-        total +
-        (unit.changedSize && unit.changedSize !== 0
-          ? unit.changedSize
-          : unit.size || 0),
-      0,
-    )
-    .toString()
+  const propertySize = getRentalPropertySize(units).toString()
 
   return (
     <SummaryCard cardLabel={formatMessage(summary.propertyInfoHeader)}>
@@ -153,7 +140,7 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
         <GridColumn span={['12/12']}>
           <KeyValue
             label={summary.propertyDescriptionLabel}
-            value={descriptionInput || '-'}
+            value={description || '-'}
           />
         </GridColumn>
       </SummaryCardRow>
@@ -166,7 +153,7 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
         <GridColumn span={['12/12']}>
           <KeyValue
             label={summary.PropertySpecialProvisionsLabel}
-            value={rulesInput || '-'}
+            value={rules || '-'}
           />
         </GridColumn>
       </SummaryCardRow>
@@ -196,12 +183,12 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
         <GridColumn span={['12/12', '12/12', '12/12', '12/12', '8/12']}>
           <KeyValue
             label={summary.propertyConditionDescriptionLabel}
-            value={resultsDescription || ''}
+            value={conditionDescription || ''}
           />
         </GridColumn>
       </SummaryCardRow>
 
-      {uploadedFiles && uploadedFiles.length > 0 && (
+      {files && files.length > 0 && (
         <SummaryCardRow
           editAction={goToScreen}
           route={fileUploadRoute}
@@ -218,7 +205,7 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
                 {formatMessage(summary.fileUploadLabel)}
               </Text>
               <ul className={fileLinksList}>
-                {uploadedFiles.map((file) => (
+                {files.map((file) => (
                   <li key={file.name} className={fileLink}>
                     <Button
                       key={file.name}
@@ -282,14 +269,20 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
         </GridColumn>
         <GridColumn span={['12/12', '6/12', '6/12', '6/12', '3/12']}>
           <KeyValue
-            label={summary.fireProtectionsExitsLabel}
-            value={emergencyExits || '-'}
+            label={summary.fireProtectionsFireBlanketLabel}
+            value={fireBlanket || '-'}
           />
         </GridColumn>
         <GridColumn span={['12/12', '6/12', '6/12', '6/12', '3/12']}>
           <KeyValue
-            label={summary.fireProtectionsFireBlanketLabel}
-            value={fireBlanket || '-'}
+            label={summary.fireProtectionsEmergencyExitsLabel}
+            value={
+              getOptionLabel(
+                emergencyExits || '',
+                getEmergencyExitOptions,
+                '',
+              ) || '-'
+            }
           />
         </GridColumn>
       </SummaryCardRow>

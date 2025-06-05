@@ -27,5 +27,6 @@ query allLists($input: SignatureCollectionIdInput!) {
     numberOfSignatures
     maxReached
     reviewed
+    collectionType
   }
 }

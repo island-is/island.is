@@ -3,6 +3,7 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/smart-solutions-v2/src",
   "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
   "targets": {
     "lint": {
       "executor": "@nx/eslint:lint"
@@ -32,6 +33,5 @@
       },
       "outputs": ["{projectRoot}/gen/schema.ts"]
     }
-  },
-  "tags": ["lib:client", "scope:client"]
+  }
 }

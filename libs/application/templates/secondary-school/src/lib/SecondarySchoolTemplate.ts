@@ -252,6 +252,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               delete: true,
+              api: [SchoolsApi],
             },
             {
               id: Roles.ORGANISATION_REVIEWER,

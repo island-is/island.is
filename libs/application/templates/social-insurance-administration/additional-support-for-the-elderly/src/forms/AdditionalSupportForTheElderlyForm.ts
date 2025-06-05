@@ -2,6 +2,7 @@ import {
   buildAlertMessageField,
   buildCheckboxField,
   buildCustomField,
+  buildDescriptionField,
   buildForm,
   buildHiddenInputWithWatchedValue,
   buildMultiField,
@@ -36,6 +37,7 @@ import {
   getApplicationExternalData,
   getAvailableMonths,
   getAvailableYears,
+  hasNoCohabitants,
 } from '../lib/additionalSupportForTheElderlyUtils'
 import { additionalSupportForTheElderyFormMessage } from '../lib/messages'
 
@@ -191,6 +193,46 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
               // Needed to trigger an update on options in the select above
               id: 'period.hiddenInput',
               watchValue: 'period.year',
+            }),
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      id: 'higherPayments',
+      title:
+        additionalSupportForTheElderyFormMessage.info.higherPaymentsCohabTitle,
+      children: [
+        buildMultiField({
+          id: 'higherPayments',
+          title: (application: Application) => {
+            return hasNoCohabitants(application)
+              ? additionalSupportForTheElderyFormMessage.info
+                  .higherPaymentsTitle
+              : additionalSupportForTheElderyFormMessage.info
+                  .higherPaymentsCohabTitle
+          },
+          description: (application: Application) => {
+            return hasNoCohabitants(application)
+              ? additionalSupportForTheElderyFormMessage.info
+                  .higherPaymentsDescription
+              : additionalSupportForTheElderyFormMessage.info
+                  .higherPaymentsCohabDescription
+          },
+          children: [
+            buildRadioField({
+              id: 'higherPayments.question',
+              options: getYesNoOptions(),
+              width: 'half',
+              condition: (_, externalData) => {
+                return hasNoCohabitants({ externalData } as Application)
+              },
+            }),
+            buildDescriptionField({
+              id: 'higherPayments.text',
+              condition: (_, externalData) => {
+                return !hasNoCohabitants({ externalData } as Application)
+              },
             }),
           ],
         }),

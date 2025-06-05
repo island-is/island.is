@@ -17,7 +17,11 @@ import {
   Remark,
 } from './drivingLicenseApi.types'
 import { handleCreateResponse } from './utils/handleCreateResponse'
-import { PracticePermitDto, DriverLicenseWithoutImagesDto } from '../v5'
+import {
+  PracticePermitDto,
+  DriverLicenseWithoutImagesDto,
+  ImagesFromThjodskraDto,
+} from '../v5'
 
 @Injectable()
 export class DrivingLicenseApi {
@@ -587,8 +591,15 @@ export class DrivingLicenseApi {
     districtId: number
     stolenOrLost: boolean
     pickUpLicense: boolean
+    imageBiometricsId: string | null
   }): Promise<number> {
-    const { districtId, token, stolenOrLost, pickUpLicense } = params
+    const {
+      districtId,
+      token,
+      stolenOrLost,
+      pickUpLicense,
+      imageBiometricsId,
+    } = params
     return await this.v5.apiDrivinglicenseV5ApplicationsNewCollaborativePost({
       apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
       apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
@@ -598,6 +609,7 @@ export class DrivingLicenseApi {
         licenseStolenOrLost: stolenOrLost,
         userId: v5.DRIVING_LICENSE_API_USER_ID,
         pickUpLicense,
+        imageBiometricsId,
       },
     })
   }
@@ -648,15 +660,30 @@ export class DrivingLicenseApi {
     }
   }
 
-  async getHasQualityScannedPhoto(params: { ssn: string }): Promise<boolean> {
+  async getHasQualityScannedPhoto(params: { token: string }): Promise<boolean> {
     const res =
-      await this.imageApiV5.apiImagecontrollerV5SSNHasqualityscannedphotoGet({
+      await this.imageApiV5.apiImagecontrollerV5HasqualityscannedphotoGet({
         apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
         apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
-        sSN: params.ssn,
+        jwttoken: params.token.replace('Bearer ', ''),
       })
 
     return res > 0
+  }
+
+  async getAllPhotosFromThjodskra(params: {
+    token: string
+  }): Promise<ImagesFromThjodskraDto> {
+    const res =
+      await this.imageApiV5.apiImagecontrollerV5FromnationalregistryWithagerestrictionGet(
+        {
+          apiVersion: v5.DRIVING_LICENSE_API_VERSION_V5,
+          apiVersion2: v5.DRIVING_LICENSE_API_VERSION_V5,
+          jwttoken: params.token.replace('Bearer ', ''),
+        },
+      )
+
+    return res
   }
 
   async getAllDriverLicenses(

@@ -1096,6 +1096,11 @@ export const m = defineMessages({
     defaultMessage: 'Fastanúmer',
     description: 'Property number label',
   },
+  propertyNumberVehicle: {
+    id: 'es.application:propertyNumberVehicle',
+    defaultMessage: 'Fastanúmer',
+    description: 'Property number label',
+  },
   propertyShare: {
     id: 'es.application:propertyShare',
     defaultMessage: 'Eignarhluti',

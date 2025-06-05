@@ -292,8 +292,8 @@ export const summary = defineMessages({
     defaultMessage: 'Slökkvitæki',
     description: 'Fire extinguisher label',
   },
-  fireProtectionsExitsLabel: {
-    id: 'ra.application:summary.fireProtectionsExitsLabel',
+  fireProtectionsEmergencyExitsLabel: {
+    id: 'ra.application:summary.fireProtectionsEmergencyExitsLabel',
     defaultMessage: 'Flóttaleiðir',
     description: 'Exits label',
   },

@@ -63,4 +63,18 @@ export const ApplicantTypes: ApplicantType[] = [
       en: 'Legal entity',
     },
   },
+  {
+    id: ApplicantTypesEnum.LEGAL_ENTITY_OF_PROCURATION_HOLDER,
+    description: {
+      is: 'Lögaðili fyrir prókúruhafa',
+      en: 'Legal entity of procuration holder',
+    },
+  },
+  {
+    id: ApplicantTypesEnum.LEGAL_GUARDIAN,
+    description: {
+      is: 'Forráðamaður',
+      en: 'Legal guardian',
+    },
+  },
 ]

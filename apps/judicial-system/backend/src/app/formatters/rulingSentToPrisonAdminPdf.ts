@@ -115,9 +115,9 @@ export const createRulingSentToPrisonAdminPdf = (
       defendant.serviceRequirement === ServiceRequirement.REQUIRED &&
       defendant.verdictViewDate
         ? (formatDate(defendant.verdictViewDate) as string)
-        : defendant.serviceRequirement === ServiceRequirement.NOT_REQUIRED
-        ? 'Dómfelldi var viðstaddur dómsuppkvaðningu'
         : defendant.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
+        ? 'Dómfelldi var viðstaddur dómsuppkvaðningu'
+        : defendant.serviceRequirement === ServiceRequirement.NOT_REQUIRED
         ? 'Birting dóms ekki þörf'
         : 'Óþekkt'
 

@@ -2844,7 +2844,7 @@ export class CaseNotificationService extends BaseNotificationService {
       case CaseNotificationType.RECEIVED_BY_COURT:
         return this.sendReceivedByCourtNotifications(theCase)
       case CaseNotificationType.COURT_DATE:
-        return this.sendCourtDateNotifications(theCase, userDescriptor)
+        return this.sendCourtDateNotifications(theCase, user ?? userDescriptor)
       case CaseNotificationType.DISTRICT_COURT_JUDGE_ASSIGNED:
         return this.sendDistrictCourtUserAssignedNotifications(
           theCase,

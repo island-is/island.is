@@ -17,6 +17,7 @@ import {
 import { m } from '../lib/messages'
 import { SignatureCollectionList } from '@island.is/api/schema'
 import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
+import { IndividualDto } from '@island.is/clients/national-registry-v2'
 
 export const Draft: Form = buildForm({
   id: 'SignListDraft',
@@ -90,8 +91,13 @@ export const Draft: Form = buildForm({
               title: m.municipality,
               width: 'full',
               readOnly: true,
-              //Todo: update once available from externalData
-              defaultValue: 'Borgarbyggð',
+              defaultValue: ({ externalData }: Application) => {
+                const municipalIdentity = getValueViaPath<IndividualDto>(
+                  externalData,
+                  'municipalIdentity.data',
+                )
+                return municipalIdentity?.legalDomicile?.locality
+              },
             }),
             buildTextField({
               id: 'candidateName',

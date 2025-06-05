@@ -220,3 +220,4 @@ export class PaymentFlow extends Model<
 }
 
 export type PaymentFlowAttributes = InferAttributes<PaymentFlow>
+export type PaymentFlowChargeAttributes = InferAttributes<PaymentFlowCharge>

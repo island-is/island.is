@@ -9,6 +9,7 @@ import {
 import { format as formatNationalId } from 'kennitala'
 import { m } from '../../lib/messages'
 import { Application } from '@island.is/api/schema'
+import { Signee } from '@island.is/clients/signature-collection'
 
 export const information = buildSection({
   id: 'listInformationSection',
@@ -29,8 +30,13 @@ export const information = buildSection({
           title: m.listMunicipality,
           width: 'full',
           readOnly: true,
-          //Todo: use value from externalData once available
-          defaultValue: () => 'Borgarbyggð',
+          defaultValue: ({ externalData }: Application) => {
+            const signee = getValueViaPath<Signee>(
+              externalData,
+              'candidate.data',
+            )
+            return signee?.area?.name ?? ''
+          },
         }),
         buildTextField({
           id: 'list.name',

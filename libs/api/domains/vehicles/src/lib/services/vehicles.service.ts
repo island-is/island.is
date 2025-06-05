@@ -177,7 +177,6 @@ export class VehiclesService {
     })
   }
 
-
   async getPublicVehicleSearch(search: string) {
     return await this.publicVehiclesApi
       .publicVehicleSearchGet({
