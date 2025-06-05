@@ -163,20 +163,6 @@ const PaymentArrangementSchema = z
       path: ['contactInfo', 'phone'],
     },
   )
-  .refine(
-    ({ explanation, individualOrCompany, paymentOptions }) => {
-      if (
-        individualOrCompany === IndividualOrCompany.individual ||
-        paymentOptions === PaymentOptions.cashOnDelivery
-      ) {
-        return true
-      }
-      return explanation && explanation.length < 41 && explanation.length > 0
-    },
-    {
-      path: ['explanation'],
-    },
-  )
 
 const ExamineeSchema = z
   .array(
