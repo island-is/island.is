@@ -320,7 +320,7 @@ export class SubpoenaService {
     })
   }
 
-  async deliverSubpoenaToPolice(
+  async deliverSubpoenaToNationalCommissionersOffice(
     theCase: Case,
     defendant: Defendant,
     subpoena: Subpoena,
