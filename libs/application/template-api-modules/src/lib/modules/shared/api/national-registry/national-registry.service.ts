@@ -341,6 +341,11 @@ export class NationalRegistryService extends BaseTemplateApiService {
     const childrenNationalIds =
       await this.nationalRegistryV3Api.getCustodyChildren(parentUser)
 
+    console.log('--------------------------------')
+    console.log('childrenNationalIds')
+    console.dir(childrenNationalIds, { depth: null, colors: true })
+    console.log('--------------------------------')
+
     if (params?.validateHasChildren) {
       if (!childrenNationalIds || childrenNationalIds.length === 0) {
         throw new TemplateApiError(

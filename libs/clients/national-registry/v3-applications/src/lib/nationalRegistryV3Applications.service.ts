@@ -69,6 +69,11 @@ export class NationalRegistryV3ApplicationsClientService {
       kennitala: user.nationalId,
     })
 
+    console.log('--------------------------------')
+    console.log('v3 get custody children res')
+    console.dir(res, { depth: null, colors: true })
+    console.log('--------------------------------')
+
     return (
       res.forsjaBornList?.map((x) => x.barnKt || '')?.filter((x) => !!x) || []
     )
