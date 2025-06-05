@@ -12,6 +12,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   CaseFileCategory,
+  CaseIndictmentRulingDecision,
   EventType,
   hasIndictmentCaseBeenSubmittedToCourt,
   SubpoenaType,
@@ -21,6 +22,7 @@ import {
 import {
   Confirmation,
   createCaseFilesRecord,
+  createFineSentToPrisonAdminPdf,
   createIndictment,
   createRulingSentToPrisonAdminPdf,
   createServiceCertificate,
@@ -366,6 +368,12 @@ export class PdfService {
   }
 
   async getRulingSentToPrisonAdminPdf(theCase: Case): Promise<Buffer> {
-    return await createRulingSentToPrisonAdminPdf(theCase)
+    if (
+      theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
+    ) {
+      return await createFineSentToPrisonAdminPdf(theCase)
+    } else {
+      return await createRulingSentToPrisonAdminPdf(theCase)
+    }
   }
 }
