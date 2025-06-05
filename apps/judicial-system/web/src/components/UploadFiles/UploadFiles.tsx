@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useCallback, useEffect } from 'react'
+import { Dispatch, FC, SetStateAction, useCallback } from 'react'
 import { useDropzone } from 'react-dropzone'
 import { useIntl } from 'react-intl'
 
@@ -23,18 +23,6 @@ interface Props {
   isBottomComponent?: boolean
 }
 
-export const createPreviewUrlFiles = (acceptedFiles: File[]) => {
-  const toFileWithPreview = (file: File): FileWithPreviewURL => {
-    const previewUrl = URL.createObjectURL(file)
-    return Object.assign(file, { previewUrl })
-  }
-
-  const acceptedFilesWithPreviewURL = acceptedFiles.map((file) =>
-    toFileWithPreview(file),
-  )
-  return acceptedFilesWithPreviewURL
-}
-
 const UploadFiles: FC<Props> = (props) => {
   const {
     files,
@@ -49,7 +37,7 @@ const UploadFiles: FC<Props> = (props) => {
 
   const onDrop = useCallback(
     (acceptedFiles: File[]) => {
-      onChange(createPreviewUrlFiles(acceptedFiles))
+      onChange(acceptedFiles)
     },
     [onChange],
   )
@@ -58,17 +46,6 @@ const UploadFiles: FC<Props> = (props) => {
     accept: ['application/pdf', 'image/png', 'image/jpeg', 'image/jpg'],
     onDrop,
   })
-
-  useEffect(() => {
-    return () => {
-      // Cleanup object URLs when component unmounts
-      files.forEach((file) => {
-        if (file.previewUrl) {
-          URL.revokeObjectURL(file.previewUrl)
-        }
-      })
-    }
-  }, [files])
 
   return (
     <div
