@@ -9,6 +9,7 @@ export interface EnvironmentConfig {
   label: string
   idsIssuer: string
   apiUrl: string
+  islandUrl: string
   configCat: string | null
   datadog: string | null
 }
@@ -85,6 +86,7 @@ export const environmentStore = create<EnvironmentStore>(
                 id: branch.namespace,
                 label: branch.namespace,
                 apiUrl: `https://${branch.host}${branch.path}`,
+                islandUrl: `https://${branch.host}`,
               })),
               environments.local,
               environments.mock,

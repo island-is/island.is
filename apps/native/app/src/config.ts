@@ -1,17 +1,20 @@
 import { Platform } from 'react-native'
 import DeviceInfo from 'react-native-device-info'
 import {
+  EnvironmentConfig,
   environmentStore,
   useEnvironmentStore,
 } from './stores/environment-store'
 
-// Initial environment
-export const environments = {
+type EnvironmentId = 'prod' | 'staging' | 'dev' | 'local' | 'mock'
+
+export const environments: Record<EnvironmentId, EnvironmentConfig> = {
   prod: {
     id: 'prod',
     label: 'Production',
     idsIssuer: 'https://innskra.island.is/',
     apiUrl: 'https://island.is/api',
+    islandUrl: 'https://island.is',
     configCat: 'YcfYCOwBTUeI04mWOWpPdA/qDKG1RMTMkeqM0ifHFlxmQ',
     datadog: 'pubdb17b5a1eb2e3bc1c7f7ad1595c8cfc7',
   },
@@ -20,6 +23,7 @@ export const environments = {
     label: 'Staging',
     idsIssuer: 'https://identity-server.staging01.devland.is/',
     apiUrl: 'https://beta.staging01.devland.is/api',
+    islandUrl: 'https://beta.staging01.devland.is',
     configCat: 'YcfYCOwBTUeI04mWOWpPdA/7kWZdAnrz0acVfr_paEl5Q',
     datadog: 'pubdb17b5a1eb2e3bc1c7f7ad1595c8cfc7',
   },
@@ -28,6 +32,7 @@ export const environments = {
     label: 'Development',
     idsIssuer: 'https://identity-server.dev01.devland.is/',
     apiUrl: 'https://beta.dev01.devland.is/api',
+    islandUrl: 'https://beta.dev01.devland.is',
     configCat: 'YcfYCOwBTUeI04mWOWpPdA/2mYtDGA4oEKdCJt2lnpXEw',
     datadog: null,
   },
@@ -36,6 +41,7 @@ export const environments = {
     label: 'Local',
     idsIssuer: 'https://identity-server.dev01.devland.is/',
     apiUrl: 'http://localhost:4444/api',
+    islandUrl: 'http://localhost:4200',
     configCat: 'YcfYCOwBTUeI04mWOWpPdA/2mYtDGA4oEKdCJt2lnpXEw',
     datadog: null,
   },
@@ -44,6 +50,7 @@ export const environments = {
     label: 'Mock',
     idsIssuer: 'https://identity-server.dev01.devland.is/',
     apiUrl: 'http://localhost:4444/api',
+    islandUrl: 'http://localhost:4200',
     configCat: 'YcfYCOwBTUeI04mWOWpPdA/2mYtDGA4oEKdCJt2lnpXEw',
     datadog: null,
   },

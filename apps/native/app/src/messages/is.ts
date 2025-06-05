@@ -268,6 +268,16 @@ export const is = {
   'documentReply.uploadAttachment': 'Hlaða upp skjali',
   'documentReply.sendMessage': 'Senda skilaboð',
 
+  // register email
+  'registerEmail.title': 'Vinsamlegast skráðu netfang',
+  'registerEmail.titleRegistered': 'Netfang skráð',
+  'registerEmail.description': '[Til þess að svara pósti þarf að skrá netfang]',
+  'registerEmail.descriptionRegistered':
+    '[Nú getur þú svarað pósti úr pósthólfi þínu]',
+  'registerEmail.button': 'Skrá netfang',
+  'registerEmail.cancel': 'Hætta við',
+  'registerEmail.close': 'Loka',
+
   // profile
   'profile.screenTitle': 'Meira',
   'profile.bottomTabText': 'Meira',

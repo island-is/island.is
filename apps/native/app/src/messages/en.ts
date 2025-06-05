@@ -267,6 +267,17 @@ export const en: TranslatedMessages = {
   'documentReply.uploadAttachment': 'Upload document',
   'documentReply.sendMessage': 'Send message',
 
+  // register email
+  'registerEmail.title': 'Please register your email',
+  'registerEmail.titleRegistered': 'Email registered',
+  'registerEmail.description':
+    '[To reply to email, you need to register an email]',
+  'registerEmail.descriptionRegistered':
+    '[Now you can reply to emails from your mailbox]',
+  'registerEmail.button': 'Register email',
+  'registerEmail.cancel': 'Cancel',
+  'registerEmail.close': 'Close',
+
   // wallet
   'wallet.screenTitle': 'Wallet',
   'wallet.bottomTabText': 'Wallet',
