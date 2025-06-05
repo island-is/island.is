@@ -301,27 +301,34 @@ export class SignatureCollectionAdminClientService {
     newEndDate: Date,
     auth: Auth,
   ): Promise<Success> {
-    const list = await this.getApiWithAuth(
-      this.adminApi,
-      auth,
-    ).adminMedmaelalistiIDExtendTimePatch({
-      iD: parseInt(listId),
-      newEndDate: newEndDate,
-    })
-    const { dagsetningLokar } = list
-    const success = dagsetningLokar
-      ? newEndDate.getTime() === dagsetningLokar.getTime()
-      : false
-
-    // Can only toggle list if it is in review or reviewed
-    if (success && list.lokadHandvirkt) {
-      await this.getApiWithAuth(
+    try {
+      const list = await this.getApiWithAuth(
         this.adminApi,
         auth,
-      ).adminMedmaelalistiIDToggleListPatch({ iD: parseInt(listId) })
-    }
-    return {
-      success,
+      ).adminMedmaelalistiIDExtendTimePatch({
+        iD: parseInt(listId),
+        newEndDate: newEndDate,
+      })
+      const { dagsetningLokar } = list
+      const success = dagsetningLokar
+        ? newEndDate.getTime() === dagsetningLokar.getTime()
+        : false
+
+      // Can only toggle list if it is in review or reviewed
+      if (success && list.lokadHandvirkt) {
+        await this.getApiWithAuth(
+          this.adminApi,
+          auth,
+        ).adminMedmaelalistiIDToggleListPatch({ iD: parseInt(listId) })
+      }
+      return {
+        success,
+      }
+    } catch (error) {
+      return {
+        success: false,
+        reasons: [error.body ?? ReasonKey.DeniedByService],
+      }
     }
   }
 
