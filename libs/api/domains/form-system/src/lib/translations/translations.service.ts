@@ -47,11 +47,12 @@ export class TranslationsService {
 
     try {
       const response = await enhancedFetch(
-        `https://translation.googleapis.com/language/translate/v2?key=${FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY}`,
+        `https://translation.googleapis.com/language/translate/v2`,
         {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            'X-goog-api-key': FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY,
           },
           body: JSON.stringify({
             q: input.q,
@@ -70,11 +71,11 @@ export class TranslationsService {
 
       const result = await response.json()
       return {
-        translation: result?.data?.translations[0]?.translatedText || '',
+        translation: result?.data?.translations?.[0]?.translatedText || '',
       } as GoogleTranslation
     } catch (error) {
       handle4xx(error, this.handleError, 'failed to get Google translation')
-      return error
+      throw new Error('Unexpected error in translation service')
     }
   }
 }
