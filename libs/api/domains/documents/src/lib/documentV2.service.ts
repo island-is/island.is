@@ -1,6 +1,7 @@
 import type { User } from '@island.is/auth-nest-tools'
 import {
   DocumentsClientV2Service,
+  DocumentsListClientV2Service,
   MessageAction,
 } from '@island.is/clients/documents-v2'
 import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
@@ -33,6 +34,7 @@ const LOG_CATEGORY = 'documents-api-v2'
 @Injectable()
 export class DocumentServiceV2 {
   constructor(
+    private documentListService: DocumentsListClientV2Service,
     private documentService: DocumentsClientV2Service,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
     @Inject(DownloadServiceConfig.KEY)
@@ -135,7 +137,7 @@ export class DocumentServiceV2 {
       mutableCategoryIds.filter((c) => !hiddenCategoryIds.includes(c))
     }
 
-    const documents = await this.documentService.getDocumentList({
+    const documents = await this.documentListService.getDocumentList({
       ...restOfInput,
       categoryId: mutableCategoryIds.join(),
       hiddenCategoryIds: this.getHiddenCategoriesIDs(user).join(),
@@ -183,7 +185,7 @@ export class DocumentServiceV2 {
     let categories
 
     try {
-      categories = await this.documentService.getCustomersCategories(
+      categories = await this.documentListService.getCustomersCategories(
         user.nationalId,
       )
     } catch (error) {
@@ -217,7 +219,7 @@ export class DocumentServiceV2 {
   }
 
   async getTypes(nationalId: string): Promise<Array<Type>> {
-    const res = await this.documentService.getCustomersTypes(nationalId)
+    const res = await this.documentListService.getCustomersTypes(nationalId)
 
     return (
       res.types
@@ -235,7 +237,7 @@ export class DocumentServiceV2 {
   }
 
   async getSenders(nationalId: string): Promise<Array<Sender>> {
-    const res = await this.documentService.getCustomersSenders(nationalId)
+    const res = await this.documentListService.getCustomersSenders(nationalId)
 
     return (
       res.senders
@@ -259,7 +261,7 @@ export class DocumentServiceV2 {
   ): Promise<DocumentPageNumber> {
     const defaultRes = 1
     try {
-      const res = await this.documentService.getPageNumber(
+      const res = await this.documentListService.getPageNumber(
         nationalId,
         documentId,
         pageSize,
@@ -283,7 +285,7 @@ export class DocumentServiceV2 {
   async getPaperMailInfo(
     nationalId: string,
   ): Promise<PaperMailPreferences | null> {
-    const res = await this.documentService.requestPaperMail({
+    const res = await this.documentListService.requestPaperMail({
       kennitala: nationalId,
     })
 
@@ -301,7 +303,7 @@ export class DocumentServiceV2 {
     nationalId: string,
     wantsPaper: boolean,
   ): Promise<PaperMailPreferences | null> {
-    const res = await this.documentService.updatePaperMailPreference(
+    const res = await this.documentListService.updatePaperMailPreference(
       nationalId,
       wantsPaper,
     )
@@ -322,7 +324,7 @@ export class DocumentServiceV2 {
     this.logger.debug('Marking all mail as read', {
       category: LOG_CATEGORY,
     })
-    const res = await this.documentService.markAllMailAsRead(nationalId)
+    const res = await this.documentListService.markAllMailAsRead(nationalId)
 
     return {
       success: res.success,
@@ -337,31 +339,31 @@ export class DocumentServiceV2 {
     if (Array.isArray(documentId)) {
       switch (action) {
         case MailAction.ARCHIVE:
-          return this.documentService.batchArchiveMail(
+          return this.documentListService.batchArchiveMail(
             nationalId,
             documentId,
             true,
           )
         case MailAction.UNARCHIVE:
-          return this.documentService.batchArchiveMail(
+          return this.documentListService.batchArchiveMail(
             nationalId,
             documentId,
             false,
           )
         case MailAction.BOOKMARK:
-          return this.documentService.batchBookmarkMail(
+          return this.documentListService.batchBookmarkMail(
             nationalId,
             documentId,
             true,
           )
         case MailAction.UNBOOKMARK:
-          return this.documentService.batchBookmarkMail(
+          return this.documentListService.batchBookmarkMail(
             nationalId,
             documentId,
             false,
           )
         case MailAction.READ:
-          return this.documentService.batchReadMail(nationalId, documentId)
+          return this.documentListService.batchReadMail(nationalId, documentId)
         default:
           this.logger.error('Invalid bulk document action', {
             action,
@@ -372,15 +374,15 @@ export class DocumentServiceV2 {
     }
     switch (action) {
       case MailAction.ARCHIVE:
-        return this.documentService.archiveMail(nationalId, documentId)
+        return this.documentListService.archiveMail(nationalId, documentId)
       case MailAction.UNARCHIVE:
-        return this.documentService.unarchiveMail(nationalId, documentId)
+        return this.documentListService.unarchiveMail(nationalId, documentId)
       case MailAction.BOOKMARK:
-        return this.documentService.bookmarkMail(nationalId, documentId)
+        return this.documentListService.bookmarkMail(nationalId, documentId)
       case MailAction.UNBOOKMARK:
-        return this.documentService.unbookmarkMail(nationalId, documentId)
+        return this.documentListService.unbookmarkMail(nationalId, documentId)
       case MailAction.READ:
-        return this.documentService.batchReadMail(nationalId, [documentId])
+        return this.documentListService.batchReadMail(nationalId, [documentId])
       default:
         this.logger.error('Invalid single document action', {
           action,
