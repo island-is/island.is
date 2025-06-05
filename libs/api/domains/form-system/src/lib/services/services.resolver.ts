@@ -40,7 +40,6 @@ export class ServicesResolver {
     input: GetGoogleTranslationInput,
     @CurrentUser() user: User,
   ): Promise<GoogleTranslation> {
-    // Input validation
     if (
       !input.q ||
       typeof input.q !== 'string' ||
@@ -48,9 +47,9 @@ export class ServicesResolver {
     ) {
       throw new BadRequestException('Input "q" must be a non-empty string.')
     }
-    if (input.q.length > 500) {
+    if (input.q.length > 2500) {
       throw new BadRequestException(
-        'Input "q" is too long (max 500 characters).',
+        'Input "q" is too long (max 2500 characters).',
       )
     }
     return this.formSystemServices.getGoogleTranslation(user, input)
