@@ -495,21 +495,6 @@ export function setupRoutes() {
     })
   })
 
-  addRoute('/inbox/:docId/reply', (passProps) => {
-    Navigation.showModal({
-      stack: {
-        children: [
-          {
-            component: {
-              name: ComponentRegistry.DocumentReplyScreen,
-              passProps,
-            },
-          },
-        ],
-      },
-    })
-  })
-
   addRoute('/e2e/disable-applock', () => {
     preferencesStore.setState({ dev__useLockScreen: false })
   })

@@ -23,6 +23,9 @@ import {
 } from '../../graphql/types/schema'
 import { LoadingIcon } from '../../components/nav-loading-spinner/loading-icon'
 import { useAuthStore } from '../../stores/auth-store'
+import { useNavigation } from '../../hooks/use-navigation'
+import { ComponentRegistry } from '../../utils/component-registry'
+import { useNavigationCurrentComponentId } from '../../hooks/use-navigation-current-component-id'
 
 const Host = styled.SafeAreaView`
   flex: 1;
@@ -79,6 +82,8 @@ export const DocumentReplyScreen: NavigationFunctionComponent<
   useNavigationOptions(componentId)
   const intl = useIntl()
   const theme = useTheme()
+  const { showModal } = useNavigation()
+  const currentComponentId = useNavigationCurrentComponentId()
   const { userInfo } = useAuthStore()
 
   const { data, loading, error } = useGetProfileQuery()
@@ -86,25 +91,19 @@ export const DocumentReplyScreen: NavigationFunctionComponent<
 
   const [message, setMessage] = useState('')
 
-  const [sendMessage, sendMessageResult] = useDocumentReplyMutation({
-    fetchPolicy: 'network-only',
-  })
+  const [sendMessage, sendMessageResult] = useDocumentReplyMutation()
 
   const onUploadPress = () => {
     console.log('upload')
   }
 
   const onSendPress = () => {
-    // if (!userProfile?.email) {
-    //   return
-    // }
-    console.log({
-      documentId,
-      body: message,
-      reguesterEmail: userProfile?.email ?? 'snaer@aranja.com',
-      reguesterName: userInfo?.name,
-      subject,
-    })
+    if (!userProfile?.email) {
+      showModal(ComponentRegistry.RegisterEmailScreen)
+
+      return
+    }
+
     sendMessage({
       variables: {
         input: {
@@ -119,13 +118,11 @@ export const DocumentReplyScreen: NavigationFunctionComponent<
   }
 
   useEffect(() => {
-    if (!userProfile?.email) {
-      console.log('trigger email flow', userProfile)
-      // TODO trigger email flow
+    // Make sure we only instantiate the modal once
+    if (!userProfile?.email && currentComponentId === componentId) {
+      showModal(ComponentRegistry.RegisterEmailScreen)
     }
-  }, [userProfile])
-
-  console.log('sendMessageResult', sendMessageResult.data?.documentsV2Reply)
+  }, [userProfile, showModal, currentComponentId, componentId])
 
   return (
     <>

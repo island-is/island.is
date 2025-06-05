@@ -32,6 +32,7 @@ import { OnboardingBiometricsScreen } from '../../screens/onboarding/onboarding-
 import { OnboardingNotificationsScreen } from '../../screens/onboarding/onboarding-notifications'
 import { OnboardingPinCodeScreen } from '../../screens/onboarding/onboarding-pin-code'
 import { PasskeyScreen } from '../../screens/passkey/passkey'
+import { RegisterEmailScreen } from '../../screens/register-email/register-email'
 import { EditBankInfoScreen } from '../../screens/settings/edit-bank-info'
 import { EditConfirmScreen } from '../../screens/settings/edit-confirm'
 import { EditEmailScreen } from '../../screens/settings/edit-email'
@@ -117,6 +118,7 @@ export function registerAllComponents() {
     ApplicationsIncompleteScreen,
   )
   registerComponent(CR.VaccinationsScreen, VaccinationsScreen)
+  registerComponent(CR.RegisterEmailScreen, RegisterEmailScreen)
 
   // Overlay
   registerComponent(CR.OfflineBanner, OfflineBanner)
