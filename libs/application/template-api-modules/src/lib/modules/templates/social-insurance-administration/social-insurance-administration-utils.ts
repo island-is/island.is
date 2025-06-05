@@ -385,7 +385,6 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     personalAllowance,
     personalAllowanceUsage,
     taxLevel,
-    incomePlan,
     isSelfEmployed,
     calculatedRemunerationDate,
     isPartTimeEmployed,
