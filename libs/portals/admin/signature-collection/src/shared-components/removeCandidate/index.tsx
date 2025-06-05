@@ -31,8 +31,8 @@ const RemoveCandidate = ({ list }: { list: SignatureCollectionList }) => {
         },
       },
       onCompleted: () => {
-        setModalRemoveCandidateIsOpen(false)
         if (data?.signatureCollectionAdminRemoveCandidate?.success) {
+          setModalRemoveCandidateIsOpen(false)
           toast.success(formatMessage(m.cancelCollectionModalToastSuccess))
           navigate(-1)
         } else {
