@@ -1,7 +1,7 @@
 import { Label, ReviewGroup } from '@island.is/application/ui-components'
 import { Box, TopicCard } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { getAttachments } from '../../../lib/medicalAndRehabilitationPaymentsUtils'
+import { getAttachments } from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 import { ReviewGroupProps } from './props'
 
 export const Attachments = ({ application }: ReviewGroupProps) => {

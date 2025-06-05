@@ -13,16 +13,17 @@ import {
 } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { Application } from '@island.is/application/types'
 import {
-  SelfAssessmentQuestionnaireAnswers,
   SelfAssessmentQuestionnaire,
+  SelfAssessmentQuestionnaireAnswers,
 } from '../types'
+
+import { medicalAndRehabilitationPaymentsFormMessage } from '../lib/messages'
 import {
   AttachmentLabel,
   AttachmentTypes,
   NOT_APPLICABLE,
   NotApplicable,
 } from './constants'
-import { medicalAndRehabilitationPaymentsFormMessage } from './messages'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   const applicantPhonenumber = getValueViaPath(
@@ -220,7 +221,7 @@ export const getApplicationExternalData = (
     'nationalRegistry.data.address.locality',
   ) as string
 
-  const applicantMunicipality = applicantPostalCode + ', ' + applicantLocality
+  const applicantMunicipality = `${applicantPostalCode}, ${applicantLocality}`
 
   const bankInfo = getValueViaPath(
     externalData,

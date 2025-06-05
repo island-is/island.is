@@ -14,7 +14,7 @@ import { fileUploadSharedProps } from '@island.is/application/templates/social-i
 import {
   getApplicationAnswers,
   getYesNoNotApplicableOptions,
-} from '../../../lib/medicalAndRehabilitationPaymentsUtils'
+} from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
 
 import { siaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/graphql/queries'

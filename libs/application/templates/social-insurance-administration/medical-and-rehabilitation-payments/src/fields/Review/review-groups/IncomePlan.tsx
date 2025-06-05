@@ -9,7 +9,7 @@ import { StaticTableFormField } from '@island.is/application/ui-fields'
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useMemo } from 'react'
-import { getApplicationAnswers } from '../../../lib/medicalAndRehabilitationPaymentsUtils'
+import { getApplicationAnswers } from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 import { ReviewGroupProps } from './props'
 
 export const IncomePlan = ({

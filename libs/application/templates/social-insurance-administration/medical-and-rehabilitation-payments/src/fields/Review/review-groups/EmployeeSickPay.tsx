@@ -1,14 +1,15 @@
 import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
 import { GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { NOT_APPLICABLE } from '../../../lib/constants'
+
 import {
   getApplicationAnswers,
   getSickPayEndDateLabel,
   getYesNoNotApplicableTranslation,
-} from '../../../lib/medicalAndRehabilitationPaymentsUtils'
+} from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
+import { NOT_APPLICABLE } from '../../../utils/constants'
 
 export const EmployeeSickPay = ({
   application,

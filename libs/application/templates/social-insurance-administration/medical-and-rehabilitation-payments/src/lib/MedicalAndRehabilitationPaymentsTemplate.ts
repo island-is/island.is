@@ -47,7 +47,7 @@ import {
   SocialInsuranceAdministrationQuestionnairesApi,
 } from '../dataProviders'
 import { dataSchema } from './dataSchema'
-import { getApplicationAnswers } from './medicalAndRehabilitationPaymentsUtils'
+import { getApplicationAnswers } from '../utils/medicalAndRehabilitationPaymentsUtils'
 import {
   medicalAndRehabilitationPaymentsFormMessage,
   statesMessages,

@@ -7,7 +7,7 @@ import { formatNumber } from 'libphonenumber-js'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
-} from '../../../lib/medicalAndRehabilitationPaymentsUtils'
+} from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 import { ReviewGroupProps } from './props'
 
 export const BaseInformation = ({

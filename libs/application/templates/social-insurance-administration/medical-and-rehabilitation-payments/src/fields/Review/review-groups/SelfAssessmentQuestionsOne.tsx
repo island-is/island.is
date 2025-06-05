@@ -5,7 +5,7 @@ import {
 } from '@island.is/application/ui-components'
 import { GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { getApplicationAnswers } from '../../../lib/medicalAndRehabilitationPaymentsUtils'
+import { getApplicationAnswers } from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
 import { ReviewGroupProps } from './props'
 

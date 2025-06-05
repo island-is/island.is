@@ -16,7 +16,7 @@ import { Application } from '@island.is/application/types'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
-} from '../../../lib/medicalAndRehabilitationPaymentsUtils'
+} from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 import { TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 export const paymentInfoSubSection = buildSubSection({

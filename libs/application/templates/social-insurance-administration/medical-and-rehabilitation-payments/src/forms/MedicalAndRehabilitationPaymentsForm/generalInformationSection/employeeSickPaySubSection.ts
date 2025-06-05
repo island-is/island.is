@@ -10,7 +10,7 @@ import {
 import {
   getApplicationAnswers,
   getYesNoNotApplicableOptions,
-} from '../../../lib/medicalAndRehabilitationPaymentsUtils'
+} from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
 
 export const employeeSickPaySubSection = buildSubSection({

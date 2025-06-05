@@ -2,7 +2,7 @@ import { socialInsuranceAdministrationMessage } from '@island.is/application/tem
 import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
 import { GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { getApplicationAnswers } from '../../../lib/medicalAndRehabilitationPaymentsUtils'
+import { getApplicationAnswers } from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 import { ReviewGroupProps } from './props'
 
 export const Comment = ({

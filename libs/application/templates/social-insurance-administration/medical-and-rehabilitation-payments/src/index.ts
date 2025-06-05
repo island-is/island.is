@@ -5,5 +5,5 @@ export const getFields = () => import('./fields')
 
 export default template
 
-export * from './lib/medicalAndRehabilitationPaymentsUtils'
+export * from './utils/medicalAndRehabilitationPaymentsUtils'
 export * from './lib/messages'

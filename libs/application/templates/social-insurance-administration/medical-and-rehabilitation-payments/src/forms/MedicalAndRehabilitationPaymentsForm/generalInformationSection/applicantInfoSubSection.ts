@@ -9,7 +9,7 @@ import { maritalStatuses } from '@island.is/application/templates/social-insuran
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { Application } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
-import { getApplicationExternalData } from '../../../lib/medicalAndRehabilitationPaymentsUtils'
+import { getApplicationExternalData } from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 
 export const applicantInfoSubSection = buildSubSection({
   id: 'applicantInfoSubSection',

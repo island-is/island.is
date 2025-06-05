@@ -9,15 +9,16 @@ import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { RadioController } from '@island.is/shared/form-fields'
 import { Locale } from '@island.is/shared/types'
-import { FC, useState, useEffect } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
-import { selfAssessmentOptions } from '../../lib/constants'
+
+import { medicalAndRehabilitationPaymentsFormMessage } from '../../lib/messages'
+import { SelfAssessmentQuestionnaireAnswers } from '../../types'
+import { selfAssessmentOptions } from '../../utils/constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
-} from '../../lib/medicalAndRehabilitationPaymentsUtils'
-import { medicalAndRehabilitationPaymentsFormMessage } from '../../lib/messages'
-import { SelfAssessmentQuestionnaireAnswers } from '../../types'
+} from '../../utils/medicalAndRehabilitationPaymentsUtils'
 
 export const SelfAssessmentQuestionnaire: FC<FieldBaseProps> = ({
   application,

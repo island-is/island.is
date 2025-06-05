@@ -1,5 +1,5 @@
 import { MessageDescriptor } from 'react-intl'
-import { medicalAndRehabilitationPaymentsFormMessage } from './messages'
+import { medicalAndRehabilitationPaymentsFormMessage } from '../lib/messages'
 
 export const AttachmentLabel: {
   [key: string]: MessageDescriptor

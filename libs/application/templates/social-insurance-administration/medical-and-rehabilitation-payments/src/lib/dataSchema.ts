@@ -9,7 +9,8 @@ import { errorMessages as coreSIAErrorMessages } from '@island.is/application/te
 import { formatBankInfo } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import { NOT_APPLICABLE } from './constants'
+
+import { NOT_APPLICABLE } from '../utils/constants'
 import { errorMessages } from './messages'
 
 const isValidPhoneNumber = (phoneNumber: string) => {

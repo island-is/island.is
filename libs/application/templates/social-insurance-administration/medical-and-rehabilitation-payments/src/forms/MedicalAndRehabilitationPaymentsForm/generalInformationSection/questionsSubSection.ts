@@ -9,7 +9,7 @@ import {
 } from '@island.is/application/core'
 import { fileUploadSharedProps } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { getYesNoOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
-import { getApplicationAnswers } from '../../../lib/medicalAndRehabilitationPaymentsUtils'
+import { getApplicationAnswers } from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
 
 export const questionsSubSection = buildSubSection({

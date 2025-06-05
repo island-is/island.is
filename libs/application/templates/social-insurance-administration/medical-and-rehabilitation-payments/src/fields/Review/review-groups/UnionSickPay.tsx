@@ -11,13 +11,14 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useMemo } from 'react'
-import { NOT_APPLICABLE } from '../../../lib/constants'
+
+import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
+import { NOT_APPLICABLE } from '../../../utils/constants'
 import {
   getApplicationAnswers,
   getSickPayEndDateLabel,
   getYesNoNotApplicableTranslation,
-} from '../../../lib/medicalAndRehabilitationPaymentsUtils'
-import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
+} from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 import { ReviewGroupProps } from './props'
 
 export const UnionSickPay = ({
