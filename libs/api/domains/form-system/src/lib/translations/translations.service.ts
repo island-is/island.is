@@ -37,8 +37,16 @@ export class TranslationsService {
       )
     }
 
+    // Use createEnhancedFetch to get a fetch function
+    const enhancedFetch = createEnhancedFetch({
+      name: 'form-system-translations',
+      organizationSlug: 'stafraent-island',
+      timeout: 20000,
+      logErrorResponseBody: true,
+    })
+
     try {
-      const response = await fetch(
+      const response = await enhancedFetch(
         `https://translation.googleapis.com/language/translate/v2?key=${FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY}`,
         {
           method: 'POST',
