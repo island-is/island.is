@@ -2,7 +2,7 @@ import gql from 'graphql-tag'
 
 export const siaRehabilitationPlanQuery = gql`
   query SiaRehabilitationPlan {
-    siaGetRehabilitationPlan {
+    socialInsuranceRehabilitationPlan {
       serviceProvider {
         serviceProviderName
         coordinatorName

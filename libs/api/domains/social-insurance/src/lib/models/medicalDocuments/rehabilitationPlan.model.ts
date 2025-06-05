@@ -1,7 +1,7 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType, GraphQLISODateTime } from '@nestjs/graphql'
 
-@ObjectType('SocialInsuranceMedicalDocumentsServiceProviderModel')
-class ServiceProviderModel {
+@ObjectType('SocialInsuranceMedicalDocumentsServiceProvider')
+class ServiceProvider {
   @Field({ nullable: true })
   serviceProviderName?: string
 
@@ -18,8 +18,8 @@ class ServiceProviderModel {
   phoneNumber?: string
 }
 
-@ObjectType('SocialInsuranceMedicalDocumentsHealthGoalsModel')
-class HealthGoalsModel {
+@ObjectType('SocialInsuranceMedicalDocumentsHealthGoals')
+class HealthGoals {
   @Field({ nullable: true })
   goalDescription?: string
 
@@ -27,26 +27,26 @@ class HealthGoalsModel {
   measures?: string
 }
 
-@ObjectType('SocialInsuranceMedicalDocumentsRehabilitationPlanModel')
-export class RehabilitationPlanModel {
-  @Field(() => ServiceProviderModel, { nullable: true })
-  serviceProvider?: ServiceProviderModel
+@ObjectType('SocialInsuranceMedicalDocumentsRehabilitationPlan')
+export class RehabilitationPlan {
+  @Field(() => ServiceProvider, { nullable: true })
+  serviceProvider?: ServiceProvider
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   startDate?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   plannedEndDate?: Date
 
   @Field({ nullable: true })
   rehabilitationFocusAndStrategy?: string
 
-  @Field(() => HealthGoalsModel, { nullable: true })
-  physicalHealthGoals?: HealthGoalsModel
+  @Field(() => HealthGoals, { nullable: true })
+  physicalHealthGoals?: HealthGoals
 
-  @Field(() => HealthGoalsModel, { nullable: true })
-  mentalHealthGoals?: HealthGoalsModel
+  @Field(() => HealthGoals, { nullable: true })
+  mentalHealthGoals?: HealthGoals
 
-  @Field(() => HealthGoalsModel, { nullable: true })
-  activityAndParticipationGoals?: HealthGoalsModel
+  @Field(() => HealthGoals, { nullable: true })
+  activityAndParticipationGoals?: HealthGoals
 }

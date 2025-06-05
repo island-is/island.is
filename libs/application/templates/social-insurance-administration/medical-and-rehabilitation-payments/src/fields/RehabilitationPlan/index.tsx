@@ -58,7 +58,7 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
                 .serviceProvider,
               {
                 serviceProvider:
-                  data?.siaGetRehabilitationPlan?.serviceProvider
+                  data?.socialInsuranceRehabilitationPlan?.serviceProvider
                     ?.serviceProviderName,
               },
             )}
@@ -72,7 +72,10 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
             )}
           </Label>
           <Text>
-            {data?.siaGetRehabilitationPlan?.serviceProvider?.workplace}
+            {
+              data?.socialInsuranceRehabilitationPlan?.serviceProvider
+                ?.workplace
+            }
           </Text>
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
@@ -82,7 +85,10 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
             )}
           </Label>
           <Text>
-            {data?.siaGetRehabilitationPlan?.serviceProvider?.phoneNumber}
+            {
+              data?.socialInsuranceRehabilitationPlan?.serviceProvider
+                ?.phoneNumber
+            }
           </Text>
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
@@ -93,7 +99,10 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
             )}
           </Label>
           <Text>
-            {data?.siaGetRehabilitationPlan?.serviceProvider?.coordinatorName}
+            {
+              data?.socialInsuranceRehabilitationPlan?.serviceProvider
+                ?.coordinatorName
+            }
           </Text>
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
@@ -104,7 +113,10 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
             )}
           </Label>
           <Text>
-            {data?.siaGetRehabilitationPlan?.serviceProvider?.coordinatorTitle}
+            {
+              data?.socialInsuranceRehabilitationPlan?.serviceProvider
+                ?.coordinatorTitle
+            }
           </Text>
         </GridColumn>
       </GridRow>
@@ -130,9 +142,9 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
             )}
           </Label>
           <Text>
-            {data?.siaGetRehabilitationPlan?.startDate
+            {data?.socialInsuranceRehabilitationPlan?.startDate
               ? format(
-                  new Date(data.siaGetRehabilitationPlan.startDate),
+                  new Date(data.socialInsuranceRehabilitationPlan.startDate),
                   'dd.MM.yyyy',
                 )
               : '-'}
@@ -146,9 +158,11 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
             )}
           </Label>
           <Text>
-            {data?.siaGetRehabilitationPlan?.plannedEndDate
+            {data?.socialInsuranceRehabilitationPlan?.plannedEndDate
               ? format(
-                  new Date(data.siaGetRehabilitationPlan.plannedEndDate),
+                  new Date(
+                    data.socialInsuranceRehabilitationPlan.plannedEndDate,
+                  ),
                   'dd.MM.yyyy',
                 )
               : '-'}
@@ -162,7 +176,10 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
             )}
           </Label>
           <Text>
-            {data?.siaGetRehabilitationPlan?.rehabilitationFocusAndStrategy}
+            {
+              data?.socialInsuranceRehabilitationPlan
+                ?.rehabilitationFocusAndStrategy
+            }
           </Text>
         </GridColumn>
         <GridColumn span="1/1">
@@ -183,7 +200,7 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
           </Label>
           <Text>
             {
-              data?.siaGetRehabilitationPlan?.physicalHealthGoals
+              data?.socialInsuranceRehabilitationPlan?.physicalHealthGoals
                 ?.goalDescription
             }
           </Text>
@@ -196,7 +213,7 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
             )}
           </Label>
           <Markdown>
-            {data?.siaGetRehabilitationPlan?.physicalHealthGoals?.measures
+            {data?.socialInsuranceRehabilitationPlan?.physicalHealthGoals?.measures
               ?.split(/\n/)
               ?.map((value) => '* ' + value)
               ?.join('\n\n') ?? ''}
@@ -219,7 +236,10 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
             </Box>
           </Label>
           <Text>
-            {data?.siaGetRehabilitationPlan?.mentalHealthGoals?.goalDescription}
+            {
+              data?.socialInsuranceRehabilitationPlan?.mentalHealthGoals
+                ?.goalDescription
+            }
           </Text>
         </GridColumn>
         <GridColumn span="1/1">
@@ -230,7 +250,7 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
             )}
           </Label>
           <Markdown>
-            {data?.siaGetRehabilitationPlan?.mentalHealthGoals?.measures
+            {data?.socialInsuranceRehabilitationPlan?.mentalHealthGoals?.measures
               ?.split(/\n/)
               ?.map((value) => '* ' + value)
               ?.join('\n\n') ?? ''}
@@ -254,8 +274,8 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
           </Label>
           <Text>
             {
-              data?.siaGetRehabilitationPlan?.activityAndParticipationGoals
-                ?.goalDescription
+              data?.socialInsuranceRehabilitationPlan
+                ?.activityAndParticipationGoals?.goalDescription
             }
           </Text>
         </GridColumn>
@@ -267,7 +287,7 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
             )}
           </Label>
           <Markdown>
-            {data?.siaGetRehabilitationPlan?.activityAndParticipationGoals?.measures
+            {data?.socialInsuranceRehabilitationPlan?.activityAndParticipationGoals?.measures
               ?.split(/\n/)
               ?.map((value) => '* ' + value)
               ?.join('\n\n') ?? ''}
