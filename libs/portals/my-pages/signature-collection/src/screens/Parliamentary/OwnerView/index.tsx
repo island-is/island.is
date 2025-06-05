@@ -14,6 +14,7 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../../lib/messages'
 import AddConstituency from './AddConstituency'
 import {
+  SignatureCollectionCollectionType,
   SignatureCollectionList,
   SignatureCollectionSuccess,
 } from '@island.is/api/schema'
@@ -39,8 +40,14 @@ const OwnerView = ({
   const location = useLocation()
 
   const { formatMessage } = useLocale()
-  const { listsForOwner, loadingOwnerLists, refetchListsForOwner } =
-    useGetListsForOwner(currentCollection?.id || '')
+  const {
+    listsForOwner,
+    loadingOwnerLists,
+    refetchListsForOwner,
+  } = useGetListsForOwner(
+    currentCollection?.id || '',
+    SignatureCollectionCollectionType.Parliamentary,
+  )
 
   const [cancelCollection] = useMutation<SignatureCollectionSuccess>(
     cancelCollectionMutation,
@@ -70,7 +77,10 @@ const OwnerView = ({
   return (
     <Stack space={6}>
       <Box>
-        <SignedList currentCollection={currentCollection} />
+        <SignedList
+          currentCollection={currentCollection}
+          collectionType={SignatureCollectionCollectionType.Parliamentary}
+        />
         <Box
           display="flex"
           justifyContent="spaceBetween"

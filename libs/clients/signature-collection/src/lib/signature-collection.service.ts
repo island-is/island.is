@@ -555,15 +555,17 @@ export class SignatureCollectionClientService {
           ? user.medmaelalistar?.map((list) => mapListBase(list))
           : []
 
-      const { success: canCreate, reasons: canCreateInfo } =
-        this.sharedService.canCreate({
-          requirementsMet: user.maFrambod,
-          canCreateInfo: user.maFrambodInfo,
-          ownedLists,
-          collectionType,
-          isActive,
-          areas,
-        })
+      const {
+        success: canCreate,
+        reasons: canCreateInfo,
+      } = this.sharedService.canCreate({
+        requirementsMet: user.maFrambod,
+        canCreateInfo: user.maFrambodInfo,
+        ownedLists,
+        collectionType,
+        isActive,
+        areas,
+      })
 
       const { success: canSign, reasons: canSignInfo } = await this.canSign({
         requirementsMet: user.maKjosa,

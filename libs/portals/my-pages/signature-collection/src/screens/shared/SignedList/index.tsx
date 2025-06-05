@@ -15,8 +15,10 @@ import {
 
 const SignedList = ({
   currentCollection,
+  collectionType,
 }: {
   currentCollection: SignatureCollection
+  collectionType: SignatureCollectionCollectionType
 }) => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
@@ -26,8 +28,11 @@ const SignedList = ({
   )
 
   // SignedList is typically singular, although it may consist of multiple entries, which in that case will all be invalid
-  const { signedLists, loadingSignedLists, refetchSignedLists } =
-    useGetSignedList()
+  const {
+    signedLists,
+    loadingSignedLists,
+    refetchSignedLists,
+  } = useGetSignedList(collectionType)
 
   const [unSign, { loading }] = useMutation<{
     signatureCollectionUnsign: Mutation['signatureCollectionUnsign']

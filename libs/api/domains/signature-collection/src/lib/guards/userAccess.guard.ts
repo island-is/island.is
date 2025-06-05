@@ -56,6 +56,12 @@ export class UserAccessGuard implements CanActivate {
     const { body } = getRequest(context)
     if (body && body.collectionType && isCollectionType(body.collectionType)) {
       return body.collectionType as CollectionType
+    } else if (
+      body &&
+      body?.variables?.input?.collectionType &&
+      isCollectionType(body.variables.input.collectionType)
+    ) {
+      return body.variables.input.collectionType as CollectionType
     }
     return CollectionType.OtherUnknown
   }
@@ -92,6 +98,7 @@ export class UserAccessGuard implements CanActivate {
     }
 
     const collectionType = this.determineCollectionType(context)
+    console.log(`WE DETERMINE COLLECTION TYPE HERE AS ${collectionType}`)
 
     // IsOwner needs signee
     const signee = await this.signatureCollectionService.signee(
