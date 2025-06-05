@@ -100,12 +100,10 @@ export const BaseInput = () => {
               })
             }
             onFocus={async (e) => {
-              if (
-                !currentItem?.name?.en &&
-                currentItem?.name?.is &&
-                currentItem.name.is !== ''
-              ) {
-                const translation = await getTranslation(currentItem.name.is)
+              if (!currentItem?.name?.en && currentItem?.name?.is !== '') {
+                const translation = await getTranslation(
+                  currentItem?.name?.is ?? '',
+                )
                 controlDispatch({
                   type: 'CHANGE_NAME',
                   payload: {
@@ -156,11 +154,10 @@ export const BaseInput = () => {
                 onFocus={async (e) => {
                   if (
                     !currentItem?.description?.en &&
-                    currentItem?.description?.is &&
-                    currentItem.description.is !== ''
+                    currentItem?.description?.is !== ''
                   ) {
                     const translation = await getTranslation(
-                      currentItem.description.is,
+                      currentItem?.description?.is ?? '',
                     )
                     controlDispatch({
                       type: 'CHANGE_DESCRIPTION',

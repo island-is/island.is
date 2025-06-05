@@ -90,11 +90,10 @@ export const MainContent = () => {
                 onFocus={async (e) => {
                   if (
                     !activeItem?.data?.name?.en &&
-                    activeItem?.data?.name?.is &&
-                    activeItem.data.name.is !== ''
+                    activeItem?.data?.name?.is !== ''
                   ) {
                     const translation = await getTranslation(
-                      activeItem.data.name.is,
+                      activeItem?.data?.name?.is ?? '',
                     )
                     controlDispatch({
                       type: 'CHANGE_NAME',

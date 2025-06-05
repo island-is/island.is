@@ -13,7 +13,6 @@ import { FormSystemField, FormSystemListItem } from '@island.is/api/schema'
 import { NavbarSelectStatus } from '../../../../../../../lib/utils/interfaces'
 import { useIntl } from 'react-intl'
 import * as styles from './ListItem.css'
-import { getTranslation } from '../../../../../../../lib/utils/getTranslation'
 import { useMutation } from '@apollo/client'
 import {
   DELETE_LIST_ITEM,
@@ -204,12 +203,10 @@ export const ListItem = ({
             size="sm"
             value={listItem?.label?.en ?? ''}
             onFocus={async (e) => {
-              if (
-                !listItem?.label?.en &&
-                listItem?.label?.is &&
-                listItem.label.is !== ''
-              ) {
-                const translation = await getTranslation(listItem.label.is)
+              if (!listItem?.label?.en && listItem?.label?.is !== '') {
+                const translation = await getTranslation(
+                  listItem?.label?.is ?? '',
+                )
                 controlDispatch({
                   type: 'CHANGE_LIST_ITEM',
                   payload: {
@@ -272,11 +269,10 @@ export const ListItem = ({
               onFocus={async (e) => {
                 if (
                   !listItem?.description?.en &&
-                  listItem?.description?.is &&
-                  listItem.description.is !== ''
+                  listItem?.description?.is !== ''
                 ) {
                   const translation = await getTranslation(
-                    listItem.description.is,
+                    listItem?.description?.is ?? '',
                   )
                   controlDispatch({
                     type: 'CHANGE_LIST_ITEM',
