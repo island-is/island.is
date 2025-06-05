@@ -116,7 +116,7 @@ export const unionSickPaySubSection = buildSubSection({
             })
 
             return (
-              data?.siaGetUnions
+              data?.socialInsuranceUnions
                 ?.map(({ name, nationalId }) => ({
                   value: nationalId || '',
                   label: name || '',

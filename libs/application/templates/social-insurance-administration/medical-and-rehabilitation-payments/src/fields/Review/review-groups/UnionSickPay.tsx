@@ -35,7 +35,7 @@ export const UnionSickPay = ({
 
   const { data, loading, error } = useQuery<SiaUnionsQuery>(siaUnionsQuery)
   const unionName = useMemo(() => {
-    return data?.siaGetUnions.find(
+    return data?.socialInsuranceUnions.find(
       (union) => union?.nationalId === unionNationalId,
     )?.name
   }, [data, unionNationalId])
