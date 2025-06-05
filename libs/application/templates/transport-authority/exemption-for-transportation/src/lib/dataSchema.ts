@@ -311,7 +311,7 @@ const AxleSpacingSchema = z
     data.trailerList.forEach((trailer, index) => {
       if (trailer.permno) {
         if (trailer.useSameValues?.includes(YES)) {
-          if (!trailer.values?.[0]) {
+          if (!trailer.singleValue) {
             ctx.addIssue({
               path: ['trailerList', index, 'singleValue'],
               code: z.ZodIssueCode.custom,

@@ -2,6 +2,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 import { ExemptionForTransportationAnswers } from '../..'
 import { Freight, FreightPairing } from '../types'
+import { ExemptionFor } from '../../shared'
 
 export const getFreightItems = (answers: FormValue): Freight[] => {
   const items =
@@ -12,7 +13,8 @@ export const getFreightItems = (answers: FormValue): Freight[] => {
 
   return items.map((item) => ({
     ...item,
-    exemptionFor: item.exemptionFor?.filter((x) => !!x) || [],
+    exemptionFor:
+      item.exemptionFor?.filter((x): x is ExemptionFor => x != null) || [],
   }))
 }
 

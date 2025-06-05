@@ -78,34 +78,28 @@ const uniqueAndSortByPermno = (items: Vehicle[]): Vehicle[] => {
   )
 }
 
-const getAllConvoyVehicles = (answers: FormValue): Vehicle[] => {
-  const convoyItems = getConvoyItems(answers)
-  const vehicles: Vehicle[] = convoyItems.map((x) => x.vehicle)
-  return uniqueAndSortByPermno(vehicles)
-}
-
-const getAllConvoyTrailers = (answers: FormValue): Vehicle[] => {
-  const convoyItems = getConvoyItems(answers)
-  const trailers: Vehicle[] = convoyItems
-    .map((x) => x.trailer)
-    .filter((x): x is Vehicle => !!x?.permno)
-  return uniqueAndSortByPermno(trailers)
-}
-
 export const getConvoyVehicle = (
   answers: FormValue,
   vehicleIndex: number,
 ): Vehicle | undefined => {
-  const vehicles = getAllConvoyVehicles(answers)
-  return vehicles?.[vehicleIndex]
+  const convoyItems = getConvoyItems(answers)
+  const vehicles: Vehicle[] = convoyItems
+    .map((x) => x.vehicle)
+    .filter((x): x is Vehicle => !!x?.permno)
+  const vehiclesSorted = uniqueAndSortByPermno(vehicles)
+  return vehiclesSorted?.[vehicleIndex]
 }
 
 export const getConvoyTrailer = (
   answers: FormValue,
   trailerIndex: number,
 ): Vehicle | undefined => {
-  const trailers = getAllConvoyTrailers(answers)
-  return trailers?.[trailerIndex]
+  const convoyItems = getConvoyItems(answers)
+  const trailers: Vehicle[] = convoyItems
+    .map((x) => x.trailer)
+    .filter((x): x is Vehicle => !!x?.permno)
+  const trailersSorted = uniqueAndSortByPermno(trailers)
+  return trailersSorted?.[trailerIndex]
 }
 
 export const shouldUseSameValuesForTrailer = (
