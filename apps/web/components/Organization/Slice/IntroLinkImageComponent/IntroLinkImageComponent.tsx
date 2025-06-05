@@ -38,7 +38,7 @@ export const IntroLinkImageComponent = ({
   const linkHref = linkHrefFromCms
     ? linkHrefFromCms
     : link?.type && link.slug
-    ? linkResolver(link.type as LinkType, [link.slug])
+    ? linkResolver(link.type as LinkType, [link.slug]).href
     : ''
   return (
     <GridRow direction={leftImage ? 'row' : 'rowReverse'} rowGap={1}>
