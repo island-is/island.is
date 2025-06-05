@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { IsNotEmpty, IsString } from 'class-validator'
 
-@ObjectType('SocialInsuranceGeneralUnionModel')
+@ObjectType('SocialInsuranceGeneralUnion')
 export class UnionModel {
   @Field()
   @IsNotEmpty()
