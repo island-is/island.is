@@ -87,14 +87,21 @@ export class SignatureCollectionAdminClientService {
       listStatus === ListStatus.InReview ||
       listStatus === ListStatus.Reviewed
     ) {
-      const list = await this.getApiWithAuth(
-        this.adminApi,
-        auth,
-      ).adminMedmaelalistiIDToggleListPatch({
-        iD: parseInt(listId),
-        shouldToggle: listStatus === ListStatus.InReview,
-      })
-      return { success: !!list }
+      try {
+        const list = await this.getApiWithAuth(
+          this.adminApi,
+          auth,
+        ).adminMedmaelalistiIDToggleListPatch({
+          iD: parseInt(listId),
+          shouldToggle: listStatus === ListStatus.InReview,
+        })
+        return { success: !!list }
+      } catch (error) {
+        return {
+          success: false,
+          reasons: error.body ? [error.body] : [],
+        }
+      }
     }
     return { success: false }
   }
@@ -206,7 +213,7 @@ export class SignatureCollectionAdminClientService {
       })
       return { success: true }
     } catch (error) {
-      return { success: false }
+      return { success: false, reasons: error.body ? [error.body] : [] }
     }
   }
 
@@ -327,7 +334,7 @@ export class SignatureCollectionAdminClientService {
     } catch (error) {
       return {
         success: false,
-        reasons: [error.body ?? ReasonKey.DeniedByService],
+        reasons: error.body ? [error.body] : [],
       }
     }
   }
@@ -359,7 +366,7 @@ export class SignatureCollectionAdminClientService {
       })
       return { success: true }
     } catch (error) {
-      return { success: false, reasons: [ReasonKey.DeniedByService] }
+      return { success: false, reasons: error.body ? [error.body] : [] }
     }
   }
 
@@ -372,7 +379,7 @@ export class SignatureCollectionAdminClientService {
       )
       return { success: true }
     } catch (error) {
-      return { success: false, reasons: [ReasonKey.DeniedByService] }
+      return { success: false, reasons: error.body ? [error.body] : [] }
     }
   }
 
@@ -390,8 +397,8 @@ export class SignatureCollectionAdminClientService {
         blsNr: pageNumber,
       })
       return { success: res.bladsidaNr === pageNumber }
-    } catch {
-      return { success: false }
+    } catch (error) {
+      return { success: false, reasons: error.body ? [error.body] : [] }
     }
   }
 
@@ -446,8 +453,8 @@ export class SignatureCollectionAdminClientService {
         iD: parseInt(listId, 10),
       })
       return { success: res.listaLokad ?? false }
-    } catch {
-      return { success: false }
+    } catch (error) {
+      return { success: false, reasons: error.body ? [error.body] : [] }
     }
   }
 
@@ -486,10 +493,10 @@ export class SignatureCollectionAdminClientService {
           ? []
           : getReasonKeyForPaperSignatureUpload(signature, nationalId),
       }
-    } catch {
+    } catch (error) {
       return {
         success: false,
-        reasons: [ReasonKey.DeniedByService],
+        reasons: error.body ? [error.body] : [],
       }
     }
   }
