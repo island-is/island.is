@@ -606,11 +606,20 @@ export class UserProfileService {
           `Email with id ${emailId} not found for user.`,
         )
       }
+
+      // 3. Check if email is verified before setting as primary
+      if (newPrimary.emailStatus !== DataStatus.VERIFIED) {
+        throw new BadRequestException(
+          'Cannot set unverified email as primary email',
+        )
+      }
+
+      // 4. Set the email as primary
       if (!newPrimary.primary) {
         await newPrimary.update({ primary: true }, { transaction })
       }
 
-      // 3. Update UserProfile nudge dates
+      // 5. Update UserProfile nudge dates
       const userProfile = await this.userProfileModel.findOne({
         where: { nationalId },
         transaction,

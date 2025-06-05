@@ -63,6 +63,21 @@ export class ActorProfileResolver {
     return this.userProfileService.updateActorProfileEmail(input, user)
   }
 
+  @Mutation(() => ActorProfileEmail, {
+    name: 'updateActorProfileEmailWithoutActor',
+  })
+  async updateActorProfileEmailWithoutActor(
+    @Args('input') input: UpdateActorProfileEmailInput,
+    @Args('fromNationalId') fromNationalId: string,
+    @CurrentUser() user: User,
+  ): Promise<ActorProfileEmailDto> {
+    return this.userProfileService.updateActorProfileEmailWithoutActor(
+      input,
+      fromNationalId,
+      user,
+    )
+  }
+
   @Mutation(() => ActorProfileDetails, {
     name: 'setActorProfileEmail',
   })

@@ -155,6 +155,19 @@ export class UserProfileServiceV2 {
     })
   }
 
+  async updateActorProfileEmailWithoutActor(
+    input: UpdateActorProfileEmailInput,
+    fromNationalId: string,
+    user: User,
+  ) {
+    return this.v2MeUserProfileApiWithAuth(
+      user,
+    ).meUserProfileControllerUpdateActorProfileEmail({
+      xParamFromNationalId: fromNationalId,
+      updateActorProfileEmailDto: input,
+    })
+  }
+
   confirmNudge(user: User) {
     return this.v2MeUserProfileApiWithAuth(
       user,

@@ -13,9 +13,11 @@ import { useEffectOnce } from '@island.is/react-spa/shared'
 import { Modal } from '../Modal/Modal'
 import { useAddEmailMutation } from '../emails/ProfileEmailForm/addEmail.mutation.generated'
 import { useCreateEmailVerificationMutation } from '../emails/ProfileEmailForm/createEmailVerification.mutation.generated'
-import { useUpdateActorProfileEmailMutation } from '../notificationSettings/ActorProfileEmails/actorProfileUpdate.mutation.generated'
+import { useUpdateActorProfileEmailMutation } from '../NotificationSettings/ActorProfileEmails/actorProfileUpdate.mutation.generated'
+import { useUpdateActorProfileEmailWithoutActorMutation } from '../NotificationSettings/ActorProfileEmails/actorProfileUpdateWithoutActor.mutations.generated'
+import { useUserInfo } from '@island.is/react-spa/bff'
 
-interface VerifyEmailModalProps {
+interface BaseProps {
   type: 'add' | 'update'
   open?: boolean
   email: string
@@ -23,14 +25,28 @@ interface VerifyEmailModalProps {
   onSuccess?(emailsId: string): void
 }
 
+interface AddProps extends BaseProps {
+  type: 'add'
+  fromNationalId?: never
+}
+
+interface UpdateProps extends BaseProps {
+  type: 'update'
+  fromNationalId: string
+}
+
+type VerifyEmailModalProps = AddProps | UpdateProps
+
 export const VerifyEmailModal = ({
   type = 'add',
   open = false,
   onClose,
   email,
   onSuccess,
+  fromNationalId,
 }: VerifyEmailModalProps) => {
   useNamespaces('sp.settings')
+  const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
   const [createEmailVerification, { error: createEmailVerificationError }] =
     useCreateEmailVerificationMutation()
@@ -60,6 +76,24 @@ export const VerifyEmailModal = ({
       if (data.updateActorProfileEmail) {
         onClose()
         onSuccess?.(data.updateActorProfileEmail.emailsId)
+        client.refetchQueries({
+          include: [USER_PROFILE],
+        })
+      }
+    },
+  })
+
+  const [
+    updateActorProfileEmailWithoutActor,
+    {
+      loading: updateActorProfileEmailWithoutActorLoading,
+      error: updateActorProfileEmailWithoutActorError,
+    },
+  ] = useUpdateActorProfileEmailWithoutActorMutation({
+    onCompleted: (data) => {
+      if (data.updateActorProfileEmailWithoutActor) {
+        onClose()
+        onSuccess?.(data.updateActorProfileEmailWithoutActor.emailsId)
         client.refetchQueries({
           include: [USER_PROFILE],
         })
@@ -118,10 +152,22 @@ export const VerifyEmailModal = ({
 
   const onSubmit = useCallback(
     async (input: VerifyTemplateInput) => {
+      const isDelegation = userInfo?.profile?.actor ? true : false
+
       if (type === 'add') {
         addEmail({
           variables: {
             input,
+          },
+        })
+      } else if (!isDelegation && fromNationalId) {
+        updateActorProfileEmailWithoutActor({
+          variables: {
+            input: {
+              email: input.email,
+              emailVerificationCode: input.code,
+            },
+            fromNationalId,
           },
         })
       } else {
@@ -135,7 +181,7 @@ export const VerifyEmailModal = ({
         })
       }
     },
-    [addEmail, updateActorProfileEmail, type],
+    [addEmail, updateActorProfileEmail, type, fromNationalId],
   )
 
   return (

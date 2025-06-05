@@ -149,6 +149,18 @@ export class UserProfileService {
     return this.userProfileServiceV2.updateActorProfileEmail(input, user)
   }
 
+  async updateActorProfileEmailWithoutActor(
+    input: UpdateActorProfileEmailInput,
+    fromNationalId: string,
+    user: User,
+  ) {
+    return this.userProfileServiceV2.updateActorProfileEmailWithoutActor(
+      input,
+      fromNationalId,
+      user,
+    )
+  }
+
   async setActorProfileEmail(input: SetActorProfileEmailInput, user: User) {
     return this.userProfileServiceV2.setActorProfileEmail(input, user)
   }

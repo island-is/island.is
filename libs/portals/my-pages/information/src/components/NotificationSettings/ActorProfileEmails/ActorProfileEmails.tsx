@@ -183,6 +183,7 @@ export const ActorProfileEmails = ({
           email={verifyEmailModalEmail}
           onClose={onModalClose}
           onSuccess={onSuccess}
+          fromNationalId={actorProfile.fromNationalId}
         />
       )}
     </>
