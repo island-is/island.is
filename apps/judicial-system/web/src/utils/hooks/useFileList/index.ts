@@ -7,7 +7,6 @@ import {
   FormContext,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { FileWithPreviewURL } from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
 import { CaseFileState } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import useIsMobile from '../useIsMobile/useIsMobile'
@@ -129,7 +128,7 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
       if (!file.id) {
         return
       }
-      setCurrentFile(file as FileWithPreviewURL)
+      setCurrentFile(file as TUploadFile)
 
       const query = limitedAccess ? limitedAccessGetSignedUrl : getSignedUrl
 

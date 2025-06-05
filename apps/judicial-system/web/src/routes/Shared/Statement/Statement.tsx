@@ -82,12 +82,7 @@ const Statement = () => {
 
   const handleNextButtonClick = useCallback(async () => {
     const uploadResult = await handleUpload(
-      uploadFiles.filter((file) => {
-        if (file.previewUrl) {
-          URL.revokeObjectURL(file.previewUrl) // Cleanup object URLs
-        }
-        return file.percent === 0
-      }),
+      uploadFiles.filter((file) => file.percent === 0),
       updateUploadFile,
     )
 
