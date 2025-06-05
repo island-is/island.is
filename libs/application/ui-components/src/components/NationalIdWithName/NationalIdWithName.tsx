@@ -204,12 +204,10 @@ export const NationalIdWithName: FC<
       return
     }
 
-    if (
-      kennitala.isValid(nationalIdInput) &&
-      kennitala.isPerson(nationalIdInput)
-    ) {
+    if (kennitala.isValid(nationalIdInput)) {
       setInvalidNationalId(false)
       searchPersons &&
+        kennitala.isPerson(nationalIdInput) &&
         getIdentity({
           variables: {
             input: {
