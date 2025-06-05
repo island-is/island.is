@@ -1,5 +1,12 @@
 import { UseGuards } from '@nestjs/common'
-import { Args, Mutation, Query, ResolveField, Resolver } from '@nestjs/graphql'
+import {
+  Args,
+  Directive,
+  Mutation,
+  Query,
+  ResolveField,
+  Resolver,
+} from '@nestjs/graphql'
 
 import type { User } from '@island.is/auth-nest-tools'
 import {
@@ -22,6 +29,8 @@ import { UserDeviceToken } from './userDeviceToken.model'
 import { UserProfile } from './userProfile.model'
 import { UserProfileService } from './userProfile.service'
 import { ApolloError } from 'apollo-server-express'
+import { DeleteIslykillValueInput } from './dto/deleteIslykillValueInput'
+import { DeleteIslykillSettings } from './models/deleteIslykillSettings.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => UserProfile)
@@ -63,6 +72,35 @@ export class UserProfileResolver {
     @Args('input') input: DeleteEmailOrPhoneInput,
     @CurrentUser() user: User,
   ): Promise<DeleteEmailOrPhoneSettings> {
+    const { nationalId } = await this.userProfileService.updateMeUserProfile(
+      {
+        ...(input.email && { email: '' }),
+        ...(input.mobilePhoneNumber && { mobilePhoneNumber: '' }),
+      },
+      user,
+    )
+
+    if (!nationalId) {
+      throw new ApolloError('Failed to update user profile')
+    }
+
+    return {
+      nationalId,
+      valid: true,
+    }
+  }
+
+  @Directive(
+    '@deprecated(reson: "Will be removed shortly, use deleteEmailOrPhone instead")',
+  )
+  @Mutation(() => UserProfile, {
+    nullable: true,
+    deprecationReason: 'Use deleteEmailOrPhone instead',
+  })
+  async deleteIslykillValue(
+    @Args('input') input: DeleteIslykillValueInput,
+    @CurrentUser() user: User,
+  ): Promise<DeleteIslykillSettings> {
     const { nationalId } = await this.userProfileService.updateMeUserProfile(
       {
         ...(input.email && { email: '' }),

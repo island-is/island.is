@@ -11,9 +11,10 @@ import { Button, NavigationBarSheet, TextField, Typography } from '../../ui'
 import {
   CreateEmailVerificationDocument,
   CreateEmailVerificationMutation,
-  CreateEmailVerificationMutationVariables, DeleteEmailOrPhoneMutationVariables,
-  DeleteEmailOrPhoneDocument,
-  DeleteEmailOrPhoneMutation,
+  CreateEmailVerificationMutationVariables,
+  DeleteIslykillValueDocument,
+  DeleteIslykillValueMutation,
+  DeleteIslykillValueMutationVariables,
   GetProfileDocument,
   useGetProfileQuery,
 } from '../../graphql/types/schema'
@@ -88,10 +89,10 @@ export const EditEmailScreen: NavigationFunctionComponent<{
               try {
                 if (isEmpty) {
                   const res = await client.mutate<
-                    DeleteEmailOrPhoneMutation,
-                    DeleteEmailOrPhoneMutationVariables
+                    DeleteIslykillValueMutation,
+                    DeleteIslykillValueMutationVariables
                   >({
-                    mutation: DeleteEmailOrPhoneDocument,
+                    mutation: DeleteIslykillValueDocument,
                     variables: {
                       input: {
                         email: true,
