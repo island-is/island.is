@@ -57,6 +57,11 @@ const prosecutorIndictmentSharedWhereOptions = (user: TUser) => ({
   prosecutors_office_id: user.institution?.id,
 })
 
+export const prosecutorIndictmentInDraftWhereOptions = (user: TUser) => ({
+  ...prosecutorIndictmentSharedWhereOptions(user),
+  state: [CaseState.DRAFT],
+})
+
 export const prosecutorIndictmentWaitingForConfirmationWhereOptions = (
   user: TUser,
 ) => ({
@@ -69,6 +74,7 @@ export const prosecutorIndictmentInProgressWhereOptions = (user: TUser) => ({
   state: {
     [Op.notIn]: [
       ...completedIndictmentCaseStates,
+      CaseState.DRAFT,
       CaseState.DELETED,
       CaseState.WAITING_FOR_CANCELLATION,
       CaseState.WAITING_FOR_CONFIRMATION,

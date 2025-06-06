@@ -2,8 +2,6 @@ import { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AlertMessage, Box, Select } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
-import { capitalize } from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
   isDistrictCourtUser,
@@ -12,10 +10,9 @@ import {
   isPublicProsecutionUser,
   isRequestCase,
 } from '@island.is/judicial-system/types'
-import { core, errors, titles } from '@island.is/judicial-system-web/messages'
+import { errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   CasesLayout,
-  ContextMenu,
   Logo,
   Modal,
   PageHeader,
@@ -31,7 +28,6 @@ import {
   CaseTransition,
   EventType,
   User,
-  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
@@ -41,55 +37,13 @@ import CasesAwaitingConfirmationTable from '../../Prosecutor/components/CasesAwa
 import CasesAwaitingReview from '../../PublicProsecutor/Tables/CasesAwaitingReview'
 import ActiveCases from './ActiveCases'
 import { useCasesQuery } from './cases.generated'
+import { CreateCaseButton } from './CreateCaseButton'
 import { FilterOption, useFilter } from './useFilter'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
 
-interface CreateCaseButtonProps {
+export interface CreateCaseButtonProps {
   user: User
-}
-
-const CreateCaseButton: FC<CreateCaseButtonProps> = (props) => {
-  const { user } = props
-  const { formatMessage } = useIntl()
-
-  const items = useMemo(() => {
-    if (user.role === UserRole.PROSECUTOR_REPRESENTATIVE) {
-      return [
-        {
-          href: constants.CREATE_INDICTMENT_ROUTE,
-          title: capitalize(formatMessage(core.indictment)),
-        },
-      ]
-    } else if (user.role === UserRole.PROSECUTOR) {
-      return [
-        {
-          href: constants.CREATE_INDICTMENT_ROUTE,
-          title: capitalize(formatMessage(core.indictment)),
-        },
-        {
-          href: constants.CREATE_RESTRICTION_CASE_ROUTE,
-          title: capitalize(formatMessage(core.restrictionCase)),
-        },
-        {
-          href: constants.CREATE_TRAVEL_BAN_ROUTE,
-          title: capitalize(formatMessage(core.travelBan)),
-        },
-        {
-          href: constants.CREATE_INVESTIGATION_CASE_ROUTE,
-          title: capitalize(formatMessage(core.investigationCase)),
-        },
-      ]
-    } else {
-      return []
-    }
-  }, [formatMessage, user?.role])
-
-  return (
-    <Box marginTop={[2, 2, 0]}>
-      <ContextMenu title="Nýtt mál" items={items} />
-    </Box>
-  )
 }
 
 export const Cases: FC = () => {

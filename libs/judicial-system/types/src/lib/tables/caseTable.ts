@@ -4,12 +4,13 @@ import {
   isDistrictCourtUser,
   isPrisonAdminUser,
   isPrisonStaffUser,
+  isProsecutionUser,
   isPublicProsecutionOfficeUser,
-  isPublicProsecutionUser,
 } from '../user'
 import { CaseTableColumnKey } from './caseTableColumnTypes'
 import {
   prosecutorIndictmentCompleted,
+  prosecutorIndictmentInDraft,
   prosecutorIndictmentInProgress,
   prosecutorIndictmentWaitingForConfirmation,
   prosecutorRequestCasesActive,
@@ -98,7 +99,8 @@ export const getCaseTableType = (
     }
   }
 
-  if (isPublicProsecutionUser(user)) {
+  // shared mapping for all prosecution users
+  if (isProsecutionUser(user)) {
     switch (route) {
       case CaseTableRoutes.IN_PROGRESS:
         return CaseTableType.PROSECUTOR_REQUEST_CASES_IN_PROGRESS
@@ -112,6 +114,8 @@ export const getCaseTableType = (
         return CaseTableType.PUBLIC_PROSECUTOR_INDICTMENT_IN_REVIEW
       case CaseTableRoutes.REVIEWED:
         return CaseTableType.PUBLIC_PROSECUTOR_INDICTMENT_REVIEWED
+      case CaseTableRoutes.INDICTMENT_DRAFT:
+        return CaseTableType.PROSECUTOR_INDICTMENT_DRAFT
       case CaseTableRoutes.WAITING_FOR_CONFIRMATION:
         return CaseTableType.PROSECUTOR_INDICTMENT_WAITING_FOR_CONFIRMATION
       case CaseTableRoutes.INDICTMENT_IN_PROGRESS:
@@ -478,6 +482,7 @@ export const caseTables: { [key in CaseTableType]: CaseTable } = {
   PROSECUTOR_REQUEST_CASES_COMPLETED: prosecutorRequestCasesCompleted,
   PUBLIC_PROSECUTOR_INDICTMENT_IN_REVIEW: publicProsecutorIndictmentInReview,
   PUBLIC_PROSECUTOR_INDICTMENT_REVIEWED: publicProsecutorIndictmentReviewed,
+  PROSECUTOR_INDICTMENT_DRAFT: prosecutorIndictmentInDraft,
   PROSECUTOR_INDICTMENT_WAITING_FOR_CONFIRMATION:
     prosecutorIndictmentWaitingForConfirmation,
   PROSECUTOR_INDICTMENT_IN_PROGRESS: prosecutorIndictmentInProgress,

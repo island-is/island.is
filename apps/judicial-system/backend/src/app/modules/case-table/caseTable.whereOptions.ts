@@ -25,6 +25,7 @@ import {
 } from './whereOptions/conditions'
 import {
   prosecutorIndictmentCompletedWhereOptions,
+  prosecutorIndictmentInDraftWhereOptions,
   prosecutorIndictmentInProgressWhereOptions,
   prosecutorIndictmentWaitingForConfirmationWhereOptions,
   prosecutorRequestCasesActiveWhereOptions,
@@ -466,6 +467,8 @@ export const caseTableWhereOptions: Record<
     publicProsecutorIndictmentInReviewWhereOptions(user),
   [CaseTableType.PUBLIC_PROSECUTOR_INDICTMENT_REVIEWED]: (user) =>
     publicProsecutorIndictmentReviewedWhereOptions(user),
+  [CaseTableType.PROSECUTOR_INDICTMENT_DRAFT]: (user) =>
+    prosecutorIndictmentInDraftWhereOptions(user),
   [CaseTableType.PROSECUTOR_INDICTMENT_WAITING_FOR_CONFIRMATION]: (user) =>
     prosecutorIndictmentWaitingForConfirmationWhereOptions(user),
   [CaseTableType.PROSECUTOR_INDICTMENT_IN_PROGRESS]: (user) =>
