@@ -24,8 +24,8 @@ export enum ChargeItemCode {
   AOSH_STREET_REGISTRATION_SA113 = 'SA113', // Skráningarmerki vinnuvél SGS
   AOSH_STREET_REGISTRATION_SA116 = 'SA116', // Nýskráning
   AOSH_STREET_REGISTRATION_SA117 = 'SA117', // Rafræn forskráning
-  AOSH_PRACTICAL_EXAM_VJ101 = 'VJ101', // Skráning í verklegt próf
-  AOSH_PRACTICAL_EXAM_VJ103 = 'VJ103', // Skirteinisgjald
+  AOSH_PRACTICAL_EXAM_VJ172 = 'VJ172', // Skráning í verklegt próf
+  AOSH_PRACTICAL_EXAM_VJ171 = 'VJ171', // Skirteinisgjald
   HEALTHCARE_LICENSE_CERTIFICATE = 'L6102',
   ID_CARD_REGULAR = 'AY155', //Nafnskírteini almennt gjald
   ID_CARD_EXPRESS = 'AY156', //Nafnskírteini skyndiútgáfa
