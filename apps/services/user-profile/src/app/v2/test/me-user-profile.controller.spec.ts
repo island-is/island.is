@@ -1838,7 +1838,7 @@ describe('MeUserProfileController', () => {
       expect(res.body.detail).toContain('not found for user')
     })
 
-    it('should recalculate nextNudge to SKIP_INTERVAL if new primary email is unverified', async () => {
+    it('Should not set primary email if email is not verified', async () => {
       // Arrange: Update secondary email to be unverified
       await emailsModel.update(
         { emailStatus: DataStatus.NOT_VERIFIED },
@@ -1855,25 +1855,17 @@ describe('MeUserProfileController', () => {
       )
 
       // Assert Response
-      expect(res.status).toEqual(200)
-      expect(res.body.emailVerified).toBe(false)
+      expect(res.status).toEqual(400)
+      expect(res.body.detail).toContain(
+        'Cannot set unverified email as primary email',
+      )
 
       // Assert DB - Nudge Dates Updated for SKIP_INTERVAL
       const updatedProfile = await userProfileModel.findOne({
         where: { nationalId: testUserProfile.nationalId },
       })
       expect(updatedProfile?.lastNudge).toBeDefined() // Check definition
-      expect(updatedProfile?.lastNudge).not.toEqual(initialProfile?.lastNudge)
-      if (updatedProfile?.lastNudge) {
-        // Add check before using lastNudge
-        const expectedNextNudge = addMonths(
-          updatedProfile.lastNudge,
-          SKIP_INTERVAL,
-        ) // Expect skip interval
-        expect(
-          updatedProfile?.nextNudge?.toISOString().substring(0, 22),
-        ).toEqual(expectedNextNudge.toISOString().substring(0, 22))
-      }
+      expect(updatedProfile?.lastNudge).toEqual(initialProfile?.lastNudge)
     })
 
     it('should recalculate nextNudge to NUDGE_INTERVAL if new primary email and mobile are verified', async () => {

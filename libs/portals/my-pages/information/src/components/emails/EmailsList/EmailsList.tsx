@@ -1,4 +1,4 @@
-import { Box, toast } from '@island.is/island-ui/core'
+import { Box, toast, Option } from '@island.is/island-ui/core'
 import {
   USER_PROFILE,
   DataStatus,
@@ -8,15 +8,19 @@ import { Email } from '@island.is/api/schema'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { useIntl } from 'react-intl'
 import { useActorProfile } from '../../../hooks/useActorProfile'
-import { emailsMsg } from '../../../lib/messages'
+import { emailsMsg, msg } from '../../../lib/messages'
 import { EmailCard, EmailCardTag, EmailCta } from '../EmailCard/EmailCard'
 import { useDeleteEmailMutation } from './deleteEmail.mutation.generated'
 import { useSetActorProfileEmailMutation } from './setActorProfileEmail.mutation.generated'
 import { useSetPrimaryEmailMutation } from './setPrimaryEmail.mutation.generated'
+import { useCallback, useState } from 'react'
+import { VerifyEmailModal } from '../../verify/VerifyEmailModal'
 
 type EmailsListProps = {
   items: Email[]
 }
+
+type EmailOption = Option<string> & Pick<Email, 'id' | 'emailStatus'>
 
 export const EmailsList = ({ items }: EmailsListProps) => {
   const { formatMessage } = useIntl()
@@ -24,6 +28,11 @@ export const EmailsList = ({ items }: EmailsListProps) => {
   const { data: actorProfile, refetch: refetchActorProfile } = useActorProfile()
   const actorProfileEmail = actorProfile?.email
   const isActor = !!userInfo?.profile?.actor?.nationalId
+  const [previousOption, setPreviousOption] = useState<EmailOption | null>(null)
+  const [selectedOption, setSelectedOption] = useState<EmailOption | null>(null)
+  const [verifyEmailModalEmail, setVerifyEmailModalEmail] = useState<
+    string | undefined
+  >()
 
   const refreshEmailList = () => {
     if (isActor) {
@@ -87,6 +96,12 @@ export const EmailsList = ({ items }: EmailsListProps) => {
       emailId: item.id,
       label: formatMessage(emailsMsg.emailMakePrimary),
       onClick(emailId: string) {
+        // Check if email is verified
+        if (item.emailStatus === DataStatus.NOT_VERIFIED) {
+          setVerifyEmailModalEmail(item.email ?? '')
+          return
+        }
+
         setPrimaryEmail({
           variables: { input: { emailId } },
         })
@@ -97,6 +112,11 @@ export const EmailsList = ({ items }: EmailsListProps) => {
       emailId: item.id,
       label: formatMessage(emailsMsg.connectEmailToDelegation),
       onClick(emailId: string) {
+        if (item.emailStatus === DataStatus.NOT_VERIFIED) {
+          setVerifyEmailModalEmail(item.email ?? '')
+          return
+        }
+
         const fromNationalId = userInfo.profile?.actor?.nationalId
 
         if (!fromNationalId) {
@@ -125,6 +145,10 @@ export const EmailsList = ({ items }: EmailsListProps) => {
   const getTags = (email: Email): EmailCardTag[] => {
     const tags: EmailCardTag[] = []
 
+    if (email.emailStatus === DataStatus.NOT_VERIFIED) {
+      tags.push('not_verified')
+    }
+
     if (isActor) {
       if (
         email.isConnectedToActorProfile &&
@@ -144,12 +168,25 @@ export const EmailsList = ({ items }: EmailsListProps) => {
       tags.push('connected_to_delegation')
     }
 
-    if (email.emailStatus === DataStatus.NOT_VERIFIED) {
-      tags.push('not_verified')
-    }
-
     return tags
   }
+  const onSuccess = useCallback(
+    (emailId: string) => {
+      const payload = { input: { emailId } }
+
+      if (!isActor) {
+        setPrimaryEmail({ variables: payload })
+      } else {
+        setActorProfileEmail({ variables: payload })
+      }
+    },
+    [isActor],
+  )
+
+  const onModalClose = useCallback(() => {
+    setVerifyEmailModalEmail(undefined)
+    setSelectedOption(previousOption)
+  }, [previousOption])
 
   return (
     <Box display="flex" flexDirection="column" rowGap={2}>
@@ -161,6 +198,15 @@ export const EmailsList = ({ items }: EmailsListProps) => {
           ctaList={createCtaList(item)}
         />
       ))}
+      {verifyEmailModalEmail && (
+        <VerifyEmailModal
+          type="add"
+          open={!!verifyEmailModalEmail}
+          email={verifyEmailModalEmail}
+          onClose={onModalClose}
+          onSuccess={onSuccess}
+        />
+      )}
     </Box>
   )
 }

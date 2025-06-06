@@ -18,6 +18,7 @@ import { UserProfile } from '../../user-profile/userProfile.model'
 import { CreateEmailDto } from '../dto/create-emails.dto'
 import { EmailVerification } from '../../user-profile/emailVerification.model'
 import { ActorProfile } from '../models/actor-profile.model'
+import { DataStatus } from '../../user-profile/types/dataStatusTypes'
 
 // Test data setup
 const testUserProfileEmail = {
@@ -318,6 +319,36 @@ describe('Emails controller', () => {
         email: 'test@example.com',
         emailStatus: 'VERIFIED',
       })
+
+      const emailInDb = await emailsModel.findOne({
+        where: {
+          nationalId: testUserProfile.nationalId,
+          email: 'test@example.com',
+        },
+        useMaster: true,
+      })
+
+      expect(emailInDb).toBeTruthy()
+      expect(emailInDb?.email).toBe('test@example.com')
+      expect(emailInDb?.emailStatus).toBe('VERIFIED')
+    })
+
+    it('should verify email if it already exists', async () => {
+      await setupEmailVerification()
+
+      await fixtureFactory.createEmail({
+        nationalId: testUserProfile.nationalId,
+        email: 'test@example.com',
+        primary: false,
+        emailStatus: DataStatus.NOT_VERIFIED,
+      })
+
+      const res = await server.post('/v2/actor/emails').send({
+        email: 'test@example.com',
+        code: '123',
+      } as CreateEmailDto)
+
+      expect(res.status).toEqual(200)
 
       const emailInDb = await emailsModel.findOne({
         where: {
