@@ -347,17 +347,19 @@ export class UserProfileService {
           })
         }
       } else {
-        console.log('Creating primary email')
-        await this.emailModel.create({
-          id: uuid(),
-          email: userProfile.email || null,
-          primary: true,
-          nationalId,
-          emailStatus:
-            isEmailDefined && userProfile.email
-              ? DataStatus.VERIFIED
-              : DataStatus.NOT_DEFINED,
-        })
+        // This is a workaround to ensure that the primary email is created after the user profile is created
+        setTimeout(async () => {
+          await this.emailModel.create({
+            id: uuid(),
+            email: userProfile.email || null,
+            primary: true,
+            nationalId,
+            emailStatus:
+              isEmailDefined && userProfile.email
+                ? DataStatus.VERIFIED
+                : DataStatus.NOT_DEFINED,
+          })
+        }, 2500)
       }
 
       // Update islykill settings
