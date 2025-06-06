@@ -46,11 +46,11 @@ test.describe('Front page', () => {
       )
       for (const url of lifeEventUrls) {
         const page = await context.newPage()
-        const result = await page.goto(url!)
+        const result = await page.goto(url)
         await expect(
           page.getByRole('link', { name: 'island.is logo' }),
         ).toBeVisible()
-        expect(result!.status()).toBe(200)
+        expect(result.status()).toBe(200)
         await page.close()
       }
     })
@@ -66,11 +66,11 @@ test.describe('Front page', () => {
       )
       for (const url of featuresLinksUrls) {
         const page = await context.newPage()
-        const result = await page.goto(url!)
+        const result = await page.goto(url)
         await expect(
           page.getByRole('link', { name: 'island.is logo' }),
         ).toBeVisible()
-        expect(result!.status()).toBe(200)
+        expect(result.status()).toBe(200)
         await page.close()
       }
     })
@@ -86,7 +86,7 @@ test.describe('Front page', () => {
       )
       for (const url of lifeEventUrls) {
         const page = await context.newPage()
-        const result = await page.goto(url!)
+        const result = await page.goto(url)
         expect(result?.url()).not.toBe(home)
         await page.locator('[data-testid="link-back-home"]').click()
         await expect(page.locator('data-testid=home-heading')).toBeVisible()
@@ -102,7 +102,7 @@ test.describe('Front page', () => {
     const homeHeading = page.locator('h1[data-testid="home-heading"]')
     const icelandicHeading = await homeHeading.textContent()
     await page.locator('button[data-testid="language-toggler"]:visible').click()
-    await expect(homeHeading).not.toHaveText(icelandicHeading!)
+    await expect(homeHeading).not.toHaveText(icelandicHeading)
     await expect(page).toHaveURL('/en')
   })
 
