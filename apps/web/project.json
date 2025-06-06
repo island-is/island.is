@@ -114,7 +114,8 @@
           "echo '  CONTENTFUL_HOST '",
           "echo '  CONTENTFUL_MANAGEMENT_ACCESS_TOKEN '",
           "echo ''",
-          "yarn nx run api:dev-init"
+          "yarn nx run api:dev-init",
+          "./scripts/run-es-proxy.sh"
         ],
         "parallel": false
       }
@@ -122,11 +123,7 @@
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "./scripts/run-es-proxy.sh",
-          "yarn nx run api:dev",
-          "yarn start web"
-        ],
+        "commands": ["yarn nx run api:dev", "yarn start web"],
         "parallel": true
       }
     },
