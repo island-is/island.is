@@ -2472,7 +2472,6 @@ services-payments:
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
     PAYMENTS_JWT_SIGNING_EXPIRES_IN_MINUTES: '5'
-    PAYMENTS_JWT_SIGNING_ISSUER: 'https://beta.staging01.devland.is'
     PAYMENTS_WEB_URL: 'https://beta.staging01.devland.is/greida'
     REDIS_NODES: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
