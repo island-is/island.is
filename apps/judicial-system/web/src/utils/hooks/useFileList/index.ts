@@ -121,7 +121,7 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
       if (!file.id) {
         return
       }
-      setCurrentFile(file as File)
+      setCurrentFile(file)
 
       const query = limitedAccess ? limitedAccessGetSignedUrl : getSignedUrl
 
