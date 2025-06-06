@@ -293,7 +293,7 @@ jobs:
 
       - name: Create newlint function
         run: |
-          lint_count() {
+          count-lints() {
             local lints_file=$1
             echo "lints-file=$lints_file" | tee -a "$GITHUB_OUTPUT"
             yarn nx run-many -t lint --output-style=static --projects "$AFFECTED_PROJECTS" |
@@ -308,7 +308,7 @@ jobs:
         run: |
           set -euo pipefail
           lints=$(mktemp -t lint-head.XXXXXX)
-          lints_file "$lints"
+          count-lints "$lints"
 
       # Checkout for linting base
       - uses: actions/checkout@v4
@@ -323,7 +323,7 @@ jobs:
         run: |
           set -euo pipefail
           lints=$(mktemp -t lint-base.XXXXXX)
-          lints_file "$lints"
+          count-lints "$lints"
 
       - name: No new lints
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
