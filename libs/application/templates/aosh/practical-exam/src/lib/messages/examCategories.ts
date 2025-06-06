@@ -97,7 +97,7 @@ export const examCategories = {
     missingFileUploadMessage: {
       id: 'aosh.pe.application:examCategories.labels.missingFileUploadMessage',
       defaultMessage:
-        'Vantar að hlaða upp læknisvottorði, eða mistókst, vinsamlegas reyndu aftur',
+        'Vantar að hlaða upp læknisvottorði, eða það hefur mistekist, vinsamlegas reyndu aftur',
       description: `Error missing file upload message`,
     },
     chooseExamCategory: {
