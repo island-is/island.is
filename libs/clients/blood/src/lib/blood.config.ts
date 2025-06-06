@@ -17,7 +17,7 @@ export const BloodClientConfig = defineConfig<z.infer<typeof schema>>({
         'IS-DEV/GOV/10022/Landspitali-Protected/external-patient-api-v1',
       ),
       apiKey: env.required('LSH_BLOOD_API_KEY', ''),
-      scope: [],
+      scope: ['@landspitali.is/patientdata:read'],
     }
   },
 })
