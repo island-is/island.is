@@ -21,7 +21,7 @@ export const prerequisitesSection = buildSection({
   tabTitle: shared.application.prerequisiteTabTitle,
   children: [
     buildExternalDataProvider({
-      id: 'externalData',
+      id: 'approveExternalData',
       title: externalData.dataProvider.pageTitle,
       subTitle: externalData.dataProvider.subTitle,
       checkboxLabel: externalData.dataProvider.checkboxLabel,

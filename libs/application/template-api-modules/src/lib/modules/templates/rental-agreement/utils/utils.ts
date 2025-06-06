@@ -56,7 +56,7 @@ export const mapAppraisalUnits = (units: PropertyUnit[] | undefined) => {
       unit.unitCode && parseInt(unit.unitCode.slice(-2), 10).toString()
 
     return {
-      appraisalUnitId: unit.unitCode ?? null,
+      appraisalUnitId: unit.appraisalUnitCode?.toString() ?? null,
       apartmentNumber: apartmentNumber ?? null,
       floor: apartmentFloor ?? null,
       size:

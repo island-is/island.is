@@ -65,14 +65,12 @@ const FindStudentModal = ({
 
   return (
     <Box
-      marginTop={[3, 0, 0]}
-      width="half"
-      display={'flex'}
-      justifyContent={'flexEnd'}
-      alignItems={'flexEnd'}
-      className={styles.mobileWidth}
+      marginTop={3}
+      display="flex"
+      justifyContent="flexEnd"
+      alignItems="flexEnd"
     >
-      <Box display={'flex'} justifyContent={['flexEnd', 'center', 'center']}>
+      <Box display="flex" justifyContent={['flexEnd', 'center', 'center']}>
         <ModalBase
           isVisible={isModalOpen}
           baseId="myDialog"
@@ -90,7 +88,7 @@ const FindStudentModal = ({
           }
           className={styles.modalStyle}
         >
-          <Box padding={[5, 5, 10]} style={{ background: 'white' }}>
+          <Box padding={[5, 5, 10]}>
             <Text variant="h1">
               {formatMessage(m.studentsOverviewOtherStudentIdModalTitle)}
             </Text>
@@ -114,7 +112,7 @@ const FindStudentModal = ({
                 }
               />
             </Box>
-            <Box display={'flex'} justifyContent={'spaceBetween'}>
+            <Box display="flex" justifyContent="spaceBetween">
               <Button
                 variant="ghost"
                 onClick={() => {
