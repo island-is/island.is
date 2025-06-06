@@ -53,8 +53,8 @@ export enum Features {
   occupationalLicensesHealthDirectorate = 'isHealthDirectorateOccupationalLicenseEnabled',
   healthPaymentOverview = 'isHealthPaymentsDocumentOverviewEnabled',
   isIDSAdminSsoSettingEnabled = 'isIDSAdminSsoSettingEnabled',
-
   isIdentityDocumentEnabled = 'isIdentityDocumentEnabled',
+  isServicePortal2WayMailboxEnabled = 'isServicePortal2WayMailboxEnabled',
 
   //New License service fetch enabled
   licensesV2 = 'isLicensesV2Enabled',
