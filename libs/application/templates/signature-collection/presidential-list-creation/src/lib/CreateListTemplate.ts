@@ -17,7 +17,7 @@ import {
   EphemeralStateLifeCycle,
   pruneAfterDays,
 } from '@island.is/application/core'
-import { OwnerRequirementsApi, CurrentCollectionApi } from '../dataProviders'
+import { OwnerRequirementsApi, LatestCollectionApi } from '../dataProviders'
 import { CodeOwners } from '@island.is/shared/constants'
 
 const CreateListTemplate: ApplicationTemplate<
@@ -60,7 +60,7 @@ const CreateListTemplate: ApplicationTemplate<
                 NationalRegistryUserApi,
                 UserProfileApi,
                 OwnerRequirementsApi,
-                CurrentCollectionApi,
+                LatestCollectionApi,
               ],
             },
           ],
