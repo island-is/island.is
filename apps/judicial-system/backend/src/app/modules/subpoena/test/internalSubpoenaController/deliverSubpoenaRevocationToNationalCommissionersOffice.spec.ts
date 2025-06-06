@@ -44,7 +44,7 @@ describe('InternalSubpoenaController - Deliver subpoena revocation to police', (
       const then = {} as Then
 
       try {
-        await internalSubpoenaController.deliverSubpoenaRevocationToPolice(
+        await internalSubpoenaController.deliverSubpoenaRevocationToNationalCommissionersOffice(
           caseId,
           defendantId,
           subpoenaId,
