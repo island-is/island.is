@@ -44,20 +44,15 @@ export class RentalAgreementService extends BaseTemplateApiService {
       mappedAnswers,
     )
 
-    console.log(
-      '-------------------------------- Application Data --------------------------------',
-      leaseApplication,
-    )
+    return await this.homeApiWithAuth(auth)
+      .contractPost({
+        leaseApplication,
+      })
+      .catch((error) => {
+        const errorMessage = `Error sending application ${id} to HMS Rental Service`
+        console.error(errorMessage, error)
 
-    // return await this.homeApiWithAuth(auth)
-    //   .contractPost({
-    //     leaseApplication,
-    //   })
-    //   .catch((error) => {
-    //     const errorMessage = `Error sending application ${id} to HMS Rental Service`
-    //     console.error(errorMessage, error)
-
-    //     throw new Error(`${errorMessage}: ${error.message || 'Unknown error'}`)
-    //   })
+        throw new Error(`${errorMessage}: ${error.message || 'Unknown error'}`)
+      })
   }
 }

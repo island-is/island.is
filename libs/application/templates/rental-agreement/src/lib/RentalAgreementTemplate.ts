@@ -1,6 +1,7 @@
 import set from 'lodash/set'
 import { assign } from 'xstate'
 import {
+  DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
   pruneAfterDays,
 } from '@island.is/application/core'
@@ -18,6 +19,7 @@ import {
   ApplicationConfigurations,
   ApplicationRole,
   defineTemplateApi,
+  InstitutionNationalIds,
 } from '@island.is/application/types'
 import { Events } from '../utils/types'
 import { States, Roles } from '../utils/enums'
@@ -182,12 +184,44 @@ const RentalAgreementTemplate: ApplicationTemplate<
               read: 'all',
               delete: true,
             },
+            {
+              id: Roles.INSTITUTION,
+              write: 'all',
+              read: 'all',
+              delete: true,
+            },
           ],
         },
         on: {
           [DefaultEvents.EDIT]: {
             target: States.INREVIEW,
           },
+          [DefaultEvents.APPROVE]: {
+            target: States.COMPLETED,
+          },
+        },
+      },
+      [States.COMPLETED]: {
+        meta: {
+          name: States.COMPLETED,
+          status: 'completed',
+          lifecycle: DefaultStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/completed').then((module) =>
+                  Promise.resolve(module.completedForm),
+                ),
+              read: 'all',
+            },
+            {
+              id: Roles.INSTITUTION,
+              write: 'all',
+              read: 'all',
+              delete: true,
+            },
+          ],
         },
       },
     },
@@ -216,6 +250,11 @@ const RentalAgreementTemplate: ApplicationTemplate<
     application: Application,
   ): ApplicationRole | undefined {
     const { applicant, assignees } = application
+
+    if (id === InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN) {
+      return Roles.INSTITUTION
+    }
+
     if (id === applicant) {
       return Roles.APPLICANT
     }
