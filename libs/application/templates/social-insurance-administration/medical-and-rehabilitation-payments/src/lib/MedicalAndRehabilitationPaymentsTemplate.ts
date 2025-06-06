@@ -212,7 +212,7 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
         const { answers } = application
         const { incomePlan } = getApplicationAnswers(answers)
 
-        incomePlan.forEach((income, index) => {
+        incomePlan?.forEach((income, index) => {
           if (
             (income.income === RatioType.MONTHLY &&
               income.incomeCategory === INCOME &&

@@ -1,4 +1,4 @@
-import { getValueViaPath, YES, YesOrNo } from '@island.is/application/core'
+import { getValueViaPath, NO, YES, YesOrNo } from '@island.is/application/core'
 import { TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { getYesNoOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
@@ -26,139 +26,116 @@ import {
 } from './constants'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
-  const applicantPhonenumber = getValueViaPath(
-    answers,
-    'applicantInfo.phonenumber',
-  ) as string
+  const applicantPhonenumber =
+    getValueViaPath<string>(answers, 'applicantInfo.phonenumber') ?? ''
 
-  const applicantEmail = getValueViaPath(
-    answers,
-    'applicantInfo.email',
-  ) as string
+  const applicantEmail =
+    getValueViaPath<string>(answers, 'applicantInfo.email') ?? ''
 
-  const bank = getValueViaPath(answers, 'paymentInfo.bank') as string
-  const paymentInfo = getValueViaPath(answers, 'paymentInfo') as PaymentInfo
+  const bank = getValueViaPath<string>(answers, 'paymentInfo.bank', '') ?? ''
 
-  const personalAllowance = getValueViaPath(
-    answers,
-    'paymentInfo.personalAllowance',
-  ) as YesOrNo
+  const paymentInfo = getValueViaPath<PaymentInfo>(answers, 'paymentInfo')
 
-  const personalAllowanceUsage = getValueViaPath(
-    answers,
-    'paymentInfo.personalAllowanceUsage',
-  ) as string
+  const personalAllowance =
+    getValueViaPath<YesOrNo>(answers, 'paymentInfo.personalAllowance') ?? NO
 
-  const taxLevel = getValueViaPath(
-    answers,
-    'paymentInfo.taxLevel',
-  ) as TaxLevelOptions
+  const personalAllowanceUsage =
+    getValueViaPath<string>(answers, 'paymentInfo.personalAllowanceUsage') ?? ''
 
-  const incomePlan = getValueViaPath(
-    answers,
-    'incomePlanTable',
-    [],
-  ) as IncomePlanRow[]
+  const taxLevel =
+    getValueViaPath<TaxLevelOptions>(answers, 'paymentInfo.taxLevel') ??
+    TaxLevelOptions.INCOME
 
-  const isSelfEmployed = getValueViaPath(
-    answers,
-    'questions.isSelfEmployed',
-  ) as YesOrNo
+  const incomePlan =
+    getValueViaPath<IncomePlanRow[]>(answers, 'incomePlanTable', []) ?? []
 
-  const calculatedRemunerationDate = getValueViaPath(
-    answers,
-    'questions.calculatedRemunerationDate',
-  ) as string
+  const isSelfEmployed =
+    getValueViaPath<YesOrNo>(answers, 'questions.isSelfEmployed') ?? NO
 
-  const isPartTimeEmployed = getValueViaPath(
-    answers,
-    'questions.isPartTimeEmployed',
-  ) as YesOrNo
+  const calculatedRemunerationDate =
+    getValueViaPath<string>(answers, 'questions.calculatedRemunerationDate') ??
+    ''
 
-  const isStudying = getValueViaPath(answers, 'questions.isStudying') as YesOrNo
+  const isPartTimeEmployed =
+    getValueViaPath<YesOrNo>(answers, 'questions.isPartTimeEmployed') ?? NO
 
-  const isStudyingFileUpload = getValueViaPath(
-    answers,
-    'questions.isStudyingFileUpload',
-  ) as FileType[]
+  const isStudying =
+    getValueViaPath<YesOrNo>(answers, 'questions.isStudying') ?? NO
 
-  const hasUtilizedEmployeeSickPayRights = getValueViaPath(
-    answers,
-    'employeeSickPay.hasUtilizedEmployeeSickPayRights',
-  ) as YesOrNo | NotApplicable
+  const isStudyingFileUpload =
+    getValueViaPath<FileType[]>(answers, 'questions.isStudyingFileUpload') ?? []
 
-  const employeeSickPayEndDate = getValueViaPath(
-    answers,
-    'employeeSickPay.endDate',
-  ) as string
+  const hasUtilizedEmployeeSickPayRights =
+    getValueViaPath<YesOrNo | NotApplicable>(
+      answers,
+      'employeeSickPay.hasUtilizedEmployeeSickPayRights',
+    ) ?? NOT_APPLICABLE
 
-  const hasUtilizedUnionSickPayRights = getValueViaPath(
-    answers,
-    'unionSickPay.hasUtilizedUnionSickPayRights',
-  ) as YesOrNo | NotApplicable
+  const employeeSickPayEndDate =
+    getValueViaPath<string>(answers, 'employeeSickPay.endDate') ?? ''
 
-  const unionSickPayEndDate = getValueViaPath(
-    answers,
-    'unionSickPay.endDate',
-  ) as string
+  const hasUtilizedUnionSickPayRights =
+    getValueViaPath<YesOrNo | NotApplicable>(
+      answers,
+      'unionSickPay.hasUtilizedUnionSickPayRights',
+    ) ?? NOT_APPLICABLE
 
-  const unionNationalId = getValueViaPath(
-    answers,
-    'unionSickPay.unionNationalId',
-  ) as string
+  const unionSickPayEndDate =
+    getValueViaPath<string>(answers, 'unionSickPay.endDate') ?? ''
 
-  const unionSickPayFileUpload = getValueViaPath(
-    answers,
-    'unionSickPay.fileupload',
-  ) as FileType[]
+  const unionNationalId =
+    getValueViaPath<string>(answers, 'unionSickPay.unionNationalId') ?? ''
 
-  const rehabilitationPlanConfirmation = getValueViaPath(
-    answers,
-    'rehabilitationPlanConfirmation',
-  ) as string[]
+  const unionSickPayFileUpload =
+    getValueViaPath<FileType[]>(answers, 'unionSickPay.fileupload') ?? []
 
-  const hadAssistance = getValueViaPath(
-    answers,
-    'selfAssessment.hadAssistance',
-  ) as YesOrNo
+  const rehabilitationPlanConfirmation =
+    getValueViaPath<string[]>(answers, 'rehabilitationPlanConfirmation') ?? []
 
-  const highestLevelOfEducation = getValueViaPath(
-    answers,
-    'selfAssessment.highestLevelOfEducation',
-  ) as string
+  const hadAssistance =
+    getValueViaPath<YesOrNo>(answers, 'selfAssessment.hadAssistance') ?? NO
 
-  const comment = getValueViaPath(answers, 'comment') as string
+  const highestLevelOfEducation =
+    getValueViaPath<string>(
+      answers,
+      'selfAssessment.highestLevelOfEducation',
+    ) ?? ''
 
-  const questionnaire = getValueViaPath(
-    answers,
-    'selfAssessment.questionnaire',
-    [],
-  ) as SelfAssessmentQuestionnaireAnswers[]
+  const comment = getValueViaPath<string>(answers, 'comment') ?? ''
 
-  const mainProblem = getValueViaPath(
-    answers,
-    'selfAssessment.mainProblem',
-  ) as string
+  const questionnaire =
+    getValueViaPath<SelfAssessmentQuestionnaireAnswers[]>(
+      answers,
+      'selfAssessment.questionnaire',
+      [],
+    ) ?? []
 
-  const hasPreviouslyReceivedRehabilitationOrTreatment = getValueViaPath(
-    answers,
-    'selfAssessment.hasPreviouslyReceivedRehabilitationOrTreatment',
-  ) as YesOrNo
+  const mainProblem =
+    getValueViaPath<string>(answers, 'selfAssessment.mainProblem') ?? ''
 
-  const previousRehabilitationOrTreatment = getValueViaPath(
-    answers,
-    'selfAssessment.previousRehabilitationOrTreatment',
-  ) as string
+  const hasPreviouslyReceivedRehabilitationOrTreatment =
+    getValueViaPath<YesOrNo>(
+      answers,
+      'selfAssessment.hasPreviouslyReceivedRehabilitationOrTreatment',
+    ) ?? NO
 
-  const previousRehabilitationSuccessful = getValueViaPath(
-    answers,
-    'selfAssessment.previousRehabilitationSuccessful',
-  ) as YesOrNo
+  const previousRehabilitationOrTreatment =
+    getValueViaPath<string>(
+      answers,
+      'selfAssessment.previousRehabilitationOrTreatment',
+    ) ?? ''
 
-  const previousRehabilitationSuccessfulFurtherExplanations = getValueViaPath(
-    answers,
-    'selfAssessment.previousRehabilitationSuccessfulFurtherExplanations',
-  ) as string
+  const previousRehabilitationSuccessful =
+    getValueViaPath<YesOrNo>(
+      answers,
+      'selfAssessment.previousRehabilitationSuccessful',
+    ) ?? NO
+
+  const previousRehabilitationSuccessfulFurtherExplanations =
+    getValueViaPath<string>(
+      answers,
+      'selfAssessment.previousRehabilitationSuccessfulFurtherExplanations',
+    ) ?? ''
 
   return {
     applicantPhonenumber,
@@ -196,88 +173,90 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 export const getApplicationExternalData = (
   externalData: Application['externalData'],
 ) => {
-  const applicantName = getValueViaPath(
-    externalData,
-    'nationalRegistry.data.fullName',
-  ) as string
+  const applicantName =
+    getValueViaPath<string>(externalData, 'nationalRegistry.data.fullName') ??
+    ''
 
-  const applicantNationalId = getValueViaPath(
-    externalData,
-    'nationalRegistry.data.nationalId',
-  ) as string
+  const applicantNationalId =
+    getValueViaPath<string>(externalData, 'nationalRegistry.data.nationalId') ??
+    ''
 
-  const applicantAddress = getValueViaPath(
-    externalData,
-    'nationalRegistry.data.address.streetAddress',
-  ) as string
+  const applicantAddress =
+    getValueViaPath<string>(
+      externalData,
+      'nationalRegistry.data.address.streetAddress',
+    ) ?? ''
 
-  const applicantPostalCode = getValueViaPath(
-    externalData,
-    'nationalRegistry.data.address.postalCode',
-  ) as string
+  const applicantPostalCode =
+    getValueViaPath<string>(
+      externalData,
+      'nationalRegistry.data.address.postalCode',
+    ) ?? ''
 
-  const applicantLocality = getValueViaPath(
-    externalData,
-    'nationalRegistry.data.address.locality',
-  ) as string
+  const applicantLocality =
+    getValueViaPath<string>(
+      externalData,
+      'nationalRegistry.data.address.locality',
+    ) ?? ''
 
   const applicantMunicipality = `${applicantPostalCode}, ${applicantLocality}`
 
-  const bankInfo = getValueViaPath(
+  const bankInfo = getValueViaPath<BankInfo>(
     externalData,
     'socialInsuranceAdministrationApplicant.data.bankAccount',
-  ) as BankInfo
+  )
 
-  const userProfileEmail = getValueViaPath(
-    externalData,
-    'userProfile.data.email',
-  ) as string
+  const userProfileEmail =
+    getValueViaPath<string>(externalData, 'userProfile.data.email') ?? ''
 
-  const userProfilePhoneNumber = getValueViaPath(
-    externalData,
-    'userProfile.data.mobilePhoneNumber',
-  ) as string
+  const userProfilePhoneNumber =
+    getValueViaPath<string>(
+      externalData,
+      'userProfile.data.mobilePhoneNumber',
+    ) ?? ''
 
-  const spouseName = getValueViaPath(
-    externalData,
-    'nationalRegistrySpouse.data.name',
-  ) as string
+  const spouseName =
+    getValueViaPath<string>(externalData, 'nationalRegistrySpouse.data.name') ??
+    ''
 
-  const spouseNationalId = getValueViaPath(
-    externalData,
-    'nationalRegistrySpouse.data.nationalId',
-  ) as string
+  const spouseNationalId =
+    getValueViaPath<string>(
+      externalData,
+      'nationalRegistrySpouse.data.nationalId',
+    ) ?? ''
 
-  const maritalStatus = getValueViaPath(
-    externalData,
-    'nationalRegistrySpouse.data.maritalStatus',
-  ) as string
+  const maritalStatus =
+    getValueViaPath<string>(
+      externalData,
+      'nationalRegistrySpouse.data.maritalStatus',
+    ) ?? ''
 
-  const hasSpouse = getValueViaPath(
-    externalData,
-    'nationalRegistrySpouse.data',
-  ) as object
+  const hasSpouse =
+    getValueViaPath<object>(externalData, 'nationalRegistrySpouse.data') ?? {}
 
-  const categorizedIncomeTypes = getValueViaPath(
-    externalData,
-    'socialInsuranceAdministrationCategorizedIncomeTypes.data',
-    [],
-  ) as CategorizedIncomeTypes[]
+  const categorizedIncomeTypes =
+    getValueViaPath<CategorizedIncomeTypes[]>(
+      externalData,
+      'socialInsuranceAdministrationCategorizedIncomeTypes.data',
+      [],
+    ) ?? []
 
-  const currencies = getValueViaPath(
-    externalData,
-    'socialInsuranceAdministrationCurrencies.data',
-  ) as Array<string>
+  const currencies =
+    getValueViaPath<Array<string>>(
+      externalData,
+      'socialInsuranceAdministrationCurrencies.data',
+    ) ?? []
 
-  const incomePlanConditions = getValueViaPath(
+  const incomePlanConditions = getValueViaPath<IncomePlanConditions>(
     externalData,
     'socialInsuranceAdministrationIncomePlanConditions.data',
-  ) as IncomePlanConditions
+  )
 
-  const selfAssessmentQuestionnaire = getValueViaPath(
-    externalData,
-    'socialInsuranceAdministrationQuestionnairesSelfAssessment.data',
-  ) as SelfAssessmentQuestionnaire[]
+  const selfAssessmentQuestionnaire =
+    getValueViaPath<SelfAssessmentQuestionnaire[]>(
+      externalData,
+      'socialInsuranceAdministrationQuestionnairesSelfAssessment.data',
+    ) ?? []
 
   return {
     applicantName,
