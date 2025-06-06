@@ -31,6 +31,7 @@ import { FavAndStash } from '../FavAndStash/FavAndStash'
 import UrgentTag from '../UrgentTag/UrgentTag'
 import AvatarImage from './AvatarImage'
 import * as styles from './DocumentLine.css'
+import { Reply } from '../../lib/types'
 
 interface Props {
   documentLine: DocumentV2
@@ -84,6 +85,7 @@ export const DocumentLine: FC<Props> = ({
     setDocumentDisplayError,
     setDocLoading,
     setLocalRead,
+    setReplyState,
     categoriesAvailable,
     localRead,
   } = useDocumentContext()
@@ -176,6 +178,43 @@ export const DocumentLine: FC<Props> = ({
             displayPdf(docContent, actions, alert)
             setDocumentDisplayError(undefined)
             setLocalRead([...localRead, documentLine.id])
+            const replyable = data?.documentV2?.replyable ?? false
+
+            if (data?.documentV2?.ticket) {
+              const reply: Reply = {
+                id: data.documentV2?.ticket?.id,
+                createdDate: data.documentV2?.ticket?.createdDate,
+                updatedDate: data.documentV2?.ticket?.updatedDate,
+                subject: data.documentV2?.ticket?.subject,
+                authorId: data.documentV2?.ticket?.authorId,
+                status: data.documentV2?.ticket?.status,
+                comments: data.documentV2?.ticket?.comments?.map(
+                  (item, index) => {
+                    if (
+                      index ===
+                      (data.documentV2?.ticket?.comments?.length ?? 0) - 1
+                    ) {
+                      return {
+                        ...item,
+                        hide: false,
+                      }
+                    } else
+                      return {
+                        ...item,
+                        hide: false, // true, //TODO check if it should still be collapsable
+                      }
+                  },
+                ),
+              }
+              setReplyState((prevState) => ({
+                ...prevState,
+                replies: reply,
+                replyable,
+                closedForMoreReplies:
+                  data?.documentV2?.closedForMoreReplies ?? false,
+                replyOpen: prevState?.replyOpen ?? false, // Ensure replyOpen is explicitly set to a boolean
+              }))
+            }
           } else {
             setDocumentDisplayError(formatMessage(messages.documentErrorLoad))
           }
@@ -328,9 +367,29 @@ export const DocumentLine: FC<Props> = ({
         >
           {active && <div className={styles.fakeBorder} />}
           <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
-            <Text variant="medium" truncate>
-              {documentLine.sender?.name ?? ''}
-            </Text>
+            <Box display="inlineFlex">
+              <Text variant="medium" truncate>
+                {documentLine.sender?.name ?? ''}
+              </Text>
+              {documentLine.replyable && (
+                <Box
+                  background="dark100"
+                  borderRadius="standard"
+                  paddingX="smallGutter"
+                  marginLeft={1}
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  <Icon
+                    icon="undo"
+                    color="dark400"
+                    size="small"
+                    type="outline"
+                  />
+                </Box>
+              )}
+            </Box>
             <Text variant="medium">{date}</Text>
           </Box>
           <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
