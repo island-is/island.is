@@ -725,9 +725,6 @@
       "@island.is/clients/hms-application-system": [
         "libs/clients/hms-application-system/src/index.ts"
       ],
-      "@island.is/clients/hms-rental-agreement": [
-        "libs/clients/hms-rental-agreement/src/index.ts"
-      ],
       "@island.is/clients/hms-housing-benefits": [
         "libs/clients/hms-housing-benefits/src/index.ts"
       ],
