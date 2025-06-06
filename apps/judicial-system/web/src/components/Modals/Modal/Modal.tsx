@@ -242,22 +242,6 @@ const ModalPortal = ({
   const modalRoot =
     document.getElementById('modal') ?? document.createElement('div')
 
-  useEffect(() => {
-    const handleKeyDown = (e: { key: string }) => {
-      if (e.key === 'Escape') {
-        onClose && onClose()
-      }
-    }
-
-    // Attach the event listener
-    document.addEventListener('keydown', handleKeyDown)
-
-    // Cleanup the event listener on component unmount
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [onClose])
-
   return ReactDOM.createPortal(
     <Modal
       title={title}
