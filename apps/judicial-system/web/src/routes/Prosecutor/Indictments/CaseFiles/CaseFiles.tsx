@@ -38,7 +38,7 @@ const CaseFiles = () => {
     removeUploadFile,
   } = useUploadFiles(workingCase.caseFiles)
 
-  const { onOpen } = useFileList({
+  const { onOpenFile } = useFileList({
     caseId: workingCase.id,
   })
 
@@ -108,7 +108,7 @@ const CaseFiles = () => {
                 updateUploadFile,
               )
             }
-            onOpenFile={(file) => onOpen(file)}
+            onOpenFile={(file) => onOpenFile(file)}
             onRemove={(file) => handleRemove(file, removeUploadFile)}
             onRetry={(file) => handleRetry(file, updateUploadFile)}
           />
@@ -134,7 +134,7 @@ const CaseFiles = () => {
                 updateUploadFile,
               )
             }
-            onOpenFile={(file) => onOpen(file)}
+            onOpenFile={(file) => onOpenFile(file)}
             onRemove={(file) => handleRemove(file, removeUploadFile)}
             onRetry={(file) => handleRetry(file, updateUploadFile)}
           />
@@ -158,7 +158,7 @@ const CaseFiles = () => {
                 updateUploadFile,
               )
             }
-            onOpenFile={(file) => onOpen(file)}
+            onOpenFile={(file) => onOpenFile(file)}
             onRemove={(file) => handleRemove(file, removeUploadFile)}
             onRetry={(file) => handleRetry(file, updateUploadFile)}
           />

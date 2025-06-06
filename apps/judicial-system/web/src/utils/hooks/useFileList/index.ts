@@ -117,6 +117,29 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
   ])
 
   const onOpen = useMemo(
+    () => (fileId: string) => {
+      const query = limitedAccess ? limitedAccessGetSignedUrl : getSignedUrl
+
+      query({
+        variables: {
+          input: {
+            id: fileId,
+            caseId: connectedCaseParentId ?? caseId,
+            mergedCaseId: connectedCaseParentId && caseId,
+          },
+        },
+      })
+    },
+    [
+      caseId,
+      connectedCaseParentId,
+      getSignedUrl,
+      limitedAccess,
+      limitedAccessGetSignedUrl,
+    ],
+  )
+
+  const onOpenFile = useMemo(
     () => (file: UploadFile) => {
       if (!file.id) {
         return
@@ -148,7 +171,7 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
     setFileNotFound(false)
   }
 
-  return { fileNotFound, dismissFileNotFound, onOpen }
+  return { fileNotFound, dismissFileNotFound, onOpen, onOpenFile }
 }
 
 export default useFileList

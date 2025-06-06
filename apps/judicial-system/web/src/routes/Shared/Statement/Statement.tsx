@@ -60,7 +60,7 @@ const Statement = () => {
     removeUploadFile,
   } = useUploadFiles(workingCase.caseFiles)
 
-  const { onOpen } = useFileList({
+  const { onOpenFile } = useFileList({
     caseId: workingCase.id,
   })
 
@@ -174,7 +174,7 @@ const Statement = () => {
                 buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
                 onChange={(files) => handleChange(files, appealStatementType)}
                 onRemove={(file) => handleRemoveFile(file)}
-                onOpenFile={(file) => onOpen(file)}
+                onOpenFile={(file) => onOpenFile(file)}
                 hideIcons={!allFilesDoneOrError}
                 disabled={!allFilesDoneOrError}
               />
@@ -206,7 +206,7 @@ const Statement = () => {
                 buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
                 onChange={(files) => handleChange(files, appealCaseFilesType)}
                 onRemove={(file) => handleRemoveFile(file)}
-                onOpenFile={(file) => onOpen(file)}
+                onOpenFile={(file) => onOpenFile(file)}
                 hideIcons={!allFilesDoneOrError}
                 disabled={!allFilesDoneOrError}
               />

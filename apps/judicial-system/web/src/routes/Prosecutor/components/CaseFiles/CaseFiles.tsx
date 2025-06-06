@@ -79,7 +79,7 @@ export const CaseFiles = () => {
   const { handleUpload, handleUploadFromPolice, handleRetry, handleRemove } =
     useS3Upload(workingCase.id)
 
-  const { onOpen } = useFileList({
+  const { onOpenFile } = useFileList({
     caseId: workingCase.id,
   })
   const { updateCase } = useCase()
@@ -240,7 +240,7 @@ export const CaseFiles = () => {
               onRetry={(file) => handleRetry(file, updateUploadFile)}
               errorMessage={uploadErrorMessage}
               disabled={isUploadingPoliceCaseFiles}
-              onOpenFile={(file) => onOpen(file)}
+              onOpenFile={(file) => onOpenFile(file)}
             />
           </ContentBlock>
         </Box>

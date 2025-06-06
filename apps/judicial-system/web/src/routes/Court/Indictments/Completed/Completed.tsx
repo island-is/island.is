@@ -66,7 +66,7 @@ const Completed: FC = () => {
   const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
   const { createEventLog } = useEventLog()
 
-  const { onOpen } = useFileList({
+  const { onOpenFile } = useFileList({
     caseId: workingCase.id,
   })
 
@@ -269,7 +269,7 @@ const Completed: FC = () => {
               })}
               onChange={handleCriminalRecordUpdateUpload}
               onRemove={handleRemoveFile}
-              onOpenFile={(file) => onOpen(file)}
+              onOpenFile={(file) => onOpenFile(file)}
             />
           </Box>
         )}

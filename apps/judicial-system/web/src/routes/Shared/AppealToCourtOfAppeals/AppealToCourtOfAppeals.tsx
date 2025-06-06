@@ -57,7 +57,7 @@ const AppealToCourtOfAppeals = () => {
     updateUploadFile,
   } = useUploadFiles(workingCase.caseFiles)
   const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
-  const { onOpen } = useFileList({
+  const { onOpenFile } = useFileList({
     caseId: workingCase.id,
   })
   const { transitionCase, isTransitioningCase } = useCase()
@@ -144,7 +144,7 @@ const AppealToCourtOfAppeals = () => {
             onRemove={(file) => {
               handleRemoveFile(file)
             }}
-            onOpenFile={(file) => onOpen(file)}
+            onOpenFile={(file) => onOpenFile(file)}
             hideIcons={!allFilesDoneOrError}
             disabled={!allFilesDoneOrError}
           />
@@ -176,7 +176,7 @@ const AppealToCourtOfAppeals = () => {
             buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
             onChange={(files) => handleChange(files, appealCaseFilesType)}
             onRemove={(file) => handleRemoveFile(file)}
-            onOpenFile={(file) => onOpen(file)}
+            onOpenFile={(file) => onOpenFile(file)}
             hideIcons={!allFilesDoneOrError}
             disabled={!allFilesDoneOrError}
           />

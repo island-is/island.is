@@ -66,7 +66,7 @@ const CourtOfAppealRuling = () => {
   const { handleUpload, handleRetry, handleRemove } = useS3Upload(
     workingCase.id,
   )
-  const { onOpen } = useFileList({
+  const { onOpenFile } = useFileList({
     caseId: workingCase.id,
   })
   const { updateCase, setAndSendCaseToServer } = useCase()
@@ -238,7 +238,7 @@ const CourtOfAppealRuling = () => {
                   updateUploadFile,
                 )
               }}
-              onOpenFile={(file) => onOpen(file)}
+              onOpenFile={(file) => onOpenFile(file)}
               onRemove={(file) => handleRemove(file, removeUploadFile)}
               onRetry={(file) => handleRetry(file, updateUploadFile)}
             />
@@ -366,7 +366,7 @@ const CourtOfAppealRuling = () => {
                     updateUploadFile,
                   )
                 }}
-                onOpenFile={(file) => onOpen(file)}
+                onOpenFile={(file) => onOpenFile(file)}
                 onRemove={(file) => handleRemove(file, removeUploadFile)}
                 onRetry={(file) => handleRetry(file, updateUploadFile)}
               />

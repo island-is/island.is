@@ -492,13 +492,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
                 <CaseFile
                   caseFile={item}
                   onReorder={handleReorder}
-                  onOpen={() =>
-                    onOpen({
-                      name: `${item.displayText}`,
-                      ...item,
-                      size: item.size ?? undefined,
-                    })
-                  }
+                  onOpen={onOpen}
                   onRename={handleRename}
                   onDelete={handleDelete}
                   setEditCount={setEditCount}
