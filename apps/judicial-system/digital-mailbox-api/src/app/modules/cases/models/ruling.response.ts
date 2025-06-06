@@ -10,9 +10,6 @@ export class RulingResponse {
   @ApiProperty({ type: String })
   caseId!: string
 
-  @ApiProperty({ type: Boolean })
-  waitingToBeServed!: boolean
-
   @ApiProperty({ type: String })
   title!: string
 
@@ -30,7 +27,6 @@ export class RulingResponse {
 
     return {
       caseId: internalCase.id,
-      waitingToBeServed: false, // TODO
       title: t.rulingTitle,
       subtitle: '',
 
