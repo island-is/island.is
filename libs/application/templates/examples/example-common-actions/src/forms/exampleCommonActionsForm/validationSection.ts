@@ -2,7 +2,6 @@ import {
   buildDescriptionField,
   buildMultiField,
   buildRadioField,
-  buildCheckboxField,
   buildSection,
   buildTextField,
   buildSelectField,
