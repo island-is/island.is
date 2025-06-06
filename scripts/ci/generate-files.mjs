@@ -111,28 +111,30 @@ async function main() {
     }
   }
 
-  console.log(`\nExisting files: ${existingFiles.length}`)
+  console.log(`Existing files: ${existingFiles.length}`)
   console.log(`Missing files or patterns: ${missingFiles.length}`)
 
   await fs.writeFile('generated_files_list.txt', existingFiles.join('\n'))
 
-  console.log(`\nCreating archive: ${outputFileName}...`)
+  console.log(`::group::Creating archive (${outputFileName})`)
   execSync(`tar zcvf "${outputFileName}" -T generated_files_list.txt`, {
     stdio: 'inherit',
   })
+  console.log(`::endgroup::`)
 
   const stats = await fs.stat(outputFileName)
   const fileSizeInMegabytes = stats.size / (1024 * 1024)
 
   const cacheKey = `codegen-${execSync('git rev-parse HEAD').toString().trim()}`
 
-  console.log(`\nCache key: ${cacheKey}`)
+  console.log(`Cache key: ${cacheKey}`)
   console.log(`Archive created: ${outputFileName}`)
   console.log(`Archive size: ${fileSizeInMegabytes.toFixed(2)} MB`)
 
   if (missingFiles.length > 0) {
-    console.log('\nMissing files or patterns:')
+    console.log('::group::Missing files or patterns')
     missingFiles.forEach((file) => console.log(file))
+    console.log(`::endgroup::`)
   }
 }
 
