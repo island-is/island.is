@@ -177,6 +177,10 @@ export class Defendant extends Model {
   @ApiPropertyOptional({ type: Date })
   verdictAppealDate?: Date
 
+  // This is the currently selected subpoena type per defendant but we also
+  // store the subpoena type in the subpoenas table to keep the history.
+  // We will later remove it from the defendant table when we fix the
+  // handling of new subpoenas per defendant.
   @Column({
     type: DataType.ENUM,
     allowNull: true,
