@@ -291,24 +291,17 @@ jobs:
         with:
           RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
-      - name: Create newlint function
-        run: |
-          lint_count() {
-            local lints_file=$1
-            echo "lints-file=$lints_file" | tee -a "$GITHUB_OUTPUT"
-            yarn nx run-many -t lint --output-style=static --projects "$AFFECTED_PROJECTS" |
-              tee "$lints_file"
-            (grep -oP '(?<=✖ )(\d+)(?= problems)' "$lints_file" || echo '0') | # Find number of problems
-              awk '{ SUM += $1} END { SUM /= 2; printf "lint-count=%d\n", SUM }' | # sum number of problems, divide by 2 because each problem summary occurs twice
-              tee -a "$GITHUB_OUTPUT" # Finally create output
-          }
-
       - name: Lint head
         id: lint-head
         run: |
           set -euo pipefail
           lints=$(mktemp -t lint-head.XXXXXX)
-          lints_file "$lints"
+          echo "lints-file=$lints" | tee -a "$GITHUB_OUTPUT"
+          yarn nx run-many -t lint --output-style=static --projects "$AFFECTED_PROJECTS" |
+            tee "$lints"
+          (grep -oP '(?<=✖ )(\d+)(?= problems)' "$lints" || echo '0') | # Find number of problems
+            awk '{ SUM += $1} END { SUM /= 2; printf "lint-count=%d\n", SUM }' | # sum number of problems, divide by 2 because each problem summary occurs twice
+            tee -a "$GITHUB_OUTPUT" # Finally create output
 
       # Checkout for linting base
       - uses: actions/checkout@v4
@@ -323,7 +316,12 @@ jobs:
         run: |
           set -euo pipefail
           lints=$(mktemp -t lint-base.XXXXXX)
-          lints_file "$lints"
+          echo "lints-file=$lints" | tee -a "$GITHUB_OUTPUT"
+          yarn nx run-many -t lint --output-style=static --projects "$AFFECTED_PROJECTS" |
+            tee "$lints"
+          (grep -oP '(?<=✖ )(\d+)(?= problems)' "$lints" || echo '0') | # Find number of problems
+            awk '{ SUM += $1} END { SUM /= 2; printf "lint-count=%d\n", SUM }' | # sum number of problems, divide by 2 because each problem summary occurs twice
+            tee -a "$GITHUB_OUTPUT" # Finally create output
 
       - name: No new lints
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
