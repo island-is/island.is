@@ -7,6 +7,7 @@ import {
   SecurityDepositAmountOptions,
   SecurityDepositTypeOptions,
 } from './enums'
+import { applicationAnswers } from '../shared'
 
 // Amount utils
 export const rentalAmountConnectedToIndex = (answers: FormValue) => {
@@ -204,4 +205,86 @@ export const calculateSecurityDepositAmount = (answers: FormValue) => {
     ? monthMapping[securityAmount as keyof typeof monthMapping]
     : 0
   return (parseInt(rentalAmount ?? '0') * months).toString()
+}
+
+// TODO: Replace mock data with API when available
+const indexData = [
+  {
+    date: '2025M07',
+    indexRate: '651,0',
+  },
+  {
+    date: '2025M06',
+    indexRate: '649,7',
+  },
+  {
+    date: '2025M05',
+    indexRate: '643,7',
+  },
+  {
+    date: '2025M04',
+    indexRate: '641,3',
+  },
+  {
+    date: '2024M12',
+    indexRate: '634,1',
+  },
+  {
+    date: '2025M03',
+    indexRate: '635,5',
+  },
+  {
+    date: '2025M02',
+    indexRate: '637,2',
+  },
+  {
+    date: '2025M01',
+    indexRate: '634,7',
+  },
+]
+
+export const formatIndexRateDateToIcelandic = (dateString: string): string => {
+  const year = dateString.substring(0, 4)
+  const month = dateString.substring(5, 7)
+
+  const icelandicMonths: Record<string, string> = {
+    '01': 'Janúar',
+    '02': 'Febrúar',
+    '03': 'Mars',
+    '04': 'Apríl',
+    '05': 'Maí',
+    '06': 'Júní',
+    '07': 'Júlí',
+    '08': 'Ágúst',
+    '09': 'September',
+    '10': 'Október',
+    '11': 'Nóvember',
+    '12': 'Desember',
+  }
+
+  return `${icelandicMonths[month]} ${year}`
+}
+
+export const getIndexDateOptions = () => {
+  const sortedIndexData = [...indexData].sort((a, b) =>
+    b.date.localeCompare(a.date),
+  )
+
+  return sortedIndexData.map((item: { date: string }) => ({
+    value: item.date,
+    label: formatIndexRateDateToIcelandic(item.date),
+  }))
+}
+export const getIndexRateForDate = (answers: FormValue) => {
+  const { indexDate } = applicationAnswers(answers)
+
+  if (!indexDate) {
+    return ''
+  }
+
+  const selectedIndex = indexData.find(
+    (item: { date: string; indexRate: string }) => item.date === indexDate,
+  )
+
+  return selectedIndex?.indexRate || ''
 }

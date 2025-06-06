@@ -14,6 +14,7 @@ export const getOrganisationQuery = gql`
       address
       email
       phoneNumber
+      zendeskId
       administrativeContact {
         id
         name
