@@ -108,15 +108,22 @@
           "echo yarn get-secrets {projectName}",
           "echo \"#############\n # ATTENTION #\n #############\n \n You must manually add these to your .env.secrets file (used for e.g. extract-strings):\n CONTENTFUL_HOST \n CONTENTFUL_MANAGEMENT_ACCESS_TOKEN\n\"",
           "yarn nx run api:dev-init",
-          "./scripts/run-es-proxy.sh"
+          "yarn nx dev-services {projectName}"
         ],
         "parallel": false
+      }
+    },
+    "dev-services": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": ["nohup ./scripts/run-es-proxy.sh &>>.xroad.log &"],
+        "parallel": true
       }
     },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["yarn nx run api:dev", "yarn start web"],
+        "commands": ["yarn nx run api:dev", "yarn start {projectName}"],
         "parallel": true
       }
     },
