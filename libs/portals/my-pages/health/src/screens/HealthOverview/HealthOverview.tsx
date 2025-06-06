@@ -1,73 +1,103 @@
 import {
-  AlertMessage,
   Box,
-  Button,
+  CategoryCard,
   GridColumn,
+  GridContainer,
   GridRow,
   Icon,
-  SkeletonLoader,
-  Stack,
   Text,
   toast,
 } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  IntroWrapper,
-  SJUKRATRYGGINGAR_SLUG,
-  StackWithBottomDivider,
-  UserInfoLine,
-  amountFormat,
-  downloadLink,
+  InfoCard,
+  InfoCardGrid,
+  InfoLine,
+  InfoLineStack,
   formatDate,
   isDateAfterToday,
   m,
 } from '@island.is/portals/my-pages/core'
-import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
+import subYears from 'date-fns/subYears'
 import { useEffect, useState } from 'react'
+import { useWindowSize } from 'react-use'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
+import { CONTENT_GAP_LG } from '../../utils/constants'
+import * as styles from './HealthOverview.css'
 import {
-  CONTENT_GAP,
-  CONTENT_GAP_LG,
-  CONTENT_GAP_SM,
-  SECTION_GAP,
-} from '../../utils/constants'
-import {
-  useGetInsuranceConfirmationLazyQuery,
+  useGetDentistsQuery,
+  useGetDonorStatusQuery,
+  useGetHealthCenterQuery,
   useGetInsuranceOverviewQuery,
 } from './HealthOverview.generated'
+import AppointmentCard from '../../components/AppointmentCard/AppointmentCard'
+
+const DEFAULT_DATE_TO = new Date()
+const DEFAULT_DATE_FROM = subYears(DEFAULT_DATE_TO, 10)
 
 export const HealthOverview = () => {
   useNamespaces('sp.health')
-
-  const { formatMessage, formatDateFns } = useLocale()
-  const user = useUserInfo()
+  const { formatMessage, locale } = useLocale()
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.md
+  const isTablet = width < theme.breakpoints.lg && !isMobile
 
   const { data, error, loading } = useGetInsuranceOverviewQuery()
-
   const [displayConfirmationErrorAlert, setDisplayConfirmationErrorAlert] =
     useState(false)
 
-  const [
-    getInsuranceConfirmationLazyQuery,
-    { loading: confirmationLoading, error: confirmationError },
-  ] = useGetInsuranceConfirmationLazyQuery()
+  const {
+    data: healthCenterData,
+    loading: healthCenterLoading,
+    error: healthCenterError,
+  } = useGetHealthCenterQuery({
+    variables: {
+      input: {
+        dateFrom: DEFAULT_DATE_FROM,
+        dateTo: DEFAULT_DATE_TO,
+      },
+    },
+    fetchPolicy: 'no-cache',
+  })
 
-  const getInsuranceConfirmation = async () => {
-    const { data: fetchedData } = await getInsuranceConfirmationLazyQuery()
-    const downloadData = fetchedData?.rightsPortalInsuranceConfirmation
+  const {
+    data: dentistsData,
+    loading: dentistsLoading,
+    error: dentistsError,
+  } = useGetDentistsQuery({
+    variables: {
+      input: {
+        dateFrom: DEFAULT_DATE_FROM,
+        dateTo: DEFAULT_DATE_TO,
+      },
+    },
+    fetchPolicy: 'no-cache',
+  })
 
-    if (downloadData?.data && downloadData.fileName) {
-      downloadLink(downloadData.data, 'application/pdf', downloadData.fileName)
-    }
-  }
+  const {
+    data: donorStatusData,
+    loading: donorStatusLoading,
+    error: donorStatusError,
+  } = useGetDonorStatusQuery({
+    variables: {
+      locale: locale,
+    },
+    fetchPolicy: 'no-cache',
+  })
 
-  useEffect(() => {
-    if (confirmationError) {
-      setDisplayConfirmationErrorAlert(true)
-    }
-  }, [confirmationError])
+  const healthCenterName =
+    healthCenterData?.rightsPortalHealthCenterRegistrationHistory?.current
+      ?.healthCenterName
+
+  const dentistName =
+    dentistsData?.rightsPortalUserDentistRegistration?.dentist?.name
+
+  const donor = donorStatusData?.healthDirectorateOrganDonation.donor
+
+  console.log(donorStatusData?.healthDirectorateOrganDonation.donor)
 
   useEffect(() => {
     if (!loading && displayConfirmationErrorAlert) {
@@ -78,136 +108,204 @@ export const HealthOverview = () => {
     }
   }, [displayConfirmationErrorAlert, loading, formatMessage])
 
-  const insurance = data?.rightsPortalInsuranceOverview
+  const doctor =
+    healthCenterData?.rightsPortalHealthCenterRegistrationHistory?.current
+      ?.doctor
 
-  const isEhicValid = isDateAfterToday(
-    data?.rightsPortalInsuranceOverview?.ehicCardExpiryDate ?? undefined,
+  const insurance = data?.rightsPortalInsuranceOverview
+  const isInsuranceCardValid = isDateAfterToday(
+    insurance?.ehicCardExpiryDate ?? undefined,
   )
+  const insuranceCardExpirationDate = insurance?.ehicCardExpiryDate
+  const isInsured = insurance?.isInsured
+  const insuredFrom = formatDate(insurance?.from)
 
   return (
-    <IntroWrapper
-      marginBottom={CONTENT_GAP_LG}
-      title={formatMessage(user.profile.name)}
-      intro={formatMessage(messages.overviewIntro)}
-      serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
-      serviceProviderTooltip={formatMessage(messages.healthTooltip)}
-    >
-      {error ? (
-        <Problem error={error} noBorder={false} />
-      ) : loading ? (
-        <SkeletonLoader
-          repeat={3}
-          space={CONTENT_GAP}
-          height={24}
-          borderRadius="standard"
+    <>
+      <GridRow marginBottom={CONTENT_GAP_LG}>
+        <GridColumn span={isMobile ? '8/8' : '5/8'}>
+          <>
+            <Text variant="h3" as={'h1'}>
+              {formatMessage(messages.healthOverview)}
+            </Text>
+
+            <Text variant="default" paddingTop={1}>
+              {formatMessage(messages.overviewIntro)}
+            </Text>
+          </>
+        </GridColumn>
+      </GridRow>
+      <Box>
+        {/* If no appointments, hide */}
+        <Text
+          variant="eyebrow"
+          color="foregroundBrandSecondary"
+          marginBottom={2}
+        >
+          {formatMessage(messages.myAppointments)}
+        </Text>
+
+        <InfoCardGrid
+          size="small"
+          variant="appointment"
+          empty={{
+            title: 'Engir tímar',
+            description: 'Engar tímabókanir framundan.',
+          }}
+          cards={[
+            {
+              title: 'Mæðravernd',
+              description: 'Tími hjá: Sigríður Gunnarsdóttir',
+              appointment: {
+                date: 'Fimmtudaginn, 03.04.2025',
+                time: '11:40',
+                location: {
+                  label: 'Heilsugæslan við Ásbrú',
+                  href: HealthPaths.HealthCenter,
+                },
+              },
+            },
+            {
+              title: 'Mæðravernd',
+              description: 'Tími hjá: Sigríður Gunnarsdóttir',
+              appointment: {
+                date: 'Fimmtudaginn, 03.04.2025',
+                time: '11:40',
+                location: {
+                  label: 'Heilsugæslan við Ásbrú',
+                  href: HealthPaths.HealthCenter,
+                },
+              },
+            },
+          ]}
         />
-      ) : !insurance?.isInsured ? (
-        <AlertMessage
-          type="info"
-          title={formatMessage(messages.noHealthInsurance)}
-          message={insurance?.explanation}
+      </Box>
+      <Box>
+        <Text
+          variant="eyebrow"
+          color="foregroundBrandSecondary"
+          marginBottom={2}
+        >
+          Empty state
+        </Text>
+
+        <InfoCardGrid
+          empty={{
+            title: 'Engir tímar',
+            description: 'Engar tímabókanir framundan.',
+          }}
+          cards={[]}
+          size="small"
         />
-      ) : (
-        <Stack space={SECTION_GAP}>
-          <GridRow
-            marginBottom={[
-              CONTENT_GAP_SM,
-              CONTENT_GAP_SM,
-              CONTENT_GAP_SM,
-              CONTENT_GAP_LG,
-            ]}
-          >
-            <GridColumn span="12/12">
-              <Box
-                display="flex"
-                flexDirection="row"
-                flexWrap="wrap"
-                justifyContent="flexStart"
-                printHidden
-              >
-                <Box
-                  paddingRight={CONTENT_GAP}
-                  marginBottom={[
-                    CONTENT_GAP_SM,
-                    CONTENT_GAP_SM,
-                    CONTENT_GAP_SM,
-                    0,
-                  ]}
-                >
-                  <Button
-                    variant="utility"
-                    disabled={displayConfirmationErrorAlert}
-                    size="small"
-                    icon="fileTrayFull"
-                    loading={confirmationLoading}
-                    iconType="outline"
-                    onClick={() => getInsuranceConfirmation()}
-                  >
-                    {formatMessage(messages.healthInsuranceConfirmation)}
-                  </Button>
-                </Box>
-              </Box>
-            </GridColumn>
-          </GridRow>
-          <StackWithBottomDivider space={CONTENT_GAP_SM}>
-            <UserInfoLine
-              title={formatMessage(messages.statusOfRights)}
-              label={formatMessage(messages.healthInsuranceStart)}
-              content={
-                insurance.from
-                  ? formatMessage(formatDateFns(insurance.from, 'dd.MM.yyyy'))
-                  : ''
-              }
-            />
-            <UserInfoLine
-              label={formatMessage(messages.status)}
-              content={insurance.status?.display ?? undefined}
-            />
-          </StackWithBottomDivider>
-          <StackWithBottomDivider space={CONTENT_GAP_SM}>
-            <UserInfoLine
-              title={formatMessage(messages.paymentParticipation)}
-              label={formatMessage(messages.paymentTarget)}
-              editLink={{
-                title: formatMessage(messages.seeMore),
-                url: HealthPaths.HealthPaymentOverview,
-                external: true,
-                icon: 'link',
-              }}
-              content={amountFormat(insurance.maximumPayment ?? 0)}
-            />
-          </StackWithBottomDivider>
-          {insurance.ehicCardExpiryDate && (
-            <StackWithBottomDivider space={CONTENT_GAP_SM}>
-              <UserInfoLine
-                title={formatMessage(messages.ehic)}
-                label={formatMessage(messages.validityPeriod)}
-                content={
-                  <Box
-                    display="flex"
-                    justifyContent="center"
-                    alignItems="center"
-                    columnGap="p1"
-                  >
-                    <Text>
-                      {formatDate(insurance?.ehicCardExpiryDate, 'dd.MM.yyyy')}
-                    </Text>
-                    <Icon
-                      icon={isEhicValid ? 'checkmarkCircle' : 'closeCircle'}
-                      color={isEhicValid ? 'mint600' : 'red600'}
-                      type="filled"
-                    />
-                    <Text fontWeight="semiBold" variant="small">
-                      {formatMessage(isEhicValid ? m.valid : m.expired)}
-                    </Text>
-                  </Box>
-                }
-              />
-            </StackWithBottomDivider>
-          )}
-        </Stack>
-      )}
-    </IntroWrapper>
+        <InfoCardGrid
+          empty={{
+            title: 'Engir tímar',
+            description: 'Engar tímabókanir framundan.',
+          }}
+          cards={[]}
+          size="large"
+        />
+      </Box>
+      <Box>
+        <Text
+          variant="eyebrow"
+          color="foregroundBrandSecondary"
+          marginBottom={2}
+        >
+          {formatMessage(messages.myPregnancy)}
+        </Text>
+        <InfoCardGrid
+          empty={{
+            title: 'Engar upplýsingar um meðgöngu',
+            description: 'Engar upplýsingar um meðgöngu fundust.',
+          }}
+          cards={[
+            {
+              title: 'Meðgangan mín ',
+              description:
+                'Hér getur þú séð fundið allar upplýsingar sem tengjast meðgöngu þinni',
+              size: 'large',
+              to: HealthPaths.HealthOrganDonation,
+              detail: [
+                { label: 'Lengd meðgöngu', value: '19 vikur + 2 dagar' },
+                { label: 'Væntanlegur fæðingardagur.', value: '08.07.2025' },
+              ],
+              img: './assets/images/baby.svg',
+            },
+          ]}
+          size="large"
+        />
+      </Box>
+      <Box>
+        <Text
+          variant="eyebrow"
+          color="foregroundBrandSecondary"
+          marginBottom={2}
+        >
+          {formatMessage(messages.basicInformation)}
+        </Text>
+        <InfoCardGrid
+          cards={[
+            {
+              title: 'Heilsugæslan Kirkjusandi',
+              description: 'Heimilislæknir: Sigríður Gunnarsdóttir',
+              to: HealthPaths.HealthCenter,
+            },
+            {
+              title: formatMessage(messages.hasHealthInsurance),
+              description: `${formatMessage(messages.from)} ${formatDate(
+                insurance?.from,
+              )}`,
+              to: HealthPaths.HealthCenter, // TODO -> Hvert fer þessi síða
+              icon: {
+                color: isInsured ? 'mint600' : 'red400',
+                type: isInsured ? 'checkmarkCircle' : 'closeCircle',
+              },
+            },
+            {
+              title: formatMessage(messages.ehic),
+              description: `${formatMessage(
+                isInsuranceCardValid
+                  ? messages.medicineValidTo
+                  : messages.medicineIsExpiredCertificate,
+              )} ${formatDate(insurance?.ehicCardExpiryDate)}`,
+              to: HealthPaths.HealthCenter, // TODO -> Hvert fer þessi síða
+              icon: {
+                color: isInsuranceCardValid ? 'mint600' : 'red400',
+                type: isInsuranceCardValid ? 'checkmarkCircle' : 'closeCircle',
+              },
+            },
+            {
+              title: formatMessage(messages.organDonation),
+              description: donor?.isDonor
+                ? formatMessage(messages.youAreOrganDonor)
+                : donor?.limitations?.hasLimitations
+                ? formatMessage(messages.youAreOrganDonorWithExceptions)
+                : formatMessage(messages.youAreNotOrganDonor),
+
+              to: HealthPaths.HealthOrganDonation,
+            },
+            // TODO: Kemur inn þegar blóðflokka pull requestan er komin inn
+            // {
+            //   title: 'Blóðflokkur',
+            //   description: 'Þú ert í blóðflokki A+',
+            //   to: HealthPaths.HealthCenter,
+            // },
+            // TODO: Kemur inn þegar ofnæmisþjónustan er ready
+            // {
+            //   title: 'Ofnæmi',
+            //   description: 'Ekkert skráð ofnæmi',
+            //   to: HealthPaths.HealthCenter,
+            // },
+          ]}
+          empty={{
+            title: 'Engar grunnupplýsingar fundust',
+            description: 'Engar grunnupplýsingar fundust um þig.',
+          }}
+          variant="link"
+        />
+      </Box>
+    </>
   )
 }
 
