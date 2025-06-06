@@ -10,13 +10,14 @@ import {
 } from '@island.is/island-ui/core'
 
 import { ModalContainer } from '../Modal/Modal'
+import * as styles from './SearchModal.css'
 
 interface Props {
   onClose: () => void
 }
 
 const SearchResultButton = () => (
-  <button style={{ width: '100%' }}>
+  <button className={styles.resultButton}>
     <Box
       border="standard"
       padding={2}
