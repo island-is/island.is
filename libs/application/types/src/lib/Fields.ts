@@ -745,7 +745,14 @@ export type TableRepeaterField = BaseField & {
      * if not provided it will be auto generated from the fields
      */
     rows?: string[]
-    format?: Record<string, (value: string) => string | StaticText>
+    format?: Record<
+      string,
+      (
+        value: string,
+        index: number,
+        application?: Application,
+      ) => string | StaticText
+    >
   }
   initActiveFieldIfEmpty?: boolean
 }
