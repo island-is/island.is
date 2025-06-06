@@ -56,7 +56,7 @@ export interface ApplicationAnswers {
     paymentMethodAccountNumber?: string
     paymentMethodOtherTextField?: string
     indexConnected?: YesOrNoEnum
-    indexTypes?: string
+    indexRate?: string
   }
   rentalPeriod?: {
     startDate?: string
