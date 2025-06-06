@@ -1,4 +1,4 @@
-import React, { Suspense, useEffect, useMemo, useState } from 'react'
+import React, { Suspense, useMemo } from 'react'
 import cn from 'classnames'
 import { theme } from '@island.is/island-ui/theme'
 import iconMap from './iconMap'
