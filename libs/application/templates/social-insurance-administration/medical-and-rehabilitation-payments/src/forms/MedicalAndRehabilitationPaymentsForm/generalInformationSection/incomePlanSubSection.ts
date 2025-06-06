@@ -21,6 +21,10 @@ import {
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { Application } from '@island.is/application/types'
 import { formatCurrencyWithoutSuffix } from '@island.is/application/ui-components'
+import {
+  shouldShowEqualIncomePerMonth,
+  shouldShowIncomePlanMonths,
+} from '../../../utils/conditionUtils'
 import { getApplicationExternalData } from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 
 export const incomePlanSubSection = buildSubSection({
@@ -192,18 +196,8 @@ export const incomePlanSubSection = buildSubSection({
             watchValues: 'income',
           },
           suffix: '',
-          condition: (_, activeField) => {
-            const unevenAndEmploymentIncome =
-              activeField?.unevenIncomePerYear?.[0] !== YES ||
-              (activeField?.incomeCategory !== INCOME &&
-                activeField?.unevenIncomePerYear?.[0] === YES)
-
-            return (
-              activeField?.income === RatioType.MONTHLY &&
-              activeField?.currency !== ISK &&
-              unevenAndEmploymentIncome
-            )
-          },
+          condition: (_, activeField) =>
+            shouldShowEqualIncomePerMonth(true, activeField),
         },
         equalIncomePerMonth: {
           component: 'input',
@@ -234,18 +228,8 @@ export const incomePlanSubSection = buildSubSection({
             watchValues: 'income',
           },
           suffix: '',
-          condition: (_, activeField) => {
-            const unevenAndEmploymentIncome =
-              activeField?.unevenIncomePerYear?.[0] !== YES ||
-              (activeField?.incomeCategory !== INCOME &&
-                activeField?.unevenIncomePerYear?.[0] === YES)
-
-            return (
-              activeField?.income === RatioType.MONTHLY &&
-              activeField?.currency === ISK &&
-              unevenAndEmploymentIncome
-            )
-          },
+          condition: (_, activeField) =>
+            shouldShowEqualIncomePerMonth(false, activeField),
         },
         incomePerYear: {
           component: 'input',
@@ -376,13 +360,8 @@ export const incomePlanSubSection = buildSubSection({
           displayInTable: false,
           currency: true,
           suffix: '',
-          condition: (_, activeField) => {
-            return (
-              activeField?.income === RatioType.MONTHLY &&
-              activeField?.incomeCategory === INCOME &&
-              activeField?.unevenIncomePerYear?.[0] === YES
-            )
-          },
+          condition: (_, activeField) =>
+            shouldShowIncomePlanMonths(activeField),
         },
         february: {
           component: 'input',
@@ -393,13 +372,8 @@ export const incomePlanSubSection = buildSubSection({
           displayInTable: false,
           currency: true,
           suffix: '',
-          condition: (_, activeField) => {
-            return (
-              activeField?.income === RatioType.MONTHLY &&
-              activeField?.incomeCategory === INCOME &&
-              activeField?.unevenIncomePerYear?.[0] === YES
-            )
-          },
+          condition: (_, activeField) =>
+            shouldShowIncomePlanMonths(activeField),
         },
         march: {
           component: 'input',
@@ -410,13 +384,8 @@ export const incomePlanSubSection = buildSubSection({
           displayInTable: false,
           currency: true,
           suffix: '',
-          condition: (_, activeField) => {
-            return (
-              activeField?.income === RatioType.MONTHLY &&
-              activeField?.incomeCategory === INCOME &&
-              activeField?.unevenIncomePerYear?.[0] === YES
-            )
-          },
+          condition: (_, activeField) =>
+            shouldShowIncomePlanMonths(activeField),
         },
         april: {
           component: 'input',
@@ -427,13 +396,8 @@ export const incomePlanSubSection = buildSubSection({
           displayInTable: false,
           currency: true,
           suffix: '',
-          condition: (_, activeField) => {
-            return (
-              activeField?.income === RatioType.MONTHLY &&
-              activeField?.incomeCategory === INCOME &&
-              activeField?.unevenIncomePerYear?.[0] === YES
-            )
-          },
+          condition: (_, activeField) =>
+            shouldShowIncomePlanMonths(activeField),
         },
         may: {
           component: 'input',
@@ -444,13 +408,8 @@ export const incomePlanSubSection = buildSubSection({
           displayInTable: false,
           currency: true,
           suffix: '',
-          condition: (_, activeField) => {
-            return (
-              activeField?.income === RatioType.MONTHLY &&
-              activeField?.incomeCategory === INCOME &&
-              activeField?.unevenIncomePerYear?.[0] === YES
-            )
-          },
+          condition: (_, activeField) =>
+            shouldShowIncomePlanMonths(activeField),
         },
         june: {
           component: 'input',
@@ -461,13 +420,8 @@ export const incomePlanSubSection = buildSubSection({
           displayInTable: false,
           currency: true,
           suffix: '',
-          condition: (_, activeField) => {
-            return (
-              activeField?.income === RatioType.MONTHLY &&
-              activeField?.incomeCategory === INCOME &&
-              activeField?.unevenIncomePerYear?.[0] === YES
-            )
-          },
+          condition: (_, activeField) =>
+            shouldShowIncomePlanMonths(activeField),
         },
         july: {
           component: 'input',
@@ -478,13 +432,8 @@ export const incomePlanSubSection = buildSubSection({
           displayInTable: false,
           currency: true,
           suffix: '',
-          condition: (_, activeField) => {
-            return (
-              activeField?.income === RatioType.MONTHLY &&
-              activeField?.incomeCategory === INCOME &&
-              activeField?.unevenIncomePerYear?.[0] === YES
-            )
-          },
+          condition: (_, activeField) =>
+            shouldShowIncomePlanMonths(activeField),
         },
         august: {
           component: 'input',
@@ -495,13 +444,8 @@ export const incomePlanSubSection = buildSubSection({
           displayInTable: false,
           currency: true,
           suffix: '',
-          condition: (_, activeField) => {
-            return (
-              activeField?.income === RatioType.MONTHLY &&
-              activeField?.incomeCategory === INCOME &&
-              activeField?.unevenIncomePerYear?.[0] === YES
-            )
-          },
+          condition: (_, activeField) =>
+            shouldShowIncomePlanMonths(activeField),
         },
         september: {
           component: 'input',
@@ -512,13 +456,8 @@ export const incomePlanSubSection = buildSubSection({
           displayInTable: false,
           currency: true,
           suffix: '',
-          condition: (_, activeField) => {
-            return (
-              activeField?.income === RatioType.MONTHLY &&
-              activeField?.incomeCategory === INCOME &&
-              activeField?.unevenIncomePerYear?.[0] === YES
-            )
-          },
+          condition: (_, activeField) =>
+            shouldShowIncomePlanMonths(activeField),
         },
         october: {
           component: 'input',
@@ -529,13 +468,8 @@ export const incomePlanSubSection = buildSubSection({
           displayInTable: false,
           currency: true,
           suffix: '',
-          condition: (_, activeField) => {
-            return (
-              activeField?.income === RatioType.MONTHLY &&
-              activeField?.incomeCategory === INCOME &&
-              activeField?.unevenIncomePerYear?.[0] === YES
-            )
-          },
+          condition: (_, activeField) =>
+            shouldShowIncomePlanMonths(activeField),
         },
         november: {
           component: 'input',
@@ -546,13 +480,8 @@ export const incomePlanSubSection = buildSubSection({
           displayInTable: false,
           currency: true,
           suffix: '',
-          condition: (_, activeField) => {
-            return (
-              activeField?.income === RatioType.MONTHLY &&
-              activeField?.incomeCategory === INCOME &&
-              activeField?.unevenIncomePerYear?.[0] === YES
-            )
-          },
+          condition: (_, activeField) =>
+            shouldShowIncomePlanMonths(activeField),
         },
         december: {
           component: 'input',
@@ -563,13 +492,8 @@ export const incomePlanSubSection = buildSubSection({
           displayInTable: false,
           currency: true,
           suffix: '',
-          condition: (_, activeField) => {
-            return (
-              activeField?.income === RatioType.MONTHLY &&
-              activeField?.incomeCategory === INCOME &&
-              activeField?.unevenIncomePerYear?.[0] === YES
-            )
-          },
+          condition: (_, activeField) =>
+            shouldShowIncomePlanMonths(activeField),
         },
       },
       table: {
