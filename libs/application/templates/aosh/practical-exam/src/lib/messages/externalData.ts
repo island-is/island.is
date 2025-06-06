@@ -57,5 +57,16 @@ export const externalData = {
       defaultMessage: 'Villa í umsókn',
       description: 'Error fetching data from VER title',
     },
+    prereqTitle: {
+      id: 'aosh.pe.application:externalData.ver.prereqTitle',
+      defaultMessage: 'Upplýsingar frá Vinnueftirlitinu',
+      description: 'prerequisite title for AOSH',
+    },
+    prereqMessage: {
+      id: 'aosh.pe.application:externalData.ver.prereqMessage',
+      defaultMessage:
+        'Vinnueftirlitið flettir upp réttindum til að taka verkleg próf.',
+      description: 'prerequisite message for AOSH',
+    },
   }),
 }

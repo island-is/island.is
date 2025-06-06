@@ -2,6 +2,7 @@ import { Op } from 'sequelize'
 
 import {
   CaseIndictmentRulingDecision,
+  CaseState,
   EventType,
   indictmentCases,
   type User as TUser,
@@ -19,6 +20,7 @@ const publicProsecutorIndictmentSharedWhereOptions = (user: TUser) => ({
     CaseIndictmentRulingDecision.FINE,
     CaseIndictmentRulingDecision.RULING,
   ],
+  state: [CaseState.COMPLETED],
   [Op.and]: [
     buildEventLogExistsCondition(
       EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,

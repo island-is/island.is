@@ -55,6 +55,7 @@ export const examineeSection = buildSection({
               label: examinee.labels.licenceNumber,
               width: 'half',
               displayInTable: false,
+              format: '#########################',
             },
             countryIssuer: {
               component: 'select',
