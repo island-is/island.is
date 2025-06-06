@@ -9,6 +9,7 @@ import {
 import { TemplateApiError } from '@island.is/nest/problem'
 import { errorMessages } from '@island.is/application/templates/signature-collection/presidential-list-signing'
 import { ProviderErrorReason } from '@island.is/shared/problem'
+import { getCollectionTypeFromApplicationType } from '../shared/utils'
 
 @Injectable()
 export class SignatureListSigningService extends BaseTemplateApiService {
@@ -17,14 +18,17 @@ export class SignatureListSigningService extends BaseTemplateApiService {
   ) {
     super(ApplicationTypes.PRESIDENTIAL_LIST_SIGNING)
   }
-
+  private collectionType = getCollectionTypeFromApplicationType(
+    ApplicationTypes.PRESIDENTIAL_LIST_SIGNING,
+  )
   async signList({ auth, application }: TemplateApiModuleActionProps) {
     const listId = application.answers.listId
       ? (application.answers.listId as string)
-      : (application.externalData.getList.data as any)[0].id
+      : (application.externalData.getList.data as Array<{ id: string }>)[0].id
 
     const signature = await this.signatureCollectionClientService.signList(
       listId,
+      this.collectionType,
       auth,
     )
     if (signature) {
@@ -35,7 +39,10 @@ export class SignatureListSigningService extends BaseTemplateApiService {
   }
 
   async canSign({ auth }: TemplateApiModuleActionProps) {
-    const signee = await this.signatureCollectionClientService.getSignee(auth)
+    const signee = await this.signatureCollectionClientService.getSignee(
+      auth,
+      this.collectionType,
+    )
     const { canSign, canSignInfo } = signee
 
     if (canSign) {
@@ -69,7 +76,9 @@ export class SignatureListSigningService extends BaseTemplateApiService {
   async getList({ auth, application }: TemplateApiModuleActionProps) {
     // Returns the list user is trying to sign, in the apporiate area
     const areaId = (
-      application.externalData.canSign.data as { area: { id: string } }
+      application.externalData.canSign.data as {
+        area: { id: string }
+      }
     ).area?.id
 
     if (!areaId) {

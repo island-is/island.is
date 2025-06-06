@@ -24,7 +24,10 @@ import {
   PdfButton,
   RenderFiles,
 } from '@island.is/judicial-system-web/src/components'
-import { useSentToPrisonAdminDate } from '@island.is/judicial-system-web/src/components/IndictmentCaseFilesList/IndictmentCaseFilesList'
+import {
+  getIdAndTitleForPdfButtonForRulingSentToPrisonPdf,
+  useSentToPrisonAdminDate,
+} from '@island.is/judicial-system-web/src/components/IndictmentCaseFilesList/IndictmentCaseFilesList'
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
@@ -43,7 +46,7 @@ const IndictmentOverview = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
-  const { updateCase } = useCase()
+  const { updateCase, isUpdatingCase } = useCase()
 
   const { formatMessage } = useIntl()
   const { limitedAccessUpdateDefendant, updateDefendantState } = useDefendants()
@@ -76,11 +79,15 @@ const IndictmentOverview = () => {
   )
 
   const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
-  const isCompletedWithRuling =
-    workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+
+  const { pdfTitle, pdfElementId, isCompletedWithRulingOrFine } =
+    getIdAndTitleForPdfButtonForRulingSentToPrisonPdf(
+      workingCase.indictmentRulingDecision ?? undefined,
+      sentToPrisonAdminDate,
+    )
 
   const displaySentToPrisonAdminFiles =
-    (isCompletedWithRuling && sentToPrisonAdminDate) ||
+    (isCompletedWithRulingOrFine && sentToPrisonAdminDate) ||
     isNonEmptyArray(sentToPrisonAdminFiles)
 
   const hasPunishmentType = (punishmentType: PunishmentType) =>
@@ -101,11 +108,13 @@ const IndictmentOverview = () => {
       toast.error('Tókst ekki að skrá í fangelsiskerfi')
       return
     }
-    toast.info(
+
+    toast.success(
       !updatedCase.isRegisteredInPrisonSystem
-        ? formatMessage(strings.verdictDeRegisteredInfo)
-        : formatMessage(strings.verdictRegistered),
+        ? 'Dómur afskráður'
+        : 'Dómur skráður',
     )
+
     setWorkingCase((prevWorkingCase) => ({
       ...prevWorkingCase,
       isRegisteredInPrisonSystem: updatedCase.isRegisteredInPrisonSystem,
@@ -118,12 +127,12 @@ const IndictmentOverview = () => {
     icon: IconMapIcon
   } = !workingCase?.isRegisteredInPrisonSystem
     ? {
-        title: formatMessage(strings.verdictRegistered),
+        title: 'Dómur skráður',
         colorScheme: 'default',
         icon: 'checkmark',
       }
     : {
-        title: formatMessage(strings.verdictDeregister),
+        title: 'Afskrá dóm',
         colorScheme: 'destructive',
         icon: 'close',
       }
@@ -208,14 +217,13 @@ const IndictmentOverview = () => {
                 caseFiles={sentToPrisonAdminFiles}
               />
             )}
-            {isCompletedWithRuling && sentToPrisonAdminDate && (
+
+            {isCompletedWithRulingOrFine && sentToPrisonAdminDate && (
               <PdfButton
                 caseId={workingCase.id}
-                title={`Dómur til fullnustu ${formatDate(
-                  sentToPrisonAdminDate,
-                )}.pdf`}
+                title={pdfTitle}
                 pdfType="rulingSentToPrisonAdmin"
-                elementId={'Dómur til fullnustu'}
+                elementId={pdfElementId}
                 renderAs="row"
               />
             )}
@@ -320,6 +328,7 @@ const IndictmentOverview = () => {
           onNextButtonClick={savePunishmentType}
           nextButtonColorScheme={footerNextButtonText.colorScheme}
           nextButtonIcon={footerNextButtonText.icon}
+          nextIsLoading={isUpdatingCase}
         />
       </FormContentContainer>
     </PageLayout>

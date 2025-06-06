@@ -15,6 +15,6 @@ export const FriggClientConfig = defineConfig<z.infer<typeof schema>>({
       'XROAD_MMS_FRIGG_PATH',
       'IS-DEV/GOV/10066/MMS-Protected/frigg-form-api',
     ),
-    scope: [MMSScope.frigg],
+    scope: [MMSScope.nemendagrunnur],
   }),
 })

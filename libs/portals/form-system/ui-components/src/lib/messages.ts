@@ -79,7 +79,7 @@ export const m = defineMessages({
   },
   slug: {
     id: 'portals-admin.form-system:slug',
-    defaultMessage: 'slug (tæma og reFocus til að uppfæra)',
+    defaultMessage: 'slug',
   },
   daysUntilExpiration: {
     id: 'portals-admin.form-system:days-until-expiration',
@@ -513,6 +513,10 @@ export const m = defineMessages({
   totalAmount: {
     id: 'portals-admin-form-system:total-amount',
     defaultMessage: 'Heildarupphæð',
+  },
+  submitted: {
+    id: 'portals-admin-form-system:submitted',
+    defaultMessage: 'Innsend',
   },
   // Error messages
   invalidEmail: {

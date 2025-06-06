@@ -1,8 +1,10 @@
 import { EmailTemplateGenerator } from '../../../../types'
+import { logger } from '@island.is/logging'
 
 export const generateSyslumennNotifyErrorEmail: EmailTemplateGenerator = (
   props,
 ) => {
+  logger.info('AfgreidaSakavottord Generating error email')
   const {
     application,
     options: { email },

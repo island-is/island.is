@@ -1942,6 +1942,14 @@ export const m = defineMessages({
     id: 'service.portal:sort-by',
     defaultMessage: 'Raða eftir',
   },
+  expand: {
+    id: 'service.portal:expand',
+    defaultMessage: 'Útvíkka',
+  },
+  collapse: {
+    id: 'service.portal:collapse',
+    defaultMessage: 'Fella saman',
+  },
 })
 
 export const searchTagsMessages = defineMessages({
@@ -2044,6 +2052,14 @@ export const searchTagsMessages = defineMessages({
   healthShorter: {
     id: 'sp.search.tags:health-shorter',
     defaultMessage: 'Sjúkra',
+  },
+  healthReferrals: {
+    id: 'sp.search.tags:health-referrals',
+    defaultMessage: 'Vísanir',
+  },
+  healthWaiting: {
+    id: 'sp.search.tags:health-waitlist',
+    defaultMessage: 'Bíða',
   },
   licensesAlternative: {
     id: 'sp.search.tags:licenses-alternative',

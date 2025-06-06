@@ -28,7 +28,7 @@ import type { Auth, User } from '@island.is/auth-nest-tools'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { basicVehicleInformationMapper } from '../utils/basicVehicleInformationMapper'
-import { VehiclesDetail, VehiclesExcel } from '../models/getVehicleDetail.model'
+import { VehiclesDetail } from '../models/getVehicleDetail.model'
 import {
   GetVehiclesForUserInput,
   GetVehiclesListV2Input,
@@ -175,20 +175,6 @@ export class VehiclesService {
       showDeregistered: showDeregistered,
       showHistory: showHistory,
     })
-  }
-
-  async getExcelVehiclesForUser(auth: User): Promise<VehiclesExcel> {
-    const res = await this.getVehiclesWithAuth(auth).ownershipReportDataGet({
-      ssn: auth.nationalId,
-    })
-
-    return {
-      persidno: res.persidno ?? undefined,
-      name: res.name ?? undefined,
-      vehicles: res.vehicles?.map((item) =>
-        basicVehicleInformationMapper(item),
-      ),
-    }
   }
 
   async getPublicVehicleSearch(search: string) {

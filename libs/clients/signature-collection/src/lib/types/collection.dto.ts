@@ -42,6 +42,11 @@ const collectionTypeTable = {
   9: CollectionType.ResidentPoll,
 }
 
+// Typeguard
+export const isCollectionType = (value: unknown): value is CollectionType => {
+  return Object.values(CollectionType).includes(value as CollectionType)
+}
+
 export const getCollectionTypeFromNumber = (number: number): CollectionType => {
   const index = number as keyof typeof collectionTypeTable
   if (collectionTypeTable?.[index]) {
