@@ -55,9 +55,13 @@ export class SignatureCollectionAdminClientService {
     return api.withMiddleware(new AuthMiddleware(auth)) as T
   }
 
-  async currentCollection(auth: Auth): Promise<Collection[]> {
+  async currentCollection(
+    auth: Auth,
+    collectionTypeFilter?: CollectionType,
+  ): Promise<Collection[]> {
     return await this.sharedService.currentCollection(
       this.getApiWithAuth(this.electionsApi, auth),
+      collectionTypeFilter,
     )
   }
 
@@ -137,8 +141,10 @@ export class SignatureCollectionAdminClientService {
     { collectionId, owner, areas, collectionType }: CreateListInput,
     auth: Auth,
   ): Promise<Slug> {
-    const { id, areas: collectionAreas } =
-      await this.getLatestCollectionForType(auth, collectionType)
+    const {
+      id,
+      areas: collectionAreas,
+    } = await this.getLatestCollectionForType(auth, collectionType)
     // check if collectionId is current collection and current collection is open
     if (collectionId !== id) {
       throw new Error('Collection id input wrong')
@@ -234,14 +240,16 @@ export class SignatureCollectionAdminClientService {
         ? user.medmaelalistar?.map((list) => mapListBase(list))
         : []
 
-    const { success: canCreate, reasons: canCreateInfo } =
-      this.sharedService.canCreate({
-        requirementsMet: user.maFrambod,
-        canCreateInfo: user.maFrambodInfo,
-        ownedLists,
-        collectionType,
-        areas,
-      })
+    const {
+      success: canCreate,
+      reasons: canCreateInfo,
+    } = this.sharedService.canCreate({
+      requirementsMet: user.maFrambod,
+      canCreateInfo: user.maFrambodInfo,
+      ownedLists,
+      collectionType,
+      areas,
+    })
 
     return {
       nationalId: user.kennitala ?? '',
