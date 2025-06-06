@@ -12,7 +12,8 @@ describe('InternalSubpoenaController - Deliver subpoena revoked to police guards
   beforeEach(() => {
     guards = Reflect.getMetadata(
       '__guards__',
-      InternalSubpoenaController.prototype.deliverSubpoenaRevocationToPolice,
+      InternalSubpoenaController.prototype
+        .deliverSubpoenaRevocationToNationalCommissionersOffice,
     )
   })
 
