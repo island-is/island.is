@@ -80,7 +80,10 @@ async function main() {
     )
   }
 
-  const skipCodegen = args.includes('--skip-codegen')
+  // If we're skipping codegen, we don't need the filename, hence, we also
+  // need to search in the "filename" for flags to allow e.g.
+  // `node ./generate-files.mjs --skip-codegen`
+  const skipCodegen = [outputFileName, ...args].includes('--skip-codegen')
 
   if (skipCodegen) {
     console.log('Skipping codegen command...')
@@ -116,23 +119,30 @@ async function main() {
 
   await fs.writeFile('generated_files_list.txt', existingFiles.join('\n'))
 
-  console.log(`\nCreating archive: ${outputFileName}...`)
-  execSync(`tar zcvf "${outputFileName}" -T generated_files_list.txt`, {
-    stdio: 'inherit',
-  })
+  if (!skipCodegen) {
+    console.log(`\nCreating archive: ${outputFileName}...`)
+    execSync(`tar zcvf "${outputFileName}" -T generated_files_list.txt`, {
+      stdio: 'inherit',
+    })
 
-  const stats = await fs.stat(outputFileName)
-  const fileSizeInMegabytes = stats.size / (1024 * 1024)
+    const stats = await fs.stat(outputFileName)
+    const fileSizeInMegabytes = stats.size / (1024 * 1024)
 
-  const cacheKey = `codegen-${execSync('git rev-parse HEAD').toString().trim()}`
+    const cacheKey = `codegen-${execSync('git rev-parse HEAD')
+      .toString()
+      .trim()}`
 
-  console.log(`\nCache key: ${cacheKey}`)
-  console.log(`Archive created: ${outputFileName}`)
-  console.log(`Archive size: ${fileSizeInMegabytes.toFixed(2)} MB`)
+    console.log(`\nCache key: ${cacheKey}`)
+    console.log(`Archive created: ${outputFileName}`)
+    console.log(`Archive size: ${fileSizeInMegabytes.toFixed(2)} MB`)
+  }
 
   if (missingFiles.length > 0) {
+    // GitHub log group
+    console.log('::group::Missing files')
     console.log('\nMissing files or patterns:')
     missingFiles.forEach((file) => console.log(file))
+    console.log('::endgroup::')
   }
 }
 
