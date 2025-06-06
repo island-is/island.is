@@ -1,10 +1,14 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
 import { SystemMetadata } from '@island.is/shared/types'
 import { CacheField } from '@island.is/nest/graphql'
-import { IIntroLinkImage } from '../generated/contentfulTypes'
+import {
+  IIntroLinkImage,
+  IOrganizationSubpage,
+} from '../generated/contentfulTypes'
 import { mapReferenceLink, ReferenceLink } from './referenceLink.model'
 import { Html, mapHtml } from './html.model'
 import { Image, mapImage } from './image.model'
+import { generateOrganizationSubpageUrl } from './utils'
 
 @ObjectType()
 export class IntroLinkImage {
@@ -32,6 +36,9 @@ export class IntroLinkImage {
   @CacheField(() => ReferenceLink, { nullable: true })
   link?: ReferenceLink | null
 
+  @Field(() => String, { nullable: true })
+  linkHref?: string
+
   @Field(() => Boolean)
   openLinkInNewTab?: boolean
 }
@@ -53,5 +60,9 @@ export const mapIntroLinkImage = ({
     linkTitle: fields.linkTitle ?? '',
     link: fields.link ? mapReferenceLink(fields.link) : null,
     openLinkInNewTab: fields.openLinkInNewTab ?? true,
+    linkHref:
+      fields.link?.sys.contentType.sys.id === 'organizationSubpage'
+        ? generateOrganizationSubpageUrl(fields.link as IOrganizationSubpage)
+        : '',
   }
 }
