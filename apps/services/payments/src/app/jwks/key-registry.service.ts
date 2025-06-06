@@ -1,9 +1,11 @@
-import { Injectable, OnModuleInit } from '@nestjs/common'
+import { Inject, Injectable, OnModuleInit } from '@nestjs/common'
 import { createPublicKey } from 'crypto'
 import { exportJWK } from 'jose'
 
 import { environment } from '../../environments'
 import { JwkDto } from './dtos/serveJwks.response'
+import { ConfigType } from '@nestjs/config'
+import { JwtConfig } from './jwks.config'
 
 interface JwkEntry {
   kid: string
@@ -15,6 +17,11 @@ interface JwkEntry {
 export class KeyRegistryService implements OnModuleInit {
   private jwkEntries: JwkEntry[] = []
 
+  constructor(
+    @Inject(JwtConfig.KEY)
+    private readonly config: ConfigType<typeof JwtConfig>,
+  ) {}
+
   async onModuleInit() {
     await this.initialize()
   }
@@ -24,23 +31,20 @@ export class KeyRegistryService implements OnModuleInit {
 
     // Add current key without expiration
     await this.addKeyToRegistry({
-      kid: environment.jwtSigning.keyId,
-      pem: environment.jwtSigning.publicKey,
+      kid: this.config.keyId,
+      pem: this.config.publicKey,
     })
 
     // Add previous key with expiration if it exists
-    if (
-      environment.jwtSigning.previousPublicKeyId &&
-      environment.jwtSigning.previousPublicKey
-    ) {
+    if (this.config.previousPublicKeyId && this.config.previousPublicKey) {
       try {
         const expiresAt = new Date(
-          Date.now() + environment.jwtSigning.expiresInMinutes * 60 * 1000,
+          Date.now() + this.config.expiresInMinutes * 60 * 1000,
         )
 
         await this.addKeyToRegistry({
-          kid: environment.jwtSigning.previousPublicKeyId,
-          pem: environment.jwtSigning.previousPublicKey,
+          kid: this.config.previousPublicKeyId,
+          pem: this.config.previousPublicKey,
           expiresAt,
         })
       } catch (err) {

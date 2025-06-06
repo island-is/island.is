@@ -12,6 +12,9 @@ import { PaymentFlowEvent } from './models/paymentFlowEvent.model'
 import { PaymentFlowFjsChargeConfirmation } from './models/paymentFlowFjsChargeConfirmation.model'
 import { PaymentFlowPaymentConfirmation } from './models/paymentFlowPaymentConfirmation.model'
 import { JwksModule } from '../jwks/jwks.module'
+import { ConfigModule } from '@nestjs/config'
+import { PaymentFlowModuleConfig } from './paymentFlow.config'
+import { JwtConfig } from '../jwks/jwks.config'
 
 @Module({
   imports: [
@@ -22,6 +25,9 @@ import { JwksModule } from '../jwks/jwks.module'
       PaymentFlowFjsChargeConfirmation,
       PaymentFlowPaymentConfirmation,
     ]),
+    ConfigModule.forRoot({
+      load: [PaymentFlowModuleConfig, JwtConfig],
+    }),
     FeatureFlagModule,
     ChargeFjsV2ClientModule,
     NationalRegistryV3ClientModule,

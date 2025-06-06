@@ -20,6 +20,8 @@ import { CardPaymentModuleConfig } from './cardPayment.config'
 import { CardPaymentCacheModule } from './cardPayment.cache'
 import { PaymentFlowPaymentConfirmation } from '../paymentFlow/models/paymentFlowPaymentConfirmation.model'
 import { JwksModule } from '../jwks/jwks.module'
+import { JwtConfig } from '../jwks/jwks.config'
+import { PaymentFlowModuleConfig } from '../paymentFlow/paymentFlow.config'
 
 @Module({
   imports: [
@@ -32,7 +34,7 @@ import { JwksModule } from '../jwks/jwks.module'
     ]),
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [CardPaymentModuleConfig],
+      load: [CardPaymentModuleConfig, PaymentFlowModuleConfig, JwtConfig],
     }),
     FeatureFlagModule,
     ChargeFjsV2ClientModule,

@@ -2,15 +2,65 @@ import { TestApp, testServer } from '@island.is/testing/nest'
 import { generateKeyPairSync } from 'crypto'
 import { KeyRegistryService } from './key-registry.service'
 import { JwksModule } from './jwks.module'
-import { environment } from '../../../src/environments'
+import { JwtConfigType } from './jwks.config'
+
+const toBase64 = (str: string) => Buffer.from(str).toString('base64')
+
+const jwtConfigKeyToProcessEnvKey = (key: keyof JwtConfigType) => {
+  switch (key) {
+    case 'expiresInMinutes':
+      return 'PAYMENTS_JWT_SIGNING_EXPIRES_IN_MINUTES'
+    case 'issuer':
+      return 'PAYMENTS_JWT_SIGNING_ISSUER'
+    case 'keyId':
+      return 'PAYMENTS_JWT_SIGNING_KEY_ID'
+    case 'privateKey':
+      return 'PAYMENTS_JWT_SIGNING_PRIVATE_KEY'
+    case 'publicKey':
+      return 'PAYMENTS_JWT_SIGNING_PUBLIC_KEY'
+    case 'previousPublicKeyId':
+      return 'PAYMENTS_PREVIOUS_KEY_ID'
+    case 'previousPublicKey':
+      return 'PAYMENTS_PREVIOUS_PUBLIC_KEY'
+    default:
+      throw new Error(`Unknown JWT config key: ${key}`)
+  }
+}
+
+const setJwtEnvironmentVariables = (state: Partial<JwtConfigType>) => {
+  for (const key in state) {
+    const processEnvKey = jwtConfigKeyToProcessEnvKey(
+      key as keyof JwtConfigType,
+    )
+    process.env[processEnvKey] =
+      state[key as keyof JwtConfigType]?.toString() ?? ''
+  }
+}
 
 describe('KeyRegistryService', () => {
   let app: TestApp
   let service: KeyRegistryService
   let currentKeyPair: { privateKey: string; publicKey: string }
   let previousKeyPair: { privateKey: string; publicKey: string }
+  let originalEnv: NodeJS.ProcessEnv
+  let currentState: JwtConfigType
+
+  const setup = async (state: Partial<JwtConfigType>) => {
+    setJwtEnvironmentVariables(state)
+
+    app = await testServer({
+      appModule: JwksModule,
+    })
+
+    service = app.get<KeyRegistryService>(KeyRegistryService)
+
+    await service.initialize()
+  }
 
   beforeAll(async () => {
+    // Store original env
+    originalEnv = { ...process.env }
+
     // Generate current key pair
     const currentKeys = generateKeyPairSync('rsa', {
       modulusLength: 2048,
@@ -46,39 +96,25 @@ describe('KeyRegistryService', () => {
       privateKey: previousKeys.privateKey,
       publicKey: previousKeys.publicKey,
     }
-
-    app = await testServer({
-      appModule: JwksModule,
-    })
-
-    service = app.get<KeyRegistryService>(KeyRegistryService)
-  })
-
-  let envBefore: string
-
-  beforeEach(() => {
-    envBefore = JSON.stringify(environment.jwtSigning)
   })
 
   afterEach(() => {
-    environment.jwtSigning = JSON.parse(envBefore)
-  })
-
-  afterAll(() => {
     app?.cleanUp()
+    jest.resetAllMocks()
+    // Restore original environment
+    process.env = originalEnv
   })
 
   describe('getJwks', () => {
     it('should return single JWK when only current key is configured', async () => {
-      environment.jwtSigning.issuer = 'test-issuer'
-      environment.jwtSigning.keyId = 'current-key'
-      environment.jwtSigning.privateKey = currentKeyPair.privateKey
-      environment.jwtSigning.publicKey = currentKeyPair.publicKey
-      environment.jwtSigning.expiresInMinutes = 5
-      environment.jwtSigning.previousPublicKeyId = undefined
-      environment.jwtSigning.previousPublicKey = undefined
+      currentState = {
+        ...currentState,
+        keyId: 'current-key',
+        previousPublicKeyId: undefined,
+        previousPublicKey: undefined,
+      }
 
-      await service.initialize()
+      await setup(currentState)
 
       const result = await service.getJwks()
 
@@ -93,15 +129,17 @@ describe('KeyRegistryService', () => {
     })
 
     it('should return two JWKs when both current and previous keys are configured', async () => {
-      environment.jwtSigning.issuer = 'test-issuer'
-      environment.jwtSigning.keyId = 'current-key'
-      environment.jwtSigning.privateKey = currentKeyPair.privateKey
-      environment.jwtSigning.publicKey = currentKeyPair.publicKey
-      environment.jwtSigning.expiresInMinutes = 5
-      environment.jwtSigning.previousPublicKeyId = 'previous-key'
-      environment.jwtSigning.previousPublicKey = previousKeyPair.publicKey
+      currentState = {
+        issuer: 'test-issuer',
+        keyId: 'current-key',
+        privateKey: toBase64(currentKeyPair.privateKey),
+        publicKey: toBase64(currentKeyPair.publicKey),
+        expiresInMinutes: 5,
+        previousPublicKeyId: 'previous-key',
+        previousPublicKey: toBase64(previousKeyPair.publicKey),
+      }
 
-      await service.initialize()
+      await setup(currentState)
 
       const result = await service.getJwks()
 

@@ -1,5 +1,6 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { ConfigType } from '@nestjs/config'
 import { isCompany, isValid } from 'kennitala'
 import { v4 as uuid } from 'uuid'
 
@@ -43,8 +44,10 @@ import { ChargeResponse } from '../cardPayment/cardPayment.types'
 import { PaymentTrackingData } from '../../types/cardPayment'
 import { onlyReturnKnownErrorCode } from '../../utils/paymentErrors'
 import { generateWebhookJwt } from '../../utils/webhookAuth.utils'
-import { JwtConfigService } from '../jwks/jwt-config.service'
+import { JwksConfigService } from '../jwks/jwks-config.service'
 import { ChargeItem } from '../../utils/chargeUtils'
+import { PaymentFlowModuleConfig } from './paymentFlow.config'
+import { JwtConfig } from '../jwks/jwks.config'
 
 interface PaymentFlowUpdateConfig {
   /**
@@ -77,7 +80,13 @@ export class PaymentFlowService {
     private chargeFjsV2ClientService: ChargeFjsV2ClientService,
     private nationalRegistryV3: NationalRegistryV3ClientService,
     private companyRegistryApi: CompanyRegistryClientService,
-    private jwtConfigService: JwtConfigService,
+    private jwtConfigService: JwksConfigService,
+    @Inject(PaymentFlowModuleConfig.KEY)
+    private readonly paymentFlowConfig: ConfigType<
+      typeof PaymentFlowModuleConfig
+    >,
+    @Inject(JwtConfig.KEY)
+    private readonly jwtConfig: ConfigType<typeof JwtConfig>,
   ) {}
 
   async createPaymentUrl(
@@ -130,8 +139,8 @@ export class PaymentFlowService {
 
       return {
         urls: {
-          is: `${environment.paymentsWeb.origin}/is/${paymentFlow.id}`,
-          en: `${environment.paymentsWeb.origin}/en/${paymentFlow.id}`,
+          is: `${this.paymentFlowConfig.webOrigin}/is/${paymentFlow.id}`,
+          en: `${this.paymentFlowConfig.webOrigin}/en/${paymentFlow.id}`,
         },
       }
     } catch (e) {
@@ -407,7 +416,7 @@ export class PaymentFlowService {
         { type: update.type },
         updateBody,
         {
-          ...environment.jwtSigning,
+          ...this.jwtConfig,
           privateKey: this.jwtConfigService.getPrivateKey(),
         },
       )
