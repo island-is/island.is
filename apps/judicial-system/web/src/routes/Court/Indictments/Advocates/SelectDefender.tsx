@@ -6,7 +6,6 @@ import { capitalize } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
-  DefenderNotFound,
   FormContext,
   InputAdvocate,
   Modal,
@@ -34,7 +33,6 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
 
   const [displayModal, setDisplayModal] = useState<boolean>(false)
 
-  const [defenderNotFound, setDefenderNotFound] = useState<boolean>(false)
   const gender = defendant.gender || 'NONE'
 
   const handleUpdateDefendantState = (update: UpdateDefendant) => {
@@ -122,9 +120,6 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
 
   return (
     <Box component="section" marginBottom={5}>
-      {defenderNotFound && !workingCase.defendantWaivesRightToCounsel && (
-        <DefenderNotFound />
-      )}
       <BlueBox>
         <Box marginBottom={2}>
           <Text variant="h4">
@@ -173,7 +168,6 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
               defenderPhoneNumber,
             })
           }
-          onAdvocateNotFound={setDefenderNotFound}
           onEmailChange={(defenderEmail: string | null) =>
             handleUpdateDefendantState({
               defendantId: defendant.id,
