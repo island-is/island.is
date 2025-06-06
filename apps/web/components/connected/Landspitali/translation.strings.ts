@@ -104,6 +104,11 @@ export const m = {
       defaultMessage: 'kr.',
       description: 'gjaldmiðill',
     },
+    amountISKExtra: {
+      id: 'web.landspitali.memorialCard:info.amountISKExtra',
+      defaultMessage: '500 króna kostnaður bætist við',
+      description: 'Texti fyrir auka kostnað',
+    },
     continue: {
       id: 'web.landspitali.memorialCard:info.continue',
       defaultMessage: 'Áfram',

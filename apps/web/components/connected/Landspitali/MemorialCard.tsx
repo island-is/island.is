@@ -380,6 +380,8 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
               error={errors.senderPlace?.message}
               rules={requiredRule}
             />
+          </Stack>
+          <Box>
             <Text>
               {formatMessage(m.info.amountISKPrefix)}{' '}
               {selectedAmount === 'other'
@@ -389,8 +391,8 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
                 : selectedAmount || 0}{' '}
               {formatMessage(m.info.amountISKCurrency)}
             </Text>
-          </Stack>
-
+            <Text>{formatMessage(m.info.amountISKExtra)}</Text>
+          </Box>
           <Box display="flex" justifyContent="flexEnd" marginTop={5}>
             <Button type="submit" icon="arrowForward">
               {formatMessage(m.info.continue)}
