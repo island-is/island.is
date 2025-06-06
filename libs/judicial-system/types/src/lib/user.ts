@@ -77,7 +77,9 @@ export const isProsecutorUser = (user?: InstitutionUser): boolean => {
   )
 }
 
-export const isProsecutorRepresentativeUser = (user?: InstitutionUser): boolean => {
+export const isProsecutorRepresentativeUser = (
+  user?: InstitutionUser,
+): boolean => {
   return Boolean(
     user?.role &&
       user.role === UserRole.PROSECUTOR_REPRESENTATIVE &&

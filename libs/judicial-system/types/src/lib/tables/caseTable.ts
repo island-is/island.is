@@ -4,8 +4,8 @@ import {
   isDistrictCourtUser,
   isPrisonAdminUser,
   isPrisonStaffUser,
+  isProsecutionUser,
   isPublicProsecutionOfficeUser,
-  isPublicProsecutionUser,
 } from '../user'
 import { CaseTableColumnKey } from './caseTableColumnTypes'
 import {
