@@ -1,20 +1,23 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { DataStatus } from '../types/dataStatus.enum'
 
-@ObjectType()
-export class Email {
+@ObjectType('ActorProfileEmail')
+export class ActorProfileEmail {
   @Field(() => String)
-  id!: string
+  emailsId!: string
 
   @Field(() => String, { nullable: true })
   email!: string | null
 
-  @Field(() => Boolean)
-  primary!: boolean
-
   @Field(() => DataStatus)
   emailStatus!: DataStatus
 
+  @Field(() => Boolean, { nullable: true })
+  needsNudge!: boolean | null
+
+  @Field(() => String)
+  nationalId!: string
+
   @Field(() => Boolean)
-  isConnectedToActorProfile!: boolean
+  emailNotifications!: boolean
 }

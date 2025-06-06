@@ -36,6 +36,12 @@ export class UpdateActorProfileEmailDto {
 
 export class ActorProfileEmailDto {
   @ApiProperty({
+    description: 'ID of the email to set on the actor profile',
+    example: 'f47ac10b-58cc-4372-a567-0e02b2c3d479',
+  })
+  emailsId!: string
+
+  @ApiProperty({
     description: 'Email associated with the actor profile',
     example: 'john@example.com',
   })

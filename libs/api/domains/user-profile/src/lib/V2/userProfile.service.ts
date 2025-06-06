@@ -15,7 +15,7 @@ import { ActorProfile, ActorProfileResponse } from '../dto/actorProfile'
 import { CreateEmailVerificationInput } from '../dto/createEmalVerificationInput'
 import { CreateSmsVerificationInput } from '../dto/createSmsVerificationInput'
 import { DeleteIslykillValueInput } from '../dto/deleteIslykillValueInput'
-import { UpdateActorProfileInput } from '../dto/updateActorProfileInput'
+import { UserProfileUpdateActorProfileInput } from '../dto/userProfileUpdateActorProfile.input'
 import { UpdateUserProfileInput } from '../dto/updateUserProfileInput'
 import { IslykillService } from '../islykill.service'
 import { DeleteIslykillSettings } from '../models/deleteIslykillSettings.model'
@@ -23,6 +23,7 @@ import { UserProfile } from '../userProfile.model'
 import { ActorProfileDetails } from '../dto/actorProfileDetails'
 import { SetActorProfileEmailInput } from '../dto/setActorProfileEmail.input'
 import { UserProfileSetActorProfileEmailInput } from '../dto/userProfileSetActorProfileEmail.input'
+import { UpdateActorProfileEmailInput } from '../dto/updateActorProfileEmail.input'
 
 @Injectable()
 export class UserProfileServiceV2 {
@@ -132,7 +133,7 @@ export class UserProfileServiceV2 {
   }
 
   async updateActorProfile(
-    input: UpdateActorProfileInput,
+    input: UserProfileUpdateActorProfileInput,
     user: User,
   ): Promise<ActorProfile> {
     return this.v2ActorApiWithAuth(
@@ -140,6 +141,30 @@ export class UserProfileServiceV2 {
     ).actorUserProfileControllerCreateOrUpdateActorProfile({
       xParamFromNationalId: input.fromNationalId,
       patchActorProfileDto: { emailNotifications: input.emailNotifications },
+    })
+  }
+
+  async updateActorProfileEmail(
+    input: UpdateActorProfileEmailInput,
+    user: User,
+  ) {
+    return this.v2ActorApiWithAuth(
+      user,
+    ).actorUserProfileControllerUpdateActorProfileEmail({
+      updateActorProfileEmailDto: input,
+    })
+  }
+
+  async updateActorProfileEmailWithoutActor(
+    input: UpdateActorProfileEmailInput,
+    fromNationalId: string,
+    user: User,
+  ) {
+    return this.v2MeUserProfileApiWithAuth(
+      user,
+    ).meUserProfileControllerUpdateActorProfileEmail({
+      xParamFromNationalId: fromNationalId,
+      updateActorProfileEmailDto: input,
     })
   }
 

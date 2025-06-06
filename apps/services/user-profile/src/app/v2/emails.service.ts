@@ -83,7 +83,7 @@ export class EmailsService {
       // Verify the email code
       await this.verifyEmailCode(nationalId, email, code)
 
-      // Check for existing email
+      // Check for existing email that is not verified
       await this.checkEmailExists(nationalId, email)
 
       // Create user profile if it doesn't exist
@@ -97,16 +97,28 @@ export class EmailsService {
       }
 
       // Create the email record
-      const emailRecord = await this.emailsModel.create(
-        {
+      const [emailRecord, created] = await this.emailsModel.findOrCreate({
+        where: {
+          email,
+          nationalId,
+        },
+        defaults: {
           id: uuid(),
           email,
           primary: false,
           nationalId,
           emailStatus: DataStatus.VERIFIED,
         },
-        { transaction, useMaster: true },
-      )
+        transaction,
+        useMaster: true,
+      })
+
+      // If the email is not created, set it as verified
+      if (!created) {
+        await emailRecord.update({
+          emailStatus: DataStatus.VERIFIED,
+        })
+      }
 
       // Check if this email is connected to any actor profile
       const connectedEmailIds = await this.getConnectedEmailIds([
@@ -185,7 +197,10 @@ export class EmailsService {
       where: { nationalId, email },
     })
 
-    if (existingEmail) {
+    if (
+      existingEmail &&
+      existingEmail.emailStatus !== DataStatus.NOT_VERIFIED
+    ) {
       throw new BadRequestException('Email already exists for this user')
     }
   }
