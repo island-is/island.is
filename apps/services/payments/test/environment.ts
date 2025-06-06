@@ -3,8 +3,7 @@ export const environment = {
   PAYMENTS_GATEWAY_API_HEADER_KEY: 'key',
   PAYMENTS_GATEWAY_API_HEADER_VALUE: 'value',
   PAYMENTS_GATEWAY_SYSTEM_CALLING: 'test',
-  PAYMENTS_JWT_SIGNING_ISSUER: 'https://payments.test',
-  PAYMENTS_WEB_ORIGIN: 'https://payments.test',
+  PAYMENTS_WEB_URL: 'https://payments.test',
   PAYMENTS_JWT_SIGNING_KEY_ID: 'payments_test_key_0',
   // Private and public key pair created just for testing purposes
   PAYMENTS_JWT_SIGNING_PRIVATE_KEY:

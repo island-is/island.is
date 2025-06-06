@@ -11,7 +11,7 @@ const jwtConfigKeyToProcessEnvKey = (key: keyof JwksConfigType) => {
     case 'expiresInMinutes':
       return 'PAYMENTS_JWT_SIGNING_EXPIRES_IN_MINUTES'
     case 'issuer':
-      return 'PAYMENTS_JWT_SIGNING_ISSUER'
+      return 'PAYMENTS_WEB_URL'
     case 'keyId':
       return 'PAYMENTS_JWT_SIGNING_KEY_ID'
     case 'privateKey':

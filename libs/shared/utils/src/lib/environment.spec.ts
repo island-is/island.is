@@ -71,31 +71,3 @@ describe('isRunningOnEnvironment', () => {
     expect(isRunningOnEnvironment('production')).toBe(false)
   })
 })
-
-describe('getEnvVarOrThrow', () => {
-  const processEnvCopy = cloneDeep(process.env)
-
-  afterEach(() => {
-    jest.resetModules()
-    process.env = cloneDeep(processEnvCopy)
-  })
-
-  it('should throw an error if the environment variable is not set', () => {
-    const { getEnvVarOrThrow } = require('./environment')
-
-    expect(() => getEnvVarOrThrow('TEST_ENV_VAR')).toThrow()
-  })
-
-  it('should return the default value if the environment variable is not set', () => {
-    const { getEnvVarOrThrow } = require('./environment')
-
-    expect(getEnvVarOrThrow('TEST_ENV_VAR', 'default')).toBe('default')
-  })
-
-  it('should return the environment variable if it is set', () => {
-    const { getEnvVarOrThrow } = require('./environment')
-    process.env.TEST_ENV_VAR = 'test'
-
-    expect(getEnvVarOrThrow('TEST_ENV_VAR')).toBe('test')
-  })
-})

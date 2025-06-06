@@ -52,11 +52,6 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
           'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
         ]),
       },
-      PAYMENTS_JWT_SIGNING_ISSUER: {
-        dev: 'https://beta.dev01.devland.is',
-        staging: 'https://beta.staging01.devland.is',
-        prod: 'https://island.is',
-      },
       PAYMENTS_JWT_SIGNING_EXPIRES_IN_MINUTES: '5',
     })
     .secrets({

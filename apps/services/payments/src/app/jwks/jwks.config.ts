@@ -22,7 +22,7 @@ export const JwksConfig = defineConfig({
   name: 'JwksConfig',
   schema,
   load: (env) => ({
-    issuer: env.required('PAYMENTS_JWT_SIGNING_ISSUER'),
+    issuer: env.required('PAYMENTS_WEB_URL'),
     keyId: env.required('PAYMENTS_JWT_SIGNING_KEY_ID'),
     privateKey: decodeBase64Key(
       env.required('PAYMENTS_JWT_SIGNING_PRIVATE_KEY'),
