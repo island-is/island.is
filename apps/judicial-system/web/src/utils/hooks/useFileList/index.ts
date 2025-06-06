@@ -45,12 +45,11 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
       }
     },
     onError: () => {
-      if (
-        currentFile &&
-        currentFile.previewUrl &&
-        currentFile.id === fullAccessVariables?.input.id
-      ) {
-        openFile(currentFile.previewUrl)
+      if (currentFile && currentFile.id === fullAccessVariables?.input.id) {
+        const previewUrl = URL.createObjectURL(
+          currentFile.originalFileObj as Blob,
+        )
+        openFile(previewUrl)
       } else {
         toast.error(formatMessage(errors.openDocument))
       }
@@ -69,12 +68,11 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
       }
     },
     onError: () => {
-      if (
-        currentFile &&
-        currentFile.previewUrl &&
-        currentFile.id === fullAccessVariables?.input.id
-      ) {
-        openFile(currentFile.previewUrl)
+      if (currentFile && currentFile.id === fullAccessVariables?.input.id) {
+        const previewUrl = URL.createObjectURL(
+          currentFile.originalFileObj as Blob,
+        )
+        openFile(previewUrl)
       } else {
         toast.error(formatMessage(errors.openDocument))
       }
@@ -128,7 +126,7 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
       if (!file.id) {
         return
       }
-      setCurrentFile(file as TUploadFile)
+      setCurrentFile(file as File)
 
       const query = limitedAccess ? limitedAccessGetSignedUrl : getSignedUrl
 

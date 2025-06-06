@@ -134,7 +134,7 @@ export const useUploadFiles = (files?: CaseFile[] | null) => {
       percent: 0,
       originalFileObj: file,
       userGeneratedFilename: setUserGeneratedFilename ? file.name : undefined,
-      previewUrl: URL.createObjectURL(file),
+      previewUrl: file.previewUrl,
       ...overRides,
     }))
 
@@ -391,9 +391,6 @@ const useS3Upload = (
     ) => {
       const promises = files.map(async (file) => {
         try {
-          if (file.previewUrl) {
-            URL.revokeObjectURL(file.previewUrl) // Cleanup object URLs
-          }
           updateFile({ ...file, status: FileUploadStatus.uploading })
 
           const presignedPost = await getPresignedPost(file)
