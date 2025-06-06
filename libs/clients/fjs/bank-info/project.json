@@ -24,7 +24,7 @@
         "prettier --write src/clientConfig.json"
       ],
       "parallel": false,
-      "cwd": "libs/clients/fjs/bankinfo"
+      "cwd": "libs/clients/fjs/bank-info"
     }
   },
   "codegen/backend-client": {
