@@ -711,6 +711,18 @@ export const messages = defineMessages({
     defaultMessage: 'Öll líffæri má nota til ígræðslu fyrir utan:',
     id: 'sp.health:i-am-organ-donor-w-exceptions-text',
   },
+  youAreOrganDonor: {
+    defaultMessage: 'Þú ert skráð/ur líffæragjafi.',
+    id: 'sp.health:you-are-organ-donor',
+  },
+  youAreNotOrganDonor: {
+    defaultMessage: 'Þú ert ekki skráð/ur líffæragjafi.',
+    id: 'sp.health:you-are-not-organ-donor',
+  },
+  youAreOrganDonorWithExceptions: {
+    defaultMessage: 'Þú ert skráð/ur líffæragjafi með takmörkunum.',
+    id: 'sp.health:you-are-organ-donor-with-exceptions',
+  },
   informationAboutStatus: {
     defaultMessage: 'Upplýsingar um stöðu',
     id: 'sp.health:info-about-status',

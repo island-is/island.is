@@ -2,6 +2,7 @@ import { globalStyle, style, styleVariants } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const container = style({})
+
 export const boxContainer = style({
   ':focus': {
     borderColor: theme.color.mint400,
@@ -14,6 +15,12 @@ export const boxContainer = style({
 export const image = style({
   minHeight: 150,
   maxHeight: 180,
+})
+
+export const smallImage = style({
+  minHeight: 85,
+  maxHeight: 105,
+  width: 'auto',
 })
 
 export const icon = style({

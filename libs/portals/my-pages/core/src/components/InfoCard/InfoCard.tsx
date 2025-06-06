@@ -1,7 +1,38 @@
+/**
+ * InfoCard Component
+ *
+ * A versatile card component designed to display information in various formats.
+ * It supports multiple variants, including default, detail, appointment, and link,
+ * and can be customized with icons, tags, images, and detailed information.
+ * Please use with InfoCardGrid for a grid layout of InfoCards.
+ *
+ * @component
+ * @param {InfoCardProps} props - The properties for the InfoCard component.
+ * @param {string} props.title - The title of the card.
+ * @param {string} props.description - A brief description displayed on the card.
+ * @param {string} props.to - The URL or path the card links to.
+ * @param {'small' | 'large'} props.size - The size of the card, either 'small' or 'large'.
+ * @param {'default' | 'detail' | 'appointment' | 'link'} [props.variant] - The variant of the card, determining its layout and behavior.
+ * @param {object} [props.appointment] - Appointment details for the 'appointment' variant.
+ * @param {string} props.appointment.date - The date of the appointment.
+ * @param {string} props.appointment.time - The time of the appointment.
+ * @param {object} props.appointment.location - The location details of the appointment.
+ * @param {string} props.appointment.location.label - The label for the location.
+ * @param {string} [props.appointment.location.href] - An optional link for the location.
+ * @param {object} [props.icon] - Icon details to display on the card.
+ * @param {IconProps['icon']} props.icon.type - The type of the icon.
+ * @param {IconProps['color']} props.icon.color - The color of the icon.
+ * @param {InfoCardDetail[]} [props.detail] - An array of detail objects to display additional information.
+ * @param {string} props.detail[].label - The label for the detail item.
+ * @param {string | React.ReactNode} props.detail[].value - The value for the detail item.
+ * @param {Array<ActionCardProps['tag']>} [props.tags] - An array of tags to display on the card.
+ * @param {string} [props.img] - An optional image URL to display on the card.
+ *
+ * @returns {React.FC<InfoCardProps>} A React functional component rendering the InfoCard.
+ */
 import {
   Box,
   GridColumn,
-  GridColumnProps,
   GridRow,
   Icon,
   IconProps,
@@ -14,6 +45,7 @@ import React from 'react'
 import useIsMobile from '../../hooks/useIsMobile/useIsMobile'
 import LinkResolver from '../LinkResolver/LinkResolver'
 import * as styles from './InfoCard.css'
+import TimeCard from './TimeCard'
 
 interface InfoCardDetail {
   label: string
@@ -23,12 +55,21 @@ interface InfoCardDetail {
 export interface InfoCardProps {
   title: string
   description: string
-  to: string
-  size: 'small' | 'large'
+  to?: string
+  size?: 'small' | 'large'
+  appointment?: {
+    date: string
+    time: string
+    location: {
+      label: string
+      href?: string
+    }
+  }
   icon?: { type: IconProps['icon']; color: IconProps['color'] }
   detail?: InfoCardDetail[]
   tags?: Array<ActionCardProps['tag']>
   img?: string
+  variant?: 'default' | 'detail' | 'appointment' | 'link'
 }
 
 export const InfoCard: React.FC<InfoCardProps> = ({
@@ -40,20 +81,27 @@ export const InfoCard: React.FC<InfoCardProps> = ({
   detail,
   tags,
   img,
+  appointment,
+  variant = 'default',
 }) => {
   const { isMobile } = useIsMobile()
   const detailLength = detail ? detail.length : 0
 
-  const detailItemSpan: GridColumnProps['span'] =
-    detailLength <= 2 ? '4/8' : detailLength >= 4 ? '2/8' : '3/8'
   let detailData = detail
   if (detailLength >= 12) {
     detailData = detail?.slice(0, 12)
   }
 
+  if (variant === 'appointment') {
+    console.log('appointment', appointment)
+    return (
+      <TimeCard title={title} data={appointment} description={description} />
+    )
+  }
+
   return (
     <Box width={size === 'large' ? 'full' : undefined}>
-      <LinkResolver href={to} className={styles.container}>
+      <LinkResolver href={to ?? ''} className={styles.container}>
         <Box
           border="standard"
           borderColor="blue200"
@@ -78,7 +126,11 @@ export const InfoCard: React.FC<InfoCardProps> = ({
                 marginBottom={detail ? 3 : 0}
               >
                 <Box>
-                  <Text variant="h4" marginBottom={1} color="blue400">
+                  <Text
+                    variant="h4"
+                    marginBottom={variant === 'link' ? 0 : 1}
+                    color="blue400"
+                  >
                     {title}
                   </Text>
                   <Inline space={1}>
@@ -93,8 +145,8 @@ export const InfoCard: React.FC<InfoCardProps> = ({
                   flexDirection={[
                     'column',
                     size === 'small' ? 'column' : 'row',
-                    size === 'small' ? 'column' : 'row',
-                    size === 'small' ? 'column' : 'row',
+                    'column',
+                    'column',
                     'row',
                   ]}
                   flexWrap="nowrap"

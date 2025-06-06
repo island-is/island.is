@@ -19,6 +19,9 @@ query getDonorStatus($locale: String) {
   healthDirectorateOrganDonation(locale: $locale) {
     donor {
       isDonor
+      limitations {
+        hasLimitations
+      }
     }
   }
 }

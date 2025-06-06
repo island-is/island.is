@@ -40,11 +40,12 @@ const DEFAULT_DATE_FROM = subYears(DEFAULT_DATE_TO, 10)
 
 export const HealthOverview = () => {
   useNamespaces('sp.health')
-
   const { formatMessage, locale } = useLocale()
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.md
+  const isTablet = width < theme.breakpoints.lg && !isMobile
 
   const { data, error, loading } = useGetInsuranceOverviewQuery()
-
   const [displayConfirmationErrorAlert, setDisplayConfirmationErrorAlert] =
     useState(false)
 
@@ -94,8 +95,9 @@ export const HealthOverview = () => {
   const dentistName =
     dentistsData?.rightsPortalUserDentistRegistration?.dentist?.name
 
-  const isOrganDonor =
-    donorStatusData?.healthDirectorateOrganDonation.donor?.isDonor
+  const donor = donorStatusData?.healthDirectorateOrganDonation.donor
+
+  console.log(donorStatusData?.healthDirectorateOrganDonation.donor)
 
   useEffect(() => {
     if (!loading && displayConfirmationErrorAlert) {
@@ -106,17 +108,17 @@ export const HealthOverview = () => {
     }
   }, [displayConfirmationErrorAlert, loading, formatMessage])
 
-  const insurance = data?.rightsPortalInsuranceOverview
   const doctor =
     healthCenterData?.rightsPortalHealthCenterRegistrationHistory?.current
       ?.doctor
 
-  const isEhicValid = isDateAfterToday(
+  const insurance = data?.rightsPortalInsuranceOverview
+  const isInsuranceCardValid = isDateAfterToday(
     insurance?.ehicCardExpiryDate ?? undefined,
   )
-  const { width } = useWindowSize()
-  const isMobile = width < theme.breakpoints.md
-  const isTablet = width < theme.breakpoints.lg && !isMobile
+  const insuranceCardExpirationDate = insurance?.ehicCardExpiryDate
+  const isInsured = insurance?.isInsured
+  const insuredFrom = formatDate(insurance?.from)
 
   return (
     <>
@@ -133,41 +135,77 @@ export const HealthOverview = () => {
           </>
         </GridColumn>
       </GridRow>
-      {/* If no appontments, hide */}
-      <Text variant="eyebrow" color="foregroundBrandSecondary" marginBottom={2}>
-        {formatMessage(messages.myAppointments)}
-      </Text>
-      <Box
-        display="flex"
-        rowGap={2}
-        columnGap={2}
-        flexWrap="wrap"
-        flexDirection="row"
-      >
-        <AppointmentCard
+      <Box>
+        {/* If no appointments, hide */}
+        <Text
+          variant="eyebrow"
+          color="foregroundBrandSecondary"
+          marginBottom={2}
+        >
+          {formatMessage(messages.myAppointments)}
+        </Text>
+
+        <InfoCardGrid
           size="small"
-          title="Mæðravernd"
-          date="Fimmtudaginn, 03.04.2025"
-          time="11:40"
-          description="Tími hjá: Sigríður Gunnarsdóttir"
-          location={{
-            label: 'Heilsugæslan við Ásbrú',
-            href: HealthPaths.HealthCenter,
+          variant="appointment"
+          empty={{
+            title: 'Engir tímar',
+            description: 'Engar tímabókanir framundan.',
           }}
-        />
-        <AppointmentCard
-          size="small"
-          title="Mæðravernd"
-          date="Fimmtudaginn, 03.04.2025"
-          time="11:40"
-          description="Tími hjá: Sigríður Gunnarsdóttir"
-          location={{
-            label: 'Heilsugæslan við Ásbrú',
-            href: HealthPaths.HealthCenter,
-          }}
+          cards={[
+            {
+              title: 'Mæðravernd',
+              description: 'Tími hjá: Sigríður Gunnarsdóttir',
+              appointment: {
+                date: 'Fimmtudaginn, 03.04.2025',
+                time: '11:40',
+                location: {
+                  label: 'Heilsugæslan við Ásbrú',
+                  href: HealthPaths.HealthCenter,
+                },
+              },
+            },
+            {
+              title: 'Mæðravernd',
+              description: 'Tími hjá: Sigríður Gunnarsdóttir',
+              appointment: {
+                date: 'Fimmtudaginn, 03.04.2025',
+                time: '11:40',
+                location: {
+                  label: 'Heilsugæslan við Ásbrú',
+                  href: HealthPaths.HealthCenter,
+                },
+              },
+            },
+          ]}
         />
       </Box>
+      <Box>
+        <Text
+          variant="eyebrow"
+          color="foregroundBrandSecondary"
+          marginBottom={2}
+        >
+          Empty state
+        </Text>
 
+        <InfoCardGrid
+          empty={{
+            title: 'Engir tímar',
+            description: 'Engar tímabókanir framundan.',
+          }}
+          cards={[]}
+          size="small"
+        />
+        <InfoCardGrid
+          empty={{
+            title: 'Engir tímar',
+            description: 'Engar tímabókanir framundan.',
+          }}
+          cards={[]}
+          size="large"
+        />
+      </Box>
       <Box>
         <Text
           variant="eyebrow"
@@ -177,6 +215,10 @@ export const HealthOverview = () => {
           {formatMessage(messages.myPregnancy)}
         </Text>
         <InfoCardGrid
+          empty={{
+            title: 'Engar upplýsingar um meðgöngu',
+            description: 'Engar upplýsingar um meðgöngu fundust.',
+          }}
           cards={[
             {
               title: 'Meðgangan mín ',
@@ -194,245 +236,74 @@ export const HealthOverview = () => {
           size="large"
         />
       </Box>
-      <Box marginTop={6}>
-        {error ? (
-          <Problem error={error} noBorder={false} />
-        ) : (
-          <InfoLineStack space={1} label={formatMessage(m.baseInfo)}>
-            <InfoLine
-              label={formatMessage(messages.healthCenter)}
-              content={healthCenterName ?? ''}
-              loading={healthCenterLoading}
-              button={{
-                to: HealthPaths.HealthCenter,
-                label: formatMessage(messages.seeMore),
-                type: 'link',
-                icon: 'arrowForward',
-              }}
-            />
-            {doctor && (
-              <InfoLine
-                label={formatMessage(messages.chooseDoctorPlaceholder)}
-                content={doctor}
-                loading={healthCenterLoading}
-              />
-            )}
-            <InfoLine
-              label={formatMessage(messages.dentist)}
-              content={dentistName ?? ''}
-              loading={dentistsLoading}
-              button={{
-                to: HealthPaths.HealthDentists,
-                label: formatMessage(messages.seeMore),
-                type: 'link',
-                icon: 'arrowForward',
-              }}
-            />
-            <InfoLine
-              label={formatMessage(messages.organDonation)}
-              content={formatMessage(
-                isOrganDonor
-                  ? messages.iAmOrganDonor
-                  : messages.iAmNotOrganDonor,
-              )}
-              loading={donorStatusLoading}
-              button={{
-                to: HealthPaths.HealthOrganDonation,
-                label: formatMessage(messages.seeMore),
-                type: 'link',
-                icon: 'arrowForward',
-              }}
-            />
-            <InfoLine
-              label={formatMessage(messages.hasHealthInsurance)}
-              content={
-                <Box
-                  display="flex"
-                  justifyContent="center"
-                  alignItems="center"
-                  columnGap="p1"
-                >
-                  <Text>
-                    {insurance?.isInsured &&
-                      formatMessage(messages.medicineValidFrom)}{' '}
-                    {formatDate(insurance?.from, 'dd.MM.yyyy')}
-                  </Text>
-                  <Icon
-                    icon={
-                      insurance?.isInsured ? 'checkmarkCircle' : 'closeCircle'
-                    }
-                    color={insurance?.isInsured ? 'mint600' : 'red600'}
-                    type="filled"
-                  />
-                  <Text fontWeight="semiBold" variant="small">
-                    {formatMessage(insurance?.isInsured ? m.valid : m.expired)}
-                  </Text>
-                </Box>
-              }
-              loading={loading}
-              button={{
-                to: HealthPaths.HealthInsurance,
-                label: formatMessage(messages.seeMore),
-                type: 'link',
-                icon: 'arrowForward',
-              }}
-            />
-            <InfoLine
-              label={formatMessage(messages.ehic)}
-              content={
-                <Box
-                  display="flex"
-                  justifyContent="center"
-                  alignItems="center"
-                  columnGap="p1"
-                >
-                  <Text>
-                    {insurance?.ehicCardExpiryDate &&
-                      formatMessage(
-                        isEhicValid
-                          ? messages.medicineValidFrom
-                          : messages.medicineValidTo,
-                      )}{' '}
-                    {formatDate(insurance?.ehicCardExpiryDate, 'dd.MM.yyyy')}
-                  </Text>
-                  <Icon
-                    icon={isEhicValid ? 'checkmarkCircle' : 'closeCircle'}
-                    color={isEhicValid ? 'mint600' : 'red600'}
-                    type="filled"
-                  />
-                  <Text fontWeight="semiBold" variant="small">
-                    {formatMessage(isEhicValid ? m.valid : m.expired)}
-                  </Text>
-                </Box>
-              }
-              loading={loading}
-            />
-          </InfoLineStack>
-        )}
-      </Box>
-      <Box
-        display="flex"
-        flexDirection="row"
-        justifyContent="spaceBetween"
-        columnGap="gutter"
-        marginBottom={4}
-      >
-        {/* <InfoBox
-          button={{
-            action: () => console.log('action'),
-            label: 'Sjá allt',
-          }}
-          title="Biðlistar"
-          icon={{ icon: 'document' }}
-        >
-          <InfoBoxItem
-            title="Liðaskiptaaðgerð á hné"
-            data={[
-              {
-                label: 'Landspítalinn',
-              },
-            ]}
-          />
-          <InfoBoxItem
-            title="Hjúkrunarheimili"
-            data={[
-              {
-                label: 'Sóltún hjúkrunarheimili',
-                content: (
-                  <Tag variant="blueberry" outlined>
-                    Umsókn í vinnslu
-                  </Tag>
-                ),
-              },
-            ]}
-          />
-        </InfoBox> */}
-      </Box>
-      {/* FLÝTILEIÐIR TODO: Add correct path to each card */}
       <Box>
-        <Text variant="eyebrow" color="purple400" marginBottom={2}>
-          Flýtileiðir
+        <Text
+          variant="eyebrow"
+          color="foregroundBrandSecondary"
+          marginBottom={2}
+        >
+          {formatMessage(messages.basicInformation)}
         </Text>
-        <GridContainer>
-          <GridRow marginBottom={2}>
-            <GridColumn span={'4/12'}>
-              <CategoryCard
-                hyphenate
-                heading="Krabbameinsmeðferð"
-                text="Torem ipsum dolor sit amet, consectetur adipiscing elit interdum, ac aliquet odio mattis."
-                headingVariant="h4"
-                textVariant="small"
-              />
-            </GridColumn>
-            <GridColumn span={'4/12'}>
-              <CategoryCard
-                hyphenate
-                heading="Lyfjaávísanir"
-                text="Torem ipsum dolor sit amet, consectetur adipiscing elit interdum, ac aliquet odio mattis."
-                headingVariant="h4"
-                textVariant="small"
-              />
-            </GridColumn>
-            <GridColumn span={'4/12'}>
-              <CategoryCard
-                hyphenate
-                heading="Lyfjaskírteini"
-                text="Torem ipsum dolor sit amet, consectetur adipiscing elit interdum, ac aliquet odio mattis."
-                headingVariant="h4"
-                textVariant="small"
-              />
-            </GridColumn>
-          </GridRow>
-          <GridRow marginBottom={2}>
-            <GridColumn span={'4/12'}>
-              <CategoryCard
-                hyphenate
-                heading="Greiðslur og réttindi"
-                text="Torem ipsum dolor sit amet, consectetur adipiscing elit interdum, ac aliquet odio mattis."
-                headingVariant="h4"
-                textVariant="small"
-              />
-            </GridColumn>
-            <GridColumn span={'4/12'}>
-              <CategoryCard
-                hyphenate
-                heading="Þjálfun"
-                text="Staða beiðna þinna í sjúkraþjálfun, talþjálfun eða iðjuþjálfun."
-                headingVariant="h4"
-                textVariant="small"
-              />
-            </GridColumn>
-            <GridColumn span={'4/12'}>
-              <CategoryCard
-                hyphenate
-                heading="Hjálpartæki og næring"
-                text="Torem ipsum dolor sit amet, consectetur adipiscing elit interdum, ac aliquet odio mattis."
-                headingVariant="h4"
-                textVariant="small"
-              />
-            </GridColumn>
-          </GridRow>
-          <GridRow marginBottom={2}>
-            <GridColumn span={'4/12'}>
-              <CategoryCard
-                hyphenate
-                heading="Bólusetningar"
-                text="Torem ipsum dolor sit amet, consectetur adipiscing elit interdum, ac aliquet odio mattis."
-                headingVariant="h4"
-                textVariant="small"
-              />
-            </GridColumn>
-            <GridColumn span={'4/12'}>
-              <CategoryCard
-                hyphenate
-                heading="Bólusetningarvottorð"
-                text="Torem ipsum dolor sit amet, consectetur adipiscing elit interdum, ac aliquet odio mattis."
-                headingVariant="h4"
-                textVariant="small"
-              />
-            </GridColumn>
-          </GridRow>
-        </GridContainer>
+        <InfoCardGrid
+          cards={[
+            {
+              title: 'Heilsugæslan Kirkjusandi',
+              description: 'Heimilislæknir: Sigríður Gunnarsdóttir',
+              to: HealthPaths.HealthCenter,
+            },
+            {
+              title: formatMessage(messages.hasHealthInsurance),
+              description: `${formatMessage(messages.from)} ${formatDate(
+                insurance?.from,
+              )}`,
+              to: HealthPaths.HealthCenter, // TODO -> Hvert fer þessi síða
+              icon: {
+                color: isInsured ? 'mint600' : 'red400',
+                type: isInsured ? 'checkmarkCircle' : 'closeCircle',
+              },
+            },
+            {
+              title: formatMessage(messages.ehic),
+              description: `${formatMessage(
+                isInsuranceCardValid
+                  ? messages.medicineValidTo
+                  : messages.medicineIsExpiredCertificate,
+              )} ${formatDate(insurance?.ehicCardExpiryDate)}`,
+              to: HealthPaths.HealthCenter, // TODO -> Hvert fer þessi síða
+              icon: {
+                color: isInsuranceCardValid ? 'mint600' : 'red400',
+                type: isInsuranceCardValid ? 'checkmarkCircle' : 'closeCircle',
+              },
+            },
+            {
+              title: formatMessage(messages.organDonation),
+              description: donor?.isDonor
+                ? formatMessage(messages.youAreOrganDonor)
+                : donor?.limitations?.hasLimitations
+                ? formatMessage(messages.youAreOrganDonorWithExceptions)
+                : formatMessage(messages.youAreNotOrganDonor),
+
+              to: HealthPaths.HealthOrganDonation,
+            },
+            // TODO: Kemur inn þegar blóðflokka pull requestan er komin inn
+            // {
+            //   title: 'Blóðflokkur',
+            //   description: 'Þú ert í blóðflokki A+',
+            //   to: HealthPaths.HealthCenter,
+            // },
+            // TODO: Kemur inn þegar ofnæmisþjónustan er ready
+            // {
+            //   title: 'Ofnæmi',
+            //   description: 'Ekkert skráð ofnæmi',
+            //   to: HealthPaths.HealthCenter,
+            // },
+          ]}
+          empty={{
+            title: 'Engar grunnupplýsingar fundust',
+            description: 'Engar grunnupplýsingar fundust um þig.',
+          }}
+          variant="link"
+        />
       </Box>
     </>
   )

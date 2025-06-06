@@ -7,37 +7,47 @@ import {
   Box,
   Text,
 } from '@island.is/island-ui/core'
-import { LinkResolver, useIsMobile } from '@island.is/portals/my-pages/core'
+import { LinkResolver } from '../LinkResolver/LinkResolver'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
+import EmptyCard from './EmptyCard'
 
 interface AppointmentCardProps {
   title: string
-  date: string
   description: string
-  time: string
-  location: { label: string; href?: string }
+  data?: {
+    date: string
+    time: string
+    location: {
+      label: string
+      href?: string
+    }
+  }
   size?: 'small' | 'large'
 }
 
-const AppointmentCard: React.FC<AppointmentCardProps> = ({
+const TimeCard: React.FC<AppointmentCardProps> = ({
   title,
-  date,
   description,
-  time,
-  location,
+  data,
   size = 'small',
 }) => {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
   const isTablet = width < theme.breakpoints.lg && !isMobile
-
+  console.log('data', data)
+  if (!data) {
+    return (
+      <EmptyCard
+        title={title}
+        description={description}
+        size={'large'}
+        img="./assets/images/sofa.svg"
+      />
+    )
+  }
   return (
-    <Box
-      style={{
-        width: size === 'small' && !isMobile && !isTablet ? '49%' : '100%',
-      }}
-    >
+    <Box>
       <Box
         border="standard"
         borderColor="blue200"
@@ -52,7 +62,7 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
               </Text>
               <Box display="flex" justifyContent="spaceBetween" width="full">
                 <Text variant="medium" marginBottom={'smallGutter'}>
-                  {date}
+                  {data.date}
                 </Text>
                 <Box
                   display="flex"
@@ -67,7 +77,7 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
                     size="small"
                     type="outline"
                   />
-                  <Text variant="medium">{time}</Text>
+                  <Text variant="medium">{data.time}</Text>
                 </Box>
               </Box>
               <Inline space={1}>
@@ -76,14 +86,17 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
                 </Text>
               </Inline>
               <Inline>
-                {location && location.href ? (
-                  <LinkResolver href={location.href} label={location.label}>
+                {data.location && data.location.href ? (
+                  <LinkResolver
+                    href={data.location.href}
+                    label={data.location.label}
+                  >
                     <Text variant="medium" color="blue400">
-                      {location.label}
+                      {data.location.label}
                     </Text>
                   </LinkResolver>
                 ) : (
-                  <Text variant="medium">{location.label}</Text>
+                  <Text variant="medium">{data.location.label}</Text>
                 )}
               </Inline>
             </Box>
@@ -94,4 +107,4 @@ const AppointmentCard: React.FC<AppointmentCardProps> = ({
   )
 }
 
-export default AppointmentCard
+export default TimeCard
