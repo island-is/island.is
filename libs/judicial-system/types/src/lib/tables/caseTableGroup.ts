@@ -4,17 +4,19 @@ import {
   isDistrictCourtUser,
   isPrisonAdminUser,
   isPrisonStaffUser,
-  isProsecutionUser,
+  isProsecutorRepresentativeUser,
+  isProsecutorUser,
   isPublicProsecutionOfficeUser,
   isPublicProsecutionUser,
 } from '../user'
+import { prosecutorRepresentativeTableGroups } from './tableGroups/prosecutorRepresentativeTableGroups'
 import { prosecutorTableGroups } from './tableGroups/prosecutorTableGroups'
+import { publicProsecutorTableGroups } from './tableGroups/publicProsecutorTableGroups'
 import {
   CaseTableGroup,
   CaseTableRoutes,
   CaseTableType,
 } from './caseTableTypes'
-import { publicProsecutorTableGroups } from './tableGroups'
 
 const districtCourtTableGroups: CaseTableGroup[] = [
   {
@@ -226,7 +228,11 @@ export const getCaseTableGroups = (
     return publicProsecutorTableGroups
   }
 
-  if (isProsecutionUser(user)) {
+  if (isProsecutorRepresentativeUser(user)) {
+    return prosecutorRepresentativeTableGroups
+  }
+
+  if (isProsecutorUser(user)) {
     return prosecutorTableGroups
   }
 

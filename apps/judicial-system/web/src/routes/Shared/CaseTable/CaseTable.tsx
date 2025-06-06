@@ -131,6 +131,7 @@ const CaseTable: FC = () => {
     errorPolicy: 'all',
   })
 
+
   const table = type && caseTables[type]
 
   const caseTableData = data?.caseTable

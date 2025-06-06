@@ -100,7 +100,8 @@ export const getCaseTableType = (
     }
   }
 
-  if (isPublicProsecutionUser(user)) {
+  // shared mapping for all prosecution users
+  if (isProsecutionUser(user)) {
     switch (route) {
       case CaseTableRoutes.IN_PROGRESS:
         return CaseTableType.PROSECUTOR_REQUEST_CASES_IN_PROGRESS
