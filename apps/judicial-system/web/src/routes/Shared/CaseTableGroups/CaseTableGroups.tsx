@@ -46,7 +46,7 @@ const CaseTableGroups: FC = () => {
             <CasesDashboardLayout title={group.title} key={idx}>
               {group.tables.map((t, idx) => (
                 <CasesCard
-                  title={t.title}
+                title={t.title}
                   description={t.description}
                   href={`${router.asPath}/${t.route}`}
                   key={idx}
@@ -56,11 +56,13 @@ const CaseTableGroups: FC = () => {
           ))}
           {user && isProsecutionUser(user) ? (
             <>
-              <SectionHeading title={'Stofna mál'} marginBottom={1} />
-              <Text marginBottom={3}>
-                Ef ekki er hægt að stofna mál í kerfi lögreglunnar er hægt að
-                stofna nýtt mál hér.
-              </Text>
+              <SectionHeading
+                title="Stofna mál"
+                description="Ef ekki er hægt að stofna mál í kerfi lögreglunnar er hægt að
+                stofna nýtt mál hér."
+                marginBottom={1}
+              />
+
               <CreateCaseButton user={user} />
             </>
           ) : null}
