@@ -91,7 +91,7 @@ export class UserProfileResolver {
   }
 
   @Directive(
-    '@deprecated(reson: "Will be removed shortly, use deleteEmailOrPhone instead")',
+    '@deprecated(reason: "Will be removed shortly, use deleteEmailOrPhone instead")',
   )
   @Mutation(() => UserProfile, {
     nullable: true,

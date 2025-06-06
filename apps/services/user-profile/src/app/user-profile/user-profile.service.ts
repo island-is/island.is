@@ -160,8 +160,8 @@ export class UserProfileService {
         const { confirmed, message, remainingAttempts } =
           await this.verificationService.confirmEmail(
             {
-              email: userProfile.email!,
-              hash: userProfile.emailVerificationCode!,
+              email: userProfile.email ?? '',
+              hash: userProfile.emailVerificationCode ?? '',
             },
             ...commonArgs,
           )
@@ -182,8 +182,8 @@ export class UserProfileService {
         const { confirmed, message, remainingAttempts } =
           await this.verificationService.confirmSms(
             {
-              mobilePhoneNumber: userProfile.mobilePhoneNumber!,
-              code: userProfile.mobilePhoneNumberVerificationCode!,
+              mobilePhoneNumber: userProfile.mobilePhoneNumber ?? '',
+              code: userProfile.mobilePhoneNumberVerificationCode ?? '',
             },
             ...commonArgs,
           )

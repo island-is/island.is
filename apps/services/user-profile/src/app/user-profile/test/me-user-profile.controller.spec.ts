@@ -62,10 +62,10 @@ const testSMSVerification = {
 
 describe('MeUserProfileController', () => {
   describe('GET /v2/me', () => {
-    let app: TestApp = null
-    let server: SuperTest<Test> = null
-    let fixtureFactory: FixtureFactory = null
-    let userProfileModel: typeof UserProfile = null
+    let app: TestApp
+    let server: SuperTest<Test>
+    let fixtureFactory: FixtureFactory
+    let userProfileModel: typeof UserProfile
 
     beforeAll(async () => {
       app = await setupApp({

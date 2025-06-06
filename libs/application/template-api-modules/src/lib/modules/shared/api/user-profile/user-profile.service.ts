@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common'
-import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { V2MeApi } from '@island.is/clients/user-profile'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import {
@@ -31,9 +31,9 @@ import {
 export class UserProfileService extends BaseTemplateApiService {
   constructor(
     private readonly userProfileApi: V2MeApi,
-    private bankinfoClientService: BankinfoClientService,
+    private readonly bankinfoClientService: BankinfoClientService,
     @Inject(IdsClientConfig.KEY)
-    private idsClientConfig: ConfigType<typeof IdsClientConfig>,
+    private readonly idsClientConfig: ConfigType<typeof IdsClientConfig>,
     @Inject(ConfigService)
     private readonly configService: ConfigService<SharedModuleConfig>,
   ) {
