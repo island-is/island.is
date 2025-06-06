@@ -51,6 +51,7 @@ export const ComponentRegistry = {
   UpdateAppScreen: `${prefix}.screens.UpdateAppScreen`,
   HealthOverviewScreen: `${prefix}.screens.HealthOverviewScreen`,
   VaccinationsScreen: `${prefix}.screens.VaccinationsScreen`,
+  PrescriptionsScreen: `${prefix}.screens.PrescriptionsScreen`,
 
   // custom navigation icons
   OfflineIcon: `${prefix}.navigation.OfflineIcon`,
