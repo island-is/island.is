@@ -28,8 +28,7 @@ export class RulingResponse {
     return {
       caseId: internalCase.id,
       title: t.rulingTitle,
-      subtitle: '',
-
+      subtitle: 'TODO subtitle (if needed)',
       groups: [
         {
           label: t.rulingTitle,
