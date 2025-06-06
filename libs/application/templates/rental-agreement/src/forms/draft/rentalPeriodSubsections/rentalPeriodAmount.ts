@@ -7,15 +7,14 @@ import {
   buildSelectField,
   buildHiddenInput,
   YesOrNoEnum,
+  buildDisplayField,
 } from '@island.is/application/core'
 import {
   getPaymentMethodOptions,
-  getRentalAmountIndexTypes,
   getRentalAmountPaymentDateOptions,
 } from '../../../utils/utils'
 import {
   Routes,
-  RentalAmountIndexTypes,
   RentalAmountPaymentDateOptions,
   RentalPaymentMethodOptions,
 } from '../../../utils/enums'
@@ -25,6 +24,8 @@ import {
   rentalPaymentDateIsOther,
   rentalPaymentMethodIsBankTransfer,
   rentalPaymentMethodIsOther,
+  getIndexDateOptions,
+  getIndexRateForDate,
 } from '../../../utils/rentalPeriodUtils'
 import { rentalAmount } from '../../../lib/messages'
 
@@ -53,16 +54,8 @@ export const RentalPeriodAmount = buildSubSection({
           maxLength: 15,
           required: true,
         }),
-        buildSelectField({
-          id: 'rentalAmount.indexTypes',
-          title: rentalAmount.indexOptionsLabel,
-          options: getRentalAmountIndexTypes(),
-          defaultValue: RentalAmountIndexTypes.CONSUMER_PRICE_INDEX,
-          condition: rentalAmountConnectedToIndex,
-        }),
         buildCheckboxField({
           id: 'rentalAmount.isIndexConnected',
-          clearOnChange: ['rentalAmount.indexTypes'],
           options: [
             {
               value: YesOrNoEnum.YES,
@@ -70,6 +63,25 @@ export const RentalPeriodAmount = buildSubSection({
             },
           ],
           spacing: 0,
+          marginTop: 1,
+        }),
+        buildSelectField({
+          id: 'rentalAmount.indexDate',
+          title: rentalAmount.indexDateLabel,
+          // TODO: Replace hardcoded with dynamic options from indexation api when available
+          options: getIndexDateOptions(),
+          defaultValue: getIndexDateOptions()[0]?.value || '',
+          condition: rentalAmountConnectedToIndex,
+          width: 'half',
+          marginTop: 1,
+        }),
+        buildDisplayField({
+          id: 'rentalAmount.indexRate',
+          label: rentalAmount.indexRateLabel,
+          variant: 'text',
+          value: (answers) => getIndexRateForDate(answers),
+          condition: rentalAmountConnectedToIndex,
+          width: 'half',
         }),
 
         // Payment details
