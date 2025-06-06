@@ -1946,6 +1946,14 @@ export const m = defineMessages({
     id: 'service.portal:sjukratryggingar',
     defaultMessage: 'Sjúkratryggingar',
   },
+  expand: {
+    id: 'service.portal:expand',
+    defaultMessage: 'Útvíkka',
+  },
+  collapse: {
+    id: 'service.portal:collapse',
+    defaultMessage: 'Fella saman',
+  },
 })
 
 export const searchTagsMessages = defineMessages({

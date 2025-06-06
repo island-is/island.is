@@ -3,48 +3,38 @@ import {
   Box,
   Button,
   DatePicker,
-  Input,
+  Icon,
+  Tag,
   toast,
+  Text,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
+import format from 'date-fns/format'
 import { useEffect, useState } from 'react'
 import { Modal } from '@island.is/react/components'
-import format from 'date-fns/format'
 import { useExtendDeadlineMutation } from './extendDeadline.generated'
 import { useRevalidator } from 'react-router-dom'
 import { m } from '../../lib/messages'
-import { SignatureCollectionCollectionType } from '@island.is/api/schema'
+import { SignatureCollectionList } from '@island.is/api/schema'
 
-const ActionExtendDeadline = ({
-  listId,
-  endTime,
-  allowedToProcess,
-  collectionType,
-}: {
-  listId: string
-  endTime: string
-  collectionType: SignatureCollectionCollectionType
-  allowedToProcess?: boolean
-}) => {
+const ActionExtendDeadline = ({ list }: { list: SignatureCollectionList }) => {
   const { formatMessage } = useLocale()
   const [modalChangeDateIsOpen, setModalChangeDateIsOpen] = useState(false)
-  const [endDate, setEndDate] = useState(endTime)
+  const [endDate, setEndDate] = useState(list?.endTime)
   const [extendDeadlineMutation, { loading }] = useExtendDeadlineMutation()
   const { revalidate } = useRevalidator()
 
   useEffect(() => {
     setEndDate(endDate)
-  }, [endTime])
+  }, [endDate, list.endTime])
 
-  const extendDeadline = async (
-    newEndDate: string,
-    collectionType: SignatureCollectionCollectionType,
-  ) => {
+  const extendDeadline = async (newEndDate: string) => {
     try {
       const res = await extendDeadlineMutation({
         variables: {
           input: {
-            collectionType,
-            listId,
+            listId: list.id,
             newEndDate: newEndDate,
           },
         },
@@ -62,24 +52,33 @@ const ActionExtendDeadline = ({
 
   return (
     <Box>
-      <Box display="flex" alignItems="flexEnd">
-        <Input
-          name="endTime"
-          size="sm"
-          label={formatMessage(m.listEndTime)}
-          readOnly
-          value={format(new Date(endDate), 'dd.MM.yyyy HH:mm')}
-        />
-        <Box marginLeft={3}>
-          <Button
-            icon="calendar"
-            iconType="outline"
-            variant="ghost"
-            disabled={!allowedToProcess}
-            onClick={() => setModalChangeDateIsOpen(true)}
-          ></Button>
-        </Box>
-      </Box>
+      <GridRow>
+        <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
+          <Box display="flex">
+            <Tag>
+              <Box display="flex" justifyContent="center">
+                <Icon icon="calendar" type="outline" color="blue600" />
+              </Box>
+            </Tag>
+            <Box marginLeft={5}>
+              <Text variant="h4">{formatMessage(m.updateListEndTime)}</Text>
+              <Text color="blue600" variant="eyebrow" marginY={1}>
+                {endDate ? format(new Date(endDate), 'dd.MM.yyyy - HH:mm') : ''}
+              </Text>
+              <Text marginBottom={2}>
+                {formatMessage(m.updateListEndTimeDescription)}
+              </Text>
+              <Button
+                variant="text"
+                size="small"
+                onClick={() => setModalChangeDateIsOpen(true)}
+              >
+                {formatMessage(m.updateListEndTime)}
+              </Button>
+            </Box>
+          </Box>
+        </GridColumn>
+      </GridRow>
       <Modal
         id="extendDeadline"
         isVisible={modalChangeDateIsOpen}
@@ -92,7 +91,7 @@ const ActionExtendDeadline = ({
           <DatePicker
             locale="is"
             label={formatMessage(m.listEndTime)}
-            selected={new Date(endDate)}
+            selected={endDate ? new Date(endDate) : undefined}
             handleChange={(date) => setEndDate(new Date(date).toISOString())}
             placeholderText=""
             showTimeInput
@@ -101,7 +100,7 @@ const ActionExtendDeadline = ({
             <Button
               loading={loading}
               onClick={() => {
-                extendDeadline(endDate, collectionType)
+                extendDeadline(endDate)
                 setModalChangeDateIsOpen(false)
               }}
             >

@@ -1,7 +1,7 @@
 export enum ApplicationTypes {
-  EXAMPLE = 'ExampleForm',
   EXAMPLE_AUTH_DELEGATION = 'ExampleAuthDelegation',
   EXAMPLE_COMMON_ACTIONS = 'ExampleCommonActions',
+  EXAMPLE_FOLDER_STRUCTURE_AND_CONVENTIONS = 'ExampleFolderStructureAndConventions',
   EXAMPLE_INPUTS = 'ExampleInputs',
   EXAMPLE_NO_INPUTS = 'ExampleNoInputs',
   EXAMPLE_PAYMENT = 'ExamplePayment',
@@ -82,20 +82,22 @@ export enum ApplicationTypes {
   NEW_PRIMARY_SCHOOL = 'NewPrimarySchool',
   WORK_ACCIDENT_NOTIFICATION = 'WorkAccidentNotification',
   MACHINE_REGISTRATION = 'MachineRegistration',
+  PRACTICAL_EXAM = 'PracticalExam',
   RENTAL_AGREEMENT = 'RentalAgreement',
   SEMINAR_REGISTRATION = 'SeminarRegistration',
   TRAINING_LICENSE_ON_A_WORK_MACHINE = 'TrainingLicenseOnAWorkMachine',
   SECONDARY_SCHOOL = 'SecondarySchool',
+  LEGAL_GAZETTE = 'LegalGazette',
 }
 
 export const ApplicationConfigurations = {
-  [ApplicationTypes.EXAMPLE]: {
-    slug: 'example',
-    translation: 'example.application',
-  },
   [ApplicationTypes.EXAMPLE_COMMON_ACTIONS]: {
     slug: 'example-common-actions',
     translation: 'eca.application',
+  },
+  [ApplicationTypes.EXAMPLE_FOLDER_STRUCTURE_AND_CONVENTIONS]: {
+    slug: 'example-folder-structure-and-conventions',
+    translation: 'exfsc.application',
   },
   [ApplicationTypes.EXAMPLE_INPUTS]: {
     slug: 'example-inputs',
@@ -425,6 +427,10 @@ export const ApplicationConfigurations = {
     slug: 'nyskraning-taekis',
     translation: ['aosh.rnm.application'],
   },
+  [ApplicationTypes.PRACTICAL_EXAM]: {
+    slug: 'verklegt-prof',
+    translation: ['aosh.pe.application'],
+  },
   [ApplicationTypes.RENTAL_AGREEMENT]: {
     slug: 'leigusamningur',
     translation: 'ra.application',
@@ -440,5 +446,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.SECONDARY_SCHOOL]: {
     slug: 'framhaldsskoli',
     translation: 'ss.application',
+  },
+  [ApplicationTypes.LEGAL_GAZETTE]: {
+    slug: 'logbirtingarblad',
+    translation: 'lg.application',
   },
 }

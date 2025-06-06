@@ -70,7 +70,10 @@ import { EmptyTable } from '../EmptyTable/EmptyTable'
 export const SortableTable = (props: SortableTableProps) => {
   const { items, requestSort, sortConfig } = useSortableData<SortableData>(
     props.items,
-    { direction: 'ascending', key: props.defaultSortByKey },
+    {
+      direction: props.sortBy ?? 'ascending',
+      key: props.defaultSortByKey,
+    },
   )
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
@@ -79,8 +82,9 @@ export const SortableTable = (props: SortableTableProps) => {
   useEffect(() => {
     const headerItems = Array.from(
       new Set(
-        props.items.flatMap(({ id, tag, lastNode, ...restItems }) =>
-          Object.keys(restItems),
+        props.items.flatMap(
+          ({ id, tag, lastNode, onExpandCallback, ...restItems }) =>
+            Object.keys(restItems),
         ),
       ),
     )
@@ -122,6 +126,7 @@ export const SortableTable = (props: SortableTableProps) => {
               lastNode,
               children,
               subTitleFirstCol,
+              onExpandCallback,
               ...itemObject
             } = item
             // Remove the key that matches the "mobileTitleKey"
@@ -133,6 +138,7 @@ export const SortableTable = (props: SortableTableProps) => {
               title: props.mobileTitleKey
                 ? item[props.mobileTitleKey]
                 : undefined,
+              onExpandCallback,
               data: valueItems
                 .map((valueItem, valueIndex) => {
                   if (
@@ -251,6 +257,7 @@ export const SortableTable = (props: SortableTableProps) => {
                   <EmptyTable
                     message={props.emptyTableMessage}
                     background="white"
+                    loading={props.tableLoading}
                   />
                 </Box>
               </Box>
