@@ -72,7 +72,7 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
     },
   ],
   requiredScopes: [ApiScope.socialInsuranceAdministration],
-  // allowMultipleApplicationsInDraft: false,
+  allowMultipleApplicationsInDraft: false,
   featureFlag: Features.medicalAndRehabilitationPayments,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
