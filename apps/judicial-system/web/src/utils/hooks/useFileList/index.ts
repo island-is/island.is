@@ -33,6 +33,17 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
     window.open(url, isMobile ? '_self' : '_blank', 'noopener, noreferrer')
   }
 
+  const onErrorOrPreviewURl = (currentFile: TUploadFile | undefined) => {
+    if (currentFile && currentFile.id === fullAccessVariables?.input.id) {
+      const previewUrl = URL.createObjectURL(
+        currentFile.originalFileObj as Blob,
+      )
+      openFile(previewUrl)
+    } else {
+      toast.error(formatMessage(errors.openDocument))
+    }
+  }
+
   const [
     getSignedUrl,
     { error: fullAccessError, variables: fullAccessVariables },
@@ -45,14 +56,7 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
       }
     },
     onError: () => {
-      if (currentFile && currentFile.id === fullAccessVariables?.input.id) {
-        const previewUrl = URL.createObjectURL(
-          currentFile.originalFileObj as Blob,
-        )
-        openFile(previewUrl)
-      } else {
-        toast.error(formatMessage(errors.openDocument))
-      }
+      onErrorOrPreviewURl(currentFile)
     },
   })
 
@@ -68,14 +72,7 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
       }
     },
     onError: () => {
-      if (currentFile && currentFile.id === fullAccessVariables?.input.id) {
-        const previewUrl = URL.createObjectURL(
-          currentFile.originalFileObj as Blob,
-        )
-        openFile(previewUrl)
-      } else {
-        toast.error(formatMessage(errors.openDocument))
-      }
+      onErrorOrPreviewURl(currentFile)
     },
   })
 
