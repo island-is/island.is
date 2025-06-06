@@ -3,7 +3,7 @@ import { UserProfileClientModule } from '@island.is/clients/user-profile'
 import { UserProfileResolver } from './userProfile.resolver'
 
 import { IdentityClientModule } from '@island.is/clients/identity'
-import { BankinfoClientModule } from '@island.is/clients/fjs/bankinfo'
+import { BankinfoClientModule } from '@island.is/clients/fjs/bank-info'
 
 import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { UserProfileService } from './userProfile.service'

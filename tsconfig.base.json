@@ -897,7 +897,7 @@
         "libs/clients/workpoint/arborg/src/index.ts"
       ],
       "@island.is/clients/zendesk": ["libs/clients/zendesk/src/index.ts"],
-      "@island.is/clients/fjs/bankinfo": ["libs/clients/fjs/bankinfo/src/index.ts"],
+      "@island.is/clients/fjs/bank-info": ["libs/clients/fjs/bank-info/src/index.ts"],
       "@island.is/cms": ["libs/cms/src/index.ts"],
       "@island.is/cms-translations": ["libs/cms-translations/src/index.ts"],
       "@island.is/cms-translations/test": [

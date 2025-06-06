@@ -13,7 +13,7 @@ import {
 import {
   BankinfoClientService,
   formatBankInfo,
-} from '@island.is/clients/fjs/bankinfo'
+} from '@island.is/clients/fjs/bank-info'
 import { AdminUserProfile } from './adminUserProfile.model'
 import { ActorProfile, ActorProfileResponse } from './dto/actorProfile'
 import { CreateEmailVerificationInput } from './dto/createEmalVerificationInput'

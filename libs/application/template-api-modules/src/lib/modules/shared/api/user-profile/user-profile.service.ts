@@ -24,7 +24,7 @@ import { CodeOwners } from '@island.is/shared/constants'
 import {
   BankinfoClientService,
   formatBankInfo,
-} from '@island.is/clients/fjs/bankinfo'
+} from '@island.is/clients/fjs/bank-info'
 
 @Injectable()
 @CodeOwner(CodeOwners.NordaApplications)

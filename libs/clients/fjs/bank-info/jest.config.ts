@@ -1,6 +1,6 @@
 /* eslint-disable */
 export default {
-  displayName: 'clients-fjs-bankinfo',
+  displayName: 'clients-fjs-bankInfo',
   preset: '../../../../jest.preset.js',
   testEnvironment: 'node',
   transform: {

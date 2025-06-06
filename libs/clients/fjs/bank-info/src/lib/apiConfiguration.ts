@@ -15,7 +15,7 @@ export const ApiConfiguration = {
   ) => {
     return new Configuration({
       fetchApi: createEnhancedFetch({
-        name: 'clients-fjs-bankinfo',
+        name: 'clients-fjs-bankInfo',
         organizationSlug: 'fjarsysla-rikisins',
         logErrorResponseBody: true,
         autoAuth: idsClientConfig.isConfigured

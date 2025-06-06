@@ -2,15 +2,13 @@ import { DynamicModule } from '@nestjs/common'
 import { BaseTemplateAPIModuleConfig } from '../../../../types'
 import { UserProfileService } from './user-profile.service'
 import { Configuration, V2MeApi } from '@island.is/clients/user-profile'
-import { BankinfoClientModule } from '@island.is/clients/fjs/bankinfo'
+import { BankinfoClientModule } from '@island.is/clients/fjs/bank-info'
 
 export class UserProfileModule {
   static register(config: BaseTemplateAPIModuleConfig): DynamicModule {
     return {
       module: UserProfileModule,
-      imports: [
-        BankinfoClientModule,
-      ],
+      imports: [BankinfoClientModule],
       providers: [
         UserProfileService,
         {

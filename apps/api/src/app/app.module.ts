@@ -130,7 +130,7 @@ import {
   FirearmDigitalLicenseClientConfig,
   MachineDigitalLicenseClientConfig,
 } from '@island.is/clients/license-client'
-import { BankInfoClientConfig } from '@island.is/clients/fjs/bankinfo'
+import { BankInfoClientConfig } from '@island.is/clients/fjs/bank-info'
 
 import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalities-financial-aid'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
