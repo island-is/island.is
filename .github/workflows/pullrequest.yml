@@ -152,6 +152,15 @@ jobs:
         ports:
           - 5432:5432
 
+      # $ docker run -d --name elasticsearch --net somenetwork -p 9200:9200 -p 9300:9300 -e "discovery.type=single-node" elasticsearch:tag
+      elasticsearch:
+        image: elasticsearch:8.18.2
+        env:
+          discovery.type: single-node
+        ports:
+          - 9200:9200
+          - 9300:9300
+
     env:
       DB_USER: postgres
       DB_PASS: postgres
