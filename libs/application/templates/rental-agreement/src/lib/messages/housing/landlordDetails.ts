@@ -73,7 +73,7 @@ export const landlordDetails = defineMessages({
   landlordOnlyRepresentativeTableError: {
     id: 'ra.application:landlordDetails.landlordOnlyRepresentativeTableError',
     defaultMessage:
-      'Að minnsta kosti einn leigusali þarf að vera skráður á leigusamninginn. Ekki er nóg að skrá umboðsaðlia leigusala.',
+      'Að minnsta kosti einn leigusali þarf að vera skráður á leigusamninginn. Ekki er nóg að skrá umboðsaðila leigusala.',
     description: 'Landlord details only a representative of landlord in table',
   },
   landlordNationalIdEmptyError: {

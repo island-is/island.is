@@ -68,7 +68,7 @@ export const tenantDetails = defineMessages({
   tenantOnlyRepresentativeTableError: {
     id: 'ra.application:tenantDetails.tenantOnlyRepresentativeTableError',
     defaultMessage:
-      'Að minnsta kosti einn leigutaki þarf að vera skráður á leigusamninginn. Ekki er nóg að skrá umboðsaðlia leigusala.',
+      'Að minnsta kosti einn leigjandi þarf að vera skráður á leigusamninginn. Ekki er nóg að skrá umboðsaðila leigjanda.',
     description: 'Tenant details only a representative of tenant in table',
   },
   tenantNationalIdEmptyError: {

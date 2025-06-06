@@ -2,6 +2,7 @@ import {
   buildSubSection,
   buildMultiField,
   buildTableRepeaterField,
+  buildAlertMessageField,
 } from '@island.is/application/core'
 import {
   formatNationalId,
@@ -10,6 +11,7 @@ import {
 } from '../../../utils/utils'
 import { Routes } from '../../../utils/enums'
 import { tenantDetails } from '../../../lib/messages'
+import { applicationAnswers } from '../../../shared'
 
 export const RentalHousingTenantInfo = buildSubSection({
   id: Routes.TENANTINFORMATION,
@@ -78,6 +80,22 @@ export const RentalHousingTenantInfo = buildSubSection({
               tenantDetails.isRepresentative,
             ],
             rows: ['name', 'phone', 'nationalId', 'email', 'isRepresentative'],
+          },
+        }),
+        buildAlertMessageField({
+          id: 'tenantInfo.onlyRepresentativeError',
+          alertType: 'error',
+          title: tenantDetails.tenantOnlyRepresentativeTableError,
+          shouldBlockInSetBeforeSubmitCallback: true,
+          condition: (answers) => {
+            const { tenants } = applicationAnswers(answers)
+            const filterNonRepresentatives =
+              tenants?.filter(
+                (tenant) =>
+                  !tenant.isRepresentative?.includes(IS_REPRESENTATIVE),
+              ) ?? []
+
+            return tenants.length > 0 && filterNonRepresentatives.length === 0
           },
         }),
       ],
