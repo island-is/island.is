@@ -86,6 +86,7 @@ fragmentTypes.json
 *.generated.ts
 /apps/**/src/index.html
 nx_cloud_access_token.txt
+*.tgz
 
 # IDE - Visual Studio
 *.suo
