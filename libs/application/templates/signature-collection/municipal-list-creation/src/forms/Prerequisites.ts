@@ -80,7 +80,6 @@ export const Prerequisites: Form = buildForm({
               title: m.nationalRegistryProviderTitle,
               subTitle: m.nationalRegistryProviderSubtitle,
             }),
-            //Todo: update providers once known
             buildDataProviderItem({
               provider: MunicipalCollectionApi,
             }),
