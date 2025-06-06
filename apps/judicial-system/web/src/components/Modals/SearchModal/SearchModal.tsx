@@ -8,6 +8,7 @@ import {
   Tag,
   Text,
 } from '@island.is/island-ui/core'
+import { CaseType } from '@island.is/judicial-system/types'
 
 import { ModalContainer } from '../Modal/Modal'
 import * as styles from './SearchModal.css'
@@ -16,8 +17,19 @@ interface Props {
   onClose: () => void
 }
 
-const SearchResultButton = () => (
-  <button className={styles.resultButton}>
+interface ResultsProps {
+  caseNumber: string
+  caseType: CaseType
+}
+
+const SearchResultButton = ({ caseNumber, caseType }: ResultsProps) => (
+  <button
+    className={styles.resultButton}
+    onClick={() => {
+      //TODO: Implement navigation to case route
+      console.log(`Navigating to case route: ${caseNumber} - ${caseType}`)
+    }}
+  >
     <Box
       border="standard"
       padding={2}
@@ -50,7 +62,7 @@ const SearchModal: FC<Props> = ({ onClose }) => {
 
   return (
     <ModalContainer title="Leit" onClose={onClose}>
-      <Box margin={3}>
+      <Box margin={3} className={styles.searchModal}>
         <Text variant="h3" marginBottom={1}>
           Leit
         </Text>
@@ -89,10 +101,13 @@ const SearchModal: FC<Props> = ({ onClose }) => {
         <AnimatePresence>
           {isSearching && (
             <motion.div
-            //   initial={{ opacity: 0, maxHeight: 0 }}
-            //   animate={{ opacity: 1, maxHeight: 500 }}
-            //   exit={{ opacity: 0, maxHeight: 0 }}
-            //   transition={{ duration: 0.2 }}
+              initial={{ opacity: 0, maxHeight: 0 }}
+              animate={{ opacity: 1, maxHeight: 500 }}
+              exit={{ opacity: 0, maxHeight: 0 }}
+              transition={{
+                opacity: { duration: 0.2 },
+                maxHeight: { duration: 0.5, ease: 'easeOut' },
+              }}
             >
               <Text variant="eyebrow" marginBottom={2} color="dark300">
                 Leitarniðurstöður
@@ -101,11 +116,21 @@ const SearchModal: FC<Props> = ({ onClose }) => {
               {isLoading ? (
                 <SkeletonLoader repeat={3} height={90} space={2} />
               ) : (
-                <>
-                  <SearchResultButton />
-                  <SearchResultButton />
-                  <SearchResultButton />
-                </>
+                <div>
+                  <SearchResultButton
+                    caseNumber="123"
+                    caseType={CaseType.CUSTODY}
+                  />
+
+                  <SearchResultButton
+                    caseNumber="123"
+                    caseType={CaseType.BODY_SEARCH}
+                  />
+                  <SearchResultButton
+                    caseNumber="123"
+                    caseType={CaseType.INTERNET_USAGE}
+                  />
+                </div>
               )}
             </motion.div>
           )}
