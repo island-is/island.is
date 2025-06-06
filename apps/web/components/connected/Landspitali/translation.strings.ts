@@ -218,5 +218,10 @@ export const m = {
       defaultMessage: 'Lágmark er 1.000 kr.',
       description: 'Villuskilaboð fyrir lágmarksupphæð',
     },
+    requiredAmount: {
+      id: 'web.landspitali.memorialCard:validation.requiredAmount',
+      defaultMessage: 'Veldu upphæð eða sláðu inn aðra upphæð.',
+      description: 'Villuskilaboð þegar ekkert er valið í fjárhæð',
+    },
   }),
 }

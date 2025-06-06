@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 
@@ -123,6 +123,12 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
     setSubmitted(true)
   }
 
+  useEffect(() => {
+    methods.register('amountISK', {
+      required: formatMessage(m.validation.requiredAmount),
+    })
+  }, [methods, formatMessage])
+
   const handleReset = () => setSubmitted(false)
 
   if (submitted) {
@@ -199,10 +205,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
   const requiredRule = {
     required: {
       value: true,
-      message: formatMessage({
-        id: 'web.landspitali.memorialCard:validation.required',
-        defaultMessage: 'Það þarf að fylla út þennan reit',
-      }),
+      message: formatMessage(m.validation.required),
     },
   }
 
@@ -258,7 +261,9 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
                   name="amountISK"
                   label={amount}
                   checked={selectedAmount === amount}
-                  onChange={() => setValue('amountISK', amount)}
+                  onChange={() =>
+                    setValue('amountISK', amount, { shouldValidate: true })
+                  }
                 />
               </FocusableBox>
             ))}
@@ -268,9 +273,16 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
                 name="amountISK"
                 label={formatMessage(m.info.amountOfMoneyOtherRadioLabel)}
                 checked={selectedAmount === 'other'}
-                onChange={() => setValue('amountISK', 'other')}
+                onChange={() =>
+                  setValue('amountISK', 'other', { shouldValidate: true })
+                }
               />
             </FocusableBox>
+            {errors.amountISK && (
+              <Text color="red600" variant="small">
+                {errors.amountISK.message}
+              </Text>
+            )}
           </Box>
 
           {selectedAmount === 'other' && (
@@ -284,10 +296,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
               currency={true}
               error={
                 parseInt(watch('amountISKCustom') || '0') < 1000
-                  ? formatMessage({
-                      id: 'web.landspitali.memorialCard:validation.minimumAmount',
-                      defaultMessage: 'Lágmark er 1.000 kr.',
-                    })
+                  ? formatMessage(m.validation.minimumAmount)
                   : undefined
               }
               rules={requiredRule}
@@ -346,10 +355,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
                 ...requiredRule,
                 pattern: {
                   value: /^\d{10}$/,
-                  message: formatMessage({
-                    id: 'web.landspitali.memorialCard:validation.invalidNationalId',
-                    defaultMessage: 'Kennitala verður að vera 10 tölustafir',
-                  }),
+                  message: formatMessage(m.validation.invalidNationalId),
                 },
               }}
             />
