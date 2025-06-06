@@ -25,6 +25,12 @@ import {
   shouldShowEqualIncomePerMonth,
   shouldShowIncomePlanMonths,
 } from '../../../utils/conditionUtils'
+import {
+  currencyValueModifier,
+  equalIncomePerMonthValueModifier,
+  incomePerYearValueModifier,
+  incomeTypeValueModifier,
+} from '../../../utils/incomePlanUtils'
 import { getApplicationExternalData } from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 
 export const incomePlanSubSection = buildSubSection({
@@ -83,19 +89,8 @@ export const incomePlanSubSection = buildSubSection({
           width: 'half',
           isSearchable: true,
           updateValueObj: {
-            valueModifier: (application, activeField) => {
-              const { categorizedIncomeTypes } = getApplicationExternalData(
-                application.externalData,
-              )
-              const options = getTypesOptions(
-                categorizedIncomeTypes,
-                activeField?.incomeCategory,
-              )
-              const selectedOption = options.find(
-                (option) => option.value === activeField?.incomeType,
-              )?.value
-              return selectedOption ?? null
-            },
+            valueModifier: (application, activeField) =>
+              incomeTypeValueModifier(application.externalData, activeField),
             watchValues: 'incomeCategory',
           },
           options: (application, activeField) => {
@@ -116,19 +111,8 @@ export const incomePlanSubSection = buildSubSection({
             socialInsuranceAdministrationMessage.incomePlan.selectCurrency,
           isSearchable: true,
           updateValueObj: {
-            valueModifier: (_, activeField) => {
-              const defaultCurrency =
-                activeField?.incomeType === FOREIGN_BASIC_PENSION ||
-                activeField?.incomeType === FOREIGN_PENSION ||
-                activeField?.incomeType === FOREIGN_INCOME ||
-                activeField?.incomeType ===
-                  INTEREST_ON_DEPOSITS_IN_FOREIGN_BANKS ||
-                activeField?.incomeType === DIVIDENDS_IN_FOREIGN_BANKS
-                  ? null
-                  : ISK
-
-              return defaultCurrency
-            },
+            valueModifier: (_, activeField) =>
+              currencyValueModifier(activeField),
             watchValues: 'incomeType',
           },
           options: (application, activeField) => {
@@ -176,24 +160,9 @@ export const incomePlanSubSection = buildSubSection({
           displayInTable: false,
           currency: true,
           updateValueObj: {
-            valueModifier: (_, activeField) => {
-              const unevenAndEmploymentIncome =
-                activeField?.unevenIncomePerYear?.[0] !== YES ||
-                (activeField?.incomeCategory !== INCOME &&
-                  activeField?.unevenIncomePerYear?.[0] === YES)
-
-              if (
-                activeField?.income === RatioType.MONTHLY &&
-                activeField?.currency !== ISK &&
-                unevenAndEmploymentIncome
-              ) {
-                return Math.round(
-                  Number(activeField?.incomePerYear) / 12,
-                ).toString()
-              }
-              return undefined
-            },
-            watchValues: 'income',
+            valueModifier: (_, activeField) =>
+              equalIncomePerMonthValueModifier(true, activeField),
+            watchValues: ['income', 'currency', 'unevenIncomePerYear'],
           },
           suffix: '',
           condition: (_, activeField) =>
@@ -208,24 +177,9 @@ export const incomePlanSubSection = buildSubSection({
           displayInTable: false,
           currency: true,
           updateValueObj: {
-            valueModifier: (_, activeField) => {
-              const unevenAndEmploymentIncome =
-                activeField?.unevenIncomePerYear?.[0] !== YES ||
-                (activeField?.incomeCategory !== INCOME &&
-                  activeField?.unevenIncomePerYear?.[0] === YES)
-
-              if (
-                activeField?.income === RatioType.MONTHLY &&
-                activeField?.currency === ISK &&
-                unevenAndEmploymentIncome
-              ) {
-                return Math.round(
-                  Number(activeField?.incomePerYear) / 12,
-                ).toString()
-              }
-              return undefined
-            },
-            watchValues: 'income',
+            valueModifier: (_, activeField) =>
+              equalIncomePerMonthValueModifier(false, activeField),
+            watchValues: ['income', 'currency', 'unevenIncomePerYear'],
           },
           suffix: '',
           condition: (_, activeField) =>
@@ -241,48 +195,8 @@ export const incomePlanSubSection = buildSubSection({
             return activeField?.income === RatioType.MONTHLY
           },
           updateValueObj: {
-            valueModifier: (_, activeField) => {
-              if (
-                activeField?.income === RatioType.MONTHLY &&
-                activeField?.incomeCategory === INCOME &&
-                activeField?.unevenIncomePerYear?.[0] === YES
-              ) {
-                return (
-                  Number(activeField?.january ?? 0) +
-                  Number(activeField?.february ?? 0) +
-                  Number(activeField?.march ?? 0) +
-                  Number(activeField?.april ?? 0) +
-                  Number(activeField?.may ?? 0) +
-                  Number(activeField?.june ?? 0) +
-                  Number(activeField?.july ?? 0) +
-                  Number(activeField?.august ?? 0) +
-                  Number(activeField?.september ?? 0) +
-                  Number(activeField?.october ?? 0) +
-                  Number(activeField?.november ?? 0) +
-                  Number(activeField?.december ?? 0)
-                ).toString()
-              }
-
-              if (
-                activeField?.income === RatioType.MONTHLY &&
-                activeField?.currency === ISK
-              ) {
-                return (
-                  Number(activeField?.equalIncomePerMonth) * 12
-                ).toString()
-              }
-
-              if (
-                activeField?.income === RatioType.MONTHLY &&
-                activeField?.currency !== ISK
-              ) {
-                return (
-                  Number(activeField?.equalForeignIncomePerMonth) * 12
-                ).toString()
-              }
-
-              return undefined
-            },
+            valueModifier: (_, activeField) =>
+              incomePerYearValueModifier(activeField),
             watchValues: (activeField) => {
               if (
                 activeField?.income === RatioType.MONTHLY &&
