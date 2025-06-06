@@ -8,9 +8,10 @@ import { GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { ReviewGroupProps } from './props'
-import { getApplicationAnswers } from '../../../utils/medicalAndRehabilitationPaymentsUtils'
+
 import { getTaxLevelOption } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { YES } from '@island.is/application/core'
+import { getApplicationAnswers } from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 
 export const Payment = ({
   application,

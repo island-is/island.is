@@ -66,8 +66,13 @@ export const formatBank = (bankInfo: string) => {
 // new one or changing.
 export const shouldNotUpdateBankAccount = (
   bankInfo: BankInfo,
-  paymentInfo: PaymentInfo,
+  paymentInfo: PaymentInfo | undefined,
 ) => {
+  if (!paymentInfo) {
+    console.error('shouldNotUpdateBankAccount - Payment info is undefined!')
+    return false
+  }
+
   const {
     bankAccountType,
     bank,

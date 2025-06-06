@@ -43,7 +43,7 @@ export const paymentInfoSubSection = buildSubSection({
             const { bankInfo } = getApplicationExternalData(
               application.externalData,
             )
-            return getBankIsk(bankInfo)
+            return bankInfo ? getBankIsk(bankInfo) : ''
           },
         }),
         buildRadioField({

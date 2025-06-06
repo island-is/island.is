@@ -56,7 +56,9 @@ export const UnionSickPay = ({
                   .unionSickPayTitle,
               )}
               value={formatMessage(
-                getYesNoNotApplicableTranslation(hasUtilizedUnionSickPayRights),
+                getYesNoNotApplicableTranslation(
+                  hasUtilizedUnionSickPayRights ?? '',
+                ),
               )}
             />
           </GridColumn>
