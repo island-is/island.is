@@ -1,0 +1,43 @@
+name: 'Setup Playwright'
+description: 'Installs Playwright browsers and sets up caching'
+inputs:
+  RUNS_ON_S3_BUCKET_CACHE:
+    description: ''
+    required: true
+  working-directory:
+    description: 'Directory to run the action in'
+    required: false
+    default: '.'
+
+runs:
+  using: 'composite'
+  steps:
+    - name: Set Playwright cache key
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      id: set-playwright-cache-key
+      run: |
+        echo "CACHE_KEY=${{ runner.os }}-playwright-${{ hashFiles('yarn.lock') }}-1" >> $GITHUB_OUTPUT
+
+    - name: Restore Playwright Cache
+      uses: runs-on/cache/restore@v4
+      id: restore-playwright-cache
+      with:
+        path: ~/.cache/ms-playwright
+        key: ${{ steps.set-playwright-cache-key.outputs.CACHE_KEY }}
+      env:
+        RUNS_ON_S3_BUCKET_CACHE: ${{ inputs.RUNS_ON_S3_BUCKET_CACHE }}
+
+    - name: Install Playwright browsers
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: yarn playwright install --with-deps
+
+    - name: Cache Playwright
+      uses: runs-on/cache/save@v4
+      if: steps.restore-playwright-cache.outputs.cache-hit != 'true'
+      with:
+        path: ~/.cache/ms-playwright
+        key: ${{ steps.set-playwright-cache-key.outputs.CACHE_KEY }}
+      env:
+        RUNS_ON_S3_BUCKET_CACHE: ${{ inputs.RUNS_ON_S3_BUCKET_CACHE }}
