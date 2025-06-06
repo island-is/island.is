@@ -5,20 +5,10 @@ import {
   isPrisonAdminUser,
   isPrisonStaffUser,
   isPublicProsecutionOfficeUser,
+  isPublicProsecutionUser,
 } from '../user'
-import { CaseTableType } from './caseTable'
-
-interface CaseTableDescriptor {
-  type: CaseTableType
-  route: string
-  title: string
-  description: string
-}
-
-interface CaseTableGroup {
-  title: string
-  tables: CaseTableDescriptor[]
-}
+import { publicProsecutorTableGroups } from './tableGroups/publicProsecutorTableGroups'
+import { CaseTableGroup, CaseTableType } from './caseTableTypes'
 
 const districtCourtTableGroups: CaseTableGroup[] = [
   {
@@ -224,6 +214,10 @@ export const getCaseTableGroups = (
 
   if (isPublicProsecutionOfficeUser(user)) {
     return publicProsecutorsOfficeTableGroups
+  }
+
+  if (isPublicProsecutionUser(user)) {
+    return publicProsecutorTableGroups
   }
 
   return []

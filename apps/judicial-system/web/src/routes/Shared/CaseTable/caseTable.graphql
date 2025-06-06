@@ -2,8 +2,8 @@ query CaseTable($input: CaseTableQueryInput!) {
   caseTable(input: $input) {
     rowCount
     rows {
-      caseId
       isMyCase
+      caseId
       cells {
         value {
           __typename
