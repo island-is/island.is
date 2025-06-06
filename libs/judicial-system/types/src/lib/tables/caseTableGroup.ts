@@ -7,8 +7,8 @@ import {
   isPublicProsecutionOfficeUser,
   isPublicProsecutionUser,
 } from '../user'
+import { publicProsecutorTableGroups } from './tableGroups/publicProsecutorTableGroups'
 import { CaseTableGroup, CaseTableType } from './caseTableTypes'
-import { publicProsecutorTableGroups } from './tableGroups'
 
 const districtCourtTableGroups: CaseTableGroup[] = [
   {

@@ -30,9 +30,11 @@ import {
   prosecutorRequestCasesAppealedWhereOptions,
   prosecutorRequestCasesCompletedWhereOptions,
   prosecutorRequestCasesInProgressWhereOptions,
+} from './whereOptions/prosecutor'
+import {
   publicProsecutorIndictmentInReviewWhereOptions,
   publicProsecutorIndictmentReviewedWhereOptions,
-} from './whereOptions'
+} from './whereOptions/publicProsecutor'
 
 // District Court Request Cases
 
@@ -407,30 +409,29 @@ export const caseTableWhereOptions: Record<
     withUserFilter(districtCourtIndictmentsFinalizingWhereOptions, user),
   [CaseTableType.DISTRICT_COURT_INDICTMENTS_COMPLETED]: (user) =>
     withUserFilter(districtCourtIndictmentsCompletedWhereOptions, user),
-  [CaseTableType.COURT_OF_APPEALS_IN_PROGRESS]: (_user) =>
+  [CaseTableType.COURT_OF_APPEALS_IN_PROGRESS]: () =>
     courtOfAppealsInProgressWhereOptions,
-  [CaseTableType.COURT_OF_APPEALS_COMPLETED]: (_user) =>
+  [CaseTableType.COURT_OF_APPEALS_COMPLETED]: () =>
     courtOfAppealsCompletedWhereOptions,
-  [CaseTableType.PRISON_ACTIVE]: (_user) => prisonActiveWhereOptions,
-  [CaseTableType.PRISON_DONE]: (_user) => prisonDoneWhereOptions,
-  [CaseTableType.PRISON_ADMIN_ACTIVE]: (_user) => prisonAdminActiveWhereOptions,
-  [CaseTableType.PRISON_ADMIN_DONE]: (_user) => prisonAdminDoneWhereOptions,
-  [CaseTableType.PRISON_ADMIN_INDICTMENT_SENT_TO_PRISON_ADMIN]: (_user) =>
+  [CaseTableType.PRISON_ACTIVE]: () => prisonActiveWhereOptions,
+  [CaseTableType.PRISON_DONE]: () => prisonDoneWhereOptions,
+  [CaseTableType.PRISON_ADMIN_ACTIVE]: () => prisonAdminActiveWhereOptions,
+  [CaseTableType.PRISON_ADMIN_DONE]: () => prisonAdminDoneWhereOptions,
+  [CaseTableType.PRISON_ADMIN_INDICTMENT_SENT_TO_PRISON_ADMIN]: () =>
     prisonAdminIndictmentSentToPrisonAdminWhereOptions,
-  [CaseTableType.PRISON_ADMIN_INDICTMENT_REGISTERED_RULING]: (_user) =>
+  [CaseTableType.PRISON_ADMIN_INDICTMENT_REGISTERED_RULING]: () =>
     prisonAdminIndictmentRegisteredRulingWhereOptions,
-  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_NEW]: (_user) =>
+  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_NEW]: () =>
     prosecutorsOfficeIndictmentNewWhereOptions,
-  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_IN_REVIEW]: (_user) =>
+  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_IN_REVIEW]: () =>
     prosecutorsOfficeIndictmentInReviewWhereOptions,
-  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_REVIEWED]: (_user) =>
+  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_REVIEWED]: () =>
     prosecutorsOfficeIndictmentReviewedWhereOptions,
-  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_APPEAL_PERIOD_EXPIRED]: (
-    _user,
-  ) => prosecutorsOfficeIndictmentAppealPeriodExpiredWhereOptions,
-  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_SENT_TO_PRISON_ADMIN]: (_user) =>
+  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_APPEAL_PERIOD_EXPIRED]: () =>
+    prosecutorsOfficeIndictmentAppealPeriodExpiredWhereOptions,
+  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_SENT_TO_PRISON_ADMIN]: () =>
     prosecutorsOfficeIndictmentSentToPrisonAdminWhereOptions,
-  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_APPEALED]: (_user) =>
+  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_APPEALED]: () =>
     prosecutorsOfficeIndictmentAppealedWhereOptions,
   [CaseTableType.PROSECUTOR_REQUEST_CASES_IN_PROGRESS]: (user) =>
     prosecutorRequestCasesInProgressWhereOptions(user),

@@ -11,22 +11,17 @@ import {
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
-const prosecutorSharedWhereOptions = (user: TUser) => ({
-  [Op.or]: [
-    { creating_prosecutor_id: user.id },
-    { prosecutor_id: user.id },
-    { prosecutors_office_id: user.institution?.id },
-    { shared_with_prosecutors_office_id: user.institution?.id },
-  ],
-})
-
 // Prosecutor Request Cases
 
 const prosecutorRequestCasesSharedWhereOptions = (user: TUser) => ({
   is_archived: false,
   type: [...restrictionCases, ...investigationCases],
-  is_heightened_security_level: { [Op.or]: [null, false] },
-  ...prosecutorSharedWhereOptions(user),
+  [Op.or]: [
+    { is_heightened_security_level: [null, false] },
+    { creating_prosecutor_id: user.id },
+    { prosecutor_id: user.id },
+    { shared_with_prosecutors_office_id: user.institution?.id },
+  ],
 })
 
 export const prosecutorRequestCasesInProgressWhereOptions = (user: TUser) => ({
@@ -35,37 +30,23 @@ export const prosecutorRequestCasesInProgressWhereOptions = (user: TUser) => ({
 })
 
 export const prosecutorRequestCasesActiveWhereOptions = (user: TUser) => ({
-  [Op.and]: [
-    prosecutorRequestCasesSharedWhereOptions(user),
-    {
-      [Op.or]: [
-        {
-          initial_ruling_date: {
-            [Op.or]: [null, { [Op.lte]: fn('NOW') }],
-          },
-        },
-        {
-          ruling_date: {
-            [Op.or]: [null, { [Op.lte]: fn('NOW') }],
-          },
-        },
-      ],
-    },
-  ],
+  ...prosecutorRequestCasesSharedWhereOptions(user),
   state: [CaseState.ACCEPTED],
-  valid_to_date: { [Op.or]: [null, { [Op.gte]: fn('NOW') }] },
+  valid_to_date: [null, { [Op.gte]: fn('NOW') }],
 })
 
 export const prosecutorRequestCasesAppealedWhereOptions = (user: TUser) => ({
   ...prosecutorRequestCasesSharedWhereOptions(user),
   state: completedRequestCaseStates,
-  appeal_state: [CaseAppealState.APPEALED],
+  appeal_state: [CaseAppealState.RECEIVED, CaseAppealState.APPEALED],
 })
 
 export const prosecutorRequestCasesCompletedWhereOptions = (user: TUser) => ({
   ...prosecutorRequestCasesSharedWhereOptions(user),
   state: completedRequestCaseStates,
-  appeal_state: { [Op.not]: CaseAppealState.APPEALED },
+  appeal_state: {
+    [Op.not]: [CaseAppealState.RECEIVED, CaseAppealState.APPEALED],
+  },
 })
 
 // prosecutor indictments
@@ -73,7 +54,7 @@ export const prosecutorRequestCasesCompletedWhereOptions = (user: TUser) => ({
 const prosecutorIndictmentSharedWhereOptions = (user: TUser) => ({
   is_archived: false,
   type: indictmentCases,
-  ...prosecutorSharedWhereOptions(user),
+  prosecutors_office_id: user.institution?.id,
 })
 
 export const prosecutorIndictmentWaitingForConfirmationWhereOptions = (
