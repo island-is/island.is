@@ -7,7 +7,6 @@ import {
 } from '@island.is/clients/charge-fjs-v2'
 import { CardErrorCode } from '@island.is/shared/constants'
 
-import { environment } from '../../environments'
 import { ChargeCardInput } from './dtos/chargeCard.input'
 import { VerifyCardInput } from './dtos/verifyCard.input'
 import {
@@ -56,10 +55,12 @@ export const generateVerificationRequestOptions = ({
   verifyCardInput,
   md,
   paymentApiConfig,
+  webOrigin,
 }: {
   verifyCardInput: VerifyCardInput
   md: string
   paymentApiConfig: CardPaymentModuleConfigType['paymentGateway']
+  webOrigin: string
 }) => {
   const { cardNumber, expiryMonth, expiryYear, amount } = verifyCardInput
   const {
@@ -83,7 +84,7 @@ export const generateVerificationRequestOptions = ({
       cardholderDeviceType: 'WWW',
       amount: iskToAur(amount),
       currency: 'ISK',
-      authenticationUrl: `${environment.paymentsWeb.origin}/api/card/callback`,
+      authenticationUrl: `${webOrigin}/api/card/callback`,
       MD: md,
       systemCalling,
     }),

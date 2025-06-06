@@ -13,6 +13,7 @@ import { PaymentFlowModule } from './paymentFlow/paymentFlow.module'
 import { CardPaymentModule } from './cardPayment/cardPayment.module'
 import { InvoicePaymentModule } from './invoicePayment/invoicePayment.module'
 import { SequelizeConfigService } from '../sequelizeConfig.service'
+import { JwksModule } from './jwks/jwks.module'
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { SequelizeConfigService } from '../sequelizeConfig.service'
     PaymentFlowModule,
     CardPaymentModule,
     InvoicePaymentModule,
+    JwksModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
