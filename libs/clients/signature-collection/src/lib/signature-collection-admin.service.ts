@@ -4,7 +4,6 @@ import {
   GetListInput,
   CreateListInput,
   BulkUploadInput,
-  ReasonKey,
 } from './signature-collection.types'
 import { Collection, CollectionType } from './types/collection.dto'
 import { getSlug, List, ListStatus, mapListBase } from './types/list.dto'
