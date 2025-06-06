@@ -1,6 +1,6 @@
 import { BrowserContext, expect, test } from '@playwright/test'
 
-import { session,urls } from '@island.is/testing/e2e'
+import { session, urls } from '@island.is/testing/e2e'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
