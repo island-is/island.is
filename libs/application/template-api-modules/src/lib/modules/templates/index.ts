@@ -1,3 +1,5 @@
+import { FireCompensationAppraisalModule } from './hms/fire-compensation-appraisal/fire-compensation-appraisal.module'
+import { FireCompensationAppraisalService } from './hms/fire-compensation-appraisal/fire-compensation-appraisal.service'
 import { ExampleFolderStructureAndConventionsModule } from './examples/example-folder-structure-and-conventions/example-folder-structure-and-conventions.module'
 import { ExampleFolderStructureAndConventionsService } from './examples/example-folder-structure-and-conventions/example-folder-structure-and-conventions.service'
 import { ExampleAuthDelegationModule } from './examples/example-auth-delegation/example-auth-delegation.module'
@@ -246,6 +248,7 @@ export const modules = [
   LegalGazetteTemplateModule,
   ExampleAuthDelegationModule,
   RentalAgreementModule,
+  FireCompensationAppraisalModule,
 ]
 
 export const services = [
@@ -330,4 +333,5 @@ export const services = [
   LegalGazetteTemplateService,
   ExampleAuthDelegationService,
   RentalAgreementService,
+  FireCompensationAppraisalService,
 ]

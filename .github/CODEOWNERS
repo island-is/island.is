@@ -24,6 +24,7 @@
 /libs/application/templates/aosh/                                                                         @island-is/norda
 /libs/application/templates/examples/                                                                     @island-is/norda
 /libs/application/templates/family-matters/                                                               @island-is/norda
+/libs/application/templates/hms/                                                                          @island-is/norda
 /libs/application/templates/inao/                                                                         @island-is/norda
 /libs/application/templates/signature-collection                                                          @island-is/norda
 /libs/application/templates/social-insurance-administration/                                              @island-is/norda
@@ -244,6 +245,7 @@ codemagic.yaml                                                                  
 /libs/application/templates/grindavik-housing-buyout/                                                     @island-is/norda
 /libs/application/templates/health-insurance/                                                             @island-is/norda
 /libs/application/templates/health-insurance-declaration/                                                 @island-is/norda
+/libs/application/templates/hms/fire-compensation-appraisal/                                              @island-is/norda
 /libs/application/templates/home-support/                                                                 @island-is/norda
 /libs/application/templates/inao/financial-statement-cemetery/                                            @island-is/norda
 /libs/application/templates/inao/financial-statement-individual-election/                                 @island-is/norda
@@ -266,6 +268,7 @@ codemagic.yaml                                                                  
 /libs/application/template-api-modules/src/lib/modules/templates/grindavik-housing-buyout/                @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/health-insurance/                        @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/health-insurance-declaration/            @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/hms/fire-compensation-appraisal/         @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/home-support/                            @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/institution-collaboration/               @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/login-service/                           @island-is/norda
@@ -276,6 +279,7 @@ codemagic.yaml                                                                  
 /libs/clients/data-protection-complaint/                                                                  @island-is/norda
 /libs/clients/financial-statements-inao                                                                   @island-is/norda
 /libs/clients/fishing-license/                                                                            @island-is/norda
+/libs/clients/hms-application-system/                                                                     @island-is/norda                                                                      @island-is/norda
 /libs/clients/icelandic-health-insurance/health-insurance/                                                @island-is/norda
 /libs/clients/payment-schedule/                                                                           @island-is/norda
 /libs/clients/rsk/company-registry                                                                        @island-is/norda
