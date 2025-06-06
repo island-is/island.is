@@ -105,15 +105,8 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "yarn get-secrets web",
-          "echo '#############'",
-          "echo '# ATTENTION #'",
-          "echo '#############'",
-          "echo ''",
-          "echo 'You must manually add these to your .env.secrets file (used for e.g. extract-strings):'",
-          "echo '  CONTENTFUL_HOST '",
-          "echo '  CONTENTFUL_MANAGEMENT_ACCESS_TOKEN '",
-          "echo ''",
+          "echo yarn get-secrets {projectName}",
+          "echo \"#############\n # ATTENTION #\n #############\n \n You must manually add these to your .env.secrets file (used for e.g. extract-strings):\n CONTENTFUL_HOST \n CONTENTFUL_MANAGEMENT_ACCESS_TOKEN\n\"",
           "yarn nx run api:dev-init",
           "./scripts/run-es-proxy.sh"
         ],
