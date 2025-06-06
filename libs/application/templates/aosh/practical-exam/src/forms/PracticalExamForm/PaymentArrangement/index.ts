@@ -173,6 +173,9 @@ export const paymentArrangementSection = buildSection({
         buildTextField({
           id: 'paymentArrangement.explanation',
           title: paymentArrangement.labels.explanation,
+          rows: 1,
+          maxLength: 40,
+          showMaxLength: true,
           condition: isCompanyAndInvoice,
         }),
         buildCustomField({

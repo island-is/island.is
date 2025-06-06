@@ -2048,6 +2048,7 @@ export class CaseService {
                   transaction,
                   updatedArraignmentDate?.date,
                   updatedArraignmentDate?.location,
+                  defendant.subpoenaType,
                 ),
               ),
           )

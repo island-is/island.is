@@ -406,7 +406,7 @@ export class SyslumennService {
         vedbandayfirlitSkeyti: {
           audkenni: id,
           fastanumer: cleanPropertyNumber(assetId),
-          tegundAndlags: assetType as unknown as VedbondTegundAndlags,
+          tegundAndlags: (assetType as unknown) as VedbondTegundAndlags,
         },
       })
       .catch((e) => {
@@ -706,7 +706,20 @@ export class SyslumennService {
 
   async checkCriminalRecord(auth: Auth) {
     const { api } = await this.createApiWithAuth(auth)
-    return await api.kannaSakavottordAuthGet()
+    // Note: District Commissioners (Sýslumenn) have requested that we include the
+    //       authorization token from island.is in the request in the following header
+    //       'islandis-token'. This is to comply with Sýslumenn's exposed usage of 
+    //       DMR's endpoint on their system, that is to say, DC forwards this token
+    //       to DMR.
+    return await api
+      .withMiddleware({
+        pre: async (context) => {
+          context.init.headers = Object.assign({}, context.init.headers, {
+            'islandis-token': auth.authorization,
+          })
+        },
+      })
+      .kannaSakavottordAuthGet()
   }
 
   async uploadDataCriminalRecord(

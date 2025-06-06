@@ -147,13 +147,6 @@ export const ExamInputs: FC<
     examCategoriesRequireMedicalCertificate.includes(category.value),
   )
 
-  useEffect(() => {
-    if (!shouldShowUpload) {
-      setValue(`examCategories[${idx}].medicalCertificate`, undefined)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shouldShowUpload])
-
   const onSubmit = async () => {
     // Reset Validation error
     setIsInvalidValidation(false)
@@ -306,11 +299,24 @@ export const ExamInputs: FC<
     const updatedInstructors = allInstructors.filter(
       (_: InstructorInformationInput, i: number) => i !== removeIndex,
     )
+
+    const currentlyChosen = chosenCategories.filter(
+      (item) => item.value !== removedValue.value,
+    )
+    if (
+      currentlyChosen.every(
+        (item) => !examCategoriesRequireMedicalCertificate.includes(item.value),
+      )
+    ) {
+      setValue(`examCategories[${idx}].medicalCertificate`, undefined)
+    }
+
     setValue(`examCategories[${idx}].instructor`, updatedInstructors)
   }
 
   const handleClear = () => {
     setValue(`examCategories[${idx}].instructor`, [])
+    setValue(`examCategories[${idx}].medicalCertificate`, undefined)
     setChosenCategories([])
     setCategoryList((prev) =>
       prev.map((option) => ({

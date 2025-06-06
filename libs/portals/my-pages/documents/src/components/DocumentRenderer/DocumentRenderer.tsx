@@ -5,7 +5,6 @@ import NoPDF from '../NoPDF/NoPDF'
 import { messages } from '../../utils/messages'
 import { ActiveDocumentType2 } from '../../lib/types'
 import { useLocale } from '@island.is/localization'
-import { customUrl } from '../../utils/customUrlHandler'
 
 type DocumentRendererProps = {
   doc: ActiveDocumentType2
@@ -23,17 +22,7 @@ export const DocumentRenderer: React.FC<DocumentRendererProps> = ({ doc }) => {
   }
 
   if (doc?.document?.type === 'URL' || doc.downloadUrl) {
-    const docUrl = customUrl({
-      ...doc,
-      document: {
-        content: doc.document.value ?? '',
-        html: doc.document.value ?? '',
-        url: doc.document.value ?? '',
-        fileType: doc.document.type ?? '',
-      },
-    })
-
-    return <UrlDocument url={docUrl} />
+    return <UrlDocument url={doc.document.value ?? ''} />
   }
 
   return <NoPDF text={formatMessage(messages.error)} />

@@ -25,13 +25,13 @@ import {
 } from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
 
-export const Contacts = ({
+export const Relatives = ({
   application,
   editable,
   goToScreen,
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
-  const { contacts } = getApplicationAnswers(application.answers)
+  const { relatives } = getApplicationAnswers(application.answers)
 
   const {
     options: relationFriggOptions,
@@ -39,7 +39,7 @@ export const Contacts = ({
     error,
   } = useFriggOptions(OptionsType.RELATION)
 
-  const rows = contacts.map((r) => {
+  const rows = relatives.map((r) => {
     return [
       r.fullName,
       formatPhoneNumber(removeCountryCode(r.phoneNumber ?? '')),
@@ -51,7 +51,7 @@ export const Contacts = ({
   return (
     <ReviewGroup
       isEditable={editable}
-      editAction={() => goToScreen?.('contacts')}
+      editAction={() => goToScreen?.('relatives')}
     >
       {loading ? (
         <SkeletonLoader height={40} width="80%" borderRadius="large" />
@@ -61,10 +61,10 @@ export const Contacts = ({
             <Label>
               {formatMessage(
                 newPrimarySchoolMessages.childrenNGuardians
-                  .contactsSubSectionTitle,
+                  .relativesSubSectionTitle,
               )}
             </Label>
-            {contacts?.length > 0 && (
+            {relatives?.length > 0 && (
               <Box paddingTop={3}>
                 <StaticTableFormField
                   application={application}
@@ -72,7 +72,7 @@ export const Contacts = ({
                     type: FieldTypes.STATIC_TABLE,
                     component: FieldComponents.STATIC_TABLE,
                     children: undefined,
-                    id: 'contactsTable',
+                    id: 'relativesTable',
                     header: [
                       newPrimarySchoolMessages.shared.fullName,
                       newPrimarySchoolMessages.shared.phoneNumber,

@@ -9,3 +9,8 @@ export const GetListApi = defineTemplateApi({
   action: 'getList',
   order: 1,
 })
+
+export const MunicipalIdentityApi = defineTemplateApi({
+  action: 'municipalIdentity',
+  order: 2,
+})

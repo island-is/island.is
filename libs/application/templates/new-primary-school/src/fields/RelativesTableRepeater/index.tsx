@@ -15,7 +15,7 @@ import { OptionsType } from '../../lib/constants'
 import { newPrimarySchoolMessages } from '../../lib/messages'
 import { getSelectedOptionLabel } from '../../lib/newPrimarySchoolUtils'
 
-const ContactsTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
+const RelativesTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   error,
   field,
   application,
@@ -37,22 +37,26 @@ const ContactsTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         id,
         title,
         formTitle:
-          newPrimarySchoolMessages.childrenNGuardians.contactsRegistrationTitle,
+          newPrimarySchoolMessages.childrenNGuardians
+            .relativesRegistrationTitle,
         addItemButtonText:
-          newPrimarySchoolMessages.childrenNGuardians.contactsAddContact,
+          newPrimarySchoolMessages.childrenNGuardians.relativesAddRelative,
         saveItemButtonText:
-          newPrimarySchoolMessages.childrenNGuardians.contactsRegisterContact,
+          newPrimarySchoolMessages.childrenNGuardians.relativesRegisterRelative,
         removeButtonTooltipText:
-          newPrimarySchoolMessages.childrenNGuardians.contactsDeleteContact,
+          newPrimarySchoolMessages.childrenNGuardians.relativesDeleteRelative,
+        editButtonTooltipText:
+          newPrimarySchoolMessages.childrenNGuardians.relativesEditRelative,
         marginTop: 0,
         maxRows: 4,
+        editField: true,
         fields: {
           fullName: {
             component: 'input',
             label: newPrimarySchoolMessages.shared.fullName,
             width: 'half',
             type: 'text',
-            dataTestId: 'contact-full-name',
+            dataTestId: 'relative-full-name',
           },
           phoneNumber: {
             component: 'input',
@@ -61,7 +65,7 @@ const ContactsTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             type: 'tel',
             format: '###-####',
             placeholder: '000-0000',
-            dataTestId: 'contact-phone-number',
+            dataTestId: 'relative-phone-number',
           },
           nationalId: {
             component: 'input',
@@ -70,7 +74,7 @@ const ContactsTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             type: 'text',
             format: '######-####',
             placeholder: '000000-0000',
-            dataTestId: 'contact-national-id',
+            dataTestId: 'relative-national-id',
           },
           relation: {
             component: 'select',
@@ -78,7 +82,7 @@ const ContactsTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
             width: 'half',
             placeholder: newPrimarySchoolMessages.shared.relationPlaceholder,
             options: relationFriggOptions,
-            dataTestId: 'contact-relation',
+            dataTestId: 'relative-relation',
           },
         },
         table: {
@@ -103,4 +107,4 @@ const ContactsTableRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   )
 }
 
-export default ContactsTableRepeater
+export default RelativesTableRepeater

@@ -13,7 +13,7 @@ import {
 import { useEffect, useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import {
-  SignatureCollectionArea,
+  SignatureCollection,
   SignatureCollectionAreaSummaryReport,
 } from '@island.is/api/schema'
 import { m } from '../../lib/messages'
@@ -23,11 +23,9 @@ import { SignatureCollectionAreaSummaryReportDocument } from './MyPdfDocument/ar
 import { useLazyQuery } from '@apollo/client'
 
 export const DownloadReports = ({
-  areas,
-  collectionId,
+  collection,
 }: {
-  areas: SignatureCollectionArea[]
-  collectionId: string
+  collection: SignatureCollection
 }) => {
   const { formatMessage } = useLocale()
   const [modalDownloadReportsIsOpen, setModalDownloadReportsIsOpen] =
@@ -55,7 +53,7 @@ export const DownloadReports = ({
         variables: {
           input: {
             areaId: area,
-            collectionId: collectionId,
+            collectionId: collection?.id,
           },
         },
       })
@@ -120,7 +118,7 @@ export const DownloadReports = ({
         <Text>{formatMessage(m.downloadReportsDescription)}</Text>
         <Box marginY={5}>
           <Stack space={3}>
-            {areas.map((area) => (
+            {collection?.areas.map((area) => (
               <ActionCard
                 key={area.id}
                 heading={formatMessage(area.name)}

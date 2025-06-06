@@ -7,16 +7,39 @@ import {
   Icon,
   Tag,
   Text,
+  toast,
 } from '@island.is/island-ui/core'
 import { useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import { m } from '../../lib/messages'
+import { useSignatureCollectionAdminRemoveCandidateMutation } from './removeCandidate.generated'
+import { useNavigate } from 'react-router-dom'
+import { SignatureCollectionList } from '@island.is/api/schema'
 
-const RemoveCandidate = () => {
+const RemoveCandidate = ({ list }: { list: SignatureCollectionList }) => {
   const { formatMessage } = useLocale()
+  const navigate = useNavigate()
 
   const [modalRemoveCandidateIsOpen, setModalRemoveCandidateIsOpen] =
     useState(false)
+
+  const [removeCandidate, { loading }] =
+    useSignatureCollectionAdminRemoveCandidateMutation({
+      variables: {
+        input: {
+          candidateId: list?.candidate?.id,
+        },
+      },
+      onCompleted: () => {
+        setModalRemoveCandidateIsOpen(false)
+        toast.success(formatMessage(m.cancelCollectionModalToastSuccess))
+        navigate(-1)
+      },
+      onError: () => {
+        toast.error(formatMessage(m.cancelCollectionModalToastError))
+      },
+    })
+
   return (
     <Box>
       <GridRow>
@@ -49,22 +72,23 @@ const RemoveCandidate = () => {
       <Modal
         id="toggleLockList"
         isVisible={modalRemoveCandidateIsOpen}
-        title={formatMessage(m.lockList)}
+        title={formatMessage(m.cancelCollectionButton)}
         onClose={() => setModalRemoveCandidateIsOpen(false)}
         label={''}
         closeButtonLabel={''}
       >
-        <Box marginTop={5}>
-          <Text>{formatMessage(m.lockListDescription)}</Text>
+        <Box>
+          <Text>{formatMessage(m.cancelCollectionModalMessage)}</Text>
           <Box display="flex" justifyContent="flexEnd" marginTop={5}>
             <Button
               iconType="outline"
               variant="ghost"
-              onClick={() => console.log('Todo: add remove action')}
-              icon="lockClosed"
+              onClick={() => removeCandidate()}
+              icon="trash"
               colorScheme="destructive"
+              loading={loading}
             >
-              {formatMessage(m.lockList)}
+              {formatMessage(m.cancelCollectionModalConfirmButton)}
             </Button>
           </Box>
         </Box>
