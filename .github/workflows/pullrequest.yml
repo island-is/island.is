@@ -178,6 +178,11 @@ jobs:
       - name: load-deps
         uses: ./.github/actions/load-deps
 
+      - name: Setup Playwright
+        uses: ./.github/actions/setup-playwright
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
+
       - name: Running e2e tests
         run: yarn nx run-many --target=e2e --projects="${AFFECTED_PROJECTS}" --parallel 3
 
