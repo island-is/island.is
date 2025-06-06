@@ -106,7 +106,8 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
       console.log('--------------------------------')
       console.log('SUBMITTING APPLICATION')
       console.log('--------------------------------')
-      const applicationDto = mapAnswersToApplicationDto(application.answers)
+      const applicationDto = mapAnswersToApplicationDto(application)
+      console.dir(applicationDto, { depth: null })
 
       const res = await this.hmsApplicationSystemService.apiApplicationPost({
         applicationDto,
@@ -117,6 +118,10 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
       console.log('--------------------------------')
       console.log(res)
       console.log('--------------------------------')
+
+      if (res.status !== 200) {
+        throw new Error('Villa kom upp við að senda umsókn')
+      }
 
       return res
     } catch (e) {
