@@ -6,6 +6,7 @@ import {
   isPrisonStaffUser,
   isProsecutionUser,
   isPublicProsecutionOfficeUser,
+  isPublicProsecutionUser,
 } from '../user'
 import { CaseTableColumnKey } from './caseTableColumnTypes'
 import {
@@ -98,7 +99,7 @@ export const getCaseTableType = (
     }
   }
 
-  if (isProsecutionUser(user)) {
+  if (isPublicProsecutionUser(user)) {
     switch (route) {
       case CaseTableRoutes.IN_PROGRESS:
         return CaseTableType.PROSECUTOR_REQUEST_CASES_IN_PROGRESS
