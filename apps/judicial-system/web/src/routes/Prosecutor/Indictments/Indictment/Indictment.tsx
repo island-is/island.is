@@ -300,7 +300,8 @@ const Indictment = () => {
       const prevSuspensionOffenses = getSuspensionOffenses(
         workingCase.indictmentCounts,
       )
-      const newSuspensionOffeenses = getSuspensionOffenses(
+
+      const newSuspensionOffenses = getSuspensionOffenses(
         workingCase.indictmentCounts?.map((count) =>
           count.id === indictmentCountId
             ? {
@@ -311,11 +312,13 @@ const Indictment = () => {
         ),
       )
 
-      setSuspensionRequest(
-        prevSuspensionOffenses,
-        newSuspensionOffeenses,
-        workingCase.requestDriversLicenseSuspension,
-      )
+      if (updatedOffenses && updatedOffenses?.length > 0) {
+        setSuspensionRequest(
+          prevSuspensionOffenses,
+          newSuspensionOffenses,
+          workingCase.requestDriversLicenseSuspension,
+        )
+      }
 
       updateIndictmentCountState(
         indictmentCountId,
