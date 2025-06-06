@@ -40,26 +40,11 @@ export const Icon = ({
   skipPlaceholderSize,
   ariaHidden,
 }: IconProps) => {
-  const [isMounted, setIsMounted] = useState(false)
   const path = iconMap[type][icon]
   const IconSvg = useMemo(
     () => React.lazy(() => import('./icons/' + path)),
     [path],
   )
-
-  useEffect(() => {
-    setIsMounted(true)
-  }, [])
-
-  if (!isMounted) {
-    return (
-      <Placeholder
-        skipPlaceholderSize={skipPlaceholderSize}
-        size={size}
-        className={className}
-      />
-    )
-  }
 
   const optionalProps: SvgProps = {}
   if (className) {
