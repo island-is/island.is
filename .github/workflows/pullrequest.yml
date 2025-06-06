@@ -207,7 +207,6 @@ jobs:
     needs:
       - prepare
     runs-on: arc-shared
-    if: ${{ github.event_name == 'pull_request' }}
     timeout-minutes: 15
     env:
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
@@ -240,13 +239,13 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
         with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: Run auto-format
         id: auto-format
-        # NOTE: We want to use the PR base, not last good, since the format is not part of "good" build
-        # and causes unintended format changes when using a different commit
         run: |
+          # NOTE: We want to use the PR base, not last good, since the format is not part of "good" build
+          # and causes unintended format changes when using a different commit
           yarn nx format --base="origin/$GITHUB_BASE_REF"
           if ! git diff "origin/$GITHUB_BASE_REF" --exit-code; then
             echo "FILES_CHANGED=true" | tee -a "$GITHUB_OUTPUT"
