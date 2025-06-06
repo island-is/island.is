@@ -11,6 +11,8 @@ import type { Logger } from '@island.is/logging'
 import { getValueViaPath } from '@island.is/application/core'
 import { mapAnswersToApplicationDto, paymentForAppraisal } from './utils'
 import { ApplicationApi } from '@island.is/clients/hms-application-system'
+import { TemplateApiError } from '@island.is/nest/problem'
+
 @Injectable()
 export class FireCompensationAppraisalService extends BaseTemplateApiService {
   constructor(
@@ -50,8 +52,8 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
           }) ?? [],
         )
       } catch (e) {
-        this.logger.error('Failed to fetch properties:', e)
-        throw new Error('Villa kom upp við að sækja eignir')
+        this.logger.error('Failed to fetch properties:', e.message)
+        throw new TemplateApiError(e, 500)
       }
     }
 
@@ -92,41 +94,33 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
 
       return paymentForAppraisal(selectedUnitsFireAppraisal)
     } catch (e) {
-      this.logger.error('Failed to calculate amount:', e)
-      throw new Error('Villa kom upp við að reikna út núverandi brunabótamat')
+      this.logger.error('Failed to calculate amount:', e.message)
+      throw new TemplateApiError(
+        'Error came up calculating the current fire compensation appraisal',
+        500,
+      )
     }
   }
 
-  async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
+  async submitApplication({ application }: TemplateApiModuleActionProps) {
     try {
-      console.log('--------------------------------')
-      console.log('SUBMITTING APPLICATION')
-      console.log('--------------------------------')
       const applicationDto = mapAnswersToApplicationDto(application)
-      console.dir(applicationDto, { depth: null })
 
       const res = await this.hmsApplicationSystemService.apiApplicationPost({
         applicationDto,
       })
 
-      console.log('--------------------------------')
-      console.log('APPLICATION SUBMITTED')
-      console.log('--------------------------------')
-      console.log(res)
-      console.log('--------------------------------')
-
       if (res.status !== 200) {
-        throw new Error('Villa kom upp við að senda umsókn')
+        throw new TemplateApiError(
+          'Failed to submit application, non 200 status',
+          500,
+        )
       }
 
       return res
     } catch (e) {
-      console.log('--------------------------------')
-      console.log('FAILED TO SUBMIT APPLICATION')
-      console.log('--------------------------------')
-      console.log(e)
-      console.log('--------------------------------')
-      this.logger.error('Failed to submit application:', e)
+      this.logger.error('Failed to submit application:', e.message)
+      throw new TemplateApiError(e, 500)
     }
   }
 }

@@ -279,6 +279,7 @@ codemagic.yaml                                                                  
 /libs/clients/data-protection-complaint/                                                                  @island-is/norda
 /libs/clients/financial-statements-inao                                                                   @island-is/norda
 /libs/clients/fishing-license/                                                                            @island-is/norda
+/libs/clients/hms-application-system/                                                                     @island-is/norda                                                                      @island-is/norda
 /libs/clients/icelandic-health-insurance/health-insurance/                                                @island-is/norda
 /libs/clients/payment-schedule/                                                                           @island-is/norda
 /libs/clients/rsk/company-registry                                                                        @island-is/norda

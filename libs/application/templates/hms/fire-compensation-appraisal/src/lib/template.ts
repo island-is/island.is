@@ -25,6 +25,7 @@ import { InstitutionNationalIds } from '@island.is/application/types'
 import * as m from '../lib/messages'
 import { TemplateApiActions } from '../types'
 import { getChargeItems } from '../utils/paymentUtils'
+import { Features } from '@island.is/feature-flags'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -35,6 +36,7 @@ const template: ApplicationTemplate<
   name: m.miscMessages.applicationName,
   codeOwner: CodeOwners.NordaApplications,
   institution: m.miscMessages.institutionName,
+  featureFlag: Features.fireCompensationAppraisalEnabled,
   translationNamespaces: [
     ApplicationConfigurations.FireCompensationAppraisal.translation,
   ],
