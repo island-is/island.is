@@ -48,7 +48,7 @@ export const mapAnswersToApplicationDto = (
     applicationName: 'Brunabótamat - Endurmat',
     status: 40, // Fixed value something from umsóknasmiður
     language: 'IS',
-    portalApplicationID: '1234567894', // swap to application.id when HMS is ready,
+    portalApplicationID: Math.floor(Math.random() * 1000000000).toString(), // swap to application.id when HMS is ready,
     applicationType: 'LscVK9yI7EeXf4WDCOBfww', // This is fixed and comes from HMS
     applicationJson: null,
     dagssetning: new Date(),
