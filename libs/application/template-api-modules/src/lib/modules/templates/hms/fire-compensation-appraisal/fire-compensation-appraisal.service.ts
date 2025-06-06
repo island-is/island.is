@@ -1,7 +1,5 @@
 import { Inject, Injectable } from '@nestjs/common'
-import { SharedTemplateApiService } from '../../../shared'
 import { ApplicationTypes } from '@island.is/application/types'
-import { NotificationsService } from '../../../../notification/notifications.service'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { TemplateApiModuleActionProps } from '../../../..'
 import { Fasteign, FasteignirApi } from '@island.is/clients/assets'
@@ -17,8 +15,6 @@ import { ApplicationApi } from '@island.is/clients/hms-application-system'
 export class FireCompensationAppraisalService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly notificationsService: NotificationsService,
     private propertiesApi: FasteignirApi,
     private hmsApplicationSystemService: ApplicationApi,
   ) {

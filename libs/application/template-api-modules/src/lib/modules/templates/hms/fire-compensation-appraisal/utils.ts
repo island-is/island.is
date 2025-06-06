@@ -13,10 +13,10 @@ export const paymentForAppraisal = (currentAppraisal: number) => {
   }
 
   if (currentAppraisal > 500000000) {
-    return currentAppraisal * 0.0001
+    return Math.round(currentAppraisal * 0.0001)
   }
 
-  return currentAppraisal * 0.0003
+  return Math.round(currentAppraisal * 0.0003)
 }
 
 const GUID = 'c7c13606-9a03-40ec-837b-ec5d7665a8fe' // HMS does nothing with this but it has to have a certain form for the request to go through

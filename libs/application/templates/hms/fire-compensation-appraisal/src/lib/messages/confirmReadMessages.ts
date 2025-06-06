@@ -3,13 +3,13 @@ import { defineMessages } from 'react-intl'
 export const confirmReadMessages = defineMessages({
   title: {
     id: 'fca.application:confirmRead.title',
-    defaultMessage: 'Lestur upplýsinga',
+    defaultMessage: 'Staðfesting á lestri upplýsinga',
     description: 'Confirm read section title',
   },
   description: {
     id: 'fca.application:confirmRead.description#markdown',
     defaultMessage:
-      'Vinsamleast kynntu þér [Persónuverndarstefnu HMS](https://island.is/s/hms/hms-personuverndarstefna) og efni á Ísland.is um [brunabótamat](https://island.is/brunabotamat) áður en lengra er haldið.',
+      'Vinsamlegast kynntu þér [Persónuverndarstefnu HMS](https://island.is/s/hms/hms-personuverndarstefna) og efni á Ísland.is um [brunabótamat](https://island.is/brunabotamat) áður en lengra er haldið.',
     description: 'Confirm read section description',
   },
   confirmReadPrivacyPolicy: {

@@ -34,7 +34,7 @@ export const overviewMessages = defineMessages({
   },
   city: {
     id: 'fca.application:city',
-    defaultMessage: 'Bærjarfélag',
+    defaultMessage: 'Sveitarfélag',
     description: 'City',
   },
   email: {
@@ -54,7 +54,7 @@ export const overviewMessages = defineMessages({
   },
   usageUnits: {
     id: 'fca.application:usageUnits',
-    defaultMessage: 'Notkunareiningar til að endurmeta',
+    defaultMessage: 'Notkunareiningar til endurmats',
     description: 'Usage units',
   },
   pay: {

@@ -356,18 +356,18 @@ export class PaymentService {
     locale?: string | undefined,
   ): Promise<CreateChargeResult> {
     // Retrieve charge items from FJS
-    let catalogChargeItems = await this.findCatalogChargeItems(
+    const catalogChargeItems = await this.findCatalogChargeItems(
       performingOrganizationID,
       chargeItems,
-    )
-
-    // If the price is dynamic, we need to update the price of the
-    // catalogChargeItems with the price from the chargeItems
-    catalogChargeItems = catalogChargeItems.map((catalogChargeItem, i) => {
-      return {
-        ...catalogChargeItem,
-        priceAmount: chargeItems[i].amount ?? catalogChargeItem.priceAmount,
-      }
+    ).then((catalogChargeItems) => {
+      return catalogChargeItems.map((catalogChargeItem, i) => {
+        // If the price is dynamic, we need to update the price of the
+        // catalogChargeItems with the price from the chargeItems
+        return {
+          ...catalogChargeItem,
+          priceAmount: chargeItems[i].amount ?? catalogChargeItem.priceAmount,
+        }
+      })
     })
 
     //2. Fetch existing payment if any
