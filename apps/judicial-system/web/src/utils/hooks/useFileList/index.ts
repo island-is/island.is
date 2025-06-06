@@ -25,9 +25,7 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
   const { formatMessage } = useIntl()
   const isMobile = useIsMobile()
   const [fileNotFound, setFileNotFound] = useState<boolean>()
-  const [currentFile, setCurrentFile] = useState<TUploadFile | undefined>(
-    undefined,
-  )
+  const [currentFile, setCurrentFile] = useState<TUploadFile | undefined>()
 
   const openFile = (url: string) => {
     window.open(url, isMobile ? '_self' : '_blank', 'noopener, noreferrer')
