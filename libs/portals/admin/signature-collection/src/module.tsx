@@ -40,6 +40,26 @@ export const signatureCollectionModule: PortalModule = {
   enabled: ({ userInfo }) =>
     userInfo.scopes.some((scope) => allowedScopes.includes(scope)),
   routes: (props) => [
+    /* ------ Municipal ------ */
+    {
+      name: m.municipalCollectionTitle,
+      path: SignatureCollectionPaths.MunicipalRoot,
+      element: <AllMunicipalities />,
+      loader: municipalListsLoader(props),
+    },
+    {
+      name: m.municipalCollectionTitle,
+      path: SignatureCollectionPaths.SingleMunicipality,
+      element: <Municipality />,
+      loader: municipalListsLoader(props),
+    },
+    {
+      name: m.municipalCollectionTitle,
+      path: SignatureCollectionPaths.MunicipalList,
+      element: <MunicipalList />,
+      loader: municipalListLoader(props),
+    },
+
     /* ------ Parliamentary ------ */
     {
       name: m.signatureListsTitle,
@@ -72,26 +92,6 @@ export const signatureCollectionModule: PortalModule = {
       path: SignatureCollectionPaths.PresidentialList,
       element: <List />,
       loader: presidentialListLoader(props),
-    },
-
-    /* ------ Municipal ------ */
-    {
-      name: m.municipalCollectionTitle,
-      path: SignatureCollectionPaths.MunicipalRoot,
-      element: <AllMunicipalities />,
-      loader: municipalListsLoader(props),
-    },
-    {
-      name: m.municipalCollectionTitle,
-      path: SignatureCollectionPaths.SingleMunicipality,
-      element: <Municipality />,
-      loader: municipalListsLoader(props),
-    },
-    {
-      name: m.municipalCollectionTitle,
-      path: SignatureCollectionPaths.MunicipalList,
-      element: <MunicipalList />,
-      loader: municipalListLoader(props),
     },
   ],
 }

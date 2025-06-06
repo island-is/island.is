@@ -29,18 +29,19 @@ export const applicationToCaseRequest = async (
 ): Promise<CreateCaseRequest> => {
   const answers = application.answers as ComplaintsToAlthingiOmbudsmanAnswers
   const contacts = gatherContacts(answers)
+
+  const metadata = contacts[0]?.gender ? [{
+    name: 'GenderMod',
+    value: contacts[0].gender,
+  }] : undefined
+
   return {
     category: 'Kvörtun',
     subject: 'Kvörtun frá ísland.is',
     template: 'Kvörtun',
     contacts,
     documents: attachments,
-    metadata: [
-      {
-        name: 'GenderMod',
-        value: contacts[0].gender,
-      },
-    ],
+    metadata,
   }
 }
 
