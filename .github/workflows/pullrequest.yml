@@ -340,6 +340,11 @@ jobs:
           echo "::endgroup::"
           exit 1
 
+      - name: Checkout back to PR
+        uses: actions/checkout@v4
+        with:
+          clean: false
+
   build:
     needs:
       - prepare
