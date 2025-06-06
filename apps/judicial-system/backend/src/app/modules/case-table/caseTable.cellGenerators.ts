@@ -17,6 +17,7 @@ import {
   CaseState,
   CaseTableColumnKey,
   CaseType,
+  courtSessionTypeNames,
   DefendantEventType,
   EventType,
   getIndictmentAppealDeadlineDate,
@@ -411,7 +412,7 @@ const getPoliceCaseNumberSortValue = (policeCaseNumber: string): string => {
   const number = num.padStart(6, '0') // Assume its no more than 6 digits
   const postfix = post ? post.padStart(3, '0') : '000'
 
-  return `${year}${prefix}${number}${postfix}`
+  return `${prefix}${year}${number}${postfix}`
 }
 
 const generateCaseNumberSortValue = (
@@ -673,23 +674,7 @@ const rulingDate: CaseTableCellGenerator<StringValue> = {
   generate: (c: Case): CaseTableCell<StringValue> => generateDate(c.rulingDate),
 }
 
-const arraignmentDate: CaseTableCellGenerator<StringValue> = {
-  includes: {
-    dateLogs: {
-      model: DateLog,
-      attributes: ['date', 'dateType'],
-      order: [['created', 'DESC']],
-      separate: true,
-    },
-  },
-  generate: (c: Case): CaseTableCell<StringValue> => {
-    const arraignmentDate = DateLog.arraignmentDate(c.dateLogs)?.date
-
-    return generateDate(arraignmentDate)
-  },
-}
-
-const indictmentArraignmentDate: CaseTableCellGenerator<StringGroupValue> = {
+const arraignmentDate: CaseTableCellGenerator<StringGroupValue> = {
   includes: {
     dateLogs: {
       model: DateLog,
@@ -718,6 +703,44 @@ const indictmentArraignmentDate: CaseTableCellGenerator<StringGroupValue> = {
 
     return generateCell(
       { strList: [`${capitalize(datePart)}`, `kl. ${timePart}`] },
+      sortValue,
+    )
+  },
+}
+
+const indictmentArraignmentDate: CaseTableCellGenerator<StringGroupValue> = {
+  attributes: ['courtSessionType'],
+  includes: {
+    dateLogs: {
+      model: DateLog,
+      attributes: ['date', 'dateType'],
+      order: [['created', 'DESC']],
+      separate: true,
+    },
+  },
+  generate: (c: Case): CaseTableCell<StringGroupValue> => {
+    const courtDate = getIndictmentCourtDate(c)
+
+    const datePart = formatDate(courtDate, 'EEE d. MMMM yyyy')
+    const sortValue = formatDate(courtDate, 'yyyyMMddHHmm')
+
+    if (!datePart || !sortValue || !c.courtSessionType) {
+      // No date part, so we return undefined
+      return generateCell()
+    }
+    const courtSessionType = courtSessionTypeNames[c.courtSessionType]
+
+    const timePart = formatDate(courtDate, 'HH:mm')
+
+    if (!timePart) {
+      // This should never happen, but if it does, we return the court date only
+      return generateCell({ strList: [`${capitalize(datePart)}`] }, sortValue)
+    }
+
+    return generateCell(
+      {
+        strList: [courtSessionType, `${capitalize(datePart)} kl. ${timePart}`],
+      },
       sortValue,
     )
   },
