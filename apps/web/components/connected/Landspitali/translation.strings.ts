@@ -202,4 +202,21 @@ export const m = {
       description: 'Greiða',
     },
   }),
+  validation: defineMessages({
+    invalidNationalId: {
+      id: 'web.landspitali.memorialCard:validation.invalidNationalId',
+      defaultMessage: 'Kennitala verður að vera 10 tölustafir',
+      description: 'Kennitala verður að vera 10 tölustafir',
+    },
+    required: {
+      id: 'web.landspitali.memorialCard:validation.required',
+      defaultMessage: 'Það þarf að fylla út þennan reit',
+      description: 'Villuskilaboð á óútfylltan reit',
+    },
+    minimumAmount: {
+      id: 'web.landspitali.memorialCard:validation.minimumAmount',
+      defaultMessage: 'Lágmark er 1.000 kr.',
+      description: 'Villuskilaboð fyrir lágmarksupphæð',
+    },
+  }),
 }

@@ -36,6 +36,7 @@ interface MemorialCard {
   senderAddress: string
   senderPostalCode: string
   senderPlace: string
+  amountISKCustom: string
 }
 
 const DEFAULT_FUND_OPTIONS = [
@@ -81,7 +82,7 @@ const DEFAULT_FUND_OPTIONS = [
   },
 ]
 
-const PRESET_AMOUNTS = ['5000', '10000', '50000', '100000']
+const PRESET_AMOUNTS = ['5.000', '10.000', '50.000', '100.000']
 
 export const MemorialCard = ({ slice }: MemorialCardProps) => {
   const { formatMessage } = useIntl()
@@ -103,6 +104,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
       senderAddress: '',
       senderPostalCode: '',
       senderPlace: '',
+      amountISKCustom: '',
     },
   })
 
@@ -117,9 +119,8 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
   const [submitted, setSubmitted] = useState(false)
   const selectedAmount = watch('amountISK')
 
-  const onSubmit = (data: MemorialCard) => {
+  const onSubmit = () => {
     setSubmitted(true)
-    console.log('Submitted data:', data)
   }
 
   const handleReset = () => setSubmitted(false)
@@ -173,14 +174,20 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
             {formatMessage(m.overview.memorialCardTitle)}
           </Text>
           <Text>
-            {formatMessage(m.overview.amountISK)} {data.amountISK} kr.
+            {formatMessage(m.overview.amountISK)}{' '}
+            {data.amountISK === 'other'
+              ? data.amountISKCustom
+                  .toString()
+                  .replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+              : data.amountISK}{' '}
+            kr.
           </Text>
           <Text>
             {formatMessage(m.overview.fund)} {data.fund}
           </Text>
         </Stack>
-        <Box display="flex" justifyContent="spaceBetween">
-          <Button onClick={handleReset}>
+        <Box display="flex" justifyContent="spaceBetween" marginTop={5}>
+          <Button onClick={handleReset} variant="ghost" preTextIcon="arrowBack">
             {formatMessage(m.overview.goBack)}
           </Button>
           <Button>{formatMessage(m.overview.pay)}</Button>
@@ -190,7 +197,13 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
   }
 
   const requiredRule = {
-    required: { value: true, message: 'Það þarf að fylla út þennan reit' },
+    required: {
+      value: true,
+      message: formatMessage({
+        id: 'web.landspitali.memorialCard:validation.required',
+        defaultMessage: 'Það þarf að fylla út þennan reit',
+      }),
+    },
   }
 
   return (
@@ -200,6 +213,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
           <SelectController
             id="fund"
             name="fund"
+            size="xs"
             label={formatMessage(m.info.fundLabel)}
             options={fundOptions}
             defaultValue={fundOptions.find(
@@ -219,6 +233,15 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
             rules={requiredRule}
           />
 
+          <InputController
+            id="senderSignature"
+            control={control}
+            label={formatMessage(m.info.senderSignatureLabel)}
+            size="xs"
+            error={errors.senderSignature?.message}
+            rules={requiredRule}
+          />
+
           <Text variant="h2">{formatMessage(m.info.amountOfMoneyTitle)}</Text>
           <Text>{formatMessage(m.info.amountOfMoneyExtraInfo)}</Text>
 
@@ -233,7 +256,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
                 <RadioButton
                   id={`amount-${amount}`}
                   name="amountISK"
-                  label={parseInt(amount)}
+                  label={amount}
                   checked={selectedAmount === amount}
                   onChange={() => setValue('amountISK', amount)}
                 />
@@ -244,37 +267,32 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
                 id="amount-other-radio"
                 name="amountISK"
                 label={formatMessage(m.info.amountOfMoneyOtherRadioLabel)}
-                checked={!PRESET_AMOUNTS.includes(selectedAmount)}
-                onChange={() => setValue('amountISK', '')}
+                checked={selectedAmount === 'other'}
+                onChange={() => setValue('amountISK', 'other')}
               />
             </FocusableBox>
           </Box>
 
-          {!PRESET_AMOUNTS.includes(selectedAmount) && (
+          {selectedAmount === 'other' && (
             <InputController
-              id="amountISK"
+              id="amountISKCustom"
               control={control}
+              size="xs"
               label={formatMessage(m.info.amountOfMoneyOtherInputLabel)}
               type="number"
               inputMode="numeric"
               currency={true}
               error={
-                parseInt(selectedAmount) < 1000
-                  ? 'Lágmark er 1.000 kr.'
+                parseInt(watch('amountISKCustom') || '0') < 1000
+                  ? formatMessage({
+                      id: 'web.landspitali.memorialCard:validation.minimumAmount',
+                      defaultMessage: 'Lágmark er 1.000 kr.',
+                    })
                   : undefined
               }
               rules={requiredRule}
             />
           )}
-
-          <InputController
-            id="senderSignature"
-            control={control}
-            label={formatMessage(m.info.senderSignatureLabel)}
-            size="xs"
-            error={errors.senderSignature?.message}
-            rules={requiredRule}
-          />
 
           <Stack space={2}>
             <Text variant="h2">{formatMessage(m.info.recipientLabel)}</Text>
@@ -324,7 +342,16 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
               error={errors.senderNationalId?.message}
               type="number"
               inputMode="numeric"
-              rules={requiredRule}
+              rules={{
+                ...requiredRule,
+                pattern: {
+                  value: /^\d{10}$/,
+                  message: formatMessage({
+                    id: 'web.landspitali.memorialCard:validation.invalidNationalId',
+                    defaultMessage: 'Kennitala verður að vera 10 tölustafir',
+                  }),
+                },
+              }}
             />
             <InputController
               id="senderAddress"
@@ -348,13 +375,20 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
               rules={requiredRule}
             />
             <Text>
-              {formatMessage(m.info.amountISKPrefix)} {selectedAmount || 0}{' '}
+              {formatMessage(m.info.amountISKPrefix)}{' '}
+              {selectedAmount === 'other'
+                ? (watch('amountISKCustom') || 0)
+                    .toString()
+                    .replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+                : selectedAmount || 0}{' '}
               {formatMessage(m.info.amountISKCurrency)}
             </Text>
           </Stack>
 
-          <Box>
-            <Button type="submit">{formatMessage(m.info.continue)}</Button>
+          <Box display="flex" justifyContent="flexEnd" marginTop={5}>
+            <Button type="submit" icon="arrowForward">
+              {formatMessage(m.info.continue)}
+            </Button>
           </Box>
         </Stack>
       </form>
