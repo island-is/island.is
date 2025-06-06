@@ -4,7 +4,6 @@ import {
   isDistrictCourtUser,
   isPrisonAdminUser,
   isPrisonStaffUser,
-  isProsecutionUser,
   isPublicProsecutionOfficeUser,
   isPublicProsecutionUser,
 } from '../user'
