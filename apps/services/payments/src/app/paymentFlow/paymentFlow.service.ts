@@ -47,7 +47,7 @@ import { generateWebhookJwt } from '../../utils/webhookAuth.utils'
 import { JwksConfigService } from '../jwks/jwks-config.service'
 import { ChargeItem } from '../../utils/chargeUtils'
 import { PaymentFlowModuleConfig } from './paymentFlow.config'
-import { JwtConfig } from '../jwks/jwks.config'
+import { JwksConfig } from '../jwks/jwks.config'
 
 interface PaymentFlowUpdateConfig {
   /**
@@ -80,13 +80,13 @@ export class PaymentFlowService {
     private chargeFjsV2ClientService: ChargeFjsV2ClientService,
     private nationalRegistryV3: NationalRegistryV3ClientService,
     private companyRegistryApi: CompanyRegistryClientService,
-    private jwtConfigService: JwksConfigService,
+    private jwksConfigService: JwksConfigService,
     @Inject(PaymentFlowModuleConfig.KEY)
     private readonly paymentFlowConfig: ConfigType<
       typeof PaymentFlowModuleConfig
     >,
-    @Inject(JwtConfig.KEY)
-    private readonly jwtConfig: ConfigType<typeof JwtConfig>,
+    @Inject(JwksConfig.KEY)
+    private readonly jwksConfig: ConfigType<typeof JwksConfig>,
   ) {}
 
   async createPaymentUrl(
@@ -416,8 +416,8 @@ export class PaymentFlowService {
         { type: update.type },
         updateBody,
         {
-          ...this.jwtConfig,
-          privateKey: this.jwtConfigService.getPrivateKey(),
+          ...this.jwksConfig,
+          privateKey: this.jwksConfigService.getPrivateKey(),
         },
       )
 

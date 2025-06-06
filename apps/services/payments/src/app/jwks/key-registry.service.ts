@@ -1,11 +1,10 @@
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common'
+import { ConfigType } from '@nestjs/config'
 import { createPublicKey } from 'crypto'
 import { exportJWK } from 'jose'
 
-import { environment } from '../../environments'
 import { JwkDto } from './dtos/serveJwks.response'
-import { ConfigType } from '@nestjs/config'
-import { JwtConfig } from './jwks.config'
+import { JwksConfig } from './jwks.config'
 
 interface JwkEntry {
   kid: string
@@ -18,8 +17,8 @@ export class KeyRegistryService implements OnModuleInit {
   private jwkEntries: JwkEntry[] = []
 
   constructor(
-    @Inject(JwtConfig.KEY)
-    private readonly config: ConfigType<typeof JwtConfig>,
+    @Inject(JwksConfig.KEY)
+    private readonly config: ConfigType<typeof JwksConfig>,
   ) {}
 
   async onModuleInit() {

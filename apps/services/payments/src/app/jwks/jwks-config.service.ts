@@ -2,7 +2,7 @@ import { createPublicKey, createPrivateKey } from 'crypto'
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common'
 import { ConfigType } from '@nestjs/config'
 
-import { JwtConfig } from './jwks.config'
+import { JwksConfig } from './jwks.config'
 
 @Injectable()
 export class JwksConfigService implements OnModuleInit {
@@ -10,8 +10,8 @@ export class JwksConfigService implements OnModuleInit {
   private publicKeyPem?: string
 
   constructor(
-    @Inject(JwtConfig.KEY)
-    private readonly config: ConfigType<typeof JwtConfig>,
+    @Inject(JwksConfig.KEY)
+    private readonly config: ConfigType<typeof JwksConfig>,
   ) {}
 
   onModuleInit() {

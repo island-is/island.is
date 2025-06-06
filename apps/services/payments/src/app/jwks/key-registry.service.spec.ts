@@ -2,11 +2,11 @@ import { TestApp, testServer } from '@island.is/testing/nest'
 import { generateKeyPairSync } from 'crypto'
 import { KeyRegistryService } from './key-registry.service'
 import { JwksModule } from './jwks.module'
-import { JwtConfigType } from './jwks.config'
+import { JwksConfigType } from './jwks.config'
 
 const toBase64 = (str: string) => Buffer.from(str).toString('base64')
 
-const jwtConfigKeyToProcessEnvKey = (key: keyof JwtConfigType) => {
+const jwtConfigKeyToProcessEnvKey = (key: keyof JwksConfigType) => {
   switch (key) {
     case 'expiresInMinutes':
       return 'PAYMENTS_JWT_SIGNING_EXPIRES_IN_MINUTES'
@@ -27,13 +27,13 @@ const jwtConfigKeyToProcessEnvKey = (key: keyof JwtConfigType) => {
   }
 }
 
-const setJwtEnvironmentVariables = (state: Partial<JwtConfigType>) => {
+const setJwtEnvironmentVariables = (state: Partial<JwksConfigType>) => {
   for (const key in state) {
     const processEnvKey = jwtConfigKeyToProcessEnvKey(
-      key as keyof JwtConfigType,
+      key as keyof JwksConfigType,
     )
     process.env[processEnvKey] =
-      state[key as keyof JwtConfigType]?.toString() ?? ''
+      state[key as keyof JwksConfigType]?.toString() ?? ''
   }
 }
 
@@ -43,9 +43,9 @@ describe('KeyRegistryService', () => {
   let currentKeyPair: { privateKey: string; publicKey: string }
   let previousKeyPair: { privateKey: string; publicKey: string }
   let originalEnv: NodeJS.ProcessEnv
-  let currentState: JwtConfigType
+  let currentState: JwksConfigType
 
-  const setup = async (state: Partial<JwtConfigType>) => {
+  const setup = async (state: Partial<JwksConfigType>) => {
     setJwtEnvironmentVariables(state)
 
     app = await testServer({

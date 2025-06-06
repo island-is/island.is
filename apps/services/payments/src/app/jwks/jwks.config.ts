@@ -16,10 +16,10 @@ const schema = z.object({
   previousPublicKey: z.string().optional(),
 })
 
-export type JwtConfigType = z.infer<typeof schema>
+export type JwksConfigType = z.infer<typeof schema>
 
-export const JwtConfig = defineConfig({
-  name: 'JwtConfig',
+export const JwksConfig = defineConfig({
+  name: 'JwksConfig',
   schema,
   load: (env) => ({
     issuer: env.required('PAYMENTS_JWT_SIGNING_ISSUER'),
