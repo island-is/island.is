@@ -46,7 +46,7 @@ const CaseTableGroups: FC = () => {
             <CasesDashboardLayout title={group.title} key={idx}>
               {group.tables.map((t, idx) => (
                 <CasesCard
-                title={t.title}
+                  title={t.title}
                   description={t.description}
                   href={`${router.asPath}/${t.route}`}
                   key={idx}
