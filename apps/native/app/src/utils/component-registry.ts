@@ -4,8 +4,8 @@ const prefix = bundleId
 
 export const ComponentRegistry = {
   // dev screens
-  DevtoolsStorybookScreen: `${prefix}.screens.DevStorybook`,
   DevtoolsCognitoAuthScreen: `${prefix}.screens.DevCognitoAuth`,
+  DevtoolsStorybookScreen: `${prefix}.screens.DevStorybook`,
 
   // screens
   AirDiscountScreen: `${prefix}.screens.AirDiscountScreen`,
@@ -17,6 +17,7 @@ export const ComponentRegistry = {
   AssetsDetailScreen: `${prefix}.screens.AssetsDetailScreen`,
   AssetsOverviewScreen: `${prefix}.screens.AssetsOverviewScreen`,
   CognitoAuthScreen: `${prefix}.screens.CognitoAuth`,
+  DocumentCommunicationsScreen: `${prefix}.screens.DocumentCommunications`,
   DocumentDetailScreen: `${prefix}.screens.DocumentDetail`,
   DocumentReplyScreen: `${prefix}.screens.DocumentReply`,
   EditBankInfoScreen: `${prefix}.screens.EditBankInfoScreen`,
@@ -58,33 +59,31 @@ export const ComponentRegistry = {
 } as const
 
 export const ButtonRegistry = {
+  DocumentArchiveButton: `${prefix}.button.DocumentArchiveButton`,
+  DocumentStarButton: `${prefix}.button.DocumentStarButton`,
+  HomeScreenOptionsButton: `${prefix}.button.HomeScreenOptionsButton`,
+  InboxBulkDeselectAllButton: `${prefix}.button.InboxBulkDeselectAllButton`,
+  InboxBulkSelectAllButton: `${prefix}.button.InboxBulkSelectAllButton`,
+  InboxBulkSelectButton: `${prefix}.button.InboxBulkSelectButton`,
+  InboxBulkSelectCancelButton: `${prefix}.button.InboxBulkSelectCancelButton`,
+  InboxFilterClearButton: `${prefix}.button.InboxFilterClearButton`,
   LoadingButton: `${prefix}.button.LoadingButton`,
-  OfflineButton: `${prefix}.button.OfflineButton`,
-  SettingsButton: `${prefix}.button.SettingsButton`,
-  // to do remove this unused user button
-  UserButton: `${prefix}.button.UserButton`,
   NotificationsButton: `${prefix}.button.NotificationsButton`,
-  ShareButton: `${prefix}.button.ShareButton`,
+  OfflineButton: `${prefix}.button.OfflineButton`,
   ScanLicenseButton: `${prefix}.button.ScanLicenseButton`,
   ScanLicenseDoneButton: `${prefix}.button.ScanLicenseDoneButton`,
-  DocumentStarButton: `${prefix}.button.DocumentStarButton`,
-  DocumentArchiveButton: `${prefix}.button.DocumentArchiveButton`,
-  InboxFilterClearButton: `${prefix}.button.InboxFilterClearButton`,
-  HomeScreenOptionsButton: `${prefix}.button.HomeScreenOptionsButton`,
-  InboxBulkSelectButton: `${prefix}.button.InboxBulkSelectButton`,
-  InboxBulkSelectAllButton: `${prefix}.button.InboxBulkSelectAllButton`,
-  InboxBulkDeselectAllButton: `${prefix}.button.InboxBulkDeselectAllButton`,
-  InboxBulkSelectCancelButton: `${prefix}.button.InboxBulkSelectCancelButton`,
+  SettingsButton: `${prefix}.button.SettingsButton`,
+  ShareButton: `${prefix}.button.ShareButton`,
 }
 
 export const StackRegistry = {
-  LoginStack: `${prefix}.stack.LoginStack`,
-  InboxStack: `${prefix}.stack.InboxStack`,
-  HomeStack: `${prefix}.stack.HomeStack`,
-  WalletStack: `${prefix}.stack.WalletStack`,
-  LicenseScannerStack: `${prefix}.stack.LicenseScannerStack`,
-  MoreStack: `${prefix}.stack.MoreStack`,
   ApplicationsStack: `${prefix}.stack.ApplicationsStack`,
+  HomeStack: `${prefix}.stack.HomeStack`,
+  InboxStack: `${prefix}.stack.InboxStack`,
+  LicenseScannerStack: `${prefix}.stack.LicenseScannerStack`,
+  LoginStack: `${prefix}.stack.LoginStack`,
+  MoreStack: `${prefix}.stack.MoreStack`,
+  WalletStack: `${prefix}.stack.WalletStack`,
 }
 
 export const MainBottomTabs = `${prefix}.bottomTabs.MainBottomTabs`

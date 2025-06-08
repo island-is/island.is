@@ -1,4 +1,3 @@
-import { useEffect, useState } from 'react'
 import { FormattedMessage, useIntl } from 'react-intl'
 import { useWindowDimensions } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
@@ -6,15 +5,12 @@ import styled from 'styled-components/native'
 
 import illustrationSrc from '../../assets/illustrations/digital-services-m1-dots.png'
 import logo from '../../assets/logo/logo-64w.png'
-import { getConfig } from '../../config'
-import { useGetProfileQuery } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useNavigation } from '../../hooks/use-navigation'
-import { useBrowser } from '../../lib/use-browser'
-import { Button, NavigationBarSheet, Typography } from '../../ui'
-import { Container } from '../../ui/lib/container/container'
+import { Button, NavigationBarSheet, Typography, Container } from '../../ui'
+import { ComponentRegistry } from '../../utils/component-registry'
 
-const Host = styled.SafeAreaView`
+const Wrapper = styled.SafeAreaView`
   flex: 1;
 `
 
@@ -58,23 +54,12 @@ export const RegisterEmailScreen: NavigationFunctionComponent<{
 
   const intl = useIntl()
   const { height } = useWindowDimensions()
-  const { dismissModal } = useNavigation()
-  const { openBrowser } = useBrowser()
+  const { dismissModal, showModal } = useNavigation()
 
-  const [hasRegisteredEmail, setHasRegisteredEmail] = useState(false)
-
-  const { data, loading } = useGetProfileQuery({
-    pollInterval: 10_000,
-    skip: hasRegisteredEmail,
-  })
-
-  const email = data?.getUserProfile?.email
-
-  useEffect(() => {
-    if (email) {
-      setHasRegisteredEmail(true)
-    }
-  }, [email])
+  const onRegisterPress = () => {
+    dismissModal(componentId)
+    showModal(ComponentRegistry.SettingsScreen)
+  }
 
   return (
     <>
@@ -82,29 +67,16 @@ export const RegisterEmailScreen: NavigationFunctionComponent<{
         componentId={componentId}
         onClosePress={() => dismissModal(componentId)}
         includeContainer
-        showLoading={loading}
       />
-      <Host>
+      <Wrapper>
         <ContentWrapper>
           <Logo source={logo} resizeMode="contain" />
           <TextWrapper>
             <Title variant="heading2" textAlign="center">
-              <FormattedMessage
-                id={
-                  hasRegisteredEmail
-                    ? 'registerEmail.titleRegistered'
-                    : 'registerEmail.title'
-                }
-              />
+              <FormattedMessage id={'registerEmail.title'} />
             </Title>
             <Typography textAlign="center">
-              <FormattedMessage
-                id={
-                  hasRegisteredEmail
-                    ? 'registerEmail.descriptionRegistered'
-                    : 'registerEmail.description'
-                }
-              />
+              <FormattedMessage id={'registerEmail.description'} />
             </Typography>
           </TextWrapper>
           {height > 650 && (
@@ -112,45 +84,25 @@ export const RegisterEmailScreen: NavigationFunctionComponent<{
           )}
         </ContentWrapper>
         <Container rowGap={1}>
-          {hasRegisteredEmail ? (
-            <Button
-              isOutlined
-              title={intl.formatMessage({
-                id: 'registerEmail.close',
-                defaultMessage: 'Loka',
-              })}
-              onPress={() => {
-                dismissModal(componentId)
-              }}
-            />
-          ) : (
-            <>
-              <Button
-                onPress={() => {
-                  openBrowser(
-                    `${getConfig().islandUrl}/minarsidur/min-gogn/stillingar`,
-                    componentId,
-                  )
-                }}
-                title={intl.formatMessage({
-                  id: 'registerEmail.button',
-                  defaultMessage: 'Skrá netfang',
-                })}
-              />
-              <Button
-                isOutlined
-                title={intl.formatMessage({
-                  id: 'registerEmail.cancel',
-                  defaultMessage: 'Hætta við',
-                })}
-                onPress={() => {
-                  dismissModal(componentId)
-                }}
-              />
-            </>
-          )}
+          <Button
+            onPress={onRegisterPress}
+            title={intl.formatMessage({
+              id: 'registerEmail.button',
+              defaultMessage: 'Skrá netfang',
+            })}
+          />
+          <Button
+            isOutlined
+            title={intl.formatMessage({
+              id: 'registerEmail.cancel',
+              defaultMessage: 'Hætta við',
+            })}
+            onPress={() => {
+              dismissModal(componentId)
+            }}
+          />
         </Container>
-      </Host>
+      </Wrapper>
     </>
   )
 }

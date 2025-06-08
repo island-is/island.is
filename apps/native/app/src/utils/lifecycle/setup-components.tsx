@@ -10,6 +10,7 @@ import { ApplicationsIncompleteScreen } from '../../screens/applications/applica
 import { AssetsDetailScreen } from '../../screens/assets/assets-detail'
 import { AssetsOverviewScreen } from '../../screens/assets/assets-overview'
 import { CognitoAuthScreen } from '../../screens/cognito-auth/cognito-auth'
+import { DocumentCommunicationsScreen } from '../../screens/document-detail/document-communications'
 import { DocumentDetailScreen } from '../../screens/document-detail/document-detail'
 import { DocumentReplyScreen } from '../../screens/document-detail/document-reply'
 import { FamilyDetailScreen } from '../../screens/family/family-details'
@@ -119,6 +120,10 @@ export function registerAllComponents() {
   )
   registerComponent(CR.VaccinationsScreen, VaccinationsScreen)
   registerComponent(CR.RegisterEmailScreen, RegisterEmailScreen)
+  registerComponent(
+    CR.DocumentCommunicationsScreen,
+    DocumentCommunicationsScreen,
+  )
 
   // Overlay
   registerComponent(CR.OfflineBanner, OfflineBanner)

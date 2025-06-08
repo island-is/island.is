@@ -23,6 +23,7 @@ export const PdfViewer = memo(
 
     return (
       <Pdf
+        spacing={0}
         source={{ uri: actualUrl }}
         onLoadComplete={(_, filePath) => {
           onLoaded?.(filePath)
