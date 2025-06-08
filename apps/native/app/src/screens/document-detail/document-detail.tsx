@@ -46,6 +46,10 @@ import {
 import { ListParams } from '../inbox/inbox'
 import { getButtonsForActions } from './utils/get-buttons-for-actions'
 import { shareFile } from './utils/share-file'
+import {
+  FloatingBottomContent,
+  FloatingBottomFooter,
+} from './components/floating-bottom-footer'
 
 const Host = styled.SafeAreaView`
   margin-left: ${({ theme }) => theme.spacing[2]}px;
@@ -72,28 +76,6 @@ const DocumentWrapper = styled.View<{ hasMarginTop?: boolean }>`
   flex: 1;
   margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
   padding-top: ${({ theme }) => theme.spacing[2]}px;
-`
-
-const FloatingTwoWayFooter = styled(SafeAreaView)`
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background-color: ${({ theme }) => theme.color.white};
-
-  /* iOS shadow */
-  shadow-color: ${({ theme }) => theme.color.blue400};
-  shadow-offset: 0px -4px;
-  shadow-opacity: 0.08;
-  shadow-radius: 12px;
-
-  /* Android shadow */
-  elevation: 1;
-`
-
-const FloatingTwoWayContent = styled.View`
-  padding-horizontal: ${({ theme }) => theme.spacing.p4}px;
-  padding-top: ${({ theme }) => theme.spacing.p2}px;
 `
 
 const regexForBr = /<br\s*\/>/gi
@@ -213,7 +195,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
 }> = ({ componentId, docId, isUrgent, listParams }) => {
   useNavigationOptions(componentId)
 
-  const { showModal } = useNavigation()
+  const { showModal, navigate } = useNavigation()
 
   const insets = useSafeAreaInsets()
   const theme = useTheme()
@@ -418,8 +400,6 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     }
   }, [loaded])
 
-  const isReplyable = Document.replyable ?? false
-
   const onReplyPress = () => {
     const senderName = Document.sender?.name
 
@@ -435,6 +415,28 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
       },
     })
   }
+
+  const onCommunicationsPress = () => {
+    navigate({
+      componentId,
+      componentName: ComponentRegistry.DocumentCommunicationsScreen,
+      layoutComponent: {
+        options: {
+          topBar: {
+            title: {
+              text: Document.subject,
+            },
+          },
+        },
+        passProps: {
+          document: Document,
+        },
+      },
+    })
+  }
+
+  const isReplyable = Document.replyable ?? false
+  const hasComments = Document?.ticket?.comments?.length ?? null
 
   return (
     <>
@@ -556,22 +558,30 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
           </View>
         )}
       </DocumentWrapper>
-      {isReplyable && (
-        <FloatingTwoWayFooter>
-          <FloatingTwoWayContent>
+      {isReplyable && !loading && (
+        <FloatingBottomFooter>
+          <FloatingBottomContent>
             <Button
               onLayout={(event) => {
                 setButtonHeight(event.nativeEvent.layout.height)
               }}
-              title={intl.formatMessage({ id: 'documentDetail.replyButton' })}
+              title={intl.formatMessage({
+                id: hasComments
+                  ? 'documentDetail.buttonCommunications'
+                  : 'documentDetail.buttonReply',
+              })}
               isTransparent
               isOutlined
               iconPosition="left"
-              icon={require('../../assets/icons/reply.png')}
-              onPress={onReplyPress}
+              icon={
+                hasComments
+                  ? require('../../assets/icons/chatbubbles.png')
+                  : require('../../assets/icons/reply.png')
+              }
+              onPress={hasComments ? onCommunicationsPress : onReplyPress}
             />
-          </FloatingTwoWayContent>
-        </FloatingTwoWayFooter>
+          </FloatingBottomContent>
+        </FloatingBottomFooter>
       )}
     </>
   )
