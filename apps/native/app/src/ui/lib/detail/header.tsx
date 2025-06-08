@@ -1,12 +1,12 @@
 import React from 'react'
 import { ImageSourcePropType } from 'react-native'
 import styled from 'styled-components/native'
+import { useDateTimeFormatter } from '../../../hooks/use-date-time-formatter'
+import { Spacing, theme } from '../../utils'
 import { dynamicColor } from '../../utils/dynamic-color'
+import { Label } from '../label/label'
 import { Skeleton } from '../skeleton/skeleton'
 import { Typography } from '../typography/typography'
-import { Label } from '../label/label'
-import { Spacing, theme } from '../../utils'
-import { useIntl } from 'react-intl'
 
 const Host = styled.View`
   display: flex;
@@ -68,7 +68,7 @@ export function Header({
   isLoading,
   label,
 }: HeaderProps) {
-  const intl = useIntl()
+  const formatDate = useDateTimeFormatter()
 
   const renderSkeleton = ({
     height,
@@ -86,23 +86,6 @@ export function Header({
         height={height}
       />
     )
-  }
-
-  const formatDate = (dt: string) => {
-    const date = new Date(dt)
-
-    const datePart = intl.formatDate(date, {
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    })
-    const timePart = intl.formatTime(date, {
-      hour: '2-digit',
-      minute: '2-digit',
-      hour12: false,
-    })
-
-    return `${datePart}, ${timePart}`
   }
 
   if (isLoading) {

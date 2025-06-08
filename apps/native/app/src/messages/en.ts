@@ -258,7 +258,8 @@ export const en: TranslatedMessages = {
   'documentDetail.screenTitle': 'Document',
   'documentDetail.loadingText': 'Loading document',
   'documentDetail.errorUnknown': 'Error occurred while loading document',
-  'documentDetail.replyButton': 'Reply',
+  'documentDetail.buttonReply': 'Reply',
+  'documentDetail.buttonCommunications': 'Communications',
 
   // document reply
   'documentReply.to': 'To',
@@ -267,16 +268,15 @@ export const en: TranslatedMessages = {
   'documentReply.uploadAttachment': 'Upload document',
   'documentReply.sendMessage': 'Send message',
 
+  // document communications
+  'documentCommunications.caseNumber': 'Case number',
+
   // register email
   'registerEmail.title': 'Please register your email',
-  'registerEmail.titleRegistered': 'Email registered',
   'registerEmail.description':
     '[To reply to email, you need to register an email]',
-  'registerEmail.descriptionRegistered':
-    '[Now you can reply to emails from your mailbox]',
   'registerEmail.button': 'Register email',
   'registerEmail.cancel': 'Cancel',
-  'registerEmail.close': 'Close',
 
   // wallet
   'wallet.screenTitle': 'Wallet',

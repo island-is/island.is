@@ -6,8 +6,17 @@ import {
   NavigationFunctionComponent,
 } from 'react-native-navigation'
 
-import styled, { css, useTheme } from 'styled-components/native'
+import styled, { css } from 'styled-components/native'
+import { LoadingIcon } from '../../components/nav-loading-spinner/loading-icon'
+import { Pressable } from '../../components/pressable/pressable'
+import {
+  useDocumentReplyMutation,
+  useGetProfileQuery,
+} from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
+import { useNavigation } from '../../hooks/use-navigation'
+import { useNavigationCurrentComponentId } from '../../hooks/use-navigation-current-component-id'
+import { useAuthStore } from '../../stores/auth-store'
 import {
   Button,
   NavigationBarSheet,
@@ -16,16 +25,8 @@ import {
   TextField,
   Typography,
 } from '../../ui'
-import { Container } from '../../ui/lib/container/container'
-import {
-  useDocumentReplyMutation,
-  useGetProfileQuery,
-} from '../../graphql/types/schema'
-import { LoadingIcon } from '../../components/nav-loading-spinner/loading-icon'
-import { useAuthStore } from '../../stores/auth-store'
-import { useNavigation } from '../../hooks/use-navigation'
+import { Container, Icon } from '../../ui'
 import { ComponentRegistry } from '../../utils/component-registry'
-import { useNavigationCurrentComponentId } from '../../hooks/use-navigation-current-component-id'
 
 const Host = styled.SafeAreaView`
   flex: 1;
@@ -63,6 +64,10 @@ const Footer = styled(Container)`
   justify-content: flex-end;
 `
 
+const EmailIconWrapper = styled(Pressable)`
+  margin-left: auto;
+`
+
 const { getNavigationOptions, useNavigationOptions } =
   createNavigationOptionHooks(() => ({
     topBar: {
@@ -81,21 +86,31 @@ export const DocumentReplyScreen: NavigationFunctionComponent<
 > = ({ componentId, senderName, documentId, subject }) => {
   useNavigationOptions(componentId)
   const intl = useIntl()
-  const theme = useTheme()
-  const { showModal } = useNavigation()
+  const { showModal, dismissModal } = useNavigation()
   const currentComponentId = useNavigationCurrentComponentId()
   const { userInfo } = useAuthStore()
+  const [hasRegisteredEmail, setHasRegisteredEmail] = useState(false)
 
-  const { data, loading, error } = useGetProfileQuery()
+  const { data, loading, error } = useGetProfileQuery({
+    pollInterval: 10_000,
+    skip: hasRegisteredEmail,
+  })
   const userProfile = data?.getUserProfile
 
   const [message, setMessage] = useState('')
 
-  const [sendMessage, sendMessageResult] = useDocumentReplyMutation()
+  const [sendMessage, { loading: sendMessageLoading }] =
+    useDocumentReplyMutation({
+      onCompleted: (data) => {
+        const id = data.documentsV2Reply?.id
 
-  const onUploadPress = () => {
-    console.log('upload')
-  }
+        if (id) {
+          // Successful reply, clear message
+          setMessage('')
+          dismissModal(componentId)
+        }
+      },
+    })
 
   const onSendPress = () => {
     if (!userProfile?.email) {
@@ -109,12 +124,16 @@ export const DocumentReplyScreen: NavigationFunctionComponent<
         input: {
           documentId,
           body: message,
-          reguesterEmail: userProfile?.email ?? 'disa@hugsmidjan.is',
+          reguesterEmail: userProfile.email,
           reguesterName: userInfo?.name,
           subject,
         },
       },
     })
+  }
+
+  const onEmailPress = () => {
+    showModal(ComponentRegistry.SettingsScreen)
   }
 
   useEffect(() => {
@@ -124,12 +143,19 @@ export const DocumentReplyScreen: NavigationFunctionComponent<
     }
   }, [userProfile, showModal, currentComponentId, componentId])
 
+  useEffect(() => {
+    if (userProfile?.email) {
+      setHasRegisteredEmail(true)
+    }
+  }, [userProfile])
+
   return (
     <>
       <NavigationBarSheet
         componentId={componentId}
         onClosePress={() => Navigation.dismissModal(componentId)}
         includeContainer
+        showLoading={sendMessageLoading}
       />
       <Host>
         {loading ? (
@@ -178,8 +204,15 @@ export const DocumentReplyScreen: NavigationFunctionComponent<
                 numberOfLines={1}
                 ellipsizeMode="tail"
               >
-                {userProfile?.email ?? 'snaer@aranja.com'}
+                {userProfile?.email}
               </Typography>
+              <EmailIconWrapper onPress={onEmailPress}>
+                <Icon
+                  source={require('../../assets/icons/chevron-forward.png')}
+                  width={16}
+                  height={16}
+                />
+              </EmailIconWrapper>
             </Row>
 
             <Row hasBottomBorder={false} paddingVertical={2}>
@@ -195,25 +228,11 @@ export const DocumentReplyScreen: NavigationFunctionComponent<
                 />
               </TextAreaWrapper>
             </Row>
-            <Row hasBottomBorder={false} paddingVertical={0}>
-              <Button
-                icon={require('../../assets/icons/attachment.png')}
-                title={intl.formatMessage({
-                  id: 'documentReply.uploadAttachment',
-                })}
-                isTransparent
-                isOutlined
-                onPress={onUploadPress}
-                textStyle={{
-                  color: theme.color.dark400,
-                }}
-              />
-            </Row>
             <Footer>
               <Button
                 title={intl.formatMessage({ id: 'documentReply.sendMessage' })}
                 onPress={onSendPress}
-                disabled={!message.trim()}
+                disabled={!message.trim() || sendMessageLoading}
               />
             </Footer>
           </>

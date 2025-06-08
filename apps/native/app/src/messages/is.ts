@@ -258,7 +258,8 @@ export const is = {
   'documentDetail.screenTitle': 'Skjal',
   'documentDetail.loadingText': 'Sæki skjal',
   'documentDetail.errorUnknown': 'Villa kom upp við að sækja skjal',
-  'documentDetail.replyButton': 'Svara pósti',
+  'documentDetail.buttonReply': 'Svara pósti',
+  'documentDetail.buttonCommunications': 'Samskipti',
 
   // document reply
   'documentReply.to': 'Til',
@@ -268,15 +269,14 @@ export const is = {
   'documentReply.uploadAttachment': 'Hlaða upp skjali',
   'documentReply.sendMessage': 'Senda skilaboð',
 
+  // document communications
+  'documentCommunications.caseNumber': 'Málsnúmer',
+
   // register email
   'registerEmail.title': 'Vinsamlegast skráðu netfang',
-  'registerEmail.titleRegistered': 'Netfang skráð',
   'registerEmail.description': '[Til þess að svara pósti þarf að skrá netfang]',
-  'registerEmail.descriptionRegistered':
-    '[Nú getur þú svarað pósti úr pósthólfi þínu]',
   'registerEmail.button': 'Skrá netfang',
   'registerEmail.cancel': 'Hætta við',
-  'registerEmail.close': 'Loka',
 
   // profile
   'profile.screenTitle': 'Meira',

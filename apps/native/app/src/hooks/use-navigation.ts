@@ -45,16 +45,16 @@ export const useNavigation = () => {
     <P extends {} = {}>({
       componentId,
       componentName,
-      options,
+      layoutComponent,
     }: {
       componentId: string
       componentName: ComponentName
-      options?: Omit<LayoutComponent<P>, 'name'>
+      layoutComponent?: Omit<LayoutComponent<P>, 'name'>
     }) => {
       Navigation.push(componentId, {
         component: {
           name: componentName,
-          ...options,
+          ...layoutComponent,
         },
       })
     },

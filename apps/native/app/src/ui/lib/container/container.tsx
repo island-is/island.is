@@ -1,5 +1,5 @@
 import { PropsWithChildren } from 'react'
-import { ViewStyle } from 'react-native'
+import { ViewProps, ViewStyle } from 'react-native'
 import styled from 'styled-components/native'
 import { Spacing } from '../../utils'
 
@@ -17,8 +17,9 @@ export const Container = ({
   rowGap,
   style,
   children,
-}: PropsWithChildren<ContainerProps>) => (
-  <StyledContainer rowGap={rowGap} style={style}>
+  ...props
+}: PropsWithChildren<ContainerProps & ViewProps>) => (
+  <StyledContainer rowGap={rowGap} style={style} {...props}>
     {children}
   </StyledContainer>
 )
