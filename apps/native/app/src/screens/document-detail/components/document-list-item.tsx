@@ -57,6 +57,7 @@ type DocumentListItemProps = {
   title: string
   body?: string
   date?: string
+  isOpen?: boolean
   hasTopBorder?: boolean
   hasBottomBorder?: boolean
 }
@@ -66,12 +67,13 @@ export const DocumentListItem = ({
   title,
   body,
   date,
+  isOpen = false,
   hasTopBorder = true,
 }: DocumentListItemProps) => {
   const theme = useTheme()
   const { getOrganizationLogoUrl } = useOrganizationsStore()
 
-  const isExpanded = useSharedValue(false)
+  const isExpanded = useSharedValue(isOpen)
   const height = useSharedValue(0)
 
   const derivedHeight = useDerivedValue(() =>

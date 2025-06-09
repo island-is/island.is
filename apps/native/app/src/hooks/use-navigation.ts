@@ -41,25 +41,5 @@ export const useNavigation = () => {
     [],
   )
 
-  const navigate = useCallback(
-    <P extends {} = {}>({
-      componentId,
-      componentName,
-      layoutComponent,
-    }: {
-      componentId: string
-      componentName: ComponentName
-      layoutComponent?: Omit<LayoutComponent<P>, 'name'>
-    }) => {
-      Navigation.push(componentId, {
-        component: {
-          name: componentName,
-          ...layoutComponent,
-        },
-      })
-    },
-    [],
-  )
-
-  return { showModal, dismissModal, navigate }
+  return { showModal, dismissModal }
 }

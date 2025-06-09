@@ -10,8 +10,8 @@ import {
 import {
   useNavigationButtonPress,
   useNavigationComponentDidAppear,
-} from 'react-native-navigation-hooks/dist'
-import { SafeAreaView, useSafeAreaInsets } from 'react-native-safe-area-context'
+} from 'react-native-navigation-hooks'
+import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import WebView from 'react-native-webview'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -195,7 +195,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
 }> = ({ componentId, docId, isUrgent, listParams }) => {
   useNavigationOptions(componentId)
 
-  const { showModal, navigate } = useNavigation()
+  const { showModal } = useNavigation()
 
   const insets = useSafeAreaInsets()
   const theme = useTheme()
@@ -412,24 +412,24 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
         senderName,
         documentId: docId,
         subject: Document.subject,
+        firstReply: true,
       },
     })
   }
 
   const onCommunicationsPress = () => {
-    navigate({
-      componentId,
-      componentName: ComponentRegistry.DocumentCommunicationsScreen,
-      layoutComponent: {
+    Navigation.push(componentId, {
+      component: {
+        name: ComponentRegistry.DocumentCommunicationsScreen,
+        passProps: {
+          documentId: docId,
+        },
         options: {
           topBar: {
             title: {
               text: Document.subject,
             },
           },
-        },
-        passProps: {
-          document: Document,
         },
       },
     })
