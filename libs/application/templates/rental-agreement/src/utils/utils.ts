@@ -11,7 +11,6 @@ import {
   RentalHousingCategoryClass,
 } from '../shared'
 import {
-  RentalAmountIndexTypes,
   RentalHousingCategoryClassGroup,
   RentalHousingCategoryTypes,
   RentalHousingConditionInspector,
@@ -177,13 +176,6 @@ export const getInspectorOptions = () => [
   {
     value: RentalHousingConditionInspector.INDEPENDENT_PARTY,
     label: m.housingCondition.inspectorOptionIndependentParty,
-  },
-]
-
-export const getRentalAmountIndexTypes = () => [
-  {
-    value: RentalAmountIndexTypes.CONSUMER_PRICE_INDEX,
-    label: m.rentalAmount.indexOptionConsumerPriceIndex,
   },
 ]
 
