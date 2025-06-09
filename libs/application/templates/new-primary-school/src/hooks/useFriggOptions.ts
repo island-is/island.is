@@ -19,12 +19,12 @@ export const useFriggOptions = (type?: OptionsType) => {
 
   const options =
     data?.friggOptions?.flatMap(({ options }) =>
-      options.flatMap(({ value, key }) => {
+      options.flatMap(({ value, key, id }) => {
         let content = value.find(({ language }) => language === lang)?.content
         if (!content) {
           content = value.find(({ language }) => language === 'is')?.content
         }
-        return { value: key ?? '', label: content ?? '' }
+        return { value: (id || key) ?? '', label: content ?? '' }
       }),
     ) ?? []
 

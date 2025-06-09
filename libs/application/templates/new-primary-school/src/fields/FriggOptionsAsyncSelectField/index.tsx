@@ -69,7 +69,7 @@ const FriggOptionsAsyncSelectField: FC<
 
           const options =
             data?.friggOptions?.flatMap(({ options }) =>
-              options.flatMap(({ value, key }) => {
+              options.flatMap(({ value, key, id }) => {
                 let content = value.find(
                   ({ language }) => language === lang,
                 )?.content
@@ -78,7 +78,7 @@ const FriggOptionsAsyncSelectField: FC<
                     ({ language }) => language === 'is',
                   )?.content
                 }
-                return { value: key ?? '', label: content ?? '' }
+                return { value: (id || key) ?? '', label: content ?? '' }
               }),
             ) ?? []
 

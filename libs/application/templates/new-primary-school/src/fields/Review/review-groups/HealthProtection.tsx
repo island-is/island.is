@@ -20,7 +20,7 @@ import {
 } from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
 
-export const AllergiesAndIntolerances = ({
+export const HealthProtection = ({
   application,
   editable,
   goToScreen,
@@ -51,7 +51,7 @@ export const AllergiesAndIntolerances = ({
   return (
     <ReviewGroup
       isEditable={editable}
-      editAction={() => goToScreen?.('allergiesAndIntolerances')}
+      editAction={() => goToScreen?.('healthProctection')}
     >
       <Stack space={2}>
         {(hasFoodAllergiesOrIntolerances.includes(YES) ||
