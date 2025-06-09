@@ -1,23 +1,25 @@
+import { YES } from '@island.is/application/core'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import {
+  bankInfoToString,
+  getTaxLevelOption,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import {
   DataValue,
   RadioValue,
   ReviewGroup,
-  formatBankInfo,
 } from '@island.is/application/ui-components'
 import { GridColumn, GridRow, Stack } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { ReviewGroupProps } from './props'
 import { getApplicationAnswers } from '../../../utils/medicalAndRehabilitationPaymentsUtils'
-import { getTaxLevelOption } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
-import { YES } from '@island.is/application/core'
+import { ReviewGroupProps } from './props'
 
 export const Payment = ({
   application,
   editable,
   goToScreen,
 }: ReviewGroupProps) => {
-  const { bank, personalAllowance, personalAllowanceUsage, taxLevel } =
+  const { bankInfo, personalAllowance, personalAllowanceUsage, taxLevel } =
     getApplicationAnswers(application.answers)
 
   const { formatMessage } = useLocale()
@@ -35,7 +37,7 @@ export const Payment = ({
               label={formatMessage(
                 socialInsuranceAdministrationMessage.payment.bank,
               )}
-              value={formatBankInfo(bank)}
+              value={bankInfoToString(bankInfo)}
             />
           </GridColumn>
         </GridRow>

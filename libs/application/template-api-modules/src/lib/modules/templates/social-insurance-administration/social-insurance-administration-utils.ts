@@ -5,6 +5,7 @@ import {
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
   formatBank,
+  getBankIsk,
   shouldNotUpdateBankAccount,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import {
@@ -380,7 +381,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
   const {
     applicantPhonenumber,
     applicantEmail,
-    bank,
+    bankInfo,
     paymentInfo,
     personalAllowance,
     personalAllowanceUsage,
@@ -398,8 +399,6 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     questionnaire,
   } = getMARPApplicationAnswers(application.answers)
 
-  const { bankInfo } = getASFTEApplicationExternalData(application.externalData)
-
   const marpDTO: MedicalAndRehabilitationPaymentsDTO = {
     applicantInfo: {
       email: applicantEmail,
@@ -413,7 +412,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     applicationId: application.id,
     ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {
       domesticBankInfo: {
-        bank: formatBank(bank),
+        bank: getBankIsk(bankInfo),
       },
     }),
     taxInfo: {

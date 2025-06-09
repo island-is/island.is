@@ -1156,7 +1156,15 @@ export const buildAccordionField = (
 export const buildBankAccountField = (
   data: Omit<BankAccountField, 'type' | 'component' | 'children'>,
 ): BankAccountField => {
-  const { title = '', id, marginBottom, marginTop, titleVariant } = data
+  const {
+    title = '',
+    id,
+    marginBottom,
+    marginTop,
+    titleVariant,
+    defaultValue,
+  } = data
+
   return {
     children: undefined,
     id,
@@ -1166,6 +1174,7 @@ export const buildBankAccountField = (
     titleVariant,
     type: FieldTypes.BANK_ACCOUNT,
     component: FieldComponents.BANK_ACCOUNT,
+    defaultValue,
   }
 }
 
