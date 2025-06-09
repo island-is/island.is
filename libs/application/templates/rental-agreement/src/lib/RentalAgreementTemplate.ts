@@ -92,7 +92,7 @@ const RentalAgreementTemplate: ApplicationTemplate<
         meta: {
           name: States.DRAFT,
           status: 'draft',
-          lifecycle: pruneAfterDays(30),
+          lifecycle: DefaultStateLifeCycle,
           onExit: defineTemplateApi({
             action: TemplateApiActions.sendApplicationSummary,
           }),
