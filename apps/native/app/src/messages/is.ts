@@ -271,6 +271,10 @@ export const is = {
 
   // document communications
   'documentCommunications.caseNumber': 'Málsnúmer',
+  'documentCommunications.initialReply':
+    'Skilaboðin eru móttekin og mál hefur verið stofnað. Þú getur haldið áfram samskiptunum hér eða í gegnum þitt persónulega netfang {email}.',
+  'documentCommunications.cannotReply':
+    'Ekki er hægt að svara þessum skilaboðum því sendandi hefur lokað fyrir frekari svör í þessu samtali.',
 
   // register email
   'registerEmail.title': 'Vinsamlegast skráðu netfang',

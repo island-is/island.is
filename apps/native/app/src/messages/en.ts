@@ -270,6 +270,10 @@ export const en: TranslatedMessages = {
 
   // document communications
   'documentCommunications.caseNumber': 'Case number',
+  'documentCommunications.initialReply':
+    'The message has been received and a case has been created. You can continue the conversation here or via your personal email {email}.',
+  'documentCommunications.cannotReply':
+    'This message cannot be replied to because the sender has blocked further replies in this conversation.',
 
   // register email
   'registerEmail.title': 'Please register your email',

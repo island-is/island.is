@@ -9,24 +9,26 @@ import {
 import styled, { css } from 'styled-components/native'
 import { LoadingIcon } from '../../components/nav-loading-spinner/loading-icon'
 import { Pressable } from '../../components/pressable/pressable'
-import {
-  useDocumentReplyMutation,
-  useGetProfileQuery,
-} from '../../graphql/types/schema'
+import { useUser } from '../../contexts/user-provider'
+import { useDocumentReplyMutation } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useNavigation } from '../../hooks/use-navigation'
 import { useNavigationCurrentComponentId } from '../../hooks/use-navigation-current-component-id'
 import { useAuthStore } from '../../stores/auth-store'
 import {
   Button,
+  Container,
+  Icon,
   NavigationBarSheet,
   Problem,
   Spacing,
   TextField,
   Typography,
 } from '../../ui'
-import { Container, Icon } from '../../ui'
-import { ComponentRegistry } from '../../utils/component-registry'
+import {
+  ComponentRegistry,
+  StackRegistry,
+} from '../../utils/component-registry'
 
 const Host = styled.SafeAreaView`
   flex: 1;
@@ -37,8 +39,11 @@ const Row = styled(Container)<{
   paddingVertical?: Spacing
 }>`
   flex-direction: row;
-  padding-vertical: ${({ paddingVertical = 1, theme }) =>
+  padding-top: ${({ paddingVertical = 1, theme }) =>
     theme.spacing[paddingVertical]}px;
+  padding-bottom: ${({ paddingVertical = 1, theme }) =>
+    theme.spacing[paddingVertical]}px;
+
   ${({ hasBottomBorder = true, theme }) =>
     hasBottomBorder &&
     css`
@@ -79,23 +84,18 @@ type DocumentReplyScreenProps = {
   senderName: string
   documentId: string
   subject: string
+  firstReply?: boolean
 }
 
 export const DocumentReplyScreen: NavigationFunctionComponent<
   DocumentReplyScreenProps
-> = ({ componentId, senderName, documentId, subject }) => {
+> = ({ componentId, senderName, documentId, subject, firstReply = false }) => {
   useNavigationOptions(componentId)
   const intl = useIntl()
   const { showModal, dismissModal } = useNavigation()
   const currentComponentId = useNavigationCurrentComponentId()
   const { userInfo } = useAuthStore()
-  const [hasRegisteredEmail, setHasRegisteredEmail] = useState(false)
-
-  const { data, loading, error } = useGetProfileQuery({
-    pollInterval: 10_000,
-    skip: hasRegisteredEmail,
-  })
-  const userProfile = data?.getUserProfile
+  const { user: userProfile, loading, error } = useUser()
 
   const [message, setMessage] = useState('')
 
@@ -107,7 +107,27 @@ export const DocumentReplyScreen: NavigationFunctionComponent<
         if (id) {
           // Successful reply, clear message
           setMessage('')
+          // Close the modal
           dismissModal(componentId)
+
+          // Navigate to the document communications screen
+          Navigation.push(firstReply ? StackRegistry.InboxStack : componentId, {
+            component: {
+              name: ComponentRegistry.DocumentCommunicationsScreen,
+              passProps: {
+                documentId,
+                firstReply,
+                refetchDocument: true,
+              },
+              options: {
+                topBar: {
+                  title: {
+                    text: subject,
+                  },
+                },
+              },
+            },
+          })
         }
       },
     })
@@ -142,12 +162,6 @@ export const DocumentReplyScreen: NavigationFunctionComponent<
       showModal(ComponentRegistry.RegisterEmailScreen)
     }
   }, [userProfile, showModal, currentComponentId, componentId])
-
-  useEffect(() => {
-    if (userProfile?.email) {
-      setHasRegisteredEmail(true)
-    }
-  }, [userProfile])
 
   return (
     <>
@@ -214,7 +228,6 @@ export const DocumentReplyScreen: NavigationFunctionComponent<
                 />
               </EmailIconWrapper>
             </Row>
-
             <Row hasBottomBorder={false} paddingVertical={2}>
               <TextAreaWrapper>
                 <TextArea
