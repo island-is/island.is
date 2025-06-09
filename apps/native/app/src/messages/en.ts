@@ -265,6 +265,7 @@ export const en: TranslatedMessages = {
   'documentReply.to': 'To',
   'documentReply.from': 'From',
   'documentReply.message': 'Message',
+  'documentReply.messagePlaceholder': 'Write message here',
   'documentReply.uploadAttachment': 'Upload document',
   'documentReply.sendMessage': 'Send message',
 
