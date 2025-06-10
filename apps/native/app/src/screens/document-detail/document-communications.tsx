@@ -133,7 +133,7 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
   const onLayoutCallback = useCallback(() => {
     setTimeout(() => {
       flatListRef.current?.scrollToOffset({
-        offset: 75 * (comments.length - 1) + 500,
+        offset: 75 * (comments.length - 1),
         animated: true,
       })
     }, TOGGLE_ANIMATION_DURATION + 50)
