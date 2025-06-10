@@ -12,6 +12,7 @@ import {
 import { OptionsType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
+import { useId } from 'react'
 
 export const healthProtectionSubSection = buildSubSection({
   id: 'healthProtectionSubSection',
@@ -62,6 +63,7 @@ export const healthProtectionSubSection = buildSubSection({
               newPrimarySchoolMessages.differentNeeds
                 .typeOfFoodAllergiesOrIntolerancesPlaceholder,
             isMulti: true,
+            useId: true,
           },
         ),
         buildCheckboxField({
@@ -91,6 +93,7 @@ export const healthProtectionSubSection = buildSubSection({
               newPrimarySchoolMessages.differentNeeds
                 .typeOfOtherAllergiesPlaceholder,
             isMulti: true,
+            useId: true,
           },
         ),
         buildAlertMessageField({

@@ -40,13 +40,13 @@ export const HealthProtection = ({
     options: foodAllergiesOrIntolerancesOptions,
     loading: foodAllergiesOrIntolerancesLoading,
     error: foodAllergiesOrIntolerancesError,
-  } = useFriggOptions(OptionsType.FOOD_ALLERGY_AND_INTOLERANCE)
+  } = useFriggOptions(OptionsType.FOOD_ALLERGY_AND_INTOLERANCE, true)
 
   const {
     options: otherAllergiesOptions,
     loading: otherAllergiesLoading,
     error: otherAllergiesError,
-  } = useFriggOptions(OptionsType.ALLERGY)
+  } = useFriggOptions(OptionsType.ALLERGY, true)
 
   return (
     <ReviewGroup
