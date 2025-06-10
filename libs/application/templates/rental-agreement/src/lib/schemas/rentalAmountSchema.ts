@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
+import { YesOrNoEnum } from '@island.is/application/core'
 import { parseCurrency } from '../../utils/utils'
 import {
   RentalAmountPaymentDateOptions,
@@ -10,6 +11,9 @@ import * as m from '../messages'
 export const rentalAmount = z
   .object({
     amount: z.string().optional(),
+    rentalPeriodIsDefinite: z.string().array().optional(),
+    rentalPeriodStartDate: z.string().optional(),
+    rentalPeriodEndDate: z.string().optional(),
     indexValue: z.string().optional(),
     isIndexConnected: z.string().array().optional(),
     indexDate: z.string().optional(),
@@ -30,6 +34,36 @@ export const rentalAmount = z
         params: m.dataSchema.requiredErrorMsg,
         path: ['amount'],
       })
+    }
+
+    // Using hidden fields to check length of rental period and if it is definite
+    const startDate = data.rentalPeriodStartDate
+      ? new Date(data.rentalPeriodStartDate)
+      : undefined
+    const endDate = data.rentalPeriodEndDate
+      ? new Date(data.rentalPeriodEndDate)
+      : undefined
+    const rentalPeriodIsDefinite = data.rentalPeriodIsDefinite?.includes(
+      YesOrNoEnum.YES,
+    )
+    const indexIsConnected = data.isIndexConnected?.includes(YesOrNoEnum.YES)
+
+    if (rentalPeriodIsDefinite && startDate && endDate && indexIsConnected) {
+      // Calculate the difference in milliseconds
+      const diffTime = Math.abs(endDate.getTime() - startDate.getTime())
+      // Convert milliseconds to days (1000ms * 60s * 60min * 24h)
+      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24))
+      // 365.25 accounts for leap years more accurately
+      const diffMonthsApprox = diffDays / 30.44 // Average days in a month (365.25/12)
+
+      if (diffMonthsApprox <= 12) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.rentalAmount.indexNotAllowedForShortTermRentalError,
+          path: ['isIndexConnected'],
+        })
+      }
     }
 
     const numericAmount = parseCurrency(data.amount ?? '')
