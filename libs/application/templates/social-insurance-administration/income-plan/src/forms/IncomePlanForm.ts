@@ -620,7 +620,7 @@ export const IncomePlanForm: Form = buildForm({
                 },
                 december: {
                   component: 'input',
-                  label: socialInsuranceAdministrationMessage.months.desember,
+                  label: socialInsuranceAdministrationMessage.months.december,
                   width: 'third',
                   type: 'number',
                   backgroundColor: 'blue',

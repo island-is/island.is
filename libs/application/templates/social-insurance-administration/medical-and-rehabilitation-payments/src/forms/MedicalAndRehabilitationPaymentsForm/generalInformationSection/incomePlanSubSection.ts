@@ -4,12 +4,7 @@ import {
   YES,
 } from '@island.is/application/core'
 import {
-  DIVIDENDS_IN_FOREIGN_BANKS,
-  FOREIGN_BASIC_PENSION,
-  FOREIGN_INCOME,
-  FOREIGN_PENSION,
   INCOME,
-  INTEREST_ON_DEPOSITS_IN_FOREIGN_BANKS,
   ISK,
   RatioType,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
@@ -19,6 +14,13 @@ import {
   getCurrencies,
   getTypesOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
+import {
+  getMonths,
+  isMonthlyIncomeAndCategoryIncome,
+  isUnevenAndEmploymentIncome,
+  shouldShowMonthlyUnevenIncomeField,
+  showCurrency,
+} from '@island.is/application/templates/social-insurance-administration-core/utils/incomePlanUtils'
 import { Application } from '@island.is/application/types'
 import { formatCurrencyWithoutSuffix } from '@island.is/application/ui-components'
 import { getApplicationExternalData } from '../../../utils/medicalAndRehabilitationPaymentsUtils'
@@ -113,17 +115,7 @@ export const incomePlanSubSection = buildSubSection({
           isSearchable: true,
           updateValueObj: {
             valueModifier: (_, activeField) => {
-              const defaultCurrency =
-                activeField?.incomeType === FOREIGN_BASIC_PENSION ||
-                activeField?.incomeType === FOREIGN_PENSION ||
-                activeField?.incomeType === FOREIGN_INCOME ||
-                activeField?.incomeType ===
-                  INTEREST_ON_DEPOSITS_IN_FOREIGN_BANKS ||
-                activeField?.incomeType === DIVIDENDS_IN_FOREIGN_BANKS
-                  ? null
-                  : ISK
-
-              return defaultCurrency
+              return showCurrency(activeField) ? null : ISK
             },
             watchValues: 'incomeType',
           },
@@ -132,16 +124,7 @@ export const incomePlanSubSection = buildSubSection({
               application.externalData,
             )
 
-            const hideISKCurrency =
-              activeField?.incomeType === FOREIGN_BASIC_PENSION ||
-              activeField?.incomeType === FOREIGN_PENSION ||
-              activeField?.incomeType === FOREIGN_INCOME ||
-              activeField?.incomeType ===
-                INTEREST_ON_DEPOSITS_IN_FOREIGN_BANKS ||
-              activeField?.incomeType === DIVIDENDS_IN_FOREIGN_BANKS
-                ? ISK
-                : ''
-
+            const hideISKCurrency = showCurrency(activeField) ? ISK : ''
             return getCurrencies(currencies, hideISKCurrency)
           },
         },
@@ -173,15 +156,10 @@ export const incomePlanSubSection = buildSubSection({
           currency: true,
           updateValueObj: {
             valueModifier: (_, activeField) => {
-              const unevenAndEmploymentIncome =
-                activeField?.unevenIncomePerYear?.[0] !== YES ||
-                (activeField?.incomeCategory !== INCOME &&
-                  activeField?.unevenIncomePerYear?.[0] === YES)
-
               if (
                 activeField?.income === RatioType.MONTHLY &&
                 activeField?.currency !== ISK &&
-                unevenAndEmploymentIncome
+                isUnevenAndEmploymentIncome(activeField)
               ) {
                 return Math.round(
                   Number(activeField?.incomePerYear) / 12,
@@ -193,15 +171,10 @@ export const incomePlanSubSection = buildSubSection({
           },
           suffix: '',
           condition: (_, activeField) => {
-            const unevenAndEmploymentIncome =
-              activeField?.unevenIncomePerYear?.[0] !== YES ||
-              (activeField?.incomeCategory !== INCOME &&
-                activeField?.unevenIncomePerYear?.[0] === YES)
-
             return (
               activeField?.income === RatioType.MONTHLY &&
               activeField?.currency !== ISK &&
-              unevenAndEmploymentIncome
+              isUnevenAndEmploymentIncome(activeField)
             )
           },
         },
@@ -215,15 +188,10 @@ export const incomePlanSubSection = buildSubSection({
           currency: true,
           updateValueObj: {
             valueModifier: (_, activeField) => {
-              const unevenAndEmploymentIncome =
-                activeField?.unevenIncomePerYear?.[0] !== YES ||
-                (activeField?.incomeCategory !== INCOME &&
-                  activeField?.unevenIncomePerYear?.[0] === YES)
-
               if (
                 activeField?.income === RatioType.MONTHLY &&
                 activeField?.currency === ISK &&
-                unevenAndEmploymentIncome
+                isUnevenAndEmploymentIncome(activeField)
               ) {
                 return Math.round(
                   Number(activeField?.incomePerYear) / 12,
@@ -235,15 +203,10 @@ export const incomePlanSubSection = buildSubSection({
           },
           suffix: '',
           condition: (_, activeField) => {
-            const unevenAndEmploymentIncome =
-              activeField?.unevenIncomePerYear?.[0] !== YES ||
-              (activeField?.incomeCategory !== INCOME &&
-                activeField?.unevenIncomePerYear?.[0] === YES)
-
             return (
               activeField?.income === RatioType.MONTHLY &&
               activeField?.currency === ISK &&
-              unevenAndEmploymentIncome
+              isUnevenAndEmploymentIncome(activeField)
             )
           },
         },
@@ -305,20 +268,7 @@ export const incomePlanSubSection = buildSubSection({
                 activeField?.incomeCategory === INCOME &&
                 activeField?.unevenIncomePerYear?.[0] === YES
               ) {
-                return [
-                  'january',
-                  'february',
-                  'march',
-                  'april',
-                  'may',
-                  'june',
-                  'july',
-                  'august',
-                  'september',
-                  'october',
-                  'november',
-                  'december',
-                ]
+                return [...getMonths()]
               }
               if (
                 activeField?.income === RatioType.MONTHLY &&
@@ -360,217 +310,32 @@ export const incomePlanSubSection = buildSubSection({
           ],
           backgroundColor: 'blue',
           displayInTable: false,
-          condition: (_, activeField) => {
-            return (
-              activeField?.income === RatioType.MONTHLY &&
-              activeField?.incomeCategory === INCOME
-            )
-          },
+          condition: (
+            _application: unknown,
+            activeField: Record<string, unknown> = {},
+          ) => isMonthlyIncomeAndCategoryIncome(activeField),
         },
-        january: {
-          component: 'input',
-          label: socialInsuranceAdministrationMessage.months.january,
-          width: 'third',
-          type: 'number',
-          backgroundColor: 'blue',
-          displayInTable: false,
-          currency: true,
-          suffix: '',
-          condition: (_, activeField) => {
-            return (
-              activeField?.income === RatioType.MONTHLY &&
-              activeField?.incomeCategory === INCOME &&
-              activeField?.unevenIncomePerYear?.[0] === YES
-            )
-          },
-        },
-        february: {
-          component: 'input',
-          label: socialInsuranceAdministrationMessage.months.february,
-          width: 'third',
-          type: 'number',
-          backgroundColor: 'blue',
-          displayInTable: false,
-          currency: true,
-          suffix: '',
-          condition: (_, activeField) => {
-            return (
-              activeField?.income === RatioType.MONTHLY &&
-              activeField?.incomeCategory === INCOME &&
-              activeField?.unevenIncomePerYear?.[0] === YES
-            )
-          },
-        },
-        march: {
-          component: 'input',
-          label: socialInsuranceAdministrationMessage.months.march,
-          width: 'third',
-          type: 'number',
-          backgroundColor: 'blue',
-          displayInTable: false,
-          currency: true,
-          suffix: '',
-          condition: (_, activeField) => {
-            return (
-              activeField?.income === RatioType.MONTHLY &&
-              activeField?.incomeCategory === INCOME &&
-              activeField?.unevenIncomePerYear?.[0] === YES
-            )
-          },
-        },
-        april: {
-          component: 'input',
-          label: socialInsuranceAdministrationMessage.months.april,
-          width: 'third',
-          type: 'number',
-          backgroundColor: 'blue',
-          displayInTable: false,
-          currency: true,
-          suffix: '',
-          condition: (_, activeField) => {
-            return (
-              activeField?.income === RatioType.MONTHLY &&
-              activeField?.incomeCategory === INCOME &&
-              activeField?.unevenIncomePerYear?.[0] === YES
-            )
-          },
-        },
-        may: {
-          component: 'input',
-          label: socialInsuranceAdministrationMessage.months.may,
-          width: 'third',
-          type: 'number',
-          backgroundColor: 'blue',
-          displayInTable: false,
-          currency: true,
-          suffix: '',
-          condition: (_, activeField) => {
-            return (
-              activeField?.income === RatioType.MONTHLY &&
-              activeField?.incomeCategory === INCOME &&
-              activeField?.unevenIncomePerYear?.[0] === YES
-            )
-          },
-        },
-        june: {
-          component: 'input',
-          label: socialInsuranceAdministrationMessage.months.june,
-          width: 'third',
-          type: 'number',
-          backgroundColor: 'blue',
-          displayInTable: false,
-          currency: true,
-          suffix: '',
-          condition: (_, activeField) => {
-            return (
-              activeField?.income === RatioType.MONTHLY &&
-              activeField?.incomeCategory === INCOME &&
-              activeField?.unevenIncomePerYear?.[0] === YES
-            )
-          },
-        },
-        july: {
-          component: 'input',
-          label: socialInsuranceAdministrationMessage.months.july,
-          width: 'third',
-          type: 'number',
-          backgroundColor: 'blue',
-          displayInTable: false,
-          currency: true,
-          suffix: '',
-          condition: (_, activeField) => {
-            return (
-              activeField?.income === RatioType.MONTHLY &&
-              activeField?.incomeCategory === INCOME &&
-              activeField?.unevenIncomePerYear?.[0] === YES
-            )
-          },
-        },
-        august: {
-          component: 'input',
-          label: socialInsuranceAdministrationMessage.months.august,
-          width: 'third',
-          type: 'number',
-          backgroundColor: 'blue',
-          displayInTable: false,
-          currency: true,
-          suffix: '',
-          condition: (_, activeField) => {
-            return (
-              activeField?.income === RatioType.MONTHLY &&
-              activeField?.incomeCategory === INCOME &&
-              activeField?.unevenIncomePerYear?.[0] === YES
-            )
-          },
-        },
-        september: {
-          component: 'input',
-          label: socialInsuranceAdministrationMessage.months.september,
-          width: 'third',
-          type: 'number',
-          backgroundColor: 'blue',
-          displayInTable: false,
-          currency: true,
-          suffix: '',
-          condition: (_, activeField) => {
-            return (
-              activeField?.income === RatioType.MONTHLY &&
-              activeField?.incomeCategory === INCOME &&
-              activeField?.unevenIncomePerYear?.[0] === YES
-            )
-          },
-        },
-        october: {
-          component: 'input',
-          label: socialInsuranceAdministrationMessage.months.october,
-          width: 'third',
-          type: 'number',
-          backgroundColor: 'blue',
-          displayInTable: false,
-          currency: true,
-          suffix: '',
-          condition: (_, activeField) => {
-            return (
-              activeField?.income === RatioType.MONTHLY &&
-              activeField?.incomeCategory === INCOME &&
-              activeField?.unevenIncomePerYear?.[0] === YES
-            )
-          },
-        },
-        november: {
-          component: 'input',
-          label: socialInsuranceAdministrationMessage.months.november,
-          width: 'third',
-          type: 'number',
-          backgroundColor: 'blue',
-          displayInTable: false,
-          currency: true,
-          suffix: '',
-          condition: (_, activeField) => {
-            return (
-              activeField?.income === RatioType.MONTHLY &&
-              activeField?.incomeCategory === INCOME &&
-              activeField?.unevenIncomePerYear?.[0] === YES
-            )
-          },
-        },
-        december: {
-          component: 'input',
-          label: socialInsuranceAdministrationMessage.months.desember,
-          width: 'third',
-          type: 'number',
-          backgroundColor: 'blue',
-          displayInTable: false,
-          currency: true,
-          suffix: '',
-          condition: (_, activeField) => {
-            return (
-              activeField?.income === RatioType.MONTHLY &&
-              activeField?.incomeCategory === INCOME &&
-              activeField?.unevenIncomePerYear?.[0] === YES
-            )
-          },
-        },
+        // Dynamically generate month fields
+        ...getMonths().reduce<{ [key: string]: unknown }>((fields, month) => {
+          fields[month] = {
+            component: 'input',
+            label:
+              socialInsuranceAdministrationMessage.months[
+                month as keyof typeof socialInsuranceAdministrationMessage.months
+              ],
+            width: 'third',
+            type: 'number',
+            backgroundColor: 'blue',
+            displayInTable: false,
+            currency: true,
+            suffix: '',
+            condition: (
+              _application: unknown,
+              activeField: Record<string, unknown> = {},
+            ) => shouldShowMonthlyUnevenIncomeField(activeField),
+          }
+          return fields
+        }, {}),
       },
       table: {
         format: {

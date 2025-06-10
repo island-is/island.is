@@ -95,7 +95,7 @@ export const MONTHS = [
   },
   {
     value: 'December',
-    label: socialInsuranceAdministrationMessage.months.desember,
+    label: socialInsuranceAdministrationMessage.months.december,
   },
 ]
 

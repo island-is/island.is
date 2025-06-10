@@ -261,8 +261,8 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
       defaultMessage: 'Nóvember',
       description: 'November',
     },
-    desember: {
-      id: 'sia.application:months.desember',
+    december: {
+      id: 'sia.application:months.december',
       defaultMessage: 'Desember',
       description: 'December',
     },
