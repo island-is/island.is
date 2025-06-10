@@ -86,7 +86,7 @@ const PRESET_AMOUNTS = ['5.000', '10.000', '50.000', '100.000']
 
 export const MemorialCard = ({ slice }: MemorialCardProps) => {
   const { formatMessage } = useIntl()
-  const fundOptions = slice.json?.speedLimitOptions ?? DEFAULT_FUND_OPTIONS
+  const fundOptions = slice.json?.fundOptions ?? DEFAULT_FUND_OPTIONS
 
   const methods = useForm<MemorialCard>({
     mode: 'onChange',
@@ -128,6 +128,10 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
       required: formatMessage(m.validation.requiredAmount),
     })
   }, [methods, formatMessage])
+
+  const formatCurrency = (amount: string | number) => {
+    return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+  }
 
   const handleReset = () => setSubmitted(false)
 
@@ -182,9 +186,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
           <Text>
             {formatMessage(m.overview.amountISK)}{' '}
             {data.amountISK === 'other'
-              ? data.amountISKCustom
-                  .toString()
-                  .replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+              ? formatCurrency(data.amountISKCustom)
               : data.amountISK}{' '}
             kr.
           </Text>
@@ -385,9 +387,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
             <Text>
               {formatMessage(m.info.amountISKPrefix)}{' '}
               {selectedAmount === 'other'
-                ? (watch('amountISKCustom') || 0)
-                    .toString()
-                    .replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+                ? formatCurrency(watch('amountISKCustom') || 0)
                 : selectedAmount || 0}{' '}
               {formatMessage(m.info.amountISKCurrency)}
             </Text>
