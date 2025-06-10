@@ -32,7 +32,6 @@ import { ChargeCardInput } from './dtos/chargeCard.input'
 import { VerifyCardInput } from './dtos/verifyCard.input'
 import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
 import { CatalogItemWithQuantity } from '../../types/charges'
-import { environment } from '../../environments'
 import { PaymentTrackingData } from '../../types/cardPayment'
 import { paymentGatewayResponseCodes } from './cardPayment.constants'
 
@@ -85,6 +84,7 @@ export class CardPaymentService {
       verifyCardInput,
       paymentApiConfig: this.config.paymentGateway,
       md: md,
+      webOrigin: this.config.webOrigin,
     })
 
     const response = await fetch(
@@ -374,19 +374,21 @@ export class CardPaymentService {
     chargeResponse,
     totalPrice,
     merchantReferenceData,
+    systemId,
   }: {
     paymentFlow: PaymentFlowAttributes
     charges: CatalogItemWithQuantity[]
     chargeResponse: ChargeResponse
     totalPrice: number
     merchantReferenceData: string
+    systemId: string
   }) {
     return generateCardChargeFJSPayload({
       paymentFlow,
       charges,
       chargeResponse,
       totalPrice,
-      systemId: environment.chargeFjs.systemId,
+      systemId,
       merchantReferenceData,
     })
   }

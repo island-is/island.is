@@ -42,6 +42,7 @@ import { PaymentTrackingData } from '../../types/cardPayment'
 import { PaymentFlowAttributes } from '../paymentFlow/models/paymentFlow.model'
 import { CatalogItemWithQuantity } from '../../types/charges'
 import { onlyReturnKnownErrorCode } from '../../utils/paymentErrors'
+import { environment } from '../../environments'
 
 @UseGuards(FeatureFlagGuard)
 @FeatureFlag(Features.isIslandisPaymentEnabled)
@@ -401,6 +402,7 @@ export class CardPaymentController {
           chargeResponse: paymentResult,
           totalPrice,
           merchantReferenceData,
+          systemId: environment.chargeFjs.systemId,
         })
 
       createdFjsChargeConfirmation = await retry(

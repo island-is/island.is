@@ -41,3 +41,18 @@ export const GetVerificationStatus = gql`
     }
   }
 `
+
+export const GetJwks = gql`
+  query getJwks {
+    paymentsGetJwks {
+      keys {
+        kty
+        n
+        e
+        kid
+        use
+        alg
+      }
+    }
+  }
+`

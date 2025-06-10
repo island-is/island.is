@@ -3,7 +3,6 @@ import getConfig from 'next/config'
 import { NextApiRequest, NextApiResponse } from 'next'
 import { z } from 'zod'
 
-import { logger } from '@island.is/logging'
 import { findProblemInApolloError } from '@island.is/shared/problem'
 
 import initApollo from '../../../graphql/client'
