@@ -12,6 +12,7 @@ on:
       mq_helm_values_branch:
         type: string
         required: true
+
       mq_has_output:
         type: boolean
         required: true
@@ -60,14 +61,6 @@ jobs:
           JSON_DATA: ${{ steps.read.outputs.result }}
         run: |
           node scripts/ci/docker/write-data.mjs
-      - name: Get manifest data
-        id: manifest
-        if: ${{ inputs.mq_should_run_build == 'true' && inputs.docker_chunks && inputs.docker_chunks != '[]' }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          node scripts/ci/docker/bootstrap.mjs
-          node scripts/ci/docker/get-data.mjs
       - name: Update helm-values repository
         uses: ./.github/actions/update-helm-values
         if: ${{ inputs.mq_has_output == 'true' && inputs.mq_should_run_build == 'true' && inputs.docker_chunks && inputs.docker_chunks != '[]' }}
@@ -77,30 +70,3 @@ jobs:
           app-id: ${{ secrets.HELM_VALUES_APP_ID }}
           branch: ${{ inputs.mq_helm_values_branch }}
           commit-msg: ${{ inputs.mq_commit_msg }}
-      - name: Update judicial system
-        id: judicial-system
-        if: ${{ github.event.merge_group.base_ref == 'refs/heads/main' && inputs.docker_chunks && inputs.docker_chunks != '[]'  }}
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SHOULD_DEPLOY_JUDICIAL: true
-        run: |
-          node scripts/ci/docker/get-data.mjs --deploy-judicial
-      - name: Update helm-values repository with judicial system DEV
-        uses: ./.github/actions/update-helm-values
-        if: ${{ inputs.mq_has_output == 'true' }}
-        with:
-          files: ${{ inputs.mq_judicial_dev }}
-          ssh-key: ${{ secrets.HELM_VALUES_SSH_KEY }}
-          app-id: ${{ secrets.HELM_VALUES_APP_ID }}
-          commit-msg: ${{ steps.judicial-system.outputs.MQ_COMMIT_MSG }}
-          branch: main
-
-      - name: Update helm-values repository with judicial system PROD
-        uses: ./.github/actions/update-helm-values
-        if: ${{ inputs.mq_has_output == 'true' }}
-        with:
-          files: ${{ inputs.mq_judicial_prod }}
-          ssh-key: ${{ secrets.HELM_VALUES_SSH_KEY }}
-          app-id: ${{ secrets.HELM_VALUES_APP_ID }}
-          commit-msg: ${{ steps.judicial-system.outputs.MQ_COMMIT_MSG }}
-          branch: release
