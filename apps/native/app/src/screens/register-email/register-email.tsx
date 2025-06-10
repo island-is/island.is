@@ -26,7 +26,7 @@ const ContentWrapper = styled.View`
   row-gap: ${({ theme }) => theme.spacing[2]}px;
 `
 
-const TextWrapper = styled(Container)`
+const TextWrapper = styled.View`
   max-width: 270px;
 `
 
@@ -71,14 +71,16 @@ export const RegisterEmailScreen: NavigationFunctionComponent<{
       <Wrapper>
         <ContentWrapper>
           <Logo source={logo} resizeMode="contain" />
-          <TextWrapper>
-            <Title variant="heading2" textAlign="center">
-              <FormattedMessage id={'registerEmail.title'} />
-            </Title>
+          <Container>
+            <TextWrapper>
+              <Title variant="heading2" textAlign="center">
+                <FormattedMessage id={'registerEmail.title'} />
+              </Title>
+            </TextWrapper>
             <Typography textAlign="center">
               <FormattedMessage id={'registerEmail.description'} />
             </Typography>
-          </TextWrapper>
+          </Container>
           {height > 650 && (
             <IllustrationImage source={illustrationSrc} resizeMode="contain" />
           )}

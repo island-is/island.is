@@ -278,7 +278,7 @@ export const en: TranslatedMessages = {
   // register email
   'registerEmail.title': 'Please register your email',
   'registerEmail.description':
-    '[To reply to email, you need to register an email]',
+    'To reply to email, you need to register an email',
   'registerEmail.button': 'Register email',
   'registerEmail.cancel': 'Cancel',
 
