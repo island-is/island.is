@@ -58,7 +58,6 @@ export const dateSection = buildSection({
               application.answers,
               'period.dateFieldFrom',
             )
-            console.log(application.answers.period)
             return dateFrom && dateFrom !== '' ? false : true
           },
         }),

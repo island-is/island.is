@@ -925,7 +925,7 @@ export interface DisplayField extends BaseField {
   halfWidthOwnline?: boolean
   variant?: TextFieldVariant
   label?: MessageDescriptor | string
-  value: (answers: FormValue) => string
+  value: (answers: FormValue, externalData: ExternalData) => string
 }
 
 export type KeyValueItem = {

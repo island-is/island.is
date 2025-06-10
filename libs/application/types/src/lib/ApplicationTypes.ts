@@ -87,6 +87,7 @@ export enum ApplicationTypes {
   SEMINAR_REGISTRATION = 'SeminarRegistration',
   TRAINING_LICENSE_ON_A_WORK_MACHINE = 'TrainingLicenseOnAWorkMachine',
   SECONDARY_SCHOOL = 'SecondarySchool',
+  FIRE_COMPENSATION_APPRAISAL = 'FireCompensationAppraisal',
   LEGAL_GAZETTE = 'LegalGazette',
 }
 
@@ -446,6 +447,10 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.SECONDARY_SCHOOL]: {
     slug: 'framhaldsskoli',
     translation: 'ss.application',
+  },
+  [ApplicationTypes.FIRE_COMPENSATION_APPRAISAL]: {
+    slug: 'endurmat-brunabotamats',
+    translation: 'fca.application',
   },
   [ApplicationTypes.LEGAL_GAZETTE]: {
     slug: 'logbirtingarblad',

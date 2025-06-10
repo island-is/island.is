@@ -30,7 +30,7 @@ export const DisplayFormField = ({ field, application }: Props) => {
   const [displayValue, setDisplayValue] = useState(allValues[id])
 
   useEffect(() => {
-    const newDisplayValue = value(allValues)
+    const newDisplayValue = value(allValues, application.externalData)
     if (newDisplayValue !== displayValue) {
       setDisplayValue(newDisplayValue)
       setValue(id, newDisplayValue)
