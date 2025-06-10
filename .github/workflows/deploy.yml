@@ -1,0 +1,100 @@
+name: Deploy
+on:
+  workflow_call:
+    inputs:
+      mq_should_run_build:
+        required: true
+        type: boolean
+      docker_chunks:
+        required: true
+        type: string
+      docker_build_output:
+        required: true
+        type: string
+      mq_helm_values_branch:
+        required: true
+        type: string
+      merge_group_base_ref:
+        required: true
+        type: string
+    secrets:
+      github_token:
+        required: true
+      helm_values_ssh_key:
+        required: true
+      helm_values_app_id:
+        required: true
+
+jobs:
+  deploy:
+    runs-on: arc-shared
+    steps:
+      - name: Get docker-build output
+        uses: cloudposse/github-action-matrix-outputs-read@v1
+        id: read
+        with:
+          matrix-step-name: docker-build
+          matrix-outputs: ${{ inputs.docker_build_output }}
+      - name: checkout
+        if: ${{ inputs.mq_should_run_build == true && inputs.docker_chunks && inputs.docker_chunks != '[]' }}
+        uses: actions/checkout@v4
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+        if: ${{ inputs.mq_should_run_build == true && inputs.docker_chunks && inputs.docker_chunks != '[]' }}
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+        if: ${{ inputs.mq_should_run_build == true && inputs.docker_chunks && inputs.docker_chunks != '[]' }}
+      - name: Prepare artifact to be uploaded
+        if: ${{ inputs.mq_should_run_build == true && inputs.docker_chunks && inputs.docker_chunks != '[]' }}
+        env:
+          JSON_DATA: ${{ steps.read.outputs.result }}
+        run: |
+          node scripts/ci/docker/write-data.mjs
+      - name: Get manifest data
+        id: manifest
+        if: ${{ inputs.mq_should_run_build == true && inputs.docker_chunks && inputs.docker_chunks != '[]' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}
+        run: |
+          node scripts/ci/docker/bootstrap.mjs
+          node scripts/ci/docker/get-data.mjs
+      - name: Update helm-values repository
+        uses: ./.github/actions/update-helm-values
+        if: ${{ steps.manifest.outputs.MQ_HAS_OUTPUT == 'true' && inputs.mq_should_run_build == true && inputs.docker_chunks && inputs.docker_chunks != '[]' }}
+        with:
+          files: ${{ steps.manifest.outputs.MQ_CHANGED_FILES }}
+          ssh-key: ${{ secrets.helm_values_ssh_key }}
+          app-id: ${{ secrets.helm_values_app_id }}
+          branch: ${{ inputs.mq_helm_values_branch }}
+          commit-msg: ${{ steps.manifest.outputs.MQ_COMMIT_MSG }}
+      - name: Update judicial system
+        id: judicial-system
+        if: ${{ inputs.merge_group_base_ref == 'refs/heads/main' && inputs.docker_chunks && inputs.docker_chunks != '[]'  }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.github_token }}
+          SHOULD_DEPLOY_JUDICIAL: true
+        run: |
+          node scripts/ci/docker/get-data.mjs --deploy-judicial
+      - name: Update helm-values repository with judicial system DEV
+        uses: ./.github/actions/update-helm-values
+        if: ${{ steps.judicial-system.outputs.MQ_HAS_OUTPUT == 'true' }}
+        with:
+          files: ${{ steps.judicial-system.outputs.MQ_JUDICIAL_DEV }}
+          ssh-key: ${{ secrets.helm_values_ssh_key }}
+          app-id: ${{ secrets.helm_values_app_id }}
+          commit-msg: ${{ steps.judicial-system.outputs.MQ_COMMIT_MSG }}
+          branch: main
+
+      - name: Update helm-values repository with judicial system PROD
+        uses: ./.github/actions/update-helm-values
+        if: ${{ steps.judicial-system.outputs.MQ_HAS_OUTPUT == 'true' }}
+        with:
+          files: ${{ steps.judicial-system.outputs.MQ_JUDICIAL_PROD }}
+          ssh-key: ${{ secrets.helm_values_ssh_key }}
+          app-id: ${{ secrets.helm_values_app_id }}
+          commit-msg: ${{ steps.judicial-system.outputs.MQ_COMMIT_MSG }}
+          branch: release
