@@ -9,6 +9,9 @@ import { PressableHighlight } from '../../../components/pressable-highlight/pres
 import { useOrganizationsStore } from '../../../stores/organizations-store'
 import { Container, Icon, Typography } from '../../../ui'
 import { getInitials } from '../../../utils/get-initials'
+import { LayoutChangeEvent } from 'react-native'
+
+export const TOGGLE_ANIMATION_DURATION = 300
 
 const Wrapper = styled(PressableHighlight)<{
   hasTopBorder: boolean
@@ -58,8 +61,10 @@ type DocumentListItemProps = {
   body?: string
   date?: string
   isOpen?: boolean
+  closeable?: boolean
   hasTopBorder?: boolean
   hasBottomBorder?: boolean
+  onLayoutCallback?: (event: LayoutChangeEvent) => void
 }
 
 export const DocumentListItem = ({
@@ -67,8 +72,10 @@ export const DocumentListItem = ({
   title,
   body,
   date,
+  closeable = false,
   isOpen = false,
   hasTopBorder = true,
+  onLayoutCallback,
 }: DocumentListItemProps) => {
   const theme = useTheme()
   const { getOrganizationLogoUrl } = useOrganizationsStore()
@@ -78,7 +85,7 @@ export const DocumentListItem = ({
 
   const derivedHeight = useDerivedValue(() =>
     withTiming(height.value * Number(isExpanded.value), {
-      duration: 300,
+      duration: TOGGLE_ANIMATION_DURATION,
     }),
   )
   const bodyStyle = useAnimatedStyle(() => ({
@@ -87,6 +94,10 @@ export const DocumentListItem = ({
   }))
 
   const handlePress = () => {
+    if (!closeable) {
+      return
+    }
+
     isExpanded.value = !isExpanded.value
   }
 
@@ -96,7 +107,7 @@ export const DocumentListItem = ({
     <Wrapper
       hasTopBorder={hasTopBorder}
       onPress={handlePress}
-      highlightColor={theme.shade.shade100}
+      highlightColor={closeable ? theme.shade.shade100 : theme.color.white}
     >
       <>
         <Host>
@@ -123,6 +134,7 @@ export const DocumentListItem = ({
           <Body
             onLayout={(e) => {
               height.value = e.nativeEvent.layout.height
+              onLayoutCallback?.(e)
             }}
           >
             <Typography variant="body3">{body}</Typography>

@@ -254,7 +254,7 @@ export const is = {
   'inbox.bulkSelect.pleaseTryAgain': 'Vinsamlegast prófaðu aftur síðar',
 
   // document detail
-  'documentDetail.screenTitle': 'Skjal',
+  'documentDetail.screenTitle': 'Póstur',
   'documentDetail.loadingText': 'Sæki skjal',
   'documentDetail.errorUnknown': 'Villa kom upp við að sækja skjal',
   'documentDetail.buttonReply': 'Svara pósti',
@@ -277,7 +277,7 @@ export const is = {
 
   // register email
   'registerEmail.title': 'Vinsamlegast skráðu netfang',
-  'registerEmail.description': '[Til þess að svara pósti þarf að skrá netfang]',
+  'registerEmail.description': 'Til þess að svara pósti þarf að skrá netfang',
   'registerEmail.button': 'Skrá netfang',
   'registerEmail.cancel': 'Hætta við',
 
