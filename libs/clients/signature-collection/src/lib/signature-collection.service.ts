@@ -156,14 +156,18 @@ export class SignatureCollectionClientService {
   }
 
   async createMunicipalCandidacy(
-    { collectionId, owner, areas, collectionType }: CreateListInput,
+    { collectionId, owner, areas, collectionType, listName }: CreateListInput,
     auth: User,
   ): Promise<Slug> {
-    const {
-      id,
-      isActive,
-      areas: collectionAreas,
-    } = await this.getLatestCollectionForType(collectionType)
+    const matchingCollection = (await this.currentCollection()).find(
+      (collection) => collection.id === collectionId,
+    )
+    if (!matchingCollection) {
+      throw new Error('Collection not found')
+    }
+
+    const { id, isActive, areas: collectionAreas } = matchingCollection
+
     // check if collectionId is current collection and current collection is open
     if (collectionId !== id.toString() || !isActive) {
       // TODO: create ApplicationTemplateError
@@ -192,14 +196,16 @@ export class SignatureCollectionClientService {
       frambodRequestDTO: {
         sofnunID: parseInt(id),
         kennitala: owner.nationalId.replace(/\D/g, ''),
+        frambodNafn: `${listName ?? partyBallotLetterInfo?.name}`,
         simi: owner.phone,
         netfang: owner.email,
         medmaelalistar: filteredAreas.map((area) => ({
           svaediID: parseInt(area.id),
-          listiNafn: `${partyBallotLetterInfo?.name}`,
+          listiNafn: `${listName ?? partyBallotLetterInfo?.name}`,
         })),
       },
     })
+
     return {
       slug: getSlug(
         candidacy.id ?? '',
