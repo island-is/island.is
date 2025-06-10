@@ -94,7 +94,6 @@ export class UserProfileService {
             'Invalid bank account format, expected: bank-ledger-accountNumber',
         })
       }
-      // update bank info
       try {
         await this.bankinfoClientService.createBankAccountForNationalId(
           user.nationalId,
@@ -105,12 +104,7 @@ export class UserProfileService {
           },
         )
       } catch (e) {
-        console.error('Failed to update bank info', e)
-        throw new ProblemError({
-          type: ProblemType.BAD_SESSION,
-          title: 'Failed to update bank info',
-          detail: e.message,
-        })
+        throw new BadRequestException(e, 'Failed to update bank account')
       }
     }
 
