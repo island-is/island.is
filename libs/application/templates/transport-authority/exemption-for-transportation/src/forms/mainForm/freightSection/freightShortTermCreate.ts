@@ -16,6 +16,10 @@ import {
   checkIfExemptionTypeShortTerm,
 } from '../../../utils'
 import { FreightCommonHiddenInputs } from './freightCommonHiddenInputs'
+import { Application } from '@island.is/application/types'
+
+const freightIndex = 0
+const convoyIndex = 0
 
 export const FreightShortTermCreateMultiField = buildMultiField({
   id: 'freightShortTermCreateMultiField',
@@ -26,17 +30,48 @@ export const FreightShortTermCreateMultiField = buildMultiField({
   description: freight.create.description,
   children: [
     ...FreightCommonHiddenInputs('freight'),
+    ...FreightCommonHiddenInputs(`freightPairing.${freightIndex}`),
+    buildHiddenInput({
+      id: `freight.items.${freightIndex}.freightId`,
+      defaultValue: getRandomId(),
+    }),
+    buildHiddenInput({
+      id: `freightPairing.${freightIndex}.freightId`,
+      defaultValue: (application: Application) => {
+        return getValueViaPath<string>(
+          application.answers,
+          `freight.items.${freightIndex}.freightId`,
+        )
+      },
+    }),
+    buildHiddenInput({
+      id: `freightPairing.${freightIndex}.items.${convoyIndex}.convoyId`,
+      defaultValue: (application: Application) => {
+        return getValueViaPath<string>(
+          application.answers,
+          `convoy.items.${convoyIndex}.convoyId`,
+        )
+      },
+    }),
+    buildHiddenInput({
+      id: `freightPairing.${freightIndex}.convoyIdList`,
+      defaultValue: (application: Application) => {
+        return [
+          getValueViaPath<string>(
+            application.answers,
+            `convoy.items.${convoyIndex}.convoyId`,
+          ),
+        ]
+      },
+    }),
+
     buildDescriptionField({
       id: 'freight.subtitle',
       title: freight.labels.freightSubtitle,
       titleVariant: 'h5',
     }),
-    buildHiddenInput({
-      id: 'freight.items[0].freightId',
-      defaultValue: getRandomId(),
-    }),
     buildTextField({
-      id: 'freight.items[0].name',
+      id: `freight.items.${freightIndex}.name`,
       title: freight.labels.freightName,
       backgroundColor: 'blue',
       width: 'full',
@@ -44,7 +79,7 @@ export const FreightShortTermCreateMultiField = buildMultiField({
       required: true,
     }),
     buildTextField({
-      id: 'freight.items[0].length',
+      id: `freight.items.${freightIndex}.length`,
       title: freight.labels.freightLength,
       backgroundColor: 'blue',
       width: 'half',
@@ -53,7 +88,7 @@ export const FreightShortTermCreateMultiField = buildMultiField({
       suffix: freight.labels.metersSuffix,
     }),
     buildTextField({
-      id: 'freight.items[0].weight',
+      id: `freight.items.${freightIndex}.weight`,
       title: freight.labels.freightWeight,
       backgroundColor: 'blue',
       width: 'half',
@@ -67,7 +102,7 @@ export const FreightShortTermCreateMultiField = buildMultiField({
       titleVariant: 'h5',
     }),
     buildTextField({
-      id: 'freight.items[0].height',
+      id: `freightPairing.${freightIndex}.items.${convoyIndex}.height`,
       title: freight.labels.heightWithConvoy,
       backgroundColor: 'blue',
       width: 'half',
@@ -76,7 +111,7 @@ export const FreightShortTermCreateMultiField = buildMultiField({
       suffix: freight.labels.metersSuffix,
     }),
     buildTextField({
-      id: 'freight.items[0].width',
+      id: `freightPairing.${freightIndex}.items.${convoyIndex}.width`,
       title: freight.labels.widthWithConvoy,
       backgroundColor: 'blue',
       width: 'half',
@@ -85,7 +120,7 @@ export const FreightShortTermCreateMultiField = buildMultiField({
       suffix: freight.labels.metersSuffix,
     }),
     buildTextField({
-      id: 'freight.items[0].totalLength',
+      id: `freightPairing.${freightIndex}.items.${convoyIndex}.totalLength`,
       title: freight.labels.totalLengthWithConvoy,
       backgroundColor: 'blue',
       width: 'full',
@@ -110,23 +145,27 @@ export const FreightShortTermCreateMultiField = buildMultiField({
       },
       condition: (answers, externalData) => {
         const rules = getExemptionRules(externalData)
+        const maxLength = rules?.policeEscort.maxLength
         const maxHeight = rules?.policeEscort.maxHeight
         const maxWidth = rules?.policeEscort.maxWidth
-        const maxLength = rules?.policeEscort.maxLength
-        const height = getValueViaPath<string>(
-          answers,
-          'freight.items.0.height',
-        )
-        const width = getValueViaPath<string>(answers, 'freight.items.0.width')
+
         const length = getValueViaPath<string>(
           answers,
-          'freight.items.0.length',
+          `freight.items.${freightIndex}.length`,
+        )
+        const height = getValueViaPath<string>(
+          answers,
+          `freightPairing.${freightIndex}.items.${convoyIndex}.height`,
+        )
+        const width = getValueViaPath<string>(
+          answers,
+          `freightPairing.${freightIndex}.items.${convoyIndex}.width`,
         )
 
         return (
+          (length && maxLength ? Number(length) > maxLength : false) ||
           (height && maxHeight ? Number(height) > maxHeight : false) ||
-          (width && maxWidth ? Number(width) > maxWidth : false) ||
-          (length && maxLength ? Number(length) > maxLength : false)
+          (width && maxWidth ? Number(width) > maxWidth : false)
         )
       },
     }),
@@ -136,7 +175,7 @@ export const FreightShortTermCreateMultiField = buildMultiField({
       titleVariant: 'h5',
     }),
     buildCheckboxField({
-      id: 'freight.items[0].exemptionFor',
+      id: `freightPairing.${freightIndex}.items.${convoyIndex}.exemptionFor`,
       large: true,
       backgroundColor: 'blue',
       split: '1/2',

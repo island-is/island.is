@@ -12,6 +12,8 @@ import {
 } from '../../../utils'
 import { DollyType } from '../../../shared'
 
+const convoyIndex = 0
+
 export const ConvoyShortTermMultiField = buildMultiField({
   id: 'convoyShortTermMultiField',
   condition: (answers) => {
@@ -21,11 +23,11 @@ export const ConvoyShortTermMultiField = buildMultiField({
   description: convoy.general.description,
   children: [
     buildHiddenInput({
-      id: 'convoy.items[0].convoyId',
+      id: `convoy.items.${convoyIndex}.convoyId`,
       defaultValue: getRandomId(),
     }),
     buildVehiclePermnoWithInfoField({
-      id: 'convoy.items[0].vehicle',
+      id: `convoy.items.${convoyIndex}.vehicle`,
       width: 'full',
       required: true,
       loadValidation: ({ apolloClient, permno }) =>
@@ -37,7 +39,7 @@ export const ConvoyShortTermMultiField = buildMultiField({
       validationFailedErrorMessage: convoy.error.validationFailedErrorMessage,
     }),
     buildVehiclePermnoWithInfoField({
-      id: 'convoy.items[0].trailer',
+      id: `convoy.items.${convoyIndex}.trailer`,
       width: 'full',
       required: false,
       loadValidation: ({ apolloClient, permno }) =>
@@ -49,7 +51,7 @@ export const ConvoyShortTermMultiField = buildMultiField({
       validationFailedErrorMessage: convoy.error.validationFailedErrorMessage,
     }),
     buildRadioField({
-      id: 'convoy.items[0].dollyType',
+      id: `convoy.items.${convoyIndex}.dollyType`,
       title: convoy.dollyType.subtitle,
       required: true,
       marginTop: 2,

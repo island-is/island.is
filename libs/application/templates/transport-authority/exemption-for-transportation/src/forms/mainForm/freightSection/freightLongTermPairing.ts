@@ -65,11 +65,6 @@ const FreightPairingSubSection = (freightIndex: number) =>
         description: freight.pairing.description,
         children: [
           ...FreightCommonHiddenInputs(`freightPairing.${freightIndex}`),
-          buildDescriptionField({
-            id: `freightLongTermPairingDescription.${freightIndex}.subtitle`,
-            title: freight.labels.pairingConvoyListSubtitle,
-            titleVariant: 'h5',
-          }),
           buildHiddenInput({
             id: `freightPairing.${freightIndex}.freightId`,
             defaultValue: (application: Application) => {
@@ -79,6 +74,12 @@ const FreightPairingSubSection = (freightIndex: number) =>
               )
               return freightItem?.freightId
             },
+          }),
+
+          buildDescriptionField({
+            id: `freightLongTermPairingDescription.${freightIndex}.subtitle`,
+            title: freight.labels.pairingConvoyListSubtitle,
+            titleVariant: 'h5',
           }),
           buildSelectField({
             id: `freightPairing.${freightIndex}.convoyIdList`,

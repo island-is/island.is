@@ -6,17 +6,17 @@ import {
   buildSection,
   buildSelectField,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { location } from '../../../lib/messages'
 import {
-  EXEMPTION_REGIONS,
   FILE_SIZE_LIMIT,
   FILE_TYPES_ALLOWED,
   getExemptionType,
   checkIfExemptionTypeLongTerm,
   checkIfExemptionTypeShortTerm,
 } from '../../../utils'
-import { ExemptionType } from '../../../shared'
+import { ExemptionType, RegionArea } from '../../../shared'
 import { Application } from '@island.is/application/types'
 
 export const locationSection = buildSection({
@@ -130,7 +130,10 @@ export const locationSection = buildSection({
           width: 'full',
           isMulti: true,
           options: () => {
-            return EXEMPTION_REGIONS.map((x) => ({ value: x, label: x }))
+            return Object.keys(RegionArea).map((key) => ({
+              value: key,
+              label: getValueViaPath(location.regionOptions, key) || '',
+            }))
           },
           condition: (answers) => {
             return checkIfExemptionTypeLongTerm(answers)

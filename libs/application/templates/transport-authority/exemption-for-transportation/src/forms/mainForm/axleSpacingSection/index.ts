@@ -284,6 +284,24 @@ export const axleSpacingSection = buildSection({
                 variant: 'number',
                 suffix: axleSpacing.labels.metersSuffix,
               }),
+              buildHiddenInput({
+                id: `axleSpacing.trailerList.${trailerIndex}.axleCount`,
+                condition: (answers) => {
+                  const trailer = getConvoyTrailer(answers, trailerIndex)
+                  const hasTrailer = !!trailer?.permno
+                  return (
+                    hasTrailer &&
+                    shouldUseSameValuesForTrailer(answers, trailerIndex)
+                  )
+                },
+                defaultValue: (application: Application) => {
+                  const trailer = getConvoyTrailer(
+                    application.answers,
+                    trailerIndex,
+                  )
+                  return trailer?.numberOfAxles || 0
+                },
+              }),
             ]
           }),
       ],

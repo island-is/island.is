@@ -1,14 +1,8 @@
 import { buildHiddenInput } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { getExemptionRulesLimitations, getExemptionType } from '../../../utils'
+import { getExemptionRulesLimitations } from '../../../utils'
 
 export const FreightCommonHiddenInputs = (id: string) => [
-  buildHiddenInput({
-    id: `${id}.exemptionPeriodType`,
-    defaultValue: (application: Application) => {
-      return getExemptionType(application.answers)
-    },
-  }),
   buildHiddenInput({
     id: `${id}.limit.maxLength`,
     defaultValue: (application: Application) => {

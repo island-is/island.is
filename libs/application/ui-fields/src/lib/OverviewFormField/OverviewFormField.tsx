@@ -162,12 +162,19 @@ export const OverviewFormField = ({
                               locale,
                               formatMessage,
                             )}: `}
-                          {formatTextWithLocale(
-                            value,
-                            application,
-                            locale,
-                            formatMessage,
-                          )}
+                          {Array.isArray(value)
+                            ? formatTextWithLocale(
+                                value,
+                                application,
+                                locale,
+                                formatMessage,
+                              ).join(', ')
+                            : formatTextWithLocale(
+                                value,
+                                application,
+                                locale,
+                                formatMessage,
+                              )}
                         </Text>
                       ))
                     ) : (

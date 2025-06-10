@@ -2,7 +2,7 @@ import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { coreErrorMessages, YES } from '@island.is/application/core'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { DollyType, ExemptionFor, ExemptionType } from '../shared'
+import { DollyType, ExemptionFor, ExemptionType, RegionArea } from '../shared'
 import { error } from './messages'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
@@ -129,9 +129,8 @@ const ConvoySchema = z.object({
 
 const FreightSchema = z
   .object({
-    // Note: we are only saving exemptionPeriodType and limit in answers to be able to display
+    // Note: we are only saving limit in answers to be able to display
     // pretty zod error message (without the usage of custom component)
-    exemptionPeriodType: z.string(),
     limit: z
       .object({
         maxLength: z.number().optional(),
@@ -147,37 +146,19 @@ const FreightSchema = z
         name: z.string().min(1).max(100),
         length: z.string().min(1),
         weight: z.string().min(1),
-        // Short-term only:
-        height: z.string().optional(),
-        width: z.string().optional(),
-        totalLength: z.string().optional(),
-        exemptionFor: z.array(z.nativeEnum(ExemptionFor).nullable()).optional(),
       }),
     ),
   })
-  .superRefine(({ items, limit, exemptionPeriodType }, ctx) => {
+  .superRefine(({ items, limit }, ctx) => {
     if (!limit) return
 
-    let keysToCheck: {
+    const keysToCheck: {
       key: keyof NonNullable<typeof items[number]>
       limitKey: keyof NonNullable<typeof limit>
-    }[] = []
-
-    if (exemptionPeriodType === ExemptionType.SHORT_TERM) {
-      keysToCheck = [
-        { key: 'length', limitKey: 'maxLength' },
-        { key: 'weight', limitKey: 'maxWeight' },
-        { key: 'height', limitKey: 'maxHeight' },
-        { key: 'width', limitKey: 'maxWidth' },
-        { key: 'totalLength', limitKey: 'maxTotalLength' },
-      ]
-    } else if (exemptionPeriodType === ExemptionType.LONG_TERM) {
-      keysToCheck = [
-        { key: 'length', limitKey: 'maxLength' },
-        { key: 'weight', limitKey: 'maxWeight' },
-        // Note: Exclude height, width and totalLength, since those fields are validated in the pairing part for long-term
-      ]
-    }
+    }[] = [
+      { key: 'length', limitKey: 'maxLength' },
+      { key: 'weight', limitKey: 'maxWeight' },
+    ]
 
     keysToCheck.forEach(({ key, limitKey }) => {
       const max = limit[limitKey]
@@ -205,9 +186,8 @@ const FreightSchema = z
 
 const FreightPairingSchema = z
   .object({
-    // Note: we are only saving exemptionPeriodType and limit in answers to be able to display
+    // Note: we are only saving limit in answers to be able to display
     // pretty zod error message (without the usage of custom component)
-    exemptionPeriodType: z.string(),
     limit: z
       .object({
         maxLength: z.number().optional(),
@@ -223,7 +203,6 @@ const FreightPairingSchema = z
       z
         .object({
           convoyId: z.string(),
-          // Long-term only:
           height: z.string().min(1),
           width: z.string().min(1),
           totalLength: z.string().min(1),
@@ -231,13 +210,12 @@ const FreightPairingSchema = z
             .array(z.nativeEnum(ExemptionFor).nullable())
             .optional(),
         })
-        .optional()
+        // Note: need to be nullable, since there can be items/convoys in between that are not selected and therefor null
         .nullable(),
     ),
   })
-  .superRefine(({ exemptionPeriodType, limit, items }, ctx) => {
-    // Note: Skipping if not long-term, since these fields are validated in the freight part of the schema
-    if (exemptionPeriodType !== ExemptionType.LONG_TERM || !limit) return
+  .superRefine(({ limit, items }, ctx) => {
+    if (!limit) return
 
     const keysToCheck: {
       key: keyof NonNullable<typeof items[number]>
@@ -283,6 +261,7 @@ const AxleSpacingSchema = z
         values: z.array(z.string().min(1)),
       }),
     ),
+    // Note: Not array, since dolly is only allowed in short-term where there is max one convoy
     dolly: z.object({
       type: z.nativeEnum(DollyType).optional(),
       value: z.string().optional(),
@@ -291,8 +270,9 @@ const AxleSpacingSchema = z
       z.object({
         useSameValues: z.array(z.enum([YES])).optional(),
         permno: z.string(),
-        singleValue: z.string().optional(),
         values: z.array(z.string().optional()),
+        singleValue: z.string().optional(),
+        axleCount: z.number().optional(),
       }),
     ),
   })
@@ -409,7 +389,7 @@ const LocationSchema = z
       .optional(),
     longTerm: z
       .object({
-        regions: z.array(z.string()).optional().nullable(),
+        regions: z.array(z.nativeEnum(RegionArea)).optional().nullable(),
         directions: z.string().optional(),
         files: z.array(FileDocumentSchema).optional(),
       })
@@ -477,9 +457,9 @@ export const ExemptionForTransportationSchema = z.object({
   }),
   convoy: ConvoySchema,
   freight: FreightSchema,
-  freightPairing: z
-    .array(FreightPairingSchema.optional().nullable())
-    .optional(),
+  // Note: Needs to be nullable, since we are updating each freightPairing index separately,
+  // per subsection, and then all items in the array before the selected subsection is null
+  freightPairing: z.array(FreightPairingSchema.nullable()),
   axleSpacing: AxleSpacingSchema,
   vehicleSpacing: VehicleSpacingSchema,
   location: LocationSchema,

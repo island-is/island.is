@@ -18,10 +18,6 @@ export type Freight = {
   name: string
   freightId: string
   weight: string
-  height?: string | undefined
-  width?: string | undefined
-  totalLength?: string | undefined
-  exemptionFor?: ExemptionFor[]
 }
 
 export type FreightPairing = {

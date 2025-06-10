@@ -1,8 +1,12 @@
-import { AttachmentItem, ExternalData } from '@island.is/application/types'
+import {
+  AttachmentItem,
+  ExternalData,
+  FormText,
+} from '@island.is/application/types'
 import { FormValue } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import { KeyValueItem } from '@island.is/application/types'
-import { exemptionPeriod, overview } from '../../lib/messages'
+import { exemptionPeriod, location, overview } from '../../lib/messages'
 import { formatDateStr, formatKennitala, formatPhoneNumber } from './format'
 import { shouldShowResponsiblePerson } from './shouldShowResponsiblePerson'
 import { isSameAsApplicant } from './isSameAsApplicant'
@@ -158,7 +162,7 @@ export const getLongTermLocationOverviewItems = (
   const regions = getValueViaPath<string[]>(
     answers,
     'location.longTerm.regions',
-  )?.join(', ')
+  )?.map((key) => getValueViaPath<FormText[]>(location.regionOptions, key))
   const directions = getValueViaPath<string>(
     answers,
     'location.longTerm.directions',

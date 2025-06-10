@@ -110,4 +110,41 @@ export const location = {
       description: 'Location file upload button label',
     },
   }),
+  regionOptions: defineMessages({
+    SOUTH_WEST: {
+      id: 'ta.eft.application:location.regionOptions.SOUTH_WEST',
+      defaultMessage: 'Suðvesturland',
+      description: 'South west option',
+    },
+    WESTFJORDS_NORTH: {
+      id: 'ta.eft.application:location.regionOptions.WESTFJORDS_NORTH',
+      defaultMessage: 'Vestfirðir norður',
+      description: 'Westfjords north option',
+    },
+    WESTFJORDS_SOUTH: {
+      id: 'ta.eft.application:location.regionOptions.WESTFJORDS_SOUTH',
+      defaultMessage: 'Vestfirðir suður',
+      description: 'Westfjords south option',
+    },
+    NORTH_WEST: {
+      id: 'ta.eft.application:location.regionOptions.NORTH_WEST',
+      defaultMessage: 'Norðurlandvestra',
+      description: 'North west option',
+    },
+    NORTH_EAST: {
+      id: 'ta.eft.application:location.regionOptions.NORTH_EAST',
+      defaultMessage: 'Norðurlandeystra',
+      description: 'North east option',
+    },
+    EAST: {
+      id: 'ta.eft.application:location.regionOptions.EAST',
+      defaultMessage: 'Austurland',
+      description: 'East option',
+    },
+    OTHER: {
+      id: 'ta.eft.application:location.regionOptions.OTHER',
+      defaultMessage: 'Annað',
+      description: 'Other option',
+    },
+  }),
 }

@@ -5,6 +5,7 @@ import {
   ExemptionRules,
   ExemptionValidation,
 } from './exemptionForTransportationClient.types'
+import { RouteApplicationAddModel } from '../../gen/fetch'
 
 @Injectable()
 export class ExemptionForTransportationClient {
@@ -82,7 +83,14 @@ export class ExemptionForTransportationClient {
     }
   }
 
-  public async submitApplication() {
-    // TODO
+  public async submitApplication(
+    auth: User,
+    application: RouteApplicationAddModel,
+  ) {
+    await this.permitApplicationApiWithAuth(auth).applicationsRoutePost({
+      apiVersion: '1.0',
+      apiVersion2: '1.0',
+      ...application,
+    })
   }
 }
