@@ -1,10 +1,5 @@
 const isProduction = process.env.NODE_ENV === 'production'
 
-const decodeBase64Key = (base64Key: string | undefined): string | undefined => {
-  if (!base64Key) return undefined
-  return Buffer.from(base64Key, 'base64').toString('utf-8')
-}
-
 export const environment = {
   audit: {
     defaultNamespace: '@island.is/payments',
