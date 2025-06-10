@@ -54,16 +54,15 @@ const CaseTableGroups: FC = () => {
               ))}
             </CasesDashboardLayout>
           ))}
-          {user && isProsecutionUser(user) ? (
+          {isProsecutionUser(user) ? (
             <>
               <SectionHeading
                 title="Stofna mál"
                 description="Ef ekki er hægt að stofna mál í kerfi lögreglunnar er hægt að
                 stofna nýtt mál hér."
-                marginBottom={1}
+                marginBottom={3}
               />
-
-              <CreateCaseButton user={user} />
+              <CreateCaseButton />
             </>
           ) : null}
         </>

@@ -210,9 +210,7 @@ export const Cases: FC = () => {
         <PageHeader title={formatMessage(titles.shared.cases)} />
         <div className={styles.logoContainer}>
           <Logo />
-          {user && isProsecutionUser(user) ? (
-            <CreateCaseButton user={user} />
-          ) : null}
+          {isProsecutionUser(user) ? <CreateCaseButton /> : null}
         </div>
         <Box marginBottom={[2, 2, 5]} className={styles.filterContainer}>
           <Select

@@ -1,33 +1,29 @@
-import { FC, useMemo } from 'react'
+import { useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
-import { ContextMenu } from '@island.is/judicial-system-web/src/components'
 import {
-  User,
-  UserRole,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+  ContextMenu,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
+import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
 
-interface Props {
-  user: User
-}
-
-export const CreateCaseButton: FC<Props> = (props) => {
-  const { user } = props
+export const CreateCaseButton = () => {
   const { formatMessage } = useIntl()
+  const { user } = useContext(UserContext)
 
   const items = useMemo(() => {
-    if (user.role === UserRole.PROSECUTOR_REPRESENTATIVE) {
+    if (user?.role === UserRole.PROSECUTOR_REPRESENTATIVE) {
       return [
         {
           href: constants.CREATE_INDICTMENT_ROUTE,
           title: capitalize(formatMessage(core.indictment)),
         },
       ]
-    } else if (user.role === UserRole.PROSECUTOR) {
+    } else if (user?.role === UserRole.PROSECUTOR) {
       return [
         {
           href: constants.CREATE_INDICTMENT_ROUTE,
