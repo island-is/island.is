@@ -102,7 +102,7 @@ const Conclusion: FC = () => {
   const { handleUpload, handleRetry, handleRemove } = useS3Upload(
     workingCase.id,
   )
-  const { onOpen } = useFileList({
+  const { onOpenFile } = useFileList({
     caseId: workingCase.id,
   })
 
@@ -597,7 +597,7 @@ const Conclusion: FC = () => {
               }}
               onRemove={(file) => handleRemove(file, removeUploadFile)}
               onRetry={(file) => handleRetry(file, updateUploadFile)}
-              onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
+              onOpenFile={(file) => onOpenFile(file)}
             />
           </Box>
         )}
@@ -634,7 +634,7 @@ const Conclusion: FC = () => {
                 }}
                 onRemove={(file) => handleRemove(file, removeUploadFile)}
                 onRetry={(file) => handleRetry(file, updateUploadFile)}
-                onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
+                onOpenFile={(file) => onOpenFile(file)}
               />
             </Box>
           )}
