@@ -104,8 +104,7 @@ export const informationSection = buildSection({
           id: 'information.licenseNumber',
           title: information.general.licenseNumberLabel,
           width: 'half',
-          variant: 'number',
-          maxLength: 25,
+          format: '#########################',
           required: true,
           condition: (answers: FormValue) => {
             const isForSelf = getValueViaPath<SelfOrOthers>(

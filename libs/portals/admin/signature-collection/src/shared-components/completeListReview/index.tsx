@@ -34,20 +34,27 @@ const CompleteListReview = ({
     ? formatMessage(m.confirmListReviewedToggleBack)
     : formatMessage(m.confirmListReviewed)
 
-  const [toggleListReview, { loading }] = useToggleListReviewMutation({
+  const [toggleListReview, { loading, data }] = useToggleListReviewMutation({
     variables: {
       input: {
         listId,
       },
     },
     onCompleted: () => {
-      setModalSubmitReviewIsOpen(false)
-      revalidate()
-      toast.success(
-        listReviewed
-          ? formatMessage(m.toggleReviewSuccessToggleBack)
-          : formatMessage(m.toggleReviewSuccess),
-      )
+      if (data?.signatureCollectionAdminToggleListReview.success) {
+        setModalSubmitReviewIsOpen(false)
+        revalidate()
+        toast.success(
+          listReviewed
+            ? formatMessage(m.toggleReviewSuccessToggleBack)
+            : formatMessage(m.toggleReviewSuccess),
+        )
+      } else {
+        const message =
+          data?.signatureCollectionAdminToggleListReview.reasons?.[0] ??
+          formatMessage(m.toggleReviewError)
+        toast.error(message)
+      }
     },
     onError: () => {
       toast.error(formatMessage(m.toggleReviewError))

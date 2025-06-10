@@ -287,6 +287,7 @@ const OverviewSchema = z.object({
 })
 
 export const PracticalExamAnswersSchema = z.object({
+  approveExternalData: z.boolean().refine((v) => v),
   information: InformationSchema,
   examinees: ExamineeSchema,
   instructors: InstructorSchema,
