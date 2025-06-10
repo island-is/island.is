@@ -222,6 +222,15 @@ jobs:
   deploy:
     if: ${{ !cancelled() }}
     uses: ./.github/workflows/deploy.yml
+    with:
+      mq_should_run_build: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD }}
+      docker_chunks: ${{ needs.prepare.outputs.DOCKER_CHUNKS }}
+      mq_helm_values_branch: ${{ needs.prepare.outputs.MQ_HELM_VALUES_BRANCH }}
+      mq_has_output: ${{ steps.manifest.outputs.MQ_HAS_OUTPUT }}
+      mq_changed_files: ${{ steps.manifest.outputs.MQ_CHANGED_FILES }}
+      mq_commit_msg: ${{ steps.manifest.outputs.MQ_COMMIT_MSG }}
+      mq_judicial_dev: ${{ steps.judicial-system.outputs.MQ_JUDICIAL_DEV }}
+      mq_judicial_prod: ${{ steps.judicial-system.outputs.MQ_JUDICIAL_PROD }}
     needs:
       - prepare
       - tests
