@@ -39,6 +39,7 @@ import { SignatureCollectionClientConfig } from '@island.is/clients/signature-co
 import { InnaClientConfig } from '@island.is/clients/inna'
 import { OfficialJournalOfIcelandClientConfig } from '@island.is/clients/official-journal-of-iceland'
 import { OfficialJournalOfIcelandApplicationClientConfig } from '@island.is/clients/official-journal-of-iceland/application'
+import { LegalGazetteClientConfig } from '@island.is/clients/legal-gazette'
 import {
   HealthDirectorateClientConfig,
   HealthDirectorateVaccinationsClientConfig,
@@ -66,6 +67,7 @@ import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-regi
 import { SeminarsClientConfig } from '@island.is/clients/seminars-ver'
 import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school'
 import { PaymentsApiClientConfig } from '@island.is/clients/payments'
+import { HmsRentalAgreementClientConfig } from '@island.is/clients/hms-rental-agreement'
 
 @Module({
   imports: [
@@ -108,6 +110,7 @@ import { PaymentsApiClientConfig } from '@island.is/clients/payments'
         InnaClientConfig,
         OfficialJournalOfIcelandClientConfig,
         OfficialJournalOfIcelandApplicationClientConfig,
+        LegalGazetteClientConfig,
         HealthDirectorateVaccinationsClientConfig,
         HealthDirectorateOrganDonationClientConfig,
         HealthDirectorateClientConfig,
@@ -131,6 +134,7 @@ import { PaymentsApiClientConfig } from '@island.is/clients/payments'
         SeminarsClientConfig,
         SecondarySchoolClientConfig,
         PaymentsApiClientConfig,
+        HmsRentalAgreementClientConfig,
       ],
     }),
   ],

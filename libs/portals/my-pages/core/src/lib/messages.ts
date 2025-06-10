@@ -1685,6 +1685,10 @@ export const m = defineMessages({
     id: 'service.portal:active-document-open',
     defaultMessage: '{subject} opið',
   },
+  activeDocumentOpenEnlargedAriaLabel: {
+    id: 'service.portal:active-document-open-enlarged-aria-label',
+    defaultMessage: '{subject} stækkað',
+  },
   closeActiveDocument: {
     id: 'service.portal:close-active-document',
     defaultMessage: 'Loka skjali',
@@ -1692,6 +1696,10 @@ export const m = defineMessages({
   backToList: {
     id: 'service.portal:back-to-list',
     defaultMessage: 'Aftur í lista',
+  },
+  backToDocumentsList: {
+    id: 'service.portal:back-to-documents-list',
+    defaultMessage: 'Aftur í skjalalista',
   },
   month: {
     id: 'service.portal:month',
@@ -1934,6 +1942,14 @@ export const m = defineMessages({
     id: 'service.portal:sort-by',
     defaultMessage: 'Raða eftir',
   },
+  expand: {
+    id: 'service.portal:expand',
+    defaultMessage: 'Útvíkka',
+  },
+  collapse: {
+    id: 'service.portal:collapse',
+    defaultMessage: 'Fella saman',
+  },
 })
 
 export const searchTagsMessages = defineMessages({
@@ -2036,6 +2052,14 @@ export const searchTagsMessages = defineMessages({
   healthShorter: {
     id: 'sp.search.tags:health-shorter',
     defaultMessage: 'Sjúkra',
+  },
+  healthReferrals: {
+    id: 'sp.search.tags:health-referrals',
+    defaultMessage: 'Vísanir',
+  },
+  healthWaiting: {
+    id: 'sp.search.tags:health-waitlist',
+    defaultMessage: 'Bíða',
   },
   licensesAlternative: {
     id: 'sp.search.tags:licenses-alternative',

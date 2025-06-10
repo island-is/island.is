@@ -1,6 +1,9 @@
 name: Monorepo pipeline - build and deploy
 
 on:
+  push:
+    branches:
+      - 'pre-release/**'
   workflow_dispatch:
   pull_request:
     types:
@@ -39,7 +42,7 @@ env:
   NX_MAX_PARALLEL: '4'
   NODE_IMAGE_VERSION: 20
   S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-  RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+  RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
   AWS_REGION: eu-west-1
   GENERATED_FILES: ${{ github.sha }}.tar.gz
   CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache
@@ -50,7 +53,7 @@ jobs:
     secrets: inherit
 
   prepare:
-    runs-on: arc-runners
+    runs-on: arc-shared
     timeout-minutes: 90
 
     if: needs.pre-checks.outputs.PRE_CHECK
@@ -67,12 +70,9 @@ jobs:
       TEST_CHUNKS: ${{ steps.test_projects.outputs.CHUNKS }}
       DOCKER_TAG: ${{ steps.docker_tags.outputs.DOCKER_TAG }}
       NODE_IMAGE_VERSION: ${{ steps.nodejs_image.outputs.NODE_IMAGE_VERSION }}
-      LAST_GOOD_BUILD_DOCKER_TAG: ${{ steps.git_nx_base.outputs.LAST_GOOD_BUILD_DOCKER_TAG }}
       BUILD_CHUNKS: ${{ steps.build_map.outputs.BUILD_CHUNKS }}
       IMAGES: ${{ steps.deploy_map.outputs.IMAGES }}
-      node-modules-hash: ${{ steps.calculate_node_modules_hash.outputs.node-modules-hash }}
       DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
-      CACHE_KEY: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
 
     steps:
       - uses: actions/checkout@v4
@@ -94,7 +94,6 @@ jobs:
         id: git_nx_base
         uses: ./.github/actions/prerelease-checkout
 
-      # NOTE: checkout main
       - name: Checkout main branch
         if: ${{ !(needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy') }}
         run: |
@@ -130,7 +129,8 @@ jobs:
         id: docker_tags
         run: |
           set -euo pipefail
-          export DOCKER_BRANCH_TAG="$(echo "${GIT_BRANCH:0:45}" | tr "/." "-" )"
+          DOCKER_BRANCH_TAG="$(echo "${GIT_BRANCH:0:45}" | tr "/." "-" )"
+          export DOCKER_BRANCH_TAG
           SHA="${{ github.event.pull_request.head.sha }}"
           echo "SHA='$SHA' retrieved from event"
           if [[ "$SHA" == "" ]]; then
@@ -146,7 +146,7 @@ jobs:
 
       - name: Send Slack notification
         id: slack
-        if: ${{ startsWith( github.env.GIT_BASE_BRANCH, 'release/' ) }}
+        if: ${{ startsWith( env.GIT_BASE_BRANCH, 'release/' ) }}
         uses: 8398a7/action-slack@v3
         with:
           status: custom
@@ -164,7 +164,7 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
         with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: Install infra modules
         working-directory: infra
@@ -207,16 +207,18 @@ jobs:
         id: build_map
         run: |
           set -euo pipefail
-          AFFECTED_TARGETS="$(yarn nx show projects --affected --base $BASE --head $HEAD --json | jq -r '. | join(",")')"
-          cd infra
-          ADDITIONAL_PROJECTS="$(yarn feature-env downstream --feature tmp --images $AFFECTED_TARGETS --chart islandis)"
-          cd ..
-          export ADDITIONAL_PROJECTS
+          AFFECTED_TARGETS="$(yarn nx show projects --affected --base "$NX_BASE" --head "$NX_HEAD" --json | jq -r 'join(",")')"
+          ADDITIONAL_PROJECTS="$( (cd infra && yarn feature-env downstream --feature tmp --images "$AFFECTED_TARGETS" --chart islandis) )"
           echo "Additional Projects: $ADDITIONAL_PROJECTS"
-          CHUNKS="$(ADDITIONAL_PROJECTS="$ADDITIONAL_PROJECTS" ./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
+          export ADDITIONAL_PROJECTS # Export for use in generate-docker-chunks.sh
+
+          # Split ADDITIONAL_PROJECTS into an array to correctly pass multiple arguments
+          # The ADDITIONAL_PROJECTS variable is exported for use by generate-docker-chunks.sh
+          # The script expects positional arguments to be the docker targets.
+          CHUNKS="$(./scripts/ci/generate-docker-chunks.sh "docker-express" "docker-next" "docker-static" "docker-playwright" "docker-jest")"
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
-            echo BUILD_CHUNKS=$(echo "$CHUNKS" | jq -cM '. | map("\(.|tostring)")') >> "$GITHUB_OUTPUT"
+            echo "BUILD_CHUNKS=$(echo "$CHUNKS" | jq -cM '. | map("\(.|tostring)")')" >> "$GITHUB_OUTPUT"
             echo "CHUNKS='$CHUNKS'" >> "$GITHUB_OUTPUT"
           fi
 
@@ -230,7 +232,7 @@ jobs:
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
             # NOTE: validate the jq command to trigger failure
-            echo "$CHUNKS" | jq -r 'map(.projects) | join(",")'
+            echo "$CHUNKS" | jq -er 'map(.projects) | join(",")'
             IMAGES=$(echo "$CHUNKS" | jq -r 'map(.projects) | join(",")')
             echo "IMAGES='$IMAGES'" >> "$GITHUB_OUTPUT"
           fi
@@ -250,14 +252,14 @@ jobs:
     needs:
       - pre-checks
       - prepare
-    runs-on: arc-docker
+    runs-on: arc-shared
     timeout-minutes: 45
     if: needs.prepare.outputs.BUILD_CHUNKS
     permissions:
       actions: read
       contents: read
     outputs:
-      json: ${{ steps.matrix-output.outputs.json }}
+      json: ${{ needs.prepare.outputs.BUILD_CHUNKS || '' }}
     env:
       AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
       GIT_BRANCH: ${{ needs.pre-checks.outputs.GIT_BRANCH}}
@@ -280,19 +282,28 @@ jobs:
           DOCKER_TYPE="$(echo '${{ matrix.chunk }}' | jq -r '.docker_type')"
           APP_HOME="$(echo '${{ matrix.chunk }}' | jq -r '.home')"
           APP_DIST_HOME="$(echo '${{ matrix.chunk }}' | jq -r '.dist')"
-          echo AFFECTED_PROJECTS="$AFFECTED_PROJECTS" >> "$GITHUB_ENV"
-          echo DOCKER_TYPE="$DOCKER_TYPE" >> "$GITHUB_ENV"
-          echo APP_HOME="$APP_HOME" >> "$GITHUB_ENV"
-          echo APP_DIST_HOME="$APP_DIST_HOME" >> "$GITHUB_ENV"
+          {
+            echo AFFECTED_PROJECTS="$AFFECTED_PROJECTS"
+            echo DOCKER_TYPE="$DOCKER_TYPE"
+            echo APP_HOME="$APP_HOME"
+            echo APP_DIST_HOME="$APP_DIST_HOME"
+          } >> "$GITHUB_ENV"
         continue-on-error: true
 
       - uses: actions/checkout@v4
         if: steps.gather.outcome == 'success'
 
+      - name: Check for deploy-feature label
+        id: check-label
+        uses: ./.github/actions/check-label
+        with:
+          pr-number: ${{ github.event.pull_request.number }}
+        continue-on-error: false
+
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
         with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: Set id for matrix
         run: |
@@ -351,7 +362,7 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
         with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: Building Docker images
         continue-on-error: true
@@ -397,7 +408,7 @@ jobs:
       - prepare
       - pre-checks
     if: needs.prepare.outputs.IMAGES && needs.pre-checks.outputs.PRE_CHECK != 'push'
-    runs-on: arc-docker
+    runs-on: arc-shared
     timeout-minutes: 30
     env:
       FEATURE_NAME: ${{ needs.pre-checks.outputs.FEATURE_NAME }}
@@ -422,7 +433,7 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
         with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: Docker build image
         working-directory: infra
@@ -430,10 +441,12 @@ jobs:
           echo Registry is: ${{env.DOCKER_BASE_IMAGE_REGISTRY}}
           echo Image tag is: ${{env.NODE_IMAGE_VERSION}}
           ./scripts/build-docker-container.sh "$DOCKER_TAG"
-          echo "COMMENT<<EOF" >> "$GITHUB_ENV"
-          echo "Affected services are: ${{needs.prepare.outputs.IMAGES}}" >> "$GITHUB_ENV"
-          docker run --rm "${DOCKER_REGISTRY}/helm-config:$DOCKER_TAG" ingress-comment --images=${{needs.prepare.outputs.IMAGES}} --chart=islandis --feature="$FEATURE_NAME" >> "$GITHUB_ENV"
-          echo 'EOF' >> "$GITHUB_ENV"
+          {
+            echo "COMMENT<<EOF"
+            echo "Affected services are: ${{needs.prepare.outputs.IMAGES}}"
+            docker run --rm "${DOCKER_REGISTRY}/helm-config:$DOCKER_TAG" ingress-comment --images=${{needs.prepare.outputs.IMAGES}} --chart=islandis --feature="$FEATURE_NAME"
+            echo 'EOF'
+          } >> "$GITHUB_ENV"
         env:
           PUBLISH: 'true'
 
@@ -446,8 +459,9 @@ jobs:
             const updateComment = require('./.github/actions/update-comment.js')
             const { COMMENT } = process.env
             await updateComment({github, context, comment: COMMENT})
+
   deploy-feature:
-    runs-on: arc-runners
+    runs-on: arc-shared
     if: ${{ !cancelled()
       && needs.pre-checks.result == 'success'
       && needs.pre-checks.outputs.PRE_CHECK == 'feature-deploy'
@@ -475,6 +489,14 @@ jobs:
           path: monorepo
           fetch-depth: 0
 
+      - name: Check for deploy-feature label
+        id: check-label
+        uses: ./monorepo/.github/actions/check-label
+        with:
+          pr-number: ${{ github.event.pull_request.number }}
+          working-directory: monorepo
+        continue-on-error: false
+
       - name: Get docker-build output
         uses: cloudposse/github-action-matrix-outputs-read@v1
         id: read
@@ -485,10 +507,10 @@ jobs:
         uses: ./monorepo/.github/actions/setup-yarn
         with:
           working-directory: monorepo
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: Install infra modules
-        if: steps.infra-node-modules.outputs.cache-hit != 'true'
+        id: install-infra-modules
         working-directory: monorepo/infra
         run: |
           corepack enable && CI=true yarn install --immutable
@@ -500,21 +522,8 @@ jobs:
           IMAGES: ${{ needs.prepare.outputs.IMAGES }}
           DOCKER_TAG: ${{ needs.prepare.outputs.DOCKER_TAG }}
         run: |
-
-          for image in ${IMAGES//,/ }; do
-            image=$(echo "$image" | tr -d "'")
-            ./scripts/generate-feature-values.sh "$FEATURE_NAME" "$DOCKER_TAG" "$image" "$DOCKER_REGISTRY"
-          done
-
-          echo "Change directory to root"
-          cd ../
-
-          git config user.name andes-it
-          git config user.email andes-it@andes.is
-
-          git add .
-
-          git commit -m "feat: feature-deployment"
+          IMAGES=$(echo "$IMAGES" | tr -d "'\\ ")
+          ./scripts/generate-feature-values.sh "$FEATURE_NAME" "$DOCKER_TAG" "$IMAGES" "$DOCKER_REGISTRY"
 
       - name: load-deps
         uses: ./monorepo/.github/actions/load-deps
@@ -572,7 +581,7 @@ jobs:
           "https://api.github.com/repos/$repo_owner/$repository/dispatches" \
           -d "{\"event_type\":\"deploy-feature\", \"client_payload\":{ \"feature_name\":\"$FEATURE_NAME\"}}"
   push-success:
-    runs-on: arc-runners
+    runs-on: arc-shared
     if: ${{ !cancelled() }}
     needs:
       - pre-checks
@@ -587,7 +596,7 @@ jobs:
         run: echo "Build was skipped"
 
   failure-notification:
-    runs-on: arc-runners
+    runs-on: arc-shared
     if: failure() && needs.pre-checks.outputs.PRE_CHECK && needs.pre-checks.outputs.PRE_CHECK != 'feature-deploy'
     needs:
       - pre-checks
@@ -607,7 +616,7 @@ jobs:
 
   scanflags:
     if: github.ref == 'ref/heads/main'
-    runs-on: arc-runners
+    runs-on: arc-shared
     steps:
       - name: Checkout
         uses: actions/checkout@v4

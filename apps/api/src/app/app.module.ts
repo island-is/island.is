@@ -39,6 +39,7 @@ import { FishingLicenseModule } from '@island.is/api/domains/fishing-license'
 import { FiskistofaModule } from '@island.is/api/domains/fiskistofa'
 import { OccupationalLicensesModule } from '@island.is/api/domains/occupational-licenses'
 import { HealthInsuranceModule } from '@island.is/api/domains/health-insurance'
+import { ApiDomainsHmsModule } from '@island.is/api/domains/hms'
 import { HmsLoansModule } from '@island.is/api/domains/hms-loans'
 import { HousingBenefitsModule } from '@island.is/api/domains/housing-benefits'
 import { HousingBenefitCalculatorModule } from '@island.is/api/domains/housing-benefit-calculator'
@@ -79,6 +80,7 @@ import {
   WatsonAssistantChatModule,
 } from '@island.is/api/domains/watson-assistant-chat'
 import { WorkMachinesModule } from '@island.is/api/domains/work-machines'
+import { PracticalExamsModule } from '@island.is/api/domains/practical-exams'
 import { SeminarsModule } from '@island.is/api/domains/seminars-ver'
 import { AuthConfig, AuthModule } from '@island.is/auth-nest-tools'
 import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-machine-license'
@@ -113,6 +115,10 @@ import {
   OfficialJournalOfIcelandClientConfig,
   OfficialJournalOfIcelandClientModule,
 } from '@island.is/clients/official-journal-of-iceland'
+import {
+  LegalGazetteClientConfig,
+  LegalGazetteClientModule,
+} from '@island.is/clients/legal-gazette'
 import { OfficialJournalOfIcelandApplicationClientConfig } from '@island.is/clients/official-journal-of-iceland/application'
 import { HmsLoansClientConfig } from '@island.is/clients/hms-loans'
 import { HousingBenefitCalculatorClientConfig } from '@island.is/clients/housing-benefit-calculator'
@@ -152,6 +158,7 @@ import { FileStorageConfig } from '@island.is/file-storage'
 import { AuditModule } from '@island.is/nest/audit'
 import { DocumentsClientV2Config } from '@island.is/clients/documents-v2'
 import { WorkAccidentClientConfig } from '@island.is/clients/work-accident-ver'
+import { PracticalExamsClientConfig } from '@island.is/clients/practical-exams-ver'
 
 import {
   ConfigModule,
@@ -212,6 +219,8 @@ import { VerdictsClientConfig } from '@island.is/clients/verdicts'
 import { VerdictsModule } from '@island.is/api/domains/verdicts'
 import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school'
 import { SecondarySchoolApiModule } from '@island.is/api/domains/secondary-school'
+import { HmsConfig } from '@island.is/clients/hms'
+import { HmsRentalAgreementClientConfig } from '@island.is/clients/hms-rental-agreement'
 
 const environment = getConfig
 
@@ -299,6 +308,7 @@ const environment = getConfig
     SocialInsuranceModule,
     HealthDirectorateClientModule,
     OfficialJournalOfIcelandClientModule,
+    LegalGazetteClientModule,
     DisabilityLicenseModule,
     FiskistofaModule,
     WatsonAssistantChatModule,
@@ -324,6 +334,7 @@ const environment = getConfig
     VehiclesModule,
     RightsPortalModule,
     AssetsModule,
+    ApiDomainsHmsModule,
     HmsLoansModule,
     HousingBenefitsModule,
     PassportModule,
@@ -352,6 +363,7 @@ const environment = getConfig
     HealthDirectorateModule,
     VerdictsModule,
     SecondarySchoolApiModule,
+    PracticalExamsModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -384,7 +396,9 @@ const environment = getConfig
         DownloadServiceConfig,
         HuntingLicenseClientConfig,
         FeatureFlagConfig,
+        HmsConfig,
         HmsLoansClientConfig,
+        HmsRentalAgreementClientConfig,
         HousingBenefitsConfig,
         FinanceClientConfig,
         FinanceClientV2Config,
@@ -419,6 +433,7 @@ const environment = getConfig
         HealthDirectorateHealthClientConfig,
         OfficialJournalOfIcelandClientConfig,
         OfficialJournalOfIcelandApplicationClientConfig,
+        LegalGazetteClientConfig,
         InnaClientConfig,
         SessionsApiClientConfig,
         PaymentsApiClientConfig,
@@ -451,6 +466,7 @@ const environment = getConfig
         HealthInsuranceV2ClientConfig,
         UmbodsmadurSkuldaraClientConfig,
         WorkAccidentClientConfig,
+        PracticalExamsClientConfig,
         ZendeskServiceConfig,
         emailModuleConfig,
         VerdictsClientConfig,

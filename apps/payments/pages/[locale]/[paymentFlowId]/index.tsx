@@ -1,17 +1,11 @@
-import { useRef, useState } from 'react'
 import { GetServerSideProps } from 'next'
-import { FormProvider, SubmitHandler, useForm } from 'react-hook-form'
-import { useRouter } from 'next/router'
-import Link from 'next/link'
+import { FormProvider, useForm } from 'react-hook-form'
 
-import { Box, Button } from '@island.is/island-ui/core'
+import { Box, Button, Link, LinkV2 } from '@island.is/island-ui/core'
 import { Features } from '@island.is/feature-flags'
 import { useLocale } from '@island.is/localization'
 import { findProblemInApolloError } from '@island.is/shared/problem'
-import {
-  PaymentsChargeCardInput,
-  PaymentsVerifyCardInput,
-} from '@island.is/api/schema'
+
 import { CardErrorCode } from '@island.is/shared/constants'
 
 import { PageCard } from '../../../components/PageCard/PageCard'
@@ -35,24 +29,18 @@ import {
 } from '../../../utils/error/error'
 
 import {
-  VerifyCardMutation,
-  ChargeCardMutation,
-  useVerifyCardMutation,
-  useChargeCardMutation,
-  useCreateInvoiceMutation,
-} from '../../../graphql/mutations.graphql.generated'
-import {
   GetPaymentFlowQuery,
   GetOrganizationByNationalIdQuery,
   GetPaymentFlowQueryVariables,
   GetPaymentFlowDocument,
   GetOrganizationByNationalIdDocument,
   GetOrganizationByNationalIdQueryVariables,
-  useGetVerificationStatusLazyQuery,
 } from '../../../graphql/queries.graphql.generated'
 import { PaymentReceipt } from '../../../components/PaymentReceipt'
 import { ThreeDSecure } from '../../../components/ThreeDSecure/ThreeDSecure'
 import { InvoiceReceipt } from '../../../components/InvoiceReceipt'
+import { usePaymentOrchestration } from '../../../hooks/usePaymentOrchestration'
+import { withLocale } from '../../../i18n/withLocale'
 
 interface PaymentPageProps {
   locale: string
@@ -181,17 +169,11 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
   }
 }
 
-export default function PaymentPage({
+function PaymentPage({
   paymentFlow,
   organization,
   productInformation,
 }: PaymentPageProps) {
-  const [verifyCardMutation] = useVerifyCardMutation()
-  const [chargeCardMutation] = useChargeCardMutation()
-  const [getVerificationStatusQuery] = useGetVerificationStatusLazyQuery()
-  const [createInvoiceMutation] = useCreateInvoiceMutation()
-
-  const router = useRouter()
   const methods = useForm({
     mode: 'onBlur',
     reValidateMode: 'onChange',
@@ -202,228 +184,31 @@ export default function PaymentPage({
     },
   })
   const { formatMessage } = useLocale()
-  const [selectedPaymentMethod, setSelectedPaymentMethod] = useState<string>(
-    paymentFlow?.availablePaymentMethods?.[0] ?? '',
-  )
-  const [isSubmitting, setIsSubmitting] = useState(false)
-  const [isVerifyingCard, setIsVerifyingCard] = useState(false)
-  const [threeDSecureData, setThreeDSecureData] = useState(null)
-  const [paymentError, setPaymentError] = useState<PaymentError | null>(null)
 
-  // To break the verification loop
-  const isVerifyingRef = useRef(false)
+  const {
+    selectedPaymentMethod,
+    changePaymentMethod,
+    overallIsSubmitting,
+    paymentError,
+    setPaymentError,
+    handleFormSubmit,
+    isThreeDSecureModalActive,
+    threeDSecureDataForModal,
+    handleVerificationCancelledByModal,
+  } = usePaymentOrchestration({
+    paymentFlow,
+    productInformation,
+  })
+
+  // Invoice payment doesn't have any input fields, so we don't need to check if it's valid
+  const isCardPaymentInvalid =
+    selectedPaymentMethod === 'card' && !methods.formState.isValid
 
   const invalidFlowSetup =
     !organization ||
     !productInformation ||
     !paymentFlow ||
     !paymentFlow.availablePaymentMethods
-
-  const waitForCardVerification = async () => {
-    const maximumWaitTimeSeconds = 2 * 60
-    let remainingWaitTimeInMilliSeconds = maximumWaitTimeSeconds * 1000
-
-    const interval = 5000
-
-    while (remainingWaitTimeInMilliSeconds > 0) {
-      if (!isVerifyingRef.current) {
-        throw new Error(CardErrorCode.VerificationCancelledByUser)
-      }
-
-      const { data } = await getVerificationStatusQuery({
-        variables: {
-          input: {
-            id: paymentFlow.id,
-          },
-        },
-      })
-
-      if (data) {
-        const status = data.paymentsGetVerificationStatus
-
-        if (status.isVerified) {
-          return true
-        }
-      }
-
-      await new Promise((resolve) => setTimeout(resolve, interval))
-      remainingWaitTimeInMilliSeconds -= interval
-    }
-
-    return false
-  }
-
-  const verifyCard = async (
-    input: PaymentsVerifyCardInput,
-  ): Promise<VerifyCardMutation['paymentsVerifyCard']> => {
-    try {
-      const { data, errors } = await verifyCardMutation({
-        variables: {
-          input,
-        },
-      })
-
-      if (errors) {
-        // TODO
-      }
-
-      if (!data) {
-        throw new Error('Failed to verify card')
-      }
-
-      const verification = data.paymentsVerifyCard
-
-      if (!verification.isSuccess) {
-        setPaymentError({
-          code: verification.responseCode as CardErrorCode,
-        })
-      }
-
-      return verification
-    } catch (e) {
-      const problem = findProblemInApolloError(e)
-
-      if (problem) {
-        throw new Error(problem?.detail)
-      }
-
-      throw new Error(CardErrorCode.UnknownCardError)
-    }
-  }
-
-  const chargeCard = async (
-    input: PaymentsChargeCardInput,
-  ): Promise<ChargeCardMutation['paymentsChargeCard']> => {
-    try {
-      const { data, errors } = await chargeCardMutation({
-        variables: {
-          input,
-        },
-      })
-
-      if (!data) {
-        throw new Error('Failed to charge card')
-      }
-
-      const result = data?.paymentsChargeCard
-
-      if (!result.isSuccess) {
-        setPaymentError({
-          code: result.responseCode as CardErrorCode,
-        })
-      }
-
-      return result
-    } catch (e) {
-      const problem = findProblemInApolloError(e)
-
-      if (problem) {
-        throw new Error(problem?.detail)
-      }
-
-      throw new Error(CardErrorCode.UnknownCardError)
-    }
-  }
-
-  const payWithCard = async (data: Record<string, string>) => {
-    const { card, cardExpiry, cardCVC } = data
-
-    if (!card || !cardExpiry || typeof cardExpiry !== 'string' || !cardCVC) {
-      return
-    }
-
-    const [month, year] = cardExpiry.split('/')
-
-    const cardInfo = {
-      number: card,
-      expiryMonth: Number(month),
-      expiryYear: Number(year),
-      cvc: cardCVC,
-    }
-
-    const verifyCardResponse = await verifyCard({
-      amount: productInformation.amount,
-      cardNumber: cardInfo.number,
-      expiryMonth: cardInfo.expiryMonth,
-      expiryYear: cardInfo.expiryYear,
-      paymentFlowId: paymentFlow.id,
-    })
-
-    setVerificationStatus(true)
-    setThreeDSecureData(verifyCardResponse)
-
-    const isCardVerified = await waitForCardVerification()
-
-    if (!isCardVerified) {
-      throw new Error(CardErrorCode.VerificationDeadlineExceeded)
-    }
-
-    const chargeCardResponse = await chargeCard({
-      amount: productInformation.amount,
-      cardNumber: cardInfo.number,
-      cvc: cardInfo.cvc,
-      expiryMonth: cardInfo.expiryMonth,
-      expiryYear: cardInfo.expiryYear,
-      paymentFlowId: paymentFlow.id,
-    })
-
-    if (!chargeCardResponse.isSuccess) {
-      throw new Error(chargeCardResponse.responseCode)
-    }
-
-    if (paymentFlow.redirectToReturnUrlOnSuccess && paymentFlow.returnUrl) {
-      window.location.assign(paymentFlow.returnUrl)
-    } else {
-      router.reload()
-    }
-  }
-
-  const onSubmit: SubmitHandler<Record<string, string>> = async (data) => {
-    setIsSubmitting(true)
-
-    try {
-      if (selectedPaymentMethod === 'card') {
-        await payWithCard(data)
-        return // No need to set isSubmitting to false
-      } else {
-        const response = await createInvoiceMutation({
-          variables: {
-            input: {
-              paymentFlowId: paymentFlow.id,
-            },
-          },
-        })
-
-        if (!response.data?.paymentsCreateInvoice.isSuccess) {
-          alert('Invoice error TODO')
-        } else {
-          router.reload()
-          return // No need to set isSubmitting to false
-        }
-      }
-    } catch (e) {
-      setVerificationStatus(false)
-
-      if (e.message !== CardErrorCode.VerificationCancelledByUser) {
-        setPaymentError({
-          code: e.message as CardErrorCode,
-        })
-      }
-      console.warn('payment.onSubmit error:', e)
-    }
-
-    setIsSubmitting(false)
-  }
-
-  const setVerificationStatus = (value: boolean) => {
-    setIsVerifyingCard(value)
-    isVerifyingRef.current = value
-  }
-
-  const changePaymentMethod = (paymentMethod: string) => {
-    methods.reset()
-    setSelectedPaymentMethod(paymentMethod)
-  }
 
   const hasPaymentError = paymentError !== null
   const canRenderMainFlow = !invalidFlowSetup && !hasPaymentError
@@ -463,11 +248,11 @@ export default function PaymentPage({
               />
 
               <Box marginTop={4} width="full">
-                <Link href={paymentFlow.returnUrl ?? 'https://island.is'}>
-                  <Button fluid>
+                <LinkV2 href={paymentFlow.returnUrl ?? 'https://island.is'}>
+                  <Button fluid unfocusable>
                     {formatMessage(generic.buttonFinishAndReturn)}
                   </Button>
-                </Link>
+                </LinkV2>
               </Box>
             </>
           }
@@ -496,7 +281,7 @@ export default function PaymentPage({
         bodySlot={
           canRenderMainFlow ? (
             <FormProvider {...methods}>
-              <form onSubmit={methods.handleSubmit(onSubmit)}>
+              <form onSubmit={methods.handleSubmit(handleFormSubmit)}>
                 <Box display="flex" flexDirection="column" rowGap={[2, 3]}>
                   <PaymentSelector
                     availablePaymentMethods={
@@ -517,23 +302,20 @@ export default function PaymentPage({
                   )}
                   <Button
                     type="submit"
-                    loading={isSubmitting}
+                    loading={overallIsSubmitting}
                     fluid
-                    disabled={!methods.formState.isValid || isSubmitting}
+                    disabled={overallIsSubmitting || isCardPaymentInvalid}
                   >
                     {selectedPaymentMethod === 'card'
                       ? formatMessage(card.pay)
                       : formatMessage(invoice.create)}
                   </Button>
                   <Box display="flex" justifyContent="center">
-                    <Link
-                      href={paymentFlow.returnUrl ?? 'https://island.is'}
-                      aria-disabled={isSubmitting}
-                    >
-                      <Button variant="text" disabled={isSubmitting}>
+                    <LinkV2 href={paymentFlow.returnUrl ?? 'https://island.is'}>
+                      <Button unfocusable variant="text">
                         {formatMessage(generic.buttonCancel)}
                       </Button>
-                    </Link>
+                    </LinkV2>
                   </Box>
                 </Box>
               </form>
@@ -558,16 +340,17 @@ export default function PaymentPage({
       />
 
       <ThreeDSecure
-        isActive={isVerifyingCard}
+        isActive={isThreeDSecureModalActive}
         onClose={() => {
-          setVerificationStatus(false)
-          setIsSubmitting(false)
+          handleVerificationCancelledByModal()
         }}
-        hasData={!!threeDSecureData}
-        postUrl={threeDSecureData?.postUrl}
-        scriptPath={threeDSecureData?.scriptPath}
-        verificationFields={threeDSecureData?.verificationFields ?? []}
+        hasData={!!threeDSecureDataForModal}
+        postUrl={threeDSecureDataForModal?.postUrl}
+        scriptPath={threeDSecureDataForModal?.scriptPath}
+        verificationFields={threeDSecureDataForModal?.verificationFields ?? []}
       />
     </>
   )
 }
+
+export default withLocale(PaymentPage)

@@ -6,7 +6,7 @@ export { default as CaseDates } from './CaseDates/CaseDates'
 export { default as CaseFile } from './CaseFile/CaseFile'
 export { default as CaseFileList } from './CaseFileList/CaseFileList'
 export { default as CaseFilesAccordionItem } from './AccordionItems/CaseFilesAccordionItem/CaseFilesAccordionItem'
-export { default as CaseResubmitModal } from './CaseResubmitModal/CaseResubmitModal'
+export { default as CaseResubmitModal } from './Modals/CaseResubmitModal/CaseResubmitModal'
 export {
   default as CheckboxList,
   type CheckboxInfo,
@@ -14,7 +14,10 @@ export {
 export { default as ConnectedCaseFilesAccordionItem } from './AccordionItems/ConnectedCaseFilesAccordionItem/ConnectedCaseFilesAccordionItem'
 export { default as CommentsAccordionItem } from './AccordionItems/CommentsAccordionItem/CommentsAccordionItem'
 export { default as ConclusionDraft } from './ConclusionDraft/ConclusionDraft'
-export { default as ContextMenu } from './ContextMenu/ContextMenu'
+export {
+  default as ContextMenu,
+  useContextMenu,
+} from './ContextMenu/ContextMenu'
 export {
   CourtArrangements,
   useCourtArrangements,
@@ -49,7 +52,7 @@ export { default as InputNationalId } from './Inputs/InputNationalId'
 export { default as Loading } from './Loading/Loading'
 export { default as Logo } from './Logo/Logo'
 export { default as MarkdownWrapper } from './MarkdownWrapper/MarkdownWrapper'
-export { default as Modal } from './Modal/Modal'
+export { default as Modal } from './Modals/Modal/Modal'
 export { default as MultipleValueList } from './MultipleValueList/MultipleValueList'
 export { default as PageHeader } from './PageHeader/PageHeader'
 export { default as PageLayout } from './PageLayout/PageLayout'
@@ -80,7 +83,7 @@ export {
 export {
   SigningModal,
   useRequestRulingSignature,
-} from './SigningModal/SigningModal'
+} from './Modals/SigningModal/SigningModal'
 export { default as Skeleton } from './Skeleton/Skeleton'
 export { default as TimeInputField } from './TimeInputField/TimeInputField'
 export { UserProvider, UserContext, userRef } from './UserProvider/UserProvider'
@@ -89,7 +92,7 @@ export {
   ViewportContext,
   type Rect,
 } from './ViewportProvider/ViewportProvider'
-export { default as FileNotFoundModal } from './FileNotFoundModal/FileNotFoundModal'
+export { default as FileNotFoundModal } from './Modals/FileNotFoundModal/FileNotFoundModal'
 export { default as AppealCaseFilesOverview } from './AppealCaseFilesOverview/AppealCaseFilesOverview'
 export { default as Conclusion } from './Conclusion/Conclusion'
 export { conclusion } from './Conclusion/Conclusion.strings'
@@ -97,9 +100,9 @@ export { default as CaseResentExplanation } from './CaseResentExplanation/CaseRe
 export { AlertBanner } from './AlertBanner'
 export { default as RulingDateLabel } from './DateLabel/RulingDateLabel'
 export { default as DateLabel } from './DateLabel/DateLabel'
-export { default as SharedPageLayout } from './SharedPageLayout/SharedPageLayout'
-export { default as ReopenModal } from './ReopenModal/ReopenModal'
-export { default as RulingModifiedModal } from './RulingModifiedModal/RulingModifiedModal'
+export { default as ReopenModal } from './Modals/ReopenModal/ReopenModal'
+export { default as RulingModifiedModal } from './Modals/RulingModifiedModal/RulingModifiedModal'
+export { default as CasesLayout } from './Layouts/CasesLayout'
 export { default as CommentsInput } from './CommentsInput/CommentsInput'
 export { default as RestrictionLength } from './RestrictionLength/RestrictionLength'
 export { default as CaseTitleInfoAndTags } from './CaseTitleInfoAndTags/CaseTitleInfoAndTags'

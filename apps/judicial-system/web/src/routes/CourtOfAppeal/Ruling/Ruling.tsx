@@ -38,13 +38,14 @@ import {
 import {
   formatDateForServer,
   useCase,
+  useFileList,
   useOnceOn,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isCourtOfAppealRulingStepFieldsValid } from '@island.is/judicial-system-web/src/utils/validate'
 
-import CaseNumbers from '../components/CaseNumbers/CaseNumbers'
+import { CaseNumbers } from '../components'
 import { courtOfAppealRuling as strings } from './Ruling.strings'
 
 const CourtOfAppealRuling = () => {
@@ -65,6 +66,9 @@ const CourtOfAppealRuling = () => {
   const { handleUpload, handleRetry, handleRemove } = useS3Upload(
     workingCase.id,
   )
+  const { onOpen } = useFileList({
+    caseId: workingCase.id,
+  })
   const { updateCase, setAndSendCaseToServer } = useCase()
   const { formatMessage } = useIntl()
   const router = useRouter()
@@ -234,6 +238,7 @@ const CourtOfAppealRuling = () => {
                   updateUploadFile,
                 )
               }}
+              onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
               onRemove={(file) => handleRemove(file, removeUploadFile)}
               onRetry={(file) => handleRetry(file, updateUploadFile)}
             />
@@ -361,6 +366,7 @@ const CourtOfAppealRuling = () => {
                     updateUploadFile,
                   )
                 }}
+                onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
                 onRemove={(file) => handleRemove(file, removeUploadFile)}
                 onRetry={(file) => handleRetry(file, updateUploadFile)}
               />
