@@ -58,6 +58,7 @@ export const FormsHeader = () => {
       onChange={onTabChange}
       onlyRenderSelectedTab
       variant="default"
+      selected={location}
     />
   )
 }

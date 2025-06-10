@@ -15,6 +15,7 @@ export interface FormsLoaderResponse {
   forms: FormSystemForm[]
   organizations: FormSystemOption[]
   isAdmin: boolean
+  organizationId: string
   organizationNationalId: string
   applications: FormSystemApplication[]
   selectedCertificationTypes: string[]

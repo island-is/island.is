@@ -1,52 +1,41 @@
-import { Tabs } from '@island.is/island-ui/core'
-import { useLoaderData } from 'react-router-dom'
+import { useLazyQuery } from "@apollo/client"
+import { useIntl } from "react-intl"
 import {
-  AdminLoaderResponse,
   GET_ORGANIZATION_ADMIN,
 } from '@island.is/form-system/graphql'
-import { useLazyQuery } from '@apollo/client'
-import { useEffect, useState } from 'react'
-import { AdminHeader } from './AdminHeader'
-import { PermissionsList } from '../../components/Admin/PermissionsList'
-import { useIntl } from 'react-intl'
+import { useContext, useState } from "react"
+import { FormsContext } from "../../context/FormsContext"
+import { Box, GridColumn, GridRow, Select, Text } from "@island.is/island-ui/core"
 import { m } from '@island.is/form-system/ui'
-import { useContext } from 'react'
-import { ControlContext } from '../../context/ControlContext'
-import { FormsContext } from '../../context/FormsContext'
+import { FormSystemPermissionType } from '@island.is/api/schema'
+import { Permission } from "./components/Permission"
+
 
 export const Admin = () => {
   const { formatMessage } = useIntl()
   const [getAdminQuery] = useLazyQuery(GET_ORGANIZATION_ADMIN, {
-    fetchPolicy: 'no-cache',
+    fetchPolicy: 'no-cache'
   })
-  const {
-    // organizationId,
-    selectedCertificationTypes,
-    selectedListTypes,
-    selectedFieldTypes,
-    certficationTypes,
-    listTypes,
-    fieldTypes,
-    organizations,
-  } = useContext(FormsContext)
 
-  const [organizationsState, setOrganizationsState] = useState(organizations)
-  const [organizationIdState, setOrganizationIdState] = useState('')
-  const [selectedCertificationTypesState, setSelectedCertificationTypesState] =
-    useState(selectedCertificationTypes)
-  const [selectedListTypesState, setSelectedListTypesState] =
-    useState(selectedListTypes)
-  const [selectedFieldTypesState, setSelectedFieldTypesState] =
-    useState(selectedFieldTypes)
+  const {
+    setOrganizationId,
+    setSelectedCertificationTypes,
+    setSelectedListTypes,
+    setSelectedFieldTypes,
+    organizations,
+    setOrganizations,
+    organizationNationalId,
+    setOrganizationNationalId,
+  } = useContext(FormsContext)
 
   const handleOrganizationChange = async (selected: {
     value: string | undefined
   }) => {
-    const updatedOrganizations = organizationsState.map((org) => ({
+    const updatedOrganizations = organizations.map((org) => ({
       ...org,
       isSelected: org.value === selected.value,
     }))
-    setOrganizationsState(updatedOrganizations)
+    setOrganizations(updatedOrganizations)
 
     const { data } = await getAdminQuery({
       variables: {
@@ -56,82 +45,93 @@ export const Admin = () => {
       },
     })
 
-    if (data?.formSystemOrganizationAdmin.organizationId) {
-      setOrganizationIdState(data.formSystemOrganizationAdmin.organizationId)
-    }
+    const admin = data?.formSystenOrganizationAdmin
+    const { organizationId, selectedCertificationTypes, selectedListTypes, selectedFieldTypes } = admin
 
-    if (data?.formSystemOrganizationAdmin.selectedCertificationTypes) {
-      setSelectedCertificationTypesState(
-        data.formSystemOrganizationAdmin.selectedCertificationTypes,
-      )
+    if (organizationId) {
+      setOrganizationId(organizationId)
     }
-
-    if (data?.formSystemOrganizationAdmin.selectedListTypes) {
-      setSelectedListTypesState(
-        data.formSystemOrganizationAdmin.selectedListTypes,
-      )
+    if (selectedCertificationTypes) {
+      setSelectedCertificationTypes(selectedCertificationTypes)
     }
-
-    if (data?.formSystemOrganizationAdmin.selectedFieldTypes) {
-      setSelectedFieldTypesState(
-        data.formSystemOrganizationAdmin.selectedFieldTypes,
-      )
+    if (selectedListTypes) {
+      setSelectedListTypes(selectedListTypes)
+    }
+    if (selectedFieldTypes) {
+      setSelectedFieldTypes(selectedFieldTypes)
     }
   }
 
-  // useEffect(() => {
-  //   if (control.organizationNationalId) {
-  //     handleOrganizationChange({ value: control.organizationNationalId })
-  //   }
-  // }, [])
+  const sortPermissionsList = (list: FormSystemPermissionType[]) => {
+    return list.sort((a, b) => Number(a.isCommon) - Number(b.isCommon))
+  }
 
-  const tabs = [
-    {
-      label: formatMessage(m.certifications),
-      content: (
-        <PermissionsList
-          selectedPermissions={selectedCertificationTypesState}
-          permissionsList={certficationTypes}
-          organizationId={organizationIdState}
-          setSelectedPermissionsState={setSelectedCertificationTypesState}
-        />
-      ),
-    },
-    {
-      label: formatMessage(m.lists),
-      content: (
-        <PermissionsList
-          selectedPermissions={selectedListTypesState}
-          permissionsList={listTypes}
-          organizationId={organizationIdState}
-          setSelectedPermissionsState={setSelectedListTypesState}
-        />
-      ),
-    },
-    {
-      label: formatMessage(m.inputFields),
-      content: (
-        <PermissionsList
-          selectedPermissions={selectedFieldTypesState}
-          permissionsList={fieldTypes}
-          organizationId={organizationIdState}
-          setSelectedPermissionsState={setSelectedFieldTypesState}
-        />
-      ),
-    },
-  ]
+  const PermissionsHeader = () => (
+    <GridColumn span='12/12'>
+      <GridRow>
+        {/* <Select
+          name="organizations"
+          label={formatMessage(m.organization)}
+          options={organizations}
+          size="sm"
+          value={organizations.find(org => org.value === organizationNationalId)}
+          onChange={async (selected) => {
+            if (selected) {
+              setOrganizationNationalId(selected.value)
+              handleOrganizationChange({ value: selected.value })
+            }
+          }}
+        /> */}
+      </GridRow>
+      <GridRow>
+        <GridColumn span='4/12'>
+          <Box>
+            <Text variant="default" fontWeight="semiBold">
+              {formatMessage(m.certifications)}
+            </Text>
+          </Box>
+        </GridColumn>
+        <GridColumn span='4/12'>
+          <Box>
+            <Text variant="default" fontWeight="semiBold">
+              {formatMessage(m.lists)}
+            </Text>
+          </Box>
+        </GridColumn>
+        <GridColumn span='4/12'>
+          <Box>
+            <Text variant="default" fontWeight="semiBold">
+              {formatMessage(m.inputFields)}
+            </Text>
+          </Box>
+        </GridColumn>
+      </GridRow>
+    </GridColumn>
+  )
 
   return (
-    <>
-      <AdminHeader
-        organizations={organizationsState}
-        onOrganizationChange={handleOrganizationChange}
-      />
-      <Tabs
-        label={formatMessage(m.regulations)}
-        tabs={tabs}
-        contentBackground="white"
-      />
-    </>
+    <Box marginTop={4}>
+      <GridColumn span='12/12'>
+        <PermissionsHeader />
+        <GridRow>
+          <GridColumn span='4/12'>
+            <Box>
+              <Permission type='certificate' />
+            </Box>
+          </GridColumn>
+          <GridColumn span='4/12'>
+            <Box>
+              <Permission type="list" />
+            </Box>
+          </GridColumn>
+          <GridColumn span='4/12'>
+            <Box>
+              <Permission type="field" />
+            </Box>
+          </GridColumn>
+        </GridRow>
+      </GridColumn>
+    </Box>
+
   )
 }

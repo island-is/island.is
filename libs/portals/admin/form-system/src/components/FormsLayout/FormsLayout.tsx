@@ -2,8 +2,8 @@ import { useContext } from "react"
 import { FormsContext } from "../../context/FormsContext"
 import { FormsHeader } from "./components/FormsHeader"
 import { Applications } from "../../screens/Applications/Applications"
-import { Admin } from "../../screens/Admin/Admin"
 import { Forms } from "../Forms/Forms"
+import { Admin } from "../Admin/Admin"
 
 
 export const FormsLayout = () => {

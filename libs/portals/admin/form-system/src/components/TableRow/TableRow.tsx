@@ -102,6 +102,7 @@ export const TableRow = ({
               marginRight={1}
               onClick={goToForm}
               cursor="pointer"
+
             >
               <Icon
                 icon="pencil"
@@ -113,7 +114,7 @@ export const TableRow = ({
               menuLabel={`${formatMessage(m.actions)} ${name}`}
               disclosure={
                 <Button
-                  icon="menu"
+                  icon="ellipsisVertical"
                   circle
                   colorScheme="negative"
                   title={formatMessage(m.actions)}
@@ -122,10 +123,6 @@ export const TableRow = ({
                 />
               }
               items={[
-                {
-                  title: formatMessage(m.edit),
-                  onClick: () => goToForm()
-                },
                 {
                   title: formatMessage(m.copy),
                 },

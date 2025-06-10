@@ -2,14 +2,20 @@ import { useContext, useEffect } from "react"
 import { TableRowHeader } from "../TableRow/TableRowHeader"
 import { FormsContext } from "../../context/FormsContext"
 import { TableRow } from "../TableRow/TableRow"
-import { useLazyQuery } from "@apollo/client"
-import { GET_FORMS } from '@island.is/form-system/graphql'
+import { useLazyQuery, useMutation } from "@apollo/client"
+import { CREATE_FORM, GET_FORMS } from '@island.is/form-system/graphql'
+import { Box, Button, GridRow, } from '@island.is/island-ui/core'
+import { useNavigate } from "react-router-dom"
+import { FormSystemPaths } from "../../lib/paths"
+import { useIntl } from "react-intl"
+import { m } from '@island.is/form-system/ui'
 
 
 export const Forms = () => {
   const { forms, setForms, organizations, setOrganizations, isAdmin, organizationNationalId } = useContext(FormsContext)
   const [getFormsQuery] = useLazyQuery(GET_FORMS, { fetchPolicy: 'no-cache' })
-
+  const navigate = useNavigate()
+  const { formatMessage } = useIntl()
   const handleOrganizationChange = async (selected: {
     value: string | undefined
   }) => {
@@ -31,6 +37,17 @@ export const Forms = () => {
     }
   }
 
+  const [formSystemCreateFormMutation] = useMutation(CREATE_FORM, {
+    onCompleted: (newFormData) => {
+      if (newFormData?.createFormSystemForm?.form) {
+        setForms((prevForms) => [
+          ...prevForms,
+          newFormData.createFormSystemForm.form,
+        ])
+      }
+    },
+  })
+
   useEffect(() => {
     if (isAdmin && organizationNationalId) {
       handleOrganizationChange({ value: organizationNationalId })
@@ -38,7 +55,33 @@ export const Forms = () => {
   }, [])
 
   return (
-    <>
+    <Box marginTop={5}>
+      <Box marginTop={5} marginBottom={5}>
+        <GridRow>
+          <Box marginLeft={2}>
+            <Button
+              size="default"
+              onClick={async () => {
+                const { data } = await formSystemCreateFormMutation({
+                  variables: {
+                    input: {
+                      organizationNationalId: organizationNationalId,
+                    },
+                  },
+                })
+                navigate(
+                  FormSystemPaths.Form.replace(
+                    ':formId',
+                    String(data?.createFormSystemForm?.form?.id),
+                  ),
+                )
+              }}
+            >
+              {formatMessage(m.newForm)}
+            </Button>
+          </Box>
+        </GridRow>
+      </Box>
       <TableRowHeader />
       {forms &&
         forms?.map((f) => {
@@ -56,6 +99,6 @@ export const Forms = () => {
             />
           )
         })}
-    </>
+    </Box>
   )
 }

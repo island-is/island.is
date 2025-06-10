@@ -20,21 +20,26 @@ export const FormsProvider = ({
     forms: formsState,
     organizations: orgs,
     isAdmin,
-    organizationNationalId,
+    organizationId: orgId,
+    organizationNationalId: orgNationalId,
     applications: apps,
-    selectedCertificationTypes,
-    selectedListTypes,
-    selectedFieldTypes,
+    selectedCertificationTypes: selectedCert,
+    selectedListTypes: selectedList,
+    selectedFieldTypes: selectedField,
     certficationTypes,
     listTypes,
     fieldTypes,
   } = formsLoader
-  console.log('FormsProvider', formsLoader)
   const [forms, setForms] = useState<FormSystemForm[]>(formsState)
   const [organizations, setOrganizations] = useState<Option<string>[]>(orgs)
   const [applications, setApplications] = useState<FormSystemApplication[]>(apps)
   const [getFormsQuery] = useLazyQuery(GET_FORMS, { fetchPolicy: 'no-cache' })
   const [location, setLocation] = useState<FormsLocationState>('forms')
+  const [organizationNationalId, setOrganizationNationalId] = useState<string>(orgNationalId)
+  const [organizationId, setOrganizationId] = useState<string>(orgId)
+  const [selectedCertificationTypes, setSelectedCertificationTypes] = useState<string[]>(selectedCert)
+  const [selectedListTypes, setSelectedListTypes] = useState<string[]>(selectedList)
+  const [selectedFieldTypes, setSelectedFieldTypes] = useState<string[]>(selectedField)
 
   const handleOrganizationChange = async (selected: {
     value: string | undefined
@@ -72,21 +77,28 @@ export const FormsProvider = ({
     setForms,
     organizations,
     setOrganizations,
+    organizationId,
+    setOrganizationId,
     organizationNationalId,
+    setOrganizationNationalId,
     applications,
     isAdmin,
     setApplications,
     location,
     setLocation,
     selectedCertificationTypes,
+    setSelectedCertificationTypes,
     selectedListTypes,
+    setSelectedListTypes,
     selectedFieldTypes,
+    setSelectedFieldTypes,
     certficationTypes,
     listTypes,
     fieldTypes,
   }), [
     forms,
     organizations,
+    organizationId,
     organizationNationalId,
     applications,
     isAdmin,
@@ -96,7 +108,7 @@ export const FormsProvider = ({
     selectedFieldTypes,
     certficationTypes,
     listTypes,
-    fieldTypes
+    fieldTypes,
   ])
 
   return (
