@@ -16,11 +16,20 @@ import {
 const prosecutorRequestCasesSharedWhereOptions = (user: TUser) => ({
   is_archived: false,
   type: [...restrictionCases, ...investigationCases],
-  [Op.or]: [
-    { is_heightened_security_level: [null, false] },
-    { creating_prosecutor_id: user.id },
-    { prosecutor_id: user.id },
-    { shared_with_prosecutors_office_id: user.institution?.id },
+  [Op.and]: [
+    {
+      [Op.or]: [
+        { prosecutors_office_id: user.institution?.id },
+        { shared_with_prosecutors_office_id: user.institution?.id },
+      ],
+    },
+    {
+      [Op.or]: [
+        { is_heightened_security_level: { [Op.or]: [null, false] } },
+        { creating_prosecutor_id: user.id },
+        { prosecutor_id: user.id },
+      ],
+    },
   ],
 })
 
@@ -89,5 +98,5 @@ export const prosecutorIndictmentInProgressWhereOptions = (user: TUser) => ({
 
 export const prosecutorIndictmentCompletedWhereOptions = (user: TUser) => ({
   ...prosecutorIndictmentSharedWhereOptions(user),
-  state: [CaseState.COMPLETED],
+  state: [CaseState.COMPLETED, CaseState.WAITING_FOR_CANCELLATION],
 })

@@ -139,8 +139,10 @@ export const GetListsForOwner = gql`
 `
 
 export const GetCurrentCollection = gql`
-  query currentCollection {
-    signatureCollectionCurrent {
+  query currentCollection(
+    $input: SignatureCollectionCollectionTypeFilterInput
+  ) {
+    signatureCollectionCurrent(input: $input) {
       id
       endTime
       startTime

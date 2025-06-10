@@ -49,16 +49,14 @@ export class SignatureCollectionSharedClientService {
         }),
     )
 
-    const orderedCollections = (
-      collections
-        .flatMap((_) => _)
-        .map(mapCollection)
-        .filter(
-          (collection) =>
-            collection?.isSignatureCollection &&
-            collection.startTime < new Date(),
-        ) as Collection[]
-    ).sort((a, b) => (a.endTime < b.endTime ? 1 : -1))
+    const orderedCollections = (collections
+      .flatMap((_) => _)
+      .map(mapCollection)
+      .filter(
+        (collection) =>
+          collection?.isSignatureCollection &&
+          collection.startTime < new Date(),
+      ) as Collection[]).sort((a, b) => (a.endTime < b.endTime ? 1 : -1))
 
     if (!orderedCollections.length) {
       throw new Error('No current collection for selected type')
@@ -67,7 +65,10 @@ export class SignatureCollectionSharedClientService {
     return orderedCollections[0]
   }
 
-  async currentCollection(api: ElectionApi): Promise<Collection[]> {
+  async currentCollection(
+    api: ElectionApi,
+    collectionTypeFilter?: CollectionType,
+  ): Promise<Collection[]> {
     // includeInactive: false will return collections as active until electionday for collection has passed
     const baseRes = await api.kosningGet({
       hasSofnun: true,
@@ -85,7 +86,13 @@ export class SignatureCollectionSharedClientService {
     if (!collections.length) {
       throw new Error('No current collection')
     }
-    return collections.flatMap((_) => _).map(mapCollection)
+    let mappedCollections = collections.flatMap((_) => _).map(mapCollection)
+    if (collectionTypeFilter) {
+      mappedCollections = mappedCollections.filter(
+        (collection) => collection.collectionType === collectionTypeFilter,
+      )
+    }
+    return mappedCollections
   }
 
   async getLists(
