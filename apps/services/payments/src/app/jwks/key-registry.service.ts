@@ -3,8 +3,11 @@ import { ConfigType } from '@nestjs/config'
 import { createPublicKey } from 'crypto'
 import { exportJWK } from 'jose'
 
+import type { Logger } from '@island.is/logging'
+
 import { JwkDto } from './dtos/serveJwks.response'
 import { JwksConfig } from './jwks.config'
+import { LOGGER_PROVIDER } from '@island.is/logging'
 
 interface JwkEntry {
   kid: string
@@ -17,6 +20,8 @@ export class KeyRegistryService implements OnModuleInit {
   private jwkEntries: JwkEntry[] = []
 
   constructor(
+    @Inject(LOGGER_PROVIDER)
+    private readonly logger: Logger,
     @Inject(JwksConfig.KEY)
     private readonly config: ConfigType<typeof JwksConfig>,
   ) {}
@@ -47,7 +52,12 @@ export class KeyRegistryService implements OnModuleInit {
           expiresAt,
         })
       } catch (err) {
-        console.error('Error processing previous key:', err)
+        this.logger.error(
+          `Error processing previous key: ${
+            err instanceof Error ? err.message : err
+          }`,
+          err instanceof Error ? err.stack : undefined,
+        )
       }
     }
   }

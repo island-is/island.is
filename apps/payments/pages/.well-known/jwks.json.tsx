@@ -18,7 +18,12 @@ export const getServerSideProps: GetServerSideProps = async ({ res }) => {
     if (errors) {
       console.error('[JWKS] GraphQL errors:', errors)
       res.statusCode = 503
-      res.write(JSON.stringify({ error: 'Unknown error occurred' }))
+      res.write(
+        JSON.stringify({
+          error: 'Failed to retrieve JWKS data',
+          message: 'Service temporarily unavailable',
+        }),
+      )
       res.end()
       return { props: {} }
     }
