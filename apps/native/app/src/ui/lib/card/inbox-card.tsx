@@ -18,7 +18,7 @@ interface InboxCardProps {
   selected?: boolean
   onPress(id: string): void
   onPressIcon?(id: string): void
-  replyable?: boolean
+  replyable?: boolean | null
 }
 
 export const InboxCard = ({
@@ -49,7 +49,7 @@ export const InboxCard = ({
         date={publicationDate ? new Date(publicationDate) : undefined}
         unread={unread}
         urgent={!!isUrgent}
-        replyable={replyable}
+        replyable={!!replyable}
         starred={!!bookmarked}
         icon={icon}
         selectable={selectable}

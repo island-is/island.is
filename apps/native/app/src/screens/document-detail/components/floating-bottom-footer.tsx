@@ -6,6 +6,7 @@ export const FloatingBottomFooter = styled.SafeAreaView`
   left: 0;
   right: 0;
   background-color: ${({ theme }) => theme.color.white};
+  min-height: 100px;
 
   /* iOS shadow */
   shadow-color: ${({ theme }) => theme.color.blue400};
@@ -20,4 +21,5 @@ export const FloatingBottomFooter = styled.SafeAreaView`
 export const FloatingBottomContent = styled.View`
   padding-horizontal: ${({ theme }) => theme.spacing.p4}px;
   padding-top: ${({ theme }) => theme.spacing.p2}px;
+  row-gap: ${({ theme }) => theme.spacing.p2}px;
 `
