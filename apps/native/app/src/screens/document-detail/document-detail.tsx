@@ -50,6 +50,7 @@ import {
   FloatingBottomContent,
   FloatingBottomFooter,
 } from './components/floating-bottom-footer'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 
 const Host = styled.SafeAreaView`
   margin-left: ${({ theme }) => theme.spacing[2]}px;
@@ -204,6 +205,11 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   const htmlStyles = useHtmlStyles()
   const { openBrowser } = useBrowser()
   const { getOrganizationLogoUrl } = useOrganizationsStore()
+  const isFeature2WayMailboxEnabled = useFeatureFlag(
+    'is2WayMailboxEnabled',
+    false,
+  )
+
   const [error, setError] = useState(false)
   const [showConfirmedAlert, setShowConfirmedAlert] = useState(false)
   const [visible, setVisible] = useState(false)
@@ -558,7 +564,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
           </View>
         )}
       </DocumentWrapper>
-      {isReplyable && !loading && (
+      {isFeature2WayMailboxEnabled && isReplyable && !loading && (
         <FloatingBottomFooter>
           <FloatingBottomContent>
             <Button

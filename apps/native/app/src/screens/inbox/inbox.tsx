@@ -54,6 +54,7 @@ import { isAndroid, isIos } from '../../utils/devices'
 import { testIDs } from '../../utils/test-ids'
 import { ActionBar } from './components/action-bar'
 import { Toast, ToastVariant } from './components/toast'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 
 type ListItem =
   | { id: string; type: 'skeleton' | 'empty' }
@@ -141,6 +142,7 @@ const PressableListItem = React.memo(
     selectedItems,
     setSelectedItems,
     setSelectedState,
+    isFeature2WayMailboxEnabled,
   }: {
     item: DocumentV2
     listParams: ListParams
@@ -148,6 +150,7 @@ const PressableListItem = React.memo(
     selectedItems: string[]
     setSelectedItems: (items: string[]) => void
     setSelectedState: (state: boolean) => void
+    isFeature2WayMailboxEnabled: boolean
   }) => {
     const { getOrganizationLogoUrl } = useOrganizationsStore()
     const isSelected = selectable && selectedItems.includes(item.id)
@@ -162,7 +165,7 @@ const PressableListItem = React.memo(
         senderName={item.sender.name}
         icon={item.sender.name && getOrganizationLogoUrl(item.sender.name, 75)}
         isUrgent={item.isUrgent}
-        replyable={item.replyable}
+        replyable={isFeature2WayMailboxEnabled ? item.replyable : false}
         bookmarked={item.bookmarked}
         selectable={selectable}
         selected={isSelected}
@@ -241,6 +244,10 @@ export const InboxScreen: NavigationFunctionComponent<{
   const queryString = useThrottleState(query)
   const [hiddenContent, setHiddenContent] = useState(isIos)
   const [refetching, setRefetching] = useState(false)
+  const isFeature2WayMailboxEnabled = useFeatureFlag(
+    'is2WayMailboxEnabled',
+    false,
+  )
 
   const [toastInfo, setToastInfo] = useState<{
     variant: ToastVariant
@@ -609,6 +616,7 @@ export const InboxScreen: NavigationFunctionComponent<{
           selectedItems={selectedItems}
           setSelectedItems={setSelectedItems}
           setSelectedState={setSelectedState}
+          isFeature2WayMailboxEnabled={isFeature2WayMailboxEnabled}
           listParams={{
             ...filters,
             category,
