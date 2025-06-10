@@ -52,7 +52,14 @@ const districtCourtRequestCasesInProgressWhereOptions = {
       state: completedRequestCaseStates,
       ruling_signature_date: null,
       is_completed_without_ruling: null,
-      appeal_state: { [Op.not]: CaseAppealState.APPEALED },
+      appeal_state: {
+        [Op.or]: [
+          null,
+          CaseAppealState.RECEIVED,
+          CaseAppealState.WITHDRAWN,
+          CaseAppealState.COMPLETED,
+        ],
+      },
     },
   ],
 }
@@ -70,7 +77,14 @@ const districtCourtRequestCasesCompletedWhereOptions = {
     { ruling_signature_date: { [Op.not]: null } },
     { is_completed_without_ruling: { [Op.not]: null } },
   ],
-  appeal_state: { [Op.not]: CaseAppealState.APPEALED },
+  appeal_state: {
+    [Op.or]: [
+      null,
+      CaseAppealState.RECEIVED,
+      CaseAppealState.WITHDRAWN,
+      CaseAppealState.COMPLETED,
+    ],
+  },
 }
 
 // District Court Indictments
