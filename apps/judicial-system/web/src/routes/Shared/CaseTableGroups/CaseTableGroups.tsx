@@ -1,7 +1,7 @@
 import { FC, useContext } from 'react'
 import { useRouter } from 'next/router'
 
-import { AlertMessage, Text } from '@island.is/island-ui/core'
+import { AlertMessage } from '@island.is/island-ui/core'
 import {
   getCaseTableGroups,
   isProsecutionUser,
