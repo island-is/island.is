@@ -28,9 +28,9 @@ export const healthProtectionSubSection = buildSubSection({
 
       children: [
         buildCheckboxField({
+          id: 'healthProtection.hasFoodAllergiesOrIntolerances',
           title:
             newPrimarySchoolMessages.differentNeeds.allergiesAndIntolerances,
-          id: 'healthProtection.hasFoodAllergiesOrIntolerances',
           spacing: 0,
           options: [
             {

@@ -652,7 +652,7 @@ export const newPrimarySchoolMessages: MessageDir = {
       description: 'Do the parents need an interpreter?',
     },
 
-    // Allergies and intolerances
+    // Health protection
     healthProtectionSubSectionTitle: {
       id: 'nps.application:different.needs.health.protection.sub.section.title',
       defaultMessage: 'Heilsuvernd',
