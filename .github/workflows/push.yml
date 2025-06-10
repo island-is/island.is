@@ -239,6 +239,7 @@ jobs:
 
       - name: Prepare docker deps
         id: docker-deps
+        if: needs.pre-checks.outputs.PRE_CHECK != 'push'
         run: |
           ./scripts/ci/10_prepare-docker-deps.sh
 
