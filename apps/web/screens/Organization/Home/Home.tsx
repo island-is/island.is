@@ -214,7 +214,11 @@ const OrganizationHomePage = ({
             slice.news.length >= 3
           ) {
             return (
-              <Box paddingTop={[5, 5, 8]} paddingBottom={[2, 2, 5]}>
+              <Box
+                paddingTop={[5, 5, 8]}
+                paddingBottom={[2, 2, 5]}
+                key={slice.id}
+              >
                 <DigitalIcelandLatestNewsSlice
                   slice={slice}
                   slug={organizationPage.slug}
@@ -224,6 +228,7 @@ const OrganizationHomePage = ({
           }
           return (
             <Box
+              key={slice.id}
               paddingBottom={
                 index === organizationPage.bottomSlices.length - 1
                   ? SLICE_SPACING
@@ -231,7 +236,6 @@ const OrganizationHomePage = ({
               }
             >
               <SliceMachine
-                key={slice.id}
                 slice={slice}
                 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                 // @ts-ignore make web strict
