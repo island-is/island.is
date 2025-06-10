@@ -351,17 +351,6 @@ const Indictment = () => {
           (count) => count.id !== indictmentCountId,
         )
 
-        const prevSuspensionOffenses = getSuspensionOffenses(
-          workingCase.indictmentCounts,
-        )
-        const newSuspensionOffenses = getSuspensionOffenses(indictmentCounts)
-
-        setSuspensionRequest(
-          prevSuspensionOffenses,
-          newSuspensionOffenses,
-          workingCase.requestDriversLicenseSuspension,
-        )
-
         setWorkingCase((prevWorkingCase) => ({
           ...prevWorkingCase,
           indictmentCounts,
@@ -370,11 +359,9 @@ const Indictment = () => {
     },
     [
       deleteIndictmentCount,
-      setSuspensionRequest,
       setWorkingCase,
       workingCase.id,
       workingCase.indictmentCounts,
-      workingCase.requestDriversLicenseSuspension,
     ],
   )
 
