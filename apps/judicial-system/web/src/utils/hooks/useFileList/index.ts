@@ -1,7 +1,7 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { toast } from '@island.is/island-ui/core'
+import { toast, UploadFile } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
 import {
   FormContext,
@@ -10,6 +10,7 @@ import {
 import { CaseFileState } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import useIsMobile from '../useIsMobile/useIsMobile'
+import { TUploadFile } from '../useS3Upload/useS3Upload'
 import { useGetSignedUrlLazyQuery } from './getSigendUrl.generated'
 import { useLimitedAccessGetSignedUrlLazyQuery } from './limitedAccessGetSigendUrl.generated'
 
@@ -24,9 +25,21 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
   const { formatMessage } = useIntl()
   const isMobile = useIsMobile()
   const [fileNotFound, setFileNotFound] = useState<boolean>()
+  const [currentFile, setCurrentFile] = useState<TUploadFile | undefined>()
 
   const openFile = (url: string) => {
     window.open(url, isMobile ? '_self' : '_blank', 'noopener, noreferrer')
+  }
+
+  const onErrorOrPreviewURl = (currentFile: TUploadFile | undefined) => {
+    if (currentFile && currentFile.id === fullAccessVariables?.input.id) {
+      const previewUrl = URL.createObjectURL(
+        currentFile.originalFileObj as Blob,
+      )
+      openFile(previewUrl)
+    } else {
+      toast.error(formatMessage(errors.openDocument))
+    }
   }
 
   const [
@@ -41,7 +54,7 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
       }
     },
     onError: () => {
-      toast.error(formatMessage(errors.openDocument))
+      onErrorOrPreviewURl(currentFile)
     },
   })
 
@@ -57,7 +70,7 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
       }
     },
     onError: () => {
-      toast.error(formatMessage(errors.openDocument))
+      onErrorOrPreviewURl(currentFile)
     },
   })
 
@@ -126,11 +139,39 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
     ],
   )
 
+  const onOpenFile = useMemo(
+    () => (file: UploadFile) => {
+      if (!file.id) {
+        return
+      }
+      setCurrentFile(file)
+
+      const query = limitedAccess ? limitedAccessGetSignedUrl : getSignedUrl
+
+      query({
+        variables: {
+          input: {
+            id: file.id,
+            caseId: connectedCaseParentId ?? caseId,
+            mergedCaseId: connectedCaseParentId && caseId,
+          },
+        },
+      })
+    },
+    [
+      caseId,
+      connectedCaseParentId,
+      getSignedUrl,
+      limitedAccess,
+      limitedAccessGetSignedUrl,
+    ],
+  )
+
   const dismissFileNotFound = () => {
     setFileNotFound(false)
   }
 
-  return { fileNotFound, dismissFileNotFound, onOpen }
+  return { fileNotFound, dismissFileNotFound, onOpen, onOpenFile }
 }
 
 export default useFileList

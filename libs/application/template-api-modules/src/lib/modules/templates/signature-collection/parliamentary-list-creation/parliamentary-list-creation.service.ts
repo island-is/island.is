@@ -46,10 +46,11 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
   }
 
   async parliamentaryCollection({ auth }: TemplateApiModuleActionProps) {
-    const currentCollection = await this.signatureCollectionClientService.getLatestCollectionForType(
-      this.collectionType,
-    )
-    if (currentCollection.collectionType !== CollectionType.Parliamentary) {
+    const latestCollection =
+      await this.signatureCollectionClientService.getLatestCollectionForType(
+        this.collectionType,
+      )
+    if (latestCollection.collectionType !== CollectionType.Parliamentary) {
       throw new TemplateApiError(
         errorMessages.currentCollectionNotParliamentary,
         405,
@@ -58,14 +59,14 @@ export class ParliamentaryListCreationService extends BaseTemplateApiService {
     // Candidates are stored on user national id never the actors so should be able to check just the auth national id
 
     if (
-      currentCollection.candidates.some(
+      latestCollection.candidates.some(
         (c) => c.nationalId.replace('-', '') === auth.nationalId,
       )
     ) {
       throw new TemplateApiError(errorMessages.alreadyCandidate, 412)
     }
 
-    return currentCollection
+    return latestCollection
   }
 
   async parliamentaryIdentity({ auth }: TemplateApiModuleActionProps) {

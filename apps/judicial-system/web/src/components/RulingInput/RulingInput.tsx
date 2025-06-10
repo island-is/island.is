@@ -15,6 +15,9 @@ interface Props {
   setWorkingCase: Dispatch<SetStateAction<Case>>
   rows?: number
   disabled?: boolean
+  label?: string
+  placeholder?: string
+  required?: boolean
 }
 
 const RulingInput: FC<Props> = ({
@@ -22,6 +25,9 @@ const RulingInput: FC<Props> = ({
   setWorkingCase,
   rows,
   disabled = false,
+  label,
+  placeholder,
+  required = false,
 }) => {
   const { updateCase } = useCase()
   const { formatMessage } = useIntl()
@@ -32,9 +38,10 @@ const RulingInput: FC<Props> = ({
     <Input
       data-testid="ruling"
       name="ruling"
-      label={formatMessage(m.label)}
-      placeholder={formatMessage(m.placeholder)}
+      label={label || formatMessage(m.label)}
+      placeholder={placeholder || formatMessage(m.placeholder)}
       value={workingCase.ruling || ''}
+      required={required}
       onChange={(event) =>
         removeTabsValidateAndSet(
           'ruling',

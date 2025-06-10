@@ -163,20 +163,6 @@ const PaymentArrangementSchema = z
       path: ['contactInfo', 'phone'],
     },
   )
-  .refine(
-    ({ explanation, individualOrCompany, paymentOptions }) => {
-      if (
-        individualOrCompany === IndividualOrCompany.individual ||
-        paymentOptions === PaymentOptions.cashOnDelivery
-      ) {
-        return true
-      }
-      return explanation && explanation.length < 41 && explanation.length > 0
-    },
-    {
-      path: ['explanation'],
-    },
-  )
 
 const ExamineeSchema = z
   .array(
@@ -278,11 +264,14 @@ const ExamCategorySchema = z.object({
   doesntHaveToPayLicenseFee: z.boolean(),
   nationalId: z.string().optional(),
   medicalCertificate: z
-    .object({
-      content: z.string(),
-      name: z.string(),
-      type: z.string(),
-    })
+    .array(
+      z
+        .object({
+          key: z.string(),
+          name: z.string(),
+        })
+        .optional(),
+    )
     .optional(),
 })
 
@@ -298,6 +287,7 @@ const OverviewSchema = z.object({
 })
 
 export const PracticalExamAnswersSchema = z.object({
+  approveExternalData: z.boolean().refine((v) => v),
   information: InformationSchema,
   examinees: ExamineeSchema,
   instructors: InstructorSchema,
