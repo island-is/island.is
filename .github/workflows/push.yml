@@ -369,6 +369,7 @@ jobs:
           NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
           GIT_COMMIT_SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
+          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
         run: |
           set -x
           echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
@@ -382,6 +383,7 @@ jobs:
           NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
           GIT_COMMIT_SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
+          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
         run: |
           set -x
           echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
