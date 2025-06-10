@@ -1,13 +1,14 @@
 import React, { isValidElement } from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
-import { Image, ImageSourcePropType, Pressable } from 'react-native'
-import styled from 'styled-components/native'
+import { Image, ImageSourcePropType, Pressable, View } from 'react-native'
+import styled, { css } from 'styled-components/native'
 
-import { Typography } from '../typography/typography'
-import { Label } from '../label/label'
-import { dynamicColor } from '../../utils'
-import checkmarkIcon from '../../assets/icons/checkmark.png'
 import starFilledIcon from '../../../assets/icons/star-filled.png'
+import checkmarkIcon from '../../assets/icons/checkmark.png'
+import { dynamicColor } from '../../utils'
+import { Icon as UIIcon } from '../icon/icon'
+import { Label } from '../label/label'
+import { Typography } from '../typography/typography'
 
 const Host = styled.SafeAreaView<{ unread?: boolean }>`
   flex-direction: row;
@@ -60,11 +61,28 @@ const Row = styled.View`
   gap: ${({ theme }) => theme.spacing.smallGutter}px;
 `
 
+const LowerRow = styled(Row)`
+  align-items: center;
+  padding-bottom: 0;
+`
+
 const Title = styled.View`
   flex-direction: row;
   align-items: center;
   flex: 1;
   margin-bottom: ${({ theme }) => theme.spacing.smallGutter}px;
+`
+
+const SubtitleWrapper = styled.View<{ replyable?: boolean }>`
+  flex-direction: row;
+  align-items: center;
+  flex: 1;
+  ${({ replyable, theme }) =>
+    replyable &&
+    css`
+      margin-right: ${theme.spacing[2]}px;
+      column-gap: ${theme.spacing.smallGutter}px;
+    `}
 `
 
 const Cell = styled.View``
@@ -93,6 +111,7 @@ interface ListItemProps {
   icon?: ImageSourcePropType | React.ReactNode
   starred?: boolean
   urgent?: boolean
+  replyable?: boolean
   selectable?: boolean
   selected?: boolean
   onPressIcon?: () => void
@@ -108,6 +127,7 @@ export function ListItem({
   starred = false,
   selectable = false,
   selected = false,
+  replyable = false,
   onPressIcon,
 }: ListItemProps) {
   const intl = useIntl()
@@ -148,21 +168,27 @@ export function ListItem({
               </Typography>
             )}
           </Row>
-          <Row style={{ alignItems: 'center', paddingBottom: 0 }}>
-            <Typography
-              variant="heading5"
-              numberOfLines={1}
-              style={{ flex: 1 }}
-            >
-              {subtitle}
-            </Typography>
+          <LowerRow>
+            <SubtitleWrapper replyable={replyable}>
+              <Typography variant="heading5" numberOfLines={1}>
+                {subtitle}
+              </Typography>
+              {replyable && (
+                <UIIcon
+                  source={require('../../../assets/icons/reply.png')}
+                  width={12}
+                  height={12}
+                  tintColor="dark300"
+                />
+              )}
+            </SubtitleWrapper>
             {urgent && (
               <Label color="urgent" icon>
                 {intl.formatMessage({ id: 'inbox.urgent' })}
               </Label>
             )}
             {starred && <StarImage source={starFilledIcon} active={starred} />}
-          </Row>
+          </LowerRow>
         </Content>
       </Host>
     </Cell>
