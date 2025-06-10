@@ -6,6 +6,7 @@ import {
   Box,
   Button,
   Checkbox,
+  Icon,
   Tag,
   TagVariant,
   Text,
@@ -43,11 +44,7 @@ const compare = (a: CaseTableCell, b: CaseTableCell): number => {
 }
 
 const renderString = (value: StringValue) => {
-  return (
-    <Text as="span" variant="small">
-      {value.str}
-    </Text>
-  )
+  return <Text>{value.str}</Text>
 }
 
 const renderStringGroup = (value: StringGroupValue) => {
@@ -56,15 +53,20 @@ const renderStringGroup = (value: StringGroupValue) => {
 
   return (
     <Box display="flex" flexDirection="column">
-      {strings.map((s, idx) =>
-        length < 3 && idx === 0 ? (
-          <Text key={idx}>{s}</Text>
-        ) : (
-          <Text key={idx} as="span" variant="small">
-            {s}
-          </Text>
-        ),
-      )}
+      {strings.map((s, idx) => (
+        <Box key={idx} className={styles.stringGroupItem}>
+          {idx === length - 1 && value.hasCheckMark && (
+            <Icon icon="checkmark" color="blue400" size="medium" />
+          )}
+          {length < 3 && idx === 0 ? (
+            <Text>{s}</Text>
+          ) : (
+            <Text as="span" variant="small">
+              {s}
+            </Text>
+          )}
+        </Box>
+      ))}
     </Box>
   )
 }

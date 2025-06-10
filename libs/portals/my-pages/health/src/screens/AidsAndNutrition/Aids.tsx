@@ -2,6 +2,7 @@ import {
   RightsPortalAidOrNutrition,
   RightsPortalAidOrNutritionRenewalStatus,
 } from '@island.is/api/schema'
+import { Box, Icon, Text, Tooltip, toast } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   DownloadFileButtons,
@@ -11,15 +12,14 @@ import {
   formatDate,
   m,
 } from '@island.is/portals/my-pages/core'
-import { messages } from '../../lib/messages'
-import { exportAidTable } from '../../utils/FileBreakdown'
-import NestedInfoLines from '../MedicinePrescriptions/components/NestedInfoLines/NestedInfoLines'
-import { Box, Text, Tooltip, Icon, toast } from '@island.is/island-ui/core'
-import { useRenewAidsAndNutritionMutation } from './AidsAndNutrition.generated'
+import { useState } from 'react'
 import GenericRenewModal, {
   ModalField,
 } from '../../components/GenericRenewModal/GenericRenewModal'
-import { useState } from 'react'
+import NestedInfoLines from '../../components/NestedInfoLines/NestedInfoLines'
+import { messages } from '../../lib/messages'
+import { exportAidTable } from '../../utils/FileBreakdown'
+import { useRenewAidsAndNutritionMutation } from './AidsAndNutrition.generated'
 
 interface Props {
   data: Array<RightsPortalAidOrNutrition>
