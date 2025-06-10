@@ -13,6 +13,7 @@ export interface GetListInput {
   nationalId?: string
   candidateId?: string
   collectionId?: string
+  collectionType?: CollectionType
   onlyActive?: boolean
 }
 
@@ -29,13 +30,16 @@ export interface AreaInput {
 export interface CreateListInput {
   collectionId: string
   owner: OwnerInput
+  collectionType: CollectionType
   areas?: AreaInput[]
+  listName?: string
 }
 
 // Should replace CreateListInput once refactored to new ÞÍ endpoints
 export interface AddListsInput {
   collectionId: string
   candidateId: string
+  collectionType: CollectionType
   areas?: AreaInput[]
 }
 

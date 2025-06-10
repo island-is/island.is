@@ -11,6 +11,7 @@ import { SignatureCollectionBulk } from './models/bulk.model'
 import { SignatureCollectionCandidateLookUp } from './models/signee.model'
 import { SignatureCollectionListInput } from './dto/singatureList.input'
 import {
+  CollectionType,
   ReasonKey,
   SignatureCollectionAdminClientService,
   SignatureCollectionClientService,
@@ -37,8 +38,24 @@ export class SignatureCollectionAdminService {
     private signatureCollectionBasicService: SignatureCollectionClientService,
   ) {}
 
-  async currentCollection(user: User): Promise<SignatureCollection> {
-    return await this.signatureCollectionClientService.currentCollection(user)
+  async currentCollection(
+    user: User,
+    collectionTypeFilter?: CollectionType,
+  ): Promise<SignatureCollection[]> {
+    return await this.signatureCollectionClientService.currentCollection(
+      user,
+      collectionTypeFilter,
+    )
+  }
+
+  async getLatestCollectionForType(
+    user: User,
+    collectionType: CollectionType,
+  ): Promise<SignatureCollection> {
+    return await this.signatureCollectionClientService.getLatestCollectionForType(
+      user,
+      collectionType,
+    )
   }
 
   async allLists(
@@ -56,9 +73,13 @@ export class SignatureCollectionAdminService {
     auth: User,
     nationalId: string,
     listId: string,
+    collectionType: CollectionType,
   ): Promise<SignatureCollectionSuccess> {
-    const signatureSignee =
-      await this.signatureCollectionBasicService.getSignee(auth, nationalId)
+    const signatureSignee = await this.signatureCollectionBasicService.getSignee(
+      auth,
+      collectionType,
+      nationalId,
+    )
     const list = await this.list(listId, auth)
     // Current signatures should not prevent paper signatures
     const canSign =
@@ -101,10 +122,12 @@ export class SignatureCollectionAdminService {
 
   async signee(
     nationalId: string,
+    collectionType: CollectionType,
     user: User,
   ): Promise<SignatureCollectionCandidateLookUp> {
     return await this.signatureCollectionClientService.candidateLookup(
       nationalId,
+      collectionType,
       user,
     )
   }

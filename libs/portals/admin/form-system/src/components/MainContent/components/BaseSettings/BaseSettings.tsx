@@ -15,8 +15,14 @@ import { UpdateFormResponse } from '@island.is/form-system/shared'
 import { convertToSlug } from '../../../../lib/utils/convertToSlug'
 
 export const BaseSettings = () => {
-  const { control, controlDispatch, setFocus, focus, formUpdate } =
-    useContext(ControlContext)
+  const {
+    control,
+    controlDispatch,
+    setFocus,
+    focus,
+    formUpdate,
+    getTranslation,
+  } = useContext(ControlContext)
   const { form } = control
   const { formatMessage } = useIntl()
   const [errorMsg, setErrorMsg] = useState('')
@@ -132,7 +138,16 @@ export const BaseSettings = () => {
             name="formNameEn"
             value={form?.name?.en ?? ''}
             backgroundColor="blue"
-            onFocus={(e) => setFocus(e.target.value)}
+            onFocus={async (e) => {
+              if (!form?.name?.en && form?.name?.is !== '') {
+                const translation = await getTranslation(form.name.is ?? '')
+                controlDispatch({
+                  type: 'CHANGE_FORM_NAME',
+                  payload: { lang: 'en', newValue: translation.translation },
+                })
+              }
+              setFocus(e.target.value)
+            }}
             onBlur={(e) => e.target.value !== focus && formUpdate()}
             onChange={(e) =>
               controlDispatch({
@@ -166,7 +181,7 @@ export const BaseSettings = () => {
             onBlur={async (e) => {
               if (e.target.value !== focus) {
                 const response: UpdateFormResponse = await formUpdate()
-                if (response.errors) {
+                if (response && response.errors) {
                   setErrorMsg(response.errors[0].message as string)
                 } else {
                   setErrorMsg('')

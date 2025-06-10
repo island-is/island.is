@@ -77,7 +77,7 @@ export class CivilClaimant extends Model {
   caseId!: string
 
   @BelongsTo(() => Case, 'caseId')
-  @ApiProperty({ type: Case })
+  @ApiProperty({ type: () => Case })
   case?: Case
 
   @Column({ type: DataType.BOOLEAN, allowNull: true })

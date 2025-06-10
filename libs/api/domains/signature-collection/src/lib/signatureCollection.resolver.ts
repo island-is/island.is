@@ -33,6 +33,9 @@ import {
 } from './models'
 import { SignatureCollectionListSummary } from './models/areaSummaryReport.model'
 import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.input'
+import { SignatureCollectionCollectionTypeInput } from './dto/collectionType.input'
+import { SignatureCollectionListIdWithTypeInput } from './dto/listId.input'
+import { SignatureCollectionCollectionTypeFilterInput } from './dto/collectionTypeFilter.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard, UserAccessGuard)
 @Resolver()
@@ -51,9 +54,23 @@ export class SignatureCollectionResolver {
   }
 
   @BypassAuth()
+  @Query(() => [SignatureCollection])
+  async signatureCollectionCurrent(
+    @Args('input') input?: SignatureCollectionCollectionTypeFilterInput,
+  ): Promise<SignatureCollection[]> {
+    return this.signatureCollectionService.currentCollection(
+      input?.collectionTypeFilter,
+    )
+  }
+
+  @BypassAuth()
   @Query(() => SignatureCollection)
-  async signatureCollectionCurrent(): Promise<SignatureCollection> {
-    return this.signatureCollectionService.currentCollection()
+  async signatureCollectionLatestForType(
+    @Args('input') input: SignatureCollectionCollectionTypeInput,
+  ) {
+    return this.signatureCollectionService.getLatestCollectionForType(
+      input.collectionType,
+    )
   }
 
   @BypassAuth()
@@ -105,9 +122,13 @@ export class SignatureCollectionResolver {
   @Query(() => [SignatureCollectionSignedList], { nullable: true })
   @Audit()
   async signatureCollectionSignedList(
+    @Args('input') input: SignatureCollectionCollectionTypeInput,
     @CurrentUser() user: User,
   ): Promise<SignatureCollectionSignedList[] | null> {
-    return this.signatureCollectionService.signedList(user)
+    return this.signatureCollectionService.signedList(
+      user,
+      input.collectionType,
+    )
   }
 
   @Scopes(ApiScope.signatureCollection)
@@ -153,9 +174,13 @@ export class SignatureCollectionResolver {
   @Audit()
   async signatureCollectionUnsign(
     @CurrentUser() user: User,
-    @Args('input') input: SignatureCollectionListIdInput,
+    @Args('input') input: SignatureCollectionListIdWithTypeInput,
   ): Promise<SignatureCollectionSuccess> {
-    return this.signatureCollectionService.unsign(input.listId, user)
+    return this.signatureCollectionService.unsign(
+      input.listId,
+      user,
+      input.collectionType,
+    )
   }
 
   @Scopes(ApiScope.signatureCollection)

@@ -1,42 +1,31 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { EmailTemplateGenerator } from '../../../types'
-import { ApplicantsInfo } from './types'
-import { filterNonRepresentativesAndMapInfo } from './utils'
+import { filterNonRepresentativesAndMapInfo } from './utils/utils'
+import { applicationAnswers } from '@island.is/application/templates/rental-agreement'
 
 export const generateRentalAgreementEmail: EmailTemplateGenerator = (props) => {
   const {
     application,
-    options: { email },
+    options: { email, locale },
   } = props
 
-  // TODO: Get email of application creator from user profile, user profile datta seems to be empty as of now
-  // const applicationCreator = {
-  //   name:
-  //     getValueViaPath(
-  //       application.externalData,
-  //       'nationalRegistry.fullName',
-  //       '',
-  //     ) || '',
-  //   email:
-  //     getValueViaPath(application.externalData, 'userProfile.data.email', '') ||
-  //     '',
-  // }
+  const applicationCreator = {
+    name:
+      getValueViaPath<string>(
+        application.externalData,
+        'nationalRegistry.fullName',
+      ) || '',
+    email:
+      getValueViaPath<string>(
+        application.externalData,
+        'userProfile.data.email',
+      ) || '',
+  }
 
-  const tenants = filterNonRepresentativesAndMapInfo(
-    getValueViaPath<Array<ApplicantsInfo>>(
-      application.answers,
-      'tenantInfo.table',
-      [],
-    ) ?? [],
-  )
+  const { landlords, tenants } = applicationAnswers(application.answers)
 
-  const landlords = filterNonRepresentativesAndMapInfo(
-    getValueViaPath<Array<ApplicantsInfo>>(
-      application.answers,
-      'landlordInfo.table',
-      [],
-    ) ?? [],
-  )
+  const filteredTenants = filterNonRepresentativesAndMapInfo(tenants) ?? []
+  const filteredLandlords = filterNonRepresentativesAndMapInfo(landlords) ?? []
 
   const htmlSummaryForEmail = getValueViaPath<string>(
     application.answers,
@@ -72,35 +61,42 @@ export const generateRentalAgreementEmail: EmailTemplateGenerator = (props) => {
                   }
                 </style>`
 
-  const allRecipients = [...landlords, ...tenants]
+  const allRecipients = [...filteredLandlords, ...filteredTenants]
+
+  const subject =
+    locale === 'is' ? 'Drög að húsaleigusamningi' : 'Draft of rental agreement'
+  const intro = locale === 'is' ? 'Góðan dag.' : 'Hello.'
+  const introText =
+    locale === 'is'
+      ? 'Vinsamlegast lestu yfir leigusamninginn hér að neðan. Ef þú ert með athugasemdir við innihald hans væri best að þú svaraðir þessum tölvupósti með þeim.'
+      : 'Please read the rental agreement below. If you have any comments on its content, it would be best if you replied to this email with them.'
 
   return {
     from: {
       name: email.sender,
       address: email.address,
     },
-    // TODO: Get email of application creator from user profile, user profile datta seems to be empty as of now
-    // replyTo: {
-    //   name: applicationCreator.name,
-    //   address: applicationCreator.email,
-    // },
+    replyTo: {
+      name: applicationCreator.name,
+      address: applicationCreator.email,
+    },
     to: allRecipients,
-    subject: 'Drög að húsaleigusamningi',
+    subject: `${subject}`,
     template: {
-      title: 'Drög að húsaleigusamningi',
+      title: `${subject}`,
       body: [
         {
           component: 'Heading',
-          context: { copy: 'Drög að húsaleigusamningi', align: 'left' },
+          context: { copy: `${subject}`, align: 'left' },
         },
         {
           component: 'Copy',
           context: {
             copy:
               `<br/>` +
-              `<span>Góðan dag.</span>` +
+              `<span>${intro}</span>` +
               `<br/>` +
-              `<span>Vinsamlegast lestu yfir leigusamninginn hér að neðan. Ef þú ert með athugasemdir við innihald hans væri best að þú svaraðir þessum tölvupósti með þeim.</span>` +
+              `<span>${introText}</span>` +
               `<br/><br/>`,
             align: 'left',
             small: true,

@@ -169,6 +169,24 @@ export const useSentToPrisonAdminDate = (workingCase: Case) => {
   }, [workingCase.defendants])
 }
 
+export const getIdAndTitleForPdfButtonForRulingSentToPrisonPdf = (
+  indictmentRulingDecision?: CaseIndictmentRulingDecision | null,
+  sentToPrisonAdminDate?: Date,
+) => {
+  const baseTitle =
+    indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
+      ? 'Viðurlagaákvörðun til fullnustu'
+      : 'Dómur til fullnustu'
+
+  return {
+    pdfTitle: `${baseTitle} ${formatDate(sentToPrisonAdminDate)}.pdf`,
+    pdfElementId: baseTitle,
+    isCompletedWithRulingOrFine:
+      indictmentRulingDecision === CaseIndictmentRulingDecision.RULING ||
+      indictmentRulingDecision === CaseIndictmentRulingDecision.FINE,
+  }
+}
+
 const IndictmentCaseFilesList: FC<Props> = ({
   workingCase,
   displayGeneratedPDFs = true,
@@ -193,8 +211,13 @@ const IndictmentCaseFilesList: FC<Props> = ({
   const showFiles = Object.values(filteredFiles).some((f) => f.length > 0)
 
   const sentToPrisonAdminDate = useSentToPrisonAdminDate(workingCase)
-  const isCompletedWithRuling =
-    workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
+
+  const { pdfTitle, pdfElementId, isCompletedWithRulingOrFine } =
+    getIdAndTitleForPdfButtonForRulingSentToPrisonPdf(
+      workingCase.indictmentRulingDecision,
+      sentToPrisonAdminDate,
+    )
+
   const hasNoFiles = !showFiles && !displayGeneratedPDFs
 
   return (
@@ -365,14 +388,12 @@ const IndictmentCaseFilesList: FC<Props> = ({
             onOpenFile={onOpen}
             shouldRender={permissions.canViewSentToPrisonAdminFiles}
           >
-            {isCompletedWithRuling && sentToPrisonAdminDate && (
+            {isCompletedWithRulingOrFine && sentToPrisonAdminDate && (
               <PdfButton
                 caseId={workingCase.id}
-                title={`Dómur til fullnustu ${formatDate(
-                  sentToPrisonAdminDate,
-                )}.pdf`}
+                title={pdfTitle}
                 pdfType="rulingSentToPrisonAdmin"
-                elementId="Dómur til fullnustu"
+                elementId={pdfElementId}
                 renderAs="row"
               />
             )}
