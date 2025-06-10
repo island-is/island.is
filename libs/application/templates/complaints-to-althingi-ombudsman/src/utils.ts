@@ -1,8 +1,9 @@
 import { Answer } from '@island.is/application/types'
-import { shared } from './lib/messages'
+import { information, shared } from './lib/messages'
 import {
   ComplainedForTypes,
   ComplaineeTypes,
+  GenderAnswerOptions,
   OmbudsmanComplaintTypeEnum,
 } from './shared/constants'
 import { complainedFor } from './lib/messages'
@@ -62,3 +63,26 @@ export const mapComplainedForToMessage = {
   [ComplainedForTypes.MYSELF]: complainedFor.decision.myselfLabel,
   [ComplainedForTypes.SOMEONEELSE]: complainedFor.decision.someoneelseLabel,
 }
+
+export const genderOptions = [
+  {
+    label: information.aboutTheComplainer.genderOptionFemale,
+    value: GenderAnswerOptions.FEMALE,
+  },
+  {
+    label: information.aboutTheComplainer.genderOptionMale,
+    value: GenderAnswerOptions.MALE,
+  },
+  {
+    label: information.aboutTheComplainer.genderOptionNonbinary,
+    value: GenderAnswerOptions.NONBINARY,
+  },
+  {
+    label: information.aboutTheComplainer.genderOptionOther,
+    value: GenderAnswerOptions.OTHER,
+  },
+  {
+    label: information.aboutTheComplainer.genderOptionDeclinedToAnswer,
+    value: GenderAnswerOptions.DECLINED,
+  },
+]

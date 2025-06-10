@@ -37,6 +37,7 @@ import {
   formatDateForServer,
   UpdateCase,
   useCase,
+  useFileList,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -101,6 +102,9 @@ const Conclusion: FC = () => {
   const { handleUpload, handleRetry, handleRemove } = useS3Upload(
     workingCase.id,
   )
+  const { onOpenFile } = useFileList({
+    caseId: workingCase.id,
+  })
 
   const [selectedAction, setSelectedAction] = useState<IndictmentDecision>()
   const [postponementReason, setPostponementReason] = useState<string>()
@@ -593,6 +597,7 @@ const Conclusion: FC = () => {
               }}
               onRemove={(file) => handleRemove(file, removeUploadFile)}
               onRetry={(file) => handleRetry(file, updateUploadFile)}
+              onOpenFile={(file) => onOpenFile(file)}
             />
           </Box>
         )}
@@ -629,6 +634,7 @@ const Conclusion: FC = () => {
                 }}
                 onRemove={(file) => handleRemove(file, removeUploadFile)}
                 onRetry={(file) => handleRetry(file, updateUploadFile)}
+                onOpenFile={(file) => onOpenFile(file)}
               />
             </Box>
           )}

@@ -68,6 +68,7 @@ import {
   prosecutorRule,
   publicProsecutorStaffRule,
 } from '../../guards'
+import { CivilClaimantService } from '../defendant'
 import { EventService } from '../event'
 import { UserService } from '../user'
 import { CreateCaseDto } from './dto/createCase.dto'
@@ -122,6 +123,7 @@ export class CaseController {
     private readonly userService: UserService,
     private readonly eventService: EventService,
     private readonly pdfService: PdfService,
+    private readonly civilClaimantService: CivilClaimantService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -277,6 +279,14 @@ export class CaseController {
       throw new BadRequestException(
         'Cannot merge case that is not in a received state',
       )
+    }
+
+    if (update.hasCivilClaims !== undefined) {
+      if (update.hasCivilClaims) {
+        await this.civilClaimantService.create(theCase)
+      } else {
+        await this.civilClaimantService.deleteAll(theCase.id)
+      }
     }
 
     // If the case comes from LOKE then we don't want to allow the removal or

@@ -1,12 +1,13 @@
 import { z } from 'zod'
 import { YesOrNoEnum } from '@island.is/application/core'
+import { CostField } from '../../shared'
 import {
   hasInvalidCostItems,
   isValidMeterNumber,
   isValidMeterStatus,
+  parseCurrency,
 } from '../../utils/utils'
 import { OtherFeesPayeeOptions } from '../../utils/enums'
-import { CostField } from '../../utils/types'
 import * as m from '../messages'
 
 const otherCostItemsSchema = z.object({
@@ -44,7 +45,9 @@ export const otherFees = z
       data.heatingCost === OtherFeesPayeeOptions.TENANT
     const hasOtherCosts = data.otherCosts?.includes(YesOrNoEnum.YES)
 
+    // Housing fund
     if (data.housingFund && tenantPaysHousingFund) {
+      const numericAmount = parseCurrency(data.housingFundAmount ?? '')
       if (!data.housingFundAmount) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
@@ -53,9 +56,26 @@ export const otherFees = z
           path: ['housingFundAmount'],
         })
       }
+
+      if (numericAmount !== undefined && numericAmount < 1) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.otherFees.errorHousingFundTooLow,
+          path: ['housingFundAmount'],
+        })
+      }
+      if (numericAmount !== undefined && numericAmount > 999999) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.otherFees.errorHousingFundTooHigh,
+          path: ['housingFundAmount'],
+        })
+      }
     }
 
-    //
+    // Electricity cost
     if (data.electricityCost && tenantPaysElectricityCost) {
       if (!data.electricityCostMeterNumber) {
         ctx.addIssue({
@@ -105,6 +125,7 @@ export const otherFees = z
       }
     }
 
+    // Heating cost
     if (data.heatingCost && tenantPaysHeatingCost) {
       if (!data.heatingCostMeterNumber) {
         ctx.addIssue({
@@ -154,6 +175,7 @@ export const otherFees = z
       }
     }
 
+    // Other costs
     if (hasOtherCosts) {
       if (
         data.otherCostItems &&

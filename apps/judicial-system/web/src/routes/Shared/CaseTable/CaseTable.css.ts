@@ -14,3 +14,19 @@ export const logoContainer = style({
     },
   },
 })
+
+export const infoContainer = style({
+  marginBottom: theme.spacing[3],
+
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      maxWidth: '50%',
+    },
+  },
+})
+
+export const stringGroupItem = style({
+  display: 'flex',
+  alignItems: 'center',
+  columnGap: '4px',
+})

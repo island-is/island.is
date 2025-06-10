@@ -11,9 +11,8 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { FinancialStatementsInaoClientService } from '@island.is/clients/financial-statements-inao'
 import { getInput, getShouldGetFileName } from './mappers/helpers'
 import { S3Service } from '@island.is/nest/aws'
-import { FSIUSERTYPE } from '@island.is/application/templates/financial-statements-inao/types'
 import { ELECTION_SPENDING_LIMIT_FALLBACK } from './constants'
-
+import { FSIUSERTYPE } from '@island.is/application/templates/financial-statement-individual-election'
 export interface AttachmentData {
   key: string
   name: string
