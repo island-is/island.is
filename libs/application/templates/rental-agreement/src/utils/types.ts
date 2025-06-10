@@ -15,7 +15,9 @@ import {
   SecurityDepositTypeOptions,
 } from './enums'
 
-export type Events = { type: DefaultEvents.SUBMIT | DefaultEvents.EDIT }
+export type Events = {
+  type: DefaultEvents.SUBMIT | DefaultEvents.EDIT | DefaultEvents.APPROVE
+}
 
 export type StatusProvider = 'failure' | 'success'
 
