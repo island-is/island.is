@@ -40,7 +40,7 @@ const MedicinePrescriptions = lazy(() =>
   import('./screens/MedicinePrescriptions/MedicinePrescriptions'),
 )
 const MedicinePrescriptionHistory = lazy(() =>
-  import('./screens/MedicinePrescriptions/MedicinePrescriptionHistory'),
+  import('./screens/MedicineHistory/MedicinePrescriptionHistory'),
 )
 const HealthCenterRegistration = lazy(() =>
   import('./screens/HealthCenterRegistration/HealthCenterRegistration'),
@@ -54,9 +54,9 @@ const MedicineCertificate = lazy(() =>
   import('./screens/MedicineCertificate/MedicineCertificate'),
 )
 
-const MedicineDelegation = lazy(() =>
-  import('./screens/MedicineDelegation/MedicineDelegation'),
-)
+// const MedicineDelegation = lazy(() =>
+//   import('./screens/MedicineDelegation/MedicineDelegation'),
+// )
 
 const PaymentParticipation = lazy(() =>
   import('./screens/Payments/PaymentParticipation'),
@@ -74,6 +74,16 @@ const OrganDonationRegistration = lazy(() =>
 const Vaccinations = lazy(() =>
   import('./screens/Vaccinations/VaccinationsWrapper'),
 )
+
+const Referrals = lazy(() => import('./screens/Referrals/Referrals'))
+
+const ReferralsDetail = lazy(() =>
+  import('./screens/Referrals/ReferralsDetail'),
+)
+
+const Waitlist = lazy(() => import('./screens/Waitlists/Waitlists'))
+
+const WaitlistDetail = lazy(() => import('./screens/Waitlists/WaitlistsDetail'))
 
 const MEDICINE_LANDLAEKNIR_FLAG = 'HealthMedicineLandlaeknir'
 
@@ -254,6 +264,42 @@ export const healthModule: PortalModule = {
       key: 'HealthVaccinations',
       enabled: userInfo.scopes.includes(ApiScope.healthVaccinations),
       element: <Vaccinations />,
+    },
+    {
+      name: hm.referrals,
+      path: HealthPaths.HealthReferrals,
+      key: 'Referrals',
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.health),
+      element: <Referrals />,
+    },
+    {
+      name: hm.referrals,
+      path: HealthPaths.HealthReferralsDetail,
+      key: 'Referrals',
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.health),
+      element: <ReferralsDetail />,
+    },
+    {
+      name: hm.waitlists,
+      path: HealthPaths.HealthWaitlists,
+      key: 'HealthWaitlists',
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.health),
+      element: <Waitlist />,
+    },
+    {
+      name: hm.waitlists,
+      path: HealthPaths.HealthWaitlistsDetail,
+      key: 'HealthWaitlists',
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.health),
+      element: <WaitlistDetail />,
     },
   ],
 }
