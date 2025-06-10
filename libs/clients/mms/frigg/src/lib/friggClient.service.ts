@@ -50,6 +50,10 @@ export class FriggClientService {
         municipality: { name: 'ExampleSýsla' },
         postCode: '12345',
         country: { name: 'Exampleland' },
+        houseNumber: { number: '12' },
+        streetNumber: { number: '34' },
+        apartmentNumber: { number: '56' },
+        municipalityId: { id: '7890' },
       },
       residence: {
         id: '1234567890',
@@ -57,17 +61,25 @@ export class FriggClientService {
         municipality: { name: 'ExampleSýsla' },
         postCode: '12345',
         country: { name: 'Exampleland' },
+        houseNumber: { number: '12' },
+        streetNumber: { number: '34' },
+        apartmentNumber: { number: '56' },
+        municipalityId: { id: '7890' },
       },
       primaryOrgId: { id: '1234567890' },
       memberships: null,
       agents: null,
+      nationality: 'Exampleland',
+      healthProfile: null,
+      affiliations: [],
+      spokenLanguages: ['Icelandic'],
+      preferredLanguage: 'Icelandic',
     })
-    /*
     return await this.friggApiWithAuth(user)
       .getUserBySourcedId({
         nationalId: childNationalId,
       })
-      .catch(handle404) */
+      .catch(handle404)
   }
 
   sendApplication(user: User, form: FormDto): Promise<FormSubmitSuccessModel> {
