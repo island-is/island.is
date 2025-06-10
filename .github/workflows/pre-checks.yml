@@ -38,8 +38,6 @@ env:
   NX_PARALLEL: '2'
   NX_MAX_PARALLEL: '4'
   NODE_IMAGE_VERSION: 20
-  S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-  RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
   AWS_REGION: eu-west-1
   GENERATED_FILES: ${{ github.sha }}.tar.gz
   CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache

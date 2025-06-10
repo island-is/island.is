@@ -8,10 +8,10 @@ defaults:
   run:
     shell: bash
 env:
-  S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-  RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
+  RUNS_ON_BUCKET_NAME: ${{ vars.RUNS_ON_BUCKET_NAME }}
   AWS_REGION: eu-west-1
   YARN_ENABLE_HARDENED_MODE: '0'
+
 jobs:
   check-unicorn:
     name: Is this a unicorn PR
@@ -25,8 +25,6 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-        with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: Derive appropriate SHAs
         uses: nrwl/nx-set-shas@v4

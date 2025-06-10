@@ -28,9 +28,13 @@ jobs:
       - name: Checkout code
         uses: actions/checkout@v4
 
+      - name: Set RUNS_ON_S3_BUCKET_CACHE
+        if: ${{ !github.event.localrun }}
+        run: echo "RUNS_ON_S3_BUCKET_CACHE=${{ vars.RUNS_ON_S3_BUCKET_CACHE }}" >> $GITHUB_ENV
+
       - name: Cache actionlint binary
         id: cache-actionlint
-        uses: actions/cache@v4
+        uses: runs-on/cache@v4
         with:
           path: ${{ env.ACTIONLINT_DIR }}
           key: actionlint-${{ env.ACTIONLINT_VERSION }}
@@ -53,7 +57,7 @@ jobs:
 
       - name: Cache actionlint binary (save)
         if: steps.cache-actionlint.outputs.cache-hit != 'true' && failure()
-        uses: actions/cache/save@v4
+        uses: runs-on/cache/save@v4
         with:
           path: ${{ env.ACTIONLINT_DIR }}
           key: actionlint-${{ env.ACTIONLINT_VERSION }}

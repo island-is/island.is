@@ -14,6 +14,9 @@ concurrency:
   group: push-${{ github.head_ref || github.run_id }}
   cancel-in-progress: false
 
+env:
+  RUNS_ON_BUCKET_NAME: ${{ vars.RUNS_ON_BUCKET_NAME }}
+
 jobs:
   close_feature:
     name: Terminate feature deployment
@@ -29,8 +32,6 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-        with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: Generate feature name
         id: git-feature-name
