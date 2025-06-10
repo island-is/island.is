@@ -653,12 +653,12 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
 
     // Allergies and intolerances
-    healthProctectionSubSectionTitle: {
+    healthProtectionSubSectionTitle: {
       id: 'nps.application:different.needs.health.protection.sub.section.title',
       defaultMessage: 'Heilsuvernd',
       description: 'Health protection',
     },
-    healthProctectionSubSectionDescription: {
+    healthProtectionSubSectionDescription: {
       id: 'nps.application:different.needs.health.protection.sub.section.description',
       defaultMessage:
         'Heilsuvernd skólabarna er hluti af heilsugæslunni og framhald af ung- og smábarnavernd. Til að skólahjúkrunarfræðingur geti sinnt heilsuvernd skólabarns, haft umsjón með umönnun þess þegar svo ber við og veitt starfsfólki skólans viðeigandi fræðslu og ráðgjöf um rétt viðbrögð, er mikilvægt að hann hafi nauðsynlegar upplýsingar um heilsu barnsins.',

@@ -86,37 +86,37 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const hasFoodAllergiesOrIntolerances = getValueViaPath(
     answers,
-    'healthProctection.hasFoodAllergiesOrIntolerances',
+    'healthProtection.hasFoodAllergiesOrIntolerances',
   ) as string[]
 
   const foodAllergiesOrIntolerances = getValueViaPath(
     answers,
-    'healthProctection.foodAllergiesOrIntolerances',
+    'healthProtection.foodAllergiesOrIntolerances',
   ) as string[]
 
   const hasOtherAllergies = getValueViaPath(
     answers,
-    'healthProctection.hasOtherAllergies',
+    'healthProtection.hasOtherAllergies',
   ) as string[]
 
   const otherAllergies = getValueViaPath(
     answers,
-    'healthProctection.otherAllergies',
+    'healthProtection.otherAllergies',
   ) as string[]
 
   const usesEpiPen = getValueViaPath(
     answers,
-    'healthProctection.usesEpiPen',
+    'healthProtection.usesEpiPen',
   ) as YesOrNo
 
   const hasConfirmedMedicalDiagnoses = getValueViaPath(
     answers,
-    'healthProctection.hasConfirmedMedicalDiagnoses',
+    'healthProtection.hasConfirmedMedicalDiagnoses',
   ) as YesOrNo
 
   const requestsMedicationAdministration = getValueViaPath(
     answers,
-    'healthProctection.requestsMedicationAdministration',
+    'healthProtection.requestsMedicationAdministration',
   ) as YesOrNo
 
   const hasDiagnoses = getValueViaPath(

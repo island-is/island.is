@@ -51,7 +51,7 @@ export const HealthProtection = ({
   return (
     <ReviewGroup
       isEditable={editable}
-      editAction={() => goToScreen?.('healthProctection')}
+      editAction={() => goToScreen?.('healthProtection')}
     >
       <Stack space={2}>
         {(hasFoodAllergiesOrIntolerances.includes(YES) ||
