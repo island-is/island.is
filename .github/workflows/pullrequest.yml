@@ -310,9 +310,6 @@ jobs:
         with:
           RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
-      - name: load-deps
-        uses: ./.github/actions/load-deps
-
       - name: Lint head
         id: lint-head
         run: |
