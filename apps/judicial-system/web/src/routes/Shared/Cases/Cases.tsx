@@ -27,7 +27,6 @@ import {
   CaseState,
   CaseTransition,
   EventType,
-  User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
@@ -41,10 +40,6 @@ import { CreateCaseButton } from './CreateCaseButton'
 import { FilterOption, useFilter } from './useFilter'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
-
-export interface CreateCaseButtonProps {
-  user: User
-}
 
 export const Cases: FC = () => {
   const { formatMessage } = useIntl()
@@ -215,9 +210,7 @@ export const Cases: FC = () => {
         <PageHeader title={formatMessage(titles.shared.cases)} />
         <div className={styles.logoContainer}>
           <Logo />
-          {user && isProsecutionUser(user) ? (
-            <CreateCaseButton user={user} />
-          ) : null}
+          {isProsecutionUser(user) ? <CreateCaseButton user={user} /> : null}
         </div>
         <Box marginBottom={[2, 2, 5]} className={styles.filterContainer}>
           <Select

@@ -59,7 +59,9 @@ export const prosecutionRoles: UserRole[] = [
 ]
 const prosecutionsRolesStrings: string[] = prosecutionRoles
 
-export const isProsecutionUser = (user?: InstitutionUser): boolean => {
+export const isProsecutionUser = (
+  user?: InstitutionUser,
+): user is InstitutionUser => {
   return Boolean(
     user?.role &&
       prosecutionsRolesStrings.includes(user.role) &&

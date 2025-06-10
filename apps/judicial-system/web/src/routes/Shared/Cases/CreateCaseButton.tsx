@@ -6,11 +6,16 @@ import * as constants from '@island.is/judicial-system/consts'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 import { ContextMenu } from '@island.is/judicial-system-web/src/components'
-import { UserRole } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  User,
+  UserRole,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { CreateCaseButtonProps } from './Cases'
+interface Props {
+  user: User
+}
 
-export const CreateCaseButton: FC<CreateCaseButtonProps> = (props) => {
+export const CreateCaseButton: FC<Props> = (props) => {
   const { user } = props
   const { formatMessage } = useIntl()
 
