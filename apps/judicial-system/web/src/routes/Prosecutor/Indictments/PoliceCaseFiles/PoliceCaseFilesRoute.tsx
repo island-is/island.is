@@ -85,7 +85,7 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
   } = useUploadFiles(caseFiles)
   const { handleUpload, handleUploadFromPolice, handleRetry, handleRemove } =
     useS3Upload(caseId)
-  const { onOpen } = useFileList({
+  const { onOpenFile } = useFileList({
     caseId,
   })
   const {
@@ -286,7 +286,7 @@ const UploadFilesToPoliceCase: FC<UploadFilesToPoliceCaseProps> = ({
             updateUploadFile,
           )
         }
-        onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
+        onOpenFile={(file) => onOpenFile(file)}
         onRemove={(file) => handleRemove(file, removeFileCB)}
         onRetry={(file) => handleRetry(file, updateUploadFile)}
         errorMessage={errorMessage}

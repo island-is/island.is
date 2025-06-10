@@ -31,7 +31,7 @@ const EditPage = ({
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const { revalidate } = useRevalidator()
 
-  const [updatePage, { loading }] =
+  const [updatePage, { loading, data }] =
     useSignatureCollectionAdminUpdatePaperSignaturePageNumberMutation({
       variables: {
         input: {
@@ -40,9 +40,18 @@ const EditPage = ({
         },
       },
       onCompleted: () => {
-        toast.success(formatMessage(m.editPaperNumberSuccess))
-        revalidate()
-        setModalIsOpen(false)
+        if (
+          data?.signatureCollectionAdminUpdatePaperSignaturePageNumber.success
+        ) {
+          toast.success(formatMessage(m.editPaperNumberSuccess))
+          revalidate()
+          setModalIsOpen(false)
+        } else {
+          const message =
+            data?.signatureCollectionAdminUpdatePaperSignaturePageNumber
+              .reasons?.[0] ?? formatMessage(m.editPaperNumberError)
+          toast.error(message)
+        }
       },
       onError: () => {
         toast.error(formatMessage(m.editPaperNumberError))
