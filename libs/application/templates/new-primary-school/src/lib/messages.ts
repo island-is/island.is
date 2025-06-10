@@ -737,6 +737,13 @@ export const newPrimarySchoolMessages: MessageDir = {
       description:
         'Is assistance requested for a child due to medication administration during school hours?',
     },
+    requestsMedicationAdministrationTooltip: {
+      id: 'nps.application:different.needs.health.protection.requests.medication.administration.tooltip',
+      defaultMessage:
+        'Í fæstum tilvikum geta börn borið ábyrgð á lyfjatöku sinni. Þar skiptir þó aldur og lyfjategund máli. Ábyrgðin er forráðamanna en hjúkrunarfræðingar og starfsmenn skóla aðstoða við lyfjatökuna. Meginreglan er sú að barn á aðeins að fá lyf á skólatíma sem forráðamenn hafa komið með í skólann og óskað eftir að barnið fái.',
+      description:
+        'In most cases, children cannot be responsible for taking their own medication. However, age and type of medication matter. The responsibility lies with the guardians, but nurses and school staff assist with medication administration. The main rule is that a child should only receive medication at school that the guardians have brought to the school and requested the child to take.',
+    },
     schoolNurseAlertMessage: {
       id: 'nps.application:different.needs.health.protection.school.nurse.alert.message',
       defaultMessage:

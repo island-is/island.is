@@ -2,6 +2,7 @@ import {
   buildAlertMessageField,
   buildCheckboxField,
   buildCustomField,
+  buildDescriptionField,
   buildMultiField,
   buildRadioField,
   buildSubSection,
@@ -162,14 +163,22 @@ export const healthProtectionSubSection = buildSubSection({
             },
           ],
         }),
-        buildRadioField({
-          id: 'healthProtection.requestsMedicationAdministration',
+        buildDescriptionField({
+          id: 'healthProtection.requestsMedicationAdministrationDescription',
           title:
             newPrimarySchoolMessages.differentNeeds
               .requestsMedicationAdministration,
-          width: 'half',
-          required: true,
+          titleVariant: 'h4',
+          titleTooltip:
+            newPrimarySchoolMessages.differentNeeds
+              .requestsMedicationAdministrationTooltip,
           space: 4,
+        }),
+        buildRadioField({
+          id: 'healthProtection.requestsMedicationAdministration',
+          width: 'half',
+          space: 0,
+          required: true,
           options: [
             {
               label: newPrimarySchoolMessages.shared.yes,
