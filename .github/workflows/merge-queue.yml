@@ -219,88 +219,6 @@ jobs:
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
 
-  get-manifest-data:
-    runs-on: arc-shared
-    needs:
-      - prepare
-      - docker-build
-    if: ${{ !cancelled() && needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
-    outputs:
-      MQ_HAS_OUTPUT: ${{ steps.manifest.outputs.MQ_HAS_OUTPUT }}
-      MQ_CHANGED_FILES: ${{ steps.manifest.outputs.MQ_CHANGED_FILES }}
-      MQ_COMMIT_MSG: ${{ steps.manifest.outputs.MQ_COMMIT_MSG }}
-    steps:
-      - name: Get docker-build output
-        uses: cloudposse/github-action-matrix-outputs-read@v1
-        id: read
-        with:
-          matrix-step-name: docker-build
-      - name: checkout
-        uses: actions/checkout@v4
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
-        with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
-      - name: load-deps
-        uses: ./.github/actions/load-deps
-      - name: Prepare artifact to be uploaded
-        env:
-          JSON_DATA: ${{ steps.read.outputs.result }}
-        run: |
-          node scripts/ci/docker/write-data.mjs
-      - name: Get manifest data
-        id: manifest
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
-          node scripts/ci/docker/bootstrap.mjs
-          node scripts/ci/docker/get-data.mjs
-
-  get-judicial-data:
-    runs-on: arc-shared
-    needs:
-      - prepare
-      - docker-build
-    if: ${{ !cancelled() && github.event.merge_group.base_ref == 'refs/heads/main' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
-    outputs:
-      MQ_JUDICIAL_DEV: ${{ steps.judicial-system.outputs.MQ_JUDICIAL_DEV }}
-      MQ_JUDICIAL_PROD: ${{ steps.judicial-system.outputs.MQ_JUDICIAL_PROD }}
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
-        with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
-      - name: load-deps
-        uses: ./.github/actions/load-deps
-      - name: Update judicial system
-        id: judicial-system
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-          SHOULD_DEPLOY_JUDICIAL: true
-        run: |
-          node scripts/ci/docker/get-data.mjs --deploy-judicial
-
-  deploy:
-    uses: ./.github/workflows/deploy.yml
-    with:
-      mq_should_run_build: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD }}
-      docker_chunks: ${{ needs.prepare.outputs.DOCKER_CHUNKS }}
-      mq_helm_values_branch: ${{ needs.prepare.outputs.MQ_HELM_VALUES_BRANCH }}
-      mq_has_output: ${{ needs.get-manifest-data.outputs.MQ_HAS_OUTPUT }}
-      mq_changed_files: ${{ needs.get-manifest-data.outputs.MQ_CHANGED_FILES }}
-      mq_commit_msg: ${{ needs.get-manifest-data.outputs.MQ_COMMIT_MSG }}
-      mq_judicial_dev: ${{ needs.get-judicial-data.outputs.MQ_JUDICIAL_DEV }}
-      mq_judicial_prod: ${{ needs.get-judicial-data.outputs.MQ_JUDICIAL_PROD }}
-      runs_on_s3_bucket_cache: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
-    needs:
-      - prepare
-      - tests
-      - docker-build
-      - get-manifest-data
-      - get-judicial-data
-
   success:
     runs-on: arc-shared
     if: ${{ !cancelled() }}
@@ -308,7 +226,6 @@ jobs:
       - prepare
       - tests
       - docker-build
-      - deploy
     steps:
       - name: Check prepare success
         run: '[[ ${{ needs.prepare.result }} == "success" ]] || exit 1'
@@ -316,6 +233,74 @@ jobs:
         run: '[[ ${{ needs.tests.result }} != "failure" && ${{ needs.tests.result }} != "abandoned" && ${{ needs.tests.result }} != "cancelled" ]] || exit 1'
       - name: Check build success
         run: '[[ ${{ needs.docker-build.result }} != "failure" && ${{ needs.docker-build.result }} != "abandoned" && ${{ needs.docker-build.result }} != "cancelled" ]] || exit 1'
+      - name: Get docker-build output
+        uses: cloudposse/github-action-matrix-outputs-read@v1
+        id: read
+        with:
+          matrix-step-name: docker-build
+      - name: checkout
+        if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
+        uses: actions/checkout@v4
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+        if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
+        with:
+          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+        if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
+      - name: Prepare artifact to be uploaded
+        if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
+        env:
+          JSON_DATA: ${{ steps.read.outputs.result }}
+        run: |
+          node scripts/ci/docker/write-data.mjs
+      - name: Get manifest data
+        id: manifest
+        if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          node scripts/ci/docker/bootstrap.mjs
+          node scripts/ci/docker/get-data.mjs
+      - name: Update helm-values repository
+        uses: ./.github/actions/update-helm-values
+        if: ${{ steps.manifest.outputs.MQ_HAS_OUTPUT == 'true' && needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
+        with:
+          files: ${{ steps.manifest.outputs.MQ_CHANGED_FILES }}
+          ssh-key: ${{ secrets.HELM_VALUES_SSH_KEY }}
+          app-id: ${{ secrets.HELM_VALUES_APP_ID }}
+          branch: ${{ needs.prepare.outputs.MQ_HELM_VALUES_BRANCH }}
+          commit-msg: ${{ steps.manifest.outputs.MQ_COMMIT_MSG }}
+      - name: Update judicial system
+        id: judicial-system
+        if: ${{ github.event.merge_group.base_ref == 'refs/heads/main' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]'  }}
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SHOULD_DEPLOY_JUDICIAL: true
+        run: |
+          node scripts/ci/docker/get-data.mjs --deploy-judicial
+      - name: Update helm-values repository with judicial system DEV
+        uses: ./.github/actions/update-helm-values
+        if: ${{ steps.judicial-system.outputs.MQ_HAS_OUTPUT == 'true' }}
+        with:
+          files: ${{ steps.judicial-system.outputs.MQ_JUDICIAL_DEV }}
+          ssh-key: ${{ secrets.HELM_VALUES_SSH_KEY }}
+          app-id: ${{ secrets.HELM_VALUES_APP_ID }}
+          commit-msg: ${{ steps.judicial-system.outputs.MQ_COMMIT_MSG }}
+          branch: main
+
+      - name: Update helm-values repository with judicial system PROD
+        uses: ./.github/actions/update-helm-values
+        if: ${{ steps.judicial-system.outputs.MQ_HAS_OUTPUT == 'true' }}
+        with:
+          files: ${{ steps.judicial-system.outputs.MQ_JUDICIAL_PROD }}
+          ssh-key: ${{ secrets.HELM_VALUES_SSH_KEY }}
+          app-id: ${{ secrets.HELM_VALUES_APP_ID }}
+          commit-msg: ${{ steps.judicial-system.outputs.MQ_COMMIT_MSG }}
+          branch: release
 
   # Remove this as a required status check and switch to something more meaningful
   codeowners-check:
