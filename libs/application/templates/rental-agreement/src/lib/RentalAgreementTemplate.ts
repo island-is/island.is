@@ -92,7 +92,7 @@ const RentalAgreementTemplate: ApplicationTemplate<
         meta: {
           name: States.DRAFT,
           status: 'draft',
-          lifecycle: pruneAfterDays(30),
+          lifecycle: DefaultStateLifeCycle,
           onExit: defineTemplateApi({
             action: TemplateApiActions.sendApplicationSummary,
           }),
@@ -129,7 +129,7 @@ const RentalAgreementTemplate: ApplicationTemplate<
         meta: {
           name: States.INREVIEW,
           status: 'inprogress',
-          lifecycle: pruneAfterDays(30),
+          lifecycle: pruneAfterDays(10),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -169,7 +169,7 @@ const RentalAgreementTemplate: ApplicationTemplate<
         meta: {
           name: States.SIGNING,
           status: 'inprogress',
-          lifecycle: pruneAfterDays(30),
+          lifecycle: pruneAfterDays(10),
           onEntry: defineTemplateApi({
             action: TemplateApiActions.submitApplicationToHmsRentalService,
           }),
@@ -193,9 +193,6 @@ const RentalAgreementTemplate: ApplicationTemplate<
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: {
-            target: States.SIGNING,
-          },
           [DefaultEvents.EDIT]: {
             target: States.INREVIEW,
           },
