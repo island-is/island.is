@@ -8,7 +8,6 @@ import Logo from '@island.is/application/templates/social-insurance-administrati
 
 export const InReview: Form = buildForm({
   id: 'MedicalAndRehabilitationInReview',
-  title: '',
   logo: Logo,
   children: [
     buildSection({

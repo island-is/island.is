@@ -9,7 +9,6 @@ import { errorMessages as coreSIAErrorMessages } from '@island.is/application/te
 import { formatBankInfo } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-
 import { NOT_APPLICABLE } from '../utils/constants'
 import { errorMessages } from './messages'
 
@@ -37,11 +36,7 @@ export const dataSchema = z.object({
       bank: z.string(),
       personalAllowance: z.enum([YES, NO]),
       personalAllowanceUsage: z.string().optional(),
-      taxLevel: z.enum([
-        TaxLevelOptions.INCOME,
-        TaxLevelOptions.FIRST_LEVEL,
-        TaxLevelOptions.SECOND_LEVEL,
-      ]),
+      taxLevel: z.nativeEnum(TaxLevelOptions),
     })
     .partial()
     .refine(
