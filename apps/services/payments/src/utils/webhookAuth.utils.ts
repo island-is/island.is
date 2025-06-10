@@ -2,6 +2,8 @@ import * as jwt from 'jsonwebtoken'
 import { v4 as uuid } from 'uuid'
 import * as crypto from 'crypto'
 
+import type { Logger } from '@island.is/logging'
+
 interface JwtSigningConfig {
   privateKey: string
   keyId: string
@@ -30,6 +32,7 @@ export const generateWebhookJwt = (
   updateInfo: UpdateInfo,
   updateBody: object,
   jwtConfig: JwtSigningConfig,
+  logger?: Logger,
 ): string => {
   if (
     !jwtConfig.privateKey ||
@@ -48,7 +51,7 @@ export const generateWebhookJwt = (
     upstreamSystemIdentifier = new URL(paymentFlow.onUpdateUrl).origin
   } catch (e) {
     // Log this warning, but proceed with a default audience
-    console.warn(
+    ;(logger ?? console).warn(
       `Could not parse onUpdateUrl to determine audience: ${paymentFlow.onUpdateUrl}. Using default.`,
     )
   }

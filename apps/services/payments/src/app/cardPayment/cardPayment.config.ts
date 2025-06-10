@@ -53,6 +53,6 @@ export const CardPaymentModuleConfig = defineConfig({
     tokenExpiryMinutes: env.optionalJSON('PAYMENTS_TOKEN_EXPIRY_MINUTES') ?? 2,
     memCacheExpiryMinutes:
       env.optionalJSON('PAYMENTS_MEM_CACHE_EXPIRY_MINUTES') ?? 2,
-    webOrigin: env.required('PAYMENTS_WEB_URL'),
+    webOrigin: env.required('PAYMENTS_WEB_URL', 'http://localhost:4200/greida'),
   }),
 })

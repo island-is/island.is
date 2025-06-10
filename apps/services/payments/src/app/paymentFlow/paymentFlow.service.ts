@@ -419,6 +419,7 @@ export class PaymentFlowService {
           ...this.jwksConfig,
           privateKey: this.jwksConfigService.getPrivateKey(),
         },
+        this.logger,
       )
 
       const response = await fetch(paymentFlow.onUpdateUrl, {
