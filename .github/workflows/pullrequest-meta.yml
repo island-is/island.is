@@ -62,6 +62,7 @@ jobs:
         run: echo "✅ actionlint ran successfully."
 
   collect:
+    name: CI workflow success
     runs-on: arc-shared
     if: ${{ !cancelled() }}
     needs: [actionlint]
