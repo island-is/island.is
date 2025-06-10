@@ -1,3 +1,4 @@
+export * from './completed'
 export * from './dataSchema'
 export * from './prerequisites'
 export * from './housing/registerProperty'
