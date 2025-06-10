@@ -1,9 +1,7 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
-import { YesOrNoEnum } from '@island.is/application/core'
 import { parseCurrency } from '../../utils/utils'
 import {
-  RentalAmountIndexTypes,
   RentalAmountPaymentDateOptions,
   RentalPaymentMethodOptions,
 } from '../../utils/enums'
@@ -12,9 +10,10 @@ import * as m from '../messages'
 export const rentalAmount = z
   .object({
     amount: z.string().optional(),
-    indexTypes: z.nativeEnum(RentalAmountIndexTypes).optional(),
     indexValue: z.string().optional(),
     isIndexConnected: z.string().array().optional(),
+    indexDate: z.string().optional(),
+    indexRate: z.string().optional(),
     paymentDateOptions: z.nativeEnum(RentalAmountPaymentDateOptions).optional(),
     paymentDateOther: z.string().optional(),
     paymentMethodOptions: z.nativeEnum(RentalPaymentMethodOptions).optional(),
@@ -59,14 +58,6 @@ export const rentalAmount = z
       })
     }
 
-    if (data.isIndexConnected?.includes(YesOrNoEnum.YES) && !data.indexTypes) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Custom error message',
-        params: m.rentalAmount.indexValueRequiredError,
-        path: ['indexTypes'],
-      })
-    }
     if (
       data.paymentDateOptions?.includes(RentalAmountPaymentDateOptions.OTHER) &&
       !data.paymentDateOther?.trim().length

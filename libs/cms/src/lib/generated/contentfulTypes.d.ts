@@ -2197,6 +2197,7 @@ export interface IIntroLinkImageFields {
     | ILinkUrl
     | INews
     | IAnchorPage
+    | IOrganizationSubpage
     | undefined
 
   /** Open Link in New Tab */
