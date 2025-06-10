@@ -207,7 +207,7 @@ const OrganizationHomePage = ({
             : 0
         }
       >
-        {organizationPage?.bottomSlices.map((slice) => {
+        {organizationPage?.bottomSlices.map((slice, index) => {
           if (
             organizationHasDigitalIcelandNewsVisuals(organizationPage.slug) &&
             slice.__typename === 'LatestNewsSlice' &&
@@ -223,21 +223,29 @@ const OrganizationHomePage = ({
             )
           }
           return (
-            <SliceMachine
-              key={slice.id}
-              slice={slice}
-              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-              // @ts-ignore make web strict
-              namespace={namespace}
-              slug={organizationPage.slug}
-              fullWidth={true}
-              params={{
-                latestNewsSliceColorVariant:
-                  organizationPage.theme === 'landing_page'
-                    ? 'blue'
-                    : 'default',
-              }}
-            />
+            <Box
+              paddingBottom={
+                index === organizationPage.bottomSlices.length - 1
+                  ? SLICE_SPACING
+                  : 0
+              }
+            >
+              <SliceMachine
+                key={slice.id}
+                slice={slice}
+                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                // @ts-ignore make web strict
+                namespace={namespace}
+                slug={organizationPage.slug}
+                fullWidth={true}
+                params={{
+                  latestNewsSliceColorVariant:
+                    organizationPage.theme === 'landing_page'
+                      ? 'blue'
+                      : 'default',
+                }}
+              />
+            </Box>
           )
         })}
       </Stack>
