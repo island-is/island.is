@@ -126,7 +126,7 @@ libs/clients/rsk/relationships/                                                 
 /apps/payments                                                                                            @island-is/aranja
 /apps/services/payments                                                                                   @island-is/aranja
 /libs/clients/payments                                                                                    @island-is/aranja
-/libs/clients/fjs/bank-info/                                                                               @island-is/aranja
+/libs/clients/fjs/bank-info/                                                                              @island-is/aranja
 
 /apps/native/app/                                                                                         @island-is/aranja-app
 codemagic.yaml                                                                                            @island-is/aranja-app
