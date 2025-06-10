@@ -101,7 +101,7 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
   const document = docRes.data?.documentV2
   const comments = document?.ticket?.comments ?? []
   const replyable = document?.replyable ?? false
-  const isSkeleton = docRes.loading
+  const isSkeleton = docRes.loading && !docRes.data
 
   const onReplyPress = () => {
     if (!document?.sender?.name) {
@@ -244,7 +244,7 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
                 onPress={onReplyPress}
               />
             )}
-            {!replyable && !firstReply && (
+            {!replyable && !firstReply && !docRes.loading && (
               <Alert
                 type="info"
                 message={intl.formatMessage({
