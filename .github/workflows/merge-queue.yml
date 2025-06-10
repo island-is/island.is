@@ -220,7 +220,6 @@ jobs:
           docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
 
   deploy:
-    if: ${{ !cancelled() }}
     uses: ./.github/workflows/deploy.yml
     with:
       mq_should_run_build: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD }}
@@ -231,6 +230,7 @@ jobs:
       mq_commit_msg: ${{ steps.manifest.outputs.MQ_COMMIT_MSG }}
       mq_judicial_dev: ${{ steps.judicial-system.outputs.MQ_JUDICIAL_DEV }}
       mq_judicial_prod: ${{ steps.judicial-system.outputs.MQ_JUDICIAL_PROD }}
+      runs_on_s3_bucket_cache: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
     needs:
       - prepare
       - tests

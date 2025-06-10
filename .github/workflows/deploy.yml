@@ -27,6 +27,9 @@ on:
       mq_judicial_prod:
         type: string
         required: true
+      runs_on_s3_bucket_cache:
+        type: string
+        required: true
 
 jobs:
   deploy:
@@ -46,7 +49,7 @@ jobs:
         uses: ./.github/actions/setup-yarn
         if: ${{ inputs.mq_should_run_build == 'true' && inputs.docker_chunks && inputs.docker_chunks != '[]' }}
         with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
+          RUNS_ON_S3_BUCKET_CACHE: ${{ inputs.runs_on_s3_bucket_cache }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
