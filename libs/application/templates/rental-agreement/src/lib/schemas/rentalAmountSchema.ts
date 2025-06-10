@@ -46,8 +46,9 @@ export const rentalAmount = z
     const rentalPeriodIsDefinite = data.rentalPeriodIsDefinite?.includes(
       YesOrNoEnum.YES,
     )
+    const indexIsConnected = data.isIndexConnected?.includes(YesOrNoEnum.YES)
 
-    if (rentalPeriodIsDefinite && startDate && endDate) {
+    if (rentalPeriodIsDefinite && startDate && endDate && indexIsConnected) {
       // Calculate the difference in milliseconds
       const diffTime = Math.abs(endDate.getTime() - startDate.getTime())
       // Convert milliseconds to days (1000ms * 60s * 60min * 24h)
