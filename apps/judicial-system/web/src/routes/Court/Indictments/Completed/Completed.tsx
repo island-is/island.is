@@ -66,7 +66,7 @@ const Completed: FC = () => {
   const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
   const { createEventLog } = useEventLog()
 
-  const { onOpen } = useFileList({
+  const { onOpenFile } = useFileList({
     caseId: workingCase.id,
   })
 
@@ -156,14 +156,23 @@ const Completed: FC = () => {
   const isRuling =
     workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
 
-  const stepIsValid = () =>
-    workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
-      ? workingCase.defendants?.every((defendant) =>
-          defendant.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
-            ? Boolean(defendant.verdictAppealDecision)
-            : Boolean(defendant.serviceRequirement),
-        )
-      : true
+  const stepIsValid = () => {
+    const isValidDefendants =
+      workingCase.indictmentRulingDecision ===
+      CaseIndictmentRulingDecision.RULING
+        ? workingCase.defendants?.every((defendant) =>
+            defendant.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
+              ? Boolean(defendant.verdictAppealDecision)
+              : Boolean(defendant.serviceRequirement),
+          )
+        : true
+
+    if (features?.includes(Feature.SERVICE_PORTAL)) {
+      return Boolean(workingCase.ruling) && isValidDefendants
+    } else {
+      return isValidDefendants
+    }
+  }
 
   const hasLawsBroken = lawsBroken.size > 0
   const hasMergeCases =
@@ -180,6 +189,8 @@ const Completed: FC = () => {
     {
       label: 'Upplýsingar um áfrýjun til Landsréttar og áfrýjunarfresti',
       value: InformationForDefendant.INFORMATION_ON_APPEAL_TO_COURT_OF_APPEALS,
+      tooltip:
+        'Einstaklingur getur áfrýjað dómi til Landsréttar ef viðkomandi hefur verið dæmdur í fangelsi eða til að greiða sekt eða sæta upptöku eigna sem nær áfrýjunarfjárhæð í einkamáli, kr. 1.420.488.',
     },
     {
       label: 'Þýðing skilorðsbundinnar refsingar og skilorðsrofs',
@@ -267,7 +278,7 @@ const Completed: FC = () => {
               })}
               onChange={handleCriminalRecordUpdateUpload}
               onRemove={handleRemoveFile}
-              onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
+              onOpenFile={(file) => onOpenFile(file)}
             />
           </Box>
         )}
@@ -427,7 +438,7 @@ const Completed: FC = () => {
                           dómfellda um við birtingu dómsins.
                         </Text>
                         <BlueBox>
-                          {defendantCheckboxes.map((checkbox) => (
+                          {defendantCheckboxes.map((checkbox, indexChecbox) => (
                             <React.Fragment key={checkbox.value}>
                               <Checkbox
                                 label={checkbox.label}
@@ -436,6 +447,7 @@ const Completed: FC = () => {
                                 checked={defendant?.informationForDefendant?.includes(
                                   checkbox.value,
                                 )}
+                                tooltip={checkbox?.tooltip}
                                 large
                                 filled
                                 onChange={(target) => {
@@ -461,7 +473,10 @@ const Completed: FC = () => {
                                   )
                                 }}
                               />
-                              <Box marginBottom={marginSpaceBetweenButtons} />
+                              {defendantCheckboxes.length - 1 !==
+                                indexChecbox && (
+                                <Box marginBottom={marginSpaceBetweenButtons} />
+                              )}
                             </React.Fragment>
                           ))}
                         </BlueBox>
@@ -474,7 +489,7 @@ const Completed: FC = () => {
           </Box>
         )}
         {features?.includes(Feature.SERVICE_PORTAL) && (
-          <Box marginBottom={5}>
+          <Box>
             <SectionHeading title={'Dómsorð'} marginBottom={2} heading="h4" />
             <RulingInput
               workingCase={workingCase}
@@ -482,6 +497,7 @@ const Completed: FC = () => {
               rows={8}
               label="Dómsorð"
               placeholder="Hvert er dómsorðið?"
+              required
             />
           </Box>
         )}

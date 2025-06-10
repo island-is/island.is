@@ -117,7 +117,7 @@ export const m = defineMessages({
   },
   collectionTitle: {
     id: 'admin-portal.signature-collection:collectionTitle',
-    defaultMessage: 'Forsetakosningar 2024',
+    defaultMessage: 'Forsetakosningar',
     description: '',
   },
   municipalCollectionTitle: {
@@ -161,6 +161,11 @@ export const m = defineMessages({
   viewConstituency: {
     id: 'admin-portal.signature-collection:viewConstituency',
     defaultMessage: 'Skoða kjördæmi',
+    description: '',
+  },
+  municipality: {
+    id: 'admin-portal.signature-collection:municipality',
+    defaultMessage: 'Sveitarfélag',
     description: '',
   },
   viewMunicipality: {

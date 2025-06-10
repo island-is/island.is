@@ -44,11 +44,7 @@ const compare = (a: CaseTableCell, b: CaseTableCell): number => {
 }
 
 const renderString = (value: StringValue) => {
-  return (
-    <Text as="span" variant="small">
-      {value.str}
-    </Text>
-  )
+  return <Text>{value.str}</Text>
 }
 
 const renderStringGroup = (value: StringGroupValue) => {
