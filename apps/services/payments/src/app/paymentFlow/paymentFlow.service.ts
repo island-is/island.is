@@ -1,5 +1,6 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { ConfigType } from '@nestjs/config'
 import { isCompany, isValid } from 'kennitala'
 import { v4 as uuid } from 'uuid'
 
@@ -11,6 +12,7 @@ import {
 } from '@island.is/clients/charge-fjs-v2'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
+import { retry } from '@island.is/shared/utils/server'
 
 import {
   PaymentFlow,
@@ -33,17 +35,19 @@ import { PaymentFlowFjsChargeConfirmation } from './models/paymentFlowFjsChargeC
 import { FjsErrorCode, PaymentServiceCode } from '@island.is/shared/constants'
 import { CatalogItemWithQuantity } from '../../types/charges'
 import {
-  fjsErrorMessageToCode,
   generateChargeFJSPayload,
   mapFjsErrorToCode,
 } from '../../utils/fjsCharge'
 import { processCharges } from '../../utils/chargeUtils'
 import { PaymentFlowPaymentConfirmation } from './models/paymentFlowPaymentConfirmation.model'
 import { ChargeResponse } from '../cardPayment/cardPayment.types'
-import { retry } from '@island.is/shared/utils/server'
 import { PaymentTrackingData } from '../../types/cardPayment'
 import { onlyReturnKnownErrorCode } from '../../utils/paymentErrors'
+import { generateWebhookJwt } from '../../utils/webhookAuth.utils'
+import { JwksConfigService } from '../jwks/jwks-config.service'
 import { ChargeItem } from '../../utils/chargeUtils'
+import { PaymentFlowModuleConfig } from './paymentFlow.config'
+import { JwksConfig } from '../jwks/jwks.config'
 
 interface PaymentFlowUpdateConfig {
   /**
@@ -76,6 +80,13 @@ export class PaymentFlowService {
     private chargeFjsV2ClientService: ChargeFjsV2ClientService,
     private nationalRegistryV3: NationalRegistryV3ClientService,
     private companyRegistryApi: CompanyRegistryClientService,
+    private jwksConfigService: JwksConfigService,
+    @Inject(PaymentFlowModuleConfig.KEY)
+    private readonly paymentFlowConfig: ConfigType<
+      typeof PaymentFlowModuleConfig
+    >,
+    @Inject(JwksConfig.KEY)
+    private readonly jwksConfig: ConfigType<typeof JwksConfig>,
   ) {}
 
   async createPaymentUrl(
@@ -128,8 +139,8 @@ export class PaymentFlowService {
 
       return {
         urls: {
-          is: `${environment.paymentsWeb.origin}/is/${paymentFlow.id}`,
-          en: `${environment.paymentsWeb.origin}/en/${paymentFlow.id}`,
+          is: `${this.paymentFlowConfig.webOrigin}/is/${paymentFlow.id}`,
+          en: `${this.paymentFlowConfig.webOrigin}/en/${paymentFlow.id}`,
         },
       }
     } catch (e) {
@@ -399,10 +410,23 @@ export class PaymentFlowService {
     }
 
     const notifyUpdateUrl = async (attempt?: number) => {
+      // Generate the JWT
+      const token = generateWebhookJwt(
+        { id: paymentFlow.id, onUpdateUrl: paymentFlow.onUpdateUrl },
+        { type: update.type },
+        updateBody,
+        {
+          ...this.jwksConfig,
+          privateKey: this.jwksConfigService.getPrivateKey(),
+        },
+        this.logger,
+      )
+
       const response = await fetch(paymentFlow.onUpdateUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(updateBody),
       })

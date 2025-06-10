@@ -66,6 +66,11 @@ const CompareLists = ({ collectionId }: { collectionId: string }) => {
             return result.id !== signatureId
           }),
         )
+      } else if (
+        Array.isArray(res.data?.signatureCollectionAdminUnsign.reasons) &&
+        res.data.signatureCollectionAdminUnsign.reasons.length > 0
+      ) {
+        toast.error(res.data.signatureCollectionAdminUnsign.reasons[0])
       }
     } catch (e) {
       toast.error(e.message)

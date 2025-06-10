@@ -59,11 +59,12 @@ const Statement = () => {
     updateUploadFile,
     removeUploadFile,
   } = useUploadFiles(workingCase.caseFiles)
-  const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
 
-  const { onOpen } = useFileList({
+  const { onOpenFile } = useFileList({
     caseId: workingCase.id,
   })
+
+  const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
 
   const appealStatementType = !isDefenceUser(user)
     ? CaseFileCategory.PROSECUTOR_APPEAL_STATEMENT
@@ -117,7 +118,10 @@ const Statement = () => {
   }
 
   const handleChange = (files: File[], category: CaseFileCategory) => {
-    addUploadFiles(files, { category, status: FileUploadStatus.done })
+    addUploadFiles(files, {
+      category,
+      status: FileUploadStatus.done,
+    })
   }
 
   return (
@@ -128,6 +132,11 @@ const Statement = () => {
           {formatMessage(strings.title)}
         </PageTitle>
         <Box marginBottom={7}>
+          {workingCase.courtCaseNumber && (
+            <Text as="h2" variant="h2" fontWeight="semiBold" marginBottom={1}>
+              Mál nr. {workingCase.courtCaseNumber}
+            </Text>
+          )}
           {workingCase.rulingDate && (
             <RulingDateLabel rulingDate={workingCase.rulingDate} />
           )}
@@ -156,6 +165,7 @@ const Statement = () => {
                 title={formatMessage(strings.uploadStatementTitle)}
                 required
               />
+
               <InputFileUpload
                 name="appealStatement"
                 files={uploadFiles.filter(
@@ -169,7 +179,7 @@ const Statement = () => {
                 buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
                 onChange={(files) => handleChange(files, appealStatementType)}
                 onRemove={(file) => handleRemoveFile(file)}
-                onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
+                onOpenFile={(file) => onOpenFile(file)}
                 hideIcons={!allFilesDoneOrError}
                 disabled={!allFilesDoneOrError}
               />
@@ -201,7 +211,7 @@ const Statement = () => {
                 buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
                 onChange={(files) => handleChange(files, appealCaseFilesType)}
                 onRemove={(file) => handleRemoveFile(file)}
-                onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
+                onOpenFile={(file) => onOpenFile(file)}
                 hideIcons={!allFilesDoneOrError}
                 disabled={!allFilesDoneOrError}
               />

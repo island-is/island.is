@@ -18,7 +18,7 @@ import {
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Features } from '@island.is/feature-flags'
-import { CanSignApi, CurrentCollectionApi, GetListApi } from '../dataProviders'
+import { CanSignApi, GetListApi } from '../dataProviders'
 import { CodeOwners } from '@island.is/shared/constants'
 
 const signListTemplate: ApplicationTemplate<
@@ -66,7 +66,6 @@ const signListTemplate: ApplicationTemplate<
               api: [
                 NationalRegistryUserApi,
                 UserProfileApi,
-                CurrentCollectionApi,
                 CanSignApi,
                 GetListApi,
               ],

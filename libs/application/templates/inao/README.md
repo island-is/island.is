@@ -1,4 +1,6 @@
-# Applications for the Icelandic National Audit Office, Ríkisendurskoðun
+# The Icelandic National Audit Office (INAO)
+
+Applications that get sent in to The Icelandic National Audit Office (Ríkisendurskoðun)
 
 ## Financial-statement-cemetery
 

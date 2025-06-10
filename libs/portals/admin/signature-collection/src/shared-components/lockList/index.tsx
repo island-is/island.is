@@ -21,7 +21,7 @@ const ActionLockList = ({ listId }: { listId: string }) => {
 
   const [modalLockListIsOpen, setModalLockListIsOpen] = useState(false)
 
-  const [lockList, { loading: loadingLockList }] =
+  const [lockList, { loading: loadingLockList, data: lockListData }] =
     useSignatureCollectionLockListMutation({
       variables: {
         input: {
@@ -29,9 +29,16 @@ const ActionLockList = ({ listId }: { listId: string }) => {
         },
       },
       onCompleted: () => {
-        setModalLockListIsOpen(false)
-        revalidate()
-        toast.success(formatMessage(m.lockListSuccess))
+        if (lockListData?.signatureCollectionLockList.success) {
+          setModalLockListIsOpen(false)
+          revalidate()
+          toast.success(formatMessage(m.lockListSuccess))
+        } else {
+          const message =
+            lockListData?.signatureCollectionLockList.reasons?.[0] ??
+            formatMessage(m.lockListError)
+          toast.error(message)
+        }
       },
       onError: () => {
         toast.error(formatMessage(m.lockListError))

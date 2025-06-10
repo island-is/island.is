@@ -8,11 +8,7 @@ import {
 import { AnyEventObject, MachineOptions, StateMachine } from 'xstate/lib/types'
 
 import { FormLoader, FormText, StaticText } from './Form'
-import {
-  Application,
-  ActionCardTag,
-  ApplicationWithAttachments,
-} from './Application'
+import { Application, ActionCardTag } from './Application'
 import { Condition } from './Condition'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { TemplateApi } from './template-api/TemplateApi'

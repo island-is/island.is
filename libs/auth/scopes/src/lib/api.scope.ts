@@ -36,4 +36,5 @@ export enum ApiScope {
   energyFunds = '@island.is/applications/orkusjodur',
   signatureCollection = '@island.is/signature-collection',
   menntamalastofnun = '@island.is/applications/mms',
+  ojoiAdverts = '@island.is/applications/dmr:stjornartidindi',
 }
