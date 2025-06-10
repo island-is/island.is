@@ -18,9 +18,11 @@ import {
   MyMockProvider,
   NationalRegistryApi,
   ReferenceDataApi,
+  SendNotification,
 } from '../dataProviders'
 import { assign } from 'xstate'
 import { Features } from '@island.is/feature-flags'
+import { NotificationType } from '@island.is/application/template-api-modules'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -162,6 +164,7 @@ const template: ApplicationTemplate<
                 ),
               write: 'all',
               read: 'all',
+              api: [SendNotification],
             },
           ],
         },
