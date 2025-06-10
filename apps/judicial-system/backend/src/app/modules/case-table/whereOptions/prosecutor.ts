@@ -35,7 +35,12 @@ const prosecutorRequestCasesSharedWhereOptions = (user: TUser) => ({
 
 export const prosecutorRequestCasesInProgressWhereOptions = (user: TUser) => ({
   ...prosecutorRequestCasesSharedWhereOptions(user),
-  state: [CaseState.DRAFT, CaseState.SUBMITTED, CaseState.RECEIVED],
+  state: [
+    CaseState.NEW,
+    CaseState.DRAFT,
+    CaseState.SUBMITTED,
+    CaseState.RECEIVED,
+  ],
 })
 
 export const prosecutorRequestCasesActiveWhereOptions = (user: TUser) => ({
