@@ -151,6 +151,7 @@ const PressableListItem = React.memo(
   }) => {
     const { getOrganizationLogoUrl } = useOrganizationsStore()
     const isSelected = selectable && selectedItems.includes(item.id)
+
     return (
       <InboxCard
         key={item.id}
@@ -161,6 +162,7 @@ const PressableListItem = React.memo(
         senderName={item.sender.name}
         icon={item.sender.name && getOrganizationLogoUrl(item.sender.name, 75)}
         isUrgent={item.isUrgent}
+        replyable={item.replyable ?? false}
         bookmarked={item.bookmarked}
         selectable={selectable}
         selected={isSelected}
