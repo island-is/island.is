@@ -45,7 +45,12 @@ export const prosecutorRequestCasesCompletedWhereOptions = (user: TUser) => ({
   ...prosecutorRequestCasesSharedWhereOptions(user),
   state: completedRequestCaseStates,
   appeal_state: {
-    [Op.not]: [CaseAppealState.RECEIVED, CaseAppealState.APPEALED],
+    [Op.or]: [
+      null,
+      CaseAppealState.RECEIVED,
+      CaseAppealState.WITHDRAWN,
+      CaseAppealState.COMPLETED,
+    ],
   },
 })
 
