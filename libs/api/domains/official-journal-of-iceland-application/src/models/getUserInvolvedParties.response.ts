@@ -11,7 +11,7 @@ export class InvolvededParty {
   @Field({ description: 'The slug of the involved party' })
   slug!: string
 
-  @Field({
+  @Field(() => String, {
     description: 'The nationalId of the involved party',
     nullable: true,
   })
