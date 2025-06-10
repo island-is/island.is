@@ -34,6 +34,7 @@ import {
   isSuccessfulServiceStatus,
   ServiceStatus,
   SubpoenaNotificationType,
+  SubpoenaType,
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
@@ -128,6 +129,7 @@ export class SubpoenaService {
     transaction: Transaction,
     arraignmentDate?: Date,
     location?: string,
+    subpoenaType?: SubpoenaType,
   ): Promise<Subpoena> {
     return this.subpoenaModel.create(
       {
@@ -135,6 +137,7 @@ export class SubpoenaService {
         caseId,
         arraignmentDate,
         location,
+        type: subpoenaType,
       },
       { transaction },
     )

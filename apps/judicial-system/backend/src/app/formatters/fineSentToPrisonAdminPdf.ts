@@ -4,6 +4,7 @@ import {
   formatDate,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
+import { EventType } from '@island.is/judicial-system/types'
 
 import { Case } from '../modules/case'
 import {
@@ -70,6 +71,10 @@ export const createFineSentToPrisonAdminPdf = (
       (a, b) => new Date(b.created).getTime() - new Date(a.created).getTime(),
     )[0]?.created
 
+  const getSignatureDate = theCase.eventLogs?.find(
+    (eventLog) => eventLog.eventType === EventType.INDICTMENT_REVIEWED,
+  )?.created
+
   addMediumCenteredText(
     doc,
     `Sent til fullnustu ${
@@ -81,7 +86,9 @@ export const createFineSentToPrisonAdminPdf = (
   addEmptyLines(doc, 2)
 
   const signatureDateText = `Dagsetning áritunar: `
-  const rulingDateText = `${formatDate(theCase.rulingDate)}`
+  const signatureDate = `${
+    getSignatureDate ? formatDate(getSignatureDate) : ''
+  }`
 
   const reviewedByText = 'Yfirlestur: '
   const reviewerNameText = theCase.indictmentReviewer?.name || ''
@@ -92,19 +99,19 @@ export const createFineSentToPrisonAdminPdf = (
   const reviewedByTextWidth = doc.widthOfString(reviewedByText)
 
   doc.font('Times-Roman').fontSize(12)
-  const rulingDateTextWidth = doc.widthOfString(rulingDateText)
+  const signatureDateWidth = doc.widthOfString(signatureDate)
   const reviewerNameTextWidth = doc.widthOfString(reviewerNameText)
 
   // Calculate left and right lengths
   const totalTextWidth =
     signatureDateTextWidth +
-    rulingDateTextWidth +
+    signatureDateWidth +
     reviewedByTextWidth +
     reviewerNameTextWidth
 
   // Add left-aligned text
   addNormalPlusText(doc, signatureDateText, 'Times-Bold', true)
-  addNormalPlusText(doc, rulingDateText, 'Times-Roman', true)
+  addNormalPlusText(doc, signatureDate, 'Times-Roman', true)
 
   // Get starting x position for right-aligned text
   const startX = doc.page.width - doc.page.margins.left - totalTextWidth

@@ -5,7 +5,8 @@ import {
 import { SecurityDepositType } from '@island.is/clients/hms-rental-agreement'
 
 export const parseToNumber = (value: string): number => {
-  const parsed = parseInt(value, 10)
+  const normalizedValue = value.replace(',', '.')
+  const parsed = parseFloat(normalizedValue)
   return isNaN(parsed) ? 0 : parsed
 }
 
@@ -56,7 +57,7 @@ export const mapAppraisalUnits = (units: PropertyUnit[] | undefined) => {
       unit.unitCode && parseInt(unit.unitCode.slice(-2), 10).toString()
 
     return {
-      appraisalUnitId: unit.unitCode ?? null,
+      appraisalUnitId: unit.appraisalUnitCode?.toString() ?? null,
       apartmentNumber: apartmentNumber ?? null,
       floor: apartmentFloor ?? null,
       size:

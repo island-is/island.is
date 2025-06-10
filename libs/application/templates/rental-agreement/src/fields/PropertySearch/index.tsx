@@ -26,6 +26,8 @@ import { PropertyTableRow } from './components/PropertyTableRow'
 import { PropertyTableUnits } from './components/PropertyTableUnits'
 import { registerProperty } from '../../lib/messages'
 
+const ERROR_ID = 'registerProperty'
+
 interface Props extends FieldBaseProps {
   field: CustomField
   errors?: Record<string, Record<string, string>>
@@ -283,6 +285,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
       units: chosenUnits,
     })
     setCheckedUnits(updateCheckedUnits)
+    clearErrors(ERROR_ID)
   }
 
   const handleUnitSizeChange = (unit: PropertyUnit, value: number) => {
@@ -310,14 +313,16 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
       })
       return newValues
     })
+    clearErrors(ERROR_ID)
   }
 
-  const handleUnitRoomsChange = (unit: PropertyUnit, value: number) => {
+  const handleUnitRoomsChange = (unit: PropertyUnit, value: string) => {
     const unitKey = `${unit.propertyCode}_${unit.unitCode}`
+    const numberValue = value ? Number(value) : 0
     setNumOfRoomsValue((prev) => {
       const newValues = {
         ...prev,
-        [unitKey]: value,
+        [unitKey]: numberValue,
       }
       const updatedUnits = (storedValue?.units || []).map((u: PropertyUnit) => {
         if (
@@ -326,7 +331,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
         ) {
           return {
             ...u,
-            numOfRooms: value || 0,
+            numOfRooms: numberValue,
           }
         }
         return u
@@ -337,6 +342,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
       })
       return newValues
     })
+    clearErrors(ERROR_ID)
   }
 
   const handleAddressSelectionChange = (
@@ -361,6 +367,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
           }
         : undefined,
     )
+    clearErrors(ERROR_ID)
   }
 
   const hasValidationErrors = errors ? Object.keys(errors).length > 0 : false
@@ -492,7 +499,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
                                           onUnitRoomsChange={(e) =>
                                             handleUnitRoomsChange(
                                               unit,
-                                              Number(e.target.value),
+                                              e.target.value,
                                             )
                                           }
                                           unitInputErrorMessage={

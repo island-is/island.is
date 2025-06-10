@@ -1,4 +1,5 @@
 import { useLocale } from '@island.is/localization'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { FormScreen } from '../components/form/FormScreen'
 import { involvedParty } from '../lib/messages'
 import { InputFields, OJOIFieldBaseProps } from '../lib/types'
@@ -21,6 +22,7 @@ export const InvolvedPartyScreen = ({
   })
   const { formatMessage: f } = useLocale()
   const { setValue } = useFormContext()
+  const user = useUserInfo()
 
   useEffect(() => {
     setSubmitButtonDisabled && setSubmitButtonDisabled(true)
@@ -36,7 +38,13 @@ export const InvolvedPartyScreen = ({
         data.officialJournalOfIcelandApplicationGetUserInvolvedParties
           .involvedParties
 
-      if (involvedParties.length === 1) {
+      const userIsInvolvedParty =
+        involvedParties?.some(
+          (involvedParty) =>
+            involvedParty.nationalId === user?.profile?.nationalId,
+        ) ?? false
+
+      if (involvedParties.length === 1 || userIsInvolvedParty) {
         const involvedParty = involvedParties[0]
 
         setValue(InputFields.advert.involvedPartyId, involvedParty.id)
@@ -87,7 +95,11 @@ export const InvolvedPartyScreen = ({
               <AlertMessage
                 type="error"
                 title={f(involvedParty.errors.title)}
-                message={f(involvedParty.errors.message)}
+                message={
+                  error.graphQLErrors?.[0].message === 'Forbidden'
+                    ? f(involvedParty.errors.messageForbidden)
+                    : f(involvedParty.errors.message)
+                }
               />
             )}
           </Stack>
