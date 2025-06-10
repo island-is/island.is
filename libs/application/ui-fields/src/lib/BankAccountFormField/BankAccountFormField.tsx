@@ -7,6 +7,7 @@ import { BankAccountField, FieldBaseProps } from '@island.is/application/types'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
+import { getDefaultValue } from '../../getDefaultValue'
 
 interface Props extends FieldBaseProps {
   field: BankAccountField
@@ -30,6 +31,14 @@ export const BankAccountFormField = ({ field, application }: Props) => {
     application,
     formatMessage,
   )
+  const defaultBankAccount = getDefaultValue(field, application)
+  const bankNumberValue = defaultBankAccount
+    ? defaultBankAccount.split('-')[0]
+    : ''
+  const ledgerValue = defaultBankAccount ? defaultBankAccount.split('-')[1] : ''
+  const accountNumberValue = defaultBankAccount
+    ? defaultBankAccount.split('-')[2]
+    : ''
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
       {title && (
@@ -44,7 +53,7 @@ export const BankAccountFormField = ({ field, application }: Props) => {
           <Box marginBottom={[2, 2, 4]}>
             <InputController
               id={`${id}.bankNumber`}
-              defaultValue=""
+              defaultValue={bankNumberValue}
               label={bankNumber}
               placeholder="0000"
               format="####"
@@ -58,7 +67,7 @@ export const BankAccountFormField = ({ field, application }: Props) => {
           <Box marginBottom={[2, 2, 4]}>
             <InputController
               id={`${id}.ledger`}
-              defaultValue=""
+              defaultValue={ledgerValue}
               label={ledger}
               placeholder="00"
               format="##"
@@ -71,7 +80,7 @@ export const BankAccountFormField = ({ field, application }: Props) => {
           <Box marginBottom={[2, 2, 4]}>
             <InputController
               id={`${id}.accountNumber`}
-              defaultValue=""
+              defaultValue={accountNumberValue}
               label={accountNumber}
               placeholder="000000"
               format="######"

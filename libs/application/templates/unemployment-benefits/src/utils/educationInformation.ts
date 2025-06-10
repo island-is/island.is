@@ -1,6 +1,14 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 import { EducationType } from '../shared'
 import { FormValue } from '@island.is/application/types'
+
+export const wasStudyingLastTwelveMonths = (answers: FormValue) => {
+  const lastTwelveMonths = getValueViaPath<string>(
+    answers,
+    'education.lastTwelveMonths',
+  )
+  return lastTwelveMonths === YES
+}
 
 export const isCurrentlyStudying = (answers: FormValue) => {
   const educationType = getValueViaPath<string>(
@@ -23,7 +31,6 @@ export const wasStudyingLastSemester = (answers: FormValue) => {
     answers,
     'education.typeOfEducation',
   )
-  console.log(educationType)
   return educationType === EducationType.LAST_SEMESTER
 }
 

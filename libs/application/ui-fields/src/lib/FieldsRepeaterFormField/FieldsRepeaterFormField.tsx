@@ -163,7 +163,7 @@ export const FieldsRepeaterFormField = ({
       )}
       <Box marginTop={description ? 3 : 0}>
         <Stack space={4}>
-          <GridRow rowGap={[2, 2, 2, 3]}>
+          <GridRow rowGap={[2]}>
             {Array.from({ length: numberOfItems }).map((_i, i) => (
               <Fragment key={i}>
                 {(formTitleNumbering !== 'none' || formTitle) && (

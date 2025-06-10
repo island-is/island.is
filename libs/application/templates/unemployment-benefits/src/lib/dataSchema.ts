@@ -1,57 +1,20 @@
 import { z } from 'zod'
-import * as kennitala from 'kennitala'
-import { NO, YES, YesOrNoEnum } from '@island.is/application/core'
-import { EducationType } from '../shared'
+import { YES, YesOrNoEnum } from '@island.is/application/core'
+import { application } from './messages'
+import {
+  applicantInformationSchema,
+  educationSchema,
+  employmentHistorySchema,
+  payoutSchema,
+  taxDiscountSchema,
+  vacationSchema,
+} from './schemas'
 
 const FileSchema = z.object({
   name: z.string(),
   key: z.string(),
   url: z.string().optional(),
 })
-
-const applicantInformationSchema = z
-  .object({
-    nationalId: z
-      .string()
-      .refine(
-        (nationalId) =>
-          nationalId &&
-          nationalId.length !== 0 &&
-          kennitala.isValid(nationalId),
-      ),
-    name: z.string(),
-    address: z.string(),
-    postalCode: z.string(),
-    email: z.string(),
-    phoneNumber: z.string(),
-    password: z.string().min(4),
-    otherAddressCheckbox: z.array(z.string()).optional(),
-    otherAddress: z.string().optional(),
-    otherPostcode: z.string().optional(),
-    serviceOffice: z.string().optional(),
-  })
-  .refine(
-    ({ otherAddressCheckbox, otherAddress }) => {
-      if (otherAddressCheckbox && otherAddressCheckbox[0] === YES) {
-        return !!otherAddress
-      }
-      return true
-    },
-    {
-      path: ['otherAddress'],
-    },
-  )
-  .refine(
-    ({ otherAddressCheckbox, otherPostcode }) => {
-      if (otherAddressCheckbox && otherAddressCheckbox[0] === YES) {
-        return !!otherPostcode
-      }
-      return true
-    },
-    {
-      path: ['otherPostcode'],
-    },
-  )
 
 const familyInformationSchema = z.object({
   children: z.array(
@@ -86,7 +49,6 @@ const currentJobSchema = z.object({
 
 const currentSituationSchema = z.object({
   status: z.string().optional(),
-  reasonForUnemployment: z.string().optional(),
   currentJob: currentJobSchema.optional(),
   wantedJobPercentage: z.string().optional(),
   jobTimelineStartDate: z.string().optional(),
@@ -97,41 +59,6 @@ const jobWishesSchema = z.object({
   jobList: z.array(z.string()).optional(),
   outsideYourLocation: z.array(z.string()).optional(),
   location: z.array(z.string()).optional(),
-})
-
-const EmploymentHistorySchema = z.object({
-  isIndependent: z
-    .nativeEnum(YesOrNoEnum)
-    .refine((v) => Object.values(YesOrNoEnum).includes(v)),
-  lastJob: z.object({
-    title: z.string().optional(),
-    percentage: z.string().optional(),
-    startDate: z.string().optional(),
-    endDate: z.string().optional(),
-  }),
-  ownSSNJob: z
-    .object({
-      title: z.string().optional(),
-      percentage: z.string().optional(),
-      startDate: z.string().optional(),
-      endDate: z.string().optional(),
-    })
-    .optional(),
-  previousJobs: z.array(
-    z.object({
-      company: z.object({
-        nationalId: z.string().optional(),
-        name: z.string().optional(),
-      }),
-      title: z.string().optional(),
-      percentage: z.string().optional(),
-      startDate: z.string().optional(),
-      endDate: z.string().optional(),
-    }),
-  ),
-  hasWorkedEes: z
-    .nativeEnum(YesOrNoEnum)
-    .refine((v) => Object.values(YesOrNoEnum).includes(v)),
 })
 
 const currentStudiesSchema = z
@@ -152,58 +79,6 @@ const educationHistorySchema = z
     studyNotCompleted: z.array(z.string()).optional(),
   })
   .optional()
-
-const educationSchema = z
-  .object({
-    lastTwelveMonths: z
-      .nativeEnum(YesOrNoEnum)
-      .refine((v) => Object.values(YesOrNoEnum).includes(v)),
-    typeOfEducation: z.nativeEnum(EducationType).optional(),
-    didFinishLastSemester: z.nativeEnum(YesOrNoEnum).optional(),
-    appliedForNextSemester: z.nativeEnum(YesOrNoEnum).optional(),
-    currentEducation: z.object({
-      programName: z.string().optional(),
-      programUnits: z.string().optional(),
-      programDegree: z.string().optional(),
-      programEnd: z.string().optional(),
-      degreeFile: z.array(FileSchema).optional(),
-    }),
-    notAppliedForNextSemesterExplanation: z.string().optional(),
-  })
-  .refine(
-    ({ lastTwelveMonths, typeOfEducation }) => {
-      if (lastTwelveMonths === YES) {
-        return typeOfEducation !== undefined
-      }
-      return true
-    },
-    {
-      path: ['typeOfEducation'],
-    },
-  )
-  .refine(
-    ({
-      lastTwelveMonths,
-      typeOfEducation,
-      didFinishLastSemester,
-      appliedForNextSemester,
-      currentEducation,
-    }) => {
-      if (
-        lastTwelveMonths === YES &&
-        (typeOfEducation === EducationType.CURRENT ||
-          (typeOfEducation === EducationType.LAST_SEMESTER &&
-            didFinishLastSemester === NO &&
-            appliedForNextSemester !== NO))
-      ) {
-        return currentEducation && currentEducation.programName
-      }
-      return true
-    },
-    {
-      path: ['currentEducation', 'programName'],
-    },
-  )
 
 const drivingLicenseSchema = z.object({
   drivingLicenseType: z.array(z.string()).optional(),
@@ -232,10 +107,6 @@ const introductoryMeetingSchema = z.object({
   language: z.string(),
 })
 
-const payoutSchema = z.object({
-  bankNumber: z.string().optional(),
-})
-
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicant: applicantInformationSchema,
@@ -249,30 +120,50 @@ export const dataSchema = z.object({
   languageSkills: z.array(languageSkillsSchema),
   euresJobSearch: euresSchema,
   resume: resumeSchema,
-  employmentHistory: EmploymentHistorySchema,
+  employmentHistory: employmentHistorySchema,
   payout: payoutSchema,
+  taxDiscount: taxDiscountSchema,
+  vacation: vacationSchema,
   informationChangeAgreement: z
     .array(z.string())
-    .refine((v) => v.includes(YES)),
+    .refine((v) => v.includes(YES), {
+      params: application.iUnderstandError,
+    }),
   introductoryMeeting: introductoryMeetingSchema,
-  concurrentWorkAgreement: z.array(z.string()).refine((v) => v.includes(YES)),
-  yourRightsAgreement: z.array(z.string()).refine((v) => v.includes(YES)),
-  lossOfRightsAgreement: z.array(z.string()).refine((v) => v.includes(YES)),
+  concurrentWorkAgreement: z.array(z.string()).refine((v) => v.includes(YES), {
+    params: application.iUnderstandError,
+  }),
+  yourRightsAgreement: z.array(z.string()).refine((v) => v.includes(YES), {
+    params: application.iUnderstandError,
+  }),
+  lossOfRightsAgreement: z.array(z.string()).refine((v) => v.includes(YES), {
+    params: application.iUnderstandError,
+  }),
   employmentSearchConfirmationAgreement: z
     .array(z.string())
-    .refine((v) => v.includes(YES)),
+    .refine((v) => v.includes(YES), {
+      params: application.iUnderstandError,
+    }),
   interviewAndMeetingAgreement: z
     .array(z.string())
-    .refine((v) => v.includes(YES)),
+    .refine((v) => v.includes(YES), {
+      params: application.iUnderstandError,
+    }),
   introductoryMeetingAgreement: z
     .array(z.string())
-    .refine((v) => v.includes(YES)),
+    .refine((v) => v.includes(YES), {
+      params: application.iUnderstandError,
+    }),
   unemploymentBenefitsPayoutAgreement: z
     .array(z.string())
-    .refine((v) => v.includes(YES)),
+    .refine((v) => v.includes(YES), {
+      params: application.iUnderstandError,
+    }),
   vacationsAndForeginWorkAgreement: z
     .array(z.string())
-    .refine((v) => v.includes(YES)),
+    .refine((v) => v.includes(YES), {
+      params: application.iUnderstandError,
+    }),
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

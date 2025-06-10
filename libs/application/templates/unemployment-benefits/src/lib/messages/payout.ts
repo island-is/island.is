@@ -40,15 +40,35 @@ export const payout = {
       defaultMessage: 'Reikningsnúmer',
       description: 'payout account number label',
     },
+    unionQuestion: {
+      id: 'vmst.ub.application:payout.payoutInformation.unionQuestion',
+      defaultMessage: 'Viltu greiða í stéttarfélag?',
+      description: 'payout union question',
+    },
     unionLabel: {
       id: 'vmst.ub.application:payout.payoutInformation.unionLabel',
-      defaultMessage: 'Stéttarfélag',
+      defaultMessage: 'Stéttafélag',
       description: 'payout union label',
+    },
+    unionAlertTitle: {
+      id: 'vmst.ub.application:payout.payoutInformation.unionAlertTitle',
+      defaultMessage: 'Athugið',
+      description: 'payout union alert title',
+    },
+    unionAlertMessage: {
+      id: 'vmst.ub.application:payout.payoutInformation.unionAlertMessage',
+      defaultMessage: `Með því að velja „nei” missir þú áunninn rétt hjá stéttarfélagi þínu.`,
+      description: 'payout union alert message',
     },
     pensionFundLabel: {
       id: 'vmst.ub.application:payout.payoutInformation.pensionFundLabel',
       defaultMessage: 'Lífeyrissjóður',
       description: 'payout pension fund label',
+    },
+    privatePensionFundQuestion: {
+      id: 'vmst.ub.application:payout.payoutInformation.privatePensionFundQuestion',
+      defaultMessage: 'Viltu greiða í séreignarsjóð?',
+      description: 'payout private pension fund question',
     },
     privatePensionFundLabel: {
       id: 'vmst.ub.application:payout.payoutInformation.privatePensionFundLabel',
@@ -59,6 +79,11 @@ export const payout = {
       id: 'vmst.ub.application:payout.payoutInformation.privatePensionFundPercentageLabel',
       defaultMessage: 'Hlutfall',
       description: 'payout private pension fund percentage label',
+    },
+    privatePensionFundPercentageAlertMessage: {
+      id: 'vmst.ub.application:payout.payoutInformation.privatePensionFundPercentageAlertMessage',
+      defaultMessage: `Atvinnuleysisbætursjóður greiðir ekki mótframlag í séreignarsjóð.`,
+      description: 'payout private pension fund percentage alert message',
     },
   }),
   taxDiscount: defineMessages({
@@ -72,6 +97,26 @@ export const payout = {
       defaultMessage: 'Persónuafsláttur',
       description: 'Tax discount page description',
     },
+    description: {
+      id: 'vmst.ub.application:payout.taxDiscount.description#markdown',
+      defaultMessage: `Sláðu inn hlutfall persónuafsláttar sem þú vilt nýta. Ef 0% þá nýtir þú engan persónuafslátt.`,
+      description: 'Tax discount page description',
+    },
+    taxDiscountLabel: {
+      id: 'vmst.ub.application:payout.taxDiscount.taxDiscountLabel',
+      defaultMessage: 'Persónuafsláttur',
+      description: 'Tax discount label',
+    },
+    taxDiscountPlaceholder: {
+      id: 'vmst.ub.application:payout.taxDiscount.taxDiscountPlaceholder',
+      defaultMessage: 'Sláðu inn persónuafslátt í prósentum (0-100%)',
+      description: 'Tax discount placeholder',
+    },
+    taxDiscountAlertMessage: {
+      id: 'vmst.ub.application:payout.taxDiscount.taxDiscountAlertMessage#markdown',
+      defaultMessage: `Nálgast má nánari upplýsingar um persónuafslátt á heimasíðu [Skattsins](https://www.skatturinn.is/).`,
+      description: 'Tax discount alert message',
+    },
   }),
   vacation: defineMessages({
     sectionTitle: {
@@ -83,6 +128,42 @@ export const payout = {
       id: 'vmst.ub.application:payout.vacation.pageTitle',
       defaultMessage: 'Orlof',
       description: 'Vactaion page description',
+    },
+    vacationAlertMessage: {
+      id: 'vmst.ub.application:payout.vacation.vacationAlertMessage',
+      defaultMessage: `Ef þú átt inni ótekið orlof eða hefur fengið greitt orlof við starfslok þarftu að skrá dagsetningu orlofsdaga. Athugaðu að þú getur ekki fengið atvinnuleysisbætur og orlof greitt á sama tímabili.`,
+      description: 'Vacation alert message',
+    },
+    haveVacationQuestion: {
+      id: 'vmst.ub.application:payout.vacation.haveVacationQuestion',
+      defaultMessage: 'Áttu ótekið orlof þegar þú hættir í starfi?',
+      description: 'Do you have vacation question',
+    },
+    explainVacationLabel: {
+      id: 'vmst.ub.application:payout.vacation.explainVacationLabel',
+      defaultMessage:
+        'Vinsamlegast tilgreindu fjölda orlofsdaga og hvenær þú ætlar að nýta þá',
+      description: 'Explain vacation label',
+    },
+    vacationDaysLabel: {
+      id: 'vmst.ub.application:payout.vacation.vacationDaysLabel',
+      defaultMessage: 'Fjöldi orlofsdaga',
+      description: 'Vacation days label',
+    },
+    dateStart: {
+      id: 'vmst.ub.application:payout.vacation.dateStart',
+      defaultMessage: 'Dagsetning frá',
+      description: 'Vacation start date label',
+    },
+    dateEnd: {
+      id: 'vmst.ub.application:payout.vacation.dateEnd',
+      defaultMessage: 'Dagsetning til',
+      description: 'Vacation end date label',
+    },
+    datePlaceholder: {
+      id: 'vmst.ub.application:payout.vacation.datePlaceholder',
+      defaultMessage: 'Veldu dagsetningu',
+      description: 'Vacation date placeholder',
     },
   }),
   vacationsAndForeignWorkAgreement: defineMessages({
@@ -98,7 +179,12 @@ export const payout = {
     },
     pageDescription: {
       id: 'vmst.ub.application:payout.vacationsAndForeignWorkAgreement.pageDescription#markdown',
-      defaultMessage: `Ef þú ferð til útlanda verður þú alltaf að láta Vinnumálastofnun vita áður en þú ferð. Þú getur tilkynnt um utanlandsferð á Mínum síðum. Þú átt ekki rétt á atvinnuleysisbótum á meðan þú ert erlendis nema að þú hafir fengið útgefið vottorð (U2) sem heimilar atvinnuleit á Evrópska efnahagssvæðinu.\nEf þú ætlar að leita þér að vinnu erlendis er gott að byrja á að skoða www.eures.is og tala við EURES ráðgjafa Vinnumálastofnunar.`,
+      defaultMessage: `Ef þú ferð til útlanda verður þú alltaf að láta Vinnumálastofnun 
+      vita áður en þú ferð. Þú getur tilkynnt um utanlandsferð á Mínum síðum. Þú átt 
+      ekki rétt á atvinnuleysisbótum á meðan þú ert erlendis nema að þú hafir fengið 
+      útgefið vottorð (U2) sem heimilar atvinnuleit á Evrópska efnahagssvæðinu.
+      \n Ef þú ætlar að leita þér að vinnu erlendis er gott að byrja á að skoða 
+    [www.eures.is](www.eures.is) og tala við EURES ráðgjafa Vinnumálastofnunar.`,
       description: 'Vacations and foreign work agreement page description',
     },
   }),

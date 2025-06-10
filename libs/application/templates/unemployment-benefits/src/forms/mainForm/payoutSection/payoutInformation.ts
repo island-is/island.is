@@ -1,14 +1,15 @@
 import {
-  buildTextField,
   buildMultiField,
   buildSubSection,
   buildSelectField,
-  buildCheckboxField,
   getValueViaPath,
   coreMessages,
   YES,
   NO,
   buildRadioField,
+  buildBankAccountField,
+  buildAlertMessageField,
+  buildDescriptionField,
 } from '@island.is/application/core'
 import { payout as payoutMessages } from '../../../lib/messages'
 import { Application } from '@island.is/application/types'
@@ -16,6 +17,11 @@ import {
   GaldurDomainModelsSettingsUnionsUnionDTO,
   GaldurDomainModelsSettingsPensionFundsPensionFundDTO,
 } from '@island.is/clients/vmst-unemployment'
+import {
+  doesNotpayToUnion,
+  payPrivatePensionFund,
+  payToUnion,
+} from '../../../utils'
 
 export const payoutInformationSubSection = buildSubSection({
   id: 'payoutInformationSubSection',
@@ -25,23 +31,29 @@ export const payoutInformationSubSection = buildSubSection({
       id: 'payoutInformationSubSection',
       title: payoutMessages.payoutInformation.pageTitle,
       children: [
-        //TODO split into 3 fields
-        buildTextField({
-          title: payoutMessages.payoutInformation.accountBankNumber,
-          id: 'payout.bankNumber',
-          dataTestId: 'bank-account-number',
-          readOnly: true,
-          format: '####-##-######',
-          placeholder: '0000-00-000000',
-          defaultValue: (application: Application) =>
-            (
-              application.externalData.userProfile?.data as {
-                bankInfo?: string
-              }
-            )?.bankInfo,
+        buildBankAccountField({
+          id: 'payout.bankAccount',
+          title: payoutMessages.payoutInformation.accountLabel,
+          titleVariant: 'h5',
+          defaultValue: (application: Application) => {
+            const bankInfo = getValueViaPath<string>(
+              application.externalData,
+              'userProfile.data.bankInfo',
+              '',
+            )
+            return bankInfo
+          },
+        }),
+        buildDescriptionField({
+          id: 'payout.payToUnionDescription',
+          title: payoutMessages.payoutInformation.unionQuestion,
+          titleVariant: 'h5',
+          space: 0,
         }),
         buildRadioField({
           id: 'payout.payToUnion',
+          width: 'half',
+          space: 0,
           options: [
             {
               value: YES,
@@ -52,6 +64,14 @@ export const payoutInformationSubSection = buildSubSection({
               label: coreMessages.radioNo,
             },
           ],
+        }),
+        buildAlertMessageField({
+          id: 'payout.unionAlert',
+          title: payoutMessages.payoutInformation.unionAlertTitle,
+          message: payoutMessages.payoutInformation.unionAlertMessage,
+          alertType: 'info',
+          doesNotRequireAnswer: true,
+          condition: doesNotpayToUnion,
         }),
         buildSelectField({
           id: 'payout.union',
@@ -68,16 +88,14 @@ export const payoutInformationSubSection = buildSubSection({
               value: option.id || '',
             }))
           },
-          condition: (answers) => {
-            const payToUnion = getValueViaPath<string>(
-              answers,
-              'payout.payToUnion',
-              NO,
-            )
-            return payToUnion === YES
-          },
+          condition: payToUnion,
         }),
-
+        buildDescriptionField({
+          id: 'payout.pensionDescription',
+          title: payoutMessages.payoutInformation.pensionFundLabel,
+          titleVariant: 'h5',
+          marginTop: 2,
+        }),
         buildSelectField({
           id: 'payout.pensionFund',
           title: payoutMessages.payoutInformation.pensionFundLabel,
@@ -96,7 +114,27 @@ export const payoutInformationSubSection = buildSubSection({
             }))
           },
         }),
-
+        buildDescriptionField({
+          id: 'payout.privatePensionFundDescription',
+          title: payoutMessages.payoutInformation.privatePensionFundQuestion,
+          titleVariant: 'h5',
+          marginTop: 2,
+        }),
+        buildRadioField({
+          id: 'payout.payPrivatePensionFund',
+          width: 'half',
+          space: 0,
+          options: [
+            {
+              value: YES,
+              label: coreMessages.radioYes,
+            },
+            {
+              value: NO,
+              label: coreMessages.radioNo,
+            },
+          ],
+        }),
         buildSelectField({
           id: 'payout.privatePensionFund',
           title: payoutMessages.payoutInformation.pensionFundLabel,
@@ -115,24 +153,36 @@ export const payoutInformationSubSection = buildSubSection({
               value: option.id || '',
             }))
           },
+          condition: payPrivatePensionFund,
         }),
         buildSelectField({
           id: 'payout.privatePensionFundPercentage',
           title:
             payoutMessages.payoutInformation.privatePensionFundPercentageLabel,
           width: 'half',
-          options: (application: Application) => {
+          options: (_application: Application) => {
             return [
-              {
-                label: '4%',
-                value: '4',
-              },
               {
                 label: '2%',
                 value: '2',
               },
+              {
+                label: '4%',
+                value: '4',
+              },
             ]
           },
+          condition: payPrivatePensionFund,
+        }),
+        buildAlertMessageField({
+          id: 'payout.privatePensionFundAlert',
+          title: payoutMessages.payoutInformation.unionAlertTitle,
+          message:
+            payoutMessages.payoutInformation
+              .privatePensionFundPercentageAlertMessage,
+          alertType: 'info',
+          doesNotRequireAnswer: true,
+          condition: payPrivatePensionFund,
         }),
       ],
     }),

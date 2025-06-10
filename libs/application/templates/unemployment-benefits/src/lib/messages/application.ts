@@ -68,4 +68,10 @@ export const application = defineMessages({
     defaultMessage: 'Ég skil',
     description: 'Agree checkbox label',
   },
+  iUnderstandError: {
+    id: 'vmst.ub.application:iUnderstandError',
+    defaultMessage:
+      'Þú verður að haka í hér fyrir ofan til þess að halda áfram',
+    description: 'Error message when user has not checked the agree checkbox',
+  },
 })

@@ -379,7 +379,7 @@ export const employment = {
       },
       lastJobs: {
         id: 'vmst.ub.application:employment.employmentHistory.labels.lastJobs',
-        defaultMessage: 'Fyrri störf',
+        defaultMessage: 'Fyrra starf',
         description: 'Last jobs label',
       },
       radioEesLabel: {

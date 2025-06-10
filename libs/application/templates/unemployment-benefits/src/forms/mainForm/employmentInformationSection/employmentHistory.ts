@@ -171,10 +171,9 @@ export const employmentHistorySubSection = buildSubSection({
           id: 'employmentHistory.previousJobs',
           minRows: 0,
           marginTop: 0,
-          title: employmentMessages.employmentHistory.labels.lastJobs,
-          titleVariant: 'h5',
+          formTitle: employmentMessages.employmentHistory.labels.lastJobs,
+          formTitleVariant: 'h5',
           width: 'full',
-          formTitleNumbering: 'none',
           addItemButtonText: employmentMessages.employmentHistory.labels.addJob,
           fields: {
             company: {
@@ -183,8 +182,7 @@ export const employmentHistorySubSection = buildSubSection({
             },
             title: {
               component: 'input',
-              label:
-                employmentMessages.employmentHistory.labels.lastOldJobEndDate,
+              label: employmentMessages.employmentHistory.labels.lastJobTitle,
               width: 'half',
               type: 'text',
             },
@@ -204,7 +202,8 @@ export const employmentHistorySubSection = buildSubSection({
             },
             endDate: {
               component: 'date',
-              label: employmentMessages.employmentHistory.labels.lastJobEndDate,
+              label:
+                employmentMessages.employmentHistory.labels.lastOldJobEndDate,
               width: 'half',
             },
           },

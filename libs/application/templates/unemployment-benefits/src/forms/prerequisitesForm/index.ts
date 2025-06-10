@@ -9,12 +9,15 @@ import {
 import { DefaultEvents } from '@island.is/application/types'
 import {
   FormModes,
-  UserProfileApi,
   NationalRegistryUserApi,
   NationalRegistrySpouseApi,
   ChildrenCustodyInformationApi,
 } from '@island.is/application/types'
-import { UnemploymentApi, WorkMachineLicensesApi } from '../../dataProviders'
+import {
+  UnemploymentApi,
+  UserProfileApi,
+  WorkMachineLicensesApi,
+} from '../../dataProviders'
 import Logo from '../../assets/Logo'
 
 export const Prerequisites = buildForm({

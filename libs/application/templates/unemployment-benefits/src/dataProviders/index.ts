@@ -14,3 +14,12 @@ export const UnemploymentApi = defineTemplateApi({
   action: 'getEmptyApplication',
   externalDataId: 'unemploymentApplication',
 })
+
+export const UserProfileApi = defineTemplateApi({
+  action: 'userProfile',
+  externalDataId: 'userProfile',
+  namespace: 'UserProfile',
+  params: {
+    validateBankInformation: true,
+  },
+})

@@ -57,25 +57,6 @@ export const currentSituationSubSection = buildSubSection({
           ],
         }),
         buildDescriptionField({
-          id: 'currentSituationDescription',
-          title:
-            employmentMessages.currentSituation.labels
-              .reasonForUnemploymentDescription,
-          titleVariant: 'h5',
-          marginTop: 2,
-          condition: isUnemployed,
-        }),
-        buildTextField({
-          id: 'currentSituation.reasonForUnemployment',
-          title:
-            employmentMessages.currentSituation.labels
-              .reasonForUnemploymentLabel,
-          variant: 'textarea',
-          rows: 6,
-          condition: isUnemployed,
-        }),
-
-        buildDescriptionField({
           id: 'currentjobDescription',
           title:
             employmentMessages.currentSituation.labels.partTimeJobDescription,
