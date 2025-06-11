@@ -63,10 +63,8 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-
-      - name: Install yarn in infra
-        working-directory: infra
-        run: yarn install --immutable
+        with:
+          working-directory: infra
 
       - name: Run unit tests
         working-directory: infra
@@ -94,6 +92,8 @@ jobs:
       - uses: actions/checkout@v4
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+        with:
+          working-directory: infra
 
       - name: Install yarn in infra
         working-directory: infra
