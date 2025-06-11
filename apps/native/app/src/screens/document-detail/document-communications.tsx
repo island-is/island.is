@@ -110,6 +110,11 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
       : true
   const isSkeleton = docRes.loading && !docRes.data
 
+  const handleRefresh = () => {
+    setRefetching(true)
+    docRes.refetch().finally(() => setRefetching(false))
+  }
+
   const onReplyPress = () => {
     if (!document?.sender?.name) {
       return
@@ -124,8 +129,7 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
           setShowFirstReplyInfo(showFirstReplyInfo)
         }
 
-        setRefetching(true)
-        docRes.refetch().finally(() => setRefetching(false))
+        handleRefresh()
       },
     }
 
@@ -251,10 +255,7 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
           )}
           onContentSizeChange={handleContentSizeChange}
           refreshControl={
-            <RefreshControl
-              refreshing={refetching}
-              onRefresh={docRes.refetch}
-            />
+            <RefreshControl refreshing={refetching} onRefresh={handleRefresh} />
           }
         />
       </ListWrapper>
