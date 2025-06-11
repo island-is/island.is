@@ -11,8 +11,11 @@ export class InvolvededParty {
   @Field({ description: 'The slug of the involved party' })
   slug!: string
 
-  @Field({ description: 'The nationalId of the involved party' })
-  nationalId!: string
+  @Field(() => String, {
+    description: 'The nationalId of the involved party',
+    nullable: true,
+  })
+  nationalId?: string | null
 }
 
 @ObjectType('OfficialJournalOfIcelandApplicationGetUserInvolvedPartiesResponse')
