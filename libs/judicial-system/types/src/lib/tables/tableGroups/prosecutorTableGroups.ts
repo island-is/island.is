@@ -38,7 +38,7 @@ export const prosecutorIndictmentsTableGroup: CaseTableGroup = {
   title: 'Sakamál',
   tables: [
     {
-      type: CaseTableType.PROSECUTOR_INDICTMENT_DRAFT,
+      type: CaseTableType.PROSECUTOR_INDICTMENT_IN_DRAFT,
       route: CaseTableRoutes.INDICTMENT_DRAFT,
       title: 'Ákærur í drögum',
       description: 'Ákærur í drögum.',

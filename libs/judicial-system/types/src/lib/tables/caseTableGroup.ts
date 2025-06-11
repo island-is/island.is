@@ -73,7 +73,7 @@ const districtCourtTableGroups: CaseTableGroup[] = [
       },
       {
         type: CaseTableType.DISTRICT_COURT_INDICTMENTS_COMPLETED,
-        route: CaseTableRoutes.COMPLETED,
+        route: CaseTableRoutes.INDICTMENT_COMPLETED,
         title: 'Afgreidd sakamál',
         description: 'Sakamál sem búið er að ljúka.',
       },
@@ -88,7 +88,7 @@ const courtOfAppealsTableGroups: CaseTableGroup[] = [
       {
         type: CaseTableType.COURT_OF_APPEALS_IN_PROGRESS,
         route: CaseTableRoutes.IN_PROGRESS,
-        title: 'Rannsóknarmál mál í vinnslu',
+        title: 'Rannsóknarmál í vinnslu',
         description: 'Kærð sakamál sem eru til meðferðar.',
       },
       {
@@ -188,7 +188,7 @@ const publicProsecutorsOfficeTableGroups: CaseTableGroup[] = [
       },
       {
         type: CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_SENT_TO_PRISON_ADMIN,
-        route: CaseTableRoutes.SENT_TO_PRISON,
+        route: CaseTableRoutes.IN_PRISON,
         title: 'Mál í fullnustu',
         description: 'Mál sem hafa verið send í fullnustu.',
       },

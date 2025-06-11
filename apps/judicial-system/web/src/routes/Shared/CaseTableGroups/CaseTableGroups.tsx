@@ -16,7 +16,7 @@ import {
 import CasesCard from '@island.is/judicial-system-web/src/components/Cards/CasesCard'
 import CasesDashboardLayout from '@island.is/judicial-system-web/src/components/Layouts/CasesDashboardLayout'
 
-import { CreateCaseButton } from '../Cases/CreateCaseButton'
+import { CreateCaseButton } from '../CreateCaseButton/CreateCaseButton'
 import * as styles from './CaseTableGroups.css'
 
 const CaseTableGroups: FC = () => {

@@ -5,6 +5,7 @@ import {
   isPrisonAdminUser,
   isPrisonStaffUser,
   isProsecutionUser,
+  isProsecutorRepresentativeUser,
   isPublicProsecutionOfficeUser,
 } from '../user'
 import { CaseTableColumnKey } from './caseTableColumnTypes'
@@ -99,7 +100,19 @@ export const getCaseTableType = (
     }
   }
 
-  // shared mapping for all prosecution users
+  if (isProsecutorRepresentativeUser(user)) {
+    switch (route) {
+      case CaseTableRoutes.INDICTMENT_DRAFT:
+        return CaseTableType.PROSECUTOR_INDICTMENT_IN_DRAFT
+      case CaseTableRoutes.WAITING_FOR_CONFIRMATION:
+        return CaseTableType.PROSECUTOR_INDICTMENT_WAITING_FOR_CONFIRMATION
+      case CaseTableRoutes.INDICTMENT_IN_PROGRESS:
+        return CaseTableType.PROSECUTOR_INDICTMENT_IN_PROGRESS
+      case CaseTableRoutes.INDICTMENT_COMPLETED:
+        return CaseTableType.PROSECUTOR_INDICTMENT_COMPLETED
+    }
+  }
+
   if (isProsecutionUser(user)) {
     switch (route) {
       case CaseTableRoutes.IN_PROGRESS:
@@ -115,7 +128,7 @@ export const getCaseTableType = (
       case CaseTableRoutes.REVIEWED:
         return CaseTableType.PUBLIC_PROSECUTOR_INDICTMENT_REVIEWED
       case CaseTableRoutes.INDICTMENT_DRAFT:
-        return CaseTableType.PROSECUTOR_INDICTMENT_DRAFT
+        return CaseTableType.PROSECUTOR_INDICTMENT_IN_DRAFT
       case CaseTableRoutes.WAITING_FOR_CONFIRMATION:
         return CaseTableType.PROSECUTOR_INDICTMENT_WAITING_FOR_CONFIRMATION
       case CaseTableRoutes.INDICTMENT_IN_PROGRESS:
@@ -482,7 +495,7 @@ export const caseTables: { [key in CaseTableType]: CaseTable } = {
   PROSECUTOR_REQUEST_CASES_COMPLETED: prosecutorRequestCasesCompleted,
   PUBLIC_PROSECUTOR_INDICTMENT_IN_REVIEW: publicProsecutorIndictmentInReview,
   PUBLIC_PROSECUTOR_INDICTMENT_REVIEWED: publicProsecutorIndictmentReviewed,
-  PROSECUTOR_INDICTMENT_DRAFT: prosecutorIndictmentInDraft,
+  PROSECUTOR_INDICTMENT_IN_DRAFT: prosecutorIndictmentInDraft,
   PROSECUTOR_INDICTMENT_WAITING_FOR_CONFIRMATION:
     prosecutorIndictmentWaitingForConfirmation,
   PROSECUTOR_INDICTMENT_IN_PROGRESS: prosecutorIndictmentInProgress,
