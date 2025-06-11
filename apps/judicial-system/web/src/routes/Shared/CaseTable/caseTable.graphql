@@ -2,8 +2,8 @@ query CaseTable($input: CaseTableQueryInput!) {
   caseTable(input: $input) {
     rowCount
     rows {
-      isMyCase
       caseId
+      isMyCase
       cells {
         value {
           __typename
@@ -20,12 +20,12 @@ query CaseTable($input: CaseTableQueryInput!) {
           }
           ... on TagPairValue {
             firstTag {
-              color
               text
+              color
             }
             secondTag {
-              color
               text
+              color
             }
           }
         }

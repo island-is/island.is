@@ -35,13 +35,18 @@ const prosecutorRequestCasesSharedWhereOptions = (user: TUser) => ({
 
 export const prosecutorRequestCasesInProgressWhereOptions = (user: TUser) => ({
   ...prosecutorRequestCasesSharedWhereOptions(user),
-  state: [CaseState.DRAFT, CaseState.SUBMITTED, CaseState.RECEIVED],
+  state: [
+    CaseState.NEW,
+    CaseState.DRAFT,
+    CaseState.SUBMITTED,
+    CaseState.RECEIVED,
+  ],
 })
 
 export const prosecutorRequestCasesActiveWhereOptions = (user: TUser) => ({
   ...prosecutorRequestCasesSharedWhereOptions(user),
   state: [CaseState.ACCEPTED],
-  valid_to_date: [null, { [Op.gte]: fn('NOW') }],
+  valid_to_date: { [Op.or]: [null, { [Op.gte]: fn('NOW') }] },
 })
 
 export const prosecutorRequestCasesAppealedWhereOptions = (user: TUser) => ({
@@ -54,7 +59,12 @@ export const prosecutorRequestCasesCompletedWhereOptions = (user: TUser) => ({
   ...prosecutorRequestCasesSharedWhereOptions(user),
   state: completedRequestCaseStates,
   appeal_state: {
-    [Op.not]: [CaseAppealState.RECEIVED, CaseAppealState.APPEALED],
+    [Op.or]: [
+      null,
+      CaseAppealState.RECEIVED,
+      CaseAppealState.WITHDRAWN,
+      CaseAppealState.COMPLETED,
+    ],
   },
 })
 
@@ -64,6 +74,11 @@ const prosecutorIndictmentSharedWhereOptions = (user: TUser) => ({
   is_archived: false,
   type: indictmentCases,
   prosecutors_office_id: user.institution?.id,
+})
+
+export const prosecutorIndictmentInDraftWhereOptions = (user: TUser) => ({
+  ...prosecutorIndictmentSharedWhereOptions(user),
+  state: [CaseState.DRAFT],
 })
 
 export const prosecutorIndictmentWaitingForConfirmationWhereOptions = (
@@ -78,6 +93,7 @@ export const prosecutorIndictmentInProgressWhereOptions = (user: TUser) => ({
   state: {
     [Op.notIn]: [
       ...completedIndictmentCaseStates,
+      CaseState.DRAFT,
       CaseState.DELETED,
       CaseState.WAITING_FOR_CANCELLATION,
       CaseState.WAITING_FOR_CONFIRMATION,
