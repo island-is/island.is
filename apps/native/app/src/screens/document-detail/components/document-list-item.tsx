@@ -64,7 +64,6 @@ type DocumentListItemProps = {
   closeable?: boolean
   hasTopBorder?: boolean
   hasBottomBorder?: boolean
-  onLayoutCallback?: (event: LayoutChangeEvent) => void
 }
 
 export const DocumentListItem = ({
@@ -75,7 +74,6 @@ export const DocumentListItem = ({
   closeable = false,
   isOpen = false,
   hasTopBorder = true,
-  onLayoutCallback,
 }: DocumentListItemProps) => {
   const theme = useTheme()
   const { getOrganizationLogoUrl } = useOrganizationsStore()
@@ -134,7 +132,6 @@ export const DocumentListItem = ({
           <Body
             onLayout={(e) => {
               height.value = e.nativeEvent.layout.height
-              onLayoutCallback?.(e)
             }}
           >
             <Typography variant="body3">{body}</Typography>
