@@ -12,7 +12,6 @@ import {
 import { OptionsType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
-import { useId } from 'react'
 
 export const healthProtectionSubSection = buildSubSection({
   id: 'healthProtectionSubSection',
