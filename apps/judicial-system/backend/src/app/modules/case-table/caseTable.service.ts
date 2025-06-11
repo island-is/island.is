@@ -113,6 +113,8 @@ export class CaseTableService {
         cells: caseTableCellKeys.map((k) =>
           caseTableCellGenerators[k].generate(c, user),
         ),
+        // TODO: Add action on row click
+        // TODO: Add context mentu actions
       })),
     }
   }
