@@ -46,7 +46,7 @@ export const prosecutorRequestCasesInProgressWhereOptions = (user: TUser) => ({
 export const prosecutorRequestCasesActiveWhereOptions = (user: TUser) => ({
   ...prosecutorRequestCasesSharedWhereOptions(user),
   state: [CaseState.ACCEPTED],
-  valid_to_date: [null, { [Op.gte]: fn('NOW') }],
+  valid_to_date: { [Op.or]: [null, { [Op.gte]: fn('NOW') }] },
 })
 
 export const prosecutorRequestCasesAppealedWhereOptions = (user: TUser) => ({
