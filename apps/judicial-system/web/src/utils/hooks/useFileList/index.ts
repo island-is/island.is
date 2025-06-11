@@ -7,7 +7,10 @@ import {
   FormContext,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { CaseFileState } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  CaseFileState,
+  GetSignedUrlInput,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 
 import useIsMobile from '../useIsMobile/useIsMobile'
 import { TUploadFile } from '../useS3Upload/useS3Upload'
@@ -31,8 +34,11 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
     window.open(url, isMobile ? '_self' : '_blank', 'noopener, noreferrer')
   }
 
-  const onErrorOrPreviewURl = (currentFile: TUploadFile | undefined) => {
-    if (currentFile && currentFile.id === fullAccessVariables?.input.id) {
+  const onErrorOrPreviewURl = (
+    currentFile: TUploadFile | undefined,
+    variables?: { input: GetSignedUrlInput },
+  ) => {
+    if (currentFile && currentFile.id === variables?.input?.id) {
       const previewUrl = URL.createObjectURL(
         currentFile.originalFileObj as Blob,
       )
@@ -54,7 +60,7 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
       }
     },
     onError: () => {
-      onErrorOrPreviewURl(currentFile)
+      onErrorOrPreviewURl(currentFile, fullAccessVariables)
     },
   })
 
@@ -70,7 +76,7 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
       }
     },
     onError: () => {
-      onErrorOrPreviewURl(currentFile)
+      onErrorOrPreviewURl(currentFile, limitedAccessVariables)
     },
   })
 
@@ -141,6 +147,7 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
 
   const onOpenFile = useMemo(
     () => (file: UploadFile) => {
+      console.log({ file })
       if (!file.id) {
         return
       }
