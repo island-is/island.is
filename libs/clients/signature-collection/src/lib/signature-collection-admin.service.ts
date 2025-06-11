@@ -5,7 +5,11 @@ import {
   CreateListInput,
   BulkUploadInput,
 } from './signature-collection.types'
-import { Collection, CollectionType } from './types/collection.dto'
+import {
+  Collection,
+  CollectionType,
+  mapCollection,
+} from './types/collection.dto'
 import { getSlug, List, ListStatus, mapListBase } from './types/list.dto'
 import { Signature, mapSignature } from './types/signature.dto'
 import { CandidateLookup } from './types/user.dto'
@@ -499,6 +503,33 @@ export class SignatureCollectionAdminClientService {
         reasons: success
           ? []
           : getReasonKeyForPaperSignatureUpload(signature, nationalId),
+      }
+    } catch (error) {
+      return {
+        success: false,
+        reasons: error.body ? [error.body] : [],
+      }
+    }
+  }
+
+  async openMunicipalCollection(
+    auth: Auth,
+    {
+      collectionId,
+      municipalId,
+    }: { collectionId: number; municipalId: number },
+  ): Promise<Success<Collection>> {
+    try {
+      const response = await this.getApiWithAuth(
+        this.adminApi,
+        auth,
+      ).adminKosningIDSveitSofnunPost({
+        iD: collectionId,
+        sveitarfelagID: municipalId,
+      })
+      return {
+        success: true,
+        response: mapCollection(response),
       }
     } catch (error) {
       return {

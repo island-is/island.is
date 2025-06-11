@@ -90,6 +90,41 @@
         }
       }
     },
+    "/Admin/Kosning/{ID}/SveitSofnun": {
+      "post": {
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "sveitarfelagID",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MedmaelasofnunDTO" }
+              }
+            }
+          },
+          "204": { "description": "No Content" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
     "/Admin/Listabokstafur": {
       "post": {
         "tags": ["Admin"],
