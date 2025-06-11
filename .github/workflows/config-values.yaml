@@ -40,7 +40,6 @@ jobs:
         run: |
           set -euo pipefail
           GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
-          # ENVS=("dev" "staging")
           ENVS=("dev" "staging")
           if [[ "$GIT_BRANCH" =~ ^release\/ ]]; then
             echo "Adding prod environments to test set"
@@ -54,13 +53,13 @@ jobs:
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
-        if: ${{ github.event_name == 'pull_request' }}
+        if: ${{ github.event_name == 'pull_request' && !github.event.localrun }}
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
 
       - uses: actions/checkout@v4
-        if: ${{ github.event_name != 'pull_request' }}
+        if: ${{ github.event_name != 'pull_request' || github.event.localrun }}
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
