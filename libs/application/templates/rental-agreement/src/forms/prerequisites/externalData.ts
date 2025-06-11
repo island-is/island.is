@@ -34,11 +34,11 @@ export const externalData = buildSection({
           title: prerequisites.externalData.currentApplicationTitle,
           subTitle: prerequisites.externalData.currentApplicationSubTitle,
         }),
-        buildDataProviderItem({
-          provider: NationalRegistryUserApi,
-          title: prerequisites.externalData.nationalRegistryTitle,
-          subTitle: prerequisites.externalData.nationalRegistrySubTitle,
-        }),
+        // buildDataProviderItem({
+        //   provider: NationalRegistryUserApi,
+        //   title: prerequisites.externalData.nationalRegistryTitle,
+        //   subTitle: prerequisites.externalData.nationalRegistrySubTitle,
+        // }),
       ],
     }),
   ],
