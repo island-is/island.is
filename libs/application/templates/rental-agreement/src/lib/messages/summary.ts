@@ -121,15 +121,10 @@ export const summary = defineMessages({
     defaultMessage: 'Gjalddagi leigu',
     description: 'Payment date options label',
   },
-  indexTypeLabel: {
-    id: 'ra.application:summary.indexTypeLabel',
-    defaultMessage: 'Vísitala',
-    description: 'Indexation type label',
-  },
-  indexValueLabel: {
-    id: 'ra.application:summary.indexValueLabel',
-    defaultMessage: 'Vísitala við upphaf samnings',
-    description: 'Indexation value label',
+  indexRateLabel: {
+    id: 'ra.application:summary.indexRateLabel',
+    defaultMessage: 'Vísitölugildi',
+    description: 'Indexation rate label',
   },
 
   // Rent transaction details
