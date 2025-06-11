@@ -73,7 +73,7 @@ const PdfWrapper = styled.View`
   background-color: ${dynamicColor('background')};
 `
 
-const DocumentWrapper = styled.View<{ hasMarginTop?: boolean }>`
+const DocumentWrapper = styled.View`
   flex: 1;
   margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
   padding-top: ${({ theme }) => theme.spacing[2]}px;
@@ -479,7 +479,6 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
       )}
       <Border />
       <DocumentWrapper
-        hasMarginTop={true}
         {...(isReplyable && {
           style: {
             paddingBottom: insets.bottom + theme.spacing.p2 + buttonHeight,
