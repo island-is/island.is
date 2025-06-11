@@ -10,19 +10,10 @@ inputs:
     description: 'Cache path'
     required: false
     default: ${{ runner.temp }}
-  aws-region:
-    description: 'AWS region to use'
-    required: false
-    default: 'eu-west-1'
 
 runs:
   using: 'composite'
   steps:
-    - name: Set RUNS_ON_S3_BUCKET_CACHE
-      shell: bash
-      if: ${{ !github.event.localrun && env.RUNS_ON_BUCKET_NAME }}
-      run: echo "RUNS_ON_S3_BUCKET_CACHE=${{ env.RUNS_ON_BUCKET_NAME }}" >> $GITHUB_ENV
-
     - name: Set env
       shell: bash
       run: |
@@ -43,17 +34,14 @@ runs:
         node ./scripts/ci/generate-files.mjs /dev/null --skip-codegen
 
     - name: Cache generated files
-      uses: runs-on/cache@v4
+      uses: ./.github/actions/cache
       id: restore-codegen-cache
       with:
         path: |
           ${{ env.GENERATED_FILES_PATH }}
         key: >-
-          OS=${{ runner.os }}
           generated-files-${{ hashFiles('generated_files_list.txt') }}
-          working-directory=${{ inputs.working-directory }}
-      env:
-        AWS_REGION: ${{ inputs.aws-region }}
+        working-directory: ${{ inputs.working-directory }}
 
     - name: Prepare generated files
       if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
