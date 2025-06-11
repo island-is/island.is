@@ -39,10 +39,10 @@ const supportEmail = getConfig()?.publicRuntimeConfig?.supportEmail ?? ''
 
 const LogoIcon = () => (
   <>
-    <Hidden above="sm">
+    <Hidden above="md">
       <Logo width={40} iconOnly />
     </Hidden>
-    <Hidden below="md">
+    <Hidden below="lg">
       <Logo width={160} />
     </Hidden>
   </>
