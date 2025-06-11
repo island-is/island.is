@@ -66,7 +66,7 @@ const Completed: FC = () => {
   const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
   const { createEventLog } = useEventLog()
 
-  const { onOpen } = useFileList({
+  const { onOpenFile } = useFileList({
     caseId: workingCase.id,
   })
 
@@ -156,14 +156,23 @@ const Completed: FC = () => {
   const isRuling =
     workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
 
-  const stepIsValid = () =>
-    workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
-      ? workingCase.defendants?.every((defendant) =>
-          defendant.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
-            ? Boolean(defendant.verdictAppealDecision)
-            : Boolean(defendant.serviceRequirement),
-        )
-      : true
+  const stepIsValid = () => {
+    const isValidDefendants =
+      workingCase.indictmentRulingDecision ===
+      CaseIndictmentRulingDecision.RULING
+        ? workingCase.defendants?.every((defendant) =>
+            defendant.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
+              ? Boolean(defendant.verdictAppealDecision)
+              : Boolean(defendant.serviceRequirement),
+          )
+        : true
+
+    if (features?.includes(Feature.SERVICE_PORTAL)) {
+      return Boolean(workingCase.ruling) && isValidDefendants
+    } else {
+      return isValidDefendants
+    }
+  }
 
   const hasLawsBroken = lawsBroken.size > 0
   const hasMergeCases =
@@ -269,7 +278,7 @@ const Completed: FC = () => {
               })}
               onChange={handleCriminalRecordUpdateUpload}
               onRemove={handleRemoveFile}
-              onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
+              onOpenFile={(file) => onOpenFile(file)}
             />
           </Box>
         )}
