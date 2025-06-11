@@ -5,10 +5,6 @@ inputs:
     description: 'Directory to run the action in'
     required: false
     default: '.'
-  aws-region:
-    description: 'AWS region to use'
-    required: false
-    default: 'eu-west-1'
 
 runs:
   using: 'composite'
@@ -61,7 +57,7 @@ runs:
           yarn.lock-hash=${{ hashFiles('yarn.lock') }}
           working-directory=${{ inputs.working-directory }}
       env:
-        AWS_REGION: ${{ inputs.aws-region }}
+        AWS_REGION: ${{ env.AWS_REGION || 'eu-west-1' }}
 
     - name: Yarn install
       working-directory: ${{ inputs.working-directory }}
