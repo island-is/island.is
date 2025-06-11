@@ -88,10 +88,12 @@ export const isProsecutorRepresentativeUser = (
   )
 }
 
+const publicProsecutionRoles: string[] = [UserRole.PROSECUTOR]
+
 export const isPublicProsecutionUser = (user?: InstitutionUser): boolean => {
   return Boolean(
     user?.role &&
-      user.role === UserRole.PROSECUTOR &&
+      publicProsecutionRoles.includes(user.role) &&
       user.institution?.type === InstitutionType.PUBLIC_PROSECUTORS_OFFICE,
   )
 }
