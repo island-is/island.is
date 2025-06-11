@@ -284,7 +284,7 @@ const HeaderContainer = () => {
             />
           )}
           {/* TODO SEARCH */}
-          {/* <button onClick={() => setIsSearchOpen(!isSearchOpen)}>
+          <button onClick={() => setIsSearchOpen(!isSearchOpen)}>
             <Box
               border="standard"
               borderRadius="full"
@@ -296,11 +296,11 @@ const HeaderContainer = () => {
               <Text>Leit</Text>
               <Icon icon="search" color="blue400" size="small" />
             </Box>
-          </button> */}
+          </button>
         </Inline>
       </Container>
       {/* TODO SEARCH */}
-      {/* <AnimatePresence>
+      <AnimatePresence>
         {isSearchOpen && (
           <SearchModal
             onClose={() => {
@@ -308,7 +308,7 @@ const HeaderContainer = () => {
             }}
           />
         )}
-      </AnimatePresence> */}
+      </AnimatePresence>
     </>
   )
 }
