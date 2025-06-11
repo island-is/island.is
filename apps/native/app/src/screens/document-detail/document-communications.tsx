@@ -1,10 +1,7 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Animated, ListRenderItemInfo, RefreshControl } from 'react-native'
-import {
-  Navigation,
-  NavigationFunctionComponent,
-} from 'react-native-navigation'
+import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 import { useUser } from '../../contexts/user-provider'
@@ -35,6 +32,7 @@ import {
   FloatingBottomContent,
   FloatingBottomFooter,
 } from './components/floating-bottom-footer'
+import { DocumentReplyScreenProps } from './document-reply'
 
 type FlatListItem = DocumentComment | { __typename: 'Skeleton'; id: string }
 
@@ -66,14 +64,14 @@ const { useNavigationOptions, getNavigationOptions } =
     },
   )
 
-type DocumentCommunicationsScreenProps = {
+export type DocumentCommunicationsScreenProps = {
   documentId: string
-  firstReply?: boolean
+  ticketId?: string
 }
 
 export const DocumentCommunicationsScreen: NavigationFunctionComponent<
   DocumentCommunicationsScreenProps
-> = ({ componentId, documentId, firstReply = false }) => {
+> = ({ componentId, documentId, ticketId }) => {
   useNavigationOptions(componentId)
   const locale = useLocale()
   const theme = useTheme()
@@ -85,6 +83,7 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
   const [shouldScroll, setShouldScroll] = useState(false)
   const [buttonHeight, setButtonHeight] = useState(48) // Default height
   const [refetching, setRefetching] = useState(false)
+  const [showFirstReplyInfo, setShowFirstReplyInfo] = useState(false)
   const flatListRef = useRef<Animated.FlatList>(null)
   const scrollY = useRef(new Animated.Value(0)).current
 
@@ -116,31 +115,24 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
       return
     }
 
-    showModal(ComponentRegistry.DocumentReplyScreen, {
-      passProps: {
-        senderName: document.sender.name,
-        documentId,
-        subject: document?.subject,
+    const passProps: DocumentReplyScreenProps = {
+      senderName: document.sender.name,
+      documentId,
+      subject: document?.subject,
+      onReplySuccess: (showFirstReplyInfo) => {
+        if (setShowFirstReplyInfo) {
+          setShowFirstReplyInfo(showFirstReplyInfo)
+        }
+
+        setRefetching(true)
+        docRes.refetch().finally(() => setRefetching(false))
       },
+    }
+
+    showModal(ComponentRegistry.DocumentReplyScreen, {
+      passProps,
     })
   }
-
-  useEffect(() => {
-    const modalDismissedListener =
-      Navigation.events().registerModalDismissedListener(
-        async ({ componentName }) => {
-          if (componentName === ComponentRegistry.DocumentReplyScreen) {
-            setRefetching(true)
-            docRes.refetch().finally(() => setRefetching(false))
-          }
-        },
-      )
-
-    return () => {
-      modalDismissedListener.remove()
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
 
   useEffect(() => {
     if (!isSkeleton && comments.length > 0) {
@@ -203,9 +195,11 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
         <Typography variant="eyebrow" color={theme.color.purple400}>
           {intl.formatMessage({ id: 'documentCommunications.caseNumber' })}
         </Typography>
-        <Typography variant="body3">#{document?.ticket?.id}</Typography>
+        <Typography variant="body3">
+          #{document?.ticket?.id ?? ticketId}
+        </Typography>
       </CaseNumberWrapper>
-      {(!firstReply || !replyable) && (
+      {(!showFirstReplyInfo || !replyable) && (
         <TopLine scrollY={scrollY} offsetTop={31} />
       )}
       <ListWrapper>
@@ -220,7 +214,7 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
             />
           </Container>
         )}
-        {firstReply && replyable && (
+        {showFirstReplyInfo && replyable && (
           <Container>
             <Alert
               type="info"
