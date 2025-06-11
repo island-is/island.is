@@ -19,7 +19,7 @@ import {
 @Resolver(() => BloodType)
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/rights-portal/blood' })
-@FeatureFlag(Features.servicePortalHealthOrganDonationPageEnabled)
+@FeatureFlag(Features.servicePortalHealthBloodPageEnabled)
 export class BloodResolver {
   constructor(private readonly service: BloodService) {}
 
