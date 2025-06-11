@@ -25,6 +25,7 @@ defaults:
 
 env:
   AWS_MAX_ATTEMPTS: 10
+  AWS_REGION: eu-west-1
   GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
   RUNS_ON_BUCKET_NAME: ${{ vars.RUNS_ON_BUCKET_NAME }}
 
