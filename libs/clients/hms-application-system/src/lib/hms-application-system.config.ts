@@ -11,7 +11,7 @@ export const HmsApplicationSystemConfig = defineConfig({
   load(env) {
     return {
       servicePath: env.required(
-        'HMS_APPLICATION_SYSTEM_SERVICE_PATH',
+        'HMS_APPLICATION_SYSTEM_PATH',
         'IS-DEV/GOV/10033/HMS-Protected/formbuilder-v1',
       ),
       xRoadClientHeader: env.required(
