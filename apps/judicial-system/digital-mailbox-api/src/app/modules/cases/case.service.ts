@@ -223,16 +223,16 @@ export class CaseService {
     verdictAppeal: UpdateVerdictAppealDecisionDto,
     lang?: string,
   ): Promise<VerdictResponse> {
-    await this.patchDefendant(caseId, nationalId, {
+    const verdict = await this.getVerdictInfo(caseId, nationalId, lang)
+
+    const defendant = await this.patchDefendant(caseId, nationalId, {
       verdictAppealDecision: verdictAppeal.verdictAppealDecision,
     })
 
-    const updatedCase = await this.fetchCase(caseId, nationalId)
-    return VerdictResponse.fromInternalCaseResponse(
-      updatedCase,
-      nationalId,
-      lang,
-    )
+    return {
+      ...verdict,
+      verdictAppealDecision: defendant.verdictAppealDecision,
+    }
   }
 
   private async fetchCases(
