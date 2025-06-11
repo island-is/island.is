@@ -42,7 +42,7 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     housingFundPayee,
   } = applicationAnswers(answers)
 
-  const tenantIds = tenants.map(
+  const tenantIds = (tenants ?? []).map(
     (tenant) => tenant.nationalIdWithName.nationalId,
   )
 
@@ -51,12 +51,12 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const isConditionPresent = conditionDescription || (files && files.length > 0)
   const isOtherFeesPresent =
     electricityCostPayee && heatingCostPayee && housingFundPayee
-  const isSameLandlordAndTenantRuleFulfilled = hasAnyMatchingNationalId(
+  const hasSameLandlordAndTenant = hasAnyMatchingNationalId(
     tenantIds,
     landlords,
   )
-  const isRepeatedLandlordRuleFulfilled = hasDuplicateApplicants(landlords)
-  const isRepeatedTenantRuleFulfilled = hasDuplicateApplicants(tenants)
+  const hasRepeatedLandlord = hasDuplicateApplicants(landlords)
+  const hasRepeatedTenant = hasDuplicateApplicants(tenants)
 
   const AlertMessageConditions = [
     {
@@ -75,22 +75,22 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       message: summary.alertMissingInfoOtherFees,
     },
     {
-      isFilled: !isSameLandlordAndTenantRuleFulfilled,
+      isFilled: !hasSameLandlordAndTenant,
       route: Routes.LANDLORDINFORMATION,
       message: summary.alertSameTenantAndLandlordLandlord,
     },
     {
-      isFilled: !isRepeatedLandlordRuleFulfilled,
+      isFilled: !hasRepeatedLandlord,
       route: Routes.LANDLORDINFORMATION,
       message: summary.alertRepeatedLandlord,
     },
     {
-      isFilled: !isSameLandlordAndTenantRuleFulfilled,
+      isFilled: !hasSameLandlordAndTenant,
       route: Routes.TENANTINFORMATION,
       message: summary.alertSameTenantAndLandlordTenant,
     },
     {
-      isFilled: !isRepeatedTenantRuleFulfilled,
+      isFilled: !hasRepeatedTenant,
       route: Routes.TENANTINFORMATION,
       message: summary.alertRepeatedTenant,
     },
