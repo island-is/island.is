@@ -269,7 +269,7 @@ describe('GET v2/actor/actor-profile', () => {
       email: null,
       emailStatus: DataStatus.NOT_VERIFIED,
       emailVerified: false,
-      needsNudge: false,
+      needsNudge: null,
       nationalId: testUserProfile.nationalId,
       emailNotifications: true,
     })
@@ -298,7 +298,7 @@ describe('GET v2/actor/actor-profile', () => {
       emailStatus: userProfile.emails?.[0].emailStatus,
       emailVerified:
         userProfile.emails?.[0].emailStatus === DataStatus.VERIFIED,
-      needsNudge: false,
+      needsNudge: null,
       nationalId: testUserProfile.nationalId,
       emailNotifications: true,
     })

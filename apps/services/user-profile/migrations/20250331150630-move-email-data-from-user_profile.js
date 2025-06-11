@@ -29,15 +29,15 @@ module.exports = {
         }
 
         // Clean up: Remove all email related columns from user_profile
-        await queryInterface.removeColumn('user_profile', 'email_status', {
-          transaction,
-        })
-        await queryInterface.removeColumn('user_profile', 'email_verified', {
-          transaction,
-        })
-        await queryInterface.removeColumn('user_profile', 'email', {
-          transaction,
-        })
+        // await queryInterface.removeColumn('user_profile', 'email_status', {
+        //   transaction,
+        // })
+        // await queryInterface.removeColumn('user_profile', 'email_verified', {
+        //   transaction,
+        // })
+        // await queryInterface.removeColumn('user_profile', 'email', {
+        //   transaction,
+        // })
       })
     } catch (error) {
       console.error('Error migrating email data:', error)
@@ -46,43 +46,41 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    await queryInterface.sequelize.transaction(async (transaction) => {
-      await queryInterface.addColumn(
-        'user_profile',
-        'email_status',
-        {
-          type: Sequelize.ENUM(
-            'NOT_DEFINED',
-            'NOT_VERIFIED',
-            'VERIFIED',
-            'EMPTY',
-          ),
-          defaultValue: 'NOT_DEFINED',
-          allowNull: false,
-        },
-        { transaction },
-      )
-
-      await queryInterface.addColumn(
-        'user_profile',
-        'email_verified',
-        {
-          type: Sequelize.BOOLEAN,
-          defaultValue: false,
-          allowNull: false,
-        },
-        { transaction },
-      )
-
-      await queryInterface.addColumn(
-        'user_profile',
-        'email',
-        {
-          type: Sequelize.STRING,
-          allowNull: true,
-        },
-        { transaction },
-      )
-    })
+    // await queryInterface.sequelize.transaction(async (transaction) => {
+    //   await queryInterface.addColumn(
+    //     'user_profile',
+    //     'email_status',
+    //     {
+    //       type: Sequelize.ENUM(
+    //         'NOT_DEFINED',
+    //         'NOT_VERIFIED',
+    //         'VERIFIED',
+    //         'EMPTY',
+    //       ),
+    //       defaultValue: 'NOT_DEFINED',
+    //       allowNull: false,
+    //     },
+    //     { transaction },
+    //   )
+    //   await queryInterface.addColumn(
+    //     'user_profile',
+    //     'email_verified',
+    //     {
+    //       type: Sequelize.BOOLEAN,
+    //       defaultValue: false,
+    //       allowNull: false,
+    //     },
+    //     { transaction },
+    //   )
+    //   await queryInterface.addColumn(
+    //     'user_profile',
+    //     'email',
+    //     {
+    //       type: Sequelize.STRING,
+    //       allowNull: true,
+    //     },
+    //     { transaction },
+    //   )
+    // })
   },
 }
