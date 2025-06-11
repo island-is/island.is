@@ -1226,24 +1226,12 @@ export class UserProfileService {
   /* Private methods */
 
   private async getIncomingDelegations(nationalId: string) {
-    return {
-      data: [
-        {
-          fromNationalId: '0101303019',
-          toNationalId: '0101307789',
-          subjectId: '',
-          type: 'Custom',
-        },
-      ],
-      totalCount: 0,
-      pageInfo: { hasNextPage: false },
-    } // Placeholder for actual implementation
-    // return this.delegationsApi.delegationsControllerGetDelegationRecords({
-    //   xQueryNationalId: nationalId,
-    //   scope: DocumentsScope.main,
-    //   direction:
-    //     DelegationsControllerGetDelegationRecordsDirectionEnum.incoming,
-    // })
+    return this.delegationsApi.delegationsControllerGetDelegationRecords({
+      xQueryNationalId: nationalId,
+      scope: DocumentsScope.main,
+      direction:
+        DelegationsControllerGetDelegationRecordsDirectionEnum.incoming,
+    })
   }
 
   /**
