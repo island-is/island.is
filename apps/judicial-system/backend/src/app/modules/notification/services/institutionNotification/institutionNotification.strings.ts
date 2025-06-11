@@ -19,7 +19,7 @@ export const strings = {
   tail: defineMessage({
     id: 'judicial.system.backend:institution_notifications.tail_v2',
     defaultMessage:
-      'Hægt er að nálgast yfirlit og staðfesta ákærur í {linkStart}Réttarvörslugátt{linkEnd}',
+      'Hægt er að nálgast yfirlit og staðfesta ákærur í {linkStart}Réttarvörslugátt{linkEnd}.',
     description:
       'Tail of the notification sent when indictments are waiting for confirmation',
   }),
