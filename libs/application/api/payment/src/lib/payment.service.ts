@@ -359,7 +359,16 @@ export class PaymentService {
     const catalogChargeItems = await this.findCatalogChargeItems(
       performingOrganizationID,
       chargeItems,
-    )
+    ).then((catalogChargeItems) => {
+      return catalogChargeItems.map((catalogChargeItem, i) => {
+        // If the price is dynamic, we need to update the price of the
+        // catalogChargeItems with the price from the chargeItems
+        return {
+          ...catalogChargeItem,
+          priceAmount: chargeItems[i].amount ?? catalogChargeItem.priceAmount,
+        }
+      })
+    })
 
     //2. Fetch existing payment if any
     let paymentModel = await this.findPaymentByApplicationId(applicationId)
