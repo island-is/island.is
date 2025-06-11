@@ -6,7 +6,7 @@ import {
   NavigationFunctionComponent,
 } from 'react-native-navigation'
 
-import styled, { css } from 'styled-components/native'
+import styled from 'styled-components/native'
 import { LoadingIcon } from '../../components/nav-loading-spinner/loading-icon'
 import { Pressable } from '../../components/pressable/pressable'
 import { useUser } from '../../contexts/user-provider'
@@ -29,6 +29,7 @@ import {
   ComponentRegistry,
   StackRegistry,
 } from '../../utils/component-registry'
+import { isAndroid } from '../../utils/devices'
 
 const Host = styled.SafeAreaView`
   flex: 1;
@@ -37,20 +38,15 @@ const Host = styled.SafeAreaView`
 const Row = styled(Container)<{
   hasBottomBorder?: boolean
   paddingVertical?: Spacing
-}>`
-  flex-direction: row;
-  padding-top: ${({ paddingVertical = 1, theme }) =>
-    theme.spacing[paddingVertical]}px;
-  padding-bottom: ${({ paddingVertical = 1, theme }) =>
-    theme.spacing[paddingVertical]}px;
-
-  ${({ hasBottomBorder = true, theme }) =>
-    hasBottomBorder &&
-    css`
-      border-bottom-width: ${theme.border.width.standard}px;
-      border-bottom-color: ${theme.color.blue200};
-    `}
-`
+}>(({ hasBottomBorder = true, paddingVertical = 1, theme }) => ({
+  flexDirection: 'row',
+  paddingTop: theme.spacing[paddingVertical],
+  paddingBottom: theme.spacing[paddingVertical],
+  ...(hasBottomBorder && {
+    borderBottomWidth: theme.border.width.standard,
+    borderBottomColor: theme.color.blue200,
+  }),
+}))
 
 const HeaderTitle = styled(Row)`
   padding-bottom: ${({ theme }) => theme.spacing.p2}px;
@@ -64,10 +60,13 @@ const TextArea = styled(TextField)`
   height: 170px;
 `
 
-const Footer = styled(Container)`
-  flex: 1;
-  justify-content: flex-end;
-`
+const Footer = styled(Container)(({ theme }) => ({
+  flex: 1,
+  justifyContent: 'flex-end',
+  ...(isAndroid && {
+    paddingBottom: theme.spacing.p2,
+  }),
+}))
 
 const EmailIconWrapper = styled(Pressable)`
   margin-left: auto;
@@ -107,27 +106,26 @@ export const DocumentReplyScreen: NavigationFunctionComponent<
         if (id) {
           // Successful reply, clear message
           setMessage('')
-          // Close the modal
           dismissModal(componentId)
 
-          // Navigate to the document communications screen
-          Navigation.push(firstReply ? StackRegistry.InboxStack : componentId, {
-            component: {
-              name: ComponentRegistry.DocumentCommunicationsScreen,
-              passProps: {
-                documentId,
-                firstReply,
-                refetchDocument: true,
-              },
-              options: {
-                topBar: {
-                  title: {
-                    text: subject,
+          if (firstReply) {
+            Navigation.push(StackRegistry.InboxStack, {
+              component: {
+                name: ComponentRegistry.DocumentCommunicationsScreen,
+                passProps: {
+                  documentId,
+                  firstReply,
+                },
+                options: {
+                  topBar: {
+                    title: {
+                      text: subject,
+                    },
                   },
                 },
               },
-            },
-          })
+            })
+          }
         }
       },
     })
@@ -167,7 +165,7 @@ export const DocumentReplyScreen: NavigationFunctionComponent<
     <>
       <NavigationBarSheet
         componentId={componentId}
-        onClosePress={() => Navigation.dismissModal(componentId)}
+        onClosePress={() => dismissModal(componentId)}
         includeContainer
         showLoading={sendMessageLoading}
       />
