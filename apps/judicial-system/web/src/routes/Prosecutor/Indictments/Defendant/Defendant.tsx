@@ -368,6 +368,7 @@ const Defendant = () => {
         const createdCase = await createCase(workingCase)
 
         if (createdCase) {
+          // TODO: Do not create an empty defendant?
           workingCase.defendants?.forEach(async (defendant, index) => {
             if (
               index === 0 &&
