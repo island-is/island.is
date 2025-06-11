@@ -44,7 +44,10 @@ export const EmptyCard: React.FC<EmptyCardProps> = ({
             justifyContent="spaceBetween"
             alignItems="center"
           >
-            <Box marginRight={3}>
+            <Box
+              marginRight={3}
+              flexDirection={isMobile ? 'rowReverse' : 'row'}
+            >
               <Text variant="h3" as="p">
                 {title}
               </Text>

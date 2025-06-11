@@ -52,3 +52,12 @@ export const detailItem = style({
   flexDirection: 'column',
   justifyContent: 'center',
 })
+
+export const detailContainer = style({
+  width: 'fit-content',
+  ...themeUtils.responsiveStyle({
+    xl: {
+      width: '100%',
+    },
+  }),
+})

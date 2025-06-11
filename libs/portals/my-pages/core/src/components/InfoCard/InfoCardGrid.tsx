@@ -43,28 +43,33 @@ export const InfoCardGrid: React.FC<InfoCardGridProps> = ({
               border="standard"
               borderRadius="large"
               borderColor="blue200"
-              paddingY="p2"
-              paddingX={3}
+              paddingTop={isMobile ? 2 : 'p2'}
+              paddingBottom={isMobile ? 5 : 'p2'}
+              paddingX={isMobile ? 2 : 3}
               display="flex"
               justifyContent="spaceBetween"
               alignItems="center"
+              flexDirection={isMobile ? 'columnReverse' : 'row'}
             >
-              <Box marginRight={3}>
+              <Box marginRight={isMobile ? 0 : 3}>
                 <Text
                   variant="h3"
                   as="p"
-                  marginBottom={size === 'large' ? 1 : 0}
+                  marginBottom={isMobile || size === 'large' ? 1 : 0}
+                  textAlign={isMobile ? 'center' : 'left'}
                 >
                   {emptyTitle}
                 </Text>
-                <Text>{emptyDescription}</Text>
+                <Text textAlign={isMobile ? 'center' : 'left'}>
+                  {emptyDescription}
+                </Text>
               </Box>
               <Box>
                 <Box
                   alt=""
                   component="img"
                   src={img ?? './assets/images/sofa.svg'}
-                  margin={3}
+                  margin={isMobile ? 3 : 1}
                   className={styles.smallImage}
                   display="flex"
                   justifyContent="center"

@@ -46,6 +46,8 @@ import useIsMobile from '../../hooks/useIsMobile/useIsMobile'
 import LinkResolver from '../LinkResolver/LinkResolver'
 import * as styles from './InfoCard.css'
 import TimeCard from './TimeCard'
+import { useWindowSize } from 'react-use'
+import { theme } from '@island.is/island-ui/theme'
 
 interface InfoCardDetail {
   label: string
@@ -84,7 +86,10 @@ export const InfoCard: React.FC<InfoCardProps> = ({
   appointment,
   variant = 'default',
 }) => {
-  const { isMobile } = useIsMobile()
+  const { width } = useWindowSize()
+  const isMobile = width < theme.breakpoints.md
+  const isDesktop = width < theme.breakpoints.xl
+
   const detailLength = detail ? detail.length : 0
 
   let detailData = detail
@@ -144,7 +149,7 @@ export const InfoCard: React.FC<InfoCardProps> = ({
                   display="flex"
                   flexDirection={[
                     'column',
-                    size === 'small' ? 'column' : 'row',
+                    'column',
                     'column',
                     'column',
                     'row',
@@ -152,6 +157,7 @@ export const InfoCard: React.FC<InfoCardProps> = ({
                   flexWrap="nowrap"
                   alignItems="stretch"
                   justifyContent={'spaceBetween'}
+                  className={styles.detailContainer}
                 >
                   {detailData.map((item, index) => (
                     <React.Fragment key={`${item.label}-${index}`}>
@@ -176,6 +182,8 @@ export const InfoCard: React.FC<InfoCardProps> = ({
                           borderRightWidth={
                             size === 'large' ? 'standard' : undefined
                           }
+                          marginY={isDesktop ? 2 : 0}
+                          borderBottomWidth={isDesktop ? 'standard' : undefined}
                         />
                       )}
                     </React.Fragment>
