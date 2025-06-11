@@ -201,6 +201,38 @@ export class CaseService {
     nationalId: string,
     lang?: string,
   ): Promise<VerdictResponse> {
+    const caseWithVerdict = await this.fetchCaseWithVerdict(caseId, nationalId)
+
+    return VerdictResponse.fromInternalCaseResponse(
+      caseWithVerdict,
+      nationalId,
+      lang,
+    )
+  }
+
+  private async updateVerdictAppealDecisionInfo(
+    caseId: string,
+    nationalId: string,
+    verdictAppeal: UpdateVerdictAppealDecisionDto,
+    lang?: string,
+  ): Promise<VerdictResponse> {
+    const caseWithVerdict = await this.fetchCaseWithVerdict(caseId, nationalId)
+
+    const defendant = await this.patchDefendant(caseId, nationalId, {
+      verdictAppealDecision: verdictAppeal.verdictAppealDecision,
+    })
+
+    return VerdictResponse.fromInternalCaseResponse(
+      { ...caseWithVerdict, defendants: [defendant] },
+      nationalId,
+      lang,
+    )
+  }
+
+  private async fetchCaseWithVerdict(
+    caseId: string,
+    nationalId: string,
+  ): Promise<InternalCaseResponse> {
     const caseData = await this.fetchCase(caseId, nationalId)
 
     if (!isCompletedCase(caseData.state)) {
@@ -214,25 +246,8 @@ export class CaseService {
         `Verdict has not been issued for case ${caseId}`,
       )
     }
-    return VerdictResponse.fromInternalCaseResponse(caseData, nationalId, lang)
-  }
 
-  private async updateVerdictAppealDecisionInfo(
-    caseId: string,
-    nationalId: string,
-    verdictAppeal: UpdateVerdictAppealDecisionDto,
-    lang?: string,
-  ): Promise<VerdictResponse> {
-    const verdict = await this.getVerdictInfo(caseId, nationalId, lang)
-
-    const defendant = await this.patchDefendant(caseId, nationalId, {
-      verdictAppealDecision: verdictAppeal.verdictAppealDecision,
-    })
-
-    return {
-      ...verdict,
-      verdictAppealDecision: defendant.verdictAppealDecision,
-    }
+    return caseData
   }
 
   private async fetchCases(
