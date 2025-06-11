@@ -7,6 +7,7 @@ import {
   getIndictmentAppealDeadlineDate,
   hasDatePassed,
   ServiceRequirement,
+  VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 
 import { InternalCaseResponse } from './internal/internalCase.response'
@@ -22,6 +23,9 @@ export class VerdictResponse {
 
   @ApiProperty({ type: String })
   subtitle?: string
+
+  @ApiProperty({ enum: VerdictAppealDecision })
+  verdictAppealDecision?: VerdictAppealDecision
 
   @ApiProperty({ type: [Groups] })
   groups?: Groups[]
@@ -59,6 +63,7 @@ export class VerdictResponse {
       caseId: internalCase.id,
       title: t.rulingTitle,
       // subtitle: 'TODO subtitle (if needed)',
+      verdictAppealDecision: defendant?.verdictAppealDecision,
       groups: [
         {
           label: t.rulingTitle,
