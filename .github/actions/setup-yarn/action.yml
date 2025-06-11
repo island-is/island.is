@@ -5,6 +5,10 @@ inputs:
     description: 'Directory to run the action in'
     required: false
     default: '.'
+  aws-region:
+    description: 'AWS region to use'
+    required: false
+    default: 'eu-west-1'
 
 runs:
   using: 'composite'
@@ -51,7 +55,13 @@ runs:
           ${{ steps.yarn-cache-dir-path.outputs.dir }}
           ${{ inputs.working-directory }}/node_modules
           ${{ github.workspace }}/.cypress-cache
-        key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-1-node_modules
+        key: >-
+          OS=${{ runner.os }}
+          deps=cypress:node_modules
+          yarn.lock-hash=${{ hashFiles('yarn.lock') }}
+          working-directory=${{ inputs.working-directory }}
+      env:
+        AWS_REGION: ${{ inputs.aws-region }}
 
     - name: Yarn install
       working-directory: ${{ inputs.working-directory }}
