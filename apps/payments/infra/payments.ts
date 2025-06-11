@@ -25,6 +25,17 @@ export const serviceSetup = (services: {
         staging: 'https://beta.staging01.devland.is',
         prod: 'https://island.is',
       },
+      APP_EXTERNAL_BASEPATH: {
+        local: 'http://localhost:4200',
+        dev: ref(
+          (ctx) =>
+            `https://${
+              ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
+            }beta.dev01.devland.is`,
+        ),
+        staging: 'https://beta.staging01.devland.is',
+        prod: 'https://island.is',
+      },
     })
     .secrets({
       SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY',
