@@ -3,6 +3,7 @@ import {
   ApplicationType,
   getApplicationAnswers,
   getApplicationExternalData,
+  getSelectedChild,
   LanguageEnvironmentOptions,
   ReasonForApplicationOptions,
   SchoolType,
@@ -14,7 +15,23 @@ import {
   FormDto,
   FormDtoTypeEnum,
   LanguageDtoLanguageEnvironmentEnum,
+  UserDtoGenderEnum,
 } from '@island.is/clients/mms/frigg'
+
+export const getGenderCode = (genderCode: string) => {
+  switch (genderCode) {
+    case '1':
+    case '3':
+      return UserDtoGenderEnum.Male
+    case '2':
+    case '4':
+      return UserDtoGenderEnum.Female
+    case '7':
+    case '8':
+    default:
+      return UserDtoGenderEnum.Other
+  }
+}
 
 export const transformApplicationToNewPrimarySchoolDTO = (
   application: Application,
@@ -54,7 +71,10 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     selectedSchoolType,
   } = getApplicationAnswers(application.answers)
 
-  const { primaryOrgId } = getApplicationExternalData(application.externalData)
+  const { primaryOrgId, childNationality } = getApplicationExternalData(
+    application.externalData,
+  )
+  const selectedChild = getSelectedChild(application)
 
   const agents: AgentDto[] = [
     ...guardians.map((guardian) => ({
@@ -93,7 +113,8 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     user: {
       name: childInfo.name,
       nationalId: childInfo.nationalId,
-      nationality: '', // LAGA
+      nationality: childNationality,
+      gender: getGenderCode(selectedChild?.genderCode || ''),
       ...(childInfo.usePronounAndPreferredName?.includes(YES)
         ? {
             preferredName: childInfo.preferredName,
