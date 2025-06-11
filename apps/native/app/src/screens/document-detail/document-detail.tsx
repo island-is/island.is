@@ -24,7 +24,7 @@ import {
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { useLocale } from '../../hooks/use-locale'
-import { useNavigation } from '../../hooks/use-navigation'
+import { useNavigationModal } from '../../hooks/use-navigation-modal'
 import { toggleAction } from '../../lib/post-mail-action'
 import { useBrowser } from '../../lib/use-browser'
 import { useOrganizationsStore } from '../../stores/organizations-store'
@@ -195,7 +195,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
 }> = ({ componentId, docId, isUrgent, listParams }) => {
   useNavigationOptions(componentId)
 
-  const { showModal } = useNavigation()
+  const { showModal } = useNavigationModal()
 
   const insets = useSafeAreaInsets()
   const theme = useTheme()

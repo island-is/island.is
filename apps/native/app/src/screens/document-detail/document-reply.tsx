@@ -9,7 +9,7 @@ import { Pressable } from '../../components/pressable/pressable'
 import { useUser } from '../../contexts/user-provider'
 import { useDocumentReplyMutation } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { useNavigation } from '../../hooks/use-navigation'
+import { useNavigationModal } from '../../hooks/use-navigation-modal'
 import { useNavigationCurrentComponentId } from '../../hooks/use-navigation-current-component-id'
 import { useAuthStore } from '../../stores/auth-store'
 import {
@@ -93,7 +93,7 @@ export const DocumentReplyScreen: NavigationFunctionComponent<
 }) => {
   useNavigationOptions(componentId)
   const intl = useIntl()
-  const { showModal, dismissModal } = useNavigation()
+  const { showModal, dismissModal } = useNavigationModal()
   const currentComponentId = useNavigationCurrentComponentId()
   const { userInfo } = useAuthStore()
   const { user: userProfile, loading, error } = useUser()
