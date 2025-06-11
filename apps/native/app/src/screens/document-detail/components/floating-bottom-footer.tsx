@@ -1,4 +1,5 @@
 import styled from 'styled-components/native'
+import { isAndroid } from '../../../utils/devices'
 
 export const FloatingBottomFooter = styled.SafeAreaView`
   position: absolute;
@@ -17,8 +18,11 @@ export const FloatingBottomFooter = styled.SafeAreaView`
   elevation: 4;
 `
 
-export const FloatingBottomContent = styled.View`
-  padding-horizontal: ${({ theme }) => theme.spacing.p4}px;
-  padding-vertical: ${({ theme }) => theme.spacing.p2}px;
-  row-gap: ${({ theme }) => theme.spacing.p2}px;
-`
+export const FloatingBottomContent = styled.View(({ theme }) => ({
+  paddingHorizontal: theme.spacing.p4,
+  paddingTop: theme.spacing.p2,
+  rowGap: theme.spacing.p2,
+  ...(isAndroid && {
+    paddingBottom: theme.spacing.p2,
+  }),
+}))

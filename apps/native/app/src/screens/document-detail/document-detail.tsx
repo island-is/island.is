@@ -48,6 +48,8 @@ import {
 } from './components/floating-bottom-footer'
 import { getButtonsForActions } from './utils/get-buttons-for-actions'
 import { shareFile } from './utils/share-file'
+import { DocumentReplyScreenProps } from './document-reply'
+import { DocumentCommunicationsScreenProps } from './document-communications'
 
 const Host = styled.SafeAreaView`
   margin-left: ${({ theme }) => theme.spacing[2]}px;
@@ -403,30 +405,42 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     }
   }, [loaded])
 
-  const onReplyPress = () => {
+  /**
+   * Navigate to the document reply modal.
+   * It will pass the first reply info down so that the document communications screen can show the first reply info.
+   */
+  const onFirstReplyPress = () => {
     const senderName = Document.sender?.name
 
     if (!senderName) {
       return
     }
 
+    const passProps: DocumentReplyScreenProps = {
+      senderName,
+      documentId: docId,
+      subject: Document.subject ?? '',
+      isFirstReply: true,
+    }
+
     showModal(ComponentRegistry.DocumentReplyScreen, {
-      passProps: {
-        senderName,
-        documentId: docId,
-        subject: Document.subject,
-        firstReply: true,
-      },
+      passProps,
     })
   }
 
+  /**
+   * Navigate to the document communications modal.
+   */
   const onCommunicationsPress = () => {
+    const passProps: DocumentCommunicationsScreenProps = {
+      documentId: docId,
+      ticketId: Document.ticket?.id ?? undefined,
+    }
+
     Navigation.push(componentId, {
       component: {
         name: ComponentRegistry.DocumentCommunicationsScreen,
-        passProps: {
-          documentId: docId,
-        },
+        passProps,
         options: {
           topBar: {
             title: {
@@ -580,7 +594,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
                   ? require('../../assets/icons/chatbubbles.png')
                   : require('../../assets/icons/reply.png')
               }
-              onPress={hasComments ? onCommunicationsPress : onReplyPress}
+              onPress={hasComments ? onCommunicationsPress : onFirstReplyPress}
             />
           </FloatingBottomContent>
         </FloatingBottomFooter>

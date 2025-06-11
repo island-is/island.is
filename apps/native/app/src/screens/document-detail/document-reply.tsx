@@ -1,10 +1,7 @@
 import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import {
-  Navigation,
-  NavigationFunctionComponent,
-} from 'react-native-navigation'
+import { NavigationFunctionComponent } from 'react-native-navigation'
 
 import styled from 'styled-components/native'
 import { LoadingIcon } from '../../components/nav-loading-spinner/loading-icon'
@@ -25,10 +22,7 @@ import {
   TextField,
   Typography,
 } from '../../ui'
-import {
-  ComponentRegistry,
-  StackRegistry,
-} from '../../utils/component-registry'
+import { ComponentRegistry } from '../../utils/component-registry'
 import { isAndroid } from '../../utils/devices'
 
 const Host = styled.SafeAreaView`
@@ -79,16 +73,24 @@ const { getNavigationOptions, useNavigationOptions } =
     },
   }))
 
-type DocumentReplyScreenProps = {
+export type DocumentReplyScreenProps = {
   senderName: string
   documentId: string
   subject: string
-  firstReply?: boolean
+  isFirstReply?: boolean
+  onReplySuccess?(showFirstReplyInfo: boolean): void
 }
 
 export const DocumentReplyScreen: NavigationFunctionComponent<
   DocumentReplyScreenProps
-> = ({ componentId, senderName, documentId, subject, firstReply = false }) => {
+> = ({
+  componentId,
+  senderName,
+  documentId,
+  subject,
+  isFirstReply = false,
+  onReplySuccess,
+}) => {
   useNavigationOptions(componentId)
   const intl = useIntl()
   const { showModal, dismissModal } = useNavigation()
@@ -106,26 +108,8 @@ export const DocumentReplyScreen: NavigationFunctionComponent<
         if (id) {
           // Successful reply, clear message
           setMessage('')
+          onReplySuccess?.(isFirstReply)
           dismissModal(componentId)
-
-          if (firstReply) {
-            Navigation.push(StackRegistry.InboxStack, {
-              component: {
-                name: ComponentRegistry.DocumentCommunicationsScreen,
-                passProps: {
-                  documentId,
-                  firstReply,
-                },
-                options: {
-                  topBar: {
-                    title: {
-                      text: subject,
-                    },
-                  },
-                },
-              },
-            })
-          }
         }
       },
     })
