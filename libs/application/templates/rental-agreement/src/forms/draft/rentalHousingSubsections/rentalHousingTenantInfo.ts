@@ -98,6 +98,28 @@ export const RentalHousingTenantInfo = buildSubSection({
             return tenants.length > 0 && filterNonRepresentatives.length === 0
           },
         }),
+        buildAlertMessageField({
+          id: 'tenantInfo.tenantSameAsLandlordError',
+          alertType: 'warning',
+          title: tenantDetails.sameTenantLandlordError,
+          condition: (answers) => {
+            const { tenants, landlords } = applicationAnswers(answers)
+
+            const landlordsNationalIds =
+              landlords?.map(
+                (landlord) => landlord.nationalIdWithName.nationalId,
+              ) ?? []
+
+            return (
+              landlordsNationalIds.length > 0 &&
+              tenants.some((tenant) =>
+                landlordsNationalIds.includes(
+                  tenant.nationalIdWithName.nationalId,
+                ),
+              )
+            )
+          },
+        }),
       ],
     }),
   ],

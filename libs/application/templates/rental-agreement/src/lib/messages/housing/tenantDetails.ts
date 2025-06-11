@@ -71,6 +71,12 @@ export const tenantDetails = defineMessages({
       'Að minnsta kosti einn leigjandi þarf að vera skráður á leigusamninginn. Ekki er nóg að skrá umboðsaðila leigjanda.',
     description: 'Tenant details only a representative of tenant in table',
   },
+  sameTenantLandlordError: {
+    id: 'ra.application:tenantDetails.sameTenantLandlordError',
+    defaultMessage:
+      'Sami aðili getur ekki verið skráður bæði sem leigusali og leigjandi.',
+    description: 'Tenant details same landlord and tenant error',
+  },
   tenantNationalIdEmptyError: {
     id: 'ra.application:tenantDetails.tenantNationalIdEmptyError',
     defaultMessage: 'Kennitala leigutaka þarf að vera skráð',

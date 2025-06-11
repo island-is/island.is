@@ -26,6 +26,8 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const { answers } = application
 
   const {
+    landlords,
+    tenants,
     smokeDetectors,
     fireExtinguisher,
     emergencyExits,
@@ -36,11 +38,18 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     housingFundPayee,
   } = applicationAnswers(answers)
 
+  const tenantIds = tenants.map(
+    (tenant) => tenant.nationalIdWithName.nationalId,
+  )
+
   const isFireProtectionsPresent =
     smokeDetectors && fireExtinguisher && emergencyExits
   const isConditionPresent = conditionDescription || (files && files.length > 0)
   const isOtherFeesPresent =
     electricityCostPayee && heatingCostPayee && housingFundPayee
+  const isSameLandlordAndTenantRuleFulfilled = landlords.some((landlord) =>
+    tenantIds.includes(landlord.nationalIdWithName.nationalId),
+  )
 
   const AlertMessageConditions = [
     {
@@ -57,6 +66,16 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       isFilled: isOtherFeesPresent,
       route: Routes.OTHERFEES,
       message: summary.alertMissingInfoOtherFees,
+    },
+    {
+      isFilled: !isSameLandlordAndTenantRuleFulfilled,
+      route: Routes.LANDLORDINFORMATION,
+      message: summary.alertSameTenantAndLandlordLandlord,
+    },
+    {
+      isFilled: !isSameLandlordAndTenantRuleFulfilled,
+      route: Routes.TENANTINFORMATION,
+      message: summary.alertSameTenantAndLandlordTenant,
     },
   ]
 
@@ -111,9 +130,7 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         route={Routes.OTHERFEES}
         hasChangeButton={true}
       />
-      {(!isFireProtectionsPresent ||
-        !isConditionPresent ||
-        !isOtherFeesPresent) && (
+      {unfilledConditions.length > 0 && (
         <Box marginTop={4} marginBottom={4}>
           <AlertMessage
             type="error"

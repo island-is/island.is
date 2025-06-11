@@ -385,4 +385,16 @@ export const summary = defineMessages({
     defaultMessage: 'Önnur gjöld',
     description: 'Missing information alert other fees',
   },
+  alertSameTenantAndLandlordLandlord: {
+    id: 'ra.application:summary.alertSameTenantAndLandlordLandlord',
+    defaultMessage:
+      'Sami aðili getur ekki verið skráður bæði sem leigusali og leigjandi (Leigusali)',
+    description: 'Same tenant and landlord alert message (landlord)',
+  },
+  alertSameTenantAndLandlordTenant: {
+    id: 'ra.application:summary.alertSameTenantAndLandlordTenant',
+    defaultMessage:
+      'Sami aðili getur ekki verið skráður bæði sem leigusali og leigjandi (Leigjandi)',
+    description: 'Same tenant and landlord alert message (tenant)',
+  },
 })
