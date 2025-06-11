@@ -8,6 +8,7 @@
     "yarn": "4.6"
   },
   "scripts": {
+    "DEPLOYME": "true",
     "test": "jest",
     "charts": "node -r esbuild-register src/cli/generate-chart-values.ts",
     "update": "yarn update:packagejson",
