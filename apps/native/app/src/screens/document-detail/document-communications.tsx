@@ -207,7 +207,7 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
         <TopLine scrollY={scrollY} offsetTop={31} />
       )}
       <ListWrapper>
-        {!replyable && (
+        {document?.closedForMoreReplies && (
           <Container>
             <Alert
               type="info"
