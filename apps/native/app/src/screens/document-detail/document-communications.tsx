@@ -75,6 +75,7 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
   const { user } = useUser()
 
   const insets = useSafeAreaInsets()
+  const [shouldScroll, setShouldScroll] = useState(false)
   const [buttonHeight, setButtonHeight] = useState(48) // Default height
   const [refetching, setRefetching] = useState(false)
   const flatListRef = useRef<Animated.FlatList>(null)
@@ -125,20 +126,29 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refetchDocument])
 
+  useEffect(() => {
+    if (!isSkeleton && comments.length > 0) {
+      setShouldScroll(true)
+    }
+    // Only run when isSkeleton or comments.length changes
+  }, [isSkeleton, comments.length])
+
   const keyExtractor = useCallback(
     (item: FlatListItem, index: number) => item.id ?? `comment-${index}`,
     [],
   )
 
-  const onLayoutCallback = useCallback(() => {
-    setTimeout(() => {
-      flatListRef.current?.scrollToOffset({
-        offset: 75 * (comments.length - 1),
-        animated: true,
-      })
-    }, TOGGLE_ANIMATION_DURATION + 50)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [])
+  const handleContentSizeChange = () => {
+    if (shouldScroll) {
+      setShouldScroll(false)
+      setTimeout(() => {
+        flatListRef.current?.scrollToOffset({
+          offset: 75 * (comments.length - 1) + 200,
+          animated: true,
+        })
+      }, TOGGLE_ANIMATION_DURATION + 50)
+    }
+  }
 
   const renderItem = useCallback(
     ({ item, index }: ListRenderItemInfo<FlatListItem>) => {
@@ -156,9 +166,6 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
           body={item.body ?? undefined}
           date={item.createdDate ? formatDate(item.createdDate) : undefined}
           hasTopBorder={index !== 0}
-          {...(index === comments.length - 1 && {
-            onLayoutCallback,
-          })}
         />
       )
     },
@@ -188,7 +195,7 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
           contentContainerStyle={{
             paddingBottom:
               !firstReply && replyable
-                ? FIRST_REPLY_HEIGHT + insets.bottom + theme.spacing[4]
+                ? FIRST_REPLY_HEIGHT + insets.bottom + theme.spacing[2]
                 : replyable
                 ? insets.bottom + buttonHeight
                 : 0,
@@ -203,6 +210,7 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
               useNativeDriver: true,
             },
           )}
+          onContentSizeChange={handleContentSizeChange}
           refreshControl={
             <RefreshControl
               refreshing={refetching}
