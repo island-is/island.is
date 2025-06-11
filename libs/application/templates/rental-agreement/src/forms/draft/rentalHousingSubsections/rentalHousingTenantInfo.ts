@@ -7,6 +7,8 @@ import {
 import {
   formatNationalId,
   formatPhoneNumber,
+  hasAnyMatchingNationalId,
+  hasDuplicateApplicants,
   IS_REPRESENTATIVE,
 } from '../../../utils/utils'
 import { Routes } from '../../../utils/enums'
@@ -100,7 +102,7 @@ export const RentalHousingTenantInfo = buildSubSection({
         }),
         buildAlertMessageField({
           id: 'tenantInfo.tenantSameAsLandlordError',
-          alertType: 'warning',
+          alertType: 'error',
           title: tenantDetails.sameTenantLandlordError,
           condition: (answers) => {
             const { tenants, landlords } = applicationAnswers(answers)
@@ -110,14 +112,21 @@ export const RentalHousingTenantInfo = buildSubSection({
                 (landlord) => landlord.nationalIdWithName.nationalId,
               ) ?? []
 
-            return (
-              landlordsNationalIds.length > 0 &&
-              tenants.some((tenant) =>
-                landlordsNationalIds.includes(
-                  tenant.nationalIdWithName.nationalId,
-                ),
-              )
-            )
+            return hasAnyMatchingNationalId(landlordsNationalIds, tenants)
+          },
+        }),
+        buildAlertMessageField({
+          id: 'tenantInfo.tenantAlreadyExistsError',
+          alertType: 'error',
+          title: tenantDetails.tenantAlreadyExistsError,
+          condition: (answers) => {
+            const { tenants } = applicationAnswers(answers)
+
+            if (tenants.length === 0 || tenants.length === 1) {
+              return false
+            }
+
+            return hasDuplicateApplicants(tenants)
           },
         }),
       ],

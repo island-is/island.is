@@ -7,7 +7,9 @@ import {
 import {
   formatNationalId,
   formatPhoneNumber,
+  hasAnyMatchingNationalId,
   IS_REPRESENTATIVE,
+  hasDuplicateApplicants,
 } from '../../../utils/utils'
 import { Routes } from '../../../utils/enums'
 import { landlordDetails } from '../../../lib/messages'
@@ -99,7 +101,7 @@ export const RentalHousingLandlordInfo = buildSubSection({
         }),
         buildAlertMessageField({
           id: 'landlordInfo.landlordSameAsTenantError',
-          alertType: 'warning',
+          alertType: 'error',
           title: landlordDetails.landlordSameAsTenantError,
           condition: (answers) => {
             const { tenants, landlords } = applicationAnswers(answers)
@@ -108,14 +110,21 @@ export const RentalHousingLandlordInfo = buildSubSection({
               tenants?.map((tenant) => tenant.nationalIdWithName.nationalId) ??
               []
 
-            return (
-              tenantNationalIds.length > 0 &&
-              landlords.some((landlord) =>
-                tenantNationalIds.includes(
-                  landlord.nationalIdWithName.nationalId,
-                ),
-              )
-            )
+            return hasAnyMatchingNationalId(tenantNationalIds, landlords)
+          },
+        }),
+        buildAlertMessageField({
+          id: 'landlordInfo.landlordAlreadyExistsError',
+          alertType: 'error',
+          title: landlordDetails.landlordAlreadyExistsError,
+          condition: (answers) => {
+            const { landlords } = applicationAnswers(answers)
+
+            if (landlords.length === 0 || landlords.length === 1) {
+              return false
+            }
+
+            return hasDuplicateApplicants(landlords)
           },
         }),
       ],

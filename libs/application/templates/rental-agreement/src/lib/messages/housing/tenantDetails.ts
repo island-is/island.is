@@ -77,6 +77,12 @@ export const tenantDetails = defineMessages({
       'Sami aðili getur ekki verið skráður bæði sem leigusali og leigjandi.',
     description: 'Tenant details same landlord and tenant error',
   },
+  tenantAlreadyExistsError: {
+    id: 'ra.application:tenantDetails.tenantAlreadyExistsError',
+    defaultMessage:
+      'Sami aðili getur ekki verið skráður mörgum sinnum sem leigjandi.',
+    description: 'Tenant details tenant already registered error',
+  },
   tenantNationalIdEmptyError: {
     id: 'ra.application:tenantDetails.tenantNationalIdEmptyError',
     defaultMessage: 'Kennitala leigutaka þarf að vera skráð',
