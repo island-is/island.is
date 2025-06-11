@@ -23,7 +23,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     applicationType,
     childInfo,
     guardians,
-    contacts,
+    relatives,
     reasonForApplication,
     reasonForApplicationStreetAddress,
     reasonForApplicationPostalCode,
@@ -61,22 +61,21 @@ export const transformApplicationToNewPrimarySchoolDTO = (
       name: guardian.fullName,
       nationalId: guardian.nationalId,
       nationality: '', // LAGA
-      type: AgentDtoTypeEnum.Guardian, // LAGA
+      type: AgentDtoTypeEnum.Guardian,
       domicile: {
         address: guardian.address.streetAddress,
         postCode: guardian.address.postalCode,
       },
       email: guardian.email,
       phone: guardian.phoneNumber,
-      role: 'guardian',
     })),
-    ...contacts.map((contact) => ({
-      name: contact.fullName,
-      nationalId: contact.nationalId,
+    ...relatives.map((relative) => ({
+      name: relative.fullName,
+      nationalId: relative.nationalId,
       nationality: '', // LAGA
-      type: AgentDtoTypeEnum.Guardian, // LAGA
-      phone: contact.phoneNumber,
-      role: contact.relation,
+      type: AgentDtoTypeEnum.EmergencyContact,
+      phone: relative.phoneNumber,
+      relationTypeId: relative.relation,
     })),
     ...(reasonForApplication ===
     ReasonForApplicationOptions.SIBLINGS_IN_SAME_SCHOOL
@@ -84,8 +83,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
           name: sibling.fullName,
           nationalId: sibling.nationalId,
           nationality: '', // LAGA
-          type: AgentDtoTypeEnum.Guardian, // LAGA
-          role: 'sibling',
+          type: AgentDtoTypeEnum.Sibling,
         }))
       : []),
   ]
