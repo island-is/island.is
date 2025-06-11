@@ -18,7 +18,7 @@ export enum GenderAnswerOptions {
   FEMALE = 'Kona/Kvenkyns',
   NONBINARY = 'Kvár/Kynsegin',
   OTHER = 'Annað',
-  DECLINED = 'Vil ekki svara'
+  DECLINED = 'Vil ekki svara',
 }
 
 export enum ApiActions {

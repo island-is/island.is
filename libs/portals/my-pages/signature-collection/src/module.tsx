@@ -34,7 +34,10 @@ export const signatureCollectionModule: PortalModule = {
         enabled: userInfo.scopes.includes(ApiScope.signatureCollection),
         element: (
           /* Default path to municipal lists since these are next */
-          <Navigate to={SignatureCollectionPaths.SignatureCollectionMunicipalLists} replace />
+          <Navigate
+            to={SignatureCollectionPaths.SignatureCollectionMunicipalLists}
+            replace
+          />
         ),
       },
       // Parliamentary

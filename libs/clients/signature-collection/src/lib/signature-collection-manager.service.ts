@@ -33,9 +33,13 @@ export class SignatureCollectionManagerClientService {
     return api.withMiddleware(new AuthMiddleware(auth)) as T
   }
 
-  async currentCollection(auth: Auth): Promise<Collection[]> {
+  async currentCollection(
+    auth: Auth,
+    collectionTypeFilter?: CollectionType,
+  ): Promise<Collection[]> {
     return await this.sharedService.currentCollection(
       this.getApiWithAuth(this.electionsApi, auth),
+      collectionTypeFilter,
     )
   }
 
@@ -53,6 +57,7 @@ export class SignatureCollectionManagerClientService {
     return await this.sharedService.getLists(
       input,
       this.getApiWithAuth(this.listsApi, auth),
+      this.getApiWithAuth(this.electionsApi, auth),
     )
   }
 

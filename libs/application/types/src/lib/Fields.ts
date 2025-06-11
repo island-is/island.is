@@ -5,6 +5,7 @@ import type {
   DatePickerProps,
   IconProps,
   InputBackgroundColor,
+  InputProps,
   SpanType,
 } from '@island.is/island-ui/core/types'
 import {
@@ -411,6 +412,7 @@ export interface DescriptionField extends BaseField {
   titleTooltip?: FormText
   space?: BoxProps['paddingTop']
   titleVariant?: TitleVariants
+  showFieldName?: boolean
 }
 
 export interface RadioField extends InputField {
@@ -743,7 +745,14 @@ export type TableRepeaterField = BaseField & {
      * if not provided it will be auto generated from the fields
      */
     rows?: string[]
-    format?: Record<string, (value: string) => string | StaticText>
+    format?: Record<
+      string,
+      (
+        value: string,
+        index: number,
+        application?: Application,
+      ) => string | StaticText
+    >
   }
   initActiveFieldIfEmpty?: boolean
 }
@@ -916,7 +925,7 @@ export interface DisplayField extends BaseField {
   halfWidthOwnline?: boolean
   variant?: TextFieldVariant
   label?: MessageDescriptor | string
-  value: (answers: FormValue) => string
+  value: (answers: FormValue, externalData: ExternalData) => string
 }
 
 export type KeyValueItem = {

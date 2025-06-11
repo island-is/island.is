@@ -52,7 +52,6 @@ const VehiclesOverview = () => {
   const [GetUsersVehiclesLazyQuery, { loading, error, ...usersVehicleQuery }] =
     useGetUsersVehiclesV2LazyQuery()
 
-
   useEffect(() => {
     GetUsersVehiclesLazyQuery({
       variables: {
@@ -62,7 +61,7 @@ const VehiclesOverview = () => {
         },
       },
     })
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   useDebounce(
@@ -92,54 +91,57 @@ const VehiclesOverview = () => {
   const filteredVehicles = vehicles?.vehicleList ?? []
 
   return (
-      <IntroWrapper
-        title={messages.title}
-        intro={messages.intro}
-        serviceProviderSlug={SAMGONGUSTOFA_SLUG}
-        serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
-        buttonGroup={((!loading && !error && filteredVehicles.length > 0) ||
-                searchLoading) ? [
-          ownershipLinks ?
-          <DropdownMenu
-          key="dropdown-menu"
-            icon="ellipsisHorizontal"
-            menuLabel={formatMessage(messages.myCarsFiles)}
-            items={[
-              {
-                onClick: () => formSubmit(ownershipLinks.pdf),
-                title: formatMessage(messages.myCarsFilesPDF),
-              },
-              {
-                onClick: () =>  formSubmit(ownershipLinks.excel),
-                title: formatMessage(messages.myCarsFilesExcel),
-              },
-            ]}
-            title={formatMessage(messages.myCarsFiles)}
-          /> : undefined,
-          <LinkButton
-           key="owner-change"
-            to={formatMessage(urls.ownerChange)}
-            text={formatMessage(messages.changeOfOwnership)}
-            icon='open'
-            variant="utility"
-          />,
-          <LinkButton
-           key="recycle-car"
-            to={formatMessage(urls.recycleCar)}
-            text={formatMessage(messages.recycleCar)}
-            icon='reader'
-            variant="utility"
-          />,
-          <LinkButton
-           key="hide-name"
-            to={formatMessage(urls.hideName)}
-            text={formatMessage(messages.vehicleNameSecret)}
-            icon='eyeOff'
-            variant="utility"
-          />,
-          ].filter(isDefined) : []}>
-
-
+    <IntroWrapper
+      title={messages.title}
+      intro={messages.intro}
+      serviceProviderSlug={SAMGONGUSTOFA_SLUG}
+      serviceProviderTooltip={formatMessage(m.vehiclesTooltip)}
+      buttonGroup={
+        (!loading && !error && filteredVehicles.length > 0) || searchLoading
+          ? [
+              ownershipLinks ? (
+                <DropdownMenu
+                  key="dropdown-menu"
+                  icon="ellipsisHorizontal"
+                  menuLabel={formatMessage(messages.myCarsFiles)}
+                  items={[
+                    {
+                      onClick: () => formSubmit(ownershipLinks.pdf),
+                      title: formatMessage(messages.myCarsFilesPDF),
+                    },
+                    {
+                      onClick: () => formSubmit(ownershipLinks.excel),
+                      title: formatMessage(messages.myCarsFilesExcel),
+                    },
+                  ]}
+                  title={formatMessage(messages.myCarsFiles)}
+                />
+              ) : undefined,
+              <LinkButton
+                key="owner-change"
+                to={formatMessage(urls.ownerChange)}
+                text={formatMessage(messages.changeOfOwnership)}
+                icon="open"
+                variant="utility"
+              />,
+              <LinkButton
+                key="recycle-car"
+                to={formatMessage(urls.recycleCar)}
+                text={formatMessage(messages.recycleCar)}
+                icon="reader"
+                variant="utility"
+              />,
+              <LinkButton
+                key="hide-name"
+                to={formatMessage(urls.hideName)}
+                text={formatMessage(messages.vehicleNameSecret)}
+                icon="eyeOff"
+                variant="utility"
+              />,
+            ].filter(isDefined)
+          : []
+      }
+    >
       {error && !loading && <Problem error={error} noBorder={false} />}
       <Stack space={2}>
         {((!loading && !error) || searchLoading) && (

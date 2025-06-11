@@ -11,9 +11,10 @@ import {
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages/information'
 import { shared } from '../../../lib/messages'
-import { Application, FormValue } from '@island.is/application/types'
+import { Application, Field, FormValue } from '@island.is/application/types'
 import { getAllCountryCodes } from '@island.is/shared/utils'
 import { SelfOrOthers } from '../../../utils/enums'
+import { Locale } from '@island.is/shared/types'
 
 export const informationSection = buildSection({
   id: 'informationSection',
@@ -103,7 +104,7 @@ export const informationSection = buildSection({
           id: 'information.licenseNumber',
           title: information.general.licenseNumberLabel,
           width: 'half',
-          format: '########',
+          format: '#########################',
           required: true,
           condition: (answers: FormValue) => {
             const isForSelf = getValueViaPath<SelfOrOthers>(
@@ -126,7 +127,11 @@ export const informationSection = buildSection({
             )
             return isForSelf === SelfOrOthers.self
           },
-          options: () => {
+          options: (
+            _application: Application,
+            _field: Field,
+            locale: Locale,
+          ) => {
             const iceland = {
               name: 'Iceland',
               name_is: 'Ísland',
@@ -135,19 +140,21 @@ export const informationSection = buildSection({
               code: 'IS',
               dial_code: '+354',
             }
-
             const countries = getAllCountryCodes().filter(
-              (country) => country.code !== 'IS',
+              (country) => country.code !== 'IS' || '',
             )
+
+            const getLocalizedName = (name: string, nameIs?: string) =>
+              locale === 'is' ? nameIs || name : name
 
             return [
               {
-                label: iceland.name_is || iceland.name,
+                label: getLocalizedName(iceland.name, iceland.name_is),
                 value: iceland.name_is,
               },
               ...countries.map((country) => ({
-                label: country.name_is || country.name,
-                value: country.name_is || country.name,
+                label: getLocalizedName(country.name, country.name_is),
+                value: getLocalizedName(country.name, country.name_is),
               })),
             ]
           },
