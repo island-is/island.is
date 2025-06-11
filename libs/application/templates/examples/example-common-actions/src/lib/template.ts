@@ -22,7 +22,7 @@ import {
 } from '../dataProviders'
 import { assign } from 'xstate'
 import { Features } from '@island.is/feature-flags'
-import { NotificationType } from '@island.is/application/template-api-modules'
+// import { NotificationType } from '@island.is/application/template-api-modules'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -142,14 +142,14 @@ const template: ApplicationTemplate<
       [States.COMPLETED]: {
         meta: {
           onEntry: [
-            SendNotification.configure({
-              params: {
-                type: NotificationType.System,
-                args: {
-                  documentId: '123',
-                },
-              },
-            }),
+            // SendNotification.configure({
+            //   params: {
+            //     type: NotificationType.System,
+            //     args: {
+            //       documentId: '123',
+            //     },
+            //   },
+            // }),
           ],
           name: 'Completed',
           status: 'completed',
