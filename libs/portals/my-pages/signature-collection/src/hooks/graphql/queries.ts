@@ -140,7 +140,7 @@ export const GetListsForOwner = gql`
 
 export const GetCurrentCollection = gql`
   query currentCollection(
-    $input: SignatureCollectionCollectionTypeFilterInput
+    $input: SignatureCollectionCollectionTypeFilterInput!
   ) {
     signatureCollectionCurrent(input: $input) {
       id

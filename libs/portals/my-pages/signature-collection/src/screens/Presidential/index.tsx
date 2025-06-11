@@ -18,10 +18,8 @@ const SignatureCollectionPresidential = () => {
   const { isOwner, loadingIsOwner } = useIsOwner(
     SignatureCollectionCollectionType.Presidential,
   )
-  const {
-    currentCollection,
-    loadingCurrentCollection,
-  } = useGetCurrentCollection()
+  const { currentCollection, loadingCurrentCollection } =
+    useGetCurrentCollection(SignatureCollectionCollectionType.Presidential)
 
   return (
     <Box>

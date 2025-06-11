@@ -87,6 +87,7 @@ export const useGetListsForUser = (
   collectionType: SignatureCollectionCollectionType,
   collectionId?: string,
 ) => {
+  console.log('here ever??', collectionType, collectionId)
   const {
     data: getListsForUser,
     loading: loadingUserLists,
@@ -165,14 +166,22 @@ export const useIsOwner = (
   return { isOwner, loadingIsOwner, refetchIsOwner }
 }
 
-export const useGetCurrentCollection = () => {
+export const useGetCurrentCollection = (
+  collectionType?: SignatureCollectionCollectionType,
+) => {
   const {
     data: getCurrentCollection,
     loading: loadingCurrentCollection,
     refetch: refetchCurrentCollection,
   } = useQuery<{
     signatureCollectionCurrent?: SignatureCollection
-  }>(GetCurrentCollection)
+  }>(GetCurrentCollection, {
+    variables: {
+      input: {
+        collectionTypeFilter: collectionType,
+      },
+    },
+  })
   const currentCollection =
     (getCurrentCollection?.signatureCollectionCurrent as SignatureCollection) ??
     null
@@ -205,9 +214,8 @@ export const useGetCanSign = (
 }
 
 export const useGetCollectors = () => {
-  const { data: getCollectorsData, loading: loadingCollectors } = useQuery(
-    GetCollectors,
-  )
+  const { data: getCollectorsData, loading: loadingCollectors } =
+    useQuery(GetCollectors)
   const collectors =
     (getCollectorsData?.signatureCollectionCollectors as SignatureCollectionCollector[]) ??
     []

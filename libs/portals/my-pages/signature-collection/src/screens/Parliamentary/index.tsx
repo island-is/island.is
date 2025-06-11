@@ -19,19 +19,18 @@ import {
 const SignatureCollectionParliamentary = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
+  const collectionType = SignatureCollectionCollectionType.Parliamentary
 
-  const { isOwner, loadingIsOwner, refetchIsOwner } = useIsOwner(
-    SignatureCollectionCollectionType.Parliamentary,
-  )
+  const { isOwner, loadingIsOwner, refetchIsOwner } = useIsOwner(collectionType)
   const userInfo = useUserInfo()
-  const {
-    currentCollection,
-    loadingCurrentCollection,
-  } = useGetCurrentCollection()
+  const { currentCollection, loadingCurrentCollection } =
+    useGetCurrentCollection(SignatureCollectionCollectionType.Parliamentary)
   const { listsForOwner } = useGetListsForOwner(
-    '',
-    SignatureCollectionCollectionType.Parliamentary,
+    currentCollection?.id ?? '',
+    collectionType,
   )
+
+  console.log(isOwner, currentCollection)
 
   return (
     <Box>
@@ -42,13 +41,7 @@ const SignatureCollectionParliamentary = () => {
       />
       {!loadingIsOwner && !loadingCurrentCollection && (
         <Box>
-          {currentCollection?.collectionType ===
-          SignatureCollectionCollectionType.Presidential ? (
-            <EmptyState
-              title={m.noCollectionIsActive}
-              description={m.noCollectionIsActiveDescription}
-            />
-          ) : isOwner.success ? (
+          {isOwner.success ? (
             <OwnerView
               refetchIsOwner={refetchIsOwner}
               currentCollection={currentCollection}
@@ -62,7 +55,7 @@ const SignatureCollectionParliamentary = () => {
           ) : (
             <SigneeView
               currentCollection={currentCollection}
-              collectionType={SignatureCollectionCollectionType.Parliamentary}
+              collectionType={collectionType}
             />
           )}
         </Box>

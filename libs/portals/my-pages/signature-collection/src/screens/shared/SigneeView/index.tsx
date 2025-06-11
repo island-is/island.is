@@ -25,14 +25,14 @@ const SigneeView = ({
   currentCollection: SignatureCollection
   collectionType: SignatureCollectionCollectionType
 }) => {
+  console.log('eg er signee', currentCollection, collectionType)
   const user = useUserInfo()
   const { formatMessage } = useLocale()
   const { signedLists, loadingSignedLists } = useGetSignedList(collectionType)
-  const {
-    listsForUser,
-    loadingUserLists,
-    getListsForUserError,
-  } = useGetListsForUser(collectionType, currentCollection?.id)
+  const { listsForUser, loadingUserLists, getListsForUserError } =
+    useGetListsForUser(collectionType, currentCollection?.id)
+
+  console.log('lists', listsForUser)
 
   if (getListsForUserError !== undefined) {
     return (

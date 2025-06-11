@@ -28,11 +28,8 @@ const SignedList = ({
   )
 
   // SignedList is typically singular, although it may consist of multiple entries, which in that case will all be invalid
-  const {
-    signedLists,
-    loadingSignedLists,
-    refetchSignedLists,
-  } = useGetSignedList(collectionType)
+  const { signedLists, loadingSignedLists, refetchSignedLists } =
+    useGetSignedList(collectionType)
 
   const [unSign, { loading }] = useMutation<{
     signatureCollectionUnsign: Mutation['signatureCollectionUnsign']
@@ -40,6 +37,7 @@ const SignedList = ({
     variables: {
       input: {
         listId: listIdToUnsign,
+        collectionType
       },
     },
   })

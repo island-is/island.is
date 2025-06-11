@@ -40,14 +40,11 @@ const OwnerView = ({
   const location = useLocation()
 
   const { formatMessage } = useLocale()
-  const {
-    listsForOwner,
-    loadingOwnerLists,
-    refetchListsForOwner,
-  } = useGetListsForOwner(
-    currentCollection?.id || '',
-    SignatureCollectionCollectionType.Parliamentary,
-  )
+  const { listsForOwner, loadingOwnerLists, refetchListsForOwner } =
+    useGetListsForOwner(
+      currentCollection?.id || '',
+      SignatureCollectionCollectionType.Parliamentary,
+    )
 
   const [cancelCollection] = useMutation<SignatureCollectionSuccess>(
     cancelCollectionMutation,
