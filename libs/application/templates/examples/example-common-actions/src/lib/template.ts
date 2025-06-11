@@ -141,6 +141,16 @@ const template: ApplicationTemplate<
       },
       [States.COMPLETED]: {
         meta: {
+          onEntry: [
+            SendNotification.configure({
+              params: {
+                type: NotificationType.System,
+                args: {
+                  documentId: '123',
+                },
+              },
+            }),
+          ],
           name: 'Completed',
           status: 'completed',
           actionCard: {
