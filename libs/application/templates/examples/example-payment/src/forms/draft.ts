@@ -76,15 +76,5 @@ export const draft: Form = buildForm({
         }),
       ],
     }),
-    buildSection({
-      id: 'payment',
-      title: m.step.paymentTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'confirm',
-      title: m.step.confirmTitle,
-      children: [],
-    }),
   ],
 })
