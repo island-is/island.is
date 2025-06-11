@@ -154,6 +154,7 @@ jobs:
 
   success:
     name: Config Values Success
+    if: ${{ !cancelled() }}
     needs:
       - check-secrets
     runs-on: arc-shared
