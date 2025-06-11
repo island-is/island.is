@@ -89,6 +89,7 @@ export const OverviewFormField = ({
 
   useEffect(() => {
     load()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   const renderItems = (item: KeyValueItem, i: number) => {
