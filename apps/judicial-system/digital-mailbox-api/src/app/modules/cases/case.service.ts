@@ -1,5 +1,6 @@
 import {
   BadGatewayException,
+  BadRequestException,
   Inject,
   Injectable,
   NotFoundException,
@@ -12,7 +13,10 @@ import {
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
 import { LawyersService } from '@island.is/judicial-system/lawyers'
-import { DefenderChoice } from '@island.is/judicial-system/types'
+import {
+  DefenderChoice,
+  isCompletedCase,
+} from '@island.is/judicial-system/types'
 
 import { UpdateSubpoenaDto } from './dto/subpoena.dto'
 import { UpdateVerdictAppealDecisionDto } from './dto/verdictAppeal.dto'
@@ -21,8 +25,8 @@ import { CasesResponse } from './models/cases.response'
 import { InternalCaseResponse } from './models/internal/internalCase.response'
 import { InternalCasesResponse } from './models/internal/internalCases.response'
 import { InternalDefendantResponse } from './models/internal/internalDefendant.response'
-import { RulingResponse } from './models/ruling.response'
 import { SubpoenaResponse } from './models/subpoena.response'
+import { VerdictResponse } from './models/verdict.response'
 import { caseModuleConfig } from './case.config'
 
 @Injectable()
@@ -88,7 +92,7 @@ export class CaseService {
     nationalId: string,
     verdictAppeal: UpdateVerdictAppealDecisionDto,
     lang?: string,
-  ): Promise<RulingResponse> {
+  ): Promise<VerdictResponse> {
     return this.auditTrailService.audit(
       'digital-mailbox-api',
       AuditedAction.UPDATE_VERDICT_APPEAL_DECISION,
@@ -102,15 +106,15 @@ export class CaseService {
     )
   }
 
-  async getRuling(
+  async getVerdict(
     caseId: string,
     nationalId: string,
     lang?: string,
-  ): Promise<RulingResponse> {
+  ): Promise<VerdictResponse> {
     return this.auditTrailService.audit(
       'digital-mailbox-api',
-      AuditedAction.GET_RULING,
-      this.getRulingInfo(caseId, nationalId, lang),
+      AuditedAction.GET_VERDICT,
+      this.getVerdictInfo(caseId, nationalId, lang),
       nationalId,
     )
   }
@@ -192,14 +196,26 @@ export class CaseService {
     )
   }
 
-  private async getRulingInfo(
+  private async getVerdictInfo(
     caseId: string,
     nationalId: string,
     lang?: string,
-  ): Promise<RulingResponse> {
+  ): Promise<VerdictResponse> {
     const caseData = await this.fetchCase(caseId, nationalId)
 
-    return RulingResponse.fromInternalCaseResponse(caseData, nationalId, lang)
+    console.log('!!!', { caseData })
+    if (!isCompletedCase(caseData.state)) {
+      throw new BadRequestException(
+        `Verdict is not available for case ${caseId}. Case must be completed before verdict can be accessed.`,
+      )
+    }
+
+    if (!caseData.rulingDate) {
+      throw new NotFoundException(
+        `Verdict has not been issued for case ${caseId}`,
+      )
+    }
+    return VerdictResponse.fromInternalCaseResponse(caseData, nationalId, lang)
   }
 
   private async updateVerdictAppealDecisionInfo(
@@ -207,13 +223,13 @@ export class CaseService {
     nationalId: string,
     verdictAppeal: UpdateVerdictAppealDecisionDto,
     lang?: string,
-  ): Promise<RulingResponse> {
+  ): Promise<VerdictResponse> {
     await this.patchDefendant(caseId, nationalId, {
       verdictAppealDecision: verdictAppeal.verdictAppealDecision,
     })
 
     const updatedCase = await this.fetchCase(caseId, nationalId)
-    return RulingResponse.fromInternalCaseResponse(
+    return VerdictResponse.fromInternalCaseResponse(
       updatedCase,
       nationalId,
       lang,
@@ -277,6 +293,7 @@ export class CaseService {
 
       const caseData = await res.json()
 
+      console.log('!!!2', { caseData })
       return caseData
     } catch (reason) {
       if (

@@ -1345,7 +1345,13 @@ export class InternalCaseService {
         },
         { model: DateLog, as: 'dateLogs' },
       ],
-      attributes: ['courtCaseNumber', 'id'],
+      attributes: [
+        'courtCaseNumber',
+        'id',
+        'state',
+        'indictmentRulingDecision',
+        'rulingDate',
+      ],
       where: {
         type: CaseType.INDICTMENT,
         id: caseId,

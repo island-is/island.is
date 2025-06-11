@@ -1,5 +1,6 @@
 import {
   CaseIndictmentRulingDecision,
+  CaseState,
   DateType,
   DefenderChoice,
   Gender,
@@ -23,6 +24,7 @@ export class InternalCaseResponse {
   dateLogs?: DateLog[]
   rulingDate?: Date
   indictmentRulingDecision?: CaseIndictmentRulingDecision
+  state?: CaseState
 }
 
 interface Defendant {

@@ -7,14 +7,13 @@ import {
   getIndictmentAppealDeadlineDate,
   hasDatePassed,
   ServiceRequirement,
-  VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 
 import { InternalCaseResponse } from './internal/internalCase.response'
 import { Groups } from './shared/groups.model'
 import { getTranslations } from './utils/translations.strings'
 
-export class RulingResponse {
+export class VerdictResponse {
   @ApiProperty({ type: String })
   caseId!: string
 
@@ -31,7 +30,7 @@ export class RulingResponse {
     internalCase: InternalCaseResponse,
     nationalId: string,
     lang?: string,
-  ): RulingResponse {
+  ): VerdictResponse {
     const t = getTranslations(lang)
 
     const defendant =
