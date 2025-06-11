@@ -147,14 +147,12 @@ const VehicleMileage = () => {
   const hasData = details && details?.length > 0
   const isFormEditable = data?.vehicleMileageDetails?.editing
   const canRegisterMileage = data?.vehicleMileageDetails?.canRegisterMileage
-  const requiresMileageRegistration =
-    data?.vehicleMileageDetails?.requiresMileageRegistration
 
   const actionLoading = putActionLoading || postActionLoading
   const hasUserPostAccess =
     data?.vehicleMileageDetails?.canUserRegisterVehicleMileage
 
-  if ((error || requiresMileageRegistration === false) && !loading) {
+  if ((error || canRegisterMileage === false) && !loading) {
     return <Problem type="not_found" />
   }
 

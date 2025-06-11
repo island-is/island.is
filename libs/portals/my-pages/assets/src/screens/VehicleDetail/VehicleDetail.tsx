@@ -154,9 +154,7 @@ const VehicleDetail = () => {
     })
   }
 
-  const reqMileageReg =
-    data?.vehiclesDetail?.mainInfo?.requiresMileageRegistration
-
+  const canRegisterMileage = data?.vehiclesDetail?.mainInfo?.canRegisterMileage
   return (
     <>
       <Box marginBottom={[2, 2, 6]}>
@@ -183,7 +181,7 @@ const VehicleDetail = () => {
             ) : null}
           </GridColumn>
         </GridRow>
-        {!loading && (downloadServiceURL || reqMileageReg) && (
+        {!loading && (downloadServiceURL || canRegisterMileage) && (
           <GridRow marginTop={0}>
             <GridColumn span="9/9">
               <Box
@@ -192,7 +190,7 @@ const VehicleDetail = () => {
                 justifyContent="flexStart"
                 printHidden
               >
-                {reqMileageReg && (
+                {canRegisterMileage && (
                   <Box paddingRight={2} marginBottom={[1, 1, 1, 0]}>
                     <LinkButton
                       to={
@@ -356,7 +354,7 @@ const VehicleDetail = () => {
           </>
         )}
 
-        {data?.vehiclesDetail?.inspectionInfo?.odometer && reqMileageReg && (
+        {data?.vehiclesDetail?.inspectionInfo?.odometer && canRegisterMileage && (
           <>
             <UserInfoLine
               label={formatMessage(messages.lastKnownOdometerStatus)}
@@ -367,7 +365,7 @@ const VehicleDetail = () => {
               )}
               loading={loading}
               editLink={
-                reqMileageReg
+                canRegisterMileage
                   ? {
                       title: m.viewDetail,
                       url: id
