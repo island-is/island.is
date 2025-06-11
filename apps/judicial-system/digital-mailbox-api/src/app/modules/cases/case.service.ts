@@ -203,7 +203,6 @@ export class CaseService {
   ): Promise<VerdictResponse> {
     const caseData = await this.fetchCase(caseId, nationalId)
 
-    console.log('!!!', { caseData })
     if (!isCompletedCase(caseData.state)) {
       throw new BadRequestException(
         `Verdict is not available for case ${caseId}. Case must be completed before verdict can be accessed.`,
@@ -293,7 +292,6 @@ export class CaseService {
 
       const caseData = await res.json()
 
-      console.log('!!!2', { caseData })
       return caseData
     } catch (reason) {
       if (

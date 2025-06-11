@@ -66,16 +66,14 @@ export class VerdictResponse {
             [
               t.rulingDate,
               internalCase.rulingDate
-                ? formatDate(internalCase.rulingDate, 'PP')
+                ? formatDate(internalCase.rulingDate)
                 : t.notAvailable,
             ],
             [t.court, internalCase.court?.name || t.notAvailable],
             [t.caseNumber, internalCase.courtCaseNumber || t.notAvailable],
             [
               t.appealDeadline,
-              appealDeadline
-                ? formatDate(appealDeadline, 'PP')
-                : t.notAvailable,
+              appealDeadline ? formatDate(appealDeadline) : t.notAvailable,
             ],
           ].map((item) => ({
             label: item[0],
