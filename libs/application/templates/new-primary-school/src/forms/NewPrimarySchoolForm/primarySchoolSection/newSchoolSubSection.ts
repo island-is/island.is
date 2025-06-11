@@ -67,7 +67,9 @@ export const newSchoolSubSection = buildSubSection({
                     children &&
                     children.length > 0 &&
                     children.filter(({ gradeLevels }) =>
-                      gradeLevels?.includes(childGradeLevel),
+                      !childGradeLevel
+                        ? true
+                        : gradeLevels?.includes(childGradeLevel),
                     )?.length > 0,
                 )
                 ?.map(({ name, unitId }) => ({
@@ -119,11 +121,13 @@ export const newSchoolSubSection = buildSubSection({
                     children
                       ?.filter(
                         ({ type, gradeLevels, unitId }) =>
-                          gradeLevels?.includes(childGradeLevel) &&
                           unitId &&
                           getMunicipalityCodeBySchoolUnitId(unitId) ===
                             municipalityCode &&
-                          type === OrganizationModelTypeEnum.School,
+                          type === OrganizationModelTypeEnum.School &&
+                          (!childGradeLevel
+                            ? true
+                            : gradeLevels?.includes(childGradeLevel)),
                       )
                       ?.map((school) => ({
                         ...school,
@@ -139,10 +143,11 @@ export const newSchoolSubSection = buildSubSection({
             const municipalitySchools =
               data?.friggSchoolsByMunicipality
                 ?.find(({ unitId }) => unitId === municipalityCode)
-                ?.children?.filter(
-                  ({ type, gradeLevels }) =>
-                    type === OrganizationModelTypeEnum.School &&
-                    gradeLevels?.includes(childGradeLevel),
+                ?.children?.filter(({ type, gradeLevels }) =>
+                  // if no childGradeLevel then skip grade level check. This is the case if student is not registered in Frigg
+                  type === OrganizationModelTypeEnum.School && !childGradeLevel
+                    ? true
+                    : gradeLevels?.includes(childGradeLevel),
                 )
                 ?.map((school) => ({
                   ...school,

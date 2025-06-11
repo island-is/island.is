@@ -52,6 +52,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     expectedEndDate,
     selectedSchool,
     selectedSchoolType,
+    currentSchoolId,
   } = getApplicationAnswers(application.answers)
 
   const { primaryOrgId } = getApplicationExternalData(application.externalData)
@@ -116,7 +117,11 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     },
     agents,
     registration: {
-      defaultOrganizationId: primaryOrgId,
+      ...(primaryOrgId || currentSchoolId
+        ? {
+            defaultOrganizationId: primaryOrgId || currentSchoolId,
+          }
+        : {}),
       selectedOrganizationId: selectedSchool,
       requestingMeeting: requestingMeeting === YES,
       ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL

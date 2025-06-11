@@ -108,6 +108,18 @@ export const dataSchema = z.object({
         path: ['transferOfLegalDomicile', 'postalCode'],
       },
     ),
+  currentSchool: z
+    .object({
+      municipality: z.string().optional().nullable(),
+      school: z.string().optional().nullable(),
+    })
+    .refine(
+      ({ municipality, school }) =>
+        !municipality || (school && school.length > 0),
+      {
+        path: ['school'],
+      },
+    ),
   newSchool: z.object({
     municipality: z.string(),
     school: z.string(),

@@ -211,6 +211,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'school.applyForNeighbourhoodSchool',
   ) as YesOrNo
 
+  const currentSchoolId = getValueViaPath<string>(
+    answers,
+    'currentSchool.school',
+  )
+
   return {
     applicationType,
     childNationalId,
@@ -250,6 +255,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     currentNurseryMunicipality,
     currentNursery,
     applyForNeighbourhoodSchool,
+    currentSchoolId,
   }
 }
 
