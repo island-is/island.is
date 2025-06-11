@@ -42,7 +42,7 @@ export const notifications = {
   emailTail: defineMessage({
     id: 'judicial.system.backend:notifications.email_tail_v2',
     defaultMessage:
-      'Hægt er að nálgast yfirlitssíðu málsins á {linkStart}rettarvorslugatt.island.is{linkEnd}.',
+      'Hægt er að nálgast yfirlitssíðu málsins í {linkStart}Réttarvörslugátt{linkEnd}.',
     description: 'Notaður sem texti í email til þess að tilgreina slóð á RVG',
   }),
   emailWhitelist: defineMessage({
