@@ -9,13 +9,8 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
 import React from 'react'
-import { useParams } from 'react-router-dom'
 import { messages } from '../../lib/messages'
 import { useBloodTypeQuery } from './Bloodtype.generated'
-
-type UseParams = {
-  id: string
-}
 
 const ReferencesDetail: React.FC = () => {
   useNamespaces('sp.health')
@@ -28,12 +23,12 @@ const ReferencesDetail: React.FC = () => {
   return (
     <IntroWrapper
       title={formatMessage(messages.bloodtype)}
-      intro={formatMessage(messages.bloodtypeDesc)}
+      intro={bloodType?.description ?? formatMessage(messages.bloodtypeDesc)}
       serviceProviderSlug={LANDLAEKNIR_SLUG}
       marginBottom={6}
       buttonGroup={[
         <LinkButton
-          to={formatMessage(messages.bloodtypeLink)}
+          to={bloodType?.link ?? formatMessage(messages.bloodtypeLink)}
           text={formatMessage(messages.readAboutBloodtypes)}
           variant="utility"
           icon="open"

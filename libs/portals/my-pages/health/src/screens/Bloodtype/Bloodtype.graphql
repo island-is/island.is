@@ -3,5 +3,6 @@ query bloodType {
     description
     registered
     type
+    link
   }
 }

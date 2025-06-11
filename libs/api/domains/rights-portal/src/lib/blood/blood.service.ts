@@ -18,6 +18,7 @@ export class BloodService {
       type: data.type,
       registered: data.registered,
       description: data.bloodInfo?.description,
+      link: data.bloodInfo?.page,
     }
   }
 }
