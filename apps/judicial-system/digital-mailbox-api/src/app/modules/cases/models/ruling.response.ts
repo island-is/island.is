@@ -1,6 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-import { CaseAppealDecision } from '@island.is/judicial-system/types'
+import { formatDate } from '@island.is/judicial-system/formatters'
+import {
+  CaseAppealDecision,
+  CaseIndictmentRulingDecision,
+  getIndictmentAppealDeadlineDate,
+  hasDatePassed,
+  ServiceRequirement,
+  VerdictAppealDecision,
+} from '@island.is/judicial-system/types'
 
 import { InternalCaseResponse } from './internal/internalCase.response'
 import { Groups } from './shared/groups.model'
@@ -14,62 +22,102 @@ export class RulingResponse {
   title!: string
 
   @ApiProperty({ type: String })
-  subtitle!: string
+  subtitle?: string
 
   @ApiProperty({ type: [Groups] })
-  groups!: Groups[]
+  groups?: Groups[]
 
   static fromInternalCaseResponse(
     internalCase: InternalCaseResponse,
+    nationalId: string,
     lang?: string,
   ): RulingResponse {
     const t = getTranslations(lang)
 
+    const defendant =
+      internalCase.defendants?.find((def) => def.nationalId === nationalId) ||
+      internalCase.defendants?.[0]
+
+    const serviceRequired =
+      defendant?.serviceRequirement === ServiceRequirement.REQUIRED
+    const isFineCase =
+      internalCase.indictmentRulingDecision ===
+      CaseIndictmentRulingDecision.FINE
+
+    const baseDate = serviceRequired
+      ? defendant?.verdictViewDate
+      : internalCase.rulingDate
+
+    const appealDeadline = baseDate
+      ? getIndictmentAppealDeadlineDate(new Date(baseDate), isFineCase)
+      : null
+
+    const isAppealDeadlineExpired = appealDeadline
+      ? hasDatePassed(appealDeadline)
+      : false
+
     return {
       caseId: internalCase.id,
       title: t.rulingTitle,
-      subtitle: 'TODO subtitle (if needed)',
+      // subtitle: 'TODO subtitle (if needed)',
       groups: [
         {
           label: t.rulingTitle,
           items: [
-            [t.rulingDate, 'TODO Dagsetning'],
-            [t.court, 'TODO Dómstóll'],
-            [t.caseNumber, 'TODO Málsnr'],
-            [t.appealDeadline, 'TODO Áfrýjunarfrestur'],
+            [
+              t.rulingDate,
+              internalCase.rulingDate
+                ? formatDate(internalCase.rulingDate, 'PP')
+                : t.notAvailable,
+            ],
+            [t.court, internalCase.court?.name || t.notAvailable],
+            [t.caseNumber, internalCase.courtCaseNumber || t.notAvailable],
+            [
+              t.appealDeadline,
+              appealDeadline
+                ? formatDate(appealDeadline, 'PP')
+                : t.notAvailable,
+            ],
           ].map((item) => ({
             label: item[0],
             value: item[1],
           })),
         },
+        // Ruling text
         {
           label: t.ruling,
           items: [
             {
-              value: 'TODO Ruling text goes here', // This should be replaced with the actual ruling text
+              // This should be replaced with the actual ruling text
+              // but we don't have that stored right now.
+              value: 'TODO Ruling text goes here',
               type: 'richText',
             },
           ],
         },
-        {
-          label: t.appealDecision,
-          items: [
-            {
-              value: t.appealDecisionText,
-              type: 'text',
-            },
-            {
-              label: t.appealDecisionPostpone,
-              value: CaseAppealDecision.POSTPONE,
-              type: 'radioButton',
-            },
-            {
-              label: t.appealDecisionAccept,
-              value: CaseAppealDecision.ACCEPT,
-              type: 'radioButton',
-            },
-          ],
-        },
+        ...(!isAppealDeadlineExpired
+          ? [
+              {
+                label: t.appealDecision,
+                items: [
+                  {
+                    value: t.appealDecisionText,
+                    type: 'text' as const,
+                  },
+                  {
+                    label: t.appealDecisionPostpone,
+                    value: CaseAppealDecision.POSTPONE,
+                    type: 'radioButton' as const,
+                  },
+                  {
+                    label: t.appealDecisionAccept,
+                    value: CaseAppealDecision.ACCEPT,
+                    type: 'radioButton' as const,
+                  },
+                ],
+              },
+            ]
+          : []),
         {
           label: t.rulingInstructions,
           //TODO: Replace with actual instructions

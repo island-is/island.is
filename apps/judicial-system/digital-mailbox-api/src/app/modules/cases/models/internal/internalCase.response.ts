@@ -1,4 +1,5 @@
 import {
+  CaseIndictmentRulingDecision,
   DateType,
   DefenderChoice,
   Gender,
@@ -20,6 +21,8 @@ export class InternalCaseResponse {
   prosecutorsOffice!: Institution
   prosecutor!: User
   dateLogs?: DateLog[]
+  rulingDate?: Date
+  indictmentRulingDecision?: CaseIndictmentRulingDecision
 }
 
 interface Defendant {
@@ -42,6 +45,7 @@ interface Defendant {
   verdictAppealDecision?: VerdictAppealDecision
   verdictAppealDate?: Date
   informationForDefendant?: InformationForDefendant[]
+  serviceRequirement?: ServiceRequirement
 }
 
 interface DateLog {

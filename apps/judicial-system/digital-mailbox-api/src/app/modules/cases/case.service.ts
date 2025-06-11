@@ -15,6 +15,7 @@ import { LawyersService } from '@island.is/judicial-system/lawyers'
 import { DefenderChoice } from '@island.is/judicial-system/types'
 
 import { UpdateSubpoenaDto } from './dto/subpoena.dto'
+import { UpdateVerdictAppealDecisionDto } from './dto/verdictAppeal.dto'
 import { CaseResponse } from './models/case.response'
 import { CasesResponse } from './models/cases.response'
 import { InternalCaseResponse } from './models/internal/internalCase.response'
@@ -69,28 +70,47 @@ export class CaseService {
   }
 
   async updateSubpoena(
-    nationalId: string,
     caseId: string,
+    nationalId: string,
     updateSubpoena: UpdateSubpoenaDto,
     lang?: string,
   ): Promise<SubpoenaResponse> {
-    return await this.auditTrailService.audit(
+    return this.auditTrailService.audit(
       'digital-mailbox-api',
       AuditedAction.UPDATE_SUBPOENA,
-      this.updateSubpoenaInfo(nationalId, caseId, updateSubpoena, lang),
+      this.updateSubpoenaInfo(caseId, nationalId, updateSubpoena, lang),
+      nationalId,
+    )
+  }
+
+  async updateVerdictAppeal(
+    caseId: string,
+    nationalId: string,
+    verdictAppeal: UpdateVerdictAppealDecisionDto,
+    lang?: string,
+  ): Promise<RulingResponse> {
+    return this.auditTrailService.audit(
+      'digital-mailbox-api',
+      AuditedAction.UPDATE_VERDICT_APPEAL_DECISION,
+      this.updateVerdictAppealDecisionInfo(
+        caseId,
+        nationalId,
+        verdictAppeal,
+        lang,
+      ),
       nationalId,
     )
   }
 
   async getRuling(
-    nationalId: string,
     caseId: string,
+    nationalId: string,
     lang?: string,
   ): Promise<RulingResponse> {
-    return await this.auditTrailService.audit(
+    return this.auditTrailService.audit(
       'digital-mailbox-api',
       AuditedAction.GET_RULING,
-      this.getRulingInfo(nationalId, caseId, lang),
+      this.getRulingInfo(caseId, nationalId, lang),
       nationalId,
     )
   }
@@ -116,21 +136,17 @@ export class CaseService {
 
   private async getSubpoenaInfo(
     caseId: string,
-    defendantNationalId: string,
+    nationalId: string,
     lang?: string,
   ): Promise<SubpoenaResponse> {
-    const caseData = await this.fetchCase(caseId, defendantNationalId)
+    const caseData = await this.fetchCase(caseId, nationalId)
 
-    return SubpoenaResponse.fromInternalCaseResponse(
-      caseData,
-      defendantNationalId,
-      lang,
-    )
+    return SubpoenaResponse.fromInternalCaseResponse(caseData, nationalId, lang)
   }
 
   private async updateSubpoenaInfo(
-    defendantNationalId: string,
     caseId: string,
+    nationalId: string,
     defenderAssignment: UpdateSubpoenaDto,
     lang?: string,
   ): Promise<SubpoenaResponse> {
@@ -164,25 +180,44 @@ export class CaseService {
       requestedDefenderNationalId: defenderAssignment.defenderNationalId,
       requestedDefenderName: chosenLawyer?.Name,
     }
-    await this.patchDefenseInfo(defendantNationalId, caseId, defenderChoice)
 
-    const updatedCase = await this.fetchCase(caseId, defendantNationalId)
+    await this.patchDefendant(caseId, nationalId, defenderChoice)
+
+    const updatedCase = await this.fetchCase(caseId, nationalId)
 
     return SubpoenaResponse.fromInternalCaseResponse(
       updatedCase,
-      defendantNationalId,
+      nationalId,
       lang,
     )
   }
 
   private async getRulingInfo(
-    nationalId: string,
     caseId: string,
+    nationalId: string,
     lang?: string,
   ): Promise<RulingResponse> {
     const caseData = await this.fetchCase(caseId, nationalId)
 
-    return RulingResponse.fromInternalCaseResponse(caseData, lang)
+    return RulingResponse.fromInternalCaseResponse(caseData, nationalId, lang)
+  }
+
+  private async updateVerdictAppealDecisionInfo(
+    caseId: string,
+    nationalId: string,
+    verdictAppeal: UpdateVerdictAppealDecisionDto,
+    lang?: string,
+  ): Promise<RulingResponse> {
+    await this.patchDefendant(caseId, nationalId, {
+      verdictAppealDecision: verdictAppeal.verdictAppealDecision,
+    })
+
+    const updatedCase = await this.fetchCase(caseId, nationalId)
+    return RulingResponse.fromInternalCaseResponse(
+      updatedCase,
+      nationalId,
+      lang,
+    )
   }
 
   private async fetchCases(
@@ -257,32 +292,28 @@ export class CaseService {
     }
   }
 
-  private async patchDefenseInfo(
-    defendantNationalId: string,
+  private async patchDefendant(
     caseId: string,
-    defenderChoice: {
-      requestedDefenderChoice: DefenderChoice
-      requestedDefenderNationalId: string | undefined
-      requestedDefenderName?: string
-    },
+    nationalId: string,
+    updates: Record<string, unknown>,
   ): Promise<InternalDefendantResponse> {
     try {
       const response = await fetch(
-        `${this.config.backendUrl}/api/internal/case/${caseId}/defense/${defendantNationalId}`,
+        `${this.config.backendUrl}/api/internal/case/${caseId}/defense/${nationalId}`,
         {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
             authorization: `Bearer ${this.config.secretToken}`,
           },
-          body: JSON.stringify(defenderChoice),
+          body: JSON.stringify(updates),
         },
       )
 
       if (!response.ok) {
         const errorResponse = await response.json()
         throw new BadGatewayException(
-          `Failed to assign defender: ${
+          `Failed to update defendant: ${
             errorResponse.message || response.statusText
           }`,
         )
@@ -295,13 +326,15 @@ export class CaseService {
         id: updatedDefendant.id,
         defenderChoice: updatedDefendant.defenderChoice,
         defenderName: updatedDefendant.defenderName,
+        verdictAppealDecision: updatedDefendant.verdictAppealDecision,
       } as InternalDefendantResponse
     } catch (error) {
       if (error instanceof NotFoundException) {
         throw error
       }
       throw new BadGatewayException(
-        error.message || 'An unexpected error occurred',
+        error.message ||
+          'An unexpected error occurred while updating defendant',
       )
     }
   }
