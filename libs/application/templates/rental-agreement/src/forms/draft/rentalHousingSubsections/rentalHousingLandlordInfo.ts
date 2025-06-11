@@ -101,7 +101,7 @@ export const RentalHousingLandlordInfo = buildSubSection({
         }),
         buildAlertMessageField({
           id: 'landlordInfo.landlordSameAsTenantError',
-          alertType: 'error',
+          alertType: 'warning',
           title: landlordDetails.landlordSameAsTenantError,
           condition: (answers) => {
             const { tenants, landlords } = applicationAnswers(answers)
@@ -115,7 +115,7 @@ export const RentalHousingLandlordInfo = buildSubSection({
         }),
         buildAlertMessageField({
           id: 'landlordInfo.landlordAlreadyExistsError',
-          alertType: 'error',
+          alertType: 'warning',
           title: landlordDetails.landlordAlreadyExistsError,
           condition: (answers) => {
             const { landlords } = applicationAnswers(answers)
