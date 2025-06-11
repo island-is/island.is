@@ -146,7 +146,7 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
         query({
           variables: {
             input: {
-              id: file.id, // this id will be invalid and throws an error
+              id: file.id,
               caseId: connectedCaseParentId ?? caseId,
               mergedCaseId: connectedCaseParentId && caseId,
             },
