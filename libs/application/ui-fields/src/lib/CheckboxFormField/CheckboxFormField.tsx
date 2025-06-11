@@ -18,6 +18,7 @@ import { useLocale } from '@island.is/localization'
 import { getDefaultValue } from '../../getDefaultValue'
 import { Locale } from '@island.is/shared/types'
 import { Markdown } from '@island.is/shared/components'
+import { useFormContext } from 'react-hook-form'
 
 interface Props extends FieldBaseProps {
   field: CheckboxField
@@ -47,11 +48,12 @@ export const CheckboxFormField = ({
     clearOnChange,
   } = field
   const { formatMessage, lang: locale } = useLocale()
-
-  const finalOptions = useMemo(
-    () => buildFieldOptions(options, application, field, locale),
-    [options, application, locale],
-  )
+  const { watch } = useFormContext()
+  const finalOptions = useMemo(() => {
+    const updatedApplication = { ...application, answers: watch() }
+    return buildFieldOptions(options, updatedApplication, field, locale)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [watch(), options, application, locale])
 
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
