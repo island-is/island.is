@@ -171,12 +171,8 @@ const FormProvider = ({ children }: Props) => {
   )
 
   useEffect(() => {
-    // This is hacky, we need to find a better fix but it's just to stop the endless loop 
-    // of login attempts if the user is unauthorized
-    const searchParams = new URLSearchParams(window.location.search)
-    const villa = searchParams.get('villa')
-
-    if (!isAuthenticated && !villa) {
+    const isRoot = /^\/?$/.test(window.location.pathname)
+    if (!isRoot && !isAuthenticated) {
       window.location.assign(
         `${api.apiUrl}/api/auth/login?redirectRoute=${window.location.pathname}`,
       )

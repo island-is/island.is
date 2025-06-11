@@ -19,6 +19,22 @@ export const MockableVinnueftirlitidPaymentCatalogApi =
     params: {
       organizationId: InstitutionNationalIds.VINNUEFTIRLITID,
       enableMockPayment: true,
+      mockPaymentCatalog: [
+        {
+          performingOrgID: InstitutionNationalIds.VINNUEFTIRLITID,
+          chargeType: 'string',
+          chargeItemCode: 'VJ101',
+          chargeItemName: 'Verklegt próf',
+          priceAmount: 10800,
+        },
+        {
+          performingOrgID: InstitutionNationalIds.VINNUEFTIRLITID,
+          chargeType: 'string',
+          chargeItemCode: 'VJ103',
+          chargeItemName: 'Skírteini',
+          priceAmount: 8640,
+        },
+      ],
     },
     externalDataId: 'payment',
   })

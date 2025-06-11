@@ -197,7 +197,6 @@ export class ApplicationController {
       nationalId,
       typeId,
       status,
-      user.actor?.nationalId,
     )
     return this.filterApplicationsByAccess(
       applications,
@@ -217,14 +216,12 @@ export class ApplicationController {
     nationalId: string,
     typeId?: string,
     status?: string,
-    actorNationalId?: string,
   ): Promise<Application[]> {
     this.logger.debug(`Getting applications with status ${status}`)
     return this.applicationService.findAllByNationalIdAndFilters(
       nationalId,
       typeId,
       status,
-      actorNationalId,
     )
   }
 

@@ -79,7 +79,7 @@ export const m = defineMessages({
   },
   slug: {
     id: 'portals-admin.form-system:slug',
-    defaultMessage: 'slug (tæma og reFocus til að uppfæra)',
+    defaultMessage: 'slug',
   },
   daysUntilExpiration: {
     id: 'portals-admin.form-system:days-until-expiration',

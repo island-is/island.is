@@ -20,18 +20,6 @@ export class ApplicationEventDto {
   created?: Date
 }
 
-@ObjectType('FormSystemApplicationResponse')
-export class ApplicationResponse {
-  @Field(() => [Application], { nullable: 'itemsAndList' })
-  applications?: Application[]
-
-  @Field(() => Number, { nullable: true })
-  total?: number
-
-  @Field(() => [Option], { nullable: 'itemsAndList' })
-  organizations?: Option[]
-}
-
 @ObjectType('FormSystemApplication')
 export class Application {
   @Field(() => String)
@@ -138,4 +126,19 @@ export class SubmitScreenResponse {
 
   @Field(() => [SubmitScreenResponseField], { nullable: 'itemsAndList' })
   fields?: SubmitScreenResponseField[]
+}
+
+@ObjectType('FormSystemApplicationResponse')
+export class ApplicationResponse {
+  @Field(() => [Application], { nullable: 'itemsAndList' })
+  applications?: Application[]
+
+  @Field(() => Application, { nullable: true })
+  application?: Application
+
+  @Field(() => Number, { nullable: true })
+  total?: number
+
+  @Field(() => [Option], { nullable: 'itemsAndList' })
+  organizations?: Option[]
 }
