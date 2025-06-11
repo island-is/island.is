@@ -1,1 +1,7 @@
-export const formSystemScopes = ['api_resource.scope']
+import { ApplicationScope } from '../application.scope'
+
+
+export const formSystemScopes = [
+  ApplicationScope.read,
+  ApplicationScope.write
+] 

@@ -5,6 +5,7 @@ import {
   adminPortalScopes,
   applicationSystemScopes,
   servicePortalScopes,
+  formSystemScopes
 } from '../../../libs/auth/scopes/src/index'
 
 const MINAR_SIDUR: PortalKeys = 'minarsidur'
@@ -21,6 +22,7 @@ export const getScopes = (key: PortalKeys) => {
       const combinedScopes = new Set([
         ...servicePortalScopes,
         ...applicationSystemScopes,
+        ...formSystemScopes
       ])
 
       return [...combinedScopes]
@@ -50,8 +52,8 @@ export const bffConfig = ({
     const domain = ctx.featureDeploymentName
       ? `${ctx.featureDeploymentName}-beta.${ctx.env.domain}`
       : ctx.env.type === 'prod'
-      ? ctx.env.domain
-      : `beta.${ctx.env.domain}`
+        ? ctx.env.domain
+        : `beta.${ctx.env.domain}`
 
     return `https://${domain}`
   }
