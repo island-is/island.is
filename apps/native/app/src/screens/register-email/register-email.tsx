@@ -6,7 +6,7 @@ import styled from 'styled-components/native'
 import illustrationSrc from '../../assets/illustrations/digital-services-m1-dots.png'
 import logo from '../../assets/logo/logo-64w.png'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { useNavigation } from '../../hooks/use-navigation'
+import { useNavigationModal } from '../../hooks/use-navigation-modal'
 import { Button, NavigationBarSheet, Typography, Container } from '../../ui'
 import { ComponentRegistry } from '../../utils/component-registry'
 import { isAndroid } from '../../utils/devices'
@@ -58,7 +58,7 @@ export const RegisterEmailScreen: NavigationFunctionComponent<{
 
   const intl = useIntl()
   const { height } = useWindowDimensions()
-  const { dismissModal, showModal } = useNavigation()
+  const { dismissModal, showModal } = useNavigationModal()
 
   const onRegisterPress = () => {
     dismissModal(componentId)

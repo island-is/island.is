@@ -13,7 +13,7 @@ import { createNavigationOptionHooks } from '../../hooks/create-navigation-optio
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { useDateTimeFormatter } from '../../hooks/use-date-time-formatter'
 import { useLocale } from '../../hooks/use-locale'
-import { useNavigation } from '../../hooks/use-navigation'
+import { useNavigationModal } from '../../hooks/use-navigation-modal'
 import {
   Alert,
   Button,
@@ -77,7 +77,7 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
   const theme = useTheme()
   const intl = useIntl()
   const formatDate = useDateTimeFormatter()
-  const { showModal } = useNavigation()
+  const { showModal } = useNavigationModal()
   const { user } = useUser()
   const insets = useSafeAreaInsets()
   const [shouldScroll, setShouldScroll] = useState(false)
