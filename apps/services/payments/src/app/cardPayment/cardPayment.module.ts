@@ -19,6 +19,9 @@ import { ConfigModule } from '@nestjs/config'
 import { CardPaymentModuleConfig } from './cardPayment.config'
 import { CardPaymentCacheModule } from './cardPayment.cache'
 import { PaymentFlowPaymentConfirmation } from '../paymentFlow/models/paymentFlowPaymentConfirmation.model'
+import { JwksModule } from '../jwks/jwks.module'
+import { JwksConfig } from '../jwks/jwks.config'
+import { PaymentFlowModuleConfig } from '../paymentFlow/paymentFlow.config'
 
 @Module({
   imports: [
@@ -31,13 +34,14 @@ import { PaymentFlowPaymentConfirmation } from '../paymentFlow/models/paymentFlo
     ]),
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [CardPaymentModuleConfig],
+      load: [CardPaymentModuleConfig, PaymentFlowModuleConfig, JwksConfig],
     }),
     FeatureFlagModule,
     ChargeFjsV2ClientModule,
     NationalRegistryV3ClientModule,
     CompanyRegistryClientModule,
     CardPaymentCacheModule,
+    JwksModule,
   ],
   controllers: [CardPaymentController],
   providers: [CardPaymentService, PaymentFlowService],

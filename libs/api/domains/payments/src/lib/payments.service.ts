@@ -16,8 +16,6 @@ import { ChargeCardInput } from './dto/chargeCard.input'
 import { ChargeCardResponse } from './dto/chargeCard.response'
 import { CardVerificationCallbackInput } from './dto/cardVerificationCallback.input'
 import { PaymentsApiModuleConfig } from './payments.config'
-import { CreatePaymentFlowInput } from './dto/createPaymentFlow.input'
-import { CreatePaymentFlowResponse } from './dto/createPaymentFlow.response'
 import { CreateInvoiceInput } from './dto/createInvoice.input'
 import { CreateInvoiceResponse } from './dto/createInvoice.response'
 import { CardVerificationResponse } from './dto/cardVerificationCallback.response'
@@ -106,5 +104,9 @@ export class PaymentsService {
     return this.paymentsApi.invoicePaymentControllerCreate({
       createInvoiceInput,
     })
+  }
+
+  async getJwks() {
+    return this.paymentsApi.jwksControllerServeJwks()
   }
 }
