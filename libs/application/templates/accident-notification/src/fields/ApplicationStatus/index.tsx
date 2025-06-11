@@ -45,6 +45,7 @@ export const ApplicationStatus = ({
     // Fetch every 5 minutes in case user leaves screen
     // open for long period of time and does not refresh.
     // We might get information from organization during that time.
+    //
     pollInterval: 300000,
   })
 
