@@ -373,10 +373,8 @@ export const DocumentLine: FC<Props> = ({
               </Text>
               {documentLine.replyable && (
                 <Box
-                  background="dark100"
-                  borderRadius="standard"
                   paddingX="smallGutter"
-                  marginLeft={1}
+                  marginLeft={'smallGutter'}
                   display="flex"
                   justifyContent="center"
                   alignItems="center"
