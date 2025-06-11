@@ -12,7 +12,6 @@ import {
   IndictmentCaseReviewDecision,
   indictmentCases,
   investigationCases,
-  isDistrictCourtUser,
   restrictionCases,
   ServiceRequirement,
   type User as TUser,
@@ -49,13 +48,14 @@ const buildEventLogExistsCondition = (eventType: EventType, exists: boolean) =>
 
 // District Court Request Cases
 
-const districtCourtRequestCasesSharedWhereOptions = {
+const districtCourtRequestCasesSharedWhereOptions = (user: TUser) => ({
   is_archived: false,
+  court_id: user.institution?.id,
   type: [...restrictionCases, ...investigationCases],
-}
+})
 
-const districtCourtRequestCasesInProgressWhereOptions = {
-  ...districtCourtRequestCasesSharedWhereOptions,
+const districtCourtRequestCasesInProgressWhereOptions = (user: TUser) => ({
+  ...districtCourtRequestCasesSharedWhereOptions(user),
   [Op.or]: [
     { state: [CaseState.DRAFT, CaseState.SUBMITTED, CaseState.RECEIVED] },
     {
@@ -72,16 +72,16 @@ const districtCourtRequestCasesInProgressWhereOptions = {
       },
     },
   ],
-}
+})
 
-const districtCourtRequestCasesAppealedWhereOptions = {
-  ...districtCourtRequestCasesSharedWhereOptions,
+const districtCourtRequestCasesAppealedWhereOptions = (user: TUser) => ({
+  ...districtCourtRequestCasesSharedWhereOptions(user),
   state: completedRequestCaseStates,
   appeal_state: [CaseAppealState.APPEALED],
-}
+})
 
-const districtCourtRequestCasesCompletedWhereOptions = {
-  ...districtCourtRequestCasesSharedWhereOptions,
+const districtCourtRequestCasesCompletedWhereOptions = (user: TUser) => ({
+  ...districtCourtRequestCasesSharedWhereOptions(user),
   state: completedRequestCaseStates,
   [Op.or]: [
     { ruling_signature_date: { [Op.not]: null } },
@@ -95,33 +95,34 @@ const districtCourtRequestCasesCompletedWhereOptions = {
       CaseAppealState.COMPLETED,
     ],
   },
-}
+})
 
 // District Court Indictments
 
-const districtCourtIndictmentsSharedWhereOptions = {
+const districtCourtIndictmentsSharedWhereOptions = (user: TUser) => ({
   is_archived: false,
+  court_id: user.institution?.id,
   type: indictmentCases,
-}
+})
 
-const districtCourtIndictmentsNewWhereOptions = {
-  ...districtCourtIndictmentsSharedWhereOptions,
+const districtCourtIndictmentsNewWhereOptions = (user: TUser) => ({
+  ...districtCourtIndictmentsSharedWhereOptions(user),
   state: [CaseState.SUBMITTED, CaseState.RECEIVED],
   judge_id: null,
-}
+})
 
-const districtCourtIndictmentsReceivedWhereOptions = {
-  ...districtCourtIndictmentsSharedWhereOptions,
+const districtCourtIndictmentsReceivedWhereOptions = (user: TUser) => ({
+  ...districtCourtIndictmentsSharedWhereOptions(user),
   state: CaseState.RECEIVED,
   judge_id: { [Op.not]: null },
   [Op.and]: [
     buildSubpoenaExistsCondition(false),
     buildAlternativeServiceExistsCondition(false),
   ],
-}
+})
 
-const districtCourtIndictmentsInProgressWhereOptions = {
-  ...districtCourtIndictmentsSharedWhereOptions,
+const districtCourtIndictmentsInProgressWhereOptions = (user: TUser) => ({
+  ...districtCourtIndictmentsSharedWhereOptions(user),
   [Op.or]: [
     {
       state: CaseState.RECEIVED,
@@ -132,10 +133,10 @@ const districtCourtIndictmentsInProgressWhereOptions = {
     },
     { state: CaseState.WAITING_FOR_CANCELLATION },
   ],
-}
+})
 
-const districtCourtIndictmentsFinalizingWhereOptions = {
-  ...districtCourtIndictmentsSharedWhereOptions,
+const districtCourtIndictmentsFinalizingWhereOptions = (user: TUser) => ({
+  ...districtCourtIndictmentsSharedWhereOptions(user),
   state: CaseState.COMPLETED,
   indictment_ruling_decision: [
     CaseIndictmentRulingDecision.RULING,
@@ -147,10 +148,10 @@ const districtCourtIndictmentsFinalizingWhereOptions = {
       false,
     ),
   ],
-}
+})
 
-const districtCourtIndictmentsCompletedWhereOptions = {
-  ...districtCourtIndictmentsSharedWhereOptions,
+const districtCourtIndictmentsCompletedWhereOptions = (user: TUser) => ({
+  ...districtCourtIndictmentsSharedWhereOptions(user),
   state: CaseState.COMPLETED,
   [Op.not]: {
     indictment_ruling_decision: [
@@ -164,7 +165,7 @@ const districtCourtIndictmentsCompletedWhereOptions = {
       ),
     ],
   },
-}
+})
 
 // Court of Appeals Cases
 
@@ -425,35 +426,26 @@ const prosecutorsOfficeIndictmentAppealedWhereOptions = {
   ],
 }
 
-const withUserFilter = (
-  whereOptions: WhereOptions,
-  user: TUser,
-): WhereOptions => {
-  return isDistrictCourtUser(user)
-    ? { ...whereOptions, court_id: user.institution?.id }
-    : whereOptions
-}
-
 export const caseTableWhereOptions: Record<
   CaseTableType,
   (user: TUser) => WhereOptions
 > = {
-  [CaseTableType.DISTRICT_COURT_REQUEST_CASES_IN_PROGRESS]: (user) =>
-    withUserFilter(districtCourtRequestCasesInProgressWhereOptions, user),
-  [CaseTableType.DISTRICT_COURT_REQUEST_CASES_APPEALED]: (user) =>
-    withUserFilter(districtCourtRequestCasesAppealedWhereOptions, user),
-  [CaseTableType.DISTRICT_COURT_REQUEST_CASES_COMPLETED]: (user) =>
-    withUserFilter(districtCourtRequestCasesCompletedWhereOptions, user),
-  [CaseTableType.DISTRICT_COURT_INDICTMENTS_NEW]: (user) =>
-    withUserFilter(districtCourtIndictmentsNewWhereOptions, user),
-  [CaseTableType.DISTRICT_COURT_INDICTMENTS_RECEIVED]: (user) =>
-    withUserFilter(districtCourtIndictmentsReceivedWhereOptions, user),
-  [CaseTableType.DISTRICT_COURT_INDICTMENTS_IN_PROGRESS]: (user) =>
-    withUserFilter(districtCourtIndictmentsInProgressWhereOptions, user),
-  [CaseTableType.DISTRICT_COURT_INDICTMENTS_FINALIZING]: (user) =>
-    withUserFilter(districtCourtIndictmentsFinalizingWhereOptions, user),
-  [CaseTableType.DISTRICT_COURT_INDICTMENTS_COMPLETED]: (user) =>
-    withUserFilter(districtCourtIndictmentsCompletedWhereOptions, user),
+  [CaseTableType.DISTRICT_COURT_REQUEST_CASES_IN_PROGRESS]:
+    districtCourtRequestCasesInProgressWhereOptions,
+  [CaseTableType.DISTRICT_COURT_REQUEST_CASES_APPEALED]:
+    districtCourtRequestCasesAppealedWhereOptions,
+  [CaseTableType.DISTRICT_COURT_REQUEST_CASES_COMPLETED]:
+    districtCourtRequestCasesCompletedWhereOptions,
+  [CaseTableType.DISTRICT_COURT_INDICTMENTS_NEW]:
+    districtCourtIndictmentsNewWhereOptions,
+  [CaseTableType.DISTRICT_COURT_INDICTMENTS_RECEIVED]:
+    districtCourtIndictmentsReceivedWhereOptions,
+  [CaseTableType.DISTRICT_COURT_INDICTMENTS_IN_PROGRESS]:
+    districtCourtIndictmentsInProgressWhereOptions,
+  [CaseTableType.DISTRICT_COURT_INDICTMENTS_FINALIZING]:
+    districtCourtIndictmentsFinalizingWhereOptions,
+  [CaseTableType.DISTRICT_COURT_INDICTMENTS_COMPLETED]:
+    districtCourtIndictmentsCompletedWhereOptions,
   [CaseTableType.COURT_OF_APPEALS_IN_PROGRESS]: () =>
     courtOfAppealsInProgressWhereOptions,
   [CaseTableType.COURT_OF_APPEALS_COMPLETED]: () =>
