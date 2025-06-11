@@ -37,8 +37,6 @@ const SearchResultButton = ({ caseNumber, caseType }: ResultsProps) => (
       display="flex"
       alignItems="center"
       justifyContent="spaceBetween"
-      width="full"
-      marginBottom={2}
     >
       <Box display="flex" alignItems="flexStart" flexDirection={'column'}>
         <Text variant="eyebrow">Gæsluvarðhald</Text>
@@ -109,29 +107,29 @@ const SearchModal: FC<Props> = ({ onClose }) => {
                 maxHeight: { duration: 0.5, ease: 'easeOut' },
               }}
             >
-              <Text variant="eyebrow" marginBottom={2} color="dark300">
-                Leitarniðurstöður
-              </Text>
-
-              {isLoading ? (
-                <SkeletonLoader repeat={3} height={90} space={2} />
-              ) : (
-                <div>
-                  <SearchResultButton
-                    caseNumber="123"
-                    caseType={CaseType.CUSTODY}
-                  />
-
-                  <SearchResultButton
-                    caseNumber="123"
-                    caseType={CaseType.BODY_SEARCH}
-                  />
-                  <SearchResultButton
-                    caseNumber="123"
-                    caseType={CaseType.INTERNET_USAGE}
-                  />
-                </div>
-              )}
+              <div className={styles.searchResults}>
+                <Text variant="eyebrow" color="dark300">
+                  Leitarniðurstöður
+                </Text>
+                {isLoading ? (
+                  <SkeletonLoader repeat={3} height={90} space={2} />
+                ) : (
+                  <>
+                    <SearchResultButton
+                      caseNumber="123"
+                      caseType={CaseType.CUSTODY}
+                    />
+                    <SearchResultButton
+                      caseNumber="123"
+                      caseType={CaseType.BODY_SEARCH}
+                    />
+                    <SearchResultButton
+                      caseNumber="123"
+                      caseType={CaseType.INTERNET_USAGE}
+                    />
+                  </>
+                )}
+              </div>
             </motion.div>
           )}
         </AnimatePresence>
