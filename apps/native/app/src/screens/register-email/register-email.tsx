@@ -9,10 +9,14 @@ import { createNavigationOptionHooks } from '../../hooks/create-navigation-optio
 import { useNavigation } from '../../hooks/use-navigation'
 import { Button, NavigationBarSheet, Typography, Container } from '../../ui'
 import { ComponentRegistry } from '../../utils/component-registry'
+import { isAndroid } from '../../utils/devices'
 
-const Wrapper = styled.SafeAreaView`
-  flex: 1;
-`
+const Wrapper = styled.SafeAreaView(({ theme }) => ({
+  flex: 1,
+  ...(isAndroid && {
+    paddingBottom: theme.spacing.p2,
+  }),
+}))
 
 const Logo = styled.Image`
   width: 40px;

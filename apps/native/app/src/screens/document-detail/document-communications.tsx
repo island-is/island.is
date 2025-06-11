@@ -1,7 +1,10 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { Animated, ListRenderItemInfo, RefreshControl } from 'react-native'
-import { NavigationFunctionComponent } from 'react-native-navigation'
+import {
+  Navigation,
+  NavigationFunctionComponent,
+} from 'react-native-navigation'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
 import { useUser } from '../../contexts/user-provider'
@@ -14,10 +17,16 @@ import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator
 import { useDateTimeFormatter } from '../../hooks/use-date-time-formatter'
 import { useLocale } from '../../hooks/use-locale'
 import { useNavigation } from '../../hooks/use-navigation'
-import { Alert, Button, ListItemSkeleton, TopLine, Typography } from '../../ui'
+import {
+  Alert,
+  Button,
+  Container,
+  ListItemSkeleton,
+  TopLine,
+  Typography,
+} from '../../ui'
 import { ComponentRegistry } from '../../utils/component-registry'
 import { createSkeletonArr } from '../../utils/create-skeleton-arr'
-import { isDefined } from '../../utils/is-defined'
 import {
   DocumentListItem,
   TOGGLE_ANIMATION_DURATION,
@@ -29,7 +38,7 @@ import {
 
 type FlatListItem = DocumentComment | { __typename: 'Skeleton'; id: string }
 
-const FIRST_REPLY_HEIGHT = 100
+const LAST_REPLY_HEIGHT = 100
 
 const CaseNumberWrapper = styled.View`
   flex-direction: row;
@@ -60,12 +69,11 @@ const { useNavigationOptions, getNavigationOptions } =
 type DocumentCommunicationsScreenProps = {
   documentId: string
   firstReply?: boolean
-  refetchDocument?: boolean
 }
 
 export const DocumentCommunicationsScreen: NavigationFunctionComponent<
   DocumentCommunicationsScreenProps
-> = ({ componentId, documentId, firstReply = false, refetchDocument }) => {
+> = ({ componentId, documentId, firstReply = false }) => {
   useNavigationOptions(componentId)
   const locale = useLocale()
   const theme = useTheme()
@@ -73,7 +81,6 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
   const formatDate = useDateTimeFormatter()
   const { showModal } = useNavigation()
   const { user } = useUser()
-
   const insets = useSafeAreaInsets()
   const [shouldScroll, setShouldScroll] = useState(false)
   const [buttonHeight, setButtonHeight] = useState(48) // Default height
@@ -88,9 +95,6 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
       },
       locale,
     },
-    onCompleted: () => {
-      setRefetching(false)
-    },
   })
 
   useConnectivityIndicator({
@@ -101,7 +105,10 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
 
   const document = docRes.data?.documentV2
   const comments = document?.ticket?.comments ?? []
-  const replyable = document?.replyable ?? false
+  const replyable =
+    !docRes.loading && document && document?.replyable
+      ? document?.replyable
+      : true
   const isSkeleton = docRes.loading && !docRes.data
 
   const onReplyPress = () => {
@@ -119,12 +126,21 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
   }
 
   useEffect(() => {
-    if (refetchDocument) {
-      setRefetching(true)
-      docRes.refetch()
+    const modalDismissedListener =
+      Navigation.events().registerModalDismissedListener(
+        async ({ componentName }) => {
+          if (componentName === ComponentRegistry.DocumentReplyScreen) {
+            setRefetching(true)
+            docRes.refetch().finally(() => setRefetching(false))
+          }
+        },
+      )
+
+    return () => {
+      modalDismissedListener.remove()
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refetchDocument])
+  }, [])
 
   useEffect(() => {
     if (!isSkeleton && comments.length > 0) {
@@ -142,11 +158,13 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
     if (shouldScroll) {
       setShouldScroll(false)
       setTimeout(() => {
-        flatListRef.current?.scrollToOffset({
-          offset: 75 * (comments.length - 1) + 200,
-          animated: true,
+        requestAnimationFrame(() => {
+          flatListRef.current?.scrollToOffset({
+            offset: 75 * (comments.length - 1),
+            animated: true,
+          })
         })
-      }, TOGGLE_ANIMATION_DURATION + 50)
+      }, TOGGLE_ANIMATION_DURATION + 100)
     }
   }
 
@@ -176,7 +194,7 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
   const data = useMemo(
     () => (isSkeleton ? createSkeletonArr(8) : comments),
     // eslint-disable-next-line react-hooks/exhaustive-deps
-    [isSkeleton],
+    [isSkeleton, docRes.data],
   ) as FlatListItem[]
 
   return (
@@ -187,18 +205,45 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
         </Typography>
         <Typography variant="body3">#{document?.ticket?.id}</Typography>
       </CaseNumberWrapper>
-      <TopLine scrollY={scrollY} offsetTop={31} />
+      {(!firstReply || !replyable) && (
+        <TopLine scrollY={scrollY} offsetTop={31} />
+      )}
       <ListWrapper>
+        {!replyable && (
+          <Container>
+            <Alert
+              type="info"
+              message={intl.formatMessage({
+                id: 'documentCommunications.cannotReply',
+              })}
+              hasBorder
+            />
+          </Container>
+        )}
+        {firstReply && replyable && (
+          <Container>
+            <Alert
+              type="info"
+              message={intl.formatMessage(
+                {
+                  id: 'documentCommunications.initialReply',
+                },
+                {
+                  email: user?.email ?? '',
+                },
+              )}
+              hasBorder
+            />
+          </Container>
+        )}
         <Animated.FlatList
           ref={flatListRef}
           keyExtractor={keyExtractor}
+          initialNumToRender={50}
           contentContainerStyle={{
-            paddingBottom:
-              !firstReply && replyable
-                ? FIRST_REPLY_HEIGHT + insets.bottom + theme.spacing[2]
-                : replyable
-                ? insets.bottom + buttonHeight
-                : 0,
+            paddingBottom: replyable
+              ? insets.bottom + buttonHeight + LAST_REPLY_HEIGHT
+              : 0,
           }}
           data={data}
           renderItem={renderItem}
@@ -220,47 +265,22 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
         />
       </ListWrapper>
 
-      {isDefined(replyable) && (
+      {replyable && (
         <FloatingBottomFooter>
           <FloatingBottomContent>
-            {firstReply && replyable && (
-              <Alert
-                type="info"
-                message={intl.formatMessage(
-                  {
-                    id: 'documentCommunications.initialReply',
-                  },
-                  {
-                    email: user?.email ?? '',
-                  },
-                )}
-                hasBorder
-              />
-            )}
-            {replyable && (
-              <Button
-                onLayout={(event) => {
-                  setButtonHeight(event.nativeEvent.layout.height)
-                }}
-                title={intl.formatMessage({
-                  id: 'documentDetail.buttonReply',
-                })}
-                isTransparent
-                isOutlined
-                iconPosition="left"
-                icon={require('../../assets/icons/reply.png')}
-                onPress={onReplyPress}
-              />
-            )}
-            {!replyable && !firstReply && !docRes.loading && (
-              <Alert
-                type="info"
-                message={intl.formatMessage({
-                  id: 'documentCommunications.cannotReply',
-                })}
-                hasBorder
-              />
-            )}
+            <Button
+              onLayout={(event) => {
+                setButtonHeight(event.nativeEvent.layout.height)
+              }}
+              title={intl.formatMessage({
+                id: 'documentDetail.buttonReply',
+              })}
+              isTransparent
+              isOutlined
+              iconPosition="left"
+              icon={require('../../assets/icons/reply.png')}
+              onPress={onReplyPress}
+            />
           </FloatingBottomContent>
         </FloatingBottomFooter>
       )}

@@ -7,15 +7,13 @@ import {
   NavigationFunctionComponent,
   OptionsTopBarButton,
 } from 'react-native-navigation'
-import {
-  useNavigationButtonPress,
-  useNavigationComponentDidAppear,
-} from 'react-native-navigation-hooks'
+import { useNavigationButtonPress } from 'react-native-navigation-hooks'
 import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import WebView from 'react-native-webview'
 import styled, { useTheme } from 'styled-components/native'
 
 import { PdfViewer } from '../../components/pdf-viewer/pdf-viewer'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
   DocumentV2,
   DocumentV2Action,
@@ -44,13 +42,12 @@ import {
   ComponentRegistry,
 } from '../../utils/component-registry'
 import { ListParams } from '../inbox/inbox'
-import { getButtonsForActions } from './utils/get-buttons-for-actions'
-import { shareFile } from './utils/share-file'
 import {
   FloatingBottomContent,
   FloatingBottomFooter,
 } from './components/floating-bottom-footer'
-import { useFeatureFlag } from '../../contexts/feature-flag-provider'
+import { getButtonsForActions } from './utils/get-buttons-for-actions'
+import { shareFile } from './utils/share-file'
 
 const Host = styled.SafeAreaView`
   margin-left: ${({ theme }) => theme.spacing[2]}px;
@@ -355,9 +352,9 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     }
   }, componentId)
 
-  useNavigationComponentDidAppear(() => {
+  useEffect(() => {
     setVisible(true)
-  })
+  }, [])
 
   const markDocumentAsRead = () => {
     if (Document.opened) {
@@ -396,7 +393,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
 
   const fadeAnim = useRef(new Animated.Value(0)).current
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (loaded) {
       Animated.timing(fadeAnim, {
         toValue: 1,
