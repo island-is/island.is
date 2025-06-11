@@ -1,6 +1,6 @@
 {
   "name": "infra",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "index.js",
   "engines": {
     "npm": "please-use-yarn",
@@ -8,7 +8,6 @@
     "yarn": "4.6"
   },
   "scripts": {
-    "DEPLOYME": "true",
     "test": "jest",
     "charts": "node -r esbuild-register src/cli/generate-chart-values.ts",
     "update": "yarn update:packagejson",
