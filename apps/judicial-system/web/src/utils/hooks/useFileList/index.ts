@@ -140,6 +140,7 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
       if (!validateUuid(file.id)) {
         const previewUrl = URL.createObjectURL(file.originalFileObj as Blob)
         openFile(previewUrl)
+        setTimeout(() => URL.revokeObjectURL(previewUrl), 1000 * 60) // revoke url in 1 minute
       } else {
         const query = limitedAccess ? limitedAccessGetSignedUrl : getSignedUrl
 
