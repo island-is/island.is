@@ -143,11 +143,13 @@ export const newSchoolSubSection = buildSubSection({
             const municipalitySchools =
               data?.friggSchoolsByMunicipality
                 ?.find(({ unitId }) => unitId === municipalityCode)
-                ?.children?.filter(({ type, gradeLevels }) =>
-                  // if no childGradeLevel then skip grade level check. This is the case if student is not registered in Frigg
-                  type === OrganizationModelTypeEnum.School && !childGradeLevel
-                    ? true
-                    : gradeLevels?.includes(childGradeLevel),
+                ?.children?.filter(
+                  ({ type, gradeLevels }) =>
+                    // if no childGradeLevel then skip grade level check. This is the case if student is not registered in Frigg
+                    type === OrganizationModelTypeEnum.School &&
+                    (!childGradeLevel
+                      ? true
+                      : gradeLevels?.includes(childGradeLevel)),
                 )
                 ?.map((school) => ({
                   ...school,

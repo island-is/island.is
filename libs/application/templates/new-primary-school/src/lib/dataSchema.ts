@@ -119,7 +119,8 @@ export const dataSchema = z.object({
       {
         path: ['school'],
       },
-    ),
+    )
+    .optional(),
   newSchool: z.object({
     municipality: z.string(),
     school: z.string(),

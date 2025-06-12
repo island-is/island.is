@@ -30,10 +30,7 @@ export class FriggClientService {
     return await this.friggApiWithAuth(user).getAllSchoolsByMunicipality({})
   }
 
-  async getUserById(
-    user: User,
-    childNationalId: string,
-  ): Promise<UserModel | null> {
+  async getUserById(user: User, childNationalId: string): Promise<UserModel> {
     try {
       return await this.friggApiWithAuth(user).getUserBySourcedId({
         nationalId: childNationalId,
