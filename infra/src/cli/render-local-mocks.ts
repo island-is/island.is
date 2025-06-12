@@ -13,6 +13,7 @@ type LocalServiceArgs = {
   dryRun?: boolean
   secrets?: boolean
   devServices?: boolean
+  mocks?: boolean
 }
 
 export async function renderLocalServices({
@@ -22,6 +23,7 @@ export async function renderLocalServices({
   dryRun,
   secrets,
   devServices,
+  mocks,
 }: LocalServiceArgs): Promise<LocalrunValueFile> {
   logger.debug('renderLocalServices', {
     services,
@@ -49,9 +51,9 @@ export async function renderLocalServices({
     const commandedServices = Object.entries(
       renderedLocalServices.services,
     ).map(([k, v]) => [k, `(${(v.commands ?? []).join(' && ')})`])
-    logger.info(
+    console.log(
       (json ? (s: any) => JSON.stringify(s, null, 2) : (s: any) => s)({
-        mocks: renderedLocalServices.mocks,
+        ...(mocks ? { mocks: renderedLocalServices.mocks } : {}),
         services: Object.fromEntries(commandedServices),
       }),
     )

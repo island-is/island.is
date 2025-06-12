@@ -66,6 +66,7 @@ const cli = yargs(process.argv.slice(2))
           })
           .option('json', { type: 'boolean', default: false })
           .option('dry', { type: 'boolean', default: false })
+          .option('mocks', { type: 'boolean', default: true })
           .option('secrets', {
             type: 'boolean',
             default: true,
@@ -90,6 +91,7 @@ const cli = yargs(process.argv.slice(2))
         json: argv.json,
         print: true,
         secrets: argv['secrets'],
+        mocks: argv.mocks,
       })
     },
   )
@@ -107,6 +109,7 @@ const cli = yargs(process.argv.slice(2))
           .option('dependencies', { array: true, type: 'string', default: [] })
           .option('json', { type: 'boolean', default: false })
           .option('dry', { type: 'boolean', default: false })
+          .option('mocks', { type: 'boolean', default: true })
           .option('secrets', {
             type: 'boolean',
             default: false,
@@ -142,6 +145,7 @@ const cli = yargs(process.argv.slice(2))
         print: argv.print,
         startProxies: argv.proxies,
         devServices: argv['dev-services'],
+        mocks: argv.mocks,
       })
     },
   )
