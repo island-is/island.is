@@ -3,10 +3,6 @@ import { FormValue } from '@island.is/application/types'
 import { ExemptionForTransportationAnswers } from '../..'
 import { Convoy, Vehicle } from '../types'
 
-const isVehicle = (value: unknown): value is Vehicle => {
-  return typeof value === 'object' && value !== null && 'permno' in value
-}
-
 export const getConvoyItems = (answers: FormValue): Convoy[] => {
   const items =
     getValueViaPath<ExemptionForTransportationAnswers['convoy']['items']>(
@@ -16,7 +12,14 @@ export const getConvoyItems = (answers: FormValue): Convoy[] => {
 
   return items.map((item) => ({
     ...item,
-    trailer: isVehicle(item.trailer) ? item.trailer : undefined,
+    trailer: item.trailer?.permno
+      ? {
+          permno: item.trailer.permno,
+          makeAndColor: item.trailer.makeAndColor || '',
+          numberOfAxles: item.trailer.numberOfAxles || 0,
+          hasError: item.trailer.hasError || false,
+        }
+      : undefined,
   }))
 }
 

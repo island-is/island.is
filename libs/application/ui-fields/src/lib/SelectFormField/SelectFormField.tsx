@@ -49,7 +49,13 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
   const values = getValues()
 
   const finalOptions = useMemo(() => {
-    const updatedApplication = { ...application, answers: values }
+    const updatedApplication = {
+      ...application,
+      answers: {
+        ...application.answers,
+        ...values,
+      },
+    }
     return buildFieldOptions(options, updatedApplication, field, locale)
   }, [options, application, field, locale, values])
 
