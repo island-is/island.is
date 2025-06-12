@@ -38,27 +38,33 @@ export const EmptyCard: React.FC<EmptyCardProps> = ({
             border="standard"
             borderRadius="large"
             borderColor="blue200"
-            paddingY="p2"
-            paddingX={3}
+            paddingTop={isMobile ? 2 : 'p2'}
+            paddingBottom={isMobile ? 5 : 'p2'}
+            paddingX={isMobile ? 2 : 3}
             display="flex"
             justifyContent="spaceBetween"
             alignItems="center"
+            flexDirection={isMobile ? 'columnReverse' : 'row'}
           >
-            <Box
-              marginRight={3}
-              flexDirection={isMobile ? 'rowReverse' : 'row'}
-            >
-              <Text variant="h3" as="p">
+            <Box marginRight={isMobile ? 0 : 3}>
+              <Text
+                variant="h3"
+                as="p"
+                marginBottom={isMobile || size === 'large' ? 1 : 0}
+                textAlign={isMobile ? 'center' : 'left'}
+              >
                 {title}
               </Text>
-              <Text>{description}</Text>
+              <Text textAlign={isMobile ? 'center' : 'left'}>
+                {description}
+              </Text>
             </Box>
             <Box>
               <Box
                 alt=""
                 component="img"
                 src={img ?? './assets/images/sofa.svg'}
-                margin={3}
+                margin={isMobile ? 3 : 1}
                 className={styles.smallImage}
                 display="flex"
                 justifyContent="center"

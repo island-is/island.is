@@ -123,6 +123,7 @@ export const InfoCard: React.FC<InfoCardProps> = ({
                     : '11/12'
                   : '11/12'
               }
+              className={styles.contentContainer}
             >
               <Box
                 display="flex"
@@ -192,7 +193,7 @@ export const InfoCard: React.FC<InfoCardProps> = ({
               )}
             </GridColumn>
             {size === 'large' && !isMobile && img && (
-              <GridColumn span="3/12">
+              <GridColumn span="3/12" className={styles.imageContainer}>
                 <Box
                   className={styles.image}
                   alt=""

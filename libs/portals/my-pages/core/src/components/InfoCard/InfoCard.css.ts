@@ -12,17 +12,6 @@ export const boxContainer = style({
   },
 })
 
-export const image = style({
-  minHeight: 150,
-  maxHeight: 180,
-})
-
-export const smallImage = style({
-  minHeight: 85,
-  maxHeight: 105,
-  width: 'auto',
-})
-
 export const icon = style({
   padding: 0,
 })
@@ -60,4 +49,25 @@ export const detailContainer = style({
       width: '100%',
     },
   }),
+})
+
+export const contentContainer = style({
+  display: 'flex',
+  flexDirection: 'column',
+  justifyContent: 'space-around',
+})
+
+export const imageContainer = style({
+  paddingTop: theme.spacing[1],
+  maxHeight: 165,
+})
+
+export const image = style({
+  height: '100%',
+})
+
+export const smallImage = style({
+  minHeight: 85,
+  maxHeight: 105,
+  width: 'auto',
 })

@@ -52,7 +52,7 @@ const TimeCard: React.FC<AppointmentCardProps> = ({
         border="standard"
         borderColor="blue200"
         borderRadius="large"
-        padding={3}
+        padding={isMobile ? 2 : 3}
       >
         <GridRow direction="row">
           <GridColumn span={'12/12'}>
@@ -60,13 +60,18 @@ const TimeCard: React.FC<AppointmentCardProps> = ({
               <Text variant="h4" marginBottom={1} color="blue400">
                 {title}
               </Text>
-              <Box display="flex" justifyContent="spaceBetween" width="full">
+              <Box
+                display="flex"
+                justifyContent="spaceBetween"
+                width="full"
+                flexDirection={isMobile ? 'column' : 'row'}
+              >
                 <Text variant="medium" marginBottom={'smallGutter'}>
                   {data.date}
                 </Text>
                 <Box
                   display="flex"
-                  justifyContent="flexEnd"
+                  justifyContent={isMobile ? 'flexStart' : 'flexEnd'}
                   alignItems="center"
                   columnGap={1}
                   marginBottom={'smallGutter'}
