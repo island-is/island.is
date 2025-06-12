@@ -6,6 +6,7 @@ import {
 } from '@island.is/application/core'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { DefaultEvents } from '@island.is/application/types'
+import { overviewFields } from '../../utils/overviewFields'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
@@ -13,16 +14,11 @@ export const overviewSection = buildSection({
   children: [
     buildMultiField({
       id: 'overview',
+      title: socialInsuranceAdministrationMessage.confirm.overviewTitle,
+      description:
+        socialInsuranceAdministrationMessage.confirm.overviewDescription,
       children: [
-        buildCustomField(
-          {
-            id: 'overviewScreen',
-            component: 'Review',
-          },
-          {
-            editable: true,
-          },
-        ),
+        ...overviewFields(true),
         buildSubmitField({
           id: 'submit',
           placement: 'footer',
