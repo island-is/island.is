@@ -35,8 +35,9 @@ interface CheckboxControllerProps {
   backgroundColor?: InputBackgroundColor
   onSelect?: (s: string[]) => void
   clearOnChange?: string[]
-  setOnChange?:
-    | { key: string; value: any }[]
+  setOnChange?: // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  | { key: string; value: any }[]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     | ((value: string[]) => Promise<{ key: string; value: any }[]>)
 }
 export const CheckboxController: FC<
