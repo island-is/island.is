@@ -6,11 +6,5 @@ import { ConvoyLongTermMultiField } from './convoyLongTerm'
 export const convoySection = buildSection({
   id: 'convoySection',
   title: convoy.general.sectionTitle,
-  children: [
-    // Short-term
-    ConvoyShortTermMultiField,
-
-    // Long-term
-    ConvoyLongTermMultiField,
-  ],
+  children: [ConvoyShortTermMultiField, ConvoyLongTermMultiField],
 })

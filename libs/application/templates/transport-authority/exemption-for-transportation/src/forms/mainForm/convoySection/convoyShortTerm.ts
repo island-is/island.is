@@ -12,6 +12,7 @@ import {
 } from '../../../utils'
 import { DollyType } from '../../../shared'
 
+// Since there is max 1 convoy in short-term
 const convoyIndex = 0
 
 export const ConvoyShortTermMultiField = buildMultiField({

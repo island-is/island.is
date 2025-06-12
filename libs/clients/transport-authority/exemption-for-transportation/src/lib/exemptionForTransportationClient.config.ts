@@ -14,7 +14,7 @@ export const ExemptionForTransportationClientConfig = defineConfig<
   load(env) {
     return {
       xroadPath: env.required(
-        'XROAD_EXEMPTION_FOR_TRANSPORTATION_PATH', //TODOy bæta við í env
+        'XROAD_EXEMPTION_FOR_TRANSPORTATION_PATH', //TODOx bæta við í env
         'IS-DEV/GOV/10017/Samgongustofa-Protected/Leyfur-V1',
       ),
       scope: ['@samgongustofa.is/leyfur-test'],

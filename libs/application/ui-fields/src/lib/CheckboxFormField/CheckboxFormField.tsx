@@ -40,7 +40,6 @@ export const CheckboxFormField = ({
     strong,
     backgroundColor,
     width,
-    split,
     required,
     onSelect,
     spacing,
@@ -87,7 +86,7 @@ export const CheckboxFormField = ({
           disabled={disabled}
           large={large}
           name={`${id}`}
-          split={split ? split : width === 'half' ? '1/2' : '1/1'}
+          split={width === 'half' ? '1/2' : '1/1'}
           onSelect={onSelect}
           backgroundColor={backgroundColor}
           defaultValue={

@@ -48,16 +48,19 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
   const { getValues } = useFormContext()
   const values = getValues()
 
-  const finalOptions = useMemo(() => {
-    const updatedApplication = {
+  const updatedApplication = useMemo(() => {
+    return {
       ...application,
       answers: {
         ...application.answers,
         ...values,
       },
     }
+  }, [application, values])
+
+  const finalOptions = useMemo(() => {
     return buildFieldOptions(options, updatedApplication, field, locale)
-  }, [options, application, field, locale, values])
+  }, [options, updatedApplication, field, locale])
 
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
@@ -112,7 +115,7 @@ export const SelectFormField: FC<React.PropsWithChildren<Props>> = ({
           setOnChange={
             typeof setOnChange === 'function'
               ? async (optionValue) =>
-                  await setOnChange(optionValue, application)
+                  await setOnChange(optionValue, updatedApplication)
               : setOnChange
           }
           isClearable={isClearable}

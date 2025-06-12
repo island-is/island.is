@@ -18,6 +18,7 @@ import {
 import { FreightCommonHiddenInputs } from './freightCommonHiddenInputs'
 import { Application } from '@island.is/application/types'
 
+// Since there is max 1 freight and 1 convoy in short-term
 const freightIndex = 0
 const convoyIndex = 0
 
@@ -178,7 +179,7 @@ export const FreightShortTermCreateMultiField = buildMultiField({
       id: `freightPairing.${freightIndex}.items.${convoyIndex}.exemptionFor`,
       large: true,
       backgroundColor: 'blue',
-      split: '1/2',
+      width: 'half',
       options: [
         {
           value: ExemptionFor.WIDTH,

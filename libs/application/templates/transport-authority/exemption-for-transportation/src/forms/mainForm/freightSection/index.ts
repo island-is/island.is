@@ -8,10 +8,7 @@ export const freightSection = buildSection({
   id: 'freightSection',
   title: freight.general.sectionTitle,
   children: [
-    // Short-term
     FreightShortTermCreateMultiField,
-
-    // Long-term
     FreightLongTermCreateSubSection,
     ...FreightLongTermPairingSubSections,
   ],

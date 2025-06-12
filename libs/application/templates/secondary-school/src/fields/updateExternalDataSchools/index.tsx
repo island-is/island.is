@@ -72,7 +72,6 @@ export const UpdateExternalDataSchools: FC<FieldBaseProps> = ({
   )
 
   useEffect(() => {
-    console.log('useEffect')
     // Should only update external data and refetch if old data was fetched was over an hour ago
     if (
       !isLoading &&

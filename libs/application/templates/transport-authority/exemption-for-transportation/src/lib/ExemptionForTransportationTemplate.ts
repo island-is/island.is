@@ -21,12 +21,7 @@ import {
   EphemeralStateLifeCycle,
   pruneAfterDays,
 } from '@island.is/application/core'
-import {
-  application as applicationMessage,
-  overview,
-  // historyMessages as applicationHistoryMessages,
-  // pendingActionMessages as applicationPendingActionMessages,
-} from './messages'
+import { application as applicationMessage, overview } from './messages'
 import { Features } from '@island.is/feature-flags'
 import {
   ExemptionRulesApi,
@@ -48,15 +43,6 @@ const ExemptionForTransportationTemplate: ApplicationTemplate<
   ],
   dataSchema: ExemptionForTransportationSchema,
   featureFlag: Features.ExemptionForTransportation,
-  // allowedDelegations: [
-  //   {
-  //     type: AuthDelegationType.LegalGuardian,
-  //   },
-  //   {
-  //     type: AuthDelegationType.Custom,
-  //   },
-  // ],
-  // requiredScopes: [ApiScope.samgongustofa],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -179,17 +165,6 @@ const ExemptionForTransportationTemplate: ApplicationTemplate<
       },
     },
   },
-  // stateMachineOptions: {
-  //   actions: {
-  //     clearAssignees: assign((context) => ({
-  //       ...context,
-  //       application: {
-  //         ...context.application,
-  //         assignees: [],
-  //       },
-  //     })),
-  //   },
-  // },
   mapUserToRole: (
     _nationalId: string,
     _application: Application,

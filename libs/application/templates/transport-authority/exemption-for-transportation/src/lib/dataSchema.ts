@@ -7,7 +7,7 @@ import { error } from './messages'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
-  return phone && phone.isValid()
+  return !!phone && phone.isValid()
 }
 
 const ApplicantSchema = z.object({

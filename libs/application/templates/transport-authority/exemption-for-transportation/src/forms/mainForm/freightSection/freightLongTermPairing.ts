@@ -336,7 +336,7 @@ const FreightPairingSubSection = (freightIndex: number) =>
                   },
                   large: true,
                   backgroundColor: 'blue',
-                  split: '1/2',
+                  width: 'half',
                   options: [
                     {
                       value: ExemptionFor.WIDTH,
