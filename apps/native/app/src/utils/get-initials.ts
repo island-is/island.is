@@ -1,8 +1,6 @@
-import { isDefined } from './is-defined'
-
 /**
  * Returns the initials for a given name string.
- * - For a single word, returns the first two letters (uppercased).
+ * - For a single word, returns the first letter (uppercased).
  * - For multiple words, returns the first letter of the first and first letter of the last word (uppercased).
  *
  * @param name - The full name string to extract initials from.
@@ -15,12 +13,13 @@ export const getInitials = (name: string): string => {
 
   const words = name
     .split(' ')
+    .map((word) => word.trim())
     // Remove empty strings from multiple spaces
-    .filter(isDefined)
+    .filter((word) => word)
 
   if (words.length === 1) {
-    // If there is only one word, return the first two letters
-    return (words[0][0] + words[0][1]).toUpperCase()
+    // If there is only one word, return the first letter
+    return words[0][0].toUpperCase()
   }
 
   // If there are multiple words, return the first letter of the first word and the first letter of the last word
