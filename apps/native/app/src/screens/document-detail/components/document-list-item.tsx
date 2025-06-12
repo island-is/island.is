@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import Animated, {
   useAnimatedStyle,
   useDerivedValue,
@@ -13,7 +13,7 @@ import { getInitials } from '../../../utils/get-initials'
 
 export const TOGGLE_ANIMATION_DURATION = 300
 
-const Wrapper = styled(Animated.View)<{
+const Wrapper = styled(PressableHighlight)<{
   hasTopBorder: boolean
 }>(({ theme, hasTopBorder }) => ({
   flexDirection: 'column',
@@ -76,12 +76,14 @@ export const DocumentListItem = ({
   const theme = useTheme()
   const { getOrganizationLogoUrl } = useOrganizationsStore()
 
-  const [measured, setMeasured] = useState(false)
-
   const height = useSharedValue(0)
   const containerOpacity = useSharedValue(0)
   const isExpanded = useSharedValue(isOpen)
   const shouldAnimate = useSharedValue(false)
+
+  useEffect(() => {
+    containerOpacity.value = withTiming(1, { duration: 200 })
+  }, [])
 
   const derivedHeight = useDerivedValue(() => {
     const duration = shouldAnimate.value ? TOGGLE_ANIMATION_DURATION : 0
@@ -95,15 +97,8 @@ export const DocumentListItem = ({
   }))
 
   const containerAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: containerOpacity.value,
+    opacity: withTiming(containerOpacity.value, { duration: 100 }),
   }))
-
-  useEffect(() => {
-    if (measured) {
-      containerOpacity.value = withTiming(1, { duration: 200 })
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [measured])
 
   const handlePress = () => {
     if (!closeable) {
@@ -116,42 +111,44 @@ export const DocumentListItem = ({
   const source = getOrganizationLogoUrl(sender, 75, true)
 
   return (
-    <PressableHighlight
-      onPress={handlePress}
-      highlightColor={closeable ? theme.shade.shade100 : theme.color.white}
-    >
-      <Wrapper hasTopBorder={hasTopBorder} style={containerAnimatedStyle}>
-        <Host>
-          <IconBackground>
-            {!source ? (
-              <Typography
-                variant="body"
-                weight="600"
-                lineHeight={0}
-                color={theme.color.blue400}
-              >
-                {getInitials(sender)}
-              </Typography>
-            ) : (
-              <Icon source={source} width={24} height={24} />
-            )}
-          </IconBackground>
-          <Content>
-            <Typography variant="eyebrow">{title}</Typography>
-            <Typography variant="body3">{date}</Typography>
-          </Content>
-        </Host>
-        <Animated.View style={bodyStyle}>
-          <Body
-            onLayout={(e) => {
-              height.value = e.nativeEvent.layout.height
-              setMeasured(true)
-            }}
-          >
-            <Typography variant="body3">{body}</Typography>
-          </Body>
-        </Animated.View>
+    <Animated.View style={containerAnimatedStyle}>
+      <Wrapper
+        onPress={handlePress}
+        highlightColor={closeable ? theme.shade.shade100 : theme.color.white}
+        hasTopBorder={hasTopBorder}
+      >
+        <>
+          <Host>
+            <IconBackground>
+              {!source ? (
+                <Typography
+                  variant="body"
+                  weight="600"
+                  lineHeight={0}
+                  color={theme.color.blue400}
+                >
+                  {getInitials(sender)}
+                </Typography>
+              ) : (
+                <Icon source={source} width={24} height={24} />
+              )}
+            </IconBackground>
+            <Content>
+              <Typography variant="eyebrow">{title}</Typography>
+              <Typography variant="body3">{date}</Typography>
+            </Content>
+          </Host>
+          <Animated.View style={bodyStyle}>
+            <Body
+              onLayout={(e) => {
+                height.value = e.nativeEvent.layout.height
+              }}
+            >
+              <Typography variant="body3">{body}</Typography>
+            </Body>
+          </Animated.View>
+        </>
       </Wrapper>
-    </PressableHighlight>
+    </Animated.View>
   )
 }
