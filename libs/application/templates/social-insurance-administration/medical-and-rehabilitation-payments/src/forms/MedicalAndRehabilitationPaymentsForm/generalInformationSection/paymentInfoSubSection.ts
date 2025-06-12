@@ -7,9 +7,9 @@ import {
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
+import { TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
-  getBankIsk,
   getTaxOptions,
   getYesNoOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
@@ -18,7 +18,6 @@ import {
   getApplicationAnswers,
   getApplicationExternalData,
 } from '../../../utils/medicalAndRehabilitationPaymentsUtils'
-import { TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 export const paymentInfoSubSection = buildSubSection({
   id: 'paymentInfoSubSection',
@@ -37,12 +36,10 @@ export const paymentInfoSubSection = buildSubSection({
         }),
         buildBankAccountField({
           id: 'paymentInfo.bank',
-          title: socialInsuranceAdministrationMessage.payment.bank,
           defaultValue: (application: Application) => {
             const { bankInfo } = getApplicationExternalData(
               application.externalData,
             )
-
             return { ...bankInfo, bankNumber: bankInfo?.bank }
           },
         }),
