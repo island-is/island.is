@@ -2,7 +2,10 @@ import { ApolloClient } from '@apollo/client'
 import { NO, YES } from '@island.is/application/core'
 import { siaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/graphql/queries'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { getTaxLevelOption } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
+import {
+  bankInfoToString,
+  getTaxLevelOption,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { SiaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/types/schema'
 import {
   ExternalData,
@@ -10,10 +13,7 @@ import {
   KeyValueItem,
   TableData,
 } from '@island.is/application/types'
-import {
-  formatBankInfo,
-  formatCurrencyWithoutSuffix,
-} from '@island.is/application/ui-components'
+import { formatCurrencyWithoutSuffix } from '@island.is/application/ui-components'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import parseISO from 'date-fns/parseISO'
@@ -102,14 +102,14 @@ export const applicantItems = (
 }
 
 export const paymentItems = (answers: FormValue): Array<KeyValueItem> => {
-  const { bank, personalAllowance, personalAllowanceUsage, taxLevel } =
+  const { bankInfo, personalAllowance, personalAllowanceUsage, taxLevel } =
     getApplicationAnswers(answers)
 
   const baseItems: Array<KeyValueItem> = [
     {
       width: 'full',
       keyText: socialInsuranceAdministrationMessage.payment.bank,
-      valueText: formatBankInfo(bank),
+      valueText: bankInfoToString(bankInfo),
     },
     {
       width: 'half',

@@ -33,19 +33,16 @@ export const dataSchema = z.object({
   }),
   paymentInfo: z
     .object({
-      bank: z.string(),
+      bank: z.object({
+        bankNumber: z.string().min(4),
+        ledger: z.string().min(2),
+        accountNumber: z.string().min(6),
+      }),
       personalAllowance: z.enum([YES, NO]),
       personalAllowanceUsage: z.string().optional(),
       taxLevel: z.nativeEnum(TaxLevelOptions),
     })
     .partial()
-    .refine(
-      ({ bank }) => {
-        const bankAccount = formatBankInfo(bank ?? '')
-        return bankAccount.length === 12 // 4 (bank) + 2 (ledger) + 6 (number)
-      },
-      { params: coreSIAErrorMessages.bank, path: ['bank'] },
-    )
     .refine(
       ({ personalAllowance, personalAllowanceUsage }) =>
         personalAllowance === YES

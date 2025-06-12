@@ -7,6 +7,7 @@ import { BankAccountField, FieldBaseProps } from '@island.is/application/types'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
+import { getDefaultValue } from '../../getDefaultValue'
 
 interface Props extends FieldBaseProps {
   field: BankAccountField
@@ -30,6 +31,9 @@ export const BankAccountFormField = ({ field, application }: Props) => {
     application,
     formatMessage,
   )
+
+  const bankInfo = getDefaultValue(field, application)
+
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
       {title && (
@@ -44,7 +48,7 @@ export const BankAccountFormField = ({ field, application }: Props) => {
           <Box marginBottom={[2, 2, 4]}>
             <InputController
               id={`${id}.bankNumber`}
-              defaultValue=""
+              defaultValue={bankInfo?.bankNumber || ''}
               label={bankNumber}
               placeholder="0000"
               format="####"
@@ -58,7 +62,7 @@ export const BankAccountFormField = ({ field, application }: Props) => {
           <Box marginBottom={[2, 2, 4]}>
             <InputController
               id={`${id}.ledger`}
-              defaultValue=""
+              defaultValue={bankInfo?.ledger || ''}
               label={ledger}
               placeholder="00"
               format="##"
@@ -71,7 +75,7 @@ export const BankAccountFormField = ({ field, application }: Props) => {
           <Box marginBottom={[2, 2, 4]}>
             <InputController
               id={`${id}.accountNumber`}
-              defaultValue=""
+              defaultValue={bankInfo?.accountNumber || ''}
               label={accountNumber}
               placeholder="000000"
               format="######"

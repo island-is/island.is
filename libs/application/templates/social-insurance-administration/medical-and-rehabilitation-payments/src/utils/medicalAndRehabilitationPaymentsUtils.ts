@@ -36,7 +36,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'applicantInfo.email',
   ) as string
 
-  const bank = getValueViaPath(answers, 'paymentInfo.bank') as string
+  const bankInfo = getValueViaPath(answers, 'paymentInfo.bank') as BankInfo
   const paymentInfo = getValueViaPath(answers, 'paymentInfo') as PaymentInfo
 
   const personalAllowance = getValueViaPath(
@@ -163,7 +163,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   return {
     applicantPhonenumber,
     applicantEmail,
-    bank,
+    bankInfo,
     paymentInfo,
     personalAllowance,
     personalAllowanceUsage,
