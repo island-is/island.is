@@ -4,7 +4,7 @@ import { Field, InputType, registerEnumType } from '@nestjs/graphql'
 registerEnumType(CollectionType, { name: 'SignatureCollectionCollectionType' })
 
 @InputType()
-export class SignatureCollectionCollectionTypeFilterInput {
-  @Field(() => CollectionType, { nullable: true })
-  collectionTypeFilter?: CollectionType
+export class SignatureCollectionBaseInput {
+  @Field(() => CollectionType)
+  collectionType!: CollectionType
 }
