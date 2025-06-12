@@ -1,32 +1,29 @@
+import { useEffect, useState } from 'react'
 import Animated, {
   useAnimatedStyle,
   useDerivedValue,
   useSharedValue,
   withTiming,
 } from 'react-native-reanimated'
-import styled, { css, useTheme } from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 import { PressableHighlight } from '../../../components/pressable-highlight/pressable-highlight'
 import { useOrganizationsStore } from '../../../stores/organizations-store'
 import { Container, Icon, Typography } from '../../../ui'
 import { getInitials } from '../../../utils/get-initials'
-import { LayoutChangeEvent } from 'react-native'
 
 export const TOGGLE_ANIMATION_DURATION = 300
 
-const Wrapper = styled(PressableHighlight)<{
+const Wrapper = styled(Animated.View)<{
   hasTopBorder: boolean
-}>`
-  flex-direction: column;
-  padding-vertical: ${({ theme }) => theme.spacing[2]}px;
-  column-gap: ${({ theme }) => theme.spacing[2]}px;
-
-  ${({ hasTopBorder = false, theme }) =>
-    hasTopBorder &&
-    css`
-      border-top-width: ${theme.border.width.standard}px;
-      border-top-color: ${theme.color.blue200};
-    `}
-`
+}>(({ theme, hasTopBorder }) => ({
+  flexDirection: 'column',
+  paddingVertical: theme.spacing[2],
+  columnGap: theme.spacing[2],
+  ...(hasTopBorder && {
+    borderTopWidth: theme.border.width.standard,
+    borderTopColor: theme.color.blue200,
+  }),
+}))
 
 const Host = styled(Container)`
   align-items: center;
@@ -37,6 +34,7 @@ const Host = styled(Container)`
 const Body = styled(Container)`
   position: absolute;
   width: 100%;
+  height: auto;
   padding-top: ${({ theme }) => theme.spacing[2]}px;
 `
 
@@ -78,36 +76,51 @@ export const DocumentListItem = ({
   const theme = useTheme()
   const { getOrganizationLogoUrl } = useOrganizationsStore()
 
-  const isExpanded = useSharedValue(isOpen)
-  const height = useSharedValue(0)
+  const [measured, setMeasured] = useState(false)
 
-  const derivedHeight = useDerivedValue(() =>
-    withTiming(height.value * Number(isExpanded.value), {
-      duration: TOGGLE_ANIMATION_DURATION,
-    }),
-  )
+  const height = useSharedValue(0)
+  const containerOpacity = useSharedValue(0)
+  const isExpanded = useSharedValue(isOpen)
+  const shouldAnimate = useSharedValue(false)
+
+  const derivedHeight = useDerivedValue(() => {
+    const duration = shouldAnimate.value ? TOGGLE_ANIMATION_DURATION : 0
+
+    return withTiming(height.value * Number(isExpanded.value), { duration })
+  })
+
   const bodyStyle = useAnimatedStyle(() => ({
     height: derivedHeight.value,
     overflow: 'hidden',
   }))
 
+  const containerAnimatedStyle = useAnimatedStyle(() => ({
+    opacity: containerOpacity.value,
+  }))
+
+  useEffect(() => {
+    if (measured) {
+      containerOpacity.value = withTiming(1, { duration: 200 })
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [measured])
+
   const handlePress = () => {
     if (!closeable) {
       return
     }
-
+    shouldAnimate.value = true
     isExpanded.value = !isExpanded.value
   }
 
   const source = getOrganizationLogoUrl(sender, 75, true)
 
   return (
-    <Wrapper
-      hasTopBorder={hasTopBorder}
+    <PressableHighlight
       onPress={handlePress}
       highlightColor={closeable ? theme.shade.shade100 : theme.color.white}
     >
-      <>
+      <Wrapper hasTopBorder={hasTopBorder} style={containerAnimatedStyle}>
         <Host>
           <IconBackground>
             {!source ? (
@@ -132,12 +145,13 @@ export const DocumentListItem = ({
           <Body
             onLayout={(e) => {
               height.value = e.nativeEvent.layout.height
+              setMeasured(true)
             }}
           >
             <Typography variant="body3">{body}</Typography>
           </Body>
         </Animated.View>
-      </>
-    </Wrapper>
+      </Wrapper>
+    </PressableHighlight>
   )
 }
