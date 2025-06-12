@@ -39,10 +39,11 @@ export const judgeAmendsCase = async (page: Page, caseId: string) => {
     .click()
   await page.getByRole('dialog').waitFor({ state: 'visible' })
   await page.locator('textarea[id=reason]').fill('Dómari breytti úrskurði')
-  await page.getByTestId('modalPrimaryButton').click()
-  await page
-    .getByRole('dialog', { name: 'request-ruling-signature-modal' })
-    .waitFor({ state: 'visible' })
+  await Promise.all([
+    page.getByTestId('modalPrimaryButton').click(),
+    verifyRequestCompletion(page, '/api/graphql', 'TransitionCase'),
+  ])
+
   await page.getByTestId('modalSecondaryButton').click()
 
   await expect(page).toHaveURL(`/krafa/yfirlit/${caseId}`)

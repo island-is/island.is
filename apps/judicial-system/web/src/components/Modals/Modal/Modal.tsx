@@ -23,7 +23,6 @@ interface ModalProps {
   children?: ReactNode
   invertButtonColors?: boolean
   loading?: boolean
-  id?: string
 }
 
 const Modal: FC<PropsWithChildren<ModalProps>> = ({
@@ -42,7 +41,6 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
   children,
   invertButtonColors,
   loading,
-  id = 'modal',
 }: ModalProps) => {
   const modalVariants = {
     open: {
@@ -67,7 +65,6 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
         role="dialog"
         aria-modal="true"
         data-testid="modal"
-        id={id}
       >
         <motion.div
           className={styles.modalContainer}
@@ -157,7 +154,6 @@ const ModalPortal = ({
   children,
   invertButtonColors,
   loading,
-  id = 'modal',
 }: ModalProps) => {
   const modalRoot =
     document.getElementById('modal') ?? document.createElement('div')
@@ -179,7 +175,6 @@ const ModalPortal = ({
       children={children}
       invertButtonColors={invertButtonColors}
       loading={loading}
-      id={id}
     />,
     modalRoot,
   )
