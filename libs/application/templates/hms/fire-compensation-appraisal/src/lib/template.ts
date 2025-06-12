@@ -105,7 +105,7 @@ const template: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.PAYMENT]: {
-            target: States.PAYMENT,
+            target: States.DONE,
           },
         },
       },
