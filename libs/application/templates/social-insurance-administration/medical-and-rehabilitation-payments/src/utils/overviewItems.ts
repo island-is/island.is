@@ -54,7 +54,7 @@ export const applicantItems = (
           {
             width: 'half',
             keyText: socialInsuranceAdministrationMessage.confirm.nationalId,
-            valueText: formatKennitala(applicantNationalId),
+            valueText: formatKennitala(applicantNationalId ?? ''),
           },
         ]
       : []
@@ -93,7 +93,7 @@ export const applicantItems = (
         {
           width: 'half',
           keyText: socialInsuranceAdministrationMessage.confirm.nationalId,
-          valueText: formatKennitala(spouseNationalId),
+          valueText: formatKennitala(spouseNationalId ?? ''),
         },
       ]
     : []
@@ -102,14 +102,14 @@ export const applicantItems = (
 }
 
 export const paymentItems = (answers: FormValue): Array<KeyValueItem> => {
-  const { bankInfo, personalAllowance, personalAllowanceUsage, taxLevel } =
+  const { bank, personalAllowance, personalAllowanceUsage, taxLevel } =
     getApplicationAnswers(answers)
 
   const baseItems: Array<KeyValueItem> = [
     {
       width: 'full',
       keyText: socialInsuranceAdministrationMessage.payment.bank,
-      valueText: bankInfoToString(bankInfo),
+      valueText: bankInfoToString(bank),
     },
     {
       width: 'half',
@@ -193,7 +193,7 @@ export const questionsItems = (answers: FormValue): Array<KeyValueItem> => {
               medicalAndRehabilitationPaymentsFormMessage.generalInformation
                 .questionsCalculatedRemunerationDate,
             valueText: format(
-              parseISO(calculatedRemunerationDate),
+              parseISO(calculatedRemunerationDate ?? ''),
               'dd.MM.yyyy',
               { locale: is },
             ),
@@ -251,9 +251,13 @@ export const employeeSickPayItems = (
           {
             width: 'full',
             keyText: getSickPayEndDateLabel(hasUtilizedEmployeeSickPayRights),
-            valueText: format(parseISO(employeeSickPayEndDate), 'dd.MM.yyyy', {
-              locale: is,
-            }),
+            valueText: format(
+              parseISO(employeeSickPayEndDate ?? ''),
+              'dd.MM.yyyy',
+              {
+                locale: is,
+              },
+            ),
           },
         ]
       : []
@@ -305,9 +309,13 @@ export const unionSickPayItems = async (
           {
             width: 'half',
             keyText: getSickPayEndDateLabel(hasUtilizedUnionSickPayRights),
-            valueText: format(parseISO(unionSickPayEndDate), 'dd.MM.yyyy', {
-              locale: is,
-            }),
+            valueText: format(
+              parseISO(unionSickPayEndDate ?? ''),
+              'dd.MM.yyyy',
+              {
+                locale: is,
+              },
+            ),
           },
         ]
       : []

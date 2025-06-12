@@ -14,15 +14,15 @@ export const formatBankInfo = (bankInfo: string) => {
   return bankInfo
 }
 
-export const bankInfoToString = (bankInfo: BankInfo) => {
-  return bankInfo
+export const bankInfoToString = (bankInfo?: BankInfo) => {
+  return !isEmpty(bankInfo)
     ? `${bankInfo.bankNumber ?? ''}-${bankInfo.ledger ?? ''}-${
         bankInfo.accountNumber ?? ''
       }`
     : ''
 }
 
-export const getBankIsk = (bankInfo: BankInfo) => {
+export const getBankIsk = (bankInfo?: BankInfo) => {
   return !isEmpty(bankInfo) &&
     (bankInfo.bank || bankInfo.bankNumber) &&
     bankInfo.ledger &&
@@ -75,11 +75,10 @@ export const formatBank = (bankInfo: string) => {
 // We should only send bank account to TR if applicant is registering
 // new one or changing.
 export const shouldNotUpdateBankAccount = (
-  bankInfo: BankInfo,
-  paymentInfo: PaymentInfo | undefined,
+  bankInfo?: BankInfo,
+  paymentInfo?: PaymentInfo,
 ) => {
   if (!paymentInfo) {
-    console.error('shouldNotUpdateBankAccount - Payment info is undefined!')
     return false
   }
 
