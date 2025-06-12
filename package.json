@@ -134,7 +134,7 @@
     "@types/pdfkit": "0.11.2",
     "@types/pubsub-js": "1.8.1",
     "@types/react-csv": "1.1.1",
-    "@types/react-input-mask": "3.0.0",
+    "@types/react-input-mask": "3.0.6",
     "@types/react-modal": "3.13.1",
     "@types/react-table": "7.0.24",
     "@vanilla-extract/babel-plugin": "1.1.6",

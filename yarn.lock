@@ -23194,12 +23194,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/react-input-mask@npm:3.0.0":
-  version: 3.0.0
-  resolution: "@types/react-input-mask@npm:3.0.0"
+"@types/react-input-mask@npm:3.0.6":
+  version: 3.0.6
+  resolution: "@types/react-input-mask@npm:3.0.6"
   dependencies:
     "@types/react": "npm:*"
-  checksum: 10/aead8d91683d92197bd1f6ed1fdaa073033e56f556856c92e2f906ce01f52258d95aa8a9cf68c431d085a648ab405af128a3c465ba2b207d3be4a60eeb418a46
+  checksum: 10/808f55f5d498c06eca86bf2afa24941cc41d2e67498a28ad30db8ed18310bcd063c55cc02371239c6d8056de84408fa3492ad0b223df2583ce69ca420f0c1308
   languageName: node
   linkType: hard
 
@@ -39975,7 +39975,7 @@ __metadata:
     "@types/react-dom": "npm:18.3.0"
     "@types/react-html-parser": "npm:2.0.1"
     "@types/react-infinite-scroller": "npm:^1.2.3"
-    "@types/react-input-mask": "npm:3.0.0"
+    "@types/react-input-mask": "npm:3.0.6"
     "@types/react-modal": "npm:3.13.1"
     "@types/react-table": "npm:7.0.24"
     "@types/request": "npm:2.48.5"
