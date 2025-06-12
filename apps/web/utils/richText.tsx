@@ -92,7 +92,8 @@ import { BenefitsOfDigitalProcessesCalculator } from '../components/connected/Be
 import { DigitalIcelandStatistics } from '../components/connected/DigitalIcelandStatistics/DigitalIcelandStatistics'
 import { GrindavikResidentialPropertyPurchaseCalculator } from '../components/connected/GrindavikResidentialPropertyPurchaseCalculator'
 import HousingBenefitCalculator from '../components/connected/HousingBenefitCalculator/HousingBenefitCalculator/HousingBenefitCalculator'
-import { MemorialCard } from '../components/connected/Landspitali'
+import { DirectGrants } from '../components/connected/Landspitali/DirectGrants'
+import { MemorialCard } from '../components/connected/Landspitali/MemorialCard'
 import { FineCalculator } from '../components/connected/logreglan/FineCalculator/FineCalculator'
 import { SpeedMeasurementCalculator } from '../components/connected/logreglan/SpeedMeasurementCalculator'
 import { BurningPermitList } from '../components/connected/syslumenn/CardLists/BurningPermitList/BurningPermitList'
@@ -238,6 +239,9 @@ export const webRenderConnectedComponent = (
       break
     case 'Landspitali/MemorialCard':
       connectedComponent = <MemorialCard slice={slice} />
+      break
+    case 'Landspitali/DirectGrants':
+      connectedComponent = <DirectGrants slice={slice} />
       break
     default:
       connectedComponent = renderConnectedComponent(slice)
