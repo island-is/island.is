@@ -29,21 +29,21 @@ export const overviewSection = buildSection({
       title: overview.general.pageTitle,
       children: [
         buildOverviewField({
-          id: 'overview',
+          id: 'overview.userInformation',
           title: overview.userInformation.subtitle,
           backId: 'userInformationMultiField',
           bottomLine: true,
           items: getUserInformationOverviewItems,
         }),
         buildOverviewField({
-          id: 'overview',
+          id: 'overview.exemptionPeriod',
           title: overview.exemptionPeriod.subtitle,
           backId: 'exemptionPeriodMultiField',
           bottomLine: true,
           items: getExemptionPeriodOverviewItems,
         }),
         buildOverviewField({
-          id: 'overview',
+          id: 'overview.shortTermlocation',
           title: overview.shortTermlocation.subtitle,
           backId: 'locationMultiField',
           bottomLine: true,
@@ -53,7 +53,7 @@ export const overviewSection = buildSection({
           },
         }),
         buildOverviewField({
-          id: 'overview',
+          id: 'overview.longTermlocation',
           title: overview.longTermlocation.subtitle,
           backId: 'locationMultiField',
           bottomLine: true,
@@ -64,7 +64,7 @@ export const overviewSection = buildSection({
           },
         }),
         buildOverviewField({
-          id: 'overview',
+          id: 'overview.supportingDocuments',
           title: overview.supportingDocuments.subtitle,
           backId: 'supportingDocumentsMultiField',
           bottomLine: true,
