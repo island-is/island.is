@@ -66,11 +66,12 @@ const cli = yargs(process.argv.slice(2))
           })
           .option('json', { type: 'boolean', default: false })
           .option('dry', { type: 'boolean', default: false })
-          .option('no-update-secrets', {
+          .option('secrets', {
             type: 'boolean',
-            default: false,
-            alias: ['nosecrets', 'no-secrets'],
+            default: true,
+            alias: ['update-secrets'],
           })
+          .option('dev-services', { type: 'boolean', default: true })
           // Custom check for 'services' since yargs lack built-in validation
           .check((argv) => {
             const svc = argv.services
@@ -88,7 +89,7 @@ const cli = yargs(process.argv.slice(2))
         dryRun: argv.dry,
         json: argv.json,
         print: true,
-        noUpdateSecrets: argv['no-update-secrets'],
+        secrets: argv['secrets'],
       })
     },
   )
@@ -106,10 +107,10 @@ const cli = yargs(process.argv.slice(2))
           .option('dependencies', { array: true, type: 'string', default: [] })
           .option('json', { type: 'boolean', default: false })
           .option('dry', { type: 'boolean', default: false })
-          .option('no-update-secrets', {
+          .option('secrets', {
             type: 'boolean',
             default: false,
-            alias: ['nosecrets', 'no-secrets'],
+            alias: ['update-secrets'],
           })
           .option('print', { type: 'boolean', default: false })
           .option('proxies', { type: 'boolean', default: false })
@@ -118,6 +119,7 @@ const cli = yargs(process.argv.slice(2))
             type: 'boolean',
             default: false,
           })
+          .option('dev-services', { type: 'boolean', default: true })
           // Custom check for 'services' since yargs lack built-in validation
           .check((argv) => {
             const svc = argv.services
@@ -130,13 +132,16 @@ const cli = yargs(process.argv.slice(2))
       )
     },
     async (argv) => {
-      await runLocalServices(argv.services, argv.dependencies, {
+      await runLocalServices({
+        services: argv.services,
+        dependencies: argv.dependencies,
         dryRun: argv.dry,
         json: argv.json,
         neverFail: argv['never-fail'],
-        noUpdateSecrets: argv['no-update-secrets'],
+        secrets: argv['secrets'],
         print: argv.print,
         startProxies: argv.proxies,
+        devServices: argv['dev-services'],
       })
     },
   )
