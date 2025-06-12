@@ -189,6 +189,12 @@ export const transporterSubSection = buildSubSection({
             return shouldShowResponsiblePerson(answers)
           },
         }),
+        buildHiddenInput({
+          id: 'responsiblePerson.shouldShow',
+          defaultValue: (application: Application) => {
+            return shouldShowResponsiblePerson(application.answers)
+          },
+        }),
         buildCheckboxField({
           id: 'responsiblePerson.isSameAsApplicant',
           large: false,
@@ -203,13 +209,6 @@ export const transporterSubSection = buildSubSection({
           condition: (answers) => {
             return shouldShowResponsiblePerson(answers)
           },
-        }),
-        buildHiddenInput({
-          id: 'responsiblePerson.isSameAsApplicantHidden',
-          condition: (answers) => {
-            return !shouldShowResponsiblePerson(answers)
-          },
-          defaultValue: [YES],
         }),
         // Responsible person - editable
         buildNationalIdWithNameField({

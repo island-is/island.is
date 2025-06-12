@@ -21,50 +21,52 @@ const ApplicantSchema = z.object({
 
 const ResponsiblePersonSchema = z
   .object({
+    shouldShow: z.boolean(),
     isSameAsApplicant: z.array(z.enum([YES])).optional(),
-    xx: z.array(z.enum([YES])).optional(), //TODOx geyma kt transporter...
     nationalId: z.string().optional(),
     name: z.string().optional(),
     email: z.string().optional(),
     phone: z.string().optional(),
   })
   .refine(
-    ({ isSameAsApplicant, nationalId }) => {
-      if (isSameAsApplicant?.includes(YES)) return true
+    ({ shouldShow, isSameAsApplicant, nationalId }) => {
+      if (!shouldShow || isSameAsApplicant?.includes(YES)) return true
       return nationalId && kennitala.isValid(nationalId)
     },
     { path: ['nationalId'] },
   )
   .refine(
-    ({ isSameAsApplicant, name }) => {
-      if (isSameAsApplicant?.includes(YES)) return true
+    ({ shouldShow, isSameAsApplicant, name }) => {
+      if (!shouldShow || isSameAsApplicant?.includes(YES)) return true
       return !!name
     },
     { path: ['name'] },
   )
   .refine(
-    ({ isSameAsApplicant, email }) => {
-      if (isSameAsApplicant?.includes(YES)) return true
+    ({ shouldShow, isSameAsApplicant, email }) => {
+      if (!shouldShow || isSameAsApplicant?.includes(YES)) return true
       return !!email
     },
     { path: ['email'] },
   )
   .refine(
-    ({ isSameAsApplicant, phone }) => {
-      if (isSameAsApplicant?.includes(YES)) return true
+    ({ shouldShow, isSameAsApplicant, phone }) => {
+      if (!shouldShow || isSameAsApplicant?.includes(YES)) return true
       return !!phone
     },
     { path: ['phone'] },
   )
 
 const TransporterSchema = z
-  .intersection(
-    ResponsiblePersonSchema,
-    z.object({
-      address: z.string().max(100).optional(),
-      postalCodeAndCity: z.string().optional(),
-    }),
-  )
+  .object({
+    isSameAsApplicant: z.array(z.enum([YES])).optional(),
+    nationalId: z.string().optional(),
+    name: z.string().optional(),
+    email: z.string().optional(),
+    phone: z.string().optional(),
+    address: z.string().max(100).optional(),
+    postalCodeAndCity: z.string().optional(),
+  })
   .refine(
     ({ isSameAsApplicant, address }) => {
       if (isSameAsApplicant?.includes(YES)) return true
