@@ -21,8 +21,7 @@ export class NewsSyncService implements CmsSyncProvider<INews> {
       (entry: Entry<any>): entry is INews =>
         entry.sys.contentType.sys.id === 'news' &&
         !!entry.fields.title &&
-        !!entry.fields.date &&
-        (entry.fields.organization?.canPagesBeFoundInSearchResults ?? true),
+        !!entry.fields.date,
     )
   }
 

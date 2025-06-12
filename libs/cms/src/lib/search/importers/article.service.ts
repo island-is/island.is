@@ -43,10 +43,7 @@ export class ArticleSyncService implements CmsSyncProvider<IArticle> {
     return (
       singleEntry.sys.contentType.sys.id === 'article' &&
       !!singleEntry.fields.title &&
-      (isDefaultLocale || otherLocaleThanDefaultLocaleIsActive) &&
-      (singleEntry.fields.organization?.[0]?.fields
-        ?.canPagesBeFoundInSearchResults ??
-        true)
+      (isDefaultLocale || otherLocaleThanDefaultLocaleIsActive)
     )
   }
 

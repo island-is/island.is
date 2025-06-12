@@ -24,10 +24,7 @@ export class SubArticleSyncService implements CmsSyncProvider<ISubArticle> {
       singleEntry.sys.contentType.sys.id === 'subArticle' &&
       !!singleEntry.fields.title &&
       !!singleEntry.fields.slug &&
-      !!singleEntry.fields.parent?.fields &&
-      (singleEntry.fields.parent.fields?.organization?.[0]?.fields
-        ?.canPagesBeFoundInSearchResults ??
-        true)
+      !!singleEntry.fields.parent?.fields
     )
   }
 
