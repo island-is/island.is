@@ -8,6 +8,7 @@ import {
   UserProfileApi,
   DefaultEvents,
   FormModes,
+  NotificationType,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -22,7 +23,6 @@ import {
 } from '../dataProviders'
 import { assign } from 'xstate'
 import { Features } from '@island.is/feature-flags'
-// import { NotificationType } from '@island.is/application/template-api-modules'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -141,16 +141,7 @@ const template: ApplicationTemplate<
       },
       [States.COMPLETED]: {
         meta: {
-          onEntry: [
-            // SendNotification.configure({
-            //   params: {
-            //     type: NotificationType.System,
-            //     args: {
-            //       documentId: '123',
-            //     },
-            //   },
-            // }),
-          ],
+          onEntry: [SendNotification],
           name: 'Completed',
           status: 'completed',
           actionCard: {
@@ -174,7 +165,16 @@ const template: ApplicationTemplate<
                 ),
               write: 'all',
               read: 'all',
-              api: [SendNotification],
+              api: [
+                SendNotification.configure({
+                  params: {
+                    type: NotificationType.System,
+                    args: {
+                      documentId: '123',
+                    },
+                  },
+                }),
+              ],
             },
           ],
         },
