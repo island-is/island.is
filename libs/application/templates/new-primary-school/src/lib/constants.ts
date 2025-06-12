@@ -42,8 +42,8 @@ export enum OptionsType {
   LANGUAGE_ENVIRONMENT = 'languageEnvironment',
 }
 
-export enum MembershipRole {
-  Admin = 'admin',
+export enum AffiliationRole {
+  Member = 'member',
   Guardian = 'guardian',
   Parent = 'parent',
   Principal = 'principal',
@@ -52,9 +52,11 @@ export enum MembershipRole {
   Teacher = 'teacher',
 }
 
-export enum MembershipOrganizationType {
+export enum AffiliationOrganizationType {
+  ChildCare = 'childCare',
   Municipality = 'municipality',
   National = 'national',
+  PrivateOwner = 'privateOwner',
   School = 'school',
 }
 

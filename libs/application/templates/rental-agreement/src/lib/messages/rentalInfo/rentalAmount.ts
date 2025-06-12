@@ -21,7 +21,7 @@ export const rentalAmount = defineMessages({
   // Rental amount
   infoTitle: {
     id: 'ra.application:rentalAmount.infoTitle',
-    defaultMessage: 'Mánaðarlegt leiguverð fyrir afnot á húsnæðinu',
+    defaultMessage: 'Mánaðarleg leiguupphæð fyrir afnot á húsnæðinu',
     description: 'Rental amount title',
   },
   inputLabel: {
@@ -38,7 +38,7 @@ export const rentalAmount = defineMessages({
   // Indexation
   priceIndexLabel: {
     id: 'ra.application:rentalAmount.priceIndexLabel',
-    defaultMessage: 'Leiguverð fylgir vísitölu',
+    defaultMessage: 'Leiguverð fylgir vísitölu neysluverðs til verðtryggingar',
     description: 'Rental amount price index checkbox label',
   },
   indexOptionsLabel: {
@@ -46,35 +46,20 @@ export const rentalAmount = defineMessages({
     defaultMessage: 'Vísitala',
     description: 'Rental amount index options label',
   },
-  indexOptionConsumerPriceIndex: {
-    id: 'ra.application:rentalAmount.indexOptionConsumerPriceIndex',
-    defaultMessage: 'Vísitala neysluverðs',
-    description: 'Rental amount consumer price index option',
-  },
-  indexOptionConstructionCostIndex: {
-    id: 'ra.application:rentalAmount.indexOptionConstructionCostIndex',
-    defaultMessage: 'Byggingarvísitala',
-    description: 'Rental amount construction cost index option',
-  },
-  indexOptionWageIndex: {
-    id: 'ra.application:rentalAmount.indexOptionWageIndex',
-    defaultMessage: 'Launavísitala',
-    description: 'Rental amount wage index option',
-  },
   indexDateLabel: {
     id: 'ra.application:rentalAmount.indexDateLabel',
-    defaultMessage: 'Útgáfudagur vísitölu',
+    defaultMessage: 'Viðmið',
     description: 'Rental amount index type date label',
   },
-  indexValueLabel: {
-    id: 'ra.application:rentalAmount.indexValueLabel',
-    defaultMessage: 'Vísitala við upphaf samnings',
-    description: 'Rental amount index type value label',
+  indexNewestDateText: {
+    id: 'ra.application:rentalAmount.indexNewestDateText',
+    defaultMessage: ' (Nýjasta útgáfa)',
+    description: 'Rental amount index type date newest rate text',
   },
-  indexValuePlaceholder: {
-    id: 'ra.application:rentalAmount.indexValuePlaceholder',
-    defaultMessage: 'Sláðu inn gildi',
-    description: 'Rental amount index type value placeholder',
+  indexRateLabel: {
+    id: 'ra.application:rentalAmount.indexRateLabel',
+    defaultMessage: 'Vísitölugildi við upphaf samnings',
+    description: 'Rental amount index type rate label',
   },
 
   // Payment date
@@ -175,6 +160,12 @@ export const rentalAmount = defineMessages({
   },
 
   // Error messages
+  indexNotAllowedForShortTermRentalError: {
+    id: 'ra.application:rentalAmount.indexNotAllowedForShortTermRentalError',
+    defaultMessage:
+      'Einungis má vísitölutengja tímabundinn leigusamning ef hann er bundinn lengur en til 12 mánaða',
+    description: 'Rental amount index not allowed for short term rental error',
+  },
   tooHighNumberError: {
     id: 'ra.application:rentalAmount.tooHighNumberError',
     defaultMessage: 'Leiguverð má ekki vera hærra en 1.500.000 kr.',
@@ -186,21 +177,6 @@ export const rentalAmount = defineMessages({
     description: 'Rental amount too low number error',
   },
 
-  indexTypesRequiredError: {
-    id: 'ra.application:rentalAmount.indexTypesRequiredError',
-    defaultMessage: 'Veldu tegund vísitölu',
-    description: 'Rental amount index types required error',
-  },
-  indexValueRequiredError: {
-    id: 'ra.application:rentalAmount.indexValueRequiredError',
-    defaultMessage: 'Sláðu inn vísitölu',
-    description: 'Rental amount index value required error',
-  },
-  indexValueValidationError: {
-    id: 'ra.application:rentalAmount.indexValueRequiredError',
-    defaultMessage: 'vísitala má aðeins innihalda tölustafi með einum aukastaf',
-    description: 'Rental amount index value required error',
-  },
   paymentDateOtherOptionRequiredError: {
     id: 'ra.application:rentalAmount.paymentDateOtherOptionRequiredError',
     defaultMessage: 'Sláðu inn mánaðardag greiðslu',

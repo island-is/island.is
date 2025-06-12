@@ -279,6 +279,7 @@ export const INVOLVED_PARTIES_QUERY = gql`
         id
         title
         slug
+        nationalId
       }
     }
   }

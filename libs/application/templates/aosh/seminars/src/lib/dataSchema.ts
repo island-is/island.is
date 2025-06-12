@@ -16,9 +16,7 @@ const UserSchemaBase = z.object({
       (nationalId) =>
         nationalId &&
         nationalId.length !== 0 &&
-        kennitala.isValid(nationalId) &&
-        (kennitala.isCompany(nationalId) ||
-          kennitala.info(nationalId).age >= 18),
+        kennitala.isValid(nationalId),
     ),
   name: z.string().min(1),
   email: z.string().refine((x) => isValidEmail(x)),

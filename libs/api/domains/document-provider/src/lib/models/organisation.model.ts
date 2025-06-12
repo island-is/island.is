@@ -40,4 +40,7 @@ export class Organisation {
 
   @Field(() => [Provider], { nullable: true })
   providers?: Provider[]
+
+  @Field({ nullable: true })
+  zendeskId?: string
 }

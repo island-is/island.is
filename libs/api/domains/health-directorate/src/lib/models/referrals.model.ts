@@ -1,4 +1,4 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType, GraphQLISODateTime } from '@nestjs/graphql'
 
 @ObjectType('HealthDirectorateReferralContact')
 export class ReferralContact {
@@ -20,10 +20,10 @@ export class Referral {
   @Field({ nullable: true })
   serviceName?: string
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   createdDate?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   validUntilDate?: Date
 
   @Field({ nullable: true })

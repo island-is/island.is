@@ -60,7 +60,7 @@ const AppealFiles = () => {
     updateUploadFile,
   } = useUploadFiles()
   const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
-  const { onOpen } = useFileList({
+  const { onOpenFile } = useFileList({
     caseId: workingCase.id,
   })
   const { sendNotification } = useCase()
@@ -183,7 +183,7 @@ const AppealFiles = () => {
             onRemove={handleRemoveFile}
             hideIcons={!allFilesDoneOrError}
             disabled={!allFilesDoneOrError}
-            onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
+            onOpenFile={(file) => onOpenFile(file)}
           />
         </Box>
         {isProsecutionUser(user) && (

@@ -18,7 +18,7 @@ import {
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
-const buildSubpoenaExistsCondition = (exists = true) =>
+const buildSubpoenaExistsCondition = (exists: boolean) =>
   Sequelize.literal(`
     ${exists ? '' : 'NOT'} EXISTS (
       SELECT 1
@@ -27,7 +27,17 @@ const buildSubpoenaExistsCondition = (exists = true) =>
     )
   `)
 
-const buildEventLogExistsCondition = (eventType: EventType, exists = true) =>
+const buildAlternativeServiceExistsCondition = (exists: boolean) =>
+  Sequelize.literal(`
+    ${exists ? '' : 'NOT'} EXISTS (
+      SELECT 1
+      FROM defendant
+      WHERE defendant.case_id = "Case".id
+        AND defendant.is_alternative_service = true
+    )
+  `)
+
+const buildEventLogExistsCondition = (eventType: EventType, exists: boolean) =>
   Sequelize.literal(`
      ${exists ? '' : 'NOT'} EXISTS (
         SELECT 1
@@ -46,7 +56,22 @@ const districtCourtRequestCasesSharedWhereOptions = {
 
 const districtCourtRequestCasesInProgressWhereOptions = {
   ...districtCourtRequestCasesSharedWhereOptions,
-  state: [CaseState.DRAFT, CaseState.SUBMITTED, CaseState.RECEIVED],
+  [Op.or]: [
+    { state: [CaseState.DRAFT, CaseState.SUBMITTED, CaseState.RECEIVED] },
+    {
+      state: completedRequestCaseStates,
+      ruling_signature_date: null,
+      is_completed_without_ruling: null,
+      appeal_state: {
+        [Op.or]: [
+          null,
+          CaseAppealState.RECEIVED,
+          CaseAppealState.WITHDRAWN,
+          CaseAppealState.COMPLETED,
+        ],
+      },
+    },
+  ],
 }
 
 const districtCourtRequestCasesAppealedWhereOptions = {
@@ -58,7 +83,18 @@ const districtCourtRequestCasesAppealedWhereOptions = {
 const districtCourtRequestCasesCompletedWhereOptions = {
   ...districtCourtRequestCasesSharedWhereOptions,
   state: completedRequestCaseStates,
-  appeal_state: { [Op.not]: CaseAppealState.APPEALED },
+  [Op.or]: [
+    { ruling_signature_date: { [Op.not]: null } },
+    { is_completed_without_ruling: { [Op.not]: null } },
+  ],
+  appeal_state: {
+    [Op.or]: [
+      null,
+      CaseAppealState.RECEIVED,
+      CaseAppealState.WITHDRAWN,
+      CaseAppealState.COMPLETED,
+    ],
+  },
 }
 
 // District Court Indictments
@@ -70,39 +106,41 @@ const districtCourtIndictmentsSharedWhereOptions = {
 
 const districtCourtIndictmentsNewWhereOptions = {
   ...districtCourtIndictmentsSharedWhereOptions,
-  state: {
-    [Op.or]: [CaseState.SUBMITTED, CaseState.RECEIVED],
-  },
+  state: [CaseState.SUBMITTED, CaseState.RECEIVED],
   judge_id: null,
 }
 
 const districtCourtIndictmentsReceivedWhereOptions = {
   ...districtCourtIndictmentsSharedWhereOptions,
   state: CaseState.RECEIVED,
-  [Op.and]: [buildSubpoenaExistsCondition(false)],
+  judge_id: { [Op.not]: null },
+  [Op.and]: [
+    buildSubpoenaExistsCondition(false),
+    buildAlternativeServiceExistsCondition(false),
+  ],
 }
+
 const districtCourtIndictmentsInProgressWhereOptions = {
   ...districtCourtIndictmentsSharedWhereOptions,
   [Op.or]: [
     {
       state: CaseState.RECEIVED,
-      [Op.and]: [buildSubpoenaExistsCondition(true)],
+      [Op.or]: [
+        buildSubpoenaExistsCondition(true),
+        buildAlternativeServiceExistsCondition(true),
+      ],
     },
-    {
-      state: CaseState.WAITING_FOR_CANCELLATION,
-    },
+    { state: CaseState.WAITING_FOR_CANCELLATION },
   ],
 }
 
 const districtCourtIndictmentsFinalizingWhereOptions = {
   ...districtCourtIndictmentsSharedWhereOptions,
   state: CaseState.COMPLETED,
-  indictment_ruling_decision: {
-    [Op.or]: [
-      CaseIndictmentRulingDecision.RULING,
-      CaseIndictmentRulingDecision.FINE,
-    ],
-  },
+  indictment_ruling_decision: [
+    CaseIndictmentRulingDecision.RULING,
+    CaseIndictmentRulingDecision.FINE,
+  ],
   [Op.and]: [
     buildEventLogExistsCondition(
       EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
@@ -114,6 +152,18 @@ const districtCourtIndictmentsFinalizingWhereOptions = {
 const districtCourtIndictmentsCompletedWhereOptions = {
   ...districtCourtIndictmentsSharedWhereOptions,
   state: CaseState.COMPLETED,
+  [Op.not]: {
+    indictment_ruling_decision: [
+      CaseIndictmentRulingDecision.RULING,
+      CaseIndictmentRulingDecision.FINE,
+    ],
+    [Op.and]: [
+      buildEventLogExistsCondition(
+        EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+        false,
+      ),
+    ],
+  },
 }
 
 // Court of Appeals Cases
@@ -130,10 +180,8 @@ const courtOfAppealsInProgressWhereOptions = {
   [Op.or]: [
     { appeal_state: CaseAppealState.RECEIVED },
     {
-      [Op.and]: [
-        { appeal_state: [CaseAppealState.WITHDRAWN] },
-        { appeal_received_by_court_date: { [Op.not]: null } },
-      ],
+      appeal_state: [CaseAppealState.WITHDRAWN],
+      appeal_received_by_court_date: { [Op.not]: null },
     },
   ],
 }
@@ -188,12 +236,10 @@ const prisonAdminIndictmentSharedWhereOptions = {
   is_archived: false,
   type: indictmentCases,
   state: CaseState.COMPLETED,
-  indictment_ruling_decision: {
-    [Op.or]: [
-      CaseIndictmentRulingDecision.RULING,
-      CaseIndictmentRulingDecision.FINE,
-    ],
-  },
+  indictment_ruling_decision: [
+    CaseIndictmentRulingDecision.RULING,
+    CaseIndictmentRulingDecision.FINE,
+  ],
   indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
   id: {
     [Op.in]: Sequelize.literal(`
@@ -220,12 +266,10 @@ const prosecutorsOfficeIndictmentSharedWhereOptions = {
   is_archived: false,
   type: indictmentCases,
   state: CaseState.COMPLETED,
-  indictment_ruling_decision: {
-    [Op.or]: [
-      CaseIndictmentRulingDecision.RULING,
-      CaseIndictmentRulingDecision.FINE,
-    ],
-  },
+  indictment_ruling_decision: [
+    CaseIndictmentRulingDecision.RULING,
+    CaseIndictmentRulingDecision.FINE,
+  ],
   id: {
     [Op.in]: Sequelize.literal(`
       (SELECT case_id

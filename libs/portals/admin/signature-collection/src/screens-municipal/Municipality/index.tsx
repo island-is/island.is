@@ -21,6 +21,7 @@ import { replaceParams } from '@island.is/react-spa/shared'
 import { getTagConfig } from '../../lib/utils'
 import CompareLists from '../../shared-components/compareLists'
 import ActionDrawer from '../../shared-components/compareLists/ActionDrawer'
+import { Actions } from '../../shared-components/compareLists/ActionDrawer/ListActions'
 
 export const Municipality = () => {
   const { formatMessage } = useLocale()
@@ -69,7 +70,14 @@ export const Municipality = () => {
             imgPosition="right"
             imgHiddenBelow="sm"
             img={nationalRegistryLogo}
-            buttonGroup={<ActionDrawer />}
+            buttonGroup={
+              <ActionDrawer
+                allowedActions={[
+                  Actions.DownloadReports,
+                  Actions.CreateCollection,
+                ]}
+              />
+            }
             marginBottom={4}
           />
           <Divider />
@@ -109,9 +117,7 @@ export const Municipality = () => {
                         )
                       },
                     }}
-                    tag={{
-                      ...getTagConfig(list),
-                    }}
+                    tag={getTagConfig(list)}
                   />
                 ))}
               </Stack>

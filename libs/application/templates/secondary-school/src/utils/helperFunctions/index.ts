@@ -9,6 +9,7 @@ export * from './checkIsEditable'
 export * from './checkUseAnswersCopy'
 export * from './checkIsFreshman'
 export * from './checkIsActor'
+export * from './getSchoolsData'
 
 export const applicationDataHasBeenPruned = (answers: FormValue) => {
   return !getValueViaPath<boolean>(answers, 'approveExternalData')

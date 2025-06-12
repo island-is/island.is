@@ -1,0 +1,1440 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Application System",
+    "version": "1.0"
+  },
+  "paths": {
+    "/api/Application": {
+      "post": {
+        "tags": ["Application"],
+        "summary": "Adds a new application.",
+        "requestBody": {
+          "description": "The application json",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationResultSetDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationResultSetDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationResultSetDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
+      "get": {
+        "tags": ["Application"],
+        "summary": "Test function for island.is to to verify connections.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationIDResultSetDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationIDResultSetDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationIDResultSetDto"
+                }
+              }
+            }
+          }
+        }
+      },
+      "delete": {
+        "tags": ["Application"],
+        "summary": "Deletes the application and files",
+        "parameters": [
+          {
+            "name": "portalApplicationId",
+            "in": "query",
+            "description": "The application id in the portal.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Application/Upload": {
+      "post": {
+        "tags": ["Application"],
+        "summary": "Uploads an application file.",
+        "requestBody": {
+          "description": "",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationFilesContentDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationFilesContentDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationFilesContentDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationIDResultSetDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationIDResultSetDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationIDResultSetDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/Application/{portalApplicationId}": {
+      "get": {
+        "tags": ["Application"],
+        "summary": "Returns the application in HMS internal systems.",
+        "parameters": [
+          {
+            "name": "portalApplicationId",
+            "in": "path",
+            "description": "The application id in the portal.",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationIDResultSetDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationIDResultSetDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationIDResultSetDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/Application/GetApplicationPdf": {
+      "get": {
+        "tags": ["Application"],
+        "summary": "Get applications pdf as download.",
+        "parameters": [
+          {
+            "name": "portalApplicationId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Application/GetApplicationHTML": {
+      "get": {
+        "tags": ["Application"],
+        "summary": "Get applications pdf as download.",
+        "parameters": [
+          {
+            "name": "portalApplicationId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Application/GetApplicationFileAsDownload": {
+      "get": {
+        "tags": ["Application"],
+        "summary": "Get applications file as download.",
+        "parameters": [
+          {
+            "name": "portalApplicationId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "fileId",
+            "in": "query",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Application/CheckAndResendApplicationAndFiles": {
+      "get": {
+        "tags": ["Application"],
+        "summary": "Check and resend application and files.",
+        "responses": {
+          "200": {
+            "description": "Success"
+          }
+        }
+      }
+    },
+    "/api/Application/GetFailedApplications": {
+      "get": {
+        "tags": ["Application"],
+        "summary": "Get failed applications.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApplicationSimpleDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApplicationSimpleDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApplicationSimpleDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Application/GetFailedFiles": {
+      "get": {
+        "tags": ["Application"],
+        "summary": "Get failed application files.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApplicationFileSimpleDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApplicationFileSimpleDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApplicationFileSimpleDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Application/GetApplicationWithFilter": {
+      "get": {
+        "tags": ["Application"],
+        "summary": "Get application with filter.",
+        "parameters": [
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "ex. 12-24-2023 (optional)",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "ex. 12-24-2023 (optional)",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "kennitala",
+            "in": "query",
+            "description": "kennitala (optional)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "applicationType",
+            "in": "query",
+            "description": "applicationType (optional)",
+            "schema": {
+              "type": "string"
+            }
+          },
+          {
+            "name": "postnumer",
+            "in": "query",
+            "description": "postnumer (optional)",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApplicationAdilarDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApplicationAdilarDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApplicationAdilarDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Application/GetApplicationOverview": {
+      "get": {
+        "tags": ["Application"],
+        "summary": "Get application overview by date.",
+        "parameters": [
+          {
+            "name": "dateFrom",
+            "in": "query",
+            "description": "ex. 12-24-2023 (optional)",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "dateTo",
+            "in": "query",
+            "description": "ex. 12-24-2023 (optional)",
+            "schema": {
+              "type": "string",
+              "format": "date-time"
+            }
+          },
+          {
+            "name": "groupByDate",
+            "in": "query",
+            "description": "Add date as group by",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApplicationOverviewDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApplicationOverviewDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApplicationOverviewDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/Application/FixOldApplicationsWithoutAdilar": {
+      "get": {
+        "tags": ["Application"],
+        "summary": "Fix old applications without adilar records.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationResultSetDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationResultSetDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationResultSetDto"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/ApplicationManager": {
+      "post": {
+        "tags": ["ApplicationManager"],
+        "summary": "Adds a new application manager.",
+        "requestBody": {
+          "description": "The applicationmanager json",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationManagerForCreationDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationManagerForCreationDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationManagerForCreationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationManagerDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationManagerDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationManagerDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
+      "get": {
+        "tags": ["ApplicationManager"],
+        "summary": "Returns all applicationmanager in HMS internal systems.",
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApplicationManagerDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApplicationManagerDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/ApplicationManagerDto"
+                  }
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/ApplicationManager/AddApplicationManagerNewType": {
+      "post": {
+        "tags": ["ApplicationManager"],
+        "summary": "Adds a new application manager.",
+        "parameters": [
+          {
+            "name": "applicationmanagerId",
+            "in": "query",
+            "description": "Id of applicationmanager",
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          },
+          {
+            "name": "newApplicationType",
+            "in": "query",
+            "description": "new type",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "201": {
+            "description": "Created",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationManagerDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationManagerDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationManagerDto"
+                }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/ApplicationManager/{id}": {
+      "get": {
+        "tags": ["ApplicationManager"],
+        "summary": "Returns the application manager in HMS internal systems.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "description": "The application manager id in the portal.",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationManagerDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationManagerDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationManagerDto"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
+      "delete": {
+        "tags": ["ApplicationManager"],
+        "summary": "Deletes applicationmanager in HMS internal systems.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "string"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "string"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      },
+      "put": {
+        "tags": ["ApplicationManager"],
+        "summary": "Updates applicationmanager in HMS internal systems.",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "integer",
+              "format": "int32"
+            }
+          }
+        ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationManagerForCreationDto"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationManagerForCreationDto"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/ApplicationManagerForCreationDto"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationManagerDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationManagerDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationManagerDto"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    },
+    "/api/ApplicationManager/ApplicationManagerByType": {
+      "get": {
+        "tags": ["ApplicationManager"],
+        "summary": "Returns the application manager in HMS internal systems.",
+        "parameters": [
+          {
+            "name": "applicationType",
+            "in": "query",
+            "description": "The application manager id in the portal.",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "Success",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationManagerDto"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationManagerDto"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/ApplicationManagerDto"
+                }
+              }
+            }
+          },
+          "204": {
+            "description": "No Content"
+          },
+          "400": {
+            "description": "Bad Request"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AdiliDto": {
+        "type": "object",
+        "properties": {
+          "kennitala": {
+            "type": "string",
+            "description": "kennitala for legal / natural persons",
+            "nullable": true
+          },
+          "heiti": {
+            "type": "string",
+            "description": "Name",
+            "nullable": true
+          },
+          "heimili": {
+            "type": "string",
+            "description": "Address",
+            "nullable": true
+          },
+          "postnumer": {
+            "type": "string",
+            "description": "Postal Code",
+            "nullable": true
+          },
+          "stadur": {
+            "type": "string",
+            "description": "Municipality",
+            "nullable": true
+          },
+          "tegund": {
+            "$ref": "#/components/schemas/ApplicantType"
+          },
+          "hlutverk": {
+            "type": "string",
+            "description": "description/role for the person",
+            "nullable": true
+          },
+          "netfang": {
+            "type": "string",
+            "description": "email address if provided",
+            "nullable": true
+          },
+          "simi": {
+            "type": "string",
+            "description": "phone number if provided",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Information regarding legal and natural persons within the application."
+      },
+      "ApplicantType": {
+        "enum": [0, 1, 2, -2],
+        "type": "integer",
+        "description": "Type of applicants,-2:user with mandate 0: authenticated natural person, 1: natural person. 2: legal person",
+        "format": "int32"
+      },
+      "ApplicationAdilarDto": {
+        "type": "object",
+        "properties": {
+          "applicationName": {
+            "type": "string",
+            "nullable": true
+          },
+          "status": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "language": {
+            "type": "string",
+            "nullable": true
+          },
+          "portalApplicationID": {
+            "type": "string",
+            "nullable": true
+          },
+          "applicationType": {
+            "type": "string",
+            "nullable": true
+          },
+          "dagssetning": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "externalId": {
+            "type": "string",
+            "nullable": true
+          },
+          "applicantName": {
+            "type": "string",
+            "nullable": true
+          },
+          "applicantKennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "orgName": {
+            "type": "string",
+            "nullable": true
+          },
+          "orgKennitala": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ApplicationDto": {
+        "type": "object",
+        "properties": {
+          "applicationName": {
+            "type": "string",
+            "description": "Application name.",
+            "nullable": true
+          },
+          "adilar": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AdiliDto"
+            },
+            "description": "List of persons that have a role in the application",
+            "nullable": true
+          },
+          "notandagogn": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/NotandagognDto"
+            },
+            "description": "Information extracted from the application the the ruleset can use.",
+            "nullable": true
+          },
+          "greidsla": {
+            "$ref": "#/components/schemas/GreidslaDto"
+          },
+          "files": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ApplicationFileDto"
+            },
+            "description": "Files that are in the application if any.",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/CurrentApplicationStatus"
+          },
+          "language": {
+            "type": "string",
+            "description": "Value for the language, currently we support IS and EN",
+            "nullable": true
+          },
+          "portalApplicationID": {
+            "type": "string",
+            "description": "ID of the application in portal",
+            "nullable": true
+          },
+          "applicationType": {
+            "type": "string",
+            "description": "The type of application",
+            "nullable": true
+          },
+          "applicationJson": {
+            "type": "string",
+            "description": "Original application json",
+            "nullable": true
+          },
+          "dagssetning": {
+            "type": "string",
+            "description": "Date when application was last changed",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Reglusett dataset sent from Leyfisveitingagátt"
+      },
+      "ApplicationFileDto": {
+        "type": "object",
+        "properties": {
+          "flokkur": {
+            "$ref": "#/components/schemas/ApplicationFileTypes"
+          },
+          "heiti": {
+            "type": "string",
+            "description": "Name of the file",
+            "nullable": true
+          },
+          "dags": {
+            "type": "string",
+            "description": "Date when the file was uploaded into the application",
+            "format": "date-time"
+          },
+          "tegund": {
+            "type": "string",
+            "description": "Mimetype of file if known",
+            "nullable": true
+          },
+          "fileID": {
+            "type": "string",
+            "description": "The file id that can be used to fetch the file in LVG",
+            "nullable": true
+          },
+          "ending": {
+            "type": "string",
+            "description": "extension if the file if available else empty",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Information about a file in the application"
+      },
+      "ApplicationFileSimpleDto": {
+        "type": "object",
+        "properties": {
+          "fileID": {
+            "type": "string",
+            "description": "File id",
+            "nullable": true
+          },
+          "applicationID": {
+            "type": "string",
+            "description": "Id of application",
+            "nullable": true
+          },
+          "applicationType": {
+            "type": "string",
+            "description": "content of the file, empty if file was not recieved",
+            "nullable": true
+          },
+          "heiti": {
+            "type": "string",
+            "description": "Name of the file",
+            "nullable": true
+          },
+          "dags": {
+            "type": "string",
+            "description": "Date when the file was uploaded into the application",
+            "format": "date-time"
+          },
+          "ending": {
+            "type": "string",
+            "description": "The file id that can be used to fetch the file in LVG",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Information about a file in the application"
+      },
+      "ApplicationFileTypes": {
+        "enum": [1, 2, 3, 4, 5],
+        "type": "integer",
+        "description": "Origin of the files. 1: Service, 2: Uploads, 3: Additional ,4: Reviews, 5: Process",
+        "format": "int32"
+      },
+      "ApplicationFilesContentDto": {
+        "type": "object",
+        "properties": {
+          "fileID": {
+            "type": "string",
+            "description": "File id",
+            "nullable": true
+          },
+          "applicationID": {
+            "type": "string",
+            "description": "Id of application",
+            "nullable": true
+          },
+          "content": {
+            "type": "string",
+            "description": "content of the file, empty if file was not recieved",
+            "nullable": true
+          },
+          "applicationType": {
+            "type": "string",
+            "description": "Application Type",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "File associated with the application and their content"
+      },
+      "ApplicationIDResultSetDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/ResultStatus"
+          },
+          "message": {
+            "type": "string",
+            "description": "Message to be displayed to the user if the application is not valid.",
+            "nullable": true
+          },
+          "applicationID": {
+            "type": "string",
+            "description": "ID to be stored with LVG application -1 if invalid",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Return status, message and ID for the application."
+      },
+      "ApplicationManagerDto": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "integer",
+            "description": "Application Id",
+            "format": "int32"
+          },
+          "applicationType": {
+            "type": "string",
+            "description": "Application type",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of application",
+            "nullable": true
+          },
+          "receiver": {
+            "type": "string",
+            "description": "Receiver, where to forward it",
+            "nullable": true
+          },
+          "oneMalategund": {
+            "type": "string",
+            "description": "If receiver is One, what Malategund",
+            "nullable": true
+          },
+          "lodaVirkni": {
+            "type": "boolean",
+            "description": "Use loda functionality"
+          },
+          "pdf": {
+            "type": "boolean",
+            "description": "Should be sent as PDF"
+          },
+          "html": {
+            "type": "boolean",
+            "description": "Should be sent as HTML"
+          },
+          "imageSize": {
+            "type": "integer",
+            "description": "Max image size",
+            "format": "int32"
+          },
+          "active": {
+            "type": "boolean",
+            "description": "Is active or not"
+          },
+          "createdOn": {
+            "type": "string",
+            "description": "When created",
+            "format": "date-time",
+            "nullable": true
+          },
+          "applicationtypes": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "All application types connected",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "ApplicationType dataset"
+      },
+      "ApplicationManagerForCreationDto": {
+        "type": "object",
+        "properties": {
+          "applicationType": {
+            "type": "string",
+            "description": "Application type",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Name of application",
+            "nullable": true
+          },
+          "receiver": {
+            "type": "string",
+            "description": "Receiver, where to forward it",
+            "nullable": true
+          },
+          "oneMalategund": {
+            "type": "string",
+            "description": "If receiver is One, what Malategund",
+            "nullable": true
+          },
+          "lodaVirkni": {
+            "type": "boolean",
+            "description": "Use loda functionality"
+          },
+          "pdf": {
+            "type": "boolean",
+            "description": "Should be sent as PDF"
+          },
+          "html": {
+            "type": "boolean",
+            "description": "Should be sent as HTML"
+          },
+          "imageSize": {
+            "type": "integer",
+            "description": "Max image size",
+            "format": "int32"
+          },
+          "active": {
+            "type": "boolean",
+            "description": "Is active or not"
+          }
+        },
+        "additionalProperties": false,
+        "description": "ApplicationType dataset"
+      },
+      "ApplicationOverviewDto": {
+        "type": "object",
+        "properties": {
+          "dagssetning": {
+            "type": "string",
+            "description": "Dagssetning optional",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "description": "Application type name.",
+            "nullable": true
+          },
+          "count": {
+            "type": "integer",
+            "description": "Count",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Reglusett dataset sent from Leyfisveitingagátt"
+      },
+      "ApplicationResultSetDto": {
+        "type": "object",
+        "properties": {
+          "status": {
+            "$ref": "#/components/schemas/ResultStatus"
+          },
+          "message": {
+            "type": "string",
+            "description": "Message to be displayed to the user if the application is not valid.",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Return status and message for the application."
+      },
+      "ApplicationSimpleDto": {
+        "type": "object",
+        "properties": {
+          "applicationName": {
+            "type": "string",
+            "description": "Application name.",
+            "nullable": true
+          },
+          "status": {
+            "$ref": "#/components/schemas/CurrentApplicationStatus"
+          },
+          "language": {
+            "type": "string",
+            "description": "Value for the language, currently we support IS and EN",
+            "nullable": true
+          },
+          "portalApplicationID": {
+            "type": "string",
+            "description": "ID of the application in portal",
+            "nullable": true
+          },
+          "applicationType": {
+            "type": "string",
+            "description": "The type of application",
+            "nullable": true
+          },
+          "dagssetning": {
+            "type": "string",
+            "description": "Date when application was last changed",
+            "format": "date-time"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Reglusett dataset sent from Leyfisveitingagátt"
+      },
+      "CurrentApplicationStatus": {
+        "enum": [40, 70, 71, 73, 80, 90, 100, 1100, 1200],
+        "type": "integer",
+        "description": "The current status of the application.\r\n40: Sent for approval, 70: Approved, 71: Iteration, 73: PaymentIteration, 80: Declined, 90: Delisted, 100: Expired, 1100: OnHold, 1200: Send to license provider",
+        "format": "int32"
+      },
+      "GreidslaDto": {
+        "type": "object",
+        "properties": {
+          "upphaed": {
+            "type": "string",
+            "description": "The amount",
+            "nullable": true
+          },
+          "dags": {
+            "type": "string",
+            "description": "Date when payment was made",
+            "format": "date-time",
+            "nullable": true
+          },
+          "korthafi": {
+            "type": "string",
+            "description": "The card holder",
+            "nullable": true
+          },
+          "kortanumer": {
+            "type": "string",
+            "description": "The card number",
+            "nullable": true
+          },
+          "tegundKorts": {
+            "type": "string",
+            "description": "The type of card",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Payment information"
+      },
+      "NotandagognDto": {
+        "type": "object",
+        "properties": {
+          "flokkur": {
+            "type": "string",
+            "description": "Group name",
+            "nullable": true
+          },
+          "heiti": {
+            "type": "string",
+            "description": "Name of the variable",
+            "nullable": true
+          },
+          "tegund": {
+            "type": "string",
+            "description": "Type of variable",
+            "nullable": true
+          },
+          "gildi": {
+            "type": "string",
+            "description": "Value for inspection",
+            "nullable": true
+          },
+          "countryCode": {
+            "type": "string",
+            "description": "if tegund is \"landalisti\" then the countryCode is included.\r\nThis is a two letter countryCode, i.e. \"DK\" for Denmark",
+            "nullable": true
+          },
+          "nafn": {
+            "type": "string",
+            "description": "If tegund is \"kennitala\" then the name of the payer is included",
+            "nullable": true
+          },
+          "guid": {
+            "type": "string",
+            "format": "uuid"
+          }
+        },
+        "additionalProperties": false,
+        "description": "Data entered by the applicant"
+      },
+      "ResultStatus": {
+        "enum": [200, 300, 400],
+        "type": "integer",
+        "description": "Result values for the service\r\nSuccess meaning application should continue\r\nError application should not continue\r\nSystem error application will not continue untill it is reolved",
+        "format": "int32"
+      }
+    }
+  }
+}

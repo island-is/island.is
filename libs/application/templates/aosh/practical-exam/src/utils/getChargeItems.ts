@@ -22,14 +22,14 @@ export const getChargeItems = (
 
   const items: Array<BasicChargeItem> = [
     {
-      code: ChargeItemCode.AOSH_PRACTICAL_EXAM_VJ101.toString(),
+      code: ChargeItemCode.AOSH_PRACTICAL_EXAM_VJ172.toString(),
       quantity: examCounter,
     },
   ]
 
   if (needsToPayForLicenseCounter > 0) {
     items.push({
-      code: ChargeItemCode.AOSH_PRACTICAL_EXAM_VJ103.toString(),
+      code: ChargeItemCode.AOSH_PRACTICAL_EXAM_VJ171.toString(),
       quantity: needsToPayForLicenseCounter,
     })
   }

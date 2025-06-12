@@ -23,6 +23,7 @@ export const BaseInput = () => {
     focus,
     fieldTypes,
     updateActiveItem,
+    getTranslation,
   } = useContext(ControlContext)
   const { activeItem } = control
   const currentItem = activeItem.data as FormSystemField
@@ -62,7 +63,6 @@ export const BaseInput = () => {
         </Column>
       </Row>
       <Row>
-        {/* Name  */}
         <Column span="10/10">
           <Input
             label={formatMessage(m.name)}
@@ -84,7 +84,6 @@ export const BaseInput = () => {
         </Column>
       </Row>
       <Row>
-        {/* Name en */}
         <Column span="10/10">
           <Input
             label={formatMessage(m.nameEnglish)}
@@ -100,7 +99,21 @@ export const BaseInput = () => {
                 },
               })
             }
-            onFocus={(e) => setFocus(e.target.value)}
+            onFocus={async (e) => {
+              if (!currentItem?.name?.en && currentItem?.name?.is !== '') {
+                const translation = await getTranslation(
+                  currentItem?.name?.is ?? '',
+                )
+                controlDispatch({
+                  type: 'CHANGE_NAME',
+                  payload: {
+                    lang: 'en',
+                    newValue: translation.translation,
+                  },
+                })
+              }
+              setFocus(e.target.value)
+            }}
             onBlur={(e) => e.target.value !== focus && updateActiveItem()}
           />
         </Column>
@@ -138,7 +151,24 @@ export const BaseInput = () => {
                 value={currentItem?.description?.en ?? ''}
                 textarea
                 backgroundColor="blue"
-                onFocus={(e) => setFocus(e.target.value)}
+                onFocus={async (e) => {
+                  if (
+                    !currentItem?.description?.en &&
+                    currentItem?.description?.is !== ''
+                  ) {
+                    const translation = await getTranslation(
+                      currentItem?.description?.is ?? '',
+                    )
+                    controlDispatch({
+                      type: 'CHANGE_DESCRIPTION',
+                      payload: {
+                        lang: 'en',
+                        newValue: translation.translation,
+                      },
+                    })
+                  }
+                  setFocus(e.target.value)
+                }}
                 onBlur={(e) => e.target.value !== focus && updateActiveItem()}
                 onChange={(e) =>
                   controlDispatch({

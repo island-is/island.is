@@ -72,7 +72,7 @@ export const createSubpoena = (
 
   arraignmentDate = arraignmentDate ?? subpoena?.arraignmentDate
   location = location ?? subpoena?.location
-  subpoenaType = subpoenaType ?? defendant.subpoenaType
+  subpoenaType = subpoenaType ?? subpoena?.type
 
   if (theCase.court?.name) {
     addNormalText(

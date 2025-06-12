@@ -10,8 +10,10 @@ import {
 import { Application } from '@island.is/application/types'
 import {
   AgentDto,
+  AgentDtoTypeEnum,
   FormDto,
   FormDtoTypeEnum,
+  LanguageDtoLanguageEnvironmentEnum,
 } from '@island.is/clients/mms/frigg'
 
 export const transformApplicationToNewPrimarySchoolDTO = (
@@ -21,13 +23,13 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     applicationType,
     childInfo,
     guardians,
-    contacts,
+    relatives,
     reasonForApplication,
     reasonForApplicationStreetAddress,
     reasonForApplicationPostalCode,
     siblings,
     languageEnvironment,
-    selectedLanguages,
+    //selectedLanguages,
     preferredLanguage,
     signLanguage,
     guardianRequiresInterpreter,
@@ -58,26 +60,30 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     ...guardians.map((guardian) => ({
       name: guardian.fullName,
       nationalId: guardian.nationalId,
+      nationality: '', // LAGA
+      type: AgentDtoTypeEnum.Guardian,
       domicile: {
         address: guardian.address.streetAddress,
         postCode: guardian.address.postalCode,
       },
       email: guardian.email,
       phone: guardian.phoneNumber,
-      role: 'guardian',
     })),
-    ...contacts.map((contact) => ({
-      name: contact.fullName,
-      nationalId: contact.nationalId,
-      phone: contact.phoneNumber,
-      role: contact.relation,
+    ...relatives.map((relative) => ({
+      name: relative.fullName,
+      nationalId: relative.nationalId,
+      nationality: '', // LAGA
+      type: AgentDtoTypeEnum.EmergencyContact,
+      phone: relative.phoneNumber,
+      relationTypeId: relative.relation,
     })),
     ...(reasonForApplication ===
     ReasonForApplicationOptions.SIBLINGS_IN_SAME_SCHOOL
       ? siblings.map((sibling) => ({
           name: sibling.fullName,
           nationalId: sibling.nationalId,
-          role: 'sibling',
+          nationality: '', // LAGA
+          type: AgentDtoTypeEnum.Sibling,
         }))
       : []),
   ]
@@ -87,6 +93,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     user: {
       name: childInfo.name,
       nationalId: childInfo.nationalId,
+      nationality: '', // LAGA
       ...(childInfo.usePronounAndPreferredName?.includes(YES)
         ? {
             preferredName: childInfo.preferredName,
@@ -109,8 +116,8 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     },
     agents,
     registration: {
-      defaultOrg: primaryOrgId,
-      selectedOrg: selectedSchool,
+      defaultOrganizationId: primaryOrgId,
+      selectedOrganizationId: selectedSchool,
       requestingMeeting: requestingMeeting === YES,
       ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
         ? {
@@ -123,7 +130,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         : {
             expectedStartDate: new Date(), // Temporary until we start working on the "Enrollment in primary school" application
           }),
-      reason: reasonForApplication, // TODO: Add a condition for this when Júní has added school type
+      reason: reasonForApplication, //LAGA: Add a condition for this when Júní has added school type
       ...(reasonForApplication ===
       ReasonForApplicationOptions.MOVING_MUNICIPALITY
         ? {
@@ -178,22 +185,23 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         : {}),
     },
     language: {
-      languageEnvironment,
+      languageEnvironment: LanguageDtoLanguageEnvironmentEnum.OnlyIcelandic, // LAGA
       signLanguage: signLanguage === YES,
       ...(languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
         ? {
             preferredLanguage,
             guardianRequiresInterpreter: guardianRequiresInterpreter === YES,
-            firstLanguage: selectedLanguages[0]?.code,
-            secondLanguage: selectedLanguages[1]?.code,
-            thirdLanguage: selectedLanguages[2]?.code,
-            fourthLanguage: selectedLanguages[3]?.code,
+            // firstLanguage: selectedLanguages[0]?.code,// LAGA
+            // secondLanguage: selectedLanguages[1]?.code,// LAGA
+            // thirdLanguage: selectedLanguages[2]?.code,// LAGA
+            // fourthLanguage: selectedLanguages[3]?.code,// LAGA
           }
         : {
             preferredLanguage: 'is',
             guardianRequiresInterpreter: false,
-            firstLanguage: 'is',
+            // firstLanguage: 'is', // LAGA
           }),
+      languages: [], // LAGA
     },
   }
 

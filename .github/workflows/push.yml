@@ -41,12 +41,12 @@ env:
   NX_PARALLEL: '2'
   NX_MAX_PARALLEL: '4'
   NODE_IMAGE_VERSION: 20
-  S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-  RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
+  RUNS_ON_BUCKET_NAME: ${{ vars.RUNS_ON_BUCKET_NAME }}
   AWS_REGION: eu-west-1
   GENERATED_FILES: ${{ github.sha }}.tar.gz
   CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache
   YARN_ENABLE_HARDENED_MODE: '0'
+
 jobs:
   pre-checks:
     uses: ./.github/workflows/pre-checks.yml
@@ -163,8 +163,6 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-        with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: Install infra modules
         working-directory: infra
@@ -239,6 +237,8 @@ jobs:
 
       - name: Prepare docker deps
         id: docker-deps
+        env:
+          S3_DOCKER_CACHE_BUCKET: ${{ vars.S3_DOCKER_CACHE_BUCKET }}
         run: |
           ./scripts/ci/10_prepare-docker-deps.sh
 
@@ -269,6 +269,7 @@ jobs:
       DISABLE_CHUNKS: true
       MAX_JOBS: 3
       NX_PARALLEL: 1
+      S3_DOCKER_CACHE_BUCKET: ${{ vars.S3_DOCKER_CACHE_BUCKET }}
     strategy:
       fail-fast: false
       matrix:
@@ -302,8 +303,6 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-        with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: Set id for matrix
         run: |
@@ -361,8 +360,6 @@ jobs:
           fi
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-        with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: Building Docker images
         continue-on-error: true
@@ -372,6 +369,7 @@ jobs:
           NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
           GIT_COMMIT_SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
+          S3_DOCKER_CACHE_BUCKET: ${{ vars.S3_DOCKER_CACHE_BUCKET }}
         run: |
           set -x
           echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
@@ -385,6 +383,7 @@ jobs:
           NODE_IMAGE_VERSION: ${{ needs.prepare.outputs.NODE_IMAGE_VERSION }}
           GIT_COMMIT_SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
+          S3_DOCKER_CACHE_BUCKET: ${{ vars.S3_DOCKER_CACHE_BUCKET }}
         run: |
           set -x
           echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
@@ -432,8 +431,6 @@ jobs:
           aws-region: eu-west-1
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-        with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: Docker build image
         working-directory: infra
@@ -507,7 +504,6 @@ jobs:
         uses: ./monorepo/.github/actions/setup-yarn
         with:
           working-directory: monorepo
-          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: Install infra modules
         id: install-infra-modules

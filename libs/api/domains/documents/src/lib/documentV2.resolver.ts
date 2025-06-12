@@ -140,7 +140,7 @@ export class DocumentResolverV2 {
         isCourtCase: true,
       },
     })
-    this.logger.info('confirming urgent urgent document modal', {
+    this.logger.info('confirming urgent document modal', {
       category: LOG_CATEGORY,
       id: input.id,
       confirmed: input.confirmed,

@@ -1950,6 +1950,14 @@ export const m = defineMessages({
     id: 'service.portal:sort-by',
     defaultMessage: 'Raða eftir',
   },
+  expand: {
+    id: 'service.portal:expand',
+    defaultMessage: 'Útvíkka',
+  },
+  collapse: {
+    id: 'service.portal:collapse',
+    defaultMessage: 'Fella saman',
+  },
 })
 
 export const searchTagsMessages = defineMessages({

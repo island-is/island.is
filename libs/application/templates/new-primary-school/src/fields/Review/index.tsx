@@ -24,12 +24,12 @@ import { getApplicationAnswers } from '../../lib/newPrimarySchoolUtils'
 
 import { AllergiesAndIntolerances } from './review-groups/AllergiesAndIntolerances'
 import { Child } from './review-groups/Child'
-import { Contacts } from './review-groups/Contacts'
 import { CurrentNursery } from './review-groups/CurrentNursery'
 import { CurrentSchool } from './review-groups/CurrentSchool'
 import { Guardians } from './review-groups/Guardians'
 import { Languages } from './review-groups/Languages'
 import { ReasonForApplication } from './review-groups/ReasonForApplication'
+import { Relatives } from './review-groups/Relatives'
 import { School } from './review-groups/School'
 import { Siblings } from './review-groups/Siblings'
 import { Support } from './review-groups/Support'
@@ -167,7 +167,7 @@ export const Review: FC<ReviewScreenProps> = ({
       )}
       <Child {...childProps} />
       <Guardians {...childProps} />
-      <Contacts {...childProps} />
+      <Relatives {...childProps} />
       {applicationType === ApplicationType.NEW_PRIMARY_SCHOOL && (
         <CurrentSchool {...childProps} />
       )}

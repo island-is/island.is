@@ -57,8 +57,6 @@ export const CemeteryCaretaker = ({
       const actors = application.applicantActors
       const currentActor: string = actors[actors.length - 1]
 
-      console.log('Values: ', values)
-
       const allMembers = values.cemeteryCaretaker
       const { careTakers, boardMembers } =
         getBoardmembersAndCaretakers(allMembers)

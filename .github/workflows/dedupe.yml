@@ -27,7 +27,7 @@ concurrency:
   cancel-in-progress: true
 
 env:
-  RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
+  RUNS_ON_BUCKET_NAME: ${{ vars.RUNS_ON_BUCKET_NAME }}
   AWS_REGION: eu-west-1
 
 jobs:
@@ -56,8 +56,6 @@ jobs:
       - name: Setup yarn
         if: ${{ steps.dedupe.outputs.should == 'true' }}
         uses: ./.github/actions/setup-yarn
-        with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: Deduplicate (check)
         if: ${{ !inputs.write && steps.dedupe.outputs.should == 'true' }}

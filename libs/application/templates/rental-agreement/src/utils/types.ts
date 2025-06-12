@@ -15,7 +15,9 @@ import {
   SecurityDepositTypeOptions,
 } from './enums'
 
-export type Events = { type: DefaultEvents.SUBMIT | DefaultEvents.EDIT }
+export type Events = {
+  type: DefaultEvents.SUBMIT | DefaultEvents.EDIT | DefaultEvents.APPROVE
+}
 
 export type StatusProvider = 'failure' | 'success'
 
@@ -54,7 +56,7 @@ export interface ApplicationAnswers {
     paymentMethodAccountNumber?: string
     paymentMethodOtherTextField?: string
     indexConnected?: YesOrNoEnum
-    indexTypes?: string
+    indexRate?: string
   }
   rentalPeriod?: {
     startDate?: string

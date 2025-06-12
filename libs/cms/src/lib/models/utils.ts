@@ -34,26 +34,42 @@ export const mapReferenceLink = (link?: LinkType): Link | null => {
   return null
 }
 
+export const generateOrganizationSubpageUrl = (
+  subpage: IOrganizationSubpage,
+) => {
+  const prefix = getOrganizationPageUrlPrefix(subpage.sys.locale)
+  const parentSlug = subpage.fields.organizationParentSubpage?.fields.slug
+  const url = parentSlug
+    ? `${subpage.fields.organizationPage.fields.slug}/${parentSlug}/${subpage.fields.slug}`
+    : `${subpage.fields.organizationPage.fields.slug}/${subpage.fields.slug}`
+  return `/${prefix}/${url}`
+}
+
+const generateOrganizationParentSubpageUrl = (
+  parentSubpage: IOrganizationParentSubpage,
+) => {
+  const prefix = getOrganizationPageUrlPrefix(parentSubpage.sys.locale)
+  const url = `${parentSubpage.fields.organizationPage.fields.slug}/${parentSubpage.fields.slug}`
+  return `/${prefix}/${url}`
+}
+
 const generateOrganizationSubpageLinkFromLinkedPage = (
   linkedPage: ILinkedPage,
 ): Link | null => {
   const contentTypeId = linkedPage.fields.page.sys.contentType.sys.id
-  let slug = ''
+  let url = ''
 
   if (contentTypeId === 'organizationParentSubpage') {
-    const subpage = linkedPage.fields.page as IOrganizationParentSubpage
-    slug = `${subpage.fields.organizationPage.fields.slug}/${subpage.fields.slug}`
+    url = generateOrganizationParentSubpageUrl(
+      linkedPage.fields.page as IOrganizationParentSubpage,
+    )
   } else if (contentTypeId === 'organizationSubpage') {
-    const subpage = linkedPage.fields.page as IOrganizationSubpage
-    const parentSlug = subpage.fields.organizationParentSubpage?.fields.slug
-    slug = parentSlug
-      ? `${subpage.fields.organizationPage.fields.slug}/${parentSlug}/${subpage.fields.slug}`
-      : `${subpage.fields.organizationPage.fields.slug}/${subpage.fields.slug}`
+    url = generateOrganizationSubpageUrl(
+      linkedPage.fields.page as IOrganizationSubpage,
+    )
   } else {
     return null
   }
-
-  const prefix = getOrganizationPageUrlPrefix(linkedPage.sys.locale)
 
   return mapLink({
     ...linkedPage,
@@ -69,7 +85,7 @@ const generateOrganizationSubpageLinkFromLinkedPage = (
     },
     fields: {
       text: linkedPage.fields.title ?? '',
-      url: `/${prefix}/${slug}`,
+      url,
     },
   })
 }

@@ -191,7 +191,7 @@ export const createServiceCertificate = (
   addEmptyLines(doc)
 
   addNormalText(doc, 'Tegund fyrirkalls: ', 'Times-Bold', true)
-  addNormalText(doc, getSubpoenaType(defendant.subpoenaType), 'Times-Roman')
+  addNormalText(doc, getSubpoenaType(subpoena.type), 'Times-Roman')
 
   addEmptyLines(doc, 3)
 
