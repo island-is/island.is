@@ -110,6 +110,7 @@ export const FreightLongTermCreateSubSection = buildSubSection({
                   freightName: freightItems[invalidFreightIndex]?.name,
                 },
               }
+            else return ''
           },
           doesNotRequireAnswer: true,
           alertType: 'error',

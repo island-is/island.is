@@ -102,6 +102,7 @@ export const ConvoyLongTermMultiField = buildMultiField({
 
         if (showEmptyListError) return convoy.error.emptyListErrorMessage
         else if (showDuplicateError) return convoy.error.duplicateErrorMessage
+        else return ''
       },
       doesNotRequireAnswer: true,
       alertType: 'error',
