@@ -1,5 +1,4 @@
 import {
-  buildCustomField,
   buildMultiField,
   buildSection,
   buildSubmitField,
