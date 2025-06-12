@@ -86,7 +86,7 @@ export const useCancelCase = (onComplete: (caseId: string) => void) => {
       return
     }
 
-    onComplete()
+    onComplete(cancelCaseId)
 
     setCaseToCancel([undefined, false, undefined])
   }
