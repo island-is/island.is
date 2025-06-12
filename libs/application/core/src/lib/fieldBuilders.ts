@@ -251,6 +251,7 @@ export const buildAsyncSelectField = (
     isSearchable,
     isMulti,
     updateOnSelect,
+    isClearable,
   } = data
 
   return {
@@ -266,6 +267,7 @@ export const buildAsyncSelectField = (
     isSearchable,
     isMulti,
     updateOnSelect,
+    isClearable,
   }
 }
 
