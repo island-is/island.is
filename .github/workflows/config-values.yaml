@@ -54,13 +54,13 @@ jobs:
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
-        if: ${{ github.event_name == 'pull_request' }}
+        if: ${{ github.event_name == 'pull_request' && !github.event.localrun }}
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
 
       - uses: actions/checkout@v4
-        if: ${{ github.event_name != 'pull_request' }}
+        if: ${{ github.event_name != 'pull_request' || github.event.localrun }}
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
@@ -151,3 +151,20 @@ jobs:
             while IFS= read -r secret ; do echo $secret; done <<< "$missing"
             exit 1
           fi
+
+  success:
+    name: Config Values Success
+    if: ${{ !cancelled() }}
+    needs:
+      - check-secrets
+    runs-on: arc-shared
+    steps:
+      - name: Collect
+        run: |
+          for job in ${{ needs.check-secrets.result }}; do
+            if [[ "$job" == "failure" ]]; then
+              echo "::error title=config values::❌ config values workflow failed!"
+              exit 1
+            fi
+          done
+          echo "::info title=config values::✅ config values workflow ran successfully."
