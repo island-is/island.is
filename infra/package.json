@@ -1,6 +1,6 @@
 {
   "name": "infra",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "main": "index.js",
   "engines": {
     "npm": "please-use-yarn",

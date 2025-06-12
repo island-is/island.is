@@ -54,13 +54,13 @@ jobs:
     timeout-minutes: 25
     steps:
       - uses: actions/checkout@v4
-        if: ${{ github.event_name == 'pull_request' }}
+        if: ${{ github.event_name == 'pull_request' && !github.event.localrun }}
         with:
           ref: ${{ github.event.pull_request.head.ref }}
           token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
 
       - uses: actions/checkout@v4
-        if: ${{ github.event_name != 'pull_request' }}
+        if: ${{ github.event_name != 'pull_request' || github.event.localrun }}
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
