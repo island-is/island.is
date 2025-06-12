@@ -51,7 +51,6 @@ const Subtitle = styled.Text`
   ${font({
     fontSize: 20,
   })}
-  height: 22px;
 `
 
 const Center = styled.View`
@@ -81,6 +80,9 @@ export const AppLockScreen: NavigationFunctionComponent<{
   const [invalidCode, setInvalidCode] = useState(false)
   const pinTries = preferencesStore.getState().pinTries
   const [attempts, setAttempts] = useState(pinTries)
+  // Add 1 to offset the attempts counter, ensuring we display "1 attempt left" instead of "0 attempts left"
+  const attemptsLeft = MAX_ATTEMPTS + 1 - attempts
+
   const { useBiometrics } = usePreferencesStore()
   const biometricType = useBiometricType()
   const intl = useIntl()
@@ -219,8 +221,9 @@ export const AppLockScreen: NavigationFunctionComponent<{
           <Title>{intl.formatMessage({ id: 'applock.title' })}</Title>
           <Subtitle>
             {attempts > 0
-              ? `${MAX_ATTEMPTS - attempts} ${intl.formatMessage({
-                  id: 'applock.attempts',
+              ? `${attemptsLeft} ${intl.formatMessage({
+                  id:
+                    attemptsLeft === 1 ? 'applock.attempt' : 'applock.attempts',
                 })}`
               : ''}
           </Subtitle>
