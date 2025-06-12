@@ -42,6 +42,7 @@ const RequestRulingSignatureModal: FC<Props> = ({
       primaryButtonText={formatMessage(strings.yes)}
       onSecondaryButtonClick={onNo}
       secondaryButtonText={formatMessage(strings.no)}
+      id="request-ruling-signature-modal"
     />
   )
 }

@@ -228,6 +228,7 @@ test.describe.serial('Custody tests', () => {
       page.getByTestId('continueButton').click(),
       verifyRequestCompletion(page, '/api/graphql', 'TransitionCase'),
     ])
+    await page.getByTestId('modalSecondaryButton').click()
   })
 
   test('judge should amend case', async ({ judgePage }) => {
