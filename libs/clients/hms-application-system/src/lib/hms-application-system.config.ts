@@ -3,6 +3,7 @@ import { z } from 'zod'
 
 const schema = z.object({
   servicePath: z.string(),
+  xRoadClientHeader: z.string(),
 })
 
 export const HmsApplicationSystemConfig = defineConfig({
