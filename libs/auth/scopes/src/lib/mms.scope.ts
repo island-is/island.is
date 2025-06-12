@@ -1,4 +1,4 @@
 export enum MMSScope {
-  frigg = '@mms.is/frigg',
+  nemendagrunnur = '@mms.is/nemendagrunnur',
   framhaldsskolaumsokn = '@mms.is/framhaldsskolaumsokn',
 }

@@ -254,6 +254,7 @@ export const buildAsyncSelectField = (
     isSearchable,
     isMulti,
     updateOnSelect,
+    isClearable,
   } = data
 
   return {
@@ -269,6 +270,7 @@ export const buildAsyncSelectField = (
     isSearchable,
     isMulti,
     updateOnSelect,
+    isClearable,
   }
 }
 
@@ -1182,6 +1184,7 @@ export const buildOverviewField = (
     description,
     backId,
     items,
+    loadItems,
     attachments,
     tableData,
     hideIfEmpty,
@@ -1194,6 +1197,7 @@ export const buildOverviewField = (
     description,
     backId,
     items,
+    loadItems,
     attachments,
     tableData,
     hideIfEmpty,

@@ -225,6 +225,16 @@ export const Finance = new XroadConf({
   },
 })
 
+export const FireCompensation = new XroadConf({
+  env: {
+    XROAD_HMS_APPLICATION_SYSTEM_PATH: {
+      dev: 'IS-DEV/GOV/10033/HMS-Protected/formbuilder-v1',
+      staging: 'IS-TEST/GOV/5812191480/HMS-Protected/formbuilder-v1',
+      prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/formbuilder-v1',
+    },
+  },
+})
+
 export const Properties = new XroadConf({
   env: {
     XROAD_PROPERTIES_SERVICE_V2_PATH: {
@@ -247,6 +257,21 @@ export const PropertySearch = new XroadConf({
       prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Fasteignir-v2',
     },
     XROAD_HMS_PROPERTY_SEARCH_CLIENT_HEADER: {
+      dev: 'IS-DEV/GOV/10000/island-is-client',
+      staging: 'IS-TEST/GOV/5501692829/test-client',
+      prod: 'IS/GOV/5501692829/island-is-client',
+    },
+  },
+})
+
+export const RentalService = new XroadConf({
+  env: {
+    XROAD_HMS_RENTAL_SERVICE_PATH: {
+      dev: 'IS-DEV/GOV/10033/HMS-Protected/Leigusamningar-v1',
+      staging: 'IS-TEST/GOV/5812191480/HMS-Protected/Leigusamningar-v1',
+      prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Leigusamningar-v1',
+    },
+    XROAD_HMS_RENTAL_SERVICE_CLIENT_HEADER: {
       dev: 'IS-DEV/GOV/10000/island-is-client',
       staging: 'IS-TEST/GOV/5501692829/test-client',
       prod: 'IS/GOV/5501692829/island-is-client',
@@ -293,6 +318,17 @@ export const WorkMachines = new XroadConf({
       staging:
         'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token',
       prod: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token',
+    },
+  },
+})
+
+export const PracticalExams = new XroadConf({
+  env: {
+    XROAD_PRACTICAL_EXAMS_PATH: {
+      dev: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/verkleg-prof-token',
+      staging:
+        'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/verkleg-prof-token',
+      prod: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/verkleg-prof-token',
     },
   },
 })
@@ -949,12 +985,22 @@ export const OfficialJournalOfIcelandApplication = new XroadConf({
   },
 })
 
+export const LegalGazette = new XroadConf({
+  env: {
+    XROAD_LEGAL_GAZETTE_PATH: {
+      dev: 'IS-DEV/GOV/10014/DMR-Protected/legal-gazette-api',
+      staging: 'IS-TEST/GOV/10014/DMR-Protected/legal-gazette-api',
+      prod: 'IS/GOV/5804170510/DMR-Protected/legal-gazette-api',
+    },
+  },
+})
+
 export const Frigg = new XroadConf({
   env: {
     XROAD_MMS_FRIGG_PATH: {
       dev: 'IS-DEV/GOV/10066/MMS-Protected/frigg-form-api',
-      staging: 'IS-TEST/GOV/10066/MMS-Protected/frigg-form-api',
-      prod: 'IS/GOV/10066/MMS-Protected/frigg-form-api',
+      staging: 'IS-TEST/GOV/6601241280/MMS-Protected/frigg-form-api',
+      prod: 'IS/GOV/6601241280/MMS-Protected/frigg-form-api',
     },
   },
 })

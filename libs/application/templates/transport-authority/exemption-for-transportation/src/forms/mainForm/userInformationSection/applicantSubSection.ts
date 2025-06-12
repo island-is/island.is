@@ -6,6 +6,15 @@ import {
 import { userInformation } from '../../../lib/messages'
 import { applicantInformationMultiField } from '@island.is/application/ui-forms'
 
+const order = {
+  applicantnationalId: 0,
+  applicantname: 1,
+  applicantaddress: 2,
+  applicantpostalCodeAndCity: 3,
+  applicantphoneNumber: 5,
+  applicantemail: 6,
+}
+
 export const applicantSubSection = buildSubSection({
   id: 'applicantSubSection',
   title: userInformation.applicant.subSectionTitle,
@@ -28,15 +37,12 @@ export const applicantSubSection = buildSubSection({
           customAddressLabel: userInformation.transporter.address,
           customPostalCodeAndCityLabel:
             userInformation.transporter.postalCodeAndCity,
-          order: {
-            nationalId: 0,
-            name: 1,
-            address: 2,
-            postalCodeAndCity: 3,
-            phoneNumber: 5,
-            email: 6,
-          },
-        }).children,
+        }).children.sort((a, b) => {
+          const getOrder = (id: string): number => {
+            return order[id as keyof typeof order] ?? 999
+          }
+          return getOrder(a.id) - getOrder(b.id)
+        }),
       ],
     }),
   ],

@@ -53,8 +53,8 @@ judicial-system-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 8
       replicas:
-        max: 10
-        min: 2
+        max: 3
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-api'
   ingress:
@@ -79,9 +79,9 @@ judicial-system-api:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
-    max: 10
-    min: 2
+    default: 1
+    max: 3
+    min: 1
   resources:
     limits:
       cpu: '350m'
@@ -161,8 +161,8 @@ judicial-system-backend:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 10
-        min: 2
+        max: 3
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-backend'
   initContainer:
@@ -195,9 +195,9 @@ judicial-system-backend:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
-    max: 10
-    min: 2
+    default: 1
+    max: 3
+    min: 1
   resources:
     limits:
       cpu: '400m'
@@ -421,7 +421,7 @@ judicial-system-scheduler:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 1
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/judicial-system-scheduler'
@@ -433,7 +433,7 @@ judicial-system-scheduler:
   pvcs: []
   replicaCount:
     default: 1
-    max: 1
+    max: 3
     min: 1
   resources:
     limits:

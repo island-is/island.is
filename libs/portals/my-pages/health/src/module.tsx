@@ -40,7 +40,7 @@ const MedicinePrescriptions = lazy(() =>
   import('./screens/MedicinePrescriptions/MedicinePrescriptions'),
 )
 const MedicinePrescriptionHistory = lazy(() =>
-  import('./screens/MedicinePrescriptions/MedicinePrescriptionHistory'),
+  import('./screens/MedicineHistory/MedicinePrescriptionHistory'),
 )
 const HealthCenterRegistration = lazy(() =>
   import('./screens/HealthCenterRegistration/HealthCenterRegistration'),
@@ -54,9 +54,9 @@ const MedicineCertificate = lazy(() =>
   import('./screens/MedicineCertificate/MedicineCertificate'),
 )
 
-const MedicineDelegation = lazy(() =>
-  import('./screens/MedicineDelegation/MedicineDelegation'),
-)
+// const MedicineDelegation = lazy(() =>
+//   import('./screens/MedicineDelegation/MedicineDelegation'),
+// )
 
 const PaymentParticipation = lazy(() =>
   import('./screens/Payments/PaymentParticipation'),

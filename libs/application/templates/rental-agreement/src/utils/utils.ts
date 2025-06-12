@@ -2,13 +2,15 @@ import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import is from 'date-fns/locale/is'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { EMAIL_REGEX, getValueViaPath } from '@island.is/application/core'
-import { Application, StateLifeCycle } from '@island.is/application/types'
-import { ApplicantsInfo, CostField } from './types'
+import { EMAIL_REGEX } from '@island.is/application/core'
+import { StateLifeCycle } from '@island.is/application/types'
 import {
-  UserRole,
-  RentalAmountIndexTypes,
+  ApplicantsInfo,
+  CostField,
+  PropertyUnit,
   RentalHousingCategoryClass,
+} from '../shared'
+import {
   RentalHousingCategoryClassGroup,
   RentalHousingCategoryTypes,
   RentalHousingConditionInspector,
@@ -18,6 +20,7 @@ import {
   SecurityDepositAmountOptions,
   RentalPaymentMethodOptions,
   NextStepInReviewOptions,
+  EmergencyExitOptions,
 } from './enums'
 import * as m from '../lib/messages'
 
@@ -105,49 +108,15 @@ export const parseCurrency = (value: string): number | undefined => {
   return numeric ? Number(numeric) : undefined
 }
 
-export const extractApplicationAnswers = (answers: Application['answers']) => {
-  return {
-    landlords: getValueViaPath<ApplicantsInfo[]>(answers, 'landlordInfo.table'),
-    tenants: getValueViaPath<ApplicantsInfo[]>(answers, 'tenantInfo.table'),
-    propertyTypeOptions: getValueViaPath<RentalHousingCategoryTypes>(
-      answers,
-      'registerProperty.categoryType',
-    ),
-    propertyClassOptions: getValueViaPath<RentalHousingCategoryClass>(
-      answers,
-      'registerProperty.categoryClass',
-    ),
-    inspectorOptions: getValueViaPath<RentalHousingConditionInspector>(
-      answers,
-      'condition.inspector',
-    ),
-    rentalAmountIndexTypesOptions: getValueViaPath<RentalAmountIndexTypes>(
-      answers,
-      'rentalAmount.indexTypes',
-    ),
-    rentalAmountPaymentDateOptions:
-      getValueViaPath<RentalAmountPaymentDateOptions>(
-        answers,
-        'rentalAmount.paymentDateOptions',
-      ),
-    otherFeesHousingFund: getValueViaPath<OtherFeesPayeeOptions>(
-      answers,
-      'otherFees.housingFund',
-    ),
-    otherFeesElectricityCost: getValueViaPath<OtherFeesPayeeOptions>(
-      answers,
-      'otherFees.electricityCost',
-    ),
-    otherFeesHeatingCost: getValueViaPath<OtherFeesPayeeOptions>(
-      answers,
-      'otherFees.heatingCost',
-    ),
-    nextStepInReviewOptions: getValueViaPath<NextStepInReviewOptions>(
-      answers,
-      'reviewInfo.applicationReview.nextStepOptions',
-    ),
-  }
-}
+export const getRentalPropertySize = (units: PropertyUnit[]) =>
+  units.reduce(
+    (total, unit) =>
+      total +
+      (unit.changedSize && unit.changedSize !== 0
+        ? unit.changedSize
+        : unit.size || 0),
+    0,
+  )
 
 export const getPropertyTypeOptions = () => [
   {
@@ -207,13 +176,6 @@ export const getInspectorOptions = () => [
   {
     value: RentalHousingConditionInspector.INDEPENDENT_PARTY,
     label: m.housingCondition.inspectorOptionIndependentParty,
-  },
-]
-
-export const getRentalAmountIndexTypes = () => [
-  {
-    value: RentalAmountIndexTypes.CONSUMER_PRICE_INDEX,
-    label: m.rentalAmount.indexOptionConsumerPriceIndex,
   },
 ]
 
@@ -289,17 +251,6 @@ export const getOtherFeesPayeeOptions = () => [
   },
 ]
 
-export const getOtherFeesHousingFundPayeeOptions = () => [
-  {
-    value: OtherFeesPayeeOptions.LANDLORD_OR_NOT_APPLICABLE,
-    label: m.otherFees.housingFundPayedByLandlordLabel,
-  },
-  {
-    value: OtherFeesPayeeOptions.TENANT,
-    label: m.otherFees.paidByTenantLabel,
-  },
-]
-
 export const getPaymentMethodOptions = () => [
   {
     value: RentalPaymentMethodOptions.BANK_TRANSFER,
@@ -326,13 +277,13 @@ export const getNextStepInReviewOptions = () => [
   },
 ]
 
-export const getUserRoleOptions = [
+export const getEmergencyExitOptions = () => [
   {
-    label: m.userRole.landlordOptionLabel,
-    value: UserRole.LANDLORD,
+    value: EmergencyExitOptions.YES,
+    label: m.housingFireProtections.typeRadioYesExit,
   },
   {
-    label: m.userRole.tenantOptionLabel,
-    value: UserRole.TENANT,
+    value: EmergencyExitOptions.NO,
+    label: m.housingFireProtections.typeRadioNoExit,
   },
 ]
