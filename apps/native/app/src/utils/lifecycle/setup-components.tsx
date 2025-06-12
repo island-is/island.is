@@ -120,10 +120,6 @@ export function registerAllComponents() {
   )
   registerComponent(CR.VaccinationsScreen, VaccinationsScreen)
   registerComponent(CR.RegisterEmailScreen, RegisterEmailScreen)
-  registerComponent(
-    CR.DocumentCommunicationsScreen,
-    DocumentCommunicationsScreen,
-  )
 
   // Overlay
   registerComponent(CR.OfflineBanner, OfflineBanner)
@@ -134,4 +130,8 @@ export function registerAllComponents() {
   // Document screens
   registerComponent(CR.DocumentDetailScreen, DocumentDetailScreen)
   registerComponent(CR.DocumentReplyScreen, DocumentReplyScreen)
+  registerComponent(
+    CR.DocumentCommunicationsScreen,
+    DocumentCommunicationsScreen,
+  )
 }
