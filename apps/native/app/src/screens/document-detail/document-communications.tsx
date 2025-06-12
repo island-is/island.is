@@ -172,7 +172,7 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
           key={item.id}
           isOpen={index === comments.length - 1}
           closeable={comments.length > 1}
-          sender={document?.sender?.name ?? ''}
+          sender={item.author ?? ''}
           title={item.author ?? ''}
           body={item.body ?? undefined}
           date={item.createdDate ? formatDate(item.createdDate) : undefined}

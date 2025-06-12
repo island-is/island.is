@@ -83,10 +83,15 @@ export const organizationsStore = create<OrganizationsStore>(
         if (!c) {
           const qs = lowerCase(String(forName).trim())
           const orgs = get().organizations
-          const match =
-            orgs.find((o) => o.query === qs) ||
-            orgs.find((o) => o.logo?.title === 'Skjaldarmerki')
+
+          let match = orgs.find((o) => o.query === qs)
+
+          if (!match && !canReturnEmpty) {
+            match = orgs.find((o) => o.logo?.title === 'Skjaldarmerki')
+          }
+
           c = match?.logo?.url
+
           if (c) {
             if (!c.startsWith('https://')) {
               logoCache.set(forName, `https:${c}`)
