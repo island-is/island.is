@@ -12,6 +12,7 @@ import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
+  getinternationalSchoolsIds,
   getMunicipalityCodeBySchoolUnitId,
 } from '../../../lib/newPrimarySchoolUtils'
 import {
@@ -98,14 +99,6 @@ export const newSchoolSubSection = buildSubSection({
 
             const municipalityCode = selectedValues?.[0]
 
-            // Since the data from Frigg is not structured for international schools, we need to manually identify them
-            const internationalSchoolsIds = [
-              'G-2250-A',
-              'G-2250-B',
-              'G-1157-A',
-              'G-1157-B',
-            ] //Alþjóðaskólinn G-2250-x & Landkotsskóli G-1157-x
-
             const { childGradeLevel } = getApplicationExternalData(
               application.externalData,
             )
@@ -131,7 +124,7 @@ export const newSchoolSubSection = buildSubSection({
                       )
                       ?.map((school) => ({
                         ...school,
-                        type: internationalSchoolsIds.some(
+                        type: getinternationalSchoolsIds().some(
                           (id) => id === school.unitId, // Hack to identify international schools from private ownded schools
                         )
                           ? SchoolType.INTERNATIONAL_SCHOOL
