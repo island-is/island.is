@@ -39,7 +39,6 @@ export const FormsHeader = () => {
 
     if (isValidLocation(tabId)) {
       setLocation(tabId as FormsLocationState);
-      console.log(tabId)
     } else {
       console.warn(`Invalid location: ${tabId}`);
     }

@@ -29,7 +29,6 @@ export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
     if (!dataForms) {
       throw new Error('No forms were found')
     }
-    console.log('dataForms', dataForms)
     const { data: dataApplications, error: errorApplications } = await client.query<ApplicationsLoaderQueryResponse>(
       {
         query: GET_APPLICATIONS,
@@ -50,7 +49,6 @@ export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
     if (!dataApplications) {
       throw new Error('No applications were found')
     }
-    console.log('dataApplications', dataApplications)
     const { data, error } = await client.query<AdminLoaderQueryResponse>({
       query: GET_ORGANIZATION_ADMIN,
       variables: {
@@ -68,7 +66,6 @@ export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
     if (!data) {
       throw new Error('No organization admin was found')
     }
-    console.log('data', data)
 
     const forms = dataForms.formSystemForms?.forms
       ?.filter((form) => form !== null)
