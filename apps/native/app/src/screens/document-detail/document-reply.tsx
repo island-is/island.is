@@ -10,7 +10,6 @@ import { useUser } from '../../contexts/user-provider'
 import { useDocumentReplyMutation } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useNavigationModal } from '../../hooks/use-navigation-modal'
-import { useNavigationCurrentComponentId } from '../../hooks/use-navigation-current-component-id'
 import { useAuthStore } from '../../stores/auth-store'
 import {
   Button,
@@ -94,11 +93,11 @@ export const DocumentReplyScreen: NavigationFunctionComponent<
   useNavigationOptions(componentId)
   const intl = useIntl()
   const { showModal, dismissModal } = useNavigationModal()
-  const currentComponentId = useNavigationCurrentComponentId()
   const { userInfo } = useAuthStore()
   const { user: userProfile, loading, error } = useUser()
 
   const [message, setMessage] = useState('')
+  const [hasShownModal, setHasShownModal] = useState(false)
 
   const [sendMessage, { loading: sendMessageLoading }] =
     useDocumentReplyMutation({
@@ -140,10 +139,12 @@ export const DocumentReplyScreen: NavigationFunctionComponent<
 
   useEffect(() => {
     // Make sure we only instantiate the modal once
-    if (!userProfile?.email && currentComponentId === componentId) {
+    if (!userProfile?.email && !hasShownModal) {
+      setHasShownModal(true)
       showModal(ComponentRegistry.RegisterEmailScreen)
     }
-  }, [userProfile, showModal, currentComponentId, componentId])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userProfile, showModal])
 
   return (
     <>
