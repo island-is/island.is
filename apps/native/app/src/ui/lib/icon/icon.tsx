@@ -1,18 +1,16 @@
 import { ImageProps, ImageSourcePropType, ImageStyle } from 'react-native'
-import styled, { css } from 'styled-components/native'
+import styled from 'styled-components/native'
 import { Colors } from '../../utils'
 
 export const StyledIcon = styled.Image<
   Pick<IconProps, 'width' | 'height' | 'tintColor'>
->`
-  width: ${({ width }) => width}px;
-  height: ${({ height }) => height}px;
-  ${({ tintColor, theme }) =>
-    tintColor &&
-    css`
-      tint-color: ${theme.color[tintColor]};
-    `}
-`
+>(({ width, height, tintColor, theme }) => ({
+  width,
+  height,
+  ...(tintColor && {
+    tintColor: theme.color[tintColor],
+  }),
+}))
 
 type IconProps = {
   source: ImageSourcePropType
