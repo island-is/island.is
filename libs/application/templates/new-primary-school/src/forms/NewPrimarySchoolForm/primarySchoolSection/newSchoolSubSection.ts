@@ -12,7 +12,7 @@ import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
-  getinternationalSchoolsIds,
+  getInternationalSchoolsIds,
   getMunicipalityCodeBySchoolUnitId,
 } from '../../../lib/newPrimarySchoolUtils'
 import {
@@ -124,7 +124,7 @@ export const newSchoolSubSection = buildSubSection({
                       )
                       ?.map((school) => ({
                         ...school,
-                        type: getinternationalSchoolsIds().some(
+                        type: getInternationalSchoolsIds().some(
                           (id) => id === school.unitId, // Hack to identify international schools from private ownded schools
                         )
                           ? SchoolType.INTERNATIONAL_SCHOOL
