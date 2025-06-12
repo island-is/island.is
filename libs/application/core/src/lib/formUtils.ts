@@ -41,7 +41,16 @@ const containsArray = (obj: RecordObject) => {
 }
 
 export const getErrorViaPath = (obj: RecordObject, path: string): string => {
-  return get(obj, path) as string
+  const error = get(obj, path)
+  if (typeof error === 'string') {
+    return error
+  }
+
+  if (Array.isArray(error)) {
+    return error.join(', ')
+  }
+
+  return ''
 }
 
 export const getValueViaPath = <T = unknown>(

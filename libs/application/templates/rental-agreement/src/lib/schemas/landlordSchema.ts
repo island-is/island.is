@@ -1,5 +1,6 @@
 import { z } from 'zod'
 import * as m from '../messages'
+import { IS_REPRESENTATIVE } from '../..'
 
 export const landlordInfo = z
   .object({
@@ -38,11 +39,11 @@ export const landlordInfo = z
   })
   .superRefine((data, ctx) => {
     // TODO: Uncomment this when validation in repeatable table is fixed
-    // const filterNonRepresentatives =
-    //   data.table &&
-    //   data.table.filter(
-    //     (landlord) => !landlord.isRepresentative?.includes(IS_REPRESENTATIVE),
-    //   )
+    const filterNonRepresentatives =
+      data.table &&
+      data.table.filter(
+        (landlord) => !landlord.isRepresentative?.includes(IS_REPRESENTATIVE),
+      )
     if (data.table && data.table.length === 0) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
@@ -52,12 +53,12 @@ export const landlordInfo = z
       })
     }
     // TODO: Uncomment this when validation in repeatable table is fixed
-    // if (filterNonRepresentatives?.length === 0) {
-    //   ctx.addIssue({
-    //     code: z.ZodIssueCode.custom,
-    //     message: 'Custom error message',
-    //     params: m.landlordDetails.landlordOnlyRepresentativeTableError,
-    //     path: ['table'],
-    //   })
-    // }
+    if (filterNonRepresentatives?.length === 0) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Custom error message',
+        params: m.landlordDetails.landlordOnlyRepresentativeTableError,
+        path: ['table'],
+      })
+    }
   })
