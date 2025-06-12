@@ -14,6 +14,11 @@ inputs:
 runs:
   using: 'composite'
   steps:
+    - name: Set RUNS_ON_S3_BUCKET_CACHE
+      shell: bash
+      if: ${{ !github.event.localrun }}
+      run: echo "RUNS_ON_S3_BUCKET_CACHE=${{ env.RUNS_ON_BUCKET_NAME }}" >> $GITHUB_ENV
+
     - name: Set env
       shell: bash
       run: |
@@ -26,13 +31,20 @@ runs:
       run: |
         echo "generated files: ${{ env.GENERATED_FILES_PATH }}"
 
-    - name: Restore generated files
-      uses: runs-on/cache/restore@v4
+    - name: Generate hash for generated files list
+      id: generate-files-hash
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        node ./scripts/ci/generate-files.mjs /dev/null --skip-codegen
+
+    - name: Cache generated files
+      uses: runs-on/cache@v4
       id: restore-codegen-cache
       with:
         path: |
           ${{ env.GENERATED_FILES_PATH }}
-        key: generated-files-${{ github.sha }}
+        key: generated-files-${{ hashFiles('generated_files_list.txt') }}
 
     - name: Prepare generated files
       if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
@@ -46,12 +58,6 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
+        echo "::group::Extract generated files"
         tar -xzvf ${{ env.GENERATED_FILES_PATH }}
-
-    - name: Cache Generated files
-      if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
-      uses: runs-on/cache/save@v4
-      with:
-        path: |
-          ${{ env.GENERATED_FILES_PATH }}
-        key: generated-files-${{ github.sha }}
+        echo "::endgroup::"

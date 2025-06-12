@@ -1179,6 +1179,7 @@ export const buildOverviewField = (
     description,
     backId,
     items,
+    loadItems,
     attachments,
     tableData,
   } = data
@@ -1190,6 +1191,7 @@ export const buildOverviewField = (
     description,
     backId,
     items,
+    loadItems,
     attachments,
     tableData,
     type: FieldTypes.OVERVIEW,
