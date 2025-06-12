@@ -7,12 +7,12 @@ import { userInformation } from '../../../lib/messages'
 import { applicantInformationMultiField } from '@island.is/application/ui-forms'
 
 const order = {
-  applicantnationalId: 0,
-  applicantname: 1,
-  applicantaddress: 2,
-  applicantpostalCodeAndCity: 3,
-  applicantphoneNumber: 5,
-  applicantemail: 6,
+  'applicant.nationalId': 0,
+  'applicant.name': 1,
+  'applicant.address': 2,
+  'applicant.postalCodeAndCity': 3,
+  'applicant.phoneNumber': 5,
+  'applicant.email': 6,
 }
 
 export const applicantSubSection = buildSubSection({

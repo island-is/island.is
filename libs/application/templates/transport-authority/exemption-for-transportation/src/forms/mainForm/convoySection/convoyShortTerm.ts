@@ -25,7 +25,7 @@ export const ConvoyShortTermMultiField = buildMultiField({
   children: [
     buildHiddenInput({
       id: `convoy.items.${convoyIndex}.convoyId`,
-      defaultValue: getRandomId(),
+      defaultValue: () => getRandomId(),
     }),
     buildVehiclePermnoWithInfoField({
       id: `convoy.items.${convoyIndex}.vehicle`,

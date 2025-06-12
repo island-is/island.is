@@ -1,4 +1,4 @@
-import { Field, ObjectType } from '@nestjs/graphql'
+import { Field, Int, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class VehicleValidationErrorMessage {
@@ -23,7 +23,7 @@ export class BasicVehicleInformation {
   @Field(() => String, { nullable: true })
   role?: string | null
 
-  @Field(() => Number, { nullable: true })
+  @Field(() => Int, { nullable: true })
   numberOfAxles?: number | null
 
   @Field(() => Boolean, { nullable: true })

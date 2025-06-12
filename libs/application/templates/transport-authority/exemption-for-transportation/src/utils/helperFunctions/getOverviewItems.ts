@@ -28,12 +28,12 @@ export const getUserInformationOverviewItems = (
             'nationalRegistry.data.address.streetAddress',
           )}, ${
             getValueViaPath<string>(
-              answers,
+              externalData,
               'nationalRegistry.data.address.postalCode',
             ) ?? ''
           } ${
             getValueViaPath<string>(
-              answers,
+              externalData,
               'nationalRegistry.data.address.locality',
             ) ?? ''
           }`,

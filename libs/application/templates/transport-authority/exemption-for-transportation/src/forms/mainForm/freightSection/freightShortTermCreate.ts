@@ -34,7 +34,7 @@ export const FreightShortTermCreateMultiField = buildMultiField({
     ...FreightCommonHiddenInputs(`freightPairing.${freightIndex}`),
     buildHiddenInput({
       id: `freight.items.${freightIndex}.freightId`,
-      defaultValue: getRandomId(),
+      defaultValue: () => getRandomId(),
     }),
     buildHiddenInput({
       id: `freightPairing.${freightIndex}.freightId`,
@@ -171,7 +171,7 @@ export const FreightShortTermCreateMultiField = buildMultiField({
       },
     }),
     buildDescriptionField({
-      id: 'freightWithConvoy.subtitle',
+      id: 'freightExemptionFor.subtitle',
       title: freight.labels.exemptionFor,
       titleVariant: 'h5',
     }),

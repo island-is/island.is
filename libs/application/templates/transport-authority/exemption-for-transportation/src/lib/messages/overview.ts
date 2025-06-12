@@ -65,39 +65,39 @@ export const overview = {
   }),
   shortTermlocation: defineMessages({
     subtitle: {
-      id: 'ta.eft.application:overview.location.subtitle',
+      id: 'ta.eft.application:overview.shortTermlocation.subtitle',
       defaultMessage: 'Leið',
       description: 'Overview short-term location subtitle',
     },
     from: {
-      id: 'ta.eft.application:overview.location.from',
+      id: 'ta.eft.application:overview.shortTermlocation.from',
       defaultMessage: 'Upphafsstaður',
       description: 'Overview short-term location from label',
     },
     to: {
-      id: 'ta.eft.application:overview.location.to',
+      id: 'ta.eft.application:overview.shortTermlocation.to',
       defaultMessage: 'Áfangastaður',
       description: 'Overview short-term location to label',
     },
     directions: {
-      id: 'ta.eft.application:overview.location.directions',
+      id: 'ta.eft.application:overview.shortTermlocation.directions',
       defaultMessage: 'Leiðarlýsing',
       description: 'Overview short-term location directions label',
     },
   }),
   longTermlocation: defineMessages({
     subtitle: {
-      id: 'ta.eft.application:overview.location.subtitle',
+      id: 'ta.eft.application:overview.longTermlocation.subtitle',
       defaultMessage: 'Svæði',
       description: 'Overview long-term location subtitle',
     },
     regions: {
-      id: 'ta.eft.application:overview.location.regions',
+      id: 'ta.eft.application:overview.longTermlocation.regions',
       defaultMessage: 'Svæði',
       description: 'Overview long-term location regions label',
     },
     directions: {
-      id: 'ta.eft.application:overview.location.directions',
+      id: 'ta.eft.application:overview.longTermlocation.directions',
       defaultMessage: 'Leiðarlýsing',
       description: 'Overview long-term location directions label',
     },

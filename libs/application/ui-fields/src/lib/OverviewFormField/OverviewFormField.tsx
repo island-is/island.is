@@ -124,15 +124,6 @@ export const OverviewFormField = ({
       )
     }
 
-    if (
-      field.hideIfEmpty &&
-      !filteredItems?.length &&
-      !attachments?.length &&
-      !tableData?.rows?.length
-    ) {
-      return null
-    }
-
     return (
       <GridColumn key={i} span={span}>
         {item.lineAboveKeyText && (
@@ -199,6 +190,15 @@ export const OverviewFormField = ({
         )}
       </GridColumn>
     )
+  }
+
+  if (
+    field.hideIfEmpty &&
+    !filteredItems?.length &&
+    !attachments?.length &&
+    !tableData?.rows?.length
+  ) {
+    return null
   }
 
   return (

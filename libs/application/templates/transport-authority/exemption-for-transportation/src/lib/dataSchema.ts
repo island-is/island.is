@@ -22,6 +22,7 @@ const ApplicantSchema = z.object({
 const ResponsiblePersonSchema = z
   .object({
     isSameAsApplicant: z.array(z.enum([YES])).optional(),
+    xx: z.array(z.enum([YES])).optional(), //TODOx geyma kt transporter...
     nationalId: z.string().optional(),
     name: z.string().optional(),
     email: z.string().optional(),

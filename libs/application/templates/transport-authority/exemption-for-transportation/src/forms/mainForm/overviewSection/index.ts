@@ -25,7 +25,7 @@ export const overviewSection = buildSection({
   title: overview.general.sectionTitle,
   children: [
     buildMultiField({
-      id: 'overviewSection',
+      id: 'overviewMultiField',
       title: overview.general.pageTitle,
       children: [
         buildOverviewField({
@@ -77,6 +77,7 @@ export const overviewSection = buildSection({
           large: true,
           backgroundColor: 'blue',
           marginTop: 3,
+          required: true,
           options: [
             {
               value: YES,

@@ -205,7 +205,7 @@ export const transporterSubSection = buildSubSection({
           },
         }),
         buildHiddenInput({
-          id: 'responsiblePerson.isSameAsApplicant',
+          id: 'responsiblePerson.isSameAsApplicantHidden',
           condition: (answers) => {
             return !shouldShowResponsiblePerson(answers)
           },

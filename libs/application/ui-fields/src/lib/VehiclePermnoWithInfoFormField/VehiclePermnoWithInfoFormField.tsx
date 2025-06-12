@@ -26,7 +26,6 @@ import { Locale } from '@island.is/shared/types'
 import { gql, useApolloClient, useLazyQuery } from '@apollo/client'
 import { BasicVehicleInformation } from '@island.is/api/schema'
 import { GET_VEHICLE_BASIC_INFO_BY_PERMNO } from './graphql/queries'
-import debounce from 'lodash/debounce'
 
 interface Props extends FieldBaseProps {
   field: VehiclePermnoWithInfoField
@@ -41,7 +40,7 @@ export const VehiclePermnoWithInfoFormField: FC<
   const numberOfAxlesField = `${field.id}.numberOfAxles`
   const hasErrorField = `${field.id}.hasError`
 
-  const { setValue } = useFormContext()
+  const { setValue, getValues } = useFormContext()
   const { formatMessage, lang: locale } = useLocale()
   const apolloClient = useApolloClient()
 
@@ -85,7 +84,7 @@ export const VehiclePermnoWithInfoFormField: FC<
     try {
       if (field.loadValidation) {
         const response = await field.loadValidation({
-          application,
+          application: { ...application, answers: getValues() },
           apolloClient,
           permno: permno,
         })
@@ -139,9 +138,9 @@ export const VehiclePermnoWithInfoFormField: FC<
             backgroundColor="blue"
             required={buildFieldRequired(application, field.required)}
             maxLength={INPUT_MAX_LENGTH}
-            onChange={debounce(async (v) => {
+            onChange={(v) => {
               onChangePermno(v.target.value.replace(/\W/g, ''))
-            })}
+            }}
             loading={isLoadingDetails || isLoadingValidation}
             error={errors && getErrorViaPath(errors, permnoField)}
           />
@@ -185,7 +184,7 @@ export const VehiclePermnoWithInfoFormField: FC<
             message={
               <Box>
                 <BulletList>
-                  {vehicleValidation.errorMessages?.map((errorMessage) => {
+                  {vehicleValidation.errorMessages?.map((errorMessage, idx) => {
                     const message =
                       errorMessage &&
                       formatText(errorMessage, application, formatMessage)
@@ -198,7 +197,9 @@ export const VehiclePermnoWithInfoFormField: FC<
                         formatMessage,
                       )
 
-                    return <Bullet>{message || fallbackMessage}</Bullet>
+                    return (
+                      <Bullet key={idx}>{message || fallbackMessage}</Bullet>
+                    )
                   })}
                 </BulletList>
               </Box>

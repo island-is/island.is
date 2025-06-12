@@ -112,7 +112,6 @@ export const buildCheckboxField = (
     required,
     backgroundColor = 'blue',
     spacing,
-    split,
   } = data
   return {
     ...extractCommonFields(data),
@@ -123,7 +122,6 @@ export const buildCheckboxField = (
     options,
     required,
     spacing,
-    split,
     type: FieldTypes.CHECKBOX,
     component: FieldComponents.CHECKBOX,
   }
@@ -1187,6 +1185,7 @@ export const buildOverviewField = (
     loadItems,
     attachments,
     tableData,
+    bottomLine,
     hideIfEmpty,
   } = data
   return {
@@ -1200,6 +1199,7 @@ export const buildOverviewField = (
     loadItems,
     attachments,
     tableData,
+    bottomLine,
     hideIfEmpty,
     type: FieldTypes.OVERVIEW,
     component: FieldComponents.OVERVIEW,

@@ -22,11 +22,12 @@ import {
 import { useLocale } from '@island.is/localization'
 import { FieldDescription } from '@island.is/shared/form-fields'
 import { FC, useEffect, useState } from 'react'
-import { set, useFieldArray, useFormContext, useWatch } from 'react-hook-form'
+import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import {
   buildDefaultTableHeader,
   buildDefaultTableRows,
   handleCustomMappedValues,
+  setObjectWithNestedKey,
 } from './utils'
 import { Item } from './TableRepeaterItem'
 import { Locale } from '@island.is/shared/types'
@@ -173,8 +174,9 @@ export const TableRepeaterFormField: FC<Props> = ({
   useEffect(() => {
     const values = methods.getValues(data.id) || []
     if (initActiveFieldIfEmpty && values?.length === 0) {
+      // Using setObjectValue to handle nested ids
       const newValues = {}
-      set(newValues, data.id, [{}])
+      setObjectWithNestedKey(newValues, data.id, [{}])
       methods.reset({
         ...newValues,
       })

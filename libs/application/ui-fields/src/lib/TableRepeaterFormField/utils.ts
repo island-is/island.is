@@ -66,11 +66,11 @@ const handleVehiclePermnoWithInfoItem = <T>(
     const nested = value[item.id]
     if (!!nested && typeof nested === 'object') {
       const { [item.id]: _, ...rest } = value
-      const flat: Record<string, any> = {}
+      const flat: Record<string, T> = {}
 
-      for (const key in nested) {
-        flat[`${item.id}.${key}`] = nested[key]
-      }
+      Object.keys(nested as Record<string, unknown>).forEach((key) => {
+        flat[`${item.id}.${key}`] = (nested as Record<string, T>)[key]
+      })
 
       return {
         ...rest,
@@ -107,3 +107,26 @@ export const buildDefaultTableRows = (
       }
     })
     .flat(2)
+
+export const setObjectWithNestedKey = <T extends Record<string, unknown>>(
+  obj: T,
+  nestedKey: string,
+  value: unknown,
+): void => {
+  const keys = nestedKey.split('.')
+  let current: Record<string, unknown> = obj
+
+  for (let i = 0; i < keys.length - 1; i++) {
+    const key = keys[i]
+    if (
+      !(key in current) ||
+      typeof current[key] !== 'object' ||
+      current[key] === null
+    ) {
+      current[key] = {}
+    }
+    current = current[key] as Record<string, unknown>
+  }
+
+  current[keys[keys.length - 1]] = value
+}

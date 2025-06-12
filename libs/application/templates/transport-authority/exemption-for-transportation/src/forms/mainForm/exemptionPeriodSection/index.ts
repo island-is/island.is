@@ -67,7 +67,7 @@ export const exemptionPeriodSection = buildSection({
               application.answers,
               'exemptionPeriod.dateTo',
             )
-            const dateTo = dateToStr ? new Date(dateToStr) : new Date()
+            const dateTo = dateToStr ? new Date(dateToStr) : undefined
 
             const today = new Date()
             if (!dateTo) return today

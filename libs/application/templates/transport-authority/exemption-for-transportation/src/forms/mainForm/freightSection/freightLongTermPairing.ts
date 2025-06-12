@@ -89,11 +89,11 @@ const FreightPairingSubSection = (freightIndex: number) =>
             isMulti: true,
             options: (application) => {
               const convoyItems = getConvoyItems(application.answers)
-              return convoyItems.map((item, freightIndex) => ({
+              return convoyItems.map((item, convoyIndex) => ({
                 label: {
                   ...freight.labels.pairingConvoyOption,
                   values: {
-                    convoyNumber: freightIndex + 1,
+                    convoyNumber: convoyIndex + 1,
                     vehicleAndTrailerPermno: getConvoyShortName(item),
                   },
                 },
@@ -127,7 +127,7 @@ const FreightPairingSubSection = (freightIndex: number) =>
                     return {
                       ...freight.labels.pairingFreightWithConvoySubtitle,
                       values: {
-                        convoyNumber: freightIndex + 1,
+                        convoyNumber: convoyIndex + 1,
                         vehicleAndTrailerPermno: getConvoyShortName(convoyItem),
                       },
                     }
@@ -216,7 +216,7 @@ const FreightPairingSubSection = (freightIndex: number) =>
                   suffix: freight.labels.metersSuffix,
                 }),
                 buildAlertMessageField({
-                  id: 'freightPairing.alertValidation',
+                  id: `freightPairing.alertValidation.${freightIndex}`,
                   title: freight.create.errorAlertMessageTitle,
                   message: (application) => {
                     // Empty list error

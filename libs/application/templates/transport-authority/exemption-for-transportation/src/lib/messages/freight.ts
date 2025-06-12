@@ -137,7 +137,7 @@ export const freight = {
       description: 'Meters suffix',
     },
     tonsSuffix: {
-      id: 'ta.eft.application:freight.labels.metersSuffix',
+      id: 'ta.eft.application:freight.labels.tonsSuffix',
       defaultMessage: ' tonn',
       description: 'Tons suffix',
     },
