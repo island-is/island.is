@@ -9,6 +9,7 @@ import styled, { useTheme } from 'styled-components/native'
 import { PressableHighlight } from '../../../components/pressable-highlight/pressable-highlight'
 import { useOrganizationsStore } from '../../../stores/organizations-store'
 import { Container, Icon, Typography } from '../../../ui'
+import { isAndroid } from '../../../utils/devices'
 import { getInitials } from '../../../utils/get-initials'
 
 export const TOGGLE_ANIMATION_DURATION = 300
@@ -77,12 +78,14 @@ export const DocumentListItem = ({
   const { getOrganizationLogoUrl } = useOrganizationsStore()
 
   const height = useSharedValue(0)
-  const containerOpacity = useSharedValue(0)
+  const containerOpacity = useSharedValue(isAndroid ? 1 : 0)
   const isExpanded = useSharedValue(isOpen)
   const shouldAnimate = useSharedValue(false)
 
   useEffect(() => {
-    containerOpacity.value = withTiming(1, { duration: 200 })
+    if (!isAndroid) {
+      containerOpacity.value = withTiming(1, { duration: 200 })
+    }
   }, [])
 
   const derivedHeight = useDerivedValue(() => {
@@ -96,14 +99,21 @@ export const DocumentListItem = ({
     overflow: 'hidden',
   }))
 
-  const containerAnimatedStyle = useAnimatedStyle(() => ({
-    opacity: withTiming(containerOpacity.value, { duration: 100 }),
-  }))
+  const containerAnimatedStyle = useAnimatedStyle(() => {
+    if (isAndroid) {
+      return {}
+    }
+
+    return {
+      opacity: withTiming(containerOpacity.value, { duration: 100 }),
+    }
+  })
 
   const handlePress = () => {
     if (!closeable) {
       return
     }
+
     shouldAnimate.value = true
     isExpanded.value = !isExpanded.value
   }
