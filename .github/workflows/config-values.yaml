@@ -151,3 +151,20 @@ jobs:
             while IFS= read -r secret ; do echo $secret; done <<< "$missing"
             exit 1
           fi
+
+  success:
+    name: Config Values Success
+    if: ${{ !cancelled() }}
+    needs:
+      - check-secrets
+    runs-on: arc-shared
+    steps:
+      - name: Collect
+        run: |
+          for job in ${{ needs.check-secrets.result }}; do
+            if [[ "$job" == "failure" ]]; then
+              echo "::error title=config values::❌ config values workflow failed!"
+              exit 1
+            fi
+          done
+          echo "::info title=config values::✅ config values workflow ran successfully."
