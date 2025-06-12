@@ -13,6 +13,11 @@ import {
   caseTableColumns,
 } from './caseTableColumn'
 
+export enum CaseActionType {
+  VIEW = 'VIEW',
+  CANCEL = 'CANCEL',
+}
+
 export enum CaseTableType {
   COURT_OF_APPEALS_IN_PROGRESS = 'COURT_OF_APPEALS_IN_PROGRESS',
   COURT_OF_APPEALS_COMPLETED = 'COURT_OF_APPEALS_COMPLETED',

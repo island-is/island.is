@@ -4,6 +4,8 @@ import {
   getSchemaPath,
 } from '@nestjs/swagger'
 
+import { CaseActionType } from '@island.is/judicial-system/types'
+
 export class StringValue {
   @ApiProperty({ type: String, description: 'The string value' })
   readonly str!: string
@@ -67,6 +69,18 @@ class CaseTableRow {
     description: 'Indicates if the case belongs to the current user',
   })
   readonly isMyCase!: boolean
+
+  @ApiProperty({
+    enum: CaseActionType,
+    description: 'The action to take on row click',
+  })
+  readonly actionOnRowClick!: CaseActionType
+
+  @ApiProperty({
+    enum: [CaseActionType],
+    description: 'The available context menu actions',
+  })
+  readonly contextMenuActions!: CaseActionType[]
 
   @ApiProperty({ type: [CaseTableCell], description: 'The row cells' })
   readonly cells!: CaseTableCell[]

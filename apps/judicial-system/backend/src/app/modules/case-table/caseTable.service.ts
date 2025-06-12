@@ -6,10 +6,15 @@ import { InjectModel } from '@nestjs/sequelize'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
+  CaseActionType,
+  CaseState,
   CaseTableColumnKey,
   caseTables,
   CaseTableType,
   isDistrictCourtUser,
+  isIndictmentCase,
+  isProsecutionUser,
+  isRequestCase,
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
@@ -22,6 +27,8 @@ import { caseTableWhereOptions } from './caseTable.whereOptions'
 const getAttributes = (caseTableCellKeys: CaseTableColumnKey[]) => {
   return [
     'id',
+    'type',
+    'state',
     ...caseTableCellKeys
       .map((k) => caseTableCellGenerators[k].attributes ?? [])
       .flat(),
@@ -82,6 +89,65 @@ const isMyCase = (theCase: Case, user: TUser): boolean => {
   return false
 }
 
+const getActionOnRowClick = (theCase: Case, user: TUser): CaseActionType => {
+  if (
+    isDistrictCourtUser(user) &&
+    isIndictmentCase(theCase.type) &&
+    theCase.state === CaseState.WAITING_FOR_CANCELLATION
+  ) {
+    return CaseActionType.CANCEL
+  }
+
+  return CaseActionType.VIEW
+}
+
+const canDeleteRequestCase = (caseToDelete: Case): boolean => {
+  return (
+    caseToDelete.state === CaseState.NEW ||
+    caseToDelete.state === CaseState.DRAFT ||
+    caseToDelete.state === CaseState.SUBMITTED ||
+    caseToDelete.state === CaseState.RECEIVED
+  )
+}
+
+const canDeleteIndictmentCase = (caseToDelete: Case): boolean => {
+  return (
+    caseToDelete.state === CaseState.DRAFT ||
+    caseToDelete.state === CaseState.WAITING_FOR_CONFIRMATION
+  )
+}
+
+const canDeleteCase = (caseToDelete: Case): boolean => {
+  if (isRequestCase(caseToDelete.type)) {
+    return canDeleteRequestCase(caseToDelete)
+  }
+
+  if (isIndictmentCase(caseToDelete.type)) {
+    return canDeleteIndictmentCase(caseToDelete)
+  }
+
+  return false
+}
+
+const getContextMenuActions = (
+  theCase: Case,
+  user: TUser,
+): CaseActionType[] => {
+  if (isProsecutionUser(user) && canDeleteCase(theCase)) {
+    return [CaseActionType.VIEW, CaseActionType.CANCEL]
+  }
+
+  if (
+    isDistrictCourtUser(user) &&
+    isIndictmentCase(theCase.type) &&
+    theCase.state === CaseState.WAITING_FOR_CANCELLATION
+  ) {
+    return []
+  }
+
+  return [CaseActionType.VIEW]
+}
+
 @Injectable()
 export class CaseTableService {
   constructor(
@@ -110,11 +176,11 @@ export class CaseTableService {
       rows: cases.map((c) => ({
         caseId: c.id,
         isMyCase: isMyCase(c, user),
+        actionOnRowClick: getActionOnRowClick(c, user),
+        contextMenuActions: getContextMenuActions(c, user),
         cells: caseTableCellKeys.map((k) =>
           caseTableCellGenerators[k].generate(c, user),
         ),
-        // TODO: Add action on row click
-        // TODO: Add context mentu actions
       })),
     }
   }

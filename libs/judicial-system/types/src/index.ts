@@ -147,6 +147,7 @@ export { type CourtDocument } from './lib/courtDocument'
 
 export { type CaseTableColumnKey } from './lib/tables/caseTableColumn'
 export {
+  CaseActionType,
   CaseTableType,
   getCaseTableType,
   caseTables,
