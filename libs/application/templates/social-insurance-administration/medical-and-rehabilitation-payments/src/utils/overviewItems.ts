@@ -13,10 +13,7 @@ import {
   KeyValueItem,
   TableData,
 } from '@island.is/application/types'
-import {
-  formatBankInfo,
-  formatCurrencyWithoutSuffix,
-} from '@island.is/application/ui-components'
+import { formatCurrencyWithoutSuffix } from '@island.is/application/ui-components'
 import format from 'date-fns/format'
 import is from 'date-fns/locale/is'
 import parseISO from 'date-fns/parseISO'
