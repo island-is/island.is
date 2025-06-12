@@ -7,7 +7,7 @@ import illustrationSrc from '../../assets/illustrations/digital-services-m1-dots
 import logo from '../../assets/logo/logo-64w.png'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useNavigationModal } from '../../hooks/use-navigation-modal'
-import { Button, NavigationBarSheet, Typography, Container } from '../../ui'
+import { Button, Container, NavigationBarSheet, Typography } from '../../ui'
 import { ComponentRegistry } from '../../utils/component-registry'
 import { isAndroid } from '../../utils/devices'
 
@@ -50,10 +50,9 @@ const { getNavigationOptions, useNavigationOptions } =
     },
   }))
 
-export const RegisterEmailScreen: NavigationFunctionComponent<{
-  url?: string
-  parentComponentId?: string
-}> = ({ componentId }) => {
+export const RegisterEmailScreen: NavigationFunctionComponent = ({
+  componentId,
+}) => {
   useNavigationOptions(componentId)
 
   const intl = useIntl()
