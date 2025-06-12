@@ -196,7 +196,6 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   useNavigationOptions(componentId)
 
   const { showModal } = useNavigationModal()
-
   const insets = useSafeAreaInsets()
   const theme = useTheme()
   const client = useApolloClient()

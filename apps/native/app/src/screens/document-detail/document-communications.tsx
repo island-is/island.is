@@ -142,7 +142,6 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
     if (!isSkeleton && comments.length > 0) {
       setShouldScroll(true)
     }
-    // Only run when isSkeleton or comments.length changes
   }, [isSkeleton, comments.length])
 
   const keyExtractor = useCallback(
@@ -154,11 +153,9 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
     if (shouldScroll) {
       setShouldScroll(false)
       setTimeout(() => {
-        requestAnimationFrame(() => {
-          flatListRef.current?.scrollToOffset({
-            offset: 75 * (comments.length - 1),
-            animated: true,
-          })
+        flatListRef.current?.scrollToOffset({
+          offset: 75 * (comments.length - 1),
+          animated: true,
         })
       }, TOGGLE_ANIMATION_DURATION + 100)
     }
