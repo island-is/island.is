@@ -23,7 +23,7 @@ export interface IFormsContext {
   setSelectedListTypes: Dispatch<SetStateAction<string[]>>
   selectedFieldTypes: string[]
   setSelectedFieldTypes: Dispatch<SetStateAction<string[]>>
-  certficationTypes: FormSystemPermissionType[]
+  certificationTypes: FormSystemPermissionType[]
   listTypes: FormSystemPermissionType[]
   fieldTypes: FormSystemPermissionType[]
 }
@@ -66,7 +66,7 @@ export const FormsContext = createContext<IFormsContext>({
   setSelectedFieldTypes: function (_value: SetStateAction<string[]>): void {
     throw new Error('setSelectedFieldTypes function not implemented')
   },
-  certficationTypes: [],
+  certificationTypes: [],
   listTypes: [],
   fieldTypes: [],
 })

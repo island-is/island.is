@@ -110,7 +110,7 @@ export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
       selectedCertificationTypes: admin?.selectedCertificationTypes?.map(cert => cert) as string[],
       selectedListTypes: admin?.selectedListTypes?.map(list => list) as string[],
       selectedFieldTypes: admin?.selectedFieldTypes?.map(field => field) as string[],
-      certficationTypes: mapPermissionTypes(admin.certificationTypes || []),
+      certificationTypes: mapPermissionTypes(admin.certificationTypes || []),
       listTypes: mapPermissionTypes(admin.listTypes || []),
       fieldTypes: mapPermissionTypes(admin.fieldTypes || []),
     }

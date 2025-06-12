@@ -21,7 +21,7 @@ export interface FormsLoaderResponse {
   selectedCertificationTypes: string[]
   selectedListTypes: string[]
   selectedFieldTypes: string[]
-  certficationTypes: FormSystemPermissionType[]
+  certificationTypes: FormSystemPermissionType[]
   listTypes: FormSystemPermissionType[]
   fieldTypes: FormSystemPermissionType[]
 }

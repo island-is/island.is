@@ -3,7 +3,7 @@ import { FormsContext } from "../../../context/FormsContext"
 import { Box, Checkbox, GridRow, Stack } from '@island.is/island-ui/core'
 import { useMutation } from "@apollo/client"
 import { CREATE_ORGANIZATION_PERMISSION, DELETE_ORGANIZATION_PERMISSION } from '@island.is/form-system/graphql'
-import { id } from "date-fns/locale"
+import { FormSystemPermissionType } from '@island.is/api/schema'
 
 type PermissionType = 'certificate' | 'list' | 'field'
 
@@ -13,7 +13,7 @@ interface Props {
 
 export const Permission = ({ type }: Props) => {
   const {
-    certficationTypes,
+    certificationTypes,
     selectedCertificationTypes,
     setSelectedCertificationTypes,
     listTypes,
@@ -24,6 +24,11 @@ export const Permission = ({ type }: Props) => {
     setSelectedFieldTypes,
     organizationId
   } = useContext(FormsContext)
+
+  const sortedPermissionsList = (list: FormSystemPermissionType[]) => {
+    if (!list) return []
+    return list.sort((a, b) => Number(a.isCommon) - Number(b.isCommon))
+  }
 
   const [addPermissionMutation] = useMutation(CREATE_ORGANIZATION_PERMISSION, {
     onCompleted: (newPermissionData) => {
@@ -42,30 +47,38 @@ export const Permission = ({ type }: Props) => {
   const [removePermissionMutation] = useMutation(DELETE_ORGANIZATION_PERMISSION)
 
   const addPermission = async (id: string) => {
-    await addPermissionMutation({
-      variables: {
-        input: {
-          updateOrganizationPermissionDto: {
-            permission: id,
-            organizationId: organizationId,
+    try {
+      await addPermissionMutation({
+        variables: {
+          input: {
+            updateOrganizationPermissionDto: {
+              permission: id,
+              organizationId: organizationId,
+            }
           }
         }
-      }
-    })
+      })
+    } catch (error) {
+      console.error('Failed to add permission:', error);
+    }
   }
 
   const removePermission = async (id: string) => {
-    await removePermissionMutation({
-      variables: {
-        input: {
-          updateOrganizationPermissionDto: {
-            permission: id,
-            organizationId: organizationId,
+    try {
+      await removePermissionMutation({
+        variables: {
+          input: {
+            updateOrganizationPermissionDto: {
+              permission: id,
+              organizationId: organizationId,
+            },
           },
         },
-      },
-    })
-    setSelectedTypes(getSelectedTypes().filter((type) => type !== id))
+      })
+      setSelectedTypes(getSelectedTypes().filter((type) => type !== id))
+    } catch (error) {
+      console.error('Failed to remove permission:', error);
+    }
   }
 
   const getSelectedTypes = () => {
@@ -84,11 +97,11 @@ export const Permission = ({ type }: Props) => {
   const getTypes = () => {
     switch (type) {
       case 'certificate':
-        return certficationTypes
+        return sortedPermissionsList(certificationTypes)
       case 'list':
-        return listTypes
+        return sortedPermissionsList(listTypes)
       case 'field':
-        return fieldTypes
+        return sortedPermissionsList(fieldTypes)
       default:
         return []
     }

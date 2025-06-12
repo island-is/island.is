@@ -26,7 +26,7 @@ export const FormsProvider = ({
     selectedCertificationTypes: selectedCert,
     selectedListTypes: selectedList,
     selectedFieldTypes: selectedField,
-    certficationTypes,
+    certificationTypes,
     listTypes,
     fieldTypes,
   } = formsLoader
@@ -92,7 +92,7 @@ export const FormsProvider = ({
     setSelectedListTypes,
     selectedFieldTypes,
     setSelectedFieldTypes,
-    certficationTypes,
+    certificationTypes,
     listTypes,
     fieldTypes,
   }), [
@@ -106,7 +106,7 @@ export const FormsProvider = ({
     selectedCertificationTypes,
     selectedListTypes,
     selectedFieldTypes,
-    certficationTypes,
+    certificationTypes,
     listTypes,
     fieldTypes,
   ])
