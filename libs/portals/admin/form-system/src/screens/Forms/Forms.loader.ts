@@ -92,6 +92,7 @@ export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
 
     const organizationNationalId = userInfo?.profile.nationalId
     const admin = data.formSystemOrganizationAdmin
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const mapPermissionTypes = (types: any[]): FormSystemPermissionType[] =>
       types?.map(type => ({
         id: type?.id,
