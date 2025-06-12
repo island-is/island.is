@@ -35,6 +35,7 @@ import { SignatureCollectionListSummary } from './models/areaSummaryReport.model
 import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.input'
 import { SignatureCollectionCollectionTypeInput } from './dto/collectionType.input'
 import { SignatureCollectionListIdWithTypeInput } from './dto/listId.input'
+import { SignatureCollectionCollectionTypeFilterInput } from './dto/collectionTypeFilter.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard, UserAccessGuard)
 @Resolver()
@@ -54,8 +55,12 @@ export class SignatureCollectionResolver {
 
   @BypassAuth()
   @Query(() => [SignatureCollection])
-  async signatureCollectionCurrent(): Promise<SignatureCollection[]> {
-    return this.signatureCollectionService.currentCollection()
+  async signatureCollectionCurrent(
+    @Args('input') input?: SignatureCollectionCollectionTypeFilterInput,
+  ): Promise<SignatureCollection[]> {
+    return this.signatureCollectionService.currentCollection(
+      input?.collectionTypeFilter,
+    )
   }
 
   @BypassAuth()

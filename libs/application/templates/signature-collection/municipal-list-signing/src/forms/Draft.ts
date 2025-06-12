@@ -18,6 +18,7 @@ import { m } from '../lib/messages'
 import { SignatureCollectionList } from '@island.is/api/schema'
 import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
 import { IndividualDto } from '@island.is/clients/national-registry-v2'
+import { format as formatNationalId } from 'kennitala'
 
 export const Draft: Form = buildForm({
   id: 'SignListDraft',
@@ -122,16 +123,24 @@ export const Draft: Form = buildForm({
               title: m.guarantorsNationalId,
               width: 'half',
               readOnly: true,
-              //Todo: update once available from externalData
-              defaultValue: '010130-3019',
+              defaultValue: ({ externalData }: Application) =>
+                formatNationalId(
+                  getValueViaPath(
+                    externalData,
+                    'nationalRegistry.data.nationalId',
+                  ) ?? '',
+                ),
             }),
             buildTextField({
               id: 'guarantorsName',
               title: m.guarantorsName,
               width: 'half',
               readOnly: true,
-              //Todo: update once available from externalData
-              defaultValue: 'Jón Jónsson',
+              defaultValue: ({ externalData }: Application) =>
+                getValueViaPath(
+                  externalData,
+                  'nationalRegistry.data.fullName',
+                ) ?? '',
             }),
             buildSubmitField({
               id: 'submit',

@@ -95,28 +95,29 @@ export const convertToQueryParams = <T>(data: T) => {
 }
 
 export const getDateOfCalculationsOptions = (pageData?: CustomPage | null) => {
-  const options: Option<string>[] = pageData?.configJson
-    ?.dateOfCalculationOptions ?? [
-    {
-      label: '2024',
-      value: new Date(2024, 11, 31).toISOString(),
-    },
-    {
-      label: '2023 (júl-des)',
-      value: new Date(2023, 11, 31).toISOString(),
-    },
-    {
-      label: '2023 (jan-jún)',
-      value: new Date(2023, 5, 30).toISOString(),
-    },
-    {
-      label: '2022 (jún-des)',
-      value: new Date(2022, 11, 31).toISOString(),
-    },
-    {
-      label: '2022 (jan-maí)',
-      value: new Date(2022, 5, 31).toISOString(),
-    },
+  const options: Option<string>[] = [
+    ...(pageData?.configJson?.dateOfCalculationOptions ?? [
+      {
+        label: '2024',
+        value: new Date(2024, 11, 31).toISOString(),
+      },
+      {
+        label: '2023 (júl-des)',
+        value: new Date(2023, 11, 31).toISOString(),
+      },
+      {
+        label: '2023 (jan-jún)',
+        value: new Date(2023, 5, 30).toISOString(),
+      },
+      {
+        label: '2022 (jún-des)',
+        value: new Date(2022, 11, 31).toISOString(),
+      },
+      {
+        label: '2022 (jan-maí)',
+        value: new Date(2022, 5, 31).toISOString(),
+      },
+    ]),
   ]
 
   const missingYearOptions: Option<string>[] = []

@@ -72,7 +72,7 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
     },
   ],
   requiredScopes: [ApiScope.socialInsuranceAdministration],
-  // allowMultipleApplicationsInDraft: false,
+  allowMultipleApplicationsInDraft: false,
   featureFlag: Features.medicalAndRehabilitationPayments,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
@@ -87,7 +87,7 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Prerequisites/index').then((module) =>
+                import('../forms/Prerequisites').then((module) =>
                   Promise.resolve(module.Prerequisites),
                 ),
               actions: [

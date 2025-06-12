@@ -14,6 +14,7 @@ import {
   getYesNoOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { Application } from '@island.is/application/types'
+import { shouldShowSpouseFields } from '../../../utils/conditionUtils'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
@@ -76,10 +77,7 @@ export const paymentInfoSubSection = buildSubSection({
             socialInsuranceAdministrationMessage.payment.alertSpouseAllowance,
           doesNotRequireAnswer: true,
           alertType: 'info',
-          condition: (_, externalData) => {
-            const { hasSpouse } = getApplicationExternalData(externalData)
-            return !!hasSpouse
-          },
+          condition: (_, externalData) => shouldShowSpouseFields(externalData),
         }),
         buildRadioField({
           id: 'paymentInfo.taxLevel',
