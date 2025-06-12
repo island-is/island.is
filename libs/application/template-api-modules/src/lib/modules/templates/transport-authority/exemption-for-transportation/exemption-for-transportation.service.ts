@@ -17,6 +17,7 @@ import {
 import { getValueViaPath } from '@island.is/application/core'
 import {
   DollyType,
+  error as errorMessage,
   ExemptionFor,
   ExemptionForTransportationAnswers,
   ExemptionType,
@@ -32,6 +33,7 @@ import {
   mapStringToNumber,
 } from './utils'
 import { S3Service } from '@island.is/nest/aws'
+import { TemplateApiError } from '@island.is/nest/problem'
 
 @Injectable()
 export class ExemptionForTransportationService extends BaseTemplateApiService {
@@ -63,7 +65,7 @@ export class ExemptionForTransportationService extends BaseTemplateApiService {
       fullName: nationalRegistryData?.fullName || '',
       address: nationalRegistryData?.address?.streetAddress || '',
       email: applicantAnswers?.email || '',
-      phone: applicantAnswers?.phoneNumber || '',
+      phone: applicantAnswers?.phoneNumber?.slice(-7) || '',
     }
 
     // Transporter + Responsible person
@@ -80,7 +82,7 @@ export class ExemptionForTransportationService extends BaseTemplateApiService {
           fullName: transporterAnswers?.name || '',
           address: transporterAnswers?.address || '',
           email: transporterAnswers?.email || '',
-          phone: transporterAnswers?.phone || '',
+          phone: transporterAnswers?.phone?.slice(-7) || '',
         }
 
     const responsiblePerson: Person | undefined = isCompany(
@@ -92,7 +94,7 @@ export class ExemptionForTransportationService extends BaseTemplateApiService {
             nationalId: responsiblePersonAnswers?.nationalId || '',
             fullName: responsiblePersonAnswers?.name || '',
             email: responsiblePersonAnswers?.email || '',
-            phone: responsiblePersonAnswers?.phone || '',
+            phone: responsiblePersonAnswers?.phone?.slice(-7) || '',
           }
       : undefined
 
@@ -153,161 +155,183 @@ export class ExemptionForTransportationService extends BaseTemplateApiService {
     >(application.answers, 'vehicleSpacing')
 
     // Submit the application
-    return this.exemptionForTransportationClient.submitApplication(auth, {
-      externalID: application.id,
-      // Applicant:
-      applicant: {
-        ssn: applicant.nationalId,
-        firstName: getFirstName(applicant.fullName),
-        lastName: getLastName(applicant.fullName),
-        email: applicant.email,
-        phone: applicant.phone,
-      },
-      // Transporter + Responsible person
-      transporterSSN: transporter.nationalId,
-      transporterName: transporter.fullName,
-      transporterAddress: transporter.address || '',
-      transporterPhone: transporter.phone,
-      transporterEmail: transporter.email,
-      guarantor: responsiblePerson
-        ? {
-            ssn: responsiblePerson.nationalId,
-            firstName: getFirstName(responsiblePerson.fullName),
-            lastName: getLastName(responsiblePerson.fullName),
-            email: responsiblePerson.email,
-            phone: responsiblePerson.phone,
-          }
-        : undefined,
-
-      // Exemption period
-      dateFrom: new Date(exemptionPeriodAnswers?.dateFrom || ''),
-      dateTo: new Date(exemptionPeriodAnswers?.dateTo || ''),
-
-      // Location
-      origin:
-        exemptionPeriodType === ExemptionType.SHORT_TERM
-          ? `${locationAnswers?.shortTerm?.addressFrom}, ${locationAnswers?.shortTerm?.postalCodeAndCityFrom}`
+    const result =
+      await this.exemptionForTransportationClient.submitApplication(auth, {
+        externalID: application.id,
+        // Applicant:
+        applicant: {
+          ssn: applicant.nationalId,
+          firstName: getFirstName(applicant.fullName),
+          lastName: getLastName(applicant.fullName),
+          email: applicant.email,
+          phone: applicant.phone,
+        },
+        // Transporter + Responsible person
+        transporterSSN: transporter.nationalId,
+        transporterName: transporter.fullName,
+        transporterAddress: transporter.address || '',
+        transporterPhone: transporter.phone,
+        transporterEmail: transporter.email,
+        guarantor: responsiblePerson
+          ? {
+              ssn: responsiblePerson.nationalId,
+              firstName: getFirstName(responsiblePerson.fullName),
+              lastName: getLastName(responsiblePerson.fullName),
+              email: responsiblePerson.email,
+              phone: responsiblePerson.phone,
+            }
           : undefined,
-      destination:
-        exemptionPeriodType === ExemptionType.SHORT_TERM
-          ? `${locationAnswers?.shortTerm?.addressTo}, ${locationAnswers?.shortTerm?.postalCodeAndCityTo}`
-          : undefined,
-      areas:
-        exemptionPeriodType === ExemptionType.LONG_TERM
-          ? mapEnumByValue(
-              RegionArea,
-              Area,
-              locationAnswers?.longTerm?.regions || [],
+
+        // Exemption period
+        dateFrom: new Date(exemptionPeriodAnswers?.dateFrom || ''),
+        dateTo: new Date(exemptionPeriodAnswers?.dateTo || ''),
+
+        // Location
+        origin:
+          exemptionPeriodType === ExemptionType.SHORT_TERM
+            ? `${locationAnswers?.shortTerm?.addressFrom}, ${locationAnswers?.shortTerm?.postalCodeAndCityFrom}`
+            : undefined,
+        destination:
+          exemptionPeriodType === ExemptionType.SHORT_TERM
+            ? `${locationAnswers?.shortTerm?.addressTo}, ${locationAnswers?.shortTerm?.postalCodeAndCityTo}`
+            : undefined,
+        areas:
+          exemptionPeriodType === ExemptionType.LONG_TERM
+            ? mapEnumByValue(
+                RegionArea,
+                Area,
+                locationAnswers?.longTerm?.regions || [],
+              )
+            : undefined,
+        desiredRoute:
+          exemptionPeriodType === ExemptionType.SHORT_TERM
+            ? locationAnswers?.shortTerm?.directions
+            : locationAnswers?.longTerm?.directions,
+
+        // Supporting documents
+        documents: (exemptionPeriodType === ExemptionType.LONG_TERM
+          ? [...locationFiles, ...supportingDocumentsFiles]
+          : supportingDocumentsFiles
+        ).map((file) => ({
+          documentName: file.name,
+          documentContent: file.content,
+        })),
+        comment: supportingDocumentsAnswers?.comments,
+
+        // Freight
+        cargoes:
+          freightAnswers?.items?.map((item) => ({
+            code: item.freightId,
+            name: item.name,
+            length: Number(item.length),
+            weight: Number(item.weight),
+          })) || [],
+
+        // Convoy + Freight pairing + Axle spacing + Vehicle spacing
+        haulUnits:
+          convoyAnswers?.items?.map((item) => {
+            const vehicleAxleSpacing = axleSpacingAnswers?.vehicleList.find(
+              (x) => x.permno === item.vehicle.permno,
             )
-          : undefined,
-      desiredRoute:
-        exemptionPeriodType === ExemptionType.SHORT_TERM
-          ? locationAnswers?.shortTerm?.directions
-          : locationAnswers?.longTerm?.directions,
-
-      // Supporting documents
-      documents: (exemptionPeriodType === ExemptionType.LONG_TERM
-        ? [...locationFiles, ...supportingDocumentsFiles]
-        : supportingDocumentsFiles
-      ).map((file) => ({
-        documentName: file.name,
-        documentContent: file.content,
-      })),
-      comment: supportingDocumentsAnswers?.comments,
-
-      // Freight
-      cargoes:
-        freightAnswers?.items?.map((item) => ({
-          code: item.freightId,
-          name: item.name,
-          length: Number(item.length),
-          weight: Number(item.weight),
-        })) || [],
-
-      // Convoy + Freight pairing
-      haulUnits:
-        convoyAnswers?.items?.map((item) => {
-          const vehicleAxleSpacing = axleSpacingAnswers?.vehicleList.find(
-            (x) => x.permno === item.vehicle.permno,
-          )
-          const trailerAxleSpacing = axleSpacingAnswers?.trailerList.find(
-            (x) => x.permno === item.trailer?.permno,
-          )
-          const vehicleSpacing = vehicleSpacingAnswers?.convoyList?.find(
-            (x) => x.convoyId === item.convoyId,
-          )
-          return {
-            vehicles: [
-              {
-                permno: item.vehicle.permno,
-                vehicleType: VehicleType.CAR,
-                axleSpacing: (axleSpacingAnswers?.hasExemptionForWeight
-                  ? vehicleAxleSpacing?.values || []
-                  : []
-                ).map(mapStringToNumber),
-              },
-              ...(axleSpacingAnswers?.exemptionPeriodType ===
-                ExemptionType.SHORT_TERM &&
-              (axleSpacingAnswers?.dolly?.type === DollyType.SINGLE ||
-                axleSpacingAnswers?.dolly?.type === DollyType.DOUBLE)
-                ? [
-                    {
-                      vehicleType: VehicleType.DOLLY,
-                      axleSpacing: (axleSpacingAnswers?.hasExemptionForWeight &&
-                      axleSpacingAnswers?.dolly?.type === DollyType.DOUBLE
-                        ? [axleSpacingAnswers.dolly.value]
-                        : []
-                      ).map(mapStringToNumber),
-                    },
-                  ]
-                : []),
-              ...(item.trailer?.permno
-                ? [
-                    {
-                      permno: item.trailer.permno,
-                      vehicleType: VehicleType.TRAILER,
-                      axleSpacing: (axleSpacingAnswers?.hasExemptionForWeight
-                        ? (trailerAxleSpacing?.useSameValues
-                            ? Array(trailerAxleSpacing?.axleCount).fill(
-                                trailerAxleSpacing?.singleValue,
-                              )
-                            : trailerAxleSpacing?.values) || []
-                        : []
-                      ).map(mapStringToNumber),
-                    },
-                  ]
-                : []),
-            ],
-            vehicleSpacing: (vehicleSpacingAnswers?.hasExemptionForWeight &&
-            vehicleSpacing?.hasTrailer
-              ? vehicleSpacingAnswers?.exemptionPeriodType ===
+            const trailerAxleSpacing = axleSpacingAnswers?.trailerList.find(
+              (x) => x.permno === item.trailer?.permno,
+            )
+            const vehicleSpacing = vehicleSpacingAnswers?.convoyList?.find(
+              (x) => x.convoyId === item.convoyId,
+            )
+            return {
+              // Convoy
+              vehicles: [
+                {
+                  permno: item.vehicle.permno,
+                  vehicleType: VehicleType.CAR,
+                  // Axle spacing
+                  axleSpacing: (axleSpacingAnswers?.hasExemptionForWeight
+                    ? vehicleAxleSpacing?.values || []
+                    : []
+                  ).map(mapStringToNumber),
+                },
+                ...(axleSpacingAnswers?.exemptionPeriodType ===
                   ExemptionType.SHORT_TERM &&
-                (vehicleSpacing.dollyType === DollyType.SINGLE ||
-                  vehicleSpacing.dollyType === DollyType.DOUBLE)
-                ? [
-                    vehicleSpacing.vehicleToDollyValue,
-                    vehicleSpacing.dollyToTrailerValue,
-                  ]
-                : [vehicleSpacing.vehicleToTrailerValue]
-              : []
-            ).map(mapStringToNumber),
-            cargoAssignments: getAllFreightForConvoy(
-              freightPairingAnswers || [],
-              item.convoyId,
-            ).map((item) => ({
-              cargoCode: item.freightId,
-              height: Number(item.height),
-              width: Number(item.width),
-              combinedVehicleLength: Number(item.totalLength),
-              exceptionFor: mapEnumByValue(
-                ExemptionFor,
-                ExceptionType,
-                item.exemptionFor,
-              ),
-            })),
-          }
-        }) || [],
-    })
+                (axleSpacingAnswers?.dolly?.type === DollyType.SINGLE ||
+                  axleSpacingAnswers?.dolly?.type === DollyType.DOUBLE)
+                  ? [
+                      {
+                        vehicleType: VehicleType.DOLLY,
+                        // Axle spacing
+                        axleSpacing:
+                          (axleSpacingAnswers?.hasExemptionForWeight &&
+                          axleSpacingAnswers?.dolly?.type === DollyType.DOUBLE
+                            ? [axleSpacingAnswers.dolly.value]
+                            : []
+                          ).map(mapStringToNumber),
+                      },
+                    ]
+                  : []),
+                ...(item.trailer?.permno
+                  ? [
+                      {
+                        permno: item.trailer.permno,
+                        vehicleType: VehicleType.TRAILER,
+                        // Axle spacing
+                        axleSpacing: (axleSpacingAnswers?.hasExemptionForWeight
+                          ? (trailerAxleSpacing?.useSameValues
+                              ? Array(
+                                  (trailerAxleSpacing?.axleCount ?? 0) - 1,
+                                ).fill(trailerAxleSpacing?.singleValue)
+                              : trailerAxleSpacing?.values) || []
+                          : []
+                        ).map(mapStringToNumber),
+                      },
+                    ]
+                  : []),
+              ],
+              // Vehicle Spacing
+              vehicleSpacing: (vehicleSpacingAnswers?.hasExemptionForWeight &&
+              vehicleSpacing?.hasTrailer
+                ? vehicleSpacingAnswers?.exemptionPeriodType ===
+                    ExemptionType.SHORT_TERM &&
+                  (vehicleSpacing.dollyType === DollyType.SINGLE ||
+                    vehicleSpacing.dollyType === DollyType.DOUBLE)
+                  ? [
+                      vehicleSpacing.vehicleToDollyValue,
+                      vehicleSpacing.dollyToTrailerValue,
+                    ]
+                  : [vehicleSpacing.vehicleToTrailerValue]
+                : []
+              ).map(mapStringToNumber),
+              // Freight pairing
+              cargoAssignments: getAllFreightForConvoy(
+                freightPairingAnswers || [],
+                item.convoyId,
+              ).map((item) => ({
+                cargoCode: item.freightId,
+                height: Number(item.height),
+                width: Number(item.width),
+                combinedVehicleLength: Number(item.totalLength),
+                exceptionFor: mapEnumByValue(
+                  ExemptionFor,
+                  ExceptionType,
+                  item.exemptionFor,
+                ),
+              })),
+            }
+          }) || [],
+      })
+
+    if (result.hasError) {
+      throw new TemplateApiError(
+        {
+          title: errorMessage.submitErrorTitle,
+          summary: result.errorMessages
+            ? result.errorMessages.join(',')
+            : errorMessage.submitErrorFallbackMessage,
+        },
+        400,
+      )
+    }
+
+    return result
   }
 
   private async getAttachmentAsBase64(

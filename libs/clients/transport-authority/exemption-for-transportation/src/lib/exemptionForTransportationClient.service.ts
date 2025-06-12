@@ -2,10 +2,13 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { Injectable } from '@nestjs/common'
 import { PermitApplicationApi } from '../../gen/fetch/apis'
 import {
+  ExemptionApplicationValidation,
   ExemptionRules,
-  ExemptionValidation,
+  ExemptionVehicleValidation,
 } from './exemptionForTransportationClient.types'
 import { RouteApplicationAddModel } from '../../gen/fetch'
+import { logger } from '@island.is/logging'
+import { getErrorMessagesFromTryCatch } from './exemptionForTransportationClient.utils'
 
 @Injectable()
 export class ExemptionForTransportationClient {
@@ -53,7 +56,7 @@ export class ExemptionForTransportationClient {
     auth: User,
     permno: string,
     shouldBeTrailer: boolean,
-  ): Promise<ExemptionValidation> {
+  ): Promise<ExemptionVehicleValidation> {
     try {
       const result = await this.permitApplicationApiWithAuth(
         auth,
@@ -86,11 +89,18 @@ export class ExemptionForTransportationClient {
   public async submitApplication(
     auth: User,
     application: RouteApplicationAddModel,
-  ) {
-    await this.permitApplicationApiWithAuth(auth).applicationsRoutePost({
-      apiVersion: '1.0',
-      apiVersion2: '1.0',
-      ...application,
-    })
+  ): Promise<ExemptionApplicationValidation> {
+    try {
+      await this.permitApplicationApiWithAuth(auth).applicationsRoutePost({
+        apiVersion: '1.0',
+        apiVersion2: '1.0',
+        routeApplicationAddModel: application,
+      })
+      return { hasError: false }
+    } catch (e) {
+      logger.error(`Failed to submit application for exemption: ${e.message}`)
+      const errorMessages = getErrorMessagesFromTryCatch(e)
+      return { hasError: true, errorMessages }
+    }
   }
 }

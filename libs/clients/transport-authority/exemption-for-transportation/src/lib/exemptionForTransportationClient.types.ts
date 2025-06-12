@@ -18,13 +18,18 @@ export interface ExemptionRules {
   longTermMeasurementLimitations: ExemptionRulesLimitations
 }
 
-export interface ExemptionValidation {
+export interface ExemptionValidationMessage {
+  errorNo?: string | null
+  defaultMessage?: string | null
+}
+
+export interface ExemptionVehicleValidation {
   isInspected: boolean
   isInOrder: boolean
   errorMessages?: Array<ExemptionValidationMessage> | null
 }
 
-export interface ExemptionValidationMessage {
-  errorNo?: string | null
-  defaultMessage?: string | null
+export interface ExemptionApplicationValidation {
+  hasError: boolean
+  errorMessages?: string[]
 }
