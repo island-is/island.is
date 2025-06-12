@@ -1,6 +1,7 @@
 import {
   YES,
   buildAlertMessageField,
+  buildBankAccountField,
   buildMultiField,
   buildRadioField,
   buildSubSection,
@@ -9,7 +10,6 @@ import {
 import { TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
-  getBankIsk,
   getTaxOptions,
   getYesNoOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
@@ -35,16 +35,13 @@ export const paymentInfoSubSection = buildSubSection({
           doesNotRequireAnswer: true,
           alertType: 'info',
         }),
-        buildTextField({
+        buildBankAccountField({
           id: 'paymentInfo.bank',
-          title: socialInsuranceAdministrationMessage.payment.bank,
-          format: '####-##-######',
-          placeholder: '0000-00-000000',
           defaultValue: (application: Application) => {
             const { bankInfo } = getApplicationExternalData(
               application.externalData,
             )
-            return bankInfo ? getBankIsk(bankInfo) : ''
+            return { ...bankInfo, bankNumber: bankInfo?.bank }
           },
         }),
         buildRadioField({

@@ -32,6 +32,7 @@ export interface CreateListInput {
   owner: OwnerInput
   collectionType: CollectionType
   areas?: AreaInput[]
+  listName?: string
 }
 
 // Should replace CreateListInput once refactored to new ÞÍ endpoints

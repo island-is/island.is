@@ -14,12 +14,22 @@ export const formatBankInfo = (bankInfo: string) => {
   return bankInfo
 }
 
+export const bankInfoToString = (bankInfo: BankInfo) => {
+  return bankInfo
+    ? `${bankInfo.bankNumber ?? ''}-${bankInfo.ledger ?? ''}-${
+        bankInfo.accountNumber ?? ''
+      }`
+    : ''
+}
+
 export const getBankIsk = (bankInfo: BankInfo) => {
   return !isEmpty(bankInfo) &&
-    bankInfo.bank &&
+    (bankInfo.bank || bankInfo.bankNumber) &&
     bankInfo.ledger &&
     bankInfo.accountNumber
-    ? bankInfo.bank + bankInfo.ledger + bankInfo.accountNumber
+    ? (bankInfo.bank || bankInfo.bankNumber) +
+        bankInfo.ledger +
+        bankInfo.accountNumber
     : ''
 }
 
