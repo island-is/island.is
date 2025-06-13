@@ -112,6 +112,11 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
+      - name: Setup yarn (infra)
+        uses: ./.github/actions/setup-yarn
+        with:
+          working-directory: infra/
+
       - name: load-deps
         uses: ./.github/actions/load-deps
 
