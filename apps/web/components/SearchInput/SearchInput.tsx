@@ -31,6 +31,7 @@ import {
   GetSearchResultsQuery,
   LifeEventPage,
   News,
+  OrganizationParentSubpage,
   OrganizationSubpage,
   QuerySearchResultsArgs,
   SearchableContentTypes,
@@ -412,6 +413,7 @@ type SearchResultItem =
   | News
   | SubArticle
   | OrganizationSubpage
+  | OrganizationParentSubpage
 
 type ResultsProps = {
   search: SearchState
@@ -468,7 +470,12 @@ const Results = ({
                 const typename = item.__typename?.toLowerCase() as
                   | LinkType
                   | 'anchorpage'
-                let variables = item.slug?.split('/')
+                  | 'organizationparentsubpage'
+                let variables: string[] = []
+
+                if ('slug' in item) {
+                  variables = item.slug.split('/')
+                }
 
                 if (typename === 'organizationsubpage') {
                   variables = (item as OrganizationSubpage).url
@@ -479,7 +486,7 @@ const Results = ({
                     type: 'link',
                     string:
                       typename === 'organizationparentsubpage'
-                        ? item.href
+                        ? (item as OrganizationParentSubpage).href
                         : linkResolver(
                             typename === 'anchorpage'
                               ? extractAnchorPageLinkType(item as AnchorPage)
