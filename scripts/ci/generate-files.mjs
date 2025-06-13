@@ -69,6 +69,36 @@ const getPatterns = async () => {
   return Array.from(patterns)
 }
 
+const extractCodegenInputs = async () => {
+  const codegenFiles = findCodegenFiles()
+  const inputs = new Set()
+
+  for (const file of codegenFiles) {
+    const config = await parseCodegenFile(file)
+
+    const addInput = (val) => addToPatterns(inputs, val)
+
+    if (config.schema) addInput(config.schema)
+    if (config.documents) addInput(config.documents)
+
+    if (config.generates) {
+      Object.values(config.generates).forEach((entry) => {
+        if (typeof entry !== 'object') return
+
+        if (entry.schema) addInput(entry.schema)
+        if (entry.documents) addInput(entry.documents)
+
+        if (entry.config) {
+          if (entry.config.fragments) addInput(entry.config.fragments)
+          if (entry.config.baseTypesPath) addInput(entry.config.baseTypesPath)
+        }
+      })
+    }
+  }
+
+  return Array.from(inputs)
+}
+
 async function main() {
   console.log('Starting codegen process...')
 
@@ -93,8 +123,12 @@ async function main() {
     'Gathering patterns from codegen.yml files and additional patterns...',
   )
   const patterns = await getPatterns()
+  const inputs = await extractCodegenInputs()
 
-  console.log(`Found ${patterns.length} patterns`)
+  await fs.writeFile('codegen_inputs_list.txt', inputs.join('\n'))
+
+  console.log(`Found ${patterns.length} total patterns`)
+  console.log(`Found ${inputs.length} codegen input patterns`)
 
   const existingFiles = []
   const missingFiles = []
