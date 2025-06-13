@@ -593,6 +593,7 @@ const Search: Screen<CategoryProps> = ({
                 quickContentLabel={n('quickContentLabel', 'Beint að efninu')}
                 activeLocale={activeLocale}
                 initialInputValue={q}
+                organization={state.query.organization?.[0]}
               />
               <Box width="full">
                 <Inline
