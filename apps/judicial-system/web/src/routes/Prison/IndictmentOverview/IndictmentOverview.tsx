@@ -9,7 +9,7 @@ import {
   Text,
   toast,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
@@ -23,6 +23,7 @@ import {
   PageTitle,
   PdfButton,
   RenderFiles,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   getIdAndTitleForPdfButtonForRulingSentToPrisonPdf,
@@ -43,6 +44,7 @@ import {
 import { strings } from './IndictmentOverview.strings'
 
 const IndictmentOverview = () => {
+  const { user } = useContext(UserContext)
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
@@ -145,7 +147,7 @@ const IndictmentOverview = () => {
     >
       <PageHeader title={formatMessage(strings.htmlTitle)} />
       <FormContentContainer>
-        <PageTitle previousUrl={constants.PRISON_CASES_ROUTE}>
+        <PageTitle previousUrl={getStandardUserDashboardRoute(user)}>
           {formatMessage(strings.title, {
             isFine:
               workingCase.indictmentRulingDecision ===
@@ -323,7 +325,7 @@ const IndictmentOverview = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={constants.PRISON_CASES_ROUTE}
+          previousUrl={getStandardUserDashboardRoute(user)}
           nextButtonText={footerNextButtonText.title}
           onNextButtonClick={savePunishmentType}
           nextButtonColorScheme={footerNextButtonText.colorScheme}
