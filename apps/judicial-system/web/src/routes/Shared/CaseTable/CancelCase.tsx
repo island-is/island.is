@@ -107,14 +107,12 @@ export const useCancelCase = (onComplete: (caseId: string) => void) => {
 
   const cancelCaseModal = theCase && (
     <Modal
-      title={'Mál afturkallað'}
-      text={
-        'Ákæruvaldið hefur afturkallað ákæruna. Hægt er að skrá málsnúmer og ljúka málinu hér.'
-      }
-      primaryButtonText={'Ljúka máli'}
+      title="Mál afturkallað"
+      text="Ákæruvaldið hefur afturkallað ákæruna. Hægt er að skrá málsnúmer og ljúka málinu hér."
+      primaryButtonText="Ljúka máli"
       onPrimaryButtonClick={handlePrimaryButtonClick}
       isPrimaryButtonLoading={isUpdatingCase || isTransitioningCase}
-      secondaryButtonText={'Hætta við'}
+      secondaryButtonText="Hætta við"
       onSecondaryButtonClick={handleSecondaryButtonClick}
     >
       <Box marginBottom={8}>
