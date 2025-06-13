@@ -67,16 +67,11 @@ jobs:
         uses: ./.github/actions/setup-yarn
         with:
           working-directory: infra/
-      - name: Start (pre)
-        run: |
-          ls -lahd node_modules
-          yarn infra run-local-env --no-secrets --no-dev-services ${{ env.AFFECTED_PROJECTS }}
-          exit 1
-
       - name: load-deps
         uses: ./.github/actions/load-deps
       - name: Start
         run: |
+          ls -lahd node_modules
           yarn infra run-local-env --no-secrets --no-dev-services ${{ env.AFFECTED_PROJECTS }} &
           t_stop=$(date +%s -d '+3 minutes')
           while (( $(date +%s) < t_stop )) && ! curl -s http://localhost:4200/; do
