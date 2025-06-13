@@ -610,6 +610,10 @@ const ArticleScreen: Screen<ArticleProps> = ({
       </Box>
     </Box>
   )
+
+  const indexableBySearchEngine =
+    article?.organization?.[0]?.canPagesBeFoundInSearchResults ?? true
+
   return (
     <>
       <HeadWithSocialSharing
@@ -619,7 +623,11 @@ const ArticleScreen: Screen<ArticleProps> = ({
         imageWidth={article?.featuredImage?.width.toString()}
         imageHeight={article?.featuredImage?.height.toString()}
         keywords={article?.keywords}
-      />
+      >
+        {!indexableBySearchEngine && (
+          <meta name="robots" content="noindex, nofollow" />
+        )}
+      </HeadWithSocialSharing>
       <SidebarLayout
         isSticky={false}
         sidebarContent={

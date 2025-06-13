@@ -79,6 +79,9 @@ export class Organization {
 
   @CacheField(() => [EmailSignup], { nullable: true })
   newsBottomSlices?: Array<EmailSignup>
+
+  @Field(() => Boolean, { nullable: true })
+  canPagesBeFoundInSearchResults?: boolean
 }
 
 export const mapOrganization = ({
@@ -114,5 +117,7 @@ export const mapOrganization = ({
     trackingDomain: fields.trackingDomain ?? '',
     referenceIdentifier: fields.referenceIdentifier,
     newsBottomSlices: (fields.newsBottomSlices ?? []).map(mapEmailSignup),
+    canPagesBeFoundInSearchResults:
+      fields.canPagesBeFoundInSearchResults ?? true,
   }
 }

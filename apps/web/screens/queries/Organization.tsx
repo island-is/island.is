@@ -79,6 +79,7 @@ export const GET_ORGANIZATION_QUERY = gql`
       title
       hasALandingPage
       trackingDomain
+      canPagesBeFoundInSearchResults
       logo {
         title
         url
@@ -178,6 +179,7 @@ export const GET_ORGANIZATION_PAGE_QUERY = gql`
         email
         phone
         trackingDomain
+        canPagesBeFoundInSearchResults
         publishedMaterialSearchFilterGenericTags {
           id
           title
