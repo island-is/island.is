@@ -19,8 +19,8 @@ import {
   RegionArea,
 } from '@island.is/application/templates/transport-authority/exemption-for-transportation'
 import {
-  getFirstName,
-  getLastName,
+  getAllWordsExceptFirst,
+  getFirstWord,
   mapApplicant,
   mapEnumByValue,
   mapHaulUnits,
@@ -97,8 +97,8 @@ export class ExemptionForTransportationService extends BaseTemplateApiService {
         externalID: application.id,
         applicant: {
           ssn: applicant.nationalId,
-          firstName: getFirstName(applicant.fullName),
-          lastName: getLastName(applicant.fullName),
+          firstName: getFirstWord(applicant.fullName),
+          lastName: getAllWordsExceptFirst(applicant.fullName),
           email: applicant.email,
           phone: applicant.phone,
         },
@@ -114,8 +114,8 @@ export class ExemptionForTransportationService extends BaseTemplateApiService {
         guarantor: responsiblePerson
           ? {
               ssn: responsiblePerson.nationalId,
-              firstName: getFirstName(responsiblePerson.fullName),
-              lastName: getLastName(responsiblePerson.fullName),
+              firstName: getFirstWord(responsiblePerson.fullName),
+              lastName: getAllWordsExceptFirst(responsiblePerson.fullName),
               email: responsiblePerson.email,
               phone: responsiblePerson.phone,
             }

@@ -17,12 +17,12 @@ import {
 } from '@island.is/application/types'
 import { isCompany } from 'kennitala'
 
-export const getFirstName = (fullName: string) => {
+export const getFirstWord = (fullName: string) => {
   const [firstName] = fullName.split(' ')
   return firstName || ''
 }
 
-export const getLastName = (fullName: string) => {
+export const getAllWordsExceptFirst = (fullName: string) => {
   const parts = fullName.split(' ')
   return parts.length > 1 ? parts.slice(1).join(' ') : ''
 }
@@ -119,8 +119,10 @@ export const mapTransporter = (
         nationalId: transporterAnswers?.nationalId || '',
         fullName: transporterAnswers?.name || '',
         address: transporterAnswers?.address || '',
-        postalCode: getFirstName(transporterAnswers?.postalCodeAndCity || ''),
-        city: getLastName(transporterAnswers?.postalCodeAndCity || ''),
+        postalCode: getFirstWord(transporterAnswers?.postalCodeAndCity || ''),
+        city: getAllWordsExceptFirst(
+          transporterAnswers?.postalCodeAndCity || '',
+        ),
         email: transporterAnswers?.email || '',
         phone: transporterAnswers?.phone?.slice(-7) || '',
       }
