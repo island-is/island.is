@@ -475,7 +475,7 @@ describe('MeUserProfileController', () => {
         },
       })
 
-      expect(userProfile.emails?.[0]?.email).toBe(null)
+      expect(userProfile.emails.length).toBe(0)
       expect(userProfile.mobilePhoneNumber).toBe(
         testUserProfile.mobilePhoneNumber,
       )
@@ -904,10 +904,9 @@ describe('MeUserProfileController', () => {
         where: { nationalId: testUserProfile.nationalId },
       })
 
-      expect(userProfile?.emails?.[0].email).toBe(null)
+      expect(userProfile.emails.length).toBe(0)
       expect(userProfile.mobilePhoneNumber).toBe(null)
       expect(userProfile.mobilePhoneNumberVerified).toBe(false)
-      expect(userProfile?.emails?.[0].emailStatus).toBe(DataStatus.EMPTY)
       expect(userProfile.mobileStatus).toBe(DataStatus.EMPTY)
       expect(userProfile.nextNudge.toString()).toBe(
         addMonths(userProfile.lastNudge, NUDGE_INTERVAL).toString(),

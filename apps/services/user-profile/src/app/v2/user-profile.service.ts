@@ -328,38 +328,57 @@ export class UserProfileService {
         { transaction },
       )
 
-      // Find primary email, if it doesn't exist, create it, if it does, update it
-      const primaryEmail = await this.emailModel.findOne({
-        where: {
-          nationalId,
-          primary: true,
-        },
-        transaction,
-        useMaster: true,
-      })
-
-      if (primaryEmail) {
-        // Only update if it has incoming changes
-        if (isEmailDefined) {
-          await primaryEmail.update({
-            email: userProfile.email || null,
-            emailStatus: calculatedEmailStatus,
-          })
-        }
-      } else {
-        // This is a workaround to ensure that the primary email is created after the user profile is created
-        setTimeout(async () => {
-          await this.emailModel.create({
-            id: uuid(),
-            email: userProfile.email || null,
-            primary: true,
+      // Now lets check if the email is already in the database
+      if (isEmailDefined) {
+        // Lets find the primary email and set it it to false
+        const primaryEmail = await this.emailModel.findOne({
+          where: {
             nationalId,
-            emailStatus:
-              isEmailDefined && userProfile.email
-                ? DataStatus.VERIFIED
-                : DataStatus.NOT_DEFINED,
+            primary: true,
+          },
+          transaction,
+          useMaster: true,
+        })
+
+        if (primaryEmail) {
+          // Set the primary email to false
+          await primaryEmail.update({ primary: false }, { transaction })
+        }
+
+        if (isEmailDefined && userProfile.email !== '') {
+          const email = await this.emailModel.findOne({
+            where: {
+              email: userProfile.email,
+            },
           })
-        }, 2500)
+
+          await new Promise((resolve) => setTimeout(resolve, 2500))
+
+          if (email) {
+            await email.update(
+              {
+                primary: true,
+                emailStatus: calculatedEmailStatus,
+              },
+              { transaction },
+            )
+          } else {
+            // This is a workaround to ensure that the primary email is created after the user profile is created
+            await this.emailModel.create(
+              {
+                id: uuid(),
+                email: userProfile.email || null,
+                primary: true,
+                nationalId,
+                emailStatus:
+                  isEmailDefined && userProfile.email
+                    ? DataStatus.VERIFIED
+                    : DataStatus.NOT_DEFINED,
+              },
+              { transaction },
+            )
+          }
+        }
       }
 
       // Update islykill settings
