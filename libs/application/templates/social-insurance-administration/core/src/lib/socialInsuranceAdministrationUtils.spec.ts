@@ -1,6 +1,7 @@
 import { BankInfo, PaymentInfo } from '../types'
 import { BankAccountType } from './constants'
 import {
+  bankInfoToString,
   formatBank,
   formatBankInfo,
   friendlyFormatIBAN,
@@ -22,6 +23,18 @@ describe('formatBankInfo', () => {
     const formattedBank = formatBankInfo(bankInfo)
 
     expect('222200123456').toEqual(formattedBank)
+  })
+})
+
+describe('bankInfoToString', () => {
+  it('format bank info to string', () => {
+    const bankInfo: BankInfo = {
+      bankNumber: '2222',
+      ledger: '00',
+      accountNumber: '123456',
+    }
+    const bankInfoString = bankInfoToString(bankInfo)
+    expect('2222-00-123456').toEqual(bankInfoString)
   })
 })
 
