@@ -893,7 +893,7 @@ describe('CaseController - Update', () => {
           elementId: [defendantId1, subpoenaId1],
         },
         {
-          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
+          type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA,
           user,
           caseId: theCase.id,
           elementId: [defendantId1, subpoenaId1],
@@ -911,7 +911,7 @@ describe('CaseController - Update', () => {
           elementId: [defendantId2, subpoenaId2],
         },
         {
-          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
+          type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA,
           user,
           caseId: theCase.id,
           elementId: [defendantId2, subpoenaId2],
