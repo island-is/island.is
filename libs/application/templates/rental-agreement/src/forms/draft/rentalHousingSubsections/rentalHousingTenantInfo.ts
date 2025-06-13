@@ -2,14 +2,18 @@ import {
   buildSubSection,
   buildMultiField,
   buildTableRepeaterField,
+  buildAlertMessageField,
 } from '@island.is/application/core'
 import {
   formatNationalId,
   formatPhoneNumber,
+  hasAnyMatchingNationalId,
+  hasDuplicateApplicants,
   IS_REPRESENTATIVE,
 } from '../../../utils/utils'
 import { Routes } from '../../../utils/enums'
 import { tenantDetails } from '../../../lib/messages'
+import { applicationAnswers } from '../../../shared'
 
 export const RentalHousingTenantInfo = buildSubSection({
   id: Routes.TENANTINFORMATION,
@@ -78,6 +82,51 @@ export const RentalHousingTenantInfo = buildSubSection({
               tenantDetails.isRepresentative,
             ],
             rows: ['name', 'phone', 'nationalId', 'email', 'isRepresentative'],
+          },
+        }),
+        buildAlertMessageField({
+          id: 'tenantInfo.onlyRepresentativeError',
+          alertType: 'error',
+          title: tenantDetails.tenantOnlyRepresentativeTableError,
+          shouldBlockInSetBeforeSubmitCallback: true,
+          condition: (answers) => {
+            const { tenants } = applicationAnswers(answers)
+            const filterNonRepresentatives =
+              tenants?.filter(
+                (tenant) =>
+                  !tenant.isRepresentative?.includes(IS_REPRESENTATIVE),
+              ) ?? []
+
+            return tenants.length > 0 && filterNonRepresentatives.length === 0
+          },
+        }),
+        buildAlertMessageField({
+          id: 'tenantInfo.tenantSameAsLandlordError',
+          alertType: 'warning',
+          title: tenantDetails.sameTenantLandlordError,
+          condition: (answers) => {
+            const { tenants, landlords } = applicationAnswers(answers)
+
+            const landlordsNationalIds =
+              landlords?.map(
+                (landlord) => landlord.nationalIdWithName.nationalId,
+              ) ?? []
+
+            return hasAnyMatchingNationalId(landlordsNationalIds, tenants)
+          },
+        }),
+        buildAlertMessageField({
+          id: 'tenantInfo.tenantAlreadyExistsError',
+          alertType: 'warning',
+          title: tenantDetails.tenantAlreadyExistsError,
+          condition: (answers) => {
+            const { tenants } = applicationAnswers(answers)
+
+            if (tenants.length === 0 || tenants.length === 1) {
+              return false
+            }
+
+            return hasDuplicateApplicants(tenants)
           },
         }),
       ],

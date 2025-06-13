@@ -68,8 +68,20 @@ export const tenantDetails = defineMessages({
   tenantOnlyRepresentativeTableError: {
     id: 'ra.application:tenantDetails.tenantOnlyRepresentativeTableError',
     defaultMessage:
-      'Að minnsta kosti einn leigutaki þarf að vera skráður á leigusamninginn. Ekki er nóg að skrá umboðsaðlia leigusala.',
+      'Að minnsta kosti einn leigjandi þarf að vera skráður á leigusamninginn. Ekki er nóg að skrá umboðsaðila leigjanda.',
     description: 'Tenant details only a representative of tenant in table',
+  },
+  sameTenantLandlordError: {
+    id: 'ra.application:tenantDetails.sameTenantLandlordError',
+    defaultMessage:
+      'Sami aðili getur ekki verið skráður bæði sem leigusali og leigjandi.',
+    description: 'Tenant details same landlord and tenant error',
+  },
+  tenantAlreadyExistsError: {
+    id: 'ra.application:tenantDetails.tenantAlreadyExistsError',
+    defaultMessage:
+      'Sami aðili getur ekki verið skráður mörgum sinnum sem leigjandi.',
+    description: 'Tenant details tenant already registered error',
   },
   tenantNationalIdEmptyError: {
     id: 'ra.application:tenantDetails.tenantNationalIdEmptyError',
