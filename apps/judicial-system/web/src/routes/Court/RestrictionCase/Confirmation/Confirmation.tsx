@@ -120,8 +120,6 @@ const Confirmation: FC = () => {
     }
   }
 
-  console.log(workingCase.notifications)
-
   return (
     <PageLayout
       workingCase={workingCase}
