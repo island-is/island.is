@@ -24,7 +24,7 @@ class HealthGoals {
   goalDescription?: string
 
   @Field(() => [String], { nullable: true })
-  measures?: string[]
+  measures?: string[] | null
 }
 
 @ObjectType('SocialInsuranceMedicalDocumentsRehabilitationPlan')
