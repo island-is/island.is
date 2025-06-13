@@ -33,7 +33,7 @@ export const DefenderCasesTable: FC<Props> = ({
   showingCompletedCases,
 }) => {
   const { formatMessage } = useIntl()
-  const { openCaseInNewTabMenuItem } = useOpenCaseInNewTab()
+  const { openCaseInNewTab } = useOpenCaseInNewTab()
 
   const {
     withdrawAppealMenuOption,
@@ -72,7 +72,7 @@ export const DefenderCasesTable: FC<Props> = ({
         ]}
         data={cases}
         generateContextMenuItems={(row) => [
-          openCaseInNewTabMenuItem(row.id),
+          openCaseInNewTab(row.id),
           ...(shouldDisplayWithdrawAppealOption(row)
             ? [withdrawAppealMenuOption(row.id)]
             : []),

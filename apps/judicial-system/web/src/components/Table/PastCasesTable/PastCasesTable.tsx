@@ -42,7 +42,7 @@ interface Props {
 const PastCasesTable: FC<Props> = ({ cases, loading, isFiltering }) => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
-  const { openCaseInNewTabMenuItem } = useOpenCaseInNewTab()
+  const { openCaseInNewTab } = useOpenCaseInNewTab()
 
   const {
     withdrawAppealMenuOption,
@@ -90,7 +90,7 @@ const PastCasesTable: FC<Props> = ({ cases, loading, isFiltering }) => {
           ]}
           data={pastCasesData}
           generateContextMenuItems={(row) => [
-            openCaseInNewTabMenuItem(row.id),
+            openCaseInNewTab(row.id),
             ...(shouldDisplayWithdrawAppealOption(row)
               ? [withdrawAppealMenuOption(row.id)]
               : []),

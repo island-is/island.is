@@ -28,7 +28,7 @@ interface Props {
 const ActiveCases: FC<Props> = (props) => {
   const { cases, onContextMenuDeleteClick, canDeleteCase } = props
   const { formatMessage } = useIntl()
-  const { openCaseInNewTabMenuItem } = useOpenCaseInNewTab()
+  const { openCaseInNewTab } = useOpenCaseInNewTab()
 
   return (
     <Table
@@ -57,7 +57,7 @@ const ActiveCases: FC<Props> = (props) => {
       ]}
       data={cases}
       generateContextMenuItems={(row) => [
-        openCaseInNewTabMenuItem(row.id),
+        openCaseInNewTab(row.id),
         ...(canDeleteCase(row)
           ? [
               {

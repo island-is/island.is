@@ -19,6 +19,7 @@ export {
   type ContextMenuItem,
 } from './ContextMenu/ContextMenu'
 export { useOpenCaseInNewTab } from './ContextMenu/ContextMenuItems/OpenCaseInNewTab'
+export { useDeleteCase } from './ContextMenu/ContextMenuItems/DeleteCase'
 export {
   CourtArrangements,
   useCourtArrangements,

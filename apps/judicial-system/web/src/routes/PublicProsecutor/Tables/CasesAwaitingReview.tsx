@@ -35,7 +35,7 @@ interface CasesForReviewTableProps {
 
 const CasesForReview: FC<CasesForReviewTableProps> = ({ loading, cases }) => {
   const { formatMessage } = useIntl()
-  const { openCaseInNewTabMenuItem } = useOpenCaseInNewTab()
+  const { openCaseInNewTab } = useOpenCaseInNewTab()
 
   return (
     <>
@@ -62,9 +62,7 @@ const CasesForReview: FC<CasesForReviewTableProps> = ({ loading, cases }) => {
                 },
               ]}
               data={cases}
-              generateContextMenuItems={(row) => [
-                openCaseInNewTabMenuItem(row.id),
-              ]}
+              generateContextMenuItems={(row) => [openCaseInNewTab(row.id)]}
               columns={[
                 {
                   cell: (row) => (

@@ -17,6 +17,7 @@ import {
   Logo,
   PageHeader,
   SectionHeading,
+  useDeleteCase,
   useOpenCaseInNewTab,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
@@ -119,7 +120,7 @@ const render = (cell: CaseTableCell): ReactNode => {
 const CaseTable: FC = () => {
   const router = useRouter()
   const { user, hasError } = useContext(UserContext)
-  const { openCaseInNewTabMenuItem } = useOpenCaseInNewTab()
+  const { openCaseInNewTab } = useOpenCaseInNewTab()
   const { isOpeningCaseId, handleOpenCase, LoadingIndicator, showLoading } =
     useCaseList()
   const [showOnlyMyCases, setShowOnlyMyCases] = useState(false)
@@ -153,6 +154,7 @@ const CaseTable: FC = () => {
     rows.splice(idx, 1)
   }
 
+  const { deleteCase, deleteCaseModal } = useDeleteCase(removeRow)
   const { cancelCase, cancelCaseId, isCancelCaseLoading, cancelCaseModal } =
     useCancelCase(removeRow)
 
@@ -163,10 +165,10 @@ const CaseTable: FC = () => {
       return r.contextMenuActions.map((a) => {
         switch (a) {
           case CaseActionType.CANCEL:
-            return openCaseInNewTabMenuItem(r.caseId)
+            return deleteCase(r.caseId)
           case CaseActionType.VIEW:
           default: // Default to opening the case in a new tab
-            return openCaseInNewTabMenuItem(r.caseId)
+            return openCaseInNewTab(r.caseId)
         }
       })
     }
@@ -274,6 +276,7 @@ const CaseTable: FC = () => {
               ))
             )}
             {cancelCaseModal}
+            {deleteCaseModal}
           </>
         ) : (
           /* If we cannot determine which table to show, then the user does not have access to the current route */

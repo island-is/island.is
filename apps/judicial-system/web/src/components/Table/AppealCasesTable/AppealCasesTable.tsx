@@ -36,7 +36,7 @@ const AppealCasesTable: FC<Props> = (props) => {
   const { cases, loading, showingCompletedCases } = props
   const { formatMessage } = useIntl()
   const { isOpeningCaseId, handleOpenCase, showLoading } = useCaseList()
-  const { openCaseInNewTabMenuItem } = useOpenCaseInNewTab()
+  const { openCaseInNewTab } = useOpenCaseInNewTab()
 
   const activeCasesData = useMemo(
     () =>
@@ -95,7 +95,7 @@ const AppealCasesTable: FC<Props> = (props) => {
         ]}
         data={activeCasesData}
         generateContextMenuItems={(row) => {
-          return [openCaseInNewTabMenuItem(row.id)]
+          return [openCaseInNewTab(row.id)]
         }}
         columns={[
           {

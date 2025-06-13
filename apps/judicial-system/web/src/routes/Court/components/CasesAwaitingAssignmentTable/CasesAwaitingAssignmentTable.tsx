@@ -33,7 +33,7 @@ const CasesAwaitingAssignmentTable: FC<CasesAwaitingAssignmentTableProps> = (
   props,
 ) => {
   const { formatMessage } = useIntl()
-  const { openCaseInNewTabMenuItem } = useOpenCaseInNewTab()
+  const { openCaseInNewTab } = useOpenCaseInNewTab()
 
   const { loading, isFiltering, cases } = props
   return (
@@ -64,7 +64,7 @@ const CasesAwaitingAssignmentTable: FC<CasesAwaitingAssignmentTableProps> = (
               ]}
               data={cases}
               generateContextMenuItems={(row) => {
-                return [openCaseInNewTabMenuItem(row.id)]
+                return [openCaseInNewTab(row.id)]
               }}
               columns={[
                 {

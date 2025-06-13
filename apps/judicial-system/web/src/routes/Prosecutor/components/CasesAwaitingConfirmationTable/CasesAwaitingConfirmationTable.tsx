@@ -46,7 +46,7 @@ const CasesAwaitingConfirmationTable: FC<
   } = props
   const { formatMessage } = useIntl()
 
-  const { openCaseInNewTabMenuItem } = useOpenCaseInNewTab()
+  const { openCaseInNewTab } = useOpenCaseInNewTab()
 
   return (
     <section>
@@ -82,7 +82,7 @@ const CasesAwaitingConfirmationTable: FC<
               data={cases}
               generateContextMenuItems={(row) => {
                 return [
-                  openCaseInNewTabMenuItem(row.id),
+                  openCaseInNewTab(row.id),
                   ...(canDeleteCase(row)
                     ? [
                         {
