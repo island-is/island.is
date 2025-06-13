@@ -3226,6 +3226,9 @@ export interface IOrganizationFields {
 
   /** News Bottom Slices */
   newsBottomSlices?: IEmailSignup[] | undefined
+
+  /** Can pages belonging to this organization be found in search results  */
+  canPagesBeFoundInSearchResults?: boolean | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
