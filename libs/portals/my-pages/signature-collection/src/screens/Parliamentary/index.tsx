@@ -1,6 +1,5 @@
 import { Box } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { EmptyState } from '@island.is/portals/my-pages/core'
 import { m } from '../../lib/messages'
 import OwnerView from './OwnerView'
 import SigneeView from '../shared/SigneeView'
@@ -23,8 +22,10 @@ const SignatureCollectionParliamentary = () => {
 
   const { isOwner, loadingIsOwner, refetchIsOwner } = useIsOwner(collectionType)
   const userInfo = useUserInfo()
-  const { currentCollection, loadingCurrentCollection } =
-    useGetCurrentCollection(SignatureCollectionCollectionType.Parliamentary)
+  const {
+    currentCollection,
+    loadingCurrentCollection,
+  } = useGetCurrentCollection(SignatureCollectionCollectionType.Parliamentary)
   const { listsForOwner } = useGetListsForOwner(
     currentCollection?.id ?? '',
     collectionType,
