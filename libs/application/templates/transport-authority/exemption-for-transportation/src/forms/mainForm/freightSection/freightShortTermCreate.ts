@@ -12,7 +12,6 @@ import { ExemptionFor } from '../../../shared'
 import {
   formatNumber,
   getExemptionRules,
-  getRandomId,
   checkIfExemptionTypeShortTerm,
 } from '../../../utils'
 import { FreightCommonHiddenInputs } from './freightCommonHiddenInputs'
