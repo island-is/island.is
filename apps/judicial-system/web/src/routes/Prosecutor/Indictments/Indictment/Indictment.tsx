@@ -164,14 +164,22 @@ const Indictment = () => {
       }
 
       // Suspension is requested
+      const hasDrivenWithoutEverHavingLicense = trafficViolationOffenses.has(
+        IndictmentCountOffense.DRIVING_WITHOUT_EVER_HAVING_LICENSE,
+      )
 
       // If driving without ever having license, then use the future-suspension demands
-      if (
-        trafficViolationOffenses.has(
-          IndictmentCountOffense.DRIVING_WITHOUT_EVER_HAVING_LICENSE,
-        )
-      ) {
-        return strings.demandsAutofillWithFutureLicenseSuspension[gender]
+      if (hasDrivenWithoutEverHavingLicense) {
+        // If any other suspension offense is present, then use the future-suspension demands
+        // with the future license suspension
+        const hasAnyOtherSuspensionOffense = trafficViolationOffenses.size > 1
+
+        return hasAnyOtherSuspensionOffense
+          ? strings
+              .demandsAutofillWithFutureLicenseAndUnderTheInfluenceSuspensions[
+              gender
+            ]
+          : strings.demandsAutofillWithFutureLicenseSuspension[gender]
       }
 
       // If any other suspension offense is present, then use the under-the-influence-suspension demands
