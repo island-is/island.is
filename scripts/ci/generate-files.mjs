@@ -129,8 +129,6 @@ async function main() {
   )
   const patterns = await getPatterns()
 
-  await fs.writeFile('codegen_inputs_list.txt', inputs.join('\n'))
-
   console.log(`Found ${patterns.length} total patterns`)
   console.log(`Found ${inputs.length} codegen input patterns`)
 
@@ -153,6 +151,7 @@ async function main() {
   console.log(`Missing files or patterns: ${missingFiles.length}`)
 
   await fs.writeFile('generated_files_list.txt', existingFiles.join('\n'))
+  await fs.writeFile('codegen_inputs_list.txt', inputs.join('\n'))
 
   console.log(`::group::Creating archive (${outputFileName})`)
   execSync(`tar zcvf "${outputFileName}" -T generated_files_list.txt`, {
