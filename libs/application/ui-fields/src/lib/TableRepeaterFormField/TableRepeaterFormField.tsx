@@ -181,6 +181,8 @@ export const TableRepeaterFormField: FC<Props> = ({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
+  console.log('error: ', error)
+
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
       {showFieldName && (
@@ -346,7 +348,7 @@ export const TableRepeaterFormField: FC<Props> = ({
             </Box>
           )}
         </Stack>
-        {error && typeof error === 'string' && (
+        {error && (
           <Box marginTop={3}>
             <AlertMessage type="error" title={error} />
           </Box>

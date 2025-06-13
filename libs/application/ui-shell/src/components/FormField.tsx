@@ -49,6 +49,10 @@ const FormField: FC<
 
   const error = getErrorViaPath(errors, field.id)
 
+  console.log('error in formField: ', error)
+  console.log('errors in formField: ', errors)
+  console.log('field in formField: ', field)
+
   const fieldProps: FieldBaseProps = {
     application,
     setBeforeSubmitCallback,
