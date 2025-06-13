@@ -23,6 +23,7 @@ import {
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { AirfaresUsageTable } from './airfares-usage-table'
 import externalLinkIcon from '../../assets/icons/external-link.png'
+import { testIDs } from '../../utils/test-ids'
 
 const BulletList = styled.View`
   margin-vertical: 12px;
@@ -115,7 +116,7 @@ export const AirDiscountScreen: NavigationFunctionComponent = ({
     ).length === data?.airDiscountSchemeDiscounts?.length
 
   return (
-    <ScrollView style={{ flex: 1 }}>
+    <ScrollView style={{ flex: 1 }} testID={testIDs.SCREEN_AIR_DISCOUNT}>
       <SafeAreaView style={{ marginHorizontal: theme.spacing[2] }}>
         <Heading>
           <FormattedMessage
