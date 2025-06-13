@@ -28,23 +28,25 @@ runs:
       run: |
         corepack enable
 
-    - name: Restore Corepack/Yarn Cache
+    - name: Cache Corepack/Yarn
       uses: runs-on/cache@v4
       id: restore-corepack
       with:
         path: |
-          ${{ inputs.working-directory }}/.cache/corepack/corepack.tgz
-        key: ${{ runner.os }}-corepack-${{ hashFiles('package.json') }}
+          ${{ inputs.working-directory }}/.cache/corepack/yarn.tgz
+        key: ${{ runner.os }}-corepack-${{ hashFiles('package.json') }}-1
       env:
         AWS_REGION: ${{ env.AWS_REGION || 'eu-west-1' }}
 
     - name: Corepack install
-      if: steps.restore-corepack.outputs.cache-hit == 'true'
+      id: corepack-install
       shell: bash
       working-directory: ${{ inputs.working-directory }}
       run: |
         mkdir -p .cache/corepack
-        corepack install -g .cache/corepack/corepack.tgz
+        if ! corepack install -g .cache/corepack/yarn.tgz; then
+          corepack pack "yarn@$(yarn --version)" -o .cache/corepack/yarn.tgz
+        fi
 
     - name: Check node version
       working-directory: ${{ inputs.working-directory }}
