@@ -16,15 +16,17 @@ import {
   SignatureCollectionCollectionType,
 } from '@island.is/api/schema'
 
+const collectionType = SignatureCollectionCollectionType.Parliamentary
+
 const SignatureCollectionParliamentary = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
 
-  const { isOwner, loadingIsOwner, refetchIsOwner } = useIsOwner()
+  const { isOwner, loadingIsOwner, refetchIsOwner } = useIsOwner(collectionType)
   const userInfo = useUserInfo()
   const { currentCollection, loadingCurrentCollection } =
-    useGetCurrentCollection()
-  const { listsForOwner } = useGetListsForOwner('')
+    useGetCurrentCollection(collectionType)
+  const { listsForOwner } = useGetListsForOwner(collectionType, '')
 
   return (
     <Box>
@@ -53,7 +55,10 @@ const SignatureCollectionParliamentary = () => {
               }
             />
           ) : (
-            <SigneeView currentCollection={currentCollection} />
+            <SigneeView
+              currentCollection={currentCollection}
+              collectionType={collectionType}
+            />
           )}
         </Box>
       )}
