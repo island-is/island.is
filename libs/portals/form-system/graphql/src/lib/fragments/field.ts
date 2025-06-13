@@ -27,6 +27,7 @@ export const FieldFragment = gql`
     }
     isRequired
     isHidden
+    displayOrder
   }
   ${ValueDtoFragment}
   ${ListItemFragment}

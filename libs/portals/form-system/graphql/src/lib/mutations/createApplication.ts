@@ -3,7 +3,7 @@ import { ApplicationFragment } from '../fragments/application'
 
 export const CREATE_APPLICATION = gql`
   mutation CreateFormSystemApplication(
-    $input: FormSystemCreateApplicationInput!
+    $input: CreateFormSystemApplicationInput!
   ) {
     createFormSystemApplication(input: $input) {
       ...Application
