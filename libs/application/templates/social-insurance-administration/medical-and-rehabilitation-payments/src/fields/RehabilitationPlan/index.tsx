@@ -214,7 +214,6 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
           </Label>
           <Markdown>
             {data?.socialInsuranceRehabilitationPlan?.physicalHealthGoals?.measures
-              ?.split(/\n/)
               ?.map((value) => '* ' + value)
               ?.join('\n\n') ?? ''}
           </Markdown>
@@ -251,7 +250,6 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
           </Label>
           <Markdown>
             {data?.socialInsuranceRehabilitationPlan?.mentalHealthGoals?.measures
-              ?.split(/\n/)
               ?.map((value) => '* ' + value)
               ?.join('\n\n') ?? ''}
           </Markdown>
@@ -288,7 +286,6 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
           </Label>
           <Markdown>
             {data?.socialInsuranceRehabilitationPlan?.activityAndParticipationGoals?.measures
-              ?.split(/\n/)
               ?.map((value) => '* ' + value)
               ?.join('\n\n') ?? ''}
           </Markdown>
