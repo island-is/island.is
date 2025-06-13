@@ -82,6 +82,11 @@ export interface CaseTable {
   columns: CaseTableColumn[]
 }
 
+export enum CaseActionType {
+  VIEW = 'VIEW',
+  CANCEL = 'CANCEL',
+}
+
 export const pickColumns = (
   keys: CaseTableColumnKey[],
 ): CaseTableColumnMap[CaseTableColumnKey][] => {
