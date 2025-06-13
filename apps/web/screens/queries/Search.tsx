@@ -52,6 +52,12 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
             slug
           }
         }
+        ... on OrganizationParentSubpage {
+          id
+          title
+          href
+          organizationPageTitle
+        }
         ... on Manual {
           id
           title
