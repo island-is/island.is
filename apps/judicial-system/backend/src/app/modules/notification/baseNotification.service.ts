@@ -128,7 +128,7 @@ export abstract class BaseNotificationService {
           recipients && recipients.length > 1 ? recipients.slice(1) : undefined,
         subject,
         text: stripHtmlTags(html),
-        html: html,
+        html,
         attachments,
       })
     } catch (error) {
