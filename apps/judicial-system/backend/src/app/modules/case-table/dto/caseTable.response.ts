@@ -4,7 +4,10 @@ import {
   getSchemaPath,
 } from '@nestjs/swagger'
 
-import { CaseActionType } from '@island.is/judicial-system/types'
+import {
+  CaseActionType,
+  ContextMenuCaseActionType,
+} from '@island.is/judicial-system/types'
 
 export class StringValue {
   @ApiProperty({ type: String, description: 'The string value' })
@@ -77,10 +80,10 @@ class CaseTableRow {
   readonly actionOnRowClick!: CaseActionType
 
   @ApiProperty({
-    enum: [CaseActionType],
+    enum: [ContextMenuCaseActionType],
     description: 'The available context menu actions',
   })
-  readonly contextMenuActions!: CaseActionType[]
+  readonly contextMenuActions!: ContextMenuCaseActionType[]
 
   @ApiProperty({ type: [CaseTableCell], description: 'The row cells' })
   readonly cells!: CaseTableCell[]

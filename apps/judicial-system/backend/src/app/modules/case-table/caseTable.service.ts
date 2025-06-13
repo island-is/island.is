@@ -11,6 +11,7 @@ import {
   CaseTableColumnKey,
   caseTables,
   CaseTableType,
+  ContextMenuCaseActionType,
   isDistrictCourtUser,
   isIndictmentCase,
   isProsecutionUser,
@@ -107,10 +108,10 @@ const getActionOnRowClick = (theCase: Case, user: TUser): CaseActionType => {
     isIndictmentCase(theCase.type) &&
     theCase.state === CaseState.WAITING_FOR_CANCELLATION
   ) {
-    return CaseActionType.CANCEL
+    return CaseActionType.COMPLETE_CANCELLED_CASE
   }
 
-  return CaseActionType.VIEW
+  return CaseActionType.OPEN_CASE
 }
 
 const canDeleteRequestCase = (caseToDelete: Case): boolean => {
@@ -144,9 +145,12 @@ const canDeleteCase = (caseToDelete: Case): boolean => {
 const getContextMenuActions = (
   theCase: Case,
   user: TUser,
-): CaseActionType[] => {
+): ContextMenuCaseActionType[] => {
   if (isProsecutionUser(user) && canDeleteCase(theCase)) {
-    return [CaseActionType.VIEW, CaseActionType.CANCEL]
+    return [
+      ContextMenuCaseActionType.OPEN_CASE_IN_NEW_TAB,
+      ContextMenuCaseActionType.DELETE_CASE,
+    ]
   }
 
   if (
@@ -157,7 +161,7 @@ const getContextMenuActions = (
     return []
   }
 
-  return [CaseActionType.VIEW]
+  return [ContextMenuCaseActionType.OPEN_CASE_IN_NEW_TAB]
 }
 
 @Injectable()

@@ -30,6 +30,7 @@ import {
   CaseActionType,
   CaseTableCell,
   CaseTableRow,
+  ContextMenuCaseActionType,
   StringGroupValue,
   StringValue,
   TagPairValue,
@@ -164,9 +165,9 @@ const CaseTable: FC = () => {
     const getContextMenuItems = () => {
       return r.contextMenuActions.map((a) => {
         switch (a) {
-          case CaseActionType.CANCEL:
+          case ContextMenuCaseActionType.DELETE_CASE:
             return deleteCase(r.caseId)
-          case CaseActionType.VIEW:
+          case ContextMenuCaseActionType.OPEN_CASE_IN_NEW_TAB:
           default: // Default to opening the case in a new tab
             return openCaseInNewTab(r.caseId)
         }
@@ -175,13 +176,13 @@ const CaseTable: FC = () => {
 
     const getRowClickAction = () => {
       switch (r.actionOnRowClick) {
-        case CaseActionType.CANCEL:
+        case CaseActionType.COMPLETE_CANCELLED_CASE:
           return {
             onClick: () => cancelCase(r.caseId),
             isDisabled: cancelCaseId === r.caseId,
             isLoading: cancelCaseId === r.caseId && isCancelCaseLoading,
           }
-        case CaseActionType.VIEW:
+        case CaseActionType.OPEN_CASE:
         default: // Default to opening the case in a new tab
           return {
             onClick: () => handleOpenCase(r.caseId),
