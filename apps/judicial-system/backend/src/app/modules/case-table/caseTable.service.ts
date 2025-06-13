@@ -10,6 +10,7 @@ import {
   caseTables,
   CaseTableType,
   isDistrictCourtUser,
+  isProsecutionUser,
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
@@ -19,12 +20,18 @@ import { CaseTableResponse } from './dto/caseTable.response'
 import { caseTableCellGenerators } from './caseTable.cellGenerators'
 import { caseTableWhereOptions } from './caseTable.whereOptions'
 
-const getAttributes = (caseTableCellKeys: CaseTableColumnKey[]) => {
+const getAttributes = (
+  caseTableCellKeys: CaseTableColumnKey[],
+  user: TUser,
+) => {
   return [
     'id',
     ...caseTableCellKeys
       .map((k) => caseTableCellGenerators[k].attributes ?? [])
       .flat(),
+    ...(isProsecutionUser(user)
+      ? ['creatingProsecutorId', 'prosecutorId']
+      : []),
   ]
 }
 
@@ -78,6 +85,12 @@ const isMyCase = (theCase: Case, user: TUser): boolean => {
   if (isDistrictCourtUser(user)) {
     return theCase.judge?.id === user.id || theCase.registrar?.id === user.id
   }
+  if (isProsecutionUser(user)) {
+    return (
+      theCase.creatingProsecutorId === user.id ||
+      theCase.prosecutorId === user.id
+    )
+  }
 
   return false
 }
@@ -95,7 +108,7 @@ export class CaseTableService {
   ): Promise<CaseTableResponse> {
     const caseTableCellKeys = caseTables[type].columnKeys
 
-    const attributes = getAttributes(caseTableCellKeys)
+    const attributes = getAttributes(caseTableCellKeys, user)
 
     const include = getIncludes(caseTableCellKeys, user)
 

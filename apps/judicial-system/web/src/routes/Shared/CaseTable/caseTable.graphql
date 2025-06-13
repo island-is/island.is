@@ -20,12 +20,12 @@ query CaseTable($input: CaseTableQueryInput!) {
           }
           ... on TagPairValue {
             firstTag {
-              color
               text
+              color
             }
             secondTag {
-              color
               text
+              color
             }
           }
         }

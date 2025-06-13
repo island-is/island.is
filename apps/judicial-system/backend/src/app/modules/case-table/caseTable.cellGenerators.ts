@@ -50,8 +50,13 @@ import {
   TagValue,
 } from './dto/caseTable.response'
 
+// gets the element type if T is an array.
 type ElementType<T> = T extends (infer U)[] ? U : T
+
+// gets the non-null, non-undefined version of ElementType<T>.
 type DefinedObject<T> = NonNullable<ElementType<T>>
+
+// extracts keys from T where the corresponding value, after non-nullable, is an object.
 type ObjectKeys<T> = Extract<
   {
     [K in keyof T]: DefinedObject<T[K]> extends object ? K : never
@@ -416,7 +421,10 @@ const generateCaseNumberSortValue = (
   policeCaseNumber: string,
   user: TUser,
 ): string | undefined => {
-  if (isProsecutionUser(user) || isDistrictCourtUser(user)) {
+  if (isProsecutionUser(user)) {
+    return getPoliceCaseNumberSortValue(policeCaseNumber)
+  }
+  if (isDistrictCourtUser(user)) {
     return `${getCourtCaseNumberSortValue(
       courtCaseNumber,
     )}${getPoliceCaseNumberSortValue(policeCaseNumber)}`
@@ -601,6 +609,13 @@ const courtOfAppealsHead: CaseTableCellGenerator<StringValue> = {
     }
 
     return generateCell({ str: initials }, initials)
+  },
+}
+
+const created: CaseTableCellGenerator<StringValue> = {
+  attributes: ['created'],
+  generate: (c: Case): CaseTableCell<StringValue> => {
+    return generateDate(c.created)
   },
 }
 
@@ -1024,6 +1039,7 @@ export const caseTableCellGenerators: Record<
   caseType,
   appealState,
   courtOfAppealsHead,
+  created,
   validFromTo,
   rulingDate,
   requestCaseState,

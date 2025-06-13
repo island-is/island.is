@@ -1,7 +1,6 @@
 export interface CaseTableColumn {
   title: string
 }
-
 const caseNumber: CaseTableColumn = { title: 'Málsnúmer' }
 const defendants: CaseTableColumn = { title: 'Varnaraðili' }
 const caseType: CaseTableColumn = { title: 'Tegund' }
@@ -27,6 +26,7 @@ const caseSentToCourtDate: CaseTableColumn = { title: 'Útgáfudagur' }
 const arraignmentDate: CaseTableColumn = { title: 'Fyrirtaka' }
 const indictmentArraignmentDate: CaseTableColumn = { title: 'Fyrirtaka' }
 const indictmentRulingDecision: CaseTableColumn = { title: 'Niðurstaða' }
+const created: CaseTableColumn = { title: 'Stofnað' }
 
 export const caseTableColumns = {
   caseNumber,
@@ -52,6 +52,7 @@ export const caseTableColumns = {
   indictmentCaseState,
   indictmentArraignmentDate,
   indictmentRulingDecision,
+  created,
 }
 
 export type CaseTableColumnMap = typeof caseTableColumns

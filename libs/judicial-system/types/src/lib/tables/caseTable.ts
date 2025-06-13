@@ -4,39 +4,29 @@ import {
   isDistrictCourtUser,
   isPrisonAdminUser,
   isPrisonStaffUser,
+  isProsecutionUser,
+  isProsecutorRepresentativeUser,
   isPublicProsecutionOfficeUser,
 } from '../user'
+import { CaseTableColumnKey } from './caseTableColumnTypes'
 import {
-  CaseTableColumn,
-  CaseTableColumnKey,
-  CaseTableColumnMap,
-  caseTableColumns,
-} from './caseTableColumn'
-
-export enum CaseTableType {
-  COURT_OF_APPEALS_IN_PROGRESS = 'COURT_OF_APPEALS_IN_PROGRESS',
-  COURT_OF_APPEALS_COMPLETED = 'COURT_OF_APPEALS_COMPLETED',
-  DISTRICT_COURT_REQUEST_CASES_IN_PROGRESS = 'DISTRICT_COURT_REQUEST_CASES_IN_PROGRESS',
-  DISTRICT_COURT_REQUEST_CASES_APPEALED = 'DISTRICT_COURT_REQUEST_CASES_APPEALED',
-  DISTRICT_COURT_REQUEST_CASES_COMPLETED = 'DISTRICT_COURT_REQUEST_CASES_COMPLETED',
-  DISTRICT_COURT_INDICTMENTS_NEW = 'DISTRICT_COURT_INDICTMENTS_NEW',
-  DISTRICT_COURT_INDICTMENTS_RECEIVED = 'DISTRICT_COURT_INDICTMENTS_RECEIVED',
-  DISTRICT_COURT_INDICTMENTS_IN_PROGRESS = 'DISTRICT_COURT_INDICTMENTS_IN_PROGRESS',
-  DISTRICT_COURT_INDICTMENTS_FINALIZING = 'DISTRICT_COURT_INDICTMENTS_FINALIZING',
-  DISTRICT_COURT_INDICTMENTS_COMPLETED = 'DISTRICT_COURT_INDICTMENTS_COMPLETED',
-  PRISON_ACTIVE = 'PRISON_ACTIVE',
-  PRISON_DONE = 'PRISON_DONE',
-  PRISON_ADMIN_ACTIVE = 'PRISON_ADMIN_ACTIVE',
-  PRISON_ADMIN_DONE = 'PRISON_ADMIN_DONE',
-  PRISON_ADMIN_INDICTMENT_SENT_TO_PRISON_ADMIN = 'PRISON_ADMIN_INDICTMENT_SENT_TO_PRISON_ADMIN',
-  PRISON_ADMIN_INDICTMENT_REGISTERED_RULING = 'PRISON_ADMIN_INDICTMENT_REGISTERED_RULING',
-  PROSECUTORS_OFFICE_INDICTMENT_NEW = 'PROSECUTORS_OFFICE_INDICTMENT_NEW',
-  PROSECUTORS_OFFICE_INDICTMENT_IN_REVIEW = 'PROSECUTORS_OFFICE_INDICTMENT_IN_REVIEW',
-  PROSECUTORS_OFFICE_INDICTMENT_REVIEWED = 'PROSECUTORS_OFFICE_INDICTMENT_REVIEWED',
-  PROSECUTORS_OFFICE_INDICTMENT_APPEAL_PERIOD_EXPIRED = 'PROSECUTORS_OFFICE_INDICTMENT_APPEAL_PERIOD_EXPIRED',
-  PROSECUTORS_OFFICE_INDICTMENT_SENT_TO_PRISON_ADMIN = 'PROSECUTORS_OFFICE_INDICTMENT_SENT_TO_PRISON_ADMIN',
-  PROSECUTORS_OFFICE_INDICTMENT_APPEALED = 'PROSECUTORS_OFFICE_INDICTMENT_APPEALED',
-}
+  prosecutorIndictmentCompleted,
+  prosecutorIndictmentInDraft,
+  prosecutorIndictmentInProgress,
+  prosecutorIndictmentWaitingForConfirmation,
+  prosecutorRequestCasesActive,
+  prosecutorRequestCasesAppealed,
+  prosecutorRequestCasesCompleted,
+  prosecutorRequestCasesInProgress,
+  publicProsecutorIndictmentInReview,
+  publicProsecutorIndictmentReviewed,
+} from './caseTables'
+import {
+  CaseTable,
+  CaseTableRoutes,
+  CaseTableType,
+  pickColumns,
+} from './caseTableTypes'
 
 export const getCaseTableType = (
   user: InstitutionUser | undefined,
@@ -44,84 +34,109 @@ export const getCaseTableType = (
 ): CaseTableType | undefined => {
   if (isDistrictCourtUser(user)) {
     switch (route) {
-      case 'mal-i-vinnslu':
+      case CaseTableRoutes.IN_PROGRESS:
         return CaseTableType.DISTRICT_COURT_REQUEST_CASES_IN_PROGRESS
-      case 'kaerd-mal':
+      case CaseTableRoutes.REQUEST_APPEALED:
         return CaseTableType.DISTRICT_COURT_REQUEST_CASES_APPEALED
-      case 'afgreidd-mal':
+      case CaseTableRoutes.COMPLETED:
         return CaseTableType.DISTRICT_COURT_REQUEST_CASES_COMPLETED
-      case 'ny-sakamal':
+      case CaseTableRoutes.INDICTMENT_NEW:
         return CaseTableType.DISTRICT_COURT_INDICTMENTS_NEW
-      case 'mottekin-sakamal':
+      case CaseTableRoutes.INDICTMENT_RECEIVED:
         return CaseTableType.DISTRICT_COURT_INDICTMENTS_RECEIVED
-      case 'sakamal-i-vinnslu':
+      case CaseTableRoutes.INDICTMENT_IN_PROGRESS:
         return CaseTableType.DISTRICT_COURT_INDICTMENTS_IN_PROGRESS
-      case 'sakamal-i-fragangi':
+      case CaseTableRoutes.INDICTMENT_FINALIZING:
         return CaseTableType.DISTRICT_COURT_INDICTMENTS_FINALIZING
-      case 'afgreidd-sakamal':
+      case CaseTableRoutes.INDICTMENT_COMPLETED:
         return CaseTableType.DISTRICT_COURT_INDICTMENTS_COMPLETED
     }
   }
   if (isCourtOfAppealsUser(user)) {
     switch (route) {
-      case 'mal-i-vinnslu':
+      case CaseTableRoutes.IN_PROGRESS:
         return CaseTableType.COURT_OF_APPEALS_IN_PROGRESS
-      case 'afgreidd-mal':
+      case CaseTableRoutes.COMPLETED:
         return CaseTableType.COURT_OF_APPEALS_COMPLETED
     }
   }
 
   if (isPrisonAdminUser(user)) {
     switch (route) {
-      case 'virk-mal':
+      case CaseTableRoutes.ACTIVE:
         return CaseTableType.PRISON_ADMIN_ACTIVE
-      case 'lokid':
+      case CaseTableRoutes.DONE:
         return CaseTableType.PRISON_ADMIN_DONE
-      case 'mal-til-fullnustu':
+      case CaseTableRoutes.SENT_TO_PRISON:
         return CaseTableType.PRISON_ADMIN_INDICTMENT_SENT_TO_PRISON_ADMIN
-      case 'skradir-domar':
+      case CaseTableRoutes.REGISTERED_RULING:
         return CaseTableType.PRISON_ADMIN_INDICTMENT_REGISTERED_RULING
     }
   }
 
   if (isPrisonStaffUser(user)) {
     switch (route) {
-      case 'virk-mal':
+      case CaseTableRoutes.ACTIVE:
         return CaseTableType.PRISON_ACTIVE
-      case 'lokid':
+      case CaseTableRoutes.DONE:
         return CaseTableType.PRISON_DONE
     }
   }
 
   if (isPublicProsecutionOfficeUser(user)) {
     switch (route) {
-      case 'ny-mal':
+      case CaseTableRoutes.NEW:
         return CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_NEW
-      case 'mal-i-yfirlestri':
+      case CaseTableRoutes.IN_REVIEW:
         return CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_IN_REVIEW
-      case 'yfirlesin-mal':
+      case CaseTableRoutes.REVIEWED:
         return CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_REVIEWED
-      case 'frestur-lidinn':
+      case CaseTableRoutes.APPEALED_EXPIRED:
         return CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_APPEAL_PERIOD_EXPIRED
-      case 'mal-i-fullnustu':
+      case CaseTableRoutes.SENT_TO_PRISON:
         return CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_SENT_TO_PRISON_ADMIN
-      case 'afryjud-mal':
+      case CaseTableRoutes.INDICTMENT_APPEALED:
         return CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_APPEALED
     }
   }
-}
 
-interface CaseTable {
-  title: string
-  hasMyCasesFilter: boolean
-  columnKeys: CaseTableColumnKey[]
-  columns: CaseTableColumn[]
-}
+  if (isProsecutorRepresentativeUser(user)) {
+    switch (route) {
+      case CaseTableRoutes.INDICTMENT_DRAFT:
+        return CaseTableType.PROSECUTOR_INDICTMENT_IN_DRAFT
+      case CaseTableRoutes.WAITING_FOR_CONFIRMATION:
+        return CaseTableType.PROSECUTOR_INDICTMENT_WAITING_FOR_CONFIRMATION
+      case CaseTableRoutes.INDICTMENT_IN_PROGRESS:
+        return CaseTableType.PROSECUTOR_INDICTMENT_IN_PROGRESS
+      case CaseTableRoutes.INDICTMENT_COMPLETED:
+        return CaseTableType.PROSECUTOR_INDICTMENT_COMPLETED
+    }
+  }
 
-const pickColumns = (
-  keys: CaseTableColumnKey[],
-): CaseTableColumnMap[CaseTableColumnKey][] => {
-  return keys.map((key) => caseTableColumns[key])
+  if (isProsecutionUser(user)) {
+    switch (route) {
+      case CaseTableRoutes.IN_PROGRESS:
+        return CaseTableType.PROSECUTOR_REQUEST_CASES_IN_PROGRESS
+      case CaseTableRoutes.ACTIVE:
+        return CaseTableType.PROSECUTOR_REQUEST_CASES_ACTIVE
+      case CaseTableRoutes.REQUEST_APPEALED:
+        return CaseTableType.PROSECUTOR_REQUEST_CASES_APPEALED
+      case CaseTableRoutes.COMPLETED:
+        return CaseTableType.PROSECUTOR_REQUEST_CASES_COMPLETED
+      case CaseTableRoutes.IN_REVIEW:
+        return CaseTableType.PUBLIC_PROSECUTOR_INDICTMENT_IN_REVIEW
+      case CaseTableRoutes.REVIEWED:
+        return CaseTableType.PUBLIC_PROSECUTOR_INDICTMENT_REVIEWED
+      case CaseTableRoutes.INDICTMENT_DRAFT:
+        return CaseTableType.PROSECUTOR_INDICTMENT_IN_DRAFT
+      case CaseTableRoutes.WAITING_FOR_CONFIRMATION:
+        return CaseTableType.PROSECUTOR_INDICTMENT_WAITING_FOR_CONFIRMATION
+      case CaseTableRoutes.INDICTMENT_IN_PROGRESS:
+        return CaseTableType.PROSECUTOR_INDICTMENT_IN_PROGRESS
+      case CaseTableRoutes.INDICTMENT_COMPLETED:
+        return CaseTableType.PROSECUTOR_INDICTMENT_COMPLETED
+    }
+  }
 }
 
 const districtCourtRequestCasesInProgressColumnKeys: CaseTableColumnKey[] = [
@@ -474,4 +489,15 @@ export const caseTables: { [key in CaseTableType]: CaseTable } = {
   PROSECUTORS_OFFICE_INDICTMENT_SENT_TO_PRISON_ADMIN:
     prosecutorsOfficeIndictmentSentToPrisonAdmin,
   PROSECUTORS_OFFICE_INDICTMENT_APPEALED: prosecutorsOfficeIndictmentAppealed,
+  PROSECUTOR_REQUEST_CASES_IN_PROGRESS: prosecutorRequestCasesInProgress,
+  PROSECUTOR_REQUEST_CASES_ACTIVE: prosecutorRequestCasesActive,
+  PROSECUTOR_REQUEST_CASES_APPEALED: prosecutorRequestCasesAppealed,
+  PROSECUTOR_REQUEST_CASES_COMPLETED: prosecutorRequestCasesCompleted,
+  PUBLIC_PROSECUTOR_INDICTMENT_IN_REVIEW: publicProsecutorIndictmentInReview,
+  PUBLIC_PROSECUTOR_INDICTMENT_REVIEWED: publicProsecutorIndictmentReviewed,
+  PROSECUTOR_INDICTMENT_IN_DRAFT: prosecutorIndictmentInDraft,
+  PROSECUTOR_INDICTMENT_WAITING_FOR_CONFIRMATION:
+    prosecutorIndictmentWaitingForConfirmation,
+  PROSECUTOR_INDICTMENT_IN_PROGRESS: prosecutorIndictmentInProgress,
+  PROSECUTOR_INDICTMENT_COMPLETED: prosecutorIndictmentCompleted,
 }

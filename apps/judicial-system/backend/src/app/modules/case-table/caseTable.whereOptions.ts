@@ -18,34 +18,25 @@ import {
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
-const buildSubpoenaExistsCondition = (exists: boolean) =>
-  Sequelize.literal(`
-    ${exists ? '' : 'NOT'} EXISTS (
-      SELECT 1
-      FROM subpoena
-      WHERE subpoena.case_id = "Case".id
-    )
-  `)
-
-const buildAlternativeServiceExistsCondition = (exists: boolean) =>
-  Sequelize.literal(`
-    ${exists ? '' : 'NOT'} EXISTS (
-      SELECT 1
-      FROM defendant
-      WHERE defendant.case_id = "Case".id
-        AND defendant.is_alternative_service = true
-    )
-  `)
-
-const buildEventLogExistsCondition = (eventType: EventType, exists: boolean) =>
-  Sequelize.literal(`
-     ${exists ? '' : 'NOT'} EXISTS (
-        SELECT 1
-        FROM event_log
-        WHERE event_log.case_id = "Case".id
-          AND event_log.event_type = '${eventType}'
-      )
-    `)
+import {
+  buildAlternativeServiceExistsCondition,
+  buildEventLogExistsCondition,
+  buildSubpoenaExistsCondition,
+} from './whereOptions/conditions'
+import {
+  prosecutorIndictmentCompletedWhereOptions,
+  prosecutorIndictmentInDraftWhereOptions,
+  prosecutorIndictmentInProgressWhereOptions,
+  prosecutorIndictmentWaitingForConfirmationWhereOptions,
+  prosecutorRequestCasesActiveWhereOptions,
+  prosecutorRequestCasesAppealedWhereOptions,
+  prosecutorRequestCasesCompletedWhereOptions,
+  prosecutorRequestCasesInProgressWhereOptions,
+} from './whereOptions/prosecutor'
+import {
+  publicProsecutorIndictmentInReviewWhereOptions,
+  publicProsecutorIndictmentReviewedWhereOptions,
+} from './whereOptions/publicProsecutor'
 
 // District Court Request Cases
 
@@ -478,4 +469,24 @@ export const caseTableWhereOptions: Record<
     prosecutorsOfficeIndictmentSentToPrisonAdminWhereOptions,
   [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_APPEALED]: () =>
     prosecutorsOfficeIndictmentAppealedWhereOptions,
+  [CaseTableType.PROSECUTOR_REQUEST_CASES_IN_PROGRESS]: (user) =>
+    prosecutorRequestCasesInProgressWhereOptions(user),
+  [CaseTableType.PROSECUTOR_REQUEST_CASES_ACTIVE]: (user) =>
+    prosecutorRequestCasesActiveWhereOptions(user),
+  [CaseTableType.PROSECUTOR_REQUEST_CASES_APPEALED]: (user) =>
+    prosecutorRequestCasesAppealedWhereOptions(user),
+  [CaseTableType.PROSECUTOR_REQUEST_CASES_COMPLETED]: (user) =>
+    prosecutorRequestCasesCompletedWhereOptions(user),
+  [CaseTableType.PUBLIC_PROSECUTOR_INDICTMENT_IN_REVIEW]: (user) =>
+    publicProsecutorIndictmentInReviewWhereOptions(user),
+  [CaseTableType.PUBLIC_PROSECUTOR_INDICTMENT_REVIEWED]: (user) =>
+    publicProsecutorIndictmentReviewedWhereOptions(user),
+  [CaseTableType.PROSECUTOR_INDICTMENT_IN_DRAFT]: (user) =>
+    prosecutorIndictmentInDraftWhereOptions(user),
+  [CaseTableType.PROSECUTOR_INDICTMENT_WAITING_FOR_CONFIRMATION]: (user) =>
+    prosecutorIndictmentWaitingForConfirmationWhereOptions(user),
+  [CaseTableType.PROSECUTOR_INDICTMENT_IN_PROGRESS]: (user) =>
+    prosecutorIndictmentInProgressWhereOptions(user),
+  [CaseTableType.PROSECUTOR_INDICTMENT_COMPLETED]: (user) =>
+    prosecutorIndictmentCompletedWhereOptions(user),
 }

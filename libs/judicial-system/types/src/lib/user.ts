@@ -68,13 +68,25 @@ export const isProsecutionUser = (user?: InstitutionUser): boolean => {
   )
 }
 
-export const getContactInformation = (user: {
-  name: string
-  email: string
-}) => ({
-  name: user.name,
-  email: user.email,
-})
+export const isProsecutorUser = (user?: InstitutionUser): boolean => {
+  return Boolean(
+    user?.role &&
+      user.role === UserRole.PROSECUTOR &&
+      user.institution?.type &&
+      prosecutionOfficeTypes.includes(user.institution.type),
+  )
+}
+
+export const isProsecutorRepresentativeUser = (
+  user?: InstitutionUser,
+): boolean => {
+  return Boolean(
+    user?.role &&
+      user.role === UserRole.PROSECUTOR_REPRESENTATIVE &&
+      user.institution?.type &&
+      prosecutionOfficeTypes.includes(user.institution.type),
+  )
+}
 
 const publicProsecutionRoles: string[] = [UserRole.PROSECUTOR]
 
@@ -256,3 +268,11 @@ export const getAdminUserInstitutionUserRoles = (
 
   return institutionUserRoles[institutionType]
 }
+
+export const getContactInformation = (user: {
+  name: string
+  email: string
+}) => ({
+  name: user.name,
+  email: user.email,
+})
