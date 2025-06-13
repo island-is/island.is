@@ -5,6 +5,7 @@ import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import {
   Collection,
+  CollectionType,
   SignatureCollectionClientService,
 } from '@island.is/clients/signature-collection'
 import { errorMessages } from '@island.is/application/templates/signature-collection/municipal-list-creation'
@@ -52,7 +53,9 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
     )
 
     const currentCollection = (
-      await this.signatureCollectionClientService.currentCollection()
+      await this.signatureCollectionClientService.currentCollection(
+        CollectionType.LocalGovernmental,
+      )
     )
       .filter((collection) => collection.isActive)
       .filter(
@@ -113,8 +116,9 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
 
   async submit({ application, auth }: TemplateApiModuleActionProps) {
     const answers = application.answers as CreateListSchema
-    const municipalCollection = (application.externalData.municipalCollection
-      .data as Array<Collection>)[0]
+    const municipalCollection = (
+      application.externalData.municipalCollection.data as Array<Collection>
+    )[0]
 
     const input = {
       collectionType: this.collectionType,

@@ -54,10 +54,17 @@ const ListActions = ({ allowedActions }: ListActionsProps = {}) => {
           <CreateCollection collection={collection} />
         )}
         {allowedActions?.includes(Actions.LockList) && (
-          <ActionLockList listId={list.id} />
+          <ActionLockList
+            listId={list.id}
+            collectionType={list.collectionType}
+          />
         )}
         {allowedActions?.includes(Actions.ReviewComplete) && (
-          <ActionReviewComplete listId={list?.id} listStatus={listStatus} />
+          <ActionReviewComplete
+            listId={list?.id}
+            listStatus={listStatus}
+            collectionType={list.collectionType}
+          />
         )}
         {allowedActions?.includes(Actions.ExtendDeadline) && (
           <ActionExtendDeadline list={list} />

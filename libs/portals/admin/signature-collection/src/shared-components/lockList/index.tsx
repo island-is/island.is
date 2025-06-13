@@ -14,8 +14,15 @@ import { Modal } from '@island.is/react/components'
 import { useRevalidator } from 'react-router-dom'
 import { useSignatureCollectionLockListMutation } from './lockList.generated'
 import { m } from '../../lib/messages'
+import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 
-const ActionLockList = ({ listId }: { listId: string }) => {
+const ActionLockList = ({
+  listId,
+  collectionType,
+}: {
+  listId: string
+  collectionType: SignatureCollectionCollectionType
+}) => {
   const { formatMessage } = useLocale()
   const { revalidate } = useRevalidator()
 
@@ -26,6 +33,7 @@ const ActionLockList = ({ listId }: { listId: string }) => {
       variables: {
         input: {
           listId,
+          collectionType,
         },
       },
       onCompleted: () => {

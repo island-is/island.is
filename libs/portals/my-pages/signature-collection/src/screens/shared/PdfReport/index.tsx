@@ -5,10 +5,17 @@ import MyPdfDocument from './Document'
 import { useEffect } from 'react'
 import { useGetPdfReport } from '../../../hooks'
 import { m } from '../../../lib/messages'
+import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 
-export const PdfReport = ({ listId }: { listId: string }) => {
+export const PdfReport = ({
+  listId,
+  collectionType,
+}: {
+  listId: string
+  collectionType: SignatureCollectionCollectionType
+}) => {
   const { formatMessage } = useLocale()
-  const { report } = useGetPdfReport(listId || '')
+  const { report } = useGetPdfReport(listId || '', collectionType)
 
   const [document, updateDocument] = usePDF({
     document: report && <MyPdfDocument report={report} />,

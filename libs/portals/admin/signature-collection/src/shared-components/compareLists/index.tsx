@@ -12,7 +12,10 @@ import { useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import { useBulkCompareMutation } from './compareLists.generated'
 import { format as formatNationalId } from 'kennitala'
-import { SignatureCollectionSignature } from '@island.is/api/schema'
+import {
+  SignatureCollectionCollectionType,
+  SignatureCollectionSignature,
+} from '@island.is/api/schema'
 import { Skeleton } from './skeleton'
 import { useUnsignAdminMutation } from './removeSignatureFromList.generated'
 import { m } from '../../lib/messages'
@@ -20,7 +23,13 @@ import { createFileList, getFileData } from '../../lib/utils'
 
 const { Table, Row, Head, HeadData, Body, Data } = T
 
-const CompareLists = ({ collectionId }: { collectionId: string }) => {
+const CompareLists = ({
+  collectionId,
+  collectionType,
+}: {
+  collectionId: string
+  collectionType: SignatureCollectionCollectionType
+}) => {
   const { formatMessage } = useLocale()
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const [fileList, setFileList] = useState<Array<UploadFileDeprecated>>([])
@@ -55,6 +64,7 @@ const CompareLists = ({ collectionId }: { collectionId: string }) => {
         variables: {
           input: {
             signatureId,
+            collectionType,
           },
         },
       })

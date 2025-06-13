@@ -23,7 +23,13 @@ import { useRevalidator } from 'react-router-dom'
 import { m } from '../../lib/messages'
 import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 
-export const PaperSignees = ({ listId }: { listId: string }) => {
+export const PaperSignees = ({
+  listId,
+  collectionType,
+}: {
+  listId: string
+  collectionType: SignatureCollectionCollectionType
+}) => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
   const { revalidate } = useRevalidator()
@@ -46,7 +52,7 @@ export const PaperSignees = ({ listId }: { listId: string }) => {
         input: {
           signeeNationalId: nationalIdInput,
           listId,
-          collectionType: SignatureCollectionCollectionType.Presidential,
+          collectionType,
         },
       },
       skip: !nationalId.isValid(nationalIdInput) || !name,
@@ -71,6 +77,7 @@ export const PaperSignees = ({ listId }: { listId: string }) => {
           listId: listId,
           nationalId: nationalIdInput,
           pageNumber: Number(page),
+          collectionType,
         },
       },
       onCompleted: (res) => {

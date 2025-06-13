@@ -25,6 +25,8 @@ import ActionCompleteCollectionProcessing from '../../shared-components/complete
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import FindSignature from './findSignature'
 
+const collectionType = SignatureCollectionCollectionType.Parliamentary
+
 const ParliamentaryRoot = () => {
   const { formatMessage } = useLocale()
 
@@ -108,9 +110,12 @@ const ParliamentaryRoot = () => {
               )
             })}
           </Stack>
-          <CompareLists collectionId={collection?.id} />
+          <CompareLists
+            collectionId={collection?.id}
+            collectionType={collectionType}
+          />
           <ActionCompleteCollectionProcessing
-            collectionType={SignatureCollectionCollectionType.Parliamentary}
+            collectionType={collectionType}
             collectionId={collection?.id}
             canProcess={
               !!allLists.length && allLists.every((l) => l.reviewed === true)

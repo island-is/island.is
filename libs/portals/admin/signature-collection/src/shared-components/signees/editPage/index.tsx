@@ -14,17 +14,20 @@ import { useState } from 'react'
 import { useSignatureCollectionAdminUpdatePaperSignaturePageNumberMutation } from './editPage.generated'
 import { toast } from 'react-toastify'
 import { useRevalidator } from 'react-router-dom'
+import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 
 const EditPage = ({
   page,
   name,
   nationalId,
   signatureId,
+  collectionType,
 }: {
   page: number
   name: string
   nationalId: string
   signatureId: string
+  collectionType: SignatureCollectionCollectionType
 }) => {
   const { formatMessage } = useLocale()
   const [newPage, setNewPage] = useState(page)
@@ -37,6 +40,7 @@ const EditPage = ({
         input: {
           pageNumber: newPage,
           signatureId: signatureId,
+          collectionType,
         },
       },
       onCompleted: () => {

@@ -36,6 +36,7 @@ const ActionExtendDeadline = ({ list }: { list: SignatureCollectionList }) => {
           input: {
             listId: list.id,
             newEndDate: newEndDate,
+            collectionType: list.collectionType,
           },
         },
       })

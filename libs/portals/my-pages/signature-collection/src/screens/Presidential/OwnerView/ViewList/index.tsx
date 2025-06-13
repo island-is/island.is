@@ -5,6 +5,9 @@ import { useParams } from 'react-router-dom'
 import { useGetSignatureList } from '../../../../hooks'
 import format from 'date-fns/format'
 import Signees from '../../../shared/Signees'
+import { SignatureCollectionCollectionType } from '@island.is/api/schema'
+
+const collectionType = SignatureCollectionCollectionType.Presidential
 
 const ViewList = () => {
   useNamespaces('sp.signatureCollection')
@@ -54,7 +57,7 @@ const ViewList = () => {
               )}
             </Box>
           </Box>
-          <Signees />
+          <Signees collectionType={collectionType} />
         </Stack>
       )}
     </Box>
