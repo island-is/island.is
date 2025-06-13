@@ -47,6 +47,43 @@ jobs:
     with:
       main_branch: ${{ github.base_ref }}
 
+  startup-check:
+    needs:
+      - prepare
+    runs-on: arc-shared
+    env:
+      AFFECTED_PROJECTS: ${{ matrix.projects }}
+      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
+      max-parallel: 1
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+        with:
+          working-directory: infra/
+      - name: Start (pre)
+        run: |
+          ls -lahd node_modules
+          yarn infra run-local-env --no-secrets --no-dev-services ${{ env.AFFECTED_PROJECTS }}
+          exit 1
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+      - name: Start
+        run: |
+          yarn infra run-local-env --no-secrets --no-dev-services ${{ env.AFFECTED_PROJECTS }} &
+          t_stop=$(date +%s -d '+3 minutes')
+          while (( $(date +%s) < t_stop )) && ! curl -s http://localhost:4200/; do
+            sleep 0.1
+          done
+          curl -s http://localhost:4200/
+
   tests:
     needs:
       - prepare
