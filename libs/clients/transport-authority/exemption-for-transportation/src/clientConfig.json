@@ -2,7 +2,7 @@
   "openapi": "3.0.1",
   "info": {
     "title": "SGS - Leyfur",
-    "description": "Vefþjónusta fyrir undanþágu og leyfisveitinga kerfi Samgöngustofu -  -  - 0e79dc1343dfb20b761b07219f66a56a935c7774-20250522.2",
+    "description": "Vefþjónusta fyrir undanþágu og leyfisveitinga kerfi Samgöngustofu -  -  - 80271aab9a17608a176205952c2f977239b68b60-20250612.1",
     "contact": {
       "name": "Samgöngustofa",
       "email": "tolvuhjalp@samgongustofa.is"
@@ -158,7 +158,7 @@
       "post": {
         "tags": ["PermitApplication"],
         "summary": "For submitting a Route application",
-        "description": "When submitting a Route application various errors can come up \r\n</br><h3>Errors</h3>\r\n\r\nErrors are returned as problem details where the title is an error code example:  \r\n</br>\r\n```json\r\n{\r\n    \"title\": \"VEHICLE_NOT_FOUND\",\r\n    \"status\": 404,\r\n    \"detail\": \"Vehicle not found DZM435\"\r\n}\r\n```\r\n\r\n\r\nWhen payload validation errors are returned the problem details contains an error object example: \r\n</br>\r\n```json\r\n{\r\n    \"title\": \"VALIDATION_ERROR\",\r\n    \"status\": 400,\r\n    \"detail\": \"One or more validation errors occured\",\r\n    \"errors\": {\r\n        \"CombinedVehicleLengthToSpacing\": [\r\n        \"The sum of all spacing values (vehicle spacing, dolly axle spacing, and vehicle axle spacing) must not exceed the combined vehicle length.\"\r\n         ]\r\n    }\r\n}\r\n```\r\n\r\nPossible error codes for <b>400</b>\r\n</br><ul><li><b>VEHICLE_NOT_IN_ALLOWED_GROUP</b> - When vehicle is not in an allowed vehicle group</li><li><b>VEHICLE_NOT_IN_ALLOWED_USE_GROUP</b> - When vehicle is not in an allowed use group</li><li><b>VEHICLE_CANT_BE_TRAILER</b> - In a single vehicle application the vehicle cant be a trailer</li><li><b>VEHICLES_COMBINATION_NOT_ALLOWED</b> - When vehicles are more than 1 they must contain 1 trailer and one vehicle in an allowed group</li><li><b>VEHICLE_OUT_OF_ORDER</b> - A vehicle in the application is out of order</li><li><b>VEHICLE_NOT_INSPECTED</b> - A vehicle in the application is not inspected</li><li><b>VALIDATION_ERROR</b> - Payload not passing validation </li></ul>\r\n            \r\nPossible error codes for <b>404</b>\r\n</br><ul><li><b>VEHICLE_NOT_FOUND</b> - No vehicle found</li></ul>\r\n</br><h3>Special rules</h3><ul><li>In a an application with a haul unit that has a single vehicle, adding dollies is not allowed</li><li>Vehicle,axle and dolly spacing is only required if exceptionFor has WEIGHT</li><li>If dolly is selected then a vehicle is added with vehicleType DOLLY and axle spacing is added if it is a double dolly</li><li>If date range exceeds 31 days then the application is handled as a long term application else it is short term</li></ul><h3>Long term applications</h3><ul><li>Can not require police escort</li><li>Can not contain DOLLY</li><li>Do not contain origin and destination</li><li>Desired route is optional</li></ul><h3>Short term applications</h3><ul><li>Can only include one cargo, one haul unit and one cargo assignment</li><li>Can not contain areas</li></ul>",
+        "description": "When submitting a Route application various errors can come up \r\n</br><h3>Errors</h3>\r\n\r\nErrors are returned as problem details where the title is an error code example:  \r\n</br>\r\n```json\r\n{\r\n    \"title\": \"VEHICLE_NOT_FOUND\",\r\n    \"status\": 404,\r\n    \"detail\": \"Vehicle not found DZM435\"\r\n}\r\n```\r\n\r\n\r\nWhen payload validation errors are returned the problem details contains an error object example: \r\n</br>\r\n```json\r\n{\r\n    \"title\": \"VALIDATION_ERROR\",\r\n    \"status\": 400,\r\n    \"detail\": \"One or more validation errors occured\",\r\n    \"errors\": {\r\n        \"CombinedVehicleLengthToSpacing\": [\r\n        \"The sum of all spacing values (vehicle spacing, dolly axle spacing, and vehicle axle spacing) must not exceed the combined vehicle length.\"\r\n         ]\r\n    }\r\n}\r\n```\r\n\r\nPossible error codes for <b>400</b>\r\n</br><ul><li><b>VEHICLE_NOT_IN_ALLOWED_GROUP</b> - When vehicle is not in an allowed vehicle group</li><li><b>VEHICLE_NOT_IN_ALLOWED_USE_GROUP</b> - When vehicle is not in an allowed use group</li><li><b>VEHICLE_CANT_BE_TRAILER</b> - In a single vehicle application the vehicle cant be a trailer</li><li><b>VEHICLES_COMBINATION_NOT_ALLOWED</b> - When vehicles are more than 1 they must contain 1 trailer and one vehicle in an allowed group</li><li><b>VEHICLE_OUT_OF_ORDER</b> - A vehicle in the application is out of order</li><li><b>VEHICLE_NOT_INSPECTED</b> - A vehicle in the application is not inspected</li><li><b>AXLE_SPACING_INCORRECT</b> - Axle spacing provided does not match vehicle axlecount </li><li><b>VALIDATION_ERROR</b> - Payload not passing validation </li></ul>\r\n            \r\nPossible error codes for <b>404</b>\r\n</br><ul><li><b>VEHICLE_NOT_FOUND</b> - No vehicle found</li></ul>\r\n</br><h3>Special rules</h3><ul><li>In a an application with a haul unit that has a single vehicle, adding dollies is not allowed</li><li>Vehicle,axle and dolly spacing is only required if exceptionFor has WEIGHT</li><li>If dolly is selected then a vehicle is added with vehicleType DOLLY and axle spacing is added if it is a double dolly</li><li>If date range exceeds 31 days then the application is handled as a long term application else it is short term</li></ul><h3>Long term applications</h3><ul><li>Can not require police escort</li><li>Can not contain DOLLY</li><li>Do not contain origin and destination</li><li>Desired route is optional</li></ul><h3>Short term applications</h3><ul><li>Can only include one cargo, one haul unit and one cargo assignment</li><li>Can not contain areas</li></ul>",
         "parameters": [
           {
             "name": "api-version",
@@ -611,22 +611,12 @@
         "additionalProperties": false
       },
       "RouteApplicationAddModel": {
-        "required": [
-          "applicant",
-          "cargoes",
-          "dateFrom",
-          "dateTo",
-          "haulUnits",
-          "transporterAddress",
-          "transporterEmail",
-          "transporterName",
-          "transporterPhone",
-          "transporterSSN"
-        ],
+        "required": ["applicant", "cargoes", "dateFrom", "dateTo", "haulUnits"],
         "type": "object",
         "properties": {
           "applicant": { "$ref": "#/components/schemas/ApplicationRole" },
           "guarantor": { "$ref": "#/components/schemas/ApplicationRole" },
+          "transporter": { "$ref": "#/components/schemas/Transporter" },
           "origin": {
             "type": "string",
             "description": "Route origin",
@@ -641,38 +631,6 @@
             "type": "string",
             "description": "Desired route",
             "nullable": true
-          },
-          "transporterName": {
-            "maxLength": 50,
-            "minLength": 1,
-            "type": "string",
-            "description": "Name of transporter"
-          },
-          "transporterSSN": {
-            "maxLength": 10,
-            "minLength": 10,
-            "pattern": "[0-7]\\d[01]\\d{3}[-]*\\d{3}[09]",
-            "type": "string",
-            "description": "Transporter ssn"
-          },
-          "transporterPhone": {
-            "minLength": 1,
-            "pattern": "^[4-9]\\d{6}$",
-            "type": "string",
-            "description": "Transporter phone"
-          },
-          "transporterAddress": {
-            "maxLength": 100,
-            "minLength": 1,
-            "type": "string",
-            "description": "Transporter address"
-          },
-          "transporterEmail": {
-            "maxLength": 254,
-            "minLength": 1,
-            "type": "string",
-            "description": "Transporter email",
-            "format": "email"
           },
           "dateFrom": {
             "minLength": 1,
@@ -724,6 +682,50 @@
         },
         "additionalProperties": false,
         "description": "Model for adding route application"
+      },
+      "Transporter": {
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "description": "Name of transporter",
+            "nullable": true
+          },
+          "ssn": {
+            "type": "string",
+            "description": "Transporter ssn",
+            "nullable": true
+          },
+          "phone": {
+            "type": "string",
+            "description": "Transporter phone",
+            "nullable": true
+          },
+          "address": {
+            "type": "string",
+            "description": "Transporter address",
+            "nullable": true
+          },
+          "city": { "type": "string", "description": "City", "nullable": true },
+          "postalCode": {
+            "type": "string",
+            "description": "Postal code of the transporter",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "description": "Transporter email",
+            "nullable": true
+          },
+          "fullAddress": {
+            "type": "string",
+            "description": "Full address combining the address, postal code, and city",
+            "nullable": true,
+            "readOnly": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Represents a transporter with relevant information such as name,\r\ncontact details, and address."
       },
       "VehicleCheckDto": {
         "type": "object",

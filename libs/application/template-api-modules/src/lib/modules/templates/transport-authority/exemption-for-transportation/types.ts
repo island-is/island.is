@@ -4,6 +4,8 @@ export interface Person {
   nationalId: string
   fullName: string
   address?: string
+  postalCode?: string
+  city?: string
   email: string
   phone: string
 }

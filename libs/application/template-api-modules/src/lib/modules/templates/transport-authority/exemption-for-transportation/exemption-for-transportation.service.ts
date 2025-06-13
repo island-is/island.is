@@ -64,6 +64,8 @@ export class ExemptionForTransportationService extends BaseTemplateApiService {
       nationalId: nationalRegistryData?.nationalId || '',
       fullName: nationalRegistryData?.fullName || '',
       address: nationalRegistryData?.address?.streetAddress || '',
+      postalCode: nationalRegistryData?.address?.postalCode || '',
+      city: nationalRegistryData?.address?.locality || '',
       email: applicantAnswers?.email || '',
       phone: applicantAnswers?.phoneNumber?.slice(-7) || '',
     }
@@ -81,6 +83,8 @@ export class ExemptionForTransportationService extends BaseTemplateApiService {
           nationalId: transporterAnswers?.nationalId || '',
           fullName: transporterAnswers?.name || '',
           address: transporterAnswers?.address || '',
+          postalCode: getFirstName(transporterAnswers?.postalCodeAndCity || ''),
+          city: getLastName(transporterAnswers?.postalCodeAndCity || ''),
           email: transporterAnswers?.email || '',
           phone: transporterAnswers?.phone?.slice(-7) || '',
         }
@@ -167,11 +171,15 @@ export class ExemptionForTransportationService extends BaseTemplateApiService {
           phone: applicant.phone,
         },
         // Transporter + Responsible person
-        transporterSSN: transporter.nationalId,
-        transporterName: transporter.fullName,
-        transporterAddress: transporter.address || '',
-        transporterPhone: transporter.phone,
-        transporterEmail: transporter.email,
+        transporter: {
+          ssn: transporter.nationalId,
+          name: transporter.fullName,
+          address: transporter.address,
+          postalCode: transporter.postalCode,
+          city: transporter.city,
+          email: transporter.email,
+          phone: transporter.phone,
+        },
         guarantor: responsiblePerson
           ? {
               ssn: responsiblePerson.nationalId,
