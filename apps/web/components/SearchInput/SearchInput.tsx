@@ -133,6 +133,7 @@ const useSearch = (
                   SearchableContentTypes['WebDigitalIcelandService'],
                   SearchableContentTypes['WebDigitalIcelandCommunityPage'],
                   SearchableContentTypes['WebManual'],
+                  SearchableContentTypes['WebOrganizationParentSubpage'],
                 ],
                 highlightResults: true,
                 useQuery: 'suggestions',
@@ -476,15 +477,18 @@ const Results = ({
                 const { onClick, ...itemProps } = getItemProps({
                   item: {
                     type: 'link',
-                    string: linkResolver(
-                      typename === 'anchorpage'
-                        ? extractAnchorPageLinkType(item as AnchorPage)
-                        : typename === 'organizationsubpage' &&
-                          (item as OrganizationSubpage)?.url?.length === 3
-                        ? 'organizationparentsubpagechild'
-                        : typename,
-                      variables,
-                    )?.href,
+                    string:
+                      typename === 'organizationparentsubpage'
+                        ? item.href
+                        : linkResolver(
+                            typename === 'anchorpage'
+                              ? extractAnchorPageLinkType(item as AnchorPage)
+                              : typename === 'organizationsubpage' &&
+                                (item as OrganizationSubpage)?.url?.length === 3
+                              ? 'organizationparentsubpagechild'
+                              : typename,
+                            variables,
+                          )?.href,
                   },
                 })
                 return (
