@@ -5,14 +5,14 @@ import { DefendantExistsGuard } from '../../../defendant'
 import { SubpoenaExistsGuard } from '../../guards/subpoenaExists.guard'
 import { InternalSubpoenaController } from '../../internalSubpoena.controller'
 
-describe('InternalSubpoenaController - Deliver subpoena to police guards', () => {
+describe('InternalSubpoenaController - Deliver subpoena file to police guards', () => {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   let guards: any[]
 
   beforeEach(() => {
     guards = Reflect.getMetadata(
       '__guards__',
-      InternalSubpoenaController.prototype.deliverSubpoenaToPolice,
+      InternalSubpoenaController.prototype.deliverSubpoenaFileToPolice,
     )
   })
 
