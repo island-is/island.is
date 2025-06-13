@@ -16,6 +16,7 @@ import {
   ContextMenu,
   FileNotFoundModal,
   FormContext,
+  IconButton,
   PdfButton,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
@@ -30,7 +31,6 @@ import {
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import IconButton from '../IconButton/IconButton'
 import { contextMenu } from '../ContextMenu/ContextMenu.strings'
 import { strings } from './AppealCaseFilesOverview.strings'
 import * as styles from './AppealCaseFilesOverview.css'

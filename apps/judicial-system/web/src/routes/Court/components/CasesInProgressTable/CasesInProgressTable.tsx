@@ -17,8 +17,8 @@ import {
   Modal,
   SectionHeading,
   TagCaseState,
+  useOpenCaseInNewTab,
 } from '@island.is/judicial-system-web/src/components'
-import { useContextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import {
   ColumnCaseType,
   CourtCaseNumber,
@@ -53,7 +53,7 @@ const CasesInProgressTable: FC<CasesInProgressTableProps> = (props) => {
   const { loading, isFiltering, cases, refetch } = props
 
   const { formatMessage } = useIntl()
-  const { openCaseInNewTabMenuItem } = useContextMenu()
+  const { openCaseInNewTabMenuItem } = useOpenCaseInNewTab()
   const { getCase } = useContext(FormContext)
   const [caseToCancelId, setCaseToCancelId] = useState<string>()
   const [caseToCancel, setCaseToCancel] = useState<Case>()

@@ -7,8 +7,8 @@ import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
   SectionHeading,
   TagCaseState,
+  useOpenCaseInNewTab,
 } from '@island.is/judicial-system-web/src/components'
-import { useContextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import {
   ColumnCaseType,
   CourtCaseNumber,
@@ -33,7 +33,7 @@ const CasesAwaitingAssignmentTable: FC<CasesAwaitingAssignmentTableProps> = (
   props,
 ) => {
   const { formatMessage } = useIntl()
-  const { openCaseInNewTabMenuItem } = useContextMenu()
+  const { openCaseInNewTabMenuItem } = useOpenCaseInNewTab()
 
   const { loading, isFiltering, cases } = props
   return (

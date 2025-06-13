@@ -11,8 +11,8 @@ import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
   CaseTag,
   SectionHeading,
+  useOpenCaseInNewTab,
 } from '@island.is/judicial-system-web/src/components'
-import { useContextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import {
   CourtCaseNumber,
   DefendantInfo,
@@ -37,7 +37,7 @@ interface Props {
 
 const CasesReviewed: FC<Props> = ({ loading, cases }) => {
   const { formatMessage } = useIntl()
-  const { openCaseInNewTabMenuItem } = useContextMenu()
+  const { openCaseInNewTabMenuItem } = useOpenCaseInNewTab()
 
   const indictmentReviewDecisionMapping = (
     reviewDecision: IndictmentCaseReviewDecision,

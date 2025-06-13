@@ -6,13 +6,11 @@ import { Text } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
+  ContextMenuItem,
   SectionHeading,
   TagCaseState,
+  useOpenCaseInNewTab,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  ContextMenuItem,
-  useContextMenu,
-} from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import { contextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu.strings'
 import {
   ColumnCaseType,
@@ -48,7 +46,7 @@ const CasesAwaitingConfirmationTable: FC<
   } = props
   const { formatMessage } = useIntl()
 
-  const { openCaseInNewTabMenuItem } = useContextMenu()
+  const { openCaseInNewTabMenuItem } = useOpenCaseInNewTab()
 
   return (
     <section>

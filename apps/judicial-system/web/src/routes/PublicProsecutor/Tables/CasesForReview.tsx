@@ -9,8 +9,10 @@ import {
   formatDate,
 } from '@island.is/judicial-system/formatters'
 import { core, tables } from '@island.is/judicial-system-web/messages'
-import { SectionHeading } from '@island.is/judicial-system-web/src/components'
-import { useContextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
+import {
+  SectionHeading,
+  useOpenCaseInNewTab,
+} from '@island.is/judicial-system-web/src/components'
 import {
   CourtCaseNumber,
   DefendantInfo,
@@ -37,7 +39,7 @@ interface CasesForReviewTableProps {
 
 const CasesForReview: FC<CasesForReviewTableProps> = ({ loading, cases }) => {
   const { formatMessage } = useIntl()
-  const { openCaseInNewTabMenuItem } = useContextMenu()
+  const { openCaseInNewTabMenuItem } = useOpenCaseInNewTab()
 
   return (
     <>

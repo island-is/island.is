@@ -2,8 +2,12 @@ import { useMemo } from 'react'
 import { useLocalStorage } from 'react-use'
 import { AnimatePresence, motion } from 'motion/react'
 
-import ContextMenu, { ContextMenuItem } from '../ContextMenu/ContextMenu'
-import IconButton from '../IconButton/IconButton'
+import {
+  ContextMenu,
+  ContextMenuItem,
+  IconButton,
+} from '@island.is/judicial-system-web/src/components'
+
 import SortButton from './SortButton/SortButton'
 import * as styles from './Table.css'
 

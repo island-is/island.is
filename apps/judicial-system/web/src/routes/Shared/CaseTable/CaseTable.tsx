@@ -17,7 +17,7 @@ import {
   Logo,
   PageHeader,
   SectionHeading,
-  useContextMenu,
+  useOpenCaseInNewTab,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -119,7 +119,7 @@ const render = (cell: CaseTableCell): ReactNode => {
 const CaseTable: FC = () => {
   const router = useRouter()
   const { user, hasError } = useContext(UserContext)
-  const { openCaseInNewTabMenuItem } = useContextMenu()
+  const { openCaseInNewTabMenuItem } = useOpenCaseInNewTab()
   const { isOpeningCaseId, handleOpenCase, LoadingIndicator, showLoading } =
     useCaseList()
   const [showOnlyMyCases, setShowOnlyMyCases] = useState(false)

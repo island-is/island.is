@@ -21,9 +21,9 @@ import {
   SectionHeading,
   TagAppealState,
   TagCaseState,
+  useOpenCaseInNewTab,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { useContextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import {
   ColumnCaseType,
   CourtCaseNumber,
@@ -54,7 +54,7 @@ import * as styles from './Cases.css'
 export const PrisonCases: FC = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
-  const { openCaseInNewTabMenuItem } = useContextMenu()
+  const { openCaseInNewTabMenuItem } = useOpenCaseInNewTab()
 
   const isPrisonAdmin = user?.institution?.type === InstitutionType.PRISON_ADMIN
 
