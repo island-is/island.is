@@ -179,8 +179,9 @@ export const searchQuery = (
     highlight: {
       pre_tags: ['<b>'],
       post_tags: ['</b>'],
-      number_of_fragments: 3,
+      number_of_fragments: 1,
       fragment_size: 150,
+      order: 'score',
       fields: {
         title: {},
         content: {},

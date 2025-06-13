@@ -2,39 +2,11 @@ import type { MappedData } from '@island.is/content-search-indexer/types'
 import { logger } from '@island.is/logging'
 import { Injectable } from '@nestjs/common'
 import type { Entry } from 'contentful'
-import type {
-  IOrganizationParentSubpage,
-  IOrganizationSubpage,
-} from '../../generated/contentfulTypes'
+import type { IOrganizationParentSubpage } from '../../generated/contentfulTypes'
 import type { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
-import {
-  extractChildEntryIds,
-  extractStringsFromObject,
-  pruneNonSearchableSliceUnionFields,
-} from './utils'
+import { extractChildEntryIds } from './utils'
 import { mapOrganizationParentSubpage } from '../../models/organizationParentSubpage.model'
-import { mapOrganizationSubpage } from '../../models/organizationSubpage.model'
-
-const safelyExtractContentFromOrganizationSubpage = (
-  subpage: IOrganizationSubpage,
-) => {
-  try {
-    const mappedSubpage = mapOrganizationSubpage(subpage)
-    const content = extractStringsFromObject(
-      (mappedSubpage.description ?? []).map(pruneNonSearchableSliceUnionFields),
-    )
-    return content
-  } catch (error) {
-    logger.warn(
-      'Failed to map organization subpage to get searchable content',
-      {
-        error: error.message,
-        id: subpage?.sys?.id,
-      },
-    )
-    return ''
-  }
-}
+import { documentToPlainTextString } from '@contentful/rich-text-plain-text-renderer'
 
 @Injectable()
 export class OrganizationParentSubpageSyncService
@@ -73,10 +45,13 @@ export class OrganizationParentSubpageSyncService
           const contentSections: string[] = []
 
           for (const page of entry.fields.pages) {
-            const pageContent =
-              safelyExtractContentFromOrganizationSubpage(page)
-            if (pageContent) {
-              contentSections.push(pageContent)
+            if (page.fields.description) {
+              const pageContent = documentToPlainTextString(
+                page.fields.description,
+              )
+              if (pageContent) {
+                contentSections.push(pageContent)
+              }
             }
           }
 
