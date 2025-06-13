@@ -81,7 +81,7 @@ export const AppLockScreen: NavigationFunctionComponent<{
   const pinTries = preferencesStore.getState().pinTries
   const [attempts, setAttempts] = useState(pinTries)
   // Add 1 to offset the attempts counter, ensuring we display "1 attempt left" instead of "0 attempts left"
-  const attemptsLeft = MAX_ATTEMPTS + 1 - attempts
+  const attemptsLeft = MAX_ATTEMPTS - attempts
 
   const { useBiometrics } = usePreferencesStore()
   const biometricType = useBiometricType()
@@ -143,7 +143,7 @@ export const AppLockScreen: NavigationFunctionComponent<{
   useEffect(() => {
     setInvalidCode(false)
     if (code.length === MAX_PIN_CHARS) {
-      if (attempts === MAX_ATTEMPTS) {
+      if (attempts + 1 === MAX_ATTEMPTS) {
         // maximum attempts reached
         authStore
           .getState()
