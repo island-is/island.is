@@ -1,3 +1,31 @@
+query getHealthCenter($input: RightsPortalHealthCenterHistoryInput) {
+  rightsPortalHealthCenterRegistrationHistory(input: $input) {
+    current {
+      healthCenterName
+      doctor
+    }
+  }
+}
+
+query getDentists($input: RightsPortalDentistBillsInput!) {
+  rightsPortalUserDentistRegistration(input: $input) {
+    dentist {
+      name
+    }
+  }
+}
+
+query getDonorStatus($locale: String) {
+  healthDirectorateOrganDonation(locale: $locale) {
+    donor {
+      isDonor
+      limitations {
+        hasLimitations
+      }
+    }
+  }
+}
+
 query getInsuranceOverview {
   rightsPortalInsuranceOverview {
     isInsured
