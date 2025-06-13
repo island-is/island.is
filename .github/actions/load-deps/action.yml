@@ -51,6 +51,10 @@ runs:
       run: |
         node ./scripts/ci/generate-files.mjs ${{ env.GENERATED_FILES_PATH }}
 
+    # If we don't split into restore/save the generated cache might not get saved
+    # if later steps fail. The "Post" step for the cache action seems to re-evaluate
+    # its args, i.e. re-evaluating the hash of the mutated `generated_files_list.txt`,
+    # causing it to save the cache to a different cache key
     - name: Save generated files cache
       if: steps.generate-files.outcome == 'success'
       uses: runs-on/cache/save@v4
