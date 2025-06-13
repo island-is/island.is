@@ -29,7 +29,7 @@ import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema
 import { useContextMenu } from '../../ContextMenu/ContextMenu'
 import WithdrawAppealContextMenuModal, {
   useWithdrawAppealMenuOption,
-} from '../../ContextMenu/ContextMenuOptions/WithdrawAppealMenuOption'
+} from '../../ContextMenuOptions/WithdrawAppealMenuOption'
 import TagContainer from '../../Tags/TagContainer/TagContainer'
 import Table, { TableWrapper } from '../Table'
 

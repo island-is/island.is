@@ -119,7 +119,7 @@ export { default as IndictmentCaseFilesList } from './IndictmentCaseFilesList/In
 export {
   default as WithdrawAppealContextMenuModal,
   useWithdrawAppealMenuOption,
-} from './ContextMenu/ContextMenuOptions/WithdrawAppealMenuOption'
+} from './ContextMenuOptions/WithdrawAppealMenuOption'
 export { default as ZipButton } from './ZipButton/ZipButton'
 export { default as RequestAppealRulingNotToBePublishedCheckbox } from './RequestAppealRulingNotToBePublishedCheckbox/RequestAppealRulingNotToBePublishedCheckbox'
 export { LawyerRegistryProvider } from './LawyerRegistryProvider/LawyerRegistryProvider'
