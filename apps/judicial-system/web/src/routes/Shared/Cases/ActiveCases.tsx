@@ -61,7 +61,7 @@ const ActiveCases: FC<Props> = (props) => {
         ...(canDeleteCase(row)
           ? [
               {
-                title: formatMessage(contextMenu.deleteCase),
+                title: 'Afturkalla',
                 onClick: () => {
                   onContextMenuDeleteClick(row.id)
                 },

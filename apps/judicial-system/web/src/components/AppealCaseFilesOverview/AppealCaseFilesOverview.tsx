@@ -159,14 +159,14 @@ const AppealCaseFilesOverview = () => {
                     <ContextMenu
                       items={[
                         {
-                          title: formatMessage(contextMenu.openFile),
+                          title: 'Opna',
                           onClick: () => onOpen(file.id),
                           icon: 'open' as IconMapIcon,
                         },
                         ...(canDeleteFile
                           ? [
                               {
-                                title: formatMessage(contextMenu.deleteFile),
+                                title: 'Eyða',
                                 onClick: () =>
                                   handleRemove(file as TUploadFile, () => {
                                     setAllFiles((prev) =>

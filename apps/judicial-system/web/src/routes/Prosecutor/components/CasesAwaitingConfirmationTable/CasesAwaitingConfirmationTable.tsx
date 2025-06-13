@@ -86,7 +86,7 @@ const CasesAwaitingConfirmationTable: FC<
                   ...(canDeleteCase(row)
                     ? [
                         {
-                          title: formatMessage(contextMenu.deleteCase),
+                          title: 'Afturkalla',
                           onClick: () => {
                             onContextMenuDeleteClick(row.id)
                           },
