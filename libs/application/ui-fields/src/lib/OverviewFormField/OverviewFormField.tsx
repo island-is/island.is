@@ -55,6 +55,14 @@ export const OverviewFormField = ({
     application.externalData,
     userInfo?.profile?.nationalId,
   )
+  const filteredItems = items?.filter(
+    (item) =>
+      !(
+        item.hideIfEmpty &&
+        (!item.valueText ||
+          (Array.isArray(item.valueText) && item.valueText.length === 0))
+      ),
+  )
   const attachments = rawAttachments?.(
     application.answers,
     application.externalData,
@@ -123,25 +131,55 @@ export const OverviewFormField = ({
             <Divider weight="black" thickness="thick" />
           </Box>
         )}
-        <Text variant="h4">
-          {formatTextWithLocale(
-            item?.keyText ?? '',
-            application,
-            locale,
-            formatMessage,
-          )}
-        </Text>
+        {!item.inlineKeyText && (
+          <Text variant="h5">
+            {formatTextWithLocale(
+              item?.keyText ?? '',
+              application,
+              locale,
+              formatMessage,
+            )}
+          </Text>
+        )}
         {Array.isArray(item?.valueText) ? (
           item?.valueText.map((value, index) => (
             <Text
               key={`${value}-${index}`}
               fontWeight={item.boldValueText ? 'semiBold' : 'light'}
             >
-              {formatTextWithLocale(value, application, locale, formatMessage)}
+              {item.inlineKeyText &&
+                Array.isArray(item?.keyText) &&
+                `${formatTextWithLocale(
+                  item?.keyText?.[index] ?? '',
+                  application,
+                  locale,
+                  formatMessage,
+                )}: `}
+              {Array.isArray(value)
+                ? formatTextWithLocale(
+                    value,
+                    application,
+                    locale,
+                    formatMessage,
+                  ).join(', ')
+                : formatTextWithLocale(
+                    value,
+                    application,
+                    locale,
+                    formatMessage,
+                  )}
             </Text>
           ))
         ) : (
           <Text fontWeight={item.boldValueText ? 'semiBold' : 'light'}>
+            {item.inlineKeyText &&
+              !Array.isArray(item?.keyText) &&
+              `${formatTextWithLocale(
+                item?.keyText ?? '',
+                application,
+                locale,
+                formatMessage,
+              )}: `}
             {formatTextWithLocale(
               item?.valueText ?? '',
               application,
@@ -152,6 +190,15 @@ export const OverviewFormField = ({
         )}
       </GridColumn>
     )
+  }
+
+  if (
+    field.hideIfEmpty &&
+    !filteredItems?.length &&
+    !attachments?.length &&
+    !tableData?.rows?.length
+  ) {
+    return null
   }
 
   return (
@@ -189,7 +236,7 @@ export const OverviewFormField = ({
         )}
       </Box>
       <GridRow rowGap={3}>
-        {items && items?.map((item, i) => renderItems(item, i))}
+        {filteredItems && filteredItems?.map((item, i) => renderItems(item, i))}
         {isLoading ? (
           <SkeletonLoader
             height={40}
