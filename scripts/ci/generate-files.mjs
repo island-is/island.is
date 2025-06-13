@@ -130,6 +130,10 @@ async function main() {
   console.log(`Found ${patterns.length} total patterns`)
   console.log(`Found ${inputs.length} codegen input patterns`)
 
+  console.log('::group::Input files or patterns')
+  inputs.forEach((file) => console.log(file))
+  console.log(`::endgroup::`)
+
   const existingFiles = []
   const missingFiles = []
 
