@@ -35,6 +35,9 @@ export class OrganizationParentSubpage {
 
   @Field(() => String, { nullable: true })
   organizationPageTitle?: string
+
+  @Field(() => String, { nullable: true })
+  intro?: string
 }
 
 export const mapOrganizationParentSubpage = ({
@@ -54,6 +57,7 @@ export const mapOrganizationParentSubpage = ({
     shortTitle: fields.shortTitle ?? '',
     href,
     organizationPageTitle: fields.organizationPage?.fields?.title ?? '',
+    intro: '', // Populated by search (includes the highlighted content that matched the search query)
     childLinks:
       fields.pages
         ?.filter(

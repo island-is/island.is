@@ -270,6 +270,13 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
             }
           }
         }
+        ... on OrganizationParentSubpage {
+          id
+          title
+          href
+          organizationPageTitle
+          intro
+        }
         ... on ProjectPage {
           id
           title
