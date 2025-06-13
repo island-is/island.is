@@ -27,6 +27,7 @@ jobs:
         uses: ./.github/actions/setup-yarn
 
       - name: Derive appropriate SHAs
+        if: ${{ !github.event.localrun  }}
         uses: nrwl/nx-set-shas@v4
 
       - name: Debug HEAD/BASE
