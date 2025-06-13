@@ -6,11 +6,16 @@ import { InjectModel } from '@nestjs/sequelize'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
+  CaseActionType,
+  CaseState,
   CaseTableColumnKey,
   caseTables,
   CaseTableType,
+  ContextMenuCaseActionType,
   isDistrictCourtUser,
+  isIndictmentCase,
   isProsecutionUser,
+  isRequestCase,
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
@@ -26,6 +31,8 @@ const getAttributes = (
 ) => {
   return [
     'id',
+    'type',
+    'state',
     ...caseTableCellKeys
       .map((k) => caseTableCellGenerators[k].attributes ?? [])
       .flat(),
@@ -95,6 +102,68 @@ const isMyCase = (theCase: Case, user: TUser): boolean => {
   return false
 }
 
+const getActionOnRowClick = (theCase: Case, user: TUser): CaseActionType => {
+  if (
+    isDistrictCourtUser(user) &&
+    isIndictmentCase(theCase.type) &&
+    theCase.state === CaseState.WAITING_FOR_CANCELLATION
+  ) {
+    return CaseActionType.COMPLETE_CANCELLED_CASE
+  }
+
+  return CaseActionType.OPEN_CASE
+}
+
+const canDeleteRequestCase = (caseToDelete: Case): boolean => {
+  return (
+    caseToDelete.state === CaseState.NEW ||
+    caseToDelete.state === CaseState.DRAFT ||
+    caseToDelete.state === CaseState.SUBMITTED ||
+    caseToDelete.state === CaseState.RECEIVED
+  )
+}
+
+const canDeleteIndictmentCase = (caseToDelete: Case): boolean => {
+  return (
+    caseToDelete.state === CaseState.DRAFT ||
+    caseToDelete.state === CaseState.WAITING_FOR_CONFIRMATION
+  )
+}
+
+const canDeleteCase = (caseToDelete: Case): boolean => {
+  if (isRequestCase(caseToDelete.type)) {
+    return canDeleteRequestCase(caseToDelete)
+  }
+
+  if (isIndictmentCase(caseToDelete.type)) {
+    return canDeleteIndictmentCase(caseToDelete)
+  }
+
+  return false
+}
+
+const getContextMenuActions = (
+  theCase: Case,
+  user: TUser,
+): ContextMenuCaseActionType[] => {
+  if (isProsecutionUser(user) && canDeleteCase(theCase)) {
+    return [
+      ContextMenuCaseActionType.OPEN_CASE_IN_NEW_TAB,
+      ContextMenuCaseActionType.DELETE_CASE,
+    ]
+  }
+
+  if (
+    isDistrictCourtUser(user) &&
+    isIndictmentCase(theCase.type) &&
+    theCase.state === CaseState.WAITING_FOR_CANCELLATION
+  ) {
+    return []
+  }
+
+  return [ContextMenuCaseActionType.OPEN_CASE_IN_NEW_TAB]
+}
+
 @Injectable()
 export class CaseTableService {
   constructor(
@@ -123,6 +192,8 @@ export class CaseTableService {
       rows: cases.map((c) => ({
         caseId: c.id,
         isMyCase: isMyCase(c, user),
+        actionOnRowClick: getActionOnRowClick(c, user),
+        contextMenuActions: getContextMenuActions(c, user),
         cells: caseTableCellKeys.map((k) =>
           caseTableCellGenerators[k].generate(c, user),
         ),

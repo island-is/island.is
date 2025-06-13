@@ -147,5 +147,9 @@ export { type CourtDocument } from './lib/courtDocument'
 
 export { type CaseTableColumnKey } from './lib/tables/caseTableColumnTypes'
 export { getCaseTableType, caseTables } from './lib/tables/caseTable'
-export { CaseTableType } from './lib/tables/caseTableTypes'
+export {
+  CaseActionType,
+  ContextMenuCaseActionType,
+  CaseTableType,
+} from './lib/tables/caseTableTypes'
 export { getCaseTableGroups } from './lib/tables/caseTableGroup'
