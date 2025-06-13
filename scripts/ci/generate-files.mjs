@@ -112,6 +112,11 @@ async function main() {
 
   const skipCodegen = args.includes('--skip-codegen')
 
+  const inputs = await extractCodegenInputs()
+  console.log('::group::Input files or patterns')
+  inputs.forEach((file) => console.log(file))
+  console.log(`::endgroup::`)
+
   if (skipCodegen) {
     console.log('Skipping codegen command...')
   } else {
@@ -123,16 +128,11 @@ async function main() {
     'Gathering patterns from codegen.yml files and additional patterns...',
   )
   const patterns = await getPatterns()
-  const inputs = await extractCodegenInputs()
 
   await fs.writeFile('codegen_inputs_list.txt', inputs.join('\n'))
 
   console.log(`Found ${patterns.length} total patterns`)
   console.log(`Found ${inputs.length} codegen input patterns`)
-
-  console.log('::group::Input files or patterns')
-  inputs.forEach((file) => console.log(file))
-  console.log(`::endgroup::`)
 
   const existingFiles = []
   const missingFiles = []
