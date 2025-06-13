@@ -22,4 +22,7 @@ export class SignatureCollectionArea {
 
   @Field({ nullable: true })
   max!: number
+
+  @Field({ nullable: true })
+  collectionId?: string
 }

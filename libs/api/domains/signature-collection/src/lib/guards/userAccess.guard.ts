@@ -56,6 +56,12 @@ export class UserAccessGuard implements CanActivate {
     const { body } = getRequest(context)
     if (body && body.collectionType && isCollectionType(body.collectionType)) {
       return body.collectionType as CollectionType
+    } else if (
+      body &&
+      body?.variables?.input?.collectionType &&
+      isCollectionType(body.variables.input.collectionType)
+    ) {
+      return body.variables.input.collectionType as CollectionType
     }
     return CollectionType.OtherUnknown
   }

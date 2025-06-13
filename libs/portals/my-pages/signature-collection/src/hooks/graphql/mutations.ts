@@ -11,7 +11,7 @@ export const cancelCollectionMutation = gql`
 `
 
 export const unSignList = gql`
-  mutation removeSignature($input: SignatureCollectionListIdInput!) {
+  mutation removeSignature($input: SignatureCollectionListIdWithTypeInput!) {
     signatureCollectionUnsign(input: $input) {
       success
       reasons

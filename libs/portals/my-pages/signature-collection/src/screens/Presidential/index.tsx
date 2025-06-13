@@ -15,9 +15,11 @@ const SignatureCollectionPresidential = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
 
-  const { isOwner, loadingIsOwner } = useIsOwner()
+  const { isOwner, loadingIsOwner } = useIsOwner(
+    SignatureCollectionCollectionType.Presidential,
+  )
   const { currentCollection, loadingCurrentCollection } =
-    useGetCurrentCollection()
+    useGetCurrentCollection(SignatureCollectionCollectionType.Presidential)
 
   return (
     <Box>
@@ -34,7 +36,10 @@ const SignatureCollectionPresidential = () => {
             isOwner.success ? (
               <OwnerView currentCollection={currentCollection} />
             ) : (
-              <SigneeView currentCollection={currentCollection} />
+              <SigneeView
+                currentCollection={currentCollection}
+                collectionType={SignatureCollectionCollectionType.Presidential}
+              />
             )
           ) : (
             <EmptyState

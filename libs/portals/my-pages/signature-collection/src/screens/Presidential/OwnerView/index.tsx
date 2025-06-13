@@ -1,4 +1,7 @@
-import { SignatureCollection } from '@island.is/api/schema'
+import {
+  SignatureCollection,
+  SignatureCollectionCollectionType,
+} from '@island.is/api/schema'
 import { ActionCard, Box, Button, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useUserInfo } from '@island.is/react-spa/bff'
@@ -23,6 +26,7 @@ const OwnerView = ({
   const { formatMessage } = useLocale()
   const { listsForOwner, loadingOwnerLists } = useGetListsForOwner(
     currentCollection?.id || '',
+    SignatureCollectionCollectionType.Presidential,
   )
 
   return (
@@ -51,7 +55,10 @@ const OwnerView = ({
 
             {/* Signed list */}
             {!user?.profile.actor && (
-              <SignedList currentCollection={currentCollection} />
+              <SignedList
+                currentCollection={currentCollection}
+                collectionType={SignatureCollectionCollectionType.Presidential}
+              />
             )}
 
             {/* Candidate created lists */}

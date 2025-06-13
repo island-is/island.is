@@ -15,7 +15,8 @@ const ViewList = () => {
 
   return (
     <Stack space={5}>
-      <Text variant="h3">
+      <Text>hello</Text>
+      {/*<Text variant="h3">
         {listInfo?.title ?? 'Test - Borgarbyggð Framboð A'}
       </Text>
       <Box>
@@ -28,7 +29,7 @@ const ViewList = () => {
         <ListActions />
         <Divider />
       </Box>
-      <Signees />
+      <Signees />*/}
     </Stack>
   )
 }

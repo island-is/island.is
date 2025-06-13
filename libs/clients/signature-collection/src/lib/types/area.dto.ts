@@ -4,11 +4,13 @@ export interface Area {
   name: string
   min: number
   max: number
+  collectionId?: string
 }
 
-export const mapArea = (area: SvaediDTO): Area => ({
+export const mapArea = (area: SvaediDTO, collectionId?: string): Area => ({
   id: area?.id?.toString() ?? '',
   name: area?.nafn?.toString() ?? '',
   min: area?.fjoldi ?? 0,
   max: area?.fjoldiMax ?? 0,
+  collectionId,
 })
