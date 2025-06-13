@@ -31,7 +31,7 @@ export class OrganizationSubpageSyncService
           entry.fields.organizationPage.fields.canBeFoundInSearchResults ??
           true) &&
         // Subpages should not be searchable if they belong to a parent subpage
-        !entry.fields.organizationParentSubpage?.fields?.slug,
+        !entry.fields.organizationParentSubpage,
     )
   }
 
