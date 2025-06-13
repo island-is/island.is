@@ -1,6 +1,4 @@
-import { CanActivate } from '@nestjs/common'
-
-import { JwtAuthUserGuard } from '@island.is/judicial-system/auth'
+import { JwtAuthUserGuard, RolesGuard } from '@island.is/judicial-system/auth'
 
 import { UserController } from '../user.controller'
 
@@ -12,19 +10,9 @@ describe('UserController - Get all guards', () => {
     guards = Reflect.getMetadata('__guards__', UserController.prototype.getAll)
   })
 
-  it('should have guards', () => {
-    expect(guards).toHaveLength(1)
-  })
-
-  describe('JwtAuthUserGuard', () => {
-    let guard: CanActivate
-
-    beforeEach(() => {
-      guard = new guards[0]()
-    })
-
-    it('should have JwtAuthUserGuard as guard 1', () => {
-      expect(guard).toBeInstanceOf(JwtAuthUserGuard)
-    })
+  it('should have the right guard configuration', () => {
+    expect(guards).toHaveLength(2)
+    expect(new guards[0]()).toBeInstanceOf(JwtAuthUserGuard)
+    expect(new guards[1]()).toBeInstanceOf(RolesGuard)
   })
 })
