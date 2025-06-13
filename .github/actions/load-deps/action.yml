@@ -23,13 +23,7 @@ runs:
       shell: bash
       run: |
         export GENERATED_FILES_PATH=${{ inputs.cache-path }}/${{ env.GENERATED_FILES }}
-        echo "GENERATED_FILES_PATH=$GENERATED_FILES_PATH" >> "$GITHUB_ENV"
-
-    - name: INFO
-      working-directory: ${{ inputs.working-directory }}
-      shell: bash
-      run: |
-        echo "generated files: ${{ env.GENERATED_FILES_PATH }}"
+        echo "GENERATED_FILES_PATH=$GENERATED_FILES_PATH" | tee -a "$GITHUB_ENV"
 
     - name: Generate hash for generated files list
       id: generate-files-hash
@@ -37,15 +31,17 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       run: |
         node ./scripts/ci/generate-files.mjs /dev/null --skip-codegen
-        echo "generated-files-hash=$(sha256sum generated_files_list.txt | awk '{print $1}')" >> "$GITHUB_OUTPUT"
 
-    - name: Cache generated files
+    - name: Restore generated files cache
       uses: runs-on/cache/restore@v4
       id: restore-codegen-cache
       with:
         path: |
           ${{ env.GENERATED_FILES_PATH }}
-        key: generated-files-${{ steps.generate-files-hash.outputs.generated-files-hash }}
+        key: generated-files-${{ hashFiles('generated_files_list.txt') }}
+        restore-keys: generated-files
+      env:
+        AWS_REGION: ${{ env.AWS_REGION || 'eu-west-1' }}
 
     - name: Prepare generated files
       if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
@@ -55,13 +51,15 @@ runs:
       run: |
         node ./scripts/ci/generate-files.mjs ${{ env.GENERATED_FILES_PATH }}
 
-    - name: Cache generated files
+    - name: Save generated files cache
       if: steps.generate-files.outcome == 'success'
       uses: runs-on/cache/save@v4
       with:
         path: |
           ${{ env.GENERATED_FILES_PATH }}
-        key: generated-files-${{ steps.generate-files-hash.outputs.generated-files-hash }}
+        key: ${{ steps.restore-codegen-cache.outputs.cache-primary-key }}
+      env:
+        AWS_REGION: ${{ env.AWS_REGION || 'eu-west-1' }}
 
     - name: Extract generated files
       if: steps.restore-codegen-cache.outputs.cache-hit == 'true'
