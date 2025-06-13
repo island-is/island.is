@@ -159,9 +159,6 @@ async function main() {
   const stats = await fs.stat(outputFileName)
   const fileSizeInMegabytes = stats.size / (1024 * 1024)
 
-  const cacheKey = `codegen-${execSync('git rev-parse HEAD').toString().trim()}`
-
-  console.log(`Cache key: ${cacheKey}`)
   console.log(`Archive created: ${outputFileName}`)
   console.log(`Archive size: ${fileSizeInMegabytes.toFixed(2)} MB`)
 
