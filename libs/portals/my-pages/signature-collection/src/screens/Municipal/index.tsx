@@ -9,14 +9,17 @@ import OwnerView from './OwnerView'
 import SigneeView from '../shared/SigneeView'
 import { m } from '../../lib/messages'
 import Intro from '../shared/Intro'
+import { SignatureCollectionCollectionType } from '@island.is/api/schema'
+
+const collectionType = SignatureCollectionCollectionType.LocalGovernmental
 
 const SignatureCollectionMunicipal = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
-  const { isOwner } = useIsOwner()
+  const { isOwner } = useIsOwner(collectionType)
   const { currentCollection, loadingCurrentCollection } =
-    useGetCurrentCollection()
-  const { listsForOwner } = useGetListsForOwner('')
+    useGetCurrentCollection(collectionType)
+  const { listsForOwner } = useGetListsForOwner(collectionType, '')
 
   return (
     <Box>
@@ -28,7 +31,10 @@ const SignatureCollectionMunicipal = () => {
       {!loadingCurrentCollection && isOwner.success ? (
         <OwnerView />
       ) : (
-        <SigneeView currentCollection={currentCollection} />
+        <SigneeView
+          currentCollection={currentCollection}
+          collectionType={collectionType}
+        />
       )}
     </Box>
   )
