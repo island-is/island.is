@@ -19,6 +19,7 @@ export class OrganizationParentSubpageSyncService
         !!entry.fields.title &&
         !!entry.fields.slug &&
         (entry.fields.pages ?? []).length > 0 &&
+        entry.fields.organizationPage?.fields?.theme !== 'standalone' &&
         // Parent subpage should not be searchable if the organization frontpage isn't searchable
         (entry.fields.organizationPage?.fields?.organization?.fields
           ?.canPagesBeFoundInSearchResults ??
