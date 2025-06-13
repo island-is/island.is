@@ -37,6 +37,7 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       run: |
         node ./scripts/ci/generate-files.mjs /dev/null --skip-codegen
+        echo "generated-files-hash=$(sha256sum generated_files_list.txt | awk '{print $1}')" >> "$GITHUB_OUTPUT"
 
     - name: Cache generated files
       uses: runs-on/cache/restore@v4
@@ -44,7 +45,7 @@ runs:
       with:
         path: |
           ${{ env.GENERATED_FILES_PATH }}
-        key: generated-files-${{ hashFiles('generated_files_list.txt') }}
+        key: generated-files-${{ steps.generate-files-hash.outputs.generated-files-hash }}
 
     - name: Prepare generated files
       if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
@@ -60,7 +61,7 @@ runs:
       with:
         path: |
           ${{ env.GENERATED_FILES_PATH }}
-        key: generated-files-${{ hashFiles('generated_files_list.txt') }}
+        key: generated-files-${{ steps.generate-files-hash.outputs.generated-files-hash }}
 
     - name: Extract generated files
       if: steps.restore-codegen-cache.outputs.cache-hit == 'true'
