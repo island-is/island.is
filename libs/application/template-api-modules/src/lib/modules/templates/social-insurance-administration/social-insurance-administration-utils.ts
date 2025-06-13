@@ -5,7 +5,6 @@ import {
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
   formatBank,
-  getBankIsk,
   shouldNotUpdateBankAccount,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import {
@@ -24,10 +23,7 @@ import {
   getApplicationAnswers as getIPApplicationAnswers,
   getApplicationExternalData as getIPApplicationExternalData,
 } from '@island.is/application/templates/social-insurance-administration/income-plan'
-import {
-  getApplicationAnswers as getMARPApplicationAnswers,
-  getApplicationExternalData as getMARPApplicationExternalData,
-} from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
+import { getApplicationAnswers as getMARPApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
 import {
   ApplicationType,
   Employer,
@@ -380,8 +376,8 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
   const {
     applicantPhonenumber,
     applicantEmail,
-    bank,
-    paymentInfo,
+    // bank,
+    //paymentInfo,
     personalAllowance,
     personalAllowanceUsage,
     taxLevel,
@@ -398,7 +394,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     questionnaire,
   } = getMARPApplicationAnswers(application.answers)
 
-  const { bankInfo } = getMARPApplicationExternalData(application.externalData)
+  //  const { bankInfo } = getMARPApplicationExternalData(application.externalData)
 
   const marpDTO: MedicalAndRehabilitationPaymentsDTO = {
     applicantInfo: {
