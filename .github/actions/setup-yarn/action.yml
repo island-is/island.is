@@ -52,8 +52,9 @@ runs:
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
-        ls -l "$(which yarn)" && yarn --version
-        ls -l "$(which node)" && node --version
+        for tool in yarn node; do
+          echo -n "$tool: $("$tool" --version)" && ls -l "$(which "$tool")"
+        done
 
     - name: Get Yarn Cache Directory Path
       working-directory: ${{ inputs.working-directory }}
