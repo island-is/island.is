@@ -1,6 +1,7 @@
 import addHours from 'date-fns/addHours'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
+import isEqual from 'date-fns/isEqual'
 import isWeekend from 'date-fns/isWeekend'
 import fetch from 'node-fetch'
 
@@ -26,27 +27,30 @@ type JobConfig = {
 }
 
 const getTime = (hour: number) => {
-  const todayAtHour = new Date()
+  const todayAtHour = now()
   return todayAtHour.setHours(hour, 0, 0, 0)
 }
+
+const isBeforeOrEqual = (date: Date | number, dateToCompare: Date | number) =>
+  isBefore(date, dateToCompare) || isEqual(date, dateToCompare)
 
 const getCurrentJobScheduleType = () => {
   // Create 1 h interval to check the target job time.
   // Example: Jobs are currently triggered at 2AM and 9AM.
   // Thus, if now = 9:01 our interval would be (8:01, 9:01) and we check if 9
   // falls in that interval
-  const now = new Date()
-  const before = addHours(now, -1)
+  const timeNow = now()
+  const before = addHours(timeNow, -1)
 
   const today2AM = getTime(2)
   const today9AM = getTime(9)
 
-  if (isBefore(today2AM, now) && isAfter(today2AM, before)) {
+  if (isBeforeOrEqual(today2AM, timeNow) && isAfter(today2AM, before)) {
     return JobScheduleType.EveryDayAt2
   }
   if (
     !isWeekend(today9AM) &&
-    isBefore(today9AM, now) &&
+    isBeforeOrEqual(today9AM, timeNow) &&
     isAfter(today9AM, before)
   ) {
     return JobScheduleType.WeekdaysAt9
@@ -85,10 +89,11 @@ export class AppService {
   }
 
   private async archiveCases() {
+    console.log({ archiveUrl: this.config.backendUrl })
+
     const startTime = now()
 
     let done = false
-
     do {
       done = await fetch(
         `${this.config.backendUrl}/api/internal/cases/archive`,
@@ -156,7 +161,6 @@ export class AppService {
         jobScheduleType: JobScheduleType.EveryDayAt2,
         function: this.archiveCases,
       },
-
       {
         jobScheduleType: JobScheduleType.EveryDayAt2,
         function: this.postDailyHearingArrangementSummary,
@@ -174,9 +178,11 @@ export class AppService {
       return
     }
 
-    jobs
-      .filter((job) => job.jobScheduleType === currentJobScheduleType)
-      .forEach(async (job) => await job.function())
+    const filteredJobs = jobs.filter(
+      (job) => job.jobScheduleType === currentJobScheduleType,
+    )
+    console.log({ filteredJobs })
+    filteredJobs.forEach(async (job) => await job.function())
 
     this.logger.info('Scheduler done')
   }

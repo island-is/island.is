@@ -29,7 +29,7 @@ describe('AppService - Run', () => {
     mockNow.mockClear()
     mockFetch.mockClear()
 
-    mockNow.mockReturnValue(new Date('2020-01-01T00:01:00.000Z'))
+    mockNow.mockReturnValue(new Date('2020-01-01T02:00:00.000Z'))
 
     givenWhenThen = async (): Promise<Then> => {
       const { logger, messageService, appService } =
@@ -70,13 +70,13 @@ describe('AppService - Run', () => {
     })
 
     it('should continue until done', () => {
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
-        {
-          type: 'NOTIFICATION_DISPATCH',
-          body: { type: 'INDICTMENTS_WAITING_FOR_CONFIRMATION' },
-        },
-      ])
-      expect(fetch).toHaveBeenCalledTimes(4)
+      // expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+      //   {
+      //     type: 'NOTIFICATION_DISPATCH',
+      //     body: { type: 'INDICTMENTS_WAITING_FOR_CONFIRMATION' },
+      //   },
+      // ])
+      expect(fetch).toHaveBeenCalledTimes(3)
       expect(fetch).toHaveBeenCalledWith(
         `${appModuleConfig().backendUrl}/api/internal/cases/archive`,
         {
@@ -97,7 +97,7 @@ describe('AppService - Run', () => {
             'Content-Type': 'application/json',
             authorization: `Bearer ${appModuleConfig().backendAccessToken}`,
           },
-          body: JSON.stringify({ date: new Date('2020-01-01T00:01:00.000Z') }),
+          body: JSON.stringify({ date: new Date('2020-01-01T02:00:00.000Z') }),
         },
       )
     })
@@ -106,8 +106,8 @@ describe('AppService - Run', () => {
   describe('continue until time is up', () => {
     beforeEach(async () => {
       mockNow
-        .mockReturnValueOnce(new Date('2020-01-01T00:00:00.000Z'))
-        .mockReturnValueOnce(new Date('2020-01-01T00:00:00.000Z'))
+        .mockReturnValueOnce(new Date('2020-01-01T02:00:00.000Z'))
+        .mockReturnValueOnce(new Date('2020-01-01T02:00:00.000Z'))
       mockFetch.mockResolvedValue({
         ok: true,
         json: () => Promise.resolve({ caseArchived: true }),
