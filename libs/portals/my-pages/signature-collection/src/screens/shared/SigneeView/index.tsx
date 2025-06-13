@@ -20,14 +20,16 @@ import {
 
 const SigneeView = ({
   currentCollection,
+  collectionType,
 }: {
   currentCollection: SignatureCollection
+  collectionType: SignatureCollectionCollectionType
 }) => {
   const user = useUserInfo()
   const { formatMessage } = useLocale()
-  const { signedLists, loadingSignedLists } = useGetSignedList()
+  const { signedLists, loadingSignedLists } = useGetSignedList(collectionType)
   const { listsForUser, loadingUserLists, getListsForUserError } =
-    useGetListsForUser(currentCollection?.id)
+    useGetListsForUser(collectionType, currentCollection?.id)
 
   if (getListsForUserError !== undefined) {
     return (
@@ -53,7 +55,10 @@ const SigneeView = ({
 
           <Box marginTop={[0, 5]}>
             {/* Signed list */}
-            <SignedList currentCollection={currentCollection} />
+            <SignedList
+              currentCollection={currentCollection}
+              collectionType={collectionType}
+            />
 
             {/* Other available lists */}
             <Box marginTop={[5, 10]}>
