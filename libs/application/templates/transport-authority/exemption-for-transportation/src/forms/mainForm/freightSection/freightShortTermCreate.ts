@@ -32,16 +32,25 @@ export const FreightShortTermCreateMultiField = buildMultiField({
   children: [
     ...FreightCommonHiddenInputs('freight'),
     ...FreightCommonHiddenInputs(`freightPairing.${freightIndex}`),
+    // Note: We are reusing convoyId as freightId here.
+    // This is safe because freight and convoy are separate arrays,
+    // and each requires a unique ID within its own context.
+    // The overlap doesn't cause issues, and also convoyId isn't sent over to SGS
     buildHiddenInput({
       id: `freight.items.${freightIndex}.freightId`,
-      defaultValue: () => getRandomId(),
+      defaultValue: (application: Application) => {
+        return getValueViaPath<string>(
+          application.answers,
+          `convoy.items.${convoyIndex}.convoyId`,
+        )
+      },
     }),
     buildHiddenInput({
       id: `freightPairing.${freightIndex}.freightId`,
       defaultValue: (application: Application) => {
         return getValueViaPath<string>(
           application.answers,
-          `freight.items.${freightIndex}.freightId`,
+          `convoy.items.${convoyIndex}.convoyId`,
         )
       },
     }),
