@@ -204,7 +204,7 @@ export const getLocalrunValueFile = async (
   const mocksObj = {
     containerer: 'docker',
     containererCommand: 'run',
-    containererFlags: '-it --rm',
+    containererFlags: '--rm',
     ports: ['2525', ...mocksConfigs.ports],
     mounts: [`${process.cwd()}/${defaultMountebankConfig}:/app/default.json:z`],
     image: 'docker.io/bbyars/mountebank:2.8.1',
