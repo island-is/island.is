@@ -1,3 +1,7 @@
+import addHours from 'date-fns/addHours'
+import isAfter from 'date-fns/isAfter'
+import isBefore from 'date-fns/isBefore'
+import isWeekend from 'date-fns/isWeekend'
 import fetch from 'node-fetch'
 
 import { BadGatewayException, Inject, Injectable } from '@nestjs/common'
@@ -10,6 +14,46 @@ import { NotificationDispatchType } from '@island.is/judicial-system/types'
 
 import { appModuleConfig } from './app.config'
 import { now } from './date.factory'
+
+enum JobScheduleType {
+  EveryDayAt2 = 'everyDayAt2',
+  WeekdaysAt9 = 'weekdaysAt9',
+}
+
+type JobConfig = {
+  jobScheduleType: JobScheduleType
+  function: () => Promise<void | Logger>
+}
+
+const getTime = (hour: number) => {
+  const todayAtHour = new Date()
+  return todayAtHour.setHours(hour, 0, 0, 0)
+}
+
+const getCurrentJobScheduleType = () => {
+  // Create 1 h interval to check the target job time.
+  // Example: Jobs are currently triggered at 2AM and 9AM.
+  // Thus, if now = 9:01 our interval would be (8:01, 9:01) and we check if 9
+  // falls in that interval
+  const now = new Date()
+  const before = addHours(now, -1)
+
+  const today2AM = getTime(2)
+  const today9AM = getTime(9)
+
+  if (isBefore(today2AM, now) && isAfter(today2AM, before)) {
+    return JobScheduleType.EveryDayAt2
+  }
+  if (
+    !isWeekend(today9AM) &&
+    isBefore(today9AM, now) &&
+    isAfter(today9AM, before)
+  ) {
+    return JobScheduleType.WeekdaysAt9
+  }
+
+  return null
+}
 
 const minutesBetween = (startTime: Date, endTime: Date) => {
   return Math.floor((endTime.getTime() - startTime.getTime()) / (1000 * 60))
@@ -106,9 +150,33 @@ export class AppService {
   async run() {
     this.logger.info('Scheduler starting')
 
-    await this.addMessagesForIndictmentsWaitingForConfirmationToQueue()
-    await this.archiveCases()
-    await this.postDailyHearingArrangementSummary()
+    // create the job config
+    const jobs: JobConfig[] = [
+      {
+        jobScheduleType: JobScheduleType.EveryDayAt2,
+        function: this.archiveCases,
+      },
+
+      {
+        jobScheduleType: JobScheduleType.EveryDayAt2,
+        function: this.postDailyHearingArrangementSummary,
+      },
+
+      {
+        jobScheduleType: JobScheduleType.WeekdaysAt9,
+        function: this.addMessagesForIndictmentsWaitingForConfirmationToQueue,
+      },
+    ]
+
+    const currentJobScheduleType = getCurrentJobScheduleType()
+    if (!currentJobScheduleType) {
+      this.logger.info('Scheduler done: No jobs executed')
+      return
+    }
+
+    jobs
+      .filter((job) => job.jobScheduleType === currentJobScheduleType)
+      .forEach(async (job) => await job.function())
 
     this.logger.info('Scheduler done')
   }
