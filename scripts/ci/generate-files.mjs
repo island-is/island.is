@@ -30,9 +30,9 @@ const parseCodegenFile = async (filePath) => {
 
 const addToPatterns = (patterns, item) => {
   if (Array.isArray(item)) {
-    item.forEach((i) => patterns.add(i))
+    item.forEach((i) => patterns.add(i.trim()))
   } else if (typeof item === 'string') {
-    patterns.add(item)
+    patterns.add(item.trim())
   }
 }
 
@@ -49,7 +49,7 @@ const getPatterns = async () => {
 
     if (config.generates) {
       Object.entries(config.generates).forEach(([outputFile, options]) => {
-        patterns.add(outputFile)
+        patterns.add(outputFile.trim())
 
         if (typeof options === 'object') {
           if (options.schema) {
@@ -63,20 +63,18 @@ const getPatterns = async () => {
     }
   }
 
-  // Add additional patterns
-  additionalPatterns.forEach((pattern) => patterns.add(pattern))
+  additionalPatterns.forEach((pattern) => patterns.add(pattern.trim()))
 
   return Array.from(patterns)
 }
 
 const extractCodegenInputs = async () => {
   const codegenFiles = findCodegenFiles()
-  const inputs = new Set()
+  const inputPatterns = new Set()
 
   for (const file of codegenFiles) {
     const config = await parseCodegenFile(file)
-
-    const addInput = (val) => addToPatterns(inputs, val)
+    const addInput = (val) => addToPatterns(inputPatterns, val)
 
     if (config.schema) addInput(config.schema)
     if (config.documents) addInput(config.documents)
@@ -96,7 +94,17 @@ const extractCodegenInputs = async () => {
     }
   }
 
-  return Array.from(inputs)
+  const resolvedFiles = new Set()
+
+  Array.from(inputPatterns).forEach((pattern) => {
+    const matched = globSync(pattern, {
+      nodir: true,
+      ignore: ignorePatterns,
+    })
+    matched.forEach((f) => resolvedFiles.add(f))
+  })
+
+  return Array.from(resolvedFiles).sort()
 }
 
 async function main() {
@@ -113,9 +121,9 @@ async function main() {
   const skipCodegen = args.includes('--skip-codegen')
 
   const inputs = await extractCodegenInputs()
-  console.log('::group::Input files or patterns')
+  console.log('::group::Input files')
   inputs.forEach((file) => console.log(file))
-  console.log(`::endgroup::`)
+  console.log('::endgroup::')
 
   if (skipCodegen) {
     console.log('Skipping codegen command...')
@@ -130,7 +138,7 @@ async function main() {
   const patterns = await getPatterns()
 
   console.log(`Found ${patterns.length} total patterns`)
-  console.log(`Found ${inputs.length} codegen input patterns`)
+  console.log(`Resolved ${inputs.length} codegen input files`)
 
   const existingFiles = []
   const missingFiles = []
@@ -157,7 +165,7 @@ async function main() {
   execSync(`tar zcvf "${outputFileName}" -T generated_files_list.txt`, {
     stdio: 'inherit',
   })
-  console.log(`::endgroup::`)
+  console.log('::endgroup::')
 
   const stats = await fs.stat(outputFileName)
   const fileSizeInMegabytes = stats.size / (1024 * 1024)
@@ -168,7 +176,7 @@ async function main() {
   if (missingFiles.length > 0) {
     console.log('::group::Missing files or patterns')
     missingFiles.forEach((file) => console.log(file))
-    console.log(`::endgroup::`)
+    console.log('::endgroup::')
   }
 }
 
