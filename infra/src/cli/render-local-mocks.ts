@@ -77,7 +77,17 @@ export async function runLocalServices({
   neverFail?: boolean
   dependencies?: typeof services
 }) {
-  logger.debug('runLocalServices', { services, dependencies })
+  logger.debug('runLocalServices', {
+    services,
+    dependencies,
+    dryRun,
+    neverFail,
+    print,
+    json,
+    secrets,
+    startProxies,
+    devServices,
+  })
 
   // Add the service itself to the list of dependencies
   dependencies.push(...services)

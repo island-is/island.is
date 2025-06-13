@@ -37,5 +37,6 @@ export async function localrun(
           : renderers.localrun,
       env: envConfig,
     }),
+    { dryRun, devServices },
   )
 }
