@@ -33,9 +33,9 @@ export const dataSchema = z.object({
   paymentInfo: z
     .object({
       bank: z.object({
-        bankNumber: z.string().min(4),
-        ledger: z.string().min(2),
-        accountNumber: z.string().min(6),
+        bankNumber: z.string().regex(/^\d{4}$/),
+        ledger: z.string().regex(/^\d{2}$/),
+        accountNumber: z.string().regex(/^\d{6}$/),
       }),
       personalAllowance: z.enum([YES, NO]),
       personalAllowanceUsage: z.coerce
