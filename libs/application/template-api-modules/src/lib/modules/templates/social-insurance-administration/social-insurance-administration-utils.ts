@@ -411,11 +411,11 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     },
     comment,
     applicationId: application.id,
-    ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {
-      domesticBankInfo: {
-        bank: getBankIsk(bank),
-      },
-    }),
+    // ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && { // LAGA shouldNotUpdateBankAccount(bankInfo
+    //   domesticBankInfo: {
+    //     bank: getBankIsk(bank),
+    //   },
+    // }),
     taxInfo: {
       personalAllowance: YES === personalAllowance,
       personalAllowanceUsage:
@@ -455,7 +455,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
       hadAssistance: true, //TODO:
       answers: questionnaire.map((question) => ({
         questionId: question.questionId,
-        answer: +question.answer === 5 ? -1 : +question.answer, //TODO: TR teymið er ekki klárt hvort að við eigum að senda -1 eða null
+        answer: question.answer === '5' ? '-1' : question.answer, //TODO: TR teymið er ekki klárt hvort að við eigum að senda -1 eða null
       })),
     },
   }
