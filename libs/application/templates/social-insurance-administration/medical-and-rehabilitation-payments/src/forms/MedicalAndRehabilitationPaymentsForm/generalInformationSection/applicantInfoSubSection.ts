@@ -120,12 +120,9 @@ export const applicantInfoSubSection = buildSubSection({
             const { maritalStatus } = getApplicationExternalData(
               application.externalData,
             )
-            return maritalStatuses[maritalStatus]
+            return maritalStatus ? maritalStatuses[maritalStatus] : ''
           },
-          condition: (_, externalData) => {
-            const { maritalStatus } = getApplicationExternalData(externalData)
-            return !!maritalStatus
-          },
+          condition: (_, externalData) => shouldShowSpouseFields(externalData),
         }),
         buildTextField({
           id: 'applicantInfo.spouseName',
@@ -138,10 +135,7 @@ export const applicantInfoSubSection = buildSubSection({
             )
             return spouseName
           },
-          condition: (_, externalData) => {
-            const { spouseName } = getApplicationExternalData(externalData)
-            return !!spouseName
-          },
+          condition: (_, externalData) => shouldShowSpouseFields(externalData),
         }),
         buildTextField({
           id: 'applicantInfo.spouseID',
@@ -153,13 +147,9 @@ export const applicantInfoSubSection = buildSubSection({
             const { spouseNationalId } = getApplicationExternalData(
               application.externalData,
             )
-            return kennitala.format(spouseNationalId)
+            return spouseNationalId ? kennitala.format(spouseNationalId) : ''
           },
-          condition: (_, externalData) => {
-            const { spouseNationalId } =
-              getApplicationExternalData(externalData)
-            return !!spouseNationalId
-          },
+          condition: (_, externalData) => shouldShowSpouseFields(externalData),
         }),
       ],
     }),
