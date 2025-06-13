@@ -175,6 +175,10 @@ export const healthNavigation: PortalNavigationItem = {
       ],
     },
     {
+      name: m.bloodtype,
+      path: HealthPaths.HealthBloodtype,
+    },
+    {
       name: messages.referrals,
       path: HealthPaths.HealthReferrals,
       searchTags: [s.healthReferrals],
