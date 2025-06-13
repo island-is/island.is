@@ -71,7 +71,10 @@ export class InstitutionNotificationService extends BaseNotificationService {
     const body = this.formatMessage(strings.waitingForConfirmation.body, {
       count,
     })
-    const tail = this.formatMessage(strings.tail)
+    const tail = this.formatMessage(strings.tail, {
+      linkStart: `<a href="${this.config.clientUrl}">`,
+      linkEnd: '</a>',
+    })
 
     return Promise.all(
       recipients.map((recipient: User) =>

@@ -1,5 +1,7 @@
 import { uuid } from 'uuidv4'
 
+import { ConfigType } from '@nestjs/config'
+
 import { EmailService } from '@island.is/email-service'
 
 import {
@@ -18,6 +20,7 @@ import { Case } from '../../../case'
 import { CaseNotificationDto } from '../../dto/caseNotification.dto'
 import { DeliverResponse } from '../../models/deliver.response'
 import { Notification } from '../../models/notification.model'
+import { notificationModuleConfig } from '../../notification.config'
 
 jest.mock('../../../../factories')
 
@@ -41,14 +44,21 @@ describe('InternalNotificationController - Send court date notifications', () =>
 
   const { prosecutor, defender } = createTestUsers(['prosecutor', 'defender'])
 
+  let mockConfig: ConfigType<typeof notificationModuleConfig>
+
   let mockEmailService: EmailService
   let mockNotificationModel: typeof Notification
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { emailService, internalNotificationController, notificationModel } =
-      await createTestingNotificationModule()
+    const {
+      emailService,
+      internalNotificationController,
+      notificationConfig,
+      notificationModel,
+    } = await createTestingNotificationModule()
 
+    mockConfig = notificationConfig
     mockEmailService = emailService
     mockNotificationModel = notificationModel
 
@@ -95,7 +105,7 @@ describe('InternalNotificationController - Send court date notifications', () =>
         expect.objectContaining({
           to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: `Fyrirtaka í máli: ${courtCaseNumber}`,
-          html: `Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um gæsluvarðhald.<br /><br />Fyrirtaka mun fara fram á ótilgreindum tíma.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari hefur ekki verið skráður.<br /><br />Verjandi sakbornings: ${defender.name}. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
+          html: `Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um gæsluvarðhald.<br /><br />Fyrirtaka mun fara fram á ótilgreindum tíma.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari hefur ekki verið skráður.<br /><br />Verjandi sakbornings: ${defender.name}. Hægt er að nálgast yfirlitssíðu málsins í <a href="${mockConfig.clientUrl}">Réttarvörslugátt</a>.`,
         }),
       )
 
