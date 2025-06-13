@@ -88,13 +88,16 @@ jobs:
         uses: ./.github/actions/load-deps
       - name: Start
         run: |
-          ls -lahd node_modules
-          yarn infra run-local-env --no-secrets --no-dev-services ${{ env.AFFECTED_PROJECTS }} &
-          t_stop=$(date +%s -d '+3 minutes')
-          while (( $(date +%s) < t_stop )) && ! curl -s http://localhost:4200/; do
+          yarn infra run-local-env --no-secrets --no-dev-services ${{ env.AFFECTED_PROJECTS }} >> run-local-env.log &
+          t_stop=$(date +%s -d '+3 minutes') ; t_start=$(date +%s)
+          while (( $(date +%s) < t_stop )); do
+            t_remaining=$(( t_stop - $(date +%s) )) ; t_elapsed=$(( $(date +%s) - t_start ))
+            if curl -s http://localhost:4200 ; then echo ""; echo "Succeeded in ${t_elapsed}s (${t_remaining}s remaining)"; kill %1; exit 0; fi
+            echo -n "."
             sleep 0.1
           done
-          curl -s http://localhost:4200/
+          kill %1
+          exit 1
 
   tests:
     needs:
