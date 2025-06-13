@@ -38,7 +38,7 @@ runs:
       with:
         path: |
           ${{ env.GENERATED_FILES_PATH }}
-        key: generated-files-${{ hashFiles('generated_files_list.txt') }}
+        key: generated-files-${{ hashFiles('codegen_inputs_list.txt') }}
         restore-keys: generated-files
       env:
         AWS_REGION: ${{ env.AWS_REGION || 'eu-west-1' }}
