@@ -164,12 +164,12 @@ const Indictment = () => {
       }
 
       // Suspension is requested
-      const hasDrivingWithoutEverHavingLicense = trafficViolationOffenses.has(
+      const hasDrivenWithoutEverHavingLicense = trafficViolationOffenses.has(
         IndictmentCountOffense.DRIVING_WITHOUT_EVER_HAVING_LICENSE,
       )
 
       // If driving without ever having license, then use the future-suspension demands
-      if (hasDrivingWithoutEverHavingLicense) {
+      if (hasDrivenWithoutEverHavingLicense) {
         // If any other suspension offense is present, then use the future-suspension demands
         // with the future license suspension
         const hasAnyOtherSuspensionOffense = trafficViolationOffenses.size > 1

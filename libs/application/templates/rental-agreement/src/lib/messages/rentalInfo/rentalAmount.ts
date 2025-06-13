@@ -160,6 +160,12 @@ export const rentalAmount = defineMessages({
   },
 
   // Error messages
+  indexNotAllowedForShortTermRentalError: {
+    id: 'ra.application:rentalAmount.indexNotAllowedForShortTermRentalError',
+    defaultMessage:
+      'Einungis má vísitölutengja tímabundinn leigusamning ef hann er bundinn lengur en til 12 mánaða',
+    description: 'Rental amount index not allowed for short term rental error',
+  },
   tooHighNumberError: {
     id: 'ra.application:rentalAmount.tooHighNumberError',
     defaultMessage: 'Leiguverð má ekki vera hærra en 1.500.000 kr.',
