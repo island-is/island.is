@@ -15,7 +15,7 @@ interface Then {
 
 type GivenWhenThen = () => Promise<Then>
 
-describe('InternalSubpoenaController - Deliver subpoena to police', () => {
+describe('InternalSubpoenaController - Deliver subpoena to national commissioners office', () => {
   const caseId = uuid()
   const subpoenaId = uuid()
   const defendantId = uuid()
@@ -41,7 +41,7 @@ describe('InternalSubpoenaController - Deliver subpoena to police', () => {
       const then = {} as Then
 
       await internalSubpoenaController
-        .deliverSubpoenaToPolice(
+        .deliverSubpoenaToNationalCommissionersOffice(
           caseId,
           defendantId,
           subpoenaId,

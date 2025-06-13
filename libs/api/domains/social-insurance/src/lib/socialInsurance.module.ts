@@ -1,13 +1,15 @@
-import { Module } from '@nestjs/common'
 import { SocialInsuranceAdministrationClientModule } from '@island.is/clients/social-insurance-administration'
-import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { CmsModule } from '@island.is/cms'
-import { SocialInsuranceService } from './socialInsurance.service'
+import { FeatureFlagModule } from '@island.is/nest/feature-flags'
+import { Module } from '@nestjs/common'
 import {
+  GeneralResolver,
   IncomePlanResolver,
+  MedicalDocumentsResolver,
   PaymentPlanResolver,
   PensionResolver,
 } from './resolvers'
+import { SocialInsuranceService } from './socialInsurance.service'
 
 @Module({
   imports: [
@@ -20,6 +22,8 @@ import {
     PensionResolver,
     IncomePlanResolver,
     SocialInsuranceService,
+    GeneralResolver,
+    MedicalDocumentsResolver,
   ],
 })
 export class SocialInsuranceModule {}

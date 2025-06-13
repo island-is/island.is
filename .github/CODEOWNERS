@@ -360,6 +360,7 @@ codemagic.yaml                                                                  
 /libs/application/templates/social-insurance-administration/income-plan                                   @island-is/deloitte
 /libs/application/templates/social-insurance-administration/old-age-pension                               @island-is/deloitte
 /libs/application/templates/social-insurance-administration/pension-supplement                            @island-is/deloitte
+/libs/application/templates/social-insurance-administration/medical-and-rehabilitation-payments           @island-is/deloitte
 /libs/clients/social-insurance-administration/                                                            @island-is/deloitte @island-is/stefna @island-is/hugsmidjan
 /libs/application/templates/car-recycling/                                                                @island-is/deloitte
 /libs/application/template-api-modules/src/lib/modules/templates/car-recycling/                           @island-is/deloitte

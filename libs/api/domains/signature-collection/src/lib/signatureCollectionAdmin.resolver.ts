@@ -37,7 +37,7 @@ import { SignatureCollectionSignatureLookupInput } from './dto/signatureLookup.i
 import { SignatureCollectionAreaSummaryReportInput } from './dto/areaSummaryReport.input'
 import { SignatureCollectionAreaSummaryReport } from './models/areaSummaryReport.model'
 import { SignatureCollectionUploadPaperSignatureInput } from './dto/uploadPaperSignature.input'
-import { SignatureCollectionCollectionTypeInput } from './dto/collectionType.input'
+import { SignatureCollectionBaseInput } from './dto/signatureCollectionBase.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.signatureCollectionProcess)
@@ -70,7 +70,7 @@ export class SignatureCollectionAdminResolver {
   )
   async signatureCollectionAdminCurrent(
     @CurrentUser() user: User,
-    @Args('input') input: SignatureCollectionCollectionTypeInput,
+    @Args('input') input: SignatureCollectionBaseInput,
   ): Promise<SignatureCollection> {
     const isManager = user.scope.includes(
       AdminPortalScope.signatureCollectionManage,
