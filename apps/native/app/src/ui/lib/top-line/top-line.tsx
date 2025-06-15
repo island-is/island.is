@@ -12,10 +12,9 @@ const Host = styled(Animated.View)`
 
 interface TopLineProps {
   scrollY: Animated.Value
-  offsetTop?: number
 }
 
-export function TopLine({ scrollY, offsetTop }: TopLineProps) {
+export function TopLine({ scrollY }: TopLineProps) {
   const ref = useRef<SafeAreaView>(null)
   const offset = useRef(new Animated.Value(0)).current
 
@@ -33,7 +32,7 @@ export function TopLine({ scrollY, offsetTop }: TopLineProps) {
       style={{
         width: '100%',
         position: 'absolute',
-        top: offsetTop ?? 0,
+        top: 0,
         zIndex: 10,
       }}
     >

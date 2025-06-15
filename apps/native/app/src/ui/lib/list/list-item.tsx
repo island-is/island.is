@@ -73,16 +73,11 @@ const Title = styled.View`
   margin-bottom: ${({ theme }) => theme.spacing.smallGutter}px;
 `
 
-const SubtitleWrapper = styled.View<{ replyable?: boolean }>`
+const SubtitleWrapper = styled.View`
   flex-direction: row;
   align-items: center;
-  flex: 1;
-  ${({ replyable, theme }) =>
-    replyable &&
-    css`
-      margin-right: ${theme.spacing[2]}px;
-      column-gap: ${theme.spacing.smallGutter}px;
-    `}
+  flex-shrink: 1;
+  column-gap: ${({ theme }) => theme.spacing.smallGutter}px;
 `
 
 const Cell = styled.View``
@@ -169,25 +164,26 @@ export function ListItem({
             )}
           </Row>
           <LowerRow>
-            <SubtitleWrapper replyable={replyable}>
+            <SubtitleWrapper>
               <Typography variant="heading5" numberOfLines={1}>
                 {subtitle}
               </Typography>
-              {replyable && (
-                <UIIcon
-                  source={require('../../../assets/icons/reply.png')}
-                  width={12}
-                  height={12}
-                  tintColor="dark300"
-                />
-              )}
             </SubtitleWrapper>
+            {replyable && (
+              <UIIcon
+                source={require('../../../assets/icons/reply.png')}
+                width={12}
+                height={12}
+                tintColor="dark300"
+              />
+            )}
+            <View style={{ flex: 1 }} />
+            {starred && <StarImage source={starFilledIcon} active={starred} />}
             {urgent && (
               <Label color="urgent" icon>
                 {intl.formatMessage({ id: 'inbox.urgent' })}
               </Label>
             )}
-            {starred && <StarImage source={starFilledIcon} active={starred} />}
           </LowerRow>
         </Content>
       </Host>
