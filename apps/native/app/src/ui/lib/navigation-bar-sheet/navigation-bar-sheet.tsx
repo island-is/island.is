@@ -6,7 +6,7 @@ import {
   useWindowDimensions,
   ViewStyle,
 } from 'react-native'
-import styled, { useTheme } from 'styled-components/native'
+import styled, { css, useTheme } from 'styled-components/native'
 import { LoadingIcon } from '../../../components/nav-loading-spinner/loading-icon'
 import { OfflineIcon } from '../../../components/offline/offline-icon'
 import { useOfflineStore } from '../../../stores/offline-store'
@@ -45,6 +45,7 @@ const Handle = styled.View`
 `
 
 const IconsWrapper = styled.View`
+  margin-left: auto;
   flex-direction: row;
   align-items: center;
   gap: ${({ theme }) => theme.spacing[1]}px;
@@ -67,20 +68,22 @@ const CloseIcon = styled.Image`
   height: ${({ theme }) => theme.spacing[3]}px;
 `
 
-export function NavigationBarSheet({
-  title,
-  onClosePress,
-  style,
-  showLoading,
-  closable = true,
-}: {
+type NavigationBarSheetProps = {
   title?: React.ReactNode
   componentId: string
   onClosePress(): void
   style?: ViewStyle
   showLoading?: boolean
   closable?: boolean
-}) {
+}
+
+export function NavigationBarSheet({
+  title,
+  onClosePress,
+  style,
+  showLoading,
+  closable = true,
+}: NavigationBarSheetProps) {
   const isConnected = useOfflineStore(({ isConnected }) => isConnected)
   const wd = useWindowDimensions()
   const theme = useTheme()

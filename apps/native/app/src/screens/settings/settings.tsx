@@ -1,12 +1,12 @@
 import { useApolloClient } from '@apollo/client'
 import { authenticateAsync } from 'expo-local-authentication'
-import React, { useEffect, useRef, useState } from 'react'
+import React, { useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
-  Alert as RNAlert,
   Image,
   Linking,
   Platform,
+  Alert as RNAlert,
   ScrollView,
   Switch,
   TouchableOpacity,
@@ -20,16 +20,9 @@ import {
 } from 'react-native-navigation'
 import { useTheme } from 'styled-components/native'
 
-import {
-  Alert,
-  NavigationBarSheet,
-  TableViewAccessory,
-  TableViewCell,
-  TableViewGroup,
-} from '../../ui'
 import editIcon from '../../assets/icons/edit.png'
-import chevronForward from '../../ui/assets/icons/chevron-forward.png'
 import { PressableHighlight } from '../../components/pressable-highlight/pressable-highlight'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
   UpdateProfileDocument,
   UpdateProfileMutation,
@@ -46,11 +39,18 @@ import {
   usePreferencesStore,
 } from '../../stores/preferences-store'
 import { useUiStore } from '../../stores/ui-store'
+import {
+  Alert,
+  NavigationBarSheet,
+  TableViewAccessory,
+  TableViewCell,
+  TableViewGroup,
+} from '../../ui'
+import chevronForward from '../../ui/assets/icons/chevron-forward.png'
 import { ComponentRegistry } from '../../utils/component-registry'
 import { getAppRoot } from '../../utils/lifecycle/get-app-root'
 import { testIDs } from '../../utils/test-ids'
 import { useBiometricType } from '../onboarding/onboarding-biometrics'
-import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 
 const { getNavigationOptions, useNavigationOptions } =
   createNavigationOptionHooks(() => ({
@@ -80,7 +80,6 @@ export const SettingsScreen: NavigationFunctionComponent = ({
   } = usePreferencesStore()
   const [loadingCP, setLoadingCP] = useState(false)
   const [localPackage, setLocalPackage] = useState<LocalPackage | null>(null)
-  const efficient = useRef<any>({}).current
   const isInfoDismissed = dismissed.includes('userSettingsInformational')
   const { authenticationTypes, isEnrolledBiometrics } = useUiStore()
   const biometricType = useBiometricType(authenticationTypes)
