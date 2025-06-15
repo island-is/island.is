@@ -283,9 +283,10 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
     differentPlaceOfResidenceDescription: {
       id: 'nps.application:childrenNGuardians.child.info.different.place.of.residence.description',
-      defaultMessage: 'Aðsetur er tímabundin búseta barns í öðru húsnæði',
+      defaultMessage:
+        'Aðsetur og lögheimili er ekki sama skráningin. Aðsetur er tímabundin skráning á búsetu sem notuð er þegar dvalið er utan lögheimilis í afmarkaðan tíma svo sem vegna náms eða veikinda.',
       description:
-        "Temporary residence is a child's place of residence in another home",
+        'Temporary residence and legal domicile are not the same registration. Temporary residence is a temporary registration of residence used when staying outside the legal domicile for a limited time, such as for education or illness.',
     },
     childInfoPlaceOfResidence: {
       id: 'nps.application:childrenNGuardians.child.info.place.of.residence',
