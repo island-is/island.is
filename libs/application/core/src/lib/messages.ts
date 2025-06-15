@@ -818,6 +818,12 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Ekki fannst virk ökunámsbók',
     description: 'Did not find active student book',
   },
+  vehicleNotFoundForPermno: {
+    id: 'application.system:core.fetch.data.vehicleNotFoundForPermno',
+    defaultMessage: 'Tókst ekki að sækja ökutæki út frá þessu bílnúmeri.',
+    description:
+      'Error message if there was no vehicle associated with given permno',
+  },
 })
 
 export const coreDelegationsMessages = defineMessages({

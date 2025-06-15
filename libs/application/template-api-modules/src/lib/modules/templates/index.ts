@@ -164,6 +164,8 @@ import { LegalGazetteTemplateModule } from './legal-gazette/legal-gazette.module
 import { LegalGazetteTemplateService } from './legal-gazette/legal-gazette.service'
 import { RentalAgreementModule } from './rental-agreement/rental-agreement.module'
 import { RentalAgreementService } from './rental-agreement/rental-agreement.service'
+import { ExemptionForTransportationModule } from './transport-authority/exemption-for-transportation/exemption-for-transportation.module'
+import { ExemptionForTransportationService } from './transport-authority/exemption-for-transportation/exemption-for-transportation.service'
 
 export const dynamicModules = [GeneralPetitionModule]
 
@@ -249,6 +251,7 @@ export const modules = [
   ExampleAuthDelegationModule,
   RentalAgreementModule,
   FireCompensationAppraisalModule,
+  ExemptionForTransportationModule,
 ]
 
 export const services = [
@@ -334,4 +337,5 @@ export const services = [
   ExampleAuthDelegationService,
   RentalAgreementService,
   FireCompensationAppraisalService,
+  ExemptionForTransportationService,
 ]

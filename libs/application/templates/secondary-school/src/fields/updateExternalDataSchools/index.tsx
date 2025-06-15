@@ -77,6 +77,7 @@ export const UpdateExternalDataSchools: FC<FieldBaseProps> = ({
       !isLoading &&
       (oldDataStatus !== 'success' || timeLapsedInMinutes(oldDataDateStr) > 60)
     ) {
+      console.log('useEffect load data')
       setIsLoading(true)
       updateExternalDataSchoolsAndRefetch()
     }

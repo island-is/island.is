@@ -12,11 +12,15 @@ export const handleCustomMappedValues = <T>(
   tableItems: Array<Item>,
   values: Array<Value<T>>,
 ) => {
-  // Iterate over tableItems and handle items with nationalIdWithName component
   return tableItems.reduce((acc, item) => {
     if (item.component === 'nationalIdWithName') {
-      return handleNationalIdWithNameItem(item, values)
+      return handleNationalIdWithNameItem(item, acc.length ? acc : values)
     }
+
+    if (item.component === 'vehiclePermnoWithInfo') {
+      return handleVehiclePermnoWithInfoItem(item, acc.length ? acc : values)
+    }
+
     return acc
   }, [] as Array<Value<T>>)
 }
@@ -50,6 +54,34 @@ const handleNationalIdWithNameItem = <T>(
   return newValues
 }
 
+const handleVehiclePermnoWithInfoItem = <T>(
+  item: Item,
+  values: Array<Value<T>>,
+) => {
+  if (!values?.length) {
+    return []
+  }
+
+  return values.map((value) => {
+    const nested = value[item.id]
+    if (!!nested && typeof nested === 'object') {
+      const { [item.id]: _, ...rest } = value
+      const flat: Record<string, T> = {}
+
+      Object.keys(nested as Record<string, unknown>).forEach((key) => {
+        flat[`${item.id}.${key}`] = (nested as Record<string, T>)[key]
+      })
+
+      return {
+        ...rest,
+        ...flat,
+      }
+    }
+
+    return value
+  })
+}
+
 export const buildDefaultTableHeader = (items: Array<RepeaterItem>) =>
   items
     .map((item) =>
@@ -64,10 +96,37 @@ export const buildDefaultTableRows = (
   items: Array<RepeaterItem & { id: string }>,
 ) =>
   items
-    .map((item) =>
+    .map((item) => {
       // nationalIdWithName is a special case where the value is an object of name and nationalId
-      item.component === 'nationalIdWithName'
-        ? ['name', 'nationalId']
-        : item.id,
-    )
+      if (item.component === 'nationalIdWithName') {
+        return ['name', 'nationalId']
+      } else if (item.component === 'vehiclePermnoWithInfo') {
+        return `${item.id}.permno`
+      } else {
+        return item.id
+      }
+    })
     .flat(2)
+
+export const setObjectWithNestedKey = <T extends Record<string, unknown>>(
+  obj: T,
+  nestedKey: string,
+  value: unknown,
+): void => {
+  const keys = nestedKey.split('.')
+  let current: Record<string, unknown> = obj
+
+  for (let i = 0; i < keys.length - 1; i++) {
+    const key = keys[i]
+    if (
+      !(key in current) ||
+      typeof current[key] !== 'object' ||
+      current[key] === null
+    ) {
+      current[key] = {}
+    }
+    current = current[key] as Record<string, unknown>
+  }
+
+  current[keys[keys.length - 1]] = value
+}
