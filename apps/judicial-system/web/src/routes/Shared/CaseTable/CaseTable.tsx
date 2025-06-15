@@ -17,7 +17,8 @@ import {
   Logo,
   PageHeader,
   SectionHeading,
-  useContextMenu,
+  useDeleteCase,
+  useOpenCaseInNewTab,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -26,7 +27,10 @@ import {
 } from '@island.is/judicial-system-web/src/components/Table'
 import TagContainer from '@island.is/judicial-system-web/src/components/Tags/TagContainer/TagContainer'
 import {
+  CaseActionType,
   CaseTableCell,
+  CaseTableRow,
+  ContextMenuCaseActionType,
   StringGroupValue,
   StringValue,
   TagPairValue,
@@ -36,6 +40,7 @@ import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayH
 import { useCaseList } from '@island.is/judicial-system-web/src/utils/hooks'
 import { compareLocaleIS } from '@island.is/judicial-system-web/src/utils/sortHelper'
 
+import { useCancelCase } from './CancelCase'
 import { useCaseTableQuery } from './caseTable.generated'
 import * as styles from './CaseTable.css'
 
@@ -116,7 +121,7 @@ const render = (cell: CaseTableCell): ReactNode => {
 const CaseTable: FC = () => {
   const router = useRouter()
   const { user, hasError } = useContext(UserContext)
-  const { openCaseInNewTabMenuItem } = useContextMenu()
+  const { openCaseInNewTab } = useOpenCaseInNewTab()
   const { isOpeningCaseId, handleOpenCase, LoadingIndicator, showLoading } =
     useCaseList()
   const [showOnlyMyCases, setShowOnlyMyCases] = useState(false)
@@ -131,9 +136,69 @@ const CaseTable: FC = () => {
     errorPolicy: 'all',
   })
 
+  const caseTableData = data?.caseTable
+
+  const removeRow = (caseId: string) => {
+    if (!caseTableData) {
+      return
+    }
+
+    const { rows } = caseTableData
+
+    const idx = rows.findIndex((r) => r.caseId === caseId)
+
+    if (idx < 0) {
+      return
+    }
+
+    // remove element idx from rows modifying the original array
+    rows.splice(idx, 1)
+  }
+
+  const { deleteCase, deleteCaseModal } = useDeleteCase(removeRow)
+  const { cancelCase, cancelCaseId, isCancelCaseLoading, cancelCaseModal } =
+    useCancelCase(removeRow)
+
   const table = type && caseTables[type]
 
-  const caseTableData = data?.caseTable
+  const getRow = (r: CaseTableRow) => {
+    const getContextMenuItems = () => {
+      return r.contextMenuActions.map((a) => {
+        switch (a) {
+          case ContextMenuCaseActionType.DELETE_CASE:
+            return deleteCase(r.caseId)
+          case ContextMenuCaseActionType.OPEN_CASE_IN_NEW_TAB:
+          default: // Default to opening the case in a new tab
+            return openCaseInNewTab(r.caseId)
+        }
+      })
+    }
+
+    const getRowClickAction = () => {
+      switch (r.actionOnRowClick) {
+        case CaseActionType.COMPLETE_CANCELLED_CASE:
+          return {
+            onClick: () => cancelCase(r.caseId),
+            isDisabled: cancelCaseId === r.caseId,
+            isLoading: cancelCaseId === r.caseId && isCancelCaseLoading,
+          }
+        case CaseActionType.OPEN_CASE:
+        default: // Default to opening the case in a new tab
+          return {
+            onClick: () => handleOpenCase(r.caseId),
+            isDisabled: isOpeningCaseId === r.caseId,
+            isLoading: isOpeningCaseId === r.caseId && showLoading,
+          }
+      }
+    }
+
+    const id = r.caseId
+    const cells = r.cells
+    const contextMenuItems = getContextMenuItems()
+    const { onClick, isDisabled, isLoading } = getRowClickAction()
+
+    return { id, cells, contextMenuItems, onClick, isDisabled, isLoading }
+  }
 
   const errorMessage = (
     <div className={styles.infoContainer}>
@@ -152,9 +217,7 @@ const CaseTable: FC = () => {
         <Button
           colorScheme="default"
           iconType="filled"
-          onClick={() => {
-            router.push('/malalistar')
-          }}
+          onClick={() => router.push('/malalistar')}
           preTextIcon="arrowBack"
           preTextIconType="filled"
           type="button"
@@ -178,9 +241,7 @@ const CaseTable: FC = () => {
                   <Checkbox
                     label="Mín mál"
                     checked={showOnlyMyCases}
-                    onChange={(e) => {
-                      setShowOnlyMyCases(e.target.checked)
-                    }}
+                    onChange={(e) => setShowOnlyMyCases(e.target.checked)}
                   />
                 </Box>
               )}
@@ -195,26 +256,15 @@ const CaseTable: FC = () => {
               (caseTableData.rows.length > 0 ? (
                 <GenericTable
                   tableId={type}
-                  columns={table.columns.map((column) => ({
-                    title: column.title,
+                  columns={table.columns.map((c) => ({
+                    title: c.title,
                     compare,
                     render,
                   }))}
                   rows={caseTableData.rows
-                    .filter((row) => !showOnlyMyCases || row.isMyCase)
-                    .map((row) => ({
-                      id: row.caseId,
-                      cells: row.cells,
-                    }))}
-                  generateContextMenuItems={(id) => {
-                    return [openCaseInNewTabMenuItem(id)]
-                  }}
+                    .filter((r) => !showOnlyMyCases || r.isMyCase)
+                    .map((r) => getRow(r))}
                   loadingIndicator={LoadingIndicator}
-                  rowIdBeingOpened={isOpeningCaseId}
-                  showLoading={showLoading}
-                  onClick={(id) => {
-                    handleOpenCase(id)
-                  }}
                 />
               ) : (
                 <div className={styles.infoContainer}>
@@ -226,6 +276,8 @@ const CaseTable: FC = () => {
                 </div>
               ))
             )}
+            {cancelCaseModal}
+            {deleteCaseModal}
           </>
         ) : (
           /* If we cannot determine which table to show, then the user does not have access to the current route */

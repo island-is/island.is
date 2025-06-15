@@ -5,11 +5,18 @@ import {
   registerEnumType,
 } from '@nestjs/graphql'
 
-import { CaseTableType } from '@island.is/judicial-system/types'
+import {
+  CaseActionType,
+  ContextMenuCaseActionType,
+} from '@island.is/judicial-system/types'
 
-registerEnumType(CaseTableType, {
-  name: 'CaseTableType',
-  description: 'The type of a case table',
+registerEnumType(CaseActionType, {
+  name: 'CaseActionType',
+  description: 'The actions that can be taken on a case',
+})
+registerEnumType(ContextMenuCaseActionType, {
+  name: 'ContextMenuCaseActionType',
+  description: 'The actions that can be taken on a case in a context menu',
 })
 
 @ObjectType()
@@ -97,6 +104,16 @@ class CaseTableRow {
     description: 'Indicates if the case belongs to the current user',
   })
   readonly isMyCase!: boolean
+
+  @Field(() => CaseActionType, {
+    description: 'The action to take on row click',
+  })
+  readonly actionOnRowClick!: CaseActionType
+
+  @Field(() => [ContextMenuCaseActionType], {
+    description: 'The available context menu actions',
+  })
+  readonly contextMenuActions!: ContextMenuCaseActionType[]
 
   @Field(() => [CaseTableCell], { description: 'The row cells' })
   readonly cells!: CaseTableCell[]

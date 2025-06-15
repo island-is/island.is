@@ -3,11 +3,11 @@ import { useIntl } from 'react-intl'
 
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { core, tables } from '@island.is/judicial-system-web/messages'
-import { TagCaseState } from '@island.is/judicial-system-web/src/components'
 import {
   ContextMenuItem,
-  useContextMenu,
-} from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
+  TagCaseState,
+  useOpenCaseInNewTab,
+} from '@island.is/judicial-system-web/src/components'
 import { contextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu.strings'
 import {
   ColumnCaseType,
@@ -28,7 +28,7 @@ interface Props {
 const ActiveCases: FC<Props> = (props) => {
   const { cases, onContextMenuDeleteClick, canDeleteCase } = props
   const { formatMessage } = useIntl()
-  const { openCaseInNewTabMenuItem } = useContextMenu()
+  const { openCaseInNewTab } = useOpenCaseInNewTab()
 
   return (
     <Table
@@ -57,11 +57,11 @@ const ActiveCases: FC<Props> = (props) => {
       ]}
       data={cases}
       generateContextMenuItems={(row) => [
-        openCaseInNewTabMenuItem(row.id),
+        openCaseInNewTab(row.id),
         ...(canDeleteCase(row)
           ? [
               {
-                title: formatMessage(contextMenu.deleteCase),
+                title: 'Afturkalla',
                 onClick: () => {
                   onContextMenuDeleteClick(row.id)
                 },
