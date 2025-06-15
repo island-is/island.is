@@ -26,17 +26,17 @@ export class ExampleCommonActionsService extends BaseTemplateApiService {
       'nationalRegistry.data.fullName',
     ) as string
 
-    this.notificationsService.sendNotification({
-      type: NotificationType.ChildrenResidenceChange,
-      messageParties: {
-        recipient: auth.nationalId,
-        sender: auth.nationalId,
-      },
-      args: {
-        applicantName,
-        applicationId: application.id,
-      },
-    })
+    // this.notificationsService.sendNotification({
+    //   type: NotificationType.ChildrenResidenceChange,
+    //   messageParties: {
+    //     recipient: auth.nationalId,
+    //     sender: auth.nationalId,
+    //   },
+    //   args: {
+    //     applicantName,
+    //     applicationId: application.id,
+    //   },
+    // })
 
     return {
       referenceData: {
