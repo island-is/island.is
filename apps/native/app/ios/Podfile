@@ -53,8 +53,6 @@ target 'IslandApp' do
   pod 'FirebaseABTesting', :modular_headers => true
   pod 'FirebaseInstallations', :modular_headers => true
   pod 'RNFS', :path => '../../../../node_modules/react-native-fs'
-  pod 'glog', :podspec => '../../../../node_modules/react-native/third-party-podspecs/glog.podspec', :modular_headers => true
-  pod 'DoubleConversion', :podspec => '../../../../node_modules/react-native/third-party-podspecs/DoubleConversion.podspec', :modular_headers => true
 
 
   use_react_native!(
