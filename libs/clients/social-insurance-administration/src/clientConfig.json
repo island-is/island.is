@@ -571,6 +571,114 @@
         }
       }
     },
+    "/api/protected/v1/Applicant/residence-information": {
+      "get": {
+        "tags": ["Applicant"],
+        "summary": "Returns residence information for a client in National registry (ísl. Þjóðskrá)",
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.Applicant.NationalRegistryAddress"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.Applicant.NationalRegistryAddress"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.Applicant.NationalRegistryAddress"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/protected/v1/Application/{applicationType}": {
       "post": {
         "tags": ["Application"],
@@ -1153,6 +1261,123 @@
         }
       }
     },
+    "/api/protected/v1/General/countries": {
+      "get": {
+        "tags": ["General"],
+        "summary": "Returns a list of countries",
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Countries.Models.CountryDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Countries.Models.CountryDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Common.Countries.Models.CountryDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/protected/v1/General/unions": {
       "get": {
         "tags": ["General"],
@@ -1379,6 +1604,249 @@
                   "type": "array",
                   "items": {
                     "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.EducationalInstitutions.Models.EducationalInstitutionsDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/protected/v1/General/educationlevels/{applicationType}": {
+      "get": {
+        "tags": ["General"],
+        "summary": "Education levels based on application type",
+        "parameters": [
+          {
+            "name": "applicationType",
+            "in": "path",
+            "description": "The application type associated with the education levels",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.EducationalInstitutions.Models.EducationLevelDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.EducationalInstitutions.Models.EducationLevelDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.EducationalInstitutions.Models.EducationLevelDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/protected/v1/General/ects-units": {
+      "get": {
+        "tags": ["General"],
+        "summary": "Returns a list of available ECTS units",
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.EducationalInstitutions.Models.EctsUnitDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.EducationalInstitutions.Models.EctsUnitDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.EducationalInstitutions.Models.EctsUnitDto"
                   }
                 }
               }
@@ -3534,6 +4002,17 @@
         },
         "additionalProperties": false
       },
+      "TrWeb.Api.Services.Common.Countries.Models.CountryDto": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "string", "nullable": true },
+          "name": { "type": "string", "nullable": true },
+          "nameIcelandic": { "type": "string", "nullable": true },
+          "isPartOfEes": { "type": "boolean" },
+          "isScandinavic": { "type": "boolean" }
+        },
+        "additionalProperties": false
+      },
       "TrWeb.Api.Services.Domain.Applications.Models.CreateApplicationFromPaperReturn": {
         "type": "object",
         "properties": {
@@ -3546,6 +4025,22 @@
         "properties": {
           "type": { "type": "string", "nullable": true },
           "content": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.Api.Services.Domain.EducationalInstitutions.Models.EctsUnitDto": {
+        "type": "object",
+        "properties": {
+          "description": { "type": "string", "nullable": true },
+          "value": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.Api.Services.Domain.EducationalInstitutions.Models.EducationLevelDto": {
+        "type": "object",
+        "properties": {
+          "description": { "type": "string", "nullable": true },
+          "code": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -3659,6 +4154,7 @@
         "properties": {
           "questionCode": { "type": "string", "nullable": true },
           "questionTitle": { "type": "string", "nullable": true },
+          "explanationText": { "type": "string", "nullable": true },
           "question": { "type": "string", "nullable": true },
           "icfCode": { "type": "string", "nullable": true }
         },
@@ -3670,8 +4166,13 @@
           "questionnaireName": { "type": "string", "nullable": true },
           "questionnaireCode": { "type": "string", "nullable": true },
           "versionNumber": { "type": "string", "nullable": true },
-          "scaleMin": { "type": "integer", "format": "int32" },
-          "scaleMax": { "type": "integer", "format": "int32" },
+          "scale": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Questionnaires.Models.ScaleOptionDto"
+            },
+            "nullable": true
+          },
           "questions": {
             "type": "array",
             "items": {
@@ -3680,6 +4181,15 @@
             "nullable": true
           },
           "language": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.Api.Services.Domain.Questionnaires.Models.ScaleOptionDto": {
+        "type": "object",
+        "properties": {
+          "value": { "type": "integer", "format": "int32" },
+          "display": { "type": "string", "nullable": true },
+          "order": { "type": "integer", "format": "int32" }
         },
         "additionalProperties": false
       },
@@ -3794,6 +4304,32 @@
             "type": "string",
             "description": "The reference date when getting the balance. If no date is provided the deceased date will be used.",
             "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.Commons.ExternalPortals.Api.Models.Applicant.NationalRegistryAddress": {
+        "type": "object",
+        "properties": {
+          "address": {
+            "type": "string",
+            "description": "The address e.g. Suðurgata 1",
+            "nullable": true
+          },
+          "municipality": {
+            "type": "string",
+            "description": "The municipality of residence",
+            "nullable": true
+          },
+          "postalCode": {
+            "type": "string",
+            "description": "The postal code of residence",
+            "nullable": true
+          },
+          "apartmentNumber": {
+            "type": "string",
+            "description": "The apartment number of residence, especially relevant when living in block.",
             "nullable": true
           }
         },
@@ -4655,6 +5191,13 @@
       "TrWeb.External.Models.ServicePortal.ComprehensiveEvaluation": {
         "type": "object",
         "properties": {
+          "evaluationScale": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.EnumType"
+            },
+            "nullable": true
+          },
           "learningAndApplyingKnowledge": {
             "type": "integer",
             "format": "int32",
@@ -4701,7 +5244,10 @@
       "TrWeb.External.Models.ServicePortal.Confirmation": {
         "type": "object",
         "properties": {
-          "type": { "type": "integer", "format": "int32", "nullable": true },
+          "type": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.EnumType"
+          },
+          "typeName": { "type": "string", "nullable": true },
           "treatmentMeasures": {
             "type": "array",
             "items": { "type": "string" },
@@ -4780,6 +5326,15 @@
         },
         "additionalProperties": false
       },
+      "TrWeb.External.Models.ServicePortal.EnumType": {
+        "type": "object",
+        "properties": {
+          "value": { "type": "integer", "format": "int32" },
+          "name": { "type": "string", "nullable": true },
+          "display": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
       "TrWeb.External.Models.ServicePortal.EnvironmentalCategory": {
         "enum": [0, 1, 2, 3, 4, 5],
         "type": "integer",
@@ -4815,9 +5370,7 @@
           "applicantStatus": { "type": "string", "nullable": true },
           "previousMedicalOrRehab": { "type": "string", "nullable": true },
           "attitudeTowardsWork": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.EnumType"
           }
         },
         "additionalProperties": false
@@ -4826,36 +5379,28 @@
         "type": "object",
         "properties": {
           "rehabilitationProgress": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.EnumType"
           },
           "rehabilitationProgressDetails": {
             "type": "string",
             "nullable": true
           },
           "rehabilitationMeasuresProgress": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.EnumType"
           },
           "rehabilitationMeasuresProgressDetails": {
             "type": "string",
             "nullable": true
           },
           "rehabilitationChanges": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.EnumType"
           },
           "rehabilitationChangesDetails": {
             "type": "string",
             "nullable": true
           },
           "applicantCircumstancesChanges": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.EnumType"
           },
           "applicantCircumstancesChangesDetails": {
             "type": "string",
@@ -4886,7 +5431,11 @@
         "type": "object",
         "properties": {
           "goalDescription": { "type": "string", "nullable": true },
-          "measures": { "type": "string", "nullable": true }
+          "measures": {
+            "type": "array",
+            "items": { "type": "string" },
+            "nullable": true
+          }
         },
         "additionalProperties": false
       },
@@ -4947,9 +5496,7 @@
             "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.ServiceProvider"
           },
           "applicantEmploymentStatus": {
-            "type": "integer",
-            "format": "int32",
-            "nullable": true
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.EnumType"
           },
           "firstEvaluation": {
             "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.FirstEvaluation"
