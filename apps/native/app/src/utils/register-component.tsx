@@ -10,7 +10,6 @@ import { I18nProvider } from '../contexts/i18n-provider'
 import { ThemeProvider } from '../contexts/theme-provider'
 import { getApolloClient } from '../graphql/client'
 import { OfflineHoc } from '../hoc/offline-hoc'
-import { UserProvider } from '../contexts/user-provider'
 
 export function registerComponent<Props>(
   name: string,
@@ -28,11 +27,9 @@ export function registerComponent<Props>(
               <FeatureFlagProvider>
                 <ApolloProvider client={client}>
                   <OfflineHoc>
-                    <UserProvider>
-                      <SafeAreaProvider>
-                        <Component {...props} />
-                      </SafeAreaProvider>
-                    </UserProvider>
+                    <SafeAreaProvider>
+                      <Component {...props} />
+                    </SafeAreaProvider>
                   </OfflineHoc>
                 </ApolloProvider>
               </FeatureFlagProvider>

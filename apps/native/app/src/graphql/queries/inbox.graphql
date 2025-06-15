@@ -36,7 +36,7 @@ query GetDocumentsCategoriesAndSenders {
 query GetDocument($input: DocumentInput!, $locale: String) {
   documentV2(input: $input, locale: $locale) {
     ...ListDocument
-    ...DocumentTiket
+    ...DocumentTicket
     content {
       type
       value

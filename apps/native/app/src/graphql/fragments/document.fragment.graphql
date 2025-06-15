@@ -1,6 +1,6 @@
 directive @client on FIELD
 
-fragment DocumentTiket on DocumentV2 {
+fragment DocumentTicket on DocumentV2 {
   ticket {
     id
     authorId

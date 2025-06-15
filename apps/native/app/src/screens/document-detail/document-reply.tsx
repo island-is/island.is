@@ -6,8 +6,10 @@ import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled from 'styled-components/native'
 import { LoadingIcon } from '../../components/nav-loading-spinner/loading-icon'
 import { Pressable } from '../../components/pressable/pressable'
-import { useUser } from '../../contexts/user-provider'
-import { useDocumentReplyMutation } from '../../graphql/types/schema'
+import {
+  useDocumentReplyMutation,
+  useGetProfileQuery,
+} from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useNavigationModal } from '../../hooks/use-navigation-modal'
 import { useAuthStore } from '../../stores/auth-store'
@@ -36,7 +38,7 @@ const Row = styled(Container)<{
   paddingTop: theme.spacing[paddingVertical],
   paddingBottom: theme.spacing[paddingVertical],
   ...(hasBottomBorder && {
-    borderBottomWidth: theme.border.width.standard,
+    borderBottomWidth: theme.border.width.hairline,
     borderBottomColor: theme.color.blue200,
   }),
 }))
@@ -72,12 +74,16 @@ const { getNavigationOptions, useNavigationOptions } =
     },
   }))
 
+export type DocumentReplyInfo = {
+  email?: string | null
+}
+
 export type DocumentReplyScreenProps = {
   senderName: string
   documentId: string
   subject: string
   isFirstReply?: boolean
-  onReplySuccess?(showFirstReplyInfo: boolean): void
+  onReplySuccess?(replyInfo: DocumentReplyInfo): void
 }
 
 export const DocumentReplyScreen: NavigationFunctionComponent<
@@ -94,7 +100,8 @@ export const DocumentReplyScreen: NavigationFunctionComponent<
   const intl = useIntl()
   const { showModal, dismissModal } = useNavigationModal()
   const { userInfo } = useAuthStore()
-  const { user: userProfile, loading, error } = useUser()
+  const { data: userProfileData, loading, error } = useGetProfileQuery()
+  const userProfile = userProfileData?.getUserProfile
 
   const [message, setMessage] = useState('')
   const [hasShownModal, setHasShownModal] = useState(false)
@@ -102,12 +109,12 @@ export const DocumentReplyScreen: NavigationFunctionComponent<
   const [sendMessage, { loading: sendMessageLoading }] =
     useDocumentReplyMutation({
       onCompleted: (data) => {
-        const id = data.documentsV2Reply?.id
-
-        if (id) {
+        if (data.documentsV2Reply?.id) {
           // Successful reply, clear message
           setMessage('')
-          onReplySuccess?.(isFirstReply)
+          onReplySuccess?.({
+            email: data.documentsV2Reply.email ?? userProfile?.email,
+          })
           dismissModal(componentId)
         }
       },
@@ -143,15 +150,14 @@ export const DocumentReplyScreen: NavigationFunctionComponent<
       setHasShownModal(true)
       showModal(ComponentRegistry.RegisterEmailScreen)
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userProfile, showModal])
+  }, [userProfile, showModal, hasShownModal, setHasShownModal])
 
   return (
     <>
       <NavigationBarSheet
         componentId={componentId}
         onClosePress={() => dismissModal(componentId)}
-        includeContainer
+        style={{ marginHorizontal: 16 }}
         showLoading={sendMessageLoading}
       />
       <Host>

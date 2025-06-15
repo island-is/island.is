@@ -1,10 +1,14 @@
 import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { Animated, ListRenderItemInfo, RefreshControl } from 'react-native'
+import {
+  Animated,
+  LayoutChangeEvent,
+  ListRenderItemInfo,
+  RefreshControl,
+  SafeAreaView,
+} from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import styled, { useTheme } from 'styled-components/native'
-import { useUser } from '../../contexts/user-provider'
 import {
   DocumentComment,
   useGetDocumentQuery,
@@ -14,29 +18,17 @@ import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator
 import { useDateTimeFormatter } from '../../hooks/use-date-time-formatter'
 import { useLocale } from '../../hooks/use-locale'
 import { useNavigationModal } from '../../hooks/use-navigation-modal'
-import {
-  Alert,
-  Button,
-  Container,
-  ListItemSkeleton,
-  TopLine,
-  Typography,
-} from '../../ui'
+import { Alert, Button, ListItemSkeleton, TopLine, Typography } from '../../ui'
 import { ComponentRegistry } from '../../utils/component-registry'
 import { createSkeletonArr } from '../../utils/create-skeleton-arr'
 import {
   DocumentListItem,
   TOGGLE_ANIMATION_DURATION,
 } from './components/document-list-item'
-import {
-  FloatingBottomContent,
-  FloatingBottomFooter,
-} from './components/floating-bottom-footer'
-import { DocumentReplyScreenProps } from './document-reply'
+import { ButtonDrawer } from './components/button-drawer'
+import { DocumentReplyInfo, DocumentReplyScreenProps } from './document-reply'
 
 type FlatListItem = DocumentComment | { __typename: 'Skeleton'; id: string }
-
-const LAST_REPLY_HEIGHT = 100
 
 const CaseNumberWrapper = styled.View`
   flex-direction: row;
@@ -47,7 +39,17 @@ const CaseNumberWrapper = styled.View`
 
 const ListWrapper = styled.View`
   flex: 1;
-  padding-top: ${({ theme }) => theme.spacing[2]}px;
+  margin-top: ${({ theme }) => theme.spacing[2]}px;
+`
+
+const AlertsContainer = styled.View`
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  z-index: 1;
+  padding-bottom: ${({ theme }) => theme.spacing.p4}px;
+  padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
 `
 
 const { useNavigationOptions, getNavigationOptions } =
@@ -67,23 +69,21 @@ const { useNavigationOptions, getNavigationOptions } =
 export type DocumentCommunicationsScreenProps = {
   documentId: string
   ticketId?: string
+  firstReplyInfo?: DocumentReplyInfo
 }
 
 export const DocumentCommunicationsScreen: NavigationFunctionComponent<
   DocumentCommunicationsScreenProps
-> = ({ componentId, documentId, ticketId }) => {
+> = ({ componentId, documentId, ticketId, firstReplyInfo }) => {
   useNavigationOptions(componentId)
   const locale = useLocale()
   const theme = useTheme()
   const intl = useIntl()
   const formatDate = useDateTimeFormatter()
   const { showModal } = useNavigationModal()
-  const { user } = useUser()
-  const insets = useSafeAreaInsets()
   const [shouldScroll, setShouldScroll] = useState(false)
-  const [buttonHeight, setButtonHeight] = useState(48) // Default height
+  const [actionsHeight, setActionsHeight] = useState(0) // Default height
   const [refetching, setRefetching] = useState(false)
-  const [showFirstReplyInfo, setShowFirstReplyInfo] = useState(false)
   const flatListRef = useRef<Animated.FlatList>(null)
   const scrollY = useRef(new Animated.Value(0)).current
 
@@ -124,11 +124,7 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
       senderName: document.sender.name,
       documentId,
       subject: document?.subject,
-      onReplySuccess: (showFirstReplyInfo) => {
-        if (setShowFirstReplyInfo) {
-          setShowFirstReplyInfo(showFirstReplyInfo)
-        }
-
+      onReplySuccess: () => {
         handleRefresh()
       },
     }
@@ -154,7 +150,7 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
       setShouldScroll(false)
       setTimeout(() => {
         flatListRef.current?.scrollToOffset({
-          offset: 75 * (comments.length - 1),
+          offset: Number.MAX_SAFE_INTEGER,
           animated: true,
         })
       }, TOGGLE_ANIMATION_DURATION + 100)
@@ -189,6 +185,9 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [isSkeleton, docRes.data],
   ) as FlatListItem[]
+  if (document) {
+    document.closedForMoreReplies = true
+  }
 
   return (
     <>
@@ -200,45 +199,15 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
           #{document?.ticket?.id ?? ticketId}
         </Typography>
       </CaseNumberWrapper>
-      {(!showFirstReplyInfo || !replyable) && (
-        <TopLine scrollY={scrollY} offsetTop={31} />
-      )}
+
       <ListWrapper>
-        {document?.closedForMoreReplies && (
-          <Container>
-            <Alert
-              type="info"
-              message={intl.formatMessage({
-                id: 'documentCommunications.cannotReply',
-              })}
-              hasBorder
-            />
-          </Container>
-        )}
-        {showFirstReplyInfo && replyable && (
-          <Container>
-            <Alert
-              type="info"
-              message={intl.formatMessage(
-                {
-                  id: 'documentCommunications.initialReply',
-                },
-                {
-                  email: user?.email ?? '',
-                },
-              )}
-              hasBorder
-            />
-          </Container>
-        )}
+        <TopLine scrollY={scrollY} />
         <Animated.FlatList
           ref={flatListRef}
           keyExtractor={keyExtractor}
           initialNumToRender={50}
           contentContainerStyle={{
-            paddingBottom: replyable
-              ? insets.bottom + buttonHeight + LAST_REPLY_HEIGHT
-              : 0,
+            paddingBottom: actionsHeight,
           }}
           data={data}
           renderItem={renderItem}
@@ -255,26 +224,59 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
             <RefreshControl refreshing={refetching} onRefresh={handleRefresh} />
           }
         />
+
+        {(document?.closedForMoreReplies || (firstReplyInfo && replyable)) && (
+          <AlertsContainer
+            onLayout={(event: LayoutChangeEvent) => {
+              setActionsHeight(event.nativeEvent.layout.height)
+            }}
+          >
+            <SafeAreaView style={{ rowGap: theme.spacing[2] }}>
+              {document?.closedForMoreReplies && (
+                <Alert
+                  type="info"
+                  message={intl.formatMessage({
+                    id: 'documentCommunications.cannotReply',
+                  })}
+                  hasBorder
+                />
+              )}
+              {firstReplyInfo && replyable && (
+                <Alert
+                  type="info"
+                  message={intl.formatMessage(
+                    {
+                      id: 'documentCommunications.initialReply',
+                    },
+                    {
+                      email: firstReplyInfo.email,
+                    },
+                  )}
+                  hasBorder
+                />
+              )}
+            </SafeAreaView>
+          </AlertsContainer>
+        )}
       </ListWrapper>
 
       {replyable && (
-        <FloatingBottomFooter>
-          <FloatingBottomContent>
-            <Button
-              onLayout={(event) => {
-                setButtonHeight(event.nativeEvent.layout.height)
-              }}
-              title={intl.formatMessage({
-                id: 'documentDetail.buttonReply',
-              })}
-              isTransparent
-              isOutlined
-              iconPosition="left"
-              icon={require('../../assets/icons/reply.png')}
-              onPress={onReplyPress}
-            />
-          </FloatingBottomContent>
-        </FloatingBottomFooter>
+        <ButtonDrawer>
+          <SafeAreaView>
+            {replyable && (
+              <Button
+                title={intl.formatMessage({
+                  id: 'documentDetail.buttonReply',
+                })}
+                isTransparent
+                isOutlined
+                iconPosition="start"
+                icon={require('../../assets/icons/reply.png')}
+                onPress={onReplyPress}
+              />
+            )}
+          </SafeAreaView>
+        </ButtonDrawer>
       )}
     </>
   )

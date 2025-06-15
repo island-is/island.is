@@ -69,7 +69,7 @@ export const RegisterEmailScreen: NavigationFunctionComponent = ({
       <NavigationBarSheet
         componentId={componentId}
         onClosePress={() => dismissModal(componentId)}
-        includeContainer
+        style={{ marginHorizontal: 16 }}
       />
       <Wrapper>
         <ContentWrapper>
