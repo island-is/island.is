@@ -352,7 +352,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     }
   }, componentId)
 
-  useEffect(() => {
+  useNavigationComponentDidAppear(() => {
     setVisible(true)
   }, [])
 
