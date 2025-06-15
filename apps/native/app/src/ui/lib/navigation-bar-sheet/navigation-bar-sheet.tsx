@@ -14,19 +14,12 @@ import closeIcon from '../../assets/icons/close.png'
 import { dynamicColor } from '../../utils/dynamic-color'
 import { font } from '../../utils/font'
 
-const Header = styled.View<{ includeContainer?: boolean }>`
+const Header = styled.View`
   padding-top: 20px;
   padding-bottom: ${({ theme }) => theme.spacing[1]}px;
   flex-direction: row;
   justify-content: space-between;
   align-items: flex-start;
-
-  ${({ includeContainer }) =>
-    includeContainer &&
-    css`
-      padding-left: ${({ theme }) => theme.spacing[2]}px;
-      padding-right: ${({ theme }) => theme.spacing[2]}px;
-    `}
 `
 
 const HeaderTitle = styled.Text`
@@ -82,7 +75,6 @@ type NavigationBarSheetProps = {
   style?: ViewStyle
   showLoading?: boolean
   closable?: boolean
-  includeContainer?: boolean
 }
 
 export function NavigationBarSheet({
@@ -91,7 +83,6 @@ export function NavigationBarSheet({
   style,
   showLoading,
   closable = true,
-  includeContainer = false,
 }: NavigationBarSheetProps) {
   const isConnected = useOfflineStore(({ isConnected }) => isConnected)
   const wd = useWindowDimensions()
@@ -107,7 +98,7 @@ export function NavigationBarSheet({
       {isHandle && closable && <Handle />}
       <SafeAreaView>
         {(closable || title) && (
-          <Header style={style} includeContainer={includeContainer}>
+          <Header style={style}>
             {typeof title === 'string' ? (
               <HeaderTitle>{title}</HeaderTitle>
             ) : (

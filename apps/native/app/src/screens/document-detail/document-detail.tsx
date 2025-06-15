@@ -1,14 +1,19 @@
 import { useApolloClient, useFragment_experimental } from '@apollo/client'
 import React, { useEffect, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { Animated, Alert as RNAlert, StyleSheet, View } from 'react-native'
+import {
+  Animated,
+  Alert as RNAlert,
+  StyleSheet,
+  View,
+  SafeAreaView,
+} from 'react-native'
 import {
   Navigation,
   NavigationFunctionComponent,
   OptionsTopBarButton,
 } from 'react-native-navigation'
 import { useNavigationButtonPress } from 'react-native-navigation-hooks'
-import { useSafeAreaInsets } from 'react-native-safe-area-context'
 import WebView from 'react-native-webview'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -42,13 +47,10 @@ import {
   ComponentRegistry,
 } from '../../utils/component-registry'
 import { ListParams } from '../inbox/inbox'
-import {
-  FloatingBottomContent,
-  FloatingBottomFooter,
-} from './components/floating-bottom-footer'
+import { ButtonDrawer } from './components/button-drawer'
 import { getButtonsForActions } from './utils/get-buttons-for-actions'
 import { shareFile } from './utils/share-file'
-import { DocumentReplyScreenProps } from './document-reply'
+import { DocumentReplyInfo, DocumentReplyScreenProps } from './document-reply'
 import { DocumentCommunicationsScreenProps } from './document-communications'
 
 const Host = styled.SafeAreaView`
@@ -196,8 +198,6 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   useNavigationOptions(componentId)
 
   const { showModal } = useNavigationModal()
-  const insets = useSafeAreaInsets()
-  const theme = useTheme()
   const client = useApolloClient()
   const intl = useIntl()
   const htmlStyles = useHtmlStyles()
@@ -214,7 +214,6 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   const [loaded, setLoaded] = useState(false)
   const [pdfUrl, setPdfUrl] = useState('')
   const [refetching, setRefetching] = useState(false)
-  const [buttonHeight, setButtonHeight] = useState(48) // Default button height
 
   const [logConfirmedAction] = useDocumentConfirmActionsLazyQuery({
     fetchPolicy: 'no-cache',
@@ -420,6 +419,9 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
       documentId: docId,
       subject: Document.subject ?? '',
       isFirstReply: true,
+      onReplySuccess(info) {
+        onCommunicationsPress(info)
+      },
     }
 
     showModal(ComponentRegistry.DocumentReplyScreen, {
@@ -430,10 +432,11 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   /**
    * Navigate to the document communications modal.
    */
-  const onCommunicationsPress = () => {
+  const onCommunicationsPress = (reply?: DocumentReplyInfo) => {
     const passProps: DocumentCommunicationsScreenProps = {
       documentId: docId,
       ticketId: Document.ticket?.id ?? undefined,
+      firstReplyInfo: reply,
     }
 
     Navigation.push(componentId, {
@@ -488,13 +491,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
         </ActionsWrapper>
       )}
       <Border />
-      <DocumentWrapper
-        {...(isReplyable && {
-          style: {
-            paddingBottom: insets.bottom + theme.spacing.p2 + buttonHeight,
-          },
-        })}
-      >
+      <DocumentWrapper>
         <Animated.View
           style={{
             flex: 1,
@@ -574,12 +571,9 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
         )}
       </DocumentWrapper>
       {isFeature2WayMailboxEnabled && isReplyable && !loading && (
-        <FloatingBottomFooter>
-          <FloatingBottomContent>
+        <ButtonDrawer>
+          <SafeAreaView>
             <Button
-              onLayout={(event) => {
-                setButtonHeight(event.nativeEvent.layout.height)
-              }}
               title={intl.formatMessage({
                 id: hasComments
                   ? 'documentDetail.buttonCommunications'
@@ -587,16 +581,22 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
               })}
               isTransparent
               isOutlined
-              iconPosition="left"
+              iconPosition="start"
               icon={
                 hasComments
                   ? require('../../assets/icons/chatbubbles.png')
                   : require('../../assets/icons/reply.png')
               }
-              onPress={hasComments ? onCommunicationsPress : onFirstReplyPress}
+              onPress={() => {
+                if (hasComments) {
+                  onCommunicationsPress()
+                } else {
+                  onFirstReplyPress()
+                }
+              }}
             />
-          </FloatingBottomContent>
-        </FloatingBottomFooter>
+          </SafeAreaView>
+        </ButtonDrawer>
       )}
     </>
   )

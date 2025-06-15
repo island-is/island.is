@@ -18,7 +18,7 @@ interface ButtonBaseProps extends TouchableHighlightProps {
   textProps?: TextProps
   iconStyle?: ImageStyle
   ellipsis?: boolean
-  iconPosition?: 'left' | 'right'
+  iconPosition?: 'start' | 'end'
 }
 
 interface IconButtonProps extends ButtonBaseProps {
@@ -40,6 +40,7 @@ const Host = styled.TouchableHighlight<HostProps>`
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  column-gap: ${({ theme }) => theme.spacing.p1}px;
   padding: ${(props) =>
     `${props.theme.spacing.p3}px ${props.theme.spacing.p4}px`};
   background-color: ${dynamicColor<HostProps>(
@@ -74,7 +75,6 @@ const Host = styled.TouchableHighlight<HostProps>`
     `
     border-width: 1px;
     border-style: solid;
-
   `}
 `
 
@@ -104,14 +104,9 @@ const Text = styled.Text<{
 
 const Icon = styled.Image<{
   noMargin?: boolean
-  iconPosition?: 'left' | 'right'
 }>`
   width: 16px;
   height: 16px;
-  margin-left: ${({ noMargin, iconPosition }) =>
-    noMargin ? '0' : iconPosition === 'left' ? '0' : '8px'};
-  margin-right: ${({ noMargin, iconPosition }) =>
-    noMargin ? '0' : iconPosition === 'right' ? '0' : '8px'};
 `
 
 export function Button({
@@ -124,7 +119,7 @@ export function Button({
   textProps,
   iconStyle,
   ellipsis,
-  iconPosition = 'right',
+  iconPosition = 'end',
   ...rest
 }: ButtonProps) {
   const theme = useTheme()
@@ -153,7 +148,7 @@ export function Button({
       {...rest}
     >
       <>
-        {icon && iconPosition === 'left' && renderIcon()}
+        {icon && iconPosition === 'start' && renderIcon()}
         {title && (
           <Text
             {...textProps}
@@ -168,7 +163,7 @@ export function Button({
             {title}
           </Text>
         )}
-        {icon && iconPosition === 'right' && renderIcon()}
+        {icon && iconPosition === 'end' && renderIcon()}
       </>
     </Host>
   )
