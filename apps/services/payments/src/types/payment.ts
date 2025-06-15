@@ -12,6 +12,22 @@ export enum PaymentStatus {
   PAID = 'paid',
 }
 
+export enum PaymentFlowEventType {
+  UPDATE = 'update',
+  SUCCESS = 'success',
+  ERROR = 'error',
+  DELETED = 'deleted',
+}
+
+export enum PaymentFlowEventReason {
+  PAYMENT_STARTED = 'payment_started',
+  PAYMENT_COMPLETED = 'payment_completed',
+  PAYMENT_FAILED = 'payment_failed',
+  DELETED_ADMIN = 'deleted_admin',
+  DELETED_AUTO = 'deleted_auto',
+  OTHER = 'other',
+}
+
 export type PaymentFlowUpdateEvent = {
   type: PaymentFlowEvent['type']
   paymentFlowId: PaymentFlowEvent['paymentFlowId'] // Unique identifier for the payment flow

@@ -3,6 +3,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import { ConfigType } from '@nestjs/config'
 import { isCompany, isValid } from 'kennitala'
 import { v4 as uuid } from 'uuid'
+import { Op, literal } from 'sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -24,9 +25,12 @@ import {
   PaymentFlowUpdateEvent,
   PaymentMethod,
   PaymentStatus,
+  PaymentFlowEventType,
+  PaymentFlowEventReason,
 } from '../../types'
 import { GetPaymentFlowDTO } from './dtos/getPaymentFlow.dto'
 import { CreatePaymentFlowInput } from './dtos/createPaymentFlow.input'
+import { GetPaymentFlowsPaginatedDTO } from './dtos/getPaymentFlow.dto'
 
 import { environment } from '../../environments'
 import { PaymentFlowEvent } from './models/paymentFlowEvent.model'
@@ -48,6 +52,7 @@ import { JwksConfigService } from '../jwks/jwks-config.service'
 import { ChargeItem } from '../../utils/chargeUtils'
 import { PaymentFlowModuleConfig } from './paymentFlow.config'
 import { JwksConfig } from '../jwks/jwks.config'
+import { paginate } from '@island.is/nest/pagination'
 
 interface PaymentFlowUpdateConfig {
   /**
@@ -276,7 +281,7 @@ export class PaymentFlowService {
     return true
   }
 
-  async getPaymentFlowDetails(id: string) {
+  async getPaymentFlowDetails(id: string, includeEvents?: boolean) {
     const paymentFlow = (
       await this.paymentFlowModel.findOne({
         where: {
@@ -286,6 +291,14 @@ export class PaymentFlowService {
           {
             model: PaymentFlowCharge,
           },
+          ...(includeEvents
+            ? [
+                {
+                  model: PaymentFlowEvent,
+                  as: 'events',
+                },
+              ]
+            : []),
         ],
       })
     )?.toJSON()
@@ -339,9 +352,12 @@ export class PaymentFlowService {
     return { paymentStatus, updatedAt }
   }
 
-  async getPaymentFlow(id: string): Promise<GetPaymentFlowDTO | null> {
+  async getPaymentFlow(
+    id: string,
+    includeEvents?: boolean,
+  ): Promise<GetPaymentFlowDTO | null> {
     try {
-      const paymentFlow = await this.getPaymentFlowDetails(id)
+      const paymentFlow = await this.getPaymentFlowDetails(id, includeEvents)
       const paymentDetails = await this.getPaymentFlowChargeDetails(
         paymentFlow.organisationId,
         paymentFlow.charges,
@@ -362,6 +378,13 @@ export class PaymentFlowService {
           paymentFlow.availablePaymentMethods as PaymentMethod[],
         paymentStatus,
         updatedAt,
+        events: includeEvents
+          ? paymentFlow.events?.map((event) => ({
+              ...event,
+              type: event.type as PaymentFlowEventType,
+              reason: event.reason as PaymentFlowEventReason,
+            }))
+          : undefined,
       }
     } catch (e) {
       this.logger.error(`Failed to get payment flow (${id})`, e)
@@ -637,7 +660,82 @@ export class PaymentFlowService {
         `Failed to delete payment confirmation for flow ${paymentFlowId}, correlation ID ${correlationId}`,
         { error },
       )
-      // Not re-throwing, to prevent disruption of a primary flow (e.g., refund)
+    }
+  }
+  // Not re-throwing, to prevent disruption of a primary flow (e.g., refund)
+  async searchPaymentFlows(
+    payerNationalId?: string,
+    search?: string,
+    limit?: number,
+    after?: string,
+    before?: string,
+  ): Promise<GetPaymentFlowsPaginatedDTO> {
+    const where: any = {}
+
+    if (payerNationalId && isValid(payerNationalId)) {
+      where.payerNationalId = payerNationalId
+    }
+
+    if (search && search !== '') {
+      where.id = search
+    }
+
+    console.log('TEDDI', search)
+
+    // First get the paginated payment flows
+    const paginatedResult = await paginate({
+      Model: this.paymentFlowModel,
+      primaryKeyField: 'id',
+      orderOption: [['created', 'DESC']],
+      where,
+      after: after || '',
+      before: before,
+      limit: limit || 10,
+      include: [
+        {
+          model: PaymentFlowEvent,
+          as: 'events',
+        },
+        {
+          model: PaymentFlowCharge,
+          as: 'charges',
+        },
+      ],
+    })
+
+    // Then transform the results
+    const paymentFlowDtos = await Promise.all(
+      paginatedResult.data.map(async (flow) => {
+        const paymentDetails = await this.getPaymentFlowChargeDetails(
+          flow.organisationId,
+          flow.charges,
+        )
+        const { paymentStatus, updatedAt } = await this.getPaymentFlowStatus(
+          flow,
+        )
+        const payerName = await this.getPayerName(flow.payerNationalId)
+
+        return {
+          ...flow.toJSON(),
+          productTitle: flow.productTitle ?? paymentDetails.firstProductTitle,
+          productPrice: paymentDetails.totalPrice,
+          payerName,
+          availablePaymentMethods:
+            flow.availablePaymentMethods as PaymentMethod[],
+          paymentStatus,
+          updatedAt,
+          events:
+            (flow as any).events?.map((event: PaymentFlowEvent) =>
+              event.toJSON(),
+            ) ?? [],
+        }
+      }),
+    )
+
+    return {
+      data: paymentFlowDtos,
+      totalCount: paginatedResult.totalCount,
+      pageInfo: paginatedResult.pageInfo,
     }
   }
 }

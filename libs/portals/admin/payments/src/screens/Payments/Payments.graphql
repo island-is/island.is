@@ -1,0 +1,26 @@
+query GetPaymentFlows($input: GetPaymentFlowsInput!) {
+  paymentsGetFlows(input: $input) {
+    data {
+      id
+      payerNationalId
+      payerName
+      productTitle
+      productPrice
+      paymentStatus
+      updatedAt
+      existingInvoiceId
+      availablePaymentMethods
+      organisationId
+      metadata
+      returnUrl
+      redirectToReturnUrlOnSuccess
+    }
+    totalCount
+    pageInfo {
+      hasNextPage
+      hasPreviousPage
+      startCursor
+      endCursor
+    }
+  }
+}
