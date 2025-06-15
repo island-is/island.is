@@ -1,7 +1,12 @@
 import { getValueViaPath, YES } from '@island.is/application/core'
 import { Application, FormValue } from '@island.is/application/types'
-import { ApplicationDto } from '@island.is/clients/hms-application-system'
+import {
+  ApplicationDto,
+  ApplicationFilesContentDto,
+} from '@island.is/clients/hms-application-system'
 import { Fasteign } from '@island.is/clients/assets'
+import { AttachmentData } from '../../../shared/services/attachment-s3.service'
+
 // The payment structure is as follows:
 // 1. If the current appraisal is less than 25 million, the payment is 6.000kr
 // 2. If the current appraisal is between 25 million and 500 million, the payment is 0.03% of the current appraisal
@@ -20,6 +25,7 @@ export const paymentForAppraisal = (currentAppraisal: number) => {
 }
 
 const GUID = 'c7c13606-9a03-40ec-837b-ec5d7665a8fe' // HMS does nothing with this but it has to have a certain form for the request to go through
+const APPLICATION_TYPE = 'LscVK9yI7EeXf4WDCOBfww' // This is fixed and comes from HMS
 
 const getApplicant = (answers: FormValue) => {
   return {
@@ -33,8 +39,25 @@ const getApplicant = (answers: FormValue) => {
   }
 }
 
+export const mapAnswersToApplicationFilesContentDto = (
+  application: Application,
+  files: Array<AttachmentData>,
+): Array<ApplicationFilesContentDto> => {
+  return (
+    files?.map((file) => {
+      return {
+        fileID: file.key,
+        applicationID: application.id,
+        content: file.fileContent, // TODO get the content from the file
+        applicationType: APPLICATION_TYPE,
+      }
+    }) ?? []
+  )
+}
+
 export const mapAnswersToApplicationDto = (
   application: Application,
+  files: Array<AttachmentData>,
 ): ApplicationDto => {
   const { answers, externalData } = application
   const applicant = getApplicant(answers)
@@ -44,12 +67,23 @@ export const mapAnswersToApplicationDto = (
     'getProperties.data',
   )?.find((realEstate) => realEstate.fasteignanumer === selectedRealEstateId)
 
+  const parsedFiles = files?.map((file) => {
+    return {
+      flokkur: 2,
+      heiti: file.key,
+      dags: new Date(),
+      tegund: file.key.split('.').pop() ?? '',
+      fileID: file.key,
+      ending: file.key.split('.').pop() ?? '',
+    }
+  })
+
   return {
     applicationName: 'Brunabótamat - Endurmat',
     status: 40, // Fixed value something from umsóknasmiður
     language: 'IS',
-    portalApplicationID: Math.floor(Math.random() * 1000000000).toString(), // swap to application.id when HMS is ready,
-    applicationType: 'LscVK9yI7EeXf4WDCOBfww', // This is fixed and comes from HMS
+    portalApplicationID: application.id,
+    applicationType: APPLICATION_TYPE,
     applicationJson: null,
     dagssetning: new Date(),
     adilar: [
@@ -184,31 +218,6 @@ export const mapAnswersToApplicationDto = (
       kortanumer: null,
       tegundKorts: null,
     },
-    files: [
-      {
-        flokkur: 2,
-        heiti: 'Mynd 1',
-        dags: new Date(),
-        tegund: 'image/jpeg',
-        fileID: '1234567890',
-        ending: '.jpg',
-      },
-      {
-        flokkur: 2,
-        heiti: 'Mynd 2',
-        dags: new Date(),
-        tegund: 'image/jpeg',
-        fileID: '1234567890',
-        ending: '.jpg',
-      },
-      {
-        flokkur: 5,
-        heiti: 'Mynd 3',
-        dags: new Date(),
-        tegund: 'application/pdf',
-        fileID: '1234567890',
-        ending: '.pdf',
-      },
-    ],
+    files: parsedFiles,
   }
 }
