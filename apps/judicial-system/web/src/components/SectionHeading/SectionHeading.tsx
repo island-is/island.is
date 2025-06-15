@@ -15,7 +15,7 @@ type Heading = 'h1' | 'h2' | 'h3' | 'h4' | 'h5'
 interface Props {
   title: string
   required?: boolean
-  tooltip?: ReactNode
+  tooltip?: ReactNode | string
   description?: ReactNode | string
   marginBottom?: ResponsiveProp<Space | 'auto'>
   heading?: Heading
