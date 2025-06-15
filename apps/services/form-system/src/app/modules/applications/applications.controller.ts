@@ -24,13 +24,20 @@ import { CreateApplicationDto } from './models/dto/createApplication.dto'
 import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
 import { ApplicationResponseDto } from './models/dto/application.response.dto'
 import { ScreenValidationResponse } from '../../dataTypes/validationResponse.model'
-import { CurrentUser, IdsUserGuard, User } from '@island.is/auth-nest-tools'
+import {
+  CurrentUser,
+  IdsUserGuard,
+  User,
+} from '@island.is/auth-nest-tools'
+import { ScreenDto } from '../screens/models/dto/screen.dto'
+import { SubmitScreenDto } from './models/dto/submitScreen.dto'
+
 
 @UseGuards(IdsUserGuard)
 @ApiTags('applications')
 @Controller({ path: 'applications', version: ['1', VERSION_NEUTRAL] })
 export class ApplicationsController {
-  constructor(private readonly applicationsService: ApplicationsService) {}
+  constructor(private readonly applicationsService: ApplicationsService) { }
 
   @ApiOperation({ summary: 'Get an application by id' })
   @ApiOkResponse({
@@ -114,10 +121,11 @@ export class ApplicationsController {
   @ApiOperation({ summary: 'validate and save input values of a screen' })
   @ApiCreatedResponse({
     description: 'validate and save input values of a screen',
+    type: ScreenValidationResponse,
   })
   @ApiParam({ name: 'screenId', type: String })
   @ApiBody({ type: ApplicationDto })
-  @Post('/submitScreen:screenId')
+  @Post('submitScreen/:screenId')
   async submitScreen(
     @Param('screenId') screenId: string,
     @Body() applicationDto: ApplicationDto,
@@ -146,6 +154,21 @@ export class ApplicationsController {
     )
   }
 
+
+  @ApiOperation({ summary: 'Save screen data' })
+  @ApiCreatedResponse({
+    description: 'Screen saved successfully',
+    type: ScreenDto,
+  })
+  @ApiBody({ type: SubmitScreenDto })
+  @Put('submitScreen/:screenId')
+  async saveScreen(
+    @Param('screenId') screenId: string,
+    @Body() screenDto: SubmitScreenDto,
+  ): Promise<ScreenDto> {
+    return await this.applicationsService.saveScreen(screenId, screenDto)
+  }
+
   // @ApiOperation({ summary: 'Get all applications by user and formId' })
   // @ApiOkResponse({
   //   type: ApplicationResponseDto,
@@ -160,4 +183,5 @@ export class ApplicationsController {
   // ): Promise<ApplicationResponseDto> {
   //   return await this.applicationsService.findAllByUserAndFormId(user, formId)
   // }
+
 }
