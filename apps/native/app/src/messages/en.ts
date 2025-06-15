@@ -681,6 +681,7 @@ export const en: TranslatedMessages = {
   'health.overview.levelStatusValue': 'Level {level}, you pay {percentage}%',
   'health.overview.medicinePurchaseNoActivePeriodWarning':
     'A new payment period begins with the next medicine purchase',
+  'health.overview.prescriptions': 'Prescriptions',
 
   // health - vaccinations
   'health.vaccinations.screenTitle': 'Vaccinations',
@@ -711,4 +712,41 @@ export const en: TranslatedMessages = {
     'No organs can be used for transplantation.',
   'health.organDonation.isDonorWithLimitationsDescription':
     'All organs can be used for transplantation except: {limitations}.',
+
+  // health - prescriptions & drug certificates
+  'health.prescriptionsAndCertificates.screenTitle': 'Medication',
+  'health.prescriptionsAndCertificates.validTo': 'Valid to: {date}',
+  'health.prescriptionsAndCertificates.expired': 'Expired',
+  'health.prescriptionsAndCertificates.rejected': 'Rejected',
+  'health.prescriptionsAndCertificates.inProcess': 'In process',
+  'health.prescriptionsAndCertificates.valid': 'Valid',
+  'health.prescriptionsAndCertificates.furtherInformation':
+    'Further information',
+  'health.prescriptionsAndCertificates.status': 'Status',
+
+  'health.drugCertificates.title': 'Medication certificate',
+  'health.drugCertificates.drugName': 'Drug name',
+  'health.drugCertificates.atcCode': 'ATC code',
+  'health.drugCertificates.ingredients': 'Ingredient',
+  'health.drugCertificates.validFrom': 'Valid from',
+  'health.drugCertificates.validUntil': 'Valid to',
+  'health.drugCertificates.nameOfDoctor': 'Name of doctor',
+  'health.drugCertificates.methylDoctors':
+    'Extra doctors registered on license',
+
+  'health.prescriptions.title': 'Prescriptions',
+  'health.prescriptions.description':
+    'Here you can find an overview of your prescriptions and medication certificates.',
+  'health.prescriptions.drug': 'Lyf',
+  'health.prescriptions.type': 'Tegund',
+  'health.prescriptions.indication': 'Lyf er notað við',
+  'health.prescriptions.quantity': 'Ávísað magn',
+  'health.prescriptions.dosageInstructions': 'Notkunarleiðbeiningar',
+  'health.prescriptions.quantityUnit': '{quantity} stk',
+  'health.prescriptions.issueDate': 'Útgáfudagur',
+  'health.prescriptions.expiresAt': 'Gildir til',
+  'health.prescriptions.doctor': 'Læknir',
+  'health.prescriptions.issueInformation': 'Útgáfa',
+  'health.prescriptions.dispensations': 'Afgreiðslusaga',
+  'health.prescriptions.dispensationNumber': '{number}. afgreiðsla:',
 }
