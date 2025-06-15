@@ -9,27 +9,6 @@ inputs:
 runs:
   using: 'composite'
   steps:
-    - name: Corepack
-      shell: bash
-      working-directory: ${{ inputs.working-directory }}
-      run: |
-        corepack enable
-
-    - name: Check node version
-      working-directory: ${{ inputs.working-directory }}
-      shell: bash
-      run: |
-        set -euo pipefail
-        node -v
-        yarn --version
-        ls -l "$(which node)"
-
-    - name: Get Yarn Cache Directory Path
-      working-directory: ${{ inputs.working-directory }}
-      shell: bash
-      id: yarn-cache-dir-path
-      run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-
     # Set RunsOn S3 cache bucket only for CI runs
     #
     # This step conditionally sets RUNS_ON_S3_BUCKET_CACHE from RUNS_ON_BUCKET_NAME
@@ -42,6 +21,46 @@ runs:
       shell: bash
       if: ${{ !github.event.localrun && env.RUNS_ON_BUCKET_NAME }}
       run: echo "RUNS_ON_S3_BUCKET_CACHE=${{ env.RUNS_ON_BUCKET_NAME }}" >> $GITHUB_ENV
+
+    - name: Corepack
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        corepack enable
+
+    - name: Cache Corepack/Yarn
+      uses: runs-on/cache@v4
+      id: restore-corepack
+      with:
+        path: |
+          ${{ inputs.working-directory }}/.cache/corepack/yarn.tgz
+        key: ${{ runner.os }}-corepack-${{ hashFiles('package.json') }}-1
+      env:
+        AWS_REGION: ${{ env.AWS_REGION || 'eu-west-1' }}
+
+    - name: Corepack install
+      id: corepack-install
+      shell: bash
+      working-directory: ${{ inputs.working-directory }}
+      run: |
+        mkdir -p .cache/corepack
+        if ! corepack install -g .cache/corepack/yarn.tgz; then
+          corepack pack "yarn@$(yarn --version)" -o .cache/corepack/yarn.tgz
+        fi
+
+    - name: Check node version
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: |
+        for tool in yarn node; do
+          echo -n "$tool: $("$tool" --version)" && ls -l "$(which "$tool")"
+        done
+
+    - name: Get Yarn Cache Directory Path
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      id: yarn-cache-dir-path
+      run: echo "dir=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
 
     - name: Cache Dependencies
       uses: runs-on/cache@v4
