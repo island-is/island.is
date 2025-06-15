@@ -84,6 +84,11 @@ export interface Passport {
   childPassports?: IdentityDocumentChild[]
 }
 
+export interface PassportsCollection {
+  userPassports?: IdentityDocument[]
+  childPassports?: IdentityDocumentChild[]
+}
+
 export type Gender = 'F' | 'M' | 'X'
 
 export type ExpiryStatus = 'EXPIRED' | 'LOST'
