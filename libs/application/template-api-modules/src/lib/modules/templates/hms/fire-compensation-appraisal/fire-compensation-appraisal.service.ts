@@ -9,9 +9,14 @@ import { mockGetProperties } from './mockedFasteign'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { getValueViaPath } from '@island.is/application/core'
-import { mapAnswersToApplicationDto, paymentForAppraisal } from './utils'
+import {
+  mapAnswersToApplicationDto,
+  mapAnswersToApplicationFilesContentDto,
+  paymentForAppraisal,
+} from './utils'
 import { ApplicationApi } from '@island.is/clients/hms-application-system'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { AttachmentS3Service } from '../../../shared/services'
 
 @Injectable()
 export class FireCompensationAppraisalService extends BaseTemplateApiService {
@@ -19,6 +24,7 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private propertiesApi: FasteignirApi,
     private hmsApplicationSystemService: ApplicationApi,
+    private readonly attachmentService: AttachmentS3Service,
   ) {
     super(ApplicationTypes.FIRE_COMPENSATION_APPRAISAL)
   }
@@ -104,8 +110,39 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
 
   async submitApplication({ application }: TemplateApiModuleActionProps) {
     try {
-      const applicationDto = mapAnswersToApplicationDto(application)
+      // get content of files from S3
+      const files = await this.attachmentService.getFiles(application, [
+        'photos',
+      ])
 
+      // Map the photos to the dto interface
+      const applicationFilesContentDtoArray =
+        mapAnswersToApplicationFilesContentDto(application, files)
+
+      // Send the photos in to HMS
+      const photoResults = await Promise.all(
+        applicationFilesContentDtoArray.map(
+          async (applicationFilesContentDto) => {
+            return await this.hmsApplicationSystemService.apiApplicationUploadPost(
+              {
+                applicationFilesContentDto,
+              },
+            )
+          },
+        ),
+      )
+
+      if (photoResults.some((result) => result.status !== 200)) {
+        throw new TemplateApiError(
+          'Failed to upload photos, non 200 status',
+          500,
+        )
+      }
+
+      // Map the application to the dto interface
+      const applicationDto = mapAnswersToApplicationDto(application, files)
+
+      // Send the application to HMS
       const res = await this.hmsApplicationSystemService.apiApplicationPost({
         applicationDto,
       })
