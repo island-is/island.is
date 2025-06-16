@@ -134,11 +134,12 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
           />
         </GridColumn>
         {isIndexConnected?.includes(YesOrNoEnum.YES) &&
-          indexRate !== undefined && (
+          indexRate !== undefined &&
+          indexRate !== null && (
             <GridColumn span={['12/12', '4/12']}>
               <KeyValue
                 label={summary.indexRateLabel}
-                value={indexRate.toString() || '-'}
+                value={indexRate.toString()}
               />
             </GridColumn>
           )}

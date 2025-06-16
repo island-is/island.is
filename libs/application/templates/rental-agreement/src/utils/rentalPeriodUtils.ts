@@ -153,7 +153,7 @@ export const calculateSecurityDepositAmount = (answers: FormValue) => {
   const months = securityDepositAmount
     ? monthMapping[securityDepositAmount as keyof typeof monthMapping]
     : 0
-  return (parseInt(securityAmountHiddenRentalAmount ?? '0') * months).toString()
+  return (Number(securityAmountHiddenRentalAmount ?? '0') * months).toString()
 }
 
 const formatMonthsWithLocale = (dateString: string): string => {
