@@ -2197,6 +2197,7 @@ export interface IIntroLinkImageFields {
     | ILinkUrl
     | INews
     | IAnchorPage
+    | IOrganizationSubpage
     | undefined
 
   /** Open Link in New Tab */
@@ -3225,6 +3226,9 @@ export interface IOrganizationFields {
 
   /** News Bottom Slices */
   newsBottomSlices?: IEmailSignup[] | undefined
+
+  /** Can pages be found in search results */
+  canPagesBeFoundInSearchResults?: boolean | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {

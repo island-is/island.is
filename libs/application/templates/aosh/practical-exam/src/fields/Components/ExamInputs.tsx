@@ -54,6 +54,7 @@ export const ExamInputs: FC<
   const [chosenCategories, setChosenCategories] = useState<Option[]>([])
   const [isInvalidInput, setIsInvalidInput] = useState<boolean>(false)
   const [isInvalidValidation, setIsInvalidValidation] = useState<boolean>(false)
+  const [isMissingFileUpload, setIsMissingFileUpload] = useState<boolean>(false)
   const [validationError, setValidationError] = useState<string>('')
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
@@ -147,17 +148,11 @@ export const ExamInputs: FC<
     examCategoriesRequireMedicalCertificate.includes(category.value),
   )
 
-  useEffect(() => {
-    if (!shouldShowUpload) {
-      setValue(`examCategories[${idx}].medicalCertificate`, undefined)
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [shouldShowUpload])
-
   const onSubmit = async () => {
     // Reset Validation error
     setIsInvalidValidation(false)
     setValidationError('')
+    setIsMissingFileUpload(false)
     setValue(`examCategories[${idx}].isValid`, false)
 
     const instructors: Option[] = getValues(`examCategories[${idx}].instructor`)
@@ -179,12 +174,11 @@ export const ExamInputs: FC<
       shouldShowUpload &&
       (!medicalCert ||
         !medicalCert.medicalCertificate ||
-        !medicalCert.medicalCertificate.content ||
-        !medicalCert.medicalCertificate.name ||
-        !medicalCert.medicalCertificate.type)
+        !medicalCert.medicalCertificate[0] ||
+        !medicalCert.medicalCertificate[0].key ||
+        !medicalCert.medicalCertificate[0].name)
     ) {
-      // No MedicalCertificate uploader
-
+      setIsMissingFileUpload(true)
       return null
     }
 
@@ -263,7 +257,8 @@ export const ExamInputs: FC<
     onChange: (...event: any[]) => void,
   ) => {
     if (!includedCategories || !Array.isArray(value)) return onChange(value)
-
+    // Category added, requires validation again
+    setValue(`examCategories[${idx}].isValid`, false)
     // Disable included categories
     const updatedOptions = categoryList.map((cat) => ({
       ...cat,
@@ -286,6 +281,9 @@ export const ExamInputs: FC<
     onChange: (...event: any[]) => void,
   ) => {
     onChange(value)
+    // Something was removed, Requires validation again
+    setValue(`examCategories[${idx}].isValid`, false)
+
     if (includedCategories && Array.isArray(value)) {
       const updatedOptions = categoryList.map((cat) => ({
         ...cat,
@@ -306,11 +304,25 @@ export const ExamInputs: FC<
     const updatedInstructors = allInstructors.filter(
       (_: InstructorInformationInput, i: number) => i !== removeIndex,
     )
+
+    const currentlyChosen = chosenCategories.filter(
+      (item) => item.value !== removedValue.value,
+    )
+    if (
+      currentlyChosen.every(
+        (item) => !examCategoriesRequireMedicalCertificate.includes(item.value),
+      )
+    ) {
+      setValue(`examCategories[${idx}].medicalCertificate`, undefined)
+    }
+
     setValue(`examCategories[${idx}].instructor`, updatedInstructors)
   }
 
   const handleClear = () => {
+    setValue(`examCategories[${idx}].isValid`, false)
     setValue(`examCategories[${idx}].instructor`, [])
+    setValue(`examCategories[${idx}].medicalCertificate`, undefined)
     setChosenCategories([])
     setCategoryList((prev) =>
       prev.map((option) => ({
@@ -434,6 +446,15 @@ export const ExamInputs: FC<
           type="warning"
           title={formatMessage(examCategories.labels.invalidValidationTitle)}
           message={validationError}
+        />
+      )}
+      {isMissingFileUpload && (
+        <AlertMessage
+          type="warning"
+          title={formatMessage(examCategories.labels.missingFileUploadTitle)}
+          message={formatMessage(
+            examCategories.labels.missingFileUploadMessage,
+          )}
         />
       )}
       {showInfo && (

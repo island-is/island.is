@@ -3,6 +3,7 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/form-system/src",
   "projectType": "library",
+  "tags": ["lib:api", "scope:api"],
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",
@@ -25,6 +26,5 @@
         }
       }
     }
-  },
-  "tags": ["lib:api", "scope:api"]
+  }
 }

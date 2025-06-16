@@ -420,6 +420,11 @@ export const institutionMapper = {
     contentfulId: InstitutionContentfulIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
   },
   [ApplicationTypes.TERMINATE_RENTAL_AGREEMENT]: {
+        nationalId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+    slug: InstitutionTypes.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+    contentfulId: InstitutionContentfulIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+  },
+  [ApplicationTypes.FIRE_COMPENSATION_APPRAISAL]: {
     nationalId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
     slug: InstitutionTypes.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
     contentfulId: InstitutionContentfulIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
@@ -448,5 +453,15 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU,
     slug: InstitutionTypes.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU,
     contentfulId: InstitutionContentfulIds.MIDSTOD_MENNTUNAR_SKOLATHJONUSTU,
+  },
+  [ApplicationTypes.MEDICAL_AND_REHABILITATION_PAYMENTS]: {
+    nationalId: InstitutionNationalIds.TRYGGINGASTOFNUN,
+    slug: InstitutionTypes.TRYGGINGASTOFNUN,
+    contentfulId: InstitutionContentfulIds.TRYGGINGASTOFNUN,
+  },
+  [ApplicationTypes.LEGAL_GAZETTE]: {
+    nationalId: InstitutionNationalIds.DOMSMALA_RADUNEYTID,
+    slug: InstitutionTypes.DOMSMALARADUNEYTID,
+    contentfulId: InstitutionContentfulIds.DOMSMALARADUNEYTID,
   },
 }

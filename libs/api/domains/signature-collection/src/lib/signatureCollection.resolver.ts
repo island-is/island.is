@@ -33,7 +33,7 @@ import {
 } from './models'
 import { SignatureCollectionListSummary } from './models/areaSummaryReport.model'
 import { SignatureCollectionSignatureUpdateInput } from './dto/signatureUpdate.input'
-import { SignatureCollectionCollectionTypeInput } from './dto/collectionType.input'
+import { SignatureCollectionBaseInput } from './dto/signatureCollectionBase.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard, UserAccessGuard)
 @Resolver()
@@ -47,20 +47,25 @@ export class SignatureCollectionResolver {
   @Audit()
   async signatureCollectionIsOwner(
     @CurrentSignee() signee: SignatureCollectionSignee,
+    @Args('input') _input: SignatureCollectionBaseInput,
   ): Promise<SignatureCollectionSuccess> {
     return { success: signee.isOwner }
   }
 
   @BypassAuth()
   @Query(() => [SignatureCollection])
-  async signatureCollectionCurrent(): Promise<SignatureCollection[]> {
-    return this.signatureCollectionService.currentCollection()
+  async signatureCollectionCurrent(
+    @Args('input') input: SignatureCollectionBaseInput,
+  ): Promise<SignatureCollection[]> {
+    return this.signatureCollectionService.currentCollection(
+      input?.collectionType,
+    )
   }
 
   @BypassAuth()
   @Query(() => SignatureCollection)
   async signatureCollectionLatestForType(
-    @Args('input') input: SignatureCollectionCollectionTypeInput,
+    @Args('input') input: SignatureCollectionBaseInput,
   ) {
     return this.signatureCollectionService.getLatestCollectionForType(
       input.collectionType,
@@ -116,7 +121,7 @@ export class SignatureCollectionResolver {
   @Query(() => [SignatureCollectionSignedList], { nullable: true })
   @Audit()
   async signatureCollectionSignedList(
-    @Args('input') input: SignatureCollectionCollectionTypeInput,
+    @Args('input') input: SignatureCollectionBaseInput,
     @CurrentUser() user: User,
   ): Promise<SignatureCollectionSignedList[] | null> {
     return this.signatureCollectionService.signedList(
@@ -142,6 +147,7 @@ export class SignatureCollectionResolver {
   @Audit()
   async signatureCollectionSignee(
     @CurrentSignee() signee: SignatureCollectionSignee,
+    @Args('input') _input: SignatureCollectionBaseInput,
   ): Promise<SignatureCollectionSignee> {
     return signee
   }
@@ -222,6 +228,7 @@ export class SignatureCollectionResolver {
   async signatureCollectionCollectors(
     @CurrentUser() user: User,
     @CurrentSignee() signee: SignatureCollectionSignee,
+    @Args('input') _input: SignatureCollectionBaseInput,
   ): Promise<SignatureCollectionCollector[]> {
     return this.signatureCollectionService.collectors(
       user,

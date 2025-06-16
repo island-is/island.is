@@ -4,7 +4,6 @@ import {
   GetListInput,
   CreateListInput,
   BulkUploadInput,
-  ReasonKey,
 } from './signature-collection.types'
 import { Collection, CollectionType } from './types/collection.dto'
 import { getSlug, List, ListStatus, mapListBase } from './types/list.dto'
@@ -55,9 +54,13 @@ export class SignatureCollectionAdminClientService {
     return api.withMiddleware(new AuthMiddleware(auth)) as T
   }
 
-  async currentCollection(auth: Auth): Promise<Collection[]> {
+  async currentCollection(
+    auth: Auth,
+    collectionTypeFilter?: CollectionType,
+  ): Promise<Collection[]> {
     return await this.sharedService.currentCollection(
       this.getApiWithAuth(this.electionsApi, auth),
+      collectionTypeFilter,
     )
   }
 
@@ -87,14 +90,21 @@ export class SignatureCollectionAdminClientService {
       listStatus === ListStatus.InReview ||
       listStatus === ListStatus.Reviewed
     ) {
-      const list = await this.getApiWithAuth(
-        this.adminApi,
-        auth,
-      ).adminMedmaelalistiIDToggleListPatch({
-        iD: parseInt(listId),
-        shouldToggle: listStatus === ListStatus.InReview,
-      })
-      return { success: !!list }
+      try {
+        const list = await this.getApiWithAuth(
+          this.adminApi,
+          auth,
+        ).adminMedmaelalistiIDToggleListPatch({
+          iD: parseInt(listId),
+          shouldToggle: listStatus === ListStatus.InReview,
+        })
+        return { success: !!list }
+      } catch (error) {
+        return {
+          success: false,
+          reasons: error.body ? [error.body] : [],
+        }
+      }
     }
     return { success: false }
   }
@@ -113,6 +123,7 @@ export class SignatureCollectionAdminClientService {
     return await this.sharedService.getLists(
       input,
       this.getApiWithAuth(this.listsApi, auth),
+      this.getApiWithAuth(this.electionsApi, auth),
     )
   }
 
@@ -207,7 +218,7 @@ export class SignatureCollectionAdminClientService {
       })
       return { success: true }
     } catch (error) {
-      return { success: false }
+      return { success: false, reasons: error.body ? [error.body] : [] }
     }
   }
 
@@ -304,27 +315,34 @@ export class SignatureCollectionAdminClientService {
     newEndDate: Date,
     auth: Auth,
   ): Promise<Success> {
-    const list = await this.getApiWithAuth(
-      this.adminApi,
-      auth,
-    ).adminMedmaelalistiIDExtendTimePatch({
-      iD: parseInt(listId),
-      newEndDate: newEndDate,
-    })
-    const { dagsetningLokar } = list
-    const success = dagsetningLokar
-      ? newEndDate.getTime() === dagsetningLokar.getTime()
-      : false
-
-    // Can only toggle list if it is in review or reviewed
-    if (success && list.lokadHandvirkt) {
-      await this.getApiWithAuth(
+    try {
+      const list = await this.getApiWithAuth(
         this.adminApi,
         auth,
-      ).adminMedmaelalistiIDToggleListPatch({ iD: parseInt(listId) })
-    }
-    return {
-      success,
+      ).adminMedmaelalistiIDExtendTimePatch({
+        iD: parseInt(listId),
+        newEndDate: newEndDate,
+      })
+      const { dagsetningLokar } = list
+      const success = dagsetningLokar
+        ? newEndDate.getTime() === dagsetningLokar.getTime()
+        : false
+
+      // Can only toggle list if it is in review or reviewed
+      if (success && list.lokadHandvirkt) {
+        await this.getApiWithAuth(
+          this.adminApi,
+          auth,
+        ).adminMedmaelalistiIDToggleListPatch({ iD: parseInt(listId) })
+      }
+      return {
+        success,
+      }
+    } catch (error) {
+      return {
+        success: false,
+        reasons: error.body ? [error.body] : [],
+      }
     }
   }
 
@@ -355,7 +373,7 @@ export class SignatureCollectionAdminClientService {
       })
       return { success: true }
     } catch (error) {
-      return { success: false, reasons: [ReasonKey.DeniedByService] }
+      return { success: false, reasons: error.body ? [error.body] : [] }
     }
   }
 
@@ -368,7 +386,7 @@ export class SignatureCollectionAdminClientService {
       )
       return { success: true }
     } catch (error) {
-      return { success: false, reasons: [ReasonKey.DeniedByService] }
+      return { success: false, reasons: error.body ? [error.body] : [] }
     }
   }
 
@@ -386,8 +404,8 @@ export class SignatureCollectionAdminClientService {
         blsNr: pageNumber,
       })
       return { success: res.bladsidaNr === pageNumber }
-    } catch {
-      return { success: false }
+    } catch (error) {
+      return { success: false, reasons: error.body ? [error.body] : [] }
     }
   }
 
@@ -442,8 +460,8 @@ export class SignatureCollectionAdminClientService {
         iD: parseInt(listId, 10),
       })
       return { success: res.listaLokad ?? false }
-    } catch {
-      return { success: false }
+    } catch (error) {
+      return { success: false, reasons: error.body ? [error.body] : [] }
     }
   }
 
@@ -482,10 +500,10 @@ export class SignatureCollectionAdminClientService {
           ? []
           : getReasonKeyForPaperSignatureUpload(signature, nationalId),
       }
-    } catch {
+    } catch (error) {
       return {
         success: false,
-        reasons: [ReasonKey.DeniedByService],
+        reasons: error.body ? [error.body] : [],
       }
     }
   }

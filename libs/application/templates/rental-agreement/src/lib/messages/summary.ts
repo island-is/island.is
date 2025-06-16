@@ -121,15 +121,10 @@ export const summary = defineMessages({
     defaultMessage: 'Gjalddagi leigu',
     description: 'Payment date options label',
   },
-  indexTypeLabel: {
-    id: 'ra.application:summary.indexTypeLabel',
-    defaultMessage: 'Vísitala',
-    description: 'Indexation type label',
-  },
-  indexValueLabel: {
-    id: 'ra.application:summary.indexValueLabel',
-    defaultMessage: 'Vísitala við upphaf samnings',
-    description: 'Indexation value label',
+  indexRateLabel: {
+    id: 'ra.application:summary.indexRateLabel',
+    defaultMessage: 'Vísitölugildi',
+    description: 'Indexation rate label',
   },
 
   // Rent transaction details
@@ -292,8 +287,8 @@ export const summary = defineMessages({
     defaultMessage: 'Slökkvitæki',
     description: 'Fire extinguisher label',
   },
-  fireProtectionsExitsLabel: {
-    id: 'ra.application:summary.fireProtectionsExitsLabel',
+  fireProtectionsEmergencyExitsLabel: {
+    id: 'ra.application:summary.fireProtectionsEmergencyExitsLabel',
     defaultMessage: 'Flóttaleiðir',
     description: 'Exits label',
   },
@@ -389,5 +384,29 @@ export const summary = defineMessages({
     id: 'ra.application:summary.alertMissingInfoOtherFees',
     defaultMessage: 'Önnur gjöld',
     description: 'Missing information alert other fees',
+  },
+  alertSameTenantAndLandlordLandlord: {
+    id: 'ra.application:summary.alertSameTenantAndLandlordLandlord',
+    defaultMessage:
+      'Sami aðili getur ekki verið skráður bæði sem leigusali og leigjandi (Leigusali)',
+    description: 'Same tenant and landlord alert message (landlord)',
+  },
+  alertSameTenantAndLandlordTenant: {
+    id: 'ra.application:summary.alertSameTenantAndLandlordTenant',
+    defaultMessage:
+      'Sami aðili getur ekki verið skráður bæði sem leigusali og leigjandi (Leigjandi)',
+    description: 'Same tenant and landlord alert message (tenant)',
+  },
+  alertRepeatedLandlord: {
+    id: 'ra.application:summary.alertRepeatedLandlord',
+    defaultMessage:
+      'Sami aðili getur ekki verið skráður mörgum sinnum sem leigusali.',
+    description: 'Duplicate landlord alert message',
+  },
+  alertRepeatedTenant: {
+    id: 'ra.application:summary.alertRepeatedTenant',
+    defaultMessage:
+      'Sami aðili getur ekki verið skráður mörgum sinnum sem leigjandi.',
+    description: 'Duplicate tenant alert message',
   },
 })

@@ -14,8 +14,10 @@ import {
 } from '@island.is/api/schema'
 
 const SignedList = ({
+  collectionType,
   currentCollection,
 }: {
+  collectionType: SignatureCollectionCollectionType
   currentCollection: SignatureCollection
 }) => {
   useNamespaces('sp.signatureCollection')
@@ -27,7 +29,7 @@ const SignedList = ({
 
   // SignedList is typically singular, although it may consist of multiple entries, which in that case will all be invalid
   const { signedLists, loadingSignedLists, refetchSignedLists } =
-    useGetSignedList()
+    useGetSignedList(collectionType)
 
   const [unSign, { loading }] = useMutation<{
     signatureCollectionUnsign: Mutation['signatureCollectionUnsign']
