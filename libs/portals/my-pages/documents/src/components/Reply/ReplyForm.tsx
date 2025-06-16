@@ -35,7 +35,7 @@ const ReplyForm: React.FC<Props> = ({ successfulSubmit }) => {
         toast.error(formatMessage(messages.replySentError))
         return
       }
-      toast.success('Skilaboð send')
+      toast.success(formatMessage(messages.replySentShort))
       successfulSubmit()
       setReplyState((prev) => ({
         ...prev,
@@ -85,10 +85,10 @@ const ReplyForm: React.FC<Props> = ({ successfulSubmit }) => {
                 textarea
                 rows={6}
                 name="reply-message"
-                label="Skilaboð"
+                label={formatMessage(messages.message)}
                 backgroundColor="blue"
-                placeholder="Skilaboð hér"
-                maxLength={500} // Todo - check what the max length should be
+                placeholder={formatMessage(messages.messagesHere)}
+                maxLength={500}
                 onChange={(e) => onChange(e.target.value)}
                 value={value}
                 errorMessage={methods.formState.errors.reply?.message}
