@@ -23,5 +23,5 @@ export class ReplyInput {
   @Field(() => String, { nullable: true })
   @IsOptional()
   @IsString()
-  readonly reguesterName?: string | null
+  readonly requesterName?: string | null
 }
