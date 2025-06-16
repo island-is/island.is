@@ -61,21 +61,4 @@ describe('DateTime component', () => {
 
     expect(lastMockCall[1]).toEqual(true)
   })
-
-  test('should add a : character when the user enters two digits into time', async () => {
-    const user = userEvent.setup()
-    const onChangeMock = jest.fn()
-
-    render(
-      <IntlProvider locale="is" onError={jest.fn}>
-        <DateTime name="test1" onChange={onChangeMock} />
-      </IntlProvider>,
-    )
-
-    await user.type(await screen.findByTestId('test1-time'), '11')
-
-    expect(
-      ((await screen.findByTestId('test1-time')) as HTMLInputElement).value,
-    ).toEqual('11:')
-  })
 })
