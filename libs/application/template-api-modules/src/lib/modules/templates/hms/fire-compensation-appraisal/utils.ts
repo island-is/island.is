@@ -232,6 +232,5 @@ export const mapAnswersToApplicationDto = (
 // This is because HMS has this set to varChar(20) in their database and they don't want
 // to change it. This has the potential to cause collisions but it's unlikely.
 export const hashToLength20 = (input: string): string => {
-  const fullHash = crypto.createHash('sha256').update(input).digest('base64')
-  return fullHash.slice(0, 20) // Truncate to 20 characters
+  return crypto.createHash('sha256').update(input).digest('hex').slice(0, 20)
 }
