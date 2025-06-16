@@ -7,7 +7,7 @@ export interface BloodTypeDto {
   registered?: string
   bloodInfo?: {
     description: string
-    //url to next page
+    //url to information page
     page?: string
   }
 }

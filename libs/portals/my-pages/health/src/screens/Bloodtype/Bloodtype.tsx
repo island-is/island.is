@@ -35,10 +35,13 @@ const ReferencesDetail: React.FC = () => {
         />,
       ]}
     >
+      {!loading && !bloodType && !error && (
+        <Problem type="no_data" noBorder={false} />
+      )}
       {error && !loading && (
         <Problem error={{ name: 'ee', message: 'error' }} noBorder={false} />
       )}
-      {!error && (
+      {bloodType && !error && (
         <InfoLineStack space={1}>
           <InfoLine
             label={formatMessage(messages.bloodtype)}

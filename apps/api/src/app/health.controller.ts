@@ -13,9 +13,6 @@ export class HealthController {
   @Get()
   @HealthCheck()
   check() {
-    //dummy
-
-    const k = 8
     return this.health.check([() => this.cmsHealthIndicator.isHealthy()])
   }
 }

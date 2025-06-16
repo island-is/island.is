@@ -37,7 +37,6 @@ export const BloodApiProvider: Provider<BloodApi> = {
           'Content-Type': 'application/json',
           Accept: 'application/json',
           'X-Road-Client': xroadConfig.xRoadClient,
-          'X-Api-Key': config.apiKey,
         },
       }),
     ),

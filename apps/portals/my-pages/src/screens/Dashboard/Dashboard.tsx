@@ -51,9 +51,6 @@ export const Dashboard = () => {
 
   const { filteredDocuments, data, loading } = useDocumentList()
 
-  //dummy
-  const k = 8
-
   useEffect(() => {
     PlausiblePageviewDetail(
       ServicePortalPaths.Root,
