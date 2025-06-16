@@ -18,9 +18,8 @@ export const collapseGovernment = (
     collectionType: CollectionType.LocalGovernmental,
   }
   for (const collection of collections) {
-    const { status, startTime, endTime, areas, candidates } = mapCollection(
-      collection,
-    )
+    const { status, startTime, endTime, areas, candidates } =
+      mapCollection(collection)
 
     // Aggregate time over collection for maximal range
     if (startTime < earliestStart) {

@@ -22,10 +22,8 @@ const SignatureCollectionParliamentary = () => {
 
   const { isOwner, loadingIsOwner, refetchIsOwner } = useIsOwner(collectionType)
   const userInfo = useUserInfo()
-  const {
-    currentCollection,
-    loadingCurrentCollection,
-  } = useGetCurrentCollection(SignatureCollectionCollectionType.Parliamentary)
+  const { currentCollection, loadingCurrentCollection } =
+    useGetCurrentCollection(SignatureCollectionCollectionType.Parliamentary)
   const { listsForOwner } = useGetListsForOwner(
     collectionType,
     currentCollection?.id ?? '',

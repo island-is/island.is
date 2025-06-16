@@ -40,6 +40,8 @@ const SigneeView = ({
     )
   }
 
+  console.log('listforuser', listsForUser, currentCollection)
+
   return (
     <Box>
       {!user?.profile.actor && !loadingSignedLists && !loadingUserLists ? (

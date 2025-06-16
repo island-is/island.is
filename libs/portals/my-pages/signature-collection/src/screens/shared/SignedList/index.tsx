@@ -16,11 +16,9 @@ import {
 const SignedList = ({
   collectionType,
   currentCollection,
-  collectionType,
 }: {
   collectionType: SignatureCollectionCollectionType
   currentCollection: SignatureCollection
-  collectionType: SignatureCollectionCollectionType
 }) => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
@@ -39,7 +37,7 @@ const SignedList = ({
     variables: {
       input: {
         listId: listIdToUnsign,
-        collectionType
+        collectionType,
       },
     },
   })

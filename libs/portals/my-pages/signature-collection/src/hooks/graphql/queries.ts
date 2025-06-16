@@ -51,7 +51,7 @@ export const GetListSignatures = gql`
 `
 
 export const GetSignedList = gql`
-  query signedList($input: SignatureCollectionCollectionTypeInput!) {
+  query signedList($input: SignatureCollectionBaseInput!) {
     signatureCollectionSignedList(input: $input) {
       id
       title
@@ -77,7 +77,7 @@ export const GetSignedList = gql`
 `
 
 export const GetIsOwner = gql`
-  query isOwner($input: SignatureCollectionCollectionTypeInput!) {
+  query isOwner($input: SignatureCollectionBaseInput!) {
     signatureCollectionIsOwner(input: $input) {
       success
     }
@@ -139,23 +139,51 @@ export const GetListsForOwner = gql`
 `
 
 export const GetCurrentCollection = gql`
-  query currentCollection(
-    $input: SignatureCollectionCollectionTypeFilterInput!
-  ) {
-    signatureCollectionCurrent(input: $input) {
+  query collectionLatestForType($input: SignatureCollectionBaseInput!) {
+    signatureCollectionLatestForType(input: $input) {
       id
       endTime
-      startTime
+
       name
-      isActive
-      collectionType
-      status
       areas {
         id
         name
         min
         max
       }
+      candidates {
+        id
+        nationalId
+        collectionId
+        name
+      }
+      isActive
+    }
+  }
+`
+
+export const GetLatestCollectionForType = gql`
+  query collectionLatestForType(
+    $input: SignatureCollectionCollectionTypeInput!
+  ) {
+    signatureCollectionLatestForType(input: $input) {
+      id
+      endTime
+      startTime
+      name
+      areas {
+        id
+        name
+        min
+        max
+      }
+      candidates {
+        id
+        nationalId
+        collectionId
+        name
+      }
+      isActive
     }
   }
 `

@@ -14,7 +14,7 @@ const ViewList = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
   const { id } = useParams() as { id: string }
-  const { listInfo } = useGetSignatureList(id || '')
+  const { listInfo } = useGetSignatureList(id || '', collectionType)
 
   return (
     <Stack space={5}>

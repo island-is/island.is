@@ -17,10 +17,8 @@ const SignatureCollectionMunicipal = () => {
   const collectionType = SignatureCollectionCollectionType.LocalGovernmental
 
   const { isOwner } = useIsOwner(collectionType)
-  const {
-    currentCollection,
-    loadingCurrentCollection,
-  } = useGetCurrentCollection(collectionType)
+  const { currentCollection, loadingCurrentCollection } =
+    useGetCurrentCollection(collectionType)
 
   const { listsForOwner } = useGetListsForOwner(
     collectionType,

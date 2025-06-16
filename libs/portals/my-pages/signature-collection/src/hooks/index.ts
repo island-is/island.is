@@ -21,7 +21,10 @@ import {
   SignatureCollectionCollectionType,
 } from '@island.is/api/schema'
 
-export const useGetSignatureList = (listId: string) => {
+export const useGetSignatureList = (
+  listId: string,
+  collectionType: SignatureCollectionCollectionType,
+) => {
   const {
     data: signatureList,
     refetch: refetchSignatureList,
@@ -32,6 +35,7 @@ export const useGetSignatureList = (listId: string) => {
       variables: {
         input: {
           listId,
+          collectionType,
         },
       },
     },
@@ -177,16 +181,16 @@ export const useGetCurrentCollection = (
     loading: loadingCurrentCollection,
     refetch: refetchCurrentCollection,
   } = useQuery<{
-    signatureCollectionCurrent?: SignatureCollection
+    signatureCollectionLatestForType?: SignatureCollection
   }>(GetCurrentCollection, {
     variables: {
       input: {
-        collectionTypeFilter: collectionType,
+        collectionType,
       },
     },
   })
   const currentCollection =
-    (getCurrentCollection?.signatureCollectionCurrent as SignatureCollection) ??
+    (getCurrentCollection?.signatureCollectionLatestForType as SignatureCollection) ??
     null
   return {
     currentCollection,
