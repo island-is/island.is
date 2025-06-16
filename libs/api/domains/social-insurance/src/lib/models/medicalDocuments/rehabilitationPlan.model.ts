@@ -23,8 +23,8 @@ class HealthGoals {
   @Field({ nullable: true })
   goalDescription?: string
 
-  @Field({ nullable: true })
-  measures?: string
+  @Field(() => [String], { nullable: true })
+  measures?: string[] | null
 }
 
 @ObjectType('SocialInsuranceMedicalDocumentsRehabilitationPlan')
