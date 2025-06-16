@@ -1,4 +1,4 @@
-import { FC, ReactNode, useContext, useState } from 'react'
+import { FC, ReactNode, useContext, useEffect, useState } from 'react'
 import { useRouter } from 'next/router'
 
 import {
@@ -125,6 +125,7 @@ const CaseTable: FC = () => {
   const { openCaseInNewTab } = useOpenCaseInNewTab()
   const { isOpeningCaseId, handleOpenCase, LoadingIndicator, showLoading } =
     useCaseList()
+  const [rows, setRows] = useState<CaseTableRow[]>([])
   const [showOnlyMyCases, setShowOnlyMyCases] = useState(false)
 
   const type = getCaseTableType(user, router.asPath.split('/').pop())
@@ -137,23 +138,14 @@ const CaseTable: FC = () => {
     errorPolicy: 'all',
   })
 
-  const caseTableData = data?.caseTable
+  useEffect(() => {
+    if (data?.caseTable) {
+      setRows(data.caseTable.rows)
+    }
+  }, [data])
 
   const removeRow = (caseId: string) => {
-    if (!caseTableData) {
-      return
-    }
-
-    const { rows } = caseTableData
-
-    const idx = rows.findIndex((r) => r.caseId === caseId)
-
-    if (idx < 0) {
-      return
-    }
-
-    // remove element idx from rows modifying the original array
-    rows.splice(idx, 1)
+    setRows((prev) => prev.filter((r) => r.caseId !== caseId))
   }
 
   const { deleteCase, deleteCaseModal } = useDeleteCase(removeRow)
@@ -240,7 +232,7 @@ const CaseTable: FC = () => {
           <>
             <Box display="flex" alignItems="center">
               <SectionHeading title={table.title} />
-              {table.hasMyCasesFilter && isNonEmptyArray(caseTableData?.rows) && (
+              {table.hasMyCasesFilter && isNonEmptyArray(rows) && (
                 <Box marginBottom={3} marginLeft={'auto'}>
                   <Checkbox
                     label="Mín mál"
@@ -255,30 +247,27 @@ const CaseTable: FC = () => {
             ) : error ? (
               /* If we cannot get the table contents, then we show an error message after the table title */
               errorMessage
+            ) : rows.length > 0 ? (
+              <GenericTable
+                tableId={type}
+                columns={table.columns.map((c) => ({
+                  title: c.title,
+                  compare,
+                  render,
+                }))}
+                rows={rows
+                  .filter((r) => !showOnlyMyCases || r.isMyCase)
+                  .map((r) => getRow(r))}
+                loadingIndicator={LoadingIndicator}
+              />
             ) : (
-              caseTableData &&
-              (caseTableData.rows.length > 0 ? (
-                <GenericTable
-                  tableId={type}
-                  columns={table.columns.map((c) => ({
-                    title: c.title,
-                    compare,
-                    render,
-                  }))}
-                  rows={caseTableData.rows
-                    .filter((r) => !showOnlyMyCases || r.isMyCase)
-                    .map((r) => getRow(r))}
-                  loadingIndicator={LoadingIndicator}
+              <div className={styles.infoContainer}>
+                <AlertMessage
+                  type="info"
+                  title="Engin mál fundust"
+                  message="Engin mál fundust í þessum flokki"
                 />
-              ) : (
-                <div className={styles.infoContainer}>
-                  <AlertMessage
-                    type="info"
-                    title="Engin mál fundust"
-                    message="Engin mál fundust í þessum flokki"
-                  />
-                </div>
-              ))
+              </div>
             )}
             {cancelCaseModal}
             {deleteCaseModal}

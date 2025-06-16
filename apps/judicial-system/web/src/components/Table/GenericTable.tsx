@@ -97,7 +97,7 @@ const GenericTable = <Cell,>({
             aria-label="Opna kröfu"
             aria-disabled={r.isDisabled}
             className={styles.tableRowContainer}
-            onClick={r.onClick}
+            onClick={() => r.isDisabled && r.onClick}
           >
             {r.cells.map((cell, idx) => (
               <td key={idx}>{columns[idx].render(cell)}</td>
