@@ -15,7 +15,11 @@ export class StringValue {
 }
 
 export class StringGroupValue {
-  @ApiProperty({ type: [String], description: 'The string values' })
+  @ApiProperty({
+    type: String,
+    isArray: true,
+    description: 'The string values',
+  })
   readonly strList!: string[]
 
   @ApiPropertyOptional({
@@ -80,12 +84,17 @@ class CaseTableRow {
   readonly actionOnRowClick!: CaseActionType
 
   @ApiProperty({
-    enum: [ContextMenuCaseActionType],
+    enum: ContextMenuCaseActionType,
+    isArray: true,
     description: 'The available context menu actions',
   })
   readonly contextMenuActions!: ContextMenuCaseActionType[]
 
-  @ApiProperty({ type: [CaseTableCell], description: 'The row cells' })
+  @ApiProperty({
+    type: CaseTableCell,
+    isArray: true,
+    description: 'The row cells',
+  })
   readonly cells!: CaseTableCell[]
 }
 
@@ -93,6 +102,10 @@ export class CaseTableResponse {
   @ApiProperty({ type: Number, description: 'The number of rows' })
   readonly rowCount!: number
 
-  @ApiProperty({ type: [CaseTableRow], description: 'The table rows' })
+  @ApiProperty({
+    type: CaseTableRow,
+    isArray: true,
+    description: 'The table rows',
+  })
   readonly rows!: CaseTableRow[]
 }

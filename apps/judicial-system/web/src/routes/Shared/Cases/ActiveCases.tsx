@@ -8,7 +8,6 @@ import {
   TagCaseState,
   useOpenCaseInNewTab,
 } from '@island.is/judicial-system-web/src/components'
-import { contextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu.strings'
 import {
   ColumnCaseType,
   CourtCaseNumber,
