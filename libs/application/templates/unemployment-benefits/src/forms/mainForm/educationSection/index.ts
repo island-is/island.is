@@ -43,6 +43,7 @@ export const educationSection = buildSection({
           id: 'education.lastTwelveMonths',
           width: 'half',
           space: 0,
+          doesNotRequireAnswer: true,
           options: [
             {
               value: YES,
@@ -64,6 +65,7 @@ export const educationSection = buildSection({
         buildRadioField({
           id: 'education.typeOfEducation',
           space: 0,
+          doesNotRequireAnswer: true,
           options: [
             {
               value: EducationType.CURRENT,
@@ -93,6 +95,7 @@ export const educationSection = buildSection({
           id: 'education.didFinishLastSemester',
           width: 'half',
           space: 0,
+          doesNotRequireAnswer: true,
           options: [
             {
               value: YES,
@@ -133,6 +136,7 @@ export const educationSection = buildSection({
           id: 'education.appliedForNextSemester',
           width: 'half',
           space: 0,
+          doesNotRequireAnswer: true,
           options: [
             {
               value: YES,
@@ -164,6 +168,7 @@ export const educationSection = buildSection({
           id: 'education.currentEducation.programName',
           title: educationMessages.labels.schoolProgramLabel,
           width: 'half',
+          doesNotRequireAnswer: true,
           options: (application, _field, locale) => {
             const education = getValueViaPath<
               GaldurDomainModelsEducationItem[]
@@ -192,6 +197,7 @@ export const educationSection = buildSection({
           title: educationMessages.labels.schoolProgramUnitsLabel,
           width: 'half',
           variant: 'number',
+          doesNotRequireAnswer: true,
           condition: (answers) =>
             wasStudyingLastTwelveMonths(answers) &&
             (isCurrentlyStudying(answers) ||
@@ -203,6 +209,7 @@ export const educationSection = buildSection({
           id: 'education.currentEducation.programDegree',
           title: educationMessages.labels.schoolDegreeLabel,
           width: 'half',
+          doesNotRequireAnswer: true,
           condition: (answers) =>
             wasStudyingLastTwelveMonths(answers) &&
             (isCurrentlyStudying(answers) ||
@@ -214,6 +221,7 @@ export const educationSection = buildSection({
           id: 'education.currentEducation.programEnd',
           title: educationMessages.labels.currentSchoolEndDateLabel,
           width: 'half',
+          doesNotRequireAnswer: true,
           condition: (answers) =>
             wasStudyingLastTwelveMonths(answers) &&
             (isCurrentlyStudying(answers) ||
@@ -241,6 +249,7 @@ export const educationSection = buildSection({
           uploadDescription:
             educationMessages.labels.currentSchoolDegreeFileNameDescription,
           uploadAccept: '.pdf, .docx, .rtf',
+          doesNotRequireAnswer: true,
           condition: (answers) =>
             wasStudyingLastTwelveMonths(answers) &&
             (isCurrentlyStudying(answers) ||
@@ -252,6 +261,7 @@ export const educationSection = buildSection({
           id: 'education.notAppliedForNextSemesterExplanation',
           title: educationMessages.labels.appliedForNextSemesterTextarea,
           variant: 'textarea',
+          doesNotRequireAnswer: true,
           rows: 6,
           condition: (answers) =>
             wasStudyingLastTwelveMonths(answers) &&

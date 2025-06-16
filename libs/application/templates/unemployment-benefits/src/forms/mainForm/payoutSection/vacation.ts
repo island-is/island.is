@@ -25,6 +25,7 @@ export const vacationSubSection = buildSubSection({
           id: 'vacationAlert',
           message: payoutMessages.vacation.vacationAlertMessage,
           alertType: 'info',
+          doesNotRequireAnswer: true,
         }),
         buildDescriptionField({
           id: 'haveVacationQuestion',

@@ -26,6 +26,14 @@ export const employmentSearch = {
         'Hvernig starfi ertu að leita eftir? Þú verður að velja minnst tvö störf.',
       description: 'Employment list question',
     },
+    employmentListDescription: {
+      id: 'vmst.ub.application:employmentSearch.jobWishes.employmentListDescription',
+      defaultMessage: `Leitaðu í listanum að því starfsheiti sem passar best við það starf sem þú 
+      leitar að með því að setja fyrstu stafina inn í reitinn. Vinnumálastofnun notar evrópska 
+      starfaflokkunarkerfið ESCO. Ef þú finnur ekki starfsheiti sem við á getur þú skoðað lista 
+      yfir öll starfsheiti [hér](https://esco.ec.europa.eu/is/classification/occupation_main).`,
+      description: 'Employment list description',
+    },
     employmentListLabel: {
       id: 'vmst.ub.application:employmentSearch.jobWishes.employmentListLabel',
       defaultMessage: 'Starfalisti',

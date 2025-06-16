@@ -19,6 +19,7 @@ import {
   WorkMachineLicensesApi,
 } from '../../dataProviders'
 import Logo from '../../assets/Logo'
+import { externalData } from '../../lib/messages'
 
 export const Prerequisites = buildForm({
   id: 'PrerequisitesDraft',
@@ -28,41 +29,39 @@ export const Prerequisites = buildForm({
   children: [
     buildSection({
       id: 'conditions',
-      tabTitle: 'Forkröfur',
+      tabTitle: externalData.dataProvider.tabTitle,
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
-          title: 'External data',
+          title: externalData.dataProvider.sectionTitle,
+          checkboxLabel: externalData.dataProvider.checkboxLabel,
           dataProviders: [
             buildDataProviderItem({
-              provider: UserProfileApi,
-              title: 'User profile',
-              subTitle: 'User profile',
-            }),
-            buildDataProviderItem({
               provider: NationalRegistrySpouseApi,
-              title: 'NationalRegistrySpouseApi',
-              subTitle: 'NationalRegistrySpouseApi',
+              title: externalData.nationalRegistry.title,
+              subTitle: externalData.nationalRegistry.subTitle,
             }),
             buildDataProviderItem({
               provider: NationalRegistryUserApi,
-              title: 'NationalRegistryUserApi',
-              subTitle: 'NationalRegistryUserApi',
+            }),
+            buildDataProviderItem({
+              provider: UserProfileApi,
+              title: externalData.userProfile.title,
+              subTitle: externalData.userProfile.subTitle,
             }),
             buildDataProviderItem({
               provider: ChildrenCustodyInformationApi,
-              title: 'ChildrenCustodyInformationApi',
-              subTitle: 'ChildrenCustodyInformationApi',
+              // TODO: I'm guessing that the tax is suppose to be somewhere else?
+              title: externalData.tax.title,
+              subTitle: externalData.tax.subTitle,
             }),
             buildDataProviderItem({
               provider: WorkMachineLicensesApi,
-              title: 'WorkMachineLicensesApi',
-              subTitle: 'WorkMachineLicensesApi',
             }),
             buildDataProviderItem({
               provider: UnemploymentApi,
-              title: 'UnemploymentApi',
-              subTitle: 'UnemploymentApi',
+              title: externalData.stateInsuranceAcency.title,
+              subTitle: externalData.stateInsuranceAcency.subTitle,
             }),
 
             // buildDataProviderItem({
@@ -78,7 +77,7 @@ export const Prerequisites = buildForm({
             actions: [
               {
                 event: DefaultEvents.SUBMIT,
-                name: coreMessages.buttonNext,
+                name: externalData.dataProvider.submitButton,
                 type: 'primary',
               },
             ],

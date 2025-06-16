@@ -80,18 +80,10 @@ export const familyInformationSubSection = buildSubSection({
           addItemButtonText:
             applicantMessages.labels.moreDependentChildrenButton,
           fields: {
-            nationalId: {
-              label: applicantMessages.labels.childNationalId,
-              type: 'text',
-              format: '######-####',
-              component: 'input',
-              width: 'half',
-            },
-            name: {
-              label: applicantMessages.labels.childName,
-              type: 'text',
-              component: 'input',
-              width: 'half',
+            child: {
+              customNationalIdLabel: applicantMessages.labels.childNationalId,
+              customNameLabel: applicantMessages.labels.childName,
+              component: 'nationalIdWithName',
             },
           },
         }),

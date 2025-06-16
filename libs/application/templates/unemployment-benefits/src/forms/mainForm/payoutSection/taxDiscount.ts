@@ -31,6 +31,7 @@ export const taxDiscountSubSection = buildSubSection({
           id: 'taxDiscountAlertMessage',
           message: payoutMessages.taxDiscount.taxDiscountAlertMessage,
           alertType: 'info',
+          doesNotRequireAnswer: true,
         }),
       ],
     }),

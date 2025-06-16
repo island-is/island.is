@@ -4,12 +4,13 @@ import {
   buildSubSection,
   buildSelectField,
   getValueViaPath,
-  buildCheckboxField,
   YES,
   coreMessages,
   NO,
+  buildRadioField,
 } from '@island.is/application/core'
 import { employmentSearch as employmentSearchMessages } from '../../../lib/messages'
+import { GaldurDomainModelsSettingsJobCodesJobCodeDTO } from '@island.is/clients/vmst-unemployment'
 
 export const jobWishesSubSection = buildSubSection({
   id: 'jobWishesSubSection',
@@ -22,31 +23,24 @@ export const jobWishesSubSection = buildSubSection({
         buildDescriptionField({
           id: 'jobWishes.jobList.description',
           title: employmentSearchMessages.jobWishes.employmentListQuestion,
+          description:
+            employmentSearchMessages.jobWishes.employmentListDescription,
           titleVariant: 'h5',
         }),
         buildSelectField({
           id: 'jobWishes.jobList',
           title: employmentSearchMessages.jobWishes.employmentListLabel,
           isMulti: true,
-          options: (application) => {
-            // TODO: get jobList from externalData when service is ready
-            const jobList = getValueViaPath<{ name: string }[]>(
-              application.externalData,
-              'jobList',
-            ) ?? [
-              {
-                name: 'Veitingarstörf',
-              },
-              {
-                name: 'Skrifstofustarf',
-              },
-              {
-                name: 'Þjónustustörf',
-              },
-            ]
+          options: (application, _, locale) => {
+            const jobList =
+              getValueViaPath<GaldurDomainModelsSettingsJobCodesJobCodeDTO[]>(
+                application.externalData,
+                'unemploymentApplication.data.supportData.jobCodes',
+              ) ?? []
             return jobList.map((job) => ({
-              value: job.name,
-              label: job.name,
+              value: job.id ?? '',
+              label:
+                (locale === 'is' ? job.name : job.english ?? job.name) || '',
             }))
           },
         }),
@@ -56,9 +50,10 @@ export const jobWishesSubSection = buildSubSection({
           titleVariant: 'h5',
           marginTop: 3,
         }),
-        buildCheckboxField({
+        buildRadioField({
           id: 'jobWishes.outsideYourLocation',
           width: 'half',
+          space: 0,
           options: [
             {
               value: YES,
@@ -87,8 +82,6 @@ export const jobWishesSubSection = buildSubSection({
             }))
           },
         }),
-
-        //TODO: Missing info about ESCO code - see design when ready.
       ],
     }),
   ],

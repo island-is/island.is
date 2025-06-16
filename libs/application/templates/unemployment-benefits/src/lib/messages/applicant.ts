@@ -151,5 +151,10 @@ export const applicant = {
       defaultMessage: 'Fjölskylduupplýsingar',
       description: 'family information page description',
     },
+    moreThanEighteenErrorMessage: {
+      id: 'vmst.ub.application:applicant.familyInformation.moreThanEighteenErrorMessage',
+      defaultMessage: 'Ekki er hægt að skrá barn sem hefur náð 18 ára aldri',
+      description: 'error message for children older than 18',
+    },
   }),
 }

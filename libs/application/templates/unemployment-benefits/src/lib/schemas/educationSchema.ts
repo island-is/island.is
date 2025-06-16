@@ -12,7 +12,14 @@ export const educationSchema = z
     didFinishLastSemester: z.nativeEnum(YesOrNoEnum).optional(),
     appliedForNextSemester: z.nativeEnum(YesOrNoEnum).optional(),
     currentEducation: z.object({
-      programName: z.string().optional(),
+      programName: z
+        .preprocess((val) => {
+          if (!val) {
+            return ''
+          }
+          return val
+        }, z.string())
+        .optional(),
       programUnits: z.string().optional(),
       programDegree: z.string().optional(),
       programEnd: z.string().optional(),

@@ -3,34 +3,20 @@ import { YES, YesOrNoEnum } from '@island.is/application/core'
 import { application } from './messages'
 import {
   applicantInformationSchema,
+  capitalIncomeSchema,
   educationSchema,
   employmentHistorySchema,
+  otherBenefitsSchema,
   payoutSchema,
   taxDiscountSchema,
   vacationSchema,
 } from './schemas'
+import { familyInformationSchema } from './schemas/familyInformationSchema'
 
 const FileSchema = z.object({
   name: z.string(),
   key: z.string(),
   url: z.string().optional(),
-})
-
-const familyInformationSchema = z.object({
-  children: z.array(
-    z.object({
-      name: z.string().min(1),
-      nationalId: z.string().min(1),
-    }),
-  ),
-  additionalChildren: z
-    .array(
-      z.object({
-        name: z.string().optional(),
-        nationalId: z.string().optional(),
-      }),
-    )
-    .optional(),
 })
 
 const currentJobSchema = z.object({
@@ -57,7 +43,9 @@ const currentSituationSchema = z.object({
 /**  Job search section  **/
 const jobWishesSchema = z.object({
   jobList: z.array(z.string()).optional(),
-  outsideYourLocation: z.array(z.string()).optional(),
+  outsideYourLocation: z
+    .nativeEnum(YesOrNoEnum)
+    .refine((v) => Object.values(YesOrNoEnum).includes(v)),
   location: z.array(z.string()).optional(),
 })
 
@@ -112,7 +100,6 @@ export const dataSchema = z.object({
   applicant: applicantInformationSchema,
   familyInformation: familyInformationSchema,
   currentSituation: currentSituationSchema,
-  jobWishes: jobWishesSchema,
   currentStudies: currentStudiesSchema,
   educationHistory: z.array(educationHistorySchema),
   education: educationSchema,
@@ -124,6 +111,9 @@ export const dataSchema = z.object({
   payout: payoutSchema,
   taxDiscount: taxDiscountSchema,
   vacation: vacationSchema,
+  otherBenefits: otherBenefitsSchema,
+  capitalIncome: capitalIncomeSchema,
+  jobWishes: jobWishesSchema,
   informationChangeAgreement: z
     .array(z.string())
     .refine((v) => v.includes(YES), {

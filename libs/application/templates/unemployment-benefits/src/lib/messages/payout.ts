@@ -206,6 +206,82 @@ Ef viðkomandi er að fá tekjur frá TR þá eru þær komnar inn í reit merkt
 Ef viðkomandi er að fá lífeyri þá er upphæðin komin frá RSK í reit merktur Lífeyrisgreiðslur`,
       description: 'Other benefits page description',
     },
+    paymentsFromInsuraceDescription: {
+      id: 'vmst.ub.application:payout.otherBenefits.paymentsFromInsuraceDescription',
+      defaultMessage: `Greiðslur frá Tryggingastofnun`,
+      description: 'Other benefits payments from insurance description',
+    },
+    paymentsFromInsurace: {
+      id: 'vmst.ub.application:payout.otherBenefits.paymentsFromInsurace',
+      defaultMessage: 'Upphæð á mánuði',
+      description: 'Other benefits payments from insurance label',
+    },
+    paymentsFromPensionDescription: {
+      id: 'vmst.ub.application:payout.otherBenefits.paymentsFromPensionDescription',
+      defaultMessage: `Greiðslur frá lífeyrissjóði/um`,
+      description: 'Other benefits payments from pension description',
+    },
+    typeOfPayment: {
+      id: 'vmst.ub.application:payout.otherBenefits.typeOfPayment',
+      defaultMessage: 'Tegund greiðslu',
+      description: 'Other benefits type of payment label',
+    },
+    paymentAmount: {
+      id: 'vmst.ub.application:payout.otherBenefits.paymentAmount',
+      defaultMessage: 'Upphæð á mánuði',
+      description: 'Other benefits payment amount label',
+    },
+    paymentsFromSicknessAllowance: {
+      id: 'vmst.ub.application:payout.otherBenefits.paymentsFromSicknessAllowance',
+      defaultMessage: 'Greiðsla sjúkradagpeninga',
+      description: 'Other benefits payments from sickness allowance label',
+    },
+    union: {
+      id: 'vmst.ub.application:payout.otherBenefits.union',
+      defaultMessage: 'Stéttarfélag',
+      description: 'Other benefits union label',
+    },
+    dateFrom: {
+      id: 'vmst.ub.application:payout.otherBenefits.dateFrom',
+      defaultMessage: 'Tímabil frá',
+      description: 'Other benefits date from label',
+    },
+    dateTo: {
+      id: 'vmst.ub.application:payout.otherBenefits.dateTo',
+      defaultMessage: 'Tímabil til',
+      description: 'Other benefits date to label',
+    },
+    fileHeader: {
+      id: 'vmst.ub.application:payout.otherBenefits.fileHeader',
+      defaultMessage: 'Staðfesting á sjúkradagpeningum',
+      description: 'Other benefits file header',
+    },
+    fileDescription: {
+      id: 'vmst.ub.application:payout.otherBenefits.fileDescription',
+      defaultMessage: `Tekið er við skjölum með endingu: .pdf, .docx, .rtf`,
+      description: 'Other benefits file description',
+    },
+    payedFromPrivatePensionFundQuestion: {
+      id: 'vmst.ub.application:payout.otherBenefits.payedFromPrivatePensionFundQuestion',
+      defaultMessage: 'Ertu að fá greitt úr séreignarsjóði?',
+      description: 'Other benefits payed from private pension fund question',
+    },
+    payedFromPrivatePensionFundAlertMessage: {
+      id: 'vmst.ub.application:payout.otherBenefits.payedFromPrivatePensionFundAlertMessage#markdown',
+      defaultMessage: `Þetta á aðeins við ef að séreignasjóðsgreiðslur eru greiddar út en ekki ef séreignasjóður er greiddur beint inn á lán.`,
+      description:
+        'Other benefits payed from private pension fund alert message',
+    },
+    payedFromPrivatePensionFundLabel: {
+      id: 'vmst.ub.application:payout.otherBenefits.payedFromPrivatePensionFundLabel',
+      defaultMessage: 'Séreignarsjóður',
+      description: 'Other benefits payed from private pension fund label',
+    },
+    amountFromPrivatePensionFund: {
+      id: 'vmst.ub.application:payout.otherBenefits.amountFromPrivatePensionFund',
+      defaultMessage: 'Upphæð',
+      description: 'Other benefits amount from private pension fund label',
+    },
   }),
   capitalIncome: defineMessages({
     sectionTitle: {
@@ -217,6 +293,17 @@ Ef viðkomandi er að fá lífeyri þá er upphæðin komin frá RSK í reit mer
       id: 'vmst.ub.application:payout.capitalIncome.pageTitle',
       defaultMessage: 'Fjármagnstekjur',
       description: 'Capital income page description',
+    },
+    pageDescription: {
+      id: 'vmst.ub.application:payout.capitalIncome.description#markdown',
+      defaultMessage: `Ertu að fá aðrar tekjur en þær sem flokkast undir launatekjur? Eins og t.d. leigutekjur, vaxtatekjur, arð eða söluhagnað?
+      \n [Nánar um fjármagnstekjur hér](https://www.skatturinn.is/einstaklingar/fjarmagnstekjur/)`,
+      description: 'Capital income page description',
+    },
+    amountLabel: {
+      id: 'vmst.ub.application:payout.capitalIncome.amountLabel',
+      defaultMessage: 'Upphæð á mánuði',
+      description: 'Capital income amount label',
     },
   }),
   unemploymentBenefitsPayoutAgreement: defineMessages({
@@ -234,8 +321,8 @@ Ef viðkomandi er að fá lífeyri þá er upphæðin komin frá RSK í reit mer
       id: 'vmst.ub.application:payout.unemploymentBenefitsPayoutAgreement.pageDescription#markdown',
       defaultMessage: `Greiðsla atvinnuleysisbóta tekur annaðhvort mið af þeim degi sem staðfest umsókn er send eða þegar uppsagnarfresti lýkur, svo lengi sem umsókn berst fyrir þann tíma.\n
 Útborgun atvinnuleysisbóta er síðasta virka dag hvers mánaðar.\n
-Greiðslutímabilið er frá fyrsta til síðasta dags mánaðar. T.d. fyrir 1. janúar - 31. janúar kemur greiðsla síðasta virka daginn í janúar.\n
-Upphæðin lækkar eftir því sem bótarétturinn er minni en þú verður að hafa a.m.k. stundað 25% starf í 3 mánuði á sl. 12 mánuðum.`,
+Greiðslutímabilið er frá fyrsta til síðasta dags mánaðar. Til dæmis fyrir 1. janúar – 31. janúar kemur greiðsla síðasta virka daginn í janúar.\n
+Upphæðin lækkar eftir því sem bótarétturinn er minni en þú verður að hafa að minnsta kosti stundað 25% starf í 3 mánuði á síðastliðnum 12 mánuðum.`,
       description: 'Unemployment benefits payout agreement page description',
     },
   }),
