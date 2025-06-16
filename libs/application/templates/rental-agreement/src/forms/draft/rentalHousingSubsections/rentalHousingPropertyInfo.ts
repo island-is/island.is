@@ -85,7 +85,6 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
           id: 'propertyInfo.categoryClass',
           description: messagesCategory.classDescription,
           options: getPropertyClassOptions(),
-          clearOnChange: ['propertyInfo.categoryClassGroup'],
           defaultValue: RentalHousingCategoryClass.GENERAL_MARKET,
           width: 'half',
           space: 0,

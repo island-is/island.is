@@ -8,6 +8,11 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { generateRentalAgreementEmail } from './rental-agreement-email'
 import { mapRentalApplicationData } from './utils/mapRentalApplicationData'
+import {
+  fetchFinancialIndexationForMonths,
+  listOfLastMonths,
+  FinancialIndexationEntry,
+} from './utils/utils'
 
 @Injectable()
 export class RentalAgreementService extends BaseTemplateApiService {
@@ -28,6 +33,13 @@ export class RentalAgreementService extends BaseTemplateApiService {
       application,
     )
     return
+  }
+
+  async consumerIndex(): Promise<FinancialIndexationEntry[]> {
+    const numberOfMonths = 8 // Number of months to fetch
+    const months = listOfLastMonths(numberOfMonths)
+
+    return await fetchFinancialIndexationForMonths(months)
   }
 
   async submitApplicationToHmsRentalService({

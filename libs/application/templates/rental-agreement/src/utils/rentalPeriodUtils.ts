@@ -1,5 +1,8 @@
+import format from 'date-fns/format'
+import parse from 'date-fns/parse'
+import is from 'date-fns/locale/is'
 import { getValueViaPath, YesOrNoEnum } from '@island.is/application/core'
-import { FormValue } from '@island.is/application/types'
+import { Application, FormValue } from '@island.is/application/types'
 import {
   OtherFeesPayeeOptions,
   RentalAmountPaymentDateOptions,
@@ -7,116 +10,77 @@ import {
   SecurityDepositAmountOptions,
   SecurityDepositTypeOptions,
 } from './enums'
-import { applicationAnswers } from '../shared'
+import { applicationAnswers, ConsumerIndexItem } from '../shared'
 
 // Amount utils
 export const rentalAmountConnectedToIndex = (answers: FormValue) => {
-  const isAmountConnectedToIndex = getValueViaPath<string[]>(
-    answers,
-    'rentalAmount.isIndexConnected',
-  )
-  return isAmountConnectedToIndex?.includes(YesOrNoEnum.YES) || false
+  const { isIndexConnected } = applicationAnswers(answers)
+  return isIndexConnected?.includes(YesOrNoEnum.YES) || false
 }
 
 export const rentalPaymentDateIsOther = (answers: FormValue) => {
-  const paymentDate = getValueViaPath<string>(
-    answers,
-    'rentalAmount.paymentDateOptions',
-  )
-  return paymentDate === RentalAmountPaymentDateOptions.OTHER
+  const { paymentDay } = applicationAnswers(answers)
+  return paymentDay === RentalAmountPaymentDateOptions.OTHER
 }
 
 export const rentalPaymentMethodIsBankTransfer = (answers: FormValue) => {
-  const paymentMethod = getValueViaPath<string>(
-    answers,
-    'rentalAmount.paymentMethodOptions',
-  )
+  const { paymentMethod } = applicationAnswers(answers)
   return paymentMethod === RentalPaymentMethodOptions.BANK_TRANSFER
 }
 
 export const rentalPaymentMethodIsOther = (answers: FormValue) => {
-  const paymentMethod = getValueViaPath<string>(
-    answers,
-    'rentalAmount.paymentMethodOptions',
-  )
+  const { paymentMethod } = applicationAnswers(answers)
   return paymentMethod === RentalPaymentMethodOptions.OTHER
 }
 
 export const rentalInsuranceRequired = (answers: FormValue) => {
-  const isInsuranceRequired = getValueViaPath<string[]>(
-    answers,
-    'rentalAmount.securityDepositRequired',
-  )
-  return isInsuranceRequired?.includes(YesOrNoEnum.YES) || false
+  const { securityDepositRequired } = applicationAnswers(answers)
+  return securityDepositRequired?.includes(YesOrNoEnum.YES) || false
 }
 
 // Details utils
 export const rentalPeriodIsDefinite = (answers: FormValue) => {
-  const rentalPeriodDefinite = getValueViaPath<string[]>(
-    answers,
-    'rentalPeriod.isDefinite',
-  )
-  return rentalPeriodDefinite?.includes(YesOrNoEnum.YES) || false
+  const { isDefinite } = applicationAnswers(answers)
+  return isDefinite?.includes(YesOrNoEnum.YES) || false
 }
 
 // Other fees utils
 export const housingFundAmountPayedByTenant = (answers: FormValue) => {
-  const otherFeesHousingFund = getValueViaPath<OtherFeesPayeeOptions>(
-    answers,
-    'otherFees.housingFund',
-  )
-  return otherFeesHousingFund === OtherFeesPayeeOptions.TENANT
+  const { housingFundPayee } = applicationAnswers(answers)
+  return housingFundPayee === OtherFeesPayeeOptions.TENANT
 }
 
 export const electricityCostPayedByTenant = (answers: FormValue) => {
-  const otherFeesElectricityCost = getValueViaPath<OtherFeesPayeeOptions>(
-    answers,
-    'otherFees.electricityCost',
-  )
-  return otherFeesElectricityCost === OtherFeesPayeeOptions.TENANT
+  const { electricityCostPayee } = applicationAnswers(answers)
+  return electricityCostPayee === OtherFeesPayeeOptions.TENANT
 }
 
 export const heatingCostPayedByTenant = (answers: FormValue) => {
-  const otherFeesHeatingCost = getValueViaPath<OtherFeesPayeeOptions>(
-    answers,
-    'otherFees.heatingCost',
-  )
-  return otherFeesHeatingCost === OtherFeesPayeeOptions.TENANT
+  const { heatingCostPayee } = applicationAnswers(answers)
+  return heatingCostPayee === OtherFeesPayeeOptions.TENANT
 }
 
 export const otherFeesPayedByTenant = (answers: FormValue) => {
-  const otherFeesOtherCosts = getValueViaPath<string[]>(
-    answers,
-    'otherFees.otherCosts',
-  )
-  return otherFeesOtherCosts?.includes(YesOrNoEnum.YES) || false
+  const { otherCostPayedByTenant } = applicationAnswers(answers)
+  return otherCostPayedByTenant?.includes(YesOrNoEnum.YES) || false
 }
 
 // Security deposit utils
 export const securityDepositRequired = (answers: FormValue) => {
-  const isInsuranceRequired = getValueViaPath<string[]>(
-    answers,
-    'rentalAmount.securityDepositRequired',
-  )
-  return isInsuranceRequired?.includes(YesOrNoEnum.YES) || false
+  const { securityDepositRequired } = applicationAnswers(answers)
+  return securityDepositRequired?.includes(YesOrNoEnum.YES) || false
 }
 
 const checkSecurityDepositType = (
   answers: FormValue,
   typeToCheck: SecurityDepositTypeOptions,
 ): boolean => {
-  const isInsuranceRequired = getValueViaPath<string[]>(
-    answers,
-    'rentalAmount.securityDepositRequired',
-  )
-  const securityType = getValueViaPath<SecurityDepositTypeOptions>(
-    answers,
-    'securityDeposit.securityType',
-  )
+  const { securityDepositRequired } = applicationAnswers(answers)
+  const { securityDepositType } = applicationAnswers(answers)
   return (
-    Boolean(isInsuranceRequired?.includes(YesOrNoEnum.YES)) &&
-    Boolean(securityType) &&
-    securityType === typeToCheck
+    Boolean(securityDepositRequired?.includes(YesOrNoEnum.YES)) &&
+    Boolean(securityDepositType) &&
+    securityDepositType === typeToCheck
   )
 }
 
@@ -155,14 +119,11 @@ export const securityDepositIsLandlordsMutualFund = (
 
 export const securityDepositIsNotLandlordsMutualFund = (answers: FormValue) => {
   const securityDeposit = getValueViaPath<string[]>(answers, 'securityDeposit')
-  const securityType = getValueViaPath<SecurityDepositTypeOptions>(
-    answers,
-    'securityDeposit.securityType',
-  )
+  const { securityDepositType } = applicationAnswers(answers)
   return (
     !securityDeposit ||
-    securityType === undefined ||
-    securityType !== SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND
+    securityDepositType === undefined ||
+    securityDepositType !== SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND
   )
 }
 
@@ -170,30 +131,18 @@ export const securityDepositIsLandlordsMutualFundOrOther = (
   answers: FormValue,
 ) => {
   const securityDeposit = getValueViaPath<string[]>(answers, 'securityDeposit')
-  const securityType = getValueViaPath<SecurityDepositTypeOptions>(
-    answers,
-    'securityDeposit.securityType',
-  )
-  const securityAmount = getValueViaPath<SecurityDepositAmountOptions>(
-    answers,
-    'securityDeposit.securityAmount',
-  )
+  const { securityDepositType } = applicationAnswers(answers)
+  const { securityDepositAmount } = applicationAnswers(answers)
   return (
     securityDeposit &&
-    (securityType === SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND ||
-      securityAmount === SecurityDepositAmountOptions.OTHER)
+    (securityDepositType === SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND ||
+      securityDepositAmount === SecurityDepositAmountOptions.OTHER)
   )
 }
 
 export const calculateSecurityDepositAmount = (answers: FormValue) => {
-  const rentalAmount = getValueViaPath<string>(
-    answers,
-    'securityDeposit.rentalAmount',
-  )
-  const securityAmount = getValueViaPath<string>(
-    answers,
-    'securityDeposit.securityAmount',
-  )
+  const { securityAmountHiddenRentalAmount } = applicationAnswers(answers)
+  const { securityDepositAmount } = applicationAnswers(answers)
 
   const monthMapping = {
     [SecurityDepositAmountOptions.ONE_MONTH]: 1,
@@ -201,90 +150,65 @@ export const calculateSecurityDepositAmount = (answers: FormValue) => {
     [SecurityDepositAmountOptions.THREE_MONTHS]: 3,
   }
 
-  const months = securityAmount
-    ? monthMapping[securityAmount as keyof typeof monthMapping]
+  const months = securityDepositAmount
+    ? monthMapping[securityDepositAmount as keyof typeof monthMapping]
     : 0
-  return (parseInt(rentalAmount ?? '0') * months).toString()
+  return (Number(securityAmountHiddenRentalAmount ?? '0') * months).toString()
 }
 
-// TODO: Replace mock data with API when available
-const indexData = [
-  {
-    date: '2025M07',
-    indexRate: '651,0',
-  },
-  {
-    date: '2025M06',
-    indexRate: '649,7',
-  },
-  {
-    date: '2025M05',
-    indexRate: '643,7',
-  },
-  {
-    date: '2025M04',
-    indexRate: '641,3',
-  },
-  {
-    date: '2024M12',
-    indexRate: '634,1',
-  },
-  {
-    date: '2025M03',
-    indexRate: '635,5',
-  },
-  {
-    date: '2025M02',
-    indexRate: '637,2',
-  },
-  {
-    date: '2025M01',
-    indexRate: '634,7',
-  },
-]
+const formatMonthsWithLocale = (dateString: string): string => {
+  try {
+    if (dateString.includes('T')) {
+      const date = new Date(dateString)
+      return format(date, 'MMMM yyyy', { locale: is })
+    }
+    const parsedDate = parse(dateString, 'yyyyMMM', new Date(), {
+      locale: is,
+    })
 
-export const formatIndexRateDateToIcelandic = (dateString: string): string => {
-  const year = dateString.substring(0, 4)
-  const month = dateString.substring(5, 7)
+    return format(parsedDate, 'MMMM yyyy', { locale: is })
+  } catch (error) {
+    return dateString
+  }
+}
 
-  const icelandicMonths: Record<string, string> = {
-    '01': 'Janúar',
-    '02': 'Febrúar',
-    '03': 'Mars',
-    '04': 'Apríl',
-    '05': 'Maí',
-    '06': 'Júní',
-    '07': 'Júlí',
-    '08': 'Ágúst',
-    '09': 'September',
-    '10': 'Október',
-    '11': 'Nóvember',
-    '12': 'Desember',
+export const getConsumerIndexDateOptions = (
+  application: Application,
+): Array<{ value: string; label: string }> => {
+  const consumerIndexArray = application.externalData?.consumerIndex?.data
+
+  if (!consumerIndexArray || !Array.isArray(consumerIndexArray)) {
+    return []
   }
 
-  return `${icelandicMonths[month]} ${year}`
+  const typedArray: ConsumerIndexItem[] = consumerIndexArray
+
+  return [...typedArray]
+    .sort((a, b) => b.month.localeCompare(a.month))
+    .map(({ month }) => ({
+      value: month,
+      label: formatMonthsWithLocale(month),
+    }))
 }
 
-export const getIndexDateOptions = () => {
-  const sortedIndexData = [...indexData].sort((a, b) =>
-    b.date.localeCompare(a.date),
-  )
+export const getIndexRateForConsumerIndexDate = (
+  answers: Application['answers'],
+  externalData: Application['externalData'],
+): number | undefined => {
+  const { isIndexConnected, indexDate } = applicationAnswers(answers)
 
-  return sortedIndexData.map((item: { date: string }) => ({
-    value: item.date,
-    label: formatIndexRateDateToIcelandic(item.date),
-  }))
-}
-export const getIndexRateForDate = (answers: FormValue) => {
-  const { indexDate } = applicationAnswers(answers)
-
-  if (!indexDate) {
-    return ''
+  if (!isIndexConnected?.includes(YesOrNoEnum.YES) || !indexDate) {
+    return undefined
   }
 
-  const selectedIndex = indexData.find(
-    (item: { date: string; indexRate: string }) => item.date === indexDate,
-  )
+  const consumerIndexArray = externalData.consumerIndex?.data
 
-  return selectedIndex?.indexRate || ''
+  if (!consumerIndexArray || !Array.isArray(consumerIndexArray)) {
+    return undefined
+  }
+
+  const typedArray: ConsumerIndexItem[] = consumerIndexArray
+  const selectedIndex = typedArray.find((item) => item.month === indexDate)
+
+  return selectedIndex?.value
 }
