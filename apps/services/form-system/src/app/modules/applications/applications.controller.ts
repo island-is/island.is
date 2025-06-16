@@ -71,6 +71,29 @@ export class ApplicationsController {
     )
   }
 
+  @ApiOperation({
+    summary: 'Get all unfinished applications of type slug belonging to user ',
+  })
+  @ApiOkResponse({
+    type: ApplicationResponseDto,
+    description:
+      'Get all unfinished applications of type slug belonging to user ',
+  })
+  @ApiParam({ name: 'slug', type: String })
+  @Get(':slug')
+  async findAllBySlugAndUser(
+    @Param('slug') slug: string,
+    @Query('isTest') isTest: boolean,
+    @CurrentUser()
+    user: User,
+  ): Promise<ApplicationResponseDto> {
+    return await this.applicationsService.findAllBySlugAndUser(
+      slug,
+      user,
+      isTest,
+    )
+  }
+
   @ApiOperation({ summary: 'Update application dependencies' })
   @ApiNoContentResponse({
     description: 'Update application dependencies',
@@ -131,6 +154,7 @@ export class ApplicationsController {
     )
   }
 
+
   @ApiOperation({ summary: 'Save screen data' })
   @ApiCreatedResponse({
     description: 'Screen saved successfully',
@@ -144,4 +168,20 @@ export class ApplicationsController {
   ): Promise<ScreenDto> {
     return await this.applicationsService.saveScreen(screenId, screenDto)
   }
+
+  // @ApiOperation({ summary: 'Get all applications by user and formId' })
+  // @ApiOkResponse({
+  //   type: ApplicationResponseDto,
+  //   description: 'Get all applications by user and formId',
+  // })
+  // @ApiParam({ name: 'formId', type: String })
+  // @Get('nationalId/:nationalId/formId/:formId')
+  // async findAllByUserAndFormId(
+  //   @Param('formId') formId: string,
+  //   @CurrentUser()
+  //   user: User,
+  // ): Promise<ApplicationResponseDto> {
+  //   return await this.applicationsService.findAllByUserAndFormId(user, formId)
+  // }
+
 }

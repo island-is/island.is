@@ -7,10 +7,10 @@ import {
   buildSubmitField,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
+import { applicationAnswers } from '../../shared'
 import {
   formatNationalId,
   formatPhoneNumber,
-  extractApplicationAnswers,
   getNextStepInReviewOptions,
 } from '../../utils/utils'
 import { NextStepInReviewOptions } from '../../utils/enums'
@@ -35,7 +35,7 @@ export const ReviewInfoSection = buildSection({
             inReview.preSignatureInfo.tableHeaderEmail,
           ],
           rows: (application) => {
-            const { landlords, tenants } = extractApplicationAnswers(
+            const { landlords, tenants } = applicationAnswers(
               application.answers,
             )
 
@@ -86,8 +86,7 @@ export const ReviewInfoSection = buildSection({
             },
           ],
           condition: (answers) => {
-            const { nextStepInReviewOptions } =
-              extractApplicationAnswers(answers)
+            const { nextStepInReviewOptions } = applicationAnswers(answers)
             return (
               nextStepInReviewOptions ===
               NextStepInReviewOptions.EDIT_APPLICATION

@@ -2,6 +2,7 @@ import { fn, literal, Op, Sequelize, where, WhereOptions } from 'sequelize'
 
 import {
   CaseAppealState,
+  CaseDecision,
   CaseIndictmentRulingDecision,
   CaseState,
   CaseTableType,
@@ -11,9 +12,152 @@ import {
   IndictmentCaseReviewDecision,
   indictmentCases,
   investigationCases,
+  isDistrictCourtUser,
   restrictionCases,
   ServiceRequirement,
+  type User as TUser,
 } from '@island.is/judicial-system/types'
+
+import {
+  buildAlternativeServiceExistsCondition,
+  buildEventLogExistsCondition,
+  buildSubpoenaExistsCondition,
+} from './whereOptions/conditions'
+import {
+  prosecutorIndictmentCompletedWhereOptions,
+  prosecutorIndictmentInDraftWhereOptions,
+  prosecutorIndictmentInProgressWhereOptions,
+  prosecutorIndictmentWaitingForConfirmationWhereOptions,
+  prosecutorRequestCasesActiveWhereOptions,
+  prosecutorRequestCasesAppealedWhereOptions,
+  prosecutorRequestCasesCompletedWhereOptions,
+  prosecutorRequestCasesInProgressWhereOptions,
+} from './whereOptions/prosecutor'
+import {
+  publicProsecutorIndictmentInReviewWhereOptions,
+  publicProsecutorIndictmentReviewedWhereOptions,
+} from './whereOptions/publicProsecutor'
+
+// District Court Request Cases
+
+const districtCourtRequestCasesSharedWhereOptions = {
+  is_archived: false,
+  type: [...restrictionCases, ...investigationCases],
+}
+
+const districtCourtRequestCasesInProgressWhereOptions = {
+  ...districtCourtRequestCasesSharedWhereOptions,
+  [Op.or]: [
+    { state: [CaseState.DRAFT, CaseState.SUBMITTED, CaseState.RECEIVED] },
+    {
+      state: completedRequestCaseStates,
+      ruling_signature_date: null,
+      is_completed_without_ruling: null,
+      appeal_state: {
+        [Op.or]: [
+          null,
+          CaseAppealState.RECEIVED,
+          CaseAppealState.WITHDRAWN,
+          CaseAppealState.COMPLETED,
+        ],
+      },
+    },
+  ],
+}
+
+const districtCourtRequestCasesAppealedWhereOptions = {
+  ...districtCourtRequestCasesSharedWhereOptions,
+  state: completedRequestCaseStates,
+  appeal_state: [CaseAppealState.APPEALED],
+}
+
+const districtCourtRequestCasesCompletedWhereOptions = {
+  ...districtCourtRequestCasesSharedWhereOptions,
+  state: completedRequestCaseStates,
+  [Op.or]: [
+    { ruling_signature_date: { [Op.not]: null } },
+    { is_completed_without_ruling: { [Op.not]: null } },
+  ],
+  appeal_state: {
+    [Op.or]: [
+      null,
+      CaseAppealState.RECEIVED,
+      CaseAppealState.WITHDRAWN,
+      CaseAppealState.COMPLETED,
+    ],
+  },
+}
+
+// District Court Indictments
+
+const districtCourtIndictmentsSharedWhereOptions = {
+  is_archived: false,
+  type: indictmentCases,
+}
+
+const districtCourtIndictmentsNewWhereOptions = {
+  ...districtCourtIndictmentsSharedWhereOptions,
+  state: [CaseState.SUBMITTED, CaseState.RECEIVED],
+  judge_id: null,
+}
+
+const districtCourtIndictmentsReceivedWhereOptions = {
+  ...districtCourtIndictmentsSharedWhereOptions,
+  state: CaseState.RECEIVED,
+  judge_id: { [Op.not]: null },
+  [Op.and]: [
+    buildSubpoenaExistsCondition(false),
+    buildAlternativeServiceExistsCondition(false),
+  ],
+}
+
+const districtCourtIndictmentsInProgressWhereOptions = {
+  ...districtCourtIndictmentsSharedWhereOptions,
+  [Op.or]: [
+    {
+      state: CaseState.RECEIVED,
+      [Op.or]: [
+        buildSubpoenaExistsCondition(true),
+        buildAlternativeServiceExistsCondition(true),
+      ],
+    },
+    { state: CaseState.WAITING_FOR_CANCELLATION },
+  ],
+}
+
+const districtCourtIndictmentsFinalizingWhereOptions = {
+  ...districtCourtIndictmentsSharedWhereOptions,
+  state: CaseState.COMPLETED,
+  indictment_ruling_decision: [
+    CaseIndictmentRulingDecision.RULING,
+    CaseIndictmentRulingDecision.FINE,
+  ],
+  [Op.and]: [
+    buildEventLogExistsCondition(
+      EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+      false,
+    ),
+  ],
+}
+
+const districtCourtIndictmentsCompletedWhereOptions = {
+  ...districtCourtIndictmentsSharedWhereOptions,
+  state: CaseState.COMPLETED,
+  [Op.not]: {
+    indictment_ruling_decision: [
+      CaseIndictmentRulingDecision.RULING,
+      CaseIndictmentRulingDecision.FINE,
+    ],
+    [Op.and]: [
+      buildEventLogExistsCondition(
+        EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+        false,
+      ),
+    ],
+  },
+}
+
+// Court of Appeals Cases
 
 const courtOfAppealsSharedWhereOptions = {
   is_archived: false,
@@ -27,10 +171,8 @@ const courtOfAppealsInProgressWhereOptions = {
   [Op.or]: [
     { appeal_state: CaseAppealState.RECEIVED },
     {
-      [Op.and]: [
-        { appeal_state: [CaseAppealState.WITHDRAWN] },
-        { appeal_received_by_court_date: { [Op.not]: null } },
-      ],
+      appeal_state: [CaseAppealState.WITHDRAWN],
+      appeal_received_by_court_date: { [Op.not]: null },
     },
   ],
 }
@@ -40,10 +182,17 @@ const courtOfAppealsCompletedWhereOptions = {
   appeal_state: CaseAppealState.COMPLETED,
 }
 
+// Prison Staff Request Cases
+
 const prisonSharedWhereOptions = {
   is_archived: false,
-  type: [...restrictionCases, CaseType.PAROLE_REVOCATION],
+  type: [
+    CaseType.CUSTODY,
+    CaseType.ADMISSION_TO_FACILITY,
+    CaseType.PAROLE_REVOCATION,
+  ],
   state: CaseState.ACCEPTED,
+  decision: [CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY],
 }
 
 const prisonActiveWhereOptions = {
@@ -56,16 +205,32 @@ const prisonDoneWhereOptions = {
   valid_to_date: { [Op.lt]: fn('NOW') },
 }
 
+// Prison Admin Indictments
+
+const prisonAdminSharedWhereOptions = {
+  is_archived: false,
+  type: [...restrictionCases, CaseType.PAROLE_REVOCATION],
+  state: CaseState.ACCEPTED,
+}
+
+const prisonAdminActiveWhereOptions = {
+  ...prisonAdminSharedWhereOptions,
+  valid_to_date: { [Op.or]: [null, { [Op.gte]: fn('NOW') }] },
+}
+
+const prisonAdminDoneWhereOptions = {
+  ...prisonAdminSharedWhereOptions,
+  valid_to_date: { [Op.lt]: fn('NOW') },
+}
+
 const prisonAdminIndictmentSharedWhereOptions = {
   is_archived: false,
   type: indictmentCases,
   state: CaseState.COMPLETED,
-  indictment_ruling_decision: {
-    [Op.or]: [
-      CaseIndictmentRulingDecision.RULING,
-      CaseIndictmentRulingDecision.FINE,
-    ],
-  },
+  indictment_ruling_decision: [
+    CaseIndictmentRulingDecision.RULING,
+    CaseIndictmentRulingDecision.FINE,
+  ],
   indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
   id: {
     [Op.in]: Sequelize.literal(`
@@ -86,16 +251,16 @@ const prisonAdminIndictmentRegisteredRulingWhereOptions = {
   is_registered_in_prison_system: true,
 }
 
+// Prosecutor's Office Indictments
+
 const prosecutorsOfficeIndictmentSharedWhereOptions = {
   is_archived: false,
   type: indictmentCases,
   state: CaseState.COMPLETED,
-  indictment_ruling_decision: {
-    [Op.or]: [
-      CaseIndictmentRulingDecision.RULING,
-      CaseIndictmentRulingDecision.FINE,
-    ],
-  },
+  indictment_ruling_decision: [
+    CaseIndictmentRulingDecision.RULING,
+    CaseIndictmentRulingDecision.FINE,
+  ],
   id: {
     [Op.in]: Sequelize.literal(`
       (SELECT case_id
@@ -251,27 +416,77 @@ const prosecutorsOfficeIndictmentAppealedWhereOptions = {
   ],
 }
 
-export const caseTableWhereOptions: Record<CaseTableType, WhereOptions> = {
-  [CaseTableType.COURT_OF_APPEALS_IN_PROGRESS]:
+const withUserFilter = (
+  whereOptions: WhereOptions,
+  user: TUser,
+): WhereOptions => {
+  return isDistrictCourtUser(user)
+    ? { ...whereOptions, court_id: user.institution?.id }
+    : whereOptions
+}
+
+export const caseTableWhereOptions: Record<
+  CaseTableType,
+  (user: TUser) => WhereOptions
+> = {
+  [CaseTableType.DISTRICT_COURT_REQUEST_CASES_IN_PROGRESS]: (user) =>
+    withUserFilter(districtCourtRequestCasesInProgressWhereOptions, user),
+  [CaseTableType.DISTRICT_COURT_REQUEST_CASES_APPEALED]: (user) =>
+    withUserFilter(districtCourtRequestCasesAppealedWhereOptions, user),
+  [CaseTableType.DISTRICT_COURT_REQUEST_CASES_COMPLETED]: (user) =>
+    withUserFilter(districtCourtRequestCasesCompletedWhereOptions, user),
+  [CaseTableType.DISTRICT_COURT_INDICTMENTS_NEW]: (user) =>
+    withUserFilter(districtCourtIndictmentsNewWhereOptions, user),
+  [CaseTableType.DISTRICT_COURT_INDICTMENTS_RECEIVED]: (user) =>
+    withUserFilter(districtCourtIndictmentsReceivedWhereOptions, user),
+  [CaseTableType.DISTRICT_COURT_INDICTMENTS_IN_PROGRESS]: (user) =>
+    withUserFilter(districtCourtIndictmentsInProgressWhereOptions, user),
+  [CaseTableType.DISTRICT_COURT_INDICTMENTS_FINALIZING]: (user) =>
+    withUserFilter(districtCourtIndictmentsFinalizingWhereOptions, user),
+  [CaseTableType.DISTRICT_COURT_INDICTMENTS_COMPLETED]: (user) =>
+    withUserFilter(districtCourtIndictmentsCompletedWhereOptions, user),
+  [CaseTableType.COURT_OF_APPEALS_IN_PROGRESS]: () =>
     courtOfAppealsInProgressWhereOptions,
-  [CaseTableType.COURT_OF_APPEALS_COMPLETED]:
+  [CaseTableType.COURT_OF_APPEALS_COMPLETED]: () =>
     courtOfAppealsCompletedWhereOptions,
-  [CaseTableType.PRISON_ACTIVE]: prisonActiveWhereOptions,
-  [CaseTableType.PRISON_DONE]: prisonDoneWhereOptions,
-  [CaseTableType.PRISON_ADMIN_INDICTMENT_SENT_TO_PRISON_ADMIN]:
+  [CaseTableType.PRISON_ACTIVE]: () => prisonActiveWhereOptions,
+  [CaseTableType.PRISON_DONE]: () => prisonDoneWhereOptions,
+  [CaseTableType.PRISON_ADMIN_ACTIVE]: () => prisonAdminActiveWhereOptions,
+  [CaseTableType.PRISON_ADMIN_DONE]: () => prisonAdminDoneWhereOptions,
+  [CaseTableType.PRISON_ADMIN_INDICTMENT_SENT_TO_PRISON_ADMIN]: () =>
     prisonAdminIndictmentSentToPrisonAdminWhereOptions,
-  [CaseTableType.PRISON_ADMIN_INDICTMENT_REGISTERED_RULING]:
+  [CaseTableType.PRISON_ADMIN_INDICTMENT_REGISTERED_RULING]: () =>
     prisonAdminIndictmentRegisteredRulingWhereOptions,
-  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_NEW]:
+  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_NEW]: () =>
     prosecutorsOfficeIndictmentNewWhereOptions,
-  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_IN_REVIEW]:
+  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_IN_REVIEW]: () =>
     prosecutorsOfficeIndictmentInReviewWhereOptions,
-  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_REVIEWED]:
+  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_REVIEWED]: () =>
     prosecutorsOfficeIndictmentReviewedWhereOptions,
-  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_APPEAL_PERIOD_EXPIRED]:
+  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_APPEAL_PERIOD_EXPIRED]: () =>
     prosecutorsOfficeIndictmentAppealPeriodExpiredWhereOptions,
-  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_SENT_TO_PRISON_ADMIN]:
+  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_SENT_TO_PRISON_ADMIN]: () =>
     prosecutorsOfficeIndictmentSentToPrisonAdminWhereOptions,
-  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_APPEALED]:
+  [CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_APPEALED]: () =>
     prosecutorsOfficeIndictmentAppealedWhereOptions,
+  [CaseTableType.PROSECUTOR_REQUEST_CASES_IN_PROGRESS]: (user) =>
+    prosecutorRequestCasesInProgressWhereOptions(user),
+  [CaseTableType.PROSECUTOR_REQUEST_CASES_ACTIVE]: (user) =>
+    prosecutorRequestCasesActiveWhereOptions(user),
+  [CaseTableType.PROSECUTOR_REQUEST_CASES_APPEALED]: (user) =>
+    prosecutorRequestCasesAppealedWhereOptions(user),
+  [CaseTableType.PROSECUTOR_REQUEST_CASES_COMPLETED]: (user) =>
+    prosecutorRequestCasesCompletedWhereOptions(user),
+  [CaseTableType.PUBLIC_PROSECUTOR_INDICTMENT_IN_REVIEW]: (user) =>
+    publicProsecutorIndictmentInReviewWhereOptions(user),
+  [CaseTableType.PUBLIC_PROSECUTOR_INDICTMENT_REVIEWED]: (user) =>
+    publicProsecutorIndictmentReviewedWhereOptions(user),
+  [CaseTableType.PROSECUTOR_INDICTMENT_IN_DRAFT]: (user) =>
+    prosecutorIndictmentInDraftWhereOptions(user),
+  [CaseTableType.PROSECUTOR_INDICTMENT_WAITING_FOR_CONFIRMATION]: (user) =>
+    prosecutorIndictmentWaitingForConfirmationWhereOptions(user),
+  [CaseTableType.PROSECUTOR_INDICTMENT_IN_PROGRESS]: (user) =>
+    prosecutorIndictmentInProgressWhereOptions(user),
+  [CaseTableType.PROSECUTOR_INDICTMENT_COMPLETED]: (user) =>
+    prosecutorIndictmentCompletedWhereOptions(user),
 }

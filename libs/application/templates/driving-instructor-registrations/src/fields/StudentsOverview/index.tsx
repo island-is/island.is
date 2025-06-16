@@ -8,6 +8,7 @@ import {
   Stack,
   Text,
   Tabs,
+  SkeletonLoader,
 } from '@island.is/island-ui/core'
 import { Table as T } from '@island.is/island-ui/core'
 import { PAGE_SIZE, pages, paginate } from './pagination'
@@ -18,7 +19,6 @@ import { useLocale } from '@island.is/localization'
 import FindStudentModal from '../FindStudentModal/index'
 import { useQuery } from '@apollo/client'
 import { InstructorsStudentsQuery } from '../../graphql/queries'
-import Skeleton from './Skeleton'
 import { DrivingLicenseBookStudentForTeacher as Student } from '../../types/schema'
 import { format as formatKennitala } from 'kennitala'
 import * as styles from '../style.css'
@@ -93,7 +93,7 @@ const StudentsOverview: FC<
   )
 
   return (
-    <Box marginBottom={10}>
+    <Box marginBottom={8}>
       <Text variant="h2" marginBottom={3}>
         {showStudentOverview
           ? formatMessage(m.studentsOverviewTitle)
@@ -126,22 +126,17 @@ const StudentsOverview: FC<
       )}
       {showStudentOverview ? (
         <Stack space={5}>
-          <Box
-            display={['block', 'flex', 'flex']}
-            justifyContent={'spaceBetween'}
-          >
-            <Box width="half" className={styles.mobileWidth}>
-              <Input
-                name="searchbar"
-                label={formatMessage(m.studentsOverviewSearchLabel)}
-                placeholder={formatMessage(m.studentsOverviewSearchPlaceholder)}
-                icon={{ name: 'search' }}
-                backgroundColor="blue"
-                size="sm"
-                value={searchTerm}
-                onChange={(e) => setSearchTerm(e.target.value)}
-              />
-            </Box>
+          <Box>
+            <Input
+              name="searchbar"
+              label={formatMessage(m.studentsOverviewSearchLabel)}
+              placeholder={formatMessage(m.studentsOverviewSearchPlaceholder)}
+              icon={{ name: 'search' }}
+              backgroundColor="blue"
+              size="sm"
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
             <FindStudentModal
               application={application}
               setShowStudentOverview={setShowStudentOverview}
@@ -151,72 +146,83 @@ const StudentsOverview: FC<
           <T.Table box={{ overflow: 'hidden' }}>
             <T.Head>
               <T.Row>
-                <T.HeadData style={styles.tableStyles}>
+                <T.HeadData
+                  style={styles.tableStyles}
+                  text={{ variant: 'eyebrow' }}
+                >
                   {formatMessage(m.studentsOverviewTableHeaderCol1)}
                 </T.HeadData>
-                <T.HeadData style={styles.tableStyles}>
+                <T.HeadData
+                  style={styles.tableStyles}
+                  text={{ variant: 'eyebrow' }}
+                >
                   {formatMessage(m.studentsOverviewTableHeaderCol2)}
                 </T.HeadData>
                 <T.HeadData
                   style={styles.tableStyles}
                   box={{ textAlign: 'center' }}
+                  text={{ variant: 'eyebrow' }}
                 >
                   {formatMessage(m.studentsOverviewTableHeaderCol3)}
                 </T.HeadData>
                 <T.HeadData
                   box={{ textAlign: 'center' }}
                   style={styles.tableStyles}
+                  text={{ variant: 'eyebrow' }}
                 ></T.HeadData>
               </T.Row>
             </T.Head>
-            {loading || (data && !pageStudents) ? (
-              <Skeleton />
-            ) : (
-              <T.Body>
-                {pageStudents && pageStudents.length ? (
-                  pageStudents.map((student) => {
-                    return (
-                      <T.Row key={student.id}>
-                        <T.Data style={styles.tableStyles}>
-                          {student.name}
-                        </T.Data>
-                        <T.Data style={styles.tableStyles}>
-                          {formatKennitala(student.nationalId)}
-                        </T.Data>
-                        <T.Data box={{ textAlign: 'center' }}>
-                          {student.totalLessonCount % 2 === 0
-                            ? student.totalLessonCount
-                            : student.totalLessonCount.toFixed(2) ?? 0}
-                        </T.Data>
-                        <T.Data
-                          box={{ textAlign: 'center' }}
-                          style={styles.tableStyles}
+            <T.Body>
+              {pageStudents && pageStudents.length ? (
+                pageStudents.map((student) => {
+                  return (
+                    <T.Row key={student.id}>
+                      <T.Data style={styles.tableStyles}>{student.name}</T.Data>
+                      <T.Data style={styles.tableStyles}>
+                        {formatKennitala(student.nationalId)}
+                      </T.Data>
+                      <T.Data box={{ textAlign: 'center' }}>
+                        {student.totalLessonCount % 2 === 0
+                          ? student.totalLessonCount
+                          : student.totalLessonCount.toFixed(2) ?? 0}
+                      </T.Data>
+                      <T.Data
+                        box={{ textAlign: 'center' }}
+                        style={styles.tableStyles}
+                      >
+                        <Button
+                          variant="text"
+                          size="small"
+                          onClick={() => {
+                            setStudentId(student.nationalId)
+                            setShowStudentOverview(false)
+                          }}
                         >
-                          <Button
-                            variant="text"
-                            size="small"
-                            onClick={() => {
-                              setStudentId(student.nationalId)
-                              setShowStudentOverview(false)
-                            }}
-                          >
-                            {formatMessage(
-                              m.studentsOverviewRegisterHoursButton,
-                            )}
-                          </Button>
-                        </T.Data>
-                      </T.Row>
-                    )
-                  })
-                ) : (
-                  <T.Row>
-                    <T.Data colSpan={4}>
-                      {formatMessage(m.studentsOverviewNoStudentFound)}
-                    </T.Data>
-                  </T.Row>
-                )}
-              </T.Body>
-            )}
+                          {formatMessage(m.studentsOverviewRegisterHoursButton)}
+                        </Button>
+                      </T.Data>
+                    </T.Row>
+                  )
+                })
+              ) : loading || (data && !pageStudents) ? (
+                <T.Row>
+                  <T.Data colSpan={4} style={styles.tableStyles}>
+                    <SkeletonLoader
+                      height={50}
+                      borderRadius="large"
+                      repeat={3}
+                      space={1}
+                    />
+                  </T.Data>
+                </T.Row>
+              ) : (
+                <T.Row>
+                  <T.Data colSpan={4}>
+                    {formatMessage(m.studentsOverviewNoStudentFound)}
+                  </T.Data>
+                </T.Row>
+              )}
+            </T.Body>
           </T.Table>
           {pageStudents && pageStudents.length > 0 && (
             <Pagination
