@@ -13,9 +13,9 @@ export const ButtonDrawer = styled.View(({ theme }) => ({
   shadowColor: theme.color.blue400,
   shadowOffsetWidth: 0,
   shadowOffsetHeight: -4,
-  shadowOpacity: 0.08,
+  shadowOpacity: '0.08',
   shadowRadius: 12,
 
   /* Android shadow */
-  elevation: 4,
+  elevation: '4',
 }))
