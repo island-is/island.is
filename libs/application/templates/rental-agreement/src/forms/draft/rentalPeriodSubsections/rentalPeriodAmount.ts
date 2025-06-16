@@ -10,8 +10,7 @@ import {
   buildDisplayField,
   buildHiddenInputWithWatchedValue,
 } from '@island.is/application/core'
-import { Application, Field } from '@island.is/application/types'
-import { Locale } from '@island.is/shared/types'
+import { Application } from '@island.is/application/types'
 import {
   getPaymentMethodOptions,
   getRentalAmountPaymentDateOptions,

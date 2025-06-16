@@ -1,5 +1,4 @@
 import { YesOrNoEnum } from '@island.is/application/core'
-import { FormTextWithLocale } from '@island.is/application/types'
 import { NextStepInReviewOptions } from '../utils/enums'
 
 export type Maybe<T> = T | null

@@ -1,4 +1,5 @@
-import { parse, format } from 'date-fns'
+import format from 'date-fns/format'
+import parse from 'date-fns/parse'
 import is from 'date-fns/locale/is'
 import { getValueViaPath, YesOrNoEnum } from '@island.is/application/core'
 import { Application, FormValue } from '@island.is/application/types'
