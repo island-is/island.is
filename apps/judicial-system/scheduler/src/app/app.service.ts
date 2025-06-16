@@ -32,26 +32,26 @@ type JobConfig = {
   jobScheduleType: JobScheduleType
 }
 
-const getTime = (hour: number) => {
-  const todayAtHour = new Date()
-  return todayAtHour.setHours(hour, 0, 0, 0)
+// pass down today as a date prop to limit calls to now() to simplify mocked calls in tests
+const getTodayAtTime = (today: Date, hour: number) => {
+  const todayAtHour = new Date(today)
+  return new Date(todayAtHour.setHours(hour, 0, 0, 0))
 }
 
 const isBeforeOrEqual = (date: Date | number, dateToCompare: Date | number) =>
   isBefore(date, dateToCompare) || isEqual(date, dateToCompare)
 
 const getCurrentJobScheduleType = () => {
-  // Create 1 h interval to check the target job time.
+  // Create 1H interval to check the target job time.
   // Example: Jobs are currently triggered at 2AM and 9AM.
-  // Thus, if now = 9:01 our interval would be (8:01, 9:01) and we check if 9
-  // falls in that interval
+  // Thus, if now = 9:01 our interval would be [8:01, 9:01] and we check if the
+  // 9 AM timestamp falls in that interval
   const timeNow = now()
   const before = addHours(timeNow, -1)
 
-  const today2AM = getTime(2)
-  const today9AM = getTime(9)
+  const today2AM = getTodayAtTime(timeNow, 2)
+  const today9AM = getTodayAtTime(timeNow, 9)
 
-  console.log({ timeNow, today2AM, today9AM })
   if (isBeforeOrEqual(today2AM, timeNow) && isAfter(today2AM, before)) {
     return JobScheduleType.EveryDayAt2
   }
@@ -66,13 +66,8 @@ const getCurrentJobScheduleType = () => {
   return null
 }
 
-const minutesBetween = (startTime: Date, endTime: Date) => {
-  const minutes = Math.floor(
-    (endTime.getTime() - startTime.getTime()) / (1000 * 60),
-  )
-  console.log({ minutes })
-  return minutes
-}
+const minutesBetween = (startTime: Date, endTime: Date) =>
+  Math.floor((endTime.getTime() - startTime.getTime()) / (1000 * 60))
 
 @Injectable()
 export class AppService {
@@ -130,7 +125,6 @@ export class AppService {
 
           return true
         })
-      console.log({ startTime })
     } while (
       !done &&
       minutesBetween(startTime, now()) < this.config.timeToLiveMinutes
@@ -165,7 +159,6 @@ export class AppService {
   private async runTargetJob(type: JobType) {
     switch (type) {
       case JobType.ArchiveCase:
-        console.log('archive cases')
         await this.archiveCases()
         break
       case JobType.PostDailyHearingInSlack:
@@ -176,6 +169,7 @@ export class AppService {
         break
     }
   }
+
   async run() {
     this.logger.info('Scheduler starting')
 
@@ -204,9 +198,9 @@ export class AppService {
     const filteredJobs = jobs.filter(
       (job) => job.jobScheduleType === currentJobScheduleType,
     )
-    // filteredJobs.forEach(async (job) => await this.runTargetJob(job.type))
-
-    // await this.archiveCases()
+    for (const job of filteredJobs) {
+      await this.runTargetJob(job.type)
+    }
 
     this.logger.info('Scheduler done')
   }
