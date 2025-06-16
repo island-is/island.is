@@ -6,6 +6,7 @@ import {
   Box,
   DropdownMenu,
   Button,
+  Icon,
 } from '@island.is/island-ui/core'
 import { Dispatch, SetStateAction, useState } from 'react'
 import { AnimatePresence, motion } from 'motion/react'
@@ -57,6 +58,13 @@ export const TableRow = ({
   const navigate = useNavigate()
   const { formatMessage, formatDate } = useIntl()
   const deleteForm = useMutation(DELETE_FORM)
+  const goToForm = () => {
+    navigate(FormSystemPaths.Form.replace(':formId', String(id)), {
+      state: {
+        id,
+      },
+    })
+  }
   return (
     <Box
       paddingTop={2}
@@ -90,11 +98,23 @@ export const TableRow = ({
         </Column>
         <Column span="1/12">
           <Box display="flex" justifyContent="center" alignItems="center">
+            <Box
+              marginRight={1}
+              onClick={goToForm}
+              cursor="pointer"
+
+            >
+              <Icon
+                icon="pencil"
+                color='blue400'
+                type="filled"
+              />
+            </Box>
             <DropdownMenu
               menuLabel={`${formatMessage(m.actions)} ${name}`}
               disclosure={
                 <Button
-                  icon="menu"
+                  icon="ellipsisVertical"
                   circle
                   colorScheme="negative"
                   title={formatMessage(m.actions)}
@@ -103,19 +123,6 @@ export const TableRow = ({
                 />
               }
               items={[
-                {
-                  title: formatMessage(m.edit),
-                  onClick: () => {
-                    navigate(
-                      FormSystemPaths.Form.replace(':formId', String(id)),
-                      {
-                        state: {
-                          formId: id,
-                        },
-                      },
-                    )
-                  },
-                },
                 {
                   title: formatMessage(m.copy),
                 },
@@ -142,27 +149,7 @@ export const TableRow = ({
           </Box>
         </Column>
       </Row>
-      <div>
-        {isOpen === true ? (
-          <motion.div
-            key={id}
-            transition={{ duration: 0.8, ease: [0.04, 0.62, 0.23, 0.98] }}
-            initial={{ opacity: 0 }}
-            animate={{
-              opacity: 1,
-              transition: {
-                duration: 0.5,
-              },
-            }}
-            exit={{ opacity: 0 }}
-          >
-            <AnimatePresence>
-              <Box style={{ height: '50px' }}></Box>
-            </AnimatePresence>
-          </motion.div>
-        ) : null}
-        <Divider />
-      </div>
+      <Divider />
     </Box>
   )
 }

@@ -9,6 +9,7 @@ export interface ExtraData {
 export interface BasicChargeItem {
   code: string
   quantity?: number
+  amount?: number // Is used to set a dynamic charge amount based on the application data
 }
 
 export interface CreateChargeParameters {

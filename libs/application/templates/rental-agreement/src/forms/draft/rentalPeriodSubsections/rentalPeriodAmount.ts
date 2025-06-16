@@ -8,6 +8,7 @@ import {
   buildHiddenInput,
   YesOrNoEnum,
   buildDisplayField,
+  buildHiddenInputWithWatchedValue,
 } from '@island.is/application/core'
 import {
   getPaymentMethodOptions,
@@ -54,6 +55,21 @@ export const RentalPeriodAmount = buildSubSection({
           maxLength: 15,
           required: true,
         }),
+
+        // Hidden fields  to capture rental period start and end dates
+        buildHiddenInputWithWatchedValue({
+          id: 'rentalAmount.rentalPeriodStartDate',
+          watchValue: 'rentalPeriod.startDate',
+        }),
+        buildHiddenInputWithWatchedValue({
+          id: 'rentalAmount.rentalPeriodEndDate',
+          watchValue: 'rentalPeriod.endDate',
+        }),
+        buildHiddenInputWithWatchedValue({
+          id: 'rentalAmount.rentalPeriodIsDefinite',
+          watchValue: 'rentalPeriod.isDefinite',
+        }),
+
         buildCheckboxField({
           id: 'rentalAmount.isIndexConnected',
           options: [
