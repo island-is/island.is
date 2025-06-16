@@ -2,6 +2,9 @@ import { ActionCard, Stack, Text, Box } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../../lib/messages'
 import Managers from '../../shared/Managers'
+import { SignatureCollectionCollectionType } from '@island.is/api/schema'
+
+const collectionType = SignatureCollectionCollectionType.LocalGovernmental
 
 const OwnerView = () => {
   const { formatMessage } = useLocale()
@@ -37,7 +40,7 @@ const OwnerView = () => {
           }}
         />
       </Box>
-      <Managers />
+      <Managers collectionType={collectionType} />
     </Stack>
   )
 }
