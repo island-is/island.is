@@ -90,6 +90,33 @@ export const filterRepresentativesFromApplicants = <T extends ApplicantsInfo>(
   )
 }
 
+export const hasAnyMatchingNationalId = (
+  nationalIds: string[],
+  applicants: ApplicantsInfo[] = [],
+) => {
+  return (
+    nationalIds.length > 0 &&
+    applicants?.some((applicant) =>
+      nationalIds.includes(applicant.nationalIdWithName.nationalId),
+    )
+  )
+}
+
+export const hasDuplicateApplicants = (
+  applicants: ApplicantsInfo[] = [],
+): boolean => {
+  const seen = new Set<string>()
+
+  for (const applicant of applicants) {
+    if (seen.has(applicant.nationalIdWithName.nationalId)) {
+      return true
+    }
+    seen.add(applicant.nationalIdWithName.nationalId)
+  }
+
+  return false
+}
+
 export const isCostItemValid = (item: CostField) =>
   ((item.description ?? '').trim() !== '' && item.amount !== undefined) ||
   ((item.description ?? '').trim() === '' && item.amount === undefined)

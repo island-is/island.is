@@ -46,8 +46,13 @@ export class SignatureCollectionClientService {
     return api.withMiddleware(new AuthMiddleware(auth)) as T
   }
 
-  async currentCollection(): Promise<Collection[]> {
-    return await this.sharedService.currentCollection(this.electionsApi)
+  async currentCollection(
+    collectionTypeFilter: CollectionType,
+  ): Promise<Collection[]> {
+    return await this.sharedService.currentCollection(
+      this.electionsApi,
+      collectionTypeFilter,
+    )
   }
 
   async getLatestCollectionForType(
@@ -159,9 +164,9 @@ export class SignatureCollectionClientService {
     { collectionId, owner, areas, collectionType, listName }: CreateListInput,
     auth: User,
   ): Promise<Slug> {
-    const matchingCollection = (await this.currentCollection()).find(
-      (collection) => collection.id === collectionId,
-    )
+    const matchingCollection = (
+      await this.currentCollection(CollectionType.LocalGovernmental)
+    ).find((collection) => collection.id === collectionId)
     if (!matchingCollection) {
       throw new Error('Collection not found')
     }
@@ -561,17 +566,15 @@ export class SignatureCollectionClientService {
           ? user.medmaelalistar?.map((list) => mapListBase(list))
           : []
 
-      const {
-        success: canCreate,
-        reasons: canCreateInfo,
-      } = this.sharedService.canCreate({
-        requirementsMet: user.maFrambod,
-        canCreateInfo: user.maFrambodInfo,
-        ownedLists,
-        collectionType,
-        isActive,
-        areas,
-      })
+      const { success: canCreate, reasons: canCreateInfo } =
+        this.sharedService.canCreate({
+          requirementsMet: user.maFrambod,
+          canCreateInfo: user.maFrambodInfo,
+          ownedLists,
+          collectionType,
+          isActive,
+          areas,
+        })
 
       const { success: canSign, reasons: canSignInfo } = await this.canSign({
         requirementsMet: user.maKjosa,

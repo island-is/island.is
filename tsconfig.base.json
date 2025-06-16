@@ -457,6 +457,9 @@
       "@island.is/application/templates/healthcare-work-permit": [
         "libs/application/templates/healthcare-work-permit/src/index.ts"
       ],
+      "@island.is/application/templates/hms/fire-compensation-appraisal": [
+        "libs/application/templates/hms/fire-compensation-appraisal/src/index.ts"
+      ],
       "@island.is/application/templates/home-support": [
         "libs/application/templates/home-support/src/index.ts"
       ],
@@ -558,6 +561,9 @@
       ],
       "@island.is/application/templates/social-insurance-administration/death-benefits": [
         "libs/application/templates/social-insurance-administration/death-benefits/src/index.ts"
+      ],
+      "@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments": [
+        "libs/application/templates/social-insurance-administration/medical-and-rehabilitation-payments/src/index.ts"
       ],
       "@island.is/application/templates/social-insurance-administration/household-supplement": [
         "libs/application/templates/social-insurance-administration/household-supplement/src/index.ts"
@@ -720,6 +726,9 @@
         "libs/clients/health-directorate/src/index.ts"
       ],
       "@island.is/clients/hms": ["libs/clients/hms/src/index.ts"],
+      "@island.is/clients/hms-application-system": [
+        "libs/clients/hms-application-system/src/index.ts"
+      ],
       "@island.is/clients/hms-housing-benefits": [
         "libs/clients/hms-housing-benefits/src/index.ts"
       ],

@@ -8,20 +8,22 @@ import {
   ApplicantApi,
   ApplicationApi,
   Configuration,
+  DeathBenefitsApi,
   DocumentsApi,
   GeneralApi,
   IncomePlanApi,
+  MedicalDocumentsApi,
   PaymentPlanApi,
   PensionCalculatorApi,
-  DeathBenefitsApi,
+  QuestionnairesApi,
 } from '../../gen/fetch'
+import { ConfigFactory } from './configFactory'
+import { SocialInsuranceAdministrationClientConfig } from './socialInsuranceAdministrationClient.config'
 import {
   Api,
   ApplicationWriteApi,
   Scope,
 } from './socialInsuranceAdministrationClient.type'
-import { ConfigFactory } from './configFactory'
-import { SocialInsuranceAdministrationClientConfig } from './socialInsuranceAdministrationClient.config'
 
 const apiCollection: Array<{
   api: Api
@@ -71,6 +73,16 @@ const apiCollection: Array<{
   {
     api: DeathBenefitsApi,
     scopes: ['@tr.is/danarbaetur:read'],
+    autoAuth: true,
+  },
+  {
+    api: MedicalDocumentsApi,
+    scopes: ['@tr.is/sjukraogendurhaefingargreidslur:read'],
+    autoAuth: true,
+  },
+  {
+    api: QuestionnairesApi,
+    scopes: ['@tr.is/sjukraogendurhaefingargreidslur:read'],
     autoAuth: true,
   },
 ]

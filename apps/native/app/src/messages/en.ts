@@ -302,17 +302,18 @@ export const en: TranslatedMessages = {
   'licenseDetail.ehic.alert.title': 'Remember the card!',
   'licenseDetail.ehic.alert.description':
     'This summary is not valid as a European Health Insurance card.',
-  'licenseDetail.passport.alert.title': 'Remember the passport!',
+  'licenseDetail.passport.alert.title':
+    'This is for information only and is not valid for identification or travel',
   'licenseDetail.passport.alert.description':
-    'This summary is not valid as a travel document.',
+    'Only the physical document is valid for identification and travel.',
   'licenseDetail.identityDocument.alert.title':
     'This is for information only and is not valid for identification purposes',
   'licenseDetail.identityDocument.alert.description':
     'Only the physical document is valid for identification.',
   'licenseDetail.identityTravelDocument.alert.title':
-    'Please remember your travel document!',
+    'This is for information only and is not valid for identification or travel',
   'licenseDetail.identityTravelDocument.alert.description':
-    'This is not valid as a travel document.',
+    'Only the physical document is valid for identification and travel.',
   'licenseDetail.warning.title': 'Expires within 6 months',
   'licenseDetail.passport.warning.description':
     'Note that your passport will expire within the next 6 months.',

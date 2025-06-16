@@ -105,24 +105,26 @@ describe('InternalNotificationController - Send revoked notifications for indict
     })
 
     it('should send a notifications', () => {
+      const subject = `Ákæra afturkölluð í máli ${courtCaseNumber}`
+      const courtHtml = `${prosecutorsOfficeName} hefur afturkallað ákæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins í <a href="${mockConfig.clientUrl}">Réttarvörslugátt</a>.`
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [{ address: judge.email, name: judge.name }],
-          subject: `Ákæra afturkölluð í máli ${courtCaseNumber}`,
-          html: `${prosecutorsOfficeName} hefur afturkallað ákæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
+          subject,
+          html: courtHtml,
         }),
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [{ address: registrar.email, name: registrar.name }],
-          subject: `Ákæra afturkölluð í máli ${courtCaseNumber}`,
-          html: `${prosecutorsOfficeName} hefur afturkallað ákæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
+          subject,
+          html: courtHtml,
         }),
       )
       expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [{ address: defender.email, name: defender.name }],
-          subject: `Ákæra afturkölluð í máli ${courtCaseNumber}`,
+          subject,
           html: `${prosecutorsOfficeName} hefur afturkallað ákæru í máli ${courtCaseNumber}.<br /><br />Hægt er að nálgast yfirlitssíðu málsins á <a href="${mockConfig.clientUrl}/verjandi/akaera/${theCase.id}">rettarvorslugatt.island.is</a>.`,
         }),
       )
