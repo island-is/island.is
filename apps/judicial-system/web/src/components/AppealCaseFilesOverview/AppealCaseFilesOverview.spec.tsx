@@ -17,7 +17,7 @@ import { FormContextWrapper, UserContextWrapper } from '../../utils/testHelpers'
 import AppealCaseFilesOverview from './AppealCaseFilesOverview'
 
 describe('<AppealCaseFilesOverview />', () => {
-  test('should display a context menu for all files', () => {
+  test('should display a context menu for all files', async () => {
     const theCase = {
       id: 'asd',
       type: CaseType.CUSTODY,
@@ -41,7 +41,7 @@ describe('<AppealCaseFilesOverview />', () => {
       </IntlProvider>,
     )
 
-    expect(screen.queryAllByRole('button')).toHaveLength(2)
+    expect(await screen.findAllByRole('button')).toHaveLength(2)
   })
 
   test('should not have an option to delete file if the file is of category APPEAL_RULING', async () => {
@@ -66,7 +66,7 @@ describe('<AppealCaseFilesOverview />', () => {
     )
 
     await userEvent.click(screen.getByRole('button'))
-    expect(screen.getAllByRole('menuitem')).toHaveLength(1)
+    expect(await screen.findAllByRole('menuitem')).toHaveLength(1)
   })
 
   test('should not have an option to delete file if the file of category PROSECUTOR_APPEAL_BRIEF even though the user is a prosecutor', async () => {
@@ -94,7 +94,7 @@ describe('<AppealCaseFilesOverview />', () => {
     )
 
     await userEvent.click(screen.getByRole('button'))
-    expect(screen.getAllByRole('menuitem')).toHaveLength(1)
+    expect(await screen.findAllByRole('menuitem')).toHaveLength(1)
   })
 
   test('should not have an option to delete file if the file of category PROSECUTOR_APPEAL_CASE_FILE even though the user is a defender', async () => {
@@ -121,7 +121,7 @@ describe('<AppealCaseFilesOverview />', () => {
     )
 
     await userEvent.click(screen.getByRole('button'))
-    expect(screen.getAllByRole('menuitem')).toHaveLength(1)
+    expect(await screen.findAllByRole('menuitem')).toHaveLength(1)
   })
 
   test('should have an option to delete file if the file of category PROSECUTOR_APPEAL_CASE_FILE even though the user is a prosecutor', async () => {
@@ -148,6 +148,6 @@ describe('<AppealCaseFilesOverview />', () => {
     )
 
     await userEvent.click(screen.getByRole('button'))
-    expect(screen.getAllByRole('menuitem')).toHaveLength(2)
+    expect(await screen.findAllByRole('menuitem')).toHaveLength(2)
   })
 })
