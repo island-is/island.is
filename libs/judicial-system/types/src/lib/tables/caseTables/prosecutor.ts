@@ -22,7 +22,7 @@ const prosecutorRequestCasesActiveColumnKeys: CaseTableColumnKey[] = [
   'defendants',
   'caseType',
   'caseSentToCourtDate',
-  'requestCaseState',
+  'appealCaseState',
   'validFromTo',
 ]
 
@@ -111,7 +111,7 @@ export const prosecutorIndictmentInDraft: CaseTable = {
 }
 
 const prosecutorIndictmentWaitingForConfirmationColumnKeys: CaseTableColumnKey[] =
-  ['caseNumber', 'defendants', 'caseType', 'created']
+  ['caseNumber', 'defendants', 'caseType', 'created', 'prosecutor']
 
 export const prosecutorIndictmentWaitingForConfirmation: CaseTable = {
   title: 'Ákærur sem bíða staðfestingar',
