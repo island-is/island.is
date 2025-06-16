@@ -46,6 +46,7 @@ jobs:
         if: ${{ steps.unicorn_affected.outputs.IS_UNICORN == 'true' }}
         id: get_latest_release
         run: |
+          echo $(git branch -r)
           LATEST_RELEASE="$(node scripts/ci/get-last-release.mjs "$(git branch -r)")"
           echo "LATEST_RELEASE=$LATEST_RELEASE" >> "$GITHUB_OUTPUT"
 
