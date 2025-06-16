@@ -1,4 +1,4 @@
-import { ApplicantTypesEnum } from '@island.is/form-system/ui'
+import { ApplicantTypesEnum } from '@island.is/form-system/enums'
 
 export const applicantTypeGroups = {
   individual: [ApplicantTypesEnum.INDIVIDUAL],
@@ -12,6 +12,6 @@ export const applicantTypeGroups = {
   ],
   procuration: [
     ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION,
-    ApplicantTypesEnum.LEGAL_ENTITY,
+    ApplicantTypesEnum.LEGAL_ENTITY_OF_PROCURATION_HOLDER,
   ],
 }

@@ -71,6 +71,12 @@ export class CreateFileDto {
   readonly userGeneratedFilename?: string
 
   @IsOptional()
+  @Type(() => Date)
+  @IsDate()
+  @ApiPropertyOptional({ type: Date })
+  readonly submissionDate?: Date
+
+  @IsOptional()
   @IsString()
   @MaxLength(255)
   @ApiPropertyOptional({ type: String })

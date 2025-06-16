@@ -1,0 +1,33 @@
+{
+  "name": "application-templates-social-insurance-administration-medical-and-rehabilitation-payments",
+  "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/application/templates/social-insurance-administration/medical-and-rehabilitation-payments/src",
+  "projectType": "library",
+  "tags": ["scope:application-system", "lib:application-system"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": [
+        "{workspaceRoot}/coverage/libs/application/templates/social-insurance-administration/medical-and-rehabilitation-payments"
+      ],
+      "options": {
+        "jestConfig": "libs/application/templates/social-insurance-administration/medical-and-rehabilitation-payments/jest.config.ts"
+      }
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/social-insurance-administration/medical-and-rehabilitation-payments/src/lib/messages.ts"
+      }
+    },
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "graphql-codegen --config libs/application/templates/social-insurance-administration/medical-and-rehabilitation-payments/codegen.yml"
+      }
+    }
+  }
+}

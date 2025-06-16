@@ -7,6 +7,7 @@ import {
   PaymentOptions,
   RegisterNumber,
 } from '../shared/types'
+import { participants as participantMessages } from './messages'
 
 const UserSchemaBase = z.object({
   nationalId: z
@@ -15,9 +16,7 @@ const UserSchemaBase = z.object({
       (nationalId) =>
         nationalId &&
         nationalId.length !== 0 &&
-        kennitala.isValid(nationalId) &&
-        (kennitala.isCompany(nationalId) ||
-          kennitala.info(nationalId).age >= 18),
+        kennitala.isValid(nationalId),
     ),
   name: z.string().min(1),
   email: z.string().refine((x) => isValidEmail(x)),
@@ -35,12 +34,6 @@ export const PaymentArrangementSchema = z
         name: z.string().optional(),
       })
       .optional(),
-    individualInfo: z
-      .object({
-        email: z.string().optional(),
-        phone: z.string().optional(),
-      })
-      .optional(),
     contactInfo: z
       .object({
         email: z.string().optional(),
@@ -48,37 +41,7 @@ export const PaymentArrangementSchema = z
       })
       .optional(),
     explanation: z.string().optional(),
-    agreementCheckbox: z.array(z.string()).refine((v) => v.includes(YES)),
   })
-  .refine(
-    ({ individualInfo, individualOrCompany }) => {
-      if (individualOrCompany === IndividualOrCompany.company) return true
-      return (
-        individualOrCompany === IndividualOrCompany.individual &&
-        individualInfo &&
-        individualInfo.email &&
-        individualInfo.email.length > 0 &&
-        isValidEmail(individualInfo.email)
-      )
-    },
-    {
-      path: ['individualInfo', 'email'],
-    },
-  )
-  .refine(
-    ({ individualInfo, individualOrCompany }) => {
-      if (individualOrCompany === IndividualOrCompany.company) return true
-      return (
-        individualOrCompany === IndividualOrCompany.individual &&
-        individualInfo &&
-        individualInfo.phone &&
-        isValidPhoneNumber(individualInfo?.phone)
-      )
-    },
-    {
-      path: ['individualInfo', 'phone'],
-    },
-  )
   .refine(
     ({ companyInfo, individualOrCompany }) => {
       if (individualOrCompany === IndividualOrCompany.individual) return true
@@ -181,17 +144,22 @@ export const SeminarAnswersSchema = z.object({
   applicant: UserInformationSchema,
   paymentArrangement: PaymentArrangementSchema,
   personalValidation: PersonalValidationSchema,
-  participantList: z.array(ParticipantSchema).refine(
-    (pList) => {
-      const hasDisabled = pList.filter((x) => x.disabled === 'true')
-      return hasDisabled.length === 0
-    },
-    {
-      message:
-        'Vinsamlegast fjarlægðu ógjaldgenga notendur áður en haldið er áfram',
-    },
-  ),
+  participantList: z
+    .array(ParticipantSchema)
+    .refine(
+      (pList) => {
+        const hasDisabled = pList.filter((x) => x.disabled === 'true')
+        return hasDisabled.length === 0
+      },
+      {
+        params: participantMessages.labels.tableError,
+      },
+    )
+    .refine((plist) => plist.length > 0, {
+      params: participantMessages.labels.emptyListError,
+    }),
   participantCsvError: z.string().optional(),
   participantValidityError: z.string().optional(),
   participantFinishedValidation: z.string().refine((x) => x === 'true'),
+  paymentAgreementCheckbox: z.array(z.string()).refine((v) => v.includes(YES)),
 })

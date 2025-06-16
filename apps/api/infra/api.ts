@@ -36,10 +36,13 @@ import {
   OccupationalLicenses,
   OfficialJournalOfIceland,
   OfficialJournalOfIcelandApplication,
+  LegalGazette,
   Passports,
   Payment,
   PaymentSchedule,
   Properties,
+  PropertySearch,
+  RentalService,
   RskCompanyInfo,
   RskProcuring,
   SeminarsVer,
@@ -54,6 +57,8 @@ import {
   WorkAccidents,
   WorkMachines,
   SecondarySchool,
+  PracticalExams,
+  FireCompensation,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -68,6 +73,7 @@ export const serviceSetup = (services: {
   authAdminApi: ServiceBuilder<'services-auth-admin-api'>
   universityGatewayApi: ServiceBuilder<'services-university-gateway'>
   userNotificationService: ServiceBuilder<'services-user-notification'>
+  paymentsApi: ServiceBuilder<'services-payments'>
   formSystemService: ServiceBuilder<'services-form-system-api'>
 }): ServiceBuilder<'api'> => {
   return service('api')
@@ -76,10 +82,18 @@ export const serviceSetup = (services: {
     .command('node')
     .args('--tls-min-v1.0', '--no-experimental-fetch', 'main.js')
     .env({
-      APPLICATION_SYSTEM_API_URL: ref((h) => `http://${h.svc(services.appSystemApi)}`,),
-      USER_NOTIFICATION_API_URL: ref((h) => `http://${h.svc(services.userNotificationService)}`,),
-      ICELANDIC_NAMES_REGISTRY_BACKEND_URL: ref((h) => `http://${h.svc(services.icelandicNameRegistryBackend)}`,),
-      AIR_DISCOUNT_SCHEME_BACKEND_URL: ref((h) => `http://${h.svc(services.airDiscountSchemeBackend)}`,),
+      APPLICATION_SYSTEM_API_URL: ref(
+        (h) => `http://${h.svc(services.appSystemApi)}`,
+      ),
+      USER_NOTIFICATION_API_URL: ref(
+        (h) => `http://${h.svc(services.userNotificationService)}`,
+      ),
+      ICELANDIC_NAMES_REGISTRY_BACKEND_URL: ref(
+        (h) => `http://${h.svc(services.icelandicNameRegistryBackend)}`,
+      ),
+      AIR_DISCOUNT_SCHEME_BACKEND_URL: ref(
+        (h) => `http://${h.svc(services.airDiscountSchemeBackend)}`,
+      ),
       AIR_DISCOUNT_SCHEME_FRONTEND_HOSTNAME: {
         dev: 'loftbru.dev01.devland.is',
         staging: 'loftbru.staging01.devland.is',
@@ -126,20 +140,28 @@ export const serviceSetup = (services: {
         staging: 'development@island.is',
         prod: 'island@island.is',
       },
-      USER_PROFILE_CLIENT_URL: ref((h) => `http://${h.svc(services.servicePortalApi)}`,),
+      USER_PROFILE_CLIENT_URL: ref(
+        (h) => `http://${h.svc(services.servicePortalApi)}`,
+      ),
       FILE_DOWNLOAD_BUCKET: {
         dev: 'island-is-dev-download-cache-api',
         staging: 'island-is-staging-download-cache-api',
         prod: 'island-is-prod-download-cache-api',
       },
-      SERVICE_DOCUMENTS_BASEPATH: ref((h) => `http://${h.svc(services.documentsService)}`,),
+      SERVICE_DOCUMENTS_BASEPATH: ref(
+        (h) => `http://${h.svc(services.documentsService)}`,
+      ),
       DOWNLOAD_SERVICE_BASE_PATH: {
         prod: 'https://api.island.is',
         dev: 'https://api.dev01.devland.is',
         staging: 'https://api.staging01.devland.is',
       },
-      ENDORSEMENT_SYSTEM_BASE_API_URL: ref((h) => `http://${h.svc(services.servicesEndorsementApi)}`,),
-      REGULATIONS_ADMIN_URL: ref((h) => `http://${h.svc(services.regulationsAdminBackend)}`,),
+      ENDORSEMENT_SYSTEM_BASE_API_URL: ref(
+        (h) => `http://${h.svc(services.servicesEndorsementApi)}`,
+      ),
+      REGULATIONS_ADMIN_URL: ref(
+        (h) => `http://${h.svc(services.regulationsAdminBackend)}`,
+      ),
       IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/api',
       AIR_DISCOUNT_SCHEME_CLIENT_TIMEOUT: '20000',
       XROAD_NATIONAL_REGISTRY_TIMEOUT: '20000',
@@ -178,7 +200,9 @@ export const serviceSetup = (services: {
       },
       FINANCIAL_STATEMENTS_INAO_TOKEN_ENDPOINT:
         'https://login.microsoftonline.com/05a20268-aaea-4bb5-bb78-960b0462185e/oauth2/v2.0/token',
-      FORM_SYSTEM_API_BASE_PATH: ref((h) => `http://${h.svc(services.formSystemService)}`),
+      FORM_SYSTEM_API_BASE_PATH: ref(
+        (h) => `http://${h.svc(services.formSystemService)}`,
+      ),
       CONSULTATION_PORTAL_CLIENT_BASE_PATH: {
         dev: 'https://samradapi-test.devland.is',
         staging: 'https://samradapi-test.devland.is',
@@ -253,7 +277,10 @@ export const serviceSetup = (services: {
         '@rsk.is/prokura',
         '@rsk.is/prokura:admin',
       ]),
-      UNIVERSITY_GATEWAY_API_URL: ref((h) => `http://${h.svc(services.universityGatewayApi)}`,),
+      UNIVERSITY_GATEWAY_API_URL: ref(
+        (h) => `http://${h.svc(services.universityGatewayApi)}`,
+      ),
+      PAYMENTS_API_URL: ref((h) => `http://${h.svc(services.paymentsApi)}`),
       WATSON_ASSISTANT_CHAT_FEEDBACK_DB_NAME: {
         dev: 'island-is-assistant-feedback',
         staging: 'island-is-assistant-feedback',
@@ -374,6 +401,8 @@ export const serviceSetup = (services: {
         '/k8s/api/UMBODSMADUR_SKULDARA_COST_OF_LIVING_CALCULATOR_API_URL',
       VINNUEFTIRLITID_CAMPAIGN_MONITOR_API_KEY:
         '/k8s/api/VINNUEFTIRLITID_CAMPAIGN_MONITOR_API_KEY',
+      PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET:
+        '/k8s/payments/PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET',
       VERDICTS_GOPRO_USERNAME: '/k8s/api/VERDICTS_GOPRO_USERNAME',
       VERDICTS_GOPRO_PASSWORD: '/k8s/api/VERDICTS_GOPRO_PASSWORD',
     })
@@ -395,9 +424,12 @@ export const serviceSetup = (services: {
       DistrictCommissionersPCard,
       DistrictCommissionersLicenses,
       Finance,
+      FireCompensation,
       Education,
       NationalRegistry,
       Properties,
+      PropertySearch,
+      RentalService,
       PaymentSchedule,
       CriminalRecord,
       RskCompanyInfo,
@@ -425,6 +457,7 @@ export const serviceSetup = (services: {
       OfficialJournalOfIceland,
       JudicialSystemServicePortal,
       OfficialJournalOfIcelandApplication,
+      LegalGazette,
       Frigg,
       HealthDirectorateOrganDonation,
       HealthDirectorateVaccination,
@@ -432,6 +465,7 @@ export const serviceSetup = (services: {
       WorkAccidents,
       SeminarsVer,
       SecondarySchool,
+      PracticalExams,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
@@ -464,5 +498,7 @@ export const serviceSetup = (services: {
       'portals-admin',
       'service-portal',
       'portals-my-pages',
+      'services-payments',
+      'payments',
     )
 }

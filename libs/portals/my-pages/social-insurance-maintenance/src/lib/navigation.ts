@@ -12,6 +12,7 @@ export const socialInsuranceMaintenanceNavigation: PortalNavigationItem = {
   children: [
     {
       name: m.paymentPlan,
+      description: m.socialInsuranceMaintenanceDescription,
       path: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenancePaymentPlan,
       children: [
         {
@@ -29,6 +30,7 @@ export const socialInsuranceMaintenanceNavigation: PortalNavigationItem = {
     },
     {
       name: m.incomePlan,
+      description: m.incomePlanDescription,
       path: SocialInsuranceMaintenancePaths.SocialInsuranceMaintenanceIncomePlan,
       children: [
         {

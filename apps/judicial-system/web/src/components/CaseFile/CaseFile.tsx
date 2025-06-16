@@ -24,6 +24,7 @@ interface Props {
 
 const CaseFile: FC<Props> = (props) => {
   const { name, size, color, id, icon, onClick } = props
+  const hasSize = !!size || size === 0
 
   return (
     <Box
@@ -42,7 +43,7 @@ const CaseFile: FC<Props> = (props) => {
         <Text fontWeight="semiBold" as="span">
           {name}
         </Text>
-        {size && <Text as="span">{` (${fileSize(size)})`}</Text>}
+        {hasSize && <Text as="span">{` (${fileSize(size)})`}</Text>}
       </Box>
       {icon &&
         (icon.onClick ? (

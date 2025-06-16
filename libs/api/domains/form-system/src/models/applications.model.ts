@@ -2,6 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql'
 import { Section } from './section.model'
 import { LanguageType } from './languageType.model'
 import { Dependency } from './form.model'
+import { Option } from './option.model'
 
 @ObjectType('FormSystemApplicationEventDto')
 export class ApplicationEventDto {
@@ -60,4 +61,17 @@ export class Application {
   sections?: Section[]
 }
 
+@ObjectType('FormSystemApplicationResponse')
+export class ApplicationResponse {
+  @Field(() => [Application], { nullable: 'itemsAndList' })
+  applications?: Application[]
 
+  @Field(() => Application, { nullable: true })
+  application?: Application
+
+  @Field(() => Number, { nullable: true })
+  total?: number
+
+  @Field(() => [Option], { nullable: 'itemsAndList' })
+  organizations?: Option[]
+}

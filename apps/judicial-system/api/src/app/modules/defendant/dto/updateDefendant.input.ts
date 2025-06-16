@@ -6,6 +6,7 @@ import {
   DefendantPlea,
   DefenderChoice,
   Gender,
+  InformationForDefendant,
   PunishmentType,
   ServiceRequirement,
   SubpoenaType,
@@ -126,4 +127,19 @@ export class UpdateDefendantInput {
   @IsOptional()
   @Field(() => PunishmentType, { nullable: true })
   readonly punishmentType?: PunishmentType
+
+  @Allow()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly isAlternativeService?: boolean
+
+  @Allow()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly alternativeServiceDescription?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => [InformationForDefendant], { nullable: true })
+  readonly informationForDefendant?: InformationForDefendant[]
 }

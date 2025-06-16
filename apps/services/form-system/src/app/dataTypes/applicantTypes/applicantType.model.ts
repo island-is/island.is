@@ -1,6 +1,6 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 import { LanguageType } from '../languageType.model'
-import { ApplicantTypesEnum } from './applicantTypes.enum'
+import { ApplicantTypesEnum } from '@island.is/form-system/shared'
 import { ApplicantTypeNames } from './applicantTypeName.model'
 
 export class ApplicantType {
@@ -61,6 +61,20 @@ export const ApplicantTypes: ApplicantType[] = [
     description: {
       is: 'Lögaðili',
       en: 'Legal entity',
+    },
+  },
+  {
+    id: ApplicantTypesEnum.LEGAL_ENTITY_OF_PROCURATION_HOLDER,
+    description: {
+      is: 'Lögaðili fyrir prókúruhafa',
+      en: 'Legal entity of procuration holder',
+    },
+  },
+  {
+    id: ApplicantTypesEnum.LEGAL_GUARDIAN,
+    description: {
+      is: 'Forráðamaður',
+      en: 'Legal guardian',
     },
   },
 ]

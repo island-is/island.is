@@ -279,7 +279,18 @@ export const INVOLVED_PARTIES_QUERY = gql`
         id
         title
         slug
+        nationalId
       }
+    }
+  }
+`
+
+export const MY_USER_INFO_QUERY = gql`
+  query MyUserInfo {
+    officialJournalOfIcelandApplicationGetMyUserInfo {
+      firstName
+      lastName
+      email
     }
   }
 `

@@ -9,6 +9,7 @@ import {
   financeRoutesLoader,
 } from './screens/FinanceRoutes.loader'
 import { redirects } from './financeRedirects'
+import FinanceTransactionsVehicleMileage from './screens/FinanceTransactionsVehicleMileage'
 
 const FinanceStatus = lazy(() => import('./screens/FinanceStatus'))
 const FinanceBills = lazy(() => import('./screens/FinanceBills'))
@@ -58,6 +59,14 @@ export const financeModule: PortalModule = {
       name: m.financeTransactionsCategories,
       path: FinancePaths.FinanceTransactionCategories,
       element: <FinanceTransactionsCategories />,
+      enabled: userInfo.scopes.includes(ApiScope.financeOverview),
+      dynamic: true,
+      loader: financeRoutesLoader({ userInfo, ...rest }),
+    },
+    {
+      name: m.financeTransactionsVehiclesMileage,
+      path: FinancePaths.FinanceTransactionVehicleMileage,
+      element: <FinanceTransactionsVehicleMileage />,
       enabled: userInfo.scopes.includes(ApiScope.financeOverview),
       dynamic: true,
       loader: financeRoutesLoader({ userInfo, ...rest }),

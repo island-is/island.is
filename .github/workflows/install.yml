@@ -11,7 +11,7 @@ on:
         default: 'main'
         type: string
       run_merge_queue:
-        description: 'Should the merge que step run'
+        description: 'Should the merge queue step run'
         required: false
         type: boolean
         default: false
@@ -61,10 +61,9 @@ env:
   NX_MAX_PARALLEL: '4'
   NX_TASKS_RUNNER: ci
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
-  S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-  RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+  RUNS_ON_BUCKET_NAME: ${{ vars.RUNS_ON_BUCKET_NAME }}
   AWS_REGION: eu-west-1
-  GENERATED_FILES: ${{ github.workspace }}/${{ github.sha }}.tar.gz
+  GENERATED_FILES: ${{ github.sha }}.tar.gz
   AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
   SERVERSIDE_FEATURES_ON: ''
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
@@ -94,7 +93,7 @@ jobs:
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
       DEPLOY_FEATURE: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE }}
       is-unicorn: ${{ steps.unicorn.outputs.is-unicorn }}
-    runs-on: arc-runners
+    runs-on: arc-shared
     permissions:
       contents: 'read'
       actions: 'read'
@@ -103,24 +102,26 @@ jobs:
         id: set-outputs
         run: |
           echo "DEPLOY_FEATURE: $DEPLOY_FEATURE"
-          echo DEPLOY_FEATURE="$DEPLOY_FEATURE" >> $GITHUB_OUTPUT
+          echo "DEPLOY_FEATURE=${DEPLOY_FEATURE}" >> "$GITHUB_OUTPUT"
 
       - name: checkout
         uses: actions/checkout@v4
         with:
           fetch-depth: 0
+
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-        with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+
       - name: load-deps
         uses: ./.github/actions/load-deps
+
       - id: get-branch
         env:
           RAW_REF: ${{ inputs.main_branch }}
         run: |
-          echo "MAIN_BRANCH=${RAW_REF#refs/heads/}" >> $GITHUB_OUTPUT
+          echo "MAIN_BRANCH=${RAW_REF#refs/heads/}" >> "$GITHUB_OUTPUT"
           echo "MAIN_BRANCH=${RAW_REF#refs/heads/}"
+
       - name: Derive appropriate SHAs
         if: ${{ inputs.run_merge_queue == false }}
         uses: nrwl/nx-set-shas@v4
@@ -132,9 +133,10 @@ jobs:
         shell: bash
         env:
           MAIN_BRANCH: ${{ steps.get-branch.outputs.MAIN_BRANCH }}
+          RUN_MERGE_QUEUE_INPUT: ${{ inputs.run_merge_queue }}
         run: |
-          if [[ "${{ inputs.run_merge_queue }}" == "true" ]]; then
-            # In merge que we always want to use the last
+          if [[ "$RUN_MERGE_QUEUE_INPUT" == "true" ]]; then
+            # In merge queue we always want to use the last
             # commit as head - last commit sha is alway succesful
             # since else it won't get merged!
             # checkout this PR: https://github.com/nrwl/nx-set-shas/pull/145/files
@@ -142,31 +144,31 @@ jobs:
             #
             # If we do not do this we will get the wrong base sha
             # :(
-            export NX_HEAD=${{ github.sha }}
-            export NX_BASE=$(git rev-parse HEAD^1)
-            echo NX_HEAD="$NX_HEAD" >> "$GITHUB_OUTPUT"
-            echo NX_BASE="$NX_BASE" >> "$GITHUB_OUTPUT"
-            echo HEAD="$NX_HEAD" >> "$GITHUB_ENV"
-            echo BASE="$NX_BASE" >> "$GITHUB_ENV"
+            NX_HEAD="$GITHUB_SHA"
+            NX_BASE=$(git rev-parse HEAD^1)
+            echo "NX_HEAD=$NX_HEAD" >> "$GITHUB_OUTPUT"
+            echo "NX_BASE=$NX_BASE" >> "$GITHUB_OUTPUT"
+            echo "HEAD=$NX_HEAD" >> "$GITHUB_ENV"
+            echo "BASE=$NX_BASE" >> "$GITHUB_ENV"
             exit 0
           fi
-          echo NX_HEAD="${{ env.NX_HEAD }}" >> "$GITHUB_OUTPUT"
-          echo NX_BASE="${{ env.NX_BASE }}" >> "$GITHUB_OUTPUT"
+          echo "NX_HEAD=$NX_HEAD" >> "$GITHUB_OUTPUT"
+          echo "NX_BASE=$NX_BASE" >> "$GITHUB_OUTPUT"
           # NOTE: we reference BASE and HEAD elsewhere
-          echo HEAD="${{ env.NX_HEAD }}" >> "$GITHUB_ENV"
-          echo BASE="${{ env.NX_BASE }}" >> "$GITHUB_ENV"
-          if [[ "${{ steps.get-branch.outputs.MAIN_BRANCH }}" == release/* ]]; then
-          echo SKIP_JUDICIAL="true" >> "$GITHUB_OUTPUT"
-          echo SKIP_JUDICIAL="true" >> "$GITHUB_ENV"
-          export SKIP_JUDICIAL="true"
+          echo "HEAD=$NX_HEAD" >> "$GITHUB_ENV"
+          echo "BASE=$NX_BASE" >> "$GITHUB_ENV"
+          if [[ "$MAIN_BRANCH" == release/* ]]; then
+            echo "SKIP_JUDICIAL=true" >> "$GITHUB_OUTPUT"
+            echo "SKIP_JUDICIAL=true" >> "$GITHUB_ENV"
+            export SKIP_JUDICIAL="true"
           else
-          echo SKIP_JUDICIAL="false" >> "$GITHUB_OUTPUT"
-          echo SKIP_JUDICIAL="false" >> "$GITHUB_ENV"
-          export SKIP_JUDICIAL="false"
+            echo "SKIP_JUDICIAL=false" >> "$GITHUB_OUTPUT"
+            echo "SKIP_JUDICIAL=false" >> "$GITHUB_ENV"
+            export SKIP_JUDICIAL="false"
           fi
-          echo Skipping judicial: $SKIP_JUDICIAL
-          echo "Current base SHA is ${{ env.NX_BASE }} and head SHA is ${{ env.NX_HEAD }}"
-          echo "{\"base_sha\": \"${{ env.NX_BASE }}\", \"head_sha\":\"${{ env.NX_HEAD }}\"}" > event.json
+          echo "Skipping judicial: $SKIP_JUDICIAL"
+          echo "Current base SHA is $NX_BASE and head SHA is $NX_HEAD"
+          echo "{\"base_sha\": \"$NX_BASE\", \"head_sha\":\"$NX_HEAD\"}" > event.json
 
       - name: Git bot config
         id: git-bot-config
@@ -228,7 +230,7 @@ jobs:
           CHUNK_SIZE: 1
         run: |
           set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-chunks.sh e2e-ci)"
+          CHUNKS="$(./scripts/ci/generate-chunks.sh e2e)"
           if [[ "$CHUNKS" != "[]" ]]; then
             echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
           fi
@@ -248,10 +250,10 @@ jobs:
         if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE != 'true' }}
         run: |
           set -euo pipefail
-          CHUNKS="$(./scripts/ci/generate-docker-chunks.sh docker-express docker-next docker-static docker-playwright docker-jest)"
+          CHUNKS="$(./scripts/ci/generate-docker-chunks.sh "docker-express" "docker-next" "docker-static" "docker-playwright" "docker-jest")"
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
-            echo BUILD_CHUNKS=$(echo "$CHUNKS" | jq -cM '. | map("\(.|tostring)")') >> "$GITHUB_OUTPUT"
+            echo "BUILD_CHUNKS=$(echo "$CHUNKS" | jq -cM '. | map("\(.|tostring)")')" >> "$GITHUB_OUTPUT"
             echo "CHUNKS='$CHUNKS'" >> "$GITHUB_OUTPUT"
           fi
 

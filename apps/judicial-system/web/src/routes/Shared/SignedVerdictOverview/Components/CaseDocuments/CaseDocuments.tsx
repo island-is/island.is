@@ -8,6 +8,8 @@ import {
   isAcceptingCaseDecision,
   isDistrictCourtUser,
   isInvestigationCase,
+  isPrisonAdminUser,
+  isPrisonStaffUser,
   isPrisonSystemUser,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
@@ -21,7 +23,7 @@ import {
   SignedDocument,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { RequestRulingSignatureMutation } from '@island.is/judicial-system-web/src/components/SigningModal/requestRulingSignature.generated'
+import { RequestRulingSignatureMutation } from '@island.is/judicial-system-web/src/components/Modals/SigningModal/requestRulingSignature.generated'
 import {
   CaseDecision,
   CaseState,
@@ -80,6 +82,25 @@ const CaseDocuments: FC<Props> = ({
   const { user } = useContext(UserContext)
 
   const isRulingRequired = !workingCase.isCompletedWithoutRuling
+
+  const showRuling: () => boolean = () => {
+    if (!user) {
+      return false
+    }
+
+    if (isPrisonStaffUser(user)) {
+      return false
+    }
+
+    if (isPrisonAdminUser(user)) {
+      return (
+        workingCase.type === CaseType.CUSTODY ||
+        workingCase.type === CaseType.PAROLE_REVOCATION
+      )
+    }
+
+    return true
+  }
 
   return (
     <Box marginBottom={10}>
@@ -141,7 +162,7 @@ const CaseDocuments: FC<Props> = ({
               ))}
           </PdfButton>
         </li>
-        {!isPrisonSystemUser(user) && (
+        {showRuling() && (
           <li>
             <PdfButton
               renderAs="row"

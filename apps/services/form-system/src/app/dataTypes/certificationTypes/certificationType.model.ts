@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { LanguageType } from '../languageType.model'
-import { CertificationTypesEnum } from './certificationTypes.enum'
+import { CertificationTypesEnum } from '@island.is/form-system/shared'
 
 export class CertificationType {
   @ApiProperty()

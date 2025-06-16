@@ -1,4 +1,4 @@
-import { FieldTypesEnum } from '../fieldTypes/fieldTypes.enum'
+import { FieldTypesEnum } from '@island.is/form-system/shared'
 import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
@@ -23,7 +23,7 @@ export class ValueTypeFactory {
       case FieldTypesEnum.HOMESTAY_NUMBER:
         keys = ['homestayNumber']
         return this.pickSettings(valueType, keys)
-      case FieldTypesEnum.CANDITATE:
+      case FieldTypesEnum.CANDIDATE:
         keys = [
           'kennitala',
           'name',

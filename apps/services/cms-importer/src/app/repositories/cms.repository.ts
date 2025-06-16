@@ -3,7 +3,7 @@ import { isDefined } from '@island.is/shared/utils'
 import { ContentFields, Entry, KeyValueMap } from 'contentful-management'
 import { ManagementClientService } from '../modules/managementClient/managementClient.service'
 import { CmsGrant, CmsGrantInput } from '../app.types'
-import { CONTENT_TYPE, LOCALE } from '../modules/managementClient/constants'
+import { CONTENT_TYPE, LOCALE } from '../constants'
 import { logger } from '@island.is/logging'
 
 @Injectable()
@@ -128,12 +128,21 @@ export class CmsRepository {
     return !!contentFields.find((ctf) => ctf.id === inputField.key)
   }
 
-  private updateContentfulEntry = (
+  private updateContentfulEntry = async (
     grantReferenceId: string,
     entry: Entry,
     contentFields: Array<ContentFields<KeyValueMap>>,
     inputFields: Array<{ key: string; value: unknown }>,
   ): Promise<Entry | undefined> => {
+    if (entry.isUpdated()) {
+      //Invalid state, log and skip
+      logger.warn(`Entry has unpublished changes, please publish!`, {
+        id: entry.sys.id,
+        referenceId: grantReferenceId,
+      })
+      return Promise.reject(`Entry has unpublished changes`)
+    }
+
     let hasChanges = false
     for (const inputField of inputFields) {
       if (!this.inputFieldExistsInContent(contentFields, inputField)) {
@@ -163,12 +172,35 @@ export class CmsRepository {
       }
     }
 
+    const hasEntryBeenPublishedBefore = entry.isPublished()
+
     if (hasChanges) {
       logger.info('updating values', {
         id: entry.sys.id,
         referenceId: grantReferenceId,
       })
-      return entry.update()
+      const updatedEntry = await entry.update()
+
+      logger.info('Entry updated', {
+        id: updatedEntry.sys.id,
+        referenceId: grantReferenceId,
+      })
+
+      //If not currently published, stop.
+      if (!hasEntryBeenPublishedBefore) {
+        logger.info('returning updated entry, no publication', {
+          id: updatedEntry.sys.id,
+          referenceId: grantReferenceId,
+        })
+        return updatedEntry
+      } else {
+        const publishedEntry = await updatedEntry.publish()
+        logger.info('Entry published, returning published entry', {
+          id: publishedEntry.sys.id,
+          referenceId: grantReferenceId,
+        })
+        return publishedEntry
+      }
     }
     logger.info('Values unchanged, aborting update', {
       id: entry.sys.id,

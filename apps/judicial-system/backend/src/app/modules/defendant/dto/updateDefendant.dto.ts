@@ -1,5 +1,6 @@
 import { Transform, Type } from 'class-transformer'
 import {
+  IsArray,
   IsBoolean,
   IsDate,
   IsEnum,
@@ -15,6 +16,7 @@ import {
   DefendantPlea,
   DefenderChoice,
   Gender,
+  InformationForDefendant,
   PunishmentType,
   ServiceRequirement,
   SubpoenaType,
@@ -158,4 +160,21 @@ export class UpdateDefendantDto {
   @IsEnum(PunishmentType)
   @ApiPropertyOptional({ enum: PunishmentType })
   readonly punishmentType?: PunishmentType
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly isAlternativeService?: boolean
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  @ApiPropertyOptional({ type: String })
+  readonly alternativeServiceDescription?: string
+
+  @IsOptional()
+  @IsArray()
+  @IsEnum(InformationForDefendant, { each: true })
+  @ApiPropertyOptional({ enum: InformationForDefendant, isArray: true })
+  readonly informationForDefendant?: InformationForDefendant[]
 }

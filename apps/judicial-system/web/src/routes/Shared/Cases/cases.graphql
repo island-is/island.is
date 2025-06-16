@@ -29,15 +29,17 @@ query Cases {
       verdictViewDate
       isSentToPrisonAdmin
       punishmentType
+      isAlternativeService
       openedByPrisonAdminDate
       subpoenas {
         id
         serviceStatus
-        subpoenaId
+        policeSubpoenaId
       }
       verdictAppealDate
     }
     defendantsPunishmentType
+    publicProsecutorIsRegisteredInPoliceSystem
     courtDate
     isValidToDateInThePast
     initialRulingDate
@@ -108,7 +110,6 @@ query Cases {
     indictmentVerdictAppealDeadlineExpired
     indictmentRulingDecision
     indictmentDecision
-    indictmentCompletedDate
     courtSessionType
     caseSentToCourtDate
     isCompletedWithoutRuling

@@ -10,23 +10,25 @@ import { FC } from 'react'
 import {
   ConnectedComponent,
   SignatureCollectionCandidate,
+  SignatureCollectionCollectionType,
   SignatureCollectionListBase,
 } from '@island.is/api/schema'
 import { useLocalization } from '../../utils'
 import {
-  useGetCurrentCollection,
+  useGetLatestCollectionForType,
   useGetOpenLists,
 } from './useGetSignatureLists'
 import { sortAlpha } from '@island.is/shared/utils'
 
 interface SignatureListsProps {
   slice: ConnectedComponent
+  collectionType: SignatureCollectionCollectionType
 }
 
 export const SignatureLists: FC<
   React.PropsWithChildren<SignatureListsProps>
-> = ({ slice }) => {
-  const { collection, loading } = useGetCurrentCollection()
+> = ({ slice, collectionType }) => {
+  const { collection, loading } = useGetLatestCollectionForType(collectionType)
   const { openLists, openListsLoading } = useGetOpenLists(collection)
   const t = useLocalization(slice.json)
 
@@ -116,7 +118,8 @@ export const SignatureLists: FC<
                           onClick: () =>
                             window.open(
                               `${window.location.origin}/umsoknir/${
-                                collection.isPresidential
+                                collection.collectionType ===
+                                SignatureCollectionCollectionType.Presidential
                                   ? 'maela-med-frambodi'
                                   : 'maela-med-althingisframbodi'
                               }/?candidate=${candidate.id}`,

@@ -6,13 +6,12 @@ import { formsLoader } from './screens/Forms/Forms.loader'
 import { formLoader } from './screens/Form/Form.loader'
 import { m } from '@island.is/form-system/ui'
 
-const Forms = lazy(() => import('./screens/Forms/Forms'))
-
 const Form = lazy(() => import('./screens/Form/Form'))
+const Forms = lazy(() => import('./screens/Forms/Forms'))
 
 const allowedScopes: string[] = [
   AdminPortalScope.formSystem,
-  AdminPortalScope.formSystemSuperUser,
+  AdminPortalScope.formSystemAdmin,
 ]
 
 export const formSystemModule: PortalModule = {
@@ -33,7 +32,7 @@ export const formSystemModule: PortalModule = {
         path: FormSystemPaths.Form,
         element: <Form />,
         loader: formLoader(props),
-      },
+      }
     ]
   },
 }

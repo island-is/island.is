@@ -1,11 +1,11 @@
 import { FormValue } from '@island.is/application/types'
-import { WhoIsTheNotificationForEnum } from '../types'
 import {
   isReportingOnBehalfOfChild,
   isReportingOnBehalfOfEmployee,
   isReportingOnBehalfOfInjured,
   isReportingOnBehalfSelf,
 } from './reportingUtils'
+import { WhoIsTheNotificationForEnum } from './enums'
 
 describe('isReportingOnBehalfOfInjured', () => {
   const powerOfAttorneyReporter: FormValue = {

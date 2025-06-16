@@ -16,11 +16,18 @@ import { FieldContent } from './components/FieldContent/FieldContent'
 import { PreviewStepOrGroup } from './components/PreviewStepOrGroup/PreviewStepOrGroup'
 import { useIntl } from 'react-intl'
 import { RelevantParties } from './components/RelevantParties/RelevantParties'
-import { m, SectionTypes } from '@island.is/form-system/ui'
+import { m } from '@island.is/form-system/ui'
+import { SectionTypes } from '@island.is/form-system/enums'
 
 export const MainContent = () => {
-  const { control, controlDispatch, updateActiveItem, setFocus, focus } =
-    useContext(ControlContext)
+  const {
+    control,
+    controlDispatch,
+    updateActiveItem,
+    setFocus,
+    focus,
+    getTranslation,
+  } = useContext(ControlContext)
   const { activeItem } = control
   const [openPreview, setOpenPreview] = useState(false)
   const { formatMessage } = useIntl()
@@ -80,7 +87,24 @@ export const MainContent = () => {
                     },
                   })
                 }
-                onFocus={(e) => setFocus(e.target.value)}
+                onFocus={async (e) => {
+                  if (
+                    !activeItem?.data?.name?.en &&
+                    activeItem?.data?.name?.is !== ''
+                  ) {
+                    const translation = await getTranslation(
+                      activeItem?.data?.name?.is ?? '',
+                    )
+                    controlDispatch({
+                      type: 'CHANGE_NAME',
+                      payload: {
+                        lang: 'en',
+                        newValue: translation.translation,
+                      },
+                    })
+                  }
+                  setFocus(e.target.value)
+                }}
                 onBlur={(e) => e.target.value !== focus && updateActiveItem()}
               />
             </Column>

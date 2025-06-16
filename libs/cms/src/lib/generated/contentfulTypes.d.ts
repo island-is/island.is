@@ -495,6 +495,9 @@ export interface IBloodDonationRestrictionFields {
 
   /** Nánar um áhrif á blóðgjöf */
   detailedText?: Document | undefined
+
+  /** Flokkur */
+  filterTags?: IGenericTag[] | undefined
 }
 
 export interface IBloodDonationRestriction
@@ -2194,6 +2197,7 @@ export interface IIntroLinkImageFields {
     | ILinkUrl
     | INews
     | IAnchorPage
+    | IOrganizationSubpage
     | undefined
 
   /** Open Link in New Tab */
@@ -2449,11 +2453,19 @@ export interface ILink extends Entry<ILinkFields> {
 }
 
 export interface ILinkedPageFields {
+  /** Internal Title */
+  internalTitle: string
+
   /** Title */
   title: string
 
   /** page */
-  page: IArticle | IArticleCategory | INews
+  page:
+    | IArticle
+    | IArticleCategory
+    | INews
+    | IOrganizationSubpage
+    | IOrganizationParentSubpage
 }
 
 export interface ILinkedPage extends Entry<ILinkedPageFields> {
@@ -3014,7 +3026,7 @@ export interface IOneColumnTextFields {
   content?: Document | undefined
 
   /** Link */
-  link?: ILink | undefined
+  link?: ILink | ILinkedPage | undefined
 
   /** Divider On Top */
   dividerOnTop?: boolean | undefined
@@ -3214,6 +3226,9 @@ export interface IOrganizationFields {
 
   /** News Bottom Slices */
   newsBottomSlices?: IEmailSignup[] | undefined
+
+  /** Can pages be found in search results */
+  canPagesBeFoundInSearchResults?: boolean | undefined
 }
 
 export interface IOrganization extends Entry<IOrganizationFields> {
@@ -3401,6 +3416,9 @@ export interface IOrganizationParentSubpageFields {
   /** Displayed Title */
   title: string
 
+  /** Short Title */
+  shortTitle?: string | undefined
+
   /** Slug */
   slug?: string | undefined
 
@@ -3521,6 +3539,7 @@ export interface IOrganizationSubpageFields {
         | ISectionHeading
         | ILatestEventsSlice
         | IGenericList
+        | IOrganizationParentSubpageList
       )[]
     | undefined
 
@@ -3543,7 +3562,10 @@ export interface IOrganizationSubpageFields {
   signLanguageVideo?: IEmbeddedVideo | undefined
 
   /** Bottom Slices */
-  bottomSlices?: (ITimeline | ILogoListSlice)[] | undefined
+  bottomSlices?: (ITimeline | ILogoListSlice | ILatestNewsSlice)[] | undefined
+
+  /** Organization Parent Subpage */
+  organizationParentSubpage?: IOrganizationParentSubpage | undefined
 }
 
 export interface IOrganizationSubpage

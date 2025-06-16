@@ -37,6 +37,10 @@ const SelectCourtOfficials = () => {
         judgeId,
       })
 
+      if (!updatedCase) {
+        return
+      }
+
       setWorkingCase((prevWorkingCase) => ({
         ...prevWorkingCase,
         judge: updatedCase?.judge,
@@ -49,6 +53,10 @@ const SelectCourtOfficials = () => {
       const updatedCase = await updateCase(workingCase.id, {
         registrarId: registrarId ?? null,
       })
+
+      if (!updatedCase) {
+        return
+      }
 
       setWorkingCase((prevWorkingCase) => ({
         ...prevWorkingCase,

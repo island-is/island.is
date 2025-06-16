@@ -13,6 +13,8 @@ import {
   ItemType,
   NavbarSelectStatus,
 } from '../lib/utils/interfaces'
+import { UpdateFormResponse } from '@island.is/form-system/shared'
+import { GoogleTranslation } from '@island.is/form-system/shared'
 
 export interface IControlContext {
   control: ControlState
@@ -32,8 +34,9 @@ export interface IControlContext {
   setSelectStatus: Dispatch<NavbarSelectStatus>
   setInListBuilder: Dispatch<SetStateAction<boolean>>
   inListBuilder: boolean
-  formUpdate: (updatedForm?: FormSystemForm) => void
+  formUpdate: (updatedForm?: FormSystemForm) => Promise<UpdateFormResponse>
   applicantTypes: Maybe<Maybe<FormSystemFormApplicant>[]> | undefined
+  getTranslation: (text: string) => Promise<GoogleTranslation>
 }
 
 export const ControlContext = createContext<IControlContext>({
@@ -66,8 +69,11 @@ export const ControlContext = createContext<IControlContext>({
     throw new Error('Function not implemented.')
   },
   inListBuilder: false,
-  formUpdate: function (): void {
+  formUpdate: function (): Promise<UpdateFormResponse> {
     throw new Error('Function not implemented.')
   },
   applicantTypes: [] as Maybe<Maybe<FormSystemFormApplicant>[]>,
+  getTranslation: function (_text: string): Promise<GoogleTranslation> {
+    throw new Error('Function not implemented.')
+  },
 })

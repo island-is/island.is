@@ -1,5 +1,5 @@
 import { ExternalData, FormValue } from '@island.is/application/types'
-import { IdentityDocumentData, Passport, Routes } from '../lib/constants'
+import { IdentityDocumentData, Routes } from '../lib/constants'
 import { getValueViaPath } from '@island.is/application/core'
 
 export const getChildPassport = (

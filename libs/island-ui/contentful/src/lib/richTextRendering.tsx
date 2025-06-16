@@ -196,7 +196,7 @@ export const defaultRenderComponent = (
       return <Statistics {...slice} />
 
     case 'Image':
-      return <Image {...slice} thumbnail={slice.url + '?w=50'} />
+      return <Image {...slice} />
 
     case 'Asset':
       return <AssetLink {...slice} />

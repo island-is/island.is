@@ -21,6 +21,7 @@ import {
 import { FormsService } from './forms.service'
 import { FormResponseDto } from './models/dto/form.response.dto'
 import { UpdateFormDto } from './models/dto/updateForm.dto'
+import { UpdateFormResponse } from '@island.is/form-system/shared'
 import {
   CurrentUser,
   IdsUserGuard,
@@ -42,9 +43,13 @@ export class FormsController {
     type: FormResponseDto,
     description: 'Create new form',
   })
-  @Post()
-  async create(@CurrentUser() user: User): Promise<FormResponseDto> {
-    return await this.formsService.create(user)
+  @ApiParam({ name: 'organizationNationalId', type: String })
+  @Post(':organizationNationalId')
+  async create(
+    @CurrentUser() user: User,
+    @Param('organizationNationalId') organizationNationalId: string,
+  ): Promise<FormResponseDto> {
+    return await this.formsService.create(user, organizationNationalId)
   }
 
   @ApiOperation({ summary: 'Get all forms belonging to organization' })
@@ -52,12 +57,14 @@ export class FormsController {
     type: FormResponseDto,
     description: 'Get all forms belonging to organization',
   })
-  @Get('organization')
+  @ApiParam({ name: 'nationalId', type: String })
+  @Get('organization/:nationalId')
   async findAll(
     @CurrentUser()
     user: User,
+    @Param('nationalId') nationalId: string,
   ): Promise<FormResponseDto> {
-    return await this.formsService.findAll(user)
+    return await this.formsService.findAll(user, nationalId)
   }
 
   @ApiOperation({ summary: 'Get form by id' })
@@ -72,7 +79,8 @@ export class FormsController {
   }
 
   @ApiOperation({ summary: 'Update form' })
-  @ApiNoContentResponse({
+  @ApiOkResponse({
+    type: UpdateFormResponse,
     description: 'Update form',
   })
   @ApiBody({ type: UpdateFormDto })
@@ -81,7 +89,7 @@ export class FormsController {
   async updateForm(
     @Param('id') id: string,
     @Body() updateFormDto: UpdateFormDto,
-  ): Promise<void> {
+  ): Promise<UpdateFormResponse> {
     return await this.formsService.update(id, updateFormDto)
   }
 

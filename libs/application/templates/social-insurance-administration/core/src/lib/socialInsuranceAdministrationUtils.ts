@@ -1,9 +1,9 @@
+import { NO, YES } from '@island.is/application/core'
+import { Option } from '@island.is/application/types'
 import isEmpty from 'lodash/isEmpty'
-import { BankInfo, PaymentInfo } from '../types'
+import { BankInfo, CategorizedIncomeTypes, PaymentInfo } from '../types'
 import { BankAccountType, TaxLevelOptions } from './constants'
 import { socialInsuranceAdministrationMessage } from './messages'
-import { Option } from '@island.is/application/types'
-import { YES, NO } from '@island.is/application/core'
 
 export const formatBankInfo = (bankInfo: string) => {
   const formattedBankInfo = bankInfo.replace(/[^0-9]/g, '')
@@ -14,12 +14,22 @@ export const formatBankInfo = (bankInfo: string) => {
   return bankInfo
 }
 
-export const getBankIsk = (bankInfo: BankInfo) => {
+export const bankInfoToString = (bankInfo?: BankInfo) => {
+  return !isEmpty(bankInfo)
+    ? `${bankInfo.bankNumber ?? ''}-${bankInfo.ledger ?? ''}-${
+        bankInfo.accountNumber ?? ''
+      }`
+    : ''
+}
+
+export const getBankIsk = (bankInfo?: BankInfo) => {
   return !isEmpty(bankInfo) &&
-    bankInfo.bank &&
+    (bankInfo.bank || bankInfo.bankNumber) &&
     bankInfo.ledger &&
     bankInfo.accountNumber
-    ? bankInfo.bank + bankInfo.ledger + bankInfo.accountNumber
+    ? (bankInfo.bank || bankInfo.bankNumber) +
+        bankInfo.ledger +
+        bankInfo.accountNumber
     : ''
 }
 
@@ -65,9 +75,13 @@ export const formatBank = (bankInfo: string) => {
 // We should only send bank account to TR if applicant is registering
 // new one or changing.
 export const shouldNotUpdateBankAccount = (
-  bankInfo: BankInfo,
-  paymentInfo: PaymentInfo,
+  bankInfo?: BankInfo,
+  paymentInfo?: PaymentInfo,
 ) => {
+  if (!paymentInfo) {
+    return false
+  }
+
   const {
     bankAccountType,
     bank,
@@ -161,4 +175,46 @@ export const getTaxLevelOption = (option: TaxLevelOptions) => {
     default:
       return socialInsuranceAdministrationMessage.payment.taxIncomeLevel
   }
+}
+
+export const getOneInstanceOfCategory = (
+  categories: CategorizedIncomeTypes[],
+) => {
+  return [
+    ...new Map(
+      categories.map((category) => [category.categoryName, category]),
+    ).values(),
+  ]
+}
+
+export const getCategoriesOptions = (
+  categorizedIncomeTypes: CategorizedIncomeTypes[],
+) => {
+  const categories = getOneInstanceOfCategory(categorizedIncomeTypes)
+
+  return (
+    categories &&
+    categories.map((item) => {
+      return {
+        value: item.categoryName || '',
+        label: item.categoryName || '',
+      }
+    })
+  )
+}
+
+export const getTypesOptions = (
+  categorizedIncomeTypes: CategorizedIncomeTypes[],
+  categoryName: string | undefined,
+) => {
+  if (categoryName === undefined) return []
+
+  return categorizedIncomeTypes
+    .filter((item) => item.categoryName === categoryName)
+    .map((item) => {
+      return {
+        value: item.incomeTypeName || '',
+        label: item.incomeTypeName || '',
+      }
+    })
 }

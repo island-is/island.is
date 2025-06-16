@@ -1,5 +1,6 @@
 import { MessageDescriptor } from 'react-intl'
-import { BankAccountType } from './lib/constants'
+import { BankAccountType, RatioType } from './lib/constants'
+
 export interface BankInfo {
   bank?: string
   ledger?: string
@@ -9,6 +10,7 @@ export interface BankInfo {
   foreignBankName?: string
   foreignBankAddress?: string
   currency?: string
+  bankNumber?: string // used in BankAccountFormField
 }
 
 export interface ApplicantInfo {
@@ -48,4 +50,45 @@ export interface Eligible {
   isEligible: boolean
   reason: string
   reasonCode: string
+}
+
+export interface CategorizedIncomeTypes {
+  categoryCode?: string | null
+  categoryName?: string | null
+  categoryNumber?: number
+  incomeTypeCode?: string | null
+  incomeTypeName?: string | null
+  incomeTypeNumber?: number
+}
+
+export interface IncomePlanRow {
+  incomeType: string
+  incomeTypeNumber: number
+  incomeTypeCode: string
+  currency: string
+  incomeCategory: string
+  incomeCategoryNumber: number
+  incomeCategoryCode: string
+  income: RatioType
+  equalForeignIncomePerMonth?: string
+  equalIncomePerMonth?: string
+  incomePerYear: string
+  unevenIncomePerYear?: string
+  january?: string
+  february?: string
+  march?: string
+  april?: string
+  may?: string
+  june?: string
+  july?: string
+  august?: string
+  september?: string
+  october?: string
+  november?: string
+  december?: string
+}
+
+export interface IncomePlanConditions {
+  incomePlanYear: number
+  showTemporaryCalculations: boolean
 }

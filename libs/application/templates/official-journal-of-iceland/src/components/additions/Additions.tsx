@@ -16,10 +16,7 @@ import {
 } from '@island.is/island-ui/core'
 import { HTMLText } from '@island.is/regulations-tools/types'
 import { z } from 'zod'
-import {
-  DEFAULT_ADDITIONS_COUNT,
-  MAXIMUM_ADDITIONS_COUNT,
-} from '../../lib/constants'
+import { MAXIMUM_ADDITIONS_COUNT } from '../../lib/constants'
 import { HTMLEditor } from '../htmlEditor/HTMLEditor'
 import { useApplication } from '../../hooks/useUpdateApplication'
 import { getValueViaPath } from '@island.is/application/core'
@@ -64,17 +61,20 @@ export const Additions = ({ application }: Props) => {
       InputFields.advert.additions,
     )
 
-    return isAddition(additions)
-      ? additions
-      : [getAddition(titlePrefix, DEFAULT_ADDITIONS_COUNT, false)]
+    return isAddition(additions) ? additions : []
   }
 
   const onRemoveAddition = (index: number) => {
     const filtered = additions.filter((_, i) => i !== index)
     const mapped = filtered.map((addition, i) => {
-      const title = f(titlePrefix === TitlePrefix.Appendix ? attachments.additions.appendixTitle : attachments.additions.attachmentTitle, {
-        index: asRoman ? convertNumberToRoman(i + 1) : i + 1,
-      })
+      const title = f(
+        titlePrefix === TitlePrefix.Appendix
+          ? attachments.additions.appendixTitle
+          : attachments.additions.attachmentTitle,
+        {
+          index: asRoman ? convertNumberToRoman(i + 1) : i + 1,
+        },
+      )
 
       return {
         ...addition,
@@ -96,10 +96,14 @@ export const Additions = ({ application }: Props) => {
 
   const onTitleChange = (titlePrefix: TitlePrefix, roman: boolean) => {
     const handleTitleChange = (addition: Addition, i: number) => {
-
-      const title = f(titlePrefix === TitlePrefix.Appendix ? attachments.additions.appendixTitle : attachments.additions.attachmentTitle, {
-        index: roman ? convertNumberToRoman(i + 1) : i + 1,
-      })
+      const title = f(
+        titlePrefix === TitlePrefix.Appendix
+          ? attachments.additions.appendixTitle
+          : attachments.additions.attachmentTitle,
+        {
+          index: roman ? convertNumberToRoman(i + 1) : i + 1,
+        },
+      )
       return {
         ...addition,
         title: title,
@@ -159,7 +163,9 @@ export const Additions = ({ application }: Props) => {
   const onAdditionChange = (index: number, value: string) => {
     const currentAnswers = structuredClone(currentApplication.answers)
     const updatedAdditions = additions.map((addition, i) =>
-      i === index ? { ...addition, content: value } : addition,
+      i === index
+        ? { ...addition, content: Buffer.from(value).toString('base64') }
+        : addition,
     )
 
     const updatedAnswers = set(
@@ -223,7 +229,11 @@ export const Additions = ({ application }: Props) => {
                   controller={false}
                   name="addition"
                   key={addition.id}
-                  value={defaultValue as HTMLText}
+                  value={
+                    Buffer.from(defaultValue, 'base64').toString(
+                      'utf-8',
+                    ) as HTMLText
+                  }
                   fileUploader={fileUploader()}
                   onChange={(value) => onAdditionChange(additionIndex, value)}
                 />
@@ -241,17 +251,19 @@ export const Additions = ({ application }: Props) => {
             </Box>
           )
         })}
-        <Inline space={2} flexWrap="wrap">
-          <Button
-            disabled={additions.length >= MAXIMUM_ADDITIONS_COUNT}
-            variant="utility"
-            icon="add"
-            size="small"
-            onClick={onAddAddition}
-          >
-            {f(attachments.buttons.addAddition)}
-          </Button>
-        </Inline>
+        <Box paddingY={2}>
+          <Inline space={2} flexWrap="wrap">
+            <Button
+              disabled={additions.length >= MAXIMUM_ADDITIONS_COUNT}
+              variant="utility"
+              icon="add"
+              size="small"
+              onClick={onAddAddition}
+            >
+              {f(attachments.buttons.addAddition)}
+            </Button>
+          </Inline>
+        </Box>
       </Stack>
     </Stack>
   )

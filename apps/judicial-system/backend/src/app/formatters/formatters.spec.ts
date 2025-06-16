@@ -6,6 +6,7 @@ import {
   CaseCustodyRestrictions,
   CaseLegalProvisions,
   CaseType,
+  DefenderSubRole,
   Gender,
   InstitutionType,
   RequestSharedWithDefender,
@@ -14,8 +15,10 @@ import {
   UserRole,
 } from '@island.is/judicial-system/types'
 
+import { DateLog } from '../modules/case'
 import {
   filterWhitelistEmails,
+  formatArraignmentDateEmailNotification,
   formatCourtHeadsUpSmsNotification,
   formatCourtReadyForCourtSmsNotification,
   formatCourtResubmittedToCourtSmsNotification,
@@ -51,7 +54,7 @@ export const makeProsecutor = (): User => {
       id: '',
       created: '',
       modified: '',
-      type: InstitutionType.PROSECUTORS_OFFICE,
+      type: InstitutionType.POLICE_PROSECUTORS_OFFICE,
       name: 'Lögreglan á Höfuðborgarsvæðinu',
       active: true,
     },
@@ -866,34 +869,6 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     )
   })
 
-  test('should format court date notification for indictments', () => {
-    // Arrange
-    const type = CaseType.INDICTMENT
-    const courtCaseNumber = 'S-898/2021'
-    const court = 'Héraðsdómur Reykjavíkur'
-    const courtDate = new Date('2021-12-24T10:00')
-    const courtRoom = '999'
-    const judgeName = 'Dóra Dómari'
-    const registrarName = 'Dalli Dómritari'
-
-    // Act
-    const res = fn(
-      type,
-      courtCaseNumber,
-      court,
-      courtDate,
-      courtRoom,
-      judgeName,
-      registrarName,
-    )
-
-    // Assert
-    expect(res.subject).toBe('Þingfesting í máli: S-898/2021')
-    expect(res.body).toBe(
-      'Héraðsdómur Reykjavíkur boðar til þingfestingar í máli S-898/2021.<br /><br />Þingfesting mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 999.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.',
-    )
-  })
-
   test('should format court date notification when defender will not attend', () => {
     // Arrange
     const type = CaseType.OTHER
@@ -951,6 +926,85 @@ describe('formatProsecutorCourtDateEmailNotification', () => {
     // Assert
     expect(res.body).toBe(
       'Héraðsdómur Reykjavíkur hefur staðfest fyrirtökutíma fyrir kröfu um gæsluvarðhald.<br /><br />Fyrirtaka mun fara fram 24. desember 2020, kl. 18:00.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.<br /><br />Verjandi sakbornings: Valdi Verjandi.',
+    )
+  })
+})
+
+describe('formatArraignmentDateEmailNotification', () => {
+  let formatMessage: FormatMessage
+  beforeAll(() => {
+    formatMessage = createTestIntl({
+      locale: 'is',
+      onError: jest.fn(),
+    }).formatMessage
+  })
+
+  const fn = (
+    arraignmentDateLog: DateLog,
+    courtName?: string,
+    courtCaseNumber?: string,
+    judgeName?: string,
+    registrarName?: string,
+  ) =>
+    formatArraignmentDateEmailNotification({
+      formatMessage,
+      courtName,
+      courtCaseNumber,
+      judgeName,
+      registrarName,
+      arraignmentDateLog,
+    })
+
+  test('should format arraignment date notification', () => {
+    // Arrange
+    const courtCaseNumber = 'S-898/2021'
+    const courtName = 'Héraðsdómur Reykjavíkur'
+    const judgeName = 'Dóra Dómari'
+    const registrarName = 'Dalli Dómritari'
+    const arraignmentDateLog = {
+      date: new Date('2021-12-24T10:00'),
+      location: '101',
+    } as DateLog
+
+    // Act
+    const res = fn(
+      arraignmentDateLog,
+      courtName,
+      courtCaseNumber,
+      judgeName,
+      registrarName,
+    )
+
+    // Assert
+    expect(res.subject).toBe('Þingfesting í máli: S-898/2021')
+    expect(res.body).toBe(
+      'Héraðsdómur Reykjavíkur boðar til þingfestingar í máli S-898/2021.<br /><br />Þingfesting mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur: 101.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.',
+    )
+  })
+
+  test('should format arraignment date notification when courtroom is not set', () => {
+    // Arrange
+    const courtCaseNumber = 'S-898/2021'
+    const courtName = 'Héraðsdómur Reykjavíkur'
+    const judgeName = 'Dóra Dómari'
+    const registrarName = 'Dalli Dómritari'
+    const arraignmentDateLog = {
+      date: new Date('2021-12-24T10:00'),
+      location: undefined,
+    } as DateLog
+
+    // Act
+    const res = fn(
+      arraignmentDateLog,
+      courtName,
+      courtCaseNumber,
+      judgeName,
+      registrarName,
+    )
+
+    // Assert
+    expect(res.body).toBe(
+      'Héraðsdómur Reykjavíkur boðar til þingfestingar í máli S-898/2021.<br /><br />Þingfesting mun fara fram 24. desember 2021, kl. 10:00.<br /><br />Dómsalur hefur ekki verið skráður.<br /><br />Dómari: Dóra Dómari.<br /><br />Dómritari: Dalli Dómritari.',
     )
   })
 })
@@ -1249,6 +1303,7 @@ describe('formatDefenderCourtDateEmailNotification', () => {
       prosecutor.name,
       prosecutor.institution?.name,
       sessionArrangements,
+      DefenderSubRole.DEFENDANT_DEFENDER,
     )
 
     // Assert
@@ -1280,6 +1335,7 @@ describe('formatDefenderCourtDateEmailNotification', () => {
       prosecutor.name,
       prosecutor.institution?.name,
       sessionArrangements,
+      DefenderSubRole.DEFENDANT_DEFENDER,
     )
 
     // Assert
@@ -1311,6 +1367,7 @@ describe('formatDefenderCourtDateEmailNotification', () => {
       prosecutor.name,
       prosecutor.institution?.name,
       sessionArrangements,
+      DefenderSubRole.DEFENDANT_DEFENDER,
     )
 
     // Assert
@@ -1342,6 +1399,7 @@ describe('formatDefenderCourtDateEmailNotification', () => {
       prosecutor.name,
       prosecutor.institution?.name,
       sessionArrangements,
+      DefenderSubRole.DEFENDANT_DEFENDER,
     )
 
     // Assert
@@ -1372,6 +1430,7 @@ describe('formatDefenderCourtDateEmailNotification', () => {
       prosecutor.name,
       prosecutor.institution?.name,
       sessionArrangements,
+      DefenderSubRole.DEFENDANT_DEFENDER,
     )
 
     // Assert
@@ -1398,17 +1457,19 @@ describe('formatDefenderCourtDateLinkEmailNotification', () => {
     const requestSharedWithDefender = RequestSharedWithDefender.COURT_DATE
 
     // Act
-    const res = formatDefenderCourtDateLinkEmailNotification(
+    const res = formatDefenderCourtDateLinkEmailNotification({
       formatMessage,
       overviewUrl,
       court,
       courtCaseNumber,
-      requestSharedWithDefender === RequestSharedWithDefender.COURT_DATE,
-    )
+      requestSharedWithDefender:
+        requestSharedWithDefender === RequestSharedWithDefender.COURT_DATE,
+      defenderSubRole: DefenderSubRole.DEFENDANT_DEFENDER,
+    })
 
     // Assert
     expect(res).toBe(
-      'Sækjandi hefur valið að deila kröfu með þér sem verjanda sakbornings í máli R-77/2021.<br /><br />Þú getur nálgast gögn málsins á <a href="https://example.com/overview">yfirlitssíðu málsins í Réttarvörslugátt</a>.',
+      'Sækjandi hefur valið að deila kröfu með þér sem verjanda/talsmann sakbornings í máli R-77/2021.<br /><br />Þú getur nálgast gögn málsins á <a href="https://example.com/overview">yfirlitssíðu málsins í Réttarvörslugátt</a>.',
     )
   })
 
@@ -1419,12 +1480,13 @@ describe('formatDefenderCourtDateLinkEmailNotification', () => {
     const overviewUrl = 'https://example.com/overview'
 
     // Act
-    const res = formatDefenderCourtDateLinkEmailNotification(
+    const res = formatDefenderCourtDateLinkEmailNotification({
       formatMessage,
       overviewUrl,
       court,
       courtCaseNumber,
-    )
+      defenderSubRole: DefenderSubRole.DEFENDANT_DEFENDER,
+    })
 
     // Assert
     expect(res).toBe(

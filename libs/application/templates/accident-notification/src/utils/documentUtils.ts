@@ -1,23 +1,23 @@
 import { getValueViaPath, YES, YesOrNo } from '@island.is/application/core'
 import { AccidentNotification } from '../lib/dataSchema'
-import {
-  AttachmentsEnum,
-  FileType,
-  PowerOfAttorneyUploadEnum,
-  WhoIsTheNotificationForEnum,
-} from '../types'
+import { FileType } from './types'
 import { attachments, overview } from '../lib/messages'
 import { FormatMessage } from '@island.is/localization'
 import { FormValue } from '@island.is/application/types'
 import {
   AccidentNotificationAttachmentStatus,
   AccidentNotifTypes,
-} from '../types'
+} from './types'
 import {
   isReportingOnBehalfOfEmployee,
   isReportingOnBehalfSelf,
 } from './reportingUtils'
 import { isFatalAccident } from './accidentUtils'
+import {
+  AttachmentsEnum,
+  PowerOfAttorneyUploadEnum,
+  WhoIsTheNotificationForEnum,
+} from './enums'
 
 export const hasAttachment = (attachment: Array<FileType> | undefined) =>
   attachment && attachment.length > 0
@@ -201,41 +201,108 @@ export const hasMissingDocuments = (answers: FormValue) => {
   )
 }
 
-export const getAttachmentTitles = (answers: AccidentNotification) => {
-  const deathCertificateFile =
-    answers.attachments?.deathCertificateFile?.file || undefined
-  const injuryCertificateFile =
-    answers.attachments?.injuryCertificateFile?.file || undefined
-  const powerOfAttorneyFile =
-    answers.attachments?.powerOfAttorneyFile?.file || undefined
-  const additionalFiles =
-    answers.attachments?.additionalFiles?.file || undefined
-  const additionalFilesFromReviewer =
-    answers.attachments?.additionalFilesFromReviewer?.file || undefined
+export const getAttachmentTitles = (answers: FormValue) => {
+  const deathCertificateFile = getValueViaPath<Array<FileType>>(
+    answers,
+    'attachments.deathCertificateFile.file',
+  )
+  const injuryCertificateFile = getValueViaPath<Array<FileType>>(
+    answers,
+    'attachments.injuryCertificateFile.file',
+  )
+  const powerOfAttorneyFile = getValueViaPath<Array<FileType>>(
+    answers,
+    'attachments.powerOfAttorneyFile.file',
+  )
+  const additionalFiles = getValueViaPath<Array<FileType>>(
+    answers,
+    'attachments.additionalFiles.file',
+  )
+  const additionalFilesFromReviewer = getValueViaPath<Array<FileType>>(
+    answers,
+    'attachments.additionalFilesFromReviewer.file',
+  )
 
   const files = []
 
-  if (hasAttachment(deathCertificateFile))
+  if (hasAttachment(deathCertificateFile)) {
     files.push(attachments.documentNames.deathCertificate)
+  }
+
   if (
     hasAttachment(injuryCertificateFile) &&
     getValueViaPath<AttachmentsEnum>(answers, 'injuryCertificate.answer') !==
       AttachmentsEnum.HOSPITALSENDSCERTIFICATE
-  )
+  ) {
     files.push(attachments.documentNames.injuryCertificate)
-  if (hasAttachment(powerOfAttorneyFile))
+  }
+
+  if (hasAttachment(powerOfAttorneyFile)) {
     files.push(attachments.documentNames.powerOfAttorneyDocument)
+  }
+
   if (
-    answers.injuryCertificate?.answer ===
+    getValueViaPath(answers, 'injuryCertificate.answer') ===
     AttachmentsEnum.HOSPITALSENDSCERTIFICATE
-  )
+  ) {
     files.push(overview.labels.hospitalSendsCertificate)
-  if (hasAttachment(additionalFiles))
+  }
+
+  if (hasAttachment(additionalFiles)) {
     files.push(attachments.documentNames.additionalDocumentsFromApplicant)
-  if (hasAttachment(additionalFilesFromReviewer))
+  }
+
+  if (hasAttachment(additionalFilesFromReviewer)) {
     files.push(attachments.documentNames.additionalDocumentsFromReviewer)
+  }
 
   return files
+}
+
+export const missingDocuments = (answers: FormValue) => {
+  const injuryCertificate = getValueViaPath<{ answer: AttachmentsEnum }>(
+    answers,
+    'injuryCertificate',
+  )
+  const whoIsTheNotificationFor = getValueViaPath<WhoIsTheNotificationForEnum>(
+    answers,
+    'whoIsTheNotificationFor.answer',
+  )
+  const wasTheAccidentFatal = getValueViaPath<YesOrNo>(
+    answers,
+    'wasTheAccidentFatal',
+  )
+  const missingDocuments = []
+
+  if (
+    injuryCertificate?.answer === AttachmentsEnum.SENDCERTIFICATELATER &&
+    !hasAttachment(
+      getValueViaPath(answers, 'attachments.injuryCertificateFile.file'),
+    )
+  ) {
+    missingDocuments.push(attachments.documentNames.injuryCertificate)
+  }
+
+  // Only show this to applicant or assignee that is also the applicant
+  if (
+    whoIsTheNotificationFor === WhoIsTheNotificationForEnum.POWEROFATTORNEY &&
+    !hasAttachment(
+      getValueViaPath(answers, 'attachments.powerOfAttorneyFile.file'),
+    )
+  ) {
+    missingDocuments.push(attachments.documentNames.powerOfAttorneyDocument)
+  }
+
+  if (
+    wasTheAccidentFatal === YES &&
+    !hasAttachment(
+      getValueViaPath(answers, 'attachments.deathCertificateFile.file'),
+    )
+  ) {
+    missingDocuments.push(attachments.documentNames.deathCertificate)
+  }
+
+  return missingDocuments
 }
 
 export const returnMissingDocumentsList = (
@@ -243,7 +310,7 @@ export const returnMissingDocumentsList = (
   formatMessage: FormatMessage,
 ) => {
   const injuryCertificate = answers.injuryCertificate
-  const whoIsTheNotificationFor = answers.whoIsTheNotificationFor.answer
+  const whoIsTheNotificationFor = answers?.whoIsTheNotificationFor?.answer
   const wasTheAccidentFatal = answers.wasTheAccidentFatal
   const missingDocuments = []
 

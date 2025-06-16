@@ -12,13 +12,16 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
     .codeOwner(CodeOwners.Advania)
     .db()
     .migrations()
-    .seed()
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+    })
+    .secrets({
+      FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY:
+        '/k8s/form-system/FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY',
     })
     .ingress({
       primary: {

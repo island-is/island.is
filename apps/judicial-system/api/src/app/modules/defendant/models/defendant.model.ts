@@ -4,6 +4,7 @@ import {
   DefendantPlea,
   DefenderChoice,
   Gender,
+  InformationForDefendant,
   PunishmentType,
   ServiceRequirement,
   SubpoenaType,
@@ -19,6 +20,7 @@ registerEnumType(DefenderChoice, { name: 'DefenderChoice' })
 registerEnumType(SubpoenaType, { name: 'SubpoenaType' })
 registerEnumType(PunishmentType, { name: 'PunishmentType' })
 registerEnumType(VerdictAppealDecision, { name: 'VerdictAppealDecision' })
+registerEnumType(InformationForDefendant, { name: 'InformationForDefendant' })
 
 @ObjectType()
 export class Defendant {
@@ -120,4 +122,13 @@ export class Defendant {
 
   @Field(() => PunishmentType, { nullable: true })
   readonly punishmentType?: PunishmentType
+
+  @Field(() => Boolean, { nullable: true })
+  readonly isAlternativeService?: boolean
+
+  @Field(() => String, { nullable: true })
+  readonly alternativeServiceDescription?: string
+
+  @Field(() => [InformationForDefendant], { nullable: true })
+  readonly informationForDefendant?: InformationForDefendant[]
 }

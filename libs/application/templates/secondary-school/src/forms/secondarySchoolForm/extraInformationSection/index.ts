@@ -11,6 +11,7 @@ import { error, extraInformation } from '../../../lib/messages'
 import { getAllLanguageCodes } from '@island.is/shared/utils'
 import {
   FILE_SIZE_LIMIT,
+  FILE_TOTAL_SIZE_LIMIT,
   FILE_TYPES_ALLOWED,
   getEndOfDayUTCDate,
   getFirstRegistrationEndDate,
@@ -78,6 +79,8 @@ export const extraInformationSection = buildSection({
           rows: 5,
           title: extraInformation.other.textareaLabel,
           placeholder: extraInformation.other.textareaPlaceholder,
+          maxLength: 3000,
+          showMaxLength: true,
         }),
 
         // Supporting documents
@@ -93,6 +96,7 @@ export const extraInformationSection = buildSection({
           introduction: '',
           uploadAccept: FILE_TYPES_ALLOWED,
           maxSize: FILE_SIZE_LIMIT,
+          totalMaxSize: FILE_TOTAL_SIZE_LIMIT,
           uploadMultiple: true,
           uploadHeader: extraInformation.supportingDocuments.fileUploadHeader,
           uploadDescription:

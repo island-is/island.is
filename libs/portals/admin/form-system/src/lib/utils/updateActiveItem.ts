@@ -81,8 +81,8 @@ export const updateActiveItemFn = async (
         isRequired,
         isHidden,
       } = currentActiveItem
-          ? (currentActiveItem.data as FormSystemField)
-          : (activeItem.data as FormSystemField)
+        ? (currentActiveItem.data as FormSystemField)
+        : (activeItem.data as FormSystemField)
       updateField({
         variables: {
           input: {

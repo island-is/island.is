@@ -546,7 +546,7 @@ const DeathBenefitsTemplate: ApplicationTemplate<
         const { additionalAttachmentsRequired, additionalAttachments } =
           getApplicationAnswers(answers)
 
-        if (additionalAttachmentsRequired) {  
+        if (additionalAttachmentsRequired) {
           const mergedAdditionalDocumentRequired = [
             ...additionalAttachments,
             ...additionalAttachmentsRequired,
@@ -559,7 +559,7 @@ const DeathBenefitsTemplate: ApplicationTemplate<
           )
           unset(answers, 'fileUploadAdditionalFilesRequired')
         }
-        
+
         return context
       }),
     },

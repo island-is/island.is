@@ -109,6 +109,10 @@ const DefenderInfo: FC<Props> = ({ workingCase, setWorkingCase }) => {
       defenderNationalId,
       defenderEmail,
       defenderPhoneNumber,
+      // if court makes any defender changes we default to not share the request
+      ...(isDistrictCourtUser(user)
+        ? { requestSharedWithDefender: RequestSharedWithDefender.NOT_SHARED }
+        : {}),
       force: true,
     })
   }

@@ -2,29 +2,21 @@ import { FC, useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { AlertMessage, Box, Select } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
-import { capitalize } from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
   isDistrictCourtUser,
   isIndictmentCase,
   isProsecutionUser,
-  isPublicProsecutor,
+  isPublicProsecutionUser,
   isRequestCase,
 } from '@island.is/judicial-system/types'
+import { errors, titles } from '@island.is/judicial-system-web/messages'
 import {
-  core,
-  errors,
-  tables,
-  titles,
-} from '@island.is/judicial-system-web/messages'
-import {
-  ContextMenu,
+  CasesLayout,
   Logo,
   Modal,
   PageHeader,
   SectionHeading,
-  SharedPageLayout,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { PastCasesTable } from '@island.is/judicial-system-web/src/components/Table'
@@ -35,8 +27,6 @@ import {
   CaseState,
   CaseTransition,
   EventType,
-  User,
-  UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
@@ -44,64 +34,12 @@ import CasesAwaitingAssignmentTable from '../../Court/components/CasesAwaitingAs
 import CasesInProgressTable from '../../Court/components/CasesInProgressTable/CasesInProgressTable'
 import CasesAwaitingConfirmationTable from '../../Prosecutor/components/CasesAwaitingConfirmationTable/CasesAwaitingConfirmationTable'
 import CasesAwaitingReview from '../../PublicProsecutor/Tables/CasesAwaitingReview'
+import { CreateCaseButton } from '../CreateCaseButton/CreateCaseButton'
 import ActiveCases from './ActiveCases'
 import { useCasesQuery } from './cases.generated'
 import { FilterOption, useFilter } from './useFilter'
 import { cases as m } from './Cases.strings'
 import * as styles from './Cases.css'
-
-interface CreateCaseButtonProps {
-  user: User
-}
-
-const CreateCaseButton: FC<CreateCaseButtonProps> = (props) => {
-  const { user } = props
-  const { formatMessage } = useIntl()
-
-  const items = useMemo(() => {
-    if (user.role === UserRole.PROSECUTOR_REPRESENTATIVE) {
-      return [
-        {
-          href: constants.CREATE_INDICTMENT_ROUTE,
-          title: capitalize(formatMessage(core.indictment)),
-        },
-      ]
-    } else if (user.role === UserRole.PROSECUTOR) {
-      return [
-        {
-          href: constants.CREATE_INDICTMENT_ROUTE,
-          title: capitalize(formatMessage(core.indictment)),
-        },
-        {
-          href: constants.CREATE_RESTRICTION_CASE_ROUTE,
-          title: capitalize(formatMessage(core.restrictionCase)),
-        },
-        {
-          href: constants.CREATE_TRAVEL_BAN_ROUTE,
-          title: capitalize(formatMessage(core.travelBan)),
-        },
-        {
-          href: constants.CREATE_INVESTIGATION_CASE_ROUTE,
-          title: capitalize(formatMessage(core.investigationCase)),
-        },
-      ]
-    } else {
-      return []
-    }
-  }, [formatMessage, user?.role])
-
-  return (
-    <Box marginTop={[2, 2, 0]}>
-      <ContextMenu
-        dataTestId="createCaseDropdown"
-        menuLabel="Tegund kröfu"
-        items={items}
-        title={formatMessage(m.createCaseButton)}
-        offset={[0, 8]}
-      />
-    </Box>
-  )
-}
 
 export const Cases: FC = () => {
   const { formatMessage } = useIntl()
@@ -201,7 +139,7 @@ export const Cases: FC = () => {
         }
       }
 
-      // This componenet is only used for prosecution and district court users
+      // This component is only used for prosecution and district court users
       return false
     })
 
@@ -268,13 +206,11 @@ export const Cases: FC = () => {
 
   return (
     <>
-      <SharedPageLayout>
+      <CasesLayout>
         <PageHeader title={formatMessage(titles.shared.cases)} />
         <div className={styles.logoContainer}>
           <Logo />
-          {user && isProsecutionUser(user) ? (
-            <CreateCaseButton user={user} />
-          ) : null}
+          {isProsecutionUser(user) ? <CreateCaseButton /> : null}
         </div>
         <Box marginBottom={[2, 2, 5]} className={styles.filterContainer}>
           <Select
@@ -312,7 +248,7 @@ export const Cases: FC = () => {
                       onContextMenuDeleteClick={setVisibleModal}
                       canDeleteCase={canDeleteCase}
                     />
-                    {isPublicProsecutor(user) && (
+                    {isPublicProsecutionUser(user) && (
                       <CasesAwaitingReview
                         loading={loading}
                         cases={casesAwaitingReview}
@@ -320,28 +256,32 @@ export const Cases: FC = () => {
                     )}
                   </>
                 )}
-                <SectionHeading title={formatMessage(m.activeRequests.title)} />
-                <TableWrapper loading={loading || isFiltering}>
-                  {activeCases.length > 0 ? (
-                    <ActiveCases
-                      cases={activeCases}
-                      onContextMenuDeleteClick={setVisibleModal}
-                      canDeleteCase={canDeleteCase}
-                    />
-                  ) : (
-                    <div className={styles.infoContainer}>
-                      <AlertMessage
-                        type="info"
-                        title={formatMessage(
-                          m.activeRequests.infoContainerTitle,
-                        )}
-                        message={formatMessage(
-                          m.activeRequests.infoContainerText,
-                        )}
+                <section>
+                  <SectionHeading
+                    title={formatMessage(m.activeRequests.title)}
+                  />
+                  <TableWrapper loading={loading || isFiltering}>
+                    {activeCases.length > 0 ? (
+                      <ActiveCases
+                        cases={activeCases}
+                        onContextMenuDeleteClick={setVisibleModal}
+                        canDeleteCase={canDeleteCase}
                       />
-                    </div>
-                  )}
-                </TableWrapper>
+                    ) : (
+                      <div className={styles.infoContainer}>
+                        <AlertMessage
+                          type="info"
+                          title={formatMessage(
+                            m.activeRequests.infoContainerTitle,
+                          )}
+                          message={formatMessage(
+                            m.activeRequests.infoContainerText,
+                          )}
+                        />
+                      </div>
+                    )}
+                  </TableWrapper>
+                </section>
               </>
             )}
             {isDistrictCourtUser(user) && (
@@ -361,9 +301,12 @@ export const Cases: FC = () => {
                 />
               </>
             )}
-            <SectionHeading title={formatMessage(tables.completedCasesTitle)} />
             {loading || pastCases.length > 0 ? (
-              <PastCasesTable cases={pastCases} />
+              <PastCasesTable
+                cases={pastCases}
+                loading={loading}
+                isFiltering={isFiltering}
+              />
             ) : (
               <div className={styles.infoContainer}>
                 <AlertMessage
@@ -375,7 +318,7 @@ export const Cases: FC = () => {
             )}
           </>
         )}
-      </SharedPageLayout>
+      </CasesLayout>
       {modalVisible !== undefined && (
         <Modal
           title={formatMessage(m.activeRequests.deleteCaseModal.title)}

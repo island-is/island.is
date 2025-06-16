@@ -37,6 +37,7 @@ import { SignatureCollectionSignatureLookupInput } from './dto/signatureLookup.i
 import { SignatureCollectionAreaSummaryReportInput } from './dto/areaSummaryReport.input'
 import { SignatureCollectionAreaSummaryReport } from './models/areaSummaryReport.model'
 import { SignatureCollectionUploadPaperSignatureInput } from './dto/uploadPaperSignature.input'
+import { SignatureCollectionBaseInput } from './dto/signatureCollectionBase.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.signatureCollectionProcess)
@@ -58,6 +59,7 @@ export class SignatureCollectionAdminResolver {
       user,
       input.signeeNationalId,
       input.listId,
+      input.collectionType,
     )
   }
 
@@ -68,13 +70,20 @@ export class SignatureCollectionAdminResolver {
   )
   async signatureCollectionAdminCurrent(
     @CurrentUser() user: User,
+    @Args('input') input: SignatureCollectionBaseInput,
   ): Promise<SignatureCollection> {
     const isManager = user.scope.includes(
       AdminPortalScope.signatureCollectionManage,
     )
     return isManager
-      ? this.signatureCollectionManagerService.currentCollection(user)
-      : this.signatureCollectionService.currentCollection(user)
+      ? this.signatureCollectionManagerService.getLatestCollectionForType(
+          user,
+          input.collectionType,
+        )
+      : this.signatureCollectionService.getLatestCollectionForType(
+          user,
+          input.collectionType,
+        )
   }
 
   @Query(() => [SignatureCollectionList])
@@ -135,9 +144,14 @@ export class SignatureCollectionAdminResolver {
   @Audit()
   async signatureCollectionAdminCandidateLookup(
     @CurrentUser() user: User,
-    @Args('input') { nationalId }: SignatureCollectionNationalIdInput,
+    @Args('input')
+    { nationalId, collectionType }: SignatureCollectionNationalIdInput,
   ): Promise<SignatureCollectionCandidateLookUp> {
-    return this.signatureCollectionService.signee(nationalId, user)
+    return this.signatureCollectionService.signee(
+      nationalId,
+      collectionType,
+      user,
+    )
   }
 
   @Query(() => SignatureCollectionListStatus)

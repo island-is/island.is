@@ -38,6 +38,7 @@ import {
   Inna,
   OfficialJournalOfIceland,
   OfficialJournalOfIcelandApplication,
+  LegalGazette,
   VehiclesMileage,
   UniversityCareers,
   Frigg,
@@ -47,6 +48,9 @@ import {
   WorkAccidents,
   NationalRegistryB2C,
   SecondarySchool,
+  PracticalExams,
+  RentalService,
+  FireCompensation,
 } from '../../../../infra/src/dsl/xroad'
 
 export const GRAPHQL_API_URL_ENV_VAR_NAME = 'GRAPHQL_API_URL' // This property is a part of a circular dependency that is treated specially in certain deployment types
@@ -65,6 +69,7 @@ const namespace = 'application-system'
 const serviceAccount = 'application-system-api'
 export const workerSetup = (services: {
   userNotificationService: ServiceBuilder<'services-user-notification'>
+  paymentsApi: ServiceBuilder<'services-payments'>
 }): ServiceBuilder<'application-system-api-worker'> =>
   service('application-system-api-worker')
     .namespace(namespace)
@@ -110,6 +115,13 @@ export const workerSetup = (services: {
         (h) => `http://${h.svc(services.userNotificationService)}`,
       ),
       APPLICATION_SYSTEM_BULL_PREFIX,
+      PAYMENTS_API_URL: ref((h) => `http://${h.svc(services.paymentsApi)}`),
+      PAYMENT_API_CALLBACK_URL: ref(
+        (ctx) =>
+          `http://${
+            ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
+          }application-system-api.application-system.svc.cluster.local`,
+      ),
     })
     .xroad(Base, Client, Payment, Inna, EHIC, WorkMachines)
     .secrets({
@@ -149,6 +161,7 @@ export const serviceSetup = (services: {
   // The user profile service is named service-portal-api in infra setup
   servicePortalApi: ServiceBuilder<'service-portal-api'>
   userNotificationService: ServiceBuilder<'services-user-notification'>
+  paymentsApi: ServiceBuilder<'services-payments'>
 }): ServiceBuilder<'application-system-api'> =>
   service('application-system-api')
     .namespace(namespace)
@@ -171,10 +184,15 @@ export const serviceSetup = (services: {
         prod: 'cdn.contentful.com',
       },
       CLIENT_LOCATION_ORIGIN: {
-        dev: 'https://beta.dev01.devland.is/umsoknir',
-        staging: 'https://beta.staging01.devland.is/umsoknir',
-        prod: 'https://island.is/umsoknir',
-        local: 'http://localhost:4200/umsoknir',
+        dev: ref(
+          (ctx) =>
+            `https://${
+              ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
+            }beta.dev01.devland.is/umsoknir`,
+        ),
+        staging: `https://beta.staging01.devland.is/umsoknir`,
+        prod: `https://island.is/umsoknir`,
+        local: 'http://localhost:4242/umsoknir',
       },
       APPLICATION_ATTACHMENT_BUCKET: {
         dev: 'island-is-dev-storage-application-system',
@@ -191,8 +209,7 @@ export const serviceSetup = (services: {
         staging: 'island-is-staging-fs-presign-bucket',
         prod: 'island-is-prod-fs-presign-bucket',
       },
-      [GRAPHQL_API_URL_ENV_VAR_NAME]:
-        'http://api.islandis.svc.cluster.local',
+      [GRAPHQL_API_URL_ENV_VAR_NAME]: 'http://api.islandis.svc.cluster.local',
       INSTITUTION_APPLICATION_RECIPIENT_EMAIL_ADDRESS: {
         dev: 'gunnar.ingi@fjr.is',
         staging: 'gunnar.ingi@fjr.is',
@@ -255,8 +272,8 @@ export const serviceSetup = (services: {
         prod: 'IS/GOV/4707171140/Domstolasyslan/JusticePortal-v1',
       },
       XROAD_ALTHINGI_OMBUDSMAN_SERVICE_PATH: {
-        dev: 'IS-DEV/GOV/10047/UA-Protected/kvortun-v1/',
-        staging: 'IS-TEST/GOV/10047/UA-Protected/kvortun-v1/',
+        dev: 'IS-DEV/GOV/10047/UA-Protected/kvortun-v1',
+        staging: 'IS-TEST/GOV/10047/UA-Protected/kvortun-v1',
         prod: 'IS/GOV/5605882089/UA-Protected/kvortun-v1',
       },
       NOVA_ACCEPT_UNAUTHORIZED: {
@@ -288,6 +305,15 @@ export const serviceSetup = (services: {
         (h) => `http://${h.svc(services.userNotificationService)}`,
       ),
       APPLICATION_SYSTEM_BULL_PREFIX,
+      PAYMENTS_API_URL: ref((h) => `http://${h.svc(services.paymentsApi)}`),
+      PAYMENT_API_CALLBACK_URL: ref(
+        (ctx) =>
+          `http://application-system-api.${
+            ctx.featureDeploymentName
+              ? `feature-${ctx.featureDeploymentName}`
+              : 'application-system'
+          }.svc.cluster.local`,
+      ),
     })
     .xroad(
       Base,
@@ -306,6 +332,7 @@ export const serviceSetup = (services: {
       ChargeFjsV2,
       EnergyFunds,
       Finance,
+      FireCompensation,
       Properties,
       RskCompanyInfo,
       VehicleServiceFjsV1,
@@ -324,6 +351,7 @@ export const serviceSetup = (services: {
       ArborgWorkpoint,
       OfficialJournalOfIceland,
       OfficialJournalOfIcelandApplication,
+      LegalGazette,
       UniversityCareers,
       Frigg,
       HealthDirectorateVaccination,
@@ -331,6 +359,8 @@ export const serviceSetup = (services: {
       HealthDirectorateOrganDonation,
       WorkAccidents,
       SecondarySchool,
+      PracticalExams,
+      RentalService,
     )
     .secrets({
       NOVA_URL: '/k8s/application-system-api/NOVA_URL',
@@ -418,4 +448,4 @@ export const serviceSetup = (services: {
         },
       },
     })
-    .grantNamespaces('nginx-ingress-internal', 'islandis')
+    .grantNamespaces('services-payments', 'nginx-ingress-internal', 'islandis')

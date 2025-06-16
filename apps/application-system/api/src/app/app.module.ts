@@ -13,6 +13,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
 import { ApplicationModule } from './modules/application/application.module'
 import { DrivingLicenseBookClientConfig } from '@island.is/clients/driving-license-book'
 import { NationalRegistryClientConfig } from '@island.is/clients/national-registry-v2'
+import { NationalRegistryV3ApplicationsClientConfig } from '@island.is/clients/national-registry-v3-applications'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 import { DrivingLicenseApiConfig } from '@island.is/clients/driving-license'
 import { MunicipalitiesFinancialAidConfig } from '@island.is/clients/municipalities-financial-aid'
@@ -38,6 +39,7 @@ import { SignatureCollectionClientConfig } from '@island.is/clients/signature-co
 import { InnaClientConfig } from '@island.is/clients/inna'
 import { OfficialJournalOfIcelandClientConfig } from '@island.is/clients/official-journal-of-iceland'
 import { OfficialJournalOfIcelandApplicationClientConfig } from '@island.is/clients/official-journal-of-iceland/application'
+import { LegalGazetteClientConfig } from '@island.is/clients/legal-gazette'
 import {
   HealthDirectorateClientConfig,
   HealthDirectorateVaccinationsClientConfig,
@@ -53,7 +55,6 @@ import {
   UniversityOfIcelandCareerClientConfig,
 } from '@island.is/clients/university-careers'
 import { DataProtectionComplaintClientConfig } from '@island.is/clients/data-protection-complaint'
-import { CriminalRecordClientConfig } from '@island.is/clients/criminal-record'
 import { HealthInsuranceV2ClientConfig } from '@island.is/clients/icelandic-health-insurance/health-insurance'
 import { VmstClientConfig } from '@island.is/clients/vmst'
 import { RightsPortalClientConfig } from '@island.is/clients/icelandic-health-insurance/rights-portal'
@@ -65,6 +66,8 @@ import { UserNotificationClientConfig } from '@island.is/clients/user-notificati
 import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
 import { SeminarsClientConfig } from '@island.is/clients/seminars-ver'
 import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school'
+import { PaymentsApiClientConfig } from '@island.is/clients/payments'
+import { HmsRentalAgreementClientConfig } from '@island.is/clients/hms-rental-agreement'
 
 @Module({
   imports: [
@@ -82,6 +85,7 @@ import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school
         DrivingLicenseApiConfig,
         DrivingLicenseBookClientConfig,
         NationalRegistryClientConfig,
+        NationalRegistryV3ApplicationsClientConfig,
         FeatureFlagConfig,
         MunicipalitiesFinancialAidConfig,
         FishingLicenseClientConfig,
@@ -106,6 +110,7 @@ import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school
         InnaClientConfig,
         OfficialJournalOfIcelandClientConfig,
         OfficialJournalOfIcelandApplicationClientConfig,
+        LegalGazetteClientConfig,
         HealthDirectorateVaccinationsClientConfig,
         HealthDirectorateOrganDonationClientConfig,
         HealthDirectorateClientConfig,
@@ -117,7 +122,6 @@ import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school
         HolarUniversityCareerClientConfig,
         IcelandUniversityOfTheArtsCareerClientConfig,
         DataProtectionComplaintClientConfig,
-        CriminalRecordClientConfig,
         HealthInsuranceV2ClientConfig,
         VmstClientConfig,
         RightsPortalClientConfig,
@@ -129,6 +133,8 @@ import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school
         NationalRegistryV3ClientConfig,
         SeminarsClientConfig,
         SecondarySchoolClientConfig,
+        PaymentsApiClientConfig,
+        HmsRentalAgreementClientConfig,
       ],
     }),
   ],

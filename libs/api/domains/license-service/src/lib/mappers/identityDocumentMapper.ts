@@ -44,27 +44,7 @@ export class IdentityDocumentMapper implements GenericLicenseMapper {
       locale,
     )
 
-    const emptyIdentityDocument = {
-      licenseName: formatMessage(m.identityDocument),
-      type: 'user' as const,
-      payload: {
-        data: [],
-        rawData: '',
-        metadata: {
-          title: formatMessage(m.identityDocument),
-          name: formatMessage(m.identityDocument),
-          subtitle: formatMessage(m.noValidIdentityDocument),
-          ctaLink: {
-            label: formatMessage(m.apply),
-            value: formatMessage(m.identityDocumentApplyUrl),
-          },
-        },
-      },
-    }
-
-    if (!payload.length) {
-      return [emptyIdentityDocument]
-    }
+    if (!payload) return Promise.resolve([])
 
     const typedPayload = payload as Array<
       IdentityDocument | IdentityDocumentChild
@@ -93,40 +73,16 @@ export class IdentityDocumentMapper implements GenericLicenseMapper {
         })
         .flat()
 
-    if (mappedLicenses.findIndex((ml) => ml.type === 'user') < 0) {
-      mappedLicenses.push(emptyIdentityDocument)
-    }
-
     return mappedLicenses
   }
 
-  private mapChildDocument(
+  private mapChildDocument = (
     document: IdentityDocumentChild,
     formatMessage: FormatMessage,
-  ): Array<Payload> {
-    if (document.passports?.length) {
-      return (
-        document.passports?.map((p) =>
-          this.mapDocument(p, formatMessage, document.childName ?? undefined),
-        ) ?? []
-      )
-    }
-
-    return [
-      {
-        data: [],
-        metadata: {
-          name: document.childName ?? '',
-          title: document.childName ?? '',
-          subtitle: formatMessage(m.noValidIdentityDocument),
-          ctaLink: {
-            label: formatMessage(m.apply),
-            value: formatMessage(m.identityDocumentApplyUrl),
-          },
-        },
-      },
-    ]
-  }
+  ): Array<Payload> =>
+    document.passports?.map((p) =>
+      this.mapDocument(p, formatMessage, document.childName ?? undefined),
+    ) ?? []
 
   private mapDocument(
     document: IdentityDocument,
@@ -138,6 +94,26 @@ export class IdentityDocumentMapper implements GenericLicenseMapper {
     const isExpiring = document.expiresWithinNoticeTime
     const isInvalid = document.status
       ? document.status.toLowerCase() === 'invalid'
+      : undefined
+
+    const licenseNumber =
+      document.number && document.type && document.subType
+        ? `${document.type}${document.subType}${document.number}`
+        : undefined
+
+    const mapLicenseType = (subType: string) => {
+      if (subType === 'D') {
+        return formatMessage(m.identityDocumentTravelLicense)
+      }
+      if (subType === 'I') {
+        return formatMessage(m.identityDocumentNotTravelLicense)
+      }
+
+      return formatMessage(m.identityDocument)
+    }
+
+    const licenseType = document.subType
+      ? mapLicenseType(document.subType)
       : undefined
 
     const displayTag: GenericUserLicenseMetaTag | undefined = {
@@ -172,16 +148,23 @@ export class IdentityDocumentMapper implements GenericLicenseMapper {
             ),
           }
         : null,
-      document.numberWithType
+      licenseNumber
         ? {
             type: GenericLicenseDataFieldType.Value,
             label: formatMessage(m.number),
-            value: document.numberWithType,
+            value: licenseNumber,
             link: {
               label: formatMessage(m.copy),
-              value: document.numberWithType,
+              value: licenseNumber,
               type: GenericUserLicenseMetaLinksType.Copy,
             },
+          }
+        : null,
+      licenseType
+        ? {
+            type: GenericLicenseDataFieldType.Value,
+            label: formatMessage(m.licenseType),
+            value: licenseType,
           }
         : null,
       document.issuingDate
@@ -199,25 +182,18 @@ export class IdentityDocumentMapper implements GenericLicenseMapper {
             tag: displayTag,
           }
         : null,
-      document.mrzFirstName && document.mrzLastName
+      document.mrzFirstName && document.mrzLastName && document.subType === 'D'
         ? {
             type: GenericLicenseDataFieldType.Value,
             label: formatMessage(m.passportNameComputer),
             value: `${document.mrzLastName} ${document.mrzFirstName}`,
           }
         : null,
-      document.sex
-        ? {
-            type: GenericLicenseDataFieldType.Value,
-            label: formatMessage(m.sex),
-            value:
-              document.sex === 'M'
-                ? formatMessage(m.male)
-                : document.sex === 'F'
-                ? formatMessage(m.female)
-                : formatMessage(m.otherGender),
-          }
-        : null,
+      {
+        type: GenericLicenseDataFieldType.Value,
+        label: formatMessage(m.publisher),
+        value: 'Þjóðskrá',
+      },
     ].filter(isDefined)
 
     const alert: GenericUserLicenseAlert | undefined =
@@ -256,7 +232,7 @@ export class IdentityDocumentMapper implements GenericLicenseMapper {
       rawData: JSON.stringify(document),
       metadata: {
         links,
-        licenseNumber: document.numberWithType?.toString() ?? '',
+        licenseNumber: licenseNumber ?? '',
         licenseId: document.number?.toString(),
         expiryStatus:
           document.expiryStatus === 'EXPIRED'
@@ -272,10 +248,7 @@ export class IdentityDocumentMapper implements GenericLicenseMapper {
         name: licenseName ?? document.verboseType ?? undefined,
         title: formatMessage(m.identityDocument) ?? undefined,
         subtitle: formatMessage(m.identityDocumentNumberDisplay, {
-          arg:
-            document.subType && document.number
-              ? `${document.subType}${document.number}`
-              : formatMessage(m.unknown),
+          arg: licenseNumber ?? formatMessage(m.unknown),
         }),
         description: [{ text: formatMessage(m.identityDocumentDescription) }],
         alert,

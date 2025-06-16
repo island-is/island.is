@@ -137,11 +137,13 @@ export const Review: FC<React.PropsWithChildren<ReviewScreenProps>> = ({
               label={formatMessage(
                 parentalLeaveFormMessages.reviewScreen.language,
               )}
-              value={formatMessage(
-                language === Languages.EN
-                  ? parentalLeaveFormMessages.applicant.english
-                  : parentalLeaveFormMessages.applicant.icelandic,
-              )}
+              value={
+                formatMessage(
+                  language === Languages.EN
+                    ? parentalLeaveFormMessages.applicant.english
+                    : parentalLeaveFormMessages.applicant.icelandic,
+                ) ?? ''
+              }
             />
           </GridColumn>
         </GridRow>

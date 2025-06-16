@@ -431,16 +431,36 @@ export const is = {
   'walletPass.expiredLicense': 'Útrunnið',
   'walletPass.errorFetchingLicense': 'Ekki tókst að uppfæra',
 
-  // wallet passport
-  'walletPassport.screenTitle': 'Vegabréf',
-  'walletPassport.infoTitle': 'Mundu eftir vegabréfinu!',
-  'walletPassport.infoDescription':
-    'Þetta yfirlit gildir ekki sem ferðaskilríki.',
-  'walletPassport.warningTitle': 'Rennur út innan 6 mánaða',
-  'walletPassport.warningDescription':
+  // license details
+  'licenseDetail.pcard.alert.title': 'Mundu eftir stæðiskortinu!',
+  'licenseDetail.pcard.alert.description':
+    'Þetta yfirlit gildir ekki sem stæðiskort.',
+  'licenseDetail.ehic.alert.title': 'Mundu eftir kortinu!',
+  'licenseDetail.ehic.alert.description':
+    'Þetta yfirlit gildir ekki sem sjúkratryggingakort.',
+  'licenseDetail.passport.alert.title':
+    'Þetta er eingöngu yfirlit og gildir ekki sem persónu- eða ferðaskilríki',
+  'licenseDetail.passport.alert.description':
+    'Einungis skilríkið sjálft er gilt persónu- og ferðaskilríki.',
+  'licenseDetail.identityDocument.alert.title':
+    'Þetta er eingöngu yfirlit og gildir ekki sem persónuskilríki',
+  'licenseDetail.identityDocument.alert.description':
+    'Einungis skilríkið sjálft er fullgilt persónuskilríki.',
+  'licenseDetail.identityTravelDocument.alert.title':
+    'Þetta er eingöngu yfirlit og gildir ekki sem persónu- eða ferðaskilríki',
+  'licenseDetail.identityTravelDocument.alert.description':
+    'Einungis skilríkið sjálft er gilt persónu- og ferðaskilríki.',
+  'licenseDetail.warning.title': 'Rennur út innan 6 mánaða',
+  'licenseDetail.passport.warning.description':
     'Athugið að vegabréfið þitt mun renna út innan næstu 6 mánaða.',
-  'walletPassport.noPassport': 'Engin gild vegabréf',
-  'walletPassport.noPassportLink': 'Sækja um',
+  'licenseDetail.identityDocument.warning.description':
+    'Athugið að nafnskírteinið þitt mun renna út innan næstu 6 mánaða.',
+  'licenseDetail.passport.noPassport': 'Engin gild vegabréf',
+  'licenseDetail.identityDocument.noIdentityDocument':
+    'Engin gild nafnskilríki',
+  'licenseDetail.apply': 'Sækja um',
+  'licenseDetail.passport.title': 'Vegabréf',
+  'licenseDetail.identityDocument.title': 'Nafnskírteini',
 
   // license scanner
   'licenseScanner.title': 'Skilríkjaskanni',
@@ -484,14 +504,6 @@ export const is = {
   'licenseScannerResult.birthDate': 'Fæðingardagur',
   'licenseScannerResult.nationalId': 'Kennitala',
   'licenseScannerResult.driverLicenseNumber': 'Númer ökuskírteinis',
-
-  // license details
-  'licenseDetail.pcard.alert.title': 'Mundu eftir stæðiskortinu!',
-  'licenseDetail.pcard.alert.description':
-    'Þetta yfirlit gildir ekki sem stæðiskort.',
-  'licenseDetail.ehic.alert.title': 'Mundu eftir kortinu!',
-  'licenseDetail.ehic.alert.description':
-    'Þetta yfirlit gildir ekki sem sjúkratryggingakort.',
 
   // notifications
   'notifications.screenTitle': 'Tilkynningar',

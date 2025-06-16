@@ -13,7 +13,12 @@ import {
   laws,
   readableIndictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
-import { Gender, UserRole } from '@island.is/judicial-system/types'
+import {
+  DefenderSubRole,
+  Gender,
+  getContactInformation,
+  UserRole,
+} from '@island.is/judicial-system/types'
 import {
   CaseCustodyRestrictions,
   CaseLegalProvisions,
@@ -263,6 +268,83 @@ export const formatPostponedCourtDateEmailNotification = (
   return { subject, body }
 }
 
+export const formatArraignmentDateEmailNotification = ({
+  formatMessage,
+  courtName,
+  courtCaseNumber,
+  judgeName,
+  registrarName,
+  arraignmentDateLog,
+}: {
+  formatMessage: FormatMessage
+  courtName?: string
+  courtCaseNumber?: string
+  judgeName?: string
+  registrarName?: string
+  arraignmentDateLog: DateLog
+}) => {
+  const { date: arraignmentDate, location: courtRoom } = arraignmentDateLog
+  const cf = notifications.indictmentArraignmentDateEmail
+
+  const scheduledCaseText = formatMessage(cf.scheduledCase, {
+    court: courtName,
+    courtCaseNumber: courtCaseNumber ?? '',
+  })
+
+  const arraignmentDateText = formatMessage(cf.arraignmentDate, {
+    arraignmentDate: formatDate(arraignmentDate, 'PPPp')?.replace(
+      ' kl.',
+      ', kl.',
+    ),
+  })
+
+  const courtRoomText = formatMessage(notifications.courtRoom, {
+    courtRoom: courtRoom || 'NONE',
+  })
+
+  const judgeText = formatMessage(notifications.judge, {
+    judgeName: judgeName || 'NONE',
+  })
+  const registrarText = registrarName
+    ? formatMessage(notifications.registrar, { registrarName: registrarName })
+    : undefined
+
+  return {
+    body: formatMessage(cf.body, {
+      scheduledCaseText,
+      arraignmentDateText,
+      courtRoomText,
+      judgeText,
+      registrarText: registrarText || 'NONE',
+    }),
+    subject: formatMessage(cf.subject, {
+      courtCaseNumber: courtCaseNumber || '',
+    }),
+  }
+}
+
+export const formatCourtCalendarInvitation = (
+  theCase: Case,
+  courtRoom?: string,
+) => {
+  const title = `Fyrirtaka í máli ${theCase.courtCaseNumber} - ${theCase.prosecutorsOffice?.name} gegn X`
+  const location = `${theCase.court?.name} - ${
+    courtRoom ? `Dómsalur ${courtRoom}` : 'Dómsalur hefur ekki verið skráður.'
+  }`
+
+  const { registrar, judge } = theCase
+  const eventOrganizerUser = registrar ?? judge
+  const eventOrganizer = eventOrganizerUser
+    ? { ...getContactInformation(eventOrganizerUser) }
+    : { name: '', email: '' }
+
+  return {
+    title,
+    location,
+    eventOrganizer,
+  }
+}
+
 export const formatProsecutorCourtDateEmailNotification = (
   formatMessage: FormatMessage,
   type: CaseType,
@@ -276,20 +358,17 @@ export const formatProsecutorCourtDateEmailNotification = (
   sessionArrangements?: SessionArrangements,
 ): SubjectAndBody => {
   const cf = notifications.prosecutorCourtDateEmail
-  const scheduledCaseText = isIndictmentCase(type)
-    ? formatMessage(cf.sheduledIndictmentCase, { court, courtCaseNumber })
-    : formatMessage(cf.scheduledCase, {
-        court,
-        investigationPrefix:
-          type === CaseType.OTHER
-            ? 'onlyPrefix'
-            : isInvestigationCase(type)
-            ? 'withPrefix'
-            : 'noPrefix',
-        courtTypeName: formatCaseType(type),
-      })
+  const scheduledCaseText = formatMessage(cf.scheduledCase, {
+    court,
+    investigationPrefix:
+      type === CaseType.OTHER
+        ? 'onlyPrefix'
+        : isInvestigationCase(type)
+        ? 'withPrefix'
+        : 'noPrefix',
+    courtTypeName: formatCaseType(type),
+  })
   const courtDateText = formatMessage(cf.courtDate, {
-    isIndictment: isIndictmentCase(type),
     courtDate: courtDate
       ? formatDate(courtDate, 'PPPp')?.replace(' kl.', ', kl.')
       : 'NONE',
@@ -309,26 +388,17 @@ export const formatProsecutorCourtDateEmailNotification = (
     sessionArrangements,
   })
 
-  const body = isIndictmentCase(type)
-    ? formatMessage(cf.bodyIndictments, {
-        scheduledCaseText,
-        courtDateText,
-        courtRoomText,
-        judgeText,
-        registrarText: registrarText || 'NONE',
-      })
-    : formatMessage(cf.body, {
-        scheduledCaseText,
-        courtDateText,
-        courtRoomText,
-        judgeText,
-        registrarText: registrarText || 'NONE',
-        defenderText,
-        sessionArrangements,
-      })
+  const body = formatMessage(cf.body, {
+    scheduledCaseText,
+    courtDateText,
+    courtRoomText,
+    judgeText,
+    registrarText: registrarText || 'NONE',
+    defenderText,
+    sessionArrangements,
+  })
 
   const subject = formatMessage(cf.subject, {
-    isIndictment: isIndictmentCase(type),
     courtCaseNumber: courtCaseNumber || '',
   })
 
@@ -415,12 +485,23 @@ export const formatDefenderCourtDateEmailNotification = (
   prosecutorName?: string,
   prosecutorInstitution?: string,
   sessionArrangements?: SessionArrangements,
+  defenderSubRole?: DefenderSubRole,
 ): string => {
   /** contentful strings */
+  const defenderResponsibility = formatDefenderResponsibility({
+    defenderSubRole,
+    getCustomDefendantDefenderLabel: () =>
+      `${
+        sessionArrangements === SessionArrangements.ALL_PRESENT_SPOKESPERSON
+          ? 'talsmann'
+          : 'verjanda'
+      } sakbornings`,
+  })
+
   const cf = notifications.defenderCourtDateEmail
   const sessionArrangementsText = formatMessage(cf.sessionArrangements, {
     court,
-    sessionArrangements,
+    defenderResponsibility,
   })
   const courtDateText = formatMessage(cf.courtDate, {
     courtDate: courtDate
@@ -459,13 +540,21 @@ export const formatDefenderCourtDateEmailNotification = (
   })
 }
 
-export const formatDefenderCourtDateLinkEmailNotification = (
-  formatMessage: FormatMessage,
-  overviewUrl?: string,
-  court?: string,
-  courtCaseNumber?: string,
-  requestSharedWithDefender?: boolean,
-): string => {
+export const formatDefenderCourtDateLinkEmailNotification = ({
+  formatMessage,
+  overviewUrl,
+  court,
+  courtCaseNumber,
+  requestSharedWithDefender,
+  defenderSubRole,
+}: {
+  formatMessage: FormatMessage
+  overviewUrl?: string
+  court?: string
+  courtCaseNumber?: string
+  requestSharedWithDefender?: boolean
+  defenderSubRole?: DefenderSubRole
+}): string => {
   const cf = notifications.defenderCourtDateEmail
 
   const info = {
@@ -475,11 +564,17 @@ export const formatDefenderCourtDateLinkEmailNotification = (
     linkEnd: '</a>',
   }
 
+  const defenderResponsibility = formatDefenderResponsibility({
+    defenderSubRole,
+    getCustomDefendantDefenderLabel: () => 'verjanda/talsmann sakbornings',
+  })
+
   const body = requestSharedWithDefender
-    ? formatMessage(cf.linkBody, { courtCaseNumber })
+    ? formatMessage(cf.linkBody, { courtCaseNumber, defenderResponsibility })
     : formatMessage(cf.linkNoRequestBody, {
         courtName: court,
         courtCaseNumber,
+        defenderResponsibility,
       })
 
   const link = requestSharedWithDefender
@@ -672,21 +767,44 @@ export const formatCourtIndictmentReadyForCourtEmailNotification = (
   return { body, subject }
 }
 
-export const formatDefenderReadyForCourtEmailNotification = (
-  formatMessage: FormatMessage,
-  policeCaseNumber: string,
-  courtName: string,
-  overviewUrl?: string,
-) => {
-  const subject = formatMessage(notifications.defenderReadyForCourtSubject, {
+export const formatDefenderResponsibility = ({
+  defenderSubRole,
+  getCustomDefendantDefenderLabel,
+}: {
+  defenderSubRole?: DefenderSubRole
+  getCustomDefendantDefenderLabel?: () => string
+}) =>
+  defenderSubRole === DefenderSubRole.DEFENDANT_DEFENDER
+    ? getCustomDefendantDefenderLabel
+      ? getCustomDefendantDefenderLabel()
+      : 'verjanda varnaraðila'
+    : defenderSubRole === DefenderSubRole.VICTIM_LAWYER
+    ? 'réttargæslumaður'
+    : null
+
+export const formatDefenderReadyForCourtEmailNotification = ({
+  formatMessage,
+  policeCaseNumber,
+  courtName,
+  overviewUrl,
+  defenderSubRole,
+}: {
+  formatMessage: FormatMessage
+  policeCaseNumber: string
+  courtName: string
+  overviewUrl?: string
+  defenderSubRole?: DefenderSubRole
+}) => {
+  const subject = formatMessage(notifications.defenderReadyForCourt.subject, {
     policeCaseNumber: policeCaseNumber,
   })
 
-  const body = formatMessage(notifications.defenderReadyForCourtBody, {
+  const body = formatMessage(notifications.defenderReadyForCourt.body, {
     policeCaseNumber: policeCaseNumber,
+    defenderResponsibility: formatDefenderResponsibility({ defenderSubRole }),
   })
 
-  const link = formatMessage(notifications.defenderLink, {
+  const link = formatMessage(notifications.defenderReadyForCourt.link, {
     defenderHasAccessToRvg: Boolean(overviewUrl),
     courtName: applyDativeCaseToCourtName(courtName),
     linkStart: `<a href="${overviewUrl}">`,

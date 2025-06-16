@@ -105,7 +105,7 @@ describe('InternalNotificationController - Send appeal statement notifications',
       then = await givenWhenThen(
         {
           role: UserRole.PROSECUTOR,
-          institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+          institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
         } as User,
         uuid(),
         appealCaseNumber,
@@ -135,7 +135,7 @@ describe('InternalNotificationController - Send appeal statement notifications',
       then = await givenWhenThen(
         {
           role: UserRole.PROSECUTOR,
-          institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+          institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
         } as User,
         undefined,
         appealCaseNumber,
@@ -192,7 +192,7 @@ describe('InternalNotificationController - Send appeal statement notifications',
       then = await givenWhenThen(
         {
           role: UserRole.PROSECUTOR,
-          institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+          institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
         } as User,
         uuid(),
       )
@@ -216,7 +216,7 @@ describe('InternalNotificationController - Send appeal statement notifications',
     beforeEach(async () => {
       then = await givenWhenThen({
         role: UserRole.PROSECUTOR,
-        institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+        institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
       } as User)
     })
 

@@ -7,15 +7,15 @@ interface Student {
   totalLessonCount: number
 }
 
-export function paginate(
+export const paginate = (
   students: Student[],
   pageSize: number,
   pageNumber: number,
-) {
+) => {
   return students?.slice((pageNumber - 1) * pageSize, pageNumber * pageSize)
 }
 
-export function pages(studentsLength: number) {
+export const pages = (studentsLength: number) => {
   if (studentsLength === undefined) return 0
   else {
     return Math.ceil(studentsLength / PAGE_SIZE)

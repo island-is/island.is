@@ -75,19 +75,6 @@ initContainer:
         requests:
           cpu: '50m'
           memory: '128Mi'
-    - args:
-        - 'sequelize-cli'
-        - 'db:seed:all'
-      command:
-        - 'npx'
-      name: 'seed'
-      resources:
-        limits:
-          cpu: '200m'
-          memory: '256Mi'
-        requests:
-          cpu: '50m'
-          memory: '128Mi'
   env:
     DB_HOST: 'postgres-applications.internal'
     DB_NAME: 'services_form_system_api'
@@ -114,6 +101,7 @@ resources:
 secrets:
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
   DB_PASS: '/k8s/services-form-system-api/DB_PASSWORD'
+  FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY: '/k8s/form-system/FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY'
 securityContext:
   allowPrivilegeEscalation: false
   privileged: false

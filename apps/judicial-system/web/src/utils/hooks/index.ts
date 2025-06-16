@@ -27,6 +27,7 @@ export {
 export { default as useSort } from './useSort/useSort'
 export { useGeoLocation } from './useGeoLocation/useGeoLocation'
 export { default as useDefendants } from './useDefendants'
+export { default as useVictim } from './useVictim'
 export {
   type UpdateIndictmentCount,
   default as useIndictmentCounts,
@@ -36,3 +37,4 @@ export { default as useCaseList } from './useCaseList'
 export { default as useNationalRegistry } from './useNationalRegistry'
 export { default as useCivilClaimants } from './useCivilClaimants'
 export { default as useSubpoena } from './useSubpoena'
+export { default as useLawTag } from './useLawTag/useLawTag'

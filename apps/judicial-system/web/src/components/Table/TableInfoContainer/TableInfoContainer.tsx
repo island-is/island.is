@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, ReactNode } from 'react'
 import { motion } from 'motion/react'
 
 import { AlertMessage } from '@island.is/island-ui/core'
@@ -6,7 +6,7 @@ import { AlertMessage } from '@island.is/island-ui/core'
 import * as styles from './TableInfoContainer.css'
 
 interface TableInfoContainerProps {
-  title: string
+  title: string | ReactNode
   message: string
 }
 

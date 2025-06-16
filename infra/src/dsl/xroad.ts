@@ -90,8 +90,18 @@ export const JudicialSystem = new XroadConf({
       staging: '5309672079',
       prod: '5309672079',
     },
+    XROAD_DMR_MEMBER_CODE: {
+      dev: '10014',
+      staging: '5804170510',
+      prod: '5804170510',
+    },
     XROAD_COURT_API_PATH: '/Domstolasyslan/JusticePortal-v1',
     XROAD_POLICE_API_PATH: '/Logreglan-Private/rettarvarsla-v1',
+    XROAD_DMR_CRIMINAL_RECORD_API_PATH: {
+      dev: '/DMR-Protected/sakaskra-dev',
+      staging: '/DMR-Protected/sakaskra-dev',
+      prod: '/DMR-Protected/sakaskra',
+    },
   },
   secrets: {
     XROAD_CLIENT_CERT: '/k8s/judicial-system/XROAD_CLIENT_CERT',
@@ -215,6 +225,21 @@ export const Finance = new XroadConf({
   },
 })
 
+export const FireCompensation = new XroadConf({
+  env: {
+    XROAD_HMS_APPLICATION_SYSTEM_PATH: {
+      dev: 'IS-DEV/GOV/10033/HMS-Protected/formbuilder-v1',
+      staging: 'IS-TEST/GOV/5812191480/HMS-Protected/formbuilder-v1',
+      prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/formbuilder-v1',
+    },
+    XROAD_HMS_APPLICATION_SYSTEM_CLIENT_HEADER: {
+      dev: 'IS-DEV/GOV/10000/island-is-client',
+      staging: 'IS-TEST/GOV/5501692829/test-client',
+      prod: 'IS/GOV/5501692829/island-is-client',
+    },
+  },
+})
+
 export const Properties = new XroadConf({
   env: {
     XROAD_PROPERTIES_SERVICE_V2_PATH: {
@@ -226,6 +251,36 @@ export const Properties = new XroadConf({
   secrets: {
     XROAD_PROPERTIES_CLIENT_SECRET:
       '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET',
+  },
+})
+
+export const PropertySearch = new XroadConf({
+  env: {
+    XROAD_HMS_PROPERTY_SEARCH_PATH: {
+      dev: 'IS-DEV/GOV/10033/HMS-Protected/fasteignir-v2-beta',
+      staging: 'IS-TEST/GOV/5812191480/HMS-Protected/fasteignir-v2-beta',
+      prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Fasteignir-v2',
+    },
+    XROAD_HMS_PROPERTY_SEARCH_CLIENT_HEADER: {
+      dev: 'IS-DEV/GOV/10000/island-is-client',
+      staging: 'IS-TEST/GOV/5501692829/test-client',
+      prod: 'IS/GOV/5501692829/island-is-client',
+    },
+  },
+})
+
+export const RentalService = new XroadConf({
+  env: {
+    XROAD_HMS_RENTAL_SERVICE_PATH: {
+      dev: 'IS-DEV/GOV/10033/HMS-Protected/Leigusamningar-v1',
+      staging: 'IS-TEST/GOV/5812191480/HMS-Protected/Leigusamningar-v1',
+      prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Leigusamningar-v1',
+    },
+    XROAD_HMS_RENTAL_SERVICE_CLIENT_HEADER: {
+      dev: 'IS-DEV/GOV/10000/island-is-client',
+      staging: 'IS-TEST/GOV/5501692829/test-client',
+      prod: 'IS/GOV/5501692829/island-is-client',
+    },
   },
 })
 
@@ -268,6 +323,17 @@ export const WorkMachines = new XroadConf({
       staging:
         'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token',
       prod: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token',
+    },
+  },
+})
+
+export const PracticalExams = new XroadConf({
+  env: {
+    XROAD_PRACTICAL_EXAMS_PATH: {
+      dev: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/verkleg-prof-token',
+      staging:
+        'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/verkleg-prof-token',
+      prod: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/verkleg-prof-token',
     },
   },
 })
@@ -409,8 +475,8 @@ export const NationalRegistry = new XroadConf({
   env: {
     XROAD_NATIONAL_REGISTRY_SERVICE_PATH: {
       dev: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1',
-      staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
-      prod: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
+      staging: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Einstaklingar-v1',
+      prod: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Einstaklingar-v1',
     },
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: {
       dev: json([
@@ -424,7 +490,7 @@ export const NationalRegistry = new XroadConf({
       ]),
     },
     // Deprecated:
-    XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1',
+    XROAD_TJODSKRA_API_PATH: '/SKRA-Cloud-Protected/Einstaklingar-v1',
     XROAD_TJODSKRA_MEMBER_CODE: {
       prod: '6503760649',
       dev: '10001',
@@ -451,10 +517,21 @@ export const NationalRegistryB2C = new XroadConf({
       staging: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default',
       prod: 'https://skraidentity.onmicrosoft.com/midlun/.default',
     },
+    NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE: {
+      dev: 'https://skraidentitydev.onmicrosoft.com/midlunumsoknir/.default',
+      staging:
+        'https://skraidentitystaging.onmicrosoft.com/midlunumsoknir/.default',
+      prod: 'https://skraidentity.onmicrosoft.com/midlunumsoknir/.default',
+    },
     NATIONAL_REGISTRY_B2C_PATH: {
       dev: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1',
       staging: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1',
       prod: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1',
+    },
+    NATIONAL_REGISTRY_B2C_APPLICATION_PATH: {
+      dev: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/MidlunUmsoknir-v1',
+      staging: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1',
+      prod: 'IS/GOV/6503760649/SKRA-Cloud-Protected/MidlunUmsoknir-v1',
     },
   },
 })
@@ -913,12 +990,22 @@ export const OfficialJournalOfIcelandApplication = new XroadConf({
   },
 })
 
+export const LegalGazette = new XroadConf({
+  env: {
+    XROAD_LEGAL_GAZETTE_PATH: {
+      dev: 'IS-DEV/GOV/10014/DMR-Protected/legal-gazette-api',
+      staging: 'IS-TEST/GOV/10014/DMR-Protected/legal-gazette-api',
+      prod: 'IS/GOV/5804170510/DMR-Protected/legal-gazette-api',
+    },
+  },
+})
+
 export const Frigg = new XroadConf({
   env: {
     XROAD_MMS_FRIGG_PATH: {
       dev: 'IS-DEV/GOV/10066/MMS-Protected/frigg-form-api',
-      staging: 'IS-TEST/GOV/10066/MMS-Protected/frigg-form-api',
-      prod: 'IS/GOV/10066/MMS-Protected/frigg-form-api',
+      staging: 'IS-TEST/GOV/6601241280/MMS-Protected/frigg-form-api',
+      prod: 'IS/GOV/6601241280/MMS-Protected/frigg-form-api',
     },
   },
 })

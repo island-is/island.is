@@ -17,6 +17,7 @@ import {
   DefendantPlea,
   DefenderChoice,
   Gender,
+  InformationForDefendant,
   PunishmentType,
   ServiceRequirement,
   SubpoenaType,
@@ -176,6 +177,10 @@ export class Defendant extends Model {
   @ApiPropertyOptional({ type: Date })
   verdictAppealDate?: Date
 
+  // This is the currently selected subpoena type per defendant but we also
+  // store the subpoena type in the subpoenas table to keep the history.
+  // We will later remove it from the defendant table when we fix the
+  // handling of new subpoenas per defendant.
   @Column({
     type: DataType.ENUM,
     allowNull: true,
@@ -227,4 +232,20 @@ export class Defendant extends Model {
   @HasMany(() => DefendantEventLog, { foreignKey: 'defendantId' })
   @ApiPropertyOptional({ type: () => DefendantEventLog, isArray: true })
   eventLogs?: DefendantEventLog[]
+
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  isAlternativeService?: boolean
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  alternativeServiceDescription?: string
+
+  @Column({
+    type: DataType.ARRAY(DataType.ENUM),
+    allowNull: true,
+    values: Object.values(InformationForDefendant),
+  })
+  @ApiPropertyOptional({ enum: InformationForDefendant, isArray: true })
+  informationForDefendant?: InformationForDefendant[]
 }

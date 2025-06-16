@@ -14,35 +14,48 @@ import { useState } from 'react'
 import { useSignatureCollectionAdminUpdatePaperSignaturePageNumberMutation } from './editPage.generated'
 import { toast } from 'react-toastify'
 import { useRevalidator } from 'react-router-dom'
+import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 
 const EditPage = ({
   page,
   name,
   nationalId,
   signatureId,
+  collectionType,
 }: {
   page: number
   name: string
   nationalId: string
   signatureId: string
+  collectionType: SignatureCollectionCollectionType
 }) => {
   const { formatMessage } = useLocale()
   const [newPage, setNewPage] = useState(page)
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const { revalidate } = useRevalidator()
 
-  const [updatePage, { loading }] =
+  const [updatePage, { loading, data }] =
     useSignatureCollectionAdminUpdatePaperSignaturePageNumberMutation({
       variables: {
         input: {
           pageNumber: newPage,
           signatureId: signatureId,
+          collectionType,
         },
       },
       onCompleted: () => {
-        toast.success(formatMessage(m.editPaperNumberSuccess))
-        revalidate()
-        setModalIsOpen(false)
+        if (
+          data?.signatureCollectionAdminUpdatePaperSignaturePageNumber.success
+        ) {
+          toast.success(formatMessage(m.editPaperNumberSuccess))
+          revalidate()
+          setModalIsOpen(false)
+        } else {
+          const message =
+            data?.signatureCollectionAdminUpdatePaperSignaturePageNumber
+              .reasons?.[0] ?? formatMessage(m.editPaperNumberError)
+          toast.error(message)
+        }
       },
       onError: () => {
         toast.error(formatMessage(m.editPaperNumberError))
@@ -52,7 +65,7 @@ const EditPage = ({
   return (
     <Box>
       <Box marginLeft={1} onClick={() => setModalIsOpen(true)} cursor="pointer">
-        <Icon icon="pencil" type="outline" color="blue400" />
+        <Icon icon="pencil" color="blue400" />
       </Box>
       <Modal
         id="editPageModal"

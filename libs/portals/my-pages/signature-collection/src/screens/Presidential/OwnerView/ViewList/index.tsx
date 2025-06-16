@@ -1,17 +1,19 @@
 import { Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { m } from '../../../../lib/messages'
-import { useLocation } from 'react-router-dom'
+import { useParams } from 'react-router-dom'
 import { useGetSignatureList } from '../../../../hooks'
 import format from 'date-fns/format'
-import Signees from './SigneesOverview'
+import Signees from '../../../shared/Signees'
+import { SignatureCollectionCollectionType } from '@island.is/api/schema'
+
+const collectionType = SignatureCollectionCollectionType.Presidential
 
 const ViewList = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
-  const { pathname } = useLocation()
-  const listId = pathname.replace('/min-gogn/listar/medmaelasofnun/', '')
-  const { listInfo, loadingList } = useGetSignatureList(listId)
+  const { id } = useParams() as { id: string }
+  const { listInfo, loadingList } = useGetSignatureList(id)
 
   return (
     <Box>
@@ -55,7 +57,7 @@ const ViewList = () => {
               )}
             </Box>
           </Box>
-          <Signees />
+          <Signees collectionType={collectionType} />
         </Stack>
       )}
     </Box>

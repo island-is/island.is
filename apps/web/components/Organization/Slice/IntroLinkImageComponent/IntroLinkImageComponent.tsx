@@ -22,10 +22,24 @@ interface IntroLinkImageComponentProps {
 }
 
 export const IntroLinkImageComponent = ({
-  item: { leftImage, linkTitle, image, openLinkInNewTab, title, intro, link },
+  item: {
+    leftImage,
+    linkTitle,
+    image,
+    openLinkInNewTab,
+    title,
+    intro,
+    link,
+    linkHref: linkHrefFromCms,
+  },
   id,
 }: IntroLinkImageComponentProps) => {
   const { linkResolver } = useLinkResolver()
+  const linkHref = linkHrefFromCms
+    ? linkHrefFromCms
+    : link?.type && link.slug
+    ? linkResolver(link.type as LinkType, [link.slug]).href
+    : ''
   return (
     <GridRow direction={leftImage ? 'row' : 'rowReverse'} rowGap={1}>
       {image?.url && (
@@ -39,7 +53,7 @@ export const IntroLinkImageComponent = ({
             <img
               className={styles.image}
               src={`${image.url}?w=774&fm=webp&q=80`}
-              alt=""
+              alt={image.description ?? ''}
             />
           </Box>
         </GridColumn>
@@ -74,12 +88,8 @@ export const IntroLinkImageComponent = ({
                 )}
               </Box>
             )}
-            {link?.slug && link?.type && (
-              <Link
-                {...linkResolver(link.type as LinkType, [link.slug])}
-                skipTab
-                newTab={openLinkInNewTab ?? true}
-              >
+            {linkHref && (
+              <Link href={linkHref} skipTab newTab={openLinkInNewTab ?? true}>
                 <Button icon="arrowForward" variant="text">
                   {linkTitle}
                 </Button>

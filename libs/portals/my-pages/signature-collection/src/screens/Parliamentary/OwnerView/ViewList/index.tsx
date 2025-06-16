@@ -4,12 +4,15 @@ import { m } from '../../../../lib/messages'
 import { useParams } from 'react-router-dom'
 import { useGetSignatureList } from '../../../../hooks'
 import format from 'date-fns/format'
-import Signees from './Signees'
+import Signees from '../../../shared/Signees'
+import { SignatureCollectionCollectionType } from '@island.is/api/schema'
+
+const collectionType = SignatureCollectionCollectionType.LocalGovernmental
 
 const ViewList = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
-  const { id } = useParams() as { id: string }
+  const { id } = useParams<{ id: string }>()
   const { listInfo, loadingList } = useGetSignatureList(id || '')
 
   return (
@@ -48,7 +51,7 @@ const ViewList = () => {
               )}
             </Box>
           </Box>
-          <Signees />
+          <Signees collectionType={collectionType} />
         </Stack>
       )}
     </Box>

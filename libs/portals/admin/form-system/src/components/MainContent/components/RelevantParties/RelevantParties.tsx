@@ -8,12 +8,11 @@ import {
 } from '@island.is/form-system/graphql'
 import { useMutation } from '@apollo/client'
 import { FormSystemFormApplicant } from '@island.is/api/schema'
-import { ApplicantTypesEnum, m } from '@island.is/form-system/ui'
+import { m } from '@island.is/form-system/ui'
+import { ApplicantTypesEnum } from '@island.is/form-system/enums'
 import { removeTypename } from '../../../../lib/utils/removeTypename'
 import { FormApplicantTypes } from './components/FormApplicantTypes'
 import { applicantTypeGroups } from '../../../../lib/utils/applicantTypeGroups'
-
-
 
 export const RelevantParties = () => {
   const [createApplicant] = useMutation(CREATE_APPLICANT)
@@ -75,7 +74,6 @@ export const RelevantParties = () => {
       }
     } catch (e) {
       console.error(e)
-
     }
   }
 
@@ -88,80 +86,13 @@ export const RelevantParties = () => {
         handleApplicantChange(applicantTypeGroups.individualDelegation, checked)
         break
       case 2:
-        {
-          if (checked) {
-            if (
-              formApplicants.some(
-                (applicant) => applicant.id === ApplicantTypesEnum.LEGAL_ENTITY,
-              )
-            ) {
-              handleApplicantChange(
-                [
-                  ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY,
-                ],
-                checked,
-              )
-            } else {
-              handleApplicantChange(
-                applicantTypeGroups.legalEntityDelegation,
-                checked,
-              )
-            }
-          } else {
-            if (
-              !formApplicants.some(
-                (applicant) =>
-                  applicant.id ===
-                  ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION,
-              )
-            ) {
-              handleApplicantChange(
-                applicantTypeGroups.legalEntityDelegation,
-                checked,
-              )
-            } else {
-              handleApplicantChange(
-                [
-                  ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY,
-                ],
-                checked,
-              )
-            }
-          }
-        }
+        handleApplicantChange(
+          applicantTypeGroups.legalEntityDelegation,
+          checked,
+        )
         break
       case 3:
-        {
-          if (checked) {
-            if (
-              formApplicants.some(
-                (applicant) => applicant.id === ApplicantTypesEnum.LEGAL_ENTITY,
-              )
-            ) {
-              handleApplicantChange(
-                [ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION],
-                checked,
-              )
-            } else {
-              handleApplicantChange(applicantTypeGroups.procuration, checked)
-            }
-          } else {
-            if (
-              !formApplicants.some(
-                (applicant) =>
-                  applicant.id ===
-                  ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY,
-              )
-            ) {
-              handleApplicantChange(applicantTypeGroups.procuration, checked)
-            } else {
-              handleApplicantChange(
-                [ApplicantTypesEnum.INDIVIDUAL_WITH_PROCURATION],
-                checked,
-              )
-            }
-          }
-        }
+        handleApplicantChange(applicantTypeGroups.procuration, checked)
         break
       default:
         break

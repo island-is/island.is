@@ -2,8 +2,6 @@ import {
   AlertMessage,
   AlertMessageProps,
   Box,
-  Bullet,
-  BulletList,
   Button,
   Inline,
   LinkV2,
@@ -135,11 +133,13 @@ export const FormScreen = ({
       ) : (
         <Box>
           <Box className={styles.childrenWrapper}>{children}</Box>
-          <LinkV2 href={helpHref}>
-            <Button variant="text" size="small" icon="arrowForward">
-              Skoða hjálparsíðu
-            </Button>
-          </LinkV2>
+          <Box paddingTop={1}>
+            <LinkV2 href={helpHref}>
+              <Button variant="text" size="small" icon="arrowForward">
+                Skoða hjálparsíðu
+              </Button>
+            </LinkV2>
+          </Box>
         </Box>
       )}
     </>

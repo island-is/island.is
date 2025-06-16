@@ -5,21 +5,33 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:application-builder',
     defaultMessage: 'Umsóknarsmiður',
   },
-  template: {
-    id: 'portals-admin.form-system:template',
-    defaultMessage: 'Forskrift',
+  form: {
+    id: 'portals-admin.form-system:form',
+    defaultMessage: 'Form',
   },
-  templates: {
-    id: 'portals-admin.form-system:templates',
-    defaultMessage: 'Forskriftir',
-  },
-  newTemplate: {
-    id: 'portals-admin.form-system:new-template',
+  newForm: {
+    id: 'portals-admin.form-system:new-form',
     defaultMessage: 'Nýtt',
   },
-  organisation: {
-    id: 'portals-admin.form-system:organisation',
+  organization: {
+    id: 'portals-admin.form-system:organization',
     defaultMessage: 'Stofnun',
+  },
+  applications: {
+    id: 'portals-admin.form-system:applications',
+    defaultMessage: 'Umsóknir',
+  },
+  administration: {
+    id: 'portals-admin.form-system:administration',
+    defaultMessage: 'Kerfisstjórnun',
+  },
+  overview: {
+    id: 'portals-admin.form-system:overview',
+    defaultMessage: 'Yfirlitsíða',
+  },
+  back: {
+    id: 'portals-admin.form-system:back',
+    defaultMessage: 'Til baka',
   },
   state: {
     id: 'portals-admin.form-system:state',
@@ -49,6 +61,26 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:description-english',
     defaultMessage: 'Lýsing á ensku',
   },
+  organizationName: {
+    id: 'portals-admin.form-system:organization-name',
+    defaultMessage: 'Raunheiti stofnunar',
+  },
+  organizationNameEn: {
+    id: 'portals-admin.form-system:organization-name-en',
+    defaultMessage: 'Raunheiti stofnunar á ensku',
+  },
+  organizationDisplayName: {
+    id: 'portals-admin.form-system:organization-display-name',
+    defaultMessage: 'Birt heiti stofnunar',
+  },
+  organizationDisplayNameEn: {
+    id: 'portals-admin.form-system:organization-display-name-en',
+    defaultMessage: 'Birt heiti stofnunar á ensku',
+  },
+  slug: {
+    id: 'portals-admin.form-system:slug',
+    defaultMessage: 'slug',
+  },
   daysUntilExpiration: {
     id: 'portals-admin.form-system:days-until-expiration',
     defaultMessage: 'Líftími umsóknar',
@@ -57,14 +89,30 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:deadline',
     defaultMessage: 'Umsóknarfrestur',
   },
-  basicSettings: {
-    id: 'portals-admin.form-system:basic-settings',
-    defaultMessage: 'Grunnstillingar',
+  settings: {
+    id: 'portals-admin.form-system:settings',
+    defaultMessage: 'Stillingar',
   },
   allowProgress: {
     id: 'portals-admin.form-system:allow-progress',
     defaultMessage:
       'Leyfa notanda að halda áfram í umsókninni með ógild/óútfyllt gildi',
+  },
+  certifications: {
+    id: 'portals-admin.form-system:certifications',
+    defaultMessage: 'Vottorð',
+  },
+  lists: {
+    id: 'portals-admin.form-system:lists',
+    defaultMessage: 'Listar',
+  },
+  inputFields: {
+    id: 'portals-admin.form-system:inputFields',
+    defaultMessage: 'Innsláttarreitir',
+  },
+  regulations: {
+    id: 'portals-admin.form-system:regulations',
+    defaultMessage: 'Reglugerðir',
   },
   premisesTitle: {
     id: 'portals-admin.form-system:premises-title',
@@ -147,9 +195,9 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:save-and-continue',
     defaultMessage: 'Vista og halda áfram',
   },
-  addStep: {
-    id: 'portals-admin.form-system:add-step',
-    defaultMessage: 'Bæta við skrefi',
+  addSection: {
+    id: 'portals-admin.form-system:add-section',
+    defaultMessage: 'Bæta við kafla',
   },
   allowFileTypes: {
     id: 'portals-admin.form-system:allow-file-types',
@@ -377,10 +425,6 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:copy',
     defaultMessage: 'Afrita',
   },
-  translateToEnglish: {
-    id: 'portals-admin.form-system:translate-to-english',
-    defaultMessage: 'Þýðing enska',
-  },
   getUrl: {
     id: 'portals-admin.form-system:get-url',
     defaultMessage: 'Sækja slóð',
@@ -417,12 +461,12 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:property-number-input',
     defaultMessage: 'Skrá fasteignanúmer',
   },
-  addGroupHover: {
-    id: 'portals-admin.form-system:add-step-hover',
-    defaultMessage: 'Bæta við hópi',
+  addScreenHover: {
+    id: 'portals-admin.form-system:add-screen-hover',
+    defaultMessage: 'Bæta við skjá',
   },
-  addInputHover: {
-    id: 'portals-admin.form-system:add-input-hover',
+  addFieldHover: {
+    id: 'portals-admin.form-system:add-field-hover',
     defaultMessage: 'Bæta við innslætti',
   },
   areYouSure: {
@@ -469,6 +513,10 @@ export const m = defineMessages({
   totalAmount: {
     id: 'portals-admin-form-system:total-amount',
     defaultMessage: 'Heildarupphæð',
+  },
+  submitted: {
+    id: 'portals-admin-form-system:submitted',
+    defaultMessage: 'Innsend',
   },
   // Error messages
   invalidEmail: {

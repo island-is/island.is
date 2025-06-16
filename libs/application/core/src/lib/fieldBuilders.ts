@@ -139,6 +139,7 @@ export const buildDateField = (
     backgroundColor = 'blue',
     required,
     readOnly,
+    tempDisabled,
   } = data
   return {
     ...extractCommonFields(data),
@@ -154,6 +155,7 @@ export const buildDateField = (
     backgroundColor,
     required,
     readOnly,
+    tempDisabled,
   }
 }
 
@@ -249,6 +251,7 @@ export const buildAsyncSelectField = (
     isSearchable,
     isMulti,
     updateOnSelect,
+    isClearable,
   } = data
 
   return {
@@ -264,6 +267,7 @@ export const buildAsyncSelectField = (
     isSearchable,
     isMulti,
     updateOnSelect,
+    isClearable,
   }
 }
 
@@ -471,6 +475,7 @@ export const buildKeyValueField = (data: {
   paddingBottom?: BoxProps['padding']
   marginTop?: BoxProps['marginTop']
   marginBottom?: BoxProps['marginBottom']
+  tooltip?: FormText
 }): KeyValueField => {
   const {
     label,
@@ -485,6 +490,7 @@ export const buildKeyValueField = (data: {
     paddingBottom,
     marginTop,
     marginBottom,
+    tooltip,
   } = data
 
   return {
@@ -506,6 +512,7 @@ export const buildKeyValueField = (data: {
     paddingBottom,
     marginTop,
     marginBottom,
+    tooltip,
   }
 }
 
@@ -652,7 +659,8 @@ export const buildExpandableDescriptionField = (
 export const buildAlertMessageField = (
   data: Omit<AlertMessageField, 'type' | 'component' | 'children'>,
 ): AlertMessageField => {
-  const { message, alertType, links } = data
+  const { message, alertType, links, shouldBlockInSetBeforeSubmitCallback } =
+    data
   return {
     ...extractCommonFields(data),
     children: undefined,
@@ -661,6 +669,7 @@ export const buildAlertMessageField = (
     type: FieldTypes.ALERT_MESSAGE,
     component: FieldComponents.ALERT_MESSAGE,
     links,
+    shouldBlockInSetBeforeSubmitCallback,
   }
 }
 
@@ -897,6 +906,7 @@ export const buildTableRepeaterField = (
     maxRows,
     onSubmitLoad,
     loadErrorMessage,
+    initActiveFieldIfEmpty,
   } = data
 
   return {
@@ -917,6 +927,7 @@ export const buildTableRepeaterField = (
     maxRows,
     onSubmitLoad,
     loadErrorMessage,
+    initActiveFieldIfEmpty,
   }
 }
 
@@ -1147,7 +1158,15 @@ export const buildAccordionField = (
 export const buildBankAccountField = (
   data: Omit<BankAccountField, 'type' | 'component' | 'children'>,
 ): BankAccountField => {
-  const { title = '', id, marginBottom, marginTop, titleVariant } = data
+  const {
+    title = '',
+    id,
+    marginBottom,
+    marginTop,
+    titleVariant,
+    defaultValue,
+  } = data
+
   return {
     children: undefined,
     id,
@@ -1157,6 +1176,7 @@ export const buildBankAccountField = (
     titleVariant,
     type: FieldTypes.BANK_ACCOUNT,
     component: FieldComponents.BANK_ACCOUNT,
+    defaultValue,
   }
 }
 
@@ -1170,6 +1190,7 @@ export const buildOverviewField = (
     description,
     backId,
     items,
+    loadItems,
     attachments,
     tableData,
   } = data
@@ -1181,6 +1202,7 @@ export const buildOverviewField = (
     description,
     backId,
     items,
+    loadItems,
     attachments,
     tableData,
     type: FieldTypes.OVERVIEW,

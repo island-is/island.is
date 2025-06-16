@@ -1,0 +1,114 @@
+{
+  "name": "payments",
+  "$schema": "../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "apps/payments",
+  "projectType": "application",
+  "prefix": "payments",
+  "tags": ["scope:react-next"],
+  "targets": {
+    "build": {
+      "executor": "@nx/next:build",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/payments"
+      },
+      "configurations": {
+        "development": {
+          "outputPath": "apps/payments"
+        },
+        "production": {}
+      },
+      "dependsOn": ["build-custom-server"]
+    },
+    "build-custom-server": {
+      "executor": "@nx/webpack:webpack",
+      "defaultConfiguration": "production",
+      "options": {
+        "outputPath": "dist/apps/payments",
+        "main": "apps/payments/server.ts",
+        "tsConfig": "apps/payments/tsconfig.server.json",
+        "maxWorkers": 2,
+        "assets": [],
+        "compiler": "tsc",
+        "target": "node",
+        "webpackConfig": "apps/payments/webpack.config.js"
+      },
+      "configurations": {
+        "development": {},
+        "production": {
+          "optimization": true,
+          "extractLicenses": true,
+          "inspect": false
+        }
+      }
+    },
+    "serve": {
+      "executor": "@nx/next:server",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "payments:build",
+        "dev": true,
+        "customServerTarget": "payments:serve-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "payments:build:development",
+          "dev": true,
+          "customServerTarget": "payments:serve-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "payments:build:production",
+          "dev": false,
+          "customServerTarget": "payments:serve-custom-server:production"
+        }
+      }
+    },
+    "serve-custom-server": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "payments:build-custom-server"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "payments:build-custom-server:development"
+        },
+        "production": {
+          "buildTarget": "payments:build-custom-server:production"
+        }
+      }
+    },
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "graphql-codegen --config apps/payments/codegen.yml"
+      }
+    },
+    "export": {
+      "executor": "@nx/next:export",
+      "options": {
+        "buildTarget": "payments:build:production"
+      }
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "apps/payments/jest.config.ts"
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "extract-strings": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract 'apps/payments/messages/*.ts'"
+      }
+    },
+    "docker-next": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-next`"
+    }
+  }
+}
