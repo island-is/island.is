@@ -1,5 +1,5 @@
 import { useFormContext, Controller } from 'react-hook-form'
-import InputMask from 'react-input-mask'
+import { InputMask } from '@react-input/mask'
 
 import { Box, Input } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -16,8 +16,8 @@ interface CardPaymentInput {
 }
 
 const CARD_MASK_BY_TYPE = {
-  default: '9999 9999 9999 9999',
-  amex: '9999 999999 99999',
+  default: '____ ____ ____ ____',
+  amex: '____ ______ _____',
 }
 
 const getCardType = (cardNumber: string) => {
@@ -55,24 +55,22 @@ export const CardPayment = () => {
           }}
           render={({ field }) => (
             <InputMask
-              mask={cardMask}
-              maskPlaceholder={null}
               {...field}
+              component={Input}
+              mask={cardMask}
+              replacement={{ _: /\d/ }}
               onChange={(e) => {
                 const cardNumber = e.target.value.replace(/\s/g, '')
                 handleCardChange(cardNumber)
                 field.onChange(cardNumber)
               }}
-            >
-              <Input
-                name={field.name}
-                backgroundColor="blue"
-                label={formatMessage(card.cardNumber)}
-                placeholder={formatMessage(card.cardNumberPlaceholder)}
-                size="sm"
-                errorMessage={formState.errors.card?.message}
-              />
-            </InputMask>
+              name={field.name}
+              backgroundColor="blue"
+              label={formatMessage(card.cardNumber)}
+              placeholder={formatMessage(card.cardNumberPlaceholder)}
+              size="sm"
+              errorMessage={formState.errors.card?.message}
+            />
           )}
         />
         <Box
@@ -91,23 +89,21 @@ export const CardPayment = () => {
               }}
               render={({ field }) => (
                 <InputMask
-                  mask="99/99"
-                  maskPlaceholder={null}
+                  component={Input}
+                  mask="__/__"
+                  replacement={{ _: /\d/ }}
                   {...field}
                   onChange={(e) =>
                     field.onChange(e.target.value.replace(/\s/g, ''))
                   }
-                >
-                  <Input
-                    name={field.name}
-                    backgroundColor="blue"
-                    label={formatMessage(card.cardExpiry)}
-                    placeholder={formatMessage(card.cardExpiryPlaceholder)}
-                    size="sm"
-                    rows={6}
-                    errorMessage={formState.errors.cardExpiry?.message}
-                  />
-                </InputMask>
+                  name={field.name}
+                  backgroundColor="blue"
+                  label={formatMessage(card.cardExpiry)}
+                  placeholder={formatMessage(card.cardExpiryPlaceholder)}
+                  size="sm"
+                  rows={6}
+                  errorMessage={formState.errors.cardExpiry?.message}
+                />
               )}
             />
           </Box>
@@ -120,17 +116,19 @@ export const CardPayment = () => {
                 validate: (value) => validateCardCVC(value, formatMessage),
               }}
               render={({ field }) => (
-                <InputMask mask="999" maskPlaceholder={null} {...field}>
-                  <Input
-                    name={field.name}
-                    backgroundColor="blue"
-                    label={formatMessage(card.cardCVC)}
-                    placeholder={formatMessage(card.cardCVCPlaceholder)}
-                    size="sm"
-                    rows={6}
-                    errorMessage={formState.errors.cardCVC?.message}
-                  />
-                </InputMask>
+                <InputMask
+                  component={Input}
+                  mask="___"
+                  replacement={{ _: /\d/ }}
+                  {...field}
+                  name={field.name}
+                  backgroundColor="blue"
+                  label={formatMessage(card.cardCVC)}
+                  placeholder={formatMessage(card.cardCVCPlaceholder)}
+                  size="sm"
+                  rows={6}
+                  errorMessage={formState.errors.cardCVC?.message}
+                />
               )}
             />
           </Box>
