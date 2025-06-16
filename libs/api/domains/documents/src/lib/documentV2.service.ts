@@ -438,8 +438,8 @@ export class DocumentServiceV2 {
         {
           body: input.body,
           subject: input.subject,
-          requesterEmail: input.reguesterEmail,
-          requesterName: input.reguesterName,
+          requesterEmail: input.requesterEmail,
+          requesterName: input.requesterName,
         },
       )
       // if no ticket id is returned we handle error client side

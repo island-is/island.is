@@ -61,10 +61,9 @@ const ReplyForm: React.FC<Props> = ({ successfulSubmit }) => {
           input: {
             documentId: activeDocument.id,
             body: data.reply,
-            reguesterEmail:
-              profile.email ?? userProfile?.email ?? 'disa@hugsmidjan.is', // TODO: REMOVE AFTER TESTING
+            requesterEmail: profile.email ?? userProfile?.email ?? '',
             subject: activeDocument?.subject,
-            reguesterName: profile.name,
+            requesterName: profile.name,
           },
         },
       })
