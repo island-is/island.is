@@ -139,21 +139,25 @@ export const GetListsForOwner = gql`
 `
 
 export const GetCurrentCollection = gql`
-  query currentCollection($input: SignatureCollectionBaseInput!) {
-    signatureCollectionCurrent(input: $input) {
+  query collectionLatestForType($input: SignatureCollectionBaseInput!) {
+    signatureCollectionLatestForType(input: $input) {
       id
       endTime
-      startTime
+
       name
-      isActive
-      collectionType
-      status
       areas {
         id
         name
         min
         max
       }
+      candidates {
+        id
+        nationalId
+        collectionId
+        name
+      }
+      isActive
     }
   }
 `

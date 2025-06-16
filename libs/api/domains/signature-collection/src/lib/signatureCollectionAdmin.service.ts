@@ -75,11 +75,12 @@ export class SignatureCollectionAdminService {
     listId: string,
     collectionType: CollectionType,
   ): Promise<SignatureCollectionSuccess> {
-    const signatureSignee = await this.signatureCollectionBasicService.getSignee(
-      auth,
-      collectionType,
-      nationalId,
-    )
+    const signatureSignee =
+      await this.signatureCollectionBasicService.getSignee(
+        auth,
+        collectionType,
+        nationalId,
+      )
     const list = await this.list(listId, auth)
     // Current signatures should not prevent paper signatures
     const canSign =

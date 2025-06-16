@@ -21,7 +21,7 @@ const Intro = ({
         intro={intro}
         serviceProviderSlug={providerSlug}
       />
-      <ShareLink slug={slug} />
+      {slug && <ShareLink slug={slug} />}
     </Box>
   )
 }

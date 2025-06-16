@@ -37,6 +37,7 @@ const SignedList = ({
     variables: {
       input: {
         listId: listIdToUnsign,
+        collectionType,
       },
     },
   })
