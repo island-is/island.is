@@ -40,9 +40,6 @@ export const UserLicenses: FC<React.PropsWithChildren<Props>> = ({
   const { formatMessage } = useLocale()
   const currentDate = new Date()
 
-  //DUMMY
-  const k = 8
-
   const getLabel = (
     type: GenericLicenseType | 'Passport',
     isInvalid = false,
