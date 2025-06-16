@@ -8,7 +8,7 @@ import {
 export const collapseGovernment = (
   collections: MedmaelasofnunExtendedDTO[],
 ): Collection => {
-  let earliestStart: Date = new Date(Number.MAX_SAFE_INTEGER)
+  let earliestStart: Date = new Date(8640000000000000) // Max date
   let latestEndTime: Date = new Date(0)
 
   const localGovernmentalCollection: Collection = {
