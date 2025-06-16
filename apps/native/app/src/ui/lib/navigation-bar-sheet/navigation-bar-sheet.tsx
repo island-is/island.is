@@ -6,7 +6,7 @@ import {
   useWindowDimensions,
   ViewStyle,
 } from 'react-native'
-import styled, { css, useTheme } from 'styled-components/native'
+import styled, { useTheme } from 'styled-components/native'
 import { LoadingIcon } from '../../../components/nav-loading-spinner/loading-icon'
 import { OfflineIcon } from '../../../components/offline/offline-icon'
 import { useOfflineStore } from '../../../stores/offline-store'

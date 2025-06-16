@@ -1,7 +1,7 @@
 import React, { isValidElement } from 'react'
 import { FormattedDate, useIntl } from 'react-intl'
 import { Image, ImageSourcePropType, Pressable, View } from 'react-native'
-import styled, { css } from 'styled-components/native'
+import styled from 'styled-components/native'
 
 import starFilledIcon from '../../../assets/icons/star-filled.png'
 import checkmarkIcon from '../../assets/icons/checkmark.png'

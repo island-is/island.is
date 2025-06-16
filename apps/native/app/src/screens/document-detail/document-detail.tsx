@@ -13,7 +13,10 @@ import {
   NavigationFunctionComponent,
   OptionsTopBarButton,
 } from 'react-native-navigation'
-import { useNavigationButtonPress } from 'react-native-navigation-hooks'
+import {
+  useNavigationButtonPress,
+  useNavigationComponentDidAppear,
+} from 'react-native-navigation-hooks'
 import WebView from 'react-native-webview'
 import styled, { useTheme } from 'styled-components/native'
 
@@ -297,7 +300,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     },
   })
 
-  const Document = {
+  const Document: DocumentV2 = {
     ...(doc?.data || {}),
     ...(docRes.data?.documentV2 || {}),
   }
@@ -354,7 +357,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
 
   useNavigationComponentDidAppear(() => {
     setVisible(true)
-  }, [])
+  })
 
   const markDocumentAsRead = () => {
     if (Document.opened) {

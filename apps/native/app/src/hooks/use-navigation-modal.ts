@@ -22,7 +22,7 @@ type ComponentName = typeof ComponentRegistry[keyof typeof ComponentRegistry]
  */
 export const useNavigationModal = () => {
   const showModal = useCallback(
-    <P extends {} = {}>(
+    <P extends object = Record<string, never>>(
       name: ComponentName,
       options?: Omit<LayoutComponent<P>, 'name'>,
     ) => {

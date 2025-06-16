@@ -88,14 +88,7 @@ export type DocumentReplyScreenProps = {
 
 export const DocumentReplyScreen: NavigationFunctionComponent<
   DocumentReplyScreenProps
-> = ({
-  componentId,
-  senderName,
-  documentId,
-  subject,
-  isFirstReply = false,
-  onReplySuccess,
-}) => {
+> = ({ componentId, senderName, documentId, subject, onReplySuccess }) => {
   useNavigationOptions(componentId)
   const intl = useIntl()
   const { showModal, dismissModal } = useNavigationModal()

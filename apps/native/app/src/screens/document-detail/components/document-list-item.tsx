@@ -86,7 +86,7 @@ export const DocumentListItem = ({
     if (!isAndroid) {
       containerOpacity.value = withTiming(1, { duration: 200 })
     }
-  }, [])
+  }, [containerOpacity])
 
   const derivedHeight = useDerivedValue(() => {
     const duration = shouldAnimate.value ? TOGGLE_ANIMATION_DURATION : 0
