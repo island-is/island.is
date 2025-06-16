@@ -3,7 +3,6 @@ import { fn, Op } from 'sequelize'
 import {
   CaseAppealState,
   CaseState,
-  CaseType,
   completedIndictmentCaseStates,
   completedRequestCaseStates,
   indictmentCases,
