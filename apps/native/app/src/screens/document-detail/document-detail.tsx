@@ -300,7 +300,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     },
   })
 
-  const Document: DocumentV2 = {
+  const Document: Partial<DocumentV2> = {
     ...(doc?.data || {}),
     ...(docRes.data?.documentV2 || {}),
   }
@@ -341,14 +341,11 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   })
 
   useNavigationButtonPress(({ buttonId }) => {
-    if (buttonId === ButtonRegistry.DocumentArchiveButton) {
-      toggleAction(Document.archived ? 'unarchive' : 'archive', Document.id!)
+    if (buttonId === ButtonRegistry.DocumentArchiveButton && Document.id) {
+      toggleAction(Document.archived ? 'unarchive' : 'archive', Document.id)
     }
-    if (buttonId === ButtonRegistry.DocumentStarButton) {
-      toggleAction(
-        Document.bookmarked ? 'unbookmark' : 'bookmark',
-        Document.id!,
-      )
+    if (buttonId === ButtonRegistry.DocumentStarButton && Document.id) {
+      toggleAction(Document.bookmarked ? 'unbookmark' : 'bookmark', Document.id)
     }
     if (buttonId === ButtonRegistry.ShareButton && loaded) {
       onShare()
@@ -392,6 +389,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
       return
     }
     markDocumentAsRead()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Document.id])
 
   const fadeAnim = useRef(new Animated.Value(0)).current
@@ -404,7 +402,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
         useNativeDriver: true,
       }).start()
     }
-  }, [loaded])
+  }, [loaded, fadeAnim])
 
   /**
    * Navigate to the document reply modal.
