@@ -94,7 +94,7 @@ const InputNationalId: FC<Props> = (props) => {
       mask={isDateOfBirth ? '__.__.____' : '______-____'}
       replacement={{ _: /\d/ }}
       component={Input}
-      value={inputValue}
+      value={inputValue ?? value}
       onChange={handleChange}
       onBlur={handleBlur}
       disabled={disabled}
