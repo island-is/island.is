@@ -21,13 +21,19 @@ enum JobScheduleType {
   WeekdaysAt9 = 'weekdaysAt9',
 }
 
+enum JobType {
+  ArchiveCase = 'archiveCases',
+  PostDailyHearingInSlack = 'postDailyHearingInSlack',
+  SendWaitingForConfirmation = 'sendWaitingForConfirmation',
+}
+
 type JobConfig = {
+  type: JobType
   jobScheduleType: JobScheduleType
-  function: () => Promise<void | Logger>
 }
 
 const getTime = (hour: number) => {
-  const todayAtHour = now()
+  const todayAtHour = new Date()
   return todayAtHour.setHours(hour, 0, 0, 0)
 }
 
@@ -45,6 +51,7 @@ const getCurrentJobScheduleType = () => {
   const today2AM = getTime(2)
   const today9AM = getTime(9)
 
+  console.log({ timeNow, today2AM, today9AM })
   if (isBeforeOrEqual(today2AM, timeNow) && isAfter(today2AM, before)) {
     return JobScheduleType.EveryDayAt2
   }
@@ -60,7 +67,11 @@ const getCurrentJobScheduleType = () => {
 }
 
 const minutesBetween = (startTime: Date, endTime: Date) => {
-  return Math.floor((endTime.getTime() - startTime.getTime()) / (1000 * 60))
+  const minutes = Math.floor(
+    (endTime.getTime() - startTime.getTime()) / (1000 * 60),
+  )
+  console.log({ minutes })
+  return minutes
 }
 
 @Injectable()
@@ -72,7 +83,7 @@ export class AppService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  private addMessagesForIndictmentsWaitingForConfirmationToQueue() {
+  private async addMessagesForIndictmentsWaitingForConfirmationToQueue() {
     return this.messageService
       .sendMessagesToQueue([
         {
@@ -89,8 +100,6 @@ export class AppService {
   }
 
   private async archiveCases() {
-    console.log({ archiveUrl: this.config.backendUrl })
-
     const startTime = now()
 
     let done = false
@@ -121,6 +130,7 @@ export class AppService {
 
           return true
         })
+      console.log({ startTime })
     } while (
       !done &&
       minutesBetween(startTime, now()) < this.config.timeToLiveMinutes
@@ -152,23 +162,36 @@ export class AppService {
     }
   }
 
+  private async runTargetJob(type: JobType) {
+    switch (type) {
+      case JobType.ArchiveCase:
+        console.log('archive cases')
+        await this.archiveCases()
+        break
+      case JobType.PostDailyHearingInSlack:
+        await this.postDailyHearingArrangementSummary()
+        break
+      case JobType.SendWaitingForConfirmation:
+        await this.addMessagesForIndictmentsWaitingForConfirmationToQueue()
+        break
+    }
+  }
   async run() {
     this.logger.info('Scheduler starting')
 
     // create the job config
     const jobs: JobConfig[] = [
       {
+        type: JobType.ArchiveCase,
         jobScheduleType: JobScheduleType.EveryDayAt2,
-        function: this.archiveCases,
       },
       {
+        type: JobType.PostDailyHearingInSlack,
         jobScheduleType: JobScheduleType.EveryDayAt2,
-        function: this.postDailyHearingArrangementSummary,
       },
-
       {
+        type: JobType.SendWaitingForConfirmation,
         jobScheduleType: JobScheduleType.WeekdaysAt9,
-        function: this.addMessagesForIndictmentsWaitingForConfirmationToQueue,
       },
     ]
 
@@ -181,8 +204,9 @@ export class AppService {
     const filteredJobs = jobs.filter(
       (job) => job.jobScheduleType === currentJobScheduleType,
     )
-    console.log({ filteredJobs })
-    filteredJobs.forEach(async (job) => await job.function())
+    // filteredJobs.forEach(async (job) => await this.runTargetJob(job.type))
+
+    // await this.archiveCases()
 
     this.logger.info('Scheduler done')
   }
