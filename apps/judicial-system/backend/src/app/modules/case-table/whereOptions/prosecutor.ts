@@ -3,6 +3,7 @@ import { fn, Op } from 'sequelize'
 import {
   CaseAppealState,
   CaseState,
+  CaseType,
   completedIndictmentCaseStates,
   completedRequestCaseStates,
   indictmentCases,
@@ -45,6 +46,7 @@ export const prosecutorRequestCasesInProgressWhereOptions = (user: TUser) => ({
 
 export const prosecutorRequestCasesActiveWhereOptions = (user: TUser) => ({
   ...prosecutorRequestCasesSharedWhereOptions(user),
+  type: restrictionCases,
   state: [CaseState.ACCEPTED],
   valid_to_date: { [Op.or]: [null, { [Op.gte]: fn('NOW') }] },
 })
