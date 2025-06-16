@@ -619,6 +619,23 @@ const created: CaseTableCellGenerator<StringValue> = {
   },
 }
 
+const prosecutor: CaseTableCellGenerator<StringValue> = {
+  includes: {
+    prosecutor: {
+      model: User,
+      attributes: ['name'],
+    },
+  },
+  generate: (c: Case): CaseTableCell<StringValue> => {
+    const prosecutor = c.prosecutor
+    if (!prosecutor) {
+      return generateCell()
+    }
+
+    return generateCell({ str: prosecutor.name }, prosecutor.name)
+  },
+}
+
 const validFromTo: CaseTableCellGenerator<StringValue> = {
   attributes: [
     'type',
@@ -1040,6 +1057,7 @@ export const caseTableCellGenerators: Record<
   appealState,
   courtOfAppealsHead,
   created,
+  prosecutor,
   validFromTo,
   rulingDate,
   requestCaseState,
