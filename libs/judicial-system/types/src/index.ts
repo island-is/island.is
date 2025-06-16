@@ -145,10 +145,7 @@ export { type Lawyer, mapToLawyer } from './lib/lawyer'
 
 export { type CourtDocument } from './lib/courtDocument'
 
-export { type CaseTableColumnKey } from './lib/tables/caseTableColumn'
-export {
-  CaseTableType,
-  getCaseTableType,
-  caseTables,
-} from './lib/tables/caseTable'
+export { type CaseTableColumnKey } from './lib/tables/caseTableColumnTypes'
+export { getCaseTableType, caseTables } from './lib/tables/caseTable'
+export { CaseTableType } from './lib/tables/caseTableTypes'
 export { getCaseTableGroups } from './lib/tables/caseTableGroup'
