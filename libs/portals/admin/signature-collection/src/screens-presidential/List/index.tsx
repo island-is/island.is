@@ -19,6 +19,7 @@ import ActionDrawer from '../../shared-components/compareLists/ActionDrawer'
 import { PaperSignees } from '../../shared-components/paperSignees'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import { SignatureCollectionPaths } from '../../lib/paths'
+import { Actions } from '../../shared-components/compareLists/ActionDrawer/ListActions'
 
 export const List = () => {
   const { list } = useLoaderData() as {
@@ -64,7 +65,17 @@ export const List = () => {
                 img={nationalRegistryLogo}
                 imgPosition="right"
                 imgHiddenBelow="sm"
-                buttonGroup={<ActionDrawer />}
+                buttonGroup={
+                  <ActionDrawer
+                    allowedActions={[
+                      Actions.LockList,
+                      Actions.ReviewComplete,
+                      Actions.ExtendDeadline,
+                      Actions.RemoveCandidate,
+                    ]}
+                    withManagers
+                  />
+                }
                 marginBottom={4}
               />
               <Divider />
@@ -84,7 +95,10 @@ export const List = () => {
                 </Box>
               )}
               <Signees list={list} />
-              <PaperSignees listId={list.id} />
+              <PaperSignees
+                listId={list.id}
+                collectionType={list.collectionType}
+              />
             </>
           )}
         </GridColumn>
