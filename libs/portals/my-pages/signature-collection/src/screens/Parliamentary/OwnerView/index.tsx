@@ -26,6 +26,8 @@ import { cancelCollectionMutation } from '../../../hooks/graphql/mutations'
 import SignedList from '../../shared/SignedList'
 import Managers from '../../shared/Managers'
 
+const collectionType = SignatureCollectionCollectionType.Parliamentary
+
 const OwnerView = ({
   refetchIsOwner,
   currentCollection,
@@ -41,10 +43,7 @@ const OwnerView = ({
 
   const { formatMessage } = useLocale()
   const { listsForOwner, loadingOwnerLists, refetchListsForOwner } =
-    useGetListsForOwner(
-      currentCollection?.id || '',
-      SignatureCollectionCollectionType.Parliamentary,
-    )
+    useGetListsForOwner(collectionType, currentCollection?.id || '')
 
   const [cancelCollection] = useMutation<SignatureCollectionSuccess>(
     cancelCollectionMutation,
@@ -76,7 +75,7 @@ const OwnerView = ({
       <Box>
         <SignedList
           currentCollection={currentCollection}
-          collectionType={SignatureCollectionCollectionType.Parliamentary}
+          collectionType={collectionType}
         />
         <Box
           display="flex"
@@ -192,7 +191,7 @@ const OwnerView = ({
           ))
         )}
       </Box>
-      <Managers />
+      <Managers collectionType={collectionType} />
     </Stack>
   )
 }

@@ -15,6 +15,8 @@ import SignedList from '../../shared/SignedList'
 import CancelCollection from './CancelCollection'
 import ShareLink from '../../shared/ShareLink'
 
+const collectionType = SignatureCollectionCollectionType.Presidential
+
 const OwnerView = ({
   currentCollection,
 }: {
@@ -25,8 +27,8 @@ const OwnerView = ({
   const user = useUserInfo()
   const { formatMessage } = useLocale()
   const { listsForOwner, loadingOwnerLists } = useGetListsForOwner(
+    collectionType,
     currentCollection?.id || '',
-    SignatureCollectionCollectionType.Presidential,
   )
 
   return (
@@ -57,7 +59,7 @@ const OwnerView = ({
             {!user?.profile.actor && (
               <SignedList
                 currentCollection={currentCollection}
-                collectionType={SignatureCollectionCollectionType.Presidential}
+                collectionType={collectionType}
               />
             )}
 

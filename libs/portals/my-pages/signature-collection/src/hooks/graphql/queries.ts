@@ -167,8 +167,8 @@ export const GetCanSign = gql`
 `
 
 export const GetCollectors = gql`
-  query SignatureCollectionCollectors {
-    signatureCollectionCollectors {
+  query SignatureCollectionCollectors($input: SignatureCollectionBaseInput!) {
+    signatureCollectionCollectors(input: $input) {
       nationalId
       name
     }

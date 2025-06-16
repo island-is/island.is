@@ -22,7 +22,7 @@ const OwnerView = ({
   const navigate = useNavigate()
 
   const { listsForOwner, loadingOwnerLists, refetchListsForOwner } =
-    useGetListsForOwner(currentCollection?.id || '', collectionType)
+    useGetListsForOwner(collectionType, currentCollection?.id || '')
 
   return (
     <Box>
@@ -74,7 +74,7 @@ const OwnerView = ({
               </Box>
             ))}
           </Box>
-          <Managers />
+          <Managers collectionType={collectionType} />
         </Stack>
       )}
     </Box>

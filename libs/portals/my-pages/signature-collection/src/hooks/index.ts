@@ -18,8 +18,8 @@ import {
   SignatureCollection,
   SignatureCollectionSignedList,
   SignatureCollectionCollector,
+  SignatureCollectionCollectionType,
 } from '@island.is/api/schema'
-import { SignatureCollectionCollectionType } from '@island.is/portals/my-pages/graphql'
 
 export const useGetSignatureList = (listId: string) => {
   const {
@@ -41,7 +41,10 @@ export const useGetSignatureList = (listId: string) => {
   return { listInfo, refetchSignatureList, loadingList }
 }
 
-export const useGetListSignees = (listId: string) => {
+export const useGetListSignees = (
+  listId: string,
+  collectionType: SignatureCollectionCollectionType,
+) => {
   const {
     data: listSignatures,
     refetch: refetchListSignees,
@@ -52,6 +55,7 @@ export const useGetListSignees = (listId: string) => {
     variables: {
       input: {
         listId,
+        collectionType,
       },
     },
   })
@@ -87,7 +91,6 @@ export const useGetListsForUser = (
   collectionType: SignatureCollectionCollectionType,
   collectionId?: string,
 ) => {
-  console.log('here ever??', collectionType, collectionId)
   const {
     data: getListsForUser,
     loading: loadingUserLists,
@@ -117,8 +120,8 @@ export const useGetListsForUser = (
 }
 
 export const useGetListsForOwner = (
-  collectionId: string,
   collectionType: SignatureCollectionCollectionType,
+  collectionId: string,
 ) => {
   const {
     data: getListsForOwner,
@@ -193,6 +196,7 @@ export const useGetCurrentCollection = (
 }
 
 export const useGetCanSign = (
+  collectionType: SignatureCollectionCollectionType,
   signeeId: string,
   listId: string,
   isValidId: boolean,
@@ -204,6 +208,7 @@ export const useGetCanSign = (
         input: {
           signeeNationalId: signeeId,
           listId: listId,
+          collectionType,
         },
       },
       skip: !signeeId || signeeId.length !== 10 || !isValidId,
@@ -213,9 +218,18 @@ export const useGetCanSign = (
   return { canSign, loadingCanSign }
 }
 
-export const useGetCollectors = () => {
+export const useGetCollectors = (
+  collectionType: SignatureCollectionCollectionType,
+) => {
   const { data: getCollectorsData, loading: loadingCollectors } = useQuery(
     GetCollectors,
+    {
+      variables: {
+        input: {
+          collectionType,
+        },
+      },
+    },
   )
   const collectors =
     (getCollectorsData?.signatureCollectionCollectors as SignatureCollectionCollector[]) ??
@@ -223,13 +237,17 @@ export const useGetCollectors = () => {
   return { collectors, loadingCollectors }
 }
 
-export const useGetPdfReport = (listId: string) => {
+export const useGetPdfReport = (
+  listId: string,
+  collectionType: SignatureCollectionCollectionType,
+) => {
   const { data: pdfReportData, loading: loadingReport } = useQuery(
     getPdfReport,
     {
       variables: {
         input: {
           listId,
+          collectionType,
         },
       },
       skip: !listId,

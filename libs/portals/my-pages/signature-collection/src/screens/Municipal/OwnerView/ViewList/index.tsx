@@ -6,6 +6,9 @@ import { useGetSignatureList } from '../../../../hooks'
 import format from 'date-fns/format'
 import Signees from '../../../shared/Signees'
 import ListActions from './ListActions'
+import { SignatureCollectionCollectionType } from '@island.is/api/schema'
+
+const collectionType = SignatureCollectionCollectionType.LocalGovernmental
 
 const ViewList = () => {
   useNamespaces('sp.signatureCollection')
@@ -16,7 +19,7 @@ const ViewList = () => {
   return (
     <Stack space={5}>
       <Text>hello</Text>
-      {/*<Text variant="h3">
+      <Text variant="h3">
         {listInfo?.title ?? 'Test - Borgarbyggð Framboð A'}
       </Text>
       <Box>
@@ -29,7 +32,7 @@ const ViewList = () => {
         <ListActions />
         <Divider />
       </Box>
-      <Signees />*/}
+      <Signees collectionType={collectionType} />
     </Stack>
   )
 }

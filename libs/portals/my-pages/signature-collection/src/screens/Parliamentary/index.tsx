@@ -27,8 +27,8 @@ const SignatureCollectionParliamentary = () => {
     loadingCurrentCollection,
   } = useGetCurrentCollection(SignatureCollectionCollectionType.Parliamentary)
   const { listsForOwner } = useGetListsForOwner(
-    currentCollection?.id ?? '',
     collectionType,
+    currentCollection?.id ?? '',
   )
 
   console.log(isOwner, currentCollection)

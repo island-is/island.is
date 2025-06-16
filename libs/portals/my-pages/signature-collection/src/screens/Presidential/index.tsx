@@ -11,15 +11,15 @@ import { m } from '../../lib/messages'
 import SigneeView from '../shared/SigneeView'
 import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 
+const collectionType = SignatureCollectionCollectionType.Presidential
+
 const SignatureCollectionPresidential = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
 
-  const { isOwner, loadingIsOwner } = useIsOwner(
-    SignatureCollectionCollectionType.Presidential,
-  )
+  const { isOwner, loadingIsOwner } = useIsOwner(collectionType)
   const { currentCollection, loadingCurrentCollection } =
-    useGetCurrentCollection(SignatureCollectionCollectionType.Presidential)
+    useGetCurrentCollection(collectionType)
 
   return (
     <Box>
@@ -38,7 +38,7 @@ const SignatureCollectionPresidential = () => {
             ) : (
               <SigneeView
                 currentCollection={currentCollection}
-                collectionType={SignatureCollectionCollectionType.Presidential}
+                collectionType={collectionType}
               />
             )
           ) : (

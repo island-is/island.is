@@ -14,9 +14,11 @@ import {
 } from '@island.is/api/schema'
 
 const SignedList = ({
+  collectionType,
   currentCollection,
   collectionType,
 }: {
+  collectionType: SignatureCollectionCollectionType
   currentCollection: SignatureCollection
   collectionType: SignatureCollectionCollectionType
 }) => {

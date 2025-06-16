@@ -4,10 +4,15 @@ import { useGetCollectors } from '../../../hooks'
 import { m } from '../../../lib/messages'
 import { CollectorSkeleton } from '../../../lib/skeletons'
 import { formatNationalId } from '@island.is/portals/core'
+import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 
-const Managers = () => {
+const Managers = ({
+  collectionType,
+}: {
+  collectionType: SignatureCollectionCollectionType
+}) => {
   const { formatMessage } = useLocale()
-  const { collectors, loadingCollectors } = useGetCollectors()
+  const { collectors, loadingCollectors } = useGetCollectors(collectionType)
 
   return (
     <Box>

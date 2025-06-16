@@ -251,6 +251,7 @@ export const buildAsyncSelectField = (
     isSearchable,
     isMulti,
     updateOnSelect,
+    isClearable,
   } = data
 
   return {
@@ -266,6 +267,7 @@ export const buildAsyncSelectField = (
     isSearchable,
     isMulti,
     updateOnSelect,
+    isClearable,
   }
 }
 
@@ -1156,7 +1158,15 @@ export const buildAccordionField = (
 export const buildBankAccountField = (
   data: Omit<BankAccountField, 'type' | 'component' | 'children'>,
 ): BankAccountField => {
-  const { title = '', id, marginBottom, marginTop, titleVariant } = data
+  const {
+    title = '',
+    id,
+    marginBottom,
+    marginTop,
+    titleVariant,
+    defaultValue,
+  } = data
+
   return {
     children: undefined,
     id,
@@ -1166,6 +1176,7 @@ export const buildBankAccountField = (
     titleVariant,
     type: FieldTypes.BANK_ACCOUNT,
     component: FieldComponents.BANK_ACCOUNT,
+    defaultValue,
   }
 }
 
@@ -1179,6 +1190,7 @@ export const buildOverviewField = (
     description,
     backId,
     items,
+    loadItems,
     attachments,
     tableData,
   } = data
@@ -1190,6 +1202,7 @@ export const buildOverviewField = (
     description,
     backId,
     items,
+    loadItems,
     attachments,
     tableData,
     type: FieldTypes.OVERVIEW,
