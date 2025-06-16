@@ -27,7 +27,6 @@ export class UserProfileService {
   ) {}
 
   userProfileApiWithAuth(auth: Auth) {
-    const k = 8 // dummy
     return this.userProfileApi.withMiddleware(new AuthMiddleware(auth))
   }
 
