@@ -15,13 +15,16 @@ import { useToggleListReviewMutation } from './toggleListReview.generated'
 import { useRevalidator } from 'react-router-dom'
 import { m } from '../../lib/messages'
 import { ListStatus } from '../../lib/utils'
+import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 
 const CompleteListReview = ({
   listId,
   listStatus,
+  collectionType,
 }: {
   listId: string
   listStatus: string
+  collectionType: SignatureCollectionCollectionType
 }) => {
   const { formatMessage } = useLocale()
   const { revalidate } = useRevalidator()
@@ -38,6 +41,7 @@ const CompleteListReview = ({
     variables: {
       input: {
         listId,
+        collectionType,
       },
     },
     onCompleted: () => {
