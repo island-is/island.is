@@ -13,7 +13,7 @@ export class ReplyInput {
 
   @Field()
   @IsString()
-  readonly reguesterEmail!: string
+  readonly requesterEmail!: string
 
   @Field(() => String, { nullable: true })
   @IsOptional()
