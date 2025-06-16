@@ -114,7 +114,7 @@ export interface FinancialIndexationEntry {
   value: number
 }
 
-export function listOfLastMonths(numberOfMonths: number) {
+export const listOfLastMonths = (numberOfMonths: number) => {
   const months: string[] = []
   const now = new Date()
   // Start from next month
@@ -142,7 +142,7 @@ export function listOfLastMonths(numberOfMonths: number) {
   return months
 }
 
-function parsePXMonth(monthStr: string): Date {
+const parsePXMonth = (monthStr: string): Date => {
   // Expects format: "YYYYMmm" (e.g. "2025M06")
   const match = /^(\d{4})M(\d{2})$/.exec(monthStr)
   if (!match) throw new Error('Invalid month format: ' + monthStr)
@@ -151,7 +151,7 @@ function parsePXMonth(monthStr: string): Date {
   return new Date(year, month, 1)
 }
 
-export async function fetchFinancialIndexationForMonths(months: string[]) {
+export const fetchFinancialIndexationForMonths = async (months: string[]) => {
   const url =
     'https://px.hagstofa.is:443/pxis/api/v1/is/Efnahagur/visitolur/1_vnv/1_vnv/VIS01004.px'
 
