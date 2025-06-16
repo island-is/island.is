@@ -104,10 +104,10 @@ describe('AppService - Run', () => {
   describe('Jobs at 2:00 AM: Continue archiving cases until time is up', () => {
     beforeEach(async () => {
       mockNow
-        .mockReturnValueOnce(new Date('2020-01-01T02:00:00.000Z')) // time set tests start, used as a base to get relevant job schedule type
-        .mockReturnValueOnce(new Date('2020-01-01T02:00:00.000Z')) // time set when archive cases start
-        .mockReturnValueOnce(new Date('2020-01-01T02:00:00.000Z')) // time set after once iteration of archive cases
-      // default date above is used when return value once is not specified, which will trigger the archive cases iteration to stop
+        .mockReturnValueOnce(new Date('2020-01-01T02:00:00.000Z')) // time set when finding relevant job schedule type
+        .mockReturnValueOnce(new Date('2020-01-01T02:00:00.000Z')) // time set when archive cases starts
+        .mockReturnValueOnce(new Date('2020-01-01T02:00:00.000Z')) // time set after one iteration of archive cases
+      // default date above defined earlier us used when return value once is not specified for future now() calls
 
       mockFetch.mockResolvedValue({
         ok: true,

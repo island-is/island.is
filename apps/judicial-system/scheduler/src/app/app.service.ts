@@ -32,6 +32,22 @@ type JobConfig = {
   jobScheduleType: JobScheduleType
 }
 
+// create the job config
+const JOBS: JobConfig[] = [
+  {
+    type: JobType.ArchiveCase,
+    jobScheduleType: JobScheduleType.EveryDayAt2,
+  },
+  {
+    type: JobType.PostDailyHearingInSlack,
+    jobScheduleType: JobScheduleType.EveryDayAt2,
+  },
+  {
+    type: JobType.SendWaitingForConfirmation,
+    jobScheduleType: JobScheduleType.WeekdaysAt9,
+  },
+]
+
 // pass down today as a date prop to limit calls to now() to simplify mocked calls in tests
 const getTodayAtTime = (today: Date, hour: number) => {
   const todayAtHour = new Date(today)
@@ -173,29 +189,13 @@ export class AppService {
   async run() {
     this.logger.info('Scheduler starting')
 
-    // create the job config
-    const jobs: JobConfig[] = [
-      {
-        type: JobType.ArchiveCase,
-        jobScheduleType: JobScheduleType.EveryDayAt2,
-      },
-      {
-        type: JobType.PostDailyHearingInSlack,
-        jobScheduleType: JobScheduleType.EveryDayAt2,
-      },
-      {
-        type: JobType.SendWaitingForConfirmation,
-        jobScheduleType: JobScheduleType.WeekdaysAt9,
-      },
-    ]
-
     const currentJobScheduleType = getCurrentJobScheduleType()
     if (!currentJobScheduleType) {
       this.logger.info('Scheduler done: No jobs executed')
       return
     }
 
-    const filteredJobs = jobs.filter(
+    const filteredJobs = JOBS.filter(
       (job) => job.jobScheduleType === currentJobScheduleType,
     )
     for (const job of filteredJobs) {
