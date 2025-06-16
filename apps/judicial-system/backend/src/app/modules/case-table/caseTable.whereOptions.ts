@@ -205,7 +205,7 @@ const prisonDoneWhereOptions = {
   valid_to_date: { [Op.lt]: fn('NOW') },
 }
 
-// Prison Admin Indictments
+// Prison Admin restriction cases
 
 const prisonAdminSharedWhereOptions = {
   is_archived: false,
@@ -222,6 +222,8 @@ const prisonAdminDoneWhereOptions = {
   ...prisonAdminSharedWhereOptions,
   valid_to_date: { [Op.lt]: fn('NOW') },
 }
+
+// Prison Admin Indictments
 
 const prisonAdminIndictmentSharedWhereOptions = {
   is_archived: false,
