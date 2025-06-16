@@ -148,7 +148,7 @@ export const mapCollection = (
     hasExtendedLists,
   })
   const governmentalArea = CollectionType.LocalGovernmental
-    ? areas[0].id?.toString()
+    ? areas[0]?.id?.toString()
     : undefined
   return {
     id: id.toString(),
