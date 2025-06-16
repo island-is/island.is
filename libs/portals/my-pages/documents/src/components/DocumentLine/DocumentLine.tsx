@@ -201,7 +201,7 @@ export const DocumentLine: FC<Props> = ({
                     } else
                       return {
                         ...item,
-                        hide: false, // true, //TODO check if it should still be collapsable
+                        hide: false,
                       }
                   },
                 ),
@@ -374,7 +374,7 @@ export const DocumentLine: FC<Props> = ({
               {documentLine.replyable && (
                 <Box
                   paddingX="smallGutter"
-                  marginLeft={'smallGutter'}
+                  marginLeft="smallGutter"
                   display="flex"
                   justifyContent="center"
                   alignItems="center"

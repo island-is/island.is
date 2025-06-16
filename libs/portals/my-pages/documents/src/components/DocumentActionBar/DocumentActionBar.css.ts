@@ -30,11 +30,6 @@ globalStyle(`${filterBtns} button, ${filterBtns} a > span`, {
   backgroundColor: theme.color.white,
   width: 40,
   height: 40,
-  // '@media': {
-  //   [`screen and (max-width: ${theme.breakpoints.md}px)`]: {
-  //     backgroundColor: theme.color.blue100,
-  //   },
-  // },
 })
 
 globalStyle(`${filterBtns} button svg, ${filterBtns} a > span svg`, {
