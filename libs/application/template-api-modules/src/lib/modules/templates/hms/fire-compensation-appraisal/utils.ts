@@ -6,6 +6,7 @@ import {
 } from '@island.is/clients/hms-application-system'
 import { Fasteign } from '@island.is/clients/assets'
 import { AttachmentData } from '../../../shared/services/attachment-s3.service'
+import crypto from 'crypto'
 
 // The payment structure is as follows:
 // 1. If the current appraisal is less than 25 million, the payment is 6.000kr
@@ -46,9 +47,9 @@ export const mapAnswersToApplicationFilesContentDto = (
   return (
     files?.map((file) => {
       return {
-        fileID: file.key,
+        fileID: hashToLength20(file.key.split('_')[0]),
         applicationID: application.id,
-        content: file.fileContent, // TODO get the content from the file
+        content: file.fileContent,
         applicationType: APPLICATION_TYPE,
       }
     }) ?? []
@@ -68,13 +69,15 @@ export const mapAnswersToApplicationDto = (
   )?.find((realEstate) => realEstate.fasteignanumer === selectedRealEstateId)
 
   const parsedFiles = files?.map((file) => {
+    const ending = file.key.split('.').pop()
+    const tegund = ending === 'pdf' ? 'application/pdf' : 'image/jpeg'
     return {
-      flokkur: 2,
-      heiti: file.key,
+      flokkur: ending === 'pdf' ? 5 : 2,
+      heiti: file.key.replace(/^[^_]*_/, ''), // This is limited to varChar(100) in the HMS database but most opperating systems allow 256 characters j
       dags: new Date(),
-      tegund: file.key.split('.').pop() ?? '',
-      fileID: file.key,
-      ending: file.key.split('.').pop() ?? '',
+      tegund,
+      fileID: hashToLength20(file.key.split('_')[0]),
+      ending: `.${ending}`,
     }
   })
 
@@ -121,7 +124,7 @@ export const mapAnswersToApplicationDto = (
         gildi:
           getValueViaPath<Array<string>>(
             answers,
-            'confirmReadFireCompensationInfo',
+            'confirmReadPrivacyPolicy',
           )?.[1] === YES
             ? 'true'
             : 'false',
@@ -220,4 +223,12 @@ export const mapAnswersToApplicationDto = (
     },
     files: parsedFiles,
   }
+}
+
+// This is a helper function to hash the fileID to a length of 20 characters
+// This is because HMS has this set to varChar(20) in their database and they don't want
+// to change it. This has the potential to cause collisions but it's unlikely.
+export const hashToLength20 = (input: string): string => {
+  const fullHash = crypto.createHash('sha256').update(input).digest('base64')
+  return fullHash.slice(0, 20) // Truncate to 20 characters
 }
