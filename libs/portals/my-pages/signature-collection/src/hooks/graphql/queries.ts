@@ -162,32 +162,6 @@ export const GetCurrentCollection = gql`
   }
 `
 
-export const GetLatestCollectionForType = gql`
-  query collectionLatestForType(
-    $input: SignatureCollectionCollectionTypeInput!
-  ) {
-    signatureCollectionLatestForType(input: $input) {
-      id
-      endTime
-      startTime
-      name
-      areas {
-        id
-        name
-        min
-        max
-      }
-      candidates {
-        id
-        nationalId
-        collectionId
-        name
-      }
-      isActive
-    }
-  }
-`
-
 export const GetCanSign = gql`
   query Query($input: SignatureCollectionCanSignFromPaperInput!) {
     signatureCollectionCanSignFromPaper(input: $input)

@@ -147,9 +147,10 @@ export const mapCollection = (
     hasActiveLists,
     hasExtendedLists,
   })
-  const governmentalArea = CollectionType.LocalGovernmental
-    ? areas[0]?.id?.toString()
-    : undefined
+  const governmentalArea =
+    collectionType === CollectionType.LocalGovernmental && areas.length > 0
+      ? areas[0].id?.toString()
+      : undefined
   return {
     id: id.toString(),
     name: collection.kosningNafn ?? '',
