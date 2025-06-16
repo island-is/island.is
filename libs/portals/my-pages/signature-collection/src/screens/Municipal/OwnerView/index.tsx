@@ -21,8 +21,8 @@ const OwnerView = ({
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
-  const { listsForOwner, loadingOwnerLists, refetchListsForOwner } =
-    useGetListsForOwner(collectionType, currentCollection?.id || '')
+  const { listsForOwner, loadingOwnerLists } =
+    useGetListsForOwner(collectionType, currentCollection?.id)
 
   return (
     <Box>

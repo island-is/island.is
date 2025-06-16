@@ -29,8 +29,6 @@ const SignatureCollectionParliamentary = () => {
     currentCollection?.id ?? '',
   )
 
-  console.log(isOwner, currentCollection)
-
   return (
     <Box>
       <Intro
