@@ -34,11 +34,13 @@ export interface Vehicle {
     date: Date
     internalId?: number
   }
+  co2?: string
 }
 
 export const mapVehicleResponseDto = (
   data?: CurrentVehiclesWithMilageAndNextInspDtoListPagedResponse,
 ): VehiclesResponseDto | null => {
+  console.log(data)
   if (
     !data ||
     !data.pageNumber ||
@@ -72,6 +74,7 @@ export const mapVehicleResponseDto = (
                 }
               : undefined,
             userRole: d.role ?? undefined,
+            co2: d.co2?.toString() ?? undefined,
             make: d.make ?? undefined,
             color:
               d.colorName && d.colorCode
