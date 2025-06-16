@@ -10,6 +10,8 @@ import {
   buildDisplayField,
   buildHiddenInputWithWatchedValue,
 } from '@island.is/application/core'
+import { Application, Field } from '@island.is/application/types'
+import { Locale } from '@island.is/shared/types'
 import {
   getPaymentMethodOptions,
   getRentalAmountPaymentDateOptions,
@@ -25,8 +27,8 @@ import {
   rentalPaymentDateIsOther,
   rentalPaymentMethodIsBankTransfer,
   rentalPaymentMethodIsOther,
-  getIndexDateOptions,
-  getIndexRateForDate,
+  getConsumerIndexDateOptions,
+  getIndexRateForConsumerIndexDate,
 } from '../../../utils/rentalPeriodUtils'
 import { rentalAmount } from '../../../lib/messages'
 
@@ -84,9 +86,13 @@ export const RentalPeriodAmount = buildSubSection({
         buildSelectField({
           id: 'rentalAmount.indexDate',
           title: rentalAmount.indexDateLabel,
-          // TODO: Replace hardcoded with dynamic options from indexation api when available
-          options: getIndexDateOptions(),
-          defaultValue: getIndexDateOptions()[0]?.value || '',
+          options: (application: Application) => {
+            return getConsumerIndexDateOptions(application)
+          },
+          defaultValue: (application: Application) => {
+            const options = getConsumerIndexDateOptions(application)
+            return options.length > 0 ? options[0].value : undefined
+          },
           condition: rentalAmountConnectedToIndex,
           width: 'half',
           marginTop: 1,
@@ -95,7 +101,8 @@ export const RentalPeriodAmount = buildSubSection({
           id: 'rentalAmount.indexRate',
           label: rentalAmount.indexRateLabel,
           variant: 'text',
-          value: (answers) => getIndexRateForDate(answers),
+          value: (answers, externalData) =>
+            getIndexRateForConsumerIndexDate(answers, externalData),
           condition: rentalAmountConnectedToIndex,
           width: 'half',
         }),

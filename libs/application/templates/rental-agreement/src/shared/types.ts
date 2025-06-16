@@ -1,4 +1,5 @@
 import { YesOrNoEnum } from '@island.is/application/core'
+import { FormTextWithLocale } from '@island.is/application/types'
 import { NextStepInReviewOptions } from '../utils/enums'
 
 export type Maybe<T> = T | null
@@ -97,6 +98,11 @@ export interface RentalPeriodSection {
   isDefinite: string | undefined
 }
 
+export interface ConsumerIndexItem {
+  month: string
+  value: string
+}
+
 export interface RentalAmountSection {
   rentalAmount: string | undefined
   isIndexConnected: string | undefined
@@ -121,6 +127,7 @@ export interface SecurityDepositSection {
   securityDepositAmount: string | undefined
   securityDepositAmountOther: string | undefined
   securityAmountCalculated: string | undefined
+  securityAmountHiddenRentalAmount: string | undefined
 }
 
 export interface OtherFeesSection {
@@ -134,6 +141,7 @@ export interface OtherFeesSection {
   heatingCostMeterStatusDate: string | undefined
   heatingCostMeterNumber: string | undefined
   heatingCostMeterStatus: string | undefined
+  otherCostPayedByTenant: YesOrNoEnum | undefined
   otherCostItems: CostField[] | undefined
 }
 
