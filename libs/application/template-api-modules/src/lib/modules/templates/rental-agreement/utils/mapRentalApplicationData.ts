@@ -125,9 +125,7 @@ export const mapRentalApplicationData = (
             ? RentIndex.ConsumerPriceIndex
             : RentIndex.None,
         indexRate:
-          isIndexConnected === YesOrNoEnum.YES && indexRate
-            ? parseToNumber(indexRate)
-            : null,
+          isIndexConnected === YesOrNoEnum.YES && indexRate ? indexRate : null,
       },
       payment: {
         method: paymentMethod as PaymentMethod,

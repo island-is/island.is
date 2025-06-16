@@ -104,7 +104,7 @@ const extractRentalAmount = (
     'rentalAmount.isIndexConnected',
   ),
   indexDate: getValueViaPath<string>(answers, 'rentalAmount.indexDate'),
-  indexRate: getValueViaPath<string>(answers, 'rentalAmount.indexRate'),
+  indexRate: getValueViaPath<number>(answers, 'rentalAmount.indexRate'),
   paymentMethod: getValueViaPath<string>(
     answers,
     'rentalAmount.paymentMethodOptions',

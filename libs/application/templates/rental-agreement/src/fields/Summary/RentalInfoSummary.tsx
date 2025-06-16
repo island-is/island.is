@@ -133,11 +133,15 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
             value={(rentalAmount && formatCurrency(rentalAmount)) || '-'}
           />
         </GridColumn>
-        {isIndexConnected?.includes(YesOrNoEnum.YES) && indexRate && (
-          <GridColumn span={['12/12', '4/12']}>
-            <KeyValue label={summary.indexRateLabel} value={indexRate} />
-          </GridColumn>
-        )}
+        {isIndexConnected?.includes(YesOrNoEnum.YES) &&
+          indexRate !== undefined && (
+            <GridColumn span={['12/12', '4/12']}>
+              <KeyValue
+                label={summary.indexRateLabel}
+                value={indexRate.toString() || '-'}
+              />
+            </GridColumn>
+          )}
         <GridColumn span={['12/12', '4/12']}>
           <KeyValue
             label={summary.paymentDateOptionsLabel}

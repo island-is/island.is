@@ -102,7 +102,7 @@ export const getSecurityDepositTypeDescription = (
 // Utils for getting index from Hagstofan
 interface ApiDataItem {
   key: [string, 'financial_indexation']
-  values: [string]
+  values: [number]
 }
 
 interface ApiResponse {
@@ -111,7 +111,7 @@ interface ApiResponse {
 
 export interface FinancialIndexationEntry {
   month: Date
-  value: string
+  value: number
 }
 
 export function listOfLastMonths(numberOfMonths: number) {

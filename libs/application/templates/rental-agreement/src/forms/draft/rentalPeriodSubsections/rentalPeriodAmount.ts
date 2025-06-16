@@ -100,8 +100,10 @@ export const RentalPeriodAmount = buildSubSection({
           id: 'rentalAmount.indexRate',
           label: rentalAmount.indexRateLabel,
           variant: 'text',
-          value: (answers, externalData) =>
-            getIndexRateForConsumerIndexDate(answers, externalData),
+          value: (answers, externalData) => {
+            const rate = getIndexRateForConsumerIndexDate(answers, externalData)
+            return rate !== undefined ? String(rate) : ''
+          },
           condition: rentalAmountConnectedToIndex,
           width: 'half',
         }),

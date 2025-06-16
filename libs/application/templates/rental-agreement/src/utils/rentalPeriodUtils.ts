@@ -194,21 +194,21 @@ export const getConsumerIndexDateOptions = (
 export const getIndexRateForConsumerIndexDate = (
   answers: Application['answers'],
   externalData: Application['externalData'],
-): string => {
+): number | undefined => {
   const { isIndexConnected, indexDate } = applicationAnswers(answers)
 
-  if (!isIndexConnected || !indexDate) {
-    return ''
+  if (!isIndexConnected?.includes(YesOrNoEnum.YES) || !indexDate) {
+    return undefined
   }
 
   const consumerIndexArray = externalData.consumerIndex?.data
 
   if (!consumerIndexArray || !Array.isArray(consumerIndexArray)) {
-    return ''
+    return undefined
   }
 
   const typedArray: ConsumerIndexItem[] = consumerIndexArray
   const selectedIndex = typedArray.find((item) => item.month === indexDate)
 
-  return selectedIndex?.value || ''
+  return selectedIndex?.value
 }
