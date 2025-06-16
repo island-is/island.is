@@ -7,48 +7,51 @@ import {
 import { CaseTransition } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
-export const useDeleteCase = (onComplete: (caseId: string) => void) => {
-  const [deleteCaseId, setDeleteCaseId] = useState<string>()
+export const useWithdrawAppeal = (onComplete: () => void) => {
+  const [withdrawAppealCaseId, setWithdrawAppealCaseId] = useState<string>()
   const { transitionCase, isTransitioningCase } = useCase()
 
-  const deleteCase = (caseId: string): ContextMenuItem => {
+  const withdrawAppeal = (caseId: string): ContextMenuItem => {
     return {
-      title: 'Afturkalla mál',
+      title: 'Afturkalla kæru',
       icon: 'trash',
       onClick: () => {
-        if (deleteCaseId) {
+        if (withdrawAppealCaseId) {
           return
         }
 
-        setDeleteCaseId(caseId)
+        setWithdrawAppealCaseId(caseId)
       },
     }
   }
 
   const handlePrimaryButtonClick = async () => {
-    if (!deleteCaseId) {
+    if (!withdrawAppealCaseId) {
       return
     }
 
-    const deleted = await transitionCase(deleteCaseId, CaseTransition.DELETE)
+    const appealWithdrawn = await transitionCase(
+      withdrawAppealCaseId,
+      CaseTransition.WITHDRAW_APPEAL,
+    )
 
-    if (!deleted) {
+    if (!appealWithdrawn) {
       return
     }
 
-    onComplete(deleteCaseId)
+    onComplete()
 
-    setDeleteCaseId(undefined)
+    setWithdrawAppealCaseId(undefined)
   }
 
   const handleSecondaryButtonClick = () => {
-    setDeleteCaseId(undefined)
+    setWithdrawAppealCaseId(undefined)
   }
 
-  const deleteCaseModal = deleteCaseId && (
+  const withdrawAppealModal = withdrawAppealCaseId && (
     <Modal
-      title="Afturkalla mál"
-      text="Ertu viss um að þú viljir afturkalla þetta mál?"
+      title="Afturkalla kæru"
+      text="Ertu viss um að þú viljir afturkalla þessa kæru?"
       primaryButtonText="Afturkalla"
       primaryButtonColorScheme="destructive"
       onPrimaryButtonClick={handlePrimaryButtonClick}
@@ -59,7 +62,7 @@ export const useDeleteCase = (onComplete: (caseId: string) => void) => {
   )
 
   return {
-    deleteCase,
-    deleteCaseModal,
+    withdrawAppeal,
+    withdrawAppealModal,
   }
 }

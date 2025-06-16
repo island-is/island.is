@@ -8,8 +8,8 @@ export const useOpenCaseInNewTab = () => {
   const openCaseInNewTab = (id: string): ContextMenuItem => {
     return {
       title: 'Opna mál í nýjum flipa',
-      onClick: () => handleOpenCase(id, true),
       icon: 'open',
+      onClick: () => handleOpenCase(id, true),
     }
   }
 

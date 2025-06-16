@@ -7,6 +7,7 @@ import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   CaseActionType,
+  CaseAppealState,
   CaseState,
   CaseTableColumnKey,
   caseTables,
@@ -25,21 +26,38 @@ import { CaseTableResponse } from './dto/caseTable.response'
 import { caseTableCellGenerators } from './caseTable.cellGenerators'
 import { caseTableWhereOptions } from './caseTable.whereOptions'
 
+const getIsMyCaseAttributes = (user: TUser): string[] => {
+  if (isProsecutionUser(user)) {
+    return ['creatingProsecutorId', 'prosecutorId']
+  }
+
+  return []
+}
+
+const getAvailableActionsAttributes = (user: TUser): string[] => {
+  if (isProsecutionUser(user)) {
+    return ['type', 'state', 'appealState', 'prosecutorPostponedAppealDate']
+  }
+
+  if (isDistrictCourtUser(user)) {
+    return ['type', 'state']
+  }
+
+  return []
+}
+
 const getAttributes = (
   caseTableCellKeys: CaseTableColumnKey[],
   user: TUser,
 ) => {
-  return [
-    'id',
-    'type',
-    'state',
-    ...caseTableCellKeys
-      .map((k) => caseTableCellGenerators[k].attributes ?? [])
-      .flat(),
-    ...(isProsecutionUser(user)
-      ? ['creatingProsecutorId', 'prosecutorId']
-      : []),
-  ]
+  return getIsMyCaseAttributes(user)
+    .concat(getAvailableActionsAttributes(user))
+    .concat([
+      'id',
+      ...caseTableCellKeys
+        .map((k) => caseTableCellGenerators[k].attributes ?? [])
+        .flat(),
+    ])
 }
 
 const getIsMyCaseIncludes = (user: TUser): Includeable[] => {
@@ -89,14 +107,15 @@ const getIncludes = (caseTableCellKeys: CaseTableColumnKey[], user: TUser) => {
 }
 
 const isMyCase = (theCase: Case, user: TUser): boolean => {
-  if (isDistrictCourtUser(user)) {
-    return theCase.judge?.id === user.id || theCase.registrar?.id === user.id
-  }
   if (isProsecutionUser(user)) {
     return (
       theCase.creatingProsecutorId === user.id ||
       theCase.prosecutorId === user.id
     )
+  }
+
+  if (isDistrictCourtUser(user)) {
+    return theCase.judge?.id === user.id || theCase.registrar?.id === user.id
   }
 
   return false
@@ -130,7 +149,11 @@ const canDeleteIndictmentCase = (caseToDelete: Case): boolean => {
   )
 }
 
-const canDeleteCase = (caseToDelete: Case): boolean => {
+const canDeleteCase = (caseToDelete: Case, user: TUser): boolean => {
+  if (!isProsecutionUser(user)) {
+    return false
+  }
+
   if (isRequestCase(caseToDelete.type)) {
     return canDeleteRequestCase(caseToDelete)
   }
@@ -142,17 +165,26 @@ const canDeleteCase = (caseToDelete: Case): boolean => {
   return false
 }
 
+const canCancelAppeal = (theCase: Case, user: TUser): boolean => {
+  if (!isProsecutionUser(user) || !isRequestCase(theCase.type)) {
+    return false
+  }
+
+  if (
+    (theCase.appealState === CaseAppealState.APPEALED ||
+      theCase.appealState === CaseAppealState.RECEIVED) &&
+    theCase.prosecutorPostponedAppealDate
+  ) {
+    return true
+  }
+
+  return false
+}
+
 const getContextMenuActions = (
   theCase: Case,
   user: TUser,
 ): ContextMenuCaseActionType[] => {
-  if (isProsecutionUser(user) && canDeleteCase(theCase)) {
-    return [
-      ContextMenuCaseActionType.OPEN_CASE_IN_NEW_TAB,
-      ContextMenuCaseActionType.DELETE_CASE,
-    ]
-  }
-
   if (
     isDistrictCourtUser(user) &&
     isIndictmentCase(theCase.type) &&
@@ -161,7 +193,17 @@ const getContextMenuActions = (
     return []
   }
 
-  return [ContextMenuCaseActionType.OPEN_CASE_IN_NEW_TAB]
+  const actions = [ContextMenuCaseActionType.OPEN_CASE_IN_NEW_TAB]
+
+  if (canDeleteCase(theCase, user)) {
+    actions.push(ContextMenuCaseActionType.DELETE_CASE)
+  }
+
+  if (canCancelAppeal(theCase, user)) {
+    actions.push(ContextMenuCaseActionType.WITHDRAW_APPEAL)
+  }
+
+  return actions
 }
 
 @Injectable()

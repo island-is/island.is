@@ -20,6 +20,7 @@ export {
 } from './ContextMenu/ContextMenu'
 export { useOpenCaseInNewTab } from './ContextMenu/ContextMenuItems/OpenCaseInNewTab'
 export { useDeleteCase } from './ContextMenu/ContextMenuItems/DeleteCase'
+export { useWithdrawAppeal } from './ContextMenu/ContextMenuItems/WithdrawAppeal'
 export {
   CourtArrangements,
   useCourtArrangements,

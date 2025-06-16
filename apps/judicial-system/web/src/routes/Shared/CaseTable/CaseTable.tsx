@@ -20,6 +20,7 @@ import {
   useDeleteCase,
   useOpenCaseInNewTab,
   UserContext,
+  useWithdrawAppeal,
 } from '@island.is/judicial-system-web/src/components'
 import {
   GenericTable,
@@ -128,7 +129,7 @@ const CaseTable: FC = () => {
 
   const type = getCaseTableType(user, router.asPath.split('/').pop())
 
-  const { data, loading, error } = useCaseTableQuery({
+  const { data, loading, error, refetch } = useCaseTableQuery({
     // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
     variables: { input: { type: type! } },
     skip: !type,
@@ -156,6 +157,7 @@ const CaseTable: FC = () => {
   }
 
   const { deleteCase, deleteCaseModal } = useDeleteCase(removeRow)
+  const { withdrawAppeal, withdrawAppealModal } = useWithdrawAppeal(refetch)
   const { cancelCase, cancelCaseId, isCancelCaseLoading, cancelCaseModal } =
     useCancelCase(removeRow)
 
@@ -167,6 +169,8 @@ const CaseTable: FC = () => {
         switch (a) {
           case ContextMenuCaseActionType.DELETE_CASE:
             return deleteCase(r.caseId)
+          case ContextMenuCaseActionType.WITHDRAW_APPEAL:
+            return withdrawAppeal(r.caseId)
           case ContextMenuCaseActionType.OPEN_CASE_IN_NEW_TAB:
           default: // Default to opening the case in a new tab
             return openCaseInNewTab(r.caseId)
@@ -278,6 +282,7 @@ const CaseTable: FC = () => {
             )}
             {cancelCaseModal}
             {deleteCaseModal}
+            {withdrawAppealModal}
           </>
         ) : (
           /* If we cannot determine which table to show, then the user does not have access to the current route */
