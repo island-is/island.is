@@ -129,7 +129,7 @@ export const prerequisites = {
     },
     submitButton: {
       id: 'ra.application:prerequisites.externalData.submitButton',
-      defaultMessage: 'Hefja umsókn',
+      defaultMessage: 'Halda áfram',
       description: 'Text for the submit button in external data collection',
     },
   }),

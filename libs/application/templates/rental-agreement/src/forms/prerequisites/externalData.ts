@@ -3,6 +3,7 @@ import {
   buildExternalDataProvider,
   buildSection,
   buildSubmitField,
+  coreMessages,
 } from '@island.is/application/core'
 import { DefaultEvents } from '@island.is/application/types'
 import { UserProfileApi, NationalRegistryUserApi } from '../../dataProviders'
@@ -19,11 +20,12 @@ export const externalData = buildSection({
       checkboxLabel: prerequisites.externalData.checkboxLabel,
       submitField: buildSubmitField({
         id: 'toDraft',
+        placement: 'footer',
         refetchApplicationAfterSubmit: true,
         actions: [
           {
             event: DefaultEvents.SUBMIT,
-            name: prerequisites.externalData.submitButton,
+            name: coreMessages.buttonNext,
             type: 'primary',
           },
         ],
