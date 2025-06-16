@@ -14,9 +14,8 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
     .readiness('/readiness')
     .replicaCount({
       default: 2,
-      max: 30,
+      max: 4,
       min: 2,
-      scalingMagicNumber: 8,
     })
     .resources({
       limits: { cpu: '400m', memory: '512Mi' },
@@ -55,4 +54,4 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
         paths: ['/form'],
       },
     })
-    .grantNamespaces('nginx-ingress-external', 'identity-server')
+    .grantNamespaces('nginx-ingress-external')

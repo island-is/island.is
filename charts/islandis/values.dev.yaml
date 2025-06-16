@@ -1552,7 +1552,6 @@ form-system-web:
     SI_PUBLIC_ENVIRONMENT: 'dev'
   grantNamespaces:
     - 'nginx-ingress-external'
-    - 'identity-server'
   grantNamespacesEnabled: true
   healthCheck:
     liveness:
@@ -1567,7 +1566,7 @@ form-system-web:
     scaling:
       metric:
         cpuAverageUtilization: 90
-        nginxRequestsIrate: 8
+        nginxRequestsIrate: 5
       replicas:
         max: 3
         min: 1
