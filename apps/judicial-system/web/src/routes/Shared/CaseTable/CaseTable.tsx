@@ -148,9 +148,9 @@ const CaseTable: FC = () => {
     setRows((prev) => prev.filter((r) => r.caseId !== caseId))
   }
 
-  const { deleteCase, deleteCaseModal } = useDeleteCase(removeRow)
-  const { withdrawAppeal, withdrawAppealModal } = useWithdrawAppeal(refetch)
-  const { cancelCase, cancelCaseId, isCancelCaseLoading, cancelCaseModal } =
+  const { deleteCase, DeleteCaseModal } = useDeleteCase(removeRow)
+  const { withdrawAppeal, WithdrawAppealModal } = useWithdrawAppeal(refetch)
+  const { cancelCase, cancelCaseId, isCancelCaseLoading, CancelCaseModal } =
     useCancelCase(removeRow)
 
   const table = type && caseTables[type]
@@ -269,9 +269,9 @@ const CaseTable: FC = () => {
                 />
               </div>
             )}
-            {cancelCaseModal}
-            {deleteCaseModal}
-            {withdrawAppealModal}
+            <CancelCaseModal />
+            <DeleteCaseModal />
+            <WithdrawAppealModal />
           </>
         ) : (
           /* If we cannot determine which table to show, then the user does not have access to the current route */

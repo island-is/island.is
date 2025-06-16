@@ -48,21 +48,19 @@ export const useWithdrawAppeal = (onComplete: () => void) => {
     setWithdrawAppealCaseId(undefined)
   }
 
-  const withdrawAppealModal = withdrawAppealCaseId && (
-    <Modal
-      title="Afturkalla kæru"
-      text="Ertu viss um að þú viljir afturkalla þessa kæru?"
-      primaryButtonText="Afturkalla"
-      primaryButtonColorScheme="destructive"
-      onPrimaryButtonClick={handlePrimaryButtonClick}
-      isPrimaryButtonLoading={isTransitioningCase}
-      secondaryButtonText="Hætta við"
-      onSecondaryButtonClick={handleSecondaryButtonClick}
-    />
-  )
+  const WithdrawAppealModal = () =>
+    withdrawAppealCaseId && (
+      <Modal
+        title="Afturkalla kæru"
+        text="Ertu viss um að þú viljir afturkalla þessa kæru?"
+        primaryButtonText="Afturkalla"
+        primaryButtonColorScheme="destructive"
+        onPrimaryButtonClick={handlePrimaryButtonClick}
+        isPrimaryButtonLoading={isTransitioningCase}
+        secondaryButtonText="Hætta við"
+        onSecondaryButtonClick={handleSecondaryButtonClick}
+      />
+    )
 
-  return {
-    withdrawAppeal,
-    withdrawAppealModal,
-  }
+  return { withdrawAppeal, WithdrawAppealModal }
 }
