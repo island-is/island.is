@@ -7,6 +7,7 @@ import {
 import { Fasteign } from '@island.is/clients/assets'
 import { AttachmentData } from '../../../shared/services/attachment-s3.service'
 import crypto from 'crypto'
+import * as kennitala from 'kennitala'
 
 // The payment structure is as follows:
 // 1. If the current appraisal is less than 25 million, the payment is 6.000kr
@@ -96,7 +97,7 @@ export const mapAnswersToApplicationDto = (
         heimili: applicant.address,
         postnumer: applicant.postalCode,
         stadur: applicant.city,
-        tegund: 0, // 0 is a person and 2 is a company
+        tegund: kennitala.isPerson(applicant.nationalId ?? '') ? 0 : 2, // 0 is a person and 2 is a company
         hlutverk: 'Umsækjandi',
         netfang: applicant.email,
         simi: applicant.phoneNumber,
@@ -125,7 +126,7 @@ export const mapAnswersToApplicationDto = (
           getValueViaPath<Array<string>>(
             answers,
             'confirmReadPrivacyPolicy',
-          )?.[1] === YES
+          )?.[0] === YES
             ? 'true'
             : 'false',
         guid: GUID,
@@ -181,9 +182,10 @@ export const mapAnswersToApplicationDto = (
         flokkur: 'Matsaðferð',
         heiti: 'Endurmat vegna endurbóta',
         tegund: 'radio',
-        gildi: getValueViaPath<Array<string>>(answers, 'endurmat')?.includes(
-          'renovations',
-        )
+        gildi: getValueViaPath<Array<string>>(
+          answers,
+          'appraisalMethod',
+        )?.includes('renovations')
           ? 'Já, vegna endurbóta'
           : 'Nei, ekki vegna endurbóta',
         guid: GUID,
@@ -192,9 +194,10 @@ export const mapAnswersToApplicationDto = (
         flokkur: 'Matsaðferð',
         heiti: 'Endurmat vegna viðbyggingar',
         tegund: 'radio',
-        gildi: getValueViaPath<Array<string>>(answers, 'endurmat')?.includes(
-          'additions',
-        )
+        gildi: getValueViaPath<Array<string>>(
+          answers,
+          'appraisalMethod',
+        )?.includes('additions')
           ? 'Já, vegna viðbyggingar'
           : 'Nei, ekki vegna viðbyggingar',
         guid: GUID,

@@ -111,18 +111,15 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
   async submitApplication({ application }: TemplateApiModuleActionProps) {
     try {
       // get content of files from S3
-      console.log('Getting files from S3')
       const files = await this.attachmentService.getFiles(application, [
         'photos',
       ])
 
       // Map the photos to the dto interface
-      console.log('Mapping files to dto')
       const applicationFilesContentDtoArray =
         mapAnswersToApplicationFilesContentDto(application, files)
 
       // Send the photos in to HMS
-      console.log('Sending files to HMS')
       const photoResults = await Promise.all(
         applicationFilesContentDtoArray.map(
           async (applicationFilesContentDto) => {
@@ -143,24 +140,12 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
       }
 
       // Map the application to the dto interface
-      console.log('Mapping application to dto')
       const applicationDto = mapAnswersToApplicationDto(application, files)
 
-      console.log('--------------------------------')
-      console.log('applicationDto')
-      console.dir(applicationDto, { depth: null })
-      console.log('--------------------------------')
-
       // Send the application to HMS
-      console.log('Sending application to HMS')
       const res = await this.hmsApplicationSystemService.apiApplicationPost({
         applicationDto,
       })
-
-      console.log('--------------------------------')
-      console.log('res')
-      console.dir(res, { depth: null })
-      console.log('--------------------------------')
 
       if (res.status !== 200) {
         throw new TemplateApiError(
