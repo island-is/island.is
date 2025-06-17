@@ -153,7 +153,7 @@
             "name": "opened",
             "in": "query",
             "schema": {
-              "type": "string"
+              "type": "boolean"
             }
           },
           {
@@ -540,20 +540,21 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/SetBatchMessagesRead"
+                "$ref": "#/components/schemas/Request"
               }
             },
             "text/json": {
               "schema": {
-                "$ref": "#/components/schemas/SetBatchMessagesRead"
+                "$ref": "#/components/schemas/Request"
               }
             },
             "application/*+json": {
               "schema": {
-                "$ref": "#/components/schemas/SetBatchMessagesRead"
+                "$ref": "#/components/schemas/Request"
               }
             }
-          }
+          },
+          "required": true
         },
         "responses": {
           "204": {
@@ -609,7 +610,14 @@
             "name": "authenticationType",
             "in": "query",
             "schema": {
-              "$ref": "#/components/schemas/AuthenticationType"
+              "type": "string"
+            }
+          },
+          {
+            "name": "locale",
+            "in": "query",
+            "schema": {
+              "type": "string"
             }
           },
           {
@@ -627,17 +635,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/MessageDTO"
+                  "$ref": "#/components/schemas/DocumentDTO"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MessageDTO"
+                  "$ref": "#/components/schemas/DocumentDTO"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/MessageDTO"
+                  "$ref": "#/components/schemas/DocumentDTO"
                 }
               }
             }
@@ -879,15 +887,27 @@
             "schema": {
               "type": "string"
             }
-          },
-          {
-            "name": "wantsPaper",
-            "in": "query",
-            "schema": {
-              "type": "boolean"
-            }
           }
         ],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaperMail"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaperMail"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/PaperMail"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": "OK",
@@ -920,27 +940,20 @@
         "type": "object",
         "properties": {
           "subject": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "body": {
             "minLength": 1,
             "type": "string"
           },
           "requesterEmail": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "requesterName": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           }
         },
         "additionalProperties": false
-      },
-      "AuthenticationType": {
-        "enum": ["LOW", "SUBSTANTIAL", "HIGH"],
-        "type": "string"
       },
       "BatchRequest": {
         "type": "object",
@@ -950,8 +963,7 @@
             "items": {
               "type": "string",
               "format": "uuid"
-            },
-            "nullable": true
+            }
           },
           "status": {
             "type": "boolean"
@@ -996,8 +1008,7 @@
             "format": "int64"
           },
           "reqeusterEmail": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           }
         },
         "additionalProperties": false
@@ -1017,6 +1028,68 @@
         ],
         "type": "string"
       },
+      "DocumentDTO": {
+        "type": "object",
+        "properties": {
+          "fileName": {
+            "type": "string"
+          },
+          "fileType": {
+            "type": "string"
+          },
+          "content": {
+            "type": "string",
+            "nullable": true
+          },
+          "htmlContent": {
+            "type": "string",
+            "nullable": true
+          },
+          "url": {
+            "type": "string",
+            "nullable": true
+          },
+          "publicationDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "bookmarked": {
+            "type": "boolean"
+          },
+          "archived": {
+            "type": "boolean"
+          },
+          "senderName": {
+            "type": "string"
+          },
+          "senderKennitala": {
+            "type": "string"
+          },
+          "subject": {
+            "type": "string"
+          },
+          "categoryId": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "urgent": {
+            "type": "boolean"
+          },
+          "replyable": {
+            "type": "boolean"
+          },
+          "actions": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MessageAction"
+            }
+          },
+          "ticket": {
+            "$ref": "#/components/schemas/TicketDto"
+          }
+        },
+        "additionalProperties": false
+      },
       "DocumentInfoDTO": {
         "type": "object",
         "properties": {
@@ -1035,20 +1108,16 @@
             "nullable": true
           },
           "senderKennitala": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "senderName": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "subject": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "categoryId": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "opened": {
             "type": "boolean"
@@ -1057,19 +1126,16 @@
             "type": "boolean"
           },
           "withdrawnReason": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "minimumAuthenticationType": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "bookmarked": {
             "type": "boolean"
           },
           "fileType": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "urgent": {
             "type": "boolean"
@@ -1084,16 +1150,13 @@
         "type": "object",
         "properties": {
           "type": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "title": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "data": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           }
         },
         "additionalProperties": false
@@ -1102,12 +1165,10 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "name": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           }
         },
         "additionalProperties": false
@@ -1119,78 +1180,7 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/MessageCategoryDTO"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "MessageDTO": {
-        "type": "object",
-        "properties": {
-          "fileName": {
-            "type": "string",
-            "nullable": true
-          },
-          "fileType": {
-            "type": "string",
-            "nullable": true
-          },
-          "content": {
-            "type": "string",
-            "nullable": true
-          },
-          "htmlContent": {
-            "type": "string",
-            "nullable": true
-          },
-          "url": {
-            "type": "string",
-            "nullable": true
-          },
-          "publicationDate": {
-            "type": "string",
-            "format": "date-time",
-            "nullable": true
-          },
-          "bookmarked": {
-            "type": "boolean"
-          },
-          "archived": {
-            "type": "boolean",
-            "nullable": true
-          },
-          "senderName": {
-            "type": "string",
-            "nullable": true
-          },
-          "senderKennitala": {
-            "type": "string",
-            "nullable": true
-          },
-          "subject": {
-            "type": "string",
-            "nullable": true
-          },
-          "categoryId": {
-            "type": "integer",
-            "format": "int32"
-          },
-          "urgent": {
-            "type": "boolean"
-          },
-          "replyable": {
-            "type": "boolean"
-          },
-          "actions": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/MessageAction"
-            },
-            "nullable": true
-          },
-          "ticket": {
-            "$ref": "#/components/schemas/TicketDto"
+            }
           }
         },
         "additionalProperties": false
@@ -1202,8 +1192,7 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/DocumentInfoDTO"
-            },
-            "nullable": true
+            }
           },
           "unreadCount": {
             "type": "integer",
@@ -1230,12 +1219,10 @@
         "type": "object",
         "properties": {
           "id": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "name": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           }
         },
         "additionalProperties": false
@@ -1247,8 +1234,19 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/MessageTypeDTO"
-            },
-            "nullable": true
+            }
+          }
+        },
+        "additionalProperties": false
+      },
+      "PaperMail": {
+        "type": "object",
+        "properties": {
+          "kennitala": {
+            "type": "string"
+          },
+          "wantsPaper": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false
@@ -1257,11 +1255,23 @@
         "type": "object",
         "properties": {
           "kennitala": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "wantsPaper": {
             "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Request": {
+        "type": "object",
+        "properties": {
+          "ids": {
+            "type": "array",
+            "items": {
+              "type": "string",
+              "format": "uuid"
+            }
           }
         },
         "additionalProperties": false
@@ -1270,12 +1280,10 @@
         "type": "object",
         "properties": {
           "kennitala": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           },
           "name": {
-            "type": "string",
-            "nullable": true
+            "type": "string"
           }
         },
         "additionalProperties": false
@@ -1287,22 +1295,7 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/SenderDTO"
-            },
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "SetBatchMessagesRead": {
-        "type": "object",
-        "properties": {
-          "ids": {
-            "type": "array",
-            "items": {
-              "type": "string",
-              "format": "uuid"
-            },
-            "nullable": true
+            }
           }
         },
         "additionalProperties": false
@@ -1342,8 +1335,7 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/CommentDto"
-            },
-            "nullable": true
+            }
           }
         },
         "additionalProperties": false
