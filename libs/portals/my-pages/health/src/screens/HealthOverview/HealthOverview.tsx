@@ -1,20 +1,8 @@
-import {
-  Box,
-  GridColumn,
-  GridRow,
-  Text,
-  toast,
-} from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  InfoCardGrid,
-  amountFormat,
-  formatDate,
-  isDateAfterToday,
-} from '@island.is/portals/my-pages/core'
+import { InfoCardGrid } from '@island.is/portals/my-pages/core'
 import subYears from 'date-fns/subYears'
-import { useEffect, useState } from 'react'
 import { useWindowSize } from 'react-use'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
@@ -28,8 +16,8 @@ import {
   useGetPaymentsOverviewQuery,
 } from './HealthOverview.generated'
 import Appointments from './components/Appointments'
-import PaymentsAndMedicine from './components/PaymentsAndMedicine'
 import BasicInformation from './components/BasicInformation'
+import PaymentsAndMedicine from './components/PaymentsAndMedicine'
 
 const DEFAULT_DATE_TO = new Date()
 const DEFAULT_DATE_FROM = subYears(DEFAULT_DATE_TO, 10)
@@ -39,7 +27,6 @@ export const HealthOverview = () => {
   const { formatMessage, locale } = useLocale()
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
-  const isTablet = width < theme.breakpoints.lg && !isMobile
 
   const { data, error, loading } = useGetInsuranceOverviewQuery()
 

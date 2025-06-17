@@ -7,7 +7,7 @@ import {
   Box,
   Text,
 } from '@island.is/island-ui/core'
-import { LinkResolver, useIsMobile } from '@island.is/portals/my-pages/core'
+import { LinkResolver } from '@island.is/portals/my-pages/core'
 import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
 
