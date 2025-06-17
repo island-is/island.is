@@ -33,5 +33,6 @@ export const mapToDocumentInfoDto = (
     senderNationalId: document.senderKennitala,
     senderName: document.senderName,
     publicationDate: document.publicationDate,
+    documentDate: document.documentDate ?? undefined,
   }
 }
