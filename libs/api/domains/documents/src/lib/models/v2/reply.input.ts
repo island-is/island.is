@@ -18,10 +18,10 @@ export class ReplyInput {
   @Field(() => String, { nullable: true })
   @IsOptional()
   @IsString()
-  readonly subject?: string | null
+  readonly subject?: string
 
   @Field(() => String, { nullable: true })
   @IsOptional()
   @IsString()
-  readonly requesterName?: string | null
+  readonly requesterName?: string
 }
