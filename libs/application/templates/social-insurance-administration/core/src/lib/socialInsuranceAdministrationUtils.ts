@@ -14,12 +14,22 @@ export const formatBankInfo = (bankInfo: string) => {
   return bankInfo
 }
 
-export const getBankIsk = (bankInfo: BankInfo) => {
+export const bankInfoToString = (bankInfo?: BankInfo) => {
+  return !isEmpty(bankInfo)
+    ? `${bankInfo.bankNumber ?? ''}-${bankInfo.ledger ?? ''}-${
+        bankInfo.accountNumber ?? ''
+      }`
+    : ''
+}
+
+export const getBankIsk = (bankInfo?: BankInfo) => {
   return !isEmpty(bankInfo) &&
-    bankInfo.bank &&
+    (bankInfo.bank || bankInfo.bankNumber) &&
     bankInfo.ledger &&
     bankInfo.accountNumber
-    ? bankInfo.bank + bankInfo.ledger + bankInfo.accountNumber
+    ? (bankInfo.bank || bankInfo.bankNumber) +
+        bankInfo.ledger +
+        bankInfo.accountNumber
     : ''
 }
 
@@ -65,9 +75,13 @@ export const formatBank = (bankInfo: string) => {
 // We should only send bank account to TR if applicant is registering
 // new one or changing.
 export const shouldNotUpdateBankAccount = (
-  bankInfo: BankInfo,
-  paymentInfo: PaymentInfo,
+  bankInfo?: BankInfo,
+  paymentInfo?: PaymentInfo,
 ) => {
+  if (!paymentInfo) {
+    return false
+  }
+
   const {
     bankAccountType,
     bank,

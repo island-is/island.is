@@ -1,0 +1,478 @@
+{
+  "openapi": "3.0.4",
+  "info": {
+    "title": "LeigusamningarService API",
+    "description": "API for handling rental contracts PDF generation and signing.",
+    "version": "v1"
+  },
+  "paths": {
+    "/contract": {
+      "post": {
+        "tags": ["Home"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeaseApplication"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeaseApplication"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/LeaseApplication"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "AppraisalUnit": {
+        "required": ["appraisalUnitId", "rooms", "size"],
+        "type": "object",
+        "properties": {
+          "appraisalUnitId": {
+            "type": "string",
+            "nullable": true
+          },
+          "apartmentNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "floor": {
+            "type": "string",
+            "nullable": true
+          },
+          "size": {
+            "type": "number",
+            "format": "float"
+          },
+          "rooms": {
+            "type": "number",
+            "format": "float"
+          }
+        },
+        "additionalProperties": false
+      },
+      "DepositAmount": {
+        "enum": ["OneMonth", "TwoMonths", "ThreeMonths", "Other"],
+        "type": "string"
+      },
+      "FireProtections": {
+        "type": "object",
+        "properties": {
+          "fireBlanket": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "emergencyExits": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "smokeDetectors": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "fireExtinguisher": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "HousingFund": {
+        "type": "object",
+        "properties": {
+          "payedBy": {
+            "$ref": "#/components/schemas/Payer"
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "InspectorType": {
+        "enum": ["ContractParties", "Indipendant"],
+        "type": "string"
+      },
+      "Lease": {
+        "required": [
+          "condition",
+          "fireProtections",
+          "otherFees",
+          "payment",
+          "rent",
+          "securityDeposit"
+        ],
+        "type": "object",
+        "properties": {
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "rules": {
+            "type": "string",
+            "nullable": true
+          },
+          "condition": {
+            "type": "string",
+            "nullable": true
+          },
+          "inspectorType": {
+            "$ref": "#/components/schemas/InspectorType"
+          },
+          "hasInspectionFiles": {
+            "type": "boolean"
+          },
+          "indipendantInspector": {
+            "type": "string",
+            "nullable": true
+          },
+          "fireProtections": {
+            "$ref": "#/components/schemas/FireProtections"
+          },
+          "startDate": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "isFixedTerm": {
+            "type": "boolean"
+          },
+          "rent": {
+            "$ref": "#/components/schemas/Rent"
+          },
+          "payment": {
+            "$ref": "#/components/schemas/Payment"
+          },
+          "securityDeposit": {
+            "$ref": "#/components/schemas/SecurityDeposit"
+          },
+          "otherFees": {
+            "$ref": "#/components/schemas/OtherFees"
+          }
+        },
+        "additionalProperties": false
+      },
+      "LeaseApplication": {
+        "required": [
+          "applicationId",
+          "initiatorNationalId",
+          "landlords",
+          "lease",
+          "property",
+          "tenants"
+        ],
+        "type": "object",
+        "properties": {
+          "applicationId": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "initiatorNationalId": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "landlords": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Person"
+            }
+          },
+          "tenants": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Person"
+            }
+          },
+          "property": {
+            "$ref": "#/components/schemas/Property"
+          },
+          "lease": {
+            "$ref": "#/components/schemas/Lease"
+          }
+        },
+        "additionalProperties": false
+      },
+      "MeteredCost": {
+        "type": "object",
+        "properties": {
+          "payedBy": {
+            "$ref": "#/components/schemas/Payer"
+          },
+          "meterNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "meterStatus": {
+            "type": "string",
+            "nullable": true
+          },
+          "meterStatusDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "MiscellaneousFees": {
+        "required": ["name"],
+        "type": "object",
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "amount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "OtherFees": {
+        "required": [
+          "electricityCost",
+          "heatingCost",
+          "housingFund",
+          "miscellaneousFees"
+        ],
+        "type": "object",
+        "properties": {
+          "housingFund": {
+            "$ref": "#/components/schemas/HousingFund"
+          },
+          "electricityCost": {
+            "$ref": "#/components/schemas/MeteredCost"
+          },
+          "heatingCost": {
+            "$ref": "#/components/schemas/MeteredCost"
+          },
+          "miscellaneousFees": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MiscellaneousFees"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Payer": {
+        "enum": ["Landlord", "Tenant"],
+        "type": "string"
+      },
+      "Payment": {
+        "type": "object",
+        "properties": {
+          "method": {
+            "$ref": "#/components/schemas/PaymentMethod"
+          },
+          "otherMethod": {
+            "type": "string",
+            "nullable": true
+          },
+          "paymentDay": {
+            "$ref": "#/components/schemas/PaymentDay"
+          },
+          "otherPaymentDay": {
+            "type": "string",
+            "nullable": true
+          },
+          "bankAccountNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "nationalIdOfAccountOwner": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "PaymentDay": {
+        "enum": ["First", "Last", "Other"],
+        "type": "string"
+      },
+      "PaymentMethod": {
+        "enum": ["BankTransfer", "PaymentSlip", "Other"],
+        "type": "string"
+      },
+      "Person": {
+        "required": ["address", "email", "name", "nationalId", "phone"],
+        "type": "object",
+        "properties": {
+          "nationalId": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "name": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "email": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "phone": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "address": {
+            "minLength": 1,
+            "type": "string"
+          },
+          "isRepresentative": {
+            "type": "boolean"
+          }
+        },
+        "additionalProperties": false
+      },
+      "Property": {
+        "required": [
+          "address",
+          "appraisalUnits",
+          "municipality",
+          "part",
+          "propertyId",
+          "specialGroup",
+          "type",
+          "zip"
+        ],
+        "type": "object",
+        "properties": {
+          "address": {
+            "type": "string",
+            "nullable": true
+          },
+          "municipality": {
+            "type": "string",
+            "nullable": true
+          },
+          "zip": {
+            "type": "string",
+            "nullable": true
+          },
+          "propertyId": {
+            "type": "string",
+            "nullable": true
+          },
+          "appraisalUnits": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/AppraisalUnit"
+            },
+            "nullable": true
+          },
+          "part": {
+            "$ref": "#/components/schemas/PropertyPart"
+          },
+          "type": {
+            "$ref": "#/components/schemas/PropertyType"
+          },
+          "specialGroup": {
+            "$ref": "#/components/schemas/SpecialGroup"
+          }
+        },
+        "additionalProperties": false
+      },
+      "PropertyPart": {
+        "enum": ["Whole", "Part"],
+        "type": "string"
+      },
+      "PropertyType": {
+        "enum": ["House_Apartment", "Room", "Commercial"],
+        "type": "string"
+      },
+      "Rent": {
+        "required": ["amount"],
+        "type": "object",
+        "properties": {
+          "amount": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "index": {
+            "$ref": "#/components/schemas/RentIndex"
+          },
+          "indexRate": {
+            "type": "number",
+            "format": "float",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "RentIndex": {
+        "enum": ["None", "ConsumerPriceIndex"],
+        "type": "string"
+      },
+      "SecurityDeposit": {
+        "type": "object",
+        "properties": {
+          "type": {
+            "$ref": "#/components/schemas/SecurityDepositType"
+          },
+          "otherType": {
+            "type": "string",
+            "nullable": true
+          },
+          "description": {
+            "type": "string",
+            "nullable": true
+          },
+          "amount": {
+            "$ref": "#/components/schemas/DepositAmount"
+          },
+          "otherAmount": {
+            "type": "integer",
+            "format": "int32"
+          }
+        },
+        "additionalProperties": false
+      },
+      "SecurityDepositType": {
+        "enum": [
+          "None",
+          "BankGuarantee",
+          "Capital",
+          "ThirdPartyGuarantee",
+          "InsuranceCompany",
+          "LandlordMutualFund",
+          "Other"
+        ],
+        "type": "string"
+      },
+      "SpecialGroup": {
+        "enum": [
+          "No",
+          "Student",
+          "Elderly",
+          "Disabled",
+          "HalfwayHouse",
+          "IncomeRestricted"
+        ],
+        "type": "string"
+      }
+    }
+  }
+}

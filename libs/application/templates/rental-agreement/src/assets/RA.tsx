@@ -3809,15 +3809,15 @@ const RA: React.FC<React.PropsWithChildren<unknown>> = () => (
         y2="319.029"
         gradientUnits="userSpaceOnUse"
       >
-        <stop stop-color="#FF4C84" />
-        <stop offset="0.0241" stop-color="#F1528E" />
-        <stop offset="0.1169" stop-color="#BF65B0" />
-        <stop offset="0.2089" stop-color="#9674CD" />
-        <stop offset="0.2981" stop-color="#7681E3" />
-        <stop offset="0.3839" stop-color="#5F89F2" />
-        <stop offset="0.4647" stop-color="#518FFC" />
-        <stop offset="0.5355" stop-color="#4C90FF" />
-        <stop offset="1" stop-color="#FF4C84" />
+        <stop stopColor="#FF4C84" />
+        <stop offset="0.0241" stopColor="#F1528E" />
+        <stop offset="0.1169" stopColor="#BF65B0" />
+        <stop offset="0.2089" stopColor="#9674CD" />
+        <stop offset="0.2981" stopColor="#7681E3" />
+        <stop offset="0.3839" stopColor="#5F89F2" />
+        <stop offset="0.4647" stopColor="#518FFC" />
+        <stop offset="0.5355" stopColor="#4C90FF" />
+        <stop offset="1" stopColor="#FF4C84" />
       </linearGradient>
     </defs>
   </svg>

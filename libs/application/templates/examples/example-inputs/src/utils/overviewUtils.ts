@@ -1,11 +1,14 @@
+import { ApolloClient } from '@apollo/client'
 import { getValueViaPath } from '@island.is/application/core'
-import { m } from '../lib/messages'
 import {
   AttachmentItem,
   ExternalData,
   FormValue,
   KeyValueItem,
 } from '@island.is/application/types'
+import { friggSchoolsByMunicipalityQuery } from '../graphql/sampleQuery'
+import { m } from '../lib/messages'
+import { FriggSchoolsByMunicipality } from './types'
 
 export const getOverviewItems = (
   answers: FormValue,
@@ -70,6 +73,43 @@ export const getOverviewItems = (
       width: 'snug',
       keyText: 'Snug width',
       valueText: 'test@test.is',
+    },
+    {
+      width: 'full',
+      keyText: 'Full width valueText array',
+      valueText: ['Value 1', 'Value 2', 'Value 3', 'Value 4'],
+    },
+  ]
+}
+
+export const getOverviewLoadItems = async (
+  answers: FormValue,
+  _externalData: ExternalData,
+  _userNationalId: string,
+  apolloClient: ApolloClient<object>,
+): Promise<KeyValueItem[]> => {
+  const { data } = await apolloClient.query<FriggSchoolsByMunicipality>({
+    query: friggSchoolsByMunicipalityQuery,
+  })
+
+  const municipality = data?.friggSchoolsByMunicipality?.[0].name
+
+  return [
+    {
+      width: 'full',
+      keyText: 'Full width',
+      valueText: getValueViaPath<string>(answers, 'applicant.name') ?? '',
+    },
+    {
+      width: 'half',
+      keyText: 'Half width',
+      valueText:
+        getValueViaPath<string>(answers, 'applicant.phoneNumber') ?? '',
+    },
+    {
+      width: 'half',
+      keyText: 'Half width',
+      valueText: municipality,
     },
   ]
 }

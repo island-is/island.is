@@ -24,3 +24,9 @@ export const infoContainer = style({
     },
   },
 })
+
+export const stringGroupItem = style({
+  display: 'flex',
+  alignItems: 'center',
+  columnGap: '4px',
+})

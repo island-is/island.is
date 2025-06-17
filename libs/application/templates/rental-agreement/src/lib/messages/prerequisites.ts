@@ -127,10 +127,5 @@ export const prerequisites = {
         'Upplýsingar um símanúmer og netfang til að auðvelda samningagerðina.',
       description: 'Subtitle for current application data collection',
     },
-    submitButton: {
-      id: 'ra.application:prerequisites.externalData.submitButton',
-      defaultMessage: 'Hefja umsókn',
-      description: 'Text for the submit button in external data collection',
-    },
   }),
 }

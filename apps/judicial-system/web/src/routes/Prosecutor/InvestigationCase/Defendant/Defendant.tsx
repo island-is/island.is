@@ -429,6 +429,7 @@ const Defendant = () => {
               <Button
                 data-testid="addFirstVictimButton"
                 icon="add"
+                variant="ghost"
                 onClick={() =>
                   createVictimAndSetState(workingCase.id, setWorkingCase)
                 }

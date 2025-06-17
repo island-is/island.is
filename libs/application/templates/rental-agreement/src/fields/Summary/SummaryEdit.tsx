@@ -8,10 +8,7 @@ import {
   BulletList,
   Button,
 } from '@island.is/island-ui/core'
-import {
-  extractOtherFeesData,
-  extractPropertyInfoData,
-} from '../../utils/summaryUtils'
+import { applicationAnswers } from '../../shared'
 import { Routes } from '../../utils/enums'
 import { ApplicantsRepresentativesSummary } from './ApplicantsRepresentativesSummary'
 import { ApplicantsSummary } from './ApplicantsSummary'
@@ -20,6 +17,10 @@ import { PropertyInfoSummary } from './PropertyInfoSummary'
 import { RentalInfoSummary } from './RentalInfoSummary'
 import { summaryWrap } from './summaryStyles.css'
 import { summary } from '../../lib/messages'
+import {
+  hasAnyMatchingNationalId,
+  hasDuplicateApplicants,
+} from '../../utils/utils'
 
 export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   ...props
@@ -29,21 +30,33 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const { answers } = application
 
   const {
+    landlords,
+    tenants,
     smokeDetectors,
     fireExtinguisher,
     emergencyExits,
-    resultsDescription,
-    uploadedFiles,
-  } = extractPropertyInfoData(answers)
+    conditionDescription,
+    files,
+    electricityCostPayee,
+    heatingCostPayee,
+    housingFundPayee,
+  } = applicationAnswers(answers)
 
-  const { electricityCost, heatingCost, housingFund } =
-    extractOtherFeesData(answers)
+  const tenantIds = (tenants ?? []).map(
+    (tenant) => tenant.nationalIdWithName.nationalId,
+  )
 
   const isFireProtectionsPresent =
     smokeDetectors && fireExtinguisher && emergencyExits
-  const isConditionPresent =
-    resultsDescription || (uploadedFiles && uploadedFiles.length > 0)
-  const isOtherFeesPresent = electricityCost && heatingCost && housingFund
+  const isConditionPresent = conditionDescription || (files && files.length > 0)
+  const isOtherFeesPresent =
+    electricityCostPayee && heatingCostPayee && housingFundPayee
+  const hasSameLandlordAndTenant = hasAnyMatchingNationalId(
+    tenantIds,
+    landlords,
+  )
+  const hasRepeatedLandlord = hasDuplicateApplicants(landlords)
+  const hasRepeatedTenant = hasDuplicateApplicants(tenants)
 
   const AlertMessageConditions = [
     {
@@ -60,6 +73,26 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       isFilled: isOtherFeesPresent,
       route: Routes.OTHERFEES,
       message: summary.alertMissingInfoOtherFees,
+    },
+    {
+      isFilled: !hasSameLandlordAndTenant,
+      route: Routes.LANDLORDINFORMATION,
+      message: summary.alertSameTenantAndLandlordLandlord,
+    },
+    {
+      isFilled: !hasRepeatedLandlord,
+      route: Routes.LANDLORDINFORMATION,
+      message: summary.alertRepeatedLandlord,
+    },
+    {
+      isFilled: !hasSameLandlordAndTenant,
+      route: Routes.TENANTINFORMATION,
+      message: summary.alertSameTenantAndLandlordTenant,
+    },
+    {
+      isFilled: !hasRepeatedTenant,
+      route: Routes.TENANTINFORMATION,
+      message: summary.alertRepeatedTenant,
     },
   ]
 
@@ -114,9 +147,7 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         route={Routes.OTHERFEES}
         hasChangeButton={true}
       />
-      {(!isFireProtectionsPresent ||
-        !isConditionPresent ||
-        !isOtherFeesPresent) && (
+      {unfilledConditions.length > 0 && (
         <Box marginTop={4} marginBottom={4}>
           <AlertMessage
             type="error"

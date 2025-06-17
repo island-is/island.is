@@ -2,13 +2,15 @@ import format from 'date-fns/format'
 import parseISO from 'date-fns/parseISO'
 import is from 'date-fns/locale/is'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
-import { EMAIL_REGEX, getValueViaPath } from '@island.is/application/core'
-import { Application, StateLifeCycle } from '@island.is/application/types'
-import { ApplicantsInfo, CostField, Unit } from './types'
+import { EMAIL_REGEX } from '@island.is/application/core'
+import { StateLifeCycle } from '@island.is/application/types'
 import {
-  UserRole,
-  RentalAmountIndexTypes,
+  ApplicantsInfo,
+  CostField,
+  PropertyUnit,
   RentalHousingCategoryClass,
+} from '../shared'
+import {
   RentalHousingCategoryClassGroup,
   RentalHousingCategoryTypes,
   RentalHousingConditionInspector,
@@ -88,6 +90,33 @@ export const filterRepresentativesFromApplicants = <T extends ApplicantsInfo>(
   )
 }
 
+export const hasAnyMatchingNationalId = (
+  nationalIds: string[],
+  applicants: ApplicantsInfo[] = [],
+) => {
+  return (
+    nationalIds.length > 0 &&
+    applicants?.some((applicant) =>
+      nationalIds.includes(applicant.nationalIdWithName.nationalId),
+    )
+  )
+}
+
+export const hasDuplicateApplicants = (
+  applicants: ApplicantsInfo[] = [],
+): boolean => {
+  const seen = new Set<string>()
+
+  for (const applicant of applicants) {
+    if (seen.has(applicant.nationalIdWithName.nationalId)) {
+      return true
+    }
+    seen.add(applicant.nationalIdWithName.nationalId)
+  }
+
+  return false
+}
+
 export const isCostItemValid = (item: CostField) =>
   ((item.description ?? '').trim() !== '' && item.amount !== undefined) ||
   ((item.description ?? '').trim() === '' && item.amount === undefined)
@@ -106,7 +135,7 @@ export const parseCurrency = (value: string): number | undefined => {
   return numeric ? Number(numeric) : undefined
 }
 
-export const getRentalPropertySize = (units: Unit[]) =>
+export const getRentalPropertySize = (units: PropertyUnit[]) =>
   units.reduce(
     (total, unit) =>
       total +
@@ -115,50 +144,6 @@ export const getRentalPropertySize = (units: Unit[]) =>
         : unit.size || 0),
     0,
   )
-
-export const extractApplicationAnswers = (answers: Application['answers']) => {
-  return {
-    landlords: getValueViaPath<ApplicantsInfo[]>(answers, 'landlordInfo.table'),
-    tenants: getValueViaPath<ApplicantsInfo[]>(answers, 'tenantInfo.table'),
-    propertyTypeOptions: getValueViaPath<RentalHousingCategoryTypes>(
-      answers,
-      'registerProperty.categoryType',
-    ),
-    propertyClassOptions: getValueViaPath<RentalHousingCategoryClass>(
-      answers,
-      'registerProperty.categoryClass',
-    ),
-    inspectorOptions: getValueViaPath<RentalHousingConditionInspector>(
-      answers,
-      'condition.inspector',
-    ),
-    rentalAmountIndexTypesOptions: getValueViaPath<RentalAmountIndexTypes>(
-      answers,
-      'rentalAmount.indexTypes',
-    ),
-    rentalAmountPaymentDateOptions:
-      getValueViaPath<RentalAmountPaymentDateOptions>(
-        answers,
-        'rentalAmount.paymentDateOptions',
-      ),
-    otherFeesHousingFund: getValueViaPath<OtherFeesPayeeOptions>(
-      answers,
-      'otherFees.housingFund',
-    ),
-    otherFeesElectricityCost: getValueViaPath<OtherFeesPayeeOptions>(
-      answers,
-      'otherFees.electricityCost',
-    ),
-    otherFeesHeatingCost: getValueViaPath<OtherFeesPayeeOptions>(
-      answers,
-      'otherFees.heatingCost',
-    ),
-    nextStepInReviewOptions: getValueViaPath<NextStepInReviewOptions>(
-      answers,
-      'reviewInfo.applicationReview.nextStepOptions',
-    ),
-  }
-}
 
 export const getPropertyTypeOptions = () => [
   {
@@ -218,13 +203,6 @@ export const getInspectorOptions = () => [
   {
     value: RentalHousingConditionInspector.INDEPENDENT_PARTY,
     label: m.housingCondition.inspectorOptionIndependentParty,
-  },
-]
-
-export const getRentalAmountIndexTypes = () => [
-  {
-    value: RentalAmountIndexTypes.CONSUMER_PRICE_INDEX,
-    label: m.rentalAmount.indexOptionConsumerPriceIndex,
   },
 ]
 
@@ -300,17 +278,6 @@ export const getOtherFeesPayeeOptions = () => [
   },
 ]
 
-export const getOtherFeesHousingFundPayeeOptions = () => [
-  {
-    value: OtherFeesPayeeOptions.LANDLORD_OR_NOT_APPLICABLE,
-    label: m.otherFees.housingFundPayedByLandlordLabel,
-  },
-  {
-    value: OtherFeesPayeeOptions.TENANT,
-    label: m.otherFees.paidByTenantLabel,
-  },
-]
-
 export const getPaymentMethodOptions = () => [
   {
     value: RentalPaymentMethodOptions.BANK_TRANSFER,
@@ -334,17 +301,6 @@ export const getNextStepInReviewOptions = () => [
   {
     value: NextStepInReviewOptions.EDIT_APPLICATION,
     label: m.inReview.reviewInfo.nextStepToEditButtonText,
-  },
-]
-
-export const getUserRoleOptions = [
-  {
-    label: m.userRole.landlordOptionLabel,
-    value: UserRole.LANDLORD,
-  },
-  {
-    label: m.userRole.tenantOptionLabel,
-    value: UserRole.TENANT,
   },
 ]
 

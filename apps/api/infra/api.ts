@@ -42,6 +42,7 @@ import {
   PaymentSchedule,
   Properties,
   PropertySearch,
+  RentalService,
   RskCompanyInfo,
   RskProcuring,
   SeminarsVer,
@@ -57,6 +58,7 @@ import {
   WorkMachines,
   SecondarySchool,
   PracticalExams,
+  FireCompensation,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -422,10 +424,12 @@ export const serviceSetup = (services: {
       DistrictCommissionersPCard,
       DistrictCommissionersLicenses,
       Finance,
+      FireCompensation,
       Education,
       NationalRegistry,
       Properties,
       PropertySearch,
+      RentalService,
       PaymentSchedule,
       CriminalRecord,
       RskCompanyInfo,

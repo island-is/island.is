@@ -155,7 +155,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               backgroundColor: 'blue',
               defaultValue: '',
             }),
-            buildDividerField({marginTop: 2}),
+            buildDividerField({ marginTop: 2 }),
             buildSelectField({
               id: 'complainedForInformation.gender',
               title: information.aboutTheComplainer.gender,

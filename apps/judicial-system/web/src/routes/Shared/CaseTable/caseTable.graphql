@@ -12,6 +12,7 @@ query CaseTable($input: CaseTableQueryInput!) {
           }
           ... on StringGroupValue {
             strList
+            hasCheckMark
           }
           ... on TagValue {
             color
@@ -19,12 +20,12 @@ query CaseTable($input: CaseTableQueryInput!) {
           }
           ... on TagPairValue {
             firstTag {
-              color
               text
+              color
             }
             secondTag {
-              color
               text
+              color
             }
           }
         }
