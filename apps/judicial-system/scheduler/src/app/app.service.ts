@@ -171,7 +171,7 @@ export class AppService {
 
     const currentJobScheduleType = getCurrentJobScheduleType()
     if (!currentJobScheduleType) {
-      this.logger.info('Scheduler done: No jobs executed')
+      this.logger.info('Scheduler: No jobs executed')
       return
     }
 
@@ -179,7 +179,11 @@ export class AppService {
       (job) => job.jobScheduleType === currentJobScheduleType,
     )
     for (const job of filteredJobs) {
-      await job.execute()
+      try {
+        await job.execute()
+      } catch (error) {
+        this.logger.info(`Scheduler: Error at job ${job.execute.name}`, error)
+      }
     }
 
     this.logger.info('Scheduler done')
