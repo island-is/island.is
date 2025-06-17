@@ -45,9 +45,7 @@ const ReplyHeaderMobile: React.FC<ReplyHeaderMobileProps> = ({
           ) : (
             <>
               <Text variant="medium">
-                {' '}
-                {formatMessage(messages.from)}
-                {': '}
+                {` ${formatMessage(messages.from)}: `}
               </Text>
 
               <LinkResolver

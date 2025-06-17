@@ -8,7 +8,7 @@ export const caseNumberDivider = style({
       display: 'flex',
       selectors: {
         '&::before': {
-          content: "''",
+          content: '',
           position: 'relative',
           top: '0.125rem',
           height: '1rem',
@@ -23,7 +23,7 @@ export const caseNumberDivider = style({
       display: 'flex',
       selectors: {
         '&::before': {
-          content: "''",
+          content: '',
           position: 'relative',
           top: '0.125rem',
           height: '1rem',

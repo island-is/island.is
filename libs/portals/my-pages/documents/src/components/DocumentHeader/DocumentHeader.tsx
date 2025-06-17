@@ -53,11 +53,7 @@ export const DocumentHeader: React.FC<DocumentHeaderProps> = ({
         paddingTop={[2, 2, 2, 3]}
         ref={wrapper}
         paddingBottom={3}
-        style={{
-          top: 112,
-          width: '100%',
-          zIndex: 100,
-        }}
+        className={styles.container}
       >
         <Text variant="h3" as="h2">
           {subject}

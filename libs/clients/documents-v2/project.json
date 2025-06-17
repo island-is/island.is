@@ -19,7 +19,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "curl https://test-skjalabirting-island-is.azurewebsites.net/swagger/v1/swagger.json > src/clientConfig.json",
+          "curl ${POSTHOLF_BASE_PATH}/swagger/v1/swagger.json > src/clientConfig.json",
           "prettier --write src/clientConfig.json"
         ],
         "parallel": false,
