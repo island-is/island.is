@@ -21,32 +21,10 @@ enum JobScheduleType {
   WeekdaysAt9 = 'weekdaysAt9',
 }
 
-enum JobType {
-  ArchiveCase = 'archiveCases',
-  PostDailyHearingInSlack = 'postDailyHearingInSlack',
-  SendWaitingForConfirmation = 'sendWaitingForConfirmation',
-}
-
 type JobConfig = {
-  type: JobType
   jobScheduleType: JobScheduleType
+  execute: () => Promise<void | Logger>
 }
-
-// create the job config
-const JOBS: JobConfig[] = [
-  {
-    type: JobType.ArchiveCase,
-    jobScheduleType: JobScheduleType.EveryDayAt2,
-  },
-  {
-    type: JobType.PostDailyHearingInSlack,
-    jobScheduleType: JobScheduleType.EveryDayAt2,
-  },
-  {
-    type: JobType.SendWaitingForConfirmation,
-    jobScheduleType: JobScheduleType.WeekdaysAt9,
-  },
-]
 
 // pass down today as a date prop to limit calls to now() to simplify mocked calls in tests
 const getTodayAtTime = (today: Date, hour: number) => {
@@ -93,6 +71,22 @@ export class AppService {
     private readonly config: ConfigType<typeof appModuleConfig>,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
+
+  private readonly jobs: JobConfig[] = [
+    {
+      jobScheduleType: JobScheduleType.EveryDayAt2,
+      execute: () => this.archiveCases(),
+    },
+    {
+      jobScheduleType: JobScheduleType.EveryDayAt2,
+      execute: () => this.postDailyHearingArrangementSummary(),
+    },
+    {
+      jobScheduleType: JobScheduleType.WeekdaysAt9,
+      execute: () =>
+        this.addMessagesForIndictmentsWaitingForConfirmationToQueue(),
+    },
+  ]
 
   private async addMessagesForIndictmentsWaitingForConfirmationToQueue() {
     return this.messageService
@@ -172,20 +166,6 @@ export class AppService {
     }
   }
 
-  private async runTargetJob(type: JobType) {
-    switch (type) {
-      case JobType.ArchiveCase:
-        await this.archiveCases()
-        break
-      case JobType.PostDailyHearingInSlack:
-        await this.postDailyHearingArrangementSummary()
-        break
-      case JobType.SendWaitingForConfirmation:
-        await this.addMessagesForIndictmentsWaitingForConfirmationToQueue()
-        break
-    }
-  }
-
   async run() {
     this.logger.info('Scheduler starting')
 
@@ -195,11 +175,11 @@ export class AppService {
       return
     }
 
-    const filteredJobs = JOBS.filter(
+    const filteredJobs = this.jobs.filter(
       (job) => job.jobScheduleType === currentJobScheduleType,
     )
     for (const job of filteredJobs) {
-      await this.runTargetJob(job.type)
+      await job.execute()
     }
 
     this.logger.info('Scheduler done')
