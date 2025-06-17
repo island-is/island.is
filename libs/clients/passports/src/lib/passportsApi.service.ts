@@ -231,12 +231,14 @@ export class PassportsService {
     user: User,
     type?: IdentityDocumentTypes,
   ): Promise<PassportsCollection> {
-    const userPassports = await this.getIdentityDocument(user, type)
-    const childPassports = await this.getIdentityDocumentChildren(user, type)
+    const [userPassports, childPassports] = await Promise.all([
+      this.getIdentityDocument(user, type),
+      this.getIdentityDocumentChildren(user, type),
+    ])
 
     return {
-      userPassports,
-      childPassports,
+      userPassports: userPassports ?? [],
+      childPassports: childPassports ?? [],
     }
   }
 
