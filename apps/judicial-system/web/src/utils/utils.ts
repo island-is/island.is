@@ -205,6 +205,7 @@ export const isCaseCivilClaimantLegalSpokesperson = (
       ) &&
       civilClaimant.spokespersonIsLawyer,
   )
+
 // Use the gender of the single defendant if there is only one,
 // otherwise default to male
 export const getDefaultDefendantGender = (defendants?: Defendant[] | null) =>
