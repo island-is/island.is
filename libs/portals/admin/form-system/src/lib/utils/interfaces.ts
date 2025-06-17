@@ -42,3 +42,5 @@ export type ButtonTypes =
   | 'CHANGE_FORM_NAME'
   | 'CHANGE_DESCRIPTION'
   | 'SET_MESSAGE_WITH_LINK_SETTINGS'
+
+export type FormsLocationState = 'forms' | 'applications' | 'admin'
