@@ -1,28 +1,28 @@
-import { MessageDTO, MessageAction, TicketDto } from '../..'
+import { DocumentDTO, MessageAction, TicketDto } from '../..'
 import sanitizeHtml from 'sanitize-html'
 import { svgAttr, svgTags } from '../../utils/htmlConfig'
 
 export type FileType = 'pdf' | 'html' | 'url'
 
 export type DocumentDto = {
-  fileName?: string | null
+  fileName?: string
   fileType: FileType
   content?: string | null
-  date?: Date | null
-  bookmarked?: boolean | null
-  archived?: boolean | null
-  senderName?: string | null
-  senderNationalId?: string | null
+  date?: Date
+  bookmarked?: boolean
+  archived?: boolean
+  senderName?: string
+  senderNationalId?: string
   subject: string
-  categoryId?: string | null
-  urgent?: boolean | null
-  actions?: Array<MessageAction> | null
+  categoryId?: string
+  urgent?: boolean
+  actions?: Array<MessageAction>
   replyable?: boolean | null
   ticket?: TicketDto | null
 }
 
 export const mapToDocument = (
-  document: MessageDTO,
+  document: DocumentDTO,
   includeDocument?: boolean,
 ): DocumentDto | null => {
   let fileType: FileType, content: string

@@ -6,11 +6,11 @@ export interface DocumentInfoDto
   id: string
   senderNationalId: string
   publicationDate: Date
-  senderName?: string | null
-  documentDate?: Date | null
+  senderName?: string
+  documentDate?: Date
   withdrawn?: boolean
   widthdrawnReason?: string
-  minimumAuthenticationType?: string | null
+  minimumAuthenticationType?: string
   urgent?: boolean
   replyable?: boolean
 }

@@ -1,6 +1,5 @@
 import {
   AddCommentCommand,
-  AuthenticationType,
   CustomersApi,
   CustomersListDocumentsOrderEnum,
   CustomersListDocumentsSortByEnum,
@@ -72,12 +71,6 @@ export class DocumentsClientV2Service {
       sortBy: input.sortBy
         ? CustomersListDocumentsSortByEnum[input.sortBy]
         : undefined,
-      opened:
-        input.opened === true
-          ? 'true'
-          : input.opened === false
-          ? 'false'
-          : undefined,
     })
 
     const documents = await this.api.customersListDocuments(inputObject)
@@ -103,7 +96,7 @@ export class DocumentsClientV2Service {
     const document = await this.api.customersDocument({
       kennitala: customerId,
       messageId: documentId,
-      authenticationType: AuthenticationType['HIGH'] ?? 'HIGH',
+      authenticationType: 'HIGH',
       includeDocument: includeDocument,
     })
 
@@ -157,7 +150,7 @@ export class DocumentsClientV2Service {
   updatePaperMailPreference(nationalId: string, wantsPaper: boolean) {
     return this.api.customersUpdatePaperMailPreference({
       kennitala: nationalId,
-      wantsPaper: wantsPaper,
+      paperMail: { kennitala: nationalId, wantsPaper },
     })
   }
   async markAllMailAsRead(nationalId: string) {
@@ -244,7 +237,7 @@ export class DocumentsClientV2Service {
   async batchReadMail(nationalId: string, documentIds: Array<string>) {
     await this.api.customersBatchReadDocuments({
       kennitala: nationalId,
-      setBatchMessagesRead: { ids: documentIds },
+      request: { ids: documentIds },
     })
     return {
       success: true,
