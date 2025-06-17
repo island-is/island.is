@@ -2,6 +2,7 @@ import { Injectable } from '@nestjs/common'
 import { BloodApi } from '../../gen/fetch'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { BloodTypeDto, mapBloodTypeDto } from './dtos/bloodTypes.dto'
+import { handle404 } from '@island.is/clients/middlewares'
 
 @Injectable()
 export class BloodClientService {
@@ -12,7 +13,9 @@ export class BloodClientService {
   }
 
   getBloodType = async (user: User): Promise<BloodTypeDto | null> => {
-    const bloodType = await this.bloodTypeWithAuth(user).apiBloodGet()
+    const bloodType = await this.bloodTypeWithAuth(user)
+      .apiBloodGet()
+      .catch(handle404)
 
     if (!bloodType) {
       return null

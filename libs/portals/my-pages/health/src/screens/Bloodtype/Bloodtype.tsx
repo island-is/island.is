@@ -12,7 +12,7 @@ import React from 'react'
 import { messages } from '../../lib/messages'
 import { useBloodTypeQuery } from './Bloodtype.generated'
 
-const ReferencesDetail: React.FC = () => {
+const Bloodtype: React.FC = () => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
 
@@ -28,6 +28,7 @@ const ReferencesDetail: React.FC = () => {
       marginBottom={6}
       buttonGroup={[
         <LinkButton
+          key={'bloodtype-link'}
           to={bloodType?.link ?? formatMessage(messages.bloodtypeLink)}
           text={formatMessage(messages.readAboutBloodtypes)}
           variant="utility"
@@ -38,9 +39,7 @@ const ReferencesDetail: React.FC = () => {
       {!loading && !bloodType && !error && (
         <Problem type="no_data" noBorder={false} />
       )}
-      {error && !loading && (
-        <Problem error={{ name: 'ee', message: 'error' }} noBorder={false} />
-      )}
+      {error && !loading && <Problem error={error} noBorder={false} />}
       {bloodType && !error && (
         <InfoLineStack space={1}>
           <InfoLine
@@ -66,4 +65,4 @@ const ReferencesDetail: React.FC = () => {
   )
 }
 
-export default ReferencesDetail
+export default Bloodtype
