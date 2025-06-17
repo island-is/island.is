@@ -1,4 +1,4 @@
-query getHealthCenter($input: RightsPortalHealthCenterHistoryInput) {
+query getHealthCenterOverview($input: RightsPortalHealthCenterHistoryInput) {
   rightsPortalHealthCenterRegistrationHistory(input: $input) {
     current {
       healthCenterName
@@ -7,7 +7,7 @@ query getHealthCenter($input: RightsPortalHealthCenterHistoryInput) {
   }
 }
 
-query getDentists($input: RightsPortalDentistBillsInput!) {
+query getDentistOverview($input: RightsPortalDentistBillsInput!) {
   rightsPortalUserDentistRegistration(input: $input) {
     dentist {
       name
@@ -15,7 +15,7 @@ query getDentists($input: RightsPortalDentistBillsInput!) {
   }
 }
 
-query getDonorStatus($locale: String) {
+query getDonorStatusOverview($locale: String) {
   healthDirectorateOrganDonation(locale: $locale) {
     donor {
       isDonor
@@ -29,21 +29,22 @@ query getDonorStatus($locale: String) {
 query getInsuranceOverview {
   rightsPortalInsuranceOverview {
     isInsured
-    explanation
     from
-    status {
-      display
-      code
-    }
-    maximumPayment
     ehicCardExpiryDate
   }
 }
 
-query getInsuranceConfirmation {
-  rightsPortalInsuranceConfirmation {
-    fileName
-    contentType
-    data
+query getPaymentsOverview {
+  rightsPortalCopaymentStatus {
+    maximumMonthlyPayment
+    maximumPayment
+  }
+}
+
+query getMedicinePaymentOverview {
+  rightsPortalDrugPeriods {
+    paymentStatus
+    levelNumber
+    levelPercentage
   }
 }

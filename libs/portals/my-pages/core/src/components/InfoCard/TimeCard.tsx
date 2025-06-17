@@ -1,15 +1,15 @@
-import React from 'react'
 import {
-  GridRow,
-  GridColumn,
-  Inline,
-  Icon,
   Box,
+  GridColumn,
+  GridRow,
+  Icon,
+  Inline,
   Text,
 } from '@island.is/island-ui/core'
-import { LinkResolver } from '../LinkResolver/LinkResolver'
-import { useWindowSize } from 'react-use'
 import { theme } from '@island.is/island-ui/theme'
+import React from 'react'
+import { useWindowSize } from 'react-use'
+import { LinkResolver } from '../LinkResolver/LinkResolver'
 import EmptyCard from './EmptyCard'
 
 interface AppointmentCardProps {
@@ -30,12 +30,9 @@ const TimeCard: React.FC<AppointmentCardProps> = ({
   title,
   description,
   data,
-  size = 'small',
 }) => {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
-  const isTablet = width < theme.breakpoints.lg && !isMobile
-  console.log('data', data)
   if (!data) {
     return (
       <EmptyCard

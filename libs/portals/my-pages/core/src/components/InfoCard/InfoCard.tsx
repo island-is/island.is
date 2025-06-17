@@ -37,6 +37,7 @@ import {
   Icon,
   IconProps,
   Inline,
+  LoadingDots,
   Tag,
   Text,
 } from '@island.is/island-ui/core'
@@ -68,10 +69,11 @@ export interface InfoCardProps {
     }
   }
   icon?: { type: IconProps['icon']; color: IconProps['color'] }
-  detail?: InfoCardDetail[]
+  detail?: (InfoCardDetail | null)[]
   tags?: Array<ActionCardProps['tag']>
   img?: string
   variant?: 'default' | 'detail' | 'appointment' | 'link'
+  loading?: boolean
 }
 
 export const InfoCard: React.FC<InfoCardProps> = ({
@@ -85,10 +87,10 @@ export const InfoCard: React.FC<InfoCardProps> = ({
   img,
   appointment,
   variant = 'default',
+  loading = false,
 }) => {
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
-  const isDesktop = width < theme.breakpoints.xl
 
   const detailLength = detail ? detail.length : 0
 
@@ -98,7 +100,6 @@ export const InfoCard: React.FC<InfoCardProps> = ({
   }
 
   if (variant === 'appointment') {
-    console.log('appointment', appointment)
     return (
       <TimeCard title={title} data={appointment} description={description} />
     )
@@ -137,11 +138,13 @@ export const InfoCard: React.FC<InfoCardProps> = ({
                     marginBottom={variant === 'link' ? 0 : 1}
                     color="blue400"
                   >
-                    {title}
+                    {loading ? <LoadingDots /> : title}
                   </Text>
                   <Inline space={1}>
-                    <Text>{description}</Text>
-                    {icon && <Icon icon={icon.type} color={icon.color} />}
+                    <Text>{loading ? <LoadingDots /> : description}</Text>
+                    {!loading && icon && (
+                      <Icon icon={icon.type} color={icon.color} />
+                    )}
                   </Inline>
                 </Box>
               </Box>
@@ -158,19 +161,19 @@ export const InfoCard: React.FC<InfoCardProps> = ({
                   flexWrap="nowrap"
                   alignItems="stretch"
                   justifyContent={'spaceBetween'}
-                  className={styles.detailContainer}
+                  width="full"
                 >
                   {detailData.map((item, index) => (
-                    <React.Fragment key={`${item.label}-${index}`}>
+                    <React.Fragment key={`${item?.label}-${index}`}>
                       <Box
                         display="flex"
                         flexDirection="column"
-                        justifyContent="center"
-                        className={styles.detailItem}
+                        justifyContent="spaceBetween"
+                        className={styles.flexItem}
                       >
-                        <Text variant="small">{item.label}</Text>
+                        <Text variant="small">{item?.label}</Text>
                         <Text variant="h3" as="p">
-                          {item.value}
+                          {item?.value}
                         </Text>
                       </Box>
 
@@ -178,14 +181,18 @@ export const InfoCard: React.FC<InfoCardProps> = ({
                       {index < detailData.length - 1 && (
                         <Box
                           display="flex"
-                          style={{ gap: 4 }}
-                          borderColor="blue200"
-                          borderRightWidth={
-                            size === 'large' ? 'standard' : undefined
-                          }
-                          marginY={isDesktop ? 2 : 0}
-                          borderBottomWidth={isDesktop ? 'standard' : undefined}
-                        />
+                          className={styles.flexItemBorder}
+                          justifyContent="center"
+                          marginY={isMobile ? 2 : 0}
+                        >
+                          <Box
+                            borderColor="blue200"
+                            borderRightWidth={isMobile ? undefined : 'standard'}
+                            borderBottomWidth={
+                              isMobile ? 'standard' : undefined
+                            }
+                          />
+                        </Box>
                       )}
                     </React.Fragment>
                   ))}

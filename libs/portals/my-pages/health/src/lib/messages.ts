@@ -110,7 +110,7 @@ export const messages = defineMessages({
   },
   healthCenterNoHealthCenterRegistered: {
     id: 'sp.health:health-center-no-health-center',
-    defaultMessage: 'Enginn heilsugæsla skráð',
+    defaultMessage: 'Engin heilsugæsla skráð',
   },
   healthRegistrationSave: {
     id: 'sp.health:health-registration-save',
@@ -136,6 +136,14 @@ export const messages = defineMessages({
     id: 'sp.health:medicine-title-intro',
     defaultMessage:
       'Sjúkratryggingar greiða samkvæmt lyfjaverðskrá í almennum lyfjum á markaði hér á landi. Greiðsla sjúkratryggðs fer eftir þrepastöðu. Lyfjaeining Sjúkratrygginga annast afgreiðslu umsókna um lyfjaskírteini (einstaklingsbundin greiðsluþátttaka)',
+  },
+  medicinePurchase: {
+    id: 'sp.health:medicine-purchase',
+    defaultMessage: 'Lyfjakaup',
+  },
+  medicinePurchaseDescription: {
+    id: 'sp.health:medicine-purchase-description',
+    defaultMessage: 'Upplýsingar um kostnað við lyfjakaup',
   },
   medicinePurchacePeriod: {
     id: 'sp.health:medicine-purchase-period',
@@ -203,6 +211,10 @@ export const messages = defineMessages({
   medicineStepStatus: {
     id: 'sp.health:medicine-step-status',
     defaultMessage: 'Greiðsluþrep {step}, þú greiðir {ratio}%',
+  },
+  medicineStepStatusShort: {
+    id: 'sp.health:medicine-step-status-short',
+    defaultMessage: 'Þrep {step}, þú greiðir',
   },
   medicineBills: {
     id: 'sp.health:medicine-bills',
@@ -394,6 +406,10 @@ export const messages = defineMessages({
     defaultMessage: 'Heimilislæknir',
     id: 'sp.health:close-placeholder',
   },
+  healthCenterDoctorLabel: {
+    defaultMessage: 'Heimilislæknir: {doctor}',
+    id: 'sp.health:health-center-doctor-label',
+  },
   chooseMedicineTabs: {
     defaultMessage: 'Veldu flokk',
     id: 'sp.health:choose-medicine-tabs',
@@ -427,6 +443,10 @@ export const messages = defineMessages({
   dentist: {
     defaultMessage: 'Tannlæknir',
     id: 'sp.health:dentist',
+  },
+  noDentistRegistered: {
+    defaultMessage: 'Engin tannlæknir skráður',
+    id: 'sp.health:no-dentist-registered',
   },
   dentistCharge: {
     defaultMessage: 'Gjaldskr. tannlæknis',
@@ -794,6 +814,10 @@ export const messages = defineMessages({
     defaultMessage: 'Hámarksgreiðsla þín á mánuði',
     id: 'sp.health:maximum-monthly-payment',
   },
+  maximumMonthlyPaymentShort: {
+    defaultMessage: 'Hámarksgreiðsla þín á mán.',
+    id: 'sp.health:maximum-monthly-payment-short',
+  },
   maxPaidByApplicant: {
     defaultMessage: 'Fyrst greitt af umsækjanda á mánuði',
     id: 'sp.health:max-paid-by-applicant',
@@ -1148,6 +1172,10 @@ export const messages = defineMessages({
     defaultMessage: 'Greiðslur og réttindi',
     id: 'sp.health:payments-and-rights',
   },
+  paymentsAndRightsDescription: {
+    defaultMessage: 'Upplýsingar um greiðslustöðu þína',
+    id: 'sp.health:payments-and-rights-description',
+  },
   paymentsIntro: {
     defaultMessage:
       'Undir greiðsluþátttökukerfið falla greiðslur fyrir þjónustu sem veitt er á heilsugæslustöðvum og sjúkrahúsum.',
@@ -1341,6 +1369,10 @@ export const messages = defineMessages({
   statusOfRights: {
     defaultMessage: 'Réttindastaða',
     id: 'sp.health:status-of-rights',
+  },
+  statusOfRightsAndPayments: {
+    defaultMessage: 'Réttindastaða og greiðsluþáttaka',
+    id: 'sp.health:status-of-right-and-payments',
   },
   temporaryMedicine: {
     defaultMessage: 'Tímabundin lyf',
@@ -1598,5 +1630,9 @@ export const messages = defineMessages({
   openFylgiskjalNr: {
     id: 'sp.health:open-fylgiskjal-nr',
     defaultMessage: 'Opna fylgiskjal {arg}',
+  },
+  noBasicInfo: {
+    id: 'sp.health:no-basic-info',
+    defaultMessage: 'Engar grunnupplýsingar fundust',
   },
 })

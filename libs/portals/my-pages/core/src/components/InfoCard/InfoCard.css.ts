@@ -36,20 +36,6 @@ export const detailDivider = styleVariants({
     }),
   },
 })
-export const detailItem = style({
-  display: 'flex',
-  flexDirection: 'column',
-  justifyContent: 'center',
-})
-
-export const detailContainer = style({
-  width: 'fit-content',
-  ...themeUtils.responsiveStyle({
-    xl: {
-      width: '100%',
-    },
-  }),
-})
 
 export const contentContainer = style({
   display: 'flex',
@@ -70,4 +56,24 @@ export const smallImage = style({
   minHeight: 85,
   maxHeight: 105,
   width: 'auto',
+})
+
+export const flexItem = style({
+  flex: 2,
+})
+
+export const flexItemBorder = style({
+  width: '100%',
+  flex: 1,
+})
+
+globalStyle(`${flexItemBorder} > div`, {
+  ...themeUtils.responsiveStyle({
+    xs: {
+      width: '100%',
+    },
+    lg: {
+      width: 'auto',
+    },
+  }),
 })

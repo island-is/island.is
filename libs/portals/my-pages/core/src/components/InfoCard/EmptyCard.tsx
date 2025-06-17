@@ -8,12 +8,11 @@ import {
 import { theme } from '@island.is/island-ui/theme'
 import React from 'react'
 import { useWindowSize } from 'react-use'
-import InfoCard, { InfoCardProps } from './InfoCard'
 import * as styles from './InfoCard.css'
 
 interface EmptyCardProps {
   title: string
-  description: string
+  description?: string
   img?: string
   size?: 'small' | 'large'
 }
