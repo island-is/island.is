@@ -3,7 +3,6 @@ import { Box, LoadingDots } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { SERVICE_PORTAL_HEADER_HEIGHT_LG } from '@island.is/portals/my-pages/constants'
 import { m } from '@island.is/portals/my-pages/core'
-import { useUserInfo } from '@island.is/react-spa/bff'
 import { FC } from 'react'
 import { useDocumentList } from '../../hooks/useDocumentList'
 import { Reply } from '../../lib/types'
@@ -27,7 +26,6 @@ export const DesktopOverview: FC<Props> = ({
 }) => {
   useNamespaces('sp.documents')
   const { formatMessage } = useLocale()
-  const { profile } = useUserInfo()
 
   const {
     activeDocument,
@@ -59,20 +57,6 @@ export const DesktopOverview: FC<Props> = ({
 
   if (!activeDocument) {
     return <NoPDF />
-  }
-
-  const toggleReply = (id?: string | null) => {
-    const updatedReplies: Reply = {
-      ...replyState?.replies,
-      comments:
-        replyState?.replies?.comments?.map((reply) =>
-          reply.id === id ? { ...reply, hide: !reply.hide } : reply,
-        ) || [],
-    }
-    setReplyState((prev) => ({
-      ...prev,
-      replies: updatedReplies,
-    }))
   }
 
   const toggleDocument = () => {
