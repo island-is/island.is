@@ -58,7 +58,7 @@ const ReplyHeaderMobile: React.FC<ReplyHeaderMobileProps> = ({
                   icon="pencil"
                   iconType="outline"
                   size="small"
-                  type="text"
+                  type="button"
                   variant="text"
                   as="span"
                   unfocusable

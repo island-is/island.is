@@ -180,39 +180,22 @@ export const DocumentLine: FC<Props> = ({
             setLocalRead([...localRead, documentLine.id])
             const replyable = data?.documentV2?.replyable ?? false
 
-            if (data?.documentV2?.ticket) {
+            const ticket = data?.documentV2?.ticket
+            if (ticket) {
               const reply: Reply = {
-                id: data.documentV2?.ticket?.id,
-                createdDate: data.documentV2?.ticket?.createdDate,
-                updatedDate: data.documentV2?.ticket?.updatedDate,
-                subject: data.documentV2?.ticket?.subject,
-                authorId: data.documentV2?.ticket?.authorId,
-                status: data.documentV2?.ticket?.status,
-                comments: data.documentV2?.ticket?.comments?.map(
-                  (item, index) => {
-                    if (
-                      index ===
-                      (data.documentV2?.ticket?.comments?.length ?? 0) - 1
-                    ) {
-                      return {
-                        ...item,
-                        hide: false,
-                      }
-                    } else
-                      return {
-                        ...item,
-                        hide: false,
-                      }
-                  },
-                ),
+                ...ticket,
+                comments: (ticket.comments ?? []).map((c) => ({
+                  ...c,
+                  hide: false,
+                })),
               }
-              setReplyState((prevState) => ({
-                ...prevState,
+              setReplyState((prev) => ({
+                ...prev,
                 replies: reply,
                 replyable,
                 closedForMoreReplies:
-                  data?.documentV2?.closedForMoreReplies ?? false,
-                replyOpen: prevState?.replyOpen ?? false, // Ensure replyOpen is explicitly set to a boolean
+                  data.documentV2?.closedForMoreReplies ?? false,
+                replyOpen: prev?.replyOpen ?? false,
               }))
             }
           } else {

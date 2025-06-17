@@ -39,7 +39,7 @@ export class DocumentsClientV2Service {
       const sanitizedObj = {} as T
 
       for (const key in obj) {
-        if (obj[key]) {
+        if (obj[key] !== undefined && obj[key] !== null) {
           if (Array.isArray(obj[key]) && obj[key].length === 0) {
             continue
           }
@@ -253,14 +253,14 @@ export class DocumentsClientV2Service {
   }
 
   async postTicket(
-    nationalID: string,
+    nationalId: string,
     documentId: string,
     input: AddCommentCommand,
   ) {
     return await this.api.apiMailV1CustomersKennitalaMessagesMessageIdCommentsPost(
       {
         addCommentCommand: input,
-        kennitala: nationalID,
+        kennitala: nationalId,
         messageId: documentId,
       },
     )

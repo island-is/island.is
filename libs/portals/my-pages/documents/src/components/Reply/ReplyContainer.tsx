@@ -48,18 +48,16 @@ const ReplyContainer = () => {
     changeReplyState({ replyOpen: false }) // Close the reply form after sending
   }
 
-  const changeReplyState = (replyState: ReplyState) => {
+  const changeReplyState = (partial: Partial<ReplyState>) => {
     setReplyState((prev) => {
       return {
         ...prev,
-        reply: replyState.reply ?? prev?.reply,
-        replyable: replyState.replyable ?? prev?.replyable ?? false,
-        replyOpen: replyState.replyOpen ?? prev?.replyOpen ?? false,
-        replies: replyState.replies ?? prev?.replies,
+        reply: partial.reply ?? prev?.reply,
+        replyable: partial.replyable ?? prev?.replyable ?? false,
+        replyOpen: partial.replyOpen ?? prev?.replyOpen ?? false,
+        replies: partial.replies ?? prev?.replies,
         closedForMoreReplies:
-          replyState.closedForMoreReplies ??
-          prev?.closedForMoreReplies ??
-          false,
+          partial.closedForMoreReplies ?? prev?.closedForMoreReplies ?? false,
       }
     })
   }
@@ -99,7 +97,7 @@ const ReplyContainer = () => {
                   }
                   changeReplyState({
                     replies: reply,
-                    reply: sent && replyState?.reply && undefined,
+                    reply: sent ? replyState?.reply : undefined,
                   })
                 }
               },
@@ -116,6 +114,7 @@ const ReplyContainer = () => {
   )
 
   const toggleReply = (id?: string | null) => {
+    if (!replies) return
     const updatedReplies: Reply = {
       ...replies,
       comments:

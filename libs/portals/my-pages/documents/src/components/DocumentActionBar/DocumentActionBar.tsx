@@ -232,7 +232,7 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
           <DropdownMenu
             icon="ellipsisVertical"
             iconType="filled"
-            items={actions.reverse()}
+            items={[...actions].reverse()}
             disclosure={
               <span className={styles.actionsButton}>
                 <Tooltip text={formatMessage(m.actions)}>

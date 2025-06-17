@@ -140,8 +140,6 @@ export class DocumentServiceV2 {
       replyable: use2Way ? document.replyable : false,
       closedForMoreReplies: use2Way
         ? ticket?.status?.toLowerCase() === 'closed'
-          ? true
-          : false
         : null,
       ticket: ticket,
     }

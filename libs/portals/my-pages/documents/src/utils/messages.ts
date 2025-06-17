@@ -203,10 +203,6 @@ export const messages = defineMessages({
     id: 'sp.documents:reply-cannot-be-empty',
     defaultMessage: 'Skilaboð mega ekki vera tóm',
   },
-  reply: {
-    id: 'sp.documents:reply-cannot-be-empty',
-    defaultMessage: 'Skilaboð mega ekki vera tóm',
-  },
   messagesHere: {
     id: 'sp.documents:messages-here',
     defaultMessage: 'Skilaboð hér',

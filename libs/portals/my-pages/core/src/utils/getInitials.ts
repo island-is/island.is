@@ -3,12 +3,15 @@ export const getInitials = (username?: string) => {
     return ''
   }
 
-  const names = username.split(' ')
-  let initials = names[0].substring(0, 1).toUpperCase()
+  const parts = username.trim().split(/\s+/).filter(Boolean)
 
-  if (names.length > 1) {
-    initials += names[names.length - 1].substring(0, 1).toUpperCase()
+  if (parts.length === 0) {
+    return ''
   }
 
+  let initials = parts[0].charAt(0).toUpperCase()
+  if (parts.length > 1) {
+    initials += parts[parts.length - 1].charAt(0).toUpperCase()
+  }
   return initials
 }
