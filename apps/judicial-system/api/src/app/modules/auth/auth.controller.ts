@@ -71,7 +71,8 @@ export class AuthController {
     name: REDIRECT_COOKIE_NAME,
     options: {
       ...this.defaultCookieOptions,
-      sameSite: 'none',
+      sameSite: 'none', // this only works when the secure attribute is set to true
+      secure: true,
     },
   }
 
