@@ -214,9 +214,12 @@ export const mapHaulUnits = (application: Application): HaulUnitModel[] => {
                   // Axle spacing
                   axleSpacing: (axleSpacingAnswers?.hasExemptionForWeight
                     ? (trailerAxleSpacing?.useSameValues
-                        ? Array((trailerAxleSpacing?.axleCount ?? 0) - 1).fill(
-                            trailerAxleSpacing?.singleValue,
-                          )
+                        ? Array(
+                            Math.max(
+                              (trailerAxleSpacing?.axleCount ?? 0) - 1,
+                              0,
+                            ),
+                          ).fill(trailerAxleSpacing?.singleValue)
                         : trailerAxleSpacing?.values) || []
                     : []
                   ).map(mapStringToNumber),
