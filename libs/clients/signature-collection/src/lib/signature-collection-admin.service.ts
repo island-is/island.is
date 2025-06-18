@@ -144,9 +144,15 @@ export class SignatureCollectionAdminClientService {
   }
 
   async createListsAdmin(
-    { collectionId, owner, areas, collectionType }: CreateListInput,
+    {
+      collectionId,
+      owner,
+      areas,
+      collectionType,
+      collectionName,
+    }: CreateListInput,
     auth: Auth,
-  ): Promise<Slug> {
+  ): Promise<Slug & Success> {
     const { id, areas: collectionAreas } =
       await this.getLatestCollectionForType(auth, collectionType)
     // check if collectionId is current collection and current collection is open
@@ -154,58 +160,68 @@ export class SignatureCollectionAdminClientService {
       throw new Error('Collection id input wrong')
     }
 
-    const candidates = await this.getApiWithAuth(
-      this.candidateApi,
-      auth,
-    ).frambodGet({
-      sofnunID: parseInt(collectionId),
-    })
-
-    const adminApi = this.getApiWithAuth(this.adminApi, auth)
-
-    const filteredAreas = areas
-      ? collectionAreas.filter((area) =>
-          areas.flatMap((a) => a.areaId).includes(area.id),
-        )
-      : collectionAreas
-
-    let candidacy = candidates.find((c) => c.kennitala === owner.nationalId)
-
-    // If no candidacy exists, create one
-    if (!candidacy) {
-      candidacy = await adminApi.adminFrambodPost({
-        frambodRequestDTO: {
-          sofnunID: parseInt(id),
-          kennitala: owner.nationalId,
-          simi: owner.phone,
-          netfang: owner.email,
-          medmaelalistar: filteredAreas.map((area) => ({
-            svaediID: parseInt(area.id),
-            listiNafn: `${owner.name} - ${area.name}`,
-          })),
-        },
+    try {
+      const candidates = await this.getApiWithAuth(
+        this.candidateApi,
+        auth,
+      ).frambodGet({
+        sofnunID: parseInt(collectionId),
       })
-    }
-    // Candidacy exists, add area
-    else {
-      await adminApi.adminMedmaelalistiPost({
-        medmaelalistarRequestDTO: {
-          frambodID: candidacy.id,
-          medmaelalistar: filteredAreas.map((area) => ({
-            svaediID: parseInt(area.id),
-            listiNafn: `${owner.name} - ${area.name}`,
-          })),
-        },
+
+      const adminApi = this.getApiWithAuth(this.adminApi, auth)
+
+      const filteredAreas = areas
+        ? collectionAreas.filter((area) =>
+            areas.flatMap((a) => a.areaId).includes(area.id),
+          )
+        : collectionAreas
+
+      let candidacy = candidates.find((c) => c.kennitala === owner.nationalId)
+
+      // If no candidacy exists, create one
+      if (!candidacy) {
+        candidacy = await adminApi.adminFrambodPost({
+          frambodRequestDTO: {
+            sofnunID: parseInt(id),
+            kennitala: owner.nationalId,
+            simi: owner.phone,
+            netfang: owner.email,
+            frambodNafn: collectionName,
+            medmaelalistar: filteredAreas.map((area) => ({
+              svaediID: parseInt(area.id),
+              listiNafn: `${owner.name} - ${area.name}`,
+            })),
+          },
+        })
+      }
+      // Candidacy exists, add area
+      else {
+        await adminApi.adminMedmaelalistiPost({
+          medmaelalistarRequestDTO: {
+            frambodID: candidacy.id,
+            medmaelalistar: filteredAreas.map((area) => ({
+              svaediID: parseInt(area.id),
+              listiNafn: `${owner.name} - ${area.name}`,
+            })),
+          },
+        })
+      }
+
+      const collectionsApi = this.getApiWithAuth(this.collectionsApi, auth)
+      const votingType = await collectionsApi.medmaelasofnunIDGet({
+        iD: candidacy.medmaelasofnunID ?? -1,
       })
-    }
 
-    const collectionsApi = this.getApiWithAuth(this.collectionsApi, auth)
-    const votingType = await collectionsApi.medmaelasofnunIDGet({
-      iD: candidacy.medmaelasofnunID ?? -1,
-    })
-
-    return {
-      slug: getSlug(candidacy.id ?? '', votingType.kosningTegund),
+      return {
+        slug: getSlug(candidacy.id ?? '', votingType.kosningTegund),
+        success: true,
+      }
+    } catch (error) {
+      return {
+        slug: '',
+        success: false,
+        reasons: error.body ? [error.body] : [],
+      }
     }
   }
 

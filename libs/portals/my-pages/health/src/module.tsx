@@ -166,10 +166,22 @@ export const healthModule: PortalModule = {
       element: <Dentists />,
     },
     {
+      name: hm.dentistsTitle,
+      path: HealthPaths.HealthDentistsOld,
+      enabled: userInfo.scopes.includes(ApiScope.healthDentists),
+      element: <Navigate to={HealthPaths.HealthDentists} replace />,
+    },
+    {
       name: hm.healthCenterTitle,
       path: HealthPaths.HealthCenter,
       enabled: userInfo.scopes.includes(ApiScope.healthHealthcare),
       element: <HealthCenter />,
+    },
+    {
+      name: hm.healthCenterTitle,
+      path: HealthPaths.HealthCenterOld,
+      enabled: userInfo.scopes.includes(ApiScope.healthHealthcare),
+      element: <Navigate to={HealthPaths.HealthCenter} replace />,
     },
     {
       name: hm.medicineTitle,
@@ -231,7 +243,6 @@ export const healthModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
       element: <MedicineCertificate />,
     },
-
     {
       name: hm.healthCenterRegistrationTitle,
       path: HealthPaths.HealthCenterRegistration,
@@ -239,10 +250,22 @@ export const healthModule: PortalModule = {
       element: <HealthCenterRegistration />,
     },
     {
+      name: hm.healthCenterRegistrationTitle,
+      path: HealthPaths.HealthCenterRegistrationOld,
+      enabled: userInfo.scopes.includes(ApiScope.healthHealthcare),
+      element: <Navigate to={HealthPaths.HealthCenterRegistration} replace />,
+    },
+    {
       name: hm.dentistRegisterationPageTitle,
       path: HealthPaths.HealthDentistRegistration,
       enabled: userInfo.scopes.includes(ApiScope.healthDentists),
       element: <DentistRegistration />,
+    },
+    {
+      name: hm.dentistRegisterationPageTitle,
+      path: HealthPaths.HealthDentistRegistrationOld,
+      enabled: userInfo.scopes.includes(ApiScope.healthDentists),
+      element: <Navigate to={HealthPaths.HealthDentistRegistration} replace />,
     },
     {
       name: hm.organDonation,
@@ -253,10 +276,26 @@ export const healthModule: PortalModule = {
     },
     {
       name: hm.organDonation,
+      path: HealthPaths.HealthOrganDonationOld,
+      key: 'HealthOrganDonation',
+      enabled: userInfo.scopes.includes(ApiScope.healthOrganDonation),
+      element: <Navigate to={HealthPaths.HealthOrganDonation} replace />,
+    },
+    {
+      name: hm.organDonation,
       path: HealthPaths.HealthOrganDonationRegistration,
       key: 'HealthOrganDonation',
       enabled: userInfo.scopes.includes(ApiScope.healthOrganDonation),
       element: <OrganDonationRegistration />,
+    },
+    {
+      name: hm.organDonation,
+      path: HealthPaths.HealthOrganDonationRegistrationOld,
+      key: 'HealthOrganDonation',
+      enabled: userInfo.scopes.includes(ApiScope.healthOrganDonation),
+      element: (
+        <Navigate to={HealthPaths.HealthOrganDonationRegistration} replace />
+      ),
     },
     {
       name: hm.vaccinations,
@@ -265,6 +304,7 @@ export const healthModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.healthVaccinations),
       element: <Vaccinations />,
     },
+
     {
       name: hm.referrals,
       path: HealthPaths.HealthReferrals,
