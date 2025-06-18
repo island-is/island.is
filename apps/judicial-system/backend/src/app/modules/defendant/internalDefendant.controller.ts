@@ -37,7 +37,7 @@ import {
 } from '../case'
 import { DeliverDto } from './dto/deliver.dto'
 import { InternalUpdateDefendantDto } from './dto/internalUpdateDefendant.dto'
-import { UpdateVerdictAppealDto } from './dto/updateVerdictAppealDecision.dto'
+import { UpdateVerdictAppealDto } from './dto/updateVerdictAppeal.dto'
 import { CurrentDefendant } from './guards/defendant.decorator'
 import { DefendantExistsGuard } from './guards/defendantExists.guard'
 import { DefendantNationalIdExistsGuard } from './guards/defendantNationalIdExists.guard'

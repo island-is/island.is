@@ -8,5 +8,5 @@ export class UpdateVerdictAppealDto {
   @IsNotEmpty()
   @IsEnum(VerdictAppealDecision)
   @ApiProperty({ enum: VerdictAppealDecision })
-  verdictAppealDecision!: VerdictAppealDecision
+  readonly verdictAppealDecision!: VerdictAppealDecision
 }
