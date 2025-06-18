@@ -5,7 +5,6 @@ import { SERVICE_PORTAL_HEADER_HEIGHT_LG } from '@island.is/portals/my-pages/con
 import { m } from '@island.is/portals/my-pages/core'
 import { FC } from 'react'
 import { useDocumentList } from '../../hooks/useDocumentList'
-import { Reply } from '../../lib/types'
 import { useDocumentContext } from '../../screens/Overview/DocumentContext'
 import { DocumentHeader } from '../DocumentHeader/DocumentHeader'
 import { DocumentRenderer } from '../DocumentRenderer/DocumentRenderer'

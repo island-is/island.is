@@ -41,7 +41,7 @@ export const MobileOverview: FC<Props> = ({
     } else if (scrollDirection === 'up' && scrollingDown) {
       setScrollingDown(false)
     }
-  }, [scrollDirection])
+  }, [scrollDirection, scrollingDown])
 
   if (loading) {
     return <LoadModal />
