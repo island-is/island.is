@@ -36,18 +36,34 @@ export class SignatureCollectionSharedClientService {
       hasSofnun: true,
       onlyActive: true,
     })
+
+    let filteredBaseRes = baseRes.filter(
+      (election) =>
+        Boolean(election.id) &&
+        election.kosningTegundNr ===
+          getNumberFromCollectionType(collectionType),
+    )
+
+    if (
+      collectionType === CollectionType.LocalGovernmental &&
+      !filteredBaseRes.length
+    ) {
+      // No active local governmental elections, checking for "special" sveitó elections
+      filteredBaseRes = baseRes.filter(
+        (election) =>
+          Boolean(election.id) &&
+          election.kosningTegundNr ===
+            getNumberFromCollectionType(
+              CollectionType.SpecialLocalGovernmental,
+            ),
+      )
+    }
+
     const elections = await Promise.all(
-      baseRes
-        .filter(
-          (election) =>
-            Boolean(election.id) &&
-            election.kosningTegundNr ===
-              getNumberFromCollectionType(collectionType),
-        )
-        .map(async ({ id }) => {
-          const iD = id ?? 0 // Filter already applied but typing not catching up
-          return await api.kosningIDSofnunListGet({ iD })
-        }),
+      filteredBaseRes.map(async ({ id }) => {
+        const iD = id ?? 0 // Filter already applied but typing not catching up
+        return await api.kosningIDSofnunListGet({ iD })
+      }),
     )
 
     // The signature-collection system has operated on the assumption that

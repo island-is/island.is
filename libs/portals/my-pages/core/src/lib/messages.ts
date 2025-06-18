@@ -1945,7 +1945,11 @@ export const m = defineMessages({
   bloodtype: {
     id: 'service.portal:bloodtype',
     defaultMessage: 'Blóðflokkur',
-  }, 
+  },
+  sjukratryggingar: {
+    id: 'service.portal:sjukratryggingar',
+    defaultMessage: 'Sjúkratryggingar',
+  },
   expand: {
     id: 'service.portal:expand',
     defaultMessage: 'Útvíkka',
