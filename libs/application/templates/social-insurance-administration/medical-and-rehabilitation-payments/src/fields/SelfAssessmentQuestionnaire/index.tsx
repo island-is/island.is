@@ -11,6 +11,7 @@ import { RadioController } from '@island.is/shared/form-fields'
 import { Locale } from '@island.is/shared/types'
 import { FC, useEffect, useState } from 'react'
 import { useFormContext } from 'react-hook-form'
+
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../lib/messages'
 import { SelfAssessmentQuestionnaireAnswers } from '../../types'
 import { selfAssessmentOptions } from '../../utils/constants'
