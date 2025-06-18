@@ -1,5 +1,7 @@
 import { Box, Text } from '@island.is/island-ui/core'
+import { OfficialJournalOfIcelandAdvertAppendix } from '@island.is/web/graphql/schema'
 
+import { Appendixes } from './OJOIAppendix'
 import * as s from './OJOIAdvertDisplay.css'
 
 export type OJOIAdvertDisplayProps = {
@@ -9,6 +11,7 @@ export type OJOIAdvertDisplayProps = {
   advertSubject: string
   advertText: string
   isLegacy: boolean
+  additions?: OfficialJournalOfIcelandAdvertAppendix[]
 }
 
 export const OJOIAdvertDisplay = ({
@@ -18,6 +21,7 @@ export const OJOIAdvertDisplay = ({
   advertSubject,
   advertText,
   isLegacy,
+  additions,
 }: OJOIAdvertDisplayProps) => {
   if (!advertText) {
     return null
@@ -50,6 +54,7 @@ export const OJOIAdvertDisplay = ({
         className={isLegacy ? s.bodyText : s.bodyText}
         dangerouslySetInnerHTML={{ __html: advertText }}
       ></Box>
+      <Appendixes additions={additions ?? []} />
     </Box>
   )
 }

@@ -4,21 +4,18 @@
     "/api/v1/applications/adverts": {
       "get": {
         "operationId": "getAdvertCopies",
-        "summary": "",
         "parameters": [
           {
             "name": "page",
             "required": false,
             "in": "query",
-            "example": 1,
-            "schema": { "type": "number" }
+            "schema": { "example": 1, "type": "number" }
           },
           {
             "name": "pageSize",
             "required": false,
             "in": "query",
-            "example": 10,
-            "schema": { "type": "number" }
+            "schema": { "example": 10, "type": "number" }
           },
           {
             "name": "search",
@@ -40,13 +37,13 @@
             }
           }
         },
-        "security": [{ "bearer": [] }]
+        "security": [{ "bearer": [] }],
+        "summary": ""
       }
     },
     "/api/v1/applications/my-user-info": {
       "get": {
         "operationId": "getMyUserInfo",
-        "summary": "",
         "parameters": [],
         "responses": {
           "default": {
@@ -60,13 +57,13 @@
             }
           }
         },
-        "security": [{ "bearer": [] }]
+        "security": [{ "bearer": [] }],
+        "summary": ""
       }
     },
     "/api/v1/applications/{id}/price": {
       "get": {
         "operationId": "getPrice",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -85,13 +82,13 @@
             }
           }
         },
-        "security": [{ "bearer": [] }]
+        "security": [{ "bearer": [] }],
+        "summary": ""
       }
     },
     "/api/v1/applications/{id}": {
       "get": {
         "operationId": "getApplication",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -112,13 +109,13 @@
             }
           }
         },
-        "security": [{ "bearer": [] }]
+        "security": [{ "bearer": [] }],
+        "summary": ""
       }
     },
     "/api/v1/applications/{id}/post": {
       "post": {
         "operationId": "postApplication",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -128,13 +125,13 @@
           }
         ],
         "responses": { "200": { "description": "" } },
-        "security": [{ "bearer": [] }]
+        "security": [{ "bearer": [] }],
+        "summary": ""
       }
     },
     "/api/v1/applications/{id}/comments": {
       "get": {
         "operationId": "getComments",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -153,11 +150,11 @@
             }
           }
         },
-        "security": [{ "bearer": [] }]
+        "security": [{ "bearer": [] }],
+        "summary": ""
       },
       "post": {
         "operationId": "postComment",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -177,13 +174,13 @@
           }
         },
         "responses": { "204": { "description": "" } },
-        "security": [{ "bearer": [] }]
+        "security": [{ "bearer": [] }],
+        "summary": ""
       }
     },
     "/api/v1/applications/{id}/upload": {
       "post": {
         "operationId": "uploadApplicationAttachment",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -222,13 +219,13 @@
             }
           }
         },
-        "security": [{ "bearer": [] }]
+        "security": [{ "bearer": [] }],
+        "summary": ""
       }
     },
     "/api/v1/applications/{id}/presigned-url/{type}": {
       "post": {
         "operationId": "getPresignedUrl",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -241,7 +238,7 @@
             "required": true,
             "in": "path",
             "schema": {
-              "enum": ["frumrit", "fylgiskjol", "assets"],
+              "enum": ["frumrit", "fylgiskjol", "fylgigogn", "assets"],
               "type": "string"
             }
           }
@@ -266,13 +263,13 @@
             }
           }
         },
-        "security": [{ "bearer": [] }]
+        "security": [{ "bearer": [] }],
+        "summary": ""
       }
     },
     "/api/v1/applications/{id}/attachments/{type}": {
       "post": {
         "operationId": "addApplicationAttachment",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -285,7 +282,7 @@
             "required": true,
             "in": "path",
             "schema": {
-              "enum": ["frumrit", "fylgiskjol", "assets"],
+              "enum": ["frumrit", "fylgiskjol", "fylgigogn", "assets"],
               "type": "string"
             }
           }
@@ -301,11 +298,11 @@
           }
         },
         "responses": { "204": { "description": "" } },
-        "security": [{ "bearer": [] }]
+        "security": [{ "bearer": [] }],
+        "summary": ""
       },
       "get": {
         "operationId": "getApplicationAttachments",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -318,7 +315,7 @@
             "required": true,
             "in": "path",
             "schema": {
-              "enum": ["frumrit", "fylgiskjol", "assets"],
+              "enum": ["frumrit", "fylgiskjol", "fylgigogn", "assets"],
               "type": "string"
             }
           }
@@ -335,13 +332,13 @@
             }
           }
         },
-        "security": [{ "bearer": [] }]
+        "security": [{ "bearer": [] }],
+        "summary": ""
       }
     },
     "/api/v1/applications/{id}/attachments/delete": {
       "delete": {
         "operationId": "deleteApplicationAttachment",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -357,13 +354,13 @@
           }
         ],
         "responses": { "204": { "description": "" } },
-        "security": [{ "bearer": [] }]
+        "security": [{ "bearer": [] }],
+        "summary": ""
       }
     },
     "/api/v1/applications/{id}/involved-parties": {
       "get": {
         "operationId": "getInvolvedParties",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -384,13 +381,13 @@
             }
           }
         },
-        "security": [{ "bearer": [] }]
+        "security": [{ "bearer": [] }],
+        "summary": ""
       }
     },
     "/api/v1/applications/{id}/case": {
       "get": {
         "operationId": "getApplicationCase",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -411,13 +408,13 @@
             }
           }
         },
-        "security": [{ "bearer": [] }]
+        "security": [{ "bearer": [] }],
+        "summary": ""
       }
     },
     "/api/v1/applications/advert/templates": {
       "get": {
         "operationId": "getApplicationAdvertTemplates",
-        "summary": "",
         "parameters": [],
         "responses": {
           "default": {
@@ -434,13 +431,13 @@
             }
           }
         },
-        "security": [{ "bearer": [] }]
+        "security": [{ "bearer": [] }],
+        "summary": ""
       }
     },
     "/api/v1/applications/advert/templates/{advertType}": {
       "get": {
         "operationId": "getApplicationAdvertTemplate",
-        "summary": "",
         "parameters": [
           {
             "name": "advertType",
@@ -464,13 +461,13 @@
             }
           }
         },
-        "security": [{ "bearer": [] }]
+        "security": [{ "bearer": [] }],
+        "summary": ""
       }
     },
     "/api/v1/applications/involved-party/{involvedPartyId}": {
       "get": {
         "operationId": "getSignaturesForInvolvedParty",
-        "summary": "",
         "parameters": [
           {
             "name": "involvedPartyId",
@@ -490,13 +487,13 @@
           },
           "404": { "description": "" }
         },
-        "security": [{ "bearer": [] }]
+        "security": [{ "bearer": [] }],
+        "summary": ""
       }
     },
     "/api/v1/advert-types/types": {
       "get": {
         "operationId": "getTypes",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -580,13 +577,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/advert-types/main-types": {
       "get": {
         "operationId": "getMainTypes",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -670,13 +667,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/advert-types/types/{id}": {
       "get": {
         "operationId": "getTypeById",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -718,13 +715,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/advert-types/main-types/{id}": {
       "get": {
         "operationId": "getMainTypeById",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -766,13 +763,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/pdf/case/{id}": {
       "get": {
         "operationId": "getPdfByCaseId",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -790,13 +787,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/pdf/application/{id}": {
       "get": {
         "operationId": "getPdfByApplicationId",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -821,13 +818,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/pdf/case/{id}/url": {
       "get": {
         "operationId": "getPdfUrlByCaseId",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -845,13 +842,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/pdf/application/{id}/url": {
       "get": {
         "operationId": "getPdfUrlByApplicationId",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -869,12 +866,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/health": {
       "get": {
-        "operationId": "HealthController_",
+        "operationId": "HealthController__v1",
         "parameters": [],
         "responses": { "200": { "description": "Health check endpoint." } }
       }
@@ -1241,7 +1239,6 @@
       },
       "CaseActionEnum": {
         "type": "string",
-        "description": "The action that created the comment",
         "enum": [
           "SUBMIT",
           "ASSIGN_USER",
@@ -1254,7 +1251,6 @@
       },
       "CaseStatusEnum": {
         "type": "string",
-        "description": "Status of the case",
         "enum": [
           "Innsent",
           "Grunnvinnsla",
@@ -1274,7 +1270,8 @@
           },
           "title": {
             "example": "Innsent",
-            "$ref": "#/components/schemas/CaseStatusEnum"
+            "description": "Status of the case",
+            "allOf": [{ "$ref": "#/components/schemas/CaseStatusEnum" }]
           },
           "slug": {
             "type": "string",
@@ -1308,7 +1305,10 @@
             "type": "string",
             "description": "ISO string representation of the date the comment was created"
           },
-          "action": { "$ref": "#/components/schemas/CaseActionEnum" },
+          "action": {
+            "description": "The action that created the comment",
+            "allOf": [{ "$ref": "#/components/schemas/CaseActionEnum" }]
+          },
           "caseStatus": {
             "description": "The status of the case when the comment was created",
             "allOf": [{ "$ref": "#/components/schemas/CaseStatus" }]
@@ -1433,7 +1433,7 @@
           },
           "title": {
             "type": "string",
-            "enum": ["Frumrit", "Fylgiskjöl"],
+            "enum": ["Frumrit", "Fylgiskjöl", "Fylgigögn"],
             "description": "Title of the attachment type"
           },
           "slug": {

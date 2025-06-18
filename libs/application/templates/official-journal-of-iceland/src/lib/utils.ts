@@ -137,12 +137,9 @@ export enum TitlePrefix {
 export const getAddition = (
   titlePrefix: TitlePrefix,
   index: number,
-  roman = true,
 ): z.infer<typeof additionSchema>[number] => ({
   id: uuid(),
-  title: roman
-    ? `${titlePrefix} ${convertNumberToRoman(index)}`
-    : `${titlePrefix} ${index}`,
+  title: `${titlePrefix} ${index}`,
   content: '',
   type: 'html',
 })

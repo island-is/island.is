@@ -1,21 +1,13 @@
-import { useState } from 'react'
-import {
-  convertNumberToRoman,
-  getAddition,
-  isAddition,
-  TitlePrefix,
-} from '../../lib/utils'
-import { additionSchema } from '../../lib/dataSchema'
+import { getAddition, isAddition, TitlePrefix } from '../../lib/utils'
 import {
   Stack,
   Inline,
-  RadioButton,
   Box,
   Button,
   Text,
+  Input,
 } from '@island.is/island-ui/core'
 import { HTMLText } from '@island.is/regulations-tools/types'
-import { z } from 'zod'
 import { MAXIMUM_ADDITIONS_COUNT } from '../../lib/constants'
 import { HTMLEditor } from '../htmlEditor/HTMLEditor'
 import { useApplication } from '../../hooks/useUpdateApplication'
@@ -31,16 +23,9 @@ type Props = {
   application: OJOIApplication
 }
 
-type Addition = z.infer<typeof additionSchema>[number]
+const titlePrefix = TitlePrefix.Appendix
 
 export const Additions = ({ application }: Props) => {
-  const [asRoman, setAsRoman] = useState<boolean>(
-    application.answers.misc?.asRoman ?? false,
-  )
-  const [titlePrefix, setTitlePrefix] = useState<TitlePrefix>(
-    application.answers.misc?.titlePrefix ?? TitlePrefix.Appendix,
-  )
-
   const { useFileUploader } = useApplicationAssetUploader({
     applicationId: application.id,
   })
@@ -67,14 +52,9 @@ export const Additions = ({ application }: Props) => {
   const onRemoveAddition = (index: number) => {
     const filtered = additions.filter((_, i) => i !== index)
     const mapped = filtered.map((addition, i) => {
-      const title = f(
-        titlePrefix === TitlePrefix.Appendix
-          ? attachments.additions.appendixTitle
-          : attachments.additions.attachmentTitle,
-        {
-          index: asRoman ? convertNumberToRoman(i + 1) : i + 1,
-        },
-      )
+      const title = f(attachments.additions.appendixTitle, {
+        index: i + 1,
+      })
 
       return {
         ...addition,
@@ -94,38 +74,19 @@ export const Additions = ({ application }: Props) => {
     updateApplication(updatedAnswers)
   }
 
-  const onTitleChange = (titlePrefix: TitlePrefix, roman: boolean) => {
-    const handleTitleChange = (addition: Addition, i: number) => {
-      const title = f(
-        titlePrefix === TitlePrefix.Appendix
-          ? attachments.additions.appendixTitle
-          : attachments.additions.attachmentTitle,
-        {
-          index: roman ? convertNumberToRoman(i + 1) : i + 1,
-        },
-      )
-      return {
-        ...addition,
-        title: title,
-      }
-    }
-
+  const onTitleChange = (index: number, value: string) => {
     const currentAnswers = structuredClone(currentApplication.answers)
-    const updatedAdditions = additions.map(handleTitleChange)
+    const updatedAdditions = additions.map((addition, i) =>
+      i === index ? { ...addition, title: value } : addition,
+    )
 
-    let updatedAnswers = set(
+    const updatedAnswers = set(
       currentAnswers,
       InputFields.advert.additions,
       updatedAdditions,
     )
 
-    updatedAnswers = set(updatedAnswers, InputFields.misc.asRoman, roman)
-
-    setAsRoman(roman)
-    setTitlePrefix(titlePrefix)
     setValue(InputFields.advert.additions, updatedAdditions)
-    setValue(InputFields.misc.asRoman, roman)
-    setValue(InputFields.misc.titlePrefix, titlePrefix)
     updateApplication(updatedAnswers)
   }
 
@@ -142,11 +103,7 @@ export const Additions = ({ application }: Props) => {
 
     // TS not inferring the type after the check above
     if (isAddition(currentAdditions)) {
-      const newAddition = getAddition(
-        titlePrefix,
-        additions.length + 1,
-        asRoman,
-      )
+      const newAddition = getAddition(titlePrefix, additions.length + 1)
 
       const updatedAdditions = [...currentAdditions, newAddition]
       const updatedAnswers = set(
@@ -183,38 +140,9 @@ export const Additions = ({ application }: Props) => {
   return (
     <Stack space={2}>
       <Text variant="h3">{f(attachments.inputs.radio.title.label)}</Text>
-      <Inline space={2}>
-        <RadioButton
-          label={f(attachments.inputs.radio.appendixNumeric.label)}
-          name="appendixAsNumbers"
-          checked={titlePrefix === TitlePrefix.Appendix && !asRoman}
-          onChange={() => onTitleChange(TitlePrefix.Appendix, false)}
-        />
-        <RadioButton
-          label={f(attachments.inputs.radio.appendixRoman.label)}
-          name="appendixAsRoman"
-          checked={titlePrefix === TitlePrefix.Appendix && asRoman}
-          onChange={() => onTitleChange(TitlePrefix.Appendix, true)}
-        />
-      </Inline>
-      <Inline space={2}>
-        <RadioButton
-          label={f(attachments.inputs.radio.attachmentNumeric.label)}
-          name="attachmentAsNumbers"
-          checked={titlePrefix === TitlePrefix.Attachment && !asRoman}
-          onChange={() => onTitleChange(TitlePrefix.Attachment, false)}
-        />
-        <RadioButton
-          label={f(attachments.inputs.radio.attachmentRoman.label)}
-          name="attachmentAsRoman"
-          checked={titlePrefix === TitlePrefix.Attachment && asRoman}
-          onChange={() => onTitleChange(TitlePrefix.Attachment, true)}
-        />
-      </Inline>
       <Stack space={4}>
         {additions.map((addition, additionIndex) => {
           const currentAddition = additions.at(additionIndex)
-
           const defaultValue = currentAddition?.content || ''
           return (
             <Box
@@ -224,7 +152,15 @@ export const Additions = ({ application }: Props) => {
               padding={2}
             >
               <Stack space={2}>
-                <Text variant="h3">{addition.title}</Text>
+                <Input
+                  name="addition-title"
+                  maxLength={100}
+                  label="Titill"
+                  size="sm"
+                  backgroundColor="blue"
+                  defaultValue={addition.title}
+                  onChange={(e) => onTitleChange(additionIndex, e.target.value)}
+                />
                 <HTMLEditor
                   controller={false}
                   name="addition"
