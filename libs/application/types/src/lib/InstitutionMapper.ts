@@ -459,4 +459,9 @@ export const institutionMapper = {
     slug: InstitutionTypes.DOMSMALARADUNEYTID,
     contentfulId: InstitutionContentfulIds.DOMSMALARADUNEYTID,
   },
+  [ApplicationTypes.EXEMPTION_FOR_TRANSPORTATION]: {
+    nationalId: InstitutionNationalIds.SAMGONGUSTOFA,
+    slug: InstitutionTypes.SAMGONGUSTOFA,
+    contentfulId: InstitutionContentfulIds.SAMGONGUSTOFA,
+  },
 }

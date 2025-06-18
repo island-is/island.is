@@ -67,7 +67,12 @@ export const NationalIdWithNameFormField: FC<
         emailLabel={field.emailLabel}
         error={error}
         clearOnChange={field.clearOnChange}
-        setOnChange={field.setOnChange}
+        setOnChange={async (optionValue) => {
+          if (typeof field.setOnChange === 'function')
+            return await field.setOnChange(optionValue, application)
+          else if (field.setOnChange) return field.setOnChange
+          return []
+        }}
       />
     </Box>
   )

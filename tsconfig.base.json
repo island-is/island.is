@@ -589,6 +589,9 @@
       "@island.is/application/templates/transport-authority/digital-tachograph-drivers-card": [
         "libs/application/templates/transport-authority/digital-tachograph-drivers-card/src/index.ts"
       ],
+      "@island.is/application/templates/transport-authority/exemption-for-transportation": [
+        "libs/application/templates/transport-authority/exemption-for-transportation/src/index.ts"
+      ],
       "@island.is/application/templates/transport-authority/license-plate-renewal": [
         "libs/application/templates/transport-authority/license-plate-renewal/src/index.ts"
       ],
@@ -843,6 +846,9 @@
       "@island.is/clients/syslumenn": ["libs/clients/syslumenn/src/index.ts"],
       "@island.is/clients/transport-authority/digital-tachograph-drivers-card": [
         "libs/clients/transport-authority/digital-tachograph-drivers-card/src/index.ts"
+      ],
+      "@island.is/clients/transport-authority/exemption-for-transportation": [
+        "libs/clients/transport-authority/exemption-for-transportation/src/index.ts"
       ],
       "@island.is/clients/transport-authority/vehicle-codetables": [
         "libs/clients/transport-authority/vehicle-codetables/src/index.ts"

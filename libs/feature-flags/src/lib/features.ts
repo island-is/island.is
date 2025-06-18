@@ -36,6 +36,7 @@ export enum Features {
   PracticalExamEnabled = 'isPracticalExamEnabled',
   pensionSupplementEnabled = 'isPensionSupplementEnabled',
   fireCompensationAppraisalEnabled = 'isFireCompensationAppraisalEnabled',
+  ExemptionForTransportation = 'isExemptionForTransportationEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',

@@ -1,5 +1,6 @@
 import {
   buildAlertMessageField,
+  buildHiddenInput,
   buildMultiField,
   buildPhoneField,
   buildTextField,
@@ -23,16 +24,23 @@ export const applicantInformationArray = (
     emailCondition,
     emailRequired = true,
     emailDisabled = false,
-    readOnly = false,
-    readOnlyEmailAndPhone = false,
+    baseInfoReadOnly = false,
+    emailAndPhoneReadOnly = false,
+    compactFields = false,
   } = props ?? {}
+
+  // Note: base info fields are not editable, and are default displayed as disabled fields.
+  // If baseInfoReadOnly=true, then these fields will be displayed as readonly instead of disabled
+  const baseInfoDisabled = !baseInfoReadOnly
+
   return [
     buildTextField({
       id: 'applicant.name',
       title: applicantInformation.labels.name,
+      width: compactFields ? 'half' : 'full',
       backgroundColor: 'white',
-      disabled: !readOnly,
-      readOnly: readOnly,
+      disabled: baseInfoDisabled,
+      readOnly: baseInfoReadOnly,
       defaultValue: (application: ApplicantInformationInterface) =>
         application.externalData?.nationalRegistry?.data?.fullName ??
         application.externalData?.identity?.data?.name ??
@@ -44,8 +52,8 @@ export const applicantInformationArray = (
       format: '######-####',
       width: 'half',
       backgroundColor: 'white',
-      disabled: !readOnly,
-      readOnly: readOnly,
+      disabled: baseInfoDisabled,
+      readOnly: baseInfoReadOnly,
       defaultValue: (application: ApplicantInformationInterface) =>
         application.externalData?.nationalRegistry?.data?.nationalId ??
         application.externalData?.identity?.data?.nationalId ??
@@ -56,8 +64,8 @@ export const applicantInformationArray = (
       title: applicantInformation.labels.address,
       width: 'half',
       backgroundColor: 'white',
-      disabled: !readOnly,
-      readOnly: readOnly,
+      disabled: baseInfoDisabled,
+      readOnly: baseInfoReadOnly,
       defaultValue: (application: ApplicantInformationInterface) =>
         application.externalData?.nationalRegistry?.data?.address
           ?.streetAddress ??
@@ -70,8 +78,8 @@ export const applicantInformationArray = (
       width: 'half',
       format: '###',
       backgroundColor: 'white',
-      disabled: !readOnly,
-      readOnly: readOnly,
+      disabled: baseInfoDisabled,
+      readOnly: baseInfoReadOnly,
       defaultValue: (application: ApplicantInformationInterface) => {
         return (
           application.externalData?.nationalRegistry?.data?.address
@@ -80,18 +88,63 @@ export const applicantInformationArray = (
           ''
         )
       },
+      condition: () => !compactFields,
+    }),
+    buildHiddenInput({
+      id: 'applicant.postalCode',
+      defaultValue: (application: ApplicantInformationInterface) => {
+        return (
+          application.externalData?.nationalRegistry?.data?.address
+            ?.postalCode ??
+          application.externalData?.identity?.data?.address?.postalCode ??
+          ''
+        )
+      },
+      condition: () => !!compactFields,
     }),
     buildTextField({
       id: 'applicant.city',
       title: applicantInformation.labels.city,
       width: 'half',
       backgroundColor: 'white',
-      disabled: !readOnly,
-      readOnly: readOnly,
+      disabled: baseInfoDisabled,
+      readOnly: baseInfoReadOnly,
       defaultValue: (application: ApplicantInformationInterface) =>
         application.externalData?.nationalRegistry?.data?.address?.city ??
         application.externalData?.identity?.data?.address?.city ??
         '',
+      condition: () => !compactFields,
+    }),
+    buildHiddenInput({
+      id: 'applicant.city',
+      defaultValue: (application: ApplicantInformationInterface) =>
+        application.externalData?.nationalRegistry?.data?.address?.city ??
+        application.externalData?.identity?.data?.address?.city ??
+        '',
+      condition: () => !!compactFields,
+    }),
+    buildTextField({
+      id: 'applicant.postalCodeAndCity',
+      title:
+        props?.customPostalCodeAndCityLabel ??
+        applicantInformation.labels.postalCodeAndCity,
+      width: 'half',
+      backgroundColor: 'white',
+      disabled: baseInfoDisabled,
+      readOnly: baseInfoReadOnly,
+      defaultValue: (application: ApplicantInformationInterface) => {
+        const postalCode =
+          application.externalData?.nationalRegistry?.data?.address
+            ?.postalCode ??
+          application.externalData?.identity?.data?.address?.postalCode ??
+          ''
+        const city =
+          application.externalData?.nationalRegistry?.data?.address?.city ??
+          application.externalData?.identity?.data?.address?.city ??
+          ''
+        return `${postalCode} ${city}`
+      },
+      condition: () => !!compactFields,
     }),
     buildTextField({
       id: 'applicant.email',
@@ -101,8 +154,8 @@ export const applicantInformationArray = (
       backgroundColor: 'blue',
       condition: emailCondition,
       required: emailRequired,
-      disabled: emailDisabled,
-      readOnly: readOnlyEmailAndPhone,
+      disabled: emailDisabled && !emailAndPhoneReadOnly,
+      readOnly: emailAndPhoneReadOnly,
       defaultValue: (application: ApplicantInformationInterface) =>
         application.externalData?.userProfile?.data?.email ?? '',
       maxLength: 100,
@@ -114,8 +167,8 @@ export const applicantInformationArray = (
       backgroundColor: 'blue',
       condition: phoneCondition,
       required: phoneRequired,
-      disabled: phoneDisabled,
-      readOnly: readOnlyEmailAndPhone,
+      disabled: phoneDisabled && !emailAndPhoneReadOnly,
+      readOnly: emailAndPhoneReadOnly,
       enableCountrySelector: phoneEnableCountrySelector,
       defaultValue: (application: ApplicantInformationInterface) =>
         application.externalData?.userProfile?.data?.mobilePhoneNumber ?? '',
@@ -133,7 +186,7 @@ export const applicantInformationArray = (
           isExternal: false,
         },
       ],
-      condition: () => readOnlyEmailAndPhone,
+      condition: () => emailAndPhoneReadOnly,
     }),
   ]
 }
