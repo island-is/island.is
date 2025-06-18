@@ -5,6 +5,7 @@ import {
   adminPortalScopes,
   applicationSystemScopes,
   servicePortalScopes,
+  formSystemScopes
 } from '../../../libs/auth/scopes/src/index'
 
 const MINAR_SIDUR: PortalKeys = 'minarsidur'
@@ -21,6 +22,7 @@ export const getScopes = (key: PortalKeys) => {
       const combinedScopes = new Set([
         ...servicePortalScopes,
         ...applicationSystemScopes,
+        ...formSystemScopes
       ])
 
       return [...combinedScopes]
@@ -50,8 +52,8 @@ export const bffConfig = ({
     const domain = ctx.featureDeploymentName
       ? `${ctx.featureDeploymentName}-beta.${ctx.env.domain}`
       : ctx.env.type === 'prod'
-      ? ctx.env.domain
-      : `beta.${ctx.env.domain}`
+        ? ctx.env.domain
+        : `beta.${ctx.env.domain}`
 
     return `https://${domain}`
   }
@@ -89,7 +91,9 @@ export const bffConfig = ({
         local: json([
           `http://localhost:4200/${key}`,
           // This is a special case for minarsidur, since it serves two applications
-          ...(key === MINAR_SIDUR ? ['http://localhost:4242/umsoknir'] : []),
+          ...(key === MINAR_SIDUR
+            ? ['http://localhost:4242/umsoknir', 'http://localhost:4201/form']
+            : []),
         ]),
         dev: ref((ctx) => json(getRedirectUris(getBaseUrl(ctx), key))),
         staging: ref((ctx) => json(getRedirectUris(getBaseUrl(ctx), key))),
