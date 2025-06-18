@@ -24,6 +24,9 @@ export const boxContainer = style({
   },
 })
 
+export const gridRow = style({
+  justifyContent: 'space-between',
+})
 export const icon = style({
   padding: 0,
 })
@@ -57,11 +60,13 @@ export const contentContainer = style({
 
 export const imageContainer = style({
   paddingTop: theme.spacing[1],
-  maxHeight: 165,
+  display: 'flex',
+  alignItems: 'flex-end',
+  height: '100%',
 })
 
 export const image = style({
-  height: '100%',
+  maxHeight: 120,
 })
 
 export const smallImage = style({

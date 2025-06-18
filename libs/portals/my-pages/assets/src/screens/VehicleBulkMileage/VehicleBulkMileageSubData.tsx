@@ -1,24 +1,25 @@
+import { VehiclesMileageRegistrationHistory } from '@island.is/api/schema'
+import { Box, Button, Inline, Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import {
   LinkResolver,
   NestedFullTable,
   SimpleBarChart,
   formatDate,
   numberFormat,
-  LinkButton,
 } from '@island.is/portals/my-pages/core'
-import { Box, Text, Button, Inline } from '@island.is/island-ui/core'
-import { AssetsPaths } from '../../lib/paths'
-import { vehicleMessage } from '../../lib/messages'
-import { useLocale } from '@island.is/localization'
-import { useMemo, useState } from 'react'
-import { VehiclesMileageRegistrationHistory } from '@island.is/api/schema'
-import { displayWithUnit } from '../../utils/displayWithUnit'
 import format from 'date-fns/format'
+import { useMemo, useState } from 'react'
+import VehicleCO2 from '../../components/VehicleCO2'
+import { vehicleMessage } from '../../lib/messages'
+import { AssetsPaths } from '../../lib/paths'
+import { displayWithUnit } from '../../utils/displayWithUnit'
 
 interface Props {
   vehicleId: string
   data: VehiclesMileageRegistrationHistory
   loading?: boolean
+  co2?: string
 }
 
 interface ChartProps {
@@ -62,6 +63,7 @@ export const VehicleBulkMileageSubData = ({
   vehicleId,
   loading,
   data,
+  co2,
 }: Props) => {
   const { formatMessage } = useLocale()
 
@@ -143,6 +145,7 @@ export const VehicleBulkMileageSubData = ({
           }}
         />
       ) : undefined}
+      <VehicleCO2 co2={co2 ?? '0'} />
       <Box marginTop={2}>
         <Inline space={1}>
           <LinkResolver
@@ -161,14 +164,6 @@ export const VehicleBulkMileageSubData = ({
               {formatMessage(vehicleMessage.viewRegistrationHistory)}
             </Button>
           </LinkResolver>
-          <LinkButton
-            key="finance"
-            to={AssetsPaths.LinkFinanceTransactionVehicleMileage}
-            text={formatMessage(vehicleMessage.financeMileageLink)}
-            icon="arrowForward"
-            variant="utility"
-            colorScheme="white"
-          />
         </Inline>
       </Box>
     </Box>
