@@ -28,9 +28,7 @@ const convoyIndexForDolly = 0
 export const axleSpacingSection = buildSection({
   id: 'axleSpacingSection',
   title: axleSpacing.general.sectionTitle,
-  condition: (answers) => {
-    return hasFreightItemWithExemptionForWeight(answers)
-  },
+  condition: hasFreightItemWithExemptionForWeight,
   children: [
     buildMultiField({
       id: 'axleSpacingMultiField',

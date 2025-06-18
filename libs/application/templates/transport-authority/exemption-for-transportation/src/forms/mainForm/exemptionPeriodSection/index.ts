@@ -4,19 +4,16 @@ import {
   buildMultiField,
   buildRadioField,
   buildSection,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { exemptionPeriod } from '../../../lib/messages'
 import { ExemptionType } from '../../../shared'
 import {
   getExemptionType,
   checkIfExemptionTypeLongTerm,
-  checkIfExemptionTypeShortTerm,
-  LONG_TERM_MAX_DAYS,
-  LONG_TERM_MIN_DAYS,
-  MS_IN_DAY,
-  SHORT_TERM_MAX_DAYS,
-  SHORT_TERM_MIN_DAYS,
+  getMinDateFrom,
+  getMaxDateFrom,
+  getMinDateTo,
+  getMaxDateTo,
 } from '../../../utils'
 
 export const exemptionPeriodSection = buildSection({
@@ -62,42 +59,8 @@ export const exemptionPeriodSection = buildSection({
           condition: (answers) => {
             return !!getExemptionType(answers)
           },
-          minDate: (application) => {
-            const dateToStr = getValueViaPath<string>(
-              application.answers,
-              'exemptionPeriod.dateTo',
-            )
-            const dateTo = dateToStr ? new Date(dateToStr) : undefined
-
-            const today = new Date()
-            if (!dateTo) return today
-
-            const offset = checkIfExemptionTypeShortTerm(application.answers)
-              ? SHORT_TERM_MAX_DAYS
-              : LONG_TERM_MAX_DAYS
-
-            const lowerBound = new Date(dateTo.getTime() - offset * MS_IN_DAY)
-
-            return lowerBound > today ? lowerBound : today
-          },
-          maxDate: (application) => {
-            const dateToStr = getValueViaPath<string>(
-              application.answers,
-              'exemptionPeriod.dateTo',
-            )
-            const dateTo = dateToStr ? new Date(dateToStr) : undefined
-
-            if (!dateTo) return undefined
-
-            const offset = checkIfExemptionTypeShortTerm(application.answers)
-              ? SHORT_TERM_MIN_DAYS
-              : LONG_TERM_MIN_DAYS
-
-            const upperBound = new Date(dateTo.getTime() - offset * MS_IN_DAY)
-
-            const today = new Date()
-            return upperBound > today ? upperBound : today
-          },
+          minDate: (application) => getMinDateFrom(application.answers),
+          maxDate: (application) => getMaxDateFrom(application.answers),
         }),
         buildDateField({
           id: 'exemptionPeriod.dateTo',
@@ -108,32 +71,8 @@ export const exemptionPeriodSection = buildSection({
           condition: (answers) => {
             return !!getExemptionType(answers)
           },
-          minDate: (application) => {
-            const dateFromStr = getValueViaPath<string>(
-              application.answers,
-              'exemptionPeriod.dateFrom',
-            )
-            const dateFrom = dateFromStr ? new Date(dateFromStr) : new Date()
-
-            const offset = checkIfExemptionTypeShortTerm(application.answers)
-              ? SHORT_TERM_MIN_DAYS
-              : LONG_TERM_MIN_DAYS
-
-            return new Date(dateFrom.getTime() + offset * MS_IN_DAY)
-          },
-          maxDate: (application) => {
-            const dateFromStr = getValueViaPath<string>(
-              application.answers,
-              'exemptionPeriod.dateFrom',
-            )
-            const dateFrom = dateFromStr ? new Date(dateFromStr) : new Date()
-
-            const offset = checkIfExemptionTypeShortTerm(application.answers)
-              ? SHORT_TERM_MAX_DAYS
-              : LONG_TERM_MAX_DAYS
-
-            return new Date(dateFrom.getTime() + offset * MS_IN_DAY)
-          },
+          minDate: (application) => getMinDateTo(application.answers),
+          maxDate: (application) => getMaxDateTo(application.answers),
         }),
       ],
     }),
