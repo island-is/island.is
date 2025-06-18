@@ -40,10 +40,7 @@ export const registerProperty = z
       .optional(),
   })
   .superRefine((data, ctx) => {
-    if (
-      !data?.searchresults?.units ||
-      (data?.searchresults?.units && data.searchresults.units.length < 1)
-    ) {
+    if (!data?.searchresults?.units || data.searchresults.units.length === 0) {
       ctx.addIssue({
         code: z.ZodIssueCode.custom,
         message: 'Custom error message',
