@@ -37,7 +37,7 @@ const RemoveCandidate = ({ list }: { list: SignatureCollectionList }) => {
           navigate(-1)
         } else {
           const message =
-            response.signatureCollectionAdminRemoveCandidate.reasons?.[0] ??
+            response.signatureCollectionAdminRemoveCandidate?.reasons?.[0] ??
             formatMessage(m.cancelCollectionModalToastError)
           toast.error(message)
         }

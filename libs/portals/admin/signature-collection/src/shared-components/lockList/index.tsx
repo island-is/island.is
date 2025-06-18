@@ -43,7 +43,7 @@ const ActionLockList = ({
           toast.success(formatMessage(m.lockListSuccess))
         } else {
           const message =
-            response.signatureCollectionLockList.reasons?.[0] ??
+            response.signatureCollectionLockList?.reasons?.[0] ??
             formatMessage(m.lockListError)
           toast.error(message)
         }

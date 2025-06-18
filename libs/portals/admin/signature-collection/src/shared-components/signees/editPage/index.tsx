@@ -54,7 +54,7 @@ const EditPage = ({
         } else {
           const message =
             response.signatureCollectionAdminUpdatePaperSignaturePageNumber
-              .reasons?.[0] ?? formatMessage(m.editPaperNumberError)
+              ?.reasons?.[0] ?? formatMessage(m.editPaperNumberError)
           toast.error(message)
         }
       },
