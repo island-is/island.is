@@ -1,6 +1,6 @@
 import { Page, expect } from '@playwright/test'
-import { verifyRequestCompletion } from 'testing/e2e/api-tools'
-import { randomAppealCaseNumber, uploadDocument } from './utils/helpers'
+import { verifyRequestCompletion } from '@island.is/testing/e2e'
+import { randomAppealCaseNumber, uploadDocument } from '../../utils/helpers'
 
 export const coaJudgesCompleteAppealCaseTest = async (
   page: Page,

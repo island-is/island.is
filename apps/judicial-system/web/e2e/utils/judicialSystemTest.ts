@@ -4,9 +4,8 @@ import {
   JUDICIAL_SYSTEM_COA_JUDGE_HOME_URL,
   JUDICIAL_SYSTEM_DEFENDER_HOME_URL,
   JUDICIAL_SYSTEM_JUDGE_HOME_URL,
-} from '../../../support/urls'
-
-import { judicialSystemSession } from '../../../support/session'
+  judicialSystemSession,
+} from '@island.is/testing/e2e'
 
 export const test = base.extend<{
   prosecutorPage: Page

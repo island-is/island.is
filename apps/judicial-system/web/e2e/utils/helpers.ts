@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test'
-import { verifyRequestCompletion } from '../../../support/api-tools'
+import { verifyRequestCompletion } from '@island.is/testing/e2e'
 
 export const randomPoliceCaseNumber = () => {
   return `007-${new Date().getFullYear()}-${Math.floor(Math.random() * 100000)}`

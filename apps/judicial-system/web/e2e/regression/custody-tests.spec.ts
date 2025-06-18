@@ -1,15 +1,14 @@
 import { expect } from '@playwright/test'
 import faker from 'faker'
-import { urls } from 'testing/e2e/urls'
-import { verifyRequestCompletion } from 'testing/e2e/api-tools'
-import { test } from 'utils/judicialSystemTest'
+import { verifyRequestCompletion, urls } from '@island.is/testing/e2e'
+import { test } from '../utils/judicialSystemTest'
 import {
   randomPoliceCaseNumber,
   randomCourtCaseNumber,
   getDaysFromNow,
   chooseDocument,
   verifyUpload,
-} from 'utils/helpers'
+} from '../utils/helpers'
 import { judgeReceivesAppealTest } from './shared-steps/receive-appeal'
 import { prosecutorAppealsCaseTest } from './shared-steps/send-appeal'
 import { coaJudgesCompleteAppealCaseTest } from './shared-steps/complete-appeal'
