@@ -1,0 +1,8 @@
+query bloodType {
+  rightsPortalBloodType {
+    description
+    registered
+    type
+    link
+  }
+}
