@@ -94,11 +94,14 @@ const CreateCollection = ({
   const createNewCollection = async () => {
     try {
       const createCollectionRes = await createCollection()
-      if (createCollectionRes.data?.signatureCollectionAdminCreate.slug) {
+      if (createCollectionRes.data?.signatureCollectionAdminCreate.success) {
         toast.success(formatMessage(m.createCollectionSuccess))
         setModalIsOpen(false)
       } else {
-        toast.error(formatMessage(m.createCollectionSuccess))
+        toast.error(
+          createCollectionRes.data?.signatureCollectionAdminCreate
+            .reasons?.[0] || formatMessage(m.createCollectionError),
+        )
       }
     } catch (e) {
       toast.error(e.message)
