@@ -1178,6 +1178,10 @@ export const messages = defineMessages({
     defaultMessage: 'Greiðslur og réttindi',
     id: 'sp.health:payments-and-rights',
   },
+  rights: {
+    defaultMessage: 'Réttindi',
+    id: 'sp.health:rights',
+  },
   paymentsAndRightsDescription: {
     defaultMessage: 'Upplýsingar um greiðslustöðu þína',
     id: 'sp.health:payments-and-rights-description',

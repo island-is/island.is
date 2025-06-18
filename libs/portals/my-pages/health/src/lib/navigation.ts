@@ -52,6 +52,11 @@ export const healthNavigation: PortalNavigationItem = {
           path: HealthPaths.HealthPaymentOverview,
           navHide: true,
         },
+        {
+          name: messages.rights,
+          path: HealthPaths.HealthPaymentRights,
+          navHide: true,
+        },
       ],
     },
     {
