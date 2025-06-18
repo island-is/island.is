@@ -124,6 +124,11 @@ export class InternalDefendantController {
   ): Promise<Defendant> {
     this.logger.debug(`Updating verdict appeal for defendant in case ${caseId}`)
 
+    if (!theCase.rulingDate) {
+      throw new BadRequestException(
+        `No verdict has been issued for case ${theCase.id}`,
+      )
+    }
     // Validate appeal deadline
     const serviceRequired =
       defendant.serviceRequirement === ServiceRequirement.REQUIRED
