@@ -1,8 +1,15 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { FormValue } from '@island.is/application/types'
+import {
+  ExternalData,
+  FormValue,
+  StaticText,
+} from '@island.is/application/types'
 import { ExemptionForTransportationAnswers } from '../..'
 import { Freight, FreightPairing } from '../types'
 import { ExemptionFor } from '../../shared'
+import { getConvoyItem, getConvoyShortName } from './getConvoyItem'
+import { freight } from '../../lib/messages'
+import { getExemptionRules } from './getExemptionRules'
 
 export const getFreightItems = (answers: FormValue): Freight[] => {
   const items =
@@ -49,4 +56,64 @@ export const hasFreightItemWithExemptionForWeight = (
   return freightPairingAllItems.some((item) =>
     item?.exemptionFor?.includes(ExemptionFor.WEIGHT),
   )
+}
+
+export const showFreightPairingItem = (
+  answers: FormValue,
+  freightIndex: number,
+  convoyIndex: number,
+): boolean => {
+  const convoyItem = getConvoyItem(answers, convoyIndex)
+  if (!convoyItem) return false
+
+  const convoyIdList =
+    getValueViaPath<string[]>(
+      answers,
+      `freightPairing.${freightIndex}.convoyIdList`,
+    ) || []
+  return convoyIdList.indexOf(convoyItem.convoyId) !== -1
+}
+
+export const getFreightPairingErrorMessage = (
+  externalData: ExternalData,
+  answers: FormValue,
+  freightIndex: number,
+): StaticText | undefined => {
+  // Empty list error
+  const convoyIdList = getValueViaPath<string[]>(
+    answers,
+    `freightPairing.${freightIndex}.convoyIdList`,
+  )
+  const showEmptyListError = !convoyIdList?.length
+
+  // Police escort error
+  const freightPairingItems = getFreightPairingItems(answers, freightIndex)
+  const rules = getExemptionRules(externalData)
+  const maxHeight = rules?.policeEscort.maxHeight
+  const maxWidth = rules?.policeEscort.maxWidth
+  const invalidConvoyIndex = freightPairingItems
+    ? freightPairingItems.findIndex(
+        (x) =>
+          (x?.height && maxHeight && Number(x.height) > maxHeight) ||
+          (x?.width && maxWidth && Number(x.width) > maxWidth),
+      )
+    : -1
+  const convoyItem =
+    invalidConvoyIndex !== -1
+      ? getConvoyItem(answers, invalidConvoyIndex)
+      : undefined
+  const showPoliceEscortError = !!convoyItem
+
+  if (showEmptyListError) return freight.pairing.errorEmptyListAlertMessage
+  else if (showPoliceEscortError) {
+    return {
+      ...freight.pairing.errorPoliceEscortAlertMessage,
+      values: {
+        maxHeight,
+        maxWidth,
+        convoyNumber: invalidConvoyIndex + 1,
+        vehicleAndTrailerPermno: getConvoyShortName(convoyItem),
+      },
+    }
+  }
 }

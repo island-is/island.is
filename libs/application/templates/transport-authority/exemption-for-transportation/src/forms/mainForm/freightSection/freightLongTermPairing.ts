@@ -7,7 +7,6 @@ import {
   buildSelectField,
   buildSubSection,
   buildTextField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { freight } from '../../../lib/messages'
 import { Application, SubSection } from '@island.is/application/types'
@@ -15,13 +14,12 @@ import {
   getConvoyItem,
   getConvoyItems,
   getConvoyShortName,
-  getExemptionRules,
   getFreightItem,
-  getFreightPairingItems,
-  isConvoySelected,
   checkIfExemptionTypeLongTerm,
   MAX_CNT_CONVOY,
   MAX_CNT_FREIGHT,
+  showFreightPairingItem,
+  getFreightPairingErrorMessage,
 } from '../../../utils'
 import { ExemptionFor } from '../../../shared'
 import { FreightCommonHiddenInputs } from './freightCommonHiddenInputs'
@@ -107,17 +105,8 @@ const FreightPairingSubSection = (freightIndex: number) =>
               return [
                 buildDescriptionField({
                   id: `freightLongTermPairingDescription.${freightIndex}.${convoyIndex}.subtitle`,
-                  condition: (answers) => {
-                    const convoyItem = getConvoyItem(answers, convoyIndex)
-                    return (
-                      !!convoyItem &&
-                      isConvoySelected(
-                        answers,
-                        freightIndex,
-                        convoyItem.convoyId,
-                      )
-                    )
-                  },
+                  condition: (answers) =>
+                    showFreightPairingItem(answers, freightIndex, convoyIndex),
                   title: (application) => {
                     const convoyItem = getConvoyItem(
                       application.answers,
@@ -136,17 +125,8 @@ const FreightPairingSubSection = (freightIndex: number) =>
                 }),
                 buildHiddenInput({
                   id: `freightPairing.${freightIndex}.items.${convoyIndex}.convoyId`,
-                  condition: (answers) => {
-                    const convoyItem = getConvoyItem(answers, convoyIndex)
-                    return (
-                      !!convoyItem &&
-                      isConvoySelected(
-                        answers,
-                        freightIndex,
-                        convoyItem.convoyId,
-                      )
-                    )
-                  },
+                  condition: (answers) =>
+                    showFreightPairingItem(answers, freightIndex, convoyIndex),
                   defaultValue: (application: Application) => {
                     const convoyItem = getConvoyItem(
                       application.answers,
@@ -157,17 +137,8 @@ const FreightPairingSubSection = (freightIndex: number) =>
                 }),
                 buildTextField({
                   id: `freightPairing.${freightIndex}.items.${convoyIndex}.height`,
-                  condition: (answers) => {
-                    const convoyItem = getConvoyItem(answers, convoyIndex)
-                    return (
-                      !!convoyItem &&
-                      isConvoySelected(
-                        answers,
-                        freightIndex,
-                        convoyItem.convoyId,
-                      )
-                    )
-                  },
+                  condition: (answers) =>
+                    showFreightPairingItem(answers, freightIndex, convoyIndex),
                   title: freight.labels.heightWithConvoy,
                   backgroundColor: 'blue',
                   width: 'half',
@@ -177,17 +148,8 @@ const FreightPairingSubSection = (freightIndex: number) =>
                 }),
                 buildTextField({
                   id: `freightPairing.${freightIndex}.items.${convoyIndex}.width`,
-                  condition: (answers) => {
-                    const convoyItem = getConvoyItem(answers, convoyIndex)
-                    return (
-                      !!convoyItem &&
-                      isConvoySelected(
-                        answers,
-                        freightIndex,
-                        convoyItem.convoyId,
-                      )
-                    )
-                  },
+                  condition: (answers) =>
+                    showFreightPairingItem(answers, freightIndex, convoyIndex),
                   title: freight.labels.widthWithConvoy,
                   backgroundColor: 'blue',
                   width: 'half',
@@ -197,17 +159,8 @@ const FreightPairingSubSection = (freightIndex: number) =>
                 }),
                 buildTextField({
                   id: `freightPairing.${freightIndex}.items.${convoyIndex}.totalLength`,
-                  condition: (answers) => {
-                    const convoyItem = getConvoyItem(answers, convoyIndex)
-                    return (
-                      !!convoyItem &&
-                      isConvoySelected(
-                        answers,
-                        freightIndex,
-                        convoyItem.convoyId,
-                      )
-                    )
-                  },
+                  condition: (answers) =>
+                    showFreightPairingItem(answers, freightIndex, convoyIndex),
                   title: freight.labels.totalLengthWithConvoy,
                   backgroundColor: 'blue',
                   width: 'full',
@@ -218,122 +171,33 @@ const FreightPairingSubSection = (freightIndex: number) =>
                 buildAlertMessageField({
                   id: `freightPairing.alertValidation.${freightIndex}`,
                   title: freight.create.errorAlertMessageTitle,
-                  message: (application) => {
-                    // Empty list error
-                    const convoyIdList = getValueViaPath<string[]>(
-                      application.answers,
-                      `freightPairing.${freightIndex}.convoyIdList`,
-                    )
-                    const showEmptyListError = !convoyIdList?.length
-
-                    // Police escort error
-                    const freightPairingItems = getFreightPairingItems(
+                  message: (application) =>
+                    getFreightPairingErrorMessage(
+                      application.externalData,
                       application.answers,
                       freightIndex,
-                    )
-                    const rules = getExemptionRules(application.externalData)
-                    const maxHeight = rules?.policeEscort.maxHeight
-                    const maxWidth = rules?.policeEscort.maxWidth
-                    const invalidConvoyIndex = freightPairingItems
-                      ? freightPairingItems.findIndex(
-                          (x) =>
-                            (x?.height &&
-                              maxHeight &&
-                              Number(x.height) > maxHeight) ||
-                            (x?.width &&
-                              maxWidth &&
-                              Number(x.width) > maxWidth),
-                        )
-                      : -1
-                    const convoyItem =
-                      invalidConvoyIndex !== -1
-                        ? getConvoyItem(application.answers, invalidConvoyIndex)
-                        : undefined
-                    const showPoliceEscortError = !!convoyItem
-
-                    if (showEmptyListError)
-                      return freight.pairing.errorEmptyListAlertMessage
-                    else if (showPoliceEscortError) {
-                      return {
-                        ...freight.pairing.errorPoliceEscortAlertMessage,
-                        values: {
-                          maxHeight,
-                          maxWidth,
-                          convoyNumber: invalidConvoyIndex + 1,
-                          vehicleAndTrailerPermno:
-                            getConvoyShortName(convoyItem),
-                        },
-                      }
-                    }
-                  },
+                    ) || '',
+                  condition: (answers, externalData) =>
+                    !!getFreightPairingErrorMessage(
+                      externalData,
+                      answers,
+                      freightIndex,
+                    ),
                   doesNotRequireAnswer: true,
                   alertType: 'error',
-                  condition: (answers, externalData) => {
-                    // Empty list error
-                    const convoyIdList = getValueViaPath<string[]>(
-                      answers,
-                      `freightPairing.${freightIndex}.convoyIdList`,
-                    )
-                    const showEmptyListError = !convoyIdList?.length
-
-                    // Police escort error
-                    const freightPairingItems = getFreightPairingItems(
-                      answers,
-                      freightIndex,
-                    )
-                    const rules = getExemptionRules(externalData)
-                    const maxHeight = rules?.policeEscort.maxHeight
-                    const maxWidth = rules?.policeEscort.maxWidth
-                    const invalidConvoyIndex = freightPairingItems
-                      ? freightPairingItems.findIndex(
-                          (x) =>
-                            (x?.height &&
-                              maxHeight &&
-                              Number(x.height) > maxHeight) ||
-                            (x?.width &&
-                              maxWidth &&
-                              Number(x.width) > maxWidth),
-                        )
-                      : -1
-                    const convoyItem =
-                      invalidConvoyIndex !== -1
-                        ? getConvoyItem(answers, invalidConvoyIndex)
-                        : undefined
-                    const showPoliceEscortError = !!convoyItem
-
-                    return showEmptyListError || showPoliceEscortError
-                  },
                   shouldBlockInSetBeforeSubmitCallback: true,
                 }),
                 buildDescriptionField({
                   id: `freightLongTermPairingDescription.${freightIndex}.${convoyIndex}.exemptionFor`,
-                  condition: (answers) => {
-                    const convoyItem = getConvoyItem(answers, convoyIndex)
-                    return (
-                      !!convoyItem &&
-                      isConvoySelected(
-                        answers,
-                        freightIndex,
-                        convoyItem.convoyId,
-                      )
-                    )
-                  },
+                  condition: (answers) =>
+                    showFreightPairingItem(answers, freightIndex, convoyIndex),
                   title: freight.labels.exemptionFor,
                   titleVariant: 'h5',
                 }),
                 buildCheckboxField({
                   id: `freightPairing.${freightIndex}.items.${convoyIndex}.exemptionFor`,
-                  condition: (answers) => {
-                    const convoyItem = getConvoyItem(answers, convoyIndex)
-                    return (
-                      !!convoyItem &&
-                      isConvoySelected(
-                        answers,
-                        freightIndex,
-                        convoyItem.convoyId,
-                      )
-                    )
-                  },
+                  condition: (answers) =>
+                    showFreightPairingItem(answers, freightIndex, convoyIndex),
                   large: true,
                   backgroundColor: 'blue',
                   width: 'half',

@@ -30,19 +30,6 @@ export const getConvoyItem = (
   return getConvoyItems(answers)[convoyIndex]
 }
 
-export const isConvoySelected = (
-  answers: FormValue,
-  freightIndex: number,
-  convoyId: string,
-): boolean => {
-  const convoyIdList =
-    getValueViaPath<string[]>(
-      answers,
-      `freightPairing.${freightIndex}.convoyIdList`,
-    ) || []
-  return convoyIdList.indexOf(convoyId) !== -1
-}
-
 export const getConvoyShortName = (convoyItem: Convoy): string => {
   return (
     convoyItem.vehicle.permno +
