@@ -12,7 +12,6 @@ export type AppendixesProps = {
 export const Appendixes = memo((props: AppendixesProps) => {
   const { additions } = props
 
-  console.log('Appendixes', additions)
   if (!additions || additions.length === 0) {
     return null
   }
