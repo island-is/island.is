@@ -41,7 +41,7 @@ export const baseConfig = ({
       url: baseURL,
       reuseExistingServer: !process.env.CI,
       stdout: 'pipe',
-      timeout: 3 * MINUTE,
+      timeout: 5 * MINUTE,
       cwd: workspaceRoot,
     },
     reporter: process.env.CI ? 'line' : 'html',
