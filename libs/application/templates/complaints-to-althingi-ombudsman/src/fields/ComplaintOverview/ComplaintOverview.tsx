@@ -92,6 +92,7 @@ export const ComplaintOverview: FC<React.PropsWithChildren<Props>> = ({
       <ComplainedFor
         complainedForType={answers.complainedFor.decision}
         complainedFor={answers.complainedForInformation}
+        gender={answers.genderAnswer}
         connection={answers.complainedForInformation?.connection ?? ''}
         isEditable={isEditable}
         onEdit={changeScreens}

@@ -8,13 +8,14 @@ import {
   complaintOverview,
   information,
 } from '../../lib/messages'
-import { ComplainedForTypes } from '../../shared'
+import { ComplainedForTypes, GenderAnswerOptions } from '../../shared'
 import { mapComplainedForToMessage } from '../../utils'
 import { DocumentCard } from '../components'
 import { ValueLine } from './ValueLine'
 
 type Props = {
   complainedForType: ComplainedForTypes
+  gender: GenderAnswerOptions
   complainedFor: ComplaintsToAlthingiOmbudsman['complainedForInformation']
   connection: string
   isEditable?: boolean
@@ -23,6 +24,7 @@ type Props = {
 
 export const ComplainedFor: FC<React.PropsWithChildren<Props>> = ({
   complainedFor,
+  gender,
   connection,
   complainedForType,
   isEditable,
@@ -134,10 +136,10 @@ export const ComplainedFor: FC<React.PropsWithChildren<Props>> = ({
                 />
               </GridColumn>
             )}
-            {complainedFor.gender && (
+            {gender && (
               <GridColumn span={['9/12', '9/12', '9/12', '4/12']}>
                 <ValueLine
-                  value={complainedFor.gender}
+                  value={gender}
                   label={information.aboutTheComplainer.gender}
                 />
               </GridColumn>
