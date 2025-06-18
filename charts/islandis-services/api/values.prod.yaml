@@ -132,6 +132,7 @@ env:
   XROAD_INTELLECTUAL_PROPERTIES_PATH: 'IS/GOV/6501912189/WebAPI-Public/HUG-webAPI'
   XROAD_JUDICIAL_SYSTEM_SP_PATH: 'IS/GOV/5804170510/Rettarvorslugatt-Private/judicial-system-mailbox-api'
   XROAD_LEGAL_GAZETTE_PATH: 'IS/GOV/5804170510/DMR-Protected/legal-gazette-api'
+  XROAD_LSH_PATH: 'IS/GOV/5003002130/Landspitali-Protected/external-patient-api-v1'
   XROAD_MMS_FRIGG_PATH: 'IS/GOV/6601241280/MMS-Protected/frigg-form-api'
   XROAD_MMS_GRADE_SERVICE_ID: 'IS/GOV/6601241280/MMS-Protected/grade-api-v1'
   XROAD_MMS_LICENSE_SERVICE_ID: 'IS/GOV/6601241280/MMS-Protected/license-api-v1'

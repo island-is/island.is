@@ -48,3 +48,10 @@ query getMedicinePaymentOverview {
     levelPercentage
   }
 }
+
+query getBloodTypeOverview {
+  rightsPortalBloodType {
+    registered
+    type
+  }
+}

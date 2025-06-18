@@ -1597,6 +1597,27 @@ export const messages = defineMessages({
     defaultMessage: 'Greiðsla þín',
     id: 'sp.health:your-payment',
   },
+  bloodtype: {
+    id: 'sp.health:bloodtype',
+    defaultMessage: 'Blóðflokkur',
+  },
+  bloodtypeDesc: {
+    id: 'sp.health:bloodtype-desc',
+    defaultMessage:
+      'Hér sérð þú blóðflokk þinn samkvæmt upplýsingum úr skrám Landspítala.',
+  },
+  readAboutBloodtypes: {
+    id: 'sp.health:read-about-bloodtypes',
+    defaultMessage: 'Lesa um blóðflokka',
+  },
+  bloodtypeLink: {
+    id: 'sp.health:bloodtype-link',
+    defaultMessage: 'https://island.is/s/blodbankinn/blodflokkar',
+  },
+  registered: {
+    id: 'sp.health:registered',
+    defaultMessage: 'Skráð',
+  },
   basicInformation: {
     defaultMessage: 'Grunnupplýsingar',
     id: 'sp.health:basic-information',

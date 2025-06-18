@@ -52,6 +52,8 @@ export enum HealthPaths {
   HealthVaccinationsGeneral = '/heilsa/bolusetningar/almennar',
   HealthVaccinationsOther = '/heilsa/bolusetningar/adrar',
 
+  HealthBloodtype = '/heilsa/blodflokkur',
+
   HealthReferrals = '/heilsa/tilvisanir',
   HealthReferralsDetail = '/heilsa/tilvisanir/:id',
 
