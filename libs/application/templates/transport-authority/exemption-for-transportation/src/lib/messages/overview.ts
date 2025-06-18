@@ -266,7 +266,7 @@ export const overview = {
     longTermLabel: {
       id: 'ta.eft.application:overview.vehicleSpacing.longTermLabel',
       defaultMessage:
-        'Bil í vagnlest {convoyNumber}, ökutæki - {vehiclePermno} í eftirvagn - {trailerPermno}: {vehicleSpacing}',
+        'Bil í vagnlest {convoyNumber}, ökutæki ({vehiclePermno}) í eftirvagn ({trailerPermno}): {vehicleSpacing}',
       description: 'Overview vehicle spacing long-term label for convoy',
     },
   }),
