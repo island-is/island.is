@@ -1,11 +1,11 @@
 import { expect, test as base, Page } from '@playwright/test'
-import { env } from '../../../../support/urls'
+import { env } from 'testing/e2e/urls'
 import {
   disableI18n,
   disablePreviousApplications,
   disableObjectKey,
-} from '../../../../support/disablers'
-import { session } from '../../../../support/session'
+} from 'testing/e2e/disablers'
+import { session } from 'testing/e2e/session'
 
 const homeUrl = '/umsoknir/okuskirteini'
 

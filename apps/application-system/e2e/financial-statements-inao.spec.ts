@@ -1,8 +1,8 @@
 import { BrowserContext, expect, test } from '@playwright/test'
-import { helpers } from '../../../../support/locator-helpers'
-import { session } from '../../../../support/session'
-import { urls } from '../../../../support/urls'
-import { createMockPdf, deleteMockPdf } from '../../../../support/utils'
+import { helpers } from 'testing/e2e/locator-helpers'
+import { session } from 'testing/e2e/session'
+import { urls } from 'testing/e2e/urls'
+import { createMockPdf, deleteMockPdf } from 'testing/e2e/utils'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 

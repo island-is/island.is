@@ -1,6 +1,6 @@
 import { BrowserContext, expect, test } from '@playwright/test'
-import { urls } from '../../../support/urls'
-import { judicialSystemSession } from '../../../support/session'
+import { urls } from 'testing/e2e/urls'
+import { judicialSystemSession } from 'testing/e2e/session'
 
 test.use({ baseURL: urls.judicialSystemBaseUrl })
 

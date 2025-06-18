@@ -3,14 +3,14 @@ import {
   createMockPdf,
   deleteMockPdf,
   sleep,
-} from '../../../../../src/support/utils'
+} from 'testing/e2e/utils'
 import {
   disableI18n,
   disablePreviousApplications,
   disableObjectKey,
   disableDelegations,
-} from '../../../../support/disablers'
-import { session } from '../../../../support/session'
+} from 'testing/e2e/disablers'
+import { session } from 'testing/e2e/session'
 
 const homeUrl = '/umsoknir/vegabref'
 

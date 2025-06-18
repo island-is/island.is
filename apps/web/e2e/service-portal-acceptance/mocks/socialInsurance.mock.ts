@@ -1,6 +1,6 @@
-import { addXroadMock } from '../../../../../support/wire-mocks'
+import { addXroadMock } from 'testing/e2e/wire-mocks'
 import { Response } from '@anev/ts-mountebank'
-import { SocialInsuranceAdministration } from '../../../../../../../../infra/src/dsl/xroad'
+import { SocialInsuranceAdministration } from '../../infra/src/dsl/xroad'
 
 export const loadSocialInsuranceXroadMocks = async () => {
   await addXroadMock({

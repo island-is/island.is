@@ -1,10 +1,10 @@
 import { expect, test as base, Page } from '@playwright/test'
-import { disableI18n } from '../../../../support/disablers'
-import { session } from '../../../../support/session'
-import { createApplication } from '../../../../support/application'
-import { label } from '../../../../support/i18n'
+import { disableI18n } from 'testing/e2e/disablers'
+import { session } from 'testing/e2e/session'
+import { createApplication } from 'testing/e2e/application'
+import { label } from 'testing/e2e/i18n'
 import { m as messages } from '@island.is/application/templates/no-debt-certificate'
-import { switchUser } from '../../../../support/login'
+import { switchUser } from 'testing/e2e/login'
 
 const homeUrl = '/umsoknir/skuldleysisvottord'
 

@@ -1,6 +1,6 @@
 import { Response } from '@anev/ts-mountebank'
-import { NationalRegistry } from '../../../../../../../../infra/src/dsl/xroad'
-import { addXroadMock } from '../../../../../support/wire-mocks'
+import { NationalRegistry } from '../../infra/src/dsl/xroad'
+import { addXroadMock } from 'testing/e2e/wire-mocks'
 
 export const loadNationalRegistryXroadMocks = async () => {
   /* Gervimaður Afríka */

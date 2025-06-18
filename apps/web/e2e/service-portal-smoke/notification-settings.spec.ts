@@ -2,11 +2,11 @@ import { test, BrowserContext, expect } from '@playwright/test'
 
 import { mNotifications } from '@island.is/portals/my-pages/information/messages'
 
-import { session } from '../../../../support/session'
-import { disableI18n } from '../../../../support/disablers'
-import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
-import { label } from '../../../../support/i18n'
-import { helpers } from '../../../../support/locator-helpers'
+import { session } from 'testing/e2e/session'
+import { disableI18n } from 'testing/e2e/disablers'
+import { icelandicAndNoPopupUrl, urls } from 'testing/e2e/urls'
+import { label } from 'testing/e2e/i18n'
+import { helpers } from 'testing/e2e/locator-helpers'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
 test.use({ baseURL: urls.islandisBaseUrl })

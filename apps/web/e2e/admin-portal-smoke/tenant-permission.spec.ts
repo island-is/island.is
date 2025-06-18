@@ -1,8 +1,8 @@
 import { BrowserContext, expect, test } from '@playwright/test'
 
-import { urls } from '../../../../support/urls'
-import { session } from '../../../../support/session'
-import { getInputByName } from '../../../../utils/pageHelpers'
+import { urls } from 'testing/e2e/urls'
+import { session } from 'testing/e2e/session'
+import { getInputByName } from '../../utils/pageHelpers'
 
 const permissionId = '@admin.island.is/delegations'
 const homeUrl = `${

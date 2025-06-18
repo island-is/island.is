@@ -1,6 +1,6 @@
 import { HttpMethod, Response } from '@anev/ts-mountebank'
-import { Frigg } from '../../../../../../../../infra/src/dsl/xroad'
-import { addXroadMock } from '../../../../../support/wire-mocks'
+import { Frigg } from '../../infra/src/dsl/xroad'
+import { addXroadMock } from 'testing/e2e/wire-mocks'
 import { uuid } from 'uuidv4'
 
 export const loadNewPrimarySchoolXroadMocks = async () => {

@@ -1,14 +1,14 @@
 import { newPrimarySchoolMessages } from '@island.is/application/templates/new-primary-school'
 import { conclusionMessages } from '@island.is/application/ui-forms'
 import { test as base, expect, Page } from '@playwright/test'
-import { verifyRequestCompletion } from '../../../../support/api-tools'
+import { verifyRequestCompletion } from 'testing/e2e/api-tools'
 import {
   disableI18n,
   disablePreviousApplications,
-} from '../../../../support/disablers'
-import { label } from '../../../../support/i18n'
-import { helpers } from '../../../../support/locator-helpers'
-import { session } from '../../../../support/session'
+} from 'testing/e2e/disablers'
+import { label } from 'testing/e2e/i18n'
+import { helpers } from 'testing/e2e/locator-helpers'
+import { session } from 'testing/e2e/session'
 import { setupXroadMocks } from './setup-xroad.mocks'
 const homeUrl = '/umsoknir/nyr-grunnskoli'
 

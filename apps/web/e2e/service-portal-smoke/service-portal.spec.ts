@@ -1,10 +1,10 @@
 import { BrowserContext, expect, test } from '@playwright/test'
 import { messages as m } from '@island.is/portals/my-pages/documents/messages'
-import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
-import { session } from '../../../../support/session'
-import { label } from '../../../../support/i18n'
-import { helpers } from '../../../../support/locator-helpers'
-import { disableI18n } from '../../../../support/disablers'
+import { icelandicAndNoPopupUrl, urls } from 'testing/e2e/urls'
+import { session } from 'testing/e2e/session'
+import { label } from 'testing/e2e/i18n'
+import { helpers } from 'testing/e2e/locator-helpers'
+import { disableI18n } from 'testing/e2e/disablers'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 

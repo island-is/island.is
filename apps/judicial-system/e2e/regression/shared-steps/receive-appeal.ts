@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test'
-import { verifyRequestCompletion } from '../../../../support/api-tools'
+import { verifyRequestCompletion } from 'testing/e2e/api-tools'
 
 export const judgeReceivesAppealTest = async (page: Page, caseId: string) => {
   await Promise.all([

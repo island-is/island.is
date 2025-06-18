@@ -1,6 +1,6 @@
 import { BrowserContext, expect, Page, test } from '@playwright/test'
-import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
-import { session } from '../../../../support/session'
+import { icelandicAndNoPopupUrl, urls } from 'testing/e2e/urls'
+import { session } from 'testing/e2e/session'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
 test.use({ baseURL: urls.islandisBaseUrl })

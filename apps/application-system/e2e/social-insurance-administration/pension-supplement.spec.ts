@@ -1,12 +1,14 @@
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import { pensionSupplementFormMessage } from '@island.is/application/templates/social-insurance-administration/pension-supplement'
 import { test as base, expect, Page } from '@playwright/test'
 import {
   disableI18n,
   disablePreviousApplications,
-} from '../../../../../support/disablers'
-import { label } from '../../../../../support/i18n'
-import { session } from '../../../../../support/session'
-import { setupXroadMocks } from '../setup-xroad.mocks'
+} from 'testing/e2e/disablers'
+import { label } from 'testing/e2e/i18n'
+import { helpers } from 'testing/e2e/locator-helpers'
+import { session } from 'testing/e2e/session'
+import { setupXroadMocks } from './setup-xroad.mocks'
 import {
   additionalAttachments,
   expectHeadingToBeVisible,
@@ -17,7 +19,7 @@ import {
   writeComment,
 } from './shared'
 
-const homeUrl = '/umsoknir/felagslegur-vidbotarstudningur'
+const homeUrl = '/umsoknir/uppbot-a-lifeyri'
 
 const applicationTest = base.extend<{ applicationPage: Page }>({
   applicationPage: async ({ browser }, use) => {
@@ -32,9 +34,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     await disablePreviousApplications(applicationPage)
     await disableI18n(applicationPage)
     await applicationPage.goto(homeUrl)
-    await expect(applicationPage).toBeApplication(
-      'felagslegur-vidbotarstudningur',
-    )
+    await expect(applicationPage).toBeApplication('uppbot-a-lifeyri')
     await setupXroadMocks()
     await use(applicationPage)
 
@@ -43,11 +43,12 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
   },
 })
 
-applicationTest.describe('Additional support for the elderly', () => {
+applicationTest.describe('Pension Supplement', () => {
   applicationTest(
-    'Should complete Additional support for the elderly application successfully',
+    'Should complete Pension Supplement application successfully',
     async ({ applicationPage }) => {
       const page = applicationPage
+      const { proceed } = helpers(page)
 
       await applicationTest.step('Agree to data providers', async () => {
         await expectHeadingToBeVisible(
@@ -69,8 +70,28 @@ applicationTest.describe('Additional support for the elderly', () => {
       )
 
       await applicationTest.step('Fill in payment information', () =>
-        fillPaymentInfo(page, true),
+        fillPaymentInfo(page, false),
       )
+
+      await applicationTest.step('Select application reason', async () => {
+        await expectHeadingToBeVisible(
+          page,
+          pensionSupplementFormMessage.applicationReason.title,
+        )
+
+        await page
+          .getByRole('region', {
+            name: label(pensionSupplementFormMessage.applicationReason.title),
+          })
+          .getByRole('checkbox', {
+            name: label(
+              pensionSupplementFormMessage.applicationReason.medicineCost,
+            ),
+          })
+          .click()
+
+        await proceed()
+      })
 
       await applicationTest.step('Select period', () => selectPeriod(page))
 
@@ -93,7 +114,7 @@ applicationTest.describe('Additional support for the elderly', () => {
               .getByRole('heading', {
                 name: label(
                   socialInsuranceAdministrationMessage.conclusionScreen
-                    .receivedAwaitingIncomePlanTitle,
+                    .receivedTitle,
                 ),
               })
               .first(),

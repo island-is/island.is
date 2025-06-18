@@ -1,11 +1,11 @@
 import { BrowserContext, expect, test } from '@playwright/test'
-import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
-import { session } from '../../../../support/session'
+import { icelandicAndNoPopupUrl, urls } from 'testing/e2e/urls'
+import { session } from 'testing/e2e/session'
 import {
   disableI18n,
   disablePreviousApplications,
   disableDelegations,
-} from '../../../../support/disablers'
+} from 'testing/e2e/disablers'
 import format from 'date-fns/format'
 
 test.use({ baseURL: urls.islandisBaseUrl })

@@ -1,14 +1,14 @@
 import { expect } from '@playwright/test'
 import faker from 'faker'
-import { urls } from '../../../support/urls'
-import { verifyRequestCompletion } from '../../../support/api-tools'
-import { test } from '../utils/judicialSystemTest'
+import { urls } from 'testing/e2e/urls'
+import { verifyRequestCompletion } from 'testing/e2e/api-tools'
+import { test } from 'utils/judicialSystemTest'
 import {
   randomPoliceCaseNumber,
   getDaysFromNow,
   randomIndictmentCourtCaseNumber,
   chooseDocument,
-} from '../utils/helpers'
+} from 'utils/helpers'
 
 test.use({ baseURL: urls.judicialSystemBaseUrl })
 

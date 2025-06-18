@@ -1,14 +1,14 @@
 import { BrowserContext, expect, test } from '@playwright/test'
-import { urls } from '../../../../support/urls'
-import { session } from '../../../../support/session'
-import { mockApi } from '../../../../support/api-tools'
+import { urls } from 'testing/e2e/urls'
+import { session } from 'testing/e2e/session'
+import { mockApi } from 'testing/e2e/api-tools'
 import { regex as uuidRegex } from 'uuidv4'
 import {
   disableI18n,
   disablePreviousApplications,
   disableDelegations,
   disableObjectKey,
-} from '../../../../support/disablers'
+} from 'testing/e2e/disablers'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 

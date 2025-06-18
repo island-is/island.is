@@ -1,6 +1,6 @@
 import { BrowserContext, expect, test } from '@playwright/test'
-import { icelandicAndNoPopupUrl, urls } from '../../../../support/urls'
-import { session } from '../../../../support/session'
+import { icelandicAndNoPopupUrl, urls } from 'testing/e2e/urls'
+import { session } from 'testing/e2e/session'
 
 const homeUrl = `${urls.islandisBaseUrl}/stjornbord`
 const delegationTarget = 'text="65° ARTIC ehf."'

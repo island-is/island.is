@@ -1,8 +1,8 @@
 import { BrowserContext, expect, test } from '@playwright/test'
 
-import { urls } from '../../../../support/urls'
-import { session } from '../../../../support/session'
-import { helpers } from '../../../../support/locator-helpers'
+import { urls } from 'testing/e2e/urls'
+import { session } from 'testing/e2e/session'
+import { helpers } from 'testing/e2e/locator-helpers'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 

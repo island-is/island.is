@@ -4,11 +4,11 @@ import { test as base, expect, Page } from '@playwright/test'
 import {
   disableI18n,
   disablePreviousApplications,
-} from '../../../../../support/disablers'
-import { label } from '../../../../../support/i18n'
-import { helpers } from '../../../../../support/locator-helpers'
-import { session } from '../../../../../support/session'
-import { setupXroadMocks } from '../setup-xroad.mocks'
+} from 'testing/e2e/disablers'
+import { label } from 'testing/e2e/i18n'
+import { helpers } from 'testing/e2e/locator-helpers'
+import { session } from 'testing/e2e/session'
+import { setupXroadMocks } from './setup-xroad.mocks'
 import {
   additionalAttachments,
   expectHeadingToBeVisible,
