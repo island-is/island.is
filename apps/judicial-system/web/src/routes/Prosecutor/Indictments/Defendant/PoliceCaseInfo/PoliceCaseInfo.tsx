@@ -30,6 +30,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 import { policeCaseInfo } from './PoliceCaseInfo.strings'
+import { POLICE_CASE_NUMBER } from '@island.is/judicial-system/consts'
 
 interface Props {
   index: number
@@ -151,7 +152,7 @@ export const PoliceCaseInfo: FC<Props> = ({
       <Box marginBottom={2}>
         <InputMask
           component={Input}
-          mask={'___-____-_______'}
+          mask={POLICE_CASE_NUMBER}
           replacement={{ _: /\d/ }}
           value={policeCaseNumberInput}
           onChange={(event) => {

@@ -12,6 +12,7 @@ import { Button, Input } from '@island.is/island-ui/core'
 
 import BlueBox from '../BlueBox/BlueBox'
 import * as styles from './MultipleValueList.css'
+import { POLICE_CASE_NUMBER } from '@island.is/judicial-system/consts'
 
 type MaskType = 'police-case-numbers'
 
@@ -47,7 +48,7 @@ const MultipleValueList: FC<PropsWithChildren<MultipleValueListProps>> = ({
 
   const masks = {
     'police-case-numbers': {
-      mask: '___-____-_______',
+      mask: POLICE_CASE_NUMBER,
       replacement: { _: /\d/ },
     },
   }
