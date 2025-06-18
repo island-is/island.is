@@ -231,7 +231,9 @@ const FreightPairingSchema = z
             .array(z.nativeEnum(ExemptionFor).nullable())
             .optional(),
         })
-        // Note: need to be nullable, since there can be items/convoys in between that are not selected and therefor null
+        // Note: need to be optional/nullable, since there can be items/convoys in between that are not selected and therefor undefined/null
+        // (needs to be optional for zod validation, and nullable for graphql validation)
+        .optional()
         .nullable(),
     ),
   })
