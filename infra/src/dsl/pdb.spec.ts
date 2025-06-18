@@ -28,6 +28,7 @@ describe('PodDisruptionBudget definitions', () => {
     > = await renderHelmServiceFile(Staging, [sut], [sut], 'no-mocks')
     const pdb = serviceDef.services.api.podDisruptionBudget
     expect(pdb?.maxUnavailable).toEqual(1)
+    expect(pdb?.minAvailable).toEqual(1)
   })
 
   it('Service should have minAvailable: 2, thus overriding the default', async () => {
