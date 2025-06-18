@@ -10,7 +10,6 @@ import {
   formatDate,
   formatNationalId,
   getPaymentMethodOptions,
-  getRentalAmountIndexTypes,
   getRentalAmountPaymentDateOptions,
   getSecurityDepositTypeOptions,
 } from '../../utils/utils'
@@ -59,7 +58,7 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
     bankAccountNumber,
     paymentMethodOther,
     isIndexConnected,
-    indexType,
+    indexRate,
     securityAmountCalculated,
     securityDepositAmountOther,
     securityDepositType,
@@ -134,6 +133,16 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
             value={(rentalAmount && formatCurrency(rentalAmount)) || '-'}
           />
         </GridColumn>
+        {isIndexConnected?.includes(YesOrNoEnum.YES) &&
+          indexRate !== undefined &&
+          indexRate !== null && (
+            <GridColumn span={['12/12', '4/12']}>
+              <KeyValue
+                label={summary.indexRateLabel}
+                value={indexRate.toString()}
+              />
+            </GridColumn>
+          )}
         <GridColumn span={['12/12', '4/12']}>
           <KeyValue
             label={summary.paymentDateOptionsLabel}
@@ -144,18 +153,6 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
             )}
           />
         </GridColumn>
-        {isIndexConnected?.includes(YesOrNoEnum.YES) && indexType && (
-          <GridColumn span={['12/12', '4/12']}>
-            <KeyValue
-              label={summary.indexTypeLabel}
-              value={getOptionLabel(
-                indexType || '',
-                getRentalAmountIndexTypes,
-                '',
-              )}
-            />
-          </GridColumn>
-        )}
       </SummaryCardRow>
       {/* Security deposit */}
       {securityDepositRequired?.includes(YesOrNoEnum.YES) && (

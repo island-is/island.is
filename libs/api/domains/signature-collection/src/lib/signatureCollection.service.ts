@@ -34,8 +34,12 @@ export class SignatureCollectionService {
     }
   }
 
-  async currentCollection(): Promise<SignatureCollection[]> {
-    return await this.signatureCollectionClientService.currentCollection()
+  async currentCollection(
+    collectionTypeFilter: CollectionType,
+  ): Promise<SignatureCollection[]> {
+    return await this.signatureCollectionClientService.currentCollection(
+      collectionTypeFilter,
+    )
   }
 
   async getLatestCollectionForType(
@@ -181,11 +185,12 @@ export class SignatureCollectionService {
     input: SignatureCollectionCanSignFromPaperInput,
     signee: SignatureCollectionSignee,
   ): Promise<boolean> {
-    const signatureSignee = await this.signatureCollectionClientService.getSignee(
-      user,
-      input.collectionType,
-      input.signeeNationalId,
-    )
+    const signatureSignee =
+      await this.signatureCollectionClientService.getSignee(
+        user,
+        input.collectionType,
+        input.signeeNationalId,
+      )
     const list = await this.list(input.listId, user, signee)
     // Current signatures should not prevent paper signatures
     const canSign =

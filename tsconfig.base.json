@@ -123,7 +123,9 @@
       "@island.is/api/domains/hms-loans": [
         "libs/api/domains/hms-loans/src/index.ts"
       ],
-      "@island.is/api/domains/hms-rental-agreement": ["libs/api/domains/hms-rental-agreement/src/index.ts"],
+      "@island.is/api/domains/hms-rental-agreement": [
+        "libs/api/domains/hms-rental-agreement/src/index.ts"
+      ],
       "@island.is/api/domains/housing-benefit-calculator": [
         "libs/api/domains/housing-benefit-calculator/src/index.ts"
       ],
@@ -189,6 +191,9 @@
       ],
       "@island.is/api/domains/powerbi": [
         "libs/api/domains/powerbi/src/index.ts"
+      ],
+      "@island.is/api/domains/practical-exams": [
+        "libs/api/domains/practical-exams/src/index.ts"
       ],
       "@island.is/api/domains/regulations": [
         "libs/api/domains/regulations/src/index.ts"
@@ -452,6 +457,9 @@
       "@island.is/application/templates/healthcare-work-permit": [
         "libs/application/templates/healthcare-work-permit/src/index.ts"
       ],
+      "@island.is/application/templates/hms/fire-compensation-appraisal": [
+        "libs/application/templates/hms/fire-compensation-appraisal/src/index.ts"
+      ],
       "@island.is/application/templates/home-support": [
         "libs/application/templates/home-support/src/index.ts"
       ],
@@ -553,6 +561,9 @@
       ],
       "@island.is/application/templates/social-insurance-administration/death-benefits": [
         "libs/application/templates/social-insurance-administration/death-benefits/src/index.ts"
+      ],
+      "@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments": [
+        "libs/application/templates/social-insurance-administration/medical-and-rehabilitation-payments/src/index.ts"
       ],
       "@island.is/application/templates/social-insurance-administration/household-supplement": [
         "libs/application/templates/social-insurance-administration/household-supplement/src/index.ts"
@@ -714,13 +725,16 @@
         "libs/clients/health-directorate/src/index.ts"
       ],
       "@island.is/clients/hms": ["libs/clients/hms/src/index.ts"],
-      "@island.is/clients/hms-rental-agreement": [
-        "libs/clients/hms-rental-agreement/src/index.ts"
+      "@island.is/clients/hms-application-system": [
+        "libs/clients/hms-application-system/src/index.ts"
       ],
       "@island.is/clients/hms-housing-benefits": [
         "libs/clients/hms-housing-benefits/src/index.ts"
       ],
       "@island.is/clients/hms-loans": ["libs/clients/hms-loans/src/index.ts"],
+      "@island.is/clients/hms-rental-agreement": [
+        "libs/clients/hms-rental-agreement/src/index.ts"
+      ],
       "@island.is/clients/housing-benefit-calculator": [
         "libs/clients/housing-benefit-calculator/src/index.ts"
       ],
@@ -748,7 +762,9 @@
       "@island.is/clients/judicial-system-sp": [
         "libs/clients/judicial-system-sp/src/index.ts"
       ],
-      "@island.is/clients/legal-gazette": ["libs/clients/legal-gazette/src/index.ts"],
+      "@island.is/clients/legal-gazette": [
+        "libs/clients/legal-gazette/src/index.ts"
+      ],
       "@island.is/clients/license-client": [
         "libs/clients/license-client/src/index.ts"
       ],
@@ -784,10 +800,10 @@
       "@island.is/clients/payment-schedule": [
         "libs/clients/payment-schedule/src/index.ts"
       ],
+      "@island.is/clients/payments": ["libs/clients/payments/src/index.ts"],
       "@island.is/clients/practical-exams-ver": [
         "libs/clients/practical-exams-ver/src/index.ts"
       ],
-      "@island.is/clients/payments": ["libs/clients/payments/src/index.ts"],
       "@island.is/clients/regulations": [
         "libs/clients/regulations/src/index.ts"
       ],
@@ -1201,9 +1217,6 @@
       "@island.is/web/component*": ["apps/web/component*/real.ts"],
       "api/domains/financial-statement-cemetery": [
         "libs/api/domains/financial-statement-cemetery/src/index.ts"
-      ],
-      "@island.is/api/domains/practical-exams": [
-        "libs/api/domains/practical-exams/src/index.ts"
       ],
       "application/templates/examples/example-no-inputs": [
         "libs/application/templates/examples/example-no-inputs/src/index.ts"

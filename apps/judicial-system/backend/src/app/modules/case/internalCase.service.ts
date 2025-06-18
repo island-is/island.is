@@ -772,7 +772,10 @@ export class InternalCaseService {
               prosecutorsOffice: theCase.creatingProsecutor?.institution?.name,
               caseNumber,
             },
-          )} ${this.formatMessage(notifications.emailTail)}`,
+          )} ${this.formatMessage(notifications.emailTail, {
+            linkStart: `<a href="${this.config.clientUrl}">`,
+            linkEnd: '</a>',
+          })}`,
         ),
       )
       .then(() => ({ delivered: true }))

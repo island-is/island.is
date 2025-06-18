@@ -14,8 +14,6 @@ import { ScreensService } from './screens/screens.service'
 import { ScreensResolver } from './screens/screens.resolver'
 import { SectionsService } from './sections/sections.service'
 import { SectionsResolver } from './sections/sections.resolver'
-import { ServicesResolver } from './services/services.resolver'
-import { ServicesService } from './services/services.service'
 import { ApplicantsResolver } from './applicants/applicants.resolver'
 import { ApplicantsService } from './applicants/applicants.service'
 import { LoggingModule } from '@island.is/logging'
@@ -24,6 +22,8 @@ import { CertificationsService } from './certification/certification.service'
 import { OrganizationPermissionsResolver } from './organizationPermissions/organizationPermissions.resolver'
 import { OrganizationPermissionsService } from './organizationPermissions/organizationPermissions.service'
 import { CmsModule } from '@island.is/cms'
+import { TranslationsService } from './translations/translations.service'
+import { TranslationsResolver } from './translations/translations.resolver'
 
 @Module({
   providers: [
@@ -41,8 +41,8 @@ import { CmsModule } from '@island.is/cms'
     ScreensResolver,
     SectionsService,
     SectionsResolver,
-    ServicesResolver,
-    ServicesService,
+    TranslationsResolver,
+    TranslationsService,
     ApplicantsResolver,
     ApplicantsService,
     CertificationsResolver,

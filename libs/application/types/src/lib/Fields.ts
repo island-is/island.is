@@ -745,7 +745,14 @@ export type TableRepeaterField = BaseField & {
      * if not provided it will be auto generated from the fields
      */
     rows?: string[]
-    format?: Record<string, (value: string) => string | StaticText>
+    format?: Record<
+      string,
+      (
+        value: string,
+        index: number,
+        application?: Application,
+      ) => string | StaticText
+    >
   }
   initActiveFieldIfEmpty?: boolean
 }
@@ -918,7 +925,7 @@ export interface DisplayField extends BaseField {
   halfWidthOwnline?: boolean
   variant?: TextFieldVariant
   label?: MessageDescriptor | string
-  value: (answers: FormValue) => string
+  value: (answers: FormValue, externalData: ExternalData) => string
 }
 
 export type KeyValueItem = {
@@ -944,7 +951,7 @@ export type TableData = {
 export interface OverviewField extends BaseField {
   readonly type: FieldTypes.OVERVIEW
   component: FieldComponents.OVERVIEW
-  title: FormText
+  title?: FormText
   titleVariant?: TitleVariants
   description?: FormText
   backId?: string | ((answers: FormValue) => string | undefined)
@@ -954,6 +961,12 @@ export interface OverviewField extends BaseField {
     externalData: ExternalData,
     userNationalId: string,
   ) => Array<KeyValueItem>
+  loadItems?: (
+    answers: FormValue,
+    externalData: ExternalData,
+    userNationalId: string,
+    apolloClient: ApolloClient<object>,
+  ) => Promise<KeyValueItem[]>
   attachments?: (
     answers: FormValue,
     externalData: ExternalData,

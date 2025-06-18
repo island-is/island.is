@@ -34,6 +34,7 @@ import {
   isSuccessfulServiceStatus,
   ServiceStatus,
   SubpoenaNotificationType,
+  SubpoenaType,
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
@@ -128,6 +129,7 @@ export class SubpoenaService {
     transaction: Transaction,
     arraignmentDate?: Date,
     location?: string,
+    subpoenaType?: SubpoenaType,
   ): Promise<Subpoena> {
     return this.subpoenaModel.create(
       {
@@ -135,6 +137,7 @@ export class SubpoenaService {
         caseId,
         arraignmentDate,
         location,
+        type: subpoenaType,
       },
       { transaction },
     )
@@ -310,7 +313,7 @@ export class SubpoenaService {
     })
   }
 
-  async deliverSubpoenaToPolice(
+  async deliverSubpoenaToNationalCommissionersOffice(
     theCase: Case,
     defendant: Defendant,
     subpoena: Subpoena,
@@ -483,14 +486,14 @@ export class SubpoenaService {
       })
   }
 
-  async deliverSubpoenaRevocationToPolice(
+  async deliverSubpoenaRevocationToNationalCommissionersOffice(
     theCase: Case,
     subpoena: Subpoena,
     user: TUser,
   ): Promise<DeliverResponse> {
     if (!subpoena.policeSubpoenaId) {
       this.logger.warn(
-        `Attempted to revoke a subpoena with id ${subpoena.id} that had not been delivered to the police`,
+        `Attempted to revoke a subpoena with id ${subpoena.id} that had not been delivered to the national commissioners office`,
       )
       return { delivered: true }
     }
