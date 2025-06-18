@@ -95,7 +95,10 @@ export const List = () => {
                 </Box>
               )}
               <Signees list={list} />
-              <PaperSignees listId={list.id} />
+              <PaperSignees
+                listId={list.id}
+                collectionType={list.collectionType}
+              />
             </>
           )}
         </GridColumn>

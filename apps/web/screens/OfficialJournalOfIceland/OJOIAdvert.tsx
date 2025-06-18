@@ -283,6 +283,7 @@ const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
         advertSubject={advert.subject}
         advertText={advert.document.html}
         isLegacy={advert.document.isLegacy ?? false}
+        additions={advert.additions ?? []}
       />
     </OJOIWrapper>
   )

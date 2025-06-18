@@ -132,6 +132,11 @@ const Statement = () => {
           {formatMessage(strings.title)}
         </PageTitle>
         <Box marginBottom={7}>
+          {workingCase.courtCaseNumber && (
+            <Text as="h2" variant="h2" fontWeight="semiBold" marginBottom={1}>
+              Mál nr. {workingCase.courtCaseNumber}
+            </Text>
+          )}
           {workingCase.rulingDate && (
             <RulingDateLabel rulingDate={workingCase.rulingDate} />
           )}

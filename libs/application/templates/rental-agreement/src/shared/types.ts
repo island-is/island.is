@@ -97,11 +97,16 @@ export interface RentalPeriodSection {
   isDefinite: string | undefined
 }
 
+export interface ConsumerIndexItem {
+  month: string
+  value: number
+}
+
 export interface RentalAmountSection {
   rentalAmount: string | undefined
   isIndexConnected: string | undefined
   indexDate: string | undefined
-  indexRate: string | undefined
+  indexRate: number | undefined
   paymentMethod: string | undefined
   paymentMethodOther: string | undefined
   paymentDay: string | undefined
@@ -121,6 +126,7 @@ export interface SecurityDepositSection {
   securityDepositAmount: string | undefined
   securityDepositAmountOther: string | undefined
   securityAmountCalculated: string | undefined
+  securityAmountHiddenRentalAmount: string | undefined
 }
 
 export interface OtherFeesSection {
@@ -134,6 +140,7 @@ export interface OtherFeesSection {
   heatingCostMeterStatusDate: string | undefined
   heatingCostMeterNumber: string | undefined
   heatingCostMeterStatus: string | undefined
+  otherCostPayedByTenant: YesOrNoEnum | undefined
   otherCostItems: CostField[] | undefined
 }
 

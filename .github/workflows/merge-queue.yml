@@ -31,8 +31,7 @@ env:
   NX_PARALLEL: '2'
   NX_MAX_PARALLEL: '4'
   NODE_IMAGE_VERSION: 20
-  S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-  RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
+  RUNS_ON_BUCKET_NAME: ${{ vars.RUNS_ON_BUCKET_NAME }}
   AWS_REGION: eu-west-1
   AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
   SERVERSIDE_FEATURES_ON: ''
@@ -98,8 +97,6 @@ jobs:
         uses: actions/checkout@v4
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-        with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
       - name: Set id for matrix
         run: |
           node ./scripts/ci/docker/create-id.mjs
@@ -156,7 +153,9 @@ jobs:
         id: dockerbuild
         if: steps.gather.outcome == 'success'
         env:
+          GIT_COMMIT_SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
+          S3_DOCKER_CACHE_BUCKET: ${{ vars.S3_DOCKER_CACHE_BUCKET }}
         run: |
           set -x
           echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
@@ -167,7 +166,9 @@ jobs:
       - name: Building Docker images Retry
         if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
         env:
+          GIT_COMMIT_SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
+          S3_DOCKER_CACHE_BUCKET: ${{ vars.S3_DOCKER_CACHE_BUCKET }}
         run: |
           set -x
           echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
@@ -204,8 +205,6 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-        with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -245,8 +244,6 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
         if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS && needs.prepare.outputs.DOCKER_CHUNKS != '[]' }}
-        with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: load-deps
         uses: ./.github/actions/load-deps

@@ -118,16 +118,27 @@ const Completed: FC = () => {
   )
 
   const handleCriminalRecordUpdateUpload = useCallback(
-    (files: File[]) => {
+    async (files: File[]) => {
       // If the case has been sent to the public prosecutor
       // we want to complete these uploads straight away
       if (isSentToPublicProsecutor) {
-        handleUpload(
+        const uploadResult = await handleUpload(
           addUploadFiles(files, {
             category: CaseFileCategory.CRIMINAL_RECORD_UPDATE,
           }),
           updateUploadFile,
         )
+        if (uploadResult !== 'ALL_SUCCEEDED') {
+          return
+        }
+
+        const eventLogCreated = createEventLog({
+          caseId: workingCase.id,
+          eventType: EventType.INDICTMENT_CRIMINAL_RECORD_UPDATED_BY_COURT,
+        })
+        if (!eventLogCreated) {
+          return
+        }
       }
       // Otherwise we don't complete uploads until
       // we handle the next button click
@@ -138,7 +149,14 @@ const Completed: FC = () => {
         })
       }
     },
-    [addUploadFiles, handleUpload, isSentToPublicProsecutor, updateUploadFile],
+    [
+      workingCase.id,
+      addUploadFiles,
+      handleUpload,
+      isSentToPublicProsecutor,
+      updateUploadFile,
+      createEventLog,
+    ],
   )
 
   const handleNavigationTo = useCallback(
@@ -156,14 +174,23 @@ const Completed: FC = () => {
   const isRuling =
     workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
 
-  const stepIsValid = () =>
-    workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
-      ? workingCase.defendants?.every((defendant) =>
-          defendant.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
-            ? Boolean(defendant.verdictAppealDecision)
-            : Boolean(defendant.serviceRequirement),
-        )
-      : true
+  const stepIsValid = () => {
+    const isValidDefendants =
+      workingCase.indictmentRulingDecision ===
+      CaseIndictmentRulingDecision.RULING
+        ? workingCase.defendants?.every((defendant) =>
+            defendant.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
+              ? Boolean(defendant.verdictAppealDecision)
+              : Boolean(defendant.serviceRequirement),
+          )
+        : true
+
+    if (features?.includes(Feature.SERVICE_PORTAL)) {
+      return Boolean(workingCase.ruling) && isValidDefendants
+    } else {
+      return isValidDefendants
+    }
+  }
 
   const hasLawsBroken = lawsBroken.size > 0
   const hasMergeCases =
