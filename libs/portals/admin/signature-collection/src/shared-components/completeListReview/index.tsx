@@ -44,7 +44,6 @@ const CompleteListReview = ({
         collectionType,
       },
     },
-    notifyOnNetworkStatusChange: true,
     onCompleted: (response) => {
       if (response.signatureCollectionAdminToggleListReview.success) {
         setModalSubmitReviewIsOpen(false)
@@ -56,7 +55,7 @@ const CompleteListReview = ({
         )
       } else {
         const message =
-          response?.signatureCollectionAdminToggleListReview.reasons?.[0] ??
+          response.signatureCollectionAdminToggleListReview.reasons?.[0] ??
           formatMessage(m.toggleReviewError)
         toast.error(message)
       }
