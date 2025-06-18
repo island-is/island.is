@@ -29,9 +29,7 @@ export class UserEmailsService {
   }
 
   async getEmails(user: User): Promise<EmailsDto[]> {
-    return this.v2EmailsApiWithAuth(user).emailsControllerFindAllByNationalId({
-      nationalId: user.nationalId,
-    })
+    return this.v2EmailsApiWithAuth(user).emailsControllerFindAllByNationalId()
   }
 
   async addEmail({ user, input }: { user: User; input: AddEmailInput }) {
