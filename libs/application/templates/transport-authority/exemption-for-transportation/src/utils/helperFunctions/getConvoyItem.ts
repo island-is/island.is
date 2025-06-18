@@ -39,8 +39,8 @@ export const getConvoyItem = (
 
 export const getConvoyShortName = (convoyItem: Convoy): string => {
   return (
-    convoyItem.vehicle.permno +
-    (convoyItem.trailer?.permno ? ' / ' + convoyItem.trailer.permno : '')
+    convoyItem?.vehicle?.permno +
+    (convoyItem?.trailer?.permno ? ' / ' + convoyItem.trailer.permno : '')
   )
 }
 
