@@ -83,6 +83,7 @@ const MultipleValueList: FC<PropsWithChildren<MultipleValueListProps>> = ({
             name={name}
             label={inputLabel}
             placeholder={inputPlaceholder}
+            value={value}
             size="sm"
             autoComplete="off"
             ref={valueRef}
