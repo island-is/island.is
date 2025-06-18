@@ -89,7 +89,7 @@ export class ServiceBuilder<ServiceType extends string> {
       xroadConfig: [],
       files: [],
       volumes: [],
-      podDisruptionBudget: { minAvailable: 1, maxUnavailable: 0 },
+      podDisruptionBudget: { minAvailable: 1, maxUnavailable: 1 },
     }
   }
 
