@@ -52,6 +52,7 @@ export enum ApplicationTypes {
   ALCOHOL_TAX_REDEMPTION = 'AlcoholTaxRedemption',
   EUROPEAN_HEALTH_INSURANCE_CARD = 'EuropeanHealthInsuranceCard',
   OLD_AGE_PENSION = 'OldAgePension',
+  DISABILITY_PENSION = 'DisabilityPension',
   HOUSEHOLD_SUPPLEMENT = 'HouseholdSupplement',
   CAR_RECYCLING = 'CarRecycling',
   PRESIDENTIAL_LIST_CREATION = 'PresidentialListCreation',
@@ -303,6 +304,10 @@ export const ApplicationConfigurations = {
   },
   [ApplicationTypes.OLD_AGE_PENSION]: {
     slug: 'ellilifeyrir',
+    translation: ['oap.application', 'sia.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.DISABILITY_PENSION]: {
+    slug: 'ororkulifeyrir',
     translation: ['oap.application', 'sia.application', 'uiForms.application'],
   },
   [ApplicationTypes.HOUSEHOLD_SUPPLEMENT]: {
