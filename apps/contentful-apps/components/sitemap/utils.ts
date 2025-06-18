@@ -243,3 +243,99 @@ export const updateNode = (parentNode: Tree, updatedNode: TreeNode) => {
     parentNode.childNodes[nodeIndex] = updatedNode
   }
 }
+
+export const moveNode = (
+  root: Tree,
+  nodeId: number,
+  targetParentId: number,
+  targetIndex: number,
+) => {
+  // Find the node to move
+  const nodeToMove = findNode(root, (node) => node.id === nodeId)
+  if (!nodeToMove) {
+    return false
+  }
+
+  // Find the source parent (the parent that currently contains the node)
+  const sourceParent = findParentNode(root, nodeId)
+  if (!sourceParent) {
+    return false
+  }
+
+  // Find the target parent
+  const targetParent =
+    targetParentId === root.id
+      ? root
+      : findNode(root, (node) => node.id === targetParentId)
+
+  if (!targetParent) {
+    return false
+  }
+
+  // Remove the node from its current parent
+  sourceParent.childNodes = sourceParent.childNodes.filter(
+    (node) => node.id !== nodeId,
+  )
+
+  // Add the node to the target parent at the specified index
+  if (targetIndex >= targetParent.childNodes.length) {
+    targetParent.childNodes.push(nodeToMove)
+  } else {
+    targetParent.childNodes.splice(targetIndex, 0, nodeToMove)
+  }
+
+  return true
+}
+
+const findParentNode = (root: Tree, nodeId: number): Tree | null => {
+  // Check if the node is a direct child of the root
+  if (root.childNodes.some((node) => node.id === nodeId)) {
+    return root
+  }
+
+  // Check in child nodes recursively
+  for (const child of root.childNodes) {
+    if (child.childNodes.some((node) => node.id === nodeId)) {
+      return child
+    }
+    const parent = findParentNode(child, nodeId)
+    if (parent) {
+      return parent
+    }
+  }
+  return null
+}
+
+export const findNodeParentAndIndex = (
+  root: Tree,
+  nodeId: number,
+): { parent: Tree; index: number } | null => {
+  // Check root level
+  const rootIndex = root.childNodes.findIndex((node) => node.id === nodeId)
+  if (rootIndex !== -1) {
+    return { parent: root, index: rootIndex }
+  }
+
+  // Check in child nodes recursively
+  const findInNode = (
+    node: TreeNode,
+  ): { parent: Tree; index: number } | null => {
+    const childIndex = node.childNodes.findIndex((child) => child.id === nodeId)
+    if (childIndex !== -1) {
+      return { parent: node, index: childIndex }
+    }
+
+    for (const child of node.childNodes) {
+      const result = findInNode(child)
+      if (result) return result
+    }
+    return null
+  }
+
+  for (const child of root.childNodes) {
+    const result = findInNode(child)
+    if (result) return result
+  }
+
+  return null
+}

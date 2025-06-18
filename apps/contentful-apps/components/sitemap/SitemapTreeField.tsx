@@ -2,6 +2,16 @@ import { useCallback, useEffect, useState } from 'react'
 import { useDebounce } from 'react-use'
 import type { FieldExtensionSDK } from '@contentful/app-sdk'
 import { useSDK } from '@contentful/react-apps-toolkit'
+import {
+  closestCenter,
+  DndContext,
+  DragEndEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
+import { SortableContext } from '@dnd-kit/sortable'
 
 import { AddNodeButton } from './AddNodeButton'
 import { EntryContext, useEntryContext } from './entryContext'
@@ -9,6 +19,8 @@ import { SitemapNode } from './SitemapNode'
 import {
   addNode as addNodeUtil,
   findNodes,
+  findNodeParentAndIndex as findNodeParentAndIndexUtil,
+  moveNode as moveNodeUtil,
   removeNode as removeNodeUtil,
   type Tree,
   TreeNode,
@@ -83,33 +95,101 @@ export const SitemapTreeField = () => {
     [tree],
   )
 
+  const sensors = useSensors(useSensor(PointerSensor))
+
   return (
-    <EntryContext.Provider value={useEntryContext()}>
-      <div>
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      modifiers={[restrictToVerticalAxis]}
+      onDragEnd={(event: DragEndEvent) => {
+        const { active, over } = event
+
+        console.log('Drag end event:', { active, over })
+
+        if (!over || active.id === over.id) {
+          console.log('No valid drop target or same item')
+          return
+        }
+
+        const activeId = Number(active.id)
+        const overId = Number(over.id)
+
+        console.log('Processing drag:', { activeId, overId })
+
+        // Find the source parent and index
+        const sourceInfo = findNodeParentAndIndexUtil(tree, activeId)
+        if (!sourceInfo) {
+          console.warn('Could not find source node:', activeId)
+          return
+        }
+
+        // Find the target parent and index
+        const targetInfo = findNodeParentAndIndexUtil(tree, overId)
+        if (!targetInfo) {
+          console.warn('Could not find target node:', overId)
+          return
+        }
+
+        console.log('Source info:', sourceInfo)
+        console.log('Target info:', targetInfo)
+
+        // Don't allow dropping a node into itself or its descendants
+        if (activeId === targetInfo.parent.id) {
+          console.log('Cannot drop node into itself')
+          return
+        }
+
+        // Move the node
+        const success = moveNodeUtil(
+          tree,
+          activeId,
+          targetInfo.parent.id,
+          targetInfo.index,
+        )
+
+        if (success) {
+          console.log('Node moved successfully')
+          setTree((prevTree) => ({ ...prevTree }))
+        } else {
+          console.warn(
+            'Failed to move node:',
+            activeId,
+            'to parent:',
+            targetInfo.parent.id,
+          )
+        }
+      }}
+    >
+      <EntryContext.Provider value={useEntryContext()}>
         <div>
-          <div className={styles.childNodeContainer}>
-            {tree.childNodes.map((node) => (
-              <SitemapNode
-                parentNode={tree}
-                removeNode={removeNode}
-                addNode={addNode}
-                updateNode={updateNode}
-                key={node.id}
-                node={node}
-                root={tree}
-                onMarkEntryAsPrimary={onMarkEntryAsPrimary}
-              />
-            ))}
-            <div className={styles.addNodeButtonContainer}>
-              <AddNodeButton
-                addNode={(type, createNew) => {
-                  addNode(tree, type, createNew)
-                }}
-              />
-            </div>
+          <div>
+            <SortableContext items={tree.childNodes}>
+              <div className={styles.childNodeContainer}>
+                {tree.childNodes.map((node) => (
+                  <SitemapNode
+                    parentNode={tree}
+                    removeNode={removeNode}
+                    addNode={addNode}
+                    updateNode={updateNode}
+                    key={node.id}
+                    node={node}
+                    root={tree}
+                    onMarkEntryAsPrimary={onMarkEntryAsPrimary}
+                  />
+                ))}
+                <div className={styles.addNodeButtonContainer}>
+                  <AddNodeButton
+                    addNode={(type, createNew) => {
+                      addNode(tree, type, createNew)
+                    }}
+                  />
+                </div>
+              </div>
+            </SortableContext>
           </div>
         </div>
-      </div>
-    </EntryContext.Provider>
+      </EntryContext.Provider>
+    </DndContext>
   )
 }
