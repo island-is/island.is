@@ -1,6 +1,7 @@
 import {
   BadGatewayException,
   BadRequestException,
+  ForbiddenException,
   Inject,
   Injectable,
   NotFoundException,
@@ -372,7 +373,7 @@ export class CaseService {
 
       if (!response.ok) {
         if (response.status === 403) {
-          throw new BadGatewayException(
+          throw new ForbiddenException(
             'Appeal deadline has passed or appeal not allowed',
           )
         }

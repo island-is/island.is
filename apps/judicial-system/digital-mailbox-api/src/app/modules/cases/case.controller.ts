@@ -70,7 +70,7 @@ export class CaseController {
     @CurrentUser() user: User,
     @Query() query?: { locale: string },
   ): Promise<CasesResponse[]> {
-    this.logger.debug(`Getting all cases for user ${user.nationalId}`)
+    this.logger.debug(`Getting all cases for user`)
 
     return this.caseService.getCases(user.nationalId, query?.locale)
   }
