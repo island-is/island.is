@@ -31,6 +31,8 @@ const PaymentsAndRights: React.FC<Props> = ({
     insurance.data?.ehicCardExpiryDate ?? undefined,
   )
   const isInsured = insurance.data?.isInsured
+  const ehicDate = insurance.data?.ehicCardExpiryDate
+
   return (
     <Box>
       <Text variant="eyebrow" color="foregroundBrandSecondary" marginBottom={2}>
@@ -88,9 +90,9 @@ const PaymentsAndRights: React.FC<Props> = ({
             ? null
             : {
                 title: formatMessage(messages.hasHealthInsurance),
-                description: `${formatMessage(messages.from)} ${formatDate(
-                  insurance.data?.from,
-                )}`,
+                description: `${formatMessage(
+                  messages.from,
+                ).toLocaleLowerCase()} ${formatDate(insurance.data?.from)}`,
                 to: HealthPaths.HealthPaymentParticipation,
 
                 loading: insurance.loading,
@@ -109,12 +111,14 @@ const PaymentsAndRights: React.FC<Props> = ({
             : {
                 title: formatMessage(messages.ehic),
                 description: isInsuranceCardValid
-                  ? `${formatMessage(messages.medicineValidTo)} ${formatDate(
-                      insurance.data?.ehicCardExpiryDate,
+                  ? `${formatMessage(messages.medicineValidTo)}: ${formatDate(
+                      ehicDate,
                     )}`
-                  : formatMessage(messages.expiredOn, {
-                      arg: formatDate(insurance.data?.ehicCardExpiryDate),
-                    }),
+                  : ehicDate
+                  ? formatMessage(messages.expiredOn, {
+                      arg: formatDate(ehicDate),
+                    })
+                  : formatMessage(messages.vaccineExpired),
                 to: HealthPaths.HealthPaymentParticipation,
 
                 tags: [
