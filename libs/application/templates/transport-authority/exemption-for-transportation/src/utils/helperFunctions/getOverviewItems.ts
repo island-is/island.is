@@ -7,10 +7,12 @@ import { FormValue } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import { KeyValueItem } from '@island.is/application/types'
 import { exemptionPeriod, location, overview } from '../../lib/messages'
-import { formatDateStr, formatKennitala, formatPhoneNumber } from './format'
+import { formatDateStr } from './format'
 import { shouldShowResponsiblePerson } from './shouldShowResponsiblePerson'
 import { isSameAsApplicant } from './isSameAsApplicant'
 import { checkIfExemptionTypeShortTerm } from './getExemptionType'
+import { format as formatKennitala } from 'kennitala'
+import { formatPhoneNumber } from '@island.is/application/ui-components'
 
 export const getUserInformationOverviewItems = (
   answers: FormValue,
@@ -19,7 +21,10 @@ export const getUserInformationOverviewItems = (
   const getApplicant = (includeAddress: boolean) => [
     getValueViaPath<string>(externalData, 'nationalRegistry.data.fullName'),
     formatKennitala(
-      getValueViaPath<string>(externalData, 'nationalRegistry.data.nationalId'),
+      getValueViaPath<string>(
+        externalData,
+        'nationalRegistry.data.nationalId',
+      ) || '',
     ),
     ...(includeAddress
       ? [
@@ -40,29 +45,33 @@ export const getUserInformationOverviewItems = (
         ]
       : []),
     formatPhoneNumber(
-      getValueViaPath<string>(answers, 'applicant.phoneNumber'),
+      getValueViaPath<string>(answers, 'applicant.phoneNumber') || '',
     ),
     getValueViaPath<string>(answers, 'applicant.email'),
   ]
 
   const transporter = [
     getValueViaPath<string>(answers, 'transporter.name'),
-    formatKennitala(getValueViaPath<string>(answers, 'transporter.nationalId')),
+    formatKennitala(
+      getValueViaPath<string>(answers, 'transporter.nationalId') || '',
+    ),
     `${getValueViaPath<string>(
       answers,
       'transporter.address',
     )}, ${getValueViaPath<string>(answers, 'transporter.postalCodeAndCity')}`,
-    formatPhoneNumber(getValueViaPath<string>(answers, 'transporter.phone')),
+    formatPhoneNumber(
+      getValueViaPath<string>(answers, 'transporter.phone') || '',
+    ),
     getValueViaPath<string>(answers, 'transporter.email'),
   ]
 
   const responsiblePerson = [
     getValueViaPath<string>(answers, 'responsiblePerson.name'),
     formatKennitala(
-      getValueViaPath<string>(answers, 'responsiblePerson.nationalId'),
+      getValueViaPath<string>(answers, 'responsiblePerson.nationalId') || '',
     ),
     formatPhoneNumber(
-      getValueViaPath<string>(answers, 'responsiblePerson.phone'),
+      getValueViaPath<string>(answers, 'responsiblePerson.phone') || '',
     ),
     getValueViaPath<string>(answers, 'responsiblePerson.email'),
   ]
