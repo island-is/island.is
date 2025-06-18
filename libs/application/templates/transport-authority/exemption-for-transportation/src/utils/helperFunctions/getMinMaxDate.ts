@@ -9,6 +9,9 @@ import {
 import { checkIfExemptionTypeShortTerm } from './getExemptionType'
 import { FormValue } from '@island.is/application/types'
 
+const addDays = (date: Date, days: number) =>
+  new Date(date.getTime() + days * MS_IN_DAY)
+
 export const getMinDateFrom = (answers: FormValue) => {
   const dateToStr = getValueViaPath<string>(answers, 'exemptionPeriod.dateTo')
   const dateTo = dateToStr ? new Date(dateToStr) : undefined
@@ -17,26 +20,23 @@ export const getMinDateFrom = (answers: FormValue) => {
   if (!dateTo) return today
 
   const offset = checkIfExemptionTypeShortTerm(answers)
-    ? SHORT_TERM_MAX_DAYS
-    : LONG_TERM_MAX_DAYS
+    ? -SHORT_TERM_MAX_DAYS
+    : -LONG_TERM_MAX_DAYS
 
-  const lowerBound = new Date(dateTo.getTime() - offset * MS_IN_DAY)
-
+  const lowerBound = addDays(dateTo, offset)
   return lowerBound > today ? lowerBound : today
 }
 
 export const getMaxDateFrom = (answers: FormValue) => {
   const dateToStr = getValueViaPath<string>(answers, 'exemptionPeriod.dateTo')
   const dateTo = dateToStr ? new Date(dateToStr) : undefined
-
   if (!dateTo) return undefined
 
   const offset = checkIfExemptionTypeShortTerm(answers)
-    ? SHORT_TERM_MIN_DAYS
-    : LONG_TERM_MIN_DAYS
+    ? -SHORT_TERM_MIN_DAYS
+    : -LONG_TERM_MIN_DAYS
 
-  const upperBound = new Date(dateTo.getTime() - offset * MS_IN_DAY)
-
+  const upperBound = addDays(dateTo, offset)
   const today = new Date()
   return upperBound > today ? upperBound : today
 }
@@ -52,7 +52,7 @@ export const getMinDateTo = (answers: FormValue) => {
     ? SHORT_TERM_MIN_DAYS
     : LONG_TERM_MIN_DAYS
 
-  return new Date(dateFrom.getTime() + offset * MS_IN_DAY)
+  return addDays(dateFrom, offset)
 }
 
 export const getMaxDateTo = (answers: FormValue) => {
@@ -66,5 +66,5 @@ export const getMaxDateTo = (answers: FormValue) => {
     ? SHORT_TERM_MAX_DAYS
     : LONG_TERM_MAX_DAYS
 
-  return new Date(dateFrom.getTime() + offset * MS_IN_DAY)
+  return addDays(dateFrom, offset)
 }
