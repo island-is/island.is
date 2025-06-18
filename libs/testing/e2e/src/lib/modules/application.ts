@@ -1,4 +1,5 @@
 import { Page } from '@playwright/test'
+import { isUuid } from 'uuidv4'
 
 /**
  * Creates a new application if there are existing applications on the overview page.
@@ -12,10 +13,9 @@ import { Page } from '@playwright/test'
  */
 export const createApplication = async (page: Page): Promise<number> => {
   // Wait for the response from the GraphQL API endpoint that lists applications
-  const applicationResponsePromise = await page.waitForResponse(
+  const applicationResponse = await page.waitForResponse(
     '**/api/graphql?op=ApplicationApplications',
   )
-  const applicationResponse = await applicationResponsePromise
   const applicationData = await applicationResponse.json()
   const existingApplicationCount =
     applicationData.data.applicationApplications.length || 0
@@ -26,4 +26,11 @@ export const createApplication = async (page: Page): Promise<number> => {
   }
 
   return existingApplicationCount
+}
+
+export const isApplication = (page: Page): boolean => {
+  const applicationUrl = new URL(page.url())
+  const path = applicationUrl.pathname.split('/')
+
+  return isUuid(path.pop() ?? '') && path.pop() == 'umsoknir'
 }
