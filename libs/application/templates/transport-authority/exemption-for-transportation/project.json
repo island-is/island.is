@@ -18,7 +18,7 @@
     "extract-strings": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/transport-authority/exemption-for-transportation/src/lib/messages.ts"
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/transport-authority/exemption-for-transportation/src/lib/messages/*.{js,ts,tsx}"
       }
     }
   }
