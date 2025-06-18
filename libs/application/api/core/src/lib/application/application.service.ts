@@ -222,7 +222,6 @@ export class ApplicationService {
         },
       },
       order: [['modified', 'DESC']],
-      logging: console.log,
     })
   }
 
