@@ -300,7 +300,8 @@ const Indictment = () => {
       const prevSuspensionOffenses = getSuspensionOffenses(
         workingCase.indictmentCounts,
       )
-      const newSuspensionOffeenses = getSuspensionOffenses(
+
+      const newSuspensionOffenses = getSuspensionOffenses(
         workingCase.indictmentCounts?.map((count) =>
           count.id === indictmentCountId
             ? {
@@ -311,11 +312,13 @@ const Indictment = () => {
         ),
       )
 
-      setSuspensionRequest(
-        prevSuspensionOffenses,
-        newSuspensionOffeenses,
-        workingCase.requestDriversLicenseSuspension,
-      )
+      if (updatedOffenses && updatedOffenses?.length > 0) {
+        setSuspensionRequest(
+          prevSuspensionOffenses,
+          newSuspensionOffenses,
+          workingCase.requestDriversLicenseSuspension,
+        )
+      }
 
       updateIndictmentCountState(
         indictmentCountId,
@@ -348,17 +351,6 @@ const Indictment = () => {
           (count) => count.id !== indictmentCountId,
         )
 
-        const prevSuspensionOffenses = getSuspensionOffenses(
-          workingCase.indictmentCounts,
-        )
-        const newSuspensionOffenses = getSuspensionOffenses(indictmentCounts)
-
-        setSuspensionRequest(
-          prevSuspensionOffenses,
-          newSuspensionOffenses,
-          workingCase.requestDriversLicenseSuspension,
-        )
-
         setWorkingCase((prevWorkingCase) => ({
           ...prevWorkingCase,
           indictmentCounts,
@@ -367,11 +359,9 @@ const Indictment = () => {
     },
     [
       deleteIndictmentCount,
-      setSuspensionRequest,
       setWorkingCase,
       workingCase.id,
       workingCase.indictmentCounts,
-      workingCase.requestDriversLicenseSuspension,
     ],
   )
 
