@@ -49,7 +49,7 @@ export const externalData = {
     dataError: {
       id: 'aosh.pe.application:externalData.ver.dataError',
       defaultMessage:
-        'Villa í gögnum frá Vinnueftirliti, vinsamlegast reynið síða',
+        'Villa í gögnum frá Vinnueftirliti, vinsamlegast reynið síðar',
       description: 'Error fetching data from VER',
     },
     errorInApplication: {

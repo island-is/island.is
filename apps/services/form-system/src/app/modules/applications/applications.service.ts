@@ -33,7 +33,10 @@ import { User } from '@island.is/auth-nest-tools'
 import { Applicant } from '../applicants/models/applicant.model'
 import { FormApplicantType } from '../formApplicantTypes/models/formApplicantType.model'
 import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
+import { SubmitScreenDto } from './models/dto/submitScreen.dto'
+import { ScreenDto } from '../screens/models/dto/screen.dto'
 import { Option } from '../../dataTypes/option.model'
+
 
 @Injectable()
 export class ApplicationsService {
@@ -53,6 +56,9 @@ export class ApplicationsService {
     private readonly applicationMapper: ApplicationMapper,
     private readonly serviceManager: ServiceManager,
     private readonly sequelize: Sequelize,
+    @InjectModel(Screen) private screenModel: typeof Screen,
+    @InjectModel(Field) private fieldModel: typeof Field,
+    @InjectModel(Section) private sectionModel: typeof Section,
   ) {}
 
   async create(
@@ -595,5 +601,72 @@ export class ApplicationsService {
     }
 
     return form
+  }
+
+  async saveScreen(
+    screenId: string,
+    submitScreenDto: SubmitScreenDto,
+  ): Promise<ScreenDto> {
+    const screen = await this.screenModel.findByPk(screenId)
+
+    if (!screen) {
+      throw new NotFoundException(`Screen with id '${screenId}' not found`)
+    }
+    const { screenDto, applicationId } = submitScreenDto
+
+    if (!screenDto) {
+      throw new NotFoundException(`ScreenDto not found`)
+    }
+
+    const application = await this.applicationModel.findByPk(applicationId)
+
+    if (!application) {
+      throw new NotFoundException(
+        `Application with id '${applicationId}' not found`,
+      )
+    }
+
+    if (screenDto.fields) {
+      for (const field of screenDto.fields) {
+        if (field.values) {
+          for (const value of field.values) {
+            await this.valueModel.update(
+              { ...(value as Partial<Value>) },
+              {
+                where: {
+                  fieldId: field.id,
+                  applicationId: applicationId,
+                  id: value.id,
+                },
+              },
+            )
+          }
+        }
+      }
+    }
+
+    await application.update({
+      ...application,
+      completed: [...(application.completed ?? []), screen.id],
+    })
+    const lastScreen = await this.screenModel.findOne({
+      where: { sectionId: screen.sectionId },
+      order: [['displayOrder', 'DESC']],
+    })
+    if (lastScreen && lastScreen.id === screenId) {
+      await application.update({
+        ...application,
+        completed: [...(application.completed ?? []), screen.sectionId],
+      })
+    }
+
+    const screenResult = await this.screenModel.findByPk(screenId, {
+      include: [{ model: this.fieldModel, include: [this.valueModel] }],
+    })
+
+    if (!screenResult) {
+      throw new NotFoundException(`Screen with id '${screenId}' not found`)
+    }
+    return screenResult as unknown as ScreenDto
   }
 }
