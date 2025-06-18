@@ -19,7 +19,7 @@ export const Appendixes = memo((props: AppendixesProps) => {
   return (
     <Box marginTop={[6, 10]} marginBottom={[6, 6]}>
       <Accordion singleExpand={false}>
-        {additions.map((appendix, i) => {
+        {additions.map((appendix) => {
           const { id } = appendix
           return (
             appendix.html && (
