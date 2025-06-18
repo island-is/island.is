@@ -4,7 +4,20 @@ import {
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
-import { getOverviewItems } from '../../utils/getOverviewItems'
+import {
+  getPersonalInformationOverviewItems,
+  getRentalAgreementOverviewItems,
+  getTerminationTypeOverviewItems,
+  getBoundTerminationOverviewItems,
+  getUnboundTerminationOverviewItems,
+  getCancelationDetailsOverviewItems,
+} from '../../utils/getOverviewItems'
+import * as m from '../../lib/messages'
+import {
+  isBoundTermination,
+  isCancelation,
+  isUnboundTermination,
+} from '../../utils/conditions'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
@@ -15,12 +28,55 @@ export const overviewSection = buildSection({
       title: 'Overview',
       children: [
         buildOverviewField({
-          id: 'overview',
-          title: 'Overview',
-          description: 'This is an overview, should come from messages.ts',
-          backId: 'idToSomeField',
+          id: 'personalInformationOverview',
+          title: m.overviewMessages.personalInformationTitle,
+          backId: 'applicant',
           bottomLine: false,
-          items: getOverviewItems,
+          items: getPersonalInformationOverviewItems,
+        }),
+        buildOverviewField({
+          id: 'rentalAgreementOverview',
+          title: {
+            ...m.overviewMessages.rentalAgreementTitle,
+            values: {
+              terminationType: 'rifta',
+            },
+          },
+          backId: 'chooseContract',
+          bottomLine: false,
+          items: getRentalAgreementOverviewItems,
+        }),
+        buildOverviewField({
+          id: 'terminationTypeOverview',
+          title: m.overviewMessages.terminationTypeTitle,
+          backId: 'terminationTypeMultiField',
+          bottomLine: false,
+          items: getTerminationTypeOverviewItems,
+        }),
+
+        buildOverviewField({
+          condition: isCancelation,
+          id: 'cancelationDetailsOverview',
+          title: m.overviewMessages.cancelationDetailsTitle,
+          backId: 'cancelationMultiField',
+          bottomLine: false,
+          items: getCancelationDetailsOverviewItems,
+        }),
+        buildOverviewField({
+          condition: isBoundTermination,
+          id: 'boundTerminationOverview',
+          title: m.overviewMessages.boundTerminationTitle,
+          backId: 'boundTerminationMultiField',
+          bottomLine: false,
+          items: getBoundTerminationOverviewItems,
+        }),
+        buildOverviewField({
+          condition: isUnboundTermination,
+          id: 'unboundTerminationOverview',
+          title: m.overviewMessages.unboundTerminationTitle,
+          backId: 'unboundTerminationMultiField',
+          bottomLine: false,
+          items: getUnboundTerminationOverviewItems,
         }),
         buildSubmitField({
           id: 'submit',

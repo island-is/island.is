@@ -18,5 +18,5 @@ export enum Roles {
 
 export enum TerminationTypes {
   CANCELATION = 'cancelation',
-  DISMISSAL = 'dismissal',
+  TERMINATION = 'termination',
 }

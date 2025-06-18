@@ -3,19 +3,13 @@ import {
   buildMultiField,
   buildDateField,
   buildSelectField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import * as m from '../../lib/messages'
 import { terminationReasonOptions } from '../../utils/options'
-import { TerminationTypes } from '../../utils/constants'
+import { isUnboundTermination } from '../../utils/conditions'
 
 export const unboundTerminationSection = buildSection({
-  condition: (answers) => {
-    const terminationType = getValueViaPath<string>(answers, 'terminationType')
-    const rentalAgreement = getValueViaPath<string>(answers, 'rentalAgreement')
-    console.log(rentalAgreement)
-    return terminationType === TerminationTypes.DISMISSAL && true
-  },
+  condition: isUnboundTermination,
   id: 'unboundTerminationSection',
   title: m.unboundTerminationMessages.title,
   children: [

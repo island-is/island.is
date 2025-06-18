@@ -24,7 +24,13 @@ export class LegalGazetteTemplateService extends BaseTemplateApiService {
     try {
       const { categories } = await this.legalGazetteClient.getCategories(auth)
 
-      return categories.map((c) => ({ id: c.id, title: c.title, slug: c.slug }))
+      return categories.map(
+        (c: { id: string; title: string; slug: string }) => ({
+          id: c.id,
+          title: c.title,
+          slug: c.slug,
+        }),
+      )
     } catch (error) {
       this.logger.error('Failed to get categories', {
         error,

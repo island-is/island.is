@@ -4,13 +4,9 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import * as m from '../../lib/messages'
-import { contractOptions } from '../../utils/options'
+import { rentalContractOptions } from '../../utils/options'
 
 export const chooseContractSection = buildSection({
-  condition: (answers, externalData) => {
-    console.log(answers, externalData)
-    return true
-  },
   id: 'chooseContractSection',
   title: m.chooseContractMessages.title,
   children: [
@@ -21,7 +17,7 @@ export const chooseContractSection = buildSection({
       children: [
         buildRadioField({
           id: 'rentalAgreement',
-          options: contractOptions,
+          options: rentalContractOptions,
         }),
       ],
     }),

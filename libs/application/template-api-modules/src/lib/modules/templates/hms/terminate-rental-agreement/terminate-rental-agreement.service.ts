@@ -1,35 +1,37 @@
 import { Injectable } from '@nestjs/common'
-import { SharedTemplateApiService } from '../../../shared'
 import { ApplicationTypes } from '@island.is/application/types'
-import { NotificationsService } from '../../../../notification/notifications.service'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { TemplateApiModuleActionProps } from '../../../..'
+import { HomeApi } from '@island.is/clients/hms-rental-agreement'
+import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class TerminateRentalAgreementService extends BaseTemplateApiService {
-  constructor(
-    private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly notificationsService: NotificationsService,
-  ) {
+  constructor(private readonly homeApi: HomeApi) {
     super(ApplicationTypes.TERMINATE_RENTAL_AGREEMENT)
   }
 
-  async getRentalAgreements({
-    application,
-    auth,
-  }: TemplateApiModuleActionProps) {
-    return [
-      {
-        id: 1,
-        name: 'Leigusamningur 1',
-        status: 'active',
-      },
-      {
-        id: 2,
-        name: 'Leigusamningur 2',
-        status: 'active',
-      },
-    ]
+  private homeApiWithAuth(auth: Auth) {
+    return this.homeApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  async getRentalAgreements({ auth }: TemplateApiModuleActionProps) {
+    return await this.homeApiWithAuth(auth).contractKtKtGet({
+      kt: auth.nationalId,
+    })
+
+    // return [
+    //   {
+    //     id: 1,
+    //     name: 'Leigusamningur 1',
+    //     status: 'active',
+    //   },
+    //   {
+    //     id: 2,
+    //     name: 'Leigusamningur 2',
+    //     status: 'active',
+    //   },
+    // ]
   }
 
   async createApplication() {

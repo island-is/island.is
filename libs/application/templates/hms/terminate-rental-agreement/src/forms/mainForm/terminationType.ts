@@ -19,7 +19,7 @@ export const terminationTypeSection = buildSection({
         buildAlertMessageField({
           condition: (answers) => {
             const terminationType = getValueViaPath(answers, 'terminationType')
-            return terminationType === TerminationTypes.DISMISSAL
+            return terminationType === TerminationTypes.TERMINATION
           },
           id: 'alertMessage',
           title: m.terminationTypeMessages.terminationWithNoticeLabel,
@@ -42,7 +42,7 @@ export const terminationTypeSection = buildSection({
           id: 'terminationType',
           options: [
             {
-              value: TerminationTypes.DISMISSAL, // Uppsögn
+              value: TerminationTypes.TERMINATION, // Uppsögn
               label: m.terminationTypeMessages.terminationWithNoticeLabel,
             },
             {

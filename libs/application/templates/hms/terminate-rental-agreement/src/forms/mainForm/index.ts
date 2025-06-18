@@ -7,6 +7,7 @@ import { unboundTerminationSection } from './unboundTerminationSection'
 import { boundTerminationSection } from './boundTerminationSection'
 import { cancelationSection } from './cancelationSection'
 import HmsLogo from '../../assets/HmsLogo'
+import { personalInformationSection } from './personalInformationSection'
 
 export const MainForm = buildForm({
   id: 'MainForm',
@@ -15,6 +16,7 @@ export const MainForm = buildForm({
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
   children: [
+    personalInformationSection,
     chooseContractSection,
     terminationTypeSection,
     cancelationSection,

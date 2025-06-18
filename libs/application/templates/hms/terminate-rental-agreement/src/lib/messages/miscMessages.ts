@@ -6,4 +6,9 @@ export const miscMessages = defineMessages({
     defaultMessage: 'Uppsögn og riftun leigusamninga',
     description: 'Application name',
   },
+  personalInformationSectionTitle: {
+    id: 'tra.application:misc.personalInformationSectionTitle',
+    defaultMessage: 'Persónuupplýsingar',
+    description: 'Personal information section title',
+  },
 })
