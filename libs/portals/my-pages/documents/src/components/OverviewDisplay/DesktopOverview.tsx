@@ -1,15 +1,16 @@
-import { FC } from 'react'
-import { m } from '@island.is/portals/my-pages/core'
-import { Box, LoadingDots } from '@island.is/island-ui/core'
 import { DocumentsV2Category } from '@island.is/api/schema'
+import { Box, LoadingDots } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { DocumentRenderer } from '../DocumentRenderer/DocumentRenderer'
-import { DocumentHeader } from '../DocumentHeader/DocumentHeader'
-import NoPDF from '../NoPDF/NoPDF'
 import { SERVICE_PORTAL_HEADER_HEIGHT_LG } from '@island.is/portals/my-pages/constants'
-import { useDocumentContext } from '../../screens/Overview/DocumentContext'
-import * as styles from './OverviewDisplay.css'
+import { m } from '@island.is/portals/my-pages/core'
+import { FC } from 'react'
 import { useDocumentList } from '../../hooks/useDocumentList'
+import { useDocumentContext } from '../../screens/Overview/DocumentContext'
+import { DocumentHeader } from '../DocumentHeader/DocumentHeader'
+import { DocumentRenderer } from '../DocumentRenderer/DocumentRenderer'
+import NoPDF from '../NoPDF/NoPDF'
+import ReplyContainer from '../Reply/ReplyContainer'
+import * as styles from './OverviewDisplay.css'
 
 interface Props {
   activeBookmark: boolean
@@ -24,7 +25,14 @@ export const DesktopOverview: FC<Props> = ({
 }) => {
   useNamespaces('sp.documents')
   const { formatMessage } = useLocale()
-  const { activeDocument } = useDocumentContext()
+
+  const {
+    activeDocument,
+    replyState,
+    hideDocument,
+    setHideDocument,
+    setReplyState,
+  } = useDocumentContext()
   const { activeArchive } = useDocumentList()
 
   if (loading) {
@@ -50,30 +58,45 @@ export const DesktopOverview: FC<Props> = ({
     return <NoPDF />
   }
 
+  const toggleDocument = () => {
+    setHideDocument(!hideDocument)
+  }
+
   return (
     <Box
       marginLeft={8}
       marginTop={3}
       padding={5}
+      paddingTop={0}
       borderRadius="large"
       background="white"
       className={styles.docWrap}
+      width="full"
     >
       <DocumentHeader
         avatar={activeDocument.img}
         sender={activeDocument.sender}
         date={activeDocument.date}
         category={category}
-        subject={formatMessage(m.activeDocumentOpenAriaLabel, {
+        subjectAriaLabel={formatMessage(m.activeDocumentOpenAriaLabel, {
           subject: activeDocument.subject,
         })}
+        subject={activeDocument.subject}
         actionBar={{
           archived: activeArchive,
           bookmarked: activeBookmark,
+          isReplyable: replyState?.replyable,
+          onReply: () =>
+            setReplyState((prev) => ({ ...prev, replyOpen: true })),
         }}
         actions={activeDocument.actions}
+        onClick={toggleDocument}
       />
-      <Box>{<DocumentRenderer doc={activeDocument} />}</Box>
+
+      {!hideDocument && <DocumentRenderer doc={activeDocument} />}
+
+      <ReplyContainer />
+
       {activeDocument?.id && (
         <Box className={styles.reveal}>
           <button

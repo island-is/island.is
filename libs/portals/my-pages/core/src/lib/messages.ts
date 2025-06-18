@@ -1673,6 +1673,14 @@ export const m = defineMessages({
     id: 'service.portal:remove-from-storage',
     defaultMessage: 'Flytja í pósthólf',
   },
+  reply: {
+    id: 'service.portal:reply',
+    defaultMessage: 'Svara',
+  },
+  replyDocument: {
+    id: 'service.portal:reply-document',
+    defaultMessage: 'Svara pósti',
+  },
   goToArg: {
     id: 'service.portal:go-to-arg',
     defaultMessage: 'Fara til {arg}',

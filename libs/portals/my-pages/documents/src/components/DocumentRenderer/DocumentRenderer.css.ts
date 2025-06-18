@@ -37,7 +37,7 @@ export const htmlDoc = style({})
 
 export const pdfPage = style({
   background: theme.color.blue100,
-  padding: theme.spacing[2],
+  padding: theme.spacing[1],
   border: `1px solid ${theme.color.blue200}`,
   borderTop: 0,
 })

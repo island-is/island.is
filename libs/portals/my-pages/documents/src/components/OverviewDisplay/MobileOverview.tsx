@@ -1,7 +1,10 @@
-import { FC } from 'react'
-import FocusLock from 'react-focus-lock'
-import { LoadModal, m } from '@island.is/portals/my-pages/core'
-import { Box, Text, GridColumn, GridRow } from '@island.is/island-ui/core'
+import { FC, useEffect, useState } from 'react'
+import {
+  LoadModal,
+  m,
+  useScrollDirection,
+} from '@island.is/portals/my-pages/core'
+import { Box } from '@island.is/island-ui/core'
 import { DocumentsV2Category } from '@island.is/api/schema'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { DocumentRenderer } from '../DocumentRenderer/DocumentRenderer'
@@ -9,6 +12,8 @@ import { DocumentHeader } from '../DocumentHeader/DocumentHeader'
 import { DocumentActionBar } from '../DocumentActionBar/DocumentActionBar'
 import { useDocumentContext } from '../../screens/Overview/DocumentContext'
 import * as styles from './OverviewDisplay.css'
+import MobileReply from '../Reply/Mobile/MobileReply'
+import cn from 'classnames'
 
 interface Props {
   onPressBack: () => void
@@ -25,7 +30,18 @@ export const MobileOverview: FC<Props> = ({
 }) => {
   useNamespaces('sp.documents')
   const { formatMessage } = useLocale()
-  const { activeDocument } = useDocumentContext()
+  const { activeDocument, replyState, hideDocument, setReplyState } =
+    useDocumentContext()
+  const [scrollingDown, setScrollingDown] = useState(false)
+  const scrollDirection = useScrollDirection()
+
+  useEffect(() => {
+    if (scrollDirection === 'down' && !scrollingDown) {
+      setScrollingDown(true)
+    } else if (scrollDirection === 'up' && scrollingDown) {
+      setScrollingDown(false)
+    }
+  }, [scrollDirection, scrollingDown])
 
   if (loading) {
     return <LoadModal />
@@ -36,42 +52,44 @@ export const MobileOverview: FC<Props> = ({
   }
 
   return (
-    <GridRow>
-      <GridColumn span="12/12" position="relative">
-        <FocusLock autoFocus={false}>
-          <Box className={styles.modalBase}>
-            <Box className={styles.modalHeader}>
-              <DocumentActionBar
-                onGoBack={onPressBack}
-                bookmarked={activeBookmark}
-              />
-            </Box>
-            <Box className={styles.modalContent}>
-              <DocumentHeader
-                avatar={activeDocument.img}
-                sender={activeDocument.sender}
-                date={activeDocument.date}
-                category={category}
-                subject={formatMessage(m.activeDocumentOpenAriaLabel, {
-                  subject: activeDocument.subject,
-                })}
-                actions={activeDocument.actions}
-              />
-              <Text variant="h3" as="h3" marginBottom={3}>
-                {activeDocument?.subject}
-              </Text>
-              {<DocumentRenderer doc={activeDocument} />}
-
-              <Box className={styles.reveal}>
-                <button onClick={onPressBack}>
-                  {formatMessage(m.backToDocumentsList)}
-                </button>
-              </Box>
-            </Box>
-          </Box>
-        </FocusLock>
-      </GridColumn>
-    </GridRow>
+    <Box className={styles.modalBase}>
+      <Box
+        className={cn(styles.modalHeader, {
+          [styles.modalHeaderScrollingUp]: !scrollingDown,
+        })}
+      >
+        <DocumentActionBar
+          onGoBack={onPressBack}
+          bookmarked={activeBookmark}
+          isReplyable={replyState?.replyable}
+          onReply={() =>
+            setReplyState((prev) => ({ ...prev, replyOpen: true }))
+          }
+        />
+      </Box>
+      {!replyState?.replyOpen && (
+        <Box className={styles.modalContent}>
+          <DocumentHeader
+            avatar={activeDocument.img}
+            sender={activeDocument.sender}
+            date={activeDocument.date}
+            category={category}
+            subjectAriaLabel={formatMessage(m.activeDocumentOpenAriaLabel, {
+              subject: activeDocument.subject,
+            })}
+            subject={activeDocument.subject}
+            actions={activeDocument.actions}
+          />
+          {!hideDocument && <DocumentRenderer doc={activeDocument} />}
+        </Box>
+      )}
+      <MobileReply />
+      <Box className={styles.reveal}>
+        <button onClick={onPressBack}>
+          {formatMessage(m.backToDocumentsList)}
+        </button>
+      </Box>
+    </Box>
   )
 }
 

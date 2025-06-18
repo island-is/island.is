@@ -2,6 +2,9 @@ import {
   DocumentDetails,
   DocumentV2Content,
   DocumentV2Action,
+  DocumentComment,
+  DocumentTicket,
+  DocumentReply,
 } from '@island.is/api/schema'
 
 type ActiveDoc = {
@@ -24,3 +27,23 @@ export type ActiveDocumentType = {
 export type ActiveDocumentType2 = {
   document: Partial<DocumentV2Content>
 } & ActiveDoc
+
+export interface Comment extends DocumentComment {
+  hide: boolean
+}
+
+export interface Reply extends DocumentTicket {
+  comments?: Comment[]
+}
+
+export interface PostReply extends DocumentReply {
+  body: string
+}
+
+export interface ReplyState {
+  replyable?: boolean
+  replyOpen?: boolean
+  replies?: Reply
+  reply?: PostReply
+  closedForMoreReplies?: boolean
+}
