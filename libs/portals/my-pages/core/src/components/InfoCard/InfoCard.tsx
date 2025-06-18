@@ -236,7 +236,11 @@ export const InfoCard: React.FC<InfoCardProps> = ({
             <GridRow>
               <GridColumn paddingTop={2}>
                 {tags.map((tag, index) => (
-                  <Tag variant={tag?.variant} outlined key={index}>
+                  <Tag
+                    variant={tag?.variant}
+                    outlined
+                    key={`infocard-tag-${tag?.label ?? index}`}
+                  >
                     {tag?.label}
                   </Tag>
                 ))}

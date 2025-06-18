@@ -48,7 +48,6 @@ export const EmptyCard: React.FC<EmptyCardProps> = ({
             <Box marginRight={isMobile ? 0 : 3}>
               <Text
                 variant="h3"
-                as="p"
                 marginBottom={isMobile || size === 'large' ? 1 : 0}
                 textAlign={isMobile ? 'center' : 'left'}
               >
