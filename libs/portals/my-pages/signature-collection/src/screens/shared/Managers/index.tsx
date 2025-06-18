@@ -47,7 +47,11 @@ const Managers = ({
               </T.Row>
             ))
           ) : (
-            <Text marginTop={2}>{formatMessage(m.noManagers)}</Text>
+            <T.Row>
+              <T.Data width="25%" colSpan={2}>
+                <Text marginTop={2}>{formatMessage(m.noManagers)}</Text>
+              </T.Data>
+            </T.Row>
           )}
         </T.Body>
       </T.Table>
