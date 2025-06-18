@@ -25,8 +25,11 @@ const ResponsiblePersonSchema = z
     isSameAsApplicant: z.array(z.enum([YES])).optional(),
     nationalId: z.string().optional(),
     name: z.string().optional(),
-    email: z.string().optional(),
-    phone: z.string().optional(),
+    email: z.string().email().optional(),
+    phone: z
+      .string()
+      .optional()
+      .refine((v) => !v || isValidPhoneNumber(v)),
   })
   .refine(
     ({ shouldShow, isSameAsApplicant, nationalId }) => {
@@ -62,8 +65,11 @@ const TransporterSchema = z
     isSameAsApplicant: z.array(z.enum([YES])).optional(),
     nationalId: z.string().optional(),
     name: z.string().optional(),
-    email: z.string().optional(),
-    phone: z.string().optional(),
+    email: z.string().email().optional(),
+    phone: z
+      .string()
+      .optional()
+      .refine((v) => !v || isValidPhoneNumber(v)),
     address: z.string().max(100).optional(),
     postalCodeAndCity: z.string().optional(),
   })
