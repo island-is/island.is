@@ -7,18 +7,17 @@ import {
   buildRadioField,
   buildSubSection,
   buildTextField,
-  NO,
   YES,
 } from '@island.is/application/core'
+import { siaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/graphql/queries'
 import { fileUploadSharedProps } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { SiaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/types/schema'
+import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
+import { shouldShowUnionSickPayUnionAndEndDate } from '../../../utils/conditionUtils'
 import {
   getApplicationAnswers,
   getYesNoNotApplicableOptions,
-} from '../../../lib/medicalAndRehabilitationPaymentsUtils'
-import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
-
-import { siaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/graphql/queries'
-import { SiaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/types/schema'
+} from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 
 export const unionSickPaySubSection = buildSubSection({
   id: 'unionSickPaySubSection',
@@ -58,7 +57,7 @@ export const unionSickPaySubSection = buildSubSection({
             medicalAndRehabilitationPaymentsFormMessage.shared.datePlaceholder,
           width: 'half',
           disabled: true,
-          defaultValue: '2024-11-25',
+          defaultValue: '', //Use the data from TR when the TR API is ready
         }),
       ],
     }),
@@ -84,14 +83,8 @@ export const unionSickPaySubSection = buildSubSection({
               .unionSickPayUnionDescriptionTitle,
           titleVariant: 'h4',
           space: 4,
-          condition: (answers) => {
-            const { hasUtilizedUnionSickPayRights } =
-              getApplicationAnswers(answers)
-            return (
-              hasUtilizedUnionSickPayRights === YES ||
-              hasUtilizedUnionSickPayRights === NO
-            )
-          },
+          condition: (answers) =>
+            shouldShowUnionSickPayUnionAndEndDate(answers),
         }),
         buildAsyncSelectField({
           id: 'unionSickPay.unionNationalId',
@@ -102,14 +95,8 @@ export const unionSickPaySubSection = buildSubSection({
             medicalAndRehabilitationPaymentsFormMessage.generalInformation
               .unionSickPayUnionSelectPlaceholder,
           required: true,
-          condition: (answers) => {
-            const { hasUtilizedUnionSickPayRights } =
-              getApplicationAnswers(answers)
-            return (
-              hasUtilizedUnionSickPayRights === YES ||
-              hasUtilizedUnionSickPayRights === NO
-            )
-          },
+          condition: (answers) =>
+            shouldShowUnionSickPayUnionAndEndDate(answers),
           loadOptions: async ({ apolloClient }) => {
             const { data, error } = await apolloClient.query<SiaUnionsQuery>({
               query: siaUnionsQuery,
@@ -146,14 +133,8 @@ export const unionSickPaySubSection = buildSubSection({
           },
           titleVariant: 'h4',
           space: 4,
-          condition: (answers) => {
-            const { hasUtilizedUnionSickPayRights } =
-              getApplicationAnswers(answers)
-            return (
-              hasUtilizedUnionSickPayRights === YES ||
-              hasUtilizedUnionSickPayRights === NO
-            )
-          },
+          condition: (answers) =>
+            shouldShowUnionSickPayUnionAndEndDate(answers),
         }),
         buildDateField({
           id: 'unionSickPay.endDate',
@@ -161,14 +142,8 @@ export const unionSickPaySubSection = buildSubSection({
           placeholder:
             medicalAndRehabilitationPaymentsFormMessage.shared.datePlaceholder,
           required: true,
-          condition: (answers) => {
-            const { hasUtilizedUnionSickPayRights } =
-              getApplicationAnswers(answers)
-            return (
-              hasUtilizedUnionSickPayRights === YES ||
-              hasUtilizedUnionSickPayRights === NO
-            )
-          },
+          condition: (answers) =>
+            shouldShowUnionSickPayUnionAndEndDate(answers),
         }),
         buildDescriptionField({
           id: 'unionSickPay.fileupload.description',

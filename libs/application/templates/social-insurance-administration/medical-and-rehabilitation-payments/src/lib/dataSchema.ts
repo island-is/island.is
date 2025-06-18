@@ -6,10 +6,9 @@ import {
   TaxLevelOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { errorMessages as coreSIAErrorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { formatBankInfo } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import { NOT_APPLICABLE } from './constants'
+import { NOT_APPLICABLE } from '../utils/constants'
 import { errorMessages } from './messages'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
@@ -33,36 +32,20 @@ export const dataSchema = z.object({
   }),
   paymentInfo: z
     .object({
-      bank: z.string(),
+      bank: z.object({
+        bankNumber: z.string().regex(/^\d{4}$/),
+        ledger: z.string().regex(/^\d{2}$/),
+        accountNumber: z.string().regex(/^\d{6}$/),
+      }),
       personalAllowance: z.enum([YES, NO]),
-      personalAllowanceUsage: z.string().optional(),
-      taxLevel: z.enum([
-        TaxLevelOptions.INCOME,
-        TaxLevelOptions.FIRST_LEVEL,
-        TaxLevelOptions.SECOND_LEVEL,
-      ]),
+      personalAllowanceUsage: z.coerce
+        .number()
+        .int()
+        .min(1)
+        .max(100)
+        .optional(),
+      taxLevel: z.nativeEnum(TaxLevelOptions),
     })
-    .partial()
-    .refine(
-      ({ bank }) => {
-        const bankAccount = formatBankInfo(bank ?? '')
-        return bankAccount.length === 12 // 4 (bank) + 2 (ledger) + 6 (number)
-      },
-      { params: coreSIAErrorMessages.bank, path: ['bank'] },
-    )
-    .refine(
-      ({ personalAllowance, personalAllowanceUsage }) =>
-        personalAllowance === YES
-          ? !(
-              Number(personalAllowanceUsage) < 1 ||
-              Number(personalAllowanceUsage) > 100
-            )
-          : true,
-      {
-        path: ['personalAllowanceUsage'],
-        params: coreSIAErrorMessages.personalAllowance,
-      },
-    )
     .refine(
       ({ personalAllowance, personalAllowanceUsage }) =>
         personalAllowance === YES ? !!personalAllowanceUsage : true,

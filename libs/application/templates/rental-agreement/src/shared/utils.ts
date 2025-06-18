@@ -103,7 +103,8 @@ const extractRentalAmount = (
     answers,
     'rentalAmount.isIndexConnected',
   ),
-  indexType: getValueViaPath<string>(answers, 'rentalAmount.indexTypes'),
+  indexDate: getValueViaPath<string>(answers, 'rentalAmount.indexDate'),
+  indexRate: getValueViaPath<number>(answers, 'rentalAmount.indexRate'),
   paymentMethod: getValueViaPath<string>(
     answers,
     'rentalAmount.paymentMethodOptions',
@@ -170,6 +171,10 @@ const extractSecurityDeposit = (
     answers,
     'securityDeposit.securityAmountCalculated',
   ),
+  securityAmountHiddenRentalAmount: getValueViaPath<string>(
+    answers,
+    'securityDeposit.rentalAmount',
+  ),
 })
 
 const extractOtherFees = (
@@ -208,6 +213,10 @@ const extractOtherFees = (
   heatingCostMeterStatus: getValueViaPath<string>(
     answers,
     'otherFees.heatingCostMeterStatus',
+  ),
+  otherCostPayedByTenant: getValueViaPath<YesOrNoEnum>(
+    answers,
+    'otherFees.otherCost',
   ),
   otherCostItems: getValueViaPath<CostField[]>(
     answers,

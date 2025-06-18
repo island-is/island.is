@@ -50,7 +50,7 @@ export const mapRentalApplicationData = (
     endDate,
     rentalAmount,
     isIndexConnected,
-    indexType,
+    indexRate,
     paymentMethod,
     paymentMethodOther,
     paymentDay,
@@ -95,7 +95,6 @@ export const mapRentalApplicationData = (
       zip: searchResults?.postalCode?.toString() ?? null,
       propertyId: propertyId?.toString() ?? null,
       appraisalUnits: appraisalUnits ?? null,
-      // TODO: Check how 'part' should be handled.
       part: PropertyPart.Whole, // Whole | Part
       type: categoryType as PropertyType,
       specialGroup:
@@ -122,11 +121,11 @@ export const mapRentalApplicationData = (
       rent: {
         amount: parseToNumber(rentalAmount || '0'),
         index:
-          isIndexConnected === YesOrNoEnum.YES && indexType
-            ? (indexType as RentIndex)
+          isIndexConnected === YesOrNoEnum.YES
+            ? RentIndex.ConsumerPriceIndex
             : RentIndex.None,
-        // TODO: add the index rate when it has been implemented in the application
-        indexRate: null,
+        indexRate:
+          isIndexConnected === YesOrNoEnum.YES && indexRate ? indexRate : null,
       },
       payment: {
         method: paymentMethod as PaymentMethod,

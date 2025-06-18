@@ -5,12 +5,14 @@ import {
   buildMultiField,
   buildRadioField,
   buildSubSection,
-  YES,
 } from '@island.is/application/core'
 import { fileUploadSharedProps } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { getYesNoOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
-import { getApplicationAnswers } from '../../../lib/medicalAndRehabilitationPaymentsUtils'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
+import {
+  shouldShowCalculatedRemunerationDate,
+  shouldShowIsStudyingFileUpload,
+} from '../../../utils/conditionUtils'
 
 export const questionsSubSection = buildSubSection({
   id: 'questionsSubSection',
@@ -43,10 +45,7 @@ export const questionsSubSection = buildSubSection({
               .questionsCalculatedRemunerationDate,
           titleVariant: 'h4',
           space: 4,
-          condition: (answers) => {
-            const { isSelfEmployed } = getApplicationAnswers(answers)
-            return isSelfEmployed === YES
-          },
+          condition: (answers) => shouldShowCalculatedRemunerationDate(answers),
         }),
         buildDateField({
           id: 'questions.calculatedRemunerationDate',
@@ -54,10 +53,7 @@ export const questionsSubSection = buildSubSection({
           placeholder:
             medicalAndRehabilitationPaymentsFormMessage.shared.datePlaceholder,
           required: true,
-          condition: (answers) => {
-            const { isSelfEmployed } = getApplicationAnswers(answers)
-            return isSelfEmployed === YES
-          },
+          condition: (answers) => shouldShowCalculatedRemunerationDate(answers),
         }),
         buildRadioField({
           id: 'questions.isPartTimeEmployed',
@@ -86,18 +82,12 @@ export const questionsSubSection = buildSubSection({
               .uploadConfirmationDocument,
           titleVariant: 'h4',
           space: 4,
-          condition: (answers) => {
-            const { isStudying } = getApplicationAnswers(answers)
-            return isStudying === YES
-          },
+          condition: (answers) => shouldShowIsStudyingFileUpload(answers),
         }),
         buildFileUploadField({
           id: 'questions.isStudyingFileUpload',
           ...fileUploadSharedProps,
-          condition: (answers) => {
-            const { isStudying } = getApplicationAnswers(answers)
-            return isStudying === YES
-          },
+          condition: (answers) => shouldShowIsStudyingFileUpload(answers),
         }),
       ],
     }),

@@ -1,23 +1,24 @@
 import {
   YES,
   buildAlertMessageField,
+  buildBankAccountField,
   buildMultiField,
   buildRadioField,
   buildSubSection,
   buildTextField,
 } from '@island.is/application/core'
+import { TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
-  getBankIsk,
   getTaxOptions,
   getYesNoOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { Application } from '@island.is/application/types'
+import { shouldShowSpouseFields } from '../../../utils/conditionUtils'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
-} from '../../../lib/medicalAndRehabilitationPaymentsUtils'
-import { TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+} from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 
 export const paymentInfoSubSection = buildSubSection({
   id: 'paymentInfoSubSection',
@@ -34,16 +35,13 @@ export const paymentInfoSubSection = buildSubSection({
           doesNotRequireAnswer: true,
           alertType: 'info',
         }),
-        buildTextField({
+        buildBankAccountField({
           id: 'paymentInfo.bank',
-          title: socialInsuranceAdministrationMessage.payment.bank,
-          format: '####-##-######',
-          placeholder: '0000-00-000000',
           defaultValue: (application: Application) => {
             const { bankInfo } = getApplicationExternalData(
               application.externalData,
             )
-            return getBankIsk(bankInfo)
+            return { ...bankInfo, bankNumber: bankInfo?.bank }
           },
         }),
         buildRadioField({
@@ -79,10 +77,7 @@ export const paymentInfoSubSection = buildSubSection({
             socialInsuranceAdministrationMessage.payment.alertSpouseAllowance,
           doesNotRequireAnswer: true,
           alertType: 'info',
-          condition: (_, externalData) => {
-            const { hasSpouse } = getApplicationExternalData(externalData)
-            return !!hasSpouse
-          },
+          condition: (_, externalData) => shouldShowSpouseFields(externalData),
         }),
         buildRadioField({
           id: 'paymentInfo.taxLevel',

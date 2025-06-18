@@ -11,7 +11,6 @@ import {
   RentalHousingCategoryClass,
 } from '../shared'
 import {
-  RentalAmountIndexTypes,
   RentalHousingCategoryClassGroup,
   RentalHousingCategoryTypes,
   RentalHousingConditionInspector,
@@ -89,6 +88,33 @@ export const filterRepresentativesFromApplicants = <T extends ApplicantsInfo>(
         !applicant.isRepresentative || applicant.isRepresentative.length === 0,
     ) ?? []
   )
+}
+
+export const hasAnyMatchingNationalId = (
+  nationalIds: string[],
+  applicants: ApplicantsInfo[] = [],
+) => {
+  return (
+    nationalIds.length > 0 &&
+    applicants?.some((applicant) =>
+      nationalIds.includes(applicant.nationalIdWithName.nationalId),
+    )
+  )
+}
+
+export const hasDuplicateApplicants = (
+  applicants: ApplicantsInfo[] = [],
+): boolean => {
+  const seen = new Set<string>()
+
+  for (const applicant of applicants) {
+    if (seen.has(applicant.nationalIdWithName.nationalId)) {
+      return true
+    }
+    seen.add(applicant.nationalIdWithName.nationalId)
+  }
+
+  return false
 }
 
 export const isCostItemValid = (item: CostField) =>
@@ -177,13 +203,6 @@ export const getInspectorOptions = () => [
   {
     value: RentalHousingConditionInspector.INDEPENDENT_PARTY,
     label: m.housingCondition.inspectorOptionIndependentParty,
-  },
-]
-
-export const getRentalAmountIndexTypes = () => [
-  {
-    value: RentalAmountIndexTypes.CONSUMER_PRICE_INDEX,
-    label: m.rentalAmount.indexOptionConsumerPriceIndex,
   },
 ]
 

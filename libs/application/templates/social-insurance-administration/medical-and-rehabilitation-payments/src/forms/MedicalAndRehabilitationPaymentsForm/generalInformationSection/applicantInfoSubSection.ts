@@ -9,7 +9,8 @@ import { maritalStatuses } from '@island.is/application/templates/social-insuran
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { Application } from '@island.is/application/types'
 import * as kennitala from 'kennitala'
-import { getApplicationExternalData } from '../../../lib/medicalAndRehabilitationPaymentsUtils'
+import { shouldShowSpouseFields } from '../../../utils/conditionUtils'
+import { getApplicationExternalData } from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 
 export const applicantInfoSubSection = buildSubSection({
   id: 'applicantInfoSubSection',
@@ -108,10 +109,7 @@ export const applicantInfoSubSection = buildSubSection({
           title:
             socialInsuranceAdministrationMessage.info.applicantMaritalTitle,
           space: 'containerGutter',
-          condition: (_, externalData) => {
-            const { hasSpouse } = getApplicationExternalData(externalData)
-            return !!hasSpouse
-          },
+          condition: (_, externalData) => shouldShowSpouseFields(externalData),
         }),
         buildTextField({
           id: 'applicantInfo.maritalStatus',
@@ -122,12 +120,9 @@ export const applicantInfoSubSection = buildSubSection({
             const { maritalStatus } = getApplicationExternalData(
               application.externalData,
             )
-            return maritalStatuses[maritalStatus]
+            return maritalStatus ? maritalStatuses[maritalStatus] : ''
           },
-          condition: (_, externalData) => {
-            const { maritalStatus } = getApplicationExternalData(externalData)
-            return !!maritalStatus
-          },
+          condition: (_, externalData) => shouldShowSpouseFields(externalData),
         }),
         buildTextField({
           id: 'applicantInfo.spouseName',
@@ -140,10 +135,7 @@ export const applicantInfoSubSection = buildSubSection({
             )
             return spouseName
           },
-          condition: (_, externalData) => {
-            const { spouseName } = getApplicationExternalData(externalData)
-            return !!spouseName
-          },
+          condition: (_, externalData) => shouldShowSpouseFields(externalData),
         }),
         buildTextField({
           id: 'applicantInfo.spouseID',
@@ -155,13 +147,9 @@ export const applicantInfoSubSection = buildSubSection({
             const { spouseNationalId } = getApplicationExternalData(
               application.externalData,
             )
-            return kennitala.format(spouseNationalId)
+            return spouseNationalId ? kennitala.format(spouseNationalId) : ''
           },
-          condition: (_, externalData) => {
-            const { spouseNationalId } =
-              getApplicationExternalData(externalData)
-            return !!spouseNationalId
-          },
+          condition: (_, externalData) => shouldShowSpouseFields(externalData),
         }),
       ],
     }),

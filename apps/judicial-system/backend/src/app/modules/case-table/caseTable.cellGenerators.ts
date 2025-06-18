@@ -17,6 +17,7 @@ import {
   CaseState,
   CaseTableColumnKey,
   CaseType,
+  courtSessionTypeNames,
   DefendantEventType,
   EventType,
   getIndictmentAppealDeadlineDate,
@@ -49,8 +50,13 @@ import {
   TagValue,
 } from './dto/caseTable.response'
 
+// gets the element type if T is an array.
 type ElementType<T> = T extends (infer U)[] ? U : T
+
+// gets the non-null, non-undefined version of ElementType<T>.
 type DefinedObject<T> = NonNullable<ElementType<T>>
+
+// extracts keys from T where the corresponding value, after non-nullable, is an object.
 type ObjectKeys<T> = Extract<
   {
     [K in keyof T]: DefinedObject<T[K]> extends object ? K : never
@@ -415,7 +421,10 @@ const generateCaseNumberSortValue = (
   policeCaseNumber: string,
   user: TUser,
 ): string | undefined => {
-  if (isProsecutionUser(user) || isDistrictCourtUser(user)) {
+  if (isProsecutionUser(user)) {
+    return getPoliceCaseNumberSortValue(policeCaseNumber)
+  }
+  if (isDistrictCourtUser(user)) {
     return `${getCourtCaseNumberSortValue(
       courtCaseNumber,
     )}${getPoliceCaseNumberSortValue(policeCaseNumber)}`
@@ -603,6 +612,30 @@ const courtOfAppealsHead: CaseTableCellGenerator<StringValue> = {
   },
 }
 
+const created: CaseTableCellGenerator<StringValue> = {
+  attributes: ['created'],
+  generate: (c: Case): CaseTableCell<StringValue> => {
+    return generateDate(c.created)
+  },
+}
+
+const prosecutor: CaseTableCellGenerator<StringValue> = {
+  includes: {
+    prosecutor: {
+      model: User,
+      attributes: ['name'],
+    },
+  },
+  generate: (c: Case): CaseTableCell<StringValue> => {
+    const prosecutor = c.prosecutor
+    if (!prosecutor) {
+      return generateCell()
+    }
+
+    return generateCell({ str: prosecutor.name }, prosecutor.name)
+  },
+}
+
 const validFromTo: CaseTableCellGenerator<StringValue> = {
   attributes: [
     'type',
@@ -662,23 +695,7 @@ const rulingDate: CaseTableCellGenerator<StringValue> = {
   generate: (c: Case): CaseTableCell<StringValue> => generateDate(c.rulingDate),
 }
 
-const arraignmentDate: CaseTableCellGenerator<StringValue> = {
-  includes: {
-    dateLogs: {
-      model: DateLog,
-      attributes: ['date', 'dateType'],
-      order: [['created', 'DESC']],
-      separate: true,
-    },
-  },
-  generate: (c: Case): CaseTableCell<StringValue> => {
-    const arraignmentDate = DateLog.arraignmentDate(c.dateLogs)?.date
-
-    return generateDate(arraignmentDate)
-  },
-}
-
-const indictmentArraignmentDate: CaseTableCellGenerator<StringGroupValue> = {
+const arraignmentDate: CaseTableCellGenerator<StringGroupValue> = {
   includes: {
     dateLogs: {
       model: DateLog,
@@ -707,6 +724,44 @@ const indictmentArraignmentDate: CaseTableCellGenerator<StringGroupValue> = {
 
     return generateCell(
       { strList: [`${capitalize(datePart)}`, `kl. ${timePart}`] },
+      sortValue,
+    )
+  },
+}
+
+const indictmentArraignmentDate: CaseTableCellGenerator<StringGroupValue> = {
+  attributes: ['courtSessionType'],
+  includes: {
+    dateLogs: {
+      model: DateLog,
+      attributes: ['date', 'dateType'],
+      order: [['created', 'DESC']],
+      separate: true,
+    },
+  },
+  generate: (c: Case): CaseTableCell<StringGroupValue> => {
+    const courtDate = getIndictmentCourtDate(c)
+
+    const datePart = formatDate(courtDate, 'EEE d. MMMM yyyy')
+    const sortValue = formatDate(courtDate, 'yyyyMMddHHmm')
+
+    if (!datePart || !sortValue || !c.courtSessionType) {
+      // No date part, so we return undefined
+      return generateCell()
+    }
+    const courtSessionType = courtSessionTypeNames[c.courtSessionType]
+
+    const timePart = formatDate(courtDate, 'HH:mm')
+
+    if (!timePart) {
+      // This should never happen, but if it does, we return the court date only
+      return generateCell({ strList: [`${capitalize(datePart)}`] }, sortValue)
+    }
+
+    return generateCell(
+      {
+        strList: [courtSessionType, `${capitalize(datePart)} kl. ${timePart}`],
+      },
       sortValue,
     )
   },
@@ -1001,6 +1056,8 @@ export const caseTableCellGenerators: Record<
   caseType,
   appealState,
   courtOfAppealsHead,
+  created,
+  prosecutor,
   validFromTo,
   rulingDate,
   requestCaseState,

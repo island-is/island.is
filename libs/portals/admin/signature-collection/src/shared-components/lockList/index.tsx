@@ -14,26 +14,39 @@ import { Modal } from '@island.is/react/components'
 import { useRevalidator } from 'react-router-dom'
 import { useSignatureCollectionLockListMutation } from './lockList.generated'
 import { m } from '../../lib/messages'
-import { SignatureCollectionList } from '@island.is/api/schema'
+import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 
-const ActionLockList = ({ list }: { list: SignatureCollectionList }) => {
+const ActionLockList = ({
+  listId,
+  collectionType,
+}: {
+  listId: string
+  collectionType: SignatureCollectionCollectionType
+}) => {
   const { formatMessage } = useLocale()
   const { revalidate } = useRevalidator()
 
   const [modalLockListIsOpen, setModalLockListIsOpen] = useState(false)
-  const listId = list?.id ?? ''
 
-  const [lockList, { loading: loadingLockList }] =
+  const [lockList, { loading: loadingLockList, data: lockListData }] =
     useSignatureCollectionLockListMutation({
       variables: {
         input: {
           listId,
+          collectionType,
         },
       },
       onCompleted: () => {
-        setModalLockListIsOpen(false)
-        revalidate()
-        toast.success(formatMessage(m.lockListSuccess))
+        if (lockListData?.signatureCollectionLockList.success) {
+          setModalLockListIsOpen(false)
+          revalidate()
+          toast.success(formatMessage(m.lockListSuccess))
+        } else {
+          const message =
+            lockListData?.signatureCollectionLockList.reasons?.[0] ??
+            formatMessage(m.lockListError)
+          toast.error(message)
+        }
       },
       onError: () => {
         toast.error(formatMessage(m.lockListError))

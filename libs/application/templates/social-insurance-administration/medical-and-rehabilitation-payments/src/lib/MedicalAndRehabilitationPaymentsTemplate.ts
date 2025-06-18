@@ -47,7 +47,7 @@ import {
   SocialInsuranceAdministrationQuestionnairesApi,
 } from '../dataProviders'
 import { dataSchema } from './dataSchema'
-import { getApplicationAnswers } from './medicalAndRehabilitationPaymentsUtils'
+import { getApplicationAnswers } from '../utils/medicalAndRehabilitationPaymentsUtils'
 import {
   medicalAndRehabilitationPaymentsFormMessage,
   statesMessages,
@@ -72,7 +72,7 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
     },
   ],
   requiredScopes: [ApiScope.socialInsuranceAdministration],
-  // allowMultipleApplicationsInDraft: false,
+  allowMultipleApplicationsInDraft: false,
   featureFlag: Features.medicalAndRehabilitationPayments,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
@@ -87,7 +87,7 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/Prerequisites/index').then((module) =>
+                import('../forms/Prerequisites').then((module) =>
                   Promise.resolve(module.Prerequisites),
                 ),
               actions: [
@@ -212,7 +212,7 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
         const { answers } = application
         const { incomePlan } = getApplicationAnswers(answers)
 
-        incomePlan.forEach((income, index) => {
+        incomePlan?.forEach((income, index) => {
           if (
             (income.income === RatioType.MONTHLY &&
               income.incomeCategory === INCOME &&

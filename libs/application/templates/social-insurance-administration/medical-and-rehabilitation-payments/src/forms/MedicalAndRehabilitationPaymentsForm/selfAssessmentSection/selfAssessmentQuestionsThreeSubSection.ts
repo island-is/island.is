@@ -8,8 +8,9 @@ import {
   YES,
 } from '@island.is/application/core'
 import { getYesNoOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
-import { getApplicationAnswers } from '../../../lib/medicalAndRehabilitationPaymentsUtils'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
+import { shouldShowPreviousRehabilitationOrTreatmentFields } from '../../../utils/conditionUtils'
+import { getApplicationAnswers } from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 
 export const selfAssessmentQuestionsThreeSubSection = buildSubSection({
   id: 'selfAssessmentQuestionsThreeSubSection',
@@ -49,11 +50,8 @@ export const selfAssessmentQuestionsThreeSubSection = buildSubSection({
           title:
             medicalAndRehabilitationPaymentsFormMessage.selfAssessment
               .previousRehabilitationOrTreatment,
-          condition: (answers) => {
-            const { hasPreviouslyReceivedRehabilitationOrTreatment } =
-              getApplicationAnswers(answers)
-            return hasPreviouslyReceivedRehabilitationOrTreatment === YES
-          },
+          condition: (answers) =>
+            shouldShowPreviousRehabilitationOrTreatmentFields(answers),
         }),
         buildRadioField({
           id: 'selfAssessment.previousRehabilitationSuccessful',
@@ -64,11 +62,8 @@ export const selfAssessmentQuestionsThreeSubSection = buildSubSection({
           required: true,
           width: 'half',
           space: 4,
-          condition: (answers) => {
-            const { hasPreviouslyReceivedRehabilitationOrTreatment } =
-              getApplicationAnswers(answers)
-            return hasPreviouslyReceivedRehabilitationOrTreatment === YES
-          },
+          condition: (answers) =>
+            shouldShowPreviousRehabilitationOrTreatmentFields(answers),
         }),
         buildTextField({
           id: 'selfAssessment.previousRehabilitationSuccessfulFurtherExplanations',

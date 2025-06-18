@@ -4,14 +4,14 @@ import {
   buildMultiField,
   buildRadioField,
   buildSubSection,
-  NO,
   YES,
 } from '@island.is/application/core'
+import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
+import { shouldShowEmployeeSickPayEndDate } from '../../../utils/conditionUtils'
 import {
   getApplicationAnswers,
   getYesNoNotApplicableOptions,
-} from '../../../lib/medicalAndRehabilitationPaymentsUtils'
-import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
+} from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 
 export const employeeSickPaySubSection = buildSubSection({
   id: 'employeeSickPaySubSection',
@@ -47,14 +47,7 @@ export const employeeSickPaySubSection = buildSubSection({
           },
           titleVariant: 'h4',
           space: 4,
-          condition: (answers) => {
-            const { hasUtilizedEmployeeSickPayRights } =
-              getApplicationAnswers(answers)
-            return (
-              hasUtilizedEmployeeSickPayRights === YES ||
-              hasUtilizedEmployeeSickPayRights === NO
-            )
-          },
+          condition: (answers) => shouldShowEmployeeSickPayEndDate(answers),
         }),
         buildDateField({
           id: 'employeeSickPay.endDate',
@@ -62,14 +55,7 @@ export const employeeSickPaySubSection = buildSubSection({
           placeholder:
             medicalAndRehabilitationPaymentsFormMessage.shared.datePlaceholder,
           required: true,
-          condition: (answers) => {
-            const { hasUtilizedEmployeeSickPayRights } =
-              getApplicationAnswers(answers)
-            return (
-              hasUtilizedEmployeeSickPayRights === YES ||
-              hasUtilizedEmployeeSickPayRights === NO
-            )
-          },
+          condition: (answers) => shouldShowEmployeeSickPayEndDate(answers),
         }),
       ],
     }),

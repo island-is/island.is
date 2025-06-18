@@ -12,9 +12,18 @@ import {
   getApplicationExternalData as getASFTEApplicationExternalData,
 } from '@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly'
 import {
+  getApplicationAnswers as getDBApplicationAnswers,
+  getApplicationExternalData as getDBApplicationExternalData,
+} from '@island.is/application/templates/social-insurance-administration/death-benefits'
+import {
   getApplicationAnswers as getHSApplicationAnswers,
   getApplicationExternalData as getHSApplicationExternalData,
 } from '@island.is/application/templates/social-insurance-administration/household-supplement'
+import {
+  getApplicationAnswers as getIPApplicationAnswers,
+  getApplicationExternalData as getIPApplicationExternalData,
+} from '@island.is/application/templates/social-insurance-administration/income-plan'
+import { getApplicationAnswers as getMARPApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
 import {
   ApplicationType,
   Employer,
@@ -23,6 +32,10 @@ import {
   getApplicationExternalData as getOAPApplicationExternalData,
   RatioType,
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
+import {
+  getApplicationAnswers as getPSApplicationAnswers,
+  getApplicationExternalData as getPSApplicationExternalData,
+} from '@island.is/application/templates/social-insurance-administration/pension-supplement'
 import { Application } from '@island.is/application/types'
 import {
   ApplicationDTO,
@@ -32,23 +45,6 @@ import {
   Employer as TrWebEmployer,
 } from '@island.is/clients/social-insurance-administration'
 import parse from 'date-fns/parse'
-
-import {
-  getApplicationAnswers as getPSApplicationAnswers,
-  getApplicationExternalData as getPSApplicationExternalData,
-} from '@island.is/application/templates/social-insurance-administration/pension-supplement'
-
-import {
-  getApplicationAnswers as getDBApplicationAnswers,
-  getApplicationExternalData as getDBApplicationExternalData,
-} from '@island.is/application/templates/social-insurance-administration/death-benefits'
-
-import {
-  getApplicationAnswers as getIPApplicationAnswers,
-  getApplicationExternalData as getIPApplicationExternalData,
-} from '@island.is/application/templates/social-insurance-administration/income-plan'
-
-import { getApplicationAnswers as getMARPApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
 
 export const transformApplicationToOldAgePensionDTO = (
   application: Application,
@@ -380,8 +376,8 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
   const {
     applicantPhonenumber,
     applicantEmail,
-    bank,
-    paymentInfo,
+    // bank,
+    //paymentInfo,
     personalAllowance,
     personalAllowanceUsage,
     taxLevel,
@@ -398,7 +394,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     questionnaire,
   } = getMARPApplicationAnswers(application.answers)
 
-  const { bankInfo } = getASFTEApplicationExternalData(application.externalData)
+  //  const { bankInfo } = getMARPApplicationExternalData(application.externalData)
 
   const marpDTO: MedicalAndRehabilitationPaymentsDTO = {
     applicantInfo: {
@@ -411,11 +407,11 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     },
     comment,
     applicationId: application.id,
-    ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {
-      domesticBankInfo: {
-        bank: formatBank(bank),
-      },
-    }),
+    // ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && { // LAGA shouldNotUpdateBankAccount(bankInfo
+    //   domesticBankInfo: {
+    //     bank: getBankIsk(bank),
+    //   },
+    // }),
     taxInfo: {
       personalAllowance: YES === personalAllowance,
       personalAllowanceUsage:
@@ -455,7 +451,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
       hadAssistance: true, //TODO:
       answers: questionnaire.map((question) => ({
         questionId: question.questionId,
-        answer: +question.answer === 5 ? -1 : +question.answer, //TODO: TR teymið er ekki klárt hvort að við eigum að senda -1 eða null
+        answer: question.answer === '5' ? '-1' : question.answer, //TODO: TR teymið er ekki klárt hvort að við eigum að senda -1 eða null
       })),
     },
   }
@@ -614,10 +610,8 @@ export const getEmployers = (employers: Employer[]): Array<TrWebEmployer> => {
   return employersInfo
 }
 
-export const getYesNoNotApplicableValue = (
-  hasUtilizedEmployeeSickPayRights: string,
-): number | null => {
-  switch (hasUtilizedEmployeeSickPayRights) {
+export const getYesNoNotApplicableValue = (value?: string): number | null => {
+  switch (value) {
     case YES:
       return 1
     case NO:
