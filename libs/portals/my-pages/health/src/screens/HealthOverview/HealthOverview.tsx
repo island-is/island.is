@@ -16,7 +16,6 @@ import {
 
 import BasicInformation from './components/BasicInformation'
 import PaymentsAndRights from './components/PaymentsAndRights'
-import { Box } from 'reakit'
 
 const DEFAULT_DATE_TO = new Date()
 const DEFAULT_DATE_FROM = subYears(DEFAULT_DATE_TO, 10)
