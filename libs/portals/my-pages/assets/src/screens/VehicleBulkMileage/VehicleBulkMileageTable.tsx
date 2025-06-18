@@ -22,7 +22,7 @@ const VehicleBulkMileageTable = ({ vehicles, loading }: Props) => {
         vehicle={item}
       />
     ))
-  }, [formatMessage, vehicles])
+  }, [vehicles])
 
   const totalLastMileage = useMemo(() => {
     if (!vehicles.length) {

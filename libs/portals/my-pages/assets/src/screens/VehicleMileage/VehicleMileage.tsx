@@ -1,7 +1,3 @@
-import { useParams } from 'react-router-dom'
-import { useEffect, useState } from 'react'
-import { InputController } from '@island.is/shared/form-fields'
-import { useForm } from 'react-hook-form'
 import {
   Box,
   Button,
@@ -16,29 +12,32 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
-  m,
   FootNote,
-  SAMGONGUSTOFA_SLUG,
-  IntroHeader,
   icelandLocalTime,
+  IntroHeader,
+  m,
+  SAMGONGUSTOFA_SLUG,
   SimpleBarChart,
 } from '@island.is/portals/my-pages/core'
+import { InputController } from '@island.is/shared/form-fields'
+import { useEffect, useState } from 'react'
+import { useForm } from 'react-hook-form'
+import { useParams } from 'react-router-dom'
 
+import { VehicleMileageDetail } from '@island.is/api/schema'
+import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
+import format from 'date-fns/format'
+import VehicleCO2 from '../../components/VehicleCO2'
+import { vehicleMessage as messages } from '../../lib/messages'
+import { displayWithUnit } from '../../utils/displayWithUnit'
 import { isReadDateToday } from '../../utils/readDate'
-import { vehicleMessage as messages, vehicleMessage } from '../../lib/messages'
 import {
   useGetCo2Query,
   useGetUsersMileageQuery,
   usePostVehicleMileageMutation,
   usePutVehicleMileageMutation,
 } from './VehicleDetail.generated'
-import { displayWithUnit } from '../../utils/displayWithUnit'
 import * as styles from './VehicleMileage.css'
-import { Problem } from '@island.is/react-spa/shared'
-import { VehicleMileageDetail } from '@island.is/api/schema'
-import format from 'date-fns/format'
-import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
-import VehicleCO2 from '../../components/VehicleCO2'
 
 const ORIGIN_CODE = 'ISLAND.IS'
 
