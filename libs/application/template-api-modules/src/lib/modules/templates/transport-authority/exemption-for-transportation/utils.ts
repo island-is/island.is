@@ -375,11 +375,15 @@ export const mapApplicationToDto = async (
     dateFrom: new Date(exemptionPeriodAnswers?.dateFrom || ''),
     dateTo: new Date(exemptionPeriodAnswers?.dateTo || ''),
     origin:
-      exemptionPeriodAnswers?.type === ExemptionType.SHORT_TERM
+      exemptionPeriodAnswers?.type === ExemptionType.SHORT_TERM &&
+      locationAnswers?.shortTerm?.addressFrom &&
+      locationAnswers?.shortTerm?.postalCodeAndCityFrom
         ? `${locationAnswers?.shortTerm?.addressFrom}, ${locationAnswers?.shortTerm?.postalCodeAndCityFrom}`
         : undefined,
     destination:
-      exemptionPeriodAnswers?.type === ExemptionType.SHORT_TERM
+      exemptionPeriodAnswers?.type === ExemptionType.SHORT_TERM &&
+      locationAnswers?.shortTerm?.addressTo &&
+      locationAnswers?.shortTerm?.postalCodeAndCityTo
         ? `${locationAnswers?.shortTerm?.addressTo}, ${locationAnswers?.shortTerm?.postalCodeAndCityTo}`
         : undefined,
     areas:
