@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
@@ -99,6 +99,14 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const unfilledConditions = AlertMessageConditions.filter(
     (condition) => !condition.isFilled,
   )
+
+  useEffect(() => {
+    if (unfilledConditions.length > 0) {
+      setSubmitButtonDisabled?.(true)
+    } else {
+      setSubmitButtonDisabled?.(false)
+    }
+  }, [unfilledConditions, setSubmitButtonDisabled])
 
   return (
     <Box className={summaryWrap} id="email-summary-container">
