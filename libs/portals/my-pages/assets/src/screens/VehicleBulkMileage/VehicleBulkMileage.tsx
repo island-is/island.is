@@ -98,6 +98,7 @@ const VehicleBulkMileage = () => {
                 vehicleId: v.vehicleId,
                 vehicleType: v.make,
                 lastMileageRegistration,
+                co2: v.co2 ?? undefined,
               }
             })
             .filter(isDefined) ?? []

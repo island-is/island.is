@@ -25,8 +25,9 @@ import {
 } from '@island.is/portals/my-pages/core'
 
 import { isReadDateToday } from '../../utils/readDate'
-import { vehicleMessage as messages } from '../../lib/messages'
+import { vehicleMessage as messages, vehicleMessage } from '../../lib/messages'
 import {
+  useGetCo2Query,
   useGetUsersMileageQuery,
   usePostVehicleMileageMutation,
   usePutVehicleMileageMutation,
@@ -37,6 +38,7 @@ import { Problem } from '@island.is/react-spa/shared'
 import { VehicleMileageDetail } from '@island.is/api/schema'
 import format from 'date-fns/format'
 import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
+import VehicleCO2 from '../../components/VehicleCO2'
 
 const ORIGIN_CODE = 'ISLAND.IS'
 
@@ -64,6 +66,17 @@ const VehicleMileage = () => {
     formState: { errors },
     reset,
   } = useForm<FormData>()
+
+  const { data: co2 } = useGetCo2Query({
+    variables: {
+      input: {
+        page: 1,
+        pageSize: 1,
+        filterOnlyVehiclesUserCanRegisterMileage: true,
+        query: id,
+      },
+    },
+  })
 
   const [showChart, setShowChart] = useState<boolean>(false)
   const featureFlagClient = useFeatureFlagClient()
@@ -147,16 +160,10 @@ const VehicleMileage = () => {
   const hasData = details && details?.length > 0
   const isFormEditable = data?.vehicleMileageDetails?.editing
   const canRegisterMileage = data?.vehicleMileageDetails?.canRegisterMileage
-  const requiresMileageRegistration =
-    data?.vehicleMileageDetails?.requiresMileageRegistration
 
   const actionLoading = putActionLoading || postActionLoading
   const hasUserPostAccess =
     data?.vehicleMileageDetails?.canUserRegisterVehicleMileage
-
-  if ((error || requiresMileageRegistration === false) && !loading) {
-    return <Problem type="not_found" />
-  }
 
   const parseChartData = (
     data: Array<VehicleMileageDetail>,
@@ -448,6 +455,7 @@ const VehicleMileage = () => {
             </>
           )}
         </Stack>
+        <VehicleCO2 co2={co2?.vehiclesListV3?.data?.[0]?.co2 ?? '0'} />
       </Box>
 
       <FootNote
