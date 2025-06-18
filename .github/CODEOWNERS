@@ -338,6 +338,7 @@ codemagic.yaml                                                                  
 
 /apps/consultation-portal/                                                                                @island-is/advania
 /apps/services/form-system/                                                                               @island-is/advania
+/apps/form-system/                                                                                        @island-is/advania
 /libs/clients/consultation-portal/                                                                        @island-is/advania
 /libs/api/domains/consultation-portal/                                                                    @island-is/advania
 /libs/api/domains/form-system                                                                             @island-is/advania

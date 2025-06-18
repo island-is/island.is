@@ -17,3 +17,14 @@ export const ApplicantFragment = gql`
   }
   ${LanguageFields}
 `
+
+export const ApplicantTypeDtoFragment = gql`
+  fragment ApplicantTypeDto on FormApplicantType {
+    id
+    applicantTypeId
+    name {
+      ...LanguageFields
+    }
+  }
+  ${LanguageFields}
+`
