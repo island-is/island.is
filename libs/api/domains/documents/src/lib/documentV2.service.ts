@@ -52,6 +52,7 @@ export class DocumentServiceV2 {
     const document = await this.documentService.getCustomersDocument(
       user.nationalId,
       documentId,
+      locale,
       includeDocument,
     )
 

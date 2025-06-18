@@ -1099,8 +1099,7 @@
           },
           "documentDate": {
             "type": "string",
-            "format": "date-time",
-            "nullable": true
+            "format": "date-time"
           },
           "publicationDate": {
             "type": "string",

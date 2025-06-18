@@ -32,6 +32,7 @@ export class DocumentsClientV2Service {
      * @param input List input object. Example: { dateFrom: undefined, nationalId: '123' }
      * @returns List object sanitized of unnecessary values. Example: { nationalId: '123' }
      */
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const sanitizeObject = function <T extends { [key: string]: any }>(
       obj: T,
     ): T {
@@ -57,6 +58,7 @@ export class DocumentsClientV2Service {
         documents: [],
       }
     }
+
     const inputObject = sanitizeObject({
       ...input,
       kennitala: input.nationalId,
@@ -91,12 +93,14 @@ export class DocumentsClientV2Service {
   async getCustomersDocument(
     customerId: string,
     documentId: string,
+    locale?: string,
     includeDocument?: boolean,
   ): Promise<DocumentDto | null> {
     const document = await this.api.customersDocument({
       kennitala: customerId,
       messageId: documentId,
       authenticationType: 'HIGH',
+      locale: locale,
       includeDocument: includeDocument,
     })
 
