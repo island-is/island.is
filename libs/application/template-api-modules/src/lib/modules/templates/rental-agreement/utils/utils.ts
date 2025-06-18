@@ -98,3 +98,101 @@ export const getSecurityDepositTypeDescription = (
       return null
   }
 }
+
+// Utils for getting index from Hagstofan
+interface ApiDataItem {
+  key: [string, 'financial_indexation']
+  values: [number]
+}
+
+interface ApiResponse {
+  data: ApiDataItem[]
+}
+
+export interface FinancialIndexationEntry {
+  month: Date
+  value: number
+}
+
+export const listOfLastMonths = (numberOfMonths: number) => {
+  const months: string[] = []
+  const now = new Date()
+  // Start from next month
+  let year = now.getFullYear()
+  let month = now.getMonth() + 2 // JS months are 0-based, so +1 for current, +1 for next
+
+  if (month > 12) {
+    month = 1
+    year += 1
+  }
+
+  for (let i = 0; i < numberOfMonths; i++) {
+    // Pad month with zero
+    const mm = month < 10 ? `0${month}` : `${month}`
+    months.push(`${year}M${mm}`)
+
+    // Move to previous month
+    month--
+    if (month === 0) {
+      month = 12
+      year--
+    }
+  }
+
+  return months
+}
+
+const parsePXMonth = (monthStr: string): Date => {
+  // Expects format: "YYYYMmm" (e.g. "2025M06")
+  const match = /^(\d{4})M(\d{2})$/.exec(monthStr)
+  if (!match) throw new Error('Invalid month format: ' + monthStr)
+  const year = parseInt(match[1], 10)
+  const month = parseInt(match[2], 10) - 1 // JS Date months are 0-based
+  return new Date(year, month, 1)
+}
+
+export const fetchFinancialIndexationForMonths = async (months: string[]) => {
+  const url =
+    'https://px.hagstofa.is:443/pxis/api/v1/is/Efnahagur/visitolur/1_vnv/1_vnv/VIS01004.px'
+
+  const payload = {
+    query: [
+      {
+        code: 'Mánuður',
+        selection: {
+          filter: 'item',
+          values: months,
+        },
+      },
+      {
+        code: 'Vísitala',
+        selection: {
+          filter: 'item',
+          values: ['financial_indexation'],
+        },
+      },
+    ],
+    response: {
+      format: 'json',
+    },
+  }
+
+  const response = await fetch(url, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify(payload),
+  })
+
+  if (!response.ok) {
+    throw new Error(`HTTP error! status: ${response.status}`)
+  }
+
+  const json: ApiResponse = await response.json()
+
+  return json.data.map(
+    (item): FinancialIndexationEntry => ({
+      month: parsePXMonth(item.key[0]),
+      value: item.values[0],
+    }),
+  )
+}
