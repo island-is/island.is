@@ -377,7 +377,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
       <Box>
         <Controller
           name={`${id}`}
-          defaultValue=""
+          defaultValue={{}}
           render={({ field: { onChange } }) => {
             return (
               <AsyncSearch
@@ -540,6 +540,16 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
                 />
               )}
             </Box>
+          )}
+        </Box>
+      )}
+      {!selectedAddress && hasValidationErrors && (
+        <Box marginTop={4}>
+          {errors?.registerProperty?.['searchresults'] && (
+            <AlertMessage
+              type="error"
+              title={errors?.registerProperty?.['searchresults']}
+            />
           )}
         </Box>
       )}
