@@ -34,8 +34,12 @@ export class SignatureCollectionService {
     }
   }
 
-  async currentCollection(): Promise<SignatureCollection[]> {
-    return await this.signatureCollectionClientService.currentCollection()
+  async currentCollection(
+    collectionTypeFilter: CollectionType,
+  ): Promise<SignatureCollection[]> {
+    return await this.signatureCollectionClientService.currentCollection(
+      collectionTypeFilter,
+    )
   }
 
   async getLatestCollectionForType(

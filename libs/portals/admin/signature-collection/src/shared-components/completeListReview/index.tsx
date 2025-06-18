@@ -15,13 +15,16 @@ import { useToggleListReviewMutation } from './toggleListReview.generated'
 import { useRevalidator } from 'react-router-dom'
 import { m } from '../../lib/messages'
 import { ListStatus } from '../../lib/utils'
+import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 
 const CompleteListReview = ({
   listId,
   listStatus,
+  collectionType,
 }: {
   listId: string
   listStatus: string
+  collectionType: SignatureCollectionCollectionType
 }) => {
   const { formatMessage } = useLocale()
   const { revalidate } = useRevalidator()
@@ -34,20 +37,28 @@ const CompleteListReview = ({
     ? formatMessage(m.confirmListReviewedToggleBack)
     : formatMessage(m.confirmListReviewed)
 
-  const [toggleListReview, { loading }] = useToggleListReviewMutation({
+  const [toggleListReview, { loading, data }] = useToggleListReviewMutation({
     variables: {
       input: {
         listId,
+        collectionType,
       },
     },
     onCompleted: () => {
-      setModalSubmitReviewIsOpen(false)
-      revalidate()
-      toast.success(
-        listReviewed
-          ? formatMessage(m.toggleReviewSuccessToggleBack)
-          : formatMessage(m.toggleReviewSuccess),
-      )
+      if (data?.signatureCollectionAdminToggleListReview.success) {
+        setModalSubmitReviewIsOpen(false)
+        revalidate()
+        toast.success(
+          listReviewed
+            ? formatMessage(m.toggleReviewSuccessToggleBack)
+            : formatMessage(m.toggleReviewSuccess),
+        )
+      } else {
+        const message =
+          data?.signatureCollectionAdminToggleListReview.reasons?.[0] ??
+          formatMessage(m.toggleReviewError)
+        toast.error(message)
+      }
     },
     onError: () => {
       toast.error(formatMessage(m.toggleReviewError))
