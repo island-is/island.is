@@ -38,7 +38,7 @@ export class DocumentsClientV2Service {
       const sanitizedObj = {} as T
 
       for (const key in obj) {
-        if (obj[key] !== undefined && obj[key] !== null) {
+        if (obj[key]) {
           if (Array.isArray(obj[key]) && obj[key].length === 0) {
             continue
           }
