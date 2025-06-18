@@ -1138,6 +1138,12 @@ export const messages = defineMessages({
     id: 'sp.health:health-overview',
     defaultMessage: 'Heilsuyfirlit',
   },
+
+  healthOverviewIntro: {
+    id: 'sp.health:health-overview-intro',
+    defaultMessage:
+      'Hér getur þú séð yfirlit yfir grunnupplýsingar þínar í Heilsu, tímabókanir, skráningar, stöðu á listum og mælingar.',
+  },
   paymentDocument: {
     defaultMessage: 'Greiðsluskjal',
     id: 'sp.health:payment-document',
@@ -1634,5 +1640,9 @@ export const messages = defineMessages({
   noBasicInfo: {
     id: 'sp.health:no-basic-info',
     defaultMessage: 'Engar grunnupplýsingar fundust',
+  },
+  expiredOn: {
+    id: 'sp.health:expired-on',
+    defaultMessage: 'Rann út {arg}',
   },
 })

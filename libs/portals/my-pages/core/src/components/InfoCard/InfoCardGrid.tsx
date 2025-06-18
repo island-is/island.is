@@ -48,7 +48,6 @@ export const InfoCardGrid: React.FC<InfoCardGridProps> = ({
           >
             {card && (
               <InfoCard
-                icon={card.icon}
                 tags={card.tags}
                 img={card.img}
                 size={card.size ?? size ?? 'small'}

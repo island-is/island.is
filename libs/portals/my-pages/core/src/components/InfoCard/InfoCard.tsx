@@ -3,7 +3,7 @@
  *
  * A versatile card component designed to display information in various formats.
  * It supports multiple variants, including default, detail, appointment, and link,
- * and can be customized with icons, tags, images, and detailed information.
+ * and can be customized with tags, images, and detailed information.
  * Please use with InfoCardGrid for a grid layout of InfoCards.
  *
  * @component
@@ -19,9 +19,6 @@
  * @param {object} props.appointment.location - The location details of the appointment.
  * @param {string} props.appointment.location.label - The label for the location.
  * @param {string} [props.appointment.location.href] - An optional link for the location.
- * @param {object} [props.icon] - Icon details to display on the card.
- * @param {IconProps['icon']} props.icon.type - The type of the icon.
- * @param {IconProps['color']} props.icon.color - The color of the icon.
  * @param {InfoCardDetail[]} [props.detail] - An array of detail objects to display additional information.
  * @param {string} props.detail[].label - The label for the detail item.
  * @param {string | React.ReactNode} props.detail[].value - The value for the detail item.
@@ -35,8 +32,6 @@ import {
   GridColumn,
   GridRow,
   Icon,
-  IconProps,
-  Inline,
   Tag,
   Text,
 } from '@island.is/island-ui/core'
@@ -67,7 +62,6 @@ export interface InfoCardProps {
       href?: string
     }
   }
-  icon?: { type: IconProps['icon']; color: IconProps['color'] }
   detail?: (InfoCardDetail | null)[]
   tags?: Array<ActionCardProps['tag']>
   img?: string
@@ -80,7 +74,6 @@ export const InfoCard: React.FC<InfoCardProps> = ({
   description,
   to,
   size = 'small',
-  icon,
   detail,
   tags,
   img,
@@ -148,10 +141,7 @@ export const InfoCard: React.FC<InfoCardProps> = ({
                   >
                     {title}
                   </Text>
-                  <Inline space={1}>
-                    <Text>{description}</Text>
-                    {icon && <Icon icon={icon.type} color={icon.color} />}
-                  </Inline>
+                  <Text>{description}</Text>
                 </Box>
               </Box>
               {detailData && (

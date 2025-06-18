@@ -92,28 +92,40 @@ const PaymentsAndRights: React.FC<Props> = ({
                   insurance.data?.from,
                 )}`,
                 to: HealthPaths.HealthPaymentParticipation,
-                icon: {
-                  color: isInsured ? 'mint600' : 'red400',
-                  type: isInsured ? 'checkmarkCircle' : 'closeCircle',
-                },
+
                 loading: insurance.loading,
+                tags: [
+                  {
+                    label: isInsured
+                      ? formatMessage(messages.valid)
+                      : formatMessage(messages.vaccineExpired),
+                    variant: isInsured ? 'blue' : 'red',
+                    outlined: true,
+                  },
+                ],
               },
           insurance.error
             ? null
             : {
                 title: formatMessage(messages.ehic),
-                description: `${formatMessage(
-                  isInsuranceCardValid
-                    ? messages.medicineValidTo
-                    : messages.medicineIsExpiredCertificate,
-                )} ${formatDate(insurance.data?.ehicCardExpiryDate)}`,
+                description: isInsuranceCardValid
+                  ? `${formatMessage(messages.medicineValidTo)} ${formatDate(
+                      insurance.data?.ehicCardExpiryDate,
+                    )}`
+                  : formatMessage(messages.expiredOn, {
+                      arg: formatDate(insurance.data?.ehicCardExpiryDate),
+                    }),
                 to: HealthPaths.HealthPaymentParticipation,
-                icon: {
-                  color: isInsuranceCardValid ? 'mint600' : 'red400',
-                  type: isInsuranceCardValid
-                    ? 'checkmarkCircle'
-                    : 'closeCircle',
-                },
+
+                tags: [
+                  {
+                    label: isInsuranceCardValid
+                      ? formatMessage(messages.valid)
+                      : formatMessage(messages.vaccineExpired),
+                    variant: isInsuranceCardValid ? 'blue' : 'red',
+                    outlined: true,
+                  },
+                ],
                 loading: insurance.loading,
               },
         ]}

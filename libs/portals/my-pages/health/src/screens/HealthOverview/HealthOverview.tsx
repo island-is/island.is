@@ -16,6 +16,7 @@ import {
 
 import BasicInformation from './components/BasicInformation'
 import PaymentsAndRights from './components/PaymentsAndRights'
+import { Box } from 'reakit'
 
 const DEFAULT_DATE_TO = new Date()
 const DEFAULT_DATE_FROM = subYears(DEFAULT_DATE_TO, 10)
@@ -89,7 +90,7 @@ export const HealthOverview = () => {
             </Text>
 
             <Text variant="default" paddingTop={1}>
-              {formatMessage(messages.overviewIntro)}
+              {formatMessage(messages.healthOverviewIntro)}
             </Text>
           </>
         </GridColumn>

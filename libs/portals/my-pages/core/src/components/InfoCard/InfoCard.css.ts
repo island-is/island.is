@@ -89,7 +89,3 @@ globalStyle(`${flexItemBorder} > div`, {
     },
   }),
 })
-
-globalStyle(`${boxContainer} > div`, {
-  height: '100%',
-})
