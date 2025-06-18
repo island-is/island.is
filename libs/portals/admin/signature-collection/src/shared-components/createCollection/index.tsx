@@ -129,6 +129,7 @@ const CreateCollection = ({
       })
     } else {
       setName('')
+      setCollectionName('')
       setNationalIdInput('')
       setNationalIdNotFound(false)
       setCanCreate(true)
@@ -169,6 +170,7 @@ const CreateCollection = ({
           setModalIsOpen(false)
           setNationalIdInput('')
           setName('')
+          setCollectionName('')
           setCanCreate(true)
         }}
         hideOnClickOutside={false}
