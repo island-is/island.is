@@ -156,7 +156,7 @@ const extractSecurityDeposit = (
   ),
   landlordsMutualFundInfo: getValueViaPath<string>(
     answers,
-    'securityDeposit.landlordsMutualFundInfo',
+    'securityDeposit.mutualFundInfo',
   ),
   otherInfo: getValueViaPath<string>(answers, 'securityDeposit.otherInfo'),
   securityDepositAmount: getValueViaPath<string>(
