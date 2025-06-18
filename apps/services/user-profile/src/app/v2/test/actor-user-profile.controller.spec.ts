@@ -169,7 +169,7 @@ describe('GET v2/actor/actor-profile', () => {
         nextNudge: nextNudgeDate,
       })
     } catch (error) {
-      console.error('Error creating actor profile:', error)
+      throw new Error('Error creating actor profile' + error)
     }
 
     // Act
@@ -214,7 +214,7 @@ describe('GET v2/actor/actor-profile', () => {
         nextNudge: nextNudgeDate,
       })
     } catch (error) {
-      console.error('Error creating actor profile:', error)
+      throw new Error('Error creating actor profile' + error)
     }
 
     // Act
@@ -329,7 +329,7 @@ describe('GET v2/actor/actor-profile', () => {
         emailNotifications: true,
       })
     } catch (error) {
-      console.error('Error creating actor profile:', error)
+      throw new Error('Error creating actor profile' + error)
       // You might want to fail the test if this creation fails
       // throw error;
     }

@@ -104,7 +104,8 @@ export const VerifyEmailModal = ({
   const serverError =
     addEmailError ||
     createEmailVerificationError ||
-    updateActorProfileEmailError
+    updateActorProfileEmailError ||
+    updateActorProfileEmailWithoutActorError
 
   const verifyEmail = (email: string) => {
     createEmailVerification({
