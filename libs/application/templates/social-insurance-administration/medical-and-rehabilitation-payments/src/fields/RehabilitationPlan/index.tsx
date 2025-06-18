@@ -172,7 +172,7 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
           <Label>
             {formatMessage(
               medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
-                .informationrExplanationOfProgress,
+                .informationExplanationOfProgress,
             )}
           </Label>
           <Text>

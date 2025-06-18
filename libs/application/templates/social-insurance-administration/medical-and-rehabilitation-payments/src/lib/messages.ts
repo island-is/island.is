@@ -475,7 +475,7 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       description:
         'What was the progress of the previous rehabilitation period',
     },
-    informationrExplanationOfProgress: {
+    informationExplanationOfProgress: {
       id: 'marp.application:rehabilitation.plan.information.explanation.of.progress',
       defaultMessage:
         'Nánari útskýring á framvindu fyrri endurhæfingartímabils',
