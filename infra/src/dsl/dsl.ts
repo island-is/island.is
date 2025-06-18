@@ -30,7 +30,8 @@ import { COMMON_SECRETS } from './consts'
  * @template OriginalType - The original type with all properties.
  * @template OptionalKeys - The keys (or names) of the properties that should be made optional.
  *
- * @returns A new type with the same properties as `OriginalType`, but with the properties specified by `OptionalKeys` made optional.
+ * @returns A new type with the same properties as `OriginalType`, but with the properties specified by `OptionalKeys`
+ * made optional.
  *
  * @example
  * ```
@@ -131,7 +132,8 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 
   /**
-   * Sets the namespace for your service. Default value is `islandis` (optional). It sets the [namespace](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/) for all resources.
+   * Sets the namespace for your service. Default value is `islandis` (optional). It sets the [namespace](https://kubernetes.io/docs/concepts/overview/working-with-objects/namespaces/)
+   * for all resources.
    * @param name - Namespace name
    */
   namespace(name: string) {
@@ -140,7 +142,9 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 
   /**
-   * This is necessary to allow access to this service from other namespaces. This can be the case if a pod from a different namespace is using this service. A good example of that is the ingress controller service pods that are routing traffic to the services in the cluster.
+   * This is necessary to allow access to this service from other namespaces. This can be the case if a pod from
+   * a different namespace is using this service. A good example of that is the ingress controller service pods
+   * that are routing traffic to the services in the cluster.
    * @param namespaces - List of namespaces that have access to the namespace this service is part of
    */
   grantNamespaces(...namespaces: string[]) {
@@ -163,9 +167,14 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 
   /**
-   * Environment variables are used for a configuration that is not a secret. It can be environment-specific or not. Mapped to [environment variables](https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/). Environment variables are only applied to the service. If you need those on an `initContainer` you need to specify them at that scope. That means you may need to extract and reuse or duplicate the variables if you need them both for `initContainer` and the service.
+   * Environment variables are used for a configuration that is not a secret. It can be environment-specific or
+   * not. Mapped to [environment variables](https://kubernetes.io/docs/tasks/inject-data-application/define-environment-variable-container/).
+   * Environment variables are only applied to the service. If you need those on an `initContainer` you need to
+   * specify them at that scope. That means you may need to extract and reuse or duplicate the variables if you
+   * need them both for `initContainer` and the service.
    *
-   * @param envs - A mapping from environment variable name to its value. A single string sets the same value across all environment. A dictionary with keys the environments sets an individual value for each one
+   * @param envs - A mapping from environment variable name to its value. A single string sets the same value across
+   * all environment. A dictionary with keys the environments sets an individual value for each one
    *
    * @example
    * ```
@@ -201,7 +210,8 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 
   /**
-   * X-Road configuration blocks to inject to the container. Types of XroadConfig can contain environment variables and/or secrets that define how to contact an external service through X-Road.
+   * X-Road configuration blocks to inject to the container. Types of XroadConfig can contain environment variables
+   * and/or secrets that define how to contact an external service through X-Road.
    * @param ...configs - X-road configs
    */
   xroad(...configs: XroadConfig[]) {
@@ -228,7 +238,8 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 
   /**
-   * PodDisruptionBudget is a Kubernetes resource that ensures that a minimum number of pods are available at any given time. It is used to prevent Kubernetes from killing all pods of a service at once. Mapped to a [PodDisruptionBudget](https://kubernetes.io/docs/tasks/run-application/configure-pdb/).
+   * PodDisruptionBudget is a Kubernetes resource that ensures that a minimum number of pods are available at any
+   * given time. It is used to prevent Kubernetes from killing all pods of a service at once. Mapped to a [PodDisruptionBudget](https://kubernetes.io/docs/tasks/run-application/configure-pdb/).
    * @param pdb - PodDisruptionBudget definitions
    */
   podDisruption(pdb: PodDisruptionBudget) {
@@ -237,7 +248,11 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 
   /**
-   * Secrets are configuration that is resolved at deployment time. Their values are _paths_ in the Parameter Store in AWS Systems Manager. There is a service in Kubernetes that resolves the concrete value of these secrets and they appear as environment variables on the service or the `initContainer`. Mapped to [ExternalSecrets](https://github.com/godaddy/kubernetes-external-secrets). Like environment variables, secrets are only applied to the service. If you need those on an `initContainer` you need to specify them at that scope.
+   * Secrets are configuration that is resolved at deployment time. Their values are _paths_ in the Parameter Store
+   * in AWS Systems Manager. There is a service in Kubernetes that resolves the concrete value of these secrets
+   * and they appear as environment variables on the service or the `initContainer`. Mapped to [ExternalSecrets](https://github.com/godaddy/kubernetes-external-secrets).
+   * Like environment variables, secrets are only applied to the service. If you need those on an `initContainer`
+   * you need to specify them at that scope.
    *
    * To provision secrets in the Parameter Store, you need to get in touch with the DevOps team.
    *
@@ -307,16 +322,21 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 
   /**
-   * Merges the properties of the provided PostgresInfo objects, optionally creating a copy instead of modifying in-place.
-   * If `copy` is true, a copy of the target object is created and merged with the `postgres` object, if false, the target object is modified in-place.
+   * Merges the properties of the provided PostgresInfo objects, optionally creating a copy instead of modifying
+   * in-place.
+   * If `copy` is true, a copy of the target object is created and merged with the `postgres` object, if false,
+   * the target object is modified in-place.
    * Additionally, defaults are applied to the output via `postgresDefoluts`.
-   * The `extensions` property of the resulting object is a concatenation of the `extensions` properties of the `target` and `postgres` objects.
+   * The `extensions` property of the resulting object is a concatenation of the `extensions` properties of the
+   * `target` and `postgres` objects.
    * If the `extensions` property of the resulting object is an empty array, it is set to undefined.
    *
    * @param {PostgresInfo} [target] - The target object to be merged. If not provided, an empty object is used.
-   * @param {PostgresInfo} [postgres] - The object to merge with the target object. If not provided, an empty object is used.
+   * @param {PostgresInfo} [postgres] - The object to merge with the target object. If not provided, an empty object
+   * is used.
    * @param {Object} [opts]  - Optional flag indicating whether to create a copy of the target object before merging.
-   * @param {boolean} [opts.copy=false] - Optional flag indicating whether to create a copy of the target object before merging.
+   * @param {boolean} [opts.copy=false] - Optional flag indicating whether to create a copy of the target object
+   * before merging.
    * @returns {PostgresInfo} target - The resulting object after merging.
    */
   private grantDB(
@@ -475,7 +495,8 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 
   /**
-   * You can allow ingress traffic (traffic from the internet) to your service by creating an ingress controller. Mapped to an [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/#what-is-ingress).
+   * You can allow ingress traffic (traffic from the internet) to your service by creating an ingress controller.
+   * Mapped to an [Ingress](https://kubernetes.io/docs/concepts/services-networking/ingress/#what-is-ingress).
    * @param ingress - Ingress parameters
    */
   ingress(ingress: IngressMapping) {
@@ -484,7 +505,8 @@ export class ServiceBuilder<ServiceType extends string> {
   }
 
   /**
-   * If your service needs to perform AWS API calls, you will need to create a [service account](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/) and associate it with an AWS IAM role using Kubernetes annotations.
+   * If your service needs to perform AWS API calls, you will need to create a [service account](https://kubernetes.io/docs/tasks/configure-pod-container/configure-service-account/)
+   * and associate it with an AWS IAM role using Kubernetes annotations.
    *
    * The AWS IAM Role and its permissions needs to be provisioned by the DevOps team.
    *
