@@ -39,7 +39,10 @@ import {
   getFreightPairingItems,
 } from './getFreightItem'
 import { format as formatKennitala } from 'kennitala'
-import { formatPhoneNumber } from '@island.is/application/ui-components'
+import {
+  formatPhoneNumber,
+  removeCountryCode,
+} from '@island.is/application/ui-components'
 
 export const getUserInformationOverviewItems = (
   answers: FormValue,
@@ -72,7 +75,9 @@ export const getUserInformationOverviewItems = (
         ]
       : []),
     formatPhoneNumber(
-      getValueViaPath<string>(answers, 'applicant.phoneNumber') || '',
+      removeCountryCode(
+        getValueViaPath<string>(answers, 'applicant.phoneNumber') || '',
+      ),
     ),
     getValueViaPath<string>(answers, 'applicant.email'),
   ]
@@ -87,7 +92,9 @@ export const getUserInformationOverviewItems = (
       'transporter.address',
     )}, ${getValueViaPath<string>(answers, 'transporter.postalCodeAndCity')}`,
     formatPhoneNumber(
-      getValueViaPath<string>(answers, 'transporter.phone') || '',
+      removeCountryCode(
+        getValueViaPath<string>(answers, 'transporter.phone') || '',
+      ),
     ),
     getValueViaPath<string>(answers, 'transporter.email'),
   ]
@@ -98,7 +105,9 @@ export const getUserInformationOverviewItems = (
       getValueViaPath<string>(answers, 'responsiblePerson.nationalId') || '',
     ),
     formatPhoneNumber(
-      getValueViaPath<string>(answers, 'responsiblePerson.phone') || '',
+      removeCountryCode(
+        getValueViaPath<string>(answers, 'responsiblePerson.phone') || '',
+      ),
     ),
     getValueViaPath<string>(answers, 'responsiblePerson.email'),
   ]
@@ -256,10 +265,10 @@ export const getConvoyOverviewItems = (
         ...overview.convoy.vehicleLabel,
         values: { permno: convoyItem.vehicle.permno },
       },
-      convoyItem.dollyType === DollyType.SINGLE
+      !isLongTerm && convoyItem.dollyType === DollyType.SINGLE
         ? [overview.convoy.dollySingleLabel]
         : [],
-      convoyItem.dollyType === DollyType.DOUBLE
+      !isLongTerm && convoyItem.dollyType === DollyType.DOUBLE
         ? [overview.convoy.dollyDoubleLabel]
         : [],
       ...(convoyItem.trailer?.permno
