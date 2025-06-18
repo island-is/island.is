@@ -7,6 +7,7 @@ export {
   ExceptionType,
   VehicleType,
   HaulUnitModel,
+  RouteApplicationAddModel,
 } from '../gen/fetch/models'
 
 export { ExemptionForTransportationClientConfig } from './lib/exemptionForTransportationClient.config'

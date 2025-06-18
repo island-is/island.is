@@ -3,28 +3,33 @@ import {
   ExemptionFor,
   ExemptionForTransportationAnswers,
   ExemptionType,
+  RegionArea,
 } from '@island.is/application/templates/transport-authority/exemption-for-transportation'
 import { CargoAssignment, Person } from './types'
 import {
+  Area,
   ExceptionType,
   HaulUnitModel,
+  RouteApplicationAddModel,
   VehicleType,
 } from '@island.is/clients/transport-authority/exemption-for-transportation'
 import { getValueViaPath } from '@island.is/application/core'
 import {
   Application,
+  ApplicationWithAttachments,
   NationalRegistryIndividual,
 } from '@island.is/application/types'
 import { isCompany } from 'kennitala'
+import { S3Service } from '@island.is/nest/aws'
 
-export const getFirstWord = (fullName: string) => {
-  const [firstName] = fullName.split(' ')
-  return firstName || ''
+export const getAllWordsExceptLast = (fullName: string) => {
+  const parts = fullName.trim().split(' ')
+  return parts.length > 1 ? parts.slice(0, -1).join(' ') : ''
 }
 
-export const getAllWordsExceptFirst = (fullName: string) => {
-  const parts = fullName.split(' ')
-  return parts.length > 1 ? parts.slice(1).join(' ') : ''
+export const getLastWord = (fullName: string) => {
+  const parts = fullName.trim().split(' ')
+  return parts.at(-1) || ''
 }
 
 export const mapEnumByValue = <
@@ -119,10 +124,8 @@ export const mapTransporter = (
         nationalId: transporterAnswers?.nationalId || '',
         fullName: transporterAnswers?.name || '',
         address: transporterAnswers?.address || '',
-        postalCode: getFirstWord(transporterAnswers?.postalCodeAndCity || ''),
-        city: getAllWordsExceptFirst(
-          transporterAnswers?.postalCodeAndCity || '',
-        ),
+        postalCode: transporterAnswers?.postalCodeAndCity?.split(' ')?.[0],
+        city: transporterAnswers?.postalCodeAndCity?.split(' ')?.[1],
         email: transporterAnswers?.email || '',
         phone: transporterAnswers?.phone?.slice(-7) || '',
       }
@@ -253,4 +256,159 @@ export const mapHaulUnits = (application: Application): HaulUnitModel[] => {
       }
     }) || []
   )
+}
+
+const getAttachmentAsBase64 = async (
+  application: ApplicationWithAttachments,
+  s3Service: S3Service,
+  attachment: {
+    key: string
+    name: string
+  },
+): Promise<string> => {
+  const attachmentKey = attachment.key
+
+  const fileName = (
+    application.attachments as {
+      [key: string]: string
+    }
+  )[attachmentKey]
+
+  if (!fileName) {
+    throw new Error(
+      `Attachment filename not found in application on attachment key: ${attachmentKey}`,
+    )
+  }
+
+  try {
+    const fileContent = await s3Service.getFileContent(fileName, 'base64')
+
+    if (!fileContent) {
+      throw new Error(`File content not found for: ${fileName}`)
+    }
+
+    return fileContent
+  } catch (error) {
+    throw new Error(`Failed to retrieve attachment: ${error.message}`)
+  }
+}
+
+export const mapApplicationToDto = async (
+  application: ApplicationWithAttachments,
+  s3Service: S3Service,
+): Promise<RouteApplicationAddModel> => {
+  // Get answers
+  const exemptionPeriodAnswers = getValueViaPath<
+    ExemptionForTransportationAnswers['exemptionPeriod']
+  >(application.answers, 'exemptionPeriod')
+  const locationAnswers = getValueViaPath<
+    ExemptionForTransportationAnswers['location']
+  >(application.answers, 'location')
+  const supportingDocumentsAnswers = getValueViaPath<
+    ExemptionForTransportationAnswers['supportingDocuments']
+  >(application.answers, 'supportingDocuments')
+  const freightAnswers = getValueViaPath<
+    ExemptionForTransportationAnswers['freight']
+  >(application.answers, 'freight')
+
+  // Map applicant, transporter + responsible person
+  const applicant = mapApplicant(application)
+  const transporter = mapTransporter(application, applicant)
+  const responsiblePerson = mapResponsiblePerson(
+    application,
+    applicant,
+    transporter,
+  )
+
+  // Map files
+  const locationFiles =
+    exemptionPeriodAnswers?.type === ExemptionType.LONG_TERM
+      ? await Promise.all(
+          (locationAnswers?.longTerm?.files || []).map(async (file) => {
+            return {
+              name: file.name,
+              content: await getAttachmentAsBase64(
+                application,
+                s3Service,
+                file,
+              ),
+            }
+          }),
+        )
+      : []
+  const supportingDocumentsFiles = await Promise.all(
+    (supportingDocumentsAnswers?.files || []).map(async (file) => {
+      return {
+        name: file.name,
+        content: await getAttachmentAsBase64(application, s3Service, file),
+      }
+    }),
+  )
+
+  return {
+    externalID: application.id,
+    applicant: {
+      ssn: applicant.nationalId,
+      firstName: getAllWordsExceptLast(applicant.fullName),
+      lastName: getLastWord(applicant.fullName),
+      email: applicant.email,
+      phone: applicant.phone,
+    },
+    transporter: {
+      ssn: transporter.nationalId,
+      name: transporter.fullName,
+      address: transporter.address,
+      postalCode: transporter.postalCode,
+      city: transporter.city,
+      email: transporter.email,
+      phone: transporter.phone,
+    },
+    guarantor: responsiblePerson
+      ? {
+          ssn: responsiblePerson.nationalId,
+          firstName: getAllWordsExceptLast(responsiblePerson.fullName),
+          lastName: getLastWord(responsiblePerson.fullName),
+          email: responsiblePerson.email,
+          phone: responsiblePerson.phone,
+        }
+      : undefined,
+    dateFrom: new Date(exemptionPeriodAnswers?.dateFrom || ''),
+    dateTo: new Date(exemptionPeriodAnswers?.dateTo || ''),
+    origin:
+      exemptionPeriodAnswers?.type === ExemptionType.SHORT_TERM
+        ? `${locationAnswers?.shortTerm?.addressFrom}, ${locationAnswers?.shortTerm?.postalCodeAndCityFrom}`
+        : undefined,
+    destination:
+      exemptionPeriodAnswers?.type === ExemptionType.SHORT_TERM
+        ? `${locationAnswers?.shortTerm?.addressTo}, ${locationAnswers?.shortTerm?.postalCodeAndCityTo}`
+        : undefined,
+    areas:
+      exemptionPeriodAnswers?.type === ExemptionType.LONG_TERM
+        ? mapEnumByValue(
+            RegionArea,
+            Area,
+            locationAnswers?.longTerm?.regions || [],
+          )
+        : undefined,
+    desiredRoute:
+      exemptionPeriodAnswers?.type === ExemptionType.SHORT_TERM
+        ? locationAnswers?.shortTerm?.directions
+        : locationAnswers?.longTerm?.directions,
+    documents: (exemptionPeriodAnswers?.type === ExemptionType.LONG_TERM
+      ? [...locationFiles, ...supportingDocumentsFiles]
+      : supportingDocumentsFiles
+    ).map((file) => ({
+      documentName: file.name,
+      documentContent: file.content,
+    })),
+    comment: supportingDocumentsAnswers?.comments,
+    cargoes:
+      freightAnswers?.items?.map((item) => ({
+        code: item.freightId,
+        name: item.name,
+        length: Number(item.length),
+        weight: Number(item.weight),
+      })) || [],
+    haulUnits: mapHaulUnits(application),
+  }
 }
