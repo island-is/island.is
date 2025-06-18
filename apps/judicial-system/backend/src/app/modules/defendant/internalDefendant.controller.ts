@@ -138,18 +138,22 @@ export class InternalDefendantController {
       ? defendant.verdictViewDate
       : theCase.rulingDate
 
-    if (baseDate) {
-      const appealDeadline = getIndictmentAppealDeadlineDate(
-        new Date(baseDate),
-        isFine,
+    if (!baseDate) {
+      throw new BadRequestException(
+        `Cannot register appeal – ruling date not available for case ${theCase.id}`,
       )
-      if (hasDatePassed(appealDeadline)) {
-        throw new BadRequestException(
-          `Appeal deadline has passed for case ${
-            theCase.id
-          }. Deadline was ${appealDeadline.toISOString()}`,
-        )
-      }
+    }
+
+    const appealDeadline = getIndictmentAppealDeadlineDate(
+      new Date(baseDate),
+      isFine,
+    )
+    if (hasDatePassed(appealDeadline)) {
+      throw new BadRequestException(
+        `Appeal deadline has passed for case ${
+          theCase.id
+        }. Deadline was ${appealDeadline.toISOString()}`,
+      )
     }
 
     return this.defendantService.updateRestricted(
