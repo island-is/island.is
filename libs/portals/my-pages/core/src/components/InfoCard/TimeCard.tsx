@@ -102,7 +102,7 @@ const TimeCard: React.FC<AppointmentCardProps> = ({
                 </Text>
               </Inline>
               <Inline>
-                {data.location && data.location.href ? (
+                {data.location?.href ? (
                   <LinkResolver
                     href={data.location.href}
                     label={data.location.label}

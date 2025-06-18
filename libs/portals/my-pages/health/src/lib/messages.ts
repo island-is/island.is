@@ -586,7 +586,7 @@ export const messages = defineMessages({
   },
   hasHealthInsuranceIntro: {
     defaultMessage: 'Sjúkratryggingar Íslands lýsitexti',
-    id: 'sp.health:has-health-insurance',
+    id: 'sp.health:has-health-insurance-intro',
   },
   healthCenter: {
     defaultMessage: 'Heilsugæsla',

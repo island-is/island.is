@@ -40,15 +40,15 @@ export const InfoCardGrid: React.FC<InfoCardGridProps> = ({
   return (
     <GridContainer>
       <GridRow rowGap={2} marginBottom={6}>
-        {cards.map((card, index) => (
+        {cards.filter(Boolean).map((card, index) => (
           <GridColumn
             span={size === 'small' && !isMobile && !isTablet ? '6/12' : '12/12'}
             className={styles.gridCard}
+            key={`infocard-${card?.title ?? index}`}
           >
             {card && (
               <InfoCard
                 icon={card.icon}
-                key={index}
                 tags={card.tags}
                 img={card.img}
                 size={card.size ?? size ?? 'small'}

@@ -99,9 +99,9 @@ export const IntroWrapper = (props: IntroWrapperProps) => {
                 alt=""
                 component="img"
                 src={props.img}
-                width={isMobile ? undefined : 'full'}
-                height={isMobile ? undefined : 'full'}
-                marginRight={isMobile ? 2 : 0}
+                width="full"
+                height="full"
+                marginRight={0}
               />
             )}
             {props.serviceProviderSlug && organization?.link && (

@@ -1,25 +1,27 @@
+const basicInformation = '/heilsa/grunnupplysingar'
+
 export enum HealthPaths {
   HealthRoot = '/heilsa',
 
-  HealthBasicInformation = 'heilsa/grunnupplysingar',
-  HealthOverview = '/heilsa/grunnupplysingar/yfirlit',
+  HealthBasicInformation = `${basicInformation}`,
+  HealthOverview = `${basicInformation}/yfirlit`,
 
-  HealthDentists = '/heilsa/grunnupplysingar/tannlaeknar',
-  HealthDentistRegistration = '/heilsa/grunnupplysingar/tannlaeknar/skraning',
+  HealthDentists = `${basicInformation}/tannlaeknar`,
+  HealthDentistRegistration = `${basicInformation}/tannlaeknar/skraning`,
+
+  HealthOrganDonation = `${basicInformation}/liffaeragjof`,
+  HealthOrganDonationRegistration = `${basicInformation}/liffaeragjof/skraning`,
+
+  HealthInsurance = `${basicInformation}/sjukratryggingar`,
+
+  HealthCenter = `${basicInformation}/heilsugaesla`,
+  HealthCenterRegistration = `${basicInformation}/heilsugaesla/skraning`,
 
   HealthDentistsOld = '/heilsa/tannlaeknar',
   HealthDentistRegistrationOld = '/heilsa/tannlaeknar/skraning',
 
-  HealthOrganDonation = '/heilsa/grunnupplysingar/liffaeragjof',
-  HealthOrganDonationRegistration = '/heilsa/grunnupplysingar/liffaeragjof/skraning',
-
   HealthOrganDonationOld = '/heilsa/liffaeragjof',
   HealthOrganDonationRegistrationOld = '/heilsa/liffaeragjof/skraning',
-
-  HealthInsurance = '/heilsa/grunnupplysingar/sjukratryggingar',
-
-  HealthCenter = '/heilsa/grunnupplysingar/heilsugaesla',
-  HealthCenterRegistration = '/heilsa/grunnupplysingar/heilsugaesla/skraning',
 
   HealthCenterOld = '/heilsa/heilsugaesla',
   HealthCenterRegistrationOld = '/heilsa/heilsugaesla/skraning',

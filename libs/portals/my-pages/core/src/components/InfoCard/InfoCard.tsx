@@ -57,7 +57,7 @@ interface InfoCardDetail {
 export interface InfoCardProps {
   title: string
   description: string
-  to?: string
+  to: string
   size?: 'small' | 'large'
   appointment?: {
     date: string
@@ -114,7 +114,7 @@ export const InfoCard: React.FC<InfoCardProps> = ({
       width={size === 'large' ? 'full' : undefined}
       className={styles.container}
     >
-      <LinkResolver href={to ?? ''} className={styles.containerLink}>
+      <LinkResolver href={to} className={styles.containerLink}>
         <Box
           border="standard"
           borderColor="blue200"
