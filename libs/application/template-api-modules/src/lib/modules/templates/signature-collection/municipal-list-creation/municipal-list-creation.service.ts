@@ -15,7 +15,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { CreateListSchema } from '@island.is/application/templates/signature-collection/municipal-list-creation'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { isCompany } from 'kennitala'
-import { coreErrorMessages } from '@island.is/application/core'
+import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import { generateApplicationSubmittedEmail } from './emailGenerators'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { getCollectionTypeFromApplicationType } from '../shared/utils'
@@ -120,6 +120,11 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
       application.externalData.municipalCollection.data as Array<Collection>
     )[0]
 
+    const candidateAreaId = getValueViaPath(
+      application.externalData,
+      'candidate.data.area.id',
+    ) as string
+
     const input = {
       collectionType: this.collectionType,
       collectionId: municipalCollection.id,
@@ -130,6 +135,7 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
           : answers.applicant.nationalId,
       },
       listName: answers?.list?.name ?? '',
+      areas: [{ areaId: candidateAreaId }],
     }
 
     const result = await this.signatureCollectionClientService
