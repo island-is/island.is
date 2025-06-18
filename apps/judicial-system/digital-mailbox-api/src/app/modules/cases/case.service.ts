@@ -201,38 +201,6 @@ export class CaseService {
     nationalId: string,
     lang?: string,
   ): Promise<VerdictResponse> {
-    const caseWithVerdict = await this.fetchCaseWithVerdict(caseId, nationalId)
-
-    return VerdictResponse.fromInternalCaseResponse(
-      caseWithVerdict,
-      nationalId,
-      lang,
-    )
-  }
-
-  private async updateVerdictAppealDecisionInfo(
-    caseId: string,
-    nationalId: string,
-    verdictAppeal: UpdateVerdictAppealDecisionDto,
-    lang?: string,
-  ): Promise<VerdictResponse> {
-    const caseWithVerdict = await this.fetchCaseWithVerdict(caseId, nationalId)
-
-    const defendant = await this.patchDefendant(caseId, nationalId, {
-      verdictAppealDecision: verdictAppeal.verdictAppealDecision,
-    })
-
-    return VerdictResponse.fromInternalCaseResponse(
-      { ...caseWithVerdict, defendants: [defendant] },
-      nationalId,
-      lang,
-    )
-  }
-
-  private async fetchCaseWithVerdict(
-    caseId: string,
-    nationalId: string,
-  ): Promise<InternalCaseResponse> {
     const caseData = await this.fetchCase(caseId, nationalId)
 
     if (!isCompletedCase(caseData.state)) {
@@ -247,7 +215,23 @@ export class CaseService {
       )
     }
 
-    return caseData
+    return VerdictResponse.fromInternalCaseResponse(caseData, nationalId, lang)
+  }
+
+  private async updateVerdictAppealDecisionInfo(
+    caseId: string,
+    nationalId: string,
+    verdictAppeal: UpdateVerdictAppealDecisionDto,
+    lang?: string,
+  ): Promise<VerdictResponse> {
+    await this.patchVerdictAppeal(caseId, nationalId, verdictAppeal)
+
+    const updatedCase = await this.fetchCase(caseId, nationalId)
+    return VerdictResponse.fromInternalCaseResponse(
+      updatedCase,
+      nationalId,
+      lang,
+    )
   }
 
   private async fetchCases(
@@ -365,6 +349,54 @@ export class CaseService {
       throw new BadGatewayException(
         error.message ||
           'An unexpected error occurred while updating defendant',
+      )
+    }
+  }
+  private async patchVerdictAppeal(
+    caseId: string,
+    nationalId: string,
+    verdictAppeal: UpdateVerdictAppealDecisionDto,
+  ): Promise<void> {
+    try {
+      const response = await fetch(
+        `${this.config.backendUrl}/api/internal/case/${caseId}/defendant/${nationalId}/verdict-appeal`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${this.config.secretToken}`,
+          },
+          body: JSON.stringify(verdictAppeal),
+        },
+      )
+
+      if (!response.ok) {
+        if (response.status === 403) {
+          throw new BadGatewayException(
+            'Appeal deadline has passed or appeal not allowed',
+          )
+        }
+        if (response.status === 404) {
+          throw new NotFoundException('Case or defendant not found')
+        }
+
+        const errorResponse = await response.json()
+        throw new BadGatewayException(
+          `Failed to submit verdict appeal: ${
+            errorResponse.message || response.statusText
+          }`,
+        )
+      }
+    } catch (error) {
+      if (
+        error instanceof NotFoundException ||
+        error instanceof BadGatewayException
+      ) {
+        throw error
+      }
+      throw new BadGatewayException(
+        error.message ||
+          'An unexpected error occurred while submitting verdict appeal',
       )
     }
   }
