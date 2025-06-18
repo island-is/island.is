@@ -1,13 +1,15 @@
 import { Injectable } from '@nestjs/common'
-import { SharedTemplateApiService } from '../../shared'
 import { ApplicationTypes } from '@island.is/application/types'
-import { NotificationsService } from '../../../notification/notifications.service'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { CurrentVehicleDto, VehicleSearchApi } from '@island.is/clients/vehicles'
-import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { VehicleSearchApi } from '@island.is/clients/vehicles'
+import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { RskRentalDayRateClient } from '@island.is/clients-rental-day-rate'
-import { EntryModel } from '@island.is/clients-rental-day-rate'
+import { EntryModel, ProblemDetails } from '@island.is/clients-rental-day-rate'
+import { getValueViaPath } from '@island.is/application/core'
+
+import { CarCategoryRecord, RateCategory } from '@island.is/application/templates/car-rental-fee-category'
+import { TemplateApiError } from '@island.is/nest/problem'
 
 @Injectable()
 export class CarRentalFeeCategoryService extends BaseTemplateApiService {
@@ -26,12 +28,27 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
     return this.rentalDayRateClient.defaultApiWithAuth(auth)
   }
 
-  async getCurrentVehicles({ auth }: TemplateApiModuleActionProps) : Promise<CurrentVehicleDto[]> {
-    return await this.vehiclesApiWithAuth(auth).currentVehiclesV2Get({
+  async getCurrentVehicles({ auth }: TemplateApiModuleActionProps) : Promise<CurrentVehicleWithMilage[]> {
+    const data = await this.vehiclesApiWithAuth(auth).currentvehicleswithmileageandinspGet({
       showOwned: true,
       showCoowned: true,
       showOperated: true,
+      page: 0,
+      pageSize: 100000,
+      onlyMileageRequiredVehicles: false,
+      onlyMileageRegisterableVehicles: false
     })
+
+    return data.data?.filter(vehicle => 
+      vehicle.permno !== null && 
+      vehicle.make !== null && 
+      typeof vehicle.latestMileage === 'number' && 
+      vehicle.latestMileage >= 0
+    ).map(vehicle => ({
+      permno: vehicle.permno ?? null,
+      make: vehicle.make ?? null,
+      milage: vehicle.latestMileage ?? null
+    })) || []
   }
 
   async getCurrentVehiclesRateCategory({ auth }: TemplateApiModuleActionProps) : Promise<Array<EntryModel>> {
@@ -40,38 +57,84 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
     })
   }
 
-  async createApplication({
-    application,
-    auth,
-  }: TemplateApiModuleActionProps) {
+  async postDataToSkatturinn({ application, auth }: TemplateApiModuleActionProps) : Promise<boolean> {
+    const data = getValueViaPath<CarCategoryRecord[]>(
+      application.answers,
+      'dataToChange.data',
+    )
+    console.log('DATA DATA DATA', data)
 
-    const x = await this.vehiclesApiWithAuth(auth).currentVehiclesV2Get({
-      showOwned: true,
-      showCoowned: true,
-      showOperated: true,
-    })
+    const rateToChangeTo = getValueViaPath<RateCategory>(
+      application.answers,
+      'categorySelectionRadio',
+    )
 
-    const y = await this.rentalsApiWithAuth(auth).apiDayRateEntriesEntityIdGet({
-      entityId: auth.nationalId
-    })
+    const now = new Date()
+    const endOfToday = new Date(new Date().setHours(23, 59, 59, 999))
 
-    console.log('samgöngustofan', x)
-    console.log('skattur', y)
+    try {
+      if(rateToChangeTo === RateCategory.KMRATE) {
+        await this.rentalsApiWithAuth(auth).apiDayRateEntriesEntityIdRegisterPost({
+          entityId: auth.nationalId,
+          dayRateRegistrationModel: {
+            skraningaradili: application.applicantActors[0] ?? application.applicant ?? null,
+            entries: data?.map( c => {
+              return {
+                permno: c.vehicleId,
+                mileage: c.newMilage,
+                validFrom: now
+              }
+            }) ?? null
+          }
+        })
 
-    return {
-      id: 1337,
+        // await this.rentalsApiWithAuth(auth).apiDayRateEntriesEntityIdRegisterPost({
+        //   entityId: auth.nationalId,
+        //   dayRateRegistrationModel: {
+        //     skraningaradili: application.applicantActors[0] ?? application.applicant ?? null,
+        //     entries: [{
+        //         permno: 'AA322',
+        //         mileage: 1222333,
+        //         validFrom: now
+        //       }]
+        //   }
+        // })
+        return true
+      } else {
+        await this.rentalsApiWithAuth(auth).apiDayRateEntriesEntityIdDeregisterPost({
+          entityId: auth.nationalId,
+          deregistrationModel: {
+            afskraningaradili: application.applicantActors[0] ?? application.applicant ?? null,
+            entries: data?.map(c => {
+              return {
+                permno: c.vehicleId,
+                mileage: c.newMilage,
+                validTo: endOfToday
+              }
+            }) ?? null
+          }
+        })
+        return true
+      }
+    } catch (error) {
+      // Check if error has ProblemDetails properties
+      if (error && typeof error === 'object' && ('status' in error || 'detail' in error || 'title' in error)) {
+        // Maybe do some error handling here, like throw application error
+        console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', error)
+      }
+      throw new TemplateApiError(
+        {
+          title: 'Request to skatturinn failed',
+          summary: 'Something went wrong when posting car data to skatturinn',
+        },
+        error?.status ?? 500,
+      )
     }
   }
+}
 
-  async completeApplication({
-    application,
-    auth,
-  }: TemplateApiModuleActionProps) {
-    // TODO: Implement this
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-
-    return {
-      id: 1337,
-    }
-  }
+export interface CurrentVehicleWithMilage {
+  permno: string | null
+  make: string | null
+  milage: number | null
 }

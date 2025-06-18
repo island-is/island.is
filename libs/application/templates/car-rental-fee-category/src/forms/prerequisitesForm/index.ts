@@ -6,7 +6,7 @@ import {
   buildSubmitField,
   coreMessages,
 } from '@island.is/application/core'
-import { DefaultEvents, NationalRegistryUserApi, FormModes, UserProfileApi } from '@island.is/application/types'
+import { DefaultEvents, FormModes } from '@island.is/application/types'
 import { SkatturApi, VehiclesApi } from '../../dataProviders'
 
 export const Prerequisites = buildForm({
@@ -32,16 +32,6 @@ export const Prerequisites = buildForm({
               provider: VehiclesApi, // Samgöngustofan
               title: 'Upplýsingar úr Samgöngustofunni',
               subTitle: 'Upplýsingar úr ökutækjaskrá - Upplýsingar um þínar bifreiðar og stöðu þeirra',
-            }),
-            buildDataProviderItem({
-              provider: NationalRegistryUserApi, // Þjóðskrá
-              title: 'Upplýsingar úr Þjóðskrá',
-              subTitle: 'Til þess að auðvelda fyrir, sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina',
-            }),
-            buildDataProviderItem({
-              provider: UserProfileApi, // Mínar síður
-              title: 'Netfang og símanúmer úr þínum stillingum',
-              subTitle: 'Til að auðvelda umsóknarferlið er gott að hafa fyllt út netfang og símanúmer á mínum síðum',
             }),
           ],
           submitField: buildSubmitField({

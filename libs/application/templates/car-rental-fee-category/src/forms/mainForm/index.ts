@@ -19,6 +19,6 @@ export const MainForm = buildForm({
     multiUploadSection,
     tableViewSelectionSection,
     verifySection,
-    overviewSection
+    //overviewSection
   ],
 })

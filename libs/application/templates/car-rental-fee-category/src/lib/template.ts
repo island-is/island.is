@@ -7,10 +7,8 @@ import {
   Application,
   DefaultEvents,
   FormModes,
-  UserProfileApi,
   ApplicationConfigurations,
   defineTemplateApi,
-  NationalRegistryUserApi,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -54,7 +52,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [UserProfileApi, NationalRegistryUserApi, VehiclesApi, SkatturApi],
+              api: [VehiclesApi, SkatturApi],
               delete: true,
             },
           ],
@@ -110,6 +108,9 @@ const template: ApplicationTemplate<
               delete: true,
             },
           ],
+          onEntry: defineTemplateApi({
+            action: 'postDataToSkatturinn',
+          }),
         },
       },
     },

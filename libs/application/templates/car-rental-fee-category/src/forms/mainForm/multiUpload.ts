@@ -2,14 +2,14 @@ import {
     buildAlertMessageField,
     buildCustomField,
     buildDescriptionField,
-    buildDownloadFileButtonField,
     buildMultiField,
     buildSection,
+    buildSubmitField,
     getValueViaPath,
   } from '@island.is/application/core'
 import { generateExcelSheet } from '../../utils/generateExcelSheet'
 import { RateCategory, UploadSelection } from '../../utils/constants'
-import { CarCategoryRecord } from '../../utils/types'
+import { CarMap } from '../../utils/types'
   
 export const multiUploadSection = buildSection({
   condition: (answers) => {
@@ -36,19 +36,25 @@ export const multiUploadSection = buildSection({
             alertType: 'info',
             message: '1. Sæktu sniðmátið \n2. Gerðu viðeigandi breytingar á skjalinu \n3. Hleður upp skjalinu hér að neðan'
         }),
-        // buildDownloadFileButtonField({
-        //   id: 'multiUploadDownloadFileButtonField',
-        //   getFileContent: () => generateExcelSheet('pass in data from external sources here'),
-        //   buttonTitle: 'Sniðmát'
-        // }),
         buildCustomField({
           id: 'multiUploadUploadCatCategoryField',
           doesNotRequireAnswer: false,
           component: 'UploadCarCategoryFile',
         },
         {
-          postParseAction: (records: CarCategoryRecord[]) => true,
-          getFileContent: () => generateExcelSheet('pass in data from external sources here')
+          getFileContent: (vehicleMap: CarMap, rateCategory: RateCategory) => generateExcelSheet(vehicleMap, rateCategory)
+        }),
+        buildSubmitField({
+          id: 'submit',
+          title: 'Submit',
+          refetchApplicationAfterSubmit: true,
+          actions: [
+            {
+              event: 'SUBMIT',
+              name: 'Submit',
+              type: 'primary',
+            },
+          ],
         }),
       ],
     }),

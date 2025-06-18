@@ -7,15 +7,15 @@ import {
   
   export const verifySection = buildSection({
     id: 'verifySection',
-    title: 'Yfirferð',
+    title: 'Skráning móttekin!',
     children: [
       buildMultiField({
         id: 'verifyMultiField',
-        title: 'Yfirferð',
+        title: 'Skráning móttekin!',
         children: [
           buildDescriptionField({
             id: 'verifyDescription',
-            description: 'huehuehue'
+            description: 'Staðfestinga skjár'
           })
         ],
       }),

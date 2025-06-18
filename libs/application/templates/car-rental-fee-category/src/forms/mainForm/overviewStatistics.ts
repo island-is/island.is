@@ -2,7 +2,11 @@ import {
   buildMultiField,
   buildSection,
   buildStaticTableField,
+  getValueViaPath,
 } from '@island.is/application/core'
+import { EntryModel } from '@island.is/clients-rental-day-rate'
+import { CurrentVehicleWithMilage } from '../../utils/types'
+import { hasActiveDayRate } from '../../utils/dayRateUtils'
 
 export const overviewStatistics = buildSection({
   id: 'overviewStatisticsSection',
@@ -13,25 +17,36 @@ export const overviewStatistics = buildSection({
       title: 'Yfirlit yfir bifreiðar',
       children: [
         buildStaticTableField({
-          // Header, rows and summary can also be functions that access external data or answers
           header: [
             'Yfirlit',
             '',
           ],
-          rows: [
-            [
-              'Fjöldi bifreiða á skrá',
-              '222',
-            ],
-            [
-              'Fjöldi bifreiða á daggjaldi',
-              '111',
-            ],
-            [
-              'Fjöldi bifreiða á kílómetragjaldi',
-              '111',
-            ],
-          ],
+          rows: (application) => {
+            const vehicles = getValueViaPath<Array<CurrentVehicleWithMilage>>(
+              application.externalData,
+              'getCurrentVehicles.data',
+            ) ?? []
+
+            const rates = getValueViaPath<Array<EntryModel>>(
+              application.externalData,
+              'getCurrentVehiclesRateCategory.data',
+            ) ?? []
+            
+            return [
+              [
+                'Fjöldi bifreiða á skrá',
+                vehicles.length.toString(),
+              ],
+              [
+                'Fjöldi bifreiða á daggjaldi',
+                rates.filter(x => x.dayRateEntries && hasActiveDayRate(x.dayRateEntries)).length.toString(),
+              ],
+              [
+                'Fjöldi bifreiða á kílómetragjaldi',
+                rates.filter(x => !x.dayRateEntries || !hasActiveDayRate(x.dayRateEntries)).length.toString(),
+              ],
+            ]
+          },
         }),
       ],
     }),
