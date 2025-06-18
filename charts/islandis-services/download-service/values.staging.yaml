@@ -86,6 +86,7 @@ ingress:
 namespace: 'download-service'
 podDisruptionBudget:
   maxUnavailable: 1
+  minAvailable: 1
 pvcs: []
 replicaCount:
   default: 1

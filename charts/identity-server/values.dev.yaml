@@ -56,6 +56,7 @@ auth-admin-web:
   namespace: 'identity-server-admin'
   podDisruptionBudget:
     maxUnavailable: 1
+    minAvailable: 1
   progressDeadlineSeconds: 1200
   pvcs: []
   replicaCount:
@@ -166,6 +167,7 @@ identity-server:
   namespace: 'identity-server'
   podDisruptionBudget:
     maxUnavailable: 1
+    minAvailable: 1
   podSecurityContext:
     fsGroup: 65534
   pvcs:
@@ -288,6 +290,7 @@ services-auth-admin-api:
   namespace: 'identity-server-admin'
   podDisruptionBudget:
     maxUnavailable: 1
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 1
@@ -392,6 +395,7 @@ services-auth-delegation-api:
   namespace: 'identity-server-delegation'
   podDisruptionBudget:
     maxUnavailable: 1
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 1
@@ -527,6 +531,7 @@ services-auth-ids-api:
   namespace: 'identity-server'
   podDisruptionBudget:
     maxUnavailable: 1
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 1
@@ -599,6 +604,7 @@ services-auth-ids-api-cleanup:
   namespace: 'identity-server'
   podDisruptionBudget:
     maxUnavailable: 1
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 1
@@ -683,6 +689,7 @@ services-auth-personal-representative:
   namespace: 'personal-representative'
   podDisruptionBudget:
     maxUnavailable: 1
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 1
@@ -752,6 +759,7 @@ services-auth-personal-representative-public:
   namespace: 'personal-representative'
   podDisruptionBudget:
     maxUnavailable: 1
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 1
@@ -851,6 +859,7 @@ services-auth-public-api:
   namespace: 'identity-server-admin'
   podDisruptionBudget:
     maxUnavailable: 1
+    minAvailable: 1
   pvcs: []
   replicaCount:
     default: 1

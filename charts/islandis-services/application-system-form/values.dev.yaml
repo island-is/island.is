@@ -62,6 +62,7 @@ ingress:
 namespace: 'application-system'
 podDisruptionBudget:
   maxUnavailable: 1
+  minAvailable: 1
 pvcs: []
 replicaCount:
   default: 1
