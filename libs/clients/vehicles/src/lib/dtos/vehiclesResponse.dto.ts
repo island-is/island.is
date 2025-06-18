@@ -40,7 +40,6 @@ export interface Vehicle {
 export const mapVehicleResponseDto = (
   data?: CurrentVehiclesWithMilageAndNextInspDtoListPagedResponse,
 ): VehiclesResponseDto | null => {
-  console.log(data)
   if (
     !data ||
     !data.pageNumber ||

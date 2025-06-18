@@ -498,7 +498,7 @@ export const vehicleMessage = defineMessages({
     defaultMessage: 'Meðalútblástur allra ökutækja',
   },
   mediumCo2Tooltip: {
-    id: 'sp.vehicles:medium-co2',
+    id: 'sp.vehicles:medium-co2-tooltip',
     defaultMessage: 'Meðalútblástur allra ökutækja í flokknum M1 í júní 2025',
   },
   nedc: {
