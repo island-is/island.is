@@ -65,6 +65,7 @@ const CreateCollection = ({
   const [nationalIdInput, setNationalIdInput] = useState('')
   const [nationalIdNotFound, setNationalIdNotFound] = useState(false)
   const [name, setName] = useState('')
+  const [collectionName, setCollectionName] = useState('')
   const [canCreate, setCanCreate] = useState(true)
   const [canCreateErrorReason, setCanCreateErrorReason] = useState('')
 
@@ -75,6 +76,7 @@ const CreateCollection = ({
       input: {
         collectionType: collectionType,
         collectionId: id,
+        collectionName: collectionName || undefined,
         owner: {
           name: name,
           nationalId: nationalIdInput,
@@ -201,10 +203,23 @@ const CreateCollection = ({
               />
               <Input
                 name="candidateName"
-                label={formatMessage(m.candidateName)}
+                label={formatMessage(m.name)}
                 readOnly
                 value={name}
               />
+              {collectionType ===
+                SignatureCollectionCollectionType.LocalGovernmental && (
+                <Input
+                  name="collectionName"
+                  id="collectionName"
+                  label={formatMessage(m.candidateName)}
+                  backgroundColor="blue"
+                  value={collectionName}
+                    onChange={(v) =>
+                    setCollectionName(v.target.value)
+                  }
+                />
+              )}
               {currentArea?.id && (
                 <Input
                   name="candidateArea"
