@@ -815,7 +815,7 @@ export const messages = defineMessages({
     id: 'sp.health:maximum-monthly-payment',
   },
   maximumMonthlyPaymentShort: {
-    defaultMessage: 'Hámarksgreiðsla þín á mán.',
+    defaultMessage: 'Hámarksgreiðsla á mán.',
     id: 'sp.health:maximum-monthly-payment-short',
   },
   maxPaidByApplicant: {

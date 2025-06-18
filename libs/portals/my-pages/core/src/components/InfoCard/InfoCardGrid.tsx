@@ -4,6 +4,7 @@ import React from 'react'
 import { useWindowSize } from 'react-use'
 import EmptyCard from './EmptyCard'
 import InfoCard, { InfoCardProps } from './InfoCard'
+import * as styles from './InfoCard.css'
 
 interface InfoCardGridProps {
   cards: (InfoCardProps | null)[]
@@ -42,6 +43,7 @@ export const InfoCardGrid: React.FC<InfoCardGridProps> = ({
         {cards.map((card, index) => (
           <GridColumn
             span={size === 'small' && !isMobile && !isTablet ? '6/12' : '12/12'}
+            className={styles.gridCard}
           >
             {card && (
               <InfoCard

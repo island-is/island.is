@@ -1,7 +1,19 @@
 import { globalStyle, style, styleVariants } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
 
-export const container = style({})
+export const gridCard = style({
+  display: 'flex',
+  flexDirection: 'column',
+})
+
+export const container = style({
+  flex: '1 0 auto',
+})
+
+export const containerLink = style({
+  display: 'block',
+  height: '100%',
+})
 
 export const boxContainer = style({
   ':focus': {
@@ -59,7 +71,7 @@ export const smallImage = style({
 })
 
 export const flexItem = style({
-  flex: 2,
+  flex: 3,
 })
 
 export const flexItemBorder = style({
@@ -72,8 +84,12 @@ globalStyle(`${flexItemBorder} > div`, {
     xs: {
       width: '100%',
     },
-    lg: {
+    xl: {
       width: 'auto',
     },
   }),
+})
+
+globalStyle(`${boxContainer} > div`, {
+  height: '100%',
 })

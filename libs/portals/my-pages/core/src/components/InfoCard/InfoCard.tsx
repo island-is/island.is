@@ -42,13 +42,12 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { ActionCardProps } from '@island.is/island-ui/core/types'
+import { theme } from '@island.is/island-ui/theme'
 import React from 'react'
-import useIsMobile from '../../hooks/useIsMobile/useIsMobile'
+import { useWindowSize } from 'react-use'
 import LinkResolver from '../LinkResolver/LinkResolver'
 import * as styles from './InfoCard.css'
 import TimeCard from './TimeCard'
-import { useWindowSize } from 'react-use'
-import { theme } from '@island.is/island-ui/theme'
 
 interface InfoCardDetail {
   label: string
@@ -92,6 +91,9 @@ export const InfoCard: React.FC<InfoCardProps> = ({
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
 
+  const displayBottomBorder = width < theme.breakpoints.xl
+  const displayRightBorder = width >= theme.breakpoints.xl
+
   const detailLength = detail ? detail.length : 0
 
   let detailData = detail
@@ -106,14 +108,18 @@ export const InfoCard: React.FC<InfoCardProps> = ({
   }
 
   return (
-    <Box width={size === 'large' ? 'full' : undefined}>
-      <LinkResolver href={to ?? ''} className={styles.container}>
+    <Box
+      width={size === 'large' ? 'full' : undefined}
+      className={styles.container}
+    >
+      <LinkResolver href={to ?? ''} className={styles.containerLink}>
         <Box
           border="standard"
           borderColor="blue200"
           borderRadius="large"
           padding={3}
           className={styles.boxContainer}
+          height="full"
         >
           <GridRow direction="row">
             <GridColumn
@@ -129,7 +135,7 @@ export const InfoCard: React.FC<InfoCardProps> = ({
               <Box
                 display="flex"
                 justifyContent="spaceBetween"
-                alignItems={'center'}
+                flexGrow={1}
                 marginBottom={detail ? 3 : 0}
               >
                 <Box>
@@ -183,13 +189,15 @@ export const InfoCard: React.FC<InfoCardProps> = ({
                           display="flex"
                           className={styles.flexItemBorder}
                           justifyContent="center"
-                          marginY={isMobile ? 2 : 0}
+                          marginY={[2, 2, 2, 2, 0]}
                         >
                           <Box
                             borderColor="blue200"
-                            borderRightWidth={isMobile ? undefined : 'standard'}
+                            borderRightWidth={
+                              displayRightBorder ? 'standard' : undefined
+                            }
                             borderBottomWidth={
-                              isMobile ? 'standard' : undefined
+                              displayBottomBorder ? 'standard' : undefined
                             }
                           />
                         </Box>
