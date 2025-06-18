@@ -294,31 +294,31 @@ const AxleSpacingSchema = z
     { path: ['dolly', 'value'] },
   )
   .superRefine((data, ctx) => {
-    if (data.hasExemptionForWeight) {
-      data.trailerList.forEach((trailer, index) => {
-        if (trailer.permno) {
-          if (trailer.useSameValues?.includes(YES)) {
-            if (!trailer.singleValue) {
-              ctx.addIssue({
-                path: ['trailerList', index, 'singleValue'],
-                code: z.ZodIssueCode.custom,
-                params: coreErrorMessages.defaultError,
-              })
-            }
-          } else {
-            trailer.values?.forEach((value, valueIndex) => {
-              if (!value) {
-                ctx.addIssue({
-                  path: ['trailerList', index, 'values', valueIndex],
-                  code: z.ZodIssueCode.custom,
-                  params: coreErrorMessages.defaultError,
-                })
-              }
+    if (!data.hasExemptionForWeight) return
+
+    data.trailerList.forEach((trailer, index) => {
+      if (!trailer.permno) return
+
+      const useSame = trailer.useSameValues?.includes(YES)
+
+      if (useSame && !trailer.singleValue) {
+        ctx.addIssue({
+          path: ['trailerList', index, 'singleValue'],
+          code: z.ZodIssueCode.custom,
+          params: coreErrorMessages.defaultError,
+        })
+      } else if (!useSame && trailer.values) {
+        trailer.values.forEach((value, valueIndex) => {
+          if (!value) {
+            ctx.addIssue({
+              path: ['trailerList', index, 'values', valueIndex],
+              code: z.ZodIssueCode.custom,
+              params: coreErrorMessages.defaultError,
             })
           }
-        }
-      })
-    }
+        })
+      }
+    })
   })
 
 const VehicleSpacingSchema = z
@@ -337,40 +337,36 @@ const VehicleSpacingSchema = z
     ),
   })
   .superRefine((data, ctx) => {
-    if (data.hasExemptionForWeight) {
-      data.convoyList.forEach((convoy, index) => {
-        if (convoy.hasTrailer) {
-          const hasDolly =
-            data.exemptionPeriodType === ExemptionType.SHORT_TERM &&
-            (convoy.dollyType === DollyType.SINGLE ||
-              convoy.dollyType === DollyType.DOUBLE)
+    if (!data.hasExemptionForWeight) return
 
-          if (hasDolly) {
-            if (!convoy.vehicleToDollyValue) {
-              ctx.addIssue({
-                path: ['convoyList', index, 'vehicleToDollyValue'],
-                code: z.ZodIssueCode.custom,
-                params: coreErrorMessages.defaultError,
-              })
-            } else if (!convoy.dollyToTrailerValue) {
-              ctx.addIssue({
-                path: ['convoyList', index, 'dollyToTrailerValue'],
-                code: z.ZodIssueCode.custom,
-                params: coreErrorMessages.defaultError,
-              })
-            }
-          } else {
-            if (!convoy.vehicleToTrailerValue) {
-              ctx.addIssue({
-                path: ['convoyList', index, 'vehicleToTrailerValue'],
-                code: z.ZodIssueCode.custom,
-                params: coreErrorMessages.defaultError,
-              })
-            }
-          }
-        }
-      })
-    }
+    data.convoyList.forEach((convoy, index) => {
+      if (!convoy.hasTrailer) return
+
+      const hasDolly =
+        data.exemptionPeriodType === ExemptionType.SHORT_TERM &&
+        (convoy.dollyType === DollyType.SINGLE ||
+          convoy.dollyType === DollyType.DOUBLE)
+
+      if (hasDolly && !convoy.vehicleToDollyValue) {
+        ctx.addIssue({
+          path: ['convoyList', index, 'vehicleToDollyValue'],
+          code: z.ZodIssueCode.custom,
+          params: coreErrorMessages.defaultError,
+        })
+      } else if (hasDolly && !convoy.dollyToTrailerValue) {
+        ctx.addIssue({
+          path: ['convoyList', index, 'dollyToTrailerValue'],
+          code: z.ZodIssueCode.custom,
+          params: coreErrorMessages.defaultError,
+        })
+      } else if (!hasDolly && !convoy.vehicleToTrailerValue) {
+        ctx.addIssue({
+          path: ['convoyList', index, 'vehicleToTrailerValue'],
+          code: z.ZodIssueCode.custom,
+          params: coreErrorMessages.defaultError,
+        })
+      }
+    })
   })
 
 const FileDocumentSchema = z.object({
