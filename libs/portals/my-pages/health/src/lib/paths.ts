@@ -1,10 +1,30 @@
+const basicInformation = '/heilsa/grunnupplysingar'
+
 export enum HealthPaths {
   HealthRoot = '/heilsa',
 
-  HealthOverview = '/heilsa/yfirlit',
+  HealthBasicInformation = `${basicInformation}`,
+  HealthOverview = `${basicInformation}/yfirlit`,
 
-  HealthOrganDonation = '/heilsa/liffaeragjof',
-  HealthOrganDonationRegistration = '/heilsa/liffaeragjof/skraning',
+  HealthDentists = `${basicInformation}/tannlaeknar`,
+  HealthDentistRegistration = `${basicInformation}/tannlaeknar/skraning`,
+
+  HealthOrganDonation = `${basicInformation}/liffaeragjof`,
+  HealthOrganDonationRegistration = `${basicInformation}/liffaeragjof/skraning`,
+
+  HealthInsurance = `${basicInformation}/sjukratryggingar`,
+
+  HealthCenter = `${basicInformation}/heilsugaesla`,
+  HealthCenterRegistration = `${basicInformation}/heilsugaesla/skraning`,
+
+  HealthDentistsOld = '/heilsa/tannlaeknar',
+  HealthDentistRegistrationOld = '/heilsa/tannlaeknar/skraning',
+
+  HealthOrganDonationOld = '/heilsa/liffaeragjof',
+  HealthOrganDonationRegistrationOld = '/heilsa/liffaeragjof/skraning',
+
+  HealthCenterOld = '/heilsa/heilsugaesla',
+  HealthCenterRegistrationOld = '/heilsa/heilsugaesla/skraning',
 
   HealthTherapies = '/heilsa/thjalfun',
   HealthTherapiesPhysical = '/heilsa/thjalfun/sjukrathjalfun',
@@ -17,9 +37,6 @@ export enum HealthPaths {
 
   HealthAidsAndNutrition = '/heilsa/hjalpartaeki-og-naering',
 
-  HealthDentists = '/heilsa/tannlaeknar',
-  HealthDentistRegistration = '/heilsa/tannlaeknar/skraning',
-
   HealthMedicine = '/heilsa/lyf',
   HealthMedicinePaymentParticipation = '/heilsa/lyf/greidsluthatttaka',
   HealthMedicinePurchase = '/heilsa/lyf/greidsluthatttaka/lyfjakaup',
@@ -30,9 +47,6 @@ export enum HealthPaths {
   HealthMedicinePrescriptionOverview = '/heilsa/lyf/lyfjaavisanir/yfirlit',
   HealthMedicinePrescriptionHistory = '/heilsa/lyf/lyfjasaga',
   HealthMedicineDelegation = '/heilsa/lyf/lyfjaumbod',
-
-  HealthCenter = '/heilsa/heilsugaesla',
-  HealthCenterRegistration = '/heilsa/heilsugaesla/skraning',
 
   HealthVaccinations = '/heilsa/bolusetningar',
   HealthVaccinationsGeneral = '/heilsa/bolusetningar/almennar',
