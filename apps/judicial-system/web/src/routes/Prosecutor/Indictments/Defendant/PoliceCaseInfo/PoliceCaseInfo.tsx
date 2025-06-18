@@ -10,6 +10,7 @@ import {
   Select,
   Tag,
 } from '@island.is/island-ui/core'
+import { POLICE_CASE_NUMBER } from '@island.is/judicial-system/consts'
 import {
   capitalize,
   indictmentSubtypes,
@@ -30,7 +31,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/formHelper'
 
 import { policeCaseInfo } from './PoliceCaseInfo.strings'
-import { POLICE_CASE_NUMBER } from '@island.is/judicial-system/consts'
 
 interface Props {
   index: number
