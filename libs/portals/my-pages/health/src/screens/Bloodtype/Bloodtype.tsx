@@ -40,7 +40,7 @@ const Bloodtype: React.FC = () => {
         <Problem type="no_data" noBorder={false} />
       )}
       {error && !loading && <Problem error={error} noBorder={false} />}
-      {bloodType && !error && (
+      {!error && (
         <InfoLineStack space={1}>
           <InfoLine
             label={formatMessage(messages.bloodtype)}
@@ -50,7 +50,9 @@ const Bloodtype: React.FC = () => {
           <InfoLine
             label={formatMessage(messages.registered)}
             content={
-              bloodType?.registered ? formatDate(bloodType.registered) : ''
+              bloodType?.registered
+                ? formatDate(bloodType.registered)
+                : formatMessage(messages.notRegistered)
             }
             loading={loading}
           />
