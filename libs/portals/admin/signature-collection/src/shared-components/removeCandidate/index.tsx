@@ -23,21 +23,21 @@ const RemoveCandidate = ({ list }: { list: SignatureCollectionList }) => {
   const [modalRemoveCandidateIsOpen, setModalRemoveCandidateIsOpen] =
     useState(false)
 
-  const [removeCandidate, { loading, data }] =
+  const [removeCandidate, { loading }] =
     useSignatureCollectionAdminRemoveCandidateMutation({
       variables: {
         input: {
           candidateId: list?.candidate?.id,
         },
       },
-      onCompleted: () => {
-        if (data?.signatureCollectionAdminRemoveCandidate?.success) {
+      onCompleted: (response) => {
+        if (response.signatureCollectionAdminRemoveCandidate?.success) {
           setModalRemoveCandidateIsOpen(false)
           toast.success(formatMessage(m.cancelCollectionModalToastSuccess))
           navigate(-1)
         } else {
           const message =
-            data?.signatureCollectionAdminRemoveCandidate.reasons?.[0] ??
+            response.signatureCollectionAdminRemoveCandidate?.reasons?.[0] ??
             formatMessage(m.cancelCollectionModalToastError)
           toast.error(message)
         }
