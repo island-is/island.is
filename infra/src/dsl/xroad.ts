@@ -1052,3 +1052,14 @@ export const SecondarySchool = new XroadConf({
     },
   },
 })
+
+export const LSH = new XroadConf({
+  env: {
+    XROAD_LSH_PATH: {
+      dev: 'IS-DEV/GOV/10022/Landspitali-Protected/external-patient-api-v1',
+      staging:
+        'IS-TEST/GOV/10022/Landspitali-Protected/external-patient-api-v1',
+      prod: 'IS/GOV/5003002130/Landspitali-Protected/external-patient-api-v1',
+    },
+  },
+})
