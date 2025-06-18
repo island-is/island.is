@@ -64,8 +64,8 @@ describe('<AppealCaseFilesOverview />', () => {
         </ApolloProvider>
       </IntlProvider>,
     )
-
-    await userEvent.click(screen.getByRole('button'))
+    const button = await screen.findByRole('button')
+    await userEvent.click(button)
     expect(await screen.findAllByRole('menuitem')).toHaveLength(1)
   })
 
@@ -93,7 +93,8 @@ describe('<AppealCaseFilesOverview />', () => {
       </IntlProvider>,
     )
 
-    await userEvent.click(screen.getByRole('button'))
+    const button = await screen.findByRole('button')
+    await userEvent.click(button)
     expect(await screen.findAllByRole('menuitem')).toHaveLength(1)
   })
 
@@ -120,7 +121,8 @@ describe('<AppealCaseFilesOverview />', () => {
       </IntlProvider>,
     )
 
-    await userEvent.click(screen.getByRole('button'))
+    const button = await screen.findByRole('button')
+    await userEvent.click(button)
     expect(await screen.findAllByRole('menuitem')).toHaveLength(1)
   })
 
@@ -147,7 +149,8 @@ describe('<AppealCaseFilesOverview />', () => {
       </IntlProvider>,
     )
 
-    await userEvent.click(screen.getByRole('button'))
+    const button = await screen.findByRole('button')
+    await userEvent.click(button)
     expect(await screen.findAllByRole('menuitem')).toHaveLength(2)
   })
 })
