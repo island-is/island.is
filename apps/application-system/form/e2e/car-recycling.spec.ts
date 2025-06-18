@@ -2,11 +2,11 @@ import { expect, test as base, Page } from '@playwright/test'
 import {
   disableI18n,
   disablePreviousApplications,
-} from 'testing/e2e/disablers'
-import { session } from 'testing/e2e/session'
-import { helpers } from 'testing/e2e/locator-helpers'
+} from '@island.is/testing/e2e'
+import { session } from '@island.is/testing/e2e'
+import { helpers } from '@island.is/testing/e2e'
 import { carRecyclingMessages } from '@island.is/application/templates/car-recycling'
-import { label } from 'testing/e2e/i18n'
+import { label } from '@island.is/testing/e2e'
 import { coreMessages } from '@island.is/application/core'
 
 const homeUrl = '/umsoknir/skilavottord'

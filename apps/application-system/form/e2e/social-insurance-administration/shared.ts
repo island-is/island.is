@@ -1,8 +1,8 @@
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { expect, Page } from '@playwright/test'
 import { MessageDescriptor } from 'react-intl'
-import { label } from 'testing/e2e/i18n'
-import { helpers } from 'testing/e2e/locator-helpers'
+import { label } from '@island.is/testing/e2e'
+import { helpers } from '@island.is/testing/e2e'
 
 export const expectHeadingToBeVisible = async (
   page: Page,

@@ -5,25 +5,25 @@ import {
   getEnvironmentBaseUrl,
   TestEnvironment,
   urls,
-} from 'testing/e2e/urls'
+} from '@island.is/testing/e2e'
 import {
   disableI18n,
   disablePreviousApplications,
-} from 'testing/e2e/disablers'
+} from '@island.is/testing/e2e'
 import {
   employerFormMessages,
   parentalLeaveFormMessages,
 } from '@island.is/application/templates/parental-leave/messages'
 import { coreMessages } from '@island.is/application/core/messages'
-import { label } from 'testing/e2e/i18n'
+import { label } from '@island.is/testing/e2e'
 import {
   EmailAccount,
   makeEmailAccount,
-} from 'testing/e2e/email-account'
-import { helpers } from 'testing/e2e/locator-helpers'
-import { session } from 'testing/e2e/session'
+} from '@island.is/testing/e2e'
+import { helpers } from '@island.is/testing/e2e'
+import { session } from '@island.is/testing/e2e'
 import { setupXroadMocks } from './setup-xroad.mocks'
-import { createMockPdf, deleteMockPdf } from 'testing/e2e/utils'
+import { createMockPdf, deleteMockPdf } from '@island.is/testing/e2e'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 

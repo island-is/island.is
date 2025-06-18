@@ -3,14 +3,14 @@ import {
   createMockPdf,
   deleteMockPdf,
   sleep,
-} from 'testing/e2e/utils'
+} from '@island.is/testing/e2e'
 import {
   disableI18n,
   disablePreviousApplications,
   disableObjectKey,
   disableDelegations,
-} from 'testing/e2e/disablers'
-import { session } from 'testing/e2e/session'
+} from '@island.is/testing/e2e'
+import { session } from '@island.is/testing/e2e'
 
 const homeUrl = '/umsoknir/rekstrarleyfi'
 

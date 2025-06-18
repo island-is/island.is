@@ -2,8 +2,8 @@ import { expect, test as base, Page } from '@playwright/test'
 import {
   disableI18n,
   disablePreviousApplications,
-} from 'testing/e2e/disablers'
-import { session } from 'testing/e2e/session'
+} from '@island.is/testing/e2e'
+import { session } from '@island.is/testing/e2e'
 
 const homeUrl = '/umsoknir/akstursmat'
 

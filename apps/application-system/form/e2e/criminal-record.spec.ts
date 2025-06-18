@@ -1,9 +1,9 @@
 import { expect, test as base, Page } from '@playwright/test'
-import { disableI18n } from 'testing/e2e/disablers'
-import { session } from 'testing/e2e/session'
-import { createApplication } from 'testing/e2e/application'
+import { disableI18n } from '@island.is/testing/e2e'
+import { session } from '@island.is/testing/e2e'
+import { createApplication } from '@island.is/testing/e2e'
 import { m } from '@island.is/application/templates/criminal-record/messages'
-import { label } from 'testing/e2e/i18n'
+import { label } from '@island.is/testing/e2e'
 
 const homeUrl = '/umsoknir/sakavottord'
 

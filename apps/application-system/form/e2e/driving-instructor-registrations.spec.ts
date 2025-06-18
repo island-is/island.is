@@ -3,8 +3,8 @@ import {
   disableI18n,
   disablePreviousApplications,
   disableObjectKey,
-} from 'testing/e2e/disablers'
-import { session } from 'testing/e2e/session'
+} from '@island.is/testing/e2e'
+import { session } from '@island.is/testing/e2e'
 
 const homeUrl = '/umsoknir/okutimar'
 
