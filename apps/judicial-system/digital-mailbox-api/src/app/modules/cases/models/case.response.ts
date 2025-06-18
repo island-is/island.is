@@ -52,7 +52,7 @@ export class CaseResponse {
           subpoenas.length > 0
             ? isSuccessfulServiceStatus(subpoenas[0].serviceStatus)
             : false,
-        hasRulingBeenServed: true, // TODO: Implement logic to determine if the ruling has been served
+        hasRulingBeenServed: false, // TODO: Implement logic to determine if the ruling has been served
         groups: [
           {
             label: t.defendant,

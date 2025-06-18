@@ -10,6 +10,9 @@ export class Items {
   @ApiProperty({ type: String, enum: ['email', 'tel'] })
   linkType?: 'email' | 'tel'
 
-  @ApiProperty({ type: String, enum: ['richText'] })
+  @ApiProperty({
+    type: String,
+    enum: ['text', 'richText', 'accordion', 'radioButton'],
+  })
   type?: 'text' | 'richText' | 'accordion' | 'radioButton'
 }
