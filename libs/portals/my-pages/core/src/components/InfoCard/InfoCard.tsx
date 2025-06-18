@@ -37,7 +37,6 @@ import {
   Icon,
   IconProps,
   Inline,
-  LoadingDots,
   Tag,
   Text,
 } from '@island.is/island-ui/core'
@@ -47,6 +46,7 @@ import React from 'react'
 import { useWindowSize } from 'react-use'
 import LinkResolver from '../LinkResolver/LinkResolver'
 import * as styles from './InfoCard.css'
+import LoaderCard from './LoaderCard'
 import TimeCard from './TimeCard'
 
 interface InfoCardDetail {
@@ -106,7 +106,9 @@ export const InfoCard: React.FC<InfoCardProps> = ({
       <TimeCard title={title} data={appointment} description={description} />
     )
   }
-
+  if (loading) {
+    return <LoaderCard />
+  }
   return (
     <Box
       width={size === 'large' ? 'full' : undefined}
@@ -144,13 +146,11 @@ export const InfoCard: React.FC<InfoCardProps> = ({
                     marginBottom={variant === 'link' ? 0 : 1}
                     color="blue400"
                   >
-                    {loading ? <LoadingDots /> : title}
+                    {title}
                   </Text>
                   <Inline space={1}>
-                    <Text>{loading ? <LoadingDots /> : description}</Text>
-                    {!loading && icon && (
-                      <Icon icon={icon.type} color={icon.color} />
-                    )}
+                    <Text>{description}</Text>
+                    {icon && <Icon icon={icon.type} color={icon.color} />}
                   </Inline>
                 </Box>
               </Box>

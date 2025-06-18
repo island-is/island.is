@@ -5,7 +5,6 @@ import {
   LinkButton,
   SJUKRATRYGGINGAR_SLUG,
   TabNavigation,
-  m,
 } from '@island.is/portals/my-pages/core'
 import { messages } from '../../../lib/messages'
 import { healthNavigation } from '../../../lib/navigation'
@@ -21,7 +20,7 @@ export const PaymentsWrapper = ({ children, pathname }: Props) => {
   return (
     <IntroWrapper
       marginBottom={5}
-      title={formatMessage(messages.payments)}
+      title={formatMessage(messages.paymentsAndRights)}
       intro={formatMessage(messages.paymentsIntro)}
       serviceProviderSlug={SJUKRATRYGGINGAR_SLUG}
       serviceProviderTooltip={formatMessage(messages.healthTooltip)}

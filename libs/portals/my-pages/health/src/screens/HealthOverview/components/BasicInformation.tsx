@@ -1,57 +1,31 @@
 import {
   HealthDirectorateOrganDonor,
   RightsPortalHealthCenterRegistrationHistory,
-  RightsPortalInsuranceOverview,
 } from '@island.is/api/schema'
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import {
-  formatDate,
-  InfoCardGrid,
-  isDateAfterToday,
-} from '@island.is/portals/my-pages/core'
+import { InfoCardGrid } from '@island.is/portals/my-pages/core'
 import React from 'react'
 import { messages } from '../../..'
 import { HealthPaths } from '../../../lib/paths'
+import { DataState } from '../../../utils/types'
 
 interface Props {
-  healthCenterData?: RightsPortalHealthCenterRegistrationHistory | null
-  healthCenterLoading: boolean
-  healthCenterError: boolean
-  dentistsData?: string | null
-  dentistsLoading: boolean
-  dentistError: boolean
-  insuranceData?: RightsPortalInsuranceOverview | null
-  insuranceLoading: boolean
-  insuranceError: boolean
-  donorData?: Pick<
+  healthCenter: DataState<RightsPortalHealthCenterRegistrationHistory | null>
+  dentists: DataState<string | null>
+  donor: DataState<Pick<
     HealthDirectorateOrganDonor,
     'isDonor' | 'limitations'
-  > | null
-  donorLoading: boolean
-  donorError: boolean
+  > | null>
 }
 const BasicInformation: React.FC<Props> = ({
-  healthCenterData,
-  healthCenterLoading,
-  healthCenterError,
-  dentistsData,
-  dentistsLoading,
-  dentistError,
-  donorData,
-  donorLoading,
-  donorError,
-  insuranceData,
-  insuranceLoading,
-  insuranceError,
+  healthCenter,
+  dentists,
+  donor,
 }) => {
   const { formatMessage } = useLocale()
 
-  const doctor = healthCenterData?.current?.doctor
-  const isInsuranceCardValid = isDateAfterToday(
-    insuranceData?.ehicCardExpiryDate ?? undefined,
-  )
-  const isInsured = insuranceData?.isInsured
+  const doctor = healthCenter.data?.current?.doctor
 
   return (
     <Box>
@@ -60,11 +34,11 @@ const BasicInformation: React.FC<Props> = ({
       </Text>
       <InfoCardGrid
         cards={[
-          healthCenterError
+          healthCenter.error
             ? null
             : {
                 title:
-                  healthCenterData?.current?.healthCenterName ??
+                  healthCenter.data?.current?.healthCenterName ??
                   formatMessage(messages.healthCenterNoHealthCenterRegistered),
                 description: doctor
                   ? formatMessage(messages.healthCenterDoctorLabel, {
@@ -72,74 +46,31 @@ const BasicInformation: React.FC<Props> = ({
                     })
                   : formatMessage(messages.healthCenterNoDoctor),
                 to: HealthPaths.HealthCenter,
-                loading: healthCenterLoading,
+                loading: healthCenter.loading,
               },
-          dentistError
+          dentists.error
             ? null
             : {
                 title: formatMessage(messages.dentist),
                 description:
-                  dentistsData ?? formatMessage(messages.noDentistRegistered),
-                to: HealthPaths.HealthDentists, // TODO -> Hvert fer þessi síða
-                loading: dentistsLoading,
+                  dentists.data ?? formatMessage(messages.noDentistRegistered),
+                to: HealthPaths.HealthDentists,
+                loading: dentists.loading,
               },
-          insuranceError
-            ? null
-            : {
-                title: formatMessage(messages.hasHealthInsurance),
-                description: `${formatMessage(messages.from)} ${formatDate(
-                  insuranceData?.from,
-                )}`,
-                to: HealthPaths.HealthInsurance, // TODO -> Hvert fer þessi síða
-                icon: {
-                  color: isInsured ? 'mint600' : 'red400',
-                  type: isInsured ? 'checkmarkCircle' : 'closeCircle',
-                },
-                loading: insuranceLoading,
-              },
-          insuranceError
-            ? null
-            : {
-                title: formatMessage(messages.ehic),
-                description: `${formatMessage(
-                  isInsuranceCardValid
-                    ? messages.medicineValidTo
-                    : messages.medicineIsExpiredCertificate,
-                )} ${formatDate(insuranceData?.ehicCardExpiryDate)}`,
-                to: HealthPaths.HealthInsurance, // TODO -> Hvert fer þessi síða
-                icon: {
-                  color: isInsuranceCardValid ? 'mint600' : 'red400',
-                  type: isInsuranceCardValid
-                    ? 'checkmarkCircle'
-                    : 'closeCircle',
-                },
-                loading: insuranceLoading,
-              },
-          donorError
+
+          donor.error
             ? null
             : {
                 title: formatMessage(messages.organDonation),
-                description: donorData?.isDonor
+                description: donor.data?.isDonor
                   ? formatMessage(messages.youAreOrganDonor)
-                  : donorData?.limitations?.hasLimitations
+                  : donor.data?.limitations?.hasLimitations
                   ? formatMessage(messages.youAreOrganDonorWithExceptions)
                   : formatMessage(messages.youAreNotOrganDonor),
 
                 to: HealthPaths.HealthOrganDonation,
-                loading: donorLoading,
+                loading: donor.loading,
               },
-          // TODO: Kemur inn þegar blóðflokka pull requestan er komin inn
-          // {
-          //   title: 'Blóðflokkur',
-          //   description: 'Þú ert í blóðflokki A+',
-          //   to: HealthPaths.HealthCenter,
-          // },
-          // TODO: Kemur inn þegar ofnæmisþjónustan er ready
-          // {
-          //   title: 'Ofnæmi',
-          //   description: 'Ekkert skráð ofnæmi',
-          //   to: HealthPaths.HealthCenter,
-          // },
         ]}
         empty={{
           title: formatMessage(messages.noBasicInfo),

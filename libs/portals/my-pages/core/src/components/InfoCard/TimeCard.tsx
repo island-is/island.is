@@ -26,6 +26,20 @@ interface AppointmentCardProps {
   size?: 'small' | 'large'
 }
 
+// Example of a timecard
+// {
+//   title: 'Mæðravernd',
+//   description: 'Tími hjá: Sigríður Gunnarsdóttir',
+//   appointment: {
+//     date: 'Fimmtudaginn, 03.04.2025',
+//     time: '11:40',
+//     location: {
+//       label: 'Heilsugæslan við Ásbrú',
+//       href: HealthPaths.HealthCenter,
+//     },
+//   },
+// },
+
 const TimeCard: React.FC<AppointmentCardProps> = ({
   title,
   description,

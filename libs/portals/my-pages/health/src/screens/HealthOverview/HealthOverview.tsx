@@ -1,11 +1,9 @@
-import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
+import { GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { InfoCardGrid } from '@island.is/portals/my-pages/core'
 import subYears from 'date-fns/subYears'
 import { useWindowSize } from 'react-use'
 import { messages } from '../../lib/messages'
-import { HealthPaths } from '../../lib/paths'
 import { CONTENT_GAP_LG } from '../../utils/constants'
 import {
   useGetDentistOverviewQuery,
@@ -15,9 +13,9 @@ import {
   useGetMedicinePaymentOverviewQuery,
   useGetPaymentsOverviewQuery,
 } from './HealthOverview.generated'
-import Appointments from './components/Appointments'
+
 import BasicInformation from './components/BasicInformation'
-import PaymentsAndMedicine from './components/PaymentsAndMedicine'
+import PaymentsAndRights from './components/PaymentsAndRights'
 
 const DEFAULT_DATE_TO = new Date()
 const DEFAULT_DATE_FROM = subYears(DEFAULT_DATE_TO, 10)
@@ -70,13 +68,13 @@ export const HealthOverview = () => {
     data: paymentOverviewData,
     loading: paymentOverviewLoading,
     error: paymentOverviewError,
-  } = useGetPaymentsOverviewQuery({})
+  } = useGetPaymentsOverviewQuery()
 
   const {
     data: medicinePaymentOverviewData,
     loading: medicinePaymentOverviewLoading,
     error: medicinePaymentOverviewError,
-  } = useGetMedicinePaymentOverviewQuery({})
+  } = useGetMedicinePaymentOverviewQuery()
 
   const currentMedicinePeriod =
     medicinePaymentOverviewData?.rightsPortalDrugPeriods[0] ?? null
@@ -96,92 +94,43 @@ export const HealthOverview = () => {
           </>
         </GridColumn>
       </GridRow>
-      {/* Appointments - just temp for displaying */}
-      <Appointments />
-      <Box>
-        <Text
-          variant="eyebrow"
-          color="foregroundBrandSecondary"
-          marginBottom={2}
-        >
-          Empty state - TESTING ONLY
-        </Text>
-
-        <InfoCardGrid
-          empty={{
-            title: 'Engir tímar',
-            description: 'Engar tímabókanir framundan.',
-          }}
-          cards={[]}
-          size="small"
-        />
-        <InfoCardGrid
-          empty={{
-            title: 'Engir tímar',
-            description: 'Engar tímabókanir framundan.',
-          }}
-          cards={[]}
-          size="large"
-        />
-      </Box>
-      {/* Payments and medicine payments */}
-      <PaymentsAndMedicine
-        paymentsData={paymentOverviewData?.rightsPortalCopaymentStatus}
-        paymentsLoading={paymentOverviewLoading}
-        paymentsError={!!paymentOverviewError}
-        medicineData={currentMedicinePeriod}
-        medicineLoading={medicinePaymentOverviewLoading}
-        medicineError={!!medicinePaymentOverviewError}
+      {/* Appointments */}
+      {/* Payments, medicine and insurance overview */}
+      <PaymentsAndRights
+        payments={{
+          data: paymentOverviewData?.rightsPortalCopaymentStatus,
+          loading: paymentOverviewLoading,
+          error: !!paymentOverviewError,
+        }}
+        medicine={{
+          data: currentMedicinePeriod,
+          loading: medicinePaymentOverviewLoading,
+          error: !!medicinePaymentOverviewError,
+        }}
+        insurance={{
+          data: data?.rightsPortalInsuranceOverview,
+          loading: loading,
+          error: !!error,
+        }}
       />
-      {/* Temp for empty screen display */}
-      <Box>
-        <Text
-          variant="eyebrow"
-          color="foregroundBrandSecondary"
-          marginBottom={2}
-        >
-          {formatMessage(messages.myPregnancy)}
-        </Text>
-        <InfoCardGrid
-          empty={{
-            title: 'Engar upplýsingar um meðgöngu',
-            description: 'Engar upplýsingar um meðgöngu fundust.',
-          }}
-          cards={[
-            {
-              title: 'Meðgangan mín ',
-              description:
-                'Hér getur þú séð fundið allar upplýsingar sem tengjast meðgöngu þinni',
-              size: 'large',
-              to: HealthPaths.HealthOrganDonation,
-              detail: [
-                { label: 'Lengd meðgöngu', value: '19 vikur + 2 dagar' },
-                { label: 'Væntanlegur fæðingardagur.', value: '08.07.2025' },
-              ],
-              img: './assets/images/baby.svg',
-            },
-          ]}
-          size="large"
-        />
-      </Box>
-      {/* Displaying basic information like healthcenter, dentist, */}
+      {/* Displaying basic information like healthcenter, dentist etc, */}
       <BasicInformation
-        healthCenterData={
-          healthCenterData?.rightsPortalHealthCenterRegistrationHistory
-        }
-        healthCenterLoading={healthCenterLoading}
-        healthCenterError={!!healthCenterError}
-        dentistsData={
-          dentistsData?.rightsPortalUserDentistRegistration?.dentist?.name
-        }
-        dentistsLoading={dentistsLoading}
-        dentistError={!!dentistsError}
-        insuranceData={data?.rightsPortalInsuranceOverview}
-        insuranceLoading={loading}
-        insuranceError={!!error}
-        donorData={donorStatusData?.healthDirectorateOrganDonation.donor}
-        donorLoading={donorStatusLoading}
-        donorError={!!donorStatusError}
+        healthCenter={{
+          data: healthCenterData?.rightsPortalHealthCenterRegistrationHistory,
+          loading: healthCenterLoading,
+          error: !!healthCenterError,
+        }}
+        dentists={{
+          data: dentistsData?.rightsPortalUserDentistRegistration?.dentist
+            ?.name,
+          loading: dentistsLoading,
+          error: !!dentistsError,
+        }}
+        donor={{
+          data: donorStatusData?.healthDirectorateOrganDonation.donor,
+          loading: donorStatusLoading,
+          error: !!donorStatusError,
+        }}
       />
     </>
   )
