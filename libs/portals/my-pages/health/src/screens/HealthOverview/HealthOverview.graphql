@@ -1,21 +1,50 @@
+query getHealthCenterOverview($input: RightsPortalHealthCenterHistoryInput) {
+  rightsPortalHealthCenterRegistrationHistory(input: $input) {
+    current {
+      healthCenterName
+      doctor
+    }
+  }
+}
+
+query getDentistOverview($input: RightsPortalDentistBillsInput!) {
+  rightsPortalUserDentistRegistration(input: $input) {
+    dentist {
+      name
+    }
+  }
+}
+
+query getDonorStatusOverview($locale: String) {
+  healthDirectorateOrganDonation(locale: $locale) {
+    donor {
+      isDonor
+      limitations {
+        hasLimitations
+      }
+    }
+  }
+}
+
 query getInsuranceOverview {
   rightsPortalInsuranceOverview {
     isInsured
-    explanation
     from
-    status {
-      display
-      code
-    }
-    maximumPayment
     ehicCardExpiryDate
   }
 }
 
-query getInsuranceConfirmation {
-  rightsPortalInsuranceConfirmation {
-    fileName
-    contentType
-    data
+query getPaymentsOverview {
+  rightsPortalCopaymentStatus {
+    maximumMonthlyPayment
+    maximumPayment
+  }
+}
+
+query getMedicinePaymentOverview {
+  rightsPortalDrugPeriods {
+    paymentStatus
+    levelNumber
+    levelPercentage
   }
 }
