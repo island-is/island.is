@@ -18,8 +18,8 @@ import { EntryContext, useEntryContext } from './entryContext'
 import { SitemapNode } from './SitemapNode'
 import {
   addNode as addNodeUtil,
-  findNodes,
   findNodeParentAndIndex as findNodeParentAndIndexUtil,
+  findNodes,
   moveNode as moveNodeUtil,
   removeNode as removeNodeUtil,
   type Tree,
