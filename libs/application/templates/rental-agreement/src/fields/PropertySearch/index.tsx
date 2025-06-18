@@ -27,6 +27,7 @@ import { PropertyTableUnits } from './components/PropertyTableUnits'
 import { registerProperty } from '../../lib/messages'
 
 const ERROR_ID = 'registerProperty'
+const EMPTY_OBJECT = {}
 
 interface Props extends FieldBaseProps {
   field: CustomField
@@ -377,7 +378,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
       <Box>
         <Controller
           name={`${id}`}
-          defaultValue=""
+          defaultValue={EMPTY_OBJECT}
           render={({ field: { onChange } }) => {
             return (
               <AsyncSearch
@@ -522,24 +523,24 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
               </T.Table>
             )
           )}
-          {hasValidationErrors && (
-            <Box marginTop={8}>
-              {errors?.registerProperty?.['searchresults'] && (
-                <AlertMessage
-                  type="error"
-                  title={errors?.registerProperty?.['searchresults']}
-                />
+        </Box>
+      )}
+      {hasValidationErrors && (
+        <Box marginTop={4}>
+          {errors?.registerProperty?.['searchresults'] && (
+            <AlertMessage
+              type="error"
+              title={errors?.registerProperty?.['searchresults']}
+            />
+          )}
+          {errors?.registerProperty?.['searchresults.units'] && (
+            <AlertMessage
+              type="error"
+              message={errors?.registerProperty?.['searchresults.units']}
+              title={formatMessage(
+                registerProperty.search.searchResultsErrorBannerTitle,
               )}
-              {errors?.registerProperty?.['searchresults.units'] && (
-                <AlertMessage
-                  type="error"
-                  message={errors?.registerProperty?.['searchresults.units']}
-                  title={formatMessage(
-                    registerProperty.search.searchResultsErrorBannerTitle,
-                  )}
-                />
-              )}
-            </Box>
+            />
           )}
         </Box>
       )}
