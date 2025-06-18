@@ -143,6 +143,7 @@ export const VehicleBulkMileageSubData = ({
           }}
         />
       ) : undefined}
+      <Box marginTop={2}>{}</Box>
       <Box marginTop={2}>
         <Inline space={1}>
           <LinkResolver
@@ -161,14 +162,6 @@ export const VehicleBulkMileageSubData = ({
               {formatMessage(vehicleMessage.viewRegistrationHistory)}
             </Button>
           </LinkResolver>
-          <LinkButton
-            key="finance"
-            to={AssetsPaths.LinkFinanceTransactionVehicleMileage}
-            text={formatMessage(vehicleMessage.financeMileageLink)}
-            icon="arrowForward"
-            variant="utility"
-            colorScheme="white"
-          />
         </Inline>
       </Box>
     </Box>

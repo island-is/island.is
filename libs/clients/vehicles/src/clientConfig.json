@@ -2,7 +2,7 @@
   "openapi": "3.0.4",
   "info": {
     "title": "SamgÃ¶ngustofa",
-    "description": "Leitar eftir Ã¶kutÃ¦kjum Ãºt frÃ¡ fastanÃºmeri, skrÃ¡ningarnÃºmeri eÃ°a verksmiÃ°junÃºmeri - Release-57 : 20250612.2",
+    "description": "Leitar eftir Ã¶kutÃ¦kjum Ãºt frÃ¡ fastanÃºmeri, skrÃ¡ningarnÃºmeri eÃ°a verksmiÃ°junÃºmeri - Release-58 : 20250618.1",
     "contact": {
       "name": "Samgongustofa",
       "url": "https://www.samgongustofa.is/",
@@ -1815,6 +1815,9 @@
           "requiresMileageRegistration": {
             "type": "boolean",
             "nullable": true
+          },
+          "availableMileageRegistration": {
+            "type": "boolean"
           },
           "canRegisterMileage": {
             "type": "boolean",

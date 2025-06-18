@@ -101,6 +101,7 @@ export const mapVehicleResponseDto = (
                     internalId: d.latestMileageInternalId ?? undefined,
                   }
                 : undefined,
+
             canRegisterMileage: d.canRegisterMilage ?? undefined,
             requiresMileageRegistration:
               d.requiresMileageRegistration ?? undefined,
