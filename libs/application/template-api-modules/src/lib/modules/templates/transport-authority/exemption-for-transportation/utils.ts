@@ -33,7 +33,7 @@ export const mapEnumByValue = <
 >(
   fromEnum: FromEnum,
   toEnum: ToEnum,
-  values: (keyof FromEnum)[],
+  enumValues: Array<FromEnum[keyof FromEnum]>,
 ): ToEnum[keyof ToEnum][] => {
   const valueMap = Object.values(fromEnum).reduce<
     Record<string, ToEnum[keyof ToEnum]>
@@ -44,8 +44,8 @@ export const mapEnumByValue = <
     return acc
   }, {})
 
-  return values
-    .map((key) => valueMap[fromEnum[key]])
+  return enumValues
+    .map((val) => valueMap[val])
     .filter((v): v is ToEnum[keyof ToEnum] => v !== undefined)
 }
 
