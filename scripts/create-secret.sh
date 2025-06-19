@@ -17,18 +17,11 @@ MIN_LENGTH="6"
 MAX_LENGTH="128"
 
 # Secret name can only be alphanumeric and dash
-ALPHANUMERIC_DASH="^[a-zA-Z0-9\//_-]"
+ALPHANUMERIC_DASH="^[a-zA-Z0-9\/\_-]+$"
 
-# Atleast one valid char
-ONE_OR_MORE="+$"
-# END="$"
-# Exclude whitespaces
 ILLEGAL_CHARS="*[[:space:]]*"
-HAS_SLASH_END="[^\/]"
+HAS_SLASH_END="[^\/]$"
 SECRET_TYPE_OPTIONS='(SecureString|String)'
-
-# Complete pattern
-# PATTERN=$ALPHANUMERIC_DASH$MIN_LENGTH$HAS_SLASH_END$END
 
 print_help() {
   cat <<EOF
@@ -42,10 +35,11 @@ ${BLUE}Commands:${RESET}
          [--type <String|SecureString>]
          [--tags "Key=K,Value=V ..."]   Non-interactively create a secret
 
-  validate_length <string>         Validate that input is 6–128 characters
+  validate_length <string>         Validate that input is ${MIN_LENGTH}–${MAX_LENGTH} characters
   validate_chars <string>          Validate that input contains only letters, numbers, /, -, _
   validate_whitespace <string>     Validate that input contains no whitespace
   validate_empty <string>          Validate that input is non-empty
+  validate_slash <string>          Validate that input has no trailing slashes
 
 ${BLUE}Options:${RESET}
   -h, --help                       Show this help message and exit
@@ -58,157 +52,161 @@ EOF
 }
 
 __error_exit() {
-  # printf "${RED}[ERROR]: $*${NOSTYLE}" >&2; exit 1;
   printf "%s[ERROR]: $*%s\n" "$RED" "$RESET" >&2
   exit 1
 }
 
-error_empty() {
-  __error_exit "No empty values"
-}
-
 validate_empty() {
-  [[ -n "$1" ]] || __error_exit "No empty values"
+  local input="$1"
+  [[ -n "$input" ]] || __error_exit "Input cannot be empty."
 }
 
 validate_slash() {
-  [[ ! $1 =~ $HAS_SLASH_END ]] || __error_exit "No trailing slashes allowed"
-  printf "%sNo ending slash: Ok!%s" "$GREEN" "$RESET"
+  local input="$1"
+  [[ ! "$input" =~ $HAS_SLASH_END ]] || __error_exit "No trailing slashes allowed."
 }
 
 validate_whitespace() {
-  if [ ! ${1+x} ]; then error_empty; fi
+  local input="$1"
+  validate_empty "$input"
   # shellcheck disable=SC2053
-  if [[ $1 = $ILLEGAL_CHARS ]]; then
-    __error_exit "Whitespaces are not allowed"
+  if [[ "$input" = $ILLEGAL_CHARS ]]; then
+    __error_exit "Whitespaces are not allowed."
   fi
 }
 
 validate_chars() {
-  if [ ! ${1+x} ]; then error_empty; fi
-  if [[ $1 =~ $ALPHANUMERIC_DASH$ONE_OR_MORE ]]; then
-    printf "%sName: Ok! %s\n" "$GREEN" "$RESET"
+  local input="$1"
+  validate_empty "$input"
+  if [[ "$input" =~ $ALPHANUMERIC_DASH ]]; then
+    : # Valid
   else
-    __error_exit "Secret name can only contain letters, numbers, hyphens and underscores"
+    __error_exit "Secret name can only contain letters, numbers, hyphens, underscores, and forward slashes."
   fi
 }
 
 validate_length() {
-  if [ ! ${1+x} ]; then error_empty; fi
-  if ((${#1} < MIN_LENGTH || ${#1} > MAX_LENGTH)); then
-    __error_exit "Too short, should be 6-256 characters long."
-  else
-    printf "%sLength: Ok! %s\n" "$GREEN" "$RESET"
+  local input="$1"
+  validate_empty "$input"
+  if ((${#input} < MIN_LENGTH || ${#input} > MAX_LENGTH)); then
+    __error_exit "Length must be between ${MIN_LENGTH} and ${MAX_LENGTH} characters."
   fi
 }
 
 validate_type() {
-  if [ ! ${1+x} ]; then error_empty; fi
-  if [[ ! "$SECRET_TYPE" =~ ^$SECRET_TYPE_OPTIONS$ ]]; then
-    __error_exit "Secret type not one of $SECRET_TYPE_OPTIONS."
-  else
-    printf "%sType: Ok! %s\n" "$GREEN" "$RESET"
+  local input_type="$1"
+  validate_empty "$input_type"
+  if [[ ! "$input_type" =~ ^$SECRET_TYPE_OPTIONS$ ]]; then
+    __error_exit "Secret type must be one of $SECRET_TYPE_OPTIONS."
   fi
-}
-
-validate_all() {
-  validate_whitespace "$SECRET_NAME"
-  validate_chars "$SECRET_NAME"
-  validate_length "$SECRET_NAME"
-  validate_whitespace "$SECRET_VALUE"
-  validate_length "$SECRET_VALUE"
-  validate_type "$SECRET_TYPE"
 }
 
 #-------------------CREATE SECRET--------------------------#
 parse_create_args() {
+  local _secret_name=""
+  local _secret_value=""
+  local _secret_type=""
+  local _tags=""
+
   while [[ $# -gt 0 ]]; do
     case "$1" in
     --name)
-      SECRET_NAME="$2"
-      validate_empty "$SECRET_NAME" >/dev/null
-      validate_length "$SECRET_NAME" >/dev/null
-      validate_chars "$SECRET_NAME" >/dev/null
-      validate_whitespace "$SECRET_NAME" >/dev/null
+      _secret_name="$2"
       shift 2
       ;;
     --value)
-      SECRET_VALUE="$2"
-      validate_empty "$SECRET_VALUE" >/dev/null
+      _secret_value="$2"
       shift 2
       ;;
     --type)
-      SECRET_TYPE="$2"
-      validate_type "$SECRET_TYPE" >/dev/null
+      _secret_type="$2"
       shift 2
       ;;
     --tags)
-      TAGS="$2"
+      _tags="$2"
       shift 2
       ;;
     *)
-      __error_exit "Unknown option: $1" >&2
+      __error_exit "Unknown option: $1"
       ;;
     esac
   done
+
+  prepare_secret "$_secret_name" "$_secret_value" "$_secret_type" "$_tags"
 }
+
 prepare_secret() {
+  local _secret_name="${1:-}"
+  local _secret_value="${2:-}"
+  local _secret_type="${3:-}"
+  local _tags="${4:-}"
+
   # Prompt user for secret name
-  [[ -n "$SECRET_NAME" ]] || read -erp "${BLUE}Secret name: ${RESET}${SSM_PREFIX}" SECRET_NAME
-  validate_whitespace "$SECRET_NAME"
-  validate_chars "$SECRET_NAME"
-  validate_length "$SECRET_NAME"
-  validate_slash "$SECRET_NAME"
+  if [[ -z "$_secret_name" ]]; then
+    read -erp "${BLUE}Secret name: ${RESET}${SSM_PREFIX}" _secret_name
+  fi
+  validate_empty "$_secret_name"
+  validate_whitespace "$_secret_name"
+  validate_chars "$_secret_name"
+  validate_length "$_secret_name"
+  validate_slash "$_secret_name"
 
   # Prompt user for secret value
-  [[ -n "$SECRET_VALUE" ]] || read -erp "${BLUE}Secret value: ${RESET}" SECRET_VALUE
-  validate_whitespace "$SECRET_VALUE"
-  validate_length "$SECRET_VALUE"
+  if [[ -z "$_secret_value" ]]; then
+    read -erp "${BLUE}Secret value: ${RESET}" _secret_value
+  fi
+  validate_empty "$_secret_value"
+  validate_whitespace "$_secret_value"
+  validate_length "$_secret_value"
 
   # Prompt user for secret type
-  if [[ -z "$SECRET_TYPE" ]]; then
-    read -erp "${BLUE}SecureString [Y/n]? ${RESET}"
+  if [[ -z "$_secret_type" ]]; then
+    read -erp "${BLUE}Use SecureString (Y/n)? ${RESET}"
     if [[ $REPLY =~ ^[Nn]$ ]]; then
-      SECRET_TYPE="String"
+      _secret_type="String"
     else
-      SECRET_TYPE="SecureString"
+      _secret_type="SecureString"
     fi
-    printf "%s$SECRET_TYPE selected%s\n" "$GREEN" "$RESET"
+    printf "%s%s selected%s\n" "$GREEN" "$_secret_type" "$RESET"
   fi
-  validate_type "$SECRET_TYPE"
+  validate_type "$_secret_type"
 
   # Prompt user for adding tags
-  if [[ "${TAGS-unset}" == unset ]]; then
-    read -erp "${BLUE}Add tags? [y/N]? ${RESET}"
+  if [[ -z "$_tags" ]]; then
+    read -erp "${BLUE}Add tags (y/N)? ${RESET}"
     if [[ $REPLY =~ ^[Yy]$ ]]; then
-      read -erp "${YELLOW}Example: Key=Foo,Value=Bar Key=Another,Value=Tag: ${RESET}" TAGS
+      read -erp "${YELLOW}Enter tags (e.g., 'Key=Env,Value=Prod Key=Owner,Value=Team'): ${RESET}" _tags
     fi
   fi
-  read -erp "${YELLOW}Create secret '$SSM_PREFIX$SECRET_NAME' [Y/n]? ${RESET}"
+
+  read -erp "${YELLOW}Create secret '${SSM_PREFIX}${_secret_name}' [Y/n]? ${RESET}"
   if [[ $REPLY =~ ^[Nn]$ ]]; then
-    printf "%sAborting...%s" "$RED" "$RESET"
+    printf "%sAborting...%s\n" "$RED" "$RESET"
   else
-    printf "%sCreating /k8s/$SECRET_NAME as $SECRET_TYPE%s\n" "$GREEN" "$RESET"
-    create_secret "$SECRET_NAME" "$SECRET_VALUE" "$SECRET_TYPE" "$TAGS"
+    printf "%sCreating %s%s as %s%s\n" "$GREEN" "$SSM_PREFIX" "$_secret_name" "$_secret_type" "$RESET"
+    create_secret "$_secret_name" "$_secret_value" "$_secret_type" "$_tags"
   fi
 }
 
 create_secret() {
-  SECRET_NAME=$1
-  SECRET_VALUE=$2
-  SECRET_TYPE=$3
-  TAGS=$4
-  CMD="aws ssm put-parameter --name $SSM_PREFIX$SECRET_NAME --value $SECRET_VALUE --type $SECRET_TYPE"
+  local secret_name="$1"
+  local secret_value="$2"
+  local secret_type="$3"
+  local tags="$4"
 
-  if [ -n "$TAGS" ]; then
-    CMD="$CMD --tags $TAGS"
+  local cmd=(aws ssm put-parameter --name "${SSM_PREFIX}${secret_name}" --value "$secret_value" --type "$secret_type")
+
+  if [[ -n "$tags" ]]; then
+    # shellcheck disable=SC2206
+    cmd+=(--tags $tags) # Tags are space-separated, so no quotes here
   fi
-  eval "$CMD"
-  printf "%sDone!%s" "$GREEN" "$RESET"
+
+  "${cmd[@]}"
+  printf "%sDone!%s\n" "$GREEN" "$RESET"
 }
 
 case "$1" in
-validate_length | validate_chars | validate_whitespace | validate_empty | validate_slash | __error_exit)
+validate_length | validate_chars | validate_whitespace | validate_empty | validate_slash | validate_type | __error_exit)
   "$@"
   exit 0
   ;;
@@ -218,7 +216,6 @@ create)
     prepare_secret
   else
     parse_create_args "$@"
-    prepare_secret "$SECRET_NAME" "$SECRET_VALUE" "$SECRET_TYPE" "$TAGS"
   fi
   ;;
 --help | -h)
