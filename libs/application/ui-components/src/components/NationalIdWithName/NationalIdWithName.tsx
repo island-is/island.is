@@ -158,6 +158,7 @@ export const NationalIdWithName: FC<
           ) {
             setValue(nameField, '')
           } else if (
+            searchPersons &&
             searchCompanies &&
             companyData?.companyRegistryCompany === null
           ) {
@@ -191,7 +192,11 @@ export const NationalIdWithName: FC<
           companyData?.companyRegistryCompany === null
         ) {
           setValue(nameField, '')
-        } else if (searchPersons && data?.identity === null) {
+        } else if (
+          searchPersons &&
+          searchCompanies &&
+          data?.identity === null
+        ) {
           setValue(nameField, '')
         }
       },
@@ -265,7 +270,13 @@ export const NationalIdWithName: FC<
                 )
               }
             })}
-            loading={searchPersons ? queryLoading : companyQueryLoading}
+            loading={
+              searchPersons
+                ? queryLoading
+                : searchCompanies
+                ? companyQueryLoading
+                : undefined
+            }
             error={nationalIdFieldErrors}
             disabled={disabled}
             clearOnChange={clearOnChange}

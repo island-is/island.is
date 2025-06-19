@@ -18,6 +18,7 @@ export class DocumentBuilder {
   private readonly customDocuments: DocumentTypeFilter[] = [
     {
       senderName: 'Ríkisskattstjóri',
+      // eslint-disable-next-line local-rules/disallow-kennitalas
       senderNatReg: '5402696029',
       subjectContains: 'Niðurstaða álagningar',
       url: 'https://thjonustusidur.rsk.is/alagningarsedill',
@@ -25,6 +26,7 @@ export class DocumentBuilder {
     },
     {
       senderName: 'Ríkisskattstjóri',
+      // eslint-disable-next-line local-rules/disallow-kennitalas
       senderNatReg: '5402696029',
       subjectContains: 'Skjöl send í undirritun fyrir umsókn',
       url: '',

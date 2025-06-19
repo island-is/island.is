@@ -138,7 +138,7 @@ export const m = defineMessages({
   },
   numberOfSignatures: {
     id: 'admin-portal.signature-collection:numberOfSignatures',
-    defaultMessage: 'Fjöldi framboða: ',
+    defaultMessage: 'Fjöldi undirskrifta',
     description: '',
   },
   parliamentaryCollectionTitle: {
