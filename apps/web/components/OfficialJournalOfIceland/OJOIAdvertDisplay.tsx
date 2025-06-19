@@ -1,3 +1,5 @@
+import c from 'classnames'
+
 import { Box, Text } from '@island.is/island-ui/core'
 import { OfficialJournalOfIcelandAdvertAppendix } from '@island.is/web/graphql/schema'
 
@@ -51,7 +53,7 @@ export const OJOIAdvertDisplay = ({
         <Text variant="h4">{advertSubject}</Text>
       </Box>
       <Box
-        className={isLegacy ? s.bodyText : s.bodyText}
+        className={c(s.bodyText, 'ojoi-advert-display-wrapper')}
         dangerouslySetInnerHTML={{ __html: advertText }}
       ></Box>
       <Appendixes additions={additions ?? []} />
