@@ -1,6 +1,12 @@
 import { BrowserContext, expect, test } from '@playwright/test'
 import { messages as m } from '@island.is/portals/my-pages/documents/messages'
-import { icelandicAndNoPopupUrl, urls, session, label, helpers, disableI18n } from '@island.is/testing/e2e'
+import {
+  icelandicAndNoPopupUrl,
+  urls,
+  session,
+  label,
+  disableI18n,
+} from '@island.is/testing/e2e'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
@@ -21,32 +27,32 @@ test.describe('Service portal', () => {
   const servicePortalHome = icelandicAndNoPopupUrl('/minarsidur')
   test('should have clickable navigation bar', async () => {
     const page = await context.newPage()
-    const { findByRole } = helpers(page)
     await page.goto(icelandicAndNoPopupUrl(servicePortalHome))
-    await expect(findByRole('link', 'Pósthólf').first()).toBeVisible()
+    await expect(
+      page.getByRole('link', { name: 'Pósthólf' }).first(),
+    ).toBeVisible()
   })
   test('should have user Gervimaður Afríka logged in', async () => {
     const page = await context.newPage()
-    const { findByRole } = helpers(page)
     await page.goto(icelandicAndNoPopupUrl(servicePortalHome))
-    await expect(findByRole('heading', 'Gervimaður Afríka')).toBeVisible()
+    await expect(
+      page.getByRole('heading', { name: 'Gervimaður Afríka' }),
+    ).toBeVisible()
   })
   test('should have Pósthólf', async () => {
     const page = await context.newPage()
     await disableI18n(page)
-    const { findByRole } = helpers(page)
     await page.goto(icelandicAndNoPopupUrl(servicePortalHome))
-    await findByRole('link', 'Pósthólf').click()
+    await page.getByRole('link', { name: 'Pósthólf' }).click()
     await expect(page.getByText(label(m.pickDocument))).toBeVisible()
   })
   test('should change language', async () => {
     const page = await context.newPage()
-    const { findByTestId } = helpers(page)
     await page.goto(icelandicAndNoPopupUrl(servicePortalHome))
 
-    const languageButton = findByTestId('language-switcher-button')
+    const languageButton = page.getByTestId('language-switcher-button')
     await languageButton.click()
-    const greeting = findByTestId('greeting')
+    const greeting = page.getByTestId('greeting')
 
     await expect(languageButton).toContainText('IS')
     await expect(greeting).toContainText(/(?:day|evening)/)

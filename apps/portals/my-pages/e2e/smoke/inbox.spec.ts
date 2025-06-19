@@ -1,5 +1,12 @@
 import { test, BrowserContext, expect } from '@playwright/test'
-import { sleep, icelandicAndNoPopupUrl, urls, session, label, disableI18n } from '@island.is/testing/e2e'
+import {
+  sleep,
+  icelandicAndNoPopupUrl,
+  urls,
+  session,
+  label,
+  disableI18n,
+} from '@island.is/testing/e2e'
 import { messages } from '@island.is/portals/my-pages/documents/messages'
 import { m } from '@island.is/portals/my-pages/core/messages'
 
@@ -35,7 +42,7 @@ test.describe('MS - Pósthólf overview', () => {
         name: label(m.searchLabel),
       })
       await inputField.click()
-      await inputField.type('greiðslukvittun', { delay: 100 })
+      await inputField.fill('greiðslukvittun')
       await inputField.press('Enter')
 
       const btnClearFilter = page.getByRole('button', {

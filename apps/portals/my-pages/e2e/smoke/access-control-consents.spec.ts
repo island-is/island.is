@@ -55,12 +55,12 @@ test.describe('Service portal access control concents', () => {
       const consentScope = await page.getByTestId('consent-scope').count()
 
       // Assert - Make sure the consent scopes are more than 0
-      await expect(consentScope).toBeGreaterThan(0)
+      expect(consentScope).toBeGreaterThan(0)
 
       // Act - Click on the first consent action card to expand it
       await page.getByTestId(actionCardDataTestId).first().click()
 
-      const firstToggleSwitch = await page
+      const firstToggleSwitch = page
         .getByTestId('consent-scope')
         .first()
         .locator('button')
@@ -77,9 +77,9 @@ test.describe('Service portal access control concents', () => {
       await firstToggleSwitch.first().click()
 
       // Assert - Make sure the toggle switch is toggled
-      await expect(
-        Boolean(firstToggleSwitch.getAttribute(ariaPressedStr)),
-      ).not.toBe(orginalAriaPressedValue)
+      expect(Boolean(firstToggleSwitch.getAttribute(ariaPressedStr))).not.toBe(
+        orginalAriaPressedValue,
+      )
 
       // Act - Click on the toggle switch again to toggle it back
       await firstToggleSwitch.first().click()

@@ -1,5 +1,11 @@
 import { test, BrowserContext, expect } from '@playwright/test'
-import { icelandicAndNoPopupUrl, urls, session, label, disableI18n } from '@island.is/testing/e2e'
+import {
+  icelandicAndNoPopupUrl,
+  urls,
+  session,
+  label,
+  disableI18n,
+} from '@island.is/testing/e2e'
 import { messages } from '@island.is/portals/my-pages/assets/messages'
 import { m } from '@island.is/portals/my-pages/core/messages'
 
@@ -39,7 +45,7 @@ test.describe('MS - Work Machines', () => {
         name: label(m.searchLabel),
       })
       await inputField.click()
-      await inputField.type('hys', { delay: 200 })
+      await inputField.fill('hys')
       const actionCardButton = page.getByTestId('action-card-cta').first()
 
       const closeFilter = page

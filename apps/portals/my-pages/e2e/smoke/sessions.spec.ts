@@ -1,7 +1,12 @@
 import { test, expect, BrowserContext } from '@playwright/test'
 import { format } from 'kennitala'
 
-import { env, icelandicAndNoPopupUrl, urls, session } from '@island.is/testing/e2e'
+import {
+  env,
+  icelandicAndNoPopupUrl,
+  urls,
+  session,
+} from '@island.is/testing/e2e'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
 const sessionHistoryUrl = icelandicAndNoPopupUrl(
@@ -40,7 +45,7 @@ test.describe('Service portal, in session history', () => {
     const sessionsRows = page.locator('table > tbody > tr')
 
     // Assert
-    await expect(sessionsRows).toHaveCountGreaterThan(0)
+    expect(sessionsRows.count()).toBeGreaterThan(0)
   })
 
   test('can filter list of session by national id', async () => {
@@ -60,7 +65,7 @@ test.describe('Service portal, in session history', () => {
     })
 
     // Assert
-    await expect(sessionsRows).toHaveCountGreaterThan(0)
+    expect(sessionsRows.count()).toBeGreaterThan(0)
   })
 
   test('can view list of sessions as company', async () => {
@@ -80,6 +85,6 @@ test.describe('Service portal, in session history', () => {
     const sessionsRows = page.getByRole('row')
 
     // Assert
-    await expect(sessionsRows).toHaveCountGreaterThan(0)
+    expect(sessionsRows.count()).toBeGreaterThan(0)
   })
 })

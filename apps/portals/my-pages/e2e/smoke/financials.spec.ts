@@ -1,5 +1,11 @@
 import { test, BrowserContext, expect } from '@playwright/test'
-import { icelandicAndNoPopupUrl, urls, session, label, disableI18n } from '@island.is/testing/e2e'
+import {
+  icelandicAndNoPopupUrl,
+  urls,
+  session,
+  label,
+  disableI18n,
+} from '@island.is/testing/e2e'
 import { m } from '@island.is/portals/my-pages/core/messages'
 const timeout = 15000
 
@@ -52,7 +58,7 @@ test.describe('MS - Fjármál overview', () => {
       await inputField.click()
 
       // "Sakavottorð" comes from the api - not translateable
-      await inputField.type('Sakavottorð', { delay: 100 })
+      await inputField.fill('Sakavottorð')
 
       // Assert
       await expect(
@@ -87,13 +93,13 @@ test.describe('MS - Fjármál overview', () => {
       const inputField = page.getByPlaceholder(label(m.datepickLabel)).first()
       await inputField.click()
       await inputField.fill('')
-      await inputField.type('15.01.2023', { delay: 200 })
+      await inputField.fill('15.01.2023')
 
       const filterInput = page.getByRole('textbox', {
         name: label(m.searchPlaceholder),
       })
       await filterInput.click()
-      await filterInput.type('27.01.2023', { delay: 100 })
+      await filterInput.fill('27.01.2023')
 
       // Assert
       await expect(page.locator('role=table')).toContainText('27.01.2023', {
@@ -122,7 +128,7 @@ test.describe('MS - Fjármál overview', () => {
       const inputField = page.getByPlaceholder(label(m.datepickLabel)).first()
       await inputField.click()
       await inputField.fill('')
-      await inputField.type('15.10.2021', { delay: 200 })
+      await inputField.fill('15.10.2021')
 
       // Assert
       await expect(page.locator('role=table')).toContainText('15.10.2021', {

@@ -4,10 +4,10 @@ import { icelandicAndNoPopupUrl, urls, session } from '@island.is/testing/e2e'
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
 test.use({ baseURL: urls.islandisBaseUrl })
 
-export async function switchDelegation(
+export const switchDelegation = async (
   page: Page,
   delegationType: 'Prókúra' | 'Forsjá',
-) {
+) => {
   await page.locator('data-testid=user-menu >> visible=true').click()
   await page.locator('role=button[name="Skipta um notanda"]').click()
 

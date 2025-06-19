@@ -1,5 +1,11 @@
 import { test, BrowserContext, expect } from '@playwright/test'
-import { icelandicAndNoPopupUrl, urls, session, label, disableI18n } from '@island.is/testing/e2e'
+import {
+  icelandicAndNoPopupUrl,
+  urls,
+  session,
+  label,
+  disableI18n,
+} from '@island.is/testing/e2e'
 import {
   vehicleMessage,
   messages,
@@ -111,7 +117,7 @@ test.describe('MS - Vehicles', () => {
         name: label(vehicleMessage.searchLabel),
       })
       await inputField.click()
-      await inputField.type('ísland.is', { delay: 200 })
+      await inputField.fill('ísland.is')
       const lookBtn = page
         .getByRole('button', { name: label(vehicleMessage.search) })
         .first()
@@ -150,7 +156,7 @@ test.describe('MS - Vehicles', () => {
       const inputField = page.getByPlaceholder('Veldu dagsetningu').first()
       await inputField.click()
       await inputField.fill('')
-      await inputField.type('01.04.2023', { delay: 200 })
+      await inputField.fill('01.04.2023')
 
       // Assert
       await expect(table).not.toContainText('Forskráð')
