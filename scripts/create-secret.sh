@@ -72,7 +72,7 @@ validate_empty() {
 }
 
 validate_slash() {
-  [[ ! $1 =~ $HAS_SLASH_END ]]
+  [[ ! $1 =~ $HAS_SLASH_END ]] || __error_exit "No trailing slashes allowed"
   printf "%sNo ending slash: Ok!%s" "$GREEN" "$RESET"
 }
 
@@ -158,6 +158,7 @@ prepare_secret() {
   validate_whitespace "$SECRET_NAME"
   validate_chars "$SECRET_NAME"
   validate_length "$SECRET_NAME"
+  validate_slash "$SECRET_NAME"
 
   # Prompt user for secret value
   [[ -n "$SECRET_VALUE" ]] || read -erp "${BLUE}Secret value: ${RESET}" SECRET_VALUE
@@ -202,7 +203,6 @@ create_secret() {
   if [ -n "$TAGS" ]; then
     CMD="$CMD --tags $TAGS"
   fi
-  __error_exit "EXIT"
   eval "$CMD"
   printf "%sDone!%s" "$GREEN" "$RESET"
 }
