@@ -105,7 +105,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "echo yarn get-secrets web",
+          "yarn get-secrets web",
           "echo \"#############\n # ATTENTION #\n #############\n \n You must manually add these to your .env.secrets file (used for e.g. extract-strings):\n CONTENTFUL_HOST \n CONTENTFUL_MANAGEMENT_ACCESS_TOKEN\n\"",
           "yarn nx dev-services web",
           "yarn nx run api:dev-init"
