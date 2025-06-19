@@ -3,7 +3,6 @@ import {
   buildCustomField,
   buildDateField,
   buildDescriptionField,
-  buildDividerField,
   buildFileUploadField,
   buildForm,
   buildMultiField,

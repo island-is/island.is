@@ -35,7 +35,7 @@ export const gender = {
     genderOptionDeclinedToAnswer: {
         id: 'ctao.application:gender.general.genderOptionDeclinedToAnswer',
         defaultMessage: 'Vil ekki svara',
-        description: 'Declined to asnwer gender option',
+        description: 'Declined to answer gender option',
     },
     genderJustification: {
         id: 'ctao.application:gender.general.genderJustification',

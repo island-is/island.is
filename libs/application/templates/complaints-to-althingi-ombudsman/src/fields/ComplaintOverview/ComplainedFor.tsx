@@ -7,7 +7,7 @@ import {
   complainedFor as complainedForMessages,
   complaintOverview,
 } from '../../lib/messages'
-import { ComplainedForTypes, GenderAnswerOptions } from '../../shared'
+import { ComplainedForTypes } from '../../shared'
 import { mapComplainedForToMessage } from '../../utils'
 import { DocumentCard } from '../components'
 import { ValueLine } from './ValueLine'

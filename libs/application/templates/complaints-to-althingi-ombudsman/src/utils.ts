@@ -1,5 +1,5 @@
 import { Answer } from '@island.is/application/types'
-import { gender, information, shared } from './lib/messages'
+import { gender, shared } from './lib/messages'
 import {
   ComplainedForTypes,
   ComplaineeTypes,
