@@ -29,9 +29,9 @@ export class TranslationsService {
     auth: User,
     input: GoogleTranslationInput,
   ): Promise<GoogleTranslation> {
-    const { FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY } = process.env
+    const apiKey = process.env.FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY as string
 
-    if (!FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY) {
+    if (!apiKey) {
       throw new Error(
         'Api key for Google translation service is not configured',
       )
@@ -52,7 +52,7 @@ export class TranslationsService {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            'X-goog-api-key': FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY,
+            'X-goog-api-key': apiKey,
           },
           body: JSON.stringify({
             q: input.q,
