@@ -23,7 +23,9 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     await disablePreviousApplications(applicationPage)
     await disableI18n(applicationPage)
     await applicationPage.goto(homeUrl)
-    await isApplication(applicationPage, 'andlatstilkynningar')
+    await expect(
+      await isApplication(applicationPage, 'andlatstilkynningar'),
+    ).toBeTruthy()
     await use(applicationPage)
 
     await applicationPage.close()
@@ -34,7 +36,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
 applicationTest.describe('Announcement of Death', () => {
   applicationTest('test', async ({ applicationPage }) => {
     const page = applicationPage
-    await isApplication(page, 'andlatstilkynningar')
+    await expect(isApplication(page, 'andlatstilkynningar')).toBeTruthy()
 
     // Custom continue button
     const submitButton = page.getByRole('button', { name: 'Halda áfram' })

@@ -1,4 +1,4 @@
-import { Page, expect } from '@playwright/test'
+import { Page } from '@playwright/test'
 import { isUuid } from 'uuidv4'
 
 /**
@@ -36,20 +36,21 @@ export const createApplication = async (page: Page): Promise<number> => {
  * @param expectedPath Optional path segment to check within the application URL.
  * @returns True if it's an application page (and matches `expectedPath` if provided), false otherwise.
  */
-export const isApplication = async (
-  page: Page,
-  expectedPath?: string,
-): Promise<void> => {
+export const isApplication = async (page: Page, expectedPath?: string): Promise<boolean> => {
+  await page.waitForURL('**/umsoknir/**')
   const applicationUrl = new URL(page.url())
   const pathSegments = applicationUrl.pathname.split('/').filter(Boolean) // Filter(Boolean) removes empty strings from array
 
   const uuidSegment = pathSegments.pop()
   const umsoknirSegment = pathSegments.pop()
 
-  expect(isUuid(uuidSegment ?? '')).toBeTruthy()
-  expect(umsoknirSegment).toEqual('umsoknir')
-
-  if (expectedPath) {
-    expect(applicationUrl.pathname).toContain(expectedPath)
+  if (!isUuid(uuidSegment ?? '') || umsoknirSegment !== 'umsoknir') {
+    return false
   }
+
+  if (expectedPath && !applicationUrl.pathname.includes(expectedPath)) {
+    return false
+  }
+
+  return true
 }
