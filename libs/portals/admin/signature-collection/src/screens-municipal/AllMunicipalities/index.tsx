@@ -20,9 +20,10 @@ import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { SignatureCollectionList } from '@island.is/api/schema'
 import { useState } from 'react'
+import FindSignature from '../../shared-components/findSignature'
 
 const AllMunicipalities = () => {
-  const { allLists } = useLoaderData() as ListsLoaderReturn
+  const { allLists, collection } = useLoaderData() as ListsLoaderReturn
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const [searchTerm, setSearchTerm] = useState('')
@@ -80,25 +81,7 @@ const AllMunicipalities = () => {
           />
           <Divider />
           <Box marginTop={9} />
-          <Box
-            width="full"
-            marginBottom={3}
-            display="flex"
-            justifyContent="spaceBetween"
-          >
-            <Box width="half">
-              {/* Todo: display search results */}
-              <FilterInput
-                name="searchSignee"
-                value={searchTerm}
-                onChange={(v) => {
-                  setSearchTerm(v)
-                }}
-                placeholder={formatMessage(m.searchNationalIdPlaceholder)}
-                backgroundColor="blue"
-              />
-            </Box>
-          </Box>
+          <FindSignature collectionId={collection.id} />
           <Box marginBottom={3} display="flex" justifyContent="flexEnd">
             <Text variant="eyebrow">
               {formatMessage(m.totalListResults) +
@@ -111,13 +94,14 @@ const AllMunicipalities = () => {
               return (
                 <ActionCard
                   key={list.area.id}
-                  eyebrow={
-                    formatMessage(m.totalListsPerConstituency) +
+                  heading={list.area.name}
+                  eyebrow={formatMessage(m.municipality)}
+                  text={
+                    formatMessage(m.totalListsPerMunicipality) +
                     (areaCounts[list.area.name]
                       ? areaCounts[list.area.name].toString()
                       : '0')
                   }
-                  heading={list.area.name}
                   cta={{
                     label: formatMessage(m.viewMunicipality),
                     variant: 'text',
