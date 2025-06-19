@@ -159,7 +159,7 @@ jobs:
       - name: load-deps
         uses: ./.github/actions/load-deps
 
-      - name: load-deps
+      - name: Setup Playwright
         uses: ./.github/actions/setup-playwright
 
       - name: Running e2e tests
