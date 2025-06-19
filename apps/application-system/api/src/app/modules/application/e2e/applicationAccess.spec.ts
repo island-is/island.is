@@ -48,7 +48,7 @@ const actorDelegationsApiMock = {
         },
       ],
       toName: 'Account',
-      toNationalId: faker.datatype.string(10),
+      toNationalId: '2304769429',
       types: ['Custom'],
       validTo: '2021-11-13T00:00:00.000Z',
     },

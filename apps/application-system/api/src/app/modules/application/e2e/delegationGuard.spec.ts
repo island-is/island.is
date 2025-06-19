@@ -11,7 +11,7 @@ import { setup } from '../../../../../test/setup'
 import { AppModule } from '../../../app.module'
 import { FeatureFlagService } from '@island.is/nest/feature-flags'
 import { MockFeatureFlagService } from './mockFeatureFlagService'
-import { uuid } from 'uuidv4'
+import * as uuid from 'uuidv4'
 
 import { getRequestMethod, TestEndpointOptions } from '@island.is/testing/nest'
 import { createNationalId } from '@island.is/testing/fixtures'
@@ -94,12 +94,12 @@ describe('Application system API delegation guard', () => {
     },
     {
       method: 'GET',
-      endpoint: `/applications/${uuid()}`,
+      endpoint: `/applications/${uuid.uuid()}`,
       send: {},
     },
     {
       method: 'PUT',
-      endpoint: `/applications/${uuid()}`,
+      endpoint: `/applications/${uuid.uuid()}`,
       send: {
         answers: {
           careerHistoryCompanies: ['government'],
@@ -109,19 +109,19 @@ describe('Application system API delegation guard', () => {
     },
     {
       method: 'PUT',
-      endpoint: `/applications/${uuid()}/submit`,
+      endpoint: `/applications/${uuid.uuid()}/submit`,
       send: { event: 'SUBMIT' },
     },
     {
       method: 'PUT',
-      endpoint: `/applications/${uuid()}/externalData`,
+      endpoint: `/applications/${uuid.uuid()}/externalData`,
       send: {
         dataProviders: [{ id: 'test', type: 'ExampleSucceeds' }],
       },
     },
     {
       method: 'PUT',
-      endpoint: `/applications/${uuid()}/attachments`,
+      endpoint: `/applications/${uuid.uuid()}/attachments`,
       send: {
         key: '',
         url: '',
@@ -129,7 +129,7 @@ describe('Application system API delegation guard', () => {
     },
     {
       method: 'DELETE',
-      endpoint: `/applications/${uuid()}/attachments`,
+      endpoint: `/applications/${uuid.uuid()}/attachments`,
       send: {
         key: '',
       },
@@ -143,7 +143,7 @@ describe('Application system API delegation guard', () => {
     },
     {
       method: 'DELETE',
-      endpoint: `/applications/${uuid()}`,
+      endpoint: `/applications/${uuid.uuid()}`,
       send: {},
     },
   ])(
