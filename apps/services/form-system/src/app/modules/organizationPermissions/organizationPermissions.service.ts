@@ -6,10 +6,13 @@ import { OrganizationPermissionDto } from './models/dto/organizationPermission.d
 import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
+import { Organization } from '../organizations/models/organization.model'
 
 @Injectable()
 export class OrganizationPermissionsService {
   constructor(
+    @InjectModel(Organization)
+    private readonly organizationModel: typeof Organization,
     @InjectModel(OrganizationPermission)
     private readonly organizationPermissionModel: typeof OrganizationPermission,
   ) {}
@@ -17,8 +20,22 @@ export class OrganizationPermissionsService {
   async create(
     createOrganizationPermissionDto: UpdateOrganizationPermissionDto,
   ): Promise<OrganizationPermissionDto> {
-    const organizationPermission =
-      createOrganizationPermissionDto as OrganizationPermission
+    const organization = await this.organizationModel.findOne({
+      where: {
+        nationalId: createOrganizationPermissionDto.organizationNationalId,
+      },
+    })
+
+    if (!organization) {
+      throw new NotFoundException(
+        `Organization with nationalId '${createOrganizationPermissionDto.organizationNationalId}' not found`,
+      )
+    }
+
+    const organizationPermission = new OrganizationPermission()
+    organizationPermission.organizationId = organization.id
+    organizationPermission.permission =
+      createOrganizationPermissionDto.permission
 
     const newOrganizationPermission: OrganizationPermission =
       new this.organizationPermissionModel(organizationPermission)
@@ -37,10 +54,22 @@ export class OrganizationPermissionsService {
   async delete(
     deleteOrganizationPermissionDto: UpdateOrganizationPermissionDto,
   ): Promise<void> {
+    const organization = await this.organizationModel.findOne({
+      where: {
+        nationalId: deleteOrganizationPermissionDto.organizationNationalId,
+      },
+    })
+
+    if (!organization) {
+      throw new NotFoundException(
+        `Organization with nationalId '${deleteOrganizationPermissionDto.organizationNationalId}' not found`,
+      )
+    }
+
     const organizationPermission =
       await this.organizationPermissionModel.findOne({
         where: {
-          organizationId: deleteOrganizationPermissionDto.organizationId,
+          organizationId: organization.id,
           permission: deleteOrganizationPermissionDto.permission,
         },
       })
@@ -49,7 +78,7 @@ export class OrganizationPermissionsService {
       {
         throw new NotFoundException(
           `Organization permission with 
-        organizationId '${deleteOrganizationPermissionDto.organizationId}' and
+        organizationId '${organization.id}' and
         permission '${deleteOrganizationPermissionDto.permission}' not found`,
         )
       }
