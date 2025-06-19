@@ -57,7 +57,9 @@ import {
   WorkAccidents,
   WorkMachines,
   SecondarySchool,
+  LSH,
   PracticalExams,
+  FireCompensation,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -423,6 +425,7 @@ export const serviceSetup = (services: {
       DistrictCommissionersPCard,
       DistrictCommissionersLicenses,
       Finance,
+      FireCompensation,
       Education,
       NationalRegistry,
       Properties,
@@ -463,6 +466,7 @@ export const serviceSetup = (services: {
       WorkAccidents,
       SeminarsVer,
       SecondarySchool,
+      LSH,
       PracticalExams,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })

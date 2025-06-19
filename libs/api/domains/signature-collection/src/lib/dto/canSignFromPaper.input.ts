@@ -1,9 +1,9 @@
 import { IsString } from 'class-validator'
 import { Field, InputType } from '@nestjs/graphql'
-import { SignatureCollectionCollectionTypeInput } from './collectionType.input'
+import { SignatureCollectionBaseInput } from './signatureCollectionBase.input'
 
 @InputType()
-export class SignatureCollectionCanSignFromPaperInput extends SignatureCollectionCollectionTypeInput {
+export class SignatureCollectionCanSignFromPaperInput extends SignatureCollectionBaseInput {
   @Field()
   @IsString()
   signeeNationalId!: string
