@@ -7,7 +7,10 @@ import { capitalize, formatDate } from '@island.is/judicial-system/formatters'
 import { isRestrictionCase } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages/Core'
 import { tables } from '@island.is/judicial-system-web/messages/Core/tables'
-import { TagAppealState } from '@island.is/judicial-system-web/src/components'
+import {
+  TagAppealState,
+  useOpenCaseInNewTab,
+} from '@island.is/judicial-system-web/src/components'
 import {
   ColumnCaseType,
   CourtCaseNumber,
@@ -20,7 +23,6 @@ import {
   useViewport,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { useContextMenu } from '../../ContextMenu/ContextMenu'
 import Table, { TableWrapper } from '../Table'
 import MobileAppealCase from './MobileAppealCase'
 
@@ -34,7 +36,7 @@ const AppealCasesTable: FC<Props> = (props) => {
   const { cases, loading, showingCompletedCases } = props
   const { formatMessage } = useIntl()
   const { isOpeningCaseId, handleOpenCase, showLoading } = useCaseList()
-  const { openCaseInNewTabMenuItem } = useContextMenu()
+  const { openCaseInNewTab } = useOpenCaseInNewTab()
 
   const activeCasesData = useMemo(
     () =>
@@ -93,7 +95,7 @@ const AppealCasesTable: FC<Props> = (props) => {
         ]}
         data={activeCasesData}
         generateContextMenuItems={(row) => {
-          return [openCaseInNewTabMenuItem(row.id)]
+          return [openCaseInNewTab(row.id)]
         }}
         columns={[
           {
