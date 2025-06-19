@@ -4,7 +4,6 @@
     "/api/v1/adverts/{id}": {
       "get": {
         "operationId": "getAdvertById",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -22,13 +21,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/adverts/similar/{id}": {
       "get": {
         "operationId": "getSimilarAdvertsById",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -48,13 +47,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/adverts": {
       "get": {
         "operationId": "getAdverts",
-        "summary": "",
         "parameters": [
           {
             "name": "search",
@@ -129,13 +128,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/departments/{id}": {
       "get": {
         "operationId": "getDepartmentById",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -155,13 +154,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/departments": {
       "get": {
         "operationId": "getDepartments",
-        "summary": "",
         "parameters": [
           {
             "name": "search",
@@ -196,13 +195,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/maincategories": {
       "get": {
         "operationId": "getMainCategories",
-        "summary": "",
         "parameters": [
           {
             "name": "search",
@@ -247,13 +246,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/categories": {
       "get": {
         "operationId": "getCategories",
-        "summary": "",
         "parameters": [
           {
             "name": "search",
@@ -298,13 +297,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/institutions": {
       "get": {
         "operationId": "getInstitutions",
-        "summary": "",
         "parameters": [
           {
             "name": "search",
@@ -349,13 +348,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/signatures": {
       "get": {
         "operationId": "getSignatures",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -369,16 +368,14 @@
             "required": false,
             "in": "query",
             "description": "Search for a specific signature by type",
-            "example": "Regular",
-            "schema": { "type": "string" }
+            "schema": { "example": "Regular", "type": "string" }
           },
           {
             "name": "search",
             "required": false,
             "in": "query",
             "description": "Search for a specific signature",
-            "example": "Dagur B. Eggertsson",
-            "schema": { "type": "string" }
+            "schema": { "example": "Dagur B. Eggertsson", "type": "string" }
           },
           {
             "name": "page",
@@ -399,13 +396,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/cases": {
       "get": {
         "operationId": "getCasesInProgress",
-        "summary": "",
         "parameters": [
           {
             "name": "search",
@@ -450,13 +447,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/rss/{id}": {
       "get": {
         "operationId": "getRssFeed",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -472,13 +469,13 @@
             },
             "description": ""
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/pdf/{id}": {
       "get": {
         "operationId": "getPDFFromAdvert",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -512,13 +509,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/advert-types/types": {
       "get": {
         "operationId": "getTypes",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -602,13 +599,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/advert-types/main-types": {
       "get": {
         "operationId": "getMainTypes",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -692,13 +689,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/advert-types/types/{id}": {
       "get": {
         "operationId": "getTypeById",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -740,13 +737,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/advert-types/main-types/{id}": {
       "get": {
         "operationId": "getMainTypeById",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -788,13 +785,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/pdf/case/{id}": {
       "get": {
         "operationId": "getPdfByCaseId",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -812,13 +809,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/pdf/application/{id}": {
       "get": {
         "operationId": "getPdfByApplicationId",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -843,13 +840,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/pdf/case/{id}/url": {
       "get": {
         "operationId": "getPdfUrlByCaseId",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -867,13 +864,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/pdf/application/{id}/url": {
       "get": {
         "operationId": "getPdfUrlByApplicationId",
-        "summary": "",
         "parameters": [
           {
             "name": "id",
@@ -891,12 +888,13 @@
               }
             }
           }
-        }
+        },
+        "summary": ""
       }
     },
     "/api/v1/health": {
       "get": {
-        "operationId": "HealthController_",
+        "operationId": "HealthController__v1",
         "parameters": [],
         "responses": { "200": { "description": "Health check endpoint." } }
       }
@@ -955,6 +953,21 @@
           }
         },
         "required": ["id", "title", "slug", "department"]
+      },
+      "AdvertStatus": {
+        "type": "string",
+        "enum": [
+          "Virk",
+          "Afturkölluð",
+          "Drög",
+          "Eldri auglýsing",
+          "Hafnað",
+          "Í bið",
+          "Í vinnslu",
+          "Innsend",
+          "Tilbúin til útgáfu",
+          "Útgefin"
+        ]
       },
       "AdvertPublicationNumber": {
         "type": "object",
@@ -1082,6 +1095,10 @@
         },
         "required": ["isLegacy", "html"]
       },
+      "AdvertSignatureType": {
+        "type": "string",
+        "enum": ["Hefðbundin", "Nefnd"]
+      },
       "AdvertSignatureMember": {
         "type": "object",
         "properties": {
@@ -1156,10 +1173,9 @@
             "example": "00000000-0000-0000-0000-000000000000"
           },
           "type": {
-            "type": "string",
             "description": "Type of the signature",
-            "enum": ["Hefðbundin", "Nefnd"],
-            "example": "Hefðbundin"
+            "example": "Hefðbundin",
+            "allOf": [{ "$ref": "#/components/schemas/AdvertSignatureType" }]
           },
           "additional": {
             "type": "string",
@@ -1196,6 +1212,23 @@
           }
         },
         "required": ["name", "type", "url"]
+      },
+      "CaseAddition": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "string",
+            "example": "d290f1ee-6c54-4b01-90e6-d701748f0851"
+          },
+          "title": { "type": "string", "description": "Title of the addition" },
+          "html": { "type": "string", "description": "HTML of the addition" },
+          "order": {
+            "type": "number",
+            "description": "HTML of the addition",
+            "default": 0
+          }
+        },
+        "required": ["id", "title", "html", "order"]
       },
       "AdvertCorrection": {
         "type": "object",
@@ -1275,22 +1308,10 @@
             "example": "GJALDSKRÁ fyrir hundahald í Reykjavíkurborg."
           },
           "status": {
-            "type": "string",
-            "enum": [
-              "Virk",
-              "Afturkölluð",
-              "Drög",
-              "Eldri auglýsing",
-              "Hafnað",
-              "Í bið",
-              "Í vinnslu",
-              "Innsend",
-              "Tilbúin til útgáfu",
-              "Útgefin"
-            ],
             "description": "Status of the advert",
             "nullable": false,
-            "example": "Virk"
+            "example": "Virk",
+            "allOf": [{ "$ref": "#/components/schemas/AdvertStatus" }]
           },
           "publicationNumber": {
             "description": "Publication number of the advert",
@@ -1347,6 +1368,11 @@
             "description": "Attachments for the advert.",
             "type": "array",
             "items": { "$ref": "#/components/schemas/AdvertAttachment" }
+          },
+          "additions": {
+            "description": "Additions for the advert.",
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CaseAddition" }
           },
           "corrections": {
             "description": "Corrections made to the advert.",

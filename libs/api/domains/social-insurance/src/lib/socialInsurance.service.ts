@@ -1,9 +1,10 @@
 import { User } from '@island.is/auth-nest-tools'
 import { handle404 } from '@island.is/clients/middlewares'
 import {
-  SocialInsuranceAdministrationClientService,
-  TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
   IncomePlanStatus as IncomeStatus,
+  SocialInsuranceAdministrationClientService,
+  TrWebExternalModelsServicePortalRehabilitationPlan,
+  TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
 } from '@island.is/clients/social-insurance-administration'
 import {
   CmsElasticsearchService,
@@ -14,20 +15,20 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { isDefined } from '@island.is/shared/utils'
 import { Inject, Injectable } from '@nestjs/common'
 import { PensionCalculationInput } from './dtos/pensionCalculation.input'
+import { TemporaryCalculationInput } from './dtos/temporaryCalculation.input'
+import { IncomePlan } from './models/income/incomePlan.model'
+import { IncomePlanEligbility } from './models/income/incomePlanEligibility.model'
+import { PaymentGroup } from './models/payments/paymentGroup.model'
+import { mapToPaymentGroupType } from './models/payments/paymentGroupType.model'
+import { PaymentPlan } from './models/payments/paymentPlan.model'
+import { Payments } from './models/payments/payments.model'
 import { PensionCalculationResponse } from './models/pension/pensionCalculation.model'
+import { IncomePlanStatus, LOG_CATEGORY } from './socialInsurance.type'
 import {
   getPensionCalculationHighlightedItems,
   groupPensionCalculationItems,
   mapPensionCalculationInput,
 } from './utils'
-import { PaymentGroup } from './models/payments/paymentGroup.model'
-import { PaymentPlan } from './models/payments/paymentPlan.model'
-import { Payments } from './models/payments/payments.model'
-import { mapToPaymentGroupType } from './models/payments/paymentGroupType.model'
-import { IncomePlan } from './models/income/incomePlan.model'
-import { IncomePlanStatus, LOG_CATEGORY } from './socialInsurance.type'
-import { IncomePlanEligbility } from './models/income/incomePlanEligibility.model'
-import { TemporaryCalculationInput } from './dtos/temporaryCalculation.input'
 
 @Injectable()
 export class SocialInsuranceService {
@@ -226,5 +227,15 @@ export class SocialInsuranceService {
       default:
         return IncomePlanStatus.UNKNOWN
     }
+  }
+
+  getUnions(user: User) {
+    return this.socialInsuranceApi.getUnions(user)
+  }
+
+  async getRehabilitationPlan(
+    user: User,
+  ): Promise<TrWebExternalModelsServicePortalRehabilitationPlan> {
+    return await this.socialInsuranceApi.getRehabilitationPlan(user)
   }
 }

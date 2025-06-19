@@ -34,6 +34,7 @@ export interface Vehicle {
     date: Date
     internalId?: number
   }
+  co2?: string
 }
 
 export const mapVehicleResponseDto = (
@@ -72,6 +73,7 @@ export const mapVehicleResponseDto = (
                 }
               : undefined,
             userRole: d.role ?? undefined,
+            co2: d.co2?.toString() ?? undefined,
             make: d.make ?? undefined,
             color:
               d.colorName && d.colorCode
@@ -98,6 +100,7 @@ export const mapVehicleResponseDto = (
                     internalId: d.latestMileageInternalId ?? undefined,
                   }
                 : undefined,
+
             canRegisterMileage: d.canRegisterMilage ?? undefined,
             requiresMileageRegistration:
               d.requiresMileageRegistration ?? undefined,

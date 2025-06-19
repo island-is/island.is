@@ -8,9 +8,13 @@ export interface Candidate extends UserBase {
   email: string
   collectionId: string
   partyBallotLetter: string
+  areaId?: string
 }
 
-export const mapCandidate = (candidate: FrambodBaseDTO): Candidate => {
+export const mapCandidate = (
+  candidate: FrambodBaseDTO,
+  areaId?: string,
+): Candidate => {
   const { id: id, kennitala: nationalId } = candidate
   if (!id || !nationalId) {
     logger.warn(
@@ -27,5 +31,6 @@ export const mapCandidate = (candidate: FrambodBaseDTO): Candidate => {
     email: candidate.netfang ?? '',
     collectionId: candidate.medmaelasofnunID?.toString() ?? '',
     partyBallotLetter: candidate.listabokstafur ?? '',
+    areaId,
   }
 }

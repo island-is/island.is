@@ -71,6 +71,31 @@ export class NotificationDispatchService {
     return { delivered: true }
   }
 
+  private criminalRecordFileUpdateMessages(theCase: Case) {
+    const hasCriminalRecordFiles = theCase.caseFiles?.some(
+      (file) => file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE,
+    )
+    if (hasCriminalRecordFiles) {
+      return [
+        {
+          type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+          caseId: theCase.id,
+          body: {
+            type: IndictmentCaseNotificationType.CRIMINAL_RECORD_FILES_UPLOADED,
+          },
+        },
+      ]
+    }
+    return []
+  }
+
+  private async dispatchIndictmentCriminalRecordFileUpdate(
+    theCase: Case,
+  ): Promise<void> {
+    const messages = this.criminalRecordFileUpdateMessages(theCase)
+    return this.messageService.sendMessagesToQueue(messages)
+  }
+
   private async dispatchIndictmentSentToPublicProsecutorNotifications(
     theCase: Case,
   ): Promise<void> {
@@ -83,19 +108,11 @@ export class NotificationDispatchService {
         },
       },
     ]
-    const hasCriminalRecordFiles = theCase.caseFiles?.some(
-      (file) => file.category === CaseFileCategory.CRIMINAL_RECORD_UPDATE,
-    )
-    if (hasCriminalRecordFiles) {
-      messages.push({
-        type: MessageType.INDICTMENT_CASE_NOTIFICATION,
-        caseId: theCase.id,
-        body: {
-          type: IndictmentCaseNotificationType.CRIMINAL_RECORD_FILES_UPLOADED,
-        },
-      })
-    }
-    return this.messageService.sendMessagesToQueue(messages)
+
+    return this.messageService.sendMessagesToQueue([
+      ...messages,
+      ...this.criminalRecordFileUpdateMessages(theCase),
+    ])
   }
 
   private async dispatchCourtDateNotifications(
@@ -140,6 +157,9 @@ export class NotificationDispatchService {
           await this.dispatchIndictmentSentToPublicProsecutorNotifications(
             theCase,
           )
+          break
+        case EventNotificationType.INDICTMENT_CRIMINAL_RECORD_UPDATED_BY_COURT:
+          await this.dispatchIndictmentCriminalRecordFileUpdate(theCase)
           break
         default:
           throw new InternalServerErrorException(

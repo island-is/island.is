@@ -2,6 +2,9 @@ import { Box, Button, Divider, Drawer, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import PdfReport from '../../../../shared/PdfReport'
 import { m } from '../../../../../lib/messages'
+import { SignatureCollectionCollectionType } from '@island.is/api/schema'
+
+const collectionType = SignatureCollectionCollectionType.LocalGovernmental
 
 const ListActions = () => {
   const { formatMessage } = useLocale()
@@ -29,7 +32,7 @@ const ListActions = () => {
             <Text variant="h4">{formatMessage(m.downloadPdf)}</Text>
             <Text>{formatMessage(m.downloadPdfDescription)}</Text>
           </Box>
-          <PdfReport listId="1" />
+          <PdfReport listId="1" collectionType={collectionType} />
         </Box>
         <Box display="flex" justifyContent="spaceBetween">
           <Box>

@@ -119,11 +119,14 @@ const AppealToCourtOfAppeals = () => {
         <PageTitle previousUrl={previousUrl}>
           {formatMessage(strings.title)}
         </PageTitle>
-        {workingCase.rulingDate && (
-          <Box marginBottom={7}>
-            <RulingDateLabel rulingDate={workingCase.rulingDate} />
-          </Box>
-        )}
+        <Box component="section" marginBottom={5}>
+          <Text variant="h2" as="h2">
+            {`Mál nr. ${workingCase.courtCaseNumber}`}
+          </Text>
+          {workingCase.rulingDate && (
+            <RulingDateLabel rulingDate={workingCase.rulingDate} as="h3" />
+          )}
+        </Box>
         <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(strings.appealBriefTitle)}

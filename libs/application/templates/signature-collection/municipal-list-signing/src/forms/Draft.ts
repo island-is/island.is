@@ -88,19 +88,6 @@ export const Draft: Form = buildForm({
           description: m.listDescription,
           children: [
             buildTextField({
-              id: 'municipality',
-              title: m.municipality,
-              width: 'full',
-              readOnly: true,
-              defaultValue: ({ externalData }: Application) => {
-                const municipalIdentity = getValueViaPath<IndividualDto>(
-                  externalData,
-                  'municipalIdentity.data',
-                )
-                return municipalIdentity?.legalDomicile?.locality
-              },
-            }),
-            buildTextField({
               id: 'candidateName',
               title: m.candidateName,
               width: 'full',
@@ -123,24 +110,36 @@ export const Draft: Form = buildForm({
               title: m.guarantorsNationalId,
               width: 'half',
               readOnly: true,
-              defaultValue: ({ externalData }: Application) =>
-                formatNationalId(
-                  getValueViaPath(
+              defaultValue: ({ answers, externalData }: Application) => {
+                const lists =
+                  getValueViaPath<SignatureCollectionList[]>(
                     externalData,
-                    'nationalRegistry.data.nationalId',
-                  ) ?? '',
-                ),
+                    'getList.data',
+                  ) || []
+
+                const nationalId =
+                  lists.length === 1
+                    ? lists[0].candidate.nationalId
+                    : lists.find((list) => list.id === answers.listId)
+                        ?.candidate.nationalId
+
+                return nationalId
+                  ? formatNationalId(nationalId)
+                  : undefined
+              },
             }),
             buildTextField({
-              id: 'guarantorsName',
-              title: m.guarantorsName,
+              id: 'municipality',
+              title: m.municipality,
               width: 'half',
               readOnly: true,
-              defaultValue: ({ externalData }: Application) =>
-                getValueViaPath(
+              defaultValue: ({ externalData }: Application) => {
+                const municipalIdentity = getValueViaPath<IndividualDto>(
                   externalData,
-                  'nationalRegistry.data.fullName',
-                ) ?? '',
+                  'municipalIdentity.data',
+                )
+                return municipalIdentity?.legalDomicile?.locality
+              },
             }),
             buildSubmitField({
               id: 'submit',

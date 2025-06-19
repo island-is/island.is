@@ -350,7 +350,7 @@ export const AdditionalSupportForTheElderlyForm: Form = buildForm({
         additionalSupportForTheElderyFormMessage.conclusionScreen.bulletList,
       expandableIntro:
         additionalSupportForTheElderyFormMessage.conclusionScreen.nextStepsText,
-      bottomButtonLink: 'https://minarsidur.tr.is/forsendur/tekjuaetlun',
+      bottomButtonLink: 'https://island.is/umsoknir/tekjuaaetlun',
       bottomButtonLabel:
         socialInsuranceAdministrationMessage.conclusionScreen
           .incomePlanCardLabel,

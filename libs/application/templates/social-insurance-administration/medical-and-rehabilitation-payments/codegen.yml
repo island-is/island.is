@@ -1,0 +1,11 @@
+schema:
+  - apps/api/src/api.graphql
+documents: libs/application/templates/social-insurance-administration/medical-and-rehabilitation-payments/src/graphql/queries.ts
+generates:
+  libs/application/templates/social-insurance-administration/medical-and-rehabilitation-payments/src/types/schema.ts:
+    plugins:
+      - typescript
+      - typescript-operations
+hooks:
+  afterAllFileWrite:
+    - prettier --write

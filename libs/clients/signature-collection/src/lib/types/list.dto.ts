@@ -20,7 +20,7 @@ export enum ListStatus {
 export enum ListType {
   Parliamentary = 'alþingiskosning',
   Presidential = 'forsetakosning',
-  Municipal = 'sveitarstjornarkosning',
+  Municipal = 'sveitarstjórnarkosningar',
 }
 
 export interface ListBase {

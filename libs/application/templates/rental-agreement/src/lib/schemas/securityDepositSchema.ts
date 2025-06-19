@@ -110,6 +110,20 @@ export const securityDeposit = z
     }
 
     if (
+      (data.securityType === SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND ||
+        data.securityAmount === SecurityDepositAmountOptions.OTHER) &&
+      data.securityAmountOther &&
+      Number(data.securityAmountOther) <= 0
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Custom error message',
+        params: m.securityDeposit.amountOtherZeroError,
+        path: ['securityAmountOther'],
+      })
+    }
+
+    if (
       data.securityType === SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND &&
       Number(data.rentalAmount) * 0.1 < Number(data.securityAmountOther)
     ) {

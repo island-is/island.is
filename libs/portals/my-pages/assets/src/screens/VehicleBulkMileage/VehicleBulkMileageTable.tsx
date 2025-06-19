@@ -1,11 +1,11 @@
-import { Table as T, Box, Text } from '@island.is/island-ui/core'
+import { Box, Table as T, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { EmptyTable, ExpandHeader } from '@island.is/portals/my-pages/core'
-import { vehicleMessage } from '../../lib/messages'
 import { useMemo } from 'react'
+import { vehicleMessage } from '../../lib/messages'
+import { displayWithUnit } from '../../utils/displayWithUnit'
 import { VehicleType } from './types'
 import { VehicleBulkMileageRow } from './VehicleBulkMileageRow'
-import { displayWithUnit } from '../../utils/displayWithUnit'
 
 interface Props {
   vehicles: Array<VehicleType>
@@ -22,7 +22,7 @@ const VehicleBulkMileageTable = ({ vehicles, loading }: Props) => {
         vehicle={item}
       />
     ))
-  }, [formatMessage, vehicles])
+  }, [vehicles])
 
   const totalLastMileage = useMemo(() => {
     if (!vehicles.length) {

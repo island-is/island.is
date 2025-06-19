@@ -130,6 +130,7 @@ export class MunicipalListSigningService extends BaseTemplateApiService {
       candidateId: isCandidateId ? ownerId : undefined,
       areaId,
       onlyActive: true,
+      collectionType: this.collectionType,
     })
     // If candidateId existed or if there is only one list, check if maxReached
     if (lists.length === 1) {

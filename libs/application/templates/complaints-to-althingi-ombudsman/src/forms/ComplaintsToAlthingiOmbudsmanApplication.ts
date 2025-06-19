@@ -3,7 +3,6 @@ import {
   buildCustomField,
   buildDateField,
   buildDescriptionField,
-  buildDividerField,
   buildFileUploadField,
   buildForm,
   buildMultiField,
@@ -59,6 +58,7 @@ import {
   isGovernmentComplainee,
   isPreviousOmbudsmanComplaint,
 } from '../utils'
+import { gender } from '../lib/messages/gender'
 
 export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
   id: 'ComplaintsToAlthingiOmbudsmanDraftForm',
@@ -154,17 +154,6 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
               width: 'half',
               backgroundColor: 'blue',
               defaultValue: '',
-            }),
-            buildDividerField({ marginTop: 2 }),
-            buildSelectField({
-              id: 'complainedForInformation.gender',
-              title: information.aboutTheComplainer.gender,
-              options: genderOptions,
-            }),
-            buildAlertMessageField({
-              id: 'complainedForInformation.genderJustification',
-              message: information.aboutTheComplainer.genderJustification,
-              alertType: 'info',
             }),
             buildDescriptionField({
               id: 'complainedForInformation.titleField',
@@ -441,6 +430,29 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
           uploadButtonLabel: attachments.uploadButtonLabel,
         }),
       ],
+    }),
+    buildSection({
+      id: 'gender',
+      title: gender.general.title,
+      children: [
+        buildMultiField({
+          id: 'section.gender',
+          title: gender.general.title,
+          children: [
+            buildSelectField({
+              id: 'genderAnswer',
+              title: gender.general.gender,
+              options: genderOptions,
+              required: true,
+            }),
+            buildAlertMessageField({
+              id: 'genderJustification',
+              message: gender.general.genderJustification,
+              alertType: 'info',
+            }),
+          ],
+        }),
+      ]
     }),
     buildSection({
       id: 'section.overview',

@@ -44,6 +44,9 @@ export class VehiclesMainInfo {
 
   @Field(() => Boolean, { nullable: true })
   canRegisterMileage?: boolean | null
+
+  @Field(() => Boolean, { nullable: true })
+  availableMileageRegistration?: boolean
 }
 
 @ObjectType()

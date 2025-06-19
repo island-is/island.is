@@ -92,25 +92,37 @@ export const IntroWrapper = (props: IntroWrapperProps) => {
             </>
           )}
         </GridColumn>
-        {!isMobile && props.serviceProviderSlug && organization?.link && (
+        {!isMobile && (
           <GridColumn span={'2/8'} offset={isTablet ? '0' : '1/8'}>
-            <InstitutionPanel
-              loading={loading}
-              linkHref={organization.link ?? ''}
-              linkLabel={
-                organization.title
-                  ? formatMessage(m.readMoreAbout, {
-                      arg: organization.title,
-                    })
-                  : ''
-              }
-              img={organization.logo?.url ?? ''}
-              imgContainerDisplay={isMobile ? 'block' : 'flex'}
-              isSvg={organization.logo?.contentType === 'image/svg+xml'}
-              tooltipText={props.serviceProviderTooltip}
-              backgroundColor={props.backgroundColor}
-              tooltipVariant={props.tooltipVariant ?? 'light'}
-            />
+            {props.img && (
+              <Box
+                alt=""
+                component="img"
+                src={props.img}
+                width="full"
+                height="full"
+                marginRight={0}
+              />
+            )}
+            {props.serviceProviderSlug && organization?.link && (
+              <InstitutionPanel
+                loading={loading}
+                linkHref={organization.link ?? ''}
+                linkLabel={
+                  organization.title
+                    ? formatMessage(m.readMoreAbout, {
+                        arg: organization.title,
+                      })
+                    : ''
+                }
+                img={organization.logo?.url ?? ''}
+                imgContainerDisplay={isMobile ? 'block' : 'flex'}
+                isSvg={organization.logo?.contentType === 'image/svg+xml'}
+                tooltipText={props.serviceProviderTooltip}
+                backgroundColor={props.backgroundColor}
+                tooltipVariant={props.tooltipVariant ?? 'light'}
+              />
+            )}
           </GridColumn>
         )}
       </GridRow>

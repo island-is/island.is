@@ -83,6 +83,12 @@ const template: ApplicationTemplate<
           progress: 0.4,
           status: FormModes.DRAFT,
           lifecycle: DefaultStateLifeCycle,
+          onEntry: [
+            defineTemplateApi({
+              action: TemplateApiActions.calculateAmount,
+              order: 1,
+            }),
+          ],
           roles: [
             {
               id: Roles.APPLICANT,
@@ -110,12 +116,6 @@ const template: ApplicationTemplate<
         },
       },
       [States.PAYMENT]: buildPaymentState({
-        onEntry: [
-          defineTemplateApi({
-            action: TemplateApiActions.calculateAmount,
-            order: 1, // This has to run first to fetch the propperties and calculate the amount on the backend before the payment is made
-          }),
-        ],
         organizationId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
         chargeItems: getChargeItems,
       }),

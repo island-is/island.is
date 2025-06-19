@@ -18,6 +18,17 @@ export const attachments = {
       defaultMessage: 'Viðaukar og fylgiskjöl',
       description: 'Title of the addition and documents section',
     },
+    titleSupporting: {
+      id: 'ojoi.application:attachments.general.titleSupporting',
+      defaultMessage: 'Fylgigögn',
+      description: 'Title of the supporting documents form',
+    },
+    introSupporting: {
+      id: 'ojoi.application:attachments.general.introSupporting',
+      defaultMessage:
+        'Hér skal skrá fylgigögn sem birtast ekki með auglýsingu á vef Stjórnartíðinda. Þetta skjal verður aðgengilegt fyrir ritstjórn í innri kerfum.',
+      description: 'Intro of the supporting documents form',
+    },
   }),
   headings: defineMessages({
     fileNames: {

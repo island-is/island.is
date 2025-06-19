@@ -19,6 +19,7 @@ export const applicationSystemScopes = [
   ApiScope.meDetails,
   ApiScope.samgongustofaVehicles,
   ApiScope.signatureCollection,
+  ApiScope.socialInsuranceAdministration,
   ApiScope.vinnueftirlitid,
   ApiScope.vinnueftirlitidAccident,
   ApiScope.menntamalastofnun,

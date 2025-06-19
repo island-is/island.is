@@ -1,4 +1,7 @@
-import { SignatureCollection } from '@island.is/api/schema'
+import {
+  SignatureCollection,
+  SignatureCollectionCollectionType,
+} from '@island.is/api/schema'
 import { ActionCard, Box, Button, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { useUserInfo } from '@island.is/react-spa/bff'
@@ -12,6 +15,8 @@ import SignedList from '../../shared/SignedList'
 import CancelCollection from './CancelCollection'
 import ShareLink from '../../shared/ShareLink'
 
+const collectionType = SignatureCollectionCollectionType.Presidential
+
 const OwnerView = ({
   currentCollection,
 }: {
@@ -22,6 +27,7 @@ const OwnerView = ({
   const user = useUserInfo()
   const { formatMessage } = useLocale()
   const { listsForOwner, loadingOwnerLists } = useGetListsForOwner(
+    collectionType,
     currentCollection?.id || '',
   )
 
@@ -51,7 +57,10 @@ const OwnerView = ({
 
             {/* Signed list */}
             {!user?.profile.actor && (
-              <SignedList currentCollection={currentCollection} />
+              <SignedList
+                currentCollection={currentCollection}
+                collectionType={collectionType}
+              />
             )}
 
             {/* Candidate created lists */}

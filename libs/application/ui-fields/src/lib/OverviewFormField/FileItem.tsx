@@ -8,7 +8,7 @@ type Props = {
 
 export const FileItem = ({ fileName, fileSize, fileType }: Props) => {
   return (
-    <Box paddingY={2}>
+    <Box>
       <ActionCard
         heading={fileName}
         text={fileSize ?? ''}

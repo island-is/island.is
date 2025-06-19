@@ -13,6 +13,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import differenceInYears from 'date-fns/differenceInYears'
 import { HEALTH_CATEGORY_ID, LAW_AND_ORDER_CATEGORY_ID } from './document.types'
 import { getBirthday } from './helpers/getBirthday'
+import { Action } from './models/v2/actions.model'
 import { MailAction } from './models/v2/bulkMailAction.input'
 import { Category } from './models/v2/category.model'
 import {
@@ -20,33 +21,36 @@ import {
   DocumentPageNumber,
   PaginatedDocuments,
 } from './models/v2/document.model'
-import { Action } from './models/v2/actions'
 import { FileType } from './models/v2/documentContent.model'
 import { DocumentsInput } from './models/v2/documents.input'
 import { DocumentV2MarkAllMailAsRead } from './models/v2/markAllMailAsRead.model'
 import { PaperMailPreferences } from './models/v2/paperMailPreferences.model'
+import { ReplyInput } from './models/v2/reply.input'
+import { Reply } from './models/v2/reply.model'
 import { Sender } from './models/v2/sender.model'
 import { Type } from './models/v2/type.model'
+import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 
 const LOG_CATEGORY = 'documents-api-v2'
 
 @Injectable()
 export class DocumentServiceV2 {
   constructor(
-    private documentService: DocumentsClientV2Service,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
+    private readonly featureService: FeatureFlagService,
+    private documentService: DocumentsClientV2Service,
     @Inject(DownloadServiceConfig.KEY)
     private downloadServiceConfig: ConfigType<typeof DownloadServiceConfig>,
   ) {}
 
   async findDocumentById(
-    nationalId: string,
+    user: User,
     documentId: string,
     locale?: Locale,
     includeDocument?: boolean,
   ): Promise<Document | null> {
     const document = await this.documentService.getCustomersDocument(
-      nationalId,
+      user.nationalId,
       documentId,
       locale,
       includeDocument,
@@ -55,6 +59,12 @@ export class DocumentServiceV2 {
     if (!document) {
       return null // Null document logged in clients-documents-v2
     }
+
+    const use2Way = await this.featureService.getValue(
+      Features.isServicePortal2WayMailboxEnabled,
+      false,
+      user,
+    )
 
     let type: FileType
     switch (document.fileType) {
@@ -90,6 +100,24 @@ export class DocumentServiceV2 {
       (action) => action.type !== 'alert' && action.type !== 'confirmation',
     )
 
+    const ticket = use2Way
+      ? {
+          id: document.ticket?.id?.toString(),
+          authorId: document.ticket?.authorId?.toString(),
+          createdDate: document.ticket?.createdAt,
+          updatedDate: document.ticket?.updatedAt,
+          status: document.ticket?.status,
+          subject: document.ticket?.subject,
+          comments: document.ticket?.comments?.map((c) => ({
+            id: c.id?.toString(),
+            body: c.body,
+            createdDate: c.createdAt,
+            authorId: c.authorId?.toString(),
+            author: c.author,
+          })),
+        }
+      : null
+
     return {
       ...document,
       publicationDate: document.date,
@@ -110,6 +138,11 @@ export class DocumentServiceV2 {
       actions: this.actionMapper(documentId, actions),
       confirmation: confirmation,
       alert: alert,
+      replyable: use2Way ? document.replyable : false,
+      closedForMoreReplies: use2Way
+        ? ticket?.status?.toLowerCase() === 'closed'
+        : null,
+      ticket: ticket,
     }
   }
 
@@ -148,7 +181,11 @@ export class DocumentServiceV2 {
         totalCount: documents?.totalCount,
       })
     }
-
+    const use2Way = await this.featureService.getValue(
+      Features.isServicePortal2WayMailboxEnabled,
+      false,
+      user,
+    )
     const documentData: Array<Document> =
       documents?.documents
         .map((d) => {
@@ -165,6 +202,8 @@ export class DocumentServiceV2 {
               id: d.senderNationalId,
             },
             isUrgent: d.urgent,
+            replyable: use2Way ? d.replyable : false,
+            ticket: undefined,
           }
         })
         .filter(isDefined) ?? []
@@ -387,6 +426,33 @@ export class DocumentServiceV2 {
           category: LOG_CATEGORY,
         })
         throw new Error('Invalid single document action')
+    }
+  }
+
+  async postReply(user: User, input: ReplyInput): Promise<Reply | null> {
+    try {
+      const res = await this.documentService.postTicket(
+        user.nationalId,
+        input.documentId,
+        {
+          body: input.body,
+          subject: input.subject,
+          requesterEmail: input.requesterEmail,
+          requesterName: input.requesterName,
+        },
+      )
+      // if no ticket id is returned we handle error client side
+      if (!res.ticketId) {
+        return null
+      }
+      return { id: res.ticketId?.toString(), email: res.reqeusterEmail }
+    } catch (error) {
+      this.logger.error('Failed to post reply', {
+        category: LOG_CATEGORY,
+        error: error,
+        documentId: input.documentId,
+      })
+      return null
     }
   }
 

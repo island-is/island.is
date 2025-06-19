@@ -6,13 +6,18 @@ import { useState } from 'react'
 import { useGetCurrentCollection } from '../../../../hooks'
 import { useMutation } from '@apollo/client'
 import { cancelCollectionMutation } from '../../../../hooks/graphql/mutations'
-import { SignatureCollectionSuccess } from '@island.is/api/schema'
+import {
+  SignatureCollectionCollectionType,
+  SignatureCollectionSuccess,
+} from '@island.is/api/schema'
 
 const CancelCollection = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
   const [modalIsOpen, setModalIsOpen] = useState(false)
-  const { currentCollection } = useGetCurrentCollection()
+  const { currentCollection } = useGetCurrentCollection(
+    SignatureCollectionCollectionType.Presidential,
+  )
 
   const [cancelCollection, { loading }] =
     useMutation<SignatureCollectionSuccess>(cancelCollectionMutation, {

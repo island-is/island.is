@@ -34,6 +34,7 @@ import { application } from './messages'
 enum TemplateApiActions {
   sendApplicationSummary = 'sendApplicationSummary',
   submitApplicationToHmsRentalService = 'submitApplicationToHmsRentalService',
+  consumerIndex = 'consumerIndex',
 }
 
 const RentalAgreementTemplate: ApplicationTemplate<
@@ -93,6 +94,9 @@ const RentalAgreementTemplate: ApplicationTemplate<
           name: States.DRAFT,
           status: 'draft',
           lifecycle: DefaultStateLifeCycle,
+          onEntry: defineTemplateApi({
+            action: TemplateApiActions.consumerIndex,
+          }),
           onExit: defineTemplateApi({
             action: TemplateApiActions.sendApplicationSummary,
           }),

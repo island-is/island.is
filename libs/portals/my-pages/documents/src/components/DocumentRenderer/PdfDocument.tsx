@@ -2,12 +2,12 @@ import { Box, Button, PdfViewer, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { DOMSMAL_DOC_ID, Modal, m } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
-import { useEffect, useMemo, useRef, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { ActiveDocumentType2 } from '../../lib/types'
+import { usePdfRendererLazyQuery } from '../../queries/PdfRenderer.generated'
 import { downloadFile } from '../../utils/downloadDocument'
 import { messages } from '../../utils/messages'
 import * as styles from './DocumentRenderer.css'
-import { usePdfRendererLazyQuery } from '../../queries/PdfRenderer.generated'
 
 type PdfDocumentProps = {
   document: ActiveDocumentType2
@@ -105,13 +105,7 @@ export const PdfDocument: React.FC<PdfDocumentProps> = ({
           />
         ) : undefined}
       </Box>
-      <Box
-        className={styles.pdfPage}
-        height="full"
-        overflow="auto"
-        boxShadow="subtle"
-        ref={ref}
-      >
+      <Box className={styles.pdfPage} height="full" overflow="auto" ref={ref}>
         <PdfViewer
           file={`data:application/pdf;base64,${document.document.value}`}
           scale={scalePDF}

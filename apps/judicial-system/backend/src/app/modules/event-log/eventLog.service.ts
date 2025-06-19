@@ -25,6 +25,7 @@ const allowMultiple: EventType[] = [
   EventType.LOGIN_BYPASS_UNAUTHORIZED,
   EventType.INDICTMENT_CONFIRMED,
   EventType.COURT_DATE_SCHEDULED,
+  EventType.INDICTMENT_CRIMINAL_RECORD_UPDATED_BY_COURT,
 ]
 
 const eventToNotificationMap: Partial<
@@ -32,6 +33,8 @@ const eventToNotificationMap: Partial<
 > = {
   INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR:
     EventNotificationType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+  INDICTMENT_CRIMINAL_RECORD_UPDATED_BY_COURT:
+    EventNotificationType.INDICTMENT_CRIMINAL_RECORD_UPDATED_BY_COURT,
   COURT_DATE_SCHEDULED: EventNotificationType.COURT_DATE_SCHEDULED,
 }
 

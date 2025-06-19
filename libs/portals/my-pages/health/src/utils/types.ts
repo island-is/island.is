@@ -29,3 +29,9 @@ export interface DetailTable {
 export interface PrescriptionItem extends HealthDirectoratePrescription {
   documents?: HealthDirectoratePrescriptionDocument[]
 }
+
+export interface DataState<T> {
+  data?: T | null
+  loading?: boolean
+  error?: boolean
+}

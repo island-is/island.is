@@ -14,7 +14,7 @@ import {
   Text,
   UploadFile,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { InformationForDefendant } from '@island.is/judicial-system/types'
 import { Feature } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
@@ -36,6 +36,7 @@ import {
   RulingInput,
   SectionHeading,
   useIndictmentsLawsBroken,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import VerdictAppealDecisionChoice from '@island.is/judicial-system-web/src/components/VerdictAppealDecisionChoice/VerdictAppealDecisionChoice'
 import {
@@ -56,6 +57,7 @@ import strings from './Completed.strings'
 import * as styles from './Completed.css'
 
 const Completed: FC = () => {
+  const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const { setAndSendDefendantToServer } = useDefendants()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
@@ -118,16 +120,27 @@ const Completed: FC = () => {
   )
 
   const handleCriminalRecordUpdateUpload = useCallback(
-    (files: File[]) => {
+    async (files: File[]) => {
       // If the case has been sent to the public prosecutor
       // we want to complete these uploads straight away
       if (isSentToPublicProsecutor) {
-        handleUpload(
+        const uploadResult = await handleUpload(
           addUploadFiles(files, {
             category: CaseFileCategory.CRIMINAL_RECORD_UPDATE,
           }),
           updateUploadFile,
         )
+        if (uploadResult !== 'ALL_SUCCEEDED') {
+          return
+        }
+
+        const eventLogCreated = createEventLog({
+          caseId: workingCase.id,
+          eventType: EventType.INDICTMENT_CRIMINAL_RECORD_UPDATED_BY_COURT,
+        })
+        if (!eventLogCreated) {
+          return
+        }
       }
       // Otherwise we don't complete uploads until
       // we handle the next button click
@@ -138,7 +151,14 @@ const Completed: FC = () => {
         })
       }
     },
-    [addUploadFiles, handleUpload, isSentToPublicProsecutor, updateUploadFile],
+    [
+      workingCase.id,
+      addUploadFiles,
+      handleUpload,
+      isSentToPublicProsecutor,
+      updateUploadFile,
+      createEventLog,
+    ],
   )
 
   const handleNavigationTo = useCallback(
@@ -505,7 +525,7 @@ const Completed: FC = () => {
       <Box marginBottom={10} />
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={constants.CASES_ROUTE}
+          previousUrl={getStandardUserDashboardRoute(user)}
           hideNextButton={!isRulingOrFine || isSentToPublicProsecutor}
           nextButtonText={formatMessage(strings.sendToPublicProsecutor)}
           nextIsDisabled={!stepIsValid()}
@@ -517,7 +537,9 @@ const Completed: FC = () => {
           title={formatMessage(strings.sentToPublicProsecutorModalTitle)}
           text={formatMessage(strings.sentToPublicProsecutorModalMessage)}
           primaryButtonText={formatMessage(core.closeModal)}
-          onPrimaryButtonClick={() => router.push(constants.CASES_ROUTE)}
+          onPrimaryButtonClick={() =>
+            router.push(getStandardUserDashboardRoute(user))
+          }
         />
       )}
     </PageLayout>

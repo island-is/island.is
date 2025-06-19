@@ -10,6 +10,7 @@ query vehiclesList($input: VehiclesListInputV3!) {
         number
       }
       make
+      co2
       color {
         name
       }

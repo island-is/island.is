@@ -438,6 +438,7 @@ export const VehicleBulkMileageRow = ({ vehicle }: Props) => {
           <VehicleBulkMileageSubData
             vehicleId={vehicle.vehicleId}
             data={data?.vehiclesMileageRegistrationHistory}
+            co2={vehicle.co2}
             loading={loading}
           />
         ) : (

@@ -162,6 +162,8 @@ const FormProvider = ({ children }: Props) => {
 
             if (theCase) {
               onCompleted(theCase)
+            } else {
+              onError()
             }
           }
         })

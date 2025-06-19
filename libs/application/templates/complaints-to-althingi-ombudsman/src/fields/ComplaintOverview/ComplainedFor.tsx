@@ -6,7 +6,6 @@ import { ComplaintsToAlthingiOmbudsman } from '../../lib/dataSchema'
 import {
   complainedFor as complainedForMessages,
   complaintOverview,
-  information,
 } from '../../lib/messages'
 import { ComplainedForTypes } from '../../shared'
 import { mapComplainedForToMessage } from '../../utils'
@@ -131,14 +130,6 @@ export const ComplainedFor: FC<React.PropsWithChildren<Props>> = ({
                 <ValueLine
                   value={complainedFor.email}
                   label={complainedForMessages.labels.email}
-                />
-              </GridColumn>
-            )}
-            {complainedFor.gender && (
-              <GridColumn span={['9/12', '9/12', '9/12', '4/12']}>
-                <ValueLine
-                  value={complainedFor.gender}
-                  label={information.aboutTheComplainer.gender}
                 />
               </GridColumn>
             )}

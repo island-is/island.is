@@ -4,6 +4,8 @@ query CaseTable($input: CaseTableQueryInput!) {
     rows {
       caseId
       isMyCase
+      contextMenuActions
+      actionOnRowClick
       cells {
         value {
           __typename
@@ -20,12 +22,12 @@ query CaseTable($input: CaseTableQueryInput!) {
           }
           ... on TagPairValue {
             firstTag {
-              color
               text
+              color
             }
             secondTag {
-              color
               text
+              color
             }
           }
         }

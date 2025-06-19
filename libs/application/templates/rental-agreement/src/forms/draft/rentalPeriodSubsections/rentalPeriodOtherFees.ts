@@ -65,6 +65,7 @@ export const RentalPeriodOtherFees = buildSubSection({
           width: 'half',
           maxLength: 20,
           condition: electricityCostPayedByTenant,
+          variant: 'number',
         }),
         buildTextField({
           id: 'otherFees.electricityCostMeterStatus',
@@ -73,6 +74,7 @@ export const RentalPeriodOtherFees = buildSubSection({
           width: 'half',
           maxLength: 10,
           condition: electricityCostPayedByTenant,
+          variant: 'number',
         }),
         buildDateField({
           id: 'otherFees.electricityCostMeterStatusDate',
@@ -102,6 +104,7 @@ export const RentalPeriodOtherFees = buildSubSection({
           width: 'half',
           maxLength: 20,
           condition: heatingCostPayedByTenant,
+          variant: 'number',
         }),
         buildTextField({
           id: 'otherFees.heatingCostMeterStatus',
@@ -110,6 +113,7 @@ export const RentalPeriodOtherFees = buildSubSection({
           width: 'half',
           maxLength: 10,
           condition: heatingCostPayedByTenant,
+          variant: 'number',
         }),
         buildDateField({
           id: 'otherFees.heatingCostMeterStatusDate',

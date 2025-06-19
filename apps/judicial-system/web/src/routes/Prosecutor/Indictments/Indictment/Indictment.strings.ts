@@ -136,4 +136,12 @@ export const strings = {
     [Gender.OTHER]:
       'Þess er krafist að ákært verði dæmt til refsingar, til greiðslu alls sakarkostnaðar og til að sæta sviptingu á réttinum til að öðlast ökuskírteini skv. 4. mgr. 58. gr. laga nr. 77/2019.',
   },
+  demandsAutofillWithFutureLicenseAndUnderTheInfluenceSuspensions: {
+    [Gender.MALE]:
+      'Þess er krafist að ákærði verði dæmdur til refsingar, til greiðslu alls sakarkostnaðar, til að sæta sviptingu á réttinum til að öðlast ökuskírteini samkvæmt 4. mgr. 58. gr. laga nr. 77/2019 og til að sæta sviptingu ökuréttar skv. 99. gr. og 101. gr. laga nr. 77/2019.',
+    [Gender.FEMALE]:
+      'Þess er krafist að ákærða verði dæmd til refsingar, til greiðslu alls sakarkostnaðar, til að sæta sviptingu á réttinum til að öðlast ökuskírteini samkvæmt 4. mgr. 58. gr. laga nr. 77/2019 og til að sæta sviptingu ökuréttar skv. 99. gr. og 101. gr. laga nr. 77/2019.',
+    [Gender.OTHER]:
+      'Þess er krafist að ákært verði dæmt til refsingar, til greiðslu alls sakarkostnaðar, til að sæta sviptingu á réttinum til að öðlast ökuskírteini samkvæmt 4. mgr. 58. gr. laga nr. 77/2019 og til að sæta sviptingu ökuréttar skv. 99. gr. og 101. gr. laga nr. 77/2019.',
+  },
 }

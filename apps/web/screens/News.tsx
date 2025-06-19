@@ -224,6 +224,9 @@ const NewsListNew: Screen<NewsListProps> = ({
     imageHeight: socialImage?.height?.toString(),
   }
 
+  const indexableBySearchEngine =
+    newsItem?.organization?.canPagesBeFoundInSearchResults ?? true
+
   return (
     <>
       {/**
@@ -232,7 +235,11 @@ const NewsListNew: Screen<NewsListProps> = ({
       <HeadWithSocialSharing
         title={metaTitle}
         {...(newsItemMeta && { ...newsItemMeta })}
-      />
+      >
+        {!indexableBySearchEngine && (
+          <meta name="robots" content="noindex, nofollow" />
+        )}
+      </HeadWithSocialSharing>
       <SidebarLayout sidebarContent={sidebar}>
         <Box
           display={['none', 'none', 'flex']}

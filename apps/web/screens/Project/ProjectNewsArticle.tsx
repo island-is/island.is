@@ -83,6 +83,9 @@ const ProjectNewsArticle: Screen<ProjectNewsArticleleProps> = ({
     },
   ]
 
+  const indexableBySearchEngine =
+    newsItem?.organization?.canPagesBeFoundInSearchResults ?? true
+
   return (
     <>
       <ProjectWrapper
@@ -99,7 +102,11 @@ const ProjectNewsArticle: Screen<ProjectNewsArticleleProps> = ({
         imageUrl={newsItem?.image?.url}
         imageWidth={newsItem?.image?.width.toString()}
         imageHeight={newsItem?.image?.height.toString()}
-      />
+      >
+        {!indexableBySearchEngine && (
+          <meta name="robots" content="noindex, nofollow" />
+        )}
+      </HeadWithSocialSharing>
     </>
   )
 }

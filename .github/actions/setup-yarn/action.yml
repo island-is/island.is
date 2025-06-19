@@ -40,7 +40,7 @@ runs:
     # version of.
     - name: Set env for RunsOn
       shell: bash
-      if: ${{ !github.event.localrun }}
+      if: ${{ !github.event.localrun && env.RUNS_ON_BUCKET_NAME }}
       run: echo "RUNS_ON_S3_BUCKET_CACHE=${{ env.RUNS_ON_BUCKET_NAME }}" >> $GITHUB_ENV
 
     - name: Cache Dependencies
@@ -52,6 +52,8 @@ runs:
           ${{ inputs.working-directory }}/node_modules
           ${{ github.workspace }}/.cypress-cache
         key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-1-node_modules
+      env:
+        AWS_REGION: ${{ env.AWS_REGION || 'eu-west-1' }}
 
     - name: Yarn install
       working-directory: ${{ inputs.working-directory }}

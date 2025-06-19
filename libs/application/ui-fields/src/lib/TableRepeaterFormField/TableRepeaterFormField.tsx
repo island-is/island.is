@@ -27,6 +27,7 @@ import {
   buildDefaultTableHeader,
   buildDefaultTableRows,
   handleCustomMappedValues,
+  setObjectWithNestedKey,
 } from './utils'
 import { Item } from './TableRepeaterItem'
 import { Locale } from '@island.is/shared/types'
@@ -173,8 +174,11 @@ export const TableRepeaterFormField: FC<Props> = ({
   useEffect(() => {
     const values = methods.getValues(data.id) || []
     if (initActiveFieldIfEmpty && values?.length === 0) {
+      // Using setObjectValue to handle nested ids
+      const newValues = {}
+      setObjectWithNestedKey(newValues, data.id, [{}])
       methods.reset({
-        [data.id]: [{}],
+        ...newValues,
       })
       setActiveIndex(0)
     }
@@ -222,7 +226,9 @@ export const TableRepeaterFormField: FC<Props> = ({
                   <T.Row key={index}>
                     <T.Data></T.Data>
                     {Object.keys(item).map((key, idx) => (
-                      <T.Data key={`static-${key}-${idx}`}>{item[key]}</T.Data>
+                      <T.Data key={`static-${key}-${idx}`}>
+                        {formatTableValue(key, item, index, application)}
+                      </T.Data>
                     ))}
                   </T.Row>
                 ))}

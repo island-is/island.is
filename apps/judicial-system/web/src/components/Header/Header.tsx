@@ -19,24 +19,21 @@ import {
   UserMenu,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { getUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   capitalize,
   formatPhoneNumber,
 } from '@island.is/judicial-system/formatters'
+import { isDefenceUser, Lawyer } from '@island.is/judicial-system/types'
 import {
-  isAdminUser,
-  isCourtOfAppealsUser,
-  isDefenceUser,
-  isPrisonSystemUser,
-  Lawyer,
-} from '@island.is/judicial-system/types'
-import { SearchModal } from '@island.is/judicial-system-web/src/components'
+  LawyerRegistryContext,
+  MarkdownWrapper,
+  SearchModal,
+  UserContext,
+} from '@island.is/judicial-system-web/src/components'
 import { api } from '@island.is/judicial-system-web/src/services'
+import { useGeoLocation } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { useGeoLocation } from '../../utils/hooks'
-import { LawyerRegistryContext } from '../LawyerRegistryProvider/LawyerRegistryProvider'
-import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
-import { UserContext } from '../UserProvider/UserProvider'
 import { header } from './Header.strings'
 import * as styles from './Header.css'
 
@@ -100,18 +97,7 @@ const HeaderContainer = () => {
     setLawyer(lawyers.find((lawyer) => lawyer.nationalId === user.nationalId))
   }, [lawyers, user])
 
-  const logoHref =
-    !user || !isAuthenticated
-      ? '/'
-      : isDefenceUser(user)
-      ? constants.DEFENDER_CASES_ROUTE
-      : isAdminUser(user)
-      ? constants.USERS_ROUTE
-      : isCourtOfAppealsUser(user)
-      ? constants.COURT_OF_APPEAL_CASES_ROUTE
-      : isPrisonSystemUser(user)
-      ? constants.PRISON_CASES_ROUTE
-      : constants.CASES_ROUTE
+  const logoHref = !user || !isAuthenticated ? '/' : getUserDashboardRoute(user)
 
   const handleLogout = () => {
     api.logout()

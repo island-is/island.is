@@ -221,9 +221,14 @@ export const securityDeposit = defineMessages({
     defaultMessage: 'Verður að slá inn upphæð tryggingar',
     description: 'security deposit amount other not entered error',
   },
+  amountOtherZeroError: {
+    id: 'ra.application:securityDeposit.amountZeroError',
+    defaultMessage: 'Upphæð tryggingar má ekki vera 0 kr.',
+    description: 'security deposit amount zero error',
+  },
   amountOtherMutualFundError: {
     id: 'ra.application:securityDeposit.amountOtherMutualFundError',
-    defaultMessage: 'Upphæð tryggingar ef of há',
+    defaultMessage: 'Upphæð tryggingar er of há',
     description: 'security deposit amount other mutual fund error',
   },
   amountOtherCapitolError: {

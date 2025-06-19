@@ -1037,7 +1037,9 @@ export const OrganizationWrapper: React.FC<
   const n = useNamespace(namespace)
 
   const indexableBySearchEngine =
-    organizationPage.canBeFoundInSearchResults ?? true
+    organizationPage.organization?.canPagesBeFoundInSearchResults ??
+    organizationPage.canBeFoundInSearchResults ??
+    true
 
   return (
     <>

@@ -104,7 +104,10 @@ export abstract class BaseNotificationService {
       html =
         html.match(/<a/g) || skipTail
           ? html
-          : `${html} ${this.formatMessage(notifications.emailTail)}`
+          : `${html} ${this.formatMessage(notifications.emailTail, {
+              linkStart: `<a href="${this.config.clientUrl}">`,
+              linkEnd: '</a>',
+            })}`
 
       await this.emailService.sendEmail({
         from: {
