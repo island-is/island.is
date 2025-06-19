@@ -1166,6 +1166,7 @@ export const buildBankAccountField = (
     marginTop,
     titleVariant,
     defaultValue,
+    condition,
   } = data
 
   return {
@@ -1178,6 +1179,7 @@ export const buildBankAccountField = (
     type: FieldTypes.BANK_ACCOUNT,
     component: FieldComponents.BANK_ACCOUNT,
     defaultValue,
+    condition,
   }
 }
 

@@ -22,7 +22,13 @@ export const rentalAmount = z
     paymentDateOther: z.string().optional(),
     paymentMethodOptions: z.nativeEnum(RentalPaymentMethodOptions).optional(),
     paymentMethodNationalId: z.string().optional(),
-    paymentMethodBankAccountNumber: z.string().optional(),
+    paymentMethodBankAccountNumber: z
+      .object({
+        bankNumber: z.string().regex(/^\d{4}$/),
+        ledger: z.string().regex(/^\d{2}$/),
+        accountNumber: z.string().regex(/^\d{6}$/),
+      })
+      .optional(),
     paymentMethodOtherTextField: z.string().optional(),
     securityDepositRequired: z.string().array().optional(),
   })
@@ -127,25 +133,39 @@ export const rentalAmount = z
           path: ['paymentMethodNationalId'],
         })
       }
-      if (!data.paymentMethodBankAccountNumber?.trim().length) {
-        ctx.addIssue({
-          code: z.ZodIssueCode.custom,
-          message: 'Custom error message',
-          params: m.rentalAmount.paymentMethodBankAccountNumberRequiredError,
-          path: ['paymentMethodBankAccountNumber'],
-        })
-      }
+
       if (
-        data.paymentMethodBankAccountNumber?.trim().length &&
-        data.paymentMethodBankAccountNumber.length < 7
+        !data.paymentMethodBankAccountNumber ||
+        !data.paymentMethodBankAccountNumber.bankNumber ||
+        !data.paymentMethodBankAccountNumber.ledger ||
+        !data.paymentMethodBankAccountNumber.accountNumber
       ) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Custom error message',
-          params: m.rentalAmount.paymentMethodBankAccountNumberInvalidError,
-          path: ['paymentMethodBankAccountNumber'],
+          params: m.rentalAmount.paymentMethodBankAccountNumberRequiredError,
+          path: ['bankNumber'],
         })
       }
+      // if (!data.paymentMethodBankAccountNumber?.trim().length) {
+      //   ctx.addIssue({
+      //     code: z.ZodIssueCode.custom,
+      //     message: 'Custom error message',
+      //     params: m.rentalAmount.paymentMethodBankAccountNumberRequiredError,
+      //     path: ['paymentMethodBankAccountNumber'],
+      //   })
+      // }
+      // if (
+      //   data.paymentMethodBankAccountNumber?.trim().length &&
+      //   data.paymentMethodBankAccountNumber.length < 7
+      // ) {
+      //   ctx.addIssue({
+      //     code: z.ZodIssueCode.custom,
+      //     message: 'Custom error message',
+      //     params: m.rentalAmount.paymentMethodBankAccountNumberInvalidError,
+      //     path: ['paymentMethodBankAccountNumber'],
+      //   })
+      // }
     }
 
     if (data.paymentMethodOptions === RentalPaymentMethodOptions.OTHER) {
