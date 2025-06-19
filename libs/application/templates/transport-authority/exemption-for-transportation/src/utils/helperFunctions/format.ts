@@ -8,7 +8,7 @@ export const formatDateStr = (dateStr: string | undefined): string =>
 
 export const formatNumber = (value?: number | string) => {
   const num = Number(value)
-  return isFinite(num) ? num.toLocaleString('de-DE') : ''
+  return Number.isFinite(num) ? num.toLocaleString('de-DE') : ''
 }
 
 export const formatNumberWithMeters = (value?: number | string) =>
