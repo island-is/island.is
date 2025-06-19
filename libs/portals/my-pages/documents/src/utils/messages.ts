@@ -183,7 +183,7 @@ export const messages = defineMessages({
   },
   sendMessage: {
     id: 'sp.documents:send-message',
-    defaultMessage: 'Senda skilaboð',
+    defaultMessage: 'Svara',
   },
   closedForReplies: {
     id: 'sp.documents:closed-for-replies',
