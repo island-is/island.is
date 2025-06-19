@@ -1,10 +1,9 @@
 import { expect, test as base, Page } from '@playwright/test'
-import { disableI18n } from '@island.is/testing/e2e'
+import { isApplication, disableI18n } from '@island.is/testing/e2e'
 import { session } from '@island.is/testing/e2e'
 import { createApplication } from '@island.is/testing/e2e'
 import { label } from '@island.is/testing/e2e'
 import { m as messages } from '@island.is/application/templates/no-debt-certificate'
-import { switchUser } from '@island.is/testing/e2e'
 
 const homeUrl = '/umsoknir/skuldleysisvottord'
 
@@ -20,6 +19,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     const applicationPage = await applicationContext.newPage()
     await disableI18n(applicationPage)
     await applicationPage.goto(homeUrl)
+    await expect(isApplication(applicationPage)).toBeTruthy()
     await use(applicationPage)
 
     await applicationPage.close()

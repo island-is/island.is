@@ -5,10 +5,10 @@ import {
   disableI18n,
   disablePreviousApplications,
 } from '@island.is/testing/e2e'
-import { label } from '@island.is/testing/e2e'
+import { isApplication, label } from '@island.is/testing/e2e'
 import { helpers } from '@island.is/testing/e2e'
 import { session } from '@island.is/testing/e2e'
-import { setupXroadMocks } from './setup-xroad.mocks'
+import { setupXroadMocks } from '../setup-xroad.mocks'
 import {
   additionalAttachments,
   expectHeadingToBeVisible,
@@ -34,7 +34,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     await disablePreviousApplications(applicationPage)
     await disableI18n(applicationPage)
     await applicationPage.goto(homeUrl)
-    await expect(applicationPage).toBeApplication()
+    await isApplication(applicationPage, 'heimilisuppbot')
     await setupXroadMocks()
     await use(applicationPage)
 

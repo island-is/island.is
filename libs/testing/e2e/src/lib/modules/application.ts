@@ -28,9 +28,14 @@ export const createApplication = async (page: Page): Promise<number> => {
   return existingApplicationCount
 }
 
-export const isApplication = (page: Page): boolean => {
+export const isApplication = (page: Page, expectedPath?: string): boolean => {
   const applicationUrl = new URL(page.url())
   const path = applicationUrl.pathname.split('/')
+  const isApplicationPage = isUuid(path.pop() ?? '') && path.pop() == 'umsoknir'
 
-  return isUuid(path.pop() ?? '') && path.pop() == 'umsoknir'
+  if (expectedPath) {
+    return isApplicationPage && applicationUrl.pathname.includes(expectedPath)
+  }
+
+  return isApplicationPage
 }

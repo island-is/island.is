@@ -53,7 +53,7 @@ class MockChargeFjsV2ClientService {
     })
   }
 
-  getChargeStatus(chargeId: string) {
+  getChargeStatus(_: string) {
     return Promise.resolve({
       statusResult: {
         docuNum: '1',
@@ -166,7 +166,7 @@ describe('Payment Service', () => {
     const performingOrganizationID = '1'
     const chargeItems = [{ code: 'asdf' }, { code: 'asdf' }]
 
-    const charge = await service.createCharge(
+    await service.createCharge(
       user,
       performingOrganizationID,
       chargeItems,
@@ -253,7 +253,7 @@ describe('Payment Service', () => {
       chargeItems,
     )
 
-    const payment = await service.createPaymentModel(
+    await service.createPaymentModel(
       catalogChargeItems,
       applicationId,
       performingOrganizationID,
@@ -294,7 +294,7 @@ describe('Payment Service', () => {
       chargeItems,
     )
 
-    const payment = await service.createPaymentModel(
+    await service.createPaymentModel(
       catalogChargeItems,
       applicationId,
       performingOrganizationID,

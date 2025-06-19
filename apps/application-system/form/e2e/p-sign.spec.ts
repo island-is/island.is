@@ -1,14 +1,13 @@
 import { BrowserContext, expect, test } from '@playwright/test'
 import { urls } from '@island.is/testing/e2e'
 import { session } from '@island.is/testing/e2e'
-import { mockApi } from '@island.is/testing/e2e'
-import { regex as uuidRegex } from 'uuidv4'
 import {
+  isApplication,
   disableI18n,
   disablePreviousApplications,
   disableDelegations,
-  disableObjectKey,
 } from '@island.is/testing/e2e'
+import { regex as uuidRegex } from 'uuidv4'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
@@ -29,6 +28,7 @@ test.describe('P-sign', () => {
   test('should be able to create application', async () => {
     const page = await context.newPage()
     await page.goto('/umsoknir/p-merki?delegationChecked=true')
+    await expect(isApplication(page, '/umsoknir/p-merki')).toBeTruthy()
 
     await disablePreviousApplications(page)
     await disableDelegations(page)

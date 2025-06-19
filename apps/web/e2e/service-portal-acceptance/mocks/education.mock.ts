@@ -1,9 +1,6 @@
 import { addXroadMock } from 'testing/e2e/wire-mocks'
 import { HttpMethod, Response } from '@anev/ts-mountebank'
-import {
-  Education,
-  HealthInsurance,
-} from '../../infra/src/dsl/xroad'
+import { Education, HealthInsurance } from '../../infra/src/dsl/xroad'
 import { StudentAssessmentViewModel } from '@island.is/clients/mms/grade'
 
 const mockObject: StudentAssessmentViewModel = {

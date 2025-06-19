@@ -6,7 +6,7 @@ import {
 import { session } from '@island.is/testing/e2e'
 import { helpers } from '@island.is/testing/e2e'
 import { carRecyclingMessages } from '@island.is/application/templates/car-recycling'
-import { label } from '@island.is/testing/e2e'
+import { isApplication, label } from '@island.is/testing/e2e'
 import { coreMessages } from '@island.is/application/core'
 
 const homeUrl = '/umsoknir/skilavottord'
@@ -24,7 +24,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     await disablePreviousApplications(applicationPage)
     await disableI18n(applicationPage)
     await applicationPage.goto(homeUrl)
-    await expect(applicationPage).toBeApplication()
+    await isApplication(applicationPage, 'skilavottord')
     await use(applicationPage)
 
     await applicationPage.close()

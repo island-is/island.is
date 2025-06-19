@@ -3,10 +3,11 @@ import { test as base, expect, Page } from '@playwright/test'
 import {
   disableI18n,
   disablePreviousApplications,
+  isApplication,
 } from '@island.is/testing/e2e'
 import { label } from '@island.is/testing/e2e'
 import { session } from '@island.is/testing/e2e'
-import { setupXroadMocks } from './setup-xroad.mocks'
+import { setupXroadMocks } from '../setup-xroad.mocks'
 import {
   additionalAttachments,
   expectHeadingToBeVisible,
@@ -32,9 +33,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     await disablePreviousApplications(applicationPage)
     await disableI18n(applicationPage)
     await applicationPage.goto(homeUrl)
-    await expect(applicationPage).toBeApplication(
-      'felagslegur-vidbotarstudningur',
-    )
+    await isApplication(applicationPage, 'felagslegur-vidbotarstudningur')
     await setupXroadMocks()
     await use(applicationPage)
 

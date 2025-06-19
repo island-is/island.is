@@ -34,7 +34,10 @@ const deepMock = <T = Dictionary>(
   original: T | T[],
   mockKey: Matchable,
   mockData: unknown = {},
-  { exactMatch = false, deepPath = 'data' } = {},
+  {
+    exactMatch = false,
+    deepPath = 'data',
+  }: { exactMatch?: boolean; deepPath?: string } = {},
 ): T | T[] | Dictionary | Dictionary[] => {
   if (Array.isArray(original)) {
     debug('Applying deep mock to array:', original)
@@ -179,12 +182,45 @@ export const disableTranslations = async (page: Page): Promise<void> => {
   })
 }
 
-/**
- * Mocks GraphQL response for delegations, returning an empty array.
- *
- * @param {Page} page - The Playwright page to apply the mock to.
- * @returns {Promise<void>}
- */
-export const disableDelegations = async (page: Page): Promise<void> => {
-  await mockGraphQL(page, 'ActorDelegations', [])
+function mergeOverwrite(_: unknown, source: unknown) {
+  source
+}
+
+export async function disableObjectKey<T>(
+  page: Page,
+  key: Matchable,
+  mockData?: T,
+) {
+  return await mockGraphQL(page, '**', mockData ?? `MOCKED-${key}`, {
+    deepMockKey: key,
+    patchResponse: true,
+  })
+}
+
+export async function disablePreviousApplications(page: Page) {
+  await mockGraphQL(page, 'ApplicationApplications', [])
+  //syslumennOnEntry.data.estates
+  /*
+  await mockQGL(
+    page,
+    'UpdateApplication',
+    {
+      externalData: {
+        existingApplication: { data: [] },
+        syslumennOnEntry: { data: {} },
+      },
+    },
+    { patchResponse: true },
+  )
+  */
+}
+
+export async function disableI18n(page: Page) {
+  return await mockGraphQL(page, 'GetTranslations', {
+    'mock.translation': 'YES-mocked',
+  })
+}
+
+export async function disableDelegations(page: Page) {
+  return await mockGraphQL(page, 'ActorDelegations', [])
 }

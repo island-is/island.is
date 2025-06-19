@@ -2,10 +2,7 @@ import { HttpMethod, Response } from '@anev/ts-mountebank'
 import addDays from 'date-fns/addDays'
 import addMonths from 'date-fns/addMonths'
 import formatISO from 'date-fns/formatISO'
-import {
-  Labor,
-  NationalRegistry,
-} from '../../infra/src/dsl/xroad'
+import { Labor, NationalRegistry } from '@island.is/infra/dsl/xroad'
 import { addXroadMock } from '@island.is/testing/e2e'
 
 export const loadParentalLeaveXroadMocks = async () => {

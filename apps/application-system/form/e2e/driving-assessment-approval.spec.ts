@@ -2,6 +2,7 @@ import { expect, test as base, Page } from '@playwright/test'
 import {
   disableI18n,
   disablePreviousApplications,
+  isApplication,
 } from '@island.is/testing/e2e'
 import { session } from '@island.is/testing/e2e'
 
@@ -21,7 +22,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     await disablePreviousApplications(applicationPage)
     await disableI18n(applicationPage)
     await applicationPage.goto(homeUrl)
-    await expect(applicationPage).toBeApplication()
+    await isApplication(applicationPage, 'akstursmat')
     await use(applicationPage)
 
     await applicationPage.close()

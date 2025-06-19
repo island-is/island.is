@@ -1,7 +1,7 @@
 import slugify from 'slugify'
 import { BrowserContext, expect, Page, test } from '@playwright/test'
 
-import { session,urls } from '@island.is/testing/e2e'
+import { session, urls } from '@island.is/testing/e2e'
 
 type GetByRole = Pick<Page, 'getByRole'>['getByRole']
 type GetByRoleParameters = Parameters<GetByRole>

@@ -1,5 +1,5 @@
 import { HttpMethod, Response } from '@anev/ts-mountebank'
-import { SocialInsuranceAdministration } from '../../infra/src/dsl/xroad'
+import { SocialInsuranceAdministration } from '@island.is/infra/dsl/xroad'
 import { addXroadMock } from '@island.is/testing/e2e'
 
 const setupApplicationMocks = async (applicationType: string) => {

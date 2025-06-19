@@ -1005,8 +1005,10 @@ describe('Application system API', () => {
   })
 
   it('PUT applications/assign returns to draft and creates a new token. Old token should be invalid', async () => {
-    const { token, applicationId } =
-      await mockExampleApplicationInAssignableState()
+    const {
+      token,
+      applicationId,
+    } = await mockExampleApplicationInAssignableState()
 
     await server
       .put(`/applications/${applicationId}/submit`)

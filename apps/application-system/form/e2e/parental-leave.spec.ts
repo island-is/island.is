@@ -16,10 +16,7 @@ import {
 } from '@island.is/application/templates/parental-leave/messages'
 import { coreMessages } from '@island.is/application/core/messages'
 import { label } from '@island.is/testing/e2e'
-import {
-  EmailAccount,
-  makeEmailAccount,
-} from '@island.is/testing/e2e'
+import { EmailAccount, makeEmailAccount } from '@island.is/testing/e2e'
 import { helpers } from '@island.is/testing/e2e'
 import { session } from '@island.is/testing/e2e'
 import { setupXroadMocks } from './setup-xroad.mocks'
@@ -40,7 +37,7 @@ const getEmployerEmailAndApprove = async (
     throw new Error('Email not found, test incomplete')
   }
   const employerUrlMatch = email.html.match(/>(http?:.*)<\/p>/)
-  if (employerUrlMatch?.length != 2)
+  if (employerUrlMatch?.length !== 2)
     throw new Error(
       'Email does not contain the url to approve the parental leave application',
     )

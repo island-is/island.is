@@ -1,9 +1,10 @@
-import { expect, test as base, Page } from '@playwright/test'
+import { test as base, Page } from '@playwright/test'
 import { env } from '@island.is/testing/e2e'
 import {
   disableI18n,
   disablePreviousApplications,
   disableObjectKey,
+  isApplication,
 } from '@island.is/testing/e2e'
 import { session } from '@island.is/testing/e2e'
 
@@ -25,7 +26,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     await disablePreviousApplications(applicationPage)
     await disableI18n(applicationPage)
     await applicationPage.goto(homeUrl)
-    await expect(applicationPage).toBeApplication()
+    await isApplication(applicationPage, 'okuskirteini')
     await use(applicationPage)
 
     await applicationPage.close()
@@ -37,7 +38,7 @@ applicationTest.describe('Driving Instructor Registrations', () => {
   applicationTest.beforeEach(async ({ applicationPage }) => {
     const page = applicationPage
     // Handle fake-data from RLS
-    if (env == 'local' || env == 'dev') {
+    if (env === 'local' || env === 'dev') {
       await page.getByLabel('Já').check()
       await page
         .getByRole('region', { name: 'Núverandi ökuréttindi umsækjanda' })

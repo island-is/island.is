@@ -1,16 +1,10 @@
 import { expect, test as base, Page } from '@playwright/test'
-import {
-  createMockPdf,
-  deleteMockPdf,
-  sleep,
-} from '@island.is/testing/e2e'
+import { createMockPdf, deleteMockPdf, sleep } from '@island.is/testing/e2e'
 import {
   disableI18n,
   disablePreviousApplications,
-  disableObjectKey,
-  disableDelegations,
 } from '@island.is/testing/e2e'
-import { session } from '@island.is/testing/e2e'
+import { isApplication, session } from '@island.is/testing/e2e'
 
 const homeUrl = '/umsoknir/rekstrarleyfi'
 
@@ -24,12 +18,10 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     })
 
     const applicationPage = await applicationContext.newPage()
-    // await disableObjectKey(applicationPage, 'existingApplication')
     await disablePreviousApplications(applicationPage)
     await disableI18n(applicationPage)
-    // await disableDelegations(applicationPage)
     await applicationPage.goto(homeUrl)
-    await expect(applicationPage).toBeApplication()
+    await isApplication(applicationPage, 'rekstrarleyfi')
     await use(applicationPage)
 
     await applicationPage.close()
