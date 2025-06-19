@@ -67,10 +67,7 @@
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "docker compose up -d",
-          "nohup ./scripts/run-xroad-proxy.sh &>>.xroad.log &"
-        ],
+        "command": "docker compose up -d",
         "cwd": "apps/services/user-profile"
       }
     },
@@ -116,7 +113,10 @@
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["yarn start services-user-profile"],
+        "commands": [
+          "yarn start services-user-profile",
+          "scripts/run-xroad-proxy.sh"
+        ],
         "parallel": true
       }
     },

@@ -67,26 +67,20 @@
     "dev-init": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "yarn get-secrets {projectName}",
-          "yarn nx dev-services {projectName}"
-        ]
+        "commands": ["yarn get-secrets api"],
+        "parallel": false
       }
     },
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": [
-          "docker compose -f scripts/docker-compose/redis-cluster.yml up -d",
-          "nohup ./scripts/run-xroad-proxy.sh &>>.xroad.log &"
-        ],
-        "parallel": true
+        "command": "docker compose -f scripts/docker-compose/redis-cluster.yml up -d"
       }
     },
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["yarn start api"],
+        "commands": ["./scripts/run-xroad-proxy.sh", "yarn start api"],
         "parallel": true
       }
     },
