@@ -68,7 +68,7 @@ error_empty() {
 }
 
 validate_empty() {
-  [[ -d $1 ]] || {
+  [[ -z $1 ]] || {
     printf "%sNo empty values%s" "$RED" "$RESET" >&2
     exit 1
   }
@@ -84,7 +84,8 @@ validate_whitespace() {
     error_empty
   fi
   # No whitespace
-  if [[ $1 = "$ILLEGAL_CHARS" ]]; then
+  # shellcheck disable=SC2053
+  if [[ $1 = $ILLEGAL_CHARS ]]; then
     printf "%sWhitespaces are not allowed%s\n" "$RED" "$RESET"
     exit 0
   fi
@@ -138,7 +139,7 @@ parse_create_args() {
       shift 2
       ;;
     *)
-      echo "Unknown option: $1" >&2
+      printf "Unknown option: %s\n" "$1" >&2
       exit 1
       ;;
     esac
@@ -157,36 +158,39 @@ parse_create_args() {
 }
 prepare_secret() {
   # Prompt user for secret name
-  read -erp "${BLUE}Secret name: ${RESET}${SSM_PREFIX}" SECRET_NAME
+  [[ -n "$SECRET_NAME" ]] || read -erp "${BLUE}Secret name: ${RESET}${SSM_PREFIX}" SECRET_NAME
   validate_whitespace "$SECRET_NAME"
   validate_chars "$SECRET_NAME"
   validate_length "$SECRET_NAME"
 
   # Prompt user for secret value
-  read -erp "${BLUE}Secret value: ${RESET}" SECRET_VALUE
+  [[ -n "$SECRET_VALUE" ]] || read -erp "${BLUE}Secret value: ${RESET}" SECRET_VALUE
   validate_whitespace "$SECRET_VALUE"
   validate_length "$SECRET_VALUE"
 
   # Prompt user for secret type
-  read -erp "${BLUE}SecureString [Y/n]? ${RESET}"
-  if [[ $REPLY =~ ^[Nn]$ ]]; then
-    SECRET_TYPE="String"
-  else
-    SECRET_TYPE="SecureString"
+  if [[ -z "$SECRET_TYPE" ]]; then
+    read -erp "${BLUE}SecureString [Y/n]? ${RESET}"
+    if [[ $REPLY =~ ^[Nn]$ ]]; then
+      SECRET_TYPE="String"
+    else
+      SECRET_TYPE="SecureString"
+    fi
   fi
   printf "%s$SECRET_TYPE selected%s\n" "$GREEN" "$RESET"
 
   # Prompt user for adding tags
-  TAGS=""
-  read -erp "${BLUE}Add tags? [y/N]? ${RESET}"
-  if [[ $REPLY =~ ^[Yy]$ ]]; then
-    read -erp "${YELLOW}Example: Key=Foo,Value=Bar Key=Another,Value=Tag: ${RESET}" TAGS
+  if [[ -z "$TAGS" ]]; then
+    read -erp "${BLUE}Add tags? [y/N]? ${RESET}"
+    if [[ $REPLY =~ ^[Yy]$ ]]; then
+      read -erp "${YELLOW}Example: Key=Foo,Value=Bar Key=Another,Value=Tag: ${RESET}" TAGS
+    fi
   fi
-  read -erp "${YELLOW}Are you sure [Y/n]? ${RESET}"
+  read -erp "${YELLOW}Create the secret [Y/n]? ${RESET}"
   if [[ $REPLY =~ ^[Nn]$ ]]; then
     printf "%sAborting...%s" "$RED" "$RESET"
   else
-    printf "%sCreating secret....%s\n" "$GREEN" "$RESET"
+    printf "%sCreating /k8s/$SECRET_NAME as $SECRET_TYPE%s\n" "$GREEN" "$RESET"
     create_secret "$SECRET_NAME" "$SECRET_VALUE" "$SECRET_TYPE" "$TAGS"
   fi
 }
