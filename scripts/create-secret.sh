@@ -20,7 +20,7 @@ MAX_LENGTH="128"
 ALPHANUMERIC_DASH="^[a-zA-Z0-9\/\_-]+$"
 
 ILLEGAL_CHARS="*[[:space:]]*"
-HAS_SLASH_END="[^\/]$"
+HAS_SLASH_END="\/$"
 SECRET_TYPE_OPTIONS='(SecureString|String)'
 
 print_help() {
