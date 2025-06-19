@@ -1,7 +1,7 @@
 import { useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
-import { applyCase } from 'beygla/strict'
 import { applyCase as applyCaseToAddress } from 'beygla/addresses'
+import { applyCase } from 'beygla/strict'
 import { AnimatePresence, motion } from 'motion/react'
 import router from 'next/router'
 
