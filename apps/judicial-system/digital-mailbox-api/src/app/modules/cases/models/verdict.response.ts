@@ -93,7 +93,7 @@ export class VerdictResponse {
               // This should be replaced with the actual ruling text
               // but we don't have that stored right now.
               value: 'TODO Ruling text goes here',
-              type: 'richText',
+              type: 'text',
             },
           ],
         },
