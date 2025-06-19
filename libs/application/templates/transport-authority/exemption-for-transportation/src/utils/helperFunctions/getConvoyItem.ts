@@ -128,16 +128,48 @@ export const hasConvoyItemWithTrailer = (answers: FormValue): boolean => {
   return convoyItems.some((item) => item.trailer?.permno)
 }
 
-export const checkHasDoubleDolly = (answers: FormValue) => {
+export const checkHasTrailer = (
+  answers: FormValue,
+  convoyIndex: number,
+): boolean => {
+  const convoyItem = getConvoyItem(answers, convoyIndex)
+  const hasTrailer = !!convoyItem?.trailer?.permno
+  return hasTrailer
+}
+
+export const checkHasDolly = (answers: FormValue): boolean => {
+  return checkHasSingleDolly(answers) || checkHasDoubleDolly(answers)
+}
+
+export const checkHasSingleDolly = (answers: FormValue): boolean => {
   const exemptionType = getExemptionType(answers)
 
+  // Note: Since dolly is only allowed in short-term, then there is only one convoy
   const convoyIndexForDolly = 0
+
   const convoyItem = getConvoyItem(answers, convoyIndexForDolly)
+  const hasTrailer = !!convoyItem?.trailer?.permno
 
   return (
     exemptionType === ExemptionType.SHORT_TERM &&
-    (convoyItem?.dollyType === DollyType.SINGLE ||
-      convoyItem?.dollyType === DollyType.DOUBLE)
+    hasTrailer &&
+    convoyItem?.dollyType === DollyType.SINGLE
+  )
+}
+
+export const checkHasDoubleDolly = (answers: FormValue): boolean => {
+  const exemptionType = getExemptionType(answers)
+
+  // Note: Since dolly is only allowed in short-term, then there is only one convoy
+  const convoyIndexForDolly = 0
+
+  const convoyItem = getConvoyItem(answers, convoyIndexForDolly)
+  const hasTrailer = !!convoyItem?.trailer?.permno
+
+  return (
+    exemptionType === ExemptionType.SHORT_TERM &&
+    hasTrailer &&
+    convoyItem?.dollyType === DollyType.DOUBLE
   )
 }
 

@@ -166,7 +166,7 @@ export const overviewSection = buildSection({
         }),
         buildAlertMessageField({
           id: 'overview.alertMessageValidation',
-          title: 'Athugið',
+          title: overview.freight.convoyMissingErrorTitle,
           message: (application) =>
             getConvoyMissingInPairingErrorMessage(application.answers) || '',
           condition: (answers) =>

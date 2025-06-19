@@ -300,11 +300,15 @@ const AxleSpacingSchema = z
     ),
   })
   .refine(
-    ({ hasExemptionForWeight, exemptionPeriodType, dolly }) => {
+    ({ hasExemptionForWeight, exemptionPeriodType, dolly, trailerList }) => {
       if (!hasExemptionForWeight) return true
 
       // Since dolly is only allowed in short-term
       if (exemptionPeriodType !== ExemptionType.SHORT_TERM) return true
+
+      // Since dolly can only be included if there is a trailer
+      const hasTrailer = trailerList.some((x) => !!x.permno)
+      if (!hasTrailer) return true
 
       // Since there is only axle space for double dolly
       if (dolly.type !== DollyType.DOUBLE) return true

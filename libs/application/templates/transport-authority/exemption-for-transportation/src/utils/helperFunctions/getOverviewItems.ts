@@ -19,7 +19,9 @@ import {
   checkIfExemptionTypeShortTerm,
 } from './getExemptionType'
 import {
+  checkHasDolly,
   checkHasDoubleDolly,
+  checkHasSingleDolly,
   getAllConvoyTrailers,
   getAllConvoyVehicles,
   getConvoyItem,
@@ -32,7 +34,7 @@ import {
   getTrailerAxleSpacing,
   getVehicleAxleSpacing,
 } from './getSpacing'
-import { DollyType, ExemptionFor } from '../../shared'
+import { ExemptionFor } from '../../shared'
 import {
   getFreightItem,
   getFreightPairingItem,
@@ -265,12 +267,8 @@ export const getConvoyOverviewItems = (
         ...overview.convoy.vehicleLabel,
         values: { permno: convoyItem.vehicle.permno },
       },
-      !isLongTerm && convoyItem.dollyType === DollyType.SINGLE
-        ? [overview.convoy.dollySingleLabel]
-        : [],
-      !isLongTerm && convoyItem.dollyType === DollyType.DOUBLE
-        ? [overview.convoy.dollyDoubleLabel]
-        : [],
+      checkHasSingleDolly(answers) ? [overview.convoy.dollySingleLabel] : [],
+      checkHasDoubleDolly(answers) ? [overview.convoy.dollyDoubleLabel] : [],
       ...(convoyItem.trailer?.permno
         ? [
             {
@@ -478,10 +476,7 @@ export const getVehicleSpacingOverviewItems = (
             convoyItem.convoyId,
           )
           if (isShortTerm) {
-            if (
-              convoyItem.dollyType === DollyType.SINGLE ||
-              convoyItem.dollyType === DollyType.DOUBLE
-            ) {
+            if (checkHasDolly(answers)) {
               return [
                 {
                   ...overview.vehicleSpacing.shortTermVehicleToDollyLabel,

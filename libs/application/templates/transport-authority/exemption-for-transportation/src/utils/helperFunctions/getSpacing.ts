@@ -1,10 +1,7 @@
 import { getValueViaPath, YES } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
-import {
-  DollyType,
-  ExemptionForTransportationAnswers,
-  ExemptionType,
-} from '../..'
+import { ExemptionForTransportationAnswers } from '../..'
+import { checkHasDolly } from './getConvoyItem'
 
 export const getVehicleAxleSpacing = (
   answers: FormValue,
@@ -63,9 +60,7 @@ export const getConvoyVehicleSpacing = (
   )
 
   return (
-    vehicleSpacingAnswers?.exemptionPeriodType === ExemptionType.SHORT_TERM &&
-    (vehicleSpacing?.dollyType === DollyType.SINGLE ||
-      vehicleSpacing?.dollyType === DollyType.DOUBLE)
+    checkHasDolly(answers)
       ? [
           vehicleSpacing?.vehicleToDollyValue,
           vehicleSpacing?.dollyToTrailerValue,
