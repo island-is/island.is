@@ -73,7 +73,7 @@ test.describe('Admin portal (Endorsements)', () => {
 
     // Assert
     let dateValue = await page.getByLabel('Tímabil til').last().inputValue()
-    await expect(dateValue).toBe(exampleDateInThePast)
+    expect(dateValue).toBe(exampleDateInThePast)
 
     // And lets end by setting the date back to what it was
     await page.getByLabel('Tímabil til').last().fill(currentEndDate)
@@ -82,6 +82,6 @@ test.describe('Admin portal (Endorsements)', () => {
 
     // Assert
     dateValue = await page.getByLabel('Tímabil til').last().inputValue()
-    await expect(dateValue).toBe(currentEndDate)
+    expect(dateValue).toBe(currentEndDate)
   })
 })

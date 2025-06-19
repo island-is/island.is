@@ -119,7 +119,7 @@ test.describe('Admin portal access control', () => {
       await expect(
         receiverPage.getByRole('heading', { name: 'Yfirlit' }),
       ).toBeVisible()
-      await expect(receiverPage.url()).toBe(`${homeUrl}loftbru`)
+      expect(receiverPage.url()).toBe(`${homeUrl}loftbru`)
     })
   })
 })
