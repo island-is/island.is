@@ -5,15 +5,15 @@ const { uuid } = require('uuidv4')
 const userProfiles = [
   {
     nationalId: '0101301111',
-    emailStatus: 'VERIFIED',
+    emailStatus: 'NOT_VERIFIED',
   },
   {
     nationalId: '0101302222',
-    emailStatus: 'VERIFIED',
+    emailStatus: 'NOT_DEFINED',
   },
   {
-    nationalId: '0101303333',
-    emailStatus: 'VERIFIED',
+    nationalId: '0101307789',
+    emailStatus: 'EMPTY',
   },
   {
     nationalId: '0101304444',
@@ -31,7 +31,7 @@ module.exports = {
           national_id: nationalId,
           mobile_phone_number: `010${nationalId.slice(4)}`,
           locale: 'en',
-          email: `${nationalId}@email.com`,
+          email: emailStatus === 'EMPTY' ? null : `${nationalId}@email.com`,
           email_status: emailStatus,
           created: new Date(),
           modified: new Date(),

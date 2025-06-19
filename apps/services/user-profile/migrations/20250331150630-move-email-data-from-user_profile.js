@@ -3,41 +3,57 @@
 const { uuid } = require('uuidv4')
 module.exports = {
   async up(queryInterface, Sequelize) {
+    console.log('Migrating email data from user_profile to emails table')
     try {
+      const SIZE = 10000
       await queryInterface.sequelize.transaction(async (transaction) => {
-        // Move email data from user_profile to user
-        const userProfiles = await queryInterface.sequelize.query(
-          'SELECT * FROM user_profile',
-          { type: queryInterface.sequelize.QueryTypes.SELECT },
-        )
+        console.log('=== Starting migration ===')
+        let offset = 0
+        let hasMore = true
 
-        if (userProfiles.length !== 0) {
-          // Insert data into emails table
-          await queryInterface.bulkInsert(
-            'emails',
-            userProfiles.map((profile) => ({
-              id: uuid(),
-              national_id: profile.national_id,
-              email: profile.email,
-              email_status: profile.email_status,
-              primary: true,
-              created: new Date(),
-              modified: new Date(),
-            })),
-            { transaction },
+        while (hasMore) {
+          console.log(
+            `Fetching user profiles from offset ${offset} to ${offset + SIZE}`,
           )
-        }
 
-        // Clean up: Remove all email related columns from user_profile
-        // await queryInterface.removeColumn('user_profile', 'email_status', {
-        //   transaction,
-        // })
-        // await queryInterface.removeColumn('user_profile', 'email_verified', {
-        //   transaction,
-        // })
-        // await queryInterface.removeColumn('user_profile', 'email', {
-        //   transaction,
-        // })
+          const userProfiles = await queryInterface.sequelize.query(
+            `SELECT national_id, email, email_status FROM user_profile WHERE email_status != 'EMPTY' AND email_status != 'NOT_DEFINED' AND EMAIL != '' ORDER BY national_id ASC LIMIT ${SIZE} OFFSET ${offset}`,
+            {
+              type: queryInterface.sequelize.QueryTypes.SELECT,
+            },
+          )
+
+          if (userProfiles.length === 0) {
+            hasMore = false
+          }
+
+          offset = offset + SIZE
+
+          const checkEmailStatus = (emailStatus) =>
+            emailStatus !== 'EMPTY' && emailStatus !== 'NOT_DEFINED'
+
+          if (userProfiles.length > 0) {
+            await queryInterface.bulkInsert(
+              'emails',
+              userProfiles
+                .map((profile) =>
+                  checkEmailStatus(profile.email_status)
+                    ? {
+                        id: uuid(),
+                        national_id: profile.national_id,
+                        email: profile.email,
+                        email_status: profile.email_status,
+                        primary: true,
+                        created: new Date(),
+                        modified: new Date(),
+                      }
+                    : null,
+                )
+                .filter((item) => item !== null),
+              { transaction },
+            )
+          }
+        }
       })
     } catch (error) {
       console.error('Error migrating email data:', error)
@@ -46,41 +62,7 @@ module.exports = {
   },
 
   async down(queryInterface, Sequelize) {
-    // await queryInterface.sequelize.transaction(async (transaction) => {
-    //   await queryInterface.addColumn(
-    //     'user_profile',
-    //     'email_status',
-    //     {
-    //       type: Sequelize.ENUM(
-    //         'NOT_DEFINED',
-    //         'NOT_VERIFIED',
-    //         'VERIFIED',
-    //         'EMPTY',
-    //       ),
-    //       defaultValue: 'NOT_DEFINED',
-    //       allowNull: false,
-    //     },
-    //     { transaction },
-    //   )
-    //   await queryInterface.addColumn(
-    //     'user_profile',
-    //     'email_verified',
-    //     {
-    //       type: Sequelize.BOOLEAN,
-    //       defaultValue: false,
-    //       allowNull: false,
-    //     },
-    //     { transaction },
-    //   )
-    //   await queryInterface.addColumn(
-    //     'user_profile',
-    //     'email',
-    //     {
-    //       type: Sequelize.STRING,
-    //       allowNull: true,
-    //     },
-    //     { transaction },
-    //   )
-    // })
+    // This migration is irreversible
+    return Promise.resolve()
   },
 }
