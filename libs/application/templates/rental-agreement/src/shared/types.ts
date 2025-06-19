@@ -99,14 +99,14 @@ export interface RentalPeriodSection {
 
 export interface ConsumerIndexItem {
   month: string
-  value: number
+  value: string
 }
 
 export interface RentalAmountSection {
   rentalAmount: string | undefined
-  isIndexConnected: string | undefined
+  isIndexConnected: YesOrNoEnum | undefined
   indexDate: string | undefined
-  indexRate: number | undefined
+  indexRate: string | undefined
   paymentMethod: string | undefined
   paymentMethodOther: string | undefined
   paymentDay: string | undefined
