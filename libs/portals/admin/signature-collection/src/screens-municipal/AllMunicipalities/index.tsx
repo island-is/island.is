@@ -7,7 +7,6 @@ import {
   GridRow,
   Stack,
   Breadcrumbs,
-  FilterInput,
   Divider,
 } from '@island.is/island-ui/core'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
@@ -19,14 +18,12 @@ import { useLoaderData, useNavigate } from 'react-router-dom'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { SignatureCollectionList } from '@island.is/api/schema'
-import { useState } from 'react'
 import FindSignature from '../../shared-components/findSignature'
 
 const AllMunicipalities = () => {
   const { allLists, collection } = useLoaderData() as ListsLoaderReturn
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
-  const [searchTerm, setSearchTerm] = useState('')
 
   const areaCounts: Record<string, number> = {}
   const municipalityMap = new Map<string, SignatureCollectionList>()
