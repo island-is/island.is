@@ -22,8 +22,8 @@ import { DeleteIslykillSettings } from './models/deleteIslykillSettings.model'
 import { Email } from './models/email.model'
 import { UserProfileLocale } from './models/userProfileLocale.model'
 import {
-  EmailsDataLoader,
   EmailsLoader,
+  type EmailsDataLoader,
 } from './modules/user-emails/emails.loader'
 import { Response } from './response.model'
 import { UserDeviceToken } from './userDeviceToken.model'

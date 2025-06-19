@@ -1,23 +1,53 @@
 'use strict'
 
+const { uuid } = require('uuidv4')
+
+const userProfiles = [
+  {
+    nationalId: '0101301111',
+    emailStatus: 'VERIFIED',
+  },
+  {
+    nationalId: '0101302222',
+    emailStatus: 'VERIFIED',
+  },
+  {
+    nationalId: '0101303333',
+    emailStatus: 'VERIFIED',
+  },
+  {
+    nationalId: '0101304444',
+    emailStatus: 'VERIFIED',
+  },
+]
+
 module.exports = {
-  up: (queryInterface) => {
-    return queryInterface.bulkInsert(
-      'user_profile',
-      [
-        {
-          id: 'ec23d2ff-4798-43eb-b487-c0c37c2778b1',
-          national_id: '2222222229',
-          mobile_phone_number: '2222229',
+  up: (queryInterface, Sequelize) => {
+    return queryInterface.sequelize.transaction(async (transaction) => {
+      return queryInterface.bulkInsert(
+        'user_profile',
+        userProfiles.map(({ nationalId, emailStatus }) => ({
+          id: uuid(),
+          national_id: nationalId,
+          mobile_phone_number: `010${nationalId.slice(4)}`,
           locale: 'en',
-          email: 'email@email.com',
-        },
-      ],
-      {},
-    )
+          email: `${nationalId}@email.com`,
+          email_status: emailStatus,
+          created: new Date(),
+          modified: new Date(),
+        })),
+        { transaction },
+      )
+    })
   },
 
   down: (queryInterface) => {
-    return queryInterface.bulkDelete('user_profile', null, {})
+    return queryInterface.bulkDelete('user_profile', null, {
+      where: {
+        national_id: {
+          [Op.in]: userProfiles.map(({ nationalId }) => nationalId),
+        },
+      },
+    })
   },
 }
