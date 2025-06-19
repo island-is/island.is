@@ -1,11 +1,11 @@
-import { Box, Button, Table as T, toast, Text } from '@island.is/island-ui/core'
+import { Box, Button, Table as T, toast, Text, GridRow, GridColumn, Tag, Icon } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m } from '../../../lib/messages'
 import { useEffect, useState } from 'react'
 import { Modal } from '@island.is/react/components'
 import { useSignatureCollectionAdminRemoveCandidateMutation } from './removeCandidate.generated'
 import { SignatureCollectionCandidate } from '@island.is/api/schema'
 import { formatNationalId } from '@island.is/portals/core'
+import { m } from '../../lib/messages'
 
 const ReviewCandidates = ({
   candidates,
@@ -55,25 +55,31 @@ const ReviewCandidates = ({
   }
 
   return (
-    <Box marginTop={8} display="flex" justifyContent="center">
-      <Box
-        display="flex"
-        justifyContent="flexEnd"
-        alignItems="flexEnd"
-        style={{ minWidth: '150px' }}
-      >
-        <Button
-          variant="text"
-          size="small"
-          colorScheme="destructive"
-          nowrap
-          onClick={() => {
-            setModalIsOpen(true)
-          }}
-        >
-          {formatMessage(m.reviewCandidatesModalDescription)}
-        </Button>
-      </Box>
+    <Box>
+      <GridRow>
+        <GridColumn span={['12/12', '12/12', '12/12', '10/12']}>
+          <Box display="flex">
+            <Tag>
+              <Box display="flex" justifyContent="center">
+                <Icon icon="people" type="outline" color="blue600" />
+              </Box>
+            </Tag>
+            <Box marginLeft={5}>
+              <Text variant="h4">{formatMessage(m.reviewCandidatesModalDescription)}</Text>
+              <Text marginBottom={2}>
+                Texti sem útskýrir þessa aðgerð betur kemur hér.
+              </Text>
+              <Button
+                variant="text"
+                size="small"
+                onClick={() => setModalIsOpen(true)}
+              >
+                {formatMessage(m.reviewCandidatesModalDescription)}
+              </Button>
+            </Box>
+          </Box>
+        </GridColumn>
+      </GridRow>
       <Modal
         id="reviewCandidatesModal"
         isVisible={modalIsOpen}
@@ -106,8 +112,9 @@ const ReviewCandidates = ({
                     </T.Data>
                     <T.Data style={{ display: 'flex', justifyContent: 'end' }}>
                       <Button
-                        variant="utility"
+                        variant="text"
                         icon="trash"
+                        colorScheme="destructive"
                         onClick={() => {
                           setConfirmModalIsOpen(true)
                           setCandidateInReview(candidate)

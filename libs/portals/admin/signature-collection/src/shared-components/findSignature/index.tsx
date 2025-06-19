@@ -1,9 +1,9 @@
 import { Box, FilterInput, Text, Table as T } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m } from '../../../lib/messages'
+import { m } from '../../lib/messages'
 import { useState } from 'react'
 import { useSignatureCollectionSignatureLookupQuery } from './findSignature.generated'
-import { SkeletonSingleRow } from '../../../shared-components/compareLists/skeleton'
+import { SkeletonSingleRow } from '../compareLists/skeleton'
 
 const FindSignature = ({ collectionId }: { collectionId: string }) => {
   const { formatMessage } = useLocale()

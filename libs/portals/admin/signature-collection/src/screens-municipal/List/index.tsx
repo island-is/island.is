@@ -57,7 +57,7 @@ const List = () => {
                     list.area.name,
                   )}`,
                 },
-                { title: list.title },
+                { title: list.candidate.name },
               ]}
             />
           </Box>
