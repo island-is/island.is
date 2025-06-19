@@ -2089,7 +2089,7 @@ export const searchTagsMessages = defineMessages({
     id: 'sp.search.tags:health-insurance-ehic-card',
     defaultMessage: 'Evrópska sjúkratryggingakortið',
   },
-  healtPaymentParticitpation: {
+  healthPaymentParticipation: {
     id: 'sp.search.tags:health-payment-participation',
     defaultMessage: 'Greiðsluþátttaka',
   },
