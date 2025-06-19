@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 
 import { Accordion, Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { getCourtDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   isAcceptingCaseDecision,
   isCompletedCase,
@@ -164,7 +165,7 @@ const Confirmation: FC = () => {
       <FormContentContainer isFooter>
         <FormFooter
           previousUrl={`${constants.RESTRICTION_CASE_COURT_RECORD_ROUTE}/${workingCase.id}`}
-          nextUrl={constants.CASES_ROUTE}
+          nextUrl={getCourtDashboardRoute(user)}
           nextButtonText={formatMessage(
             workingCase.decision === CaseDecision.ACCEPTING
               ? strings.continueButtonTextAccepting

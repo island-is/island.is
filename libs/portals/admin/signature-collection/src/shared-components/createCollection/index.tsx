@@ -65,6 +65,7 @@ const CreateCollection = ({
   const [nationalIdInput, setNationalIdInput] = useState('')
   const [nationalIdNotFound, setNationalIdNotFound] = useState(false)
   const [name, setName] = useState('')
+  const [collectionName, setCollectionName] = useState('')
   const [canCreate, setCanCreate] = useState(true)
   const [canCreateErrorReason, setCanCreateErrorReason] = useState('')
 
@@ -75,6 +76,7 @@ const CreateCollection = ({
       input: {
         collectionType: collectionType,
         collectionId: id,
+        collectionName: collectionName || undefined,
         owner: {
           name: name,
           nationalId: nationalIdInput,
@@ -92,11 +94,14 @@ const CreateCollection = ({
   const createNewCollection = async () => {
     try {
       const createCollectionRes = await createCollection()
-      if (createCollectionRes.data?.signatureCollectionAdminCreate.slug) {
+      if (createCollectionRes.data?.signatureCollectionAdminCreate.success) {
         toast.success(formatMessage(m.createCollectionSuccess))
         setModalIsOpen(false)
       } else {
-        toast.error(formatMessage(m.createCollectionSuccess))
+        toast.error(
+          createCollectionRes.data?.signatureCollectionAdminCreate
+            .reasons?.[0] || formatMessage(m.createCollectionError),
+        )
       }
     } catch (e) {
       toast.error(e.message)
@@ -129,6 +134,7 @@ const CreateCollection = ({
       })
     } else {
       setName('')
+      setCollectionName('')
       setNationalIdInput('')
       setNationalIdNotFound(false)
       setCanCreate(true)
@@ -169,6 +175,7 @@ const CreateCollection = ({
           setModalIsOpen(false)
           setNationalIdInput('')
           setName('')
+          setCollectionName('')
           setCanCreate(true)
         }}
         hideOnClickOutside={false}
@@ -201,10 +208,23 @@ const CreateCollection = ({
               />
               <Input
                 name="candidateName"
-                label={formatMessage(m.candidateName)}
+                label={formatMessage(m.name)}
                 readOnly
                 value={name}
               />
+              {collectionType ===
+                SignatureCollectionCollectionType.LocalGovernmental && (
+                <Input
+                  name="collectionName"
+                  id="collectionName"
+                  label={formatMessage(m.candidateName)}
+                  backgroundColor="blue"
+                  value={collectionName}
+                    onChange={(v) =>
+                    setCollectionName(v.target.value)
+                  }
+                />
+              )}
               {currentArea?.id && (
                 <Input
                   name="candidateArea"

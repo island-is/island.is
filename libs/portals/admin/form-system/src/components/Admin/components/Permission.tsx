@@ -1,8 +1,11 @@
-import { useContext } from "react"
-import { FormsContext } from "../../../context/FormsContext"
+import { useContext } from 'react'
+import { FormsContext } from '../../../context/FormsContext'
 import { Box, Checkbox, GridRow, Stack } from '@island.is/island-ui/core'
-import { useMutation } from "@apollo/client"
-import { CREATE_ORGANIZATION_PERMISSION, DELETE_ORGANIZATION_PERMISSION } from '@island.is/form-system/graphql'
+import { useMutation } from '@apollo/client'
+import {
+  CREATE_ORGANIZATION_PERMISSION,
+  DELETE_ORGANIZATION_PERMISSION,
+} from '@island.is/form-system/graphql'
 import { FormSystemPermissionType } from '@island.is/api/schema'
 
 type PermissionType = 'certificate' | 'list' | 'field'
@@ -22,7 +25,7 @@ export const Permission = ({ type }: Props) => {
     fieldTypes,
     selectedFieldTypes,
     setSelectedFieldTypes,
-    organizationId
+    organizationId,
   } = useContext(FormsContext)
 
   const sortedPermissionsList = (list: FormSystemPermissionType[]) => {
@@ -54,12 +57,12 @@ export const Permission = ({ type }: Props) => {
             updateOrganizationPermissionDto: {
               permission: id,
               organizationId: organizationId,
-            }
-          }
-        }
+            },
+          },
+        },
       })
     } catch (error) {
-      console.error('Failed to add permission:', error);
+      console.error('Failed to add permission:', error)
     }
   }
 
@@ -77,7 +80,7 @@ export const Permission = ({ type }: Props) => {
       })
       setSelectedTypes(getSelectedTypes().filter((type) => type !== id))
     } catch (error) {
-      console.error('Failed to remove permission:', error);
+      console.error('Failed to remove permission:', error)
     }
   }
 
@@ -151,7 +154,7 @@ export const Permission = ({ type }: Props) => {
                 name={permission?.name?.is ?? ''}
                 checked={isSelected(permission.id ?? '')}
                 onChange={async (e) => {
-                  if (e) {
+                  if (e.target.checked) {
                     await addPermission(permission.id ?? '')
                   } else {
                     await removePermission(permission.id ?? '')
