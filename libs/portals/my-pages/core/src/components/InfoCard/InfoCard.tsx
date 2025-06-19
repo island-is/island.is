@@ -116,11 +116,22 @@ export const InfoCard: React.FC<InfoCardProps> = ({
       padding={3}
       className={styles.boxContainer}
       height="full"
+      background="white"
     >
-      <GridRow direction="row">
+      <GridRow direction="row" className={styles.gridRow}>
         <GridColumn
           span={
-            size === 'large' ? (img && !isMobile ? '8/12' : '11/12') : '11/12'
+            size === 'large'
+              ? img && !isMobile
+                ? to
+                  ? '8/12'
+                  : '9/12'
+                : to
+                ? '11/12'
+                : '12/12'
+              : to
+              ? '11/12'
+              : '12/12'
           }
           className={styles.contentContainer}
         >
@@ -138,7 +149,10 @@ export const InfoCard: React.FC<InfoCardProps> = ({
               >
                 {title}
               </Text>
-              <Text>{description}</Text>
+              <Inline>
+                <Text>{description}</Text>
+                {tooltip && <Tooltip text={tooltip} />}
+              </Inline>
             </Box>
           </Box>
           {detailData && (
@@ -158,10 +172,25 @@ export const InfoCard: React.FC<InfoCardProps> = ({
                     justifyContent="spaceBetween"
                     className={styles.flexItem}
                   >
-                    <Text variant="small">{item?.label}</Text>
-                    <Text variant="h3" as="p">
-                      {item?.value}
-                    </Text>
+                    <Inline>
+                      <Text variant="small">{item?.label}</Text>
+                      {item?.tooltip && <Tooltip text={item?.tooltip} />}
+                    </Inline>
+                    <Inline alignY="bottom">
+                      <Text variant="h3" as="p">
+                        {item?.value}
+                      </Text>
+                      {item?.subValue && (
+                        <Box marginLeft={1}>
+                          <Text
+                            variant="eyebrow"
+                            color="foregroundPrimaryMinimal"
+                          >
+                            {item?.subValue}
+                          </Text>
+                        </Box>
+                      )}
+                    </Inline>
                   </Box>
 
                   {/* Only show divider between items */}
@@ -189,25 +218,23 @@ export const InfoCard: React.FC<InfoCardProps> = ({
           )}
         </GridColumn>
         {size === 'large' && !isMobile && img && (
-          <GridColumn span="3/12" className={styles.imageContainer}>
+          <GridColumn span={'3/12'} className={styles.imageContainer}>
             <Box
-              className={styles.image}
               alt=""
               component="img"
               src={img}
               marginRight={isMobile ? 2 : 0}
-              display="flex"
-              justifyContent="center"
-              alignItems="center"
-              width="full"
+              className={styles.image}
             />
           </GridColumn>
         )}
-        <GridColumn span="1/12" className={styles.icon}>
-          <Box display="flex" justifyContent="flexEnd" alignItems="flexStart">
-            <Icon icon="arrowForward" type="outline" color="blue400" />
-          </Box>
-        </GridColumn>
+        {to && (
+          <GridColumn span="1/12" className={styles.icon}>
+            <Box display="flex" justifyContent="flexEnd" alignItems="flexStart">
+              <Icon icon="arrowForward" type="outline" color="blue400" />
+            </Box>
+          </GridColumn>
+        )}
       </GridRow>
       {tags && tags.length > 0 && (
         <GridRow>
