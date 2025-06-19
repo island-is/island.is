@@ -30,8 +30,9 @@ export const dataSchema = z.object({
   childNationalId: z.string().min(1),
   childInfo: z
     .object({
+      usePronounAndPreferredName: z.array(z.string()),
       preferredName: z.string().optional(),
-      pronouns: z.array(z.string()).optional(),
+      pronouns: z.array(z.string()).optional().nullable(),
       differentPlaceOfResidence: z.enum([YES, NO]),
       placeOfResidence: z
         .object({
@@ -40,6 +41,18 @@ export const dataSchema = z.object({
         })
         .optional(),
     })
+    .refine(
+      ({ usePronounAndPreferredName, preferredName }) =>
+        usePronounAndPreferredName.includes(YES) ? !!preferredName : true,
+      { path: ['preferredName'] },
+    )
+    .refine(
+      ({ usePronounAndPreferredName, pronouns }) =>
+        usePronounAndPreferredName.includes(YES)
+          ? !!pronouns && pronouns.length > 0
+          : true,
+      { path: ['pronouns'] },
+    )
     .refine(
       ({ differentPlaceOfResidence, placeOfResidence }) =>
         differentPlaceOfResidence === YES
