@@ -6,81 +6,31 @@ import {
   buildSubmitField,
   coreMessages,
 } from '@island.is/application/core'
+import { DefaultEvents, FormModes, UserProfileApi } from '@island.is/application/types'
+import { disabilityPensionFormMessage } from '../../lib/messages'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { DefaultEvents, NationalRegistryCohabitantsApi, NationalRegistrySpouseApi, NationalRegistryUserApi } from '@island.is/application/types'
-import { FormModes, UserProfileApi } from '@island.is/application/types'
-import { SocialInsuranceAdministrationApplicantApi, SocialInsuranceAdministrationIsApplicantEligibleApi } from '../../dataProviders'
+
 
 export const Prerequisites = buildForm({
   id: 'PrerequisitesDraft',
+  title: disabilityPensionFormMessage.prerequisites.title,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   children: [
     buildSection({
       id: 'conditions',
-      tabTitle: 'Forkröfur',
+      tabTitle: disabilityPensionFormMessage.prerequisites.title,
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
-          title: 'External data',
+          title: socialInsuranceAdministrationMessage.pre.externalDataSection,
+          subTitle: socialInsuranceAdministrationMessage.pre.externalDataDescription,
           dataProviders: [
-            buildDataProviderItem({
-              provider: NationalRegistryUserApi,
-              title:
-                socialInsuranceAdministrationMessage.pre.skraInformationTitle,
-              subTitle:
-                'bingbong',
-            }),
-            buildDataProviderItem({
-              provider: NationalRegistrySpouseApi,
-              title: '',
-            }),
-            buildDataProviderItem({
-              provider: NationalRegistryCohabitantsApi,
-              title: '',
-            }),
-            buildDataProviderItem({
-              provider: UserProfileApi,
-              title: socialInsuranceAdministrationMessage.pre.contactInfoTitle,
-              subTitle:
-                socialInsuranceAdministrationMessage.pre.contactInfoDescription,
-            }),
-            buildDataProviderItem({
-              provider: SocialInsuranceAdministrationApplicantApi,
-              title:
-                socialInsuranceAdministrationMessage.pre
-                  .socialInsuranceAdministrationTitle,
-              subTitle:
-                socialInsuranceAdministrationMessage.pre
-                  .socialInsuranceAdministrationDescription,
-            }),
-            buildDataProviderItem({
-              id: 'sia.data',
-              title:
-                socialInsuranceAdministrationMessage.pre
-                  .socialInsuranceAdministrationInformationTitle,
-              subTitle:
-                socialInsuranceAdministrationMessage.pre
-                  .socialInsuranceAdministrationDataDescription,
-            }),
-            buildDataProviderItem({
-              id: 'sia.privacy',
-              title:
-                socialInsuranceAdministrationMessage.pre
-                  .socialInsuranceAdministrationPrivacyTitle,
-              subTitle:
-                socialInsuranceAdministrationMessage.pre
-                  .socialInsuranceAdministrationPrivacyDescription,
-            }),
-            buildDataProviderItem({
-              provider: SocialInsuranceAdministrationIsApplicantEligibleApi,
-              title: '',
-            }),
-            buildDataProviderItem({
+            /*buildDataProviderItem({
               provider: UserProfileApi,
               title: 'User profile',
               subTitle: 'User profile',
-            }),
+              }),*/
             // Add more data providers as needed
           ],
           submitField: buildSubmitField({

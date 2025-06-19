@@ -9,6 +9,8 @@ import {
   FormModes,
   UserProfileApi,
   ApplicationConfigurations,
+  NationalRegistryUserApi,
+  NationalRegistrySpouseApi,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -20,6 +22,7 @@ import {
 } from '@island.is/application/core'
 import { assign } from 'xstate'
 import { disabilityPensionFormMessage } from './messages'
+import { NationalRegistryBirthplaceApi } from '../dataProviders'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -30,16 +33,16 @@ const template: ApplicationTemplate<
   name: disabilityPensionFormMessage.shared.applicationTitle,
   codeOwner: CodeOwners.Hugsmidjan,
   institution: socialInsuranceAdministrationMessage.shared.institution,
-  translationNamespaces: ApplicationConfigurations.DisabilityPension.translation, // TODO: Change to the correct translation namespace
+  translationNamespaces: ApplicationConfigurations.DisabilityPension.translation,
   dataSchema,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
       [States.PREREQUISITES]: {
         meta: {
-          name: 'Skilyrði',
-          progress: 0,
+          name: 'Gagnaöflun',
           status: FormModes.DRAFT,
+          progress: 0.1,
           lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
@@ -53,7 +56,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [UserProfileApi],
+              api: [UserProfileApi, NationalRegistryUserApi, NationalRegistrySpouseApi, NationalRegistryBirthplaceApi],
               delete: true,
             },
           ],
