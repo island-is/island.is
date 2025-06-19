@@ -29,6 +29,33 @@ HAS_SLASH_END="[^\/]"
 # Complete pattern
 # PATTERN=$ALPHANUMERIC_DASH$MIN_LENGTH$HAS_SLASH_END$END
 
+print_help() {
+  cat <<EOF
+${BLUE}Usage:${RESET}
+  $(basename "$0") [command] [options]
+
+${BLUE}Commands:${RESET}
+  create                           Interactively create a secret (default if no command is given)
+  create --name <name> \\
+         --value <value> \\
+         [--type <String|SecureString>] \\
+         [--tags "Key=K,Value=V ..."]   Non-interactively create a secret
+
+  validate_length <string>         Validate length (6-128 chars)
+  validate_chars <string>          Validate allowed characters (alphanum, dash, slash, underscore)
+  validate_whitespace <string>     Validate absence of whitespace
+  validate_empty <string>          Validate input is not empty
+
+${BLUE}Options:${RESET}
+  -h, --help                       Show this help message and exit
+
+${BLUE}Examples:${RESET}
+  $(basename "$0")
+  $(basename "$0") validate_length mySecret123
+  $(basename "$0") create --name my-secret --value secret123 --type SecureString --tags "Key=Env,Value=Prod"
+EOF
+}
+
 __error_exit() {
   # printf "${RED}[ERROR]: $*${NOSTYLE}" >&2; exit 1;
   printf "%s[ERROR]: $*%s" "$RED" "$RESET" >&2
@@ -91,6 +118,43 @@ validate_length() {
 }
 
 #-------------------CREATE SECRET--------------------------#
+parse_create_args() {
+  while [[ $# -gt 0 ]]; do
+    case "$1" in
+    --name)
+      SECRET_NAME="$2"
+      shift 2
+      ;;
+    --value)
+      SECRET_VALUE="$2"
+      shift 2
+      ;;
+    --type)
+      SECRET_TYPE="$2"
+      shift 2
+      ;;
+    --tags)
+      TAGS="$2"
+      shift 2
+      ;;
+    *)
+      echo "Unknown option: $1" >&2
+      exit 1
+      ;;
+    esac
+  done
+  # Defaults
+  SECRET_TYPE="${SECRET_TYPE:-SecureString}"
+  # Validations
+  validate_whitespace "$SECRET_NAME"
+  validate_chars "$SECRET_NAME"
+  validate_length "$SECRET_NAME"
+  validate_whitespace "$SECRET_VALUE"
+  validate_length "$SECRET_VALUE"
+  printf "%sCreating secret....%s\n" "$GREEN" "$RESET"
+  create_secret "$SECRET_NAME" "$SECRET_VALUE" "$SECRET_TYPE" "$TAGS"
+  exit 0
+}
 prepare_secret() {
   # Prompt user for secret name
   read -erp "${BLUE}Secret name: ${RESET}${SSM_PREFIX}" SECRET_NAME
@@ -141,27 +205,25 @@ create_secret() {
   printf "%sDone!%s" "$GREEN" "$RESET"
 }
 
-case $1 in
-validate_length)
+case "$1" in
+validate_length | validate_chars | validate_whitespace | validate_empty | __error_exit)
   "$@"
-  exit
+  exit 0
   ;;
-validate_chars)
-  "$@"
-  exit
+create)
+  shift
+  if [[ $# -eq 0 ]]; then
+    prepare_secret
+  else
+    parse_create_args "$@"
+  fi
   ;;
-validate_whitespace)
-  "$@"
-  exit
+--help | -h)
+  print_help
+  exit 0
   ;;
-validate_empty)
-  "$@"
-  exit
-  ;;
-__error_exit)
-  "$@"
-  exit
+*)
+  print_help
+  exit 1
   ;;
 esac
-
-prepare_secret
