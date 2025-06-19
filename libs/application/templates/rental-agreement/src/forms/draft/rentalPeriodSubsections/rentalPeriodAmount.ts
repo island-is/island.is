@@ -102,7 +102,7 @@ export const RentalPeriodAmount = buildSubSection({
           variant: 'text',
           value: (answers, externalData) => {
             const rate = getIndexRateForConsumerIndexDate(answers, externalData)
-            return rate !== undefined ? String(rate) : ''
+            return rate !== undefined ? rate.replace('.', ',') : ''
           },
           condition: rentalAmountConnectedToIndex,
           width: 'half',

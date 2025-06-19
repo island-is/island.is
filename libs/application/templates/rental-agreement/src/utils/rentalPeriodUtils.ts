@@ -194,7 +194,7 @@ export const getConsumerIndexDateOptions = (
 export const getIndexRateForConsumerIndexDate = (
   answers: Application['answers'],
   externalData: Application['externalData'],
-): number | undefined => {
+): string | undefined => {
   const { isIndexConnected, indexDate } = applicationAnswers(answers)
 
   if (!isIndexConnected?.includes(YesOrNoEnum.YES) || !indexDate) {

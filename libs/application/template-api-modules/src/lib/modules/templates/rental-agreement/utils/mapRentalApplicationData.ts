@@ -10,6 +10,7 @@ import {
   SecurityDepositType,
   SpecialGroup,
 } from '@island.is/clients/hms-rental-agreement'
+import { YesOrNoEnum } from '@island.is/application/core'
 import {
   getPropertyId,
   getSecurityDepositTypeDescription,
@@ -21,7 +22,6 @@ import {
   RentalAgreementAnswers,
   RentalHousingCategoryClass,
 } from '@island.is/application/templates/rental-agreement'
-import { YesOrNoEnum } from '@island.is/application/core'
 
 export const mapRentalApplicationData = (
   applicationId: string,
@@ -120,12 +120,13 @@ export const mapRentalApplicationData = (
       isFixedTerm: Boolean(endDate),
       rent: {
         amount: parseToNumber(rentalAmount || '0'),
-        index:
-          isIndexConnected === YesOrNoEnum.YES
-            ? RentIndex.ConsumerPriceIndex
-            : RentIndex.None,
+        index: isIndexConnected?.includes(YesOrNoEnum.YES)
+          ? RentIndex.ConsumerPriceIndex
+          : RentIndex.None,
         indexRate:
-          isIndexConnected === YesOrNoEnum.YES && indexRate ? indexRate : null,
+          isIndexConnected?.includes(YesOrNoEnum.YES) && indexRate
+            ? Number(indexRate.replace(',', '.'))
+            : null,
       },
       payment: {
         method: paymentMethod as PaymentMethod,
