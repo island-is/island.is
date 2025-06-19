@@ -442,13 +442,13 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
           children: [
             buildSelectField({
               id: 'genderAnswer',
-              title: information.aboutTheComplainer.gender,
+              title: gender.general.gender,
               options: genderOptions,
               required: true,
             }),
             buildAlertMessageField({
               id: 'genderJustification',
-              message: information.aboutTheComplainer.genderJustification,
+              message: gender.general.genderJustification,
               alertType: 'info',
             }),
           ],

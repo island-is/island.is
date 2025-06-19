@@ -7,11 +7,12 @@ import {
   complaintOverview,
   information,
   complaintInformation,
+  gender
 } from '../../lib/messages'
 import { ValueLine } from './ValueLine'
 import { ComplainedFor } from './ComplainedFor'
 import { ComplaintInformation } from './ComplaintInformation'
-import { yesNoMessageMapper } from '../../utils'
+import { getGenderLabel, yesNoMessageMapper } from '../../utils'
 import { OmbudsmanComplaintTypeEnum } from '../../shared'
 import { DocumentCard } from '../components'
 import { useLocale } from '@island.is/localization'
@@ -92,7 +93,6 @@ export const ComplaintOverview: FC<React.PropsWithChildren<Props>> = ({
       <ComplainedFor
         complainedForType={answers.complainedFor.decision}
         complainedFor={answers.complainedForInformation}
-        gender={answers.genderAnswer}
         connection={answers.complainedForInformation?.connection ?? ''}
         isEditable={isEditable}
         onEdit={changeScreens}
@@ -199,6 +199,19 @@ export const ComplaintOverview: FC<React.PropsWithChildren<Props>> = ({
                 {formatMessage(complaintOverview.labels.complaintNoDocuments)}
               </Text>
             )}
+          </GridColumn>
+        </GridRow>
+      </ReviewGroup>
+      <ReviewGroup
+        isEditable={isEditable}
+        editAction={() => changeScreens('section.gender')}
+      >
+        <GridRow>
+          <GridColumn span="9/12">
+            <ValueLine
+              label={gender.general.title}
+              value={formatMessage(getGenderLabel(answers.genderAnswer))}
+            />
           </GridColumn>
         </GridRow>
       </ReviewGroup>
