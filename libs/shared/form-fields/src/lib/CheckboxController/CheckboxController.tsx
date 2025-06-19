@@ -7,7 +7,7 @@ import {
   GridColumn,
   InputBackgroundColor,
 } from '@island.is/island-ui/core'
-import { clearInputsOnChange } from '@island.is/shared/utils'
+import { clearInputsOnChange, setInputsOnChange } from '@island.is/shared/utils'
 
 type CheckboxProps = React.ComponentProps<typeof Checkbox>
 
@@ -35,6 +35,10 @@ interface CheckboxControllerProps {
   backgroundColor?: InputBackgroundColor
   onSelect?: (s: string[]) => void
   clearOnChange?: string[]
+  setOnChange?: // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  | { key: string; value: any }[]
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    | ((value: string[]) => Promise<{ key: string; value: any }[]>)
 }
 export const CheckboxController: FC<
   React.PropsWithChildren<CheckboxControllerProps>
@@ -53,6 +57,7 @@ export const CheckboxController: FC<
   backgroundColor,
   onSelect = () => undefined,
   clearOnChange,
+  setOnChange,
 }) => {
   const { clearErrors, setValue } = useFormContext()
 
@@ -91,17 +96,25 @@ export const CheckboxController: FC<
               <Checkbox
                 disabled={disabled || option.disabled}
                 large={large}
-                onChange={() => {
+                onChange={async () => {
                   clearErrors(id)
                   const newChoices = handleSelect(
                     option,
-                    Array.isArray(value) ? value : [value] || [],
+                    Array.isArray(value) ? value : [value],
                   )
                   onChange(newChoices)
                   setValue(id, newChoices)
                   onSelect(newChoices)
                   if (clearOnChange) {
                     clearInputsOnChange(clearOnChange, setValue)
+                  }
+                  if (setOnChange) {
+                    setInputsOnChange(
+                      typeof setOnChange === 'function'
+                        ? await setOnChange(newChoices)
+                        : setOnChange,
+                      setValue,
+                    )
                   }
                 }}
                 rightContent={option.rightContent}

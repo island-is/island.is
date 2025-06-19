@@ -4,7 +4,7 @@ import { Box } from '@island.is/island-ui/core'
 
 export const DocumentIndex = () => {
   return (
-    <Box paddingTop={2}>
+    <Box>
       <DocumentsProvider>
         <DocumentsOverview />
       </DocumentsProvider>

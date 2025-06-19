@@ -353,6 +353,7 @@ api:
     XROAD_DRIVING_LICENSE_V4_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Okuskirteini-v4'
     XROAD_DRIVING_LICENSE_V5_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Okuskirteini-v5'
     XROAD_ENERGY_FUNDS_PATH: 'IS-DEV/GOV/10021/FJS-Public/ElectricCarSubSidyService_v1'
+    XROAD_EXEMPTION_FOR_TRANSPORTATION_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Leyfur-V1'
     XROAD_FINANCES_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeIsland'
     XROAD_FINANCES_TIMEOUT: '20000'
     XROAD_FINANCES_V2_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeServicesFJS_v2'
@@ -382,6 +383,7 @@ api:
     XROAD_INTELLECTUAL_PROPERTIES_PATH: 'IS-DEV/GOV/10030/WebAPI-Public/HUG-webAPI'
     XROAD_JUDICIAL_SYSTEM_SP_PATH: 'IS-DEV/GOV/10014/Rettarvorslugatt-Private/judicial-system-mailbox-api'
     XROAD_LEGAL_GAZETTE_PATH: 'IS-DEV/GOV/10014/DMR-Protected/legal-gazette-api'
+    XROAD_LSH_PATH: 'IS-DEV/GOV/10022/Landspitali-Protected/external-patient-api-v1'
     XROAD_MMS_FRIGG_PATH: 'IS-DEV/GOV/10066/MMS-Protected/frigg-form-api'
     XROAD_MMS_GRADE_SERVICE_ID: 'IS-DEV/GOV/10066/MMS-Protected/grade-api-v1'
     XROAD_MMS_LICENSE_SERVICE_ID: 'IS-DEV/GOV/10066/MMS-Protected/license-api-v1'
@@ -531,6 +533,7 @@ api:
     FISKISTOFA_ZENTER_CLIENT_PASSWORD: '/k8s/api/FISKISTOFA_ZENTER_CLIENT_PASSWORD'
     FISKISTOFA_ZENTER_EMAIL: '/k8s/api/FISKISTOFA_ZENTER_EMAIL'
     FISKISTOFA_ZENTER_PASSWORD: '/k8s/api/FISKISTOFA_ZENTER_PASSWORD'
+    FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY: '/k8s/form-system/FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY'
     HOUSING_BENEFIT_CALCULATOR_PASSWORD: '/k8s/xroad/client/HOUSING_BENEFIT_CALCULATOR_PASSWORD'
     HOUSING_BENEFIT_CALCULATOR_USERNAME: '/k8s/xroad/client/HOUSING_BENEFIT_CALCULATOR_USERNAME'
     HSN_WEB_FORM_RESPONSE_SECRET: '/k8s/api/HSN_WEB_FORM_RESPONSE_SECRET'
@@ -671,6 +674,7 @@ application-system-api:
     XROAD_DRIVING_LICENSE_V4_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Okuskirteini-v4'
     XROAD_DRIVING_LICENSE_V5_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Okuskirteini-v5'
     XROAD_ENERGY_FUNDS_PATH: 'IS-DEV/GOV/10021/FJS-Public/ElectricCarSubSidyService_v1'
+    XROAD_EXEMPTION_FOR_TRANSPORTATION_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Leyfur-V1'
     XROAD_FINANCES_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeIsland'
     XROAD_FINANCES_V2_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeServicesFJS_v2'
     XROAD_FINANCIAL_AID_BACKEND_PATH: 'IS-DEV/MUN/10023/samband-sveitarfelaga/financial-aid-backend'
@@ -1557,7 +1561,7 @@ form-system-web:
     BASEPATH: '/form'
     CODE_OWNER: 'Advania'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps'
     SERVERSIDE_FEATURES_ON: ''
     SI_PUBLIC_ENVIRONMENT: 'dev'
   grantNamespaces:
@@ -2870,7 +2874,6 @@ services-form-system-api:
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
     DB_PASS: '/k8s/services-form-system-api/DB_PASSWORD'
-    FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY: '/k8s/form-system/FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY'
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false

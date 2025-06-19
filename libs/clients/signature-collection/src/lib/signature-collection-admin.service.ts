@@ -86,27 +86,22 @@ export class SignatureCollectionAdminClientService {
   async toggleListStatus(listId: string, auth: Auth): Promise<Success> {
     const listStatus = await this.listStatus(listId, auth)
     // Can only toggle list if it is in review or reviewed
-    if (
-      listStatus === ListStatus.InReview ||
-      listStatus === ListStatus.Reviewed
-    ) {
-      try {
-        const list = await this.getApiWithAuth(
-          this.adminApi,
-          auth,
-        ).adminMedmaelalistiIDToggleListPatch({
-          iD: parseInt(listId),
-          shouldToggle: listStatus === ListStatus.InReview,
-        })
-        return { success: !!list }
-      } catch (error) {
-        return {
-          success: false,
-          reasons: error.body ? [error.body] : [],
-        }
+
+    try {
+      const list = await this.getApiWithAuth(
+        this.adminApi,
+        auth,
+      ).adminMedmaelalistiIDToggleListPatch({
+        iD: parseInt(listId),
+        shouldToggle: listStatus === ListStatus.InReview,
+      })
+      return { success: !!list }
+    } catch (error) {
+      return {
+        success: false,
+        reasons: error.body ? [error.body] : [],
       }
     }
-    return { success: false }
   }
 
   async processCollection(collectionId: string, auth: Auth): Promise<Success> {
@@ -170,7 +165,7 @@ export class SignatureCollectionAdminClientService {
 
       const adminApi = this.getApiWithAuth(this.adminApi, auth)
 
-      const filteredAreas = areas
+      const filteredAreas = areas?.length
         ? collectionAreas.filter((area) =>
             areas.flatMap((a) => a.areaId).includes(area.id),
           )
