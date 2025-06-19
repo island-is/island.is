@@ -70,8 +70,9 @@ export {
   isPublicProsecutionUser,
   getAdminUserInstitutionScope,
   getAdminUserInstitutionUserRoles,
+  hasCaseGroupListsEnabled,
 } from './lib/user'
-export type { User, UserDescriptor } from './lib/user'
+export type { User, UserDescriptor, InstitutionUser } from './lib/user'
 
 export {
   CaseOrigin,
@@ -147,5 +148,9 @@ export { type CourtDocument } from './lib/courtDocument'
 
 export { type CaseTableColumnKey } from './lib/tables/caseTableColumnTypes'
 export { getCaseTableType, caseTables } from './lib/tables/caseTable'
-export { CaseTableType } from './lib/tables/caseTableTypes'
+export {
+  CaseActionType,
+  ContextMenuCaseActionType,
+  CaseTableType,
+} from './lib/tables/caseTableTypes'
 export { getCaseTableGroups } from './lib/tables/caseTableGroup'

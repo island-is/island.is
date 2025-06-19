@@ -7,13 +7,16 @@ import format from 'date-fns/format'
 import Signees from '../../../shared/Signees'
 import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 
-const collectionType = SignatureCollectionCollectionType.LocalGovernmental
+const collectionType = SignatureCollectionCollectionType.Parliamentary
 
 const ViewList = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
   const { id } = useParams<{ id: string }>()
-  const { listInfo, loadingList } = useGetSignatureList(id || '')
+  const { listInfo, loadingList } = useGetSignatureList(
+    id || '',
+    collectionType,
+  )
 
   return (
     <Box>

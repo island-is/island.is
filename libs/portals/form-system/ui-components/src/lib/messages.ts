@@ -530,5 +530,97 @@ export const m = defineMessages({
   nationalId: {
     id: 'portals-admin.form-system:national-id',
     defaultMessage: 'Kennitala',
+    description: 'National ID',
+  },
+  basicErrorMessage: {
+    id: 'form-system:basic-error-message',
+    defaultMessage: 'Villa kom upp',
+    description: 'Basic error message',
+  }
+})
+
+export const webMessages = defineMessages({
+  externalDataTitle: {
+    id: 'form-system:external-data-title',
+    defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki',
+    description:
+      'The following data will be retrieved electronically with your consent',
+  },
+  externalDataConfirmation: {
+    id: 'form-system:externalData.confirm',
+    defaultMessage: 'Staðfesta',
+    description: 'Confirm',
+  },
+  externalDataAgreement: {
+    id: 'form-system:externalData.agreement',
+    defaultMessage: 'Ég hef kynnt mér ofangreint varðandi gagnaöflun',
+    description: 'I have read the above regarding data collection',
+  },
+  icelandicRegistryTitle: {
+    id: 'form-system:icelandic-registry-title',
+    defaultMessage: 'Upplýsingar úr Þjóðskrá',
+    description: 'Icelandic registry',
+  },
+  icelandicRegistryDescription: {
+    id: 'form-system:icelandic-registry-description',
+    defaultMessage: 'Upplýsingar um þig, maka og börn.',
+    description: 'Information about you, your spouse and children',
+  },
+  myPagesTitle: {
+    id: 'form-system:my-pages-title',
+    defaultMessage: 'Mínar upplýsingar á Mínum síðum Ísland.is',
+    description: 'My information on My Pages on Ísland.is',
+  },
+  myPagesDescription: {
+    id: 'form-system:my-pages-description',
+    defaultMessage:
+      'Upplýsingar um símanúmer og netfang til að auðvelda umsóknarferlið.',
+    description:
+      'Information about phone number and email to facilitate the application process',
+  },
+  continue: {
+    id: 'form-system:continue',
+    defaultMessage: 'Halda áfram',
+    description: 'Continue',
+  },
+  back: {
+    id: 'form-system:back',
+    defaultMessage: 'Til baka',
+    description: 'Back',
+  },
+  postalCode: {
+    id: 'form-system:postal-code',
+    defaultMessage: 'Póstnúmer',
+    description: 'Postal code',
+  },
+  fullName: {
+    id: 'form-system:full-name',
+    defaultMessage: 'Fullt nafn',
+    description: 'Full name',
+  },
+  open: {
+    id: 'form-system:open',
+    defaultMessage: 'Opna',
+    description: 'Open',
+  },
+  yourProperties: {
+    id: 'form-system:your-properties',
+    defaultMessage: 'Þínar eignir',
+    description: 'Your properties',
+  },
+  uploadBoxTitle: {
+    id: 'form-system:upload-box-title',
+    defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
+    description: 'Notaður fyrir titil í Hlaða upp skrám svæði.',
+  },
+  uploadBoxButtonLabel: {
+    id: 'form-system:upload-box-button-label',
+    defaultMessage: 'Velja skjöl til að hlaða upp',
+    description: 'Notaður fyrir titil í takka á Hlaða upp skrám svæði.',
+  },
+  uploadBoxDescription: {
+    id: 'form-system:upload-box-description',
+    defaultMessage: 'Tekið er við skjölum með endingu: {fileEndings}',
+    description: 'Notaður fyrir texta í Hlaða upp skrám svæði.',
   },
 })

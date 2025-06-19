@@ -27,6 +27,7 @@ const arraignmentDate: CaseTableColumn = { title: 'Fyrirtaka' }
 const indictmentArraignmentDate: CaseTableColumn = { title: 'Fyrirtaka' }
 const indictmentRulingDecision: CaseTableColumn = { title: 'Niðurstaða' }
 const created: CaseTableColumn = { title: 'Stofnað' }
+const prosecutor: CaseTableColumn = { title: 'Ákærandi' }
 
 export const caseTableColumns = {
   caseNumber,
@@ -53,6 +54,7 @@ export const caseTableColumns = {
   indictmentArraignmentDate,
   indictmentRulingDecision,
   created,
+  prosecutor,
 }
 
 export type CaseTableColumnMap = typeof caseTableColumns
