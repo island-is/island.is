@@ -17,11 +17,6 @@ export const landlordDetails = defineMessages({
       'Hér skal skrá leigusala húsnæðis. Hægt er að bæta við eins mörgum leigusölum á samninginn eins og óskað er eftir.',
     description: 'Landlord details page description',
   },
-  nationalIdInputLabel: {
-    id: 'ra.application:landlordDetails.nationalIdInputLabel',
-    defaultMessage: 'Kennitala leigusala',
-    description: 'Landlord details national id input label',
-  },
   nationalIdHeaderLabel: {
     id: 'ra.application:landlordDetails.nationalIdHeaderLabel',
     defaultMessage: 'Kennitala',
@@ -36,11 +31,6 @@ export const landlordDetails = defineMessages({
     id: 'ra.application:landlordDetails.nameLabel',
     defaultMessage: 'Fullt nafn',
     description: 'Landlord details name input label',
-  },
-  isRepresentative: {
-    id: 'ra.application:landlordDetails.isRepresentative',
-    defaultMessage: 'Umb.',
-    description: 'Landlord is representative',
   },
   emailInputLabel: {
     id: 'ra.application:landlordDetails.emailLabel',
