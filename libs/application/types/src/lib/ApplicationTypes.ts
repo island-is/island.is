@@ -91,6 +91,7 @@ export enum ApplicationTypes {
   MEDICAL_AND_REHABILITATION_PAYMENTS = 'MedicalAndRehabilitationPayments',
   FIRE_COMPENSATION_APPRAISAL = 'FireCompensationAppraisal',
   LEGAL_GAZETTE = 'LegalGazette',
+  EXEMPTION_FOR_TRANSPORTATION = 'ExemptionForTransportation',
 }
 
 export const ApplicationConfigurations = {
@@ -465,5 +466,9 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.LEGAL_GAZETTE]: {
     slug: 'logbirtingarblad',
     translation: 'lg.application',
+  },
+  [ApplicationTypes.EXEMPTION_FOR_TRANSPORTATION]: {
+    slug: 'undanthaga-vegna-flutnings',
+    translation: 'ta.eft.application',
   },
 }

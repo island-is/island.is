@@ -12,13 +12,15 @@ import { type ConfigType } from '@island.is/nest/config'
 
 import {
   DEFENDER_INDICTMENT_ROUTE,
-  PRISON_CASES_ROUTE,
+  getStandardUserDashboardRoute,
   ROUTE_HANDLER_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
   DefendantNotificationType,
+  InstitutionType,
   isIndictmentCase,
   User,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import {
@@ -335,6 +337,10 @@ export class DefendantNotificationService extends BaseNotificationService {
   }
 
   private sendIndictmentSentToPrisonAdminNotification(theCase: Case) {
+    const dashboardRoute = getStandardUserDashboardRoute({
+      role: UserRole.PRISON_SYSTEM_STAFF,
+      institution: { type: InstitutionType.PRISON_ADMIN },
+    })
     const formattedSubject = this.formatMessage(
       strings.indictmentSentToPrisonAdminSubject,
       {
@@ -346,7 +352,7 @@ export class DefendantNotificationService extends BaseNotificationService {
       strings.indictmentSentToPrisonAdminBody,
       {
         courtCaseNumber: theCase.courtCaseNumber,
-        linkStart: `<a href="${this.config.clientUrl}${PRISON_CASES_ROUTE}">`,
+        linkStart: `<a href="${this.config.clientUrl}${dashboardRoute}">`,
         linkEnd: '</a>',
       },
     )

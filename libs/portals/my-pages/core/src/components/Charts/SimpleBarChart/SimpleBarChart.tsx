@@ -1,22 +1,22 @@
+import { Box } from '@island.is/island-ui/core'
+import { theme } from '@island.is/island-ui/theme'
 import {
-  BarChart,
   Bar,
-  XAxis,
-  YAxis,
+  BarChart,
   CartesianGrid,
-  Tooltip,
   Legend,
   ResponsiveContainer,
+  Tooltip,
+  XAxis,
+  YAxis,
 } from 'recharts'
 import {
   CustomizedAxisTick,
-  RenderLegend,
   CustomTooltip,
+  RenderLegend,
   YAxisLabel,
 } from '../sharedChartComponents'
-import { Box } from '@island.is/island-ui/core'
 import * as styles from './styles.css'
-import { theme } from '@island.is/island-ui/theme'
 
 interface Axis {
   label?: string
@@ -55,9 +55,6 @@ export const SimpleBarChart = ({
   return (
     <Box
       className={styles.frameWrapper}
-      borderColor="purple100"
-      borderWidth="standard"
-      borderRadius="large"
       display="flex"
       flexDirection="column"
       flexGrow={1}

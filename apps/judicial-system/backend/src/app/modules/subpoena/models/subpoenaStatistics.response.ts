@@ -26,6 +26,6 @@ export class SubpoenaStatistics {
   @ApiProperty({ type: Number })
   count!: number
 
-  @ApiProperty({ type: [ServiceStatusStatistics] })
+  @ApiProperty({ type: ServiceStatusStatistics, isArray: true })
   serviceStatusStatistics!: ServiceStatusStatistics[]
 }

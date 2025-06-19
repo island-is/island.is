@@ -68,6 +68,7 @@ import { SeminarsClientConfig } from '@island.is/clients/seminars-ver'
 import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school'
 import { PaymentsApiClientConfig } from '@island.is/clients/payments'
 import { HmsRentalAgreementClientConfig } from '@island.is/clients/hms-rental-agreement'
+import { ExemptionForTransportationClientConfig } from '@island.is/clients/transport-authority/exemption-for-transportation'
 
 @Module({
   imports: [
@@ -135,6 +136,7 @@ import { HmsRentalAgreementClientConfig } from '@island.is/clients/hms-rental-ag
         SecondarySchoolClientConfig,
         PaymentsApiClientConfig,
         HmsRentalAgreementClientConfig,
+        ExemptionForTransportationClientConfig,
       ],
     }),
   ],
