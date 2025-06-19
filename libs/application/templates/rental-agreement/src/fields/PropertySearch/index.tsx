@@ -1,4 +1,4 @@
-import { FC, Fragment, useEffect, useState } from 'react'
+import { FC, Fragment, useEffect, useMemo, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useLazyQuery } from '@apollo/client'
 import { CustomField, FieldBaseProps } from '@island.is/application/types'
@@ -166,6 +166,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
         formatMessage(registerProperty.search.addressSearchError) ||
           'Failed to search addresses',
       )
+      setPropertiesByAddressCode(undefined)
     },
     onCompleted: (data) => {
       setAddressSearchError(null)
@@ -193,6 +194,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
         formatMessage(registerProperty.search.propertyInfoError) ||
           'Failed to fetch properties',
       )
+      setPropertiesByAddressCode(undefined)
     },
     onCompleted: (data) => {
       setPropertyInfoError(null)
@@ -372,6 +374,12 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
   }
 
   const hasValidationErrors = errors ? Object.keys(errors).length > 0 : false
+  const propertySectionHasContent = useMemo(() => {
+    return (
+      propertiesLoading ||
+      (propertiesByAddressCode && propertiesByAddressCode.length > 0)
+    )
+  }, [propertiesLoading, propertiesByAddressCode])
 
   return (
     <>
@@ -405,20 +413,20 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
             )
           }}
         />
-        {addressSearchError && (
-          <Box marginTop={2}>
-            <AlertMessage type="error" message={addressSearchError} />
+        {!propertiesLoading && addressSearchError && (
+          <Box marginTop={4}>
+            <AlertMessage type="error" title={addressSearchError} />
+          </Box>
+        )}
+        {!propertiesLoading && propertyInfoError && (
+          <Box marginTop={4}>
+            <AlertMessage type="error" title={propertyInfoError} />
           </Box>
         )}
       </Box>
 
       {selectedAddress && (
-        <Box marginTop={6}>
-          {propertyInfoError && (
-            <Box marginBottom={4}>
-              <AlertMessage type="error" message={propertyInfoError} />
-            </Box>
-          )}
+        <Box marginTop={propertySectionHasContent ? 6 : 0}>
           {propertiesLoading ? (
             <div style={{ textAlign: 'center' }}>
               <LoadingDots large />
