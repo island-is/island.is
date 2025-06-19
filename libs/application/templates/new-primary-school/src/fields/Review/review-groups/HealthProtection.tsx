@@ -20,7 +20,7 @@ import {
 } from '../../../lib/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
 
-export const AllergiesAndIntolerances = ({
+export const HealthProtection = ({
   application,
   editable,
   goToScreen,
@@ -40,18 +40,18 @@ export const AllergiesAndIntolerances = ({
     options: foodAllergiesOrIntolerancesOptions,
     loading: foodAllergiesOrIntolerancesLoading,
     error: foodAllergiesOrIntolerancesError,
-  } = useFriggOptions(OptionsType.FOOD_ALLERGY_AND_INTOLERANCE)
+  } = useFriggOptions(OptionsType.FOOD_ALLERGY_AND_INTOLERANCE, true)
 
   const {
     options: otherAllergiesOptions,
     loading: otherAllergiesLoading,
     error: otherAllergiesError,
-  } = useFriggOptions(OptionsType.ALLERGY)
+  } = useFriggOptions(OptionsType.ALLERGY, true)
 
   return (
     <ReviewGroup
       isEditable={editable}
-      editAction={() => goToScreen?.('allergiesAndIntolerances')}
+      editAction={() => goToScreen?.('healthProtection')}
     >
       <Stack space={2}>
         {(hasFoodAllergiesOrIntolerances.includes(YES) ||

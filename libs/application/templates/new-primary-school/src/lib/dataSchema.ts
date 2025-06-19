@@ -226,7 +226,7 @@ export const dataSchema = z.object({
         path: ['guardianRequiresInterpreter'],
       },
     ),
-  allergiesAndIntolerances: z
+  healthProtection: z
     .object({
       hasFoodAllergiesOrIntolerances: z.array(z.string()),
       foodAllergiesOrIntolerances: z.array(z.string()).optional().nullable(),

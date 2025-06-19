@@ -2,6 +2,7 @@ import {
   buildAlertMessageField,
   buildCheckboxField,
   buildCustomField,
+  buildDescriptionField,
   buildMultiField,
   buildRadioField,
   buildSubSection,
@@ -12,23 +13,24 @@ import { OptionsType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
 
-export const allergiesAndIntolerancesSubSection = buildSubSection({
-  id: 'allergiesAndIntolerancesSubSection',
+export const healthProtectionSubSection = buildSubSection({
+  id: 'healthProtectionSubSection',
   title:
-    newPrimarySchoolMessages.differentNeeds
-      .allergiesAndIntolerancesSubSectionTitle,
+    newPrimarySchoolMessages.differentNeeds.healthProtectionSubSectionTitle,
   children: [
     buildMultiField({
-      id: 'allergiesAndIntolerances',
+      id: 'healthProtection',
       title:
-        newPrimarySchoolMessages.differentNeeds
-          .allergiesAndIntolerancesSubSectionTitle,
+        newPrimarySchoolMessages.differentNeeds.healthProtectionSubSectionTitle,
       description:
         newPrimarySchoolMessages.differentNeeds
-          .allergiesAndIntolerancesDescription,
+          .healthProtectionSubSectionDescription,
+
       children: [
         buildCheckboxField({
-          id: 'allergiesAndIntolerances.hasFoodAllergiesOrIntolerances',
+          id: 'healthProtection.hasFoodAllergiesOrIntolerances',
+          title:
+            newPrimarySchoolMessages.differentNeeds.allergiesAndIntolerances,
           spacing: 0,
           options: [
             {
@@ -41,7 +43,7 @@ export const allergiesAndIntolerancesSubSection = buildSubSection({
         }),
         buildCustomField(
           {
-            id: 'allergiesAndIntolerances.foodAllergiesOrIntolerances',
+            id: 'healthProtection.foodAllergiesOrIntolerances',
             title:
               newPrimarySchoolMessages.differentNeeds
                 .typeOfFoodAllergiesOrIntolerances,
@@ -60,10 +62,11 @@ export const allergiesAndIntolerancesSubSection = buildSubSection({
               newPrimarySchoolMessages.differentNeeds
                 .typeOfFoodAllergiesOrIntolerancesPlaceholder,
             isMulti: true,
+            useId: true,
           },
         ),
         buildCheckboxField({
-          id: 'allergiesAndIntolerances.hasOtherAllergies',
+          id: 'healthProtection.hasOtherAllergies',
           spacing: 0,
           options: [
             {
@@ -74,7 +77,7 @@ export const allergiesAndIntolerancesSubSection = buildSubSection({
         }),
         buildCustomField(
           {
-            id: 'allergiesAndIntolerances.otherAllergies',
+            id: 'healthProtection.otherAllergies',
             title: newPrimarySchoolMessages.differentNeeds.typeOfOtherAllergies,
             component: 'FriggOptionsAsyncSelectField',
             condition: (answers) => {
@@ -89,10 +92,11 @@ export const allergiesAndIntolerancesSubSection = buildSubSection({
               newPrimarySchoolMessages.differentNeeds
                 .typeOfOtherAllergiesPlaceholder,
             isMulti: true,
+            useId: true,
           },
         ),
         buildAlertMessageField({
-          id: 'allergiesAndIntolerances.allergiesCertificateAlertMessage',
+          id: 'healthProtection.allergiesCertificateAlertMessage',
           title: newPrimarySchoolMessages.shared.alertTitle,
           message:
             newPrimarySchoolMessages.differentNeeds
@@ -111,7 +115,7 @@ export const allergiesAndIntolerancesSubSection = buildSubSection({
           },
         }),
         buildRadioField({
-          id: 'allergiesAndIntolerances.usesEpiPen',
+          id: 'healthProtection.usesEpiPen',
           title: newPrimarySchoolMessages.differentNeeds.usesEpiPen,
           width: 'half',
           required: true,
@@ -138,7 +142,7 @@ export const allergiesAndIntolerancesSubSection = buildSubSection({
           },
         }),
         buildRadioField({
-          id: 'allergiesAndIntolerances.hasConfirmedMedicalDiagnoses',
+          id: 'healthProtection.hasConfirmedMedicalDiagnoses',
           title:
             newPrimarySchoolMessages.differentNeeds
               .hasConfirmedMedicalDiagnoses,
@@ -161,14 +165,22 @@ export const allergiesAndIntolerancesSubSection = buildSubSection({
             },
           ],
         }),
-        buildRadioField({
-          id: 'allergiesAndIntolerances.requestsMedicationAdministration',
+        buildDescriptionField({
+          id: 'healthProtection.requestsMedicationAdministrationDescription',
           title:
             newPrimarySchoolMessages.differentNeeds
               .requestsMedicationAdministration,
-          width: 'half',
-          required: true,
+          titleVariant: 'h4',
+          titleTooltip:
+            newPrimarySchoolMessages.differentNeeds
+              .requestsMedicationAdministrationTooltip,
           space: 4,
+        }),
+        buildRadioField({
+          id: 'healthProtection.requestsMedicationAdministration',
+          width: 'half',
+          space: 0,
+          required: true,
           options: [
             {
               label: newPrimarySchoolMessages.shared.yes,
@@ -183,7 +195,7 @@ export const allergiesAndIntolerancesSubSection = buildSubSection({
           ],
         }),
         buildAlertMessageField({
-          id: 'allergiesAndIntolerances.schoolNurseAlertMessage',
+          id: 'healthProtection.schoolNurseAlertMessage',
           title: newPrimarySchoolMessages.shared.alertTitle,
           message:
             newPrimarySchoolMessages.differentNeeds.schoolNurseAlertMessage,
