@@ -23224,6 +23224,15 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@types/react-input-mask@npm:3.0.0":
+  version: 3.0.0
+  resolution: "@types/react-input-mask@npm:3.0.0"
+  dependencies:
+    "@types/react": "npm:*"
+  checksum: 10/aead8d91683d92197bd1f6ed1fdaa073033e56f556856c92e2f906ce01f52258d95aa8a9cf68c431d085a648ab405af128a3c465ba2b207d3be4a60eeb418a46
+  languageName: node
+  linkType: hard
+
 "@types/react-modal@npm:3.13.1, @types/react-modal@npm:^3.13.1":
   version: 3.13.1
   resolution: "@types/react-modal@npm:3.13.1"
@@ -39997,6 +40006,7 @@ __metadata:
     "@types/react-dom": "npm:18.3.0"
     "@types/react-html-parser": "npm:2.0.1"
     "@types/react-infinite-scroller": "npm:^1.2.3"
+    "@types/react-input-mask": "npm:3.0.0"
     "@types/react-modal": "npm:3.13.1"
     "@types/react-table": "npm:7.0.24"
     "@types/request": "npm:2.48.5"
@@ -40179,6 +40189,7 @@ __metadata:
     react-hook-form: "npm:7.43.3"
     react-html-parser: "npm:2.0.2"
     react-infinite-scroller: "npm:^1.2.6"
+    react-input-mask: "npm:3.0.0-alpha.2"
     react-intl: "npm:5.13.1"
     react-is: "npm:18.3.1"
     react-keyed-flatten-children: "npm:1.2.0"
@@ -50575,6 +50586,20 @@ __metadata:
   peerDependencies:
     react: ^0.14.9 || ^15.3.0 || ^16.0.0 || ^17.0.0 || ^18.0.0
   checksum: 10/d37d3dfc99029e203631b155cc92181453f14cef1cfbbf9bb05504a67b97eedc0771ca6848d110d846c26e3001981702baefd951bcdcdf9fbec15b5dfb420cad
+  languageName: node
+  linkType: hard
+
+"react-input-mask@npm:3.0.0-alpha.2":
+  version: 3.0.0-alpha.2
+  resolution: "react-input-mask@npm:3.0.0-alpha.2"
+  dependencies:
+    invariant: "npm:^2.2.4"
+    prop-types: "npm:^15.7.2"
+    warning: "npm:^4.0.3"
+  peerDependencies:
+    react: ">=16.8"
+    react-dom: ">=16.8"
+  checksum: 10/7f6ec5162d0567aa935d900d6e601d8e31a8df73379022e985ed0dca24841ec98e5df3d7d483a3fe40039fe309d16a3ebfcb4aff4b66bb8a501aa717c4f3f2e4
   languageName: node
   linkType: hard
 
