@@ -1,7 +1,6 @@
 import { BrowserContext, expect, test } from '@playwright/test'
 
-import { urls } from 'testing/e2e/urls'
-import { session } from 'testing/e2e/session'
+import { urls, session } from '@island.is/testing/e2e'
 import { getInputByName } from '../../utils/pageHelpers'
 
 const permissionId = '@admin.island.is/delegations'

@@ -1,4 +1,4 @@
-import { addXroadMock } from 'testing/e2e/wire-mocks'
+import { addXroadMock } from '@island.is/testing/e2e'
 import { HttpMethod, Response } from '@anev/ts-mountebank'
 import { HealthInsurance } from '../../infra/src/dsl/xroad'
 

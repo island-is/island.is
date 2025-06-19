@@ -1,10 +1,6 @@
 import { BrowserContext, expect, test } from '@playwright/test'
 import { messages as m } from '@island.is/portals/my-pages/documents/messages'
-import { icelandicAndNoPopupUrl, urls } from 'testing/e2e/urls'
-import { session } from 'testing/e2e/session'
-import { label } from 'testing/e2e/i18n'
-import { helpers } from 'testing/e2e/locator-helpers'
-import { disableI18n } from 'testing/e2e/disablers'
+import { icelandicAndNoPopupUrl, urls, session, label, helpers, disableI18n } from '@island.is/testing/e2e'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 

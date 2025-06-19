@@ -1,8 +1,7 @@
 import { test, expect, BrowserContext } from '@playwright/test'
 import { format } from 'kennitala'
 
-import { env, icelandicAndNoPopupUrl, urls } from 'testing/e2e/urls'
-import { session } from 'testing/e2e/session'
+import { env, icelandicAndNoPopupUrl, urls, session } from '@island.is/testing/e2e'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
 const sessionHistoryUrl = icelandicAndNoPopupUrl(

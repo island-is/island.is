@@ -1,11 +1,8 @@
 import { BrowserContext, expect, test } from '@playwright/test'
 import { setupXroadMocks } from './setup-xroad.mocks'
 
-import { icelandicAndNoPopupUrl, urls } from 'testing/e2e/urls'
-import { session } from 'testing/e2e/session'
-import { label } from 'testing/e2e/i18n'
+import { icelandicAndNoPopupUrl, urls, session, label, disableI18n } from '@island.is/testing/e2e'
 import { messages } from '@island.is/portals/my-pages/assets/messages'
-import { disableI18n } from 'testing/e2e/disablers'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 

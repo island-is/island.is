@@ -1,6 +1,5 @@
-import { resetMocks, wildcard } from 'testing/e2e/wire-mocks'
+import { resetMocks, wildcard, env } from '@island.is/testing/e2e'
 import { Base } from '../../infra/src/dsl/xroad'
-import { env } from 'testing/e2e/urls'
 import { getEnvVariables } from '../../infra/src/dsl/service-to-environment/pre-process-service'
 import { EnvironmentConfig } from '../../infra/src/dsl/types/charts'
 import { loadAssetsXroadMocks } from './mocks/assets.mock'
