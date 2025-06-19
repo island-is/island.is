@@ -6,11 +6,17 @@ import { InjectModel } from '@nestjs/sequelize'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
+  CaseActionType,
+  CaseAppealState,
+  CaseState,
   CaseTableColumnKey,
   caseTables,
   CaseTableType,
+  ContextMenuCaseActionType,
   isDistrictCourtUser,
+  isIndictmentCase,
   isProsecutionUser,
+  isRequestCase,
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
@@ -20,19 +26,38 @@ import { CaseTableResponse } from './dto/caseTable.response'
 import { caseTableCellGenerators } from './caseTable.cellGenerators'
 import { caseTableWhereOptions } from './caseTable.whereOptions'
 
+const getIsMyCaseAttributes = (user: TUser): string[] => {
+  if (isProsecutionUser(user)) {
+    return ['creatingProsecutorId', 'prosecutorId']
+  }
+
+  return []
+}
+
+const getAvailableActionsAttributes = (user: TUser): string[] => {
+  if (isProsecutionUser(user)) {
+    return ['type', 'state', 'appealState', 'prosecutorPostponedAppealDate']
+  }
+
+  if (isDistrictCourtUser(user)) {
+    return ['type', 'state']
+  }
+
+  return []
+}
+
 const getAttributes = (
   caseTableCellKeys: CaseTableColumnKey[],
   user: TUser,
 ) => {
-  return [
-    'id',
-    ...caseTableCellKeys
-      .map((k) => caseTableCellGenerators[k].attributes ?? [])
-      .flat(),
-    ...(isProsecutionUser(user)
-      ? ['creatingProsecutorId', 'prosecutorId']
-      : []),
-  ]
+  return getIsMyCaseAttributes(user)
+    .concat(getAvailableActionsAttributes(user))
+    .concat([
+      'id',
+      ...caseTableCellKeys
+        .map((k) => caseTableCellGenerators[k].attributes ?? [])
+        .flat(),
+    ])
 }
 
 const getIsMyCaseIncludes = (user: TUser): Includeable[] => {
@@ -82,9 +107,6 @@ const getIncludes = (caseTableCellKeys: CaseTableColumnKey[], user: TUser) => {
 }
 
 const isMyCase = (theCase: Case, user: TUser): boolean => {
-  if (isDistrictCourtUser(user)) {
-    return theCase.judge?.id === user.id || theCase.registrar?.id === user.id
-  }
   if (isProsecutionUser(user)) {
     return (
       theCase.creatingProsecutorId === user.id ||
@@ -92,7 +114,96 @@ const isMyCase = (theCase: Case, user: TUser): boolean => {
     )
   }
 
+  if (isDistrictCourtUser(user)) {
+    return theCase.judge?.id === user.id || theCase.registrar?.id === user.id
+  }
+
   return false
+}
+
+const getActionOnRowClick = (theCase: Case, user: TUser): CaseActionType => {
+  if (
+    isDistrictCourtUser(user) &&
+    isIndictmentCase(theCase.type) &&
+    theCase.state === CaseState.WAITING_FOR_CANCELLATION
+  ) {
+    return CaseActionType.COMPLETE_CANCELLED_CASE
+  }
+
+  return CaseActionType.OPEN_CASE
+}
+
+const canDeleteRequestCase = (caseToDelete: Case): boolean => {
+  return (
+    caseToDelete.state === CaseState.NEW ||
+    caseToDelete.state === CaseState.DRAFT ||
+    caseToDelete.state === CaseState.SUBMITTED ||
+    caseToDelete.state === CaseState.RECEIVED
+  )
+}
+
+const canDeleteIndictmentCase = (caseToDelete: Case): boolean => {
+  return (
+    caseToDelete.state === CaseState.DRAFT ||
+    caseToDelete.state === CaseState.WAITING_FOR_CONFIRMATION
+  )
+}
+
+const canDeleteCase = (caseToDelete: Case, user: TUser): boolean => {
+  if (!isProsecutionUser(user)) {
+    return false
+  }
+
+  if (isRequestCase(caseToDelete.type)) {
+    return canDeleteRequestCase(caseToDelete)
+  }
+
+  if (isIndictmentCase(caseToDelete.type)) {
+    return canDeleteIndictmentCase(caseToDelete)
+  }
+
+  return false
+}
+
+const canCancelAppeal = (theCase: Case, user: TUser): boolean => {
+  if (!isProsecutionUser(user) || !isRequestCase(theCase.type)) {
+    return false
+  }
+
+  if (
+    (theCase.appealState === CaseAppealState.APPEALED ||
+      theCase.appealState === CaseAppealState.RECEIVED) &&
+    theCase.prosecutorPostponedAppealDate
+  ) {
+    return true
+  }
+
+  return false
+}
+
+const getContextMenuActions = (
+  theCase: Case,
+  user: TUser,
+): ContextMenuCaseActionType[] => {
+  if (
+    isDistrictCourtUser(user) &&
+    isIndictmentCase(theCase.type) &&
+    theCase.state === CaseState.WAITING_FOR_CANCELLATION
+  ) {
+    return []
+  }
+
+  const actions = [ContextMenuCaseActionType.OPEN_CASE_IN_NEW_TAB]
+
+  if (canDeleteCase(theCase, user)) {
+    actions.push(ContextMenuCaseActionType.DELETE_CASE)
+  }
+
+  if (canCancelAppeal(theCase, user)) {
+    actions.push(ContextMenuCaseActionType.WITHDRAW_APPEAL)
+  }
+
+  return actions
 }
 
 @Injectable()
@@ -123,6 +234,8 @@ export class CaseTableService {
       rows: cases.map((c) => ({
         caseId: c.id,
         isMyCase: isMyCase(c, user),
+        actionOnRowClick: getActionOnRowClick(c, user),
+        contextMenuActions: getContextMenuActions(c, user),
         cells: caseTableCellKeys.map((k) =>
           caseTableCellGenerators[k].generate(c, user),
         ),

@@ -15,6 +15,7 @@ import {
   SectionHeading,
   TagAppealState,
   TagCaseState,
+  useOpenCaseInNewTab,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -26,10 +27,9 @@ import {
 } from '@island.is/judicial-system-web/src/components/Table'
 import { CaseListEntry } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { useContextMenu } from '../../ContextMenu/ContextMenu'
 import WithdrawAppealContextMenuModal, {
   useWithdrawAppealMenuOption,
-} from '../../ContextMenu/ContextMenuOptions/WithdrawAppealMenuOption'
+} from '../../DeprecatedContextMenuOptions/WithdrawAppealMenuOption'
 import TagContainer from '../../Tags/TagContainer/TagContainer'
 import Table, { TableWrapper } from '../Table'
 
@@ -42,7 +42,7 @@ interface Props {
 const PastCasesTable: FC<Props> = ({ cases, loading, isFiltering }) => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
-  const { openCaseInNewTabMenuItem } = useContextMenu()
+  const { openCaseInNewTab } = useOpenCaseInNewTab()
 
   const {
     withdrawAppealMenuOption,
@@ -90,7 +90,7 @@ const PastCasesTable: FC<Props> = ({ cases, loading, isFiltering }) => {
           ]}
           data={pastCasesData}
           generateContextMenuItems={(row) => [
-            openCaseInNewTabMenuItem(row.id),
+            openCaseInNewTab(row.id),
             ...(shouldDisplayWithdrawAppealOption(row)
               ? [withdrawAppealMenuOption(row.id)]
               : []),

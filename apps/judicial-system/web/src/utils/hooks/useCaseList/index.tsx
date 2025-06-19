@@ -141,8 +141,12 @@ const useCaseList = () => {
   )
 
   const handleOpenCase = useCallback(
-    (id: string, openInNewTab?: boolean) => {
-      Promise.all(timeouts.map((timeout) => clearTimeout(timeout)))
+    async (id: string, openInNewTab?: boolean) => {
+      const clearTimeouts = () => {
+        timeouts.map((timeout) => clearTimeout(timeout))
+      }
+
+      clearTimeouts()
 
       if (clickedCase[0] !== id && !openInNewTab) {
         setClickedCase([id, false])
@@ -154,7 +158,18 @@ const useCaseList = () => {
         getCase(
           id,
           (caseData) => openCase(caseData, openInNewTab),
-          () => toast.error(formatMessage(errors.getCaseToOpen)),
+          () => {
+            setClickedCase((prev) => {
+              if (prev[0] === id) {
+                clearTimeouts()
+
+                return [null, false]
+              }
+
+              return prev
+            })
+            toast.error(formatMessage(errors.getCaseToOpen))
+          },
         )
       }
 

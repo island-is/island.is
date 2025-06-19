@@ -15,6 +15,11 @@ import {
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
+import {
+  ContextMenu,
+  ContextMenuItem,
+  IconButton,
+} from '@island.is/judicial-system-web/src/components'
 
 import { CaseListEntry, CaseState, CaseType } from '../../graphql/schema'
 import MobileCase from '../../routes/Shared/Cases/MobileCase'
@@ -26,8 +31,6 @@ import {
 } from '../../types'
 import { useCase, useCaseList, useViewport } from '../../utils/hooks'
 import { compareLocaleIS } from '../../utils/sortHelper'
-import ContextMenu, { ContextMenuItem } from '../ContextMenu/ContextMenu'
-import IconButton from '../IconButton/IconButton'
 import { mapCaseStateToTagVariant } from '../Tags/TagCaseState/TagCaseState'
 import DurationDate, { getDurationDate } from './DurationDate/DurationDate'
 import SortButton from './SortButton/SortButton'

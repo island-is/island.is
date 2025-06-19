@@ -82,6 +82,17 @@ export interface CaseTable {
   columns: CaseTableColumn[]
 }
 
+export enum CaseActionType {
+  OPEN_CASE = 'OPEN_CASE',
+  COMPLETE_CANCELLED_CASE = 'COMPLETE_CANCELLED_CASE',
+}
+
+export enum ContextMenuCaseActionType {
+  OPEN_CASE_IN_NEW_TAB = 'OPEN_CASE_IN_NEW_TAB',
+  WITHDRAW_APPEAL = 'WITHDRAW_APPEAL',
+  DELETE_CASE = 'DELETE_CASE',
+}
+
 export const pickColumns = (
   keys: CaseTableColumnKey[],
 ): CaseTableColumnMap[CaseTableColumnKey][] => {

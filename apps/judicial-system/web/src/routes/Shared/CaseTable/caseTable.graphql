@@ -4,6 +4,8 @@ query CaseTable($input: CaseTableQueryInput!) {
     rows {
       caseId
       isMyCase
+      contextMenuActions
+      actionOnRowClick
       cells {
         value {
           __typename

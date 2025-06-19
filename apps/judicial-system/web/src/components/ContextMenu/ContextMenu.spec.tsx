@@ -1,6 +1,6 @@
 import { fireEvent, render, screen } from '@testing-library/react'
 
-import ContextMenu from '../ContextMenu/ContextMenu'
+import ContextMenu from './ContextMenu'
 
 describe('ContextMenu', () => {
   it('Context menu should open and contain a button and a link', () => {

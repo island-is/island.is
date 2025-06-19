@@ -21,9 +21,9 @@ import {
   SectionHeading,
   TagAppealState,
   TagCaseState,
+  useOpenCaseInNewTab,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { useContextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import {
   ColumnCaseType,
   CourtCaseNumber,
@@ -54,7 +54,7 @@ import * as styles from './Cases.css'
 export const PrisonCases: FC = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
-  const { openCaseInNewTabMenuItem } = useContextMenu()
+  const { openCaseInNewTab } = useOpenCaseInNewTab()
 
   const isPrisonAdmin = user?.institution?.type === InstitutionType.PRISON_ADMIN
 
@@ -166,11 +166,11 @@ export const PrisonCases: FC = () => {
               ),
             },
           ]}
-          generateContextMenuItems={(row) => [openCaseInNewTabMenuItem(row.id)]}
+          generateContextMenuItems={(row) => [openCaseInNewTab(row.id)]}
         />
       )
     },
-    [formatMessage, openCaseInNewTabMenuItem],
+    [formatMessage, openCaseInNewTab],
   )
 
   const renderIndictmentTable = useMemo(
@@ -267,11 +267,11 @@ export const PrisonCases: FC = () => {
               },
             },
           ]}
-          generateContextMenuItems={(row) => [openCaseInNewTabMenuItem(row.id)]}
+          generateContextMenuItems={(row) => [openCaseInNewTab(row.id)]}
         />
       )
     },
-    [formatMessage, openCaseInNewTabMenuItem],
+    [formatMessage, openCaseInNewTab],
   )
 
   const renderAlertMessage = () => {
