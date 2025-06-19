@@ -1,0 +1,13 @@
+{
+  "extends": "../tsconfig.json",
+  "include": ["**/*.ts", "**/*.js", "**/*.tsx", "**/*.jsx"],
+  "compilerOptions": {
+    "types": ["node", "jest"],
+    "allowJs": true,
+    "outDir": "../../../dist/out-tsc",
+    "module": "commonjs",
+    "target": "es2016",
+    "jsx": "react-jsx",
+    "lib": ["es2020", "dom"]
+  }
+}
