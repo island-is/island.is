@@ -45,14 +45,14 @@ export const healthNavigation: PortalNavigationItem = {
         s.healthInsuranceCard,
         s.healthInsuranceEhicCard,
         s.healthInsuranceEhicCardLong,
-        s.healtPaymentParticitpation,
+        s.healthPaymentParticipation,
         s.healthPaymentOverview,
       ],
       children: [
         {
           name: messages.paymentParticipation,
           path: HealthPaths.HealthPaymentParticipation,
-          searchTags: [s.healtPaymentParticitpation],
+          searchTags: [s.healthPaymentParticipation],
           navHide: true,
         },
         {
