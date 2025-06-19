@@ -4,10 +4,10 @@ import { test as base, expect, Page } from '@playwright/test'
 import {
   disableI18n,
   disablePreviousApplications,
+  isApplication,
+  label,
+  session,
 } from '@island.is/testing/e2e'
-import { isApplication, label } from '@island.is/testing/e2e'
-import { helpers } from '@island.is/testing/e2e'
-import { session } from '@island.is/testing/e2e'
 import { setupXroadMocks } from '../setup-xroad.mocks'
 import {
   additionalAttachments,
@@ -15,6 +15,7 @@ import {
   fillApplicantInfo,
   fillPaymentInfo,
   selectPeriod,
+  proceed,
   submitApplication,
   writeComment,
 } from './shared'
@@ -34,7 +35,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     await disablePreviousApplications(applicationPage)
     await disableI18n(applicationPage)
     await applicationPage.goto(homeUrl)
-    await isApplication(applicationPage, 'heimilisuppbot')
+    expect(isApplication(applicationPage, 'heimilisuppbot')).toBeTruthy()
     await setupXroadMocks()
     await use(applicationPage)
 
@@ -48,7 +49,6 @@ applicationTest.describe('Household Supplement', () => {
     'Should complete Household Supplement application successfully',
     async ({ applicationPage }) => {
       const page = applicationPage
-      const { proceed } = helpers(page)
 
       await applicationTest.step('Agree to data providers', async () => {
         await expectHeadingToBeVisible(
@@ -104,7 +104,7 @@ applicationTest.describe('Household Supplement', () => {
             name: label(socialInsuranceAdministrationMessage.shared.no),
           })
           .click()
-        await proceed()
+        await proceed(page)
       })
 
       await applicationTest.step('Select period', () => selectPeriod(page))

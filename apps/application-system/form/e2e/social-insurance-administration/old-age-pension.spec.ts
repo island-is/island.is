@@ -4,10 +4,10 @@ import { test as base, expect, Page } from '@playwright/test'
 import {
   disableI18n,
   disablePreviousApplications,
+  isApplication,
+  label,
+  session,
 } from '@island.is/testing/e2e'
-import { isApplication, label } from '@island.is/testing/e2e'
-import { helpers } from '@island.is/testing/e2e'
-import { session } from '@island.is/testing/e2e'
 import { setupXroadMocks } from '../setup-xroad.mocks'
 import {
   additionalAttachments,
@@ -17,18 +17,17 @@ import {
   selectPeriod,
   submitApplication,
   writeComment,
+  proceed,
 } from './shared'
 
 const oldAgeApplicationTest = async (page: Page, applicationType: string) => {
-  const { proceed } = helpers(page)
-
   await applicationTest.step('Select type of application', async () => {
     await expectHeadingToBeVisible(
       page,
       oldAgePensionFormMessage.pre.applicationTypeTitle,
     )
     await page.getByTestId(applicationType).click()
-    await proceed()
+    await proceed(page)
   })
 
   await applicationTest.step('Agree to data providers', async () => {
@@ -37,7 +36,7 @@ const oldAgeApplicationTest = async (page: Page, applicationType: string) => {
       socialInsuranceAdministrationMessage.pre.externalDataSection,
     )
     await page.getByTestId('agree-to-data-providers').click()
-    await proceed()
+    await proceed(page)
   })
 
   await applicationTest.step(
@@ -80,7 +79,7 @@ const oldAgeApplicationTest = async (page: Page, applicationType: string) => {
         name: label(socialInsuranceAdministrationMessage.shared.no),
       })
       .click()
-    await proceed()
+    await proceed(page)
   })
 
   await applicationTest.step('View residence history', async () => {
@@ -88,7 +87,7 @@ const oldAgeApplicationTest = async (page: Page, applicationType: string) => {
       page,
       oldAgePensionFormMessage.residence.residenceHistoryTitle,
     )
-    await proceed()
+    await proceed(page)
   })
 
   if (applicationType === 'half-old-age-pension') {
@@ -103,7 +102,7 @@ const oldAgeApplicationTest = async (page: Page, applicationType: string) => {
           name: label(oldAgePensionFormMessage.employer.employee),
         })
         .click()
-      await proceed()
+      await proceed(page)
     })
 
     await applicationTest.step('Employer registration', async () => {
@@ -129,7 +128,7 @@ const oldAgeApplicationTest = async (page: Page, applicationType: string) => {
       })
       await employmentRatio.selectText()
       await employmentRatio.fill('50')
-      await proceed()
+      await proceed(page)
     })
 
     await applicationTest.step('Employers', async () => {
@@ -137,7 +136,7 @@ const oldAgeApplicationTest = async (page: Page, applicationType: string) => {
         page,
         oldAgePensionFormMessage.employer.employerTitle,
       )
-      await proceed()
+      await proceed(page)
     })
   }
 
@@ -150,7 +149,7 @@ const oldAgeApplicationTest = async (page: Page, applicationType: string) => {
         page,
         oldAgePensionFormMessage.fileUpload.pensionFileTitle,
       )
-      await proceed()
+      await proceed(page)
     },
   )
 
@@ -197,7 +196,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     await disablePreviousApplications(applicationPage)
     await disableI18n(applicationPage)
     await applicationPage.goto(homeUrl)
-    await isApplication(applicationPage, 'ellilifeyrir')
+    expect(isApplication(applicationPage, 'ellilifeyrir')).toBeTruthy()
     await setupXroadMocks()
     await use(applicationPage)
 

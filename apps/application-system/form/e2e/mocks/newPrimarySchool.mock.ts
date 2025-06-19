@@ -1,5 +1,5 @@
 import { HttpMethod, Response } from '@anev/ts-mountebank'
-import { Frigg } from '@island.is/infra/dsl/xroad'
+import { Frigg } from '../../../../../infra/src/dsl/xroad'
 import { addXroadMock } from '@island.is/testing/e2e'
 import { uuid } from 'uuidv4'
 

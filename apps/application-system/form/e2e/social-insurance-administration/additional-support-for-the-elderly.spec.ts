@@ -4,9 +4,9 @@ import {
   disableI18n,
   disablePreviousApplications,
   isApplication,
+  label,
+  session,
 } from '@island.is/testing/e2e'
-import { label } from '@island.is/testing/e2e'
-import { session } from '@island.is/testing/e2e'
 import { setupXroadMocks } from '../setup-xroad.mocks'
 import {
   additionalAttachments,
@@ -33,7 +33,9 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     await disablePreviousApplications(applicationPage)
     await disableI18n(applicationPage)
     await applicationPage.goto(homeUrl)
-    await isApplication(applicationPage, 'felagslegur-vidbotarstudningur')
+    expect(
+      isApplication(applicationPage, 'felagslegur-vidbotarstudningur'),
+    ).toBeTruthy()
     await setupXroadMocks()
     await use(applicationPage)
 

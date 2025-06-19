@@ -2,7 +2,6 @@ import { socialInsuranceAdministrationMessage } from '@island.is/application/tem
 import { expect, Page } from '@playwright/test'
 import { MessageDescriptor } from 'react-intl'
 import { label } from '@island.is/testing/e2e'
-import { helpers } from '@island.is/testing/e2e'
 
 export const expectHeadingToBeVisible = async (
   page: Page,
@@ -15,9 +14,9 @@ export const expectHeadingToBeVisible = async (
   ).toBeVisible()
 }
 
-export const fillApplicantInfo = async (page: Page) => {
-  const { proceed } = helpers(page)
+export const proceed = async (page: Page) => page.getByTestId('proceed').click()
 
+export const fillApplicantInfo = async (page: Page) => {
   await expectHeadingToBeVisible(
     page,
     socialInsuranceAdministrationMessage.info.infoSubSectionTitle,
@@ -28,12 +27,10 @@ export const fillApplicantInfo = async (page: Page) => {
   })
   await phoneNumber.selectText()
   await phoneNumber.fill('6555555')
-  await proceed()
+  await proceed(page)
 }
 
 export const fillPaymentInfo = async (page: Page, includeTax: boolean) => {
-  const { proceed } = helpers(page)
-
   await expectHeadingToBeVisible(
     page,
     socialInsuranceAdministrationMessage.payment.title,
@@ -71,12 +68,10 @@ export const fillPaymentInfo = async (page: Page, includeTax: boolean) => {
       })
       .click()
   }
-  await proceed()
+  await proceed(page)
 }
 
 export const selectPeriod = async (page: Page) => {
-  const { proceed } = helpers(page)
-
   await expectHeadingToBeVisible(
     page,
     socialInsuranceAdministrationMessage.period.title,
@@ -88,22 +83,18 @@ export const selectPeriod = async (page: Page) => {
   await page.getByTestId('select-period.month').click()
   await page.keyboard.press('ArrowUp')
   await page.keyboard.press('Enter')
-  await proceed()
+  await proceed(page)
 }
 
 export const additionalAttachments = async (page: Page) => {
-  const { proceed } = helpers(page)
-
   await expectHeadingToBeVisible(
     page,
     socialInsuranceAdministrationMessage.fileUpload.additionalFileTitle,
   )
-  await proceed()
+  await proceed(page)
 }
 
 export const writeComment = async (page: Page) => {
-  const { proceed } = helpers(page)
-
   await expectHeadingToBeVisible(
     page,
     socialInsuranceAdministrationMessage.additionalInfo.commentSection,
@@ -117,7 +108,7 @@ export const writeComment = async (page: Page) => {
     .fill(
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. In vehicula malesuada augue, sit amet pulvinar tortor pellentesque at. Nulla facilisi. Nunc vel mi ac mi commodo rhoncus sit amet ut neque.',
     )
-  await proceed()
+  await proceed(page)
 }
 
 export const submitApplication = async (page: Page) => {

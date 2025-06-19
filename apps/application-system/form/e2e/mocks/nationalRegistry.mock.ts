@@ -1,5 +1,5 @@
 import { Response } from '@anev/ts-mountebank'
-import { NationalRegistry } from '@island.is/infra/dsl/xroad'
+import { NationalRegistry } from '../../../../../infra/src/dsl/xroad'
 import { addXroadMock } from '@island.is/testing/e2e'
 
 export const loadNationalRegistryXroadMocks = async () => {
