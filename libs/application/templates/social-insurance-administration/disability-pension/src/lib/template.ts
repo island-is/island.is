@@ -13,22 +13,24 @@ import {
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
+import { socialInsuranceAdministrationMessage} from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import { assign } from 'xstate'
+import { disabilityPensionFormMessage } from './messages'
 
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
   Events
 > = {
-  type: ApplicationTypes.DISABILITY_PENSION, // TODO: Change to the correct type
-  name: 'disability-pension template',
-  codeOwner: CodeOwners.NordaApplications, // TODO: Change to the correct code owner
-  institution: 'Stafrænt Ísland', // TODO: Change to the correct institution
-  translationNamespaces: [ApplicationConfigurations.DisabilityPension.translation], // TODO: Change to the correct translation namespace
+  type: ApplicationTypes.DISABILITY_PENSION,
+  name: disabilityPensionFormMessage.shared.applicationTitle,
+  codeOwner: CodeOwners.Hugsmidjan,
+  institution: socialInsuranceAdministrationMessage.shared.institution,
+  translationNamespaces: ApplicationConfigurations.DisabilityPension.translation, // TODO: Change to the correct translation namespace
   dataSchema,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
