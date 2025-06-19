@@ -99,12 +99,12 @@ const extractRentalAmount = (
   answers: Application['answers'],
 ): RentalAmountSection => ({
   rentalAmount: getValueViaPath<string>(answers, 'rentalAmount.amount'),
-  isIndexConnected: getValueViaPath<string>(
+  isIndexConnected: getValueViaPath<YesOrNoEnum>(
     answers,
     'rentalAmount.isIndexConnected',
   ),
   indexDate: getValueViaPath<string>(answers, 'rentalAmount.indexDate'),
-  indexRate: getValueViaPath<number>(answers, 'rentalAmount.indexRate'),
+  indexRate: getValueViaPath<string>(answers, 'rentalAmount.indexRate'),
   paymentMethod: getValueViaPath<string>(
     answers,
     'rentalAmount.paymentMethodOptions',
@@ -156,7 +156,7 @@ const extractSecurityDeposit = (
   ),
   landlordsMutualFundInfo: getValueViaPath<string>(
     answers,
-    'securityDeposit.landlordsMutualFundInfo',
+    'securityDeposit.mutualFundInfo',
   ),
   otherInfo: getValueViaPath<string>(answers, 'securityDeposit.otherInfo'),
   securityDepositAmount: getValueViaPath<string>(

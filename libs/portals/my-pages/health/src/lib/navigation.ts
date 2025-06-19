@@ -203,7 +203,11 @@ export const healthNavigation: PortalNavigationItem = {
             },
           ],
         },
-        // ADD BLOOD HERE
+        {
+          name: m.bloodtype,
+          description: m.bloodtype,
+          path: HealthPaths.HealthBloodtype,
+        },
       ],
     },
   ],

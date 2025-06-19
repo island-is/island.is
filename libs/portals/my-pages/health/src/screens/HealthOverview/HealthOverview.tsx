@@ -12,6 +12,7 @@ import {
   useGetInsuranceOverviewQuery,
   useGetMedicinePaymentOverviewQuery,
   useGetPaymentsOverviewQuery,
+  useGetBloodTypeOverviewQuery,
 } from './HealthOverview.generated'
 
 import BasicInformation from './components/BasicInformation'
@@ -76,6 +77,12 @@ export const HealthOverview = () => {
     error: medicinePaymentOverviewError,
   } = useGetMedicinePaymentOverviewQuery()
 
+  const {
+    data: bloodTypeData,
+    loading: bloodTypeLoading,
+    error: bloodTypeError,
+  } = useGetBloodTypeOverviewQuery()
+
   const currentMedicinePeriod =
     medicinePaymentOverviewData?.rightsPortalDrugPeriods[0] ?? null
 
@@ -130,6 +137,11 @@ export const HealthOverview = () => {
           data: donorStatusData?.healthDirectorateOrganDonation.donor,
           loading: donorStatusLoading,
           error: !!donorStatusError,
+        }}
+        blood={{
+          data: bloodTypeData?.rightsPortalBloodType,
+          loading: bloodTypeLoading,
+          error: !!bloodTypeError,
         }}
       />
     </>

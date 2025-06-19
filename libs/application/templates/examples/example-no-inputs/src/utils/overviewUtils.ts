@@ -69,5 +69,17 @@ export const getOverviewItems = (
       keyText: 'Snug width',
       valueText: 'test@test.is',
     },
+    {
+      width: 'full',
+      keyText: 'Inline key text',
+      inlineKeyText: true,
+      valueText: 'Inline value',
+    },
+    {
+      width: 'full',
+      keyText: ['Inline key text 1', 'Inline key text 2', 'Inline key text 3'],
+      inlineKeyText: true,
+      valueText: ['Inline value 1', 'Inline value 2', 'Inline value 3'],
+    },
   ]
 }

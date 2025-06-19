@@ -170,7 +170,7 @@ export class SignatureCollectionAdminClientService {
 
       const adminApi = this.getApiWithAuth(this.adminApi, auth)
 
-      const filteredAreas = areas
+      const filteredAreas = areas?.length
         ? collectionAreas.filter((area) =>
             areas.flatMap((a) => a.areaId).includes(area.id),
           )

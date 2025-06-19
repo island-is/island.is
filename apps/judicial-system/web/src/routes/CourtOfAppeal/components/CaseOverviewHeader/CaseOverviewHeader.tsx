@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { AlertMessage, Box, Button } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { isRestrictionCase } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
@@ -13,6 +13,7 @@ import {
   CaseTitleInfoAndTags,
   FormContext,
   MarkdownWrapper,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseDecision,
@@ -30,6 +31,7 @@ interface Props {
 
 const CaseOverviewHeader: FC<Props> = (props) => {
   const { alerts } = props
+  const { user } = useContext(UserContext)
   const { workingCase } = useContext(FormContext)
 
   const { formatMessage } = useIntl()
@@ -72,7 +74,7 @@ const CaseOverviewHeader: FC<Props> = (props) => {
           <Button
             variant="text"
             preTextIcon="arrowBack"
-            onClick={() => router.push(constants.COURT_OF_APPEAL_CASES_ROUTE)}
+            onClick={() => router.push(getStandardUserDashboardRoute(user))}
           >
             {formatMessage(core.back)}
           </Button>

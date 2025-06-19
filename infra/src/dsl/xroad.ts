@@ -804,6 +804,11 @@ export const TransportAuthority = new XroadConf({
       staging: 'IS-TEST/GOV/10017/Samgongustofa-Protected/Okuritar-V1',
       prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Okuritar-V1',
     },
+    XROAD_EXEMPTION_FOR_TRANSPORTATION_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Leyfur-V1',
+      staging: 'IS-TEST/GOV/10017/Samgongustofa-Protected/Leyfur-V1',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Leyfur-V1',
+    },
   },
 })
 
@@ -1049,6 +1054,17 @@ export const SecondarySchool = new XroadConf({
       dev: 'IS-DEV/GOV/10066/MMS-Protected/umsoknagatt',
       staging: 'IS-TEST/GOV/10066/MMS-Protected/umsoknagatt',
       prod: 'IS/GOV/6601241280/MMS-Protected/umsoknagatt',
+    },
+  },
+})
+
+export const LSH = new XroadConf({
+  env: {
+    XROAD_LSH_PATH: {
+      dev: 'IS-DEV/GOV/10022/Landspitali-Protected/external-patient-api-v1',
+      staging:
+        'IS-TEST/GOV/10022/Landspitali-Protected/external-patient-api-v1',
+      prod: 'IS/GOV/5003002130/Landspitali-Protected/external-patient-api-v1',
     },
   },
 })

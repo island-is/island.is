@@ -75,6 +75,8 @@ const Vaccinations = lazy(() =>
   import('./screens/Vaccinations/VaccinationsWrapper'),
 )
 
+const Bloodtype = lazy(() => import('./screens/Bloodtype/Bloodtype'))
+
 const Referrals = lazy(() => import('./screens/Referrals/Referrals'))
 
 const ReferralsDetail = lazy(() =>
@@ -305,6 +307,15 @@ export const healthModule: PortalModule = {
       element: <Vaccinations />,
     },
 
+    {
+      name: hm.bloodtype,
+      path: HealthPaths.HealthBloodtype,
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.health),
+      key: 'HealthBlood',
+      element: <Bloodtype />,
+    },
     {
       name: hm.referrals,
       path: HealthPaths.HealthReferrals,
