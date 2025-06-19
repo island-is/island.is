@@ -10,7 +10,10 @@ import {
   buildRadioField,
 } from '@island.is/application/core'
 import { employmentSearch as employmentSearchMessages } from '../../../lib/messages'
-import { GaldurDomainModelsSettingsJobCodesJobCodeDTO } from '@island.is/clients/vmst-unemployment'
+import {
+  GaldurDomainModelsSettingsJobCodesJobCodeDTO,
+  GaldurDomainModelsSettingsServiceAreasServiceAreaDTO,
+} from '@island.is/clients/vmst-unemployment'
 
 export const jobWishesSubSection = buildSubSection({
   id: 'jobWishesSubSection',
@@ -69,17 +72,26 @@ export const jobWishesSubSection = buildSubSection({
           id: 'jobWishes.location',
           title: employmentSearchMessages.jobWishes.location,
           isMulti: true,
-          options: (application) => {
-            // TODO: get locations from externalData when service is ready
+          options: (application, _, locale) => {
             const locations =
-              getValueViaPath<{ name: string }[]>(
+              getValueViaPath<
+                GaldurDomainModelsSettingsServiceAreasServiceAreaDTO[]
+              >(
                 application.externalData,
                 'unemploymentApplication.data.supportData.serviceAreas',
               ) || []
             return locations.map((location) => ({
-              value: location.name,
-              label: location.name,
+              value: location.id ?? '',
+              label:
+                (locale === 'is'
+                  ? location.name
+                  : location.english ?? location.name) || '',
             }))
+          },
+          condition: (answers) => {
+            return (
+              getValueViaPath(answers, 'jobWishes.outsideYourLocation') === YES
+            )
           },
         }),
       ],

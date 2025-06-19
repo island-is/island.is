@@ -104,8 +104,8 @@ export const employmentHistorySubSection = buildSubSection({
               getValueViaPath<string>(
                 application.answers,
                 'currentSituation.currentJob.startDate',
-              ) ?? undefined
-            return startDate ? new Date(startDate) : undefined
+              ) ?? ''
+            return new Date(startDate).toISOString()
           },
           condition: (answers) => !isIndependent(answers),
         }),
