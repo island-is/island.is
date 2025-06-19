@@ -11,6 +11,7 @@ import {
   getBoundTerminationOverviewItems,
   getUnboundTerminationOverviewItems,
   getCancelationDetailsOverviewItems,
+  getFileUploadOverviewItems,
 } from '../../utils/getOverviewItems'
 import * as m from '../../lib/messages'
 import {
@@ -21,11 +22,16 @@ import {
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
-  title: 'Overview',
+  title: m.overviewMessages.overviewTitle,
   children: [
     buildMultiField({
-      id: 'overviewSection',
-      title: 'Overview',
+      condition: (answers, externalData) => {
+        console.log('answers: ', answers)
+        console.log('externalData: ', externalData)
+        return true
+      },
+      id: 'overviewMultiField',
+      title: m.overviewMessages.overviewTitle,
       children: [
         buildOverviewField({
           id: 'personalInformationOverview',
@@ -77,6 +83,13 @@ export const overviewSection = buildSection({
           backId: 'unboundTerminationMultiField',
           bottomLine: false,
           items: getUnboundTerminationOverviewItems,
+        }),
+        buildOverviewField({
+          id: 'fileUploadOverview',
+          title: m.fileUploadMessages.title,
+          backId: 'fileUploadMultiField',
+          bottomLine: false,
+          attachments: getFileUploadOverviewItems,
         }),
         buildSubmitField({
           id: 'submit',

@@ -1,6 +1,11 @@
 import { defineMessages } from 'react-intl'
 
 export const overviewMessages = defineMessages({
+  overviewTitle: {
+    id: 'tra.application:overview.overviewTitle',
+    defaultMessage: 'Yfirlit',
+    description: 'Overview title in the overview',
+  },
   personalInformationTitle: {
     id: 'tra.application:overview.personalInformationTitle',
     defaultMessage: 'Persónuupplýsingar',

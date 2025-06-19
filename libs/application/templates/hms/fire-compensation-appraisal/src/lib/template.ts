@@ -113,7 +113,7 @@ const template: ApplicationTemplate<
         onEntry: [
           defineTemplateApi({
             action: TemplateApiActions.calculateAmount,
-            order: 1, // This has to run first to fetch the propperties and calculate the amount on the backend before the payment is made
+            order: 1, // This has to run first to fetch the properties and calculate the amount on the backend before the payment is made
           }),
         ],
         organizationId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,

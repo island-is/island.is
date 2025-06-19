@@ -1,10 +1,11 @@
-import { ExternalData } from '@island.is/application/types'
+import { AttachmentItem, ExternalData } from '@island.is/application/types'
 import { FormValue } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import { KeyValueItem } from '@island.is/application/types'
 import * as m from '../lib/messages'
 import { formatPhoneNumber, getSelectedContract } from './helpers'
 import { format as formatNationalId } from 'kennitala'
+import { FileType } from '../types'
 
 export const getPersonalInformationOverviewItems = (
   answers: FormValue,
@@ -168,6 +169,21 @@ export const getUnboundTerminationOverviewItems = (
       keyText: m.overviewMessages.terminationReason,
       valueText:
         getValueViaPath<string>(answers, 'unboundTerminationReason') ?? '',
+    },
+  ]
+}
+
+export const getFileUploadOverviewItems = (
+  answers: FormValue,
+  _externalData: ExternalData,
+): Array<AttachmentItem> => {
+  const files = getValueViaPath<Array<FileType>>(answers, 'fileUpload')
+
+  return [
+    {
+      width: 'full',
+      fileName: files?.[0].name ?? '',
+      fileType: files?.[0].name.split('.').pop(),
     },
   ]
 }

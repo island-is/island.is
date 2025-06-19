@@ -8,6 +8,7 @@ import { boundTerminationSection } from './boundTerminationSection'
 import { cancelationSection } from './cancelationSection'
 import HmsLogo from '../../assets/HmsLogo'
 import { personalInformationSection } from './personalInformationSection'
+import { fileUploadSection } from './fileUploadSection'
 
 export const MainForm = buildForm({
   id: 'MainForm',
@@ -22,6 +23,7 @@ export const MainForm = buildForm({
     cancelationSection,
     unboundTerminationSection,
     boundTerminationSection,
+    fileUploadSection,
     overviewSection,
   ],
 })

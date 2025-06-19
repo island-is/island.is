@@ -9,6 +9,7 @@ import {
   FormModes,
   UserProfileApi,
   ApplicationConfigurations,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -20,6 +21,7 @@ import {
 import { assign } from 'xstate'
 import * as m from './messages'
 import { NationalRegistryApi, rentalAgreementsApi } from '../dataProviders'
+import { TemplateApiActions } from '../types'
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -99,6 +101,11 @@ const template: ApplicationTemplate<
           progress: 1,
           status: FormModes.COMPLETED,
           lifecycle: DefaultStateLifeCycle,
+          onEntry: [
+            defineTemplateApi({
+              action: TemplateApiActions.submitApplication,
+            }),
+          ],
           roles: [
             {
               id: Roles.APPLICANT,
