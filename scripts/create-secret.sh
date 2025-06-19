@@ -36,9 +36,9 @@ ${BLUE}Usage:${RESET}
 
 ${BLUE}Commands:${RESET}
   create                           Interactively create a secret (default if no command is given)
-  create --name <name> \\
-         --value <value> \\
-         [--type <String|SecureString>] \\
+  create --name <name>
+         --value <value>
+         [--type <String|SecureString>]
          [--tags "Key=K,Value=V ..."]   Non-interactively create a secret
 
   validate_length <string>         Validate length (6-128 chars)
@@ -50,9 +50,9 @@ ${BLUE}Options:${RESET}
   -h, --help                       Show this help message and exit
 
 ${BLUE}Examples:${RESET}
-  $(basename "$0")
-  $(basename "$0") validate_length mySecret123
-  $(basename "$0") create --name my-secret --value secret123 --type SecureString --tags "Key=Env,Value=Prod"
+  \$ $(basename "$0")
+  \$ $(basename "$0") validate_length mySecret123
+  \$ $(basename "$0") create --name my-secret --value secret123 --type SecureString --tags "Key=Env,Value=Prod"
 EOF
 }
 
