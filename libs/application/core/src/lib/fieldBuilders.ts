@@ -53,6 +53,7 @@ import {
   OverviewField,
   CopyLinkField,
   DownloadFileButtonField,
+  VehiclePermnoWithInfoField,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { Colors } from '@island.is/island-ui/theme'
@@ -252,6 +253,7 @@ export const buildAsyncSelectField = (
     isSearchable,
     isMulti,
     updateOnSelect,
+    isClearable,
   } = data
 
   return {
@@ -267,6 +269,7 @@ export const buildAsyncSelectField = (
     isSearchable,
     isMulti,
     updateOnSelect,
+    isClearable,
   }
 }
 
@@ -1175,7 +1178,15 @@ export const buildAccordionField = (
 export const buildBankAccountField = (
   data: Omit<BankAccountField, 'type' | 'component' | 'children'>,
 ): BankAccountField => {
-  const { title = '', id, marginBottom, marginTop, titleVariant } = data
+  const {
+    title = '',
+    id,
+    marginBottom,
+    marginTop,
+    titleVariant,
+    defaultValue,
+  } = data
+
   return {
     children: undefined,
     id,
@@ -1185,6 +1196,7 @@ export const buildBankAccountField = (
     titleVariant,
     type: FieldTypes.BANK_ACCOUNT,
     component: FieldComponents.BANK_ACCOUNT,
+    defaultValue,
   }
 }
 
@@ -1198,8 +1210,11 @@ export const buildOverviewField = (
     description,
     backId,
     items,
+    loadItems,
     attachments,
     tableData,
+    bottomLine,
+    hideIfEmpty,
   } = data
   return {
     ...extractCommonFields(data),
@@ -1209,8 +1224,11 @@ export const buildOverviewField = (
     description,
     backId,
     items,
+    loadItems,
     attachments,
     tableData,
+    bottomLine,
+    hideIfEmpty,
     type: FieldTypes.OVERVIEW,
     component: FieldComponents.OVERVIEW,
     children: undefined,
@@ -1231,5 +1249,33 @@ export const buildCopyLinkField = (
     type: FieldTypes.COPY_LINK,
     component: FieldComponents.COPY_LINK,
     children: undefined,
+  }
+}
+
+export const buildVehiclePermnoWithInfoField = (
+  data: Omit<VehiclePermnoWithInfoField, 'type' | 'component' | 'children'>,
+): VehiclePermnoWithInfoField => {
+  const {
+    required,
+    loadValidation,
+    permnoLabel,
+    makeAndColorLabel,
+    errorTitle,
+    fallbackErrorMessage,
+    validationFailedErrorMessage,
+  } = data
+
+  return {
+    ...extractCommonFields(data),
+    children: undefined,
+    type: FieldTypes.VEHICLE_PERMNO_WITH_INFO,
+    component: FieldComponents.VEHICLE_PERMNO_WITH_INFO,
+    required,
+    loadValidation,
+    permnoLabel,
+    makeAndColorLabel,
+    errorTitle,
+    fallbackErrorMessage,
+    validationFailedErrorMessage,
   }
 }

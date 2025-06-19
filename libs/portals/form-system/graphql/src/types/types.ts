@@ -6,14 +6,24 @@ import {
   FormSystemListType,
   FormSystemOrganizationUrl,
   FormSystemPermissionType,
+  FormSystemApplication,
+  FormSystemOption,
 } from '@island.is/api/schema'
 import { Option } from '@island.is/island-ui/core'
 
 export interface FormsLoaderResponse {
   forms: FormSystemForm[]
-  organizations: Option<string>[]
+  organizations: FormSystemOption[]
   isAdmin: boolean
+  organizationId: string
   organizationNationalId: string
+  applications: FormSystemApplication[]
+  selectedCertificationTypes: string[]
+  selectedListTypes: string[]
+  selectedFieldTypes: string[]
+  certificationTypes: FormSystemPermissionType[]
+  listTypes: FormSystemPermissionType[]
+  fieldTypes: FormSystemPermissionType[]
 }
 
 export interface FormLoaderResponse {
@@ -26,9 +36,10 @@ export interface FormLoaderResponse {
 }
 
 export interface ApplicationsLoaderResponse {
-  forms: FormSystemForm[]
+  applications: FormSystemApplication[]
   organizations: Option<string>[]
   isAdmin: boolean
+  organizationNationalId: string
 }
 
 export interface AdminLoaderResponse {

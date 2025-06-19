@@ -148,7 +148,6 @@ export const getProps: typeof StandaloneParentSubpage['getProps'] = async ({
   locale,
   query,
   organizationPage,
-  res,
 }) => {
   const [organizationPageSlug, parentSubpageSlug, subpageSlug] = (query.slugs ??
     []) as string[]
@@ -268,7 +267,7 @@ export const getProps: typeof StandaloneParentSubpage['getProps'] = async ({
   }
 
   if (!subpageSlug) {
-    throw new CustomNextRedirect(subpageLink.href)
+    throw new CustomNextRedirect(encodeURI(subpageLink.href))
   }
 
   const tableOfContentHeadings = getOrganizationParentSubpage.childLinks.map(
