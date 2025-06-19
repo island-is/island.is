@@ -652,86 +652,100 @@ export const newPrimarySchoolMessages: MessageDir = {
       description: 'Do the parents need an interpreter?',
     },
 
-    // Allergies and intolerances
-    allergiesAndIntolerancesSubSectionTitle: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.sub.section.title',
-      defaultMessage: 'Ofnæmi og óþol',
-      description: 'Allergies and intolerances',
+    // Health protection
+    healthProtectionSubSectionTitle: {
+      id: 'nps.application:different.needs.health.protection.sub.section.title',
+      defaultMessage: 'Heilsuvernd',
+      description: 'Health protection',
     },
-    allergiesAndIntolerancesDescription: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.description',
+    healthProtectionSubSectionDescription: {
+      id: 'nps.application:different.needs.health.protection.sub.section.description',
+      defaultMessage:
+        'Heilsuvernd skólabarna er hluti af heilsugæslunni og framhald af ung- og smábarnavernd. Til að skólahjúkrunarfræðingur geti sinnt heilsuvernd skólabarns, haft umsjón með umönnun þess þegar svo ber við og veitt starfsfólki skólans viðeigandi fræðslu og ráðgjöf um rétt viðbrögð, er mikilvægt að hann hafi nauðsynlegar upplýsingar um heilsu barnsins.',
+      description:
+        'Health protection for school children is part of the healthcare system and follows from child health care. For the school nurse to be able to provide health protection for the school child, manage their care when needed, and provide appropriate education and advice to school staff on the right responses, it is important that they have necessary information about the childs health.',
+    },
+    allergiesAndIntolerances: {
+      id: 'nps.application:different.needs.health.protection.allergies.and.intolerances',
       defaultMessage:
         'Er barnið með ofnæmi eða óþol sem starfsfólk skóla þarf að vera meðvitað um?',
       description:
         'Does the child have any allergies or intolerances that school staff need to be aware of?',
     },
     hasFoodAllergiesOrIntolerances: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.has.food.allergies.or.intolerances',
+      id: 'nps.application:different.needs.health.protection.has.food.allergies.or.intolerances',
       defaultMessage: 'Barnið er með fæðuofnæmi eða -óþol',
       description: 'The child has food allergies or intolerances',
     },
     typeOfFoodAllergiesOrIntolerances: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.type.of.food.allergies.or.intolerances',
+      id: 'nps.application:different.needs.health.protection.type.of.food.allergies.or.intolerances',
       defaultMessage: 'Tegund fæðuofnæmis eða -óþols',
       description: 'Type of food allergies or intolerances',
     },
     typeOfFoodAllergiesOrIntolerancesPlaceholder: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.type.of.food.allergies.or.intolerances.placeholder',
+      id: 'nps.application:different.needs.health.protection.type.of.food.allergies.or.intolerances.placeholder',
       defaultMessage: 'Veldu tegund fæðuofnæmis eða -óþols',
       description: 'Select type of food allergies or intolerances',
     },
     hasOtherAllergies: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.has.other.allergies',
+      id: 'nps.application:different.needs.health.protection.has.other.allergies',
       defaultMessage: 'Barnið er með annað ofnæmi',
       description: 'The child has other allergies',
     },
     typeOfOtherAllergies: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.type.of.other.allergies',
+      id: 'nps.application:different.needs.health.protection.type.of.other.allergies',
       defaultMessage: 'Tegund ofnæmis',
       description: 'Type of allergies',
     },
     typeOfOtherAllergiesPlaceholder: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.type.of.other.allergies.placeholder',
+      id: 'nps.application:different.needs.health.protection.type.of.other.allergies.placeholder',
       defaultMessage: 'Veldu tegund ofnæmis',
       description: 'Select type of allergies',
     },
     allergiesCertificateAlertMessage: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.allergies.certificate.alert.message',
+      id: 'nps.application:different.needs.health.protection.allergies.certificate.alert.message',
       defaultMessage:
         'Athugið að skóli getur óskað eftir vottorði til staðfestingar á ofnæmi.',
       description:
         'Please note that the school may request a certificate to confirm allergies.',
     },
     usesEpiPen: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.uses.epi.pen',
+      id: 'nps.application:different.needs.health.protection.uses.epi.pen',
       defaultMessage:
         'Þarf barnið að hafa tiltækan adrenalínpenna (epi-pen) vegna ofnæmis?',
       description:
         'Does the child need to have an epi-pen available for allergies?',
     },
     hasConfirmedMedicalDiagnoses: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.has.confirmed.medical.diagnoses',
+      id: 'nps.application:different.needs.health.protection.has.confirmed.medical.diagnoses',
       defaultMessage:
-        'Hefur barnið staðfestar læknisfræðilegar greiningar sem mikilvægt er að skólinn kunni að bregðast rétt við?',
+        'Er barnið með staðfesta læknisfræðilega greiningu sem skólinn þarf að kunna að bregðast rétt við?',
       description:
-        'Does the child have confirmed medical diagnoses that are important for the school to be able to respond appropriately?',
+        'Does the child have a confirmed medical diagnosis that the school needs to know how to respond to correctly?',
     },
     hasConfirmedMedicalDiagnosesDescription: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.has.confirmed.medical.diagnoses.description',
+      id: 'nps.application:different.needs.health.protection.has.confirmed.medical.diagnoses.description',
       defaultMessage:
         'Hér er átt við greiningar eins og flogaveiki, sykursýki eða blóðstorknunarsjúkdóm',
       description:
         'This refers to diagnoses such as epilepsy, diabetes, or blood clotting disorders',
     },
     requestsMedicationAdministration: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.requests.medication.administration',
+      id: 'nps.application:different.needs.health.protection.requests.medication.administration',
       defaultMessage:
         'Er óskað eftir aðstoð við barn vegna lyfjagjafar á skólatíma?',
       description:
         'Is assistance requested for a child due to medication administration during school hours?',
     },
+    requestsMedicationAdministrationTooltip: {
+      id: 'nps.application:different.needs.health.protection.requests.medication.administration.tooltip',
+      defaultMessage:
+        'Í fæstum tilvikum geta börn borið ábyrgð á lyfjatöku sinni. Þar skiptir þó aldur og lyfjategund máli. Ábyrgðin er forráðamanna en hjúkrunarfræðingar og starfsmenn skóla aðstoða við lyfjatökuna. Meginreglan er sú að barn á aðeins að fá lyf á skólatíma sem forráðamenn hafa komið með í skólann og óskað eftir að barnið fái.',
+      description:
+        'In most cases, children cannot be responsible for taking their own medication. However, age and type of medication matter. The responsibility lies with the guardians, but nurses and school staff assist with medication administration. The main rule is that a child should only receive medication at school that the guardians have brought to the school and requested the child to take.',
+    },
     schoolNurseAlertMessage: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.school.nurse.alert.message',
+      id: 'nps.application:different.needs.health.protection.school.nurse.alert.message',
       defaultMessage:
         'Skólahjúkrunarfræðingur mun setja sig í samband við þig til að tryggja rétta skráningu upplýsinga og miðlun þeirra til starfsfólks skóla.',
       description:
