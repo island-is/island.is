@@ -1,5 +1,6 @@
 'use strict'
 
+const { Op } = require('sequelize')
 const { uuid } = require('uuidv4')
 
 const userProfiles = [
@@ -12,7 +13,7 @@ const userProfiles = [
     emailStatus: 'NOT_DEFINED',
   },
   {
-    nationalId: '0101307789',
+    nationalId: '0101303333',
     emailStatus: 'EMPTY',
   },
   {
