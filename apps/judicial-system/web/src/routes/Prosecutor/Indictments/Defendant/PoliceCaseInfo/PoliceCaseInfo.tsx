@@ -10,6 +10,7 @@ import {
   Select,
   Tag,
 } from '@island.is/island-ui/core'
+import { POLICE_CASE_NUMBER } from '@island.is/judicial-system/consts'
 import {
   capitalize,
   indictmentSubtypes,
@@ -151,7 +152,7 @@ export const PoliceCaseInfo: FC<Props> = ({
       <Box marginBottom={2}>
         <InputMask
           component={Input}
-          mask={'___-____-_______'}
+          mask={POLICE_CASE_NUMBER}
           replacement={{ _: /\d/ }}
           value={policeCaseNumberInput}
           onChange={(event) => {

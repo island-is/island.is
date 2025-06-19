@@ -9,6 +9,7 @@ import {
 import { InputMask } from '@react-input/mask'
 
 import { Button, Input } from '@island.is/island-ui/core'
+import { POLICE_CASE_NUMBER } from '@island.is/judicial-system/consts'
 
 import BlueBox from '../BlueBox/BlueBox'
 import * as styles from './MultipleValueList.css'
@@ -47,7 +48,7 @@ const MultipleValueList: FC<PropsWithChildren<MultipleValueListProps>> = ({
 
   const masks = {
     'police-case-numbers': {
-      mask: '___-____-_______',
+      mask: POLICE_CASE_NUMBER,
       replacement: { _: /\d/ },
     },
   }
@@ -82,6 +83,7 @@ const MultipleValueList: FC<PropsWithChildren<MultipleValueListProps>> = ({
             name={name}
             label={inputLabel}
             placeholder={inputPlaceholder}
+            value={value}
             size="sm"
             autoComplete="off"
             ref={valueRef}

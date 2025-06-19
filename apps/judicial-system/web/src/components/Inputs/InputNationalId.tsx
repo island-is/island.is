@@ -1,11 +1,4 @@
-import {
-  ChangeEvent,
-  FC,
-  FocusEvent,
-  forwardRef,
-  useEffect,
-  useState,
-} from 'react'
+import { ChangeEvent, FC, FocusEvent, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { InputMask } from '@react-input/mask'
 
