@@ -1560,7 +1560,7 @@ form-system-web:
     BASEPATH: '/form'
     CODE_OWNER: 'Advania'
     LOG_LEVEL: 'info'
-    NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps'
     SERVERSIDE_FEATURES_ON: ''
     SI_PUBLIC_ENVIRONMENT: 'dev'
   grantNamespaces:
