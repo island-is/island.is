@@ -12,7 +12,7 @@ import {
 } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
 import {
-  Form,
+  DigitalIcelandLatestNewsSlice,
   HeadWithSocialSharing,
   OneColumnTextSlice,
   SliceMachine,
@@ -310,6 +310,21 @@ const ProjectPage: Screen<PageProps> = ({
             return (
               <Box paddingBottom={6}>
                 <OneColumnTextSlice slice={slice} />
+              </Box>
+            )
+          }
+          if (
+            slice.__typename === 'LatestNewsSlice' &&
+            slice.news.length >= 3 &&
+            projectPage?.slug
+          ) {
+            return (
+              <Box paddingBottom={[2, 2, 5]} key={slice.id}>
+                <DigitalIcelandLatestNewsSlice
+                  slice={slice}
+                  slug={projectPage.slug}
+                  seeMoreLinkVariant="project"
+                />
               </Box>
             )
           }

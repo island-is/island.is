@@ -172,6 +172,7 @@ const ProjectNewsList: Screen<ProjectNewsListProps> = ({
           monthOptions={monthOptions}
           title={newsTitle}
           newsPerPage={10}
+          variant="digital-iceland"
         />
       </ProjectWrapper>
       <HeadWithSocialSharing
