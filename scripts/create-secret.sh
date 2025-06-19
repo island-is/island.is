@@ -35,16 +35,16 @@ ${BLUE}Usage:${RESET}
   $(basename "$0") [command] [options]
 
 ${BLUE}Commands:${RESET}
-  create                           Interactively create a secret (default if no command is given)
+  create                           Interactively create a secret
   create --name <name>
          --value <value>
          [--type <String|SecureString>]
          [--tags "Key=K,Value=V ..."]   Non-interactively create a secret
 
-  validate_length <string>         Validate length (6-128 chars)
-  validate_chars <string>          Validate allowed characters (alphanum, dash, slash, underscore)
-  validate_whitespace <string>     Validate absence of whitespace
-  validate_empty <string>          Validate input is not empty
+  validate_length <string>         Validate that input is 6–128 characters
+  validate_chars <string>          Validate that input contains only letters, numbers, /, -, _
+  validate_whitespace <string>     Validate that input contains no whitespace
+  validate_empty <string>          Validate that input is non-empty
 
 ${BLUE}Options:${RESET}
   -h, --help                       Show this help message and exit
