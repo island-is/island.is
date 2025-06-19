@@ -70,15 +70,10 @@ const FriggOptionsAsyncSelectField: FC<
           const options =
             data?.friggOptions?.flatMap(({ options }) =>
               options.flatMap(({ value, key }) => {
-                let content = value.find(
+                const content = value.find(
                   ({ language }) => language === lang,
                 )?.content
-                if (!content) {
-                  content = value.find(
-                    ({ language }) => language === 'is',
-                  )?.content
-                }
-                return { value: key ?? '', label: content ?? '' }
+                return content ? { value: key, label: content } : []
               }),
             ) ?? []
 
