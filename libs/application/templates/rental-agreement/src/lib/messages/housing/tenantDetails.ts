@@ -11,6 +11,16 @@ export const tenantDetails = defineMessages({
     defaultMessage: 'Skrá leigjanda',
     description: 'Tenant Details page title',
   },
+  tableTitle: {
+    id: 'ra.application:tenantDetails.tableTitle',
+    defaultMessage: 'Leigjandi',
+    description: 'Tenant details table title',
+  },
+  representativeTableTitle: {
+    id: 'ra.application:tenantDetails.representativeTableTitle',
+    defaultMessage: 'Umboðsaðili (ef við á)',
+    description: 'Tenant details representative table title',
+  },
   pageDescription: {
     id: 'ra.application:tenantDetails.pageDescription',
     defaultMessage:

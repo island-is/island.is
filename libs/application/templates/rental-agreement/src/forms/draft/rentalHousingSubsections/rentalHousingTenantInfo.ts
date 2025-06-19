@@ -25,7 +25,7 @@ export const RentalHousingTenantInfo = buildSubSection({
       children: [
         buildTableRepeaterField({
           id: 'tenantInfo.table',
-          title: 'Leigutaki',
+          title: tenantDetails.tableTitle,
           editField: true,
           marginTop: 1,
           maxRows: 10,
@@ -72,7 +72,7 @@ export const RentalHousingTenantInfo = buildSubSection({
         }),
         buildTableRepeaterField({
           id: 'tenantInfo.representativeTable',
-          title: 'Umboðsaðili (ef við á)',
+          title: tenantDetails.representativeTableTitle,
           editField: true,
           marginTop: 6,
           maxRows: 10,
