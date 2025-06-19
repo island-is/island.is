@@ -1,13 +1,8 @@
 {
-  "extends": "../tsconfig.json",
-  "include": ["**/*.ts", "**/*.js", "**/*.tsx", "**/*.jsx"],
+  "extends": "./tsconfig.json",
+  "include": ["e2e/**/*.ts", "playwright.config.ts"],
   "compilerOptions": {
     "types": ["node", "jest"],
-    "allowJs": true,
-    "outDir": "../../../dist/out-tsc",
-    "module": "commonjs",
-    "target": "es2016",
-    "jsx": "react-jsx",
-    "lib": ["es2020", "dom"]
+    "allowJs": false
   }
 }
