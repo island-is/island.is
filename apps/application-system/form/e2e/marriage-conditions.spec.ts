@@ -15,7 +15,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     const applicationPage = await applicationContext.newPage()
 
     await applicationPage.goto(homeUrl)
-    await expect(isApplication(applicationPage, 'hjonavigsla')).toBeTruthy()
+    expect(await isApplication(applicationPage, 'hjonavigsla')).toBeTruthy()
     await use(applicationPage)
 
     await applicationPage.close()

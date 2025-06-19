@@ -24,7 +24,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     await disablePreviousApplications(applicationPage)
     await disableI18n(applicationPage)
     await applicationPage.goto(homeUrl)
-    await expect(isApplication(applicationPage, 'skilavottord')).toBeTruthy()
+    expect(await isApplication(applicationPage, 'skilavottord')).toBeTruthy()
     await use(applicationPage)
 
     await applicationPage.close()

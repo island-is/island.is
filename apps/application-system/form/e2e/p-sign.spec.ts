@@ -28,7 +28,7 @@ test.describe('P-sign', () => {
   test('should be able to create application', async () => {
     const page = await context.newPage()
     await page.goto('/umsoknir/p-merki?delegationChecked=true')
-    await expect(isApplication(page, '/umsoknir/p-merki')).toBeTruthy()
+    expect(await isApplication(page, '/umsoknir/p-merki')).toBeTruthy()
 
     await disablePreviousApplications(page)
     await disableDelegations(page)
