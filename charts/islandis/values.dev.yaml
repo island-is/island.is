@@ -1594,7 +1594,7 @@ form-system-web:
         nginx.ingress.kubernetes.io/proxy-buffering: 'on'
         nginx.ingress.kubernetes.io/service-upstream: 'true'
       hosts:
-        - host: 'dev01.devland.is'
+        - host: 'beta.dev01.devland.is'
           paths:
             - '/form'
   namespace: 'form-system-web'
