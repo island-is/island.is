@@ -40,7 +40,7 @@ export class CaseResolver {
   ) {}
 
   @Query(() => Case, { nullable: true })
-  @UseInterceptors(CaseInterceptor)
+  // @UseInterceptors(CaseInterceptor)
   async case(
     @Args('input', { type: () => CaseQueryInput })
     input: CaseQueryInput,
@@ -78,7 +78,7 @@ export class CaseResolver {
   }
 
   @Mutation(() => Case, { nullable: true })
-  @UseInterceptors(CaseInterceptor)
+  // @UseInterceptors(CaseInterceptor)
   createCase(
     @Args('input', { type: () => CreateCaseInput })
     input: CreateCaseInput,
@@ -97,7 +97,7 @@ export class CaseResolver {
   }
 
   @Mutation(() => Case, { nullable: true })
-  @UseInterceptors(CaseInterceptor)
+  // @UseInterceptors(CaseInterceptor)
   updateCase(
     @Args('input', { type: () => UpdateCaseInput })
     input: UpdateCaseInput,
@@ -118,7 +118,7 @@ export class CaseResolver {
   }
 
   @Mutation(() => Case, { nullable: true })
-  @UseInterceptors(CaseInterceptor)
+  // @UseInterceptors(CaseInterceptor)
   transitionCase(
     @Args('input', { type: () => TransitionCaseInput })
     input: TransitionCaseInput,
@@ -237,7 +237,7 @@ export class CaseResolver {
   }
 
   @Mutation(() => Case, { nullable: true })
-  @UseInterceptors(CaseInterceptor)
+  // @UseInterceptors(CaseInterceptor)
   extendCase(
     @Args('input', { type: () => ExtendCaseInput })
     input: ExtendCaseInput,
@@ -256,7 +256,7 @@ export class CaseResolver {
   }
 
   @Mutation(() => Case, { nullable: true })
-  @UseInterceptors(CaseInterceptor)
+  // @UseInterceptors(CaseInterceptor)
   createCourtCase(
     @Args('input', { type: () => CreateCourtCaseInput })
     input: CreateCourtCaseInput,
