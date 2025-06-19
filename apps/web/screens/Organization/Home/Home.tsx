@@ -209,7 +209,6 @@ const OrganizationHomePage = ({
       >
         {organizationPage?.bottomSlices.map((slice, index) => {
           if (
-            organizationHasDigitalIcelandNewsVisuals(organizationPage.slug) &&
             slice.__typename === 'LatestNewsSlice' &&
             slice.news.length >= 3
           ) {
