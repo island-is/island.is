@@ -1,10 +1,16 @@
 import { BrowserContext, expect, test } from '@playwright/test'
-import { icelandicAndNoPopupUrl, urls, session, helpers, label } from '@island.is/testing/e2e'
+import {
+  icelandicAndNoPopupUrl,
+  urls,
+  session,
+  label,
+  disableI18n,
+} from '@island.is/testing/e2e'
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { coreDelegationsMessages } from '@island.is/application/core/messages'
-import { m } from '@island.is/portals/shared-modules/delegations/messages'
+import { m as delegationMessages } from '@island.is/portals/shared-modules/delegations/messages'
 import { m as coreMessages } from '@island.is/portals/my-pages/core/messages'
 import { mCompany } from '@island.is/portals/my-pages/information/messages'
-import { disableI18n } from 'testing/e2e/disablers'
 import { switchDelegation } from './auth.spec'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
@@ -31,7 +37,6 @@ test.describe('Service portal', () => {
   test('can sign in as company', async () => {
     // Arrange
     const page = await context.newPage()
-    const { findByRole } = helpers(page)
     await page.goto(icelandicAndNoPopupUrl('/minarsidur'))
 
     // Act
@@ -39,9 +44,11 @@ test.describe('Service portal', () => {
 
     // Assert
     const dashboard = page.getByTestId('service-portal-dashboard')
-    await expect(findByRole('heading', companyName ?? '')).toBeVisible()
+    await expect(
+      page.getByRole('heading', { name: companyName ?? '' }),
+    ).toBeVisible()
     await expect(dashboard).toBeVisible()
-    await expect(await dashboard.locator('a').count()).toBeLessThan(10)
+    expect(await dashboard.locator('a').count()).toBeLessThan(10)
   })
 
   test('can view company data', async () => {
@@ -61,7 +68,9 @@ test.describe('Service portal', () => {
       .click()
     const firstCompany = page
       .locator(
-        `role=button[name*="${label(m.delegationTypeProcurationHolder)}"]`,
+        `role=button[name*="${label(
+          delegationMessages.delegationTypeProcurationHolder,
+        )}"]`,
       )
       .first()
     await expect(firstCompany).toBeVisible()

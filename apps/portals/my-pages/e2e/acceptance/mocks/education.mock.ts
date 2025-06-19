@@ -1,6 +1,7 @@
 import { addXroadMock } from '@island.is/testing/e2e'
-import { HttpMethod, Response } from '@anev/ts-mountebank'
-import { Education, HealthInsurance } from '../../infra/src/dsl/xroad'
+import { Response } from '@anev/ts-mountebank'
+import { Education } from '../../../../../../infra/src/dsl/xroad'
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { StudentAssessmentViewModel } from '@island.is/clients/mms/grade'
 
 const mockObject: StudentAssessmentViewModel = {
