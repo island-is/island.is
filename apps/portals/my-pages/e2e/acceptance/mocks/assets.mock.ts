@@ -1,6 +1,6 @@
 import { addXroadMock } from '@island.is/testing/e2e'
 import { Response } from '@anev/ts-mountebank'
-import { Properties } from '../../infra/src/dsl/xroad'
+import { Properties } from '../../../../../../infra/src/dsl/xroad'
 
 export const loadAssetsXroadMocks = async () => {
   await addXroadMock({
