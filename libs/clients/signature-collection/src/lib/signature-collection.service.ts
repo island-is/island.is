@@ -131,7 +131,7 @@ export class SignatureCollectionClientService {
       throw new Error('User is already owner of lists')
     }
 
-    const filteredAreas = areas
+    const filteredAreas = areas?.length
       ? collectionAreas.filter((area) =>
           areas.flatMap((a) => a.areaId).includes(area.id),
         )
@@ -188,7 +188,7 @@ export class SignatureCollectionClientService {
       throw new Error('User is already owner of lists')
     }
 
-    const filteredAreas = areas
+    const filteredAreas = areas?.length
       ? collectionAreas.filter((area) =>
           areas.flatMap((a) => a.areaId).includes(area.id),
         )

@@ -27,6 +27,7 @@ import { companySignatureCollectionNavigation } from '@island.is/portals/my-page
 export const rootNavigationItem: PortalNavigationItem = {
   name: m.overview,
   systemRoute: true,
+  breadcrumbHide: true,
   path: ServicePortalPaths.Root,
   icon: {
     icon: 'dots',
