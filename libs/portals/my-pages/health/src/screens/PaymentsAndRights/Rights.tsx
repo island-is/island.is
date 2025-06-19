@@ -1,42 +1,16 @@
-import {
-  Box,
-  DatePicker,
-  GridColumn,
-  GridContainer,
-  GridRow,
-  Hidden,
-  Icon,
-  SkeletonLoader,
-  Stack,
-  Table as T,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Icon, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
-  DownloadFileButtons,
-  ExpandHeader,
-  MobileTable,
   StackWithBottomDivider,
   UserInfoLine,
-  amountFormat,
   formatDate,
   isDateAfterToday,
   m,
-  numberFormat,
 } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
-import sub from 'date-fns/sub'
-import { useState } from 'react'
 import { messages } from '../../lib/messages'
 import { HealthPaths } from '../../lib/paths'
-import { CONTENT_GAP, SECTION_GAP } from '../../utils/constants'
-import { exportPaymentParticipationOverview } from '../../utils/FileBreakdown'
-import {
-  useGetCopaymentPeriodsQuery,
-  useGetCopaymentStatusQuery,
-  useGetInsuranceOverviewQuery,
-} from './Payments.generated'
-import { PaymentTableRow } from './PaymentTableRow'
+import { useGetInsuranceOverviewQuery } from './Payments.generated'
 import { PaymentsWrapper } from './wrapper/PaymentsWrapper'
 
 export const Rights = () => {
@@ -84,6 +58,15 @@ export const Rights = () => {
         <UserInfoLine
           label={formatMessage(messages.ehic)}
           loading={insuranceLoading}
+          editLink={
+            !isEhicValid
+              ? {
+                  url: formatMessage(messages.renewEhicUrl),
+                  external: true,
+                  title: formatMessage(messages.validForRenewal),
+                }
+              : undefined
+          }
           content={
             <Box
               display="flex"

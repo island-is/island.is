@@ -5,7 +5,6 @@ import {
   GridContainer,
   GridRow,
   Hidden,
-  Icon,
   SkeletonLoader,
   Stack,
   Table as T,
@@ -19,8 +18,6 @@ import {
   StackWithBottomDivider,
   UserInfoLine,
   amountFormat,
-  formatDate,
-  isDateAfterToday,
   m,
   numberFormat,
 } from '@island.is/portals/my-pages/core'
@@ -34,7 +31,6 @@ import { exportPaymentParticipationOverview } from '../../utils/FileBreakdown'
 import {
   useGetCopaymentPeriodsQuery,
   useGetCopaymentStatusQuery,
-  useGetInsuranceOverviewQuery,
 } from './Payments.generated'
 import { PaymentTableRow } from './PaymentTableRow'
 import { PaymentsWrapper } from './wrapper/PaymentsWrapper'
@@ -46,11 +42,6 @@ export const PaymentPartication = () => {
     sub(new Date(), { years: 1 }),
   )
   const [endDate, setEndDate] = useState<Date>(new Date())
-  const {
-    data: insuranceData,
-    error: insuranceError,
-    loading: insuranceLoading,
-  } = useGetInsuranceOverviewQuery()
 
   const { data, loading, error } = useGetCopaymentStatusQuery()
 
@@ -64,65 +55,18 @@ export const PaymentPartication = () => {
       },
     })
 
-  if (error && insuranceError) {
+  if (error) {
     return (
       <PaymentsWrapper pathname={HealthPaths.HealthPaymentParticipation}>
         <Problem noBorder={false} error={error} />
       </PaymentsWrapper>
     )
   }
-  const insurance = insuranceData?.rightsPortalInsuranceOverview
-
-  const isEhicValid = isDateAfterToday(
-    insuranceData?.rightsPortalInsuranceOverview?.ehicCardExpiryDate ??
-      undefined,
-  )
 
   return (
     <PaymentsWrapper pathname={HealthPaths.HealthPaymentParticipation}>
       <Box>
         <StackWithBottomDivider space={2}>
-          <UserInfoLine
-            title={formatMessage(messages.statusOfRights)}
-            label={formatMessage(messages.healthInsuranceStart)}
-            loading={insuranceLoading}
-            content={
-              insurance?.from
-                ? formatMessage(formatDate(insurance?.from, 'dd.MM.yyyy'))
-                : ''
-            }
-          />
-          <UserInfoLine
-            loading={insuranceLoading}
-            label={formatMessage(messages.status)}
-            content={insurance?.status?.display ?? undefined}
-          />
-
-          <UserInfoLine
-            label={formatMessage(messages.ehic)}
-            loading={insuranceLoading}
-            content={
-              <Box
-                display="flex"
-                justifyContent="center"
-                alignItems="center"
-                columnGap="p1"
-              >
-                <Text>
-                  {formatDate(insurance?.ehicCardExpiryDate, 'dd.MM.yyyy')}
-                </Text>
-                <Icon
-                  icon={isEhicValid ? 'checkmarkCircle' : 'closeCircle'}
-                  color={isEhicValid ? 'mint600' : 'red600'}
-                  type="filled"
-                />
-                <Text fontWeight="semiBold" variant="small">
-                  {formatMessage(isEhicValid ? m.valid : m.expired)}
-                </Text>
-              </Box>
-            }
-          />
-
           <UserInfoLine
             titlePadding={2}
             label={formatMessage(messages.maximumMonthlyPayment)}
@@ -149,17 +93,16 @@ export const PaymentPartication = () => {
           </Text>
         </Box>
       </Box>
-      {!data?.rightsPortalCopaymentStatus &&
-        !insuranceData?.rightsPortalInsuranceOverview && (
-          <Box marginBottom={4}>
-            <Problem
-              type="no_data"
-              imgSrc="./assets/images/coffee.svg"
-              titleSize="h3"
-              noBorder={false}
-            />
-          </Box>
-        )}
+      {!data?.rightsPortalCopaymentStatus && (
+        <Box marginBottom={4}>
+          <Problem
+            type="no_data"
+            imgSrc="./assets/images/coffee.svg"
+            titleSize="h3"
+            noBorder={false}
+          />
+        </Box>
+      )}
       {periodsLoading ? (
         <SkeletonLoader space={2} repeat={3} height={24} />
       ) : (

@@ -1649,4 +1649,8 @@ export const messages = defineMessages({
     id: 'sp.health:expired-on',
     defaultMessage: 'Rann út {arg}',
   },
+  renewEhicUrl: {
+    id: 'sp.health:renew-ehic-url',
+    defaultMessage: 'https://island.is/evropska-sjukratryggingakortid',
+  },
 })
