@@ -1,4 +1,4 @@
-import { Includeable } from 'sequelize'
+import { Includeable, Op } from 'sequelize'
 
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
@@ -23,6 +23,7 @@ import {
 import { Case } from '../case/models/case.model'
 import { User } from '../user'
 import { CaseTableResponse } from './dto/caseTable.response'
+import { SearchResponse } from './dto/search.response'
 import { caseTableCellGenerators } from './caseTable.cellGenerators'
 import { caseTableWhereOptions } from './caseTable.whereOptions'
 
@@ -239,6 +240,25 @@ export class CaseTableService {
         cells: caseTableCellKeys.map((k) =>
           caseTableCellGenerators[k].generate(c, user),
         ),
+      })),
+    }
+  }
+
+  async searchCases(query: string, user: TUser): Promise<SearchResponse> {
+    const cases = await this.caseModel.findAll({
+      attributes: ['id', 'courtCaseNumber'],
+      where: {
+        courtCaseNumber: {
+          [Op.iLike]: `%${query}%`,
+        },
+      },
+    })
+
+    return {
+      rowCount: cases.length,
+      rows: cases.map((c) => ({
+        caseId: c.id,
+        descriptor: c.courtCaseNumber ?? '???',
       })),
     }
   }
