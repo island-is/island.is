@@ -287,7 +287,7 @@ export class CaseService {
   private async makeRequest(
     url: string,
     method: 'GET' | 'PATCH',
-    body?: any,
+    body?: unknown,
   ): Promise<Response> {
     try {
       const response = await fetch(url, {
@@ -296,7 +296,7 @@ export class CaseService {
           'Content-Type': 'application/json',
           authorization: `Bearer ${this.config.secretToken}`,
         },
-        ...(body && { body: JSON.stringify(body) }),
+        ...(typeof body !== 'undefined' ? { body: JSON.stringify(body) } : {}),
       })
 
       if (!response.ok) {
@@ -325,6 +325,10 @@ export class CaseService {
     url: string,
   ): Promise<never> {
     const status = response.status
+
+    if (status === 400) {
+      throw new BadRequestException('Bad request')
+    }
 
     if (status === 404) {
       throw new NotFoundException('Resource not found')
