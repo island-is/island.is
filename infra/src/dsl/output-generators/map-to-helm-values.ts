@@ -71,7 +71,7 @@ const serializeService: SerializeMethod<HelmService> = async (
       LOG_LEVEL: 'info',
     },
     secrets: {},
-    podDisruptionBudget: serviceDef.podDisruptionBudget,
+    podDisruptionBudget: {},
     healthCheck: {
       liveness: {
         path: serviceDef.liveness.path,
