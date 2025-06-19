@@ -11,6 +11,7 @@ import {
   Select,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { getCourtDashboardRoute } from '@island.is/judicial-system/consts'
 import { courtSessionTypeNames } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -25,6 +26,7 @@ import {
   PageTitle,
   SectionHeading,
   useCourtArrangements,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseFileCategory,
@@ -86,6 +88,7 @@ const courtSessionOptions = [
 ]
 
 const Conclusion: FC = () => {
+  const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
@@ -648,7 +651,7 @@ const Conclusion: FC = () => {
               selectedAction === IndictmentDecision.COMPLETING
                 ? constants.INDICTMENTS_SUMMARY_ROUTE
                 : selectedAction === IndictmentDecision.REDISTRIBUTING
-                ? constants.CASES_ROUTE
+                ? getCourtDashboardRoute(user)
                 : constants.INDICTMENTS_COURT_OVERVIEW_ROUTE,
             )
           }

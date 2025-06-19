@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 
 import { AlertMessage, Box } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   isIndictmentCase,
   isInvestigationCase,
@@ -17,6 +18,7 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { ProsecutorAndDefendantsEntries } from '@island.is/judicial-system-web/src/components/CaseInfo/CaseInfo'
 import { Gender } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -29,6 +31,7 @@ import SelectCourtOfficials from './SelectCourtOfficials/SelectCourtOfficials'
 import { receptionAndAssignment as strings } from './ReceptionAndAssignment.strings'
 
 const ReceptionAndAssignment = () => {
+  const { user } = useContext(UserContext)
   const router = useRouter()
   const id = router.query.id
   const { formatMessage } = useIntl()
@@ -134,7 +137,7 @@ const ReceptionAndAssignment = () => {
           previousUrl={
             isIndictment
               ? `${constants.INDICTMENTS_COURT_OVERVIEW_ROUTE}/${id}`
-              : constants.CASES_ROUTE
+              : getStandardUserDashboardRoute(user)
           }
           onNextButtonClick={() => handleNavigationTo(getNextRoute)}
           nextIsDisabled={!stepIsValid}

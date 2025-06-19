@@ -29,18 +29,14 @@ import {
 } from '@island.is/judicial-system/auth'
 import {
   ACCESS_TOKEN_COOKIE_NAME,
-  CASES_ROUTE,
   CODE_VERIFIER_COOKIE_NAME,
-  COURT_OF_APPEAL_CASES_ROUTE,
   CSRF_COOKIE_NAME,
-  DEFENDER_CASES_ROUTE,
   EXPIRES_IN_MILLISECONDS,
+  getUserDashboardRoute,
   IDS_ACCESS_TOKEN_NAME,
   IDS_ID_TOKEN_NAME,
   IDS_REFRESH_TOKEN_NAME,
-  PRISON_CASES_ROUTE,
   REFRESH_TOKEN_EXPIRES_IN_MILLISECONDS,
-  USERS_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
   EventType,
@@ -539,20 +535,19 @@ export class AuthController {
     currentUser: User,
     requestedRedirectRoute?: string,
   ) {
-    const getRedirectRoute = (
-      defaultRoute: string,
-      allowedPrefixes: string[],
-    ) => {
-      return requestedRedirectRoute &&
+    const getRedirectRoute = (allowedPrefixes: string[]) => {
+      const isValidRequestedRedirectRoute =
+        requestedRedirectRoute &&
         allowedPrefixes.some((prefix) =>
           requestedRedirectRoute.startsWith(prefix),
         )
+      return isValidRequestedRedirectRoute
         ? requestedRedirectRoute
-        : defaultRoute
+        : getUserDashboardRoute(currentUser)
     }
 
     if (isProsecutionUser(currentUser)) {
-      return getRedirectRoute(CASES_ROUTE, [
+      return getRedirectRoute([
         '/beinir',
         '/krafa',
         '/kaera',
@@ -562,42 +557,27 @@ export class AuthController {
     }
 
     if (isPublicProsecutionOfficeUser(currentUser)) {
-      return getRedirectRoute(CASES_ROUTE, [
-        '/beinir',
-        '/krafa/yfirlit',
-        '/rikissaksoknari',
-      ])
+      return getRedirectRoute(['/beinir', '/krafa/yfirlit', '/rikissaksoknari'])
     }
 
     if (isDistrictCourtUser(currentUser)) {
-      return getRedirectRoute(CASES_ROUTE, [
-        '/beinir',
-        '/krafa/yfirlit',
-        '/domur',
-      ])
+      return getRedirectRoute(['/beinir', '/krafa/yfirlit', '/domur'])
     }
 
     if (isCourtOfAppealsUser(currentUser)) {
-      return getRedirectRoute(COURT_OF_APPEAL_CASES_ROUTE, ['/landsrettur'])
+      return getRedirectRoute(['/landsrettur'])
     }
 
     if (isPrisonSystemUser(currentUser)) {
-      return getRedirectRoute(PRISON_CASES_ROUTE, [
-        '/beinir',
-        '/krafa/yfirlit',
-        '/fangelsi',
-      ])
+      return getRedirectRoute(['/beinir', '/krafa/yfirlit', '/fangelsi'])
     }
 
     if (isDefenceUser(currentUser)) {
-      return getRedirectRoute(DEFENDER_CASES_ROUTE, [
-        '/krafa/yfirlit',
-        '/verjandi',
-      ])
+      return getRedirectRoute(['/krafa/yfirlit', '/verjandi'])
     }
 
     if (isAdminUser(currentUser)) {
-      return getRedirectRoute(USERS_ROUTE, ['/notendur'])
+      return getRedirectRoute(['/notendur'])
     }
 
     return '/'

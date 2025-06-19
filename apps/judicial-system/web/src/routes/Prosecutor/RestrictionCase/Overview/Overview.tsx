@@ -11,6 +11,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate, lowercase } from '@island.is/judicial-system/formatters'
 import {
   core,
@@ -350,9 +351,9 @@ export const Overview = () => {
               caseType: workingCase.type,
             })}
             text={modalText}
-            onClose={() => router.push(constants.CASES_ROUTE)}
+            onClose={() => router.push(getStandardUserDashboardRoute(user))}
             onSecondaryButtonClick={() => {
-              router.push(constants.CASES_ROUTE)
+              router.push(getStandardUserDashboardRoute(user))
             }}
             errorMessage={
               sendNotificationError
