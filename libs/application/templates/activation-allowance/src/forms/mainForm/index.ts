@@ -10,6 +10,7 @@ import { academicBackgroundSection } from './academicBackgroundSection'
 import { drivingLicensesSection } from './drivingLicensesSection'
 import { languageSkillsSection } from './languageSkillsSection'
 import { cvSection } from './cvSection'
+import { incomeSection } from './incomeSection'
 
 export const MainForm = buildForm({
   id: 'MainForm',
@@ -18,6 +19,7 @@ export const MainForm = buildForm({
   renderLastScreenBackButton: true,
   renderLastScreenButton: true,
   children: [
+    incomeSection,
     applicantSection,
     paymentInformationSection,
     jobHistorySection,

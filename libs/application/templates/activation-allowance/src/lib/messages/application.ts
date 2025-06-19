@@ -46,4 +46,14 @@ export const application = defineMessages({
     defaultMessage: 'Staðfesta',
     description: 'Confirm button label',
   },
+  yesLabel: {
+    id: 'aa.application:yesLabel',
+    defaultMessage: 'Já',
+    description: 'Yes label',
+  },
+  noLabel: {
+    id: 'aa.application:noLabel',
+    defaultMessage: 'Nei',
+    description: 'No label',
+  },
 })
