@@ -14,7 +14,7 @@ import { NotificationSettingsCard } from '../cards/NotificationSettingsCard'
 import { Problem } from '@island.is/react-spa/shared'
 import { ActorProfileEmails } from '../ActorProfileEmails/ActorProfileEmails'
 import * as styles from './ActorNotificationSettings.css'
-import { useUserProfileActorProfilesQuery } from './UserProfileActorProfiles.query.generated'
+import { useUserProfileActorProfilesQuery } from './userProfileActorProfiles.query.generated'
 import {
   UserProfile,
   useUserProfile,
