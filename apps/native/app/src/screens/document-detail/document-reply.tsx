@@ -125,8 +125,8 @@ export const DocumentReplyScreen: NavigationFunctionComponent<
         input: {
           documentId,
           body: message,
-          reguesterEmail: userProfile.email,
-          reguesterName: userInfo?.name,
+          requesterEmail: userProfile.email,
+          requesterName: userInfo?.name,
           subject,
         },
       },
