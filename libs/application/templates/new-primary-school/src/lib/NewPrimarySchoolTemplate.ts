@@ -231,17 +231,17 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         if (!hasFoodAllergiesOrIntolerances?.includes(YES)) {
           unset(
             application.answers,
-            'allergiesAndIntolerances.foodAllergiesOrIntolerances',
+            'healthProtection.foodAllergiesOrIntolerances',
           )
         }
         if (!hasOtherAllergies?.includes(YES)) {
-          unset(application.answers, 'allergiesAndIntolerances.otherAllergies')
+          unset(application.answers, 'healthProtection.otherAllergies')
         }
         if (
           !hasFoodAllergiesOrIntolerances?.includes(YES) &&
           !hasOtherAllergies?.includes(YES)
         ) {
-          unset(application.answers, 'allergiesAndIntolerances.usesEpiPen')
+          unset(application.answers, 'healthProtection.usesEpiPen')
         }
         return context
       }),
