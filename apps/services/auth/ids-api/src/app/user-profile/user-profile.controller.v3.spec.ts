@@ -13,7 +13,7 @@ import {
 } from '@island.is/clients/rsk/company-registry'
 import {
   UserProfileDto,
-  UserProfileLocaleEnum,
+  UserProfileDtoLocaleEnum,
   V2MeApi,
 } from '@island.is/clients/user-profile'
 import { Logger, LOGGER_PROVIDER } from '@island.is/logging'
@@ -76,7 +76,7 @@ function createUserProfile({ isRestricted = false }): UserProfileDto {
     email: faker.internet.email(),
     mobilePhoneNumber: faker.phone.phoneNumber(),
     locale: faker.random.arrayElement(
-      Object.values(UserProfileLocaleEnum) as UserProfileLocaleEnum[],
+      Object.values(UserProfileDtoLocaleEnum) as UserProfileDtoLocaleEnum[],
     ),
     mobilePhoneNumberVerified: faker.datatype.boolean(),
     emailVerified: faker.datatype.boolean(),
