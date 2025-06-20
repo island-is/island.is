@@ -13,6 +13,10 @@ import {
 } from '@island.is/island-ui/core'
 import { caseTables, getCaseTableType } from '@island.is/judicial-system/types'
 import {
+  CaseActionType,
+  ContextMenuCaseActionType,
+} from '@island.is/judicial-system/types'
+import {
   CasesLayout,
   Logo,
   PageHeader,
@@ -28,10 +32,9 @@ import {
 } from '@island.is/judicial-system-web/src/components/Table'
 import TagContainer from '@island.is/judicial-system-web/src/components/Tags/TagContainer/TagContainer'
 import {
-  CaseActionType,
   CaseTableCell,
   CaseTableRow,
-  ContextMenuCaseActionType,
+  CaseTableType,
   StringGroupValue,
   StringValue,
   TagPairValue,

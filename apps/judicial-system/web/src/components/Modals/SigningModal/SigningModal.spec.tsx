@@ -1,10 +1,10 @@
 import { ApolloError } from '@apollo/client'
 
-import { GetRulingSignatureConfirmationQuery } from './getRulingSignatureConfirmation.generated'
+import { RulingSignatureConfirmationQuery } from './rulingSignatureConfirmation.generated'
 import { getSigningProgress } from './SigningModal'
 
 type SignatureConfirmation =
-  GetRulingSignatureConfirmationQuery['rulingSignatureConfirmation']
+  RulingSignatureConfirmationQuery['rulingSignatureConfirmation']
 describe('getSigningProcess', () => {
   test('should return success when document has been signed', () => {
     const signatureConfirmation: SignatureConfirmation = {
