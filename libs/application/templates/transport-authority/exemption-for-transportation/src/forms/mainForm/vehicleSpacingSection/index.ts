@@ -13,9 +13,13 @@ import {
   MAX_CNT_CONVOY,
   hasFreightItemWithExemptionForWeight,
   hasConvoyItemWithTrailer,
+  checkHasDolly,
+  checkHasTrailer,
+  checkHasSingleDolly,
+  checkHasDoubleDolly,
 } from '../../../utils'
-import { DollyType } from '../../../shared'
 import { Application } from '@island.is/application/types'
+import { DollyType } from '../../../shared'
 
 export const vehicleSpacingSection = buildSection({
   id: 'vehicleSpacingSection',
@@ -79,11 +83,11 @@ export const vehicleSpacingSection = buildSection({
               buildHiddenInput({
                 id: `vehicleSpacing.convoyList.${convoyIndex}.dollyType`,
                 defaultValue: (application: Application) => {
-                  const convoyItem = getConvoyItem(
-                    application.answers,
-                    convoyIndex,
-                  )
-                  return convoyItem?.dollyType
+                  if (checkHasSingleDolly(application.answers))
+                    return DollyType.SINGLE
+                  else if (checkHasDoubleDolly(application.answers))
+                    return DollyType.DOUBLE
+                  else return DollyType.NONE
                 },
                 condition: (answers) => {
                   const convoyItem = getConvoyItem(answers, convoyIndex)
@@ -120,17 +124,7 @@ export const vehicleSpacingSection = buildSection({
               }),
               buildTextField({
                 id: `vehicleSpacing.convoyList.${convoyIndex}.vehicleToDollyValue`,
-                condition: (answers) => {
-                  const isExemptionTypeLongTerm =
-                    checkIfExemptionTypeLongTerm(answers)
-                  const convoyItem = getConvoyItem(answers, convoyIndex)
-                  const hasTrailer = !!convoyItem?.trailer?.permno
-                  const hasDolly =
-                    convoyItem?.dollyType === DollyType.SINGLE ||
-                    convoyItem?.dollyType === DollyType.DOUBLE
-
-                  return hasTrailer && !isExemptionTypeLongTerm && hasDolly
-                },
+                condition: (answers) => checkHasDolly(answers),
                 title: vehicleSpacing.labels.vehicleToDolly,
                 backgroundColor: 'blue',
                 width: 'full',
@@ -140,17 +134,7 @@ export const vehicleSpacingSection = buildSection({
               }),
               buildTextField({
                 id: `vehicleSpacing.convoyList.${convoyIndex}.dollyToTrailerValue`,
-                condition: (answers) => {
-                  const isExemptionTypeLongTerm =
-                    checkIfExemptionTypeLongTerm(answers)
-                  const convoyItem = getConvoyItem(answers, convoyIndex)
-                  const hasTrailer = !!convoyItem?.trailer?.permno
-                  const hasDolly =
-                    convoyItem?.dollyType === DollyType.SINGLE ||
-                    convoyItem?.dollyType === DollyType.DOUBLE
-
-                  return hasTrailer && !isExemptionTypeLongTerm && hasDolly
-                },
+                condition: (answers) => checkHasDolly(answers),
                 title: vehicleSpacing.labels.dollyToTrailer,
                 backgroundColor: 'blue',
                 width: 'full',
@@ -160,17 +144,9 @@ export const vehicleSpacingSection = buildSection({
               }),
               buildTextField({
                 id: `vehicleSpacing.convoyList.${convoyIndex}.vehicleToTrailerValue`,
-                condition: (answers) => {
-                  const isExemptionTypeLongTerm =
-                    checkIfExemptionTypeLongTerm(answers)
-                  const convoyItem = getConvoyItem(answers, convoyIndex)
-                  const hasTrailer = !!convoyItem?.trailer?.permno
-                  const hasDolly =
-                    convoyItem?.dollyType === DollyType.SINGLE ||
-                    convoyItem?.dollyType === DollyType.DOUBLE
-
-                  return hasTrailer && (isExemptionTypeLongTerm || !hasDolly)
-                },
+                condition: (answers) =>
+                  !checkHasDolly(answers) &&
+                  checkHasTrailer(answers, convoyIndex),
                 title: vehicleSpacing.labels.vehicleToTrailer,
                 backgroundColor: 'blue',
                 width: 'full',

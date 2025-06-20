@@ -49,6 +49,15 @@ export const getFreightPairingItems = (
     }))
 }
 
+export const getFreightPairingItem = (
+  answers: FormValue,
+  freightIndex: number,
+  convoyIndex: number,
+): FreightPairing | undefined => {
+  const pairingItems = getFreightPairingItems(answers, freightIndex)
+  return pairingItems[convoyIndex]
+}
+
 export const hasFreightItemWithExemptionForWeight = (
   answers: FormValue,
 ): boolean => {
