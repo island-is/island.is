@@ -2077,6 +2077,26 @@ export const searchTagsMessages = defineMessages({
     id: 'sp.search.tags:health-waitlist',
     defaultMessage: 'Bíða',
   },
+  healthInsuranceCard: {
+    id: 'sp.search.tags:health-insurance-card',
+    defaultMessage: 'Sjúkrakort',
+  },
+  healthInsuranceEhicCard: {
+    id: 'sp.search.tags:health-insurance-ehic-card',
+    defaultMessage: 'Sjúkratrygging',
+  },
+  healthInsuranceEhicCardLong: {
+    id: 'sp.search.tags:health-insurance-ehic-card',
+    defaultMessage: 'Evrópska sjúkratryggingakortið',
+  },
+  healthPaymentParticipation: {
+    id: 'sp.search.tags:health-payment-participation',
+    defaultMessage: 'Greiðsluþátttaka',
+  },
+  healthPaymentOverview: {
+    id: 'sp.search.tags:health-payment-overview',
+    defaultMessage: 'Greiðsluyfirlit',
+  },
   licensesAlternative: {
     id: 'sp.search.tags:licenses-alternative',
     defaultMessage: 'Skilríki',

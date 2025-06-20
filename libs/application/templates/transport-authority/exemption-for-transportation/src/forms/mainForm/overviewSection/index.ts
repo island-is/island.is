@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildCheckboxField,
   buildMultiField,
   buildOverviewField,
@@ -16,6 +17,17 @@ import {
   getUserInformationOverviewItems,
   checkIfExemptionTypeLongTerm,
   checkIfExemptionTypeShortTerm,
+  getConvoyOverviewItems,
+  getAxleSpacingOverviewItems,
+  getVehicleSpacingOverviewItems,
+  hasFreightItemWithExemptionForWeight,
+  MAX_CNT_FREIGHT,
+  getFreightItem,
+  formatNumberWithMeters,
+  formatNumberWithTons,
+  getFreightOverviewShortTermItems,
+  getFreightOverviewLongTermItems,
+  getConvoyMissingInPairingErrorMessage,
 } from '../../../utils'
 import { overview } from '../../../lib/messages'
 import { DefaultEvents } from '@island.is/application/types'
@@ -60,6 +72,78 @@ export const overviewSection = buildSection({
           },
         }),
         buildOverviewField({
+          id: 'overview.convoy',
+          title: overview.convoy.subtitle,
+          backId: (answers) =>
+            checkIfExemptionTypeShortTerm(answers)
+              ? 'convoyShortTermMultiField'
+              : 'convoyLongTermMultiField',
+          items: getConvoyOverviewItems,
+        }),
+        buildOverviewField({
+          id: `overview.freightShortTerm`,
+          condition: (answers) => checkIfExemptionTypeShortTerm(answers),
+          title: overview.freight.subtitle,
+          backId: 'freightShortTermCreateMultiField',
+          items: getFreightOverviewShortTermItems,
+        }),
+        ...Array(MAX_CNT_FREIGHT)
+          .fill(null)
+          .flatMap((_, freightIndex) => {
+            return [
+              buildOverviewField({
+                id: `overview.freightLongTerm.${freightIndex}`,
+                condition: (answers) => {
+                  return (
+                    checkIfExemptionTypeLongTerm(answers) &&
+                    !!getFreightItem(answers, freightIndex)
+                  )
+                },
+                title: (application) => {
+                  const freightItem = getFreightItem(
+                    application.answers,
+                    freightIndex,
+                  )
+                  return {
+                    ...overview.freight.label,
+                    values: {
+                      freightNumber: freightIndex + 1,
+                      freightName: freightItem?.name,
+                      length: formatNumberWithMeters(freightItem?.length),
+                      weight: formatNumberWithTons(freightItem?.weight),
+                    },
+                  }
+                },
+                displayTitleAsAccordion: true,
+                backId: `freightLongTermPairingMultiField.${freightIndex}`,
+                items: (answers, externalData) =>
+                  getFreightOverviewLongTermItems(
+                    answers,
+                    externalData,
+                    freightIndex,
+                  ),
+              }),
+            ]
+          }),
+        buildOverviewField({
+          id: 'overview.axleSpacing',
+          title: overview.axleSpacing.subtitle,
+          backId: 'axleSpacingMultiField',
+          items: getAxleSpacingOverviewItems,
+          condition: (answers) => {
+            return hasFreightItemWithExemptionForWeight(answers)
+          },
+        }),
+        buildOverviewField({
+          id: 'overview.vehicleSpacing',
+          title: overview.vehicleSpacing.subtitle,
+          backId: 'vehicleSpacingMultiField',
+          items: getVehicleSpacingOverviewItems,
+          condition: (answers) => {
+            return hasFreightItemWithExemptionForWeight(answers)
+          },
+        }),
+        buildOverviewField({
           id: 'overview.supportingDocuments',
           title: overview.supportingDocuments.subtitle,
           backId: 'supportingDocumentsMultiField',
@@ -79,6 +163,17 @@ export const overviewSection = buildSection({
               label: overview.buttons.confirm,
             },
           ],
+        }),
+        buildAlertMessageField({
+          id: 'overview.alertMessageValidation',
+          title: overview.freight.convoyMissingErrorTitle,
+          message: (application) =>
+            getConvoyMissingInPairingErrorMessage(application.answers) || '',
+          condition: (answers) =>
+            !!getConvoyMissingInPairingErrorMessage(answers),
+          doesNotRequireAnswer: true,
+          alertType: 'error',
+          shouldBlockInSetBeforeSubmitCallback: true,
         }),
         buildSubmitField({
           id: 'submit',
