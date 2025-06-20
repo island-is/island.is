@@ -18,11 +18,11 @@ export const unboundTerminationSection = buildSection({
       title: m.unboundTerminationMessages.title,
       children: [
         buildDateField({
-          id: 'unboundTerminationDate',
+          id: 'unboundTermination.unboundTerminationDate',
           title: m.unboundTerminationMessages.dateTitle,
         }),
         buildSelectField({
-          id: 'unboundTerminationReason',
+          id: 'unboundTermination.unboundTerminationReason',
           title: m.unboundTerminationMessages.selectTitle,
           options: terminationReasonOptions,
         }),

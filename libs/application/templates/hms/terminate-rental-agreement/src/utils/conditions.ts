@@ -4,12 +4,18 @@ import { getValueViaPath } from '@island.is/application/core'
 import { isTerminationBound } from './helpers'
 
 export const isTermination = (answers: FormValue) => {
-  const terminationType = getValueViaPath<string>(answers, 'terminationType')
+  const terminationType = getValueViaPath<string>(
+    answers,
+    'terminationType.answer',
+  )
   return terminationType === TerminationTypes.TERMINATION
 }
 
 export const isCancelation = (answers: FormValue) => {
-  const terminationType = getValueViaPath<string>(answers, 'terminationType')
+  const terminationType = getValueViaPath<string>(
+    answers,
+    'terminationType.answer',
+  )
   return terminationType === TerminationTypes.CANCELATION
 }
 

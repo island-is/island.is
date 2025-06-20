@@ -16,7 +16,7 @@ export const chooseContractSection = buildSection({
       description: m.chooseContractMessages.multiFieldDescription,
       children: [
         buildRadioField({
-          id: 'rentalAgreement',
+          id: 'rentalAgreement.answer',
           options: rentalContractOptions,
         }),
       ],

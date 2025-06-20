@@ -7,7 +7,10 @@ export const getSelectedContract = (
   answers: FormValue,
   externalData: ExternalData,
 ) => {
-  const selectedContractId = getValueViaPath<string>(answers, 'rentalAgreement')
+  const selectedContractId = getValueViaPath<string>(
+    answers,
+    'rentalAgreement.answer',
+  )
 
   const contracts = getValueViaPath<Array<Contract>>(
     externalData,

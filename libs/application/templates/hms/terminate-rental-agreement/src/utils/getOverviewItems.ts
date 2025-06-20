@@ -61,7 +61,8 @@ export const getRentalAgreementOverviewItems = (
     {
       width: 'half',
       keyText: m.overviewMessages.rentalAgreementNumber,
-      valueText: getValueViaPath<string>(answers, 'rentalAgreement') ?? '',
+      valueText:
+        getValueViaPath<string>(answers, 'rentalAgreement.answer') ?? '',
     },
     {
       width: 'half',
@@ -113,7 +114,8 @@ export const getTerminationTypeOverviewItems = (
       width: 'full',
       keyText: m.overviewMessages.terminationType,
       valueText:
-        getValueViaPath<string>(answers, 'terminationType') === 'dismissal'
+        getValueViaPath<string>(answers, 'terminationType.answer') ===
+        'dismissal'
           ? m.overviewMessages.terminationTypeDismissal
           : m.overviewMessages.terminationTypeTermination,
     },
@@ -128,27 +130,31 @@ export const getCancelationDetailsOverviewItems = (
     {
       width: 'full',
       keyText: m.overviewMessages.cancelationDate,
-      valueText: getValueViaPath<string>(answers, 'cancelationDate') ?? '',
+      valueText:
+        getValueViaPath<string>(answers, 'cancelation.cancelationDate') ?? '',
     },
     {
       width: 'full',
       keyText: m.overviewMessages.cancelationReason,
-      valueText: getValueViaPath<string>(answers, 'cancelationReason') ?? '',
+      valueText:
+        getValueViaPath<string>(answers, 'cancelation.cancelationReason') ?? '',
     },
   ]
 }
 
 export const getBoundTerminationOverviewItems = (
   answers: FormValue,
-  externalData: ExternalData,
+  _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  console.log('answers: ', answers)
-  console.log('externalData: ', externalData)
   return [
     {
       width: 'full',
       keyText: m.overviewMessages.terminationDate,
-      valueText: getValueViaPath<string>(answers, 'boundTerminationDate') ?? '',
+      valueText:
+        getValueViaPath<string>(
+          answers,
+          'boundTermination.boundTerminationDate',
+        ) ?? '',
     },
   ]
 }
@@ -162,13 +168,19 @@ export const getUnboundTerminationOverviewItems = (
       width: 'full',
       keyText: m.overviewMessages.terminationDate,
       valueText:
-        getValueViaPath<string>(answers, 'unboundTerminationDate') ?? '',
+        getValueViaPath<string>(
+          answers,
+          'unboundTermination.unboundTerminationDate',
+        ) ?? '',
     },
     {
       width: 'full',
       keyText: m.overviewMessages.terminationReason,
       valueText:
-        getValueViaPath<string>(answers, 'unboundTerminationReason') ?? '',
+        getValueViaPath<string>(
+          answers,
+          'unboundTermination.unboundTerminationReason',
+        ) ?? '',
     },
   ]
 }

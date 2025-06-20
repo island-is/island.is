@@ -10,7 +10,10 @@ import * as m from '../../lib/messages'
 
 export const cancelationSection = buildSection({
   condition: (answers) => {
-    const terminationType = getValueViaPath<string>(answers, 'terminationType')
+    const terminationType = getValueViaPath<string>(
+      answers,
+      'terminationType.answer',
+    )
     return terminationType === TerminationTypes.CANCELATION
   },
   id: 'cancelationSection',
@@ -21,11 +24,11 @@ export const cancelationSection = buildSection({
       title: m.cancelationMessages.title,
       children: [
         buildDateField({
-          id: 'cancelationDate',
+          id: 'cancelation.cancelationDate',
           title: m.cancelationMessages.dateTitle,
         }),
         buildTextField({
-          id: 'cancelationReason',
+          id: 'cancelation.cancelationReason',
           title: m.cancelationMessages.reasonTitle,
           placeholder: m.cancelationMessages.reasonPlaceholder,
           variant: 'textarea',

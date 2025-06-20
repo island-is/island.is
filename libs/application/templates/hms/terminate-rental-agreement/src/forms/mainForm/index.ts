@@ -1,6 +1,6 @@
 import { buildForm } from '@island.is/application/core'
 import { FormModes } from '@island.is/application/types'
-import { overviewSection } from './overview'
+import { overviewSection } from './overviewSection'
 import { terminationTypeSection } from './terminationType'
 import { chooseContractSection } from './chooseContractSection'
 import { unboundTerminationSection } from './unboundTerminationSection'

@@ -40,7 +40,7 @@ export const terminationTypeSection = buildSection({
           alertType: 'info',
         }),
         buildRadioField({
-          id: 'terminationType',
+          id: 'terminationType.answer',
           options: [
             {
               value: TerminationTypes.TERMINATION, // Uppsögn

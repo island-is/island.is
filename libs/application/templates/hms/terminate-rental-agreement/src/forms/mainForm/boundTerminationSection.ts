@@ -17,7 +17,7 @@ export const boundTerminationSection = buildSection({
       description: m.boundTerminationMessages.description,
       children: [
         buildDateField({
-          id: 'boundTerminationDate',
+          id: 'boundTermination.boundTerminationDate',
           title: m.boundTerminationMessages.dateTitle,
         }),
       ],

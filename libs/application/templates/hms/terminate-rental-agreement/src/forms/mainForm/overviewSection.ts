@@ -25,11 +25,6 @@ export const overviewSection = buildSection({
   title: m.overviewMessages.overviewTitle,
   children: [
     buildMultiField({
-      condition: (answers, externalData) => {
-        console.log('answers: ', answers)
-        console.log('externalData: ', externalData)
-        return true
-      },
       id: 'overviewMultiField',
       title: m.overviewMessages.overviewTitle,
       children: [

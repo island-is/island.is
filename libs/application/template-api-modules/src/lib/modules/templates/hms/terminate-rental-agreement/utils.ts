@@ -32,7 +32,7 @@ const terminationReasonMap: Record<string, TerminationReason> = {
 export const isCancelation = (application: Application) => {
   const terminationType = getValueViaPath<string>(
     application.answers,
-    'terminationType',
+    'terminationType.answer',
   )
 
   return terminationType === 'cancelation'
@@ -44,9 +44,13 @@ export const parseCancelContract = (
 ): CancelContract => {
   const obj = {
     contractId:
-      getValueViaPath<string>(application.answers, 'rentalAgreement') ?? '',
+      getValueViaPath<string>(application.answers, 'rentalAgreement.answer') ??
+      '',
     cancelOn: new Date(
-      getValueViaPath<string>(application.answers, 'cancelationDate') ?? '',
+      getValueViaPath<string>(
+        application.answers,
+        'cancelation.cancelationDate',
+      ) ?? '',
     ),
     document: files[0].fileContent,
     documentMime: files[0].fileName.split('.').pop() ?? 'pdf',
@@ -61,16 +65,23 @@ export const parseTerminateContract = (
   files: Array<AttachmentData>,
 ): TerminateContract => {
   const terminationReason =
-    getValueViaPath<string>(application.answers, 'unboundTerminationReason') ??
-    ''
+    getValueViaPath<string>(
+      application.answers,
+      'unboundTermination.unboundTerminationReason',
+    ) ?? ''
 
   const obj = {
     contractId:
-      getValueViaPath<string>(application.answers, 'rentalAgreement') ?? '',
+      getValueViaPath<string>(application.answers, 'rentalAgreement.answer') ??
+      '',
     terminateOn:
-      getValueViaPath<Date>(application.answers, 'terminationDate') ??
-      new Date(),
-    reasonUseCode: terminationReasonMap[terminationReason] ?? '',
+      getValueViaPath<Date>(
+        application.answers,
+        'boundTermination.boundTerminationDate',
+      ) ?? new Date(),
+    reasonUseCode:
+      terminationReasonMap[terminationReason] ??
+      TerminationReason.OWNERINBUILDING,
     document: files[0].fileContent,
     documentMime: files[0].fileName.split('.').pop() ?? 'pdf',
     documentFilename: files[0].fileName,
