@@ -134,6 +134,15 @@ export const rentalAmount = z
         })
       }
 
+      if (!data.paymentMethodBankAccountNumber?.accountNumber) {
+        ctx.addIssue({
+          code: z.ZodIssueCode.custom,
+          message: 'Custom error message',
+          params: m.rentalAmount.paymentMethodBankAccountNumberRequiredError,
+          path: ['accountNumber'],
+        })
+      }
+
       if (
         !data.paymentMethodBankAccountNumber ||
         !data.paymentMethodBankAccountNumber.bankNumber ||
