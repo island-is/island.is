@@ -1,5 +1,6 @@
 import {
   buildAlertMessageField,
+  buildCustomField,
   buildMultiField,
   buildTableRepeaterField,
 } from '@island.is/application/core'
@@ -117,6 +118,11 @@ export const ConvoyLongTermMultiField = buildMultiField({
         return showEmptyListError || showDuplicateError
       },
       shouldBlockInSetBeforeSubmitCallback: true,
+    }),
+    buildCustomField({
+      component: 'HandleBeforeSubmitConvoy',
+      id: 'handleBeforeSubmitConvoy',
+      description: '',
     }),
   ],
 })

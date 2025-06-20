@@ -1,5 +1,6 @@
 import {
   buildAlertMessageField,
+  buildCustomField,
   buildMultiField,
   buildSubSection,
   buildTableRepeaterField,
@@ -130,6 +131,11 @@ export const FreightLongTermCreateSubSection = buildSubSection({
             return showEmptyListError || showPoliceEscortError
           },
           shouldBlockInSetBeforeSubmitCallback: true,
+        }),
+        buildCustomField({
+          component: 'HandleBeforeSubmitFreight',
+          id: 'handleBeforeSubmitFreight',
+          description: '',
         }),
       ],
     }),

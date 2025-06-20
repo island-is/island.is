@@ -9,21 +9,18 @@ import {
 } from '@island.is/application/core'
 import { axleSpacing } from '../../../lib/messages'
 import {
-  getConvoyItem,
   getConvoyTrailer,
   getConvoyVehicle,
   getExemptionType,
-  checkIfExemptionTypeShortTerm,
   MAX_CNT_AXLE,
   MAX_CNT_CONVOY,
   shouldUseSameValuesForTrailer,
   hasFreightItemWithExemptionForWeight,
+  checkHasDoubleDolly,
+  checkHasSingleDolly,
 } from '../../../utils'
-import { DollyType } from '../../../shared'
 import { Application } from '@island.is/application/types'
-
-// Note: Since dolly is only allowed in short-term, then there is only one convoy
-const convoyIndexForDolly = 0
+import { DollyType } from '../../../shared'
 
 export const axleSpacingSection = buildSection({
   id: 'axleSpacingSection',
@@ -131,12 +128,7 @@ export const axleSpacingSection = buildSection({
         // Note: No axle space if single dolly / no dolly
         buildDescriptionField({
           id: `axleSpacingInfo.dollySubtitle`,
-          condition: (answers) => {
-            if (!checkIfExemptionTypeShortTerm(answers)) return false
-
-            const convoyItem = getConvoyItem(answers, convoyIndexForDolly)
-            return convoyItem?.dollyType === DollyType.DOUBLE
-          },
+          condition: checkHasDoubleDolly,
           title: axleSpacing.general.doubleDollySubtitle,
           description: axleSpacing.labels.numberOfAxlesDoubleDolly,
           titleVariant: 'h5',
@@ -144,21 +136,16 @@ export const axleSpacingSection = buildSection({
         buildHiddenInput({
           id: `axleSpacing.dolly.type`,
           defaultValue: (application: Application) => {
-            const convoyItem = getConvoyItem(
-              application.answers,
-              convoyIndexForDolly,
-            )
-            return convoyItem?.dollyType
+            if (checkHasSingleDolly(application.answers))
+              return DollyType.SINGLE
+            else if (checkHasDoubleDolly(application.answers))
+              return DollyType.DOUBLE
+            else return DollyType.NONE
           },
         }),
         buildTextField({
           id: `axleSpacing.dolly.value`,
-          condition: (answers) => {
-            if (!checkIfExemptionTypeShortTerm(answers)) return false
-
-            const convoyItem = getConvoyItem(answers, convoyIndexForDolly)
-            return convoyItem?.dollyType === DollyType.DOUBLE
-          },
+          condition: checkHasDoubleDolly,
           title: axleSpacing.labels.axleSpaceAll,
           backgroundColor: 'blue',
           width: 'full',

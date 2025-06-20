@@ -20,6 +20,8 @@ import {
   MAX_CNT_FREIGHT,
   showFreightPairingItem,
   getFreightPairingErrorMessage,
+  formatNumberWithMeters,
+  formatNumberWithTons,
 } from '../../../utils'
 import { ExemptionFor } from '../../../shared'
 import { FreightCommonHiddenInputs } from './freightCommonHiddenInputs'
@@ -40,8 +42,8 @@ const FreightPairingSubSection = (freightIndex: number) =>
         values: {
           freightNumber: freightIndex + 1,
           freightName: freightItem?.name,
-          length: freightItem?.length,
-          weight: freightItem?.weight,
+          length: formatNumberWithMeters(freightItem?.length),
+          weight: formatNumberWithTons(freightItem?.weight),
         },
       }
     },
@@ -55,8 +57,8 @@ const FreightPairingSubSection = (freightIndex: number) =>
             values: {
               freightNumber: freightIndex + 1,
               freightName: freightItem?.name,
-              length: freightItem?.length,
-              weight: freightItem?.weight,
+              length: formatNumberWithMeters(freightItem?.length),
+              weight: formatNumberWithTons(freightItem?.weight),
             },
           }
         },
