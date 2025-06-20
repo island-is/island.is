@@ -26,7 +26,7 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
           staging: ['beta'],
           prod: ['', 'www.island.is'],
         },
-        paths: ['/form'],
+        paths: ['/form-api'],
         public: true,
       },
     })
