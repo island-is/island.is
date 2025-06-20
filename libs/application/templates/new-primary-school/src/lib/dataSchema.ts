@@ -60,7 +60,7 @@ export const dataSchema = z.object({
       phoneNumber: phoneNumberSchema,
     }),
   ),
-  contacts: z
+  relatives: z
     .array(
       z.object({
         fullName: z.string().min(1),
@@ -72,7 +72,7 @@ export const dataSchema = z.object({
       }),
     )
     .refine((r) => r === undefined || r.length > 0, {
-      params: errorMessages.contactsRequired,
+      params: errorMessages.relativesRequired,
     }),
   currentNursery: z.object({
     municipality: z.string(),
@@ -226,7 +226,7 @@ export const dataSchema = z.object({
         path: ['guardianRequiresInterpreter'],
       },
     ),
-  allergiesAndIntolerances: z
+  healthProtection: z
     .object({
       hasFoodAllergiesOrIntolerances: z.array(z.string()),
       foodAllergiesOrIntolerances: z.array(z.string()).optional().nullable(),

@@ -7,12 +7,12 @@ import {
 import { Locale } from '@island.is/shared/types'
 import { MessageDescriptor } from 'react-intl'
 import {
+  Affiliation,
   Child,
   ChildInformation,
-  ContactsRow,
   FriggChildInformation,
-  Membership,
   Person,
+  RelativesRow,
   SelectOption,
   SiblingsRow,
 } from '../types'
@@ -38,7 +38,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const guardians = getValueViaPath(answers, 'guardians') as Person[]
 
-  const contacts = getValueViaPath(answers, 'contacts') as ContactsRow[]
+  const relatives = getValueViaPath(answers, 'relatives') as RelativesRow[]
 
   const reasonForApplication = getValueViaPath(
     answers,
@@ -86,37 +86,37 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const hasFoodAllergiesOrIntolerances = getValueViaPath(
     answers,
-    'allergiesAndIntolerances.hasFoodAllergiesOrIntolerances',
+    'healthProtection.hasFoodAllergiesOrIntolerances',
   ) as string[]
 
   const foodAllergiesOrIntolerances = getValueViaPath(
     answers,
-    'allergiesAndIntolerances.foodAllergiesOrIntolerances',
+    'healthProtection.foodAllergiesOrIntolerances',
   ) as string[]
 
   const hasOtherAllergies = getValueViaPath(
     answers,
-    'allergiesAndIntolerances.hasOtherAllergies',
+    'healthProtection.hasOtherAllergies',
   ) as string[]
 
   const otherAllergies = getValueViaPath(
     answers,
-    'allergiesAndIntolerances.otherAllergies',
+    'healthProtection.otherAllergies',
   ) as string[]
 
   const usesEpiPen = getValueViaPath(
     answers,
-    'allergiesAndIntolerances.usesEpiPen',
+    'healthProtection.usesEpiPen',
   ) as YesOrNo
 
   const hasConfirmedMedicalDiagnoses = getValueViaPath(
     answers,
-    'allergiesAndIntolerances.hasConfirmedMedicalDiagnoses',
+    'healthProtection.hasConfirmedMedicalDiagnoses',
   ) as YesOrNo
 
   const requestsMedicationAdministration = getValueViaPath(
     answers,
-    'allergiesAndIntolerances.requestsMedicationAdministration',
+    'healthProtection.requestsMedicationAdministration',
   ) as YesOrNo
 
   const hasDiagnoses = getValueViaPath(
@@ -216,7 +216,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     childNationalId,
     childInfo,
     guardians,
-    contacts,
+    relatives,
     reasonForApplication,
     reasonForApplicationStreetAddress,
     reasonForApplicationPostalCode,
@@ -311,11 +311,11 @@ export const getApplicationExternalData = (
     '',
   ) as string
 
-  const childMemberships = getValueViaPath(
+  const childAffiliations = getValueViaPath(
     externalData,
-    'childInformation.data.memberships',
+    'childInformation.data.affiliations',
     [],
-  ) as Membership[]
+  ) as Affiliation[]
 
   return {
     children,
@@ -328,7 +328,7 @@ export const getApplicationExternalData = (
     childInformation,
     childGradeLevel,
     primaryOrgId,
-    childMemberships,
+    childAffiliations,
   }
 }
 
@@ -395,17 +395,17 @@ export const formatGrade = (gradeLevel: string, lang: Locale) => {
 }
 
 export const getCurrentSchoolName = (application: Application) => {
-  const { primaryOrgId, childMemberships } = getApplicationExternalData(
+  const { primaryOrgId, childAffiliations } = getApplicationExternalData(
     application.externalData,
   )
 
-  if (!primaryOrgId || !childMemberships) {
+  if (!primaryOrgId || !childAffiliations) {
     return undefined
   }
 
   // Find the school name since we only have primary org id
-  return childMemberships
-    .map((membership) => membership.organization)
+  return childAffiliations
+    .map((affiliation) => affiliation.organization)
     .find((organization) => organization?.id === primaryOrgId)?.name
 }
 
@@ -448,19 +448,19 @@ export const showPreferredLanguageFields = (answers: FormValue) => {
 }
 
 export const getNeighbourhoodSchoolName = (application: Application) => {
-  const { primaryOrgId, childMemberships } = getApplicationExternalData(
+  const { primaryOrgId, childAffiliations } = getApplicationExternalData(
     application.externalData,
   )
 
-  if (!primaryOrgId || !childMemberships) {
+  if (!primaryOrgId || !childAffiliations) {
     return undefined
   }
 
   // This function needs to be improved when Juni is ready with the neighbourhood school data
 
   // Find the school name since we only have primary org id
-  return childMemberships
-    .map((membership) => membership.organization)
+  return childAffiliations
+    .map((affiliation) => affiliation.organization)
     .find((organization) => organization?.id === primaryOrgId)?.name
 }
 

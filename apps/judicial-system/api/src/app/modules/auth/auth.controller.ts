@@ -29,18 +29,14 @@ import {
 } from '@island.is/judicial-system/auth'
 import {
   ACCESS_TOKEN_COOKIE_NAME,
-  CASES_ROUTE,
   CODE_VERIFIER_COOKIE_NAME,
-  COURT_OF_APPEAL_CASES_ROUTE,
   CSRF_COOKIE_NAME,
-  DEFENDER_CASES_ROUTE,
   EXPIRES_IN_MILLISECONDS,
+  getUserDashboardRoute,
   IDS_ACCESS_TOKEN_NAME,
   IDS_ID_TOKEN_NAME,
   IDS_REFRESH_TOKEN_NAME,
-  PRISON_CASES_ROUTE,
   REFRESH_TOKEN_EXPIRES_IN_MILLISECONDS,
-  USERS_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
   EventType,
@@ -71,7 +67,8 @@ export class AuthController {
     name: REDIRECT_COOKIE_NAME,
     options: {
       ...this.defaultCookieOptions,
-      sameSite: 'none',
+      sameSite: 'none', // this only works when the secure attribute is set to true
+      secure: true,
     },
   }
 
@@ -252,6 +249,52 @@ export class AuthController {
     res.redirect('/?villa=innskraning-ogild')
   }
 
+  @UseGuards(JwtAuthGuard)
+  @Get('token-refresh')
+  async tokenRefresh(@Res() res: Response, @Req() req: Request) {
+    try {
+      this.logger.debug('Handling token expiry')
+
+      const accessToken = req.cookies[this.idToken.name]
+      if (!this.authService.isTokenExpired(accessToken)) {
+        this.logger.debug('Token is valid')
+        res.status(200).send()
+        return
+      }
+      const refreshToken = req.cookies[this.refreshToken.name]
+      const idsTokens = await this.authService.refreshToken(refreshToken)
+
+      const verifiedUserToken = await this.authService.verifyIdsToken(
+        idsTokens.id_token,
+      )
+      if (!verifiedUserToken) {
+        throw new Error('Invalid id token')
+      }
+
+      const newAccessToken = idsTokens.access_token
+      const newRefreshToken = idsTokens.refresh_token
+      if (newAccessToken && newRefreshToken) {
+        res.cookie(this.accessToken.name, newAccessToken, {
+          ...this.accessToken.options,
+        })
+        res.cookie(this.refreshToken.name, newRefreshToken, {
+          ...this.refreshToken.options,
+          maxAge: EXPIRES_IN_MILLISECONDS,
+        })
+      }
+      this.logger.debug('Token refresh successful')
+      res.status(200).send()
+    } catch (error) {
+      this.logger.error('Handling token expiry failed:', { error })
+
+      this.clearCookies(res)
+
+      res.redirect('/?villa=innskraning-villa')
+
+      return
+    }
+  }
+
   @Get('callback')
   deprecatedAuth(@Res() res: Response) {
     this.logger.debug(
@@ -268,6 +311,9 @@ export class AuthController {
     this.logger.debug('Received logout request')
 
     const idToken = req.cookies[this.idToken.name]
+    const refreshToken = req.cookies[this.refreshToken.name]
+
+    this.authService.revokeRefreshToken(refreshToken)
 
     this.clearCookies(res)
 
@@ -489,20 +535,19 @@ export class AuthController {
     currentUser: User,
     requestedRedirectRoute?: string,
   ) {
-    const getRedirectRoute = (
-      defaultRoute: string,
-      allowedPrefixes: string[],
-    ) => {
-      return requestedRedirectRoute &&
+    const getRedirectRoute = (allowedPrefixes: string[]) => {
+      const isValidRequestedRedirectRoute =
+        requestedRedirectRoute &&
         allowedPrefixes.some((prefix) =>
           requestedRedirectRoute.startsWith(prefix),
         )
+      return isValidRequestedRedirectRoute
         ? requestedRedirectRoute
-        : defaultRoute
+        : getUserDashboardRoute(currentUser)
     }
 
     if (isProsecutionUser(currentUser)) {
-      return getRedirectRoute(CASES_ROUTE, [
+      return getRedirectRoute([
         '/beinir',
         '/krafa',
         '/kaera',
@@ -512,42 +557,27 @@ export class AuthController {
     }
 
     if (isPublicProsecutionOfficeUser(currentUser)) {
-      return getRedirectRoute(CASES_ROUTE, [
-        '/beinir',
-        '/krafa/yfirlit',
-        '/rikissaksoknari',
-      ])
+      return getRedirectRoute(['/beinir', '/krafa/yfirlit', '/rikissaksoknari'])
     }
 
     if (isDistrictCourtUser(currentUser)) {
-      return getRedirectRoute(CASES_ROUTE, [
-        '/beinir',
-        '/krafa/yfirlit',
-        '/domur',
-      ])
+      return getRedirectRoute(['/beinir', '/krafa/yfirlit', '/domur'])
     }
 
     if (isCourtOfAppealsUser(currentUser)) {
-      return getRedirectRoute(COURT_OF_APPEAL_CASES_ROUTE, ['/landsrettur'])
+      return getRedirectRoute(['/landsrettur'])
     }
 
     if (isPrisonSystemUser(currentUser)) {
-      return getRedirectRoute(PRISON_CASES_ROUTE, [
-        '/beinir',
-        '/krafa/yfirlit',
-        '/fangelsi',
-      ])
+      return getRedirectRoute(['/beinir', '/krafa/yfirlit', '/fangelsi'])
     }
 
     if (isDefenceUser(currentUser)) {
-      return getRedirectRoute(DEFENDER_CASES_ROUTE, [
-        '/krafa/yfirlit',
-        '/verjandi',
-      ])
+      return getRedirectRoute(['/krafa/yfirlit', '/verjandi'])
     }
 
     if (isAdminUser(currentUser)) {
-      return getRedirectRoute(USERS_ROUTE, ['/notendur'])
+      return getRedirectRoute(['/notendur'])
     }
 
     return '/'

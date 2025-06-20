@@ -5,14 +5,9 @@ import { FormSystemPaths } from './lib/paths'
 import { formsLoader } from './screens/Forms/Forms.loader'
 import { formLoader } from './screens/Form/Form.loader'
 import { m } from '@island.is/form-system/ui'
-import { Admin } from './screens/Admin/Admin'
-import { adminLoader } from './screens/Admin/Admin.loader'
-import { applicationsLoader } from './screens/Applications/Applications.loader'
-import { Applications } from './screens/Applications/Applications'
-
-const Forms = lazy(() => import('./screens/Forms/Forms'))
 
 const Form = lazy(() => import('./screens/Form/Form'))
+const Forms = lazy(() => import('./screens/Forms/Forms'))
 
 const allowedScopes: string[] = [
   AdminPortalScope.formSystem,
@@ -37,19 +32,7 @@ export const formSystemModule: PortalModule = {
         path: FormSystemPaths.Form,
         element: <Form />,
         loader: formLoader(props),
-      },
-      {
-        name: m.rootName,
-        path: FormSystemPaths.Admin,
-        element: <Admin />,
-        loader: adminLoader(props),
-      },
-      {
-        name: m.rootName,
-        path: FormSystemPaths.Applications,
-        element: <Applications />,
-        loader: applicationsLoader(props),
-      },
+      }
     ]
   },
 }

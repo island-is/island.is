@@ -9,6 +9,7 @@ import {
   buildPhoneField,
   buildRadioField,
   buildSection,
+  buildSelectField,
   buildSubmitField,
   buildSubSection,
   buildTextField,
@@ -51,11 +52,13 @@ import {
   UPLOAD_ACCEPT,
 } from '../shared/constants'
 import {
+  genderOptions,
   getComplaintType,
   isDecisionDateOlderThanYear,
   isGovernmentComplainee,
   isPreviousOmbudsmanComplaint,
 } from '../utils'
+import { gender } from '../lib/messages/gender'
 
 export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
   id: 'ComplaintsToAlthingiOmbudsmanDraftForm',
@@ -427,6 +430,29 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
           uploadButtonLabel: attachments.uploadButtonLabel,
         }),
       ],
+    }),
+    buildSection({
+      id: 'gender',
+      title: gender.general.title,
+      children: [
+        buildMultiField({
+          id: 'section.gender',
+          title: gender.general.title,
+          children: [
+            buildSelectField({
+              id: 'genderAnswer',
+              title: gender.general.gender,
+              options: genderOptions,
+              required: true,
+            }),
+            buildAlertMessageField({
+              id: 'genderJustification',
+              message: gender.general.genderJustification,
+              alertType: 'info',
+            }),
+          ],
+        }),
+      ]
     }),
     buildSection({
       id: 'section.overview',

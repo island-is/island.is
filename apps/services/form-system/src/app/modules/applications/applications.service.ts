@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common'
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { Sequelize } from 'sequelize-typescript'
 import { Application } from './models/application.model'
@@ -23,12 +27,16 @@ import {
 import { Organization } from '../organizations/models/organization.model'
 import { ServiceManager } from '../services/service.manager'
 import { ApplicationEvent } from './models/applicationEvent.model'
-import { ApplicationListDto } from './models/dto/applicationList.dto'
+import { ApplicationResponseDto } from './models/dto/application.response.dto'
 import { ScreenValidationResponse } from '../../dataTypes/validationResponse.model'
 import { User } from '@island.is/auth-nest-tools'
 import { Applicant } from '../applicants/models/applicant.model'
 import { FormApplicantType } from '../formApplicantTypes/models/formApplicantType.model'
 import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
+import { SubmitScreenDto } from './models/dto/submitScreen.dto'
+import { ScreenDto } from '../screens/models/dto/screen.dto'
+import { Option } from '../../dataTypes/option.model'
+
 
 @Injectable()
 export class ApplicationsService {
@@ -48,6 +56,9 @@ export class ApplicationsService {
     private readonly applicationMapper: ApplicationMapper,
     private readonly serviceManager: ServiceManager,
     private readonly sequelize: Sequelize,
+    @InjectModel(Screen) private screenModel: typeof Screen,
+    @InjectModel(Field) private fieldModel: typeof Field,
+    @InjectModel(Section) private sectionModel: typeof Section,
   ) {}
 
   async create(
@@ -59,6 +70,22 @@ export class ApplicationsService {
 
     if (!form) {
       throw new NotFoundException(`Form with slug '${slug}' not found`)
+    }
+
+    // Check if at least one of the user's delegationTypes is allowed for this form
+    if (
+      form.allowedDelegationTypes.length > 0 &&
+      (!user.delegationType || user.delegationType.length === 0
+        ? !form.allowedDelegationTypes.includes('Individual')
+        : !user.delegationType.some((type) =>
+            form.allowedDelegationTypes.includes(type),
+          ))
+    ) {
+      throw new BadRequestException(
+        `User delegationTypes '${
+          user.delegationType ? user.delegationType.join(', ') : 'none'
+        }' are not allowed for this form`,
+      )
     }
 
     let newApplicationId = ''
@@ -205,7 +232,7 @@ export class ApplicationsService {
     const application = await this.applicationModel.findByPk(id)
 
     if (!application) {
-      throw new NotFoundException(`Application with id '${id}' not found`)
+      throw new NotFoundException(`Application with id '${id}' not found.`)
     }
 
     application.submittedAt = new Date()
@@ -225,11 +252,18 @@ export class ApplicationsService {
   }
 
   async findAllByOrganization(
-    organizationId: string,
+    organizationNationalId: string,
     page: number,
     limit: number,
     isTest: boolean,
-  ): Promise<ApplicationListDto> {
+  ): Promise<ApplicationResponseDto> {
+    const organization = await this.organizationModel.findOne({
+      where: { nationalId: organizationNationalId },
+      attributes: ['id'],
+    })
+
+    const organizationId = organization?.id
+
     const offset = (page - 1) * limit
     const { count: total, rows: data } =
       await this.applicationModel.findAndCountAll({
@@ -275,10 +309,24 @@ export class ApplicationsService {
       }),
     )
 
-    const applicationList = new ApplicationListDto()
-    applicationList.applications = applicationMinimalDtos
-    applicationList.total = total
-    return applicationList
+    const applicationResponseDto = new ApplicationResponseDto()
+    applicationResponseDto.applications = applicationMinimalDtos
+    applicationResponseDto.total = total
+    applicationResponseDto.organizations = await this.organizationModel
+      .findAll({
+        attributes: ['nationalId', 'name'],
+      })
+      .then((organizations) =>
+        organizations.map(
+          (org) =>
+            ({
+              value: org.nationalId,
+              label: org.name.is,
+              isSelected: org.nationalId === organizationNationalId,
+            } as Option),
+        ),
+      )
+    return applicationResponseDto
   }
 
   async getApplication(applicationId: string): Promise<ApplicationDto> {
@@ -316,6 +364,113 @@ export class ApplicationsService {
     applicationDto.organizationName = organization?.name
 
     return applicationDto
+  }
+
+  async findAllBySlugAndUser(
+    slug: string,
+    user: User,
+    isTest: boolean,
+  ): Promise<ApplicationResponseDto> {
+    const form: Form = await this.getForm(slug)
+
+    if (!form) {
+      throw new NotFoundException(`Form with slug '${slug}' not found`)
+    }
+
+    // Check if at least one of the user's delegationTypes is allowed for this form
+    if (
+      form.allowedDelegationTypes.length > 0 &&
+      (!user.delegationType || user.delegationType.length === 0
+        ? !form.allowedDelegationTypes.includes('Individual')
+        : !user.delegationType.some((type) =>
+            form.allowedDelegationTypes.includes(type),
+          ))
+    ) {
+      throw new BadRequestException(
+        `User delegationTypes '${
+          user.delegationType ? user.delegationType.join(', ') : 'none'
+        }' are not allowed for this form`,
+      )
+    }
+
+    // Check if the user has applications for this form
+    const existingApplications = await this.findAllByUserAndForm(
+      user,
+      form.id,
+      isTest,
+    )
+
+    const responseDto = new ApplicationResponseDto()
+    responseDto.applications = existingApplications
+    return responseDto
+  }
+
+  private async findAllByUserAndForm(
+    user: User,
+    formId: string,
+    isTest: boolean,
+  ): Promise<ApplicationDto[]> {
+    const delegationType = user.delegationType
+    const nationalId = delegationType ? user.actor?.nationalId : user.nationalId
+    const delegatorNationalId = delegationType ? user.nationalId : null
+
+    // 1. Find all applicants by nationalId
+    const applicants = await this.applicantModel.findAll({
+      where: { nationalId },
+      attributes: ['applicationId', 'nationalId'],
+    })
+
+    let applicationIds = applicants.map((a) => a.applicationId)
+
+    if (delegatorNationalId) {
+      // If delegatorNationalId is present, find applicants for delegatorNationalId as well
+      const delegatorApplicants = await this.applicantModel.findAll({
+        where: { nationalId: delegatorNationalId },
+        attributes: ['applicationId', 'nationalId'],
+      })
+      const delegatorApplicationIds = delegatorApplicants.map(
+        (a) => a.applicationId,
+      )
+      // Only include applications that have both applicants (intersection)
+      applicationIds = applicationIds.filter((id) =>
+        delegatorApplicationIds.includes(id),
+      )
+    } else {
+      // If no delegator, exclude applications that have more than one applicant
+      // Find all applicants for these applicationIds
+      const allApplicants = await this.applicantModel.findAll({
+        where: { applicationId: applicationIds },
+        attributes: ['applicationId'],
+      })
+      // Count applicants per applicationId
+      const counts = allApplicants.reduce((acc, a) => {
+        acc[a.applicationId] = (acc[a.applicationId] || 0) + 1
+        return acc
+      }, {} as Record<string, number>)
+      // Only keep applications with a single applicant
+      applicationIds = applicationIds.filter((id) => counts[id] === 1)
+    }
+
+    // 2. Find all applications that match the formId and filtered applicationIds
+    const applications = applicationIds.length
+      ? await this.applicationModel.findAll({
+          where: {
+            formId,
+            id: applicationIds,
+            status: ApplicationStatus.IN_PROGRESS,
+            isTest: isTest,
+          },
+        })
+      : []
+
+    // 3. Map the applications to ApplicationDto
+    const applicationDtos = await Promise.all(
+      applications.map(async (application) => {
+        return this.getApplication(application.id)
+      }),
+    )
+
+    return applicationDtos
   }
 
   private async getApplicationForm(
@@ -446,5 +601,72 @@ export class ApplicationsService {
     }
 
     return form
+  }
+
+  async saveScreen(
+    screenId: string,
+    submitScreenDto: SubmitScreenDto,
+  ): Promise<ScreenDto> {
+    const screen = await this.screenModel.findByPk(screenId)
+
+    if (!screen) {
+      throw new NotFoundException(`Screen with id '${screenId}' not found`)
+    }
+    const { screenDto, applicationId } = submitScreenDto
+
+    if (!screenDto) {
+      throw new NotFoundException(`ScreenDto not found`)
+    }
+
+    const application = await this.applicationModel.findByPk(applicationId)
+
+    if (!application) {
+      throw new NotFoundException(
+        `Application with id '${applicationId}' not found`,
+      )
+    }
+
+    if (screenDto.fields) {
+      for (const field of screenDto.fields) {
+        if (field.values) {
+          for (const value of field.values) {
+            await this.valueModel.update(
+              { ...(value as Partial<Value>) },
+              {
+                where: {
+                  fieldId: field.id,
+                  applicationId: applicationId,
+                  id: value.id,
+                },
+              },
+            )
+          }
+        }
+      }
+    }
+
+    await application.update({
+      ...application,
+      completed: [...(application.completed ?? []), screen.id],
+    })
+    const lastScreen = await this.screenModel.findOne({
+      where: { sectionId: screen.sectionId },
+      order: [['displayOrder', 'DESC']],
+    })
+    if (lastScreen && lastScreen.id === screenId) {
+      await application.update({
+        ...application,
+        completed: [...(application.completed ?? []), screen.sectionId],
+      })
+    }
+
+    const screenResult = await this.screenModel.findByPk(screenId, {
+      include: [{ model: this.fieldModel, include: [this.valueModel] }],
+    })
+
+    if (!screenResult) {
+      throw new NotFoundException(`Screen with id '${screenId}' not found`)
+    }
+    return screenResult as unknown as ScreenDto
   }
 }

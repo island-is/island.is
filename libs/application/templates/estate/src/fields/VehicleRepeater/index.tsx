@@ -68,7 +68,7 @@ export const VehicleRepeater: FC<React.PropsWithChildren<FieldBaseProps>> = ({
                   disabled={!vehicle.enabled}
                   title={vehicle?.description ?? vehicle?.assetNumber ?? ''}
                   description={[
-                    `${formatMessage(m.propertyNumber)}: ${
+                    `${formatMessage(m.propertyNumberVehicle)}: ${
                       vehicle.assetNumber
                     }`,
                     <Box marginTop={1} as="span">

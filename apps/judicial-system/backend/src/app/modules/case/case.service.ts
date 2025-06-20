@@ -184,6 +184,7 @@ export interface UpdateCase
     | 'mergeCaseId'
     | 'mergeCaseNumber'
     | 'isCompletedWithoutRuling'
+    | 'hasCivilClaims'
     | 'isRegisteredInPrisonSystem'
   > {
   type?: CaseType
@@ -1150,10 +1151,10 @@ export class CaseService {
       theCase.id,
     )
 
-    if (theCase.origin === CaseOrigin.LOKE && subpoenasToRevoke?.length > 0) {
+    if (subpoenasToRevoke?.length > 0) {
       messages.push(
         ...subpoenasToRevoke.map((subpoena) => ({
-          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_REVOCATION,
+          type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA_REVOCATION,
           user,
           caseId: theCase.id,
           elementId: [subpoena.defendantId, subpoena.id],
@@ -1397,7 +1398,7 @@ export class CaseService {
             ]
           : []),
         {
-          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
+          type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA,
           user,
           caseId: theCase.id,
           elementId: [
@@ -2047,6 +2048,7 @@ export class CaseService {
                   transaction,
                   updatedArraignmentDate?.date,
                   updatedArraignmentDate?.location,
+                  defendant.subpoenaType,
                 ),
               ),
           )
@@ -2287,6 +2289,9 @@ export class CaseService {
             creatingProsecutorId: user.id,
             prosecutorId: user.id,
             prosecutorsOfficeId: user.institution?.id,
+            demands: isInvestigationCase(theCase.type)
+              ? theCase.demands
+              : undefined,
           } as CreateCaseDto,
           transaction,
         )
