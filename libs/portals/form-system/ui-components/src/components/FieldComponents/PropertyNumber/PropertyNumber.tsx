@@ -29,10 +29,7 @@ const emptyProperty: PropertyNumberType = {
   postalCode: '',
 }
 
-export const PropertyNumber = ({
-  item,
-  dispatch,
-}: Props) => {
+export const PropertyNumber = ({ item, dispatch }: Props) => {
   const { formatMessage } = useIntl()
   const [hasCustomPropertyNumber, setCustomPropertyNumber] = useState(false)
   const [property, setProperty] = useState<PropertyNumberType>({

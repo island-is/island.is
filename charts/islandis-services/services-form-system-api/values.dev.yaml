@@ -59,7 +59,7 @@ ingress:
     hosts:
       - host: 'beta.dev01.devland.is'
         paths:
-          - '/form'
+          - '/form-api'
 initContainer:
   containers:
     - args:

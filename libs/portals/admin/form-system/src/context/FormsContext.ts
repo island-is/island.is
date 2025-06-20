@@ -1,4 +1,8 @@
-import { FormSystemApplication, FormSystemForm, FormSystemPermissionType } from '@island.is/api/schema'
+import {
+  FormSystemApplication,
+  FormSystemForm,
+  FormSystemPermissionType,
+} from '@island.is/api/schema'
 import { Option } from '@island.is/island-ui/core'
 import { createContext, Dispatch, SetStateAction } from 'react'
 import { FormsLocationState } from '../lib/utils/interfaces'
@@ -26,6 +30,7 @@ export interface IFormsContext {
   certificationTypes: FormSystemPermissionType[]
   listTypes: FormSystemPermissionType[]
   fieldTypes: FormSystemPermissionType[]
+  handleOrganizationChange?: (selected: { value: string }) => Promise<void>
 }
 
 export const FormsContext = createContext<IFormsContext>({
@@ -38,7 +43,9 @@ export const FormsContext = createContext<IFormsContext>({
     throw new Error('setOrganizations function not implemented')
   },
   applications: [],
-  setApplications: function (_value: SetStateAction<FormSystemApplication[]>): void {
+  setApplications: function (
+    _value: SetStateAction<FormSystemApplication[]>,
+  ): void {
     throw new Error('setApplications function not implemented')
   },
   isAdmin: false,
@@ -55,7 +62,9 @@ export const FormsContext = createContext<IFormsContext>({
     throw new Error('setLocation function not implemented')
   },
   selectedCertificationTypes: [],
-  setSelectedCertificationTypes: function (_value: SetStateAction<string[]>): void {
+  setSelectedCertificationTypes: function (
+    _value: SetStateAction<string[]>,
+  ): void {
     throw new Error('setSelectedCertificationTypes function not implemented')
   },
   selectedListTypes: [],
@@ -65,6 +74,9 @@ export const FormsContext = createContext<IFormsContext>({
   selectedFieldTypes: [],
   setSelectedFieldTypes: function (_value: SetStateAction<string[]>): void {
     throw new Error('setSelectedFieldTypes function not implemented')
+  },
+  handleOrganizationChange: async (_selected: { value: string }) => {
+    throw new Error('handleOrganizationChange function not implemented')
   },
   certificationTypes: [],
   listTypes: [],

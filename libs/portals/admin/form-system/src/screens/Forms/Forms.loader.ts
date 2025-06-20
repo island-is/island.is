@@ -1,6 +1,19 @@
 import { WrappedLoaderFn } from '@island.is/portals/core'
-import { FormSystemApplication, FormSystemApplicationResponse, FormSystemForm, FormSystemFormResponse, FormSystemOption, FormSystemOrganizationAdmin, FormSystemPermissionType } from '@island.is/api/schema'
-import { GET_APPLICATIONS, GET_FORMS, GET_ORGANIZATION_ADMIN, LoaderResponse } from '@island.is/form-system/graphql'
+import {
+  FormSystemApplication,
+  FormSystemApplicationResponse,
+  FormSystemForm,
+  FormSystemFormResponse,
+  FormSystemOption,
+  FormSystemOrganizationAdmin,
+  FormSystemPermissionType,
+} from '@island.is/api/schema'
+import {
+  GET_APPLICATIONS,
+  GET_FORMS,
+  GET_ORGANIZATION_ADMIN,
+  LoaderResponse,
+} from '@island.is/form-system/graphql'
 import { removeTypename } from '../../lib/utils/removeTypename'
 export interface FormsLoaderQueryResponse {
   formSystemForms: FormSystemFormResponse
@@ -14,23 +27,24 @@ export interface AdminLoaderQueryResponse {
 
 export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
   return async (): Promise<LoaderResponse> => {
-    const { data: dataForms, error: errorData } = await client.query<FormsLoaderQueryResponse>({
-      query: GET_FORMS,
-      variables: {
-        input: {
-          nationalId: userInfo?.profile.nationalId,
+    const { data: dataForms, error: errorData } =
+      await client.query<FormsLoaderQueryResponse>({
+        query: GET_FORMS,
+        variables: {
+          input: {
+            nationalId: userInfo?.profile.nationalId,
+          },
         },
-      },
-      fetchPolicy: 'no-cache',
-    })
+        fetchPolicy: 'no-cache',
+      })
     if (errorData) {
       throw errorData
     }
     if (!dataForms) {
       throw new Error('No forms were found')
     }
-    const { data: dataApplications, error: errorApplications } = await client.query<ApplicationsLoaderQueryResponse>(
-      {
+    const { data: dataApplications, error: errorApplications } =
+      await client.query<ApplicationsLoaderQueryResponse>({
         query: GET_APPLICATIONS,
         variables: {
           input: {
@@ -41,8 +55,7 @@ export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
           },
         },
         fetchPolicy: 'no-cache',
-      },
-    )
+      })
     if (errorApplications) {
       throw errorApplications
     }
@@ -71,11 +84,13 @@ export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
       ?.filter((form) => form !== null)
       .map((form) => removeTypename(form)) as FormSystemForm[]
 
-    const organizations = dataForms.formSystemForms?.organizations?.map((org) => ({
-      label: org?.label,
-      value: org?.value,
-      isSelected: org?.isSelected,
-    })) as FormSystemOption[]
+    const organizations = dataForms.formSystemForms?.organizations?.map(
+      (org) => ({
+        label: org?.label,
+        value: org?.value,
+        isSelected: org?.isSelected,
+      }),
+    ) as FormSystemOption[]
 
     const applications = dataApplications.formSystemApplications?.applications
       ?.filter((application) => application !== null)
@@ -91,7 +106,7 @@ export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
     const admin = data.formSystemOrganizationAdmin
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     const mapPermissionTypes = (types: any[]): FormSystemPermissionType[] =>
-      types?.map(type => ({
+      types?.map((type) => ({
         id: type?.id,
         name: type?.name,
         description: type?.description,
@@ -105,9 +120,15 @@ export const formsLoader: WrappedLoaderFn = ({ client, userInfo }) => {
       organizationNationalId: organizationNationalId,
       applications,
       organizationId: admin?.organizationId as string,
-      selectedCertificationTypes: admin?.selectedCertificationTypes?.map(cert => cert) as string[],
-      selectedListTypes: admin?.selectedListTypes?.map(list => list) as string[],
-      selectedFieldTypes: admin?.selectedFieldTypes?.map(field => field) as string[],
+      selectedCertificationTypes: admin?.selectedCertificationTypes?.map(
+        (cert) => cert,
+      ) as string[],
+      selectedListTypes: admin?.selectedListTypes?.map(
+        (list) => list,
+      ) as string[],
+      selectedFieldTypes: admin?.selectedFieldTypes?.map(
+        (field) => field,
+      ) as string[],
       certificationTypes: mapPermissionTypes(admin.certificationTypes || []),
       listTypes: mapPermissionTypes(admin.listTypes || []),
       fieldTypes: mapPermissionTypes(admin.fieldTypes || []),

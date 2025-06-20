@@ -1,49 +1,27 @@
-import { useContext, useEffect } from "react"
-import { TableRowHeader } from "../TableRow/TableRowHeader"
-import { FormsContext } from "../../context/FormsContext"
-import { TableRow } from "../TableRow/TableRow"
-import { useLazyQuery, useMutation } from "@apollo/client"
-import { CREATE_FORM, GET_FORMS } from '@island.is/form-system/graphql'
-import { Box, Button, GridRow, Select, } from '@island.is/island-ui/core'
-import { useNavigate } from "react-router-dom"
-import { FormSystemPaths } from "../../lib/paths"
-import { useIntl } from "react-intl"
+import { useContext, useEffect } from 'react'
+import { TableRowHeader } from '../TableRow/TableRowHeader'
+import { FormsContext } from '../../context/FormsContext'
+import { TableRow } from '../TableRow/TableRow'
+import { useMutation } from '@apollo/client'
+import { CREATE_FORM } from '@island.is/form-system/graphql'
+import { Box, Button, GridRow, Select } from '@island.is/island-ui/core'
+import { useNavigate } from 'react-router-dom'
+import { FormSystemPaths } from '../../lib/paths'
+import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
-
 
 export const Forms = () => {
   const {
     forms,
     setForms,
     organizations,
-    setOrganizations,
     isAdmin,
     organizationNationalId,
-    setOrganizationNationalId } = useContext(FormsContext)
-  const [getFormsQuery] = useLazyQuery(GET_FORMS, { fetchPolicy: 'no-cache' })
+    setOrganizationNationalId,
+    handleOrganizationChange,
+  } = useContext(FormsContext)
   const navigate = useNavigate()
   const { formatMessage } = useIntl()
-
-  const handleOrganizationChange = async (selected: {
-    value: string | undefined
-  }) => {
-    const updatedOrganizations = organizations.map((org) => ({
-      ...org,
-      isSelected: org.value === selected.value,
-    }))
-    setOrganizations(updatedOrganizations)
-
-    const { data } = await getFormsQuery({
-      variables: {
-        input: {
-          nationalId: selected.value,
-        },
-      },
-    })
-    if (data?.formSystemForms?.forms) {
-      setForms(data.formSystemForms.forms)
-    }
-  }
 
   const [formSystemCreateFormMutation] = useMutation(CREATE_FORM, {
     onCompleted: (newFormData) => {
@@ -71,14 +49,17 @@ export const Forms = () => {
           String(data?.createFormSystemForm?.form?.id),
         ),
       )
-    }
-    catch (error) {
-      console.error('Error creating form:', error)
+    } catch (error) {
+      throw new Error(
+        `Error creating form: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
+      )
     }
   }
 
   useEffect(() => {
-    if (isAdmin && organizationNationalId) {
+    if (isAdmin && organizationNationalId && handleOrganizationChange) {
       handleOrganizationChange({ value: organizationNationalId })
     }
   }, [])
@@ -94,10 +75,7 @@ export const Forms = () => {
             display="flex"
             width="full"
           >
-            <Button
-              size="default"
-              onClick={createForm}
-            >
+            <Button size="default" onClick={createForm}>
               {formatMessage(m.newForm)}
             </Button>
             {isAdmin && (
@@ -106,9 +84,11 @@ export const Forms = () => {
                 label={formatMessage(m.organization)}
                 options={organizations}
                 size="sm"
-                value={organizations.find(org => org.value === organizationNationalId)}
-                onChange={selected => {
-                  if (selected) {
+                value={organizations.find(
+                  (org) => org.value === organizationNationalId,
+                )}
+                onChange={(selected) => {
+                  if (selected && handleOrganizationChange) {
                     setOrganizationNationalId(selected.value)
                     handleOrganizationChange({ value: selected.value })
                   }

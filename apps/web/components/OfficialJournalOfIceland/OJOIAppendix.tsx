@@ -1,4 +1,4 @@
-import React, { memo } from 'react'
+import React, { memo, useEffect, useState } from 'react'
 
 import { Accordion, AccordionItem, Box } from '@island.is/island-ui/core'
 import { OfficialJournalOfIcelandAdvertAppendix } from '@island.is/web/graphql/schema'
@@ -10,6 +10,25 @@ export type AppendixesProps = {
 }
 
 export const Appendixes = memo((props: AppendixesProps) => {
+  const [clonedContent, setClonedContent] = useState<string | null>(null)
+
+  useEffect(() => {
+    const wrapper = document.querySelector('.ojoi-advert-display-wrapper')
+    if (!wrapper) return
+
+    const lastElement = wrapper.lastElementChild
+
+    if (
+      lastElement &&
+      lastElement.tagName === 'P' &&
+      lastElement.textContent?.includes('Útgáfud.:')
+    ) {
+      const clonedText = lastElement.textContent
+      wrapper.removeChild(lastElement)
+      setClonedContent(clonedText)
+    }
+  }, [])
+
   const { additions } = props
 
   if (!additions || additions.length === 0) {
@@ -40,6 +59,13 @@ export const Appendixes = memo((props: AppendixesProps) => {
           )
         })}
       </Accordion>
+      {clonedContent && (
+        <Box className={s.bodyText} marginTop={3}>
+          <p className={s.departmentDate}>
+            <strong>{clonedContent}</strong>
+          </p>
+        </Box>
+      )}
     </Box>
   )
 })

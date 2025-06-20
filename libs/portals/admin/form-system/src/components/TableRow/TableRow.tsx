@@ -98,17 +98,8 @@ export const TableRow = ({
         </Column>
         <Column span="1/12">
           <Box display="flex" justifyContent="center" alignItems="center">
-            <Box
-              marginRight={1}
-              onClick={goToForm}
-              cursor="pointer"
-
-            >
-              <Icon
-                icon="pencil"
-                color='blue400'
-                type="filled"
-              />
+            <Box marginRight={1} onClick={goToForm} cursor="pointer">
+              <Icon icon="pencil" color="blue400" type="filled" />
             </Box>
             <DropdownMenu
               menuLabel={`${formatMessage(m.actions)} ${name}`}

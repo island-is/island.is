@@ -9,7 +9,7 @@ import {
   IsOptional,
   IsString,
   ValidateNested,
-  IsArray
+  IsArray,
 } from 'class-validator'
 import { Type } from 'class-transformer'
 

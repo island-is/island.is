@@ -18,6 +18,7 @@ import {
   FormContext,
   IconButton,
   PdfButton,
+  SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -103,9 +104,14 @@ const AppealCaseFilesOverview = () => {
     allFiles.length > 0 && (
       <>
         <Box marginBottom={[2, 5]}>
-          <Text as="h3" variant="h3" marginBottom={1}>
-            {formatMessage(strings.title)}
-          </Text>
+          <SectionHeading
+            title="Skjöl kærumáls"
+            tooltip={
+              isProsecutionUser(user)
+                ? 'Verjandi sér einungis kæru og greinargerð.'
+                : undefined
+            }
+          />
           {allFiles.map((file) => {
             const prosecutorSubmitted = file.category?.includes('PROSECUTOR')
             const isDisabled = !file.key

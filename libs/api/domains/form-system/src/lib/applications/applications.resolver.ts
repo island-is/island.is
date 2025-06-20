@@ -26,7 +26,7 @@ import { Screen } from '../../models/screen.model'
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
 export class ApplicationsResolver {
-  constructor(private readonly applicationsService: ApplicationsService) { }
+  constructor(private readonly applicationsService: ApplicationsService) {}
 
   @Query(() => Application, {
     name: 'formSystemApplication',
@@ -38,7 +38,6 @@ export class ApplicationsResolver {
   ): Promise<Application> {
     return this.applicationsService.getApplication(user, input)
   }
-
 
   @Query(() => ApplicationResponse, {
     name: 'formSystemApplications',

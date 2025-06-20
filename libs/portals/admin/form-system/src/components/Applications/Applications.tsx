@@ -1,17 +1,15 @@
-import { useContext } from "react"
-import { FormsContext } from "../../context/FormsContext"
-import { ApplicationsHeader } from "./components/ApplicationsHeader/ApplicationsHeader"
-import { ApplicationsTableRow } from "./components/ApplicationsTableRow"
+import { useContext } from 'react'
+import { FormsContext } from '../../context/FormsContext'
+import { ApplicationsHeader } from './components/ApplicationsHeader/ApplicationsHeader'
+import { ApplicationsTableRow } from './components/ApplicationsTableRow'
 
 export const Applications = () => {
-  const {
-    applications,
-  } = useContext(FormsContext)
+  const { applications } = useContext(FormsContext)
 
   return (
     <>
       <ApplicationsHeader />
-      {applications.map((application) => (
+      {applications?.map((application) => (
         <ApplicationsTableRow
           key={application.id}
           submittedAt={application.submittedAt}
@@ -20,5 +18,4 @@ export const Applications = () => {
       ))}
     </>
   )
-
 }
