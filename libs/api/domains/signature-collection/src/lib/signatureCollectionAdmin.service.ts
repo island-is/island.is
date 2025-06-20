@@ -15,6 +15,7 @@ import {
   ReasonKey,
   SignatureCollectionAdminClientService,
   SignatureCollectionClientService,
+  SignatureCollectionMunicipalityClientService,
 } from '@island.is/clients/signature-collection'
 import { SignatureCollectionExtendDeadlineInput } from './dto/extendDeadline.input'
 import { User } from '@island.is/auth-nest-tools'
@@ -283,6 +284,16 @@ export class SignatureCollectionAdminService {
     return await this.signatureCollectionClientService.uploadPaperSignature(
       user,
       input,
+    )
+  }
+
+  async startMunicipalityCollection(
+    user: User,
+    areaId: string,
+  ): Promise<SignatureCollectionSuccess> {
+    return await this.signatureCollectionClientService.startMunicipalityCollection(
+      user,
+      areaId,
     )
   }
 }

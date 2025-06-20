@@ -25,6 +25,9 @@ export class ManagerCollectionApi extends MedmaelasofnunApi {}
 export class ManagerSignatureApi extends MedmaeliApi {}
 export class ManagerCandidateApi extends FrambodApi {}
 
+export class MunicipalityConfig extends Configuration {}
+export class MunicipalityAdminApi extends AdminClient {}
+
 const configFactory = (
   config: ConfigType<typeof SignatureCollectionClientConfig>,
   idsClientConfig: ConfigType<typeof IdsClientConfig>,
@@ -125,6 +128,30 @@ export const exportedApis = [
             idsClientConfig,
             xroadConfig,
             config.scopeManager,
+          ),
+        ),
+      )
+    },
+    inject: [
+      SignatureCollectionClientConfig.KEY,
+      IdsClientConfig.KEY,
+      XRoadConfig.KEY,
+    ],
+  })),
+  ...[MunicipalityAdminApi].map((Api) => ({
+    provide: Api,
+    useFactory: (
+      config: ConfigType<typeof SignatureCollectionClientConfig>,
+      idsClientConfig: ConfigType<typeof IdsClientConfig>,
+      xroadConfig: ConfigType<typeof XRoadConfig>,
+    ) => {
+      return new Api(
+        new MunicipalityConfig(
+          configFactory(
+            config,
+            idsClientConfig,
+            xroadConfig,
+            config.scopeMunicipality,
           ),
         ),
       )

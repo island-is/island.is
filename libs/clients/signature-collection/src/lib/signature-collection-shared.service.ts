@@ -17,7 +17,12 @@ import {
 } from './types/collection.dto'
 import { List, ListStatus, mapList } from './types/list.dto'
 import { Signature, mapSignature } from './types/signature.dto'
-import { AdminCandidateApi, AdminListApi } from './apis'
+import {
+  AdminApi,
+  AdminCandidateApi,
+  AdminListApi,
+  MunicipalityAdminApi,
+} from './apis'
 import { Success, mapReasons } from './types/success.dto'
 import { collapseGovernment } from './utils/mappers'
 
@@ -25,6 +30,7 @@ type ListApi = MedmaelalistarApi | AdminListApi
 type CandidateApi = FrambodApi | AdminCandidateApi
 type ElectionApi = KosningApi
 type CollectionApi = MedmaelasofnunApi
+type AdminMunicipalityApi = AdminApi | MunicipalityAdminApi
 
 @Injectable()
 export class SignatureCollectionSharedClientService {
@@ -297,5 +303,29 @@ export class SignatureCollectionSharedClientService {
       return ListStatus.Reviewed
     }
     return ListStatus.Inactive
+  }
+
+  async startMunicipalityCollection(
+    adminApi: AdminMunicipalityApi,
+    electionsApi: ElectionApi,
+    areaId: string,
+  ): Promise<Success> {
+    // This method will only be used for local governmental elections
+    const current = await this.getLatestCollectionForType(
+      electionsApi,
+      CollectionType.LocalGovernmental,
+    )
+    console.log('Current collection:', current)
+    try {
+      const collection = adminApi.adminKosningIDSveitSofnunPost({
+        iD: parseInt(current.electionId ?? ''),
+        sveitarfelagID: parseInt(areaId),
+      })
+      console.log('Collection started:', collection)
+      return { success: !!collection }
+    } catch (error) {
+      console.error('Error starting collection:', error)
+      return { success: false, reasons: error.body ? [error.body] : [] }
+    }
   }
 }

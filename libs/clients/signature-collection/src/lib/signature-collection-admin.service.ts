@@ -514,4 +514,15 @@ export class SignatureCollectionAdminClientService {
       }
     }
   }
+
+  async startMunicipalityCollection(
+    auth: Auth,
+    areaId: string,
+  ): Promise<Success> {
+    return this.sharedService.startMunicipalityCollection(
+      this.getApiWithAuth(this.adminApi, auth),
+      this.getApiWithAuth(this.electionsApi, auth),
+      areaId,
+    )
+  }
 }
