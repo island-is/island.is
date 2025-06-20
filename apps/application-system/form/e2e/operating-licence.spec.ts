@@ -1,6 +1,12 @@
 import { expect, test as base, Page } from '@playwright/test'
 import { createMockPdf, deleteMockPdf, sleep } from '@island.is/testing/e2e'
-import { disableI18n, disablePreviousApplications, isApplication, session, proceed } from '@island.is/testing/e2e'
+import {
+  disableI18n,
+  disablePreviousApplications,
+  isApplication,
+  session,
+  proceed,
+} from '@island.is/testing/e2e'
 
 const homeUrl = '/umsoknir/rekstrarleyfi'
 

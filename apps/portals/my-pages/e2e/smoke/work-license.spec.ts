@@ -1,5 +1,11 @@
 import { BrowserContext, expect, test } from '@playwright/test'
-import { icelandicAndNoPopupUrl, urls, session, label, disableI18n } from '@island.is/testing/e2e'
+import {
+  icelandicAndNoPopupUrl,
+  urls,
+  session,
+  label,
+  disableI18n,
+} from '@island.is/testing/e2e'
 import { m } from '@island.is/portals/my-pages/core/messages'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`

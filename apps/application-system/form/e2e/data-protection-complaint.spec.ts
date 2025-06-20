@@ -1,5 +1,12 @@
 import { expect, test as base, Page } from '@playwright/test'
-import { disableI18n, session, createApplication, isApplication, label, proceed } from '@island.is/testing/e2e'
+import {
+  disableI18n,
+  session,
+  createApplication,
+  isApplication,
+  label,
+  proceed,
+} from '@island.is/testing/e2e'
 import {
   complaint,
   delimitation,

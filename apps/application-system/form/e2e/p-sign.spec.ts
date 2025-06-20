@@ -1,7 +1,13 @@
 import { BrowserContext, expect, test } from '@playwright/test'
 import { urls } from '@island.is/testing/e2e'
 import { session } from '@island.is/testing/e2e'
-import { isApplication, disableI18n, disablePreviousApplications, disableDelegations, proceed } from '@island.is/testing/e2e'
+import {
+  isApplication,
+  disableI18n,
+  disablePreviousApplications,
+  disableDelegations,
+  proceed,
+} from '@island.is/testing/e2e'
 import { regex as uuidRegex } from 'uuidv4'
 
 test.use({ baseURL: urls.islandisBaseUrl })

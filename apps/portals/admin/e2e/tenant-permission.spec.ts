@@ -11,8 +11,6 @@ const homeUrl = `${
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
-
-
 test.describe('Admin portal permission', () => {
   let contextGranter: BrowserContext
 
@@ -79,10 +77,18 @@ test.describe('Admin portal permission', () => {
     await test.step('See content card and interact with it', async () => {
       // Arrange
       const title = 'Content'
-      const isDisplayNameInput = page.getByRole('textbox', { name: 'is_displayName' })
-      const enDisplayNameInput = page.getByRole('textbox', { name: 'en_displayName' })
-      const isDescriptionInput = page.getByRole('textbox', { name: 'is_description' })
-      const enDescriptionInput = page.getByRole('textbox', { name: 'en_description' })
+      const isDisplayNameInput = page.getByRole('textbox', {
+        name: 'is_displayName',
+      })
+      const enDisplayNameInput = page.getByRole('textbox', {
+        name: 'en_displayName',
+      })
+      const isDescriptionInput = page.getByRole('textbox', {
+        name: 'is_description',
+      })
+      const enDescriptionInput = page.getByRole('textbox', {
+        name: 'en_description',
+      })
       const dummyText = 'permission name'
 
       // Assert - heading is visible

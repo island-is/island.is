@@ -1,6 +1,13 @@
 import { test as base, Page } from '@playwright/test'
 import { env } from '@island.is/testing/e2e'
-import { disableI18n, disablePreviousApplications, disableObjectKey, isApplication, session, proceed } from '@island.is/testing/e2e'
+import {
+  disableI18n,
+  disablePreviousApplications,
+  disableObjectKey,
+  isApplication,
+  session,
+  proceed,
+} from '@island.is/testing/e2e'
 
 const homeUrl = '/umsoknir/okuskirteini'
 

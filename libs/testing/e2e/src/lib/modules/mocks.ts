@@ -32,7 +32,7 @@ const getServiceMock = (envVariableRef: ValueSource) => {
   serializeValueSource(
     envVariableRef,
     resolver,
-    ({} as unknown) as ServiceDefinitionForEnv,
+    {} as unknown as ServiceDefinitionForEnv,
     Envs.dev01,
   )
   const ports = Object.values(resolver.ports)

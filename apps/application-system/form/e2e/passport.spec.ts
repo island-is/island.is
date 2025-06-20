@@ -1,5 +1,11 @@
 import { expect, test as base, Page } from '@playwright/test'
-import { isApplication, disableI18n, disablePreviousApplications, session, proceed } from '@island.is/testing/e2e'
+import {
+  isApplication,
+  disableI18n,
+  disablePreviousApplications,
+  session,
+  proceed,
+} from '@island.is/testing/e2e'
 
 const homeUrl = '/umsoknir/vegabref'
 

@@ -1,5 +1,12 @@
 import { expect, test as base, Page } from '@playwright/test'
-import { disableI18n, disablePreviousApplications, session, proceed, isApplication, label } from '@island.is/testing/e2e'
+import {
+  disableI18n,
+  disablePreviousApplications,
+  session,
+  proceed,
+  isApplication,
+  label,
+} from '@island.is/testing/e2e'
 import { carRecyclingMessages } from '@island.is/application/templates/car-recycling'
 import { coreMessages } from '@island.is/application/core'
 
@@ -31,7 +38,6 @@ applicationTest.describe('Car recycling', () => {
     'Should be able to create application',
     async ({ applicationPage }) => {
       const page = applicationPage
-      
 
       await applicationTest.step('Agree to data providers', async () => {
         await expect(

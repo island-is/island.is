@@ -7,7 +7,11 @@ import {
   urls,
   proceed,
 } from '@island.is/testing/e2e'
-import { disableI18n, disablePreviousApplications, isApplication } from '@island.is/testing/e2e'
+import {
+  disableI18n,
+  disablePreviousApplications,
+  isApplication,
+} from '@island.is/testing/e2e'
 import {
   employerFormMessages,
   parentalLeaveFormMessages,
@@ -25,8 +29,6 @@ const getEmployerEmailAndApprove = async (
   employer: EmailAccount,
   page: Page,
 ) => {
-  
-
   const email = await employer.getLastEmail(6)
 
   // Require email
@@ -103,7 +105,6 @@ test.describe('Parental leave', () => {
     const apiUrl = applicationSystemApi[env]
 
     await page.goto('/umsoknir/faedingarorlof', { waitUntil: 'networkidle' })
-    
 
     // Mock data
     await expect(
@@ -451,7 +452,6 @@ test.describe('Parental leave', () => {
     const apiUrl = applicationSystemApi[env]
 
     await page.goto('/umsoknir/faedingarorlof', { waitUntil: 'networkidle' })
-    
 
     // Mock data
     await expect(

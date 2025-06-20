@@ -1,5 +1,12 @@
 import { expect, test as base, Page } from '@playwright/test'
-import { isApplication, disableI18n, session, createApplication, label, proceed } from '@island.is/testing/e2e'
+import {
+  isApplication,
+  disableI18n,
+  session,
+  createApplication,
+  label,
+  proceed,
+} from '@island.is/testing/e2e'
 import { m as messages } from '@island.is/application/templates/no-debt-certificate'
 
 const homeUrl = '/umsoknir/skuldleysisvottord'

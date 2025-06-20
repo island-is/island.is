@@ -1,5 +1,11 @@
 import { BrowserContext, expect, test } from '@playwright/test'
-import { proceed, session, urls, createMockPdf, deleteMockPdf } from '@island.is/testing/e2e'
+import {
+  proceed,
+  session,
+  urls,
+  createMockPdf,
+  deleteMockPdf,
+} from '@island.is/testing/e2e'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
@@ -20,7 +26,8 @@ test.describe('Financial Statements INAO', () => {
 
   test.skip('should be able to create application', async () => {
     const page = await context.newPage()
-    const findByTestId = (testId: string) => page.locator(`[data-testid="${testId}"]`)
+    const findByTestId = (testId: string) =>
+      page.locator(`[data-testid="${testId}"]`)
 
     await page.goto('/umsoknir/skilarsreikninga')
 

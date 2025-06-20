@@ -36,7 +36,10 @@ export const createApplication = async (page: Page): Promise<number> => {
  * @param expectedPath Optional path segment to check within the application URL.
  * @returns True if it's an application page (and matches `expectedPath` if provided), false otherwise.
  */
-export const isApplication = async (page: Page, expectedPath?: string): Promise<boolean> => {
+export const isApplication = async (
+  page: Page,
+  expectedPath?: string,
+): Promise<boolean> => {
   await page.waitForURL('**/umsoknir/**')
   const applicationUrl = new URL(page.url())
   const pathSegments = applicationUrl.pathname.split('/').filter(Boolean) // Filter(Boolean) removes empty strings from array

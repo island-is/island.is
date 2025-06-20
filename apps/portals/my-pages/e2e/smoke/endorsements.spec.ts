@@ -1,5 +1,10 @@
 import { BrowserContext, expect, test } from '@playwright/test'
-import { icelandicAndNoPopupUrl, urls, session, disableI18n } from '@island.is/testing/e2e'
+import {
+  icelandicAndNoPopupUrl,
+  urls,
+  session,
+  disableI18n,
+} from '@island.is/testing/e2e'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 test.describe('Endorsements', () => {

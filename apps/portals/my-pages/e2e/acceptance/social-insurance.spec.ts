@@ -1,5 +1,10 @@
 import { test, BrowserContext, expect } from '@playwright/test'
-import { icelandicAndNoPopupUrl, urls, session, disableI18n } from '@island.is/testing/e2e'
+import {
+  icelandicAndNoPopupUrl,
+  urls,
+  session,
+  disableI18n,
+} from '@island.is/testing/e2e'
 import { setupXroadMocks } from './setup-xroad.mocks'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
