@@ -179,11 +179,11 @@ export const messages = defineMessages({
   replySent: {
     id: 'sp.documents:reply-sent',
     defaultMessage:
-      'Skilaboðin eru móttekin og mál hefur verið stofnað. Þú getur haldið áfram samskiptunum hér eða í gegnum þitt persónulega netfang {email}.',
+      'Skilaboðin eru móttekin og mál hefur verið stofnað. Þú getur haldið áfram samskiptunum hér eða í gegnum þitt persónulega netfang {email}. Málsnúmerið er: {caseNumber}',
   },
   sendMessage: {
     id: 'sp.documents:send-message',
-    defaultMessage: 'Senda skilaboð',
+    defaultMessage: 'Svara',
   },
   closedForReplies: {
     id: 'sp.documents:closed-for-replies',

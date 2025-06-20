@@ -2,6 +2,7 @@ import ExemptionForTransportationTemplate from './lib/ExemptionForTransportation
 import { ExemptionForTransportation } from './lib/dataSchema'
 
 export const getDataProviders = () => import('./dataProviders/')
+export const getFields = () => import('./fields/')
 
 export type ExemptionForTransportationAnswers = ExemptionForTransportation
 
