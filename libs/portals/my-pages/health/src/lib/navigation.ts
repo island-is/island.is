@@ -41,15 +41,34 @@ export const healthNavigation: PortalNavigationItem = {
       name: messages.paymentsAndRights,
       description: m.paymentsIntro,
       path: HealthPaths.HealthPayments,
+      searchTags: [
+        s.healthInsuranceCard,
+        s.healthInsuranceEhicCard,
+        s.healthInsuranceEhicCardLong,
+        s.healthPaymentParticipation,
+        s.healthPaymentOverview,
+      ],
       children: [
         {
           name: messages.paymentParticipation,
           path: HealthPaths.HealthPaymentParticipation,
+          searchTags: [s.healthPaymentParticipation],
           navHide: true,
         },
         {
           name: messages.paymentOverview,
           path: HealthPaths.HealthPaymentOverview,
+          navHide: true,
+          searchTags: [s.healthPaymentOverview],
+        },
+        {
+          name: messages.rights,
+          path: HealthPaths.HealthPaymentRights,
+          searchTags: [
+            s.healthInsuranceCard,
+            s.healthInsuranceEhicCard,
+            s.healthInsuranceEhicCardLong,
+          ],
           navHide: true,
         },
       ],
