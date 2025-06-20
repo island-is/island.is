@@ -118,10 +118,10 @@ export const SignatureLists: FC<
                           onClick: () =>
                             window.open(
                               `${window.location.origin}/umsoknir/${
-                                collection.collectionType ===
+                                collectionType ===
                                 SignatureCollectionCollectionType.Presidential
                                   ? 'maela-med-frambodi'
-                                  : collection.collectionType ===
+                                  : collectionType ===
                                     SignatureCollectionCollectionType.LocalGovernmental
                                   ? 'maela-med-sveitarstjornarframbodi'
                                   : 'maela-med-althingisframbodi'
