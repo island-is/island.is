@@ -99,8 +99,10 @@ export const SitemapNode = ({
       )
       const newIndex = node.childNodes.findIndex((item) => item.id === over.id)
       if (oldIndex >= 0 && newIndex >= 0) {
-        node.childNodes = arrayMove(node.childNodes, oldIndex, newIndex)
-        updateNode(parentNode, node)
+        updateNode(parentNode, {
+          ...node,
+          childNodes: arrayMove(node.childNodes, oldIndex, newIndex),
+        })
       }
     }
   }

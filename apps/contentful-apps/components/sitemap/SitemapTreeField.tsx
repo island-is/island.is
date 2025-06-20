@@ -110,8 +110,10 @@ export const SitemapTreeField = () => {
           (item) => item.id === over.id,
         )
         if (oldIndex >= 0 && newIndex >= 0) {
-          tree.childNodes = arrayMove(tree.childNodes, oldIndex, newIndex)
-          setTree((prevTree) => ({ ...prevTree }))
+          setTree((prevTree) => ({
+            ...prevTree,
+            childNodes: arrayMove(tree.childNodes, oldIndex, newIndex),
+          }))
         }
       }
     },
