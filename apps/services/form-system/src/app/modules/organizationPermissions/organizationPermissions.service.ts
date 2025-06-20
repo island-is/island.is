@@ -32,13 +32,11 @@ export class OrganizationPermissionsService {
       )
     }
 
-    const organizationPermission = new OrganizationPermission()
-    organizationPermission.organizationId = organization.id
-    organizationPermission.permission =
-      createOrganizationPermissionDto.permission
-
     const newOrganizationPermission: OrganizationPermission =
-      new this.organizationPermissionModel(organizationPermission)
+      new this.organizationPermissionModel()
+    newOrganizationPermission.organizationId = organization.id
+    newOrganizationPermission.permission =
+      createOrganizationPermissionDto.permission
 
     await newOrganizationPermission.save()
 
