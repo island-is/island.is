@@ -11,10 +11,13 @@ import {
 import { USER_PROFILE, client } from '@island.is/portals/my-pages/graphql'
 import { useEffectOnce } from '@island.is/react-spa/shared'
 import { Modal } from '../Modal/Modal'
-import { useAddEmailMutation } from '../emails/ProfileEmailForm/addEmail.mutation.generated'
-import { useCreateEmailVerificationMutation } from '../emails/ProfileEmailForm/createEmailVerification.mutation.generated'
-import { useUpdateActorProfileEmailMutation } from '../NotificationSettings/ActorProfileEmails/actorProfileUpdate.mutation.generated'
-import { useUpdateActorProfileEmailWithoutActorMutation } from '../NotificationSettings/ActorProfileEmails/actorProfileUpdateWithoutActor.mutations.generated'
+import {
+  AddEmailMutation,
+  useAddEmailMutation,
+} from '../emails/ProfileEmailForm/addEmail.mutation.generated'
+import { useCreateEmailVerificationMutation } from '../emails/ProfileEmailForm/CreateEmailVerification.mutation.generated'
+import { useUpdateActorProfileEmailMutation } from '../NotificationSettings/ActorProfileEmails/ActorProfileUpdate.mutation.generated'
+import { useUpdateActorProfileEmailWithoutActorMutation } from '../NotificationSettings/ActorProfileEmails/ActorProfileUpdateWithoutActor.mutations.generated'
 import { useUserInfo } from '@island.is/react-spa/bff'
 
 interface BaseProps {
@@ -53,7 +56,7 @@ export const VerifyEmailModal = ({
 
   const [addEmail, { loading: addEmailLoading, error: addEmailError }] =
     useAddEmailMutation({
-      onCompleted: (data) => {
+      onCompleted: (data: AddEmailMutation) => {
         if (data.userEmailsAddEmail && type === 'add') {
           onClose()
           onSuccess?.(data.userEmailsAddEmail.id)
