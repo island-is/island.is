@@ -117,6 +117,7 @@ export const axleSpacingSection = buildSection({
                       width: 'full',
                       required: true,
                       variant: 'number',
+                      thousandSeparator: true,
                       suffix: axleSpacing.labels.metersSuffix,
                     }),
                   ]
@@ -151,6 +152,7 @@ export const axleSpacingSection = buildSection({
           width: 'full',
           required: true,
           variant: 'number',
+          thousandSeparator: true,
           suffix: axleSpacing.labels.metersSuffix,
         }),
 
@@ -248,6 +250,7 @@ export const axleSpacingSection = buildSection({
                       width: 'full',
                       required: true,
                       variant: 'number',
+                      thousandSeparator: true,
                       suffix: axleSpacing.labels.metersSuffix,
                     }),
                   ]
@@ -267,6 +270,7 @@ export const axleSpacingSection = buildSection({
                 width: 'full',
                 required: true,
                 variant: 'number',
+                thousandSeparator: true,
                 suffix: axleSpacing.labels.metersSuffix,
               }),
               buildHiddenInput({
