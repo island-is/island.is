@@ -1,16 +1,10 @@
 import {
   Action,
   ExternalLink,
-  FileType,
   LinkCategory,
   LinkType,
 } from './workMachines.types'
 
-export const mapFileTypeToLabel = (fileType: FileType) => {
-  if (fileType === FileType.CSV) {
-    return 'csv'
-  } else return 'excel'
-}
 export const mapRelationToLink = (
   rel?: string,
 ): { type: LinkType; category: LinkCategory } | null => {
