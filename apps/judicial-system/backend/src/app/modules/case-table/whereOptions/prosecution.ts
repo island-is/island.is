@@ -11,9 +11,9 @@ import {
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
-// Prosecutor Request Cases
+// Prosecution request cases
 
-const prosecutorRequestCasesSharedWhereOptions = (user: TUser) => ({
+const prosecutionRequestCasesSharedWhereOptions = (user: TUser) => ({
   is_archived: false,
   type: [...restrictionCases, ...investigationCases],
   [Op.and]: [
@@ -33,8 +33,8 @@ const prosecutorRequestCasesSharedWhereOptions = (user: TUser) => ({
   ],
 })
 
-export const prosecutorRequestCasesInProgressWhereOptions = (user: TUser) => ({
-  ...prosecutorRequestCasesSharedWhereOptions(user),
+export const prosecutionRequestCasesInProgressWhereOptions = (user: TUser) => ({
+  ...prosecutionRequestCasesSharedWhereOptions(user),
   state: [
     CaseState.NEW,
     CaseState.DRAFT,
@@ -43,21 +43,21 @@ export const prosecutorRequestCasesInProgressWhereOptions = (user: TUser) => ({
   ],
 })
 
-export const prosecutorRequestCasesActiveWhereOptions = (user: TUser) => ({
-  ...prosecutorRequestCasesSharedWhereOptions(user),
+export const prosecutionRequestCasesActiveWhereOptions = (user: TUser) => ({
+  ...prosecutionRequestCasesSharedWhereOptions(user),
   type: restrictionCases,
   state: [CaseState.ACCEPTED],
   valid_to_date: { [Op.or]: [null, { [Op.gte]: fn('NOW') }] },
 })
 
-export const prosecutorRequestCasesAppealedWhereOptions = (user: TUser) => ({
-  ...prosecutorRequestCasesSharedWhereOptions(user),
+export const prosecutionRequestCasesAppealedWhereOptions = (user: TUser) => ({
+  ...prosecutionRequestCasesSharedWhereOptions(user),
   state: completedRequestCaseStates,
   appeal_state: [CaseAppealState.RECEIVED, CaseAppealState.APPEALED],
 })
 
-export const prosecutorRequestCasesCompletedWhereOptions = (user: TUser) => ({
-  ...prosecutorRequestCasesSharedWhereOptions(user),
+export const prosecutionRequestCasesCompletedWhereOptions = (user: TUser) => ({
+  ...prosecutionRequestCasesSharedWhereOptions(user),
   state: completedRequestCaseStates,
   appeal_state: {
     [Op.or]: [
@@ -69,28 +69,28 @@ export const prosecutorRequestCasesCompletedWhereOptions = (user: TUser) => ({
   },
 })
 
-// prosecutor indictments
+// Prosecution indictments
 
-const prosecutorIndictmentSharedWhereOptions = (user: TUser) => ({
+const prosecutionIndictmentsSharedWhereOptions = (user: TUser) => ({
   is_archived: false,
   type: indictmentCases,
   prosecutors_office_id: user.institution?.id,
 })
 
-export const prosecutorIndictmentInDraftWhereOptions = (user: TUser) => ({
-  ...prosecutorIndictmentSharedWhereOptions(user),
+export const prosecutionIndictmentsInDraftWhereOptions = (user: TUser) => ({
+  ...prosecutionIndictmentsSharedWhereOptions(user),
   state: [CaseState.DRAFT],
 })
 
-export const prosecutorIndictmentWaitingForConfirmationWhereOptions = (
+export const prosecutionIndictmentsWaitingForConfirmationWhereOptions = (
   user: TUser,
 ) => ({
-  ...prosecutorIndictmentSharedWhereOptions(user),
+  ...prosecutionIndictmentsSharedWhereOptions(user),
   state: [CaseState.WAITING_FOR_CONFIRMATION],
 })
 
-export const prosecutorIndictmentInProgressWhereOptions = (user: TUser) => ({
-  ...prosecutorIndictmentSharedWhereOptions(user),
+export const prosecutionIndictmentsInProgressWhereOptions = (user: TUser) => ({
+  ...prosecutionIndictmentsSharedWhereOptions(user),
   state: {
     [Op.notIn]: [
       ...completedIndictmentCaseStates,
@@ -102,7 +102,7 @@ export const prosecutorIndictmentInProgressWhereOptions = (user: TUser) => ({
   },
 })
 
-export const prosecutorIndictmentCompletedWhereOptions = (user: TUser) => ({
-  ...prosecutorIndictmentSharedWhereOptions(user),
+export const prosecutionIndictmentsCompletedWhereOptions = (user: TUser) => ({
+  ...prosecutionIndictmentsSharedWhereOptions(user),
   state: [CaseState.COMPLETED, CaseState.WAITING_FOR_CANCELLATION],
 })

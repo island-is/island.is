@@ -1,5 +1,5 @@
 import { CaseTableGroup } from '../caseTableTypes'
-import { prosecutorIndictmentsTableGroup } from './prosecutorTableGroups'
+import { prosecutorIndictmentsTableGroup } from './prosecutor'
 
 export const prosecutorRepresentativeTableGroups: CaseTableGroup[] = [
   prosecutorIndictmentsTableGroup,
