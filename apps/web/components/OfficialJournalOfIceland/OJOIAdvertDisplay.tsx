@@ -22,7 +22,6 @@ export const OJOIAdvertDisplay = ({
   advertType,
   advertSubject,
   advertText,
-  isLegacy,
   additions,
 }: OJOIAdvertDisplayProps) => {
   if (!advertText) {
