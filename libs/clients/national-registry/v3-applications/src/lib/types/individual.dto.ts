@@ -22,16 +22,16 @@ export const formatIndividualDto = (
   if (individual == null) {
     return null
   }
-  let givenName = ''
-  let middleName = ''
-  let familyName = ''
+  let givenName: string | null = null
+  let middleName: string | null = null
+  let familyName: string | null = null
   if (individual.nafn) {
     const nameParts = individual.nafn.split(' ')
     if (nameParts.length > 2) {
       middleName = nameParts.slice(1, -1).join(' ')
     }
     givenName = nameParts[0]
-    familyName = nameParts[nameParts.length - 1]
+    familyName = nameParts.length > 1 ? nameParts[nameParts.length - 1] : null
   }
   return {
     nationalId: individual.kennitala ?? '',

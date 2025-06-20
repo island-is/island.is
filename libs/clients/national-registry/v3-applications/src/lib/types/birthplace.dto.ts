@@ -14,7 +14,9 @@ export const formatBirthplaceDto = (
   }
 
   return {
-    birthdate: new Date(birthplace.faedingardagur || ''),
+    birthdate: birthplace.faedingardagur
+      ? new Date(birthplace.faedingardagur)
+      : new Date(),
     locality: birthplace.stadur ?? null,
     municipalityNumber: birthplace.sveitarfelagsnumer ?? null,
   }
