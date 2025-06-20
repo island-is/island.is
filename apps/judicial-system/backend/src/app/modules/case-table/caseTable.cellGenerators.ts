@@ -18,6 +18,7 @@ import {
   CaseTableColumnKey,
   CaseType,
   courtSessionTypeNames,
+  DateType,
   DefendantEventType,
   EventType,
   getIndictmentAppealDeadlineDate,
@@ -31,6 +32,7 @@ import {
   isProsecutionUser,
   isPublicProsecutionOfficeUser,
   isRestrictionCase,
+  isSuccessfulServiceStatus,
   PunishmentType,
   ServiceRequirement,
   type User as TUser,
@@ -41,6 +43,7 @@ import { DateLog } from '../case/models/dateLog.model'
 import { Defendant, DefendantEventLog } from '../defendant'
 import { EventLog } from '../event-log/models/eventLog.model'
 import { Institution } from '../institution'
+import { Subpoena } from '../subpoena'
 import { User } from '../user'
 import {
   CaseTableCellValue,
@@ -107,6 +110,10 @@ const getIndictmentCourtDate = (c: Case): Date | undefined => {
       : undefined
   }
 
+  return DateLog.arraignmentDate(c.dateLogs)?.date
+}
+
+const getRequestCaseArraignmentDate = (c: Case): Date | undefined => {
   return DateLog.arraignmentDate(c.dateLogs)?.date
 }
 
@@ -261,12 +268,20 @@ const generateIndictmentCaseStateTag = (
 ): CaseTableCell<TagValue> => {
   const {
     state,
-    indictmentRulingDecision,
     indictmentDecision,
+    indictmentRulingDecision,
     indictmentReviewerId,
   } = c
 
   const courtDate = getIndictmentCourtDate(c)
+
+  const allServed = () => {
+    return c.defendants?.every(
+      (d) =>
+        d.isAlternativeService ||
+        d.subpoenas?.some((s) => isSuccessfulServiceStatus(s.serviceStatus)),
+    )
+  }
 
   const generateReceivedIndictmentStateTag = (): CaseTableCell<TagValue> => {
     switch (indictmentDecision) {
@@ -280,7 +295,9 @@ const generateIndictmentCaseStateTag = (
         return generateCell({ color: 'blue', text: 'Endurúthlutun' }, 'F')
       default:
         return courtDate
-          ? generateCell({ color: 'mint', text: 'Á dagskrá' }, 'D')
+          ? allServed()
+            ? generateCell({ color: 'mint', text: 'Á dagskrá' }, 'D')
+            : generateCell({ color: 'red', text: 'Óbirt' })
           : generateCell({ color: 'blueberry', text: 'Móttekið' }, 'C')
     }
   }
@@ -583,6 +600,20 @@ const indictmentCaseState: CaseTableCellGenerator<TagValue> = {
     'indictmentReviewerId',
   ],
   includes: {
+    defendants: {
+      model: Defendant,
+      attributes: ['isAlternativeService'],
+      order: [['created', 'ASC']],
+      includes: {
+        subpoenas: {
+          model: Subpoena,
+          attributes: ['serviceStatus'],
+          order: [['created', 'DESC']],
+          separate: true,
+        },
+      },
+      separate: true,
+    },
     dateLogs: {
       model: DateLog,
       attributes: ['date'],
@@ -702,11 +733,12 @@ const arraignmentDate: CaseTableCellGenerator<StringGroupValue> = {
       model: DateLog,
       attributes: ['date', 'dateType'],
       order: [['created', 'DESC']],
+      where: { dateType: DateType.ARRAIGNMENT_DATE },
       separate: true,
     },
   },
   generate: (c: Case, user: TUser): CaseTableCell<StringGroupValue> => {
-    let courtDate = getIndictmentCourtDate(c)
+    let courtDate = getRequestCaseArraignmentDate(c)
     let prefix = ''
 
     if (!courtDate && isDistrictCourtUser(user)) {
