@@ -9,8 +9,6 @@ import format from 'date-fns/format'
 import { FC } from 'react'
 import {
   ConnectedComponent,
-  SignatureCollectionCandidate,
-  SignatureCollectionBaseInput,
   SignatureCollectionListBase,
   SignatureCollectionCollectionType,
 } from '@island.is/api/schema'
