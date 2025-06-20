@@ -83,7 +83,9 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
       },
     })
     if (applicationsData?.formSystemApplications?.applications) {
-      setApplications(data?.formSystemApplications?.applications)
+    if (applicationsData?.formSystemApplications?.applications) {
+      setApplications(applicationsData?.formSystemApplications?.applications)
+    }
     }
 
     const { data: permissionsData } = await getAdminQuery({
