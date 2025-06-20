@@ -13,6 +13,7 @@ import {
   parseTerminateContract,
 } from './utils'
 import { AttachmentS3Service } from '../../../shared/services'
+import { ContractStatus } from './types'
 
 @Injectable()
 export class TerminateRentalAgreementService extends BaseTemplateApiService {
@@ -30,9 +31,21 @@ export class TerminateRentalAgreementService extends BaseTemplateApiService {
 
   async getRentalAgreements({ auth }: TemplateApiModuleActionProps) {
     try {
-      return await this.homeApiWithAuth(auth).contractKtKtGet({
-        kt: auth.nationalId,
-      })
+      const contracts = await this.homeApiWithAuth(auth)
+        .contractKtKtGet({
+          kt: auth.nationalId,
+        })
+        .then((res) => {
+          return res
+            .map((contract) => {
+              if (contract.contractStatus === ContractStatus.STATUSVALID) {
+                return contract
+              }
+            })
+            .filter((contract) => contract !== undefined)
+        })
+
+      return contracts
     } catch (e) {
       this.logger.error('Failed to fetch properties:', e.message)
       throw new TemplateApiError(e, 500)

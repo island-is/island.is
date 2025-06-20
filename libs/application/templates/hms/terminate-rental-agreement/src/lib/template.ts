@@ -17,11 +17,14 @@ import { dataSchema } from './dataSchema'
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { assign } from 'xstate'
 import * as m from './messages'
 import { NationalRegistryApi, rentalAgreementsApi } from '../dataProviders'
 import { TemplateApiActions } from '../types'
+import { Contract } from '@island.is/clients/hms-rental-agreement'
+
 const template: ApplicationTemplate<
   ApplicationContext,
   ApplicationStateSchema<Events>,
@@ -47,6 +50,20 @@ const template: ApplicationTemplate<
           roles: [
             {
               id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/prerequisitesForm').then((module) =>
+                  Promise.resolve(module.Prerequisites),
+                ),
+              actions: [
+                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+              ],
+              write: 'all',
+              read: 'all',
+              api: [UserProfileApi, NationalRegistryApi, rentalAgreementsApi],
+              delete: true,
+            },
+            {
+              id: Roles.NOCONTRACTS,
               formLoader: () =>
                 import('../forms/prerequisitesForm').then((module) =>
                   Promise.resolve(module.Prerequisites),
@@ -87,6 +104,19 @@ const template: ApplicationTemplate<
               read: 'all',
               delete: true,
             },
+            {
+              id: Roles.NOCONTRACTS,
+              formLoader: () =>
+                import('../forms/noContractsForm').then((module) =>
+                  Promise.resolve(module.noContractsForm),
+                ),
+              actions: [
+                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
+              ],
+              write: 'all',
+              read: 'all',
+              delete: true,
+            },
           ],
         },
         on: {
@@ -116,6 +146,16 @@ const template: ApplicationTemplate<
               read: 'all',
               delete: true,
             },
+            {
+              // This state is set for development purposes, shouldn't be reachable on prod
+              id: Roles.NOCONTRACTS,
+              formLoader: () =>
+                import('../forms/completedForm').then((module) =>
+                  Promise.resolve(module.completedForm),
+                ),
+              read: 'all',
+              delete: true,
+            },
           ],
         },
       },
@@ -134,8 +174,16 @@ const template: ApplicationTemplate<
   },
   mapUserToRole: (
     _nationalId: string,
-    _application: Application,
+    application: Application,
   ): ApplicationRole | undefined => {
+    const contracts = getValueViaPath<Array<Contract>>(
+      application.externalData,
+      'getRentalAgreements.data',
+    )
+    if (contracts?.length === 0) {
+      return Roles.NOCONTRACTS
+    }
+
     return Roles.APPLICANT
   },
 }

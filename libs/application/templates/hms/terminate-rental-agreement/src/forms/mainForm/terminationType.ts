@@ -7,6 +7,7 @@ import {
 } from '@island.is/application/core'
 import * as m from '../../lib/messages'
 import { TerminationTypes } from '../../utils/constants'
+
 export const terminationTypeSection = buildSection({
   id: 'terminationTypeSection',
   title: m.terminationTypeMessages.title,

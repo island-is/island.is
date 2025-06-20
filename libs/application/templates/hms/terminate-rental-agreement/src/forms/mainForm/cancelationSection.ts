@@ -7,8 +7,8 @@ import {
 } from '@island.is/application/core'
 import { TerminationTypes } from '../../utils/constants'
 import * as m from '../../lib/messages'
+
 export const cancelationSection = buildSection({
-  // TODO: Redo this when we have data from HMS
   condition: (answers) => {
     const terminationType = getValueViaPath<string>(answers, 'terminationType')
     return terminationType === TerminationTypes.CANCELATION

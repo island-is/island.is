@@ -14,6 +14,7 @@ export enum States {
 
 export enum Roles {
   APPLICANT = 'applicant',
+  NOCONTRACTS = 'noContracts',
 }
 
 export enum TerminationTypes {

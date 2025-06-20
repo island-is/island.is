@@ -1,4 +1,5 @@
 export * from './prereqMessages'
+export * from './noContractsMessages'
 export * from './chooseContractMessages'
 export * from './terminationTypeMessages'
 export * from './unboundTerminationMessage'
