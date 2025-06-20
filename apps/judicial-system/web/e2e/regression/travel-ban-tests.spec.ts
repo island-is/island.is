@@ -1,10 +1,12 @@
 import { expect } from '@playwright/test'
+
 import { urls, verifyRequestCompletion } from '@island.is/testing/e2e'
-import { test } from '../utils/judicialSystemTest'
+
 import { getDaysFromNow, randomCourtCaseNumber } from '../utils/helpers'
-import { prosecutorAppealsCaseTest } from './shared-steps/send-appeal'
-import { judgeReceivesAppealTest } from './shared-steps/receive-appeal'
+import { test } from '../utils/judicialSystemTest'
 import { coaJudgesCompleteAppealCaseTest } from './shared-steps/complete-appeal'
+import { judgeReceivesAppealTest } from './shared-steps/receive-appeal'
+import { prosecutorAppealsCaseTest } from './shared-steps/send-appeal'
 
 test.use({ baseURL: urls.judicialSystemBaseUrl })
 

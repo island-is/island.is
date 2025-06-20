@@ -1,6 +1,8 @@
-import { Page, expect } from '@playwright/test'
-import { chooseDocument, verifyUpload } from '../../utils/helpers'
+import { expect,Page } from '@playwright/test'
+
 import { verifyRequestCompletion } from '@island.is/testing/e2e'
+
+import { chooseDocument, verifyUpload } from '../../utils/helpers'
 
 export const prosecutorAppealsCaseTest = async (page: Page, caseId: string) => {
   await Promise.all([

@@ -1,17 +1,19 @@
-import { expect } from '@playwright/test'
 import faker from 'faker'
-import { verifyRequestCompletion, urls } from '@island.is/testing/e2e'
-import { test } from '../utils/judicialSystemTest'
+import { expect } from '@playwright/test'
+
+import { urls,verifyRequestCompletion } from '@island.is/testing/e2e'
+
 import {
-  randomPoliceCaseNumber,
-  randomCourtCaseNumber,
-  getDaysFromNow,
   chooseDocument,
+  getDaysFromNow,
+  randomCourtCaseNumber,
+  randomPoliceCaseNumber,
   verifyUpload,
 } from '../utils/helpers'
+import { test } from '../utils/judicialSystemTest'
+import { coaJudgesCompleteAppealCaseTest } from './shared-steps/complete-appeal'
 import { judgeReceivesAppealTest } from './shared-steps/receive-appeal'
 import { prosecutorAppealsCaseTest } from './shared-steps/send-appeal'
-import { coaJudgesCompleteAppealCaseTest } from './shared-steps/complete-appeal'
 
 test.use({ baseURL: urls.judicialSystemBaseUrl })
 
