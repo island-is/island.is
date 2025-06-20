@@ -14,7 +14,7 @@ import {
   Text,
   UploadFile,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { InformationForDefendant } from '@island.is/judicial-system/types'
 import { Feature } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
@@ -36,6 +36,7 @@ import {
   RulingInput,
   SectionHeading,
   useIndictmentsLawsBroken,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import VerdictAppealDecisionChoice from '@island.is/judicial-system-web/src/components/VerdictAppealDecisionChoice/VerdictAppealDecisionChoice'
 import {
@@ -56,6 +57,7 @@ import strings from './Completed.strings'
 import * as styles from './Completed.css'
 
 const Completed: FC = () => {
+  const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const { setAndSendDefendantToServer } = useDefendants()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
@@ -523,7 +525,7 @@ const Completed: FC = () => {
       <Box marginBottom={10} />
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={constants.CASES_ROUTE}
+          previousUrl={getStandardUserDashboardRoute(user)}
           hideNextButton={!isRulingOrFine || isSentToPublicProsecutor}
           nextButtonText={formatMessage(strings.sendToPublicProsecutor)}
           nextIsDisabled={!stepIsValid()}
@@ -535,7 +537,9 @@ const Completed: FC = () => {
           title={formatMessage(strings.sentToPublicProsecutorModalTitle)}
           text={formatMessage(strings.sentToPublicProsecutorModalMessage)}
           primaryButtonText={formatMessage(core.closeModal)}
-          onPrimaryButtonClick={() => router.push(constants.CASES_ROUTE)}
+          onPrimaryButtonClick={() =>
+            router.push(getStandardUserDashboardRoute(user))
+          }
         />
       )}
     </PageLayout>

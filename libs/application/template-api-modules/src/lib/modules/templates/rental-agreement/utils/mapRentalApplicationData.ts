@@ -10,6 +10,7 @@ import {
   SecurityDepositType,
   SpecialGroup,
 } from '@island.is/clients/hms-rental-agreement'
+import { YesOrNoEnum } from '@island.is/application/core'
 import {
   getPropertyId,
   getSecurityDepositTypeDescription,
@@ -21,7 +22,6 @@ import {
   RentalAgreementAnswers,
   RentalHousingCategoryClass,
 } from '@island.is/application/templates/rental-agreement'
-import { YesOrNoEnum } from '@island.is/application/core'
 
 export const mapRentalApplicationData = (
   applicationId: string,
@@ -30,7 +30,9 @@ export const mapRentalApplicationData = (
 ) => {
   const {
     landlords,
+    landlordRepresentatives,
     tenants,
+    tenantRepresentatives,
     searchResults,
     units,
     categoryType,
@@ -78,8 +80,26 @@ export const mapRentalApplicationData = (
     otherCostItems,
   } = answers
 
-  const landlordsArray = landlords?.map(mapPersonToArray)
-  const tenantsArray = tenants?.map(mapPersonToArray)
+  const landlordsArray = [
+    ...(landlords?.map((person) => ({
+      ...mapPersonToArray(person),
+      isRepresentative: false,
+    })) || []),
+    ...(landlordRepresentatives?.map((person) => ({
+      ...mapPersonToArray(person),
+      isRepresentative: true,
+    })) || []),
+  ]
+  const tenantsArray = [
+    ...(tenants?.map((person) => ({
+      ...mapPersonToArray(person),
+      isRepresentative: false,
+    })) || []),
+    ...(tenantRepresentatives?.map((person) => ({
+      ...mapPersonToArray(person),
+      isRepresentative: true,
+    })) || []),
+  ]
 
   const propertyId = getPropertyId(units)
   const appraisalUnits = mapAppraisalUnits(units)
@@ -120,13 +140,12 @@ export const mapRentalApplicationData = (
       isFixedTerm: Boolean(endDate),
       rent: {
         amount: parseToNumber(rentalAmount || '0'),
-        index:
-          isIndexConnected === YesOrNoEnum.YES
-            ? RentIndex.ConsumerPriceIndex
-            : RentIndex.None,
+        index: isIndexConnected?.includes(YesOrNoEnum.YES)
+          ? RentIndex.ConsumerPriceIndex
+          : RentIndex.None,
         indexRate:
-          isIndexConnected === YesOrNoEnum.YES && indexRate
-            ? parseToNumber(indexRate)
+          isIndexConnected?.includes(YesOrNoEnum.YES) && indexRate
+            ? Number(indexRate.replace(',', '.'))
             : null,
       },
       payment: {
