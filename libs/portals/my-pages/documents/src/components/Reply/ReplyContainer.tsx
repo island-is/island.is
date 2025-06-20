@@ -135,6 +135,7 @@ const ReplyContainer = () => {
 
   const repliesLength = replies?.comments?.length ?? 0
   const lastReply = replies?.comments?.[repliesLength - 1] ?? null
+  const lastReplyID = replies?.id ?? null
   const hideReplies = isMobile && replyState?.replyOpen
 
   return (
@@ -165,7 +166,7 @@ const ReplyContainer = () => {
                 <Divider />
               </Box>
               <ReplyHeader
-                caseNumber={lastReply?.id ?? undefined}
+                caseNumber={lastReplyID ?? undefined}
                 initials={getInitials(lastReply?.author ?? '')}
                 title={lastReply?.author ?? activeDocument.subject}
                 hasEmail={isDefined(userEmail)}
@@ -187,7 +188,7 @@ const ReplyContainer = () => {
                 <Divider />
               </Box>
               <ReplyHeader
-                caseNumber={reply.id ?? undefined}
+                caseNumber={replies.id ?? undefined}
                 initials={getInitials(reply.author ?? '')}
                 title={reply.author ?? activeDocument.subject}
                 hasEmail={isDefined(userEmail)}
@@ -234,6 +235,7 @@ const ReplyContainer = () => {
             body={replyState.reply.body}
             intro={formatMessage(messages.replySent, {
               email: userEmail,
+              caseNumber: replyState.reply.id,
             })}
           />
         </>
