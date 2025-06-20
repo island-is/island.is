@@ -32,5 +32,5 @@ export enum ChargeItemCode {
   ID_CARD_OTHERS_REGULAR = 'AY157', //Nafnskírteini aðrir gjald
   ID_CARD_OTHERS_EXPRESS = 'AY158', //Nafnskírteini aðrir skyndiútgáfa
   HEALTHCARE_WORK_PERMIT = 'L6101',
-  FIRE_COMPENSATION_APPRAISAL = 'FB102', // Endurmat brunabótamats fasteignar
+  FIRE_COMPENSATION_APPRAISAL = 'FB201', // Endurmat brunabótamats fasteignar
 }
