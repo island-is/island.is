@@ -19,11 +19,11 @@ import { useCreateEmailVerificationMutation } from '../emails/ProfileEmailForm/c
 import {
   UpdateActorProfileEmailMutation,
   useUpdateActorProfileEmailMutation,
-} from '../NotificationSettings/ActorProfileEmails/actorProfileUpdate.mutation.generated'
+} from '../notificationSettings/ActorProfileEmails/actorProfileUpdate.mutation.generated'
 import {
   UpdateActorProfileEmailWithoutActorMutation,
   useUpdateActorProfileEmailWithoutActorMutation,
-} from '../NotificationSettings/ActorProfileEmails/actorProfileUpdateWithoutActor.mutations.generated'
+} from '../notificationSettings/ActorProfileEmails/actorProfileUpdateWithoutActor.mutations.generated'
 import { useUserInfo } from '@island.is/react-spa/bff'
 
 interface BaseProps {

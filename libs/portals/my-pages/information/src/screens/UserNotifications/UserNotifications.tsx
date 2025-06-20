@@ -6,10 +6,10 @@ import {
 } from '@island.is/portals/my-pages/core'
 
 import { useUserInfo } from '@island.is/react-spa/bff'
-import { ActorNotificationSettings } from '../../components/NotificationSettings/ActorNotificationSettings/ActorNotificationSettings'
-import { NotificationSettings } from '../../components/NotificationSettings/NotificationSettings/NotificationSettings'
+import { ActorNotificationSettings } from '../../components/notificationSettings/ActorNotificationSettings/ActorNotificationSettings'
+import { NotificationSettings } from '../../components/notificationSettings/NotificationSettings/NotificationSettings'
 import { mNotifications } from '../../lib/messages'
-import { ActorProfileNotificationSettings } from '../../components/NotificationSettings/ActorProfileNotificationSettings/ActorProfileNotificationSettings'
+import { ActorProfileNotificationSettings } from '../../components/notificationSettings/ActorProfileNotificationSettings/ActorProfileNotificationSettings'
 
 const UserProfile = () => {
   useNamespaces('sp.notifications')
