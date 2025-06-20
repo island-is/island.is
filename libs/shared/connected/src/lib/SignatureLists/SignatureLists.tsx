@@ -23,7 +23,7 @@ import { sortAlpha } from '@island.is/shared/utils'
 
 interface SignatureListsProps {
   slice: ConnectedComponent
-  collectionType: SignatureCollectionBaseInput
+  collectionType: SignatureCollectionCollectionType
 }
 
 export const SignatureLists: FC<
