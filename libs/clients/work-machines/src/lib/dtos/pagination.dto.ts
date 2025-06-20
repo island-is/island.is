@@ -11,10 +11,10 @@ export const mapPaginationDto = (
   data?: GeneratedPaginationDto,
 ): PaginationDto | null => {
   if (
-    !data?.totalCount ||
-    !data?.pageSize ||
-    !data?.totalPages ||
-    !data?.currentPage
+    data?.totalCount == undefined ||
+    data?.pageSize == undefined  ||
+    data?.totalPages == undefined  ||
+    data?.currentPage == undefined
   ) {
     return null
   }

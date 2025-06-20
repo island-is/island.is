@@ -13,7 +13,7 @@ import { Model } from '../models/model.model'
 import { Category } from '../models/category.model'
 import { type ModelDto } from '../workMachines.types'
 import { GetWorkMachineModelCategoriesInput } from '../dto/getModelCategories.input'
-import { ModelSubCategory } from '../dto/modelCategory.dto'
+import { ModelSubCategory } from '../dto/modelSubCategory.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver(() => Model)
@@ -38,7 +38,7 @@ export class ModelResolver {
     const { name, type, locale, correlationId } = model
 
     const data =
-      await this.workMachinesService.getMachineParentCategoriesTypeModelGet(
+      (await this.workMachinesService.getMachineParentCategoriesTypeModelGet(
         user,
         {
           model: name,
@@ -46,9 +46,10 @@ export class ModelResolver {
         },
         locale,
         correlationId,
-      )
+      )) ?? []
 
     const categories: Array<Category> = []
+
     data.map((cat) => {
       if (!cat.name) {
         return

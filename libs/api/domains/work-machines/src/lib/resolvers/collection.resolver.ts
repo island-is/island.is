@@ -32,7 +32,7 @@ export class CollectionResolver {
       type: () => GetWorkMachineCollectionInput,
       nullable: true,
     })
-    input: GetWorkMachineCollectionInput,
+    input?: GetWorkMachineCollectionInput,
   ) {
     return this.workMachinesService.getWorkMachines(user, input)
   }

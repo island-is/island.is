@@ -159,10 +159,10 @@ export class WorkMachinesClientService {
 
   getWorkMachines = async (
     user: User,
-    input: ApiMachinesGetRequest,
+    input?: ApiMachinesGetRequest,
   ): Promise<WorkMachineResponseDto | null> => {
     const data = await this.machinesApiWithAuth(user)
-      .apiMachinesGet(input)
+      .apiMachinesGet(input ?? {})
       .catch(handle404)
 
     if (!data) {

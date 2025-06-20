@@ -2,7 +2,7 @@ import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType('WorkMachinesEntity')
 export class Entity {
-  @Field({ nullable: true })
+  @Field()
   name!: string
 
   @Field({ nullable: true })

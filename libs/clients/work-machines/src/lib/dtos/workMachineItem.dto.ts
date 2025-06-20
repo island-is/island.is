@@ -12,18 +12,23 @@ export interface WorkMachinesCollectionItem {
   status?: string
   category?: string
   subCategory?: string
+  /** Only populated for single item, not collection */
   productionYear?: string
   registrationDate?: string
   owner?: EntityDto
   supervisor?: EntityDto
+  /** Only populated for single item, not collection */
   productionCountry?: string
+  /** Only populated for single item, not collection */
   productionNumber?: string
   licensePlateNumber?: string
   importer?: string
   insurer?: string
   dateLastInspection?: string
   paymentRequiredForOwnerChange?: boolean
+  /** Only populated for single item, not collection */
   links?: Array<LinkDto>
+  /** Only populated for single item, not collection */
   labels?: Array<LabelDto>
 }
 

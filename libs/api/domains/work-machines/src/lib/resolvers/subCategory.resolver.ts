@@ -9,11 +9,9 @@ import { Args, Parent, ResolveField, Resolver } from '@nestjs/graphql'
 import { Audit } from '@island.is/nest/audit'
 import { FeatureFlagGuard } from '@island.is/nest/feature-flags'
 import { WorkMachinesService } from '../workMachines.service'
-import { Model } from '../models/model.model'
 import { SubCategory } from '../models/subCategory.model'
 import { TechInfoItem } from '../models/techInfoItem.model'
-import { GetWorkMachineSubCategoryTechInfoItemsInput } from '../dto/getSubCategoriesTechItems.input'
-import { type ModelSubCategory } from '../dto/modelCategory.dto'
+import { type ModelSubCategory } from '../dto/modelSubCategory.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver(() => SubCategory)
@@ -25,7 +23,7 @@ export class SubCategoryResolver {
   async resolveTechInfoItems(
     @CurrentUser() user: User,
     @Parent() category: ModelSubCategory,
-  ): Promise<Array<Model> | undefined> {
+  ): Promise<Array<TechInfoItem> | undefined> {
     if (!category.parentCategoryName || !category.name) {
       return []
     }

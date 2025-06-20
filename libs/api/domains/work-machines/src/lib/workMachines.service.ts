@@ -43,7 +43,7 @@ export class WorkMachinesService {
 
   async getWorkMachines(
     user: User,
-    input: GetWorkMachineCollectionInput,
+    input?: GetWorkMachineCollectionInput,
   ): Promise<PaginatedCollectionResponse | null> {
     const data = await this.machineService.getWorkMachines(user, input)
 
@@ -99,7 +99,7 @@ export class WorkMachinesService {
             }
 
             const href =
-              category === LinkCategory.DOWNLOAD
+              category === LinkCategory.DOWNLOAD && type
                 ? `${this.downloadServiceConfig.baseUrl}/download/v1/workMachines/export/${type}`
                 : l.href
 

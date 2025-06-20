@@ -144,7 +144,7 @@ export class DeprecatedResolver {
     )
   }
 
-  @Directive('@deprecated(reson: "Will be removed shortly")')
+  @Directive('@deprecated(reason: "Will be removed shortly")')
   @Scopes(ApiScope.workMachines)
   @Query(() => Document, {
     name: 'workMachinesCollectionDocument',
@@ -158,11 +158,11 @@ export class DeprecatedResolver {
       type: () => GetDocumentsInput,
       nullable: true,
     })
-    input: GetDocumentsInput,
+    input?: GetDocumentsInput,
   ) {
     const downloadServiceURL = `${
       this.downloadServiceConfig.baseUrl
-    }/download/v1/workMachines/export/${input.fileType ?? FileType.EXCEL}`
+    }/download/v1/workMachines/export/${input?.fileType ?? FileType.EXCEL}`
 
     return {
       downloadUrl: downloadServiceURL,
