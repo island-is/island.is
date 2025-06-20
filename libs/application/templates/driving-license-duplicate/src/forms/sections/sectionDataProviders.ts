@@ -8,7 +8,7 @@ import {
   CurrentLicenseApi,
   JurisdictionApi,
   QualityPhotoApi,
-  AllPhotosFromThjodskraApi,
+  // AllPhotosFromThjodskraApi,
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
@@ -42,9 +42,9 @@ export const sectionDataProviders = (allowFakeData: boolean) =>
             title: m.dataCollectionQualityPhotoTitle,
             subTitle: m.dataCollectionQualityPhotoSubtitle,
           }),
-          buildDataProviderItem({
-            provider: AllPhotosFromThjodskraApi,
-          }),
+          // buildDataProviderItem({
+          //   provider: AllPhotosFromThjodskraApi,
+          // }),
           buildDataProviderItem({
             provider: DuplicateEligibilityApi,
           }),
