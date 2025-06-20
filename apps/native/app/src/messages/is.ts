@@ -438,17 +438,18 @@ export const is = {
   'licenseDetail.ehic.alert.title': 'Mundu eftir kortinu!',
   'licenseDetail.ehic.alert.description':
     'Þetta yfirlit gildir ekki sem sjúkratryggingakort.',
-  'licenseDetail.passport.alert.title': 'Mundu eftir vegabréfinu!',
+  'licenseDetail.passport.alert.title':
+    'Þetta er eingöngu yfirlit og gildir ekki sem persónu- eða ferðaskilríki',
   'licenseDetail.passport.alert.description':
-    'Þetta yfirlit gildir ekki sem ferðaskilríki.',
+    'Einungis skilríkið sjálft er gilt persónu- og ferðaskilríki.',
   'licenseDetail.identityDocument.alert.title':
     'Þetta er eingöngu yfirlit og gildir ekki sem persónuskilríki',
   'licenseDetail.identityDocument.alert.description':
     'Einungis skilríkið sjálft er fullgilt persónuskilríki.',
   'licenseDetail.identityTravelDocument.alert.title':
-    'Mundu eftir nafnskírteininu!',
+    'Þetta er eingöngu yfirlit og gildir ekki sem persónu- eða ferðaskilríki',
   'licenseDetail.identityTravelDocument.alert.description':
-    'Þetta yfirlit gildir ekki sem ferðaskilríki.',
+    'Einungis skilríkið sjálft er gilt persónu- og ferðaskilríki.',
   'licenseDetail.warning.title': 'Rennur út innan 6 mánaða',
   'licenseDetail.passport.warning.description':
     'Athugið að vegabréfið þitt mun renna út innan næstu 6 mánaða.',

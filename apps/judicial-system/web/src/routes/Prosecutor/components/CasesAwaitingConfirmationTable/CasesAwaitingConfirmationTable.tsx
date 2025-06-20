@@ -6,14 +6,11 @@ import { Text } from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
+  ContextMenuItem,
   SectionHeading,
   TagCaseState,
+  useOpenCaseInNewTab,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  ContextMenuItem,
-  useContextMenu,
-} from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
-import { contextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu.strings'
 import {
   ColumnCaseType,
   CourtCaseNumber,
@@ -48,7 +45,7 @@ const CasesAwaitingConfirmationTable: FC<
   } = props
   const { formatMessage } = useIntl()
 
-  const { openCaseInNewTabMenuItem } = useContextMenu()
+  const { openCaseInNewTab } = useOpenCaseInNewTab()
 
   return (
     <section>
@@ -84,11 +81,11 @@ const CasesAwaitingConfirmationTable: FC<
               data={cases}
               generateContextMenuItems={(row) => {
                 return [
-                  openCaseInNewTabMenuItem(row.id),
+                  openCaseInNewTab(row.id),
                   ...(canDeleteCase(row)
                     ? [
                         {
-                          title: formatMessage(contextMenu.deleteCase),
+                          title: 'Afturkalla',
                           onClick: () => {
                             onContextMenuDeleteClick(row.id)
                           },

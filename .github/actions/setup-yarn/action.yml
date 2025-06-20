@@ -1,9 +1,6 @@
 name: 'Setup yarn'
 description: 'Yarn setup and install dependencies'
 inputs:
-  RUNS_ON_S3_BUCKET_CACHE:
-    description: ''
-    required: true
   working-directory:
     description: 'Directory to run the action in'
     required: false
@@ -52,11 +49,11 @@ runs:
       with:
         path: |
           ${{ steps.yarn-cache-dir-path.outputs.dir }}
-          ${{ env.CYPRESS_CACHE_FOLDER }}
-        key: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
+          ${{ inputs.working-directory }}/node_modules
+          ${{ github.workspace }}/.cypress-cache
+        key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-1-node_modules
       env:
-        RUNS_ON_S3_BUCKET_CACHE: ${{ inputs.RUNS_ON_S3_BUCKET_CACHE }}
-        CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache
+        AWS_REGION: ${{ env.AWS_REGION || 'eu-west-1' }}
 
     - name: Restore Dependencies Cache (infra)
       uses: runs-on/cache/restore@v4

@@ -1,4 +1,4 @@
-import { FC, Fragment, useEffect, useState } from 'react'
+import { FC, Fragment, useEffect, useMemo, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useLazyQuery } from '@apollo/client'
 import { CustomField, FieldBaseProps } from '@island.is/application/types'
@@ -17,20 +17,17 @@ import {
 import {
   HmsSearchInput,
   Query,
-  HmsSearchAddress,
   HmsPropertyInfo,
   HmsPropertyInfoInput,
 } from '@island.is/api/schema'
+import { AddressProps, PropertyUnit } from '../../shared'
 import { PropertyTableHeader } from './components/PropertyTableHeader'
 import { PropertyTableRow } from './components/PropertyTableRow'
 import { PropertyTableUnits } from './components/PropertyTableUnits'
 import { registerProperty } from '../../lib/messages'
-import { Unit } from '../../utils/types'
 
-export interface AddressProps extends HmsSearchAddress {
-  label: string
-  value: string
-}
+const ERROR_ID = 'registerProperty'
+const EMPTY_OBJECT = {}
 
 interface Props extends FieldBaseProps {
   field: CustomField
@@ -169,6 +166,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
         formatMessage(registerProperty.search.addressSearchError) ||
           'Failed to search addresses',
       )
+      setPropertiesByAddressCode(undefined)
     },
     onCompleted: (data) => {
       setAddressSearchError(null)
@@ -196,6 +194,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
         formatMessage(registerProperty.search.propertyInfoError) ||
           'Failed to fetch properties',
       )
+      setPropertiesByAddressCode(undefined)
     },
     onCompleted: (data) => {
       setPropertyInfoError(null)
@@ -206,13 +205,13 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
   })
 
   interface StoredValueUnits {
-    units?: Unit[]
+    units?: PropertyUnit[]
   }
 
   const restoreTableExpanded = (storedValue: StoredValueUnits) => {
     if (!storedValue?.units) return {}
     return storedValue.units.reduce(
-      (acc: Record<string, boolean>, unit: Unit) => {
+      (acc: Record<string, boolean>, unit: PropertyUnit) => {
         if (unit.checked && unit.propertyCode) {
           acc[unit.propertyCode] = true
         }
@@ -225,7 +224,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
   const restoreCheckedUnits = (storedValue: StoredValueUnits) => {
     if (!storedValue?.units) return {}
     return storedValue.units.reduce(
-      (acc: Record<string, boolean>, unit: Unit) => {
+      (acc: Record<string, boolean>, unit: PropertyUnit) => {
         const unitKey = `${unit.propertyCode}_${unit.unitCode}`
         acc[unitKey] = unit.checked || false
         return acc
@@ -236,7 +235,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
   const restoreRoomsValue = (storedValue: StoredValueUnits) => {
     if (!storedValue?.units) return {}
     return storedValue.units.reduce(
-      (acc: Record<string, number>, unit: Unit) => {
+      (acc: Record<string, number>, unit: PropertyUnit) => {
         const unitKey = `${unit.propertyCode}_${unit.unitCode}`
         acc[unitKey] = unit.numOfRooms || 0
         return acc
@@ -247,7 +246,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
   const restoreSizeValue = (storedValue: StoredValueUnits) => {
     if (!storedValue?.units) return {}
     return storedValue.units.reduce(
-      (acc: Record<string, number>, unit: Unit) => {
+      (acc: Record<string, number>, unit: PropertyUnit) => {
         const unitKey = `${unit.propertyCode}_${unit.unitCode}`
         acc[unitKey] = unit.changedSize || 0
         return acc
@@ -263,7 +262,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
     }))
   }
 
-  const handleCheckboxChange = (unit: Unit, checked: boolean) => {
+  const handleCheckboxChange = (unit: PropertyUnit, checked: boolean) => {
     const unitKey = `${unit.propertyCode}_${unit.unitCode}`
     const chosenUnits = checked
       ? [
@@ -275,7 +274,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
             changedSize: unitSizeChangedValue[unitKey] ?? unit.size,
           },
         ]
-      : (storedValue?.units || []).filter((u: Unit) => {
+      : (storedValue?.units || []).filter((u: PropertyUnit) => {
           const storedUnitKey = `${u.propertyCode}_${u.unitCode}`
           return storedUnitKey !== unitKey
         })
@@ -289,16 +288,17 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
       units: chosenUnits,
     })
     setCheckedUnits(updateCheckedUnits)
+    clearErrors(ERROR_ID)
   }
 
-  const handleUnitSizeChange = (unit: Unit, value: number) => {
+  const handleUnitSizeChange = (unit: PropertyUnit, value: number) => {
     const unitKey = `${unit.propertyCode}_${unit.unitCode}`
     setUnitSizeChangedValue((prev) => {
       const newValues = {
         ...prev,
         [unitKey]: value,
       }
-      const updatedUnits = (storedValue?.units || []).map((u: Unit) => {
+      const updatedUnits = (storedValue?.units || []).map((u: PropertyUnit) => {
         if (
           u.propertyCode === unit.propertyCode &&
           u.unitCode === unit.unitCode
@@ -316,23 +316,25 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
       })
       return newValues
     })
+    clearErrors(ERROR_ID)
   }
 
-  const handleUnitRoomsChange = (unit: Unit, value: number) => {
+  const handleUnitRoomsChange = (unit: PropertyUnit, value: string) => {
     const unitKey = `${unit.propertyCode}_${unit.unitCode}`
+    const numberValue = value ? Number(value) : 0
     setNumOfRoomsValue((prev) => {
       const newValues = {
         ...prev,
-        [unitKey]: value,
+        [unitKey]: numberValue,
       }
-      const updatedUnits = (storedValue?.units || []).map((u: Unit) => {
+      const updatedUnits = (storedValue?.units || []).map((u: PropertyUnit) => {
         if (
           u.propertyCode === unit.propertyCode &&
           u.unitCode === unit.unitCode
         ) {
           return {
             ...u,
-            numOfRooms: value || 0,
+            numOfRooms: numberValue,
           }
         }
         return u
@@ -343,6 +345,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
       })
       return newValues
     })
+    clearErrors(ERROR_ID)
   }
 
   const handleAddressSelectionChange = (
@@ -367,16 +370,23 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
           }
         : undefined,
     )
+    clearErrors(ERROR_ID)
   }
 
   const hasValidationErrors = errors ? Object.keys(errors).length > 0 : false
+  const propertySectionHasContent = useMemo(() => {
+    return (
+      propertiesLoading ||
+      (propertiesByAddressCode && propertiesByAddressCode.length > 0)
+    )
+  }, [propertiesLoading, propertiesByAddressCode])
 
   return (
     <>
       <Box>
         <Controller
           name={`${id}`}
-          defaultValue=""
+          defaultValue={EMPTY_OBJECT}
           render={({ field: { onChange } }) => {
             return (
               <AsyncSearch
@@ -403,20 +413,20 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
             )
           }}
         />
-        {addressSearchError && (
-          <Box marginTop={2}>
-            <AlertMessage type="error" message={addressSearchError} />
+        {!propertiesLoading && addressSearchError && (
+          <Box marginTop={4}>
+            <AlertMessage type="error" title={addressSearchError} />
+          </Box>
+        )}
+        {!propertiesLoading && propertyInfoError && (
+          <Box marginTop={4}>
+            <AlertMessage type="error" title={propertyInfoError} />
           </Box>
         )}
       </Box>
 
       {selectedAddress && (
-        <Box marginTop={6}>
-          {propertyInfoError && (
-            <Box marginBottom={4}>
-              <AlertMessage type="error" message={propertyInfoError} />
-            </Box>
-          )}
+        <Box marginTop={propertySectionHasContent ? 6 : 0}>
           {propertiesLoading ? (
             <div style={{ textAlign: 'center' }}>
               <LoadingDots large />
@@ -498,7 +508,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
                                           onUnitRoomsChange={(e) =>
                                             handleUnitRoomsChange(
                                               unit,
-                                              Number(e.target.value),
+                                              e.target.value,
                                             )
                                           }
                                           unitInputErrorMessage={
@@ -521,24 +531,24 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
               </T.Table>
             )
           )}
-          {hasValidationErrors && (
-            <Box marginTop={8}>
-              {errors?.registerProperty?.['searchresults'] && (
-                <AlertMessage
-                  type="error"
-                  title={errors?.registerProperty?.['searchresults']}
-                />
+        </Box>
+      )}
+      {hasValidationErrors && (
+        <Box marginTop={4}>
+          {errors?.registerProperty?.['searchresults'] && (
+            <AlertMessage
+              type="error"
+              title={errors?.registerProperty?.['searchresults']}
+            />
+          )}
+          {errors?.registerProperty?.['searchresults.units'] && (
+            <AlertMessage
+              type="error"
+              message={errors?.registerProperty?.['searchresults.units']}
+              title={formatMessage(
+                registerProperty.search.searchResultsErrorBannerTitle,
               )}
-              {errors?.registerProperty?.['searchresults.units'] && (
-                <AlertMessage
-                  type="error"
-                  message={errors?.registerProperty?.['searchresults.units']}
-                  title={formatMessage(
-                    registerProperty.search.searchResultsErrorBannerTitle,
-                  )}
-                />
-              )}
-            </Box>
+            />
           )}
         </Box>
       )}

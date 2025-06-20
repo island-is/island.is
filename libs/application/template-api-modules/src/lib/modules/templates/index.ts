@@ -1,3 +1,5 @@
+import { FireCompensationAppraisalModule } from './hms/fire-compensation-appraisal/fire-compensation-appraisal.module'
+import { FireCompensationAppraisalService } from './hms/fire-compensation-appraisal/fire-compensation-appraisal.service'
 import { ExampleFolderStructureAndConventionsModule } from './examples/example-folder-structure-and-conventions/example-folder-structure-and-conventions.module'
 import { ExampleFolderStructureAndConventionsService } from './examples/example-folder-structure-and-conventions/example-folder-structure-and-conventions.service'
 import { ExampleAuthDelegationModule } from './examples/example-auth-delegation/example-auth-delegation.module'
@@ -158,8 +160,12 @@ import { TrainingLicenseOnAWorkMachineTemplateModule } from './aosh/training-lic
 import { TrainingLicenseOnAWorkMachineTemplateService } from './aosh/training-license-on-a-work-machine/training-license-on-a-work-machine.service'
 import { PracticalExamTemplateModule } from './aosh/practical-exam/practical-exam.module'
 import { PracticalExamTemplateService } from './aosh/practical-exam/practical-exam.service'
+import { LegalGazetteTemplateModule } from './legal-gazette/legal-gazette.module'
+import { LegalGazetteTemplateService } from './legal-gazette/legal-gazette.service'
 import { RentalAgreementModule } from './rental-agreement/rental-agreement.module'
 import { RentalAgreementService } from './rental-agreement/rental-agreement.service'
+import { ExemptionForTransportationModule } from './transport-authority/exemption-for-transportation/exemption-for-transportation.module'
+import { ExemptionForTransportationService } from './transport-authority/exemption-for-transportation/exemption-for-transportation.service'
 
 export const dynamicModules = [GeneralPetitionModule]
 
@@ -241,8 +247,11 @@ export const modules = [
   TrainingLicenseOnAWorkMachineTemplateModule,
   PracticalExamTemplateModule,
   ExampleFolderStructureAndConventionsModule,
+  LegalGazetteTemplateModule,
   ExampleAuthDelegationModule,
   RentalAgreementModule,
+  FireCompensationAppraisalModule,
+  ExemptionForTransportationModule,
 ]
 
 export const services = [
@@ -324,6 +333,9 @@ export const services = [
   TrainingLicenseOnAWorkMachineTemplateService,
   PracticalExamTemplateService,
   ExampleFolderStructureAndConventionsService,
+  LegalGazetteTemplateService,
   ExampleAuthDelegationService,
   RentalAgreementService,
+  FireCompensationAppraisalService,
+  ExemptionForTransportationService,
 ]

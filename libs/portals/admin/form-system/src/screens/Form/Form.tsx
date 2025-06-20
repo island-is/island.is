@@ -5,7 +5,6 @@ import { FormLoaderResponse } from '@island.is/form-system/graphql'
 
 export const Form = () => {
   const formBuilder = useLoaderData() as FormLoaderResponse
-
   return (
     <FormProvider formBuilder={formBuilder}>
       <FormLayout />

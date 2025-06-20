@@ -18,4 +18,6 @@ export {
   PrescribedItemDtoRenewalBlockedReasonEnum,
   PrescribedItemDtoRenewalStatusEnum,
   PrescribedItemDtoCategoryEnum,
+  PrescriptionRenewalRequestDto,
 } from './lib/clients'
+export { DispensationHistoryItemDto } from './lib/clients/health/gen/fetch/models/DispensationHistoryItemDto'

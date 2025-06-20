@@ -11,16 +11,21 @@ export const landlordDetails = defineMessages({
     defaultMessage: 'Skrá leigusala',
     description: 'Landlord details page title',
   },
+  tableTitle: {
+    id: 'ra.application:landlordDetails.tableTitle',
+    defaultMessage: 'Leigusali',
+    description: 'Landlord details table title',
+  },
+  representativeTableTitle: {
+    id: 'ra.application:landlordDetails.representativeTableTitle',
+    defaultMessage: 'Umboðsaðili (ef við á)',
+    description: 'Landlord details representative table title',
+  },
   pageDescription: {
     id: 'ra.application:landlordDetails.pageDescription',
     defaultMessage:
       'Hér skal skrá leigusala húsnæðis. Hægt er að bæta við eins mörgum leigusölum á samninginn eins og óskað er eftir.',
     description: 'Landlord details page description',
-  },
-  nationalIdInputLabel: {
-    id: 'ra.application:landlordDetails.nationalIdInputLabel',
-    defaultMessage: 'Kennitala leigusala',
-    description: 'Landlord details national id input label',
   },
   nationalIdHeaderLabel: {
     id: 'ra.application:landlordDetails.nationalIdHeaderLabel',
@@ -36,11 +41,6 @@ export const landlordDetails = defineMessages({
     id: 'ra.application:landlordDetails.nameLabel',
     defaultMessage: 'Fullt nafn',
     description: 'Landlord details name input label',
-  },
-  isRepresentative: {
-    id: 'ra.application:landlordDetails.isRepresentative',
-    defaultMessage: 'Umb.',
-    description: 'Landlord is representative',
   },
   emailInputLabel: {
     id: 'ra.application:landlordDetails.emailLabel',
@@ -73,8 +73,26 @@ export const landlordDetails = defineMessages({
   landlordOnlyRepresentativeTableError: {
     id: 'ra.application:landlordDetails.landlordOnlyRepresentativeTableError',
     defaultMessage:
-      'Að minnsta kosti einn leigusali þarf að vera skráður á leigusamninginn. Ekki er nóg að skrá umboðsaðlia leigusala.',
+      'Að minnsta kosti einn leigusali þarf að vera skráður á leigusamninginn. Ekki er nóg að skrá umboðsaðila leigusala.',
     description: 'Landlord details only a representative of landlord in table',
+  },
+  landlordSameAsTenantError: {
+    id: 'ra.application:landlordDetails.landlordSameAsTenantError',
+    defaultMessage:
+      'Sami aðili getur ekki verið skráður bæði sem leigusali og leigjandi.',
+    description: 'Landlord details landlord cannot be same as tenant error',
+  },
+  landlordAlreadyExistsError: {
+    id: 'ra.application:landlordDetails.landlordAlreadyExistsError',
+    defaultMessage:
+      'Sami aðili getur ekki verið skráður mörgum sinnum sem leigusali.',
+    description: 'Landlord details landlord already registered error',
+  },
+  landlordSameAsRepresentativeError: {
+    id: 'ra.application:landlordDetails.landlordSameAsRepresentativeError',
+    defaultMessage:
+      'Sami aðili getur ekki verið skráður bæði sem leigusali og umboðsaðili.',
+    description: 'Landlord details landlord same as representative error',
   },
   landlordNationalIdEmptyError: {
     id: 'ra.application:landlordDetails.landlordNationalIdEmptyError',

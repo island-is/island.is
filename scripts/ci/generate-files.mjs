@@ -114,7 +114,7 @@ async function main() {
     }
   }
 
-  console.log(`\nExisting files: ${existingFiles.length}`)
+  console.log(`Existing files: ${existingFiles.length}`)
   console.log(`Missing files or patterns: ${missingFiles.length}`)
 
   await fs.writeFile('generated_files_list.txt', existingFiles.join('\n'))

@@ -9,10 +9,7 @@ import {
   buildCustomField,
   YesOrNoEnum,
 } from '@island.is/application/core'
-import {
-  getOtherFeesHousingFundPayeeOptions,
-  getOtherFeesPayeeOptions,
-} from '../../../utils/utils'
+import { getOtherFeesPayeeOptions } from '../../../utils/utils'
 import { Routes } from '../../../utils/enums'
 import {
   electricityCostPayedByTenant,
@@ -35,7 +32,7 @@ export const RentalPeriodOtherFees = buildSubSection({
           id: 'otherFees.housingFund',
           title: otherFees.housingFundTitle,
           clearOnChange: ['otherFees.housingFundAmount'],
-          options: getOtherFeesHousingFundPayeeOptions,
+          options: getOtherFeesPayeeOptions,
           width: 'half',
           space: 1,
         }),
@@ -68,6 +65,7 @@ export const RentalPeriodOtherFees = buildSubSection({
           width: 'half',
           maxLength: 20,
           condition: electricityCostPayedByTenant,
+          variant: 'number',
         }),
         buildTextField({
           id: 'otherFees.electricityCostMeterStatus',
@@ -76,6 +74,7 @@ export const RentalPeriodOtherFees = buildSubSection({
           width: 'half',
           maxLength: 10,
           condition: electricityCostPayedByTenant,
+          variant: 'number',
         }),
         buildDateField({
           id: 'otherFees.electricityCostMeterStatusDate',
@@ -105,6 +104,7 @@ export const RentalPeriodOtherFees = buildSubSection({
           width: 'half',
           maxLength: 20,
           condition: heatingCostPayedByTenant,
+          variant: 'number',
         }),
         buildTextField({
           id: 'otherFees.heatingCostMeterStatus',
@@ -113,6 +113,7 @@ export const RentalPeriodOtherFees = buildSubSection({
           width: 'half',
           maxLength: 10,
           condition: heatingCostPayedByTenant,
+          variant: 'number',
         }),
         buildDateField({
           id: 'otherFees.heatingCostMeterStatusDate',
