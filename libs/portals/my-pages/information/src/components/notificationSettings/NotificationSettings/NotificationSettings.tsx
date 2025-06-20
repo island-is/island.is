@@ -122,7 +122,7 @@ export const NotificationSettings = () => {
             mNotifications.emailNotificationsAriaLabel,
           )}
           checked={settings.canNudge}
-          onChange={(active) => onChange({ canNudge: active })}
+          onChange={(active: boolean) => onChange({ canNudge: active })}
         />
         <Divider />
         <SettingsCard
@@ -130,7 +130,9 @@ export const NotificationSettings = () => {
           subtitle={formatMessage(mNotifications.appNotificationsDescription)}
           toggleLabel={formatMessage(mNotifications.appNotificationsAriaLabel)}
           checked={settings.documentNotifications}
-          onChange={(active) => onChange({ documentNotifications: active })}
+          onChange={(active: boolean) =>
+            onChange({ documentNotifications: active })
+          }
         />
         <Divider />
         <SettingsCard
