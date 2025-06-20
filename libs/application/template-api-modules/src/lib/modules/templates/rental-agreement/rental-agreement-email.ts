@@ -1,7 +1,7 @@
 import { getValueViaPath } from '@island.is/application/core'
-import { EmailTemplateGenerator } from '../../../types'
-import { filterNonRepresentativesAndMapInfo } from './utils/utils'
 import { applicationAnswers } from '@island.is/application/templates/rental-agreement'
+import { EmailTemplateGenerator } from '../../../types'
+import { mapApplicantsInfo } from './utils/utils'
 
 export const generateRentalAgreementEmail: EmailTemplateGenerator = (props) => {
   const {
@@ -24,8 +24,8 @@ export const generateRentalAgreementEmail: EmailTemplateGenerator = (props) => {
 
   const { landlords, tenants } = applicationAnswers(application.answers)
 
-  const filteredTenants = filterNonRepresentativesAndMapInfo(tenants) ?? []
-  const filteredLandlords = filterNonRepresentativesAndMapInfo(landlords) ?? []
+  const mappedTenants = mapApplicantsInfo(tenants) ?? []
+  const mappedLandlords = mapApplicantsInfo(landlords) ?? []
 
   const htmlSummaryForEmail = getValueViaPath<string>(
     application.answers,
@@ -61,7 +61,7 @@ export const generateRentalAgreementEmail: EmailTemplateGenerator = (props) => {
                   }
                 </style>`
 
-  const allRecipients = [...filteredLandlords, ...filteredTenants]
+  const allRecipients = [...mappedLandlords, ...mappedTenants]
 
   const subject =
     locale === 'is' ? 'Drög að húsaleigusamningi' : 'Draft of rental agreement'

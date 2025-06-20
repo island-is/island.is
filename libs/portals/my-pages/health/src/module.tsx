@@ -59,9 +59,13 @@ const MedicineCertificate = lazy(() =>
 // )
 
 const PaymentParticipation = lazy(() =>
-  import('./screens/Payments/PaymentParticipation'),
+  import('./screens/PaymentsAndRights/PaymentParticipation'),
 )
-const PaymentOverview = lazy(() => import('./screens/Payments/PaymentOverview'))
+const PaymentOverview = lazy(() =>
+  import('./screens/PaymentsAndRights/PaymentOverview'),
+)
+
+const Rights = lazy(() => import('./screens/PaymentsAndRights/Rights'))
 
 const OrganDonation = lazy(() =>
   import('./screens/OrganDonation/OrganDonation'),
@@ -160,6 +164,12 @@ export const healthModule: PortalModule = {
       path: HealthPaths.HealthPaymentOverview,
       enabled: userInfo.scopes.includes(ApiScope.healthPayments),
       element: <PaymentOverview />,
+    },
+    {
+      name: hm.rights,
+      path: HealthPaths.HealthPaymentRights,
+      enabled: userInfo.scopes.includes(ApiScope.healthPayments),
+      element: <Rights />,
     },
     {
       name: hm.dentistsTitle,

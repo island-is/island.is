@@ -93,7 +93,7 @@ export const getCaseTableType = (
         return CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_REVIEWED
       case CaseTableRoutes.APPEALED_EXPIRED:
         return CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_APPEAL_PERIOD_EXPIRED
-      case CaseTableRoutes.SENT_TO_PRISON:
+      case CaseTableRoutes.IN_PRISON:
         return CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_SENT_TO_PRISON_ADMIN
       case CaseTableRoutes.INDICTMENT_APPEALED:
         return CaseTableType.PROSECUTORS_OFFICE_INDICTMENT_APPEALED

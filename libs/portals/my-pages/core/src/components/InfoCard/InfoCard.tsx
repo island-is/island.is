@@ -243,6 +243,7 @@ export const InfoCard: React.FC<InfoCardProps> = ({
               <Tag
                 variant={tag?.variant}
                 outlined
+                disabled
                 key={`infocard-tag-${tag?.label ?? index}`}
               >
                 {tag?.label}

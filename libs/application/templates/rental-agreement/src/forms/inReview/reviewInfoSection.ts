@@ -39,18 +39,7 @@ export const ReviewInfoSection = buildSection({
               application.answers,
             )
 
-            const filterLandlords = landlords?.filter(
-              (landlord) => landlord.isRepresentative?.length === 0,
-            )
-
-            const filterTenants = tenants?.filter(
-              (tenant) => tenant.isRepresentative?.length === 0,
-            )
-
-            const signees = [
-              ...(filterLandlords ?? []),
-              ...(filterTenants ?? []),
-            ]
+            const signees = [...(landlords ?? []), ...(tenants ?? [])]
 
             return signees.map((person) => [
               person.nationalIdWithName.name ?? '',

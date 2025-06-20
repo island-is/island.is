@@ -696,6 +696,7 @@ const rulingDate: CaseTableCellGenerator<StringValue> = {
 }
 
 const arraignmentDate: CaseTableCellGenerator<StringGroupValue> = {
+  attributes: ['requestedCourtDate'],
   includes: {
     dateLogs: {
       model: DateLog,
@@ -704,8 +705,14 @@ const arraignmentDate: CaseTableCellGenerator<StringGroupValue> = {
       separate: true,
     },
   },
-  generate: (c: Case): CaseTableCell<StringGroupValue> => {
-    const courtDate = getIndictmentCourtDate(c)
+  generate: (c: Case, user: TUser): CaseTableCell<StringGroupValue> => {
+    let courtDate = getIndictmentCourtDate(c)
+    let prefix = ''
+
+    if (!courtDate && isDistrictCourtUser(user)) {
+      courtDate = c.requestedCourtDate
+      prefix = 'ÓE '
+    }
 
     const datePart = formatDate(courtDate, 'EEE d. MMMM yyyy')
     const sortValue = formatDate(courtDate, 'yyyyMMddHHmm')
@@ -719,11 +726,14 @@ const arraignmentDate: CaseTableCellGenerator<StringGroupValue> = {
 
     if (!timePart) {
       // This should never happen, but if it does, we return the court date only
-      return generateCell({ strList: [`${capitalize(datePart)}`] }, sortValue)
+      return generateCell(
+        { strList: [`${prefix}${capitalize(datePart)}`] },
+        sortValue,
+      )
     }
 
     return generateCell(
-      { strList: [`${capitalize(datePart)}`, `kl. ${timePart}`] },
+      { strList: [`${prefix}${capitalize(datePart)}`, `kl. ${timePart}`] },
       sortValue,
     )
   },

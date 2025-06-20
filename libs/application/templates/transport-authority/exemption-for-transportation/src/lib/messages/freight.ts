@@ -57,13 +57,12 @@ export const freight = {
     subSectionTitle: {
       id: 'ta.eft.application:freight.pairing.subSectionTitle',
       defaultMessage:
-        'Para vagnlestir við farm {freightNumber}: {freightName} {length}m/{weight}t',
+        'Para vagnlestir við farm {freightNumber}: {freightName} {length}/{weight}',
       description: 'Title of pairing freight with convoy sub section',
     },
     pageTitle: {
       id: 'ta.eft.application:freight.pairing.pageTitle',
-      defaultMessage:
-        'Farmur {freightNumber}: {freightName} {length}m/{weight}t',
+      defaultMessage: 'Farmur {freightNumber}: {freightName} {length}/{weight}',
       description: 'Title of pairing freight with convoy page',
     },
     description: {

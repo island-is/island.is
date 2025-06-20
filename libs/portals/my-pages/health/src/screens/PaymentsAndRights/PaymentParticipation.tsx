@@ -65,37 +65,35 @@ export const PaymentPartication = () => {
 
   return (
     <PaymentsWrapper pathname={HealthPaths.HealthPaymentParticipation}>
-      {loading ? (
-        <SkeletonLoader space={2} repeat={3} height={24} />
-      ) : data?.rightsPortalCopaymentStatus ? (
-        <Box>
-          <StackWithBottomDivider space={2}>
-            <UserInfoLine
-              title={formatMessage(messages.statusOfRights)}
-              titlePadding={2}
-              label={formatMessage(messages.maximumMonthlyPayment)}
-              content={amountFormat(
-                data.rightsPortalCopaymentStatus?.maximumMonthlyPayment ?? 0,
-              )}
-            />
-            <UserInfoLine
-              label={formatMessage(messages.paymentTarget)}
-              content={amountFormat(
-                data.rightsPortalCopaymentStatus?.maximumPayment ?? 0,
-              )}
-            />
-          </StackWithBottomDivider>
-          <Box marginBottom={SECTION_GAP}>
-            <Text variant="small" marginTop={5} marginBottom={2}>
-              {formatMessage(messages.paymentParticationExplanation, {
-                basePayment: numberFormat(
-                  data.rightsPortalCopaymentStatus?.basePayment ?? 0,
-                ),
-              })}
-            </Text>
-          </Box>
+      <Box>
+        <StackWithBottomDivider space={2}>
+          <UserInfoLine
+            titlePadding={2}
+            label={formatMessage(messages.maximumMonthlyPayment)}
+            content={amountFormat(
+              data?.rightsPortalCopaymentStatus?.maximumMonthlyPayment ?? 0,
+            )}
+            loading={loading}
+          />
+          <UserInfoLine
+            label={formatMessage(messages.paymentTarget)}
+            content={amountFormat(
+              data?.rightsPortalCopaymentStatus?.maximumPayment ?? 0,
+            )}
+            loading={loading}
+          />
+        </StackWithBottomDivider>
+        <Box marginBottom={SECTION_GAP}>
+          <Text variant="small" marginTop={5} marginBottom={2}>
+            {formatMessage(messages.paymentParticationExplanation, {
+              basePayment: numberFormat(
+                data?.rightsPortalCopaymentStatus?.basePayment ?? 0,
+              ),
+            })}
+          </Text>
         </Box>
-      ) : (
+      </Box>
+      {!data?.rightsPortalCopaymentStatus && (
         <Box marginBottom={4}>
           <Problem
             type="no_data"
@@ -105,7 +103,7 @@ export const PaymentPartication = () => {
           />
         </Box>
       )}
-      {loading || periodsLoading ? (
+      {periodsLoading ? (
         <SkeletonLoader space={2} repeat={3} height={24} />
       ) : (
         <Stack space={[2, SECTION_GAP]}>
