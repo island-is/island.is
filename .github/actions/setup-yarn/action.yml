@@ -5,10 +5,6 @@ inputs:
     description: 'Directory to run the action in'
     required: false
     default: '.'
-  aws-region:
-    description: 'AWS region to use'
-    required: false
-    default: 'eu-west-1'
 
 runs:
   using: 'composite'
@@ -48,10 +44,9 @@ runs:
       run: echo "RUNS_ON_S3_BUCKET_CACHE=${{ env.RUNS_ON_BUCKET_NAME }}" >> $GITHUB_ENV
 
     - name: Cache Dependencies
-      uses: ./.github/actions/cache
+      uses: runs-on/cache@v4
       id: restore-cache
       with:
-        working-directory: ${{ inputs.working-directory }}
         path: |
           ${{ steps.yarn-cache-dir-path.outputs.dir }}
           ${{ inputs.working-directory }}/node_modules
