@@ -52,6 +52,12 @@ export const GET_SEARCH_RESULTS_QUERY = gql`
             slug
           }
         }
+        ... on OrganizationParentSubpage {
+          id
+          title
+          href
+          organizationPageTitle
+        }
         ... on Manual {
           id
           title
@@ -263,6 +269,13 @@ export const GET_SEARCH_RESULTS_QUERY_DETAILED = gql`
               height
             }
           }
+        }
+        ... on OrganizationParentSubpage {
+          id
+          title
+          href
+          organizationPageTitle
+          intro
         }
         ... on ProjectPage {
           id
