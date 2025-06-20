@@ -7,8 +7,6 @@ import get from 'lodash/get'
 import isArray from 'lodash/isArray'
 import HtmlParser from 'react-html-parser'
 
-// Deployme
-
 import {
   Application,
   ExternalData,

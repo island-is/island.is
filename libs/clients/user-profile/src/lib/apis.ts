@@ -6,8 +6,6 @@ import {
   V2MeApi,
 } from '../../gen/fetch'
 
-// DEPLOYME
-
 export const exportedApis = [UserProfileApi, V2UsersApi, V2MeApi].map(
   (Api) => ({
     provide: Api,

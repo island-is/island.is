@@ -19,8 +19,6 @@ import { DeleteIslykillSettings } from './models/deleteIslykillSettings.model'
 import { UserProfile } from './userProfile.model'
 import { UserProfileServiceV2 } from './V2/userProfile.service'
 
-// DEPLOYME
-
 @Injectable()
 export class UserProfileService {
   constructor(
