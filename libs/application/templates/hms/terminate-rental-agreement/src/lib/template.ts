@@ -24,6 +24,7 @@ import * as m from './messages'
 import { NationalRegistryApi, rentalAgreementsApi } from '../dataProviders'
 import { TemplateApiActions } from '../types'
 import { Contract } from '@island.is/clients/hms-rental-agreement'
+import { Features } from '@island.is/feature-flags'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -34,6 +35,7 @@ const template: ApplicationTemplate<
   name: m.miscMessages.applicationName,
   codeOwner: CodeOwners.NordaApplications,
   institution: 'Húsnæðis og mannvirkjastofnun',
+  featureFlag: Features.TerminateRentalAgreementEnabled,
   translationNamespaces: [
     ApplicationConfigurations.TerminateRentalAgreement.translation,
   ],
