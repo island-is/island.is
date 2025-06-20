@@ -30,7 +30,7 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  NationalRegistrySpouseV3,
+  NationalRegistrySpouse,
 } from '@island.is/application/types'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import * as kennitala from 'kennitala'
@@ -185,7 +185,7 @@ export const HouseholdSupplementForm: Form = buildForm({
                   disabled: true,
                   defaultValue: (application: Application) => {
                     const data = application.externalData.nationalRegistrySpouse
-                      .data as NationalRegistrySpouseV3
+                      .data as NationalRegistrySpouse
                     return maritalStatuses[data.maritalStatus]
                   },
                   condition: (_, externalData) => {
@@ -205,7 +205,7 @@ export const HouseholdSupplementForm: Form = buildForm({
                   disabled: true,
                   defaultValue: (application: Application) => {
                     const data = application.externalData.nationalRegistrySpouse
-                      .data as NationalRegistrySpouseV3
+                      .data as NationalRegistrySpouse
                     return data.name
                   },
                   condition: (_, externalData) => {
@@ -225,7 +225,7 @@ export const HouseholdSupplementForm: Form = buildForm({
                   disabled: true,
                   defaultValue: (application: Application) => {
                     const data = application.externalData.nationalRegistrySpouse
-                      .data as NationalRegistrySpouseV3
+                      .data as NationalRegistrySpouse
                     return kennitala.format(data.nationalId)
                   },
                   condition: (_, externalData) => {

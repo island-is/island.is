@@ -2,7 +2,7 @@ import {
   ApplicantChildCustodyInformation,
   ExternalData,
   FormValue,
-  NationalRegistrySpouseV3,
+  NationalRegistrySpouse,
 } from '@island.is/application/types'
 import { ApproveOptions } from '..'
 import { getValueViaPath } from '@island.is/application/core'
@@ -12,13 +12,13 @@ import {
 } from '@island.is/financial-aid/shared/lib'
 
 export const hasSpouse = (_answers: FormValue, externalData: ExternalData) =>
-  getValueViaPath<NationalRegistrySpouseV3>(
+  getValueViaPath<NationalRegistrySpouse>(
     externalData,
     'nationalRegistrySpouse.data',
   ) != null
 
 export const hasNoSpouse = (_answers: FormValue, externalData: ExternalData) =>
-  getValueViaPath<NationalRegistrySpouseV3>(
+  getValueViaPath<NationalRegistrySpouse>(
     externalData,
     'nationalRegistrySpouse.data',
   ) == null
