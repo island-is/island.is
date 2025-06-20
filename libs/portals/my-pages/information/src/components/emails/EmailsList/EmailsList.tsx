@@ -1,18 +1,14 @@
 import { Box, toast, Option } from '@island.is/island-ui/core'
-import {
-  USER_PROFILE,
-  DataStatus,
-  client,
-} from '@island.is/portals/my-pages/graphql'
-import { Email } from '@island.is/api/schema'
+import { USER_PROFILE, client } from '@island.is/portals/my-pages/graphql'
+import { DataStatus, Email } from '@island.is/api/schema'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { useIntl } from 'react-intl'
 import { useActorProfile } from '../../../hooks/useActorProfile'
-import { emailsMsg, msg } from '../../../lib/messages'
+import { emailsMsg } from '../../../lib/messages'
 import { EmailCard, EmailCardTag, EmailCta } from '../EmailCard/EmailCard'
-import { useDeleteEmailMutation } from './deleteEmail.mutation.generated'
-import { useSetActorProfileEmailMutation } from './setActorProfileEmail.mutation.generated'
-import { useSetPrimaryEmailMutation } from './setPrimaryEmail.mutation.generated'
+import { useDeleteEmailMutation } from './DeleteEmail.mutation.generated'
+import { useSetActorProfileEmailMutation } from './SetActorProfileEmail.mutation.generated'
+import { useSetPrimaryEmailMutation } from './SetPrimaryEmail.mutation.generated'
 import { useCallback, useState } from 'react'
 import { VerifyEmailModal } from '../../verify/VerifyEmailModal'
 
