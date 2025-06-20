@@ -8,13 +8,14 @@ import {
   DefaultEvents,
   defineTemplateApi,
   CurrentLicenseApi,
-  QualitySignatureApi,
+  AllPhotosFromThjodskraApi,
   QualityPhotoApi,
   NationalRegistryUserApi,
   UserProfileApi,
   JurisdictionApi,
   InstitutionNationalIds,
   ApplicationConfigurations,
+  BasicChargeItem,
 } from '@island.is/application/types'
 import { Events, States, Roles } from './constants'
 import { dataSchema } from './dataSchema'
@@ -30,10 +31,12 @@ import {
   MockableSyslumadurPaymentCatalogApi,
   SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
-import { coreHistoryMessages } from '@island.is/application/core'
+import {
+  coreHistoryMessages,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { buildPaymentState } from '@island.is/application/utils'
 import { CodeOwners } from '@island.is/shared/constants'
-import { getCodes } from './utils'
 
 const oneDay = 24 * 3600 * 1000
 const thirtyDays = 24 * 3600 * 1000 * 30
@@ -46,6 +49,26 @@ const pruneAfter = (time: number) => {
   }
 }
 
+const getCodes = (application: Application): BasicChargeItem[] => {
+  const codes: BasicChargeItem[] = []
+
+  const chargeItemCode = getValueViaPath<string>(
+    application.answers,
+    'chargeItemCode',
+  )
+
+  codes.push({ code: chargeItemCode as string })
+
+  const withDeliveryFee =
+    getValueViaPath<number>(application.answers, 'deliveryMethod') === 1
+
+  if (withDeliveryFee) {
+    codes.push({ code: 'AY145' })
+  }
+
+  return codes
+}
+
 const configuration =
   ApplicationConfigurations[ApplicationTypes.DRIVING_LICENSE_DUPLICATE]
 
@@ -55,10 +78,11 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.DRIVING_LICENSE_DUPLICATE,
-  name: m.applicationTitle,
   codeOwner: CodeOwners.Juni,
   dataSchema: dataSchema,
   translationNamespaces: [configuration.translation],
+  institution: m.applicantInstitution,
+  name: m.applicationTitle,
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {
@@ -116,7 +140,7 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
                 }),
                 SyslumadurPaymentCatalogApi,
                 MockableSyslumadurPaymentCatalogApi,
-                QualitySignatureApi,
+                AllPhotosFromThjodskraApi,
                 QualityPhotoApi,
                 UserProfileApi,
                 DuplicateEligibilityApi,

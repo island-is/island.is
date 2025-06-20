@@ -33,7 +33,6 @@ import {
 } from '@island.is/application/core'
 import { buildPaymentState } from '@island.is/application/utils'
 import { CodeOwners } from '@island.is/shared/constants'
-import { getChargeItemCode } from './utils'
 
 const oneDay = 24 * 3600 * 1000
 const thirtyDays = 24 * 3600 * 1000 * 30
@@ -53,11 +52,6 @@ const getCodes = (application: Application): BasicChargeItem[] => {
   )
   if (!chargeItemCode) {
     throw new Error('chargeItemCode missing in request')
-  }
-  const applicationChargeItemCode = getChargeItemCode(application.answers)
-
-  if (applicationChargeItemCode !== chargeItemCode) {
-    throw new Error('chargeItemCode validation failed')
   }
 
   return [{ code: chargeItemCode }]

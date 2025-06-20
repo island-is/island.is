@@ -18,7 +18,7 @@ export enum Roles {
   ACTOR = 'actor',
 }
 
-export const IGNORE = 'IgnoreQualityPhotoAndSignature'
+export const IGNORE = 'IgnoreQualityPhoto'
 
 export enum ApiActions {
   submitApplication = 'submitApplication',
@@ -26,37 +26,13 @@ export enum ApiActions {
 }
 
 export type DrivingLicenseDuplicateFakeData = {
-  useFakeData: YesOrNo | 'IgnoreQualityPhotoAndSignature'
+  useFakeData: YesOrNo | 'IgnoreQualityPhoto'
   currentLicense: 'none' | 'B-full' | 'B-temp'
   licenseIssuedDate?: string
   hasQualityPhoto: YesOrNo
-  hasQualitySignature: YesOrNo
 }
 
 export enum Delivery {
   SEND_HOME = 'sendHome',
   PICKUP = 'pickup',
-}
-
-export const B_FULL = 'B-full'
-export const B_TEMP = 'B-temp'
-export const B_FULL_RENEWAL_65 = 'B-full-renewal-65'
-export const B_ADVANCED = 'B-advanced'
-export const BE = 'BE'
-export const DELIVERY_FEE = 'deliveryFee'
-
-export const CHARGE_ITEM_CODES: Record<string, string> = {
-  [B_TEMP]: 'AY114',
-  [B_FULL]: 'AY110',
-  [B_FULL_RENEWAL_65]: 'AY113',
-  [BE]: 'AY115',
-  [DELIVERY_FEE]: 'AY145',
-}
-
-export enum LicenseTypes {
-  'B_FULL' = 'B-full',
-  'B_TEMP' = 'B-temp',
-  'B_FULL_RENEWAL_65' = 'B-full-renewal-65',
-  'BE' = 'BE',
-  'B_ADVANCED' = 'B-advanced',
 }
