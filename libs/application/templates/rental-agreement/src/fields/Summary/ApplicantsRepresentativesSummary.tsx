@@ -2,13 +2,13 @@ import { FC } from 'react'
 import { GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps } from '@island.is/application/types'
-import { getValueViaPath } from '@island.is/application/core'
-import { summary } from '../../lib/messages'
+import { applicationAnswers } from '../../shared'
 import { Routes } from '../../utils/enums'
 import { formatNationalId, formatPhoneNumber } from '../../utils/utils'
 import { KeyValue } from './components/KeyValue'
 import { SummaryCardRow } from './components/SummaryCardRow'
 import { SummaryCard } from './components/SummaryCard'
+import { summary } from '../../lib/messages'
 
 interface Props extends FieldBaseProps {
   goToScreen?: (id: string) => void
@@ -28,44 +28,12 @@ export const ApplicantsRepresentativesSummary: FC<Props> = ({ ...props }) => {
   } = props
   const { answers } = application
 
-  type tableInfo = {
-    isRepresentative: string[]
-    nationalIdWithName: { nationalId: string; name: string }
-    email?: string
-    phone?: string
-  }
-
-  const landlords = getValueViaPath<Array<tableInfo>>(
-    answers,
-    'landlordInfo.table',
-    [],
-  )
-  const tenants = getValueViaPath<Array<tableInfo>>(
-    answers,
-    'tenantInfo.table',
-    [],
-  )
-
-  const landlordListHasRepresentatives = landlords?.some(
-    (landlord) =>
-      landlord.isRepresentative && landlord.isRepresentative.length > 0,
-  )
-  const tenantListHasRepresentatives = tenants?.some(
-    (tenant) => tenant.isRepresentative && tenant.isRepresentative.length > 0,
-  )
-
-  const landlordRepresentatives = landlords?.filter(
-    (landlordRep) =>
-      landlordRep.isRepresentative && landlordRep.isRepresentative.length > 0,
-  )
-  const tenantRepresentatives = tenants?.filter(
-    (tenantRep) =>
-      tenantRep.isRepresentative && tenantRep.isRepresentative.length > 0,
-  )
+  const { landlordRepresentatives, tenantRepresentatives } =
+    applicationAnswers(answers)
 
   return (
     <>
-      {landlordListHasRepresentatives && (
+      {landlordRepresentatives.length > 0 && (
         <SummaryCard
           cardLabel={formatMessage(summary.landlordsRepresentativeLabel)}
         >
@@ -108,7 +76,7 @@ export const ApplicantsRepresentativesSummary: FC<Props> = ({ ...props }) => {
           })}
         </SummaryCard>
       )}
-      {tenantListHasRepresentatives && (
+      {tenantRepresentatives.length > 0 && (
         <SummaryCard
           cardLabel={formatMessage(summary.tenantsRepresentativeLabel)}
         >
