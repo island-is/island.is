@@ -15,9 +15,15 @@ import {
   AddEmailMutation,
   useAddEmailMutation,
 } from '../emails/ProfileEmailForm/addEmail.mutation.generated'
-import { useCreateEmailVerificationMutation } from '../emails/ProfileEmailForm/CreateEmailVerification.mutation.generated'
-import { useUpdateActorProfileEmailMutation } from '../NotificationSettings/ActorProfileEmails/ActorProfileUpdate.mutation.generated'
-import { useUpdateActorProfileEmailWithoutActorMutation } from '../NotificationSettings/ActorProfileEmails/ActorProfileUpdateWithoutActor.mutations.generated'
+import { useCreateEmailVerificationMutation } from '../emails/ProfileEmailForm/createEmailVerification.mutation.generated'
+import {
+  UpdateActorProfileEmailMutation,
+  useUpdateActorProfileEmailMutation,
+} from '../NotificationSettings/ActorProfileEmails/actorProfileUpdate.mutation.generated'
+import {
+  UpdateActorProfileEmailWithoutActorMutation,
+  useUpdateActorProfileEmailWithoutActorMutation,
+} from '../NotificationSettings/ActorProfileEmails/actorProfileUpdateWithoutActor.mutations.generated'
 import { useUserInfo } from '@island.is/react-spa/bff'
 
 interface BaseProps {
@@ -75,7 +81,7 @@ export const VerifyEmailModal = ({
       error: updateActorProfileEmailError,
     },
   ] = useUpdateActorProfileEmailMutation({
-    onCompleted: (data) => {
+    onCompleted: (data: UpdateActorProfileEmailMutation) => {
       if (data.updateActorProfileEmail) {
         onClose()
         onSuccess?.(data.updateActorProfileEmail.emailsId)
@@ -93,7 +99,7 @@ export const VerifyEmailModal = ({
       error: updateActorProfileEmailWithoutActorError,
     },
   ] = useUpdateActorProfileEmailWithoutActorMutation({
-    onCompleted: (data) => {
+    onCompleted: (data: UpdateActorProfileEmailWithoutActorMutation) => {
       if (data.updateActorProfileEmailWithoutActor) {
         onClose()
         onSuccess?.(data.updateActorProfileEmailWithoutActor.emailsId)
