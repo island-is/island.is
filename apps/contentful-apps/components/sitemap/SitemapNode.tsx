@@ -107,13 +107,13 @@ export const SitemapNode = ({
   return (
     <div className={styles.mainContainer}>
       <div
-        className={styles.nodeContainer}
-        ref={setNodeRef}
-        style={style}
-        {...attributes}
-      >
-        <DragHandle {...listeners} label="Drag to reorder" />
-        <div className={styles.nodeInnerContainer}>
+        <div
+          className={styles.nodeContainer}
+          ref={setNodeRef}
+          style={style}
+        >
+          <DragHandle {...listeners} {...attributes} label="Drag to reorder" />
+          <div className={styles.nodeInnerContainer}>
           <div
             tabIndex={isClickable ? 0 : undefined}
             style={{
