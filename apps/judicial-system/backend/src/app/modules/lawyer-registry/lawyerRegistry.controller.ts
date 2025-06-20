@@ -1,4 +1,4 @@
-import { Controller, Get, Inject } from '@nestjs/common'
+import { Controller, Inject, Post } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -16,7 +16,7 @@ export class LawyerRegistryController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @Get('lawyers')
+  @Post('lawyers')
   async getLawyerRegistry() {
     const lawyers = await this.lawyerRegistryService.populate()
 

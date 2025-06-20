@@ -1,8 +1,13 @@
 import { Sequelize } from 'sequelize'
 
-import { Inject, Injectable } from '@nestjs/common'
+import {
+  Inject,
+  Injectable,
+  InternalServerErrorException,
+} from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
+import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { LawyersService } from '@island.is/judicial-system/lawyers'
@@ -19,10 +24,33 @@ export class LawyerRegistryService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  private async getLawyerRegistry() {
-    const lawyers = await this.lawyersService.getLawyers()
+  private async clearLawyerRegistry() {
+    try {
+      await this.lawyerRegistryModel.destroy({
+        where: {},
+      })
+    } catch (error) {
+      this.logger.error('Error clearing lawyer registry', error)
+      throw new InternalServerErrorException('Error clearing lawyer registry')
+    }
+  }
 
-    return lawyers
+  private async getLawyerRegistry() {
+    try {
+      await this.clearLawyerRegistry()
+
+      const lawyers = await this.lawyersService.getLawyers()
+
+      if (lawyers.length === 0) {
+        throw new InternalServerErrorException(
+          'No lawyers found in the registry',
+        )
+      }
+
+      return lawyers
+    } catch (error) {
+      throw new InternalServerErrorException('Error fetching lawyer registry')
+    }
   }
 
   private async populateLawyerRegistry() {
