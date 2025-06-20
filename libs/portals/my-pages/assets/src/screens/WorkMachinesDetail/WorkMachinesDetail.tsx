@@ -3,13 +3,13 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import { useParams } from 'react-router-dom'
 import { useGetWorkMachineByIdQuery } from './WorkMachinesDetail.generated'
 import {
-  IntroHeader,
   TableGrid,
   InfoLine,
   formatDate,
   m,
   VINNUEFTIRLITID_SLUG,
   InfoLineStack,
+  IntroWrapper,
 } from '@island.is/portals/my-pages/core'
 import { messages, vehicleMessage } from '../../lib/messages'
 import {
@@ -23,7 +23,7 @@ import {
 } from '@island.is/island-ui/core'
 import { format } from 'kennitala'
 import chunk from 'lodash/chunk'
-import { WorkMachinesAction, WorkMachinesLink } from '@island.is/api/schema'
+import { WorkMachinesLink, WorkMachinesLinkType } from '@island.is/api/schema'
 import { isDefined } from '@island.is/shared/utils'
 import { Problem } from '@island.is/react-spa/shared'
 
@@ -32,11 +32,11 @@ type UseParams = {
 }
 
 const OrderedLinks = [
-  WorkMachinesAction.OWNER_CHANGE,
-  WorkMachinesAction.REQUEST_INSPECTION,
-  WorkMachinesAction.REGISTER_FOR_TRAFFIC,
-  WorkMachinesAction.CHANGE_STATUS,
-  WorkMachinesAction.SUPERVISOR_CHANGE,
+  WorkMachinesLinkType.OWNER_CHANGE,
+  WorkMachinesLinkType.REQUEST_INSPECTION,
+  WorkMachinesLinkType.REGISTER_FOR_TRAFFIC,
+  WorkMachinesLinkType.CHANGE_STATUS,
+  WorkMachinesLinkType.SUPERVISOR_CHANGE,
 ]
 
 const WorkMachinesDetail = () => {
@@ -57,13 +57,13 @@ const WorkMachinesDetail = () => {
 
   const createLinks = (links: Array<WorkMachinesLink>) => {
     const generateButton = (
-      rel: WorkMachinesAction,
+      rel: WorkMachinesLinkType,
       idx: number,
       title?: string,
       url?: string,
     ) => {
       const icon: IconMapIcon =
-        rel === WorkMachinesAction.CHANGE_STATUS ? 'removeCircle' : 'open'
+        rel === WorkMachinesLinkType.CHANGE_STATUS ? 'removeCircle' : 'open'
 
       const button = (
         <Button
@@ -88,11 +88,11 @@ const WorkMachinesDetail = () => {
     }
 
     const buttons: Array<React.ReactNode> = []
-    const keys = links.map((l) => l.rel).filter(isDefined)
+    const keys = links.map((l) => l.relation).filter(isDefined)
 
     OrderedLinks.forEach((ol, index) => {
       if (keys.includes(ol)) {
-        const link = links.find((link) => link.rel === ol)
+        const link = links.find((link) => link.relation === ol)
         if (link) {
           buttons.push(
             generateButton(
@@ -118,15 +118,17 @@ const WorkMachinesDetail = () => {
     }),
     {} as Record<string, string>,
   )
+
+  const fullTypeName = workMachine?.type
+    ? `${workMachine.type} ${workMachine.model}`.trim()
+    : undefined
+
   return (
-    <>
-      <Box marginBottom={[1, 1, 3]}>
-        <IntroHeader
-          title={workMachine?.type ?? ''}
-          serviceProviderSlug={VINNUEFTIRLITID_SLUG}
-          serviceProviderTooltip={formatMessage(m.workmachineTooltip)}
-        />
-      </Box>
+    <IntroWrapper
+      title={fullTypeName ?? ''}
+      serviceProviderSlug={VINNUEFTIRLITID_SLUG}
+      serviceProviderTooltip={formatMessage(m.workmachineTooltip)}
+    >
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && !loading && !data?.workMachine && (
         <Problem
@@ -162,7 +164,7 @@ const WorkMachinesDetail = () => {
               />
               <InfoLine
                 label={labels.type ?? ''}
-                content={workMachine?.type ?? ''}
+                content={fullTypeName ?? ''}
                 loading={loading}
               />
               <InfoLine
@@ -201,10 +203,10 @@ const WorkMachinesDetail = () => {
               title={formatMessage(messages.baseInfoWorkMachineTitle)}
               dataArray={chunk(
                 [
-                  workMachine?.type
+                  fullTypeName
                     ? {
                         title: labels.type,
-                        value: workMachine.type,
+                        value: fullTypeName,
                       }
                     : undefined,
                   workMachine?.status
@@ -271,22 +273,22 @@ const WorkMachinesDetail = () => {
             <InfoLineStack label={formatMessage(m.owner)}>
               <InfoLine
                 label={labels.ownerName}
-                content={workMachine?.ownerName ?? ''}
+                content={workMachine?.owner?.name ?? ''}
                 loading={loading}
               />
               <InfoLine
                 label={labels.ownerNationalId}
-                content={format(workMachine?.ownerNationalId ?? '')}
+                content={format(workMachine?.owner?.nationalId ?? '')}
                 loading={loading}
               />
               <InfoLine
                 label={labels.ownerAddress}
-                content={workMachine?.ownerAddress ?? ''}
+                content={workMachine?.owner?.address ?? ''}
                 loading={loading}
               />
               <InfoLine
                 label={labels.ownerPostcode}
-                content={workMachine?.ownerPostcode ?? ''}
+                content={workMachine?.owner?.postcode ?? ''}
                 loading={loading}
               />
             </InfoLineStack>
@@ -295,29 +297,29 @@ const WorkMachinesDetail = () => {
             <InfoLineStack label={formatMessage(vehicleMessage.operator)}>
               <InfoLine
                 label={labels.supervisorName}
-                content={workMachine?.supervisorName ?? ''}
+                content={workMachine?.supervisor?.name ?? ''}
                 loading={loading}
               />
               <InfoLine
                 label={labels.supervisorNationalId}
-                content={format(workMachine?.supervisorNationalId ?? '')}
+                content={format(workMachine?.supervisor?.nationalId ?? '')}
                 loading={loading}
               />
               <InfoLine
                 label={labels.supervisorAddress}
-                content={workMachine?.supervisorAddress ?? ''}
+                content={workMachine?.supervisor?.address ?? ''}
                 loading={loading}
               />
               <InfoLine
                 label={labels.supervisorPostcode}
-                content={workMachine?.supervisorPostcode ?? ''}
+                content={workMachine?.supervisor?.postcode ?? ''}
                 loading={loading}
               />
             </InfoLineStack>
           </Box>
         </>
       )}
-    </>
+    </IntroWrapper>
   )
 }
 
