@@ -93,7 +93,7 @@ const PaymentsAndRights: React.FC<Props> = ({
                 description: `${formatMessage(
                   messages.from,
                 ).toLocaleLowerCase()} ${formatDate(insurance.data?.from)}`,
-                to: HealthPaths.HealthPaymentParticipation,
+                to: HealthPaths.HealthPaymentRights,
 
                 loading: insurance.loading,
                 tags: [
@@ -119,7 +119,7 @@ const PaymentsAndRights: React.FC<Props> = ({
                       arg: formatDate(ehicDate),
                     })
                   : formatMessage(messages.vaccineExpired),
-                to: HealthPaths.HealthPaymentParticipation,
+                to: HealthPaths.HealthPaymentRights,
 
                 tags: [
                   {

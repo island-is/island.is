@@ -96,3 +96,25 @@ query getPaymentOverviewDocument(
     }
   }
 }
+
+query getInsuranceOverview {
+  rightsPortalInsuranceOverview {
+    isInsured
+    explanation
+    from
+    status {
+      display
+      code
+    }
+    maximumPayment
+    ehicCardExpiryDate
+  }
+}
+
+query getInsuranceConfirmation {
+  rightsPortalInsuranceConfirmation {
+    fileName
+    contentType
+    data
+  }
+}
