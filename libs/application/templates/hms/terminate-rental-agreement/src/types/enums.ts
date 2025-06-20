@@ -1,7 +1,5 @@
-import { DefaultEvents } from '@island.is/application/types'
-
-export type Events = {
-  type: DefaultEvents.SUBMIT | DefaultEvents.ABORT
+export enum TemplateApiActions {
+  submitApplication = 'submitApplication',
 }
 
 export enum States {
@@ -20,4 +18,9 @@ export enum Roles {
 export enum TerminationTypes {
   CANCELATION = 'cancelation',
   TERMINATION = 'termination',
+}
+
+export enum ContractTypes {
+  BOUND = 'Tímabundinn samningur',
+  UNBOUND = 'Ótímabundinn samningur',
 }

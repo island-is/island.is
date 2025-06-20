@@ -11,7 +11,6 @@ import {
   ApplicationConfigurations,
   defineTemplateApi,
 } from '@island.is/application/types'
-import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
 import {
@@ -22,7 +21,7 @@ import {
 import { assign } from 'xstate'
 import * as m from './messages'
 import { NationalRegistryApi, rentalAgreementsApi } from '../dataProviders'
-import { TemplateApiActions } from '../types'
+import { Events, Roles, States, TemplateApiActions } from '../types'
 import { Contract } from '@island.is/clients/hms-rental-agreement'
 import { Features } from '@island.is/feature-flags'
 

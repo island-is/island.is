@@ -6,7 +6,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import * as m from '../../lib/messages'
-import { TerminationTypes } from '../../utils/constants'
+import { TerminationTypes } from '../../types'
 
 export const terminationTypeSection = buildSection({
   id: 'terminationTypeSection',
@@ -22,7 +22,7 @@ export const terminationTypeSection = buildSection({
             const terminationType = getValueViaPath(answers, 'terminationType')
             return terminationType === TerminationTypes.TERMINATION
           },
-          id: 'alertMessage',
+          id: 'terminationAlertMessage',
           title: m.terminationTypeMessages.terminationWithNoticeLabel,
           message:
             m.terminationTypeMessages.terminationWithNoticeAlertDescription,
@@ -33,7 +33,7 @@ export const terminationTypeSection = buildSection({
             const terminationType = getValueViaPath(answers, 'terminationType')
             return terminationType === TerminationTypes.CANCELATION
           },
-          id: 'alertMessage',
+          id: 'cancelationAlertMessage',
           title: m.terminationTypeMessages.terminationWithoutNoticeLabel,
           message:
             m.terminationTypeMessages.terminationWithoutNoticeAlertDescription,

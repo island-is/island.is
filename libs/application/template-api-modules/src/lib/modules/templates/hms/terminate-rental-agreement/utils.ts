@@ -42,6 +42,10 @@ export const parseCancelContract = (
   application: Application,
   files: Array<AttachmentData>,
 ): CancelContract => {
+  if (files.length === 0) {
+    throw new Error('No files found')
+  }
+
   const obj = {
     contractId:
       getValueViaPath<string>(application.answers, 'rentalAgreement.answer') ??

@@ -71,7 +71,6 @@ export class TerminateRentalAgreementService extends BaseTemplateApiService {
       }
     } catch (e) {
       this.logger.error('Failed to submit application:', e.message)
-      console.dir(e, { depth: null })
       throw new TemplateApiError(e, 500)
     }
   }

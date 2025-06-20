@@ -21,9 +21,9 @@ export const rentalContractOptions = (application: Application) => {
         contractId: contract.contractId,
         contractType: contract.contractType?.toLowerCase() ?? '',
         address: contract?.contractProperty?.[0]?.streetAndHouseNumber ?? '',
-        apartmentNumber: ` - Íbúð: ${
-          contract?.contractProperty?.[0]?.apartment ?? ''
-        }`,
+        apartmentNumber: contract?.contractProperty?.[0]?.apartment
+          ? ` - Íbúð: ${contract.contractProperty?.[0].apartment}`
+          : '',
       },
     },
   }))

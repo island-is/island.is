@@ -37,7 +37,7 @@ export enum Features {
   pensionSupplementEnabled = 'isPensionSupplementEnabled',
   fireCompensationAppraisalEnabled = 'isFireCompensationAppraisalEnabled',
   ExemptionForTransportation = 'isExemptionForTransportationEnabled',
-  TerminateRentalAgreementEnabled = 'isTerminateRentalAgreementEnabled',
+  TerminateRentalAgreementEnabled = 'isterminaterentalagreementsenabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',

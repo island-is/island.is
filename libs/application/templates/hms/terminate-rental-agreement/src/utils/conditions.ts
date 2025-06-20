@@ -1,5 +1,5 @@
 import { ExternalData, FormValue } from '@island.is/application/types'
-import { TerminationTypes } from './constants'
+import { TerminationTypes } from '../types'
 import { getValueViaPath } from '@island.is/application/core'
 import { isTerminationBound } from './helpers'
 

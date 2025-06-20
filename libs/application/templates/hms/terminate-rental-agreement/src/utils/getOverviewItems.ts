@@ -27,7 +27,7 @@ export const getPersonalInformationOverviewItems = (
     {
       width: 'half',
       keyText: m.overviewMessages.address,
-      valueText: 'Hvassaleiti 5',
+      valueText: getValueViaPath<string>(answers, 'applicant.address') ?? '',
     },
     {
       width: 'half',
@@ -190,6 +190,10 @@ export const getFileUploadOverviewItems = (
   _externalData: ExternalData,
 ): Array<AttachmentItem> => {
   const files = getValueViaPath<Array<FileType>>(answers, 'fileUpload')
+
+  if (files?.length === 0) {
+    return []
+  }
 
   return [
     {

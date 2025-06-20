@@ -5,8 +5,8 @@ import {
   buildDateField,
   buildTextField,
 } from '@island.is/application/core'
-import { TerminationTypes } from '../../utils/constants'
 import * as m from '../../lib/messages'
+import { TerminationTypes } from '../../types'
 
 export const cancelationSection = buildSection({
   condition: (answers) => {

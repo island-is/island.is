@@ -3,6 +3,7 @@ import {
   buildOverviewField,
   buildSection,
   buildSubmitField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import {
   getPersonalInformationOverviewItems,
@@ -19,12 +20,18 @@ import {
   isCancelation,
   isUnboundTermination,
 } from '../../utils/conditions'
+import { TerminationTypes } from '../../types'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
   title: m.overviewMessages.overviewTitle,
   children: [
     buildMultiField({
+      condition: (answers, externalData) => {
+        console.log('answers: ', answers)
+        console.log('externalData: ', externalData)
+        return true
+      },
       id: 'overviewMultiField',
       title: m.overviewMessages.overviewTitle,
       children: [
@@ -37,12 +44,18 @@ export const overviewSection = buildSection({
         }),
         buildOverviewField({
           id: 'rentalAgreementOverview',
-          title: {
+          title: (application) => ({
             ...m.overviewMessages.rentalAgreementTitle,
             values: {
-              terminationType: 'rifta',
+              terminationType:
+                getValueViaPath(
+                  application.answers,
+                  'terminationType.answer',
+                ) === TerminationTypes.CANCELATION
+                  ? 'rifta'
+                  : 'segja upp',
             },
-          },
+          }),
           backId: 'chooseContract',
           bottomLine: false,
           items: getRentalAgreementOverviewItems,
@@ -88,12 +101,11 @@ export const overviewSection = buildSection({
         }),
         buildSubmitField({
           id: 'submit',
-          title: 'Submit',
           refetchApplicationAfterSubmit: true,
           actions: [
             {
               event: 'SUBMIT',
-              name: 'Submit',
+              name: m.overviewMessages.submit,
               type: 'primary',
             },
           ],

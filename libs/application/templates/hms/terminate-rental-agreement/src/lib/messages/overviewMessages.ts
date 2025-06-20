@@ -131,4 +131,9 @@ export const overviewMessages = defineMessages({
     defaultMessage: 'Ástæða riftunar',
     description: 'Cancelation reason in the overview',
   },
+  submit: {
+    id: 'tra.application:overview.submit',
+    defaultMessage: 'Senda inn',
+    description: 'Submit button in the overview',
+  },
 })

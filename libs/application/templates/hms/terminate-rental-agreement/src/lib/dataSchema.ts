@@ -1,5 +1,5 @@
 import { z } from 'zod'
-import { TerminationTypes } from '../utils/constants'
+import { TerminationTypes } from '../types'
 
 const fileSchema = z.object({ key: z.string(), name: z.string() })
 
