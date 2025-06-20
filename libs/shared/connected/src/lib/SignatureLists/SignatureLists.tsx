@@ -11,6 +11,7 @@ import {
   ConnectedComponent,
   SignatureCollectionListBase,
   SignatureCollectionCollectionType,
+  SignatureCollectionCandidate,
 } from '@island.is/api/schema'
 import { useLocalization } from '../../utils'
 import {
