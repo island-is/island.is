@@ -228,7 +228,7 @@ const extractOtherFees = (
   ),
   otherCostPayedByTenant: getValueViaPath<YesOrNoEnum>(
     answers,
-    'otherFees.otherCost',
+    'otherFees.otherCosts',
   ),
   otherCostItems: getValueViaPath<CostField[]>(
     answers,
