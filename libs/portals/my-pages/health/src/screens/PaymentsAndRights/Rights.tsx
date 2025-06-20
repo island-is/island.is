@@ -14,7 +14,7 @@ import { useGetInsuranceOverviewQuery } from './Payments.generated'
 import { PaymentsWrapper } from './wrapper/PaymentsWrapper'
 
 export const Rights = () => {
-  const { formatMessage, lang } = useLocale()
+  const { formatMessage } = useLocale()
 
   const {
     data: insuranceData,
