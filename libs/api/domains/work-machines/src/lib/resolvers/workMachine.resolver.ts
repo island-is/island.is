@@ -5,23 +5,20 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import type { User } from '@island.is/auth-nest-tools'
-import { BadRequestException, Inject, UseGuards } from '@nestjs/common'
+import { BadRequestException, UseGuards } from '@nestjs/common'
 import { ApiScope } from '@island.is/auth/scopes'
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { Audit } from '@island.is/nest/audit'
-import { FeatureFlagGuard } from '@island.is/nest/feature-flags'
 import { WorkMachinesService } from '../workMachines.service'
 import { WorkMachine } from '../models/workMachine.model'
 import { GetWorkMachineInput } from '../dto/getWorkMachine.input'
-import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
-@UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
+@UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => WorkMachine)
 @Audit({ namespace: '@island.is/api/work-machines' })
 export class WorkMachineResolver {
   constructor(
     private readonly workMachinesService: WorkMachinesService,
-    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
   @Scopes(ApiScope.workMachines)

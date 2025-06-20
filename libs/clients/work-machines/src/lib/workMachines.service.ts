@@ -14,10 +14,8 @@ import {
   ApiMachinesPostRequest,
   ApiTechnicalInfoInputsGetRequest,
   ExcelRequest,
-  GetMachineRequest,
   LicenseApi,
   MachineCategoryApi,
-  MachineHateoasDto,
   MachineInspectionRequestCreateDto,
   MachineLicenseTeachingApplicationApi,
   MachineModelDto,
@@ -37,7 +35,6 @@ import {
   MachineTypesApi,
   MachinesApi,
   MachinesDocumentApi,
-  MachinesFriendlyHateaosDto,
   TechInfoItemDto,
   TechnicalInfoApi,
 } from '../../gen/fetch'
