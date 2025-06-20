@@ -122,6 +122,9 @@ export const SignatureLists: FC<
                                 collection.collectionType ===
                                 SignatureCollectionCollectionType.Presidential
                                   ? 'maela-med-frambodi'
+                                  : collection.collectionType ===
+                                    SignatureCollectionCollectionType.LocalGovernmental
+                                  ? 'maela-med-sveitarstjornarframbodi'
                                   : 'maela-med-althingisframbodi'
                               }/?candidate=${candidate.id}`,
                               '_blank',
