@@ -188,7 +188,14 @@ export const VerifyEmailModal = ({
         })
       }
     },
-    [addEmail, updateActorProfileEmail, type, fromNationalId],
+    [
+      addEmail,
+      updateActorProfileEmail,
+      type,
+      fromNationalId,
+      userInfo,
+      updateActorProfileEmailWithoutActor,
+    ],
   )
 
   return (

@@ -180,7 +180,7 @@ export const EmailsList = ({ items }: EmailsListProps) => {
         setActorProfileEmail({ variables: payload })
       }
     },
-    [isActor],
+    [isActor, setPrimaryEmail, setActorProfileEmail],
   )
 
   const onModalClose = useCallback(() => {
