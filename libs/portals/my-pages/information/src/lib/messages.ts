@@ -484,7 +484,7 @@ export const emailsMsg = defineMessages({
   },
   emailMakePrimary: {
     id: 'sp.settings:email-make-primary',
-    defaultMessage: 'Gera að aðal netfangi',
+    defaultMessage: 'Gera að aðalnetfangi',
   },
   emailDelete: {
     id: 'sp.settings:email-delete',
@@ -492,7 +492,7 @@ export const emailsMsg = defineMessages({
   },
   emailMakePrimarySuccess: {
     id: 'sp.settings:email-make-primary-success',
-    defaultMessage: 'Aðal netfangi breytt',
+    defaultMessage: 'Aðalnetfangi breytt',
   },
   emailSetActorProfileSuccess: {
     id: 'sp.settings:email-set-actor-profile-success',
@@ -512,7 +512,7 @@ export const emailsMsg = defineMessages({
   },
   primary: {
     id: 'sp.settings:primary',
-    defaultMessage: 'Aðal netfang',
+    defaultMessage: 'Aðalnetfang',
   },
   emailDeleteError: {
     id: 'sp.settings:email-delete-error',
@@ -520,7 +520,7 @@ export const emailsMsg = defineMessages({
   },
   emailMakePrimaryError: {
     id: 'sp.settings:email-make-primary-error',
-    defaultMessage: 'Ekki tókst að setja aðal netfang',
+    defaultMessage: 'Ekki tókst að setja aðalnetfang',
   },
   emailSetActorProfileError: {
     id: 'sp.settings:email-set-actor-profile-error',
