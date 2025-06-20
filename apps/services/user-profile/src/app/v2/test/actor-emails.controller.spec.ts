@@ -1,24 +1,25 @@
-import faker from 'faker'
+import { UserProfileScope } from '@island.is/auth/scopes'
 import {
   createCurrentUser,
   createNationalId,
   createPhoneNumber,
 } from '@island.is/testing/fixtures'
-import { formatPhoneNumber } from '../../utils/format-phone-number'
 import { setupApp, TestApp } from '@island.is/testing/nest'
+import { getModelToken } from '@nestjs/sequelize'
+import faker from 'faker'
+import kennitala from 'kennitala'
 import request, { SuperTest, Test } from 'supertest'
 import { FixtureFactory } from '../../../../test/fixture-factory'
-import { Emails } from '../models/emails.model'
 import { AppModule } from '../../app.module'
 import { SequelizeConfigService } from '../../sequelizeConfig.service'
-import { ApiScope, UserProfileScope } from '@island.is/auth/scopes'
-import { getModelToken } from '@nestjs/sequelize'
-import kennitala from 'kennitala'
-import { UserProfile } from '../../user-profile/userProfile.model'
-import { CreateEmailDto } from '../dto/create-emails.dto'
 import { EmailVerification } from '../../user-profile/emailVerification.model'
-import { ActorProfile } from '../models/actor-profile.model'
 import { DataStatus } from '../../user-profile/types/dataStatusTypes'
+import { UserProfile } from '../../user-profile/userProfile.model'
+import { formatPhoneNumber } from '../../utils/format-phone-number'
+import { CreateEmailDto } from '../dto/create-emails.dto'
+import { ActorProfile } from '../models/actor-profile.model'
+import { Emails } from '../models/emails.model'
+import { EmailsDto } from '../dto/emails.dto'
 
 // Test data setup
 const testUserProfileEmail = {
@@ -218,7 +219,7 @@ describe('Emails controller', () => {
       await fixtureFactory.createUserProfile({ ...testUserProfile, emails: [] })
 
       // Create two emails
-      const email1 = await fixtureFactory.createEmail({
+      await fixtureFactory.createEmail({
         nationalId: testUserProfile.nationalId,
         email: 'test1@example.com',
         primary: true,
@@ -246,10 +247,10 @@ describe('Emails controller', () => {
       expect(res.body).toHaveLength(2)
 
       const firstEmail = res.body.find(
-        (e: any) => e.email === 'test1@example.com',
+        (e: EmailsDto) => e.email === 'test1@example.com',
       )
       const secondEmail = res.body.find(
-        (e: any) => e.email === 'test2@example.com',
+        (e: EmailsDto) => e.email === 'test2@example.com',
       )
 
       expect(firstEmail).toMatchObject({
@@ -287,7 +288,9 @@ describe('Emails controller', () => {
       })
 
       // Verify actor's own emails are not returned
-      const actorEmails = res.body.find((e: any) => e.email === actorEmail)
+      const actorEmails = res.body.find(
+        (e: EmailsDto) => e.email === actorEmail,
+      )
       expect(actorEmails).toBeUndefined()
     })
   })

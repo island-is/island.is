@@ -2,12 +2,10 @@ import type { User } from '@island.is/auth-nest-tools'
 import {
   ActorScopes,
   CurrentActor,
-  CurrentUser,
   IdsUserGuard,
-  Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import { ApiScope, UserProfileScope } from '@island.is/auth/scopes'
+import { UserProfileScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { Documentation } from '@island.is/nest/swagger'
 import {

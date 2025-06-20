@@ -25,7 +25,7 @@ module.exports = {
     })
   },
 
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface) {
     return await queryInterface.sequelize.transaction(async (transaction) => {
       await queryInterface.removeColumn('actor_profile', 'last_nudge', {
         transaction,

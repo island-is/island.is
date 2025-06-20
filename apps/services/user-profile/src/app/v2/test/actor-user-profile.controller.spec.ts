@@ -14,21 +14,18 @@ import {
 } from '@island.is/testing/fixtures'
 import { setupApp, TestApp } from '@island.is/testing/nest'
 
+import faker from 'faker'
 import { FixtureFactory } from '../../../../test/fixture-factory'
 import { AppModule } from '../../app.module'
 import { SequelizeConfigService } from '../../sequelizeConfig.service'
+import { NudgeType } from '../../types/nudge-type'
 import { DataStatus } from '../../user-profile/types/dataStatusTypes'
 import { UserProfile } from '../../user-profile/userProfile.model'
+import { VerificationService } from '../../user-profile/verification.service'
+import { formatPhoneNumber } from '../../utils/format-phone-number'
 import { ActorProfile } from '../models/actor-profile.model'
 import { Emails } from '../models/emails.model'
-import { formatPhoneNumber } from '../../utils/format-phone-number'
-import faker from 'faker'
-import { NudgeType } from '../../types/nudge-type'
-import { NUDGE_INTERVAL } from '../user-profile.service'
-import { SKIP_INTERVAL } from '../user-profile.service'
-import { VerificationService } from '../../user-profile/verification.service'
-
-const MIGRATION_DATE = new Date('2024-05-10')
+import { NUDGE_INTERVAL, SKIP_INTERVAL } from '../user-profile.service'
 
 const testUserProfileEmail = {
   email: faker.internet.email(),
@@ -52,7 +49,6 @@ describe('GET v2/actor/actor-profile', () => {
   let actorProfileModel: typeof ActorProfile
   let delegationsApi: DelegationsApi
   let emailsModel: typeof Emails
-  const testEmailsId = uuid()
   const testNationalId1 = createNationalId('person')
 
   beforeAll(async () => {
@@ -350,7 +346,6 @@ describe('GET v2/actor/actor-profile', () => {
 describe('POST /v2/actor/actor-profile/nudge', () => {
   let app: TestApp
   let server: SuperTest<Test>
-  let fixtureFactory: FixtureFactory
   let userProfileModel: typeof UserProfile
   let actorProfileModel: typeof ActorProfile
   let delegationsApi: DelegationsApi
@@ -372,7 +367,6 @@ describe('POST /v2/actor/actor-profile/nudge', () => {
     })
 
     server = request(app.getHttpServer())
-    fixtureFactory = new FixtureFactory(app)
     delegationsApi = app.get(DelegationsApi)
     userProfileModel = app.get(getModelToken(UserProfile))
     actorProfileModel = app.get(getModelToken(ActorProfile))
@@ -420,7 +414,7 @@ describe('POST /v2/actor/actor-profile/nudge', () => {
 
   it('should update lastNudge and set nextNudge to 6 months for NUDGE type', async () => {
     // Arrange
-    const actorProfile = await actorProfileModel.create({
+    await actorProfileModel.create({
       id: uuid(),
       toNationalId: testNationalId1,
       fromNationalId: testUserProfile.nationalId,
@@ -466,7 +460,7 @@ describe('POST /v2/actor/actor-profile/nudge', () => {
 
   it('should update lastNudge and set nextNudge to 1 month for SKIP_EMAIL type', async () => {
     // Arrange
-    const actorProfile = await actorProfileModel.create({
+    await actorProfileModel.create({
       id: uuid(),
       toNationalId: testNationalId1,
       fromNationalId: testUserProfile.nationalId,
@@ -512,7 +506,7 @@ describe('POST /v2/actor/actor-profile/nudge', () => {
 
   it('should update lastNudge and set nextNudge to 1 month for SKIP_PHONE type', async () => {
     // Arrange
-    const actorProfile = await actorProfileModel.create({
+    await actorProfileModel.create({
       id: uuid(),
       toNationalId: testNationalId1,
       fromNationalId: testUserProfile.nationalId,
@@ -561,7 +555,7 @@ describe('POST /v2/actor/actor-profile/nudge', () => {
     const existingLastNudge = subMonths(new Date(), 2) // 2 months ago
     const existingNextNudge = addMonths(new Date(), 4) // 4 months in future
 
-    const actorProfile = await actorProfileModel.create({
+    await actorProfileModel.create({
       id: uuid(),
       toNationalId: testNationalId1,
       fromNationalId: testUserProfile.nationalId,
@@ -621,7 +615,7 @@ describe('POST /v2/actor/actor-profile/nudge', () => {
     // Arrange
     const oldDate = new Date('2000-01-01')
 
-    const actorProfile = await actorProfileModel.create({
+    await actorProfileModel.create({
       id: uuid(),
       toNationalId: testNationalId1,
       fromNationalId: testUserProfile.nationalId,
@@ -839,7 +833,7 @@ describe('GET v2/actor/actor-profiles', () => {
         totalCount: 2,
       })
 
-    const userProfile = await fixtureFactory.createUserProfile({
+    await fixtureFactory.createUserProfile({
       nationalId: testNationalId1,
       emails: [],
     })
@@ -949,7 +943,7 @@ describe('GET v2/actor/actor-profiles', () => {
       })
 
     // Create user profiles and emails for both delegations
-    const userProfile1 = await fixtureFactory.createUserProfile({
+    await fixtureFactory.createUserProfile({
       nationalId: testNationalId1,
       emails: [],
     })
@@ -961,7 +955,7 @@ describe('GET v2/actor/actor-profiles', () => {
       nationalId: testNationalId1,
     })
 
-    const userProfile2 = await fixtureFactory.createUserProfile({
+    await fixtureFactory.createUserProfile({
       nationalId: testNationalId2,
       emails: [],
     })
@@ -1099,10 +1093,8 @@ describe('PATCH /v2/actor/actor-profile/email', () => {
   let actorProfileModel: typeof ActorProfile
   let delegationsApi: DelegationsApi
   let emailsModel: typeof Emails
-  let verificationService: VerificationService
   const testNationalId1 = createNationalId('person')
   const testEmail = faker.internet.email()
-  const testVerificationCode = createVerificationCode()
   let email1: Emails
   let email2: Emails
 
@@ -1127,7 +1119,6 @@ describe('PATCH /v2/actor/actor-profile/email', () => {
     userProfileModel = app.get(getModelToken(UserProfile))
     actorProfileModel = app.get(getModelToken(ActorProfile))
     emailsModel = app.get(getModelToken(Emails))
-    verificationService = app.get(VerificationService)
   })
 
   beforeEach(async () => {
@@ -1393,7 +1384,7 @@ describe('PATCH /v2/actor/actor-profile', () => {
     // Mock email verification
     jest
       .spyOn(verificationService, 'confirmEmail')
-      .mockImplementation(({ email, hash }, nationalId, options) => {
+      .mockImplementation(({ hash }) => {
         if (hash === testVerificationCode) {
           return Promise.resolve({
             confirmed: true,
@@ -1554,7 +1545,7 @@ describe('PATCH /v2/actor/actor-profile', () => {
     })
 
     // Check if email_id is null
-    const actorProfileWithNullEmailId = await actorProfileModel.findOne({
+    await actorProfileModel.findOne({
       where: {
         toNationalId: testUserProfile.nationalId,
         fromNationalId: testNationalId1,
@@ -1826,7 +1817,7 @@ describe('PATCH v2/actor/actor-profiles/.from-national-id', () => {
         totalCount: 1,
       })
 
-    const userProfile = await fixtureFactory.createUserProfile({
+    await fixtureFactory.createUserProfile({
       nationalId: testNationalId1,
       emails: [],
     })

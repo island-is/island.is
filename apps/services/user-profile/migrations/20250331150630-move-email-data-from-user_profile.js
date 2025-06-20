@@ -2,7 +2,7 @@
 
 const { uuid } = require('uuidv4')
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  async up(queryInterface) {
     console.log('Migrating email data from user_profile to emails table')
     try {
       const SIZE = 10000
@@ -61,7 +61,7 @@ module.exports = {
     }
   },
 
-  async down(queryInterface, Sequelize) {
+  async down() {
     // This migration is irreversible
     return Promise.resolve()
   },

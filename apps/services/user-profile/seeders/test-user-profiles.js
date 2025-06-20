@@ -23,7 +23,7 @@ const userProfiles = [
 ]
 
 module.exports = {
-  up: (queryInterface, Sequelize) => {
+  up: (queryInterface) => {
     return queryInterface.sequelize.transaction(async (transaction) => {
       return queryInterface.bulkInsert(
         'user_profile',

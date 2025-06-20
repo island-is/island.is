@@ -6,32 +6,31 @@ import request, { SuperTest, Test } from 'supertest'
 import { v4 as uuid } from 'uuid'
 
 import { ApiScope, UserProfileScope } from '@island.is/auth/scopes'
-import { setupApp, TestApp } from '@island.is/testing/nest'
+import { DelegationsApi } from '@island.is/clients/auth/delegation-api'
+import { IslyklarApi, PublicUser } from '@island.is/clients/islykill'
 import {
   createCurrentUser,
   createNationalId,
   createPhoneNumber,
   createVerificationCode,
 } from '@island.is/testing/fixtures'
-import { IslyklarApi, PublicUser } from '@island.is/clients/islykill'
-import { DelegationsApi } from '@island.is/clients/auth/delegation-api'
+import { setupApp, TestApp } from '@island.is/testing/nest'
 
 import { FixtureFactory } from '../../../../test/fixture-factory'
 import { AppModule } from '../../app.module'
 import { SequelizeConfigService } from '../../sequelizeConfig.service'
+import { ClientType } from '../../types/ClientType'
+import { NudgeType } from '../../types/nudge-type'
+import { EmailVerification } from '../../user-profile/emailVerification.model'
+import { SmsVerification } from '../../user-profile/smsVerification.model'
+import { DataStatus } from '../../user-profile/types/dataStatusTypes'
 import { UserProfile } from '../../user-profile/userProfile.model'
 import { VerificationService } from '../../user-profile/verification.service'
 import { formatPhoneNumber } from '../../utils/format-phone-number'
-import { SmsVerification } from '../../user-profile/smsVerification.model'
-import { EmailVerification } from '../../user-profile/emailVerification.model'
-import { DataStatus } from '../../user-profile/types/dataStatusTypes'
-import { NudgeType } from '../../types/nudge-type'
 import { PostNudgeDto } from '../dto/post-nudge.dto'
-import { NUDGE_INTERVAL, SKIP_INTERVAL } from '../user-profile.service'
 import { ActorProfile } from '../models/actor-profile.model'
-import { ClientType } from '../../types/ClientType'
 import { Emails } from '../models/emails.model'
-import { UUIDV4 } from 'sequelize'
+import { NUDGE_INTERVAL, SKIP_INTERVAL } from '../user-profile.service'
 
 type StatusFieldType = 'emailStatus' | 'mobileStatus'
 
@@ -234,7 +233,7 @@ describe('MeUserProfileController', () => {
         needsNudgeExpected: boolean | null
       }) => {
         // Arrange
-        const expectedTestValues: Record<string, any> = {}
+        const expectedTestValues: Record<string, unknown> = {}
         if (verifiedField) {
           if (verifiedField.includes('email')) {
             expectedTestValues.email = testUserProfileEmail.email
@@ -1419,7 +1418,7 @@ describe('MeUserProfileController', () => {
           totalCount: 2,
         })
 
-      const userProfile = await fixtureFactory.createUserProfile({
+      await fixtureFactory.createUserProfile({
         nationalId: testNationalId1,
         emails: [],
       })
@@ -1529,7 +1528,7 @@ describe('MeUserProfileController', () => {
         })
 
       // Create user profiles and emails for both delegations
-      const userProfile1 = await fixtureFactory.createUserProfile({
+      await fixtureFactory.createUserProfile({
         nationalId: testNationalId1,
         emails: [],
       })
@@ -1541,7 +1540,7 @@ describe('MeUserProfileController', () => {
         nationalId: testNationalId1,
       })
 
-      const userProfile2 = await fixtureFactory.createUserProfile({
+      await fixtureFactory.createUserProfile({
         nationalId: testNationalId2,
         emails: [],
       })
@@ -1734,14 +1733,16 @@ describe('MeUserProfileController', () => {
           'Test setup failed: Could not create profile with emails.',
         )
       }
-      originalPrimaryEmail = profile.emails.find((e) => e.primary)!
-      secondaryEmail = profile.emails.find((e) => !e.primary)!
+      const primaryEmail = profile.emails.find((e) => e.primary)
+      const nonPrimaryEmail = profile.emails.find((e) => !e.primary)
       // Add check for found emails
-      if (!originalPrimaryEmail || !secondaryEmail) {
+      if (!primaryEmail || !nonPrimaryEmail) {
         throw new Error(
           'Test setup failed: Could not find primary/secondary emails.',
         )
       }
+      originalPrimaryEmail = primaryEmail
+      secondaryEmail = nonPrimaryEmail
     })
 
     afterAll(async () => {
@@ -2087,7 +2088,7 @@ describe('MeUserProfileController', () => {
       // Mock email verification
       jest
         .spyOn(verificationService, 'confirmEmail')
-        .mockImplementation(({ email, hash }, nationalId, options) => {
+        .mockImplementation(({ hash }) => {
           if (hash === testVerificationCode) {
             return Promise.resolve({
               confirmed: true,
@@ -2263,7 +2264,7 @@ describe('MeUserProfileController', () => {
       })
 
       // Check if email_id is null
-      const actorProfileWithNullEmailId = await actorProfileModel.findOne({
+      await actorProfileModel.findOne({
         where: {
           toNationalId: testUserProfile.nationalId,
           fromNationalId: actorNationalId,

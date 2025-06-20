@@ -1,7 +1,7 @@
 'use strict'
 
 module.exports = {
-  async up(queryInterface, Sequelize) {
+  async up(queryInterface) {
     // Remove the existing constraint that prevents multiple emails with same national_id
     await queryInterface.removeConstraint(
       'emails',
@@ -16,7 +16,7 @@ module.exports = {
     `)
   },
 
-  async down(queryInterface, Sequelize) {
+  async down(queryInterface) {
     // Remove the partial unique index
     await queryInterface.sequelize.query(
       'DROP INDEX IF EXISTS emails_national_id_primary_unique',
