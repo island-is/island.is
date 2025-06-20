@@ -16,7 +16,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     const applicationPage = await applicationContext.newPage()
 
     await applicationPage.goto(homeUrl)
-    isApplication(applicationPage, 'okutimar')
+    await isApplication(applicationPage, 'okutimar')
     await use(applicationPage)
 
     await applicationPage.close()
