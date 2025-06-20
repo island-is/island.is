@@ -1,19 +1,12 @@
 import {
-  MachineModelDto,
-  MachineParentCategoryDetailsDto,
   MachineSubCategoryDto,
   MachineTypeDto,
-  TechInfoItemDto,
   WorkMachinesClientService,
+  WorkMachinesCollectionItem,
 } from '@island.is/clients/work-machines'
 import { isDefined } from '@island.is/shared/utils'
 import { User } from '@island.is/auth-nest-tools'
-import {
-  WorkMachine,
-  PaginatedCollectionResponse,
-} from './models/getWorkMachines'
 import { Inject, Injectable } from '@nestjs/common'
-import { Action, ExternalLink } from './workMachines.types'
 import { GetWorkMachineCollectionInput } from './dto/getWorkMachineCollection.input'
 import { GetWorkMachineInput } from './dto/getWorkMachine.input'
 import { GetDocumentsInput } from './dto/getDocuments.input'
@@ -21,7 +14,20 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { MachineDto } from '@island.is/clients/work-machines'
 import { GetMachineParentCategoryByTypeAndModelInput } from './dto/getMachineParentCategoryByTypeAndModel.input'
-import isValid from 'date-fns/isValid'
+import { PaginatedCollectionResponse } from './models/workMachinePaginatedCollection.model'
+import { WorkMachine } from './models/workMachine.model'
+import {
+  mapRelToAction,
+  mapRelToCollectionLink,
+  mapRelationToLink,
+} from './mapper'
+import { LinkCategory, ModelDto } from './workMachines.types'
+import { DownloadServiceConfig } from '@island.is/nest/config'
+import { ConfigType } from '@nestjs/config'
+import { type Locale } from '@island.is/shared/types'
+import { CategoryDto } from './dto/category.dto'
+import { TechInfoItem } from './models/techInfoItem.model'
+import { TypeClassificationDto } from './dto/typeClassification.dto'
 
 @Injectable()
 export class WorkMachinesService {
@@ -29,43 +35,15 @@ export class WorkMachinesService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private readonly machineService: WorkMachinesClientService,
+    @Inject(DownloadServiceConfig.KEY)
+    private readonly downloadServiceConfig: ConfigType<
+      typeof DownloadServiceConfig
+    >,
   ) {}
-
-  private mapRelToAction = (rel?: string) => {
-    switch (rel) {
-      case 'requestInspection':
-        return Action.REQUEST_INSPECTION
-      case 'changeStatus':
-        return Action.CHANGE_STATUS
-      case 'ownerChange':
-        return Action.OWNER_CHANGE
-      case 'supervisorChange':
-        return Action.SUPERVISOR_CHANGE
-      case 'registerForTraffic':
-        return Action.REGISTER_FOR_TRAFFIC
-      default:
-        return null
-    }
-  }
-
-  private mapRelToCollectionLink = (rel?: string) => {
-    switch (rel) {
-      case 'self':
-        return ExternalLink.SELF
-      case 'nextPage':
-        return ExternalLink.NEXT_PAGE
-      case 'excel':
-        return ExternalLink.EXCEL
-      case 'csv':
-        return ExternalLink.CSV
-      default:
-        return null
-    }
-  }
 
   async getWorkMachines(
     user: User,
-    input: GetWorkMachineCollectionInput,
+    input?: GetWorkMachineCollectionInput,
   ): Promise<PaginatedCollectionResponse | null> {
     const data = await this.machineService.getWorkMachines(user, input)
 
@@ -80,33 +58,65 @@ export class WorkMachinesService {
     }
 
     const workMachines: Array<WorkMachine> =
-      data.value
-        ?.map((v) => {
-          const inspectionDate = v.dateLastInspection
-            ? new Date(v.dateLastInspection)
-            : undefined
-          return {
-            ...v,
-            dateLastInspection: isValid(inspectionDate)
-              ? inspectionDate
-              : undefined,
-            ownerName: v.owner,
-            supervisorName: v.supervisor,
-          }
-        })
+      data.machines
+        ?.map((v) => ({
+          id: v.id,
+          registrationNumber: v.registrationNumber,
+          type: v.type,
+          model: v.model,
+          status: v.status,
+          category: v.category,
+          subCategory: v.subCategory,
+          dateLastInspection: v.dateLastInspection,
+          licensePlateNumber: v.licensePlateNumber,
+          paymentRequiredForOwnerChange: v.paymentRequiredForOwnerChange,
+          owner: v.owner,
+          supervisor: v.supervisor,
+          labels: v.labels,
+          //deprecation line
+          ownerNumber: v.owner?.number,
+          ownerName: v.owner?.name,
+          supervisorName: v.supervisor?.name,
+        }))
         .filter(isDefined) ?? []
 
     const links = data.links?.length
       ? data.links.map((l) => {
           return {
             ...l,
-            rel: this.mapRelToCollectionLink(l.rel ?? ''),
+            rel: mapRelToCollectionLink(l.rel ?? '') ?? undefined,
           }
         })
-      : null
+      : undefined
+
+    const linkCollection = data.links?.length
+      ? data.links
+          .map((l) => {
+            const rel = mapRelToAction(l.rel ?? '')
+            const { type, category } = mapRelationToLink(l.rel) ?? {
+              type: undefined,
+              category: undefined,
+            }
+
+            const href =
+              category === LinkCategory.DOWNLOAD && type
+                ? `${this.downloadServiceConfig.baseUrl}/download/v1/workMachines/export/${type}`
+                : l.href
+
+            return {
+              href,
+              displayTitle: l.displayTitle,
+              relation: type,
+              relationCategory: category,
+              rel: rel ?? undefined,
+            }
+          })
+          .filter(isDefined)
+      : undefined
 
     return {
       data: workMachines,
+      linkCollection,
       links,
       labels: data.labels,
       totalCount: data.pagination?.totalCount ?? 0,
@@ -123,9 +133,21 @@ export class WorkMachinesService {
     user: User,
     input: GetWorkMachineInput,
   ): Promise<WorkMachine | null> {
-    const data = await this.machineService.getWorkMachineById(user, input)
+    const { id, registrationNumber, locale } = input
 
-    if (!data) {
+    let data: WorkMachinesCollectionItem | null
+    if (registrationNumber) {
+      data = await this.machineService.getWorkMachine(user, {
+        regNumber: registrationNumber,
+        locale,
+      })
+    } else if (id) {
+      data = await this.machineService.getWorkMachine(user, { id, locale })
+    } else {
+      return null
+    }
+
+    if (!data || !data.id) {
       return null
     }
 
@@ -134,22 +156,62 @@ export class WorkMachinesService {
     }
 
     const links = data.links?.length
-      ? data.links.map((l) => {
-          return {
-            ...l,
-            rel: this.mapRelToAction(l.rel ?? ''),
-          }
-        })
-      : null
+      ? data.links
+          .map((l) => {
+            const { href } = l
+            const rel = mapRelToAction(l.rel ?? '')
+            const { type, category } = mapRelationToLink(l.rel) ?? {
+              type: undefined,
+              category: undefined,
+            }
 
-    const inspectionDate = data.dateLastInspection
-      ? new Date(data.dateLastInspection)
+            if (!rel || !href || !type) {
+              return null
+            }
+
+            return {
+              href: l.href,
+              displayTitle: l.displayTitle,
+              relation: type,
+              relationCategory: category,
+              rel: rel ?? undefined,
+            }
+          })
+          .filter(isDefined)
       : undefined
 
     return {
-      ...data,
-      dateLastInspection: isValid(inspectionDate) ? inspectionDate : undefined,
+      id: data.id,
+      registrationNumber: data.registrationNumber,
+      registrationDate: data.registrationDate,
+      type: data.type,
+      model: data.model,
+      status: data.status,
+      category: data.category,
+      subCategory: data.subCategory,
+      owner: data.owner,
+      supervisor: data.supervisor,
+      productionNumber: data.productionNumber,
+      productionCountry: data.productionCountry,
+      productionYear: data.productionYear,
+      licensePlateNumber: data.licensePlateNumber,
+      importer: data.importer,
+      insurer: data.insurer,
+      dateLastInspection: data.dateLastInspection,
+      paymentRequiredForOwnerChange: data.paymentRequiredForOwnerChange,
       links,
+      labels: data.labels,
+
+      //deprecated line
+      ownerNumber: data.owner?.number,
+      ownerName: data.owner?.name,
+      ownerAddress: data.owner?.address,
+      ownerNationalId: data.owner?.nationalId,
+      ownerPostcode: data.owner?.postcode,
+      supervisorName: data.supervisor?.name,
+      supervisorAddress: data.supervisor?.address,
+      supervisorNationalId: data.supervisor?.nationalId,
+      supervisorPostcode: data.supervisor?.postcode,
     }
   }
 
@@ -180,18 +242,95 @@ export class WorkMachinesService {
     )
   }
 
-  async getMachineModels(auth: User, type: string): Promise<MachineModelDto[]> {
-    return this.machineService.getMachineModels(auth, { tegund: type })
+  async isTypeValid(auth: User, type: string): Promise<boolean> {
+    const types = await this.machineService.getMachineTypes(auth)
+
+    return !!types.find((t) => t.name === type)
+  }
+
+  async getMachineTypes(
+    auth: User,
+    locale: Locale = 'is',
+    correlationId?: string,
+  ): Promise<Array<TypeClassificationDto>> {
+    const types = await this.machineService.getMachineTypes(auth)
+
+    return types
+      .map((type) => {
+        if (!type.name) {
+          return null
+        }
+
+        return {
+          name: type.name,
+          locale,
+          correlationId,
+        }
+      })
+      .filter(isDefined)
+  }
+
+  async getMachineModels(
+    auth: User,
+    type: string,
+    locale: Locale = 'is',
+    correlationId?: string,
+  ): Promise<Array<ModelDto>> {
+    const models = await this.machineService.getMachineModels(auth, {
+      tegund: type,
+      xCorrelationID: correlationId,
+    })
+
+    return models
+      .map((model) => {
+        if (!model.name) {
+          return null
+        }
+
+        return {
+          name: model.name,
+          type,
+          locale,
+          correlationId,
+        }
+      })
+      .filter(isDefined)
   }
 
   async getMachineParentCategoriesTypeModelGet(
     auth: User,
     input: GetMachineParentCategoryByTypeAndModelInput,
-  ): Promise<MachineParentCategoryDetailsDto[]> {
-    return this.machineService.getMachineParentCategoriesTypeModel(auth, {
-      type: input.type,
-      model: input.model,
-    })
+    locale: Locale = 'is',
+    correlationId?: string,
+  ): Promise<Array<CategoryDto>> {
+    const data = await this.machineService.getMachineParentCategoriesTypeModel(
+      auth,
+      {
+        type: input.type,
+        model: input.model,
+        xCorrelationID: correlationId,
+      },
+    )
+
+    return data
+      .map((d) => {
+        if (!d.name || !d.subCategoryName) {
+          return undefined
+        }
+        return {
+          name: d.nameEn && locale !== 'is' ? d.nameEn : d.name,
+          nameEn: d.nameEn ?? undefined,
+          subCategoryName:
+            d.subCategoryNameEn && locale !== 'is'
+              ? d.subCategoryNameEn
+              : d.subCategoryName,
+          subCategoryNameEn: d.subCategoryNameEn ?? undefined,
+          registrationNumberPrefix: d.registrationNumberPrefix ?? undefined,
+          locale,
+          correlationId,
+        }
+      })
+      .filter(isDefined)
   }
 
   async getMachineSubCategories(
@@ -205,11 +344,41 @@ export class WorkMachinesService {
     auth: User,
     parentCategory: string,
     subCategory: string,
-  ): Promise<TechInfoItemDto[]> {
-    return this.machineService.getTechnicalInfoInputs(auth, {
+    locale: Locale = 'is',
+    correlationId?: string,
+  ): Promise<TechInfoItem[]> {
+    const data = await this.machineService.getTechnicalInfoInputs(auth, {
       parentCategory,
       subCategory,
+      xCorrelationID: correlationId,
     })
+
+    return data
+      ?.map((input) => {
+        if (!input.variableName) {
+          return null
+        }
+
+        return {
+          name: input.variableName,
+          label:
+            locale !== 'is'
+              ? input.labelEn ?? undefined
+              : input.label ?? undefined,
+          labelEn: input.labelEn ?? undefined,
+          type: input.type ?? undefined,
+          required: input.required,
+          maxLength: input.maxLength?.toString() ?? undefined,
+          itemValues: input.values
+            ?.map((v) => (locale !== 'is' ? v.nameEn : v.name))
+            .filter(isDefined),
+          values: input.values?.map((v) => ({
+            name: v.name ?? undefined,
+            nameEn: v.nameEn ?? undefined,
+          })),
+        }
+      })
+      .filter(isDefined)
   }
 
   async getTypeByRegistrationNumber(

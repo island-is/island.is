@@ -1,5 +1,6 @@
-import { ObjectType, Field } from '@nestjs/graphql'
+import { ObjectType, Field, Directive } from '@nestjs/graphql'
 
+@Directive('@deprecated(reason: "Up for removal")')
 @ObjectType()
 export class MachineDetails {
   @Field(() => String)
@@ -26,6 +27,8 @@ export class MachineDetails {
   @Field(() => String, { nullable: true })
   plate?: string | null
 
+  //this should probaby be an application specific utility, since
+  //it doesn't really describe the object itself. imo
   @Field(() => Boolean, { nullable: true })
   disabled?: boolean | null
 

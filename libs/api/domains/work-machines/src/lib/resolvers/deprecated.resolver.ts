@@ -4,41 +4,31 @@ import {
   Scopes,
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
-import { isUuid } from 'uuidv4'
 import type { User } from '@island.is/auth-nest-tools'
 import { Inject, UseGuards } from '@nestjs/common'
 import { ApiScope } from '@island.is/auth/scopes'
-import { Args, Query, Resolver } from '@nestjs/graphql'
+import { Document } from '../models/toBeDeprecated/getDocuments'
+import { Args, Directive, Query, Resolver } from '@nestjs/graphql'
 import { Audit } from '@island.is/nest/audit'
-import {
-  PaginatedCollectionResponse,
-  WorkMachine,
-} from './models/getWorkMachines'
-import { WorkMachinesService } from './workMachines.service'
-import { GetWorkMachineInput } from './dto/getWorkMachine.input'
-import { GetWorkMachineCollectionInput } from './dto/getWorkMachineCollection.input'
-import { GetDocumentsInput } from './dto/getDocuments.input'
-import { Document } from './models/getDocuments'
 import { DownloadServiceConfig } from '@island.is/nest/config'
-import type { ConfigType } from '@island.is/nest/config'
-import { FileType } from './workMachines.types'
-import {
-  FeatureFlagGuard,
-  FeatureFlag,
-  Features,
-} from '@island.is/nest/feature-flags'
-import { MachineDetails } from './models/machineDetails'
-import { Model } from './models/model'
-import { GetMachineParentCategoryByTypeAndModelInput } from './dto/getMachineParentCategoryByTypeAndModel.input'
-import { Category } from './models/category'
-import { SubCategory } from './models/subCategory'
-import { TechInfoItem } from './models/techInfoItem'
-import { MachineType } from './models/machineType'
+import { FeatureFlagGuard } from '@island.is/nest/feature-flags'
+import { ConfigType } from '@nestjs/config'
+import { WorkMachinesService } from '../workMachines.service'
+import { MachineDetails } from '../models/toBeDeprecated/machineDetails'
+import { Model } from '../models/model.model'
+import { Category } from '../models/category.model'
+import { GetMachineParentCategoryByTypeAndModelInput } from '../dto/getMachineParentCategoryByTypeAndModel.input'
+import { MachineType } from '../models/toBeDeprecated/machineType'
+import { GetDocumentsInput } from '../dto/getDocuments.input'
+import { FileType } from '../workMachines.types'
+import { SubCategory } from '../models/subCategory.model'
+import { TechInfoItem } from '../models/techInfoItem.model'
 
+@Directive('@deprecated(reason: "Use something else")')
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Resolver()
 @Audit({ namespace: '@island.is/api/work-machines' })
-export class WorkMachinesResolver {
+export class DeprecatedResolver {
   constructor(
     private readonly workMachinesService: WorkMachinesService,
     @Inject(DownloadServiceConfig.KEY)
@@ -47,61 +37,10 @@ export class WorkMachinesResolver {
     >,
   ) {}
 
-  @Scopes(ApiScope.workMachines)
-  @Query(() => PaginatedCollectionResponse, {
-    name: 'workMachinesPaginatedCollection',
-    nullable: true,
-  })
-  @Audit()
-  async getWorkMachines(
-    @CurrentUser() user: User,
-    @Args('input', {
-      type: () => GetWorkMachineCollectionInput,
-      nullable: true,
-    })
-    input: GetWorkMachineCollectionInput,
-  ) {
-    return this.workMachinesService.getWorkMachines(user, input)
-  }
-
-  @Scopes(ApiScope.workMachines)
-  @Query(() => Document, {
-    name: 'workMachinesCollectionDocument',
-    nullable: true,
-  })
-  @Audit()
-  async getWorkMachinesCollectionDocument(
-    @Args('input', {
-      type: () => GetDocumentsInput,
-      nullable: true,
-    })
-    input: GetDocumentsInput,
-  ) {
-    const downloadServiceURL = `${
-      this.downloadServiceConfig.baseUrl
-    }/download/v1/workMachines/export/${input.fileType ?? FileType.EXCEL}`
-
-    return {
-      downloadUrl: downloadServiceURL,
-    }
-  }
-
-  @Scopes(ApiScope.workMachines)
-  @Query(() => WorkMachine, { name: 'workMachine', nullable: true })
-  @Audit()
-  async getWorkMachineById(
-    @CurrentUser() user: User,
-    @Args('input', { type: () => GetWorkMachineInput })
-    input: GetWorkMachineInput,
-  ) {
-    if (!isUuid(input.id)) {
-      return null
-    }
-    return this.workMachinesService.getWorkMachineById(user, input)
-  }
-
   @Scopes(ApiScope.vinnueftirlitid)
-  @Query(() => MachineDetails)
+  @Query(() => MachineDetails, {
+    deprecationReason: 'use workMachine model',
+  })
   @Audit()
   async getWorkerMachineDetails(
     @CurrentUser() auth: User,
@@ -112,7 +51,9 @@ export class WorkMachinesResolver {
   }
 
   @Scopes(ApiScope.vinnueftirlitid)
-  @Query(() => Boolean)
+  @Query(() => Boolean, {
+    deprecationReason: 'Property available in workMachine model',
+  })
   @Audit()
   async getWorkerMachinePaymentRequired(
     @CurrentUser() auth: User,
@@ -122,7 +63,10 @@ export class WorkMachinesResolver {
   }
 
   @Scopes(ApiScope.vinnueftirlitid)
-  @Query(() => MachineDetails)
+  @Query(() => MachineDetails, {
+    deprecationReason:
+      'TO BE REMOVED. Pass in registrationnumber to "workMachine" resolver function instead',
+  })
   @Audit()
   async getWorkerMachineByRegno(
     @CurrentUser() auth: User,
@@ -133,7 +77,7 @@ export class WorkMachinesResolver {
   }
 
   @Scopes(ApiScope.vinnueftirlitid)
-  @Query(() => [Model])
+  @Query(() => [Model], { deprecationReason: 'TO BE REMOVED' })
   @Audit()
   async getMachineModels(
     @CurrentUser() auth: User,
@@ -143,7 +87,7 @@ export class WorkMachinesResolver {
   }
 
   @Scopes(ApiScope.vinnueftirlitid)
-  @Query(() => [Category])
+  @Query(() => [Category], { deprecationReason: 'TO BE REMOVED' })
   @Audit()
   async getMachineParentCategoryByTypeAndModel(
     @CurrentUser() auth: User,
@@ -156,7 +100,7 @@ export class WorkMachinesResolver {
   }
 
   @Scopes(ApiScope.vinnueftirlitid)
-  @Query(() => [SubCategory])
+  @Query(() => [SubCategory], { deprecationReason: 'TO BE REMOVED' })
   @Audit()
   async getMachineSubCategories(
     @CurrentUser() auth: User,
@@ -169,7 +113,7 @@ export class WorkMachinesResolver {
   }
 
   @Scopes(ApiScope.vinnueftirlitid)
-  @Query(() => [TechInfoItem])
+  @Query(() => [TechInfoItem], { deprecationReason: 'TO BE REMOVED' })
   @Audit()
   async getTechnicalInfoInputs(
     @CurrentUser() auth: User,
@@ -184,7 +128,9 @@ export class WorkMachinesResolver {
   }
 
   @Scopes(ApiScope.vinnueftirlitid)
-  @Query(() => MachineType)
+  @Query(() => MachineType, {
+    deprecationReason: 'Use workMachine with registrationNumber input',
+  })
   @Audit()
   async getTypeByRegistrationNumber(
     @CurrentUser() auth: User,
@@ -196,5 +142,30 @@ export class WorkMachinesResolver {
       registrationNumber,
       applicationId,
     )
+  }
+
+  @Directive('@deprecated(reason: "Will be removed shortly")')
+  @Scopes(ApiScope.workMachines)
+  @Query(() => Document, {
+    name: 'workMachinesCollectionDocument',
+    nullable: true,
+    deprecationReason:
+      'Use the field resolver on the paginated collection type instead',
+  })
+  @Audit()
+  async getWorkMachinesCollectionDocument(
+    @Args('input', {
+      type: () => GetDocumentsInput,
+      nullable: true,
+    })
+    input?: GetDocumentsInput,
+  ) {
+    const downloadServiceURL = `${
+      this.downloadServiceConfig.baseUrl
+    }/download/v1/workMachines/export/${input?.fileType ?? FileType.EXCEL}`
+
+    return {
+      downloadUrl: downloadServiceURL,
+    }
   }
 }
