@@ -358,13 +358,21 @@ export const FineAndSpeedMeasurementCalculator = ({
       </Stack>
       <TableOfContents
         headings={[
-          { headingId: 'fine', headingTitle: 'Sektir' },
-          { headingId: 'speed-measurement', headingTitle: ' Hraðamæling' },
+          {
+            headingId: 'fine',
+            headingTitle: formatMessage(m.fines.fineTableOfContentHeading),
+          },
+          {
+            headingId: 'speed-measurement',
+            headingTitle: formatMessage(
+              m.fines.speedMeasurementTableOfContentHeading,
+            ),
+          },
         ]}
         onClick={(headingId) => {
           setSelectedHeadingId(headingId as 'fine' | 'speed-measurement')
         }}
-        tableOfContentsTitle="Yfirlit"
+        tableOfContentsTitle={formatMessage(m.fines.tableOfContentsTitle)}
         selectedHeadingId={selectedHeadingId}
       />
       {selectedHeadingId === 'fine' && (

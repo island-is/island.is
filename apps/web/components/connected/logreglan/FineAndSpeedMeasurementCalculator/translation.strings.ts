@@ -2,6 +2,21 @@ import { defineMessages } from 'react-intl'
 
 export const m = {
   fines: defineMessages({
+    fineTableOfContentHeading: {
+      id: 'web.logreglan.fineAndSpeedMeasurementCalculator:fines.fineTableOfContentHeading',
+      defaultMessage: 'Sektir',
+      description: 'Sektir',
+    },
+    speedMeasurementTableOfContentHeading: {
+      id: 'web.logreglan.fineAndSpeedMeasurementCalculator:fines.speedMeasurementTableOfContentHeading',
+      defaultMessage: 'Hraðamæling',
+      description: 'Hraðamæling',
+    },
+    tableOfContentsTitle: {
+      id: 'web.logreglan.fineAndSpeedMeasurementCalculator:fines.tableOfContentsTitle',
+      defaultMessage: 'Yfirlit',
+      description: 'Yfirlit',
+    },
     total: {
       id: 'web.logreglan.fineAndSpeedMeasurementCalculator:fines.total',
       defaultMessage: 'Samtals',
