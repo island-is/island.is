@@ -152,7 +152,11 @@ export const OldFileUpload = ({ item, hasError, lang = 'is' }: Props) => {
       onRemove={onRemove}
       errorMessage={error}
       accept={
-        types?.map((t: string) => fileTypes[t as keyof typeof fileTypes]) ?? []
+accept={
+  types
+    ?.map((t) => fileTypes[t as keyof typeof fileTypes])
+    .filter((ft): ft is string => Boolean(ft)) ?? []
+}
       }
       showFileSize
       maxSize={item?.fieldSettings?.fileMaxSize ?? 1}
