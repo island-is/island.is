@@ -89,6 +89,11 @@ export const m = defineMessages({
     defaultMessage: 'Tókst að stofna meðmælasöfnun',
     description: '',
   },
+  createCollectionError: {
+    id: 'admin-portal.signature-collection:createCollectionError',
+    defaultMessage: 'Ekki tókst að stofna meðmælasöfnun',
+    description: '',
+  },
   createCollectionModalDescription: {
     id: 'admin-portal.signature-collection:createCollectionModalDescription',
     defaultMessage:
@@ -117,7 +122,7 @@ export const m = defineMessages({
   },
   collectionTitle: {
     id: 'admin-portal.signature-collection:collectionTitle',
-    defaultMessage: 'Forsetakosningar 2024',
+    defaultMessage: 'Forsetakosningar',
     description: '',
   },
   municipalCollectionTitle: {
@@ -133,7 +138,7 @@ export const m = defineMessages({
   },
   numberOfSignatures: {
     id: 'admin-portal.signature-collection:numberOfSignatures',
-    defaultMessage: 'Fjöldi framboða: ',
+    defaultMessage: 'Fjöldi undirskrifta',
     description: '',
   },
   parliamentaryCollectionTitle: {
@@ -161,6 +166,11 @@ export const m = defineMessages({
   viewConstituency: {
     id: 'admin-portal.signature-collection:viewConstituency',
     defaultMessage: 'Skoða kjördæmi',
+    description: '',
+  },
+  municipality: {
+    id: 'admin-portal.signature-collection:municipality',
+    defaultMessage: 'Sveitarfélag',
     description: '',
   },
   viewMunicipality: {

@@ -152,6 +152,7 @@ export class VehiclesService {
       requestedPersidno: auth.nationalId,
       showDeregistered: input.showDeregeristered,
       showHistory: input.showHistory,
+
       page: input.page,
       pageSize: input.pageSize,
       type: input.type,

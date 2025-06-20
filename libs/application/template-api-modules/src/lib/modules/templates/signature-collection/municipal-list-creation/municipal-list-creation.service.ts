@@ -5,6 +5,7 @@ import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import {
   Collection,
+  CollectionType,
   SignatureCollectionClientService,
 } from '@island.is/clients/signature-collection'
 import { errorMessages } from '@island.is/application/templates/signature-collection/municipal-list-creation'
@@ -14,7 +15,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { CreateListSchema } from '@island.is/application/templates/signature-collection/municipal-list-creation'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { isCompany } from 'kennitala'
-import { coreErrorMessages } from '@island.is/application/core'
+import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import { generateApplicationSubmittedEmail } from './emailGenerators'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { getCollectionTypeFromApplicationType } from '../shared/utils'
@@ -52,7 +53,9 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
     )
 
     const currentCollection = (
-      await this.signatureCollectionClientService.currentCollection()
+      await this.signatureCollectionClientService.currentCollection(
+        CollectionType.LocalGovernmental,
+      )
     )
       .filter((collection) => collection.isActive)
       .filter(
@@ -113,18 +116,26 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
 
   async submit({ application, auth }: TemplateApiModuleActionProps) {
     const answers = application.answers as CreateListSchema
-    const municipalCollection = application.externalData.municipalCollection
-      .data as Collection
+    const municipalCollection = (
+      application.externalData.municipalCollection.data as Array<Collection>
+    )[0]
+
+    const candidateAreaId = getValueViaPath(
+      application.externalData,
+      'candidate.data.area.id',
+    ) as string
 
     const input = {
       collectionType: this.collectionType,
+      collectionId: municipalCollection.id,
       owner: {
         ...answers.applicant,
         nationalId: application?.applicantActors?.[0]
           ? application.applicant
           : answers.applicant.nationalId,
       },
-      collectionId: municipalCollection.id,
+      listName: answers?.list?.name ?? '',
+      areas: [{ areaId: candidateAreaId }],
     }
 
     const result = await this.signatureCollectionClientService

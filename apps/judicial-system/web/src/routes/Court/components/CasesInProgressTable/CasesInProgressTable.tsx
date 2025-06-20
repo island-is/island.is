@@ -17,8 +17,8 @@ import {
   Modal,
   SectionHeading,
   TagCaseState,
+  useOpenCaseInNewTab,
 } from '@island.is/judicial-system-web/src/components'
-import { useContextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import {
   ColumnCaseType,
   CourtCaseNumber,
@@ -53,7 +53,7 @@ const CasesInProgressTable: FC<CasesInProgressTableProps> = (props) => {
   const { loading, isFiltering, cases, refetch } = props
 
   const { formatMessage } = useIntl()
-  const { openCaseInNewTabMenuItem } = useContextMenu()
+  const { openCaseInNewTab } = useOpenCaseInNewTab()
   const { getCase } = useContext(FormContext)
   const [caseToCancelId, setCaseToCancelId] = useState<string>()
   const [caseToCancel, setCaseToCancel] = useState<Case>()
@@ -176,7 +176,7 @@ const CasesInProgressTable: FC<CasesInProgressTableProps> = (props) => {
               generateContextMenuItems={(row) => {
                 return row.state === CaseState.WAITING_FOR_CANCELLATION
                   ? []
-                  : [openCaseInNewTabMenuItem(row.id)]
+                  : [openCaseInNewTab(row.id)]
               }}
               onClick={(row) => {
                 if (row.state === CaseState.WAITING_FOR_CANCELLATION) {

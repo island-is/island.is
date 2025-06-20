@@ -15,13 +15,16 @@ import { useToggleListReviewMutation } from './toggleListReview.generated'
 import { useRevalidator } from 'react-router-dom'
 import { m } from '../../lib/messages'
 import { ListStatus } from '../../lib/utils'
+import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 
 const CompleteListReview = ({
   listId,
   listStatus,
+  collectionType,
 }: {
   listId: string
   listStatus: string
+  collectionType: SignatureCollectionCollectionType
 }) => {
   const { formatMessage } = useLocale()
   const { revalidate } = useRevalidator()
@@ -38,16 +41,24 @@ const CompleteListReview = ({
     variables: {
       input: {
         listId,
+        collectionType,
       },
     },
-    onCompleted: () => {
-      setModalSubmitReviewIsOpen(false)
-      revalidate()
-      toast.success(
-        listReviewed
-          ? formatMessage(m.toggleReviewSuccessToggleBack)
-          : formatMessage(m.toggleReviewSuccess),
-      )
+    onCompleted: (response) => {
+      if (response.signatureCollectionAdminToggleListReview.success) {
+        setModalSubmitReviewIsOpen(false)
+        revalidate()
+        toast.success(
+          listReviewed
+            ? formatMessage(m.toggleReviewSuccessToggleBack)
+            : formatMessage(m.toggleReviewSuccess),
+        )
+      } else {
+        const message =
+          response.signatureCollectionAdminToggleListReview?.reasons?.[0] ??
+          formatMessage(m.toggleReviewError)
+        toast.error(message)
+      }
     },
     onError: () => {
       toast.error(formatMessage(m.toggleReviewError))
@@ -61,11 +72,19 @@ const CompleteListReview = ({
           <Box display="flex">
             <Tag>
               <Box display="flex" justifyContent="center">
-                <Icon icon="checkmark" type="outline" color="blue600" />
+                {listStatus === ListStatus.Reviewed ? (
+                  <Icon icon="reload" type="outline" color="blue600" />
+                ) : (
+                  <Icon icon="checkmark" type="outline" color="red600" />
+                )}
               </Box>
             </Tag>
             <Box marginLeft={5}>
-              <Text variant="h4">{formatMessage(m.confirmListReviewed)}</Text>
+              <Text variant="h4">
+                {listStatus === ListStatus.Reviewed
+                  ? formatMessage(m.confirmListReviewedToggleBack)
+                  : formatMessage(m.confirmListReviewed)}
+              </Text>
               <Text marginBottom={2}>
                 Þegar búið er að fara yfir meðmæli er hakað við hér.
               </Text>
@@ -74,7 +93,9 @@ const CompleteListReview = ({
                 size="small"
                 onClick={() => setModalSubmitReviewIsOpen(true)}
               >
-                {formatMessage(m.confirmListReviewed)}
+                {listStatus === ListStatus.Reviewed
+                  ? formatMessage(m.confirmListReviewedToggleBack)
+                  : formatMessage(m.confirmListReviewed)}
               </Button>
             </Box>
           </Box>

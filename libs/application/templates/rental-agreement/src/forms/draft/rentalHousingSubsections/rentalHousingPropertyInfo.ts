@@ -85,9 +85,7 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
           id: 'propertyInfo.categoryClass',
           description: messagesCategory.classDescription,
           options: getPropertyClassOptions(),
-          clearOnChange: ['propertyInfo.categoryClassGroup'],
           defaultValue: RentalHousingCategoryClass.GENERAL_MARKET,
-          required: true,
           width: 'half',
           space: 0,
         }),
@@ -95,11 +93,11 @@ export const RentalHousingPropertyInfo: SubSection = buildSubSection({
           id: 'propertyInfo.categoryClassGroup',
           title: messagesCategory.classGroupLabel,
           placeholder: messagesCategory.classGroupPlaceholder,
+          options: getPropertyClassGroupOptions(),
           condition: (answers) => {
             const { categoryClass } = applicationAnswers(answers)
             return categoryClass === RentalHousingCategoryClass.SPECIAL_GROUPS
           },
-          options: getPropertyClassGroupOptions(),
         }),
       ],
     }),

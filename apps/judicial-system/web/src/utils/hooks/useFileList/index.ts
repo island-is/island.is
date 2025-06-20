@@ -1,7 +1,8 @@
-import { useContext, useEffect, useMemo, useState } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { validate as validateUuid } from 'uuid'
 
-import { toast } from '@island.is/island-ui/core'
+import { toast, UploadFile } from '@island.is/island-ui/core'
 import { errors } from '@island.is/judicial-system-web/messages'
 import {
   FormContext,
@@ -25,9 +26,12 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
   const isMobile = useIsMobile()
   const [fileNotFound, setFileNotFound] = useState<boolean>()
 
-  const openFile = (url: string) => {
-    window.open(url, isMobile ? '_self' : '_blank', 'noopener, noreferrer')
-  }
+  const openFile = useCallback(
+    (url: string) => {
+      window.open(url, isMobile ? '_self' : '_blank', 'noopener, noreferrer')
+    },
+    [isMobile],
+  )
 
   const [
     getSignedUrl,
@@ -126,11 +130,46 @@ const useFileList = ({ caseId, connectedCaseParentId }: Parameters) => {
     ],
   )
 
+  const onOpenFile = useMemo(
+    () => (file: UploadFile) => {
+      if (!file.id) {
+        return
+      }
+      // if the file has an invalid id, we assume it is a temp id where the file hasn't been created in S3 yet
+      // and we create a direct object url for preview purposes. We handle it specifically in the client to avoid internal server errors
+      if (!validateUuid(file.id)) {
+        const previewUrl = URL.createObjectURL(file.originalFileObj as Blob)
+        openFile(previewUrl)
+        setTimeout(() => URL.revokeObjectURL(previewUrl), 1000 * 60) // revoke url in 1 minute
+      } else {
+        const query = limitedAccess ? limitedAccessGetSignedUrl : getSignedUrl
+
+        query({
+          variables: {
+            input: {
+              id: file.id,
+              caseId: connectedCaseParentId ?? caseId,
+              mergedCaseId: connectedCaseParentId && caseId,
+            },
+          },
+        })
+      }
+    },
+    [
+      caseId,
+      connectedCaseParentId,
+      getSignedUrl,
+      limitedAccess,
+      limitedAccessGetSignedUrl,
+      openFile,
+    ],
+  )
+
   const dismissFileNotFound = () => {
     setFileNotFound(false)
   }
 
-  return { fileNotFound, dismissFileNotFound, onOpen }
+  return { fileNotFound, dismissFileNotFound, onOpen, onOpenFile }
 }
 
 export default useFileList

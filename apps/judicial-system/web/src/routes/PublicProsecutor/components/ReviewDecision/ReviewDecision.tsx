@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { RadioButton, Text } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   isPublicProsecutionOfficeUser,
@@ -61,7 +61,7 @@ export const ReviewDecision: FC<Props> = (props) => {
       indictmentReviewDecision: indictmentReviewDecision,
     })
     if (updateSuccess) {
-      router.push(constants.CASES_ROUTE)
+      router.push(getStandardUserDashboardRoute(user))
     }
   }
 
