@@ -20,6 +20,17 @@ import { formatCitizenshipDto, CitizenshipDto } from './types/citizenship.dto'
 import { formatIndividualDto } from './types/individual.dto'
 import { IndividualDto } from './types/individual.dto'
 
+/**
+ *
+ * Notes: The new V3 endpoint for the National Registry is quite a bit more locked down
+ * than the old V2 endpoint.
+ * As a rule of thumb, you can assume that all endpoints are locked down to the logged
+ * in user. The only exceptions apply to data about a user's custody children.
+ * There is also an endpoint forthcoming that provides minimal data about individuals
+ * which can be used to look up data such as names and addresses based on a national id.
+ * Support for the forthcoming endpoint is not yet implemented.
+ */
+
 @Injectable()
 export class NationalRegistryV3ApplicationsClientService {
   constructor(
