@@ -14,7 +14,7 @@ import { usePaperMail } from '../../../hooks/usePaperMail'
 import { mNotifications } from '../../../lib/messages'
 import { NotificationSettingsCard } from '../cards/NotificationSettingsCard'
 import { SettingsCard } from '../cards/SettingsCard/SettingsCard'
-import { useUpdateActorProfileMutation } from './UpdateActorProfile.mutation.generated'
+import { useUpdateActorProfileMutation } from './updateActorProfile.mutation.generated'
 import { safeAwait } from '@island.is/shared/utils'
 
 type Settings = {
