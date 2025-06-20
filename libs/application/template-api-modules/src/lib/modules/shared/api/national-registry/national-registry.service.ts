@@ -362,29 +362,88 @@ export class NationalRegistryService extends BaseTemplateApiService {
       return []
     }
 
-    const parentAFamily = await this.nationalRegistryV3Api.getFamily(parentUser)
+    const parentAFamily = (await this.nationalRegistryV3Api.getFamily(
+      parentUser,
+    )) || {
+      individuals: [],
+    }
     const parentAFamilyMembers = parentAFamily?.individuals ?? []
+
+    // console.log('--------------------------------')
+    // console.log('parentAFamilyMembers')
+    // console.dir(parentAFamilyMembers, { depth: null, colors: true })
+    // console.log('--------------------------------')
 
     const children: Array<ApplicantChildCustodyInformation | null> =
       await Promise.all(
         childrenNationalIds.map(async (childNationalId) => {
-          const child = await this.getIndividual(childNationalId, auth)
+          // console.log('--------------------------------')
+          // console.log('getting individual for childNationalId', childNationalId)
+          // console.log('--------------------------------')
+          // const child = await this.getIndividual(childNationalId, auth)
 
-          let domicileInIceland = true
-          const domicileCode = child?.address?.municipalityCode
-          if (!domicileCode || domicileCode.substring(0, 2) === '99') {
-            domicileInIceland = false
+          // console.log('--------------------------------')
+          // console.log(
+          //   'returned individual for childNationalId',
+          //   childNationalId,
+          // )
+          // console.dir(child, { depth: null, colors: true })
+          // console.log('--------------------------------')
+
+          const childResidenceParent =
+            await this.nationalRegistryV3Api.getChildResidenceParent(
+              auth,
+              childNationalId,
+            )
+
+          console.log('--------------------------------')
+          console.log('childResidenceParent')
+          console.dir(childResidenceParent, { depth: null, colors: true })
+          console.log('--------------------------------')
+
+          const childPerson = parentAFamilyMembers.find(
+            (person) => person.nationalId === childNationalId,
+          )
+
+          if (!childPerson) {
+            console.log('--------------------------------')
+            console.log('childPerson not found')
+            console.log('--------------------------------')
+            return null
           }
 
-          if (!child) {
-            return null
+          console.log('--------------------------------')
+          console.log('child')
+          console.dir(childPerson, { depth: null, colors: true })
+          console.log('--------------------------------')
+
+          // const childCitizenship =
+          //   await this.nationalRegistryV3Api.getCitizenship(
+          //     childPerson.nationalId,
+          //     auth,
+          //   )
+
+          // console.log('--------------------------------')
+          // console.log('childCitizenship')
+          // console.dir(childCitizenship, { depth: null, colors: true })
+          // console.log('--------------------------------')
+
+          let domicileInIceland = true
+          const domicileCode = childPerson?.residence?.municipalityNumber
+          if (!domicileCode || domicileCode.substring(0, 2) === '99') {
+            domicileInIceland = false
           }
 
           const parents =
             await this.nationalRegistryV3Api.getOtherCustodyParents(
               parentUser,
-              childNationalId,
+              childPerson.nationalId,
             )
+
+          console.log('--------------------------------')
+          console.log('other custody parents')
+          console.dir(parents, { depth: null, colors: true })
+          console.log('--------------------------------')
 
           const parentBNationalId = parents.find(
             (id) => id !== parentUser.nationalId,
@@ -394,24 +453,24 @@ export class NationalRegistryService extends BaseTemplateApiService {
             : undefined
 
           const livesWithApplicant = parentAFamilyMembers.some(
-            (person) => person.nationalId === child?.nationalId,
+            (person) => person.nationalId === childPerson.nationalId,
           )
           const livesWithParentB =
             parentB &&
             parentAFamilyMembers.some(
-              (person) => person.nationalId === parentB.nationalId,
+              (person) => person.nationalId === parentBNationalId,
             )
 
           return {
-            nationalId: child.nationalId,
-            givenName: child.givenName,
-            familyName: child.familyName,
-            fullName: child.fullName,
-            genderCode: child.genderCode,
+            nationalId: childPerson.nationalId,
+            givenName: childPerson.givenName,
+            familyName: childPerson.familyName,
+            fullName: childPerson.name,
+            genderCode: childPerson.genderCode,
             livesWithApplicant,
             livesWithBothParents: livesWithParentB ?? livesWithApplicant,
             otherParent: parentB,
-            citizenship: child.citizenship,
+            citizenship: null, // No longer accessible from v3
             domicileInIceland,
           }
         }),
