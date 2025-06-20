@@ -10,8 +10,9 @@ import { FC } from 'react'
 import {
   ConnectedComponent,
   SignatureCollectionCandidate,
-  SignatureCollectionCollectionType,
+  SignatureCollectionBaseInput,
   SignatureCollectionListBase,
+  SignatureCollectionCollectionType,
 } from '@island.is/api/schema'
 import { useLocalization } from '../../utils'
 import {
@@ -22,7 +23,7 @@ import { sortAlpha } from '@island.is/shared/utils'
 
 interface SignatureListsProps {
   slice: ConnectedComponent
-  collectionType: SignatureCollectionCollectionType
+  collectionType: SignatureCollectionBaseInput
 }
 
 export const SignatureLists: FC<

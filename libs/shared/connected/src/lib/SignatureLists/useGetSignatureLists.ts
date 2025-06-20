@@ -2,13 +2,13 @@ import gql from 'graphql-tag'
 import { useQuery } from '@apollo/client'
 import {
   SignatureCollection,
-  SignatureCollectionCollectionType,
+  SignatureCollectionBaseInput,
   SignatureCollectionListBase,
 } from '@island.is/api/schema'
 import { Query } from '@island.is/api/schema'
 
 export const GetLatestCollectionForType = gql`
-  query collectionLatestForType($input: SignatureCollectionCollectionType!) {
+  query collectionLatestForType($input: SignatureCollectionBaseInput!) {
     signatureCollectionLatestForType(input: $input) {
       id
       endTime
@@ -51,7 +51,7 @@ export const GetOpenLists = gql`
 `
 
 export const useGetLatestCollectionForType = (
-  collectionType: SignatureCollectionCollectionType,
+  collectionType: SignatureCollectionBaseInput,
 ) => {
   const { data, loading } = useQuery<Query>(GetLatestCollectionForType, {
     variables: {
