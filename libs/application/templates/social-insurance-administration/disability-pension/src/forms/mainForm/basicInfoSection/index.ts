@@ -6,6 +6,7 @@ import { PersonalInfoSubSection } from './personalInfoSubSection'
 import { PaymentInfoSubSection } from './paymentInfoSubSection'
 import { IncomePlanInstructionsSubSection } from './incomePlanInstructionsSubSection'
 import { IncomePlanSubSection } from './incomePlanSubSection'
+import { EmploymentParticipationSubSection } from './employmentParticipationSubSection'
 
 
 export const BasicInfoSection =
@@ -17,5 +18,6 @@ export const BasicInfoSection =
       PaymentInfoSubSection,
       IncomePlanInstructionsSubSection,
       IncomePlanSubSection,
+      EmploymentParticipationSubSection,
     ],
   })

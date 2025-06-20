@@ -282,4 +282,46 @@ export const disabilityPensionFormMessage: MessageDir = {
       description: 'No',
     },
   }),
+  employmentParticipation: defineMessages({
+    tabTitle: {
+      id: 'ol.application:employmentParticipation.tabTitle',
+      defaultMessage: 'Atvinnuþátttaka',
+      description: 'Employment participation',
+    },
+    title: {
+      id: 'ol.application:employmentParticipation.title',
+      defaultMessage: 'Atvinnuþátttaka',
+      description: 'Employment participation',
+    },
+    inPaidWorkTitle: {
+      id: 'ol.application:employmentParticipation.inPaidWorkTitle',
+      defaultMessage: 'Ertu í launuðu starfi?',
+      description: 'Are you in paid employment?',
+    },
+    yes: {
+      id: 'ol.application:employmentParticipation.yes',
+      defaultMessage: 'Já',
+      description: 'Yes',
+    },
+    no: {
+      id: 'ol.application:employmentParticipation.no',
+      defaultMessage: 'Nei',
+      description: 'No',
+    },
+    dontKnow: {
+      id: 'ol.application:employmentParticipation.dontKnow',
+      defaultMessage: 'Veit ekki',
+      description: "Don't know",
+    },
+    continuedWorkTitle: {
+      id: 'ol.application:employmentParticipation.continuedWorkTitle',
+      defaultMessage: 'Stefnir þú á áframhaldandi atvinnuþáttöku?',
+      description: 'Do you aim for continued employment participation - TODO?',
+    },
+    continuedWorkQuestion: {
+      id: 'ol.application:employmentParticipation.continuedWorkQuestion',
+      defaultMessage: 'Stefnir þú á áframhaldandi atvinnuþáttöku?',
+      description: 'Do you aim for continued employment participation - TODO?',
+    },
+  }),
 }
