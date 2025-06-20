@@ -28,7 +28,8 @@ const DraftProgressMeter = ({
 
   if (status !== ApplicationStatus.IN_PROGRESS) return null
 
-  const draftFinishedSteps = application.sections?.filter(s => s && s.isCompleted).length ?? 0
+  const draftFinishedSteps =
+    application.sections?.filter((s) => s && s.isCompleted).length ?? 0
   const draftTotalSteps = application.sections?.length ?? 0
 
   return (

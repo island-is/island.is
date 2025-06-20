@@ -15,7 +15,11 @@ interface Props {
   focused?: boolean
 }
 
-export const ApplicationCard = ({ application, focused = false, onDelete }: Props) => {
+export const ApplicationCard = ({
+  application,
+  focused = false,
+  onDelete,
+}: Props) => {
   const { status } = application
   const { slug } = useParams()
   const navigate = useNavigate()
@@ -53,7 +57,12 @@ export const ApplicationCard = ({ application, focused = false, onDelete }: Prop
             <Icon icon="time" size="medium" type="outline" color="blue400" />
           </Box>
           <Box display="flex" justifyContent="center">
-            <Text variant="small">{format(new Date(application.created || application.modified), formattedDate)}</Text>
+            <Text variant="small">
+              {format(
+                new Date(application.created || application.modified),
+                formattedDate,
+              )}
+            </Text>
           </Box>
         </Box>
         <Inline alignY="center" justifyContent="flexEnd" space={1}>

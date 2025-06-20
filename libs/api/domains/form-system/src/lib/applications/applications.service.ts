@@ -32,7 +32,7 @@ export class ApplicationsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private applicationsApi: ApplicationsApi,
-  ) { }
+  ) {}
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {

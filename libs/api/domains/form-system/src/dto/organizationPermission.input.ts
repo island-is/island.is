@@ -3,7 +3,7 @@ import { Field, InputType } from '@nestjs/graphql'
 @InputType('FormSystemOrganizationPermissionDtoInput')
 export class OrganizationPermissionDtoInput {
   @Field(() => String, { nullable: true })
-  organizationId?: string
+  organizationNationalId?: string
 
   @Field(() => String, { nullable: true })
   permission?: string

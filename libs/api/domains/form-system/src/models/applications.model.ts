@@ -7,7 +7,6 @@ import { FormCertificationTypeDto } from './certification.model'
 import { FormApplicantTypeDto } from './applicant.model'
 import { Option } from './option.model'
 
-
 @ObjectType('FormSystemApplicationEventDto')
 export class ApplicationEventDto {
   @Field(() => String, { nullable: true })

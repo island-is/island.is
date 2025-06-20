@@ -32,7 +32,9 @@ export const Banknumber = ({
     useRef<HTMLInputElement | HTMLTextAreaElement>(),
     useRef<HTMLInputElement | HTMLTextAreaElement>(),
   ]
-  const [value, setValue] = useState<string>(getValue(item, 'bankAccount') ?? '')
+  const [value, setValue] = useState<string>(
+    getValue(item, 'bankAccount') ?? '',
+  )
   const isInitialMount = useRef(true)
 
   const { formatMessage } = useIntl()

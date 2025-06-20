@@ -1,9 +1,5 @@
 import { useContext } from 'react'
-import {
-  Option,
-  Tabs,
-  Box
-} from '@island.is/island-ui/core'
+import { Option, Tabs, Box } from '@island.is/island-ui/core'
 import { FormsContext } from '../../../context/FormsContext'
 import { Outlet } from 'react-router-dom'
 import { FormsLocationState } from '../../../lib/utils/interfaces'
@@ -31,29 +27,25 @@ export const FormsHeader = () => {
   const { location, setLocation, forms } = useContext(FormsContext)
 
   const onTabChange = (tabId: string) => {
-    const isValidLocation = (
-      value: string,
-    ): value is FormsLocationState => {
-      return ["forms", "applications", "admin"].includes(value);
+    const isValidLocation = (value: string): value is FormsLocationState => {
+      return ['forms', 'applications', 'admin'].includes(value)
     }
 
     if (isValidLocation(tabId)) {
-      setLocation(tabId as FormsLocationState);
+      setLocation(tabId as FormsLocationState)
     } else {
-      console.warn(`Invalid location: ${tabId}`);
+      console.warn(`Invalid location: ${tabId}`)
     }
   }
 
   return (
     <Tabs
       label="tabs"
-      tabs={
-        DASHBOARD_TABS.map((tab) => ({
-          id: tab.id,
-          label: tab.label,
-          content: <Outlet />
-        }))
-      }
+      tabs={DASHBOARD_TABS.map((tab) => ({
+        id: tab.id,
+        label: tab.label,
+        content: <Outlet />,
+      }))}
       onChange={onTabChange}
       onlyRenderSelectedTab
       variant="default"

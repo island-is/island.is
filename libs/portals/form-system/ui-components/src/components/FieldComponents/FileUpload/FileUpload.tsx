@@ -23,10 +23,7 @@ interface Props {
 }
 
 // This component is still very much a WIP
-export const FileUpload = ({
-  item,
-  hasError,
-}: Props) => {
+export const FileUpload = ({ item, hasError }: Props) => {
   const [files, setFiles] = useState<UploadFile[]>([])
   const [error, setError] = useState<string | undefined>(
     hasError ? 'error' : undefined,
@@ -41,7 +38,8 @@ export const FileUpload = ({
         (item?.fieldSettings?.maxFiles ?? 1)
       ) {
         setError(
-          `${formatMessage(m.maxFileError)} ${item.fieldSettings?.maxFiles ?? 1
+          `${formatMessage(m.maxFileError)} ${
+            item.fieldSettings?.maxFiles ?? 1
           }`,
         )
         return
@@ -65,7 +63,6 @@ export const FileUpload = ({
     },
     [files, item, formatMessage],
   )
-
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const updateFile = useCallback((file: UploadFile, newId?: string) => {
@@ -155,8 +152,7 @@ export const OldFileUpload = ({ item, hasError, lang = 'is' }: Props) => {
       onRemove={onRemove}
       errorMessage={error}
       accept={
-        types?.map((t: string) => fileTypes[t as keyof typeof fileTypes]) ??
-        []
+        types?.map((t: string) => fileTypes[t as keyof typeof fileTypes]) ?? []
       }
       showFileSize
       maxSize={item?.fieldSettings?.fileMaxSize ?? 1}

@@ -536,7 +536,7 @@ export const m = defineMessages({
     id: 'form-system:basic-error-message',
     defaultMessage: 'Villa kom upp',
     description: 'Basic error message',
-  }
+  },
 })
 
 export const webMessages = defineMessages({
