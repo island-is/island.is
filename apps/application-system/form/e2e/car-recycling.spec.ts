@@ -1,12 +1,6 @@
 import { expect, test as base, Page } from '@playwright/test'
-import {
-  disableI18n,
-  disablePreviousApplications,
-} from '@island.is/testing/e2e'
-import { session } from '@island.is/testing/e2e'
-import { helpers } from '@island.is/testing/e2e'
+import { disableI18n, disablePreviousApplications, session, proceed, isApplication, label } from '@island.is/testing/e2e'
 import { carRecyclingMessages } from '@island.is/application/templates/car-recycling'
-import { isApplication, label } from '@island.is/testing/e2e'
 import { coreMessages } from '@island.is/application/core'
 
 const homeUrl = '/umsoknir/skilavottord'
@@ -37,7 +31,7 @@ applicationTest.describe('Car recycling', () => {
     'Should be able to create application',
     async ({ applicationPage }) => {
       const page = applicationPage
-      const { proceed } = helpers(page)
+      
 
       await applicationTest.step('Agree to data providers', async () => {
         await expect(
@@ -83,7 +77,7 @@ applicationTest.describe('Car recycling', () => {
         await mileage.selectText()
         await mileage.type('12345')
 
-        await proceed()
+        await proceed(page)
       })
 
       await applicationTest.step('Submit application', async () => {

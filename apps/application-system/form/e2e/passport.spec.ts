@@ -1,10 +1,5 @@
 import { expect, test as base, Page } from '@playwright/test'
-import { isApplication } from '@island.is/testing/e2e'
-import {
-  disableI18n,
-  disablePreviousApplications,
-} from '@island.is/testing/e2e'
-import { session } from '@island.is/testing/e2e'
+import { isApplication, disableI18n, disablePreviousApplications, session, proceed } from '@island.is/testing/e2e'
 
 const homeUrl = '/umsoknir/vegabref'
 
@@ -37,7 +32,7 @@ applicationTest.describe('Passport', () => {
       page.goto(`${homeUrl}?delegationChecked=true`)
 
       await page.getByTestId('agree-to-data-providers').check()
-      await page.getByTestId('proceed').click()
+      await proceed(page)
       await expect(page.getByText('Gervimaður Færeyjar')).toBeVisible()
     },
   )

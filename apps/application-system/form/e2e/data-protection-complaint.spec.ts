@@ -1,7 +1,5 @@
 import { expect, test as base, Page } from '@playwright/test'
-import { disableI18n } from '@island.is/testing/e2e'
-import { session } from '@island.is/testing/e2e'
-import { createApplication, isApplication, label } from '@island.is/testing/e2e'
+import { disableI18n, session, createApplication, isApplication, label, proceed } from '@island.is/testing/e2e'
 import {
   complaint,
   delimitation,
@@ -57,7 +55,7 @@ applicationTest.describe('Data protection complaint application', () => {
         'Proceed with the application to reach the draft state',
         async () => {
           await page.getByTestId(agreeToDataProvidersTestId).check()
-          await page.getByTestId(proceedTestId).click()
+          await proceed(page)
           await expect(page.getByText(gervimadurAfricaText)).toBeVisible()
         },
       )
@@ -155,7 +153,7 @@ applicationTest.describe('Data protection complaint application', () => {
         'Agree to data providers and proceed',
         async () => {
           await page.getByTestId(agreeToDataProvidersTestId).check()
-          await page.getByTestId(proceedTestId).click()
+          await proceed(page)
         },
       )
 
@@ -164,34 +162,34 @@ applicationTest.describe('Data protection complaint application', () => {
         await expect(page.getByText('Gervimaður Afríka')).toBeVisible()
         await expect(page.getByText(firstCheckboxText)).toBeVisible()
         await page.getByLabel(noOptionLabel).check()
-        await page.getByTestId(proceedTestId).click()
+        await proceed(page)
 
         await expect(page.getByText(secondCheckBoxText)).toBeVisible()
         await page.getByLabel(noOptionLabel).check()
-        await page.getByTestId(proceedTestId).click()
+        await proceed(page)
 
         await expect(page.getByText(thirdCheckBoxText)).toBeVisible()
         await page.getByLabel(noOptionLabel).check()
-        await page.getByTestId(proceedTestId).click()
+        await proceed(page)
 
         await expect(page.getByText(fourthCheckBoxText)).toBeVisible()
         await page.getByLabel(noOptionLabel).check()
-        await page.getByTestId(proceedTestId).click()
+        await proceed(page)
 
         await expect(page.getByText(infoAboutCaseText)).toBeVisible()
-        await page.getByTestId(proceedTestId).click()
+        await proceed(page)
       })
 
       await applicationTest.step('Select representation option', async () => {
         await expect(page.getByText(forWhomText)).toBeVisible()
         await page.getByLabel(inPowerOfSomeoneElse).check()
-        await page.getByTestId(proceedTestId).click()
+        await proceed(page)
       })
 
       await applicationTest.step('Fill in contact information', async () => {
         await page.getByLabel(emailLabel).last().fill('test@test.test')
         await page.getByLabel(phoneNumberLabel).last().fill('777-3019')
-        await page.getByTestId(proceedTestId).click()
+        await proceed(page)
       })
 
       await applicationTest.step(
@@ -210,7 +208,7 @@ applicationTest.describe('Data protection complaint application', () => {
           await chooser.setFiles('someFileThatDoesNotExist.txt')
           await page.getByLabel(fullNameLabel).last().fill('test@test.test')
           await page.getByLabel(nationalIdLabel).last().fill('0101302719')
-          await page.getByTestId(proceedTestId).click()
+          await proceed(page)
         },
       )
 

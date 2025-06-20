@@ -1,10 +1,5 @@
 import { expect, test as base, Page } from '@playwright/test'
-import {
-  disableI18n,
-  disablePreviousApplications,
-  isApplication,
-} from '@island.is/testing/e2e'
-import { session } from '@island.is/testing/e2e'
+import { disableI18n, disablePreviousApplications, isApplication, session, proceed } from '@island.is/testing/e2e'
 
 const homeUrl = '/umsoknir/akstursmat'
 
@@ -39,14 +34,14 @@ applicationTest.describe('Driving Asessment Approval', () => {
 
       // Data Providers
       await page.getByTestId('agree-to-data-providers').click()
-      await page.getByTestId('proceed').click()
+      await proceed(page)
 
       // Student info
       await page.getByLabel('Kennitala nemanda').click()
       await page.getByLabel('Kennitala nemanda').fill('0101307789')
       await page.getByLabel('Netfang').fill('email@domain.test')
       await expect(page.getByText('Gervimaður útlönd')).toBeVisible()
-      await page.getByTestId('proceed').click()
+      await proceed(page)
 
       // Confirmation
       await page

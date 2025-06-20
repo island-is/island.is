@@ -1,5 +1,5 @@
 import { expect, test as base, Page } from '@playwright/test'
-import { isApplication, session, sleep } from '@island.is/testing/e2e'
+import { isApplication, session, sleep, proceed } from '@island.is/testing/e2e'
 
 const homeUrl = '/umsoknir/hjonavigsla'
 
@@ -43,25 +43,25 @@ applicationTest.describe('Marriage Conditions', () => {
         await maritalStatusDropdown
           .locator('[id="react-select-fakeData\\.maritalStatus-option-0"]')
           .click()
-        await page.getByTestId('proceed').click()
+        await proceed(page)
       }
 
       // Introduction
-      await page.getByTestId('proceed').click()
+      await proceed(page)
 
       // Data providers
       await page.getByTestId('agree-to-data-providers').check()
-      await page.getByTestId('proceed').click()
+      await proceed(page)
 
       // Spouse information
       await page.getByLabel('Kennitala *').fill('010130-3019')
       await page.getByLabel('Símanúmer').last().fill('777-3019')
       await page.getByLabel('Netfang').last().fill('test@test.test')
       await sleep(500)
-      await page.getByTestId('proceed').click()
+      await proceed(page)
 
       // Spose overview
-      await page.getByTestId('proceed').click()
+      await proceed(page)
 
       // Planned marriage
       // Date
@@ -88,7 +88,7 @@ applicationTest.describe('Marriage Conditions', () => {
       const officeDropdown = page.getByTestId('select-ceremony.place.office')
       await officeDropdown.click()
       await officeDropdown.getByText('Sýslumaðurinn').last().click()
-      await page.getByTestId('proceed').click()
+      await proceed(page)
 
       // Witnesses
       // Witness 1
@@ -102,13 +102,13 @@ applicationTest.describe('Marriage Conditions', () => {
       await page.getByLabel('Símanúmer').last().fill('777-2399')
       await page.getByLabel('Netfang').last().fill('test@test.test')
       await sleep(500)
-      await page.getByTestId('proceed').click()
+      await proceed(page)
 
       // Final overview
       await expect(
         page.getByRole('heading', { name: 'Yfirlit yfir veittar upplýsingar' }),
       ).toBeVisible()
-      await page.getByTestId('proceed').click()
+      await proceed(page)
 
       // Payment overview
       await page.getByRole('button', { name: 'Áfram í greiðslu' }).click()

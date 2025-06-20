@@ -1,10 +1,6 @@
 import { expect, test as base, Page } from '@playwright/test'
 import { createMockPdf, deleteMockPdf, sleep } from '@island.is/testing/e2e'
-import {
-  disableI18n,
-  disablePreviousApplications,
-} from '@island.is/testing/e2e'
-import { isApplication, session } from '@island.is/testing/e2e'
+import { disableI18n, disablePreviousApplications, isApplication, session, proceed } from '@island.is/testing/e2e'
 
 const homeUrl = '/umsoknir/rekstrarleyfi'
 
@@ -45,38 +41,38 @@ applicationTest.describe('Operating Licence', () => {
         await page.getByLabel('Já').check()
         await page.getByLabel('Skuldlaus').check()
         await page.getByLabel('Ekki á sakaskrá').check()
-        await page.getByTestId('proceed').click()
+        await proceed(page)
       }
 
       // Introduction
-      await page.getByTestId('proceed').click()
+      await proceed(page)
 
       // Data providers
       await page.getByTestId('agree-to-data-providers').check()
-      await page.getByTestId('proceed').click()
+      await proceed(page)
 
       // Operation type
       await page.getByLabel('Gististaður').check()
       await page.getByLabel('Flokkur II').first().check()
       await page.getByLabel('Stærra gistiheimili').check()
-      await page.getByTestId('proceed').click()
+      await proceed(page)
 
       // Accommodation info
       await page.getByLabel('Heiti veitinga-/ gististaðar').fill('Cool Place')
       await page.getByLabel('Virðisaukaskattsnúmer').fill('123456 ')
-      await page.getByTestId('proceed').click()
+      await proceed(page)
 
       // Asset info
       await page.getByLabel('Fasteignanúmer').fill('2128077')
       await page.getByLabel('Heimilisfang').click()
       await page.getByText('Rýmisnúmer úr fasteignaskrá').click()
-      await page.getByTestId('proceed').click()
+      await proceed(page)
 
       // Additional checks
       await page.getByLabel('Ég óska eftir leyfi til bráðabirgða').check()
       await page.getByLabel('Ég lýsi því yfir að skuldastaða').check()
       await page.getByLabel('Annað').fill('This is something else... ÞÆÖ 🤷')
-      await page.getByTestId('proceed').click()
+      await proceed(page)
 
       // Extra documents
       await expect(
@@ -97,10 +93,10 @@ applicationTest.describe('Operating Licence', () => {
       deleteMockPdf()
       await sleep(1000)
       await expect(page.getByText('Ógilt gildi.')).not.toBeVisible()
-      await page.getByTestId('proceed').click()
+      await proceed(page)
 
       // Overview
-      await page.getByTestId('proceed').click()
+      await proceed(page)
 
       // Payment overview
       await page.getByRole('button', { name: 'Greiða' }).click()

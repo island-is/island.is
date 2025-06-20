@@ -1,12 +1,6 @@
 import { test as base, Page } from '@playwright/test'
 import { env } from '@island.is/testing/e2e'
-import {
-  disableI18n,
-  disablePreviousApplications,
-  disableObjectKey,
-  isApplication,
-} from '@island.is/testing/e2e'
-import { session } from '@island.is/testing/e2e'
+import { disableI18n, disablePreviousApplications, disableObjectKey, isApplication, session, proceed } from '@island.is/testing/e2e'
 
 const homeUrl = '/umsoknir/okuskirteini'
 
@@ -49,7 +43,7 @@ applicationTest.describe('Driving Instructor Registrations', () => {
         .locator('label')
         .first()
         .click()
-      await page.getByTestId('proceed').click()
+      await proceed(page)
     }
   })
 
@@ -57,11 +51,11 @@ applicationTest.describe('Driving Instructor Registrations', () => {
     const page = applicationPage
     // Data providers
     await page.getByTestId('agree-to-data-providers').click()
-    await page.getByTestId('proceed').click()
+    await proceed(page)
 
     // Driving licence type selection
     await page.getByLabel('Almenn ökuréttindi').check()
-    await page.getByTestId('proceed').click()
+    await proceed(page)
 
     // Requirements overview
     await page.getByRole('button', { name: 'Halda áfram' }).click()
@@ -71,16 +65,16 @@ applicationTest.describe('Driving Instructor Registrations', () => {
     await page.getByPlaceholder('Símanúmer').fill('7654321')
     await page.getByLabel('Ökukennari').click()
     await page.getByLabel('Ökukennari').press('Tab')
-    await page.getByTestId('proceed').click()
+    await proceed(page)
 
     // Driving licence in other country
     await page.getByLabel('Nei').check()
-    await page.getByTestId('proceed').click()
+    await proceed(page)
 
     // Delivery address
     await page.getByLabel('Afhending').click()
     await page.getByLabel('Afhending').press('Tab')
-    await page.getByTestId('proceed').click()
+    await proceed(page)
 
     // Health declaration
     await page.getByText('Heilbrigðisyfirlýsing').click()
@@ -88,7 +82,7 @@ applicationTest.describe('Driving Instructor Registrations', () => {
       await page.locator('body').press('ArrowRight')
       await page.locator('body').press('Tab')
     }
-    await page.getByTestId('proceed').click()
+    await proceed(page)
 
     // Overview
     await page.getByRole('button', { name: 'Halda áfram' }).click()

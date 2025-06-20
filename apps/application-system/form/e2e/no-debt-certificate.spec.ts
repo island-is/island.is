@@ -1,8 +1,5 @@
 import { expect, test as base, Page } from '@playwright/test'
-import { isApplication, disableI18n } from '@island.is/testing/e2e'
-import { session } from '@island.is/testing/e2e'
-import { createApplication } from '@island.is/testing/e2e'
-import { label } from '@island.is/testing/e2e'
+import { isApplication, disableI18n, session, createApplication, label, proceed } from '@island.is/testing/e2e'
 import { m as messages } from '@island.is/application/templates/no-debt-certificate'
 
 const homeUrl = '/umsoknir/skuldleysisvottord'
@@ -51,7 +48,7 @@ applicationTest.describe('Data protection complaint application', () => {
         'Proceed with the application and reach the submitted state',
         async () => {
           await page.getByTestId('agree-to-data-providers').check()
-          await page.getByTestId('proceed').click()
+          await proceed(page)
           await expect(page.getByText('Gervimaður Afríka')).toBeVisible()
         },
       )

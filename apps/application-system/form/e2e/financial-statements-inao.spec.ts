@@ -1,8 +1,5 @@
 import { BrowserContext, expect, test } from '@playwright/test'
-import { helpers } from '@island.is/testing/e2e'
-import { session } from '@island.is/testing/e2e'
-import { urls } from '@island.is/testing/e2e'
-import { createMockPdf, deleteMockPdf } from '@island.is/testing/e2e'
+import { proceed, session, urls, createMockPdf, deleteMockPdf } from '@island.is/testing/e2e'
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
@@ -23,7 +20,7 @@ test.describe('Financial Statements INAO', () => {
 
   test.skip('should be able to create application', async () => {
     const page = await context.newPage()
-    const { findByTestId, proceed } = helpers(page)
+    const findByTestId = (testId: string) => page.locator(`[data-testid="${testId}"]`)
 
     await page.goto('/umsoknir/skilarsreikninga')
 
@@ -35,10 +32,10 @@ test.describe('Financial Statements INAO', () => {
 
     // Information gathering
     await page.locator("[data-testid='agree-to-data-providers']").click()
-    await proceed()
+    await proceed(page)
 
     // Information
-    await proceed()
+    await proceed(page)
 
     // Elections
     const election = findByTestId('select-election.selectElection')
@@ -48,7 +45,7 @@ test.describe('Financial Statements INAO', () => {
     await page.keyboard.press('Enter')
 
     await findByTestId('radio-incomeLimit-moreThan').click()
-    await proceed()
+    await proceed(page)
 
     // Key figures - Revenues and expenses
     const contributionsByLegalEntities = page.locator(
@@ -105,7 +102,7 @@ test.describe('Financial Statements INAO', () => {
       'input[name="operatingCost\\.total"]',
     )
     await expect(operatingCostTotal).toHaveValue('23 kr.')
-    await proceed()
+    await proceed(page)
 
     // Key figures - Financial income and financial expenses
     const capitalNumbersCapitalIncome = page.locator(
@@ -122,7 +119,7 @@ test.describe('Financial Statements INAO', () => {
       'input[name="capitalNumbers\\.total"]',
     )
     await expect(capitalNumbersTotal).toHaveValue('1.000 kr.')
-    await proceed()
+    await proceed(page)
 
     // Key figures - Assets, liabilities and equity
     const assetFixedAssetsTotal = page.locator(
@@ -154,7 +151,7 @@ test.describe('Financial Statements INAO', () => {
       'input[name="equityAndLiabilities.total"]',
     )
     await expect(equityAndLiabilitiesTotal).toHaveValue('369 kr.')
-    await proceed()
+    await proceed(page)
 
     // Upload financial report
     createMockPdf()
@@ -165,7 +162,7 @@ test.describe('Financial Statements INAO', () => {
     await filechooser.setFiles('./mockPdf.pdf')
     await page.waitForTimeout(1000)
     deleteMockPdf()
-    await proceed()
+    await proceed(page)
 
     // Statement overview
     const applicationApprove = page.locator('input[name="applicationApprove"]')

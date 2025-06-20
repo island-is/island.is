@@ -1,6 +1,6 @@
 import { expect, test as base, Page } from '@playwright/test'
 
-import { isApplication, session } from '@island.is/testing/e2e'
+import { isApplication, session, proceed } from '@island.is/testing/e2e'
 
 const homeUrl = '/umsoknir/okutimar'
 
@@ -31,7 +31,7 @@ applicationTest.describe('Driving Instructor Registrations', () => {
       const page = applicationPage
       // Data providers
       await page.getByTestId('agree-to-data-providers').click()
-      await page.getByTestId('proceed').click()
+      await proceed(page)
 
       // Student selection
       await page.getByRole('cell', { name: '010130-5069' }).dblclick()

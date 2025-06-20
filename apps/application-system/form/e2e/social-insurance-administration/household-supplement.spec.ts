@@ -15,9 +15,9 @@ import {
   fillApplicantInfo,
   fillPaymentInfo,
   selectPeriod,
-  proceed,
   submitApplication,
   writeComment,
+  proceed,
 } from './shared'
 
 const homeUrl = '/umsoknir/heimilisuppbot'
@@ -104,7 +104,7 @@ applicationTest.describe('Household Supplement', () => {
             name: label(socialInsuranceAdministrationMessage.shared.no),
           })
           .click()
-        await proceed(page)
+        await page.getByTestId('proceed').click()
       })
 
       await applicationTest.step('Select period', () => selectPeriod(page))

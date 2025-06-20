@@ -7,7 +7,7 @@ import {
   disablePreviousApplications,
 } from '@island.is/testing/e2e'
 import { label } from '@island.is/testing/e2e'
-import { helpers } from '@island.is/testing/e2e'
+
 import { session } from '@island.is/testing/e2e'
 import { setupXroadMocks } from './setup-xroad.mocks'
 const homeUrl = '/umsoknir/nyr-grunnskoli'
@@ -25,7 +25,9 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     await disablePreviousApplications(applicationPage)
     await disableI18n(applicationPage)
     await applicationPage.goto(homeUrl)
-    await expect(applicationPage).toBeApplication('nyr-grunnskoli')
+    await expect(
+      await isApplication(applicationPage, 'nyr-grunnskoli'),
+    ).toBeTruthy()
     await setupXroadMocks()
     await use(applicationPage)
 
@@ -39,7 +41,6 @@ applicationTest.describe('New primary school', () => {
     'Should complete New primary school application successfully',
     async ({ applicationPage }) => {
       const page = applicationPage
-      const { proceed } = helpers(page)
 
       await applicationTest.step('Agree to data providers', async () => {
         await expect(

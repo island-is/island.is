@@ -1,12 +1,7 @@
 import { BrowserContext, expect, test } from '@playwright/test'
 import { urls } from '@island.is/testing/e2e'
 import { session } from '@island.is/testing/e2e'
-import {
-  isApplication,
-  disableI18n,
-  disablePreviousApplications,
-  disableDelegations,
-} from '@island.is/testing/e2e'
+import { isApplication, disableI18n, disablePreviousApplications, disableDelegations, proceed } from '@island.is/testing/e2e'
 import { regex as uuidRegex } from 'uuidv4'
 
 test.use({ baseURL: urls.islandisBaseUrl })
@@ -37,17 +32,17 @@ test.describe('P-sign', () => {
     await expect(page.locator('role=heading[name=Gagnaöflun]')).toBeVisible()
     expect(new URL(page.url()).pathname.split('/').pop()).toMatch(uuidRegex.v4)
     await page.locator('input[name="approveExternalData"]').click()
-    await page.locator('button[type="submit"]').click()
+    await proceed(page)
     await expect(page.locator('[data-testid="alertMessage"]')).not.toBeVisible()
     await expect(page.locator('text=Símanúmer')).toBeVisible()
     const phoneLocator = page.locator('input[name="phone"]')
     await phoneLocator.selectText()
     await page.keyboard.press('Backspace')
-    await phoneLocator.type('7654321')
+    await phoneLocator.fill('7654321')
     const emailLocator = page.locator('input[name="email"]')
     await emailLocator.selectText()
     await page.keyboard.press('Backspace')
-    await emailLocator.type('secret@island.is')
-    await page.locator('button[type="submit"]').click()
+    await emailLocator.fill('secret@island.is')
+    await proceed(page)
   })
 })

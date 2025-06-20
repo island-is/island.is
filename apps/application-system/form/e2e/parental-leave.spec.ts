@@ -5,11 +5,9 @@ import {
   getEnvironmentBaseUrl,
   TestEnvironment,
   urls,
+  proceed,
 } from '@island.is/testing/e2e'
-import {
-  disableI18n,
-  disablePreviousApplications,
-} from '@island.is/testing/e2e'
+import { disableI18n, disablePreviousApplications, isApplication } from '@island.is/testing/e2e'
 import {
   employerFormMessages,
   parentalLeaveFormMessages,
@@ -17,7 +15,6 @@ import {
 import { coreMessages } from '@island.is/application/core/messages'
 import { label } from '@island.is/testing/e2e'
 import { EmailAccount, makeEmailAccount } from '@island.is/testing/e2e'
-import { helpers } from '@island.is/testing/e2e'
 import { session } from '@island.is/testing/e2e'
 import { setupXroadMocks } from './setup-xroad.mocks'
 import { createMockPdf, deleteMockPdf } from '@island.is/testing/e2e'
@@ -28,7 +25,7 @@ const getEmployerEmailAndApprove = async (
   employer: EmailAccount,
   page: Page,
 ) => {
-  const { proceed } = helpers(page)
+  
 
   const email = await employer.getLastEmail(6)
 
@@ -53,7 +50,7 @@ const getEmployerEmailAndApprove = async (
     .getByRole('textbox')
     // eslint-disable-next-line local-rules/disallow-kennitalas
     .type('5402696029')
-  await proceed()
+  await proceed(page)
 
   await page
     .getByRole('button', {
@@ -106,7 +103,7 @@ test.describe('Parental leave', () => {
     const apiUrl = applicationSystemApi[env]
 
     await page.goto('/umsoknir/faedingarorlof', { waitUntil: 'networkidle' })
-    const { proceed } = helpers(page)
+    
 
     // Mock data
     await expect(
@@ -119,7 +116,7 @@ test.describe('Parental leave', () => {
         name: label(parentalLeaveFormMessages.shared.noOptionLabel),
       })
       .click()
-    await proceed()
+    await proceed(page)
 
     applicationID = page.url().split('/').slice(-1)[0]
 
@@ -130,7 +127,7 @@ test.describe('Parental leave', () => {
       }),
     ).toBeVisible()
     await page.getByTestId('parental-leave').click()
-    await proceed()
+    await proceed(page)
 
     // External Data
     await expect(
@@ -139,7 +136,7 @@ test.describe('Parental leave', () => {
       }),
     ).toBeVisible()
     await page.getByTestId('agree-to-data-providers').click()
-    await proceed()
+    await proceed(page)
 
     // Child information
     await expect(
@@ -181,7 +178,7 @@ test.describe('Parental leave', () => {
         name: label(parentalLeaveFormMessages.applicant.icelandic),
       })
       .click()
-    await proceed()
+    await proceed(page)
 
     // Child's parents
     await expect(
@@ -196,7 +193,7 @@ test.describe('Parental leave', () => {
       .getByRole('radio')
       .first()
       .click()
-    await proceed()
+    await proceed(page)
 
     // Payment information
     await expect(
@@ -239,7 +236,7 @@ test.describe('Parental leave', () => {
     await page
       .locator('#react-select-payments\\.privatePensionFundPercentage-option-0')
       .click()
-    await proceed()
+    await proceed(page)
 
     // Personal Allowance
     await expect(
@@ -249,7 +246,7 @@ test.describe('Parental leave', () => {
     ).toBeVisible()
     await page.getByTestId('use-personal-finance').click()
     await page.getByTestId('use-as-much-as-possible').click()
-    await proceed()
+    await proceed(page)
 
     // Spouse's personal allowance
     await expect(
@@ -258,7 +255,7 @@ test.describe('Parental leave', () => {
       }),
     ).toBeVisible()
     await page.getByTestId('dont-use-personal-finance').click()
-    await proceed()
+    await proceed(page)
 
     // Are you self employed?
     await expect(
@@ -283,7 +280,7 @@ test.describe('Parental leave', () => {
       })
       .nth(1)
       .click()
-    await proceed()
+    await proceed(page)
 
     // Register an employer
     await expect(
@@ -313,7 +310,7 @@ test.describe('Parental leave', () => {
         name: label(parentalLeaveFormMessages.employer.registerEmployer),
       })
       .click()
-    await proceed()
+    await proceed(page)
 
     // Additional documentation for application
     await expect(
@@ -334,7 +331,7 @@ test.describe('Parental leave', () => {
     await filechooser.setFiles('./mockPdf.pdf')
     await page.waitForTimeout(1000)
     deleteMockPdf()
-    await proceed()
+    await proceed(page)
 
     // These are your rights
     await expect(
@@ -342,7 +339,7 @@ test.describe('Parental leave', () => {
         name: label(parentalLeaveFormMessages.shared.theseAreYourRights),
       }),
     ).toBeVisible()
-    await proceed()
+    await proceed(page)
 
     // Transferal of rights
     await expect(
@@ -358,7 +355,7 @@ test.describe('Parental leave', () => {
         name: label(parentalLeaveFormMessages.shared.transferRightsNone),
       })
       .click()
-    await proceed()
+    await proceed(page)
 
     // Start of parental leave
     await expect(
@@ -376,7 +373,7 @@ test.describe('Parental leave', () => {
         ),
       })
       .click()
-    await proceed()
+    await proceed(page)
 
     // Leave duration
     await expect(
@@ -389,7 +386,7 @@ test.describe('Parental leave', () => {
         name: label(parentalLeaveFormMessages.duration.monthsOption),
       })
       .click()
-    await proceed()
+    await proceed(page)
 
     await expect(
       page.getByRole('heading', {
@@ -402,7 +399,7 @@ test.describe('Parental leave', () => {
         exact: true,
       })
       .click()
-    await proceed()
+    await proceed(page)
 
     // What percent off your employment ratio will you take for the leave?
     await expect(
@@ -414,7 +411,7 @@ test.describe('Parental leave', () => {
     await selectPercentageUse.focus()
     await page.keyboard.type('50%')
     await page.keyboard.press('Enter')
-    await proceed()
+    await proceed(page)
 
     // Here is your current leave plan
     await expect(
@@ -422,7 +419,7 @@ test.describe('Parental leave', () => {
         name: label(parentalLeaveFormMessages.leavePlan.addAnother),
       }),
     ).toBeVisible()
-    await proceed()
+    await proceed(page)
 
     // Submit application
     await page
@@ -454,7 +451,7 @@ test.describe('Parental leave', () => {
     const apiUrl = applicationSystemApi[env]
 
     await page.goto('/umsoknir/faedingarorlof', { waitUntil: 'networkidle' })
-    const { proceed } = helpers(page)
+    
 
     // Mock data
     await expect(
@@ -488,7 +485,7 @@ test.describe('Parental leave', () => {
     })
     await mockDataApplicationID.selectText()
     await mockDataApplicationID.type(applicationID)
-    await proceed()
+    await proceed(page)
 
     // Type of application
     await expect(
@@ -497,7 +494,7 @@ test.describe('Parental leave', () => {
       }),
     ).toBeVisible()
     await page.getByTestId('parental-leave').click()
-    await proceed()
+    await proceed(page)
 
     // External Data
     await expect(
@@ -506,7 +503,7 @@ test.describe('Parental leave', () => {
       }),
     ).toBeVisible()
     await page.getByTestId('agree-to-data-providers').click()
-    await proceed()
+    await proceed(page)
 
     // Child information
     await expect(
@@ -543,7 +540,7 @@ test.describe('Parental leave', () => {
         name: label(parentalLeaveFormMessages.applicant.icelandic),
       })
       .click()
-    await proceed()
+    await proceed(page)
 
     // Payment information
     await expect(
@@ -586,7 +583,7 @@ test.describe('Parental leave', () => {
     await page
       .locator('#react-select-payments\\.privatePensionFundPercentage-option-0')
       .click()
-    await proceed()
+    await proceed(page)
 
     // Personal Allowance
     await expect(
@@ -596,7 +593,7 @@ test.describe('Parental leave', () => {
     ).toBeVisible()
     await page.getByTestId('use-personal-finance').click()
     await page.getByTestId('use-as-much-as-possible').click()
-    await proceed()
+    await proceed(page)
 
     // Are you self employed?
     await expect(
@@ -621,7 +618,7 @@ test.describe('Parental leave', () => {
       })
       .nth(1)
       .click()
-    await proceed()
+    await proceed(page)
 
     // Register an employer
     await expect(
@@ -651,7 +648,7 @@ test.describe('Parental leave', () => {
         name: label(parentalLeaveFormMessages.employer.registerEmployer),
       })
       .click()
-    await proceed()
+    await proceed(page)
 
     // Additional documentation for application
     await expect(
@@ -659,7 +656,7 @@ test.describe('Parental leave', () => {
         name: label(parentalLeaveFormMessages.attachmentScreen.title),
       }),
     ).toBeVisible()
-    await proceed()
+    await proceed(page)
 
     // Start of parental leave
     await expect(
@@ -677,7 +674,7 @@ test.describe('Parental leave', () => {
         ),
       })
       .click()
-    await proceed()
+    await proceed(page)
 
     // Leave duration
     await expect(
@@ -690,7 +687,7 @@ test.describe('Parental leave', () => {
         name: label(parentalLeaveFormMessages.duration.monthsOption),
       })
       .click()
-    await proceed()
+    await proceed(page)
 
     await expect(
       page.getByRole('heading', {
@@ -703,7 +700,7 @@ test.describe('Parental leave', () => {
         exact: true,
       })
       .click()
-    await proceed()
+    await proceed(page)
 
     // What percent off your employment ratio will you take for the leave?
     await expect(
@@ -715,7 +712,7 @@ test.describe('Parental leave', () => {
     await selectPercentageUse.focus()
     await page.keyboard.type('50%')
     await page.keyboard.press('Enter')
-    await proceed()
+    await proceed(page)
 
     // Here is your current leave plan
     await expect(
@@ -723,7 +720,7 @@ test.describe('Parental leave', () => {
         name: label(parentalLeaveFormMessages.leavePlan.addAnother),
       }),
     ).toBeVisible()
-    await proceed()
+    await proceed(page)
 
     // Submit application
     await page
