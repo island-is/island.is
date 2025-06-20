@@ -8,7 +8,7 @@ import {
 import { Query } from '@island.is/api/schema'
 
 export const GetLatestCollectionForType = gql`
-  query collectionLatestForType($input: SignatureCollectionCollectionType!) {
+  query collectionLatestForType($input: SignatureCollectionBaseInput!) {
     signatureCollectionLatestForType(input: $input) {
       id
       endTime
