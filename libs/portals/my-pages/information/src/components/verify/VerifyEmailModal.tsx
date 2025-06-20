@@ -94,10 +94,7 @@ export const VerifyEmailModal = ({
 
   const [
     updateActorProfileEmailWithoutActor,
-    {
-      loading: updateActorProfileEmailWithoutActorLoading,
-      error: updateActorProfileEmailWithoutActorError,
-    },
+    { error: updateActorProfileEmailWithoutActorError },
   ] = useUpdateActorProfileEmailWithoutActorMutation({
     onCompleted: (data: UpdateActorProfileEmailWithoutActorMutation) => {
       if (data.updateActorProfileEmailWithoutActor) {

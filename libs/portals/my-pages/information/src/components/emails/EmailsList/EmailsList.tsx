@@ -24,8 +24,12 @@ export const EmailsList = ({ items }: EmailsListProps) => {
   const { data: actorProfile, refetch: refetchActorProfile } = useActorProfile()
   const actorProfileEmail = actorProfile?.email
   const isActor = !!userInfo?.profile?.actor?.nationalId
-  const [previousOption, setPreviousOption] = useState<EmailOption | null>(null)
-  const [selectedOption, setSelectedOption] = useState<EmailOption | null>(null)
+  const [previousOption, _setPreviousOption] = useState<EmailOption | null>(
+    null,
+  )
+  const [_selectedOption, setSelectedOption] = useState<EmailOption | null>(
+    null,
+  )
   const [verifyEmailModalEmail, setVerifyEmailModalEmail] = useState<
     string | undefined
   >()
