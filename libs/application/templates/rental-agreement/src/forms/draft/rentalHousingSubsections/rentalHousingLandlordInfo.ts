@@ -8,7 +8,6 @@ import {
   formatNationalId,
   formatPhoneNumber,
   hasAnyMatchingNationalId,
-  IS_REPRESENTATIVE,
   hasDuplicateApplicants,
 } from '../../../utils/utils'
 import { Routes } from '../../../utils/enums'
@@ -26,6 +25,7 @@ export const RentalHousingLandlordInfo = buildSubSection({
       children: [
         buildTableRepeaterField({
           id: 'landlordInfo.table',
+          title: landlordDetails.tableTitle,
           editField: true,
           marginTop: 1,
           maxRows: 10,
@@ -55,32 +55,66 @@ export const RentalHousingLandlordInfo = buildSubSection({
               label: landlordDetails.addressInputLabel,
               maxLength: 100,
             },
-            isRepresentative: {
-              component: 'checkbox',
-              large: true,
-              options: [
-                {
-                  label: landlordDetails.representativeLabel,
-                  value: IS_REPRESENTATIVE,
-                },
-              ],
-            },
           },
           table: {
             format: {
               phone: (value) => value && formatPhoneNumber(value),
               nationalId: (value) => value && formatNationalId(value),
-              isRepresentative: (value) =>
-                value?.includes(IS_REPRESENTATIVE) ? '✅' : '',
             },
             header: [
               landlordDetails.nameInputLabel,
               landlordDetails.phoneInputLabel,
               landlordDetails.nationalIdHeaderLabel,
               landlordDetails.emailInputLabel,
-              landlordDetails.isRepresentative,
             ],
-            rows: ['name', 'phone', 'nationalId', 'email', 'isRepresentative'],
+            rows: ['name', 'phone', 'nationalId', 'email'],
+          },
+        }),
+        buildTableRepeaterField({
+          id: 'landlordInfo.representativeTable',
+          title: landlordDetails.representativeTableTitle,
+          editField: true,
+          marginTop: 6,
+          maxRows: 10,
+          fields: {
+            nationalIdWithName: {
+              component: 'nationalIdWithName',
+              required: true,
+              searchCompanies: true,
+            },
+            phone: {
+              component: 'phone',
+              required: true,
+              label: landlordDetails.phoneInputLabel,
+              enableCountrySelector: true,
+              width: 'half',
+            },
+            email: {
+              component: 'input',
+              required: true,
+              label: landlordDetails.emailInputLabel,
+              type: 'email',
+              width: 'half',
+            },
+            address: {
+              component: 'input',
+              required: true,
+              label: landlordDetails.addressInputLabel,
+              maxLength: 100,
+            },
+          },
+          table: {
+            format: {
+              phone: (value) => value && formatPhoneNumber(value),
+              nationalId: (value) => value && formatNationalId(value),
+            },
+            header: [
+              landlordDetails.nameInputLabel,
+              landlordDetails.phoneInputLabel,
+              landlordDetails.nationalIdHeaderLabel,
+              landlordDetails.emailInputLabel,
+            ],
+            rows: ['name', 'phone', 'nationalId', 'email'],
           },
         }),
         buildAlertMessageField({
@@ -89,14 +123,10 @@ export const RentalHousingLandlordInfo = buildSubSection({
           title: landlordDetails.landlordOnlyRepresentativeTableError,
           shouldBlockInSetBeforeSubmitCallback: true,
           condition: (answers) => {
-            const { landlords } = applicationAnswers(answers)
-            const filterNonRepresentatives =
-              landlords?.filter(
-                (tenant) =>
-                  !tenant.isRepresentative?.includes(IS_REPRESENTATIVE),
-              ) ?? []
+            const { landlords, landlordRepresentatives } =
+              applicationAnswers(answers)
 
-            return landlords.length > 0 && filterNonRepresentatives.length === 0
+            return landlordRepresentatives.length > 0 && landlords.length === 0
           },
         }),
         buildAlertMessageField({

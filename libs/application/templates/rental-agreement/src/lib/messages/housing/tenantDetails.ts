@@ -11,16 +11,21 @@ export const tenantDetails = defineMessages({
     defaultMessage: 'Skrá leigjanda',
     description: 'Tenant Details page title',
   },
+  tableTitle: {
+    id: 'ra.application:tenantDetails.tableTitle',
+    defaultMessage: 'Leigjandi',
+    description: 'Tenant details table title',
+  },
+  representativeTableTitle: {
+    id: 'ra.application:tenantDetails.representativeTableTitle',
+    defaultMessage: 'Umboðsaðili (ef við á)',
+    description: 'Tenant details representative table title',
+  },
   pageDescription: {
     id: 'ra.application:tenantDetails.pageDescription',
     defaultMessage:
       'Hér skal skrá leigjendur í húsnæðinu. Hægt er að bæta við eins mörgum leigjendum á samninginn eins og óskað er eftir.',
     description: 'Tenant Details page description',
-  },
-  nationalIdInputLabel: {
-    id: 'ra.application:tenantDetails.nationalIdLabel',
-    defaultMessage: 'Kennitala leigjanda',
-    description: 'Tenant Details national id input label',
   },
   nationalIdHeaderLabel: {
     id: 'ra.application:tenantDetails.nationalIdHeaderLabel',
@@ -36,11 +41,6 @@ export const tenantDetails = defineMessages({
     id: 'ra.application:tenantDetails.emailLabel',
     defaultMessage: 'Netfang',
     description: 'Tenant Details email input label',
-  },
-  isRepresentative: {
-    id: 'ra.application:tenantDetails.isRepresentative',
-    defaultMessage: 'Umb.',
-    description: 'Tenant is representative',
   },
   phoneInputLabel: {
     id: 'ra.application:tenantDetails.phoneLabel',
@@ -82,6 +82,12 @@ export const tenantDetails = defineMessages({
     defaultMessage:
       'Sami aðili getur ekki verið skráður mörgum sinnum sem leigjandi.',
     description: 'Tenant details tenant already registered error',
+  },
+  tenantSameAsRepresentativeError: {
+    id: 'ra.application:tenantDetails.tenantSameAsRepresentativeError',
+    defaultMessage:
+      'Sami aðili getur ekki verið skráður bæði sem leigjandi og umboðsaðili.',
+    description: 'Tenant details tenant same as representative error',
   },
   tenantNationalIdEmptyError: {
     id: 'ra.application:tenantDetails.tenantNationalIdEmptyError',

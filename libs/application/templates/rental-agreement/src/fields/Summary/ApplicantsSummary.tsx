@@ -2,14 +2,9 @@ import { FC } from 'react'
 import { GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps } from '@island.is/application/types'
-import { getValueViaPath } from '@island.is/application/core'
 import { Routes } from '../../utils/enums'
-import { ApplicantsInfo } from '../../shared'
-import {
-  filterRepresentativesFromApplicants,
-  formatNationalId,
-  formatPhoneNumber,
-} from '../../utils/utils'
+import { applicationAnswers } from '../../shared'
+import { formatNationalId, formatPhoneNumber } from '../../utils/utils'
 import { KeyValue } from './components/KeyValue'
 import { SummaryCard } from './components/SummaryCard'
 import { SummaryCardRow } from './components/SummaryCardRow'
@@ -33,33 +28,18 @@ export const ApplicantsSummary: FC<Props> = ({ ...props }) => {
   } = props
   const { answers } = application
 
-  const landlords = getValueViaPath<ApplicantsInfo[]>(
-    answers,
-    'landlordInfo.table',
-    [],
-  )
-  const tenants = getValueViaPath<ApplicantsInfo[]>(
-    answers,
-    'tenantInfo.table',
-    [],
-  )
-
-  const landlordListWithoutRepresentatives =
-    filterRepresentativesFromApplicants(landlords)
-  const tenantListWithoutRepresentatives =
-    filterRepresentativesFromApplicants(tenants)
+  const { landlords, tenants } = applicationAnswers(answers)
 
   return (
     <>
       <SummaryCard
         cardLabel={
-          landlordListWithoutRepresentatives &&
-          landlordListWithoutRepresentatives.length > 1
+          landlords && landlords.length > 1
             ? formatMessage(summary.landlordsHeaderPlural)
             : formatMessage(summary.landlordsHeader)
         }
       >
-        {landlordListWithoutRepresentatives?.map((landlord) => {
+        {landlords?.map((landlord) => {
           return (
             <SummaryCardRow
               key={landlord.nationalIdWithName?.nationalId}
@@ -97,15 +77,15 @@ export const ApplicantsSummary: FC<Props> = ({ ...props }) => {
         })}
       </SummaryCard>
 
-      {tenantListWithoutRepresentatives && (
+      {tenants && (
         <SummaryCard
           cardLabel={
-            tenantListWithoutRepresentatives.length > 1
+            tenants.length > 1
               ? formatMessage(summary.tenantsHeaderPlural)
               : formatMessage(summary.tenantsHeader)
           }
         >
-          {tenantListWithoutRepresentatives.map((tenant) => {
+          {tenants.map((tenant) => {
             return (
               <SummaryCardRow
                 key={tenant.nationalIdWithName?.nationalId}

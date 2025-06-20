@@ -17,17 +17,11 @@ export const formatPhoneNumber = (phone: string) => {
     .replace(/\D/g, '') // Remove all non-digits
 }
 
-export const filterNonRepresentativesAndMapInfo = (
-  applicants: Array<ApplicantsInfo> = [],
-) => {
-  return applicants
-    .filter(
-      ({ isRepresentative }) => !isRepresentative?.includes('isRepresentative'),
-    )
-    .map((applicant) => ({
-      name: applicant.nationalIdWithName.name,
-      address: applicant.email,
-    }))
+export const mapApplicantsInfo = (applicants: Array<ApplicantsInfo> = []) => {
+  return applicants.map((applicant) => ({
+    name: applicant.nationalIdWithName.name,
+    address: applicant.email,
+  }))
 }
 
 export const mapPersonToArray = (person: ApplicantsInfo) => {
@@ -37,9 +31,6 @@ export const mapPersonToArray = (person: ApplicantsInfo) => {
     email: person.email,
     phone: formatPhoneNumber(person.phone),
     address: person.address,
-    isRepresentative: Boolean(
-      person.isRepresentative.includes('isRepresentative'),
-    ),
   }
 }
 

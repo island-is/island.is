@@ -24,7 +24,6 @@ import {
 } from './enums'
 import * as m from '../lib/messages'
 
-export const IS_REPRESENTATIVE = 'isRepresentative'
 export const SPECIALPROVISIONS_DESCRIPTION_MAXLENGTH = 1500
 export const minChangedUnitSize = 3
 export const maxChangedUnitSize = 500
@@ -77,17 +76,6 @@ export const formatBankInfo = (bankInfo: string) => {
     return formattedBankInfo
   }
   return bankInfo
-}
-
-export const filterRepresentativesFromApplicants = <T extends ApplicantsInfo>(
-  applicants?: T[],
-): T[] => {
-  return (
-    applicants?.filter(
-      (applicant) =>
-        !applicant.isRepresentative || applicant.isRepresentative.length === 0,
-    ) ?? []
-  )
 }
 
 export const hasAnyMatchingNationalId = (
