@@ -62,7 +62,6 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
       application.answers,
       'dataToChange.data',
     )
-    console.log('DATA DATA DATA', data)
 
     const rateToChangeTo = getValueViaPath<RateCategory>(
       application.answers,
@@ -70,7 +69,12 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
     )
 
     const now = new Date()
-    const endOfToday = new Date(new Date().setHours(23, 59, 59, 999))
+    const endOfToday = new Date(now.setHours(23, 59, 59, 999))
+    const tomorrow = new Date(now.setHours(24, 0, 0, 0))
+
+    // check if there are 7 or less days left of this month, if thats true, then I need a date variable for the first of next month
+    const daysLeftInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate() - now.getDate()
+    const firstOfNextMonth = daysLeftInMonth <= 7 ? new Date(now.getFullYear(), now.getMonth() + 1, 1) : null
 
     try {
       if(rateToChangeTo === RateCategory.KMRATE) {
@@ -82,7 +86,7 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
               return {
                 permno: c.vehicleId,
                 mileage: c.newMilage,
-                validFrom: now
+                validFrom: firstOfNextMonth ?? tomorrow
               }
             }) ?? null
           }
@@ -101,6 +105,19 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
         // })
         return true
       } else {
+
+        // await this.rentalsApiWithAuth(auth).apiDayRateEntriesEntityIdDeregisterPost({
+        //   entityId: auth.nationalId,
+        //   deregistrationModel: {
+        //     afskraningaradili: application.applicantActors[0] ?? application.applicant ?? null,
+        //     entries: [{
+        //         permno: 'AA322',
+        //         mileage: 1222333,
+        //         validTo: endOfToday
+        //       }]
+        //   }
+        // })
+
         await this.rentalsApiWithAuth(auth).apiDayRateEntriesEntityIdDeregisterPost({
           entityId: auth.nationalId,
           deregistrationModel: {
@@ -109,7 +126,7 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
               return {
                 permno: c.vehicleId,
                 mileage: c.newMilage,
-                validTo: endOfToday
+                validTo: firstOfNextMonth ?? endOfToday
               }
             }) ?? null
           }

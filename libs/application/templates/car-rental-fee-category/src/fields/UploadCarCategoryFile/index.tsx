@@ -19,7 +19,10 @@ import {
 import { RateCategory } from '../../utils/constants'
 import { getValueViaPath } from '@island.is/application/core'
 import { EntryModel } from '@island.is/clients-rental-day-rate'
-import { isDayRateEntryActive } from '../../utils/dayRateUtils'
+import {
+  isDayRateEntryActive,
+  is30DaysOrMoreFromDate,
+} from '../../utils/dayRateUtils'
 import { useFormContext } from 'react-hook-form'
 
 const extensionToType = {
@@ -51,11 +54,36 @@ const parseFileToCarCategory = async (
       const carNr = row[carNumberIndex]
       const prevMileStr = row[prevMilageIndex]?.trim()
       const currMileStr = row[currMilageIndex]?.trim()
+      if (!currentCarData[carNr]) {
+        return {
+          code: 1,
+          message: 'Þessi bíll fannst ekki í lista af þínum bílum!',
+          carNr,
+        }
+      }
+
+      // Changing from Dayrate
+      if (rateToChangeTo === RateCategory.KMRATE) {
+        if (currentCarData[carNr].activeDayRate?.validFrom) {
+          const is30orMoreDays = is30DaysOrMoreFromDate(
+            currentCarData[carNr].activeDayRate.validFrom,
+          )
+
+          if (!is30orMoreDays) {
+            return {
+              code: 1,
+              message:
+                'Bílar þurfa að vera skráið á daggjald í amk 30 daga áður en hægt er að breyta til baka!',
+              carNr,
+            }
+          }
+        }
+      }
 
       if (!prevMileStr && currMileStr) {
         return {
           code: 1,
-          message: 'You must have the last known milage on record!',
+          message: 'Síðasta staða bíls þarf að vera til staðar!',
           carNr,
         }
       }
@@ -66,21 +94,13 @@ const parseFileToCarCategory = async (
       const prevMile = Number(sanitizeNumber(prevMileStr))
       const currMile = Number(sanitizeNumber(currMileStr))
 
-      if (!currentCarData[carNr]) {
-        return {
-          code: 1,
-          message: 'This car is not in your list of registered cars!',
-          carNr,
-        }
-      }
-
       // Skip rows where either mileage value is not a valid number
       if (Number.isNaN(prevMile) || Number.isNaN(currMile)) return undefined
 
       if (prevMile > currMile) {
         return {
           code: 1,
-          message: 'New milage cannot be less than old milage!',
+          message: 'Nýja staða má ekki vera lægri en síðasta staða!',
           carNr,
         }
       }
@@ -95,7 +115,7 @@ const parseFileToCarCategory = async (
         return {
           code: 1,
           message:
-            'Rate category is not valid, please maintain the correct spelling',
+            'Ógildur gjaldflokkur, vinsamlegast passið uppá stafsetningu (Daggjald eða Kilometragjald)',
           carNr,
         }
       }
@@ -103,7 +123,7 @@ const parseFileToCarCategory = async (
       if (category.toLowerCase() !== rateToChangeTo.toLowerCase()) {
         return {
           code: 1,
-          message: `Rate category is not valid, you can only change the rate categories to ${rateToChangeTo}`,
+          message: `Ógildur gjaldflokkur, þú valdir að breyta gjaldflokki í ${rateToChangeTo}`,
           carNr,
         }
       }
@@ -121,17 +141,11 @@ const parseFileToCarCategory = async (
     (x): x is CarCategoryRecord | CarCategoryError => x !== undefined,
   )
 
-  // Check if there are any errors
-  const hasErrors = filteredData.some(
+  const errors = filteredData.filter(
     (item): item is CarCategoryError => 'code' in item,
   )
 
-  if (hasErrors) {
-    // Return only the error items
-    return filteredData.filter(
-      (item): item is CarCategoryError => 'code' in item,
-    )
-  }
+  if(errors.length > 0) return errors
 
   // If no errors, return only the CarCategoryRecords
   return filteredData.filter(
@@ -328,15 +342,20 @@ export const UploadCarCategoryFile = ({
       const vehicleEntry = currentRates?.find(
         (rate) => rate.permno === vehicle.permno,
       )
+      // Cannot change rate category of a car that isnt in the response from
+      if (!vehicleEntry) {
+        return acc
+      }
 
-      const hasActiveDayRate = vehicleEntry?.dayRateEntries?.find((entry) =>
+      const activeDayRate = vehicleEntry?.dayRateEntries?.find((entry) =>
         isDayRateEntryActive(entry, currentDate),
       )
 
       acc[vehicle.permno] = {
         make: vehicle.make,
         milage: vehicle.milage ?? 0,
-        category: hasActiveDayRate ? RateCategory.DAYRATE : RateCategory.KMRATE,
+        category: activeDayRate ? RateCategory.DAYRATE : RateCategory.KMRATE,
+        activeDayRate: activeDayRate,
       }
 
       return acc
@@ -378,8 +397,6 @@ export const UploadCarCategoryFile = ({
       return
     }
 
-    // At this point records is guaranteed to be CarCategoryRecord[]
-    console.log('data', dataToChange)
     setValue('dataToChange', dataToChange)
   }
 
@@ -397,7 +414,6 @@ export const UploadCarCategoryFile = ({
     setUploadedFile(null)
     setUploadErrorMessage(null)
 
-
     const file = fileToObjectDeprecated(files[0])
 
     if (file.status === 'done' && file.originalFileObj instanceof File) {
@@ -409,7 +425,7 @@ export const UploadCarCategoryFile = ({
         setUploadErrorMessage('wrongFileType')
         return
       }
-      
+
       setUploadedFile(file.originalFileObj)
       postCarCategories(file.originalFileObj, type)
     }
