@@ -24,7 +24,6 @@ import {
 } from './enums'
 import * as m from '../lib/messages'
 
-export const IS_REPRESENTATIVE = 'isRepresentative'
 export const SPECIALPROVISIONS_DESCRIPTION_MAXLENGTH = 1500
 export const minChangedUnitSize = 3
 export const maxChangedUnitSize = 500
@@ -79,15 +78,31 @@ export const formatBankInfo = (bankInfo: string) => {
   return bankInfo
 }
 
-export const filterRepresentativesFromApplicants = <T extends ApplicantsInfo>(
-  applicants?: T[],
-): T[] => {
+export const hasAnyMatchingNationalId = (
+  nationalIds: string[],
+  applicants: ApplicantsInfo[] = [],
+) => {
   return (
-    applicants?.filter(
-      (applicant) =>
-        !applicant.isRepresentative || applicant.isRepresentative.length === 0,
-    ) ?? []
+    nationalIds.length > 0 &&
+    applicants?.some((applicant) =>
+      nationalIds.includes(applicant.nationalIdWithName.nationalId),
+    )
   )
+}
+
+export const hasDuplicateApplicants = (
+  applicants: ApplicantsInfo[] = [],
+): boolean => {
+  const seen = new Set<string>()
+
+  for (const applicant of applicants) {
+    if (seen.has(applicant.nationalIdWithName.nationalId)) {
+      return true
+    }
+    seen.add(applicant.nationalIdWithName.nationalId)
+  }
+
+  return false
 }
 
 export const isCostItemValid = (item: CostField) =>

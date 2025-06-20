@@ -32,8 +32,11 @@ export enum Features {
   SeminarRegistrationEnabled = 'isSeminarRegistrationEnabled',
   TrainingLicenseOnAWorkMachineEnabled = 'isTrainingLicenseOnAWorkMachineEnabled',
   SecondarySchoolEnabled = 'isSecondarySchoolEnabled',
+  medicalAndRehabilitationPayments = 'isMedicalAndRehabilitationPaymentsEnabled',
   PracticalExamEnabled = 'isPracticalExamEnabled',
   pensionSupplementEnabled = 'isPensionSupplementEnabled',
+  fireCompensationAppraisalEnabled = 'isFireCompensationAppraisalEnabled',
+  ExemptionForTransportation = 'isExemptionForTransportationEnabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',
@@ -47,13 +50,14 @@ export enum Features {
   servicePortalHealthReferralsPageEnabled = 'isServicePortalReferralsPageEnabled',
   servicePortalHealthWaitlistsPageEnabled = 'isServicePortalHealthWaitlistsPageEnabled',
   servicePortalHealthMedicineLandlaeknirPageEnabled = 'isServicePortalHealthMedicineLandlaeknirPageEnabled',
+  servicePortalHealthBloodPageEnabled = 'isServicePortalHealthBloodPageEnabled',
   servicePortalDocumentsActionsEnabled = 'isServicePortalDocumentsActionsEnabled',
   isServicePortalDocumentsV3PageEnabled = 'isServicePortalDocumentsV3PageEnabled',
+  isServicePortal2WayMailboxEnabled = 'isServicePortal2WayMailboxEnabled',
   //Occupational License Health directorate fetch enabled
   occupationalLicensesHealthDirectorate = 'isHealthDirectorateOccupationalLicenseEnabled',
   healthPaymentOverview = 'isHealthPaymentsDocumentOverviewEnabled',
   isIDSAdminSsoSettingEnabled = 'isIDSAdminSsoSettingEnabled',
-
   isIdentityDocumentEnabled = 'isIdentityDocumentEnabled',
 
   //New License service fetch enabled

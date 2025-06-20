@@ -17,5 +17,5 @@ export enum SignatureCollectionPaths {
 
   // Municipal
   SignatureCollectionMunicipalLists = '/min-gogn/listar/sveitarstjornar-medmaelasofnun',
-  ViewMunicipalList = 'min-gogn/listar/sveitarstjornar-medmaelasofnun/:id',
+  ViewMunicipalList = '/min-gogn/listar/sveitarstjornar-medmaelasofnun/:id',
 }

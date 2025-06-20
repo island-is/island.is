@@ -97,7 +97,8 @@ const propertyInfo = z
     categoryClass: z.nativeEnum(RentalHousingCategoryClass).optional(),
     categoryClassGroup: z
       .nativeEnum(RentalHousingCategoryClassGroup)
-      .optional(),
+      .optional()
+      .nullable(),
   })
   .superRefine((data, ctx) => {
     if (
