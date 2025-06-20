@@ -14,8 +14,11 @@ import { NotificationSettingsCard } from '../cards/NotificationSettingsCard'
 import { Problem } from '@island.is/react-spa/shared'
 import { ActorProfileEmails } from '../ActorProfileEmails/ActorProfileEmails'
 import * as styles from './ActorNotificationSettings.css'
-import { useUserProfileActorProfilesQuery } from './userProfileActorProfiles.query.generated'
-import { useUserProfile } from '@island.is/portals/my-pages/graphql'
+import { useUserProfileActorProfilesQuery } from './UserProfileActorProfiles.query.generated'
+import {
+  UserProfile,
+  useUserProfile,
+} from '@island.is/portals/my-pages/graphql'
 
 export const ActorNotificationSettings = () => {
   const { data, loading, error } = useUserProfileActorProfilesQuery()
@@ -86,7 +89,7 @@ export const ActorNotificationSettings = () => {
               ) : userProfile ? (
                 <ActorProfileEmails
                   actorProfile={actorProfile}
-                  userProfile={userProfile}
+                  userProfile={userProfile as UserProfile}
                 />
               ) : null}
             </Box>

@@ -11,7 +11,7 @@ import { emailsMsg } from '../../../lib/messages'
 import { ProfileEmailForm } from '../../emails/ProfileEmailForm/ProfileEmailForm'
 import { VerifyEmailModal } from '../../verify/VerifyEmailModal'
 import * as styles from './ActorProfileEmails.css'
-import { useUserProfileSetActorProfileEmailMutation } from './userProfileSetActorProfileEmail.mutation.generated'
+import { useUserProfileSetActorProfileEmailMutation } from './UserProfileSetActorProfileEmail.mutation.generated'
 
 type EmailOption = Option<string> & Pick<Email, 'id' | 'emailStatus'>
 
@@ -106,7 +106,7 @@ export const ActorProfileEmails = ({
     setPreviousOption(selectedOption)
     setSelectedOption(option)
 
-    if (option.emailStatus === DataStatus.NOT_VERIFIED) {
+    if (option.emailStatus === DataStatus.NotVerified) {
       setVerifyEmailModalEmail(option.value)
 
       return
