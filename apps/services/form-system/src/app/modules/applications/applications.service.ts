@@ -37,7 +37,6 @@ import { SubmitScreenDto } from './models/dto/submitScreen.dto'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
 import { Option } from '../../dataTypes/option.model'
 
-
 @Injectable()
 export class ApplicationsService {
   constructor(
