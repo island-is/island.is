@@ -202,3 +202,10 @@ export { isUnderXAge } from './lib/delegations/utils/isUnderXAge'
 export * from './lib/passkeys-core/passkeys-core.module'
 export * from './lib/passkeys-core/passkeys-core.service'
 export * from './lib/passkeys-core/passkeys-core.config'
+
+// Sessions module
+export * from './lib/sessions/sessions.module'
+export * from './lib/sessions/sessions.service'
+export * from './lib/sessions/dto/session-filter.dto'
+export * from './lib/sessions/dto/session-remove-options.dto'
+export * from './lib/sessions/dto/session.dto'
