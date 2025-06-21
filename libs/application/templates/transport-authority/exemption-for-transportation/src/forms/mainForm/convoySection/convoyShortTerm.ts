@@ -9,6 +9,7 @@ import {
   getRandomId,
   checkIfExemptionTypeShortTerm,
   loadValidation,
+  checkIsConvoyWithTrailer,
 } from '../../../utils'
 import { DollyType } from '../../../shared'
 
@@ -17,9 +18,7 @@ const convoyIndex = 0
 
 export const ConvoyShortTermMultiField = buildMultiField({
   id: 'convoyShortTermMultiField',
-  condition: (answers) => {
-    return checkIfExemptionTypeShortTerm(answers)
-  },
+  condition: checkIfExemptionTypeShortTerm,
   title: convoy.general.pageTitle,
   description: convoy.general.description,
   children: [
@@ -53,6 +52,7 @@ export const ConvoyShortTermMultiField = buildMultiField({
     }),
     buildRadioField({
       id: `convoy.items.${convoyIndex}.dollyType`,
+      condition: (answers) => checkIsConvoyWithTrailer(answers, convoyIndex),
       title: convoy.dollyType.subtitle,
       required: true,
       marginTop: 2,

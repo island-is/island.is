@@ -46,9 +46,7 @@ export const exemptionPeriodSection = buildSection({
           alertType: 'info',
           title: exemptionPeriod.type.alertTitle,
           message: exemptionPeriod.type.alertMessage,
-          condition: (answers) => {
-            return checkIfExemptionTypeLongTerm(answers)
-          },
+          condition: checkIfExemptionTypeLongTerm,
         }),
         buildDateField({
           id: 'exemptionPeriod.dateFrom',
@@ -56,9 +54,7 @@ export const exemptionPeriodSection = buildSection({
           width: 'half',
           required: true,
           placeholder: exemptionPeriod.period.datePlaceholder,
-          condition: (answers) => {
-            return !!getExemptionType(answers)
-          },
+          condition: (answers) => !!getExemptionType(answers),
           minDate: (application) => getMinDateFrom(application.answers),
           maxDate: (application) => getMaxDateFrom(application.answers),
         }),
@@ -68,9 +64,7 @@ export const exemptionPeriodSection = buildSection({
           width: 'half',
           required: true,
           placeholder: exemptionPeriod.period.datePlaceholder,
-          condition: (answers) => {
-            return !!getExemptionType(answers)
-          },
+          condition: (answers) => !!getExemptionType(answers),
           minDate: (application) => getMinDateTo(application.answers),
           maxDate: (application) => getMaxDateTo(application.answers),
         }),
