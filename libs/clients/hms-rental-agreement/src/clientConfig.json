@@ -34,6 +34,110 @@
           }
         }
       }
+    },
+    "/contract/kt/{kt}": {
+      "get": {
+        "tags": ["Home"],
+        "parameters": [
+          {
+            "name": "kt",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Contract"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Contract"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/Contract"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/contract/cancel": {
+      "post": {
+        "tags": ["Home"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelContract"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelContract"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/CancelContract"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
+    },
+    "/contract/terminate": {
+      "post": {
+        "tags": ["Home"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TerminateContract"
+              }
+            },
+            "text/json": {
+              "schema": {
+                "$ref": "#/components/schemas/TerminateContract"
+              }
+            },
+            "application/*+json": {
+              "schema": {
+                "$ref": "#/components/schemas/TerminateContract"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "description": "OK"
+          }
+        }
+      }
     }
   },
   "components": {
@@ -61,6 +165,314 @@
           "rooms": {
             "type": "number",
             "format": "float"
+          }
+        },
+        "additionalProperties": false
+      },
+      "CancelContract": {
+        "required": [
+          "cancelOn",
+          "contractId",
+          "document",
+          "documentFilename",
+          "documentMime"
+        ],
+        "type": "object",
+        "properties": {
+          "contractId": {
+            "type": "string",
+            "nullable": true
+          },
+          "cancelOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "document": {
+            "type": "string",
+            "nullable": true
+          },
+          "documentMime": {
+            "type": "string",
+            "nullable": true
+          },
+          "documentFilename": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "Contract": {
+        "type": "object",
+        "properties": {
+          "contract_id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "parent_contract_id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "contract_status": {
+            "type": "string",
+            "nullable": true
+          },
+          "contract_ref": {
+            "type": "string",
+            "nullable": true
+          },
+          "date_from": {
+            "type": "string",
+            "nullable": true
+          },
+          "date_to": {
+            "type": "string",
+            "nullable": true
+          },
+          "last_changed_on": {
+            "type": "string",
+            "nullable": true
+          },
+          "base_amount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "contract_type": {
+            "type": "string",
+            "nullable": true
+          },
+          "contract_type_use_code": {
+            "type": "string",
+            "nullable": true
+          },
+          "currency_code": {
+            "type": "string",
+            "nullable": true
+          },
+          "index_type": {
+            "type": "string",
+            "nullable": true
+          },
+          "index_type_use_code": {
+            "type": "string",
+            "nullable": true
+          },
+          "index_interval_m": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "base_index": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "signature_date": {
+            "type": "string",
+            "nullable": true
+          },
+          "received_date": {
+            "type": "string",
+            "nullable": true
+          },
+          "date_manual_end": {
+            "type": "string",
+            "nullable": true
+          },
+          "contract_party": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContractParty"
+            },
+            "nullable": true
+          },
+          "contract_collateral": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContractCollateral"
+            },
+            "nullable": true
+          },
+          "contract_property": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/ContractProperty"
+            },
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ContractCollateral": {
+        "type": "object",
+        "properties": {
+          "contract_collateral_id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "collateral_type": {
+            "type": "string",
+            "nullable": true
+          },
+          "collateral_type_use_code": {
+            "type": "string",
+            "nullable": true
+          },
+          "collateral_desc": {
+            "type": "string",
+            "nullable": true
+          },
+          "collateral_amount": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "currency_code": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ContractParty": {
+        "type": "object",
+        "properties": {
+          "contract_party_id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "party_type_name": {
+            "type": "string",
+            "nullable": true
+          },
+          "party_type_use_code": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "kennitala": {
+            "type": "string",
+            "nullable": true
+          },
+          "address_1": {
+            "type": "string",
+            "nullable": true
+          },
+          "address_2": {
+            "type": "string",
+            "nullable": true
+          },
+          "town": {
+            "type": "string",
+            "nullable": true
+          },
+          "postal_code": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "country": {
+            "type": "string",
+            "nullable": true
+          },
+          "phone_number": {
+            "type": "string",
+            "nullable": true
+          },
+          "email": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "ContractProperty": {
+        "type": "object",
+        "properties": {
+          "contract_property_id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "mvs_id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "contract_property_type": {
+            "type": "string",
+            "nullable": true
+          },
+          "property_id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "postal_code": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "street_and_house_number": {
+            "type": "string",
+            "nullable": true
+          },
+          "municipality": {
+            "type": "string",
+            "nullable": true
+          },
+          "area_m2": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "no_of_rooms": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "floor": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "apartment": {
+            "type": "number",
+            "format": "double",
+            "nullable": true
+          },
+          "special_group_use_code": {
+            "type": "string",
+            "nullable": true
+          },
+          "appraisal_unit_id": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          },
+          "contract_property_desc": {
+            "type": "string",
+            "nullable": true
+          },
+          "special_type_code": {
+            "type": "string",
+            "nullable": true
+          },
+          "special_type": {
+            "type": "string",
+            "nullable": true
+          },
+          "property_details": {
+            "type": "string",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -470,6 +882,59 @@
           "Disabled",
           "HalfwayHouse",
           "IncomeRestricted"
+        ],
+        "type": "string"
+      },
+      "TerminateContract": {
+        "required": [
+          "contractId",
+          "document",
+          "documentFilename",
+          "documentMime",
+          "reasonUseCode",
+          "terminateOn"
+        ],
+        "type": "object",
+        "properties": {
+          "contractId": {
+            "type": "string",
+            "nullable": true
+          },
+          "terminateOn": {
+            "type": "string",
+            "format": "date"
+          },
+          "reasonUseCode": {
+            "$ref": "#/components/schemas/TerminationReason"
+          },
+          "document": {
+            "type": "string",
+            "nullable": true
+          },
+          "documentMime": {
+            "type": "string",
+            "nullable": true
+          },
+          "documentFilename": {
+            "type": "string",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TerminationReason": {
+        "enum": [
+          "OWNER_IN_BUILDING",
+          "FURNISHED_RENT",
+          "OWNER_TAKING_BACK",
+          "OWNER_RELATIVES",
+          "OWNER_SELLING",
+          "SIGNIFICANT_REPAIRS",
+          "TENANT_EMPLOYEE",
+          "TENANT_NON_COMPLIANCE",
+          "TENANT_BEHAVIOR",
+          "BOTH_PARTIES_INTERESTS",
+          "NON_PROFIT_TENANT"
         ],
         "type": "string"
       }
