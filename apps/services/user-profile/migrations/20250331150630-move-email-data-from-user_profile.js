@@ -1,8 +1,7 @@
 'use strict'
 
-const { uuid } = require('uuidv4')
 module.exports = {
-  async up(queryInterface) {
+  async up(queryInterface, Sequelize) {
     console.log('Migrating email data from user_profile to emails table')
     try {
       const SIZE = 10000
@@ -39,7 +38,7 @@ module.exports = {
                 .map((profile) =>
                   checkEmailStatus(profile.email_status)
                     ? {
-                        id: uuid(),
+                        id: Sequelize.literal('gen_random_uuid()'),
                         national_id: profile.national_id,
                         email: profile.email,
                         email_status: profile.email_status,
