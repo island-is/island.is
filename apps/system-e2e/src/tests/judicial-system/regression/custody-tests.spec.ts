@@ -13,6 +13,7 @@ import {
 import { judgeReceivesAppealTest } from './shared-steps/receive-appeal'
 import { prosecutorAppealsCaseTest } from './shared-steps/send-appeal'
 import { coaJudgesCompleteAppealCaseTest } from './shared-steps/complete-appeal'
+import { judgeAmendsCase } from './shared-steps/amend'
 
 test.use({ baseURL: urls.judicialSystemBaseUrl })
 
@@ -227,6 +228,11 @@ test.describe.serial('Custody tests', () => {
       page.getByTestId('continueButton').click(),
       verifyRequestCompletion(page, '/api/graphql', 'TransitionCase'),
     ])
+    await page.getByTestId('modalSecondaryButton').click()
+  })
+
+  test('judge should amend case', async ({ judgePage }) => {
+    await judgeAmendsCase(judgePage, caseId)
   })
 
   test('prosecutor should appeal case', async ({ prosecutorPage }) => {
