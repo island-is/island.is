@@ -138,3 +138,10 @@ export type FriggChildInformation = {
   phone: string // Is set as object in MMS data
   mobile: string // Is set as object in MMS data
 }
+
+export type CurrentSchool = {
+  name?: string
+  grade?: string
+  school?: string
+  municipality?: string
+}
