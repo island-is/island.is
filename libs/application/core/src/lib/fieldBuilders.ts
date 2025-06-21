@@ -52,6 +52,7 @@ import {
   TitleVariants,
   OverviewField,
   CopyLinkField,
+  DownloadFileButtonField,
   VehiclePermnoWithInfoField,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
@@ -435,6 +436,24 @@ export const buildDividerField = (data: {
     condition,
     marginTop,
     marginBottom,
+  }
+}
+
+export const buildDownloadFileButtonField = (
+  data: Omit<DownloadFileButtonField, 'type' | 'component' | 'children'>,
+): DownloadFileButtonField => {
+  const {
+    getFileContent,
+    buttonTitle,
+  } = data
+
+  return {
+    ...extractCommonFields(data),
+    children: undefined,
+    type: FieldTypes.DOWNLOAD_FILE_BUTTON,
+    component: FieldComponents.DOWNLOAD_FILE_BUTTON,
+    buttonTitle,
+    getFileContent
   }
 }
 

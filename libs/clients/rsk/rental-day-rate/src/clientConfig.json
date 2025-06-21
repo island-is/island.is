@@ -1,0 +1,12 @@
+{
+  "type": "Server.ServerProxy.InternalError",
+  "message": "Failed reading service description from https://vefurp.rsk.is/ws/rentaldayrate/Swagger/v1/Swagger.json. Status: 503 Reason: Server has been shutdown",
+  "detail": "8277692c-0c78-4b4b-be19-8550b69f0bfb",
+  "components": {
+    "schemas": {
+      "ProblemDetails": {
+        "additionalProperties": false
+      }
+    }
+  }
+}

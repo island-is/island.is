@@ -1,3 +1,6 @@
+
+import { CarRentalFeeCategoryModule } from './car-rental-fee-category/car-rental-fee-category.module'
+import { CarRentalFeeCategoryService } from './car-rental-fee-category/car-rental-fee-category.service'
 import { FireCompensationAppraisalModule } from './hms/fire-compensation-appraisal/fire-compensation-appraisal.module'
 import { FireCompensationAppraisalService } from './hms/fire-compensation-appraisal/fire-compensation-appraisal.service'
 import { ExampleFolderStructureAndConventionsModule } from './examples/example-folder-structure-and-conventions/example-folder-structure-and-conventions.module'
@@ -245,6 +248,7 @@ export const modules = [
   SeminarsTemplateModule,
   SecondarySchoolModule,
   TrainingLicenseOnAWorkMachineTemplateModule,
+  CarRentalFeeCategoryModule,
   PracticalExamTemplateModule,
   ExampleFolderStructureAndConventionsModule,
   LegalGazetteTemplateModule,
@@ -331,6 +335,7 @@ export const services = [
   MunicipalListSigningService,
   SecondarySchoolService,
   TrainingLicenseOnAWorkMachineTemplateService,
+  CarRentalFeeCategoryService,
   PracticalExamTemplateService,
   ExampleFolderStructureAndConventionsService,
   LegalGazetteTemplateService,
