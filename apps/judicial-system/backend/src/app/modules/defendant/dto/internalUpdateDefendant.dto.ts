@@ -3,7 +3,10 @@ import { IsEnum, IsOptional, IsString, Length } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
-import { DefenderChoice } from '@island.is/judicial-system/types'
+import {
+  DefenderChoice,
+  VerdictAppealDecision,
+} from '@island.is/judicial-system/types'
 
 import { nationalIdTransformer } from '../../../transformers'
 
@@ -51,4 +54,9 @@ export class InternalUpdateDefendantDto {
   @IsString()
   @ApiPropertyOptional({ type: String })
   readonly requestedDefenderName?: string
+
+  @IsOptional()
+  @IsEnum(VerdictAppealDecision)
+  @ApiPropertyOptional({ enum: VerdictAppealDecision })
+  readonly verdictAppealDecision?: VerdictAppealDecision
 }

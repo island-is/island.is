@@ -4,7 +4,9 @@ export enum EventType {
   LOGIN_UNAUTHORIZED = 'LOGIN_UNAUTHORIZED',
   LOGIN_BYPASS = 'LOGIN_BYPASS',
   LOGIN_BYPASS_UNAUTHORIZED = 'LOGIN_BYPASS_UNAUTHORIZED',
+  // This is when the indictment is confirmed by prosecution and sent to court.
   INDICTMENT_CONFIRMED = 'INDICTMENT_CONFIRMED',
+  // Only used for the stamp on the ruling, not for calculating deadlines.
   INDICTMENT_COMPLETED = 'INDICTMENT_COMPLETED',
   INDICTMENT_REVIEWED = 'INDICTMENT_REVIEWED',
   CASE_SENT_TO_COURT = 'CASE_SENT_TO_COURT',
