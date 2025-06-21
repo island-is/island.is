@@ -1,4 +1,4 @@
-import { useUserProfileActorProfileQuery } from '../components/notificationSettings/ActorProfileNotificationSettings/userProfileActorProfile.query.generated'
+import { useUserProfileActorProfileQuery } from '../components/NotificationSettings/ActorProfileNotificationSettings/userProfileActorProfile.query.generated'
 
 export const useActorProfile = () => {
   const { data, loading, error, refetch } = useUserProfileActorProfileQuery()
