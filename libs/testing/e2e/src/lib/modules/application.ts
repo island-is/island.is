@@ -1,4 +1,5 @@
 import { Page } from '@playwright/test'
+import { isUuid } from 'uuidv4'
 
 /**
  * Creates a new application if there are existing applications on the overview page.
@@ -12,10 +13,9 @@ import { Page } from '@playwright/test'
  */
 export const createApplication = async (page: Page): Promise<number> => {
   // Wait for the response from the GraphQL API endpoint that lists applications
-  const applicationResponsePromise = await page.waitForResponse(
+  const applicationResponse = await page.waitForResponse(
     '**/api/graphql?op=ApplicationApplications',
   )
-  const applicationResponse = await applicationResponsePromise
   const applicationData = await applicationResponse.json()
   const existingApplicationCount =
     applicationData.data.applicationApplications.length || 0
@@ -26,4 +26,34 @@ export const createApplication = async (page: Page): Promise<number> => {
   }
 
   return existingApplicationCount
+}
+
+/**
+ * Checks if the current page is an application page.
+ * Optionally, verifies if the application URL includes a specific path.
+ * An application page is identified by a UUID as the last path segment and 'umsoknir' as the second to last.
+ * @param page The Playwright Page object.
+ * @param expectedPath Optional path segment to check within the application URL.
+ * @returns True if it's an application page (and matches `expectedPath` if provided), false otherwise.
+ */
+export const isApplication = async (
+  page: Page,
+  expectedPath?: string,
+): Promise<boolean> => {
+  await page.waitForURL('**/umsoknir/**')
+  const applicationUrl = new URL(page.url())
+  const pathSegments = applicationUrl.pathname.split('/').filter(Boolean) // Filter(Boolean) removes empty strings from array
+
+  const uuidSegment = pathSegments.pop()
+  const umsoknirSegment = pathSegments.pop()
+
+  if (!isUuid(uuidSegment ?? '') || umsoknirSegment !== 'umsoknir') {
+    return false
+  }
+
+  if (expectedPath && !applicationUrl.pathname.includes(expectedPath)) {
+    return false
+  }
+
+  return true
 }
