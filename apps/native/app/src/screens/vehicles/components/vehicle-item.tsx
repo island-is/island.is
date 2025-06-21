@@ -6,6 +6,7 @@ import styled, { useTheme } from 'styled-components/native'
 import { Label, VehicleCard } from '../../../ui'
 import { ListVehiclesV2Query } from '../../../graphql/types/schema'
 import { navigateTo } from '../../../lib/deep-linking'
+import { testIDs } from '../../../utils/test-ids'
 
 function differenceInMonths(a: Date, b: Date) {
   return a.getMonth() - b.getMonth() + 12 * (a.getFullYear() - b.getFullYear())
@@ -44,7 +45,10 @@ export const VehicleItem = React.memo(
     const isMileageRequired = item.requiresMileageRegistration
 
     return (
-      <View style={{ paddingHorizontal: theme.spacing[2], ...style }}>
+      <View
+        style={{ paddingHorizontal: theme.spacing[2], ...style }}
+        testID={testIDs.VEHICLE_ITEM}
+      >
         <Cell
           underlayColor={
             theme.isDark ? theme.shades.dark.shade100 : theme.color.blue100
