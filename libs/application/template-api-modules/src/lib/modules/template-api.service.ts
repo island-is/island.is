@@ -46,6 +46,17 @@ export class TemplateAPIService {
       return result
     }
 
+    console.log('************************************************')
+    console.log('No service found for action: ', action)
+    console.dir(
+      this.services.map((x) => x.serviceId).sort((a, b) => a.localeCompare(b)),
+      {
+        depth: null,
+        colors: true,
+      },
+    )
+    console.log('************************************************')
+
     const noTemplateError = new TemplateApiError(
       {
         title: 'Invalid template api',
