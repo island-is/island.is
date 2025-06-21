@@ -29,82 +29,87 @@ const UserNotificationsSettings = lazy(() =>
   import('./screens/UserNotifications/UserNotifications'),
 )
 
-const sharedRoutes = (scopes: string[]) => [
-  {
-    name: m.mySettings,
-    path: InformationPaths.SettingsOld,
-    enabled: scopes.includes(UserProfileScope.write),
-    element: <Navigate to={InformationPaths.Settings} replace />,
-  },
-  {
-    name: m.mySettings,
-    path: InformationPaths.Settings,
-    enabled: scopes.includes(UserProfileScope.write),
-    element: <UserProfileSettings />,
-  },
-  {
-    name: 'Notifications',
-    path: InformationPaths.Notifications,
-    enabled: scopes.includes(DocumentsScope.main),
-    element: <Notifications />,
-  },
-]
+const sharedRoutes = (scopes: string[], isCompany = false) => {
+  const isSettingsEnabled =
+    scopes.includes(UserProfileScope.read) &&
+    scopes.includes(DocumentsScope.main)
+
+  return [
+    {
+      name: isCompany ? m.settings : m.mySettings,
+      path: InformationPaths.SettingsOld,
+      enabled: isSettingsEnabled,
+      element: <Navigate to={InformationPaths.Settings} replace />,
+    },
+    {
+      name: isCompany ? m.settings : m.mySettings,
+      path: InformationPaths.Settings,
+      enabled: isSettingsEnabled,
+      element: <UserProfileSettings />,
+    },
+    {
+      name: m.userInfo,
+      path: InformationPaths.SettingsNotifications,
+      enabled: isSettingsEnabled,
+      element: <UserNotificationsSettings />,
+    },
+    {
+      name: 'Notifications',
+      path: InformationPaths.Notifications,
+      enabled: scopes.includes(DocumentsScope.main),
+      element: <Notifications />,
+    },
+  ]
+}
 
 export const informationModule: PortalModule = {
   name: 'Upplýsingar',
-  routes: ({ userInfo }) => [
+  routes: ({ userInfo: { scopes } }) => [
     {
       name: m.userInfo,
       path: InformationPaths.MyInfoRoot,
-      enabled: userInfo.scopes.includes(ApiScope.meDetails),
+      enabled: scopes.includes(ApiScope.meDetails),
       element: <Navigate to={InformationPaths.MyInfoRootOverview} replace />,
     },
     {
       name: m.myInfo,
       path: InformationPaths.MyInfoRootOverview,
-      enabled: userInfo.scopes.includes(ApiScope.meDetails),
+      enabled: scopes.includes(ApiScope.meDetails),
       element: <UserInfoOverview />,
     },
     {
       name: m.userInfo,
       path: InformationPaths.UserInfo,
-      enabled: userInfo.scopes.includes(ApiScope.meDetails),
+      enabled: scopes.includes(ApiScope.meDetails),
       element: <UserInfo />,
     },
     {
       name: m.familyChild,
       path: InformationPaths.BioChild,
-      enabled: userInfo.scopes.includes(ApiScope.meDetails),
+      enabled: scopes.includes(ApiScope.meDetails),
       element: <FamilyMemberBioChild />,
     },
     {
       name: m.familyChild,
       path: InformationPaths.ChildCustody,
-      enabled: userInfo.scopes.includes(ApiScope.meDetails),
+      enabled: scopes.includes(ApiScope.meDetails),
       element: <FamilyMemberChildCustody />,
-    },
-    {
-      name: m.userInfo,
-      path: InformationPaths.SettingsNotifications,
-      enabled: userInfo.scopes.includes(ApiScope.internal),
-      key: 'NotificationSettings',
-      element: <UserNotificationsSettings />,
     },
     {
       name: m.familySpouse,
       path: InformationPaths.Spouse,
-      enabled: userInfo.scopes.includes(ApiScope.meDetails),
+      enabled: scopes.includes(ApiScope.meDetails),
       element: <Spouse />,
     },
-    ...sharedRoutes(userInfo.scopes),
+    ...sharedRoutes(scopes),
   ],
-  companyRoutes: ({ userInfo }) => [
+  companyRoutes: ({ userInfo: { scopes } }) => [
     {
       name: m.companyTitle,
       path: InformationPaths.Company,
-      enabled: userInfo.scopes.includes(ApiScope.company),
+      enabled: scopes.includes(ApiScope.company),
       element: <CompanyInfo />,
     },
-    ...sharedRoutes(userInfo.scopes),
+    ...sharedRoutes(scopes, true),
   ],
 }

@@ -6,23 +6,26 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useEffect, useState } from 'react'
-import { NotificationSettingsCard } from './cards/NotificationSettingsCard'
+import { NotificationSettingsCard } from '../cards/NotificationSettingsCard'
 
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { Problem } from '@island.is/react-spa/shared'
-import { mNotifications } from '../../lib/messages'
-import { SettingsCard } from './cards/SettingsCard/SettingsCard'
+import { usePaperMail } from '../../../hooks/usePaperMail'
+import { mNotifications } from '../../../lib/messages'
+import { SettingsCard } from '../cards/SettingsCard/SettingsCard'
 import {
   useUpdateUserProfileSettingsMutation,
   useUserProfileSettingsQuery,
-} from './graphql/UserProfile.generated'
+} from './getUserProfile.query.generated'
+import { safeAwait } from '@island.is/shared/utils'
 
 type UserProfileNotificationSettings = {
   documentNotifications: boolean
   canNudge: boolean
+  wantsPaper: boolean
 }
 
-export const UserProfileNotificationSettings = () => {
+export const NotificationSettings = () => {
   const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
   const {
@@ -31,21 +34,29 @@ export const UserProfileNotificationSettings = () => {
     error: fetchError,
   } = useUserProfileSettingsQuery()
   const [updateUserProfile] = useUpdateUserProfileSettingsMutation()
+  const {
+    wantsPaper,
+    postPaperMailMutation,
+    loading: paperMailLoading,
+  } = usePaperMail()
 
   const [settings, setSettings] = useState<UserProfileNotificationSettings>({
     documentNotifications:
       userProfile?.getUserProfile?.documentNotifications ?? true,
     canNudge: userProfile?.getUserProfile?.canNudge ?? true,
+    wantsPaper: wantsPaper ?? false,
   })
 
   useEffect(() => {
     if (userProfile?.getUserProfile) {
       setSettings({
+        ...settings,
         documentNotifications:
           userProfile?.getUserProfile.documentNotifications,
         canNudge: userProfile?.getUserProfile.canNudge ?? true,
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userProfile])
 
   const onChange = async (
@@ -55,20 +66,46 @@ export const UserProfileNotificationSettings = () => {
     const newSettings = { ...settings, ...updatedSettings }
     setSettings(newSettings)
 
-    try {
-      await updateUserProfile({
+    const { error } = await safeAwait(
+      updateUserProfile({
         variables: {
-          input: newSettings,
+          input: {
+            documentNotifications: newSettings.documentNotifications,
+            canNudge: newSettings.canNudge,
+          },
         },
-      })
-    } catch {
+      }),
+    )
+
+    if (error) {
       setSettings(oldSettings)
       toast.error(formatMessage(mNotifications.updateError))
     }
   }
 
-  if (loading) {
-    return <SkeletonLoader borderRadius="large" height={326} />
+  const onPaperMailChange = async (active: boolean) => {
+    const { data, error } = await safeAwait(
+      postPaperMailMutation({
+        variables: {
+          input: { wantsPaper: active },
+        },
+      }),
+    )
+
+    if (error) {
+      toast.error(formatMessage(mNotifications.updateError))
+      return
+    }
+
+    setSettings({
+      ...settings,
+      wantsPaper:
+        data?.data?.postPaperMailInfo?.wantsPaper ?? settings.wantsPaper,
+    })
+  }
+
+  if (loading || paperMailLoading) {
+    return <SkeletonLoader borderRadius="large" height={473} />
   }
 
   if (fetchError) {
@@ -96,6 +133,14 @@ export const UserProfileNotificationSettings = () => {
           onChange={(active: boolean) =>
             onChange({ documentNotifications: active })
           }
+        />
+        <Divider />
+        <SettingsCard
+          title={formatMessage(mNotifications.paperMailTitle)}
+          subtitle={formatMessage(mNotifications.paperMailDescription)}
+          toggleLabel={formatMessage(mNotifications.paperMailAriaLabel)}
+          checked={settings.wantsPaper}
+          onChange={onPaperMailChange}
         />
       </Stack>
     </NotificationSettingsCard>
