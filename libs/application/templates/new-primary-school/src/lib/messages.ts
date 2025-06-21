@@ -130,6 +130,16 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Kynsegin/Annað',
       description: 'non-binary/Other',
     },
+    language: {
+      id: 'nps.application:language',
+      defaultMessage: 'Tungumál',
+      description: 'Language',
+    },
+    languagePlaceholder: {
+      id: 'nps.application:language.placeholder',
+      defaultMessage: 'Veldu tungumál',
+      description: 'Choose language',
+    },
   }),
 
   pre: defineMessages({
@@ -315,6 +325,11 @@ export const newPrimarySchoolMessages: MessageDir = {
         'Upplýsingar um forsjáraðila eru sóttar úr Þjóðskrá og af Mínum síðum á Ísland.is. Athugaðu hvort símanúmer og netföng séu rétt skráð áður en þú heldur áfram.',
       description:
         'Information about guardians is retrieved from Registers Iceland and from My Pages on Ísland.is. Check that phone numbers and email addresses are entered correctly before proceeding.',
+    },
+    requiresInterpreter: {
+      id: 'nps.application:childrenNGuardians.requires.interpreter',
+      defaultMessage: 'Þarf forsjáraðili túlk?',
+      description: 'Does the guardian need an interpreter?',
     },
 
     // Relatives
@@ -558,11 +573,6 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
 
     // Language
-    languageSubSectionTitle: {
-      id: 'nps.application:different.needs.language.sub.section.title',
-      defaultMessage: 'Tungumál',
-      description: 'Language',
-    },
     languageTitle: {
       id: 'nps.application:different.needs.language.title',
       defaultMessage: 'Tungumál barnsins',
@@ -629,11 +639,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Fjarlægja tungumál',
       description: 'Remove language',
     },
-    languageSelectionPlaceholder: {
-      id: 'nps.application:different.needs.language.selection.placeholder',
-      defaultMessage: 'Veldu tungumál',
-      description: 'Choose language',
-    },
     preferredLanguageTitle: {
       id: 'nps.application:different.needs.preferred.language.title',
       defaultMessage:
@@ -645,11 +650,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       id: 'nps.application:different.needs.sign.language',
       defaultMessage: 'Notar barnið táknmál?',
       description: 'Does the child use sign language?',
-    },
-    interpreter: {
-      id: 'nps.application:different.needs.interpreter',
-      defaultMessage: 'Þurfa foreldrar túlk?',
-      description: 'Do the parents need an interpreter?',
     },
 
     // Health protection

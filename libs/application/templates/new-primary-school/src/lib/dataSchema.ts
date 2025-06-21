@@ -55,10 +55,21 @@ export const dataSchema = z.object({
       { path: ['placeOfResidence', 'postalCode'] },
     ),
   guardians: z.array(
-    z.object({
-      email: z.string().email(),
-      phoneNumber: phoneNumberSchema,
-    }),
+    z
+      .object({
+        email: z.string().email(),
+        phoneNumber: phoneNumberSchema,
+        requiresInterpreter: z.array(z.string()),
+        preferredLanguage: z.string().optional().nullable(),
+      })
+      .refine(
+        ({ requiresInterpreter, preferredLanguage }) =>
+          requiresInterpreter.includes(YES) ? !!preferredLanguage : true,
+        {
+          path: ['preferredLanguage'],
+          params: errorMessages.languageRequired,
+        },
+      ),
   ),
   relatives: z
     .array(
@@ -157,7 +168,6 @@ export const dataSchema = z.object({
     .object({
       languageEnvironment: z.string(),
       signLanguage: z.enum([YES, NO]),
-      guardianRequiresInterpreter: z.string().optional(),
       selectedLanguages: z
         .array(z.object({ code: z.string().optional().nullable() }))
         .optional(),
@@ -214,16 +224,6 @@ export const dataSchema = z.object({
       {
         path: ['preferredLanguage'],
         params: errorMessages.languageRequired,
-      },
-    )
-    .refine(
-      ({ languageEnvironment, guardianRequiresInterpreter }) => {
-        return languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
-          ? !!guardianRequiresInterpreter
-          : true
-      },
-      {
-        path: ['guardianRequiresInterpreter'],
       },
     ),
   healthProtection: z

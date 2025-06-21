@@ -57,10 +57,13 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const siblings = getValueViaPath(answers, 'siblings') as SiblingsRow[]
 
-  const languageEnvironment = getValueViaPath(
+  const languageEnvironmentIdAndKey = getValueViaPath(
     answers,
     'languages.languageEnvironment',
   ) as string
+
+  const [languageEnvironmentId, languageEnvironment] =
+    languageEnvironmentIdAndKey?.split('::') ?? []
 
   const selectedLanguages = getValueViaPath(
     answers,
@@ -78,11 +81,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     answers,
     'languages.preferredLanguage',
   ) as string
-
-  const guardianRequiresInterpreter = getValueViaPath(
-    answers,
-    'languages.guardianRequiresInterpreter',
-  ) as YesOrNo
 
   const hasFoodAllergiesOrIntolerances = getValueViaPath(
     answers,
@@ -221,11 +219,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     reasonForApplicationStreetAddress,
     reasonForApplicationPostalCode,
     siblings,
+    languageEnvironmentId,
     languageEnvironment,
     selectedLanguages,
     preferredLanguage,
     signLanguage,
-    guardianRequiresInterpreter,
     hasFoodAllergiesOrIntolerances,
     foodAllergiesOrIntolerances,
     hasOtherAllergies,
