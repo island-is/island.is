@@ -6,25 +6,32 @@ import { logger, runCommand } from '../common'
 import { ChildProcess } from 'child_process'
 import { LocalrunValueFile } from '../dsl/types/output-types'
 
-export async function renderLocalServices({
-  services,
-  print = false,
-  json = false,
-  dryRun = false,
-  noUpdateSecrets = false,
-}: {
+type LocalServiceArgs = {
   services: string[]
   print?: boolean
   json?: boolean
   dryRun?: boolean
-  noUpdateSecrets?: boolean
-}): Promise<LocalrunValueFile> {
+  secrets?: boolean
+  devServices?: boolean
+  mocks?: boolean
+}
+
+export async function renderLocalServices({
+  services,
+  print,
+  json,
+  dryRun,
+  secrets,
+  devServices,
+  mocks,
+}: LocalServiceArgs): Promise<LocalrunValueFile> {
   logger.debug('renderLocalServices', {
     services,
     print,
     json,
     dryRun,
-    noUpdateSecrets,
+    secrets,
+    devServices,
   })
   const chartName = 'islandis'
   const env = 'dev'
@@ -37,16 +44,16 @@ export async function renderLocalServices({
     habitat,
     uberChart,
     habitat.filter((s) => services.includes(s.name())),
-    { dryRun, noUpdateSecrets },
+    { dryRun, noUpdateSecrets: !secrets, devServices },
   )
 
   if (print) {
     const commandedServices = Object.entries(
       renderedLocalServices.services,
     ).map(([k, v]) => [k, `(${(v.commands ?? []).join(' && ')})`])
-    logger.info(
+    console.log(
       (json ? (s: any) => JSON.stringify(s, null, 2) : (s: any) => s)({
-        mocks: renderedLocalServices.mocks,
+        ...(mocks ? { mocks: renderedLocalServices.mocks } : {}),
         services: Object.fromEntries(commandedServices),
       }),
     )
@@ -55,26 +62,32 @@ export async function renderLocalServices({
   return renderedLocalServices
 }
 
-export async function runLocalServices(
-  services: string[],
-  dependencies: string[] = [],
-  {
-    dryRun = false,
-    neverFail = !!dryRun,
-    print = false,
-    json = false,
-    noUpdateSecrets = false,
-    startProxies = false,
-  }: {
-    dryRun?: boolean
-    neverFail?: boolean
-    print?: boolean
-    json?: boolean
-    noUpdateSecrets?: boolean
-    startProxies?: boolean
-  } = {},
-) {
-  logger.debug('runLocalServices', { services, dependencies })
+export async function runLocalServices({
+  services = [],
+  dependencies = [],
+  dryRun = false,
+  neverFail = !!dryRun,
+  print = false,
+  json = false,
+  secrets = false,
+  startProxies = false,
+  devServices = true,
+}: LocalServiceArgs & {
+  startProxies?: boolean
+  neverFail?: boolean
+  dependencies?: typeof services
+}) {
+  logger.debug('runLocalServices', {
+    services,
+    dependencies,
+    dryRun,
+    neverFail,
+    print,
+    json,
+    secrets,
+    startProxies,
+    devServices,
+  })
 
   // Add the service itself to the list of dependencies
   dependencies.push(...services)
@@ -84,7 +97,8 @@ export async function runLocalServices(
     print,
     json,
     dryRun,
-    noUpdateSecrets,
+    secrets,
+    devServices,
   })
 
   // Verify that all dependencies exist in the rendered dependency list
