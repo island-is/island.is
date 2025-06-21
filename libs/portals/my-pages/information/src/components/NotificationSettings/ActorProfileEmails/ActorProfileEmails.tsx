@@ -11,7 +11,7 @@ import { emailsMsg } from '../../../lib/messages'
 import { ProfileEmailForm } from '../../emails/ProfileEmailForm/ProfileEmailForm'
 import { VerifyEmailModal } from '../../verify/VerifyEmailModal'
 import * as styles from './ActorProfileEmails.css'
-import { useUserProfileSetActorProfileEmailMutation } from './UserProfileSetActorProfileEmail.mutation.generated'
+import { useUserProfileSetActorProfileEmailMutation } from './userProfileSetActorProfileEmail.mutation.generated'
 
 type EmailOption = Option<string> & Pick<Email, 'id' | 'emailStatus'>
 
