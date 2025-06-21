@@ -45,6 +45,7 @@ const Handle = styled.View`
 `
 
 const IconsWrapper = styled.View`
+  margin-left: auto;
   flex-direction: row;
   align-items: center;
   gap: ${({ theme }) => theme.spacing[1]}px;
@@ -67,20 +68,22 @@ const CloseIcon = styled.Image`
   height: ${({ theme }) => theme.spacing[3]}px;
 `
 
-export function NavigationBarSheet({
-  title,
-  onClosePress,
-  style,
-  showLoading,
-  closable = true,
-}: {
+type NavigationBarSheetProps = {
   title?: React.ReactNode
   componentId: string
   onClosePress(): void
   style?: ViewStyle
   showLoading?: boolean
   closable?: boolean
-}) {
+}
+
+export function NavigationBarSheet({
+  title,
+  onClosePress,
+  style,
+  showLoading,
+  closable = true,
+}: NavigationBarSheetProps) {
   const isConnected = useOfflineStore(({ isConnected }) => isConnected)
   const wd = useWindowDimensions()
   const theme = useTheme()

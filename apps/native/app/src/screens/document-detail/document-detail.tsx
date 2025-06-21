@@ -1,14 +1,13 @@
 import { useApolloClient, useFragment_experimental } from '@apollo/client'
 import React, { useEffect, useRef, useState } from 'react'
-import { FormattedDate, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 import {
-  Alert as RNAlert,
   Animated,
-  Platform,
+  Alert as RNAlert,
   StyleSheet,
   View,
+  SafeAreaView,
 } from 'react-native'
-import { DdLogs } from '@datadog/mobile-react-native'
 import {
   Navigation,
   NavigationFunctionComponent,
@@ -17,29 +16,45 @@ import {
 import {
   useNavigationButtonPress,
   useNavigationComponentDidAppear,
-} from 'react-native-navigation-hooks/dist'
-import Pdf, { Source } from 'react-native-pdf'
+} from 'react-native-navigation-hooks'
 import WebView from 'react-native-webview'
 import styled, { useTheme } from 'styled-components/native'
 
-import { Alert, blue400, dynamicColor, Header, Loader, Problem } from '../../ui'
+import { PdfViewer } from '../../components/pdf-viewer/pdf-viewer'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
   DocumentV2,
   DocumentV2Action,
   ListDocumentFragmentDoc,
-  useGetDocumentQuery,
   useDocumentConfirmActionsLazyQuery,
+  useGetDocumentQuery,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
 import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
 import { useLocale } from '../../hooks/use-locale'
+import { useNavigationModal } from '../../hooks/use-navigation-modal'
 import { toggleAction } from '../../lib/post-mail-action'
-import { authStore } from '../../stores/auth-store'
-import { useOrganizationsStore } from '../../stores/organizations-store'
-import { ButtonRegistry } from '../../utils/component-registry'
-import { getButtonsForActions } from './utils/get-buttons-for-actions'
 import { useBrowser } from '../../lib/use-browser'
+import { useOrganizationsStore } from '../../stores/organizations-store'
+import {
+  Alert,
+  Button,
+  Header,
+  Loader,
+  Problem,
+  blue400,
+  dynamicColor,
+} from '../../ui'
+import {
+  ButtonRegistry,
+  ComponentRegistry,
+} from '../../utils/component-registry'
+import { ListParams } from '../inbox/inbox'
+import { ButtonDrawer } from './components/button-drawer'
+import { getButtonsForActions } from './utils/get-buttons-for-actions'
 import { shareFile } from './utils/share-file'
+import { DocumentReplyInfo, DocumentReplyScreenProps } from './document-reply'
+import { DocumentCommunicationsScreenProps } from './document-communications'
 
 const Host = styled.SafeAreaView`
   margin-left: ${({ theme }) => theme.spacing[2]}px;
@@ -47,11 +62,8 @@ const Host = styled.SafeAreaView`
 `
 
 const Border = styled.View`
-  height: 1px;
-  background-color: ${dynamicColor((props) => ({
-    dark: props.theme.shades.dark.shade200,
-    light: props.theme.color.blue100,
-  }))};
+  border-bottom-width: ${({ theme }) => theme.border.width.standard}px;
+  border-bottom-color: ${({ theme }) => theme.color.blue200};
 `
 
 const ActionsWrapper = styled.View`
@@ -65,11 +77,12 @@ const PdfWrapper = styled.View`
   background-color: ${dynamicColor('background')};
 `
 
-const DocumentWrapper = styled.View<{ hasMarginTop?: boolean }>`
+const DocumentWrapper = styled.View`
   flex: 1;
   margin-horizontal: ${({ theme }) => theme.spacing[2]}px;
   padding-top: ${({ theme }) => theme.spacing[2]}px;
 `
+
 const regexForBr = /<br\s*\/>/gi
 
 // Styles for html documents
@@ -161,7 +174,7 @@ function getRightButtonsForDocumentDetail({
 
 const { useNavigationOptions, getNavigationOptions } =
   createNavigationOptionHooks(
-    (theme, intl) => ({
+    (_theme, intl) => ({
       topBar: {
         title: {
           text: intl.formatMessage({ id: 'documentDetail.screenTitle' }),
@@ -180,75 +193,24 @@ const { useNavigationOptions, getNavigationOptions } =
     },
   )
 
-interface PdfViewerProps {
-  url: string
-  subject: string
-  senderName: string
-  onLoaded: (path: string) => void
-  onError: (err: Error) => void
-}
-
-const PdfViewer = React.memo(
-  ({ url, subject, senderName, onLoaded, onError }: PdfViewerProps) => {
-    const [actualUrl, setActualUrl] = useState(url)
-    const extraProps = {
-      activityIndicatorProps: {
-        color: '#0061ff',
-        progressTintColor: '#ccdfff',
-      },
-    }
-
-    return (
-      <Pdf
-        source={{ uri: actualUrl }}
-        onLoadComplete={(_, filePath) => {
-          onLoaded?.(filePath)
-        }}
-        onError={(err) => {
-          // Send error to Datadog with document subject and sender name
-          DdLogs.warn(`PDF error for document "${subject}"`, {
-            error: (err as Error)?.message,
-            documentTitle: subject,
-            documentSenderName: senderName,
-          })
-
-          // Check if actualUrl contains any whitespace character and update if needed
-          // The Base64 logic on iOS does not support whitespace.
-          if (/\s/.test(actualUrl)) {
-            const cleanedUrl = actualUrl.replace(/\s/g, '')
-            setActualUrl(cleanedUrl)
-          } else {
-            onError?.(err as Error)
-          }
-        }}
-        trustAllCerts={Platform.select({ android: false, ios: undefined })}
-        style={{
-          flex: 1,
-          backgroundColor: 'transparent',
-        }}
-        {...extraProps}
-      />
-    )
-  },
-  (prevProps, nextProps) => {
-    if (prevProps.url === nextProps.url) {
-      return true
-    }
-    return false
-  },
-)
-
 export const DocumentDetailScreen: NavigationFunctionComponent<{
   docId: string
   isUrgent?: boolean
-}> = ({ componentId, docId, isUrgent }) => {
+  listParams: ListParams
+}> = ({ componentId, docId, isUrgent, listParams }) => {
   useNavigationOptions(componentId)
 
+  const { showModal } = useNavigationModal()
   const client = useApolloClient()
   const intl = useIntl()
   const htmlStyles = useHtmlStyles()
   const { openBrowser } = useBrowser()
   const { getOrganizationLogoUrl } = useOrganizationsStore()
+  const isFeature2WayMailboxEnabled = useFeatureFlag(
+    'is2WayMailboxEnabled',
+    false,
+  )
+
   const [error, setError] = useState(false)
   const [showConfirmedAlert, setShowConfirmedAlert] = useState(false)
   const [visible, setVisible] = useState(false)
@@ -338,7 +300,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
     },
   })
 
-  const Document = {
+  const Document: Partial<DocumentV2> = {
     ...(doc?.data || {}),
     ...(docRes.data?.documentV2 || {}),
   }
@@ -379,14 +341,11 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
   })
 
   useNavigationButtonPress(({ buttonId }) => {
-    if (buttonId === ButtonRegistry.DocumentArchiveButton) {
-      toggleAction(Document.archived ? 'unarchive' : 'archive', Document.id!)
+    if (buttonId === ButtonRegistry.DocumentArchiveButton && Document.id) {
+      toggleAction(Document.archived ? 'unarchive' : 'archive', Document.id)
     }
-    if (buttonId === ButtonRegistry.DocumentStarButton) {
-      toggleAction(
-        Document.bookmarked ? 'unbookmark' : 'bookmark',
-        Document.id!,
-      )
+    if (buttonId === ButtonRegistry.DocumentStarButton && Document.id) {
+      toggleAction(Document.bookmarked ? 'unbookmark' : 'bookmark', Document.id)
     }
     if (buttonId === ButtonRegistry.ShareButton && loaded) {
       onShare()
@@ -430,11 +389,12 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
       return
     }
     markDocumentAsRead()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [Document.id])
 
   const fadeAnim = useRef(new Animated.Value(0)).current
 
-  React.useEffect(() => {
+  useEffect(() => {
     if (loaded) {
       Animated.timing(fadeAnim, {
         toValue: 1,
@@ -442,21 +402,71 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
         useNativeDriver: true,
       }).start()
     }
-  }, [loaded])
+  }, [loaded, fadeAnim])
+
+  /**
+   * Navigate to the document reply modal.
+   * It will pass the first reply info down so that the document communications screen can show the first reply info.
+   */
+  const onFirstReplyPress = () => {
+    const senderName = Document.sender?.name
+
+    if (!senderName) {
+      return
+    }
+
+    const passProps: DocumentReplyScreenProps = {
+      senderName,
+      documentId: docId,
+      subject: Document.subject ?? '',
+      isFirstReply: true,
+      onReplySuccess(info) {
+        onCommunicationsPress(info)
+      },
+    }
+
+    showModal(ComponentRegistry.DocumentReplyScreen, {
+      passProps,
+    })
+  }
+
+  /**
+   * Navigate to the document communications modal.
+   */
+  const onCommunicationsPress = (reply?: DocumentReplyInfo) => {
+    const passProps: DocumentCommunicationsScreenProps = {
+      documentId: docId,
+      ticketId: Document.ticket?.id ?? undefined,
+      firstReplyInfo: reply,
+    }
+
+    Navigation.push(componentId, {
+      component: {
+        name: ComponentRegistry.DocumentCommunicationsScreen,
+        passProps,
+        options: {
+          topBar: {
+            title: {
+              text: Document.subject,
+            },
+          },
+        },
+      },
+    })
+  }
+
+  const isReplyable = Document.replyable ?? false
+  const hasComments = Document?.ticket?.comments?.length ?? null
 
   return (
     <>
       <Host>
         <Header
           title={Document.sender?.name ?? ''}
-          date={
-            Document.publicationDate ? (
-              <FormattedDate value={Document.publicationDate} />
-            ) : undefined
-          }
+          date={Document.publicationDate ?? undefined}
+          category={listParams?.category?.name}
           message={Document.subject}
           isLoading={loading && !Document.subject}
-          hasBorder={false}
           logo={getOrganizationLogoUrl(Document.sender?.name ?? '', 75)}
           label={isUrgent ? intl.formatMessage({ id: 'inbox.urgent' }) : ''}
         />
@@ -482,7 +492,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
         </ActionsWrapper>
       )}
       <Border />
-      <DocumentWrapper hasMarginTop={true}>
+      <DocumentWrapper>
         <Animated.View
           style={{
             flex: 1,
@@ -513,9 +523,9 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
                 {visible && (
                   <PdfViewer
                     url={`data:application/pdf;base64,${Document.content?.value}`}
-                    subject={Document.subject}
-                    senderName={Document.sender?.name}
-                    onLoaded={(filePath: any) => {
+                    subject={Document.subject ?? ''}
+                    senderName={Document.sender?.name ?? ''}
+                    onLoaded={(filePath) => {
                       setPdfUrl(filePath)
                       setLoaded(true)
                     }}
@@ -561,6 +571,34 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
           </View>
         )}
       </DocumentWrapper>
+      {isFeature2WayMailboxEnabled && isReplyable && !loading && (
+        <ButtonDrawer>
+          <SafeAreaView>
+            <Button
+              title={intl.formatMessage({
+                id: hasComments
+                  ? 'documentDetail.buttonCommunications'
+                  : 'documentDetail.buttonReply',
+              })}
+              isTransparent
+              isOutlined
+              iconPosition="start"
+              icon={
+                hasComments
+                  ? require('../../assets/icons/chatbubbles.png')
+                  : require('../../assets/icons/reply.png')
+              }
+              onPress={() => {
+                if (hasComments) {
+                  onCommunicationsPress()
+                } else {
+                  onFirstReplyPress()
+                }
+              }}
+            />
+          </SafeAreaView>
+        </ButtonDrawer>
+      )}
     </>
   )
 }

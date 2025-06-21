@@ -27,7 +27,8 @@ export async function getAppRoot(): Promise<Layout> {
               name: ComponentRegistry.LoginScreen,
             },
           },
-        ].concat(isAuthenticated ? onboardingScreens : []),
+          ...(isAuthenticated ? onboardingScreens : []),
+        ],
       },
     }
   }
