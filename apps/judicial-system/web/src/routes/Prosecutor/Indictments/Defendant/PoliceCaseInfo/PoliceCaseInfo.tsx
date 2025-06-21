@@ -1,6 +1,6 @@
 import { FC, useContext, useEffect, useMemo, useState } from 'react'
-import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
+import { InputMask } from '@react-input/mask'
 
 import {
   Box,
@@ -10,6 +10,7 @@ import {
   Select,
   Tag,
 } from '@island.is/island-ui/core'
+import { POLICE_CASE_NUMBER } from '@island.is/judicial-system/consts'
 import {
   capitalize,
   indictmentSubtypes,
@@ -150,8 +151,9 @@ export const PoliceCaseInfo: FC<Props> = ({
       )}
       <Box marginBottom={2}>
         <InputMask
-          mask={'999-9999-9999999'}
-          maskPlaceholder={null}
+          component={Input}
+          mask={POLICE_CASE_NUMBER}
+          replacement={{ _: /\d/ }}
           value={policeCaseNumberInput}
           onChange={(event) => {
             if (
@@ -187,27 +189,24 @@ export const PoliceCaseInfo: FC<Props> = ({
             }
           }}
           disabled={policeCaseNumberImmutable}
-        >
-          <Input
-            data-testid={`policeCaseNumber${index}`}
-            name="policeCaseNumber"
-            autoComplete="off"
-            label={formatMessage(policeCaseInfo.policeCaseNumberLabel)}
-            placeholder={formatMessage(
-              policeCaseInfo.policeCaseNumberPlaceholder,
-              {
-                prefix:
-                  policeCaseNumberPrefix ??
-                  user?.institution?.policeCaseNumberPrefix ??
-                  '',
-                year: new Date().getFullYear(),
-              },
-            )}
-            hasError={policeCaseNumberErrorMessage !== ''}
-            errorMessage={policeCaseNumberErrorMessage}
-            required
-          />
-        </InputMask>
+          data-testid={`policeCaseNumber${index}`}
+          name="policeCaseNumber"
+          autoComplete="off"
+          label={formatMessage(policeCaseInfo.policeCaseNumberLabel)}
+          placeholder={formatMessage(
+            policeCaseInfo.policeCaseNumberPlaceholder,
+            {
+              prefix:
+                policeCaseNumberPrefix ??
+                user?.institution?.policeCaseNumberPrefix ??
+                '',
+              year: new Date().getFullYear(),
+            },
+          )}
+          hasError={policeCaseNumberErrorMessage !== ''}
+          errorMessage={policeCaseNumberErrorMessage}
+          required
+        />
       </Box>
       <Box marginBottom={2}>
         <Select
