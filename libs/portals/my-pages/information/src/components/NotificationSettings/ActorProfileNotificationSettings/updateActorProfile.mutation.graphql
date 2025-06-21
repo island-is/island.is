@@ -1,13 +1,3 @@
-query ActorProfiles {
-  userProfileActorProfiles {
-    data {
-      fromNationalId
-      fromName
-      emailNotifications
-    }
-  }
-}
-
 mutation UpdateActorProfile($input: UserProfileUpdateActorProfileInput!) {
   userProfileUpdateActorProfile(input: $input) {
     fromNationalId

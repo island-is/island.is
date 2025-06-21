@@ -1,5 +1,3 @@
-import React from 'react'
-import { useLocale } from '@island.is/localization'
 import {
   Box,
   Hidden,
@@ -7,16 +5,28 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 
-import { mNotifications } from '../../lib/messages'
-import { NotificationSettingsCard } from './cards/NotificationSettingsCard'
-import { ActorProfileSettingsCard } from './cards/ActorProfileSettingsCard'
-import { useActorProfilesQuery } from './graphql/ActorProfiles.generated'
-import * as styles from './ActorProfilesNotificationSettings.css'
+import { mNotifications } from '../../../lib/messages'
+import { ActorProfileSettingsCard } from '../cards/ActorProfileSettingsCard'
+import { NotificationSettingsCard } from '../cards/NotificationSettingsCard'
+
 import { Problem } from '@island.is/react-spa/shared'
+import { ActorProfileEmails } from '../ActorProfileEmails/ActorProfileEmails'
+import * as styles from './ActorNotificationSettings.css'
+import { useUserProfileActorProfilesQuery } from './userProfileActorProfiles.query.generated'
+import {
+  UserProfile,
+  useUserProfile,
+} from '@island.is/portals/my-pages/graphql'
 
-export const ActorProfilesNotificationSettings = () => {
-  const { data, loading, error } = useActorProfilesQuery()
+export const ActorNotificationSettings = () => {
+  const { data, loading, error } = useUserProfileActorProfilesQuery()
+  const {
+    data: userProfile,
+    loading: userLoading,
+    error: userProfileError,
+  } = useUserProfile()
   const { formatMessage } = useLocale()
 
   const getContent = () => {
@@ -70,7 +80,19 @@ export const ActorProfilesNotificationSettings = () => {
             title={actorProfile.fromName}
             key={actorProfile.fromNationalId}
           >
-            <ActorProfileSettingsCard profile={actorProfile} />
+            <Box display="flex" flexDirection="column" rowGap={3}>
+              <ActorProfileSettingsCard profile={actorProfile} />
+              {userLoading ? (
+                <SkeletonLoader borderRadius="large" height={88} />
+              ) : userProfileError ? (
+                <Problem error={userProfileError} size="small" />
+              ) : userProfile ? (
+                <ActorProfileEmails
+                  actorProfile={actorProfile}
+                  userProfile={userProfile as UserProfile}
+                />
+              ) : null}
+            </Box>
           </NotificationSettingsCard>
         ))}
       </Stack>

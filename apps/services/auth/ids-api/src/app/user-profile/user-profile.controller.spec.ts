@@ -78,7 +78,7 @@ function createUserProfile({ isRestricted = false }): UserProfileDto {
     mobilePhoneNumber: faker.phone.phoneNumber(),
     locale: faker.random.arrayElement(
       Object.values(UserProfileLocaleEnum) as UserProfileLocaleEnum[],
-    ),
+    ) as any,
     mobilePhoneNumberVerified: faker.datatype.boolean(),
     emailVerified: faker.datatype.boolean(),
     documentNotifications: faker.datatype.boolean(),

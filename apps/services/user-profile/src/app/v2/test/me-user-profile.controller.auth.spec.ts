@@ -28,7 +28,7 @@ describe('MeUserProfileController', () => {
     ${'GET'}   | ${`/v2/me`}
     ${'PATCH'} | ${`/v2/me`}
     ${'POST'}  | ${`/v2/me/nudge`}
-    ${'POST'}  | ${`/v2/me/create-verification`}
+    ${'POST'}  | ${`/v2/actor/create-verification`}
   `('$method $endpoint', ({ method, endpoint }: TestEndpointOptions) => {
     it('should return 401 when user is not authenticated', async () => {
       // Arrange

@@ -13,6 +13,7 @@ import { UserProfile } from './userProfile.model'
 import { User } from '@island.is/auth-nest-tools'
 import { UserDeviceTokens } from './userDeviceTokens.model'
 import { DeviceTokenDto } from './dto/deviceToken.dto'
+import { Emails } from '../v2/models/emails.model'
 
 @Injectable()
 export class UserProfileService {
@@ -32,6 +33,14 @@ export class UserProfileService {
   async findByNationalId(nationalId: string): Promise<UserProfile | null> {
     this.logger.debug(`Finding user profile by nationalId "${nationalId}"`)
     return this.userProfileModel.findOne({
+      include: {
+        model: Emails,
+        as: 'emails',
+        required: true,
+        where: {
+          primary: true,
+        },
+      },
       where: { nationalId },
     })
   }

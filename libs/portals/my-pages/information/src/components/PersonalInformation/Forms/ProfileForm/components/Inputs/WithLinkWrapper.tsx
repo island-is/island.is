@@ -1,8 +1,8 @@
 import React, { ReactNode } from 'react'
 import { Box, Icon, LinkV2 as Link, Text } from '@island.is/island-ui/core'
-import * as styles from './ReadOnlyWithLinks.css'
+import * as styles from './WithLinkWrapper.css'
 
-interface ReadonlyWithLinkProps {
+interface WithLinkWrapperProps {
   input: ReactNode
   link: {
     href: string
@@ -10,7 +10,7 @@ interface ReadonlyWithLinkProps {
   }
 }
 
-export const ReadOnlyWithLinks = ({ input, link }: ReadonlyWithLinkProps) => (
+export const WithLinkWrapper = ({ input, link }: WithLinkWrapperProps) => (
   <Box
     display="flex"
     width="full"

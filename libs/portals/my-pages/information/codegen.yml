@@ -13,6 +13,8 @@ generates:
     config:
       scalars:
         DateTime: string
+      namingConvention:
+        enumValues: keep
 hooks:
   afterAllFileWrite:
     - prettier --write
