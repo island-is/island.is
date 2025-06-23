@@ -123,7 +123,7 @@ jobs:
           echo "MAIN_BRANCH=${RAW_REF#refs/heads/}"
 
       - name: Derive appropriate SHAs
-        if: ${{ inputs.run_merge_queue == false }}
+        if: ${{ inputs.run_merge_queue == false && !github.event.localrun }}
         uses: nrwl/nx-set-shas@v4
         with:
           main-branch-name: ${{ steps.get-branch.outputs.MAIN_BRANCH }}
