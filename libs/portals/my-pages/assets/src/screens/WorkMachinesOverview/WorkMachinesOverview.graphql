@@ -4,18 +4,16 @@ query GetWorkMachines($input: WorkMachinesCollectionInput) {
       id
       registrationNumber
       type
+      model
       status
       dateLastInspection
     }
-    links {
-      rel
+    linkCollection {
+      href
+      relation
+      relationCategory
+      displayTitle
     }
     totalCount
-  }
-}
-
-query GetWorkMachineDocument($input: WorkMachinesCollectionDocumentInput) {
-  workMachinesCollectionDocument(input: $input) {
-    downloadUrl
   }
 }
