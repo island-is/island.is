@@ -6,7 +6,7 @@ import {
   buildSubmitField,
   coreMessages,
 } from '@island.is/application/core'
-import { DefaultEvents, FormModes, UserProfileApi } from '@island.is/application/types'
+import { DefaultEvents, FormModes, IdentityApi, NationalRegistrySpouseApi, UserProfileApi } from '@island.is/application/types'
 import { disabilityPensionFormMessage } from '../../lib/messages'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 
@@ -26,11 +26,21 @@ export const Prerequisites = buildForm({
           title: socialInsuranceAdministrationMessage.pre.externalDataSection,
           subTitle: socialInsuranceAdministrationMessage.pre.externalDataDescription,
           dataProviders: [
-            /*buildDataProviderItem({
+            buildDataProviderItem({
               provider: UserProfileApi,
               title: 'User profile',
               subTitle: 'User profile',
-              }),*/
+              }),
+            buildDataProviderItem({
+              provider: NationalRegistrySpouseApi,
+              title: 'Spouse',
+              subTitle: 'Spouse',
+              }),
+            buildDataProviderItem({
+              provider: IdentityApi,
+              title: 'ident',
+              subTitle: 'ity',
+              }),
             // Add more data providers as needed
           ],
           submitField: buildSubmitField({

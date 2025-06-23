@@ -11,6 +11,7 @@ import {
   ApplicationConfigurations,
   NationalRegistryUserApi,
   NationalRegistrySpouseApi,
+  IdentityApi,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -22,7 +23,6 @@ import {
 } from '@island.is/application/core'
 import { assign } from 'xstate'
 import { disabilityPensionFormMessage } from './messages'
-import { NationalRegistryBirthplaceApi } from '../dataProviders'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -56,7 +56,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [UserProfileApi, NationalRegistryUserApi, NationalRegistrySpouseApi, NationalRegistryBirthplaceApi],
+              api: [UserProfileApi, IdentityApi, NationalRegistrySpouseApi],
               delete: true,
             },
           ],
