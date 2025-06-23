@@ -23,6 +23,7 @@ export const is = {
   // app lock
   'applock.title': 'Sláðu inn 4 tölustafa PIN',
   'applock.attempts': 'tilraunir eftir',
+  'applock.attempt': 'tilraun eftir',
 
   // onboarding
   'onboarding.notifications.title':

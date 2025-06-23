@@ -21,7 +21,7 @@ import { dynamicColor, font } from '../../ui'
 import logo from '../../assets/logo/logo-64w.png'
 import { PinKeypad } from '../../components/pin-keypad/pin-keypad'
 import { VisualizedPinCode } from '../../components/visualized-pin-code/visualized-pin-code'
-import { authStore } from '../../stores/auth-store'
+import { authStore, useAuthStore } from '../../stores/auth-store'
 import {
   preferencesStore,
   usePreferencesStore,
@@ -51,7 +51,6 @@ const Subtitle = styled.Text`
   ${font({
     fontSize: 20,
   })}
-  height: 22px;
 `
 
 const Center = styled.View`
@@ -79,9 +78,15 @@ export const AppLockScreen: NavigationFunctionComponent<{
   const isPromptRef = useRef(false)
   const [code, setCode] = useState('')
   const [invalidCode, setInvalidCode] = useState(false)
-  const pinTries = preferencesStore.getState().pinTries
-  const [attempts, setAttempts] = useState(pinTries)
-  const { useBiometrics } = usePreferencesStore()
+
+  const pinTries = usePreferencesStore(({ pinTries }) => pinTries)
+  const attemptsLeft = MAX_ATTEMPTS - pinTries
+
+  const useBiometrics = usePreferencesStore(
+    ({ useBiometrics }) => useBiometrics,
+  )
+
+  const logout = useAuthStore(({ logout }) => logout)
   const biometricType = useBiometricType()
   const intl = useIntl()
 
@@ -119,6 +124,82 @@ export const AppLockScreen: NavigationFunctionComponent<{
     }
   }
 
+  /**
+   * Logs out the user, resets lock screen state, and navigates to the app root
+   */
+  const handleLogout = async () => {
+    await logout()
+    resetLockScreen()
+
+    await Promise.all([
+      Navigation.dismissAllOverlays(),
+      Navigation.dismissAllModals(),
+    ])
+
+    const root = await getAppRoot()
+    await Navigation.setRoot({ root })
+  }
+
+  /**
+   * Validates the provided pin against the stored pin in Keychain
+   */
+  const validatePin = async (pin: string) => {
+    try {
+      const res = await Keychain.getGenericPassword({ service: 'PIN_CODE' })
+
+      if (res && res.password === pin) {
+        return true
+      }
+
+      return false
+    } catch (error) {
+      console.log(error)
+      return false
+    }
+  }
+
+  /**
+   * Handles a login attempt with the provided pin
+   * - If the pin is correct, unlocks the app and resets attempts
+   * - If the pin is incorrect and max attempts reached, logs out
+   * - Otherwise, increments attempt counter and shows error
+   */
+  const loginAttempt = async (pin: string) => {
+    // Do nothing if pin doesn't have the correct length
+    if (pin.length !== MAX_PIN_CHARS) {
+      return
+    }
+
+    setInvalidCode(false)
+    const isValid = await validatePin(pin)
+
+    if (isValid) {
+      preferencesStore.setState({ pinTries: 0 })
+      unlockApp()
+      return
+    }
+
+    if (pinTries + 1 >= MAX_ATTEMPTS) {
+      preferencesStore.setState({ pinTries: 0 })
+      handleLogout()
+      return
+    }
+
+    preferencesStore.setState((state) => ({
+      pinTries: state.pinTries + 1,
+    }))
+
+    setInvalidCode(true)
+    setTimeout(() => {
+      setCode('')
+    }, 660)
+  }
+
+  useEffect(() => {
+    loginAttempt(code)
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [code])
+
   useEffect(() => {
     if (status === 'active' && isPromptRef.current) {
       isPromptRef.current = false
@@ -137,47 +218,6 @@ export const AppLockScreen: NavigationFunctionComponent<{
   useNavigationComponentDidDisappear(() => {
     resetLockScreen()
   })
-
-  useEffect(() => {
-    setInvalidCode(false)
-    if (code.length === MAX_PIN_CHARS) {
-      if (attempts === MAX_ATTEMPTS) {
-        // maximum attempts reached
-        authStore
-          .getState()
-          .logout()
-          .then(() => {
-            // you are now logged out and navigated to root screen
-            resetLockScreen()
-            Navigation.dismissAllOverlays()
-            Navigation.dismissAllModals()
-            getAppRoot().then((root) => Navigation.setRoot({ root }))
-          })
-      } else {
-        // matching pin code
-        Keychain.getGenericPassword({ service: 'PIN_CODE' })
-          .then((res) => {
-            if (res && res.password === code) {
-              preferencesStore.setState({ pinTries: 0 })
-              unlockApp()
-            } else {
-              // increment attemps, reset code and display warning
-              setAttempts((previousAttempts) => previousAttempts + 1)
-              preferencesStore.setState((state) => ({
-                pinTries: state.pinTries + 1,
-              }))
-              setInvalidCode(true)
-              setTimeout(() => {
-                setCode('')
-              }, 660)
-            }
-          })
-          .catch((err) => {
-            console.log(err)
-          })
-      }
-    }
-  }, [code])
 
   const onPinInput = (char: string) => {
     setCode(
@@ -218,9 +258,10 @@ export const AppLockScreen: NavigationFunctionComponent<{
           />
           <Title>{intl.formatMessage({ id: 'applock.title' })}</Title>
           <Subtitle>
-            {attempts > 0
-              ? `${MAX_ATTEMPTS - attempts} ${intl.formatMessage({
-                  id: 'applock.attempts',
+            {pinTries > 0
+              ? `${attemptsLeft} ${intl.formatMessage({
+                  id:
+                    attemptsLeft === 1 ? 'applock.attempt' : 'applock.attempts',
                 })}`
               : ''}
           </Subtitle>
