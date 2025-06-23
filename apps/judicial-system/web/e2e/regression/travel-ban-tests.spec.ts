@@ -1,4 +1,4 @@
-import { expect } from '@island.is/testing/e2e'
+import { expect } from '@playwright/test'
 
 import { urls, verifyRequestCompletion } from '@island.is/testing/e2e'
 
