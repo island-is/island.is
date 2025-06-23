@@ -105,11 +105,6 @@ export class PaymentService extends BaseTemplateApiService {
     const { organizationId, chargeItems, extraData } = params ?? {}
     const { shouldUseMockPayment } = application.answers
 
-    console.log('--------------------------------')
-    console.log('createCharge')
-    console.dir(params, { depth: null })
-    console.log('--------------------------------')
-
     if (shouldUseMockPayment && isRunningOnEnvironment('production')) {
       this.logger.warn('Attempt to use mock payments in production', {
         applicationId: application.id,

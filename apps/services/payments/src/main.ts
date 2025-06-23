@@ -4,8 +4,6 @@ import { AppModule } from './app/app.module'
 import { openApi } from './openApi'
 import { environment } from './environments'
 
-// DEPLOYME
-
 bootstrap({
   appModule: AppModule,
   name: 'payments',
