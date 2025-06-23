@@ -2,16 +2,6 @@ import { defineMessages } from 'react-intl'
 
 export const m = {
   fines: defineMessages({
-    currencySingularPrefix: {
-      id: 'web.logreglan.fineAndSpeedMeasurementCalculator:fines.currencySingularPrefix',
-      defaultMessage: ' krónur',
-      description: ' krónur',
-    },
-    currencyPluralPrefix: {
-      id: 'web.logreglan.fineAndSpeedMeasurementCalculator:fines.currencyPluralPrefix',
-      defaultMessage: ' króna',
-      description: ' króna',
-    },
     fineTableOfContentHeading: {
       id: 'web.logreglan.fineAndSpeedMeasurementCalculator:fines.fineTableOfContentHeading',
       defaultMessage: 'Sektir',
