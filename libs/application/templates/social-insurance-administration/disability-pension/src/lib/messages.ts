@@ -163,10 +163,10 @@ export const disabilityPensionFormMessage: MessageDir = {
       defaultMessage: 'Banki',
       description: 'Bank',
     },
-    useDiscount: {
-      id: 'ol.application:paymentInfo.useDiscount',
+    personalAllowance: {
+      id: 'ol.application:paymentInfo.personalAllowance',
       defaultMessage: 'Vilt þú nýta þér persónuafsláttinn þinn?',
-      description: 'Do you want to use your personal discount?',
+      description: 'Do you want to use your personal allowance',
     },
     taxationLevel: {
       id: 'ol.application:paymentInfo.taxationLevel',

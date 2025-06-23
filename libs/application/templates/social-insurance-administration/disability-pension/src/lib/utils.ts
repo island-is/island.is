@@ -3,14 +3,18 @@ import { BankAccountType } from "@island.is/application/templates/social-insuran
 import { Application } from "@island.is/application/types"
 import { parsePhoneNumberFromString } from "libphonenumber-js"
 
-export const isForeignAccount= (applicationAnswers: Application['answers']): boolean => {
+export const accountNationality = (applicationAnswers: Application['answers']): BankAccountType | null => {
   const bankAccountType = getValueViaPath<BankAccountType>(
     applicationAnswers,
     'paymentInfoForm.accountType',
     undefined
   )
 
-  return bankAccountType === BankAccountType.FOREIGN
+  if (!bankAccountType) {
+    return null;
+  }
+
+  return bankAccountType
 }
 
 

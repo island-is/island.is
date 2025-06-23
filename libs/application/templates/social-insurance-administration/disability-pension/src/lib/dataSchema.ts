@@ -2,7 +2,7 @@ import { z } from 'zod'
 import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { BankAccountType, TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { NO, YES } from '@island.is/application/core'
-import { formatBankInfo, validIBAN, validSWIFT } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
+import { formatBankInfo, validIBAN, validSWIFT } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { isValidPhoneNumber } from './utils'
 
 
