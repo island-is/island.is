@@ -64,6 +64,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
       },
       email: guardian.email,
       phone: guardian.phoneNumber,
+      requiresInterpreter: guardian.requiresInterpreter.includes(YES),
       ...(guardian.requiresInterpreter.includes(YES) && {
         preferredLanguage: guardian.preferredLanguage,
       }),

@@ -268,6 +268,14 @@
           "relationTypeId": {
             "type": "string",
             "description": "Agents connection to the student, strings can be found under key option type \"relation\""
+          },
+          "preferredLanguage": {
+            "type": "string",
+            "description": "The preferred language of the agent, should be a valid code."
+          },
+          "requiresInterpreter": {
+            "type": "boolean",
+            "description": "If the agent requires an interpreter for communication."
           }
         },
         "required": ["name", "nationalId", "type"]
