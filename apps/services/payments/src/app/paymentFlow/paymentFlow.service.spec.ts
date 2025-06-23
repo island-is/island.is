@@ -12,6 +12,10 @@ import { CreatePaymentFlowInput } from './dtos/createPaymentFlow.input'
 import { PaymentFlow } from './models/paymentFlow.model'
 import { getModelToken } from '@nestjs/sequelize'
 
+// A helper type to satisfy the linter for partial mocks.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type TestPartial = any
+
 describe('PaymentFlowService', () => {
   let app: TestApp
   let service: PaymentFlowService
@@ -48,14 +52,16 @@ describe('PaymentFlowService', () => {
         },
       ]
 
-      jest.spyOn(service as any, 'getPaymentFlowChargeDetails').mockReturnValue(
-        Promise.resolve({
-          catalogItems: charges,
-          totalPrice: 0,
-          isAlreadyPaid: false,
-          hasInvoice: false,
-        }),
-      )
+      jest
+        .spyOn(service as TestPartial, 'getPaymentFlowChargeDetails')
+        .mockReturnValue(
+          Promise.resolve({
+            catalogItems: charges,
+            totalPrice: 0,
+            isAlreadyPaid: false,
+            hasInvoice: false,
+          }),
+        )
 
       const paymentInfo: CreatePaymentFlowInput = {
         availablePaymentMethods: [PaymentMethod.CARD],
@@ -111,7 +117,7 @@ describe('PaymentFlowService', () => {
     it('should throw an already paid error if flow is paid', async () => {
       jest
         .spyOn(service, 'getPaymentFlowDetails')
-        .mockResolvedValue(mockPaymentFlowDetails as any)
+        .mockResolvedValue(mockPaymentFlowDetails as TestPartial)
       jest.spyOn(service, 'getPaymentFlowStatus').mockResolvedValue({
         paymentStatus: PaymentStatus.PAID,
         updatedAt: new Date(),
@@ -138,7 +144,7 @@ describe('PaymentFlowService', () => {
 
       jest
         .spyOn(service, 'getPaymentFlowDetails')
-        .mockResolvedValue(paymentFlowWithInvoice as any)
+        .mockResolvedValue(paymentFlowWithInvoice as TestPartial)
       jest.spyOn(service, 'getPaymentFlowStatus').mockResolvedValue({
         paymentStatus: PaymentStatus.INVOICE_PENDING,
         updatedAt: new Date(),
@@ -146,9 +152,9 @@ describe('PaymentFlowService', () => {
       jest.spyOn(service, 'getPaymentFlowChargeDetails').mockResolvedValue({
         firstProductTitle: 'Test Product',
         totalPrice: 100,
-      } as any)
+      } as TestPartial)
       jest
-        .spyOn(service as any, 'getPayerName')
+        .spyOn(service as TestPartial, 'getPayerName')
         .mockResolvedValue(mockPayer.name)
       jest.spyOn(service, 'logPaymentFlowUpdate').mockResolvedValue(undefined)
       const deletePaymentChargeSpy = jest
@@ -177,7 +183,7 @@ describe('PaymentFlowService', () => {
 
       jest
         .spyOn(service, 'getPaymentFlowDetails')
-        .mockResolvedValue(paymentFlowWithoutInvoice as any)
+        .mockResolvedValue(paymentFlowWithoutInvoice as TestPartial)
       jest.spyOn(service, 'getPaymentFlowStatus').mockResolvedValue({
         paymentStatus: PaymentStatus.UNPAID,
         updatedAt: new Date(),
@@ -185,9 +191,9 @@ describe('PaymentFlowService', () => {
       jest.spyOn(service, 'getPaymentFlowChargeDetails').mockResolvedValue({
         firstProductTitle: 'Test Product',
         totalPrice: 100,
-      } as any)
+      } as TestPartial)
       jest
-        .spyOn(service as any, 'getPayerName')
+        .spyOn(service as TestPartial, 'getPayerName')
         .mockResolvedValue(mockPayer.name)
       jest.spyOn(service, 'logPaymentFlowUpdate').mockResolvedValue(undefined)
       const deletePaymentChargeSpy = jest
@@ -217,7 +223,7 @@ describe('PaymentFlowService', () => {
 
       jest
         .spyOn(service, 'getPaymentFlowDetails')
-        .mockResolvedValue(paymentFlowWithoutUrl as any)
+        .mockResolvedValue(paymentFlowWithoutUrl as TestPartial)
       jest.spyOn(service, 'getPaymentFlowStatus').mockResolvedValue({
         paymentStatus: PaymentStatus.UNPAID,
         updatedAt: new Date(),
@@ -225,9 +231,9 @@ describe('PaymentFlowService', () => {
       jest.spyOn(service, 'getPaymentFlowChargeDetails').mockResolvedValue({
         firstProductTitle: 'Test Product',
         totalPrice: 100,
-      } as any)
+      } as TestPartial)
       jest
-        .spyOn(service as any, 'getPayerName')
+        .spyOn(service as TestPartial, 'getPayerName')
         .mockResolvedValue(mockPayer.name)
       const logSpy = jest
         .spyOn(service, 'logPaymentFlowUpdate')
