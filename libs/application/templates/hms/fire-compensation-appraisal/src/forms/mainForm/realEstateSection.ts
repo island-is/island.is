@@ -47,6 +47,7 @@ export const realEstateSection = buildSection({
           condition: usageUnitsCondition,
           id: 'usageUnits',
           title: m.realEstateMessages.usageUnit,
+          description: m.realEstateMessages.usageUnitDescription,
           options: notkunareiningarOptions,
         }),
         buildDisplayField({

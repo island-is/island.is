@@ -16,8 +16,8 @@ export const MainForm = buildForm({
   children: [
     personalInformationSection,
     realEstateSection,
-    photoSection,
     changesSection,
+    photoSection,
     overviewSection,
   ],
 })

@@ -97,7 +97,6 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
         usageUnitsFireAppraisal?.reduce((acc, curr) => {
           return (acc ?? 0) + (curr ?? 0)
         }, 0) ?? 0
-
       return paymentForAppraisal(selectedUnitsFireAppraisal)
     } catch (e) {
       this.logger.error('Failed to calculate amount:', e.message)
