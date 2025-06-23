@@ -3,7 +3,7 @@
 set -euo pipefail
 if [[ -n "${DEBUG:-}" || -n "${CI:-}" ]]; then set -x; fi
 
-: "${REMOVE_CONTAINERS_ON_START:=true}"
+: "${REMOVE_CONTAINERS_ON_START:=}"
 : "${REMOVE_CONTAINERS_ON_FAIL:=}"
 : "${REMOVE_CONTAINERS_FORCE:=}"
 : "${RESTART_INTERVAL_TIME:=1}"
@@ -287,7 +287,7 @@ main() {
 
     if [ -n "${REMOVE_CONTAINERS_ON_START:-}" ]; then
       echo "Removing container for '$proxy' on start..."
-      containerer stop "$container_name" || echo "Found no $container_name container to stop"
+      containerer stop "$container_name" 2>/dev/null || echo "Found no $container_name container to stop"
       containerer rm ${REMOVE_CONTAINERS_FORCE:+-f} "$container_name" || echo "Failed to remove $container_name"
     fi
 
