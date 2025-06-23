@@ -14,7 +14,7 @@ import {
   Section,
   Text,
 } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   isDefenceUser,
   isIndictmentCase,
@@ -210,17 +210,10 @@ const PageLayout: FC<PropsWithChildren<PageProps>> = ({
           : formatMessage(pageLayout.otherRoles.alertMessage)
       }
       variant="error"
-      link={
-        isDefenceUser(user)
-          ? {
-              href: constants.DEFENDER_CASES_ROUTE,
-              title: 'Fara á yfirlitssíðu',
-            }
-          : {
-              href: constants.CASES_ROUTE,
-              title: 'Fara á yfirlitssíðu',
-            }
-      }
+      link={{
+        href: getStandardUserDashboardRoute(user),
+        title: 'Fara á yfirlitssíðu',
+      }}
     />
   ) : children ? (
     <>

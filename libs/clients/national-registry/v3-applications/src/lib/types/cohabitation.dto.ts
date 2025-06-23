@@ -1,4 +1,5 @@
-import { HjuDTO, SamDTO } from '../../../gen/fetch'
+import { HjuDTO, SamDTO, EinstaklingurDTO } from '../../../gen/fetch'
+import { formatIndividualDto, IndividualDto } from './individual.dto'
 
 export interface CohabitationDto {
   cohabitationCode: string
@@ -6,6 +7,22 @@ export interface CohabitationDto {
   spouseName: string
   spouseNationalId: string
   lastModified: Date | null
+}
+
+export interface CohabitantsDetailedDto {
+  cohabitants: (IndividualDto | null)[]
+}
+
+export const formatCohabitantsDetailedDto = (
+  cohabitants: EinstaklingurDTO[] | null | undefined,
+): CohabitantsDetailedDto | null => {
+  if (cohabitants == null) {
+    return null
+  }
+
+  return {
+    cohabitants: cohabitants.map(formatIndividualDto),
+  }
 }
 
 export const formatCohabitationDtoV3FromHju = (

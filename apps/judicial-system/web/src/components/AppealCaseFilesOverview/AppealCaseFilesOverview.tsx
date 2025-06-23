@@ -16,7 +16,9 @@ import {
   ContextMenu,
   FileNotFoundModal,
   FormContext,
+  IconButton,
   PdfButton,
+  SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -30,8 +32,6 @@ import {
   useS3Upload,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import IconButton from '../IconButton/IconButton'
-import { contextMenu } from '../ContextMenu/ContextMenu.strings'
 import { strings } from './AppealCaseFilesOverview.strings'
 import * as styles from './AppealCaseFilesOverview.css'
 
@@ -104,9 +104,14 @@ const AppealCaseFilesOverview = () => {
     allFiles.length > 0 && (
       <>
         <Box marginBottom={[2, 5]}>
-          <Text as="h3" variant="h3" marginBottom={1}>
-            {formatMessage(strings.title)}
-          </Text>
+          <SectionHeading
+            title="Skjöl kærumáls"
+            tooltip={
+              isProsecutionUser(user)
+                ? 'Verjandi sér einungis kæru og greinargerð.'
+                : undefined
+            }
+          />
           {allFiles.map((file) => {
             const prosecutorSubmitted = file.category?.includes('PROSECUTOR')
             const isDisabled = !file.key
@@ -159,14 +164,14 @@ const AppealCaseFilesOverview = () => {
                     <ContextMenu
                       items={[
                         {
-                          title: formatMessage(contextMenu.openFile),
+                          title: 'Opna',
                           onClick: () => onOpen(file.id),
                           icon: 'open' as IconMapIcon,
                         },
                         ...(canDeleteFile
                           ? [
                               {
-                                title: formatMessage(contextMenu.deleteFile),
+                                title: 'Eyða',
                                 onClick: () =>
                                   handleRemove(file as TUploadFile, () => {
                                     setAllFiles((prev) =>

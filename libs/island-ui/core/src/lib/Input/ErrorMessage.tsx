@@ -6,7 +6,7 @@ interface Props {
   children: ReactNode
 }
 
-export function ErrorMessage({ id, children }: Props) {
+export const ErrorMessage = ({ id, children }: Props) => {
   return (
     <div
       id={id}
