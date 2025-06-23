@@ -16,7 +16,6 @@ export type ApplicantsInfo = {
   phone: string
   address: string
   email: string
-  isRepresentative: string[]
 }
 
 export type CostField = {
@@ -63,7 +62,9 @@ export interface AddressProps {
 
 export interface ParticipantsSection {
   landlords: ApplicantsInfo[]
+  landlordRepresentatives: ApplicantsInfo[]
   tenants: ApplicantsInfo[]
+  tenantRepresentatives: ApplicantsInfo[]
 }
 
 export interface PropertySection {
@@ -99,14 +100,14 @@ export interface RentalPeriodSection {
 
 export interface ConsumerIndexItem {
   month: string
-  value: number
+  value: string
 }
 
 export interface RentalAmountSection {
   rentalAmount: string | undefined
-  isIndexConnected: string | undefined
+  isIndexConnected: YesOrNoEnum | undefined
   indexDate: string | undefined
-  indexRate: number | undefined
+  indexRate: string | undefined
   paymentMethod: string | undefined
   paymentMethodOther: string | undefined
   paymentDay: string | undefined

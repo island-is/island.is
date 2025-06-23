@@ -1,5 +1,6 @@
 import { useCallback, useContext, useState } from 'react'
 import { IntlShape, useIntl } from 'react-intl'
+import { applyCase as applyCaseToAddress } from 'beygla/addresses'
 import { applyCase } from 'beygla/strict'
 import { AnimatePresence, motion } from 'motion/react'
 import router from 'next/router'
@@ -75,7 +76,11 @@ export const getIndictmentIntroductionAutofill = (
                 ? formatNationalId(defendant.nationalId)
                 : 'Ekki skráð',
             },
-          )}\n          ${defendant.address},`
+          )}\n          ${
+            defendant.address
+              ? applyCaseToAddress('þgf', defendant.address)
+              : 'Ekki skráð'
+          },`
         })}
     `,
       ]
