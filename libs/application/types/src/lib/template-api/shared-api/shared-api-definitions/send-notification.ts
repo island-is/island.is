@@ -1,8 +1,5 @@
 import { defineTemplateApi } from '../../TemplateApi'
-import {
-  NotificationArgs,
-  NotificationType,
-} from '@island.is/application/types'
+import { NotificationArgs, NotificationType } from '../../../../'
 
 export interface SendNotificationParameters {
   type: NotificationType

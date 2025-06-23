@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common'
-import { ApplicationsNotificationsModule } from '@island.is/application/template-api-modules'
+import { ApplicationsNotificationsModule } from '../../../../notification/notifications.module'
 import { UserNotificationService } from './user-notification.service'
 
 @Module({
