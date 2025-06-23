@@ -1,3 +1,5 @@
+import { TerminateRentalAgreementModule } from './hms/terminate-rental-agreement/terminate-rental-agreement.module'
+import { TerminateRentalAgreementService } from './hms/terminate-rental-agreement/terminate-rental-agreement.service'
 import { FireCompensationAppraisalModule } from './hms/fire-compensation-appraisal/fire-compensation-appraisal.module'
 import { FireCompensationAppraisalService } from './hms/fire-compensation-appraisal/fire-compensation-appraisal.service'
 import { ExampleFolderStructureAndConventionsModule } from './examples/example-folder-structure-and-conventions/example-folder-structure-and-conventions.module'
@@ -250,6 +252,7 @@ export const modules = [
   LegalGazetteTemplateModule,
   ExampleAuthDelegationModule,
   RentalAgreementModule,
+  TerminateRentalAgreementModule,
   FireCompensationAppraisalModule,
   ExemptionForTransportationModule,
 ]
@@ -336,6 +339,7 @@ export const services = [
   LegalGazetteTemplateService,
   ExampleAuthDelegationService,
   RentalAgreementService,
+  TerminateRentalAgreementService,
   FireCompensationAppraisalService,
   ExemptionForTransportationService,
 ]
