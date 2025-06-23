@@ -17,10 +17,6 @@ export class UserNotificationService extends BaseTemplateApiService {
     auth,
     params,
   }: TemplateApiModuleActionProps<SendNotificationParameters>): Promise<CreateNotificationResponse> {
-    console.log('--------------------------------')
-    console.log('sendNotification')
-    console.dir(params, { depth: null, colors: true })
-    console.log('--------------------------------')
     if (!params) {
       throw new TemplateApiError(
         {

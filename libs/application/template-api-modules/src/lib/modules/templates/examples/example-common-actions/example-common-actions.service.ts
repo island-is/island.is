@@ -1,19 +1,15 @@
 import { Injectable } from '@nestjs/common'
-
 import { SharedTemplateApiService } from '../../../shared'
 import { ApplicationTypes } from '@island.is/application/types'
-import { NotificationsService } from '../../../../notification/notifications.service'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { TemplateApiModuleActionProps } from '../../../../types'
 import { getValueViaPath } from '@island.is/application/core'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { NotificationType } from '../../../../notification/notificationsTemplates'
 
 @Injectable()
 export class ExampleCommonActionsService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly notificationsService: NotificationsService,
   ) {
     super(ApplicationTypes.EXAMPLE_COMMON_ACTIONS)
   }
@@ -25,18 +21,6 @@ export class ExampleCommonActionsService extends BaseTemplateApiService {
       application.externalData,
       'nationalRegistry.data.fullName',
     ) as string
-
-    // this.notificationsService.sendNotification({
-    //   type: NotificationType.ChildrenResidenceChange,
-    //   messageParties: {
-    //     recipient: auth.nationalId,
-    //     sender: auth.nationalId,
-    //   },
-    //   args: {
-    //     applicantName,
-    //     applicationId: application.id,
-    //   },
-    // })
 
     return {
       referenceData: {
