@@ -90,6 +90,11 @@ export const m = {
   }),
   dataproviders: {
     provider: defineMessages({
+      sectionTitle: {
+        id: 'lg.application:dataproviders.provider.sectionTitle',
+        defaultMessage: 'Gagnaöflun',
+        description: 'Heiti kafla fyrir veitu',
+      },
       title: {
         id: 'lg.application:dataproviders.provider.title',
         defaultMessage: 'Almenn umsókn Lögbirtingablaðsins',
@@ -99,19 +104,25 @@ export const m = {
     nationalRegistry: defineMessages({
       title: {
         id: 'lg.application:nationalRegistry.title',
-        defaultMessage: 'Almenn umsókn Lögbirtingablaðsins',
+        defaultMessage: 'Upplýsingar úr Þjóðskrá',
         description: 'Heiti á þjóðskrá',
       },
       description: {
         id: 'lg.application:nationalRegistry.description',
-        defaultMessage: 'Sækir upplýsingar um notanda úr þjóðskrá',
+        defaultMessage: 'Sækir upplýsingar um þig úr þjóðskrá',
         description: 'Lýsing á þjóðskrá',
       },
     }),
     userProfile: defineMessages({
       title: {
         id: 'lg.application:userProfile.description',
-        defaultMessage: 'Sækir upplýsingar um notanda úr stillingum',
+        defaultMessage: 'Mínar síður á Ísland.is/stillingar',
+        description: 'Lýsing á notendaprófílnum',
+      },
+      description: {
+        id: 'lg.application:userProfile.description',
+        defaultMessage:
+          'Ef þú ert með skráaðar upplýsingar um síma og netfang á Mínum Síðum inná Ísland.is kemur það sjálfkrafa í umsókn þína.',
         description: 'Lýsing á notendaprófílnum',
       },
     }),

@@ -4,9 +4,7 @@ import {
   buildSubmitField,
   coreMessages,
   buildMultiField,
-  buildCheckboxField,
   buildDescriptionField,
-  YesOrNoEnum,
   buildDataProviderItem,
   buildExternalDataProvider,
 } from '@island.is/application/core'
@@ -26,29 +24,10 @@ export const RequirementsForm: Form = buildForm({
   renderLastScreenButton: true,
   children: [
     buildSection({
-      children: [
-        buildExternalDataProvider({
-          id: 'approveExternalData',
-          title: m.dataproviders.provider.title,
-          dataProviders: [
-            buildDataProviderItem({
-              provider: UserProfileApi,
-              title: m.dataproviders.userProfile.title,
-            }),
-            buildDataProviderItem({
-              provider: IdentityApi,
-              title: 'Test',
-              subTitle: 'test',
-            }),
-          ],
-        }),
-      ],
-    }),
-    buildSection({
+      id: 'prequisites',
       title: m.requirements.approval.sectionTitle,
       children: [
         buildMultiField({
-          id: 'prerequisites.fields',
           title: m.requirements.approval.formTitle,
           children: [
             buildDescriptionField({
@@ -71,30 +50,39 @@ export const RequirementsForm: Form = buildForm({
               id: 'prerequisites.description_five',
               description: m.requirements.approval.introPartFive,
             }),
-
-            buildCheckboxField({
-              id: 'requirements.approval',
-              marginTop: 5,
-              options: [
-                {
-                  value: YesOrNoEnum.YES,
-                  label: m.requirements.approval.checkboxLabel,
-                },
-              ],
-              required: true,
+          ],
+        }),
+      ],
+    }),
+    buildSection({
+      title: m.dataproviders.provider.sectionTitle,
+      children: [
+        buildExternalDataProvider({
+          id: 'approveExternalData',
+          title: m.dataproviders.provider.title,
+          dataProviders: [
+            buildDataProviderItem({
+              provider: UserProfileApi,
+              title: m.dataproviders.userProfile.title,
+              subTitle: m.dataproviders.userProfile.description,
             }),
-            buildSubmitField({
-              id: 'toDraft',
-              refetchApplicationAfterSubmit: true,
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: coreMessages.buttonNext,
-                  type: 'primary',
-                },
-              ],
+            buildDataProviderItem({
+              provider: IdentityApi,
+              title: m.dataproviders.nationalRegistry.title,
+              subTitle: m.dataproviders.nationalRegistry.description,
             }),
           ],
+          submitField: buildSubmitField({
+            id: 'toDraft',
+            refetchApplicationAfterSubmit: true,
+            actions: [
+              {
+                event: DefaultEvents.SUBMIT,
+                name: coreMessages.buttonNext,
+                type: 'primary',
+              },
+            ],
+          }),
         }),
       ],
     }),
