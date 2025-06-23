@@ -10,7 +10,7 @@ import {
   createPhoneNumber,
 } from '@island.is/testing/fixtures'
 import { AdminPortalScope, UserProfileScope } from '@island.is/auth/scopes'
-import { setupApp, setupAppWithoutAuth } from '@island.is/testing/nest'
+import { setupApp, setupAppWithoutAuth, TestApp } from '@island.is/testing/nest'
 import { DelegationsApi } from '@island.is/clients/auth/delegation-api'
 
 import { AppModule } from '../../app.module'
@@ -19,14 +19,25 @@ import { FixtureFactory } from '../../../../test/fixture-factory'
 import { UserProfile } from '../../user-profile/userProfile.model'
 import { ClientType } from '../../types/ClientType'
 import { ActorProfile } from '../models/actor-profile.model'
+import { DataStatus } from '../../user-profile/types/dataStatusTypes'
+import { Locale } from '../../user-profile/types/localeTypes'
+import { uuid } from 'uuidv4'
+
+const testNattionalId = createNationalId('person')
 
 const testUserProfile = {
-  nationalId: createNationalId(),
-  email: faker.internet.email(),
+  nationalId: testNattionalId,
   mobilePhoneNumber: createPhoneNumber(),
-  emailVerified: false,
   documentNotifications: true,
-  locale: 'is',
+  locale: Locale.ICELANDIC,
+  emails: [
+    {
+      id: uuid(),
+      email: faker.internet.email(),
+      emailStatus: DataStatus.NOT_DEFINED,
+      primary: true,
+    },
+  ],
 }
 
 const MIGRATION_DATE = new Date('2024-05-10')
@@ -87,12 +98,12 @@ describe('UserProfileController', () => {
   })
 
   describe('With auth', () => {
-    let app = null
-    let server = null
-    let fixtureFactory = null
-    let userProfileModel: typeof UserProfile = null
-    let actorProfileModel: typeof ActorProfile = null
-    let delegationsApi: DelegationsApi = null
+    let app: TestApp
+    let server: request.SuperTest<request.Test>
+    let fixtureFactory: FixtureFactory
+    let userProfileModel: typeof UserProfile
+    let actorProfileModel: typeof ActorProfile
+    let delegationsApi: DelegationsApi
 
     beforeAll(async () => {
       app = await setupApp({
@@ -156,7 +167,7 @@ describe('UserProfileController', () => {
       expect(res.status).toEqual(200)
       expect(res.body).toMatchObject({
         nationalId: testUserProfile.nationalId,
-        email: testUserProfile.email,
+        email: testUserProfile.emails[0].email,
         emailVerified: false,
         mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
         mobilePhoneNumberVerified: false,
@@ -166,6 +177,45 @@ describe('UserProfileController', () => {
       })
     })
 
+    it('GET /v2/user/.national-id should return 200 with the UserProfileDto with primaryEmail email and phone number when client type is firstParty', async () => {
+      // Arrange
+      const primaryEmail = faker.internet.email()
+      const secondaryEmail = faker.internet.email()
+      await fixtureFactory.createUserProfile({
+        ...testUserProfile,
+        emails: [
+          {
+            email: secondaryEmail,
+            emailStatus: DataStatus.NOT_DEFINED,
+            primary: false,
+          },
+          {
+            email: primaryEmail,
+            emailStatus: DataStatus.VERIFIED,
+            primary: true,
+          },
+        ],
+        lastNudge: subMonths(MIGRATION_DATE, 1),
+      })
+
+      // Act
+      const res = await server
+        .get(`/v2/users/.national-id?clientType=${ClientType.FIRST_PARTY}`)
+        .set('X-Param-National-Id', testUserProfile.nationalId)
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body).toMatchObject({
+        nationalId: testUserProfile.nationalId,
+        email: primaryEmail,
+        emailVerified: true,
+        mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
+        mobilePhoneNumberVerified: false,
+        documentNotifications: true,
+        needsNudge: true,
+        isRestricted: true,
+      })
+    })
     it('GET /v2/user/.national-id should return 200 with the UserProfileDto without email and phone when client type is thirdParty', async () => {
       // Arrange
       await fixtureFactory.createUserProfile({
@@ -205,7 +255,7 @@ describe('UserProfileController', () => {
       expect(res.status).toEqual(200)
       expect(res.body).toMatchObject({
         nationalId: testUserProfile.nationalId,
-        email: testUserProfile.email,
+        email: testUserProfile.emails[0].email,
         emailVerified: false,
         mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
         mobilePhoneNumberVerified: false,
@@ -228,11 +278,13 @@ describe('UserProfileController', () => {
                 toNationalId: testUserProfile.nationalId,
                 fromNationalId: testNationalId1,
                 subjectId: null,
+                type: 'fromNational',
               },
               {
                 toNationalId: testUserProfile.nationalId,
                 fromNationalId: testNationalId2,
                 subjectId: null,
+                type: 'fromNational',
               },
             ],
             pageInfo: {
@@ -248,10 +300,18 @@ describe('UserProfileController', () => {
       it('should return 200 and the extended actor profile if user profile exists', async () => {
         await fixtureFactory.createUserProfile(testUserProfile)
 
+        const newEmail = await fixtureFactory.createEmail({
+          email: faker.internet.email(),
+          emailStatus: DataStatus.VERIFIED,
+          primary: false,
+          nationalId: testUserProfile.nationalId,
+        })
+
         await fixtureFactory.createActorProfile({
           toNationalId: testUserProfile.nationalId,
           fromNationalId: testNationalId1,
           emailNotifications: false,
+          emailsId: newEmail.id,
         })
 
         // Act
@@ -265,10 +325,10 @@ describe('UserProfileController', () => {
         expect(res.body).toStrictEqual({
           fromNationalId: testNationalId1,
           emailNotifications: false,
-          email: testUserProfile.email,
-          emailVerified: testUserProfile.emailVerified,
+          email: newEmail.email,
           documentNotifications: testUserProfile.documentNotifications,
           locale: testUserProfile.locale,
+          emailVerified: newEmail.emailStatus === DataStatus.VERIFIED,
         })
 
         expect(
@@ -295,10 +355,10 @@ describe('UserProfileController', () => {
         expect(res.body).toStrictEqual({
           fromNationalId: testNationalId1,
           emailNotifications: true,
-          email: testUserProfile.email,
-          emailVerified: testUserProfile.emailVerified,
+          email: testUserProfile.emails[0].email,
           documentNotifications: testUserProfile.documentNotifications,
           locale: testUserProfile.locale,
+          emailVerified: false,
         })
       })
 
@@ -347,10 +407,10 @@ describe('UserProfileController', () => {
   })
 
   describe('Users collection', () => {
-    let app = null
-    let server = null
-    let fixtureFactory = null
-    let userProfileModel: typeof UserProfile = null
+    let app: TestApp
+    let server: request.SuperTest<request.Test>
+    let fixtureFactory: FixtureFactory
+    let userProfileModel: typeof UserProfile
 
     beforeAll(async () => {
       app = await setupApp({
@@ -395,7 +455,7 @@ describe('UserProfileController', () => {
         data: [
           {
             nationalId: testUserProfile.nationalId,
-            email: testUserProfile.email,
+            email: testUserProfile.emails[0].email,
             mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
           },
         ],
@@ -407,12 +467,14 @@ describe('UserProfileController', () => {
       await fixtureFactory.createUserProfile(testUserProfile)
       await fixtureFactory.createUserProfile({
         nationalId: createNationalId(),
-        email: testUserProfile.email,
+        emails: testUserProfile.emails,
         mobilePhoneNumber: createPhoneNumber(),
       })
 
       // Act
-      const res = await server.get(`/v2/users/?search=${testUserProfile.email}`)
+      const res = await server.get(
+        `/v2/users/?search=${testUserProfile.emails[0].email}`,
+      )
 
       // Assert
       expect(res.status).toEqual(200)
@@ -424,12 +486,12 @@ describe('UserProfileController', () => {
         data: [
           {
             nationalId: testUserProfile.nationalId,
-            email: testUserProfile.email,
+            email: testUserProfile.emails[0].email,
             mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
           },
           {
             nationalId: expect.not.stringMatching(testUserProfile.nationalId),
-            email: testUserProfile.email,
+            email: testUserProfile.emails[0].email,
             mobilePhoneNumber: expect.any(String),
           },
         ],
@@ -441,7 +503,13 @@ describe('UserProfileController', () => {
       await fixtureFactory.createUserProfile(testUserProfile)
       await fixtureFactory.createUserProfile({
         nationalId: createNationalId(),
-        email: faker.internet.email(),
+        emails: [
+          {
+            emailStatus: DataStatus.VERIFIED,
+            email: faker.internet.email(),
+            primary: false,
+          },
+        ],
         mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
       })
 
@@ -460,7 +528,7 @@ describe('UserProfileController', () => {
         data: [
           {
             nationalId: testUserProfile.nationalId,
-            email: testUserProfile.email,
+            email: testUserProfile.emails?.[0].email,
             mobilePhoneNumber: testUserProfile.mobilePhoneNumber,
           },
           {
