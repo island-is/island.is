@@ -268,6 +268,14 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:message',
     defaultMessage: 'Textalýsing',
   },
+  urls: {
+    id: 'portals-admin.form-system:urls',
+    defaultMessage: 'Slóðir',
+  },
+  permissions: {
+    id: 'portals-admin.form-system:permissions',
+    defaultMessage: 'Heimildir',
+  },
   phoneNumber: {
     id: 'portals-admin.form-system:phone-number',
     defaultMessage: 'Símanúmer',
