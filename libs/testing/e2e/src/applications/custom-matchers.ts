@@ -1,7 +1,7 @@
-import { expect } from '@playwright/test'
+import { expect as playwrightExpect } from '@playwright/test'
 import { isApplication } from '../modules/application'
 
-expect.extend({
+const customExpect = playwrightExpect.extend({
   async toBeApplication(page, expectedPath?: string) {
     try {
       await page.waitForURL('**/umsoknir/**')
@@ -37,3 +37,5 @@ expect.extend({
     }
   },
 })
+
+export { customExpect as applicationExpect }

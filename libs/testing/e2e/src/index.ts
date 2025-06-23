@@ -11,6 +11,7 @@ export * from './lib/modules/urls'
 export * from './lib/session/email-account'
 export * from './lib/session/login'
 export * from './lib/session/session'
-export { test, expect } from '@playwright/test'
+export { test } from '@playwright/test'
+
 export type { Page, Locator, BrowserContext } from '@playwright/test'
 export * from '../playwright.base'
