@@ -15,6 +15,7 @@ import { FineCalculator } from './components/FineCalculator'
 import { SpeedMeasurementCalculator } from './components/SpeedMeasurementCalculator'
 import { m } from './translation.strings'
 import { calculateSpeedMeasurementFine } from './utils'
+import * as styles from './FineAndSpeedMeasurementCalculator.css'
 
 const QUARTER_OFF_FINE_MULTIPLIER = 0.75
 
@@ -314,8 +315,16 @@ export const FineAndSpeedMeasurementCalculator = ({
       />
       <Stack space={3}>
         <Box display="flex" justifyContent="flexEnd">
-          <Box borderRadius="standard">
+          <Box
+            borderRadius="standard"
+            background="purple100"
+            padding={2}
+            className={styles.totalContainer}
+          >
             <Stack space={0}>
+              <Text variant="eyebrow" fontWeight="semiBold">
+                {formatMessage(m.fines.total)}
+              </Text>
               <Text textAlign="right" variant="small" fontWeight="semiBold">
                 {formatCurrency(price)}
               </Text>
