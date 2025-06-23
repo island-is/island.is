@@ -30,4 +30,21 @@ export class SignatureCollectionMunicipalityClientService {
       collectionId,
     )
   }
+
+  async getMunicipalityAreaId(auth: Auth): Promise<string> {
+    try {
+      const info = await this.getApiWithAuth(
+        this.adminApi,
+        auth,
+      ).adminSveitarfelagInfoGet({
+        kennitala: auth.nationalId,
+      })
+      console.log('Municipality Info:', info)
+      return info.sveitarfelagID.toString()
+    } catch (error) {
+      // Handle error
+      console.log('Error fetching municipality area ID:', error)
+      return ''
+    }
+  }
 }
