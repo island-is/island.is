@@ -22,6 +22,7 @@
         "tsConfig": "apps/form-system/web/tsconfig.app.json",
         "assets": [
           "apps/form-system/web/src/favicon.ico",
+          "apps/form-system/web/src/mockServiceWorker.js",
           "apps/form-system/web/src/assets"
         ],
         "styles": [
