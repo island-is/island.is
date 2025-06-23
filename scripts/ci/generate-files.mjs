@@ -117,6 +117,7 @@ const getPatterns = async () => {
     }
   }
 
+  // Add additional patterns
   additionalPatterns.forEach((pattern) => patterns.add(pattern.trim()))
 
   return Array.from(patterns)
