@@ -9,6 +9,7 @@ const generateReleaseBranches = (majorVersions, minorVersionsPerMajor) => {
       minorVersion++
     ) {
       branches.push(`release/${majorVersion}.${minorVersion}.0`)
+      branches.push(`pre-release/${majorVersion}.${minorVersion}.0`)
     }
   }
 
