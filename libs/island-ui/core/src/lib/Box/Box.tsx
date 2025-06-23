@@ -66,6 +66,7 @@ export const Box = forwardRef<HTMLElement, BoxProps & TestSupport>(
       printHidden,
       className,
       dataTestId,
+      zIndex,
       ...restProps
     },
     ref,
@@ -128,6 +129,7 @@ export const Box = forwardRef<HTMLElement, BoxProps & TestSupport>(
       outline,
       opacity,
       printHidden,
+      zIndex,
       className,
     })
 

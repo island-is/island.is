@@ -125,7 +125,9 @@
       "@island.is/api/domains/hello-world": [
         "libs/api/domains/hello-world/src/index.ts"
       ],
-      "@island.is/api/domains/hms": ["libs/api/domains/hms/src/index.ts"],
+      "@island.is/api/domains/hms": [
+        "libs/api/domains/hms/src/index.ts"
+      ],
       "@island.is/api/domains/hms-loans": [
         "libs/api/domains/hms-loans/src/index.ts"
       ],
@@ -270,10 +272,12 @@
       "@island.is/api/mocks-react": [
         "libs/api/mocks/src/react.ts"
       ],
+      "@island.is/api/mocks/native": [
+        "libs/api/mocks/src/native.ts"
+      ],
       "@island.is/api/schema": [
         "libs/api/schema/src/index.ts"
       ],
-      "@island.is/api/mocks/native": ["libs/api/mocks/src/native.ts"],
       "@island.is/application/api/core": [
         "libs/application/api/core/src/index.ts"
       ],
@@ -1453,6 +1457,9 @@
       ],
       "@island.is/application/templates/car-rental-fee-category": [
         "libs/application/templates/car-rental-fee-category/src/index.ts"
+      ],
+      "@island.is/application/templates/hms/terminate-rental-agreement": [
+        "libs/application/templates/hms/terminate-rental-agreement/src/index.ts"
       ]
     }
   }

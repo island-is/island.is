@@ -1009,6 +1009,7 @@ export interface OverviewField extends BaseField {
   ) => Array<AttachmentItem>
   tableData?: (answers: FormValue, externalData: ExternalData) => TableData
   hideIfEmpty?: boolean
+  displayTitleAsAccordion?: boolean
 }
 
 export interface CopyLinkField extends BaseField {

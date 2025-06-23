@@ -1215,6 +1215,7 @@ export const buildOverviewField = (
     tableData,
     bottomLine,
     hideIfEmpty,
+    displayTitleAsAccordion,
   } = data
   return {
     ...extractCommonFields(data),
@@ -1229,6 +1230,7 @@ export const buildOverviewField = (
     tableData,
     bottomLine,
     hideIfEmpty,
+    displayTitleAsAccordion,
     type: FieldTypes.OVERVIEW,
     component: FieldComponents.OVERVIEW,
     children: undefined,
