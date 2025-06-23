@@ -1,5 +1,7 @@
 import { uuid } from 'uuidv4'
 
+import { ConfigType } from '@nestjs/config'
+
 import { EmailService } from '@island.is/email-service'
 
 import {
@@ -18,6 +20,7 @@ import {
 import { Case } from '../../../case'
 import { DeliverResponse } from '../../models/deliver.response'
 import { Notification } from '../../models/notification.model'
+import { notificationModuleConfig } from '../../notification.config'
 
 interface Then {
   result: DeliverResponse
@@ -51,6 +54,8 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
     'appealJudge1',
   ])
 
+  let mockConfig: ConfigType<typeof notificationModuleConfig>
+
   const courtOfAppealsEmail = courtOfAppeals.email
   const courtEmail = court.email
   const courtId = uuid()
@@ -66,9 +71,14 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
   beforeEach(async () => {
     process.env.COURTS_EMAILS = `{"4676f08b-aab4-4b4f-a366-697540788088":"${courtOfAppealsEmail}","${courtId}":"${courtEmail}"}`
 
-    const { emailService, internalNotificationController, notificationModel } =
-      await createTestingNotificationModule()
+    const {
+      emailService,
+      internalNotificationController,
+      notificationConfig,
+      notificationModel,
+    } = await createTestingNotificationModule()
 
+    mockConfig = notificationConfig
     mockEmailService = emailService
     mockNotificationModel = notificationModel
 
@@ -132,7 +142,7 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
         expect.objectContaining({
           to: [{ name: defender.name, address: defender.email }],
           subject: `Afturköllun kæru í máli ${courtCaseNumber}`,
-          html: `Sækjandi hefur afturkallað kæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
+          html: `Sækjandi hefur afturkallað kæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins í <a href="${mockConfig.clientUrl}">Réttarvörslugátt</a>.`,
         }),
       )
       expect(then.result).toEqual({ delivered: true })
@@ -147,7 +157,7 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
             },
           ],
           subject: `Afturköllun kæru í máli ${courtCaseNumber}`,
-          html: `Sækjandi hefur afturkallað kæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
+          html: `Sækjandi hefur afturkallað kæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins í <a href="${mockConfig.clientUrl}">Réttarvörslugátt</a>.`,
         }),
       )
     })
@@ -156,7 +166,7 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
         expect.objectContaining({
           to: [{ name: appealAssistant.name, address: appealAssistant.email }],
           subject: `Afturköllun kæru í máli ${courtCaseNumber}`,
-          html: `Sækjandi hefur afturkallað kæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
+          html: `Sækjandi hefur afturkallað kæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins í <a href="${mockConfig.clientUrl}">Réttarvörslugátt</a>.`,
         }),
       )
     })
@@ -181,7 +191,7 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
         expect.objectContaining({
           to: [{ name: defender.name, address: defender.email }],
           subject: `Afturköllun kæru í máli ${courtCaseNumber}`,
-          html: `Sækjandi hefur afturkallað kæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
+          html: `Sækjandi hefur afturkallað kæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins í <a href="${mockConfig.clientUrl}">Réttarvörslugátt</a>.`,
         }),
       )
       expect(then.result).toEqual({ delivered: true })
@@ -196,7 +206,7 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
             },
           ],
           subject: `Afturköllun kæru í máli ${courtCaseNumber}`,
-          html: `Sækjandi hefur afturkallað kæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
+          html: `Sækjandi hefur afturkallað kæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins í <a href="${mockConfig.clientUrl}">Réttarvörslugátt</a>.`,
         }),
       )
     })
@@ -205,7 +215,7 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
         expect.objectContaining({
           to: [{ name: appealAssistant.name, address: appealAssistant.email }],
           subject: `Afturköllun kæru í máli ${courtCaseNumber}`,
-          html: `Sækjandi hefur afturkallað kæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
+          html: `Sækjandi hefur afturkallað kæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins í <a href="${mockConfig.clientUrl}">Réttarvörslugátt</a>.`,
         }),
       )
     })
@@ -230,7 +240,7 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
         expect.objectContaining({
           to: [{ name: prosecutor.name, address: prosecutor.email }],
           subject: `Afturköllun kæru í máli ${courtCaseNumber}`,
-          html: `Verjandi hefur afturkallað kæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
+          html: `Verjandi hefur afturkallað kæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins í <a href="${mockConfig.clientUrl}">Réttarvörslugátt</a>.`,
         }),
       )
 
@@ -242,7 +252,7 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
         expect.objectContaining({
           to: [{ name: judge.name, address: judge.email }],
           subject: `Afturköllun kæru í máli ${courtCaseNumber}`,
-          html: `Verjandi hefur afturkallað kæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
+          html: `Verjandi hefur afturkallað kæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins í <a href="${mockConfig.clientUrl}">Réttarvörslugátt</a>.`,
         }),
       )
     })
@@ -252,7 +262,7 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
         expect.objectContaining({
           to: [{ name: registrar.name, address: registrar.email }],
           subject: `Afturköllun kæru í máli ${courtCaseNumber}`,
-          html: `Verjandi hefur afturkallað kæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
+          html: `Verjandi hefur afturkallað kæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins í <a href="${mockConfig.clientUrl}">Réttarvörslugátt</a>.`,
         }),
       )
     })
@@ -267,7 +277,7 @@ describe('InternalNotificationController - Send appeal withdrawn notifications',
             },
           ],
           subject: `Afturköllun kæru í máli ${courtCaseNumber}`,
-          html: `Verjandi hefur afturkallað kæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins á <a href="https://rettarvorslugatt.island.is">rettarvorslugatt.island.is</a>.`,
+          html: `Verjandi hefur afturkallað kæru í máli ${courtCaseNumber}. Hægt er að nálgast yfirlitssíðu málsins í <a href="${mockConfig.clientUrl}">Réttarvörslugátt</a>.`,
         }),
       )
     })

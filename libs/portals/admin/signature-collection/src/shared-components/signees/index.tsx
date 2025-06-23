@@ -196,6 +196,7 @@ const Signees = ({ list }: { list: SignatureCollectionList }) => {
                                   s.signee.nationalId,
                                 )}
                                 signatureId={s.id}
+                                collectionType={list.collectionType}
                               />
                             </Box>
                           )}

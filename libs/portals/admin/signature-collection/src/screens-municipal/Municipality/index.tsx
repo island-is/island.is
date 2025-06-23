@@ -22,6 +22,9 @@ import { getTagConfig } from '../../lib/utils'
 import CompareLists from '../../shared-components/compareLists'
 import ActionDrawer from '../../shared-components/compareLists/ActionDrawer'
 import { Actions } from '../../shared-components/compareLists/ActionDrawer/ListActions'
+import { SignatureCollectionCollectionType } from '@island.is/api/schema'
+
+const collectionType = SignatureCollectionCollectionType.LocalGovernmental
 
 export const Municipality = () => {
   const { formatMessage } = useLocale()
@@ -98,7 +101,7 @@ export const Municipality = () => {
                     eyebrow={municipality}
                     heading={list.candidate.name}
                     text={
-                      formatMessage(m.totalListResults) +
+                      formatMessage(m.numberOfSignatures) +
                       ': ' +
                       list.numberOfSignatures
                     }
@@ -123,7 +126,10 @@ export const Municipality = () => {
               </Stack>
             </GridColumn>
           </GridRow>
-          <CompareLists collectionId={collection?.id} />
+          <CompareLists
+            collectionId={collection?.id}
+            collectionType={collectionType}
+          />
         </GridColumn>
       </GridRow>
     </GridContainer>
