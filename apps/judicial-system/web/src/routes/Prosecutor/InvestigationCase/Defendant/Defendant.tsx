@@ -1,17 +1,13 @@
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
 import { uuid } from 'uuidv4'
 
-import { Box, Button, Input, Select, toast } from '@island.is/island-ui/core'
-import { theme } from '@island.is/island-ui/theme'
+import { Box, Button, toast } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
-import {
-  capitalize,
-  formatCaseType,
-} from '@island.is/judicial-system/formatters'
+
 import {
   core,
   defendant as m,
@@ -19,7 +15,6 @@ import {
   titles,
 } from '@island.is/judicial-system-web/messages'
 import {
-  BlueBox,
   DefenderInfo,
   FormContentContainer,
   FormContext,
@@ -34,7 +29,6 @@ import {
 import {
   Case,
   CaseOrigin,
-  CaseType,
   Defendant as TDefendant,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -44,13 +38,8 @@ import {
   useVictim,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/utils'
-import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
-import {
-  DefendantInfo,
-  PoliceCaseNumbers,
-  usePoliceCaseNumbers,
-} from '../../components'
+import { DefendantInfo } from '../../components'
 
 const Defendant = () => {
   const { user } = useContext(UserContext)
@@ -59,12 +48,9 @@ const Defendant = () => {
 
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const { createCase, isCreatingCase, setAndSendCaseToServer } = useCase()
+  const { createCase, isCreatingCase } = useCase()
   const { createVictimAndSetState, deleteVictimAndSetState } = useVictim()
   const { formatMessage } = useIntl()
-
-  const { clientPoliceNumbers, setClientPoliceNumbers } =
-    usePoliceCaseNumbers(workingCase)
 
   const handleNavigationTo = useCallback(
     async (destination: string) => {
