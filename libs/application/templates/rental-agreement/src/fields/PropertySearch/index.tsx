@@ -1,4 +1,4 @@
-import { FC, Fragment, useEffect, useMemo, useState } from 'react'
+import { FC, Fragment, useEffect, useState } from 'react'
 import { Controller, useFormContext } from 'react-hook-form'
 import { useLazyQuery } from '@apollo/client'
 import { CustomField, FieldBaseProps } from '@island.is/application/types'

@@ -4,7 +4,6 @@ import {
   Adalmatseining,
   AdalmatseiningApi,
   ApiAdalmatseiningByFasteignNrGetRequest,
-  ApiFasteignByStadfangNrGetRequest,
   ApiStadfangSearchGetRequest,
   BaseAPI,
   Fasteign,
