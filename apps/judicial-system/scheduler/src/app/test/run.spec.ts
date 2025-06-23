@@ -100,6 +100,16 @@ describe('AppService - Run', () => {
           body: JSON.stringify({ date: new Date('2020-01-01T00:01:00.000Z') }),
         },
       )
+      expect(fetch).toHaveBeenCalledWith(
+        `${appModuleConfig().backendUrl}/api/lawyer-registry/reset`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${appModuleConfig().backendAccessToken}`,
+          },
+        },
+      )
     })
   })
 
