@@ -1,10 +1,6 @@
 import { Page } from '@playwright/test'
-import mergeWith from 'lodash/merge'
 import camelCase from 'lodash/camelCase'
 import { debug } from '../helpers/utils'
-
-// Helper function to always overwrite with source value in merge operations
-const overwriteMerge = (_: unknown, source: unknown): unknown => source
 
 type Matchable = string | RegExp
 
@@ -182,22 +178,20 @@ export const disableTranslations = async (page: Page): Promise<void> => {
   })
 }
 
-function mergeOverwrite(_: unknown, source: unknown) {
-  source
-}
 
-export async function disableObjectKey<T>(
+
+export const disableObjectKey = async <T>(
   page: Page,
   key: Matchable,
   mockData?: T,
-) {
+) => {
   return await mockGraphQL(page, '**', mockData ?? `MOCKED-${key}`, {
     deepMockKey: key,
     patchResponse: true,
   })
 }
 
-export async function disablePreviousApplications(page: Page) {
+export const disablePreviousApplications = async (page: Page) => {
   await mockGraphQL(page, 'ApplicationApplications', [])
   //syslumennOnEntry.data.estates
   /*
@@ -215,12 +209,12 @@ export async function disablePreviousApplications(page: Page) {
   */
 }
 
-export async function disableI18n(page: Page) {
+export const disableI18n = async (page: Page) => {
   return await mockGraphQL(page, 'GetTranslations', {
     'mock.translation': 'YES-mocked',
   })
 }
 
-export async function disableDelegations(page: Page) {
+export const disableDelegations = async (page: Page) => {
   return await mockGraphQL(page, 'ActorDelegations', [])
 }
