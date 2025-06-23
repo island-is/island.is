@@ -25,6 +25,7 @@ runs:
       run: |
         export GENERATED_FILES_PATH=${{ inputs.cache-path }}/${{ env.GENERATED_FILES }}
         echo "GENERATED_FILES_PATH=$GENERATED_FILES_PATH" >> "$GITHUB_OUTPUT"
+        echo "INPUTS_LIST_FILE=dist/codegen_inputs_list.txt" >> "$GITHUB_OUTPUT"
 
     - name: INFO
       working-directory: ${{ inputs.working-directory }}
@@ -37,7 +38,10 @@ runs:
       shell: bash
       working-directory: ${{ inputs.working-directory }}
       run: |
-        node ./scripts/ci/generate-files.mjs /dev/null --skip-codegen
+        node ./scripts/ci/generate-files.mjs /dev/null \
+          --skip-codegen \
+          --inputsFile=${{ steps.prepare.outputs.INPUTS_LIST_FILE }} \
+          --outputsFile=/dev/null
 
     - name: Cache generated files
       uses: runs-on/cache@v4
@@ -45,7 +49,7 @@ runs:
       with:
         path: |
           ${{ steps.prepare.outputs.GENERATED_FILES_PATH }}
-        key: generated-files-${{ hashFiles('dist/codegen_inputs_list.txt') }}
+        key: generated-files-${{ hashFiles(steps.prepare.outputs.INPUTS_LIST_FILE) }}
 
     - name: Prepare generated files
       if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
