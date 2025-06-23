@@ -8,7 +8,7 @@ import {
   CurrentLicenseApi,
   JurisdictionApi,
   QualityPhotoApi,
-  // AllPhotosFromThjodskraApi,
+  AllPhotosFromThjodskraApi,
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
@@ -18,7 +18,10 @@ import {
   SyslumadurPaymentCatalogApi,
 } from '../../dataProviders'
 
-export const sectionDataProviders = (allowFakeData: boolean) =>
+export const sectionDataProviders = (
+  allowFakeData: boolean,
+  allowThjodskraPhotos: boolean,
+) =>
   buildSection({
     id: 'externalData',
     title: m.dataCollectionTitle,
@@ -42,9 +45,11 @@ export const sectionDataProviders = (allowFakeData: boolean) =>
             title: m.dataCollectionQualityPhotoTitle,
             subTitle: m.dataCollectionQualityPhotoSubtitle,
           }),
-          // buildDataProviderItem({
-          //   provider: AllPhotosFromThjodskraApi,
-          // }),
+          buildDataProviderItem({
+            provider: allowThjodskraPhotos
+              ? AllPhotosFromThjodskraApi
+              : undefined,
+          }),
           buildDataProviderItem({
             provider: DuplicateEligibilityApi,
           }),

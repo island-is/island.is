@@ -8,7 +8,7 @@ import {
   DefaultEvents,
   defineTemplateApi,
   CurrentLicenseApi,
-  // AllPhotosFromThjodskraApi,
+  AllPhotosFromThjodskraApi,
   QualityPhotoApi,
   NationalRegistryUserApi,
   UserProfileApi,
@@ -121,6 +121,10 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
                     featureFlags[
                       DrivingLicenseDuplicateFeatureFlags.ALLOW_FAKE
                     ],
+                  allowThjodskraPhotos:
+                    featureFlags[
+                      DrivingLicenseDuplicateFeatureFlags.ALLOW_THJODSKRA_PHOTOS
+                    ],
                 })
               },
               actions: [
@@ -140,7 +144,7 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
                 }),
                 SyslumadurPaymentCatalogApi,
                 MockableSyslumadurPaymentCatalogApi,
-                // AllPhotosFromThjodskraApi,
+                AllPhotosFromThjodskraApi,
                 QualityPhotoApi,
                 UserProfileApi,
                 DuplicateEligibilityApi,
