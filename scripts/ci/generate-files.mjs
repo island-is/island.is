@@ -124,7 +124,7 @@ const getPatterns = async () => {
 
 const extractCodegenInputs = async () => {
   const codegenFiles = findCodegenFiles()
-  const inputPatterns = new Set()
+  const /** @type {Set<string>} */ inputPatterns = new Set()
 
   for (const file of codegenFiles) {
     const config = await parseCodegenFile(file)
@@ -149,7 +149,7 @@ const extractCodegenInputs = async () => {
     }
   }
 
-  const resolvedFiles = new Set()
+  const /** @type {Set<string>} */ resolvedFiles = new Set()
 
   Array.from(inputPatterns).forEach((pattern) => {
     const matched = globSync(pattern, {
@@ -192,8 +192,8 @@ async function main() {
   console.log(`Found ${patterns.length} total patterns`)
   console.log(`Resolved ${inputs.length} codegen input files`)
 
-  const existingFiles = []
-  const missingFiles = []
+  const /** @type {string[]} */ existingFiles = []
+  const /** @type {string[]} */ missingFiles = []
 
   for (const pattern of patterns) {
     const matchingFiles = globSync(pattern, {
