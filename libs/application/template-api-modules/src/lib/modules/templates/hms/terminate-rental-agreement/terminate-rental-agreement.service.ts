@@ -8,7 +8,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
 import {
-  isCancelation,
+  isCancellation,
   parseCancelContract,
   parseTerminateContract,
 } from './utils'
@@ -58,7 +58,7 @@ export class TerminateRentalAgreementService extends BaseTemplateApiService {
         'fileUpload',
       ])
 
-      if (isCancelation(application)) {
+      if (isCancellation(application)) {
         const parsedApplication = parseCancelContract(application, files)
         return await this.homeApiWithAuth(auth).contractCancelPost({
           cancelContract: parsedApplication,

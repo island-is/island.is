@@ -17,7 +17,7 @@ import {
 import * as m from '../../lib/messages'
 import {
   isBoundTermination,
-  isCancelation,
+  isCancellation,
   isUnboundTermination,
 } from '../../utils/conditions'
 import { TerminationTypes } from '../../types'
@@ -69,7 +69,7 @@ export const overviewSection = buildSection({
         }),
 
         buildOverviewField({
-          condition: isCancelation,
+          condition: isCancellation,
           id: 'cancelationDetailsOverview',
           title: m.overviewMessages.cancelationDetailsTitle,
           backId: 'cancelationMultiField',
