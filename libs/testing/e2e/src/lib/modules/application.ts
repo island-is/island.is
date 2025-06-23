@@ -39,7 +39,7 @@ export const createApplication = async (page: Page): Promise<number> => {
 export const isApplication = async (
   page: Page,
   expectedPath?: string,
-): Promise<boolean> => {
+): Promise<Locator> => {
   await page.waitForURL('**/umsoknir/**')
   const applicationUrl = new URL(page.url())
   const pathSegments = applicationUrl.pathname.split('/').filter(Boolean) // Filter(Boolean) removes empty strings from array
@@ -48,12 +48,12 @@ export const isApplication = async (
   const umsoknirSegment = pathSegments.pop()
 
   if (!isUuid(uuidSegment ?? '') || umsoknirSegment !== 'umsoknir') {
-    return false
+    throw new Error('Current page is not an application page (UUID or "umsoknir" segment missing/invalid).')
   }
 
   if (expectedPath && !applicationUrl.pathname.includes(expectedPath)) {
-    return false
+    throw new Error(`Application URL does not contain the expected path: ${expectedPath}. Current URL: ${applicationUrl.pathname}`)
   }
 
-  return true
+  return page.locator('body')
 }
