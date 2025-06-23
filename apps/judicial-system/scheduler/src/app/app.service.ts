@@ -103,12 +103,38 @@ export class AppService {
     }
   }
 
+  private async resetLawyerRegistry() {
+    try {
+      const res = await fetch(
+        `${this.config.backendUrl}/api/lawyer-registry/reset`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${this.config.backendAccessToken}`,
+          },
+        },
+      )
+
+      if (!res.ok) {
+        throw new BadGatewayException(
+          'Unexpected error occurred while resetting lawyer registry',
+        )
+      }
+    } catch (error) {
+      throw new BadGatewayException(
+        `Failed to reset lawyer registry: ${error.message}`,
+      )
+    }
+  }
+
   async run() {
     this.logger.info('Scheduler starting')
 
     await this.addMessagesForIndictmentsWaitingForConfirmationToQueue()
     await this.archiveCases()
     await this.postDailyHearingArrangementSummary()
+    await this.resetLawyerRegistry()
 
     this.logger.info('Scheduler done')
   }

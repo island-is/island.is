@@ -1,9 +1,11 @@
-import { Controller, Inject, Post } from '@nestjs/common'
-import { ApiTags } from '@nestjs/swagger'
+import { Controller, Inject, Post, UseGuards } from '@nestjs/common'
+import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
+import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { LawyersService, LawyerType } from '@island.is/judicial-system/lawyers'
+import { TokenGuard } from '@island.is/judicial-system/auth'
+import { Lawyer } from '@island.is/judicial-system/lawyers'
 
 import { LawyerRegistryService } from './lawyerRegistry.service'
 
@@ -12,12 +14,14 @@ import { LawyerRegistryService } from './lawyerRegistry.service'
 export class LawyerRegistryController {
   constructor(
     private readonly lawyerRegistryService: LawyerRegistryService,
-    private readonly lawyersService: LawyersService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @Post('lawyers')
-  async getLawyerRegistry() {
+  // @UseGuards(TokenGuard)
+  @Post('lawyer-registry/reset')
+  @ApiOkResponse({ description: 'Resets a local copy of lawyer registry' })
+  async resetLawyerRegistry(): Promise<Lawyer[]> {
+    this.logger.debug('Resetting lawyer registry')
     const lawyers = await this.lawyerRegistryService.populate()
 
     return lawyers

@@ -10,7 +10,7 @@ import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { LawyersService } from '@island.is/judicial-system/lawyers'
+import { Lawyer, LawyersService } from '@island.is/judicial-system/lawyers'
 
 import { LawyerRegistry } from './lawyerRegistry.model'
 
@@ -37,8 +37,6 @@ export class LawyerRegistryService {
 
   private async getLawyerRegistry() {
     try {
-      await this.clearLawyerRegistry()
-
       const lawyers = await this.lawyersService.getLawyers()
 
       if (lawyers.length === 0) {
@@ -53,24 +51,27 @@ export class LawyerRegistryService {
     }
   }
 
-  private async populateLawyerRegistry() {
-    const lawyers = await this.getLawyerRegistry()
-
-    return lawyers
-  }
-
-  async populate() {
-    const lawyers = await this.populateLawyerRegistry()
-
-    for (const lawyer of lawyers) {
-      await this.lawyerRegistryModel.create({
+  private async populateLawyerRegistry(lawyers: Lawyer[]) {
+    try {
+      const formattedLawyers = lawyers.map((lawyer) => ({
         name: lawyer.Name,
         nationalId: lawyer.SSN,
         email: lawyer.Email,
         phoneNumber: lawyer.Phone,
         practice: lawyer.Practice,
-      })
+      }))
+
+      await this.lawyerRegistryModel.bulkCreate(formattedLawyers)
+    } catch (error) {
+      this.logger.error('Error populating lawyer registry', error)
+      throw new InternalServerErrorException('Error populating lawyer registry')
     }
+  }
+
+  async populate() {
+    await this.clearLawyerRegistry()
+    const lawyers = await this.getLawyerRegistry()
+    await this.populateLawyerRegistry(lawyers)
 
     return lawyers
   }
