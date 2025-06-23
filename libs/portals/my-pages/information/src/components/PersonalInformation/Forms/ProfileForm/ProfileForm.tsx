@@ -1,18 +1,16 @@
-import React, { FC, useEffect, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 import {
+  Box,
+  Button,
   GridColumn,
   GridContainer,
   GridRow,
-  Input,
+  Link,
   PhoneInput,
+  SkeletonLoader,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import {
-  FeatureFlagClient,
-  Features,
-  useFeatureFlagClient,
-} from '@island.is/react/feature-flags'
 import { LoadModal, m, parseNumber } from '@island.is/portals/my-pages/core'
 import {
   useDeleteIslykillValue,
@@ -20,16 +18,19 @@ import {
 } from '@island.is/portals/my-pages/graphql'
 
 import { useUserInfo } from '@island.is/react-spa/bff'
-import { msg } from '../../../../lib/messages'
+import orderBy from 'lodash/orderBy'
+import { FormattedMessage } from 'react-intl'
+import { useScopeAccess } from '../../../../hooks/useScopeAccess'
+import { emailsMsg, msg } from '../../../../lib/messages'
+import { InformationPaths } from '../../../../lib/paths'
 import { bankInfoObject } from '../../../../utils/bankInfoHelper'
+import { EmailsList } from '../../../emails/EmailsList/EmailsList'
+import { ProfileEmailForm } from '../../../emails/ProfileEmailForm/ProfileEmailForm'
 import { DropModal } from './components/DropModal'
 import { InputSection } from './components/InputSection'
 import { BankInfoForm } from './components/Inputs/BankInfoForm'
-import { InputEmail } from './components/Inputs/Email'
-import { Nudge } from './components/Inputs/Nudge'
-import { PaperMail } from './components/Inputs/PaperMail'
 import { InputPhone } from './components/Inputs/Phone'
-import { ReadOnlyWithLinks } from './components/Inputs/ReadOnlyWithLinks'
+import { WithLinkWrapper } from './components/Inputs/WithLinkWrapper'
 import { OnboardingIntro } from './components/Intro'
 import { useConfirmNudgeMutation } from './confirmNudge.generated'
 import { DropModalType } from './types/form'
@@ -39,7 +40,7 @@ enum IdsUserProfileLinks {
   PHONE_NUMBER = '/app/user-profile/phone',
 }
 
-interface Props {
+interface ProfileFormProps {
   onCloseOverlay?: () => void
   onCloseDropModal?: () => void
   canDrop?: boolean
@@ -50,7 +51,7 @@ interface Props {
   setFormLoading?: (isLoading: boolean) => void
 }
 
-export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
+export const ProfileForm = ({
   onCloseOverlay,
   onCloseDropModal,
   canDrop,
@@ -59,18 +60,31 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
   setFormLoading,
   showIntroTitle,
   showIntroText = true,
-}) => {
+}: ProfileFormProps) => {
   useNamespaces('sp.settings')
+  const { formatMessage } = useLocale()
+  const { hasUserProfileWriteScope } = useScopeAccess()
+
   const [telDirty, setTelDirty] = useState(true)
-  const [emailDirty, setEmailDirty] = useState(true)
   const [internalLoading, setInternalLoading] = useState(false)
   const [showDropModal, setShowDropModal] = useState<DropModalType>()
+  const [showEmailForm, setShowEmailForm] = useState(false)
+
   const { deleteIslykillValue, loading: deleteLoading } =
     useDeleteIslykillValue()
   const userInfo = useUserInfo()
   const { data: userProfile, loading: userLoading, refetch } = useUserProfile()
-  const featureFlagClient: FeatureFlagClient = useFeatureFlagClient()
-  const { formatMessage } = useLocale()
+
+  // Filter out emails that are not set
+  const emails = useMemo(() => {
+    return (
+      orderBy(
+        userProfile?.emails?.filter((item) => item.email),
+        ['email'],
+      ) ?? []
+    )
+  }, [userProfile?.emails])
+
   const [confirmNudge] = useConfirmNudgeMutation()
   const isCompany = userInfo?.profile?.subjectType === 'legalEntity'
 
@@ -94,8 +108,8 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
 
   useEffect(() => {
     if (canDrop && onCloseOverlay) {
-      const showAll = emailDirty && telDirty && 'all'
-      const showEmail = emailDirty && 'mail'
+      const showAll = telDirty && 'all'
+      const showEmail = 'mail'
       const showTel = telDirty && 'tel'
       const showDropModal = showAll || showEmail || showTel || undefined
       if (showDropModal) {
@@ -115,14 +129,14 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
     }
   }
 
-  const submitEmptyEmailAndTel = async () => {
+  const submitEmptyTel = async () => {
     try {
       const refetchUserProfile = await refetch()
       const userProfileData = refetchUserProfile?.data?.getUserProfile
 
       const emptyProfile =
         !userProfileData || userProfileData.needsNudge === null
-      if (emptyProfile && emailDirty && telDirty) {
+      if (emptyProfile && telDirty) {
         /**
          * If the user has no email or tel data, and the inputs are empty,
          * We will save the email and mobilePhoneNumber as undefined
@@ -149,8 +163,8 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
         setFormLoading(true)
         setInternalLoading(true)
       }
-      if (emailDirty && telDirty) {
-        await submitEmptyEmailAndTel()
+      if (telDirty) {
+        await submitEmptyTel()
       } else {
         await confirmNudge().then(() => closeAllModals())
       }
@@ -168,124 +182,115 @@ export const ProfileForm: FC<React.PropsWithChildren<Props>> = ({
             showIntroTitle={showIntroTitle}
             showIntroText={showIntroText}
           />
+
           <InputSection
-            title={formatMessage(m.email)}
-            text={formatMessage(msg.editEmailText)}
-            loading={userLoading}
+            title={formatMessage(emailsMsg.emails)}
+            text={
+              <FormattedMessage
+                {...emailsMsg.emailListText}
+                values={{
+                  link: (
+                    <Link
+                      color="blue400"
+                      href={InformationPaths.Notifications}
+                      underlineVisibility="always"
+                      underline="small"
+                    >
+                      {formatMessage(emailsMsg.emailListTextLink)}
+                    </Link>
+                  ),
+                }}
+              />
+            }
+            divider={hasUserProfileWriteScope}
           >
-            {!userLoading &&
-              (!isCompany ? (
-                <ReadOnlyWithLinks
-                  input={
-                    <Input
-                      name="email"
-                      placeholder={formatMessage(msg.email)}
-                      value={userProfile?.email || ''}
-                      size="xs"
-                      label={formatMessage(msg.email)}
-                      readOnly
-                      {...(userProfile?.emailVerified && {
-                        icon: { name: 'checkmark' },
-                      })}
-                    />
-                  }
-                  link={{
-                    href: getIDSLink(IdsUserProfileLinks.EMAIL),
-                    title: formatMessage(
-                      userProfile?.email ? msg.change : msg.add,
-                    ),
-                  }}
-                />
-              ) : (
-                <InputEmail
-                  buttonText={formatMessage(msg.saveEmail)}
-                  email={userProfile?.email || ''}
-                  emailDirty={(isDirty) => setEmailDirty(isDirty)}
-                  emailVerified={userProfile?.emailVerified}
-                  disabled={deleteLoading}
-                />
-              ))}
+            {userLoading && emails ? (
+              <SkeletonLoader
+                repeat={3}
+                height={80}
+                space={2}
+                borderRadius="large"
+              />
+            ) : (
+              <Box display="flex" flexDirection="column" rowGap={2}>
+                {emails.length > 0 && <EmailsList items={emails} />}
+                {emails.length === 0 || showEmailForm ? (
+                  <ProfileEmailForm
+                    onAddSuccess={() => setShowEmailForm(false)}
+                  />
+                ) : (
+                  <Box marginTop={1}>
+                    <Button
+                      variant="text"
+                      size="small"
+                      icon="add"
+                      onClick={() => setShowEmailForm(true)}
+                    >
+                      {formatMessage(emailsMsg.addEmail)}
+                    </Button>
+                  </Box>
+                )}
+              </Box>
+            )}
           </InputSection>
-          {showDetails && (
-            <InputSection
-              title={formatMessage(m.refuseEmailTitle)}
-              loading={userLoading}
-              text={formatMessage(msg.editNudgeText)}
-            >
-              {!userLoading && (
-                <Nudge
-                  refuseMail={
-                    /**
-                     * This checkbox block is being displayed as the opposite of canNudge.
-                     * Details inside <Nudge />
-                     */
-                    typeof userProfile?.emailNotifications === 'boolean'
-                      ? !userProfile.emailNotifications
-                      : true
-                  }
-                />
-              )}
-            </InputSection>
-          )}
-          <InputSection
-            title={formatMessage(m.telNumber)}
-            text={formatMessage(msg.editTelText)}
-            loading={userLoading}
-          >
-            {!userLoading &&
-              (!isCompany ? (
-                <ReadOnlyWithLinks
-                  input={
-                    <PhoneInput
-                      name="phoneNumber"
-                      label={formatMessage(msg.tel)}
-                      placeholder="000-0000"
-                      value={parseNumber(userProfile?.mobilePhoneNumber || '')}
-                      size="xs"
-                      readOnly
-                      {...(userProfile?.mobilePhoneNumberVerified && {
-                        icon: { name: 'checkmark' },
-                      })}
+
+          {hasUserProfileWriteScope && (
+            <>
+              <InputSection
+                title={formatMessage(m.telNumber)}
+                text={formatMessage(msg.editTelText)}
+                loading={userLoading}
+              >
+                {!userLoading &&
+                  (!isCompany ? (
+                    <WithLinkWrapper
+                      input={
+                        <PhoneInput
+                          name="phoneNumber"
+                          label={formatMessage(msg.tel)}
+                          placeholder="000-0000"
+                          value={parseNumber(
+                            userProfile?.mobilePhoneNumber || '',
+                          )}
+                          size="xs"
+                          readOnly
+                          {...(userProfile?.mobilePhoneNumberVerified && {
+                            icon: { name: 'checkmark' },
+                          })}
+                        />
+                      }
+                      link={{
+                        href: getIDSLink(IdsUserProfileLinks.PHONE_NUMBER),
+                        title: formatMessage(
+                          userProfile?.mobilePhoneNumber ? msg.change : msg.add,
+                        ),
+                      }}
                     />
-                  }
-                  link={{
-                    href: getIDSLink(IdsUserProfileLinks.PHONE_NUMBER),
-                    title: formatMessage(
-                      userProfile?.mobilePhoneNumber ? msg.change : msg.add,
-                    ),
-                  }}
-                />
-              ) : (
-                <InputPhone
-                  buttonText={formatMessage(msg.saveTel)}
-                  mobile={parseNumber(userProfile?.mobilePhoneNumber || '')}
-                  telVerified={userProfile?.mobilePhoneNumberVerified}
-                  telDirty={(isDirty) => setTelDirty(isDirty)}
-                  disabled={deleteLoading}
-                />
-              ))}
-          </InputSection>
-          {showDetails && (
-            <InputSection
-              title={formatMessage(m.bankAccountInfo)}
-              text={formatMessage(msg.editBankInfoText)}
-              loading={userLoading}
-            >
-              {!userLoading && (
-                <BankInfoForm
-                  bankInfo={bankInfoObject(userProfile?.bankInfo || '')}
-                />
+                  ) : (
+                    <InputPhone
+                      buttonText={formatMessage(msg.saveTel)}
+                      mobile={parseNumber(userProfile?.mobilePhoneNumber || '')}
+                      telVerified={userProfile?.mobilePhoneNumberVerified}
+                      telDirty={(isDirty) => setTelDirty(isDirty)}
+                      disabled={deleteLoading}
+                    />
+                  ))}
+              </InputSection>
+              {showDetails && (
+                <InputSection
+                  title={formatMessage(m.bankAccountInfo)}
+                  text={formatMessage(msg.editBankInfoText)}
+                  loading={userLoading}
+                  divider={false}
+                >
+                  {!userLoading && (
+                    <BankInfoForm
+                      bankInfo={bankInfoObject(userProfile?.bankInfo || '')}
+                    />
+                  )}
+                </InputSection>
               )}
-            </InputSection>
-          )}
-          {showDetails && (
-            <InputSection
-              title={formatMessage(m.requestPaperMailTitle)}
-              loading={userLoading}
-              text={formatMessage(msg.editPaperMailText)}
-            >
-              {!userLoading && <PaperMail />}
-            </InputSection>
+            </>
           )}
           {showDropModal && onCloseOverlay && !internalLoading && (
             <DropModal

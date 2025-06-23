@@ -1,7 +1,7 @@
 import { CaseTableColumnKey } from '../caseTableColumnTypes'
 import { CaseTable, pickColumns } from '../caseTableTypes'
 
-const prisonRequestCasesColumnKeys: CaseTableColumnKey[] = [
+const prisonRequestCasesActiveColumnKeys: CaseTableColumnKey[] = [
   'caseNumber',
   'defendants',
   'caseType',
@@ -14,8 +14,8 @@ const prisonRequestCasesColumnKeys: CaseTableColumnKey[] = [
 export const prisonRequestCasesActive: CaseTable = {
   title: 'Virk mál',
   hasMyCasesFilter: false,
-  columnKeys: prisonRequestCasesColumnKeys,
-  columns: pickColumns(prisonRequestCasesColumnKeys),
+  columnKeys: prisonRequestCasesActiveColumnKeys,
+  columns: pickColumns(prisonRequestCasesActiveColumnKeys),
 }
 
 const prisonRequestCasesDoneColumnKeys: CaseTableColumnKey[] = [

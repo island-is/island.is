@@ -1,5 +1,4 @@
-import React, { FC } from 'react'
-import { Text, ToggleSwitchButton } from '@island.is/island-ui/core'
+import { Box, Text, ToggleSwitchButton } from '@island.is/island-ui/core'
 
 import * as styles from './SettingsCard.css'
 
@@ -11,15 +10,20 @@ interface SettingsCardProps {
   onChange(active: boolean): void
 }
 
-export const SettingsCard: FC<SettingsCardProps> = ({
+export const SettingsCard = ({
   title,
   subtitle,
   toggleLabel,
   checked,
   onChange,
-}) => {
+}: SettingsCardProps) => {
   return (
-    <div className={styles.wrapper}>
+    <Box
+      display="flex"
+      alignItems="center"
+      justifyContent="spaceBetween"
+      columnGap={3}
+    >
       <div>
         <Text variant="h5" as="h4" marginBottom={1}>
           {title}
@@ -34,6 +38,6 @@ export const SettingsCard: FC<SettingsCardProps> = ({
         hiddenLabel
         className={styles.toggleButton}
       />
-    </div>
+    </Box>
   )
 }

@@ -1,7 +1,7 @@
 import { CaseTableColumnKey } from '../caseTableColumnTypes'
 import { CaseTable, pickColumns } from '../caseTableTypes'
 
-const courtOfAppeaRequestCaseslsInProgressColumnKeys: CaseTableColumnKey[] = [
+const courtOfAppealsRequestCaseslsInProgressColumnKeys: CaseTableColumnKey[] = [
   'caseNumber',
   'defendants',
   'caseType',
@@ -12,8 +12,8 @@ const courtOfAppeaRequestCaseslsInProgressColumnKeys: CaseTableColumnKey[] = [
 export const courtOfAppealsRequestCasesInProgress: CaseTable = {
   title: 'Mál í vinnslu',
   hasMyCasesFilter: false,
-  columnKeys: courtOfAppeaRequestCaseslsInProgressColumnKeys,
-  columns: pickColumns(courtOfAppeaRequestCaseslsInProgressColumnKeys),
+  columnKeys: courtOfAppealsRequestCaseslsInProgressColumnKeys,
+  columns: pickColumns(courtOfAppealsRequestCaseslsInProgressColumnKeys),
 }
 
 const courtOfAppealsRequestCasesCompletedColumnKeys: CaseTableColumnKey[] = [

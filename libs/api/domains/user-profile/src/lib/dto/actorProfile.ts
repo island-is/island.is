@@ -8,6 +8,12 @@ export class ActorProfile {
 
   @Field(() => Boolean)
   emailNotifications!: boolean
+
+  @Field(() => String, { nullable: true })
+  email?: string | null
+
+  @Field(() => String, { nullable: true })
+  emailsId?: string | null
 }
 
 @ObjectType('UserProfileActorProfileResponse')
