@@ -1,9 +1,11 @@
 import { FC, FocusEvent, useContext, useEffect, useState } from 'react'
+import router from 'next/router'
 
 import { Box, Input, Select } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import {
   getStandardUserDashboardRoute,
+  INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
   InvestigationCaseTypes,
 } from '@island.is/judicial-system/consts'
 import {
@@ -23,7 +25,10 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
+import {
+  isDefendantStepValidIC,
+  isRegistrationStepValid,
+} from '@island.is/judicial-system-web/src/utils/validate'
 
 import { PoliceCaseNumbers, usePoliceCaseNumbers } from '../../components'
 
@@ -37,10 +42,16 @@ const Registration: FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
-  const { setAndSendCaseToServer, isCreatingCase } = useCase()
+  const { setAndSendCaseToServer, createCase, isCreatingCase } = useCase()
 
   const { clientPoliceNumbers, setClientPoliceNumbers } =
     usePoliceCaseNumbers(workingCase)
+
+  const stepIsValid = isRegistrationStepValid(
+    workingCase,
+    caseType,
+    clientPoliceNumbers,
+  )
 
   useEffect(() => {
     if (workingCase.id) {
@@ -63,11 +74,15 @@ const Registration: FC = () => {
     )
   }
 
-  const stepIsValid = isDefendantStepValidIC(
-    workingCase,
-    caseType,
-    clientPoliceNumbers,
-  )
+  const handleNavigationTo = async (destination: string) => {
+    if (!workingCase.id) {
+      const createdCase = await createCase(workingCase)
+      if (!createdCase) return
+      router.push(`${destination}/${createdCase.id}`)
+    } else {
+      router.push(`${destination}/${workingCase.id}`)
+    }
+  }
 
   return (
     <PageLayout
@@ -76,7 +91,7 @@ const Registration: FC = () => {
       notFound={caseNotFound}
       isExtension={!!workingCase.parentCase}
       isValid={stepIsValid}
-      // onNavigationTo={handleNavigationTo}
+      onNavigationTo={handleNavigationTo}
     >
       <PageHeader title="Efni kröfu - Réttarvörslugátt" />
       <FormContentContainer>
@@ -159,11 +174,9 @@ const Registration: FC = () => {
         <FormFooter
           nextButtonIcon="arrowForward"
           previousUrl={getStandardUserDashboardRoute(user)}
-          // onNextButtonClick={() =>
-          //   handleNavigationTo(
-          //     constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
-          //   )
-          // }
+          onNextButtonClick={() =>
+            handleNavigationTo(INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE)
+          }
           nextIsDisabled={!stepIsValid}
           nextIsLoading={isCreatingCase}
           nextButtonText={workingCase.id === '' ? 'Stofna mál' : 'Halda áfram'}
