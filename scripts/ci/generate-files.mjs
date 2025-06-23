@@ -21,9 +21,10 @@ const additionalPatterns = [
 /**
  * Returns the value of `option` from command line as a string (e.g. `--foo=bar` returns "bar")
  * @param {string} option
+ * @param {string} fallback
  * @returns {string}
  */
-const getOpt = (/** @type {string} */ option, /** @type {string} */ fallback) =>
+const getOpt = (option, fallback) =>
   args
     .filter((o) => o.startsWith(option))
     .pop()
