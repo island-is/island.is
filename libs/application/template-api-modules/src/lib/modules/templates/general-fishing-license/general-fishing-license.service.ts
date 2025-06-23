@@ -139,6 +139,22 @@ export class GeneralFishingLicenseService extends BaseTemplateApiService {
   async getShips({ auth }: TemplateApiModuleActionProps) {
     const ships = await this.fishingLicenceApi.getShips(auth.nationalId, auth)
 
+    console.log('****************************************')
+    console.log('ships')
+    console.dir(ships, { depth: null, colors: true })
+    console.log('****************************************')
+
+    ships.forEach((ship) => {
+      const inOneMonth = new Date()
+      inOneMonth.setMonth(inOneMonth.getMonth() + 1)
+      ship.seaworthiness.validTo = inOneMonth
+    })
+
+    console.log('****************************************')
+    console.log('ships, updated date')
+    console.dir(ships, { depth: null, colors: true })
+    console.log('****************************************')
+
     if (!ships || ships.length < 1) {
       throw new TemplateApiError(
         {

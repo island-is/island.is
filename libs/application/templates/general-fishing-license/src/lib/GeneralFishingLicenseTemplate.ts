@@ -70,6 +70,11 @@ const getCodes = (application: Application): BasicChargeItem[] => {
     'fishingLicense.license',
   ) as string
 
+  console.log('****************************************')
+  console.log('licenseType', licenseType)
+  console.log('chargeItemCode', chargeItemCode)
+  console.log('****************************************')
+
   if (!chargeItemCode) {
     throw new Error('Vörunúmer fyrir FJS vantar.')
   }
