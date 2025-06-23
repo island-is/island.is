@@ -61,21 +61,18 @@ export const getExtraData = (application: Application): ExtraData[] => {
 
 const getCodes = (application: Application): BasicChargeItem[] => {
   const answers = application.answers as GeneralFishingLicenseAnswers
-  const chargeItemCode = getValueViaPath(
+  const chargeItemCode = getValueViaPath<string>(
     answers,
     'fishingLicense.chargeType',
-  ) as string
-  const licenseType = getValueViaPath(
-    answers,
-    'fishingLicense.license',
-  ) as string
+  )
+  const licenseType = getValueViaPath<string>(answers, 'fishingLicense.license')
 
   if (!chargeItemCode) {
     throw new Error('Vörunúmer fyrir FJS vantar.')
   }
 
   if (
-    (chargeItemCode as string) !==
+    chargeItemCode !==
     FishingLicenseChargeType[
       licenseType as keyof typeof FishingLicenseChargeType
     ]
