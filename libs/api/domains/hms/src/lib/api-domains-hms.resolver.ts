@@ -78,17 +78,18 @@ export class HmsResolver {
     @CurrentUser() user: User,
     @Args('input') input: HmsPropertyCodeInfoInput,
   ): Promise<PropertyCodeInfo> {
+    let addressInfo
     try {
-      const address = await this.hmsService.hmsPropertyCodeInfo(user, {
+      addressInfo = await this.hmsService.hmsPropertyCodeInfo(user, {
         ...input,
       })
-      if (!address) {
-        throw new Error('Property not found')
-      }
-      return { address }
     } catch (error) {
       this.logger.error('Error fetching HMS properties:', error)
       throw new Error('Failed to fetch properties')
     }
+    if (!addressInfo) {
+      throw new Error('Property not found')
+    }
+    return { address: addressInfo }
   }
 }
