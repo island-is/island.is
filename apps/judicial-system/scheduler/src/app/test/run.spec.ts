@@ -76,7 +76,7 @@ describe('AppService - Run', () => {
           body: { type: 'INDICTMENTS_WAITING_FOR_CONFIRMATION' },
         },
       ])
-      expect(fetch).toHaveBeenCalledTimes(4)
+      expect(fetch).toHaveBeenCalledTimes(5)
       expect(fetch).toHaveBeenCalledWith(
         `${appModuleConfig().backendUrl}/api/internal/cases/archive`,
         {
