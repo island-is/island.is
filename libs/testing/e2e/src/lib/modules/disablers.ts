@@ -172,11 +172,7 @@ export const mockGraphQL = async <T>(
  * @param {Page} page - The Playwright page to apply the mock to.
  * @returns {Promise<void>}
  */
-export const disableTranslations = async (page: Page): Promise<void> => {
-  await mockGraphQL(page, 'GetTranslations', {
-    'mock.translation': 'YES-mocked',
-  })
-}
+
 
 
 
