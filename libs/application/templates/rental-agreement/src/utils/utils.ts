@@ -3,7 +3,7 @@ import parseISO from 'date-fns/parseISO'
 import is from 'date-fns/locale/is'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { EMAIL_REGEX } from '@island.is/application/core'
-import { StateLifeCycle } from '@island.is/application/types'
+import { RepeaterItem, StateLifeCycle } from '@island.is/application/types'
 import {
   ApplicantsInfo,
   CostField,
@@ -132,6 +132,48 @@ export const getRentalPropertySize = (units: PropertyUnit[]) =>
         : unit.size || 0),
     0,
   )
+
+export const applicantTableFields: Record<string, RepeaterItem> = {
+  nationalIdWithName: {
+    component: 'nationalIdWithName',
+    required: true,
+    searchCompanies: true,
+  },
+  phone: {
+    component: 'phone',
+    required: true,
+    label: m.landlordAndTenantDetails.phoneInputLabel,
+    enableCountrySelector: true,
+    width: 'half',
+  },
+  email: {
+    component: 'input',
+    required: true,
+    label: m.landlordAndTenantDetails.emailInputLabel,
+    type: 'email',
+    width: 'half',
+  },
+  address: {
+    component: 'input',
+    required: true,
+    label: m.landlordAndTenantDetails.addressInputLabel,
+    maxLength: 100,
+  },
+}
+
+export const applicantTableConfig = {
+  format: {
+    phone: (value: string) => value && formatPhoneNumber(value),
+    nationalId: (value: string) => value && formatNationalId(value),
+  },
+  header: [
+    m.landlordAndTenantDetails.nameInputLabel,
+    m.landlordAndTenantDetails.phoneInputLabel,
+    m.landlordAndTenantDetails.nationalIdHeaderLabel,
+    m.landlordAndTenantDetails.emailInputLabel,
+  ],
+  rows: ['name', 'phone', 'nationalId', 'email'],
+}
 
 export const getPropertyTypeOptions = () => [
   {
