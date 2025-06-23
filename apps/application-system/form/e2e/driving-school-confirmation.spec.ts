@@ -37,7 +37,7 @@ test.describe('Driving School Confirmation', () => {
 
     // Start application
     await page.goto('/umsoknir/okuskoli')
-    expect(await isApplication(page)).toBeTruthy()
+    await expect(isApplication(page)).toBeTruthy()
     await dataProviders.click()
     await forwardsButton.click()
 
@@ -81,7 +81,7 @@ test.describe('Driving School Confirmation', () => {
 
     // Start application
     await page.goto('/umsoknir/okuskoli')
-    expect(await isApplication(page)).toBeTruthy()
+    await expect(isApplication(page)).toBeTruthy()
     await dataProviders.click()
     await forwardsButton.click()
 

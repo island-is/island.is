@@ -196,7 +196,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     await disablePreviousApplications(applicationPage)
     await disableI18n(applicationPage)
     await applicationPage.goto(homeUrl)
-    await expect(isApplication(applicationPage, 'ellilifeyrir')).toBeTruthy()
+    await expect(isApplication(applicationPage, 'ellilifeyrir')).toBeVisible()
     await setupXroadMocks()
     await use(applicationPage)
 

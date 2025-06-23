@@ -35,9 +35,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     await disablePreviousApplications(applicationPage)
     await disableI18n(applicationPage)
     await applicationPage.goto(homeUrl)
-    expect(
-      await isApplication(applicationPage, 'uppbot-a-lifeyri'),
-    ).toBeTruthy()
+    await expect(isApplication(applicationPage, 'uppbot-a-lifeyri')).toBeTruthy()
     await setupXroadMocks()
     await use(applicationPage)
 

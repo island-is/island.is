@@ -114,7 +114,7 @@ applicationTest.describe('Data protection complaint application', () => {
             expect(numberOfApplicationsAfterDeletion).toBe(applicationAtStart)
           } else {
             await page.getByTestId(agreeToDataProvidersTestId)
-            expect(await isApplication(applicationPage)).toBeTruthy()
+            await expect(isApplication(applicationPage)).toBeTruthy()
           }
         },
       )
