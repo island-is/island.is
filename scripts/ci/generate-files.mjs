@@ -77,10 +77,12 @@ const parseCodegenFile = async (filePath) => {
   return yaml.load(content)
 }
 
-const addToPatterns = (
-  /** @type {Set<any>} */ patterns,
-  /** @type {string | object} */ item,
-) => {
+/**
+ * Add item to set of patterns (recursive)
+ * @param {Set<any>} patterns Set of patterns
+ * @param {string | object} item Item to add
+ */
+const addToPatterns = (patterns, item) => {
   if (Array.isArray(item)) {
     item.forEach((i) => patterns.add(i.trim()))
   } else if (typeof item === 'string') {
