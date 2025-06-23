@@ -4,7 +4,6 @@ import {
   buildForm,
   buildSection,
   buildSubmitField,
-  coreMessages,
 } from '@island.is/application/core'
 import { DefaultEvents, FormModes } from '@island.is/application/types'
 import { SkatturApi, VehiclesApi } from '../../dataProviders'

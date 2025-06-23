@@ -64,10 +64,9 @@ const parseFileToCarCategory = async (
 
       // Changing from Dayrate
       if (rateToChangeTo === RateCategory.KMRATE) {
-        if (currentCarData[carNr].activeDayRate?.validFrom) {
-          const is30orMoreDays = is30DaysOrMoreFromDate(
-            currentCarData[carNr].activeDayRate.validFrom,
-          )
+        const validFromDate = currentCarData[carNr].activeDayRate?.validFrom
+        if (validFromDate) {
+          const is30orMoreDays = is30DaysOrMoreFromDate(validFromDate)
 
           if (!is30orMoreDays) {
             return {

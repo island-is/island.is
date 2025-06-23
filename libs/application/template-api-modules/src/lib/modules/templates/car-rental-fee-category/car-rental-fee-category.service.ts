@@ -72,10 +72,6 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
     const endOfToday = new Date(now.setHours(23, 59, 59, 999))
     const tomorrow = new Date(now.setHours(24, 0, 0, 0))
 
-    // check if there are 7 or less days left of this month, if thats true, then I need a date variable for the first of next month
-    const daysLeftInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate() - now.getDate()
-    const firstOfNextMonth = daysLeftInMonth <= 7 ? new Date(now.getFullYear(), now.getMonth() + 1, 1) : null
-
     try {
       if(rateToChangeTo === RateCategory.KMRATE) {
         await this.rentalsApiWithAuth(auth).apiDayRateEntriesEntityIdRegisterPost({
@@ -86,38 +82,13 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
               return {
                 permno: c.vehicleId,
                 mileage: c.newMilage,
-                validFrom: firstOfNextMonth ?? tomorrow
+                validFrom: tomorrow
               }
             }) ?? null
           }
         })
-
-        // await this.rentalsApiWithAuth(auth).apiDayRateEntriesEntityIdRegisterPost({
-        //   entityId: auth.nationalId,
-        //   dayRateRegistrationModel: {
-        //     skraningaradili: application.applicantActors[0] ?? application.applicant ?? null,
-        //     entries: [{
-        //         permno: 'AA322',
-        //         mileage: 1222333,
-        //         validFrom: now
-        //       }]
-        //   }
-        // })
         return true
       } else {
-
-        // await this.rentalsApiWithAuth(auth).apiDayRateEntriesEntityIdDeregisterPost({
-        //   entityId: auth.nationalId,
-        //   deregistrationModel: {
-        //     afskraningaradili: application.applicantActors[0] ?? application.applicant ?? null,
-        //     entries: [{
-        //         permno: 'AA322',
-        //         mileage: 1222333,
-        //         validTo: endOfToday
-        //       }]
-        //   }
-        // })
-
         await this.rentalsApiWithAuth(auth).apiDayRateEntriesEntityIdDeregisterPost({
           entityId: auth.nationalId,
           deregistrationModel: {
@@ -126,7 +97,7 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
               return {
                 permno: c.vehicleId,
                 mileage: c.newMilage,
-                validTo: firstOfNextMonth ?? endOfToday
+                validTo: endOfToday
               }
             }) ?? null
           }
@@ -134,10 +105,8 @@ export class CarRentalFeeCategoryService extends BaseTemplateApiService {
         return true
       }
     } catch (error) {
-      // Check if error has ProblemDetails properties
       if (error && typeof error === 'object' && ('status' in error || 'detail' in error || 'title' in error)) {
         // Maybe do some error handling here, like throw application error
-        console.log('AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA', error)
       }
       throw new TemplateApiError(
         {

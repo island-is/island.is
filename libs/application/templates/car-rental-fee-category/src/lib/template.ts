@@ -26,7 +26,7 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.CAR_RENTAL_FEE_CATEGORY,
-  name: 'car-rental-fee-category template',
+  name: 'Bílaleigu gjaldflokkar',
   codeOwner: CodeOwners.NordaApplications,
   institution: 'Skatturinn', // TODO: Change to the correct institution
   translationNamespaces: [ApplicationConfigurations.CarRentalFeeCategory.translation], // TODO: Change to the correct translation namespace

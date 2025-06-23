@@ -1,7 +1,7 @@
 import XLSX from 'xlsx'
 import { RateCategory } from './constants'
 import { CarMap } from './types'
-// Replace data type with return type from function that combines samgöngustofu data and skatturinn data
+
 export const generateExcelSheet = (vehicleRateMap: CarMap, rateToChangeTo: RateCategory): { 
     filename: string, 
     base64Content: string, 

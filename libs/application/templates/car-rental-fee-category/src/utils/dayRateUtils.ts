@@ -18,3 +18,9 @@ export const is30DaysOrMoreFromDate = (date: string | Date, currentDate: Date = 
   
   return diffDays >= 30
 }
+
+export const areLessThan7DaysLeftOfMonth = (): boolean => {
+  const now = new Date()
+  const daysLeftInMonth = new Date(now.getFullYear(), now.getMonth() + 1, 0).getDate() - now.getDate()
+  return daysLeftInMonth <= 7
+}

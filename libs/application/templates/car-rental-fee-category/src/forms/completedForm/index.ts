@@ -8,7 +8,7 @@ export const completedForm = buildForm({
   children: [
     buildFormConclusionSection({
       alertTitle: 'Congratulations',
-      alertMessage: 'You have completed this boilerplate application',
+      alertMessage: 'You have completed this application',
     }),
   ],
 })

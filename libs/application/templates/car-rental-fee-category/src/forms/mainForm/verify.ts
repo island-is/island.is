@@ -2,7 +2,6 @@ import {
     buildDescriptionField,
     buildMultiField,
     buildSection,
-    buildSubmitField,
   } from '@island.is/application/core'
   
   export const verifySection = buildSection({

@@ -1,13 +1,8 @@
 import {
-    buildAlertMessageField,
-    buildDescriptionField,
-    buildDownloadFileButtonField,
-    buildFileUploadField,
     buildMultiField,
     buildSection,
     getValueViaPath,
   } from '@island.is/application/core'
-import { generateExcelSheet } from '../../utils/generateExcelSheet'
 import { UploadSelection } from '../../utils/constants'
   
   export const tableViewSelectionSection = buildSection({
