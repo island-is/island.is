@@ -11,7 +11,7 @@ import { coreDelegationsMessages } from '@island.is/application/core/messages'
 import { m as delegationMessages } from '@island.is/portals/shared-modules/delegations/messages'
 import { m as coreMessages } from '@island.is/portals/my-pages/core/messages'
 import { mCompany } from '@island.is/portals/my-pages/information/messages'
-import { switchDelegation } from './auth.spec'
+import { switchDelegation } from '../utils'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
 test.use({ baseURL: urls.islandisBaseUrl })
