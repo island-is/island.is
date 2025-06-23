@@ -33,9 +33,9 @@ const parseCodegenFile = async (filePath) => {
 
 const addToPatterns = (patterns, item) => {
   if (Array.isArray(item)) {
-    item.forEach((i) => patterns.add(i))
+    item.forEach((i) => patterns.add(i.trim()))
   } else if (typeof item === 'string') {
-    patterns.add(item)
+    patterns.add(item.trim())
   }
 }
 
@@ -52,7 +52,7 @@ const getPatterns = async () => {
 
     if (config.generates) {
       Object.entries(config.generates).forEach(([outputFile, options]) => {
-        patterns.add(outputFile)
+        patterns.add(outputFile.trim())
 
         if (typeof options === 'object') {
           if (options.schema) {
@@ -66,8 +66,7 @@ const getPatterns = async () => {
     }
   }
 
-  // Add additional patterns
-  additionalPatterns.forEach((pattern) => patterns.add(pattern))
+  additionalPatterns.forEach((pattern) => patterns.add(pattern.trim()))
 
   return Array.from(patterns)
 }
@@ -117,18 +116,24 @@ async function main() {
   const [outputFileName, ...args] = process.argv.slice(2)
 
   if (!outputFileName) {
-    throw new Error(
+    console.error(
       'Error: Please provide an output file name as the first argument.',
     )
+    process.exit(1)
   }
 
   const skipCodegen = args.includes('--skip-codegen')
+
+  const inputs = await extractCodegenInputs()
+  console.log('::group::Input files')
+  inputs.forEach((file) => console.log(file))
+  console.log('::endgroup::')
 
   if (skipCodegen) {
     console.log('Skipping codegen command...')
   } else {
     console.log('Running codegen...')
-    execSync('yarn codegen', { stdio: 'inherit' })
+    execSync('yarn codegen >> codegen.log', { stdio: 'inherit' })
   }
 
   console.log(
@@ -136,7 +141,8 @@ async function main() {
   )
   const patterns = await getPatterns()
 
-  console.log(`Found ${patterns.length} patterns`)
+  console.log(`Found ${patterns.length} total patterns`)
+  console.log(`Resolved ${inputs.length} codegen input files`)
 
   const existingFiles = []
   const missingFiles = []
@@ -169,16 +175,13 @@ async function main() {
   const stats = await fs.stat(outputFileName)
   const fileSizeInMegabytes = stats.size / (1024 * 1024)
 
-  const cacheKey = `codegen-${execSync('git rev-parse HEAD').toString().trim()}`
-
-  console.log(`Cache key: ${cacheKey}`)
   console.log(`Archive created: ${outputFileName}`)
   console.log(`Archive size: ${fileSizeInMegabytes.toFixed(2)} MB`)
 
   if (missingFiles.length > 0) {
     console.log('::group::Missing files or patterns')
     missingFiles.forEach((file) => console.log(file))
-    console.log(`::endgroup::`)
+    console.log('::endgroup::')
   }
 }
 
