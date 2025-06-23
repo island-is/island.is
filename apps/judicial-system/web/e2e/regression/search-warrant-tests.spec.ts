@@ -1,5 +1,5 @@
 import faker from 'faker'
-import { expect } from '@playwright/test'
+import { expect } from '@island.is/testing/e2e/applications'
 
 import { urls, verifyRequestCompletion } from '@island.is/testing/e2e'
 

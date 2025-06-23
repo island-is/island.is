@@ -1,4 +1,5 @@
-import { expect, Page } from '@playwright/test'
+import { Page } from '@playwright/test'
+import { expect } from '@island.is/testing/e2e/applications'
 import { urls } from '@island.is/testing/e2e'
 
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`

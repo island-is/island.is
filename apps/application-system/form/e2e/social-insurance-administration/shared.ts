@@ -1,5 +1,6 @@
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { expect, Page } from '@playwright/test'
+import { Page } from '@playwright/test'
+import { expect } from '@island.is/testing/e2e/applications'
 import { MessageDescriptor } from 'react-intl'
 import { label } from '@island.is/testing/e2e'
 

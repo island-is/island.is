@@ -1,10 +1,10 @@
 import { BrowserContext, expect, Page, test } from '@playwright/test'
 import { icelandicAndNoPopupUrl, urls, session } from '@island.is/testing/e2e'
 
+import { switchDelegation } from '../utils'
+
 const homeUrl = `${urls.islandisBaseUrl}/minarsidur`
 test.use({ baseURL: urls.islandisBaseUrl })
-
-import { switchDelegation } from '../utils'
 
 test.describe('Service portal', () => {
   let context: BrowserContext
