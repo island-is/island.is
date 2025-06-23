@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common'
-import { SharedTemplateApiService } from '../../../shared'
 import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { TemplateApiModuleActionProps } from '../../../../types'
@@ -8,13 +7,11 @@ import { TemplateApiError } from '@island.is/nest/problem'
 
 @Injectable()
 export class ExampleCommonActionsService extends BaseTemplateApiService {
-  constructor(
-    private readonly sharedTemplateAPIService: SharedTemplateApiService,
-  ) {
+  constructor() {
     super(ApplicationTypes.EXAMPLE_COMMON_ACTIONS)
   }
 
-  async getReferenceData({ application, auth }: TemplateApiModuleActionProps) {
+  async getReferenceData({ application }: TemplateApiModuleActionProps) {
     await new Promise((resolve) => setTimeout(resolve, 2000))
 
     const applicantName = getValueViaPath(
