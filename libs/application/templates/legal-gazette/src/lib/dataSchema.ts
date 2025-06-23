@@ -36,10 +36,24 @@ export const legalGazetteDataSchema = z.object({
       params: m.errors.emptySignatureName,
     }),
   }),
-  publishing: z.object({
-    withSpecificDates: z.nativeEnum(YesOrNoEnum),
-    dates: z.array(z.object({ date: z.string() })),
-  }),
+  publishing: z
+    .object({
+      withSpecificDates: z.nativeEnum(YesOrNoEnum),
+      dates: z.array(z.object({ date: z.string().optional() })),
+    })
+    .refine(
+      (val) => {
+        if (val.withSpecificDates === YesOrNoEnum.YES) {
+          return val.dates.length > 0 && val.dates.every((d) => d.date)
+        }
+
+        return true
+      },
+      {
+        path: ['dates', '0', 'date'],
+        params: m.errors.emptyPublishingDates,
+      },
+    ),
   communication: z.object({
     channels: z
       .array(

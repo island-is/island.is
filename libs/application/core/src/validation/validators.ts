@@ -95,6 +95,8 @@ export const validateAnswers = ({
     }
   } catch (e) {
     const zodErrors: ZodIssue[] = e.errors
+    console.log(answers)
+    console.log('Zod validation errors', zodErrors)
     return populateError(zodErrors, e.path, formatMessage, currentScreenFields)
   }
   return undefined

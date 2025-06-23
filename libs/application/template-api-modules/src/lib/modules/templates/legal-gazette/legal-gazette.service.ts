@@ -8,6 +8,7 @@ import { LegalGazetteClientService } from '@island.is/clients/legal-gazette'
 import { legalGazetteDataSchema } from '@island.is/application/templates/legal-gazette'
 import { YesOrNoEnum, getValueViaPath } from '@island.is/application/core'
 import { Identity } from '@island.is/clients/identity'
+import { isDateString } from 'class-validator'
 
 const LOGGING_CATEGORY = 'LegalGazetteTemplateService'
 
@@ -94,6 +95,13 @@ export class LegalGazetteTemplateService extends BaseTemplateApiService {
       signature,
     } = parsed.data
 
+    const dates: string[] = []
+    publishing.dates.forEach(({ date }) => {
+      if (date && isDateString(date)) {
+        dates.push(date)
+      }
+    })
+
     const submitApplicationDto = {
       applicationId: application.id,
       categoryId: appl.categoryId,
@@ -106,7 +114,7 @@ export class LegalGazetteTemplateService extends BaseTemplateApiService {
       })),
       actor: actor,
       institution: institution,
-      publishingDates: publishing.dates?.map(({ date }) => date) ?? [],
+      publishingDates: dates,
     }
 
     try {

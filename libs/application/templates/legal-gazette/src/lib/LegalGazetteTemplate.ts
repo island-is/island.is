@@ -49,6 +49,9 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
     {
       type: AuthDelegationType.ProcurationHolder,
     },
+    {
+      type: AuthDelegationType.GeneralMandate,
+    },
   ],
   stateMachineOptions: {
     actions: {
@@ -177,9 +180,9 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: false,
           },
-          onDelete: defineTemplateApi({
-            action: LegalGazetteAPIActions.deleteApplication,
-          }),
+          // onDelete: defineTemplateApi({
+          //   action: LegalGazetteAPIActions.deleteApplication,
+          // }),
           actionCard: {
             tag: {
               label: 'Í vinnslu hjá ritstjórn',
@@ -195,7 +198,7 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
                 ),
               write: 'all',
               read: 'all',
-              delete: false,
+              delete: true,
             },
             {
               id: LegalGazetteRoles.ASSIGNEE,

@@ -55,6 +55,12 @@ export const m = {
       defaultMessage: 'Undirskrift má ekki vera auð',
       description: 'Villa sem kemur upp ef undirskrift er tóm',
     },
+    emptyPublishingDates: {
+      id: 'lg.application:errors.emptyPublishingDates',
+      defaultMessage:
+        'Að minnsta kosti einn birtingardagur þarf að vera til staðar',
+      description: 'Villa sem kemur upp ef birtingardagsetning er tóm',
+    },
     invalidEmail: {
       id: 'lg.application:errors.invalidEmail',
       defaultMessage: 'Netfang er ekki gilt',
