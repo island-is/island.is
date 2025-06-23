@@ -1,4 +1,7 @@
-import { defineTemplateApi } from '@island.is/application/types'
+import {
+  defineTemplateApi,
+  NotificationType,
+} from '@island.is/application/types'
 import { MockProviderApi } from '@island.is/application/types'
 import {
   NationalRegistryUserApi,
@@ -43,5 +46,11 @@ export const NationalRegistryApi = NationalRegistryUserApi.configure({
 })
 
 export const SendNotification = SendNotificationApi.configure({
+  params: {
+    type: NotificationType.System,
+    args: {
+      documentId: '123',
+    },
+  },
   order: 4,
 })

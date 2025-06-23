@@ -8,7 +8,6 @@ import {
   UserProfileApi,
   DefaultEvents,
   FormModes,
-  NotificationType,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -102,6 +101,7 @@ const template: ApplicationTemplate<
           name: 'Main form',
           progress: 0.4,
           status: FormModes.DRAFT,
+          onEntry: [SendNotification],
           actionCard: {
             title: 'Test titill draft',
             description: 'Test description draft',
@@ -130,6 +130,7 @@ const template: ApplicationTemplate<
               write: 'all',
               read: 'all',
               delete: true,
+              api: [SendNotification],
             },
           ],
         },
@@ -141,7 +142,6 @@ const template: ApplicationTemplate<
       },
       [States.COMPLETED]: {
         meta: {
-          onEntry: [SendNotification],
           name: 'Completed',
           status: 'completed',
           actionCard: {
@@ -165,16 +165,6 @@ const template: ApplicationTemplate<
                 ),
               write: 'all',
               read: 'all',
-              api: [
-                SendNotification.configure({
-                  params: {
-                    type: NotificationType.System,
-                    args: {
-                      documentId: '123',
-                    },
-                  },
-                }),
-              ],
             },
           ],
         },
