@@ -1,3 +1,4 @@
+// @ts-check
 import { execSync } from 'child_process'
 import fs from 'fs/promises'
 import { globSync } from 'glob'
@@ -16,22 +17,69 @@ const additionalPatterns = [
   'libs/api/mocks/src/schema.ts',
   '**/gen/fetch/**/*',
 ]
+
+/**
+ * Returns the value of `option` from command line as a string (e.g. `--foo=bar` returns "bar")
+ * @param {string} option
+ * @returns {string}
+ */
+const getOpt = (/** @type {string} */ option, /** @type {string} */ fallback) =>
+  args
+    .filter((o) => o.startsWith(option))
+    .pop()
+    ?.split('=')
+    .pop() ?? fallback
+/**
+ * Returns true iff. flag is present, and not set to false. `--flag=true` or `--flag` returns `true`, while `--flag=false` returns `false`)
+ * @param {string} flag
+ * @returns {boolean}
+ */
+const getFlag = (flag) =>
+  Boolean(
+    args.filter((f) => f.startsWith(flag)).length > 0 && getOpt(flag, 'true'),
+  )
+/**
+ * Returns `n`-th argument, undefined if missing
+ * @param {number} n
+ * @returns {string}
+ */
+const getArg = (n) => args.filter((o) => !o.startsWith('-'))[n]
+
 const listDir = 'dist'
-const generatedList = `${listDir}/generated_files_list.txt`
-const inputsList = `${listDir}/codegen_inputs_list.txt`
+const args = process.argv.slice(1)
+const generatedList = getOpt(
+  '--outputsFile',
+  `${listDir}/generated_files_list.txt`,
+)
+const inputsList = getOpt('--inputsFile', `${listDir}/codegen_inputs_list.txt`)
+const skipCodegen = getFlag('--skip-codegen')
+const outputFileName = getArg(1)
+
+console.log('Parsed', {
+  inputsList,
+  skipCodegen,
+  generatedList,
+  outputFileName,
+})
 
 const ignorePatterns = ['**/node_modules/**']
 
 const findCodegenFiles = () => {
   return globSync('**/codegen.yml', { ignore: ignorePatterns })
 }
-
+/**
+ * @param {import("fs").PathLike | fs.FileHandle} filePath
+ * @returns {Promise<any>}
+ */
 const parseCodegenFile = async (filePath) => {
   const content = await fs.readFile(filePath, 'utf8')
   return yaml.load(content)
 }
 
-const addToPatterns = (patterns, item) => {
+const addToPatterns = (
+  /** @type {Set<any>} */ patterns,
+  /** @type {string | object} */ item,
+) => {
   if (Array.isArray(item)) {
     item.forEach((i) => patterns.add(i.trim()))
   } else if (typeof item === 'string') {
@@ -77,7 +125,8 @@ const extractCodegenInputs = async () => {
 
   for (const file of codegenFiles) {
     const config = await parseCodegenFile(file)
-    const addInput = (val) => addToPatterns(inputPatterns, val)
+    const addInput = (/** @type {any} */ val) =>
+      addToPatterns(inputPatterns, val)
 
     if (config.schema) addInput(config.schema)
     if (config.documents) addInput(config.documents)
@@ -113,16 +162,12 @@ const extractCodegenInputs = async () => {
 async function main() {
   console.log('Starting codegen process...')
 
-  const [outputFileName, ...args] = process.argv.slice(2)
-
   if (!outputFileName) {
     console.error(
       'Error: Please provide an output file name as the first argument.',
     )
     process.exit(1)
   }
-
-  const skipCodegen = args.includes('--skip-codegen')
 
   const inputs = await extractCodegenInputs()
   console.log('::group::Input files')
