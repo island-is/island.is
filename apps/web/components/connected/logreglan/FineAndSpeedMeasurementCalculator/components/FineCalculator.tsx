@@ -3,7 +3,6 @@ import { useIntl } from 'react-intl'
 
 import {
   Box,
-  Button,
   FocusableBox,
   GridColumn,
   GridContainer,
@@ -12,22 +11,11 @@ import {
   Inline,
   Input,
   Stack,
-  Table,
   Text,
 } from '@island.is/island-ui/core'
-import type { ConnectedComponent } from '@island.is/web/graphql/schema'
 import { formatCurrency } from '@island.is/web/utils/currency'
 
-import { m } from './translation.strings'
-import * as styles from './FineCalculator.css'
-
-const QUARTER_OFF_FINE_MULTIPLIER = 0.75
-
-interface JailTimeMapping {
-  maxAmount?: number
-  days: number
-}
-
+import { m } from '../translation.strings'
 interface Fine {
   law: string
   title: string
@@ -43,144 +31,13 @@ interface FineState extends Fine {
 }
 
 interface FineCalculatorProps {
-  slice: ConnectedComponent
-}
-
-interface FineCalculatorDetailsProps {
   fines: FineState[]
-  goBack: () => void
-  slice: ConnectedComponent
-}
-
-const getJailTimeForAmount = (
-  amount: number,
-  jailTimeMappings: JailTimeMapping[],
-): number => {
-  if (amount === 0) return 0
-  const descendingOrderedMappings = [...jailTimeMappings].sort((a, b) => {
-    return b.days - a.days
-  })
-
-  let days = 0
-
-  for (const mapping of descendingOrderedMappings) {
-    if (typeof mapping.maxAmount !== 'number') {
-      days = mapping.days
-    } else if (amount <= mapping.maxAmount) {
-      days = mapping.days
-    }
-  }
-
-  return days
-}
-
-const calculateTotalPoints = (fines: FineState[]): number => {
-  return fines.reduce((acc, fine) => {
-    const amount = fine.amountSelected > 1 ? 1 : fine.amountSelected
-    return acc + fine.points * amount
-  }, 0)
-}
-
-const FineCalculatorDetails = ({
-  fines,
-  goBack,
-  slice,
-}: FineCalculatorDetailsProps) => {
-  const { formatMessage } = useIntl()
-
-  const selectedFines = fines.filter((fine) => fine.amountSelected > 0)
-
-  const totalFine = selectedFines.reduce(
-    (acc, fine) => acc + fine.price * fine.amountSelected,
-    0,
-  )
-
-  const totalPoints = calculateTotalPoints(selectedFines)
-
-  const jailTime = getJailTimeForAmount(
-    totalFine,
-    slice.json?.jailTimeMappings ?? [],
-  )
-
-  return (
-    <Stack space={3}>
-      <Inline justifyContent="spaceBetween" alignY="center">
-        <Button
-          preTextIcon="arrowBack"
-          variant="text"
-          size="small"
-          onClick={goBack}
-        >
-          {formatMessage(m.results.goBack)}
-        </Button>
-        {jailTime > 0 && Boolean(slice.configJson?.showJailTime) && (
-          <Box paddingLeft={3}>
-            <Text variant="small" fontWeight="semiBold">
-              {formatMessage(m.results.jailTime, { days: jailTime })}
-            </Text>
-          </Box>
-        )}
-      </Inline>
-      <Table.Table>
-        <Table.Head>
-          <Table.HeadData>
-            {formatMessage(m.results.itemHeading)}
-          </Table.HeadData>
-          <Table.HeadData align="right">
-            {formatMessage(m.results.fineHeading)}
-          </Table.HeadData>
-          <Table.HeadData align="right">
-            {formatMessage(m.results.quarterOfHeading)}
-          </Table.HeadData>
-          <Table.HeadData align="right">
-            {formatMessage(m.results.pointsHeading)}
-          </Table.HeadData>
-        </Table.Head>
-        <Table.Body>
-          {selectedFines.map((fine) => (
-            <Table.Row key={fine.id}>
-              <Table.Data>
-                {fine.law} {fine.title} x {fine.amountSelected}
-              </Table.Data>
-              <Table.Data align="right">
-                {formatCurrency(fine.price * fine.amountSelected)}
-              </Table.Data>
-              <Table.Data align="right">
-                {formatCurrency(
-                  fine.price *
-                    fine.amountSelected *
-                    QUARTER_OFF_FINE_MULTIPLIER,
-                )}
-              </Table.Data>
-              <Table.Data align="right">{fine.points}</Table.Data>
-            </Table.Row>
-          ))}
-        </Table.Body>
-        <Table.Foot>
-          <Table.Row>
-            <Table.Data text={{ fontWeight: 'semiBold' }}>
-              {formatMessage(m.results.total)}
-            </Table.Data>
-            <Table.Data align="right" text={{ fontWeight: 'semiBold' }}>
-              {formatCurrency(totalFine)}
-            </Table.Data>
-            <Table.Data align="right" text={{ fontWeight: 'semiBold' }}>
-              {formatCurrency(totalFine * QUARTER_OFF_FINE_MULTIPLIER)}
-            </Table.Data>
-            <Table.Data align="right" text={{ fontWeight: 'semiBold' }}>
-              {totalPoints}
-            </Table.Data>
-          </Table.Row>
-        </Table.Foot>
-      </Table.Table>
-    </Stack>
-  )
+  setFines: Dispatch<SetStateAction<FineState[]>>
 }
 
 interface FineCardListProps {
   fines: FineState[]
   searchValue: string
-  calculate: () => void
   setFines: Dispatch<SetStateAction<FineState[]>>
   setSearchValue: Dispatch<SetStateAction<string>>
 }
@@ -188,60 +45,13 @@ interface FineCardListProps {
 const FineCardList = ({
   fines,
   searchValue,
-  calculate,
   setFines,
   setSearchValue,
 }: FineCardListProps) => {
   const { formatMessage } = useIntl()
-  const price = fines.reduce(
-    (acc, fine) => acc + fine.price * fine.amountSelected,
-    0,
-  )
-  const points = calculateTotalPoints(fines)
 
   return (
     <Stack space={8}>
-      <Stack space={3}>
-        <Box display="flex" justifyContent="flexEnd">
-          <Button
-            icon="arrowForward"
-            variant="text"
-            size="small"
-            onClick={calculate}
-            disabled={price === 0}
-          >
-            {formatMessage(m.fines.calculate)}
-          </Button>
-        </Box>
-        <Box display="flex" justifyContent="flexEnd">
-          <Box
-            className={styles.totalContainer}
-            background="purple100"
-            padding={2}
-            borderRadius="standard"
-          >
-            <Text variant="eyebrow">{formatMessage(m.fines.total)}</Text>
-            <Stack space={1}>
-              <Text textAlign="right" variant="h5">
-                {formatCurrency(price)}
-              </Text>
-              <Text textAlign="right" variant="h5">
-                {points}
-                {points === 1
-                  ? formatMessage(m.fines.pointsPostfixSingular)
-                  : formatMessage(m.fines.pointsPostfixPlural)}
-              </Text>
-              <Text textAlign="right" variant="h5">
-                {fines.reduce(
-                  (acc, fine) => acc + (fine.amountSelected > 0 ? 1 : 0),
-                  0,
-                )}
-                {formatMessage(m.fines.countPostfix)}
-              </Text>
-            </Stack>
-          </Box>
-        </Box>
-      </Stack>
       <Stack space={5}>
         <Input
           name="fine-calculator-input"
@@ -320,6 +130,7 @@ const FineCardList = ({
                             justifyContent="spaceBetween"
                             alignY="center"
                             space={1}
+                            flexWrap="nowrap"
                           >
                             <Text variant="small">{fine.law}</Text>
                             <Box
@@ -377,30 +188,15 @@ const FineCardList = ({
   )
 }
 
-export const FineCalculator = ({ slice }: FineCalculatorProps) => {
-  const [showDetails, setShowDetails] = useState(false)
+export const FineCalculator = ({ fines, setFines }: FineCalculatorProps) => {
   const [searchValue, setSearchValue] = useState('')
-  const [fines, setFines] = useState<FineState[]>(
-    slice.json?.fines?.map((fine: Fine, index: number) => ({
-      ...fine,
-      amountSelected: 0,
-      id: index,
-    })) ?? [],
-  )
 
-  return showDetails ? (
-    <FineCalculatorDetails
-      fines={fines}
-      goBack={() => setShowDetails(false)}
-      slice={slice}
-    />
-  ) : (
+  return (
     <FineCardList
       fines={fines}
       searchValue={searchValue}
       setSearchValue={setSearchValue}
       setFines={setFines}
-      calculate={() => setShowDetails(true)}
     />
   )
 }
