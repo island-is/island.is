@@ -6,7 +6,8 @@ import { ApplicationTypes } from '@island.is/application/types'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { LegalGazetteClientService } from '@island.is/clients/legal-gazette'
 import { legalGazetteDataSchema } from '@island.is/application/templates/legal-gazette'
-import { YesOrNoEnum } from '@island.is/application/core'
+import { YesOrNoEnum, getValueViaPath } from '@island.is/application/core'
+import { Identity } from '@island.is/clients/identity'
 
 const LOGGING_CATEGORY = 'LegalGazetteTemplateService'
 
@@ -35,8 +36,12 @@ export class LegalGazetteTemplateService extends BaseTemplateApiService {
     }
   }
 
+  async deleteApplication({ application, auth }: TemplateApiModuleActionProps) {
+    await this.legalGazetteClient.deleteApplication(application.id, auth)
+  }
+
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
-    const { answers } = application
+    const { answers, externalData } = application
 
     const parsed = legalGazetteDataSchema.safeParse(answers)
 
@@ -50,6 +55,37 @@ export class LegalGazetteTemplateService extends BaseTemplateApiService {
         success: false,
       }
     }
+
+    const identityInformation = getValueViaPath<Identity>(
+      externalData,
+      'identity.data',
+    )
+
+    if (!identityInformation) {
+      this.logger.error('Identity information not found in external data', {
+        category: LOGGING_CATEGORY,
+      })
+      return {
+        success: false,
+      }
+    }
+
+    const actor = identityInformation.actor
+      ? {
+          name: identityInformation.actor.name,
+          nationalId: identityInformation.actor.nationalId,
+        }
+      : {
+          name: identityInformation.name,
+          nationalId: identityInformation.nationalId,
+        }
+
+    const institution = identityInformation.actor
+      ? {
+          name: identityInformation.name,
+          nationalId: identityInformation.nationalId,
+        }
+      : undefined
 
     const {
       application: appl,
@@ -68,10 +104,9 @@ export class LegalGazetteTemplateService extends BaseTemplateApiService {
         email: ch.email,
         phone: ch.phone ?? '',
       })),
-      publishingDates:
-        publishing.withSpecificDates === YesOrNoEnum.YES
-          ? publishing.dates.map(({ date }) => date)
-          : [],
+      actor: actor,
+      institution: institution,
+      publishingDates: publishing.dates?.map(({ date }) => date) ?? [],
     }
 
     try {

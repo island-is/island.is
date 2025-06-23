@@ -9,7 +9,6 @@ import {
   InstitutionNationalIds,
   defineTemplateApi,
   UserProfileApi,
-  NationalRegistryUserApi,
 } from '@island.is/application/types'
 
 import { assign } from 'xstate'
@@ -30,6 +29,8 @@ import {
   getApplicationName,
   getUserInfo,
 } from '../utils/utils'
+import { AuthDelegationType } from '@island.is/shared/types'
+import { IdentityApi } from '../dataProviders'
 
 const LegalGazetteApplicationTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -44,6 +45,11 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
   dataSchema: legalGazetteDataSchema,
   allowMultipleApplicationsInDraft: true,
   featureFlag: Features.legalGazette,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+    },
+  ],
   stateMachineOptions: {
     actions: {
       assignToInstitution: assign((context) => {
@@ -88,7 +94,7 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],
-              api: [UserProfileApi, NationalRegistryUserApi],
+              api: [UserProfileApi, IdentityApi],
               write: 'all',
               read: 'all',
               delete: true,
@@ -107,7 +113,7 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
         },
       },
       [LegalGazetteStates.DRAFT]: {
-        entry: ['assignToInstitution', 'setCommunicationChannels'],
+        entry: ['setCommunicationChannels'],
         meta: {
           name: 'Uppsetning',
           progress: 0.5,
@@ -162,6 +168,7 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
         },
       },
       [LegalGazetteStates.SUBMITTED]: {
+        entry: ['assignToInstitution'],
         meta: {
           name: 'Staðfesting',
           progress: 1,
@@ -170,6 +177,9 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: false,
           },
+          onDelete: defineTemplateApi({
+            action: LegalGazetteAPIActions.deleteApplication,
+          }),
           actionCard: {
             tag: {
               label: 'Í vinnslu hjá ritstjórn',
