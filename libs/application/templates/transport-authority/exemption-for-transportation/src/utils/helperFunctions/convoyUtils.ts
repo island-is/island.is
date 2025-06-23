@@ -1,14 +1,13 @@
-import { getValueViaPath, YES } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
 import { FormValue, StaticText } from '@island.is/application/types'
 import {
   DollyType,
   ExemptionForTransportationAnswers,
   ExemptionType,
 } from '../..'
-import { Convoy, Vehicle } from '../types'
+import { Convoy } from '../types'
 import { getExemptionType } from './getExemptionType'
-import { getFreightPairingItems } from './getFreightItem'
-import { overview } from '../../lib/messages'
+import { convoy } from '../../lib/messages'
 
 export const getConvoyItems = (answers: FormValue): Convoy[] => {
   const items =
@@ -63,72 +62,20 @@ export const hasDuplicateConvoyItems = (answers: FormValue): boolean => {
   return false // No duplicates
 }
 
-const uniqueAndSortByPermno = (items: Vehicle[]): Vehicle[] => {
-  const uniqueMap: Record<string, Vehicle> = {}
-
-  for (const item of items) {
-    uniqueMap[item.permno] = item // keeps last occurrence
-  }
-
-  return Object.values(uniqueMap).sort((a, b) =>
-    a.permno.localeCompare(b.permno),
-  )
-}
-
-export const getAllConvoyVehicles = (answers: FormValue): Vehicle[] => {
-  const convoyItems = getConvoyItems(answers)
-  const vehicles: Vehicle[] = convoyItems
-    .map((x) => x.vehicle)
-    .filter((x): x is Vehicle => !!x?.permno)
-  const vehiclesSorted = uniqueAndSortByPermno(vehicles)
-  return vehiclesSorted
-}
-
-export const getConvoyVehicle = (
+export const checkHasConvoyAtIndex = (
   answers: FormValue,
-  vehicleIndex: number,
-): Vehicle | undefined => {
-  const vehiclesSorted = getAllConvoyVehicles(answers)
-  return vehiclesSorted?.[vehicleIndex]
-}
-
-export const getAllConvoyTrailers = (answers: FormValue): Vehicle[] => {
-  const convoyItems = getConvoyItems(answers)
-  const trailers: Vehicle[] = convoyItems
-    .map((x) => x.trailer)
-    .filter((x): x is Vehicle => !!x?.permno)
-  const trailersSorted = uniqueAndSortByPermno(trailers)
-  return trailersSorted
-}
-
-export const getConvoyTrailer = (
-  answers: FormValue,
-  trailerIndex: number,
-): Vehicle | undefined => {
-  const trailersSorted = getAllConvoyTrailers(answers)
-  return trailersSorted?.[trailerIndex]
-}
-
-export const shouldUseSameValuesForTrailer = (
-  answers: FormValue,
-  trailerIndex: number,
+  convoyIndex: number,
 ): boolean => {
-  const axleSpacing = getValueViaPath<
-    ExemptionForTransportationAnswers['axleSpacing']
-  >(answers, 'axleSpacing')
-
-  return (
-    axleSpacing?.trailerList?.[trailerIndex]?.useSameValues?.includes(YES) ||
-    false
-  )
+  const convoyItem = getConvoyItem(answers, convoyIndex)
+  return !!convoyItem
 }
 
-export const hasConvoyItemWithTrailer = (answers: FormValue): boolean => {
+export const checkHasAnyConvoyWithTrailer = (answers: FormValue): boolean => {
   const convoyItems = getConvoyItems(answers)
   return convoyItems.some((item) => item.trailer?.permno)
 }
 
-export const checkHasTrailer = (
+export const checkIsConvoyWithTrailer = (
   answers: FormValue,
   convoyIndex: number,
 ): boolean => {
@@ -173,25 +120,14 @@ export const checkHasDoubleDolly = (answers: FormValue): boolean => {
   )
 }
 
-export const getConvoyMissingInPairingErrorMessage = (
+export const getConvoyLongTermErrorMessage = (
   answers: FormValue,
 ): StaticText | undefined => {
+  // Empty list error
   const convoyItems = getConvoyItems(answers)
-  const freightPairingAllItems = getFreightPairingItems(answers)
+  if (!convoyItems?.length) return convoy.error.emptyListErrorMessage
 
-  for (let idx = 0; idx < convoyItems.length; idx++) {
-    const convoyItem = convoyItems[idx]
-    const isPaired = freightPairingAllItems.some(
-      (x) => x.convoyId === convoyItem.convoyId,
-    )
-    if (!isPaired) {
-      return {
-        ...overview.freight.convoyMissingErrorMessage,
-        values: {
-          convoyNumber: idx + 1,
-          vehicleAndTrailerPermno: getConvoyShortName(convoyItem),
-        },
-      }
-    }
-  }
+  // Duplicate error
+  if (hasDuplicateConvoyItems(answers))
+    return convoy.error.duplicateErrorMessage
 }

@@ -20,14 +20,15 @@ import {
   getConvoyOverviewItems,
   getAxleSpacingOverviewItems,
   getVehicleSpacingOverviewItems,
-  hasFreightItemWithExemptionForWeight,
   MAX_CNT_FREIGHT,
   getFreightItem,
   formatNumberWithMeters,
   formatNumberWithTons,
   getFreightOverviewShortTermItems,
   getFreightOverviewLongTermItems,
-  getConvoyMissingInPairingErrorMessage,
+  getOverviewErrorMessage,
+  checkHasFreightPairingItemWithExemptionForWeight,
+  checkHasAnyConvoyWithTrailer,
 } from '../../../utils'
 import { overview } from '../../../lib/messages'
 import { DefaultEvents } from '@island.is/application/types'
@@ -57,9 +58,7 @@ export const overviewSection = buildSection({
           title: overview.shortTermlocation.subtitle,
           backId: 'locationMultiField',
           items: getShortTermLocationOverviewItems,
-          condition: (answers) => {
-            return checkIfExemptionTypeShortTerm(answers)
-          },
+          condition: checkIfExemptionTypeShortTerm,
         }),
         buildOverviewField({
           id: 'overview.longTermlocation',
@@ -67,9 +66,7 @@ export const overviewSection = buildSection({
           backId: 'locationMultiField',
           items: getLongTermLocationOverviewItems,
           attachments: getLongTermLocationOverviewAttachments,
-          condition: (answers) => {
-            return checkIfExemptionTypeLongTerm(answers)
-          },
+          condition: checkIfExemptionTypeLongTerm,
         }),
         buildOverviewField({
           id: 'overview.convoy',
@@ -82,7 +79,7 @@ export const overviewSection = buildSection({
         }),
         buildOverviewField({
           id: `overview.freightShortTerm`,
-          condition: (answers) => checkIfExemptionTypeShortTerm(answers),
+          condition: checkIfExemptionTypeShortTerm,
           title: overview.freight.subtitle,
           backId: 'freightShortTermCreateMultiField',
           items: getFreightOverviewShortTermItems,
@@ -93,12 +90,10 @@ export const overviewSection = buildSection({
             return [
               buildOverviewField({
                 id: `overview.freightLongTerm.${freightIndex}`,
-                condition: (answers) => {
-                  return (
-                    checkIfExemptionTypeLongTerm(answers) &&
-                    !!getFreightItem(answers, freightIndex)
-                  )
-                },
+                condition: (answers) =>
+                  checkIfExemptionTypeLongTerm(answers) &&
+                  !!getFreightItem(answers, freightIndex),
+
                 title: (application) => {
                   const freightItem = getFreightItem(
                     application.answers,
@@ -130,18 +125,16 @@ export const overviewSection = buildSection({
           title: overview.axleSpacing.subtitle,
           backId: 'axleSpacingMultiField',
           items: getAxleSpacingOverviewItems,
-          condition: (answers) => {
-            return hasFreightItemWithExemptionForWeight(answers)
-          },
+          condition: checkHasFreightPairingItemWithExemptionForWeight,
         }),
         buildOverviewField({
           id: 'overview.vehicleSpacing',
           title: overview.vehicleSpacing.subtitle,
           backId: 'vehicleSpacingMultiField',
           items: getVehicleSpacingOverviewItems,
-          condition: (answers) => {
-            return hasFreightItemWithExemptionForWeight(answers)
-          },
+          condition: (answers) =>
+            checkHasAnyConvoyWithTrailer(answers) &&
+            checkHasFreightPairingItemWithExemptionForWeight(answers),
         }),
         buildOverviewField({
           id: 'overview.supportingDocuments',
@@ -168,9 +161,8 @@ export const overviewSection = buildSection({
           id: 'overview.alertMessageValidation',
           title: overview.freight.convoyMissingErrorTitle,
           message: (application) =>
-            getConvoyMissingInPairingErrorMessage(application.answers) || '',
-          condition: (answers) =>
-            !!getConvoyMissingInPairingErrorMessage(answers),
+            getOverviewErrorMessage(application.answers) || '',
+          condition: (answers) => !!getOverviewErrorMessage(answers),
           doesNotRequireAnswer: true,
           alertType: 'error',
           shouldBlockInSetBeforeSubmitCallback: true,
