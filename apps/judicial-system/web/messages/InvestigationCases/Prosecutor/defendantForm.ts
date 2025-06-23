@@ -1,4 +1,4 @@
-import { defineMessage, defineMessages } from 'react-intl'
+import { defineMessage } from 'react-intl'
 
 export const defendant = {
   heading: defineMessage({
@@ -8,36 +8,6 @@ export const defendant = {
       'Notaður sem titill á sakbornings skrefi í rannsóknarheimildum.',
   }),
   sections: {
-    investigationType: {
-      type: defineMessages({
-        label: {
-          id: 'judicial.system.investigation_cases:defendant.investigation_type.type.label',
-          defaultMessage: 'Tegund kröfu',
-          description:
-            'Notaður sem titill í "tegund kröfu" listanum á varnaraðila skrefi í rannsóknarheimildum.',
-        },
-        placeholder: {
-          id: 'judicial.system.investigation_cases:defendant.investigation_type.type.placeholder',
-          defaultMessage: 'Veldu tegund kröfu',
-          description:
-            'Notaður sem skýritexti í "tegund kröfu" listanum á varnaraðila skrefi í rannsóknarheimildum.',
-        },
-      }),
-      description: defineMessages({
-        label: {
-          id: 'judicial.system.investigation_cases:defendant.investigation_type.description.label',
-          defaultMessage: 'Efni kröfu',
-          description:
-            'Notaður sem titill í "efni kröfu" textaboxi á varnaraðila skrefi í rannsóknarheimildum.',
-        },
-        placeholder: {
-          id: 'judicial.system.investigation_cases:defendant.investigation_type.description.placeholder',
-          defaultMessage: 'Veldu tegund kröfu',
-          description:
-            'Notaður sem skýritexti í "efni kröfu" textaboxi á varnaraðila skrefi í rannsóknarheimildum.',
-        },
-      }),
-    },
     defendantInfo: {
       addDefendantButtonText: defineMessage({
         id: 'judicial.system.investigation_cases:defendant.defendant_info.add_defendant_button_text',

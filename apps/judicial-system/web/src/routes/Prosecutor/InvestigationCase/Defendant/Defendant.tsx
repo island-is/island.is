@@ -62,16 +62,6 @@ const Defendant = () => {
   const { createCase, isCreatingCase, setAndSendCaseToServer } = useCase()
   const { createVictimAndSetState, deleteVictimAndSetState } = useVictim()
   const { formatMessage } = useIntl()
-  // This state is needed because type is initially set to OTHER on the
-  // workingCase and we need to validate that the user selects an option
-  // from the case type list to allow the user to continue.
-  const [caseType, setCaseType] = useState<CaseType | null>()
-
-  useEffect(() => {
-    if (workingCase.id) {
-      setCaseType(workingCase.type)
-    }
-  }, [workingCase.id, workingCase.type])
 
   const { clientPoliceNumbers, setClientPoliceNumbers } =
     usePoliceCaseNumbers(workingCase)
@@ -221,11 +211,7 @@ const Defendant = () => {
     }))
   }
 
-  const stepIsValid = isDefendantStepValidIC(
-    workingCase,
-    caseType,
-    clientPoliceNumbers,
-  )
+  const stepIsValid = false
 
   return (
     <PageLayout
@@ -243,94 +229,7 @@ const Defendant = () => {
       <FormContentContainer>
         <Box marginBottom={10}>
           <PageTitle>{formatMessage(m.heading)}</PageTitle>
-          <Box component="section" marginBottom={5}>
-            <PoliceCaseNumbers
-              workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
-              clientPoliceNumbers={clientPoliceNumbers}
-              setClientPoliceNumbers={setClientPoliceNumbers}
-            />
-          </Box>
-          <Box component="section" marginBottom={5}>
-            <SectionHeading title="Efni kröfu" />
-            <BlueBox>
-              <Box marginBottom={3}>
-                <Select
-                  name="type"
-                  options={constants.InvestigationCaseTypes}
-                  label={formatMessage(m.sections.investigationType.type.label)}
-                  placeholder={formatMessage(
-                    m.sections.investigationType.type.placeholder,
-                  )}
-                  onChange={(selectedOption) => {
-                    const type = selectedOption?.value
 
-                    setCaseType(type)
-                    setAndSendCaseToServer(
-                      [
-                        {
-                          type,
-                          force: true,
-                        },
-                      ],
-                      workingCase,
-                      setWorkingCase,
-                    )
-                  }}
-                  value={
-                    workingCase.id
-                      ? {
-                          value: workingCase.type,
-                          label: capitalize(formatCaseType(workingCase.type)),
-                        }
-                      : undefined
-                  }
-                  formatGroupLabel={() => (
-                    <div
-                      style={{
-                        width: 'calc(100% + 24px)',
-                        height: '3px',
-                        marginLeft: '-12px',
-                        backgroundColor: theme.color.dark300,
-                      }}
-                    />
-                  )}
-                  required
-                />
-              </Box>
-              <Input
-                data-testid="description"
-                name="description"
-                label={formatMessage(
-                  m.sections.investigationType.description.label,
-                )}
-                placeholder={formatMessage(
-                  m.sections.investigationType.description.placeholder,
-                )}
-                value={workingCase.description || ''}
-                autoComplete="off"
-                onChange={(evt) => {
-                  setWorkingCase((prevWorkingCase) => ({
-                    ...prevWorkingCase,
-                    description: evt.target.value,
-                  }))
-                }}
-                onBlur={(evt) =>
-                  setAndSendCaseToServer(
-                    [
-                      {
-                        description: evt.target.value.trim(),
-                        force: true,
-                      },
-                    ],
-                    workingCase,
-                    setWorkingCase,
-                  )
-                }
-                maxLength={255}
-              />
-            </BlueBox>
-          </Box>
           <Box component="section" marginBottom={5}>
             <SectionHeading title="Varnaraðili" />
             <AnimatePresence>
