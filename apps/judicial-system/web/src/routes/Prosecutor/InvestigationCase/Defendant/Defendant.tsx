@@ -4,14 +4,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
 import { uuid } from 'uuidv4'
 
-import {
-  Box,
-  Button,
-  Input,
-  Select,
-  Text,
-  toast,
-} from '@island.is/island-ui/core'
+import { Box, Button, Input, Select, toast } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
@@ -259,11 +252,7 @@ const Defendant = () => {
             />
           </Box>
           <Box component="section" marginBottom={5}>
-            <Box marginBottom={3}>
-              <Text as="h3" variant="h3">
-                {formatMessage(m.sections.investigationType.heading)}
-              </Text>
-            </Box>
+            <SectionHeading title="Efni kröfu" />
             <BlueBox>
               <Box marginBottom={3}>
                 <Select
@@ -343,11 +332,7 @@ const Defendant = () => {
             </BlueBox>
           </Box>
           <Box component="section" marginBottom={5}>
-            <Box marginBottom={3}>
-              <Text as="h3" variant="h3">
-                {formatMessage(m.sections.defendantInfo.heading)}
-              </Text>
-            </Box>
+            <SectionHeading title="Varnaraðili" />
             <AnimatePresence>
               {workingCase.defendants &&
                 workingCase.defendants.map((defendant, index) => (

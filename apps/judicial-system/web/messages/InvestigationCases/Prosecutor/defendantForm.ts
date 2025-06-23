@@ -9,12 +9,6 @@ export const defendant = {
   }),
   sections: {
     investigationType: {
-      heading: defineMessage({
-        id: 'judicial.system.investigation_cases:defendant.investigation_type.heading',
-        defaultMessage: 'Efni kröfu',
-        description:
-          'Notaður sem titill fyrir "efni kröfu" hlutanum á varnaraðila skrefi í rannsóknarheimildum.',
-      }),
       type: defineMessages({
         label: {
           id: 'judicial.system.investigation_cases:defendant.investigation_type.type.label',
@@ -45,12 +39,6 @@ export const defendant = {
       }),
     },
     defendantInfo: {
-      heading: defineMessage({
-        id: 'judicial.system.investigation_cases:defendant.defendant_info.heading',
-        defaultMessage: 'Varnaraðili',
-        description:
-          'Notaður sem titill fyrir "upplýsingar um varnaraðila" hlutann á varnaraðila skrefi í rannsóknarheimildum.',
-      }),
       addDefendantButtonText: defineMessage({
         id: 'judicial.system.investigation_cases:defendant.defendant_info.add_defendant_button_text',
         defaultMessage: 'Bæta við varnaraðila',
