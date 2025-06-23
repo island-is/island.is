@@ -1,4 +1,3 @@
-import { NotificationType } from '@island.is/application/template-api-modules'
 import { defineTemplateApi } from '@island.is/application/types'
 import { MockProviderApi } from '@island.is/application/types'
 import {
