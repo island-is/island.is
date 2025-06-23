@@ -16,6 +16,9 @@ const additionalPatterns = [
   'libs/api/mocks/src/schema.ts',
   '**/gen/fetch/**/*',
 ]
+const listDir = 'dist'
+const generatedList = `${listDir}/generated_files_list.txt`
+const inputsList = `${listDir}/codegen_inputs_list.txt`
 
 const ignorePatterns = ['**/node_modules/**']
 
@@ -69,6 +72,45 @@ const getPatterns = async () => {
   return Array.from(patterns)
 }
 
+const extractCodegenInputs = async () => {
+  const codegenFiles = findCodegenFiles()
+  const inputPatterns = new Set()
+
+  for (const file of codegenFiles) {
+    const config = await parseCodegenFile(file)
+    const addInput = (val) => addToPatterns(inputPatterns, val)
+
+    if (config.schema) addInput(config.schema)
+    if (config.documents) addInput(config.documents)
+
+    if (config.generates) {
+      Object.values(config.generates).forEach((entry) => {
+        if (typeof entry !== 'object') return
+
+        if (entry.schema) addInput(entry.schema)
+        if (entry.documents) addInput(entry.documents)
+
+        if (entry.config) {
+          if (entry.config.fragments) addInput(entry.config.fragments)
+          if (entry.config.baseTypesPath) addInput(entry.config.baseTypesPath)
+        }
+      })
+    }
+  }
+
+  const resolvedFiles = new Set()
+
+  Array.from(inputPatterns).forEach((pattern) => {
+    const matched = globSync(pattern, {
+      nodir: true,
+      ignore: ignorePatterns,
+    })
+    matched.forEach((f) => resolvedFiles.add(f))
+  })
+
+  return Array.from(resolvedFiles).sort()
+}
+
 async function main() {
   console.log('Starting codegen process...')
 
@@ -114,13 +156,15 @@ async function main() {
   console.log(`Existing files: ${existingFiles.length}`)
   console.log(`Missing files or patterns: ${missingFiles.length}`)
 
-  await fs.writeFile('generated_files_list.txt', existingFiles.join('\n'))
+  await fs.mkdir(listDir, { recursive: true })
+  await fs.writeFile(generatedList, existingFiles.join('\n'))
+  await fs.writeFile(inputsList, inputs.join('\n'))
 
   console.log(`::group::Creating archive (${outputFileName})`)
-  execSync(`tar zcvf "${outputFileName}" -T generated_files_list.txt`, {
+  execSync(`tar zcvf "${outputFileName}" -T ${generatedList}`, {
     stdio: 'inherit',
   })
-  console.log(`::endgroup::`)
+  console.log('::endgroup::')
 
   const stats = await fs.stat(outputFileName)
   const fileSizeInMegabytes = stats.size / (1024 * 1024)
