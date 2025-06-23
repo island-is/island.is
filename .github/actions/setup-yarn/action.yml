@@ -50,8 +50,8 @@ runs:
         path: |
           ${{ steps.yarn-cache-dir-path.outputs.dir }}
           ${{ inputs.working-directory }}/node_modules
-          ${{ github.workspace }}/.cypress-cache
-        key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-1-node_modules
+          ${{ env.CYPRESS_CACHE_FOLDER }}
+        key: ${{ runner.os }}-deps-${{ env.CYPRESS_CACHE_FOLDER && 'cypress' || 'nocypress' }}-${{ hashFiles('yarn.lock') }}-1-node_modules
       env:
         AWS_REGION: ${{ env.AWS_REGION || 'eu-west-1' }}
 
