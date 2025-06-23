@@ -102,6 +102,8 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
             },
           },
         })
+      } else {
+        setSearchOptions([])
       }
     } else if (searchTerm?.length && !isInitialRender) {
       setValue(id, {
@@ -265,7 +267,7 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
     },
     onCompleted: (data) => {
       if (data.hmsPropertyCodeInfo) {
-        const propertyInfo = data.hmsPropertyCodeInfo.addresses
+        const propertyInfo = data.hmsPropertyCodeInfo.address
         const searchOptions = {
           ...propertyInfo,
           label: propertyInfo?.address || '',

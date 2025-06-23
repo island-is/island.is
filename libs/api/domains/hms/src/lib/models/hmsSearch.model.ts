@@ -39,8 +39,8 @@ export class Addresses {
   addresses!: Address[]
 }
 
-@ObjectType('HmsPropertyCodeInfos')
+@ObjectType('HmsPropertyCodeInfo')
 export class PropertyCodeInfo {
   @Field(() => Address)
-  addresses?: Address
+  address?: Address
 }

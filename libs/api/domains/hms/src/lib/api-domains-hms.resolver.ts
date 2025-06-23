@@ -85,7 +85,7 @@ export class HmsResolver {
       if (!address) {
         throw new Error('Property not found')
       }
-      return { addresses: address }
+      return { address }
     } catch (error) {
       this.logger.error('Error fetching HMS properties:', error)
       throw new Error('Failed to fetch properties')
