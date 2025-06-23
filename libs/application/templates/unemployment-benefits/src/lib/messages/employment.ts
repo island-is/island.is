@@ -372,6 +372,11 @@ export const employment = {
           'Athugaðu að til að fá 100% bætur þarftu að hafa unnið 100% starf í samtals 12 mánuði innan síðustu þriggja ára. Við mælum með því að setja inn eins ítarlega atvinnusögu og hægt er. ',
         description: 'Last job alert information label',
       },
+      lastJobPercentageAchievedInformation: {
+        id: 'vmst.ub.application:employment.employmentHistory.labels.lastJobPercentageAchievedInformation',
+        defaultMessage: 'Þú virðist hafa náð fullum bótarétti TODO texti hér',
+        description: 'Last job percentage achieved information label',
+      },
       addJob: {
         id: 'vmst.ub.application:employment.employmentHistory.labels.addJob',
         defaultMessage: 'Bæta við starfi',

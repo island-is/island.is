@@ -2,6 +2,7 @@ import {
   coreDefaultFieldMessages,
   formatText,
   formatTextWithLocale,
+  getErrorViaPath,
 } from '@island.is/application/core'
 import { BankAccountField, FieldBaseProps } from '@island.is/application/types'
 import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
@@ -12,7 +13,7 @@ import { getDefaultValue } from '../../getDefaultValue'
 interface Props extends FieldBaseProps {
   field: BankAccountField
 }
-export const BankAccountFormField = ({ field, application }: Props) => {
+export const BankAccountFormField = ({ field, application, error }: Props) => {
   const { formatMessage, lang: locale } = useLocale()
   const { marginBottom, marginTop, title, titleVariant, id, clearOnChange } =
     field
@@ -39,6 +40,9 @@ export const BankAccountFormField = ({ field, application }: Props) => {
   const accountNumberValue = defaultBankAccount
     ? defaultBankAccount.split('-')[2]
     : ''
+
+  console.log('error', error)
+
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
       {title && (
@@ -60,6 +64,10 @@ export const BankAccountFormField = ({ field, application }: Props) => {
               backgroundColor="blue"
               autoFocus
               clearOnChange={clearOnChange}
+              error={
+                getErrorViaPath(application.answers, `${id}.bankNumber`) ||
+                undefined
+              }
             />
           </Box>
         </GridColumn>

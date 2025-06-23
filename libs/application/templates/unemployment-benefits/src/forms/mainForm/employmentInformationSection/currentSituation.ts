@@ -7,6 +7,7 @@ import {
   buildSelectField,
   buildSubSection,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { employment as employmentMessages } from '../../../lib/messages'
 import { EmploymentStatus } from '../../../shared'
@@ -16,8 +17,8 @@ import {
   isEmployedAtAll,
   isEmployedPartTime,
   isOccasionallyEmployed,
-  isUnemployed,
 } from '../../../utils'
+import { Application } from '@island.is/application/types'
 
 export const currentSituationSubSection = buildSubSection({
   id: 'currentSituationSubSection',
@@ -90,6 +91,7 @@ export const currentSituationSubSection = buildSubSection({
           width: 'half',
           title:
             employmentMessages.currentSituation.labels.partTimeJobStartDate,
+          maxDate: new Date(),
           condition: isEmployedPartTime,
         }),
         buildTextField({
@@ -110,6 +112,7 @@ export const currentSituationSubSection = buildSubSection({
           id: 'currentSituation.currentJob.endDate',
           width: 'half',
           title: employmentMessages.currentSituation.labels.jobEndDate,
+          minDate: new Date(),
           condition: isEmployed,
         }),
         buildAlertMessageField({
@@ -164,6 +167,14 @@ export const currentSituationSubSection = buildSubSection({
           id: 'currentSituation.jobTimelineStartDate',
           title:
             employmentMessages.currentSituation.labels.jobTimelineDateLabel,
+          minDate: (application: Application) => {
+            const endDate =
+              getValueViaPath<string>(
+                application.answers,
+                'currentSituation.currentJob.endDate',
+              ) || ''
+            return endDate ? new Date(endDate) : new Date()
+          },
           condition: isEmployedAtAll,
         }),
         buildAlertMessageField({

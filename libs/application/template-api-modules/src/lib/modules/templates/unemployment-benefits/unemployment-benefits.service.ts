@@ -73,7 +73,6 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
     const results =
       await this.vmstUnemploymentClientService.getEmptyApplication(auth)
 
-    console.log('results', results)
     // This also comes from result, might want to do something with this!
     // canApply: true
     // errorMessage: ""

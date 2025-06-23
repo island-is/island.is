@@ -89,6 +89,7 @@ export const applicantInformationSubSection = buildSubSection({
           title: applicantMessages.labels.passwordLabel,
           placeholder: applicantMessages.labels.passwordPlaceholder,
           required: true,
+          maxLength: 10,
           defaultValue: (application: Application) => {
             return (
               getValueViaPath<string>(

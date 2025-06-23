@@ -1,6 +1,5 @@
 import {
   buildAlertMessageField,
-  buildCheckboxField,
   buildDescriptionField,
   buildImageField,
   buildMultiField,
@@ -10,10 +9,7 @@ import {
   NO,
   YES,
 } from '@island.is/application/core'
-import {
-  employmentSearch as employmentSearchMessages,
-  application as applicationMessages,
-} from '../../../lib/messages'
+import { employmentSearch as employmentSearchMessages } from '../../../lib/messages'
 import { Eures } from '../../../assets/Eures'
 
 export const euresJobSearchSubSection = buildSubSection({

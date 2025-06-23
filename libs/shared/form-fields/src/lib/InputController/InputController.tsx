@@ -107,6 +107,7 @@ export const InputController = forwardRef(
       tooltip,
     } = props
     const formContext = useFormContext()
+    console.log('error', error)
 
     const renderChildInput = (c: ChildParams & TestSupport) => {
       const { value, onChange, ...props } = c
