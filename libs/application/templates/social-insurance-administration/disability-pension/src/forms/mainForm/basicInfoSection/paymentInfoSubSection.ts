@@ -5,8 +5,12 @@ import {
   buildSubSection,
   buildTextField,
   buildTitleField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../lib/messages'
+import { FormValue } from '@island.is/application/types'
+import { BankAccountType } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { isForeignAccount } from '../../../lib/utils'
 
 const paymentInfoRoute = 'paymentInfoForm'
 
@@ -50,8 +54,15 @@ export const PaymentInfoSubSection =
               ],
             }),
             buildTextField({
+              id: `${paymentInfoRoute}.alertMessage`,
+              condition: (formValue: FormValue) => isForeignAccount(formValue),
+              description: disabilityPensionFormMessage.paymentInfo.foreignAccountNotice,
+              doesNotRequireAnswer: true,
+            }),
+            buildTextField({
               id: `${paymentInfoRoute}.bank`,
               title: disabilityPensionFormMessage.paymentInfo.bank,
+              condition: (formValue: FormValue) => !isForeignAccount(formValue),
               backgroundColor: 'blue',
               required: true,
             }),

@@ -153,6 +153,11 @@ export const disabilityPensionFormMessage: MessageDir = {
       defaultMessage: 'Erlendur reikningur',
       description: 'Foreign account',
     },
+    foreignAccountNotice: {
+      id: 'ol.application:paymentInfo.foreignAccountNotice',
+      defaultMessage: 'Ef þú ert með erlendan bankareikning sér Tryggingastofnun um að millifæra greiðslur. Greiðslurnar samræmast milliríkjasamningi Íslands við EES, Bandaríkin og Kanada og verður reikningur því að vera skráður í þeim löndum (?). Millifærslur á erlenda reikninga fara í gegnum viðskiptabanka til erlendra banka, sem getur falið í sér kostnað vegna millifærslu. Einnig getur það falið í sér gengistap. Því er almennt dýrara að fá lífeyrisgreiðslur greiddar inn á erlendan reikning . ',
+      description: 'TODO',
+    },
     bank: {
       id: 'ol.application:paymentInfo.bank',
       defaultMessage: 'Banki',

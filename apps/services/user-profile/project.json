@@ -114,8 +114,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "yarn start services-user-profile",
-          "scripts/run-xroad-proxy.sh"
+          "yarn start services-user-profile"
         ],
         "parallel": true
       }
