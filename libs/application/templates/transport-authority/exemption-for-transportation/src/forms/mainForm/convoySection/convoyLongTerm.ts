@@ -6,20 +6,17 @@ import {
 } from '@island.is/application/core'
 import { convoy } from '../../../lib/messages'
 import {
-  getConvoyItems,
   getRandomId,
-  hasDuplicateConvoyItems,
   checkIfExemptionTypeLongTerm,
   loadValidation,
   MAX_CNT_CONVOY,
+  getConvoyLongTermErrorMessage,
 } from '../../../utils'
 import { DollyType } from '../../../shared'
 
 export const ConvoyLongTermMultiField = buildMultiField({
   id: 'convoyLongTermMultiField',
-  condition: (answers) => {
-    return checkIfExemptionTypeLongTerm(answers)
-  },
+  condition: checkIfExemptionTypeLongTerm,
   title: convoy.general.pageTitle,
   description: convoy.general.description,
   children: [
@@ -93,30 +90,11 @@ export const ConvoyLongTermMultiField = buildMultiField({
     buildAlertMessageField({
       id: 'convoy.alertValidation',
       title: convoy.error.alertTitle,
-      message: (application) => {
-        // Empty list error
-        const convoyItems = getConvoyItems(application.answers)
-        const showEmptyListError = !convoyItems?.length
-
-        // Duplicate error
-        const showDuplicateError = hasDuplicateConvoyItems(application.answers)
-
-        if (showEmptyListError) return convoy.error.emptyListErrorMessage
-        else if (showDuplicateError) return convoy.error.duplicateErrorMessage
-        else return ''
-      },
+      message: (application) =>
+        getConvoyLongTermErrorMessage(application.answers) || '',
+      condition: (answers) => !!getConvoyLongTermErrorMessage(answers),
       doesNotRequireAnswer: true,
       alertType: 'error',
-      condition: (answers) => {
-        // Empty list error
-        const convoyItems = getConvoyItems(answers)
-        const showEmptyListError = !convoyItems?.length
-
-        // Duplicate error
-        const showDuplicateError = hasDuplicateConvoyItems(answers)
-
-        return showEmptyListError || showDuplicateError
-      },
       shouldBlockInSetBeforeSubmitCallback: true,
     }),
     buildCustomField({
