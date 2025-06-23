@@ -24,7 +24,6 @@ const paymentForAppraisal = (currentAppraisal: number) => {
 }
 
 export const getAmountToPay = (answers: FormValue) => {
-  console.log('answers: ', answers)
   const currentAppraisal = getValueViaPath<number>(
     answers,
     'usageUnitsFireCompensation',
