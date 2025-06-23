@@ -1,4 +1,4 @@
-import { Page } from '@playwright/test'
+import { Locator, Page } from '@playwright/test'
 import { isUuid } from 'uuidv4'
 
 /**
@@ -48,11 +48,15 @@ export const isApplication = async (
   const umsoknirSegment = pathSegments.pop()
 
   if (!isUuid(uuidSegment ?? '') || umsoknirSegment !== 'umsoknir') {
-    throw new Error('Current page is not an application page (UUID or "umsoknir" segment missing/invalid).')
+    throw new Error(
+      'Current page is not an application page (UUID or "umsoknir" segment missing/invalid).',
+    )
   }
 
   if (expectedPath && !applicationUrl.pathname.includes(expectedPath)) {
-    throw new Error(`Application URL does not contain the expected path: ${expectedPath}. Current URL: ${applicationUrl.pathname}`)
+    throw new Error(
+      `Application URL does not contain the expected path: ${expectedPath}. Current URL: ${applicationUrl.pathname}`,
+    )
   }
 
   return page.locator('body')
