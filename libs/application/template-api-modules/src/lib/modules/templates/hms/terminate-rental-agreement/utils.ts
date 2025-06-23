@@ -29,7 +29,7 @@ const terminationReasonMap: Record<string, TerminationReason> = {
     TerminationReason.NONPROFITTENANT,
 }
 
-export const isCancelation = (application: Application) => {
+export const isCancellation = (application: Application) => {
   const terminationType = getValueViaPath<string>(
     application.answers,
     'terminationType.answer',

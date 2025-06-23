@@ -11,7 +11,7 @@ export const isTermination = (answers: FormValue) => {
   return terminationType === TerminationTypes.TERMINATION
 }
 
-export const isCancelation = (answers: FormValue) => {
+export const isCancellation = (answers: FormValue) => {
   const terminationType = getValueViaPath<string>(
     answers,
     'terminationType.answer',
