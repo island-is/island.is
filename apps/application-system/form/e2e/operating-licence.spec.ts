@@ -1,4 +1,4 @@
-import { expect, test as base, Page } from '@playwright/test'
+import { expect, test as base, Page } from '@island.is/testing/e2e'
 import { createMockPdf, deleteMockPdf, sleep } from '@island.is/testing/e2e'
 import {
   disableI18n,

@@ -12,8 +12,8 @@ import { ApplicationErrorBoundary } from '@island.is/portals/core'
 
 const mockedInitialState = isMockMode
   ? createMockedInitialState({
-    scopes: ['@island.is/internal'],
-  })
+      scopes: ['@island.is/internal'],
+    })
   : undefined
 
 export const App = () => (
@@ -32,4 +32,3 @@ export const App = () => (
     </LocaleProvider>
   </ApolloProvider>
 )
-

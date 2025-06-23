@@ -32,13 +32,25 @@ export class WorkMachine {
   @Field({ nullable: true, description: 'ISO8601' })
   registrationDate?: string
 
-  @Field({ nullable: true, description: 'Only populated when retrieved specifically by id, not as a collection' })
+  @Field({
+    nullable: true,
+    description:
+      'Only populated when retrieved specifically by id, not as a collection',
+  })
   productionNumber?: string
 
-  @Field({ nullable: true, description: 'Only populated when retrieved specifically by id, not as a collection' })
+  @Field({
+    nullable: true,
+    description:
+      'Only populated when retrieved specifically by id, not as a collection',
+  })
   productionCountry?: string
 
-  @Field({ nullable: true, description: 'Only populated when retrieved specifically by id, not as a collection' })
+  @Field({
+    nullable: true,
+    description:
+      'Only populated when retrieved specifically by id, not as a collection',
+  })
   productionYear?: string
 
   @Field({ nullable: true })
@@ -63,10 +75,18 @@ export class WorkMachine {
   @Field({ nullable: true })
   paymentRequiredForOwnerChange?: boolean
 
-  @Field(() => [Link], { nullable: true,description: 'Only populated when retrieved specifically by id, not as a collection' })
+  @Field(() => [Link], {
+    nullable: true,
+    description:
+      'Only populated when retrieved specifically by id, not as a collection',
+  })
   links?: Array<Link>
 
-  @Field(() => [Label], { nullable: true,description: 'Only populated when retrieved specifically by id, not as a collection' })
+  @Field(() => [Label], {
+    nullable: true,
+    description:
+      'Only populated when retrieved specifically by id, not as a collection',
+  })
   labels?: Array<Label>
 
   /** DEPRECATION LINE */

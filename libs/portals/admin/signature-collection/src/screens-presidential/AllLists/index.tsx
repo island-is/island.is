@@ -150,7 +150,7 @@ const Lists = () => {
                 allowedActions={[
                   Actions.DownloadReports,
                   Actions.CreateCollection,
-                  Actions.ReviewCandidates
+                  Actions.ReviewCandidates,
                 ]}
               />
             }

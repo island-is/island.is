@@ -1,8 +1,9 @@
 export * from './lib/config/playwright-config'
-export * from './lib/helpers/custom-matchers'
+
 export * from './lib/helpers/api-tools'
 export * from './lib/helpers/locator-helpers'
 export * from './lib/helpers/utils'
+export * from './lib/helpers/custom-matchers'
 export * from './lib/modules/application'
 export * from './lib/modules/disablers'
 export * from './lib/modules/i18n'

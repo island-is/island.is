@@ -1,4 +1,4 @@
-import { BrowserContext, expect, test } from '@playwright/test'
+import { BrowserContext, test, expect } from '@island.is/testing/e2e'
 import format from 'date-fns/format'
 import { urls, session } from '@island.is/testing/e2e'
 
