@@ -1,6 +1,5 @@
 import { expect, test as base, Page } from '@playwright/test'
 import {
-  isApplication,
   disableI18n,
   disablePreviousApplications,
   session,
@@ -22,7 +21,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     await disablePreviousApplications(applicationPage)
     await disableI18n(applicationPage)
     await applicationPage.goto(homeUrl)
-    expect(await isApplication(applicationPage, 'vegabref')).toBeTruthy()
+    await expect(applicationPage).toBeApplication('vegabref')
     await use(applicationPage)
 
     await applicationPage.close()

@@ -10,7 +10,6 @@ import {
 import {
   disableI18n,
   disablePreviousApplications,
-  isApplication,
 } from '@island.is/testing/e2e'
 import {
   employerFormMessages,

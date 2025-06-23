@@ -1,6 +1,5 @@
 import { expect, test as base, Page } from '@playwright/test'
 import {
-  isApplication,
   disableI18n,
   session,
   createApplication,
@@ -23,7 +22,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     const applicationPage = await applicationContext.newPage()
     await disableI18n(applicationPage)
     await applicationPage.goto(homeUrl)
-    await expect(isApplication(applicationPage)).toBeTruthy()
+    await expect(applicationPage).toBeApplication('skuldleysisvottord')
     await use(applicationPage)
 
     await applicationPage.close()

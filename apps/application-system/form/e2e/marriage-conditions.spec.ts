@@ -1,5 +1,5 @@
 import { expect, test as base, Page } from '@playwright/test'
-import { isApplication, session, sleep, proceed } from '@island.is/testing/e2e'
+import { session, sleep, proceed } from '@island.is/testing/e2e'
 
 const homeUrl = '/umsoknir/hjonavigsla'
 
@@ -15,7 +15,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     const applicationPage = await applicationContext.newPage()
 
     await applicationPage.goto(homeUrl)
-    await expect(isApplication(applicationPage, 'hjonavigsla')).toBeTruthy()
+    await expect(applicationPage).toBeApplication('hjonavigsla')
     await use(applicationPage)
 
     await applicationPage.close()

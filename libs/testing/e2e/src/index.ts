@@ -1,4 +1,5 @@
 export * from './lib/config/playwright-config'
+export * from './lib/helpers/custom-matchers'
 export * from './lib/helpers/api-tools'
 export * from './lib/helpers/locator-helpers'
 export * from './lib/helpers/utils'

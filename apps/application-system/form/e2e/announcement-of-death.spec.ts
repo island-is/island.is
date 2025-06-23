@@ -3,7 +3,6 @@ import {
   disableI18n,
   disablePreviousApplications,
   disableObjectKey,
-  isApplication,
 } from '@island.is/testing/e2e'
 import { session } from '@island.is/testing/e2e'
 
@@ -23,7 +22,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     await disablePreviousApplications(applicationPage)
     await disableI18n(applicationPage)
     await applicationPage.goto(homeUrl)
-    await expect(isApplication(applicationPage, 'andlatstilkynningar')).toBeTruthy()
+    await expect(applicationPage).toBeApplication('andlatstilkynningar')
     await use(applicationPage)
 
     await applicationPage.close()
@@ -34,7 +33,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
 applicationTest.describe('Announcement of Death', () => {
   applicationTest('test', async ({ applicationPage }) => {
     const page = applicationPage
-    await expect(isApplication(page, 'andlatstilkynningar')).toBeTruthy()
+    await expect(page).toBeApplication('andlatstilkynningar')
 
     // Custom continue button
     const submitButton = page.getByRole('button', { name: 'Halda áfram' })

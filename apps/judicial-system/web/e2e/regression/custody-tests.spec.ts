@@ -1,7 +1,7 @@
 import faker from 'faker'
 import { expect } from '@playwright/test'
 
-import { urls,verifyRequestCompletion } from '@island.is/testing/e2e'
+import { urls, verifyRequestCompletion } from '@island.is/testing/e2e'
 
 import {
   chooseDocument,

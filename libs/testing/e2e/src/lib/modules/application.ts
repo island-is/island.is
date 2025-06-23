@@ -28,36 +28,16 @@ export const createApplication = async (page: Page): Promise<number> => {
   return existingApplicationCount
 }
 
-/**
- * Checks if the current page is an application page.
- * Optionally, verifies if the application URL includes a specific path.
- * An application page is identified by a UUID as the last path segment and 'umsoknir' as the second to last.
- * @param page The Playwright Page object.
- * @param expectedPath Optional path segment to check within the application URL.
- * @returns True if it's an application page (and matches `expectedPath` if provided), false otherwise.
- */
-export const isApplication = async (
-  page: Page,
-  expectedPath?: string,
-): Promise<Locator> => {
-  await page.waitForURL('**/umsoknir/**')
+export const isApplication = (page: Page, expectedPath?: string) => {
   const applicationUrl = new URL(page.url())
   const pathSegments = applicationUrl.pathname.split('/').filter(Boolean) // Filter(Boolean) removes empty strings from array
 
   const uuidSegment = pathSegments.pop()
   const umsoknirSegment = pathSegments.pop()
 
-  if (!isUuid(uuidSegment ?? '') || umsoknirSegment !== 'umsoknir') {
-    throw new Error(
-      'Current page is not an application page (UUID or "umsoknir" segment missing/invalid).',
-    )
-  }
-
-  if (expectedPath && !applicationUrl.pathname.includes(expectedPath)) {
-    throw new Error(
-      `Application URL does not contain the expected path: ${expectedPath}. Current URL: ${applicationUrl.pathname}`,
-    )
-  }
-
-  return page.locator('body')
+  return (
+    isUuid(uuidSegment ?? '') &&
+    umsoknirSegment === 'umsoknir' &&
+    (!expectedPath || applicationUrl.pathname.includes(expectedPath))
+  )
 }

@@ -4,7 +4,6 @@ import {
   disablePreviousApplications,
   session,
   proceed,
-  isApplication,
   label,
 } from '@island.is/testing/e2e'
 import { carRecyclingMessages } from '@island.is/application/templates/car-recycling'
@@ -25,7 +24,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     await disablePreviousApplications(applicationPage)
     await disableI18n(applicationPage)
     await applicationPage.goto(homeUrl)
-    await expect(isApplication(applicationPage, 'skilavottord')).toBeTruthy()
+    await expect(applicationPage).toBeApplication('skilavottord')
     await use(applicationPage)
 
     await applicationPage.close()

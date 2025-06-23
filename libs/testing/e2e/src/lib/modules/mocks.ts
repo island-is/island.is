@@ -88,7 +88,6 @@ export const resetMocks = async () => {
   )
 }
 
-
 export const wildcard = async (target: string) => {
   mockedServices.xroad.imposter.withStub(
     new Stub()

@@ -4,7 +4,6 @@ import {
   disableI18n,
   disablePreviousApplications,
   disableObjectKey,
-  isApplication,
   session,
   proceed,
 } from '@island.is/testing/e2e'
@@ -27,7 +26,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     await disablePreviousApplications(applicationPage)
     await disableI18n(applicationPage)
     await applicationPage.goto(homeUrl)
-    await expect(isApplication(applicationPage, 'okuskirteini')).toBeTruthy()
+    await expect(applicationPage).toBeApplication('okuskirteini')
     await use(applicationPage)
 
     await applicationPage.close()

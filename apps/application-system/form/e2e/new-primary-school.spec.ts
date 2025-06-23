@@ -25,7 +25,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     await disablePreviousApplications(applicationPage)
     await disableI18n(applicationPage)
     await applicationPage.goto(homeUrl)
-    await expect(isApplication(applicationPage, 'nyr-grunnskoli')).toBeTruthy()
+    await expect(applicationPage).toBeApplication('nyr-grunnskoli')
     await setupXroadMocks()
     await use(applicationPage)
 
@@ -47,7 +47,7 @@ applicationTest.describe('New primary school', () => {
           }),
         ).toBeVisible()
         await page.getByTestId('agree-to-data-providers').click()
-        await proceed()
+        await proceed(page)
       })
 
       await applicationTest.step('Select child', async () => {
@@ -121,7 +121,7 @@ applicationTest.describe('New primary school', () => {
             })
             .last()
             .fill('210')
-          await proceed()
+          await proceed(page)
         },
       )
 
@@ -152,7 +152,7 @@ applicationTest.describe('New primary school', () => {
           ).toBeVisible()
           await page.getByTestId('email2').fill('guardian2@test.is')
           await page.getByTestId('phone2').fill('7888888')
-          await proceed()
+          await proceed(page)
         },
       )
 
@@ -195,7 +195,7 @@ applicationTest.describe('New primary school', () => {
             ),
           })
           .click()
-        await proceed()
+        await proceed(page)
       })
 
       await applicationTest.step(
@@ -209,7 +209,7 @@ applicationTest.describe('New primary school', () => {
               ),
             }),
           ).toBeVisible()
-          await proceed()
+          await proceed(page)
         },
       )
 
@@ -231,7 +231,7 @@ applicationTest.describe('New primary school', () => {
 
         await page.getByTestId('select-newSchool.school').click()
         await page.keyboard.press('Enter')
-        await proceed()
+        await proceed(page)
       })
 
       await applicationTest.step('Select Reason for application', async () => {
@@ -249,7 +249,7 @@ applicationTest.describe('New primary school', () => {
         await page
           .getByRole('option', { name: 'Systkini í sama skóla' })
           .click()
-        await proceed()
+        await proceed(page)
       })
 
       await applicationTest.step(
@@ -287,7 +287,7 @@ applicationTest.describe('New primary school', () => {
               ),
             })
             .click()
-          await proceed()
+          await proceed(page)
         },
       )
 
@@ -304,7 +304,7 @@ applicationTest.describe('New primary school', () => {
 
           await page.getByTestId('datepicker').click()
           await page.getByRole('option', { name: 'choose' }).last().click()
-          await proceed()
+          await proceed(page)
         },
       )
 
@@ -366,7 +366,7 @@ applicationTest.describe('New primary school', () => {
 
         await page.getByTestId('sign-language').click()
         await page.getByTestId('guardian-requires-interpreter').click()
-        await proceed()
+        await proceed(page)
       })
 
       await applicationTest.step('Allergies and intolerances', async () => {
@@ -420,7 +420,7 @@ applicationTest.describe('New primary school', () => {
         await page.getByTestId('uses-epi-pen').click()
         await page.getByTestId('has-confirmed-medical-diagnoses').click()
         await page.getByTestId('requests-medication-administration').click()
-        await proceed()
+        await proceed(page)
       })
 
       await applicationTest.step('Support', async () => {
@@ -457,7 +457,7 @@ applicationTest.describe('New primary school', () => {
             ),
           })
           .click()
-        await proceed()
+        await proceed(page)
       })
 
       await applicationTest.step('Submit application', async () => {

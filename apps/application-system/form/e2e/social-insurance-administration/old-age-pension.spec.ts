@@ -4,7 +4,6 @@ import { test as base, expect, Page } from '@playwright/test'
 import {
   disableI18n,
   disablePreviousApplications,
-  isApplication,
   label,
   session,
 } from '@island.is/testing/e2e'
@@ -196,7 +195,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     await disablePreviousApplications(applicationPage)
     await disableI18n(applicationPage)
     await applicationPage.goto(homeUrl)
-    await expect(isApplication(applicationPage, 'ellilifeyrir')).toBeVisible()
+    await expect(applicationPage).toBeApplication('ellilifeyrir')
     await setupXroadMocks()
     await use(applicationPage)
 

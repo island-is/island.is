@@ -3,7 +3,6 @@ import { createMockPdf, deleteMockPdf, sleep } from '@island.is/testing/e2e'
 import {
   disableI18n,
   disablePreviousApplications,
-  isApplication,
   session,
   proceed,
 } from '@island.is/testing/e2e'
@@ -23,7 +22,7 @@ const applicationTest = base.extend<{ applicationPage: Page }>({
     await disablePreviousApplications(applicationPage)
     await disableI18n(applicationPage)
     await applicationPage.goto(homeUrl)
-    await expect(isApplication(applicationPage, 'rekstrarleyfi')).toBeTruthy()
+    await expect(applicationPage).toBeApplication('rekstrarleyfi')
     await use(applicationPage)
 
     await applicationPage.close()

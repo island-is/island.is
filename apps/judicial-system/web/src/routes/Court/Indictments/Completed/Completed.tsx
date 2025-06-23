@@ -17,7 +17,11 @@ import {
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { InformationForDefendant } from '@island.is/judicial-system/types'
 import { Feature } from '@island.is/judicial-system/types'
-import { EventType, CaseFileCategory, CaseIndictmentRulingDecision } from '@island.is/judicial-system-web/src/graphql/schema'
+import {
+  EventType,
+  CaseFileCategory,
+  CaseIndictmentRulingDecision,
+} from '@island.is/judicial-system-web/src/graphql/schema'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,

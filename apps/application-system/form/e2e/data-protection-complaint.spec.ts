@@ -3,7 +3,6 @@ import {
   disableI18n,
   session,
   createApplication,
-  isApplication,
   label,
   proceed,
 } from '@island.is/testing/e2e'
@@ -114,7 +113,7 @@ applicationTest.describe('Data protection complaint application', () => {
             expect(numberOfApplicationsAfterDeletion).toBe(applicationAtStart)
           } else {
             await page.getByTestId(agreeToDataProvidersTestId)
-            await expect(isApplication(applicationPage)).toBeTruthy()
+            await expect(applicationPage).toBeApplication()
           }
         },
       )
