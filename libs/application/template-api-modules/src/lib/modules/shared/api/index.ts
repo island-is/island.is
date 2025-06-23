@@ -22,6 +22,8 @@ import { HealthInsuranceModule } from './health-insurance/health-insurance.modul
 import { HealthInsuranceService } from './health-insurance/health-insurance.service'
 import { InnaService } from './education/inna.service'
 import { InnaModule } from './education/inna.module'
+import { UserNotificationModule } from './user-notification/user-notification.module'
+import { UserNotificationService } from './user-notification/user-notification.service'
 
 export const dynamicModules = [UserProfileModule]
 
@@ -37,6 +39,7 @@ export const modules = [
   DirectorateOfImmigrationModule,
   HealthInsuranceModule,
   InnaModule,
+  UserNotificationModule,
 ]
 
 export const services = [
@@ -52,4 +55,5 @@ export const services = [
   DirectorateOfImmigrationService,
   HealthInsuranceService,
   InnaService,
+  UserNotificationService,
 ]
