@@ -20,10 +20,10 @@ export class LawyerRegistryController {
   @UseGuards(TokenGuard)
   @Post('lawyer-registry/reset')
   @ApiOkResponse({ description: 'Resets a local copy of lawyer registry' })
-  async resetLawyerRegistry(): Promise<Lawyer[]> {
+  async resetLawyerRegistry(): Promise<boolean> {
     this.logger.debug('Resetting lawyer registry')
-    const lawyers = await this.lawyerRegistryService.populate()
+    const success = await this.lawyerRegistryService.populate()
 
-    return lawyers
+    return success
   }
 }
