@@ -1,6 +1,10 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
-import { coreErrorMessages, YES } from '@island.is/application/core'
+import {
+  coreErrorMessages,
+  EMAIL_REGEX,
+  YES,
+} from '@island.is/application/core'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { DollyType, ExemptionFor, ExemptionType, RegionArea } from '../shared'
 import { error } from './messages'
@@ -10,12 +14,14 @@ const isValidPhoneNumber = (phoneNumber: string) => {
   return !!phone && phone.isValid()
 }
 
+const isValidEmail = (value: string) => EMAIL_REGEX.test(value)
+
 const ApplicantSchema = z.object({
   nationalId: z
     .string()
     .refine((nationalId) => nationalId && kennitala.isValid(nationalId)),
   name: z.string().min(1),
-  email: z.string().email(),
+  email: z.string().refine((v) => isValidEmail(v)),
   phoneNumber: z.string().refine((v) => isValidPhoneNumber(v)),
 })
 
@@ -25,7 +31,10 @@ const ResponsiblePersonSchema = z
     isSameAsApplicant: z.array(z.enum([YES])).optional(),
     nationalId: z.string().optional(),
     name: z.string().optional(),
-    email: z.string().email().optional(),
+    email: z
+      .string()
+      .optional()
+      .refine((v) => !v || isValidEmail(v)),
     phone: z
       .string()
       .optional()
@@ -65,7 +74,10 @@ const TransporterSchema = z
     isSameAsApplicant: z.array(z.enum([YES])).optional(),
     nationalId: z.string().optional(),
     name: z.string().optional(),
-    email: z.string().email().optional(),
+    email: z
+      .string()
+      .optional()
+      .refine((v) => !v || isValidEmail(v)),
     phone: z
       .string()
       .optional()
@@ -219,7 +231,9 @@ const FreightPairingSchema = z
             .array(z.nativeEnum(ExemptionFor).nullable())
             .optional(),
         })
-        // Note: need to be nullable, since there can be items/convoys in between that are not selected and therefor null
+        // Note: need to be optional/nullable, since there can be items/convoys in between that are not selected and therefor undefined/null
+        // (needs to be optional for zod validation, and nullable for graphql validation)
+        .optional()
         .nullable(),
     ),
   })
@@ -286,11 +300,15 @@ const AxleSpacingSchema = z
     ),
   })
   .refine(
-    ({ hasExemptionForWeight, exemptionPeriodType, dolly }) => {
+    ({ hasExemptionForWeight, exemptionPeriodType, dolly, trailerList }) => {
       if (!hasExemptionForWeight) return true
 
       // Since dolly is only allowed in short-term
       if (exemptionPeriodType !== ExemptionType.SHORT_TERM) return true
+
+      // Since dolly can only be included if there is a trailer
+      const hasTrailer = trailerList.some((x) => !!x.permno)
+      if (!hasTrailer) return true
 
       // Since there is only axle space for double dolly
       if (dolly.type !== DollyType.DOUBLE) return true

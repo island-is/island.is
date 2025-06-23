@@ -34,7 +34,6 @@ import {
 } from '../../lib/utils'
 import { format as formatNationalId } from 'kennitala'
 import EmptyState from '../../shared-components/emptyState'
-import ReviewCandidates from './reviewCandidates'
 import CompareLists from '../../shared-components/compareLists'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import ActionCompleteCollectionProcessing from '../../shared-components/completeCollectionProcessing'
@@ -151,6 +150,7 @@ const Lists = () => {
                 allowedActions={[
                   Actions.DownloadReports,
                   Actions.CreateCollection,
+                  Actions.ReviewCandidates
                 ]}
               />
             }
@@ -343,9 +343,6 @@ const Lists = () => {
             collectionId={collection?.id}
             collectionType={collectionType}
           />
-          {lists?.length > 0 && (
-            <ReviewCandidates candidates={collection?.candidates ?? []} />
-          )}
         </GridColumn>
       </GridRow>
     </GridContainer>

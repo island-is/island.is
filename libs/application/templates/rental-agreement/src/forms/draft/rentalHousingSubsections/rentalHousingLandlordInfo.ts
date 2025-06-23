@@ -5,14 +5,16 @@ import {
   buildAlertMessageField,
 } from '@island.is/application/core'
 import {
-  formatNationalId,
-  formatPhoneNumber,
+  applicantTableConfig,
+  applicantTableFields,
   hasAnyMatchingNationalId,
-  IS_REPRESENTATIVE,
   hasDuplicateApplicants,
 } from '../../../utils/utils'
 import { Routes } from '../../../utils/enums'
-import { landlordDetails } from '../../../lib/messages'
+import {
+  landlordAndTenantDetails,
+  landlordDetails,
+} from '../../../lib/messages'
 import { applicationAnswers } from '../../../shared'
 
 export const RentalHousingLandlordInfo = buildSubSection({
@@ -26,62 +28,21 @@ export const RentalHousingLandlordInfo = buildSubSection({
       children: [
         buildTableRepeaterField({
           id: 'landlordInfo.table',
+          title: landlordDetails.tableTitle,
           editField: true,
           marginTop: 1,
           maxRows: 10,
-          fields: {
-            nationalIdWithName: {
-              component: 'nationalIdWithName',
-              required: true,
-              searchCompanies: true,
-            },
-            phone: {
-              component: 'phone',
-              required: true,
-              label: landlordDetails.phoneInputLabel,
-              enableCountrySelector: true,
-              width: 'half',
-            },
-            email: {
-              component: 'input',
-              required: true,
-              label: landlordDetails.emailInputLabel,
-              type: 'email',
-              width: 'half',
-            },
-            address: {
-              component: 'input',
-              required: true,
-              label: landlordDetails.addressInputLabel,
-              maxLength: 100,
-            },
-            isRepresentative: {
-              component: 'checkbox',
-              large: true,
-              options: [
-                {
-                  label: landlordDetails.representativeLabel,
-                  value: IS_REPRESENTATIVE,
-                },
-              ],
-            },
-          },
-          table: {
-            format: {
-              phone: (value) => value && formatPhoneNumber(value),
-              nationalId: (value) => value && formatNationalId(value),
-              isRepresentative: (value) =>
-                value?.includes(IS_REPRESENTATIVE) ? '✅' : '',
-            },
-            header: [
-              landlordDetails.nameInputLabel,
-              landlordDetails.phoneInputLabel,
-              landlordDetails.nationalIdHeaderLabel,
-              landlordDetails.emailInputLabel,
-              landlordDetails.isRepresentative,
-            ],
-            rows: ['name', 'phone', 'nationalId', 'email', 'isRepresentative'],
-          },
+          fields: applicantTableFields,
+          table: applicantTableConfig,
+        }),
+        buildTableRepeaterField({
+          id: 'landlordInfo.representativeTable',
+          title: landlordAndTenantDetails.representativeTableTitle,
+          editField: true,
+          marginTop: 6,
+          maxRows: 10,
+          fields: applicantTableFields,
+          table: applicantTableConfig,
         }),
         buildAlertMessageField({
           id: 'landlordInfo.onlyRepresentativeError',
@@ -89,14 +50,10 @@ export const RentalHousingLandlordInfo = buildSubSection({
           title: landlordDetails.landlordOnlyRepresentativeTableError,
           shouldBlockInSetBeforeSubmitCallback: true,
           condition: (answers) => {
-            const { landlords } = applicationAnswers(answers)
-            const filterNonRepresentatives =
-              landlords?.filter(
-                (tenant) =>
-                  !tenant.isRepresentative?.includes(IS_REPRESENTATIVE),
-              ) ?? []
+            const { landlords, landlordRepresentatives } =
+              applicationAnswers(answers)
 
-            return landlords.length > 0 && filterNonRepresentatives.length === 0
+            return landlordRepresentatives.length > 0 && landlords.length === 0
           },
         }),
         buildAlertMessageField({

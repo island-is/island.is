@@ -19,10 +19,6 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
         prod: 'https://innskra.island.is',
       },
     })
-    .secrets({
-      FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY:
-        '/k8s/form-system/FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY',
-    })
     .ingress({
       primary: {
         host: {
@@ -30,7 +26,7 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
           staging: ['beta'],
           prod: ['', 'www.island.is'],
         },
-        paths: ['/form'],
+        paths: ['/form-api'],
         public: true,
       },
     })
