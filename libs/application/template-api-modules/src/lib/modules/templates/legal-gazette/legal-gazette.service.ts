@@ -6,7 +6,7 @@ import { ApplicationTypes } from '@island.is/application/types'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { LegalGazetteClientService } from '@island.is/clients/legal-gazette'
 import { legalGazetteDataSchema } from '@island.is/application/templates/legal-gazette'
-import { YesOrNoEnum, getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath } from '@island.is/application/core'
 import { Identity } from '@island.is/clients/identity'
 import { isDateString } from 'class-validator'
 

@@ -180,9 +180,9 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
             shouldBeListed: true,
             shouldBePruned: false,
           },
-          // onDelete: defineTemplateApi({
-          //   action: LegalGazetteAPIActions.deleteApplication,
-          // }),
+          onDelete: defineTemplateApi({
+            action: LegalGazetteAPIActions.deleteApplication,
+          }),
           actionCard: {
             tag: {
               label: 'Í vinnslu hjá ritstjórn',
@@ -222,6 +222,9 @@ const LegalGazetteApplicationTemplate: ApplicationTemplate<
           progress: 1,
           status: 'approved',
           lifecycle: pruneAfterDays(7),
+          onDelete: defineTemplateApi({
+            action: LegalGazetteAPIActions.deleteApplication,
+          }),
           actionCard: {
             tag: {
               label: 'Samþykkt',

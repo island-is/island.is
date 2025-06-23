@@ -9,6 +9,8 @@ import type { Logger } from '@island.is/logging'
 
 const LOGGING_CATEGORY = 'legal-gazette-client-service'
 
+const COMMON_APPLICATION_TYPE_ID = 'a58fe2a8-b0a9-47bd-b424-4b9cece0e622'
+
 @Injectable()
 export class LegalGazetteClientService {
   constructor(
@@ -23,7 +25,7 @@ export class LegalGazetteClientService {
   async getCategories(auth: Auth) {
     try {
       return this.legalGazetteApiWithAuth(auth).getCategories({
-        type: 'a58fe2a8-b0a9-47bd-b424-4b9cece0e622',
+        type: COMMON_APPLICATION_TYPE_ID,
       })
     } catch (error) {
       this.logger.error('Failed to get categories', {

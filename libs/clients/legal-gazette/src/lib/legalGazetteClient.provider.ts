@@ -31,8 +31,7 @@ export const LegalGazetteClientProvider: Provider<LegalGazetteCommonApplicationA
                 }
               : undefined,
           }),
-          // basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
-          basePath: 'http://localhost:4100',
+          basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,
           headers: {
             'X-Road-Client': xroadConfig.xRoadClient,
             Accept: 'application/json',
