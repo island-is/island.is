@@ -2,6 +2,7 @@ import {
   AttachmentItem,
   ExternalData,
   FormText,
+  StaticText,
 } from '@island.is/application/types'
 import { FormValue } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
@@ -22,24 +23,24 @@ import {
   checkHasDolly,
   checkHasDoubleDolly,
   checkHasSingleDolly,
-  getAllConvoyTrailers,
-  getAllConvoyVehicles,
   getConvoyItem,
   getConvoyItems,
   getConvoyShortName,
-} from './getConvoyItem'
+} from './convoyUtils'
 import {
+  getAllConvoyTrailersForSpacing,
+  getAllConvoyVehiclesForSpacing,
   getConvoyVehicleSpacing,
   getDollyAxleSpacing,
   getTrailerAxleSpacing,
   getVehicleAxleSpacing,
-} from './getSpacing'
+} from './spacingUtils'
 import { ExemptionFor } from '../../shared'
 import {
   getFreightItem,
   getFreightPairingItem,
   getFreightPairingItems,
-} from './getFreightItem'
+} from './freightUtils'
 import { format as formatKennitala } from 'kennitala'
 import {
   formatPhoneNumber,
@@ -413,8 +414,8 @@ export const getAxleSpacingOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const vehicles = getAllConvoyVehicles(answers)
-  const trailers = getAllConvoyTrailers(answers)
+  const vehicles = getAllConvoyVehiclesForSpacing(answers)
+  const trailers = getAllConvoyTrailersForSpacing(answers)
   const hasDoubleDolly = checkHasDoubleDolly(answers)
 
   return [
@@ -559,4 +560,27 @@ export const getSupportingDocumentsOverviewAttachments = (
       fileType: getFileType(file.name),
     })) || []
   )
+}
+
+export const getOverviewErrorMessage = (
+  answers: FormValue,
+): StaticText | undefined => {
+  // Convoy missing in freight pairing error
+  const convoyItems = getConvoyItems(answers)
+  const freightPairingAllItems = getFreightPairingItems(answers)
+  for (let idx = 0; idx < convoyItems.length; idx++) {
+    const convoyItem = convoyItems[idx]
+    const isPaired = freightPairingAllItems.some(
+      (x) => x.convoyId === convoyItem.convoyId,
+    )
+    if (!isPaired) {
+      return {
+        ...overview.freight.convoyMissingErrorMessage,
+        values: {
+          convoyNumber: idx + 1,
+          vehicleAndTrailerPermno: getConvoyShortName(convoyItem),
+        },
+      }
+    }
+  }
 }
