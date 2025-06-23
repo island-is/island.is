@@ -160,8 +160,7 @@ export const employeeSubSection = (index: number) =>
               const [year, month, day] = dateOfAccident.split('-').map(Number)
               return new Date(year, month - 1, day)
             },
-            minYear: 1940,
-            maxYear: new Date().getFullYear(),
+            minDate: new Date(1940, 1, 1),
           }),
           buildSelectField({
             id: `employee[${index}].employmentTime`,
