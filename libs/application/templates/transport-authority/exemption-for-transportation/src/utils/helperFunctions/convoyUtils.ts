@@ -125,12 +125,9 @@ export const getConvoyLongTermErrorMessage = (
 ): StaticText | undefined => {
   // Empty list error
   const convoyItems = getConvoyItems(answers)
-  const showEmptyListError = !convoyItems?.length
+  if (!convoyItems?.length) return convoy.error.emptyListErrorMessage
 
   // Duplicate error
-  const showDuplicateError = hasDuplicateConvoyItems(answers)
-
-  if (showEmptyListError) return convoy.error.emptyListErrorMessage
-  else if (showDuplicateError) return convoy.error.duplicateErrorMessage
-  else return ''
+  if (hasDuplicateConvoyItems(answers))
+    return convoy.error.duplicateErrorMessage
 }
