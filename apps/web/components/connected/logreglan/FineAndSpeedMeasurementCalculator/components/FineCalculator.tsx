@@ -130,6 +130,7 @@ const FineCardList = ({
                             justifyContent="spaceBetween"
                             alignY="center"
                             space={1}
+                            flexWrap="nowrap"
                           >
                             <Text variant="small">{fine.law}</Text>
                             <Box

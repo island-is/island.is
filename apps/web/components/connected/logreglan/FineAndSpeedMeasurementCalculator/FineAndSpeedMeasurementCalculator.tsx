@@ -3,8 +3,6 @@ import { useIntl } from 'react-intl'
 
 import {
   Box,
-  Button,
-  Inline,
   Stack,
   Table,
   TableOfContents,
@@ -17,7 +15,6 @@ import { FineCalculator } from './components/FineCalculator'
 import { SpeedMeasurementCalculator } from './components/SpeedMeasurementCalculator'
 import { m } from './translation.strings'
 import { calculateSpeedMeasurementFine } from './utils'
-import * as styles from './FineAndSpeedMeasurementCalculator.css'
 
 const QUARTER_OFF_FINE_MULTIPLIER = 0.75
 
@@ -123,14 +120,15 @@ const calculateTotalPoints = (fines: FineState[]): number => {
 
 const FineCalculatorDetails = ({
   fines,
-  goBack,
   slice,
   speedMeasurementData,
 }: FineCalculatorDetailsProps) => {
   const { formatMessage } = useIntl()
 
   const selectedFines: FineState[] = (
-    speedMeasurementData
+    speedMeasurementData?.akaera ||
+    (typeof speedMeasurementData?.measuredSpeed === 'number' &&
+      speedMeasurementData?.price > 0)
       ? [
           {
             id:
@@ -169,23 +167,13 @@ const FineCalculatorDetails = ({
 
   return (
     <Stack space={3}>
-      <Inline justifyContent="spaceBetween" alignY="center">
-        <Button
-          preTextIcon="arrowBack"
-          variant="text"
-          size="small"
-          onClick={goBack}
-        >
-          {formatMessage(m.results.goBack)}
-        </Button>
-        {jailTime > 0 && Boolean(slice.configJson?.showJailTime) && (
-          <Box paddingLeft={3}>
-            <Text variant="small" fontWeight="semiBold">
-              {formatMessage(m.results.jailTime, { days: jailTime })}
-            </Text>
-          </Box>
-        )}
-      </Inline>
+      {jailTime > 0 && Boolean(slice.configJson?.showJailTime) && (
+        <Box display="flex" justifyContent="flexEnd">
+          <Text variant="small" fontWeight="semiBold">
+            {formatMessage(m.results.jailTime, { days: jailTime })}
+          </Text>
+        </Box>
+      )}
       <Table.Table>
         <Table.Head>
           <Table.HeadData>
@@ -246,6 +234,12 @@ const FineCalculatorDetails = ({
   )
 }
 
+enum HeadingId {
+  Fine = 'fine',
+  SpeedMeasurement = 'speed-measurement',
+  Results = 'results',
+}
+
 interface FineAndSpeedMeasurementCalculatorProps {
   slice: ConnectedComponent
 }
@@ -253,10 +247,9 @@ interface FineAndSpeedMeasurementCalculatorProps {
 export const FineAndSpeedMeasurementCalculator = ({
   slice,
 }: FineAndSpeedMeasurementCalculatorProps) => {
-  const [selectedHeadingId, setSelectedHeadingId] = useState<
-    'fine' | 'speed-measurement'
-  >('fine')
-  const [showDetails, setShowDetails] = useState(false)
+  const [selectedHeadingId, setSelectedHeadingId] = useState<HeadingId>(
+    HeadingId.Fine,
+  )
 
   const { formatMessage } = useIntl()
 
@@ -294,91 +287,52 @@ export const FineAndSpeedMeasurementCalculator = ({
 
   const points = finePoints + (speedMeasurementPoints ?? 0)
 
-  if (showDetails) {
-    return (
-      <FineCalculatorDetails
-        fines={fines}
-        goBack={() => setShowDetails(false)}
-        slice={slice}
-        speedMeasurementData={{
-          points: speedMeasurementPoints ?? 0,
-          price: speedMeasurementPrice ?? 0,
-          measuredSpeed: Number(measuredSpeed),
-          vikmork,
-          speedLimit,
-          over3500kgOrWithTrailer,
-          akaera,
-        }}
-      />
-    )
-  }
-
   return (
     <Stack space={3}>
+      <TableOfContents
+        headings={[
+          {
+            headingId: HeadingId.Fine,
+            headingTitle: formatMessage(m.fines.fineTableOfContentHeading),
+          },
+          {
+            headingId: HeadingId.SpeedMeasurement,
+            headingTitle: formatMessage(
+              m.fines.speedMeasurementTableOfContentHeading,
+            ),
+          },
+          {
+            headingId: HeadingId.Results,
+            headingTitle: formatMessage(m.fines.resultsTableOfContentHeading),
+          },
+        ]}
+        onClick={(headingId) => {
+          setSelectedHeadingId(headingId as HeadingId)
+        }}
+        tableOfContentsTitle={formatMessage(m.fines.tableOfContentsTitle)}
+        selectedHeadingId={selectedHeadingId}
+      />
       <Stack space={3}>
         <Box display="flex" justifyContent="flexEnd">
-          <Button
-            icon="arrowForward"
-            variant="text"
-            size="small"
-            onClick={() => setShowDetails(true)}
-            disabled={price === 0}
-          >
-            {formatMessage(m.fines.calculate)}
-          </Button>
-        </Box>
-        <Box display="flex" justifyContent="flexEnd">
-          <Box
-            className={styles.totalContainer}
-            background="purple100"
-            padding={2}
-            borderRadius="standard"
-          >
-            <Text variant="eyebrow">{formatMessage(m.fines.total)}</Text>
-            <Stack space={1}>
-              <Text textAlign="right" variant="h5">
+          <Box borderRadius="standard">
+            <Stack space={0}>
+              <Text textAlign="right" variant="small" fontWeight="semiBold">
                 {formatCurrency(price)}
               </Text>
-              <Text textAlign="right" variant="h5">
+              <Text textAlign="right" variant="small" fontWeight="semiBold">
                 {points}
                 {points === 1
                   ? formatMessage(m.fines.pointsPostfixSingular)
                   : formatMessage(m.fines.pointsPostfixPlural)}
               </Text>
-              <Text textAlign="right" variant="h5">
-                {fines.reduce(
-                  (acc, fine) => acc + (fine.amountSelected > 0 ? 1 : 0),
-                  0,
-                )}
-                {formatMessage(m.fines.countPostfix)}
-              </Text>
             </Stack>
           </Box>
         </Box>
       </Stack>
-      <TableOfContents
-        headings={[
-          {
-            headingId: 'fine',
-            headingTitle: formatMessage(m.fines.fineTableOfContentHeading),
-          },
-          {
-            headingId: 'speed-measurement',
-            headingTitle: formatMessage(
-              m.fines.speedMeasurementTableOfContentHeading,
-            ),
-          },
-        ]}
-        onClick={(headingId) => {
-          setSelectedHeadingId(headingId as 'fine' | 'speed-measurement')
-        }}
-        tableOfContentsTitle={formatMessage(m.fines.tableOfContentsTitle)}
-        selectedHeadingId={selectedHeadingId}
-      />
-      {selectedHeadingId === 'fine' && (
+      {selectedHeadingId === HeadingId.Fine && (
         <FineCalculator fines={fines} setFines={setFines} />
       )}
-      {selectedHeadingId === 'speed-measurement' && (
+      {selectedHeadingId === HeadingId.SpeedMeasurement && (
         <SpeedMeasurementCalculator
           measuredSpeed={measuredSpeed}
           speedLimit={speedLimit}
@@ -387,6 +341,22 @@ export const FineAndSpeedMeasurementCalculator = ({
           setSpeedLimit={setSpeedLimit}
           setOver3500kgOrWithTrailer={setOver3500kgOrWithTrailer}
           speedLimitOptions={speedLimitOptions}
+        />
+      )}
+      {selectedHeadingId === HeadingId.Results && (
+        <FineCalculatorDetails
+          fines={fines}
+          goBack={() => setSelectedHeadingId(HeadingId.Fine)}
+          slice={slice}
+          speedMeasurementData={{
+            points: speedMeasurementPoints ?? 0,
+            price: speedMeasurementPrice ?? 0,
+            measuredSpeed: Number(measuredSpeed),
+            vikmork,
+            speedLimit,
+            over3500kgOrWithTrailer,
+            akaera,
+          }}
         />
       )}
     </Stack>

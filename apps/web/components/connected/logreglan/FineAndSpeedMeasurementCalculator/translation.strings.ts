@@ -52,6 +52,11 @@ export const m = {
       defaultMessage: 'Sjá sundurliðun',
       description: 'Reikna',
     },
+    resultsTableOfContentHeading: {
+      id: 'web.logreglan.fineAndSpeedMeasurementCalculator:fines.resultsTableOfContentHeading',
+      defaultMessage: 'Sundurliðun',
+      description: 'Sundurliðun',
+    },
   }),
   results: defineMessages({
     goBack: {
@@ -107,7 +112,6 @@ export const m = {
       description: 'Ákært verður vegna brotsins',
     },
   }),
-
   speedMeasurementCalculator: defineMessages({
     measuredSpeedInputLabel: {
       id: 'web.logreglan.fineAndSpeedMeasurementCalculator:speedMeasurementCalculator.measuredSpeedInputLabel',
