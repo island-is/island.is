@@ -1,5 +1,5 @@
 import type { MessageDescriptor } from 'react-intl'
-import format from 'date-fns/format'
+import { format } from 'date-fns'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
