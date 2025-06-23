@@ -11,7 +11,7 @@ interface PdfViewerProps {
   onError: (err: Error) => void
 }
 
-const PdfViewer = memo(
+export const PdfViewer = memo(
   ({ url, subject, senderName, onLoaded, onError }: PdfViewerProps) => {
     const [actualUrl, setActualUrl] = useState(url)
     const extraProps = {
