@@ -579,6 +579,23 @@ export class PaymentFlowService {
       this.logger.info(
         `[${paymentFlowId}] Successfully requested deletion of FJS charge (or it was already deleted/cancelled)`,
       )
+
+      // Delete local confirmation
+      const deletedConfirmations =
+        await this.paymentFlowFjsChargeConfirmationModel.destroy({
+          where: {
+            paymentFlowId,
+          },
+        })
+      if (deletedConfirmations > 0) {
+        this.logger.info(
+          `[${paymentFlowId}] Deleted PaymentFlowFjsChargeConfirmation`,
+        )
+      } else {
+        this.logger.warn(
+          `[${paymentFlowId}] No PaymentFlowFjsChargeConfirmation found to delete`,
+        )
+      }
     } catch (error) {
       this.logger.error(
         `[${paymentFlowId}] Failed to fully process FJS charge deletion or update local records`,
