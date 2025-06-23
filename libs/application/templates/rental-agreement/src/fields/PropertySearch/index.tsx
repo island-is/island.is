@@ -74,22 +74,25 @@ export const PropertySearch: FC<React.PropsWithChildren<Props>> = ({
     HmsPropertyInfo[] | undefined
   >(storedValue?.propertiesByAddressCode || [])
 
-  const cleanupSearch = (searchTerm: string): number => {
+  const cleanupSearch = (searchTerm: string): number | null => {
     if (!searchTerm) return 0
     const cleanedTerm = searchTerm.replace(/^f|^F/, '')
     const numberValue = parseInt(cleanedTerm, 10)
-    return isNaN(numberValue) ? 0 : numberValue
+    return isNaN(numberValue) ? null : numberValue
   }
 
   useEffect(() => {
     const isInitialRender =
       selectedAddress && searchTerm === selectedAddress.value
 
-    const isFasteignaNr = /^(f|F)|^\d+$/.test(searchTerm || '')
+    const isFasteignaNr = /^(?:[fF]\d*|\d+)$/.test(searchTerm || '')
 
     if (!!searchTerm?.length && !isInitialRender && isFasteignaNr) {
       const searchedPropertyCode = cleanupSearch(searchTerm)
-      if (searchedPropertyCode.toString().length === 7) {
+      if (
+        searchedPropertyCode &&
+        searchedPropertyCode.toString().length === 7
+      ) {
         setValue(id, {
           ...storedValue,
           selectedPropertyCode: searchedPropertyCode,
