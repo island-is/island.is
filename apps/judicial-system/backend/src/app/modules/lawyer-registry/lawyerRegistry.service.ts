@@ -1,3 +1,4 @@
+import type { Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize'
 
 import {
@@ -24,10 +25,11 @@ export class LawyerRegistryService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  private async clearLawyerRegistry() {
+  private async clearLawyerRegistry(transaction: Transaction) {
     try {
       await this.lawyerRegistryModel.destroy({
         where: {},
+        transaction,
       })
     } catch (error) {
       this.logger.error('Error clearing lawyer registry', error)
@@ -51,7 +53,10 @@ export class LawyerRegistryService {
     }
   }
 
-  private async populateLawyerRegistry(lawyers: Lawyer[]) {
+  private async populateLawyerRegistry(
+    lawyers: Lawyer[],
+    transaction: Transaction,
+  ) {
     try {
       const formattedLawyers = lawyers.map((lawyer) => ({
         name: lawyer.Name,
@@ -61,7 +66,9 @@ export class LawyerRegistryService {
         practice: lawyer.Practice,
       }))
 
-      await this.lawyerRegistryModel.bulkCreate(formattedLawyers)
+      await this.lawyerRegistryModel.bulkCreate(formattedLawyers, {
+        transaction,
+      })
     } catch (error) {
       this.logger.error('Error populating lawyer registry', error)
       throw new InternalServerErrorException('Error populating lawyer registry')
@@ -69,10 +76,18 @@ export class LawyerRegistryService {
   }
 
   async populate() {
-    await this.clearLawyerRegistry()
-    const lawyers = await this.getLawyerRegistry()
-    await this.populateLawyerRegistry(lawyers)
+    const transaction = await this.sequelize.transaction()
 
-    return lawyers
+    try {
+      const lawyers = await this.getLawyerRegistry()
+
+      await this.clearLawyerRegistry(transaction)
+      await this.populateLawyerRegistry(lawyers, transaction)
+
+      return lawyers
+    } catch (error) {
+      this.logger.error('Error populating lawyer registry', error)
+      throw new InternalServerErrorException('Error populating lawyer registry')
+    }
   }
 }
