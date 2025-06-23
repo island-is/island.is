@@ -20,6 +20,12 @@ import { PaymentFlowFjsChargeConfirmation } from './paymentFlowFjsChargeConfirma
 
 @Table({
   tableName: 'payment_flow_charge',
+  indexes: [
+    {
+      name: 'payment_flow_charge_payment_flow_id_idx',
+      fields: ['payment_flow_id'],
+    },
+  ],
 })
 export class PaymentFlowCharge extends Model<
   InferAttributes<PaymentFlowCharge>,
