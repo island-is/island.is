@@ -1,19 +1,24 @@
 query GetWorkMachineById($input: WorkMachinesInput!) {
   workMachine(input: $input) {
     type
+    model
     status
     category
     subCategory
     registrationNumber
     registrationDate
-    ownerName
-    ownerNationalId
-    ownerAddress
-    ownerPostcode
-    supervisorName
-    supervisorNationalId
-    supervisorAddress
-    supervisorPostcode
+    owner {
+      name
+      nationalId
+      address
+      postcode
+    }
+    supervisor {
+      name
+      nationalId
+      address
+      postcode
+    }
     productionNumber
     productionCountry
     productionYear
@@ -23,7 +28,8 @@ query GetWorkMachineById($input: WorkMachinesInput!) {
     dateLastInspection
     links {
       href
-      rel
+      relation
+      relationCategory
       displayTitle
     }
     labels {
