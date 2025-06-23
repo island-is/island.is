@@ -97,6 +97,27 @@ export const input = recipe({
         resize: 'vertical',
       },
     },
+    oneDigit: {
+      true: {
+        padding: theme.spacing[2],
+        textAlign: 'center',
+        height: 64,
+        width: 56,
+      },
+      false: {
+        padding: mixins.mobileInputPadding,
+        ...themeUtils.responsiveStyle({
+          md: {
+            padding: mixins.inputPadding,
+          },
+        }),
+      },
+    },
+    noCaret: {
+      true: {
+        caretColor: 'transparent',
+      },
+    },
   },
 })
 
