@@ -55,6 +55,7 @@ test.describe('Sites of institutions', () => {
     target,
     disabled,
   } of orgs) {
+    // eslint-disable-next-line no-loop-func
     test(organisationName, async () => {
       if (disabled || !context) return
       const page = await context.newPage()

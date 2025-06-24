@@ -1,6 +1,6 @@
 import { BrowserContext, test } from '@playwright/test'
 
-import { expect,session, urls } from '@island.is/testing/e2e'
+import { expect, session, urls } from '@island.is/testing/e2e'
 
 const nullFilter = <T>(e: T | null | undefined): e is T => Boolean(e)
 
@@ -36,9 +36,10 @@ test.describe('Front page', () => {
     { lang: 'is', home: '/' },
     { lang: 'en', home: '/en' },
   ]) {
+    // eslint-disable-next-line no-loop-func
     test(`should have life event @lang:${lang}`, async () => {
       test.slow()
-    if (!context) throw new Error()
+      if (!context) throw new Error()
       const page = await context.newPage()
       await page.goto(home)
       const lifeEventsCards = page.locator('[data-testid="lifeevent-card"]')
@@ -49,7 +50,7 @@ test.describe('Front page', () => {
         await Promise.all(
           lifeEventHandles.map((item) => item.getAttribute('href')),
         )
-      ).filter(nullFilter<string>)
+      ).filter(nullFilter)
 
       for (const url of lifeEventUrls) {
         const page = await context.newPage()
@@ -61,17 +62,20 @@ test.describe('Front page', () => {
         await page.close()
       }
     })
+    // eslint-disable-next-line no-loop-func
     test(`should navigate to featured link @lang:${lang}`, async () => {
       test.slow()
-    if (!context) throw new Error()
+      if (!context) throw new Error()
       const page = await context.newPage()
       await page.goto(home)
       const featuredLinks = page.locator('[data-testid="featured-link"]')
       expect(await featuredLinks.count()).toBeGreaterThan(3)
       const featuredLinksHandles = await featuredLinks.elementHandles()
-      const featuresLinksUrls = (await Promise.all(
-        featuredLinksHandles.map((item) => item.getAttribute('href')),
-      )).filter(nullFilter<string>)
+      const featuresLinksUrls = (
+        await Promise.all(
+          featuredLinksHandles.map((item) => item.getAttribute('href')),
+        )
+      ).filter(nullFilter)
       for (const url of featuresLinksUrls) {
         const page = await context.newPage()
         const result = await page.goto(url)
@@ -83,16 +87,19 @@ test.describe('Front page', () => {
       }
     })
 
+    // eslint-disable-next-line no-loop-func
     test(`should have link on life events pages to navigate back to the main page @lang:${lang}`, async () => {
       test.slow()
-    if (!context) throw new Error()
+      if (!context) throw new Error()
       const page = await context.newPage()
       await page.goto(home)
       const lifeEventsCards = page.locator('[data-testid="lifeevent-card"]')
       const lifeEventHandles = await lifeEventsCards.elementHandles()
-      const lifeEventUrls = (await Promise.all(
-        lifeEventHandles.map((item) => item.getAttribute('href')),
-      )).filter(nullFilter<string>)
+      const lifeEventUrls = (
+        await Promise.all(
+          lifeEventHandles.map((item) => item.getAttribute('href')),
+        )
+      ).filter(nullFilter)
       for (const url of lifeEventUrls) {
         const page = await context.newPage()
         const result = await page.goto(url)
@@ -110,7 +117,7 @@ test.describe('Front page', () => {
     const page = await context.newPage()
     await page.goto('/')
     const homeHeading = page.locator('h1[data-testid="home-heading"]')
-    const icelandicHeading = await homeHeading.textContent() ?? ""
+    const icelandicHeading = (await homeHeading.textContent()) ?? ''
     await page.locator('button[data-testid="language-toggler"]:visible').click()
     await expect(homeHeading).not.toHaveText(icelandicHeading)
     await expect(page).toHaveURL('/en')
@@ -124,8 +131,8 @@ test.describe('Front page', () => {
       .locator('[data-testid="frontpage-burger-button"]:nth-child(2)')
       .click()
     expect(
-      await page.locator('[data-testid="mega-menu-link"] > a')
-    .count()).toBeGreaterThan(18)
+      await page.locator('[data-testid="mega-menu-link"] > a').count(),
+    ).toBeGreaterThan(18)
   })
 
   test('burger menu should open and close', async () => {
