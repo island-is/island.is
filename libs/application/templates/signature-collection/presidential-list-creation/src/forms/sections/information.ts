@@ -72,7 +72,7 @@ export const information = buildSection({
           readOnly: true,
           defaultValue: ({ externalData }: Application) => {
             return format(
-              new Date(externalData.getLatestCollection?.data.startTime),
+              new Date(externalData.currentCollection?.data.startTime),
               'dd.MM.yy',
             )
           },
@@ -84,7 +84,7 @@ export const information = buildSection({
           readOnly: true,
           defaultValue: ({ externalData }: Application) => {
             return format(
-              new Date(externalData.getLatestCollection?.data.endTime),
+              new Date(externalData.currentCollection?.data.endTime ?? ''),
               'dd.MM.yy',
             )
           },
