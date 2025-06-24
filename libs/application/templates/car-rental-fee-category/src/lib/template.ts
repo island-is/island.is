@@ -28,8 +28,8 @@ const template: ApplicationTemplate<
   type: ApplicationTypes.CAR_RENTAL_FEE_CATEGORY,
   name: 'Bílaleigu gjaldflokkar',
   codeOwner: CodeOwners.NordaApplications,
-  institution: 'Skatturinn', // TODO: Change to the correct institution
-  translationNamespaces: [ApplicationConfigurations.CarRentalFeeCategory.translation], // TODO: Change to the correct translation namespace
+  institution: 'Skatturinn',
+  translationNamespaces: [ApplicationConfigurations.CarRentalFeeCategory.translation],
   dataSchema,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
