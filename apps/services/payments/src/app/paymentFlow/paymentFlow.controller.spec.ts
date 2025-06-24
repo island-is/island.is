@@ -8,6 +8,10 @@ import { CreatePaymentFlowInput } from './dtos/createPaymentFlow.input'
 import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
 import { PaymentFlowService } from './paymentFlow.service'
 
+// A helper type to satisfy the linter for spying on private methods.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type SpiedService = any
+
 const charges = [
   {
     chargeItemCode: '123',
@@ -30,7 +34,10 @@ describe('PaymentFlowController', () => {
     )
 
     jest
-      .spyOn(PaymentFlowService.prototype as any, 'getPaymentFlowChargeDetails')
+      .spyOn(
+        PaymentFlowService.prototype as SpiedService,
+        'getPaymentFlowChargeDetails',
+      )
       .mockReturnValue(
         Promise.resolve({
           catalogItems: charges,
@@ -45,7 +52,7 @@ describe('PaymentFlowController', () => {
       .mockReturnValue(Promise.resolve(true))
 
     jest
-      .spyOn(PaymentFlowService.prototype as any, 'getPayerName')
+      .spyOn(PaymentFlowService.prototype as SpiedService, 'getPayerName')
       .mockReturnValue(Promise.resolve('Tester Testsson'))
   })
 
