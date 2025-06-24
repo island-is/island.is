@@ -16,7 +16,6 @@ import {
   selectPeriod,
   submitApplication,
   writeComment,
-  proceed,
 } from './shared'
 
 const homeUrl = '/umsoknir/heimilisuppbot'
