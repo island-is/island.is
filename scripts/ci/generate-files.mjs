@@ -68,6 +68,7 @@ const ignorePatterns = ['**/node_modules/**']
 const findCodegenFiles = () => {
   return globSync('**/codegen.yml', { ignore: ignorePatterns })
 }
+
 /**
  * @param {import("fs").PathLike | fs.FileHandle} filePath
  * @returns {Promise<any>}
