@@ -83,7 +83,7 @@ const template: ApplicationTemplate<
           progress: 0.4,
           status: FormModes.DRAFT,
           lifecycle: DefaultStateLifeCycle,
-          onEntry: [
+          onExit: [
             defineTemplateApi({
               action: TemplateApiActions.calculateAmount,
               order: 1,

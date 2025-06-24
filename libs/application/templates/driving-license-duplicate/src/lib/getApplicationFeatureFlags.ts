@@ -2,6 +2,7 @@ import { FeatureFlagClient } from '@island.is/feature-flags'
 
 export enum DrivingLicenseDuplicateFeatureFlags {
   ALLOW_FAKE = 'applicationTemplateDrivingLicenseDuplicateAllowFakeData',
+  ALLOW_THJODSKRA_PHOTOS = 'applicationTemplateDrivingLicenseDuplicateAllowThjodskraPhotos',
 }
 
 export const getApplicationFeatureFlags = async (
@@ -9,6 +10,7 @@ export const getApplicationFeatureFlags = async (
 ): Promise<Record<DrivingLicenseDuplicateFeatureFlags, boolean>> => {
   const featureFlags: DrivingLicenseDuplicateFeatureFlags[] = [
     DrivingLicenseDuplicateFeatureFlags.ALLOW_FAKE,
+    DrivingLicenseDuplicateFeatureFlags.ALLOW_THJODSKRA_PHOTOS,
   ]
 
   return (

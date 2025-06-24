@@ -121,6 +121,10 @@ const DrivingLicenseDuplicateTemplate: ApplicationTemplate<
                     featureFlags[
                       DrivingLicenseDuplicateFeatureFlags.ALLOW_FAKE
                     ],
+                  allowThjodskraPhotos:
+                    featureFlags[
+                      DrivingLicenseDuplicateFeatureFlags.ALLOW_THJODSKRA_PHOTOS
+                    ],
                 })
               },
               actions: [

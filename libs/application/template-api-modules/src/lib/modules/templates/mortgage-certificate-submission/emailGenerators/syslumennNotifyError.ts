@@ -10,7 +10,7 @@ export const generateSyslumennNotifyErrorEmail: EmailTemplateGenerator = (
     options: { email },
   } = props
 
-  const syslumennEmail = 'vefur@syslumenn.is'
+  const syslumennEmail = 'hjalp@syslumenn.is'
 
   const identityData = application.externalData.identity?.data as Identity
 

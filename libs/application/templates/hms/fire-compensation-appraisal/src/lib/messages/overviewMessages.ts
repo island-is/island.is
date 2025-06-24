@@ -62,4 +62,9 @@ export const overviewMessages = defineMessages({
     defaultMessage: 'Greiða',
     description: 'Pay',
   },
+  amountToPay: {
+    id: 'fca.application:amountToPay',
+    defaultMessage: 'Upphæð til greiðslu',
+    description: 'Amount to pay',
+  },
 })

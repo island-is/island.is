@@ -10,6 +10,7 @@ export enum LegalGazetteStates {
 
 export enum LegalGazetteAPIActions {
   submitApplication = 'submitApplication',
+  deleteApplication = 'deleteApplication',
   getCategories = 'getCategories',
 }
 

@@ -3,6 +3,7 @@ import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 
 import {
   DelegationDirection,
+  DelegationRecordDTO,
   DelegationsIndexService,
   PaginatedDelegationRecordDTO,
 } from '@island.is/auth-api-lib'
@@ -85,6 +86,27 @@ export class DelegationsController {
         scope,
         nationalId,
         direction,
+      }),
+    )
+  }
+
+  @Get('/all')
+  @Documentation({
+    description: 'Get all delegations for a national id',
+    response: { status: 200, type: [DelegationRecordDTO] },
+  })
+  async getAllDelegations(
+    @CurrentAuth() auth: Auth,
+    @Headers('X-Query-National-Id') nationalId: string,
+  ): Promise<DelegationRecordDTO[]> {
+    return this.auditService.auditPromise(
+      {
+        auth,
+        action: 'getAllDelegations',
+        resources: [nationalId],
+      },
+      this.delegationIndexService.getDelegationRecordWithoutScope({
+        nationalId,
       }),
     )
   }

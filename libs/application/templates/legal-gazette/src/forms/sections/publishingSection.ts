@@ -59,7 +59,7 @@ export const publishingSection = buildSection({
               component: 'date',
               locale: 'is',
               label: m.draft.sections.publishing.datePickerLabel,
-              width: 'half',
+              width: 'full',
               required: true,
               minDate: new Date(),
               excludeDates: getWeekendDates(

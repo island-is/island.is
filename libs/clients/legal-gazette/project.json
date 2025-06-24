@@ -19,7 +19,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10014/DMR-Protected/legal-gazette-api/swagger-json > src/clientConfig.json",
+          "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10014/DMR-Protected/legal-gazette-api/island-is-swagger/json > src/clientConfig.json",
           "prettier --write src/clientConfig.json"
         ],
         "parallel": false,

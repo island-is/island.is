@@ -161,6 +161,7 @@ const OJOITemplate: ApplicationTemplate<
             },
             {
               id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
               read: 'all',
               write: 'all',
             },
@@ -209,6 +210,7 @@ const OJOITemplate: ApplicationTemplate<
             },
             {
               id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
               read: 'all',
               write: 'all',
             },
@@ -256,6 +258,7 @@ const OJOITemplate: ApplicationTemplate<
             },
             {
               id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
               read: 'all',
               write: 'all',
             },
@@ -298,6 +301,7 @@ const OJOITemplate: ApplicationTemplate<
             },
             {
               id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
               read: 'all',
               write: 'all',
             },
@@ -327,6 +331,7 @@ const OJOITemplate: ApplicationTemplate<
             },
             {
               id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
               read: 'all',
               write: 'all',
             },

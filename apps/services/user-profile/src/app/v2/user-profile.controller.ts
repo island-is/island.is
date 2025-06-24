@@ -105,6 +105,43 @@ export class UserProfileController {
     return this.userProfileService.findById(nationalId, false, clientType)
   }
 
+  @Get('/.from-national-id/.to-national-id/actor-profiles')
+  @Documentation({
+    description: 'Get actor profiles for nationalId.',
+    request: {
+      header: {
+        'X-Param-To-National-Id': {
+          required: true,
+          description: 'National id of the user the actor profile is for',
+        },
+        'X-Param-From-National-Id': {
+          required: true,
+          description: 'National id of the user the delegation is from',
+        },
+      },
+    },
+    response: { status: 200, type: ActorProfileDto },
+  })
+  @Audit<ActorProfileDto>({
+    resources: (profile) => profile.fromNationalId,
+  })
+  async getActorProfileByDelegation(
+    @Headers('X-Param-To-National-Id') toNationalId: string,
+    @Headers('X-Param-From-National-Id') fromNationalId: string,
+  ): Promise<ActorProfileDto> {
+    if (
+      !kennitala.isValid(toNationalId) ||
+      !kennitala.isValid(fromNationalId)
+    ) {
+      throw new BadRequestException('National id is not valid')
+    }
+
+    return this.userProfileService.getActorProfileWithDocumentsScope({
+      toNationalId,
+      fromNationalId,
+    })
+  }
+
   @Get('/.to-national-id/actor-profiles/.from-national-id')
   @Documentation({
     description: 'Get actor profiles for nationalId.',
