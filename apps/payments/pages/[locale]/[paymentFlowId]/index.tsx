@@ -311,7 +311,13 @@ function PaymentPage({
                       : formatMessage(invoice.create)}
                   </Button>
                   <Box display="flex" justifyContent="center">
-                    <LinkV2 href={paymentFlow.returnUrl ?? 'https://island.is'}>
+                    <LinkV2
+                      href={
+                        paymentFlow.cancelUrl ??
+                        paymentFlow.returnUrl ??
+                        'https://island.is'
+                      }
+                    >
                       <Button unfocusable variant="text">
                         {formatMessage(generic.buttonCancel)}
                       </Button>

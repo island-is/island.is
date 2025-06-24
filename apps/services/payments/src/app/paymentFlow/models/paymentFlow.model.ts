@@ -182,6 +182,14 @@ export class PaymentFlow extends Model<
 
   @ApiPropertyOptional()
   @Column({
+    type: DataType.STRING,
+    allowNull: true,
+    field: 'cancel_url',
+  })
+  cancelUrl?: string
+
+  @ApiPropertyOptional()
+  @Column({
     type: DataType.BOOLEAN,
     allowNull: true,
     field: 'redirect_to_return_url_on_success',

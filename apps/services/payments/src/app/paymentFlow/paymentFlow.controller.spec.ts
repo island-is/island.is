@@ -8,6 +8,10 @@ import { CreatePaymentFlowInput } from './dtos/createPaymentFlow.input'
 import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
 import { PaymentFlowService } from './paymentFlow.service'
 
+// A helper type to satisfy the linter for spying on private methods.
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
+type SpiedService = any
+
 const charges = [
   {
     chargeItemCode: '123',
@@ -30,7 +34,10 @@ describe('PaymentFlowController', () => {
     )
 
     jest
-      .spyOn(PaymentFlowService.prototype as any, 'getPaymentFlowChargeDetails')
+      .spyOn(
+        PaymentFlowService.prototype as SpiedService,
+        'getPaymentFlowChargeDetails',
+      )
       .mockReturnValue(
         Promise.resolve({
           catalogItems: charges,
@@ -43,6 +50,10 @@ describe('PaymentFlowController', () => {
     jest
       .spyOn(chargeFjsService, 'validateCharge')
       .mockReturnValue(Promise.resolve(true))
+
+    jest
+      .spyOn(PaymentFlowService.prototype as SpiedService, 'getPayerName')
+      .mockReturnValue(Promise.resolve('Tester Testsson'))
   })
 
   afterAll(() => {
@@ -73,6 +84,36 @@ describe('PaymentFlowController', () => {
 
       expect(response.status).toBe(200)
       expect(response.body.urls).toBeDefined()
+    })
+
+    it('should store and retrieve the cancelUrl', async () => {
+      const cancelUrl = 'https://some.url/cancel'
+      const payload: CreatePaymentFlowInput = {
+        charges: [
+          {
+            chargeItemCode: '456',
+            chargeType: 'B',
+            quantity: 2,
+          },
+        ],
+        payerNationalId: '0101302129',
+        availablePaymentMethods: [PaymentMethod.CARD],
+        onUpdateUrl: 'https://www.island.is/greida/update',
+        organisationId: '5534567890',
+        cancelUrl,
+      }
+
+      const createResponse = await server.post('/v1/payments').send(payload)
+      expect(createResponse.status).toBe(200)
+      expect(createResponse.body.urls.is).toBeDefined()
+
+      const paymentFlowId = new URL(createResponse.body.urls.is).pathname
+        .split('/')
+        .pop()
+
+      const getResponse = await server.get(`/v1/payments/${paymentFlowId}`)
+      expect(getResponse.status).toBe(200)
+      expect(getResponse.body.cancelUrl).toBe(cancelUrl)
     })
   })
 })
