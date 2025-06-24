@@ -1,17 +1,20 @@
-import { Includeable, Op } from 'sequelize'
+import { Includeable, literal, Op } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 
 import { Inject, Injectable } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
+import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   CaseActionType,
   CaseAppealState,
+  CaseDecision,
   CaseState,
   CaseTableColumnKey,
   caseTables,
   CaseTableType,
+  CaseType,
   ContextMenuCaseActionType,
   isDistrictCourtUser,
   isIndictmentCase,
@@ -23,9 +26,25 @@ import {
 import { Case } from '../case/models/case.model'
 import { User } from '../user'
 import { CaseTableResponse } from './dto/caseTable.response'
-import { SearchResponse } from './dto/search.response'
+import { SearchCasesResponse } from './dto/searchCases.response'
 import { caseTableCellGenerators } from './caseTable.cellGenerators'
 import { caseTableWhereOptions } from './caseTable.whereOptions'
+
+type SearchResult = {
+  count: number
+  rows: {
+    id: string
+    type: CaseType
+    decision: CaseDecision
+    policeCaseNumbers: string[]
+    courtCaseNumber: string | null
+    appealCaseNumber: string | null
+    match: {
+      field: 'policeCaseNumbers' | 'courtCaseNumber' | 'appealCaseNumber'
+      value: string
+    }
+  }[]
+}
 
 const getIsMyCaseAttributes = (user: TUser): string[] => {
   if (isProsecutionUser(user)) {
@@ -211,6 +230,7 @@ const getContextMenuActions = (
 export class CaseTableService {
   constructor(
     @InjectModel(Case) private readonly caseModel: typeof Case,
+    @InjectConnection() private readonly sequelize: Sequelize,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -244,21 +264,71 @@ export class CaseTableService {
     }
   }
 
-  async searchCases(query: string, user: TUser): Promise<SearchResponse> {
-    const cases = await this.caseModel.findAll({
-      attributes: ['id', 'courtCaseNumber'],
+  async searchCases(query: string, user: TUser): Promise<SearchCasesResponse> {
+    const results = await this.caseModel.findAndCountAll({
+      attributes: [
+        'id',
+        'type',
+        'decision',
+        'policeCaseNumbers',
+        'courtCaseNumber',
+        'appealCaseNumber',
+        [
+          literal(`
+            (
+              SELECT json_build_object(
+                'value', match,
+                'field', match_source
+              )
+              FROM LATERAL (
+                SELECT unnest("Case"."police_case_numbers") AS match, 'policeCaseNumbers' AS match_source
+                UNION ALL
+                SELECT "Case"."court_case_number", 'courtCaseNumber'
+                WHERE "Case"."court_case_number" ILIKE '${`%${query}%`}'
+                UNION ALL
+                SELECT "Case"."appeal_case_number", 'appealCaseNumber'
+                WHERE "Case"."appeal_case_number" ILIKE '${`%${query}%`}'
+              ) AS matches
+              WHERE match ILIKE '${`%${query}%`}'
+              LIMIT 1
+            )
+          `),
+          'match',
+        ],
+      ],
       where: {
-        courtCaseNumber: {
-          [Op.iLike]: `%${query}%`,
-        },
+        [Op.or]: [
+          literal(`
+            EXISTS (
+              SELECT 1 FROM unnest("Case"."police_case_numbers") AS n
+              WHERE n ILIKE '${`%${query}%`}'
+            )
+          `),
+          { court_case_number: { [Op.iLike]: `%${query}%` } },
+          { appeal_case_number: { [Op.iLike]: `%${query}%` } },
+        ],
       },
+      order: [['id', 'ASC']],
+      limit: 10,
+      raw: true,
     })
 
+    const { count, rows } = results as unknown as SearchResult
+
     return {
-      rowCount: cases.length,
-      rows: cases.map((c) => ({
-        caseId: c.id,
-        descriptor: c.courtCaseNumber ?? '???',
+      rowCount: count,
+      rows: rows.map((r) => ({
+        caseId: r.id,
+        caseType:
+          r.type === CaseType.CUSTODY &&
+          r.decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
+            ? CaseType.TRAVEL_BAN
+            : r.type,
+        matchedField: r.match.field,
+        matchedValue: r.match.value,
+        policeCaseNumbers: r.policeCaseNumbers,
+        courtCaseNumber: r.courtCaseNumber,
+        appealCaseNumber: r.appealCaseNumber,
       })),
     }
   }

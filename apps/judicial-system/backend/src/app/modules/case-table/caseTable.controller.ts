@@ -13,7 +13,7 @@ import { CaseTableType, type User } from '@island.is/judicial-system/types'
 
 import { prosecutorRepresentativeRule, prosecutorRule } from '../../guards'
 import { CaseTableResponse } from './dto/caseTable.response'
-import { SearchResponse } from './dto/search.response'
+import { SearchCasesResponse } from './dto/searchCases.response'
 import { CaseTableTypeGuard } from './guards/caseTableType.guard'
 import { CaseTableService } from './caseTable.service'
 
@@ -51,8 +51,11 @@ export class CaseTableController {
 
   @UseGuards(RolesGuard)
   @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
-  @Get('search')
-  @ApiOkResponse({ type: SearchResponse, description: 'Searches for cases' })
+  @Get('search-cases')
+  @ApiOkResponse({
+    type: SearchCasesResponse,
+    description: 'Searches for cases',
+  })
   @ApiQuery({
     name: 'query',
     type: String,
@@ -62,7 +65,7 @@ export class CaseTableController {
   searchCases(
     @CurrentHttpUser() user: User,
     @Query('query') query: string,
-  ): Promise<SearchResponse> {
+  ): Promise<SearchCasesResponse> {
     this.logger.debug(`Searching for cases for user ${user.id}`)
 
     return this.caseTableService.searchCases(query, user)
