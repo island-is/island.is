@@ -106,16 +106,16 @@ const ensureIDSsession = async (
 /**
  * Initializes a browser session with necessary authentication checks.
  *
- * @param params - Configuration parameters for the session.
- * @param params.browser - Browser instance.
- * @param params.homeUrl - Home URL to navigate to. Defaults to '/'.
- * @param params.phoneNumber - Phone number for authentication.
- * @param params.authUrl - Authentication URL.
- * @param params.idsLoginOn - IDS login config or flag.
- * @param params.delegation - Delegation parameter.
- * @param params.storageState - Path to save storage state.
- * @param params.authTrigger - Trigger for authentication.
- * @returns {Promise<BrowserContext>} - Browser context with established session.
+ * @param params Configuration parameters for the session.
+ * @param params.browser Browser instance.
+ * @param params.homeUrl Home URL to navigate to. Defaults to '/'.
+ * @param params.phoneNumber Phone number for authentication.
+ * @param params.authUrl Authentication URL.
+ * @param params.idsLoginOn IDS login config or flag.
+ * @param params.delegation Delegation parameter.
+ * @param params.storageState Path to save storage state.
+ * @param params.authTrigger Trigger for authentication.
+ * @returns Browser context with established session.
  */
 export const session = async ({
   browser,
@@ -135,7 +135,7 @@ export const session = async ({
   delegation?: string
   storageState?: string
   authTrigger?: string | ((page: Page) => Promise<string>)
-}) => {
+}): Promise<BrowserContext> => {
   const storagePath = join(sessionsPath, storageState)
   const context = existsSync(storagePath)
     ? await browser.newContext({ storageState: storagePath })
@@ -165,7 +165,7 @@ export const session = async ({
   const validation = await validationPage.goto(homeUrl, {
     waitUntil: 'domcontentloaded',
   })
-  await expect(validation?.url()).toMatch(homeUrl)
+  expect(validation?.url()).toMatch(homeUrl)
   await validationPage.context().storageState({ path: storagePath })
   await validationPage.close()
 
@@ -176,10 +176,10 @@ export const session = async ({
  * Creates a browser context with a session for the judicial system.
  * Ensures Cognito authentication if needed.
  *
- * @param params - Session parameters.
- * @param params.browser - Browser instance.
- * @param params.homeUrl - Home URL to navigate to, defaults to JUDICIAL_SYSTEM_HOME_URL.
- * @returns {Promise<BrowserContext>} - Browser context.
+ * @param params Session parameters.
+ * @param params.browser Browser instance.
+ * @param params.homeUrl Home URL to navigate to, defaults to JUDICIAL_SYSTEM_HOME_URL.
+ * @returns Browser context.
  */
 export const judicialSystemSession = async ({
   browser,
@@ -187,7 +187,7 @@ export const judicialSystemSession = async ({
 }: {
   browser: Browser
   homeUrl?: string
-}) => {
+}): Promise<BrowserContext> => {
   const context = await browser.newContext()
   const page = await context.newPage()
   const authUrlPrefix = urls.authUrl
