@@ -25,10 +25,10 @@ test.describe('Search feature', () => {
     await page.goto('/')
     await page
       .getByRole('textbox', { name: 'Leitaðu á Ísland.is' })
-      .type(testPhrase, { delay: 100 })
+      .fill(testPhrase)
     await page.keyboard.press('Enter')
     const testResults = page.locator('[data-testid="search-result"]')
-    await expect(testResults).toHaveCountGreaterThan(9)
+    expect(await testResults.count()).toBeGreaterThan(9)
     const searchUrl = page.url()
     await testResults.nth(0).click()
     await page.waitForLoadState('networkidle')
@@ -38,7 +38,7 @@ test.describe('Search feature', () => {
   test('should have no search results for long bogus search words', async () => {
     const page = await context.newPage()
     await page.goto('/')
-    await page.type(
+    await page.fill(
       'role=textbox[name="Leitaðu á Ísland.is"]',
       'abcdefhijklmnopqrstuvwxyz1234567890',
     )
