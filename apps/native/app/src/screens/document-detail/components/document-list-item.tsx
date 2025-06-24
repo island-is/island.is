@@ -127,35 +127,37 @@ export const DocumentListItem = ({
         highlightColor={closeable ? theme.shade.shade100 : theme.color.white}
         hasTopBorder={hasTopBorder}
       >
-        <Host>
-          <IconBackground>
-            {!source ? (
-              <Typography
-                variant="body"
-                weight="600"
-                lineHeight={0}
-                color={theme.color.blue400}
-              >
-                {getInitials(sender)}
-              </Typography>
-            ) : (
-              <Icon source={source} width={24} height={24} />
-            )}
-          </IconBackground>
-          <Content>
-            <Typography variant="eyebrow">{title}</Typography>
-            <Typography variant="body3">{date}</Typography>
-          </Content>
-        </Host>
-        <Animated.View style={bodyStyle}>
-          <Body
-            onLayout={(e) => {
-              height.value = e.nativeEvent.layout.height
-            }}
-          >
-            <Typography variant="body3">{body}</Typography>
-          </Body>
-        </Animated.View>
+        <>
+          <Host>
+            <IconBackground>
+              {!source ? (
+                <Typography
+                  variant="body"
+                  weight="600"
+                  lineHeight={0}
+                  color={theme.color.blue400}
+                >
+                  {getInitials(sender)}
+                </Typography>
+              ) : (
+                <Icon source={source} width={24} height={24} />
+              )}
+            </IconBackground>
+            <Content>
+              <Typography variant="eyebrow">{title}</Typography>
+              <Typography variant="body3">{date}</Typography>
+            </Content>
+          </Host>
+          <Animated.View style={bodyStyle}>
+            <Body
+              onLayout={(e) => {
+                height.value = e.nativeEvent.layout.height
+              }}
+            >
+              <Typography variant="body3">{body}</Typography>
+            </Body>
+          </Animated.View>
+        </>
       </Wrapper>
     </Animated.View>
   )
