@@ -87,6 +87,8 @@ const ParliamentaryRoot = () => {
                   cta={{
                     label: formatMessage(m.viewConstituency),
                     variant: 'text',
+                    icon: 'arrowForward',
+                    disabled: areaLists.length === 0,
                     onClick: () => {
                       navigate(
                         SignatureCollectionPaths.ParliamentaryConstituency.replace(
