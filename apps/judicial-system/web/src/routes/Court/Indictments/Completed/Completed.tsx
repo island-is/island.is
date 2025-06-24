@@ -42,8 +42,8 @@ import VerdictAppealDecisionChoice from '@island.is/judicial-system-web/src/comp
 import {
   CaseFileCategory,
   CaseIndictmentRulingDecision,
-  ServiceRequirement,
   EventType,
+  ServiceRequirement,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useDefendants,

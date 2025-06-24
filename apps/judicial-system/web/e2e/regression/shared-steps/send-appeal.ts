@@ -1,6 +1,6 @@
 import { Page } from '@playwright/test'
-import { expect } from '@island.is/testing/e2e'
 
+import { expect } from '@island.is/testing/e2e'
 import { verifyRequestCompletion } from '@island.is/testing/e2e'
 
 import { chooseDocument, verifyUpload } from '../../utils/helpers'

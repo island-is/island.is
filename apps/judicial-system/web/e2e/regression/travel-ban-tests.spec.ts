@@ -1,5 +1,4 @@
 import { expect } from '@island.is/testing/e2e'
-
 import { urls, verifyRequestCompletion } from '@island.is/testing/e2e'
 
 import { getDaysFromNow, randomCourtCaseNumber } from '../utils/helpers'

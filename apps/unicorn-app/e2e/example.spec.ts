@@ -1,4 +1,5 @@
 import { test } from '@playwright/test'
+
 import { expect } from '@island.is/testing/e2e'
 
 test('has title', async ({ page }) => {
