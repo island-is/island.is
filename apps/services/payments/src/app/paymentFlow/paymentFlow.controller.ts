@@ -67,7 +67,7 @@ export class PaymentFlowController {
     description: 'Deletes a PaymentFlow.',
     response: { status: 200, type: GetPaymentFlowDTO },
   })
-  async deletePaymentFlow(
+  deletePaymentFlow(
     @Param('id', new ParseUUIDPipe()) id: string,
   ): Promise<GetPaymentFlowDTO | null> {
     return this.paymentFlowService.deletePaymentFlow(id)
