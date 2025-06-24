@@ -124,19 +124,17 @@ export const NavComponent = ({
           >
             {truncateName(data?.name?.is ?? '', active, type)}
           </Box>
-          {focusComponent && (
-            <Box
-              style={{
-                marginLeft: 'auto',
-                verticalAlign: 'middle',
-              }}
-            >
-              {!(
-                type === 'Section' &&
-                (data as FormSystemSection).sectionType !== SectionTypes.INPUT
-              ) && <NavButtons />}
-            </Box>
-          )}
+          <Box
+            style={{
+              marginLeft: 'auto',
+              verticalAlign: 'middle',
+            }}
+          >
+            {!(
+              type === 'Section' &&
+              (data as FormSystemSection).sectionType !== SectionTypes.INPUT
+            ) && <NavButtons id={data.id} type={type} />}
+          </Box>
         </Box>
       ) : (
         <Box
@@ -158,6 +156,17 @@ export const NavComponent = ({
           </Box>
           <Box id="2" paddingLeft={1}>
             {truncateName(data?.name?.is ?? '', active, type)}
+          </Box>
+          <Box
+            style={{
+              marginLeft: 'auto',
+              verticalAlign: 'middle',
+            }}
+          >
+            {!(
+              type === 'Section' &&
+              (data as FormSystemSection).sectionType !== SectionTypes.INPUT
+            ) && <NavButtons id={data.id} type={type} />}
           </Box>
           {selectable && (
             <Box className={cn(styles.selectableComponent)} marginLeft="auto">
