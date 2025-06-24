@@ -30,7 +30,7 @@ runs:
       id: cache-paths
       run: |
         echo "yarn-cache=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-        CYPRESS_CACHE_FOLDER="cypress-cache=${{ runner.temp }}/.cypress-cache"
+        CYPRESS_CACHE_FOLDER="${{ runner.temp }}/.cypress-cache"
         echo "cypress-cache=$CYPRESS_CACHE_FOLDER" >> "$GITHUB_OUTPUT"
         echo "CYPRESS_CACHE_FOLDER=$CYPRESS_CACHE_FOLDER" >> "$GITHUB_ENV"
 
