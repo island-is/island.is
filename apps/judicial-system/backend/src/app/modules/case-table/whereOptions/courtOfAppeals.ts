@@ -9,15 +9,23 @@ import {
 
 // Court of appeals request cases
 
-const courtOfAppealsSharedWhereOptions = {
+export const courtOfAppealsRequestCasesAccessWhereOptions = {
   is_archived: false,
   type: [...restrictionCases, ...investigationCases],
   state: completedRequestCaseStates,
-  appeal_state: { [Op.not]: null },
+  [Op.or]: [
+    { appeal_state: [CaseAppealState.RECEIVED, CaseAppealState.COMPLETED] },
+    {
+      [Op.and]: [
+        { appeal_state: [CaseAppealState.WITHDRAWN] },
+        { appeal_received_by_court_date: { [Op.not]: null } },
+      ],
+    },
+  ],
 }
 
 export const courtOfAppealsRequestCasesInProgressWhereOptions = {
-  ...courtOfAppealsSharedWhereOptions,
+  ...courtOfAppealsRequestCasesAccessWhereOptions,
   [Op.or]: [
     { appeal_state: CaseAppealState.RECEIVED },
     {
@@ -28,6 +36,6 @@ export const courtOfAppealsRequestCasesInProgressWhereOptions = {
 }
 
 export const courtOfAppealsRequestCasesCompletedWhereOptions = {
-  ...courtOfAppealsSharedWhereOptions,
+  ...courtOfAppealsRequestCasesAccessWhereOptions,
   appeal_state: CaseAppealState.COMPLETED,
 }
