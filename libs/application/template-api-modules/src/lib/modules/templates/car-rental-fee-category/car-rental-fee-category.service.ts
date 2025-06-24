@@ -5,7 +5,7 @@ import { VehicleSearchApi } from '@island.is/clients/vehicles'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { RskRentalDayRateClient } from '@island.is/clients-rental-day-rate'
-import { EntryModel, ProblemDetails } from '@island.is/clients-rental-day-rate'
+import { EntryModel } from '@island.is/clients-rental-day-rate'
 import { getValueViaPath } from '@island.is/application/core'
 
 import { CarCategoryRecord, RateCategory } from '@island.is/application/templates/car-rental-fee-category'
