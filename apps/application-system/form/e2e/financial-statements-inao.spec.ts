@@ -26,8 +26,6 @@ test.describe('Financial Statements INAO', () => {
 
   test.skip('should be able to create application', async () => {
     const page = await context.newPage()
-    const findByTestId = (testId: string) =>
-      page.locator(`[data-testid="${testId}"]`)
 
     await page.goto('/umsoknir/skilarsreikninga')
 
@@ -45,13 +43,15 @@ test.describe('Financial Statements INAO', () => {
     await proceed(page)
 
     // Elections
-    const election = findByTestId('select-election.selectElection')
+    const election = page.locator(
+      '[data-testid="select-election.selectElection"]',
+    )
     await election.click()
     await page.keyboard.press('ArrowDown')
     await page.keyboard.press('ArrowDown')
     await page.keyboard.press('Enter')
 
-    await findByTestId('radio-incomeLimit-moreThan').click()
+    await page.locator('[data-testid="radio-incomeLimit-moreThan"]').click()
     await proceed(page)
 
     // Key figures - Revenues and expenses
