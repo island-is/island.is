@@ -946,6 +946,8 @@ export const buildFieldsRepeaterField = (
     removeItemButtonText,
     addItemButtonText,
     saveItemButtonText,
+    hideAddButtonIfDisabled,
+    displayTitleAsAccordion,
     minRows,
     maxRows,
   } = data
@@ -963,6 +965,8 @@ export const buildFieldsRepeaterField = (
     removeItemButtonText,
     addItemButtonText,
     saveItemButtonText,
+    hideAddButtonIfDisabled,
+    displayTitleAsAccordion,
     minRows,
     maxRows,
   }

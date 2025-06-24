@@ -790,6 +790,8 @@ export type FieldsRepeaterField = BaseField & {
   removeItemButtonText?: StaticText
   addItemButtonText?: StaticText
   saveItemButtonText?: StaticText
+  hideAddButtonIfDisabled?: boolean
+  displayTitleAsAccordion?: boolean
   fields: Record<string, RepeaterItem>
   /**
    * Maximum rows that can be added to the table.

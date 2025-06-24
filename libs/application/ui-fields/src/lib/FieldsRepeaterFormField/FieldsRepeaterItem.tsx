@@ -284,6 +284,11 @@ export const Item = ({
     clearOnChangeVal = clearOnChange
   }
 
+  let suffixVal: string | string[] | undefined
+  if (component === 'input' && item.suffix) {
+    suffixVal = formatText(item.suffix, application, formatMessage)
+  }
+
   const setOnChangeFunc =
     setOnChange &&
     (async (optionValue: RepeaterOptionValue) => {
@@ -464,6 +469,7 @@ export const Item = ({
             {...(component === 'date'
               ? { maxDate: maxDateVal, minDate: minDateVal }
               : {})}
+            {...(component === 'input' ? { suffix: suffixVal } : {})}
           />
         )}
     </GridColumn>

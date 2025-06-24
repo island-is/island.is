@@ -47,12 +47,15 @@ export const FieldsRepeaterFormField = ({
     formTitleNumbering = 'suffix',
     removeItemButtonText = coreMessages.buttonRemove,
     addItemButtonText = coreMessages.buttonAdd,
+    hideAddButtonIfDisabled,
+    // displayTitleAsAccordion,
     minRows = 1,
     maxRows,
   } = data
 
   const { control, getValues, setValue } = useFormContext()
   const answers = getValues()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const numberOfItemsInAnswers = getValueViaPath<Array<any>>(
     answers,
     id,
@@ -94,7 +97,7 @@ export const FieldsRepeaterFormField = ({
 
   const { formatMessage, lang: locale } = useLocale()
 
-  const { fields, remove } = useFieldArray({
+  const { remove } = useFieldArray({
     control: control,
     name: id,
   })
@@ -137,6 +140,8 @@ export const FieldsRepeaterFormField = ({
         values={values}
       />
     ))
+
+  const disableAddButton = !!maxRowsValue && numberOfItems >= maxRowsValue
 
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
@@ -203,15 +208,21 @@ export const FieldsRepeaterFormField = ({
                 </Button>
               </Box>
             )}
-            <Button
-              variant="ghost"
-              type="button"
-              onClick={handleNewItem}
-              icon="add"
-              disabled={!maxRowsValue ? false : numberOfItems >= maxRowsValue}
-            >
-              {formatText(addItemButtonText, updatedApplication, formatMessage)}
-            </Button>
+            {!(hideAddButtonIfDisabled && disableAddButton) && (
+              <Button
+                variant="ghost"
+                type="button"
+                onClick={handleNewItem}
+                icon="add"
+                disabled={disableAddButton}
+              >
+                {formatText(
+                  addItemButtonText,
+                  updatedApplication,
+                  formatMessage,
+                )}
+              </Button>
+            )}
           </Box>
         </Stack>
         {error && typeof error === 'string' && (
