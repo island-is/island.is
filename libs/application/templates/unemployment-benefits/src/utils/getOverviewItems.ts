@@ -115,11 +115,15 @@ export const getEducationOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
+  const lastTvelveMonths =
+    getValueViaPath<string>(answers, 'education.lastTwelveMonths', '') ?? ''
   return [
     {
       width: 'full',
       keyText: overviewMessages.labels.education.education,
-      valueText: getValueViaPath<string>(answers, 'applicant.name') ?? '',
+      valueText:
+        getValueViaPath<string>(answers, 'education.lastTwelveMonths', '') ??
+        '',
     },
   ]
 }

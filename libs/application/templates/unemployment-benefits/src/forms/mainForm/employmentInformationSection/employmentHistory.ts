@@ -178,9 +178,7 @@ export const employmentHistorySubSection = buildSubSection({
             const startDate = hasEmployer(application.answers)
               ? manualInputStartDate
               : jobList[0]?.started
-            // console.log('startDate', startDate && new Date(startDate))
-            // return startDate ? new Date(startDate) : ''
-            return ''
+            return startDate ? new Date(startDate).toISOString() : ''
           },
           condition: (answers) => !isIndependent(answers),
         }),

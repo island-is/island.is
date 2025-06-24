@@ -10,8 +10,10 @@ import {
   payoutSchema,
   taxDiscountSchema,
   vacationSchema,
+  familyInformationSchema,
+  educationHistorySchema,
+  jobWishesSchema,
 } from './schemas'
-import { familyInformationSchema } from './schemas/familyInformationSchema'
 
 const FileSchema = z.object({
   name: z.string(),
@@ -39,34 +41,6 @@ const currentSituationSchema = z.object({
   wantedJobPercentage: z.string().optional(),
   jobTimelineStartDate: z.string().optional(),
 })
-
-/**  Job search section  **/
-const jobWishesSchema = z.object({
-  jobList: z.array(z.string()).optional(),
-  outsideYourLocation: z
-    .nativeEnum(YesOrNoEnum)
-    .refine((v) => Object.values(YesOrNoEnum).includes(v)),
-  location: z.array(z.string()).optional(),
-})
-
-const currentStudiesSchema = z
-  .object({
-    schoolName: z.string(),
-    courseSubject: z.string(),
-    units: z.string(),
-    degree: z.string(),
-    expectedEndOfStudy: z.string(),
-  })
-  .optional()
-
-const educationHistorySchema = z
-  .object({
-    levelOfStudy: z.string(),
-    degree: z.string(),
-    courseOfStudy: z.string(),
-    studyNotCompleted: z.array(z.string()).optional(),
-  })
-  .optional()
 
 const drivingLicenseSchema = z.object({
   drivingLicenseType: z.array(z.string()).optional(),
@@ -100,8 +74,7 @@ export const dataSchema = z.object({
   applicant: applicantInformationSchema,
   familyInformation: familyInformationSchema,
   currentSituation: currentSituationSchema,
-  currentStudies: currentStudiesSchema,
-  educationHistory: z.array(educationHistorySchema),
+  educationHistory: educationHistorySchema,
   education: educationSchema,
   drivingLicense: drivingLicenseSchema,
   languageSkills: z.array(languageSkillsSchema),

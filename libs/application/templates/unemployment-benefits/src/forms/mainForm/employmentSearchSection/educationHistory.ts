@@ -9,6 +9,7 @@ import {
 } from '@island.is/application/core'
 import { employmentSearch as employmentSearchMessages } from '../../../lib/messages'
 import { Application } from '@island.is/application/types'
+import { GaldurDomainModelsEducationItem } from '@island.is/clients/vmst-unemployment'
 
 export const educationHistorySubSection = buildSubSection({
   id: 'educationHistorySubSection',
@@ -19,12 +20,12 @@ export const educationHistorySubSection = buildSubSection({
       title: employmentSearchMessages.educationHistory.pageTitle,
       children: [
         buildDescriptionField({
-          id: 'currentStudies.description',
+          id: 'educationHistory.currentStudies.description',
           title: employmentSearchMessages.educationHistory.currentStudiesLabel,
           titleVariant: 'h5',
         }),
         buildTextField({
-          id: 'currentStudies.schoolName',
+          id: 'educationHistory.currentStudies.schoolName',
           title: employmentSearchMessages.educationHistory.schoolNameLabel,
           width: 'half',
           backgroundColor: 'white',
@@ -42,25 +43,7 @@ export const educationHistorySubSection = buildSubSection({
           },
         }),
         buildTextField({
-          id: 'currentStudies.courseSubject',
-          title: employmentSearchMessages.educationHistory.courseSubjectLabel,
-          width: 'half',
-          backgroundColor: 'white',
-          readOnly: true,
-          defaultValue: (application: Application) => {
-            const courseSubject = getValueViaPath<string>(
-              application.externalData,
-              'courseSubject',
-            )
-            return courseSubject ?? 'Verkfræði'
-          },
-          condition: (_answers, _externalData) => {
-            // TODO: Get info from externalData if available
-            return true
-          },
-        }),
-        buildTextField({
-          id: 'currentStudies.units',
+          id: 'educationHistory.currentStudies.units',
           title: employmentSearchMessages.educationHistory.unitsLabel,
           width: 'half',
           backgroundColor: 'white',
@@ -78,7 +61,7 @@ export const educationHistorySubSection = buildSubSection({
           },
         }),
         buildTextField({
-          id: 'currentStudies.degree',
+          id: 'educationHistory.currentStudies.degree',
           title: employmentSearchMessages.educationHistory.degreeLabel,
           width: 'half',
           backgroundColor: 'white',
@@ -96,7 +79,7 @@ export const educationHistorySubSection = buildSubSection({
           },
         }),
         buildTextField({
-          id: 'currentStudies.expectedEndOfStudy',
+          id: 'educationHistory.currentStudies.expectedEndOfStudy',
           title:
             employmentSearchMessages.educationHistory.expectedEndOfStudyLabel,
           width: 'half',
@@ -115,7 +98,7 @@ export const educationHistorySubSection = buildSubSection({
           },
         }),
         buildFieldsRepeaterField({
-          id: 'educationHistory',
+          id: 'educationHistory.educationHistory',
           formTitle: (index, _application) => {
             // TODO: Get info from externalData about currentStudies
             return {
@@ -135,71 +118,79 @@ export const educationHistorySubSection = buildSubSection({
               label:
                 employmentSearchMessages.educationHistory.levelOfStudyLabel,
               component: 'select',
-              options: (application) => {
-                const levelsOfStudy = getValueViaPath<{ name: string }[]>(
+              options: (application, _, locale) => {
+                const education = getValueViaPath<
+                  GaldurDomainModelsEducationItem[]
+                >(
                   application.externalData,
-                  'levelsOfStudy',
-                ) ?? [
-                  {
-                    name: 'Framhaldsskóli',
-                  },
-                  {
-                    name: 'Háskóli BSc.',
-                  },
-                  {
-                    name: 'Háskóli MSc.',
-                  },
-                ]
-                return levelsOfStudy.map((level) => ({
-                  value: level.name,
-                  label: level.name,
-                }))
+                  'unemploymentApplication.data.supportData.education',
+                )
+                return (
+                  education
+                    ?.filter((level) => level.level === 1)
+                    .map((level) => ({
+                      value: level.id ?? '',
+                      label:
+                        (locale === 'is'
+                          ? level.name
+                          : level.english ?? level.name) || '',
+                    })) ?? []
+                )
               },
             },
             degree: {
               label: employmentSearchMessages.educationHistory.degreeLabel,
               component: 'select',
-              options: (application) => {
-                const degrees = getValueViaPath<{ name: string }[]>(
+              options: (application, activeField, locale) => {
+                const education = getValueViaPath<
+                  GaldurDomainModelsEducationItem[]
+                >(
                   application.externalData,
-                  'degrees',
-                ) ?? [
-                  {
-                    name: 'Strúdentspróf',
-                  },
-                  {
-                    name: 'Háskólapróf',
-                  },
-                ]
-                return degrees.map((degree) => ({
-                  value: degree.name,
-                  label: degree.name,
-                }))
+                  'unemploymentApplication.data.supportData.education',
+                )
+                const levelOfStudy = (activeField?.levelOfStudy as string) ?? ''
+                return (
+                  education
+                    ?.filter(
+                      (level) =>
+                        level.level === 2 && level.parentId === levelOfStudy,
+                    )
+                    .map((level) => ({
+                      value: level.id ?? '',
+                      label:
+                        (locale === 'is'
+                          ? level.name
+                          : level.english ?? level.name) || '',
+                    })) ?? []
+                )
               },
             },
             courseOfStudy: {
               label:
                 employmentSearchMessages.educationHistory.courseOfStudyLabel,
               component: 'select',
-              options: (application) => {
-                const coursesOfStudy = getValueViaPath<{ name: string }[]>(
+              options: (application, activeField) => {
+                const education = getValueViaPath<
+                  GaldurDomainModelsEducationItem[]
+                >(
                   application.externalData,
-                  'coursesOfStudy',
-                ) ?? [
-                  {
-                    name: 'Stærðfræðibraut',
-                  },
-                  {
-                    name: 'Raunvísindabraut',
-                  },
-                  {
-                    name: 'Heimspeki',
-                  },
-                ]
-                return coursesOfStudy.map((level) => ({
-                  value: level.name,
-                  label: level.name,
-                }))
+                  'unemploymentApplication.data.supportData.education',
+                )
+                const levelOfStudy = (activeField?.levelOfStudy as string) ?? ''
+                const degree = (activeField?.degree as string) ?? ''
+                return (
+                  education
+                    ?.find(
+                      (level) =>
+                        level.level === 2 &&
+                        level.parentId === levelOfStudy &&
+                        level.id === degree,
+                    )
+                    ?.relations?.map((relation) => ({
+                      value: relation.code ?? '',
+                      label: relation.name ?? '',
+                    })) ?? []
+                )
               },
             },
             studyNotCompleted: {
