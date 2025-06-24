@@ -211,6 +211,7 @@ export const InputController = forwardRef(
             required={required}
             decimalSeparator={thousandSeparator ? ',' : undefined}
             thousandSeparator={thousandSeparator ? '.' : undefined}
+            isNumericString={thousandSeparator}
             getInputRef={ref}
             {...props}
           />
