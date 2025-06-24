@@ -2,11 +2,12 @@ schema:
   - apps/api/src/api.graphql
 documents: apps/web/screens/queries/*.{ts,tsx}
 generates:
-  apps/web/graphql/schema.ts:
+  apps/web/graphql/schema/index.ts:
     plugins:
       - typescript
       - typescript-operations
     config:
+      importOperationTypesFrom: ./graphql/schema
       exportFragmentSpreadSubTypes: true
       scalars:
         DateTime: Date
