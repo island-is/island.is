@@ -75,7 +75,7 @@ libs/localization/messages.json
 # Ignore automatically openapi, generated schemas, types definitions, fragments types from codegen/autoSchemaFile/servers scripts
 *.tar.gz
 *.tgz
-*.txt
+/*_list.txt
 *openapi.yaml
 api.graphql
 schema.d.ts
