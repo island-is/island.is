@@ -304,28 +304,4 @@ export class SignatureCollectionSharedClientService {
     }
     return ListStatus.Inactive
   }
-
-  async startMunicipalityCollection(
-    adminApi: AdminMunicipalityApi,
-    electionsApi: ElectionApi,
-    areaId: string,
-  ): Promise<Success> {
-    // This method will only be used for local governmental elections
-    const current = await this.getLatestCollectionForType(
-      electionsApi,
-      CollectionType.LocalGovernmental,
-    )
-    console.log('Current collection:', current)
-    try {
-      const collection = adminApi.adminKosningIDSveitSofnunPost({
-        iD: parseInt(current.electionId ?? ''),
-        sveitarfelagID: parseInt(areaId),
-      })
-      console.log('Collection started:', collection)
-      return { success: !!collection }
-    } catch (error) {
-      console.error('Error starting collection:', error)
-      return { success: false, reasons: error.body ? [error.body] : [] }
-    }
-  }
 }

@@ -20,7 +20,6 @@ import { SignatureCollectionSlug } from './models/slug.model'
 import { SignatureCollectionAdminService } from './signatureCollectionAdmin.service'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 import { SignatureCollectionListStatus } from './models/status.model'
-import { SignatureCollectionManagerService } from './signatureCollectionManager.service'
 import { SignatureCollectionNationalIdInput } from './dto/nationalId.input'
 import { SignatureCollectionSignatureIdInput } from './dto/signatureId.input'
 import { SignatureCollectionIdInput } from './dto/collectionId.input'
@@ -32,7 +31,6 @@ import { SignatureCollectionAreaSummaryReportInput } from './dto/areaSummaryRepo
 import { SignatureCollectionAreaSummaryReport } from './models/areaSummaryReport.model'
 import { SignatureCollectionUploadPaperSignatureInput } from './dto/uploadPaperSignature.input'
 import { SignatureCollectionBaseInput } from './dto/signatureCollectionBase.input'
-import { SignatureCollectionMunicipalityService } from './signatureCollectionMunicipality.service'
 import { SignatureCollectionAreaInput } from './dto'
 import { CurrentAdmin } from './decorators/admin.decorator'
 import { SignatureCollectionAdmin } from './models/admin.model'
@@ -41,14 +39,13 @@ import { SignatureCollectionAdmin } from './models/admin.model'
 @Scopes(
   AdminPortalScope.signatureCollectionProcess,
   AdminPortalScope.signatureCollectionManage,
+  AdminPortalScope.signatureCollectionMunicipality,
 )
 @Resolver()
 @Audit({ namespace: '@island.is/api/signature-collection' })
 export class SignatureCollectionAdminResolver {
   constructor(
     private signatureCollectionService: SignatureCollectionAdminService,
-    private signatureCollectionManagerService: SignatureCollectionManagerService,
-    private signatureCollectionMunicipalityService: SignatureCollectionMunicipalityService,
   ) {}
 
   @Query(() => SignatureCollectionSuccess)
@@ -70,16 +67,10 @@ export class SignatureCollectionAdminResolver {
     @CurrentAdmin() admin: SignatureCollectionAdmin,
     @Args('input') input: SignatureCollectionBaseInput,
   ): Promise<SignatureCollection> {
-    console.log('HEREEEEE admin:', admin)
-    return admin.adminScope === AdminPortalScope.signatureCollectionManage
-      ? this.signatureCollectionManagerService.getLatestCollectionForType(
-          admin,
-          input.collectionType,
-        )
-      : this.signatureCollectionService.getLatestCollectionForType(
-          admin,
-          input.collectionType,
-        )
+    return this.signatureCollectionService.getLatestCollectionForType(
+      admin,
+      input.collectionType,
+    )
   }
 
   @Query(() => [SignatureCollectionList])
@@ -88,14 +79,7 @@ export class SignatureCollectionAdminResolver {
     @CurrentAdmin() admin: SignatureCollectionAdmin,
     @Args('input') input: SignatureCollectionIdInput,
   ): Promise<SignatureCollectionList[]> {
-    // TODO: REMOVE TEST
-    const bla = await this.signatureCollectionAdminStartCollection(admin, {
-      areaId: '',
-    })
-    // TODO: REMOVE TEST
-    return admin.adminScope === AdminPortalScope.signatureCollectionManage
-      ? this.signatureCollectionManagerService.allLists(input, admin)
-      : this.signatureCollectionService.allLists(input, admin)
+    return this.signatureCollectionService.allLists(input, admin)
   }
 
   @Query(() => SignatureCollectionList)
@@ -104,12 +88,7 @@ export class SignatureCollectionAdminResolver {
     @CurrentAdmin() admin: SignatureCollectionAdmin,
     @Args('input') input: SignatureCollectionListIdInput,
   ): Promise<SignatureCollectionList> {
-    const isManager = admin.scope.includes(
-      AdminPortalScope.signatureCollectionManage,
-    )
-    return isManager
-      ? this.signatureCollectionManagerService.list(input.listId, admin)
-      : this.signatureCollectionService.list(input.listId, admin)
+    return this.signatureCollectionService.list(input.listId, admin)
   }
 
   @Query(() => [SignatureCollectionSignature], { nullable: true })
@@ -118,12 +97,7 @@ export class SignatureCollectionAdminResolver {
     @CurrentAdmin() admin: SignatureCollectionAdmin,
     @Args('input') input: SignatureCollectionListIdInput,
   ): Promise<SignatureCollectionSignature[]> {
-    const isManager = admin.scope.includes(
-      AdminPortalScope.signatureCollectionManage,
-    )
-    return isManager
-      ? this.signatureCollectionManagerService.signatures(input.listId, admin)
-      : this.signatureCollectionService.signatures(input.listId, admin)
+    return this.signatureCollectionService.signatures(input.listId, admin)
   }
 
   @Query(() => SignatureCollectionCandidateLookUp)
@@ -295,29 +269,13 @@ export class SignatureCollectionAdminResolver {
 
   @Mutation(() => SignatureCollectionSuccess)
   @Audit()
-  @Scopes(
-    AdminPortalScope.signatureCollectionProcess,
-    AdminPortalScope.signatureCollectionManage,
-    AdminPortalScope.signatureCollectionMunicipality,
-  )
-  async signatureCollectionAdminStartCollection(
+  async signatureCollectionAdminStartMunicipalityCollection(
     @CurrentAdmin() admin: SignatureCollectionAdmin,
     @Args('input') { areaId }: SignatureCollectionAreaInput,
   ): Promise<SignatureCollectionSuccess> {
-    //TODO: where to get areaId from?
-    // determine from user or force frontend to determine send areaId
-    const isMunicipality = admin.scope.includes(
-      AdminPortalScope.signatureCollectionMunicipality,
+    return this.signatureCollectionService.startMunicipalityCollection(
+      admin,
+      areaId,
     )
-    console.log('isMunicipality', isMunicipality.toString())
-    return admin.adminScope === AdminPortalScope.signatureCollectionMunicipality
-      ? this.signatureCollectionMunicipalityService.startMunicipalityCollection(
-          admin,
-          areaId,
-        )
-      : this.signatureCollectionService.startMunicipalityCollection(
-          admin,
-          areaId,
-        )
   }
 }

@@ -24,8 +24,13 @@ export class ManagerListApi extends MedmaelalistarApi {}
 export class ManagerCollectionApi extends MedmaelasofnunApi {}
 export class ManagerSignatureApi extends MedmaeliApi {}
 export class ManagerCandidateApi extends FrambodApi {}
+export class ManagerAdminApi extends AdminClient {}
 
 export class MunicipalityConfig extends Configuration {}
+export class MunicipalityListApi extends MedmaelalistarApi {}
+export class MunicipalityCollectionApi extends MedmaelasofnunApi {}
+export class MunicipalitySignatureApi extends MedmaeliApi {}
+export class MunicipalityCandidateApi extends FrambodApi {}
 export class MunicipalityAdminApi extends AdminClient {}
 
 const configFactory = (
@@ -114,6 +119,7 @@ export const exportedApis = [
     ManagerCollectionApi,
     ManagerSignatureApi,
     ManagerCandidateApi,
+    ManagerAdminApi,
   ].map((Api) => ({
     provide: Api,
     useFactory: (
@@ -138,7 +144,13 @@ export const exportedApis = [
       XRoadConfig.KEY,
     ],
   })),
-  ...[MunicipalityAdminApi].map((Api) => ({
+  ...[
+    MunicipalityListApi,
+    MunicipalityCollectionApi,
+    MunicipalitySignatureApi,
+    MunicipalityCandidateApi,
+    MunicipalityAdminApi,
+  ].map((Api) => ({
     provide: Api,
     useFactory: (
       config: ConfigType<typeof SignatureCollectionClientConfig>,
