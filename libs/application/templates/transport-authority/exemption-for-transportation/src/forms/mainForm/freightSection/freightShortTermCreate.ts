@@ -87,6 +87,7 @@ export const FreightShortTermCreateMultiField = buildMultiField({
       width: 'half',
       required: true,
       variant: 'number',
+      thousandSeparator: true,
       suffix: freight.labels.metersSuffix,
     }),
     buildTextField({
@@ -96,6 +97,7 @@ export const FreightShortTermCreateMultiField = buildMultiField({
       width: 'half',
       required: true,
       variant: 'number',
+      thousandSeparator: true,
       suffix: freight.labels.tonsSuffix,
     }),
     buildDescriptionField({
@@ -110,6 +112,7 @@ export const FreightShortTermCreateMultiField = buildMultiField({
       width: 'half',
       required: true,
       variant: 'number',
+      thousandSeparator: true,
       suffix: freight.labels.metersSuffix,
     }),
     buildTextField({
@@ -119,6 +122,7 @@ export const FreightShortTermCreateMultiField = buildMultiField({
       width: 'half',
       required: true,
       variant: 'number',
+      thousandSeparator: true,
       suffix: freight.labels.metersSuffix,
     }),
     buildTextField({
@@ -128,6 +132,7 @@ export const FreightShortTermCreateMultiField = buildMultiField({
       width: 'full',
       required: true,
       variant: 'number',
+      thousandSeparator: true,
       suffix: freight.labels.metersSuffix,
     }),
     buildAlertMessageField({
