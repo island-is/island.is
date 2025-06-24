@@ -318,16 +318,10 @@ const Lists = () => {
             )}
           {lists?.length > 0 && (
             <Box>
-              {(collectionStatus === CollectionStatus.InInitialReview ||
-                collectionStatus === CollectionStatus.InReview) && (
-                <CompareLists
-                  collectionId={collection?.id}
-                  collectionType={
-                    SignatureCollectionCollectionType.Presidential
-                  }
-                />
-              )}
-
+              <CompareLists
+                collectionId={collection?.id}
+                collectionType={collectionType}
+              />
               {!hasInReview &&
                 collectionStatus === CollectionStatus.InInitialReview && (
                   <ActionCompleteCollectionProcessing
@@ -337,10 +331,6 @@ const Lists = () => {
                     collectionId={collection?.id}
                   />
                 )}
-              <CompareLists
-                collectionId={collection?.id}
-                collectionType={collectionType}
-              />
             </Box>
           )}
         </GridColumn>
