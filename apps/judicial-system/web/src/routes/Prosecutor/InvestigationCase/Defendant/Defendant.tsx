@@ -7,6 +7,7 @@ import { uuid } from 'uuidv4'
 import { Box, Button, toast } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
+
 import {
   core,
   defendant as m,

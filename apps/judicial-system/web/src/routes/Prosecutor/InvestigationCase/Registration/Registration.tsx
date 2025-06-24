@@ -1,7 +1,7 @@
 import { FC, FocusEvent, useContext, useEffect, useState } from 'react'
 import router from 'next/router'
 
-import { Box, Input, Select } from '@island.is/island-ui/core'
+import { Box, Input, Select, toast } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import {
   getStandardUserDashboardRoute,
@@ -31,6 +31,8 @@ import {
 } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { PoliceCaseNumbers, usePoliceCaseNumbers } from '../../components'
+import { errors } from '@island.is/judicial-system-web/messages'
+import { useIntl } from 'react-intl'
 
 const Registration: FC = () => {
   // This state is needed because type is initially set to OTHER on the
@@ -38,6 +40,7 @@ const Registration: FC = () => {
   // from the case type list to allow the user to continue.
   const [caseType, setCaseType] = useState<CaseType | null>()
 
+  const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
@@ -77,8 +80,12 @@ const Registration: FC = () => {
   const handleNavigationTo = async (destination: string) => {
     if (!workingCase.id) {
       const createdCase = await createCase(workingCase)
-      if (!createdCase) return
-      router.push(`${destination}/${createdCase.id}`)
+
+      if (createdCase) {
+        router.push(`${destination}/${createdCase.id}`)
+      } else {
+        toast.error(formatMessage(errors.createCase))
+      }
     } else {
       router.push(`${destination}/${workingCase.id}`)
     }
