@@ -150,7 +150,7 @@ const Lists = () => {
                 allowedActions={[
                   Actions.DownloadReports,
                   Actions.CreateCollection,
-                  Actions.ReviewCandidates
+                  Actions.ReviewCandidates,
                 ]}
               />
             }
@@ -337,12 +337,12 @@ const Lists = () => {
                     collectionId={collection?.id}
                   />
                 )}
+              <CompareLists
+                collectionId={collection?.id}
+                collectionType={collectionType}
+              />
             </Box>
           )}
-          <CompareLists
-            collectionId={collection?.id}
-            collectionType={collectionType}
-          />
         </GridColumn>
       </GridRow>
     </GridContainer>
