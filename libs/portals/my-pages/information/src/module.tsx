@@ -1,14 +1,9 @@
-import { lazy } from 'react'
-import {
-  ApiScope,
-  DocumentsScope,
-  UserProfileScope,
-} from '@island.is/auth/scopes'
-import { m } from '@island.is/portals/my-pages/core'
+import { ApiScope, UserProfileScope } from '@island.is/auth/scopes'
 import { PortalModule } from '@island.is/portals/core'
-import { InformationPaths } from './lib/paths'
+import { m } from '@island.is/portals/my-pages/core'
+import { lazy } from 'react'
 import { Navigate } from 'react-router-dom'
-
+import { InformationPaths } from './lib/paths'
 const UserInfoOverview = lazy(() =>
   import('./screens/UserInfoOverview/UserInfoOverview'),
 )

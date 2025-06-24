@@ -173,7 +173,7 @@ export class UserProfileController {
       throw new BadRequestException('National id is not valid')
     }
 
-    return this.userProfileService.getActorProfileWithDocumentsScope({
+    return this.userProfileService.getActorProfile({
       toNationalId,
       fromNationalId,
     })

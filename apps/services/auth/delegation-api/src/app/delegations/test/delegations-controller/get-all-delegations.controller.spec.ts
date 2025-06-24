@@ -7,10 +7,6 @@ import { DelegationRecordDTO } from '@island.is/auth-api-lib'
 import { FixtureFactory } from '@island.is/services/auth/testing'
 import { TestApp, truncate } from '@island.is/testing/nest'
 import { createNationalId } from '@island.is/testing/fixtures'
-import {
-  AuthDelegationProvider,
-  AuthDelegationType,
-} from '@island.is/shared/types'
 import { PersonalRepresentativeDelegationType } from '@island.is/auth-api-lib'
 
 import { setupWithAuth } from '../../../../../test/setup'
@@ -19,7 +15,6 @@ import {
   user,
   userWithWrongScope,
   scopes,
-  personalRepresentativeRightTypeCodePostholf,
 } from './delegations.controller-test-types'
 
 const path = '/v1/delegations/all'
@@ -29,7 +24,6 @@ const person1 = createNationalId('person')
 const person2 = createNationalId('person')
 const person3 = createNationalId('person')
 const person4 = createNationalId('person')
-const parent1 = createNationalId('person')
 const child1 = createNationalId('residentChild')
 const company1 = createNationalId('company')
 const company2 = createNationalId('company')
