@@ -1,20 +1,12 @@
 import { z } from 'zod'
 import { YesOrNoEnum } from '@island.is/application/core'
-import { CostField } from '../../shared'
 import {
-  hasInvalidCostItems,
   isValidMeterNumber,
   isValidMeterStatus,
   parseCurrency,
 } from '../../utils/utils'
 import { OtherFeesPayeeOptions } from '../../utils/enums'
 import * as m from '../messages'
-
-const otherCostItemsSchema = z.object({
-  description: z.string().optional(),
-  amount: z.number().optional(),
-  hasError: z.boolean().optional(),
-})
 
 export const otherFees = z
   .object({
@@ -29,10 +21,15 @@ export const otherFees = z
     heatingCostMeterStatus: z.string().optional(),
     heatingCostMeterStatusDate: z.string().optional(),
     otherCosts: z.array(z.string()).optional(),
-    otherCostItems: z.union([
-      z.string(),
-      z.array(otherCostItemsSchema).optional(),
-    ]), // String so that it clears on OtherCosts change (clearOnChange)
+    otherCostItems: z
+      .array(
+        z.object({
+          description: z.string().optional(),
+          amount: z.string().optional(),
+        }),
+      )
+      .optional()
+      .nullable(),
     otherCostsDescription: z.string().optional(),
     otherCostsAmount: z.string().optional(),
   })
@@ -177,15 +174,48 @@ export const otherFees = z
 
     // Other costs
     if (hasOtherCosts) {
-      if (
-        data.otherCostItems &&
-        hasInvalidCostItems(data.otherCostItems as CostField[])
-      ) {
+      if (!data.otherCostItems || data.otherCostItems.length === 0) {
         ctx.addIssue({
           code: z.ZodIssueCode.custom,
           message: 'Custom error message',
           params: m.otherFees.errorOtherCost,
           path: ['otherCostItems'],
+        })
+      } else {
+        // Validate each item in the otherCostItems array
+        data.otherCostItems.forEach((item, index) => {
+          if (!item.description || item.description.trim() === '') {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: 'Custom error message',
+              params: m.otherFees.errorOtherCostDescription,
+              path: ['otherCostItems', index, 'description'],
+            })
+          }
+          if (
+            item.amount === undefined ||
+            item.amount === null ||
+            Number(item.amount) <= 0
+          ) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: 'Custom error message',
+              params: m.otherFees.errorOtherCostAmount,
+              path: ['otherCostItems', index, 'amount'],
+            })
+          }
+          if (
+            item.amount !== undefined &&
+            item.amount !== null &&
+            Number(item.amount) > 20000
+          ) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              message: 'Custom error message',
+              params: m.otherFees.errorOtherCostAmountTooHigh,
+              path: ['otherCostItems', index, 'amount'],
+            })
+          }
         })
       }
     }
