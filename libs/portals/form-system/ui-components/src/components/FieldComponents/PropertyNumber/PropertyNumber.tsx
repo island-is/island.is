@@ -14,6 +14,7 @@ import { FormSystemField } from '@island.is/api/schema'
 import { m, webMessages } from '../../../lib/messages'
 import { getValue } from '../../../lib/getValue'
 import { Action, PropertyNumberType } from '../../../lib'
+import { useFormContext, Controller } from 'react-hook-form'
 
 interface Props {
   item: FormSystemField
@@ -29,11 +30,14 @@ const emptyProperty: PropertyNumberType = {
   postalCode: '',
 }
 
+const PROPERTY_NUMBER_REGEX = /^\d{7}$/
+
 export const PropertyNumber = ({
   item,
   dispatch,
 }: Props) => {
   const { formatMessage } = useIntl()
+  const { control, setValue } = useFormContext()
   const [hasCustomPropertyNumber, setCustomPropertyNumber] = useState(false)
   const [property, setProperty] = useState<PropertyNumberType>({
     propertyNumber: getValue(item, 'propertyNumber') || '',
@@ -65,33 +69,14 @@ export const PropertyNumber = ({
   const [chosenProperty, setChosenProperty] =
     useState<PropertyNumberType | null>(property ? property : null)
 
-  const getProperty = (
-    e: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const propertyNumber = e.target.value
-    if (propertyNumber.length <= 7) {
-      setProperty((prev) => ({
-        ...prev,
-        propertyNumber: propertyNumber,
-      }))
-      if (propertyNumber.length === 7) {
-        // Mock API call to fetch property data
-        setProperties((prev) => [
-          ...prev,
-          {
-            propertyNumber: propertyNumber,
-            address: 'Borgartún 4',
-            municipality: 'Reykjavík',
-            postalCode: '105',
-          },
-        ])
-        setProperty((prev) => ({
-          ...prev,
-          address: 'Borgartún 4',
-          municipality: 'Reykjavík',
-          postalCode: '105',
-        }))
-      }
+  // Simulate fetching property info for a custom property number
+  const fetchPropertyInfo = (propertyNumber: string) => {
+    // Mock API call to fetch property data
+    return {
+      propertyNumber,
+      address: 'Borgartún 4',
+      municipality: 'Reykjavík',
+      postalCode: '105',
     }
   }
 
@@ -135,35 +120,123 @@ export const PropertyNumber = ({
           <Stack space={2}>
             <Row>
               <Column span="1/2">
-                <Input
-                  type="number"
-                  name="customPropertyNumber"
-                  label={formatMessage(m.propertyNumber)}
-                  backgroundColor="blue"
-                  onChange={(e) => getProperty(e)}
-                  value={property.propertyNumber}
+                <Controller
+                  name={`${item.id}.customPropertyNumber`}
+                  control={control}
+                  defaultValue={property.propertyNumber}
+                  rules={{
+                    required: {
+                      value: true,
+                      message: formatMessage(m.required),
+                    },
+                    pattern: {
+                      value: PROPERTY_NUMBER_REGEX,
+                      message: formatMessage({
+                        id: 'invalidPropertyNumber',
+                        defaultMessage: 'Ógilt fasteignanúmer',
+                      }),
+                    },
+                  }}
+                  render={({ field, fieldState }) => (
+                    <Input
+                      type="number"
+                      name="customPropertyNumber"
+                      label={formatMessage(m.propertyNumber)}
+                      backgroundColor="blue"
+                      value={field.value}
+                      onChange={(e) => {
+                        const value = e.target.value.replace(/\D/g, '').slice(0, 7)
+                        field.onChange(value)
+                        // Fetch property info if 7 digits
+                        if (value.length === 7) {
+                          const info = fetchPropertyInfo(value)
+                          setProperty(info)
+                          setValue(`${item.id}.customAddress`, info.address)
+                          setValue(`${item.id}.customMunicipality`, info.municipality)
+                          setValue(`${item.id}.customPostalCode`, info.postalCode)
+                        } else {
+                          setProperty({
+                            propertyNumber: value,
+                            address: '',
+                            municipality: '',
+                            postalCode: '',
+                          })
+                          setValue(`${item.id}.customAddress`, '')
+                          setValue(`${item.id}.customMunicipality`, '')
+                          setValue(`${item.id}.customPostalCode`, '')
+                        }
+                        if (dispatch) {
+                          dispatch({
+                            type: 'SET_PROPERTY_NUMBER',
+                            payload: {
+                              value: {
+                                ...property,
+                                propertyNumber: value,
+                              },
+                              id: item.id,
+                            },
+                          })
+                        }
+                      }}
+                      errorMessage={fieldState.error?.message}
+                      required
+                    />
+                  )}
                 />
               </Column>
             </Row>
             <Row>
               <Column span="1/2">
-                <Input
-                  type="text"
-                  name="customAddress"
-                  label={formatMessage(m.address)}
-                  backgroundColor="blue"
-                  disabled
-                  value={property.address}
+                <Controller
+                  name={`${item.id}.customAddress`}
+                  control={control}
+                  defaultValue={property.address}
+                  render={({ field }) => (
+                    <Input
+                      type="text"
+                      name="customAddress"
+                      label={formatMessage(m.address)}
+                      backgroundColor="blue"
+                      disabled
+                      value={field.value}
+                    />
+                  )}
                 />
               </Column>
               <Column span="1/2">
-                <Input
-                  type="text"
-                  name="customMunicipality"
-                  label={formatMessage(m.city)}
-                  backgroundColor="blue"
-                  disabled
-                  value={property.municipality}
+                <Controller
+                  name={`${item.id}.customMunicipality`}
+                  control={control}
+                  defaultValue={property.municipality}
+                  render={({ field }) => (
+                    <Input
+                      type="text"
+                      name="customMunicipality"
+                      label={formatMessage(m.city)}
+                      backgroundColor="blue"
+                      disabled
+                      value={field.value}
+                    />
+                  )}
+                />
+              </Column>
+            </Row>
+            <Row>
+              <Column span="1/2">
+                <Controller
+                  name={`${item.id}.customPostalCode`}
+                  control={control}
+                  defaultValue={property.postalCode}
+                  render={({ field }) => (
+                    <Input
+                      type="text"
+                      name="customPostalCode"
+                      label={formatMessage(webMessages.postalCode)}
+                      backgroundColor="blue"
+                      disabled
+                      value={field.value}
+                    />
+                  )}
                 />
               </Column>
             </Row>

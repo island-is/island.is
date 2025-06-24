@@ -20,6 +20,9 @@ import { Box } from '@island.is/island-ui/core'
 import { useApplicationContext } from '../../../../context/ApplicationProvider'
 import { useLocale } from '@island.is/localization'
 
+import { useCallback } from 'react'
+import { useFormContext } from 'react-hook-form'
+
 interface Props {
   field: FormSystemField
   hasError: boolean
@@ -42,14 +45,29 @@ const FIELD_COMPONENT_MAP = {
   [FieldTypesEnum.MESSAGE]: MessageWithLink,
 } as const
 
-export const Field = ({ field, hasError }: Props) => {
+export const Field = ({ field }: Props) => {
   const { lang } = useLocale()
   const { dispatch } = useApplicationContext()
+  const { control } = useFormContext()
+
+const handleErrorChange = useCallback(
+  ( fieldId: string, hasError: boolean) => {
+    console.log('Field error change for fieldId:', fieldId)
+    if (dispatch) {
+      dispatch({
+        type: 'SET_FIELD_ERROR',
+        payload: { fieldId, hasError },
+      })
+    }
+  },
+  [dispatch],
+)
   const fieldItems = {
     item: field,
-    hasError,
+    control,
     dispatch,
     lang,
+    onErrorChange: handleErrorChange,
   }
 
   const FieldComponent = field.fieldType != null

@@ -3,7 +3,6 @@ import {
   FormSystemSection,
 } from '@island.is/api/schema'
 import { ApplicationState } from '@island.is/form-system/ui'
-import { validateScreen } from '../utils/validation'
 import {
   ApolloCache,
   DefaultContext,
@@ -70,14 +69,13 @@ export const incrementWithScreens = (
   const screens = currentSectionData.screens ?? []
   const maxScreenIndex = screens.length - 1
   const [submitScreen] = submitScreenMutation
-  const errors = validateScreen(state)
+  const errors = state.errors ?? []
   if (errors.length > 0) {
     return {
       ...state,
       errors,
     }
   }
-
   submitScreen({
     variables: {
       input: {
@@ -218,6 +216,24 @@ export const decrementWithoutScreens = (
   }
 }
 
+export const setError =(
+  state: ApplicationState,
+  fieldId: string,
+  hasError: boolean,
+): ApplicationState => {
+  // Ensure errorArray exists
+  const errorArray = Array.isArray(state.errors) ? state.errors : []
+  let newErrorArray = errorArray.filter(id => id !== fieldId)
+  if (hasError) {
+    newErrorArray = [...newErrorArray, fieldId]
+  }else {
+    // If hasError is false, we remove the fieldId from the errors array
+    newErrorArray = newErrorArray.filter(id => id !== fieldId)
+  }
+  return { ...state, errors: newErrorArray }
+}
+
+
 export const setFieldValue = (
   state: ApplicationState,
   fieldProperty: string,
@@ -230,7 +246,6 @@ export const setFieldValue = (
     return state
   }
   const screen = currentScreen.data
-
   const updatedFields = screen.fields?.map((field) => {
     if (field?.id === fieldId) {
       let newValue = field?.values?.[0] ?? {}
@@ -289,7 +304,7 @@ export const setFieldValue = (
     },
     errors:
       state.errors && state.errors.length > 0
-        ? validateScreen(updatedState)
+        ? state.errors ?? []
         : [],
   }
 }
