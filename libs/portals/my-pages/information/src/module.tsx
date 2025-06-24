@@ -30,33 +30,31 @@ const UserNotificationsSettings = lazy(() =>
 )
 
 const sharedRoutes = (scopes: string[], isCompany = false) => {
-  const isSettingsEnabled =
-    scopes.includes(UserProfileScope.read) &&
-    scopes.includes(DocumentsScope.main)
+  const enabled = scopes.includes(UserProfileScope.read)
 
   return [
     {
       name: isCompany ? m.settings : m.mySettings,
       path: InformationPaths.SettingsOld,
-      enabled: isSettingsEnabled,
+      enabled,
       element: <Navigate to={InformationPaths.Settings} replace />,
     },
     {
       name: isCompany ? m.settings : m.mySettings,
       path: InformationPaths.Settings,
-      enabled: isSettingsEnabled,
+      enabled,
       element: <UserProfileSettings />,
     },
     {
       name: m.userInfo,
       path: InformationPaths.SettingsNotifications,
-      enabled: isSettingsEnabled,
+      enabled,
       element: <UserNotificationsSettings />,
     },
     {
       name: 'Notifications',
       path: InformationPaths.Notifications,
-      enabled: scopes.includes(DocumentsScope.main),
+      enabled,
       element: <Notifications />,
     },
   ]
