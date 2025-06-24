@@ -8,18 +8,20 @@
 # Usage: ./lint-and-parse.sh <AFFECTED_PROJECTS> <OUTPUT_DIR> <FILENAME>
 # <AFFECTED_PROJECTS>: Comma-separated list of Nx projects to lint.
 # <OUTPUT_DIR>: Directory to save the raw and processed lint outputs.
+# <FILENAME>: Filename of the processed lints, relative to <OUTPUT_DIR>
 
 set -euo pipefail
 
 AFFECTED_PROJECTS="$1"
 OUTPUT_DIR="$2" # e.g., /tmp or a specific run-time directory
-FILENAME="${3:-$(git log --format='%h' -n1)}"
+LINT_NAME="${LINT_NAME:-$(git log --format='%h' -n1)}"
+FILENAME="${3:-lints-processed-${LINT_NAME}.txt}"
 
 # Ensure the output directory exists
 mkdir -p "$OUTPUT_DIR"
 
-LINT_RAW_FILE="${OUTPUT_DIR}/lints-$FILENAME.txt"
-LINT_PROCESSED_FILE="${OUTPUT_DIR}/lints-processed-$FILENAME.txt"
+LINT_RAW_FILE="${OUTPUT_DIR}/${FILENAME}.raw"
+LINT_PROCESSED_FILE="${OUTPUT_DIR}/${FILENAME}"
 
 echo "Running lint for projects: $AFFECTED_PROJECTS (stripping colors)"
 echo "Raw lint output will be saved to: $LINT_RAW_FILE"
