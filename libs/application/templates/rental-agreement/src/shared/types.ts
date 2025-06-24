@@ -21,7 +21,6 @@ export type ApplicantsInfo = {
 export type CostField = {
   description: string
   amount?: number
-  hasError?: boolean
 }
 
 export type Files = {

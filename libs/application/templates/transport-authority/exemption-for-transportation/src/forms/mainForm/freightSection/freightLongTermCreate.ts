@@ -10,6 +10,7 @@ import {
   getRandomId,
   checkIfExemptionTypeLongTerm,
   MAX_CNT_FREIGHT,
+  formatNumber,
   getFreightLongTermErrorMessage,
 } from '../../../utils'
 import { FreightCommonHiddenInputs } from './freightCommonHiddenInputs'
@@ -40,13 +41,13 @@ export const FreightLongTermCreateSubSection = buildSubSection({
               length: (value) => {
                 return {
                   ...freight.labels.valueAndMetersSuffix,
-                  values: { value },
+                  values: { value: formatNumber(value) },
                 }
               },
               weight: (value) => {
                 return {
                   ...freight.labels.valueAndTonsSuffix,
-                  values: { value },
+                  values: { value: formatNumber(value) },
                 }
               },
             },
@@ -68,6 +69,7 @@ export const FreightLongTermCreateSubSection = buildSubSection({
               type: 'number',
               label: freight.labels.freightLength,
               width: 'half',
+              thousandSeparator: true,
               suffix: freight.labels.metersSuffix,
               required: true,
             },
@@ -76,6 +78,7 @@ export const FreightLongTermCreateSubSection = buildSubSection({
               type: 'number',
               label: freight.labels.freightWeight,
               width: 'half',
+              thousandSeparator: true,
               suffix: freight.labels.tonsSuffix,
               required: true,
             },
