@@ -353,7 +353,6 @@ export enum FieldTypes {
   TITLE = 'TITLE',
   OVERVIEW = 'OVERVIEW',
   COPY_LINK = 'COPY_LINK',
-  DOWNLOAD_FILE_BUTTON = 'DOWNLOAD_FILE_BUTTON',
   VEHICLE_PERMNO_WITH_INFO = 'VEHICLE_PERMNO_WITH_INFO',
 }
 
@@ -397,7 +396,6 @@ export enum FieldComponents {
   TITLE = 'TitleFormField',
   OVERVIEW = 'OverviewFormField',
   COPY_LINK = 'CopyLinkFormField',
-  DOWNLOAD_FILE_BUTTON = 'DownloadFileButtonFormField',
   VEHICLE_PERMNO_WITH_INFO = 'VehiclePermnoWithInfoFormField',
 }
 
@@ -683,18 +681,6 @@ export interface PdfLinkButtonField extends BaseField {
   viewPdfFile?: boolean
   downloadButtonTitle?: StaticText
 }
-
-export interface DownloadFileButtonField extends BaseField {
-  readonly type: FieldTypes.DOWNLOAD_FILE_BUTTON
-  component: FieldComponents.DOWNLOAD_FILE_BUTTON
-  buttonTitle?: string
-  getFileContent?: () => {
-    base64Content: string
-    fileType: string
-    filename: string
-  }
-}
-
 export interface NationalIdWithNameField extends InputField {
   readonly type: FieldTypes.NATIONAL_ID_WITH_NAME
   component: FieldComponents.NATIONAL_ID_WITH_NAME
@@ -1076,5 +1062,4 @@ export type Field =
   | TitleField
   | OverviewField
   | CopyLinkField
-  | DownloadFileButtonField
   | VehiclePermnoWithInfoField
