@@ -1,4 +1,7 @@
-import { DefenderChoice } from '@island.is/judicial-system/types'
+import {
+  DefenderChoice,
+  VerdictAppealDecision,
+} from '@island.is/judicial-system/types'
 
 export class InternalDefendantResponse {
   id!: string
@@ -7,4 +10,5 @@ export class InternalDefendantResponse {
   requestedDefenderChoice?: DefenderChoice
   requestedDefenderNationalId?: string
   requestedDefenderName?: string
+  verdictAppealDecision?: VerdictAppealDecision
 }

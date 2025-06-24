@@ -103,6 +103,7 @@ export class SubpoenaResponse {
           defendant.nationalId,
         ),
     )
+    // TODO: Change to latestSubpoena.type
     const subpoenaType = defendantInfo?.subpoenaType
 
     const intro = getIntro(defendantInfo?.gender, lang)
@@ -135,10 +136,11 @@ export class SubpoenaResponse {
     )
     const arraignmentDate = subpoenaDateLog?.date ?? ''
     const subpoenaCreatedDate = subpoenaDateLog?.created ?? '' //TODO: Change to subpoena created in RLS
+    const courtName = internalCase.court?.name ?? t.notAvailable
     const arraignmentLocation = subpoenaDateLog?.location
-      ? `${internalCase.court.name}, Dómsalur ${subpoenaDateLog.location}`
-      : internalCase.court.name
-    const courtNameAndAddress = `${internalCase.court.name}, ${internalCase.court.address}`
+      ? `${courtName}, Dómsalur ${subpoenaDateLog.location}`
+      : courtName
+    const courtNameAndAddress = `${courtName}, ${internalCase.court?.address}`
 
     return {
       caseId: internalCase.id,

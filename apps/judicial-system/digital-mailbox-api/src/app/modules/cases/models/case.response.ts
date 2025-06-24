@@ -18,6 +18,9 @@ class IndictmentCaseData {
   @ApiProperty({ type: Boolean })
   hasBeenServed?: boolean
 
+  @ApiProperty({ type: Boolean })
+  hasRulingBeenServed?: boolean
+
   @ApiProperty({ type: [Groups] })
   groups!: Groups[]
 }
@@ -49,6 +52,7 @@ export class CaseResponse {
           subpoenas.length > 0
             ? isSuccessfulServiceStatus(subpoenas[0].serviceStatus)
             : false,
+        hasRulingBeenServed: false, // TODO: Implement logic to determine if the ruling has been served
         groups: [
           {
             label: t.defendant,
