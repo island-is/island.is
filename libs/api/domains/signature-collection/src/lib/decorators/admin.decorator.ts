@@ -5,7 +5,7 @@ import {
 } from '@nestjs/common'
 import { logger } from '@island.is/logging'
 
-import { getRequest, User } from '@island.is/auth-nest-tools'
+import { getRequest } from '@island.is/auth-nest-tools'
 import { SignatureCollectionAdmin } from '../models/admin.model'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 
