@@ -9,7 +9,7 @@ interface Props {
   lang: 'is' | 'en'
 }
 
-// TODO: Implementation is still a WIP, still missing an endpoint 
+// TODO: Implementation is still a WIP, still missing an endpoint
 export const Agent = ({ applicantType, lang }: Props) => {
   const { formatMessage } = useIntl()
 

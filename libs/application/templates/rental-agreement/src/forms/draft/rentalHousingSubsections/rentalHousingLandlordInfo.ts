@@ -5,13 +5,16 @@ import {
   buildAlertMessageField,
 } from '@island.is/application/core'
 import {
-  formatNationalId,
-  formatPhoneNumber,
+  applicantTableConfig,
+  applicantTableFields,
   hasAnyMatchingNationalId,
   hasDuplicateApplicants,
 } from '../../../utils/utils'
 import { Routes } from '../../../utils/enums'
-import { landlordDetails } from '../../../lib/messages'
+import {
+  landlordAndTenantDetails,
+  landlordDetails,
+} from '../../../lib/messages'
 import { applicationAnswers } from '../../../shared'
 
 export const RentalHousingLandlordInfo = buildSubSection({
@@ -29,93 +32,17 @@ export const RentalHousingLandlordInfo = buildSubSection({
           editField: true,
           marginTop: 1,
           maxRows: 10,
-          fields: {
-            nationalIdWithName: {
-              component: 'nationalIdWithName',
-              required: true,
-              searchCompanies: true,
-            },
-            phone: {
-              component: 'phone',
-              required: true,
-              label: landlordDetails.phoneInputLabel,
-              enableCountrySelector: true,
-              width: 'half',
-            },
-            email: {
-              component: 'input',
-              required: true,
-              label: landlordDetails.emailInputLabel,
-              type: 'email',
-              width: 'half',
-            },
-            address: {
-              component: 'input',
-              required: true,
-              label: landlordDetails.addressInputLabel,
-              maxLength: 100,
-            },
-          },
-          table: {
-            format: {
-              phone: (value) => value && formatPhoneNumber(value),
-              nationalId: (value) => value && formatNationalId(value),
-            },
-            header: [
-              landlordDetails.nameInputLabel,
-              landlordDetails.phoneInputLabel,
-              landlordDetails.nationalIdHeaderLabel,
-              landlordDetails.emailInputLabel,
-            ],
-            rows: ['name', 'phone', 'nationalId', 'email'],
-          },
+          fields: applicantTableFields,
+          table: applicantTableConfig,
         }),
         buildTableRepeaterField({
           id: 'landlordInfo.representativeTable',
-          title: landlordDetails.representativeTableTitle,
+          title: landlordAndTenantDetails.representativeTableTitle,
           editField: true,
           marginTop: 6,
           maxRows: 10,
-          fields: {
-            nationalIdWithName: {
-              component: 'nationalIdWithName',
-              required: true,
-              searchCompanies: true,
-            },
-            phone: {
-              component: 'phone',
-              required: true,
-              label: landlordDetails.phoneInputLabel,
-              enableCountrySelector: true,
-              width: 'half',
-            },
-            email: {
-              component: 'input',
-              required: true,
-              label: landlordDetails.emailInputLabel,
-              type: 'email',
-              width: 'half',
-            },
-            address: {
-              component: 'input',
-              required: true,
-              label: landlordDetails.addressInputLabel,
-              maxLength: 100,
-            },
-          },
-          table: {
-            format: {
-              phone: (value) => value && formatPhoneNumber(value),
-              nationalId: (value) => value && formatNationalId(value),
-            },
-            header: [
-              landlordDetails.nameInputLabel,
-              landlordDetails.phoneInputLabel,
-              landlordDetails.nationalIdHeaderLabel,
-              landlordDetails.emailInputLabel,
-            ],
-            rows: ['name', 'phone', 'nationalId', 'email'],
-          },
+          fields: applicantTableFields,
+          table: applicantTableConfig,
         }),
         buildAlertMessageField({
           id: 'landlordInfo.onlyRepresentativeError',
