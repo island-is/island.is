@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { Dispatch, SetStateAction } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -12,11 +12,10 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import type { ConnectedComponent } from '@island.is/web/graphql/schema'
 import { formatCurrency } from '@island.is/web/utils/currency'
 
-import { m } from './translation.strings'
-import { calculateSpeedMeasurementFine } from './utils'
+import { m } from '../translation.strings'
+import { calculateSpeedMeasurementFine } from '../utils'
 
 const DEFAULT_SPEED_LIMIT_OPTIONS = [
   {
@@ -54,18 +53,24 @@ const DEFAULT_SPEED_LIMIT_OPTIONS = [
 ]
 
 interface SpeedMeasurementCalculatorProps {
-  slice: ConnectedComponent
+  measuredSpeed: string
+  speedLimit: number
+  over3500kgOrWithTrailer: boolean
+  setMeasuredSpeed: Dispatch<SetStateAction<string>>
+  setSpeedLimit: Dispatch<SetStateAction<number>>
+  setOver3500kgOrWithTrailer: Dispatch<SetStateAction<boolean>>
+  speedLimitOptions: typeof DEFAULT_SPEED_LIMIT_OPTIONS
 }
 
 export const SpeedMeasurementCalculator = ({
-  slice,
+  measuredSpeed,
+  speedLimit,
+  over3500kgOrWithTrailer,
+  setMeasuredSpeed,
+  setSpeedLimit,
+  setOver3500kgOrWithTrailer,
+  speedLimitOptions,
 }: SpeedMeasurementCalculatorProps) => {
-  const speedLimitOptions: typeof DEFAULT_SPEED_LIMIT_OPTIONS =
-    slice.json?.speedLimitOptions ?? DEFAULT_SPEED_LIMIT_OPTIONS
-
-  const [measuredSpeed, setMeasuredSpeed] = useState('')
-  const [speedLimit, setSpeedLimit] = useState(speedLimitOptions[0].value)
-  const [over3500kgOrWithTrailer, setOver3500kgOrWithTrailer] = useState(false)
   const { formatMessage } = useIntl()
 
   const {
@@ -87,7 +92,9 @@ export const SpeedMeasurementCalculator = ({
       <GridRow rowGap={2}>
         <GridColumn span={['6/12', '6/12', '1/1', '6/12']}>
           <Input
-            label={formatMessage(m.measuredSpeedInputLabel)}
+            label={formatMessage(
+              m.speedMeasurementCalculator.measuredSpeedInputLabel,
+            )}
             name="measured-speed-input"
             size="xs"
             type="number"
@@ -103,7 +110,9 @@ export const SpeedMeasurementCalculator = ({
         </GridColumn>
         <GridColumn span={['3/12', '3/12', '1/2', '3/12']}>
           <Input
-            label={formatMessage(m.vikmorkInputLabel)}
+            label={formatMessage(
+              m.speedMeasurementCalculator.vikmorkInputLabel,
+            )}
             name="vikmork"
             size="xs"
             type="number"
@@ -114,7 +123,9 @@ export const SpeedMeasurementCalculator = ({
         </GridColumn>
         <GridColumn span={['3/12', '3/12', '1/2', '3/12']}>
           <Input
-            label={formatMessage(m.nidurstadaInputLabel)}
+            label={formatMessage(
+              m.speedMeasurementCalculator.nidurstadaInputLabel,
+            )}
             name="nidurstada"
             size="xs"
             type="number"
@@ -125,7 +136,9 @@ export const SpeedMeasurementCalculator = ({
         </GridColumn>
       </GridRow>
       <Select
-        label={formatMessage(m.speedLimitSelectLabel)}
+        label={formatMessage(
+          m.speedMeasurementCalculator.speedLimitSelectLabel,
+        )}
         name="speed-limit-select"
         size="xs"
         options={speedLimitOptions}
@@ -142,12 +155,14 @@ export const SpeedMeasurementCalculator = ({
           color="blue400"
           id="over-3500kg-or-with-trailer-label"
         >
-          {formatMessage(m.over3500kgOrWithTrailerLabel)}
+          {formatMessage(
+            m.speedMeasurementCalculator.over3500kgOrWithTrailerLabel,
+          )}
         </Text>
         <Box aria-labelledby="over-3500kg-or-with-trailer-label">
           <Inline space={5} alignY="center">
             <RadioButton
-              label={formatMessage(m.no)}
+              label={formatMessage(m.speedMeasurementCalculator.no)}
               name="over-3500kg-or-with-trailer-no"
               id="over-3500kg-or-with-trailer-radio-no"
               value="no"
@@ -157,7 +172,7 @@ export const SpeedMeasurementCalculator = ({
               }}
             />
             <RadioButton
-              label={formatMessage(m.yes)}
+              label={formatMessage(m.speedMeasurementCalculator.yes)}
               name="over-3500kg-or-with-trailer-yes"
               id="over-3500kg-or-with-trailer-radio-yes"
               value="yes"
@@ -174,7 +189,9 @@ export const SpeedMeasurementCalculator = ({
         {akaera && (
           <Stack space={1}>
             <Text>
-              <strong>{formatMessage(m.akaeraText)}</strong>
+              <strong>
+                {formatMessage(m.speedMeasurementCalculator.akaeraText)}
+              </strong>
             </Text>
           </Stack>
         )}
@@ -182,22 +199,35 @@ export const SpeedMeasurementCalculator = ({
         {!akaera && (
           <Stack space={1}>
             <Text>
-              <strong>{formatMessage(m.finePrefix)}</strong>
+              <strong>
+                {formatMessage(m.speedMeasurementCalculator.finePrefix)}
+              </strong>
               {formatCurrency(fine)}
             </Text>
             <Text>
-              <strong>{formatMessage(m.pointsPrefix)}</strong>
+              <strong>
+                {formatMessage(m.speedMeasurementCalculator.pointsPrefix)}
+              </strong>
               {points}
             </Text>
             <Text>
-              <strong>{formatMessage(m.twentyPercentLoadPrefix)}</strong>
-              {twentyPercentLoad ? formatMessage(m.yes) : formatMessage(m.no)}
+              <strong>
+                {formatMessage(
+                  m.speedMeasurementCalculator.twentyPercentLoadPrefix,
+                )}
+              </strong>
+              {twentyPercentLoad
+                ? formatMessage(m.speedMeasurementCalculator.yes)
+                : formatMessage(m.speedMeasurementCalculator.no)}
             </Text>
             <Text>
               <strong>
-                {formatMessage(m.monthsOfDrivingLicenseLossPrefix)}
+                {formatMessage(
+                  m.speedMeasurementCalculator.monthsOfDrivingLicenseLossPrefix,
+                )}
               </strong>
-              {monthsOfDrivingLicenseLoss} {formatMessage(m.months)}
+              {monthsOfDrivingLicenseLoss}{' '}
+              {formatMessage(m.speedMeasurementCalculator.months)}
             </Text>
           </Stack>
         )}

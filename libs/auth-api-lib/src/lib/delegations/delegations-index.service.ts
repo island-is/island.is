@@ -205,6 +205,31 @@ export class DelegationsIndexService {
     })
   }
 
+  async getDelegationRecordWithoutScope({
+    nationalId,
+  }: {
+    nationalId: string
+  }): Promise<DelegationRecordDTO[]> {
+    if (!kennitala.isValid(nationalId)) {
+      throw new BadRequestException('Invalid national id')
+    }
+
+    const delegations = await this.delegationIndexModel.findAll({
+      where: {
+        toNationalId: nationalId,
+        validTo: { [Op.or]: [{ [Op.gte]: new Date() }, { [Op.is]: null }] },
+      },
+    })
+
+    // Filter out duplicates by fromNationalId
+    const filteredDelegations = delegations.filter(
+      (d, index, self) =>
+        index === self.findIndex((t) => t.fromNationalId === d.fromNationalId),
+    )
+
+    return filteredDelegations.map((d) => d.toDTO())
+  }
+
   /* Lookup delegations in index for user for specific scope */
   async getDelegationRecords({
     scope,
