@@ -351,7 +351,7 @@ const Defendant = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={getStandardUserDashboardRoute(user)}
+          previousUrl={`${constants.INVESTIGATION_CASE_REGISTRATION_ROUTE}/${workingCase.id}`}
           onNextButtonClick={() =>
             handleNavigationTo(
               constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,

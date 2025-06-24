@@ -5,6 +5,7 @@ import { Box, Input, Select, toast } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import {
   getStandardUserDashboardRoute,
+  INVESTIGATION_CASE_DEFENDANT_ROUTE,
   INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
   InvestigationCaseTypes,
 } from '@island.is/judicial-system/consts'
@@ -182,7 +183,7 @@ const Registration: FC = () => {
           nextButtonIcon="arrowForward"
           previousUrl={getStandardUserDashboardRoute(user)}
           onNextButtonClick={() =>
-            handleNavigationTo(INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE)
+            handleNavigationTo(INVESTIGATION_CASE_DEFENDANT_ROUTE)
           }
           nextIsDisabled={!stepIsValid}
           nextIsLoading={isCreatingCase}
