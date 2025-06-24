@@ -105,9 +105,10 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
   const document = docRes.data?.documentV2
   const comments = document?.ticket?.comments ?? []
   const replyable =
-    !docRes.loading && document && document?.replyable
-      ? document?.replyable
-      : true
+    !docRes.loading && document && document.replyable
+      ? document.replyable
+      : false
+  const closedForMoreReplies = document?.closedForMoreReplies ?? false
   const isSkeleton = docRes.loading && !docRes.data
 
   const handleRefresh = () => {
@@ -185,9 +186,6 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
     // eslint-disable-next-line react-hooks/exhaustive-deps
     [isSkeleton, docRes.data],
   ) as FlatListItem[]
-  if (document) {
-    document.closedForMoreReplies = true
-  }
 
   return (
     <>
@@ -225,14 +223,14 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
           }
         />
 
-        {(document?.closedForMoreReplies || (firstReplyInfo && replyable)) && (
+        {(closedForMoreReplies || (firstReplyInfo && replyable)) && (
           <AlertsContainer
             onLayout={(event: LayoutChangeEvent) => {
               setActionsHeight(event.nativeEvent.layout.height)
             }}
           >
             <SafeAreaView style={{ rowGap: theme.spacing[2] }}>
-              {document?.closedForMoreReplies && (
+              {closedForMoreReplies && (
                 <Alert
                   type="info"
                   message={intl.formatMessage({
@@ -260,21 +258,19 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
         )}
       </ListWrapper>
 
-      {replyable && (
+      {replyable && !closedForMoreReplies && (
         <ButtonDrawer>
           <SafeAreaView>
-            {replyable && (
-              <Button
-                title={intl.formatMessage({
-                  id: 'documentDetail.buttonReply',
-                })}
-                isTransparent
-                isOutlined
-                iconPosition="start"
-                icon={require('../../assets/icons/reply.png')}
-                onPress={onReplyPress}
-              />
-            )}
+            <Button
+              title={intl.formatMessage({
+                id: 'documentDetail.buttonReply',
+              })}
+              isTransparent
+              isOutlined
+              iconPosition="start"
+              icon={require('../../assets/icons/reply.png')}
+              onPress={onReplyPress}
+            />
           </SafeAreaView>
         </ButtonDrawer>
       )}
