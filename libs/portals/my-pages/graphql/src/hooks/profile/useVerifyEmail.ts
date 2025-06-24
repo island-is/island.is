@@ -10,12 +10,10 @@ export type CreateEmailVerificationData = {
 }
 
 export const useVerifyEmail = () => {
-  const [
-    createEmailVerificationMutation,
-    { loading: createLoading, error: createError },
-  ] = useMutation<Mutation, MutationCreateEmailVerificationArgs>(
-    CREATE_EMAIL_VERIFICATION,
-  )
+  const [createEmailVerificationMutation, { data, loading, error }] =
+    useMutation<Mutation, MutationCreateEmailVerificationArgs>(
+      CREATE_EMAIL_VERIFICATION,
+    )
 
   const createEmailVerification = (data: CreateEmailVerificationData) => {
     return createEmailVerificationMutation({
@@ -29,7 +27,8 @@ export const useVerifyEmail = () => {
 
   return {
     createEmailVerification,
-    createLoading,
-    createError,
+    data,
+    loading,
+    error,
   }
 }

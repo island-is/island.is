@@ -6,7 +6,7 @@ import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 
 const collectionType = SignatureCollectionCollectionType.LocalGovernmental
 
-const ListActions = () => {
+const ListActions = ({ listId }: { listId: string }) => {
   const { formatMessage } = useLocale()
 
   return (
@@ -32,7 +32,7 @@ const ListActions = () => {
             <Text variant="h4">{formatMessage(m.downloadPdf)}</Text>
             <Text>{formatMessage(m.downloadPdfDescription)}</Text>
           </Box>
-          <PdfReport listId="1" collectionType={collectionType} />
+          <PdfReport listId={listId} collectionType={collectionType} />
         </Box>
         <Box display="flex" justifyContent="spaceBetween">
           <Box>

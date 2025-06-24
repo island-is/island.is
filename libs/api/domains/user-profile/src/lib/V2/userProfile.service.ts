@@ -4,6 +4,7 @@ import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
   PostNudgeDtoNudgeTypeEnum,
   UserProfileControllerFindUserProfileClientTypeEnum,
+  V2ActorApi,
   V2MeApi,
   V2UsersApi,
 } from '@island.is/clients/user-profile'
@@ -14,17 +15,22 @@ import { ActorProfile, ActorProfileResponse } from '../dto/actorProfile'
 import { CreateEmailVerificationInput } from '../dto/createEmalVerificationInput'
 import { CreateSmsVerificationInput } from '../dto/createSmsVerificationInput'
 import { DeleteIslykillValueInput } from '../dto/deleteIslykillValueInput'
-import { UpdateActorProfileInput } from '../dto/updateActorProfileInput'
+import { UserProfileUpdateActorProfileInput } from '../dto/userProfileUpdateActorProfile.input'
 import { UpdateUserProfileInput } from '../dto/updateUserProfileInput'
 import { IslykillService } from '../islykill.service'
 import { DeleteIslykillSettings } from '../models/deleteIslykillSettings.model'
 import { UserProfile } from '../userProfile.model'
+import { ActorProfileDetails } from '../dto/actorProfileDetails'
+import { SetActorProfileEmailInput } from '../dto/setActorProfileEmail.input'
+import { UserProfileSetActorProfileEmailInput } from '../dto/userProfileSetActorProfileEmail.input'
+import { UpdateActorProfileEmailInput } from '../dto/updateActorProfileEmail.input'
 
 @Injectable()
 export class UserProfileServiceV2 {
   constructor(
     private v2MeApi: V2MeApi,
     private v2UserProfileApi: V2UsersApi,
+    private v2ActorApi: V2ActorApi,
     private readonly islyklarService: IslykillService,
   ) {}
 
@@ -34,6 +40,10 @@ export class UserProfileServiceV2 {
 
   v2UserProfileApiWithAuth(auth: Auth) {
     return this.v2UserProfileApi.withMiddleware(new AuthMiddleware(auth))
+  }
+
+  v2ActorApiWithAuth(auth: Auth) {
+    return this.v2ActorApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   private async getBankInfo(user: User) {
@@ -92,9 +102,9 @@ export class UserProfileServiceV2 {
   }
 
   async createSmsVerification(input: CreateSmsVerificationInput, user: User) {
-    await this.v2MeUserProfileApiWithAuth(
+    await this.v2ActorApiWithAuth(
       user,
-    ).meUserProfileControllerCreateVerification({
+    ).actorUserProfileControllerCreateVerification({
       createVerificationDto: input,
     })
   }
@@ -103,28 +113,58 @@ export class UserProfileServiceV2 {
     input: CreateEmailVerificationInput,
     user: User,
   ): Promise<void> {
-    await this.v2MeUserProfileApiWithAuth(
+    await this.v2ActorApiWithAuth(
       user,
-    ).meUserProfileControllerCreateVerification({
+    ).actorUserProfileControllerCreateVerification({
       createVerificationDto: input,
     })
   }
 
-  async getActorProfiles(user: User): Promise<ActorProfileResponse> {
-    return this.v2MeUserProfileApiWithAuth(
+  async getActorProfile(user: User): Promise<ActorProfileDetails> {
+    return this.v2ActorApiWithAuth(
       user,
-    ).meUserProfileControllerGetActorProfiles()
+    ).actorUserProfileControllerGetSingleActorProfile()
+  }
+
+  async getActorProfiles(user: User): Promise<ActorProfileResponse> {
+    return this.v2ActorApiWithAuth(
+      user,
+    ).actorUserProfileControllerGetActorProfiles()
   }
 
   async updateActorProfile(
-    input: UpdateActorProfileInput,
+    input: UserProfileUpdateActorProfileInput,
     user: User,
   ): Promise<ActorProfile> {
-    return this.v2MeUserProfileApiWithAuth(
+    return this.v2ActorApiWithAuth(
       user,
-    ).meUserProfileControllerCreateOrUpdateActorProfile({
+    ).actorUserProfileControllerCreateOrUpdateActorProfile({
       xParamFromNationalId: input.fromNationalId,
       patchActorProfileDto: { emailNotifications: input.emailNotifications },
+    })
+  }
+
+  async updateActorProfileEmail(
+    input: UpdateActorProfileEmailInput,
+    user: User,
+  ) {
+    return this.v2ActorApiWithAuth(
+      user,
+    ).actorUserProfileControllerUpdateActorProfileEmail({
+      updateActorProfileEmailDto: input,
+    })
+  }
+
+  async updateActorProfileEmailWithoutActor(
+    input: UpdateActorProfileEmailInput,
+    fromNationalId: string,
+    user: User,
+  ) {
+    return this.v2MeUserProfileApiWithAuth(
+      user,
+    ).meUserProfileControllerUpdateActorProfileEmail({
+      xParamFromNationalId: fromNationalId,
+      updateActorProfileEmailDto: input,
     })
   }
 
@@ -189,5 +229,29 @@ export class UserProfileServiceV2 {
       nationalId,
       valid: true,
     }
+  }
+
+  async userProfileSetActorProfileEmailById(
+    input: UserProfileSetActorProfileEmailInput,
+    user: User,
+  ) {
+    return this.v2MeUserProfileApiWithAuth(
+      user,
+    ).meUserProfileControllerSetActorProfileEmailById({
+      xParamFromNationalId: input.fromNationalId,
+      setActorProfileEmailDto: {
+        emailsId: input.emailId,
+      },
+    })
+  }
+
+  async setActorProfileEmail(input: SetActorProfileEmailInput, user: User) {
+    return this.v2ActorApiWithAuth(
+      user,
+    ).actorUserProfileControllerSetActorProfileEmail({
+      setActorProfileEmailDto: {
+        emailsId: input.emailId,
+      },
+    })
   }
 }
