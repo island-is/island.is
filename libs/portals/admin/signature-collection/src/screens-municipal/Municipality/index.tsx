@@ -101,7 +101,7 @@ export const Municipality = () => {
                     eyebrow={municipality}
                     heading={list.candidate.name}
                     text={
-                      formatMessage(m.totalListResults) +
+                      formatMessage(m.numberOfSignatures) +
                       ': ' +
                       list.numberOfSignatures
                     }

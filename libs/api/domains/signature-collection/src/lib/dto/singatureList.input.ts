@@ -19,4 +19,10 @@ export class SignatureCollectionListInput extends SignatureCollectionBaseInput {
     description: 'If not provided, the list will be available in all areas',
   })
   areas?: SignatureCollectionAreaInput[]
+
+  @Field(() => String, {
+    nullable: true,
+    description: 'The name of the list',
+  })
+  collectionName?: string
 }

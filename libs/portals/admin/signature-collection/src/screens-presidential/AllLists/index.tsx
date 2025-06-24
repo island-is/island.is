@@ -34,7 +34,6 @@ import {
 } from '../../lib/utils'
 import { format as formatNationalId } from 'kennitala'
 import EmptyState from '../../shared-components/emptyState'
-import ReviewCandidates from './reviewCandidates'
 import CompareLists from '../../shared-components/compareLists'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import ActionCompleteCollectionProcessing from '../../shared-components/completeCollectionProcessing'
@@ -151,6 +150,7 @@ const Lists = () => {
                 allowedActions={[
                   Actions.DownloadReports,
                   Actions.CreateCollection,
+                  Actions.ReviewCandidates,
                 ]}
               />
             }
@@ -318,16 +318,10 @@ const Lists = () => {
             )}
           {lists?.length > 0 && (
             <Box>
-              {(collectionStatus === CollectionStatus.InInitialReview ||
-                collectionStatus === CollectionStatus.InReview) && (
-                <CompareLists
-                  collectionId={collection?.id}
-                  collectionType={
-                    SignatureCollectionCollectionType.Presidential
-                  }
-                />
-              )}
-
+              <CompareLists
+                collectionId={collection?.id}
+                collectionType={collectionType}
+              />
               {!hasInReview &&
                 collectionStatus === CollectionStatus.InInitialReview && (
                   <ActionCompleteCollectionProcessing
@@ -338,13 +332,6 @@ const Lists = () => {
                   />
                 )}
             </Box>
-          )}
-          <CompareLists
-            collectionId={collection?.id}
-            collectionType={collectionType}
-          />
-          {lists?.length > 0 && (
-            <ReviewCandidates candidates={collection?.candidates ?? []} />
           )}
         </GridColumn>
       </GridRow>
