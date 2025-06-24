@@ -7,6 +7,7 @@ import {
   formatCaseType,
 } from '@island.is/judicial-system/formatters'
 import { CaseType } from '@island.is/judicial-system/types'
+import { useCaseList } from '@island.is/judicial-system-web/src/utils/hooks'
 
 import { ModalContainer } from '../Modal/Modal'
 import { useSearchCasesLazyQuery } from './searchCases.generated'
@@ -20,33 +21,43 @@ interface ResultsProps {
   caseId: string
   caseType: CaseType
   descriptor: string
+  onClick: () => void
 }
 
-const SearchResultButton = ({ caseId, caseType, descriptor }: ResultsProps) => (
-  <button
-    className={styles.resultButton}
-    onClick={() => {
-      //TODO: Implement navigation to case route
-      console.log(`Navigating to case route: ${caseId} - ${caseType}`)
-    }}
-  >
-    <Box
-      border="standard"
-      padding={2}
-      borderRadius="large"
-      display="flex"
-      alignItems="center"
-      justifyContent="spaceBetween"
+const SearchResultButton: FC<ResultsProps> = ({
+  caseId,
+  caseType,
+  descriptor,
+  onClick,
+}: ResultsProps) => {
+  const { handleOpenCase } = useCaseList()
+
+  return (
+    <button
+      className={styles.resultButton}
+      onClick={() => {
+        handleOpenCase(caseId)
+        onClick()
+      }}
     >
-      <Box display="flex" alignItems="flexStart" flexDirection={'column'}>
-        <Text variant="eyebrow">{capitalize(formatCaseType(caseType))}</Text>
-        <Text variant="h3" as="p" fontWeight="light">
-          {descriptor}
-        </Text>
+      <Box
+        border="standard"
+        padding={2}
+        borderRadius="large"
+        display="flex"
+        alignItems="center"
+        justifyContent="spaceBetween"
+      >
+        <Box display="flex" alignItems="flexStart" flexDirection={'column'}>
+          <Text variant="eyebrow">{capitalize(formatCaseType(caseType))}</Text>
+          <Text variant="h3" as="p" fontWeight="light">
+            {descriptor}
+          </Text>
+        </Box>
       </Box>
-    </Box>
-  </button>
-)
+    </button>
+  )
+}
 
 const SearchModal: FC<Props> = ({ onClose }) => {
   const [searchString, setSearchString] = useState<string>('')
@@ -72,9 +83,10 @@ const SearchModal: FC<Props> = ({ onClose }) => {
             results.data.searchCases.rows.map((row) => (
               <SearchResultButton
                 key={row.caseId}
-                caseId={row.matchedValue}
+                caseId={row.caseId}
                 caseType={row.caseType}
                 descriptor={row.matchedValue}
+                onClick={onClose}
               />
             ))}
         </Box>,
@@ -85,7 +97,7 @@ const SearchModal: FC<Props> = ({ onClose }) => {
       setIsLoading(false)
     }
   }
-  console.log('Result', isLoading, searchResults)
+
   return (
     <ModalContainer title="Leit" onClose={onClose}>
       <Box margin={3} className={styles.searchModal}>
