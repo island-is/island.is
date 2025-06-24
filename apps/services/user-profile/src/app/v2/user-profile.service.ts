@@ -689,11 +689,15 @@ export class UserProfileService {
   async getActorProfiles(
     toNationalId: string,
   ): Promise<PaginatedActorProfileDto> {
-    const incomingDelegations = await this.getIncomingDelegations(toNationalId)
+    const incomingDelegations =
+      await this.delegationsApi.delegationsControllerGetAllDelegations({
+        xQueryNationalId: toNationalId,
+      })
+
     const emailPreferences = await this.delegationPreference.findAll({
       where: {
         toNationalId,
-        fromNationalId: incomingDelegations.data.map((d) => d.fromNationalId),
+        fromNationalId: incomingDelegations.map((d) => d.fromNationalId),
       },
       include: [
         {
@@ -705,7 +709,7 @@ export class UserProfileService {
     })
 
     const actorProfiles = await Promise.all(
-      incomingDelegations.data.map(async (delegation) => {
+      incomingDelegations.map(async (delegation) => {
         const emailPreference = emailPreferences.find(
           (preference) =>
             preference.fromNationalId === delegation.fromNationalId,
@@ -739,6 +743,67 @@ export class UserProfileService {
   }
 
   /* Fetch extended actor profile for a specific delegation */
+  async getActorProfileWithDocumentsScope({
+    toNationalId,
+    fromNationalId,
+  }: {
+    fromNationalId: string
+    toNationalId: string
+  }): Promise<ActorProfileDto> {
+    // Check if delegation exists using the getIncomingDelegations method
+    const incomingDelegation = await this.getIncomingDelegations(toNationalId)
+
+    const delegation = incomingDelegation.data.find(
+      (d) => d.fromNationalId === fromNationalId,
+    )
+
+    // If delegation does not exist, throw an error
+    if (!delegation) {
+      throw new BadRequestException('delegation does not exist')
+    }
+
+    const userProfile = await this.findById(
+      toNationalId,
+      false,
+      ClientType.FIRST_PARTY,
+    )
+
+    const emailPreferences = await this.delegationPreference.findOne({
+      where: {
+        toNationalId,
+        fromNationalId,
+      },
+      include: [
+        {
+          model: Emails,
+          as: 'emails',
+          attributes: ['email', 'emailStatus'],
+        },
+      ],
+    })
+
+    const actorProfile = {
+      fromNationalId,
+      ...(emailPreferences
+        ? {
+            emailNotifications: emailPreferences.emailNotifications,
+            email: emailPreferences.emails?.email,
+            emailVerified:
+              emailPreferences.emails?.emailStatus === DataStatus.VERIFIED,
+          }
+        : {
+            emailNotifications: true,
+            email: userProfile.email,
+            emailVerified: userProfile.emailVerified,
+          }),
+      documentNotifications: userProfile.documentNotifications,
+      locale: userProfile.locale,
+    }
+
+    return actorProfile
+  }
+
+  /* Fetch extended actor profile for a specific delegation */
   async getActorProfile({
     toNationalId,
     fromNationalId,
@@ -746,15 +811,7 @@ export class UserProfileService {
     fromNationalId: string
     toNationalId: string
   }): Promise<ActorProfileDto> {
-    const incomingDelegation = await this.getIncomingDelegations(toNationalId)
-
-    const delegation = incomingDelegation.data.find(
-      (d) => d.fromNationalId === fromNationalId,
-    )
-
-    if (!delegation) {
-      throw new BadRequestException('delegation does not exist')
-    }
+    await this.checkDelegationExists(fromNationalId, toNationalId)
 
     const userProfile = await this.findById(
       toNationalId,
@@ -819,15 +876,7 @@ export class UserProfileService {
     emailsId?: string
   }): Promise<MeActorProfileDto> {
     // Verify delegation exists
-    const incomingDelegations = await this.getIncomingDelegations(toNationalId)
-    const delegationExists = incomingDelegations.data.some(
-      (d) => d.fromNationalId === fromNationalId,
-    )
-
-    if (!delegationExists) {
-      throw new NoContentException()
-    }
-
+    await this.checkDelegationExists(fromNationalId, toNationalId)
     // Initialize email-related variables
     let email = null
     let emailStatus = DataStatus.NOT_DEFINED
@@ -893,15 +942,7 @@ export class UserProfileService {
     const date = new Date()
 
     // Verify the delegation exists
-    const incomingDelegations = await this.getIncomingDelegations(toNationalId)
-
-    const delegation = incomingDelegations.data.find(
-      (d) => d.fromNationalId === fromNationalId,
-    )
-
-    if (!delegation) {
-      throw new BadRequestException('Delegation does not exist')
-    }
+    await this.checkDelegationExists(fromNationalId, toNationalId)
 
     // Get the actor profile
     const [actorProfile] = await this.actorProfileModel.findOrCreate({
@@ -943,16 +984,7 @@ export class UserProfileService {
     toNationalId: string
     fromNationalId: string
   }): Promise<ActorProfileDetailsDto> {
-    const incomingDelegations = await this.getIncomingDelegations(toNationalId)
-
-    // Check if this delegation exists
-    const delegation = incomingDelegations.data.find(
-      (d) => d.fromNationalId === fromNationalId,
-    )
-
-    if (!delegation) {
-      throw new BadRequestException('Delegation does not exist')
-    }
+    await this.checkDelegationExists(fromNationalId, toNationalId)
 
     // Get actor profile (delegation preferences)
     const actorProfile = await this.actorProfileModel.findOne({
@@ -1032,14 +1064,7 @@ export class UserProfileService {
     emailNotifications?: boolean
   }): Promise<ActorProfileEmailDto> {
     // Verify the delegation exists first
-    const incomingDelegations = await this.getIncomingDelegations(toNationalId)
-    const delegation = incomingDelegations.data.find(
-      (d) => d.fromNationalId === fromNationalId,
-    )
-
-    if (!delegation) {
-      throw new BadRequestException('Delegation does not exist')
-    }
+    await this.checkDelegationExists(fromNationalId, toNationalId)
 
     let emailRecord: Emails | null = null
     let emailStatus = DataStatus.NOT_DEFINED
@@ -1188,14 +1213,7 @@ export class UserProfileService {
     emailsId: string
   }): Promise<ActorProfileDetailsDto> {
     // Verify the delegation exists
-    const incomingDelegations = await this.getIncomingDelegations(toNationalId)
-    const delegation = incomingDelegations.data.find(
-      (d) => d.fromNationalId === fromNationalId,
-    )
-
-    if (!delegation) {
-      throw new BadRequestException('Delegation does not exist')
-    }
+    await this.checkDelegationExists(fromNationalId, toNationalId)
 
     // Verify the email exists
     const emailRecord = await this.emailModel.findByPk(emailsId)
@@ -1251,6 +1269,26 @@ export class UserProfileService {
       direction:
         DelegationsControllerGetDelegationRecordsDirectionEnum.incoming,
     })
+  }
+
+  private async checkDelegationExists(
+    fromNationalId: string,
+    toNationalId: string,
+  ) {
+    const delegationRecords =
+      await this.delegationsApi.delegationsControllerGetAllDelegations({
+        xQueryNationalId: toNationalId,
+      })
+
+    // find the delegation record with the fromNationalId
+    const delegationRecord = delegationRecords.find(
+      (d) => d.fromNationalId === fromNationalId,
+    )
+
+    // Throw error if delegation does not exist
+    if (!delegationRecord) {
+      throw new BadRequestException('Delegation does not exist')
+    }
   }
 
   /**

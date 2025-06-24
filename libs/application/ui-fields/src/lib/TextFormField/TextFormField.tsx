@@ -35,6 +35,7 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
     backgroundColor,
     format,
     variant = 'text',
+    thousandSeparator,
     suffix,
     rows,
     required,
@@ -119,6 +120,7 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
             variant !== 'textarea' && variant !== 'currency' ? variant : 'text'
           }
           format={format}
+          thousandSeparator={thousandSeparator}
           suffix={
             suffix &&
             formatTextWithLocale(

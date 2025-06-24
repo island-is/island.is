@@ -192,6 +192,7 @@ export const mapHaulUnits = (application: Application): HaulUnitModel[] => {
           },
           ...(axleSpacingAnswers?.exemptionPeriodType ===
             ExemptionType.SHORT_TERM &&
+          item.trailer?.permno &&
           (axleSpacingAnswers?.dolly?.type === DollyType.SINGLE ||
             axleSpacingAnswers?.dolly?.type === DollyType.DOUBLE)
             ? [
