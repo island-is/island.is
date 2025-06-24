@@ -93,7 +93,7 @@ interface Deprivation {
   retakeLicense?: boolean | null
 }
 
-interface LicenseComments {
+export interface LicenseComments {
   id?: number
   nr?: string | null
   comment?: string | null
