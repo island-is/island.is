@@ -7,7 +7,6 @@ import { theme } from '@island.is/island-ui/theme'
 import {
   getStandardUserDashboardRoute,
   INVESTIGATION_CASE_DEFENDANT_ROUTE,
-  INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
   InvestigationCaseTypes,
 } from '@island.is/judicial-system/consts'
 import {
@@ -28,10 +27,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { CaseType } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
-import {
-  isDefendantStepValidIC,
-  isRegistrationStepValid,
-} from '@island.is/judicial-system-web/src/utils/validate'
+import { isRegistrationStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { PoliceCaseNumbers, usePoliceCaseNumbers } from '../../components'
 
