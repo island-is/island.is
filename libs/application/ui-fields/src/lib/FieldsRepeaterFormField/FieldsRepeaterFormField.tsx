@@ -12,6 +12,7 @@ import {
   AlertMessage,
   Box,
   Button,
+  GridColumn,
   GridRow,
   Stack,
   Text,
@@ -128,18 +129,21 @@ export const FieldsRepeaterFormField = ({
     remove(numberOfItems - 1)
   }
 
-  const repeaterFields = (index: number) =>
-    items.map((item) => (
-      <Item
-        key={`${id}[${index}].${item.id}`}
-        application={updatedApplication}
-        error={error}
-        item={item}
-        dataId={id}
-        index={index}
-        values={values}
-      />
-    ))
+  const repeaterFields = (index: number) => (
+    <GridRow rowGap={[2, 2, 2, 3]}>
+      {items.map((item) => (
+        <Item
+          key={`${id}[${index}].${item.id}`}
+          application={updatedApplication}
+          error={error}
+          item={item}
+          dataId={id}
+          index={index}
+          values={values}
+        />
+      ))}
+    </GridRow>
+  )
 
   const disableAddButton = !!maxRowsValue && numberOfItems >= maxRowsValue
 
@@ -187,7 +191,7 @@ export const FieldsRepeaterFormField = ({
                     </Text>
                   </Box>
                 )}
-                {repeaterFields(i)}
+                <GridColumn>{repeaterFields(i)}</GridColumn>
               </Fragment>
             ))}
           </GridRow>
