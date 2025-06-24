@@ -1,5 +1,5 @@
 import { expect as playwrightExpect } from '@playwright/test'
-import { isApplication } from '../modules/application'
+import { isApplication } from '../lib/modules/application'
 
 const customExpect = playwrightExpect.extend({
   async toBeApplication(page, expectedPath?: string) {
@@ -15,8 +15,8 @@ const customExpect = playwrightExpect.extend({
       } else {
         const applicationUrl = new URL(page.url())
         const pathSegments = applicationUrl.pathname.split('/').filter(Boolean)
-        const uuidSegment = pathSegments.pop()
-        const umsoknirSegment = pathSegments.pop()
+        pathSegments.pop() // uuid segment
+        pathSegments.pop() // umsoknir segment
 
         let message = 'expected page to be an application page'
         if (!isApplication(page)) {

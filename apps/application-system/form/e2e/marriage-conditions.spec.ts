@@ -1,5 +1,5 @@
 import { test as base, Page } from '@playwright/test'
-import { expect } from '@island.is/testing/e2e/applications'
+import { expect } from '@island.is/testing/e2e'
 import { session, sleep, proceed } from '@island.is/testing/e2e'
 
 const homeUrl = '/umsoknir/hjonavigsla'

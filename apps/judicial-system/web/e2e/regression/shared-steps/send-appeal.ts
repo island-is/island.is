@@ -1,5 +1,5 @@
 import { Page } from '@playwright/test'
-import { expect } from '@island.is/testing/e2e/applications'
+import { expect } from '@island.is/testing/e2e'
 
 import { verifyRequestCompletion } from '@island.is/testing/e2e'
 

@@ -1,5 +1,5 @@
 import { test } from '@playwright/test'
-import { expect } from '@island.is/testing/e2e/applications'
+import { expect } from '@island.is/testing/e2e'
 
 test('has title', async ({ page }) => {
   await page.goto('/')

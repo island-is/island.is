@@ -1,5 +1,6 @@
 import { Page } from '@playwright/test'
 import camelCase from 'lodash/camelCase'
+import mergeWith from 'lodash/mergeWith'
 import { debug } from '../helpers/utils'
 
 type Matchable = string | RegExp
@@ -80,6 +81,11 @@ const deepMock = <T = Dictionary>(
 
   return mockedObject
 }
+
+/**
+ * Helper function to always overwrite with source value in merge operations
+ */
+const overwriteMerge = (_: unknown, source: unknown): unknown => source
 
 /**
  * Sets up a GraphQL request mock, optionally modifying the response structure.
@@ -169,15 +175,13 @@ export const mockGraphQL = async <T>(
 /**
  * Mocks GraphQL response for translations, providing a fixed mock.
  *
- * @param {Page} page - The Playwright page to apply the mock to.
- * @returns {Promise<void>}
+ * @param page - The Playwright page to apply the mock to.
  */
-
 export const disableObjectKey = async <T>(
   page: Page,
   key: Matchable,
   mockData?: T,
-) => {
+): Promise<void> => {
   return await mockGraphQL(page, '**', mockData ?? `MOCKED-${key}`, {
     deepMockKey: key,
     patchResponse: true,

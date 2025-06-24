@@ -1,4 +1,4 @@
-import { Locator, Page } from '@playwright/test'
+import { Page } from '@playwright/test'
 import { isUuid } from 'uuidv4'
 
 /**

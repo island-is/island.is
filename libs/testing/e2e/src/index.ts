@@ -1,5 +1,7 @@
 export * from './lib/config/playwright-config'
 
+export * from './applications'
+
 export * from './lib/helpers/api-tools'
 export * from './lib/helpers/locator-helpers'
 export * from './lib/helpers/utils'
