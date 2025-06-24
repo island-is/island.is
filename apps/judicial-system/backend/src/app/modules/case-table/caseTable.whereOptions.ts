@@ -2,11 +2,13 @@ import { WhereOptions } from 'sequelize'
 
 import {
   CaseTableType,
+  isCourtOfAppealsUser,
   isDistrictCourtUser,
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
 import {
+  courtOfAppealsRequestCasesAccessWhereOptions,
   courtOfAppealsRequestCasesCompletedWhereOptions,
   courtOfAppealsRequestCasesInProgressWhereOptions,
 } from './whereOptions/courtOfAppeals'
@@ -60,6 +62,42 @@ const withUserFilter = (
   return isDistrictCourtUser(user)
     ? { ...whereOptions, court_id: user.institution?.id }
     : whereOptions
+}
+
+export const userAccessWhereOptions = (user: TUser): WhereOptions => {
+  if (isCourtOfAppealsUser(user)) {
+    return courtOfAppealsRequestCasesAccessWhereOptions
+  }
+
+  // if (isDistrictCourtUser(user)) {
+  //   return districtCourtTableGroups
+  // }
+
+  // if (isPrisonStaffUser(user)) {
+  //   return prisonStaffTableGroups
+  // }
+
+  // if (isPrisonAdminUser(user)) {
+  //   return prisonAdminTableGroups
+  // }
+
+  // if (isPublicProsecutionOfficeUser(user)) {
+  //   return publicProsecutionOfficeTableGroups
+  // }
+
+  // if (isPublicProsecutionUser(user)) {
+  //   return publicProsecutionTableGroups
+  // }
+
+  // if (isProsecutorRepresentativeUser(user)) {
+  //   return prosecutorRepresentativeTableGroups
+  // }
+
+  // if (isProsecutorUser(user)) {
+  //   return prosecutorTableGroups
+  // }
+
+  return { id: null }
 }
 
 export const caseTableWhereOptions: Record<

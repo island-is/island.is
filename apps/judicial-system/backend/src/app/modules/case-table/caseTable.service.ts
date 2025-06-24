@@ -28,7 +28,10 @@ import { User } from '../user'
 import { CaseTableResponse } from './dto/caseTable.response'
 import { SearchCasesResponse } from './dto/searchCases.response'
 import { caseTableCellGenerators } from './caseTable.cellGenerators'
-import { caseTableWhereOptions } from './caseTable.whereOptions'
+import {
+  caseTableWhereOptions,
+  userAccessWhereOptions,
+} from './caseTable.whereOptions'
 
 type SearchResult = {
   count: number
@@ -297,15 +300,20 @@ export class CaseTableService {
         ],
       ],
       where: {
-        [Op.or]: [
-          literal(`
+        [Op.and]: [
+          userAccessWhereOptions(user),
+          {
+            [Op.or]: [
+              literal(`
             EXISTS (
               SELECT 1 FROM unnest("Case"."police_case_numbers") AS n
               WHERE n ILIKE '${`%${query}%`}'
             )
           `),
-          { court_case_number: { [Op.iLike]: `%${query}%` } },
-          { appeal_case_number: { [Op.iLike]: `%${query}%` } },
+              { court_case_number: { [Op.iLike]: `%${query}%` } },
+              { appeal_case_number: { [Op.iLike]: `%${query}%` } },
+            ],
+          },
         ],
       },
       order: [['id', 'ASC']],

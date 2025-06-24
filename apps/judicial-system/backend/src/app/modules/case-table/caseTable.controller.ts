@@ -11,7 +11,17 @@ import {
 } from '@island.is/judicial-system/auth'
 import { CaseTableType, type User } from '@island.is/judicial-system/types'
 
-import { prosecutorRepresentativeRule, prosecutorRule } from '../../guards'
+import {
+  courtOfAppealsAssistantRule,
+  courtOfAppealsJudgeRule,
+  courtOfAppealsRegistrarRule,
+  districtCourtAssistantRule,
+  districtCourtJudgeRule,
+  districtCourtRegistrarRule,
+  prosecutorRepresentativeRule,
+  prosecutorRule,
+  publicProsecutorStaffRule,
+} from '../../guards'
 import { CaseTableResponse } from './dto/caseTable.response'
 import { SearchCasesResponse } from './dto/searchCases.response'
 import { CaseTableTypeGuard } from './guards/caseTableType.guard'
@@ -50,7 +60,17 @@ export class CaseTableController {
   }
 
   @UseGuards(RolesGuard)
-  @RolesRules(prosecutorRule, prosecutorRepresentativeRule)
+  @RolesRules(
+    prosecutorRule,
+    prosecutorRepresentativeRule,
+    publicProsecutorStaffRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+    courtOfAppealsJudgeRule,
+    courtOfAppealsRegistrarRule,
+    courtOfAppealsAssistantRule,
+  )
   @Get('search-cases')
   @ApiOkResponse({
     type: SearchCasesResponse,
