@@ -6,7 +6,6 @@ import { EMAIL_REGEX } from '@island.is/application/core'
 import { RepeaterItem, StateLifeCycle } from '@island.is/application/types'
 import {
   ApplicantsInfo,
-  CostField,
   PropertyUnit,
   RentalHousingCategoryClass,
 } from '../shared'
@@ -62,9 +61,6 @@ export const isValidMeterStatus = (value: string) => {
   return meterStatusRegex.test(value)
 }
 
-export const hasInvalidCostItems = (items: CostField[]) =>
-  items.some((i) => i.hasError)
-
 export const formatPhoneNumber = (phoneNumber: string): string => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
   return phone?.formatNational() || phoneNumber
@@ -104,16 +100,6 @@ export const hasDuplicateApplicants = (
 
   return false
 }
-
-export const isCostItemValid = (item: CostField) =>
-  ((item.description ?? '').trim() !== '' && item.amount !== undefined) ||
-  ((item.description ?? '').trim() === '' && item.amount === undefined)
-
-export const isEmptyCostItem = (item: CostField) =>
-  (item.description ?? '').trim() === '' && item.amount === undefined
-
-export const filterEmptyCostItems = (items: CostField[]) =>
-  items.filter((item) => !isEmptyCostItem(item)) ?? []
 
 export const formatCurrency = (answer: string) =>
   answer.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
