@@ -9,6 +9,8 @@ import {
   FieldsRepeaterField,
 } from '@island.is/application/types'
 import {
+  Accordion,
+  AccordionItem,
   AlertMessage,
   Box,
   Button,
@@ -49,7 +51,7 @@ export const FieldsRepeaterFormField = ({
     removeItemButtonText = coreMessages.buttonRemove,
     addItemButtonText = coreMessages.buttonAdd,
     hideAddButtonIfDisabled,
-    // displayTitleAsAccordion,
+    displayTitleAsAccordion,
     minRows = 1,
     maxRows,
   } = data
@@ -147,6 +149,8 @@ export const FieldsRepeaterFormField = ({
 
   const disableAddButton = !!maxRowsValue && numberOfItems >= maxRowsValue
 
+  const showFormTitle = formTitleNumbering !== 'none' || formTitle
+
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
       {showFieldName && (
@@ -171,10 +175,38 @@ export const FieldsRepeaterFormField = ({
       )}
       <Box marginTop={description ? 3 : 0}>
         <Stack space={4}>
-          <GridRow rowGap={[2, 2, 2, 3]}>
-            {Array.from({ length: numberOfItems }).map((_i, i) => (
-              <Fragment key={i}>
-                {(formTitleNumbering !== 'none' || formTitle) && (
+          {showFormTitle && displayTitleAsAccordion && (
+            <Accordion>
+              {Array.from({ length: numberOfItems }).map((_i, i) => (
+                <AccordionItem
+                  id={`fields-repeater-form-title-accordion-${i}`}
+                  key={i}
+                  label={
+                    <Text variant={formTitleVariant}>
+                      {formTitleNumbering === 'prefix' ? `${i + 1}. ` : ''}
+                      {formTitle &&
+                        formatTextWithLocale(
+                          typeof formTitle === 'function'
+                            ? formTitle(i)
+                            : formTitle,
+                          application,
+                          locale as Locale,
+                          formatMessage,
+                        )}
+                      {formTitleNumbering === 'suffix' ? ` ${i + 1}` : ''}
+                    </Text>
+                  }
+                >
+                  {repeaterFields(i)}
+                </AccordionItem>
+              ))}
+            </Accordion>
+          )}
+
+          {showFormTitle && !displayTitleAsAccordion && (
+            <GridRow rowGap={[2, 2, 2, 3]}>
+              {Array.from({ length: numberOfItems }).map((_i, i) => (
+                <Fragment key={i}>
                   <Box marginTop={i === 0 ? 0 : 4} marginLeft={2} width="full">
                     <Text variant={formTitleVariant}>
                       {formTitleNumbering === 'prefix' ? `${i + 1}. ` : ''}
@@ -190,11 +222,17 @@ export const FieldsRepeaterFormField = ({
                       {formTitleNumbering === 'suffix' ? ` ${i + 1}` : ''}
                     </Text>
                   </Box>
-                )}
-                <GridColumn>{repeaterFields(i)}</GridColumn>
-              </Fragment>
+                  <GridColumn>{repeaterFields(i)}</GridColumn>
+                </Fragment>
+              ))}
+            </GridRow>
+          )}
+
+          {!showFormTitle &&
+            Array.from({ length: numberOfItems }).map((_i, i) => (
+              <Fragment key={i}>{repeaterFields(i)}</Fragment>
             ))}
-          </GridRow>
+
           <Box display="flex" justifyContent="flexEnd">
             {numberOfItems > minRowsValue && (
               <Box marginRight={2}>
