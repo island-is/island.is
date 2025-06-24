@@ -681,6 +681,7 @@ export interface PdfLinkButtonField extends BaseField {
   viewPdfFile?: boolean
   downloadButtonTitle?: StaticText
 }
+
 export interface NationalIdWithNameField extends InputField {
   readonly type: FieldTypes.NATIONAL_ID_WITH_NAME
   component: FieldComponents.NATIONAL_ID_WITH_NAME
