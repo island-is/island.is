@@ -99,4 +99,7 @@ export class GetPaymentFlowDTO {
     type: Date,
   })
   updatedAt!: Date
+
+  @ApiPropertyOptional()
+  cancelUrl?: string
 }
