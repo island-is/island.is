@@ -2,7 +2,6 @@ import { Injectable } from '@nestjs/common'
 
 import type { Auth, User } from '@island.is/auth-nest-tools'
 import { AuthMiddleware } from '@island.is/auth-nest-tools'
-import { FetchError } from '@island.is/clients/middlewares'
 
 import { Configuration, DayRateApi } from '../../gen/fetch'
 
