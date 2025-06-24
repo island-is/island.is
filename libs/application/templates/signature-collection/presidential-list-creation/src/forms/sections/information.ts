@@ -71,10 +71,8 @@ export const information = buildSection({
           width: 'half',
           readOnly: true,
           defaultValue: ({ externalData }: Application) => {
-            return format(
-              new Date(externalData.getLatestCollection?.data.startTime),
-              'dd.MM.yy',
-            )
+            const startTime = externalData.currentCollection?.data.startTime
+            return startTime ? format(new Date(startTime), 'dd.MM.yy') : ''
           },
         }),
         buildTextField({
@@ -83,10 +81,8 @@ export const information = buildSection({
           width: 'half',
           readOnly: true,
           defaultValue: ({ externalData }: Application) => {
-            return format(
-              new Date(externalData.getLatestCollection?.data.endTime),
-              'dd.MM.yy',
-            )
+            const endTime = externalData.currentCollection?.data.endTime
+            return endTime ? format(new Date(endTime), 'dd.MM.yy') : ''
           },
         }),
       ],
