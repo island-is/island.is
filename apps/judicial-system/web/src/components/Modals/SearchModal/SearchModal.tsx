@@ -1,16 +1,15 @@
 import { FC, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 
+import { Box, Input, Tag, Text } from '@island.is/island-ui/core'
 import {
-  Box,
-  Input,
-  SkeletonLoader,
-  Tag,
-  Text,
-} from '@island.is/island-ui/core'
+  capitalize,
+  formatCaseType,
+} from '@island.is/judicial-system/formatters'
 import { CaseType } from '@island.is/judicial-system/types'
 
 import { ModalContainer } from '../Modal/Modal'
+import { useSearchCasesLazyQuery } from './searchCases.generated'
 import * as styles from './SearchModal.css'
 
 interface Props {
@@ -18,16 +17,17 @@ interface Props {
 }
 
 interface ResultsProps {
-  caseNumber: string
+  caseId: string
   caseType: CaseType
+  descriptor: string
 }
 
-const SearchResultButton = ({ caseNumber, caseType }: ResultsProps) => (
+const SearchResultButton = ({ caseId, caseType, descriptor }: ResultsProps) => (
   <button
     className={styles.resultButton}
     onClick={() => {
       //TODO: Implement navigation to case route
-      console.log(`Navigating to case route: ${caseNumber} - ${caseType}`)
+      console.log(`Navigating to case route: ${caseId} - ${caseType}`)
     }}
   >
     <Box
@@ -39,25 +39,53 @@ const SearchResultButton = ({ caseNumber, caseType }: ResultsProps) => (
       justifyContent="spaceBetween"
     >
       <Box display="flex" alignItems="flexStart" flexDirection={'column'}>
-        <Text variant="eyebrow">Gæsluvarðhald</Text>
+        <Text variant="eyebrow">{capitalize(formatCaseType(caseType))}</Text>
         <Text variant="h3" as="p" fontWeight="light">
-          S-1234/2025
+          {descriptor}
         </Text>
       </Box>
-      <Tag outlined disabled>
-        Virkt
-      </Tag>
     </Box>
   </button>
 )
 
 const SearchModal: FC<Props> = ({ onClose }) => {
-  const [searchString, setSearch] = useState<string>('')
+  const [searchString, setSearchString] = useState<string>('')
+  const [isLoading, setIsLoading] = useState<boolean>(false)
+  const [searchResults, setSearchResults] = useState<JSX.Element | null>(null)
 
-  const [isSearching, setIsSearching] = useState<boolean>(false)
+  const [searchCases] = useSearchCasesLazyQuery({
+    fetchPolicy: 'no-cache',
+    errorPolicy: 'all',
+  })
 
-  const isLoading = false
+  const handleSearch = async () => {
+    setIsLoading(true)
 
+    try {
+      const results = await searchCases({
+        variables: { input: { query: searchString } },
+      })
+
+      setSearchResults(
+        <Box>
+          {results.data?.searchCases.rows &&
+            results.data.searchCases.rows.map((row) => (
+              <SearchResultButton
+                key={row.caseId}
+                caseId={row.matchedValue}
+                caseType={row.caseType}
+                descriptor={row.matchedValue}
+              />
+            ))}
+        </Box>,
+      )
+    } catch (error) {
+      console.error('Error searching cases:', error)
+    } finally {
+      setIsLoading(false)
+    }
+  }
+  console.log('Result', isLoading, searchResults)
   return (
     <ModalContainer title="Leit" onClose={onClose}>
       <Box margin={3} className={styles.searchModal}>
@@ -81,23 +109,21 @@ const SearchModal: FC<Props> = ({ onClose }) => {
             label="Málsnúmer"
             placeholder="S-1234/2025"
             value={searchString}
-            onChange={(event) => setSearch(event.target.value)}
+            onChange={(event) => setSearchString(event.target.value)}
             icon={{
               name: 'search',
               type: 'outline',
             }}
             onKeyDown={(event) => {
               if (event.key === 'Enter') {
-                setIsSearching(true)
+                handleSearch()
               }
             }}
-            onBlur={() => {
-              setIsSearching(false)
-            }}
+            disabled={isLoading}
           />
         </Box>
         <AnimatePresence>
-          {isSearching && (
+          {searchResults && (
             <motion.div
               initial={{ opacity: 0, maxHeight: 0 }}
               animate={{ opacity: 1, maxHeight: 500 }}
@@ -111,24 +137,7 @@ const SearchModal: FC<Props> = ({ onClose }) => {
                 <Text variant="eyebrow" color="dark300">
                   Leitarniðurstöður
                 </Text>
-                {isLoading ? (
-                  <SkeletonLoader repeat={3} height={90} space={2} />
-                ) : (
-                  <>
-                    <SearchResultButton
-                      caseNumber="123"
-                      caseType={CaseType.CUSTODY}
-                    />
-                    <SearchResultButton
-                      caseNumber="123"
-                      caseType={CaseType.BODY_SEARCH}
-                    />
-                    <SearchResultButton
-                      caseNumber="123"
-                      caseType={CaseType.INTERNET_USAGE}
-                    />
-                  </>
-                )}
+                {searchResults}
               </div>
             </motion.div>
           )}
