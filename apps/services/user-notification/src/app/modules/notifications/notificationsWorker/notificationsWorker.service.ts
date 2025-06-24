@@ -345,10 +345,12 @@ export class NotificationsWorkerService {
 
         if (message.onBehalfOf) {
           profile =
-            await this.userProfileApi.userProfileControllerGetActorProfile({
-              xParamToNationalId: message.recipient,
-              xParamFromNationalId: message.onBehalfOf.nationalId,
-            })
+            await this.userProfileApi.userProfileControllerGetActorProfileByDelegation(
+              {
+                xParamToNationalId: message.recipient,
+                xParamFromNationalId: message.onBehalfOf.nationalId,
+              },
+            )
         } else {
           profile =
             await this.userProfileApi.userProfileControllerFindUserProfile({
