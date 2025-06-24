@@ -43,6 +43,10 @@ describe('PaymentFlowController', () => {
     jest
       .spyOn(chargeFjsService, 'validateCharge')
       .mockReturnValue(Promise.resolve(true))
+
+    jest
+      .spyOn(PaymentFlowService.prototype as any, 'getPayerName')
+      .mockReturnValue(Promise.resolve('Tester Testsson'))
   })
 
   afterAll(() => {
