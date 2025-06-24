@@ -1,4 +1,5 @@
 import { FC, FocusEvent, useContext, useEffect, useState } from 'react'
+import { useIntl } from 'react-intl'
 import router from 'next/router'
 
 import { Box, Input, Select, toast } from '@island.is/island-ui/core'
@@ -13,6 +14,7 @@ import {
   capitalize,
   formatCaseType,
 } from '@island.is/judicial-system/formatters'
+import { errors } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   FormContentContainer,
@@ -32,8 +34,6 @@ import {
 } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { PoliceCaseNumbers, usePoliceCaseNumbers } from '../../components'
-import { errors } from '@island.is/judicial-system-web/messages'
-import { useIntl } from 'react-intl'
 
 const Registration: FC = () => {
   // This state is needed because type is initially set to OTHER on the
