@@ -10,7 +10,7 @@ export const endOfMonthCheck = buildSection({
           buildAlertMessageField({
             id: 'endOfMonthCheckAlertMessage',
             alertType: 'warning',
-            message: 'Það er of lítið eftir af mánuðinum til að geta sótt um. Vinsamlegast reynið aftur 1. í næsta mánuði.',
+            message: 'Það er of lítið eftir af mánuðinum til að hægt sé að sækja um. Vinsamlegast reynið aftur eftir mánaðamót.',
           }),
         ],
       }),

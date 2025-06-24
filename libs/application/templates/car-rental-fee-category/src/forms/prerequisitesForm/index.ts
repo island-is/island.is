@@ -24,12 +24,12 @@ export const Prerequisites = buildForm({
           dataProviders: [
             buildDataProviderItem({
               provider: SkatturApi, // Skatturinn
-              title: 'Upplýsingar úr Skattinum',
-              subTitle: 'Upplýsingar úr skattinum - Upplýsingar um gjaldflokksstöðu bifreiða',
+              title: 'Upplýsingar frá Skattinum',
+              subTitle: 'Upplýsingar frá skattinum - Upplýsingar um gjaldflokksstöðu bifreiða',
             }),
             buildDataProviderItem({
               provider: VehiclesApi, // Samgöngustofan
-              title: 'Upplýsingar úr Samgöngustofunni',
+              title: 'Upplýsingar frá Samgöngustofu',
               subTitle: 'Upplýsingar úr ökutækjaskrá - Upplýsingar um þínar bifreiðar og stöðu þeirra',
             }),
           ],
