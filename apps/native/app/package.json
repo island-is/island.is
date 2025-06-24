@@ -96,6 +96,7 @@
     "react-native-svg": "15.2.0",
     "react-native-vision-camera": "4.5.1",
     "react-native-webview": "13.8.6",
+    "react-native-widgetkit": "1.0.9",
     "styled-components": "6.1.11",
     "zustand": "3.5.12"
   },

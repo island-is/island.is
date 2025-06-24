@@ -5,6 +5,7 @@ import {
   FlatList,
   Image,
   ListRenderItemInfo,
+  Platform,
   RefreshControl,
   View,
 } from 'react-native'
@@ -13,6 +14,7 @@ import SpotlightSearch from 'react-native-spotlight-search'
 import styled, { useTheme } from 'styled-components/native'
 import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
 
+import { syncLicenseWidgetData } from '../../lib/widget-sync'
 import {
   Alert,
   Button,
@@ -40,6 +42,7 @@ import { WalletItem } from './components/wallet-item'
 import { useLocale } from '../../hooks/use-locale'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import { INCLUDED_LICENSE_TYPES } from '../wallet-pass/wallet-pass.constants'
+import { config } from '../../config'
 
 const Tabs = styled.View`
   margin-top: ${({ theme }) => theme.spacing[1]}px;
@@ -155,6 +158,14 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
     return []
   }, [res])
+
+  useEffect(() => {
+    if (licenseItems) {
+      // Update available licenses in the widgets
+      // @todo remove the data on logout/session expired.
+      syncLicenseWidgetData(licenseItems)
+    }
+  }, [licenseItems])
 
   const lastUpdatedFormatted = useMemo(() => {
     const lastUpdated = licenseItems.find((item) => item.fetch.updated)?.fetch
