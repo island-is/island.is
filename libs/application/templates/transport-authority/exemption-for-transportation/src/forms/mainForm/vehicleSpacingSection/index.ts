@@ -113,6 +113,7 @@ export const vehicleSpacingSection = buildSection({
                 width: 'full',
                 required: true,
                 variant: 'number',
+                thousandSeparator: true,
                 suffix: vehicleSpacing.labels.metersSuffix,
               }),
               buildTextField({
@@ -125,6 +126,7 @@ export const vehicleSpacingSection = buildSection({
                 width: 'full',
                 required: true,
                 variant: 'number',
+                thousandSeparator: true,
                 suffix: vehicleSpacing.labels.metersSuffix,
               }),
               buildTextField({
@@ -137,6 +139,7 @@ export const vehicleSpacingSection = buildSection({
                 width: 'full',
                 required: true,
                 variant: 'number',
+                thousandSeparator: true,
                 suffix: vehicleSpacing.labels.metersSuffix,
               }),
             ]

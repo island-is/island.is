@@ -145,6 +145,7 @@ const FreightPairingSubSection = (freightIndex: number) =>
                   width: 'half',
                   required: true,
                   variant: 'number',
+                  thousandSeparator: true,
                   suffix: freight.labels.metersSuffix,
                 }),
                 buildTextField({
@@ -160,6 +161,7 @@ const FreightPairingSubSection = (freightIndex: number) =>
                   width: 'half',
                   required: true,
                   variant: 'number',
+                  thousandSeparator: true,
                   suffix: freight.labels.metersSuffix,
                 }),
                 buildTextField({
@@ -175,6 +177,7 @@ const FreightPairingSubSection = (freightIndex: number) =>
                   width: 'full',
                   required: true,
                   variant: 'number',
+                  thousandSeparator: true,
                   suffix: freight.labels.metersSuffix,
                 }),
                 buildAlertMessageField({
