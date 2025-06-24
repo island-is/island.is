@@ -8,7 +8,6 @@ fragment DocumentTicket on DocumentV2 {
     updatedDate
     subject
     status
-    authorId
     comments {
       id
       authorId

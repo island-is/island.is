@@ -45,7 +45,7 @@ const Col = styled.View<{ columnGap?: Spacing; spaceBetween?: boolean }>`
 
 const Row = styled.View<{ rowGap?: Spacing }>`
   flex-direction: column;
-  ${({ rowGap }) => rowGap && `row-gap: ${theme.spacing[rowGap]}px`}
+  ${({ rowGap, theme }) => rowGap && `row-gap: ${theme.spacing[rowGap]}px`}
 `
 
 interface HeaderProps {
