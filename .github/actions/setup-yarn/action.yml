@@ -65,3 +65,4 @@ runs:
       if: ${{ steps.restore-cache.outputs.cache-hit != 'true' }}
       run: |
         yarn install --immutable
+        yarn cypress install
