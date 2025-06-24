@@ -17,12 +17,7 @@ import {
 } from './types/collection.dto'
 import { List, ListStatus, mapList } from './types/list.dto'
 import { Signature, mapSignature } from './types/signature.dto'
-import {
-  AdminApi,
-  AdminCandidateApi,
-  AdminListApi,
-  MunicipalityAdminApi,
-} from './apis'
+import { AdminCandidateApi, AdminListApi } from './apis'
 import { Success, mapReasons } from './types/success.dto'
 import { collapseGovernment } from './utils/mappers'
 
@@ -30,7 +25,6 @@ type ListApi = MedmaelalistarApi | AdminListApi
 type CandidateApi = FrambodApi | AdminCandidateApi
 type ElectionApi = KosningApi
 type CollectionApi = MedmaelasofnunApi
-type AdminMunicipalityApi = AdminApi | MunicipalityAdminApi
 
 @Injectable()
 export class SignatureCollectionSharedClientService {
