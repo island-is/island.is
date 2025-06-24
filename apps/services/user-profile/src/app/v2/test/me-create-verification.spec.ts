@@ -2,8 +2,8 @@ import { getModelToken } from '@nestjs/sequelize'
 import request from 'supertest'
 
 import { createCurrentUser } from '@island.is/testing/fixtures'
-import { UserProfileScope } from '@island.is/auth/scopes'
-import { setupApp } from '@island.is/testing/nest'
+import { UserProfileScope, ApiScope } from '@island.is/auth/scopes'
+import { setupApp, TestApp } from '@island.is/testing/nest'
 
 import { FixtureFactory } from '../../../../test/fixture-factory'
 import { EmailVerification } from '../../user-profile/emailVerification.model'
@@ -12,10 +12,17 @@ import { AppModule } from '../../app.module'
 import { SequelizeConfigService } from '../../sequelizeConfig.service'
 import { VerificationService } from '../../user-profile/verification.service'
 import { SmsVerification } from '../../user-profile/smsVerification.model'
+import { DataStatus } from '../../user-profile/types/dataStatusTypes'
+import { Emails } from '../models/emails.model'
 
+const testUserProfileEmail = {
+  email: 'test@test.is',
+  primary: true,
+  emailStatus: DataStatus.NOT_DEFINED,
+}
 const testUserProfile = {
   nationalId: '1234567890',
-  email: 'test@test.is',
+  emails: [testUserProfileEmail],
   mobilePhoneNumber: '1234567',
 }
 
@@ -24,21 +31,25 @@ const newPhoneNumber = '9876543'
 
 const testEmailVerification = {
   nationalId: testUserProfile.nationalId,
-  email: testUserProfile.email,
+  email: testUserProfileEmail.email,
   hash: '123',
 }
 
 describe('Email confirmation', () => {
   describe('Test with existing email verification', () => {
-    let app = null
-    let server = null
+    let app: TestApp
+    let server: request.SuperTest<request.Test>
     beforeEach(async () => {
       app = await setupApp({
         AppModule,
         SequelizeConfigService,
         user: createCurrentUser({
           nationalId: testUserProfile.nationalId,
-          scope: [UserProfileScope.read, UserProfileScope.write],
+          scope: [
+            UserProfileScope.read,
+            UserProfileScope.write,
+            ApiScope.internal,
+          ],
         }),
       })
 
@@ -51,7 +62,6 @@ describe('Email confirmation', () => {
       const fixtureFactory = new FixtureFactory(app)
       await fixtureFactory.createUserProfile({
         ...testUserProfile,
-        email: testEmailVerification.email,
         nationalId: testEmailVerification.nationalId,
       })
 
@@ -62,9 +72,9 @@ describe('Email confirmation', () => {
       await app.cleanUp()
     })
 
-    it('POST /v2/me/create-verification should return 200, email verification should be created and user profile email unchanged', async () => {
+    it('POST /v2/actor/create-verification should return 200, email verification should be created and user profile email unchanged', async () => {
       // Act
-      const res = await server.post('/v2/me/create-verification').send({
+      const res = await server.post('/v2/actor/create-verification').send({
         email: newEmail,
       })
 
@@ -84,14 +94,22 @@ describe('Email confirmation', () => {
       const userProfileModel = app.get(getModelToken(UserProfile))
       const userProfile = await userProfileModel.findOne({
         where: { nationalId: testUserProfile.nationalId },
+        include: {
+          model: Emails,
+          as: 'emails',
+          required: false,
+          where: {
+            primary: true,
+          },
+        },
       })
 
-      expect(userProfile.email).toBe(testUserProfile.email)
+      expect(userProfile.emails?.[0].email).toBe(testUserProfileEmail.email)
     })
 
-    it('POST /v2/me/create-verification should return 200, sms verification should be created and user profile phone number unchanged', async () => {
+    it('POST /v2/actor/create-verification should return 200, sms verification should be created and user profile phone number unchanged', async () => {
       // Act
-      const res = await server.post('/v2/me/create-verification').send({
+      const res = await server.post('/v2/actor/create-verification').send({
         mobilePhoneNumber: newPhoneNumber,
       })
 
@@ -118,9 +136,9 @@ describe('Email confirmation', () => {
       )
     })
 
-    it('POST /v2/me/create-verification should return 400 when bot email and phone number are posted', async () => {
+    it('POST /v2/actor/create-verification should return 400 when bot email and phone number are posted', async () => {
       // Act
-      const res = await server.post('/v2/me/create-verification').send({
+      const res = await server.post('/v2/actor/create-verification').send({
         mobilePhoneNumber: newPhoneNumber,
         email: newEmail,
       })

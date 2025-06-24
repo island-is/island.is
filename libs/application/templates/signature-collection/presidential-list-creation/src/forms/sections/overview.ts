@@ -78,7 +78,7 @@ export const overview = buildSection({
             const areas =
               getValueViaPath<SignatureCollectionArea[]>(
                 externalData,
-                'currentCollection.data.areas',
+                'getLatestCollection.data.areas',
               ) || []
             return areas?.map((area) => ({
               heading: `${getValueViaPath(answers, 'applicant.name')} - ${

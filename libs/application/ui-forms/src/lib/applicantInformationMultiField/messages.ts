@@ -25,7 +25,7 @@ export const applicantInformation = {
       description: 'Address',
     },
     postalCode: {
-      id: 'uiForms.application:applicantInfo.abels.postalCode',
+      id: 'uiForms.application:applicantInfo.labels.postalCode',
       defaultMessage: 'Póstnúmer',
       description: 'Postal Code',
     },
@@ -33,6 +33,11 @@ export const applicantInformation = {
       id: 'uiForms.application:applicantInfo.labels.city',
       defaultMessage: 'Sveitarfélag',
       description: 'City',
+    },
+    postalCodeAndCity: {
+      id: 'uiForms.application:applicantInfo.labels.postalCodeAndCity',
+      defaultMessage: 'Póstnúmer og sveitarfélag',
+      description: 'Postal Code and City',
     },
     email: {
       id: 'uiForms.application:applicantInfo.labels.email',

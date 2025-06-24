@@ -419,6 +419,11 @@ export const institutionMapper = {
     slug: InstitutionTypes.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
     contentfulId: InstitutionContentfulIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
   },
+  [ApplicationTypes.TERMINATE_RENTAL_AGREEMENT]: {
+        nationalId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+    slug: InstitutionTypes.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+    contentfulId: InstitutionContentfulIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+  },
   [ApplicationTypes.FIRE_COMPENSATION_APPRAISAL]: {
     nationalId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
     slug: InstitutionTypes.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
@@ -458,5 +463,10 @@ export const institutionMapper = {
     nationalId: InstitutionNationalIds.DOMSMALA_RADUNEYTID,
     slug: InstitutionTypes.DOMSMALARADUNEYTID,
     contentfulId: InstitutionContentfulIds.DOMSMALARADUNEYTID,
+  },
+  [ApplicationTypes.EXEMPTION_FOR_TRANSPORTATION]: {
+    nationalId: InstitutionNationalIds.SAMGONGUSTOFA,
+    slug: InstitutionTypes.SAMGONGUSTOFA,
+    contentfulId: InstitutionContentfulIds.SAMGONGUSTOFA,
   },
 }
