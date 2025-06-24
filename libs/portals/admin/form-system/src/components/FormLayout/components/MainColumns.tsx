@@ -6,6 +6,7 @@ import { m } from '@island.is/form-system/ui'
 import { useIntl } from 'react-intl'
 import { useMutation } from '@apollo/client'
 import { DELETE_SCREEN, DELETE_FIELD, DELETE_SECTION } from '@island.is/form-system/graphql'
+import { DeleteButton } from './DeleteButton'
 
 export const MainContentColumn = () => {
   const { control, controlDispatch } = useContext(ControlContext)
@@ -33,56 +34,39 @@ export const MainContentColumn = () => {
 
   const remove = async () => {
     const id = activeItem?.data?.id as string
-    if (activeItem.type === 'Section') {
-      await deleteSection[0]({
-        variables: {
-          input: {
-            id: id,
+    try {
+      if (activeItem.type === 'Section') {
+        await deleteSection[0]({
+          variables: {
+            input: {
+              id: id,
+            },
           },
-        },
-      })
-      controlDispatch({ type: 'REMOVE_SECTION', payload: { id: id } })
-    } else if (activeItem.type === 'Screen') {
-      await deleteScreen[0]({
-        variables: {
-          input: {
-            id: id,
+        })
+        controlDispatch({ type: 'REMOVE_SECTION', payload: { id: id } })
+      } else if (activeItem.type === 'Screen') {
+        await deleteScreen[0]({
+          variables: {
+            input: {
+              id: id,
+            },
           },
-        },
-      })
-      controlDispatch({ type: 'REMOVE_SCREEN', payload: { id: id } })
-    } else if (activeItem.type === 'Field') {
-      await deleteField[0]({
-        variables: {
-          input: {
-            id: id,
+        })
+        controlDispatch({ type: 'REMOVE_SCREEN', payload: { id: id } })
+      } else if (activeItem.type === 'Field') {
+        await deleteField[0]({
+          variables: {
+            input: {
+              id: id,
+            },
           },
-        },
-      })
-      controlDispatch({ type: 'REMOVE_FIELD', payload: { id: id } })
+        })
+        controlDispatch({ type: 'REMOVE_FIELD', payload: { id: id } })
+      }
+    } catch (error) {
+      console.error('Error removing item:', error)
     }
   }
-
-  const DeleteButton = React.forwardRef<HTMLButtonElement, any>((props, ref) => (
-    <Box
-      display="flex"
-      justifyContent="flexEnd"
-      marginBottom={2}
-      width="full"
-    >
-      <Button
-        variant="ghost"
-        colorScheme="destructive"
-        size="small"
-        icon="trash"
-        onClick={remove}
-        ref={ref}
-        {...props}
-      >
-        {formatMessage(m.delete)}
-      </Button>
-    </Box>
-  ))
 
   return (
     <Box
@@ -102,11 +86,11 @@ export const MainContentColumn = () => {
           buttonTextCancel={formatMessage(m.cancel)}
           onConfirm={remove}
           disclosureElement={
-            <DeleteButton />
+            <DeleteButton onClick={() => { }} label={formatMessage(m.delete)} />
           }
         />
       ) : (
-        <DeleteButton />
+        <DeleteButton onClick={remove} label={formatMessage(m.delete)} />
       )}
 
       <Box
