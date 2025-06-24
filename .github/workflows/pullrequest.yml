@@ -323,7 +323,7 @@ jobs:
           BASE_LINT_PROCESSED_FILE: ${{steps.lint-base.outputs.lints-file}}
         run: |
           # compare-lints.sh <BASE_LINT_PROCESSED_FILE> <HEAD_LINT_PROCESSED_FILE>
-          ./.github/scripts/compare-lints.sh \
+          ./scripts/ci/compare-lints.sh \
             "$BASE_LINT_PROCESSED_FILE" \
             "$HEAD_LINT_PROCESSED_FILE"
 
