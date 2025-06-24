@@ -5,7 +5,11 @@ import { ControlContext } from '../../../context/ControlContext'
 import { m } from '@island.is/form-system/ui'
 import { useIntl } from 'react-intl'
 import { useMutation } from '@apollo/client'
-import { DELETE_SCREEN, DELETE_FIELD, DELETE_SECTION } from '@island.is/form-system/graphql'
+import {
+  DELETE_SCREEN,
+  DELETE_FIELD,
+  DELETE_SECTION,
+} from '@island.is/form-system/graphql'
 import { DeleteButton } from './DeleteButton'
 
 export const MainContentColumn = () => {
@@ -20,17 +24,19 @@ export const MainContentColumn = () => {
 
   const containsGroupOrInput = (): boolean => {
     if (type === 'Section') {
-      return screens?.some(
-        (screen) => screen?.sectionId === activeItem?.data?.id,
-      ) || false;
+      return (
+        screens?.some((screen) => screen?.sectionId === activeItem?.data?.id) ||
+        false
+      )
     }
     if (type === 'Screen') {
-      return fields?.some((field) => field?.screenId === activeItem?.data?.id) || false;
+      return (
+        fields?.some((field) => field?.screenId === activeItem?.data?.id) ||
+        false
+      )
     }
     return false
   }
-
-
 
   const remove = async () => {
     const id = activeItem?.data?.id as string
@@ -86,7 +92,7 @@ export const MainContentColumn = () => {
           buttonTextCancel={formatMessage(m.cancel)}
           onConfirm={remove}
           disclosureElement={
-            <DeleteButton onClick={() => { }} label={formatMessage(m.delete)} />
+            <DeleteButton onClick={() => {}} label={formatMessage(m.delete)} />
           }
         />
       ) : (
@@ -108,4 +114,3 @@ export const MainContentColumn = () => {
     </Box>
   )
 }
-
