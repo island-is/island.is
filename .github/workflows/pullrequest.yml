@@ -204,11 +204,13 @@ jobs:
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
     steps:
       - uses: actions/checkout@v4
+        if: ${{ github.event_name == 'pull_request' }}
+        with:
+          token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
+          ref: ${{ github.event.pull_request.head.ref }}
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-        with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
 
       - name: NX format:check
         run: ./scripts/ci/20_check-formatting.sh "check"
