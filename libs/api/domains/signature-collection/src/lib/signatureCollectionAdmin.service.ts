@@ -38,7 +38,7 @@ import { AdminPortalScope } from '@island.is/auth/scopes'
 export class SignatureCollectionAdminService {
   constructor(
     private basicService: SignatureCollectionClientService,
-    // admin = LKSs
+    // admin = LKS
     private adminClientService: SignatureCollectionAdminClientService,
     // manager = Þjóðskrá
     private managerClientService: SignatureCollectionManagerClientService,
