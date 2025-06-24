@@ -24,6 +24,7 @@ import {
   ServiceDefinitionForEnv,
   ValueSource,
 } from '../../../../../../infra/src/dsl/types/input-types'
+// eslint-disable-next-line @nx/enforce-module-boundaries
 import { Envs } from '../../../../../../infra/src/environments'
 import { env, TestEnvironment } from './urls'
 
@@ -32,7 +33,7 @@ const getServiceMock = (envVariableRef: ValueSource) => {
   serializeValueSource(
     envVariableRef,
     resolver,
-    {} as unknown as ServiceDefinitionForEnv,
+    ({} as unknown) as ServiceDefinitionForEnv,
     Envs.dev01,
   )
   const ports = Object.values(resolver.ports)
