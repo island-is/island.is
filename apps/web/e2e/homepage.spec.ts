@@ -1,13 +1,13 @@
 import { BrowserContext, test } from '@playwright/test'
 
-import { session, urls, expect } from '@island.is/testing/e2e'
+import { expect,session, urls } from '@island.is/testing/e2e'
 
 const nullFilter = <T>(e: T | null | undefined): e is T => Boolean(e)
 
 test.use({ baseURL: urls.islandisBaseUrl })
 
 test.describe('Front page', () => {
-  let context: BrowserContext
+  let context: BrowserContext | undefined
   test.beforeAll(async ({ browser }) => {
     context = await session({
       browser: browser,
@@ -18,10 +18,11 @@ test.describe('Front page', () => {
     })
   })
   test.afterAll(async () => {
-    await context.close()
+    await context?.close()
   })
   test('has expected sections @lang:is', async () => {
-    const page = await context.newPage()
+    if (!context) throw new Error()
+    const page = await context?.newPage()
     await page.goto('/')
     await expect(
       page.locator('text=Öll opinber þjónusta á einum stað'),
@@ -37,6 +38,7 @@ test.describe('Front page', () => {
   ]) {
     test(`should have life event @lang:${lang}`, async () => {
       test.slow()
+    if (!context) throw new Error()
       const page = await context.newPage()
       await page.goto(home)
       const lifeEventsCards = page.locator('[data-testid="lifeevent-card"]')
@@ -61,6 +63,7 @@ test.describe('Front page', () => {
     })
     test(`should navigate to featured link @lang:${lang}`, async () => {
       test.slow()
+    if (!context) throw new Error()
       const page = await context.newPage()
       await page.goto(home)
       const featuredLinks = page.locator('[data-testid="featured-link"]')
@@ -82,6 +85,7 @@ test.describe('Front page', () => {
 
     test(`should have link on life events pages to navigate back to the main page @lang:${lang}`, async () => {
       test.slow()
+    if (!context) throw new Error()
       const page = await context.newPage()
       await page.goto(home)
       const lifeEventsCards = page.locator('[data-testid="lifeevent-card"]')
@@ -102,6 +106,7 @@ test.describe('Front page', () => {
   }
 
   test('should change welcome message on language toggle @lang:is', async () => {
+    if (!context) throw new Error()
     const page = await context.newPage()
     await page.goto('/')
     const homeHeading = page.locator('h1[data-testid="home-heading"]')
@@ -112,6 +117,7 @@ test.describe('Front page', () => {
   })
 
   test('should toggle mega-menu @lang:is', async () => {
+    if (!context) throw new Error()
     const page = await context.newPage()
     await page.goto('/')
     await page
@@ -123,6 +129,7 @@ test.describe('Front page', () => {
   })
 
   test('burger menu should open and close', async () => {
+    if (!context) throw new Error()
     // Arrange
     const page = await context.newPage()
     page.goto('/')

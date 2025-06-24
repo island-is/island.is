@@ -10,7 +10,7 @@ test.use({ baseURL: urls.islandisBaseUrl })
 type Orgs = {
   organisationName: string
   organisationHome?: string
-  enabled?: boolean
+  disabled?: boolean
   target?: { role: GetByRoleParameters[0]; options?: GetByRoleParameters[1] }
 }
 const orgs: Orgs[] = [
@@ -23,7 +23,7 @@ const orgs: Orgs[] = [
   { organisationName: 'Sjúkratryggingar', target: { role: 'link' } },
   { organisationName: 'Ríkislögmaður' },
   { organisationName: 'Landskjörstjórn', target: { role: 'link' } },
-  { organisationName: 'Opinber nýsköpun', enabled: true },
+  { organisationName: 'Opinber nýsköpun', disabled: true },
   { organisationName: 'Sýslumenn' },
   { organisationName: 'Fjársýslan' },
   {
@@ -38,7 +38,7 @@ const orgs: Orgs[] = [
 ]
 
 test.describe('Sites of institutions', () => {
-  let context: BrowserContext
+  let context: BrowserContext | undefined
   test.beforeAll(async ({ browser }) => {
     context = await session({
       browser,
@@ -47,16 +47,16 @@ test.describe('Sites of institutions', () => {
     })
   })
   test.afterAll(async () => {
-    await context.close()
+    await context?.close()
   })
   for (const {
     organisationName,
     organisationHome = `/${slugify(organisationName, { lower: true })}`,
     target,
-    enabled,
+    disabled,
   } of orgs) {
     test(organisationName, async () => {
-      if (enabled) return
+      if (disabled || !context) return
       const page = await context.newPage()
       const url = `/s${organisationHome}`
       await page.goto(url)
