@@ -399,25 +399,31 @@ export class CitizenshipService extends BaseTemplateApiService {
           })) || [],
         ),
         childrenSupportingDocuments: await Promise.all(
-          answers.childrenSupportingDocuments?.map(async (d) => ({
-            nationalId: d.nationalId,
-            birthCertificate: await this.getUrlForAttachment(
-              application,
-              d.birthCertificate,
-            ),
-            writtenConsentFromChild: await this.getUrlForAttachment(
-              application,
-              d.writtenConsentFromChild,
-            ),
-            writtenConsentFromOtherParent: await this.getUrlForAttachment(
-              application,
-              d.writtenConsentFromOtherParent,
-            ),
-            custodyDocuments: await this.getUrlForAttachment(
-              application,
-              d.custodyDocuments,
-            ),
-          })) || [],
+          answers.childrenSupportingDocuments
+            ?.filter((x) => !!x)
+            .map(async (d) => ({
+              nationalId: d?.nationalId || '',
+              birthCertificate:
+                (await this.getUrlForAttachment(
+                  application,
+                  d?.birthCertificate,
+                )) || '',
+              writtenConsentFromChild:
+                (await this.getUrlForAttachment(
+                  application,
+                  d?.writtenConsentFromChild,
+                )) || '',
+              writtenConsentFromOtherParent:
+                (await this.getUrlForAttachment(
+                  application,
+                  d?.writtenConsentFromOtherParent,
+                )) || '',
+              custodyDocuments:
+                (await this.getUrlForAttachment(
+                  application,
+                  d?.custodyDocuments,
+                )) || '',
+            })) || [],
         ),
       },
     )
