@@ -19,11 +19,11 @@ interface Props {
 
 export const NavButtons = ({ id, type }: Props) => {
   const { control, controlDispatch } = useContext(ControlContext)
-  const { activeItem, form } = control
+  const { form } = control
   const { screens, fields } = form
   const { formatMessage } = useIntl()
   const hoverText =
-    activeItem.type === 'Section'
+    type === 'Section'
       ? formatMessage(m.addScreenHover)
       : formatMessage(m.addFieldHover)
 
