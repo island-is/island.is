@@ -29,7 +29,7 @@ export const Prerequisites = buildForm({
             }),
             buildDataProviderItem({
               provider: VehiclesApi, // Samgöngustofan
-              title: 'Upplýsingar úr Samgöngustofunni',
+              title: 'Upplýsingar frá Samgöngustofu',
               subTitle: 'Upplýsingar úr ökutækjaskrá - Upplýsingar um þínar bifreiðar og stöðu þeirra',
             }),
           ],
