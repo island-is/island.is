@@ -37,9 +37,9 @@ import {
   useVictim,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/utils'
+import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { DefendantInfo } from '../../components'
-import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 const Defendant = () => {
   const { user } = useContext(UserContext)
