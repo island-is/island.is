@@ -5,23 +5,25 @@
 # strips ANSI escape codes, and then processes it to generate a file with
 # each linted file and its lint count.
 
-# Usage: ./lint-and-parse.sh <AFFECTED_PROJECTS> <OUTPUT_DIR> <FILENAME>
+# Usage: ./lint-and-parse.sh <AFFECTED_PROJECTS> <FILE_PATH>
 # <AFFECTED_PROJECTS>: Comma-separated list of Nx projects to lint.
-# <OUTPUT_DIR>: Directory to save the raw and processed lint outputs.
-# <FILENAME>: Filename of the processed lints, relative to <OUTPUT_DIR>
+# <FILE_PATH>: Filename of the processed lints
 
 set -euo pipefail
 
 AFFECTED_PROJECTS="$1"
-OUTPUT_DIR="$2" # e.g., /tmp or a specific run-time directory
 LINT_NAME="${LINT_NAME:-$(git log --format='%h' -n1)}"
-FILENAME="${3:-lints-processed-${LINT_NAME}.txt}"
+FILE_PATH="${2:-dist/lints-processed-${LINT_NAME}.txt}"
+[[ $# -le 2 ]] || {
+  echo "Max 2 args, you passed: $# ($*)"
+  exit 1
+}
 
 # Ensure the output directory exists
-mkdir -p "$OUTPUT_DIR"
+mkdir -p "$(basename "$FILE_PATH")"
 
-LINT_RAW_FILE="${OUTPUT_DIR}/${FILENAME}.raw"
-LINT_PROCESSED_FILE="${OUTPUT_DIR}/${FILENAME}"
+LINT_RAW_FILE="${FILE_PATH}.raw"
+LINT_PROCESSED_FILE="${FILE_PATH}"
 
 echo "Running lint for projects: $AFFECTED_PROJECTS (stripping colors)"
 echo "Raw lint output will be saved to: $LINT_RAW_FILE"

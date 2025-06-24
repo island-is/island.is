@@ -282,18 +282,13 @@ jobs:
           mkdir -p dist/
           echo "HEAD_LINT_FILE_PATH=dist/lints-processed-head.txt" >> "$GITHUB_ENV"
           echo "BASE_LINT_FILE_PATH=dist/lints-processed-base.txt" >> "$GITHUB_ENV"
-          echo "HEAD_LINT_RAW_FILE_PATH=dist/lints-raw-head.txt" >> "$GITHUB_ENV"
-          echo "BASE_LINT_RAW_FILE_PATH=dist/lints-raw-base.txt" >> "$GITHUB_ENV"
 
       - name: Lint head
         id: lint-head
         run: |
-          # lint-and-parse.sh <AFFECTED_PROJECTS> <OUTPUT_DIR> <FILENAME>
           ./scripts/ci/lint-and-parse.sh \
             "$AFFECTED_PROJECTS" \
-            "$HEAD_LINT_RAW_FILE_PATH" \
             "$HEAD_LINT_FILE_PATH"
-          # Set the processed lints file path as an output for the next step
           echo "lints-file=$HEAD_LINT_FILE_PATH" | tee -a "$GITHUB_OUTPUT"
 
       # Checkout for linting base
@@ -307,12 +302,9 @@ jobs:
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
         id: lint-base
         run: |
-          # lint-and-parse.sh <AFFECTED_PROJECTS> <OUTPUT_DIR> <FILENAME>
           ./scripts/ci/lint-and-parse.sh \
             "$AFFECTED_PROJECTS" \
-            "$BASE_LINT_RAW_FILE_PATH" \
             "$BASE_LINT_FILE_PATH"
-          # Set the processed lints file path as an output for the next step
           echo "lints-file=$BASE_LINT_FILE_PATH" | tee -a "$GITHUB_OUTPUT"
 
       - name: No new lints
