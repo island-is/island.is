@@ -4,13 +4,11 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
 import { uuid } from 'uuidv4'
 
-import { Box, Button, toast } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   core,
   defendant as m,
-  errors,
   titles,
 } from '@island.is/judicial-system-web/messages'
 import {
@@ -22,7 +20,6 @@ import {
   PageLayout,
   PageTitle,
   SectionHeading,
-  UserContext,
   VictimInfo,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -32,7 +29,6 @@ import {
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  useCase,
   useDefendants,
   useVictim,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -42,13 +38,11 @@ import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils
 import { DefendantInfo } from '../../components'
 
 const Defendant = () => {
-  const { user } = useContext(UserContext)
   const router = useRouter()
   const { updateDefendant, createDefendant, deleteDefendant } = useDefendants()
 
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
-  const { createCase, isCreatingCase } = useCase()
   const { createVictimAndSetState, deleteVictimAndSetState } = useVictim()
   const { formatMessage } = useIntl()
 
@@ -56,14 +50,7 @@ const Defendant = () => {
     async (destination: string) => {
       router.push(`${destination}/${workingCase.id}`)
     },
-    [
-      workingCase,
-      createCase,
-      router,
-      updateDefendant,
-      createDefendant,
-      formatMessage,
-    ],
+    [workingCase, router],
   )
 
   const updateDefendantState = useCallback(
@@ -320,7 +307,7 @@ const Defendant = () => {
             )
           }
           nextIsDisabled={!stepIsValid}
-          nextIsLoading={isCreatingCase}
+          nextIsLoading={isLoadingWorkingCase}
           nextButtonText={formatMessage(
             workingCase.id === '' ? core.createCase : core.continue,
           )}
