@@ -19,6 +19,7 @@ import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { SignatureCollectionList } from '@island.is/api/schema'
 import FindSignature from '../../shared-components/findSignature'
+import EmptyState from '../../shared-components/emptyState'
 
 const AllMunicipalities = () => {
   const { allLists, collection } = useLoaderData() as ListsLoaderReturn
@@ -79,13 +80,22 @@ const AllMunicipalities = () => {
           <Divider />
           <Box marginTop={9} />
           <FindSignature collectionId={collection.id} />
-          <Box marginBottom={3} display="flex" justifyContent="flexEnd">
-            <Text variant="eyebrow">
-              {formatMessage(m.totalListResults) +
-                ': ' +
-                municipalityLists.length}
-            </Text>
-          </Box>
+          {municipalityLists.length > 0 ? (
+            <Box marginBottom={3} display="flex" justifyContent="flexEnd">
+              <Text variant="eyebrow">
+                {formatMessage(m.totalListResults) +
+                  ': ' +
+                  municipalityLists.length}
+              </Text>
+            </Box>
+          ) : (
+            <Box marginTop={10}>
+              <EmptyState
+                title={formatMessage(m.noLists)}
+                description={formatMessage(m.noListsDescription)}
+              />
+            </Box>
+          )}
           <Stack space={3}>
             {municipalityLists.map((list) => {
               return (
