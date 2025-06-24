@@ -39,6 +39,7 @@ import {
 import { isBusiness } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { DefendantInfo } from '../../components'
+import { isDefendantStepValidIC } from '@island.is/judicial-system-web/src/utils/validate'
 
 const Defendant = () => {
   const { user } = useContext(UserContext)
@@ -53,45 +54,7 @@ const Defendant = () => {
 
   const handleNavigationTo = useCallback(
     async (destination: string) => {
-      if (!workingCase.id) {
-        const createdCase = await createCase(workingCase)
-
-        if (createdCase) {
-          workingCase.defendants?.forEach(async (defendant, index) => {
-            if (
-              index === 0 &&
-              createdCase.defendants &&
-              createdCase.defendants.length > 0
-            ) {
-              await updateDefendant({
-                caseId: createdCase.id,
-                defendantId: createdCase.defendants[0].id,
-                gender: defendant.gender,
-                name: defendant.name,
-                address: defendant.address,
-                nationalId: defendant.nationalId || null,
-                noNationalId: defendant.noNationalId,
-                citizenship: defendant.citizenship,
-              })
-            } else {
-              await createDefendant({
-                caseId: createdCase.id,
-                gender: defendant.gender,
-                name: defendant.name,
-                address: defendant.address,
-                nationalId: defendant.nationalId || null,
-                noNationalId: defendant.noNationalId,
-                citizenship: defendant.citizenship,
-              })
-            }
-          })
-          router.push(`${destination}/${createdCase.id}`)
-        } else {
-          toast.error(formatMessage(errors.createCase))
-        }
-      } else {
-        router.push(`${destination}/${workingCase.id}`)
-      }
+      router.push(`${destination}/${workingCase.id}`)
     },
     [
       workingCase,
@@ -196,7 +159,7 @@ const Defendant = () => {
     }))
   }
 
-  const stepIsValid = false
+  const stepIsValid = isDefendantStepValidIC(workingCase)
 
   return (
     <PageLayout

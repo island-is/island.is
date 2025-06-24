@@ -219,25 +219,14 @@ export const isDefendantStepValidRC = (
   )
 }
 
-export const isDefendantStepValidIC = (
-  workingCase: Case,
-  caseType?: CaseType | null,
-  policeCaseNumbers?: string[] | null,
-): boolean => {
+export const isDefendantStepValidIC = (workingCase: Case): boolean => {
   return Boolean(
-    policeCaseNumbers &&
-      policeCaseNumbers.length > 0 &&
-      workingCase.type === caseType &&
-      !someDefendantIsInvalid(workingCase) &&
+    !someDefendantIsInvalid(workingCase) &&
       areVictimsValid(workingCase.victims) &&
       (workingCase.defenderName
         ? Boolean(workingCase.requestSharedWithDefender)
         : true) &&
       validate([
-        [workingCase.type, ['empty']],
-        ...policeCaseNumbers.map(
-          (n): ValidateItem => [n, ['empty', 'police-casenumber-format']],
-        ),
         [workingCase.defenderEmail, ['email-format']],
         [workingCase.defenderPhoneNumber, ['phonenumber']],
       ]).isValid,
