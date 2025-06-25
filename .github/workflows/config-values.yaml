@@ -11,6 +11,7 @@ on:
       - 'infra/**'
       - '**/infra/**'
       - 'libs/auth/scopes/src/lib/clients/**'
+      - '.github/**'
   workflow_dispatch: {}
   pull_request:
     paths:
