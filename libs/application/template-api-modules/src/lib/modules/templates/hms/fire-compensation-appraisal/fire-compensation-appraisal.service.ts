@@ -46,13 +46,14 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
     // fetch each property individually with the full data.
     else {
       try {
-        const simpleProperties = await this.getRealEstatesWithAuth(
-          auth,
-        ).fasteignirGetFasteignir({ kennitala: auth.nationalId })
+        const api = this.getRealEstatesWithAuth(auth)
+        const simpleProperties = await api.fasteignirGetFasteignir({
+          kennitala: auth.nationalId,
+        })
 
         properties = await Promise.all(
           simpleProperties?.fasteignir?.map((property) => {
-            return this.propertiesApi.fasteignirGetFasteign({
+            return api.fasteignirGetFasteign({
               fasteignanumer: property.fasteignanumer ?? '',
             })
           }) ?? [],
