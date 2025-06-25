@@ -34,6 +34,7 @@ import {
 import { api } from '@island.is/judicial-system-web/src/services'
 import { useGeoLocation } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import { useKeyboardCombo } from '../../utils/hooks/useKeyboardCombo/useKeyboardCombo'
 import { header } from './Header.strings'
 import * as styles from './Header.css'
 
@@ -84,6 +85,10 @@ const HeaderContainer = () => {
   const { lawyers } = useContext(LawyerRegistryContext)
 
   const isLawyerInLawyersRegistry = isDefenceUser(user) && lawyer
+
+  useKeyboardCombo('Meta + k', () => {
+    setIsSearchOpen(!isSearchOpen)
+  })
 
   useEffect(() => {
     setIsRobot(countryCode !== 'IS')
