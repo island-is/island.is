@@ -268,9 +268,13 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:message',
     defaultMessage: 'Textalýsing',
   },
-  urls: {
-    id: 'portals-admin.form-system:urls',
-    defaultMessage: 'Slóðir',
+  submitUrls: {
+    id: 'portals-admin.form-system:submitUrls',
+    defaultMessage: 'Málakerfi',
+  },
+  validationUrls: {
+    id: 'portals-admin.form-system:validationUrls',
+    defaultMessage: 'Reglukerfi',
   },
   permissions: {
     id: 'portals-admin.form-system:permissions',

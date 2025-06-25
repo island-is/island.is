@@ -171,7 +171,10 @@ export class FormResponse {
   forms?: Form[]
 
   @Field(() => [OrganizationUrl], { nullable: 'itemsAndList' })
-  urls?: OrganizationUrl[]
+  submitUrls?: OrganizationUrl[]
+
+  @Field(() => [OrganizationUrl], { nullable: 'itemsAndList' })
+  validationUrls?: OrganizationUrl[]
 
   @Field(() => [Option], { nullable: 'itemsAndList' })
   organizations?: Option[]

@@ -1,6 +1,8 @@
 import {
   FormSystemApplication,
   FormSystemForm,
+  FormSystemOrganization,
+  FormSystemOrganizationUrl,
   FormSystemPermissionType,
 } from '@island.is/api/schema'
 import { Option } from '@island.is/island-ui/core'
@@ -30,6 +32,8 @@ export interface IFormsContext {
   certificationTypes: FormSystemPermissionType[]
   listTypes: FormSystemPermissionType[]
   fieldTypes: FormSystemPermissionType[]
+  submitUrls: FormSystemOrganizationUrl[]
+  validationUrls: FormSystemOrganizationUrl[]
   handleOrganizationChange?: (selected: { value: string }) => Promise<void>
 }
 
@@ -81,4 +85,6 @@ export const FormsContext = createContext<IFormsContext>({
   certificationTypes: [],
   listTypes: [],
   fieldTypes: [],
+  submitUrls: [],
+  validationUrls: [],
 })

@@ -31,6 +31,8 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
     certificationTypes,
     listTypes,
     fieldTypes,
+    submitUrls,
+    validationUrls,
   } = formsLoader
   const [forms, setForms] = useState<FormSystemForm[]>(formsState)
   const [organizations, setOrganizations] = useState<Option<string>[]>(orgs)
@@ -83,9 +85,9 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
       },
     })
     if (applicationsData?.formSystemApplications?.applications) {
-    if (applicationsData?.formSystemApplications?.applications) {
-      setApplications(applicationsData?.formSystemApplications?.applications)
-    }
+      if (applicationsData?.formSystemApplications?.applications) {
+        setApplications(applicationsData?.formSystemApplications?.applications)
+      }
     }
 
     const { data: permissionsData } = await getAdminQuery({
@@ -146,6 +148,8 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
       certificationTypes,
       listTypes,
       fieldTypes,
+      submitUrls,
+      validationUrls,
       handleOrganizationChange,
     }),
     [
@@ -162,6 +166,8 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
       certificationTypes,
       listTypes,
       fieldTypes,
+      submitUrls,
+      validationUrls,
     ],
   )
 

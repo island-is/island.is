@@ -45,6 +45,20 @@ export const GET_ORGANIZATION_ADMIN = gql`
         }
         isCommon
       }
+      submitUrls {
+        id
+        url
+        type
+        method
+        isTest
+      }
+      validationUrls {
+        id
+        url
+        type
+        method
+        isTest
+      }
       organizations {
         label
         value

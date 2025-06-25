@@ -5,13 +5,14 @@ import { FormsContext } from '../../context/FormsContext'
 import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
 import { Permissions } from './components/Permissions/Permissions'
+import { SubmitUrls } from './components/SubmitUrls/SubmitUrls'
 
 export const Admin = () => {
-  const { isAdmin } = useContext(FormsContext)
+  const { isAdmin, submitUrls } = useContext(FormsContext)
   const { formatMessage } = useIntl()
   const [activeComponent, setActiveComponent] = useState<
-    'urls' | 'permissions'
-  >('urls')
+    'submitUrls' | 'validationUrls' | 'permissions'
+  >('submitUrls')
 
   return (
     <>
@@ -35,9 +36,16 @@ export const Admin = () => {
               <Button
                 size="default"
                 variant="ghost"
-                onClick={() => setActiveComponent('urls')}
+                onClick={() => setActiveComponent('submitUrls')}
               >
-                {formatMessage(m.urls)}
+                {formatMessage(m.submitUrls)}
+              </Button>
+              <Button
+                size="default"
+                variant="ghost"
+                onClick={() => setActiveComponent('validationUrls')}
+              >
+                {formatMessage(m.validationUrls)}
               </Button>
               {isAdmin && (
                 <Button
@@ -53,7 +61,10 @@ export const Admin = () => {
           </Box>
         </Box>
       </GridRow>
-      {activeComponent === 'urls' && <p>slóðir</p>}
+      {activeComponent === 'submitUrls' && (
+        <SubmitUrls submitUrls={submitUrls} />
+      )}
+      {activeComponent === 'validationUrls' && <p>Reglukerfi</p>}
       {activeComponent === 'permissions' && isAdmin && <Permissions />}
     </>
   )
