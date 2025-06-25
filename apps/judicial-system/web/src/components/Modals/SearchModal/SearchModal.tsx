@@ -111,12 +111,11 @@ const SearchModal: FC<Props> = ({ onClose }) => {
   }, [onClose, searchCases, searchString])
 
   return (
-    <ModalContainer title="Leit" onClose={onClose}>
-      <Box margin={3} className={styles.searchModal}>
+    <ModalContainer title="Leit" onClose={onClose} position="top">
+      <div className={styles.searchModal}>
         <Text variant="h3" marginBottom={1}>
           Leit
         </Text>
-
         <Box marginBottom={3} columnGap={1} display="flex" flexWrap="wrap">
           <Tag outlined disabled>
             Málsnúmer
@@ -135,6 +134,7 @@ const SearchModal: FC<Props> = ({ onClose }) => {
           placeholder="Leit í málalistum"
           value={searchString}
           onChange={(event) => setSearchString(event.target.value)}
+          autoComplete="off"
           icon={{
             name: 'search',
             type: 'outline',
@@ -161,7 +161,7 @@ const SearchModal: FC<Props> = ({ onClose }) => {
             </motion.div>
           )}
         </AnimatePresence>
-      </Box>
+      </div>
     </ModalContainer>
   )
 }
