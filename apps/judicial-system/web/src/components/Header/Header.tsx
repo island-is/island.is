@@ -29,6 +29,7 @@ import { SearchModal } from '@island.is/judicial-system-web/src/components'
 import { api } from '@island.is/judicial-system-web/src/services'
 
 import { useGeoLocation } from '../../utils/hooks'
+import { useKeyboardCombo } from '../../utils/hooks/useKeyboardCombo/useKeyboardCombo'
 import { LawyerRegistryContext } from '../LawyerRegistryProvider/LawyerRegistryProvider'
 import MarkdownWrapper from '../MarkdownWrapper/MarkdownWrapper'
 import { UserContext } from '../UserProvider/UserProvider'
@@ -82,6 +83,10 @@ const HeaderContainer = () => {
   const { lawyers } = useContext(LawyerRegistryContext)
 
   const isLawyerInLawyersRegistry = isDefenceUser(user) && lawyer
+
+  useKeyboardCombo('Meta + k', () => {
+    setIsSearchOpen(!isSearchOpen)
+  })
 
   useEffect(() => {
     setIsRobot(countryCode !== 'IS')
