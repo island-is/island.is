@@ -38,6 +38,7 @@ import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator
 import { navigateTo } from '../../lib/deep-linking'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import { useLocale } from '../../hooks/use-locale'
+import { testIDs } from '../../utils/test-ids'
 
 const Host = styled(SafeAreaView)`
   padding-horizontal: ${({ theme }) => theme.spacing[2]}px;
@@ -219,7 +220,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
   ])
 
   return (
-    <View style={{ flex: 1 }}>
+    <View style={{ flex: 1 }} testID={testIDs.SCREEN_HEALTH_OVERVIEW}>
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
@@ -251,6 +252,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                 style={buttonStyle}
                 ellipsis
                 onPress={() => navigateTo('/vaccinations', componentId)}
+                testID={testIDs.BUTTON_VACCINATIONS}
               />
             )}
             <Button
@@ -299,7 +301,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
             }
           />
           {(healthCenterRes.data || healthCenterRes.loading) && (
-            <>
+            <View testID={testIDs.HEALTH_CENTER}>
               <InputRow background>
                 <Input
                   label={intl.formatMessage({
@@ -336,7 +338,7 @@ export const HealthOverviewScreen: NavigationFunctionComponent = ({
                   noBorder
                 />
               </InputRow>
-            </>
+            </View>
           )}
           {healthCenterRes.error &&
             !healthCenterRes.data &&

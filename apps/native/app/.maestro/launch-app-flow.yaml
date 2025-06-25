@@ -1,0 +1,4 @@
+appId: 'is.island.app.dev'
+---
+- launchApp:
+    appId: 'is.island.app.dev'

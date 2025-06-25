@@ -1,0 +1,27 @@
+appId: 'is.island.app.dev'
+---
+- runFlow: try-signing-in-flow.yaml
+- tapOn:
+    id: 'TABBAR_TAB_APPLICATION'
+- assertVisible:
+    id: 'APPLICATION_ITEM'
+- runFlow:
+    when:
+      visible:
+        text: '.*Sjá allt.*'
+    commands:
+      - tapOn:
+          text: 'Ókláraðar umsóknir Sjá allt'
+      - assertVisible:
+          id: 'SCREEN_APPLICATIONS_DETAILS'
+      - assertVisible:
+          id: 'APPLICATION_ITEM'
+      - tapOn:
+          text: 'Opna umsókn'
+      # Need to make sure preferences are reset for this to pass, if the user has already hasOnboardedPasskeys: true then this will fail
+      - assertVisible:
+          id: 'SCREEN_PASSKEY'
+      - tapOn:
+          id: 'NAVBAR_SHEET_CLOSE_BUTTON'
+- tapOn:
+    text: 'Umsóknir'
