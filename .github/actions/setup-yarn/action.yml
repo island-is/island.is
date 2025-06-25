@@ -30,9 +30,13 @@ runs:
       id: cache-paths
       run: |
         echo "yarn-cache=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
-        CYPRESS_CACHE_FOLDER="${{ runner.temp }}/.cypress-cache"
-        echo "cypress-cache=$CYPRESS_CACHE_FOLDER" >> "$GITHUB_OUTPUT"
+        # Set output only if cypress exists (empty otherwise)
+        CYPRESS_CACHE_FOLDER=
+        if jq -e '(.dependencies // {}) * (.devDependencies // {}) | keys | .[] | select(. == "cypress")' package.json; then
+          CYPRESS_CACHE_FOLDER="${{ runner.temp }}/.cypress-cache"
+        fi
         echo "CYPRESS_CACHE_FOLDER=$CYPRESS_CACHE_FOLDER" >> "$GITHUB_ENV"
+        echo "cypress-cache=$CYPRESS_CACHE_FOLDER" >> "$GITHUB_OUTPUT"
 
     # Set RunsOn S3 cache bucket only for CI runs
     #
@@ -55,7 +59,12 @@ runs:
           ${{ steps.cache-paths.outputs.yarn-cache }}
           ${{ steps.cache-paths.outputs.cypress-cache }}
           ${{ inputs.working-directory }}/node_modules
-        key: ${{ runner.os }}-deps-cypress-${{ hashFiles('yarn.lock') }}-1-node_modules
+        key: >-
+          ${{ runner.os }}-
+          deps-
+          ${{ steps.cache-paths.cypress-cache && 'cypress' || '' }}-
+          ${{ hashFiles(format('{0}/yarn.lock', inputs.working-directory)) }}-
+          1-node_modules
       env:
         AWS_REGION: ${{ env.AWS_REGION || 'eu-west-1' }}
 
@@ -65,4 +74,4 @@ runs:
       if: ${{ steps.restore-cache.outputs.cache-hit != 'true' }}
       run: |
         yarn install --immutable
-        yarn cypress install
+        if [[ -n "$CYPRESS_CACHE_FOLDER" ]]; then yarn cypress install; fi
