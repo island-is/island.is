@@ -19,6 +19,7 @@ on:
       - 'infra/**'
       - '**/infra/**'
       - 'libs/auth/scopes/src/lib/clients/**'
+      - '.github/**'
 
 defaults:
   run:
