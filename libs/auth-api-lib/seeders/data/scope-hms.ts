@@ -1,9 +1,9 @@
 import { createScope } from './helpers'
 
 export const up = createScope({
-  name: '@island.is/applications/iceland-health',
-  displayName: 'Sjúkratryggingar',
-  description: 'Veitir aðgengi að umsóknum til Sjúkratrygginga',
+  name: '@island.is/applications/hms',
+  displayName: 'Húsnæðis og mannvirkjastofnun',
+  description: 'Umsóknir hjá Húsnæðis og mannvirkjastofnun',
 
   delegation: {
     custom: true,
