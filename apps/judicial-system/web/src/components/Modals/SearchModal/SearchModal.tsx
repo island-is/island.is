@@ -62,7 +62,8 @@ const SearchResultButton: FC<ResultsProps> = ({
 const SearchModal: FC<Props> = ({ onClose }) => {
   const [searchString, setSearchString] = useState<string>('')
 
-  const [searchResults, setSearchResults] = useState<JSX.Element[]>()
+  const [searchResults, setSearchResults] =
+    useState<[JSX.Element[], number | undefined]>()
   const searchInputRef = useRef<HTMLInputElement>(null)
 
   const [searchCases, { loading }] = useSearchCasesLazyQuery({
@@ -83,7 +84,7 @@ const SearchModal: FC<Props> = ({ onClose }) => {
           variables: { input: { query: searchString } },
         })
 
-        setSearchResults(
+        setSearchResults([
           results.data && results.data.searchCases.rowCount > 0
             ? results.data?.searchCases.rows.map((row) => (
                 <SearchResultButton
@@ -97,7 +98,8 @@ const SearchModal: FC<Props> = ({ onClose }) => {
             : [
                 <Text variant="small">{`Engar niðurstöður fundust fyrir: ${searchString}`}</Text>,
               ],
-        )
+          results.data?.searchCases.rowCount,
+        ])
       } catch (error) {
         console.error('Error searching cases:', error)
       }
@@ -154,9 +156,9 @@ const SearchModal: FC<Props> = ({ onClose }) => {
             >
               <div className={styles.searchResults}>
                 <Text variant="eyebrow" color="dark300">
-                  Leitarniðurstöður
+                  {`Leitarniðurstöður (${searchResults[1]})`}
                 </Text>
-                {searchResults}
+                {searchResults[0]}
               </div>
             </motion.div>
           )}
