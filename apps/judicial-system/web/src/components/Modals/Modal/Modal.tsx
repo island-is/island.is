@@ -170,9 +170,11 @@ export const ModalContainer = ({
 
   useEffect(() => {
     document.body.style.overflow = 'hidden'
+    document.body.style.userSelect = 'none'
 
     return () => {
       document.body.style.overflow = ''
+      document.body.style.userSelect = ''
     }
   }, [])
 
