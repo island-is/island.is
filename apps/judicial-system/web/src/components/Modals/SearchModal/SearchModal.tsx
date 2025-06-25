@@ -61,40 +61,14 @@ const SearchResultButton: FC<ResultsProps> = ({
 
 const SearchModal: FC<Props> = ({ onClose }) => {
   const [searchString, setSearchString] = useState<string>('')
-  const [isLoading, setIsLoading] = useState<boolean>(false)
+
   const [searchResults, setSearchResults] = useState<JSX.Element[]>()
   const searchInputRef = useRef<HTMLInputElement>(null)
 
-  const [searchCases] = useSearchCasesLazyQuery({
+  const [searchCases, { loading }] = useSearchCasesLazyQuery({
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
-
-  const handleSearch = async () => {
-    setIsLoading(true)
-
-    try {
-      const results = await searchCases({
-        variables: { input: { query: searchString } },
-      })
-
-      setSearchResults(
-        results.data?.searchCases.rows.map((row) => (
-          <SearchResultButton
-            key={row.caseId}
-            caseId={row.caseId}
-            caseType={row.caseType}
-            descriptor={row.matchedValue}
-            onClick={onClose}
-          />
-        )),
-      )
-    } catch (error) {
-      console.error('Error searching cases:', error)
-    } finally {
-      setIsLoading(false)
-    }
-  }
 
   useEffect(() => {
     if (searchInputRef.current) {
@@ -102,49 +76,76 @@ const SearchModal: FC<Props> = ({ onClose }) => {
     }
   }, [])
 
+  useEffect(() => {
+    const handleSearch = async () => {
+      try {
+        const results = await searchCases({
+          variables: { input: { query: searchString } },
+        })
+
+        setSearchResults(
+          results.data && results.data.searchCases.rowCount > 0
+            ? results.data?.searchCases.rows.map((row) => (
+                <SearchResultButton
+                  key={row.caseId}
+                  caseId={row.caseId}
+                  caseType={row.caseType}
+                  descriptor={row.matchedValue}
+                  onClick={onClose}
+                />
+              ))
+            : [
+                <Text variant="small">{`Engar niðurstöður fundust fyrir: ${searchString}`}</Text>,
+              ],
+        )
+      } catch (error) {
+        console.error('Error searching cases:', error)
+      }
+    }
+
+    if (searchString.trim().length > 0) {
+      handleSearch()
+    } else {
+      setSearchResults(undefined)
+    }
+  }, [onClose, searchCases, searchString])
+
   return (
     <ModalContainer title="Leit" onClose={onClose}>
       <Box margin={3} className={styles.searchModal}>
         <Text variant="h3" marginBottom={1}>
           Leit
         </Text>
-        <Box marginBottom={4}>
-          <Box marginBottom={3} columnGap={1} display="flex" flexWrap="wrap">
-            <Tag outlined disabled>
-              LÖKE málsnúmer
-            </Tag>
-            <Tag outlined disabled>
-              Málsnúmer héraðsdóms
-            </Tag>
-            <Tag outlined disabled>
-              Málsnúmer Landsréttar
-            </Tag>
-          </Box>
-          <Input
-            ref={searchInputRef}
-            name="search"
-            label="Málsnúmer"
-            placeholder="S-1234/2025"
-            value={searchString}
-            onChange={(event) => setSearchString(event.target.value)}
-            icon={{
-              name: 'search',
-              type: 'outline',
-            }}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter') {
-                handleSearch()
-              }
-            }}
-            disabled={isLoading}
-          />
+
+        <Box marginBottom={3} columnGap={1} display="flex" flexWrap="wrap">
+          <Tag outlined disabled>
+            Málsnúmer
+          </Tag>
+          <Tag outlined disabled>
+            Kennitala varnaraðila
+          </Tag>
+          <Tag outlined disabled>
+            Nafn varnaraðila
+          </Tag>
         </Box>
+        <Input
+          ref={searchInputRef}
+          name="search"
+          label="Leitarorð"
+          placeholder="Leit í málalistum"
+          value={searchString}
+          onChange={(event) => setSearchString(event.target.value)}
+          icon={{
+            name: 'search',
+            type: 'outline',
+          }}
+        />
         <AnimatePresence>
           {searchResults && (
             <motion.div
-              initial={{ opacity: 0, maxHeight: 0 }}
-              animate={{ opacity: 1, maxHeight: 500 }}
-              exit={{ opacity: 0, maxHeight: 0 }}
+              initial={{ opacity: 0, maxHeight: 0, marginTop: '32px' }}
+              animate={{ opacity: 1, maxHeight: 500, marginTop: '32px' }}
+              exit={{ opacity: 0, maxHeight: 0, marginTop: 0 }}
               className={styles.searchResultsContainer}
               transition={{
                 opacity: { duration: 0.2 },
