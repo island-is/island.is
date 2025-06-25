@@ -1,11 +1,16 @@
 import {
+  CaseIndictmentRulingDecision,
+  CaseState,
   DateType,
   DefenderChoice,
   Gender,
+  InformationForDefendant,
   Institution,
+  ServiceRequirement,
   ServiceStatus,
   SubpoenaType,
   User,
+  VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 
 export class InternalCaseResponse {
@@ -17,6 +22,9 @@ export class InternalCaseResponse {
   prosecutorsOffice!: Institution
   prosecutor!: User
   dateLogs?: DateLog[]
+  rulingDate?: Date
+  indictmentRulingDecision?: CaseIndictmentRulingDecision
+  state?: CaseState
 }
 
 interface Defendant {
@@ -35,6 +43,11 @@ interface Defendant {
   requestedDefenderNationalId?: string
   requestedDefenderName?: string
   subpoenaType?: SubpoenaType
+  verdictViewDate?: Date
+  verdictAppealDecision?: VerdictAppealDecision
+  verdictAppealDate?: Date
+  informationForDefendant?: InformationForDefendant[]
+  serviceRequirement?: ServiceRequirement
 }
 
 interface DateLog {
@@ -50,4 +63,5 @@ interface Subpoena {
   created: Date
   subpoenaId: string
   serviceStatus?: ServiceStatus
+  serviceRequirement?: ServiceRequirement
 }
