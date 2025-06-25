@@ -10,6 +10,7 @@ import FocusLock from 'react-focus-lock'
 import { motion } from 'motion/react'
 
 import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
+import { useKeyboardCombo } from '@island.is/judicial-system-web/src/utils/hooks/useKeyboardCombo/useKeyboardCombo'
 
 import * as styles from './Modal.css'
 
@@ -59,22 +60,6 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
       transition: { duration: 0.2 },
     },
   }
-
-  useEffect(() => {
-    const handleKeyDown = (e: { key: string }) => {
-      if (e.key === 'Escape') {
-        onClose && onClose()
-      }
-    }
-
-    // Attach the event listener
-    document.addEventListener('keydown', handleKeyDown)
-
-    // Cleanup the event listener on component unmount
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [onClose])
 
   return (
     <FocusLock autoFocus={false}>
@@ -173,21 +158,17 @@ export const ModalContainer = ({ children, onClose }: ModalProps) => {
     },
   }
 
+  useKeyboardCombo('Escape', () => {
+    onClose && onClose()
+  })
+
   useEffect(() => {
-    const handleKeyDown = (e: { key: string }) => {
-      if (e.key === 'Escape') {
-        onClose && onClose()
-      }
-    }
+    document.body.style.overflow = 'hidden'
 
-    // Attach the event listener
-    document.addEventListener('keydown', handleKeyDown)
-
-    // Cleanup the event listener on component unmount
     return () => {
-      document.removeEventListener('keydown', handleKeyDown)
+      document.body.style.overflow = ''
     }
-  }, [onClose])
+  }, [])
 
   return (
     <FocusLock autoFocus={false}>
