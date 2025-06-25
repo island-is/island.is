@@ -39,9 +39,14 @@ runs:
         DOCKER_REGISTRY: ${{ inputs.docker-registry }}
         DD_API_KEY: ${{ inputs.dd-api-key }}
 
+    - name: Set RUNS_ON_S3_BUCKET_CACHE
+      shell: bash
+      if: ${{ !github.event.localrun && env.RUNS_ON_BUCKET_NAME }}
+      run: echo "RUNS_ON_S3_BUCKET_CACHE=${{ env.RUNS_ON_BUCKET_NAME }}" >> $GITHUB_ENV
+
     - name: Cached codecov uploader
       id: codecov-cache
-      uses: actions/cache@v4
+      uses: runs-on/cache@v4
       with:
         path: codecov
         key: ${{ runner.os }}-codeconv-${{ env.CODECOV_REV }}
