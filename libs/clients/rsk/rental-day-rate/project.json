@@ -1,0 +1,37 @@
+{
+  "name": "clients-rental-day-rate",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/clients/rsk/rental-day-rate/src",
+  "projectType": "library",
+  "tags": ["lib:client", "scope:client"],
+  "targets": {
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/libs/clients/rsk/rental-day-rate"],
+      "options": {
+        "jestConfig": "libs/clients/rsk/rental-day-rate/jest.config.ts"
+      }
+    },
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl -H \"Accept: application/json\" -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" \"http://localhost:8081/r1/IS-DEV/GOV/10006/Skatturinn/getOpenAPI?serviceCode=rentaldayrate-v1\" | jq > src/clientConfig.json",
+          "jq '.components.schemas.ProblemDetails.additionalProperties = false' src/{args.apiVersion}/clientConfig.json > _.tmp && mv _.tmp src/{args.apiVersion}/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/rsk/rental-day-rate"
+      }
+    },
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/rsk/rental-day-rate/gen/fetch -i libs/clients/rsk/rental-day-rate/src/clientConfig.json"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
+    }
+  }
+}
