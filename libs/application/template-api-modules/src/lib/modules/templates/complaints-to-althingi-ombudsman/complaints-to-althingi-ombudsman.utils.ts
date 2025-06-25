@@ -32,10 +32,14 @@ export const applicationToCaseRequest = async (
   const answers = application.answers as ComplaintsToAlthingiOmbudsmanAnswers
   const contacts = gatherContacts(answers)
 
-  const metadata = contacts[0]?.gender ? [{
-    name: 'GenderMod',
-    value: contacts[0].gender,
-  }] : undefined
+  const metadata = contacts[0]?.gender
+    ? [
+        {
+          name: 'GenderMod',
+          value: contacts[0].gender,
+        },
+      ]
+    : undefined
 
   return {
     category: 'Kvörtun',
@@ -72,8 +76,8 @@ export const gatherContacts = (
 ): LinkedContact[] => {
   const contact = getContactInfo(answers)
   const genderAnswer = getValueViaPath<GenderAnswerOptions>(
-    answers, 
-    'genderAnswer'
+    answers,
+    'genderAnswer',
   )
   //Kvartandi - main contact
   const complaintant = {

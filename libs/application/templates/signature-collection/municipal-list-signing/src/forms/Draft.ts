@@ -123,9 +123,7 @@ export const Draft: Form = buildForm({
                     : lists.find((list) => list.id === answers.listId)
                         ?.candidate.nationalId
 
-                return nationalId
-                  ? formatNationalId(nationalId)
-                  : undefined
+                return nationalId ? formatNationalId(nationalId) : undefined
               },
             }),
             buildTextField({

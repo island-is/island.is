@@ -75,9 +75,7 @@ const ListActions = ({ allowedActions }: ListActionsProps = {}) => {
           <RemoveCandidate list={list} />
         )}
         {allowedActions?.includes(Actions.ReviewCandidates) && (
-          <ReviewCandidates
-            candidates={collection.candidates}
-          />
+          <ReviewCandidates candidates={collection.candidates} />
         )}
       </Stack>
     </Drawer>
