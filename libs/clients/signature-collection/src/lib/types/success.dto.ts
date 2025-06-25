@@ -1,8 +1,9 @@
 import { ReasonKey, Requirement } from '../signature-collection.types'
 
-export interface Success {
+export interface Success<T = undefined> {
   success: boolean
   reasons?: ReasonKey[]
+  response?: T
 }
 
 export const mapReasons = (
