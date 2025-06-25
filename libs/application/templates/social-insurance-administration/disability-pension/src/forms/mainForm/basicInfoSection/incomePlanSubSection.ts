@@ -2,11 +2,11 @@ import { buildSubSection, buildTableRepeaterField, YES } from "@island.is/applic
 import { socialInsuranceAdministrationMessage } from "@island.is/application/templates/social-insurance-administration-core/lib/messages"
 import { DIVIDENDS_IN_FOREIGN_BANKS, FOREIGN_BASIC_PENSION, FOREIGN_INCOME, FOREIGN_PENSION, INCOME, INTEREST_ON_DEPOSITS_IN_FOREIGN_BANKS, ISK, RatioType } from "@island.is/application/templates/social-insurance-administration-core/lib/constants"
 
- const incomePlanRoute = 'incomePlanForm'
+ const incomePlanRoute = 'incomePlan'
 
- export const IncomePlanSubSection =
+ export const incomePlanSubSection =
  buildSubSection({
-   id: 'incomePlan',
+   id: incomePlanRoute,
    title:
      socialInsuranceAdministrationMessage.incomePlan.subSectionTitle,
    children: [

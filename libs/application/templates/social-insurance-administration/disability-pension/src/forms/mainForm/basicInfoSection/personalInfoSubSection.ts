@@ -10,11 +10,11 @@ import { disabilityPensionFormMessage } from '../../../lib/messages'
 import { Application, NationalRegistryIndividual, NationalRegistrySpouse } from '@island.is/application/types'
 import { applicantInformationArray } from '@island.is/application/ui-forms'
 
-const personalInfoRoute = 'personalInfoForm'
+const personalInfoRoute = 'personalInfo'
 
-export const PersonalInfoSubSection =
+export const personalInfoSubSection =
     buildSubSection({
-      id: 'personalInfo',
+      id: personalInfoRoute,
       tabTitle: disabilityPensionFormMessage.basicInfo.personalInfo,
       title: disabilityPensionFormMessage.basicInfo.personalInfo,
       children: [

@@ -2,22 +2,22 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../lib/messages'
-import { PersonalInfoSubSection } from './personalInfoSubSection'
-import { PaymentInfoSubSection } from './paymentInfoSubSection'
-import { IncomePlanInstructionsSubSection } from './incomePlanInstructionsSubSection'
-import { IncomePlanSubSection } from './incomePlanSubSection'
-import { EmploymentParticipationSubSection } from './employmentParticipationSubSection'
+import { personalInfoSubSection } from './personalInfoSubSection'
+import { paymentInfoSubSection } from './paymentInfoSubSection'
+import { incomePlanInstructionsSubSection } from './incomePlanInstructionsSubSection'
+import { incomePlanSubSection } from './incomePlanSubSection'
+import { employmentParticipationSubSection } from './employmentParticipationSubSection'
 
 
-export const BasicInfoSection =
+export const basicInfoSection =
   buildSection({
     id: 'personalInfo',
-    tabTitle: disabilityPensionFormMessage.basicInfo.personalInfo,
+    title: disabilityPensionFormMessage.basicInfo.personalInfo,
     children: [
-      PersonalInfoSubSection,
-      PaymentInfoSubSection,
-      IncomePlanInstructionsSubSection,
-      IncomePlanSubSection,
-      EmploymentParticipationSubSection,
+      personalInfoSubSection,
+      paymentInfoSubSection,
+      incomePlanInstructionsSubSection,
+      incomePlanSubSection,
+      employmentParticipationSubSection,
     ],
   })

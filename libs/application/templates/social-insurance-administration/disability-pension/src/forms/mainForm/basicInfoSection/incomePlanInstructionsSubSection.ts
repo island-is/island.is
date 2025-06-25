@@ -9,11 +9,11 @@ import {
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../lib/messages'
 
-const incomePlanInstructionsRoute = 'incomePlanInstructionForm'
+const incomePlanInstructionsRoute = 'incomePlanInstruction'
 
-export const IncomePlanInstructionsSubSection =
+export const incomePlanInstructionsSubSection =
     buildSubSection({
-      id: 'incomePlanInstructions',
+      id: incomePlanInstructionsRoute,
       tabTitle: disabilityPensionFormMessage.basicInfo.incomePlanInstructionsTitle,
       title: disabilityPensionFormMessage.basicInfo.incomePlanInstructionsTitle,
       children: [

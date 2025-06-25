@@ -20,11 +20,11 @@ import { BankInfo } from '@island.is/application/templates/social-insurance-admi
 import { friendlyFormatIBAN, friendlyFormatSWIFT, getCurrencies, getTaxOptions, getYesNoOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import isEmpty from 'lodash/isEmpty'
 
-const paymentInfoRoute = 'paymentInfoForm'
+const paymentInfoRoute = 'paymentInfo'
 
-export const PaymentInfoSubSection =
+export const paymentInfoSubSection =
     buildSubSection({
-      id: 'paymentInfo',
+      id: paymentInfoRoute,
       tabTitle: disabilityPensionFormMessage.basicInfo.paymentInfo,
       title: disabilityPensionFormMessage.basicInfo.paymentInfo,
       children: [

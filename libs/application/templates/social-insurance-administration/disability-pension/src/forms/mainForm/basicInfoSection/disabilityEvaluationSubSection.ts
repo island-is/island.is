@@ -10,11 +10,11 @@ import {
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../lib/messages'
 
-const disabilityEvaluationRoute = 'disabilityEvaluationForm'
+const disabilityEvaluationRoute = 'disabilityEvaluation'
 
-export const DisabilityEvaluationSubSection =
+export const disabilityEvaluationSubSection =
     buildSubSection({
-      id: 'disabilityEvaluation',
+      id: disabilityEvaluationRoute,
       tabTitle: disabilityPensionFormMessage.disabilityEvaluation.tabTitle,
       children: [
         buildMultiField({
