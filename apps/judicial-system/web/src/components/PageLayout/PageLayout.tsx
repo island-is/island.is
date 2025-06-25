@@ -17,6 +17,7 @@ import {
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   isDefenceUser,
+  isDistrictCourtUser,
   isIndictmentCase,
 } from '@island.is/judicial-system/types'
 import {
@@ -136,6 +137,8 @@ const SidePanel: FC<SidePanelProps> = ({
   const activeSubSection = sections[activeSection]?.children.findIndex(
     (s) => s.isActive,
   )
+  const showCourtCaseNumber = isDistrictCourtUser(user)
+
   return (
     <GridColumn span={['12/12', '12/12', '4/12', '3/12']}>
       <div className={styles.formStepperContainer}>
@@ -145,7 +148,11 @@ const SidePanel: FC<SidePanelProps> = ({
               <Logo defaultInstitution={workingCase.court?.name} />
             </Box>
           )}
-          <Box marginBottom={6}>
+          <Box
+            marginBottom={[1, 1, showCourtCaseNumber ? 4 : 6]}
+            marginLeft={[3, 3, 0]}
+            marginTop={[2, 2, 0]}
+          >
             <Text variant="h3" as="h3">
               {formatMessage(
                 user?.institution?.type === InstitutionType.COURT_OF_APPEALS
@@ -155,6 +162,11 @@ const SidePanel: FC<SidePanelProps> = ({
                   : formStepperSections.title,
                 { caseType: workingCase.type },
               )}
+            </Text>
+            <Text>
+              {showCourtCaseNumber && workingCase.courtCaseNumber
+                ? workingCase.courtCaseNumber
+                : '\u00A0'}
             </Text>
           </Box>
           <FormStepperV2

@@ -91,64 +91,70 @@ export const DocumentReview: FC<Props> = ({
           </GridColumn>
           {selectedChildren &&
             selectedChildren.map((child) => {
-              return (
-                <GridColumn span="1/1" paddingBottom={1}>
-                  {DescriptionFormField({
-                    application: application,
-                    showFieldName: false,
-                    field: {
-                      id: 'title',
-                      title: '',
-                      description: formatMessage(review.labels.documents, {
-                        name: `${child.givenName} ${child.familyName}`,
-                      }),
-                      titleVariant: 'h4',
-                      type: FieldTypes.DESCRIPTION,
-                      component: FieldComponents.DESCRIPTION,
-                      children: undefined,
-                    },
-                  })}
-                  {answers.childrenPassport?.map((passportFiles) => {
-                    return passportFiles?.attachment?.map((file) => {
-                      return <Text>{file.name}</Text>
-                    })
-                  })}
-                  {answers.childrenSupportingDocuments
-                    ?.filter(
-                      (document) => document.nationalId === child.nationalId,
-                    )
-                    .map((documentItems) => {
-                      const FileList: Array<JSX.Element> = []
-                      const birthCertificates: Array<JSX.Element> =
-                        documentItems.birthCertificate?.map((file) => {
-                          return <Text>{file.name}</Text>
-                        }) || []
-                      FileList.push(...birthCertificates)
-
-                      const writtenConsentsFromChild: Array<JSX.Element> =
-                        documentItems.writtenConsentFromChild?.map((file) => {
-                          return <Text>{file.name}</Text>
-                        }) || []
-                      FileList.push(...writtenConsentsFromChild)
-
-                      const writtenConsentsFromOtherParent: Array<JSX.Element> =
-                        documentItems.writtenConsentFromOtherParent?.map(
-                          (file) => {
-                            return <Text>{file.name}</Text>
-                          },
-                        ) || []
-                      FileList.push(...writtenConsentsFromOtherParent)
-
-                      const custodyDocuments: Array<JSX.Element> =
-                        documentItems.custodyDocuments?.map((file) => {
-                          return <Text>{file.name}</Text>
-                        }) || []
-                      FileList.push(...custodyDocuments)
-
-                      return FileList
+              if (child) {
+                return (
+                  <GridColumn span="1/1" paddingBottom={1}>
+                    {DescriptionFormField({
+                      application: application,
+                      showFieldName: false,
+                      field: {
+                        id: 'title',
+                        title: '',
+                        description: formatMessage(review.labels.documents, {
+                          name: `${child.givenName} ${child.familyName}`,
+                        }),
+                        titleVariant: 'h4',
+                        type: FieldTypes.DESCRIPTION,
+                        component: FieldComponents.DESCRIPTION,
+                        children: undefined,
+                      },
                     })}
-                </GridColumn>
-              )
+                    {answers.childrenPassport?.map((passportFiles) => {
+                      return passportFiles?.attachment?.map((file) => {
+                        return <Text>{file.name}</Text>
+                      })
+                    })}
+                    {answers.childrenSupportingDocuments
+                      ?.filter(
+                        (document) => document?.nationalId === child.nationalId,
+                      )
+                      .map((documentItems) => {
+                        const FileList: Array<JSX.Element> = []
+                        const birthCertificates: Array<JSX.Element> =
+                          documentItems?.birthCertificate?.map((file) => {
+                            return <Text>{file.name}</Text>
+                          }) || []
+                        FileList.push(...birthCertificates)
+
+                        const writtenConsentsFromChild: Array<JSX.Element> =
+                          documentItems?.writtenConsentFromChild?.map(
+                            (file) => {
+                              return <Text>{file.name}</Text>
+                            },
+                          ) || []
+                        FileList.push(...writtenConsentsFromChild)
+
+                        const writtenConsentsFromOtherParent: Array<JSX.Element> =
+                          documentItems?.writtenConsentFromOtherParent?.map(
+                            (file) => {
+                              return <Text>{file.name}</Text>
+                            },
+                          ) || []
+                        FileList.push(...writtenConsentsFromOtherParent)
+
+                        const custodyDocuments: Array<JSX.Element> =
+                          documentItems?.custodyDocuments?.map((file) => {
+                            return <Text>{file.name}</Text>
+                          }) || []
+                        FileList.push(...custodyDocuments)
+
+                        return FileList
+                      })}
+                  </GridColumn>
+                )
+              }
+
+              return null
             })}
         </GridRow>
       </Box>

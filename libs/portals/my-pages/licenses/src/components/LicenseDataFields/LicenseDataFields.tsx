@@ -87,7 +87,7 @@ export const LicenseDataFields = ({
                   field.value
                     ? () => (
                         <Box display="flex" alignItems="center">
-                          <Text>{field.value}</Text>
+                          <Text whiteSpace="preLine">{field.value}</Text>
                           <Box
                             marginLeft={2}
                             display="flex"

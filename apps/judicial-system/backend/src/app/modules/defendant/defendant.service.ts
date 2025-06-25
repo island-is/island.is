@@ -350,19 +350,31 @@ export class DefendantService {
     theCase: Case,
     defendant: Defendant,
     update: InternalUpdateDefendantDto,
-    isDefenderChoiceConfirmed = false,
     transaction?: Transaction,
   ): Promise<Defendant> {
     // The reason we have a separate dto for this is because requests that end here
-    // are initiated by outside API's which should not be able to edit other fields
-    // Defendant updated originating from the judicial system should use the UpdateDefendantDto
+    // are initiated by outside API's which should not be able to edit other fields directly
+    // Defendant updates originating from the judicial system should use the UpdateDefendantDto
     // and go through the update method above using the defendantId.
-    // This is also why we may set the isDefenderChoiceConfirmed to false here - the judge needs to confirm all changes.
+  
+    // If there is a change in the defender choice after the judge has confirmed the choice,
+    // we need to set the isDefenderChoiceConfirmed to false
+    const resetDefenderChoiceConfirmed =
+      defendant?.isDefenderChoiceConfirmed &&
+      ((update.defenderChoice &&
+        defendant?.defenderChoice !== update.defenderChoice) ||
+        (update.defenderNationalId &&
+          defendant?.defenderNationalId !== update.defenderNationalId))
 
     const updatedDefendant = await this.updateDatabaseDefendant(
       theCase.id,
       defendant.id,
-      { ...update, isDefenderChoiceConfirmed },
+      {
+        ...update,
+        ...(resetDefenderChoiceConfirmed && {
+          isDefenderChoiceConfirmed: false,
+        }),
+      },
       transaction,
     )
 

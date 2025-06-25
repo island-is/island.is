@@ -240,15 +240,6 @@ export class SubpoenaService {
           requestedDefenderNationalId ||
           requestedDefenderName)
       ) {
-        // If there is a change in the defender choice after the judge has confirmed the choice,
-        // we need to set the isDefenderChoiceConfirmed to false
-        const resetDefenderChoiceConfirmed =
-          subpoena.defendant?.isDefenderChoiceConfirmed &&
-          ((defenderChoice &&
-            subpoena.defendant?.defenderChoice !== defenderChoice) ||
-            (defenderNationalId &&
-              subpoena.defendant?.defenderNationalId !== defenderNationalId))
-
         // Færa message handling í defendant service
         await this.defendantService.updateRestricted(
           subpoena.case,
@@ -263,7 +254,6 @@ export class SubpoenaService {
             requestedDefenderNationalId,
             requestedDefenderName,
           },
-          resetDefenderChoiceConfirmed ? false : undefined,
           transaction,
         )
       }
