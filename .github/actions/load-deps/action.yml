@@ -23,13 +23,7 @@ runs:
       shell: bash
       run: |
         export GENERATED_FILES_PATH=${{ inputs.cache-path }}/${{ env.GENERATED_FILES }}
-        echo "GENERATED_FILES_PATH=$GENERATED_FILES_PATH" >> "$GITHUB_ENV"
-
-    - name: INFO
-      working-directory: ${{ inputs.working-directory }}
-      shell: bash
-      run: |
-        echo "generated files: ${{ env.GENERATED_FILES_PATH }}"
+        echo "GENERATED_FILES_PATH=$GENERATED_FILES_PATH" | tee -a "$GITHUB_ENV"
 
     - name: Generate hash for generated files list
       id: generate-files-hash
@@ -38,20 +32,38 @@ runs:
       run: |
         node ./scripts/ci/generate-files.mjs /dev/null --skip-codegen
 
-    - name: Cache generated files
-      uses: runs-on/cache@v4
+    - name: Restore generated files cache
+      uses: runs-on/cache/restore@v4
       id: restore-codegen-cache
       with:
         path: |
           ${{ env.GENERATED_FILES_PATH }}
-        key: generated-files-${{ hashFiles('generated_files_list.txt') }}
+        key: generated-files-${{ hashFiles('codegen_inputs_list.txt') }}
+        restore-keys: generated-files
+      env:
+        AWS_REGION: ${{ env.AWS_REGION || 'eu-west-1' }}
 
     - name: Prepare generated files
       if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
+      id: generate-files
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
         node ./scripts/ci/generate-files.mjs ${{ env.GENERATED_FILES_PATH }}
+
+    # If we don't split into restore/save the generated cache might not get saved
+    # if later steps fail. The "Post" step for the cache action seems to re-evaluate
+    # its args, i.e. re-evaluating the hash of the mutated `generated_files_list.txt`,
+    # causing it to save the cache to a different cache key
+    - name: Save generated files cache
+      if: steps.generate-files.outcome == 'success'
+      uses: runs-on/cache/save@v4
+      with:
+        path: |
+          ${{ env.GENERATED_FILES_PATH }}
+        key: ${{ steps.restore-codegen-cache.outputs.cache-primary-key }}
+      env:
+        AWS_REGION: ${{ env.AWS_REGION || 'eu-west-1' }}
 
     - name: Extract generated files
       if: steps.restore-codegen-cache.outputs.cache-hit == 'true'
