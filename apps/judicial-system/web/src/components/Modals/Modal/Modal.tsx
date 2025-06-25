@@ -7,6 +7,7 @@ import {
 } from 'react'
 import ReactDOM from 'react-dom'
 import FocusLock from 'react-focus-lock'
+import cn from 'classnames'
 import { motion } from 'motion/react'
 
 import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
@@ -30,6 +31,7 @@ interface ModalProps {
   children?: ReactNode
   invertButtonColors?: boolean
   loading?: boolean
+  position?: 'center' | 'top' | 'bottom'
 }
 
 const Modal: FC<PropsWithChildren<ModalProps>> = ({
@@ -145,7 +147,11 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
   )
 }
 
-export const ModalContainer = ({ children, onClose }: ModalProps) => {
+export const ModalContainer = ({
+  children,
+  onClose,
+  position = 'center',
+}: ModalProps) => {
   const modalVariants = {
     open: {
       translateY: 0,
@@ -174,7 +180,9 @@ export const ModalContainer = ({ children, onClose }: ModalProps) => {
     <FocusLock autoFocus={false}>
       <motion.div
         key="modal"
-        className={styles.container}
+        className={cn(styles.container, {
+          [styles.alignItems[position]]: position,
+        })}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}

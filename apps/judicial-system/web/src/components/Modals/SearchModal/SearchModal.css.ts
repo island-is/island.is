@@ -9,6 +9,7 @@ export const resultButton = style({
 export const searchModal = style({
   minWidth: '634px',
   overflow: 'hidden',
+  margin: `${theme.spacing[3]}px`,
 })
 
 export const searchResultsContainer = style({
