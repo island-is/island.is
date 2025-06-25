@@ -44,7 +44,7 @@ export const List = () => {
           offset={['0', '0', '0', '1/12']}
           span={['12/12', '12/12', '12/12', '8/12']}
         >
-          <Box marginBottom={2}>
+          <Box marginBottom={3}>
             <Breadcrumbs
               items={[
                 {
@@ -58,7 +58,7 @@ export const List = () => {
             />
           </Box>
           {!!list && (
-            <>
+            <Box>
               <IntroHeader
                 title={list.title}
                 intro={formatMessage(m.singleListIntro)}
@@ -99,7 +99,7 @@ export const List = () => {
                 listId={list.id}
                 collectionType={list.collectionType}
               />
-            </>
+            </Box>
           )}
         </GridColumn>
       </GridRow>

@@ -24,6 +24,7 @@ import {
 import ActionCompleteCollectionProcessing from '../../shared-components/completeCollectionProcessing'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import FindSignature from '../../shared-components/findSignature'
+import EmptyState from '../../shared-components/emptyState'
 
 const collectionType = SignatureCollectionCollectionType.Parliamentary
 
@@ -70,59 +71,69 @@ const ParliamentaryRoot = () => {
           />
           <Divider />
           <Box marginTop={9} />
-          <FindSignature collectionId={collection.id} />
-          <Stack space={3}>
-            {collection?.areas.map((area) => {
-              const areaLists = allLists.filter(
-                (l) => l.area.name === area.name,
-              )
-              return (
-                <ActionCard
-                  key={area.id}
-                  eyebrow={
-                    formatMessage(m.totalListsPerConstituency) +
-                    areaLists.length
-                  }
-                  heading={area.name}
-                  cta={{
-                    label: formatMessage(m.viewConstituency),
-                    variant: 'text',
-                    icon: 'arrowForward',
-                    disabled: areaLists.length === 0,
-                    onClick: () => {
-                      navigate(
-                        SignatureCollectionPaths.ParliamentaryConstituency.replace(
-                          ':constituencyName',
-                          area.name,
-                        ),
-                      )
-                    },
-                  }}
-                  tag={
-                    areaLists.length > 0 &&
-                    areaLists.every((l) => l.reviewed === true)
-                      ? {
-                          label: formatMessage(m.confirmListReviewed),
-                          variant: 'mint',
-                          outlined: true,
-                        }
-                      : undefined
-                  }
-                />
-              )
-            })}
-          </Stack>
-          <CompareLists
-            collectionId={collection?.id}
-            collectionType={collectionType}
-          />
-          <ActionCompleteCollectionProcessing
-            collectionType={collectionType}
-            collectionId={collection?.id}
-            canProcess={
-              !!allLists.length && allLists.every((l) => l.reviewed === true)
-            }
-          />
+          {allLists.length === 0 ? (
+            <EmptyState
+              title={formatMessage(m.noLists)}
+              description={formatMessage(m.noListsDescription)}
+            />
+          ) : (
+            <Box>
+              <FindSignature collectionId={collection.id} />
+              <Stack space={3}>
+                {collection?.areas.map((area) => {
+                  const areaLists = allLists.filter(
+                    (l) => l.area.name === area.name,
+                  )
+                  return (
+                    <ActionCard
+                      key={area.id}
+                      eyebrow={
+                        formatMessage(m.totalListsPerConstituency) +
+                        areaLists.length
+                      }
+                      heading={area.name}
+                      cta={{
+                        label: formatMessage(m.viewConstituency),
+                        variant: 'text',
+                        icon: 'arrowForward',
+                        disabled: areaLists.length === 0,
+                        onClick: () => {
+                          navigate(
+                            SignatureCollectionPaths.ParliamentaryConstituency.replace(
+                              ':constituencyName',
+                              area.name,
+                            ),
+                          )
+                        },
+                      }}
+                      tag={
+                        areaLists.length > 0 &&
+                        areaLists.every((l) => l.reviewed === true)
+                          ? {
+                              label: formatMessage(m.confirmListReviewed),
+                              variant: 'mint',
+                              outlined: true,
+                            }
+                          : undefined
+                      }
+                    />
+                  )
+                })}
+              </Stack>
+              <CompareLists
+                collectionId={collection?.id}
+                collectionType={collectionType}
+              />
+              <ActionCompleteCollectionProcessing
+                collectionType={collectionType}
+                collectionId={collection?.id}
+                canProcess={
+                  !!allLists.length &&
+                  allLists.every((l) => l.reviewed === true)
+                }
+              />
+            </Box>
+          )}
           {collectionStatus === CollectionStatus.Processed && (
             <Box marginTop={8}>
               <AlertMessage

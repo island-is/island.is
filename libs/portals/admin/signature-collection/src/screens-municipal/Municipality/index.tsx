@@ -54,7 +54,7 @@ export const Municipality = () => {
           offset={['0', '0', '0', '1/12']}
           span={['12/12', '12/12', '12/12', '8/12']}
         >
-          <Box marginBottom={2}>
+          <Box marginBottom={3}>
             <Breadcrumbs
               items={[
                 {
