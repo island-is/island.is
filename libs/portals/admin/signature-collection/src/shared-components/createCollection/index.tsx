@@ -220,9 +220,7 @@ const CreateCollection = ({
                   label={formatMessage(m.candidateName)}
                   backgroundColor="blue"
                   value={collectionName}
-                    onChange={(v) =>
-                    setCollectionName(v.target.value)
-                  }
+                  onChange={(v) => setCollectionName(v.target.value)}
                 />
               )}
               {currentArea?.id && (

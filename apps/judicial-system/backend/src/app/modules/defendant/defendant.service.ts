@@ -356,7 +356,7 @@ export class DefendantService {
     // are initiated by outside API's which should not be able to edit other fields directly
     // Defendant updates originating from the judicial system should use the UpdateDefendantDto
     // and go through the update method above using the defendantId.
-  
+
     // If there is a change in the defender choice after the judge has confirmed the choice,
     // we need to set the isDefenderChoiceConfirmed to false
     const resetDefenderChoiceConfirmed =

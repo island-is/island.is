@@ -21,14 +21,30 @@ export const Applicants = ({ applicantTypes }: Props) => {
       {applicantTypes.map((applicantType) => {
         if (applicantType.applicantTypeId === ApplicantTypesEnum.INDIVIDUAL) {
           return (
-            <IndividualApplicant applicantType={applicantType} lang={lang} key={applicantType.id} />
+            <IndividualApplicant
+              applicantType={applicantType}
+              lang={lang}
+              key={applicantType.id}
+            />
           )
         } else if (applicantType.applicantTypeId === agentType) {
-          return <Agent applicantType={applicantType} lang={lang} key={applicantType.id} />
+          return (
+            <Agent
+              applicantType={applicantType}
+              lang={lang}
+              key={applicantType.id}
+            />
+          )
         } else if (
           applicantType.applicantTypeId === ApplicantTypesEnum.LEGAL_ENTITY
         ) {
-          return <LegalEntity applicantType={applicantType} lang={lang} key={applicantType.id} />
+          return (
+            <LegalEntity
+              applicantType={applicantType}
+              lang={lang}
+              key={applicantType.id}
+            />
+          )
         }
         return null
       })}

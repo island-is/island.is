@@ -5,7 +5,6 @@ import { useQuery } from '@apollo/client'
 import { ApplicationLoading } from '../components/ApplicationsLoading/ApplicationLoading'
 import { NotFound } from '@island.is/portals/core'
 
-
 type UseParams = {
   slug: string
   id: string
