@@ -29,6 +29,12 @@ export const income = {
       defaultMessage: 'Launagreiðandi',
       description: 'Employer label',
     },
+    hasEmploymentEnded: {
+      id: 'aa.application:income.labels.hasEmploymentEnded',
+      defaultMessage: 'Hefur þú lokið störfum?',
+      description:
+        'Description for yes/no question wether employment has ended',
+    },
     endOfEmployment: {
       id: 'aa.application:income.labels.endOfEmployment',
       defaultMessage: 'Hvenær laukst/lýkur þú störfum?',
@@ -38,11 +44,6 @@ export const income = {
       id: 'aa.application:income.labels.endOfEmploymentDate',
       defaultMessage: 'Starfslok',
       description: 'End of employment date label',
-    },
-    stillEmployed: {
-      id: 'aa.application:income.labels.stillEmployed',
-      defaultMessage: 'Er enn í þessu starfi',
-      description: 'Still at this job checkmark label',
     },
     incomeFromOtherThanJob: {
       id: 'aa.application:income.labels.incomeFromOtherThanJob',
