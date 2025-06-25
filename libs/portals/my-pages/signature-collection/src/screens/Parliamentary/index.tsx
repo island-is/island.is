@@ -1,6 +1,5 @@
 import { Box } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { EmptyState } from '@island.is/portals/my-pages/core'
 import { m } from '../../lib/messages'
 import OwnerView from './OwnerView'
 import SigneeView from '../shared/SigneeView'
@@ -19,12 +18,16 @@ import {
 const SignatureCollectionParliamentary = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
+  const collectionType = SignatureCollectionCollectionType.Parliamentary
 
-  const { isOwner, loadingIsOwner, refetchIsOwner } = useIsOwner()
+  const { isOwner, loadingIsOwner, refetchIsOwner } = useIsOwner(collectionType)
   const userInfo = useUserInfo()
   const { currentCollection, loadingCurrentCollection } =
-    useGetCurrentCollection()
-  const { listsForOwner } = useGetListsForOwner('')
+    useGetCurrentCollection(SignatureCollectionCollectionType.Parliamentary)
+  const { listsForOwner } = useGetListsForOwner(
+    collectionType,
+    currentCollection?.id ?? '',
+  )
 
   return (
     <Box>
@@ -35,13 +38,7 @@ const SignatureCollectionParliamentary = () => {
       />
       {!loadingIsOwner && !loadingCurrentCollection && (
         <Box>
-          {currentCollection?.collectionType ===
-          SignatureCollectionCollectionType.Presidential ? (
-            <EmptyState
-              title={m.noCollectionIsActive}
-              description={m.noCollectionIsActiveDescription}
-            />
-          ) : isOwner.success ? (
+          {isOwner.success ? (
             <OwnerView
               refetchIsOwner={refetchIsOwner}
               currentCollection={currentCollection}
@@ -53,7 +50,10 @@ const SignatureCollectionParliamentary = () => {
               }
             />
           ) : (
-            <SigneeView currentCollection={currentCollection} />
+            <SigneeView
+              currentCollection={currentCollection}
+              collectionType={collectionType}
+            />
           )}
         </Box>
       )}

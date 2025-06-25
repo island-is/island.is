@@ -23,7 +23,9 @@ import {
 } from '@island.is/api/schema'
 import ActionCompleteCollectionProcessing from '../../shared-components/completeCollectionProcessing'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
-import FindSignature from './findSignature'
+import FindSignature from '../../shared-components/findSignature'
+
+const collectionType = SignatureCollectionCollectionType.Parliamentary
 
 const ParliamentaryRoot = () => {
   const { formatMessage } = useLocale()
@@ -85,6 +87,8 @@ const ParliamentaryRoot = () => {
                   cta={{
                     label: formatMessage(m.viewConstituency),
                     variant: 'text',
+                    icon: 'arrowForward',
+                    disabled: areaLists.length === 0,
                     onClick: () => {
                       navigate(
                         SignatureCollectionPaths.ParliamentaryConstituency.replace(
@@ -108,9 +112,12 @@ const ParliamentaryRoot = () => {
               )
             })}
           </Stack>
-          <CompareLists collectionId={collection?.id} />
+          <CompareLists
+            collectionId={collection?.id}
+            collectionType={collectionType}
+          />
           <ActionCompleteCollectionProcessing
-            collectionType={SignatureCollectionCollectionType.Parliamentary}
+            collectionType={collectionType}
             collectionId={collection?.id}
             canProcess={
               !!allLists.length && allLists.every((l) => l.reviewed === true)

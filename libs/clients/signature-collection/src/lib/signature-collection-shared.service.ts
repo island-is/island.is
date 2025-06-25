@@ -19,6 +19,7 @@ import { List, ListStatus, mapList } from './types/list.dto'
 import { Signature, mapSignature } from './types/signature.dto'
 import { AdminCandidateApi, AdminListApi } from './apis'
 import { Success, mapReasons } from './types/success.dto'
+import { collapseGovernment } from './utils/mappers'
 
 type ListApi = MedmaelalistarApi | AdminListApi
 type CandidateApi = FrambodApi | AdminCandidateApi
@@ -35,22 +36,58 @@ export class SignatureCollectionSharedClientService {
       hasSofnun: true,
       onlyActive: true,
     })
-    const collections = await Promise.all(
-      baseRes
-        .filter(
-          (election) =>
-            Boolean(election.id) &&
-            election.kosningTegundNr ===
-              getNumberFromCollectionType(collectionType),
-        )
-        .map(async ({ id }) => {
-          const iD = id ?? 0 // Filter already applied but typing not catching up
-          return await api.kosningIDSofnunListGet({ iD })
-        }),
+
+    let filteredBaseRes = baseRes.filter(
+      (election) =>
+        Boolean(election.id) &&
+        election.kosningTegundNr ===
+          getNumberFromCollectionType(collectionType),
     )
 
+    if (
+      collectionType === CollectionType.LocalGovernmental &&
+      !filteredBaseRes.length
+    ) {
+      // No active local governmental elections, checking for "special" sveitó elections
+      filteredBaseRes = baseRes.filter(
+        (election) =>
+          Boolean(election.id) &&
+          election.kosningTegundNr ===
+            getNumberFromCollectionType(
+              CollectionType.SpecialLocalGovernmental,
+            ),
+      )
+    }
+
+    const elections = await Promise.all(
+      filteredBaseRes.map(async ({ id }) => {
+        const iD = id ?? 0 // Filter already applied but typing not catching up
+        return await api.kosningIDSofnunListGet({ iD })
+      }),
+    )
+
+    // The signature-collection system has operated on the assumption that
+    // any Election type will have one and only one active collection.
+    // However, this assumption was broken upon the introduction of
+    // local governmental elections
+    // Therefore we collapse the multitude of areas into one collection in that special case
+    // to maintain generalization of the underlying systems in both the backend and frontend.
+    if (
+      collectionType === CollectionType.LocalGovernmental &&
+      elections.length
+    ) {
+      const orderedCollapsedElections = elections
+        .map((election) => collapseGovernment(election))
+        .sort((a, b) => (a.endTime < b.endTime ? 1 : -1))
+
+      if (!orderedCollapsedElections.length) {
+        throw new Error('No current collection for selected type')
+      }
+      return orderedCollapsedElections[0]
+    }
+
     const orderedCollections = (
-      collections
+      elections
         .flatMap((_) => _)
         .map(mapCollection)
         .filter(
@@ -67,7 +104,10 @@ export class SignatureCollectionSharedClientService {
     return orderedCollections[0]
   }
 
-  async currentCollection(api: ElectionApi): Promise<Collection[]> {
+  async currentCollection(
+    api: ElectionApi,
+    collectionTypeFilter?: CollectionType,
+  ): Promise<Collection[]> {
     // includeInactive: false will return collections as active until electionday for collection has passed
     const baseRes = await api.kosningGet({
       hasSofnun: true,
@@ -85,7 +125,33 @@ export class SignatureCollectionSharedClientService {
     if (!collections.length) {
       throw new Error('No current collection')
     }
-    return collections.flatMap((_) => _).map(mapCollection)
+    let mappedCollections = collections.flatMap((_) => _).map(mapCollection)
+
+    if (collectionTypeFilter) {
+      if (collectionTypeFilter === CollectionType.LocalGovernmental) {
+        // We can't use the earlier flatMap for LocalGovernmental elections because
+        // the signature-collection system has operated on the assumption that
+        // any Election type will have one and only one active collection.
+        // However, this assumption was broken upon the introduction of
+        // local governmental elections
+        // Therefore we collapse the multitude of areas into one collection in that special case
+        // to maintain generalization of the underlying systems in both the backend and frontend.
+
+        mappedCollections = collections
+          .filter(
+            (collections) =>
+              getCollectionTypeFromNumber(
+                collections[0]?.kosning?.kosningTegundNr ?? 0,
+              ) === CollectionType.LocalGovernmental,
+          )
+          .map(collapseGovernment)
+      } else {
+        mappedCollections = mappedCollections.filter(
+          (collection) => collection.collectionType === collectionTypeFilter,
+        )
+      }
+    }
+    return mappedCollections
   }
 
   async getLists(

@@ -30,10 +30,17 @@ const RemoveCandidate = ({ list }: { list: SignatureCollectionList }) => {
           candidateId: list?.candidate?.id,
         },
       },
-      onCompleted: () => {
-        setModalRemoveCandidateIsOpen(false)
-        toast.success(formatMessage(m.cancelCollectionModalToastSuccess))
-        navigate(-1)
+      onCompleted: (response) => {
+        if (response.signatureCollectionAdminRemoveCandidate?.success) {
+          setModalRemoveCandidateIsOpen(false)
+          toast.success(formatMessage(m.cancelCollectionModalToastSuccess))
+          navigate(-1)
+        } else {
+          const message =
+            response.signatureCollectionAdminRemoveCandidate?.reasons?.[0] ??
+            formatMessage(m.cancelCollectionModalToastError)
+          toast.error(message)
+        }
       },
       onError: () => {
         toast.error(formatMessage(m.cancelCollectionModalToastError))

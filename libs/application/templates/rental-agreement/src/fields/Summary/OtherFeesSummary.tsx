@@ -6,7 +6,6 @@ import { applicationAnswers } from '../../shared'
 import { Routes, OtherFeesPayeeOptions } from '../../utils/enums'
 import { getOptionLabel } from '../../utils/summaryUtils'
 import {
-  filterEmptyCostItems,
   formatCurrency,
   formatDate,
   getOtherFeesPayeeOptions,
@@ -170,7 +169,7 @@ export const OtherFeesSummary: FC<Props> = ({ ...props }) => {
         </SummaryCardRow>
       )}
       {tenantPaysOtherFees &&
-        filterEmptyCostItems(isOtherCostItems).map((item, index) => (
+        isOtherCostItems.map((item, index) => (
           <SummaryCardRow
             key={`${item.description}_${index}`}
             editAction={goToScreen}

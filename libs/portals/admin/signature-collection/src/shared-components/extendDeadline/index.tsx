@@ -36,6 +36,7 @@ const ActionExtendDeadline = ({ list }: { list: SignatureCollectionList }) => {
           input: {
             listId: list.id,
             newEndDate: newEndDate,
+            collectionType: list.collectionType,
           },
         },
       })
@@ -43,7 +44,10 @@ const ActionExtendDeadline = ({ list }: { list: SignatureCollectionList }) => {
         toast.success(formatMessage(m.updateListEndTimeSuccess))
         revalidate()
       } else {
-        toast.error(formatMessage(m.updateListEndTimeError))
+        const message =
+          res.data?.signatureCollectionAdminExtendDeadline?.reasons?.[0] ??
+          formatMessage(m.updateListEndTimeError)
+        toast.error(message)
       }
     } catch (e) {
       toast.error(e.message)
