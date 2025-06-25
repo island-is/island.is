@@ -48,12 +48,12 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
   }
 
   async getChildren({ auth }: TemplateApiModuleActionProps) {
-    let children =
-      await this.nationalRegistryService.getChildrenCustodyInformation(auth)
-
     const currentYear = new Date().getFullYear()
     const maxYear = currentYear - 7 // 2nd grade
     const minYear = currentYear - 16 // 10th grade
+
+    const children =
+      await this.nationalRegistryService.getChildrenCustodyInformation(auth)
 
     // Check if the child is at primary school age and lives with the applicant
     const filteredChildren = children.filter((child) => {
