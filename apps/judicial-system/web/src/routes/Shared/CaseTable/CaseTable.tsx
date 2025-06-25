@@ -34,7 +34,6 @@ import TagContainer from '@island.is/judicial-system-web/src/components/Tags/Tag
 import {
   CaseTableCell,
   CaseTableRow,
-  CaseTableType,
   StringGroupValue,
   StringValue,
   TagPairValue,
@@ -126,8 +125,12 @@ const CaseTable: FC = () => {
   const router = useRouter()
   const { user, hasError } = useContext(UserContext)
   const { openCaseInNewTab } = useOpenCaseInNewTab()
-  const { isOpeningCaseId, handleOpenCase, LoadingIndicator, showLoading } =
-    useCaseList()
+  const {
+    isOpeningCaseId,
+    handleOpenCase,
+    LoadingIndicator,
+    showLoading,
+  } = useCaseList()
   const [rows, setRows] = useState<CaseTableRow[]>([])
   const [showOnlyMyCases, setShowOnlyMyCases] = useState(false)
 
@@ -153,8 +156,12 @@ const CaseTable: FC = () => {
 
   const { deleteCase, DeleteCaseModal } = useDeleteCase(removeRow)
   const { withdrawAppeal, WithdrawAppealModal } = useWithdrawAppeal(refetch)
-  const { cancelCase, cancelCaseId, isCancelCaseLoading, CancelCaseModal } =
-    useCancelCase(removeRow)
+  const {
+    cancelCase,
+    cancelCaseId,
+    isCancelCaseLoading,
+    CancelCaseModal,
+  } = useCancelCase(removeRow)
 
   const table = type && caseTables[type]
 
@@ -167,7 +174,8 @@ const CaseTable: FC = () => {
           case ContextMenuCaseActionType.WITHDRAW_APPEAL:
             return withdrawAppeal(r.caseId)
           case ContextMenuCaseActionType.OPEN_CASE_IN_NEW_TAB:
-          default: // Default to opening the case in a new tab
+          default:
+            // Default to opening the case in a new tab
             return openCaseInNewTab(r.caseId)
         }
       })
@@ -182,7 +190,8 @@ const CaseTable: FC = () => {
             isLoading: cancelCaseId === r.caseId && isCancelCaseLoading,
           }
         case CaseActionType.OPEN_CASE:
-        default: // Default to opening the case in a new tab
+        default:
+          // Default to opening the case in a new tab
           return {
             onClick: () => handleOpenCase(r.caseId),
             isDisabled: isOpeningCaseId === r.caseId,
