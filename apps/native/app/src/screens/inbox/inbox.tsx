@@ -624,7 +624,15 @@ export const InboxScreen: NavigationFunctionComponent<{
         />
       )
     },
-    [intl, filters, selectState, selectedItems, setSelectedItems],
+    [
+      intl,
+      filters,
+      selectState,
+      selectedItems,
+      setSelectedItems,
+      availableCategories,
+      isFeature2WayMailboxEnabled,
+    ],
   )
 
   const data = useMemo(() => {
