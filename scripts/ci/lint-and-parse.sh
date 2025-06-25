@@ -20,7 +20,7 @@ FILE_PATH="${2:-dist/lints-processed-${LINT_NAME}.txt}"
 }
 
 # Ensure the output directory exists
-mkdir -p "$(basename "$FILE_PATH")"
+mkdir -p "$(dirname "$FILE_PATH")" || :
 
 LINT_RAW_FILE="${FILE_PATH}.raw"
 LINT_PROCESSED_FILE="${FILE_PATH}"
