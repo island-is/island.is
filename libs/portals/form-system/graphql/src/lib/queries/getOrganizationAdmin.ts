@@ -51,6 +51,7 @@ export const GET_ORGANIZATION_ADMIN = gql`
         type
         method
         isTest
+        isXroad
       }
       validationUrls {
         id
@@ -58,6 +59,7 @@ export const GET_ORGANIZATION_ADMIN = gql`
         type
         method
         isTest
+        isXroad
       }
       organizations {
         label

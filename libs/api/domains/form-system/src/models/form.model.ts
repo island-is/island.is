@@ -11,6 +11,7 @@ import { LanguageType } from './languageType.model'
 import { Screen as ScreenModel } from './screen.model'
 import { FieldType } from './fieldType.model'
 import { Option } from './option.model'
+import { OrganizationUrl } from './organizationUrl.model'
 
 @ObjectType('FormSystemDependency')
 export class Dependency {
@@ -127,27 +128,6 @@ export class Form {
 
   @Field(() => [FormUrl], { nullable: 'itemsAndList' })
   urls?: FormUrl[]
-}
-
-@ObjectType('FormSystemOrganizationUrl')
-export class OrganizationUrl {
-  @Field(() => String, { nullable: true })
-  id?: string
-
-  @Field(() => String, { nullable: true })
-  url?: string
-
-  @Field(() => Boolean, { nullable: true })
-  isXroad?: boolean
-
-  @Field(() => Boolean, { nullable: true })
-  isTest?: boolean
-
-  @Field(() => String, { nullable: true })
-  type?: string
-
-  @Field(() => String, { nullable: true })
-  method?: string
 }
 
 @ObjectType('FormSystemFormResponse')

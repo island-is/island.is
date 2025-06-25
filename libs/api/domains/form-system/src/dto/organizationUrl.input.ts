@@ -1,7 +1,7 @@
 import { Field, InputType } from '@nestjs/graphql'
 
 @InputType('FormSystemCreateOrganizationUrlInput')
-export class OrganizationUrlCreateInput {
+export class CreateOrganizationUrlInput {
   @Field(() => String, { nullable: true })
   organizationNationalId?: string
 
@@ -13,7 +13,7 @@ export class OrganizationUrlCreateInput {
 }
 
 @InputType('FormSystemUpdateOrganizationUrlInput')
-export class OrganizationUrlUpdateInput {
+export class UpdateOrganizationUrlInput {
   @Field(() => String, { nullable: true })
   url?: string
 
@@ -22,4 +22,10 @@ export class OrganizationUrlUpdateInput {
 
   @Field(() => Boolean, { nullable: true })
   isXroad?: boolean
+}
+
+@InputType('FormSystemDeleteOrganizationUrlInput')
+export class DeleteOrganizationUrlInput {
+  @Field(() => String, { nullable: true })
+  id?: string
 }

@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { LanguageType } from './languageType.model'
 import { Option } from './option.model'
-import { OrganizationUrl } from './form.model'
+import { OrganizationUrl } from './organizationUrl.model'
 
 @ObjectType('FormSystemPermissionType')
 export class PermissionType {
