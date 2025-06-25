@@ -2,11 +2,14 @@ import {
   Box,
   BoxProps,
   Button,
+  DropdownMenu,
+  DropdownMenuProps,
   Icon,
   LoadingDots,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { Tooltip, m } from '@island.is/portals/my-pages/core'
+import { Tooltip, m, useIsMobile } from '@island.is/portals/my-pages/core'
 import { useDocumentList } from '../../hooks/useDocumentList'
 import { useMailAction } from '../../hooks/useMailActionV2'
 import { ActiveDocumentType2 } from '../../lib/types'
@@ -19,12 +22,16 @@ export type DocumentActionBarProps = {
   spacing?: BoxProps['columnGap']
   archived?: boolean
   bookmarked?: boolean
+  isReplyable?: boolean
+  onReply?: () => void
 }
 export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
   onGoBack,
   spacing = 1,
   bookmarked,
   archived,
+  isReplyable,
+  onReply,
 }) => {
   const {
     submitMailAction,
@@ -34,11 +41,10 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
     loading,
   } = useMailAction()
 
-  const { activeDocument } = useDocumentContext()
+  const { activeDocument, replyState, setReplyState } = useDocumentContext()
   const { fetchObject, refetch } = useDocumentList()
-
   const { formatMessage } = useLocale()
-
+  const { isMobile } = useIsMobile()
   const isBookmarked =
     (bookmarked && !dataSuccess.unbookmark) || bookmarkSuccess
   const isArchived = (archived && !dataSuccess.unarchive) || archiveSuccess
@@ -54,6 +60,98 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
     return encodeURI(uri)
   }
 
+  const downloadDocument =
+    activeDocument?.document.type === 'HTML'
+      ? {
+          href: getDocumentLink(activeDocument, 'html'),
+          render: () => (
+            <a
+              download={`${activeDocument.subject}.html`}
+              href={getDocumentLink(activeDocument, 'html')}
+              aria-label={formatMessage(m.getDocument)}
+            >
+              <Box
+                display="flex"
+                alignItems="center"
+                width="full"
+                paddingY={2}
+                paddingX={1}
+                borderBottomWidth="standard"
+                borderColor="blue100"
+              >
+                <Box
+                  marginLeft={[1, 1, 1, 2]}
+                  marginRight={2}
+                  display="flex"
+                  alignItems="center"
+                  justifyContent="center"
+                >
+                  <Icon
+                    icon="download"
+                    type="outline"
+                    size="small"
+                    color="blue400"
+                  />
+                </Box>
+                <Text variant="small" fontWeight="semiBold">
+                  {formatMessage(m.download)}
+                </Text>
+              </Box>
+              {/* <Divider thickness="standard" /> */}
+            </a>
+          ),
+        }
+      : {
+          onClick: () =>
+            activeDocument &&
+            downloadFile({ doc: activeDocument, query: 'download' }),
+        }
+
+  const actions: DropdownMenuProps['items'] = [
+    {
+      title: formatMessage(m.print),
+      icon: 'print',
+      iconType: 'outline',
+      onClick: activeDocument
+        ? () =>
+            downloadFile({
+              doc: activeDocument,
+            })
+        : undefined,
+    },
+    {
+      title: formatMessage(m.download),
+      icon: 'download',
+      iconType: 'outline',
+      ...downloadDocument,
+    },
+    {
+      title: isBookmarked
+        ? formatMessage(m.removeFavorite)
+        : formatMessage(m.addFavorite),
+      icon: 'star',
+      iconType: isBookmarked ? 'filled' : 'outline',
+      onClick: async () => {
+        await submitMailAction(
+          isBookmarked ? 'unbookmark' : 'bookmark',
+          activeDocument?.id ?? '',
+        )
+        refetch(fetchObject)
+      },
+    },
+  ]
+
+  if (isReplyable) {
+    actions.push({
+      title: formatMessage(m.replyDocument),
+      icon: 'undo',
+      iconType: 'outline',
+      onClick: () => onReply?.(),
+    })
+  }
+
+  const hideActions = !isMobile || (!replyState?.replyOpen && isMobile) //Display only if desktop or replyOpen is false and isMobile
+
   return (
     <>
       {onGoBack && (
@@ -67,8 +165,20 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
         </Box>
       )}
       <Box className={styles.filterBtns} display="flex" columnGap={spacing}>
-        {!loading && (
+        {!loading && hideActions && (
           <>
+            {isReplyable && (
+              <Tooltip text={formatMessage(m.reply)}>
+                <Button
+                  circle
+                  icon="undo"
+                  iconType="outline"
+                  onClick={() => onReply?.()}
+                  size="medium"
+                  colorScheme="light"
+                />
+              </Tooltip>
+            )}
             <Tooltip
               text={formatMessage(
                 isArchived ? m.removeFromStorage : m.addToStorage,
@@ -116,57 +226,41 @@ export const DocumentActionBar: React.FC<DocumentActionBarProps> = ({
             <LoadingDots />
           </Box>
         )}
-        {activeDocument && activeDocument.document.value ? (
-          activeDocument.document.type === 'HTML' ? (
-            <Tooltip as="span" text={formatMessage(m.download)}>
-              <a
-                download={`${activeDocument.subject}.html`}
-                href={getDocumentLink(activeDocument, 'html')}
-                aria-label={formatMessage(m.getDocument)}
-              >
-                <Button
-                  as="span"
-                  unfocusable
-                  circle
-                  icon="download"
-                  iconType="outline"
-                  size="medium"
-                  colorScheme="light"
-                />
-              </a>
-            </Tooltip>
-          ) : (
-            <Tooltip text={formatMessage(m.download)}>
-              <Button
-                circle
-                icon="download"
-                iconType={'outline'}
-                onClick={() =>
-                  downloadFile({ doc: activeDocument, query: 'download' })
-                }
-                size="medium"
-                colorScheme="light"
-              />
-            </Tooltip>
-          )
-        ) : undefined}
-        {activeDocument && (
-          <Tooltip text={formatMessage(m.print)}>
-            <Button
-              circle
-              icon="print"
-              iconType={'outline'}
-              onClick={() =>
-                downloadFile({
-                  doc: activeDocument,
-                })
-              }
-              size="medium"
-              colorScheme="light"
-            />
-          </Tooltip>
-        )}
       </Box>
+      {hideActions && (
+        <Tooltip text={formatMessage(m.actions)}>
+          <DropdownMenu
+            icon="ellipsisVertical"
+            iconType="filled"
+            items={[...actions].reverse()}
+            disclosure={
+              <span className={styles.actionsButton}>
+                <Tooltip text={formatMessage(m.actions)}>
+                  <Button
+                    icon="ellipsisVertical"
+                    iconType="filled"
+                    size="small"
+                    variant="text"
+                    loading={loading}
+                  />
+                </Tooltip>
+              </span>
+            }
+          ></DropdownMenu>
+        </Tooltip>
+      )}
+      {replyState?.replyOpen && isMobile && (
+        <Box>
+          <Button
+            circle
+            icon="close"
+            colorScheme="light"
+            onClick={() =>
+              setReplyState((prev) => ({ ...prev, replyOpen: false }))
+            }
+          />
+        </Box>
+      )}
     </>
   )
 }

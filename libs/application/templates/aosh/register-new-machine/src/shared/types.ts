@@ -1,7 +1,7 @@
 import { FieldBaseProps, FormatMessage } from '@island.is/application/types'
 
 export type TechInfoItem = {
-  variableName?: string
+  name?: string
   label?: string
   labelEn?: string
   type?: string

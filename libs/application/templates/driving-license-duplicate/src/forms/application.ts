@@ -9,7 +9,10 @@ import { sectionFakeData } from './sections/sectionFakeData'
 import { sectionReasonForApplication } from './sections/sectionReasonForApplication'
 import { sectionPhoto } from './sections/sectionPhoto'
 
-export const getApplication = ({ allowFakeData = false }): Form => {
+export const getApplication = ({
+  allowFakeData = false,
+  allowThjodskraPhotos = false,
+}): Form => {
   return buildForm({
     id: 'DrivingLicenseDuplicateDraftForm',
     mode: FormModes.DRAFT,
@@ -22,7 +25,7 @@ export const getApplication = ({ allowFakeData = false }): Form => {
         condition: () => allowFakeData,
         children: [sectionFakeData],
       }),
-      sectionDataProviders(allowFakeData),
+      sectionDataProviders(allowFakeData, allowThjodskraPhotos),
       sectionReasonForApplication,
       sectionInformation,
       sectionPhoto,

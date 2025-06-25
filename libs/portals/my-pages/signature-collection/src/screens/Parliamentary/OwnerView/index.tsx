@@ -77,12 +77,7 @@ const OwnerView = ({
           currentCollection={currentCollection}
           collectionType={collectionType}
         />
-        <Box
-          display="flex"
-          justifyContent="spaceBetween"
-          alignItems="baseline"
-          marginTop={[5, 10]}
-        >
+        <Box display="flex" justifyContent="spaceBetween" alignItems="baseline">
           <Text variant="h4">{formatMessage(m.myListsDescription) + ' '}</Text>
           {isListHolder &&
             !loadingOwnerLists &&
