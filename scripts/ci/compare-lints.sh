@@ -51,19 +51,19 @@ for file in "${!HEAD_LINTS[@]}"; do
   base_count="${BASE_LINTS[$file]:-0}" # Default to 0 if file not in base
 
   delta=$((head_count - base_count))
-  if ((delta > 0)); then
-    CHANGED_FILES_OUTPUT+="  $file ($base_count->$head_count 𝚫+$delta)\n"
-    FILES_WITH_INCREASED_LINTS=$((FILES_WITH_INCREASED_LINTS + 1))
-    TOTAL_INCREASED_LINT_COUNT=$((TOTAL_INCREASED_LINT_COUNT + delta))
-  elif ((delta < 0)); then
-    CHANGED_FILES_OUTPUT+="  $file ($base_count->$head_count 𝚫$delta)\n"
-  elif [[ ! -v BASE_LINTS["$file"] ]]; then
+  if [[ ! -v BASE_LINTS["$file"] ]]; then
     # This case explicitly handles files that are new and have lints,
     # even though delta > 0 for base_count=0 covers it.
     delta=$head_count
     CHANGED_FILES_OUTPUT+="  $file (0->$head_count 𝚫+$delta, new)\n"
     FILES_WITH_INCREASED_LINTS=$((FILES_WITH_INCREASED_LINTS + 1))
     TOTAL_INCREASED_LINT_COUNT=$((TOTAL_INCREASED_LINT_COUNT + delta))
+  elif ((delta > 0)); then
+    CHANGED_FILES_OUTPUT+="  $file ($base_count->$head_count 𝚫+$delta)\n"
+    FILES_WITH_INCREASED_LINTS=$((FILES_WITH_INCREASED_LINTS + 1))
+    TOTAL_INCREASED_LINT_COUNT=$((TOTAL_INCREASED_LINT_COUNT + delta))
+  elif ((delta < 0)); then
+    CHANGED_FILES_OUTPUT+="  $file ($base_count->$head_count 𝚫$delta)\n"
   fi
 done
 
