@@ -2,7 +2,6 @@
   "extends": "./tsconfig.json",
   "compilerOptions": {
     "outDir": "../../dist/out-tsc",
-    "noEmit": false,
     "module": "commonjs",
     "types": ["jest", "node"],
     "jsx": "react"
@@ -18,10 +17,5 @@
     "**/*.test.jsx",
     "**/*.d.ts",
     "jest.config.ts"
-  ],
-  "exclude": [
-    "node_modules",
-    // Explicitly exclude e2e directory to prevent Playwright tests from being included
-    "e2e"
   ]
 }
