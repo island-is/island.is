@@ -5,8 +5,10 @@ import {
   buildTitleField,
   YES,
   NO,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../lib/messages'
+import { EmploymentEnum } from '../../../lib/constants'
 
 const employmentParticipationRoute = 'employmentParticipation'
 
@@ -32,31 +34,33 @@ export const employmentParticipationSubSection =
               required: true,
               options: [
                 {
-                  value: YES,
+                  value: EmploymentEnum.YES,
                   label: disabilityPensionFormMessage.employmentParticipation.yes,
                 },
                 {
-                  value: NO,
+                  value: EmploymentEnum.NO,
                   label: disabilityPensionFormMessage.employmentParticipation.no,
                 },
                 {
-                  value: 'dontKnow',
+                  value: EmploymentEnum.DONT_KNOW,
                   label: disabilityPensionFormMessage.employmentParticipation.dontKnow,
                 },
               ],
-            }),
-            buildTitleField({
-              title: disabilityPensionFormMessage.employmentParticipation.continuedWorkTitle,
-              titleVariant: 'h4',
-              marginTop: 'containerGutter',
-              marginBottom: 'p2',
             }),
             buildRadioField({
               id: `${employmentParticipationRoute}.continuedWork`,
               title: disabilityPensionFormMessage.employmentParticipation.continuedWorkQuestion,
               width: 'half',
-              backgroundColor: 'white',
+              backgroundColor: 'blue',
               required: true,
+              condition: (formValue) => {
+                const isWorking = getValueViaPath<EmploymentEnum>(
+                  formValue,
+                  `${employmentParticipationRoute}.inPaidWork`,
+                )
+
+                return isWorking === EmploymentEnum.YES
+              },
               options: [
                 {
                   value: YES,

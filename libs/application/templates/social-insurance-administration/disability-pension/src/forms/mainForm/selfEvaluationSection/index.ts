@@ -8,7 +8,7 @@ import { backgroundSubSection } from './backgroundSubSection'
 export const selfEvaluationSection =
   buildSection({
     id: 'selfEvaluation',
-    tabTitle: disabilityPensionFormMessage.selfEvaluation.title,
+    title: disabilityPensionFormMessage.selfEvaluation.title,
     children: [
       backgroundSubSection
     ],
