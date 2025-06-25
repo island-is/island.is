@@ -30,11 +30,21 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps) {
     const { childNationalId } = getApplicationAnswers(application.answers)
 
-    if (!childNationalId) {
-      return undefined
-    }
+    if (!childNationalId) return undefined
 
-    return await this.friggClientService.getUserById(auth, childNationalId)
+    const childInformation = await this.friggClientService.getUserById(
+      auth,
+      childNationalId,
+    )
+    if (childInformation.nationality) return childInformation
+
+    const citizenship = await this.nationalRegistryService.getCitizenship(
+      childNationalId,
+    )
+    return {
+      ...childInformation,
+      nationality: citizenship?.code || '',
+    }
   }
 
   async getChildren({ auth }: TemplateApiModuleActionProps) {
