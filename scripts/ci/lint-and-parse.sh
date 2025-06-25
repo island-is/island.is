@@ -20,7 +20,7 @@ FILE_PATH="${2:-dist/lints-processed-${LINT_NAME}.txt}"
 }
 
 # Ensure the output directory exists
-mkdir -p "$(basename "$FILE_PATH")"
+mkdir -p "$(dirname "$FILE_PATH")" || :
 
 LINT_RAW_FILE="${FILE_PATH}.raw"
 LINT_PROCESSED_FILE="${FILE_PATH}"
@@ -31,7 +31,8 @@ echo "Processed lint output will be saved to: $LINT_PROCESSED_FILE"
 
 # Run nx lint, pipe output through sed to strip ANSI escape codes, then tee to a raw file
 yarn nx run-many -t lint --output-style=static --projects "$AFFECTED_PROJECTS" |
-  sed -r "s/\x1B\[[0-9;]*[mK]//g" |
+  sed -E "s/\x1B\[[0-9;]*[mK]//g" |
+  sed 's/\r$//' |
   tee "$LINT_RAW_FILE"
 
 # Process the raw lint output to get lint counts per file
