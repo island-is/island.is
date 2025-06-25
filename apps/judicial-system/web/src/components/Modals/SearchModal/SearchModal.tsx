@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 
 import { Box, Input, Tag, Text } from '@island.is/island-ui/core'
@@ -63,6 +63,7 @@ const SearchModal: FC<Props> = ({ onClose }) => {
   const [searchString, setSearchString] = useState<string>('')
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [searchResults, setSearchResults] = useState<JSX.Element | null>(null)
+  const searchInputRef = useRef<HTMLInputElement>(null)
 
   const [searchCases] = useSearchCasesLazyQuery({
     fetchPolicy: 'no-cache',
@@ -98,6 +99,12 @@ const SearchModal: FC<Props> = ({ onClose }) => {
     }
   }
 
+  useEffect(() => {
+    if (searchInputRef.current) {
+      searchInputRef.current.focus()
+    }
+  }, [])
+
   return (
     <ModalContainer title="Leit" onClose={onClose}>
       <Box margin={3} className={styles.searchModal}>
@@ -117,6 +124,7 @@ const SearchModal: FC<Props> = ({ onClose }) => {
             </Tag>
           </Box>
           <Input
+            ref={searchInputRef}
             name="search"
             label="Málsnúmer"
             placeholder="S-1234/2025"
