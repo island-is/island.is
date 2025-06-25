@@ -12,7 +12,8 @@ describe('InternalSubpoenaController - Deliver subpoena to national commissioner
   beforeEach(() => {
     guards = Reflect.getMetadata(
       '__guards__',
-      InternalSubpoenaController.prototype.deliverSubpoenaToNationalCommissionersOffice,
+      InternalSubpoenaController.prototype
+        .deliverSubpoenaToNationalCommissionersOffice,
     )
   })
 

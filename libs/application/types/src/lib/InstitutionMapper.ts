@@ -420,7 +420,7 @@ export const institutionMapper = {
     contentfulId: InstitutionContentfulIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
   },
   [ApplicationTypes.TERMINATE_RENTAL_AGREEMENT]: {
-        nationalId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+    nationalId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
     slug: InstitutionTypes.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
     contentfulId: InstitutionContentfulIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
   },
