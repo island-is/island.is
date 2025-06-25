@@ -2629,7 +2629,7 @@ services-bff-portals-my-pages:
   enabled: true
   env:
     BFF_ALLOWED_EXTERNAL_API_URLS: '["https://api.dev01.devland.is"]'
-    BFF_ALLOWED_REDIRECT_URIS: '["https://beta.dev01.devland.is/minarsidur","https://beta.dev01.devland.is/umsoknir"]'
+    BFF_ALLOWED_REDIRECT_URIS: '["https://beta.dev01.devland.is/minarsidur","https://beta.dev01.devland.is/umsoknir","https://beta.dev01.devland.is/form"]'
     BFF_CACHE_USER_PROFILE_TTL_MS: '3595000'
     BFF_CALLBACKS_BASE_PATH: 'https://beta.dev01.devland.is/bff/callbacks'
     BFF_CLIENT_BASE_PATH: '/minarsidur'

@@ -60,7 +60,7 @@ export const bffConfig = ({
 
   const getRedirectUris = (baseUrl: string, key: PortalKeys) => [
     `${baseUrl}/${key}`,
-    ...(key === MINAR_SIDUR ? [`${baseUrl}/umsoknir`] : []),
+    ...(key === MINAR_SIDUR ? [`${baseUrl}/umsoknir`, `${baseUrl}/form`] : []),
   ]
 
   return {
