@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 
 import { Accordion, Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { getCourtDashboardRoute } from '@island.is/judicial-system/consts'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   ConnectedCaseFilesAccordionItem,
@@ -19,6 +20,7 @@ import {
   PageLayout,
   PageTitle,
   ServiceAnnouncements,
+  UserContext,
   // useIndictmentsLawsBroken, NOTE: Temporarily hidden while list of laws broken is not complete
 } from '@island.is/judicial-system-web/src/components'
 import { IndictmentDecision } from '@island.is/judicial-system-web/src/graphql/schema'
@@ -33,6 +35,7 @@ const OverviewBody = ({
 }: {
   handleNavigationTo: (destination: string) => Promise<void>
 }) => {
+  const { user } = useContext(UserContext)
   const router = useRouter()
 
   const { workingCase, isLoadingWorkingCase, setWorkingCase } =
@@ -119,7 +122,7 @@ const OverviewBody = ({
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.CASES_ROUTE}`}
+          previousUrl={getCourtDashboardRoute(user)}
           nextIsLoading={isLoadingWorkingCase}
           onNextButtonClick={() =>
             handleNavigationTo(
@@ -143,7 +146,7 @@ const OverviewBody = ({
           workingCase={workingCase}
           setWorkingCase={setWorkingCase}
           onClose={() => setModalVisible(undefined)}
-          onComplete={() => router.push(constants.CASES_ROUTE)}
+          onComplete={() => router.push(getCourtDashboardRoute(user))}
         />
       )}
     </>

@@ -16,7 +16,7 @@ export const NationalRegistryV3ApplicationsClientConfig = defineConfig<
   name: 'NationalRegistryV3ApplicationsClient',
   schema,
   load: (env) => ({
-    fetchTimeout: 10000,
+    fetchTimeout: env.optionalJSON('XROAD_NATIONAL_REGISTRY_TIMEOUT') ?? 10000,
     clientId: env.required(
       'NATIONAL_REGISTRY_B2C_CLIENT_ID',
       'b464afdd-056b-406d-b650-6d41733cfeb7',
