@@ -865,29 +865,35 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
 
   conclusion: defineMessages({
     title: {
-    id: 'marp.application:conclusionScreen.expandableDescriptionField.title',
-    defaultMessage: 'Umsókn móttekin', 
-    description: 'Application received',
+      id: 'marp.application:conclusionScreen.expandableDescriptionField.title',
+      defaultMessage: 'Umsókn móttekin',
+      description: 'Application received',
     },
     alertTitle: {
-    id: 'marp.application:conclusionScreen.expandableDescriptionField.alertTitle',
-    defaultMessage: 'Umsókn þín hefur verið móttekin', 
-    description: 'Your application has been received',
+      id: 'marp.application:conclusionScreen.expandableDescriptionField.alertTitle',
+      defaultMessage: 'Umsókn þín hefur verið móttekin',
+      description: 'Your application has been received',
     },
     alertMessage: {
-    id: 'marp.application:conclusionScreen.expandableDescriptionField.alertMessage',
-    defaultMessage: 'Umsókn um sjúkra- og endurhæfingargreiðslur hefur verið send til Tryggingastofnunar', 
-    description: 'Your application for medical and rehabilitation payments has been sent to the Social Insurance Administration',
+      id: 'marp.application:conclusionScreen.expandableDescriptionField.alertMessage',
+      defaultMessage:
+        'Umsókn um sjúkra- og endurhæfingargreiðslur hefur verið send til Tryggingastofnunar',
+      description:
+        'Your application for medical and rehabilitation payments has been sent to the Social Insurance Administration',
     },
     next: {
-    id: 'marp.application:conclusionScreen.expandableDescriptionField.next#markdown',
-    defaultMessage: '* Tryggingastofnun fer yfir umsóknina og staðfestir að allar upplýsingar eru réttar.\n* Ef þörf er á er kallað eftir frekari upplýsingum/gögnum.\n* Þegar öll nauðsynleg gögn hafa borist, fer Tryggingastofnun yfir umsókn og er afstaða tekin til sjúkra- og endurhæfingargreiðslna. Vinnslutími umsókna um sjúkra- og endurhæfingargreiðslur er fjórar til sex vikur.',
-    description: '* The Social Insurance Administration will review your application and confirm that all information provided is accurate.\n* If required, they will call for additional information/documents.\n* Once all necessary documents have been received, the Social Insurance Administration will review the application and determine whether medical and rehabilitation payments will be granted. The processing time for medical and rehabilitation payments applications is four to six weeks.',
+      id: 'marp.application:conclusionScreen.expandableDescriptionField.next#markdown',
+      defaultMessage:
+        '* Tryggingastofnun fer yfir umsóknina og staðfestir að allar upplýsingar eru réttar.\n* Ef þörf er á er kallað eftir frekari upplýsingum/gögnum.\n* Þegar öll nauðsynleg gögn hafa borist, fer Tryggingastofnun yfir umsókn og er afstaða tekin til sjúkra- og endurhæfingargreiðslna. Vinnslutími umsókna um sjúkra- og endurhæfingargreiðslur er fjórar til sex vikur.',
+      description:
+        '* The Social Insurance Administration will review your application and confirm that all information provided is accurate.\n* If required, they will call for additional information/documents.\n* Once all necessary documents have been received, the Social Insurance Administration will review the application and determine whether medical and rehabilitation payments will be granted. The processing time for medical and rehabilitation payments applications is four to six weeks.',
     },
     entitlements: {
       id: 'marp.application:conclusionScreen.entitlements#markdown',
-      defaultMessage: '# **Þú gætir átt rétt á:**\n\n Tryggingastofnun vekur athygli þína á að því þú gætir átt rétt á öðrum greiðslum samhliða sjúkra- og endurhæfingargreiðslum, svo sem:\n* Heimilisuppbót\n* Barnalífeyri\n* Greiðslum vegna bifreiðakostnaðar\n\nTryggingastofnun hvetur þig til að sækja um þessar greiðslur teljir þú þig eiga rétt á þeim. Hægt er að finna umsóknirnar á Mínum síðum á tr.is. Innskráning  á Mínar síður fer fram með rafrænum skilríkjum.\n\n Ef þú hefur spurningar eða athugasemdir er ávallt hægt að hafa samband í síma 560 4400 eða senda fyrirspurn í gegnum Mínar síður á tr.is.',
-      description: '# **You may be entitled to:**\n\nThe Social Insurance Administration would like to point out that you may be entitled to other payments along side the medical and rehabilitation payments, such as:\n* Household supplement\n* Child pension\n* Payments for car expenses\n\nThe Social Insurance Administration encourages you to apply for these payments if you think you may be entitled to them. You can find these applications on My Pages at the Social Insurance Administration. Login to My Pages is done using electronic ID.\n\nIf you have any questions or comments please contact us via telephone at 560 4400 or send an enquiry through My Pages at tr.is.',
+      defaultMessage:
+        '# **Þú gætir átt rétt á:**\n\n Tryggingastofnun vekur athygli þína á að því þú gætir átt rétt á öðrum greiðslum samhliða sjúkra- og endurhæfingargreiðslum, svo sem:\n* Heimilisuppbót\n* Barnalífeyri\n* Greiðslum vegna bifreiðakostnaðar\n\nTryggingastofnun hvetur þig til að sækja um þessar greiðslur teljir þú þig eiga rétt á þeim. Hægt er að finna umsóknirnar á Mínum síðum á tr.is. Innskráning  á Mínar síður fer fram með rafrænum skilríkjum.\n\n Ef þú hefur spurningar eða athugasemdir er ávallt hægt að hafa samband í síma 560 4400 eða senda fyrirspurn í gegnum Mínar síður á tr.is.',
+      description:
+        '# **You may be entitled to:**\n\nThe Social Insurance Administration would like to point out that you may be entitled to other payments along side the medical and rehabilitation payments, such as:\n* Household supplement\n* Child pension\n* Payments for car expenses\n\nThe Social Insurance Administration encourages you to apply for these payments if you think you may be entitled to them. You can find these applications on My Pages at the Social Insurance Administration. Login to My Pages is done using electronic ID.\n\nIf you have any questions or comments please contact us via telephone at 560 4400 or send an enquiry through My Pages at tr.is.',
     },
   }),
 }
