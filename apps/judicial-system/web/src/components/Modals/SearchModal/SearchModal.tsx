@@ -62,7 +62,7 @@ const SearchResultButton: FC<ResultsProps> = ({
 const SearchModal: FC<Props> = ({ onClose }) => {
   const [searchString, setSearchString] = useState<string>('')
   const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [searchResults, setSearchResults] = useState<JSX.Element | null>(null)
+  const [searchResults, setSearchResults] = useState<JSX.Element[]>()
   const searchInputRef = useRef<HTMLInputElement>(null)
 
   const [searchCases] = useSearchCasesLazyQuery({
@@ -79,18 +79,15 @@ const SearchModal: FC<Props> = ({ onClose }) => {
       })
 
       setSearchResults(
-        <Box>
-          {results.data?.searchCases.rows &&
-            results.data.searchCases.rows.map((row) => (
-              <SearchResultButton
-                key={row.caseId}
-                caseId={row.caseId}
-                caseType={row.caseType}
-                descriptor={row.matchedValue}
-                onClick={onClose}
-              />
-            ))}
-        </Box>,
+        results.data?.searchCases.rows.map((row) => (
+          <SearchResultButton
+            key={row.caseId}
+            caseId={row.caseId}
+            caseType={row.caseType}
+            descriptor={row.matchedValue}
+            onClick={onClose}
+          />
+        )),
       )
     } catch (error) {
       console.error('Error searching cases:', error)
@@ -148,6 +145,7 @@ const SearchModal: FC<Props> = ({ onClose }) => {
               initial={{ opacity: 0, maxHeight: 0 }}
               animate={{ opacity: 1, maxHeight: 500 }}
               exit={{ opacity: 0, maxHeight: 0 }}
+              className={styles.searchResultsContainer}
               transition={{
                 opacity: { duration: 0.2 },
                 maxHeight: { duration: 0.5, ease: 'easeOut' },
