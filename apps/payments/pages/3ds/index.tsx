@@ -5,7 +5,8 @@ import { PaymentCompleteIcon } from '../../components/PaymentCompleteIcon'
 import { threeDSecure } from '../../messages'
 import { withLocale } from '../../i18n/withLocale'
 
-const ThreeDSecureSuccessPage = () => {
+// eslint-disable-next-line func-style
+function ThreeDSecureSuccessPage() {
   const { formatMessage } = useLocale()
 
   return (
