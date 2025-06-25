@@ -91,6 +91,14 @@
     },
     "docker-native": {
       "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-native`"
+    },
+    "typecheck": {
+      "executor": "nx:run-commands",
+      "outputs": [],
+      "options": {
+        "command": "tsc --project tsconfig.app.json",
+        "cwd": "apps/native/app"
+      }
     }
   }
 }

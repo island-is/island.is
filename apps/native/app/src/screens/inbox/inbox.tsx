@@ -1,42 +1,34 @@
 import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
+  ActivityIndicator,
+  Alert,
   Animated,
   FlatList,
   Image,
   ListRenderItemInfo,
   RefreshControl,
   View,
-  Alert,
-  ActivityIndicator,
 } from 'react-native'
 import {
   Navigation,
   NavigationFunctionComponent,
 } from 'react-native-navigation'
-import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks/dist'
 import { useNavigationButtonPress } from 'react-native-navigation-hooks'
+import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks/dist'
 import styled, { useTheme } from 'styled-components/native'
 
-import {
-  Button,
-  EmptyList,
-  ListItem,
-  ListItemSkeleton,
-  SearchBar,
-  Tag,
-  TopLine,
-  InboxCard,
-} from '../../ui'
+import { useApolloClient } from '@apollo/client'
 import filterIcon from '../../assets/icons/filter-icon.png'
 import inboxReadIcon from '../../assets/icons/inbox-read.png'
 import illustrationSrc from '../../assets/illustrations/le-company-s3.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 import {
-  useMarkAllDocumentsAsReadMutation,
+  DocumentCategory,
   DocumentV2,
-  useListDocumentsQuery,
   useGetDocumentsCategoriesAndSendersQuery,
+  useListDocumentsQuery,
+  useMarkAllDocumentsAsReadMutation,
   usePostMailActionMutationMutation,
 } from '../../graphql/types/schema'
 import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
@@ -45,19 +37,41 @@ import { navigateTo } from '../../lib/deep-linking'
 import { useOrganizationsStore } from '../../stores/organizations-store'
 import { useUiStore } from '../../stores/ui-store'
 import {
+  Button,
+  EmptyList,
+  InboxCard,
+  ListItem,
+  ListItemSkeleton,
+  SearchBar,
+  Tag,
+  TopLine,
+} from '../../ui'
+import {
   ButtonRegistry,
   ComponentRegistry,
 } from '../../utils/component-registry'
+import { isAndroid, isIos } from '../../utils/devices'
 import { testIDs } from '../../utils/test-ids'
-import { isAndroid } from '../../utils/devices'
-import { useApolloClient } from '@apollo/client'
-import { isIos } from '../../utils/devices'
 import { ActionBar } from './components/action-bar'
 import { Toast, ToastVariant } from './components/toast'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 
 type ListItem =
   | { id: string; type: 'skeleton' | 'empty' }
   | (DocumentV2 & { type: undefined })
+
+type Filters = {
+  opened?: boolean
+  archived?: boolean
+  bookmarked?: boolean
+  subjectContains?: string
+  senderNationalId?: string[]
+  categoryIds?: string[]
+  dateFrom?: Date
+  dateTo?: Date
+}
+
+export type ListParams = Filters & { category?: DocumentCategory }
 
 const DEFAULT_PAGE_SIZE = 50
 
@@ -128,16 +142,19 @@ const PressableListItem = React.memo(
     selectedItems,
     setSelectedItems,
     setSelectedState,
+    isFeature2WayMailboxEnabled,
   }: {
     item: DocumentV2
-    listParams: any
+    listParams: ListParams
     selectable: boolean
     selectedItems: string[]
     setSelectedItems: (items: string[]) => void
     setSelectedState: (state: boolean) => void
+    isFeature2WayMailboxEnabled: boolean
   }) => {
     const { getOrganizationLogoUrl } = useOrganizationsStore()
     const isSelected = selectable && selectedItems.includes(item.id)
+
     return (
       <InboxCard
         key={item.id}
@@ -148,6 +165,7 @@ const PressableListItem = React.memo(
         senderName={item.sender.name}
         icon={item.sender.name && getOrganizationLogoUrl(item.sender.name, 75)}
         isUrgent={item.isUrgent}
+        replyable={isFeature2WayMailboxEnabled ? item.replyable : false}
         bookmarked={item.bookmarked}
         selectable={selectable}
         selected={isSelected}
@@ -181,17 +199,6 @@ function useThrottleState(state: string, delay = 500) {
     return () => clearTimeout(timeout)
   }, [state, delay])
   return throttledState
-}
-
-type Filters = {
-  opened?: boolean
-  archived?: boolean
-  bookmarked?: boolean
-  subjectContains?: string
-  senderNationalId?: string[]
-  categoryIds?: string[]
-  dateFrom?: Date
-  dateTo?: Date
 }
 
 function applyFilters(filters?: Filters) {
@@ -237,6 +244,10 @@ export const InboxScreen: NavigationFunctionComponent<{
   const queryString = useThrottleState(query)
   const [hiddenContent, setHiddenContent] = useState(isIos)
   const [refetching, setRefetching] = useState(false)
+  const isFeature2WayMailboxEnabled = useFeatureFlag(
+    'is2WayMailboxEnabled',
+    false,
+  )
 
   const [toastInfo, setToastInfo] = useState<{
     variant: ToastVariant
@@ -592,20 +603,36 @@ export const InboxScreen: NavigationFunctionComponent<{
           </View>
         )
       }
+
+      const document = item as DocumentV2
+      const category = availableCategories.find(
+        ({ id }) => id === document?.categoryId,
+      )
+
       return (
         <PressableListItem
-          item={item as DocumentV2}
+          item={document}
           selectable={selectState}
           selectedItems={selectedItems}
           setSelectedItems={setSelectedItems}
           setSelectedState={setSelectedState}
+          isFeature2WayMailboxEnabled={isFeature2WayMailboxEnabled}
           listParams={{
             ...filters,
+            category,
           }}
         />
       )
     },
-    [intl, filters, selectState, selectedItems, setSelectedItems],
+    [
+      intl,
+      filters,
+      selectState,
+      selectedItems,
+      setSelectedItems,
+      availableCategories,
+      isFeature2WayMailboxEnabled,
+    ],
   )
 
   const data = useMemo(() => {

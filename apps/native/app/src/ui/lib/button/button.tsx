@@ -18,6 +18,7 @@ interface ButtonBaseProps extends TouchableHighlightProps {
   textProps?: TextProps
   iconStyle?: ImageStyle
   ellipsis?: boolean
+  iconPosition?: 'start' | 'end'
 }
 
 interface IconButtonProps extends ButtonBaseProps {
@@ -39,6 +40,7 @@ const Host = styled.TouchableHighlight<HostProps>`
   flex-direction: row;
   justify-content: center;
   align-items: center;
+  column-gap: ${({ theme }) => theme.spacing.p1}px;
   padding: ${(props) =>
     `${props.theme.spacing.p3}px ${props.theme.spacing.p4}px`};
   background-color: ${dynamicColor<HostProps>(
@@ -73,7 +75,6 @@ const Host = styled.TouchableHighlight<HostProps>`
     `
     border-width: 1px;
     border-style: solid;
-
   `}
 `
 
@@ -101,10 +102,11 @@ const Text = styled.Text<{
   text-align: ${(props) => (props.isUtilityButton ? 'left' : 'center')};
 `
 
-const Icon = styled.Image<{ noMargin?: boolean }>`
+const Icon = styled.Image<{
+  noMargin?: boolean
+}>`
   width: 16px;
   height: 16px;
-  margin-left: ${(props) => (props.noMargin ? '0' : '8px')};
 `
 
 export function Button({
@@ -117,9 +119,22 @@ export function Button({
   textProps,
   iconStyle,
   ellipsis,
+  iconPosition = 'end',
   ...rest
 }: ButtonProps) {
   const theme = useTheme()
+
+  const renderIcon = () => {
+    return (
+      <Icon
+        source={icon}
+        resizeMode="center"
+        style={iconStyle}
+        noMargin={!title}
+      />
+    )
+  }
+
   return (
     <Host
       underlayColor={
@@ -133,6 +148,7 @@ export function Button({
       {...rest}
     >
       <>
+        {icon && iconPosition === 'start' && renderIcon()}
         {title && (
           <Text
             {...textProps}
@@ -147,14 +163,7 @@ export function Button({
             {title}
           </Text>
         )}
-        {icon && (
-          <Icon
-            source={icon}
-            resizeMode="center"
-            style={iconStyle}
-            noMargin={!title}
-          />
-        )}
+        {icon && iconPosition === 'end' && renderIcon()}
       </>
     </Host>
   )
