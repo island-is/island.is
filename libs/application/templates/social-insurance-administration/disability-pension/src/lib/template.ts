@@ -9,7 +9,6 @@ import {
   FormModes,
   UserProfileApi,
   ApplicationConfigurations,
-  NationalRegistryUserApi,
   NationalRegistrySpouseApi,
   IdentityApi,
 } from '@island.is/application/types'
@@ -23,6 +22,7 @@ import {
 } from '@island.is/application/core'
 import { assign } from 'xstate'
 import { disabilityPensionFormMessage } from './messages'
+import { SocialInsuranceAdministrationCategorizedIncomeTypesApi, SocialInsuranceAdministrationCurrenciesApi, SocialInsuranceAdministrationWithholdingTaxApi, SocialInsuranceAdministrationLatestIncomePlan, SocialInsuranceAdministrationIncomePlanConditionsApi } from '../dataProviders'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -56,7 +56,12 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [UserProfileApi, IdentityApi, NationalRegistrySpouseApi],
+              api: [UserProfileApi, IdentityApi, NationalRegistrySpouseApi, SocialInsuranceAdministrationCategorizedIncomeTypesApi,
+              SocialInsuranceAdministrationCurrenciesApi,
+              SocialInsuranceAdministrationWithholdingTaxApi,
+              SocialInsuranceAdministrationLatestIncomePlan,
+              //SocialInsuranceAdministrationIsApplicantEligibleApi,
+              SocialInsuranceAdministrationIncomePlanConditionsApi,],
               delete: true,
             },
           ],

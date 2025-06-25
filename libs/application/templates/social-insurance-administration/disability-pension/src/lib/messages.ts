@@ -208,6 +208,7 @@ export const disabilityPensionFormMessage: MessageDir = {
     instructionsDescription: {
       id: 'ol.application:incomePlan.instructionsDescription',
       defaultMessage: 'Leiðbeiningar um skráningu tekjuáætlunar',
+      description: 'Instructions for recording income plan',
     },
     instructionBullet1: {
       id: 'ol.application:incomePlan.instructionBullet1',
@@ -327,6 +328,25 @@ export const disabilityPensionFormMessage: MessageDir = {
       id: 'ol.application:employmentParticipation.continuedWorkQuestion',
       defaultMessage: 'Stefnir þú á áframhaldandi atvinnuþáttöku?',
       description: 'Do you aim for continued employment participation - TODO?',
+    },
+  }),
+  backgroundInfo: defineMessages({
+    title: {
+      id: 'ol.application:backgroundInfo.title',
+      defaultMessage: 'Bakgrunnur',
+      description: 'Background',
+    },
+    description: {
+      id: 'ol.application:backgroundInfo.description',
+      defaultMessage: 'Bakgrunnsupplýsingar',
+      description: 'Background information',
+    },
+  }),
+  selfEvaluation: defineMessages({
+    title: {
+      id: 'ol.application:selfEvaluation.title',
+      defaultMessage: 'Sjálfsmat',
+      description: 'Self evaluation',
     },
   }),
 }

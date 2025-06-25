@@ -1,6 +1,10 @@
-import { buildSubSection, buildTableRepeaterField, YES } from "@island.is/application/core"
+import { buildSubSection, buildTableRepeaterField, getValueViaPath, YES } from "@island.is/application/core"
 import { socialInsuranceAdministrationMessage } from "@island.is/application/templates/social-insurance-administration-core/lib/messages"
 import { DIVIDENDS_IN_FOREIGN_BANKS, FOREIGN_BASIC_PENSION, FOREIGN_INCOME, FOREIGN_PENSION, INCOME, INTEREST_ON_DEPOSITS_IN_FOREIGN_BANKS, ISK, RatioType } from "@island.is/application/templates/social-insurance-administration-core/lib/constants"
+import { CategorizedIncomeTypes, IncomePlanConditions } from "@island.is/application/templates/social-insurance-administration-core/types"
+import { getCategoriesOptions, getCurrencies, getTypesOptions } from "@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils"
+import { formatCurrencyWithoutSuffix } from '@island.is/application/ui-components'
+import { Application } from "@island.is/application/types"
 
  const incomePlanRoute = 'incomePlan'
 
@@ -11,10 +15,23 @@ import { DIVIDENDS_IN_FOREIGN_BANKS, FOREIGN_BASIC_PENSION, FOREIGN_INCOME, FORE
      socialInsuranceAdministrationMessage.incomePlan.subSectionTitle,
    children: [
      buildTableRepeaterField({
-       id: `${incomePlanRoute}Table`,
+       id: 'incomePlanTable',
        title:
          socialInsuranceAdministrationMessage.incomePlan.subSectionTitle,
-       description: 'beng',
+       description: (application: Application) => {
+         const incomePlanConditions = getValueViaPath<IncomePlanConditions>(
+           application.externalData,
+           'socialInsuranceAdministrationIncomePlanConditions.data',
+         )
+         return {
+           ...socialInsuranceAdministrationMessage.incomePlan.description,
+           values: {
+             incomePlanYear:
+               incomePlanConditions?.incomePlanYear ??
+               new Date().getFullYear(),
+           },
+         }
+       },
        formTitle:
          socialInsuranceAdministrationMessage.incomePlan.registerIncome,
        addItemButtonText:
@@ -38,16 +55,15 @@ import { DIVIDENDS_IN_FOREIGN_BANKS, FOREIGN_BASIC_PENSION, FOREIGN_INCOME, FORE
            displayInTable: false,
            width: 'half',
            isSearchable: true,
-           options: [
-             {
-               label: 'Income Category 1',
-               value: 'incomeCategory1'
-             },
-             {
-               label: 'Income Category 2',
-               value: 'incomeCategory2'
-             }
-           ]
+           options: (application) => {
+             const categorizedIncomeTypes = getValueViaPath<Array<CategorizedIncomeTypes>>(
+               application.externalData,
+               'socialInsuranceAdministrationCategorizedIncomeTypes.data',
+               [],
+             ) ?? []
+
+             return getCategoriesOptions(categorizedIncomeTypes)
+           },
          },
          incomeType: {
            component: 'select',
@@ -58,16 +74,37 @@ import { DIVIDENDS_IN_FOREIGN_BANKS, FOREIGN_BASIC_PENSION, FOREIGN_INCOME, FORE
                .selectIncomeType,
            width: 'half',
            isSearchable: true,
-           options: [
-             {
-               label: 'Income Type 1',
-               value: 'incomeType1'
+           updateValueObj: {
+             valueModifier: (application, activeField) => {
+               const categorizedIncomeTypes = getValueViaPath<Array<CategorizedIncomeTypes>>(
+                 application.externalData,
+                 'socialInsuranceAdministrationCategorizedIncomeTypes.data',
+                 [],
+               ) ?? []
+
+               const options = getTypesOptions(
+                 categorizedIncomeTypes,
+                 activeField?.incomeCategory,
+               )
+               const selectedOption = options.find(
+                 (option) => option.value === activeField?.incomeType,
+               )?.value
+               return selectedOption ?? null
              },
-             {
-               label: 'Income Type 2',
-               value: 'incomeType2'
-             }
-           ]
+             watchValues: 'incomeCategory',
+           },
+           options: (application, activeField) => {
+             const categorizedIncomeTypes = getValueViaPath<Array<CategorizedIncomeTypes>>(
+               application.externalData,
+               'socialInsuranceAdministrationCategorizedIncomeTypes.data',
+               [],
+             ) ?? []
+
+             return getTypesOptions(
+               categorizedIncomeTypes,
+               activeField?.incomeCategory,
+             )
+           },
          },
          currency: {
            component: 'select',
@@ -94,11 +131,11 @@ import { DIVIDENDS_IN_FOREIGN_BANKS, FOREIGN_BASIC_PENSION, FOREIGN_INCOME, FORE
              watchValues: 'incomeType',
            },
            options: (application, activeField) => {
-             return [{label: 'ISK', value: ISK}]
-             /*
-             const { currencies } = getApplicationExternalData(
+             const currencies = getValueViaPath<Array<string>>(
                application.externalData,
-             )
+               'socialInsuranceAdministrationCurrencies.data',
+               [],
+             ) ?? []
 
              const hideISKCurrency =
                activeField?.incomeType === FOREIGN_BASIC_PENSION ||
@@ -110,7 +147,7 @@ import { DIVIDENDS_IN_FOREIGN_BANKS, FOREIGN_BASIC_PENSION, FOREIGN_INCOME, FORE
                  ? ISK
                  : ''
 
-                 return getCurrencies(currencies, hideISKCurrency) */
+             return getCurrencies(currencies, hideISKCurrency)
            },
          },
          income: {
@@ -548,7 +585,7 @@ import { DIVIDENDS_IN_FOREIGN_BANKS, FOREIGN_BASIC_PENSION, FOREIGN_INCOME, FORE
        table: {
          format: {
            incomePerYear: (value) =>
-             value
+             value && formatCurrencyWithoutSuffix(value),
          },
          header: [
            socialInsuranceAdministrationMessage.incomePlan.incomeType,

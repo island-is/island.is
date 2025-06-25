@@ -9,6 +9,7 @@ import {
 import { DefaultEvents, FormModes, IdentityApi, NationalRegistrySpouseApi, UserProfileApi } from '@island.is/application/types'
 import { disabilityPensionFormMessage } from '../../lib/messages'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import { SocialInsuranceAdministrationCategorizedIncomeTypesApi, SocialInsuranceAdministrationCurrenciesApi, SocialInsuranceAdministrationWithholdingTaxApi, SocialInsuranceAdministrationLatestIncomePlan, SocialInsuranceAdministrationIncomePlanConditionsApi } from '../../dataProviders'
 
 
 export const Prerequisites = buildForm({
@@ -41,6 +42,26 @@ export const Prerequisites = buildForm({
               title: 'ident',
               subTitle: 'ity',
               }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationCategorizedIncomeTypesApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationCurrenciesApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationWithholdingTaxApi,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationLatestIncomePlan,
+              title: '',
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationIncomePlanConditionsApi,
+              title: '',
+            }),
             // Add more data providers as needed
           ],
           submitField: buildSubmitField({
