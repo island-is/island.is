@@ -51,20 +51,14 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
         ).fasteignirGetFasteignir({ kennitala: auth.nationalId })
 
         properties = await Promise.all(
-          simpleProperties?.fasteignir
-            ?.map((property) => {
-              if (!property.fasteignanumer) {
-                return
-              }
-
-              return this.propertiesApi.fasteignirGetFasteign({
-                fasteignanumer:
-                  // fasteignirGetFasteignir returns the fasteignanumer with and "F" in front
-                  // but fasteignirGetFasteign throws an error if the fasteignanumer is not only numbers
-                  property.fasteignanumer.replace(/\D/g, '') ?? '',
-              })
+          simpleProperties?.fasteignir?.map((property) => {
+            return this.propertiesApi.fasteignirGetFasteign({
+              fasteignanumer:
+                // fasteignirGetFasteignir returns the fasteignanumer with and "F" in front
+                // but fasteignirGetFasteign throws an error if the fasteignanumer is not only numbers
+                property.fasteignanumer?.replace(/\D/g, '') ?? '',
             })
-            .filter((property) => property !== undefined) ?? [],
+          }) ?? [],
         )
       } catch (e) {
         this.logger.error('Failed to fetch properties:', e.message)
