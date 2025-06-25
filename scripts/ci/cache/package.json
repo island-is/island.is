@@ -1,9 +1,0 @@
-{
-  "dependencies": {
-    "@actions/cache": "3.2.4",
-    "glob": "10.4.2"
-  },
-  "resolutions": {
-    "@actions/cache@3.2.4": "patch:@actions/cache@npm%3A3.2.4#./.yarn/patches/@actions-cache-npm-3.2.4-c57b047f14.patch"
-  }
-}
