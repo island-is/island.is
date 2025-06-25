@@ -69,6 +69,7 @@ export const paymentInfoSubSection =
             buildTextField({
               id: `${paymentInfoRoute}.bank`,
               title: disabilityPensionFormMessage.paymentInfo.bank,
+              required: true,
               condition: (formValue: FormValue) => accountNationality(formValue) === BankAccountType.ICELANDIC,
               backgroundColor: 'blue',
               }),
@@ -104,6 +105,7 @@ export const paymentInfoSubSection =
               id: `${paymentInfoRoute}.currency`,
               title: socialInsuranceAdministrationMessage.payment.currency,
               width: 'half',
+
               placeholder:
                 socialInsuranceAdministrationMessage.payment.selectCurrency,
               options: ({ externalData }: Application) => {

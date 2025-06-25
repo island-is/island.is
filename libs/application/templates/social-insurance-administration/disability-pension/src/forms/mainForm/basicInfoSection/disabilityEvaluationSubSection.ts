@@ -6,9 +6,12 @@ import {
   buildTitleField,
   YES,
   NO,
-  buildFileUploadField
+  buildFileUploadField,
+  getValueViaPath,
+  YesOrNoEnum
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../lib/messages'
+import { EmploymentEnum } from '../../../lib/constants'
 
 const disabilityEvaluationRoute = 'disabilityEvaluation'
 
@@ -50,7 +53,14 @@ export const disabilityEvaluationSubSection =
               id: `${disabilityEvaluationRoute}.fileUpload`,
               title: disabilityPensionFormMessage.disabilityEvaluation.fileUploadTitle,
               uploadButtonLabel: disabilityPensionFormMessage.disabilityEvaluation.uploadButtonLabel,
-              //condition: ()
+              condition: (formValue) => {
+                const isWorking = getValueViaPath<YesOrNoEnum>(
+                  formValue,
+                  `${disabilityEvaluationRoute}.appliedBefore`,
+                )
+
+                return isWorking === YES
+              },
             })
           ],
         }),

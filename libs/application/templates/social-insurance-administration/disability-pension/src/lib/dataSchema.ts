@@ -5,6 +5,12 @@ import { NO, YES } from '@island.is/application/core'
 import { formatBankInfo, validIBAN, validSWIFT } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { isValidPhoneNumber } from './utils'
 
+export const fileSchema = z.object({
+  name: z.string(),
+  key: z.string(),
+  url: z.string().optional(),
+})
+
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -13,6 +19,14 @@ export const dataSchema = z.object({
     phoneNumber: z.string().refine((v) => isValidPhoneNumber(v), {
       params: errorMessages.phoneNumber,
     }),
+  }),
+  disabilityEvaluation: z.object({
+    appliedBefore: z.enum([YES, NO]),
+    fileUpload: z
+      .array(fileSchema)
+      .refine((a) => a.length !== 0, {
+        params: errorMessages.requireAttachment,
+      }),
   }),
   paymentInfo: z
     .object({

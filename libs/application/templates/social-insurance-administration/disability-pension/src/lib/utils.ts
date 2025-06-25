@@ -6,7 +6,7 @@ import { parsePhoneNumberFromString } from "libphonenumber-js"
 export const accountNationality = (applicationAnswers: Application['answers']): BankAccountType | null => {
   const bankAccountType = getValueViaPath<BankAccountType>(
     applicationAnswers,
-    'paymentInfoForm.accountType',
+    'paymentInfo.accountType',
     undefined
   )
 
