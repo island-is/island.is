@@ -231,6 +231,7 @@ export type RepeaterItem = {
         setValueAtIndex?: (key: string, value: any) => void,
       ): Promise<Option[]>
       updateOnSelect?: MaybeWithIndex<string[]>
+      loadingError?: FormText
     }
   | { component: 'hiddenInput' }
   | {
