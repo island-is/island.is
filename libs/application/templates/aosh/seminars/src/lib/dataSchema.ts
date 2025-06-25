@@ -14,9 +14,7 @@ const UserSchemaBase = z.object({
     .string()
     .refine(
       (nationalId) =>
-        nationalId &&
-        nationalId.length !== 0 &&
-        kennitala.isValid(nationalId),
+        nationalId && nationalId.length !== 0 && kennitala.isValid(nationalId),
     ),
   name: z.string().min(1),
   email: z.string().refine((x) => isValidEmail(x)),

@@ -6,7 +6,7 @@ export const up = compose(
     displayName: 'Meðmælakerfi Admin - Municipalities',
     description: 'Umsjón sveitarfélaga með söfnum meðmæla og úrvinnsla',
     addToResource: '@admin.island.is',
-    addToClients: ['@admin.island.is/web, @admin.island.is/bff-stjornbord'],
+    addToClients: ['@admin.island.is/web', '@admin.island.is/bff-stjornbord'],
     accessControlled: true,
     delegation: {
       custom: true,
