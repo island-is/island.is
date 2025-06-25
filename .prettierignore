@@ -9,9 +9,6 @@
 /libs/api/domains/application/gen
 gen/
 *.generated.ts
-schema.d.ts
-schema.tsx
-schema.ts
 /infra/helm/
 /dist
 /coverage
