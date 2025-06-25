@@ -1,4 +1,4 @@
-import { FC, useCallback, useContext, useState } from 'react'
+import { FC, useCallback, useContext, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -38,13 +38,14 @@ const Subpoena: FC = () => {
   const [newSubpoenas, setNewSubpoenas] = useState<string[]>([])
   // Note: we keep the arraignment scheduled state in a subpoena specific state otherwise
   // re-renders (when updating case and defendants) will cause unexpected states within the subpoena component
-  const [isArraignmentScheduled, _] = useState(
-    Boolean(workingCase.arraignmentDate),
-  )
+  const [isArraignmentScheduled, setIsArraignmentScheduled] =
+    useState<boolean>()
   const [newAlternativeServices, setNewAlternativeServices] = useState<
     string[]
   >([])
   const [isCreatingSubpoena, setIsCreatingSubpoena] = useState<boolean>(false)
+  const [isSchedulingArraignmentDate, setIsSchedulingArraignmentDate] =
+    useState<boolean>()
 
   const { updateDefendantState, updateDefendant } = useDefendants()
   const { formatMessage } = useIntl()
@@ -54,11 +55,6 @@ const Subpoena: FC = () => {
     handleCourtRoomChange,
     sendCourtDateToServer,
   } = useCourtArrangements(workingCase, setWorkingCase, 'arraignmentDate')
-
-  const isSchedulingArraignmentDate =
-    !isArraignmentScheduled ||
-    newSubpoenas.length > 0 ||
-    newAlternativeServices.length > 0
 
   const isIssuingSubpoenaForDefendant = (defendant: Defendant) =>
     !defendant.isAlternativeService &&
@@ -165,6 +161,24 @@ const Subpoena: FC = () => {
     workingCase.indictmentDecision,
   ])
 
+  useEffect(() => {
+    setIsArraignmentScheduled(Boolean(workingCase.arraignmentDate))
+  }, [workingCase.arraignmentDate])
+
+  useEffect(() => {
+    setIsSchedulingArraignmentDate(
+      Boolean(
+        !isArraignmentScheduled ||
+          newSubpoenas.length > 0 ||
+          newAlternativeServices.length > 0,
+      ),
+    )
+  }, [
+    isArraignmentScheduled,
+    newAlternativeServices.length,
+    newSubpoenas.length,
+  ])
+
   const stepIsValid = isSubpoenaStepValid(workingCase, courtDate)
 
   return (
@@ -181,48 +195,52 @@ const Subpoena: FC = () => {
         <CourtCaseInfo workingCase={workingCase} />
         {workingCase.defendants && (
           <Box component="section" marginBottom={5}>
-            {
-              <SubpoenaType
-                subpoenaItems={workingCase.defendants.map((defendant) => ({
-                  defendant,
-                  alternativeServiceDescriptionDisabled:
-                    !isRegisteringAlternativeServiceForDefendant(defendant),
-                  subpoenaDisabled: !isIssuingSubpoenaForDefendant(defendant),
-                  toggleNewAlternativeService: isArraignmentScheduled
-                    ? toggleNewAlternativeService(defendant)
-                    : undefined,
-                  children: isArraignmentScheduled && (
-                    <Button
-                      variant="text"
-                      icon="reload"
-                      disabled={newSubpoenas.includes(defendant.id)}
-                      onClick={() => {
-                        setNewSubpoenas((previous) => [
-                          ...previous,
-                          defendant.id,
-                        ])
-                        // Clear any alternative service for the defendant
-                        toggleNewAlternativeService(defendant)()
-                        updateDefendantState(
-                          {
-                            defendantId: defendant.id,
-                            caseId: workingCase.id,
-                            isAlternativeService: false,
-                          },
-                          setWorkingCase,
-                        )
-                      }}
-                    >
-                      {formatMessage(strings.newSubpoenaButtonText)}
-                    </Button>
-                  ),
-                }))}
-                workingCase={workingCase}
-                setWorkingCase={setWorkingCase}
-                updateDefendantState={updateDefendantState}
-                showAlternativeServiceOption
-              />
-            }
+            <SubpoenaType
+              subpoenaItems={workingCase.defendants.map((defendant) => ({
+                defendant,
+                alternativeServiceDescriptionDisabled:
+                  !isRegisteringAlternativeServiceForDefendant(defendant),
+                subpoenaDisabled: !isIssuingSubpoenaForDefendant(defendant),
+                toggleNewAlternativeService: isArraignmentScheduled
+                  ? toggleNewAlternativeService(defendant)
+                  : undefined,
+                children: isSchedulingArraignmentDate ? (
+                  <Button
+                    variant="text"
+                    colorScheme="destructive"
+                    icon="trash"
+                    onClick={() => setIsSchedulingArraignmentDate(undefined)}
+                  >
+                    {formatMessage(strings.newSubpoenaButtonText)}
+                  </Button>
+                ) : isArraignmentScheduled ? (
+                  <Button
+                    variant="text"
+                    icon="reload"
+                    disabled={newSubpoenas.includes(defendant.id)}
+                    onClick={() => {
+                      setNewSubpoenas((previous) => [...previous, defendant.id])
+                      // Clear any alternative service for the defendant
+                      toggleNewAlternativeService(defendant)()
+                      updateDefendantState(
+                        {
+                          defendantId: defendant.id,
+                          caseId: workingCase.id,
+                          isAlternativeService: false,
+                        },
+                        setWorkingCase,
+                      )
+                    }}
+                  >
+                    {formatMessage(strings.newSubpoenaButtonText)}
+                  </Button>
+                ) : null,
+              }))}
+              workingCase={workingCase}
+              setWorkingCase={setWorkingCase}
+              updateDefendantState={updateDefendantState}
+              showAlternativeServiceOption
+            />
           </Box>
         )}
         <Box component="section" marginBottom={5}>
