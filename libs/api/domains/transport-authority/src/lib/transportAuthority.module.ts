@@ -23,6 +23,10 @@ import {
   VehiclePlateRenewalClientConfig,
 } from '@island.is/clients/transport-authority/vehicle-plate-renewal'
 import {
+  ExemptionForTransportationClientConfig,
+  ExemptionForTransportationClientModule,
+} from '@island.is/clients/transport-authority/exemption-for-transportation'
+import {
   VehicleServiceFjsV1ClientConfig,
   VehicleServiceFjsV1ClientModule,
 } from '@island.is/clients/vehicle-service-fjs-v1'
@@ -42,6 +46,7 @@ import {
     VehicleOperatorsClientModule,
     VehiclePlateOrderingClientModule,
     VehiclePlateRenewalClientModule,
+    ExemptionForTransportationClientModule,
     VehicleServiceFjsV1ClientModule,
     VehiclesClientModule,
     VehiclesMileageClientModule,
@@ -53,6 +58,7 @@ import {
         VehicleOperatorsClientConfig,
         VehiclePlateOrderingClientConfig,
         VehiclePlateRenewalClientConfig,
+        ExemptionForTransportationClientConfig,
         VehicleServiceFjsV1ClientConfig,
         VehiclesClientConfig,
         VehiclesMileageClientConfig,

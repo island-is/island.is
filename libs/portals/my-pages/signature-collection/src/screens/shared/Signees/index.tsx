@@ -10,7 +10,10 @@ import { useLocale, useNamespaces } from '@island.is/localization'
 import format from 'date-fns/format'
 import { useEffect, useState } from 'react'
 import { useParams } from 'react-router-dom'
-import { SignatureCollectionSignature as Signature } from '@island.is/api/schema'
+import {
+  SignatureCollectionSignature as Signature,
+  SignatureCollectionCollectionType,
+} from '@island.is/api/schema'
 import sortBy from 'lodash/sortBy'
 import EditPage from './EditPage'
 import { SkeletonTable } from '../../../lib/skeletons'
@@ -19,7 +22,11 @@ import { m } from '../../../lib/messages'
 import { PaperSignees } from './PaperSignees'
 import { formatNationalId } from '@island.is/portals/core'
 
-const Signees = () => {
+const Signees = ({
+  collectionType,
+}: {
+  collectionType: SignatureCollectionCollectionType
+}) => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
   const { id } = useParams<{ id: string }>()
@@ -27,6 +34,7 @@ const Signees = () => {
   const [searchTerm, setSearchTerm] = useState('')
   const { listSignees, loadingSignees, refetchListSignees } = useGetListSignees(
     id ?? '',
+    collectionType,
   )
   const [signees, setSignees] = useState(listSignees)
 
@@ -162,7 +170,11 @@ const Signees = () => {
       ) : (
         <SkeletonTable />
       )}
-      <PaperSignees listId={id ?? ''} refetchSignees={refetchListSignees} />
+      <PaperSignees
+        listId={id ?? ''}
+        refetchSignees={refetchListSignees}
+        collectionType={collectionType}
+      />
     </Box>
   )
 }
