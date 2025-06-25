@@ -32,8 +32,8 @@ import { SignatureCollectionAreaSummaryReport } from './models/areaSummaryReport
 import { SignatureCollectionUploadPaperSignatureInput } from './dto/uploadPaperSignature.input'
 import { SignatureCollectionBaseInput } from './dto/signatureCollectionBase.input'
 import { SignatureCollectionAreaInput } from './dto'
-import { CurrentAdmin } from './decorators/admin.decorator'
-import { SignatureCollectionAdmin } from './models/admin.model'
+import { CurrentAdmin } from './decorators'
+import { SignatureCollectionAdmin } from './models'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(
