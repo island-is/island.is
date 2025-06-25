@@ -45,6 +45,9 @@ import LinkResolver from '../LinkResolver/LinkResolver'
 import * as styles from './InfoCard.css'
 import LoaderCard from './LoaderCard'
 import TimeCard from './TimeCard'
+import EmptyCard from './EmptyCard'
+import { m } from '../../lib/messages'
+import { useLocale } from '@island.is/localization'
 
 interface InfoCardDetail {
   label: string
@@ -72,6 +75,7 @@ export interface InfoCardProps {
   img?: string
   variant?: 'default' | 'detail' | 'appointment' | 'link'
   loading?: boolean
+  error?: boolean
 }
 
 export const InfoCard: React.FC<InfoCardProps> = ({
@@ -86,8 +90,10 @@ export const InfoCard: React.FC<InfoCardProps> = ({
   variant = 'default',
   loading = false,
   tooltip,
+  error,
 }) => {
   const { width } = useWindowSize()
+  const { formatMessage } = useLocale()
   const isMobile = width < theme.breakpoints.md
 
   const displayBottomBorder = width < theme.breakpoints.xl
@@ -96,6 +102,7 @@ export const InfoCard: React.FC<InfoCardProps> = ({
   const detailLength = detail ? detail.length : 0
 
   let detailData = detail
+
   if (detailLength >= 12) {
     detailData = detail?.slice(0, 12)
   }
@@ -105,9 +112,21 @@ export const InfoCard: React.FC<InfoCardProps> = ({
       <TimeCard title={title} data={appointment} description={description} />
     )
   }
+
   if (loading) {
     return <LoaderCard />
   }
+
+  if (!loading && error) {
+    return (
+      <EmptyCard
+        title={title}
+        description={formatMessage(m.errorFetch)}
+        size="large"
+      />
+    )
+  }
+
   const content = (
     <Box
       border="standard"

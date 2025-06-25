@@ -1178,6 +1178,10 @@ export const messages = defineMessages({
     defaultMessage: 'Greiðslur og réttindi',
     id: 'sp.health:payments-and-rights',
   },
+  noPaymentsAndRightsData: {
+    defaultMessage: 'Engin gögn um greiðslur og réttindi fundust',
+    id: 'sp.health:no-payments-and-rights-data',
+  },
   rights: {
     defaultMessage: 'Réttindi',
     id: 'sp.health:rights',
@@ -1636,6 +1640,10 @@ export const messages = defineMessages({
   bloodtype: {
     id: 'sp.health:bloodtype',
     defaultMessage: 'Blóðflokkur',
+  },
+  youAreInBloodGroup: {
+    id: 'sp.health:you-are-in-bloodgroup',
+    defaultMessage: 'Þú ert í blóðflokki {arg}',
   },
   bloodtypeDesc: {
     id: 'sp.health:bloodtype-desc',
