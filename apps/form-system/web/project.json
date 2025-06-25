@@ -17,11 +17,12 @@
         "compiler": "babel",
         "outputPath": "dist/apps/form-system/web",
         "index": "apps/form-system/web/src/index.src.html",
-        "baseHref": "/",
+        "baseHref": "/form/",
         "main": "apps/form-system/web/src/main.tsx",
         "tsConfig": "apps/form-system/web/tsconfig.app.json",
         "assets": [
           "apps/form-system/web/src/favicon.ico",
+          "apps/form-system/web/src/mockServiceWorker.js",
           "apps/form-system/web/src/assets"
         ],
         "styles": [

@@ -1,7 +1,7 @@
 # API
 
 To create a new domain, run:
-`yarn generate @nx/nest:library api/domains/<new_domain_name>`
+`yarn generate @nx/nest:library libs/api/domains/<new_domain_name>`
 
 When prompted for project name and where it should be generated, choose the `derived` lib option.
 
