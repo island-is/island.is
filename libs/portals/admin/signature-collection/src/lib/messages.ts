@@ -469,6 +469,12 @@ export const m = defineMessages({
     defaultMessage: 'Úrvinnslu lokið',
     description: '',
   },
+  confirmListReviewActionDescription: {
+    id: 'admin-portal.signature-collection:confirmListReviewActionDescription',
+    defaultMessage:
+      'Þegar búið er að fara yfir meðmæli er hakað við hér.',
+    description: '',
+  },
   confirmListReviewedToggleBack: {
     id: 'admin-portal.signature-collection:confirmListReviewedToggleBack',
     defaultMessage: 'Opna fyrir úrvinnslu',

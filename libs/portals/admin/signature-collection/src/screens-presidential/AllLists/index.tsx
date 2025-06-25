@@ -20,7 +20,6 @@ import { SignatureCollectionPaths } from '../../lib/paths'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import {
-  SignatureCollectionCollectionType,
   SignatureCollectionList,
 } from '@island.is/api/schema'
 import format from 'date-fns/format'
@@ -38,10 +37,8 @@ import CompareLists from '../../shared-components/compareLists'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import ActionCompleteCollectionProcessing from '../../shared-components/completeCollectionProcessing'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
-import ActionDrawer from '../../shared-components/compareLists/ActionDrawer'
-import { Actions } from '../../shared-components/compareLists/ActionDrawer/ListActions'
-
-const collectionType = SignatureCollectionCollectionType.Presidential
+import ActionDrawer from '../../shared-components/actionDrawer'
+import { Actions } from '../../shared-components/actionDrawer/ListActions'
 
 const Lists = () => {
   const { formatMessage } = useLocale()
@@ -316,14 +313,12 @@ const Lists = () => {
             <Box>
               <CompareLists
                 collectionId={collection?.id}
-                collectionType={collectionType}
+                collectionType={collection?.collectionType}
               />
               {!hasInReview &&
                 collectionStatus === CollectionStatus.InInitialReview && (
                   <ActionCompleteCollectionProcessing
-                    collectionType={
-                      SignatureCollectionCollectionType.Presidential
-                    }
+                    collectionType={collection?.collectionType}
                     collectionId={collection?.id}
                   />
                 )}

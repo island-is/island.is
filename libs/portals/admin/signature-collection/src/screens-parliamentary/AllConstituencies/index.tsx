@@ -19,14 +19,11 @@ import CompareLists from '../../shared-components/compareLists'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import {
   CollectionStatus,
-  SignatureCollectionCollectionType,
 } from '@island.is/api/schema'
 import ActionCompleteCollectionProcessing from '../../shared-components/completeCollectionProcessing'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import FindSignature from '../../shared-components/findSignature'
 import EmptyState from '../../shared-components/emptyState'
-
-const collectionType = SignatureCollectionCollectionType.Parliamentary
 
 const ParliamentaryRoot = () => {
   const { formatMessage } = useLocale()
@@ -122,10 +119,10 @@ const ParliamentaryRoot = () => {
               </Stack>
               <CompareLists
                 collectionId={collection?.id}
-                collectionType={collectionType}
+                collectionType={collection?.collectionType}
               />
               <ActionCompleteCollectionProcessing
-                collectionType={collectionType}
+                collectionType={collection?.collectionType}
                 collectionId={collection?.id}
                 canProcess={
                   !!allLists.length &&
