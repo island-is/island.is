@@ -67,8 +67,8 @@
     </LinearLayout>
   </LinearLayout>
   <FrameLayout
-    android:layout_width="48dp"
-    android:layout_height="54dp"
+    android:layout_width="72dp"
+    android:layout_height="80dp"
     android:background="@drawable/rounded_image_background"
     android:clipToOutline="true">
     <ImageView

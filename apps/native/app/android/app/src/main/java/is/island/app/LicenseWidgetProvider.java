@@ -10,6 +10,7 @@ import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.net.Uri;
+import android.os.Bundle;
 import android.util.Base64;
 import android.util.Log;
 import android.widget.RemoteViews;
@@ -34,6 +35,13 @@ public class LicenseWidgetProvider extends AppWidgetProvider {
     }
 
     @Override
+    public void onAppWidgetOptionsChanged(Context context, AppWidgetManager appWidgetManager,
+                                        int appWidgetId, Bundle newOptions) {
+        super.onAppWidgetOptionsChanged(context, appWidgetManager, appWidgetId, newOptions);
+        updateAppWidget(context, appWidgetManager, appWidgetId);
+    }
+
+    @Override
     public void onDeleted(Context context, int[] appWidgetIds) {
         // Clean up widget preferences when widgets are deleted
         SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
@@ -45,16 +53,37 @@ public class LicenseWidgetProvider extends AppWidgetProvider {
         editor.apply();
     }
 
+    @Override
+    public void onReceive(Context context, Intent intent) {
+        super.onReceive(context, intent);
+
+        String action = intent.getAction();
+        if (AppWidgetManager.ACTION_APPWIDGET_CONFIGURE.equals(action)) {
+            int appWidgetId = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,
+                AppWidgetManager.INVALID_APPWIDGET_ID);
+
+            if (appWidgetId != AppWidgetManager.INVALID_APPWIDGET_ID) {
+                Intent configIntent = new Intent(context, LicenseWidgetConfigActivity.class);
+                configIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+                configIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                context.startActivity(configIntent);
+            }
+        }
+    }
+
     static void updateAppWidget(Context context, AppWidgetManager appWidgetManager, int appWidgetId) {
         try {
             SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
             String licenseType = prefs.getString("widget_license_type_" + appWidgetId, "DriversLicense");
             boolean showInfo = prefs.getBoolean("widget_show_info_" + appWidgetId, true);
             LicensePayload license = loadLicensePayload(context, licenseType);
-            RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.license_widget_medium);
+
+            // Determine the appropriate layout based on widget size
+            int layoutId = getLayoutForSize(context, appWidgetManager, appWidgetId, showInfo);
+            RemoteViews views = new RemoteViews(context.getPackageName(), layoutId);
 
             if (license != null) {
-                setupLicenseViews(context, views, license, licenseType, showInfo);
+                setupLicenseViews(context, views, license, licenseType, showInfo, appWidgetManager, appWidgetId);
             } else {
                 setupNotFoundViews(context, views, licenseType);
             }
@@ -75,16 +104,18 @@ public class LicenseWidgetProvider extends AppWidgetProvider {
         }
     }
 
-    // @todo responsive views (impl later)
-    private static int getLayoutForSize(Context context, AppWidgetManager appWidgetManager,
-                                       int appWidgetId, boolean showInfo) {
-        return R.layout.license_widget_medium;
+    private static int calculateWidgetCellWidth(int widthDp) {
+        return Math.max(1, (widthDp + 30) / 70);
+    }
+
+    private static int calculateWidgetCellHeight(int heightDp) {
+        return Math.max(1, (heightDp + 30) / 70);
     }
 
     private static void setupLicenseViews(Context context, RemoteViews views, LicensePayload license,
-                                        String licenseType, boolean showInfo) {
+                                        String licenseType, boolean showInfo, AppWidgetManager appWidgetManager, int appWidgetId) {
         views.setTextViewText(R.id.license_title,
-            license.title != null ? license.title : getLicenseDisplayTitle(licenseType));
+            license.title != null ? license.title : LicenseTypeRegistry.getDisplayName(licenseType));
 
         if (showInfo && license.subtitle != null && !license.subtitle.isEmpty()) {
             views.setTextViewText(R.id.license_subtitle, license.subtitle);
@@ -93,11 +124,10 @@ public class LicenseWidgetProvider extends AppWidgetProvider {
             views.setViewVisibility(R.id.license_subtitle, android.view.View.GONE);
         }
 
-        int iconRes = getAgencyIconResource(licenseType);
+        int iconRes = LicenseTypeRegistry.getAgencyIconResource(licenseType);
         views.setImageViewResource(R.id.agency_icon, iconRes);
 
-        int[] backgroundColors = getBackgroundColors(licenseType);
-        views.setInt(R.id.widget_container, "setBackgroundColor", backgroundColors[0]);
+        applyGradientBackground(context, views, licenseType);
 
         if (showInfo && license.photo != null) {
             Bitmap photoBitmap = decodeBase64Photo(license.photo);
@@ -120,13 +150,14 @@ public class LicenseWidgetProvider extends AppWidgetProvider {
     }
 
     private static void setupNotFoundViews(Context context, RemoteViews views, String licenseType) {
-        views.setTextViewText(R.id.license_title, getLicenseDisplayTitle(licenseType) + " fannst ekki");
-        views.setTextViewText(R.id.license_subtitle, "Skoða öll skírteini");
+        views.setTextViewText(R.id.license_title, LicenseTypeRegistry.getDisplayName(licenseType) + " fannst ekki");
+        views.setTextViewText(R.id.license_subtitle, "Opna Ísland.is appið");
+        views.setTextViewText(R.id.license_name, "Ísland.is");
         views.setViewVisibility(R.id.license_subtitle, android.view.View.VISIBLE);
         views.setImageViewResource(R.id.agency_icon, R.drawable.ic_error);
         views.setViewVisibility(R.id.license_photo, android.view.View.GONE);
         views.setViewVisibility(R.id.license_name, android.view.View.GONE);
-        views.setInt(R.id.widget_container, "setBackgroundColor", 0xFFE0E0E0);
+        applyGradientBackground(context, views, licenseType);
     }
 
     private static LicensePayload loadLicensePayload(Context context, String licenseType) {
@@ -156,7 +187,6 @@ public class LicenseWidgetProvider extends AppWidgetProvider {
         Intent intent = new Intent(Intent.ACTION_VIEW);
 
         if (license != null && license.uri != null && !license.uri.isEmpty()) {
-            System.out.println("Launching intent 1: " + license.uri);
             intent.setData(Uri.parse(license.uri));
         } else {
             String packageName = context.getPackageName();
@@ -164,17 +194,27 @@ public class LicenseWidgetProvider extends AppWidgetProvider {
 
             if (license != null && license.licenseId != null && !license.licenseId.isEmpty()) {
                 String uri = scheme + "://wallet/" + licenseType + "/" + license.licenseId;
-                System.out.println("Launching intent 2: " + uri);
                 intent.setData(Uri.parse(uri));
             } else {
                 String uri = scheme + "://wallet/" + licenseType;
-                System.out.println("Launching intent 3: " + uri);
                 intent.setData(Uri.parse(uri));
             }
         }
 
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         return intent;
+    }
+
+    private static void applyGradientBackground(Context context, RemoteViews views, String licenseType) {
+        try {
+            int backgroundResId = LicenseTypeRegistry.getBackgroundDrawableResource(licenseType);
+            views.setInt(R.id.widget_container, "setBackgroundResource", backgroundResId);
+        } catch (Exception e) {
+            Log.e(TAG, "Error applying gradient background: " + e.getMessage());
+            // Fallback to solid color
+            int[] colors = LicenseTypeRegistry.getBackgroundColors(licenseType);
+            views.setInt(R.id.widget_container, "setBackgroundColor", colors[0]);
+        }
     }
 
     private static Bitmap decodeBase64Photo(String photo) {
@@ -197,45 +237,17 @@ public class LicenseWidgetProvider extends AppWidgetProvider {
         }
     }
 
-    private static String getLicenseDisplayTitle(String licenseType) {
-        switch (licenseType) {
-            case "DriversLicense": return "Ökuskírteini";
-            case "HuntingLicense": return "Veiðikort";
-            case "AdrLicense": return "ADR skírteini";
-            case "MachineLicense": return "Vinnuvélaskírteini";
-            case "FirearmLicense": return "Skotvopnaleyfi";
-            case "DisabilityLicense": return "Örorkuskírteini";
-            case "Passport": return "Vegabréf";
-            case "Ehic": return "Evrópska sjúkratryggingakortið";
-            default: return "Skírteini";
-        }
-    }
-
-    private static int getAgencyIconResource(String licenseType) {
-        switch (licenseType) {
-            case "DriversLicense": return R.drawable.ic_agency_coat_of_arms;
-            case "HuntingLicense":
-            case "FirearmLicense": return R.drawable.ic_agency_police;
-            case "AdrLicense":
-            case "MachineLicense": return R.drawable.ic_agency_occupational_safety;
-            case "DisabilityLicense": return R.drawable.ic_agency_social_insurance;
-            case "Passport": return R.drawable.ic_agency_registers;
-            case "Ehic": return R.drawable.ic_agency_health;
-            default: return R.drawable.ic_wallet;
-        }
-    }
-
-    private static int[] getBackgroundColors(String licenseType) {
-        switch (licenseType) {
-            case "DriversLicense": return new int[]{0xFFF5E4EC, 0xFFE2C4D1};
-            case "HuntingLicense": return new int[]{0xFFDBEBF4, 0xFFB3D3E3};
-            case "AdrLicense": return new int[]{0xFFF8FAF7, 0xFFEEFAE6};
-            case "MachineLicense": return new int[]{0xFFE8FADD, 0xFFB3DC97};
-            case "FirearmLicense": return new int[]{0xFFF1EDE2, 0xFFF5F4D5};
-            case "DisabilityLicense": return new int[]{0xFFDEE6D9, 0xFF8BAB8D};
-            case "Passport": return new int[]{0xFFEAECF6, 0xFFABB2D1};
-            case "Ehic": return new int[]{0xFFEEF0F8, 0xFF95A0CF};
-            default: return new int[]{0xFFE0E0E0, 0xFFC0C0C0};
+    private static int getLayoutForSize(Context context, AppWidgetManager appWidgetManager,
+                                       int appWidgetId, boolean showInfo) {
+        Bundle options = appWidgetManager.getAppWidgetOptions(appWidgetId);
+        int minWidth = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_WIDTH, 110);
+        int minHeight = options.getInt(AppWidgetManager.OPTION_APPWIDGET_MIN_HEIGHT, 110);
+        int cellWidth = calculateWidgetCellWidth(minWidth);
+        int cellHeight = calculateWidgetCellHeight(minHeight);
+        if (cellWidth > 2 && cellHeight > 1) {
+            return R.layout.license_widget_large;
+        } else {
+            return R.layout.license_widget_medium;
         }
     }
 

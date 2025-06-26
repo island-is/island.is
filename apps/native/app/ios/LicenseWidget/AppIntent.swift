@@ -31,30 +31,25 @@ struct ConfigurationAppIntent: WidgetConfigurationIntent {
 }
 
 enum LicenseType: String, AppEnum {
-  case adrLicense,
-       disabilityLicense,
-       driversLicense,
-       ehic,
+  case driversLicense,
        firearmLicense,
        huntingLicense,
-       identityDocument,
+       disabilityLicense,
        machineLicense,
-       pcard,
-       passport;
-
+       adrLicense;
   static var typeDisplayRepresentation: TypeDisplayRepresentation = "License Type"
 
   static var caseDisplayRepresentations: [LicenseType : DisplayRepresentation] = [
     .driversLicense: "Ökuskírteini",
-    .disabilityLicense: "Örorkuskírteini",
     .firearmLicense: "Skotvopnaleyfi",
-    .adrLicense: "ADR skírteini",
     .huntingLicense: "Veiðikort",
+    .disabilityLicense: "Örorkuskírteini",
     .machineLicense: "Vinnuvélaskírteini",
-    .passport: "Vegabréf",
-    .ehic: "European Health Insurance Card",
-    .pcard: "Stæðiskort",
-    .identityDocument: "Nafnskírteini"
+    .adrLicense: "ADR skírteini",
+    // .passport: "Vegabréf",
+    // .ehic: "European Health Insurance Card",
+    // .pcard: "Stæðiskort",
+    // .identityDocument: "Nafnskírteini"
   ]
 }
 
@@ -63,24 +58,24 @@ extension LicenseType {
         switch self {
         case .driversLicense:
             return [Color(hex: "#F5E4EC"), Color(hex: "#E2C4D1")]
-        case .huntingLicense:
-            return [Color(hex: "#DBEBF4"), Color(hex: "#B3D3E3")]
-        case .adrLicense:
-            return [Color(hex: "#F8FAF7"), Color(hex: "#EEFAE6")]
-        case .machineLicense:
-            return [Color(hex: "#E8FADD"), Color(hex: "#B3DC97")]
         case .firearmLicense:
             return [Color(hex: "#F1EDE2"), Color(hex: "#F5F4D5")]
+        case .huntingLicense:
+            return [Color(hex: "#DBEBF4"), Color(hex: "#B3D3E3")]
         case .disabilityLicense:
             return [Color(hex: "#DEE6D9"), Color(hex: "#8BAB8D")]
-        case .passport:
-            return [Color(hex: "#EAECF6"), Color(hex: "#ABB2D1")]
-        case .ehic:
-            return [Color(hex: "#EEF0F8"), Color(hex: "#95A0CF")]
-        case .identityDocument:
-            return [Color(hex: "#F0F0F0"), Color(hex: "#D0D0D0")]
-        case .pcard:
-            return [Color(hex: "#F0F0F0"), Color(hex: "#D0D0D0")]
+        case .machineLicense:
+            return [Color(hex: "#E8FADD"), Color(hex: "#B3DC97")]
+        case .adrLicense:
+            return [Color(hex: "#F8FAF7"), Color(hex: "#EEFAE6")]
+//        case .passport:
+//            return [Color(hex: "#EAECF6"), Color(hex: "#ABB2D1")]
+//        case .ehic:
+//            return [Color(hex: "#EEF0F8"), Color(hex: "#95A0CF")]
+//        case .identityDocument:
+//            return [Color(hex: "#F0F0F0"), Color(hex: "#D0D0D0")]
+//        case .pcard:
+//            return [Color(hex: "#F0F0F0"), Color(hex: "#D0D0D0")]
         }
     }
 
@@ -88,24 +83,24 @@ extension LicenseType {
         switch self {
         case .driversLicense:
             return "AgencyCoatOfArms"
-        case .huntingLicense:
-            return "AgencyPolice"
-        case .adrLicense:
-            return "AgencyOccupationalSafetyHealth"
-        case .machineLicense:
-            return "AgencyOccupationalSafetyHealth"
         case .firearmLicense:
+            return "AgencyPolice"
+        case .huntingLicense:
             return "AgencyPolice"
         case .disabilityLicense:
             return "AgencySocialInsurance"
-        case .passport:
-          return "AgencyRegisters"
-        case .ehic:
-          return "AgencyHealth"
-        case .identityDocument:
-            return "AgencyRegisters"
-        case .pcard:
-            return "AgencyCoatOfArms"
+        case .machineLicense:
+            return "AgencyOccupationalSafetyHealth"
+        case .adrLicense:
+            return "AgencyOccupationalSafetyHealth"
+//        case .passport:
+//          return "AgencyRegisters"
+//        case .ehic:
+//          return "AgencyHealth"
+//        case .identityDocument:
+//            return "AgencyRegisters"
+//        case .pcard:
+//            return "AgencyCoatOfArms"
         }
     }
 
@@ -113,49 +108,49 @@ extension LicenseType {
         switch self {
         case .driversLicense:
             return "Ökuskírteini"
-        case .huntingLicense:
-            return "Veiðikort"
-        case .adrLicense:
-            return "ADR skírteini"
-        case .machineLicense:
-            return "Vinnuvélaskírteini"
         case .firearmLicense:
             return "Skotvopnaleyfi"
+        case .huntingLicense:
+            return "Veiðikort"
         case .disabilityLicense:
             return "Örorkuskírteini"
-        case .passport:
-            return "Vegabréf"
-        case .ehic:
-            return "Evrópska sjúkratryggingakortið"
-        case .identityDocument:
-            return "Nafnskírteini"
-        case .pcard:
-            return "Stæðiskort"
+        case .machineLicense:
+            return "Vinnuvélaskírteini"
+        case .adrLicense:
+            return "ADR skírteini"
+//        case .passport:
+//            return "Vegabréf"
+//        case .ehic:
+//            return "Evrópska sjúkratryggingakortið"
+//        case .identityDocument:
+//            return "Nafnskírteini"
+//        case .pcard:
+//            return "Stæðiskort"
         }
     }
 
     var systemName: String {
       switch self {
-      case .adrLicense:
-        return "AdrLicense"
-      case .disabilityLicense:
-        return "DisabilityLicense"
       case .driversLicense:
         return "DriversLicense"
-      case .ehic:
-        return "Ehic"
       case .firearmLicense:
         return "FirearmLicense"
       case .huntingLicense:
         return "HuntingLicense"
+      case .disabilityLicense:
+        return "DisabilityLicense"
       case .machineLicense:
         return "MachineLicense"
-      case .passport:
-        return "Passport"
-      case .identityDocument:
-        return "IdentityDocument"
-      case .pcard:
-        return "PCard"
+      case .adrLicense:
+        return "AdrLicense"
+//      case .ehic:
+//        return "Ehic"
+//      case .passport:
+//        return "Passport"
+//      case .identityDocument:
+//        return "IdentityDocument"
+//      case .pcard:
+//        return "PCard"
       }
     }
 }

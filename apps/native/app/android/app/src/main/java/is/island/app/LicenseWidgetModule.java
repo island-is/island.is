@@ -25,7 +25,15 @@ public class LicenseWidgetModule extends ReactContextBaseJavaModule {
 
     @ReactMethod
     public void updateLicenses(String licensesJSON) {
+        if (licensesJSON == null) {
+            return;
+        }
+
         Context context = getReactApplicationContext();
+        if (context == null) {
+            return;
+        }
+
         SharedPreferences prefs = context.getSharedPreferences(SHARED_PREFS_NAME, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = prefs.edit();
         editor.putString(LICENSES_KEY, licensesJSON);
@@ -36,6 +44,9 @@ public class LicenseWidgetModule extends ReactContextBaseJavaModule {
     @ReactMethod
     public void updateWidgets() {
         Context context = getReactApplicationContext();
+        if (context == null) {
+            return;
+        }
         updateAllWidgets(context);
     }
 

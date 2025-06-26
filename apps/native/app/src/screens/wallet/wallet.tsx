@@ -4,8 +4,8 @@ import {
   Animated,
   FlatList,
   Image,
+  Linking,
   ListRenderItemInfo,
-  Platform,
   RefreshControl,
   View,
 } from 'react-native'
@@ -42,7 +42,7 @@ import { WalletItem } from './components/wallet-item'
 import { useLocale } from '../../hooks/use-locale'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import { INCLUDED_LICENSE_TYPES } from '../wallet-pass/wallet-pass.constants'
-import { config } from '../../config'
+import { evaluateUrl } from '../../lib/deep-linking'
 
 const Tabs = styled.View`
   margin-top: ${({ theme }) => theme.spacing[1]}px;
@@ -119,6 +119,14 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
     false,
   )
   const [selectedTab, setSelectedTab] = useState(0)
+
+  useEffect(() => {
+    Linking.getInitialURL().then((url) => {
+      if (url?.includes('wallet/')) {
+        return evaluateUrl(url)
+      }
+    });
+  }, [])
 
   // Query list of licenses
   const res = useListLicensesQuery({

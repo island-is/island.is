@@ -19,45 +19,19 @@ public class LicenseWidgetConfigActivity extends Activity {
     private Spinner mLicenseTypeSpinner;
     private CheckBox mShowInfoCheckbox;
 
-    private static final String[] LICENSE_TYPES = {
-        "DriversLicense",
-        "HuntingLicense",
-        "AdrLicense",
-        "MachineLicense",
-        "FirearmLicense",
-        "DisabilityLicense",
-        "Passport",
-        "Ehic"
-    };
-
-    private static final String[] LICENSE_DISPLAY_NAMES = {
-        "Ökuskírteini",
-        "Veiðikort",
-        "ADR skírteini",
-        "Vinnuvélaskírteini",
-        "Skotvopnaleyfi",
-        "Örorkuskírteini",
-        "Vegabréf",
-        "Evrópska sjúkratryggingakortið"
-    };
-
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
 
         setResult(RESULT_CANCELED);
         setContentView(R.layout.license_widget_config);
-
         mLicenseTypeSpinner = findViewById(R.id.license_type_spinner);
         mShowInfoCheckbox = findViewById(R.id.show_info_checkbox);
 
-        // Set up the spinner (jesus.. Android version of a dropdown menu)
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(this,
-            android.R.layout.simple_spinner_item, LICENSE_DISPLAY_NAMES);
+        ArrayAdapter<LicenseTypeRegistry.LicenseType> adapter = new ArrayAdapter<>(this,
+            android.R.layout.simple_spinner_item, LicenseTypeRegistry.LICENSE_TYPES);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         mLicenseTypeSpinner.setAdapter(adapter);
-        mLicenseTypeSpinner.setSelection(0); // DriversLicense
-        mShowInfoCheckbox.setChecked(true); // Show info by default
 
         findViewById(R.id.add_button).setOnClickListener(mOnClickListener);
 
@@ -72,6 +46,8 @@ public class LicenseWidgetConfigActivity extends Activity {
             finish();
             return;
         }
+
+        loadExistingConfiguration();
     }
 
     View.OnClickListener mOnClickListener = new View.OnClickListener() {
@@ -80,7 +56,8 @@ public class LicenseWidgetConfigActivity extends Activity {
 
             // Save the configuration
             int selectedPosition = mLicenseTypeSpinner.getSelectedItemPosition();
-            String licenseType = LICENSE_TYPES[selectedPosition];
+            LicenseTypeRegistry.LicenseType selectedLicenseType = LicenseTypeRegistry.LICENSE_TYPES[selectedPosition];
+            String licenseType = selectedLicenseType.type;
             boolean showInfo = mShowInfoCheckbox.isChecked();
 
             saveLicenseTypePref(context, mAppWidgetId, licenseType);
@@ -95,6 +72,23 @@ public class LicenseWidgetConfigActivity extends Activity {
             finish();
         }
     };
+
+    private void loadExistingConfiguration() {
+        // Load existing preferences
+        String existingLicenseType = loadLicenseTypePref(this, mAppWidgetId);
+        boolean existingShowInfo = loadShowInfoPref(this, mAppWidgetId);
+
+        // Find the position of the existing license type
+        int position = 0;
+        for (int i = 0; i < LicenseTypeRegistry.LICENSE_TYPES.length; i++) {
+            if (LicenseTypeRegistry.LICENSE_TYPES[i].type.equals(existingLicenseType)) {
+                position = i;
+                break;
+            }
+        }
+        mLicenseTypeSpinner.setSelection(position);
+        mShowInfoCheckbox.setChecked(existingShowInfo);
+    }
 
     static void saveLicenseTypePref(Context context, int appWidgetId, String licenseType) {
         SharedPreferences.Editor prefs = context.getSharedPreferences(SHARED_PREFS_NAME, 0).edit();
