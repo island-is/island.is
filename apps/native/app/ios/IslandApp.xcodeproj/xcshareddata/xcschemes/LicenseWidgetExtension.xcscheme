@@ -79,11 +79,6 @@
       </MacroExpansion>
       <EnvironmentVariables>
          <EnvironmentVariable
-            key = "_XCWidgetKind"
-            value = ""
-            isEnabled = "YES">
-         </EnvironmentVariable>
-         <EnvironmentVariable
             key = "_XCWidgetDefaultView"
             value = "timeline"
             isEnabled = "YES">

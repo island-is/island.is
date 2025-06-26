@@ -95,8 +95,7 @@ public class LicenseWidgetProvider extends AppWidgetProvider {
 
             appWidgetManager.updateAppWidget(appWidgetId, views);
         } catch (Exception e) {
-            System.err.println("Error updating license widget: " + e.getMessage());
-            e.printStackTrace();
+            Log.e(TAG, "Error updating license widget: " + e.getMessage(), e);
             // Create a simple fallback view
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.license_widget_medium);
             views.setTextViewText(R.id.license_title, "Error");
@@ -177,8 +176,7 @@ public class LicenseWidgetProvider extends AppWidgetProvider {
                 }
             }
         } catch (JSONException e) {
-            System.err.println("Error parsing licenses JSON: " + e.getMessage());
-            e.printStackTrace();
+            Log.e(TAG, "Error parsing licenses JSON: " + e.getMessage(), e);
         }
         return null;
     }
@@ -232,7 +230,7 @@ public class LicenseWidgetProvider extends AppWidgetProvider {
             byte[] decodedBytes = Base64.decode(base64Data, Base64.DEFAULT);
             return BitmapFactory.decodeByteArray(decodedBytes, 0, decodedBytes.length);
         } catch (Exception e) {
-            System.err.println("Error decoding base64: " + e.getMessage());
+            Log.e(TAG, "Error decoding base64: " + e.getMessage());
             return null;
         }
     }
@@ -275,5 +273,7 @@ public class LicenseWidgetProvider extends AppWidgetProvider {
             payload.uri = json.optString("uri");
             return payload;
         }
+    }
+}
     }
 }

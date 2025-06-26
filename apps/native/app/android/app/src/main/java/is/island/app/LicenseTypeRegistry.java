@@ -92,11 +92,17 @@ public class LicenseTypeRegistry {
     }
 
     public static String getDisplayName(String type) {
+        if (type == null) {
+            return LICENSE_TYPES[0].displayName;
+        }
         LicenseType licenseType = findLicenseTypeByType(type);
         return licenseType.displayName;
     }
 
     public static int getAgencyIconResource(String type) {
+        if (type == null) {
+            return getDefaultAgencyIconResource();
+        }
         LicenseType licenseType = findLicenseTypeByType(type);
         return licenseType.agencyIconResource;
     }

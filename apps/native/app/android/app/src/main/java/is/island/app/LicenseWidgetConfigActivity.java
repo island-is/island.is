@@ -28,6 +28,11 @@ public class LicenseWidgetConfigActivity extends Activity {
         mLicenseTypeSpinner = findViewById(R.id.license_type_spinner);
         mShowInfoCheckbox = findViewById(R.id.show_info_checkbox);
 
+        if (mLicenseTypeSpinner == null || mShowInfoCheckbox == null) {
+            finish();
+            return;
+        }
+
         ArrayAdapter<LicenseTypeRegistry.LicenseType> adapter = new ArrayAdapter<>(this,
             android.R.layout.simple_spinner_item, LicenseTypeRegistry.LICENSE_TYPES);
         adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
@@ -48,8 +53,18 @@ public class LicenseWidgetConfigActivity extends Activity {
         }
 
         loadExistingConfiguration();
-    }
+        mLicenseTypeSpinner = findViewById(R.id.license_type_spinner);
+        mShowInfoCheckbox = findViewById(R.id.show_info_checkbox);
 
+        if (mLicenseTypeSpinner == null || mShowInfoCheckbox == null) {
+            finish();
+            return;
+        }
+
+        if (mLicenseTypeSpinner == null || mShowInfoCheckbox == null) {
+            finish();
+            return;
+        }
     View.OnClickListener mOnClickListener = new View.OnClickListener() {
         public void onClick(View v) {
             final Context context = LicenseWidgetConfigActivity.this;
