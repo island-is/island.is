@@ -11,6 +11,7 @@ on:
       - 'infra/**'
       - '**/infra/**'
       - 'libs/auth/scopes/src/lib/clients/**'
+      - '.github/**'
   workflow_dispatch: {}
   pull_request:
     paths:
@@ -18,6 +19,7 @@ on:
       - 'infra/**'
       - '**/infra/**'
       - 'libs/auth/scopes/src/lib/clients/**'
+      - '.github/**'
 
 defaults:
   run:
@@ -65,9 +67,10 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
-      - name: Install yarn in infra
-        working-directory: infra
-        run: yarn install --immutable
+      - name: Setup yarn (infra)
+        uses: ./.github/actions/setup-yarn
+        with:
+          working-directory: infra
 
       - name: Run unit tests
         working-directory: infra
@@ -96,9 +99,10 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
-      - name: Install yarn in infra
-        working-directory: infra
-        run: yarn install --immutable
+      - name: Setup yarn (infra)
+        uses: ./.github/actions/setup-yarn
+        with:
+          working-directory: infra
 
       - name: Select role
         env:
@@ -151,3 +155,20 @@ jobs:
             while IFS= read -r secret ; do echo $secret; done <<< "$missing"
             exit 1
           fi
+
+  success:
+    name: Config Values Success
+    if: ${{ !cancelled() }}
+    needs:
+      - check-secrets
+    runs-on: arc-shared
+    steps:
+      - name: Collect
+        run: |
+          for job in ${{ needs.check-secrets.result }}; do
+            if [[ "$job" == "failure" ]]; then
+              echo "::error title=config values::❌ config values workflow failed!"
+              exit 1
+            fi
+          done
+          echo "::info title=config values::✅ config values workflow ran successfully."

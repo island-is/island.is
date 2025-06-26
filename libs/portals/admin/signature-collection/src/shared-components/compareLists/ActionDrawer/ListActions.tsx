@@ -10,6 +10,7 @@ import { m } from '../../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import CreateCollection from '../../createCollection'
 import { ListsLoaderReturn } from '../../../loaders/AllLists.loader'
+import ReviewCandidates from '../../reviewCandidates'
 
 export enum Actions {
   DownloadReports = 'downloadReports',
@@ -18,6 +19,7 @@ export enum Actions {
   ReviewComplete = 'reviewComplete',
   ExtendDeadline = 'extendDeadline',
   RemoveCandidate = 'removeCandidate',
+  ReviewCandidates = 'reviewCandidates',
 }
 
 interface ListActionsProps {
@@ -54,16 +56,26 @@ const ListActions = ({ allowedActions }: ListActionsProps = {}) => {
           <CreateCollection collection={collection} />
         )}
         {allowedActions?.includes(Actions.LockList) && (
-          <ActionLockList listId={list.id} />
+          <ActionLockList
+            listId={list.id}
+            collectionType={list.collectionType}
+          />
         )}
         {allowedActions?.includes(Actions.ReviewComplete) && (
-          <ActionReviewComplete listId={list?.id} listStatus={listStatus} />
+          <ActionReviewComplete
+            listId={list?.id}
+            listStatus={listStatus}
+            collectionType={list.collectionType}
+          />
         )}
         {allowedActions?.includes(Actions.ExtendDeadline) && (
           <ActionExtendDeadline list={list} />
         )}
         {allowedActions?.includes(Actions.RemoveCandidate) && (
           <RemoveCandidate list={list} />
+        )}
+        {allowedActions?.includes(Actions.ReviewCandidates) && (
+          <ReviewCandidates candidates={collection.candidates} />
         )}
       </Stack>
     </Drawer>

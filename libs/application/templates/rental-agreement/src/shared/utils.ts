@@ -24,8 +24,20 @@ const extractParticipants = (
 ): ParticipantsSection => ({
   landlords:
     getValueViaPath<ApplicantsInfo[]>(answers, 'landlordInfo.table', []) ?? [],
+  landlordRepresentatives:
+    getValueViaPath<ApplicantsInfo[]>(
+      answers,
+      'landlordInfo.representativeTable',
+      [],
+    ) ?? [],
   tenants:
     getValueViaPath<ApplicantsInfo[]>(answers, 'tenantInfo.table', []) ?? [],
+  tenantRepresentatives:
+    getValueViaPath<ApplicantsInfo[]>(
+      answers,
+      'tenantInfo.representativeTable',
+      [],
+    ) ?? [],
 })
 
 const extractPropertyInfo = (
@@ -99,7 +111,7 @@ const extractRentalAmount = (
   answers: Application['answers'],
 ): RentalAmountSection => ({
   rentalAmount: getValueViaPath<string>(answers, 'rentalAmount.amount'),
-  isIndexConnected: getValueViaPath<string>(
+  isIndexConnected: getValueViaPath<YesOrNoEnum>(
     answers,
     'rentalAmount.isIndexConnected',
   ),
@@ -156,7 +168,7 @@ const extractSecurityDeposit = (
   ),
   landlordsMutualFundInfo: getValueViaPath<string>(
     answers,
-    'securityDeposit.landlordsMutualFundInfo',
+    'securityDeposit.mutualFundInfo',
   ),
   otherInfo: getValueViaPath<string>(answers, 'securityDeposit.otherInfo'),
   securityDepositAmount: getValueViaPath<string>(
@@ -170,6 +182,10 @@ const extractSecurityDeposit = (
   securityAmountCalculated: getValueViaPath<string>(
     answers,
     'securityDeposit.securityAmountCalculated',
+  ),
+  securityAmountHiddenRentalAmount: getValueViaPath<string>(
+    answers,
+    'securityDeposit.rentalAmount',
   ),
 })
 
@@ -209,6 +225,10 @@ const extractOtherFees = (
   heatingCostMeterStatus: getValueViaPath<string>(
     answers,
     'otherFees.heatingCostMeterStatus',
+  ),
+  otherCostPayedByTenant: getValueViaPath<YesOrNoEnum>(
+    answers,
+    'otherFees.otherCosts',
   ),
   otherCostItems: getValueViaPath<CostField[]>(
     answers,

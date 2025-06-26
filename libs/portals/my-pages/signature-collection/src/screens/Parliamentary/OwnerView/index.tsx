@@ -14,6 +14,7 @@ import { useLocale } from '@island.is/localization'
 import { m } from '../../../lib/messages'
 import AddConstituency from './AddConstituency'
 import {
+  SignatureCollectionCollectionType,
   SignatureCollectionList,
   SignatureCollectionSuccess,
 } from '@island.is/api/schema'
@@ -24,6 +25,8 @@ import { useMutation } from '@apollo/client'
 import { cancelCollectionMutation } from '../../../hooks/graphql/mutations'
 import SignedList from '../../shared/SignedList'
 import Managers from '../../shared/Managers'
+
+const collectionType = SignatureCollectionCollectionType.Parliamentary
 
 const OwnerView = ({
   refetchIsOwner,
@@ -40,7 +43,7 @@ const OwnerView = ({
 
   const { formatMessage } = useLocale()
   const { listsForOwner, loadingOwnerLists, refetchListsForOwner } =
-    useGetListsForOwner(currentCollection?.id || '')
+    useGetListsForOwner(collectionType, currentCollection?.id || '')
 
   const [cancelCollection] = useMutation<SignatureCollectionSuccess>(
     cancelCollectionMutation,
@@ -70,13 +73,11 @@ const OwnerView = ({
   return (
     <Stack space={6}>
       <Box>
-        <SignedList currentCollection={currentCollection} />
-        <Box
-          display="flex"
-          justifyContent="spaceBetween"
-          alignItems="baseline"
-          marginTop={[5, 10]}
-        >
+        <SignedList
+          currentCollection={currentCollection}
+          collectionType={collectionType}
+        />
+        <Box display="flex" justifyContent="spaceBetween" alignItems="baseline">
           <Text variant="h4">{formatMessage(m.myListsDescription) + ' '}</Text>
           {isListHolder &&
             !loadingOwnerLists &&
@@ -185,7 +186,7 @@ const OwnerView = ({
           ))
         )}
       </Box>
-      <Managers />
+      <Managers collectionType={collectionType} />
     </Stack>
   )
 }
