@@ -25,6 +25,7 @@ export const applicationSystemScopes = [
   ApiScope.vinnueftirlitidAccident,
   ApiScope.menntamalastofnun,
   ApiScope.ojoiAdverts,
+  ApiScope.hms,
   ApplicationScope.read,
   ApplicationScope.write,
   AuthScope.actorDelegations,
