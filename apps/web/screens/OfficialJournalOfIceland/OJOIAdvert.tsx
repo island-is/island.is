@@ -164,7 +164,7 @@ const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
 
               <Stack space={[1, 1, 2]} dividers>
                 {advert.corrections.map((correction, index) => (
-                  <Box>
+                  <Box key={correction.id || index}>
                     {correction.legacyDate ||
                     (correction.createdDate && !correction.isLegacy) ? (
                       <Box marginBottom={1}>

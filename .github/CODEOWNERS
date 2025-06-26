@@ -20,7 +20,7 @@
 /libs/shared/connected/                                                                                   @island-is/stefna
 /libs/shared/types/src/lib/api-cms-domain.ts                                                              @island-is/stefna
 
-# Subfolders containing application templates
+# Subfolders containing application templates and template-api-modules
 /libs/application/templates/aosh/                                                                         @island-is/norda
 /libs/application/templates/examples/                                                                     @island-is/norda
 /libs/application/templates/family-matters/                                                               @island-is/norda
@@ -29,6 +29,7 @@
 /libs/application/templates/signature-collection                                                          @island-is/norda
 /libs/application/templates/social-insurance-administration/                                              @island-is/norda
 /libs/application/templates/transport-authority/                                                          @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/hms/                                     @island-is/norda
 
 /*                                                                                                        @island-is/core
 /libs/api/domains/identity/                                                                               @island-is/core
@@ -247,6 +248,7 @@ codemagic.yaml                                                                  
 /libs/application/templates/health-insurance/                                                             @island-is/norda
 /libs/application/templates/health-insurance-declaration/                                                 @island-is/norda
 /libs/application/templates/hms/fire-compensation-appraisal/                                              @island-is/norda
+/libs/application/templates/hms/terminate-rental-agreement/                                               @island-is/norda
 /libs/application/templates/home-support/                                                                 @island-is/norda
 /libs/application/templates/inao/financial-statement-cemetery/                                            @island-is/norda
 /libs/application/templates/inao/financial-statement-individual-election/                                 @island-is/norda
@@ -270,11 +272,13 @@ codemagic.yaml                                                                  
 /libs/application/template-api-modules/src/lib/modules/templates/health-insurance/                        @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/health-insurance-declaration/            @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/hms/fire-compensation-appraisal/         @island-is/norda
+/libs/application/template-api-modules/src/lib/modules/templates/hms/terminate-rental-agreement/          @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/home-support/                            @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/institution-collaboration/               @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/login-service/                           @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/public-debt-payment-plan/                @island-is/norda
 /libs/application/template-api-modules/src/lib/modules/templates/reference-template/                      @island-is/norda
+
 
 /libs/clients/althingi-ombudsman/                                                                         @island-is/norda
 /libs/clients/data-protection-complaint/                                                                  @island-is/norda

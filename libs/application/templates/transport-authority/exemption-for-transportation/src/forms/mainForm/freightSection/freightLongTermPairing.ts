@@ -18,10 +18,10 @@ import {
   checkIfExemptionTypeLongTerm,
   MAX_CNT_CONVOY,
   MAX_CNT_FREIGHT,
-  showFreightPairingItem,
   getFreightPairingErrorMessage,
   formatNumberWithMeters,
   formatNumberWithTons,
+  checkHasSelectedConvoyInFreightPairing,
 } from '../../../utils'
 import { ExemptionFor } from '../../../shared'
 import { FreightCommonHiddenInputs } from './freightCommonHiddenInputs'
@@ -29,12 +29,9 @@ import { FreightCommonHiddenInputs } from './freightCommonHiddenInputs'
 const FreightPairingSubSection = (freightIndex: number) =>
   buildSubSection({
     id: `freightLongTermPairingSubSection.${freightIndex}`,
-    condition: (answers) => {
-      return (
-        checkIfExemptionTypeLongTerm(answers) &&
-        !!getFreightItem(answers, freightIndex)
-      )
-    },
+    condition: (answers) =>
+      checkIfExemptionTypeLongTerm(answers) &&
+      !!getFreightItem(answers, freightIndex),
     title: (application) => {
       const freightItem = getFreightItem(application.answers, freightIndex)
       return {
@@ -67,13 +64,8 @@ const FreightPairingSubSection = (freightIndex: number) =>
           ...FreightCommonHiddenInputs(`freightPairing.${freightIndex}`),
           buildHiddenInput({
             id: `freightPairing.${freightIndex}.freightId`,
-            defaultValue: (application: Application) => {
-              const freightItem = getFreightItem(
-                application.answers,
-                freightIndex,
-              )
-              return freightItem?.freightId
-            },
+            defaultValue: (application: Application) =>
+              getFreightItem(application.answers, freightIndex)?.freightId,
           }),
 
           buildDescriptionField({
@@ -108,7 +100,11 @@ const FreightPairingSubSection = (freightIndex: number) =>
                 buildDescriptionField({
                   id: `freightLongTermPairingDescription.${freightIndex}.${convoyIndex}.subtitle`,
                   condition: (answers) =>
-                    showFreightPairingItem(answers, freightIndex, convoyIndex),
+                    checkHasSelectedConvoyInFreightPairing(
+                      answers,
+                      freightIndex,
+                      convoyIndex,
+                    ),
                   title: (application) => {
                     const convoyItem = getConvoyItem(
                       application.answers,
@@ -128,46 +124,60 @@ const FreightPairingSubSection = (freightIndex: number) =>
                 buildHiddenInput({
                   id: `freightPairing.${freightIndex}.items.${convoyIndex}.convoyId`,
                   condition: (answers) =>
-                    showFreightPairingItem(answers, freightIndex, convoyIndex),
-                  defaultValue: (application: Application) => {
-                    const convoyItem = getConvoyItem(
-                      application.answers,
+                    checkHasSelectedConvoyInFreightPairing(
+                      answers,
+                      freightIndex,
                       convoyIndex,
-                    )
-                    return convoyItem?.convoyId
-                  },
+                    ),
+                  defaultValue: (application: Application) =>
+                    getConvoyItem(application.answers, convoyIndex)?.convoyId,
                 }),
                 buildTextField({
                   id: `freightPairing.${freightIndex}.items.${convoyIndex}.height`,
                   condition: (answers) =>
-                    showFreightPairingItem(answers, freightIndex, convoyIndex),
+                    checkHasSelectedConvoyInFreightPairing(
+                      answers,
+                      freightIndex,
+                      convoyIndex,
+                    ),
                   title: freight.labels.heightWithConvoy,
                   backgroundColor: 'blue',
                   width: 'half',
                   required: true,
                   variant: 'number',
+                  thousandSeparator: true,
                   suffix: freight.labels.metersSuffix,
                 }),
                 buildTextField({
                   id: `freightPairing.${freightIndex}.items.${convoyIndex}.width`,
                   condition: (answers) =>
-                    showFreightPairingItem(answers, freightIndex, convoyIndex),
+                    checkHasSelectedConvoyInFreightPairing(
+                      answers,
+                      freightIndex,
+                      convoyIndex,
+                    ),
                   title: freight.labels.widthWithConvoy,
                   backgroundColor: 'blue',
                   width: 'half',
                   required: true,
                   variant: 'number',
+                  thousandSeparator: true,
                   suffix: freight.labels.metersSuffix,
                 }),
                 buildTextField({
                   id: `freightPairing.${freightIndex}.items.${convoyIndex}.totalLength`,
                   condition: (answers) =>
-                    showFreightPairingItem(answers, freightIndex, convoyIndex),
+                    checkHasSelectedConvoyInFreightPairing(
+                      answers,
+                      freightIndex,
+                      convoyIndex,
+                    ),
                   title: freight.labels.totalLengthWithConvoy,
                   backgroundColor: 'blue',
                   width: 'full',
                   required: true,
                   variant: 'number',
+                  thousandSeparator: true,
                   suffix: freight.labels.metersSuffix,
                 }),
                 buildAlertMessageField({
@@ -192,14 +202,22 @@ const FreightPairingSubSection = (freightIndex: number) =>
                 buildDescriptionField({
                   id: `freightLongTermPairingDescription.${freightIndex}.${convoyIndex}.exemptionFor`,
                   condition: (answers) =>
-                    showFreightPairingItem(answers, freightIndex, convoyIndex),
+                    checkHasSelectedConvoyInFreightPairing(
+                      answers,
+                      freightIndex,
+                      convoyIndex,
+                    ),
                   title: freight.labels.exemptionFor,
                   titleVariant: 'h5',
                 }),
                 buildCheckboxField({
                   id: `freightPairing.${freightIndex}.items.${convoyIndex}.exemptionFor`,
                   condition: (answers) =>
-                    showFreightPairingItem(answers, freightIndex, convoyIndex),
+                    checkHasSelectedConvoyInFreightPairing(
+                      answers,
+                      freightIndex,
+                      convoyIndex,
+                    ),
                   large: true,
                   backgroundColor: 'blue',
                   width: 'half',
