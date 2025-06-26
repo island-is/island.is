@@ -24,12 +24,22 @@ import {
   AdminListApi,
   AdminSignatureApi,
   AdminApi,
+  ManagerListApi,
+  MunicipalityListApi,
+  ManagerCollectionApi,
+  ManagerCandidateApi,
+  ManagerSignatureApi,
+  MunicipalityCandidateApi,
+  MunicipalityCollectionApi,
+  MunicipalitySignatureApi,
+  ManagerAdminApi,
 } from './apis'
 import { SignatureCollectionSharedClientService } from './signature-collection-shared.service'
 import {
   AreaSummaryReport,
   mapAreaSummaryReport,
 } from './types/areaSummaryReport.dto'
+import { SignatureCollectionAdminClient } from './types/adminClient'
 
 type Api =
   | AdminListApi
@@ -37,10 +47,21 @@ type Api =
   | AdminSignatureApi
   | AdminCandidateApi
   | AdminApi
+  | ManagerListApi
+  | ManagerCollectionApi
+  | ManagerSignatureApi
+  | ManagerCandidateApi
+  | ManagerAdminApi
+  | MunicipalityListApi
+  | MunicipalityCollectionApi
+  | MunicipalitySignatureApi
+  | MunicipalityCandidateApi
   | KosningApi
 
 @Injectable()
-export class SignatureCollectionAdminClientService {
+export class SignatureCollectionAdminClientService
+  implements SignatureCollectionAdminClient
+{
   constructor(
     private listsApi: AdminListApi,
     private collectionsApi: AdminCollectionApi,
@@ -97,6 +118,9 @@ export class SignatureCollectionAdminClientService {
       })
       return { success: !!list }
     } catch (error) {
+      if (error.status === 403) {
+        error.body = 'Þú hefur ekki aðgang að þessari aðgerð.'
+      }
       return {
         success: false,
         reasons: error.body ? [error.body] : [],
@@ -513,5 +537,38 @@ export class SignatureCollectionAdminClientService {
         reasons: error.body ? [error.body] : [],
       }
     }
+  }
+
+  async startMunicipalityCollection(
+    auth: Auth,
+    areaId: string,
+  ): Promise<Success> {
+    const current = await this.getLatestCollectionForType(
+      auth,
+      CollectionType.LocalGovernmental,
+    )
+    try {
+      const collection = await this.getApiWithAuth(
+        this.adminApi,
+        auth,
+      ).adminKosningIDSveitSofnunPost({
+        iD: parseInt(current.electionId ?? ''),
+        sveitarfelagID: parseInt(areaId),
+      })
+      return { success: !!collection }
+    } catch (error) {
+      return { success: false, reasons: error.body ? [error.body] : [] }
+    }
+  }
+
+  async getMunicipalityAreaId(auth: Auth): Promise<string> {
+    const info = await this.getApiWithAuth(
+      this.adminApi,
+      auth,
+    ).adminSveitarfelagInfoGet({
+      kennitala: auth.nationalId,
+    })
+
+    return info.sveitarfelagID.toString()
   }
 }
