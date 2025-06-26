@@ -11,25 +11,29 @@ import {
 
 // Prison admin restriction cases
 
-const prisonAdminRequestCasesSharedWhereOptions = {
+const prisonAdminRequestCasesAccessWhereOptions = {
   is_archived: false,
   type: [...restrictionCases, CaseType.PAROLE_REVOCATION],
   state: CaseState.ACCEPTED,
 }
 
-export const prisonAdminRequestCasesActiveWhereOptions = {
-  ...prisonAdminRequestCasesSharedWhereOptions,
-  valid_to_date: { [Op.or]: [null, { [Op.gte]: fn('NOW') }] },
-}
+export const prisonAdminRequestCasesActiveWhereOptions = () => ({
+  [Op.and]: [
+    prisonAdminRequestCasesAccessWhereOptions,
+    { valid_to_date: { [Op.or]: [null, { [Op.gte]: fn('NOW') }] } },
+  ],
+})
 
-export const prisonAdminRequestCasesDoneWhereOptions = {
-  ...prisonAdminRequestCasesSharedWhereOptions,
-  valid_to_date: { [Op.lt]: fn('NOW') },
-}
+export const prisonAdminRequestCasesDoneWhereOptions = () => ({
+  [Op.and]: [
+    prisonAdminRequestCasesAccessWhereOptions,
+    { valid_to_date: { [Op.lt]: fn('NOW') } },
+  ],
+})
 
 // Prison admin indictments
 
-const prisonAdminIndictmentsSharedWhereOptions = {
+const prisonAdminIndictmentsAccessWhereOptions = {
   is_archived: false,
   type: indictmentCases,
   state: CaseState.COMPLETED,
@@ -47,12 +51,23 @@ const prisonAdminIndictmentsSharedWhereOptions = {
   },
 }
 
-export const prisonAdminIndictmentsSentToPrisonAdminWhereOptions = {
-  ...prisonAdminIndictmentsSharedWhereOptions,
-  is_registered_in_prison_system: { [Op.not]: true },
-}
+export const prisonAdminIndictmentsSentToPrisonAdminWhereOptions = () => ({
+  [Op.and]: [
+    prisonAdminIndictmentsAccessWhereOptions,
+    { is_registered_in_prison_system: { [Op.not]: true } },
+  ],
+})
 
-export const prisonAdminIndictmentsRegisteredRulingWhereOptions = {
-  ...prisonAdminIndictmentsSharedWhereOptions,
-  is_registered_in_prison_system: true,
-}
+export const prisonAdminIndictmentsRegisteredRulingWhereOptions = () => ({
+  [Op.and]: [
+    prisonAdminIndictmentsAccessWhereOptions,
+    { is_registered_in_prison_system: true },
+  ],
+})
+
+export const prisonAdminCasesAccessWhereOptions = () => ({
+  [Op.or]: [
+    prisonAdminRequestCasesAccessWhereOptions,
+    prisonAdminIndictmentsAccessWhereOptions,
+  ],
+})
