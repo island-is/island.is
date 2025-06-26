@@ -219,7 +219,6 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         if (!hasForeignLanguages(application.answers)) {
           unset(application.answers, 'languages.selectedLanguages')
           unset(application.answers, 'languages.preferredLanguage')
-          unset(application.answers, 'languages.guardianRequiresInterpreter')
         }
         return context
       }),
