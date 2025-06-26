@@ -198,6 +198,20 @@ jobs:
       - name: test-everything
         uses: ./.github/actions/test-everything
 
+      - name: Set unicorn
+        id: unicorn
+        env:
+          NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
+          NX_HEAD: ${{ steps.export-sha.outputs.NX_HEAD }}
+        run: |
+          meta_obj="{\"head\": \"${NX_HEAD}\", \"base\": \"${NX_BASE}\" }"
+          is_unicorn=$(node scripts/ci/unicorn-utils.mjs is-unicorn "$meta_obj")
+          unicorns=$(node scripts/ci/unicorn-utils.mjs show-unicorns "$meta_obj")
+          unicorns_json=$(node scripts/ci/unicorn-utils.mjs show-unicorns "$meta_obj")
+          echo is-unicorn="$is_unicorn" | tee -a "$GITHUB_OUTPUT"
+          echo unicorns="$unicorns" | tee -a "$GITHUB_OUTPUT"
+          echo unicorn-chunks="$unicorns_json" | tee -a "$GITHUB_OUTPUT"
+
       - name: Prepare lint targets
         id: lint_projects
         env:
@@ -224,11 +238,13 @@ jobs:
 
       - name: Prepare e2e targets
         id: e2e_projects
-        if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE != 'true' }}
+        if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE != 'true' && (contains(github.event.pull_request.labels.*.name, 'e2e') || steps.unicorn.outputs.is-unicorn == 'true') }}
         env:
           CHUNK_SIZE: 1
+          UNICORNS_ONLY: ${{ !contains(github.event.pull_request.labels.*.name, 'e2e') }}
         run: |
           set -euo pipefail
+          if [[ "$UNICORNS_ONLY" == true ]]; then export CHUNKS_OVERRIDE="${{ steps.unicorn.outputs.unicorn-chunks }}"
           CHUNKS="$(./scripts/ci/generate-chunks.sh e2e)"
           if [[ "$CHUNKS" != "[]" ]]; then
             echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
@@ -275,12 +291,3 @@ jobs:
         run: |
           echo "## WARN permissions" >> "$GITHUB_STEP_SUMMARY"
           echo "User '$GITHUB_ACTOR' does not have the required permissions to apply the 'test everything' label" >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Set unicorn
-        id: unicorn
-        env:
-          NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
-          NX_HEAD: ${{ steps.export-sha.outputs.NX_HEAD }}
-        run: |
-          is_unicorn=$(node scripts/ci/unicorn-utils.mjs is-unicorn "{\"head\": \"${NX_HEAD}\", \"base\": \"${NX_BASE}\" }")
-          echo is-unicorn="$is_unicorn" | tee -a "$GITHUB_OUTPUT"
