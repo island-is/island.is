@@ -1,18 +1,22 @@
 import { Injectable } from '@nestjs/common'
-import { ManagerAdminApi, ManagerCandidateApi, ManagerListApi } from './apis'
+import {
+  MunicipalityAdminApi,
+  MunicipalityCandidateApi,
+  MunicipalityListApi,
+} from './apis'
 import { SignatureCollectionSharedClientService } from './signature-collection-shared.service'
 import { KosningApi, MedmaelasofnunApi } from '../../gen/fetch'
 import { SignatureCollectionAdminClientService } from './signature-collection-admin.service'
 
 @Injectable()
-export class SignatureCollectionManagerClientService extends SignatureCollectionAdminClientService {
+export class SignatureCollectionMunicipalityClientService extends SignatureCollectionAdminClientService {
   constructor(
-    listsApi: ManagerListApi,
+    adminApi: MunicipalityAdminApi,
     electionsApi: KosningApi,
-    collectionApi: MedmaelasofnunApi,
     sharedService: SignatureCollectionSharedClientService,
-    candidateApi: ManagerCandidateApi,
-    adminApi: ManagerAdminApi,
+    listsApi: MunicipalityListApi,
+    collectionApi: MedmaelasofnunApi,
+    candidateApi: MunicipalityCandidateApi,
   ) {
     super(
       listsApi,
