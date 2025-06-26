@@ -10,6 +10,7 @@ import {
 import { employmentSearch as employmentSearchMessages } from '../../../lib/messages'
 import { Application } from '@island.is/application/types'
 import { GaldurDomainModelsEducationItem } from '@island.is/clients/vmst-unemployment'
+import { formatDate } from '../../../utils'
 
 export const educationHistorySubSection = buildSubSection({
   id: 'educationHistorySubSection',
@@ -25,17 +26,26 @@ export const educationHistorySubSection = buildSubSection({
           titleVariant: 'h5',
         }),
         buildTextField({
-          id: 'educationHistory.currentStudies.schoolName',
-          title: employmentSearchMessages.educationHistory.schoolNameLabel,
+          id: 'educationHistory.currentStudies.programName',
+          title: employmentSearchMessages.educationHistory.programNameLabel,
           width: 'half',
           backgroundColor: 'white',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const schoolName = getValueViaPath<string>(
-              application.externalData,
-              'schoolName',
-            )
-            return schoolName ?? 'Háskóli Íslands'
+            const programId =
+              getValueViaPath<string>(
+                application.answers,
+                'education.currentEducation.programName',
+              ) ?? ''
+            const education =
+              getValueViaPath<GaldurDomainModelsEducationItem[]>(
+                application.externalData,
+                'unemploymentApplication.data.supportData.education',
+              ) ?? []
+            console.log(programId, education)
+            const program = education.find((item) => item.id === programId)
+            console.log(program)
+            return program?.name ?? ''
           },
           condition: (_answers, _externalData) => {
             // TODO: Get info from externalData if available
@@ -43,17 +53,18 @@ export const educationHistorySubSection = buildSubSection({
           },
         }),
         buildTextField({
-          id: 'educationHistory.currentStudies.units',
+          id: 'educationHistory.currentStudies.programUnits',
           title: employmentSearchMessages.educationHistory.unitsLabel,
           width: 'half',
           backgroundColor: 'white',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const units = getValueViaPath<string>(
-              application.externalData,
-              'units',
-            )
-            return units ?? '20'
+            const units =
+              getValueViaPath<string>(
+                application.answers,
+                'education.currentEducation.programUnits',
+              ) ?? ''
+            return units
           },
           condition: (_answers, _externalData) => {
             // TODO: Get info from externalData if available
@@ -61,17 +72,18 @@ export const educationHistorySubSection = buildSubSection({
           },
         }),
         buildTextField({
-          id: 'educationHistory.currentStudies.degree',
+          id: 'educationHistory.currentStudies.programDegree',
           title: employmentSearchMessages.educationHistory.degreeLabel,
           width: 'half',
           backgroundColor: 'white',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const degree = getValueViaPath<string>(
-              application.externalData,
-              'degree',
-            )
-            return degree ?? 'BS'
+            const degree =
+              getValueViaPath<string>(
+                application.answers,
+                'education.currentEducation.programDegree',
+              ) ?? ''
+            return degree
           },
           condition: (_answers, _externalData) => {
             // TODO: Get info from externalData if available
@@ -79,18 +91,19 @@ export const educationHistorySubSection = buildSubSection({
           },
         }),
         buildTextField({
-          id: 'educationHistory.currentStudies.expectedEndOfStudy',
+          id: 'educationHistory.currentStudies.programEnd',
           title:
             employmentSearchMessages.educationHistory.expectedEndOfStudyLabel,
           width: 'half',
           backgroundColor: 'white',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const expectedEndOfStudy = getValueViaPath<string>(
-              application.externalData,
-              'expectedEndOfStudy',
-            )
-            return expectedEndOfStudy ?? '01.06.2024'
+            const expectedEndOfStudy =
+              getValueViaPath<string>(
+                application.answers,
+                'education.currentEducation.programEnd',
+              ) ?? ''
+            return formatDate(expectedEndOfStudy)
           },
           condition: (_answers, _externalData) => {
             // TODO: Get info from externalData if available

@@ -4,10 +4,10 @@ export const educationHistorySchema = z
   .object({
     currentStudies: z
       .object({
-        schoolName: z.string(),
-        units: z.string(),
-        degree: z.string(),
-        expectedEndOfStudy: z.string(),
+        programName: z.string(),
+        programUnits: z.string(),
+        programDegree: z.string(),
+        programEnd: z.string(),
       })
       .optional(),
     educationHistory: z.array(
