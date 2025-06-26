@@ -1,7 +1,4 @@
-import {
-  FormSystemScreen,
-  FormSystemSection,
-} from '@island.is/api/schema'
+import { FormSystemScreen, FormSystemSection } from '@island.is/api/schema'
 import { ApplicationState } from '@island.is/form-system/ui'
 import { validateScreen } from '../utils/validation'
 import {
@@ -108,11 +105,11 @@ export const incrementWithScreens = (
       },
       currentScreen: hasScreens(nextSection)
         ? {
-          index: 0,
-          data: nextSection.screens
-            ? (nextSection.screens[0] as FormSystemScreen)
-            : undefined,
-        }
+            index: 0,
+            data: nextSection.screens
+              ? (nextSection.screens[0] as FormSystemScreen)
+              : undefined,
+          }
         : undefined,
       errors: [],
     }
@@ -141,9 +138,9 @@ export const incrementWithoutScreens = (
     },
     currentScreen: hasScreens(nextSection)
       ? {
-        data: nextSection.screens?.[0] as FormSystemScreen,
-        index: 0,
-      }
+          data: nextSection.screens?.[0] as FormSystemScreen,
+          index: 0,
+        }
       : undefined,
   }
 }
@@ -177,13 +174,13 @@ export const decrementWithScreens = (
       },
       currentScreen: hasScreens(prevSection)
         ? {
-          data: prevSection.screens
-            ? (prevSection.screens[
-              prevSection.screens.length - 1
-            ] as FormSystemScreen)
-            : undefined,
-          index: prevSection.screens ? prevSection.screens.length - 1 : 0,
-        }
+            data: prevSection.screens
+              ? (prevSection.screens[
+                  prevSection.screens.length - 1
+                ] as FormSystemScreen)
+              : undefined,
+            index: prevSection.screens ? prevSection.screens.length - 1 : 0,
+          }
         : undefined,
       errors: [],
     }
@@ -206,13 +203,13 @@ export const decrementWithoutScreens = (
     },
     currentScreen: hasScreens(prevSection)
       ? {
-        data: prevSection.screens
-          ? (prevSection.screens[
-            prevSection.screens.length - 1
-          ] as FormSystemScreen)
-          : undefined,
-        index: prevSection.screens ? prevSection.screens.length - 1 : 0,
-      }
+          data: prevSection.screens
+            ? (prevSection.screens[
+                prevSection.screens.length - 1
+              ] as FormSystemScreen)
+            : undefined,
+          index: prevSection.screens ? prevSection.screens.length - 1 : 0,
+        }
       : undefined,
     errors: [],
   }

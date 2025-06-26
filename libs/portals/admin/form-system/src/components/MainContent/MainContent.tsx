@@ -40,11 +40,11 @@ export const MainContent = () => {
         <BaseSettings />
       ) : activeItem.type === 'Section' &&
         (activeItem.data as FormSystemSection).sectionType ===
-        SectionTypes.PREMISES ? (
+          SectionTypes.PREMISES ? (
         <Premises />
       ) : activeItem.type === 'Section' &&
         (activeItem.data as FormSystemSection).sectionType ===
-        SectionTypes.PARTIES ? (
+          SectionTypes.PARTIES ? (
         <RelevantParties />
       ) : openPreview ? (
         <PreviewStepOrGroup setOpenPreview={setOpenPreview} />

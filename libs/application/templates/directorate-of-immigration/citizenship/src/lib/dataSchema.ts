@@ -350,7 +350,7 @@ export const CitizenshipSchema = z.object({
   formerIcelander: z.enum([YES, NO]), //.refine((v) => v === YES) // TODO REVERT WHEN UTL FIXED SERVICES
   supportingDocuments: SupportingDocumentsSchema,
   childrenSupportingDocuments: z
-    .array(ChildrenSupportingDocumentsSchema)
+    .array(ChildrenSupportingDocumentsSchema.nullable())
     .optional(),
 })
 

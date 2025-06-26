@@ -71,7 +71,6 @@ env:
   CI_DEBUG: ${{ contains(github.event.pull_request.labels.*.name, 'ci debug') }}
   SKIP_TESTS: ${{ contains(github.event.pull_request.labels.*.name, 'test nothing') }}
   DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
-  CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache
   YARN_ENABLE_HARDENED_MODE: '0'
 
 jobs:
@@ -123,7 +122,7 @@ jobs:
           echo "MAIN_BRANCH=${RAW_REF#refs/heads/}"
 
       - name: Derive appropriate SHAs
-        if: ${{ inputs.run_merge_queue == false }}
+        if: ${{ inputs.run_merge_queue == false && !github.event.localrun }}
         uses: nrwl/nx-set-shas@v4
         with:
           main-branch-name: ${{ steps.get-branch.outputs.MAIN_BRANCH }}

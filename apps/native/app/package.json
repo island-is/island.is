@@ -22,7 +22,7 @@
     "test-mock": "echo FIXME",
     "storybook": "start-storybook -p 7007",
     "build-storybook": "build-storybook",
-    "nx:typecheck": "tsc --noEmit",
+    "nx:typecheck": "tsc --noEmit -p tsconfig.app.json",
     "nx:codegen": "yarn run -T nx run native-app:codegen/frontend-client",
     "nx:lint": "yarn run -T nx run native-app:lint",
     "nx:build": "yarn run -T nx run native-app:build",

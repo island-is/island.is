@@ -46,14 +46,18 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
     // fetch each property individually with the full data.
     else {
       try {
-        const simpleProperties = await this.getRealEstatesWithAuth(
-          auth,
-        ).fasteignirGetFasteignir({ kennitala: auth.nationalId })
+        const api = this.getRealEstatesWithAuth(auth)
+        const simpleProperties = await api.fasteignirGetFasteignir({
+          kennitala: auth.nationalId,
+        })
 
         properties = await Promise.all(
           simpleProperties?.fasteignir?.map((property) => {
-            return this.propertiesApi.fasteignirGetFasteign({
-              fasteignanumer: property.fasteignanumer ?? '',
+            return api.fasteignirGetFasteign({
+              fasteignanumer:
+                // fasteignirGetFasteignir returns the fasteignanumer with and "F" in front
+                // but fasteignirGetFasteign throws an error if the fasteignanumer is not only numbers
+                property.fasteignanumer?.replace(/\D/g, '') ?? '',
             })
           }) ?? [],
         )
@@ -114,6 +118,20 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
         'photos',
       ])
 
+      // Map the application to the dto interface
+      const applicationDto = mapAnswersToApplicationDto(application, files)
+
+      // Send the application to HMS
+      const res = await this.hmsApplicationSystemService.apiApplicationPost({
+        applicationDto,
+      })
+
+      if (res.status !== 200) {
+        throw new TemplateApiError(
+          'Failed to submit application, non 200 status',
+          500,
+        )
+      }
       // Map the photos to the dto interface
       const applicationFilesContentDtoArray =
         mapAnswersToApplicationFilesContentDto(application, files)
@@ -134,21 +152,6 @@ export class FireCompensationAppraisalService extends BaseTemplateApiService {
       if (photoResults.some((result) => result.status !== 200)) {
         throw new TemplateApiError(
           'Failed to upload photos, non 200 status',
-          500,
-        )
-      }
-
-      // Map the application to the dto interface
-      const applicationDto = mapAnswersToApplicationDto(application, files)
-
-      // Send the application to HMS
-      const res = await this.hmsApplicationSystemService.apiApplicationPost({
-        applicationDto,
-      })
-
-      if (res.status !== 200) {
-        throw new TemplateApiError(
-          'Failed to submit application, non 200 status',
           500,
         )
       }

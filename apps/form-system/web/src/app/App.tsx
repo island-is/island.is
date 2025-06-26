@@ -9,11 +9,12 @@ import { isMockMode } from '../mocks'
 import { Router } from '../components/Router/Router'
 import { environment } from '../environments'
 import { ApplicationErrorBoundary } from '@island.is/portals/core'
+import { formSystemScopes } from '@island.is/auth/scopes'
 
 const mockedInitialState = isMockMode
   ? createMockedInitialState({
-    scopes: ['@island.is/internal'],
-  })
+      scopes: formSystemScopes,
+    })
   : undefined
 
 export const App = () => (
@@ -32,4 +33,3 @@ export const App = () => (
     </LocaleProvider>
   </ApolloProvider>
 )
-

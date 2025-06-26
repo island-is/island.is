@@ -1,4 +1,14 @@
-import { Box, Button, Table as T, toast, Text, GridRow, GridColumn, Tag, Icon } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Table as T,
+  toast,
+  Text,
+  GridRow,
+  GridColumn,
+  Tag,
+  Icon,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useEffect, useState } from 'react'
 import { Modal } from '@island.is/react/components'
@@ -65,7 +75,9 @@ const ReviewCandidates = ({
               </Box>
             </Tag>
             <Box marginLeft={5}>
-              <Text variant="h4">{formatMessage(m.reviewCandidatesModalDescription)}</Text>
+              <Text variant="h4">
+                {formatMessage(m.reviewCandidatesModalDescription)}
+              </Text>
               <Text marginBottom={2}>
                 Texti sem útskýrir þessa aðgerð betur kemur hér.
               </Text>

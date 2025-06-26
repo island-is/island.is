@@ -76,6 +76,7 @@ export interface Collection {
   processed: boolean
   status: CollectionStatus
   collectionType: CollectionType
+  electionId?: string
 }
 
 const getStatus = ({
@@ -165,5 +166,6 @@ export const mapCollection = (
     processed,
     status,
     collectionType,
+    electionId: kosning?.id?.toString(),
   }
 }

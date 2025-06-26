@@ -20,9 +20,9 @@ export const serviceSetup = (services: {
     .command('node')
     .args('--no-experimental-fetch', 'main.js')
     .extraAttributes({
-      // Schedule to run daily at two in the morning.
-      dev: { schedule: '0 2 * * *' },
-      staging: { schedule: '0 2 * * *' },
-      prod: { schedule: '0 2 * * *' },
+      // Schedule to run daily at 2:00 AM and 9:00 AM
+      dev: { schedule: '0 2,9 * * *' },
+      staging: { schedule: '0 2,9 * * *' },
+      prod: { schedule: '0 2,9 * * *' },
     })
     .serviceAccount('judicial-system-scheduler')

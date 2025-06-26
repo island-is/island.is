@@ -160,26 +160,28 @@ export class WorkMachinesService {
           .map((l) => {
             const { href } = l
             const rel = mapRelToAction(l.rel ?? '')
-            const { type, category } = mapRelationToLink(l.rel) ?? {
-              type: undefined,
-              category: undefined,
-            }
 
-            if (!rel || !href || !type) {
+            const data = mapRelationToLink(l.rel)
+
+            if (
+              !rel ||
+              !href ||
+              data?.type === undefined ||
+              data?.category === undefined
+            ) {
               return null
             }
 
             return {
               href: l.href,
               displayTitle: l.displayTitle,
-              relation: type,
-              relationCategory: category,
+              relation: data.type,
+              relationCategory: data.category,
               rel: rel ?? undefined,
             }
           })
           .filter(isDefined)
       : undefined
-
     return {
       id: data.id,
       registrationNumber: data.registrationNumber,

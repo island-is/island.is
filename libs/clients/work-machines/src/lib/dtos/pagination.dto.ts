@@ -12,8 +12,8 @@ export const mapPaginationDto = (
 ): PaginationDto | null => {
   if (
     data?.totalCount == undefined ||
-    data?.pageSize == undefined  ||
-    data?.totalPages == undefined  ||
+    data?.pageSize == undefined ||
+    data?.totalPages == undefined ||
     data?.currentPage == undefined
   ) {
     return null

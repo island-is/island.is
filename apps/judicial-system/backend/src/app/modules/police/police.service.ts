@@ -470,7 +470,7 @@ export class PoliceService {
               )
 
               if (!foundCase) {
-                cases.push({ policeCaseNumber, place, date })
+                cases.push({ policeCaseNumber, place, date, licencePlate })
               } else if (date && (!foundCase.date || date > foundCase.date)) {
                 foundCase.place = place
                 foundCase.date = date
