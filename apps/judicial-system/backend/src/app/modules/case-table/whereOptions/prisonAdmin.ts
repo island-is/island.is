@@ -1,4 +1,4 @@
-import { fn, Op, Sequelize } from 'sequelize'
+import { fn, Op } from 'sequelize'
 
 import {
   CaseIndictmentRulingDecision,
@@ -8,6 +8,8 @@ import {
   indictmentCases,
   restrictionCases,
 } from '@island.is/judicial-system/types'
+
+import { buildIsSentToPrisonExistsCondition } from './conditions'
 
 // Prison admin restriction cases
 
@@ -42,13 +44,7 @@ const prisonAdminIndictmentsAccessWhereOptions = {
     CaseIndictmentRulingDecision.FINE,
   ],
   indictment_review_decision: IndictmentCaseReviewDecision.ACCEPT,
-  id: {
-    [Op.in]: Sequelize.literal(`
-      (SELECT case_id
-        FROM defendant
-        WHERE is_sent_to_prison_admin = true)
-    `),
-  },
+  [Op.and]: [buildIsSentToPrisonExistsCondition(true)],
 }
 
 export const prisonAdminIndictmentsSentToPrisonAdminWhereOptions = () => ({

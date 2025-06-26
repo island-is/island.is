@@ -21,6 +21,16 @@ export const buildAlternativeServiceExistsCondition = (exists: boolean) =>
         )
       `)
 
+export const buildIsSentToPrisonExistsCondition = (exists: boolean) =>
+  Sequelize.literal(`
+        ${exists ? '' : 'NOT'} EXISTS (
+          SELECT 1
+          FROM defendant
+          WHERE defendant.case_id = "Case".id
+            AND defendant.is_sent_to_prison_admin = true
+        )
+      `)
+
 export const buildEventLogExistsCondition = (
   eventType: EventType,
   exists: boolean,

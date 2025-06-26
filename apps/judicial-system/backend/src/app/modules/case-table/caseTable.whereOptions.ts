@@ -6,6 +6,7 @@ import {
   isDistrictCourtUser,
   isPrisonAdminUser,
   isPrisonStaffUser,
+  isPublicProsecutionOfficeUser,
   type User,
 } from '@island.is/judicial-system/types'
 
@@ -52,6 +53,7 @@ import {
   publicProsecutionIndictmentsReviewedWhereOptions,
 } from './whereOptions/publicProsecution'
 import {
+  publicProsecutionOfficeCasesAccessWhereOptions,
   publicProsecutionOfficeIndictmentsAppealedWhereOptions,
   publicProsecutionOfficeIndictmentsAppealPeriodExpiredWhereOptions,
   publicProsecutionOfficeIndictmentsInReviewWhereOptions,
@@ -77,9 +79,9 @@ export const userAccessWhereOptions = (user: User): WhereOptions => {
     return prisonAdminCasesAccessWhereOptions()
   }
 
-  // if (isPublicProsecutionOfficeUser(user)) {
-  //   return publicProsecutionOfficeTableGroups
-  // }
+  if (isPublicProsecutionOfficeUser(user)) {
+    return publicProsecutionOfficeCasesAccessWhereOptions()
+  }
 
   // if (isPublicProsecutionUser(user)) {
   //   return publicProsecutionTableGroups
@@ -132,17 +134,17 @@ export const caseTableWhereOptions: Record<
     prisonAdminIndictmentsSentToPrisonAdminWhereOptions,
   [CaseTableType.PRISON_ADMIN_INDICTMENTS_REGISTERED_RULING]:
     prisonAdminIndictmentsRegisteredRulingWhereOptions,
-  [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_NEW]: () =>
+  [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_NEW]:
     publicProsecutionOfficeIndictmentsNewWhereOptions,
-  [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_IN_REVIEW]: () =>
+  [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_IN_REVIEW]:
     publicProsecutionOfficeIndictmentsInReviewWhereOptions,
-  [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REVIEWED]: () =>
+  [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REVIEWED]:
     publicProsecutionOfficeIndictmentsReviewedWhereOptions,
   [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEAL_PERIOD_EXPIRED]:
-    () => publicProsecutionOfficeIndictmentsAppealPeriodExpiredWhereOptions,
+    publicProsecutionOfficeIndictmentsAppealPeriodExpiredWhereOptions,
   [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_SENT_TO_PRISON_ADMIN]:
-    () => publicProsecutionOfficeIndictmentsSentToPrisonAdminWhereOptions,
-  [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEALED]: () =>
+    publicProsecutionOfficeIndictmentsSentToPrisonAdminWhereOptions,
+  [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEALED]:
     publicProsecutionOfficeIndictmentsAppealedWhereOptions,
   [CaseTableType.PROSECUTION_REQUEST_CASES_IN_PROGRESS]:
     prosecutionRequestCasesInProgressWhereOptions,
