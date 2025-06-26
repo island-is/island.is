@@ -7,6 +7,7 @@ import {
   employeeSickPayItems,
   incomePlanTable,
   paymentItems,
+  questionsCountryTable,
   questionsItems,
   rehabilitationPlanItems,
   selfAssessmentQuestionnaireItems,
@@ -29,14 +30,15 @@ export const overviewFields = (editable?: boolean) => {
     }),
     buildOverviewField({
       id: 'overview.incomePlanTable',
-      backId: editable ? 'incomePlanTable' : undefined,
       title: socialInsuranceAdministrationMessage.incomePlan.subSectionTitle,
+      backId: editable ? 'incomePlanTable' : undefined,
       tableData: incomePlanTable,
     }),
     buildOverviewField({
       id: 'overview.questions',
       backId: editable ? 'questions' : undefined,
       items: questionsItems,
+      tableData: questionsCountryTable,
     }),
     buildOverviewField({
       id: 'overview.employeeSickPay',

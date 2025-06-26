@@ -123,8 +123,8 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
     },
     questionsCalculatedRemunerationDate: {
       id: 'marp.application:general.information.questions.calculated.remuneration.date',
-      defaultMessage: 'Hvenær fellur niður reiknað endurgjald?',
-      description: 'When does the calculated remuneration expire?',
+      defaultMessage: 'Hvenær féll/fellur niður reiknað endurgjald?',
+      description: 'When did/does the calculated remuneration expire?',
     },
     questionsIsPartTimeEmployed: {
       id: 'marp.application:general.information.questions.is.part.time.employed',
@@ -135,6 +135,58 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       id: 'marp.application:general.information.questions.is.studying',
       defaultMessage: 'Ertu í námi?',
       description: 'Are you studying?',
+    },
+    questionsSchoolRegistration: {
+      id: 'marp.application:general.information.questions.school.registration',
+      defaultMessage: 'Skráning skóla',
+      description: 'School registration',
+    },
+    questionsSchool: {
+      id: 'marp.application:general.information.questions.school',
+      defaultMessage: 'Skóli',
+      description: 'School',
+    },
+    questionsSelectSchool: {
+      id: 'marp.application:general.information.questions.select.school',
+      defaultMessage: 'Veldu skóla',
+      description: 'Select school',
+    },
+    questionsNumberOfCredits: {
+      id: 'marp.application:general.information.questions.number.of.credits',
+      defaultMessage: 'Fjöldi eininga á núverandi önn',
+      description: 'Number of ECTS credits per current semester',
+    },
+    questionsSelectNumberOfCredits: {
+      id: 'marp.application:general.information.questions.select.number.of.credits',
+      defaultMessage: 'Veldu fjölda eininga',
+      description: 'Select number of credits',
+    },
+    questionsBenefitsFromAnotherCountry: {
+      id: 'marp.application:general.information.questions.benefits.from.another.country',
+      defaultMessage:
+        'Færðu greiðslur frá öðru landi vegna heilsubrests eða óvinnufærni?',
+      description:
+        'Do you receive benefits from another country due to ill health or incapacity?',
+    },
+    questionsCountryRegistration: {
+      id: 'marp.application:general.information.questions.country.registration',
+      defaultMessage: 'Skráning lands',
+      description: 'Country registration',
+    },
+    questionsCountry: {
+      id: 'marp.application:general.information.questions.country',
+      defaultMessage: 'Land',
+      description: 'Country',
+    },
+    questionsSelectCountry: {
+      id: 'marp.application:general.information.questions.select.country',
+      defaultMessage: 'Veldu land',
+      description: 'Select country',
+    },
+    questionsCountryIDNumber: {
+      id: 'marp.application:general.information.questions.country.id.number',
+      defaultMessage: 'Kennitala/persónunúmer í landi',
+      description: 'Country ID number/personal ID number',
     },
 
     // Employee sick pay
@@ -841,11 +893,6 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
   }),
 
   overview: defineMessages({
-    studyConfirmation: {
-      id: 'marp.application:overview.study.confirmation',
-      defaultMessage: 'Staðfesting á námi',
-      description: 'Confirmation of study',
-    },
     unionSickPayConfirmation: {
       id: 'marp.application:overview.union.sick.pay.confirmation',
       defaultMessage: 'Sjúkradagpeningar frá stéttarfélagi',
@@ -871,6 +918,16 @@ export const errorMessages = defineMessages({
     id: 'marp.application:error.date.required',
     defaultMessage: 'Það þarf að velja dagsetningu',
     description: 'You must select a date',
+  },
+  countriesRequired: {
+    id: 'marp.application:error.countries.required',
+    defaultMessage: 'Það þarf að skrá að minnsta kosti eitt land',
+    description: 'You must add at least one country',
+  },
+  countryRequired: {
+    id: 'marp.application:error.country.required',
+    defaultMessage: 'Það þarf að velja land',
+    description: 'You must select a country',
   },
 })
 

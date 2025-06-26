@@ -169,6 +169,9 @@ export const questionsItems = (answers: FormValue): Array<KeyValueItem> => {
     calculatedRemunerationDate,
     isPartTimeEmployed,
     isStudying,
+    educationalInstitution,
+    ectsUnits,
+    isReceivingPaymentsFromOtherCountry,
   } = getApplicationAnswers(answers)
 
   const baseItems: Array<KeyValueItem> = [
@@ -224,7 +227,68 @@ export const questionsItems = (answers: FormValue): Array<KeyValueItem> => {
     },
   ]
 
-  return [...baseItems, ...calculatedRemunerationDateItem, ...baseItems2]
+  const isStudyingItems: Array<KeyValueItem> =
+    isStudying === YES
+      ? [
+          {
+            width: 'half',
+            keyText:
+              medicalAndRehabilitationPaymentsFormMessage.generalInformation
+                .questionsSchool,
+            valueText: educationalInstitution,
+          },
+          {
+            width: 'half',
+            keyText:
+              medicalAndRehabilitationPaymentsFormMessage.generalInformation
+                .questionsNumberOfCredits,
+            valueText: ectsUnits,
+          },
+        ]
+      : []
+
+  const baseItems3: Array<KeyValueItem> = [
+    {
+      width: 'full',
+      keyText:
+        medicalAndRehabilitationPaymentsFormMessage.generalInformation
+          .questionsBenefitsFromAnotherCountry,
+      valueText:
+        isReceivingPaymentsFromOtherCountry === YES
+          ? socialInsuranceAdministrationMessage.shared.yes
+          : socialInsuranceAdministrationMessage.shared.no,
+    },
+  ]
+
+  return [
+    ...baseItems,
+    ...calculatedRemunerationDateItem,
+    ...baseItems2,
+    ...isStudyingItems,
+    ...baseItems3,
+  ]
+}
+
+export const questionsCountryTable = (
+  answers: FormValue,
+  _externalData: ExternalData,
+): TableData => {
+  const { isReceivingPaymentsFromOtherCountry, countries } =
+    getApplicationAnswers(answers)
+
+  if (isReceivingPaymentsFromOtherCountry === YES) {
+    return {
+      header: [
+        medicalAndRehabilitationPaymentsFormMessage.generalInformation
+          .questionsCountry,
+        medicalAndRehabilitationPaymentsFormMessage.generalInformation
+          .questionsCountryIDNumber,
+      ],
+      rows: countries.map((e) => [e.country?.split('::')[1], e.nationalId]),
+    }
+  }
+
+  return { header: [], rows: [] }
 }
 
 export const employeeSickPayItems = (

@@ -15,9 +15,11 @@ import {
   PaymentPlanApi,
   PensionCalculatorApi,
   QuestionnairesApi,
+  TrWebApiServicesCommonCountriesModelsCountryDto,
   TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn,
+  TrWebApiServicesDomainEducationalInstitutionsModelsEctsUnitDto,
+  TrWebApiServicesDomainEducationalInstitutionsModelsEducationalInstitutionsDto,
   TrWebApiServicesDomainQuestionnairesModelsQuestionnaireDto,
-  TrWebExternalModelsServicePortalRehabilitationPlan,
   TrWebApiServicesDomainUnionsModelsUnionDto,
   TrWebApiServicesUseCaseDeathBenefitsModelsExternalSpousalInfo,
   TrWebCommonsExternalPortalsApiModelsApplicantApplicantInfoReturn,
@@ -28,6 +30,7 @@ import {
   TrWebCommonsExternalPortalsApiModelsIncomePlanWithholdingTaxDto,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanLegitimatePayments,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
+  TrWebExternalModelsServicePortalRehabilitationPlan,
 } from '../../gen/fetch'
 import { IncomePlanDto, mapIncomePlanDto } from './dto/incomePlan.dto'
 import { ApplicationWriteApi } from './socialInsuranceAdministrationClient.type'
@@ -231,5 +234,29 @@ export class SocialInsuranceAdministrationClientService {
     return this.questionnairesApiWithAuth(
       user,
     ).apiProtectedV1QuestionnairesSelfassessmentGet(languages)
+  }
+
+  async getCountries(
+    user: User,
+  ): Promise<Array<TrWebApiServicesCommonCountriesModelsCountryDto>> {
+    return this.generalApiWithAuth(user).apiProtectedV1GeneralCountriesGet()
+  }
+
+  async getEducationalInstitutions(
+    user: User,
+  ): Promise<
+    Array<TrWebApiServicesDomainEducationalInstitutionsModelsEducationalInstitutionsDto>
+  > {
+    return this.generalApiWithAuth(
+      user,
+    ).apiProtectedV1GeneralEducationalinstitutionsGet()
+  }
+
+  async getEctsUnits(
+    user: User,
+  ): Promise<
+    Array<TrWebApiServicesDomainEducationalInstitutionsModelsEctsUnitDto>
+  > {
+    return this.generalApiWithAuth(user).apiProtectedV1GeneralEctsUnitsGet()
   }
 }
