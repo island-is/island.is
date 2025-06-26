@@ -118,9 +118,9 @@ export const caseTableWhereOptions: Record<
     districtCourtIndictmentsFinalizingWhereOptions,
   [CaseTableType.DISTRICT_COURT_INDICTMENTS_COMPLETED]:
     districtCourtIndictmentsCompletedWhereOptions,
-  [CaseTableType.PRISON_REQUEST_CASES_ACTIVE]:
+  [CaseTableType.PRISON_STAFF_REQUEST_CASES_ACTIVE]:
     prisonStaffRequestCasesActiveWhereOptions,
-  [CaseTableType.PRISON_REQUEST_CASES_DONE]:
+  [CaseTableType.PRISON_STAFF_REQUEST_CASES_DONE]:
     prisonStaffRequestCasesDoneWhereOptions,
   [CaseTableType.PRISON_ADMIN_REQUEST_CASES_ACTIVE]: () =>
     prisonAdminRequestCasesActiveWhereOptions,
