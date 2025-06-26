@@ -1,33 +1,29 @@
-import {
-  CaseTableGroup,
-  CaseTableRoutes,
-  CaseTableType,
-} from '../caseTableTypes'
+import { CaseTableGroup, CaseTableType } from '../caseTableTypes'
 
 export const prosecutorRequestCasesTableGroup: CaseTableGroup = {
   title: 'Rannsóknarmál',
   tables: [
     {
-      type: CaseTableType.PROSECUTOR_REQUEST_CASES_IN_PROGRESS,
-      route: CaseTableRoutes.IN_PROGRESS,
+      type: CaseTableType.PROSECUTION_REQUEST_CASES_IN_PROGRESS,
+      route: 'rannsoknarmal-i-vinnslu',
       title: 'Rannsóknarmál í vinnslu',
       description: 'Drög, send mál, móttekin mál og mál á dagskrá.',
     },
     {
-      type: CaseTableType.PROSECUTOR_REQUEST_CASES_ACTIVE,
-      route: CaseTableRoutes.ACTIVE,
+      type: CaseTableType.PROSECUTION_REQUEST_CASES_ACTIVE,
+      route: 'virk-rannsoknarmal',
       title: 'Virk mál',
       description: 'Virk gæsluvarðhöld, farbönn og vistanir.',
     },
     {
-      type: CaseTableType.PROSECUTOR_REQUEST_CASES_APPEALED,
-      route: CaseTableRoutes.REQUEST_APPEALED,
+      type: CaseTableType.PROSECUTION_REQUEST_CASES_APPEALED,
+      route: 'rannsoknarmal-i-kaeuferli',
       title: 'Mál í kæruferli',
       description: 'Úrskurðir sem eru í kæruferli hjá Landsrétti.',
     },
     {
-      type: CaseTableType.PROSECUTOR_REQUEST_CASES_COMPLETED,
-      route: CaseTableRoutes.COMPLETED,
+      type: CaseTableType.PROSECUTION_REQUEST_CASES_COMPLETED,
+      route: 'afgreidd-rannsoknarmal',
       title: 'Afgreidd rannsóknarmál',
       description: 'Rannsóknarmál sem búið er að ljúka.',
     },
@@ -38,26 +34,26 @@ export const prosecutorIndictmentsTableGroup: CaseTableGroup = {
   title: 'Sakamál',
   tables: [
     {
-      type: CaseTableType.PROSECUTOR_INDICTMENT_IN_DRAFT,
-      route: CaseTableRoutes.INDICTMENT_DRAFT,
+      type: CaseTableType.PROSECUTION_INDICTMENTS_IN_DRAFT,
+      route: 'sakamal-i-drogum',
       title: 'Ákærur í drögum',
       description: 'Ákærur í drögum.',
     },
     {
-      type: CaseTableType.PROSECUTOR_INDICTMENT_WAITING_FOR_CONFIRMATION,
-      route: CaseTableRoutes.WAITING_FOR_CONFIRMATION,
+      type: CaseTableType.PROSECUTION_INDICTMENTS_WAITING_FOR_CONFIRMATION,
+      route: 'sakamal-sem-bida-stadfestingar',
       title: 'Ákærur sem bíða staðfestingar',
       description: 'Ákærur sem á eftir að staðfesta og senda til héraðsdóms.',
     },
     {
-      type: CaseTableType.PROSECUTOR_INDICTMENT_IN_PROGRESS,
-      route: CaseTableRoutes.INDICTMENT_IN_PROGRESS,
+      type: CaseTableType.PROSECUTION_INDICTMENTS_IN_PROGRESS,
+      route: 'sakamal-i-vinnslu',
       title: 'Sakamál í vinnslu',
       description: 'Sakamál sem eru í vinnslu.',
     },
     {
-      type: CaseTableType.PROSECUTOR_INDICTMENT_COMPLETED,
-      route: CaseTableRoutes.INDICTMENT_COMPLETED,
+      type: CaseTableType.PROSECUTION_INDICTMENTS_COMPLETED,
+      route: 'afgreidd-sakamal',
       title: 'Afgreidd sakamál',
       description: 'Sakamál sem búið er að ljúka.',
     },
