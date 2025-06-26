@@ -1,3 +1,5 @@
+import { string } from 'zod'
+
 export enum EmploymentStatus {
   UNEMPLOYED = 'unemployed',
   EMPLOYED = 'employed',
@@ -31,4 +33,30 @@ export interface PreviousJobInAnswers {
   percentage: number
   startDate: string
   endDate: string
+}
+
+export interface VacationDaysInAnswers {
+  startDate: string
+  endDate: string
+}
+
+export interface PaymentsFromPensionInAnswers {
+  paymentAmount: string
+  typeOfPayment: string
+}
+
+export interface PaymentsFromPrivatePensionInAnswers {
+  privatePensionFund: string
+  paymentAmount: string
+}
+
+export interface CapitalIncomeInAnswers {
+  amount: string
+}
+
+export interface PaymentsFromSicknessAllowanceInAnswers {
+  dateFrom: string
+  dateTo: string
+  union: string
+  file: Array<string>
 }

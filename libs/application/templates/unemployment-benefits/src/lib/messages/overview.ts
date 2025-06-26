@@ -63,6 +63,11 @@ export const overview = {
         defaultMessage: 'Menntun',
         description: 'overview section education label',
       },
+      notLastTvelveMonths: {
+        id: 'vmst.ub.application:overview.labels.education.notLastTvelveMonths',
+        defaultMessage: 'Ekki verið í námi síðustu tólf mánuði',
+        description: 'overview section education not last twelve months label',
+      },
     }),
 
     payout: defineMessages({
@@ -71,20 +76,81 @@ export const overview = {
         defaultMessage: 'Greiðsluupplýsingar',
         description: 'overview section paymentInformation label',
       },
-      personalDiscount: {
-        id: 'vmst.ub.application:overview.labels.payout.personalDiscount',
+      taxDiscount: {
+        id: 'vmst.ub.application:overview.labels.payout.taxDiscount',
         defaultMessage: 'Persónuafsláttur',
-        description: 'overview section payout personal discount label',
+        description: 'overview section payout tax discount label',
       },
       vacation: {
         id: 'vmst.ub.application:overview.labels.payout.vacation',
         defaultMessage: 'Orlof',
         description: 'overview section payout vacation label',
       },
+      hadNoVacation: {
+        id: 'vmst.ub.application:overview.labels.payout.hadNoVacation',
+        defaultMessage: 'Átti ekki ótekið orlof',
+        description: 'overview section payout had no vacation label',
+      },
+      vacationDays: {
+        id: 'vmst.ub.application:overview.labels.payout.vacationDays',
+        defaultMessage: 'Fjöldi daga',
+        description: 'overview section payout vacation days label',
+      },
+      vacationDaysFrom: {
+        id: 'vmst.ub.application:overview.labels.payout.vacationDaysFrom',
+        defaultMessage: 'Frá',
+        description: 'overview section payout vacation days from label',
+      },
       otherPayouts: {
         id: 'vmst.ub.application:overview.labels.payout.otherPayouts',
         defaultMessage: 'Aðrar greiðslur',
         description: 'overview section payout other payouts label',
+      },
+      otherPayoutsTR: {
+        id: 'vmst.ub.application:overview.labels.payout.otherPayoutsTR',
+        defaultMessage: 'Greiðslur frá TR',
+        description: 'overview section payout other payouts TR label',
+      },
+      otherPayoutSicknessAllowance: {
+        id: 'vmst.ub.application:overview.labels.payout.otherPayoutSicknessAllowance',
+        defaultMessage: 'Sjúkradagpeningar',
+        description:
+          'overview section payout other payouts sickness allowance label',
+      },
+      paymentPerMonth: {
+        id: 'vmst.ub.application:overview.labels.payout.paymentPerMonth',
+        defaultMessage: 'á mánuði',
+        description: 'overview section payout payment per month label',
+      },
+      capitalIncome: {
+        id: 'vmst.ub.application:overview.labels.payout.capitalIncome',
+        defaultMessage: 'Fjármagnstekjur',
+        description: 'overview section payout capital income label',
+      },
+      bank: {
+        id: 'vmst.ub.application:overview.labels.payout.bank',
+        defaultMessage: 'Banki',
+        description: 'overview section payout bank label',
+      },
+      pensionFund: {
+        id: 'vmst.ub.application:overview.labels.payout.pensionFund',
+        defaultMessage: 'Lífeyrissjóður',
+        description: 'overview section payout pension fund label',
+      },
+      union: {
+        id: 'vmst.ub.application:overview.labels.payout.union',
+        defaultMessage: 'Stéttarfélag',
+        description: 'overview section payout union label',
+      },
+      privatePensionFund: {
+        id: 'vmst.ub.application:overview.labels.payout.privatePensionFund',
+        defaultMessage: 'Viðbótasparnaður',
+        description: 'overview section payout private pension fund label',
+      },
+      taxUsage: {
+        id: 'vmst.ub.application:overview.labels.payout.taxUsage',
+        defaultMessage: 'Nýting',
+        description: 'overview section payout tax usage label',
       },
     }),
 
