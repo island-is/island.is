@@ -1,3 +1,5 @@
+import { plainToClass } from 'class-transformer'
+import { validate } from 'class-validator'
 import type { Transaction } from 'sequelize'
 import { Sequelize } from 'sequelize'
 
@@ -65,6 +67,17 @@ export class LawyerRegistryService {
         phoneNumber: lawyer.Phone,
         practice: lawyer.Practice,
       }))
+
+      for (const lawyer of formattedLawyers) {
+        const lawyerInstance = plainToClass(LawyerRegistry, lawyer)
+        const errors = await validate(lawyerInstance)
+
+        if (errors.length > 0) {
+          throw new Error(
+            `Validation failed for lawyer: ${JSON.stringify(errors)}`,
+          )
+        }
+      }
 
       await this.lawyerRegistryModel.bulkCreate(formattedLawyers, {
         transaction,
