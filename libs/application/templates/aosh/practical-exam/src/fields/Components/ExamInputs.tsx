@@ -55,19 +55,25 @@ export const ExamInputs: FC<
   const [isInvalidInput, setIsInvalidInput] = useState<boolean>(false)
   const [isInvalidValidation, setIsInvalidValidation] = useState<boolean>(false)
   const [isMissingFileUpload, setIsMissingFileUpload] = useState<boolean>(false)
+  const [isWebServiceFailure, setIsWebServiceFailure] = useState<boolean>(false)
   const [validationError, setValidationError] = useState<string>('')
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
   const getExamineeValidation = useLazyValidateExaminee()
   const getExamineeValidationCallback = useCallback(
     async (workMachineExaminee: WorkMachineExamineeInput) => {
-      const { data } = await getExamineeValidation({
-        input: {
-          workMachineExamineeDto: workMachineExaminee,
-          xCorrelationID: application.id,
-        },
-      })
-      return data
+      try {
+        const { data } = await getExamineeValidation({
+          input: {
+            workMachineExamineeDto: workMachineExaminee,
+            xCorrelationID: application.id,
+          },
+        })
+        return data
+      } catch (error) {
+        // This does not interfere with validation errors as they are sent via 200 ok with an error message
+        return undefined
+      }
     },
     [application.id, getExamineeValidation],
   )
@@ -151,6 +157,7 @@ export const ExamInputs: FC<
   const onSubmit = async () => {
     // Reset Validation error
     setIsInvalidValidation(false)
+    setIsWebServiceFailure(false)
     setValidationError('')
     setIsMissingFileUpload(false)
     setValue(`examCategories[${idx}].isValid`, false)
@@ -196,9 +203,9 @@ export const ExamInputs: FC<
 
     setIsLoading(true)
     const response = await getExamineeValidationCallback(payload)
-
     setIsLoading(false)
-    if (response.getExamineeValidation.isValid) {
+
+    if (response && response.getExamineeValidation.isValid) {
       setValue(`examCategories[${idx}].isValid`, true)
       setValue(
         `examCategories[${idx}].doesntHaveToPayLicenseFee`,
@@ -242,12 +249,18 @@ export const ExamInputs: FC<
       return
     }
 
-    const error =
-      lang === 'is'
-        ? response.getExamineeValidation.errorMessage
-        : response.getExamineeValidation.errorMessageEn
-    setValidationError(error || '')
-    setIsInvalidValidation(true)
+    if (response) {
+      // Case where response is present with isValid == false
+      const error =
+        lang === 'is'
+          ? response.getExamineeValidation.errorMessage
+          : response.getExamineeValidation.errorMessageEn
+      setValidationError(error || '')
+      setIsInvalidValidation(true)
+    } else {
+      // Case where the is no response, indicating failure in web service
+      setIsWebServiceFailure(true)
+    }
   }
 
   const handleSelectOption = (
@@ -446,6 +459,15 @@ export const ExamInputs: FC<
           type="warning"
           title={formatMessage(examCategories.labels.invalidValidationTitle)}
           message={validationError}
+        />
+      )}
+      {isWebServiceFailure && (
+        <AlertMessage
+          type="error"
+          title={formatMessage(examCategories.labels.webServiceFailureTitle)}
+          message={formatMessage(
+            examCategories.labels.webServiceFailureMessage,
+          )}
         />
       )}
       {isMissingFileUpload && (
