@@ -1,6 +1,6 @@
 import { CaseTableGroup, CaseTableType } from '../caseTableTypes'
 
-const prisonRequestCasesTableGroup = {
+const prisonStaffRequestCasesTableGroup = {
   title: 'Rannsóknarmál',
   tables: [
     {
@@ -19,5 +19,5 @@ const prisonRequestCasesTableGroup = {
 }
 
 export const prisonStaffTableGroups: CaseTableGroup[] = [
-  prisonRequestCasesTableGroup,
+  prisonStaffRequestCasesTableGroup,
 ]

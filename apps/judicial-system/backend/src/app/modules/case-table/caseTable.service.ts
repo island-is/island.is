@@ -231,11 +231,7 @@ const getContextMenuActions = (
 
 @Injectable()
 export class CaseTableService {
-  constructor(
-    @InjectModel(Case) private readonly caseModel: typeof Case,
-    @InjectConnection() private readonly sequelize: Sequelize,
-    @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-  ) {}
+  constructor(@InjectModel(Case) private readonly caseModel: typeof Case) {}
 
   async getCaseTableRows(
     type: CaseTableType,

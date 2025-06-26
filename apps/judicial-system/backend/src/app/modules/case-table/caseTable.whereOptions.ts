@@ -4,6 +4,7 @@ import {
   CaseTableType,
   isCourtOfAppealsUser,
   isDistrictCourtUser,
+  isPrisonStaffUser,
   type User,
 } from '@island.is/judicial-system/types'
 
@@ -24,15 +25,16 @@ import {
   districtCourtRequestCasesInProgressWhereOptions,
 } from './whereOptions/districtCourt'
 import {
-  prisonRequestCasesActiveWhereOptions,
-  prisonRequestCasesDoneWhereOptions,
-} from './whereOptions/prison'
-import {
   prisonAdminIndictmentsRegisteredRulingWhereOptions,
   prisonAdminIndictmentsSentToPrisonAdminWhereOptions,
   prisonAdminRequestCasesActiveWhereOptions,
   prisonAdminRequestCasesDoneWhereOptions,
 } from './whereOptions/prisonAdmin'
+import {
+  prisonStaffCasesAccessWhereOptions,
+  prisonStaffRequestCasesActiveWhereOptions,
+  prisonStaffRequestCasesDoneWhereOptions,
+} from './whereOptions/prisonStaff'
 import {
   prosecutionIndictmentsCompletedWhereOptions,
   prosecutionIndictmentsInDraftWhereOptions,
@@ -65,9 +67,9 @@ export const userAccessWhereOptions = (user: User): WhereOptions => {
     return districtCourtCasesAccessWhereOptions(user)
   }
 
-  // if (isPrisonStaffUser(user)) {
-  //   return prisonStaffTableGroups
-  // }
+  if (isPrisonStaffUser(user)) {
+    return prisonStaffCasesAccessWhereOptions()
+  }
 
   // if (isPrisonAdminUser(user)) {
   //   return prisonAdminTableGroups
@@ -116,10 +118,10 @@ export const caseTableWhereOptions: Record<
     districtCourtIndictmentsFinalizingWhereOptions,
   [CaseTableType.DISTRICT_COURT_INDICTMENTS_COMPLETED]:
     districtCourtIndictmentsCompletedWhereOptions,
-  [CaseTableType.PRISON_REQUEST_CASES_ACTIVE]: () =>
-    prisonRequestCasesActiveWhereOptions,
-  [CaseTableType.PRISON_REQUEST_CASES_DONE]: () =>
-    prisonRequestCasesDoneWhereOptions,
+  [CaseTableType.PRISON_REQUEST_CASES_ACTIVE]:
+    prisonStaffRequestCasesActiveWhereOptions,
+  [CaseTableType.PRISON_REQUEST_CASES_DONE]:
+    prisonStaffRequestCasesDoneWhereOptions,
   [CaseTableType.PRISON_ADMIN_REQUEST_CASES_ACTIVE]: () =>
     prisonAdminRequestCasesActiveWhereOptions,
   [CaseTableType.PRISON_ADMIN_REQUEST_CASES_DONE]: () =>
