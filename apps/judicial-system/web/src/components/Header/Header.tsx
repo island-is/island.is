@@ -34,6 +34,7 @@ import {
 import { api } from '@island.is/judicial-system-web/src/services'
 import { useGeoLocation } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import { useKeyboardCombo } from '../../utils/hooks/useKeyboardCombo/useKeyboardCombo'
 import { header } from './Header.strings'
 import * as styles from './Header.css'
 
@@ -84,6 +85,10 @@ const HeaderContainer = () => {
   const { lawyers } = useContext(LawyerRegistryContext)
 
   const isLawyerInLawyersRegistry = isDefenceUser(user) && lawyer
+
+  useKeyboardCombo('Meta + k', () => {
+    setIsSearchOpen(!isSearchOpen)
+  })
 
   useEffect(() => {
     setIsRobot(countryCode !== 'IS')
@@ -191,101 +196,102 @@ const HeaderContainer = () => {
             </Hidden>
           )}
           {user && (
-            <UserMenu
-              language="is"
-              authenticated={isAuthenticated}
-              username={user.name ?? undefined}
-              isOpen={isUserMenuOpen}
-              onClick={() => setIsUserMenuOpen(undefined)}
-              dropdownItems={
-                <>
-                  <div className={styles.dropdownItem}>
-                    <Box marginRight={2}>
-                      <Icon icon="person" type="outline" color="blue400" />
-                    </Box>
-                    <Box>
-                      <Box marginBottom={2}>
-                        <Text>
-                          {capitalize(
-                            isDefenceUser(user)
-                              ? formatMessage(header.defender)
-                              : user.title,
-                          )}
-                        </Text>
-                      </Box>
-                      <Box marginBottom={2}>
-                        <Text>
-                          {capitalize(
-                            isLawyerInLawyersRegistry
-                              ? lawyer.practice
-                              : user.institution?.name,
-                          )}
-                        </Text>
-                      </Box>
-                      <Box marginBottom={2}>
-                        <Text>
-                          {formatPhoneNumber(
-                            isLawyerInLawyersRegistry
-                              ? lawyer.phoneNr
-                              : user.mobileNumber,
-                          )}
-                        </Text>
+            <>
+              <UserMenu
+                language="is"
+                authenticated={isAuthenticated}
+                username={user.name ?? undefined}
+                isOpen={isUserMenuOpen}
+                onClick={() => setIsUserMenuOpen(undefined)}
+                dropdownItems={
+                  <>
+                    <div className={styles.dropdownItem}>
+                      <Box marginRight={2}>
+                        <Icon icon="person" type="outline" color="blue400" />
                       </Box>
                       <Box>
-                        <Text>
-                          {isLawyerInLawyersRegistry
-                            ? lawyer.email
-                            : user.email}
-                        </Text>
+                        <Box marginBottom={2}>
+                          <Text>
+                            {capitalize(
+                              isDefenceUser(user)
+                                ? formatMessage(header.defender)
+                                : user.title,
+                            )}
+                          </Text>
+                        </Box>
+                        <Box marginBottom={2}>
+                          <Text>
+                            {capitalize(
+                              isLawyerInLawyersRegistry
+                                ? lawyer.practice
+                                : user.institution?.name,
+                            )}
+                          </Text>
+                        </Box>
+                        <Box marginBottom={2}>
+                          <Text>
+                            {formatPhoneNumber(
+                              isLawyerInLawyersRegistry
+                                ? lawyer.phoneNr
+                                : user.mobileNumber,
+                            )}
+                          </Text>
+                        </Box>
+                        <Box>
+                          <Text>
+                            {isLawyerInLawyersRegistry
+                              ? lawyer.email
+                              : user.email}
+                          </Text>
+                        </Box>
+                        {renderSelectUser()}
                       </Box>
-                      {renderSelectUser()}
-                    </Box>
-                  </div>
-                  <div className={styles.dropdownItem}>
-                    <Box marginRight={2}>
-                      <Icon
-                        icon="informationCircle"
-                        type="outline"
-                        color="blue400"
-                      />
-                    </Box>
-                    <Box>
-                      {isLawyerInLawyersRegistry ? (
-                        <Text>
-                          {formatMessage(header.tipDisclaimerDefenders)}
-                        </Text>
-                      ) : (
-                        <MarkdownWrapper
-                          markdown={formatMessage(header.tipDisclaimer, {
-                            linkStart: `<a href="mailto:${supportEmail}" rel="noopener noreferrer nofollow" target="_blank">${supportEmail}`,
-                            linkEnd: '</a>',
-                          })}
+                    </div>
+                    <div className={styles.dropdownItem}>
+                      <Box marginRight={2}>
+                        <Icon
+                          icon="informationCircle"
+                          type="outline"
+                          color="blue400"
                         />
-                      )}
-                    </Box>
-                  </div>
-                </>
-              }
-              onLogout={handleLogout}
-            />
+                      </Box>
+                      <Box>
+                        {isLawyerInLawyersRegistry ? (
+                          <Text>
+                            {formatMessage(header.tipDisclaimerDefenders)}
+                          </Text>
+                        ) : (
+                          <MarkdownWrapper
+                            markdown={formatMessage(header.tipDisclaimer, {
+                              linkStart: `<a href="mailto:${supportEmail}" rel="noopener noreferrer nofollow" target="_blank">${supportEmail}`,
+                              linkEnd: '</a>',
+                            })}
+                          />
+                        )}
+                      </Box>
+                    </div>
+                  </>
+                }
+                onLogout={handleLogout}
+              />
+
+              <Box
+                border="standard"
+                borderRadius="full"
+                display="flex"
+                alignItems="center"
+                justifyContent={'spaceBetween'}
+                className={styles.searchButton}
+                component="button"
+                onClick={() => setIsSearchOpen(!isSearchOpen)}
+              >
+                <Text>Leit</Text>
+                <Icon icon="search" color="blue400" size="small" />
+              </Box>
+            </>
           )}
-          {/* TODO SEARCH */}
-          <button onClick={() => setIsSearchOpen(!isSearchOpen)}>
-            <Box
-              border="standard"
-              borderRadius="full"
-              display="flex"
-              alignItems="center"
-              justifyContent={'spaceBetween'}
-              className={styles.searchButton}
-            >
-              <Text>Leit</Text>
-              <Icon icon="search" color="blue400" size="small" />
-            </Box>
-          </button>
         </Inline>
       </Container>
-      {/* TODO SEARCH */}
       <AnimatePresence>
         {isSearchOpen && (
           <SearchModal

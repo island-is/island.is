@@ -7,9 +7,11 @@ import {
 } from 'react'
 import ReactDOM from 'react-dom'
 import FocusLock from 'react-focus-lock'
+import cn from 'classnames'
 import { motion } from 'motion/react'
 
 import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
+import { useKeyboardCombo } from '@island.is/judicial-system-web/src/utils/hooks/useKeyboardCombo/useKeyboardCombo'
 
 import * as styles from './Modal.css'
 
@@ -29,6 +31,7 @@ interface ModalProps {
   children?: ReactNode
   invertButtonColors?: boolean
   loading?: boolean
+  position?: 'center' | 'top' | 'bottom'
 }
 
 const Modal: FC<PropsWithChildren<ModalProps>> = ({
@@ -59,22 +62,6 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
       transition: { duration: 0.2 },
     },
   }
-
-  useEffect(() => {
-    const handleKeyDown = (e: { key: string }) => {
-      if (e.key === 'Escape') {
-        onClose && onClose()
-      }
-    }
-
-    // Attach the event listener
-    document.addEventListener('keydown', handleKeyDown)
-
-    // Cleanup the event listener on component unmount
-    return () => {
-      document.removeEventListener('keydown', handleKeyDown)
-    }
-  }, [onClose])
 
   return (
     <FocusLock autoFocus={false}>
@@ -160,7 +147,11 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
   )
 }
 
-export const ModalContainer = ({ children, onClose }: ModalProps) => {
+export const ModalContainer = ({
+  children,
+  onClose,
+  position = 'center',
+}: ModalProps) => {
   const modalVariants = {
     open: {
       translateY: 0,
@@ -173,27 +164,27 @@ export const ModalContainer = ({ children, onClose }: ModalProps) => {
     },
   }
 
+  useKeyboardCombo('Escape', () => {
+    onClose && onClose()
+  })
+
   useEffect(() => {
-    const handleKeyDown = (e: { key: string }) => {
-      if (e.key === 'Escape') {
-        onClose && onClose()
-      }
-    }
+    document.body.style.overflow = 'hidden'
+    document.body.style.userSelect = 'none'
 
-    // Attach the event listener
-    document.addEventListener('keydown', handleKeyDown)
-
-    // Cleanup the event listener on component unmount
     return () => {
-      document.removeEventListener('keydown', handleKeyDown)
+      document.body.style.overflow = ''
+      document.body.style.userSelect = ''
     }
-  }, [onClose])
+  }, [])
 
   return (
     <FocusLock autoFocus={false}>
       <motion.div
         key="modal"
-        className={styles.container}
+        className={cn(styles.container, {
+          [styles.alignItems[position]]: position,
+        })}
         initial={{ opacity: 0 }}
         animate={{ opacity: 1 }}
         exit={{ opacity: 0 }}

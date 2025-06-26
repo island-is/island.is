@@ -1,4 +1,4 @@
-import { FC, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 
 import { Box, Input, Tag, Text } from '@island.is/island-ui/core'
@@ -61,85 +61,94 @@ const SearchResultButton: FC<ResultsProps> = ({
 
 const SearchModal: FC<Props> = ({ onClose }) => {
   const [searchString, setSearchString] = useState<string>('')
-  const [isLoading, setIsLoading] = useState<boolean>(false)
-  const [searchResults, setSearchResults] = useState<JSX.Element | null>(null)
 
-  const [searchCases] = useSearchCasesLazyQuery({
+  const [searchResults, setSearchResults] =
+    useState<[JSX.Element[], number | undefined]>()
+  const searchInputRef = useRef<HTMLInputElement>(null)
+
+  const [searchCases, { loading }] = useSearchCasesLazyQuery({
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
 
-  const handleSearch = async () => {
-    setIsLoading(true)
-
-    try {
-      const results = await searchCases({
-        variables: { input: { query: searchString } },
-      })
-
-      setSearchResults(
-        <Box>
-          {results.data?.searchCases.rows &&
-            results.data.searchCases.rows.map((row) => (
-              <SearchResultButton
-                key={row.caseId}
-                caseId={row.caseId}
-                caseType={row.caseType}
-                descriptor={row.matchedValue}
-                onClick={onClose}
-              />
-            ))}
-        </Box>,
-      )
-    } catch (error) {
-      console.error('Error searching cases:', error)
-    } finally {
-      setIsLoading(false)
+  useEffect(() => {
+    if (searchInputRef.current) {
+      searchInputRef.current.focus()
     }
-  }
+  }, [])
+
+  useEffect(() => {
+    const handleSearch = async () => {
+      try {
+        const results = await searchCases({
+          variables: { input: { query: searchString } },
+        })
+
+        setSearchResults([
+          results.data && results.data.searchCases.rowCount > 0
+            ? results.data?.searchCases.rows.map((row) => (
+                <SearchResultButton
+                  key={row.caseId}
+                  caseId={row.caseId}
+                  caseType={row.caseType}
+                  descriptor={row.matchedValue}
+                  onClick={onClose}
+                />
+              ))
+            : [
+                <Text variant="small">{`Engar niðurstöður fundust fyrir: ${searchString}`}</Text>,
+              ],
+          results.data?.searchCases.rowCount,
+        ])
+      } catch (error) {
+        console.error('Error searching cases:', error)
+      }
+    }
+
+    if (searchString.trim().length > 0) {
+      handleSearch()
+    } else {
+      setSearchResults(undefined)
+    }
+  }, [onClose, searchCases, searchString])
 
   return (
-    <ModalContainer title="Leit" onClose={onClose}>
-      <Box margin={3} className={styles.searchModal}>
+    <ModalContainer title="Leit" onClose={onClose} position="top">
+      <div className={styles.searchModal}>
         <Text variant="h3" marginBottom={1}>
           Leit
         </Text>
-        <Box marginBottom={4}>
-          <Box marginBottom={3} columnGap={1} display="flex" flexWrap="wrap">
-            <Tag outlined disabled>
-              LÖKE málsnúmer
-            </Tag>
-            <Tag outlined disabled>
-              Málsnúmer héraðsdóms
-            </Tag>
-            <Tag outlined disabled>
-              Málsnúmer Landsréttar
-            </Tag>
-          </Box>
-          <Input
-            name="search"
-            label="Málsnúmer"
-            placeholder="S-1234/2025"
-            value={searchString}
-            onChange={(event) => setSearchString(event.target.value)}
-            icon={{
-              name: 'search',
-              type: 'outline',
-            }}
-            onKeyDown={(event) => {
-              if (event.key === 'Enter') {
-                handleSearch()
-              }
-            }}
-            disabled={isLoading}
-          />
+        <Box marginBottom={3} columnGap={1} display="flex" flexWrap="wrap">
+          <Tag outlined disabled>
+            Málsnúmer
+          </Tag>
+          <Tag outlined disabled>
+            Kennitala varnaraðila
+          </Tag>
+          <Tag outlined disabled>
+            Nafn varnaraðila
+          </Tag>
         </Box>
+        <Input
+          ref={searchInputRef}
+          name="search"
+          label="Leitarorð"
+          placeholder="Leit í málalistum"
+          value={searchString}
+          onChange={(event) => setSearchString(event.target.value)}
+          autoComplete="off"
+          icon={{
+            name: 'search',
+            type: 'outline',
+          }}
+        />
         <AnimatePresence>
           {searchResults && (
             <motion.div
-              initial={{ opacity: 0, maxHeight: 0 }}
-              animate={{ opacity: 1, maxHeight: 500 }}
-              exit={{ opacity: 0, maxHeight: 0 }}
+              initial={{ opacity: 0, maxHeight: 0, marginTop: '32px' }}
+              animate={{ opacity: 1, maxHeight: 500, marginTop: '32px' }}
+              exit={{ opacity: 0, maxHeight: 0, marginTop: 0 }}
+              className={styles.searchResultsContainer}
               transition={{
                 opacity: { duration: 0.2 },
                 maxHeight: { duration: 0.5, ease: 'easeOut' },
@@ -147,14 +156,14 @@ const SearchModal: FC<Props> = ({ onClose }) => {
             >
               <div className={styles.searchResults}>
                 <Text variant="eyebrow" color="dark300">
-                  Leitarniðurstöður
+                  {`Leitarniðurstöður (${searchResults[1]})`}
                 </Text>
-                {searchResults}
+                {searchResults[0]}
               </div>
             </motion.div>
           )}
         </AnimatePresence>
-      </Box>
+      </div>
     </ModalContainer>
   )
 }
