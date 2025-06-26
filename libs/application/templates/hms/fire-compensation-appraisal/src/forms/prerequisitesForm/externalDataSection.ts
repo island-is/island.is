@@ -17,6 +17,8 @@ export const externalDataSection = buildSection({
     buildExternalDataProvider({
       id: 'approveExternalData',
       title: m.prereqMessages.prereqTitle,
+      subTitle: m.prereqMessages.subTitle,
+      checkboxLabel: m.prereqMessages.checkboxLabel,
       dataProviders: [
         buildDataProviderItem({
           provider: UserProfileApi,
