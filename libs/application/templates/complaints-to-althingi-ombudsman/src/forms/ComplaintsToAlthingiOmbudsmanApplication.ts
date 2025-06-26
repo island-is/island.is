@@ -452,7 +452,7 @@ export const ComplaintsToAlthingiOmbudsmanApplication: Form = buildForm({
             }),
           ],
         }),
-      ]
+      ],
     }),
     buildSection({
       id: 'section.overview',

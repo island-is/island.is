@@ -258,6 +258,9 @@
       "@island.is/api/domains/work-machines": [
         "libs/api/domains/work-machines/src/index.ts"
       ],
+      "@island.is/api/mocks-react": [
+        "libs/api/mocks/src/react.ts"
+      ],
       "@island.is/api/mocks": ["libs/api/mocks/src/index.ts"],
       "@island.is/api/mocks/native": ["libs/api/mocks/src/native.ts"],
       "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
@@ -460,6 +463,9 @@
       "@island.is/application/templates/hms/fire-compensation-appraisal": [
         "libs/application/templates/hms/fire-compensation-appraisal/src/index.ts"
       ],
+      "@island.is/application/templates/hms/terminate-rental-agreement": [
+        "libs/application/templates/hms/terminate-rental-agreement/src/index.ts"
+      ],
       "@island.is/application/templates/home-support": [
         "libs/application/templates/home-support/src/index.ts"
       ],
@@ -562,14 +568,14 @@
       "@island.is/application/templates/social-insurance-administration/death-benefits": [
         "libs/application/templates/social-insurance-administration/death-benefits/src/index.ts"
       ],
-      "@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments": [
-        "libs/application/templates/social-insurance-administration/medical-and-rehabilitation-payments/src/index.ts"
-      ],
       "@island.is/application/templates/social-insurance-administration/household-supplement": [
         "libs/application/templates/social-insurance-administration/household-supplement/src/index.ts"
       ],
       "@island.is/application/templates/social-insurance-administration/income-plan": [
         "libs/application/templates/social-insurance-administration/income-plan/src/index.ts"
+      ],
+      "@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments": [
+        "libs/application/templates/social-insurance-administration/medical-and-rehabilitation-payments/src/index.ts"
       ],
       "@island.is/application/templates/social-insurance-administration/old-age-pension": [
         "libs/application/templates/social-insurance-administration/old-age-pension/src/index.ts"
@@ -631,6 +637,9 @@
       "@island.is/cache": ["libs/cache/src/index.ts"],
       "@island.is/clients-rsk-relationships": [
         "libs/clients/rsk/relationships/src/index.ts"
+      ],
+      "@island.is/clients-rental-day-rate": [
+        "libs/clients/rsk/rental-day-rate/src/index.ts"
       ],
       "@island.is/clients/administration-of-occupational-safety-and-health": [
         "libs/clients/administration-of-occupational-safety-and-health/src/index.ts"
@@ -1233,6 +1242,9 @@
       ],
       "application/templates/name-of-application": [
         "libs/application/templates/name-of-application/src/index.ts"
+      ],
+      "@island.is/application/templates/car-rental-fee-category": [
+        "libs/application/templates/car-rental-fee-category/src/index.ts"
       ],
       "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"]
     }
