@@ -109,6 +109,13 @@ export class UserProfileService {
     return this.userProfileServiceV2.createEmailVerification(input, user)
   }
 
+  async createMeEmailVerification(
+    input: CreateEmailVerificationInput,
+    user: User,
+  ): Promise<void> {
+    return this.userProfileServiceV2.createMeEmailVerification(input, user)
+  }
+
   addDeviceToken(input: UserDeviceTokenInput, user: User) {
     return this.userProfileApiWithAuth(
       user,

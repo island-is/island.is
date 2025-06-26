@@ -120,6 +120,17 @@ export class UserProfileServiceV2 {
     })
   }
 
+  async createMeEmailVerification(
+    input: CreateEmailVerificationInput,
+    user: User,
+  ): Promise<void> {
+    await this.v2MeUserProfileApiWithAuth(
+      user,
+    ).meUserProfileControllerCreateVerification({
+      createVerificationDto: input,
+    })
+  }
+
   async getActorProfile(user: User): Promise<ActorProfileDetails> {
     return this.v2ActorApiWithAuth(
       user,

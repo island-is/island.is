@@ -92,6 +92,15 @@ export class UserProfileResolver {
     return Promise.resolve({ created: true })
   }
 
+  @Mutation(() => Response, { nullable: true })
+  async createMeEmailVerification(
+    @Args('input') input: CreateEmailVerificationInput,
+    @CurrentUser() user: User,
+  ): Promise<Response> {
+    await this.userProfileService.createMeEmailVerification(input, user)
+    return Promise.resolve({ created: true })
+  }
+
   @Mutation(() => UserDeviceToken)
   addUserProfileDeviceToken(
     @Args('input') input: UserDeviceTokenInput,

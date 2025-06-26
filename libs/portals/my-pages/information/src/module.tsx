@@ -1,4 +1,8 @@
-import { ApiScope, UserProfileScope } from '@island.is/auth/scopes'
+import {
+  ApiScope,
+  DocumentsScope,
+  UserProfileScope,
+} from '@island.is/auth/scopes'
 import { PortalModule } from '@island.is/portals/core'
 import { m } from '@island.is/portals/my-pages/core'
 import { lazy } from 'react'
@@ -25,7 +29,9 @@ const UserNotificationsSettings = lazy(() =>
 )
 
 const sharedRoutes = (scopes: string[], isCompany = false) => {
-  const enabled = scopes.includes(UserProfileScope.read)
+  const enabled =
+    scopes.includes(UserProfileScope.read) &&
+    scopes.includes(DocumentsScope.main)
 
   return [
     {
@@ -49,7 +55,7 @@ const sharedRoutes = (scopes: string[], isCompany = false) => {
     {
       name: 'Notifications',
       path: InformationPaths.Notifications,
-      enabled,
+      enabled: scopes.includes(DocumentsScope.main),
       element: <Notifications />,
     },
   ]
