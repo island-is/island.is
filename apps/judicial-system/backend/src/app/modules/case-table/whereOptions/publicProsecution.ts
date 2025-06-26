@@ -10,10 +10,10 @@ import {
 
 import { buildEventLogExistsCondition } from './conditions'
 
-// public prosecutor indictments
-// specific for prosecutors at the public prosecutor office
+// Public prosecution indictments
+// Specific for prosecutors at the public prosecutor office
 
-const publicProsecutorIndictmentSharedWhereOptions = (user: TUser) => ({
+const publicProsecutionIndictmentsSharedWhereOptions = (user: TUser) => ({
   is_archived: false,
   type: indictmentCases,
   indictment_ruling_decision: [
@@ -30,16 +30,16 @@ const publicProsecutorIndictmentSharedWhereOptions = (user: TUser) => ({
   indictment_reviewer_id: user.id,
 })
 
-export const publicProsecutorIndictmentInReviewWhereOptions = (
+export const publicProsecutionIndictmentsInReviewWhereOptions = (
   user: TUser,
 ) => ({
-  ...publicProsecutorIndictmentSharedWhereOptions(user),
+  ...publicProsecutionIndictmentsSharedWhereOptions(user),
   indictment_review_decision: null,
 })
 
-export const publicProsecutorIndictmentReviewedWhereOptions = (
+export const publicProsecutionIndictmentsReviewedWhereOptions = (
   user: TUser,
 ) => ({
-  ...publicProsecutorIndictmentSharedWhereOptions(user),
+  ...publicProsecutionIndictmentsSharedWhereOptions(user),
   indictment_review_decision: { [Op.not]: null },
 })
