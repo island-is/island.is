@@ -1,5 +1,5 @@
-import { differenceInMinutes } from 'date-fns'
 import addHours from 'date-fns/addHours'
+import differenceInMinutes from 'date-fns/differenceInMinutes'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
 import isEqual from 'date-fns/isEqual'
