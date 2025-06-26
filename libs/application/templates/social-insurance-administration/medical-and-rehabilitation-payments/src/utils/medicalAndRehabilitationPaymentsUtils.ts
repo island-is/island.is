@@ -11,8 +11,8 @@ import {
   IncomePlanRow,
   PaymentInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
-import { Application } from '@island.is/application/types'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../lib/messages'
+import { Application, Option } from '@island.is/application/types'
 import {
   SelfAssessmentQuestionnaire,
   SelfAssessmentQuestionnaireAnswers,
@@ -22,6 +22,7 @@ import {
   AttachmentTypes,
   NOT_APPLICABLE,
   NotApplicable,
+  SelfAssessmentCurrentEmploymentStatus,
 } from './constants'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
@@ -149,6 +150,27 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
       'selfAssessment.previousRehabilitationSuccessfulFurtherExplanations',
     )
 
+  const currentEmploymentStatus =
+    getValueViaPath<SelfAssessmentCurrentEmploymentStatus[]>(
+      answers,
+      'selfAssessment.currentEmploymentStatus',
+    ) ?? []
+
+  const currentEmploymentStatusAdditional = getValueViaPath<string>(
+    answers,
+    'selfAssessment.currentEmploymentStatusAdditional',
+  )
+
+  const lastEmploymentTitle = getValueViaPath<string>(
+    answers,
+    'selfAssessment.lastEmploymentTitle',
+  )
+
+  const lastEmploymentYear = getValueViaPath<string>(
+    answers,
+    'selfAssessment.lastEmploymentYear',
+  )
+
   return {
     applicantPhonenumber,
     applicantEmail,
@@ -179,6 +201,10 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     previousRehabilitationOrTreatment,
     previousRehabilitationSuccessful,
     previousRehabilitationSuccessfulFurtherExplanations,
+    currentEmploymentStatus,
+    currentEmploymentStatusAdditional,
+    lastEmploymentTitle,
+    lastEmploymentYear,
   }
 }
 
@@ -354,4 +380,81 @@ export const getSickPayEndDateLabel = (hasUtilizedSickPayRights?: YesOrNo) => {
   return hasUtilizedSickPayRights === YES
     ? medicalAndRehabilitationPaymentsFormMessage.shared.sickPayDidEndDate
     : medicalAndRehabilitationPaymentsFormMessage.shared.sickPayDoesEndDate
+}
+
+export const getSelfAssessmentCurrentEmploymentStatusOptions = () => {
+  const options: Option[] = [
+    {
+      value: SelfAssessmentCurrentEmploymentStatus.NEVER_HAD_A_PAID_JOB,
+      label:
+        medicalAndRehabilitationPaymentsFormMessage.selfAssessment.neverOption,
+    },
+    {
+      value: SelfAssessmentCurrentEmploymentStatus.SELF_EMPLOYED,
+      label:
+        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+          .selfEmployedOption,
+    },
+    {
+      value: SelfAssessmentCurrentEmploymentStatus.FULL_TIME_WORKER,
+      label:
+        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+          .fullTimeOption,
+    },
+    {
+      value: SelfAssessmentCurrentEmploymentStatus.PART_TIME_WORKER,
+      label:
+        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+          .partTimeOption,
+    },
+    {
+      value: SelfAssessmentCurrentEmploymentStatus.CURRENTLY_STUDYING,
+      label:
+        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+          .studyingOption,
+    },
+    {
+      value: SelfAssessmentCurrentEmploymentStatus.JOB_SEARCH_REGISTERED,
+      label:
+        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+          .jobSearchRegisteredOption,
+    },
+    {
+      value: SelfAssessmentCurrentEmploymentStatus.JOB_SEARCH_NOT_REGISTERED,
+      label:
+        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+          .jobSearchNotRegisteredOption,
+    },
+    {
+      value: SelfAssessmentCurrentEmploymentStatus.VOLOUNTEER_OR_TEST_WORK,
+      label:
+        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+          .volunteerOrTestWorkOption,
+    },
+    {
+      value: SelfAssessmentCurrentEmploymentStatus.NO_PARTICIPATION,
+      label:
+        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+          .noParticipationOption,
+    },
+    {
+      value: SelfAssessmentCurrentEmploymentStatus.OTHER,
+      label:
+        medicalAndRehabilitationPaymentsFormMessage.selfAssessment.otherOption,
+    },
+  ]
+  return options
+}
+
+// Returns an array of year options from current year to 30 years in the past
+export const getSelfAssessmentLastEmploymentYearOptions = () => {
+  const currentYear = new Date().getFullYear()
+
+  return Array.from({ length: 31 }, (_, index) => {
+    const year = currentYear - index
+    return {
+      value: year.toString(),
+      label: year.toString(),
+    }
+  })
 }

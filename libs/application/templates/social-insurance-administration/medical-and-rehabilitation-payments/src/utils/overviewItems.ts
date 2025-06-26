@@ -20,10 +20,14 @@ import parseISO from 'date-fns/parseISO'
 import { format as formatKennitala } from 'kennitala'
 import { formatNumber } from 'libphonenumber-js'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../lib/messages'
-import { NOT_APPLICABLE } from './constants'
+import {
+  NOT_APPLICABLE,
+  SelfAssessmentCurrentEmploymentStatus,
+} from './constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
+  getSelfAssessmentCurrentEmploymentStatusOptions,
   getSickPayEndDateLabel,
   getYesNoNotApplicableTranslation,
 } from './medicalAndRehabilitationPaymentsUtils'
@@ -359,6 +363,76 @@ export const selfAssessmentQuestionsOneItems = (
           .highestlevelOfEducationDescription,
       valueText: highestLevelOfEducation,
     },
+  ]
+}
+
+export const selfAssessmentQuestionsTwoItems = (
+  answers: FormValue,
+): Array<KeyValueItem> => {
+  const {
+    currentEmploymentStatus,
+    currentEmploymentStatusAdditional,
+    lastEmploymentTitle,
+    lastEmploymentYear,
+  } = getApplicationAnswers(answers)
+
+  const currentEmploymentStatusOptions =
+    getSelfAssessmentCurrentEmploymentStatusOptions()
+
+  const statuses = currentEmploymentStatus.map((status) => {
+    return currentEmploymentStatusOptions.find(
+      (option) => option.value === status,
+    )?.label
+  })
+
+  const baseItems: Array<KeyValueItem> = [
+    {
+      width: 'full',
+      keyText:
+        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+          .currentEmploymentStatusTitle,
+      valueText: statuses,
+    },
+  ]
+
+  const previousRehabilitationOrTreatmentItems: Array<KeyValueItem> =
+    currentEmploymentStatus?.includes(
+      SelfAssessmentCurrentEmploymentStatus.OTHER,
+    )
+      ? [
+          {
+            width: 'full',
+            keyText:
+              medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+                .furtherExplanation,
+            valueText: currentEmploymentStatusAdditional,
+          },
+        ]
+      : []
+
+  const baseItems2: Array<KeyValueItem> = [
+    {
+      width: 'half',
+      keyText:
+        medicalAndRehabilitationPaymentsFormMessage.overview
+          .selfAssessmentLastEmploymentTitle,
+      valueText: lastEmploymentTitle,
+      hideIfEmpty: true,
+    },
+    {
+      width: 'half',
+      keyText:
+        medicalAndRehabilitationPaymentsFormMessage.overview
+          .selfAssessmentLastEmploymentYear,
+      valueText: lastEmploymentYear,
+      hideIfEmpty: true,
+    },
+  ]
+
+  return [
+    ...baseItems,
+    ...previousRehabilitationOrTreatmentItems,
+    ...baseItems2,
   ]
 }
 
