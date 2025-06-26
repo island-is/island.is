@@ -29,7 +29,7 @@ describe('AppService - Run', () => {
     mockNow.mockClear()
     mockFetch.mockClear()
 
-    mockNow.mockReturnValue(new Date('2020-01-01T00:01:00.000Z'))
+    mockNow.mockReturnValue(new Date('2020-01-01T02:01:00.000Z'))
 
     givenWhenThen = async (): Promise<Then> => {
       const { logger, messageService, appService } =
@@ -50,7 +50,8 @@ describe('AppService - Run', () => {
     }
   })
 
-  describe('run', () => {
+  // At 2:00 AM tests
+  describe('Jobs at 2:00 AM: Run service', () => {
     beforeEach(async () => {
       mockFetch
         .mockResolvedValue({
@@ -69,13 +70,10 @@ describe('AppService - Run', () => {
       await givenWhenThen()
     })
 
-    it('should continue until done', () => {
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
-        {
-          type: 'NOTIFICATION_DISPATCH',
-          body: { type: 'INDICTMENTS_WAITING_FOR_CONFIRMATION' },
-        },
-      ])
+    it('should archive cases until done and call post hearing arrangements', () => {
+      // in given test setting we call:
+      // fetch for archive cases 3x
+      // fetch for post daily hearing 1x
       expect(fetch).toHaveBeenCalledTimes(4)
       expect(fetch).toHaveBeenCalledWith(
         `${appModuleConfig().backendUrl}/api/internal/cases/archive`,
@@ -97,17 +95,20 @@ describe('AppService - Run', () => {
             'Content-Type': 'application/json',
             authorization: `Bearer ${appModuleConfig().backendAccessToken}`,
           },
-          body: JSON.stringify({ date: new Date('2020-01-01T00:01:00.000Z') }),
+          body: JSON.stringify({ date: new Date('2020-01-01T02:01:00.000Z') }),
         },
       )
     })
   })
 
-  describe('continue until time is up', () => {
+  describe('Jobs at 2:00 AM: Continue archiving cases until time is up', () => {
     beforeEach(async () => {
       mockNow
-        .mockReturnValueOnce(new Date('2020-01-01T00:00:00.000Z'))
-        .mockReturnValueOnce(new Date('2020-01-01T00:00:00.000Z'))
+        .mockReturnValueOnce(new Date('2020-01-01T02:00:00.000Z')) // time set when finding relevant job schedule type
+        .mockReturnValueOnce(new Date('2020-01-01T02:00:00.000Z')) // time set when archive cases starts
+        .mockReturnValueOnce(new Date('2020-01-01T02:00:00.000Z')) // time set after one iteration of archive cases
+      // default date above defined earlier us used when return value once is not specified for future now() calls
+
       mockFetch.mockResolvedValue({
         ok: true,
         json: () => Promise.resolve({ caseArchived: true }),
@@ -116,7 +117,7 @@ describe('AppService - Run', () => {
       await givenWhenThen()
     })
 
-    it('should attempt archiving twice', () => {
+    it('should attempt archiving twice and post hearing assignment once', () => {
       expect(fetch).toHaveBeenNthCalledWith(
         1,
         `${appModuleConfig().backendUrl}/api/internal/cases/archive`,
@@ -127,10 +128,17 @@ describe('AppService - Run', () => {
         `${appModuleConfig().backendUrl}/api/internal/cases/archive`,
         expect.any(Object),
       )
+      expect(fetch).toHaveBeenNthCalledWith(
+        3,
+        `${
+          appModuleConfig().backendUrl
+        }/api/internal/cases/postHearingArrangements`,
+        expect.any(Object),
+      )
     })
   })
 
-  describe('remote call not ok', () => {
+  describe('Jobs at 2:00 AM: Remote call not ok', () => {
     beforeEach(async () => {
       mockFetch.mockResolvedValueOnce({
         ok: false,
@@ -147,7 +155,7 @@ describe('AppService - Run', () => {
     })
   })
 
-  describe('remote call fails', () => {
+  describe('Jobs at 2:00 AM: Remote call fails', () => {
     const error = new Error('Some error')
 
     beforeEach(async () => {
@@ -160,6 +168,25 @@ describe('AppService - Run', () => {
       expect(mockLogger.error).toHaveBeenCalledWith('Failed to archive cases', {
         reason: error,
       })
+    })
+  })
+
+  // At 9:00 AM tests
+  describe('Jobs at 9:00 AM: Run service', () => {
+    beforeEach(async () => {
+      // change the default value to 9:00
+      mockNow.mockReturnValue(new Date('2020-01-01T09:01:00.000Z'))
+
+      await givenWhenThen()
+    })
+
+    it('should send waiting for confirmation notification to the message queue', () => {
+      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
+        {
+          type: 'NOTIFICATION_DISPATCH',
+          body: { type: 'INDICTMENTS_WAITING_FOR_CONFIRMATION' },
+        },
+      ])
     })
   })
 })
