@@ -54,13 +54,6 @@ globalStyle(`${wrapper} .island-select__multi-value`, {
 })
 
 globalStyle(
-  `${wrapper} .island-select__value-container.island-select__value-container--has-value`,
-  {
-    maxWidth: '100%',
-  },
-)
-
-globalStyle(
   `${wrapper} .island-select__value-container--is-multi.island-select__value-container--has-value .island-select__input-container`,
   {
     width: 'auto',
