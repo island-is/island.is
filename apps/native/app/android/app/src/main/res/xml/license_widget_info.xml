@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
     android:description="@string/license_widget_description"
-    android:initialKeyguardLayout="@layout/license_widget_small"
+    android:initialKeyguardLayout="@layout/license_widget_medium"
     android:initialLayout="@layout/license_widget_medium"
     android:minWidth="110dp"
     android:minHeight="40dp"
