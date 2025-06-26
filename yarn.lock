@@ -40174,7 +40174,7 @@ __metadata:
     react-dom: "npm:18.3.1"
     react-dropzone: "npm:11.7.1"
     react-focus-lock: "npm:2.9.4"
-    react-hook-form: "npm:7.57.0"
+    react-hook-form: "npm:7.43.3"
     react-html-parser: "npm:2.0.2"
     react-infinite-scroller: "npm:^1.2.6"
     react-input-mask: "npm:3.0.0-alpha.2"
@@ -50536,12 +50536,12 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-hook-form@npm:7.57.0":
-  version: 7.57.0
-  resolution: "react-hook-form@npm:7.57.0"
+"react-hook-form@npm:7.43.3":
+  version: 7.43.3
+  resolution: "react-hook-form@npm:7.43.3"
   peerDependencies:
-    react: ^16.8.0 || ^17 || ^18 || ^19
-  checksum: 10/f3f5029dff03613e8070405f3c6fcec64c9d81c0264db066fdd88e888fc3dd186824e38c2168e6d9e56d5067445e4f699155bbf02f6efbeaba8383c6179173e0
+    react: ^16.8.0 || ^17 || ^18
+  checksum: 10/df766b8b8b5f298e773d517c232fe6717dcb6451337fbdf388af08b9a4aa451d7783bb92872e10c1debe7011dd930411126e378b03fed445e357aa7932535bce
   languageName: node
   linkType: hard
 
