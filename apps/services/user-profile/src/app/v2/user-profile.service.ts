@@ -200,7 +200,9 @@ export class UserProfileService {
         const { confirmed, message, remainingAttempts } =
           await this.verificationService.confirmEmail(
             {
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               email: userProfile.email!,
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               hash: userProfile.emailVerificationCode!,
             },
             ...commonArgs,
@@ -222,7 +224,9 @@ export class UserProfileService {
         const { confirmed, message, remainingAttempts } =
           await this.verificationService.confirmSms(
             {
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               mobilePhoneNumber: userProfile.mobilePhoneNumber!,
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               code: userProfile.mobilePhoneNumberVerificationCode!,
             },
             ...commonArgs,
@@ -1065,6 +1069,7 @@ export class UserProfileService {
             await this.verificationService.confirmEmail(
               {
                 email,
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 hash: emailVerificationCode!,
               },
               toNationalId,
