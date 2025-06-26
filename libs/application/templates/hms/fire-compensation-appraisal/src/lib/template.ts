@@ -26,6 +26,8 @@ import * as m from '../lib/messages'
 import { TemplateApiActions } from '../types'
 import { getChargeItems } from '../utils/paymentUtils'
 import { Features } from '@island.is/feature-flags'
+import { ApiScope } from '@island.is/auth/scopes'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -41,6 +43,18 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.FireCompensationAppraisal.translation,
   ],
   dataSchema,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.GeneralMandate,
+    },
+    {
+      type: AuthDelegationType.ProcurationHolder,
+    },
+    {
+      type: AuthDelegationType.Custom,
+    },
+  ],
+  requiredScopes: [ApiScope.hms],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {

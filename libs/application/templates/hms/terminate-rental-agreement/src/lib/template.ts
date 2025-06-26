@@ -24,6 +24,8 @@ import { NationalRegistryApi, rentalAgreementsApi } from '../dataProviders'
 import { Events, Roles, States, TemplateApiActions } from '../types'
 import { Contract } from '@island.is/clients/hms-rental-agreement'
 import { Features } from '@island.is/feature-flags'
+import { AuthDelegationType } from '@island.is/shared/types'
+import { ApiScope } from '@island.is/auth/scopes'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -39,6 +41,18 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.TerminateRentalAgreement.translation,
   ],
   dataSchema,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.GeneralMandate,
+    },
+    {
+      type: AuthDelegationType.ProcurationHolder,
+    },
+    {
+      type: AuthDelegationType.Custom,
+    },
+  ],
+  requiredScopes: [ApiScope.hms],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
