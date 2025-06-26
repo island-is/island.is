@@ -133,8 +133,7 @@ jobs:
   e2e:
     needs:
       - prepare
-    # E2E tests are required for unicorns, but run on-demand (label) for others
-    if: ${{ needs.prepare.outputs.E2E_CHUNKS }}
+    if: ${{ needs.prepare.outputs.E2E_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
     runs-on: arc-shared
     timeout-minutes: 45
     env:

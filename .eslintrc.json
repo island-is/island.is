@@ -341,12 +341,6 @@
       "rules": {
         "@typescript-eslint/no-explicit-any": "off"
       }
-    },
-    {
-      "files": ["apps/*/migrations/*.js"],
-      "rules": {
-        "@typescript-eslint/no-unused-vars": "off"
-      }
     }
   ],
   "extends": ["plugin:storybook/recommended"]
