@@ -70,7 +70,8 @@ export const incrementWithScreens = (
   const maxScreenIndex = screens.length - 1
   const [submitScreen] = submitScreenMutation
   const errors = state.errors ?? []
-  if (errors.length > 0) {
+  const isValid = state.isValid ?? true
+  if (errors.length > 0 && isValid) {
     return {
       ...state,
       errors,

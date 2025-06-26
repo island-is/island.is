@@ -52,7 +52,6 @@ export const Field = ({ field }: Props) => {
 
 const handleErrorChange = useCallback(
   ( fieldId: string, hasError: boolean) => {
-    console.log('Field error change for fieldId:', fieldId)
     if (dispatch) {
       dispatch({
         type: 'SET_FIELD_ERROR',

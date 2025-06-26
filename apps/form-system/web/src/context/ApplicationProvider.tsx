@@ -50,7 +50,7 @@ export const ApplicationProvider: React.FC<{
   return (
     <ApplicationContext.Provider value={contextValue}>
       <FormProvider {...methods} >
-      <Form />
+      {state.application && <Form />}
       </FormProvider>
     </ApplicationContext.Provider>
   )

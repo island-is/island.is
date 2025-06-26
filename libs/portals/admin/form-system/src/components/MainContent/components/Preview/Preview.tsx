@@ -18,6 +18,7 @@ import {
 } from '@island.is/form-system/ui'
 import { FieldTypesEnum } from '@island.is/form-system/enums'
 import { useIntl } from 'react-intl'
+import { useForm, FormProvider } from 'react-hook-form'
 
 interface Props {
   data: FormSystemField
@@ -25,8 +26,10 @@ interface Props {
 
 export const Preview = ({ data }: Props) => {
   const type = data.fieldType
+  const methods = useForm()
   const { formatMessage } = useIntl()
   return (
+<FormProvider {...methods}>
     <Box padding={2} background="blue100">
       {type === FieldTypesEnum.MESSAGE && <MessageWithLink item={data} />}
       {type === FieldTypesEnum.BANK_ACCOUNT && (
@@ -61,5 +64,6 @@ export const Preview = ({ data }: Props) => {
         <PropertyNumber item={data} />
       )}
     </Box>
+    </FormProvider>
   )
 }

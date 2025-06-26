@@ -72,7 +72,10 @@ export const Banknumber = ({
             name="bank"
             control={control}
             rules={{
-              required: item?.isRequired ?? false,
+              required: {
+                value: item.isRequired ?? false,
+                message: 'Þessi reitur má ekki vera tómur',
+              },
               validate: (value) =>
                 String(value).length <= 4 || 'Maximum 4 digits allowed',
             }}
@@ -112,7 +115,10 @@ export const Banknumber = ({
             name="ledger"
             control={control}
             rules={{
-              required: item?.isRequired ?? false,
+              required: {
+                value: item.isRequired ?? false,
+                message: 'Þessi reitur má ekki vera tómur',
+              },
               validate: (value) =>
                 String(value).length <= 2 || 'Maximum 2 digits allowed',
             }}
@@ -152,7 +158,10 @@ export const Banknumber = ({
             name="account"
             control={control}
             rules={{
-              required: item?.isRequired ?? false,
+              required: {
+                value: item.isRequired ?? false,
+                message: 'Þessi reitur má ekki vera tómur',
+              },
               validate: (value) =>
                 String(value).length <= 6 || 'Maximum 6 digits allowed',
             }}

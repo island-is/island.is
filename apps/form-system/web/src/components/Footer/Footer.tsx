@@ -5,6 +5,7 @@ import { useIntl } from 'react-intl'
 import { webMessages } from '@island.is/form-system/ui'
 import { SAVE_SCREEN } from '@island.is/form-system/graphql'
 import { useMutation } from '@apollo/client'
+import { useFormContext } from 'react-hook-form'
 
 interface Props {
   externalDataAgreement: boolean
@@ -13,7 +14,10 @@ interface Props {
 export const Footer = ({ externalDataAgreement }: Props) => {
   const { state, dispatch } = useApplicationContext()
   const { formatMessage } = useIntl()
-
+  const { trigger } = useFormContext();
+  const validate = async () => {
+    return await trigger();
+  }
   const continueButtonText =
     state.currentSection.index === 0
       ? formatMessage(webMessages.externalDataConfirmation)
@@ -24,14 +28,16 @@ export const Footer = ({ externalDataAgreement }: Props) => {
       : state.currentSection.index !== state.sections.length - 1
 
   const submitScreen = useMutation(SAVE_SCREEN)
-
-  const handleIncrement = () =>
+  const handleIncrement = async () =>{
+    const isValid = await validate()
+    if (!isValid) return
     dispatch({
       type: 'INCREMENT',
       payload: {
         submitScreen,
       },
     })
+  }
   const handleDecrement = () => dispatch({ type: 'DECREMENT' })
 
   return (
@@ -52,7 +58,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
             <Button
               icon="arrowForward"
               onClick={handleIncrement}
-              disabled={!enableContinueButton}
+              disabled={!enableContinueButton && !validate().then((isValid) => isValid)}
             >
               {continueButtonText}
             </Button>

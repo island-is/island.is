@@ -14,7 +14,7 @@ interface Props {
   lang: 'is' | 'en'
 }
 
-export const DatePicker = ({ item, dispatch, lang }: Props) => {
+export const DatePicker = ({ item, dispatch, lang = 'is' }: Props) => {
   const { formatMessage } = useIntl()
   const { control } = useFormContext()
 

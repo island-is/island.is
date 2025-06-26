@@ -32,8 +32,8 @@ export const CurrencyField = ({ item, dispatch, onErrorChange }: Props) => {
               message: 'Þessi reitur má ekki vera tómur',
             },
             pattern: {
-              value: /^\d{1,15}$/,
-              message: 'Aðeins tölur eru leyfðar',
+              value: /^[\d.]{1,19}$/,
+              message: 'Aðeins tölur og punktar eru leyfðir',
             },
           }}
           render={({ field, fieldState }) => (

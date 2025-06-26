@@ -23,7 +23,7 @@ export const TextInput = ({ item, dispatch, onErrorChange }: Props) => {
       rules={{
         required: {
           value: item.isRequired ?? false,
-          message: 'Þessi reitur má ekki vera tómur', // "This field cannot be empty"
+          message: 'Þessi reitur má ekki vera tómur',
         },
       }}
       render={({ field, fieldState }) => (
