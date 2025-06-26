@@ -11,6 +11,10 @@ import { employmentSearch as employmentSearchMessages } from '../../../lib/messa
 import { Application } from '@island.is/application/types'
 import { GaldurDomainModelsEducationItem } from '@island.is/clients/vmst-unemployment'
 import { formatDate } from '../../../utils'
+import {
+  isCurrentlyStudying,
+  wasStudyingLastTwelveMonths,
+} from '../../../utils/educationInformation'
 
 export const educationHistorySubSection = buildSubSection({
   id: 'educationHistorySubSection',
@@ -24,6 +28,9 @@ export const educationHistorySubSection = buildSubSection({
           id: 'educationHistory.currentStudies.description',
           title: employmentSearchMessages.educationHistory.currentStudiesLabel,
           titleVariant: 'h5',
+          condition: (answers) =>
+            wasStudyingLastTwelveMonths(answers) &&
+            isCurrentlyStudying(answers),
         }),
         buildTextField({
           id: 'educationHistory.currentStudies.programName',
@@ -42,15 +49,12 @@ export const educationHistorySubSection = buildSubSection({
                 application.externalData,
                 'unemploymentApplication.data.supportData.education',
               ) ?? []
-            console.log(programId, education)
             const program = education.find((item) => item.id === programId)
-            console.log(program)
             return program?.name ?? ''
           },
-          condition: (_answers, _externalData) => {
-            // TODO: Get info from externalData if available
-            return true
-          },
+          condition: (answers) =>
+            wasStudyingLastTwelveMonths(answers) &&
+            isCurrentlyStudying(answers),
         }),
         buildTextField({
           id: 'educationHistory.currentStudies.programUnits',
@@ -66,10 +70,9 @@ export const educationHistorySubSection = buildSubSection({
               ) ?? ''
             return units
           },
-          condition: (_answers, _externalData) => {
-            // TODO: Get info from externalData if available
-            return true
-          },
+          condition: (answers) =>
+            wasStudyingLastTwelveMonths(answers) &&
+            isCurrentlyStudying(answers),
         }),
         buildTextField({
           id: 'educationHistory.currentStudies.programDegree',
@@ -85,10 +88,9 @@ export const educationHistorySubSection = buildSubSection({
               ) ?? ''
             return degree
           },
-          condition: (_answers, _externalData) => {
-            // TODO: Get info from externalData if available
-            return true
-          },
+          condition: (answers) =>
+            wasStudyingLastTwelveMonths(answers) &&
+            isCurrentlyStudying(answers),
         }),
         buildTextField({
           id: 'educationHistory.currentStudies.programEnd',
@@ -105,20 +107,22 @@ export const educationHistorySubSection = buildSubSection({
               ) ?? ''
             return formatDate(expectedEndOfStudy)
           },
-          condition: (_answers, _externalData) => {
-            // TODO: Get info from externalData if available
-            return true
-          },
+          condition: (answers) =>
+            wasStudyingLastTwelveMonths(answers) &&
+            isCurrentlyStudying(answers),
         }),
         buildFieldsRepeaterField({
           id: 'educationHistory.educationHistory',
-          formTitle: (index, _application) => {
-            // TODO: Get info from externalData about currentStudies
+          formTitle: (index, application) => {
             return {
               ...employmentSearchMessages.educationHistory
                 .educationHistoryTitle,
               values: {
-                value: index + 2, // TODO: If no current studies then do + 1
+                value:
+                  wasStudyingLastTwelveMonths(application.answers) &&
+                  isCurrentlyStudying(application.answers)
+                    ? index + 2
+                    : index + 1,
               },
             }
           },
