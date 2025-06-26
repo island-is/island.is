@@ -79,7 +79,7 @@ export const SubmitUrls = ({ submitUrls }: SubmitUrlsProps) => {
           variant="utility"
           onClick={() => createSubmitUrl(false, UrlMethods.SEND_NUDGE)}
         >
-          + Raunslóð
+          {formatMessage(m.addProdUrl)}
         </Button>
         <Box marginTop={2}>
           <ToggleSwitchButton
@@ -91,18 +91,19 @@ export const SubmitUrls = ({ submitUrls }: SubmitUrlsProps) => {
               if (checked) {
                 createSubmitUrl(false, UrlMethods.SEND_TO_ZENDESK)
               } else {
-                handleDelete(
-                  submitUrls.find(
-                    (url) =>
-                      url.method === UrlMethods.SEND_TO_ZENDESK && !url.isTest,
-                  )?.id ?? '',
+                const zendeskUrl = submitUrls.find(
+                  (url) =>
+                    url.method === UrlMethods.SEND_TO_ZENDESK && !url.isTest,
                 )
+                if (zendeskUrl?.id) {
+                  handleDelete(zendeskUrl.id)
+                }
               }
             }}
           />
         </Box>
       </Box>
-      <TableHeader text="Raunslóð" />
+      <TableHeader text={formatMessage(m.prodUrl)} />
       {submitUrls &&
         submitUrls
           .filter((url) => !url.isTest)
@@ -127,7 +128,7 @@ export const SubmitUrls = ({ submitUrls }: SubmitUrlsProps) => {
           variant="utility"
           onClick={() => createSubmitUrl(true, UrlMethods.SEND_NUDGE)}
         >
-          + Prófunarslóð
+          {formatMessage(m.addDevUrl)}
         </Button>
         <Box marginTop={2}>
           <ToggleSwitchButton
@@ -139,18 +140,19 @@ export const SubmitUrls = ({ submitUrls }: SubmitUrlsProps) => {
               if (checked) {
                 createSubmitUrl(true, UrlMethods.SEND_TO_ZENDESK)
               } else {
-                handleDelete(
-                  submitUrls.find(
-                    (url) =>
-                      url.method === UrlMethods.SEND_TO_ZENDESK && url.isTest,
-                  )?.id ?? '',
+                const zendeskUrl = submitUrls.find(
+                  (url) =>
+                    url.method === UrlMethods.SEND_TO_ZENDESK && url.isTest,
                 )
+                if (zendeskUrl?.id) {
+                  handleDelete(zendeskUrl.id)
+                }
               }
             }}
           />
         </Box>
       </Box>
-      <TableHeader text="Prófunarslóð" />
+      <TableHeader text={formatMessage(m.devUrl)} />
       {submitUrls &&
         submitUrls
           .filter((url) => url.isTest)

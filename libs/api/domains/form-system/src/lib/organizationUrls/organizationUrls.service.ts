@@ -41,7 +41,6 @@ export class OrganizationUrlsService {
     auth: User,
     input: CreateOrganizationUrlInput,
   ): Promise<OrganizationUrl> {
-    console.log('Creating organization URL with input:', input)
     const response = await this.organizationUrlsApiWithAuth(
       auth,
     ).organizationUrlsControllerCreate({
@@ -54,21 +53,29 @@ export class OrganizationUrlsService {
     auth: User,
     input: DeleteOrganizationUrlInput,
   ): Promise<void> {
-    await this.organizationUrlsApiWithAuth(
-      auth,
-    ).organizationUrlsControllerDelete(
-      input as OrganizationUrlsControllerDeleteRequest,
-    )
+    try {
+      await this.organizationUrlsApiWithAuth(
+        auth,
+      ).organizationUrlsControllerDelete(
+        input as OrganizationUrlsControllerDeleteRequest,
+      )
+    } catch (error) {
+      this.handleError(error, 'Failed to delete organization URL')
+    }
   }
 
   async updateOrganizationUrl(
     auth: User,
     input: UpdateOrganizationUrlInput,
   ): Promise<void> {
-    await this.organizationUrlsApiWithAuth(
-      auth,
-    ).organizationUrlsControllerUpdate(
-      input as unknown as OrganizationUrlsControllerUpdateRequest,
-    )
+    try {
+      await this.organizationUrlsApiWithAuth(
+        auth,
+      ).organizationUrlsControllerUpdate(
+        input as OrganizationUrlsControllerUpdateRequest,
+      )
+    } catch (error) {
+      this.handleError(error, 'Failed to update organization URL')
+    }
   }
 }

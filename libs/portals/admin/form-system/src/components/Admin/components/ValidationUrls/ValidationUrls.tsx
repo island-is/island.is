@@ -7,24 +7,7 @@ export const ValidationUrls = () => {
   const { formatMessage } = useIntl()
   return (
     <>
-      <Box className={styles.header}>
-        <GridRow>
-          <GridColumn span="9/12">
-            <Box marginLeft={1}>
-              <Text variant="medium" fontWeight="semiBold">
-                Raunslóð
-              </Text>
-            </Box>
-          </GridColumn>
-          <GridColumn span="3/12">
-            <Box>
-              <Text variant="medium" fontWeight="semiBold">
-                Aðgerð
-              </Text>
-            </Box>
-          </GridColumn>
-        </GridRow>
-      </Box>
+      <Text>{formatMessage(m.prodUrl)}</Text>
     </>
   )
 }
