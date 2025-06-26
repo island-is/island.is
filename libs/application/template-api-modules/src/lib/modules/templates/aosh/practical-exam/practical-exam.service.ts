@@ -29,11 +29,18 @@ import {
   externalData,
   shared,
 } from '@island.is/application/templates/aosh/practical-exam'
+import { S3Service } from '@island.is/nest/aws'
+import { sharedModuleConfig } from '../../../shared'
+import { ConfigType } from '@nestjs/config'
+
 @Injectable()
 export class PracticalExamTemplateService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly practicalExamClientService: PracticalExamsClientService,
+    private readonly s3Service: S3Service,
+    @Inject(sharedModuleConfig.KEY)
+    private config: ConfigType<typeof sharedModuleConfig>,
   ) {
     super(ApplicationTypes.PRACTICAL_EXAM)
   }
@@ -145,6 +152,25 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
     )
     const examineesRequest = mapExaminees(examinees, examCategories)
 
+    const examineesRequestWithCertificateUrl = await Promise.all(
+      examineesRequest.map(async (examinee) => {
+        if (examinee.medicalCertificate?.content) {
+          const fileUrl = await this.getUrlForAttachment(
+            examinee.medicalCertificate.content,
+            application.id,
+          )
+          return {
+            ...examinee,
+            medicalCertificate: {
+              ...examinee.medicalCertificate,
+              content: fileUrl,
+            },
+          }
+        }
+        return examinee // Return as-is if there's no content
+      }),
+    )
+
     const payload = {
       xCorrelationID: application.id,
       workMachineExamRegistrationCreateDto: {
@@ -152,7 +178,7 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
           address: examAddress,
           postalCode: examPostalCode,
         },
-        examees: examineesRequest,
+        examees: examineesRequestWithCertificateUrl,
         instructors: instructorsRequest,
         paymentInfo: paymentInfoRequest,
         contact: {
@@ -172,7 +198,32 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
     } catch (e) {
       this.logger.warn(
         '[practical-exams-service]: Error registering practical exams',
+        e,
       )
+      throw new TemplateApiError(
+        {
+          summary: shared.application.submissionError,
+          title: shared.application.submissionErrorTitle,
+        },
+        400,
+      )
+    }
+  }
+
+  private async getUrlForAttachment(
+    attachment: string,
+    applicationId: string,
+  ): Promise<string> {
+    try {
+      const url = await this.s3Service.getPresignedUrl(
+        {
+          bucket: this.config.templateApi.attachmentBucket,
+          key: `${applicationId}/${attachment}`,
+        },
+        300000,
+      )
+      return url
+    } catch (e) {
       throw new TemplateApiError(
         {
           summary: shared.application.submissionError,

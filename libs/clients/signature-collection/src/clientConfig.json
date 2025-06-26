@@ -1,5 +1,5 @@
 {
-  "openapi": "3.0.1",
+  "openapi": "3.0.4",
   "info": { "title": "MedmaeliRestAPI", "version": "1.0" },
   "paths": {
     "/Admin/Frambod": {
@@ -90,6 +90,42 @@
         }
       }
     },
+    "/Admin/Kosning/{ID}/SveitSofnun": {
+      "post": {
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "sveitarfelagID",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MedmaelasofnunDTO" }
+              }
+            }
+          },
+          "204": { "description": "No Content" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
     "/Admin/Listabokstafur": {
       "post": {
         "tags": ["Admin"],
@@ -98,7 +134,7 @@
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/CreateListabokstafurDTO"
+                "$ref": "#/components/schemas/CreateListabokstafurRequestDTO"
               }
             }
           }
@@ -121,6 +157,46 @@
             }
           }
         }
+      }
+    },
+    "/Admin/SveitarfelagInfo": {
+      "get": {
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "name": "sveitarfelagID",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          { "name": "kennitala", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SveitInfoDTO" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      },
+      "put": {
+        "tags": ["Admin"],
+        "requestBody": {
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/SveitInfoRequestDTO" }
+            }
+          }
+        },
+        "responses": { "200": { "description": "OK" } }
       }
     },
     "/Admin/Medmaelalisti": {
@@ -224,7 +300,7 @@
       "patch": {
         "tags": ["Admin"],
         "summary": "Merkir að úrvinnslu sé lokið á ákveðnum meðmælalista.",
-        "description": "Merkir að úrvinnslu sé lokið á ákveðnum meðmælalista þ.e. að lista hafi verið skilað inn og öll skrifleg meðmæli lesin inn.\r\nHægt að opna aftur fyrir úrvinnslu.",
+        "description": "Merkir að úrvinnslu sé lokið á ákveðnum meðmælalista þ.e. að lista hafi verið skilað inn og öll skrifleg meðmæli lesin inn.\nHægt að opna aftur fyrir úrvinnslu.",
         "parameters": [
           {
             "name": "ID",
@@ -537,7 +613,7 @@
       "patch": {
         "tags": ["Admin"],
         "summary": "Merkir að allri úrvinnslu fyrri fasa meðmælasöfnunar sé lokið.",
-        "description": "Merkir að allri úrvinnslu fyrri fasa meðmælasöfnunar sé lokið.\r\nEkki hægt að framkvæma nema ef allir meðmælalistar söfnunarinnar hafi verið merktir úrvinnslu lokið.\r\nEftir að aðgerð hefur verið framkvæmd opnast fyrir framlengingarfasa.\r\nEinkvæm aðgerð.",
+        "description": "Merkir að allri úrvinnslu fyrri fasa meðmælasöfnunar sé lokið.\nEkki hægt að framkvæma nema ef allir meðmælalistar söfnunarinnar hafi verið merktir úrvinnslu lokið.\nEftir að aðgerð hefur verið framkvæmd opnast fyrir framlengingarfasa.\nEinkvæm aðgerð.",
         "parameters": [
           {
             "name": "ID",
@@ -1766,7 +1842,7 @@
   },
   "components": {
     "schemas": {
-      "CreateListabokstafurDTO": {
+      "CreateListabokstafurRequestDTO": {
         "required": [
           "frambodNafn",
           "kennitala",
@@ -2223,6 +2299,27 @@
             "type": "array",
             "items": { "$ref": "#/components/schemas/MedmaelalistiExtendedDTO" }
           }
+        },
+        "additionalProperties": false
+      },
+      "SveitInfoDTO": {
+        "required": ["sveitarfelagID"],
+        "type": "object",
+        "properties": {
+          "sveitarfelagID": { "type": "integer", "format": "int32" },
+          "kennitala": { "type": "string" },
+          "postfang": { "type": "string", "nullable": true },
+          "sveitarfelagNafn": { "type": "string" }
+        },
+        "additionalProperties": false
+      },
+      "SveitInfoRequestDTO": {
+        "required": ["sveitarfelagID"],
+        "type": "object",
+        "properties": {
+          "sveitarfelagID": { "type": "integer", "format": "int32" },
+          "kennitala": { "type": "string" },
+          "postfang": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },

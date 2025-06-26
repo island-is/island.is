@@ -1,11 +1,21 @@
+import { AdminPortalScope } from '@island.is/auth/scopes'
 import {
   UploadFileDeprecated,
   fileToObjectDeprecated,
 } from '@island.is/island-ui/core'
 import { uuid } from 'uuidv4'
 import XLSX from 'xlsx'
+import { SignatureCollectionList } from '@island.is/api/schema'
+import { m } from '../lib/messages'
+import { TagVariant } from '@island.is/island-ui/core'
 
 export const pageSize = 10
+
+export const allowedScopes: string[] = [
+  AdminPortalScope.signatureCollectionManage,
+  AdminPortalScope.signatureCollectionProcess,
+  AdminPortalScope.signatureCollectionMunicipality,
+]
 
 export const countryAreas = [
   { value: 'Sunnlendingafjórðungur', label: 'Sunnlendingafjórðungur' },
@@ -105,4 +115,31 @@ export const getFileData = async (newFile: File[]) => {
   }
 
   return data
+}
+
+export const getTagConfig = (list: SignatureCollectionList) => {
+  // Lista læst
+  if (!list.active && !list.reviewed) {
+    return {
+      label: m.listLocked.defaultMessage,
+      variant: 'blueberry' as TagVariant,
+      outlined: false,
+    }
+  }
+
+  // Úrvinnslu lokið
+  if (!list.active && list.reviewed) {
+    return {
+      label: m.confirmListReviewed.defaultMessage,
+      variant: 'mint' as TagVariant,
+      outlined: false,
+    }
+  }
+
+  // Söfnun í gangi
+  return {
+    label: m.listOpen.defaultMessage,
+    variant: 'blue' as TagVariant,
+    outlined: false,
+  }
 }

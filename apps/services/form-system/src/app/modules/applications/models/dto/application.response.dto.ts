@@ -7,6 +7,9 @@ export class ApplicationResponseDto {
   applications?: ApplicationDto[]
 
   @ApiPropertyOptional()
+  application?: ApplicationDto
+
+  @ApiPropertyOptional()
   total?: number
 
   @ApiPropertyOptional({ type: [Option] })

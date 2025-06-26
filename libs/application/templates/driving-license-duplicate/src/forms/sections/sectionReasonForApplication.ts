@@ -16,7 +16,7 @@ export const sectionReasonForApplication = buildSection({
       description: m.reasonDescription,
       children: [
         buildCheckboxField({
-          id: 'reason.confirmationCheckbox',
+          id: 'reasonCheckbox',
           defaultValue: [],
           options: [
             {

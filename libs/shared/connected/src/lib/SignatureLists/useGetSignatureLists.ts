@@ -8,7 +8,7 @@ import {
 import { Query } from '@island.is/api/schema'
 
 export const GetLatestCollectionForType = gql`
-  query currentCollection($input: SignatureCollectionCollectionTypeInput) {
+  query collectionLatestForType($input: SignatureCollectionBaseInput!) {
     signatureCollectionLatestForType(input: $input) {
       id
       endTime
@@ -60,7 +60,8 @@ export const useGetLatestCollectionForType = (
       },
     },
   })
-  const collection = data?.signatureCollectionLatestForType as SignatureCollection
+  const collection =
+    data?.signatureCollectionLatestForType as SignatureCollection
 
   return { collection, loading }
 }
@@ -72,7 +73,8 @@ export const useGetOpenLists = (collection: SignatureCollection) => {
     },
     skip: !collection || collection.isActive,
   })
-  const openLists = data?.signatureCollectionAllOpenLists as SignatureCollectionListBase[]
+  const openLists =
+    data?.signatureCollectionAllOpenLists as SignatureCollectionListBase[]
 
   return { openLists, openListsLoading }
 }

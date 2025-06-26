@@ -5,6 +5,7 @@ import {
   adminPortalScopes,
   applicationSystemScopes,
   servicePortalScopes,
+  formSystemScopes,
 } from '../../../libs/auth/scopes/src/index'
 
 const MINAR_SIDUR: PortalKeys = 'minarsidur'
@@ -21,6 +22,7 @@ export const getScopes = (key: PortalKeys) => {
       const combinedScopes = new Set([
         ...servicePortalScopes,
         ...applicationSystemScopes,
+        ...formSystemScopes,
       ])
 
       return [...combinedScopes]
@@ -58,7 +60,7 @@ export const bffConfig = ({
 
   const getRedirectUris = (baseUrl: string, key: PortalKeys) => [
     `${baseUrl}/${key}`,
-    ...(key === MINAR_SIDUR ? [`${baseUrl}/umsoknir`] : []),
+    ...(key === MINAR_SIDUR ? [`${baseUrl}/umsoknir`, `${baseUrl}/form`] : []),
   ]
 
   return {

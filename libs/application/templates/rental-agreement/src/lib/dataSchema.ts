@@ -1,13 +1,19 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { YesOrNoEnum } from '@island.is/application/core'
-import { RentalHousingConditionInspector } from '../utils/enums'
-import { landlordInfo } from './schemas/landlordSchema'
-import { tenantInfo } from './schemas/tenantSchema'
+import { PropertyUnit, RentalHousingCategoryClass } from '../shared'
+import { getRentalPropertySize } from '../utils/utils'
+import {
+  RentalHousingCategoryClassGroup,
+  RentalHousingCategoryTypes,
+  RentalHousingConditionInspector,
+} from '../utils/enums'
+import { tenantInfo, landlordInfo } from './schemas/landlordAndTenantSchema'
 import { registerProperty } from './schemas/propertySearchSchema'
 import { otherFees } from './schemas/otherFeesSchema'
 import { securityDeposit } from './schemas/securityDepositSchema'
 import { rentalAmount } from './schemas/rentalAmountSchema'
+
 import * as m from './messages'
 
 const approveExternalData = z.boolean().refine((v) => v)
@@ -84,6 +90,29 @@ const condition = z
     }
   })
 
+const propertyInfo = z
+  .object({
+    categoryType: z.nativeEnum(RentalHousingCategoryTypes),
+    categoryClass: z.nativeEnum(RentalHousingCategoryClass).optional(),
+    categoryClassGroup: z
+      .nativeEnum(RentalHousingCategoryClassGroup)
+      .optional()
+      .nullable(),
+  })
+  .superRefine((data, ctx) => {
+    if (
+      data.categoryClass === RentalHousingCategoryClass.SPECIAL_GROUPS &&
+      !data.categoryClassGroup
+    ) {
+      ctx.addIssue({
+        code: z.ZodIssueCode.custom,
+        message: 'Custom error message',
+        params: m.registerProperty.category.classGroupRequiredError,
+        path: ['categoryClassGroup'],
+      })
+    }
+  })
+
 const rentalPeriod = z
   .object({
     startDate: z
@@ -144,12 +173,21 @@ const fireProtections = z
     fireExtinguisher: z.string().optional(),
     emergencyExits: z.string().optional(),
     fireBlanket: z.string().optional(),
-    propertySize: z.string().optional(),
+    propertySize: z
+      .array(
+        z.object({
+          size: z.number().optional(),
+          changedSize: z.number().optional(),
+        }),
+      )
+      .optional(),
   })
   .superRefine((data, ctx) => {
-    const propertySizeString = data.propertySize?.replace(',', '.') || ''
+    const propertySize = getRentalPropertySize(
+      (data.propertySize as PropertyUnit[]) || [],
+    )
     const numberOfSmokeDetectors = Number(data.smokeDetectors)
-    const requiredSmokeDetectors = Math.ceil(Number(propertySizeString) / 80)
+    const requiredSmokeDetectors = Math.ceil(Number(propertySize) / 80)
     if (
       data.smokeDetectors &&
       numberOfSmokeDetectors < requiredSmokeDetectors
@@ -170,15 +208,6 @@ const fireProtections = z
         path: ['fireExtinguisher'],
       })
     }
-
-    if (data.emergencyExits && Number(data.emergencyExits) < 1) {
-      ctx.addIssue({
-        code: z.ZodIssueCode.custom,
-        message: 'Custom error message',
-        params: m.housingFireProtections.emergencyExitNullError,
-        path: ['emergencyExits'],
-      })
-    }
   })
 
 const preSignatureInfo = z.object({
@@ -196,6 +225,7 @@ export const dataSchema = z.object({
   landlordInfo,
   tenantInfo,
   registerProperty,
+  propertyInfo,
   rentalPeriod,
   rentalAmount,
   securityDeposit,

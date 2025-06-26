@@ -24,14 +24,9 @@ import { CreateApplicationDto } from './models/dto/createApplication.dto'
 import { UpdateApplicationDto } from './models/dto/updateApplication.dto'
 import { ApplicationResponseDto } from './models/dto/application.response.dto'
 import { ScreenValidationResponse } from '../../dataTypes/validationResponse.model'
-import {
-  CurrentUser,
-  IdsUserGuard,
-  User,
-} from '@island.is/auth-nest-tools'
+import { CurrentUser, IdsUserGuard, User } from '@island.is/auth-nest-tools'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
 import { SubmitScreenDto } from './models/dto/submitScreen.dto'
-
 
 @UseGuards(IdsUserGuard)
 @ApiTags('applications')
@@ -68,6 +63,29 @@ export class ApplicationsController {
       slug,
       createApplicationDto,
       user,
+    )
+  }
+
+  @ApiOperation({
+    summary: 'Get all unfinished applications of type slug belonging to user ',
+  })
+  @ApiOkResponse({
+    type: ApplicationResponseDto,
+    description:
+      'Get all unfinished applications of type slug belonging to user ',
+  })
+  @ApiParam({ name: 'slug', type: String })
+  @Get(':slug')
+  async findAllBySlugAndUser(
+    @Param('slug') slug: string,
+    @Query('isTest') isTest: boolean,
+    @CurrentUser()
+    user: User,
+  ): Promise<ApplicationResponseDto> {
+    return await this.applicationsService.findAllBySlugAndUser(
+      slug,
+      user,
+      isTest,
     )
   }
 
@@ -144,4 +162,19 @@ export class ApplicationsController {
   ): Promise<ScreenDto> {
     return await this.applicationsService.saveScreen(screenId, screenDto)
   }
+
+  // @ApiOperation({ summary: 'Get all applications by user and formId' })
+  // @ApiOkResponse({
+  //   type: ApplicationResponseDto,
+  //   description: 'Get all applications by user and formId',
+  // })
+  // @ApiParam({ name: 'formId', type: String })
+  // @Get('nationalId/:nationalId/formId/:formId')
+  // async findAllByUserAndFormId(
+  //   @Param('formId') formId: string,
+  //   @CurrentUser()
+  //   user: User,
+  // ): Promise<ApplicationResponseDto> {
+  //   return await this.applicationsService.findAllByUserAndFormId(user, formId)
+  // }
 }

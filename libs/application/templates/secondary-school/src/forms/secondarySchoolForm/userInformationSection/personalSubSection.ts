@@ -16,8 +16,8 @@ import { ApplicationType } from '../../../shared'
 import {
   checkIsActor,
   checkIsFreshman,
+  getSchoolsData,
   Routes,
-  SecondarySchool,
   Student,
 } from '../../../utils'
 import { Application, UserProfile } from '@island.is/application/types'
@@ -47,7 +47,7 @@ export const personalSubSection = buildSubSection({
           phoneCondition: (_1, _2, user) => {
             return checkIsActor(user)
           },
-          readOnly: true,
+          baseInfoReadOnly: true,
         }).children,
         buildTextField({
           id: 'applicant.email',
@@ -170,10 +170,9 @@ export const personalSubSection = buildSubSection({
         buildHiddenInput({
           id: 'applicationType.isOpenForAdmissionFreshman',
           condition: (_, externalData) => {
-            const schoolIsOpenForAdmission = getValueViaPath<SecondarySchool[]>(
-              externalData,
-              'schools.data',
-            )?.find((x) => x.isOpenForAdmissionFreshman)
+            const schoolIsOpenForAdmission = getSchoolsData(externalData)?.find(
+              (x) => x.isOpenForAdmissionFreshman,
+            )
             return !!schoolIsOpenForAdmission
           },
           defaultValue: true,
@@ -181,10 +180,9 @@ export const personalSubSection = buildSubSection({
         buildHiddenInput({
           id: 'applicationType.isOpenForAdmissionGeneral',
           condition: (_, externalData) => {
-            const schoolIsOpenForAdmission = getValueViaPath<SecondarySchool[]>(
-              externalData,
-              'schools.data',
-            )?.find((x) => x.isOpenForAdmissionGeneral)
+            const schoolIsOpenForAdmission = getSchoolsData(externalData)?.find(
+              (x) => x.isOpenForAdmissionGeneral,
+            )
             return !!schoolIsOpenForAdmission
           },
           defaultValue: true,

@@ -11,7 +11,6 @@ import { getValue } from '../../../lib/getValue'
 import { Action } from '../../../lib'
 import { useIntl } from 'react-intl'
 import { m } from '../../../lib/messages'
-import { Controller, useFormContext } from 'react-hook-form'
 
 interface Props {
   item: FormSystemField

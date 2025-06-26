@@ -14,6 +14,7 @@ import {
 } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
 import * as constants from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   capitalize,
   formatCaseType,
@@ -34,6 +35,7 @@ import {
   PageLayout,
   PageTitle,
   SectionHeading,
+  UserContext,
   VictimInfo,
 } from '@island.is/judicial-system-web/src/components'
 import {
@@ -58,6 +60,7 @@ import {
 } from '../../components'
 
 const Defendant = () => {
+  const { user } = useContext(UserContext)
   const router = useRouter()
   const { updateDefendant, createDefendant, deleteDefendant } = useDefendants()
 
@@ -426,6 +429,7 @@ const Defendant = () => {
               <Button
                 data-testid="addFirstVictimButton"
                 icon="add"
+                variant="ghost"
                 onClick={() =>
                   createVictimAndSetState(workingCase.id, setWorkingCase)
                 }
@@ -477,7 +481,7 @@ const Defendant = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={`${constants.CASES_ROUTE}`}
+          previousUrl={getStandardUserDashboardRoute(user)}
           onNextButtonClick={() =>
             handleNavigationTo(
               constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE,
