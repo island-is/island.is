@@ -5,10 +5,10 @@ import {
   Box,
 } from '@island.is/island-ui/core'
 import { m } from '@island.is/form-system/ui'
-import * as styles from './TableRow.css'
+import * as styles from '../../../tableHeader.css'
 import { useIntl } from 'react-intl'
 
-export const TableRowHeader = () => {
+export const TableHeader = () => {
   const { formatMessage } = useIntl()
   return (
     <Box className={styles.header}>

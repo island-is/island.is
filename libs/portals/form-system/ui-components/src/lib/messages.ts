@@ -207,6 +207,22 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:allowed-file-types',
     defaultMessage: 'Eftirfarandi skjalatýpur eru leyfðar',
   },
+  addProdUrl: {
+    id: 'portals-admin.form-system:add-prod-url',
+    defaultMessage: '+ Raunslóð',
+  },
+  addDevUrl: {
+    id: 'portals-admin.form-system:add-dev-url',
+    defaultMessage: '+ Prófunarslóð',
+  },
+  prodUrl: {
+    id: 'portals-admin.form-system:prod-url',
+    defaultMessage: 'Raunslóð',
+  },
+  devUrl: {
+    id: 'portals-admin.form-system:dev-url',
+    defaultMessage: 'Prófunarslóð',
+  },
   // Input types
   bankAccount: {
     id: 'portals-admin.form-system:bank-account',
@@ -267,6 +283,18 @@ export const m = defineMessages({
   message: {
     id: 'portals-admin.form-system:message',
     defaultMessage: 'Textalýsing',
+  },
+  submitUrls: {
+    id: 'portals-admin.form-system:submitUrls',
+    defaultMessage: 'Málakerfi',
+  },
+  validationUrls: {
+    id: 'portals-admin.form-system:validationUrls',
+    defaultMessage: 'Reglukerfi',
+  },
+  permissions: {
+    id: 'portals-admin.form-system:permissions',
+    defaultMessage: 'Heimildir',
   },
   phoneNumber: {
     id: 'portals-admin.form-system:phone-number',

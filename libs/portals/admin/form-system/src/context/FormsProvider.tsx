@@ -31,6 +31,8 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
     certificationTypes,
     listTypes,
     fieldTypes,
+    submitUrls: submitUrlsState,
+    validationUrls: validationUrlsState,
   } = formsLoader
   const [forms, setForms] = useState<FormSystemForm[]>(formsState)
   const [organizations, setOrganizations] = useState<Option<string>[]>(orgs)
@@ -53,6 +55,8 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
     useState<string[]>(selectedList)
   const [selectedFieldTypes, setSelectedFieldTypes] =
     useState<string[]>(selectedField)
+  const [submitUrls, setSubmitUrls] = useState(submitUrlsState)
+  const [validationUrls, setValidationUrls] = useState(validationUrlsState)
 
   const handleOrganizationChange = async (selected: { value: string }) => {
     const updatedOrganizations = organizations.map((org) => ({
@@ -83,9 +87,7 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
       },
     })
     if (applicationsData?.formSystemApplications?.applications) {
-      if (applicationsData?.formSystemApplications?.applications) {
-        setApplications(applicationsData?.formSystemApplications?.applications)
-      }
+      setApplications(applicationsData?.formSystemApplications?.applications)
     }
 
     const { data: permissionsData } = await getAdminQuery({
@@ -102,6 +104,8 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
       selectedCertificationTypes,
       selectedListTypes,
       selectedFieldTypes,
+      submitUrls,
+      validationUrls,
     } = admin
 
     if (organizationId) {
@@ -115,6 +119,12 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
     }
     if (selectedFieldTypes) {
       setSelectedFieldTypes(selectedFieldTypes)
+    }
+    if (submitUrls) {
+      setSubmitUrls(submitUrls)
+    }
+    if (validationUrls) {
+      setValidationUrls(validationUrls)
     }
   }
 
@@ -146,6 +156,10 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
       certificationTypes,
       listTypes,
       fieldTypes,
+      submitUrls,
+      setSubmitUrls,
+      validationUrls,
+      setValidationUrls,
       handleOrganizationChange,
     }),
     [
@@ -162,6 +176,8 @@ export const FormsProvider = ({ children, formsLoader }: Props) => {
       certificationTypes,
       listTypes,
       fieldTypes,
+      submitUrls,
+      validationUrls,
     ],
   )
 

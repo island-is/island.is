@@ -23,12 +23,7 @@ const ColumnText = ({ text }: ColumnTextProps) => (
   </Box>
 )
 
-export const ApplicationsTableRow = ({
-  id,
-  submittedAt,
-  status,
-  nationalId,
-}: Props) => {
+export const TableRow = ({ id, submittedAt, status, nationalId }: Props) => {
   const { formatDate } = useIntl()
   return (
     <Row key={id}>

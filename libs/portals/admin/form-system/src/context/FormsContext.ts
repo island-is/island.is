@@ -1,6 +1,7 @@
 import {
   FormSystemApplication,
   FormSystemForm,
+  FormSystemOrganizationUrl,
   FormSystemPermissionType,
 } from '@island.is/api/schema'
 import { Option } from '@island.is/island-ui/core'
@@ -27,9 +28,13 @@ export interface IFormsContext {
   setSelectedListTypes: Dispatch<SetStateAction<string[]>>
   selectedFieldTypes: string[]
   setSelectedFieldTypes: Dispatch<SetStateAction<string[]>>
+  setSubmitUrls: Dispatch<SetStateAction<FormSystemOrganizationUrl[]>>
+  setValidationUrls: Dispatch<SetStateAction<FormSystemOrganizationUrl[]>>
   certificationTypes: FormSystemPermissionType[]
   listTypes: FormSystemPermissionType[]
   fieldTypes: FormSystemPermissionType[]
+  submitUrls: FormSystemOrganizationUrl[]
+  validationUrls: FormSystemOrganizationUrl[]
   handleOrganizationChange?: (selected: { value: string }) => Promise<void>
 }
 
@@ -75,10 +80,22 @@ export const FormsContext = createContext<IFormsContext>({
   setSelectedFieldTypes: function (_value: SetStateAction<string[]>): void {
     throw new Error('setSelectedFieldTypes function not implemented')
   },
+  setSubmitUrls: function (
+    _value: SetStateAction<FormSystemOrganizationUrl[]>,
+  ): void {
+    throw new Error('setSubmitUrls function not implemented')
+  },
+  setValidationUrls: function (
+    _value: SetStateAction<FormSystemOrganizationUrl[]>,
+  ): void {
+    throw new Error('setValidationUrls function not implemented')
+  },
   handleOrganizationChange: async (_selected: { value: string }) => {
     throw new Error('handleOrganizationChange function not implemented')
   },
   certificationTypes: [],
   listTypes: [],
   fieldTypes: [],
+  submitUrls: [],
+  validationUrls: [],
 })

@@ -24,7 +24,10 @@ export class FormResponseDto {
   listTypes?: ListType[]
 
   @ApiPropertyOptional({ type: [OrganizationUrlDto] })
-  urls?: OrganizationUrlDto[]
+  submitUrls?: OrganizationUrlDto[]
+
+  @ApiPropertyOptional({ type: [OrganizationUrlDto] })
+  validationUrls?: OrganizationUrlDto[]
 
   @ApiPropertyOptional({ type: [FormDto] })
   forms?: FormDto[]
