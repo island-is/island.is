@@ -82,10 +82,13 @@ export class LawyerRegistryService {
       const lawyers = await this.getLawyerRegistry()
       await this.clearLawyerRegistry(transaction)
       await this.populateLawyerRegistry(lawyers, transaction)
+      await transaction.commit()
 
       return true
     } catch (error) {
+      await transaction.rollback()
       this.logger.error('Error populating lawyer registry', error)
+
       throw new InternalServerErrorException('Error populating lawyer registry')
     }
   }
