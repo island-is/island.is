@@ -14,7 +14,13 @@ import {
 } from '@island.is/application/core'
 import { employment as employmentMessages } from '../../../lib/messages'
 import { Application, FormValue } from '@island.is/application/types'
-import { isIndependent, workOnOwnSSN } from '../../../utils'
+import {
+  isIndependent,
+  workOnOwnSSN,
+  hasEmployer,
+  getCombinedPercentage,
+} from '../../../utils'
+import { GaldurDomainModelsApplicantsApplicantProfileDTOsJob } from '@island.is/clients/vmst-unemployment'
 
 export const employmentHistorySubSection = buildSubSection({
   id: 'employmentHistorySubSection',
@@ -56,11 +62,29 @@ export const employmentHistorySubSection = buildSubSection({
               .lastJobCompanyNationalId,
           width: 'half',
           readOnly: true,
-          defaultValue: (application: Application) =>
-            getValueViaPath<string>(
-              application.answers,
-              'currentSituation.currentJob.employer.nationalId',
-            ) ?? '',
+          defaultValue: (application: Application) => {
+            //TODO get most recent job from the job list
+            const jobList =
+              getValueViaPath<
+                Array<GaldurDomainModelsApplicantsApplicantProfileDTOsJob>
+              >(
+                application.externalData,
+                'unemploymentApplication.data.jobCareer.jobs',
+                [],
+              ) ?? []
+            const manualInputCompanyNationalId =
+              getValueViaPath<string>(
+                application.answers,
+                'currentSituation.currentJob.employer.nationalId',
+              ) ?? ''
+
+            const companyNationalId = hasEmployer(application.answers)
+              ? manualInputCompanyNationalId
+              : jobList[0]?.workRatio
+
+            return companyNationalId
+          },
+
           condition: (answers) => !isIndependent(answers),
         }),
         buildTextField({
@@ -68,11 +92,29 @@ export const employmentHistorySubSection = buildSubSection({
           title: employmentMessages.employmentHistory.labels.lastJobCompanyName,
           width: 'half',
           readOnly: true,
-          defaultValue: (application: Application) =>
-            getValueViaPath<string>(
-              application.answers,
-              'currentSituation.currentJob.employer.name',
-            ) ?? '',
+          defaultValue: (application: Application) => {
+            //TODO get most recent job from the job list
+            const jobList =
+              getValueViaPath<
+                Array<GaldurDomainModelsApplicantsApplicantProfileDTOsJob>
+              >(
+                application.externalData,
+                'unemploymentApplication.data.jobCareer.jobs',
+                [],
+              ) ?? []
+            const manualInputEmployerName =
+              getValueViaPath<string>(
+                application.answers,
+                'currentSituation.currentJob.employer.name',
+              ) ?? ''
+
+            const employerName = hasEmployer(application.answers)
+              ? manualInputEmployerName
+              : jobList[0]?.workRatio
+
+            return employerName
+          },
+
           condition: (answers) => !isIndependent(answers),
         }),
         buildTextField({
@@ -88,24 +130,55 @@ export const employmentHistorySubSection = buildSubSection({
           width: 'half',
           variant: 'number',
           suffix: '%',
-          defaultValue: (application: Application) =>
-            getValueViaPath<string>(
-              application.answers,
-              'currentSituation.currentJob.percentage',
-            ) ?? '',
+          defaultValue: (application: Application) => {
+            //TODO get most recent job from the job list
+            const jobList =
+              getValueViaPath<
+                Array<GaldurDomainModelsApplicantsApplicantProfileDTOsJob>
+              >(
+                application.externalData,
+                'unemploymentApplication.data.jobCareer.jobs',
+                [],
+              ) ?? []
+            const manualInputPercentage =
+              getValueViaPath<string>(
+                application.answers,
+                'currentSituation.currentJob.percentage',
+              ) ?? ''
+
+            const percentage = hasEmployer(application.answers)
+              ? manualInputPercentage
+              : jobList[0]?.workRatio
+
+            return percentage
+          },
+
           condition: (answers) => !isIndependent(answers),
         }),
         buildDateField({
           id: 'employmentHistory.lastJob.startDate',
           title: employmentMessages.employmentHistory.labels.lastJobStartDate,
           width: 'half',
+          maxDate: new Date(),
           defaultValue: (application: Application) => {
-            const startDate =
+            //TODO get most recent job from the job list
+            const jobList =
+              getValueViaPath<
+                Array<GaldurDomainModelsApplicantsApplicantProfileDTOsJob>
+              >(
+                application.externalData,
+                'unemploymentApplication.data.jobCareer.jobs',
+                [],
+              ) ?? []
+            const manualInputStartDate =
               getValueViaPath<string>(
                 application.answers,
                 'currentSituation.currentJob.startDate',
               ) ?? ''
-            return new Date(startDate).toISOString()
+            const startDate = hasEmployer(application.answers)
+              ? manualInputStartDate
+              : jobList[0]?.started
+            return startDate ? new Date(startDate).toISOString() : ''
           },
           condition: (answers) => !isIndependent(answers),
         }),
@@ -113,6 +186,7 @@ export const employmentHistorySubSection = buildSubSection({
           id: 'employmentHistory.lastJob.endDate',
           title: employmentMessages.employmentHistory.labels.lastJobEndDate,
           width: 'half',
+          minDate: new Date(),
           condition: (answers) => !isIndependent(answers),
         }),
         /* IS INDEPENDENT */
@@ -149,6 +223,7 @@ export const employmentHistorySubSection = buildSubSection({
           id: 'employmentHistory.ownSSNJob.startDate',
           title: employmentMessages.employmentHistory.labels.lastJobStartDate,
           width: 'half',
+          maxDate: new Date(),
           condition: (answers) =>
             isIndependent(answers) && workOnOwnSSN(answers),
         }),
@@ -164,6 +239,16 @@ export const employmentHistorySubSection = buildSubSection({
             employmentMessages.employmentHistory.labels.lastJobAlertInformation,
           alertType: 'warning',
           doesNotRequireAnswer: true,
+          condition: (answers) => getCombinedPercentage(answers) < 100,
+        }),
+        buildAlertMessageField({
+          id: 'employmentHistoryJobPercentageMessage',
+          message:
+            employmentMessages.employmentHistory.labels
+              .lastJobPercentageAchievedInformation,
+          alertType: 'warning',
+          doesNotRequireAnswer: true,
+          condition: (answers) => getCombinedPercentage(answers) >= 100,
         }),
         /* OLD JOBS */
 
@@ -222,6 +307,7 @@ export const employmentHistorySubSection = buildSubSection({
               label: coreMessages.radioNo,
             },
           ],
+          condition: (answers) => getCombinedPercentage(answers) < 100,
         }),
         buildAlertMessageField({
           id: 'employmentHistoryEesAlertMessage',

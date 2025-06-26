@@ -11,20 +11,22 @@ export const educationSchema = z
     typeOfEducation: z.nativeEnum(EducationType).optional(),
     didFinishLastSemester: z.nativeEnum(YesOrNoEnum).optional(),
     appliedForNextSemester: z.nativeEnum(YesOrNoEnum).optional(),
-    currentEducation: z.object({
-      programName: z
-        .preprocess((val) => {
-          if (!val) {
-            return ''
-          }
-          return val
-        }, z.string())
-        .optional(),
-      programUnits: z.string().optional(),
-      programDegree: z.string().optional(),
-      programEnd: z.string().optional(),
-      degreeFile: z.array(FileSchema).optional(),
-    }),
+    currentEducation: z
+      .object({
+        programName: z
+          .preprocess((val) => {
+            if (!val) {
+              return ''
+            }
+            return val
+          }, z.string())
+          .optional(),
+        programUnits: z.string().optional(),
+        programDegree: z.string().optional(),
+        programEnd: z.string().optional(),
+        degreeFile: z.array(FileSchema).optional(),
+      })
+      .optional(),
     notAppliedForNextSemesterExplanation: z.string().optional(),
   })
   .refine(

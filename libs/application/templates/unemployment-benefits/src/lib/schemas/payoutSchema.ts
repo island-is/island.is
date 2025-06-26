@@ -3,11 +3,19 @@ import { z } from 'zod'
 
 export const payoutSchema = z
   .object({
-    bankAccount: z.object({
-      bankNumber: z.string().min(1),
-      ledger: z.string().min(1),
-      accountNumber: z.string().min(1),
-    }),
+    bankAccount: z
+      .object({
+        bankNumber: z.string().min(1),
+        ledger: z.string().min(1),
+        accountNumber: z.string().min(1),
+      })
+      // TODO get this error to SHOW UP!!
+      .refine(
+        ({ bankNumber, ledger, accountNumber }) => {
+          return !!bankNumber
+        },
+        { path: ['bankNumber'] },
+      ),
     payToUnion: z
       .nativeEnum(YesOrNoEnum)
       .refine((v) => Object.values(YesOrNoEnum).includes(v)),
