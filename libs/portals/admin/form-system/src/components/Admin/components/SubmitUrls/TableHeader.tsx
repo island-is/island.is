@@ -4,29 +4,29 @@ import { m } from '@island.is/form-system/ui'
 import * as styles from '../../../tableHeader.css'
 
 interface TableHeaderProps {
-  type: string
+  text: string
 }
 
-export const TableHeader = ({ type }: TableHeaderProps) => {
+export const TableHeader = ({ text }: TableHeaderProps) => {
   const { formatMessage } = useIntl()
   return (
     <>
       <Box className={styles.header}>
         <GridRow>
-          <GridColumn span="9/12">
+          <GridColumn span="11/12">
             <Box marginLeft={1}>
               <Text variant="medium" fontWeight="semiBold">
-                {type}
+                {text}
               </Text>
             </Box>
           </GridColumn>
-          <GridColumn span="3/12">
+          {/* <GridColumn span="3/12">
             <Box>
               <Text variant="medium" fontWeight="semiBold">
                 Aðgerð
               </Text>
             </Box>
-          </GridColumn>
+          </GridColumn> */}
         </GridRow>
       </Box>
     </>

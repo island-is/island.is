@@ -41,11 +41,12 @@ export class OrganizationUrlsService {
     auth: User,
     input: CreateOrganizationUrlInput,
   ): Promise<OrganizationUrl> {
+    console.log('Creating organization URL with input:', input)
     const response = await this.organizationUrlsApiWithAuth(
       auth,
-    ).organizationUrlsControllerCreate(
-      input as OrganizationUrlsControllerCreateRequest,
-    )
+    ).organizationUrlsControllerCreate({
+      createOrganizationUrlDto: input,
+    } as OrganizationUrlsControllerCreateRequest)
     return response
   }
 

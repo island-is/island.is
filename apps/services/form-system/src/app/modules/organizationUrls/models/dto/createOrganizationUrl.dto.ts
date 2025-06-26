@@ -13,6 +13,11 @@ export class CreateOrganizationUrlDto {
   type!: string
 
   @IsNotEmpty()
+  @IsString()
+  @ApiProperty()
+  method!: string
+
+  @IsNotEmpty()
   @IsBoolean()
   @ApiProperty()
   isTest!: boolean

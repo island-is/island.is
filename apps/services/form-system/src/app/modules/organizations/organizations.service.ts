@@ -21,6 +21,7 @@ import {
   ListTypesEnum,
   FieldTypesEnum,
 } from '@island.is/form-system/shared'
+import { UrlTypes } from '@island.is/form-system/enums'
 
 @Injectable()
 export class OrganizationsService {
@@ -66,7 +67,7 @@ export class OrganizationsService {
 
     const organization = await this.organizationModel.findOne({
       where: { nationalId },
-      include: ['organizationPermissions'],
+      include: ['organizationPermissions', 'organizationUrls'],
     })
 
     if (!organization) {
@@ -98,6 +99,30 @@ export class OrganizationsService {
           organizationAdminDto.selectedFieldTypes.push(permission.permission)
         }
       })
+    }
+
+    if (organization.organizationUrls) {
+      organizationAdminDto.submitUrls = organization.organizationUrls
+        .filter((url) => url.type === UrlTypes.SUBMIT)
+        .map((url) => ({
+          id: url.id,
+          url: url.url,
+          type: url.type,
+          method: url.method,
+          isTest: url.isTest,
+          isXroad: url.isXroad,
+        }))
+
+      organizationAdminDto.validationUrls = organization.organizationUrls
+        .filter((url) => url.type === UrlTypes.VALIDATION)
+        .map((url) => ({
+          id: url.id,
+          url: url.url,
+          type: url.type,
+          method: url.method,
+          isTest: url.isTest,
+          isXroad: url.isXroad,
+        }))
     }
 
     organizationAdminDto.certificationTypes = CertificationTypes

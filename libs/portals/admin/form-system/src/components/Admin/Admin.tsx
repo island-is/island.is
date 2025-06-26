@@ -13,6 +13,7 @@ export const Admin = () => {
   const [activeComponent, setActiveComponent] = useState<
     'submitUrls' | 'validationUrls' | 'permissions'
   >('submitUrls')
+  const activeColor = 'blueberry'
 
   return (
     <>
@@ -35,14 +36,20 @@ export const Admin = () => {
             >
               <Button
                 size="default"
-                variant="ghost"
+                variant="text"
+                colorScheme={
+                  activeComponent === 'submitUrls' ? activeColor : 'default'
+                }
                 onClick={() => setActiveComponent('submitUrls')}
               >
                 {formatMessage(m.submitUrls)}
               </Button>
               <Button
                 size="default"
-                variant="ghost"
+                variant="text"
+                colorScheme={
+                  activeComponent === 'validationUrls' ? activeColor : 'default'
+                }
                 onClick={() => setActiveComponent('validationUrls')}
               >
                 {formatMessage(m.validationUrls)}
@@ -50,7 +57,10 @@ export const Admin = () => {
               {isAdmin && (
                 <Button
                   size="default"
-                  variant="ghost"
+                  variant="text"
+                  colorScheme={
+                    activeComponent === 'permissions' ? activeColor : 'default'
+                  }
                   onClick={() => setActiveComponent('permissions')}
                 >
                   {formatMessage(m.permissions)}

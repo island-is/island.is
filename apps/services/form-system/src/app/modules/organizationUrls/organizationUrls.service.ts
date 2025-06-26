@@ -50,7 +50,12 @@ export class OrganizationUrlsService {
     newOrganizationUrl.organizationId = organization.id
     newOrganizationUrl.type = createOrganizationUrlDto.type
     newOrganizationUrl.isTest = createOrganizationUrlDto.isTest
+    newOrganizationUrl.method = createOrganizationUrlDto.method
+    newOrganizationUrl.isXroad = false
 
+    if (createOrganizationUrlDto.method === UrlMethods.SEND_TO_ZENDESK) {
+      newOrganizationUrl.url = 'Zendesk'
+    }
     await newOrganizationUrl.save()
 
     const keys = ['id', 'url', 'isXroad', 'isTest', 'type', 'method']

@@ -8,6 +8,9 @@ export class CreateOrganizationUrlInput {
   @Field(() => String, { nullable: true })
   type?: string
 
+  @Field(() => String, { nullable: true })
+  method?: string
+
   @Field(() => Boolean, { nullable: true })
   isTest?: boolean
 }
