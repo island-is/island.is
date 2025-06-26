@@ -113,23 +113,19 @@ struct LicensePayload: Codable {
     guard let photo = photo else {
       return nil
     }
-    
-    // We are always getting data:image/, right?
-    //    if let decodedData = Data(base64Encoded: photo) {
-    //      return decodedData
-    //    }
-    
-    let stripMime = photo
-      .replacingOccurrences(of: "data:image/jpeg;base64,", with: "")
-      .replacingOccurrences(of: "data:image/png;base64,", with: "")
-      .replacingOccurrences(of: "data:image/jpg;base64,", with: "")
-    
-    if stripMime != photo {
-      if let decodedData = Data(base64Encoded: stripMime) {
-        return decodedData
+
+    // Handle data URLs with MIME type prefix
+    if photo.hasPrefix("data:") {
+      let components = photo.components(separatedBy: ",")
+      guard components.count == 2,
+            components[0].contains("base64") else {
+        return nil
       }
+      return Data(base64Encoded: components[1])
     }
-    return nil
+
+    // Handle plain base64
+    return Data(base64Encoded: photo)
   }
 }
 
