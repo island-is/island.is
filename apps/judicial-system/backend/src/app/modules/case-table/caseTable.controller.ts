@@ -18,6 +18,7 @@ import {
   districtCourtAssistantRule,
   districtCourtJudgeRule,
   districtCourtRegistrarRule,
+  prisonSystemStaffRule,
   prosecutorRepresentativeRule,
   prosecutorRule,
   publicProsecutorStaffRule,
@@ -70,6 +71,7 @@ export class CaseTableController {
     courtOfAppealsJudgeRule,
     courtOfAppealsRegistrarRule,
     courtOfAppealsAssistantRule,
+    prisonSystemStaffRule,
   )
   @Get('search-cases')
   @ApiOkResponse({
