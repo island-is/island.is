@@ -183,7 +183,7 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Veldu land',
       description: 'Select country',
     },
-    questionsCountryIDNumber: {
+    questionsCountryIdNumber: {
       id: 'marp.application:general.information.questions.country.id.number',
       defaultMessage: 'Kennitala/persónunúmer í landi',
       description: 'Country ID number/personal ID number',
@@ -928,6 +928,18 @@ export const errorMessages = defineMessages({
     id: 'marp.application:error.country.required',
     defaultMessage: 'Það þarf að velja land',
     description: 'You must select a country',
+  },
+  countryIdNumberRequired: {
+    id: 'marp.application:error.country.id.number.required',
+    defaultMessage: 'Kennitala/persónunúmer í landi þarf að vera gilt',
+    description: 'Country ID number/personal ID number must be valid',
+  },
+  countryIdNumberMin: {
+    id: 'marp.application:error.country.id.number.min',
+    defaultMessage:
+      'Kennitala/persónunúmer í landi þarf að vera að minnsta kosti 5 stafir eða tákn',
+    description:
+      'Country ID number/personal ID number must be at least 5 characters or symbols',
   },
 })
 

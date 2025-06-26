@@ -282,7 +282,7 @@ export const questionsCountryTable = (
         medicalAndRehabilitationPaymentsFormMessage.generalInformation
           .questionsCountry,
         medicalAndRehabilitationPaymentsFormMessage.generalInformation
-          .questionsCountryIDNumber,
+          .questionsCountryIdNumber,
       ],
       rows: countries.map((e) => [e.country?.split('::')[1], e.nationalId]),
     }

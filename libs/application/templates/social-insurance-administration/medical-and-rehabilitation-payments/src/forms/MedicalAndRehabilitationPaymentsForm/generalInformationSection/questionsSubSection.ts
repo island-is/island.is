@@ -202,10 +202,9 @@ export const questionsSubSection = buildSubSection({
               component: 'input',
               label:
                 medicalAndRehabilitationPaymentsFormMessage.generalInformation
-                  .questionsCountryIDNumber,
+                  .questionsCountryIdNumber,
               width: 'half',
               backgroundColor: 'blue',
-              type: 'number',
             },
           },
           table: {
@@ -216,7 +215,7 @@ export const questionsSubSection = buildSubSection({
               medicalAndRehabilitationPaymentsFormMessage.generalInformation
                 .questionsCountry,
               medicalAndRehabilitationPaymentsFormMessage.generalInformation
-                .questionsCountryIDNumber,
+                .questionsCountryIdNumber,
             ],
           },
         }),

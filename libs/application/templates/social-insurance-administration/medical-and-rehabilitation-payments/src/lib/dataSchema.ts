@@ -197,23 +197,41 @@ export const dataSchema = z.object({
     )
     .superRefine(({ isReceivingPaymentsFromOtherCountry, countries }, ctx) => {
       if (isReceivingPaymentsFromOtherCountry === YES) {
-        // If no countries are provided
+        // Validate that at least one country has been provided
         if (!countries || countries.length === 0) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
             params: errorMessages.countriesRequired,
             path: ['countries'],
           })
-          return
+          return // Stop further validation since the array is required
         }
 
-        // Loop through each country entry to validate that a country is selected
-        countries.forEach(({ country }, index) => {
+        countries.forEach(({ country, nationalId }, index) => {
+          // Validate that a country is selected
           if (!country) {
             ctx.addIssue({
               code: z.ZodIssueCode.custom,
               params: errorMessages.countryRequired,
               path: ['countries', index, 'country'],
+            })
+          }
+
+          // Validate that nationalId is not empty
+          if (!nationalId) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              params: errorMessages.countryIdNumberRequired,
+              path: ['countries', index, 'nationalId'],
+            })
+          }
+
+          // Validate that nationalId is at least 5 characters or symbols
+          if (nationalId && nationalId.length < 5) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              params: errorMessages.countryIdNumberMin,
+              path: ['countries', index, 'nationalId'],
             })
           }
         })
