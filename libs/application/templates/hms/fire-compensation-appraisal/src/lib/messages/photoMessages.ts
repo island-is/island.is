@@ -12,15 +12,10 @@ export const photoMessages = defineMessages({
       'Hér setur þú inn myndir af því sem þú taldir upp á lýsingu á framkvæmdum og sýnir frágang.\n\nUmsækjandi er hvattur til að hlaða upp myndum sem gagnast við gerð brunabótamatsins svo að það byggi á réttum upplýsingum.\n\nTakið eftir að það þarf að hlaða upp í það minnsta **3 myndum** til að geta sótt um endurmat brunabótamats.',
     description: 'Photo section description',
   },
-  alertMessageTitle: {
-    id: 'fca.application:photo.alertMessageTitle',
-    defaultMessage: 'Fleiri myndir vantar',
-    description: 'Photo section alert message title',
-  },
   alertMessage: {
     id: 'fca.application:photo.alertMessage',
     defaultMessage:
-      'Þú þarft að hlaða upp í það minnsta **3 myndum** til að geta sótt um endurmat brunabótamats.',
+      'Þú þarft að hlaða upp í það minnsta 3 myndum til að geta sótt um endurmat brunabótamats.',
     description: 'Photo section alert message',
   },
 })
