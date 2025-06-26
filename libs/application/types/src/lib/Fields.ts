@@ -180,6 +180,7 @@ export type RepeaterItem = {
       rows?: number
       maxLength?: number
       currency?: boolean
+      thousandSeparator?: boolean
       suffix?: FormText
     }
   | {
@@ -498,6 +499,7 @@ export interface TextField extends InputField {
   variant?: TextFieldVariant
   backgroundColor?: InputBackgroundColor
   format?: string | FormatInputValueFunction
+  thousandSeparator?: boolean
   suffix?: FormText
   rows?: number
   tooltip?: FormText
@@ -996,6 +998,7 @@ export interface OverviewField extends BaseField {
   ) => Array<AttachmentItem>
   tableData?: (answers: FormValue, externalData: ExternalData) => TableData
   hideIfEmpty?: boolean
+  displayTitleAsAccordion?: boolean
 }
 
 export interface CopyLinkField extends BaseField {

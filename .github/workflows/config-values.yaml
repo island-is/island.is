@@ -65,9 +65,10 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
-      - name: Install yarn in infra
-        working-directory: infra
-        run: yarn install --immutable
+      - name: Setup yarn (infra)
+        uses: ./.github/actions/setup-yarn
+        with:
+          working-directory: infra
 
       - name: Run unit tests
         working-directory: infra
@@ -96,9 +97,10 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
-      - name: Install yarn in infra
-        working-directory: infra
-        run: yarn install --immutable
+      - name: Setup yarn (infra
+        uses: ./.github/actions/setup-yarn
+        with:
+          working-directory: infra
 
       - name: Select role
         env:

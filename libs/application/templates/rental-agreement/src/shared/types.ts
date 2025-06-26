@@ -16,13 +16,11 @@ export type ApplicantsInfo = {
   phone: string
   address: string
   email: string
-  isRepresentative: string[]
 }
 
 export type CostField = {
   description: string
   amount?: number
-  hasError?: boolean
 }
 
 export type Files = {
@@ -63,7 +61,9 @@ export interface AddressProps {
 
 export interface ParticipantsSection {
   landlords: ApplicantsInfo[]
+  landlordRepresentatives: ApplicantsInfo[]
   tenants: ApplicantsInfo[]
+  tenantRepresentatives: ApplicantsInfo[]
 }
 
 export interface PropertySection {

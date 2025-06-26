@@ -25,7 +25,7 @@ export const Permission = ({ type }: Props) => {
     fieldTypes,
     selectedFieldTypes,
     setSelectedFieldTypes,
-    organizationId,
+    organizationNationalId,
   } = useContext(FormsContext)
 
   const sortedPermissionsList = (list: FormSystemPermissionType[]) => {
@@ -56,13 +56,13 @@ export const Permission = ({ type }: Props) => {
           input: {
             updateOrganizationPermissionDto: {
               permission: id,
-              organizationId: organizationId,
+              organizationNationalId: organizationNationalId,
             },
           },
         },
       })
     } catch (error) {
-      console.error('Failed to add permission:', error)
+      throw new Error(`Failed to add permission: ${error}`)
     }
   }
 
@@ -73,14 +73,14 @@ export const Permission = ({ type }: Props) => {
           input: {
             updateOrganizationPermissionDto: {
               permission: id,
-              organizationId: organizationId,
+              organizationNationalId: organizationNationalId,
             },
           },
         },
       })
       setSelectedTypes(getSelectedTypes().filter((type) => type !== id))
     } catch (error) {
-      console.error('Failed to remove permission:', error)
+      throw new Error(`Failed to remove permission: ${error}`)
     }
   }
 
