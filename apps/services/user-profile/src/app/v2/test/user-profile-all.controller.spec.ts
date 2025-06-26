@@ -271,21 +271,30 @@ describe('UserProfileController', () => {
 
       beforeEach(async () => {
         jest
-          .spyOn(delegationsApi, 'delegationsControllerGetAllDelegations')
-          .mockResolvedValue([
-            {
-              toNationalId: testUserProfile.nationalId,
-              fromNationalId: testNationalId1,
-              subjectId: null,
-              type: 'fromNational',
+          .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
+          .mockResolvedValue({
+            data: [
+              {
+                toNationalId: testUserProfile.nationalId,
+                fromNationalId: testNationalId1,
+                subjectId: null,
+                type: 'fromNational',
+              },
+              {
+                toNationalId: testUserProfile.nationalId,
+                fromNationalId: testNationalId2,
+                subjectId: null,
+                type: 'fromNational',
+              },
+            ],
+            pageInfo: {
+              hasNextPage: false,
+              hasPreviousPage: false,
+              startCursor: '',
+              endCursor: '',
             },
-            {
-              toNationalId: testUserProfile.nationalId,
-              fromNationalId: testNationalId2,
-              subjectId: null,
-              type: 'fromNational',
-            },
-          ])
+            totalCount: 2,
+          })
       })
 
       it('should return 200 and the extended actor profile if user profile exists', async () => {
@@ -323,9 +332,11 @@ describe('UserProfileController', () => {
         })
 
         expect(
-          delegationsApi.delegationsControllerGetAllDelegations,
+          delegationsApi.delegationsControllerGetDelegationRecords,
         ).toHaveBeenCalledWith({
           xQueryNationalId: testUserProfile.nationalId,
+          scope: '@island.is/documents',
+          direction: 'incoming',
         })
       })
 
