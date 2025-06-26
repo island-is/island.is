@@ -55,7 +55,9 @@ export const OJOIAdvertDisplay = ({
         className={c(s.bodyText, 'ojoi-advert-display-wrapper')}
         dangerouslySetInnerHTML={{ __html: advertText }}
       ></Box>
-      <Appendixes additions={additions ?? []} />
+      {additions && additions.length > 0 && (
+        <Appendixes additions={additions} />
+      )}
     </Box>
   )
 }

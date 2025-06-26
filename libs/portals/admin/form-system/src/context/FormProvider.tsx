@@ -40,8 +40,15 @@ export const FormProvider: React.FC<{
     NavbarSelectStatus.OFF,
   )
 
-  const { fieldTypes, listTypes, certificationTypes, applicantTypes, form } =
-    formBuilder
+  const {
+    fieldTypes,
+    listTypes,
+    certificationTypes,
+    applicantTypes,
+    submitUrls,
+    validationUrls,
+    form,
+  } = formBuilder
   const initialControl: ControlState = {
     activeItem: {
       type: 'Section',
@@ -123,6 +130,8 @@ export const FormProvider: React.FC<{
       certificationTypes,
       fieldTypes,
       listTypes,
+      submitUrls,
+      validationUrls,
       setInSettings,
       inSettings,
       updateActiveItem,

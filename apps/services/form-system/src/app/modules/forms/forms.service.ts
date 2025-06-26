@@ -55,6 +55,7 @@ import { Sequelize } from 'sequelize-typescript'
 import { User } from '@island.is/auth-nest-tools'
 import { jwtDecode } from 'jwt-decode'
 import { OrganizationPermission } from '../organizationPermissions/models/organizationPermission.model'
+import { UrlTypes } from '@island.is/form-system/enums'
 
 @Injectable()
 export class FormsService {
@@ -406,15 +407,22 @@ export class FormsService {
       certificationTypes: await this.getCertificationTypes(form.organizationId),
       applicantTypes: await this.getApplicantTypes(),
       listTypes: await this.getListTypes(form.organizationId),
-      urls: await this.getUrls(form.organizationId),
+      submitUrls: await this.getUrls(form.organizationId, UrlTypes.SUBMIT),
+      validationUrls: await this.getUrls(
+        form.organizationId,
+        UrlTypes.VALIDATION,
+      ),
     }
 
     return response
   }
 
-  private async getUrls(organizationId: string): Promise<OrganizationUrlDto[]> {
+  private async getUrls(
+    organizationId: string,
+    type: string,
+  ): Promise<OrganizationUrlDto[]> {
     const organizationUrls = await this.organizationUrlModel.findAll({
-      where: { organizationId: organizationId },
+      where: { organizationId: organizationId, type: type },
     })
 
     const keys = ['id', 'url', 'isXroad', 'isTest', 'type', 'method']

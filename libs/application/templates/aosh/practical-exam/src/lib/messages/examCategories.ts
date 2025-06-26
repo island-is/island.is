@@ -89,6 +89,17 @@ export const examCategories = {
       defaultMessage: 'Próftaki ekki gjaldgengur í valin verkleg próf',
       description: `Error validating exam categories for examinee`,
     },
+    webServiceFailureTitle: {
+      id: 'aosh.pe.application:examCategories.labels.webServiceFailureTitle',
+      defaultMessage: 'Óvænt villa í vefþjónustu',
+      description: `Error validating exam categories for examinee`,
+    },
+    webServiceFailureMessage: {
+      id: 'aosh.pe.application:examCategories.labels.webServiceFailureMessage',
+      defaultMessage:
+        'Vefþjónustan skilaði villu. Reyndu aftur síðar. Ef vandamálið varir, vinsamlegast hafðu samband við Vinnueftirlitið.',
+      description: `Error validating exam categories for examinee`,
+    },
     missingFileUploadTitle: {
       id: 'aosh.pe.application:examCategories.labels.missingFileUploadTitle',
       defaultMessage: 'Villa vegna læknisvottorðs',

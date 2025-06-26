@@ -35,12 +35,14 @@ export const examineeSection = buildSection({
             nationalId: {
               component: 'nationalIdWithName',
               label: shared.labels.ssn,
+              required: true,
             },
             email: {
               component: 'input',
               label: shared.labels.email,
               width: 'half',
               type: 'email',
+              required: true,
             },
             phone: {
               component: 'input',
@@ -49,12 +51,15 @@ export const examineeSection = buildSection({
               format: '###-####',
               placeholder: '000-0000',
               width: 'half',
+              required: true,
             },
             licenseNumber: {
               component: 'input',
               label: examinee.labels.licenceNumber,
               width: 'half',
+              format: '#########################',
               displayInTable: false,
+              required: true,
             },
             countryIssuer: {
               component: 'select',
@@ -62,6 +67,7 @@ export const examineeSection = buildSection({
               placeholder: examinee.labels.pickCountry,
               width: 'half',
               displayInTable: false,
+              required: true,
               options: (
                 _application: Application,
                 _activeField: Record<string, string> | undefined,

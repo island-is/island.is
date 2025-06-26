@@ -25,6 +25,8 @@ export const Prerequisites = buildForm({
         buildExternalDataProvider({
           id: 'approveExternalData',
           title: 'External data',
+          subTitle: m.prereqMessages.subTitle,
+          checkboxLabel: m.prereqMessages.checkboxLabel,
           dataProviders: [
             buildDataProviderItem({
               provider: UserProfileApi,

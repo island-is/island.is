@@ -33,4 +33,15 @@ export const prereqMessages = defineMessages({
     defaultMessage: 'Upplýsingar um nafn, kennitölu og heimilisfang',
     description: 'National registry subtitle',
   },
+  checkboxLabel: {
+    id: 'tra.application:prereq.checkboxLabel',
+    defaultMessage:
+      'Ég skil að ofangreindra upplýsinga verður aflað við úrvinnslu tilkynningarinnar',
+    description: 'External information retrieval checkbox label',
+  },
+  subTitle: {
+    id: 'tra.application:prereq.subTitle',
+    defaultMessage: 'Eftirfarandi upplýsingar verða sóttar rafrænt.',
+    description: 'External information retrieval subtitle',
+  },
 })

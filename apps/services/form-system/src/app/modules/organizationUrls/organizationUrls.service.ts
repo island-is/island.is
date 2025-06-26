@@ -8,10 +8,13 @@ import { CreateOrganizationUrlDto } from './models/dto/createOrganizationUrl.dto
 import { OrganizationUrlDto } from './models/dto/organizationUrl.dto'
 import { UpdateOrganizationUrlDto } from './models/dto/updateOrganizationUrl.dto'
 import { UrlMethods, UrlTypes } from '@island.is/form-system/shared'
+import { Organization } from '../organizations/models/organization.model'
 
 @Injectable()
 export class OrganizationUrlsService {
   constructor(
+    @InjectModel(Organization)
+    private readonly organizationModel: typeof Organization,
     @InjectModel(OrganizationUrl)
     private readonly organizationUrlModel: typeof OrganizationUrl,
   ) {}
@@ -19,6 +22,18 @@ export class OrganizationUrlsService {
   async create(
     createOrganizationUrlDto: CreateOrganizationUrlDto,
   ): Promise<OrganizationUrlDto> {
+    const organization = await this.organizationModel.findOne({
+      where: {
+        nationalId: createOrganizationUrlDto.organizationNationalId,
+      },
+    })
+
+    if (!organization) {
+      throw new NotFoundException(
+        `Organization with nationalId '${createOrganizationUrlDto.organizationNationalId}' not found`,
+      )
+    }
+
     const type = createOrganizationUrlDto.type
     const urlTypes = Object.values(UrlTypes)
 
@@ -31,10 +46,16 @@ export class OrganizationUrlsService {
       throw new NotFoundException(`url type with id '${type}' not found`)
     }
 
-    const newOrganizationUrl: OrganizationUrl = new this.organizationUrlModel(
-      createOrganizationUrlDto as OrganizationUrl,
-    )
+    const newOrganizationUrl: OrganizationUrl = new this.organizationUrlModel()
+    newOrganizationUrl.organizationId = organization.id
+    newOrganizationUrl.type = createOrganizationUrlDto.type
+    newOrganizationUrl.isTest = createOrganizationUrlDto.isTest
+    newOrganizationUrl.method = createOrganizationUrlDto.method
+    newOrganizationUrl.isXroad = false
 
+    if (createOrganizationUrlDto.method === UrlMethods.SEND_TO_ZENDESK) {
+      newOrganizationUrl.url = 'Zendesk'
+    }
     await newOrganizationUrl.save()
 
     const keys = ['id', 'url', 'isXroad', 'isTest', 'type', 'method']

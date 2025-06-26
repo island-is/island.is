@@ -1,5 +1,5 @@
 import { AddressDto, formatAddressDto } from './address.dto'
-import { EinstaklingurDTO } from '../../../gen/fetch'
+import { EinstaklingurDTO, EinstaklingurLiteDTO } from '../../../gen/fetch'
 
 export interface IndividualDto {
   nationalId: string
@@ -12,6 +12,13 @@ export interface IndividualDto {
   genderDescription: string
   exceptionFromDirectMarketing: boolean
   birthdate: Date
+  legalDomicile: AddressDto | null
+  residence: AddressDto | null
+}
+
+export interface IndividualLiteDto {
+  nationalId: string
+  name: string
   legalDomicile: AddressDto | null
   residence: AddressDto | null
 }
@@ -44,6 +51,20 @@ export const formatIndividualDto = (
     genderDescription: individual.kynTexti ?? '',
     exceptionFromDirectMarketing: individual.bannmerking ?? false,
     birthdate: individual.faedingardagur ?? new Date(),
+    legalDomicile: formatAddressDto(individual.logheimili),
+    residence: formatAddressDto(individual.adsetur),
+  }
+}
+
+export const formatIndividualLiteDto = (
+  individual: EinstaklingurLiteDTO | null | undefined,
+): IndividualLiteDto | null => {
+  if (individual == null) {
+    return null
+  }
+  return {
+    nationalId: individual.kennitala ?? '',
+    name: individual.nafn ?? '',
     legalDomicile: formatAddressDto(individual.logheimili),
     residence: formatAddressDto(individual.adsetur),
   }

@@ -1,23 +1,22 @@
 import { useContext, useEffect } from 'react'
-import { TableRowHeader } from '../TableRow/TableRowHeader'
+import { TableHeader } from './components/Table/TableHeader'
 import { FormsContext } from '../../context/FormsContext'
-import { TableRow } from '../TableRow/TableRow'
+import { TableRow } from './components/Table/TableRow'
 import { useMutation } from '@apollo/client'
 import { CREATE_FORM } from '@island.is/form-system/graphql'
-import { Box, Button, GridRow, Select } from '@island.is/island-ui/core'
+import { Box, Button, GridRow } from '@island.is/island-ui/core'
 import { useNavigate } from 'react-router-dom'
 import { FormSystemPaths } from '../../lib/paths'
 import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
+import { OrganizationSelect } from '../OrganizationSelect'
 
 export const Forms = () => {
   const {
     forms,
     setForms,
-    organizations,
     isAdmin,
     organizationNationalId,
-    setOrganizationNationalId,
     handleOrganizationChange,
   } = useContext(FormsContext)
   const navigate = useNavigate()
@@ -65,40 +64,33 @@ export const Forms = () => {
   }, [])
 
   return (
-    <Box marginTop={5}>
-      <Box marginTop={5} marginBottom={5}>
-        <GridRow>
-          <Box
-            marginLeft={2}
-            marginRight={2}
-            justifyContent="spaceBetween"
-            display="flex"
-            width="full"
-          >
-            <Button size="default" onClick={createForm}>
-              {formatMessage(m.newForm)}
-            </Button>
-            {isAdmin && (
-              <Select
-                name="organizations"
-                label={formatMessage(m.organization)}
-                options={organizations}
-                size="sm"
-                value={organizations.find(
-                  (org) => org.value === organizationNationalId,
-                )}
-                onChange={(selected) => {
-                  if (selected && handleOrganizationChange) {
-                    setOrganizationNationalId(selected.value)
-                    handleOrganizationChange({ value: selected.value })
-                  }
-                }}
-              />
-            )}
+    <>
+      <GridRow>
+        <Box
+          marginTop={4}
+          marginBottom={8}
+          marginRight={1}
+          marginLeft={2}
+          display="flex"
+          justifyContent="flexEnd"
+          width="full"
+        >
+          <Box justifyContent="spaceBetween" display="flex" width="full">
+            <Box
+              display="flex"
+              flexDirection="row"
+              alignItems="center"
+              columnGap={4}
+            >
+              <Button size="default" onClick={createForm}>
+                {formatMessage(m.newForm)}
+              </Button>
+            </Box>
+            <OrganizationSelect />
           </Box>
-        </GridRow>
-      </Box>
-      <TableRowHeader />
+        </Box>
+      </GridRow>
+      <TableHeader />
       {forms &&
         forms?.map((f) => {
           return (
@@ -115,6 +107,6 @@ export const Forms = () => {
             />
           )
         })}
-    </Box>
+    </>
   )
 }

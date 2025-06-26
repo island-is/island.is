@@ -1,6 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 import { LanguageType } from './languageType.model'
 import { Option } from './option.model'
+import { OrganizationUrl } from './organizationUrl.model'
 
 @ObjectType('FormSystemPermissionType')
 export class PermissionType {
@@ -39,6 +40,12 @@ export class OrganizationAdmin {
 
   @Field(() => [PermissionType], { nullable: 'itemsAndList' })
   fieldTypes?: PermissionType[]
+
+  @Field(() => [OrganizationUrl], { nullable: 'itemsAndList' })
+  submitUrls?: OrganizationUrl[]
+
+  @Field(() => [OrganizationUrl], { nullable: 'itemsAndList' })
+  validationUrls?: OrganizationUrl[]
 
   @Field(() => [Option], { nullable: 'itemsAndList' })
   organizations?: Option[]

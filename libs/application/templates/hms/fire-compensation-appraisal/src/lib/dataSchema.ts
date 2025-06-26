@@ -1,5 +1,6 @@
 import { YES } from '@island.is/application/core'
 import { z } from 'zod'
+import * as m from './messages'
 
 const fileSchema = z.object({ key: z.string(), name: z.string() })
 
@@ -35,7 +36,14 @@ export const dataSchema = z.object({
   applicant: applicantSchema,
   realEstate: realEstateSchema,
   usageUnits: usageUnitsSchema,
-  photos: z.array(fileSchema).min(3),
+  photos: z.array(fileSchema).superRefine((data, ctx) => {
+    if (data.length < 3) {
+      ctx.addIssue({
+        params: m.photoMessages.alertMessage,
+        code: z.ZodIssueCode.custom,
+      })
+    }
+  }),
   appraisalMethod: appraisalMethodSchema,
   description: descriptionSchema,
 })
