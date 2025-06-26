@@ -275,5 +275,3 @@ public class LicenseWidgetProvider extends AppWidgetProvider {
         }
     }
 }
-    }
-}

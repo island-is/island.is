@@ -53,18 +53,8 @@ public class LicenseWidgetConfigActivity extends Activity {
         }
 
         loadExistingConfiguration();
-        mLicenseTypeSpinner = findViewById(R.id.license_type_spinner);
-        mShowInfoCheckbox = findViewById(R.id.show_info_checkbox);
+    }
 
-        if (mLicenseTypeSpinner == null || mShowInfoCheckbox == null) {
-            finish();
-            return;
-        }
-
-        if (mLicenseTypeSpinner == null || mShowInfoCheckbox == null) {
-            finish();
-            return;
-        }
     View.OnClickListener mOnClickListener = new View.OnClickListener() {
         public void onClick(View v) {
             final Context context = LicenseWidgetConfigActivity.this;
