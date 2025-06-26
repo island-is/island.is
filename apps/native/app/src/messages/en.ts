@@ -258,6 +258,30 @@ export const en: TranslatedMessages = {
   'documentDetail.screenTitle': 'Document',
   'documentDetail.loadingText': 'Loading document',
   'documentDetail.errorUnknown': 'Error occurred while loading document',
+  'documentDetail.buttonReply': 'Reply',
+  'documentDetail.buttonCommunications': 'Communications',
+
+  // document reply
+  'documentReply.to': 'To',
+  'documentReply.from': 'From',
+  'documentReply.message': 'Message',
+  'documentReply.messagePlaceholder': 'Write message here',
+  'documentReply.uploadAttachment': 'Upload document',
+  'documentReply.sendMessage': 'Send message',
+
+  // document communications
+  'documentCommunications.caseNumber': 'Case number',
+  'documentCommunications.initialReply':
+    'The message has been received and a case has been created. You can continue the conversation here or via your personal email {email}.',
+  'documentCommunications.cannotReply':
+    'This message cannot be replied to because the sender has blocked further replies in this conversation.',
+
+  // register email
+  'registerEmail.title': 'Please register your email',
+  'registerEmail.description':
+    'To reply to email, you need to register an email',
+  'registerEmail.button': 'Register email',
+  'registerEmail.cancel': 'Cancel',
 
   // wallet
   'wallet.screenTitle': 'Wallet',
