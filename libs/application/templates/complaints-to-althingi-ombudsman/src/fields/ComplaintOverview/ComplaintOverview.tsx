@@ -7,7 +7,7 @@ import {
   complaintOverview,
   information,
   complaintInformation,
-  gender
+  gender,
 } from '../../lib/messages'
 import { ValueLine } from './ValueLine'
 import { ComplainedFor } from './ComplainedFor'

@@ -5,6 +5,7 @@ import {
   AllowManager,
   RestrictGuarantor,
 } from './parliamentaryUserTypes.decorator'
+import { CurrentAdmin, getCurrentAdmin } from './admin.decorator'
 
 export {
   AllowDelegation,
@@ -13,4 +14,6 @@ export {
   getCurrentSignee,
   AllowManager,
   RestrictGuarantor,
+  CurrentAdmin,
+  getCurrentAdmin,
 }

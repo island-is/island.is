@@ -1,3 +1,9 @@
+import addHours from 'date-fns/addHours'
+import differenceInMinutes from 'date-fns/differenceInMinutes'
+import isAfter from 'date-fns/isAfter'
+import isBefore from 'date-fns/isBefore'
+import isEqual from 'date-fns/isEqual'
+import isWeekend from 'date-fns/isWeekend'
 import fetch from 'node-fetch'
 
 import { BadGatewayException, Inject, Injectable } from '@nestjs/common'
@@ -11,8 +17,48 @@ import { NotificationDispatchType } from '@island.is/judicial-system/types'
 import { appModuleConfig } from './app.config'
 import { now } from './date.factory'
 
-const minutesBetween = (startTime: Date, endTime: Date) => {
-  return Math.floor((endTime.getTime() - startTime.getTime()) / (1000 * 60))
+enum JobScheduleType {
+  EveryDayAt2 = 'everyDayAt2',
+  WeekdaysAt9 = 'weekdaysAt9',
+}
+
+type JobConfig = {
+  jobScheduleType: JobScheduleType
+  execute: () => Promise<void | Logger>
+}
+
+// pass down today as a date prop to limit calls to now() to simplify mocked calls in tests
+const getTodayAtTime = (today: Date, hour: number) => {
+  const todayAtHour = new Date(today)
+  return new Date(todayAtHour.setHours(hour, 0, 0, 0))
+}
+
+const isBeforeOrEqual = (date: Date | number, dateToCompare: Date | number) =>
+  isBefore(date, dateToCompare) || isEqual(date, dateToCompare)
+
+const getCurrentJobScheduleType = () => {
+  // Create 1H interval to check the target job time.
+  // Example: Jobs are currently triggered at 2AM and 9AM.
+  // Thus, if now = 9:01 our interval would be [8:01, 9:01] and we check if the
+  // 9 AM timestamp falls in that interval
+  const timeNow = now()
+  const before = addHours(timeNow, -1)
+
+  const today2AM = getTodayAtTime(timeNow, 2)
+  const today9AM = getTodayAtTime(timeNow, 9)
+
+  if (isBeforeOrEqual(today2AM, timeNow) && isAfter(today2AM, before)) {
+    return JobScheduleType.EveryDayAt2
+  }
+  if (
+    !isWeekend(today9AM) &&
+    isBeforeOrEqual(today9AM, timeNow) &&
+    isAfter(today9AM, before)
+  ) {
+    return JobScheduleType.WeekdaysAt9
+  }
+
+  return null
 }
 
 @Injectable()
@@ -24,7 +70,23 @@ export class AppService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  private addMessagesForIndictmentsWaitingForConfirmationToQueue() {
+  private readonly jobs: JobConfig[] = [
+    {
+      jobScheduleType: JobScheduleType.EveryDayAt2,
+      execute: () => this.archiveCases(),
+    },
+    {
+      jobScheduleType: JobScheduleType.EveryDayAt2,
+      execute: () => this.postDailyHearingArrangementSummary(),
+    },
+    {
+      jobScheduleType: JobScheduleType.WeekdaysAt9,
+      execute: () =>
+        this.addMessagesForIndictmentsWaitingForConfirmationToQueue(),
+    },
+  ]
+
+  private async addMessagesForIndictmentsWaitingForConfirmationToQueue() {
     return this.messageService
       .sendMessagesToQueue([
         {
@@ -44,7 +106,6 @@ export class AppService {
     const startTime = now()
 
     let done = false
-
     do {
       done = await fetch(
         `${this.config.backendUrl}/api/internal/cases/archive`,
@@ -74,7 +135,8 @@ export class AppService {
         })
     } while (
       !done &&
-      minutesBetween(startTime, now()) < this.config.timeToLiveMinutes
+      // leftDate should be the later date and the rightDate the earlier date
+      differenceInMinutes(now(), startTime) < this.config.timeToLiveMinutes
     )
   }
 
@@ -106,9 +168,22 @@ export class AppService {
   async run() {
     this.logger.info('Scheduler starting')
 
-    await this.addMessagesForIndictmentsWaitingForConfirmationToQueue()
-    await this.archiveCases()
-    await this.postDailyHearingArrangementSummary()
+    const currentJobScheduleType = getCurrentJobScheduleType()
+    if (!currentJobScheduleType) {
+      this.logger.info('Scheduler: No jobs executed')
+      return
+    }
+
+    const filteredJobs = this.jobs.filter(
+      (job) => job.jobScheduleType === currentJobScheduleType,
+    )
+    for (const job of filteredJobs) {
+      try {
+        await job.execute()
+      } catch (error) {
+        this.logger.info(`Scheduler: Error at job ${job.execute.name}`, error)
+      }
+    }
 
     this.logger.info('Scheduler done')
   }

@@ -52,9 +52,12 @@ export const Field = ({ field, hasError }: Props) => {
     lang,
   }
 
-  const FieldComponent = field.fieldType != null
-    ? (FIELD_COMPONENT_MAP[field.fieldType as keyof typeof FIELD_COMPONENT_MAP] as React.ElementType)
-    : undefined
+  const FieldComponent =
+    field.fieldType != null
+      ? (FIELD_COMPONENT_MAP[
+          field.fieldType as keyof typeof FIELD_COMPONENT_MAP
+        ] as React.ElementType)
+      : undefined
 
   return (
     <Box marginTop={4}>
