@@ -4,6 +4,7 @@ import {
   CaseTableType,
   isCourtOfAppealsUser,
   isDistrictCourtUser,
+  isPrisonAdminUser,
   isPrisonStaffUser,
   type User,
 } from '@island.is/judicial-system/types'
@@ -25,6 +26,7 @@ import {
   districtCourtRequestCasesInProgressWhereOptions,
 } from './whereOptions/districtCourt'
 import {
+  prisonAdminCasesAccessWhereOptions,
   prisonAdminIndictmentsRegisteredRulingWhereOptions,
   prisonAdminIndictmentsSentToPrisonAdminWhereOptions,
   prisonAdminRequestCasesActiveWhereOptions,
@@ -71,9 +73,9 @@ export const userAccessWhereOptions = (user: User): WhereOptions => {
     return prisonStaffCasesAccessWhereOptions()
   }
 
-  // if (isPrisonAdminUser(user)) {
-  //   return prisonAdminTableGroups
-  // }
+  if (isPrisonAdminUser(user)) {
+    return prisonAdminCasesAccessWhereOptions()
+  }
 
   // if (isPublicProsecutionOfficeUser(user)) {
   //   return publicProsecutionOfficeTableGroups
@@ -122,13 +124,13 @@ export const caseTableWhereOptions: Record<
     prisonStaffRequestCasesActiveWhereOptions,
   [CaseTableType.PRISON_STAFF_REQUEST_CASES_DONE]:
     prisonStaffRequestCasesDoneWhereOptions,
-  [CaseTableType.PRISON_ADMIN_REQUEST_CASES_ACTIVE]: () =>
+  [CaseTableType.PRISON_ADMIN_REQUEST_CASES_ACTIVE]:
     prisonAdminRequestCasesActiveWhereOptions,
-  [CaseTableType.PRISON_ADMIN_REQUEST_CASES_DONE]: () =>
+  [CaseTableType.PRISON_ADMIN_REQUEST_CASES_DONE]:
     prisonAdminRequestCasesDoneWhereOptions,
-  [CaseTableType.PRISON_ADMIN_INDICTMENTS_SENT_TO_PRISON_ADMIN]: () =>
+  [CaseTableType.PRISON_ADMIN_INDICTMENTS_SENT_TO_PRISON_ADMIN]:
     prisonAdminIndictmentsSentToPrisonAdminWhereOptions,
-  [CaseTableType.PRISON_ADMIN_INDICTMENTS_REGISTERED_RULING]: () =>
+  [CaseTableType.PRISON_ADMIN_INDICTMENTS_REGISTERED_RULING]:
     prisonAdminIndictmentsRegisteredRulingWhereOptions,
   [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_NEW]: () =>
     publicProsecutionOfficeIndictmentsNewWhereOptions,
