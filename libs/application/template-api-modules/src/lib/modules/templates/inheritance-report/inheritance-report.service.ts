@@ -50,19 +50,37 @@ export class InheritanceReportService extends BaseTemplateApiService {
   }
 
   async syslumennOnEntry({ application, auth }: TemplateApiModuleActionProps) {
+    // eslint-disable-next-line prefer-const
+    let useFakeData = false
+
+    if (
+      application.applicant.startsWith('010130') &&
+      application.applicant.endsWith('2399')
+    ) {
+      // useFakeData = true
+    }
+
+    // Gervimaður Danmörk
+    // const inheritanceReportNationalId = '0101302479' // application.applicant
+    // Gervimaður Færeyjar
+    const inheritanceReportNationalId = '0101302399' // application.applicant
+
+    this.logger.info(`Using fake data: ${useFakeData ? 'Yes' : 'No'}`)
+
     const [relationOptions, inheritanceReportInfos] = await Promise.all([
       this.syslumennService.getEstateRelations(),
       // Get estate info from syslumenn or fakedata depending on application.applicant
-      application.applicant.startsWith('010130') &&
-      application.applicant.endsWith('2399')
+      useFakeData
         ? [
             getFakeData('2022-14-14', 'Gervimaður Útlönd', '0101307789'),
             getFakeData('2020-15-04', 'Gervimaður Danmörk', '0101302479'),
           ]
         : this.syslumennService.getEstateInfoForInheritanceReport(
-            application.applicant,
+            inheritanceReportNationalId,
           ),
     ])
+
+    this.logger.info('inheritanceReportInfos', inheritanceReportInfos)
 
     // Loop through all inheritanceReportInfos and attach inheritanceTax to each
     await Promise.all(

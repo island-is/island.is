@@ -11,6 +11,7 @@ import { TemplateApiModuleActionProps } from '../../../types'
 import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import {
   ApplicationTypes,
+  BasicChargeItem,
   FormValue,
   InstitutionNationalIds,
 } from '@island.is/application/types'
@@ -48,31 +49,119 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
   async createCharge({
     application: { id, answers },
     auth,
+    params,
   }: TemplateApiModuleActionProps) {
+    // Determine the correct charge items based on application answers
     const applicationFor = getValueViaPath<
-      'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65'
+      'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65' | 'B-advanced'
     >(answers, 'applicationFor', 'B-full')
+    const deliveryMethod = getValueViaPath<Pickup>(
+      answers,
+      'delivery.deliveryMethod',
+    )
 
-    const chargeItemCode =
+    // Determine the correct license charge item code
+    const licenseChargeItemCode =
       applicationFor === 'B-full'
         ? 'AY110'
         : applicationFor === 'BE'
         ? 'AY115'
-        : 'AY114'
+        : applicationFor === 'B-full-renewal-65'
+        ? 'AY113'
+        : 'AY114' // Default to B-temp
 
+    // Build the expected charge items array
+    const expectedChargeItems = [{ code: licenseChargeItemCode }]
+
+    // Add delivery fee if applicable
+    if (deliveryMethod === Pickup.POST) {
+      expectedChargeItems.push({ code: 'AY145' }) // Delivery fee
+    }
+
+    // Validate the charge items if they were provided in params
+    if (params?.chargeItems) {
+      const providedChargeItems =
+        typeof params.chargeItems === 'function'
+          ? params.chargeItems(application)
+          : params.chargeItems
+
+      // Verify that the provided charge items match the expected ones
+      this.validateChargeItems(providedChargeItems, expectedChargeItems)
+    }
+
+    // Always use the expected charge items to ensure security
     const response = await this.sharedTemplateAPIService.createCharge(
       auth,
       id,
       InstitutionNationalIds.SYSLUMENN,
-      [{ code: chargeItemCode }],
+      expectedChargeItems,
     )
 
-    // last chance to validate before the user receives a dummy
+    // Validate response
     if (!response?.paymentUrl) {
       throw new Error('paymentUrl missing in response')
     }
 
     return response
+  }
+
+  /**
+   * Validates that the provided charge items match the expected ones
+   * @param providedItems The charge items provided in the request
+   * @param expectedItems The expected charge items based on application data
+   */
+  private validateChargeItems(
+    providedItems: BasicChargeItem[],
+    expectedItems: BasicChargeItem[],
+  ): void {
+    // Check if the arrays have the same length
+    if (providedItems.length !== expectedItems.length) {
+      this.log(
+        'error',
+        'Charge item validation failed: incorrect number of items',
+        {
+          providedItems,
+          expectedItems,
+        },
+      )
+      throw new Error('Invalid charge items: incorrect number of items')
+    }
+
+    // Create sets of charge item codes for easy comparison
+    const providedCodes = new Set(providedItems.map((item) => item.code))
+    const expectedCodes = new Set(expectedItems.map((item) => item.code))
+
+    // Check if all expected codes are in the provided codes
+    for (const code of expectedCodes) {
+      if (!providedCodes.has(code)) {
+        this.log(
+          'error',
+          'Charge item validation failed: missing required charge item',
+          {
+            missingCode: code,
+            providedItems,
+          },
+        )
+        throw new Error(
+          `Invalid charge items: missing required charge item ${code}`,
+        )
+      }
+    }
+
+    // Check if there are any unexpected codes in the provided codes
+    for (const code of providedCodes) {
+      if (!expectedCodes.has(code)) {
+        this.log(
+          'error',
+          'Charge item validation failed: unexpected charge item',
+          {
+            unexpectedCode: code,
+            expectedItems,
+          },
+        )
+        throw new Error(`Invalid charge items: unexpected charge item ${code}`)
+      }
+    }
   }
 
   async submitApplication({
