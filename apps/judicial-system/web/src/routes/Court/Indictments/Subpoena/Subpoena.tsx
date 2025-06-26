@@ -209,9 +209,16 @@ const Subpoena: FC = () => {
                     variant="text"
                     colorScheme="destructive"
                     icon="trash"
-                    onClick={() => setIsSchedulingArraignmentDate(undefined)}
+                    iconType="outline"
+                    onClick={() => {
+                      setNewSubpoenas((previous) =>
+                        previous.filter((v) => v !== defendant.id),
+                      )
+
+                      setIsSchedulingArraignmentDate(undefined)
+                    }}
                   >
-                    {formatMessage(strings.newSubpoenaButtonText)}
+                    Hætta við
                   </Button>
                 ) : isArraignmentScheduled ? (
                   <Button
