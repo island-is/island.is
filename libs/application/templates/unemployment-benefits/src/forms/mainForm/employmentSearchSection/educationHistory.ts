@@ -10,6 +10,11 @@ import {
 import { employmentSearch as employmentSearchMessages } from '../../../lib/messages'
 import { Application } from '@island.is/application/types'
 import { GaldurDomainModelsEducationItem } from '@island.is/clients/vmst-unemployment'
+import { formatDate } from '../../../utils'
+import {
+  isCurrentlyStudying,
+  wasStudyingLastTwelveMonths,
+} from '../../../utils/educationInformation'
 
 export const educationHistorySubSection = buildSubSection({
   id: 'educationHistorySubSection',
@@ -23,89 +28,101 @@ export const educationHistorySubSection = buildSubSection({
           id: 'educationHistory.currentStudies.description',
           title: employmentSearchMessages.educationHistory.currentStudiesLabel,
           titleVariant: 'h5',
+          condition: (answers) =>
+            wasStudyingLastTwelveMonths(answers) &&
+            isCurrentlyStudying(answers),
         }),
         buildTextField({
-          id: 'educationHistory.currentStudies.schoolName',
-          title: employmentSearchMessages.educationHistory.schoolNameLabel,
+          id: 'educationHistory.currentStudies.programName',
+          title: employmentSearchMessages.educationHistory.programNameLabel,
           width: 'half',
           backgroundColor: 'white',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const schoolName = getValueViaPath<string>(
-              application.externalData,
-              'schoolName',
-            )
-            return schoolName ?? 'Háskóli Íslands'
+            const programId =
+              getValueViaPath<string>(
+                application.answers,
+                'education.currentEducation.programName',
+              ) ?? ''
+            const education =
+              getValueViaPath<GaldurDomainModelsEducationItem[]>(
+                application.externalData,
+                'unemploymentApplication.data.supportData.education',
+              ) ?? []
+            const program = education.find((item) => item.id === programId)
+            return program?.name ?? ''
           },
-          condition: (_answers, _externalData) => {
-            // TODO: Get info from externalData if available
-            return true
-          },
+          condition: (answers) =>
+            wasStudyingLastTwelveMonths(answers) &&
+            isCurrentlyStudying(answers),
         }),
         buildTextField({
-          id: 'educationHistory.currentStudies.units',
+          id: 'educationHistory.currentStudies.programUnits',
           title: employmentSearchMessages.educationHistory.unitsLabel,
           width: 'half',
           backgroundColor: 'white',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const units = getValueViaPath<string>(
-              application.externalData,
-              'units',
-            )
-            return units ?? '20'
+            const units =
+              getValueViaPath<string>(
+                application.answers,
+                'education.currentEducation.programUnits',
+              ) ?? ''
+            return units
           },
-          condition: (_answers, _externalData) => {
-            // TODO: Get info from externalData if available
-            return true
-          },
+          condition: (answers) =>
+            wasStudyingLastTwelveMonths(answers) &&
+            isCurrentlyStudying(answers),
         }),
         buildTextField({
-          id: 'educationHistory.currentStudies.degree',
+          id: 'educationHistory.currentStudies.programDegree',
           title: employmentSearchMessages.educationHistory.degreeLabel,
           width: 'half',
           backgroundColor: 'white',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const degree = getValueViaPath<string>(
-              application.externalData,
-              'degree',
-            )
-            return degree ?? 'BS'
+            const degree =
+              getValueViaPath<string>(
+                application.answers,
+                'education.currentEducation.programDegree',
+              ) ?? ''
+            return degree
           },
-          condition: (_answers, _externalData) => {
-            // TODO: Get info from externalData if available
-            return true
-          },
+          condition: (answers) =>
+            wasStudyingLastTwelveMonths(answers) &&
+            isCurrentlyStudying(answers),
         }),
         buildTextField({
-          id: 'educationHistory.currentStudies.expectedEndOfStudy',
+          id: 'educationHistory.currentStudies.programEnd',
           title:
             employmentSearchMessages.educationHistory.expectedEndOfStudyLabel,
           width: 'half',
           backgroundColor: 'white',
           readOnly: true,
           defaultValue: (application: Application) => {
-            const expectedEndOfStudy = getValueViaPath<string>(
-              application.externalData,
-              'expectedEndOfStudy',
-            )
-            return expectedEndOfStudy ?? '01.06.2024'
+            const expectedEndOfStudy =
+              getValueViaPath<string>(
+                application.answers,
+                'education.currentEducation.programEnd',
+              ) ?? ''
+            return formatDate(expectedEndOfStudy)
           },
-          condition: (_answers, _externalData) => {
-            // TODO: Get info from externalData if available
-            return true
-          },
+          condition: (answers) =>
+            wasStudyingLastTwelveMonths(answers) &&
+            isCurrentlyStudying(answers),
         }),
         buildFieldsRepeaterField({
           id: 'educationHistory.educationHistory',
-          formTitle: (index, _application) => {
-            // TODO: Get info from externalData about currentStudies
+          formTitle: (index, application) => {
             return {
               ...employmentSearchMessages.educationHistory
                 .educationHistoryTitle,
               values: {
-                value: index + 2, // TODO: If no current studies then do + 1
+                value:
+                  wasStudyingLastTwelveMonths(application.answers) &&
+                  isCurrentlyStudying(application.answers)
+                    ? index + 2
+                    : index + 1,
               },
             }
           },

@@ -92,9 +92,9 @@ export const employmentSearch = {
       defaultMessage: 'Nám {value}',
       description: 'Education history title',
     },
-    schoolNameLabel: {
+    programNameLabel: {
       id: 'vmst.ub.application:employmentSearch.educationHistory.schoolNameLabel',
-      defaultMessage: 'Skóli',
+      defaultMessage: 'Námsstig',
       description: 'School name label',
     },
     courseSubjectLabel: {
