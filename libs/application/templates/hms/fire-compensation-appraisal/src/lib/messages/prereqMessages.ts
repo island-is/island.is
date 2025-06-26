@@ -42,4 +42,15 @@ export const prereqMessages = defineMessages({
     defaultMessage: 'Upplýsingar um fasteignir í þinni eigu',
     description: 'Properties subtitle',
   },
+  checkboxLabel: {
+    id: 'fca.application:prereq.checkboxLabel',
+    defaultMessage:
+      'Ég skil að ofangreindra upplýsinga verður aflað við úrvinnslu tilkynningarinnar',
+    description: 'External information retrieval checkbox label',
+  },
+  subTitle: {
+    id: 'fca.application:prereq.subTitle',
+    defaultMessage: 'Eftirfarandi upplýsingar verða sóttar rafrænt.',
+    description: 'External information retrieval subtitle',
+  },
 })
