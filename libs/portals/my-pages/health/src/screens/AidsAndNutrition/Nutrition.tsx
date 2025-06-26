@@ -1,5 +1,8 @@
-import { RightsPortalAidOrNutrition } from '@island.is/api/schema'
-import { Box, Text } from '@island.is/island-ui/core'
+import {
+  RightsPortalAidOrNutrition,
+  RightsPortalAidOrNutritionRenewalStatus,
+} from '@island.is/api/schema'
+import { Box, Text, toast } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   DownloadFileButtons,
@@ -12,6 +15,11 @@ import {
 import { messages } from '../../lib/messages'
 import { exportNutritionFile } from '../../utils/FileBreakdown'
 import NestedInfoLines from '../../components/NestedInfoLines/NestedInfoLines'
+import { useRenewAidsAndNutritionMutation } from './AidsAndNutrition.generated'
+import { useState } from 'react'
+import GenericRenewModal, {
+  ModalField,
+} from '../../components/GenericRenewModal/GenericRenewModal'
 
 interface Props {
   data: Array<RightsPortalAidOrNutrition>
@@ -20,6 +28,64 @@ interface Props {
 const Nutrition = ({ data }: Props) => {
   useNamespaces('sp.health')
   const { formatMessage } = useLocale()
+  const [activeItem, setActiveItem] =
+    useState<RightsPortalAidOrNutrition | null>(null)
+  const [isVisible, setIsVisible] = useState(false)
+
+  const [renewAidsAndNutrition, { data: postData, error: postError, loading }] =
+    useRenewAidsAndNutritionMutation()
+
+  const handleSubmit = async (item: RightsPortalAidOrNutrition) => {
+    const data = await renewAidsAndNutrition({
+      variables: {
+        input: {
+          id: item.id,
+        },
+      },
+    })
+
+    const success = data?.data?.rightsPortalRenewAidOrNutrition?.success
+    const error = data?.data?.rightsPortalRenewAidOrNutrition?.errorMessage
+
+    if (success) {
+      toast.success(formatMessage(messages.renewalFormSuccess))
+    }
+    if (error) {
+      toast.error(formatMessage(messages.renewalFormError))
+    }
+  }
+
+  const getFields = (item: RightsPortalAidOrNutrition): ModalField[] => [
+    {
+      title: formatMessage(messages.nutrition),
+      value: item.name ?? '',
+    },
+    {
+      title: formatMessage(messages.dispensationPlace),
+      value: item.location ?? '',
+    },
+    {
+      title: formatMessage(messages.extraDetail),
+      value: item.explanation ?? '',
+    },
+    {
+      title: formatMessage(messages.availableEvery12Months),
+      value: item.allowed12MonthPeriod?.toString() ?? '',
+    },
+    {
+      title: formatMessage(messages.availableRefund),
+      value: item.available ?? '',
+    },
+    {
+      title: formatMessage(messages.nextAvailableRefund),
+      value: item.nextAllowedMonth ?? '',
+    },
+  ]
+
+  const openModal = (item: RightsPortalAidOrNutrition) => {
+    setActiveItem(item)
+    setIsVisible(true)
+  }
 
   return (
     <Box>
@@ -34,6 +100,7 @@ const Nutrition = ({ data }: Props) => {
             ),
             availableRefund: formatMessage(messages.availableRefund),
             nextAvailableRefund: formatMessage(messages.nextAvailableRefund),
+            renewal: formatMessage(messages.renew),
           }}
           defaultSortByKey="name"
           mobileTitleKey="name"
@@ -53,6 +120,33 @@ const Nutrition = ({ data }: Props) => {
                 : '',
             availableRefund: rowItem.available ?? '',
             nextAvailableRefund: rowItem.nextAllowedMonth ?? '',
+            renewal: undefined,
+            lastNode:
+              rowItem.renewalStatus ===
+              RightsPortalAidOrNutritionRenewalStatus.RENEWAL_IN_PROGRESS
+                ? {
+                    type: 'info',
+                    label: formatMessage(messages.renewalInProgress),
+                    text: formatMessage(messages.renewalInProgress),
+                  }
+                : rowItem.renewalStatus ===
+                  RightsPortalAidOrNutritionRenewalStatus.VALID
+                ? {
+                    type: 'text',
+                    label: formatMessage(messages.valid),
+                  }
+                : RightsPortalAidOrNutritionRenewalStatus.VALID_FOR_RENEWAL
+                ? {
+                    type: 'action',
+                    label: formatMessage(messages.renew),
+                    action: () => openModal(rowItem),
+                    icon: { icon: 'arrowForward', type: 'outline' },
+                  }
+                : {
+                    type: 'info',
+                    label: formatMessage(messages.notValidForRenewal),
+                    text: formatMessage(messages.notValidForRenewalDetail),
+                  },
             children: (
               <NestedInfoLines
                 backgroundColor="blue"
@@ -89,16 +183,34 @@ const Nutrition = ({ data }: Props) => {
           ]}
         />
       </Box>
+
       <Box paddingTop={4}>
         <Text variant="small" paddingBottom={2}>
-          {formatMessage(messages['nutritionDisclaimer'])}
+          {formatMessage(messages.nutritionDisclaimer)}
         </Text>
         <LinkButton
-          to={formatMessage(messages['nutritionDescriptionLink'])}
+          to={formatMessage(messages.nutritionDescriptionLink)}
           text={formatMessage(messages.nutritionDescriptionInfo)}
           variant="text"
         />
       </Box>
+
+      {activeItem && (
+        <GenericRenewModal
+          item={activeItem}
+          isVisible={isVisible}
+          setVisible={setIsVisible}
+          setActiveItem={setActiveItem}
+          onSubmit={handleSubmit}
+          getDataFields={getFields}
+          modalTitle={formatMessage(messages.renewalAidRequest)}
+          modalText={formatMessage(messages.renewalAidRequestDetail)}
+          cancelLabel={formatMessage(m.buttonCancel)}
+          confirmLabel={formatMessage(messages.renew)}
+          errorMessage={formatMessage(messages.renewalFormError)}
+          loading={loading}
+        />
+      )}
     </Box>
   )
 }

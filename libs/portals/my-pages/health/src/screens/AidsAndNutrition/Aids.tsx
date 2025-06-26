@@ -204,10 +204,10 @@ const Aids = ({ data }: Props) => {
       </Box>
       <Box paddingTop={4}>
         <Text variant="small" paddingBottom={2}>
-          {formatMessage(messages['aidsDisclaimer'])}
+          {formatMessage(messages.aidsDisclaimer)}
         </Text>
         <LinkButton
-          to={formatMessage(messages['aidsDescriptionLink'])}
+          to={formatMessage(messages.aidsDescriptionLink)}
           text={formatMessage(messages.aidsDescriptionInfo)}
           variant="text"
         />
