@@ -39,4 +39,5 @@ export enum ApiScope {
   menntamalastofnun = '@island.is/applications/mms',
   socialInsuranceAdministration = '@island.is/applications/social-insurance-administration',
   ojoiAdverts = '@island.is/applications/dmr:stjornartidindi',
+  hms = '@island.is/applications/hms',
 }
