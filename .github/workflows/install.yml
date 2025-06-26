@@ -244,7 +244,7 @@ jobs:
           UNICORNS_ONLY: ${{ !contains(github.event.pull_request.labels.*.name, 'e2e') }}
         run: |
           set -euo pipefail
-          if [[ "$UNICORNS_ONLY" == true ]]; then export CHUNKS_OVERRIDE="${{ steps.unicorn.outputs.unicorn-chunks }}"
+          if [[ "$UNICORNS_ONLY" == true ]]; then export CHUNKS_OVERRIDE="${{ steps.unicorn.outputs.unicorn-chunks }}"; fi
           CHUNKS="$(./scripts/ci/generate-chunks.sh e2e)"
           if [[ "$CHUNKS" != "[]" ]]; then
             echo "CHUNKS={\"projects\":$CHUNKS}" >> "$GITHUB_OUTPUT"
