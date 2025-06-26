@@ -21,8 +21,17 @@ export class LawyerRegistryController {
   @ApiOkResponse({ description: 'Resets a local copy of lawyer registry' })
   async resetLawyerRegistry(): Promise<boolean> {
     this.logger.debug('Resetting lawyer registry')
-    const success = await this.lawyerRegistryService.populate()
+    try {
+      const success = await this.lawyerRegistryService.populate()
 
-    return success
+      if (success) {
+        this.logger.info('Lawyer registry reset successfully')
+      }
+
+      return success
+    } catch (error) {
+      this.logger.error('Failed to reset lawyer registry', error)
+      throw error
+    }
   }
 }
