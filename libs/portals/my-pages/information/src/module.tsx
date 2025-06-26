@@ -54,8 +54,7 @@ const sharedRoutes = async (
   })
 
   const isSettingsEnabled = isDelegationTypeFFEnabled
-    ? scopes.includes(UserProfileScope.read) &&
-      scopes.includes(DocumentsScope.main)
+    ? scopes.includes(DocumentsScope.main)
     : scopes.includes(UserProfileScope.write)
 
   return [
