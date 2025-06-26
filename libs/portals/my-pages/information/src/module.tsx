@@ -13,6 +13,7 @@ import {
 import { InformationPaths } from './lib/paths'
 import { Navigate } from 'react-router-dom'
 import { Features } from '@island.is/react/feature-flags'
+import { parseDelegationTypeFeatureFlagValue } from './utils/parseDelegationTypeFeatureFlagValue'
 
 const UserInfoOverview = lazy(() =>
   import('./screens/UserInfoOverview/UserInfoOverview'),
@@ -46,11 +47,11 @@ const sharedRoutes = async (
     { id: profile?.nationalId, attributes: {} },
   )
 
-  // TODO fix this
-  const isDelegationTypeFFEnabled = parseDelegationTypeFeatureFlagValue(
-    allowedDelegationTypes,
-    profile?.delegationType,
-  )
+  const isDelegationTypeFFEnabled = parseDelegationTypeFeatureFlagValue({
+    featureFlagValue: allowedDelegationTypes,
+    delegationTypes: profile?.delegationType,
+    actorNationalId: profile?.nationalId,
+  })
 
   const isSettingsEnabled = isDelegationTypeFFEnabled
     ? scopes.includes(UserProfileScope.read) &&
