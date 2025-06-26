@@ -45,7 +45,10 @@ export const CurrencyField = ({ item, dispatch, onErrorChange }: Props) => {
                 // Remove any non-digit characters from the input value
                 const inputValue = e.target.value.replace(/\D/g, '')
                 // Split the input value into groups of three characters
-                const formattedValue = inputValue.replace(/\B(?=(\d{3})+(?!\d))/g, '.')
+                const formattedValue = inputValue.replace(
+                  /\B(?=(\d{3})+(?!\d))/g,
+                  '.',
+                )
                 field.onChange(formattedValue)
                 if (dispatch) {
                   dispatch({
@@ -67,9 +70,8 @@ export const CurrencyField = ({ item, dispatch, onErrorChange }: Props) => {
                   setTimeout(() => {
                     onErrorChange(item.id, !!fieldState.error)
                   }, 0)
-                    }
-                  }
                 }
+              }}
               required={item?.isRequired ?? false}
               backgroundColor="blue"
               errorMessage={fieldState.error?.message}

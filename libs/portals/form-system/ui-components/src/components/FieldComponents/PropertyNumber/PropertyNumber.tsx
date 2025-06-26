@@ -32,10 +32,7 @@ const emptyProperty: PropertyNumberType = {
 
 const PROPERTY_NUMBER_REGEX = /^\d{7}$/
 
-export const PropertyNumber = ({
-  item,
-  dispatch,
-}: Props) => {
+export const PropertyNumber = ({ item, dispatch }: Props) => {
   const { formatMessage } = useIntl()
   const { control, setValue } = useFormContext()
   const [hasCustomPropertyNumber, setCustomPropertyNumber] = useState(false)
@@ -145,15 +142,23 @@ export const PropertyNumber = ({
                       backgroundColor="blue"
                       value={field.value}
                       onChange={(e) => {
-                        const value = e.target.value.replace(/\D/g, '').slice(0, 7)
+                        const value = e.target.value
+                          .replace(/\D/g, '')
+                          .slice(0, 7)
                         field.onChange(value)
                         // Fetch property info if 7 digits
                         if (value.length === 7) {
                           const info = fetchPropertyInfo(value)
                           setProperty(info)
                           setValue(`${item.id}.customAddress`, info.address)
-                          setValue(`${item.id}.customMunicipality`, info.municipality)
-                          setValue(`${item.id}.customPostalCode`, info.postalCode)
+                          setValue(
+                            `${item.id}.customMunicipality`,
+                            info.municipality,
+                          )
+                          setValue(
+                            `${item.id}.customPostalCode`,
+                            info.postalCode,
+                          )
                         } else {
                           setProperty({
                             propertyNumber: value,

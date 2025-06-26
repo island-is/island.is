@@ -16,11 +16,7 @@ interface Props {
 
 const EMAIL_REGEX = /^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$/
 
-export const Email = ({
-  item,
-  dispatch,
-  lang = 'is',
-}: Props) => {
+export const Email = ({ item, dispatch, lang = 'is' }: Props) => {
   const { formatMessage } = useIntl()
   const { control } = useFormContext()
 

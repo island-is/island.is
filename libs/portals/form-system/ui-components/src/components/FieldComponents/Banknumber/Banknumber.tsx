@@ -15,7 +15,7 @@ interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
   lang?: 'is' | 'en'
- onErrorChange?: (fieldId: string, hasError: boolean) => void
+  onErrorChange?: (fieldId: string, hasError: boolean) => void
 }
 
 export const Banknumber = ({
@@ -62,7 +62,7 @@ export const Banknumber = ({
   }
 
   return (
-        <>
+    <>
       <Row>
         <Text variant="h4">{item.name?.[lang]}</Text>
       </Row>

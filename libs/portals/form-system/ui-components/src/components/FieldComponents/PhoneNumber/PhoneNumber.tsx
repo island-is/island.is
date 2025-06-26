@@ -19,11 +19,7 @@ interface Props {
 
 const PHONE_REGEX = /^[0-9+\-() ]{7,20}$/
 
-export const PhoneNumber = ({
-  item,
-  dispatch,
-  lang = 'is',
-}: Props) => {
+export const PhoneNumber = ({ item, dispatch, lang = 'is' }: Props) => {
   const { locale, formatMessage } = useIntl()
   const { control } = useFormContext()
 
@@ -41,7 +37,10 @@ export const PhoneNumber = ({
             },
             pattern: {
               value: PHONE_REGEX,
-              message: formatMessage({ id: 'invalidPhoneNumber', defaultMessage: 'Ógilt símanúmer' }),
+              message: formatMessage({
+                id: 'invalidPhoneNumber',
+                defaultMessage: 'Ógilt símanúmer',
+              }),
             },
           }}
           render={({ field, fieldState }) => (

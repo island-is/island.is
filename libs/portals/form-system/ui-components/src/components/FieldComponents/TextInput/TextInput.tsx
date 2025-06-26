@@ -58,8 +58,8 @@ export const TextInput = ({ item, dispatch, onErrorChange }: Props) => {
               }, 0)
             }
           }}
-        errorMessage={fieldState.error?.message}
-            />
+          errorMessage={fieldState.error?.message}
+        />
       )}
     />
   )

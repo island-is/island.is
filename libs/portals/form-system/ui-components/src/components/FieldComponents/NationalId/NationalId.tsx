@@ -40,7 +40,10 @@ export const NationalId = ({ item, dispatch, hasError }: Props) => {
               },
               pattern: {
                 value: nationalIdRegex,
-                message: formatMessage({ id: 'invalidNationalId', defaultMessage: 'Ógild kennitala' }),
+                message: formatMessage({
+                  id: 'invalidNationalId',
+                  defaultMessage: 'Ógild kennitala',
+                }),
               },
             }}
             render={({ field, fieldState }) => (

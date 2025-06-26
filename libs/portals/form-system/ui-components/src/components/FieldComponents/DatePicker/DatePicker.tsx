@@ -22,24 +22,22 @@ export const DatePicker = ({ item, dispatch, lang = 'is' }: Props) => {
     <Controller
       name={item.id}
       control={control}
-      defaultValue={
-        (() => {
-          const dateValue = getValue(item, 'date')
-          if (!dateValue) return null
-          try {
-            return parseISO(dateValue)
-          } catch {
-            return null
-          }
-        })()
-      }
+      defaultValue={(() => {
+        const dateValue = getValue(item, 'date')
+        if (!dateValue) return null
+        try {
+          return parseISO(dateValue)
+        } catch {
+          return null
+        }
+      })()}
       rules={{
         required: {
           value: item.isRequired ?? false,
           message: formatMessage(m.required),
         },
-      validate: (value) =>
-          value !== null && value !== '' || formatMessage(m.required),
+        validate: (value) =>
+          (value !== null && value !== '') || formatMessage(m.required),
       }}
       render={({ field, fieldState }) => (
         <DatePickerCore
