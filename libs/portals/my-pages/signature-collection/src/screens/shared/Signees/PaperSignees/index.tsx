@@ -73,6 +73,7 @@ export const PaperSignees = ({
           listId: listId,
           nationalId: nationalIdInput,
           pageNumber: Number(page),
+          collectionType: collectionType,
         },
       },
       onCompleted: (res) => {
