@@ -50,7 +50,9 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     application: { id, answers },
     auth,
     params,
-  }: TemplateApiModuleActionProps) {
+  }: TemplateApiModuleActionProps<{
+    chargeItems?: BasicChargeItem[] | ((app: any) => BasicChargeItem[])
+  }>) {
     // Determine the correct charge items based on application answers
     const applicationFor = getValueViaPath<
       'B-full' | 'B-temp' | 'BE' | 'B-full-renewal-65' | 'B-advanced'
@@ -82,7 +84,7 @@ export class DrivingLicenseSubmissionService extends BaseTemplateApiService {
     if (params?.chargeItems) {
       const providedChargeItems =
         typeof params.chargeItems === 'function'
-          ? params.chargeItems(application)
+          ? params.chargeItems({ id, answers })
           : params.chargeItems
 
       // Verify that the provided charge items match the expected ones
