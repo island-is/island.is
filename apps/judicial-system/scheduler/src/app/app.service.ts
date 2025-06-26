@@ -1,3 +1,4 @@
+import { differenceInMinutes } from 'date-fns'
 import addHours from 'date-fns/addHours'
 import isAfter from 'date-fns/isAfter'
 import isBefore from 'date-fns/isBefore'
@@ -59,9 +60,6 @@ const getCurrentJobScheduleType = () => {
 
   return null
 }
-
-const minutesBetween = (startTime: Date, endTime: Date) =>
-  Math.floor((endTime.getTime() - startTime.getTime()) / (1000 * 60))
 
 @Injectable()
 export class AppService {
@@ -137,7 +135,8 @@ export class AppService {
         })
     } while (
       !done &&
-      minutesBetween(startTime, now()) < this.config.timeToLiveMinutes
+      // leftDate should be the later date and the rightDate the earlier date
+      differenceInMinutes(now(), startTime) < this.config.timeToLiveMinutes
     )
   }
 
