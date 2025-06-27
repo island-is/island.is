@@ -271,6 +271,8 @@ struct AccessoryLicenseView : View {
           .aspectRatio(contentMode: .fit)
           .frame(width: 26, height: 26)
           .foregroundColor(.white)
+          .privacySensitive(false)
+          .unredacted()
       }
       .clipShape(Circle())
       .widgetURL(openURL)
@@ -284,11 +286,15 @@ struct AccessoryLicenseView : View {
             .aspectRatio(contentMode: .fit)
             .frame(width: 22, height: 22)
             .foregroundColor(.white)
-          
+            .privacySensitive(false)
+            .unredacted()
+
           Text("Ökuskírteini")
             .font(.system(size: 14, weight: .medium))
             .foregroundColor(.white)
             .lineLimit(1)
+            .privacySensitive(false)
+            .unredacted()
         }
       }
       .clipShape(RoundedRectangle(cornerRadius: 8))
