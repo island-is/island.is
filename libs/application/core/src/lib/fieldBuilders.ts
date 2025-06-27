@@ -52,6 +52,7 @@ import {
   TitleVariants,
   OverviewField,
   CopyLinkField,
+  VehiclePermnoWithInfoField,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { Colors } from '@island.is/island-ui/theme'
@@ -301,6 +302,7 @@ export const buildTextField = (
     placeholder,
     variant = 'text',
     format,
+    thousandSeparator,
     suffix,
     rows,
     required,
@@ -320,6 +322,7 @@ export const buildTextField = (
     backgroundColor,
     variant,
     format,
+    thousandSeparator,
     suffix,
     rows,
     required,
@@ -1193,6 +1196,9 @@ export const buildOverviewField = (
     loadItems,
     attachments,
     tableData,
+    bottomLine,
+    hideIfEmpty,
+    displayTitleAsAccordion,
   } = data
   return {
     ...extractCommonFields(data),
@@ -1205,6 +1211,9 @@ export const buildOverviewField = (
     loadItems,
     attachments,
     tableData,
+    bottomLine,
+    hideIfEmpty,
+    displayTitleAsAccordion,
     type: FieldTypes.OVERVIEW,
     component: FieldComponents.OVERVIEW,
     children: undefined,
@@ -1225,5 +1234,33 @@ export const buildCopyLinkField = (
     type: FieldTypes.COPY_LINK,
     component: FieldComponents.COPY_LINK,
     children: undefined,
+  }
+}
+
+export const buildVehiclePermnoWithInfoField = (
+  data: Omit<VehiclePermnoWithInfoField, 'type' | 'component' | 'children'>,
+): VehiclePermnoWithInfoField => {
+  const {
+    required,
+    loadValidation,
+    permnoLabel,
+    makeAndColorLabel,
+    errorTitle,
+    fallbackErrorMessage,
+    validationFailedErrorMessage,
+  } = data
+
+  return {
+    ...extractCommonFields(data),
+    children: undefined,
+    type: FieldTypes.VEHICLE_PERMNO_WITH_INFO,
+    component: FieldComponents.VEHICLE_PERMNO_WITH_INFO,
+    required,
+    loadValidation,
+    permnoLabel,
+    makeAndColorLabel,
+    errorTitle,
+    fallbackErrorMessage,
+    validationFailedErrorMessage,
   }
 }

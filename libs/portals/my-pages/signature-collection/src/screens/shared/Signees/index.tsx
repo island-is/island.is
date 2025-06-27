@@ -4,7 +4,6 @@ import {
   Table as T,
   Pagination,
   FilterInput,
-  Icon,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import format from 'date-fns/format'
@@ -114,13 +113,6 @@ const Signees = ({
                           {!s.isDigital && (
                             <Box display="flex">
                               <Text>{s.pageNumber}</Text>
-                              <Box marginLeft={1}>
-                                <Icon
-                                  icon="document"
-                                  type="outline"
-                                  color="blue400"
-                                />
-                              </Box>
                               <EditPage
                                 page={s.pageNumber ?? 0}
                                 name={s.signee.name}
@@ -129,6 +121,7 @@ const Signees = ({
                                 )}
                                 signatureId={s.id}
                                 refetchSignees={refetchListSignees}
+                                collectionType={collectionType}
                               />
                             </Box>
                           )}

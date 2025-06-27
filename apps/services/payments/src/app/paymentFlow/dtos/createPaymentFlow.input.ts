@@ -12,6 +12,7 @@ import {
   IsPositive,
   ValidateNested,
   IsBoolean,
+  IsUrl,
 } from 'class-validator'
 import { Type } from 'class-transformer'
 
@@ -155,14 +156,19 @@ export class CreatePaymentFlowInput {
   })
   existingInvoiceId?: string
 
-  @IsString()
-  @IsOptional()
   @ApiPropertyOptional({
-    description:
-      'URL to redirect the payer to after the payment flow has been completed successfully',
-    type: String,
+    description: 'The url to redirect to on successful payment',
   })
+  @IsOptional()
+  @IsUrl()
   returnUrl?: string
+
+  @ApiPropertyOptional({
+    description: 'The url to redirect to on cancellation',
+  })
+  @IsOptional()
+  @IsUrl()
+  cancelUrl?: string
 
   @IsBoolean()
   @IsOptional()

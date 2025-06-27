@@ -28,6 +28,7 @@ export enum ApiScope {
   healthRightsStatus = '@island.is/health/rights-status',
   healthOrganDonation = '@island.is/health/organ-donation',
   healthVaccinations = '@island.is/health/vaccinations',
+  healthBlood = '@island.is/health/blood',
   workMachines = '@island.is/work-machines',
   vinnueftirlitid = '@island.is/applications/ver',
   vinnueftirlitidAccident = '@island.is/applications/ver:accidents',
@@ -37,5 +38,7 @@ export enum ApiScope {
   signatureCollection = '@island.is/signature-collection',
   menntamalastofnun = '@island.is/applications/mms',
   socialInsuranceAdministration = '@island.is/applications/social-insurance-administration',
+  rsk = '@island.is/applications/rsk',
   ojoiAdverts = '@island.is/applications/dmr:stjornartidindi',
+  hms = '@island.is/applications/hms',
 }

@@ -1,5 +1,4 @@
 import { forwardRef, ReactElement, useState } from 'react'
-import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import {
   Menu,
@@ -18,8 +17,6 @@ import {
   useBoxStyles,
 } from '@island.is/island-ui/core'
 
-import { useCaseList } from '../../utils/hooks'
-import { contextMenu as strings } from './ContextMenu.strings'
 import * as styles from './ContextMenu.css'
 
 export interface ContextMenuItem {
@@ -40,23 +37,6 @@ interface ContextMenuProps {
 
   // Custom element to be used as the menu button
   render?: ReactElement
-}
-
-export const useContextMenu = () => {
-  const { handleOpenCase } = useCaseList()
-  const { formatMessage } = useIntl()
-
-  const openCaseInNewTabMenuItem = (id: string): ContextMenuItem => {
-    return {
-      title: formatMessage(strings.openInNewTab),
-      onClick: () => handleOpenCase(id, true),
-      icon: 'open',
-    }
-  }
-
-  return {
-    openCaseInNewTabMenuItem,
-  }
 }
 
 export const ContextMenu = forwardRef<HTMLButtonElement, ContextMenuProps>(
