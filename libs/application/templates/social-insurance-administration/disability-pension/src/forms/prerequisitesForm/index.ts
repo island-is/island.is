@@ -6,7 +6,7 @@ import {
   buildSubmitField,
   coreMessages,
 } from '@island.is/application/core'
-import { DefaultEvents, FormModes, IdentityApi, NationalRegistrySpouseApi, UserProfileApi } from '@island.is/application/types'
+import { DefaultEvents, FormModes,  NationalRegistryUserApi, NationalRegistrySpouseApi, UserProfileApi } from '@island.is/application/types'
 import { disabilityPensionFormMessage } from '../../lib/messages'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { SocialInsuranceAdministrationCategorizedIncomeTypesApi, SocialInsuranceAdministrationCurrenciesApi, SocialInsuranceAdministrationWithholdingTaxApi, SocialInsuranceAdministrationLatestIncomePlan, SocialInsuranceAdministrationIncomePlanConditionsApi } from '../../dataProviders'
@@ -38,9 +38,9 @@ export const Prerequisites = buildForm({
               subTitle: 'Spouse',
               }),
             buildDataProviderItem({
-              provider: IdentityApi,
-              title: 'ident',
-              subTitle: 'ity',
+              provider: NationalRegistryUserApi,
+              title: 'user',
+              subTitle: 'user',
               }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationCategorizedIncomeTypesApi,

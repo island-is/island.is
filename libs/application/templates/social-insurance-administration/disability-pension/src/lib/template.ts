@@ -11,6 +11,7 @@ import {
   ApplicationConfigurations,
   NationalRegistrySpouseApi,
   IdentityApi,
+  NationalRegistryUserApi,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -56,7 +57,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [UserProfileApi, IdentityApi, NationalRegistrySpouseApi, SocialInsuranceAdministrationCategorizedIncomeTypesApi,
+              api: [UserProfileApi, NationalRegistryUserApi, NationalRegistrySpouseApi, SocialInsuranceAdministrationCategorizedIncomeTypesApi,
               SocialInsuranceAdministrationCurrenciesApi,
               SocialInsuranceAdministrationWithholdingTaxApi,
               SocialInsuranceAdministrationLatestIncomePlan,
@@ -75,7 +76,7 @@ const template: ApplicationTemplate<
       [States.DRAFT]: {
         meta: {
           name: 'Main form',
-          progress: 0.4,
+          progress: 0.8,
           status: FormModes.DRAFT,
           lifecycle: DefaultStateLifeCycle,
           roles: [

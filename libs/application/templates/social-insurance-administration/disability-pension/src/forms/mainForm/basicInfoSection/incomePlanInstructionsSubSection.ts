@@ -1,10 +1,7 @@
 import {
-  buildAlertMessageField,
   buildDescriptionField,
   buildMultiField,
-  buildRadioField,
   buildSubSection,
-  buildTextField,
   buildTitleField,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../lib/messages'

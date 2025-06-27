@@ -1,15 +1,64 @@
 import { z } from 'zod'
 import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { BankAccountType, INCOME, ISK, RatioType, TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import { NO, YES } from '@island.is/application/core'
+import { NO, YES, YesOrNo } from '@island.is/application/core'
 import { formatBankInfo, validIBAN, validSWIFT } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { isValidPhoneNumber } from './utils'
+import { EmploymentEnum } from './constants'
+import { getAllCountryCodes } from '@island.is/shared/utils'
 
 export const fileSchema = z.object({
   name: z.string(),
   key: z.string(),
   url: z.string().optional(),
 })
+
+const validateCountry = (country?: string) => {
+  if (!country) return false
+  const countries = getAllCountryCodes()
+  return countries.map(c => c.name).includes(country)
+}
+
+
+const livedAbroadSchema = z.object({
+  hasLivedAbroad: z.enum([YES, NO]),
+  list: z.array(
+    z.object({
+      country: z.string(),
+      abroadNationalId: z.string(),
+      periodStart: z.string(),
+      periodEnd: z.string(),
+      period: z.string()
+    }).optional()
+  )
+})
+
+const validateLivedAbroadSchema = (data: z.infer<typeof livedAbroadSchema>) => {
+  if (data.hasLivedAbroad === NO) {
+    return true
+  }
+  if (!data.list) {
+    return false
+  }
+  return data.list.length > 0 && data.list.every(item => {
+    if (!item) {
+      return false
+    }
+
+    if (!item.country || !item.abroadNationalId || !item.periodStart || !item.periodEnd) {
+      return false
+    }
+
+    const periodStart = new Date(item.periodStart)
+    const periodEnd = new Date(item.periodEnd)
+
+    if (periodStart >= periodEnd) {
+      return false
+    }
+
+    return true
+  })
+}
 
 
 export const dataSchema = z.object({
@@ -22,11 +71,26 @@ export const dataSchema = z.object({
   }),
   disabilityEvaluation: z.object({
     appliedBefore: z.enum([YES, NO]),
-    fileUpload: z
-      .array(fileSchema)
-      .refine((a) => a.length !== 0, {
-        params: errorMessages.requireAttachment,
-      }),
+    fileUpload: z.array(fileSchema).optional()
+  })
+    .refine(
+      ({ appliedBefore, fileUpload }) => {
+        if (appliedBefore === YES) {
+          return (fileUpload?.length ?? 0) > 0
+        }
+        else return true
+      },
+      { params: errorMessages.requireAttachment, path: ['fileUpload'] },
+    ),
+  livedAbroad: livedAbroadSchema.refine(validateLivedAbroadSchema),
+  paidWork: z.object({
+    inPaidWork: z.enum([EmploymentEnum.YES, EmploymentEnum.NO, EmploymentEnum.DONT_KNOW]),
+    continuedWork:z.enum([YES, NO]).optional()
+  }).refine(({inPaidWork, continuedWork}) => {
+    if (inPaidWork === EmploymentEnum.YES) {
+      return continuedWork !== undefined
+    }
+    return true
   }),
   paymentInfo: z
     .object({

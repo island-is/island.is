@@ -8,50 +8,36 @@ import {
   NO,
   buildFileUploadField,
   getValueViaPath,
-  YesOrNoEnum
+  YesOrNoEnum,
+  buildRadioField
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../lib/messages'
-import { EmploymentEnum } from '../../../lib/constants'
+import { YesOrNoOptions } from '../../../lib/utils'
 
 const disabilityEvaluationRoute = 'disabilityEvaluation'
 
 export const disabilityEvaluationSubSection =
     buildSubSection({
       id: disabilityEvaluationRoute,
-      tabTitle: disabilityPensionFormMessage.disabilityEvaluation.tabTitle,
+      title: disabilityPensionFormMessage.disabilityEvaluation.tabTitle,
       children: [
         buildMultiField({
           id: disabilityEvaluationRoute,
+          title: disabilityPensionFormMessage.disabilityEvaluation.title,
+          description: disabilityPensionFormMessage.disabilityEvaluation.description,
           space: 'containerGutter',
           children: [
-            buildTitleField({
-              title: disabilityPensionFormMessage.disabilityEvaluation.title,
-              titleVariant: 'h2',
-              marginBottom: 'p2',
-            }),
-            buildDescriptionField({
-              id: `${disabilityEvaluationRoute}.description`,
-              description: disabilityPensionFormMessage.disabilityEvaluation.description,
-            }),
-            buildCheckboxField({
+            buildRadioField({
               id: `${disabilityEvaluationRoute}.appliedBefore`,
               title: disabilityPensionFormMessage.disabilityEvaluation.appliedBeforeTitle,
               description: disabilityPensionFormMessage.disabilityEvaluation.appliedBeforeDescription,
               required: true,
-              options: [
-                {
-                  value: YES,
-                  label: disabilityPensionFormMessage.disabilityEvaluation.yes,
-                },
-                {
-                  value: NO,
-                  label: disabilityPensionFormMessage.disabilityEvaluation.no,
-                },
-              ],
+              width: 'half',
+              options: YesOrNoOptions,
             }),
             buildFileUploadField({
               id: `${disabilityEvaluationRoute}.fileUpload`,
-              title: disabilityPensionFormMessage.disabilityEvaluation.fileUploadTitle,
+              title: disabilityPensionFormMessage.basicInfo.disabilityEvaluationTitle,
               uploadButtonLabel: disabilityPensionFormMessage.disabilityEvaluation.uploadButtonLabel,
               condition: (formValue) => {
                 const isWorking = getValueViaPath<YesOrNoEnum>(

@@ -289,11 +289,6 @@ export const disabilityPensionFormMessage: MessageDir = {
     },
   }),
   employmentParticipation: defineMessages({
-    tabTitle: {
-      id: 'ol.application:employmentParticipation.tabTitle',
-      defaultMessage: 'Atvinnuþátttaka',
-      description: 'Employment participation',
-    },
     title: {
       id: 'ol.application:employmentParticipation.title',
       defaultMessage: 'Atvinnuþátttaka',
@@ -328,6 +323,56 @@ export const disabilityPensionFormMessage: MessageDir = {
       id: 'ol.application:employmentParticipation.continuedWorkQuestion',
       defaultMessage: 'Stefnir þú á áframhaldandi atvinnuþáttöku?',
       description: 'Do you aim for continued employment participation - TODO?',
+    },
+    livedAbroadTitle: {
+      id: 'ol.application:employmentParticipation.livedAbroadTitle',
+      defaultMessage: 'Búseta erlendis',
+      description: 'Lived abroad',
+    },
+    livedAbroadDescription: {
+      id: 'ol.application:employmentParticipation.livedAbroadDescription',
+      defaultMessage: 'Hefur þú búið eða unnið erlendis?',
+      description: 'Have you lived or worked abroad?',
+    },
+    country: {
+      id: 'ol.application:employmentParticipation.country',
+      defaultMessage: 'Land',
+      description: 'Country',
+    },
+    countryPlaceholder: {
+      id: 'ol.application:employmentParticipation.countryPlaceholder',
+      defaultMessage: 'Veldu land',
+      description: 'Select country',
+    },
+    abroadNationalId: {
+      id: 'ol.application:employmentParticipation.abroadNationalId',
+      defaultMessage: 'Kennitala erlendis',
+      description: 'National ID abroad',
+    },
+    period: {
+      id: 'ol.application:employmentParticipation.period',
+      defaultMessage: 'Tímabil',
+      description: 'Period',
+    },
+    periodStart: {
+      id: 'ol.application:employmentParticipation.periodStart',
+      defaultMessage: 'Upphafsdagur',
+      description: 'Start date',
+    },
+    periodStartPlaceholder: {
+      id: 'ol.application:employmentParticipation.periodStartPlaceholder',
+      defaultMessage: 'Veldu dagsetningu',
+      description: 'Select date',
+    },
+    periodEnd: {
+      id: 'ol.application:employmentParticipation.periodEnd',
+      defaultMessage: 'Lokadagur',
+      description: 'End date',
+    },
+    periodEndPlaceholder: {
+      id: 'ol.application:employmentParticipation.periodEndPlaceholder',
+      defaultMessage: 'Veldu dagsetningu',
+      description: 'Select date',
     },
   }),
   backgroundInfo: defineMessages({
