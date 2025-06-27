@@ -3,11 +3,8 @@ import { Option, Tabs, Box } from '@island.is/island-ui/core'
 import { FormsContext } from '../../../context/FormsContext'
 import { Outlet } from 'react-router-dom'
 import { FormsLocationState } from '../../../lib/utils/interfaces'
+import { TabType } from '@island.is/form-system/ui'
 
-interface TabType {
-  id: string
-  label: string
-}
 const DASHBOARD_TABS: TabType[] = [
   {
     id: 'forms',
