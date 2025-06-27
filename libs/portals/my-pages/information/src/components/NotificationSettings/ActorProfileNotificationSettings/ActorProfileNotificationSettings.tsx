@@ -36,12 +36,14 @@ export const ActorProfileNotificationSettings = () => {
   const { isDelegationTypeEnabled, isCheckingFeatureFlag } =
     useDelegationTypeFeatureFlag()
   const { hasUserProfileWriteScope } = useScopeAccess()
+  const actorProfileResult = useActorProfile()
+  const userProfileResult = useUserProfile()
 
   const {
     data: profile,
     loading,
     error,
-  } = isDelegationTypeEnabled ? useActorProfile() : useUserProfile()
+  } = isDelegationTypeEnabled ? actorProfileResult : userProfileResult
 
   const [updateActorProfile] = useUpdateActorProfileMutation()
 
@@ -75,9 +77,7 @@ export const ActorProfileNotificationSettings = () => {
     setSettings(newSettings)
 
     let updateError: any
-    console.log('isDelegationTypeEnabled', isDelegationTypeEnabled)
     if (!isDelegationTypeEnabled) {
-      console.log('updateUserProfile', newSettings.emailNotifications)
       const { error } = await safeAwait(
         updateUserProfile({
           canNudge: newSettings.emailNotifications,

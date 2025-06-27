@@ -694,6 +694,18 @@ export class UserProfileService {
     toNationalId: string,
   ): Promise<PaginatedActorProfileDto> {
     const incomingDelegations = await this.getIncomingDelegations(toNationalId)
+
+    // Filter out duplicate delegations
+    incomingDelegations.data = incomingDelegations.data.filter(
+      (delegation, index, self) =>
+        index ===
+        self.findIndex(
+          (d) =>
+            d.fromNationalId === delegation.fromNationalId &&
+            d.toNationalId === delegation.toNationalId,
+        ),
+    )
+
     const emailPreferences = await this.delegationPreference.findAll({
       where: {
         toNationalId,

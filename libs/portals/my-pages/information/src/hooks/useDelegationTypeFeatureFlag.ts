@@ -15,7 +15,7 @@ export const useDelegationTypeFeatureFlag = () => {
   useEffect(() => {
     // If the user is an actor, we need to check if the delegation types feature flag is enabled
     if (isActor) {
-      const { delegationType } = userInfo?.profile
+      const { profile } = userInfo
 
       const checkFeatureFlag = async () => {
         setIsCheckingFeatureFlag(true)
@@ -23,15 +23,15 @@ export const useDelegationTypeFeatureFlag = () => {
           Features.delegationTypesWithNotificationsEnabled,
           '',
           {
-            id: userInfo?.profile?.nationalId || '',
+            id: profile?.nationalId || '',
             attributes: {},
           },
         )
 
         const isEnabled = parseDelegationTypeFeatureFlagValue({
           featureFlagValue,
-          delegationTypes: delegationType,
-          actorNationalId: userInfo?.profile?.nationalId,
+          delegationTypes: profile?.delegationType,
+          actorNationalId: profile?.nationalId,
         })
 
         setIsDelegationTypeEnabled(isEnabled)
