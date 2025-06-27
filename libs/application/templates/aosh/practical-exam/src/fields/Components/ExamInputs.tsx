@@ -141,11 +141,16 @@ export const ExamInputs: FC<
   }, [watchedCategories])
 
   useEffect(() => {
-    const categories = getValueViaPath<ExamCategoryType[]>(
-      answers,
-      'examCategories',
-    )
-    if (!categories) return
+    const categories: ExamCategoryType[] = getValues('examCategories')
+    console.log('Categories', categories)
+    console.log('chosen cats', chosenCategories)
+
+    if (!categories || !categories[idx].categories) {
+      setChosenCategories([])
+      return
+    }
+    console.log('Setting chosen casts to be ', categories[idx].categories)
+
     setChosenCategories(categories[idx].categories)
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [idx])
