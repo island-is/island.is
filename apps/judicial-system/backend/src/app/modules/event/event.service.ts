@@ -174,6 +174,37 @@ export class EventService {
     }
   }
 
+  async postDailyLawyerRegistryResetEvent(count: number) {
+    const title = ':arrows_counterclockwise: Lögmannaskrá'
+    const message = `Lögmannaskrá uppfærð. Alls ${count} lögmenn á skrá.`
+
+    try {
+      if (!this.config.url) {
+        return
+      }
+
+      await fetch(`${this.config.url}`, {
+        method: 'POST',
+        headers: { 'Content-type': 'application/json' },
+        body: JSON.stringify({
+          blocks: [
+            {
+              type: 'section',
+              text: {
+                type: 'mrkdwn',
+                text: `*${title}*\n${message}`,
+              },
+            },
+          ],
+        }),
+      })
+    } catch (error) {
+      this.logger.error(`Failed to reset lawyer registry`, {
+        error,
+      })
+    }
+  }
+
   async postDailyHearingArrangementEvents(date: Date, cases: Case[]) {
     const title = `:judge: Fyrirtökur ${formatDate(date)}`
 

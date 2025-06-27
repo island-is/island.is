@@ -1,6 +1,11 @@
 import { defineMessages } from 'react-intl'
 
 export const prereqMessages = defineMessages({
+  title: {
+    id: 'tra.application:prereq.title',
+    defaultMessage: 'Gagnaöflun',
+    description: 'Prerequisites title',
+  },
   housingBenefitsTitle: {
     id: 'tra.application:prereq.housingBenefitsTitle',
     defaultMessage: 'Húsnæðis og mannvirkjastofnun',
@@ -32,5 +37,16 @@ export const prereqMessages = defineMessages({
     id: 'tra.application:prereq.nationalRegistrySubtitle',
     defaultMessage: 'Upplýsingar um nafn, kennitölu og heimilisfang',
     description: 'National registry subtitle',
+  },
+  checkboxLabel: {
+    id: 'tra.application:prereq.checkboxLabel',
+    defaultMessage:
+      'Ég skil að ofangreindra upplýsinga verður aflað við úrvinnslu tilkynningarinnar',
+    description: 'External information retrieval checkbox label',
+  },
+  subTitle: {
+    id: 'tra.application:prereq.subTitle',
+    defaultMessage: 'Eftirfarandi upplýsingar verða sóttar rafrænt.',
+    description: 'External information retrieval subtitle',
   },
 })
