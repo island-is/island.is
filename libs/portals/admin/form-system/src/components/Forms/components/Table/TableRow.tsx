@@ -141,7 +141,7 @@ export const TableRow = ({
                   title: 'Skoða',
                   onClick: () => {
                     if (slug) {
-                      window.open(`${PATH}/${slug}`, '_blank');
+                      window.open(`${PATH}/${slug}`, '_blank', 'noopener,noreferrer');
                     } else {
                       window.alert(formatMessage({ id: 'slugMissing', defaultMessage: 'Það vantar slug' }));
                     }
