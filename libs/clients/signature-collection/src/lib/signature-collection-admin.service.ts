@@ -139,6 +139,12 @@ export class SignatureCollectionAdminClientService
   }
 
   async getLists(input: GetListInput, auth: Auth): Promise<List[]> {
+    if (
+      input.collectionType &&
+      input.collectionType === CollectionType.LocalGovernmental
+    ) {
+      input.areaId = await this.getMunicipalityAreaId(auth)
+    }
     return await this.sharedService.getLists(
       input,
       this.getApiWithAuth(this.listsApi, auth),

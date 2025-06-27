@@ -1,25 +1,16 @@
 import React, { FC, useState, useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { m } from '@island.is/portals/my-pages/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
 import { msg } from '../../../../../../lib/messages'
-import {
-  Box,
-  Columns,
-  Column,
-  Input,
-  Text,
-  LoadingDots,
-} from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
+import { Box, Text, LoadingDots } from '@island.is/island-ui/core'
 import { InputController } from '@island.is/shared/form-fields'
 import {
-  useVerifySms,
+  useVerifyEmail,
   useUpdateOrCreateUserProfile,
   useDeleteIslykillValue,
   useUserProfile,
 } from '@island.is/portals/my-pages/graphql'
-import { sharedMessages } from '@island.is/shared/translations'
-import { parseFullNumber } from '@island.is/portals/my-pages/core'
 import { FormButton } from '../FormButton'
 import * as styles from './ProfileForms.css'
 import { ContactNotVerified } from '../ContactNotVerified'
@@ -27,33 +18,33 @@ import { useUserInfo } from '@island.is/react-spa/bff'
 
 interface Props {
   buttonText: string
-  mobile?: string
-  telVerified?: boolean
-  telDirty: (isDirty: boolean) => void
+  email?: string
+  emailDirty: (isDirty: boolean) => void
+  emailVerified?: boolean
   disabled?: boolean
 }
 
 interface FormErrors {
-  mobile: string | undefined
+  email: string | undefined
   code: string | undefined
 }
 
 interface UseFormProps {
-  tel: string
+  email: string
   code: string
 }
 
-export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
+export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
   buttonText,
-  mobile,
+  email,
   disabled,
-  telDirty,
-  telVerified = false,
+  emailDirty,
+  emailVerified = false,
 }) => {
+  useNamespaces('sp.settings')
   const userInfo = useUserInfo()
   const isActor = !!userInfo?.profile?.actor?.nationalId
 
-  useNamespaces('sp.settings')
   const methods = useForm<UseFormProps>()
   const {
     handleSubmit,
@@ -62,31 +53,36 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
     setValue,
     formState: { errors },
   } = methods
+
   const { updateOrCreateUserProfile, loading: saveLoading } =
     useUpdateOrCreateUserProfile()
   const { deleteIslykillValue, loading: deleteLoading } =
     useDeleteIslykillValue()
   const { formatMessage } = useLocale()
   const {
-    createSmsVerification,
-    createMeSmsVerification,
-    createLoading,
-    createMeLoading,
-  } = useVerifySms()
+    createEmailVerification,
+    createMeEmailVerification,
+    loading: createLoading,
+    meLoading: meCreateLoading,
+  } = useVerifyEmail()
   const { refetch, loading: fetchLoading } = useUserProfile()
-  const [telInternal, setTelInternal] = useState(mobile)
-  const [telToVerify, setTelToVerify] = useState(mobile)
+  const [emailInternal, setEmailInternal] = useState(email)
+  const [emailToVerify, setEmailToVerify] = useState(email)
 
   const [codeInternal, setCodeInternal] = useState('')
 
   const [inputPristine, setInputPristine] = useState(false)
-  const [telVerifyCreated, setTelVerifyCreated] = useState(false)
-  const [verificationValid, setVerificationValid] = useState(telVerified)
+  const [emailVerifyCreated, setEmailVerifyCreated] = useState(false)
+  const [verificationValid, setVerificationValid] = useState(emailVerified)
 
   const [resendBlock, setResendBlock] = useState(false)
 
+  useEffect(() => {
+    setVerificationValid(emailVerified)
+  }, [emailVerified])
+
   const [formErrors, setErrors] = useState<FormErrors>({
-    mobile: undefined,
+    email: undefined,
     code: undefined,
   })
 
@@ -100,56 +96,62 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
   }, [resendBlock])
 
   useEffect(() => {
-    if (mobile && mobile.length > 0) {
-      setTelInternal(mobile)
-      setValue('tel', mobile, { shouldValidate: true })
+    if (email && email.length > 0) {
+      setEmailInternal(email)
+      setValue('email', email, { shouldValidate: true })
     }
     checkSetPristineInput()
-  }, [mobile])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [email])
 
   useEffect(() => {
     if (
-      telInternal &&
-      (mobile === telInternal || telInternal === telToVerify)
+      emailInternal &&
+      (email === emailInternal || emailInternal === emailToVerify)
     ) {
-      telDirty(false)
+      emailDirty(false)
     } else {
-      telDirty(true)
+      emailDirty(true)
     }
-  }, [telInternal, mobile])
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [emailInternal, email])
 
-  const handleSendTelVerification = async (data: { tel?: string }) => {
+  const handleSendEmailVerification = async (data: { email?: string }) => {
+    const emailError = formatMessage({
+      id: 'sp.settings:email-service-error',
+      defaultMessage:
+        'Vandamál með tölvupóstþjónustu. Vinsamlegast reynið aftur síðar.',
+    })
+
     try {
-      const telValue = data.tel ?? ''
-
-      setResendBlock(true)
-
+      const emailValue = data.email ?? ''
       let response
+      setResendBlock(true)
       if (!isActor) {
-        response = await createSmsVerification({
-          mobilePhoneNumber: telValue,
+        response = await createEmailVerification({
+          email: emailValue,
         })
       } else {
-        response = await createMeSmsVerification({
-          mobilePhoneNumber: telValue,
+        response = await createMeEmailVerification({
+          email: emailValue,
         })
       }
 
       if (
-        response.data?.createSmsVerification?.created ||
-        response.data?.createMeSmsVerification?.created
+        response.data?.createEmailVerification?.created ||
+        response.data?.createMeEmailVerification?.created
       ) {
-        setTelVerifyCreated(true)
-        setTelToVerify(telValue)
+        setEmailVerifyCreated(true)
+        setEmailToVerify(emailValue)
         setVerificationValid(false)
-        setErrors({ ...formErrors, mobile: undefined })
+        setErrors({ ...formErrors, email: undefined })
       } else {
-        setErrors({ ...formErrors, mobile: formatMessage(m.somethingWrong) })
+        setErrors({ ...formErrors, email: emailError })
       }
     } catch (err) {
-      console.error(`createSmsVerification error: ${err}`)
+      console.error(`createEmailVerification error: ${err}`)
       setResendBlock(false)
-      setErrors({ ...formErrors, mobile: formatMessage(m.somethingWrong) })
+      setErrors({ ...formErrors, email: emailError })
     }
   }
 
@@ -158,15 +160,16 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
       id: 'sp.settings:code-service-error',
       defaultMessage: 'Villa í staðfestingu kóða. Vinsamlegast reynið aftur.',
     })
+
     try {
       const codeValue = data.code ?? ''
       const formValues = getValues()
-      const telValue = formValues?.tel
+      const emailValue = formValues?.email
 
-      if (telValue === telToVerify) {
+      if (emailValue === emailToVerify) {
         await updateOrCreateUserProfile({
-          mobilePhoneNumber: `+354-${telToVerify}`,
-          smsCode: codeValue,
+          email: emailToVerify,
+          emailCode: codeValue,
         }).then(() => {
           checkSetPristineInput()
           setVerificationValid(true)
@@ -174,7 +177,7 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
       }
       setErrors({ ...formErrors, code: undefined })
     } catch (err) {
-      console.error(`confirmSmsVerification error: ${err}`)
+      console.error(`confirmEmailVerification error: ${err}`)
       setErrors({ ...formErrors, code: codeError })
     } finally {
       setCodeInternal('')
@@ -191,13 +194,13 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
 
     try {
       await deleteIslykillValue({
-        mobilePhoneNumber: true,
+        email: true,
       })
       await refetch()
 
       setVerificationValid(true)
       setInputPristine(true)
-      setTelInternal(undefined)
+      setEmailInternal(undefined)
       setErrors({ ...formErrors, code: undefined })
     } catch (err) {
       setErrors({ ...formErrors, code: emailError })
@@ -205,9 +208,9 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
   }
 
   const checkSetPristineInput = () => {
-    if (getValues().tel === mobile) {
+    if (getValues().email === email) {
       setInputPristine(true)
-      setTelVerifyCreated(false)
+      setEmailVerifyCreated(false)
     } else {
       setInputPristine(false)
       setVerificationValid(false)
@@ -219,66 +222,41 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
       <FormProvider {...methods}>
         <form
           onSubmit={handleSubmit(
-            telInternal ? handleSendTelVerification : saveEmptyChange,
+            emailInternal ? handleSendEmailVerification : saveEmptyChange,
           )}
         >
           <Box display="flex" flexWrap="wrap" alignItems="center">
             <Box marginRight={3} width="full" className={styles.formContainer}>
-              <Columns>
-                <Column width="content">
-                  <Box className={styles.countryCodeInput}>
-                    <Input
-                      label={formatMessage({
-                        id: 'sp.settings:phone-country-code',
-                        defaultMessage: 'Landsnúmer',
-                      })}
-                      name="country-code"
-                      backgroundColor="blue"
-                      size="xs"
-                      readOnly
-                      value="+354"
-                      disabled
-                    />
-                  </Box>
-                </Column>
-                <Column>
-                  <InputController
-                    control={control}
-                    id="tel"
-                    backgroundColor="blue"
-                    name="tel"
-                    type="tel"
-                    format="### ####"
-                    required={false}
-                    icon={mobile && verificationValid ? 'checkmark' : undefined}
-                    disabled={disabled}
-                    size="xs"
-                    rules={{
-                      minLength: {
-                        value: 7,
-                        message: formatMessage(msg.errorTelReqLength),
-                      },
-                      maxLength: {
-                        value: 7,
-                        message: formatMessage(msg.errorTelReqLength),
-                      },
-                      pattern: {
-                        value: /^\d+$/,
-                        message: formatMessage(msg.errorOnlyNumbers),
-                      },
-                    }}
-                    label={formatMessage(sharedMessages.phoneNumber)}
-                    placeholder="000 0000"
-                    onChange={(inp) => {
-                      setTelInternal(parseFullNumber(inp.target.value || ''))
-                      setErrors({ ...formErrors, mobile: undefined })
-                      checkSetPristineInput()
-                    }}
-                    error={errors.tel?.message || formErrors.mobile}
-                    defaultValue={mobile}
-                  />
-                </Column>
-              </Columns>
+              <InputController
+                control={control}
+                backgroundColor="blue"
+                id="email"
+                autoFocus
+                name="email"
+                required={false}
+                type="email"
+                icon={email && verificationValid ? 'checkmark' : undefined}
+                disabled={disabled}
+                rules={{
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: formatMessage({
+                      id: 'sp.settings:email-wrong-format-message',
+                      defaultMessage: 'Netfangið er ekki á réttu formi',
+                    }),
+                  },
+                }}
+                label={formatMessage(m.email)}
+                onChange={(inp) => {
+                  setEmailInternal(inp.target.value)
+                  setErrors({ ...formErrors, email: undefined })
+                  checkSetPristineInput()
+                }}
+                placeholder="nafn@island.is"
+                error={errors?.email?.message || formErrors?.email}
+                size="xs"
+                defaultValue={email}
+              />
             </Box>
             <Box
               display="flex"
@@ -287,24 +265,25 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
               paddingTop={2}
             >
               {!createLoading &&
-                !createMeLoading &&
+                !meCreateLoading &&
                 !deleteLoading &&
                 !fetchLoading && (
+                  // eslint-disable-next-line react/jsx-no-useless-fragment
                   <>
-                    {telVerifyCreated ? (
+                    {emailVerifyCreated ? (
                       <FormButton
                         disabled={verificationValid || disabled || resendBlock}
                         onClick={
-                          telInternal
+                          emailInternal
                             ? () =>
-                                handleSendTelVerification({
-                                  tel: getValues().tel,
+                                handleSendEmailVerification({
+                                  email: getValues().email ?? '',
                                 })
                             : () => saveEmptyChange()
                         }
                       >
-                        {telInternal
-                          ? telInternal === telToVerify
+                        {emailInternal
+                          ? emailInternal === emailToVerify
                             ? formatMessage({
                                 id: 'sp.settings:resend',
                                 defaultMessage: 'Endursenda',
@@ -319,7 +298,7 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
                           verificationValid || disabled || inputPristine
                         }
                       >
-                        {telInternal
+                        {emailInternal
                           ? buttonText
                           : formatMessage(msg.saveEmptyChange)}
                       </FormButton>
@@ -327,21 +306,22 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
                   </>
                 )}
               {(createLoading ||
-                createMeLoading ||
+                meCreateLoading ||
                 deleteLoading ||
                 fetchLoading) && <LoadingDots />}
             </Box>
           </Box>
         </form>
-        {telVerifyCreated && (
+        {emailVerifyCreated && (
           <Box marginTop={3}>
             <Text variant="medium" marginBottom={2}>
               {formatMessage({
-                id: 'sp.settings:tel-verify-code-sent',
-                defaultMessage: `Öryggiskóði hefur verið sendur í símann þinn. Sláðu hann inn
-                  hér að neðan.`,
+                id: 'sp.settings:email-verify-code-sent',
+                defaultMessage: `Öryggiskóði hefur verið sendur á netfangið þitt. Sláðu hann inn
+                  hér að neðan. Athugaðu að pósturinn getur endað með ruslpóstinum.`,
               })}
             </Text>
+
             <form onSubmit={handleSubmit(handleConfirmCode)}>
               <Box display="flex" flexWrap="wrap" alignItems="flexStart">
                 <Box className={styles.codeInput} marginRight={3}>
@@ -354,7 +334,7 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
                     label={formatMessage(m.verificationCode)}
                     placeholder="000"
                     defaultValue=""
-                    error={errors.code?.message || formErrors.code}
+                    error={errors?.code?.message || formErrors?.code}
                     disabled={verificationValid || disabled}
                     icon={verificationValid ? 'checkmark' : undefined}
                     size="xs"
@@ -397,16 +377,16 @@ export const InputPhone: FC<React.PropsWithChildren<Props>> = ({
           </Box>
         )}
 
-        {mobile &&
+        {email &&
           verificationValid === false &&
           inputPristine &&
-          !telVerifyCreated && (
+          !emailVerifyCreated && (
             <Box marginTop={2}>
               <ContactNotVerified
-                contactType="tel"
+                contactType="email"
                 onClick={() =>
-                  handleSendTelVerification({
-                    tel: mobile,
+                  handleSendEmailVerification({
+                    email: email,
                   })
                 }
               />
