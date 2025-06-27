@@ -54,7 +54,7 @@ export const TableRow = ({
   state,
   translated,
   setFormsState,
-  slug
+  slug,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
   const navigate = useNavigate()
@@ -141,9 +141,18 @@ export const TableRow = ({
                   title: 'Skoða',
                   onClick: () => {
                     if (slug) {
-                      window.open(`${PATH}/${slug}`, '_blank', 'noopener,noreferrer');
+                      window.open(
+                        `${PATH}/${slug}`,
+                        '_blank',
+                        'noopener,noreferrer',
+                      )
                     } else {
-                      window.alert(formatMessage({ id: 'slugMissing', defaultMessage: 'Það vantar slug' }));
+                      window.alert(
+                        formatMessage({
+                          id: 'slugMissing',
+                          defaultMessage: 'Það vantar slug',
+                        }),
+                      )
                     }
                   },
                 },

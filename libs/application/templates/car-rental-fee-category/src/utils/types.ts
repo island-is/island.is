@@ -2,16 +2,16 @@ import { DayRateEntryModel } from '@island.is/clients-rental-day-rate'
 import { RateCategory } from './constants'
 
 export interface CarCategoryRecord {
-    vehicleId: string
-    oldMileage: number
-    newMilage: number,
-    rateCategory: string
-  }
-  
+  vehicleId: string
+  oldMileage: number
+  newMilage: number
+  rateCategory: string
+}
+
 export interface CarCategoryError {
-    code: 1 | 2
-    message: string
-    carNr: string
+  code: 1 | 2
+  message: string
+  carNr: string
 }
 
 export interface CurrentVehicleWithMilage {

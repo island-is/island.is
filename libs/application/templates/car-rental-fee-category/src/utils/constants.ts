@@ -16,10 +16,10 @@ export enum Roles {
 
 export enum UploadSelection {
   MULTI = 'multiSelection',
-  SINGLE = 'singleSelection'
+  SINGLE = 'singleSelection',
 }
 
 export enum RateCategory {
   DAYRATE = 'Daggjald',
-  KMRATE = 'Kilometragjald'
+  KMRATE = 'Kilometragjald',
 }

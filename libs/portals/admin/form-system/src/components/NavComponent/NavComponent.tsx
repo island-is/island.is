@@ -161,7 +161,13 @@ export const NavComponent = ({
           >
             {/* {index} */}
           </Box>
-          <Box id="2" paddingLeft={1} display="flex" alignItems="center" justifyContent="center">
+          <Box
+            id="2"
+            paddingLeft={1}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+          >
             <Text
               id={`formSystem.${type.toLowerCase()}.name`}
               variant="medium"

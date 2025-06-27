@@ -79,7 +79,7 @@ export const MainContentColumn = () => {
       style={{
         maxWidth: '1200px',
         width: '100%',
-        marginLeft: 0
+        marginLeft: 0,
       }}
     >
       {!inSettings ? (
@@ -93,7 +93,10 @@ export const MainContentColumn = () => {
             buttonTextCancel={formatMessage(m.cancel)}
             onConfirm={remove}
             disclosureElement={
-              <DeleteButton onClick={() => { }} label={formatMessage(m.delete)} />
+              <DeleteButton
+                onClick={() => {}}
+                label={formatMessage(m.delete)}
+              />
             }
           />
         ) : (

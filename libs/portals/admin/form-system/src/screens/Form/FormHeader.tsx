@@ -1,4 +1,10 @@
-import { Box, Button, GridRow as Row, GridColumn as Column, Tabs } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  GridRow as Row,
+  GridColumn as Column,
+  Tabs,
+} from '@island.is/island-ui/core'
 import { Outlet, useNavigate } from 'react-router-dom'
 import { FormSystemPaths } from '../../lib/paths'
 import { useIntl } from 'react-intl'
@@ -9,7 +15,7 @@ import { SectionTypes } from '@island.is/form-system/enums'
 import { baseSettingsStep } from '../../lib/utils/getBaseSettingsSection'
 
 type FormTabType = {
-  id: 'settings' | 'step',
+  id: 'settings' | 'step'
   label: string
 }
 
@@ -20,14 +26,15 @@ const FORM_TABS: FormTabType[] = [
   },
   {
     id: 'step',
-    label: 'Skref'
-  }
+    label: 'Skref',
+  },
 ]
 
 export const FormHeader = () => {
   const navigate = useNavigate()
   const { formatMessage } = useIntl()
-  const { control, controlDispatch, setInSettings, inSettings } = useContext(ControlContext)
+  const { control, controlDispatch, setInSettings, inSettings } =
+    useContext(ControlContext)
   const { sections } = control.form
 
   const onTabChange = (tabId: string) => {
@@ -87,7 +94,7 @@ export const FormHeader = () => {
               tabs={FORM_TABS.map((tab) => ({
                 id: tab.id,
                 label: formatMessage(m[tab.id as keyof typeof m]),
-                content: <Outlet />
+                content: <Outlet />,
               }))}
               onChange={onTabChange}
               variant="default"

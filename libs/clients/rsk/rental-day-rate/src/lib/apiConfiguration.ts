@@ -1,6 +1,4 @@
-import {
-  createEnhancedFetch,
-} from '@island.is/clients/middlewares'
+import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import {
   ConfigType,
   IdsClientConfig,

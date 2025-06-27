@@ -25,12 +25,14 @@ export const Prerequisites = buildForm({
             buildDataProviderItem({
               provider: SkatturApi, // Skatturinn
               title: 'Upplýsingar frá Skattinum',
-              subTitle: 'Upplýsingar frá skattinum - Upplýsingar um gjaldflokksstöðu bifreiða',
+              subTitle:
+                'Upplýsingar frá skattinum - Upplýsingar um gjaldflokksstöðu bifreiða',
             }),
             buildDataProviderItem({
               provider: VehiclesApi, // Samgöngustofan
               title: 'Upplýsingar frá Samgöngustofu',
-              subTitle: 'Upplýsingar úr ökutækjaskrá - Upplýsingar um þínar bifreiðar og stöðu þeirra',
+              subTitle:
+                'Upplýsingar úr ökutækjaskrá - Upplýsingar um þínar bifreiðar og stöðu þeirra',
             }),
           ],
           submitField: buildSubmitField({

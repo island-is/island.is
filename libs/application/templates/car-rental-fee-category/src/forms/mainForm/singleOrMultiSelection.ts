@@ -25,14 +25,16 @@ export const singleOrMultiSelection = buildSection({
           options: [
             {
               label: 'Magnskráning',
-              subLabel: 'Hér má hlaða upp .xlsx eða .csv skjali til að magnskrá breytingar á gjaldflokki og kílómetrastöðu.',
+              subLabel:
+                'Hér má hlaða upp .xlsx eða .csv skjali til að magnskrá breytingar á gjaldflokki og kílómetrastöðu.',
               value: UploadSelection.MULTI,
             },
             {
               label: 'Skrá staka bíla',
-              subLabel: 'Þú getur skráð upplýsingar um gjaldflokk og kílómetrastöðu beint í gegnum viðmótið.',
+              subLabel:
+                'Þú getur skráð upplýsingar um gjaldflokk og kílómetrastöðu beint í gegnum viðmótið.',
               value: UploadSelection.SINGLE,
-              disabled: true
+              disabled: true,
             },
           ],
         }),
