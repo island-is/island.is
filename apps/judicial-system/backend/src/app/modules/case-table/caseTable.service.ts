@@ -24,6 +24,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../case/models/case.model'
+import { Defendant } from '../defendant'
 import { User } from '../user'
 import { CaseTableResponse } from './dto/caseTable.response'
 import { SearchCasesResponse } from './dto/searchCases.response'
@@ -42,8 +43,15 @@ type SearchResult = {
     policeCaseNumbers: string[]
     courtCaseNumber: string | null
     appealCaseNumber: string | null
+    defendantNationalId: string | null
+    defendantName: string | null
     match: {
-      field: 'policeCaseNumbers' | 'courtCaseNumber' | 'appealCaseNumber'
+      field:
+        | 'policeCaseNumbers'
+        | 'courtCaseNumber'
+        | 'appealCaseNumber'
+        | 'defendantNationalId'
+        | 'defendantName'
       value: string
     }
   }[]
@@ -275,6 +283,34 @@ export class CaseTableService {
         [
           literal(`
             (
+              SELECT d."national_id"
+              FROM "defendant" d
+              WHERE d."case_id" = "Case"."id"
+              ORDER BY
+                (d."name" ILIKE '%${query}%' OR d."national_id" ILIKE '%${query}%') DESC,
+                d."created" ASC
+              LIMIT 1
+            )
+          `),
+          'defendantNationalId',
+        ],
+        [
+          literal(`
+            (
+              SELECT d."name"
+              FROM "defendant" d
+              WHERE d."case_id" = "Case"."id"
+              ORDER BY
+                (d."name" ILIKE '%${query}%' OR d."national_id" ILIKE '%${query}%') DESC,
+                d."created" ASC
+              LIMIT 1
+            )
+          `),
+          'defendantName',
+        ],
+        [
+          literal(`
+            (
               SELECT json_build_object(
                 'value', match,
                 'field', match_source
@@ -287,6 +323,16 @@ export class CaseTableService {
                 UNION ALL
                 SELECT "Case"."appeal_case_number", 'appealCaseNumber'
                 WHERE "Case"."appeal_case_number" ILIKE '${`%${query}%`}'
+                UNION ALL
+                SELECT d."national_id", 'defendantNationalId'
+                FROM "defendant" d
+                WHERE d."case_id" = "Case"."id"
+                  AND d."national_id" ILIKE '%${query}%'
+                UNION ALL
+                SELECT d."name", 'defendantName'
+                FROM "defendant" d
+                WHERE d."case_id" = "Case"."id"
+                  AND d."name" ILIKE '%${query}%'
               ) AS matches
               WHERE match ILIKE '${`%${query}%`}'
               LIMIT 1
@@ -295,19 +341,30 @@ export class CaseTableService {
           'match',
         ],
       ],
+      include: [
+        {
+          model: Defendant,
+          attributes: ['nationalId', 'name'],
+          as: 'defendants',
+          required: true,
+          duplicating: false,
+        },
+      ],
       where: {
         [Op.and]: [
           userAccessWhereOptions(user),
           {
             [Op.or]: [
               literal(`
-            EXISTS (
-              SELECT 1 FROM unnest("Case"."police_case_numbers") AS n
-              WHERE n ILIKE '${`%${query}%`}'
-            )
-          `),
+                EXISTS (
+                  SELECT 1 FROM unnest("Case"."police_case_numbers") AS n
+                  WHERE n ILIKE '${`%${query}%`}'
+                )
+              `),
               { court_case_number: { [Op.iLike]: `%${query}%` } },
               { appeal_case_number: { [Op.iLike]: `%${query}%` } },
+              literal(`defendants.name ILIKE '%${query}%'`),
+              literal(`defendants.national_id ILIKE '%${query}%'`),
             ],
           },
         ],
@@ -333,6 +390,8 @@ export class CaseTableService {
         policeCaseNumbers: r.policeCaseNumbers,
         courtCaseNumber: r.courtCaseNumber,
         appealCaseNumber: r.appealCaseNumber,
+        defendantNationalId: r.defendantNationalId,
+        defendantName: r.defendantName,
       })),
     }
   }

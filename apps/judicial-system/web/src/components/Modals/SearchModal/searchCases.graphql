@@ -9,6 +9,8 @@ query SearchCases($input: SearchCasesQueryInput!) {
       policeCaseNumbers
       courtCaseNumber
       appealCaseNumber
+      defendantNationalId
+      defendantName
     }
   }
 }

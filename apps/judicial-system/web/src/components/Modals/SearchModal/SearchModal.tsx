@@ -66,7 +66,7 @@ const SearchModal: FC<Props> = ({ onClose }) => {
     useState<[JSX.Element[], number | undefined]>()
   const searchInputRef = useRef<HTMLInputElement>(null)
 
-  const [searchCases, { loading }] = useSearchCasesLazyQuery({
+  const [searchCases] = useSearchCasesLazyQuery({
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
   })
@@ -91,7 +91,11 @@ const SearchModal: FC<Props> = ({ onClose }) => {
                   key={row.caseId}
                   caseId={row.caseId}
                   caseType={row.caseType}
-                  descriptor={row.matchedValue}
+                  descriptor={`${row.matchedValue}${
+                    row.matchedField === 'defendantName'
+                      ? ''
+                      : ` - ${row.defendantName}`
+                  }`}
                   onClick={onClose}
                 />
               ))

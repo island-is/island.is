@@ -27,6 +27,12 @@ class SearchCasesRow {
 
   @ApiProperty({ type: String, description: 'The appeal case number' })
   readonly appealCaseNumber!: string | null
+
+  @ApiProperty({ type: String, description: 'The defendant national id' })
+  readonly defendantNationalId!: string | null
+
+  @ApiProperty({ type: String, description: 'The defendant name' })
+  readonly defendantName!: string | null
 }
 
 export class SearchCasesResponse {

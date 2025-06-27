@@ -27,6 +27,15 @@ class SearchCasesRow {
     nullable: true,
   })
   readonly appealCaseNumber!: string | null
+
+  @Field(() => String, {
+    description: 'The defendant national id',
+    nullable: true,
+  })
+  readonly defendantNationalId!: string | null
+
+  @Field(() => String, { description: 'The defendant name', nullable: true })
+  readonly defendantName!: string | null
 }
 
 @ObjectType()
