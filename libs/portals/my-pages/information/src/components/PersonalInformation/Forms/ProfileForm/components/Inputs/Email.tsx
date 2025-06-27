@@ -101,6 +101,7 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
       setValue('email', email, { shouldValidate: true })
     }
     checkSetPristineInput()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [email])
 
   useEffect(() => {
@@ -112,6 +113,7 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
     } else {
       emailDirty(true)
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [emailInternal, email])
 
   const handleSendEmailVerification = async (data: { email?: string }) => {
@@ -123,7 +125,7 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
 
     try {
       const emailValue = data.email ?? ''
-      let response: any
+      let response
       setResendBlock(true)
       if (!isActor) {
         response = await createEmailVerification({
@@ -266,6 +268,7 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
                 !meCreateLoading &&
                 !deleteLoading &&
                 !fetchLoading && (
+                  // eslint-disable-next-line react/jsx-no-useless-fragment
                   <>
                     {emailVerifyCreated ? (
                       <FormButton

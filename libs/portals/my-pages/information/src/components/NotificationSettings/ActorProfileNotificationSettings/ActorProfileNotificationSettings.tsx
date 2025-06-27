@@ -76,7 +76,7 @@ export const ActorProfileNotificationSettings = () => {
 
     setSettings(newSettings)
 
-    let updateError: any
+    let updateError
     if (!isDelegationTypeEnabled) {
       const { error } = await safeAwait(
         updateUserProfile({
