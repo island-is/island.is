@@ -97,7 +97,7 @@ export class LawyerRegistryService {
       await this.populateLawyerRegistry(lawyers, transaction)
       await transaction.commit()
 
-      return true
+      return lawyers
     } catch (error) {
       await transaction.rollback()
       this.logger.error('Error populating lawyer registry', error)
