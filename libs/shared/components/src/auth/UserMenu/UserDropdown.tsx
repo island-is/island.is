@@ -54,7 +54,7 @@ export const UserDropdown = ({
   const userName = user.profile.name
   const actorName = actor?.name
   const isDelegationCompany = user.profile.subjectType === 'legalEntity'
-  const hasAccessToUserProfileInfo = user.scopes.includes(
+  const hasAccessToUserProfileInfo = user?.scopes?.includes(
     '@island.is/documents',
   )
 
