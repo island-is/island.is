@@ -38,6 +38,7 @@ export enum ApiScope {
   signatureCollection = '@island.is/signature-collection',
   menntamalastofnun = '@island.is/applications/mms',
   socialInsuranceAdministration = '@island.is/applications/social-insurance-administration',
+  rsk = '@island.is/applications/rsk',
   ojoiAdverts = '@island.is/applications/dmr:stjornartidindi',
   hms = '@island.is/applications/hms',
 }
