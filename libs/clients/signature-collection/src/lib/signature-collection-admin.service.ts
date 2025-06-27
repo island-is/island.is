@@ -1,4 +1,4 @@
-import { Injectable, UnauthorizedException } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { KosningApi, MedmaeliBulkItemDTO } from '../../gen/fetch'
 import {
   GetListInput,
