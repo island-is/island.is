@@ -69,6 +69,10 @@ export class OrganizationParentSubpageSyncService
               typename: 'OrganizationParentSubpage',
             }),
             tags: [
+              {
+                key: entry.fields?.organizationPage?.fields?.slug,
+                type: 'organization',
+              },
               ...childEntryIds.map((id) => ({
                 key: id,
                 type: 'hasChildEntryWithId',
