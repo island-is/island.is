@@ -4,6 +4,7 @@ import { m } from '../../../lib/messages'
 
 const StartAreaCollection = () => {
   const { formatMessage } = useLocale()
+  
   return (
     <DialogPrompt
       baseId="openCollection"
