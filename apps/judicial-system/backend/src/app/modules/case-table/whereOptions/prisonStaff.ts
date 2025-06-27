@@ -1,23 +1,8 @@
 import { fn, Op } from 'sequelize'
 
-import {
-  CaseDecision,
-  CaseState,
-  CaseType,
-} from '@island.is/judicial-system/types'
+import { prisonStaffRequestCasesAccessWhereOptions } from './access'
 
 // Prison staff request cases
-
-const prisonStaffRequestCasesAccessWhereOptions = {
-  is_archived: false,
-  type: [
-    CaseType.CUSTODY,
-    CaseType.ADMISSION_TO_FACILITY,
-    CaseType.PAROLE_REVOCATION,
-  ],
-  state: CaseState.ACCEPTED,
-  decision: [CaseDecision.ACCEPTING, CaseDecision.ACCEPTING_PARTIALLY],
-}
 
 export const prisonStaffRequestCasesActiveWhereOptions = () => ({
   [Op.and]: [
@@ -32,6 +17,3 @@ export const prisonStaffRequestCasesDoneWhereOptions = () => ({
     { valid_to_date: { [Op.lt]: fn('NOW') } },
   ],
 })
-
-export const prisonStaffCasesAccessWhereOptions = () =>
-  prisonStaffRequestCasesAccessWhereOptions
