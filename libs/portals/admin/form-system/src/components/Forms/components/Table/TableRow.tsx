@@ -9,11 +9,10 @@ import {
   Icon,
 } from '@island.is/island-ui/core'
 import { Dispatch, SetStateAction, useState } from 'react'
-import { AnimatePresence, motion } from 'motion/react'
 import { useNavigate } from 'react-router-dom'
-import { TranslationTag } from '../TranslationTag/TranslationTag'
-import { FormSystemPaths } from '../../lib/paths'
-import { ApplicationTemplateStatus } from '../../lib/utils/interfaces'
+import { TranslationTag } from '../../../TranslationTag/TranslationTag'
+import { FormSystemPaths } from '../../../../lib/paths'
+import { ApplicationTemplateStatus } from '../../../../lib/utils/interfaces'
 import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
 import { FormSystemForm } from '@island.is/api/schema'
@@ -35,6 +34,8 @@ interface Props {
   setFormsState: Dispatch<SetStateAction<FormSystemForm[]>>
 }
 
+const PATH = `https://beta.dev01.devland.is/form`
+
 interface ColumnTextProps {
   text: string | number
 }
@@ -53,6 +54,7 @@ export const TableRow = ({
   state,
   translated,
   setFormsState,
+  slug,
 }: Props) => {
   const [isOpen, setIsOpen] = useState(false)
   const navigate = useNavigate()
@@ -134,6 +136,25 @@ export const TableRow = ({
                 },
                 {
                   title: 'Json',
+                },
+                {
+                  title: 'Skoða',
+                  onClick: () => {
+                    if (slug) {
+                      window.open(
+                        `${PATH}/${slug}`,
+                        '_blank',
+                        'noopener,noreferrer',
+                      )
+                    } else {
+                      window.alert(
+                        formatMessage({
+                          id: 'slugMissing',
+                          defaultMessage: 'Það vantar slug',
+                        }),
+                      )
+                    }
+                  },
                 },
               ]}
             />

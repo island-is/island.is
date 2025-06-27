@@ -73,8 +73,9 @@ describe('AppService - Run', () => {
     it('should archive cases until done and call post hearing arrangements', () => {
       // in given test setting we call:
       // fetch for archive cases 3x
+      // fetch for resetting lawyer-registry 1x
       // fetch for post daily hearing 1x
-      expect(fetch).toHaveBeenCalledTimes(4)
+      expect(fetch).toHaveBeenCalledTimes(5)
       expect(fetch).toHaveBeenCalledWith(
         `${appModuleConfig().backendUrl}/api/internal/cases/archive`,
         {
@@ -96,6 +97,16 @@ describe('AppService - Run', () => {
             authorization: `Bearer ${appModuleConfig().backendAccessToken}`,
           },
           body: JSON.stringify({ date: new Date('2020-01-01T02:01:00.000Z') }),
+        },
+      )
+      expect(fetch).toHaveBeenCalledWith(
+        `${appModuleConfig().backendUrl}/api/lawyer-registry/reset`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${appModuleConfig().backendAccessToken}`,
+          },
         },
       )
     })

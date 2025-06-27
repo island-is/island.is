@@ -80,6 +80,10 @@ export class AppService {
       execute: () => this.postDailyHearingArrangementSummary(),
     },
     {
+      jobScheduleType: JobScheduleType.EveryDayAt2,
+      execute: () => this.resetLawyerRegistry(),
+    },
+    {
       jobScheduleType: JobScheduleType.WeekdaysAt9,
       execute: () =>
         this.addMessagesForIndictmentsWaitingForConfirmationToQueue(),
@@ -162,6 +166,31 @@ export class AppService {
       }
     } catch (error) {
       throw new BadGatewayException(`Failed to fetch cases: ${error.message}`)
+    }
+  }
+
+  private async resetLawyerRegistry() {
+    try {
+      const res = await fetch(
+        `${this.config.backendUrl}/api/lawyer-registry/reset`,
+        {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${this.config.backendAccessToken}`,
+          },
+        },
+      )
+
+      if (!res.ok) {
+        throw new BadGatewayException(
+          'Unexpected error occurred while resetting lawyer registry',
+        )
+      }
+    } catch (error) {
+      throw new BadGatewayException(
+        `Failed to reset lawyer registry: ${error.message}`,
+      )
     }
   }
 
