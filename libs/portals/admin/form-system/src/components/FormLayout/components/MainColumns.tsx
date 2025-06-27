@@ -9,7 +9,7 @@ import { DELETE_SCREEN, DELETE_FIELD, DELETE_SECTION } from '@island.is/form-sys
 import { DeleteButton } from './DeleteButton'
 
 export const MainContentColumn = () => {
-  const { control, controlDispatch } = useContext(ControlContext)
+  const { control, controlDispatch, inSettings } = useContext(ControlContext)
   const { activeItem, form } = control
   const { screens, fields } = form
   const { type } = activeItem
@@ -29,8 +29,6 @@ export const MainContentColumn = () => {
     }
     return false
   }
-
-
 
   const remove = async () => {
     const id = activeItem?.data?.id as string
@@ -72,26 +70,28 @@ export const MainContentColumn = () => {
     <Box
       style={{
         maxWidth: '1200px',
-        width: '64%',
-        position: 'fixed',
+        width: '100%',
+        marginLeft: 0
       }}
     >
-      {containsGroupOrInput() ? (
-        <DialogPrompt
-          baseId="remove"
-          title={formatMessage(m.areYouSure)}
-          description={formatMessage(m.completelySure)}
-          ariaLabel="Remove item"
-          buttonTextConfirm={formatMessage(m.confirm)}
-          buttonTextCancel={formatMessage(m.cancel)}
-          onConfirm={remove}
-          disclosureElement={
-            <DeleteButton onClick={() => { }} label={formatMessage(m.delete)} />
-          }
-        />
-      ) : (
-        <DeleteButton onClick={remove} label={formatMessage(m.delete)} />
-      )}
+      {!inSettings ? (
+        containsGroupOrInput() ? (
+          <DialogPrompt
+            baseId="remove"
+            title={formatMessage(m.areYouSure)}
+            description={formatMessage(m.completelySure)}
+            ariaLabel="Remove item"
+            buttonTextConfirm={formatMessage(m.confirm)}
+            buttonTextCancel={formatMessage(m.cancel)}
+            onConfirm={remove}
+            disclosureElement={
+              <DeleteButton onClick={() => { }} label={formatMessage(m.delete)} />
+            }
+          />
+        ) : (
+          <DeleteButton onClick={remove} label={formatMessage(m.delete)} />
+        )
+      ) : null}
 
       <Box
         border="standard"
