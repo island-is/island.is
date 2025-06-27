@@ -47,7 +47,7 @@ export class SignatureCollectionClientService {
   }
 
   async currentCollection(
-    collectionTypeFilter?: CollectionType,
+    collectionTypeFilter: CollectionType,
   ): Promise<Collection[]> {
     return await this.sharedService.currentCollection(
       this.electionsApi,
@@ -131,7 +131,7 @@ export class SignatureCollectionClientService {
       throw new Error('User is already owner of lists')
     }
 
-    const filteredAreas = areas
+    const filteredAreas = areas?.length
       ? collectionAreas.filter((area) =>
           areas.flatMap((a) => a.areaId).includes(area.id),
         )
@@ -164,9 +164,9 @@ export class SignatureCollectionClientService {
     { collectionId, owner, areas, collectionType, listName }: CreateListInput,
     auth: User,
   ): Promise<Slug> {
-    const matchingCollection = (await this.currentCollection()).find(
-      (collection) => collection.id === collectionId,
-    )
+    const matchingCollection = (
+      await this.currentCollection(CollectionType.LocalGovernmental)
+    ).find((collection) => collection.id === collectionId)
     if (!matchingCollection) {
       throw new Error('Collection not found')
     }
@@ -188,7 +188,7 @@ export class SignatureCollectionClientService {
       throw new Error('User is already owner of lists')
     }
 
-    const filteredAreas = areas
+    const filteredAreas = areas?.length
       ? collectionAreas.filter((area) =>
           areas.flatMap((a) => a.areaId).includes(area.id),
         )
@@ -566,17 +566,15 @@ export class SignatureCollectionClientService {
           ? user.medmaelalistar?.map((list) => mapListBase(list))
           : []
 
-      const {
-        success: canCreate,
-        reasons: canCreateInfo,
-      } = this.sharedService.canCreate({
-        requirementsMet: user.maFrambod,
-        canCreateInfo: user.maFrambodInfo,
-        ownedLists,
-        collectionType,
-        isActive,
-        areas,
-      })
+      const { success: canCreate, reasons: canCreateInfo } =
+        this.sharedService.canCreate({
+          requirementsMet: user.maFrambod,
+          canCreateInfo: user.maFrambodInfo,
+          ownedLists,
+          collectionType,
+          isActive,
+          areas,
+        })
 
       const { success: canSign, reasons: canSignInfo } = await this.canSign({
         requirementsMet: user.maKjosa,

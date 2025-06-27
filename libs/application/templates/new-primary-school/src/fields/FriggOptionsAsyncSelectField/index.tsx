@@ -22,6 +22,8 @@ type FriggOptionsAsyncSelectFieldProps = {
       optionsType: OptionsType | ((application: Application) => OptionsType)
       placeholder: FormText
       isMulti?: boolean
+      useId?: boolean
+      useIdAndKey?: boolean
     }
   }
 }
@@ -31,7 +33,13 @@ const FriggOptionsAsyncSelectField: FC<
 > = ({ error, field, application }) => {
   const { lang } = useLocale()
   const { title, props, defaultValue, id, marginBottom } = field
-  const { isMulti = false, optionsType, placeholder } = props
+  const {
+    isMulti = false,
+    optionsType,
+    placeholder,
+    useId = false,
+    useIdAndKey = false,
+  } = props
 
   let friggOptionsType: OptionsType
   if (typeof optionsType === 'function') {
@@ -69,16 +77,20 @@ const FriggOptionsAsyncSelectField: FC<
 
           const options =
             data?.friggOptions?.flatMap(({ options }) =>
-              options.flatMap(({ value, key }) => {
-                let content = value.find(
+              options.flatMap(({ value, key, id }) => {
+                const content = value.find(
                   ({ language }) => language === lang,
                 )?.content
-                if (!content) {
-                  content = value.find(
-                    ({ language }) => language === 'is',
-                  )?.content
-                }
-                return { value: key ?? '', label: content ?? '' }
+
+                if (!content) return []
+
+                const contentValue = useIdAndKey
+                  ? `${id}::${key}`
+                  : useId
+                  ? id
+                  : key
+
+                return { value: contentValue, label: content }
               }),
             ) ?? []
 

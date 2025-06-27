@@ -33,7 +33,7 @@ export const MACHINE_SUB_CATEGORIES = `
 export const TECHNICAL_INFO_INPUTS = `
   query GetTechnicalInfoInputs($parentCategory: String!, $subCategory: String!) {
     getTechnicalInfoInputs(parentCategory: $parentCategory, subCategory: $subCategory) {
-      variableName
+      name
       label
       labelEn
       type

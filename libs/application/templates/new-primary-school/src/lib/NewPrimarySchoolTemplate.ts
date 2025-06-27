@@ -219,7 +219,6 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         if (!hasForeignLanguages(application.answers)) {
           unset(application.answers, 'languages.selectedLanguages')
           unset(application.answers, 'languages.preferredLanguage')
-          unset(application.answers, 'languages.guardianRequiresInterpreter')
         }
         return context
       }),
@@ -231,17 +230,17 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         if (!hasFoodAllergiesOrIntolerances?.includes(YES)) {
           unset(
             application.answers,
-            'allergiesAndIntolerances.foodAllergiesOrIntolerances',
+            'healthProtection.foodAllergiesOrIntolerances',
           )
         }
         if (!hasOtherAllergies?.includes(YES)) {
-          unset(application.answers, 'allergiesAndIntolerances.otherAllergies')
+          unset(application.answers, 'healthProtection.otherAllergies')
         }
         if (
           !hasFoodAllergiesOrIntolerances?.includes(YES) &&
           !hasOtherAllergies?.includes(YES)
         ) {
-          unset(application.answers, 'allergiesAndIntolerances.usesEpiPen')
+          unset(application.answers, 'healthProtection.usesEpiPen')
         }
         return context
       }),

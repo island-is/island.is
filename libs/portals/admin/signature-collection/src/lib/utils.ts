@@ -14,6 +14,7 @@ export const pageSize = 10
 export const allowedScopes: string[] = [
   AdminPortalScope.signatureCollectionManage,
   AdminPortalScope.signatureCollectionProcess,
+  AdminPortalScope.signatureCollectionMunicipality,
 ]
 
 export const countryAreas = [
