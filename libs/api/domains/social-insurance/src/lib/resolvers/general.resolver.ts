@@ -9,8 +9,8 @@ import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import { UseGuards } from '@nestjs/common'
 import { Query, Resolver } from '@nestjs/graphql'
-import { Countries } from '../models/general/countries.model'
-import { EducationalInstitutions } from '../models/general/educationalInstitutions.model'
+import { Country } from '../models/general/country.model'
+import { EducationalInstitution } from '../models/general/educationalInstitution.model'
 import { UnionModel } from '../models/general/union.model'
 import { SocialInsuranceService } from '../socialInsurance.service'
 
@@ -26,12 +26,12 @@ export class GeneralResolver {
     return this.service.getUnions(user)
   }
 
-  @Query(() => [Countries], { name: 'socialInsuranceCountries' })
+  @Query(() => [Country], { name: 'socialInsuranceCountries' })
   async siaGetCountries(@CurrentUser() user: User) {
     return this.service.getCountries(user)
   }
 
-  @Query(() => [EducationalInstitutions], {
+  @Query(() => [EducationalInstitution], {
     name: 'socialInsuranceEducationalInstitutions',
   })
   async siaGetEducationalInstitutions(@CurrentUser() user: User) {
