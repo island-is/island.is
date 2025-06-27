@@ -4,6 +4,7 @@ import {
   buildMultiField,
   buildRadioField,
   buildSubSection,
+  NO,
   YES,
 } from '@island.is/application/core'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
@@ -51,6 +52,24 @@ export const employeeSickPaySubSection = buildSubSection({
         }),
         buildDateField({
           id: 'employeeSickPay.endDate',
+          minDate: (application) => {
+            const { hasUtilizedEmployeeSickPayRights } = getApplicationAnswers(
+              application.answers,
+            )
+            if (hasUtilizedEmployeeSickPayRights === NO) {
+              return new Date()
+            }
+            return undefined
+          },
+          maxDate: (application) => {
+            const { hasUtilizedEmployeeSickPayRights } = getApplicationAnswers(
+              application.answers,
+            )
+            if (hasUtilizedEmployeeSickPayRights === YES) {
+              return new Date()
+            }
+            return undefined
+          },
           title: medicalAndRehabilitationPaymentsFormMessage.shared.date,
           placeholder:
             medicalAndRehabilitationPaymentsFormMessage.shared.datePlaceholder,
