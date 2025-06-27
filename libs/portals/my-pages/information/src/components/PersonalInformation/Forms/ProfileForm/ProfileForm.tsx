@@ -171,7 +171,7 @@ export const ProfileForm = ({
         setFormLoading(true)
         setInternalLoading(true)
       }
-      if (telDirty && emailDirty) {
+      if (telDirty) {
         await submitEmptyTel()
       } else {
         await confirmNudge().then(() => closeAllModals())

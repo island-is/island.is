@@ -102,6 +102,13 @@ export class UserProfileService {
     return this.userProfileServiceV2.createSmsVerification(input, user)
   }
 
+  async createMeSmsVerification(
+    input: CreateSmsVerificationInput,
+    user: User,
+  ): Promise<void> {
+    return this.userProfileServiceV2.createMeSmsVerification(input, user)
+  }
+
   async createEmailVerification(
     input: CreateEmailVerificationInput,
     user: User,

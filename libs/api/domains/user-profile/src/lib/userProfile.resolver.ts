@@ -84,6 +84,15 @@ export class UserProfileResolver {
   }
 
   @Mutation(() => Response, { nullable: true })
+  async createMeSmsVerification(
+    @Args('input') input: CreateSmsVerificationInput,
+    @CurrentUser() user: User,
+  ): Promise<Response> {
+    await this.userProfileService.createMeSmsVerification(input, user)
+    return Promise.resolve({ created: true })
+  }
+
+  @Mutation(() => Response, { nullable: true })
   async createEmailVerification(
     @Args('input') input: CreateEmailVerificationInput,
     @CurrentUser() user: User,

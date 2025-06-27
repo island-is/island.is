@@ -109,6 +109,14 @@ export class UserProfileServiceV2 {
     })
   }
 
+  async createMeSmsVerification(input: CreateSmsVerificationInput, user: User) {
+    await this.v2MeUserProfileApiWithAuth(
+      user,
+    ).meUserProfileControllerCreateVerification({
+      createVerificationDto: input,
+    })
+  }
+
   async createEmailVerification(
     input: CreateEmailVerificationInput,
     user: User,
