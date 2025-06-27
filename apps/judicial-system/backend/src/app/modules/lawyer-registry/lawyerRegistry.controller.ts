@@ -3,11 +3,12 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+
 import { TokenGuard } from '@island.is/judicial-system/auth'
 import { Lawyer } from '@island.is/judicial-system/lawyers'
 
-import { LawyerRegistryService } from './lawyerRegistry.service'
 import { EventService } from '../event'
+import { LawyerRegistryService } from './lawyerRegistry.service'
 
 @Controller('api')
 @ApiTags('lawyer-registry')
