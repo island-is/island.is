@@ -189,12 +189,10 @@ export class SignatureCollectionSharedClientService {
       lists = []
 
       for (const electionId of electionIds) {
-        const electionLists = areaId
-          ? await listApi.medmaelalistarGet({
-              kosningID: electionId,
-              svaediID: parseInt(areaId),
-            })
-          : []
+        const electionLists = await listApi.medmaelalistarGet({
+          kosningID: electionId,
+          svaediID: areaId ? parseInt(areaId) : undefined,
+        })
         lists.push(...electionLists)
       }
     } else {
