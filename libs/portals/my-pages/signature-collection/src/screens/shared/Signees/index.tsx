@@ -114,13 +114,6 @@ const Signees = ({
                           {!s.isDigital && (
                             <Box display="flex">
                               <Text>{s.pageNumber}</Text>
-                              <Box marginLeft={1}>
-                                <Icon
-                                  icon="document"
-                                  type="outline"
-                                  color="blue400"
-                                />
-                              </Box>
                               <EditPage
                                 page={s.pageNumber ?? 0}
                                 name={s.signee.name}
