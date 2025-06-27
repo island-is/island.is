@@ -4,14 +4,16 @@ import {
   CaseAppealState,
   CaseIndictmentRulingDecision,
   CaseState,
+  completedIndictmentCaseStates,
   completedRequestCaseStates,
   EventType,
-  indictmentCases,
-  investigationCases,
-  restrictionCases,
   User,
 } from '@island.is/judicial-system/types'
 
+import {
+  districtCourtIndictmentsAccessWhereOptions,
+  districtCourtRequestCasesAccessWhereOptions,
+} from './access'
 import {
   buildAlternativeServiceExistsCondition,
   buildEventLogExistsCondition,
@@ -19,18 +21,6 @@ import {
 } from './conditions'
 
 // District court request cases
-
-const districtCourtRequestCasesAccessWhereOptions = (user: User) => ({
-  is_archived: false,
-  type: [...restrictionCases, ...investigationCases],
-  state: [
-    CaseState.DRAFT,
-    CaseState.SUBMITTED,
-    CaseState.RECEIVED,
-    ...completedRequestCaseStates,
-  ],
-  court_id: user.institution?.id,
-})
 
 export const districtCourtRequestCasesInProgressWhereOptions = (
   user: User,
@@ -63,7 +53,7 @@ export const districtCourtRequestCasesAppealedWhereOptions = (user: User) => ({
     districtCourtRequestCasesAccessWhereOptions(user),
     {
       state: completedRequestCaseStates,
-      appeal_state: [CaseAppealState.APPEALED],
+      appeal_state: CaseAppealState.APPEALED,
     },
   ],
 })
@@ -90,18 +80,6 @@ export const districtCourtRequestCasesCompletedWhereOptions = (user: User) => ({
 })
 
 // District court indictments
-
-const districtCourtIndictmentsAccessWhereOptions = (user: User) => ({
-  is_archived: false,
-  type: indictmentCases,
-  state: [
-    CaseState.SUBMITTED,
-    CaseState.WAITING_FOR_CANCELLATION,
-    CaseState.RECEIVED,
-    CaseState.COMPLETED,
-  ],
-  court_id: user.institution?.id,
-})
 
 export const districtCourtIndictmentsNewWhereOptions = (user: User) => ({
   [Op.and]: [
@@ -149,7 +127,7 @@ export const districtCourtIndictmentsFinalizingWhereOptions = (user: User) => ({
   [Op.and]: [
     districtCourtIndictmentsAccessWhereOptions(user),
     {
-      state: CaseState.COMPLETED,
+      state: completedIndictmentCaseStates,
       indictment_ruling_decision: [
         CaseIndictmentRulingDecision.RULING,
         CaseIndictmentRulingDecision.FINE,
@@ -168,7 +146,7 @@ export const districtCourtIndictmentsCompletedWhereOptions = (user: User) => ({
   [Op.and]: [
     districtCourtIndictmentsAccessWhereOptions(user),
     {
-      state: CaseState.COMPLETED,
+      state: completedIndictmentCaseStates,
       [Op.not]: {
         indictment_ruling_decision: [
           CaseIndictmentRulingDecision.RULING,
@@ -182,14 +160,5 @@ export const districtCourtIndictmentsCompletedWhereOptions = (user: User) => ({
         ],
       },
     },
-  ],
-})
-
-// District court cases access
-
-export const districtCourtCasesAccessWhereOptions = (user: User) => ({
-  [Op.or]: [
-    districtCourtRequestCasesAccessWhereOptions(user),
-    districtCourtIndictmentsAccessWhereOptions(user),
   ],
 })

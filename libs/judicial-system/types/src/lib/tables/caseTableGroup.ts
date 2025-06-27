@@ -46,12 +46,12 @@ export const getCaseTableGroups = (
     return publicProsecutionTableGroups
   }
 
-  if (isProsecutorRepresentativeUser(user)) {
-    return prosecutorRepresentativeTableGroups
-  }
-
   if (isProsecutorUser(user)) {
     return prosecutorTableGroups
+  }
+
+  if (isProsecutorRepresentativeUser(user)) {
+    return prosecutorRepresentativeTableGroups
   }
 
   return []

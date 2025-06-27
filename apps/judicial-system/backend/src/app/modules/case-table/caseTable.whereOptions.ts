@@ -6,17 +6,28 @@ import {
   isDistrictCourtUser,
   isPrisonAdminUser,
   isPrisonStaffUser,
+  isProsecutorRepresentativeUser,
+  isProsecutorUser,
   isPublicProsecutionOfficeUser,
+  isPublicProsecutionUser,
   type User,
 } from '@island.is/judicial-system/types'
 
 import {
   courtOfAppealsCasesAccessWhereOptions,
+  districtCourtCasesAccessWhereOptions,
+  prisonAdminCasesAccessWhereOptions,
+  prisonStaffCasesAccessWhereOptions,
+  prosecutorCasesAccessWhereOptions,
+  prosecutorRepresentativeCasesAccessWhereOptions,
+  publicProsecutionCasesAccessWhereOptions,
+  publicProsecutionOfficeCasesAccessWhereOptions,
+} from './whereOptions/access'
+import {
   courtOfAppealsRequestCasesCompletedWhereOptions,
   courtOfAppealsRequestCasesInProgressWhereOptions,
 } from './whereOptions/courtOfAppeals'
 import {
-  districtCourtCasesAccessWhereOptions,
   districtCourtIndictmentsCompletedWhereOptions,
   districtCourtIndictmentsFinalizingWhereOptions,
   districtCourtIndictmentsInProgressWhereOptions,
@@ -27,14 +38,12 @@ import {
   districtCourtRequestCasesInProgressWhereOptions,
 } from './whereOptions/districtCourt'
 import {
-  prisonAdminCasesAccessWhereOptions,
   prisonAdminIndictmentsRegisteredRulingWhereOptions,
   prisonAdminIndictmentsSentToPrisonAdminWhereOptions,
   prisonAdminRequestCasesActiveWhereOptions,
   prisonAdminRequestCasesDoneWhereOptions,
 } from './whereOptions/prisonAdmin'
 import {
-  prisonStaffCasesAccessWhereOptions,
   prisonStaffRequestCasesActiveWhereOptions,
   prisonStaffRequestCasesDoneWhereOptions,
 } from './whereOptions/prisonStaff'
@@ -53,7 +62,6 @@ import {
   publicProsecutionIndictmentsReviewedWhereOptions,
 } from './whereOptions/publicProsecution'
 import {
-  publicProsecutionOfficeCasesAccessWhereOptions,
   publicProsecutionOfficeIndictmentsAppealedWhereOptions,
   publicProsecutionOfficeIndictmentsAppealPeriodExpiredWhereOptions,
   publicProsecutionOfficeIndictmentsInReviewWhereOptions,
@@ -83,17 +91,17 @@ export const userAccessWhereOptions = (user: User): WhereOptions => {
     return publicProsecutionOfficeCasesAccessWhereOptions()
   }
 
-  // if (isPublicProsecutionUser(user)) {
-  //   return publicProsecutionTableGroups
-  // }
+  if (isPublicProsecutionUser(user)) {
+    return publicProsecutionCasesAccessWhereOptions(user)
+  }
 
-  // if (isProsecutorRepresentativeUser(user)) {
-  //   return prosecutorRepresentativeTableGroups
-  // }
+  if (isProsecutorUser(user)) {
+    return prosecutorCasesAccessWhereOptions(user)
+  }
 
-  // if (isProsecutorUser(user)) {
-  //   return prosecutorTableGroups
-  // }
+  if (isProsecutorRepresentativeUser(user)) {
+    return prosecutorRepresentativeCasesAccessWhereOptions(user)
+  }
 
   return { id: null }
 }
