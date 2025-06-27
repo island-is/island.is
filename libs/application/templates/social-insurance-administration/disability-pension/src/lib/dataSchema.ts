@@ -1,24 +1,18 @@
 import { z } from 'zod'
 import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { BankAccountType, INCOME, ISK, RatioType, TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import { NO, YES, YesOrNo } from '@island.is/application/core'
+import { NO, YES } from '@island.is/application/core'
 import { formatBankInfo, validIBAN, validSWIFT } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { isValidPhoneNumber } from './utils'
 import { EmploymentEnum } from './constants'
 import { getAllCountryCodes } from '@island.is/shared/utils'
+import { disabilityPensionFormMessage } from './messages'
 
 export const fileSchema = z.object({
   name: z.string(),
   key: z.string(),
   url: z.string().optional(),
 })
-
-const validateCountry = (country?: string) => {
-  if (!country) return false
-  const countries = getAllCountryCodes()
-  return countries.map(c => c.name).includes(country)
-}
-
 
 const livedAbroadSchema = z.object({
   hasLivedAbroad: z.enum([YES, NO]),
@@ -32,33 +26,6 @@ const livedAbroadSchema = z.object({
     }).optional()
   )
 })
-
-const validateLivedAbroadSchema = (data: z.infer<typeof livedAbroadSchema>) => {
-  if (data.hasLivedAbroad === NO) {
-    return true
-  }
-  if (!data.list) {
-    return false
-  }
-  return data.list.length > 0 && data.list.every(item => {
-    if (!item) {
-      return false
-    }
-
-    if (!item.country || !item.abroadNationalId || !item.periodStart || !item.periodEnd) {
-      return false
-    }
-
-    const periodStart = new Date(item.periodStart)
-    const periodEnd = new Date(item.periodEnd)
-
-    if (periodStart >= periodEnd) {
-      return false
-    }
-
-    return true
-  })
-}
 
 
 export const dataSchema = z.object({
@@ -81,11 +48,45 @@ export const dataSchema = z.object({
         else return true
       },
       { params: errorMessages.requireAttachment, path: ['fileUpload'] },
+    )
+    .refine(
+      ({ appliedBefore, fileUpload }) => {
+        if (appliedBefore === YES && ) {
+          return (fileUpload?.length ?? 0) > 0
+        }
+        else return true
+      },
+      { params: errorMessages.requireAttachment, path: ['fileUpload'] },
     ),
-  livedAbroad: livedAbroadSchema.refine(validateLivedAbroadSchema),
+  livedAbroad: livedAbroadSchema
+    .refine(({list, hasLivedAbroad}) => {
+      if (hasLivedAbroad.NO || (list && list.length > 0)) {
+        return true
+      }
+      return false
+    }, {
+      path: ['list'],
+      params: disabilityPensionFormMessage.errors.emptyForeignResidence,
+    })
+    .refine(({list, hasLivedAbroad}) => {
+      if (hasLivedAbroad.YES && (list && list.length > 0)) {
+        const invalidCountryLines: Array<number> = []
+        list.forEach(({ country }, index) => {
+          if (!country) return index
+          const countries = getAllCountryCodes()
+          return countries.every(c => c.name).includes(country)
+        })
+      }
+      return false
+      if (!country) return false
+      const countries = getAllCountryCodes()
+      return countries.map(c => c.name).includes(country)
+    }
+    })
+
   paidWork: z.object({
     inPaidWork: z.enum([EmploymentEnum.YES, EmploymentEnum.NO, EmploymentEnum.DONT_KNOW]),
-    continuedWork:z.enum([YES, NO]).optional()
+    continuedWork: z.enum([YES, NO]).optional()
   }).refine(({inPaidWork, continuedWork}) => {
     if (inPaidWork === EmploymentEnum.YES) {
       return continuedWork !== undefined

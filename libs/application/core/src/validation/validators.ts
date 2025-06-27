@@ -64,6 +64,8 @@ const populateError = (
       // No errors on the current screen
       return undefined
     }
+
+    console.info(relevantErrors)
     return relevantErrors
   }
 
