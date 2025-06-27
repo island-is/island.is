@@ -229,6 +229,7 @@ judicial-system-backend:
     EMAIL_REPLY_TO_NAME: '/k8s/judicial-system/EMAIL_REPLY_TO_NAME'
     ERROR_EVENT_URL: '/k8s/judicial-system/ERROR_EVENT_URL'
     EVENT_URL: '/k8s/judicial-system/EVENT_URL'
+    LAWYERS_ICELAND_API_KEY: '/k8s/judicial-system/LAWYERS_ICELAND_API_KEY'
     NOVA_PASSWORD: '/k8s/judicial-system/NOVA_PASSWORD'
     NOVA_URL: '/k8s/judicial-system/NOVA_URL'
     NOVA_USERNAME: '/k8s/judicial-system/NOVA_USERNAME'
