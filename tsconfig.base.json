@@ -632,11 +632,11 @@
       "@island.is/auth/scopes": ["libs/auth/scopes/src/index.ts"],
       "@island.is/auth/shared": ["libs/auth/shared/src/index.ts"],
       "@island.is/cache": ["libs/cache/src/index.ts"],
-      "@island.is/clients-rsk-relationships": [
-        "libs/clients/rsk/relationships/src/index.ts"
-      ],
       "@island.is/clients-rental-day-rate": [
         "libs/clients/rsk/rental-day-rate/src/index.ts"
+      ],
+      "@island.is/clients-rsk-relationships": [
+        "libs/clients/rsk/relationships/src/index.ts"
       ],
       "@island.is/clients/administration-of-occupational-safety-and-health": [
         "libs/clients/administration-of-occupational-safety-and-health/src/index.ts"
