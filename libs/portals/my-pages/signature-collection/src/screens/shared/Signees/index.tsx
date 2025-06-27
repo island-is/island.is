@@ -122,6 +122,7 @@ const Signees = ({
                                 )}
                                 signatureId={s.id}
                                 refetchSignees={refetchListSignees}
+                                collectionType={collectionType}
                               />
                             </Box>
                           )}
