@@ -33,23 +33,30 @@ export const FormProvider: React.FC<{
 }> = ({ children, formBuilder }) => {
   const [focus, setFocus] = useState<string>('')
   const [inSettings, setInSettings] = useState(
-    formBuilder?.form?.name?.is === 'Nýtt',
+    formBuilder?.form?.name?.is === '',
   )
   const [inListBuilder, setInListBuilder] = useState<boolean>(false)
   const [selectStatus, setSelectStatus] = useState<NavbarSelectStatus>(
     NavbarSelectStatus.OFF,
   )
 
-  const { fieldTypes, listTypes, certificationTypes, applicantTypes, form } =
-    formBuilder
+  const {
+    fieldTypes,
+    listTypes,
+    certificationTypes,
+    applicantTypes,
+    submitUrls,
+    validationUrls,
+    form,
+  } = formBuilder
   const initialControl: ControlState = {
     activeItem: {
       type: 'Section',
       data: inSettings
         ? baseSettingsStep
         : removeTypename(form?.sections)?.find(
-            (s: FormSystemSection) => s?.sectionType === SectionTypes.INPUT,
-          ) ?? defaultStep,
+          (s: FormSystemSection) => s?.sectionType === SectionTypes.INPUT,
+        ) ?? defaultStep,
     },
     activeListItem: null,
     form: removeTypename(form) as FormSystemForm,
@@ -123,6 +130,8 @@ export const FormProvider: React.FC<{
       certificationTypes,
       fieldTypes,
       listTypes,
+      submitUrls,
+      validationUrls,
       setInSettings,
       inSettings,
       updateActiveItem,
