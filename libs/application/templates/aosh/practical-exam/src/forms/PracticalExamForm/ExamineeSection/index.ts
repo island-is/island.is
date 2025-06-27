@@ -97,7 +97,6 @@ export const examineeSection = buildSection({
           },
           table: {
             format: {
-              nationalId: (value) => `${value.slice(0, 6)}-${value.slice(6)}`,
               phone: (value) => `${value.slice(0, 3)}-${value.slice(3)}`,
             },
           },
