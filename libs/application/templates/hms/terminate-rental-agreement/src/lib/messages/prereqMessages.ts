@@ -1,6 +1,11 @@
 import { defineMessages } from 'react-intl'
 
 export const prereqMessages = defineMessages({
+  title: {
+    id: 'tra.application:prereq.title',
+    defaultMessage: 'Gagnaöflun',
+    description: 'Prerequisites title',
+  },
   housingBenefitsTitle: {
     id: 'tra.application:prereq.housingBenefitsTitle',
     defaultMessage: 'Húsnæðis og mannvirkjastofnun',
