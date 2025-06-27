@@ -1455,19 +1455,10 @@
       "application/templates/name-of-application": [
         "libs/application/templates/name-of-application/src/index.ts"
       ],
-<<<<<<< HEAD
-      "delegation-admin": [
-        "libs/portals/admin/delegation-admin/src/index.ts"
-      ],
-      "@island.is/application/templates/social-insurance-administration/disability-pension": [
-        "libs/application/templates/social-insurance-administration/disability-pension/src/index.ts"
-      ]
-=======
       "@island.is/application/templates/car-rental-fee-category": [
         "libs/application/templates/car-rental-fee-category/src/index.ts"
       ],
       "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"]
->>>>>>> main
     }
   }
 }
