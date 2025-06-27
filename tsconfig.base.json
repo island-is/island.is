@@ -635,6 +635,9 @@
       "@island.is/clients-rsk-relationships": [
         "libs/clients/rsk/relationships/src/index.ts"
       ],
+      "@island.is/clients-rental-day-rate": [
+        "libs/clients/rsk/rental-day-rate/src/index.ts"
+      ],
       "@island.is/clients/administration-of-occupational-safety-and-health": [
         "libs/clients/administration-of-occupational-safety-and-health/src/index.ts"
       ],

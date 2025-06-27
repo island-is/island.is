@@ -17,8 +17,12 @@ import {
 import { formatFamilyDto, FamilyDto } from './types/family.dto'
 import { formatBirthplaceDto, BirthplaceDto } from './types/birthplace.dto'
 import { formatCitizenshipDto, CitizenshipDto } from './types/citizenship.dto'
-import { formatIndividualDto } from './types/individual.dto'
-import { IndividualDto } from './types/individual.dto'
+import {
+  formatIndividualDto,
+  formatIndividualLiteDto,
+  IndividualDto,
+  IndividualLiteDto,
+} from './types/individual.dto'
 
 /**
  *
@@ -26,9 +30,9 @@ import { IndividualDto } from './types/individual.dto'
  * than the old V2 endpoint.
  * As a rule of thumb, you can assume that all endpoints are locked down to the logged
  * in user. The only exceptions apply to data about a user's custody children.
- * There is also an endpoint forthcoming that provides minimal data about individuals
- * which can be used to look up data such as names and addresses based on a national id.
- * Support for the forthcoming endpoint is not yet implemented.
+ * There is also an endpoint that provides less data about individuals than the full individual endpoint.
+ * This endpoint called einstaklingarKennitalaLiteGet can be used to look up data such as
+ * names and addresses based on a national id and is available in the gotOtherIndividual method.
  */
 
 @Injectable()
@@ -60,6 +64,7 @@ export class NationalRegistryV3ApplicationsClientService {
     )
   }
 
+  //Get full individual data
   async getIndividual(
     nationalId: string,
     auth: User,
@@ -71,6 +76,20 @@ export class NationalRegistryV3ApplicationsClientService {
     })
 
     return formatIndividualDto(res)
+  }
+
+  // Get name and address based on a national id for people other than the logged in user.
+  async getOtherIndividual(
+    nationalId: string,
+    auth: User,
+  ): Promise<IndividualLiteDto | null> {
+    const res = await this.einstaklingarApiWithAuth(
+      auth,
+    ).einstaklingarKennitalaLiteGet({
+      kennitala: nationalId,
+    })
+
+    return formatIndividualLiteDto(res)
   }
 
   async getCustodyChildren(user: User): Promise<string[]> {
