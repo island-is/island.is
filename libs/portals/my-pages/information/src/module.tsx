@@ -1,9 +1,14 @@
-import { ApiScope, UserProfileScope } from '@island.is/auth/scopes'
-import { PortalModule } from '@island.is/portals/core'
-import { m } from '@island.is/portals/my-pages/core'
 import { lazy } from 'react'
-import { Navigate } from 'react-router-dom'
+import {
+  ApiScope,
+  DocumentsScope,
+  UserProfileScope,
+} from '@island.is/auth/scopes'
+import { m } from '@island.is/portals/my-pages/core'
+import { PortalModule } from '@island.is/portals/core'
 import { InformationPaths } from './lib/paths'
+import { Navigate } from 'react-router-dom'
+
 const UserInfoOverview = lazy(() =>
   import('./screens/UserInfoOverview/UserInfoOverview'),
 )
@@ -25,31 +30,33 @@ const UserNotificationsSettings = lazy(() =>
 )
 
 const sharedRoutes = (scopes: string[], isCompany = false) => {
-  const enabled = scopes.includes(UserProfileScope.read)
+  const isSettingsEnabled =
+    scopes.includes(UserProfileScope.read) &&
+    scopes.includes(DocumentsScope.main)
 
   return [
     {
       name: isCompany ? m.settings : m.mySettings,
       path: InformationPaths.SettingsOld,
-      enabled,
+      enabled: isSettingsEnabled,
       element: <Navigate to={InformationPaths.Settings} replace />,
     },
     {
       name: isCompany ? m.settings : m.mySettings,
       path: InformationPaths.Settings,
-      enabled,
+      enabled: isSettingsEnabled,
       element: <UserProfileSettings />,
     },
     {
       name: m.userInfo,
       path: InformationPaths.SettingsNotifications,
-      enabled,
+      enabled: isSettingsEnabled,
       element: <UserNotificationsSettings />,
     },
     {
       name: 'Notifications',
       path: InformationPaths.Notifications,
-      enabled,
+      enabled: scopes.includes(DocumentsScope.main),
       element: <Notifications />,
     },
   ]

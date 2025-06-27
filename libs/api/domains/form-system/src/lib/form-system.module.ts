@@ -24,6 +24,8 @@ import { OrganizationPermissionsService } from './organizationPermissions/organi
 import { CmsModule } from '@island.is/cms'
 import { TranslationsService } from './translations/translations.service'
 import { TranslationsResolver } from './translations/translations.resolver'
+import { OrganizationUrlsResolver } from './organizationUrls/organizationUrls.resolver'
+import { OrganizationUrlsService } from './organizationUrls/organizationUrls.service'
 
 @Module({
   providers: [
@@ -49,6 +51,8 @@ import { TranslationsResolver } from './translations/translations.resolver'
     CertificationsService,
     OrganizationPermissionsResolver,
     OrganizationPermissionsService,
+    OrganizationUrlsResolver,
+    OrganizationUrlsService,
     CmsModule,
   ],
   exports: [],
