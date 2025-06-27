@@ -34,7 +34,9 @@ export const Screen = () => {
         offset={['0', '0', '1/12', '1/9']}
       >
         <Text variant="h2" as="h2" marginBottom={1}>
-          {currentSectionType !== SectionTypes.PREMISES && currentSectionType !== SectionTypes.PARTIES && screenTitle}
+          {currentSectionType !== SectionTypes.PREMISES &&
+            currentSectionType !== SectionTypes.PARTIES &&
+            screenTitle}
         </Text>
         {currentSectionType === SectionTypes.PREMISES && (
           <ExternalData setExternalDataAgreement={setExternalDataAgreement} />
