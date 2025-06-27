@@ -9,9 +9,10 @@ import { useDocumentContext } from '../../screens/Overview/DocumentContext'
 import { messages } from '../../utils/messages'
 import ReplyHeaderMobile from './Mobile/MobileHeader'
 import * as styles from './Reply.css'
+import AvatarImage from '../DocumentLine/AvatarImage'
 
 interface ReplyHeaderProps {
-  initials: string
+  initials?: string
   title: string
   subTitle: string
   caseNumber?: string
@@ -20,6 +21,7 @@ interface ReplyHeaderProps {
   displayCloseButton?: boolean
   displayEmail?: boolean
   onClose?: () => void
+  avatar?: string
 }
 
 const ReplyHeader: React.FC<ReplyHeaderProps> = ({
@@ -32,6 +34,7 @@ const ReplyHeader: React.FC<ReplyHeaderProps> = ({
   displayCloseButton,
   displayEmail,
   onClose,
+  avatar,
 }) => {
   const navigate = useNavigate()
   const { formatMessage } = useLocale()
@@ -66,18 +69,22 @@ const ReplyHeader: React.FC<ReplyHeaderProps> = ({
       width="full"
     >
       <Box display="flex" flexDirection="row" marginBottom={3} width="full">
-        <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          background="blueberry100"
-          borderRadius="full"
-          style={{ minWidth: isMobile ? 48 : 56, height: isMobile ? 48 : 56 }}
-        >
-          <Text variant="h5" as="p">
-            {initials}
-          </Text>
-        </Box>
+        {initials ? (
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            background="blueberry100"
+            borderRadius="full"
+            style={{ minWidth: isMobile ? 48 : 56, height: isMobile ? 48 : 56 }}
+          >
+            <Text variant="h5" as="p">
+              {initials}
+            </Text>
+          </Box>
+        ) : (
+          avatar && <AvatarImage large img={avatar} background="blue100" />
+        )}
 
         <Box
           display={'flex'}

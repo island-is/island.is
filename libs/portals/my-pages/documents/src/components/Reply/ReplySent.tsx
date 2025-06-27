@@ -20,7 +20,7 @@ const ReplySent: React.FC<Props> = ({ body, intro, loading }) => {
         {intro && <AlertMessage type="info" message={intro} />}
         {loading && <LoadingDots />}
         <Box
-          dangerouslySetInnerHTML={{ __html: body }}
+          dangerouslySetInnerHTML={{ __html: body.replace(/\n/g, '<br />') }}
           style={{ fontWeight: 'lighter' }}
         />
       </Stack>

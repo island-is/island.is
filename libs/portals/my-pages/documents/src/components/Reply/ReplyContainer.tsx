@@ -143,12 +143,18 @@ const ReplyContainer = () => {
               </Box>
               <ReplyHeader
                 caseNumber={lastReplyID ?? undefined}
-                initials={getInitials(lastReply?.author ?? '')}
+                initials={
+                  profile.name === lastReply?.author
+                    ? getInitials(lastReply?.author ?? '')
+                    : undefined
+                }
+                avatar={activeDocument.img}
                 title={lastReply?.author ?? activeDocument.subject}
                 hasEmail={isDefined(userEmail)}
                 subTitle={formatDate(lastReply?.createdDate, dateFormat.is)}
                 displayEmail={false}
               />
+
               <ReplySent body={lastReply?.body} />
             </Box>
           </>
@@ -161,8 +167,17 @@ const ReplyContainer = () => {
               </Box>
               <ReplyHeader
                 caseNumber={replies.id ?? undefined}
-                initials={getInitials(reply.author ?? '')}
-                title={reply.author ?? activeDocument.subject}
+                initials={
+                  profile.name === reply.author
+                    ? getInitials(reply.author ?? '')
+                    : undefined
+                }
+                avatar={activeDocument.img}
+                title={
+                  profile.name === reply.author
+                    ? reply.author
+                    : activeDocument.sender ?? activeDocument.subject
+                }
                 hasEmail={isDefined(userEmail)}
                 subTitle={formatDate(reply?.createdDate, dateFormat.is)}
                 displayEmail={false}
