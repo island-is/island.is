@@ -89,9 +89,14 @@ export class SignatureCollectionAdminClientService
     auth: Auth,
     collectionType: CollectionType,
   ): Promise<Collection> {
-    return await this.sharedService.getLatestCollectionForType(
+    let areaId: string | undefined = undefined
+    if (collectionType === CollectionType.LocalGovernmental) {
+      areaId = await this.getMunicipalityAreaId(auth)
+    }
+    return this.sharedService.getLatestCollectionForType(
       this.getApiWithAuth(this.electionsApi, auth),
       collectionType,
+      areaId,
     )
   }
 
@@ -139,6 +144,12 @@ export class SignatureCollectionAdminClientService
   }
 
   async getLists(input: GetListInput, auth: Auth): Promise<List[]> {
+    if (
+      input.collectionType &&
+      input.collectionType === CollectionType.LocalGovernmental
+    ) {
+      input.areaId = await this.getMunicipalityAreaId(auth)
+    }
     return await this.sharedService.getLists(
       input,
       this.getApiWithAuth(this.listsApi, auth),
@@ -568,7 +579,6 @@ export class SignatureCollectionAdminClientService
     ).adminSveitarfelagInfoGet({
       kennitala: auth.nationalId,
     })
-
-    return info.sveitarfelagID.toString()
+    return info?.[0].sveitarfelagID.toString()
   }
 }

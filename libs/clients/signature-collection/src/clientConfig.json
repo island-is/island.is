@@ -175,7 +175,10 @@
             "description": "OK",
             "content": {
               "application/json": {
-                "schema": { "$ref": "#/components/schemas/SveitInfoDTO" }
+                "schema": {
+                  "type": "array",
+                  "items": { "$ref": "#/components/schemas/SveitInfoDTO" }
+                }
               }
             }
           },

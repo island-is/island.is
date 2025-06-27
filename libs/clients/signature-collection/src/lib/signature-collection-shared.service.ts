@@ -31,6 +31,7 @@ export class SignatureCollectionSharedClientService {
   async getLatestCollectionForType(
     api: ElectionApi,
     collectionType: CollectionType,
+    areaId?: string,
   ): Promise<Collection> {
     const baseRes = await api.kosningGet({
       hasSofnun: true,
@@ -83,7 +84,12 @@ export class SignatureCollectionSharedClientService {
       if (!orderedCollapsedElections.length) {
         throw new Error('No current collection for selected type')
       }
-      return orderedCollapsedElections[0]
+      const collection = orderedCollapsedElections[0]
+      collection.areas = collection.areas.filter((area) => area.id === areaId)
+      collection.candidates = collection.candidates.filter(
+        (candidate) => candidate.areaId === areaId,
+      )
+      return collection
     }
 
     const orderedCollections = (
@@ -100,7 +106,6 @@ export class SignatureCollectionSharedClientService {
     if (!orderedCollections.length) {
       throw new Error('No current collection for selected type')
     }
-
     return orderedCollections[0]
   }
 
@@ -176,15 +181,20 @@ export class SignatureCollectionSharedClientService {
         .filter(
           (election) =>
             getCollectionTypeFromNumber(election.kosningTegundNr) ===
-            CollectionType.LocalGovernmental,
+              CollectionType.LocalGovernmental ||
+            getCollectionTypeFromNumber(election.kosningTegundNr) ===
+              CollectionType.SpecialLocalGovernmental,
         )
         .map((election) => election.id)
       lists = []
 
       for (const electionId of electionIds) {
-        const electionLists = await listApi.medmaelalistarGet({
-          kosningID: electionId,
-        })
+        const electionLists = areaId
+          ? await listApi.medmaelalistarGet({
+              kosningID: electionId,
+              svaediID: parseInt(areaId),
+            })
+          : []
         lists.push(...electionLists)
       }
     } else {
