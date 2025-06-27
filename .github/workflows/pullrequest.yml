@@ -144,6 +144,7 @@ jobs:
       NODE_OPTIONS: --max-old-space-size=4096
       E2E_BUILD_ID: '${{ needs.prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}'
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+      NX_HEAD: ${{ needs.prepare.outputs.NX_HEAD }}
       AFFECTED_PROJECTS: ${{ matrix.projects }}
     strategy:
       fail-fast: false
@@ -207,6 +208,8 @@ jobs:
         with:
           token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
           ref: ${{ github.event.pull_request.head.ref }}
+          # Need full repo for Nx to find the commits at NX_*
+          fetch-depth: 0
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
