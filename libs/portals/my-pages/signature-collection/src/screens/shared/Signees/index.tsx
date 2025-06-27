@@ -4,7 +4,6 @@ import {
   Table as T,
   Pagination,
   FilterInput,
-  Icon,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import format from 'date-fns/format'
