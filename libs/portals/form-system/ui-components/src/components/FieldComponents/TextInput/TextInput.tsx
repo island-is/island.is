@@ -53,9 +53,7 @@ export const TextInput = ({ item, dispatch, onErrorChange }: Props) => {
             }
             field.onBlur()
             if (onErrorChange) {
-              setTimeout(() => {
-                onErrorChange(item.id, !!fieldState.error)
-              }, 0)
+              onErrorChange(item.id, !!fieldState.error)
             }
           }}
           errorMessage={fieldState.error?.message}

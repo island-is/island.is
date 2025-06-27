@@ -87,7 +87,7 @@ export const Banknumber = ({
                 type="number"
                 value={field.value ?? ''}
                 onChange={(e) => {
-                  let value = e.target.value.replace(/\D/g, '')
+                  const value = e.target.value.replace(/\D/g, '')
                   field.onChange(value)
                   if (value.length === 4) {
                     inputRefs[1].current?.focus()
@@ -98,12 +98,10 @@ export const Banknumber = ({
                   field.onChange(formatted)
                   field.onBlur()
                   if (onErrorChange) {
-                    setTimeout(() => {
                       onErrorChange(item.id, !!fieldState.error)
-                    }, 0)
                   }
                 }}
-                required={item?.isRequired ?? true}
+                required={item?.isRequired ?? false}
                 backgroundColor="blue"
                 errorMessage={fieldState.error?.message}
               />
@@ -141,9 +139,7 @@ export const Banknumber = ({
                   field.onChange(formatted)
                   field.onBlur()
                   if (onErrorChange) {
-                    setTimeout(() => {
                       onErrorChange(item.id, !!fieldState.error)
-                    }, 0)
                   }
                 }}
                 required={item?.isRequired ?? false}
@@ -181,9 +177,7 @@ export const Banknumber = ({
                   field.onChange(formatted)
                   field.onBlur()
                   if (onErrorChange) {
-                    setTimeout(() => {
                       onErrorChange(item.id, !!fieldState.error)
-                    }, 0)
                   }
                 }}
                 required={item?.isRequired ?? false}

@@ -222,16 +222,9 @@ export const setError =(
   fieldId: string,
   hasError: boolean,
 ): ApplicationState => {
-  // Ensure errorArray exists
-  const errorArray = Array.isArray(state.errors) ? state.errors : []
-  let newErrorArray = errorArray.filter(id => id !== fieldId)
-  if (hasError) {
-    newErrorArray = [...newErrorArray, fieldId]
-  }else {
-    // If hasError is false, we remove the fieldId from the errors array
-    newErrorArray = newErrorArray.filter(id => id !== fieldId)
-  }
-  return { ...state, errors: newErrorArray }
+  let errorArray = Array.isArray(state.errors) ? state.errors : []
+  hasError ? [...errorArray, fieldId] : errorArray = errorArray.filter(id => id !== fieldId)
+  return { ...state, errors: errorArray }
 }
 
 
@@ -239,7 +232,6 @@ export const setFieldValue = (
   state: ApplicationState,
   fieldProperty: string,
   fieldId: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any,
 ): ApplicationState => {
   const { currentScreen } = state
