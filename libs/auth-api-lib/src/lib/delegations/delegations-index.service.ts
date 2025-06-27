@@ -165,27 +165,55 @@ export class DelegationsIndexService {
   private async filterByFeatureFlaggedDelegationTypes(
     delegations: DelegationRecordDTO[],
   ): Promise<DelegationRecordDTO[]> {
-    const featureFlaggedDelegationTypes = await this.featureFlagService
-      .getValue(Features.delegationTypesWithNotificationsEnabled, '')
-      .then((types): Set<string> | '*' | undefined => {
-        if (!types?.trim()) return undefined // Empty value means no delegation types allowed
-        if (types?.trim() === '*') return '*' // All delegation types allowed
-        return new Set(types?.split(',').map((type) => type.trim()))
-      })
+    // Get unique fromNationalIds from delegations
+    const uniqueFromNationalIds = [
+      ...new Set(delegations.map((d) => d.fromNationalId)),
+    ]
 
-    // Case: No allowed delegation types
-    if (!featureFlaggedDelegationTypes) {
-      return []
-    }
+    // Get feature flag values for each unique fromNationalId
+    const featureFlagValues = await Promise.all(
+      uniqueFromNationalIds.map(async (fromNationalId) => {
+        const types = await this.featureFlagService.getValue(
+          Features.delegationTypesWithNotificationsEnabled,
+          '',
+          { nationalId: fromNationalId } as User,
+        )
 
-    // Case: All delegation types are allowed
-    if (featureFlaggedDelegationTypes === '*') {
-      return delegations
-    }
+        return {
+          fromNationalId,
+          featureFlaggedDelegationTypes: this.parseFeatureFlagValue(types),
+        }
+      }),
+    )
 
-    // Special case: Custom and GeneralMandate delegation types are stored with a ":person" or ":company" suffix,
-    // indicating if the value is allowing for delegations of the type from a person or a company.
+    // Create a map for quick lookup
+    const featureFlagMap = new Map(
+      featureFlagValues.map(
+        ({ fromNationalId, featureFlaggedDelegationTypes }) => [
+          fromNationalId,
+          featureFlaggedDelegationTypes,
+        ],
+      ),
+    )
+
+    // Filter delegations based on their fromNationalId's feature flag value
     return delegations.filter((delegation) => {
+      const featureFlaggedDelegationTypes = featureFlagMap.get(
+        delegation.fromNationalId,
+      )
+
+      // Case: No allowed delegation types
+      if (!featureFlaggedDelegationTypes) {
+        return false
+      }
+
+      // Case: All delegation types are allowed
+      if (featureFlaggedDelegationTypes === '*') {
+        return true
+      }
+
+      // Special case: Custom and GeneralMandate delegation types are stored with a ":person" or ":company" suffix,
+      // indicating if the value is allowing for delegations of the type from a person or a company.
       if (
         delegation.type === AuthDelegationType.Custom ||
         delegation.type === AuthDelegationType.GeneralMandate
@@ -203,6 +231,12 @@ export class DelegationsIndexService {
 
       return featureFlaggedDelegationTypes.has(delegation.type)
     })
+  }
+
+  private parseFeatureFlagValue(types: string): Set<string> | '*' | undefined {
+    if (!types?.trim()) return undefined // Empty value means no delegation types allowed
+    if (types?.trim() === '*') return '*' // All delegation types allowed
+    return new Set(types?.split(',').map((type) => type.trim()))
   }
 
   /* Lookup delegations in index for user for specific scope */
