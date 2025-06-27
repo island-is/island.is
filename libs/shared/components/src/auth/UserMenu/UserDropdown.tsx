@@ -13,7 +13,6 @@ import { theme } from '@island.is/island-ui/theme'
 import { useLocale } from '@island.is/localization'
 import { useAuth, useUserInfo } from '@island.is/react-spa/bff'
 import { sharedMessages, userMessages } from '@island.is/shared/translations'
-import { AuthDelegationType } from '@island.is/shared/types'
 import { checkDelegation } from '@island.is/shared/utils'
 import cn from 'classnames'
 import { Dispatch, SetStateAction } from 'react'
@@ -55,8 +54,8 @@ export const UserDropdown = ({
   const userName = user.profile.name
   const actorName = actor?.name
   const isDelegationCompany = user.profile.subjectType === 'legalEntity'
-  const isProcurationHolder = user.profile.delegationType?.includes(
-    AuthDelegationType.ProcurationHolder,
+  const hasAccessToUserProfileInfo = user?.scopes?.includes(
+    '@island.is/documents',
   )
 
   const { width } = useWindowSize()
@@ -145,7 +144,7 @@ export const UserDropdown = ({
                 onClick={() => switchUser()}
               />
 
-              {(!isDelegation || isProcurationHolder) && (
+              {hasAccessToUserProfileInfo && (
                 <UserProfileInfo onClick={() => onClose()} />
               )}
               <UserDropdownItem

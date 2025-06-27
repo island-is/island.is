@@ -102,11 +102,25 @@ export class UserProfileService {
     return this.userProfileServiceV2.createSmsVerification(input, user)
   }
 
+  async createMeSmsVerification(
+    input: CreateSmsVerificationInput,
+    user: User,
+  ): Promise<void> {
+    return this.userProfileServiceV2.createMeSmsVerification(input, user)
+  }
+
   async createEmailVerification(
     input: CreateEmailVerificationInput,
     user: User,
   ): Promise<void> {
     return this.userProfileServiceV2.createEmailVerification(input, user)
+  }
+
+  async createMeEmailVerification(
+    input: CreateEmailVerificationInput,
+    user: User,
+  ): Promise<void> {
+    return this.userProfileServiceV2.createMeEmailVerification(input, user)
   }
 
   addDeviceToken(input: UserDeviceTokenInput, user: User) {

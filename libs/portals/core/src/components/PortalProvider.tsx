@@ -8,6 +8,7 @@ import { useUserInfo } from '@island.is/react-spa/bff'
 import { createContext, useContext, useMemo } from 'react'
 import { Outlet, matchPath, useLocation } from 'react-router-dom'
 import { PortalModule, PortalRoute, PortalType } from '../types/portalCore'
+import { useFeatureFlagClient } from '@island.is/react/feature-flags'
 
 export type PortalMeta = {
   portalType: PortalType
@@ -47,14 +48,20 @@ export const PortalProvider = ({
   const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
   const client = useApolloClient() as ApolloClient<NormalizedCacheObject>
+  const featureFlagClient = useFeatureFlagClient()
 
   const activeModule = useMemo(
     () =>
       userInfo
-        ? modules.find((module) => {
+        ? modules.find(async (module) => {
             return (
               spreadRoutsChildren(
-                module.routes({ userInfo, client, formatMessage }),
+                await module.routes({
+                  userInfo,
+                  client,
+                  formatMessage,
+                  featureFlagClient,
+                }),
               )
                 // Extract the path from each route
                 .map(({ path }) => path)
@@ -63,7 +70,7 @@ export const PortalProvider = ({
             )
           })
         : undefined,
-    [modules, pathname, userInfo],
+    [modules, pathname, userInfo, featureFlagClient],
   )
 
   return (
