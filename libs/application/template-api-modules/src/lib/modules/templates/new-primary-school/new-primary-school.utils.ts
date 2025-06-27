@@ -56,7 +56,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     ...guardians.map((guardian) => ({
       name: guardian.fullName,
       nationalId: guardian.nationalId,
-      nationality: '', // LAGA
+      nationality: guardian.citizenship,
       type: AgentDtoTypeEnum.Guardian,
       domicile: {
         address: guardian.address.streetAddress,
