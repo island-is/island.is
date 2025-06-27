@@ -5,9 +5,15 @@ import {
   UserProfileScope,
 } from '@island.is/auth/scopes'
 import { m } from '@island.is/portals/my-pages/core'
-import { PortalModule } from '@island.is/portals/core'
+import {
+  PortalModule,
+  PortalModuleRoutesProps,
+  PortalRoute,
+} from '@island.is/portals/core'
 import { InformationPaths } from './lib/paths'
 import { Navigate } from 'react-router-dom'
+import { Features } from '@island.is/react/feature-flags'
+import { parseDelegationTypeFeatureFlagValue } from './utils/parseDelegationTypeFeatureFlagValue'
 
 const UserInfoOverview = lazy(() =>
   import('./screens/UserInfoOverview/UserInfoOverview'),
@@ -29,10 +35,27 @@ const UserNotificationsSettings = lazy(() =>
   import('./screens/UserNotifications/UserNotifications'),
 )
 
-const sharedRoutes = (scopes: string[], isCompany = false) => {
-  const isSettingsEnabled =
-    scopes.includes(UserProfileScope.read) &&
-    scopes.includes(DocumentsScope.main)
+const sharedRoutes = async (
+  routesProps: PortalModuleRoutesProps,
+  isCompany = false,
+): Promise<PortalRoute[]> => {
+  const { scopes, profile } = routesProps.userInfo
+
+  const allowedDelegationTypes = await routesProps.featureFlagClient.getValue(
+    Features.delegationTypesWithNotificationsEnabled,
+    '',
+    { id: profile?.nationalId, attributes: {} },
+  )
+
+  const isDelegationTypeFFEnabled = parseDelegationTypeFeatureFlagValue({
+    featureFlagValue: allowedDelegationTypes,
+    delegationTypes: profile?.delegationType,
+    actorNationalId: profile?.nationalId,
+  })
+
+  const isSettingsEnabled = isDelegationTypeFFEnabled
+    ? scopes.includes(DocumentsScope.main)
+    : scopes.includes(UserProfileScope.write)
 
   return [
     {
@@ -64,52 +87,58 @@ const sharedRoutes = (scopes: string[], isCompany = false) => {
 
 export const informationModule: PortalModule = {
   name: 'Upplýsingar',
-  routes: ({ userInfo: { scopes } }) => [
-    {
-      name: m.userInfo,
-      path: InformationPaths.MyInfoRoot,
-      enabled: scopes.includes(ApiScope.meDetails),
-      element: <Navigate to={InformationPaths.MyInfoRootOverview} replace />,
-    },
-    {
-      name: m.myInfo,
-      path: InformationPaths.MyInfoRootOverview,
-      enabled: scopes.includes(ApiScope.meDetails),
-      element: <UserInfoOverview />,
-    },
-    {
-      name: m.userInfo,
-      path: InformationPaths.UserInfo,
-      enabled: scopes.includes(ApiScope.meDetails),
-      element: <UserInfo />,
-    },
-    {
-      name: m.familyChild,
-      path: InformationPaths.BioChild,
-      enabled: scopes.includes(ApiScope.meDetails),
-      element: <FamilyMemberBioChild />,
-    },
-    {
-      name: m.familyChild,
-      path: InformationPaths.ChildCustody,
-      enabled: scopes.includes(ApiScope.meDetails),
-      element: <FamilyMemberChildCustody />,
-    },
-    {
-      name: m.familySpouse,
-      path: InformationPaths.Spouse,
-      enabled: scopes.includes(ApiScope.meDetails),
-      element: <Spouse />,
-    },
-    ...sharedRoutes(scopes),
-  ],
-  companyRoutes: ({ userInfo: { scopes } }) => [
-    {
-      name: m.companyTitle,
-      path: InformationPaths.Company,
-      enabled: scopes.includes(ApiScope.company),
-      element: <CompanyInfo />,
-    },
-    ...sharedRoutes(scopes, true),
-  ],
+  routes: async (routesProps) => {
+    const { scopes } = routesProps.userInfo
+    return [
+      {
+        name: m.userInfo,
+        path: InformationPaths.MyInfoRoot,
+        enabled: scopes.includes(ApiScope.meDetails),
+        element: <Navigate to={InformationPaths.MyInfoRootOverview} replace />,
+      },
+      {
+        name: m.myInfo,
+        path: InformationPaths.MyInfoRootOverview,
+        enabled: scopes.includes(ApiScope.meDetails),
+        element: <UserInfoOverview />,
+      },
+      {
+        name: m.userInfo,
+        path: InformationPaths.UserInfo,
+        enabled: scopes.includes(ApiScope.meDetails),
+        element: <UserInfo />,
+      },
+      {
+        name: m.familyChild,
+        path: InformationPaths.BioChild,
+        enabled: scopes.includes(ApiScope.meDetails),
+        element: <FamilyMemberBioChild />,
+      },
+      {
+        name: m.familyChild,
+        path: InformationPaths.ChildCustody,
+        enabled: scopes.includes(ApiScope.meDetails),
+        element: <FamilyMemberChildCustody />,
+      },
+      {
+        name: m.familySpouse,
+        path: InformationPaths.Spouse,
+        enabled: scopes.includes(ApiScope.meDetails),
+        element: <Spouse />,
+      },
+      ...(await sharedRoutes(routesProps)),
+    ]
+  },
+  companyRoutes: async (routesProps) => {
+    const { scopes } = routesProps.userInfo
+    return [
+      {
+        name: m.companyTitle,
+        path: InformationPaths.Company,
+        enabled: scopes.includes(ApiScope.company),
+        element: <CompanyInfo />,
+      },
+      ...(await sharedRoutes(routesProps, true)),
+    ]
+  },
 }

@@ -58,6 +58,18 @@ export class OrganizationParentSubpageSyncService
 
           const content = contentSections.join(' ')
 
+          const tags = childEntryIds.map((id) => ({
+            key: id,
+            type: 'hasChildEntryWithId',
+          }))
+
+          if (entry.fields?.organizationPage?.fields?.slug) {
+            tags.push({
+              key: entry.fields.organizationPage.fields.slug,
+              type: 'organization',
+            })
+          }
+
           return {
             _id: mapped.id,
             title: mapped.title,
@@ -68,12 +80,7 @@ export class OrganizationParentSubpageSyncService
               ...mapped,
               typename: 'OrganizationParentSubpage',
             }),
-            tags: [
-              ...childEntryIds.map((id) => ({
-                key: id,
-                type: 'hasChildEntryWithId',
-              })),
-            ],
+            tags,
             dateCreated: entry.sys.createdAt,
             dateUpdated: new Date().getTime().toString(),
           }

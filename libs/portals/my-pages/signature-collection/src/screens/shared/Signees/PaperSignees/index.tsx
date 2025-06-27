@@ -170,7 +170,7 @@ export const PaperSignees = ({
             <Button
               variant="ghost"
               size="small"
-              disabled={!canSign || !page}
+              disabled={!canSign || (!page && !name)}
               onClick={() => upload()}
               loading={uploadingPaperSignature}
             >

@@ -16,6 +16,13 @@ import { NotificationSettingsCard } from '../cards/NotificationSettingsCard'
 import { SettingsCard } from '../cards/SettingsCard/SettingsCard'
 import { useUpdateActorProfileMutation } from './updateActorProfile.mutation.generated'
 import { safeAwait } from '@island.is/shared/utils'
+import { useDelegationTypeFeatureFlag } from '../../../hooks/useDelegationTypeFeatureFlag'
+import {
+  useUpdateUserProfile,
+  useUserProfile,
+} from '@island.is/portals/my-pages/graphql'
+import { AccessDenied } from '@island.is/portals/core'
+import { useScopeAccess } from '../../../hooks/useScopeAccess'
 
 type Settings = {
   emailNotifications: boolean
@@ -25,9 +32,23 @@ type Settings = {
 export const ActorProfileNotificationSettings = () => {
   const userInfo = useUserInfo()
   const { formatMessage } = useLocale()
-  const { data: actorProfile, loading, error } = useActorProfile()
+
+  const { isDelegationTypeEnabled, isCheckingFeatureFlag } =
+    useDelegationTypeFeatureFlag()
+  const { hasUserProfileWriteScope } = useScopeAccess()
+  const actorProfileResult = useActorProfile()
+  const userProfileResult = useUserProfile()
+
+  const {
+    data: profile,
+    loading,
+    error,
+  } = isDelegationTypeEnabled ? actorProfileResult : userProfileResult
 
   const [updateActorProfile] = useUpdateActorProfileMutation()
+
+  const { updateUserProfile } = useUpdateUserProfile()
+
   const {
     wantsPaper,
     postPaperMailMutation,
@@ -35,19 +56,19 @@ export const ActorProfileNotificationSettings = () => {
   } = usePaperMail()
 
   const [settings, setSettings] = useState<Settings>({
-    emailNotifications: actorProfile?.emailNotifications ?? true,
+    emailNotifications: profile?.emailNotifications ?? true,
     wantsPaper: wantsPaper ?? false,
   })
 
   useEffect(() => {
-    if (actorProfile) {
+    if (profile) {
       setSettings({
         ...settings,
-        emailNotifications: actorProfile.emailNotifications,
+        emailNotifications: profile.emailNotifications ?? true,
       })
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [actorProfile])
+  }, [profile])
 
   const onChange = async (updatedSettings: Partial<Settings>) => {
     const oldSettings = { ...settings }
@@ -55,18 +76,28 @@ export const ActorProfileNotificationSettings = () => {
 
     setSettings(newSettings)
 
-    const { error } = await safeAwait(
-      updateActorProfile({
-        variables: {
-          input: {
-            emailNotifications: newSettings.emailNotifications,
-            fromNationalId: userInfo?.profile.nationalId,
+    let updateError
+    if (!isDelegationTypeEnabled) {
+      const { error } = await safeAwait(
+        updateUserProfile({
+          canNudge: newSettings.emailNotifications,
+        }),
+      )
+      updateError = error
+    } else {
+      const { error } = await safeAwait(
+        updateActorProfile({
+          variables: {
+            input: {
+              emailNotifications: newSettings.emailNotifications,
+              fromNationalId: userInfo?.profile.nationalId,
+            },
           },
-        },
-      }),
-    )
-
-    if (error) {
+        }),
+      )
+      updateError = error
+    }
+    if (updateError) {
       setSettings(oldSettings)
       toast.error(formatMessage(mNotifications.updateError))
     }
@@ -98,12 +129,16 @@ export const ActorProfileNotificationSettings = () => {
     })
   }
 
-  if (loading || paperMailLoading) {
+  if (loading || paperMailLoading || isCheckingFeatureFlag) {
     return <SkeletonLoader borderRadius="large" height={473} />
   }
 
   if (error) {
     return <Problem error={error} size="small" />
+  }
+
+  if (!isDelegationTypeEnabled && !hasUserProfileWriteScope) {
+    return <AccessDenied />
   }
 
   return (
