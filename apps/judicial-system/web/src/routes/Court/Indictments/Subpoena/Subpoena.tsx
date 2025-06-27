@@ -204,23 +204,7 @@ const Subpoena: FC = () => {
                 toggleNewAlternativeService: isArraignmentScheduled
                   ? toggleNewAlternativeService(defendant)
                   : undefined,
-                children: isSchedulingArraignmentDate ? (
-                  <Button
-                    variant="text"
-                    colorScheme="destructive"
-                    icon="trash"
-                    iconType="outline"
-                    onClick={() => {
-                      setNewSubpoenas((previous) =>
-                        previous.filter((v) => v !== defendant.id),
-                      )
-
-                      setIsSchedulingArraignmentDate(undefined)
-                    }}
-                  >
-                    Hætta við
-                  </Button>
-                ) : isArraignmentScheduled ? (
+                children: isArraignmentScheduled ? (
                   <Button
                     variant="text"
                     icon="reload"
@@ -229,6 +213,7 @@ const Subpoena: FC = () => {
                       setNewSubpoenas((previous) => [...previous, defendant.id])
                       // Clear any alternative service for the defendant
                       toggleNewAlternativeService(defendant)()
+                      setIsArraignmentScheduled(false)
                       updateDefendantState(
                         {
                           defendantId: defendant.id,
@@ -241,7 +226,23 @@ const Subpoena: FC = () => {
                   >
                     {formatMessage(strings.newSubpoenaButtonText)}
                   </Button>
-                ) : null,
+                ) : (
+                  <Button
+                    variant="text"
+                    colorScheme="destructive"
+                    icon="trash"
+                    iconType="outline"
+                    onClick={() => {
+                      setNewSubpoenas((previous) =>
+                        previous.filter((v) => v !== defendant.id),
+                      )
+
+                      setIsArraignmentScheduled(true)
+                    }}
+                  >
+                    Hætta við
+                  </Button>
+                ),
               }))}
               workingCase={workingCase}
               setWorkingCase={setWorkingCase}
