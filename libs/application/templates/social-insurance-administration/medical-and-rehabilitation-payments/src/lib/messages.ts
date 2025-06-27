@@ -33,11 +33,6 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Réttinum lýkur',
       description: 'Your entitlement ends',
     },
-    uploadConfirmationDocument: {
-      id: 'marp.application:upload.confirmation.document',
-      defaultMessage: 'Hlaða inn staðfestingarskjali',
-      description: 'Upload confirmation document',
-    },
   }),
 
   pre: defineMessages({
@@ -152,7 +147,7 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
     },
     employeeSickPayDoesEndDateTitle: {
       id: 'marp.application:general.information.employee.sick.pay.does.end.date.title',
-      defaultMessage: 'Hvenær líkur rétti þínum til veikindalauna?',
+      defaultMessage: 'Hvenær lýkur rétti þínum til veikindalauna?',
       description: 'When does your sick pay entitlement end?',
     },
     employeeSickPayDidEndDateTitle: {

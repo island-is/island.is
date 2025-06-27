@@ -2,15 +2,14 @@ import {
   buildAsyncSelectField,
   buildDateField,
   buildDescriptionField,
-  buildFileUploadField,
   buildMultiField,
   buildRadioField,
   buildSubSection,
   buildTextField,
+  NO,
   YES,
 } from '@island.is/application/core'
 import { siaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/graphql/queries'
-import { fileUploadSharedProps } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { SiaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/types/schema'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
 import { shouldShowUnionSickPayUnionAndEndDate } from '../../../utils/conditionUtils'
@@ -138,34 +137,30 @@ export const unionSickPaySubSection = buildSubSection({
         }),
         buildDateField({
           id: 'unionSickPay.endDate',
+          minDate: (application) => {
+            const { hasUtilizedUnionSickPayRights } = getApplicationAnswers(
+              application.answers,
+            )
+            if (hasUtilizedUnionSickPayRights === NO) {
+              return new Date()
+            }
+            return undefined
+          },
+          maxDate: (application) => {
+            const { hasUtilizedUnionSickPayRights } = getApplicationAnswers(
+              application.answers,
+            )
+            if (hasUtilizedUnionSickPayRights === YES) {
+              return new Date()
+            }
+            return undefined
+          },
           title: medicalAndRehabilitationPaymentsFormMessage.shared.date,
           placeholder:
             medicalAndRehabilitationPaymentsFormMessage.shared.datePlaceholder,
           required: true,
           condition: (answers) =>
             shouldShowUnionSickPayUnionAndEndDate(answers),
-        }),
-        buildDescriptionField({
-          id: 'unionSickPay.fileupload.description',
-          title:
-            medicalAndRehabilitationPaymentsFormMessage.shared
-              .uploadConfirmationDocument,
-          titleVariant: 'h4',
-          space: 4,
-          condition: (answers) => {
-            const { hasUtilizedUnionSickPayRights } =
-              getApplicationAnswers(answers)
-            return hasUtilizedUnionSickPayRights === YES
-          },
-        }),
-        buildFileUploadField({
-          id: 'unionSickPay.fileupload',
-          ...fileUploadSharedProps,
-          condition: (answers) => {
-            const { hasUtilizedUnionSickPayRights } =
-              getApplicationAnswers(answers)
-            return hasUtilizedUnionSickPayRights === YES
-          },
         }),
       ],
     }),
