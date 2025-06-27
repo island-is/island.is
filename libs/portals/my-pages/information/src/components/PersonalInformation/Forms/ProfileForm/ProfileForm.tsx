@@ -20,6 +20,7 @@ import {
 import { useUserInfo } from '@island.is/react-spa/bff'
 import orderBy from 'lodash/orderBy'
 import { FormattedMessage } from 'react-intl'
+import { useDelegationTypeFeatureFlag } from '../../../../hooks/useDelegationTypeFeatureFlag'
 import { useScopeAccess } from '../../../../hooks/useScopeAccess'
 import { emailsMsg, msg } from '../../../../lib/messages'
 import { InformationPaths } from '../../../../lib/paths'
@@ -34,6 +35,8 @@ import { WithLinkWrapper } from './components/Inputs/WithLinkWrapper'
 import { OnboardingIntro } from './components/Intro'
 import { useConfirmNudgeMutation } from './confirmNudge.generated'
 import { DropModalType } from './types/form'
+import { InputEmail } from './components/Inputs/Email'
+import { AccessDenied } from '@island.is/portals/core'
 
 enum IdsUserProfileLinks {
   EMAIL = '/app/user-profile/email',
@@ -66,6 +69,7 @@ export const ProfileForm = ({
   const { hasUserProfileWriteScope } = useScopeAccess()
 
   const [telDirty, setTelDirty] = useState(true)
+  const [emailDirty, setEmailDirty] = useState(true)
   const [internalLoading, setInternalLoading] = useState(false)
   const [showDropModal, setShowDropModal] = useState<DropModalType>()
   const [showEmailForm, setShowEmailForm] = useState(false)
@@ -73,7 +77,11 @@ export const ProfileForm = ({
   const { deleteIslykillValue, loading: deleteLoading } =
     useDeleteIslykillValue()
   const userInfo = useUserInfo()
+
   const { data: userProfile, loading: userLoading, refetch } = useUserProfile()
+
+  const { isDelegationTypeEnabled, isCheckingFeatureFlag } =
+    useDelegationTypeFeatureFlag()
 
   // Filter out emails that are not set
   const emails = useMemo(() => {
@@ -109,7 +117,7 @@ export const ProfileForm = ({
   useEffect(() => {
     if (canDrop && onCloseOverlay) {
       const showAll = telDirty && 'all'
-      const showEmail = 'mail'
+      const showEmail = emailDirty && 'mail'
       const showTel = telDirty && 'tel'
       const showDropModal = showAll || showEmail || showTel || undefined
       if (showDropModal) {
@@ -136,7 +144,7 @@ export const ProfileForm = ({
 
       const emptyProfile =
         !userProfileData || userProfileData.needsNudge === null
-      if (emptyProfile && telDirty) {
+      if (emptyProfile && telDirty && emailDirty) {
         /**
          * If the user has no email or tel data, and the inputs are empty,
          * We will save the email and mobilePhoneNumber as undefined
@@ -173,6 +181,10 @@ export const ProfileForm = ({
     }
   }
 
+  if (!isDelegationTypeEnabled && !hasUserProfileWriteScope) {
+    return <AccessDenied />
+  }
+
   return (
     <GridContainer>
       <GridRow marginBottom={10}>
@@ -182,58 +194,71 @@ export const ProfileForm = ({
             showIntroTitle={showIntroTitle}
             showIntroText={showIntroText}
           />
-
-          <InputSection
-            title={formatMessage(emailsMsg.emails)}
-            text={
-              <FormattedMessage
-                {...emailsMsg.emailListText}
-                values={{
-                  link: (
-                    <Link
-                      color="blue400"
-                      href={InformationPaths.Notifications}
-                      underlineVisibility="always"
-                      underline="small"
-                    >
-                      {formatMessage(emailsMsg.emailListTextLink)}
-                    </Link>
-                  ),
-                }}
-              />
-            }
-            divider={hasUserProfileWriteScope}
-          >
-            {userLoading && emails ? (
-              <SkeletonLoader
-                repeat={3}
-                height={80}
-                space={2}
-                borderRadius="large"
-              />
-            ) : (
-              <Box display="flex" flexDirection="column" rowGap={2}>
-                {emails.length > 0 && <EmailsList items={emails} />}
-                {emails.length === 0 || showEmailForm ? (
-                  <ProfileEmailForm
-                    onAddSuccess={() => setShowEmailForm(false)}
+          {!isCheckingFeatureFlag &&
+            (isDelegationTypeEnabled ? (
+              <InputSection
+                title={formatMessage(emailsMsg.emails)}
+                text={
+                  <FormattedMessage
+                    {...emailsMsg.emailListText}
+                    values={{
+                      link: (
+                        <Link
+                          color="blue400"
+                          href={InformationPaths.Notifications}
+                          underlineVisibility="always"
+                          underline="small"
+                        >
+                          {formatMessage(emailsMsg.emailListTextLink)}
+                        </Link>
+                      ),
+                    }}
+                  />
+                }
+                divider={hasUserProfileWriteScope}
+              >
+                {userLoading && emails ? (
+                  <SkeletonLoader
+                    repeat={3}
+                    height={80}
+                    space={2}
+                    borderRadius="large"
                   />
                 ) : (
-                  <Box marginTop={1}>
-                    <Button
-                      variant="text"
-                      size="small"
-                      icon="add"
-                      onClick={() => setShowEmailForm(true)}
-                    >
-                      {formatMessage(emailsMsg.addEmail)}
-                    </Button>
+                  <Box display="flex" flexDirection="column" rowGap={2}>
+                    {emails.length > 0 && <EmailsList items={emails} />}
+                    {emails.length === 0 || showEmailForm ? (
+                      <ProfileEmailForm
+                        onAddSuccess={() => setShowEmailForm(false)}
+                      />
+                    ) : (
+                      <Box marginTop={1}>
+                        <Button
+                          variant="text"
+                          size="small"
+                          icon="add"
+                          onClick={() => setShowEmailForm(true)}
+                        >
+                          {formatMessage(emailsMsg.addEmail)}
+                        </Button>
+                      </Box>
+                    )}
                   </Box>
                 )}
-              </Box>
-            )}
-          </InputSection>
-
+              </InputSection>
+            ) : (
+              hasUserProfileWriteScope && (
+                <Box marginTop={2}>
+                  <InputEmail
+                    buttonText={formatMessage(msg.saveEmail)}
+                    email={userProfile?.email || ''}
+                    emailDirty={(isDirty) => setEmailDirty(isDirty)}
+                    emailVerified={userProfile?.emailVerified}
+                    disabled={deleteLoading}
+                  />
+                </Box>
+              )
+            ))}
           {hasUserProfileWriteScope && (
             <>
               <InputSection
