@@ -59,8 +59,8 @@ struct Provider: AppIntentTimelineProvider {
   private func loadLicensePayload(for configuration: ConfigurationAppIntent) -> LicensePayload? {
     let suiteName = "group.is.island.app"
     let defaults = UserDefaults(suiteName: suiteName)
-    let rawJSON = defaults?.string(forKey: "licenses") ?? "[]"
-    //    print("passed data: \(rawJSON)")
+    let rawJSON = defaults?.string(forKey: "widget_licenses") ?? "[]"
+//    print("passed data: \(rawJSON)")
     guard let data = rawJSON.data(using: .utf8) else {
       return nil
     }

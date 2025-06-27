@@ -6,7 +6,7 @@ import { authStore } from '../stores/auth-store'
 
 // Constants for shared preferences key and group in iOS
 const SHARED_PREFS_KEY = 'widget_licenses'
-const SHARED_PREFS_GROUP = 'group.is.island.app'
+const SHARED_PREFS_GROUP = 'group.is.island.app.dev'
 const WIDGET_KIND = 'is.island.app.LicenseWidget';
 
 // Function to set license data for widgets
