@@ -264,9 +264,13 @@ export const OverviewFormField = ({
             </GridColumn>
           )
         })}
-      {tableData && (
+      {tableData && tableData.header.length > 0 && (
         <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
-          <Box marginTop={description || title ? 0 : 8}>
+          <Box
+            marginTop={
+              filteredItems || loadedItems || description || title ? 0 : 8
+            }
+          >
             <Table.Table>
               <Table.Head>
                 <Table.Row>
