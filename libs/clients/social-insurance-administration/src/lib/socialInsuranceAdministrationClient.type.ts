@@ -145,7 +145,9 @@ export type IncomePlanStatus = 'Accepted' | 'Cancelled' | 'InProgress'
 export interface Occupation {
   isSelfEmployed: boolean
   isStudying: boolean
+  educationalInstitution?: string
   isPartTimeEmployed: boolean
+  receivingPaymentsFromOtherCountry: boolean
   calculatedRemunerationDate?: string
 }
 

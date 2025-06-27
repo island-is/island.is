@@ -14,6 +14,8 @@ import {
 import { Application } from '@island.is/application/types'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../lib/messages'
 import {
+  Countries,
+  EctsUnits,
   SelfAssessmentQuestionnaire,
   SelfAssessmentQuestionnaireAnswers,
 } from '../types'
@@ -66,10 +68,20 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const isStudying = getValueViaPath<YesOrNo>(answers, 'questions.isStudying')
 
-  const isStudyingFileUpload = getValueViaPath<FileType[]>(
+  const educationalInstitution = getValueViaPath<string>(
     answers,
-    'questions.isStudyingFileUpload',
+    'questions.educationalInstitution',
   )
+
+  const ectsUnits = getValueViaPath<string>(answers, 'questions.ectsUnits')
+
+  const isReceivingPaymentsFromOtherCountry = getValueViaPath<YesOrNo>(
+    answers,
+    'questions.isReceivingPaymentsFromOtherCountry',
+  )
+
+  const countries =
+    getValueViaPath<Countries[]>(answers, 'questions.countries') ?? []
 
   const hasUtilizedEmployeeSickPayRights = getValueViaPath<
     YesOrNo | NotApplicable
@@ -162,7 +174,10 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     calculatedRemunerationDate,
     isPartTimeEmployed,
     isStudying,
-    isStudyingFileUpload,
+    educationalInstitution,
+    ectsUnits,
+    isReceivingPaymentsFromOtherCountry,
+    countries,
     hasUtilizedEmployeeSickPayRights,
     employeeSickPayEndDate,
     hasUtilizedUnionSickPayRights,
@@ -270,6 +285,12 @@ export const getApplicationExternalData = (
       'socialInsuranceAdministrationQuestionnairesSelfAssessment.data',
     ) ?? []
 
+  const ectsUnits =
+    getValueViaPath<EctsUnits[]>(
+      externalData,
+      'socialInsuranceAdministrationEctsUnits.data',
+    ) ?? []
+
   return {
     applicantName,
     applicantNationalId,
@@ -288,6 +309,7 @@ export const getApplicationExternalData = (
     currencies,
     incomePlanConditions,
     selfAssessmentQuestionnaire,
+    ectsUnits,
   }
 }
 
@@ -305,20 +327,9 @@ export const getAttachments = (application: Application) => {
   }
 
   const { answers } = application
-  const {
-    isStudying,
-    isStudyingFileUpload,
-    hasUtilizedUnionSickPayRights,
-    unionSickPayFileUpload,
-  } = getApplicationAnswers(answers)
+  const { hasUtilizedUnionSickPayRights, unionSickPayFileUpload } =
+    getApplicationAnswers(answers)
   const attachments: Attachments[] = []
-
-  if (isStudying === YES) {
-    getAttachmentDetails(
-      isStudyingFileUpload,
-      AttachmentTypes.STUDY_CONFIRMATION,
-    )
-  }
 
   if (hasUtilizedUnionSickPayRights === YES) {
     getAttachmentDetails(

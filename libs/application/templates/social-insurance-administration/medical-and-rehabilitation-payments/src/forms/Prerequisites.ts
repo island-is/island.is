@@ -18,6 +18,7 @@ import {
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationCategorizedIncomeTypesApi,
   SocialInsuranceAdministrationCurrenciesApi,
+  SocialInsuranceAdministrationEctsUnitsApi,
   SocialInsuranceAdministrationIncomePlanConditionsApi,
   SocialInsuranceAdministrationQuestionnairesApi,
 } from '../dataProviders'
@@ -132,6 +133,9 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationQuestionnairesApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationEctsUnitsApi,
             }),
           ],
         }),

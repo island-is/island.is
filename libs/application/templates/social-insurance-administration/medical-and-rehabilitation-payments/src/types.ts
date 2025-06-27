@@ -19,3 +19,13 @@ export interface SelfAssessmentQuestionnaireAnswers {
   answer: string
   questionId: string
 }
+
+export interface EctsUnits {
+  description: string
+  value: string
+}
+
+export interface Countries {
+  country: string
+  nationalId: string
+}

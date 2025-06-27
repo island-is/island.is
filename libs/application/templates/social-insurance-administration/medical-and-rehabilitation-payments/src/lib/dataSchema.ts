@@ -161,7 +161,18 @@ export const dataSchema = z.object({
       isSelfEmployed: z.enum([YES, NO]),
       isPartTimeEmployed: z.enum([YES, NO]),
       isStudying: z.enum([YES, NO]),
+      isReceivingPaymentsFromOtherCountry: z.enum([YES, NO]),
       calculatedRemunerationDate: z.string().optional(),
+      educationalInstitution: z.string().optional().nullable(),
+      ectsUnits: z.string().optional().nullable(),
+      countries: z
+        .array(
+          z.object({
+            country: z.string().optional().nullable(),
+            nationalId: z.string().optional(),
+          }),
+        )
+        .optional(),
     })
     .refine(
       ({ isSelfEmployed, calculatedRemunerationDate }) =>
@@ -170,7 +181,62 @@ export const dataSchema = z.object({
         path: ['calculatedRemunerationDate'],
         params: errorMessages.dateRequired,
       },
-    ),
+    )
+    .refine(
+      ({ isStudying, educationalInstitution }) =>
+        isStudying === YES ? !!educationalInstitution : true,
+      {
+        path: ['educationalInstitution'],
+      },
+    )
+    .refine(
+      ({ isStudying, ectsUnits }) => (isStudying === YES ? !!ectsUnits : true),
+      {
+        path: ['ectsUnits'],
+      },
+    )
+    .superRefine(({ isReceivingPaymentsFromOtherCountry, countries }, ctx) => {
+      if (isReceivingPaymentsFromOtherCountry === YES) {
+        // Validate that at least one country has been provided
+        if (!countries || countries.length === 0) {
+          ctx.addIssue({
+            code: z.ZodIssueCode.custom,
+            params: errorMessages.countriesRequired,
+            path: ['countries'],
+          })
+          return // Stop further validation since the array is required
+        }
+
+        countries.forEach(({ country, nationalId }, index) => {
+          // Validate that a country is selected
+          if (!country) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              params: errorMessages.countryRequired,
+              path: ['countries', index, 'country'],
+            })
+          }
+
+          // Validate that nationalId is not empty
+          if (!nationalId) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              params: errorMessages.countryIdNumberRequired,
+              path: ['countries', index, 'nationalId'],
+            })
+          }
+
+          // Validate that nationalId is at least 5 characters or symbols
+          if (nationalId && nationalId.length < 5) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              params: errorMessages.countryIdNumberMin,
+              path: ['countries', index, 'nationalId'],
+            })
+          }
+        })
+      }
+    }),
   employeeSickPay: z
     .object({
       hasUtilizedEmployeeSickPayRights: z.enum([YES, NO, NOT_APPLICABLE]),

@@ -4,15 +4,12 @@ import { medicalAndRehabilitationPaymentsFormMessage } from '../lib/messages'
 export const AttachmentLabel: {
   [key: string]: MessageDescriptor
 } = {
-  studyConfirmation:
-    medicalAndRehabilitationPaymentsFormMessage.overview.studyConfirmation,
   unionSickPayConfirmation:
     medicalAndRehabilitationPaymentsFormMessage.overview
       .unionSickPayConfirmation,
 }
 
 export enum AttachmentTypes {
-  STUDY_CONFIRMATION = 'studyConfirmation',
   UNION_SICK_PAY_CONFIRMATION = 'unionSickPayConfirmation',
 }
 
