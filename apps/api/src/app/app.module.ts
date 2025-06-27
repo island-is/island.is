@@ -175,6 +175,7 @@ import { IntellectualPropertiesModule } from '@island.is/api/domains/intellectua
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
 import { SignatureCollectionModule } from '@island.is/api/domains/signature-collection'
 import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
+import { RskRentalDayRateClientConfig } from '@island.is/clients-rental-day-rate'
 import { FinanceClientV2Config } from '@island.is/clients/finance-v2'
 import { MMSClientConfig } from '@island.is/clients/mms'
 import { PCardClientConfig } from '@island.is/clients/p-card'
@@ -218,7 +219,9 @@ import { VerdictsClientConfig } from '@island.is/clients/verdicts'
 import { VerdictsModule } from '@island.is/api/domains/verdicts'
 import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school'
 import { SecondarySchoolApiModule } from '@island.is/api/domains/secondary-school'
+import { BloodClientConfig } from '@island.is/clients/blood'
 import { HmsConfig } from '@island.is/clients/hms'
+import { HmsApplicationSystemConfig } from '@island.is/clients/hms-application-system'
 import { HmsRentalAgreementClientConfig } from '@island.is/clients/hms-rental-agreement'
 
 const environment = getConfig
@@ -392,9 +395,11 @@ const environment = getConfig
         AuthPublicApiClientConfig,
         AuthDelegationApiClientConfig,
         DownloadServiceConfig,
+        BloodClientConfig,
         HuntingLicenseClientConfig,
         FeatureFlagConfig,
         HmsConfig,
+        HmsApplicationSystemConfig,
         HmsLoansClientConfig,
         HmsRentalAgreementClientConfig,
         HousingBenefitsConfig,
@@ -441,6 +446,7 @@ const environment = getConfig
         AuthIdsApiClientConfig,
         IcelandicGovernmentInstitutionVacanciesClientConfig,
         RskRelationshipsClientConfig,
+        RskRentalDayRateClientConfig,
         AircraftRegistryClientConfig,
         ShipRegistryClientConfig,
         HousingBenefitCalculatorClientConfig,

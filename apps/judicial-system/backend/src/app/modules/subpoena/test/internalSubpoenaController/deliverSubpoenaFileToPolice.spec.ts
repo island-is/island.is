@@ -79,7 +79,7 @@ describe('InternalSubpoenaController - Deliver subpoena to police', () => {
       then = await givenWhenThen()
     })
 
-    it('should call deliverSubpoenaToPolice', () => {
+    it('should call deliverSubpoenaFileToPolice', () => {
       expect(mockPdfService.getSubpoenaPdf).toBeCalledWith(
         theCase,
         defendant,
@@ -108,7 +108,7 @@ describe('InternalSubpoenaController - Deliver subpoena to police', () => {
       then = await givenWhenThen()
     })
 
-    it('should call deliverSubpoenaToPolice', () => {
+    it('should call deliverSubpoenaFileToPolice', () => {
       expect(then.result).toEqual({ delivered: false })
     })
   })

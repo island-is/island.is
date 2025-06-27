@@ -28,12 +28,14 @@ export const instructorSection = buildSection({
             nationalId: {
               component: 'nationalIdWithName',
               label: shared.labels.ssn,
+              required: true,
             },
             email: {
               component: 'input',
               label: shared.labels.email,
               width: 'half',
               type: 'email',
+              required: true,
             },
             phone: {
               component: 'input',
@@ -42,11 +44,11 @@ export const instructorSection = buildSection({
               format: '###-####',
               placeholder: '000-0000',
               width: 'half',
+              required: true,
             },
           },
           table: {
             format: {
-              nationalId: (value) => `${value.slice(0, 6)}-${value.slice(6)}`,
               phone: (value) => `${value.slice(0, 3)}-${value.slice(3)}`,
             },
           },

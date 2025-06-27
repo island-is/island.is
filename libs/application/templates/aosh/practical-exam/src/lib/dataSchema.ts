@@ -163,20 +163,6 @@ const PaymentArrangementSchema = z
       path: ['contactInfo', 'phone'],
     },
   )
-  .refine(
-    ({ explanation, individualOrCompany, paymentOptions }) => {
-      if (
-        individualOrCompany === IndividualOrCompany.individual ||
-        paymentOptions === PaymentOptions.cashOnDelivery
-      ) {
-        return true
-      }
-      return explanation && explanation.length < 41 && explanation.length > 0
-    },
-    {
-      path: ['explanation'],
-    },
-  )
 
 const ExamineeSchema = z
   .array(
@@ -198,7 +184,7 @@ const ExamineeSchema = z
       }),
       email: z.string().refine((email) => isValidEmail(email)),
       phone: z.string().refine((phone) => isValidPhoneNumber(phone)),
-      licenseNumber: z.string().optional(),
+      licenseNumber: z.string().min(1).max(25),
       countryIssuer: z.string().min(1).max(256),
       disabled: z.enum([TrueOrFalse.true, TrueOrFalse.false]).optional(),
     }),
@@ -301,6 +287,7 @@ const OverviewSchema = z.object({
 })
 
 export const PracticalExamAnswersSchema = z.object({
+  approveExternalData: z.boolean().refine((v) => v),
   information: InformationSchema,
   examinees: ExamineeSchema,
   instructors: InstructorSchema,

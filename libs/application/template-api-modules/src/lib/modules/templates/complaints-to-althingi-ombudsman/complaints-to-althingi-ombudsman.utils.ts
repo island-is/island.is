@@ -1,6 +1,7 @@
 import {
   ComplaintsToAlthingiOmbudsmanAnswers,
   ComplainedForTypes,
+  GenderAnswerOptions,
 } from '@island.is/application/templates/complaints-to-althingi-ombudsman'
 import { Application } from '@island.is/application/types'
 import {
@@ -11,6 +12,7 @@ import {
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { join } from 'path'
 import { ComplainerContactInfo, ContactRole } from './models/complaint'
+import { getValueViaPath } from '@island.is/application/core'
 
 export const pathToAsset = (file: string) => {
   if (isRunningOnEnvironment('local')) {
@@ -29,18 +31,23 @@ export const applicationToCaseRequest = async (
 ): Promise<CreateCaseRequest> => {
   const answers = application.answers as ComplaintsToAlthingiOmbudsmanAnswers
   const contacts = gatherContacts(answers)
+
+  const metadata = contacts[0]?.gender
+    ? [
+        {
+          name: 'GenderMod',
+          value: contacts[0].gender,
+        },
+      ]
+    : undefined
+
   return {
     category: 'Kvörtun',
     subject: 'Kvörtun frá ísland.is',
     template: 'Kvörtun',
     contacts,
     documents: attachments,
-    metadata: [
-      {
-        name: 'GenderMod',
-        value: contacts[0].gender,
-      },
-    ],
+    metadata,
   }
 }
 
@@ -61,7 +68,6 @@ const getContactInfo = (
     phone: contact.phoneNumber ?? '',
     postalCode: contact.postalCode,
     city: contact.city,
-    gender: 'gender' in contact ? contact.gender : undefined,
   }
 }
 
@@ -69,6 +75,10 @@ export const gatherContacts = (
   answers: ComplaintsToAlthingiOmbudsmanAnswers,
 ): LinkedContact[] => {
   const contact = getContactInfo(answers)
+  const genderAnswer = getValueViaPath<GenderAnswerOptions>(
+    answers,
+    'genderAnswer',
+  )
   //Kvartandi - main contact
   const complaintant = {
     type: contact.type,
@@ -82,7 +92,7 @@ export const gatherContacts = (
     role: ContactRole.COMPLAINTANT,
     primary: 'true',
     webPage: '',
-    gender: contact.gender,
+    gender: genderAnswer,
   }
 
   return [complaintant]

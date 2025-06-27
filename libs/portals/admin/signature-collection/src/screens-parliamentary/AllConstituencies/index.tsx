@@ -1,15 +1,13 @@
 import {
   ActionCard,
-  FilterInput,
   GridColumn,
   GridContainer,
   GridRow,
   Stack,
   Box,
   Breadcrumbs,
-  Table as T,
-  Text,
   AlertMessage,
+  Divider,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
@@ -19,15 +17,15 @@ import { useLoaderData, useNavigate } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import CompareLists from '../../shared-components/compareLists'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
-import { useState } from 'react'
-import { useSignatureCollectionSignatureLookupQuery } from './findSignature.generated'
-import { SkeletonSingleRow } from '../../shared-components/compareLists/skeleton'
 import {
   CollectionStatus,
   SignatureCollectionCollectionType,
 } from '@island.is/api/schema'
 import ActionCompleteCollectionProcessing from '../../shared-components/completeCollectionProcessing'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
+import FindSignature from '../../shared-components/findSignature'
+
+const collectionType = SignatureCollectionCollectionType.Parliamentary
 
 const ParliamentaryRoot = () => {
   const { formatMessage } = useLocale()
@@ -35,18 +33,6 @@ const ParliamentaryRoot = () => {
   const navigate = useNavigate()
   const { collection, collectionStatus, allLists } =
     useLoaderData() as ListsLoaderReturn
-
-  const [searchTerm, setSearchTerm] = useState('')
-
-  const { data, loading } = useSignatureCollectionSignatureLookupQuery({
-    variables: {
-      input: {
-        collectionId: collection?.id,
-        nationalId: searchTerm.replace(/[^0-9]/g, ''),
-      },
-    },
-    skip: searchTerm.replace(/[^0-9]/g, '').length !== 10,
-  })
 
   return (
     <GridContainer>
@@ -80,97 +66,11 @@ const ParliamentaryRoot = () => {
             imgPosition="right"
             imgHiddenBelow="sm"
             img={nationalRegistryLogo}
+            marginBottom={4}
           />
-          <Box
-            width="full"
-            marginBottom={6}
-            display="flex"
-            justifyContent="spaceBetween"
-          >
-            <Box width="half">
-              <FilterInput
-                name="searchSignee"
-                value={searchTerm}
-                onChange={(v) => {
-                  setSearchTerm(v)
-                }}
-                placeholder={formatMessage(m.searchNationalIdPlaceholder)}
-                backgroundColor="blue"
-              />
-            </Box>
-          </Box>
-          {loading && (
-            <Box marginBottom={6}>
-              <SkeletonSingleRow />
-            </Box>
-          )}
-          {data?.signatureCollectionSignatureLookup &&
-            (data?.signatureCollectionSignatureLookup.length > 0 ? (
-              <Box marginBottom={6}>
-                <T.Table>
-                  <T.Head>
-                    <T.Row>
-                      <T.HeadData>{formatMessage(m.signeeName)}</T.HeadData>
-                      <T.HeadData>
-                        {formatMessage(m.signeeListSigned)}
-                      </T.HeadData>
-                      <T.HeadData>
-                        {formatMessage(m.signeeListSignedType)}
-                      </T.HeadData>
-                      <T.HeadData>
-                        {formatMessage(m.signeeListSignedStatus)}
-                      </T.HeadData>
-                    </T.Row>
-                  </T.Head>
-                  <T.Body>
-                    {data?.signatureCollectionSignatureLookup?.map((s) => (
-                      <T.Row key={s.id}>
-                        <T.Data
-                          span={3}
-                          text={{ variant: 'medium' }}
-                          box={{ background: s.valid ? 'white' : 'red100' }}
-                        >
-                          {s.signee.name}
-                        </T.Data>
-                        <T.Data
-                          span={3}
-                          text={{ variant: 'medium' }}
-                          box={{ background: s.valid ? 'white' : 'red100' }}
-                        >
-                          {s.listTitle}
-                        </T.Data>
-                        <T.Data
-                          span={3}
-                          text={{ variant: 'medium' }}
-                          box={{ background: s.valid ? 'white' : 'red100' }}
-                        >
-                          {formatMessage(
-                            s.isDigital
-                              ? m.signeeListSignedDigital
-                              : m.signeeListSignedPaper,
-                          )}
-                        </T.Data>
-                        <T.Data
-                          span={3}
-                          text={{ variant: 'medium' }}
-                          box={{ background: s.valid ? 'white' : 'red100' }}
-                        >
-                          {formatMessage(
-                            s.valid
-                              ? m.signeeSignatureValid
-                              : m.signeeSignatureInvalid,
-                          )}
-                        </T.Data>
-                      </T.Row>
-                    ))}
-                  </T.Body>
-                </T.Table>
-              </Box>
-            ) : (
-              <Box marginBottom={6}>
-                <Text>{formatMessage(m.noSigneeFoundOverviewText)}</Text>
-              </Box>
-            ))}
+          <Divider />
+          <Box marginTop={9} />
+          <FindSignature collectionId={collection.id} />
           <Stack space={3}>
             {collection?.areas.map((area) => {
               const areaLists = allLists.filter(
@@ -187,6 +87,8 @@ const ParliamentaryRoot = () => {
                   cta={{
                     label: formatMessage(m.viewConstituency),
                     variant: 'text',
+                    icon: 'arrowForward',
+                    disabled: areaLists.length === 0,
                     onClick: () => {
                       navigate(
                         SignatureCollectionPaths.ParliamentaryConstituency.replace(
@@ -210,9 +112,12 @@ const ParliamentaryRoot = () => {
               )
             })}
           </Stack>
-          <CompareLists collectionId={collection?.id} />
+          <CompareLists
+            collectionId={collection?.id}
+            collectionType={collectionType}
+          />
           <ActionCompleteCollectionProcessing
-            collectionType={SignatureCollectionCollectionType.Parliamentary}
+            collectionType={collectionType}
             collectionId={collection?.id}
             canProcess={
               !!allLists.length && allLists.every((l) => l.reviewed === true)

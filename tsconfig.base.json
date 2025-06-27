@@ -123,7 +123,9 @@
       "@island.is/api/domains/hms-loans": [
         "libs/api/domains/hms-loans/src/index.ts"
       ],
-      "@island.is/api/domains/hms-rental-agreement": ["libs/api/domains/hms-rental-agreement/src/index.ts"],
+      "@island.is/api/domains/hms-rental-agreement": [
+        "libs/api/domains/hms-rental-agreement/src/index.ts"
+      ],
       "@island.is/api/domains/housing-benefit-calculator": [
         "libs/api/domains/housing-benefit-calculator/src/index.ts"
       ],
@@ -190,6 +192,9 @@
       "@island.is/api/domains/powerbi": [
         "libs/api/domains/powerbi/src/index.ts"
       ],
+      "@island.is/api/domains/practical-exams": [
+        "libs/api/domains/practical-exams/src/index.ts"
+      ],
       "@island.is/api/domains/regulations": [
         "libs/api/domains/regulations/src/index.ts"
       ],
@@ -252,6 +257,9 @@
       ],
       "@island.is/api/domains/work-machines": [
         "libs/api/domains/work-machines/src/index.ts"
+      ],
+      "@island.is/api/mocks-react": [
+        "libs/api/mocks/src/react.ts"
       ],
       "@island.is/api/mocks": ["libs/api/mocks/src/index.ts"],
       "@island.is/api/mocks/native": ["libs/api/mocks/src/native.ts"],
@@ -452,6 +460,12 @@
       "@island.is/application/templates/healthcare-work-permit": [
         "libs/application/templates/healthcare-work-permit/src/index.ts"
       ],
+      "@island.is/application/templates/hms/fire-compensation-appraisal": [
+        "libs/application/templates/hms/fire-compensation-appraisal/src/index.ts"
+      ],
+      "@island.is/application/templates/hms/terminate-rental-agreement": [
+        "libs/application/templates/hms/terminate-rental-agreement/src/index.ts"
+      ],
       "@island.is/application/templates/home-support": [
         "libs/application/templates/home-support/src/index.ts"
       ],
@@ -560,6 +574,9 @@
       "@island.is/application/templates/social-insurance-administration/income-plan": [
         "libs/application/templates/social-insurance-administration/income-plan/src/index.ts"
       ],
+      "@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments": [
+        "libs/application/templates/social-insurance-administration/medical-and-rehabilitation-payments/src/index.ts"
+      ],
       "@island.is/application/templates/social-insurance-administration/old-age-pension": [
         "libs/application/templates/social-insurance-administration/old-age-pension/src/index.ts"
       ],
@@ -577,6 +594,9 @@
       ],
       "@island.is/application/templates/transport-authority/digital-tachograph-drivers-card": [
         "libs/application/templates/transport-authority/digital-tachograph-drivers-card/src/index.ts"
+      ],
+      "@island.is/application/templates/transport-authority/exemption-for-transportation": [
+        "libs/application/templates/transport-authority/exemption-for-transportation/src/index.ts"
       ],
       "@island.is/application/templates/transport-authority/license-plate-renewal": [
         "libs/application/templates/transport-authority/license-plate-renewal/src/index.ts"
@@ -618,6 +638,9 @@
       "@island.is/clients-rsk-relationships": [
         "libs/clients/rsk/relationships/src/index.ts"
       ],
+      "@island.is/clients-rental-day-rate": [
+        "libs/clients/rsk/rental-day-rate/src/index.ts"
+      ],
       "@island.is/clients/administration-of-occupational-safety-and-health": [
         "libs/clients/administration-of-occupational-safety-and-health/src/index.ts"
       ],
@@ -649,6 +672,7 @@
       "@island.is/clients/auth/public-api": [
         "libs/clients/auth/public-api/src/index.ts"
       ],
+      "@island.is/clients/blood": ["libs/clients/blood/src/index.ts"],
       "@island.is/clients/car-recycling": [
         "libs/clients/car-recycling/src/index.ts"
       ],
@@ -714,13 +738,16 @@
         "libs/clients/health-directorate/src/index.ts"
       ],
       "@island.is/clients/hms": ["libs/clients/hms/src/index.ts"],
-      "@island.is/clients/hms-rental-agreement": [
-        "libs/clients/hms-rental-agreement/src/index.ts"
+      "@island.is/clients/hms-application-system": [
+        "libs/clients/hms-application-system/src/index.ts"
       ],
       "@island.is/clients/hms-housing-benefits": [
         "libs/clients/hms-housing-benefits/src/index.ts"
       ],
       "@island.is/clients/hms-loans": ["libs/clients/hms-loans/src/index.ts"],
+      "@island.is/clients/hms-rental-agreement": [
+        "libs/clients/hms-rental-agreement/src/index.ts"
+      ],
       "@island.is/clients/housing-benefit-calculator": [
         "libs/clients/housing-benefit-calculator/src/index.ts"
       ],
@@ -748,7 +775,9 @@
       "@island.is/clients/judicial-system-sp": [
         "libs/clients/judicial-system-sp/src/index.ts"
       ],
-      "@island.is/clients/legal-gazette": ["libs/clients/legal-gazette/src/index.ts"],
+      "@island.is/clients/legal-gazette": [
+        "libs/clients/legal-gazette/src/index.ts"
+      ],
       "@island.is/clients/license-client": [
         "libs/clients/license-client/src/index.ts"
       ],
@@ -784,10 +813,10 @@
       "@island.is/clients/payment-schedule": [
         "libs/clients/payment-schedule/src/index.ts"
       ],
+      "@island.is/clients/payments": ["libs/clients/payments/src/index.ts"],
       "@island.is/clients/practical-exams-ver": [
         "libs/clients/practical-exams-ver/src/index.ts"
       ],
-      "@island.is/clients/payments": ["libs/clients/payments/src/index.ts"],
       "@island.is/clients/regulations": [
         "libs/clients/regulations/src/index.ts"
       ],
@@ -826,6 +855,9 @@
       "@island.is/clients/syslumenn": ["libs/clients/syslumenn/src/index.ts"],
       "@island.is/clients/transport-authority/digital-tachograph-drivers-card": [
         "libs/clients/transport-authority/digital-tachograph-drivers-card/src/index.ts"
+      ],
+      "@island.is/clients/transport-authority/exemption-for-transportation": [
+        "libs/clients/transport-authority/exemption-for-transportation/src/index.ts"
       ],
       "@island.is/clients/transport-authority/vehicle-codetables": [
         "libs/clients/transport-authority/vehicle-codetables/src/index.ts"
@@ -1202,9 +1234,6 @@
       "api/domains/financial-statement-cemetery": [
         "libs/api/domains/financial-statement-cemetery/src/index.ts"
       ],
-      "@island.is/api/domains/practical-exams": [
-        "libs/api/domains/practical-exams/src/index.ts"
-      ],
       "application/templates/examples/example-no-inputs": [
         "libs/application/templates/examples/example-no-inputs/src/index.ts"
       ],
@@ -1213,6 +1242,9 @@
       ],
       "application/templates/name-of-application": [
         "libs/application/templates/name-of-application/src/index.ts"
+      ],
+      "@island.is/application/templates/car-rental-fee-category": [
+        "libs/application/templates/car-rental-fee-category/src/index.ts"
       ],
       "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"]
     }

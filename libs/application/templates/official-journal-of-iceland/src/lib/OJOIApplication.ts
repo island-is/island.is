@@ -15,9 +15,11 @@ import { partialSchema } from './dataSchema'
 import { general } from './messages'
 import { InputFields, TemplateApiActions } from './types'
 import { Features } from '@island.is/feature-flags'
+import { AuthDelegationType } from '@island.is/shared/types'
 import { assign } from 'xstate'
 import set from 'lodash/set'
 import { CodeOwners } from '@island.is/shared/constants'
+import { ApiScope } from '@island.is/auth/scopes'
 
 export enum ApplicationStates {
   REQUIREMENTS = 'requirements',
@@ -73,6 +75,15 @@ const OJOITemplate: ApplicationTemplate<
     ApplicationConfigurations.OfficialJournalOfIceland.translation,
   ],
   dataSchema: partialSchema,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+    },
+    {
+      type: AuthDelegationType.Custom,
+    },
+  ],
+  requiredScopes: [ApiScope.ojoiAdverts],
   allowMultipleApplicationsInDraft: true,
   stateMachineOptions: {
     actions: {
@@ -150,6 +161,7 @@ const OJOITemplate: ApplicationTemplate<
             },
             {
               id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
               read: 'all',
               write: 'all',
             },
@@ -198,6 +210,7 @@ const OJOITemplate: ApplicationTemplate<
             },
             {
               id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
               read: 'all',
               write: 'all',
             },
@@ -245,6 +258,7 @@ const OJOITemplate: ApplicationTemplate<
             },
             {
               id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
               read: 'all',
               write: 'all',
             },
@@ -287,6 +301,7 @@ const OJOITemplate: ApplicationTemplate<
             },
             {
               id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
               read: 'all',
               write: 'all',
             },
@@ -316,6 +331,7 @@ const OJOITemplate: ApplicationTemplate<
             },
             {
               id: Roles.ASSIGNEE,
+              shouldBeListedForRole: false,
               read: 'all',
               write: 'all',
             },

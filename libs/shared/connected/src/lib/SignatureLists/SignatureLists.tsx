@@ -9,9 +9,9 @@ import format from 'date-fns/format'
 import { FC } from 'react'
 import {
   ConnectedComponent,
-  SignatureCollectionCandidate,
-  SignatureCollectionCollectionType,
   SignatureCollectionListBase,
+  SignatureCollectionCollectionType,
+  SignatureCollectionCandidate,
 } from '@island.is/api/schema'
 import { useLocalization } from '../../utils'
 import {
@@ -118,9 +118,12 @@ export const SignatureLists: FC<
                           onClick: () =>
                             window.open(
                               `${window.location.origin}/umsoknir/${
-                                collection.collectionType ===
+                                collectionType ===
                                 SignatureCollectionCollectionType.Presidential
                                   ? 'maela-med-frambodi'
+                                  : collectionType ===
+                                    SignatureCollectionCollectionType.LocalGovernmental
+                                  ? 'maela-med-sveitarstjornarframbodi'
                                   : 'maela-med-althingisframbodi'
                               }/?candidate=${candidate.id}`,
                               '_blank',

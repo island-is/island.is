@@ -123,6 +123,10 @@ export class IdentityDocumentMapper implements GenericLicenseMapper {
         ? formatMessage(m.expiresWithin, {
             arg: formatMessage(m.sixMonths),
           })
+        : document.expirationDate
+        ? formatMessage(m.validUntil, {
+            arg: formatDate(new Date(document.expirationDate)),
+          })
         : formatMessage(m.valid),
       color: isInvalid || isExpiring ? 'red' : 'blue',
       icon: isInvalid

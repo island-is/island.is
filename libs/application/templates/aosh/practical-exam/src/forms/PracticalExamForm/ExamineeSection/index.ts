@@ -8,11 +8,11 @@ import {
 } from '@island.is/application/core'
 import { examinee, shared } from '../../../lib/messages'
 import { getAllCountryCodes } from '@island.is/shared/utils'
-import { FormValue } from '@island.is/application/types'
+import { Application, FormValue } from '@island.is/application/types'
 import { SelfOrOthers, TrueOrFalse } from '../../../utils/enums'
 import { submitExaminees } from '../../../utils/submitExaminees'
 import { ExamineeType } from '../../../lib/dataSchema'
-
+import { Locale } from '@island.is/shared/types'
 export const examineeSection = buildSection({
   id: 'examineeSection',
   title: examinee.general.sectionTitle,
@@ -35,12 +35,14 @@ export const examineeSection = buildSection({
             nationalId: {
               component: 'nationalIdWithName',
               label: shared.labels.ssn,
+              required: true,
             },
             email: {
               component: 'input',
               label: shared.labels.email,
               width: 'half',
               type: 'email',
+              required: true,
             },
             phone: {
               component: 'input',
@@ -49,12 +51,15 @@ export const examineeSection = buildSection({
               format: '###-####',
               placeholder: '000-0000',
               width: 'half',
+              required: true,
             },
             licenseNumber: {
               component: 'input',
               label: examinee.labels.licenceNumber,
               width: 'half',
+              format: '#########################',
               displayInTable: false,
+              required: true,
             },
             countryIssuer: {
               component: 'select',
@@ -62,10 +67,38 @@ export const examineeSection = buildSection({
               placeholder: examinee.labels.pickCountry,
               width: 'half',
               displayInTable: false,
-              options: getAllCountryCodes().map((country) => ({
-                label: country.name,
-                value: country.name,
-              })),
+              required: true,
+              options: (
+                _application: Application,
+                _activeField: Record<string, string> | undefined,
+                locale: Locale | undefined,
+              ) => {
+                const iceland = {
+                  name: 'Iceland',
+                  name_is: 'Ísland',
+                  format: '###-####',
+                  flag: '🇮🇸',
+                  code: 'IS',
+                  dial_code: '+354',
+                }
+                const countries = getAllCountryCodes().filter(
+                  (country) => country.code !== 'IS' || '',
+                )
+
+                const getLocalizedName = (name: string, nameIs?: string) =>
+                  locale === 'is' ? nameIs || name : name
+
+                return [
+                  {
+                    label: getLocalizedName(iceland.name, iceland.name_is),
+                    value: iceland.name_is,
+                  },
+                  ...countries.map((country) => ({
+                    label: getLocalizedName(country.name, country.name_is),
+                    value: getLocalizedName(country.name, country.name_is),
+                  })),
+                ]
+              },
             },
           },
           table: {

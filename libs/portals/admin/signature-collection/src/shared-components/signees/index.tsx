@@ -68,7 +68,7 @@ const Signees = ({ list }: { list: SignatureCollectionList }) => {
           variant={getTagConfig(list).variant}
           outlined={getTagConfig(list).outlined}
         >
-          {formatMessage({ id: getTagConfig(list).label })}
+          {getTagConfig(list).label}
         </Tag>
       </Box>
 
@@ -196,6 +196,7 @@ const Signees = ({ list }: { list: SignatureCollectionList }) => {
                                   s.signee.nationalId,
                                 )}
                                 signatureId={s.id}
+                                collectionType={list.collectionType}
                               />
                             </Box>
                           )}

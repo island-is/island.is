@@ -17,6 +17,8 @@ import {
   CaseState,
   CaseTableColumnKey,
   CaseType,
+  courtSessionTypeNames,
+  DateType,
   DefendantEventType,
   EventType,
   getIndictmentAppealDeadlineDate,
@@ -30,6 +32,7 @@ import {
   isProsecutionUser,
   isPublicProsecutionOfficeUser,
   isRestrictionCase,
+  isSuccessfulServiceStatus,
   PunishmentType,
   ServiceRequirement,
   type User as TUser,
@@ -40,6 +43,7 @@ import { DateLog } from '../case/models/dateLog.model'
 import { Defendant, DefendantEventLog } from '../defendant'
 import { EventLog } from '../event-log/models/eventLog.model'
 import { Institution } from '../institution'
+import { Subpoena } from '../subpoena'
 import { User } from '../user'
 import {
   CaseTableCellValue,
@@ -49,8 +53,13 @@ import {
   TagValue,
 } from './dto/caseTable.response'
 
+// gets the element type if T is an array.
 type ElementType<T> = T extends (infer U)[] ? U : T
+
+// gets the non-null, non-undefined version of ElementType<T>.
 type DefinedObject<T> = NonNullable<ElementType<T>>
+
+// extracts keys from T where the corresponding value, after non-nullable, is an object.
 type ObjectKeys<T> = Extract<
   {
     [K in keyof T]: DefinedObject<T[K]> extends object ? K : never
@@ -101,6 +110,10 @@ const getIndictmentCourtDate = (c: Case): Date | undefined => {
       : undefined
   }
 
+  return DateLog.arraignmentDate(c.dateLogs)?.date
+}
+
+const getRequestCaseArraignmentDate = (c: Case): Date | undefined => {
   return DateLog.arraignmentDate(c.dateLogs)?.date
 }
 
@@ -255,12 +268,20 @@ const generateIndictmentCaseStateTag = (
 ): CaseTableCell<TagValue> => {
   const {
     state,
-    indictmentRulingDecision,
     indictmentDecision,
+    indictmentRulingDecision,
     indictmentReviewerId,
   } = c
 
   const courtDate = getIndictmentCourtDate(c)
+
+  const allServed = () => {
+    return c.defendants?.every(
+      (d) =>
+        d.isAlternativeService ||
+        d.subpoenas?.some((s) => isSuccessfulServiceStatus(s.serviceStatus)),
+    )
+  }
 
   const generateReceivedIndictmentStateTag = (): CaseTableCell<TagValue> => {
     switch (indictmentDecision) {
@@ -274,7 +295,9 @@ const generateIndictmentCaseStateTag = (
         return generateCell({ color: 'blue', text: 'Endurúthlutun' }, 'F')
       default:
         return courtDate
-          ? generateCell({ color: 'mint', text: 'Á dagskrá' }, 'D')
+          ? allServed()
+            ? generateCell({ color: 'mint', text: 'Á dagskrá' }, 'D')
+            : generateCell({ color: 'red', text: 'Óbirt' })
           : generateCell({ color: 'blueberry', text: 'Móttekið' }, 'C')
     }
   }
@@ -406,7 +429,7 @@ const getPoliceCaseNumberSortValue = (policeCaseNumber: string): string => {
   const number = num.padStart(6, '0') // Assume its no more than 6 digits
   const postfix = post ? post.padStart(3, '0') : '000'
 
-  return `${year}${prefix}${number}${postfix}`
+  return `${prefix}${year}${number}${postfix}`
 }
 
 const generateCaseNumberSortValue = (
@@ -415,7 +438,10 @@ const generateCaseNumberSortValue = (
   policeCaseNumber: string,
   user: TUser,
 ): string | undefined => {
-  if (isProsecutionUser(user) || isDistrictCourtUser(user)) {
+  if (isProsecutionUser(user)) {
+    return getPoliceCaseNumberSortValue(policeCaseNumber)
+  }
+  if (isDistrictCourtUser(user)) {
     return `${getCourtCaseNumberSortValue(
       courtCaseNumber,
     )}${getPoliceCaseNumberSortValue(policeCaseNumber)}`
@@ -574,6 +600,20 @@ const indictmentCaseState: CaseTableCellGenerator<TagValue> = {
     'indictmentReviewerId',
   ],
   includes: {
+    defendants: {
+      model: Defendant,
+      attributes: ['isAlternativeService'],
+      order: [['created', 'ASC']],
+      includes: {
+        subpoenas: {
+          model: Subpoena,
+          attributes: ['serviceStatus'],
+          order: [['created', 'DESC']],
+          separate: true,
+        },
+      },
+      separate: true,
+    },
     dateLogs: {
       model: DateLog,
       attributes: ['date'],
@@ -600,6 +640,30 @@ const courtOfAppealsHead: CaseTableCellGenerator<StringValue> = {
     }
 
     return generateCell({ str: initials }, initials)
+  },
+}
+
+const created: CaseTableCellGenerator<StringValue> = {
+  attributes: ['created'],
+  generate: (c: Case): CaseTableCell<StringValue> => {
+    return generateDate(c.created)
+  },
+}
+
+const prosecutor: CaseTableCellGenerator<StringValue> = {
+  includes: {
+    prosecutor: {
+      model: User,
+      attributes: ['name'],
+    },
+  },
+  generate: (c: Case): CaseTableCell<StringValue> => {
+    const prosecutor = c.prosecutor
+    if (!prosecutor) {
+      return generateCell()
+    }
+
+    return generateCell({ str: prosecutor.name }, prosecutor.name)
   },
 }
 
@@ -662,23 +726,53 @@ const rulingDate: CaseTableCellGenerator<StringValue> = {
   generate: (c: Case): CaseTableCell<StringValue> => generateDate(c.rulingDate),
 }
 
-const arraignmentDate: CaseTableCellGenerator<StringValue> = {
+const arraignmentDate: CaseTableCellGenerator<StringGroupValue> = {
+  attributes: ['requestedCourtDate'],
   includes: {
     dateLogs: {
       model: DateLog,
       attributes: ['date', 'dateType'],
       order: [['created', 'DESC']],
+      where: { dateType: DateType.ARRAIGNMENT_DATE },
       separate: true,
     },
   },
-  generate: (c: Case): CaseTableCell<StringValue> => {
-    const arraignmentDate = DateLog.arraignmentDate(c.dateLogs)?.date
+  generate: (c: Case, user: TUser): CaseTableCell<StringGroupValue> => {
+    let courtDate = getRequestCaseArraignmentDate(c)
+    let prefix = ''
 
-    return generateDate(arraignmentDate)
+    if (!courtDate && isDistrictCourtUser(user)) {
+      courtDate = c.requestedCourtDate
+      prefix = 'ÓE '
+    }
+
+    const datePart = formatDate(courtDate, 'EEE d. MMMM yyyy')
+    const sortValue = formatDate(courtDate, 'yyyyMMddHHmm')
+
+    if (!datePart || !sortValue) {
+      // No date part, so we return undefined
+      return generateCell()
+    }
+
+    const timePart = formatDate(courtDate, 'HH:mm')
+
+    if (!timePart) {
+      // This should never happen, but if it does, we return the court date only
+      return generateCell(
+        { strList: [`${prefix}${capitalize(datePart)}`] },
+        sortValue,
+      )
+    }
+
+    return generateCell(
+      { strList: [`${prefix}${capitalize(datePart)}`, `kl. ${timePart}`] },
+      sortValue,
+    )
   },
 }
 
 const indictmentArraignmentDate: CaseTableCellGenerator<StringGroupValue> = {
+  attributes: ['courtSessionType'],
   includes: {
     dateLogs: {
       model: DateLog,
@@ -693,10 +787,11 @@ const indictmentArraignmentDate: CaseTableCellGenerator<StringGroupValue> = {
     const datePart = formatDate(courtDate, 'EEE d. MMMM yyyy')
     const sortValue = formatDate(courtDate, 'yyyyMMddHHmm')
 
-    if (!datePart || !sortValue) {
+    if (!datePart || !sortValue || !c.courtSessionType) {
       // No date part, so we return undefined
       return generateCell()
     }
+    const courtSessionType = courtSessionTypeNames[c.courtSessionType]
 
     const timePart = formatDate(courtDate, 'HH:mm')
 
@@ -706,7 +801,9 @@ const indictmentArraignmentDate: CaseTableCellGenerator<StringGroupValue> = {
     }
 
     return generateCell(
-      { strList: [`${capitalize(datePart)}`, `kl. ${timePart}`] },
+      {
+        strList: [courtSessionType, `${capitalize(datePart)} kl. ${timePart}`],
+      },
       sortValue,
     )
   },
@@ -1001,6 +1098,8 @@ export const caseTableCellGenerators: Record<
   caseType,
   appealState,
   courtOfAppealsHead,
+  created,
+  prosecutor,
   validFromTo,
   rulingDate,
   requestCaseState,

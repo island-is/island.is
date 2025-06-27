@@ -21,6 +21,10 @@ import { replaceParams } from '@island.is/react-spa/shared'
 import { getTagConfig } from '../../lib/utils'
 import CompareLists from '../../shared-components/compareLists'
 import ActionDrawer from '../../shared-components/compareLists/ActionDrawer'
+import { Actions } from '../../shared-components/compareLists/ActionDrawer/ListActions'
+import { SignatureCollectionCollectionType } from '@island.is/api/schema'
+
+const collectionType = SignatureCollectionCollectionType.LocalGovernmental
 
 export const Municipality = () => {
   const { formatMessage } = useLocale()
@@ -69,7 +73,14 @@ export const Municipality = () => {
             imgPosition="right"
             imgHiddenBelow="sm"
             img={nationalRegistryLogo}
-            buttonGroup={<ActionDrawer />}
+            buttonGroup={
+              <ActionDrawer
+                allowedActions={[
+                  Actions.DownloadReports,
+                  Actions.CreateCollection,
+                ]}
+              />
+            }
             marginBottom={4}
           />
           <Divider />
@@ -90,7 +101,7 @@ export const Municipality = () => {
                     eyebrow={municipality}
                     heading={list.candidate.name}
                     text={
-                      formatMessage(m.totalListResults) +
+                      formatMessage(m.numberOfSignatures) +
                       ': ' +
                       list.numberOfSignatures
                     }
@@ -109,15 +120,16 @@ export const Municipality = () => {
                         )
                       },
                     }}
-                    tag={{
-                      ...getTagConfig(list),
-                    }}
+                    tag={getTagConfig(list)}
                   />
                 ))}
               </Stack>
             </GridColumn>
           </GridRow>
-          <CompareLists collectionId={collection?.id} />
+          <CompareLists
+            collectionId={collection?.id}
+            collectionType={collectionType}
+          />
         </GridColumn>
       </GridRow>
     </GridContainer>

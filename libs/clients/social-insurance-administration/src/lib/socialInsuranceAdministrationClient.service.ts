@@ -1,17 +1,25 @@
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { handle404 } from '@island.is/clients/middlewares'
 import { Injectable } from '@nestjs/common'
 import {
   ApiProtectedV1IncomePlanTemporaryCalculationsPostRequest,
   ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
   ApiProtectedV1PensionCalculatorPostRequest,
+  ApiProtectedV1QuestionnairesSelfassessmentGetRequest,
   ApplicantApi,
   ApplicationApi,
+  DeathBenefitsApi,
   GeneralApi,
   IncomePlanApi,
+  MedicalDocumentsApi,
   PaymentPlanApi,
   PensionCalculatorApi,
-  DeathBenefitsApi,
+  QuestionnairesApi,
   TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn,
+  TrWebApiServicesDomainQuestionnairesModelsQuestionnaireDto,
+  TrWebExternalModelsServicePortalRehabilitationPlan,
+  TrWebApiServicesDomainUnionsModelsUnionDto,
+  TrWebApiServicesUseCaseDeathBenefitsModelsExternalSpousalInfo,
   TrWebCommonsExternalPortalsApiModelsApplicantApplicantInfoReturn,
   TrWebCommonsExternalPortalsApiModelsApplicationsIsEligibleForApplicationReturn,
   TrWebCommonsExternalPortalsApiModelsDocumentsDocument,
@@ -20,11 +28,9 @@ import {
   TrWebCommonsExternalPortalsApiModelsIncomePlanWithholdingTaxDto,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanLegitimatePayments,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
-  TrWebApiServicesUseCaseDeathBenefitsModelsExternalSpousalInfo,
 } from '../../gen/fetch'
-import { handle404 } from '@island.is/clients/middlewares'
-import { ApplicationWriteApi } from './socialInsuranceAdministrationClient.type'
 import { IncomePlanDto, mapIncomePlanDto } from './dto/incomePlan.dto'
+import { ApplicationWriteApi } from './socialInsuranceAdministrationClient.type'
 
 @Injectable()
 export class SocialInsuranceAdministrationClientService {
@@ -37,6 +43,9 @@ export class SocialInsuranceAdministrationClientService {
     private readonly pensionCalculatorApi: PensionCalculatorApi,
     private readonly deathBenefitsApi: DeathBenefitsApi,
     private readonly incomePlanApi: IncomePlanApi,
+    private readonly generalApi: GeneralApi,
+    private readonly medicalDocumentsApi: MedicalDocumentsApi,
+    private readonly questionnairesApi: QuestionnairesApi,
   ) {}
 
   private applicationApiWithAuth = (user: User) =>
@@ -59,6 +68,15 @@ export class SocialInsuranceAdministrationClientService {
 
   private incomePlanApiWithAuth = (user: User) =>
     this.incomePlanApi.withMiddleware(new AuthMiddleware(user as Auth))
+
+  private generalApiWithAuth = (user: User) =>
+    this.generalApi.withMiddleware(new AuthMiddleware(user as Auth))
+
+  private medicalDocumentsApiWithAuth = (user: User) =>
+    this.medicalDocumentsApi.withMiddleware(new AuthMiddleware(user as Auth))
+
+  private questionnairesApiWithAuth = (user: User) =>
+    this.questionnairesApi.withMiddleware(new AuthMiddleware(user as Auth))
 
   getPaymentPlan(
     user: User,
@@ -188,5 +206,30 @@ export class SocialInsuranceAdministrationClientService {
     ).apiProtectedV1IncomePlanTemporaryCalculationsPost({
       trWebApiServicesDomainFinanceModelsIslandIsIncomePlanDto: parameters,
     })
+  }
+
+  async getUnions(
+    user: User,
+  ): Promise<Array<TrWebApiServicesDomainUnionsModelsUnionDto>> {
+    return this.generalApiWithAuth(user).apiProtectedV1GeneralUnionsGet()
+  }
+
+  async getRehabilitationPlan(
+    user: User,
+  ): Promise<TrWebExternalModelsServicePortalRehabilitationPlan> {
+    return this.medicalDocumentsApiWithAuth(
+      user,
+    ).apiProtectedV1MedicalDocumentsRehabilitationplanGet()
+  }
+
+  async getSelfAssessmentQuestionnaire(
+    user: User,
+    languages: ApiProtectedV1QuestionnairesSelfassessmentGetRequest,
+  ): Promise<
+    Array<TrWebApiServicesDomainQuestionnairesModelsQuestionnaireDto>
+  > {
+    return this.questionnairesApiWithAuth(
+      user,
+    ).apiProtectedV1QuestionnairesSelfassessmentGet(languages)
   }
 }

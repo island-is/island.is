@@ -11,6 +11,7 @@ import {
   Filter,
   FilterMultiChoice,
   Breadcrumbs,
+  Divider,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
@@ -33,12 +34,14 @@ import {
 } from '../../lib/utils'
 import { format as formatNationalId } from 'kennitala'
 import EmptyState from '../../shared-components/emptyState'
-import ReviewCandidates from './reviewCandidates'
 import CompareLists from '../../shared-components/compareLists'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
-import CreateCollection from '../../shared-components/createCollection'
 import ActionCompleteCollectionProcessing from '../../shared-components/completeCollectionProcessing'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
+import ActionDrawer from '../../shared-components/compareLists/ActionDrawer'
+import { Actions } from '../../shared-components/compareLists/ActionDrawer/ListActions'
+
+const collectionType = SignatureCollectionCollectionType.Presidential
 
 const Lists = () => {
   const { formatMessage } = useLocale()
@@ -142,7 +145,19 @@ const Lists = () => {
             img={nationalRegistryLogo}
             imgPosition="right"
             imgHiddenBelow="sm"
+            buttonGroup={
+              <ActionDrawer
+                allowedActions={[
+                  Actions.DownloadReports,
+                  Actions.CreateCollection,
+                  Actions.ReviewCandidates,
+                ]}
+              />
+            }
+            marginBottom={4}
           />
+          <Divider />
+          <Box marginTop={9} />
           <GridRow marginBottom={5}>
             <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
               <FilterInput
@@ -205,16 +220,6 @@ const Lists = () => {
                     }
                   />
                 </Filter>
-                {lists?.length > 0 &&
-                  collectionStatus === CollectionStatus.InInitialReview && (
-                    <CreateCollection
-                      collectionId={collection?.id}
-                      collectionType={
-                        SignatureCollectionCollectionType.Presidential
-                      }
-                      areaId={undefined}
-                    />
-                  )}
               </Box>
             </GridColumn>
           </GridRow>
@@ -256,9 +261,7 @@ const Lists = () => {
                           maxProgress: list.area.min,
                           withLabel: true,
                         }}
-                        tag={{
-                          ...getTagConfig(list),
-                        }}
+                        tag={getTagConfig(list)}
                         cta={{
                           label: formatMessage(m.viewList),
                           variant: 'text',
@@ -315,11 +318,10 @@ const Lists = () => {
             )}
           {lists?.length > 0 && (
             <Box>
-              {(collectionStatus === CollectionStatus.InInitialReview ||
-                collectionStatus === CollectionStatus.InReview) && (
-                <CompareLists collectionId={collection?.id} />
-              )}
-
+              <CompareLists
+                collectionId={collection?.id}
+                collectionType={collectionType}
+              />
               {!hasInReview &&
                 collectionStatus === CollectionStatus.InInitialReview && (
                   <ActionCompleteCollectionProcessing
@@ -330,10 +332,6 @@ const Lists = () => {
                   />
                 )}
             </Box>
-          )}
-          <CompareLists collectionId={collection?.id} />
-          {lists?.length > 0 && (
-            <ReviewCandidates candidates={collection?.candidates ?? []} />
           )}
         </GridColumn>
       </GridRow>
