@@ -1,4 +1,3 @@
-import { DocumentsScope } from '@island.is/auth/scopes'
 import {
   Box,
   Divider,
@@ -55,7 +54,9 @@ export const UserDropdown = ({
   const userName = user.profile.name
   const actorName = actor?.name
   const isDelegationCompany = user.profile.subjectType === 'legalEntity'
-  const hasAccessToUserProfileInfo = user.scopes.includes(DocumentsScope.main)
+  const hasAccessToUserProfileInfo = user.scopes.includes(
+    '@island.is/documents',
+  )
 
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
