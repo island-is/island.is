@@ -277,17 +277,19 @@ jobs:
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
+      - name: Create output directory for lint output
+        run: |
+          mkdir -p dist/
+          echo "HEAD_LINT_FILE_PATH=dist/lints-processed-head.txt" >> "$GITHUB_ENV"
+          echo "BASE_LINT_FILE_PATH=dist/lints-processed-base.txt" >> "$GITHUB_ENV"
+
       - name: Lint head
         id: lint-head
         run: |
-          set -euo pipefail
-          lints=$(mktemp -t lint-head.XXXXXX)
-          echo "lints-file=$lints" | tee -a "$GITHUB_OUTPUT"
-          yarn nx run-many -t lint --output-style=static --projects "$AFFECTED_PROJECTS" |
-            tee "$lints"
-          (grep -oP '(?<=✖ )(\d+)(?= problems)' "$lints" || echo '0') | # Find number of problems
-            awk '{ SUM += $1} END { SUM /= 2; printf "lint-count=%d\n", SUM }' | # sum number of problems, divide by 2 because each problem summary occurs twice
-            tee -a "$GITHUB_OUTPUT" # Finally create output
+          ./scripts/ci/lint-and-parse.sh \
+            "$AFFECTED_PROJECTS" \
+            "$HEAD_LINT_FILE_PATH"
+          echo "lints-file=$HEAD_LINT_FILE_PATH" | tee -a "$GITHUB_OUTPUT"
 
       # Checkout for linting base
       - uses: actions/checkout@v4
@@ -300,42 +302,22 @@ jobs:
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
         id: lint-base
         run: |
-          set -euo pipefail
-          lints=$(mktemp -t lint-base.XXXXXX)
-          echo "lints-file=$lints" | tee -a "$GITHUB_OUTPUT"
-          yarn nx run-many -t lint --output-style=static --projects "$AFFECTED_PROJECTS" |
-            tee "$lints"
-          (grep -oP '(?<=✖ )(\d+)(?= problems)' "$lints" || echo '0') | # Find number of problems
-            awk '{ SUM += $1} END { SUM /= 2; printf "lint-count=%d\n", SUM }' | # sum number of problems, divide by 2 because each problem summary occurs twice
-            tee -a "$GITHUB_OUTPUT" # Finally create output
+          ./scripts/ci/lint-and-parse.sh \
+            "$AFFECTED_PROJECTS" \
+            "$BASE_LINT_FILE_PATH"
+          echo "lints-file=$BASE_LINT_FILE_PATH" | tee -a "$GITHUB_OUTPUT"
 
       - name: No new lints
+        id: newlints
         if: ${{ !contains(github.event.pull_request.labels.*.name, 'dirty bypass') }}
         env:
-          HEAD_LINT_COUNT: ${{steps.lint-head.outputs.lint-count}}
-          BASE_LINT_COUNT: ${{steps.lint-base.outputs.lint-count}}
-          HEAD_LINT_FILE: ${{steps.lint-head.outputs.lints-file}}
-          BASE_LINT_FILE: ${{steps.lint-base.outputs.lints-file}}
+          HEAD_LINT_PROCESSED_FILE: ${{steps.lint-head.outputs.lints-file}}
+          BASE_LINT_PROCESSED_FILE: ${{steps.lint-base.outputs.lints-file}}
         run: |
-          # Get `<filename> #lints: <n>` lines for easy diff
-          for f in "${BASE_LINT_FILE}" "${HEAD_LINT_FILE}"; do
-            # Make "Remote cache..." and "Local cache" be the same
-            sed -i -E 's/\s*\[[^[]*cache[^]]*\]\s*//g' "${f}" || echo "No cached targets found in $f"
-            grep -oP "(?<=$PWD/).*" "${f}" | sort -n | uniq -c | awk '{print($2 " #lints: " $1)}' > "${f}_files.out" || { echo "No lints found in $f"; }
-          done
-          NEW_LINTS=$(comm -13 "${BASE_LINT_FILE}_files.out" "${HEAD_LINT_FILE}_files.out" | wc -l) || { echo "Failed comparing output files"; exit 1; }
-          COUNT_DIFF=$(( HEAD_LINT_COUNT - BASE_LINT_COUNT )) || :
-          if (( NEW_LINTS == 0 )); then
-            echo "Lint count has not increased (𝚫=$COUNT_DIFF)"
-            exit 0
-          fi
-          echo "::error title=NEW_LINTS::Please fix your lints 🙏 (found $NEW_LINTS additional lints)"
-          echo "Files with changed lints:"
-          diff "${BASE_LINT_FILE}_files.out" "${HEAD_LINT_FILE}_files.out" || :
-          echo "::group::lintdiff"
-          diff "${BASE_LINT_FILE}" "${HEAD_LINT_FILE}" || : # Ignore diff exit code
-          echo "::endgroup::"
-          exit 1
+          # compare-lints.sh <BASE_LINT_PROCESSED_FILE> <HEAD_LINT_PROCESSED_FILE>
+          ./scripts/ci/compare-lints.sh \
+            "$BASE_LINT_PROCESSED_FILE" \
+            "$HEAD_LINT_PROCESSED_FILE"
 
       - name: Checkout back to PR
         uses: actions/checkout@v4
