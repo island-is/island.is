@@ -1,6 +1,5 @@
 import { Box } from '@island.is/island-ui/core'
-import ListActions from './ListActions'
-import { Actions } from './ListActions'
+import ListActions, { Actions } from './ListActions'
 import ListManagers from './ListManagers'
 
 interface ActionDrawerProps {
