@@ -1,5 +1,5 @@
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 
 import {
   CaseAppealRulingDecision,
@@ -27,7 +27,7 @@ jest.mock('next/router', () => ({
 }))
 
 describe('COA - Ruling', () => {
-  it('should render fields to change validToDate and isolation if the case appeal ruling decision is CHANGED', () => {
+  it('should render fields to change validToDate and isolation if the case appeal ruling decision is CHANGED', async () => {
     render(
       <IntlProviderWrapper>
         <ApolloProvider
@@ -47,10 +47,10 @@ describe('COA - Ruling', () => {
       </IntlProviderWrapper>,
     )
 
-    expect(screen.getByTestId('caseDecisionSection')).toBeInTheDocument()
+    expect(await screen.findByTestId('caseDecisionSection')).toBeInTheDocument()
   })
 
-  it('should not render fields to change validToDate and isolation if the case appeal ruling decision is not CHANGED', () => {
+  it('should not render fields to change validToDate and isolation if the case appeal ruling decision is not CHANGED', async () => {
     render(
       <IntlProviderWrapper>
         <ApolloProvider
@@ -71,6 +71,10 @@ describe('COA - Ruling', () => {
       </IntlProviderWrapper>,
     )
 
-    expect(screen.queryByTestId('caseDecisionSection')).not.toBeInTheDocument()
+    await waitFor(() => {
+      expect(
+        screen.queryByTestId('caseDecisionSection'),
+      ).not.toBeInTheDocument()
+    })
   })
 })
