@@ -61,7 +61,9 @@ export const MobileOverview: FC<Props> = ({
         <DocumentActionBar
           onGoBack={onPressBack}
           bookmarked={activeBookmark}
-          isReplyable={replyState?.replyable}
+          isReplyable={
+            replyState?.closedForMoreReplies ? false : replyState?.replyable
+          }
           onReply={() =>
             setReplyState((prev) => ({ ...prev, replyOpen: true }))
           }

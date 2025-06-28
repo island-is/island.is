@@ -82,18 +82,7 @@ const ReplyContainer = () => {
                     subject: ticket?.subject,
                     authorId: ticket?.authorId,
                     status: ticket?.status,
-                    comments: ticket?.comments?.map((item, index) => {
-                      if (index === (ticket?.comments?.length ?? 0) - 2) {
-                        return {
-                          ...item,
-                          hide: false,
-                        }
-                      } else
-                        return {
-                          ...item,
-                          hide: true,
-                        }
-                    }),
+                    comments: ticket?.comments,
                   }
                   changeReplyState({
                     replies: reply,
@@ -113,18 +102,6 @@ const ReplyContainer = () => {
     </Box>
   )
 
-  const toggleReply = (id?: string | null) => {
-    if (!replies) return
-    const updatedReplies: Reply = {
-      ...replies,
-      comments:
-        replies?.comments?.map((reply) =>
-          reply.id === id ? { ...reply, hide: !reply.hide } : reply,
-        ) || [],
-    }
-    changeReplyState({ replies: updatedReplies })
-  }
-
   const toggleShowAllReplies = () => {
     setShowAllReplies(!showAllReplies)
   }
@@ -137,7 +114,6 @@ const ReplyContainer = () => {
   const lastReply = replies?.comments?.[repliesLength - 1] ?? null
   const lastReplyID = replies?.id ?? null
   const hideReplies = isMobile && replyState?.replyOpen
-
   return (
     <>
       <Box>
@@ -167,35 +143,46 @@ const ReplyContainer = () => {
               </Box>
               <ReplyHeader
                 caseNumber={lastReplyID ?? undefined}
-                initials={getInitials(lastReply?.author ?? '')}
+                initials={
+                  profile.name === lastReply?.author
+                    ? getInitials(lastReply?.author ?? '')
+                    : undefined
+                }
+                avatar={activeDocument.img}
                 title={lastReply?.author ?? activeDocument.subject}
                 hasEmail={isDefined(userEmail)}
                 subTitle={formatDate(lastReply?.createdDate, dateFormat.is)}
                 displayEmail={false}
               />
+
               <ReplySent body={lastReply?.body} />
             </Box>
           </>
         ) : // Show all replies
         hideReplies ? undefined : (
           replies?.comments?.map((reply) => (
-            <Box
-              onClick={() => toggleReply(reply.id)}
-              key={reply.id}
-              cursor="pointer"
-            >
+            <Box key={reply.id}>
               <Box paddingY={1}>
                 <Divider />
               </Box>
               <ReplyHeader
                 caseNumber={replies.id ?? undefined}
-                initials={getInitials(reply.author ?? '')}
-                title={reply.author ?? activeDocument.subject}
+                initials={
+                  profile.name === reply.author
+                    ? getInitials(reply.author ?? '')
+                    : undefined
+                }
+                avatar={activeDocument.img}
+                title={
+                  profile.name === reply.author
+                    ? reply.author
+                    : activeDocument.sender ?? activeDocument.subject
+                }
                 hasEmail={isDefined(userEmail)}
                 subTitle={formatDate(reply?.createdDate, dateFormat.is)}
                 displayEmail={false}
               />
-              {!reply.hide && <ReplySent body={reply.body} />}
+              {<ReplySent body={reply.body} />}
             </Box>
           ))
         )}
@@ -233,10 +220,14 @@ const ReplyContainer = () => {
 
           <ReplySent
             body={replyState.reply.body}
-            intro={formatMessage(messages.replySent, {
-              email: userEmail,
-              caseNumber: replyState.reply.id,
-            })}
+            intro={
+              replies?.comments?.length === 0
+                ? formatMessage(messages.replySent, {
+                    email: userEmail,
+                    caseNumber: replyState.reply.id,
+                  })
+                : undefined
+            }
           />
         </>
       )}
@@ -262,14 +253,7 @@ const ReplyContainer = () => {
             displayCloseButton={!sent}
             onClose={() => changeReplyState({ replyOpen: false })}
           />
-          {sent && replyState.reply && (
-            <ReplySent
-              body={replyState.reply.body}
-              intro={formatMessage(messages.replySent, {
-                email: userEmail,
-              })}
-            />
-          )}
+
           {/* Form  */}
           {!loading && replyState.replyOpen && (
             <ReplyForm
@@ -279,7 +263,10 @@ const ReplyContainer = () => {
           )}
         </Box>
       )}
-      {replyState?.replyable && !replyState?.replyOpen && button}
+      {!replyState?.closedForMoreReplies &&
+        replyState?.replyable &&
+        !replyState?.replyOpen &&
+        button}
     </>
   )
 }

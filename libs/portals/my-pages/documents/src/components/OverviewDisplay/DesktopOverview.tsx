@@ -85,7 +85,9 @@ export const DesktopOverview: FC<Props> = ({
         actionBar={{
           archived: activeArchive,
           bookmarked: activeBookmark,
-          isReplyable: replyState?.replyable,
+          isReplyable: replyState?.closedForMoreReplies
+            ? false
+            : replyState?.replyable,
           onReply: () =>
             setReplyState((prev) => ({ ...prev, replyOpen: true })),
         }}
