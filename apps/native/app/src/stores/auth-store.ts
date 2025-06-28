@@ -221,7 +221,7 @@ export const authStore = create<AuthStore>((set, get) => ({
     clearAllStorages()
 
     // Clear widgets
-    clearWidgetData();
+    clearWidgetData()
 
     // Clear push token if exists
     const pushToken = notificationsStore.getState().pushToken
