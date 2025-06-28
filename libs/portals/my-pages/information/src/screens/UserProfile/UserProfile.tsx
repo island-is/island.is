@@ -23,11 +23,7 @@ const UserProfile = () => {
         serviceProviderTooltip={formatMessage(m.userProfileTooltip)}
         serviceProviderSlug={ISLANDIS_SLUG}
       />
-      <ProfileForm
-        showIntroText={false}
-        showDetails={!!data}
-        title={profile.name || ''}
-      />
+      <ProfileForm showIntroText={false} title={profile.name || ''} />
     </>
   )
 }

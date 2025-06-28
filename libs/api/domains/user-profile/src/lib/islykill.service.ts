@@ -77,6 +77,7 @@ export class IslykillService {
             noUserFound: true,
           }
         }
+        console.log('Error getting islykill settings', e)
         throw new BadRequestException(e, errorMsg)
       })
     return apiData
