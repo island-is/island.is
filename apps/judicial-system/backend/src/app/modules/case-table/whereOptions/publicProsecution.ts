@@ -1,45 +1,26 @@
 import { Op } from 'sequelize'
 
-import {
-  CaseIndictmentRulingDecision,
-  CaseState,
-  EventType,
-  indictmentCases,
-  type User as TUser,
-} from '@island.is/judicial-system/types'
+import { type User } from '@island.is/judicial-system/types'
 
-import { buildEventLogExistsCondition } from './conditions'
+import { publicProsecutionIndictmentsAccessWhereOptions } from './access'
 
 // Public prosecution indictments
 // Specific for prosecutors at the public prosecutor office
 
-const publicProsecutionIndictmentsSharedWhereOptions = (user: TUser) => ({
-  is_archived: false,
-  type: indictmentCases,
-  indictment_ruling_decision: [
-    CaseIndictmentRulingDecision.FINE,
-    CaseIndictmentRulingDecision.RULING,
-  ],
-  state: [CaseState.COMPLETED],
-  [Op.and]: [
-    buildEventLogExistsCondition(
-      EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
-      true,
-    ),
-  ],
-  indictment_reviewer_id: user.id,
-})
-
 export const publicProsecutionIndictmentsInReviewWhereOptions = (
-  user: TUser,
+  user: User,
 ) => ({
-  ...publicProsecutionIndictmentsSharedWhereOptions(user),
+  ...publicProsecutionIndictmentsAccessWhereOptions(user),
   indictment_review_decision: null,
 })
 
 export const publicProsecutionIndictmentsReviewedWhereOptions = (
-  user: TUser,
+  user: User,
 ) => ({
-  ...publicProsecutionIndictmentsSharedWhereOptions(user),
+  ...publicProsecutionIndictmentsAccessWhereOptions(user),
   indictment_review_decision: { [Op.not]: null },
 })
+
+// Public prosecution cases access
+export const publicProsecutorCasesAccessWhereOptions = (user: User) =>
+  publicProsecutionIndictmentsAccessWhereOptions(user)

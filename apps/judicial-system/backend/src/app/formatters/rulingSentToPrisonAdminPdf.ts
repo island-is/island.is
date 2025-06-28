@@ -5,6 +5,7 @@ import {
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
 import {
+  DefendantEventType,
   EventType,
   ServiceRequirement,
   VerdictAppealDecision,
@@ -61,7 +62,10 @@ export const createRulingSentToPrisonAdminPdf = (
 
   const sentToPrisonAdminDate = theCase.defendants
     ?.flatMap((defendant) => defendant.eventLogs || [])
-    .filter((eventLog) => eventLog.eventType === 'SENT_TO_PRISON_ADMIN')
+    .filter(
+      (eventLog) =>
+        eventLog.eventType === DefendantEventType.SENT_TO_PRISON_ADMIN,
+    )
     .sort(
       (a, b) => new Date(b.created).getTime() - new Date(a.created).getTime(),
     )[0]?.created

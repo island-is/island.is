@@ -14,15 +14,15 @@ import {
   districtCourtRequestCasesInProgress,
 } from './caseTables/districtCourt'
 import {
-  prisonRequestCasesActive,
-  prisonRequestCasesDone,
-} from './caseTables/prison'
-import {
   prisonAdminIndictmentsRegisteredRuling,
   prisonAdminIndictmentsSentToPrisonAdmin,
   prisonAdminRequestCasesActive,
   prisonAdminRequestCasesDone,
 } from './caseTables/prisonAdmin'
+import {
+  prisonStaffRequestCasesActive,
+  prisonStaffRequestCasesDone,
+} from './caseTables/prisonStaff'
 import {
   prosecutionIndictmentsCompleted,
   prosecutionIndictmentsInDraft,
@@ -73,8 +73,8 @@ export const caseTables: Record<CaseTableType, CaseTable> = {
   DISTRICT_COURT_INDICTMENTS_IN_PROGRESS: districtCourtIndictmentsInProgress,
   DISTRICT_COURT_INDICTMENTS_FINALIZING: districtCourtIndictmentsFinalizing,
   DISTRICT_COURT_INDICTMENTS_COMPLETED: districtCourtIndictmentsCompleted,
-  PRISON_REQUEST_CASES_ACTIVE: prisonRequestCasesActive,
-  PRISON_REQUEST_CASES_DONE: prisonRequestCasesDone,
+  PRISON_STAFF_REQUEST_CASES_ACTIVE: prisonStaffRequestCasesActive,
+  PRISON_STAFF_REQUEST_CASES_DONE: prisonStaffRequestCasesDone,
   PRISON_ADMIN_REQUEST_CASES_ACTIVE: prisonAdminRequestCasesActive,
   PRISON_ADMIN_REQUEST_CASES_DONE: prisonAdminRequestCasesDone,
   PRISON_ADMIN_INDICTMENTS_SENT_TO_PRISON_ADMIN:

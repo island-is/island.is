@@ -275,13 +275,11 @@ const generateIndictmentCaseStateTag = (
 
   const courtDate = getIndictmentCourtDate(c)
 
-  const allServed = () => {
-    return c.defendants?.every(
-      (d) =>
-        d.isAlternativeService ||
-        d.subpoenas?.some((s) => isSuccessfulServiceStatus(s.serviceStatus)),
-    )
-  }
+  const allServed = c.defendants?.every(
+    (d) =>
+      d.isAlternativeService ||
+      d.subpoenas?.some((s) => isSuccessfulServiceStatus(s.serviceStatus)),
+  )
 
   const generateReceivedIndictmentStateTag = (): CaseTableCell<TagValue> => {
     switch (indictmentDecision) {
@@ -295,7 +293,7 @@ const generateIndictmentCaseStateTag = (
         return generateCell({ color: 'blue', text: 'Endurúthlutun' }, 'F')
       default:
         return courtDate
-          ? allServed()
+          ? allServed
             ? generateCell({ color: 'mint', text: 'Á dagskrá' }, 'D')
             : generateCell({ color: 'red', text: 'Óbirt' })
           : generateCell({ color: 'blueberry', text: 'Móttekið' }, 'C')
