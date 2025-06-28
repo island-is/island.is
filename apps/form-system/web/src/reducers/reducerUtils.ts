@@ -1,6 +1,8 @@
-import { FormSystemScreen, FormSystemSection } from '@island.is/api/schema'
+import {
+  FormSystemScreen,
+  FormSystemSection,
+} from '@island.is/api/schema'
 import { ApplicationState } from '@island.is/form-system/ui'
-import { validateScreen } from '../utils/validation'
 import {
   ApolloCache,
   DefaultContext,
@@ -67,14 +69,14 @@ export const incrementWithScreens = (
   const screens = currentSectionData.screens ?? []
   const maxScreenIndex = screens.length - 1
   const [submitScreen] = submitScreenMutation
-  const errors = validateScreen(state)
-  if (errors.length > 0) {
+  const errors = state.errors ?? []
+  const isValid = state.isValid ?? true
+  if (errors.length > 0 && isValid) {
     return {
       ...state,
       errors,
     }
   }
-
   submitScreen({
     variables: {
       input: {
@@ -105,11 +107,11 @@ export const incrementWithScreens = (
       },
       currentScreen: hasScreens(nextSection)
         ? {
-            index: 0,
-            data: nextSection.screens
-              ? (nextSection.screens[0] as FormSystemScreen)
-              : undefined,
-          }
+          index: 0,
+          data: nextSection.screens
+            ? (nextSection.screens[0] as FormSystemScreen)
+            : undefined,
+        }
         : undefined,
       errors: [],
     }
@@ -138,9 +140,9 @@ export const incrementWithoutScreens = (
     },
     currentScreen: hasScreens(nextSection)
       ? {
-          data: nextSection.screens?.[0] as FormSystemScreen,
-          index: 0,
-        }
+        data: nextSection.screens?.[0] as FormSystemScreen,
+        index: 0,
+      }
       : undefined,
   }
 }
@@ -215,11 +217,21 @@ export const decrementWithoutScreens = (
   }
 }
 
+export const setError =(
+  state: ApplicationState,
+  fieldId: string,
+  hasError: boolean,
+): ApplicationState => {
+  let errorArray = Array.isArray(state.errors) ? state.errors : []
+  hasError ? [...errorArray, fieldId] : errorArray = errorArray.filter(id => id !== fieldId)
+  return { ...state, errors: errorArray }
+}
+
+
 export const setFieldValue = (
   state: ApplicationState,
   fieldProperty: string,
   fieldId: string,
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any,
 ): ApplicationState => {
   const { currentScreen } = state
@@ -227,7 +239,6 @@ export const setFieldValue = (
     return state
   }
   const screen = currentScreen.data
-
   const updatedFields = screen.fields?.map((field) => {
     if (field?.id === fieldId) {
       let newValue = field?.values?.[0] ?? {}
@@ -286,7 +297,7 @@ export const setFieldValue = (
     },
     errors:
       state.errors && state.errors.length > 0
-        ? validateScreen(updatedState)
+        ? state.errors ?? []
         : [],
   }
 }

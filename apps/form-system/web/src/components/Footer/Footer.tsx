@@ -5,6 +5,8 @@ import { useIntl } from 'react-intl'
 import { webMessages } from '@island.is/form-system/ui'
 import { SAVE_SCREEN } from '@island.is/form-system/graphql'
 import { useMutation } from '@apollo/client'
+import { useFormContext } from 'react-hook-form'
+import { useEffect, useState } from 'react'
 
 interface Props {
   externalDataAgreement: boolean
@@ -13,6 +15,18 @@ interface Props {
 export const Footer = ({ externalDataAgreement }: Props) => {
   const { state, dispatch } = useApplicationContext()
   const { formatMessage } = useIntl()
+  const { trigger } = useFormContext();
+  const [isFormValid, setIsFormValid] = useState(true)
+
+  const validate = async () => {
+    const valid = await trigger()
+    setIsFormValid(valid)
+    return valid
+  }
+
+  useEffect(() => {
+    validate()
+  }, [state.currentScreen?.data, trigger])
 
   const continueButtonText =
     state.currentSection.index === 0
@@ -21,17 +35,19 @@ export const Footer = ({ externalDataAgreement }: Props) => {
   const enableContinueButton =
     state.currentSection.index === 0
       ? externalDataAgreement
-      : state.currentSection.index !== state.sections.length - 1
-
+      : (state.currentSection.index !== state.sections.length - 1 && isFormValid)
+      
   const submitScreen = useMutation(SAVE_SCREEN)
-
-  const handleIncrement = () =>
+  const handleIncrement = async () =>{
+    const isValid = await validate()
+    if (!isValid) return
     dispatch({
       type: 'INCREMENT',
       payload: {
         submitScreen,
       },
     })
+  }
   const handleDecrement = () => dispatch({ type: 'DECREMENT' })
 
   return (
