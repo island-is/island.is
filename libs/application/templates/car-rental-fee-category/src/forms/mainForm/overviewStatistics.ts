@@ -17,33 +17,39 @@ export const overviewStatistics = buildSection({
       title: 'Yfirlit yfir bifreiðar',
       children: [
         buildStaticTableField({
-          header: [
-            'Yfirlit',
-            '',
-          ],
+          header: ['Yfirlit', ''],
           rows: (application) => {
-            const vehicles = getValueViaPath<Array<CurrentVehicleWithMilage>>(
-              application.externalData,
-              'getCurrentVehicles.data',
-            ) ?? []
+            const vehicles =
+              getValueViaPath<Array<CurrentVehicleWithMilage>>(
+                application.externalData,
+                'getCurrentVehicles.data',
+              ) ?? []
 
-            const rates = getValueViaPath<Array<EntryModel>>(
-              application.externalData,
-              'getCurrentVehiclesRateCategory.data',
-            ) ?? []
-            
+            const rates =
+              getValueViaPath<Array<EntryModel>>(
+                application.externalData,
+                'getCurrentVehiclesRateCategory.data',
+              ) ?? []
+
             return [
-              [
-                'Fjöldi bifreiða á skrá',
-                vehicles.length.toString(),
-              ],
+              ['Fjöldi bifreiða á skrá', vehicles.length.toString()],
               [
                 'Fjöldi bifreiða á daggjaldi',
-                rates.filter(x => x.dayRateEntries && hasActiveDayRate(x.dayRateEntries)).length.toString(),
+                rates
+                  .filter(
+                    (x) =>
+                      x.dayRateEntries && hasActiveDayRate(x.dayRateEntries),
+                  )
+                  .length.toString(),
               ],
               [
                 'Fjöldi bifreiða á kílómetragjaldi',
-                rates.filter(x => !x.dayRateEntries || !hasActiveDayRate(x.dayRateEntries)).length.toString(),
+                rates
+                  .filter(
+                    (x) =>
+                      !x.dayRateEntries || !hasActiveDayRate(x.dayRateEntries),
+                  )
+                  .length.toString(),
               ],
             ]
           },

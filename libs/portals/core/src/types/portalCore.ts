@@ -4,7 +4,10 @@ import { FC } from 'react'
 import { MessageDescriptor } from 'react-intl'
 import { RouteObject } from 'react-router-dom'
 
-import type { Features } from '@island.is/react/feature-flags'
+import type {
+  FeatureFlagClient,
+  Features,
+} from '@island.is/react/feature-flags'
 import { IconProps } from '@island.is/island-ui/core'
 import { BffUser } from '@island.is/shared/types'
 import { OrganizationSlugType } from '@island.is/shared/constants'
@@ -94,6 +97,7 @@ export interface PortalModuleProps {
 
 export interface PortalModuleRoutesProps extends PortalModuleProps {
   client: ApolloClient<NormalizedCacheObject>
+  featureFlagClient: FeatureFlagClient
   formatMessage: FormatMessage
 }
 
@@ -157,14 +161,18 @@ export interface PortalModule {
    * The  portal shell will define these as routes
    * within itself and use the provided render function to render out the component
    */
-  routes: (props: PortalModuleRoutesProps) => PortalRoute[]
+  routes: (
+    props: PortalModuleRoutesProps,
+  ) => Promise<PortalRoute[]> | PortalRoute[]
 
   /**
    * Works the same way as routes.
    * The key difference is that if there are company routes present when
    * the logged-in user is a company SSN only the company routes will be rendered.
    */
-  companyRoutes?: (props: PortalModuleProps) => PortalRoute[]
+  companyRoutes?: (
+    props: PortalModuleRoutesProps,
+  ) => Promise<PortalRoute[]> | PortalRoute[]
 
   /**
    * If this is set, the module is only enabled if the feature flag is true for the authenticated user.
