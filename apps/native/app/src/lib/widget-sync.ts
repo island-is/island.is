@@ -1,6 +1,6 @@
 import { NativeModules, Platform } from 'react-native'
 import { reloadTimelines, setItem } from 'react-native-widgetkit'
-import { bundleId, config, isTestingApp } from '../config'
+import { config, isTestingApp } from '../config'
 import { ListLicensesQueryResult } from '../graphql/types/schema'
 import { authStore } from '../stores/auth-store'
 

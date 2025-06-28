@@ -162,7 +162,7 @@ export function setupEventHandlers() {
   DeviceEventEmitter.addListener('quickActionShortcut', handleQuickAction)
 
   // Subscribe to network status changes
-  addEventListener(({ isConnected, type }) => {
+  addEventListener(({ isConnected }) => {
     const offlineStoreState = offlineStore.getState()
 
     if (!isConnected) {
