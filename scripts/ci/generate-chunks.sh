@@ -13,6 +13,8 @@ if [[ "$SKIP_TESTS_ON_BRANCH" == "7913-$BRANCH" ]] || [[ "${SKIP_TESTS:-}" == tr
   echo "[]"
 elif [[ "${CI_DEBUG:-}" == true ]] && [[ "${TEST_EVERYTHING:-}" != true ]]; then
   echo '["web","air-discount-scheme-api,air-discount-scheme-backend,air-discount-scheme-web","license-api","system-e2e","island-ui-storybook"]'
+elif [[ -n "${CHUNKS_OVERRIDE:-}" ]]; then
+  echo "${CHUNKS_OVERRIDE}"
 else
   # comma-space-separated list of affected targets (e.g. "foo, bar, baz")
   PROJECTS=$("$PROJECT_ROOT"/scripts/ci/_nx-affected-targets.sh "$1")
