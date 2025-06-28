@@ -183,6 +183,8 @@ export const RESTRICTION_CASE_POLICE_REPORT_ROUTE = '/krafa/greinargerd'
 export const RESTRICTION_CASE_CASE_FILES_ROUTE = '/krafa/rannsoknargogn'
 export const RESTRICTION_CASE_OVERVIEW_ROUTE = '/krafa/stadfesta'
 
+export const INVESTIGATION_CASE_REGISTRATION_ROUTE =
+  '/krafa/rannsoknarheimild/efni-krofu'
 export const INVESTIGATION_CASE_DEFENDANT_ROUTE =
   '/krafa/rannsoknarheimild/varnaradili'
 export const INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE =

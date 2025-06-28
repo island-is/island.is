@@ -1,3 +1,3 @@
-import Defendant from '@island.is/judicial-system-web/src/routes//Prosecutor/InvestigationCase/Defendant/Defendant'
+import Registration from '@island.is/judicial-system-web/src/routes/Prosecutor/InvestigationCase/Registration/Registration'
 
-export default Defendant
+export default Registration

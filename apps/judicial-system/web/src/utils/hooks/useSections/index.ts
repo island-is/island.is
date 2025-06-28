@@ -245,11 +245,29 @@ const useSections = (
         ? []
         : [
             {
-              name: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
+              name: 'Efni kröfu',
               isActive:
                 isActive(constants.CREATE_INVESTIGATION_CASE_ROUTE) ||
-                isActive(constants.INVESTIGATION_CASE_DEFENDANT_ROUTE),
+                isActive(constants.INVESTIGATION_CASE_REGISTRATION_ROUTE),
+              href: `${constants.INVESTIGATION_CASE_REGISTRATION_ROUTE}/${id}`,
+            },
+            {
+              name: capitalize(formatMessage(core.defendant, { suffix: 'i' })),
+              isActive: isActive(constants.INVESTIGATION_CASE_DEFENDANT_ROUTE),
               href: `${constants.INVESTIGATION_CASE_DEFENDANT_ROUTE}/${id}`,
+              onClick:
+                !isActive(constants.INVESTIGATION_CASE_DEFENDANT_ROUTE) &&
+                validateFormStepper(
+                  isValid,
+                  [constants.INVESTIGATION_CASE_REGISTRATION_ROUTE],
+                  workingCase,
+                ) &&
+                onNavigationTo
+                  ? async () =>
+                      await onNavigationTo(
+                        constants.INVESTIGATION_CASE_DEFENDANT_ROUTE,
+                      )
+                  : undefined,
             },
             {
               name: formatMessage(
