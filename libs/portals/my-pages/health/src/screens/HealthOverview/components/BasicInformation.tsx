@@ -11,6 +11,7 @@ import React, { useEffect, useState } from 'react'
 import { messages } from '../../..'
 import { HealthPaths } from '../../../lib/paths'
 import { DataState } from '../../../utils/types'
+import { isDefined } from '@island.is/shared/utils'
 
 interface Props {
   healthCenter: DataState<RightsPortalHealthCenterRegistrationHistory | null>
@@ -33,6 +34,15 @@ const BasicInformation: React.FC<Props> = ({
   const doctor = healthCenter.data?.current?.doctor
   const featureFlagClient = useFeatureFlagClient()
 
+  const allEmpty =
+    !isDefined(healthCenter.data) &&
+    !isDefined(dentists.data) &&
+    !isDefined(donor.data) &&
+    !isDefined(blood.data)
+
+  const anyLoading =
+    healthCenter.loading || dentists.loading || donor.loading || blood.loading
+
   useEffect(() => {
     const isFlagEnabled = async () => {
       const ffEnabled = await featureFlagClient.getValue(
@@ -54,61 +64,64 @@ const BasicInformation: React.FC<Props> = ({
       </Text>
       <InfoCardGrid
         cards={[
-          healthCenter.error
-            ? null
-            : {
-                title:
-                  healthCenter.data?.current?.healthCenterName ??
-                  formatMessage(messages.healthCenterNoHealthCenterRegistered),
-                description: doctor
-                  ? formatMessage(messages.healthCenterDoctorLabel, {
-                      doctor: doctor,
-                    })
-                  : formatMessage(messages.healthCenterNoDoctor),
-                to: HealthPaths.HealthCenter,
-                loading: healthCenter.loading,
-              },
-          dentists.error
-            ? null
-            : {
-                title: formatMessage(messages.dentist),
-                description:
-                  dentists.data ?? formatMessage(messages.noDentistRegistered),
-                to: HealthPaths.HealthDentists,
-                loading: dentists.loading,
-              },
+          {
+            title: healthCenter.error
+              ? formatMessage(messages.healthCenter)
+              : healthCenter.data?.current?.healthCenterName ??
+                formatMessage(messages.healthCenterNoHealthCenterRegistered),
+            description: doctor
+              ? formatMessage(messages.healthCenterDoctorLabel, {
+                  doctor: doctor,
+                })
+              : formatMessage(messages.healthCenterNoDoctor),
+            to: HealthPaths.HealthCenter,
+            loading: healthCenter.loading,
+            error: healthCenter.error,
+          },
+          {
+            title: formatMessage(messages.dentist),
+            description:
+              dentists.data ?? formatMessage(messages.noDentistRegistered),
+            to: HealthPaths.HealthDentists,
+            loading: dentists.loading,
+            error: dentists.error,
+          },
 
-          donor.error
-            ? null
-            : {
-                title: formatMessage(messages.organDonation),
-                description: donor.data?.isDonor
-                  ? formatMessage(messages.youAreOrganDonor)
-                  : donor.data?.limitations?.hasLimitations
-                  ? formatMessage(messages.youAreOrganDonorWithExceptions)
-                  : formatMessage(messages.youAreNotOrganDonor),
+          {
+            title: formatMessage(messages.organDonation),
+            description: donor.data?.isDonor
+              ? formatMessage(messages.youAreOrganDonor)
+              : donor.data?.limitations?.hasLimitations
+              ? formatMessage(messages.youAreOrganDonorWithExceptions)
+              : formatMessage(messages.youAreNotOrganDonor),
 
-                to: HealthPaths.HealthOrganDonation,
-                loading: donor.loading,
-              },
+            to: HealthPaths.HealthOrganDonation,
+            loading: donor.loading,
+            error: donor.error,
+          },
           showBloodtype
-            ? blood.error
-              ? null
-              : {
-                  title: formatMessage(messages.bloodtype),
-                  description: blood.data?.registered
-                    ? blood.data.type
-                    : formatMessage(messages.notRegistered),
+            ? {
+                title: formatMessage(messages.bloodtype),
+                description: blood.data?.registered
+                  ? formatMessage(messages.youAreInBloodGroup, {
+                      arg: blood.data.type,
+                    })
+                  : formatMessage(messages.notRegistered),
 
-                  to: HealthPaths.HealthBloodtype,
-                  loading: blood.loading,
-                }
+                to: HealthPaths.HealthBloodtype,
+                loading: blood.loading,
+                error: blood.error,
+              }
             : null,
         ]}
-        empty={{
-          title: formatMessage(messages.noBasicInfo),
-          description: '',
-        }}
+        empty={
+          !anyLoading && allEmpty
+            ? {
+                title: formatMessage(messages.noBasicInfo),
+                description: '',
+              }
+            : undefined
+        }
         variant="link"
       />
     </Box>

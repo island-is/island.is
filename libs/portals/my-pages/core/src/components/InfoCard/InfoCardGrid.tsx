@@ -27,7 +27,7 @@ export const InfoCardGrid: React.FC<InfoCardGridProps> = ({
   const isMobile = width < theme.breakpoints.md
   const isTablet = width < theme.breakpoints.lg && !isMobile
 
-  if (cards.length === 0 && empty) {
+  if (empty) {
     return (
       <EmptyCard
         title={empty?.title}
@@ -59,6 +59,7 @@ export const InfoCardGrid: React.FC<InfoCardGridProps> = ({
                 appointment={card.appointment}
                 loading={card.loading}
                 tooltip={card.tooltip}
+                error={card.error}
               />
             )}
           </GridColumn>
