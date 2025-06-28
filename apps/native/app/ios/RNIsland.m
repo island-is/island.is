@@ -65,12 +65,19 @@ RCT_EXPORT_METHOD(openSafari:(NSString *)componentId options:(NSDictionary *)opt
   }
 
   (void)safariViewController.view;
-  
+
   if (@available(iOS 13.0, *)) {
     safariViewController.modalPresentationStyle = UIModalPresentationAutomatic;
   }
 
   [vc.navigationController presentViewController:safariViewController animated:YES completion:nil];
+}
+
+RCT_EXPORT_METHOD(setPreferencesValue:(NSString *)key value:(NSString *)value suite:(NSString *)suite)
+{
+  NSUserDefaults *prefs = [[NSUserDefaults alloc] initWithSuiteName:suite];
+  [prefs setObject:value forKey:key];
+  [prefs synchronize];
 }
 
 @end

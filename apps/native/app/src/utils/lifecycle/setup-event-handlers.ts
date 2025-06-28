@@ -28,6 +28,10 @@ let backgroundAppLockTimeout: ReturnType<typeof setTimeout>
 export function setupEventHandlers() {
   // Listen for url events through iOS and Android's Linking library
   Linking.addEventListener('url', ({ url }) => {
+    if (url.includes('wallet/')) {
+      return evaluateUrl(url)
+    }
+
     // Handle Cognito
     if (/cognito/.test(url)) {
       const [, hash] = url.split('#')
@@ -158,7 +162,7 @@ export function setupEventHandlers() {
   DeviceEventEmitter.addListener('quickActionShortcut', handleQuickAction)
 
   // Subscribe to network status changes
-  addEventListener(({ isConnected, type }) => {
+  addEventListener(({ isConnected }) => {
     const offlineStoreState = offlineStore.getState()
 
     if (!isConnected) {

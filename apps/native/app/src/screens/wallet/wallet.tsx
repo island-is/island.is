@@ -4,6 +4,7 @@ import {
   Animated,
   FlatList,
   Image,
+  Linking,
   ListRenderItemInfo,
   RefreshControl,
   View,
@@ -13,6 +14,7 @@ import SpotlightSearch from 'react-native-spotlight-search'
 import styled, { useTheme } from 'styled-components/native'
 import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
 
+import { syncLicenseWidgetData } from '../../lib/widget-sync'
 import {
   Alert,
   Button,
@@ -40,6 +42,7 @@ import { WalletItem } from './components/wallet-item'
 import { useLocale } from '../../hooks/use-locale'
 import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import { INCLUDED_LICENSE_TYPES } from '../wallet-pass/wallet-pass.constants'
+import { evaluateUrl } from '../../lib/deep-linking'
 
 const Tabs = styled.View`
   margin-top: ${({ theme }) => theme.spacing[1]}px;
@@ -67,7 +70,7 @@ const { useNavigationOptions, getNavigationOptions } =
         rightButtons: initialized
           ? getRightButtons({
               icons: ['licenseScan'],
-              theme: theme as any,
+              theme: theme,
             })
           : [],
       },
@@ -117,6 +120,14 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   )
   const [selectedTab, setSelectedTab] = useState(0)
 
+  useEffect(() => {
+    Linking.getInitialURL().then((url) => {
+      if (url?.includes('wallet/')) {
+        return evaluateUrl(url)
+      }
+    })
+  }, [])
+
   // Query list of licenses
   const res = useListLicensesQuery({
     variables: {
@@ -156,6 +167,14 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
     return []
   }, [res])
 
+  useEffect(() => {
+    if (licenseItems) {
+      // Update available licenses in the widgets
+      // @todo remove the data on logout/session expired.
+      syncLicenseWidgetData(licenseItems)
+    }
+  }, [licenseItems])
+
   const lastUpdatedFormatted = useMemo(() => {
     const lastUpdated = licenseItems.find((item) => item.fetch.updated)?.fetch
       .updated
@@ -163,7 +182,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
     return lastUpdated
       ? intl.formatDate(new Date(parseInt(lastUpdated, 10)))
       : undefined
-  }, [licenseItems])
+  }, [licenseItems, intl])
 
   const hasChildLicenses = licenseItems.some(
     (license) => license.isOwnerChildOfUser,
@@ -185,16 +204,16 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
     }
   }, [licenseItems])
 
+  const refetch = res.refetch
   const onRefresh = useCallback(() => {
     try {
       if (loadingTimeout.current) {
         clearTimeout(loadingTimeout.current)
       }
       setRefetching(true)
-      res
-        .refetch()
+      refetch()
         .then(() => {
-          ;(loadingTimeout as any).current = setTimeout(() => {
+          loadingTimeout.current = setTimeout(() => {
             setRefetching(false)
           }, 1331)
         })
@@ -204,7 +223,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
     } catch (err) {
       setRefetching(false)
     }
-  }, [])
+  }, [refetch])
 
   // Using the onRefresh function when pressing the update button in ios is buggy,
   // it scrolls the list half out of view when done - so we do it manually instead

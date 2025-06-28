@@ -14016,6 +14016,7 @@ __metadata:
     react-native-svg: "npm:15.2.0"
     react-native-vision-camera: "npm:4.5.1"
     react-native-webview: "npm:13.8.6"
+    react-native-widgetkit: "npm:1.0.9"
     react-test-renderer: "npm:18.2.0"
     styled-components: "npm:6.1.11"
     typescript: "npm:5.3.3"
@@ -51196,6 +51197,16 @@ __metadata:
     react: "*"
     react-native: "*"
   checksum: 10/9a510ce0c36e733e565f16b3fd44be29f40aac9518db3550a0213206ad578c41ee7fc71431849f2f72e178098241a8f9f0cd31ebfdf2223fd39d349d2f8b9cd0
+  languageName: node
+  linkType: hard
+
+"react-native-widgetkit@npm:1.0.9":
+  version: 1.0.9
+  resolution: "react-native-widgetkit@npm:1.0.9"
+  peerDependencies:
+    react: "*"
+    react-native: "*"
+  checksum: 10/1194c4b9167315da502448f746500d0d07bdad5e0b12113d6887ea3f8eb818c987c3d156776f1da416d20d7ed4d774c2b47290de13b9968ccc39eb6c08be9981
   languageName: node
   linkType: hard
 
