@@ -1,13 +1,15 @@
 import { NativeModules, Platform } from 'react-native'
 import { reloadTimelines, setItem } from 'react-native-widgetkit'
-import { config } from '../config'
+import { bundleId, config, isTestingApp } from '../config'
 import { ListLicensesQueryResult } from '../graphql/types/schema'
 import { authStore } from '../stores/auth-store'
 
 // Constants for shared preferences key and group in iOS
 const SHARED_PREFS_KEY = 'widget_licenses'
-const SHARED_PREFS_GROUP = 'group.is.island.app.dev'
-const WIDGET_KIND = 'is.island.app.LicenseWidget';
+const SHARED_PREFS_GROUP = isTestingApp
+  ? 'group.is.island.app.dev'
+  : 'group.is.island.app'
+const WIDGET_KIND = 'LicenseWidget'
 
 // Function to set license data for widgets
 export async function setLicenseWidgetData(payload: string) {
@@ -53,7 +55,9 @@ export async function syncLicenseWidgetData(
         ...license.payload?.metadata,
         displayTag: license.payload?.metadata?.displayTag?.text,
         // Use the users full name if available, otherwise use the license title
-        title: authStore.getState().userInfo?.name ?? license.payload?.metadata?.title,
+        title:
+          authStore.getState().userInfo?.name ??
+          license.payload?.metadata?.title,
         // @todo is this the correct way to deep link?
         uri: `${config.bundleId}://wallet/${license.license.type}/${license.payload?.metadata?.licenseId}`,
       },

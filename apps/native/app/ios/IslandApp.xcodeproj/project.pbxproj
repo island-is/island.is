@@ -74,6 +74,7 @@
 		54B034D314460DA252CA27C7 /* Pods-IslandApp.testing.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IslandApp.testing.xcconfig"; path = "Target Support Files/Pods-IslandApp/Pods-IslandApp.testing.xcconfig"; sourceTree = "<group>"; };
 		5BD3F84B09D28615BB8D415C /* Pods-IslandApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IslandApp.release.xcconfig"; path = "Target Support Files/Pods-IslandApp/Pods-IslandApp.release.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = IslandApp/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		890AA6A42E10000B000E7D37 /* IslandAppRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = IslandAppRelease.entitlements; path = IslandApp/IslandAppRelease.entitlements; sourceTree = "<group>"; };
 		8DCA6BB3F9BC0A645D723048 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-IslandApp/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		941A2A9F3CFC44F91E0A673C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = IslandApp/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
 		E367D422298A854E007054A4 /* IslandApp-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "IslandApp-Bridging-Header.h"; sourceTree = "<group>"; };
@@ -102,7 +103,6 @@
 		E3C8A68C2E09E932006111E3 /* LicenseWidgetExtension.appex */ = {isa = PBXFileReference; explicitFileType = "wrapper.app-extension"; includeInIndex = 0; path = LicenseWidgetExtension.appex; sourceTree = BUILT_PRODUCTS_DIR; };
 		E3C8A68D2E09E932006111E3 /* WidgetKit.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = WidgetKit.framework; path = System/Library/Frameworks/WidgetKit.framework; sourceTree = SDKROOT; };
 		E3C8A68F2E09E933006111E3 /* SwiftUI.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = SwiftUI.framework; path = System/Library/Frameworks/SwiftUI.framework; sourceTree = SDKROOT; };
-		E3C8A6B42E09F286006111E3 /* LicenseWidgetExtension.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = LicenseWidgetExtension.entitlements; sourceTree = "<group>"; };
 		ED297162215061F000B7C4FE /* JavaScriptCore.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = JavaScriptCore.framework; path = System/Library/Frameworks/JavaScriptCore.framework; sourceTree = SDKROOT; };
 /* End PBXFileReference section */
 
@@ -152,6 +152,7 @@
 		13B07FAE1A68108700A75B9A /* IslandApp */ = {
 			isa = PBXGroup;
 			children = (
+				890AA6A42E10000B000E7D37 /* IslandAppRelease.entitlements */,
 				E367D428298AB95F007054A4 /* IslandApp.entitlements */,
 				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
 				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
@@ -192,7 +193,6 @@
 		83CBB9F61A601CBA00E9B192 = {
 			isa = PBXGroup;
 			children = (
-				E3C8A6B42E09F286006111E3 /* LicenseWidgetExtension.entitlements */,
 				E367D42C298DF226007054A4 /* Resources */,
 				E367D42A298DEB5F007054A4 /* Config */,
 				13B07FAE1A68108700A75B9A /* IslandApp */,
@@ -751,7 +751,7 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				CLANG_ENABLE_MODULES = YES;
-				CODE_SIGN_ENTITLEMENTS = IslandApp/IslandApp.entitlements;
+				CODE_SIGN_ENTITLEMENTS = IslandApp/IslandAppRelease.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 144;
@@ -918,7 +918,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = LicenseWidgetExtension.entitlements;
+				CODE_SIGN_ENTITLEMENTS = LicenseWidget/LicenseWidgetExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
@@ -965,7 +965,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = LicenseWidgetExtension.entitlements;
+				CODE_SIGN_ENTITLEMENTS = LicenseWidget/LicenseWidgetExtension.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
@@ -1011,7 +1011,7 @@
 				CLANG_ENABLE_OBJC_WEAK = YES;
 				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
 				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
-				CODE_SIGN_ENTITLEMENTS = LicenseWidgetExtension.entitlements;
+				CODE_SIGN_ENTITLEMENTS = LicenseWidget/LicenseWidgetExtensionRelease.entitlements;
 				CODE_SIGN_IDENTITY = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
 				COPY_PHASE_STRIP = NO;
@@ -1034,7 +1034,7 @@
 				MARKETING_VERSION = 1.0;
 				MTL_FAST_MATH = YES;
 				OTHER_SWIFT_FLAGS = "$(inherited) -D EXPO_CONFIGURATION_RELEASE";
-				PRODUCT_BUNDLE_IDENTIFIER = is.island.app.dev.LicenseWidget;
+				PRODUCT_BUNDLE_IDENTIFIER = is.island.app.LicenseWidget;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
 				SKIP_INSTALL = YES;

@@ -57,7 +57,8 @@ struct Provider: AppIntentTimelineProvider {
   }
   
   private func loadLicensePayload(for configuration: ConfigurationAppIntent) -> LicensePayload? {
-    let suiteName = "group.is.island.app"
+    let bundleId = (Bundle.main.bundleIdentifier ?? "is.island.app").replacingOccurrences(of: ".LicenseWidget", with: "")
+    let suiteName = "group.\(bundleId)"
     let defaults = UserDefaults(suiteName: suiteName)
     let rawJSON = defaults?.string(forKey: "widget_licenses") ?? "[]"
 //    print("passed data: \(rawJSON)")
