@@ -1,5 +1,6 @@
 import { ChangeEvent, FC, FocusEvent, useEffect, useState } from 'react'
 import { useIntl } from 'react-intl'
+import { InputMask } from '@react-input/mask'
 
 import { DatePicker, Input } from '@island.is/island-ui/core'
 import {
@@ -7,7 +8,7 @@ import {
   Validation,
 } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { BlueBox, TimeInputField } from '../../components'
+import { BlueBox } from '../../components'
 import { strings } from './DateTime.strings'
 import * as styles from './DateTime.css'
 
@@ -117,7 +118,9 @@ const DateTime: FC<Props> = ({
     )
   }
 
-  const onTimeChange = (event: ChangeEvent<HTMLInputElement>) => {
+  const onTimeChange = (
+    event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const newTime = event.target.value
 
     setCurrentTime(newTime)
@@ -133,7 +136,9 @@ const DateTime: FC<Props> = ({
     sendToParent(currentDate, newTime)
   }
 
-  const onTimeBlur = (event: FocusEvent<HTMLInputElement>) => {
+  const onTimeBlur = (
+    event: FocusEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     const time = event.target.value
 
     const validations: Validation[] = ['empty', 'time-format']
@@ -194,28 +199,27 @@ const DateTime: FC<Props> = ({
           size={size}
         />
         {!dateOnly && (
-          <TimeInputField
+          <InputMask
+            component={Input}
+            mask="  :  "
+            showMask
+            replacement={{ ' ': /\d/ }}
             disabled={disabled || locked || currentDate === undefined}
             onChange={onTimeChange}
             onBlur={onTimeBlur}
             value={currentTime}
-          >
-            <Input
-              data-testid={`${name}-time`}
-              name={`${name}-time`}
-              label={timeLabel ?? formatMessage(strings.timeLabel)}
-              placeholder={formatMessage(strings.timePlaceholder)}
-              errorMessage={timeErrorMessage}
-              hasError={timeErrorMessage !== undefined}
-              icon={
-                locked ? { name: 'lockClosed', type: 'outline' } : undefined
-              }
-              required={required}
-              backgroundColor={backgroundColor}
-              size={size}
-              autoComplete="off"
-            />
-          </TimeInputField>
+            data-testid={`${name}-time`}
+            name={`${name}-time`}
+            label={timeLabel ?? formatMessage(strings.timeLabel)}
+            placeholder={formatMessage(strings.timePlaceholder)}
+            errorMessage={timeErrorMessage}
+            hasError={timeErrorMessage !== undefined}
+            icon={locked ? { name: 'lockClosed', type: 'outline' } : undefined}
+            required={required}
+            backgroundColor={backgroundColor}
+            size={size}
+            autoComplete="off"
+          />
         )}
       </div>
     )

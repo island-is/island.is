@@ -123,6 +123,7 @@
     "@nestjs/sequelize": "10.0.0",
     "@nestjs/swagger": "7.1.1",
     "@nestjs/terminus": "10.2.0",
+    "@react-input/mask": "2.0.4",
     "@react-pdf/renderer": "^3.1.9",
     "@rehooks/component-size": "1.0.3",
     "@simplewebauthn/server": "10.0.0",
