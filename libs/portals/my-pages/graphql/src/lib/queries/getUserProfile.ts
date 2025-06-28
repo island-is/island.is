@@ -8,6 +8,7 @@ export const USER_PROFILE = gql`
       locale
       email
       bankInfo
+      bankInfoError
       emailStatus
       emailVerified
       mobileStatus

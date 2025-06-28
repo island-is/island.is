@@ -92,11 +92,18 @@ export class UserProfileServiceV2 {
       user,
     ).meUserProfileControllerFindUserProfile()
 
-    const bankInfo = await this.getBankInfo(user)
+    let bankInfo
+    let bankInfoError = false
+    try {
+      bankInfo = await this.getBankInfo(user)
+    } catch (error) {
+      bankInfoError = true
+    }
 
     return {
       ...userProfile,
       bankInfo,
+      bankInfoError,
       canNudge: userProfile.emailNotifications,
     }
   }
