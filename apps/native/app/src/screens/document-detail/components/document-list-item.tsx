@@ -9,6 +9,7 @@ import styled, { useTheme } from 'styled-components/native'
 import { PressableHighlight } from '../../../components/pressable-highlight/pressable-highlight'
 import { useOrganizationsStore } from '../../../stores/organizations-store'
 import { Container, Icon, Typography } from '../../../ui'
+import { Markdown } from '../../../ui/lib/markdown/markdown'
 import { isAndroid } from '../../../utils/devices'
 import { getInitials } from '../../../utils/get-initials'
 
@@ -154,7 +155,7 @@ export const DocumentListItem = ({
                 height.value = e.nativeEvent.layout.height
               }}
             >
-              <Typography variant="body3">{body}</Typography>
+              <Markdown>{body}</Markdown>
             </Body>
           </Animated.View>
         </>
