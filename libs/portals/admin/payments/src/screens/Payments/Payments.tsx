@@ -40,6 +40,7 @@ const Payments = () => {
   const searchQuery = searchParams?.get('q')
   const [searchInput, setSearchInput] = useState(() => searchQuery || '')
   const [focused, setFocused] = useState(false)
+  const [loadingMore, setLoadingMore] = useState(false)
   const triggerRef = useRef<HTMLDivElement>(null)
 
   const { formatMessage } = useLocale()
@@ -77,7 +78,8 @@ const Payments = () => {
       (entries) => {
         const { hasNextPage, endCursor } =
           data?.paymentsGetFlows?.pageInfo || {}
-        if (entries[0].isIntersecting && hasNextPage) {
+        if (entries[0].isIntersecting && hasNextPage && !loadingMore) {
+          setLoadingMore(true)
           fetchMore({
             variables: {
               input: {
@@ -98,6 +100,8 @@ const Payments = () => {
                 },
               }
             },
+          }).finally(() => {
+            setLoadingMore(false)
           })
         }
       },
@@ -112,7 +116,7 @@ const Payments = () => {
     return () => {
       observer.disconnect()
     }
-  }, [loading, data?.paymentsGetFlows?.pageInfo, searchQuery])
+  }, [loading, data?.paymentsGetFlows?.pageInfo, searchQuery, loadingMore])
 
   const handleSearch = () => {
     if (searchInput) {
@@ -224,11 +228,11 @@ const Payments = () => {
               ))}
             </Stack>
           )}
-          {loading && data?.paymentsGetFlows?.data && (
+          {(loading && data?.paymentsGetFlows?.data) || loadingMore ? (
             <Box display="flex" justifyContent="center" marginTop={4}>
               <LoadingDots />
             </Box>
-          )}
+          ) : null}
           <div ref={triggerRef} />
         </Box>
       </Box>
