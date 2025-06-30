@@ -26,8 +26,12 @@ export class OrganizationSubpageSyncService
         // Standalone organization pages have their own search, we don't want subpages there to be found in the global search
         entry.fields.organizationPage.fields.theme !== 'standalone' &&
         // Subpage should not be searchable if the organization frontpage isn't searchable
-        (entry.fields.organizationPage.fields.canBeFoundInSearchResults ??
-          true),
+        (entry.fields.organizationPage.fields.organization?.fields
+          ?.canPagesBeFoundInSearchResults ??
+          entry.fields.organizationPage.fields.canBeFoundInSearchResults ??
+          true) &&
+        // Subpages should not be searchable if they belong to a parent subpage
+        !entry.fields.organizationParentSubpage,
     )
   }
 

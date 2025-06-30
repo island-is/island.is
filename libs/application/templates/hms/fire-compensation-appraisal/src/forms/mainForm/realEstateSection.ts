@@ -35,7 +35,7 @@ export const realEstateSection = buildSection({
 
             return (
               properties?.map((property) => ({
-                label: property?.sjalfgefidStadfang?.birting ?? '',
+                label: `(F${property.fasteignanumer}) ${property?.sjalfgefidStadfang?.birting} `,
                 value: property.fasteignanumer ?? '',
               })) ?? []
             )
@@ -47,6 +47,7 @@ export const realEstateSection = buildSection({
           condition: usageUnitsCondition,
           id: 'usageUnits',
           title: m.realEstateMessages.usageUnit,
+          description: m.realEstateMessages.usageUnitDescription,
           options: notkunareiningarOptions,
         }),
         buildDisplayField({

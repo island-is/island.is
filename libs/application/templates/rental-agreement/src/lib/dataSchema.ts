@@ -8,8 +8,7 @@ import {
   RentalHousingCategoryTypes,
   RentalHousingConditionInspector,
 } from '../utils/enums'
-import { landlordInfo } from './schemas/landlordSchema'
-import { tenantInfo } from './schemas/tenantSchema'
+import { tenantInfo, landlordInfo } from './schemas/landlordAndTenantSchema'
 import { registerProperty } from './schemas/propertySearchSchema'
 import { otherFees } from './schemas/otherFeesSchema'
 import { securityDeposit } from './schemas/securityDepositSchema'
@@ -97,7 +96,8 @@ const propertyInfo = z
     categoryClass: z.nativeEnum(RentalHousingCategoryClass).optional(),
     categoryClassGroup: z
       .nativeEnum(RentalHousingCategoryClassGroup)
-      .optional(),
+      .optional()
+      .nullable(),
   })
   .superRefine((data, ctx) => {
     if (

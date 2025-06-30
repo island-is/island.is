@@ -13,6 +13,9 @@ import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { UserProfileServiceV2 } from './V2/userProfile.service'
 import { AdminUserProfileResolver } from './adminUserProfile.resolver'
 import { ActorProfileResolver } from './actorProfile.resolver'
+import { UserEmailsService } from './modules/user-emails/userEmails.service'
+import { EmailsLoader } from './modules/user-emails/emails.loader'
+import { UserEmailsResolver } from './modules/user-emails/userEmails.resolver'
 
 export interface Config {
   islykill: IslykillApiModuleConfig
@@ -29,6 +32,9 @@ export class UserProfileModule {
         ActorProfileResolver,
         AdminUserProfileResolver,
         IslykillService,
+        UserEmailsResolver,
+        UserEmailsService,
+        EmailsLoader,
       ],
       imports: [
         FeatureFlagModule,

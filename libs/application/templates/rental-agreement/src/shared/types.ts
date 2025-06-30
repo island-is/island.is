@@ -16,13 +16,11 @@ export type ApplicantsInfo = {
   phone: string
   address: string
   email: string
-  isRepresentative: string[]
 }
 
 export type CostField = {
   description: string
   amount?: number
-  hasError?: boolean
 }
 
 export type Files = {
@@ -63,7 +61,9 @@ export interface AddressProps {
 
 export interface ParticipantsSection {
   landlords: ApplicantsInfo[]
+  landlordRepresentatives: ApplicantsInfo[]
   tenants: ApplicantsInfo[]
+  tenantRepresentatives: ApplicantsInfo[]
 }
 
 export interface PropertySection {
@@ -97,9 +97,14 @@ export interface RentalPeriodSection {
   isDefinite: string | undefined
 }
 
+export interface ConsumerIndexItem {
+  month: string
+  value: string
+}
+
 export interface RentalAmountSection {
   rentalAmount: string | undefined
-  isIndexConnected: string | undefined
+  isIndexConnected: YesOrNoEnum | undefined
   indexDate: string | undefined
   indexRate: string | undefined
   paymentMethod: string | undefined
@@ -121,6 +126,7 @@ export interface SecurityDepositSection {
   securityDepositAmount: string | undefined
   securityDepositAmountOther: string | undefined
   securityAmountCalculated: string | undefined
+  securityAmountHiddenRentalAmount: string | undefined
 }
 
 export interface OtherFeesSection {
@@ -134,6 +140,7 @@ export interface OtherFeesSection {
   heatingCostMeterStatusDate: string | undefined
   heatingCostMeterNumber: string | undefined
   heatingCostMeterStatus: string | undefined
+  otherCostPayedByTenant: YesOrNoEnum | undefined
   otherCostItems: CostField[] | undefined
 }
 

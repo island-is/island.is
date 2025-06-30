@@ -89,6 +89,11 @@ export const m = defineMessages({
     defaultMessage: 'Tókst að stofna meðmælasöfnun',
     description: '',
   },
+  createCollectionError: {
+    id: 'admin-portal.signature-collection:createCollectionError',
+    defaultMessage: 'Ekki tókst að stofna meðmælasöfnun',
+    description: '',
+  },
   createCollectionModalDescription: {
     id: 'admin-portal.signature-collection:createCollectionModalDescription',
     defaultMessage:
@@ -133,7 +138,7 @@ export const m = defineMessages({
   },
   numberOfSignatures: {
     id: 'admin-portal.signature-collection:numberOfSignatures',
-    defaultMessage: 'Fjöldi framboða: ',
+    defaultMessage: 'Fjöldi undirskrifta',
     description: '',
   },
   parliamentaryCollectionTitle: {

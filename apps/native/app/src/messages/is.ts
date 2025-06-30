@@ -23,6 +23,7 @@ export const is = {
   // app lock
   'applock.title': 'Sláðu inn 4 tölustafa PIN',
   'applock.attempts': 'tilraunir eftir',
+  'applock.attempt': 'tilraun eftir',
 
   // onboarding
   'onboarding.notifications.title':
@@ -254,9 +255,32 @@ export const is = {
   'inbox.bulkSelect.pleaseTryAgain': 'Vinsamlegast prófaðu aftur síðar',
 
   // document detail
-  'documentDetail.screenTitle': 'Skjal',
+  'documentDetail.screenTitle': 'Póstur',
   'documentDetail.loadingText': 'Sæki skjal',
   'documentDetail.errorUnknown': 'Villa kom upp við að sækja skjal',
+  'documentDetail.buttonReply': 'Svara pósti',
+  'documentDetail.buttonCommunications': 'Samskipti',
+
+  // document reply
+  'documentReply.to': 'Til',
+  'documentReply.from': 'Frá',
+  'documentReply.message': 'Skilaboð',
+  'documentReply.messagePlaceholder': 'Skrifaðu skilaboð hér',
+  'documentReply.uploadAttachment': 'Hlaða upp skjali',
+  'documentReply.sendMessage': 'Senda skilaboð',
+
+  // document communications
+  'documentCommunications.caseNumber': 'Málsnúmer',
+  'documentCommunications.initialReply':
+    'Skilaboðin eru móttekin og mál hefur verið stofnað. Þú getur haldið áfram samskiptunum hér eða í gegnum þitt persónulega netfang {email}.',
+  'documentCommunications.cannotReply':
+    'Ekki er hægt að svara þessum skilaboðum því sendandi hefur lokað fyrir frekari svör í þessu samtali.',
+
+  // register email
+  'registerEmail.title': 'Vinsamlegast skráðu netfang',
+  'registerEmail.description': 'Til þess að svara pósti þarf að skrá netfang',
+  'registerEmail.button': 'Skrá netfang',
+  'registerEmail.cancel': 'Hætta við',
 
   // profile
   'profile.screenTitle': 'Meira',
@@ -438,17 +462,18 @@ export const is = {
   'licenseDetail.ehic.alert.title': 'Mundu eftir kortinu!',
   'licenseDetail.ehic.alert.description':
     'Þetta yfirlit gildir ekki sem sjúkratryggingakort.',
-  'licenseDetail.passport.alert.title': 'Mundu eftir vegabréfinu!',
+  'licenseDetail.passport.alert.title':
+    'Þetta er eingöngu yfirlit og gildir ekki sem persónu- eða ferðaskilríki',
   'licenseDetail.passport.alert.description':
-    'Þetta yfirlit gildir ekki sem ferðaskilríki.',
+    'Einungis skilríkið sjálft er gilt persónu- og ferðaskilríki.',
   'licenseDetail.identityDocument.alert.title':
     'Þetta er eingöngu yfirlit og gildir ekki sem persónuskilríki',
   'licenseDetail.identityDocument.alert.description':
     'Einungis skilríkið sjálft er fullgilt persónuskilríki.',
   'licenseDetail.identityTravelDocument.alert.title':
-    'Mundu eftir nafnskírteininu!',
+    'Þetta er eingöngu yfirlit og gildir ekki sem persónu- eða ferðaskilríki',
   'licenseDetail.identityTravelDocument.alert.description':
-    'Þetta yfirlit gildir ekki sem ferðaskilríki.',
+    'Einungis skilríkið sjálft er gilt persónu- og ferðaskilríki.',
   'licenseDetail.warning.title': 'Rennur út innan 6 mánaða',
   'licenseDetail.passport.warning.description':
     'Athugið að vegabréfið þitt mun renna út innan næstu 6 mánaða.',
