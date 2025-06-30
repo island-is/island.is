@@ -10,7 +10,6 @@ import { useFormContext, Controller } from 'react-hook-form'
 interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
-  hasError?: boolean
   lang?: 'is' | 'en'
 }
 

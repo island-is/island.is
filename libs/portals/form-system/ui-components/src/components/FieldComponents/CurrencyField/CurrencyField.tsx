@@ -12,10 +12,9 @@ import { useFormContext, Controller } from 'react-hook-form'
 interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
-  onErrorChange?: (fieldId: string, hasError: boolean) => void
 }
 
-export const CurrencyField = ({ item, dispatch, onErrorChange }: Props) => {
+export const CurrencyField = ({ item, dispatch }: Props) => {
   const label = item?.name?.is
   const { control } = useFormContext()
 
@@ -66,11 +65,6 @@ export const CurrencyField = ({ item, dispatch, onErrorChange }: Props) => {
                   field.onChange('') // Ensure value is empty string for validation
                 }
                 field.onBlur()
-                if (onErrorChange) {
-                  setTimeout(() => {
-                    onErrorChange(item.id, !!fieldState.error)
-                  }, 0)
-                }
               }}
               required={item?.isRequired ?? false}
               backgroundColor="blue"

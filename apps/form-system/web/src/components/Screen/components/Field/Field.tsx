@@ -50,23 +50,11 @@ export const Field = ({ field }: Props) => {
   const { dispatch } = useApplicationContext()
   const { control } = useFormContext()
 
-const handleErrorChange = useCallback(
-  ( fieldId: string, hasError: boolean) => {
-    if (dispatch) {
-      dispatch({
-        type: 'SET_FIELD_ERROR',
-        payload: { fieldId, hasError },
-      })
-    }
-  },
-  [dispatch],
-)
   const fieldItems = {
     item: field,
     control,
     dispatch,
     lang,
-    onErrorChange: handleErrorChange,
   }
 
   const FieldComponent = field.fieldType != null

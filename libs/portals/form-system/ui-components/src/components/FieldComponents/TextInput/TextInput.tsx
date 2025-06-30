@@ -8,10 +8,9 @@ import { useFormContext, Controller } from 'react-hook-form'
 interface Props {
   item: FormSystemField
   dispatch?: Dispatch<Action>
-  onErrorChange?: (fieldId: string, hasError: boolean) => void
 }
 
-export const TextInput = ({ item, dispatch, onErrorChange }: Props) => {
+export const TextInput = ({ item, dispatch }: Props) => {
   const { fieldSettings } = item
   const { control } = useFormContext()
 
@@ -52,9 +51,6 @@ export const TextInput = ({ item, dispatch, onErrorChange }: Props) => {
               field.onChange('') // Ensure value is empty string for validation
             }
             field.onBlur()
-            if (onErrorChange) {
-              onErrorChange(item.id, !!fieldState.error)
-            }
           }}
           errorMessage={fieldState.error?.message}
         />

@@ -8,6 +8,7 @@ import {
 import { useFormContext, Controller } from 'react-hook-form'
 import { Dispatch, useEffect } from 'react'
 import { Action } from '../../../lib'
+import { getValue } from '../../../lib/getValue'
 
 interface Props {
   item: FormSystemField
@@ -76,6 +77,9 @@ export const TimeInput = ({ item, dispatch }: Props) => {
         return createOptions(minuteList)
     }
   }
+const timeValue = getValue(item, 'time')
+const [hourValue, minuteValue] = timeValue ? timeValue.split(':') : [undefined, undefined]
+console.log("time required: ", item.isRequired)
 
   return (
     <Row marginTop={2}>
@@ -83,14 +87,16 @@ export const TimeInput = ({ item, dispatch }: Props) => {
         <Controller
           name={`${item.id}.hour`}
           control={control}
-          defaultValue={undefined}
+          defaultValue={
+            hourValue
+              ? { label: hourValue, value: hourValue }
+              : undefined
+          }
           rules={{
             required: {
               value: item?.isRequired ?? false,
               message: 'Veldu klukkustund',
             },
-            validate: (value) =>
-              value && value.value !== '' ? true : 'Veldu klukkustund',
           }}
           render={({ field, fieldState }) => (
             <Select
@@ -115,14 +121,16 @@ export const TimeInput = ({ item, dispatch }: Props) => {
         <Controller
           name={`${item.id}.minute`}
           control={control}
-          defaultValue={undefined}
+          defaultValue={
+            minuteValue
+              ? { label: minuteValue, value: minuteValue }
+              : undefined
+          }
           rules={{
             required: {
               value: item?.isRequired ?? false,
               message: 'Veldu mínútu',
             },
-            validate: (value) =>
-              value && value.value !== '' ? true : 'Veldu mínútu',
           }}
           render={({ field, fieldState }) => (
             <Select

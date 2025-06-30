@@ -7,6 +7,7 @@ import { useIntl } from 'react-intl'
 import { getValue } from '../../../lib/getValue'
 import { parseISO } from 'date-fns' // eslint-disable-line no-restricted-imports
 import { useFormContext, Controller } from 'react-hook-form'
+import { DatePickerController } from '@island.is/shared/form-fields'
 
 interface Props {
   item: FormSystemField
@@ -16,51 +17,33 @@ interface Props {
 
 export const DatePicker = ({ item, dispatch, lang = 'is' }: Props) => {
   const { formatMessage } = useIntl()
-  const { control } = useFormContext()
+
+const handleDateChange = (dateString: string) => {
+    if (dispatch) {
+      const date = dateString ? parseISO(dateString) : null
+      dispatch({
+        type: 'SET_DATE',
+        payload: {
+          id: item.id,
+          value: date,
+        },
+      })
+    }
+  }
+      
 
   return (
-    <Controller
-      name={item.id}
-      control={control}
-      defaultValue={(() => {
-        const dateValue = getValue(item, 'date')
-        if (!dateValue) return null
-        try {
-          return parseISO(dateValue)
-        } catch {
-          return null
-        }
-      })()}
-      rules={{
-        required: {
-          value: item.isRequired ?? false,
-          message: formatMessage(m.required),
-        },
-        validate: (value) =>
-          (value !== null && value !== '') || formatMessage(m.required),
-      }}
-      render={({ field, fieldState }) => (
-        <DatePickerCore
-          label={item.name[lang] ?? ''}
-          placeholderText={formatMessage(m.chooseDate)}
-          backgroundColor="blue"
-          handleChange={(date: Date) => {
-            field.onChange(date)
-            if (dispatch) {
-              dispatch({
-                type: 'SET_DATE',
-                payload: {
-                  id: item.id,
-                  value: date,
-                },
-              })
-            }
-          }}
-          selected={field.value ?? null}
-          required={item.isRequired}
-          errorMessage={fieldState.error?.message}
-        />
-      )}
-    />
+      <DatePickerController
+        label={item.name[lang] ?? ''}
+        placeholder={formatMessage(m.chooseDate)}
+        id={item.id}
+        locale={lang}
+        defaultValue={getValue(item, 'date')}
+        backgroundColor="blue"
+        onChange={handleDateChange}
+        maxDate={new Date()}
+        minDate={new Date(1970, 0)}
+        required
+      />
   )
 }

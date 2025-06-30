@@ -2,7 +2,7 @@ import {
   FormSystemScreen,
   FormSystemSection,
 } from '@island.is/api/schema'
-import { ApplicationState } from '@island.is/form-system/ui'
+import { ApplicationState, SectionTypes } from '@island.is/form-system/ui'
 import {
   ApolloCache,
   DefaultContext,
@@ -66,13 +66,6 @@ export const incrementWithScreens = (
     ApolloCache<any>
   >,
 ): ApplicationState => {
-  console.log('incrementWithScreens', {
-    currentSectionData,
-    maxSectionIndex,
-    currentScreenIndex,
-    state,
-    submitScreenMutation,
-  })
   const screens = currentSectionData.screens ?? []
   const maxScreenIndex = screens.length - 1
   const [submitScreen] = submitScreenMutation
@@ -84,7 +77,7 @@ export const incrementWithScreens = (
       errors,
     }
   }
-  console.log('submitScreen', state.currentScreen?.data?.id)
+  if(currentSectionData.sectionType === SectionTypes.INPUT){
   submitScreen({
     variables: {
       input: {
@@ -98,7 +91,7 @@ export const incrementWithScreens = (
   }).catch((error) => {
     console.error('Error submitting screen:', error)
   })
-
+  }
   if (currentScreenIndex === maxScreenIndex) {
     if (state.currentSection.index === maxSectionIndex) {
       return {
@@ -124,7 +117,6 @@ export const incrementWithScreens = (
       errors: [],
     }
   } else {
-    console.log('inni')
     return {
       ...state,
       currentScreen: {
