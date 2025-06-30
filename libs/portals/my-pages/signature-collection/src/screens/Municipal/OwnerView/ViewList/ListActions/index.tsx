@@ -28,7 +28,11 @@ const ListActions = ({ listId }: { listId: string }) => {
         <Text marginTop={6} marginBottom={8}>
           {formatMessage(m.listActionsDescription)}
         </Text>
-        <Box display={["block", "block", "flex"]} justifyContent="spaceBetween" marginBottom={10}>
+        <Box
+          display={['block', 'block', 'flex']}
+          justifyContent="spaceBetween"
+          marginBottom={10}
+        >
           <Box marginBottom={[2, 2, 0]}>
             <Text variant="h4">{formatMessage(m.downloadPdf)}</Text>
             <Text>{formatMessage(m.downloadPdfDescription)}</Text>
