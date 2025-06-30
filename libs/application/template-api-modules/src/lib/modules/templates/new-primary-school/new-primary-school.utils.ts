@@ -117,11 +117,9 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     },
     agents,
     registration: {
-      ...(primaryOrgId || currentSchoolId
-        ? {
-            defaultOrganizationId: primaryOrgId || currentSchoolId,
-          }
-        : {}),
+      ...((primaryOrgId || currentSchoolId) && {
+        defaultOrganizationId: primaryOrgId || currentSchoolId,
+      }),
       selectedOrganizationId: selectedSchool,
       requestingMeeting: requestingMeeting === YES,
       ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
