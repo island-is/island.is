@@ -276,7 +276,7 @@ const ExamCategorySchema = z.object({
 })
 
 const ExamLocationSchema = z.object({
-  address: z.string().min(1).max(128),
+  address: z.string().min(1).max(49),
   phone: z.string().refine((v) => isValidPhoneNumber(v)),
   email: z.string().email(),
   postalCode: z.string().min(3).max(3),
