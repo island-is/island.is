@@ -30,7 +30,7 @@ jobs:
 
       - name: Set RUNS_ON_S3_BUCKET_CACHE
         if: ${{ !github.event.localrun }}
-        run: echo "RUNS_ON_S3_BUCKET_CACHE=${{ vars.RUNS_ON_S3_BUCKET_CACHE }}" >> $GITHUB_ENV
+        run: echo "RUNS_ON_S3_BUCKET_CACHE=${{ vars.RUNS_ON_S3_BUCKET_CACHE }}" >> "$GITHUB_ENV"
 
       - name: Cache actionlint binary
         id: cache-actionlint

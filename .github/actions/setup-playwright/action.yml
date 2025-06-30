@@ -1,0 +1,53 @@
+name: 'Setup Playwright'
+description: 'Installs Playwright browsers and sets up caching'
+inputs:
+  working-directory:
+    description: 'Directory to run the action in'
+    required: false
+    default: '.'
+
+runs:
+  using: 'composite'
+  steps:
+    # Set RunsOn S3 cache bucket only for CI runs
+    #
+    # This step conditionally sets RUNS_ON_S3_BUCKET_CACHE from RUNS_ON_BUCKET_NAME
+    # to enable S3 bucket caching in CI while avoiding issues in local Act runs.
+    # When running locally, RunsOn would attempt to access a bucket with an empty
+    # name, causing the workflow to skip any caching. When this step is skipped
+    # (env not set), RunsOn falls back to actions/cache, which Act implements a local
+    # version of.
+    - name: Set env for RunsOn
+      shell: bash
+      if: ${{ !github.event.localrun && env.RUNS_ON_BUCKET_NAME }}
+      run: echo "RUNS_ON_S3_BUCKET_CACHE=${{ env.RUNS_ON_BUCKET_NAME }}" >> $GITHUB_ENV
+
+    - name: Set Playwright cache key
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      id: set-playwright-cache-key
+      run: |
+        echo "CACHE_KEY=${{ runner.os }}-playwright-${{ hashFiles('yarn.lock') }}-1" >> $GITHUB_OUTPUT
+
+    - name: Restore Playwright Cache
+      uses: runs-on/cache/restore@v4
+      id: restore-playwright-cache
+      with:
+        path: ~/.cache/ms-playwright
+        key: ${{ steps.set-playwright-cache-key.outputs.CACHE_KEY }}
+      env:
+        AWS_REGION: ${{ env.AWS_REGION || 'eu-west-1' }}
+
+    - name: Install Playwright browsers
+      working-directory: ${{ inputs.working-directory }}
+      shell: bash
+      run: yarn playwright install
+
+    - name: Cache Playwright
+      uses: runs-on/cache/save@v4
+      if: steps.restore-playwright-cache.outputs.cache-hit != 'true'
+      with:
+        path: ~/.cache/ms-playwright
+        key: ${{ steps.set-playwright-cache-key.outputs.CACHE_KEY }}
+      env:
+        AWS_REGION: ${{ env.AWS_REGION || 'eu-west-1' }}
