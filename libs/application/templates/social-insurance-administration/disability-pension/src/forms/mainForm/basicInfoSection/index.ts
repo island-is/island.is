@@ -15,11 +15,11 @@ export const basicInfoSection =
     id: 'personalInfo',
     title: disabilityPensionFormMessage.basicInfo.title,
     children: [
-      //personalInfoSubSection,
-      //paymentInfoSubSection,
-      //incomePlanInstructionsSubSection,
-      //incomePlanSubSection,
-      //disabilityEvaluationSubSection,
+      personalInfoSubSection,
+      paymentInfoSubSection,
+      incomePlanInstructionsSubSection,
+      incomePlanSubSection,
+      disabilityEvaluationSubSection,
       employmentParticipationSubSection,
     ],
   })

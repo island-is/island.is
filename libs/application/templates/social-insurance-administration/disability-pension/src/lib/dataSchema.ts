@@ -67,7 +67,22 @@ export const dataSchema = z.object({
     return true
   }),
   abroadPayments: z.object({
-    hasAbroadPayments: z.enum([YES, NO])
+    hasAbroadPayments: z.enum([YES, NO]),
+    list: z.array(
+      z.object({
+        country: z.string(),
+        abroadNationalId: z.string(),
+      })
+    ).optional()
+  })
+    .refine(({ list, hasAbroadPayments }) => {
+      if ((hasAbroadPayments === NO) || (list && list.length > 0)) {
+        return true
+      }
+      return false
+    }, {
+    path: ['list'],
+    params: disabilityPensionFormMessage.errors.emptyForeignPayments,
   }),
   paymentInfo: z
     .object({

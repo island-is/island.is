@@ -406,6 +406,11 @@ export const disabilityPensionFormMessage: MessageDir = {
       defaultMessage: 'Rangar eða ófullnægjandi upplýsingar geta haft áhrif á afgreiðslu umsóknarinnar og hugsanlega leitt til endurkröfu eða annarra viðurlaga.',
       description: 'TODO',
     },
+    abroadPaymentsTableTitle: {
+      id: 'dp.application:employmentParticipation.abroadPaymentsTableTitle',
+      defaultMessage: 'Hvar hefur þú fengið greiðslur?',
+      description: 'Where have you received payments?',
+    },
   }),
   backgroundInfo: defineMessages({
     title: {
@@ -431,6 +436,11 @@ export const disabilityPensionFormMessage: MessageDir = {
       id: 'dp.application:errors.foreignResidenceRequired',
       defaultMessage: 'Nauðsynlegt er að bæta við a.m.k einni dvöl erlendis',
       description: 'You must add at least one foreign residence',
+    },
+    emptyForeignPayments: {
+      id: 'dp.application:errors.abroadPaymentsRequired',
+      defaultMessage: 'Nauðsynlegt er að bæta við a.m.k einni greiðslu erlendis',
+      description: 'You must add at least one foreign payment',
     },
     emptyCountry: {
       id: 'dp.application:errors.countryRequired',
