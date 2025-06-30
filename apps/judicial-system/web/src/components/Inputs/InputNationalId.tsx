@@ -88,24 +88,25 @@ const InputNationalId: FC<Props> = (props) => {
       replacement={{ _: /\d/ }}
       component={Input}
       value={inputValue ?? value}
+      id="nationalId"
+      name="inputNationalId"
+      data-testid="inputNationalId"
       onChange={handleChange}
       onBlur={handleBlur}
       disabled={disabled}
       errorMessage={errorMessage}
       hasError={Boolean(errorMessage)}
+      autoComplete="off"
+      required={required}
+      label={
+        label ??
+        formatMessage(isDateOfBirth ? core.dateOfBirth : core.nationalId)
+      }
       placeholder={
         placeholder ??
         formatMessage(
           isDateOfBirth ? core.dateOfBirthPlaceholder : core.nationalId,
         )
-      }
-      required={required}
-      name="nationalId"
-      id="nationalId"
-      autoComplete="off"
-      label={
-        label ??
-        formatMessage(isDateOfBirth ? core.dateOfBirth : core.nationalId)
       }
     />
   )
