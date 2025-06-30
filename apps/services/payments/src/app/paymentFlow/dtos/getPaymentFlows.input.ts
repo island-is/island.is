@@ -1,5 +1,4 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
-import { PaginationInput } from '@island.is/nest/pagination'
 import { IsOptional, IsString, IsNumber } from 'class-validator'
 
 export class GetPaymentFlowsInput {

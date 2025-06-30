@@ -13,7 +13,6 @@ import {
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'
-import { PaginationInput } from '@island.is/nest/pagination'
 
 import { PaymentFlowService } from './paymentFlow.service'
 import { CreatePaymentFlowDTO } from './dtos/createPaymentFlow.dto'
@@ -27,8 +26,6 @@ import { CreatePaymentFlowInput } from './dtos/createPaymentFlow.input'
 import { GetPaymentFlowStatusDTO } from './dtos/getPaymentFlowStatus.dto'
 import { GetPaymentFlowsPaginatedDTO } from './dtos/getPaymentFlow.dto'
 import { GetPaymentFlowsInput } from './dtos/getPaymentFlows.input'
-import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
-import { AdminPortalScope } from '@island.is/auth/scopes'
 
 @UseGuards(FeatureFlagGuard)
 @FeatureFlag(Features.isIslandisPaymentEnabled)

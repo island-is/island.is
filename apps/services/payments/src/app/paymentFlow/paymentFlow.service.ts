@@ -1,5 +1,6 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { WhereOptions } from 'sequelize'
 import { ConfigType } from '@nestjs/config'
 import { isCompany, isValid } from 'kennitala'
 import { v4 as uuid } from 'uuid'
@@ -727,7 +728,7 @@ export class PaymentFlowService {
     after?: string,
     before?: string,
   ): Promise<GetPaymentFlowsPaginatedDTO> {
-    const where: any = {}
+    const where: WhereOptions<PaymentFlow> = {}
 
     if (payerNationalId && isValid(payerNationalId)) {
       where.payerNationalId = payerNationalId
@@ -780,7 +781,7 @@ export class PaymentFlowService {
           paymentStatus,
           updatedAt,
           events:
-            (flow as any).events?.map((event: PaymentFlowEvent) =>
+            (flow as PaymentFlow).events?.map((event: PaymentFlowEvent) =>
               event.toJSON(),
             ) ?? [],
         }
