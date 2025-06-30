@@ -10,6 +10,7 @@ import {
 import { useGetListsForOwner } from '../../../hooks'
 import { useNavigate } from 'react-router-dom'
 import { SignatureCollectionPaths } from '../../../lib/paths'
+import SignedList from '../../shared/SignedList'
 
 const OwnerView = ({
   currentCollection,
@@ -30,6 +31,10 @@ const OwnerView = ({
     <Box>
       {!loadingOwnerLists && (
         <Stack space={6}>
+          <SignedList
+            currentCollection={currentCollection}
+            collectionType={collectionType}
+          />
           <Box>
             <Text variant="h4" marginBottom={3}>
               {formatMessage(m.myListsDescription)}

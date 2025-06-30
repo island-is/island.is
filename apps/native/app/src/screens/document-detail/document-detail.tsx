@@ -421,6 +421,7 @@ export const DocumentDetailScreen: NavigationFunctionComponent<{
       subject: Document.subject ?? '',
       isFirstReply: true,
       onReplySuccess(info) {
+        docRes.refetch()
         onCommunicationsPress(info)
       },
     }
