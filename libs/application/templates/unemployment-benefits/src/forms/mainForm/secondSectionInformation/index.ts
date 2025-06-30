@@ -17,6 +17,7 @@ export const secondSectionInformation = buildSection({
         buildImageField({
           id: 'secondSectionImage',
           image: sectionImage,
+          doesNotRequireAnswer: true,
         }),
       ],
     }),

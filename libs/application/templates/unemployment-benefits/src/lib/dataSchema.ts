@@ -13,6 +13,7 @@ import {
   familyInformationSchema,
   educationHistorySchema,
   jobWishesSchema,
+  drivingLicenseSchema,
 } from './schemas'
 
 const FileSchema = z.object({
@@ -40,11 +41,6 @@ const currentSituationSchema = z.object({
   currentJob: currentJobSchema.optional(),
   wantedJobPercentage: z.string().optional(),
   jobTimelineStartDate: z.string().optional(),
-})
-
-const drivingLicenseSchema = z.object({
-  drivingLicenseType: z.array(z.string()).optional(),
-  heavyMachineryLicenses: z.array(z.string()).optional(),
 })
 
 const languageSkillsSchema = z.object({

@@ -1,9 +1,12 @@
 import {
+  buildCheckboxField,
+  buildCustomField,
   buildDescriptionField,
   buildMultiField,
   buildSelectField,
   buildSubSection,
   getValueViaPath,
+  YES,
 } from '@island.is/application/core'
 import { employmentSearch as employmentSearchMessages } from '../../../lib/messages'
 
@@ -16,22 +19,65 @@ export const drivingLicenseSubSection = buildSubSection({
       title: employmentSearchMessages.drivingLicense.pageTitle,
       description: employmentSearchMessages.drivingLicense.pageDescription,
       children: [
-        buildSelectField({
+        buildCheckboxField({
+          id: 'drivingLicense.hasDrivingLicense',
+          spacing: 0,
+          options: [
+            {
+              value: YES,
+              label:
+                employmentSearchMessages.drivingLicense.hasDrivingLicenseLabel,
+            },
+          ],
+        }),
+        buildCustomField({
           id: 'drivingLicense.drivingLicenseType',
-          title:
-            employmentSearchMessages.drivingLicense.drivingLicenseTypeLabel,
-          isMulti: true,
-          options: (application) => {
-            const drivingLicenseTypes =
-              getValueViaPath<{ name: string }[]>(
-                application.externalData,
-                'unemploymentApplication.data.supportData.drivingLicenseTypes',
-              ) || []
-            return drivingLicenseTypes.map((type) => ({
-              value: type.name,
-              label: type.name,
-            }))
+          component: 'DrivingLicenseCheckbox',
+          condition: (answers) => {
+            return (
+              getValueViaPath<string[]>(
+                answers,
+                'drivingLicense.hasDrivingLicense',
+              )?.includes(YES) ?? false
+            )
           },
+        }),
+        // buildSelectField({
+        //   id: 'drivingLicense.drivingLicenseType',
+        //   title:
+        //     employmentSearchMessages.drivingLicense.drivingLicenseTypeLabel,
+        //   isMulti: true,
+        //   options: (application) => {
+        //     const drivingLicenseTypes =
+        //       getValueViaPath<{ name: string }[]>(
+        //         application.externalData,
+        //         'unemploymentApplication.data.supportData.drivingLicenseTypes',
+        //       ) || []
+        //     return drivingLicenseTypes.map((type) => ({
+        //       value: type.name,
+        //       label: type.name,
+        //     }))
+        //   },
+        //   condition: (answers) => {
+        //     return (
+        //       getValueViaPath<string[]>(
+        //         answers,
+        //         'drivingLicense.hasDrivingLicense',
+        //       )?.includes(YES) ?? false
+        //     )
+        //   },
+        // }),
+        buildCheckboxField({
+          id: 'drivingLicense.hasHeavyMachineryLicense',
+          spacing: 0,
+          options: [
+            {
+              value: YES,
+              label:
+                employmentSearchMessages.drivingLicense
+                  .hasHeavyMachineryLicenseLabel,
+            },
+          ],
         }),
         buildSelectField({
           id: 'drivingLicense.heavyMachineryLicenses',
@@ -47,6 +93,14 @@ export const drivingLicenseSubSection = buildSubSection({
               value: right.name,
               label: right.name,
             }))
+          },
+          condition: (answers) => {
+            return (
+              getValueViaPath<string[]>(
+                answers,
+                'drivingLicense.hasHeavyMachineryLicense',
+              )?.includes(YES) ?? false
+            )
           },
         }),
       ],

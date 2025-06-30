@@ -154,6 +154,26 @@ export const employmentSearch = {
       defaultMessage: 'Vinsamlegast skráðu réttindi ef einhver eru.',
       description: 'Driving licence page description',
     },
+    hasDrivingLicenseLabel: {
+      id: 'vmst.ub.application:employmentSearch.drivingLicense.hasDrivingLicenseLabel',
+      defaultMessage: 'Ég er með ökuréttindi',
+      description: 'Has driving license label',
+    },
+    drivingLicenseLabel: {
+      id: 'vmst.ub.application:employmentSearch.drivingLicense.drivingLicenseLabel',
+      defaultMessage: 'Ökuréttindi {value}',
+      description: 'Driving license label',
+    },
+    markCorrectDrivingLicenseLabel: {
+      id: 'vmst.ub.application:employmentSearch.drivingLicense.markCorrectDrivingLicenseLabel',
+      defaultMessage: 'Merktu við þau réttindi sem þú ert með',
+      description: 'Mark correct driving license label',
+    },
+    hasHeavyMachineryLicenseLabel: {
+      id: 'vmst.ub.application:employmentSearch.drivingLicense.hasHeavyMachineryLicenseLabel',
+      defaultMessage: 'Ég er með vinnuvélaréttindi',
+      description: 'Has heavy machinery license label',
+    },
     drivingLicenseTypeLabel: {
       id: 'vmst.ub.application:employmentSearch.drivingLicense.drivingLicenseTypeLabel',
       defaultMessage: 'Tegund ökuréttinda',
