@@ -161,6 +161,7 @@ codemagic.yaml                                                                  
 /apps/web/components/Regulations/                                                                         @island-is/hugsmidjan
 /apps/web/screens/OfficialJournalOfIceland/                                                               @island-is/hugsmidjan
 /apps/web/components/OfficialJournalOfIceland/                                                            @island-is/hugsmidjan
+/apps/web/pages/stjornartidindi/                                                                          @island-is/hugsmidjan
 /libs/api/domains/air-discount-scheme                                                                     @island-is/hugsmidjan
 /libs/api/domains/documents/                                                                              @island-is/hugsmidjan
 /libs/api/domains/finance/                                                                                @island-is/hugsmidjan
