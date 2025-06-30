@@ -29,7 +29,7 @@ export const generateJobsForFeature = async (
           return {
             command: ['/app/create-db.sh'],
             image,
-            name: `${info!.username!.replace(/_/g, '-').substr(0, 60)}1`,
+            name: `${info!.username!.replace(/_/g, '-').substring(0, 60)}1`,
             securityContext,
             env: [
               {
@@ -121,46 +121,46 @@ export const generateCleanUpForFeature = async (
           const extensions = getPostgresExtensions(
             service.initContainers?.postgres?.extensions,
           )
-            return {
+          return {
             command: [`/app/destroy-dbs.sh ${feature}`],
             image,
-            name: `${info!.username!.replace(/_/g, '-').substr(0, 60)}1`,
+            name: `${info!.username!.replace(/_/g, '-').substring(0, 60)}1`,
             securityContext,
             env: [
               {
-              name: 'PGHOST',
-              value: host.writer,
+                name: 'PGHOST',
+                value: host.writer,
               },
               {
-              name: 'PGDATABASE',
-              value: 'postgres',
+                name: 'PGDATABASE',
+                value: 'postgres',
               },
               {
-              name: 'PGUSER',
-              value: 'root',
+                name: 'PGUSER',
+                value: 'root',
               },
               {
-              name: 'PGPASSWORD_KEY',
-              value: '/rds/vidspyrna/masterpassword',
+                name: 'PGPASSWORD_KEY',
+                value: '/rds/vidspyrna/masterpassword',
               },
               {
-              name: 'DB_USER',
-              value: info!.username!,
+                name: 'DB_USER',
+                value: info!.username!,
               },
               {
-              name: 'DB_NAME',
-              value: info!.name!,
+                name: 'DB_NAME',
+                value: info!.name!,
               },
               {
-              name: 'DB_PASSWORD_KEY',
-              value: info!.passwordSecret!,
+                name: 'DB_PASSWORD_KEY',
+                value: info!.passwordSecret!,
               },
               {
-              name: 'DB_EXTENSIONS',
-              value: extensions,
+                name: 'DB_EXTENSIONS',
+                value: extensions,
               },
             ],
-            }
+          }
         }),
     )
     .reduce((acc, cur) => {
@@ -182,8 +182,8 @@ export const generateCleanUpForFeature = async (
       ),
       annotations: {
         'argocd.argoproj.io/hook': 'PostDelete',
-        'argocd.argoproj.io/hook-delete-policy': 'Keep'
-      }
+        'argocd.argoproj.io/hook-delete-policy': 'HookSucceded',
+      },
     },
     spec: {
       template: {
