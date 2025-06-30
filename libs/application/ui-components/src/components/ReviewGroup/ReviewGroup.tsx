@@ -21,6 +21,7 @@ interface ReviewGroupProps {
   isLast?: boolean
   canCloseEdit?: boolean
   triggerValidation?: boolean
+  hideTopDivider?: boolean
 }
 
 export const ReviewGroup: FC<React.PropsWithChildren<ReviewGroupProps>> = ({
@@ -32,6 +33,7 @@ export const ReviewGroup: FC<React.PropsWithChildren<ReviewGroupProps>> = ({
   isLast,
   canCloseEdit = true,
   triggerValidation = false,
+  hideTopDivider,
 }) => {
   const [editable, setEditable] = useState(false)
   const { formatMessage } = useLocale()
@@ -77,7 +79,7 @@ export const ReviewGroup: FC<React.PropsWithChildren<ReviewGroupProps>> = ({
 
   return (
     <Box>
-      <Divider />
+      {!hideTopDivider && <Divider />}
 
       <Box position="relative" paddingY={4}>
         {isEditable && (editChildren || editAction) && (

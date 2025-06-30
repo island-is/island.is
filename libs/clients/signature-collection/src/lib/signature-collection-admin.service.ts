@@ -24,12 +24,22 @@ import {
   AdminListApi,
   AdminSignatureApi,
   AdminApi,
+  ManagerListApi,
+  MunicipalityListApi,
+  ManagerCollectionApi,
+  ManagerCandidateApi,
+  ManagerSignatureApi,
+  MunicipalityCandidateApi,
+  MunicipalityCollectionApi,
+  MunicipalitySignatureApi,
+  ManagerAdminApi,
 } from './apis'
 import { SignatureCollectionSharedClientService } from './signature-collection-shared.service'
 import {
   AreaSummaryReport,
   mapAreaSummaryReport,
 } from './types/areaSummaryReport.dto'
+import { SignatureCollectionAdminClient } from './types/adminClient'
 
 type Api =
   | AdminListApi
@@ -37,10 +47,21 @@ type Api =
   | AdminSignatureApi
   | AdminCandidateApi
   | AdminApi
+  | ManagerListApi
+  | ManagerCollectionApi
+  | ManagerSignatureApi
+  | ManagerCandidateApi
+  | ManagerAdminApi
+  | MunicipalityListApi
+  | MunicipalityCollectionApi
+  | MunicipalitySignatureApi
+  | MunicipalityCandidateApi
   | KosningApi
 
 @Injectable()
-export class SignatureCollectionAdminClientService {
+export class SignatureCollectionAdminClientService
+  implements SignatureCollectionAdminClient
+{
   constructor(
     private listsApi: AdminListApi,
     private collectionsApi: AdminCollectionApi,
@@ -86,27 +107,25 @@ export class SignatureCollectionAdminClientService {
   async toggleListStatus(listId: string, auth: Auth): Promise<Success> {
     const listStatus = await this.listStatus(listId, auth)
     // Can only toggle list if it is in review or reviewed
-    if (
-      listStatus === ListStatus.InReview ||
-      listStatus === ListStatus.Reviewed
-    ) {
-      try {
-        const list = await this.getApiWithAuth(
-          this.adminApi,
-          auth,
-        ).adminMedmaelalistiIDToggleListPatch({
-          iD: parseInt(listId),
-          shouldToggle: listStatus === ListStatus.InReview,
-        })
-        return { success: !!list }
-      } catch (error) {
-        return {
-          success: false,
-          reasons: error.body ? [error.body] : [],
-        }
+
+    try {
+      const list = await this.getApiWithAuth(
+        this.adminApi,
+        auth,
+      ).adminMedmaelalistiIDToggleListPatch({
+        iD: parseInt(listId),
+        shouldToggle: listStatus === ListStatus.InReview,
+      })
+      return { success: !!list }
+    } catch (error) {
+      if (error.status === 403) {
+        error.body = 'Þú hefur ekki aðgang að þessari aðgerð.'
+      }
+      return {
+        success: false,
+        reasons: error.body ? [error.body] : [],
       }
     }
-    return { success: false }
   }
 
   async processCollection(collectionId: string, auth: Auth): Promise<Success> {
@@ -144,70 +163,84 @@ export class SignatureCollectionAdminClientService {
   }
 
   async createListsAdmin(
-    { collectionId, owner, areas, collectionType }: CreateListInput,
+    {
+      collectionId,
+      owner,
+      areas,
+      collectionType,
+      collectionName,
+    }: CreateListInput,
     auth: Auth,
-  ): Promise<Slug> {
-    const {
-      id,
-      areas: collectionAreas,
-    } = await this.getLatestCollectionForType(auth, collectionType)
+  ): Promise<Slug & Success> {
+    const { id, areas: collectionAreas } =
+      await this.getLatestCollectionForType(auth, collectionType)
     // check if collectionId is current collection and current collection is open
     if (collectionId !== id) {
       throw new Error('Collection id input wrong')
     }
 
-    const candidates = await this.getApiWithAuth(
-      this.candidateApi,
-      auth,
-    ).frambodGet({
-      sofnunID: parseInt(collectionId),
-    })
-
-    const adminApi = this.getApiWithAuth(this.adminApi, auth)
-
-    const filteredAreas = areas
-      ? collectionAreas.filter((area) =>
-          areas.flatMap((a) => a.areaId).includes(area.id),
-        )
-      : collectionAreas
-
-    let candidacy = candidates.find((c) => c.kennitala === owner.nationalId)
-
-    // If no candidacy exists, create one
-    if (!candidacy) {
-      candidacy = await adminApi.adminFrambodPost({
-        frambodRequestDTO: {
-          sofnunID: parseInt(id),
-          kennitala: owner.nationalId,
-          simi: owner.phone,
-          netfang: owner.email,
-          medmaelalistar: filteredAreas.map((area) => ({
-            svaediID: parseInt(area.id),
-            listiNafn: `${owner.name} - ${area.name}`,
-          })),
-        },
+    try {
+      const candidates = await this.getApiWithAuth(
+        this.candidateApi,
+        auth,
+      ).frambodGet({
+        sofnunID: parseInt(collectionId),
       })
-    }
-    // Candidacy exists, add area
-    else {
-      await adminApi.adminMedmaelalistiPost({
-        medmaelalistarRequestDTO: {
-          frambodID: candidacy.id,
-          medmaelalistar: filteredAreas.map((area) => ({
-            svaediID: parseInt(area.id),
-            listiNafn: `${owner.name} - ${area.name}`,
-          })),
-        },
+
+      const adminApi = this.getApiWithAuth(this.adminApi, auth)
+
+      const filteredAreas = areas?.length
+        ? collectionAreas.filter((area) =>
+            areas.flatMap((a) => a.areaId).includes(area.id),
+          )
+        : collectionAreas
+
+      let candidacy = candidates.find((c) => c.kennitala === owner.nationalId)
+
+      // If no candidacy exists, create one
+      if (!candidacy) {
+        candidacy = await adminApi.adminFrambodPost({
+          frambodRequestDTO: {
+            sofnunID: parseInt(id),
+            kennitala: owner.nationalId,
+            simi: owner.phone,
+            netfang: owner.email,
+            frambodNafn: collectionName,
+            medmaelalistar: filteredAreas.map((area) => ({
+              svaediID: parseInt(area.id),
+              listiNafn: `${owner.name} - ${area.name}`,
+            })),
+          },
+        })
+      }
+      // Candidacy exists, add area
+      else {
+        await adminApi.adminMedmaelalistiPost({
+          medmaelalistarRequestDTO: {
+            frambodID: candidacy.id,
+            medmaelalistar: filteredAreas.map((area) => ({
+              svaediID: parseInt(area.id),
+              listiNafn: `${owner.name} - ${area.name}`,
+            })),
+          },
+        })
+      }
+
+      const collectionsApi = this.getApiWithAuth(this.collectionsApi, auth)
+      const votingType = await collectionsApi.medmaelasofnunIDGet({
+        iD: candidacy.medmaelasofnunID ?? -1,
       })
-    }
 
-    const collectionsApi = this.getApiWithAuth(this.collectionsApi, auth)
-    const votingType = await collectionsApi.medmaelasofnunIDGet({
-      iD: candidacy.medmaelasofnunID ?? -1,
-    })
-
-    return {
-      slug: getSlug(candidacy.id ?? '', votingType.kosningTegund),
+      return {
+        slug: getSlug(candidacy.id ?? '', votingType.kosningTegund),
+        success: true,
+      }
+    } catch (error) {
+      return {
+        slug: '',
+        success: false,
+        reasons: error.body ? [error.body] : [],
+      }
     }
   }
 
@@ -246,16 +279,14 @@ export class SignatureCollectionAdminClientService {
         ? user.medmaelalistar?.map((list) => mapListBase(list))
         : []
 
-    const {
-      success: canCreate,
-      reasons: canCreateInfo,
-    } = this.sharedService.canCreate({
-      requirementsMet: user.maFrambod,
-      canCreateInfo: user.maFrambodInfo,
-      ownedLists,
-      collectionType,
-      areas,
-    })
+    const { success: canCreate, reasons: canCreateInfo } =
+      this.sharedService.canCreate({
+        requirementsMet: user.maFrambod,
+        canCreateInfo: user.maFrambodInfo,
+        ownedLists,
+        collectionType,
+        areas,
+      })
 
     return {
       nationalId: user.kennitala ?? '',
@@ -506,5 +537,38 @@ export class SignatureCollectionAdminClientService {
         reasons: error.body ? [error.body] : [],
       }
     }
+  }
+
+  async startMunicipalityCollection(
+    auth: Auth,
+    areaId: string,
+  ): Promise<Success> {
+    const current = await this.getLatestCollectionForType(
+      auth,
+      CollectionType.LocalGovernmental,
+    )
+    try {
+      const collection = await this.getApiWithAuth(
+        this.adminApi,
+        auth,
+      ).adminKosningIDSveitSofnunPost({
+        iD: parseInt(current.electionId ?? ''),
+        sveitarfelagID: parseInt(areaId),
+      })
+      return { success: !!collection }
+    } catch (error) {
+      return { success: false, reasons: error.body ? [error.body] : [] }
+    }
+  }
+
+  async getMunicipalityAreaId(auth: Auth): Promise<string> {
+    const info = await this.getApiWithAuth(
+      this.adminApi,
+      auth,
+    ).adminSveitarfelagInfoGet({
+      kennitala: auth.nationalId,
+    })
+
+    return info.sveitarfelagID.toString()
   }
 }

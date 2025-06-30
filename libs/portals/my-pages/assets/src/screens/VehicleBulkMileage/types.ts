@@ -30,6 +30,7 @@ export interface VehicleType extends VehicleProps {
     origin: string
     mileage: number
   }>
+  co2?: string
 }
 
 export interface VehicleList {

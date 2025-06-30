@@ -16,9 +16,17 @@ import { OverviewService } from './overview/overview.service'
 import { OverviewResolver } from './overview/overview.resolver'
 import { PaymentResolver } from './payment/payment.resolver'
 import { PaymentService } from './payment/payment.service'
+import { BloodResolver } from './blood/blood.resolver'
+import { BloodService } from './blood/blood.service'
+import { BloodClientModule } from '@island.is/clients/blood'
 
 @Module({
-  imports: [RightsPortalClientModule, AuthModule, FeatureFlagModule],
+  imports: [
+    RightsPortalClientModule,
+    BloodClientModule,
+    AuthModule,
+    FeatureFlagModule,
+  ],
   providers: [
     AidOrNutritionResolver,
     AidOrNutritionService,
@@ -34,6 +42,8 @@ import { PaymentService } from './payment/payment.service'
     OverviewResolver,
     PaymentService,
     PaymentResolver,
+    BloodService,
+    BloodResolver,
   ],
   exports: [],
 })

@@ -57,10 +57,13 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const siblings = getValueViaPath(answers, 'siblings') as SiblingsRow[]
 
-  const languageEnvironment = getValueViaPath(
+  const languageEnvironmentIdAndKey = getValueViaPath(
     answers,
     'languages.languageEnvironment',
   ) as string
+
+  const [languageEnvironmentId, languageEnvironment] =
+    languageEnvironmentIdAndKey?.split('::') ?? []
 
   const selectedLanguages = getValueViaPath(
     answers,
@@ -79,44 +82,39 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'languages.preferredLanguage',
   ) as string
 
-  const guardianRequiresInterpreter = getValueViaPath(
-    answers,
-    'languages.guardianRequiresInterpreter',
-  ) as YesOrNo
-
   const hasFoodAllergiesOrIntolerances = getValueViaPath(
     answers,
-    'allergiesAndIntolerances.hasFoodAllergiesOrIntolerances',
+    'healthProtection.hasFoodAllergiesOrIntolerances',
   ) as string[]
 
   const foodAllergiesOrIntolerances = getValueViaPath(
     answers,
-    'allergiesAndIntolerances.foodAllergiesOrIntolerances',
+    'healthProtection.foodAllergiesOrIntolerances',
   ) as string[]
 
   const hasOtherAllergies = getValueViaPath(
     answers,
-    'allergiesAndIntolerances.hasOtherAllergies',
+    'healthProtection.hasOtherAllergies',
   ) as string[]
 
   const otherAllergies = getValueViaPath(
     answers,
-    'allergiesAndIntolerances.otherAllergies',
+    'healthProtection.otherAllergies',
   ) as string[]
 
   const usesEpiPen = getValueViaPath(
     answers,
-    'allergiesAndIntolerances.usesEpiPen',
+    'healthProtection.usesEpiPen',
   ) as YesOrNo
 
   const hasConfirmedMedicalDiagnoses = getValueViaPath(
     answers,
-    'allergiesAndIntolerances.hasConfirmedMedicalDiagnoses',
+    'healthProtection.hasConfirmedMedicalDiagnoses',
   ) as YesOrNo
 
   const requestsMedicationAdministration = getValueViaPath(
     answers,
-    'allergiesAndIntolerances.requestsMedicationAdministration',
+    'healthProtection.requestsMedicationAdministration',
   ) as YesOrNo
 
   const hasDiagnoses = getValueViaPath(
@@ -226,11 +224,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     reasonForApplicationStreetAddress,
     reasonForApplicationPostalCode,
     siblings,
+    languageEnvironmentId,
     languageEnvironment,
     selectedLanguages,
     preferredLanguage,
     signLanguage,
-    guardianRequiresInterpreter,
     hasFoodAllergiesOrIntolerances,
     foodAllergiesOrIntolerances,
     hasOtherAllergies,

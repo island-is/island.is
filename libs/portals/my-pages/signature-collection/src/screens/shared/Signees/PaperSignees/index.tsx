@@ -19,13 +19,16 @@ import { toast } from 'react-toastify'
 import { useGetCanSign } from '../../../../hooks'
 import { uploadPaperSignature } from '../../../../hooks/graphql/mutations'
 import { m } from '../../../../lib/messages'
+import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 
 export const PaperSignees = ({
   listId,
   refetchSignees,
+  collectionType,
 }: {
   listId: string
   refetchSignees: () => void
+  collectionType: SignatureCollectionCollectionType
 }) => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
@@ -43,6 +46,7 @@ export const PaperSignees = ({
     onCompleted: (data) => setName(data.identity?.name || ''),
   })
   const { canSign, loadingCanSign } = useGetCanSign(
+    collectionType,
     nationalIdInput,
     listId,
     nationalId.isValid(nationalIdInput),
@@ -69,6 +73,7 @@ export const PaperSignees = ({
           listId: listId,
           nationalId: nationalIdInput,
           pageNumber: Number(page),
+          collectionType: collectionType,
         },
       },
       onCompleted: (res) => {
