@@ -20,11 +20,8 @@ import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import { replaceParams } from '@island.is/react-spa/shared'
 import { getTagConfig } from '../../lib/utils'
 import CompareLists from '../../shared-components/compareLists'
-import ActionDrawer from '../../shared-components/compareLists/ActionDrawer'
-import { Actions } from '../../shared-components/compareLists/ActionDrawer/ListActions'
-import { SignatureCollectionCollectionType } from '@island.is/api/schema'
-
-const collectionType = SignatureCollectionCollectionType.LocalGovernmental
+import ActionDrawer from '../../shared-components/actionDrawer'
+import { Actions } from '../../shared-components/actionDrawer/ListActions'
 
 export const Municipality = () => {
   const { formatMessage } = useLocale()
@@ -54,7 +51,7 @@ export const Municipality = () => {
           offset={['0', '0', '0', '1/12']}
           span={['12/12', '12/12', '12/12', '8/12']}
         >
-          <Box marginBottom={2}>
+          <Box marginBottom={3}>
             <Breadcrumbs
               items={[
                 {
@@ -128,7 +125,7 @@ export const Municipality = () => {
           </GridRow>
           <CompareLists
             collectionId={collection?.id}
-            collectionType={collectionType}
+            collectionType={collection?.collectionType}
           />
         </GridColumn>
       </GridRow>

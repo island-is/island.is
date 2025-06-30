@@ -18,8 +18,8 @@ import { SignatureCollectionPaths } from '../../lib/paths'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import format from 'date-fns/format'
 import { getTagConfig } from '../../lib/utils'
-import ActionDrawer from '../../shared-components/compareLists/ActionDrawer'
-import { Actions } from '../../shared-components/compareLists/ActionDrawer/ListActions'
+import ActionDrawer from '../../shared-components/actionDrawer'
+import { Actions } from '../../shared-components/actionDrawer/ListActions'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 
 export const Constituency = () => {

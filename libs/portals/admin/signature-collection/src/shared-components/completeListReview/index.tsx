@@ -86,7 +86,7 @@ const CompleteListReview = ({
                   : formatMessage(m.confirmListReviewed)}
               </Text>
               <Text marginBottom={2}>
-                Þegar búið er að fara yfir meðmæli er hakað við hér.
+                {formatMessage(m.confirmListReviewActionDescription)}
               </Text>
               <Button
                 variant="text"

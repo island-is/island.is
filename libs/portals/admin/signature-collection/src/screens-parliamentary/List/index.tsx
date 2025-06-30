@@ -14,10 +14,10 @@ import { useLoaderData } from 'react-router-dom'
 import { SignatureCollectionList } from '@island.is/api/schema'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import Signees from '../../shared-components/signees'
-import ActionDrawer from '../../shared-components/compareLists/ActionDrawer'
+import ActionDrawer from '../../shared-components/actionDrawer'
 import { PaperSignees } from '../../shared-components/paperSignees'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
-import { Actions } from '../../shared-components/compareLists/ActionDrawer/ListActions'
+import { Actions } from '../../shared-components/actionDrawer/ListActions'
 
 const List = () => {
   const { formatMessage } = useLocale()
