@@ -20,8 +20,10 @@ import { DefenderChoice, ServiceStatus } from '@island.is/judicial-system/types'
 
 import { CreateCaseDto } from './dto/createCase.dto'
 import { UpdateSubpoenaDto } from './dto/subpoena.dto'
+import { UpdateVerdictDto } from './dto/verdict.dto'
 import { Case } from './models/case.model'
 import { SubpoenaResponse } from './models/subpoena.response'
+import { VerdictResponse } from './models/verdict.model'
 import appModuleConfig from './app.config'
 
 @Injectable()
@@ -204,5 +206,21 @@ export class AppService {
         message: 'Failed to update subpoena',
       })
     }
+  }
+
+  // TODO
+  async updateVerdict(
+    caseId: string,
+    updateVerdict: UpdateVerdictDto,
+  ): Promise<VerdictResponse> {
+    return await this.auditTrailService.audit(
+      'digital-mailbox-api',
+      AuditedAction.UPDATE_SUBPOENA,
+      this.updateVerdictState(),
+      caseId,
+    )
+  }
+  private async updateVerdictState() {
+    return ''
   }
 }
