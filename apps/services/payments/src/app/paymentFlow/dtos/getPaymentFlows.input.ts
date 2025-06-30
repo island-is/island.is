@@ -1,7 +1,8 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
 import { IsOptional, IsString, IsNumber } from 'class-validator'
+import { PaginationDto } from 'libs/nest/pagination/src/lib/dto/pagination.dto'
 
-export class GetPaymentFlowsInput {
+export class GetPaymentFlowsInput extends PaginationDto {
   @ApiPropertyOptional({
     description: 'National ID of the payer to filter payment flows',
     type: String,
@@ -17,28 +18,4 @@ export class GetPaymentFlowsInput {
   @IsOptional()
   @IsString()
   search?: string
-
-  @ApiPropertyOptional({
-    description: 'Number of items to return per page',
-    type: Number,
-  })
-  @IsOptional()
-  @IsNumber()
-  limit?: number
-
-  @ApiPropertyOptional({
-    description: 'Cursor for pagination - get items after this ID',
-    type: String,
-  })
-  @IsOptional()
-  @IsString()
-  after?: string
-
-  @ApiPropertyOptional({
-    description: 'Cursor for pagination - get items before this ID',
-    type: String,
-  })
-  @IsOptional()
-  @IsString()
-  before?: string
 }
