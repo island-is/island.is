@@ -174,7 +174,14 @@ export class NationalRegistryV3ApplicationsClientService {
 
     if (res.sambud?.sambud) {
       return formatCohabitationDtoV3FromSam(res.sambud, res.hjuskapur)
-    } else if (res.hjuskapur && res.hjuskapur.kennitalaMaka) {
+    } else if (
+      // NOTE: If a user is married but their spouse does not have a national id,
+      // the national registry will return a string of 10 spaces for the spouse's national id.
+      // Luckily the spouse's name will be null in that case so we can check for that.
+      res.hjuskapur &&
+      res.hjuskapur.kennitalaMaka &&
+      res.hjuskapur.nafnMaka
+    ) {
       return formatCohabitationDtoV3FromHju(res.hjuskapur)
     } else {
       return null
