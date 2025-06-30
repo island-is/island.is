@@ -127,7 +127,7 @@ export class UserProfileService {
         {
           model: Emails,
           as: 'emails',
-          required: true,
+          required: false,
           where: {
             primary: true,
           },
@@ -694,6 +694,18 @@ export class UserProfileService {
     toNationalId: string,
   ): Promise<PaginatedActorProfileDto> {
     const incomingDelegations = await this.getIncomingDelegations(toNationalId)
+
+    // Filter out duplicate delegations
+    incomingDelegations.data = incomingDelegations.data.filter(
+      (delegation, index, self) =>
+        index ===
+        self.findIndex(
+          (d) =>
+            d.fromNationalId === delegation.fromNationalId &&
+            d.toNationalId === delegation.toNationalId,
+        ),
+    )
+
     const emailPreferences = await this.delegationPreference.findAll({
       where: {
         toNationalId,
@@ -1376,16 +1388,16 @@ export class UserProfileService {
 
     let filteredUserProfile: UserProfileDto = {
       nationalId: userProfile.nationalId,
-      email: userProfile.emails?.[0].email ?? null,
+      email: userProfile.emails?.[0]?.email ?? null,
       mobilePhoneNumber: userProfile.mobilePhoneNumber,
       locale: userProfile.locale,
       mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified ?? false,
       emailVerified:
-        userProfile.emails?.[0].emailStatus === DataStatus.VERIFIED,
+        userProfile.emails?.[0]?.emailStatus === DataStatus.VERIFIED,
       documentNotifications: userProfile.documentNotifications,
       needsNudge: this.checkNeedsNudge({
-        email: userProfile.emails?.[0].email,
-        emailStatus: userProfile.emails?.[0].emailStatus,
+        email: userProfile.emails?.[0]?.email,
+        emailStatus: userProfile.emails?.[0]?.emailStatus,
         nextNudge: userProfile.nextNudge,
         mobilePhoneNumber: userProfile.mobilePhoneNumber,
         mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified,
@@ -1401,7 +1413,7 @@ export class UserProfileService {
       (this.config.migrationDate ?? new Date()) > userProfile.lastNudge
     ) {
       const isEmailVerified =
-        userProfile.emails?.[0].emailStatus === DataStatus.VERIFIED
+        userProfile.emails?.[0]?.emailStatus === DataStatus.VERIFIED
 
       filteredUserProfile = {
         ...filteredUserProfile,

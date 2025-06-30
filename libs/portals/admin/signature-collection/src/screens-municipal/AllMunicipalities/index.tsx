@@ -20,6 +20,7 @@ import { SignatureCollectionPaths } from '../../lib/paths'
 import { SignatureCollectionList } from '@island.is/api/schema'
 import FindSignature from '../../shared-components/findSignature'
 import EmptyState from '../../shared-components/emptyState'
+import StartAreaCollection from './startCollection'
 
 const AllMunicipalities = () => {
   const { allLists, collection } = useLoaderData() as ListsLoaderReturn
@@ -45,7 +46,7 @@ const AllMunicipalities = () => {
 
   return (
     <GridContainer>
-      <GridRow direction="row">
+      <GridRow>
         <GridColumn
           span={['12/12', '5/12', '5/12', '3/12']}
           offset={['0', '7/12', '7/12', '0']}
@@ -60,7 +61,7 @@ const AllMunicipalities = () => {
           offset={['0', '0', '0', '1/12']}
           span={['12/12', '12/12', '12/12', '8/12']}
         >
-          <Box marginBottom={2}>
+          <Box marginBottom={3}>
             <Breadcrumbs
               items={[
                 {
@@ -79,23 +80,25 @@ const AllMunicipalities = () => {
           />
           <Divider />
           <Box marginTop={9} />
-          <FindSignature collectionId={collection.id} />
           {municipalityLists.length > 0 ? (
-            <Box marginBottom={3} display="flex" justifyContent="flexEnd">
-              <Text variant="eyebrow">
-                {formatMessage(m.totalListResults) +
-                  ': ' +
-                  municipalityLists.length}
-              </Text>
+            <Box>
+              <FindSignature collectionId={collection.id} />
+              <Box marginBottom={3} display="flex" justifyContent="flexEnd">
+                <Text variant="eyebrow">
+                  {formatMessage(m.totalListResults) +
+                    ': ' +
+                    municipalityLists.length}
+                </Text>
+              </Box>
             </Box>
           ) : (
-            <Box marginTop={10}>
-              <EmptyState
-                title={formatMessage(m.noLists)}
-                description={formatMessage(m.noListsDescription)}
-              />
-            </Box>
+            <EmptyState
+              title={formatMessage(m.noLists)}
+              description={formatMessage(m.noListsDescription)}
+            />
           )}
+          {/* Todo: for municipalities, not admin */}
+          <StartAreaCollection />
           <Stack space={3}>
             {municipalityLists.map((list) => {
               return (
@@ -121,7 +124,7 @@ const AllMunicipalities = () => {
                       )
                     },
                   }}
-                  /* Todo: this is still a discussion
+                  /* Todo: add for admin users
                   tag={{
                     label: 'Tag',
                     variant: 'blue',

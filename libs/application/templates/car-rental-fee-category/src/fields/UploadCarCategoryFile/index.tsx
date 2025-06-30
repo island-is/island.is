@@ -16,11 +16,13 @@ import {
 import { RateCategory } from '../../utils/constants'
 import { getValueViaPath } from '@island.is/application/core'
 import { EntryModel } from '@island.is/clients-rental-day-rate'
-import {
-  isDayRateEntryActive,
-} from '../../utils/dayRateUtils'
+import { isDayRateEntryActive } from '../../utils/dayRateUtils'
 import { useFormContext } from 'react-hook-form'
-import { createErrorExcel, downloadFile, parseFileToCarCategory } from '../../utils/UploadCarCategoryFileUtils'
+import {
+  createErrorExcel,
+  downloadFile,
+  parseFileToCarCategory,
+} from '../../utils/UploadCarCategoryFileUtils'
 
 const extensionToType = {
   [fileExtensionWhitelist['.csv']]: 'csv',

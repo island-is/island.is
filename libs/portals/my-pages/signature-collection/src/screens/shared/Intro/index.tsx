@@ -15,7 +15,7 @@ const Intro = ({
   intro: string
 }) => {
   return (
-    <Box marginBottom={8}>
+    <Box marginBottom={5}>
       <IntroWrapper
         title={title}
         intro={intro}
