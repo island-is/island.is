@@ -23,8 +23,7 @@
         "styles": ["apps/application-system/form/src/styles.css"],
         "scripts": [],
         "webpackConfig": "apps/application-system/form/webpack.config.js",
-        "maxWorkers": 2,
-        "memoryLimit": 16384
+        "maxWorkers": 2
       },
       "configurations": {
         "production": {
