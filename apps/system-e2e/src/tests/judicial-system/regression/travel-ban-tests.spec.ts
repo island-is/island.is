@@ -20,7 +20,7 @@ test.describe.serial('Travel ban tests', () => {
   }) => {
     const page = prosecutorPage
 
-    await page.goto('/krofur')
+    await page.goto('/malalistar')
     await page.getByRole('button', { name: 'Nýtt mál' }).click()
     await page.getByRole('menuitem', { name: 'Farbann' }).click()
     await expect(page).toHaveURL('/krafa/ny/farbann')

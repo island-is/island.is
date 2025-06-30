@@ -25,7 +25,7 @@ test.describe.serial('Search warrant tests', () => {
     const page = prosecutorPage
 
     // Case list
-    await page.goto('/krofur')
+    await page.goto('/malalistar')
     await page.getByRole('button', { name: 'Nýtt mál' }).click()
     await page.getByRole('menuitem', { name: 'Rannsóknarheimild' }).click()
     await expect(page).toHaveURL('/krafa/ny/rannsoknarheimild')
