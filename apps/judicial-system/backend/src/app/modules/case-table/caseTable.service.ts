@@ -1,10 +1,8 @@
 import { Includeable, literal, Op } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
-import { Inject, Injectable } from '@nestjs/common'
+import { Injectable } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
-
-import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   CaseActionType,
@@ -239,7 +237,10 @@ const getContextMenuActions = (
 
 @Injectable()
 export class CaseTableService {
-  constructor(@InjectModel(Case) private readonly caseModel: typeof Case) {}
+  constructor(
+    @InjectConnection() private readonly sequelize: Sequelize,
+    @InjectModel(Case) private readonly caseModel: typeof Case,
+  ) {}
 
   async getCaseTableRows(
     type: CaseTableType,
@@ -272,6 +273,8 @@ export class CaseTableService {
   }
 
   async searchCases(query: string, user: TUser): Promise<SearchCasesResponse> {
+    const safeQuery = this.sequelize.escape(`%${query}%`).slice(1, -1)
+
     const results = await this.caseModel.findAndCountAll({
       attributes: [
         'id',
@@ -287,7 +290,7 @@ export class CaseTableService {
               FROM "defendant" d
               WHERE d."case_id" = "Case"."id"
               ORDER BY
-                (d."name" ILIKE '%${query}%' OR d."national_id" ILIKE '%${query}%') DESC,
+                (d."name" ILIKE '${safeQuery}' OR d."national_id" ILIKE '${safeQuery}') DESC,
                 d."created" ASC
               LIMIT 1
             )
@@ -301,7 +304,7 @@ export class CaseTableService {
               FROM "defendant" d
               WHERE d."case_id" = "Case"."id"
               ORDER BY
-                (d."name" ILIKE '%${query}%' OR d."national_id" ILIKE '%${query}%') DESC,
+                (d."name" ILIKE '${safeQuery}' OR d."national_id" ILIKE '${safeQuery}') DESC,
                 d."created" ASC
               LIMIT 1
             )
@@ -319,22 +322,22 @@ export class CaseTableService {
                 SELECT unnest("Case"."police_case_numbers") AS match, 'policeCaseNumbers' AS match_source
                 UNION ALL
                 SELECT "Case"."court_case_number", 'courtCaseNumber'
-                WHERE "Case"."court_case_number" ILIKE '${`%${query}%`}'
+                WHERE "Case"."court_case_number" ILIKE '${safeQuery}'
                 UNION ALL
                 SELECT "Case"."appeal_case_number", 'appealCaseNumber'
-                WHERE "Case"."appeal_case_number" ILIKE '${`%${query}%`}'
+                WHERE "Case"."appeal_case_number" ILIKE '${safeQuery}'
                 UNION ALL
                 SELECT d."national_id", 'defendantNationalId'
                 FROM "defendant" d
                 WHERE d."case_id" = "Case"."id"
-                  AND d."national_id" ILIKE '%${query}%'
+                  AND d."national_id" ILIKE '${safeQuery}'
                 UNION ALL
                 SELECT d."name", 'defendantName'
                 FROM "defendant" d
                 WHERE d."case_id" = "Case"."id"
-                  AND d."name" ILIKE '%${query}%'
+                  AND d."name" ILIKE '${safeQuery}'
               ) AS matches
-              WHERE match ILIKE '${`%${query}%`}'
+              WHERE match ILIKE '${safeQuery}'
               LIMIT 1
             )
           `),
@@ -358,13 +361,13 @@ export class CaseTableService {
               literal(`
                 EXISTS (
                   SELECT 1 FROM unnest("Case"."police_case_numbers") AS n
-                  WHERE n ILIKE '${`%${query}%`}'
+                  WHERE n ILIKE '${safeQuery}'
                 )
-              `),
+            `),
               { court_case_number: { [Op.iLike]: `%${query}%` } },
               { appeal_case_number: { [Op.iLike]: `%${query}%` } },
-              literal(`defendants.name ILIKE '%${query}%'`),
-              literal(`defendants.national_id ILIKE '%${query}%'`),
+              literal(`defendants.name ILIKE '${safeQuery}'`),
+              literal(`defendants.national_id ILIKE '${safeQuery}'`),
             ],
           },
         ],
