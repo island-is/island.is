@@ -110,7 +110,7 @@ test.describe.serial('Search warrant tests', () => {
     await expect(page).toHaveURL(`/krafa/rannsoknarheimild/stadfesta/${caseId}`)
     await page.getByRole('button', { name: 'Senda kröfu á héraðsdóm' }).click()
     await page.getByRole('button', { name: 'Loka glugga' }).click()
-    await expect(page).toHaveURL('/krofur')
+    await expect(page).toHaveURL('/malalistar')
   })
 
   test('court should receive search warrant request and make a ruling', async ({

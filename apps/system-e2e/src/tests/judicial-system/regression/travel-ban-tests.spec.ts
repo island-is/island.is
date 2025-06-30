@@ -102,7 +102,7 @@ test.describe.serial('Travel ban tests', () => {
     await expect(page).toHaveURL(`/krafa/stadfesta/${caseId}`)
     await page.getByRole('button', { name: 'Senda kröfu á héraðsdóm' }).click()
     await page.getByRole('button', { name: 'Loka glugga' }).click()
-    await expect(page).toHaveURL('/krofur')
+    await expect(page).toHaveURL('/malalistar')
   })
 
   test('court should submit decision on travel ban case', async ({
