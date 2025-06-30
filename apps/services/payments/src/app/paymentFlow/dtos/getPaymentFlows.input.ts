@@ -1,5 +1,5 @@
 import { ApiPropertyOptional } from '@nestjs/swagger'
-import { IsOptional, IsString, IsNumber } from 'class-validator'
+import { IsOptional, IsString } from 'class-validator'
 import { PaginationDto } from 'libs/nest/pagination/src/lib/dto/pagination.dto'
 
 export class GetPaymentFlowsInput extends PaginationDto {
