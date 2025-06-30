@@ -5,7 +5,12 @@ type Translations = {
     accused: string
     active: string
     address: string
+    appealDeadline: string
+    appealDecision: string
+    appealDecisionText: string
     arraignmentDate: string
+    appealDecisionAccept: string
+    appealDecisionPostpone: string
     caseNumber: string
     completed: string
     court: string
@@ -29,6 +34,10 @@ type Translations = {
     phoneNumber: string
     prosecutor: string
     prosecutorsOffice: string
+    ruling: string
+    rulingDate: string
+    rulingInstructions: string
+    rulingTitle: string
     subpoena: string
     subpoenaSent: string
     subpoenaServed: string
@@ -42,6 +51,12 @@ const translations: Translations = {
     accused: 'Accused',
     active: 'Active',
     address: 'Address',
+    appealDeadline: 'Appeal deadline', //TODO: Verify translation
+    appealDecision: 'Appeal decision', //TODO: Verify translation
+    appealDecisionText:
+      'Ég hef tekið við leiðbeiningum um rétt til áfrýjunar og áfrýjunarfrest', //TODO: translate
+    appealDecisionAccept: 'Ég uni dómi.',
+    appealDecisionPostpone: 'Ég tek áfrýjunarfrest.',
     arraignmentDate: 'Arraignment date',
     caseNumber: 'Case number',
     completed: 'Completed',
@@ -67,6 +82,10 @@ const translations: Translations = {
     phoneNumber: 'Phone Nr.',
     prosecutor: 'Prosecutor',
     prosecutorsOffice: 'Institution',
+    ruling: 'Ruling', //TODO: Verify translation
+    rulingDate: 'Ruling date', //TODO: Verify translation
+    rulingTitle: 'Ruling', //TODO: Verify translation
+    rulingInstructions: 'Ruling instructions', //TODO: Verify translation
     subpoena: 'Subpoena',
     subpoenaSent: 'Subpoena sent',
     subpoenaServed:
@@ -78,6 +97,12 @@ const translations: Translations = {
     accused: 'Ákærði',
     active: 'Í vinnslu',
     address: 'Lögheimili',
+    appealDeadline: 'Áfrýjunarfrestur til og með',
+    appealDecision: 'Afstaða til dóms',
+    appealDecisionAccept: 'Ég uni dómi.',
+    appealDecisionPostpone: 'Ég tek áfrýjunarfrest.',
+    appealDecisionText:
+      'Ég hef tekið við leiðbeiningum um rétt til áfrýjunar og áfrýjunarfrest',
     arraignmentDate: 'Verður tekið fyrir á dómþingi',
     caseNumber: 'Málsnúmer',
     completed: 'Lokið',
@@ -103,6 +128,11 @@ const translations: Translations = {
     phoneNumber: 'Símanúmer',
     prosecutor: 'Ákærandi',
     prosecutorsOffice: 'Embætti',
+    ruling: 'Dómsorð',
+    rulingDate: 'Dómur kveðinn upp',
+    rulingInstructions: 'Leiðbeiningar tengdar þínum dómi',
+
+    rulingTitle: 'Niðurstaða dóms',
     subpoena: 'Fyrirkall',
     subpoenaSent: 'Fyrirkall sent',
     subpoenaServed:

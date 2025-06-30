@@ -772,7 +772,10 @@ export class InternalCaseService {
               prosecutorsOffice: theCase.creatingProsecutor?.institution?.name,
               caseNumber,
             },
-          )} ${this.formatMessage(notifications.emailTail)}`,
+          )} ${this.formatMessage(notifications.emailTail, {
+            linkStart: `<a href="${this.config.clientUrl}">`,
+            linkEnd: '</a>',
+          })}`,
         ),
       )
       .then(() => ({ delivered: true }))
@@ -1345,7 +1348,13 @@ export class InternalCaseService {
         },
         { model: DateLog, as: 'dateLogs' },
       ],
-      attributes: ['courtCaseNumber', 'id'],
+      attributes: [
+        'courtCaseNumber',
+        'id',
+        'state',
+        'indictmentRulingDecision',
+        'rulingDate',
+      ],
       where: {
         type: CaseType.INDICTMENT,
         id: caseId,

@@ -76,6 +76,7 @@ export interface Collection {
   processed: boolean
   status: CollectionStatus
   collectionType: CollectionType
+  electionId?: string
 }
 
 const getStatus = ({
@@ -147,6 +148,10 @@ export const mapCollection = (
     hasActiveLists,
     hasExtendedLists,
   })
+  const governmentalArea =
+    collectionType === CollectionType.LocalGovernmental && areas.length > 0
+      ? areas[0].id?.toString()
+      : undefined
   return {
     id: id.toString(),
     name: collection.kosningNafn ?? '',
@@ -155,11 +160,12 @@ export const mapCollection = (
     isActive,
     isSignatureCollection: kosning?.erMedmaelakosning ?? false,
     candidates: candidates
-      ? candidates.map((candidate) => mapCandidate(candidate))
+      ? candidates.map((candidate) => mapCandidate(candidate, governmentalArea))
       : [],
-    areas: areas.map((area) => mapArea(area)),
+    areas: areas.map((area) => mapArea(area, id.toString())),
     processed,
     status,
     collectionType,
+    electionId: kosning?.id?.toString(),
   }
 }

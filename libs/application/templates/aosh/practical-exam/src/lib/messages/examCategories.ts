@@ -10,7 +10,7 @@ export const examCategories = {
     pageDescription: {
       id: 'aosh.pe.application:examCategories.general.pageDescription',
       defaultMessage:
-        'Et sed ut est aliquam proin elit sed. Nunc tellus lacus sed eu pulvinar. ',
+        'Hér eru þeir vélaflokkar sem einstaklingur er með bókleg réttindi á og má fara í verklegt próf. Fyrir aðra vélaflokka þarf að standast bókleg námskeið.',
       description: `Exam categories's page description`,
     },
     sectionTitle: {
@@ -88,6 +88,28 @@ export const examCategories = {
       id: 'aosh.pe.application:examCategories.labels.invalidValidationTitle',
       defaultMessage: 'Próftaki ekki gjaldgengur í valin verkleg próf',
       description: `Error validating exam categories for examinee`,
+    },
+    webServiceFailureTitle: {
+      id: 'aosh.pe.application:examCategories.labels.webServiceFailureTitle',
+      defaultMessage: 'Óvænt villa í vefþjónustu',
+      description: `Error validating exam categories for examinee`,
+    },
+    webServiceFailureMessage: {
+      id: 'aosh.pe.application:examCategories.labels.webServiceFailureMessage',
+      defaultMessage:
+        'Vefþjónustan skilaði villu. Reyndu aftur síðar. Ef vandamálið varir, vinsamlegast hafðu samband við Vinnueftirlitið.',
+      description: `Error validating exam categories for examinee`,
+    },
+    missingFileUploadTitle: {
+      id: 'aosh.pe.application:examCategories.labels.missingFileUploadTitle',
+      defaultMessage: 'Villa vegna læknisvottorðs',
+      description: `Error missing file upload title`,
+    },
+    missingFileUploadMessage: {
+      id: 'aosh.pe.application:examCategories.labels.missingFileUploadMessage',
+      defaultMessage:
+        'Vantar að hlaða upp læknisvottorði, eða það hefur mistekist, vinsamlegas reyndu aftur',
+      description: `Error missing file upload message`,
     },
     chooseExamCategory: {
       id: 'aosh.pe.application:examCategories.labels.chooseExamCategory',

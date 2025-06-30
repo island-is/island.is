@@ -17,6 +17,8 @@ import {
 import { m } from '../lib/messages'
 import { SignatureCollectionList } from '@island.is/api/schema'
 import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
+import { IndividualDto } from '@island.is/clients/national-registry-v2'
+import { format as formatNationalId } from 'kennitala'
 
 export const Draft: Form = buildForm({
   id: 'SignListDraft',
@@ -86,14 +88,6 @@ export const Draft: Form = buildForm({
           description: m.listDescription,
           children: [
             buildTextField({
-              id: 'municipality',
-              title: m.municipality,
-              width: 'full',
-              readOnly: true,
-              //Todo: update once available from externalData
-              defaultValue: 'Borgarbyggð',
-            }),
-            buildTextField({
               id: 'candidateName',
               title: m.candidateName,
               width: 'full',
@@ -116,16 +110,34 @@ export const Draft: Form = buildForm({
               title: m.guarantorsNationalId,
               width: 'half',
               readOnly: true,
-              //Todo: update once available from externalData
-              defaultValue: '010130-3019',
+              defaultValue: ({ answers, externalData }: Application) => {
+                const lists =
+                  getValueViaPath<SignatureCollectionList[]>(
+                    externalData,
+                    'getList.data',
+                  ) || []
+
+                const nationalId =
+                  lists.length === 1
+                    ? lists[0].candidate.nationalId
+                    : lists.find((list) => list.id === answers.listId)
+                        ?.candidate.nationalId
+
+                return nationalId ? formatNationalId(nationalId) : undefined
+              },
             }),
             buildTextField({
-              id: 'guarantorsName',
-              title: m.guarantorsName,
+              id: 'municipality',
+              title: m.municipality,
               width: 'half',
               readOnly: true,
-              //Todo: update once available from externalData
-              defaultValue: 'Jón Jónsson',
+              defaultValue: ({ externalData }: Application) => {
+                const municipalIdentity = getValueViaPath<IndividualDto>(
+                  externalData,
+                  'municipalIdentity.data',
+                )
+                return municipalIdentity?.legalDomicile?.locality
+              },
             }),
             buildSubmitField({
               id: 'submit',

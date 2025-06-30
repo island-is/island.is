@@ -221,6 +221,7 @@ export const STATISTICS_ROUTE = '/notendur/tolfraedi'
 
 //#region Shared routes
 export const CASES_ROUTE = '/krofur'
+export const CASE_TABLE_GROUPS_ROUTE = '/malalistar'
 export const SIGNED_VERDICT_OVERVIEW_ROUTE = '/krafa/yfirlit'
 export const ROUTE_HANDLER_ROUTE = '/beinir'
 //#endregion Shared routes

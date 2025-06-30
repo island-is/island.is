@@ -408,6 +408,17 @@ export class NotificationsWorkerService {
                 recipientName = await this.getName(message.recipient)
               }
 
+              // Filter out duplicate delegations that have the same fromNationalId and toNationalId
+              delegations.data = delegations.data.filter(
+                (delegation, index, self) =>
+                  index ===
+                  self.findIndex(
+                    (d) =>
+                      d.fromNationalId === delegation.fromNationalId &&
+                      d.toNationalId === delegation.toNationalId,
+                  ),
+              )
+
               await Promise.all(
                 delegations.data.map((delegation) =>
                   this.queue.add({
