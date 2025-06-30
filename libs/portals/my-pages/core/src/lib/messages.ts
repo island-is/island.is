@@ -1966,6 +1966,14 @@ export const m = defineMessages({
     id: 'service.portal:collapse',
     defaultMessage: 'Fella saman',
   },
+  copy: {
+    id: 'service.portal:copy',
+    defaultMessage: 'Afrita',
+  },
+  copied: {
+    id: 'service.portal:copied',
+    defaultMessage: 'Afritað!',
+  },
 })
 
 export const searchTagsMessages = defineMessages({

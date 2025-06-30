@@ -19,10 +19,9 @@ const ReplySent: React.FC<Props> = ({ body, intro, loading }) => {
       <Stack space={2}>
         {intro && <AlertMessage type="info" message={intro} />}
         {loading && <LoadingDots />}
-        <Box
-          dangerouslySetInnerHTML={{ __html: body }}
-          style={{ fontWeight: 'lighter' }}
-        />
+        <Box style={{ fontWeight: 'lighter', whiteSpace: 'pre-line' }}>
+          {body}
+        </Box>
       </Stack>
     </Box>
   )

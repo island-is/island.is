@@ -1,16 +1,18 @@
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { useIsMobile } from '@island.is/portals/my-pages/core'
+import { m, Tooltip, useIsMobile } from '@island.is/portals/my-pages/core'
 import { InformationPaths } from '@island.is/portals/my-pages/information'
-import React from 'react'
+import copyToClipboard from 'copy-to-clipboard'
+import React, { useState } from 'react'
 import { useNavigate } from 'react-router-dom'
-import { messages } from '../../utils/messages'
-import * as styles from './Reply.css'
-import ReplyHeaderMobile from './Mobile/MobileHeader'
 import { useDocumentContext } from '../../screens/Overview/DocumentContext'
+import { messages } from '../../utils/messages'
+import ReplyHeaderMobile from './Mobile/MobileHeader'
+import * as styles from './Reply.css'
+import AvatarImage from '../DocumentLine/AvatarImage'
 
 interface ReplyHeaderProps {
-  initials: string
+  initials?: string
   title: string
   subTitle: string
   caseNumber?: string
@@ -19,6 +21,7 @@ interface ReplyHeaderProps {
   displayCloseButton?: boolean
   displayEmail?: boolean
   onClose?: () => void
+  avatar?: string
 }
 
 const ReplyHeader: React.FC<ReplyHeaderProps> = ({
@@ -31,11 +34,13 @@ const ReplyHeader: React.FC<ReplyHeaderProps> = ({
   displayCloseButton,
   displayEmail,
   onClose,
+  avatar,
 }) => {
   const navigate = useNavigate()
   const { formatMessage } = useLocale()
   const { isMobile } = useIsMobile()
   const { replyState } = useDocumentContext()
+  const [copiedCode, setCopiedCode] = useState<string | null>(null)
 
   if (isMobile && replyState?.replyOpen)
     return (
@@ -48,6 +53,13 @@ const ReplyHeader: React.FC<ReplyHeaderProps> = ({
       />
     )
 
+  const copy = (code?: string | null) => {
+    if (code) {
+      copyToClipboard(code)
+      setCopiedCode(code)
+    }
+  }
+
   return (
     <Box
       display="flex"
@@ -57,18 +69,22 @@ const ReplyHeader: React.FC<ReplyHeaderProps> = ({
       width="full"
     >
       <Box display="flex" flexDirection="row" marginBottom={3} width="full">
-        <Box
-          display="flex"
-          alignItems="center"
-          justifyContent="center"
-          background="blueberry100"
-          borderRadius="full"
-          style={{ minWidth: isMobile ? 48 : 56, height: isMobile ? 48 : 56 }}
-        >
-          <Text variant="h5" as="p">
-            {initials}
-          </Text>
-        </Box>
+        {initials ? (
+          <Box
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+            background="blueberry100"
+            borderRadius="full"
+            style={{ minWidth: isMobile ? 48 : 56, height: isMobile ? 48 : 56 }}
+          >
+            <Text variant="h5" as="p">
+              {initials}
+            </Text>
+          </Box>
+        ) : (
+          avatar && <AvatarImage large img={avatar} background="blue100" />
+        )}
 
         <Box
           display={'flex'}
@@ -101,6 +117,31 @@ const ReplyHeader: React.FC<ReplyHeaderProps> = ({
                     )}{' '}
                     {caseNumber}
                   </Text>
+                  <Tooltip
+                    text={
+                      copiedCode === caseNumber
+                        ? formatMessage(m.copied)
+                        : formatMessage(m.copy)
+                    }
+                  >
+                    <Box
+                      cursor="pointer"
+                      marginLeft={1}
+                      display="flex"
+                      alignItems="center"
+                      justifyContent="center"
+                      onClick={() => {
+                        copy(caseNumber)
+                      }}
+                    >
+                      <Icon
+                        icon="copy"
+                        type="outline"
+                        color="blue400"
+                        size="small"
+                      />
+                    </Box>
+                  </Tooltip>
                 </Box>
               )}
             </Box>

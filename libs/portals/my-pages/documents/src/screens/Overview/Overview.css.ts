@@ -1,4 +1,5 @@
 import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { SERVICE_PORTAL_HEADER_HEIGHT_LG } from '@island.is/portals/my-pages/constants'
 import { globalStyle, style } from '@vanilla-extract/css'
 
 export const btn = style({})
@@ -23,6 +24,15 @@ export const bullet = style({
 
 export const loading = style({
   minHeight: 200,
+})
+
+export const documentList = style({
+  ...themeUtils.responsiveStyle({
+    md: {
+      position: 'sticky',
+      top: SERVICE_PORTAL_HEADER_HEIGHT_LG,
+    },
+  }),
 })
 
 globalStyle(`${checkboxWrap} label > div`, {
