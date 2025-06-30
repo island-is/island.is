@@ -1,15 +1,31 @@
 import {
+    buildMultiField,
+  buildRadioField,
   buildSection,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../lib/messages'
-import { backgroundSubSection } from './backgroundSubSection'
+import { YesOrNoOptions } from '../../../lib/utils'
 
+export const selfEvaluationRoute = 'selfEvaluation'
 
 export const selfEvaluationSection =
   buildSection({
-    id: 'selfEvaluation',
+    id: selfEvaluationRoute,
     title: disabilityPensionFormMessage.selfEvaluation.title,
     children: [
-      backgroundSubSection
-    ],
+      buildMultiField({
+        id: selfEvaluationRoute,
+        title: disabilityPensionFormMessage.selfEvaluation.title,
+        description: disabilityPensionFormMessage.selfEvaluation.description,
+        children: [
+          buildRadioField({
+            id: `${selfEvaluationRoute}.assistance`,
+            title: disabilityPensionFormMessage.selfEvaluation.assistance,
+            width: 'half',
+            backgroundColor: 'blue',
+            options: YesOrNoOptions,
+          }),
+        ]
+      })
+    ]
   })

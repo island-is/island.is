@@ -6,6 +6,7 @@ import { formatBankInfo, validIBAN, validSWIFT } from '@island.is/application/te
 import { isValidPhoneNumber } from './utils'
 import { EmploymentEnum } from './constants'
 import { disabilityPensionFormMessage } from './messages'
+import { selfEvaluationRoute } from '../forms/mainForm/selfEvaluationSection'
 
 export const fileSchema = z.object({
   name: z.string(),
@@ -271,6 +272,9 @@ export const dataSchema = z.object({
     .refine((i) => i === undefined || i.length > 0, {
       params: errorMessages.incomePlanRequired,
     }),
+  selfEvaluation: z.object({
+    assistance: z.enum([YES, NO]),
+  })
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

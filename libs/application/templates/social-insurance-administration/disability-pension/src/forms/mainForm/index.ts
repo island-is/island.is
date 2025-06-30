@@ -8,5 +8,5 @@ export const MainForm = buildForm({
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  children: [basicInfoSection, selfEvaluationSection],
+  children: [/*basicInfoSection,*/ selfEvaluationSection],
 })
