@@ -86,9 +86,9 @@ const SearchModal: FC<Props> = ({ onClose }) => {
 
         setSearchResults([
           results.data && results.data.searchCases.rowCount > 0
-            ? results.data?.searchCases.rows.map((row) => (
+            ? results.data?.searchCases.rows.map((row, idx) => (
                 <SearchResultButton
-                  key={row.caseId}
+                  key={idx}
                   caseId={row.caseId}
                   caseType={row.caseType}
                   descriptor={`${row.matchedValue}${
