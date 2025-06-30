@@ -21,7 +21,7 @@ export const disabilityPensionFormMessage: MessageDir = {
     title: {
       id: 'dp.application:basicInfo.title',
       defaultMessage: 'Almennar upplýsingar',
-      description: 'Basic informatino',
+      description: 'Basic information',
     },
     personalInfo: {
       id: 'dp.application:basicInfo.personalInfo',
@@ -335,6 +335,11 @@ export const disabilityPensionFormMessage: MessageDir = {
       defaultMessage: 'Hefur þú búið eða unnið erlendis?',
       description: 'Have you lived or worked abroad?',
     },
+    livedAbroadQuestion: {
+      id: 'dp.application:employmentParticipation.livedAbroadQuestion',
+      defaultMessage: 'Hvar hefur þú dvalið og hversu lengi?',
+      description: 'Have you lived abroad and how long?',
+    },
     country: {
       id: 'dp.application:employmentParticipation.country',
       defaultMessage: 'Land',
@@ -405,6 +410,21 @@ export const disabilityPensionFormMessage: MessageDir = {
       id: 'dp.application:errors.countryRequired',
       defaultMessage: 'Nauðsynlegt er að velja land',
       description: 'You must add at least one country',
+    },
+    emptyNationalId: {
+      id: 'dp.application:errors.abroadNationalIdRequired',
+      defaultMessage: 'Nauðsynlegt er að slá inn kennitölu í viðeigandi landi.',
+      description: 'You must supply a foreign national id',
+    },
+    emptyStartDate: {
+      id: 'dp.application:errors.startDateRequired',
+      defaultMessage: 'Nauðsynlegt er að velja upphaf tímabils',
+      description: 'You must select the start of period',
+    },
+    emptyEndDate: {
+      id: 'dp.application:errors.endDateRequired',
+      defaultMessage: 'Nauðsynlegt er að velja enda tímabils, og að dagsetningin sé á eftir upphafsdagsetningu',
+      description: 'You must select the end of period. The end date must be after the start date.',
     },
   }),
 }

@@ -1,7 +1,7 @@
 import { z } from 'zod'
 import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { BankAccountType, INCOME, ISK, RatioType, TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import { NO, YES } from '@island.is/application/core'
+import { NO, YES, YesOrNo } from '@island.is/application/core'
 import { formatBankInfo, validIBAN, validSWIFT } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { isValidPhoneNumber } from './utils'
 import { EmploymentEnum } from './constants'
@@ -23,10 +23,9 @@ const livedAbroadSchema = z.object({
       periodStart: z.string(),
       periodEnd: z.string(),
       period: z.string()
-    }).optional()
-  )
+    })
+  ).optional()
 })
-
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -48,45 +47,17 @@ export const dataSchema = z.object({
         else return true
       },
       { params: errorMessages.requireAttachment, path: ['fileUpload'] },
-    )
-    .refine(
-      ({ appliedBefore, fileUpload }) => {
-        if (appliedBefore === YES) {
-          return (fileUpload?.length ?? 0) > 0
-        }
-        else return true
-      },
-      { params: errorMessages.requireAttachment, path: ['fileUpload'] },
     ),
   livedAbroad: livedAbroadSchema
-    .refine(({list, hasLivedAbroad}) => {
-      if ((hasLivedAbroad === NO)|| (list && list.length > 0)) {
+    .refine(({ list, hasLivedAbroad }) => {
+      if ((hasLivedAbroad === NO) || (list && list.length > 0)) {
         return true
       }
       return false
     }, {
-      path: ['list'],
-      params: disabilityPensionFormMessage.errors.emptyForeignResidence,
-    })
-    .refine(({list, hasLivedAbroad}) => {
-      if (hasLivedAbroad === YES && (list && list.length > 0)) {
-        const countries = getAllCountryCodes().map(c => c.name)
-        const invalidCountryLines = list.filter((item => item?.country && countries.includes(item.country)))
-        if (invalidCountryLines.length > 0) {
-          return false
-        }
-        return true
-      }
-    },{
-      path: ['list', '0', 'country'],
-      params: disabilityPensionFormMessage.errors.emptyCountry,
-    })
-    .refine(({list, hasLivedAbroad}) => { return hasLivedAbroad === YES && (list && list.length > 0)) {
-    },
-    {
-      path: ['list', '0', 'abroadNationalId'],
-      params: disabilityPensionFormMessage.errors.emptyCountry,
-    }),
+    path: ['list'],
+    params: disabilityPensionFormMessage.errors.emptyForeignResidence,
+  }),
   paidWork: z.object({
     inPaidWork: z.enum([EmploymentEnum.YES, EmploymentEnum.NO, EmploymentEnum.DONT_KNOW]),
     continuedWork: z.enum([YES, NO]).optional()

@@ -29,6 +29,9 @@ export const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
     const hasActiveChild = item.children?.find((child) => child.active)
     return currentItemIsActive || hasActiveChild
   })
+
+  console.log(navigation)
+
   const banners = useAlertBanners()
   const [ref, { height }] = useMeasure()
   const globalBanners = banners.filter((banner) =>

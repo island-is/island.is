@@ -5,15 +5,21 @@ import {
   getValueViaPath,
   YesOrNoEnum,
   buildTableRepeaterField,
-  buildDescriptionField,
-  buildSelectField,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import {  YesOrNoOptions, countryOptions } from '../../../../lib/utils'
 import { FormValue } from '@island.is/application/types'
 import format from 'date-fns/format'
+import addDays from 'date-fns/addDays'
 
 const livedAbroadRoute = `livedAbroad`
+
+/** TODO
+ * 1. Choose yes or no, if yes, require at least 1 row of living abroad data. If no, continue.
+ * 2. If no rows yet, display 4 inputs and block continue until 1 row has been added.
+ * 3. If row added, hide 4 inputs and use table repeater. Also ,unblock continue button.
+ * 4. On Continue, validate each and every row.
+ */
 
 const livedAbroadCondition = (formValue: FormValue) => {
   const livedAbroad = getValueViaPath<YesOrNoEnum>(
@@ -49,7 +55,7 @@ export const livedAbroadSubSection = buildMultiField({
           label: disabilityPensionFormMessage.employmentParticipation.country,
           placeholder: disabilityPensionFormMessage.employmentParticipation.countryPlaceholder,
           width: 'half',
-          displayInTable: false,
+          displayInTable: true,
           isSearchable: true,
           options: countryOptions,
         },
@@ -58,8 +64,7 @@ export const livedAbroadSubSection = buildMultiField({
           label: disabilityPensionFormMessage.employmentParticipation.abroadNationalId,
           width: 'half',
           format: '######-####',
-          displayInTable: false,
-          required: true,
+          displayInTable: true,
         },
         periodStart: {
           component: 'date',
@@ -67,7 +72,32 @@ export const livedAbroadSubSection = buildMultiField({
           placeholder: disabilityPensionFormMessage.employmentParticipation.periodStartPlaceholder,
           width: 'half',
           displayInTable: false,
-          required: true,
+          updateValueObj: {
+            valueModifier: (_,  activeField) => {
+              if (!activeField) {
+                return ""
+              }
+              const { periodEnd, periodStart } = activeField
+
+              if (!periodStart || !periodEnd) {
+                return activeField.periodStart
+              }
+              const dateStart = new Date(periodStart)
+              const dateEnd = new Date(periodEnd)
+
+              if (!dateStart || !dateEnd) {
+                return activeField.periodStart
+              }
+
+              if (dateStart >= dateEnd) {
+                const newDate = addDays(dateEnd, -1);
+                return format(newDate, 'yyyy-MM-dd');
+              }
+
+              return activeField.periodStart
+            },
+            watchValues: ['periodEnd']
+          },
         },
         periodEnd: {
           component: 'date',
@@ -75,12 +105,38 @@ export const livedAbroadSubSection = buildMultiField({
           placeholder: disabilityPensionFormMessage.employmentParticipation.periodEndPlaceholder,
           width: 'half',
           displayInTable: false,
-          required: true,
+          updateValueObj: {
+            valueModifier: (_,  activeField) => {
+              if (!activeField) {
+                return ""
+              }
+              const { periodEnd, periodStart } = activeField
+
+              if (!periodStart || !periodEnd) {
+                return activeField.periodEnd
+              }
+
+              const dateStart = new Date(periodStart)
+              const dateEnd = new Date(periodEnd)
+
+              if (!dateStart || !dateEnd) {
+                return activeField.periodEnd
+              }
+
+              if (dateEnd <= dateStart) {
+                const newDate = addDays(dateStart, 1);
+                return format(newDate, 'yyyy-MM-dd');
+              }
+
+              return activeField.periodEnd
+            },
+            watchValues: ['periodStart']
+          },
         },
         period: {
           component: 'hiddenInput',
           updateValueObj: {
-            valueModifier: (application, activeField) => {
+            valueModifier: (_, activeField) => {
               if (!activeField) {
                 return ""
               }
