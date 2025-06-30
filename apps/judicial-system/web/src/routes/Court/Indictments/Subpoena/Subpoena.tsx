@@ -30,6 +30,7 @@ import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isSubpoenaStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { subpoena as strings } from './Subpoena.strings'
+import { pdfButtonGrid } from './Subpoena.css'
 
 const Subpoena: FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
@@ -264,58 +265,40 @@ const Subpoena: FC = () => {
             courtRoomRequired
           />
         </Box>
-        <Box component="section" marginBottom={10}>
-          {workingCase.defendants?.map((defendant, dIndex) => (
+        <Box component="section" className={pdfButtonGrid} marginBottom={10}>
+          {workingCase.defendants?.map((defendant) => (
             <>
               {isIssuingSubpoenaForDefendant(defendant) && (
-                <Box
+                <PdfButton
                   key={`subpoena-${defendant.id}`}
-                  marginBottom={
-                    dIndex + 1 === workingCase.defendants?.length &&
-                    (!defendant.subpoenas || defendant.subpoenas.length === 0)
-                      ? 0
-                      : 2
+                  caseId={workingCase.id}
+                  title={`Fyrirkall - ${defendant.name} nýtt - PDF`}
+                  pdfType="subpoena"
+                  disabled={
+                    !courtDate?.date ||
+                    !courtDate?.location ||
+                    !defendant.subpoenaType
                   }
-                >
-                  <PdfButton
-                    caseId={workingCase.id}
-                    title={`Fyrirkall - ${defendant.name} nýtt - PDF`}
-                    pdfType="subpoena"
-                    disabled={
-                      !courtDate?.date ||
-                      !courtDate?.location ||
-                      !defendant.subpoenaType
-                    }
-                    elementId={[
-                      defendant.id,
-                      `Fyrirkall - ${defendant.name} nýtt - PDF`,
-                    ]}
-                    queryParameters={`arraignmentDate=${courtDate?.date}&location=${courtDate?.location}&subpoenaType=${defendant.subpoenaType}`}
-                  />
-                </Box>
+                  elementId={[
+                    defendant.id,
+                    `Fyrirkall - ${defendant.name} nýtt - PDF`,
+                  ]}
+                  queryParameters={`arraignmentDate=${courtDate?.date}&location=${courtDate?.location}&subpoenaType=${defendant.subpoenaType}`}
+                />
               )}
-              {defendant.subpoenas?.map((subpoena, sIndex) => {
+              {defendant.subpoenas?.map((subpoena) => {
                 const fileName = `Fyrirkall - ${defendant.name} ${formatDate(
                   subpoena.created,
                 )} - PDF`
 
                 return (
-                  <Box
+                  <PdfButton
                     key={`subpoena-${subpoena.id}`}
-                    marginBottom={
-                      dIndex + 1 === workingCase.defendants?.length &&
-                      sIndex + 1 === defendant.subpoenas?.length
-                        ? 0
-                        : 2
-                    }
-                  >
-                    <PdfButton
-                      caseId={workingCase.id}
-                      title={fileName}
-                      pdfType="subpoena"
-                      elementId={[defendant.id, subpoena.id, fileName]}
-                    />
-                  </Box>
+                    caseId={workingCase.id}
+                    title={fileName}
+                    pdfType="subpoena"
+                    elementId={[defendant.id, subpoena.id, fileName]}
+                  />
                 )
               })}
             </>
