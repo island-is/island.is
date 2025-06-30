@@ -25,7 +25,7 @@ import {
   FriggSchoolsByMunicipalityQuery,
   OrganizationModelTypeEnum,
 } from '../../../types/schema'
-import { isCurrentShoolRegisterd } from '../../../utils/conditionUtils'
+import { isCurrentSchoolRegistered } from '../../../utils/conditionUtils'
 
 export const currentSchoolSubSection = buildSubSection({
   id: 'currentSchoolSubSection',
@@ -46,7 +46,7 @@ export const currentSchoolSubSection = buildSubSection({
           title: newPrimarySchoolMessages.primarySchool.currentSchool,
           titleVariant: 'h4',
           condition: (_, externalData) => {
-            return isCurrentShoolRegisterd(externalData)
+            return isCurrentSchoolRegistered(externalData)
           },
         }),
         buildTextField({
@@ -55,7 +55,7 @@ export const currentSchoolSubSection = buildSubSection({
           width: 'half',
           disabled: true,
           condition: (_, externalData) => {
-            return isCurrentShoolRegisterd(externalData)
+            return isCurrentSchoolRegistered(externalData)
           },
 
           defaultValue: (application: Application) =>
@@ -68,7 +68,7 @@ export const currentSchoolSubSection = buildSubSection({
             width: 'half',
             component: 'DynamicDisabledText',
             condition: (_, externalData) => {
-              return isCurrentShoolRegisterd(externalData)
+              return isCurrentSchoolRegistered(externalData)
             },
           },
           {
