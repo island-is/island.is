@@ -1,24 +1,22 @@
 import {
+  GenericLicenseError,
   GenericLicenseType,
   GenericUserLicense,
-  GenericLicenseError,
 } from '@island.is/api/schema'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { useUserProfile } from '@island.is/portals/my-pages/graphql'
-import { Locale } from '@island.is/shared/types'
-import { useGenericLicenseCollectionQuery } from './LicensesOverview.generated'
 import { Box, Stack, Tabs, TagVariant } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   ActionCard,
   CardLoader,
   IntroWrapper,
   m as coreMessages,
 } from '@island.is/portals/my-pages/core'
-import { m } from '../../../lib/messages'
 import { Problem } from '@island.is/react-spa/shared'
-import { getPathFromType } from '../../../utils/mapPaths'
-import { useEffect, useState } from 'react'
 import { Features, useFeatureFlagClient } from '@island.is/react/feature-flags'
+import { useEffect, useState } from 'react'
+import { m } from '../../../lib/messages'
+import { getPathFromType } from '../../../utils/mapPaths'
+import { useGenericLicenseCollectionQuery } from './LicensesOverview.generated'
 
 const BASE_INCLUDED_TYPES = [
   GenericLicenseType.AdrLicense,
