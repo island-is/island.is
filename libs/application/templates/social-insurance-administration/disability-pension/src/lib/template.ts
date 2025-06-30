@@ -10,7 +10,6 @@ import {
   UserProfileApi,
   ApplicationConfigurations,
   NationalRegistrySpouseApi,
-  IdentityApi,
   NationalRegistryUserApi,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../utils/constants'

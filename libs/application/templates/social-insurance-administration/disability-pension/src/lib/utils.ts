@@ -1,8 +1,6 @@
-import { NO, YES, getValueViaPath } from "@island.is/application/core"
+import { getValueViaPath } from "@island.is/application/core"
 import { BankAccountType } from "@island.is/application/templates/social-insurance-administration-core/lib/constants"
-import { socialInsuranceAdministrationMessage } from "@island.is/application/templates/social-insurance-administration-core/lib/messages"
 import { Application } from "@island.is/application/types"
-import { getAllCountryCodes } from "@island.is/shared/utils"
 import { parsePhoneNumberFromString } from "libphonenumber-js"
 
 export const accountNationality = (applicationAnswers: Application['answers']): BankAccountType | null => {
