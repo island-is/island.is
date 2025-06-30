@@ -37,6 +37,7 @@ import { useConfirmNudgeMutation } from './confirmNudge.generated'
 import { DropModalType } from './types/form'
 import { InputEmail } from './components/Inputs/Email'
 import { AccessDenied } from '@island.is/portals/core'
+import { Problem } from '@island.is/react-spa/shared'
 
 enum IdsUserProfileLinks {
   EMAIL = '/app/user-profile/email',
@@ -48,7 +49,6 @@ interface ProfileFormProps {
   onCloseDropModal?: () => void
   canDrop?: boolean
   title: string
-  showDetails?: boolean
   showIntroTitle?: boolean
   showIntroText?: boolean
   setFormLoading?: (isLoading: boolean) => void
@@ -59,7 +59,6 @@ export const ProfileForm = ({
   onCloseDropModal,
   canDrop,
   title,
-  showDetails,
   setFormLoading,
   showIntroTitle,
   showIntroText = true,
@@ -301,20 +300,21 @@ export const ProfileForm = ({
                     />
                   ))}
               </InputSection>
-              {showDetails && (
-                <InputSection
-                  title={formatMessage(m.bankAccountInfo)}
-                  text={formatMessage(msg.editBankInfoText)}
-                  loading={userLoading}
-                  divider={false}
-                >
-                  {!userLoading && (
-                    <BankInfoForm
-                      bankInfo={bankInfoObject(userProfile?.bankInfo || '')}
-                    />
-                  )}
-                </InputSection>
-              )}
+              <InputSection
+                title={formatMessage(m.bankAccountInfo)}
+                text={formatMessage(msg.editBankInfoText)}
+                loading={userLoading}
+                divider={false}
+              >
+                {!userLoading && !userProfile?.bankInfoError && (
+                  <BankInfoForm
+                    bankInfo={bankInfoObject(userProfile?.bankInfo || '')}
+                  />
+                )}
+                {!userLoading && userProfile?.bankInfoError && (
+                  <Problem size="small" />
+                )}
+              </InputSection>
             </>
           )}
           {showDropModal && onCloseOverlay && !internalLoading && (
