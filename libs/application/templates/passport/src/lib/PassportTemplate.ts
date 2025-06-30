@@ -52,9 +52,11 @@ const getCode = (application: Application): BasicChargeItem[] => {
     application.answers,
     'chargeItemCode',
   )
+
   if (!chargeItemCode) {
     throw new Error('chargeItemCode missing in request')
   }
+
   return [{ code: chargeItemCode }]
 }
 
@@ -134,6 +136,11 @@ const PassportTemplate: ApplicationTemplate<
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
         chargeItems: getCode,
+        onEntry: [
+          defineTemplateApi({
+            action: ApiActions.verifyCode,
+          }),
+        ],
         submitTarget: [
           {
             target: States.PARENT_B_CONFIRM,

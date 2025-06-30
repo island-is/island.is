@@ -12,7 +12,13 @@ import {
 import { DiscountCheck, DistrictCommissionerAgencies } from './constants'
 import { info } from 'kennitala'
 import { generateAssignParentBApplicationEmail } from './emailGenerators/assignParentBEmail'
-import { PassportSchema } from '@island.is/application/templates/passport'
+import {
+  ageCanHaveDiscount,
+  getChargeCode,
+  isChild,
+  isElder,
+  PassportSchema,
+} from '@island.is/application/templates/passport'
 import { PassportsService } from '@island.is/clients/passports'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
@@ -20,6 +26,17 @@ import {
   InstitutionNationalIds,
 } from '@island.is/application/types'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { User } from '@island.is/auth-nest-tools'
+
+interface HasDisabilityLicenseData {
+  hasDisabilityLicense: boolean
+}
+
+const HAS_DISABILITY_LICENSE_QUERY = `
+  query hasDisabilityLicense {
+    hasDisabilityLicense
+  }
+`
 
 @Injectable()
 export class PassportService extends BaseTemplateApiService {
@@ -31,12 +48,40 @@ export class PassportService extends BaseTemplateApiService {
     super(ApplicationTypes.PASSPORT)
   }
 
+  async checkHasDisabilityLicense({ auth }: { auth: User }) {
+    try {
+      const response = await this.sharedTemplateAPIService
+        .makeGraphqlQuery<HasDisabilityLicenseData>(
+          auth.authorization,
+          HAS_DISABILITY_LICENSE_QUERY,
+        )
+        .then((response) => response.json())
+
+      if ('errors' in response) {
+        this.logger.error(
+          'GraphQL error when checking disability license status',
+          {
+            errors: response.errors,
+          },
+        )
+        throw new Error('Failed to check disability license status')
+      }
+
+      return response.data?.hasDisabilityLicense || false
+    } catch (error) {
+      this.logger.error('Failed to check disability license status', error)
+      throw new Error('Failed to check disability license status')
+    }
+  }
+
   async identityDocument({ auth, application }: TemplateApiModuleActionProps) {
     const identityDocument = await this.passportApi.getCurrentPassport(auth)
+
     this.logger.warn(
       'No passport found for user for application: ',
       application.id,
     )
+
     if (!identityDocument) {
       throw new TemplateApiError(
         {
@@ -85,20 +130,60 @@ export class PassportService extends BaseTemplateApiService {
     return deliveryAddresses
   }
 
+  async verifyCode({
+    application: { answers, externalData },
+    auth,
+  }: TemplateApiModuleActionProps) {
+    const chargeItemCode = getValueViaPath<string>(answers, 'chargeItemCode')
+
+    if (!chargeItemCode) {
+      this.logger.error('chargeItemCode missing in request')
+
+      throw new Error('chargeItemCode missing in request')
+    }
+
+    const hasDisabilityLicense = await this.checkHasDisabilityLicense({ auth })
+    const child = isChild(answers)
+    const elder = isElder(externalData)
+
+    const expectedChargeItemCode = getChargeCode(answers, externalData, {
+      withDiscount: hasDisabilityLicense || child || elder,
+    })
+
+    if (expectedChargeItemCode !== chargeItemCode) {
+      this.logger.error(
+        `Client chargeItemCode "${chargeItemCode}" does not match expected chargeItemCode "${expectedChargeItemCode}"`,
+      )
+
+      throw new Error(
+        `Client chargeItemCode "${chargeItemCode}" does not match expected chargeItemCode "${expectedChargeItemCode}"`,
+      )
+    }
+
+    this.logger.info(
+      'verifyCode completed successfully - should transition to PAYMENT state',
+    )
+
+    return true
+  }
+
   async createCharge({
     application: { id, answers },
     auth,
   }: TemplateApiModuleActionProps) {
     const chargeItemCode = getValueViaPath<string>(answers, 'chargeItemCode')
+
     if (!chargeItemCode) {
       throw new Error('chargeItemCode missing in request')
     }
+
     const response = await this.sharedTemplateAPIService.createCharge(
       auth,
       id,
       InstitutionNationalIds.SYSLUMENN,
       [{ code: chargeItemCode }],
     )
+
     // last chance to validate before the user receives a dummy
     if (!response?.paymentUrl) {
       throw new Error('paymentUrl missing in response')
@@ -113,11 +198,12 @@ export class PassportService extends BaseTemplateApiService {
     if (!(externalData.checkForDiscount?.data as DiscountCheck)?.hasDiscount) {
       const { age } = info(auth.nationalId)
 
-      if (age < 18 || age >= 60) {
+      if (ageCanHaveDiscount(age)) {
         return {
           hasDiscount: true,
         }
       }
+
       const disabilityCheck = getValueViaPath<YesOrNo>(
         answers,
         'personalInfo.hasDisabilityDiscount',
@@ -149,7 +235,9 @@ export class PassportService extends BaseTemplateApiService {
     const applicationId = {
       guid: application.id,
     }
+
     this.logger.info('submitPassportApplication', applicationId)
+
     const isPayment = await this.sharedTemplateAPIService.getPaymentStatus(
       auth,
       application.id,
@@ -163,6 +251,7 @@ export class PassportService extends BaseTemplateApiService {
         'Ekki er hægt að skila inn umsókn af því að ekki hefur tekist að taka við greiðslu.',
       )
     }
+
     try {
       const {
         passport,
