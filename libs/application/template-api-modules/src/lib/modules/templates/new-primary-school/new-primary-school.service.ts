@@ -2,17 +2,19 @@ import { NationalRegistryXRoadService } from '@island.is/api/domains/national-re
 import {
   errorMessages,
   getApplicationAnswers,
+  getOtherGuardian,
+  getSelectedChild,
 } from '@island.is/application/templates/new-primary-school'
 import { ApplicationTypes } from '@island.is/application/types'
 import { FriggClientService } from '@island.is/clients/mms/frigg'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { Inject, Injectable } from '@nestjs/common'
 import * as kennitala from 'kennitala'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { transformApplicationToNewPrimarySchoolDTO } from './new-primary-school.utils'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 @Injectable()
 export class NewPrimarySchoolService extends BaseTemplateApiService {
@@ -32,19 +34,7 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
 
     if (!childNationalId) return undefined
 
-    const childInformation = await this.friggClientService.getUserById(
-      auth,
-      childNationalId,
-    )
-    if (childInformation.nationality) return childInformation
-
-    const citizenship = await this.nationalRegistryService.getCitizenship(
-      childNationalId,
-    )
-    return {
-      ...childInformation,
-      nationality: citizenship?.code || '',
-    }
+    return await this.friggClientService.getUserById(auth, childNationalId)
   }
 
   async getChildren({ auth }: TemplateApiModuleActionProps) {
@@ -97,6 +87,34 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
     }
 
     return filteredChildren
+  }
+
+  async getCitizenship({ application }: TemplateApiModuleActionProps) {
+    const child = getSelectedChild(application)
+    const guardian = getOtherGuardian(application)
+
+    let childCitizenshipCode = ''
+    if (child) {
+      const citizenship = await this.nationalRegistryService.getCitizenship(
+        child.nationalId,
+      )
+
+      childCitizenshipCode = citizenship?.code || ''
+    }
+
+    let otherGuardianCitizenshipCode = ''
+    if (guardian) {
+      const citizenship = await this.nationalRegistryService.getCitizenship(
+        guardian.nationalId,
+      )
+
+      otherGuardianCitizenshipCode = citizenship?.code || ''
+    }
+
+    return {
+      childCitizenshipCode,
+      otherGuardianCitizenshipCode,
+    }
   }
 
   async sendApplication({ auth, application }: TemplateApiModuleActionProps) {

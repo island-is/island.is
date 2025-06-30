@@ -315,11 +315,10 @@ export const getApplicationExternalData = (
     [],
   ) as Affiliation[]
 
-  const childNationality =
-    getValueViaPath<string>(
-      externalData,
-      'childInformation.data.nationality',
-    ) ?? ''
+  const childCitizenshipCode = getValueViaPath<string>(
+    externalData,
+    'citizenship.data.childCitizenshipCode',
+  )
 
   return {
     children,
@@ -333,7 +332,7 @@ export const getApplicationExternalData = (
     childGradeLevel,
     primaryOrgId,
     childAffiliations,
-    childNationality,
+    childCitizenshipCode,
   }
 }
 

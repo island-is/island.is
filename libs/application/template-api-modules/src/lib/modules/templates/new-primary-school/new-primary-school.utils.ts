@@ -67,7 +67,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     selectedSchoolType,
   } = getApplicationAnswers(application.answers)
 
-  const { primaryOrgId, childNationality } = getApplicationExternalData(
+  const { primaryOrgId, childCitizenshipCode } = getApplicationExternalData(
     application.externalData,
   )
   const selectedChild = getSelectedChild(application)
@@ -111,7 +111,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     user: {
       name: childInfo.name,
       nationalId: childInfo.nationalId,
-      nationality: childNationality,
+      nationality: childCitizenshipCode,
       gender: getGenderCode(selectedChild?.genderCode || ''),
       ...(childInfo.usePronounAndPreferredName?.includes(YES) && {
         preferredName: childInfo.preferredName,
