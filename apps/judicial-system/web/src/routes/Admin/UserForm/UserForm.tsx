@@ -7,7 +7,7 @@ import {
   useEffect,
   useState,
 } from 'react'
-import InputMask from 'react-input-mask'
+import { InputMask } from '@react-input/mask'
 
 import {
   Box,
@@ -254,9 +254,9 @@ export const UserForm: FC<Props> = ({
         <PageTitle>Notandi</PageTitle>
         <Box marginBottom={2}>
           <InputMask
-            // eslint-disable-next-line local-rules/disallow-kennitalas
-            mask="999999-9999"
-            maskPlaceholder={null}
+            component={Input}
+            mask="______-____"
+            replacement={{ _: /\d/ }}
             value={user.nationalId || ''}
             onChange={(event) =>
               storeAndRemoveErrorIfValid(
@@ -274,18 +274,15 @@ export const UserForm: FC<Props> = ({
               )
             }
             readOnly={!isNewUser}
-          >
-            <Input
-              data-testid="nationalId"
-              name="nationalId"
-              label="Kennitala"
-              placeholder="Kennitala"
-              autoComplete="off"
-              required
-              hasError={nationalIdErrorMessage !== undefined}
-              errorMessage={nationalIdErrorMessage}
-            />
-          </InputMask>
+            data-testid="nationalId"
+            name="nationalId"
+            label="Kennitala"
+            placeholder="Kennitala"
+            autoComplete="off"
+            required
+            hasError={nationalIdErrorMessage !== undefined}
+            errorMessage={nationalIdErrorMessage}
+          />
         </Box>
         <Box marginBottom={2}>
           <Input
@@ -387,8 +384,9 @@ export const UserForm: FC<Props> = ({
         </Box>
         <Box marginBottom={2}>
           <InputMask
-            mask="999-9999"
-            maskPlaceholder={null}
+            component={Input}
+            mask="___-____"
+            replacement={{ _: /\d/ }}
             value={user.mobileNumber || ''}
             onChange={(event) =>
               storeAndRemoveErrorIfValid(
@@ -405,18 +403,15 @@ export const UserForm: FC<Props> = ({
                 setMobileNumberErrorMessage,
               )
             }
-          >
-            <Input
-              data-testid="mobileNumber"
-              name="mobileNumber"
-              label="Símanúmer"
-              placeholder="Símanúmer"
-              autoComplete="off"
-              required
-              hasError={mobileNumberErrorMessage !== undefined}
-              errorMessage={mobileNumberErrorMessage}
-            />
-          </InputMask>
+            data-testid="mobileNumber"
+            name="mobileNumber"
+            label="Símanúmer"
+            placeholder="Símanúmer"
+            autoComplete="off"
+            required
+            hasError={mobileNumberErrorMessage !== undefined}
+            errorMessage={mobileNumberErrorMessage}
+          />
         </Box>
         <Box marginBottom={2}>
           <Input

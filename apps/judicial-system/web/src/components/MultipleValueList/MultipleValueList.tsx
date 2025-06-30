@@ -6,18 +6,21 @@ import {
   useRef,
   useState,
 } from 'react'
-import InputMask from 'react-input-mask'
+import { InputMask } from '@react-input/mask'
 
 import { Button, Input } from '@island.is/island-ui/core'
+import { POLICE_CASE_NUMBER } from '@island.is/judicial-system/consts'
 
 import BlueBox from '../BlueBox/BlueBox'
 import * as styles from './MultipleValueList.css'
+
+type MaskType = 'police-case-numbers'
 
 interface MultipleValueListProps {
   onAddValue: (nextValue: string) => void
   inputLabel: string
   inputPlaceholder: string
-  inputMask?: string
+  inputMask?: MaskType
   buttonText: string
   name: string
   isDisabled: (value?: string) => boolean
@@ -43,6 +46,13 @@ const MultipleValueList: FC<PropsWithChildren<MultipleValueListProps>> = ({
   const [value, setValue] = useState('')
   const valueRef = useRef<HTMLInputElement>(null)
 
+  const masks = {
+    'police-case-numbers': {
+      mask: POLICE_CASE_NUMBER,
+      replacement: { _: /\d/ },
+    },
+  }
+
   const clearInput = () => {
     if (valueRef.current) {
       valueRef.current.value = ''
@@ -65,23 +75,22 @@ const MultipleValueList: FC<PropsWithChildren<MultipleValueListProps>> = ({
       <div className={styles.addCourtDocumentContainer}>
         {inputMask ? (
           <InputMask
-            mask={inputMask}
-            maskPlaceholder={null}
+            mask={masks[inputMask].mask}
+            replacement={masks[inputMask].replacement}
+            component={Input}
             onChange={(event) => setValue(event.target.value)}
             onBlur={onBlur}
-          >
-            <Input
-              name={name}
-              label={inputLabel}
-              placeholder={inputPlaceholder}
-              size="sm"
-              autoComplete="off"
-              ref={valueRef}
-              onKeyDown={handleEnter}
-              hasError={hasError}
-              errorMessage={errorMessage}
-            />
-          </InputMask>
+            name={name}
+            label={inputLabel}
+            placeholder={inputPlaceholder}
+            value={value}
+            size="sm"
+            autoComplete="off"
+            ref={valueRef}
+            onKeyDown={handleEnter}
+            hasError={hasError}
+            errorMessage={errorMessage}
+          />
         ) : (
           <Input
             name={name}
