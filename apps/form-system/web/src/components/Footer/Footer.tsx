@@ -16,18 +16,11 @@ export const Footer = ({ externalDataAgreement }: Props) => {
   const { state, dispatch } = useApplicationContext()
   const { formatMessage } = useIntl()
   const { trigger } = useFormContext();
-  const [isFormValid, setIsFormValid] = useState(true)
 
   const validate = async () => {
     const valid = await trigger()
-    setIsFormValid(valid)
     return valid
   }
-
-  useEffect(() => {
-    validate()
-  }, [state.currentScreen?.data, trigger])
-
   const continueButtonText =
     state.currentSection.index === 0
       ? formatMessage(webMessages.externalDataConfirmation)
@@ -35,11 +28,12 @@ export const Footer = ({ externalDataAgreement }: Props) => {
   const enableContinueButton =
     state.currentSection.index === 0
       ? externalDataAgreement
-      : (state.currentSection.index !== state.sections.length - 1 && isFormValid)
+      : state.currentSection.index !== state.sections.length - 1
       
   const submitScreen = useMutation(SAVE_SCREEN)
   const handleIncrement = async () =>{
     const isValid = await validate()
+    console.log('isValid', isValid)
     if (!isValid) return
     dispatch({
       type: 'INCREMENT',

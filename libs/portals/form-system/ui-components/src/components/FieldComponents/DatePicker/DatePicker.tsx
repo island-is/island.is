@@ -5,7 +5,7 @@ import { DatePicker as DatePickerCore } from '@island.is/island-ui/core'
 import { m } from '../../../lib/messages'
 import { useIntl } from 'react-intl'
 import { getValue } from '../../../lib/getValue'
-import { parseISO } from 'date-fns'
+import { parseISO } from 'date-fns' // eslint-disable-line no-restricted-imports
 import { useFormContext, Controller } from 'react-hook-form'
 
 interface Props {

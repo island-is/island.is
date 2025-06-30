@@ -66,6 +66,13 @@ export const incrementWithScreens = (
     ApolloCache<any>
   >,
 ): ApplicationState => {
+  console.log('incrementWithScreens', {
+    currentSectionData,
+    maxSectionIndex,
+    currentScreenIndex,
+    state,
+    submitScreenMutation,
+  })
   const screens = currentSectionData.screens ?? []
   const maxScreenIndex = screens.length - 1
   const [submitScreen] = submitScreenMutation
@@ -77,6 +84,7 @@ export const incrementWithScreens = (
       errors,
     }
   }
+  console.log('submitScreen', state.currentScreen?.data?.id)
   submitScreen({
     variables: {
       input: {
@@ -116,6 +124,7 @@ export const incrementWithScreens = (
       errors: [],
     }
   } else {
+    console.log('inni')
     return {
       ...state,
       currentScreen: {
@@ -217,14 +226,14 @@ export const decrementWithoutScreens = (
   }
 }
 
-export const setError =(
+export const setError = (
   state: ApplicationState,
   fieldId: string,
   hasError: boolean,
 ): ApplicationState => {
-  let errorArray = Array.isArray(state.errors) ? state.errors : []
-  hasError ? [...errorArray, fieldId] : errorArray = errorArray.filter(id => id !== fieldId)
-  return { ...state, errors: errorArray }
+  const errorArray = Array.isArray(state.errors) ? state.errors : []
+  const filteredArray = hasError ? [...errorArray, fieldId] : errorArray.filter(id => id !== fieldId)
+  return { ...state, errors: filteredArray }
 }
 
 

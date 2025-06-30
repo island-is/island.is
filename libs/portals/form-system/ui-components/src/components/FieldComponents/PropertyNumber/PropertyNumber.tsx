@@ -8,7 +8,7 @@ import {
   Checkbox,
   Button,
 } from '@island.is/island-ui/core'
-import { ChangeEvent, Dispatch, useState } from 'react'
+import { Dispatch, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { FormSystemField } from '@island.is/api/schema'
 import { m, webMessages } from '../../../lib/messages'
@@ -43,7 +43,7 @@ export const PropertyNumber = ({ item, dispatch }: Props) => {
     postalCode: getValue(item, 'postalCode') || '',
   })
   // Fetch properties from API from user nationalId
-  const [properties, setProperties] = useState<PropertyNumberType[]>([
+  const [properties] = useState<PropertyNumberType[]>([
     {
       propertyNumber: '1234567',
       address: 'Borgartún 1',
