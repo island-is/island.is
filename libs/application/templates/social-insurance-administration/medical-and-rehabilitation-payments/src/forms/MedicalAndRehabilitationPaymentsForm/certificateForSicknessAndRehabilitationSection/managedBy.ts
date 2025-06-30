@@ -22,9 +22,7 @@ export const managedBy = [
     marginBottom: 3,
   }),
   buildKeyValueField({
-    label:
-      medicalAndRehabilitationPaymentsFormMessage
-        .certificateForSicknessAndRehabilitation.managedByJobTitle,
+    label: medicalAndRehabilitationPaymentsFormMessage.shared.jobTitle,
     value: 'Heimilislæknir',
     width: 'half',
     marginBottom: 3,
