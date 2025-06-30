@@ -1,20 +1,13 @@
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { UseGuards } from '@nestjs/common'
 import { ApolloError } from '@apollo/client'
-import * as kennitala from 'kennitala'
 
-import {
-  CurrentUser,
-  IdsUserGuard,
-  ScopesGuard,
-  type User,
-} from '@island.is/auth-nest-tools'
+import { ScopesGuard } from '@island.is/auth-nest-tools'
 import {
   FeatureFlag,
   FeatureFlagGuard,
   Features,
 } from '@island.is/nest/feature-flags'
-import { PaginationInput } from '@island.is/nest/pagination'
 
 import { GetPaymentFlowInput } from './dto/getPaymentFlow.input'
 import { GetPaymentFlowResponse } from './dto/getPaymentFlow.response'
