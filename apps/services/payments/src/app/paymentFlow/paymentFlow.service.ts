@@ -3,7 +3,6 @@ import { InjectModel } from '@nestjs/sequelize'
 import { ConfigType } from '@nestjs/config'
 import { isCompany, isValid } from 'kennitala'
 import { v4 as uuid } from 'uuid'
-import { Op, literal } from 'sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -737,8 +736,6 @@ export class PaymentFlowService {
     if (search && search !== '') {
       where.id = search
     }
-
-    console.log('TEDDI', search)
 
     // First get the paginated payment flows
     const paginatedResult = await paginate({

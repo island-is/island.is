@@ -9,6 +9,7 @@ import {
   Delete,
   Query,
   Headers,
+  BadRequestException,
 } from '@nestjs/common'
 import { ApiTags } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'
@@ -49,9 +50,10 @@ export class PaymentFlowController {
     @Query() input: GetPaymentFlowsInput,
     @Headers('X-Query-National-Id') payerNationalId: string,
   ): Promise<GetPaymentFlowsPaginatedDTO> {
-    console.log('Fetching payment flows with input in COONTROLLER:', input)
     if (!payerNationalId && !input.search) {
-      throw new Error('Either payerNationalId or search must be provided')
+      throw new BadRequestException(
+        'Either payerNationalId or search must be provided',
+      )
     }
 
     return this.paymentFlowService.searchPaymentFlows(

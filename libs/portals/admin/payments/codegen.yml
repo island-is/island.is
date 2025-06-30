@@ -3,7 +3,7 @@ schema:
 documents:
   - libs/portals/admin/payments/src/**/*.graphql
 generates:
-  libs/portals/admin/ids-admin/src/:
+  libs/portals/admin/payments/src/:
     preset: 'near-operation-file'
     presetConfig:
       baseTypesPath: '~@island.is/api/schema'

@@ -14,7 +14,7 @@ export const m = defineMessages({
     defaultMessage: 'Greiðsluflæði',
   },
   paymentDescription: {
-    id: 'admin-portal.payments:payments-description',
+    id: 'admin-portal.payments:payment-description',
     defaultMessage: 'Upplýsingar um greiðslu og atvik',
   },
   payer: {

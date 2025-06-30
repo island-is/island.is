@@ -181,11 +181,12 @@ export class GetPaymentFlowDTO {
   })
   redirectToReturnUrlOnSuccess?: boolean
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     description: 'Events associated with the payment flow',
     type: [PaymentFlowEventDTO],
   })
   @IsArray()
+  @IsOptional()
   events?: PaymentFlowEventDTO[]
 
   @ApiProperty({
