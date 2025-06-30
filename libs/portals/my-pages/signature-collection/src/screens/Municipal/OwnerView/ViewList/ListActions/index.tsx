@@ -39,7 +39,7 @@ const ListActions = ({ listId }: { listId: string }) => {
           </Box>
           <PdfReport listId={listId} collectionType={collectionType} />
         </Box>
-       <CancelCollection listId={listId} />
+        <CancelCollection listId={listId} />
       </Drawer>
     </Box>
   )
