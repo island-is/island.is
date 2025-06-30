@@ -423,6 +423,16 @@ export const disabilityPensionFormMessage: MessageDir = {
       defaultMessage: 'Bakgrunnsupplýsingar',
       description: 'Background information',
     },
+    questionFormTitle: {
+      id: 'dp.application:backgroundInfo.questionFormTitle',
+      defaultMessage: 'Bakgrunnur og aðstæður',
+      description: 'TODO',
+    },
+    questionFormDescription: {
+      id: 'dp.application:backgroundInfo.questionFormDescription',
+      defaultMessage: 'Umsækjandi leggur hér mat á eigin heilsu.',
+      description: 'TODO',
+    }
   }),
   selfEvaluation: defineMessages({
     title: {
@@ -461,6 +471,11 @@ export const disabilityPensionFormMessage: MessageDir = {
       id: 'dp.application:errors.abroadNationalIdRequired',
       defaultMessage: 'Nauðsynlegt er að slá inn kennitölu í viðeigandi landi.',
       description: 'You must supply a foreign national id',
+    },
+    nationalIdAbroadTooShort: {
+      id: 'dp.application:errors.abroadNationalIdTooShort',
+      defaultMessage: 'Kennitala í landi verður að vera a.m.k 4 tölustafir',
+      description: 'TODO',
     },
     emptyStartDate: {
       id: 'dp.application:errors.startDateRequired',

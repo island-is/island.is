@@ -10,7 +10,7 @@ import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import {  YesOrNoOptions, countryOptions } from '../../../../lib/utils'
 import { FormValue } from '@island.is/application/types'
 import format from 'date-fns/format'
-import addDays from 'date-fns/addDays'
+import addMonths from 'date-fns/addMonths'
 
 const livedAbroadRoute = `livedAbroad`
 
@@ -50,6 +50,7 @@ export const livedAbroadSubSection = buildMultiField({
       saveItemButtonText: disabilityPensionFormMessage.employmentParticipation.save,
       removeButtonTooltipText: disabilityPensionFormMessage.employmentParticipation.remove,
       fields: {
+        //TODO: FROM SMÁRI
         country: {
           component: 'select',
           label: disabilityPensionFormMessage.employmentParticipation.country,
@@ -66,6 +67,7 @@ export const livedAbroadSubSection = buildMultiField({
           format: '######-####',
           displayInTable: true,
         },
+        //TODO: ONly month
         periodStart: {
           component: 'date',
           label: disabilityPensionFormMessage.employmentParticipation.periodStart,
@@ -89,8 +91,8 @@ export const livedAbroadSubSection = buildMultiField({
                 return activeField.periodStart
               }
 
-              if (dateStart >= dateEnd) {
-                const newDate = addDays(dateEnd, -1);
+              if (dateStart.getMonth() > dateEnd.getMonth()) {
+                const newDate = addMonths(dateEnd, -1);
                 return format(newDate, 'yyyy-MM-dd');
               }
 
@@ -99,6 +101,7 @@ export const livedAbroadSubSection = buildMultiField({
             watchValues: ['periodEnd']
           },
         },
+        //TODO: ONly month
         periodEnd: {
           component: 'date',
           label: disabilityPensionFormMessage.employmentParticipation.periodEnd,
@@ -123,8 +126,8 @@ export const livedAbroadSubSection = buildMultiField({
                 return activeField.periodEnd
               }
 
-              if (dateEnd <= dateStart) {
-                const newDate = addDays(dateStart, 1);
+              if (dateEnd.getMonth() < dateStart.getMonth()) {
+                const newDate = addMonths(dateStart, 1);
                 return format(newDate, 'yyyy-MM-dd');
               }
 

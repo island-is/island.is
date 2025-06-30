@@ -19,7 +19,7 @@ const livedAbroadSchema = z.object({
   list: z.array(
     z.object({
       country: z.string(),
-      abroadNationalId: z.string(),
+      abroadNationalId: z.string().min(4),
       periodStart: z.string(),
       periodEnd: z.string(),
       period: z.string()
@@ -38,16 +38,7 @@ export const dataSchema = z.object({
   disabilityEvaluation: z.object({
     appliedBefore: z.enum([YES, NO]),
     fileUpload: z.array(fileSchema).optional()
-  })
-    .refine(
-      ({ appliedBefore, fileUpload }) => {
-        if (appliedBefore === YES) {
-          return (fileUpload?.length ?? 0) > 0
-        }
-        else return true
-      },
-      { params: errorMessages.requireAttachment, path: ['fileUpload'] },
-    ),
+  }),
   livedAbroad: livedAbroadSchema
     .refine(({ list, hasLivedAbroad }) => {
       if ((hasLivedAbroad === NO) || (list && list.length > 0)) {
@@ -72,7 +63,7 @@ export const dataSchema = z.object({
     list: z.array(
       z.object({
         country: z.string(),
-        abroadNationalId: z.string(),
+        abroadNationalId: z.string().min(4),
       })
     ).optional()
   })
