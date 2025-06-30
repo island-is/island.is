@@ -142,14 +142,10 @@ export const ExamInputs: FC<
 
   useEffect(() => {
     const categories: ExamCategoryType[] = getValues('examCategories')
-    console.log('Categories', categories)
-    console.log('chosen cats', chosenCategories)
-
     if (!categories || !categories[idx].categories) {
       setChosenCategories([])
       return
     }
-    console.log('Setting chosen casts to be ', categories[idx].categories)
 
     setChosenCategories(categories[idx].categories)
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -168,12 +164,11 @@ export const ExamInputs: FC<
     setValue(`examCategories[${idx}].isValid`, false)
 
     const instructors: Option[] = getValues(`examCategories[${idx}].instructor`)
-
     const isUndefinedInstr = instructors.some(
       (instr: Option) => instr === undefined,
     )
 
-    if (isUndefinedInstr) {
+    if (isUndefinedInstr || instructors.length < 1) {
       setIsInvalidInput(true)
       return null
     }
