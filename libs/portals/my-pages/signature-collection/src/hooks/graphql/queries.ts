@@ -143,7 +143,8 @@ export const GetCurrentCollection = gql`
     signatureCollectionLatestForType(input: $input) {
       id
       endTime
-
+      startTime
+      collectionType
       name
       areas {
         id
