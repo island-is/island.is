@@ -57,6 +57,10 @@ export const m = defineMessages({
     id: 'admin-portal.payments:no-payments-found',
     defaultMessage: 'Engar greiðslur fundust',
   },
+  create: {
+    id: 'admin-portal.payments:eventTypeCreate',
+    defaultMessage: 'Búið til',
+  },
   update: {
     id: 'admin-portal.payments:eventTypeUpdate',
     defaultMessage: 'Uppfærsla',

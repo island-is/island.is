@@ -13,6 +13,7 @@ export enum PaymentStatus {
 }
 
 export enum PaymentFlowEventType {
+  CREATE = 'create',
   UPDATE = 'update',
   SUCCESS = 'success',
   ERROR = 'error',

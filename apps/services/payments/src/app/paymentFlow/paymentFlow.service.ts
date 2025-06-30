@@ -660,6 +660,11 @@ export class PaymentFlowService {
         paymentFlowDetails.availablePaymentMethods as PaymentMethod[],
       paymentStatus,
       updatedAt,
+      events: paymentFlowDetails.events?.map((event) => ({
+        ...event,
+        type: event.type as PaymentFlowEventType,
+        reason: event.reason as PaymentFlowEventReason,
+      })),
     }
 
     if (paymentFlowDetails.onUpdateUrl) {

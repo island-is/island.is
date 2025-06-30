@@ -32,6 +32,8 @@ const Payment = () => {
     eventType: string,
   ): { variant: TagVariant; message: string | undefined } => {
     switch (eventType) {
+      case PaymentsPaymentFlowEventType.create:
+        return { variant: 'blue', message: formatMessage(m.create) }
       case PaymentsPaymentFlowEventType.update:
         return { variant: 'blue', message: formatMessage(m.update) }
       case PaymentsPaymentFlowEventType.deleted:
