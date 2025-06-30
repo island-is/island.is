@@ -4,9 +4,9 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
-import { EmploymentEnum } from '../../../../lib/constants'
-import { YesOrNoOptions } from '../../../../lib/utils'
+import { YesOrNoOptions } from '../../../../lib/options'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import { EmploymentEnum } from '../../../../lib/constants'
 
 const paidWorkRoute = `paidWork`
 

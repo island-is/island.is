@@ -4,7 +4,8 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../lib/messages'
-import { YesOrNoOptions } from '../../../lib/utils'
+import { YesOrNoOptions } from '../../../lib/options'
+import { backgroundInfoSubSection } from './backgroundSubSection'
 
 export const selfEvaluationRoute = 'selfEvaluation'
 
@@ -26,6 +27,7 @@ export const selfEvaluationSection =
             options: YesOrNoOptions,
           }),
         ]
-      })
+      }),
+      backgroundInfoSubSection,
     ]
   })

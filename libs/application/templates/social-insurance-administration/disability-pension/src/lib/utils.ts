@@ -24,23 +24,3 @@ export const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
   return phone && phone.isValid()
 }
-
-
-export const countryOptions = getAllCountryCodes().map(
-  ({ name}) => {
-    return {
-      label: name,
-      value: name,
-    }
-  },
-)
-
-export const YesOrNoOptions = [
-    {
-      value: YES,
-      label: socialInsuranceAdministrationMessage.shared.yes,
-    },
-    {
-      value: NO,
-      label:  socialInsuranceAdministrationMessage.shared.no,
-    }]

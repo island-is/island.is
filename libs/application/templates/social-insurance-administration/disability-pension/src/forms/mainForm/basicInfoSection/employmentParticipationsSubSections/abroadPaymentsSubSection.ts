@@ -7,8 +7,8 @@ import {
   YesOrNoEnum,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
-import { YesOrNoOptions, countryOptions } from '../../../../lib/utils'
 import { FormValue } from '@island.is/application/types'
+import { YesOrNoOptions, countryOptions } from '../../../../lib/options'
 
 const abroadPaymentsRoute = `abroadPayments`
 

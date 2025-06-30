@@ -7,10 +7,10 @@ import {
   buildTableRepeaterField,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
-import {  YesOrNoOptions, countryOptions } from '../../../../lib/utils'
 import { FormValue } from '@island.is/application/types'
 import format from 'date-fns/format'
 import addMonths from 'date-fns/addMonths'
+import { YesOrNoOptions, countryOptions } from '../../../../lib/options'
 
 const livedAbroadRoute = `livedAbroad`
 

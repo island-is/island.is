@@ -449,7 +449,114 @@ export const disabilityPensionFormMessage: MessageDir = {
       id: 'dp.application:selfEvaluation.assistance',
       defaultMessage: 'Ég fæ aðstoð við að svara sjálfsmatinu',
       description: 'TODO',
-    }
+    },
+  }),
+  questions: defineMessages({
+    maritalStatusTitle: {
+      id: 'dp.application:selfEvaluation.questions.maritalStatus.title',
+      defaultMessage: 'Hver er hjúskaparstaða þín?',
+      description: 'What is your marital status?',
+    },
+    maritalStatusSingle: {
+      id: 'dp.application:selfEvaluation.questions.maritalStatus.single',
+      defaultMessage: 'Einhleyp/ur',
+      description: 'Single',
+    },
+    maritalStatusInRelationship: {
+      id: 'dp.application:selfEvaluation.questions.maritalStatus.inRelationship',
+      defaultMessage: 'Í sambandi',
+      description: 'In relationship',
+    },
+    maritalStatusMarried: {
+      id: 'dp.application:selfEvaluation.questions.maritalStatus.married',
+      defaultMessage: 'Í hjónabandi/sambúð',
+      description: 'Married',
+    },
+    maritalStatusDivorced: {
+      id: 'dp.application:selfEvaluation.questions.maritalStatus.divorced',
+      defaultMessage: 'Fráskilin(n)',
+      description: 'Divorced',
+    },
+    maritalStatusWidowed: {
+      id: 'dp.application:selfEvaluation.questions.maritalStatus.widowed',
+      defaultMessage: 'Ekkja/Ekkill',
+      description: 'Widowed',
+    },
+    maritalStatusUnknown: {
+      id: 'dp.application:selfEvaluation.questions.maritalStatus.unknown',
+      defaultMessage: 'Óupplýst',
+      description: 'Unknown',
+    },
+    residenceTitle: {
+      id: 'dp.application:selfEvaluation.questions.residence.title',
+      defaultMessage: 'Í hvernig húsnæði býrð þú?',
+      description: 'What type of housing do you live in?',
+    },
+    residenceOwnHome: {
+      id: 'dp.application:selfEvaluation.questions.residence.ownHome',
+      defaultMessage: 'Í eigin húsnæði',
+      description: 'In own home',
+    },
+    residenceRentalMarket: {
+      id: 'dp.application:selfEvaluation.questions.residence.rentalMarket',
+      defaultMessage: 'Í leiguhúsnæði á almennum markaði',
+      description: 'In rental housing on the general market',
+    },
+    residenceSocialHousing: {
+      id: 'dp.application:selfEvaluation.questions.residence.socialHousing',
+      defaultMessage: 'Í félagslegri leiguíbúð',
+      description: 'In social rental housing',
+    },
+    residenceHomeless: {
+      id: 'dp.application:selfEvaluation.questions.residence.homeless',
+      defaultMessage: 'Er húsnæðislaus',
+      description: 'Is homeless',
+    },
+    residenceWithFamily: {
+      id: 'dp.application:selfEvaluation.questions.residence.withFamily',
+      defaultMessage: 'Í húsnæði foreldar/ættingja',
+      description: 'In parents/relatives housing',
+    },
+    residenceOther: {
+      id: 'dp.application:selfEvaluation.questions.residence.other',
+      defaultMessage: 'Annað, hvað?',
+      description: 'Other, what?',
+    },
+    childrenCountTitle: {
+      id: 'dp.application:selfEvaluation.questions.childrenCount.title',
+      defaultMessage: 'Hversu mörg börn (eigin og/eða stjúp- og fósturbörn) eru á heimili þínu að jafnaði?',
+      description: 'How many children (own and/or step- and foster children) are in your household on average?',
+    },
+    childrenCountOne: {
+      id: 'dp.application:selfEvaluation.questions.childrenCount.one',
+      defaultMessage: '1',
+      description: 'One child',
+    },
+    childrenCountTwo: {
+      id: 'dp.application:selfEvaluation.questions.childrenCount.two',
+      defaultMessage: '2',
+      description: 'Two children',
+    },
+    childrenCountThree: {
+      id: 'dp.application:selfEvaluation.questions.childrenCount.three',
+      defaultMessage: '3',
+      description: 'Three children',
+    },
+    childrenCountFour: {
+      id: 'dp.application:selfEvaluation.questions.childrenCount.four',
+      defaultMessage: '4',
+      description: 'Four children',
+    },
+    childrenCountFive: {
+      id: 'dp.application:selfEvaluation.questions.childrenCount.five',
+      defaultMessage: '5',
+      description: 'Five children',
+    },
+    childrenCountSixOrMore: {
+      id: 'dp.application:selfEvaluation.questions.childrenCount.sixOrMore',
+      defaultMessage: '6+',
+      description: 'Six or more children',
+    },
   }),
   errors: defineMessages({
     emptyForeignResidence: {

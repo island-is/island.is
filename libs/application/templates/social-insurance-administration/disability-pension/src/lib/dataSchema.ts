@@ -4,9 +4,9 @@ import { BankAccountType, INCOME, ISK, RatioType, TaxLevelOptions } from '@islan
 import { NO, YES } from '@island.is/application/core'
 import { formatBankInfo, validIBAN, validSWIFT } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { isValidPhoneNumber } from './utils'
-import { EmploymentEnum } from './constants'
 import { disabilityPensionFormMessage } from './messages'
-import { selfEvaluationRoute } from '../forms/mainForm/selfEvaluationSection'
+import { EmploymentEnum, MaritalStatusEnum, ResidenceEnum, ChildrenCountEnum } from './constants'
+
 
 export const fileSchema = z.object({
   name: z.string(),
@@ -74,7 +74,36 @@ export const dataSchema = z.object({
       return false
     }, {
     path: ['list'],
-    params: disabilityPensionFormMessage.errors.emptyForeignPayments,
+    params: disabilityPensionFormMessage.errors.emptyForeignResidence,
+  }),
+  backgroundInfo: z.object({
+    maritalStatus: z.enum([
+      MaritalStatusEnum.single,
+      MaritalStatusEnum.inRelationship,
+      MaritalStatusEnum.married,
+      MaritalStatusEnum.divorced,
+      MaritalStatusEnum.widowed,
+      MaritalStatusEnum.unknown,
+    ]),
+    residence: z.object({
+      status: z.enum([
+        ResidenceEnum.ownHome,
+        ResidenceEnum.rentalMarket,
+        ResidenceEnum.socialHousing,
+        ResidenceEnum.homeless,
+        ResidenceEnum.withFamily,
+        ResidenceEnum.other,
+      ]),
+      other: z.string().optional(),
+    }),
+    children: z.enum([
+      ChildrenCountEnum.one,
+      ChildrenCountEnum.two,
+      ChildrenCountEnum.three,
+      ChildrenCountEnum.four,
+      ChildrenCountEnum.five,
+      ChildrenCountEnum.sixOrMore,
+    ]),
   }),
   paymentInfo: z
     .object({
