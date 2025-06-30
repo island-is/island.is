@@ -31,13 +31,14 @@ export class SignatureCollectionSharedClientService {
   async getLatestCollectionForType(
     api: ElectionApi,
     collectionType: CollectionType,
-    areaId?: string,
   ): Promise<Collection> {
+    // Get all active elections
     const baseRes = await api.kosningGet({
       hasSofnun: true,
       onlyActive: true,
     })
 
+    // Filter elections based on the collection type
     let filteredBaseRes = baseRes.filter(
       (election) =>
         Boolean(election.id) &&
@@ -60,11 +61,17 @@ export class SignatureCollectionSharedClientService {
       )
     }
 
-    const elections = await Promise.all(
+    // Get all collections for the filtered election
+    const collections = await Promise.all(
       filteredBaseRes.map(async ({ id }) => {
         const iD = id ?? 0 // Filter already applied but typing not catching up
         return await api.kosningIDSofnunListGet({ iD })
       }),
+    )
+
+    const activeAreas = await this.getActiveAreas(
+      filteredBaseRes[0]?.id?.toString() ?? '',
+      api,
     )
 
     // The signature-collection system has operated on the assumption that
@@ -75,27 +82,22 @@ export class SignatureCollectionSharedClientService {
     // to maintain generalization of the underlying systems in both the backend and frontend.
     if (
       collectionType === CollectionType.LocalGovernmental &&
-      elections.length
+      collections.length
     ) {
-      const orderedCollapsedElections = elections
-        .map((election) => collapseGovernment(election))
+      const orderedCollapsedElections = collections
+        .map((collection) => collapseGovernment(collection, activeAreas))
         .sort((a, b) => (a.endTime < b.endTime ? 1 : -1))
 
       if (!orderedCollapsedElections.length) {
         throw new Error('No current collection for selected type')
       }
-      const collection = orderedCollapsedElections[0]
-      collection.areas = collection.areas.filter((area) => area.id === areaId)
-      collection.candidates = collection.candidates.filter(
-        (candidate) => candidate.areaId === areaId,
-      )
-      return collection
+      return orderedCollapsedElections[0]
     }
 
     const orderedCollections = (
-      elections
+      collections
         .flatMap((_) => _)
-        .map(mapCollection)
+        .map((collection) => mapCollection(collection, activeAreas))
         .filter(
           (collection) =>
             collection?.isSignatureCollection &&
@@ -130,7 +132,14 @@ export class SignatureCollectionSharedClientService {
     if (!collections.length) {
       throw new Error('No current collection')
     }
-    let mappedCollections = collections.flatMap((_) => _).map(mapCollection)
+
+    const activeAreas = await this.getActiveAreas(
+      collections[0][0]?.kosningID?.toString() ?? '',
+      api,
+    )
+    let mappedCollections = collections
+      .flatMap((_) => _)
+      .map((collection) => mapCollection(collection, activeAreas))
 
     if (collectionTypeFilter) {
       if (collectionTypeFilter === CollectionType.LocalGovernmental) {
@@ -149,7 +158,7 @@ export class SignatureCollectionSharedClientService {
                 collections[0]?.kosning?.kosningTegundNr ?? 0,
               ) === CollectionType.LocalGovernmental,
           )
-          .map(collapseGovernment)
+          .map((collection) => collapseGovernment(collection, activeAreas))
       } else {
         mappedCollections = mappedCollections.filter(
           (collection) => collection.collectionType === collectionTypeFilter,
@@ -157,6 +166,16 @@ export class SignatureCollectionSharedClientService {
       }
     }
     return mappedCollections
+  }
+
+  async getActiveAreas(
+    electionId: string,
+    api: ElectionApi,
+  ): Promise<string[]> {
+    const areas = await api.kosningIDSvaediSofnunGet({
+      iD: parseInt(electionId),
+    })
+    return areas.map((area) => area.id?.toString() ?? '')
   }
 
   async getLists(
@@ -203,7 +222,12 @@ export class SignatureCollectionSharedClientService {
       })
     }
 
-    const listsMapped = lists.map((list) => mapList(list))
+    const activeAreas = await this.getActiveAreas(
+      lists[0]?.medmaelasofnun?.kosningID?.toString() ?? '',
+      electionApi,
+    )
+
+    const listsMapped = lists.map((list) => mapList(list, activeAreas))
     return onlyActive ? listsMapped.filter((list) => list.active) : listsMapped
   }
 
@@ -212,6 +236,7 @@ export class SignatureCollectionSharedClientService {
     listApi: ListApi,
     candidateApi: CandidateApi,
     collectionApi: CollectionApi,
+    electionApi: ElectionApi,
   ): Promise<List> {
     try {
       const list = await listApi.medmaelalistarIDGet({
@@ -234,7 +259,11 @@ export class SignatureCollectionSharedClientService {
       const { umbodList } = await candidateApi.frambodIDGet({
         iD: list.frambod?.id,
       })
-      return mapList(list, collectionType, umbodList)
+      const activeAreas = await this.getActiveAreas(
+        collection.kosningID?.toString() ?? '',
+        electionApi,
+      )
+      return mapList(list, activeAreas, collectionType, umbodList)
     } catch (error) {
       throw new NotFoundException('List not found')
     }
