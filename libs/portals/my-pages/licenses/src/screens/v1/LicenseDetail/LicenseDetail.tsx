@@ -387,6 +387,7 @@ const LicenseDetail = () => {
                 <Blockquote>
                   <Text>
                     {formatMessage(m.pkpassRemoved, {
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
                       link: (str: any) => (
                         <LinkButton
                           to="https://island.is/app"
