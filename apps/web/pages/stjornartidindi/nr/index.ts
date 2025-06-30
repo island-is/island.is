@@ -8,7 +8,8 @@ const idParser = parseAsString
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
   const recordId = idParser.parseServerSide(query.recordId)
   const recordIdCapitalized = idParser.parseServerSide(query.RecordId)
-  const idToUse = recordIdCapitalized || recordId
+  const recordIdFromStjr = idParser.parseServerSide(query.RecordID)
+  const idToUse = recordIdCapitalized || recordId || recordIdFromStjr
   if (!idToUse) {
     throw new CustomNextError(404, 'Advert not found')
   }
