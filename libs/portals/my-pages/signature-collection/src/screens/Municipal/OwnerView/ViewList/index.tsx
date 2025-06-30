@@ -17,23 +17,27 @@ const ViewList = () => {
   const { listInfo } = useGetSignatureList(id || '', collectionType)
 
   return (
-    <Stack space={5}>
-      <Text>hello</Text>
-      <Text variant="h3">
-        {listInfo?.title ?? 'Test - Borgarbyggð Framboð A'}
-      </Text>
-      <Box>
-        <Text variant="h5">{formatMessage(m.listPeriod)}</Text>
-        <Text>
-          {format(new Date(listInfo?.startTime ?? new Date()), 'dd.MM.yyyy') +
-            ' - ' +
-            format(new Date(listInfo?.endTime ?? new Date()), 'dd.MM.yyyy')}
-        </Text>
-        <ListActions listId={listInfo?.id} />
-        <Divider />
-      </Box>
-      <Signees collectionType={collectionType} />
-    </Stack>
+    <Box>
+      {listInfo && (
+        <Stack space={5}>
+          <Text variant="h3">{listInfo.title}</Text>
+          <Box>
+            <Text variant="h5">{formatMessage(m.listPeriod)}</Text>
+            <Text>
+              {format(
+                new Date(listInfo.startTime ?? new Date()),
+                'dd.MM.yyyy',
+              ) +
+                ' - ' +
+                format(new Date(listInfo.endTime ?? new Date()), 'dd.MM.yyyy')}
+            </Text>
+            <ListActions listId={listInfo.id} />
+            <Divider />
+          </Box>
+          <Signees collectionType={collectionType} />
+        </Stack>
+      )}
+    </Box>
   )
 }
 
