@@ -18,6 +18,7 @@ import { useIntl } from 'react-intl'
 import { RelevantParties } from './components/RelevantParties/RelevantParties'
 import { m } from '@island.is/form-system/ui'
 import { SectionTypes } from '@island.is/form-system/enums'
+import { Urls } from './components/Urls/Urls'
 
 export const MainContent = () => {
   const {
@@ -47,6 +48,10 @@ export const MainContent = () => {
         (activeItem.data as FormSystemSection).sectionType ===
           SectionTypes.PARTIES ? (
         <RelevantParties />
+      ) : activeItem.type === 'Section' &&
+        (activeItem.data as FormSystemSection).sectionType ===
+          SectionTypes.URLS ? (
+        <Urls />
       ) : openPreview ? (
         <PreviewStepOrGroup setOpenPreview={setOpenPreview} />
       ) : (

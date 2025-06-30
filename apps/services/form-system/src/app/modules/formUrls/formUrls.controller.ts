@@ -16,8 +16,7 @@ import {
   ApiTags,
 } from '@nestjs/swagger'
 import { FormUrlsService } from './formUrls.services'
-import { FormUrlDto } from './models/dto/formUrl.dto'
-import { CreateFormUrlDto } from './models/dto/createFormUrl.dto'
+import { FormUrlDto } from '../../../../../../../libs/form-system/src/dto/formUrl.dto'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
 
@@ -36,11 +35,11 @@ export class FormUrlsController {
     description: 'Add form url',
     type: FormUrlDto,
   })
-  @ApiBody({ type: CreateFormUrlDto })
+  @ApiBody({ type: FormUrlDto })
   @Post()
   create(
     @Body()
-    createFormUrlDto: CreateFormUrlDto,
+    createFormUrlDto: FormUrlDto,
   ): Promise<FormUrlDto> {
     return this.formUrlsService.create(createFormUrlDto)
   }
@@ -49,9 +48,12 @@ export class FormUrlsController {
   @ApiNoContentResponse({
     description: 'Remove form url',
   })
-  @ApiParam({ name: 'id', type: String })
-  @Delete(':id')
-  async delete(@Param('id') id: string): Promise<void> {
-    return this.formUrlsService.delete(id)
+  @ApiBody({ type: FormUrlDto })
+  @Delete()
+  async delete(
+    @Body()
+    deleteFormUrlDto: FormUrlDto,
+  ): Promise<void> {
+    return this.formUrlsService.delete(deleteFormUrlDto)
   }
 }

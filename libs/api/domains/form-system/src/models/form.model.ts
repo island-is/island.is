@@ -12,6 +12,7 @@ import { Screen as ScreenModel } from './screen.model'
 import { FieldType } from './fieldType.model'
 import { Option } from './option.model'
 import { OrganizationUrl } from './organizationUrl.model'
+import { FormUrlDto } from '@island.is/form-system/shared'
 
 @ObjectType('FormSystemDependency')
 export class Dependency {
@@ -23,30 +24,6 @@ export class Dependency {
 
   @Field(() => Boolean, { nullable: true })
   isSelected?: boolean
-}
-
-@ObjectType('FormSystemFormUrl')
-export class FormUrl {
-  @Field(() => String, { nullable: true })
-  id?: string
-
-  @Field(() => String, { nullable: true })
-  organizationUrlId?: string
-
-  @Field(() => String, { nullable: true })
-  url?: string
-
-  @Field(() => Boolean, { nullable: true })
-  isXroad?: boolean
-
-  @Field(() => Boolean, { nullable: true })
-  isTest?: boolean
-
-  @Field(() => String, { nullable: true })
-  type?: string
-
-  @Field(() => String, { nullable: true })
-  method?: string
 }
 
 @ObjectType('FormSystemForm')
@@ -126,8 +103,8 @@ export class Form {
   @Field(() => String)
   status!: string
 
-  @Field(() => [FormUrl], { nullable: 'itemsAndList' })
-  urls?: FormUrl[]
+  @Field(() => [FormUrlDto], { nullable: 'itemsAndList' })
+  urls?: FormUrlDto[]
 }
 
 @ObjectType('FormSystemFormResponse')

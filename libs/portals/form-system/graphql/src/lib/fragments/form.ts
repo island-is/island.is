@@ -53,13 +53,8 @@ export const FormFragment = gql`
     }
     status
     urls {
-      id
+      formId
       organizationUrlId
-      url
-      isXroad
-      isTest
-      type
-      method
     }
   }
   ${LanguageFields}
