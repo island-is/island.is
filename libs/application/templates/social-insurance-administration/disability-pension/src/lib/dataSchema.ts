@@ -51,7 +51,7 @@ export const dataSchema = z.object({
     )
     .refine(
       ({ appliedBefore, fileUpload }) => {
-        if (appliedBefore === YES && ) {
+        if (appliedBefore === YES) {
           return (fileUpload?.length ?? 0) > 0
         }
         else return true
@@ -60,7 +60,7 @@ export const dataSchema = z.object({
     ),
   livedAbroad: livedAbroadSchema
     .refine(({list, hasLivedAbroad}) => {
-      if (hasLivedAbroad.NO || (list && list.length > 0)) {
+      if ((hasLivedAbroad === NO)|| (list && list.length > 0)) {
         return true
       }
       return false
@@ -69,21 +69,31 @@ export const dataSchema = z.object({
       params: disabilityPensionFormMessage.errors.emptyForeignResidence,
     })
     .refine(({list, hasLivedAbroad}) => {
-      if (hasLivedAbroad.YES && (list && list.length > 0)) {
-        const invalidCountryLines: Array<number> = []
-        list.forEach(({ country }, index) => {
-          if (!country) return index
-          const countries = getAllCountryCodes()
-          return countries.every(c => c.name).includes(country)
-        })
+      if (hasLivedAbroad === YES && (list && list.length > 0)) {
+        const countries = getAllCountryCodes().map(c => c.name)
+        const invalidCountryLines = list.filter((item => item?.country && countries.includes(item.country)))
+        if (invalidCountryLines.length > 0) {
+          return false
+        }
+        return true
       }
-      return false
-      if (!country) return false
-      const countries = getAllCountryCodes()
-      return countries.map(c => c.name).includes(country)
-    }
+    },{
+      path: ['list', '0', 'country'],
+      params: disabilityPensionFormMessage.errors.emptyCountry,
     })
-
+    .refine(({list, hasLivedAbroad}) => {
+      if (hasLivedAbroad === YES && (list && list.length > 0)) {
+        const invalidNationalIdLines = list.filter((item => item?.abroadNationalId && !isValidNationalId(item.abroadNationalId)))
+        if (invalidNationalIdLines.length > 0) {
+          return false
+        }
+        return true
+      }
+    },
+    {
+      path: ['list', '0', 'abroadNationalId'],
+      params: disabilityPensionFormMessage.errors.emptyCountry,
+    }),
   paidWork: z.object({
     inPaidWork: z.enum([EmploymentEnum.YES, EmploymentEnum.NO, EmploymentEnum.DONT_KNOW]),
     continuedWork: z.enum([YES, NO]).optional()

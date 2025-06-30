@@ -401,5 +401,10 @@ export const disabilityPensionFormMessage: MessageDir = {
       defaultMessage: 'Nauðsynlegt er að bæta við a.m.k einni dvöl erlendis',
       description: 'You must add at least one foreign residence',
     },
+    emptyCountry: {
+      id: 'dp.application:errors.countryRequired',
+      defaultMessage: 'Nauðsynlegt er að velja land',
+      description: 'You must add at least one country',
+    },
   }),
 }
