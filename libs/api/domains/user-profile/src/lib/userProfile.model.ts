@@ -52,4 +52,7 @@ export class UserProfile {
 
   @Field(() => String, { nullable: true })
   bankInfo?: string
+
+  @Field(() => Boolean, { nullable: true })
+  bankInfoError?: boolean
 }
