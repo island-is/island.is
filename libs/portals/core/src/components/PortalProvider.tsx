@@ -5,7 +5,7 @@ import {
 } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { useUserInfo } from '@island.is/react-spa/bff'
-import { createContext, useContext, useMemo } from 'react'
+import { createContext, useContext, useMemo, useState, useEffect } from 'react'
 import { Outlet, matchPath, useLocation } from 'react-router-dom'
 import { PortalModule, PortalRoute, PortalType } from '../types/portalCore'
 import { useFeatureFlagClient } from '@island.is/react/feature-flags'
@@ -50,28 +50,39 @@ export const PortalProvider = ({
   const client = useApolloClient() as ApolloClient<NormalizedCacheObject>
   const featureFlagClient = useFeatureFlagClient()
 
-  const activeModule = useMemo(
-    () =>
-      userInfo
-        ? modules.find(async (module) => {
-            return (
-              spreadRoutsChildren(
-                await module.routes({
-                  userInfo,
-                  client,
-                  formatMessage,
-                  featureFlagClient,
-                }),
-              )
-                // Extract the path from each route
-                .map(({ path }) => path)
-                // Find the route path that matches the current pathname
-                .find((path) => path && matchPath(path, pathname))
-            )
-          })
-        : undefined,
-    [modules, pathname, userInfo, featureFlagClient],
-  )
+  const [activeModule, setActiveModule] = useState<PortalModule | undefined>()
+
+  useEffect(() => {
+    const findActiveModule = async () => {
+      if (!userInfo) {
+        setActiveModule(undefined)
+        return
+      }
+
+      for (const module of modules) {
+        const routes = await module.routes({
+          userInfo,
+          client,
+          formatMessage,
+          featureFlagClient,
+        })
+
+        const paths = spreadRoutsChildren(routes).map(({ path }) => path)
+        const hasMatchingRoute = paths.find(
+          (path) => path && matchPath(path, pathname),
+        )
+
+        if (hasMatchingRoute) {
+          setActiveModule(module)
+          return
+        }
+      }
+
+      setActiveModule(undefined)
+    }
+
+    findActiveModule()
+  }, [modules, pathname, userInfo, featureFlagClient, client, formatMessage])
 
   return (
     <PortalContext.Provider
