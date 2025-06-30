@@ -63,15 +63,15 @@ export class SignatureCollectionAdminClientService
   implements SignatureCollectionAdminClient
 {
   constructor(
-    private listsApi: AdminListApi,
-    private collectionsApi: AdminCollectionApi,
-    private electionsApi: KosningApi,
-    private sharedService: SignatureCollectionSharedClientService,
-    private candidateApi: AdminCandidateApi,
-    private adminApi: AdminApi,
+    protected listsApi: AdminListApi,
+    protected collectionsApi: AdminCollectionApi,
+    protected electionsApi: KosningApi,
+    protected sharedService: SignatureCollectionSharedClientService,
+    protected candidateApi: AdminCandidateApi,
+    protected adminApi: AdminApi,
   ) {}
 
-  private getApiWithAuth<T extends Api>(api: T, auth: Auth) {
+  protected getApiWithAuth<T extends Api>(api: T, auth: Auth) {
     return api.withMiddleware(new AuthMiddleware(auth)) as T
   }
 
@@ -89,7 +89,7 @@ export class SignatureCollectionAdminClientService
     auth: Auth,
     collectionType: CollectionType,
   ): Promise<Collection> {
-    return await this.sharedService.getLatestCollectionForType(
+    return this.sharedService.getLatestCollectionForType(
       this.getApiWithAuth(this.electionsApi, auth),
       collectionType,
     )
@@ -139,6 +139,12 @@ export class SignatureCollectionAdminClientService
   }
 
   async getLists(input: GetListInput, auth: Auth): Promise<List[]> {
+    if (
+      input.collectionType &&
+      input.collectionType === CollectionType.LocalGovernmental
+    ) {
+      input.areaId = await this.getMunicipalityAreaId(auth)
+    }
     return await this.sharedService.getLists(
       input,
       this.getApiWithAuth(this.listsApi, auth),
@@ -568,7 +574,6 @@ export class SignatureCollectionAdminClientService
     ).adminSveitarfelagInfoGet({
       kennitala: auth.nationalId,
     })
-
-    return info.sveitarfelagID.toString()
+    return info?.[0]?.sveitarfelagID?.toString()
   }
 }

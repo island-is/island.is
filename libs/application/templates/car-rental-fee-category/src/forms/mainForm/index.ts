@@ -10,7 +10,7 @@ import { endOfMonthCheck } from './endOfMonthCheck'
 import { areLessThan7DaysLeftOfMonth } from '../../utils/dayRateUtils'
 
 const applicationChildren = [
-  overviewStatistics, 
+  overviewStatistics,
   categorySelection,
   singleOrMultiSelection,
   multiUploadSection,
@@ -18,11 +18,13 @@ const applicationChildren = [
   verifySection,
 ]
 
-const tooFewDaysLeftChildren = [ endOfMonthCheck ]
+const tooFewDaysLeftChildren = [endOfMonthCheck]
 
 export const MainForm = buildForm({
   id: 'MainForm',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
-  children: areLessThan7DaysLeftOfMonth() ? tooFewDaysLeftChildren : applicationChildren
+  children: areLessThan7DaysLeftOfMonth()
+    ? tooFewDaysLeftChildren
+    : applicationChildren,
 })
