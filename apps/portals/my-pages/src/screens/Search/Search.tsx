@@ -73,7 +73,7 @@ const Search = () => {
               ref={ref}
               size="xs"
               name="search-input"
-              placeholder={formatMessage(m.searchLabel)}
+              placeholder={formatMessage(m.searchPlaceholder)}
               backgroundColor="blue"
               aria-label="Search input"
               onKeyDown={(e) => {
