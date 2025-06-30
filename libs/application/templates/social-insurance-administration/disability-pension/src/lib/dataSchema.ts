@@ -81,14 +81,7 @@ export const dataSchema = z.object({
       path: ['list', '0', 'country'],
       params: disabilityPensionFormMessage.errors.emptyCountry,
     })
-    .refine(({list, hasLivedAbroad}) => {
-      if (hasLivedAbroad === YES && (list && list.length > 0)) {
-        const invalidNationalIdLines = list.filter((item => item?.abroadNationalId && !isValidNationalId(item.abroadNationalId)))
-        if (invalidNationalIdLines.length > 0) {
-          return false
-        }
-        return true
-      }
+    .refine(({list, hasLivedAbroad}) => { return hasLivedAbroad === YES && (list && list.length > 0)) {
     },
     {
       path: ['list', '0', 'abroadNationalId'],
