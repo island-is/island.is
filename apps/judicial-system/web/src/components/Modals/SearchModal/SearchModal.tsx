@@ -100,7 +100,10 @@ const SearchModal: FC<Props> = ({ onClose }) => {
                 />
               ))
             : [
-                <Text key="no-results" variant="small">{`Engar niðurstöður fundust fyrir: ${searchString}`}</Text>,
+                <Text
+                  key="no-results"
+                  variant="small"
+                >{`Engar niðurstöður fundust fyrir: ${searchString}`}</Text>,
               ],
           results.data?.searchCases.rowCount,
         ])
