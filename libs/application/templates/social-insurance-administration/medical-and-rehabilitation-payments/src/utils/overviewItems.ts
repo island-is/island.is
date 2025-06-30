@@ -6,7 +6,7 @@ import {
   bankInfoToString,
   getTaxLevelOption,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
-import { SiaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/types/schema'
+import { SiaGeneralQuery } from '@island.is/application/templates/social-insurance-administration-core/types/schema'
 import {
   ExternalData,
   FormValue,
@@ -341,10 +341,10 @@ export const unionSickPayItems = async (
     unionNationalId,
   } = getApplicationAnswers(answers)
 
-  const { data } = await apolloClient.query<SiaUnionsQuery>({
+  const { data } = await apolloClient.query<SiaGeneralQuery>({
     query: siaUnionsQuery,
   })
-  const unionName = data?.socialInsuranceUnions.find(
+  const unionName = data?.socialInsuranceGeneral?.unions?.find(
     (union) => union?.nationalId === unionNationalId,
   )?.name
 

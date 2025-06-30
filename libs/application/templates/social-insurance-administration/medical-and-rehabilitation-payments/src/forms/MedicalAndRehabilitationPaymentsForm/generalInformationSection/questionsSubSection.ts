@@ -15,10 +15,7 @@ import {
   siaEducationalInstitutionsQuery,
 } from '@island.is/application/templates/social-insurance-administration-core/graphql/queries'
 import { getYesNoOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
-import {
-  SiaCountriesQuery,
-  SiaEducationalInstitutionsQuery,
-} from '@island.is/application/templates/social-insurance-administration-core/types/schema'
+import { SiaGeneralQuery } from '@island.is/application/templates/social-insurance-administration-core/types/schema'
 import { Application } from '@island.is/application/types'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
 import {
@@ -112,13 +109,12 @@ export const questionsSubSection = buildSubSection({
           width: 'half',
           loadingError: coreErrorMessages.failedDataProvider,
           loadOptions: async ({ apolloClient }) => {
-            const { data } =
-              await apolloClient.query<SiaEducationalInstitutionsQuery>({
-                query: siaEducationalInstitutionsQuery,
-              })
+            const { data } = await apolloClient.query<SiaGeneralQuery>({
+              query: siaEducationalInstitutionsQuery,
+            })
 
             return (
-              data?.socialInsuranceEducationalInstitutions
+              data?.socialInsuranceGeneral?.educationalInstitutions
                 ?.map(({ name }) => ({
                   value: name || '', // Should send nationalId when Smári is ready
                   label: name || '',
@@ -183,13 +179,13 @@ export const questionsSubSection = buildSubSection({
               width: 'half',
               loadingError: coreErrorMessages.failedDataProvider,
               loadOptions: async ({ apolloClient }) => {
-                const { data } = await apolloClient.query<SiaCountriesQuery>({
+                const { data } = await apolloClient.query<SiaGeneralQuery>({
                   query: siaCountriesQuery,
                 })
 
                 // Piggyback the name as part of the value
                 return (
-                  data?.socialInsuranceCountries
+                  data?.socialInsuranceGeneral?.countries
                     ?.map(({ code, name }) => ({
                       value: `${code}::${name}`,
                       label: name || '',

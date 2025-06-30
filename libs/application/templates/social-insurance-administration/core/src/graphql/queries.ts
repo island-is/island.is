@@ -2,27 +2,33 @@ import gql from 'graphql-tag'
 
 export const siaUnionsQuery = gql`
   query SiaUnions {
-    socialInsuranceUnions {
-      nationalId
-      name
+    socialInsuranceGeneral {
+      unions {
+        nationalId
+        name
+      }
     }
   }
 `
 
 export const siaCountriesQuery = gql`
   query SiaCountries {
-    socialInsuranceCountries {
-      code
-      name
+    socialInsuranceGeneral {
+      countries {
+        code
+        name
+      }
     }
   }
 `
 
 export const siaEducationalInstitutionsQuery = gql`
   query SiaEducationalInstitutions {
-    socialInsuranceEducationalInstitutions {
-      name
-      nationalId
+    socialInsuranceGeneral {
+      educationalInstitutions {
+        name
+        nationalId
+      }
     }
   }
 `

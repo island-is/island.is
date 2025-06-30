@@ -12,7 +12,7 @@ import {
 } from '@island.is/application/core'
 import { siaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/graphql/queries'
 import { fileUploadSharedProps } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import { SiaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/types/schema'
+import { SiaGeneralQuery } from '@island.is/application/templates/social-insurance-administration-core/types/schema'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
 import { shouldShowUnionSickPayUnionAndEndDate } from '../../../utils/conditionUtils'
 import {
@@ -98,12 +98,12 @@ export const unionSickPaySubSection = buildSubSection({
           required: true,
           loadingError: coreErrorMessages.failedDataProvider,
           loadOptions: async ({ apolloClient }) => {
-            const { data } = await apolloClient.query<SiaUnionsQuery>({
+            const { data } = await apolloClient.query<SiaGeneralQuery>({
               query: siaUnionsQuery,
             })
 
             return (
-              data?.socialInsuranceUnions
+              data?.socialInsuranceGeneral?.unions
                 ?.map(({ name, nationalId }) => ({
                   value: nationalId || '',
                   label: name || '',

@@ -8,33 +8,39 @@ import {
 import { ApiScope } from '@island.is/auth/scopes'
 import { Audit } from '@island.is/nest/audit'
 import { UseGuards } from '@nestjs/common'
-import { Query, Resolver } from '@nestjs/graphql'
+import { Query, Resolver, ResolveField } from '@nestjs/graphql'
 import { Country } from '../models/general/country.model'
 import { EducationalInstitution } from '../models/general/educationalInstitution.model'
-import { UnionModel } from '../models/general/union.model'
+import { Union } from '../models/general/union.model'
+import { General } from '../models/general/general.model'
 import { SocialInsuranceService } from '../socialInsurance.service'
 
-@Resolver()
+@Resolver(() => General)
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Audit({ namespace: '@island.is/api/social-insurance' })
 @Scopes(ApiScope.internal)
 export class GeneralResolver {
   constructor(private readonly service: SocialInsuranceService) {}
 
-  @Query(() => [UnionModel], { name: 'socialInsuranceUnions' })
-  async siaGetUnions(@CurrentUser() user: User) {
+  @Query(() => General, { name: 'socialInsuranceGeneral' })
+  async getGeneral() {
+    return {}
+  }
+
+  @ResolveField('unions', () => [Union], { nullable: true })
+  resolveUnions(@CurrentUser() user: User) {
     return this.service.getUnions(user)
   }
 
-  @Query(() => [Country], { name: 'socialInsuranceCountries' })
-  async siaGetCountries(@CurrentUser() user: User) {
+  @ResolveField('countries', () => [Country], { nullable: true })
+  resolveCountries(@CurrentUser() user: User) {
     return this.service.getCountries(user)
   }
 
-  @Query(() => [EducationalInstitution], {
-    name: 'socialInsuranceEducationalInstitutions',
+  @ResolveField('educationalInstitutions', () => [EducationalInstitution], {
+    nullable: true,
   })
-  async siaGetEducationalInstitutions(@CurrentUser() user: User) {
+  resolveEducationalInstitution(@CurrentUser() user: User) {
     return this.service.getEducationalInstitutions(user)
   }
 }
