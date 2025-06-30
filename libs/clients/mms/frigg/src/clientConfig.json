@@ -464,27 +464,6 @@
           "municipalityId"
         ]
       },
-      "ManagedOrganizationModel": {
-        "type": "object",
-        "properties": {
-          "managedOrganizationId": { "type": "string" },
-          "managedOrganization": {
-            "$ref": "#/components/schemas/OrganizationModel"
-          },
-          "managerOrganizationId": { "type": "string" },
-          "managerOrganization": {
-            "$ref": "#/components/schemas/OrganizationModel"
-          },
-          "createdAt": { "type": "string" }
-        },
-        "required": [
-          "managedOrganizationId",
-          "managedOrganization",
-          "managerOrganizationId",
-          "managerOrganization",
-          "createdAt"
-        ]
-      },
       "OrganizationModel": {
         "type": "object",
         "properties": {
@@ -508,17 +487,6 @@
             "nullable": true,
             "allOf": [{ "$ref": "#/components/schemas/AddressModel" }]
           },
-          "parent": {
-            "nullable": true,
-            "default": null,
-            "allOf": [{ "$ref": "#/components/schemas/OrganizationModel" }]
-          },
-          "children": {
-            "nullable": true,
-            "default": [],
-            "type": "array",
-            "items": { "$ref": "#/components/schemas/OrganizationModel" }
-          },
           "managedBy": {
             "$ref": "#/components/schemas/ManagedOrganizationModel"
           },
@@ -540,14 +508,33 @@
           "type",
           "gradeLevels",
           "address",
-          "parent",
-          "children",
           "managedBy",
           "managing",
           "unitId",
           "email",
           "phone",
           "website"
+        ]
+      },
+      "ManagedOrganizationModel": {
+        "type": "object",
+        "properties": {
+          "managedOrganizationId": { "type": "string" },
+          "managedOrganization": {
+            "$ref": "#/components/schemas/OrganizationModel"
+          },
+          "managerOrganizationId": { "type": "string" },
+          "managerOrganization": {
+            "$ref": "#/components/schemas/OrganizationModel"
+          },
+          "createdAt": { "type": "string" }
+        },
+        "required": [
+          "managedOrganizationId",
+          "managedOrganization",
+          "managerOrganizationId",
+          "managerOrganization",
+          "createdAt"
         ]
       },
       "AllergyModel": {
