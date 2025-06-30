@@ -28,12 +28,8 @@ export type ActiveDocumentType2 = {
   document: Partial<DocumentV2Content>
 } & ActiveDoc
 
-export interface Comment extends DocumentComment {
-  hide: boolean
-}
-
 export interface Reply extends DocumentTicket {
-  comments?: Comment[]
+  comments?: DocumentComment[]
 }
 
 export interface PostReply extends DocumentReply {
