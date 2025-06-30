@@ -18,6 +18,6 @@ export const minimalScrollbar = style({
     },
     '&::-webkit-scrollbar-thumb:hover': {
       background: 'rgba(0,0,0,0.4)',
-    }
-  }
+    },
+  },
 })
