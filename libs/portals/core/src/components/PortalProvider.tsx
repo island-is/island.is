@@ -67,11 +67,10 @@ export const PortalProvider = ({
           featureFlagClient,
         })
 
-        const hasMatchingRoute = await Promise.all(
-          spreadRoutsChildren(routes).map(({ path }) => path),
-        ).then((paths) => {
-          return paths.find((path) => path && matchPath(path, pathname))
-        })
+        const paths = spreadRoutsChildren(routes).map(({ path }) => path)
+        const hasMatchingRoute = paths.find(
+          (path) => path && matchPath(path, pathname),
+        )
 
         if (hasMatchingRoute) {
           setActiveModule(module)
