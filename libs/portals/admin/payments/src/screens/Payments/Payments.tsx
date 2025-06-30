@@ -13,7 +13,6 @@ import {
   toast,
   ActionCard,
   SkeletonLoader,
-  Text,
   AlertMessage,
   LoadingDots,
 } from '@island.is/island-ui/core'
@@ -67,7 +66,7 @@ const Payments = () => {
     if (error) {
       toast.error(formatMessage(m.errorDefault))
     }
-  }, [error])
+  }, [error, formatMessage])
 
   useEffect(() => {
     if (loading) {
@@ -116,7 +115,13 @@ const Payments = () => {
     return () => {
       observer.disconnect()
     }
-  }, [loading, data?.paymentsGetFlows?.pageInfo, searchQuery, loadingMore])
+  }, [
+    loading,
+    data?.paymentsGetFlows?.pageInfo,
+    searchQuery,
+    loadingMore,
+    fetchMore,
+  ])
 
   const handleSearch = () => {
     if (searchInput) {

@@ -1,26 +1,21 @@
 import { Injectable, Inject } from '@nestjs/common'
 import { verify } from 'jsonwebtoken'
 import { ConfigType } from '@nestjs/config'
-import { paginate } from '@island.is/nest/pagination'
 import * as kennitala from 'kennitala'
 
 import { GetPaymentFlowInput } from './dto/getPaymentFlow.input'
 import { GetPaymentFlowResponse } from './dto/getPaymentFlow.response'
 import {
   PaymentsApi,
-  GetPaymentFlowDTO,
   VerificationStatusResponse,
   VerificationCallbackInput,
   GetPaymentFlowDTOPaymentStatusEnum,
-  PaymentFlowEventDTOTypeEnum,
-  PaymentFlowEventDTOReasonEnum,
 } from '@island.is/clients/payments'
 
 import { VerifyCardInput } from './dto/verifyCard.input'
 import { VerifyCardResponse } from './dto/verifyCard.response'
 import { ChargeCardInput } from './dto/chargeCard.input'
 import { ChargeCardResponse } from './dto/chargeCard.response'
-import { GetPaymentVerificationStatusResponse } from './dto/getVerificationStatus.response'
 import { CardVerificationCallbackInput } from './dto/cardVerificationCallback.input'
 import { PaymentsApiModuleConfig } from './payments.config'
 import { CreateInvoiceInput } from './dto/createInvoice.input'
@@ -28,7 +23,6 @@ import { CreateInvoiceResponse } from './dto/createInvoice.response'
 import { CardVerificationResponse } from './dto/cardVerificationCallback.response'
 import { GetPaymentFlowsInput } from './dto/getPaymentFlows.input'
 import { GetPaymentFlowsResponse } from './dto/getPaymentFlows.response'
-import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 
 @Injectable()
 export class PaymentsService {
