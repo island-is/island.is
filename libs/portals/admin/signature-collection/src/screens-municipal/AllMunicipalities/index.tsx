@@ -7,7 +7,6 @@ import {
   GridRow,
   Stack,
   Breadcrumbs,
-  FilterInput,
   Divider,
 } from '@island.is/island-ui/core'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
@@ -19,13 +18,14 @@ import { useLoaderData, useNavigate } from 'react-router-dom'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { SignatureCollectionList } from '@island.is/api/schema'
-import { useState } from 'react'
+import FindSignature from '../../shared-components/findSignature'
+import EmptyState from '../../shared-components/emptyState'
+import StartAreaCollection from './startCollection'
 
 const AllMunicipalities = () => {
-  const { allLists } = useLoaderData() as ListsLoaderReturn
+  const { allLists, collection } = useLoaderData() as ListsLoaderReturn
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
-  const [searchTerm, setSearchTerm] = useState('')
 
   const areaCounts: Record<string, number> = {}
   const municipalityMap = new Map<string, SignatureCollectionList>()
@@ -46,7 +46,7 @@ const AllMunicipalities = () => {
 
   return (
     <GridContainer>
-      <GridRow direction="row">
+      <GridRow>
         <GridColumn
           span={['12/12', '5/12', '5/12', '3/12']}
           offset={['0', '7/12', '7/12', '0']}
@@ -61,7 +61,7 @@ const AllMunicipalities = () => {
           offset={['0', '0', '0', '1/12']}
           span={['12/12', '12/12', '12/12', '8/12']}
         >
-          <Box marginBottom={2}>
+          <Box marginBottom={3}>
             <Breadcrumbs
               items={[
                 {
@@ -80,44 +80,38 @@ const AllMunicipalities = () => {
           />
           <Divider />
           <Box marginTop={9} />
-          <Box
-            width="full"
-            marginBottom={3}
-            display="flex"
-            justifyContent="spaceBetween"
-          >
-            <Box width="half">
-              {/* Todo: display search results */}
-              <FilterInput
-                name="searchSignee"
-                value={searchTerm}
-                onChange={(v) => {
-                  setSearchTerm(v)
-                }}
-                placeholder={formatMessage(m.searchNationalIdPlaceholder)}
-                backgroundColor="blue"
-              />
+          {municipalityLists.length > 0 ? (
+            <Box>
+              <FindSignature collectionId={collection.id} />
+              <Box marginBottom={3} display="flex" justifyContent="flexEnd">
+                <Text variant="eyebrow">
+                  {formatMessage(m.totalListResults) +
+                    ': ' +
+                    municipalityLists.length}
+                </Text>
+              </Box>
             </Box>
-          </Box>
-          <Box marginBottom={3} display="flex" justifyContent="flexEnd">
-            <Text variant="eyebrow">
-              {formatMessage(m.totalListResults) +
-                ': ' +
-                municipalityLists.length}
-            </Text>
-          </Box>
+          ) : (
+            <EmptyState
+              title={formatMessage(m.noLists)}
+              description={formatMessage(m.noListsDescription)}
+            />
+          )}
+          {/* Todo: for municipalities, not admin */}
+          <StartAreaCollection />
           <Stack space={3}>
             {municipalityLists.map((list) => {
               return (
                 <ActionCard
                   key={list.area.id}
-                  eyebrow={
-                    formatMessage(m.totalListsPerConstituency) +
+                  heading={list.area.name}
+                  eyebrow={formatMessage(m.municipality)}
+                  text={
+                    formatMessage(m.totalListsPerMunicipality) +
                     (areaCounts[list.area.name]
                       ? areaCounts[list.area.name].toString()
                       : '0')
                   }
-                  heading={list.area.name}
                   cta={{
                     label: formatMessage(m.viewMunicipality),
                     variant: 'text',
@@ -130,7 +124,7 @@ const AllMunicipalities = () => {
                       )
                     },
                   }}
-                  /* Todo: this is still a discussion
+                  /* Todo: add for admin users
                   tag={{
                     label: 'Tag',
                     variant: 'blue',

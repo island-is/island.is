@@ -47,7 +47,7 @@ export const personalSubSection = buildSubSection({
           phoneCondition: (_1, _2, user) => {
             return checkIsActor(user)
           },
-          readOnly: true,
+          baseInfoReadOnly: true,
         }).children,
         buildTextField({
           id: 'applicant.email',

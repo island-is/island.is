@@ -37,15 +37,15 @@ const CompleteListReview = ({
     ? formatMessage(m.confirmListReviewedToggleBack)
     : formatMessage(m.confirmListReviewed)
 
-  const [toggleListReview, { loading, data }] = useToggleListReviewMutation({
+  const [toggleListReview, { loading }] = useToggleListReviewMutation({
     variables: {
       input: {
         listId,
         collectionType,
       },
     },
-    onCompleted: () => {
-      if (data?.signatureCollectionAdminToggleListReview.success) {
+    onCompleted: (response) => {
+      if (response.signatureCollectionAdminToggleListReview.success) {
         setModalSubmitReviewIsOpen(false)
         revalidate()
         toast.success(
@@ -55,7 +55,7 @@ const CompleteListReview = ({
         )
       } else {
         const message =
-          data?.signatureCollectionAdminToggleListReview.reasons?.[0] ??
+          response.signatureCollectionAdminToggleListReview?.reasons?.[0] ??
           formatMessage(m.toggleReviewError)
         toast.error(message)
       }
@@ -72,20 +72,30 @@ const CompleteListReview = ({
           <Box display="flex">
             <Tag>
               <Box display="flex" justifyContent="center">
-                <Icon icon="checkmark" type="outline" color="blue600" />
+                {listStatus === ListStatus.Reviewed ? (
+                  <Icon icon="reload" type="outline" color="blue600" />
+                ) : (
+                  <Icon icon="checkmark" type="outline" color="red600" />
+                )}
               </Box>
             </Tag>
             <Box marginLeft={5}>
-              <Text variant="h4">{formatMessage(m.confirmListReviewed)}</Text>
+              <Text variant="h4">
+                {listStatus === ListStatus.Reviewed
+                  ? formatMessage(m.confirmListReviewedToggleBack)
+                  : formatMessage(m.confirmListReviewed)}
+              </Text>
               <Text marginBottom={2}>
-                Þegar búið er að fara yfir meðmæli er hakað við hér.
+                {formatMessage(m.confirmListReviewActionDescription)}
               </Text>
               <Button
                 variant="text"
                 size="small"
                 onClick={() => setModalSubmitReviewIsOpen(true)}
               >
-                {formatMessage(m.confirmListReviewed)}
+                {listStatus === ListStatus.Reviewed
+                  ? formatMessage(m.confirmListReviewedToggleBack)
+                  : formatMessage(m.confirmListReviewed)}
               </Button>
             </Box>
           </Box>

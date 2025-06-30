@@ -1,49 +1,26 @@
-import { useContext, useEffect } from "react"
-import { TableRowHeader } from "../TableRow/TableRowHeader"
-import { FormsContext } from "../../context/FormsContext"
-import { TableRow } from "../TableRow/TableRow"
-import { useLazyQuery, useMutation } from "@apollo/client"
-import { CREATE_FORM, GET_FORMS } from '@island.is/form-system/graphql'
-import { Box, Button, GridRow, Select, } from '@island.is/island-ui/core'
-import { useNavigate } from "react-router-dom"
-import { FormSystemPaths } from "../../lib/paths"
-import { useIntl } from "react-intl"
+import { useContext, useEffect } from 'react'
+import { TableHeader } from './components/Table/TableHeader'
+import { FormsContext } from '../../context/FormsContext'
+import { TableRow } from './components/Table/TableRow'
+import { useMutation } from '@apollo/client'
+import { CREATE_FORM } from '@island.is/form-system/graphql'
+import { Box, Button, GridRow } from '@island.is/island-ui/core'
+import { useNavigate } from 'react-router-dom'
+import { FormSystemPaths } from '../../lib/paths'
+import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
-
+import { OrganizationSelect } from '../OrganizationSelect'
 
 export const Forms = () => {
   const {
     forms,
     setForms,
-    organizations,
-    setOrganizations,
     isAdmin,
     organizationNationalId,
-    setOrganizationNationalId } = useContext(FormsContext)
-  const [getFormsQuery] = useLazyQuery(GET_FORMS, { fetchPolicy: 'no-cache' })
+    handleOrganizationChange,
+  } = useContext(FormsContext)
   const navigate = useNavigate()
   const { formatMessage } = useIntl()
-
-  const handleOrganizationChange = async (selected: {
-    value: string | undefined
-  }) => {
-    const updatedOrganizations = organizations.map((org) => ({
-      ...org,
-      isSelected: org.value === selected.value,
-    }))
-    setOrganizations(updatedOrganizations)
-
-    const { data } = await getFormsQuery({
-      variables: {
-        input: {
-          nationalId: selected.value,
-        },
-      },
-    })
-    if (data?.formSystemForms?.forms) {
-      setForms(data.formSystemForms.forms)
-    }
-  }
 
   const [formSystemCreateFormMutation] = useMutation(CREATE_FORM, {
     onCompleted: (newFormData) => {
@@ -71,54 +48,49 @@ export const Forms = () => {
           String(data?.createFormSystemForm?.form?.id),
         ),
       )
-    }
-    catch (error) {
-      console.error('Error creating form:', error)
+    } catch (error) {
+      throw new Error(
+        `Error creating form: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
+      )
     }
   }
 
   useEffect(() => {
-    if (isAdmin && organizationNationalId) {
+    if (isAdmin && organizationNationalId && handleOrganizationChange) {
       handleOrganizationChange({ value: organizationNationalId })
     }
   }, [])
 
   return (
-    <Box marginTop={5}>
-      <Box marginTop={5} marginBottom={5}>
-        <GridRow>
-          <Box
-            marginLeft={2}
-            marginRight={2}
-            justifyContent="spaceBetween"
-            display="flex"
-            width="full"
-          >
-            <Button
-              size="default"
-              onClick={createForm}
+    <>
+      <GridRow>
+        <Box
+          marginTop={4}
+          marginBottom={8}
+          marginRight={1}
+          marginLeft={2}
+          display="flex"
+          justifyContent="flexEnd"
+          width="full"
+        >
+          <Box justifyContent="spaceBetween" display="flex" width="full">
+            <Box
+              display="flex"
+              flexDirection="row"
+              alignItems="center"
+              columnGap={4}
             >
-              {formatMessage(m.newForm)}
-            </Button>
-            {isAdmin && (
-              <Select
-                name="organizations"
-                label={formatMessage(m.organization)}
-                options={organizations}
-                size="sm"
-                value={organizations.find(org => org.value === organizationNationalId)}
-                onChange={selected => {
-                  if (selected) {
-                    setOrganizationNationalId(selected.value)
-                    handleOrganizationChange({ value: selected.value })
-                  }
-                }}
-              />
-            )}
+              <Button size="default" onClick={createForm}>
+                {formatMessage(m.newForm)}
+              </Button>
+            </Box>
+            <OrganizationSelect />
           </Box>
-        </GridRow>
-      </Box>
-      <TableRowHeader />
+        </Box>
+      </GridRow>
+      <TableHeader />
       {forms &&
         forms?.map((f) => {
           return (
@@ -135,6 +107,6 @@ export const Forms = () => {
             />
           )
         })}
-    </Box>
+    </>
   )
 }

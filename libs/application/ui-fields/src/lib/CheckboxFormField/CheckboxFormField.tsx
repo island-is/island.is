@@ -46,6 +46,7 @@ export const CheckboxFormField = ({
     marginTop,
     marginBottom,
     clearOnChange,
+    setOnChange,
   } = field
   const { formatMessage, lang: locale } = useLocale()
   const { watch } = useFormContext()
@@ -116,6 +117,12 @@ export const CheckboxFormField = ({
             }),
           )}
           clearOnChange={clearOnChange}
+          setOnChange={
+            typeof setOnChange === 'function'
+              ? async (optionValue) =>
+                  await setOnChange(optionValue, application)
+              : setOnChange
+          }
         />
       </Box>
     </Box>

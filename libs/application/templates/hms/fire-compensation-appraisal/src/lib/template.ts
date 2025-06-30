@@ -26,6 +26,8 @@ import * as m from '../lib/messages'
 import { TemplateApiActions } from '../types'
 import { getChargeItems } from '../utils/paymentUtils'
 import { Features } from '@island.is/feature-flags'
+import { ApiScope } from '@island.is/auth/scopes'
+import { AuthDelegationType } from '@island.is/shared/types'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -41,6 +43,18 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.FireCompensationAppraisal.translation,
   ],
   dataSchema,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.GeneralMandate,
+    },
+    {
+      type: AuthDelegationType.ProcurationHolder,
+    },
+    {
+      type: AuthDelegationType.Custom,
+    },
+  ],
+  requiredScopes: [ApiScope.hms],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -83,6 +97,12 @@ const template: ApplicationTemplate<
           progress: 0.4,
           status: FormModes.DRAFT,
           lifecycle: DefaultStateLifeCycle,
+          onExit: [
+            defineTemplateApi({
+              action: TemplateApiActions.calculateAmount,
+              order: 1,
+            }),
+          ],
           roles: [
             {
               id: Roles.APPLICANT,
@@ -110,12 +130,6 @@ const template: ApplicationTemplate<
         },
       },
       [States.PAYMENT]: buildPaymentState({
-        onEntry: [
-          defineTemplateApi({
-            action: TemplateApiActions.calculateAmount,
-            order: 1, // This has to run first to fetch the propperties and calculate the amount on the backend before the payment is made
-          }),
-        ],
         organizationId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
         chargeItems: getChargeItems,
       }),

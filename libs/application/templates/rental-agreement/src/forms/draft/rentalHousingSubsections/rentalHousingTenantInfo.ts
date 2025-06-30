@@ -5,14 +5,13 @@ import {
   buildAlertMessageField,
 } from '@island.is/application/core'
 import {
-  formatNationalId,
-  formatPhoneNumber,
+  applicantTableConfig,
+  applicantTableFields,
   hasAnyMatchingNationalId,
   hasDuplicateApplicants,
-  IS_REPRESENTATIVE,
 } from '../../../utils/utils'
 import { Routes } from '../../../utils/enums'
-import { tenantDetails } from '../../../lib/messages'
+import { landlordAndTenantDetails, tenantDetails } from '../../../lib/messages'
 import { applicationAnswers } from '../../../shared'
 
 export const RentalHousingTenantInfo = buildSubSection({
@@ -26,63 +25,21 @@ export const RentalHousingTenantInfo = buildSubSection({
       children: [
         buildTableRepeaterField({
           id: 'tenantInfo.table',
+          title: tenantDetails.tableTitle,
           editField: true,
           marginTop: 1,
           maxRows: 10,
-          fields: {
-            nationalIdWithName: {
-              component: 'nationalIdWithName',
-              required: true,
-              searchCompanies: true,
-            },
-            phone: {
-              component: 'phone',
-              required: true,
-              label: tenantDetails.phoneInputLabel,
-              enableCountrySelector: true,
-              width: 'half',
-            },
-            email: {
-              component: 'input',
-              required: true,
-              label: tenantDetails.emailInputLabel,
-              type: 'email',
-              width: 'half',
-            },
-            address: {
-              component: 'input',
-              required: true,
-              label: tenantDetails.addressInputLabel,
-              maxLength: 100,
-            },
-            isRepresentative: {
-              component: 'checkbox',
-              label: tenantDetails.representativeLabel,
-              large: true,
-              options: [
-                {
-                  label: tenantDetails.representativeLabel,
-                  value: IS_REPRESENTATIVE,
-                },
-              ],
-            },
-          },
-          table: {
-            format: {
-              phone: (value) => value && formatPhoneNumber(value),
-              nationalId: (value) => value && formatNationalId(value),
-              isRepresentative: (value) =>
-                value?.includes(IS_REPRESENTATIVE) ? '✅' : '',
-            },
-            header: [
-              tenantDetails.nameInputLabel,
-              tenantDetails.phoneInputLabel,
-              tenantDetails.nationalIdHeaderLabel,
-              tenantDetails.emailInputLabel,
-              tenantDetails.isRepresentative,
-            ],
-            rows: ['name', 'phone', 'nationalId', 'email', 'isRepresentative'],
-          },
+          fields: applicantTableFields,
+          table: applicantTableConfig,
+        }),
+        buildTableRepeaterField({
+          id: 'tenantInfo.representativeTable',
+          title: landlordAndTenantDetails.representativeTableTitle,
+          editField: true,
+          marginTop: 6,
+          maxRows: 10,
+          fields: applicantTableFields,
+          table: applicantTableConfig,
         }),
         buildAlertMessageField({
           id: 'tenantInfo.onlyRepresentativeError',
@@ -90,14 +47,10 @@ export const RentalHousingTenantInfo = buildSubSection({
           title: tenantDetails.tenantOnlyRepresentativeTableError,
           shouldBlockInSetBeforeSubmitCallback: true,
           condition: (answers) => {
-            const { tenants } = applicationAnswers(answers)
-            const filterNonRepresentatives =
-              tenants?.filter(
-                (tenant) =>
-                  !tenant.isRepresentative?.includes(IS_REPRESENTATIVE),
-              ) ?? []
+            const { tenants, tenantRepresentatives } =
+              applicationAnswers(answers)
 
-            return tenants.length > 0 && filterNonRepresentatives.length === 0
+            return tenantRepresentatives.length > 0 && tenants.length === 0
           },
         }),
         buildAlertMessageField({
