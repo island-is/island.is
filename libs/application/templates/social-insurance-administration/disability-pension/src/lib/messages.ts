@@ -1,4 +1,5 @@
 import { defineMessages, MessageDescriptor } from 'react-intl'
+import { remove } from 'winston'
 type MessageDir = Record<string, Record<string, MessageDescriptor>>
 
 export const disabilityPensionFormMessage: MessageDir = {
@@ -379,6 +380,31 @@ export const disabilityPensionFormMessage: MessageDir = {
       id: 'dp.application:employmentParticipation.periodEndPlaceholder',
       defaultMessage: 'Veldu dagsetningu',
       description: 'Select date',
+    },
+    addCountry: {
+      id: 'dp.application:employmentParticipation.addCountry',
+      defaultMessage: 'Bæta við landi',
+      description: 'Add country',
+    },
+    save: {
+      id: 'dp.application:employmentParticipation.save',
+      defaultMessage: 'Vista',
+      description: 'Save',
+    },
+    remove: {
+      id: 'dp.application:employmentParticipation.remove',
+      defaultMessage: 'Fjarlægja ',
+      description: 'Remove',
+    },
+    abroadPaymentsTitle: {
+      id: 'dp.application:employmentParticipation.abroadPaymentsTitle',
+      defaultMessage: 'Færðu greiðslur frá öðru landi vegna heilsubrests eða óvinnufærni?',
+      description: 'TODO',
+    },
+    abroadPaymentsDescription: {
+      id: 'dp.application:employmentParticipation.abroadPaymentsDescription',
+      defaultMessage: 'Rangar eða ófullnægjandi upplýsingar geta haft áhrif á afgreiðslu umsóknarinnar og hugsanlega leitt til endurkröfu eða annarra viðurlaga.',
+      description: 'TODO',
     },
   }),
   backgroundInfo: defineMessages({

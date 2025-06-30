@@ -1,11 +1,10 @@
 import { z } from 'zod'
 import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { BankAccountType, INCOME, ISK, RatioType, TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import { NO, YES, YesOrNo } from '@island.is/application/core'
+import { NO, YES } from '@island.is/application/core'
 import { formatBankInfo, validIBAN, validSWIFT } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { isValidPhoneNumber } from './utils'
 import { EmploymentEnum } from './constants'
-import { getAllCountryCodes } from '@island.is/shared/utils'
 import { disabilityPensionFormMessage } from './messages'
 
 export const fileSchema = z.object({
@@ -66,6 +65,9 @@ export const dataSchema = z.object({
       return continuedWork !== undefined
     }
     return true
+  }),
+  abroadPayments: z.object({
+    hasAbroadPayments: z.enum([YES, NO])
   }),
   paymentInfo: z
     .object({

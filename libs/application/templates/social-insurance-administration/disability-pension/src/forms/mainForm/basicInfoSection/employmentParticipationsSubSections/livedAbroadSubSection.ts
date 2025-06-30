@@ -46,9 +46,9 @@ export const livedAbroadSubSection = buildMultiField({
       id: `${livedAbroadRoute}.list`,
       condition: livedAbroadCondition,
       formTitle: disabilityPensionFormMessage.employmentParticipation.livedAbroadTableTitle,
-      addItemButtonText: 'add',
-      saveItemButtonText: 'save',
-      removeButtonTooltipText: 'remove',
+      addItemButtonText: disabilityPensionFormMessage.employmentParticipation.addCountry,
+      saveItemButtonText: disabilityPensionFormMessage.employmentParticipation.save,
+      removeButtonTooltipText: disabilityPensionFormMessage.employmentParticipation.remove,
       fields: {
         country: {
           component: 'select',
