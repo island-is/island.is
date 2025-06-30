@@ -469,6 +469,12 @@ export const m = defineMessages({
     defaultMessage: 'Úrvinnslu lokið',
     description: '',
   },
+  confirmListReviewActionDescription: {
+    id: 'admin-portal.signature-collection:confirmListReviewActionDescription',
+    defaultMessage:
+      'Þegar búið er að fara yfir meðmæli er hakað við hér.',
+    description: '',
+  },
   confirmListReviewedToggleBack: {
     id: 'admin-portal.signature-collection:confirmListReviewedToggleBack',
     defaultMessage: 'Opna fyrir úrvinnslu',
@@ -648,7 +654,31 @@ export const m = defineMessages({
     defaultMessage: 'Kennitölur sem mistókst að hlaða upp',
     description: '',
   },
-
+  startCollection: {
+    id: 'admin-portal.signature-collection:startCollection',
+    defaultMessage: 'Opna fyrir meðmælakerfi',
+    description: '',
+  },
+  startCollectionDescription: {
+    id: 'admin-portal.signature-collection:startCollectionDescription',
+    defaultMessage: 'Opnaðu fyrir meðmælasöfnun ef yfirkjörstjórn sveitarfélagsins hefur tekið þá ákvörðun að nýta sér rafræna meðmælakerfið.',
+    description: '',
+  },
+  startCollectionDescriptionInBox: {
+    id: 'admin-portal.signature-collection:startCollectionDescriptionInBox',
+    defaultMessage: 'Texti um að opna fyrir meðmælakerfið',
+    description: '',
+  },
+  startCollectionButton: {
+    id: 'admin-portal.signature-collection:startCollectionButton',
+    defaultMessage: 'Opna',
+    description: '',
+  },
+  startCollectionButtonModal: {
+    id: 'admin-portal.signature-collection:startCollectionButtonModal',
+    defaultMessage: 'Opna meðmælasöfnun',
+    description: '',
+  },
   // Compare lists
   compareLists: {
     id: 'admin-portal.signature-collection:compareLists',
