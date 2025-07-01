@@ -28,9 +28,9 @@ export const Banknumber = ({ item, dispatch, lang = 'is' }: Props) => {
   const { control, watch } = useFormContext()
 
   // Watch all three fields
-  const bank = watch('bank')
-  const ledger = watch('ledger')
-  const account = watch('account')
+  const bank = watch(`${item.id}.bank`)
+  const ledger = watch(`${item.id}.ledger`)
+  const account = watch(`${item.id}.account`)
 
   // Combine and dispatch value on change
   useEffect(() => {
@@ -67,7 +67,7 @@ export const Banknumber = ({ item, dispatch, lang = 'is' }: Props) => {
       <Row marginTop={2}>
         <Column span="4/12">
           <Controller
-            name="bank"
+            name={`${item.id}.bank`}
             control={control}
             rules={{
               required: {
@@ -108,7 +108,7 @@ export const Banknumber = ({ item, dispatch, lang = 'is' }: Props) => {
         </Column>
         <Column span="3/12">
           <Controller
-            name="ledger"
+            name={`${item.id}.ledger`}
             control={control}
             rules={{
               required: {
@@ -149,7 +149,7 @@ export const Banknumber = ({ item, dispatch, lang = 'is' }: Props) => {
         </Column>
         <Column span="4/12">
           <Controller
-            name="account"
+            name={`${item.id}.account`}
             control={control}
             rules={{
               required: {

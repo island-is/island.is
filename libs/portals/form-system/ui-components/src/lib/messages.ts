@@ -579,12 +579,12 @@ export const m = defineMessages({
     description: 'Maximum 4 digits allowed',
     value: 4,
   },
-    maxLedgerNumbers: {
+  maxLedgerNumbers: {
     id: 'form-system:max-ledger-numbers',
     defaultMessage: 'Hámark 2 tölustafir leyfðir',
     description: 'Maximum 2 digits allowed',
     value: 2,
-  },    
+  },
   maxAccountNumbers: {
     id: 'form-system:max-account-numbers',
     defaultMessage: 'Hámark 6 tölustafir leyfðir',

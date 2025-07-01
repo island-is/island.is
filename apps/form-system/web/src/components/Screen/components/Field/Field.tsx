@@ -23,7 +23,6 @@ import { useFormContext } from 'react-hook-form'
 
 interface Props {
   field: FormSystemField
-  hasError: boolean
 }
 
 const FIELD_COMPONENT_MAP = {

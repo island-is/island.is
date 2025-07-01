@@ -133,7 +133,7 @@ export const TimeInput = ({ item, dispatch }: Props) => {
           }}
           render={({ field, fieldState }) => (
             <Select
-              label= {formatMessage(m.minuteInput)}
+              label={formatMessage(m.minuteInput)}
               name={field.name}
               value={field.value}
               options={chosenMinuteList()}

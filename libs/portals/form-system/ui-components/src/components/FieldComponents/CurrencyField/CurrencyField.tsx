@@ -34,14 +34,14 @@ export const CurrencyField = ({ item, dispatch }: Props) => {
               message: formatMessage(m.required),
             },
             pattern: {
-              value: /^[\d.]{1,19}$/,
+              value: /^\d{1,3}(\.\d{3})*$/,
               message: formatMessage(m.onlyNumbers),
             },
           }}
           render={({ field, fieldState }) => (
             <Input
               label={label ?? ''}
-              name="Currency"
+              name={field.name}
               value={field.value}
               onChange={(e) => {
                 // Remove any non-digit characters from the input value

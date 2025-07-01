@@ -143,9 +143,10 @@ export const PropertyNumber = ({ item, dispatch }: Props) => {
                           .replace(/\D/g, '')
                           .slice(0, 7)
                         field.onChange(value)
+                        let info
                         // Fetch property info if 7 digits
                         if (value.length === 7) {
-                          const info = fetchPropertyInfo(value)
+                          info = fetchPropertyInfo(value)
                           setProperty(info)
                           setValue(`${item.id}.customAddress`, info.address)
                           setValue(
@@ -157,12 +158,13 @@ export const PropertyNumber = ({ item, dispatch }: Props) => {
                             info.postalCode,
                           )
                         } else {
-                          setProperty({
+                          info = {
                             propertyNumber: value,
                             address: '',
                             municipality: '',
                             postalCode: '',
-                          })
+                          }
+                          setProperty(info)
                           setValue(`${item.id}.customAddress`, '')
                           setValue(`${item.id}.customMunicipality`, '')
                           setValue(`${item.id}.customPostalCode`, '')
@@ -172,7 +174,7 @@ export const PropertyNumber = ({ item, dispatch }: Props) => {
                             type: 'SET_PROPERTY_NUMBER',
                             payload: {
                               value: {
-                                ...property,
+                                ...info,
                                 propertyNumber: value,
                               },
                               id: item.id,
