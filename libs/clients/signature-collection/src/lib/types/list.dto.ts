@@ -88,7 +88,7 @@ export const mapListBase = (
 
 export const mapList = (
   list: MedmaelalistiDTO,
-  activeAreas: string[],
+  participatingAreas: Area[],
   collectionType?: CollectionType,
   collectors?: UmbodBaseDTO[],
 ): List => {
@@ -117,7 +117,8 @@ export const mapList = (
   }
   const area = mapArea(
     areas,
-    activeAreas.includes(areas.id?.toString() ?? ''),
+    participatingAreas.find((area) => area.id === areas.id?.toString())
+      ?.isActive ?? false,
     collection.id?.toString(),
   )
   const numberOfSignatures = list.fjoldiMedmaela ?? 0
