@@ -184,7 +184,7 @@ const ExamineeSchema = z
       }),
       email: z.string().refine((email) => isValidEmail(email)),
       phone: z.string().refine((phone) => isValidPhoneNumber(phone)),
-      licenseNumber: z.string().optional(),
+      licenseNumber: z.string().min(1).max(25),
       countryIssuer: z.string().min(1).max(256),
       disabled: z.enum([TrueOrFalse.true, TrueOrFalse.false]).optional(),
     }),

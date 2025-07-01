@@ -91,6 +91,9 @@ export const childInfoSubSection = buildSubSection({
               label:
                 newPrimarySchoolMessages.childrenNGuardians
                   .usePronounAndPreferredName,
+              tooltip:
+                newPrimarySchoolMessages.childrenNGuardians
+                  .preferredNameTooltip,
             },
           ],
         }),
@@ -98,8 +101,6 @@ export const childInfoSubSection = buildSubSection({
           id: 'childInfo.preferredName',
           title:
             newPrimarySchoolMessages.childrenNGuardians.childInfoPreferredName,
-          tooltip:
-            newPrimarySchoolMessages.childrenNGuardians.preferredNameTooltip,
           condition: (answers) => {
             const { childInfo } = getApplicationAnswers(answers)
 

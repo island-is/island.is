@@ -27,8 +27,8 @@ mutation UpdateCase($input: UpdateCaseInput!) {
     }
     defenderName
     defenderNationalId
-    defenderEmail
     defenderPhoneNumber
+    defenderEmail
     requestSharedWithDefender
     isHeightenedSecurityLevel
     court {

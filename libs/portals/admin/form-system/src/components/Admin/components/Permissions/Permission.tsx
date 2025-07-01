@@ -1,5 +1,5 @@
 import { useContext } from 'react'
-import { FormsContext } from '../../../context/FormsContext'
+import { FormsContext } from '../../../../context/FormsContext'
 import { Box, Checkbox, GridRow, Stack } from '@island.is/island-ui/core'
 import { useMutation } from '@apollo/client'
 import {
