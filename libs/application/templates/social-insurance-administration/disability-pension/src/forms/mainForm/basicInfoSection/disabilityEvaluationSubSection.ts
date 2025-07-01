@@ -1,18 +1,14 @@
 import {
-  buildCheckboxField,
-  buildDescriptionField,
   buildMultiField,
   buildSubSection,
-  buildTitleField,
   YES,
-  NO,
   buildFileUploadField,
   getValueViaPath,
   YesOrNoEnum,
   buildRadioField
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../lib/messages'
-import { YesOrNoOptions } from '../../../lib/utils'
+import { YesOrNoOptions } from '../../../lib/options'
 
 const disabilityEvaluationRoute = 'disabilityEvaluation'
 

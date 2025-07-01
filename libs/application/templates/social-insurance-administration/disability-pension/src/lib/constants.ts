@@ -30,3 +30,10 @@ export enum ChildrenCountEnum {
   five = '5',
   sixOrMore = '6+',
 }
+
+export enum IcelandicCapabilityEnum {
+  poor = 'POOR',
+  fair = 'FAIR',
+  good = 'GOOD',
+  veryGood = 'VERY_GOOD',
+}

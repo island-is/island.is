@@ -1,5 +1,4 @@
 import { defineMessages, MessageDescriptor } from 'react-intl'
-import { remove } from 'winston'
 type MessageDir = Record<string, Record<string, MessageDescriptor>>
 
 export const disabilityPensionFormMessage: MessageDir = {
@@ -556,6 +555,31 @@ export const disabilityPensionFormMessage: MessageDir = {
       id: 'dp.application:selfEvaluation.questions.childrenCount.sixOrMore',
       defaultMessage: '6+',
       description: 'Six or more children',
+    },
+    icelandicCapabilityTitle: {
+      id: 'dp.application:selfEvaluation.questions.icelandicCapability.title',
+      defaultMessage: 'Hversu gott vald hefur þú á íslensku/ensku?',
+      description: 'How good is your command of Icelandic/English?',
+    },
+    icelandicCapabilityPoor: {
+      id: 'dp.application:selfEvaluation.questions.icelandicCapability.poor',
+      defaultMessage: 'Ekki gott vald',
+      description: 'Not good command',
+    },
+    icelandicCapabilityFair: {
+      id: 'dp.application:selfEvaluation.questions.icelandicCapability.fair',
+      defaultMessage: 'Sæmilegt',
+      description: 'Fair',
+    },
+    icelandicCapabilityGood: {
+      id: 'dp.application:selfEvaluation.questions.icelandicCapability.good',
+      defaultMessage: 'Gott',
+      description: 'Good',
+    },
+    icelandicCapabilityVeryGood: {
+      id: 'dp.application:selfEvaluation.questions.icelandicCapability.veryGood',
+      defaultMessage: 'Mjög gott',
+      description: 'Very good',
     },
   }),
   errors: defineMessages({

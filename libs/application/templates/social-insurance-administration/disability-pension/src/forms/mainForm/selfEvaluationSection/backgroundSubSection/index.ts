@@ -5,6 +5,7 @@ import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { maritalStatusField } from './maritalStatus'
 import { residenceField } from './residence'
 import { childrenField } from './children'
+import { icelandicCapabilityField } from './icelandicCapability'
 
 export const backgroundRoute = 'backgroundInfo'
 
@@ -16,5 +17,6 @@ export const backgroundInfoSubSection =
       maritalStatusField,
       residenceField,
       childrenField,
+      icelandicCapabilityField,
     ],
   })

@@ -5,7 +5,7 @@ import { NO, YES } from '@island.is/application/core'
 import { formatBankInfo, validIBAN, validSWIFT } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { isValidPhoneNumber } from './utils'
 import { disabilityPensionFormMessage } from './messages'
-import { EmploymentEnum, MaritalStatusEnum, ResidenceEnum, ChildrenCountEnum } from './constants'
+import { EmploymentEnum, MaritalStatusEnum, ResidenceEnum, ChildrenCountEnum, IcelandicCapabilityEnum } from './constants'
 
 
 export const fileSchema = z.object({
@@ -103,6 +103,12 @@ export const dataSchema = z.object({
       ChildrenCountEnum.four,
       ChildrenCountEnum.five,
       ChildrenCountEnum.sixOrMore,
+    ]),
+    icelandicCapability: z.enum([
+      IcelandicCapabilityEnum.poor,
+      IcelandicCapabilityEnum.fair,
+      IcelandicCapabilityEnum.good,
+      IcelandicCapabilityEnum.veryGood,
     ]),
   }),
   paymentInfo: z
