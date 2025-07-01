@@ -24,7 +24,6 @@ import {
   Case,
   CourtSessionType,
   Defendant,
-  UpdateCaseInput,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { SubpoenaType } from '@island.is/judicial-system-web/src/routes/Court/components'
@@ -57,12 +56,11 @@ const Subpoena: FC = () => {
 
   const { updateDefendantState, updateDefendant } = useDefendants()
   const { formatMessage } = useIntl()
-  const {
-    courtDate,
-    handleCourtDateChange,
-    handleCourtRoomChange,
-    sendCourtDateToServer,
-  } = useCourtArrangements(workingCase, setWorkingCase, 'arraignmentDate')
+  const { courtDate, sendCourtDateToServer } = useCourtArrangements(
+    workingCase,
+    setWorkingCase,
+    'arraignmentDate',
+  )
 
   const isIssuingSubpoenaForDefendant = (defendant: Defendant) =>
     !defendant.isAlternativeService &&
@@ -249,6 +247,7 @@ const Subpoena: FC = () => {
 
   const stepIsValid = isSubpoenaStepValid(workingCase, courtDate)
 
+  console.log(isArraignmentScheduled, newSubpoenas, newAlternativeServices)
   return (
     <PageLayout
       workingCase={workingCase}
@@ -295,7 +294,7 @@ const Subpoena: FC = () => {
                   >
                     {formatMessage(strings.newSubpoenaButtonText)}
                   </Button>
-                ) : (
+                ) : newSubpoenas.includes(defendant.id) ? (
                   <Button
                     variant="text"
                     colorScheme="destructive"
@@ -305,18 +304,20 @@ const Subpoena: FC = () => {
                       setNewSubpoenas((previous) =>
                         previous.filter((v) => v !== defendant.id),
                       )
+                      setNewAlternativeServices((previous) =>
+                        previous.filter((v) => v !== defendant.id),
+                      )
+                      setIsArraignmentScheduled(true)
 
                       setUpdates({
                         defendants: workingCase.defendants,
                         theCase: workingCase,
                       })
-
-                      setIsArraignmentScheduled(true)
                     }}
                   >
                     Hætta við
                   </Button>
-                ),
+                ) : null,
               }))}
               workingCase={workingCase}
             />
