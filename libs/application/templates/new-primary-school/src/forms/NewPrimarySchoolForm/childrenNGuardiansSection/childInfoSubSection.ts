@@ -1,7 +1,6 @@
 import {
   buildCheckboxField,
   buildCustomField,
-  buildHiddenInput,
   buildMultiField,
   buildRadioField,
   buildSubSection,
@@ -179,16 +178,6 @@ export const childInfoSubSection = buildSubSection({
             const { childInfo } = getApplicationAnswers(answers)
 
             return childInfo?.differentPlaceOfResidence === YES
-          },
-        }),
-        buildHiddenInput({
-          id: 'childInfo.citizenshipCode',
-          defaultValue: (application: Application) => {
-            const { childCitizenshipCode } = getApplicationExternalData(
-              application.externalData,
-            )
-
-            return childCitizenshipCode || ''
           },
         }),
       ],
