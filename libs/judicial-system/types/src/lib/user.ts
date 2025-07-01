@@ -68,13 +68,25 @@ export const isProsecutionUser = (user?: InstitutionUser): boolean => {
   )
 }
 
-export const getContactInformation = (user: {
-  name: string
-  email: string
-}) => ({
-  name: user.name,
-  email: user.email,
-})
+export const isProsecutorUser = (user?: InstitutionUser): boolean => {
+  return Boolean(
+    user?.role &&
+      user.role === UserRole.PROSECUTOR &&
+      user.institution?.type &&
+      prosecutionOfficeTypes.includes(user.institution.type),
+  )
+}
+
+export const isProsecutorRepresentativeUser = (
+  user?: InstitutionUser,
+): boolean => {
+  return Boolean(
+    user?.role &&
+      user.role === UserRole.PROSECUTOR_REPRESENTATIVE &&
+      user.institution?.type &&
+      prosecutionOfficeTypes.includes(user.institution.type),
+  )
+}
 
 const publicProsecutionRoles: string[] = [UserRole.PROSECUTOR]
 
@@ -205,6 +217,19 @@ export const isCoreUser = (user?: InstitutionUser): boolean => {
   )
 }
 
+// TEMP: Use this check to gradually rollout case group to users
+// Once a case group list is ready for a role we include it here to release
+export const hasCaseGroupListsEnabled = (user?: InstitutionUser): boolean => {
+  return (
+    isProsecutionUser(user) || // saksoknarar
+    isDistrictCourtUser(user) || // Heradsdomur
+    isPublicProsecutionOfficeUser(user) || // Skrifstofa rikissaksoknara
+    isCourtOfAppealsUser(user) || // Landsrettur
+    isPrisonAdminUser(user) || // Fangelsismalastofnun
+    isPrisonStaffUser(user) // Fangelsi
+  )
+}
+
 export const getAdminUserInstitutionScope = (
   user?: InstitutionUser,
 ): InstitutionType[] => {
@@ -256,3 +281,11 @@ export const getAdminUserInstitutionUserRoles = (
 
   return institutionUserRoles[institutionType]
 }
+
+export const getContactInformation = (user: {
+  name: string
+  email: string
+}) => ({
+  name: user.name,
+  email: user.email,
+})

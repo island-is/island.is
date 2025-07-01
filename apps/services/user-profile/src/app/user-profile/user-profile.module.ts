@@ -16,7 +16,11 @@ import { UserTokenService } from './userToken.service'
 import { UserDeviceTokens } from './models/userDeviceTokens.model'
 import { ActorProfile } from './models/actor-profile.model'
 import { AuthDelegationApiClientModule } from '@island.is/clients/auth/delegation-api'
+import { Emails } from './models/emails.model'
+import { EmailsController } from './emails.controller'
+import { EmailsService } from './emails.service'
 import { ActorUserProfileController } from './actor-user-profile.controller'
+
 @Module({
   imports: [
     SequelizeModule.forFeature([
@@ -25,6 +29,7 @@ import { ActorUserProfileController } from './actor-user-profile.controller'
       SmsVerification,
       UserDeviceTokens,
       ActorProfile,
+      Emails,
     ]),
     EmailModule,
     SmsModule,
@@ -35,7 +40,13 @@ import { ActorUserProfileController } from './actor-user-profile.controller'
     UserProfileController,
     UserTokenController,
     ActorUserProfileController,
+    EmailsController,
   ],
-  providers: [UserProfileService, VerificationService, UserTokenService],
+  providers: [
+    UserProfileService,
+    VerificationService,
+    UserTokenService,
+    EmailsService,
+  ],
 })
 export class UserProfileModule {}

@@ -1,5 +1,6 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
+import { ConfigType } from '@nestjs/config'
 import { isCompany, isValid } from 'kennitala'
 import { v4 as uuid } from 'uuid'
 
@@ -11,6 +12,7 @@ import {
 } from '@island.is/clients/charge-fjs-v2'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
 import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
+import { retry } from '@island.is/shared/utils/server'
 
 import {
   PaymentFlow,
@@ -33,15 +35,19 @@ import { PaymentFlowFjsChargeConfirmation } from './models/paymentFlowFjsChargeC
 import { FjsErrorCode, PaymentServiceCode } from '@island.is/shared/constants'
 import { CatalogItemWithQuantity } from '../../types/charges'
 import {
-  fjsErrorMessageToCode,
   generateChargeFJSPayload,
   mapFjsErrorToCode,
 } from '../../utils/fjsCharge'
+import { processCharges } from '../../utils/chargeUtils'
 import { PaymentFlowPaymentConfirmation } from './models/paymentFlowPaymentConfirmation.model'
 import { ChargeResponse } from '../cardPayment/cardPayment.types'
-import { retry } from '@island.is/shared/utils/server'
 import { PaymentTrackingData } from '../../types/cardPayment'
 import { onlyReturnKnownErrorCode } from '../../utils/paymentErrors'
+import { generateWebhookJwt } from '../../utils/webhookAuth.utils'
+import { JwksConfigService } from '../jwks/jwks-config.service'
+import { ChargeItem } from '../../utils/chargeUtils'
+import { PaymentFlowModuleConfig } from './paymentFlow.config'
+import { JwksConfig } from '../jwks/jwks.config'
 
 interface PaymentFlowUpdateConfig {
   /**
@@ -74,6 +80,13 @@ export class PaymentFlowService {
     private chargeFjsV2ClientService: ChargeFjsV2ClientService,
     private nationalRegistryV3: NationalRegistryV3ClientService,
     private companyRegistryApi: CompanyRegistryClientService,
+    private jwksConfigService: JwksConfigService,
+    @Inject(PaymentFlowModuleConfig.KEY)
+    private readonly paymentFlowConfig: ConfigType<
+      typeof PaymentFlowModuleConfig
+    >,
+    @Inject(JwksConfig.KEY)
+    private readonly jwksConfig: ConfigType<typeof JwksConfig>,
   ) {}
 
   async createPaymentUrl(
@@ -81,10 +94,11 @@ export class PaymentFlowService {
   ): Promise<CreatePaymentFlowDTO> {
     try {
       const paymentFlowId = uuid()
+      const processedCharges = processCharges(paymentInfo.charges)
 
       const chargeDetails = await this.getPaymentFlowChargeDetails(
         paymentInfo.organisationId,
-        paymentInfo.charges,
+        processedCharges,
       )
 
       await this.chargeFjsV2ClientService.validateCharge(
@@ -110,16 +124,23 @@ export class PaymentFlowService {
       })
 
       await this.paymentFlowChargeModel.bulkCreate(
-        paymentInfo.charges.map((charge) => ({
+        processedCharges.map((charge) => ({
           ...charge,
           paymentFlowId,
         })),
       )
 
+      this.logger.info(
+        `[${paymentFlow.id}] Payment flow created [${paymentFlow.organisationId}]`,
+        {
+          charges: processedCharges.map((c) => c.chargeItemCode),
+        },
+      )
+
       return {
         urls: {
-          is: `${environment.paymentsWeb.origin}/is/${paymentFlow.id}`,
-          en: `${environment.paymentsWeb.origin}/en/${paymentFlow.id}`,
+          is: `${this.paymentFlowConfig.webOrigin}/is/${paymentFlow.id}`,
+          en: `${this.paymentFlowConfig.webOrigin}/en/${paymentFlow.id}`,
         },
       }
     } catch (e) {
@@ -143,7 +164,7 @@ export class PaymentFlowService {
 
   async getPaymentFlowChargeDetails(
     organisationId: string,
-    charges: Pick<PaymentFlowCharge, 'chargeItemCode' | 'price' | 'quantity'>[],
+    charges: ChargeItem[],
   ) {
     const { item } =
       await this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
@@ -152,25 +173,41 @@ export class PaymentFlowService {
 
     const filteredChargeInformation: CatalogItemWithQuantity[] = []
 
-    for (const product of item) {
-      const matchingCharge = charges.find(
-        (c) => c.chargeItemCode === product.chargeItemCode,
+    for (const charge of charges) {
+      const catalogProduct = item.find(
+        (p) => p.chargeItemCode === charge.chargeItemCode,
       )
 
-      if (!matchingCharge) {
+      if (!catalogProduct) {
         continue
       }
 
-      const price = matchingCharge.price ?? product.priceAmount
+      const price = charge.price ?? catalogProduct.priceAmount
 
       filteredChargeInformation.push({
-        ...product,
+        ...catalogProduct,
         priceAmount: price,
-        quantity: matchingCharge.quantity,
+        quantity: charge.quantity,
+        chargeItemCode: catalogProduct.chargeItemCode,
       })
     }
 
     if (filteredChargeInformation.length !== charges.length) {
+      this.logger.error(
+        `[${organisationId}] Failed to create payment flow: charge item codes not found in FJS catalog or other mismatch.`,
+        {
+          inputCharges: charges.map((c) => c.chargeItemCode),
+          filteredCharges: filteredChargeInformation.map(
+            (c) => c.chargeItemCode,
+          ),
+          missingCharges: charges.filter(
+            (c) =>
+              !filteredChargeInformation.some(
+                (i) => i.chargeItemCode === c.chargeItemCode,
+              ),
+          ),
+        },
+      )
       throw new BadRequestException(PaymentServiceCode.ChargeItemCodesNotFound)
     }
 
@@ -248,6 +285,9 @@ export class PaymentFlowService {
         include: [
           {
             model: PaymentFlowCharge,
+          },
+          {
+            model: PaymentFlowFjsChargeConfirmation,
           },
         ],
       })
@@ -373,10 +413,23 @@ export class PaymentFlowService {
     }
 
     const notifyUpdateUrl = async (attempt?: number) => {
+      // Generate the JWT
+      const token = generateWebhookJwt(
+        { id: paymentFlow.id, onUpdateUrl: paymentFlow.onUpdateUrl },
+        { type: update.type },
+        updateBody,
+        {
+          ...this.jwksConfig,
+          privateKey: this.jwksConfigService.getPrivateKey(),
+        },
+        this.logger,
+      )
+
       const response = await fetch(paymentFlow.onUpdateUrl, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
         },
         body: JSON.stringify(updateBody),
       })
@@ -554,8 +607,58 @@ export class PaymentFlowService {
     }
   }
 
-  async deletePaymentFlow(id: string) {
-    // TODO
+  async deletePaymentFlow(id: string): Promise<GetPaymentFlowDTO> {
+    const paymentFlowDetails = await this.getPaymentFlowDetails(id)
+
+    const { paymentStatus, updatedAt } = await this.getPaymentFlowStatus(
+      paymentFlowDetails,
+    )
+
+    if (paymentStatus === PaymentStatus.PAID) {
+      throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
+    }
+
+    // Construct the DTO to be returned before deleting
+    const paymentDetails = await this.getPaymentFlowChargeDetails(
+      paymentFlowDetails.organisationId,
+      paymentFlowDetails.charges,
+    )
+    const payerName = await this.getPayerName(
+      paymentFlowDetails.payerNationalId,
+    )
+
+    const paymentFlowDTO: GetPaymentFlowDTO = {
+      ...paymentFlowDetails,
+      productTitle:
+        paymentFlowDetails.productTitle ?? paymentDetails.firstProductTitle,
+      productPrice: paymentDetails.totalPrice,
+      payerName,
+      availablePaymentMethods:
+        paymentFlowDetails.availablePaymentMethods as PaymentMethod[],
+      paymentStatus,
+      updatedAt,
+    }
+
+    if (paymentFlowDetails.onUpdateUrl) {
+      await this.logPaymentFlowUpdate({
+        paymentFlowId: id,
+        type: 'deleted',
+        occurredAt: new Date(),
+        paymentMethod: 'system' as PaymentMethod,
+        reason: 'deleted_admin', // TODO: connect with systemId when we have machine clients?
+        message: 'Payment flow deleted by admin action.', // TODO: same as above?
+      })
+    }
+
+    if (paymentFlowDetails.fjsChargeConfirmation) {
+      await this.deletePaymentCharge(id)
+    }
+
+    // By deleting the payment flow, the related charges, events, and other
+    // associated records will be deleted automatically by the database cascade.
+    await this.paymentFlowModel.destroy({ where: { id } })
+
+    return paymentFlowDTO
   }
 
   async deletePaymentConfirmation(

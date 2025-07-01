@@ -183,6 +183,8 @@ export const RESTRICTION_CASE_POLICE_REPORT_ROUTE = '/krafa/greinargerd'
 export const RESTRICTION_CASE_CASE_FILES_ROUTE = '/krafa/rannsoknargogn'
 export const RESTRICTION_CASE_OVERVIEW_ROUTE = '/krafa/stadfesta'
 
+export const INVESTIGATION_CASE_REGISTRATION_ROUTE =
+  '/krafa/rannsoknarheimild/efni-krofu'
 export const INVESTIGATION_CASE_DEFENDANT_ROUTE =
   '/krafa/rannsoknarheimild/varnaradili'
 export const INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE =
@@ -221,6 +223,7 @@ export const STATISTICS_ROUTE = '/notendur/tolfraedi'
 
 //#region Shared routes
 export const CASES_ROUTE = '/krofur'
+export const CASE_TABLE_GROUPS_ROUTE = '/malalistar'
 export const SIGNED_VERDICT_OVERVIEW_ROUTE = '/krafa/yfirlit'
 export const ROUTE_HANDLER_ROUTE = '/beinir'
 //#endregion Shared routes
@@ -274,3 +277,6 @@ export const courtInvestigationCasesRoutes = [
 // Feedback
 export const FEEDBACK_FORM_URL =
   'https://form.asana.com?k=45fPB_e65kYFDjvG-18f0w&d=203394141643832'
+
+// Masks
+export const POLICE_CASE_NUMBER = '___-____-_______'

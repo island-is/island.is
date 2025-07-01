@@ -359,7 +359,16 @@ export class PaymentService {
     const catalogChargeItems = await this.findCatalogChargeItems(
       performingOrganizationID,
       chargeItems,
-    )
+    ).then((catalogChargeItems) => {
+      return catalogChargeItems.map((catalogChargeItem, i) => {
+        // If the price is dynamic, we need to update the price of the
+        // catalogChargeItems with the price from the chargeItems
+        return {
+          ...catalogChargeItem,
+          priceAmount: chargeItems[i].amount ?? catalogChargeItem.priceAmount,
+        }
+      })
+    })
 
     //2. Fetch existing payment if any
     let paymentModel = await this.findPaymentByApplicationId(applicationId)
@@ -387,6 +396,8 @@ export class PaymentService {
     const onUpdateUrl = new URL(this.config.paymentApiCallbackUrl)
     onUpdateUrl.pathname = '/application-payment/api-client-payment-callback'
 
+    const { returnUrl, cancelUrl } = await this.getReturnUrls(applicationId)
+
     const paymentFlowUrls =
       await this.paymentsApi.paymentFlowControllerCreatePaymentUrl({
         createPaymentFlowInput: {
@@ -406,7 +417,8 @@ export class PaymentService {
             applicationId,
             paymentId: paymentModel.id,
           },
-          returnUrl: await this.getReturnUrl(applicationId),
+          returnUrl,
+          cancelUrl,
           redirectToReturnUrlOnSuccess: true,
           extraData,
           chargeItemSubjectId: paymentModel.id.substring(0, 22), // chargeItemSubjectId has maxlength of 22 characters
@@ -658,7 +670,7 @@ export class PaymentService {
     })
   }
 
-  private async getReturnUrl(applicationId: string) {
+  private async getReturnUrls(applicationId: string) {
     const application = await this.applicationService.findOneById(applicationId)
 
     let applicationSlug
@@ -674,6 +686,9 @@ export class PaymentService {
     returnUrl.pathname = `umsoknir/${applicationSlug}/${applicationId}`
     returnUrl.search = 'done'
 
-    return returnUrl.toString()
+    const cancelUrl = new URL(this.config.clientLocationOrigin)
+    cancelUrl.pathname = `umsoknir/${applicationSlug}` // Not including the applicationId to avoid getting forwarded back to the payment screen since the application will be in the payment state
+
+    return { returnUrl: returnUrl.toString(), cancelUrl: cancelUrl.toString() }
   }
 }

@@ -1,14 +1,15 @@
 import {
   Column,
+  CreatedAt,
   DataType,
+  HasMany,
   Model,
   Table,
-  CreatedAt,
   UpdatedAt,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
 import { Locale } from '../types/localeTypes'
-
+import { Emails } from '../models/emails.model'
 @Table({
   tableName: 'user_profile',
   timestamps: true,
@@ -61,18 +62,6 @@ export class UserProfile extends Model {
   locale?: Locale
 
   @Column({
-    type: DataType.STRING,
-  })
-  @ApiProperty()
-  email?: string
-
-  @Column({
-    type: DataType.BOOLEAN,
-  })
-  @ApiProperty()
-  emailVerified?: boolean
-
-  @Column({
     type: DataType.BOOLEAN,
   })
   @ApiProperty()
@@ -90,13 +79,6 @@ export class UserProfile extends Model {
   })
   @ApiProperty()
   documentNotifications!: boolean
-
-  @Column({
-    type: DataType.ENUM('NOT_DEFINED', 'NOT_VERIFIED', 'VERIFIED', 'EMPTY'),
-    defaultValue: 'NOT_DEFINED',
-  })
-  @ApiProperty()
-  emailStatus?: string
 
   @Column({
     type: DataType.ENUM('NOT_DEFINED', 'NOT_VERIFIED', 'VERIFIED', 'EMPTY'),
@@ -126,4 +108,11 @@ export class UserProfile extends Model {
   })
   @ApiProperty()
   nextNudge?: Date
+
+  @HasMany(() => Emails, {
+    foreignKey: 'nationalId', // 👈 the FK field in Emails
+    sourceKey: 'nationalId', // 👈 the PK/unique field in UserProfile to match
+    as: 'emails', // 👈 optional, for cleaner includes
+  })
+  emails?: Emails[]
 }

@@ -17,8 +17,6 @@ on:
         value: ${{ jobs.should-run.outputs.PRE_CHECK }}
       PRE_RELEASE:
         value: ${{ jobs.should-run.outputs.PRE_RELEASE }}
-      CACHE_KEY:
-        value: ${{ jobs.should-run.outputs.CACHE_KEY }}
 
 env:
   DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
@@ -40,11 +38,8 @@ env:
   NX_PARALLEL: '2'
   NX_MAX_PARALLEL: '4'
   NODE_IMAGE_VERSION: 20
-  S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-  RUNS_ON_S3_BUCKET_CACHE: ${{ vars.RUNS_ON_S3_BUCKET_CACHE }}
   AWS_REGION: eu-west-1
   GENERATED_FILES: ${{ github.sha }}.tar.gz
-  CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache
   YARN_ENABLE_HARDENED_MODE: '0'
 
 jobs:
@@ -62,7 +57,6 @@ jobs:
       FEATURE_NAME: ${{ steps.git-branch-deploy.outputs.FEATURE_NAME }}
       PRE_CHECK: ${{ steps.should-run.outputs.PRE_CHECK }}
       PRE_RELEASE: ${{ steps.should-run.outputs.PRE_RELEASE }}
-      CACHE_KEY: ${{ steps.set-cache-key.outputs.CACHE_KEY }}
     steps:
       - name: Get git branch
         id: git-branch
@@ -112,7 +106,7 @@ jobs:
           if [[ "$GITHUB_EVENT_NAME" == "create" ]]; then
             echo "Workflow was created because of branch creation. Branch name is '$GIT_BRANCH'"
 
-            for pre_pattern in $(echo "$PRE_RELEASE_PATTERN" | sed "s/,/ /g")
+            for pre_pattern in ${PRE_RELEASE_PATTERN//,/ }
             do
                 echo "Checking branch against pre_release_pattern '$pre_pattern'"
                 echo "Check if this is a pre-release and if it should generate a feature-deploy"
@@ -124,7 +118,7 @@ jobs:
                 fi
             done
 
-            for pattern in $(echo "$CREATE_PATTERNS" | sed "s/,/ /g")
+            for pattern in ${CREATE_PATTERNS//,/ }
             do
                 echo "Checking branch against pattern '$pattern'"
                 if [[ "$GIT_BRANCH" =~ $pattern ]]; then
@@ -152,7 +146,7 @@ jobs:
             echo "Pull request does not have deploy-feature label, exiting..."
             exit 0
           fi
-          for pre_pattern in $(echo "$PRE_RELEASE_PATTERN" | sed "s/,/ /g")
+          for pre_pattern in ${PRE_RELEASE_PATTERN//,/ }
             do
                 echo "Checking branch against pre_release_pattern '$pre_pattern'"
                 echo "Check if this is a pre-release and if it should generate a feature-deploy"

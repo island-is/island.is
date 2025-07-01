@@ -117,7 +117,7 @@ export const AdditionalVehicle = ({
           <InputController
             id={vehicleNumberField}
             name={vehicleNumberField}
-            label={formatMessage(m.propertyNumber)}
+            label={formatMessage(m.propertyNumberVehicle)}
             backgroundColor="blue"
             defaultValue={field.assetNumber}
             error={error?.assetNumber}

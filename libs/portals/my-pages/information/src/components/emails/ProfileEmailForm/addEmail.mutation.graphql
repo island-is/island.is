@@ -1,0 +1,9 @@
+mutation AddEmail($input: AddEmailInput!) {
+  userEmailsAddEmail(input: $input) {
+    id
+    email
+    emailStatus
+    primary
+    isConnectedToActorProfile
+  }
+}

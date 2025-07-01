@@ -16,8 +16,11 @@ export { default as CommentsAccordionItem } from './AccordionItems/CommentsAccor
 export { default as ConclusionDraft } from './ConclusionDraft/ConclusionDraft'
 export {
   default as ContextMenu,
-  useContextMenu,
+  type ContextMenuItem,
 } from './ContextMenu/ContextMenu'
+export { useOpenCaseInNewTab } from './ContextMenu/ContextMenuItems/OpenCaseInNewTab'
+export { useDeleteCase } from './ContextMenu/ContextMenuItems/DeleteCase'
+export { useWithdrawAppeal } from './ContextMenu/ContextMenuItems/WithdrawAppeal'
 export {
   CourtArrangements,
   useCourtArrangements,
@@ -85,7 +88,6 @@ export {
   useRequestRulingSignature,
 } from './Modals/SigningModal/SigningModal'
 export { default as Skeleton } from './Skeleton/Skeleton'
-export { default as TimeInputField } from './TimeInputField/TimeInputField'
 export { UserProvider, UserContext, userRef } from './UserProvider/UserProvider'
 export {
   ViewportProvider,
@@ -119,10 +121,11 @@ export { default as IndictmentCaseFilesList } from './IndictmentCaseFilesList/In
 export {
   default as WithdrawAppealContextMenuModal,
   useWithdrawAppealMenuOption,
-} from './ContextMenu/ContextMenuOptions/WithdrawAppealMenuOption'
+} from './DeprecatedContextMenuOptions/WithdrawAppealMenuOption'
 export { default as ZipButton } from './ZipButton/ZipButton'
 export { default as RequestAppealRulingNotToBePublishedCheckbox } from './RequestAppealRulingNotToBePublishedCheckbox/RequestAppealRulingNotToBePublishedCheckbox'
 export { LawyerRegistryProvider } from './LawyerRegistryProvider/LawyerRegistryProvider'
 export { default as RequiredStar } from './RequiredStar/RequiredStar'
 export { VictimInfo } from './VictimInfo/VictimInfo'
 export { LabelValue } from './LabelValue/LabelValue'
+export { default as IconButton } from './IconButton/IconButton'

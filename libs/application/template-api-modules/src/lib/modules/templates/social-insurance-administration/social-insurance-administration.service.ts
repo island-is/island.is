@@ -1,5 +1,10 @@
+import { YES } from '@island.is/application/core'
 import { FileType } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { getApplicationAnswers as getASFTEApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly'
+import {
+  ChildInformation,
+  getApplicationAnswers as getDBApplicationAnswers,
+} from '@island.is/application/templates/social-insurance-administration/death-benefits'
 import { getApplicationAnswers as getHSApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/household-supplement'
 import {
   ApplicationType,
@@ -8,38 +13,35 @@ import {
   isEarlyRetirement,
 } from '@island.is/application/templates/social-insurance-administration/old-age-pension'
 import { getApplicationAnswers as getPSApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/pension-supplement'
-import {
-  getApplicationAnswers as getDBApplicationAnswers,
-  ChildInformation,
-} from '@island.is/application/templates/social-insurance-administration/death-benefits'
 import { Application, ApplicationTypes } from '@island.is/application/types'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import {
   ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
+  ApiProtectedV1QuestionnairesSelfassessmentGetRequest,
   TrWebCommonsExternalPortalsApiModelsDocumentsDocument as Attachment,
   DocumentTypeEnum,
   SocialInsuranceAdministrationClientService,
 } from '@island.is/clients/social-insurance-administration'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { S3Service } from '@island.is/nest/aws'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { Inject, Injectable } from '@nestjs/common'
+import { ConfigType } from '@nestjs/config'
+import * as kennitala from 'kennitala'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
+import { sharedModuleConfig } from '../../shared'
 import {
   getApplicationType,
   transformApplicationToAdditionalSupportForTheElderlyDTO,
+  transformApplicationToDeathBenefitsDTO,
   transformApplicationToHouseholdSupplementDTO,
   transformApplicationToIncomePlanDTO,
+  transformApplicationToMedicalAndRehabilitationPaymentsDTO,
   transformApplicationToOldAgePensionDTO,
   transformApplicationToPensionSupplementDTO,
-  transformApplicationToDeathBenefitsDTO,
 } from './social-insurance-administration-utils'
-import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
-import * as kennitala from 'kennitala'
-import { sharedModuleConfig } from '../../shared'
-import { ConfigType } from '@nestjs/config'
-import { S3Service } from '@island.is/nest/aws'
-import { YES } from '@island.is/application/core'
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 
@@ -486,6 +488,22 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       )
       return response
     }
+
+    if (
+      application.typeId ===
+      ApplicationTypes.MEDICAL_AND_REHABILITATION_PAYMENTS
+    ) {
+      const marpDTO =
+        transformApplicationToMedicalAndRehabilitationPaymentsDTO(application)
+
+      const response = await this.siaClientService.sendApplication(
+        auth,
+        marpDTO,
+        application.typeId.toLowerCase(),
+      )
+
+      return response
+    }
   }
 
   async sendDocuments({ application, auth }: TemplateApiModuleActionProps) {
@@ -600,5 +618,15 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
   async getIncomePlanConditions({ auth }: TemplateApiModuleActionProps) {
     return await this.siaClientService.getIncomePlanConditions(auth)
+  }
+
+  async getSelfAssessmentQuestionnaire(
+    { auth }: TemplateApiModuleActionProps,
+    languages: ApiProtectedV1QuestionnairesSelfassessmentGetRequest = {},
+  ) {
+    return await this.siaClientService.getSelfAssessmentQuestionnaire(
+      auth,
+      languages,
+    )
   }
 }

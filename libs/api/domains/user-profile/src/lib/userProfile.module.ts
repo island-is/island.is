@@ -9,20 +9,24 @@ import { FeatureFlagModule } from '@island.is/nest/feature-flags'
 import { UserProfileService } from './userProfile.service'
 import { AdminUserProfileResolver } from './adminUserProfile.resolver'
 import { ActorProfileResolver } from './actorProfile.resolver'
-
+import { UserEmailsService } from './modules/user-emails/userEmails.service'
+import { EmailsLoader } from './modules/user-emails/emails.loader'
+import { UserEmailsResolver } from './modules/user-emails/userEmails.resolver'
 @Module({
   providers: [
     UserProfileService,
     UserProfileResolver,
     ActorProfileResolver,
     AdminUserProfileResolver,
+    UserEmailsResolver,
+    UserEmailsService,
+    EmailsLoader,
   ],
   imports: [
     FeatureFlagModule,
     IdentityClientModule,
     BankinfoClientModule,
     UserProfileClientModule,
-    IdentityClientModule,
   ],
   exports: [],
 })

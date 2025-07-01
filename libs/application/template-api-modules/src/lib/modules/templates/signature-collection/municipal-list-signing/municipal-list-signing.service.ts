@@ -11,11 +11,15 @@ import { TemplateApiError } from '@island.is/nest/problem'
 import { ProviderErrorReason } from '@island.is/shared/problem'
 import { errorMessages } from '@island.is/application/templates/signature-collection/municipal-list-signing'
 import { getCollectionTypeFromApplicationType } from '../shared/utils'
+import { isCompany } from 'kennitala'
+import { coreErrorMessages } from '@island.is/application/core'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 
 @Injectable()
 export class MunicipalListSigningService extends BaseTemplateApiService {
   constructor(
     private signatureCollectionClientService: SignatureCollectionClientService,
+    private nationalRegistryClientService: NationalRegistryClientService,
   ) {
     super(ApplicationTypes.MUNICIPAL_LIST_SIGNING)
   }
@@ -39,6 +43,25 @@ export class MunicipalListSigningService extends BaseTemplateApiService {
     } else {
       throw new TemplateApiError(errorMessages.submitFailure, 405)
     }
+  }
+
+  async municipalIdentity({ auth }: TemplateApiModuleActionProps) {
+    const contactNationalId = isCompany(auth.nationalId)
+      ? auth.actor?.nationalId ?? auth.nationalId
+      : auth.nationalId
+
+    const identity = await this.nationalRegistryClientService.getIndividual(
+      contactNationalId,
+    )
+
+    if (!identity) {
+      throw new TemplateApiError(
+        coreErrorMessages.nationalIdNotFoundInNationalRegistrySummary,
+        500,
+      )
+    }
+
+    return identity
   }
 
   async canSign({ auth }: TemplateApiModuleActionProps) {
@@ -86,9 +109,11 @@ export class MunicipalListSigningService extends BaseTemplateApiService {
 
   async getList({ auth, application }: TemplateApiModuleActionProps) {
     // Returns the list user is trying to sign, in the apporiate area
-    const areaId = (application.externalData.canSign.data as {
-      area: { id: string }
-    }).area?.id
+    const areaId = (
+      application.externalData.canSign.data as {
+        area: { id: string }
+      }
+    ).area?.id
 
     if (!areaId) {
       // If no area user will be stopped by can sign above
@@ -96,10 +121,8 @@ export class MunicipalListSigningService extends BaseTemplateApiService {
     }
     const ownerId = application.answers.initialQuery as string
     // Check if user got correct ownerId, if not user has to pick list
-    const isCandidateId = await this.signatureCollectionClientService.isCandidateId(
-      ownerId,
-      auth,
-    )
+    const isCandidateId =
+      await this.signatureCollectionClientService.isCandidateId(ownerId, auth)
 
     // If initialQuery is not defined return all list for area
     const lists = await this.signatureCollectionClientService.getLists({
@@ -107,6 +130,7 @@ export class MunicipalListSigningService extends BaseTemplateApiService {
       candidateId: isCandidateId ? ownerId : undefined,
       areaId,
       onlyActive: true,
+      collectionType: this.collectionType,
     })
     // If candidateId existed or if there is only one list, check if maxReached
     if (lists.length === 1) {

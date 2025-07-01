@@ -84,9 +84,15 @@ export enum ApplicationTypes {
   MACHINE_REGISTRATION = 'MachineRegistration',
   PRACTICAL_EXAM = 'PracticalExam',
   RENTAL_AGREEMENT = 'RentalAgreement',
+  TERMINATE_RENTAL_AGREEMENT = 'TerminateRentalAgreement',
   SEMINAR_REGISTRATION = 'SeminarRegistration',
   TRAINING_LICENSE_ON_A_WORK_MACHINE = 'TrainingLicenseOnAWorkMachine',
   SECONDARY_SCHOOL = 'SecondarySchool',
+  CAR_RENTAL_FEE_CATEGORY = 'CarRentalFeeCategory',
+  MEDICAL_AND_REHABILITATION_PAYMENTS = 'MedicalAndRehabilitationPayments',
+  FIRE_COMPENSATION_APPRAISAL = 'FireCompensationAppraisal',
+  LEGAL_GAZETTE = 'LegalGazette',
+  EXEMPTION_FOR_TRANSPORTATION = 'ExemptionForTransportation',
 }
 
 export const ApplicationConfigurations = {
@@ -434,6 +440,10 @@ export const ApplicationConfigurations = {
     slug: 'leigusamningur',
     translation: 'ra.application',
   },
+  [ApplicationTypes.TERMINATE_RENTAL_AGREEMENT]: {
+    slug: 'uppsogn-og-riftun-leigusamninga',
+    translation: 'tra.application',
+  },
   [ApplicationTypes.SEMINAR_REGISTRATION]: {
     slug: 'vinnueftirlitid-namskeid',
     translation: ['aosh.sem.application'],
@@ -445,5 +455,25 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.SECONDARY_SCHOOL]: {
     slug: 'framhaldsskoli',
     translation: 'ss.application',
+  },
+  [ApplicationTypes.CAR_RENTAL_FEE_CATEGORY]: {
+    slug: 'bilaleigu-gjaldflokkur',
+    translation: 'crfc.application',
+  },
+  [ApplicationTypes.MEDICAL_AND_REHABILITATION_PAYMENTS]: {
+    slug: 'sjukra-og-endurhaefingargreidslur',
+    translation: ['marp.application', 'sia.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.FIRE_COMPENSATION_APPRAISAL]: {
+    slug: 'endurmat-brunabotamats',
+    translation: 'fca.application',
+  },
+  [ApplicationTypes.LEGAL_GAZETTE]: {
+    slug: 'logbirtingarblad',
+    translation: 'lg.application',
+  },
+  [ApplicationTypes.EXEMPTION_FOR_TRANSPORTATION]: {
+    slug: 'undanthaga-vegna-flutnings',
+    translation: 'ta.eft.application',
   },
 }

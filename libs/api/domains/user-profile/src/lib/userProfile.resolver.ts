@@ -1,3 +1,4 @@
+import { Loader } from '@island.is/nest/dataloader'
 import { UseGuards } from '@nestjs/common'
 import {
   Args,
@@ -15,6 +16,8 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 
+import { EmailsDto } from '@island.is/clients/user-profile'
+import { ActorProfileDetails } from './dto/actorProfileDetails'
 import { CreateEmailVerificationInput } from './dto/createEmalVerificationInput'
 import { CreateSmsVerificationInput } from './dto/createSmsVerificationInput'
 import { CreateUserProfileInput } from './dto/createUserProfileInput'
@@ -23,7 +26,12 @@ import { DeleteTokenResponse } from './dto/deleteTokenResponse'
 import { UpdateUserProfileInput } from './dto/updateUserProfileInput'
 import { UserDeviceTokenInput } from './dto/userDeviceTokenInput'
 import { DeleteEmailOrPhoneSettings } from './models/deleteEmailOrPhoneSettings.model'
+import { Email } from './models/email.model'
 import { UserProfileLocale } from './models/userProfileLocale.model'
+import {
+  EmailsLoader,
+  type EmailsDataLoader,
+} from './modules/user-emails/emails.loader'
 import { Response } from './response.model'
 import { UserDeviceToken } from './userDeviceToken.model'
 import { UserProfile } from './userProfile.model'
@@ -31,6 +39,7 @@ import { UserProfileService } from './userProfile.service'
 import { ApolloError } from 'apollo-server-express'
 import { DeleteIslykillValueInput } from './dto/deleteIslykillValueInput'
 import { DeleteIslykillSettings } from './models/deleteIslykillSettings.model'
+import { UserProfileSetActorProfileEmailInput } from './dto/userProfileSetActorProfileEmail.input'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Resolver(() => UserProfile)
@@ -129,11 +138,29 @@ export class UserProfileResolver {
   }
 
   @Mutation(() => Response, { nullable: true })
+  async createMeSmsVerification(
+    @Args('input') input: CreateSmsVerificationInput,
+    @CurrentUser() user: User,
+  ): Promise<Response> {
+    await this.userProfileService.createMeSmsVerification(input, user)
+    return Promise.resolve({ created: true })
+  }
+
+  @Mutation(() => Response, { nullable: true })
   async createEmailVerification(
     @Args('input') input: CreateEmailVerificationInput,
     @CurrentUser() user: User,
   ): Promise<Response> {
     await this.userProfileService.createEmailVerification(input, user)
+    return Promise.resolve({ created: true })
+  }
+
+  @Mutation(() => Response, { nullable: true })
+  async createMeEmailVerification(
+    @Args('input') input: CreateEmailVerificationInput,
+    @CurrentUser() user: User,
+  ): Promise<Response> {
+    await this.userProfileService.createMeEmailVerification(input, user)
     return Promise.resolve({ created: true })
   }
 
@@ -163,8 +190,35 @@ export class UserProfileResolver {
     return true
   }
 
+  @Mutation(() => ActorProfileDetails, {
+    name: 'userProfileSetActorProfileEmail',
+  })
+  async setActorProfileEmail(
+    @Args('input') input: UserProfileSetActorProfileEmailInput,
+    @CurrentUser() user: User,
+  ): Promise<ActorProfileDetails> {
+    return this.userProfileService.userProfileSetActorProfileEmailById(
+      input,
+      user,
+    )
+  }
+
   @ResolveField('bankInfo')
   async bankInfo(@CurrentUser() user: User): Promise<string | null> {
     return (await this.userProfileService.getUserBankInfo(user)) ?? null
+  }
+
+  @ResolveField('emails', () => [Email], { nullable: true })
+  async getEmails(
+    @Loader(EmailsLoader) emailsLoader: EmailsDataLoader,
+  ): Promise<EmailsDto[]> {
+    return emailsLoader.load('me')
+  }
+
+  @ResolveField('primaryEmail', () => Email, { nullable: true })
+  async getPrimaryEmail(@Loader(EmailsLoader) emailsLoader: EmailsDataLoader) {
+    const emails = await emailsLoader.load('me')
+
+    return emails.find((email: EmailsDto) => email.primary) ?? null
   }
 }

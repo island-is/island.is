@@ -30,7 +30,7 @@ judicial-system-api:
     BACKEND_URL: 'http://web-judicial-system-backend'
     CONTENTFUL_ENVIRONMENT: 'test'
     CONTENTFUL_HOST: 'cdn.contentful.com'
-    HIDDEN_FEATURES: 'CRIMINAL_RECORD_ENDPOINT'
+    HIDDEN_FEATURES: 'SERVICE_PORTAL'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.staging01.devland.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -229,6 +229,7 @@ judicial-system-backend:
     EMAIL_REPLY_TO_NAME: '/k8s/judicial-system/EMAIL_REPLY_TO_NAME'
     ERROR_EVENT_URL: '/k8s/judicial-system/ERROR_EVENT_URL'
     EVENT_URL: '/k8s/judicial-system/EVENT_URL'
+    LAWYERS_ICELAND_API_KEY: '/k8s/judicial-system/LAWYERS_ICELAND_API_KEY'
     NOVA_PASSWORD: '/k8s/judicial-system/NOVA_PASSWORD'
     NOVA_URL: '/k8s/judicial-system/NOVA_URL'
     NOVA_USERNAME: '/k8s/judicial-system/NOVA_USERNAME'
@@ -442,7 +443,7 @@ judicial-system-scheduler:
     requests:
       cpu: '100m'
       memory: '128Mi'
-  schedule: '0 2 * * *'
+  schedule: '0 2,9 * * *'
   secrets:
     BACKEND_ACCESS_TOKEN: '/k8s/judicial-system/BACKEND_ACCESS_TOKEN'
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'

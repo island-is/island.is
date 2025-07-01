@@ -81,7 +81,7 @@ describe('UserTokenController', () => {
 
   describe('With auth', () => {
     let app: TestApp
-    let server: SuperTest<Test>
+    let server: request.SuperTest<request.Test>
 
     beforeAll(async () => {
       app = await setupApp({
