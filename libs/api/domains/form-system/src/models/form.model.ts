@@ -103,7 +103,7 @@ export class Form {
   status!: string
 
   @Field(() => [String], { nullable: 'itemsAndList' })
-  urls?: String[]
+  urls?: string[]
 }
 
 @ObjectType('FormSystemFormResponse')
