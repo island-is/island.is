@@ -18,6 +18,7 @@ export const Terms = buildForm({
   children: [
     buildSection({
       id: 'termsSection',
+      tabTitle: terms.pageTitle,
       children: [
         buildMultiField({
           id: 'termsMultiField',
