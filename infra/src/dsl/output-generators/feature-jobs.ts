@@ -122,7 +122,8 @@ export const generateCleanUpForFeature = async (
             service.initContainers?.postgres?.extensions,
           )
           return {
-            command: [`/app/destroy-dbs.sh`, feature as string],
+            command: [`/app/destroy-dbs.sh`],
+            args: [feature as string],
             image,
             name: `${info!.username!.replace(/_/g, '-').substring(0, 60)}1`,
             securityContext,
@@ -182,7 +183,7 @@ export const generateCleanUpForFeature = async (
       ),
       annotations: {
         'argocd.argoproj.io/hook': 'PostDelete',
-        'argocd.argoproj.io/hook-delete-policy': 'HookSucceded',
+        'argocd.argoproj.io/hook-delete-policy': 'HookSucceded, HookFailed',
       },
     },
     spec: {
