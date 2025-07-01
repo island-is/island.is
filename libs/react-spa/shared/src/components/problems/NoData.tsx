@@ -53,7 +53,12 @@ export const NoData = ({
         paddingX={[3, 3, 5, 10]}
         rowGap={[7, 7, 0]}
       >
-        <Box display="flex" flexDirection="column" rowGap={1}>
+        <Box
+          display="flex"
+          flexDirection="column"
+          rowGap={1}
+          justifyContent={['center', 'center', 'flexStart']}
+        >
           <Text variant={titleSize} as={titleSize} color="dark400">
             {title}
           </Text>
