@@ -112,7 +112,7 @@ const FreightPairingSubSection = (freightIndex: number) =>
             formTitleNumbering: 'none',
             hideAddButton: true,
             hideRemoveButton: true,
-            // minRows: MAX_CNT_CONVOY, // To set the initial numberOfItems to loop through
+            minRows: MAX_CNT_CONVOY, // To set the initial numberOfItems to loop through
             condition: (answers) =>
               getSelectedConvoyIdsInFreightPairing(answers, freightIndex)
                 .length > 0,
