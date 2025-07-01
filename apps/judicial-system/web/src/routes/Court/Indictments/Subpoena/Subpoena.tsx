@@ -182,9 +182,7 @@ const Subpoena: FC = () => {
 
   const handleDefendantUpdates = (update: UpdateDefendantInput) => {
     setUpdates((prev) => {
-      if (!prev) {
-        return updates
-      }
+      if (!prev) return
 
       return {
         defendants: prev.defendants?.map((item) =>
@@ -228,6 +226,7 @@ const Subpoena: FC = () => {
     valid: boolean,
   ) => {
     if (!valid) return
+
     updateCourtArrangement({ date })
   }
 
