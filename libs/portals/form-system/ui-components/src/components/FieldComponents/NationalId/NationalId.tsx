@@ -54,7 +54,7 @@ export const NationalId = ({ item, dispatch, hasError }: Props) => {
                 backgroundColor="blue"
                 value={field.value}
                 onChange={(e) => {
-                  const  raw = e.target.value
+                  const raw = e.target.value
                   let digits = raw.replace(/\D/g, '')
                   if (digits.length > 10) {
                     digits = digits.slice(0, 10)

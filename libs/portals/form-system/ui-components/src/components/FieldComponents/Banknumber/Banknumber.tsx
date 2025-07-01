@@ -18,11 +18,7 @@ interface Props {
   lang?: 'is' | 'en'
 }
 
-export const Banknumber = ({
-  item,
-  dispatch,
-  lang = 'is',
-}: Props) => {
+export const Banknumber = ({ item, dispatch, lang = 'is' }: Props) => {
   const inputRefs = [
     useRef<HTMLInputElement | HTMLTextAreaElement>(null),
     useRef<HTMLInputElement | HTMLTextAreaElement>(null),
@@ -60,11 +56,12 @@ export const Banknumber = ({
     return leadingZeros + originalNumber
   }
 
-const bankAccountValue = getValue(item, 'bankAccount') ?? ''
-const [bankDefault, ledgerDefault, accountDefault] = bankAccountValue.split('-')
-console.log('bankDefault', bankDefault)
-console.log('ledgerDefault', ledgerDefault)
-console.log('accountDefault', accountDefault)
+  const bankAccountValue = getValue(item, 'bankAccount') ?? ''
+  const [bankDefault, ledgerDefault, accountDefault] =
+    bankAccountValue.split('-')
+  console.log('bankDefault', bankDefault)
+  console.log('ledgerDefault', ledgerDefault)
+  console.log('accountDefault', accountDefault)
   return (
     <>
       <Row>
@@ -83,9 +80,9 @@ console.log('accountDefault', accountDefault)
               maxLength: {
                 value: 4,
                 message: 'Hámark 4 tölustafir leyfðir',
-              }
+              },
             }}
-              defaultValue={bankDefault ?? undefined}
+            defaultValue={bankDefault ?? undefined}
             render={({ field, fieldState }) => (
               <Input
                 ref={inputRefs[0]}
@@ -124,7 +121,7 @@ console.log('accountDefault', accountDefault)
               maxLength: {
                 value: 2,
                 message: 'Hámark 4 tölustafir leyfðir',
-              }
+              },
             }}
             defaultValue={ledgerDefault ?? undefined}
             render={({ field, fieldState }) => (
@@ -162,10 +159,10 @@ console.log('accountDefault', accountDefault)
                 value: item.isRequired ?? false,
                 message: 'Þessi reitur má ekki vera tómur',
               },
-            maxLength: {
+              maxLength: {
                 value: 6,
                 message: 'Hámark 4 tölustafir leyfðir',
-              }
+              },
             }}
             defaultValue={accountDefault ?? undefined}
             render={({ field, fieldState }) => (

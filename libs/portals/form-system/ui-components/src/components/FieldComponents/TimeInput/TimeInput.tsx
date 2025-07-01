@@ -77,9 +77,11 @@ export const TimeInput = ({ item, dispatch }: Props) => {
         return createOptions(minuteList)
     }
   }
-const timeValue = getValue(item, 'time')
-const [hourValue, minuteValue] = timeValue ? timeValue.split(':') : [undefined, undefined]
-console.log("time required: ", item.isRequired)
+  const timeValue = getValue(item, 'time')
+  const [hourValue, minuteValue] = timeValue
+    ? timeValue.split(':')
+    : [undefined, undefined]
+  console.log('time required: ', item.isRequired)
 
   return (
     <Row marginTop={2}>
@@ -88,9 +90,7 @@ console.log("time required: ", item.isRequired)
           name={`${item.id}.hour`}
           control={control}
           defaultValue={
-            hourValue
-              ? { label: hourValue, value: hourValue }
-              : undefined
+            hourValue ? { label: hourValue, value: hourValue } : undefined
           }
           rules={{
             required: {
@@ -122,9 +122,7 @@ console.log("time required: ", item.isRequired)
           name={`${item.id}.minute`}
           control={control}
           defaultValue={
-            minuteValue
-              ? { label: minuteValue, value: minuteValue }
-              : undefined
+            minuteValue ? { label: minuteValue, value: minuteValue } : undefined
           }
           rules={{
             required: {

@@ -46,13 +46,11 @@ export const ApplicationProvider: React.FC<{
     },
     initialReducer,
   )
-  const methods = useForm({mode: 'onBlur'})
+  const methods = useForm({ mode: 'onBlur' })
   const contextValue = useMemo(() => ({ state, dispatch }), [state])
   return (
     <ApplicationContext.Provider value={contextValue}>
-      <FormProvider {...methods} >
-      {state.application && <Form />}
-      </FormProvider>
+      <FormProvider {...methods}>{state.application && <Form />}</FormProvider>
     </ApplicationContext.Provider>
   )
 }

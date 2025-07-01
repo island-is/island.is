@@ -15,7 +15,7 @@ interface Props {
 export const Footer = ({ externalDataAgreement }: Props) => {
   const { state, dispatch } = useApplicationContext()
   const { formatMessage } = useIntl()
-  const { trigger, formState } = useFormContext();
+  const { trigger, formState } = useFormContext()
 
   const validate = async () => {
     const valid = await trigger()
@@ -29,9 +29,9 @@ export const Footer = ({ externalDataAgreement }: Props) => {
     state.currentSection.index === 0
       ? externalDataAgreement
       : state.currentSection.index !== state.sections.length - 1
-      
+
   const submitScreen = useMutation(SAVE_SCREEN)
-  const handleIncrement = async () =>{
+  const handleIncrement = async () => {
     const isValid = await validate()
     if (!isValid) return
     dispatch({

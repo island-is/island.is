@@ -18,7 +18,7 @@ interface Props {
 export const DatePicker = ({ item, dispatch, lang = 'is' }: Props) => {
   const { formatMessage } = useIntl()
 
-const handleDateChange = (dateString: string) => {
+  const handleDateChange = (dateString: string) => {
     if (dispatch) {
       const date = dateString ? parseISO(dateString) : null
       dispatch({
@@ -30,20 +30,19 @@ const handleDateChange = (dateString: string) => {
       })
     }
   }
-      
 
   return (
-      <DatePickerController
-        label={item.name[lang] ?? ''}
-        placeholder={formatMessage(m.chooseDate)}
-        id={item.id}
-        locale={lang}
-        defaultValue={getValue(item, 'date')}
-        backgroundColor="blue"
-        onChange={handleDateChange}
-        maxDate={new Date()}
-        minDate={new Date(1970, 0)}
-        required
-      />
+    <DatePickerController
+      label={item.name[lang] ?? ''}
+      placeholder={formatMessage(m.chooseDate)}
+      id={item.id}
+      locale={lang}
+      defaultValue={getValue(item, 'date')}
+      backgroundColor="blue"
+      onChange={handleDateChange}
+      maxDate={new Date()}
+      minDate={new Date(1970, 0)}
+      required
+    />
   )
 }

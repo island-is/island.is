@@ -1,7 +1,4 @@
-import {
-  FormSystemScreen,
-  FormSystemSection,
-} from '@island.is/api/schema'
+import { FormSystemScreen, FormSystemSection } from '@island.is/api/schema'
 import { ApplicationState, SectionTypes } from '@island.is/form-system/ui'
 import {
   ApolloCache,
@@ -77,20 +74,20 @@ export const incrementWithScreens = (
       errors,
     }
   }
-  if(currentSectionData.sectionType === SectionTypes.INPUT){
-  submitScreen({
-    variables: {
-      input: {
-        screenId: state.currentScreen?.data?.id,
-        submitScreenDto: {
-          applicationId: state.application.id,
-          screenDto: state.currentScreen?.data,
+  if (currentSectionData.sectionType === SectionTypes.INPUT) {
+    submitScreen({
+      variables: {
+        input: {
+          screenId: state.currentScreen?.data?.id,
+          submitScreenDto: {
+            applicationId: state.application.id,
+            screenDto: state.currentScreen?.data,
+          },
         },
       },
-    },
-  }).catch((error) => {
-    console.error('Error submitting screen:', error)
-  })
+    }).catch((error) => {
+      console.error('Error submitting screen:', error)
+    })
   }
   if (currentScreenIndex === maxScreenIndex) {
     if (state.currentSection.index === maxSectionIndex) {
@@ -108,11 +105,11 @@ export const incrementWithScreens = (
       },
       currentScreen: hasScreens(nextSection)
         ? {
-          index: 0,
-          data: nextSection.screens
-            ? (nextSection.screens[0] as FormSystemScreen)
-            : undefined,
-        }
+            index: 0,
+            data: nextSection.screens
+              ? (nextSection.screens[0] as FormSystemScreen)
+              : undefined,
+          }
         : undefined,
       errors: [],
     }
@@ -141,9 +138,9 @@ export const incrementWithoutScreens = (
     },
     currentScreen: hasScreens(nextSection)
       ? {
-        data: nextSection.screens?.[0] as FormSystemScreen,
-        index: 0,
-      }
+          data: nextSection.screens?.[0] as FormSystemScreen,
+          index: 0,
+        }
       : undefined,
   }
 }
@@ -224,10 +221,11 @@ export const setError = (
   hasError: boolean,
 ): ApplicationState => {
   const errorArray = Array.isArray(state.errors) ? state.errors : []
-  const filteredArray = hasError ? [...errorArray, fieldId] : errorArray.filter(id => id !== fieldId)
+  const filteredArray = hasError
+    ? [...errorArray, fieldId]
+    : errorArray.filter((id) => id !== fieldId)
   return { ...state, errors: filteredArray }
 }
-
 
 export const setFieldValue = (
   state: ApplicationState,
@@ -296,9 +294,6 @@ export const setFieldValue = (
       ...currentScreen,
       data: updatedScreen,
     },
-    errors:
-      state.errors && state.errors.length > 0
-        ? state.errors ?? []
-        : [],
+    errors: state.errors && state.errors.length > 0 ? state.errors ?? [] : [],
   }
 }

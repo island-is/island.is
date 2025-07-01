@@ -49,9 +49,7 @@ export const ExternalData = ({ setExternalDataAgreement }: Props) => {
             <Text variant="h4" color="blue400">
               {formatMessage(webMessages.myPagesTitle)}
             </Text>
-            <Markdown>
-              {formatMessage(webMessages.myPagesDescription)}
-            </Markdown>
+            <Markdown>{formatMessage(webMessages.myPagesDescription)}</Markdown>
           </div>
 
           {certificationTypes?.map((certificationType) => (
