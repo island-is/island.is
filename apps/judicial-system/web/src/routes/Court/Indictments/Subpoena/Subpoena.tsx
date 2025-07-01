@@ -187,7 +187,7 @@ const Subpoena: FC = () => {
   const handleCourtArrangementUpdates = (update?: string) => {
     setUpdates((prev) => {
       if (!prev) {
-        return updates
+        return
       }
 
       return {
@@ -195,8 +195,30 @@ const Subpoena: FC = () => {
         theCase: {
           ...prev.theCase,
           arraignmentDate: {
-            date: prev.theCase.arraignmentDate?.date,
+            ...prev,
             location: update,
+          },
+        },
+      }
+    })
+  }
+
+  const handleCourtArrangementUpdates2 = (
+    update: Date | undefined | null,
+    valid: boolean,
+  ) => {
+    setUpdates((prev) => {
+      if (!prev) {
+        return
+      }
+
+      return {
+        defendants: prev.defendants,
+        theCase: {
+          ...prev.theCase,
+          arraignmentDate: {
+            ...prev,
+            date: update ? update.toISOString() : null,
           },
         },
       }
@@ -226,8 +248,6 @@ const Subpoena: FC = () => {
   ])
 
   const stepIsValid = isSubpoenaStepValid(workingCase, courtDate)
-
-  console.log(updates)
 
   return (
     <PageLayout
@@ -307,7 +327,7 @@ const Subpoena: FC = () => {
             title={formatMessage(strings.courtArrangementsHeading)}
           />
           <CourtArrangements
-            handleCourtDateChange={handleCourtDateChange}
+            handleCourtDateChange={handleCourtArrangementUpdates2}
             handleCourtRoomChange={handleCourtArrangementUpdates}
             courtDate={updates?.theCase.arraignmentDate}
             dateTimeDisabled={!isSchedulingArraignmentDate}
