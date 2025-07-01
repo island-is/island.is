@@ -5,15 +5,15 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
-import { backgroundRoute } from './index'
 import { ResidenceEnum } from '../../../../lib/constants'
+import { SectionRouteEnum } from '../../../../lib/routes'
 
 export const residenceField =
   buildMultiField({
-    id: `${backgroundRoute}.residence`,
+    id: SectionRouteEnum.BACKGROUND_INFO_RESIDENCE,
     children: [
       buildRadioField({
-        id: `${backgroundRoute}.residence.status`,
+        id: `${SectionRouteEnum.BACKGROUND_INFO_RESIDENCE}.status`,
         title: disabilityPensionFormMessage.questions.residenceTitle,
         options: [
           {
@@ -43,13 +43,13 @@ export const residenceField =
         ]
       }),
       buildTextField({
-        id: `${backgroundRoute}.residence.other`,
+        id: `${SectionRouteEnum.BACKGROUND_INFO_RESIDENCE}.other`,
         title: disabilityPensionFormMessage.questions.other,
         variant: 'textarea',
         condition: (formValue) => {
           const residenceStatus = getValueViaPath<ResidenceEnum>(
             formValue,
-            `${backgroundRoute}.residence.status`,
+            `${SectionRouteEnum.BACKGROUND_INFO_RESIDENCE}.status`,
           )
           return residenceStatus === ResidenceEnum.other
         },

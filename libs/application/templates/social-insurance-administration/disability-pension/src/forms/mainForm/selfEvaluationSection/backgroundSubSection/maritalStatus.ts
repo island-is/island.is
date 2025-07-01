@@ -2,12 +2,12 @@ import {
   buildRadioField,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
-import { backgroundRoute } from './index'
 import { MaritalStatusEnum } from '../../../../lib/constants'
+import { SectionRouteEnum } from '../../../../lib/routes'
 
 export const maritalStatusField =
   buildRadioField({
-    id: `${backgroundRoute}.maritalStatus`,
+    id: SectionRouteEnum.BACKGROUND_INFO_MARITAL_STATUS,
     title: disabilityPensionFormMessage.questions.maritalStatusTitle,
     options: [
       {

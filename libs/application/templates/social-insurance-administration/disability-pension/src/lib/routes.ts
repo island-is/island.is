@@ -1,0 +1,17 @@
+export enum SectionRouteEnum {
+  ABROAD_PAYMENT= 'abroadPayments',
+  EMPLOYMENT_PARTICIPATION= 'employmentParticipation',
+  LIVED_ABROAD= 'livedAbroad',
+  PAID_WORK= 'paidWork',
+  DISABILITY_EVALUATION= 'disabilityEvaluation',
+  INCOME_PLAN_INSTRUCTION= 'incomePlanInstruction',
+  INCOME_PLAN = 'incomePlan',
+  PAYMENT_INFO= 'paymentInfo',
+  PERSONAL_INFO= 'personalInfo',
+  SELF_EVALUATION= 'selfEvaluation',
+  BACKGROUND_INFO= 'backgroundInfo',
+  BACKGROUND_INFO_RESIDENCE= 'backgroundInfoResidence',
+  BACKGROUND_INFO_CHILDREN= 'backgroundInfoChildren',
+  BACKGROUND_INFO_ICELANDIC_CAPABILITY= 'backgroundInfoIcelandicCapability',
+  BACKGROUND_INFO_MARITAL_STATUS= 'backgroundInfoMaritalStatus',
+}

@@ -3,11 +3,11 @@ import {
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { IcelandicCapabilityEnum } from '../../../../lib/constants'
-import { backgroundRoute } from './index'
+import { SectionRouteEnum } from '../../../../lib/routes'
 
 export const icelandicCapabilityField =
   buildRadioField({
-    id: `${backgroundRoute}.icelandicCapability`,
+    id: SectionRouteEnum.BACKGROUND_INFO_ICELANDIC_CAPABILITY,
     title: disabilityPensionFormMessage.questions.icelandicCapabilityTitle,
     options: [
       {

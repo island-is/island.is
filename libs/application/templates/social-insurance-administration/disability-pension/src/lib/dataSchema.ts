@@ -76,41 +76,46 @@ export const dataSchema = z.object({
     path: ['list'],
     params: disabilityPensionFormMessage.errors.emptyForeignResidence,
   }),
-  backgroundInfo: z.object({
-    maritalStatus: z.enum([
-      MaritalStatusEnum.single,
-      MaritalStatusEnum.inRelationship,
-      MaritalStatusEnum.married,
-      MaritalStatusEnum.divorced,
-      MaritalStatusEnum.widowed,
-      MaritalStatusEnum.unknown,
+  backgroundInfoMaritalStatus: z.enum([
+    MaritalStatusEnum.single,
+    MaritalStatusEnum.inRelationship,
+    MaritalStatusEnum.married,
+    MaritalStatusEnum.divorced,
+    MaritalStatusEnum.widowed,
+    MaritalStatusEnum.unknown,
+  ]),
+  backgroundInfoResidence: z.object({
+    status: z.enum([
+      ResidenceEnum.ownHome,
+      ResidenceEnum.rentalMarket,
+      ResidenceEnum.socialHousing,
+      ResidenceEnum.homeless,
+      ResidenceEnum.withFamily,
+      ResidenceEnum.other,
     ]),
-    residence: z.object({
-      status: z.enum([
-        ResidenceEnum.ownHome,
-        ResidenceEnum.rentalMarket,
-        ResidenceEnum.socialHousing,
-        ResidenceEnum.homeless,
-        ResidenceEnum.withFamily,
-        ResidenceEnum.other,
-      ]),
-      other: z.string().optional(),
-    }),
-    children: z.enum([
-      ChildrenCountEnum.one,
-      ChildrenCountEnum.two,
-      ChildrenCountEnum.three,
-      ChildrenCountEnum.four,
-      ChildrenCountEnum.five,
-      ChildrenCountEnum.sixOrMore,
-    ]),
-    icelandicCapability: z.enum([
-      IcelandicCapabilityEnum.poor,
-      IcelandicCapabilityEnum.fair,
-      IcelandicCapabilityEnum.good,
-      IcelandicCapabilityEnum.veryGood,
-    ]),
-  }),
+    other: z.string().optional(),
+  }) .refine(
+    ({ status, other }) => {
+      if (status === ResidenceEnum.other) {
+        return other && other.length > 0
+      }
+      return true
+    },
+  ),
+  backgroundInfoChildren: z.enum([
+    ChildrenCountEnum.one,
+    ChildrenCountEnum.two,
+    ChildrenCountEnum.three,
+    ChildrenCountEnum.four,
+    ChildrenCountEnum.five,
+    ChildrenCountEnum.sixOrMore,
+  ]),
+  backgroundInfoIcelandicCapability: z.enum([
+    IcelandicCapabilityEnum.poor,
+    IcelandicCapabilityEnum.fair,
+    IcelandicCapabilityEnum.good,
+    IcelandicCapabilityEnum.veryGood,
+  ]),
   paymentInfo: z
     .object({
       bankAccountType: z.enum([

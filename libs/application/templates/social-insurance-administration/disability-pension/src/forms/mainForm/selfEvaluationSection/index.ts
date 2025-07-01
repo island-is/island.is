@@ -6,21 +6,22 @@ import {
 import { disabilityPensionFormMessage } from '../../../lib/messages'
 import { YesOrNoOptions } from '../../../lib/options'
 import { backgroundInfoSubSection } from './backgroundSubSection'
+import { SectionRouteEnum } from '../../../lib/routes'
 
 export const selfEvaluationRoute = 'selfEvaluation'
 
 export const selfEvaluationSection =
   buildSection({
-    id: selfEvaluationRoute,
+    id: SectionRouteEnum.SELF_EVALUATION,
     title: disabilityPensionFormMessage.selfEvaluation.title,
     children: [
       buildMultiField({
-        id: selfEvaluationRoute,
+        id: SectionRouteEnum.SELF_EVALUATION,
         title: disabilityPensionFormMessage.selfEvaluation.title,
         description: disabilityPensionFormMessage.selfEvaluation.description,
         children: [
           buildRadioField({
-            id: `${selfEvaluationRoute}.assistance`,
+            id: `${SectionRouteEnum.SELF_EVALUATION}.assistance`,
             title: disabilityPensionFormMessage.selfEvaluation.assistance,
             width: 'half',
             backgroundColor: 'blue',

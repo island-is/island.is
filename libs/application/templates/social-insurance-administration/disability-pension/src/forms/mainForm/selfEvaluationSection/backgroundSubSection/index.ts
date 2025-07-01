@@ -6,12 +6,11 @@ import { maritalStatusField } from './maritalStatus'
 import { residenceField } from './residence'
 import { childrenField } from './children'
 import { icelandicCapabilityField } from './icelandicCapability'
-
-export const backgroundRoute = 'backgroundInfo'
+import { SectionRouteEnum } from '../../../../lib/routes'
 
 export const backgroundInfoSubSection =
   buildSubSection({
-    id: 'backgroundInfo',
+    id: SectionRouteEnum.BACKGROUND_INFO,
     title: disabilityPensionFormMessage.backgroundInfo.title,
     children: [
       maritalStatusField,

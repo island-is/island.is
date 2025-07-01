@@ -2,12 +2,12 @@ import {
   buildSelectField,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
-import { backgroundRoute } from './index'
 import { ChildrenCountEnum } from '../../../../lib/constants'
+import { SectionRouteEnum } from '../../../../lib/routes'
 
 export const childrenField =
   buildSelectField({
-    id: `${backgroundRoute}.children`,
+    id: SectionRouteEnum.BACKGROUND_INFO_CHILDREN,
     title: disabilityPensionFormMessage.questions.childrenCountTitle,
     options: [
       {
