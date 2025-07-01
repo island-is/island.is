@@ -538,6 +538,10 @@ export interface FileUploadField extends BaseField {
    * Defaults to 100MB
    */
   readonly totalMaxSize?: number
+  /**
+   * Defaults to no limit
+   */
+  readonly maxFileCount?: number
   readonly forImageUpload?: boolean
 }
 
