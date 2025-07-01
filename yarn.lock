@@ -17786,6 +17786,36 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-input/core@npm:^2.0.2":
+  version: 2.0.2
+  resolution: "@react-input/core@npm:2.0.2"
+  peerDependencies:
+    "@types/react": ">=16.8"
+    react: ">=16.8 || ^19.0.0-rc"
+    react-dom: ">=16.8 || ^19.0.0-rc"
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 10/c20b3e340e297c4f9b795247b4fe4696d225375915dcac0122ae43244751738665b4074e707d7bfae338749437110b282a966b6cbe950e1dc708367e8d63fa24
+  languageName: node
+  linkType: hard
+
+"@react-input/mask@npm:2.0.4":
+  version: 2.0.4
+  resolution: "@react-input/mask@npm:2.0.4"
+  dependencies:
+    "@react-input/core": "npm:^2.0.2"
+  peerDependencies:
+    "@types/react": ">=16.8"
+    react: ">=16.8 || ^19.0.0-rc"
+    react-dom: ">=16.8 || ^19.0.0-rc"
+  peerDependenciesMeta:
+    "@types/react":
+      optional: true
+  checksum: 10/3d31aafd041a5160453a06181958b7a61c164a549734e7aee9886dc62fc22759d77b4051960193bacc9adeacb18c49e837fae0a885d6c20331c52ef6e73b13ba
+  languageName: node
+  linkType: hard
+
 "@react-native-clipboard/clipboard@npm:1.11.2":
   version: 1.11.2
   resolution: "@react-native-clipboard/clipboard@npm:1.11.2"
@@ -39931,6 +39961,7 @@ __metadata:
     "@nx/workspace": "npm:19.4.0"
     "@openapitools/openapi-generator-cli": "npm:1.0.15-4.3.1"
     "@playwright/test": "npm:1.48"
+    "@react-input/mask": "npm:2.0.4"
     "@react-native-community/cli-platform-android": "npm:~13.6.6"
     "@react-native/babel-preset": "npm:0.74.87"
     "@react-native/metro-config": "npm:0.74.87"

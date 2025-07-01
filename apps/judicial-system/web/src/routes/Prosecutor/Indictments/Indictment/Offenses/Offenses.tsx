@@ -1,6 +1,6 @@
 import { Dispatch, SetStateAction, useMemo, useState } from 'react'
-import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
+import { InputMask } from '@react-input/mask'
 
 import { Box, Icon, Input, Select, Tag } from '@island.is/island-ui/core'
 import { SubstanceMap } from '@island.is/judicial-system/types'
@@ -252,8 +252,9 @@ export const Offenses = ({
             marginBottom={2}
           />
           <InputMask
-            mask={'9,99'}
-            maskPlaceholder={null}
+            component={Input}
+            replacement={{ _: /\d/ }}
+            mask="_,__"
             value={drunkDrivingOffense.substances?.ALCOHOL ?? ''}
             onChange={async (event) => {
               const alcoholValue = event.target.value
@@ -302,19 +303,14 @@ export const Offenses = ({
                 alcoholValue,
               )
             }}
-          >
-            <Input
-              name="alcohol"
-              autoComplete="off"
-              label={formatMessage(strings.bloodAlcoholContentLabel)}
-              placeholder={formatMessage(
-                strings.bloodAlcoholContentPlaceholder,
-              )}
-              errorMessage={bloodAlcoholContentErrorMessage}
-              hasError={bloodAlcoholContentErrorMessage !== ''}
-              required
-            />
-          </InputMask>
+            name="alcohol"
+            autoComplete="off"
+            label={formatMessage(strings.bloodAlcoholContentLabel)}
+            placeholder={formatMessage(strings.bloodAlcoholContentPlaceholder)}
+            errorMessage={bloodAlcoholContentErrorMessage}
+            hasError={bloodAlcoholContentErrorMessage !== ''}
+            required
+          />
         </Box>
       )}
       {/* SPEEDING OFFENSE FIELDS */}
