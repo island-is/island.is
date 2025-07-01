@@ -102,6 +102,7 @@ const InputNationalId: FC<Props> = (props) => {
       required={required}
       name="nationalId"
       id="nationalId"
+      data-testid="inputNationalId"
       autoComplete="off"
       label={
         label ??
