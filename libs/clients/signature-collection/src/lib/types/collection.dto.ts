@@ -1,4 +1,4 @@
-import { Area, mapArea } from './area.dto'
+import { Area } from './area.dto'
 import { MedmaelasofnunExtendedDTO } from '../../../gen/fetch'
 import { logger } from '@island.is/logging'
 import { Candidate, mapCandidate } from './candidate.dto'
