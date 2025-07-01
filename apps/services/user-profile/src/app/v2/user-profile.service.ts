@@ -37,7 +37,6 @@ import {
 import { PaginatedUserProfileDto } from './dto/paginated-user-profile.dto'
 import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
 import { UserProfileDto } from './dto/user-profile.dto'
-import { IslykillService } from './islykill.service'
 import { ActorProfile } from './models/actor-profile.model'
 import { Emails } from './models/emails.model'
 import kennitala from 'kennitala'
@@ -54,7 +53,6 @@ export class UserProfileService {
     private readonly delegationPreference: typeof ActorProfile,
     @Inject(VerificationService)
     private readonly verificationService: VerificationService,
-    private readonly islykillService: IslykillService,
     private sequelize: Sequelize,
     @Inject(UserProfileConfig.KEY)
     private config: ConfigType<typeof UserProfileConfig>,
