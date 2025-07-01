@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Delete,
-  Param,
   Post,
   UseGuards,
   VERSION_NEUTRAL,
@@ -12,13 +11,12 @@ import {
   ApiCreatedResponse,
   ApiNoContentResponse,
   ApiOperation,
-  ApiParam,
   ApiTags,
 } from '@nestjs/swagger'
-import { FormUrlsService } from './formUrls.services'
-import { FormUrlDto } from '../../../../../../../libs/form-system/src/dto/formUrl.dto'
+import { FormUrlDto } from '@island.is/form-system/shared'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
+import { FormUrlsService } from './formUrls.service'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.formSystem)
