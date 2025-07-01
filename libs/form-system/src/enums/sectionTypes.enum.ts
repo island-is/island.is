@@ -3,5 +3,4 @@ export const SectionTypes = {
   PARTIES: 'PARTIES',
   INPUT: 'INPUT',
   PAYMENT: 'PAYMENT',
-  URLS: 'URLS',
 }

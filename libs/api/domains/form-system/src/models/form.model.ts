@@ -12,7 +12,6 @@ import { Screen as ScreenModel } from './screen.model'
 import { FieldType } from './fieldType.model'
 import { Option } from './option.model'
 import { OrganizationUrl } from './organizationUrl.model'
-import { FormUrlDto } from '@island.is/form-system/shared'
 
 @ObjectType('FormSystemDependency')
 export class Dependency {
@@ -103,8 +102,8 @@ export class Form {
   @Field(() => String)
   status!: string
 
-  @Field(() => [FormUrlDto], { nullable: 'itemsAndList' })
-  urls?: FormUrlDto[]
+  @Field(() => [String], { nullable: 'itemsAndList' })
+  urls?: String[]
 }
 
 @ObjectType('FormSystemFormResponse')

@@ -29,6 +29,7 @@ export class FormUrlsResolver {
 
   @Mutation(() => Boolean, {
     name: 'deleteFormSystemFormUrl',
+    nullable: true,
   })
   async deleteFormUrl(
     @Args('input', { type: () => FormUrlDto })
