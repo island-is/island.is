@@ -88,7 +88,7 @@ export const mapListBase = (
 
 export const mapList = (
   list: MedmaelalistiDTO,
-  particiPatingAreas: Area[],
+  participatingAreas: Area[],
   collectionType?: CollectionType,
   collectors?: UmbodBaseDTO[],
 ): List => {
@@ -117,7 +117,7 @@ export const mapList = (
   }
   const area = mapArea(
     areas,
-    particiPatingAreas.find((area) => area.id === areas.id?.toString())
+    participatingAreas.find((area) => area.id === areas.id?.toString())
       ?.isActive ?? false,
     collection.id?.toString(),
   )
