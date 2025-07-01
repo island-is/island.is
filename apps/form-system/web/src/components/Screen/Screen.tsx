@@ -60,7 +60,6 @@ export const Screen = () => {
                 <Field
                   field={field}
                   key={index}
-                  hasError={state.errors?.includes(field.id) ?? false}
                 />
               )
             })}
