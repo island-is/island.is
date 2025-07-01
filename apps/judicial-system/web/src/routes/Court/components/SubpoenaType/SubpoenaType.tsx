@@ -25,6 +25,7 @@ import * as styles from '../../Indictments/Subpoena/Subpoena.css'
 interface SubpoenaTypeProps {
   subpoenaItems: {
     defendant: Defendant
+    onUpdate: (update: UpdateDefendantInput) => void
     alternativeServiceDescriptionDisabled?: boolean
     subpoenaDisabled?: boolean
     children?: ReactNode
@@ -47,6 +48,8 @@ const SubpoenaType: FC<SubpoenaTypeProps> = ({
   required = true,
 }) => {
   const { formatMessage } = useIntl()
+
+  const handleUpdate = () => {}
 
   return (
     <>
@@ -126,14 +129,11 @@ const SubpoenaType: FC<SubpoenaTypeProps> = ({
                     item.defendant.subpoenaType === SubpoenaTypeEnum.ABSENCE
                   }
                   onChange={() => {
-                    updateDefendantState(
-                      {
-                        caseId: workingCase.id,
-                        defendantId: item.defendant.id,
-                        subpoenaType: SubpoenaTypeEnum.ABSENCE,
-                      },
-                      setWorkingCase,
-                    )
+                    const { id: defendantId } = item.defendant
+                    const { id: caseId } = workingCase
+                    const subpoenaType = SubpoenaTypeEnum.ABSENCE
+
+                    item.onUpdate({ caseId, defendantId, subpoenaType })
                   }}
                   disabled={item.subpoenaDisabled}
                 />
@@ -147,14 +147,11 @@ const SubpoenaType: FC<SubpoenaTypeProps> = ({
                     item.defendant.subpoenaType === SubpoenaTypeEnum.ARREST
                   }
                   onChange={() => {
-                    updateDefendantState(
-                      {
-                        caseId: workingCase.id,
-                        defendantId: item.defendant.id,
-                        subpoenaType: SubpoenaTypeEnum.ARREST,
-                      },
-                      setWorkingCase,
-                    )
+                    const { id: defendantId } = item.defendant
+                    const { id: caseId } = workingCase
+                    const subpoenaType = SubpoenaTypeEnum.ARREST
+
+                    item.onUpdate({ caseId, defendantId, subpoenaType })
                   }}
                   disabled={item.subpoenaDisabled}
                 />

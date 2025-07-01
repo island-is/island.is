@@ -39,7 +39,7 @@ const Subpoena: FC = () => {
     useContext(FormContext)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
   const [updates, setUpdates] = useState<{
-    defendants: UpdateDefendantInput[]
+    defendants?: Defendant[] | null
     theCase: Case
   }>()
   const [newSubpoenas, setNewSubpoenas] = useState<string[]>([])
@@ -175,15 +175,17 @@ const Subpoena: FC = () => {
       }
 
       return {
-        defendants: prev.defendants.map((item) =>
-          item.defendantId === update.defendantId
-            ? { ...item, ...update }
-            : item,
+        defendants: prev.defendants?.map((item) =>
+          item.id === update.defendantId ? { ...item, ...update } : item,
         ),
         theCase: prev.theCase,
       }
     })
   }
+
+  useEffect(() => {
+    setUpdates({ defendants: workingCase.defendants, theCase: workingCase })
+  }, [workingCase])
 
   useEffect(() => {
     setIsArraignmentScheduled(Boolean(workingCase.arraignmentDate))
@@ -205,6 +207,8 @@ const Subpoena: FC = () => {
 
   const stepIsValid = isSubpoenaStepValid(workingCase, courtDate)
 
+  console.log(updates)
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -217,10 +221,10 @@ const Subpoena: FC = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        {workingCase.defendants && (
+        {updates?.defendants && (
           <Box component="section" marginBottom={5}>
             <SubpoenaType
-              subpoenaItems={workingCase.defendants.map((defendant) => ({
+              subpoenaItems={updates?.defendants?.map((defendant) => ({
                 defendant,
                 alternativeServiceDescriptionDisabled:
                   !isRegisteringAlternativeServiceForDefendant(defendant),
@@ -228,6 +232,7 @@ const Subpoena: FC = () => {
                 toggleNewAlternativeService: isArraignmentScheduled
                   ? toggleNewAlternativeService(defendant)
                   : undefined,
+                onUpdate: handleUpdates,
                 children: isArraignmentScheduled ? (
                   <Button
                     variant="text"
@@ -260,6 +265,11 @@ const Subpoena: FC = () => {
                       setNewSubpoenas((previous) =>
                         previous.filter((v) => v !== defendant.id),
                       )
+
+                      setUpdates({
+                        defendants: workingCase.defendants,
+                        theCase: workingCase,
+                      })
 
                       setIsArraignmentScheduled(true)
                     }}
