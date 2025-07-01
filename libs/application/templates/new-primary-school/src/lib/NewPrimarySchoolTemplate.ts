@@ -119,6 +119,10 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               },
             ],
           },
+          onEntry: defineTemplateApi({
+            action: ApiModuleActions.getCitizenship,
+            externalDataId: 'citizenship',
+          }),
           onExit: defineTemplateApi({
             action: ApiModuleActions.sendApplication,
             triggerEvent: DefaultEvents.SUBMIT,
