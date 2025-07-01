@@ -720,7 +720,7 @@ export class PaymentFlowService {
       )
     }
   }
-  // Not re-throwing, to prevent disruption of a primary flow (e.g., refund)
+
   async searchPaymentFlows(
     payerNationalId?: string,
     search?: string,
@@ -738,7 +738,6 @@ export class PaymentFlowService {
       where.id = search
     }
 
-    // First get the paginated payment flows
     const paginatedResult = await paginate({
       Model: this.paymentFlowModel,
       primaryKeyField: 'id',
@@ -749,17 +748,12 @@ export class PaymentFlowService {
       limit: limit || 10,
       include: [
         {
-          model: PaymentFlowEvent,
-          as: 'events',
-        },
-        {
           model: PaymentFlowCharge,
           as: 'charges',
         },
       ],
     })
 
-    // Then transform the results
     const paymentFlowDtos = await Promise.all(
       paginatedResult.data.map(async (flow) => {
         const paymentDetails = await this.getPaymentFlowChargeDetails(
@@ -780,10 +774,6 @@ export class PaymentFlowService {
             flow.availablePaymentMethods as PaymentMethod[],
           paymentStatus,
           updatedAt,
-          events:
-            (flow as PaymentFlow).events?.map((event: PaymentFlowEvent) =>
-              event.toJSON(),
-            ) ?? [],
         }
       }),
     )
