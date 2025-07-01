@@ -1,4 +1,5 @@
 import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { boolean } from 'zod'
 
 @ObjectType()
 export class SignatureCollectionAreaBase {
@@ -20,7 +21,7 @@ export class SignatureCollectionArea {
   @Field()
   min!: number
 
-  @Field()
+  @Field(() => boolean, { nullable: true })
   isActive?: boolean
 
   @Field({ nullable: true })
