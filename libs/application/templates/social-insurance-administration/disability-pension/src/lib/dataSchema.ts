@@ -5,7 +5,7 @@ import { NO, YES } from '@island.is/application/core'
 import { formatBankInfo, validIBAN, validSWIFT } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { isValidPhoneNumber } from './utils'
 import { disabilityPensionFormMessage } from './messages'
-import { EmploymentEnum, MaritalStatusEnum, ResidenceEnum, ChildrenCountEnum, IcelandicCapabilityEnum } from './constants'
+import { EmploymentEnum, MaritalStatusEnum, ResidenceEnum, ChildrenCountEnum, IcelandicCapabilityEnum, LanguageEnum, EmploymentStatusEnum } from './constants'
 
 
 export const fileSchema = z.object({
@@ -94,7 +94,7 @@ export const dataSchema = z.object({
       ResidenceEnum.other,
     ]),
     other: z.string().optional(),
-  }) .refine(
+  }).refine(
     ({ status, other }) => {
       if (status === ResidenceEnum.other) {
         return other && other.length > 0
@@ -116,6 +116,43 @@ export const dataSchema = z.object({
     IcelandicCapabilityEnum.good,
     IcelandicCapabilityEnum.veryGood,
   ]),
+  backgroundInfoLanguage: z.object({
+    language: z.enum([
+      LanguageEnum.icelandic,
+      LanguageEnum.polish,
+      LanguageEnum.english,
+      LanguageEnum.lithuanian,
+      LanguageEnum.romanian,
+      LanguageEnum.czechSlovak,
+      LanguageEnum.portuguese,
+      LanguageEnum.spanish,
+      LanguageEnum.thai,
+      LanguageEnum.filipino,
+      LanguageEnum.ukrainian,
+      LanguageEnum.arabic,
+      LanguageEnum.other,
+    ]),
+    other: z.string().optional(),
+  }).refine(
+    ({ language, other }) => {
+      if (language === LanguageEnum.other) {
+        return other && other.length > 0
+      }
+      return true
+    },
+  ),
+  backgroundInfoEmployment: z.array(z.enum([
+    EmploymentStatusEnum.neverEmployed,
+    EmploymentStatusEnum.selfEmployed,
+    EmploymentStatusEnum.fullTimeEmployee,
+    EmploymentStatusEnum.partTimeEmployee,
+    EmploymentStatusEnum.inEducation,
+    EmploymentStatusEnum.jobSeekingRegistered,
+    EmploymentStatusEnum.jobSeekingNotRegistered,
+    EmploymentStatusEnum.voluntaryWork,
+    EmploymentStatusEnum.noParticipationHealthDisability,
+  ])).optional(),
+  backgroundInfoEmploymentOther: z.string().optional(),
   paymentInfo: z
     .object({
       bankAccountType: z.enum([

@@ -6,6 +6,8 @@ import { maritalStatusField } from './maritalStatus'
 import { residenceField } from './residence'
 import { childrenField } from './children'
 import { icelandicCapabilityField } from './icelandicCapability'
+import { languageField } from './language'
+import { employmentField } from './employment'
 import { SectionRouteEnum } from '../../../../lib/routes'
 
 export const backgroundInfoSubSection =
@@ -17,5 +19,7 @@ export const backgroundInfoSubSection =
       residenceField,
       childrenField,
       icelandicCapabilityField,
+      languageField,
+      employmentField,
     ],
   })

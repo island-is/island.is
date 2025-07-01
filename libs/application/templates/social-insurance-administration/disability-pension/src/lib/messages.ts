@@ -581,6 +581,136 @@ export const disabilityPensionFormMessage: MessageDir = {
       defaultMessage: 'Mjög gott',
       description: 'Very good',
     },
+    languageTitle: {
+      id: 'dp.application:selfEvaluation.questions.language.title',
+      defaultMessage: 'Hvert er móðurmál þitt / þitt aðaltungumál?',
+      description: 'What is your native language / main language?',
+    },
+    languageIcelandic: {
+      id: 'dp.application:selfEvaluation.questions.language.icelandic',
+      defaultMessage: 'Íslenska',
+      description: 'Icelandic',
+    },
+    languagePolish: {
+      id: 'dp.application:selfEvaluation.questions.language.polish',
+      defaultMessage: 'Pólska',
+      description: 'Polish',
+    },
+    languageEnglish: {
+      id: 'dp.application:selfEvaluation.questions.language.english',
+      defaultMessage: 'Enska',
+      description: 'English',
+    },
+    languageLithuanian: {
+      id: 'dp.application:selfEvaluation.questions.language.lithuanian',
+      defaultMessage: 'Litháenska',
+      description: 'Lithuanian',
+    },
+    languageRomanian: {
+      id: 'dp.application:selfEvaluation.questions.language.romanian',
+      defaultMessage: 'Rúmenska',
+      description: 'Romanian',
+    },
+    languageCzechSlovak: {
+      id: 'dp.application:selfEvaluation.questions.language.czechSlovak',
+      defaultMessage: 'Tékkneska / Slóvakíska',
+      description: 'Czech / Slovak',
+    },
+    languagePortuguese: {
+      id: 'dp.application:selfEvaluation.questions.language.portuguese',
+      defaultMessage: 'Portúgalska',
+      description: 'Portuguese',
+    },
+    languageSpanish: {
+      id: 'dp.application:selfEvaluation.questions.language.spanish',
+      defaultMessage: 'Spænska',
+      description: 'Spanish',
+    },
+    languageThai: {
+      id: 'dp.application:selfEvaluation.questions.language.thai',
+      defaultMessage: 'Tælenska',
+      description: 'Thai',
+    },
+    languageFilipino: {
+      id: 'dp.application:selfEvaluation.questions.language.filipino',
+      defaultMessage: 'Filippseyska (Tagalog)',
+      description: 'Filipino (Tagalog)',
+    },
+    languageUkrainian: {
+      id: 'dp.application:selfEvaluation.questions.language.ukrainian',
+      defaultMessage: 'Úkraínska',
+      description: 'Ukrainian',
+    },
+    languageArabic: {
+      id: 'dp.application:selfEvaluation.questions.language.arabic',
+      defaultMessage: 'Arabíska',
+      description: 'Arabic',
+    },
+    languageOther: {
+      id: 'dp.application:selfEvaluation.questions.language.other',
+      defaultMessage: 'Annað',
+      description: 'Other',
+    },
+    languageOtherSpecify: {
+      id: 'dp.application:selfEvaluation.questions.language.otherSpecify',
+      defaultMessage: 'Tilgreindu hvaða tungumál',
+      description: 'Specify which language',
+    },
+    employmentStatusTitle: {
+      id: 'dp.application:selfEvaluation.questions.employmentStatus.title',
+      defaultMessage: 'Hver er staða þín á vinnumarkaði?',
+      description: 'What is your status in the job market?',
+    },
+    employmentStatusNeverEmployed: {
+      id: 'dp.application:selfEvaluation.questions.employmentStatus.neverEmployed',
+      defaultMessage: 'Hef aldrei verið í launuðu starfi',
+      description: 'Have never been in paid employment',
+    },
+    employmentStatusSelfEmployed: {
+      id: 'dp.application:selfEvaluation.questions.employmentStatus.selfEmployed',
+      defaultMessage: 'Sjálfstætt starfandi',
+      description: 'Self-employed',
+    },
+    employmentStatusFullTimeEmployee: {
+      id: 'dp.application:selfEvaluation.questions.employmentStatus.fullTimeEmployee',
+      defaultMessage: 'Launþegi í fullu starfi',
+      description: 'Full-time employee',
+    },
+    employmentStatusPartTimeEmployee: {
+      id: 'dp.application:selfEvaluation.questions.employmentStatus.partTimeEmployee',
+      defaultMessage: 'Launþegi í hlutastarfi',
+      description: 'Part-time employee',
+    },
+    employmentStatusInEducation: {
+      id: 'dp.application:selfEvaluation.questions.employmentStatus.inEducation',
+      defaultMessage: 'Er í námi',
+      description: 'In education',
+    },
+    employmentStatusJobSeekingRegistered: {
+      id: 'dp.application:selfEvaluation.questions.employmentStatus.jobSeekingRegistered',
+      defaultMessage: 'Í atvinnuleit (á skrá hjá VMST)',
+      description: 'Job seeking (registered with VMST)',
+    },
+    employmentStatusJobSeekingNotRegistered: {
+      id: 'dp.application:selfEvaluation.questions.employmentStatus.jobSeekingNotRegistered',
+      defaultMessage: 'Í atvinnuleit (ekki á skrá hjá VMST)',
+      description: 'Job seeking (not registered with VMST)',
+    },
+    employmentStatusVoluntaryWork: {
+      id: 'dp.application:selfEvaluation.questions.employmentStatus.voluntaryWork',
+      defaultMessage: 'Í sjálfboðavinnu/vinnuprófun',
+      description: 'In voluntary work/work trial',
+    },
+    employmentStatusNoParticipationHealthDisability: {
+      id: 'dp.application:selfEvaluation.questions.employmentStatus.noParticipationHealthDisability',
+      defaultMessage: 'Engin þátttaka á vinnumarkaði vegna heilsubrests eða fötlunar',
+      description: 'No participation in job market due to health issues or disability',
+    },
+    employmentStatusOther: {
+      id: 'dp.application:selfEvaluation.questions.employmentStatus.other',
+      defaultMessage: 'Annað',
+      description: 'Other',
+    },
   }),
   errors: defineMessages({
     emptyForeignResidence: {

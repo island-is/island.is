@@ -37,3 +37,31 @@ export enum IcelandicCapabilityEnum {
   good = 'GOOD',
   veryGood = 'VERY_GOOD',
 }
+
+export enum LanguageEnum {
+  icelandic = 'ICELANDIC',
+  polish = 'POLISH',
+  english = 'ENGLISH',
+  lithuanian = 'LITHUANIAN',
+  romanian = 'ROMANIAN',
+  czechSlovak = 'CZECH_SLOVAK',
+  portuguese = 'PORTUGUESE',
+  spanish = 'SPANISH',
+  thai = 'THAI',
+  filipino = 'FILIPINO',
+  ukrainian = 'UKRAINIAN',
+  arabic = 'ARABIC',
+  other = 'OTHER',
+}
+
+export enum EmploymentStatusEnum {
+  neverEmployed = 'NEVER_EMPLOYED',
+  selfEmployed = 'SELF_EMPLOYED',
+  fullTimeEmployee = 'FULL_TIME_EMPLOYEE',
+  partTimeEmployee = 'PART_TIME_EMPLOYEE',
+  inEducation = 'IN_EDUCATION',
+  jobSeekingRegistered = 'JOB_SEEKING_REGISTERED',
+  jobSeekingNotRegistered = 'JOB_SEEKING_NOT_REGISTERED',
+  voluntaryWork = 'VOLUNTARY_WORK',
+  noParticipationHealthDisability = 'NO_PARTICIPATION_HEALTH_DISABILITY',
+}
