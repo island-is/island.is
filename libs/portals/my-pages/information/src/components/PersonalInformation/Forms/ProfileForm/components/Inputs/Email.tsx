@@ -8,7 +8,7 @@ import { InputController } from '@island.is/shared/form-fields'
 import {
   useVerifyEmail,
   useUpdateOrCreateUserProfile,
-  useDeleteIslykillValue,
+  useDeleteEmailOrPhoneValue,
   useUserProfile,
 } from '@island.is/portals/my-pages/graphql'
 import { FormButton } from '../FormButton'
@@ -56,8 +56,8 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
 
   const { updateOrCreateUserProfile, loading: saveLoading } =
     useUpdateOrCreateUserProfile()
-  const { deleteIslykillValue, loading: deleteLoading } =
-    useDeleteIslykillValue()
+  const { deleteEmailOrPhoneValue, loading: deleteLoading } =
+    useDeleteEmailOrPhoneValue()
   const { formatMessage } = useLocale()
   const {
     createEmailVerification,
@@ -193,7 +193,7 @@ export const InputEmail: FC<React.PropsWithChildren<Props>> = ({
     })
 
     try {
-      await deleteIslykillValue({
+      await deleteEmailOrPhoneValue({
         email: true,
       })
       await refetch()

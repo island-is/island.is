@@ -1,62 +1,72 @@
-import { UserProfileScope } from '@island.is/auth/scopes'
-import { Scopes, ScopesGuard, IdsAuthGuard } from '@island.is/auth-nest-tools'
-import { Controller, Get, Inject, Param, UseGuards } from '@nestjs/common'
+import { ApiSecurity, ApiTags } from '@nestjs/swagger'
 import {
-  ApiOkResponse,
-  ApiOperation,
-  ApiSecurity,
-  ApiTags,
-} from '@nestjs/swagger'
+  Controller,
+  Get,
+  UseGuards,
+  Headers,
+  Delete,
+  Param,
+} from '@nestjs/common'
 
+import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
+import { UserProfileScope } from '@island.is/auth/scopes'
+import { Audit } from '@island.is/nest/audit'
+import { Documentation } from '@island.is/nest/swagger'
+
+import { UserTokenService } from './userToken.service'
 import { UserDeviceTokenDto } from './dto/userDeviceToken.dto'
-import { UserProfileService } from './userProfile.service'
-import { UserProfile } from './userProfile.model'
-import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
+
+const namespace = '@island.is/user-profile/v2/userTokens'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
-@ApiTags('User Profile')
-@Controller()
+@Scopes(UserProfileScope.admin)
+@ApiTags('v2/users')
+@ApiSecurity('oauth2', [UserProfileScope.admin])
+@Controller({
+  path: 'users/.nationalId/device-tokens',
+  version: ['2'],
+})
+@Audit({ namespace })
 export class UserTokenController {
-  constructor(
-    @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
-    private readonly userProfileService: UserProfileService,
-  ) {}
-  @ApiOperation({
-    summary: 'admin access - returns a list of user device tokens',
+  constructor(private readonly userTokenService: UserTokenService) {}
+
+  @Get()
+  @Documentation({
+    description: 'Get user device tokens for given nationalId.',
+    request: {
+      header: {
+        'X-Param-National-Id': {
+          required: true,
+          description: 'National id of the owner of the device tokens',
+        },
+      },
+    },
+    response: { status: 200, type: [UserDeviceTokenDto] },
   })
-  @ApiOkResponse({ type: [UserDeviceTokenDto] })
-  @Scopes(UserProfileScope.admin)
-  @ApiSecurity('oauth2', [UserProfileScope.admin])
-  @Get('userProfile/:nationalId/device-tokens')
-  async getDeviceTokens(
-    @Param('nationalId')
-    nationalId: string,
+  @Audit<UserDeviceTokenDto[]>({
+    resources: (profile) => profile.map((p) => p.id),
+  })
+  findUserDeviceToken(
+    @Headers('X-Param-National-Id') nationalId: string,
   ): Promise<UserDeviceTokenDto[]> {
-    return await this.userProfileService.getDeviceTokens(nationalId)
+    return this.userTokenService.findAllUserTokensByNationalId(nationalId)
   }
 
-  @ApiOperation({
-    summary: 'admin access - returns user profile settings',
+  @Delete(':deviceToken')
+  @Documentation({
+    description: 'Delete a user device token.',
+    response: { status: 204 },
   })
-  @Scopes(UserProfileScope.admin)
-  @ApiSecurity('oauth2', [UserProfileScope.admin])
-  @Get('userProfile/:nationalId/notification-settings')
-  @ApiOkResponse({ type: UserProfile })
-  async findOneByNationalId(
-    @Param('nationalId')
-    nationalId: string,
-  ): Promise<UserProfile | null> {
-    const userProfile = await this.userProfileService.findByNationalId(
+  @Audit({
+    resources: (deviceToken: string) => deviceToken,
+  })
+  async deleteUserDeviceToken(
+    @Headers('X-Param-National-Id') nationalId: string,
+    @Param('deviceToken') deviceToken: string,
+  ): Promise<void> {
+    await this.userTokenService.deleteUserTokenByNationalId(
       nationalId,
+      deviceToken,
     )
-    if (!userProfile) {
-      this.logger.info(
-        `A user profile with nationalId ${nationalId} does not exist`,
-      )
-    } else {
-      this.logger.info(`Found user profile with nationalId ${nationalId}`)
-    }
-    return userProfile
   }
 }

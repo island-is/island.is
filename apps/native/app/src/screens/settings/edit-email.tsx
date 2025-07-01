@@ -22,6 +22,7 @@ import { createNavigationOptionHooks } from '../../hooks/create-navigation-optio
 import { navigateTo } from '../../lib/deep-linking'
 import { testIDs } from '../../utils/test-ids'
 
+
 const { getNavigationOptions, useNavigationOptions } =
   createNavigationOptionHooks(() => ({
     topBar: {
