@@ -116,6 +116,7 @@ const getStatus = ({
 
 export const mapCollection = (
   collection: MedmaelasofnunExtendedDTO,
+  activeAreas: string[],
 ): Collection => {
   const {
     id,
@@ -162,7 +163,13 @@ export const mapCollection = (
     candidates: candidates
       ? candidates.map((candidate) => mapCandidate(candidate, governmentalArea))
       : [],
-    areas: areas.map((area) => mapArea(area, id.toString())),
+    areas: areas.map((area) =>
+      mapArea(
+        area,
+        activeAreas.some((a) => a === area.id?.toString()),
+        id.toString(),
+      ),
+    ),
     processed,
     status,
     collectionType,

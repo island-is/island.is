@@ -82,6 +82,23 @@ describe('MyService', () => {
     medmaeliApi = module.get<MedmaeliApi>(MedmaeliApi)
     frambodApi = module.get<FrambodApi>(FrambodApi)
     kosningApi = module.get<KosningApi>(KosningApi)
+
+    jest.spyOn(kosningApi, 'kosningIDSvaediSofnunGet').mockReturnValue(
+      Promise.resolve([
+        {
+          id: 123,
+          nafn: 'Svæði',
+          svaediTegundLysing: 'Lýsing',
+          nr: '1',
+        },
+        {
+          id: 321,
+          nafn: 'Svæði',
+          svaediTegundLysing: 'Lýsing',
+          nr: '1',
+        },
+      ]),
+    )
   })
 
   it('should be defined', () => {

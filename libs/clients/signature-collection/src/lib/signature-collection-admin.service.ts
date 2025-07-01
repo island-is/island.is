@@ -158,6 +158,7 @@ export class SignatureCollectionAdminClientService
       this.getApiWithAuth(this.listsApi, auth),
       this.getApiWithAuth(this.candidateApi, auth),
       this.getApiWithAuth(this.collectionsApi, auth),
+      this.getApiWithAuth(this.electionsApi, auth),
     )
   }
 
@@ -282,7 +283,14 @@ export class SignatureCollectionAdminClientService
 
     const ownedLists =
       user.medmaelalistar && candidate
-        ? user.medmaelalistar?.map((list) => mapListBase(list))
+        ? user.medmaelalistar?.map((list) =>
+            mapListBase(
+              list,
+              collection.areas.some(
+                (area) => area.id === list.svaedi?.id?.toString(),
+              ),
+            ),
+          )
         : []
 
     const { success: canCreate, reasons: canCreateInfo } =
