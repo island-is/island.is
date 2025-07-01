@@ -33,7 +33,7 @@ export const FormProvider: React.FC<{
 }> = ({ children, formBuilder }) => {
   const [focus, setFocus] = useState<string>('')
   const [inSettings, setInSettings] = useState(
-    formBuilder?.form?.name?.is === 'Nýtt',
+    formBuilder?.form?.name?.is === '',
   )
   const [inListBuilder, setInListBuilder] = useState<boolean>(false)
   const [selectStatus, setSelectStatus] = useState<NavbarSelectStatus>(
