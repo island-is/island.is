@@ -62,7 +62,7 @@ export const CurrencyField = ({ item, dispatch }: Props) => {
                   })
                 }
               }}
-              onBlur={(e) => {
+              onBlur={() => {
                 field.onBlur()
               }}
               required={item?.isRequired ?? false}

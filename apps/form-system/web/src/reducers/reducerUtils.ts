@@ -262,13 +262,6 @@ export const setFieldValue = (
     ...screen,
     fields: updatedFields,
   }
-  const updatedState = {
-    ...state,
-    currentScreen: {
-      ...currentScreen,
-      data: updatedScreen,
-    },
-  }
 
   const updatedSections: FormSystemSection[] = state.sections.map((section) => {
     if (section.screens) {
