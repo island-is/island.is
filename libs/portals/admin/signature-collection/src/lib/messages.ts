@@ -481,8 +481,7 @@ export const m = defineMessages({
   },
   confirmListReviewActionDescription: {
     id: 'admin-portal.signature-collection:confirmListReviewActionDescription',
-    defaultMessage:
-      'Þegar búið er að fara yfir meðmæli er hakað við hér.',
+    defaultMessage: 'Þegar búið er að fara yfir meðmæli er hakað við hér.',
     description: '',
   },
   confirmListReviewedToggleBack: {
@@ -671,7 +670,8 @@ export const m = defineMessages({
   },
   startCollectionDescription: {
     id: 'admin-portal.signature-collection:startCollectionDescription',
-    defaultMessage: 'Opnaðu fyrir meðmælasöfnun ef yfirkjörstjórn sveitarfélagsins hefur tekið þá ákvörðun að nýta sér rafræna meðmælakerfið.',
+    defaultMessage:
+      'Opnaðu fyrir meðmælasöfnun ef yfirkjörstjórn sveitarfélagsins hefur tekið þá ákvörðun að nýta sér rafræna meðmælakerfið.',
     description: '',
   },
   startCollectionDescriptionInBox: {
