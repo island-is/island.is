@@ -49,7 +49,13 @@ export const signatureCollectionModule: PortalModule = {
     {
       name: m.municipalCollectionTitle,
       path: SignatureCollectionPaths.MunicipalRoot,
-      element: <AllMunicipalities />,
+      element: (
+        <AllMunicipalities
+          isAdmin={props.userInfo.scopes.some((scope) =>
+            allowedScopesAdmin.includes(scope),
+          )}
+        />
+      ),
       loader: municipalListsLoader(props),
       enabled: props.userInfo.scopes.some((scope) =>
         allowedScopesAdminAndMunicipality.includes(scope),

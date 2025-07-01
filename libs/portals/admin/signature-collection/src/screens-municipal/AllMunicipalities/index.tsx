@@ -8,6 +8,10 @@ import {
   Stack,
   Breadcrumbs,
   Divider,
+  DialogPrompt,
+  Tag,
+  Icon,
+  toast,
 } from '@island.is/island-ui/core'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import { useLocale } from '@island.is/localization'
@@ -21,11 +25,36 @@ import { SignatureCollectionList } from '@island.is/api/schema'
 import FindSignature from '../../shared-components/findSignature'
 import EmptyState from '../../shared-components/emptyState'
 import StartAreaCollection from './startCollection'
+import { useStartCollectionMutation } from './startCollection/startCollection.generated'
 
-const AllMunicipalities = () => {
+const AllMunicipalities = ({ isAdmin }: { isAdmin: boolean }) => {
   const { allLists, collection } = useLoaderData() as ListsLoaderReturn
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
+
+  const [startCollectionMutation] = useStartCollectionMutation()
+
+  const onStartCollection = (areaId: string) => {
+    startCollectionMutation({
+      variables: {
+        input: {
+          areaId: areaId,
+        },
+      },
+      onCompleted: (response) => {
+        if (
+          response.signatureCollectionAdminStartMunicipalityCollection.success
+        )
+          toast.success(formatMessage(m.openMunicipalCollectionSuccess))
+        else {
+          toast.error(
+            response.signatureCollectionAdminStartMunicipalityCollection
+              .reasons?.[0] ?? formatMessage(m.openMunicipalCollectionError),
+          )
+        }
+      },
+    })
+  }
 
   const areaCounts: Record<string, number> = {}
   const municipalityMap = new Map<string, SignatureCollectionList>()
@@ -42,7 +71,9 @@ const AllMunicipalities = () => {
     }
   })
 
-  const municipalityLists = Array.from(municipalityMap.values())
+  const municipalities = Array.from(municipalityMap.values()).sort((a, b) =>
+    a.area.name.localeCompare(b.area.name),
+  )
 
   return (
     <GridContainer>
@@ -80,14 +111,14 @@ const AllMunicipalities = () => {
           />
           <Divider />
           <Box marginTop={9} />
-          {municipalityLists.length > 0 ? (
+          {municipalities.length > 0 ? (
             <Box>
               <FindSignature collectionId={collection.id} />
               <Box marginBottom={3} display="flex" justifyContent="flexEnd">
                 <Text variant="eyebrow">
                   {formatMessage(m.totalListResults) +
                     ': ' +
-                    municipalityLists.length}
+                    municipalities.length}
                 </Text>
               </Box>
             </Box>
@@ -97,19 +128,23 @@ const AllMunicipalities = () => {
               description={formatMessage(m.noListsDescription)}
             />
           )}
-          {/* Todo: for municipalities, not admin */}
-          <StartAreaCollection />
+          {/* For municipalities to start their collection if its not already active */}
+          {!isAdmin &&
+            municipalities.length > 0 &&
+            !municipalities[0]?.area?.isActive && (
+              <StartAreaCollection areaId={municipalities[0]?.area.id} />
+            )}
           <Stack space={3}>
-            {municipalityLists.map((list) => {
+            {municipalities.map((municipality) => {
               return (
                 <ActionCard
-                  key={list.area.id}
-                  heading={list.area.name}
+                  key={municipality.area.id}
+                  heading={municipality.area.name}
                   eyebrow={formatMessage(m.municipality)}
                   text={
                     formatMessage(m.totalListsPerMunicipality) +
-                    (areaCounts[list.area.name]
-                      ? areaCounts[list.area.name].toString()
+                    (areaCounts[municipality.area.name]
+                      ? areaCounts[municipality.area.name].toString()
                       : '0')
                   }
                   cta={{
@@ -119,17 +154,47 @@ const AllMunicipalities = () => {
                       navigate(
                         SignatureCollectionPaths.SingleMunicipality.replace(
                           ':municipality',
-                          list.area.name,
+                          municipality.area.name,
                         ),
                       )
                     },
                   }}
-                  /* Todo: add for admin users
-                  tag={{
-                    label: 'Tag',
-                    variant: 'blue',
-                    renderTag: () => <StartAreaCollection />,
-                  }}*/
+                  tag={
+                    isAdmin && !municipality.area.isActive
+                      ? {
+                          label: 'Open collection',
+                          renderTag: () => (
+                            <DialogPrompt
+                              baseId="open_collection_dialog"
+                              title={
+                                formatMessage(m.openMunicipalCollection) +
+                                ' - ' +
+                                municipality.area.name
+                              }
+                              description=""
+                              ariaLabel="open_collection"
+                              disclosureElement={
+                                <Tag outlined variant="blue">
+                                  <Box display="flex" alignItems="center">
+                                    <Icon
+                                      icon="lockOpened"
+                                      size="small"
+                                      type="outline"
+                                    />
+                                  </Box>
+                                </Tag>
+                              }
+                              onConfirm={() => {
+                                onStartCollection(municipality.area.id)
+                              }}
+                              buttonTextConfirm={formatMessage(
+                                m.confirmOpenMunicipalCollectionButton,
+                              )}
+                            />
+                          ),
+                        }
+                      : undefined
+                  }
                 />
               )
             })}

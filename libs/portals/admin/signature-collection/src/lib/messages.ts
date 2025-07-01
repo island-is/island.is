@@ -189,9 +189,19 @@ export const m = defineMessages({
       'Opnaðu fyrir meðmælasöfnun ef yfirkjörstjórn sveitarfélagsins hefur tekið þá ákvörðun að nýta sér rafræna meðmælakerfið.',
     description: '',
   },
-  confirmOpenMunicipalCollection: {
-    id: 'admin-portal.signature-collection:confirmOpenMunicipalCollection',
-    defaultMessage: 'Opna fyrir meðmælasöfnun',
+  confirmOpenMunicipalCollectionButton: {
+    id: 'admin-portal.signature-collection:confirmOpenMunicipalCollectionButton',
+    defaultMessage: 'Opna söfnun',
+    description: '',
+  },
+  openMunicipalCollectionSuccess: {
+    id: 'admin-portal.signature-collection:openMunicipalCollectionSuccess',
+    defaultMessage: 'Tókst að opna söfnun',
+    description: '',
+  },
+  openMunicipalCollectionError: {
+    id: 'admin-portal.signature-collection:openMunicipalCollectionError',
+    defaultMessage: 'Ekki tókst að opna söfnun',
     description: '',
   },
   noLists: {
