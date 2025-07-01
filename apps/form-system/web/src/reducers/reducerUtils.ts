@@ -231,6 +231,7 @@ export const setFieldValue = (
   state: ApplicationState,
   fieldProperty: string,
   fieldId: string,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   value: any,
 ): ApplicationState => {
   const { currentScreen } = state

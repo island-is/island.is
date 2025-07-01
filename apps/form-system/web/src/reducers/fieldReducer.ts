@@ -1,6 +1,5 @@
 import { Action, ApplicationState } from '@island.is/form-system/ui'
 import { setError, setFieldValue } from './reducerUtils'
-import { reduce } from 'lodash'
 
 export const fieldReducer = (
   state: ApplicationState,

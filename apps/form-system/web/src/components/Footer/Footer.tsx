@@ -6,7 +6,6 @@ import { webMessages } from '@island.is/form-system/ui'
 import { SAVE_SCREEN } from '@island.is/form-system/graphql'
 import { useMutation } from '@apollo/client'
 import { useFormContext } from 'react-hook-form'
-import { useEffect, useState } from 'react'
 
 interface Props {
   externalDataAgreement: boolean
@@ -15,7 +14,7 @@ interface Props {
 export const Footer = ({ externalDataAgreement }: Props) => {
   const { state, dispatch } = useApplicationContext()
   const { formatMessage } = useIntl()
-  const { trigger, formState } = useFormContext()
+  const { trigger } = useFormContext()
 
   const validate = async () => {
     const valid = await trigger()

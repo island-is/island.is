@@ -19,8 +19,6 @@ import { FormSystemField } from '@island.is/api/schema'
 import { Box } from '@island.is/island-ui/core'
 import { useApplicationContext } from '../../../../context/ApplicationProvider'
 import { useLocale } from '@island.is/localization'
-
-import { useCallback } from 'react'
 import { useFormContext } from 'react-hook-form'
 
 interface Props {
