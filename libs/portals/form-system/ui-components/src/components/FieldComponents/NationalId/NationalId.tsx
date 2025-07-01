@@ -7,9 +7,10 @@ import {
 import { FormSystemField } from '@island.is/api/schema'
 import { useIntl } from 'react-intl'
 import { m } from '../../../lib/messages'
-import { Dispatch, useState } from 'react'
+import { Dispatch } from 'react'
 import { Action } from '../../../lib'
 import { getValue } from '../../../lib/getValue'
+import { useFormContext, Controller } from 'react-hook-form'
 
 interface Props {
   item: FormSystemField
@@ -17,53 +18,64 @@ interface Props {
   hasError?: boolean
 }
 
+const nationalIdRegex = /^\d{6}-\d{4}$/
+
 export const NationalId = ({ item, dispatch, hasError }: Props) => {
   const { formatMessage } = useIntl()
-  const [nationalId, setNationalId] = useState<string>(
-    getValue(item, 'nationalId'),
-  )
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [name, setName] = useState<string>(getValue(item, 'name'))
-
-  const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
-  ) => {
-    const raw = e.target.value
-    let digits = raw.replace(/\D/g, '')
-
-    // Last character must be a digit, hyphen or backspace
-    if (raw.length > 0 && !/\d$/.test(raw) && !raw.endsWith('-')) return
-
-    if (digits.length > 10) {
-      digits = digits.slice(0, 10)
-    }
-
-    const value =
-      digits.length > 6 ? digits.slice(0, 6) + '-' + digits.slice(6) : digits
-
-    setNationalId(value)
-    if (!dispatch) return
-    dispatch({
-      type: 'SET_NATIONAL_ID',
-      payload: {
-        id: item.id,
-        value: e.target.value,
-      },
-    })
-  }
+  const { control } = useFormContext()
+  const name = getValue(item, 'name')
 
   return (
     <Stack space={2}>
       <Row>
         <Column span="5/10">
-          <Input
-            label={formatMessage(m.nationalId)}
-            name="kennitala"
-            required={item?.isRequired ?? false}
-            backgroundColor="blue"
-            value={nationalId}
-            onChange={handleChange}
-            hasError={!!hasError}
+          <Controller
+            name={item.id}
+            control={control}
+            defaultValue={getValue(item, 'nationalId') ?? ''}
+            rules={{
+              required: {
+                value: item?.isRequired ?? false,
+                message: formatMessage(m.required),
+              },
+              pattern: {
+                value: nationalIdRegex,
+                message: formatMessage(m.InvalidNationalId),
+              },
+            }}
+            render={({ field, fieldState }) => (
+              <Input
+                label={formatMessage(m.nationalId)}
+                name="kennitala"
+                required={item?.isRequired ?? false}
+                backgroundColor="blue"
+                value={field.value}
+                onChange={(e) => {
+                  const raw = e.target.value
+                  let digits = raw.replace(/\D/g, '')
+                  if (digits.length > 10) {
+                    digits = digits.slice(0, 10)
+                  }
+                  const value =
+                    digits.length > 6
+                      ? digits.slice(0, 6) + '-' + digits.slice(6)
+                      : digits
+                  field.onChange(value)
+                  if (dispatch) {
+                    dispatch({
+                      type: 'SET_NATIONAL_ID',
+                      payload: {
+                        id: item.id,
+                        value: value,
+                      },
+                    })
+                  }
+                }}
+                onBlur={field.onBlur}
+                hasError={!!fieldState.error || !!hasError}
+                errorMessage={fieldState.error?.message}
+              />
+            )}
           />
         </Column>
       </Row>

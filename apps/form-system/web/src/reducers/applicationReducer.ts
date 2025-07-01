@@ -124,7 +124,6 @@ export const applicationReducer = (
         nextSectionIndex,
         currentScreenIndex,
       } = getIncrementVariables(state)
-
       if (hasScreens(currentSectionData)) {
         return incrementWithScreens(
           state,
@@ -134,7 +133,6 @@ export const applicationReducer = (
           action.payload.submitScreen,
         )
       }
-
       return incrementWithoutScreens(state, nextSectionIndex)
     }
     case 'DECREMENT': {

@@ -8,6 +8,7 @@ import {
 import { Action, ApplicationState } from '@island.is/form-system/ui'
 import { Form } from '../components/Form/Form'
 import { fieldReducer } from '../reducers/fieldReducer'
+import { useForm, FormProvider } from 'react-hook-form'
 
 interface ApplicationContextProvider {
   state: ApplicationState
@@ -38,12 +39,11 @@ export const ApplicationProvider: React.FC<{
     },
     initialReducer,
   )
-
+  const methods = useForm({ mode: 'onBlur' })
   const contextValue = useMemo(() => ({ state, dispatch }), [state])
-
   return (
     <ApplicationContext.Provider value={contextValue}>
-      <Form />
+      <FormProvider {...methods}>{state.application && <Form />}</FormProvider>
     </ApplicationContext.Provider>
   )
 }

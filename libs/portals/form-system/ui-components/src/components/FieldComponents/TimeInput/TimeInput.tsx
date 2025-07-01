@@ -5,12 +5,59 @@ import {
   Select,
   Box,
 } from '@island.is/island-ui/core'
+import { useFormContext, Controller } from 'react-hook-form'
+import { Dispatch, useEffect } from 'react'
+import { Action } from '../../../lib'
+import { getValue } from '../../../lib/getValue'
+import { m } from '../../../lib/messages'
+import { useIntl } from 'react-intl'
 
 interface Props {
   item: FormSystemField
+  dispatch?: Dispatch<Action>
 }
 
-export const TimeInput = ({ item }: Props) => {
+export const TimeInput = ({ item, dispatch }: Props) => {
+  const { control, setValue, watch } = useFormContext()
+  const { formatMessage } = useIntl()
+  // If value from backend is a string like "13:45", split and set fields
+  useEffect(() => {
+    if (
+      typeof item.values === 'string' &&
+      (item.values as string).includes(':')
+    ) {
+      const [h, m] = (item.values as string).split(':')
+      setValue(`${item.id}.hour`, { label: h, value: h })
+      setValue(`${item.id}.minute`, { label: m, value: m })
+    }
+  }, [item.values, item.id, setValue])
+
+  // Watch hour and minute fields for this item
+  const hour = watch(`${item.id}.hour`)
+  const minute = watch(`${item.id}.minute`)
+
+  // Dispatch combined time string when both are set
+  useEffect(() => {
+    if (
+      dispatch &&
+      hour &&
+      minute &&
+      hour.value !== undefined &&
+      minute.value !== undefined &&
+      hour.value !== '' &&
+      minute.value !== ''
+    ) {
+      const timeString = `${hour.value}:${minute.value}`
+      dispatch({
+        type: 'SET_TIME',
+        payload: {
+          id: item.id,
+          value: timeString,
+        },
+      })
+    }
+  }, [dispatch, item.id, hour, minute])
+
   // 0: Minute
   // 1: Hourly
   // 2: Half hour
@@ -32,35 +79,73 @@ export const TimeInput = ({ item }: Props) => {
         return createOptions(minuteList)
     }
   }
+  const timeValue = getValue(item, 'time')
+  const [hourValue, minuteValue] = timeValue
+    ? timeValue.split(':')
+    : [undefined, undefined]
 
   return (
     <Row marginTop={2}>
-      <Column span="2/10">
-        <Select
-          label="Klukkustund"
-          name="timeSelectHour"
-          defaultValue={{ label: '00', value: '00' }}
-          options={hourList.map((t) => {
-            return {
-              label: t,
-              value: t,
-            }
-          })}
-          size="xs"
-          backgroundColor="blue"
+      <Column span="3/10">
+        <Controller
+          name={`${item.id}.hour`}
+          control={control}
+          defaultValue={
+            hourValue ? { label: hourValue, value: hourValue } : undefined
+          }
+          rules={{
+            required: {
+              value: item?.isRequired ?? false,
+              message: formatMessage(m.pickHour),
+            },
+          }}
+          render={({ field, fieldState }) => (
+            <Select
+              label={formatMessage(m.hourInput)}
+              name={field.name}
+              value={field.value}
+              options={hourList.map((t) => ({
+                label: t,
+                value: t,
+              }))}
+              size="xs"
+              backgroundColor="blue"
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+              errorMessage={fieldState.error?.message}
+            />
+          )}
         />
       </Column>
       <Box style={{ lineHeight: '90px' }}>:</Box>
-      <Column span="2/10">
-        <Select
-          label="Mínútur"
-          name="timeSelectMinute"
-          defaultValue={{ label: '00', value: '00' }}
-          options={chosenMinuteList()}
-          size="xs"
-          isSearchable
-          isDisabled={item?.fieldSettings?.timeInterval === '1'}
-          backgroundColor="blue"
+      <Column span="3/10">
+        <Controller
+          name={`${item.id}.minute`}
+          control={control}
+          defaultValue={
+            minuteValue ? { label: minuteValue, value: minuteValue } : undefined
+          }
+          rules={{
+            required: {
+              value: item?.isRequired ?? false,
+              message: formatMessage(m.pickMinute),
+            },
+          }}
+          render={({ field, fieldState }) => (
+            <Select
+              label={formatMessage(m.minuteInput)}
+              name={field.name}
+              value={field.value}
+              options={chosenMinuteList()}
+              size="xs"
+              isSearchable
+              isDisabled={item?.fieldSettings?.timeInterval === '1'}
+              backgroundColor="blue"
+              onChange={field.onChange}
+              onBlur={field.onBlur}
+              errorMessage={fieldState.error?.message}
+            />
+          )}
         />
       </Column>
     </Row>
