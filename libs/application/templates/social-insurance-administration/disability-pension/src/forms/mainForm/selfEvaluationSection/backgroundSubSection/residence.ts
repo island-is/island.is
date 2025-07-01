@@ -44,7 +44,7 @@ export const residenceField =
       }),
       buildTextField({
         id: `${SectionRouteEnum.BACKGROUND_INFO_RESIDENCE}.other`,
-        title: disabilityPensionFormMessage.questions.other,
+        title: disabilityPensionFormMessage.questions.residenceOther,
         variant: 'textarea',
         condition: (formValue) => {
           const residenceStatus = getValueViaPath<ResidenceEnum>(

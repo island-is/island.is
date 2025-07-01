@@ -5,17 +5,35 @@ import {
   buildTitleField,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../lib/messages'
+import { SectionRouteEnum } from '../../../lib/routes'
+import { FormTextWithLocale } from '@island.is/application/types'
 
-const incomePlanInstructionsRoute = 'incomePlanInstruction'
+const bullets = [
+  'bulletOne',
+  'bulletTwo',
+  'bulletThree',
+  'bulletFour',
+  'bulletFive',
+  'bulletSix',
+] as const;
+
+const bulletMessage: Record<(typeof bullets)[number], FormTextWithLocale> = {
+  bulletOne: `${SectionRouteEnum.INCOME_PLAN_INSTRUCTION}.instructionsDescription`,
+  bulletTwo: disabilityPensionFormMessage.incomePlan.instructionBullet1,
+  bulletThree: disabilityPensionFormMessage.incomePlan.instructionBullet2,
+  bulletFour: disabilityPensionFormMessage.incomePlan.instructionBullet3,
+  bulletFive: disabilityPensionFormMessage.incomePlan.instructionBullet4,
+  bulletSix: disabilityPensionFormMessage.incomePlan.instructionBullet5,
+}
 
 export const incomePlanInstructionsSubSection =
     buildSubSection({
-      id: incomePlanInstructionsRoute,
+      id: SectionRouteEnum.INCOME_PLAN_INSTRUCTION,
       tabTitle: disabilityPensionFormMessage.basicInfo.incomePlanInstructionsTitle,
       title: disabilityPensionFormMessage.basicInfo.incomePlanInstructionsTitle,
       children: [
         buildMultiField({
-          id: incomePlanInstructionsRoute,
+          id: SectionRouteEnum.INCOME_PLAN_INSTRUCTION,
           children: [
             buildTitleField({
               title: disabilityPensionFormMessage.incomePlan.instructionsTitle,
@@ -23,34 +41,16 @@ export const incomePlanInstructionsSubSection =
               marginBottom: 'p2',
             }),
             buildDescriptionField({
-              id: `${incomePlanInstructionsRoute}.instructionsDescription`,
+              id: `${SectionRouteEnum.INCOME_PLAN_INSTRUCTION}.instructionsDescription`,
               description: disabilityPensionFormMessage.incomePlan.instructionsDescription,
               marginBottom: 'p4',
             }),
-            buildDescriptionField({
-              id: `${incomePlanInstructionsRoute}.bulletOne`,
-              description: disabilityPensionFormMessage.incomePlan.instructionBullet1,
-            }),
-            buildDescriptionField({
-              id: `${incomePlanInstructionsRoute}.bulletTwo`,
-              description: disabilityPensionFormMessage.incomePlan.instructionBullet2,
-            }),
-            buildDescriptionField({
-              id: `${incomePlanInstructionsRoute}.bulletThree`,
-              description: disabilityPensionFormMessage.incomePlan.instructionBullet3,
-            }),
-            buildDescriptionField({
-              id: `${incomePlanInstructionsRoute}.bulletFour`,
-              description: disabilityPensionFormMessage.incomePlan.instructionBullet4,
-            }),
-            buildDescriptionField({
-              id: `${incomePlanInstructionsRoute}.bulletFive`,
-              description: disabilityPensionFormMessage.incomePlan.instructionBullet5,
-            }),
-            buildDescriptionField({
-              id: `${incomePlanInstructionsRoute}.bulletSix`,
-              description: disabilityPensionFormMessage.incomePlan.instructionBullet6,
-            }),
+            ...bullets.map(bullet => {
+              return buildDescriptionField({
+                id: `${SectionRouteEnum.INCOME_PLAN_INSTRUCTION}.${bullet}`,
+                description: bulletMessage[bullet]
+              });
+            })
           ],
         }),
       ],

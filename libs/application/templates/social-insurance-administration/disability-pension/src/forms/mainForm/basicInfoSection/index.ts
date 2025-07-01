@@ -8,11 +8,11 @@ import { incomePlanInstructionsSubSection } from './incomePlanInstructionsSubSec
 import { incomePlanSubSection } from './incomePlanSubSection'
 import { employmentParticipationSubSection } from './employmentParticipationsSubSections'
 import { disabilityEvaluationSubSection } from './disabilityEvaluationSubSection'
-
+import { SectionRouteEnum } from '../../../lib/routes'
 
 export const basicInfoSection =
   buildSection({
-    id: 'personalInfo',
+    id: SectionRouteEnum.BASIC_INFO,
     title: disabilityPensionFormMessage.basicInfo.title,
     children: [
       personalInfoSubSection,

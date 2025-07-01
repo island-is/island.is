@@ -7,16 +7,15 @@ import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { YesOrNoOptions } from '../../../../lib/options'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { EmploymentEnum } from '../../../../lib/constants'
-
-const paidWorkRoute = `paidWork`
+import { SectionRouteEnum } from '../../../../lib/routes'
 
 export const paidWorkSubSection = buildMultiField({
-  id: paidWorkRoute,
+  id: SectionRouteEnum.PAID_WORK,
   title: disabilityPensionFormMessage.employmentParticipation.inPaidWorkTitle,
   space: 'containerGutter',
   children: [
     buildRadioField({
-      id: `${paidWorkRoute}.inPaidWork`,
+      id: `${SectionRouteEnum.PAID_WORK}.inPaidWork`,
       width: 'full',
       backgroundColor: 'blue',
       required: true,
@@ -36,14 +35,14 @@ export const paidWorkSubSection = buildMultiField({
       ],
     }),
     buildRadioField({
-      id: `${paidWorkRoute}.continuedWork`,
+      id: `${SectionRouteEnum.PAID_WORK}.continuedWork`,
       title: disabilityPensionFormMessage.employmentParticipation.continuedWorkQuestion,
       width: 'half',
       backgroundColor: 'blue',
       condition: (formValue) => {
         const isWorking = getValueViaPath<EmploymentEnum>(
           formValue,
-          `${paidWorkRoute}.inPaidWork`,
+          `${SectionRouteEnum.PAID_WORK}.inPaidWork`,
         )
         return isWorking === EmploymentEnum.YES
       },

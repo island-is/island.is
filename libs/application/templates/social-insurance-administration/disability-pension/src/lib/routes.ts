@@ -7,6 +7,7 @@ export enum SectionRouteEnum {
   INCOME_PLAN_INSTRUCTION= 'incomePlanInstruction',
   INCOME_PLAN = 'incomePlan',
   PAYMENT_INFO= 'paymentInfo',
+  BASIC_INFO= 'basicInfo',
   PERSONAL_INFO= 'personalInfo',
   SELF_EVALUATION= 'selfEvaluation',
   BACKGROUND_INFO= 'backgroundInfo',

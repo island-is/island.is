@@ -11,39 +11,31 @@ import { FormValue } from '@island.is/application/types'
 import format from 'date-fns/format'
 import addMonths from 'date-fns/addMonths'
 import { YesOrNoOptions, countryOptions } from '../../../../lib/options'
-
-const livedAbroadRoute = `livedAbroad`
-
-/** TODO
- * 1. Choose yes or no, if yes, require at least 1 row of living abroad data. If no, continue.
- * 2. If no rows yet, display 4 inputs and block continue until 1 row has been added.
- * 3. If row added, hide 4 inputs and use table repeater. Also ,unblock continue button.
- * 4. On Continue, validate each and every row.
- */
+import { SectionRouteEnum } from '../../../../lib/routes'
 
 const livedAbroadCondition = (formValue: FormValue) => {
   const livedAbroad = getValueViaPath<YesOrNoEnum>(
     formValue,
-    `${livedAbroadRoute}.hasLivedAbroad`,
+    `${SectionRouteEnum.LIVED_ABROAD}.hasLivedAbroad`,
   )
 
   return livedAbroad === YES
 }
 
 export const livedAbroadSubSection = buildMultiField({
-  id: livedAbroadRoute,
+  id: SectionRouteEnum.LIVED_ABROAD,
   title: disabilityPensionFormMessage.employmentParticipation.livedAbroadTitle,
   description:disabilityPensionFormMessage.employmentParticipation.livedAbroadDescription,
   children: [
     buildRadioField({
-      id: `${livedAbroadRoute}.hasLivedAbroad`,
+      id: `${SectionRouteEnum.LIVED_ABROAD}.hasLivedAbroad`,
       width: 'half',
       backgroundColor: 'blue',
       required: true,
       options: YesOrNoOptions
     }),
     buildTableRepeaterField({
-      id: `${livedAbroadRoute}.list`,
+      id: `${SectionRouteEnum.LIVED_ABROAD}.list`,
       condition: livedAbroadCondition,
       formTitle: disabilityPensionFormMessage.employmentParticipation.livedAbroadTableTitle,
       addItemButtonText: disabilityPensionFormMessage.employmentParticipation.addCountry,

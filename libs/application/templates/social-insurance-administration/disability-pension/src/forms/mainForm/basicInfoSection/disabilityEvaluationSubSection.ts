@@ -9,22 +9,21 @@ import {
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../lib/messages'
 import { YesOrNoOptions } from '../../../lib/options'
-
-const disabilityEvaluationRoute = 'disabilityEvaluation'
+import { SectionRouteEnum } from '../../../lib/routes'
 
 export const disabilityEvaluationSubSection =
     buildSubSection({
-      id: disabilityEvaluationRoute,
+      id: SectionRouteEnum.DISABILITY_EVALUATION,
       title: disabilityPensionFormMessage.disabilityEvaluation.tabTitle,
       children: [
         buildMultiField({
-          id: disabilityEvaluationRoute,
+          id: SectionRouteEnum.DISABILITY_EVALUATION,
           title: disabilityPensionFormMessage.disabilityEvaluation.title,
           description: disabilityPensionFormMessage.disabilityEvaluation.description,
           space: 'containerGutter',
           children: [
             buildRadioField({
-              id: `${disabilityEvaluationRoute}.appliedBefore`,
+              id: `${SectionRouteEnum.DISABILITY_EVALUATION}.appliedBefore`,
               title: disabilityPensionFormMessage.disabilityEvaluation.appliedBeforeTitle,
               description: disabilityPensionFormMessage.disabilityEvaluation.appliedBeforeDescription,
               required: true,
@@ -32,13 +31,13 @@ export const disabilityEvaluationSubSection =
               options: YesOrNoOptions,
             }),
             buildFileUploadField({
-              id: `${disabilityEvaluationRoute}.fileUpload`,
+              id: `${SectionRouteEnum.DISABILITY_EVALUATION}.fileUpload`,
               title: disabilityPensionFormMessage.basicInfo.disabilityEvaluationTitle,
               uploadButtonLabel: disabilityPensionFormMessage.disabilityEvaluation.uploadButtonLabel,
               condition: (formValue) => {
                 const isWorking = getValueViaPath<YesOrNoEnum>(
                   formValue,
-                  `${disabilityEvaluationRoute}.appliedBefore`,
+                  `${SectionRouteEnum.DISABILITY_EVALUATION}.appliedBefore`,
                 )
 
                 return isWorking === YES

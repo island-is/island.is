@@ -200,7 +200,7 @@ export const dataSchema = z.object({
         personalAllowance === YES ? !!personalAllowanceUsage : true,
       { path: ['personalAllowanceUsage'] },
     ),
-  incomePlanTable: z.array(z
+  incomePlan: z.array(z
         .object({
           incomeCategory: z.string(),
           incomeType: z.string().min(1),
@@ -275,23 +275,23 @@ export const dataSchema = z.object({
           },
         )
         .refine(
-          (incomePlanTable) =>
-            incomePlanTable.income === RatioType.MONTHLY &&
-            incomePlanTable?.incomeCategory === INCOME &&
-            incomePlanTable.unevenIncomePerYear?.[0] === YES
+          (incomePlan) =>
+            incomePlan.income === RatioType.MONTHLY &&
+            incomePlan?.incomeCategory === INCOME &&
+            incomePlan.unevenIncomePerYear?.[0] === YES
               ? ![
-                  incomePlanTable.january,
-                  incomePlanTable.february,
-                  incomePlanTable.march,
-                  incomePlanTable.april,
-                  incomePlanTable.may,
-                  incomePlanTable.june,
-                  incomePlanTable.july,
-                  incomePlanTable.august,
-                  incomePlanTable.september,
-                  incomePlanTable.october,
-                  incomePlanTable.november,
-                  incomePlanTable.december,
+                  incomePlan.january,
+                  incomePlan.february,
+                  incomePlan.march,
+                  incomePlan.april,
+                  incomePlan.may,
+                  incomePlan.june,
+                  incomePlan.july,
+                  incomePlan.august,
+                  incomePlan.september,
+                  incomePlan.october,
+                  incomePlan.november,
+                  incomePlan.december,
                 ].every((value) => value === undefined || value === '')
               : true,
           {

@@ -9,17 +9,16 @@ import {
 import { disabilityPensionFormMessage } from '../../../lib/messages'
 import { Application, NationalRegistryIndividual, NationalRegistrySpouse } from '@island.is/application/types'
 import { applicantInformationArray } from '@island.is/application/ui-forms'
-
-const personalInfoRoute = 'personalInfo'
+import { SectionRouteEnum } from '../../../lib/routes'
 
 export const personalInfoSubSection =
     buildSubSection({
-      id: personalInfoRoute,
+      id: SectionRouteEnum.PERSONAL_INFO,
       tabTitle: disabilityPensionFormMessage.basicInfo.personalInfo,
       title: disabilityPensionFormMessage.basicInfo.personalInfo,
       children: [
         buildMultiField({
-          id: personalInfoRoute,
+          id: SectionRouteEnum.PERSONAL_INFO,
           children: [
             buildTitleField({
               title: disabilityPensionFormMessage.basicInfo.personalInfo,
@@ -42,7 +41,7 @@ export const personalInfoSubSection =
               titleVariant: 'h4'
             }),
             buildTextField({
-              id: `${personalInfoRoute}.maritalStatus`,
+              id: `${SectionRouteEnum.PERSONAL_INFO}.maritalStatus`,
               title: disabilityPensionFormMessage.personalInfo.maritalStatus,
               disabled: true,
               backgroundColor: 'white',
@@ -58,7 +57,7 @@ export const personalInfoSubSection =
               },
             }),
             buildTextField({
-              id: `${personalInfoRoute}.spouseName`,
+              id: `${SectionRouteEnum.PERSONAL_INFO}.spouseName`,
               title: disabilityPensionFormMessage.personalInfo.spouseName,
               backgroundColor: 'white',
               disabled: true,
@@ -75,7 +74,7 @@ export const personalInfoSubSection =
               },
             }),
             buildTextField({
-              id: `${personalInfoRoute}.spouseNationalId`,
+              id: `${SectionRouteEnum.PERSONAL_INFO}.spouseNationalId`,
               title: disabilityPensionFormMessage.personalInfo.spouseNationalId,
               backgroundColor: 'white',
               disabled: true,

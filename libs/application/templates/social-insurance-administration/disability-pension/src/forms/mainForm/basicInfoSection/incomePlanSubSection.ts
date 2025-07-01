@@ -5,17 +5,16 @@ import { CategorizedIncomeTypes, IncomePlanConditions } from "@island.is/applica
 import { getCategoriesOptions, getCurrencies, getTypesOptions } from "@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils"
 import { formatCurrencyWithoutSuffix } from '@island.is/application/ui-components'
 import { Application } from "@island.is/application/types"
-
- const incomePlanRoute = 'incomePlan'
+import { SectionRouteEnum } from "../../../lib/routes"
 
  export const incomePlanSubSection =
  buildSubSection({
-   id: incomePlanRoute,
+   id: SectionRouteEnum.INCOME_PLAN,
    title:
      socialInsuranceAdministrationMessage.incomePlan.subSectionTitle,
    children: [
      buildTableRepeaterField({
-       id: 'incomePlanTable',
+       id: SectionRouteEnum.INCOME_PLAN,
        title:
          socialInsuranceAdministrationMessage.incomePlan.subSectionTitle,
        description: (application: Application) => {

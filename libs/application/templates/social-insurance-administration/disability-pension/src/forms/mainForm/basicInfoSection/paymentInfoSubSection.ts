@@ -19,18 +19,17 @@ import { socialInsuranceAdministrationMessage } from '@island.is/application/tem
 import { BankInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { friendlyFormatIBAN, friendlyFormatSWIFT, getCurrencies, getTaxOptions, getYesNoOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import isEmpty from 'lodash/isEmpty'
-
-const paymentInfoRoute = 'paymentInfo'
+import { SectionRouteEnum } from '../../../lib/routes'
 
 export const paymentInfoSubSection =
     buildSubSection({
-      id: paymentInfoRoute,
+      id: SectionRouteEnum.PAYMENT_INFO,
       tabTitle: disabilityPensionFormMessage.basicInfo.paymentInfo,
       title: disabilityPensionFormMessage.basicInfo.paymentInfo,
       children: [
         buildMultiField({
           space: 'gutter',
-          id: paymentInfoRoute,
+          id: SectionRouteEnum.PAYMENT_INFO,
           children: [
             buildTitleField({
               title: disabilityPensionFormMessage.basicInfo.paymentInfo,
@@ -38,13 +37,13 @@ export const paymentInfoSubSection =
               marginBottom: 'p2',
             }),
             buildAlertMessageField({
-              id: `${paymentInfoRoute}.notice`,
+              id: `${SectionRouteEnum.PAYMENT_INFO}.notice`,
               alertType: 'info',
               title: disabilityPensionFormMessage.paymentInfo.noticeTitle,
               message: disabilityPensionFormMessage.paymentInfo.notice,
             }),
             buildRadioField({
-              id: `${paymentInfoRoute}.accountType`,
+              id: `${SectionRouteEnum.PAYMENT_INFO}.accountType`,
               title: disabilityPensionFormMessage.paymentInfo.accountType,
               width: 'full',
               largeButtons: false,
@@ -62,19 +61,19 @@ export const paymentInfoSubSection =
               ],
             }),
             buildDescriptionField({
-              id: `${paymentInfoRoute}.alertMessage`,
+              id: `${SectionRouteEnum.PAYMENT_INFO}.alertMessage`,
               condition: (formValue: FormValue) => accountNationality(formValue) === BankAccountType.FOREIGN,
               description: disabilityPensionFormMessage.paymentInfo.foreignAccountNotice,
             }),
             buildTextField({
-              id: `${paymentInfoRoute}.bank`,
+              id: `${SectionRouteEnum.PAYMENT_INFO}.bank`,
               title: disabilityPensionFormMessage.paymentInfo.bank,
               required: true,
               condition: (formValue: FormValue) => accountNationality(formValue) === BankAccountType.ICELANDIC,
               backgroundColor: 'blue',
               }),
             buildTextField({
-              id: `${paymentInfoRoute}.iban`,
+              id: `${SectionRouteEnum.PAYMENT_INFO}.iban`,
               title: socialInsuranceAdministrationMessage.payment.iban,
               placeholder: 'AB00 XXXX XXXX XXXX XXXX XX',
               defaultValue: (application: Application) => {
@@ -88,7 +87,7 @@ export const paymentInfoSubSection =
               condition: (formValue: FormValue) => accountNationality(formValue) === BankAccountType.FOREIGN,
             }),
             buildTextField({
-              id: `${paymentInfoRoute}.swift`,
+              id: `${SectionRouteEnum.PAYMENT_INFO}.swift`,
               title: socialInsuranceAdministrationMessage.payment.swift,
               placeholder: 'AAAA BB CC XXX',
               width: 'half',
@@ -102,7 +101,7 @@ export const paymentInfoSubSection =
               condition: (formValue: FormValue) => accountNationality(formValue) === BankAccountType.FOREIGN,
             }),
             buildSelectField({
-              id: `${paymentInfoRoute}.currency`,
+              id: `${SectionRouteEnum.PAYMENT_INFO}.currency`,
               title: socialInsuranceAdministrationMessage.payment.currency,
               width: 'half',
 
@@ -153,7 +152,7 @@ export const paymentInfoSubSection =
 
             }),
             buildRadioField({
-              id: `${paymentInfoRoute}.usePersonalAllowance`,
+              id: `${SectionRouteEnum.PAYMENT_INFO}.usePersonalAllowance`,
               title: disabilityPensionFormMessage.paymentInfo.personalAllowance,
               width: 'half',
               options: getYesNoOptions(),
@@ -161,7 +160,7 @@ export const paymentInfoSubSection =
               required: true,
             }),
             buildTextField({
-              id: `${paymentInfoRoute}.personalAllowanceUsage`,
+              id: `${SectionRouteEnum.PAYMENT_INFO}.personalAllowanceUsage`,
               title:
                 socialInsuranceAdministrationMessage.payment
                   .personalAllowancePercentage,
@@ -170,7 +169,7 @@ export const paymentInfoSubSection =
               condition: (formValue: FormValue) => {
                 const personalAllowance = getValueViaPath<YesOrNo>(
                  formValue,
-                 `${paymentInfoRoute}.usePersonalAllowance`,
+                 `${SectionRouteEnum.PAYMENT_INFO}.usePersonalAllowance`,
                 )
                 return personalAllowance === YES
               },
@@ -181,7 +180,7 @@ export const paymentInfoSubSection =
               maxLength: 4,
             }),
             buildRadioField({
-              id: 'paymentInfo.taxLevel',
+              id: `${SectionRouteEnum.PAYMENT_INFO}.taxLevel`,
               title: socialInsuranceAdministrationMessage.payment.taxLevel,
               options: getTaxOptions(),
               width: 'full',

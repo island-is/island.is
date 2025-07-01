@@ -9,32 +9,31 @@ import {
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { FormValue } from '@island.is/application/types'
 import { YesOrNoOptions, countryOptions } from '../../../../lib/options'
-
-const abroadPaymentsRoute = `abroadPayments`
+import { SectionRouteEnum } from '../../../../lib/routes'
 
 const abroadPaymentsCondition = (formValue: FormValue) => {
   const hasAbroadPayments = getValueViaPath<YesOrNoEnum>(
     formValue,
-    `${abroadPaymentsRoute}.hasAbroadPayments`,
+    `${SectionRouteEnum.ABROAD_PAYMENT}.hasAbroadPayments`,
   )
 
   return hasAbroadPayments === YES
 }
 
 export const abroadPaymentsSubSection = buildMultiField({
-  id: abroadPaymentsRoute,
+  id: SectionRouteEnum.ABROAD_PAYMENT,
   title: disabilityPensionFormMessage.employmentParticipation.abroadPaymentsTitle,
   description: disabilityPensionFormMessage.employmentParticipation.abroadPaymentsDescription,
   children: [
     buildRadioField({
-      id: `${abroadPaymentsRoute}.hasAbroadPayments`,
+      id: `${SectionRouteEnum.ABROAD_PAYMENT}.hasAbroadPayments`,
       width: 'half',
       backgroundColor: 'blue',
       required: true,
       options: YesOrNoOptions,
     }),
     buildTableRepeaterField({
-      id: `${abroadPaymentsRoute}.list`,
+      id: `${SectionRouteEnum.ABROAD_PAYMENT}.list`,
       condition: abroadPaymentsCondition,
       formTitle: disabilityPensionFormMessage.employmentParticipation.abroadPaymentsTableTitle,
       addItemButtonText: disabilityPensionFormMessage.employmentParticipation.addCountry,
