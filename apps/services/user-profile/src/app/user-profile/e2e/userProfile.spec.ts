@@ -9,7 +9,6 @@ import { IdsUserGuard, MockAuthGuard } from '@island.is/auth-nest-tools'
 import { UserProfileScope } from '@island.is/auth/scopes'
 import { SMS_VERIFICATION_MAX_TRIES } from '../verification.service'
 import { DataStatus } from '../types/dataStatusTypes'
-import { formatPhoneNumber } from '../../utils/format-phone-number'
 
 jest.useFakeTimers()
 
