@@ -37,11 +37,6 @@ interface SubpoenaTypeProps {
     setWorkingCase: Dispatch<SetStateAction<Case>>,
   ) => void
   required?: boolean
-  // Temporary boolean flag to determine if the alternative service option is shown
-  // The reason for this is that the component is used in two different places
-  // and the alternative service option is only shown in one of them
-  // Later, this component will only be used with the alternative service option
-  showAlternativeServiceOption?: boolean
 }
 
 const SubpoenaType: FC<SubpoenaTypeProps> = ({
@@ -50,7 +45,6 @@ const SubpoenaType: FC<SubpoenaTypeProps> = ({
   setWorkingCase,
   updateDefendantState,
   required = true,
-  showAlternativeServiceOption = false,
 }) => {
   const { formatMessage } = useIntl()
 
@@ -72,60 +66,54 @@ const SubpoenaType: FC<SubpoenaTypeProps> = ({
               <Text as="h4" variant="h4" marginBottom={2}>
                 {item.defendant.name}
               </Text>
-              {showAlternativeServiceOption && (
-                <>
-                  <Box marginBottom={2}>
-                    <Checkbox
-                      id={`alternativeService-${item.defendant.id}`}
-                      label={strings.alternativeService}
-                      checked={Boolean(item.defendant.isAlternativeService)}
-                      onChange={() => {
-                        item.toggleNewAlternativeService &&
-                          item.toggleNewAlternativeService()
-                        updateDefendantState(
-                          {
-                            caseId: workingCase.id,
-                            defendantId: item.defendant.id,
-                            isAlternativeService:
-                              !item.defendant.isAlternativeService,
-                          },
-                          setWorkingCase,
-                        )
-                      }}
-                      tooltip={strings.alternativeServiceTooltip}
-                      backgroundColor="white"
-                      large
-                      filled
-                    />
-                  </Box>
-                  {item.defendant.isAlternativeService && (
-                    <Box marginBottom={2}>
-                      <Input
-                        name="alternativeServiceDescription"
-                        label={strings.alternativeServiceDescriptionLabel}
-                        autoComplete="off"
-                        value={
-                          item.defendant.alternativeServiceDescription ?? ''
-                        }
-                        placeholder={
-                          strings.alternativeServiceDescriptionPlaceholder
-                        }
-                        onChange={(evt) => {
-                          updateDefendantState(
-                            {
-                              caseId: workingCase.id,
-                              defendantId: item.defendant.id,
-                              alternativeServiceDescription: evt.target.value,
-                            },
-                            setWorkingCase,
-                          )
-                        }}
-                        disabled={item.alternativeServiceDescriptionDisabled}
-                        required
-                      />
-                    </Box>
-                  )}
-                </>
+              <Box marginBottom={2}>
+                <Checkbox
+                  id={`alternativeService-${item.defendant.id}`}
+                  label={strings.alternativeService}
+                  checked={Boolean(item.defendant.isAlternativeService)}
+                  onChange={() => {
+                    item.toggleNewAlternativeService &&
+                      item.toggleNewAlternativeService()
+                    updateDefendantState(
+                      {
+                        caseId: workingCase.id,
+                        defendantId: item.defendant.id,
+                        isAlternativeService:
+                          !item.defendant.isAlternativeService,
+                      },
+                      setWorkingCase,
+                    )
+                  }}
+                  tooltip={strings.alternativeServiceTooltip}
+                  backgroundColor="white"
+                  large
+                  filled
+                />
+              </Box>
+              {item.defendant.isAlternativeService && (
+                <Box marginBottom={2}>
+                  <Input
+                    name="alternativeServiceDescription"
+                    label={strings.alternativeServiceDescriptionLabel}
+                    autoComplete="off"
+                    value={item.defendant.alternativeServiceDescription ?? ''}
+                    placeholder={
+                      strings.alternativeServiceDescriptionPlaceholder
+                    }
+                    onChange={(evt) => {
+                      updateDefendantState(
+                        {
+                          caseId: workingCase.id,
+                          defendantId: item.defendant.id,
+                          alternativeServiceDescription: evt.target.value,
+                        },
+                        setWorkingCase,
+                      )
+                    }}
+                    disabled={item.alternativeServiceDescriptionDisabled}
+                    required
+                  />
+                </Box>
               )}
               <Box className={styles.subpoenaTypeGrid}>
                 <RadioButton

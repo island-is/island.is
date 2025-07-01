@@ -21,8 +21,10 @@ import {
   useCourtArrangements,
 } from '@island.is/judicial-system-web/src/components'
 import {
+  Case,
   CourtSessionType,
   Defendant,
+  UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { SubpoenaType } from '@island.is/judicial-system-web/src/routes/Court/components'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -36,6 +38,10 @@ const Subpoena: FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
+  const [updates, setUpdates] = useState<{
+    defendants: UpdateDefendantInput[]
+    theCase: Case
+  }>()
   const [newSubpoenas, setNewSubpoenas] = useState<string[]>([])
   // Note: we keep the arraignment scheduled state in a subpoena specific state otherwise
   // re-renders (when updating case and defendants) will cause unexpected states within the subpoena component
@@ -162,6 +168,23 @@ const Subpoena: FC = () => {
     workingCase.indictmentDecision,
   ])
 
+  const handleUpdates = (update: UpdateDefendantInput) => {
+    setUpdates((prev) => {
+      if (!prev) {
+        return updates
+      }
+
+      return {
+        defendants: prev.defendants.map((item) =>
+          item.defendantId === update.defendantId
+            ? { ...item, ...update }
+            : item,
+        ),
+        theCase: prev.theCase,
+      }
+    })
+  }
+
   useEffect(() => {
     setIsArraignmentScheduled(Boolean(workingCase.arraignmentDate))
   }, [workingCase.arraignmentDate])
@@ -248,7 +271,6 @@ const Subpoena: FC = () => {
               workingCase={workingCase}
               setWorkingCase={setWorkingCase}
               updateDefendantState={updateDefendantState}
-              showAlternativeServiceOption
             />
           </Box>
         )}
