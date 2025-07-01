@@ -1,4 +1,4 @@
-import { Dispatch, FC, ReactNode, SetStateAction } from 'react'
+import { FC, ReactNode } from 'react'
 import { useIntl } from 'react-intl'
 
 import {
@@ -32,24 +32,15 @@ interface SubpoenaTypeProps {
     toggleNewAlternativeService?: () => void
   }[]
   workingCase: Case
-  setWorkingCase: Dispatch<SetStateAction<Case>>
-  updateDefendantState: (
-    update: UpdateDefendantInput,
-    setWorkingCase: Dispatch<SetStateAction<Case>>,
-  ) => void
   required?: boolean
 }
 
 const SubpoenaType: FC<SubpoenaTypeProps> = ({
   subpoenaItems,
   workingCase,
-  setWorkingCase,
-  updateDefendantState,
   required = true,
 }) => {
   const { formatMessage } = useIntl()
-
-  const handleUpdate = () => {}
 
   return (
     <>
@@ -75,17 +66,15 @@ const SubpoenaType: FC<SubpoenaTypeProps> = ({
                   label={strings.alternativeService}
                   checked={Boolean(item.defendant.isAlternativeService)}
                   onChange={() => {
+                    const { id: defendantId } = item.defendant
+                    const { id: caseId } = workingCase
+                    const isAlternativeService =
+                      !item.defendant.isAlternativeService
+
                     item.toggleNewAlternativeService &&
                       item.toggleNewAlternativeService()
-                    updateDefendantState(
-                      {
-                        caseId: workingCase.id,
-                        defendantId: item.defendant.id,
-                        isAlternativeService:
-                          !item.defendant.isAlternativeService,
-                      },
-                      setWorkingCase,
-                    )
+
+                    item.onUpdate({ caseId, defendantId, isAlternativeService })
                   }}
                   tooltip={strings.alternativeServiceTooltip}
                   backgroundColor="white"
@@ -104,14 +93,15 @@ const SubpoenaType: FC<SubpoenaTypeProps> = ({
                       strings.alternativeServiceDescriptionPlaceholder
                     }
                     onChange={(evt) => {
-                      updateDefendantState(
-                        {
-                          caseId: workingCase.id,
-                          defendantId: item.defendant.id,
-                          alternativeServiceDescription: evt.target.value,
-                        },
-                        setWorkingCase,
-                      )
+                      const { id: defendantId } = item.defendant
+                      const { id: caseId } = workingCase
+                      const alternativeServiceDescription = evt.target.value
+
+                      item.onUpdate({
+                        caseId,
+                        defendantId,
+                        alternativeServiceDescription,
+                      })
                     }}
                     disabled={item.alternativeServiceDescriptionDisabled}
                     required

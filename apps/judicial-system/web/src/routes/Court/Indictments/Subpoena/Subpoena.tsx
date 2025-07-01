@@ -279,8 +279,6 @@ const Subpoena: FC = () => {
                 ),
               }))}
               workingCase={workingCase}
-              setWorkingCase={setWorkingCase}
-              updateDefendantState={updateDefendantState}
             />
           </Box>
         )}
