@@ -213,6 +213,10 @@ import { VerdictsModule } from '@island.is/api/domains/verdicts'
 import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school'
 import { SecondarySchoolApiModule } from '@island.is/api/domains/secondary-school'
 import { HmsConfig } from '@island.is/clients/hms'
+import {
+  VmstUnemploymentClientConfig,
+  VmstUnemploymentClientModule,
+} from '@island.is/clients/vmst-unemployment'
 
 const environment = getConfig
 
@@ -353,6 +357,7 @@ const environment = getConfig
     HealthDirectorateModule,
     VerdictsModule,
     SecondarySchoolApiModule,
+    VmstUnemploymentClientModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -458,6 +463,7 @@ const environment = getConfig
         VerdictsClientConfig,
         SecondarySchoolClientConfig,
         PaymentsApiModuleConfig,
+        VmstUnemploymentClientConfig,
       ],
     }),
   ],

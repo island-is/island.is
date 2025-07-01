@@ -9,7 +9,12 @@ import { DefaultEvents, IdentityApi } from '@island.is/application/types'
 import { FormModes } from '@island.is/application/types'
 import { Logo } from '../../assets/Logo'
 import { externalData } from '../../lib/messages'
-import { UserProfileApiWithValidation } from '../../dataProviders'
+import {
+  ActivationAllowanceApi,
+  DrivingLicenseApi,
+  UserProfileApiWithValidation,
+  WorkMachineLicensesApi,
+} from '../../dataProviders'
 
 export const Prerequisites = buildForm({
   id: 'PrerequisitesDraft',
@@ -46,6 +51,18 @@ export const Prerequisites = buildForm({
               title: externalData.nationalInsuranceInstitute.title,
               subTitle: externalData.nationalInsuranceInstitute.subTitle,
             }),
+            buildDataProviderItem({
+              provider: ActivationAllowanceApi,
+              // TODO(Balli): Add title and subtitle
+            }),
+            // buildDataProviderItem({
+            //   provider: DrivingLicenseApi,
+            //   // TODO(Balli): Add title and subtitle
+            // }),
+            // buildDataProviderItem({
+            //   provider: WorkMachineLicensesApi,
+            //   // TODO(Balli): Add title and subtitle
+            // }),
           ],
           submitField: buildSubmitField({
             id: 'submit',

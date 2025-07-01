@@ -66,7 +66,7 @@ import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-regi
 import { SeminarsClientConfig } from '@island.is/clients/seminars-ver'
 import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school'
 import { PaymentsApiClientConfig } from '@island.is/clients/payments'
-
+import { VmstUnemploymentClientConfig } from '@island.is/clients/vmst-unemployment'
 @Module({
   imports: [
     SequelizeModule.forRootAsync({
@@ -131,6 +131,7 @@ import { PaymentsApiClientConfig } from '@island.is/clients/payments'
         SeminarsClientConfig,
         SecondarySchoolClientConfig,
         PaymentsApiClientConfig,
+        VmstUnemploymentClientConfig,
       ],
     }),
   ],

@@ -891,6 +891,7 @@
       ],
       "@island.is/clients/verdicts": ["libs/clients/verdicts/src/index.ts"],
       "@island.is/clients/vmst": ["libs/clients/vmst/src/index.ts"],
+      "@island.is/clients/vmst-unemployment": ["libs/clients/vmst-unemployment/src/index.ts"],
       "@island.is/clients/work-accident-ver": [
         "libs/clients/work-accident-ver/src/index.ts"
       ],

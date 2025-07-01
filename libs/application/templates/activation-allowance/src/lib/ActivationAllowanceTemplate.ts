@@ -26,6 +26,11 @@ import {
 } from '@island.is/application/core'
 import { assign } from 'xstate'
 import { ApiScope } from '@island.is/auth/scopes'
+import {
+  ActivationAllowanceApi,
+  DrivingLicenseApi,
+  WorkMachineLicensesApi,
+} from '../dataProviders'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -78,7 +83,13 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [IdentityApi, UserProfileApi],
+              api: [
+                IdentityApi,
+                UserProfileApi,
+                //WorkMachineLicensesApi,
+                // DrivingLicenseApi,
+                ActivationAllowanceApi,
+              ],
               delete: true,
             },
           ],
