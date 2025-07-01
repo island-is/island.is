@@ -30,10 +30,17 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
   async createApplication({
     auth,
   }: TemplateApiModuleActionProps): Promise<GaldurDomainModelsApplicationsUnemploymentApplicationsQueriesUnemploymentApplicationViewModel> {
-    const application =
-      this.vmstUnemploymentClientService.getEmptyActivityGrantApplication(auth)
+    try {
+      const application =
+        this.vmstUnemploymentClientService.getEmptyActivityGrantApplication(
+          auth,
+        )
 
-    return application
+      return application
+    } catch (error) {
+      console.log(error)
+      throw new Error(error)
+    }
   }
 
   async getDrivingLicense({

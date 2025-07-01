@@ -19,6 +19,6 @@ export const DrivingLicenseApi = defineTemplateApi({
 })
 
 export const ActivationAllowanceApi = defineTemplateApi({
-  action: 'getEmptyApplication',
+  action: 'createApplication',
   externalDataId: 'activityGrantApplication',
 })
