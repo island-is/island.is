@@ -4,7 +4,6 @@ import {
   buildMultiField,
   buildRadioField,
   buildSubSection,
-  NO,
   YES,
 } from '@island.is/application/core'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
@@ -12,6 +11,8 @@ import { shouldShowEmployeeSickPayEndDate } from '../../../utils/conditionUtils'
 import {
   getApplicationAnswers,
   getYesNoNotApplicableOptions,
+  hasNotUtilizedRights,
+  hasUtilizedRights,
 } from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 
 export const employeeSickPaySubSection = buildSubSection({
@@ -56,19 +57,13 @@ export const employeeSickPaySubSection = buildSubSection({
             const { hasUtilizedEmployeeSickPayRights } = getApplicationAnswers(
               application.answers,
             )
-            if (hasUtilizedEmployeeSickPayRights === NO) {
-              return new Date()
-            }
-            return undefined
+            return hasNotUtilizedRights(hasUtilizedEmployeeSickPayRights)
           },
           maxDate: (application) => {
             const { hasUtilizedEmployeeSickPayRights } = getApplicationAnswers(
               application.answers,
             )
-            if (hasUtilizedEmployeeSickPayRights === YES) {
-              return new Date()
-            }
-            return undefined
+            return hasUtilizedRights(hasUtilizedEmployeeSickPayRights)
           },
           title: medicalAndRehabilitationPaymentsFormMessage.shared.date,
           placeholder:

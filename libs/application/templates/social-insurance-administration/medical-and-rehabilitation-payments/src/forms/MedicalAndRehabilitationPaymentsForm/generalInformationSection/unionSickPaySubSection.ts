@@ -6,7 +6,6 @@ import {
   buildRadioField,
   buildSubSection,
   buildTextField,
-  NO,
   YES,
 } from '@island.is/application/core'
 import { siaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/graphql/queries'
@@ -16,6 +15,8 @@ import { shouldShowUnionSickPayUnionAndEndDate } from '../../../utils/conditionU
 import {
   getApplicationAnswers,
   getYesNoNotApplicableOptions,
+  hasNotUtilizedRights,
+  hasUtilizedRights,
 } from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 
 export const unionSickPaySubSection = buildSubSection({
@@ -141,19 +142,13 @@ export const unionSickPaySubSection = buildSubSection({
             const { hasUtilizedUnionSickPayRights } = getApplicationAnswers(
               application.answers,
             )
-            if (hasUtilizedUnionSickPayRights === NO) {
-              return new Date()
-            }
-            return undefined
+            return hasNotUtilizedRights(hasUtilizedUnionSickPayRights)
           },
           maxDate: (application) => {
             const { hasUtilizedUnionSickPayRights } = getApplicationAnswers(
               application.answers,
             )
-            if (hasUtilizedUnionSickPayRights === YES) {
-              return new Date()
-            }
-            return undefined
+            return hasUtilizedRights(hasUtilizedUnionSickPayRights)
           },
           title: medicalAndRehabilitationPaymentsFormMessage.shared.date,
           placeholder:

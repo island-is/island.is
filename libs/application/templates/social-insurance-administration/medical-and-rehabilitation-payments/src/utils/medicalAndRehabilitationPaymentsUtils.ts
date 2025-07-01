@@ -1,4 +1,4 @@
-import { getValueViaPath, YES, YesOrNo } from '@island.is/application/core'
+import { getValueViaPath, NO, YES, YesOrNo } from '@island.is/application/core'
 import { TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { getYesNoOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
@@ -429,6 +429,18 @@ export const getSelfAssessmentCurrentEmploymentStatusOptions = () => {
     },
   ]
   return options
+}
+
+export const hasUtilizedRights = (hasUtilizedSickPayRights?: YesOrNo | NotApplicable) => {
+  return hasUtilizedSickPayRights === YES
+  ? new Date()
+  : undefined
+}
+
+export const hasNotUtilizedRights = (hasUtilizedSickPayRights?: YesOrNo | NotApplicable) => {
+  return hasUtilizedSickPayRights === NO
+  ? new Date()
+  : undefined
 }
 
 // Returns an array of year options from current year to 30 years in the past
