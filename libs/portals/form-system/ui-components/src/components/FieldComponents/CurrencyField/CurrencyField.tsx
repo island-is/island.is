@@ -8,6 +8,8 @@ import { FormSystemField } from '@island.is/api/schema'
 import { Action } from '../../../lib'
 import { getValue } from '../../../lib/getValue'
 import { useFormContext, Controller } from 'react-hook-form'
+import { useIntl } from 'react-intl'
+import { m } from '../../../lib/messages'
 
 interface Props {
   item: FormSystemField
@@ -17,6 +19,7 @@ interface Props {
 export const CurrencyField = ({ item, dispatch }: Props) => {
   const label = item?.name?.is
   const { control } = useFormContext()
+  const { formatMessage } = useIntl()
 
   return (
     <Row marginTop={2}>
@@ -28,11 +31,11 @@ export const CurrencyField = ({ item, dispatch }: Props) => {
           rules={{
             required: {
               value: item?.isRequired ?? false,
-              message: 'Þessi reitur má ekki vera tómur',
+              message: formatMessage(m.required),
             },
             pattern: {
               value: /^[\d.]{1,19}$/,
-              message: 'Aðeins tölur og punktar eru leyfðir',
+              message: formatMessage(m.onlyNumbers),
             },
           }}
           render={({ field, fieldState }) => (
@@ -60,10 +63,6 @@ export const CurrencyField = ({ item, dispatch }: Props) => {
                 }
               }}
               onBlur={(e) => {
-                // Check for null or empty and trigger validation
-                if (e.target.value === null || e.target.value === '') {
-                  field.onChange('') // Ensure value is empty string for validation
-                }
                 field.onBlur()
               }}
               required={item?.isRequired ?? false}

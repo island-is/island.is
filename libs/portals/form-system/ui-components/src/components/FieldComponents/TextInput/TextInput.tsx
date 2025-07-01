@@ -4,6 +4,8 @@ import { Dispatch } from 'react'
 import { getValue } from '../../../lib/getValue'
 import { Action } from '../../../lib'
 import { useFormContext, Controller } from 'react-hook-form'
+import { useIntl } from 'react-intl'
+import { m } from '../../../lib/messages'
 
 interface Props {
   item: FormSystemField
@@ -13,6 +15,7 @@ interface Props {
 export const TextInput = ({ item, dispatch }: Props) => {
   const { fieldSettings } = item
   const { control } = useFormContext()
+  const { formatMessage } = useIntl()
 
   return (
     <Controller
@@ -22,7 +25,7 @@ export const TextInput = ({ item, dispatch }: Props) => {
       rules={{
         required: {
           value: item.isRequired ?? false,
-          message: 'Þessi reitur má ekki vera tómur',
+          message: formatMessage(m.required),
         },
       }}
       render={({ field, fieldState }) => (

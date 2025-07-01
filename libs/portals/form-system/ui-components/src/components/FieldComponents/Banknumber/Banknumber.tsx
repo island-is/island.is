@@ -59,9 +59,6 @@ export const Banknumber = ({ item, dispatch, lang = 'is' }: Props) => {
   const bankAccountValue = getValue(item, 'bankAccount') ?? ''
   const [bankDefault, ledgerDefault, accountDefault] =
     bankAccountValue.split('-')
-  console.log('bankDefault', bankDefault)
-  console.log('ledgerDefault', ledgerDefault)
-  console.log('accountDefault', accountDefault)
   return (
     <>
       <Row>
@@ -75,11 +72,11 @@ export const Banknumber = ({ item, dispatch, lang = 'is' }: Props) => {
             rules={{
               required: {
                 value: item.isRequired ?? false,
-                message: 'Þessi reitur má ekki vera tómur',
+                message: formatMessage(m.required),
               },
               maxLength: {
-                value: 4,
-                message: 'Hámark 4 tölustafir leyfðir',
+                value: m.maxBankNumbers.value,
+                message: formatMessage(m.maxBankNumbers),
               },
             }}
             defaultValue={bankDefault ?? undefined}
@@ -116,11 +113,11 @@ export const Banknumber = ({ item, dispatch, lang = 'is' }: Props) => {
             rules={{
               required: {
                 value: item.isRequired ?? false,
-                message: 'Þessi reitur má ekki vera tómur',
+                message: formatMessage(m.required),
               },
               maxLength: {
-                value: 2,
-                message: 'Hámark 4 tölustafir leyfðir',
+                value: m.maxLedgerNumbers.value,
+                message: formatMessage(m.maxLedgerNumbers),
               },
             }}
             defaultValue={ledgerDefault ?? undefined}
@@ -157,11 +154,11 @@ export const Banknumber = ({ item, dispatch, lang = 'is' }: Props) => {
             rules={{
               required: {
                 value: item.isRequired ?? false,
-                message: 'Þessi reitur má ekki vera tómur',
+                message: formatMessage(m.required),
               },
               maxLength: {
-                value: 6,
-                message: 'Hámark 4 tölustafir leyfðir',
+                value: m.maxAccountNumbers.value,
+                message: formatMessage(m.maxAccountNumbers),
               },
             }}
             defaultValue={accountDefault ?? undefined}

@@ -37,10 +37,7 @@ export const PhoneNumber = ({ item, dispatch, lang = 'is' }: Props) => {
             },
             pattern: {
               value: PHONE_REGEX,
-              message: formatMessage({
-                id: 'invalidPhoneNumber',
-                defaultMessage: 'Ógilt símanúmer',
-              }),
+              message: formatMessage(m.invalidPhoneNumber),
             },
           }}
           render={({ field, fieldState }) => (

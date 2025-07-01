@@ -9,6 +9,8 @@ import { useFormContext, Controller } from 'react-hook-form'
 import { Dispatch, useEffect } from 'react'
 import { Action } from '../../../lib'
 import { getValue } from '../../../lib/getValue'
+import { m } from '../../../lib/messages'
+import { useIntl } from 'react-intl'
 
 interface Props {
   item: FormSystemField
@@ -17,7 +19,7 @@ interface Props {
 
 export const TimeInput = ({ item, dispatch }: Props) => {
   const { control, setValue, watch } = useFormContext()
-
+  const { formatMessage } = useIntl()
   // If value from backend is a string like "13:45", split and set fields
   useEffect(() => {
     if (
@@ -81,7 +83,6 @@ export const TimeInput = ({ item, dispatch }: Props) => {
   const [hourValue, minuteValue] = timeValue
     ? timeValue.split(':')
     : [undefined, undefined]
-  console.log('time required: ', item.isRequired)
 
   return (
     <Row marginTop={2}>
@@ -95,12 +96,12 @@ export const TimeInput = ({ item, dispatch }: Props) => {
           rules={{
             required: {
               value: item?.isRequired ?? false,
-              message: 'Veldu klukkustund',
+              message: formatMessage(m.pickHour),
             },
           }}
           render={({ field, fieldState }) => (
             <Select
-              label="Klukkustund"
+              label={formatMessage(m.hourInput)}
               name={field.name}
               value={field.value}
               options={hourList.map((t) => ({
@@ -127,12 +128,12 @@ export const TimeInput = ({ item, dispatch }: Props) => {
           rules={{
             required: {
               value: item?.isRequired ?? false,
-              message: 'Veldu mínútu',
+              message: formatMessage(m.pickMinute),
             },
           }}
           render={({ field, fieldState }) => (
             <Select
-              label="Mínútur"
+              label= {formatMessage(m.minuteInput)}
               name={field.name}
               value={field.value}
               options={chosenMinuteList()}

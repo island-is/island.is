@@ -128,10 +128,7 @@ export const PropertyNumber = ({ item, dispatch }: Props) => {
                     },
                     pattern: {
                       value: PROPERTY_NUMBER_REGEX,
-                      message: formatMessage({
-                        id: 'invalidPropertyNumber',
-                        defaultMessage: 'Ógilt fasteignanúmer',
-                      }),
+                      message: formatMessage(m.invalidPropertyNumber),
                     },
                   }}
                   render={({ field, fieldState }) => (
