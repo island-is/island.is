@@ -5,7 +5,7 @@ import { NO, YES } from '@island.is/application/core'
 import { formatBankInfo, validIBAN, validSWIFT } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { isValidPhoneNumber } from './utils'
 import { disabilityPensionFormMessage } from './messages'
-import { EmploymentEnum, MaritalStatusEnum, ResidenceEnum, ChildrenCountEnum, IcelandicCapabilityEnum, LanguageEnum, EmploymentStatusEnum } from './constants'
+import { EmploymentEnum, MaritalStatusEnum, ResidenceEnum, ChildrenCountEnum, IcelandicCapabilityEnum, LanguageEnum, EmploymentStatusEnum, EmploymentImportanceEnum } from './constants'
 
 
 export const fileSchema = z.object({
@@ -141,18 +141,27 @@ export const dataSchema = z.object({
       return true
     },
   ),
-  backgroundInfoEmployment: z.array(z.enum([
-    EmploymentStatusEnum.neverEmployed,
-    EmploymentStatusEnum.selfEmployed,
-    EmploymentStatusEnum.fullTimeEmployee,
-    EmploymentStatusEnum.partTimeEmployee,
-    EmploymentStatusEnum.inEducation,
-    EmploymentStatusEnum.jobSeekingRegistered,
-    EmploymentStatusEnum.jobSeekingNotRegistered,
-    EmploymentStatusEnum.voluntaryWork,
-    EmploymentStatusEnum.noParticipationHealthDisability,
-  ])).optional(),
-  backgroundInfoEmploymentOther: z.string().optional(),
+  backgroundInfoEmployment: z.object({
+    status: z.array(z.enum([
+      EmploymentStatusEnum.neverEmployed,
+      EmploymentStatusEnum.selfEmployed,
+      EmploymentStatusEnum.fullTimeEmployee,
+      EmploymentStatusEnum.partTimeEmployee,
+      EmploymentStatusEnum.inEducation,
+      EmploymentStatusEnum.jobSeekingRegistered,
+      EmploymentStatusEnum.jobSeekingNotRegistered,
+      EmploymentStatusEnum.voluntaryWork,
+      EmploymentStatusEnum.noParticipationHealthDisability,
+    ])).optional(),
+    other: z.string().optional(),
+  }).refine(
+    ({ status, other }) => {
+      return (status && status.length > 0) || (other && other.length > 0)
+    },
+    {
+      params: disabilityPensionFormMessage.errors.emptyEmploymentStatus,
+    }
+  ),
   backgroundInfoPreviousEmployment: z.object({
     hasEmployment: z.enum([YES, NO]),
     when: z.string().optional(),
@@ -180,6 +189,16 @@ export const dataSchema = z.object({
       params: disabilityPensionFormMessage.errors.emptyPreviousEmploymentField,
     }
   ),
+  backgroundInfoEmploymentCapability: z.number().min(0).max(100),
+  backgroundInfoEmploymentImportance: z.enum([
+    EmploymentImportanceEnum.notImportantAtAll,
+    EmploymentImportanceEnum.notImportant,
+    EmploymentImportanceEnum.neutral,
+    EmploymentImportanceEnum.important,
+    EmploymentImportanceEnum.veryImportant,
+  ]),
+  backgroundInfoRehabilitationOrTherapy: z.enum([YES, NO]),
+  backgroundInfoBiggestIssue: z.string(),
   paymentInfo: z
     .object({
       bankAccountType: z.enum([

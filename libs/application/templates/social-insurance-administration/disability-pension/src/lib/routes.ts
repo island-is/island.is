@@ -16,8 +16,12 @@ export enum SectionRouteEnum {
   BACKGROUND_INFO_ICELANDIC_CAPABILITY = 'backgroundInfoIcelandicCapability',
   BACKGROUND_INFO_MARITAL_STATUS = 'backgroundInfoMaritalStatus',
   BACKGROUND_INFO_LANGUAGE = 'backgroundInfoLanguage',
-  BACKGROUND_INFO_LANGUAGE_OTHER = 'backgroundInfoLanguageOther',
+
   BACKGROUND_INFO_EMPLOYMENT = 'backgroundInfoEmployment',
-  BACKGROUND_INFO_EMPLOYMENT_OTHER = 'backgroundInfoEmploymentOther',
   BACKGROUND_INFO_PREVIOUS_EMPLOYMENT = 'backgroundInfoPreviousEmployment',
+
+  BACKGROUND_INFO_EMPLOYMENT_CAPABILITY = 'backgroundInfoEmploymentCapability',
+  BACKGROUND_INFO_EMPLOYMENT_IMPORTANCE = 'backgroundInfoEmploymentImportance',
+  BACKGROUND_INFO_REHABILITATION_OR_THERAPY = 'backgroundInfoRehabilitationOrTherapy',
+  BACKGROUND_INFO_BIGGEST_ISSUE = 'backgroundInfoBiggestIssue',
 }

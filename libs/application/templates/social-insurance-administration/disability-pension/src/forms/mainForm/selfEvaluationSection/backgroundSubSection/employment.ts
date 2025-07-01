@@ -12,7 +12,7 @@ export const employmentField = buildMultiField({
   title: disabilityPensionFormMessage.questions.employmentStatusTitle,
   children: [
     buildCheckboxField({
-      id: SectionRouteEnum.BACKGROUND_INFO_EMPLOYMENT,
+      id: `${SectionRouteEnum.BACKGROUND_INFO_EMPLOYMENT}.status`,
       width: 'full',
       options: [
         {
@@ -54,7 +54,7 @@ export const employmentField = buildMultiField({
       ]
     }),
     buildTextField({
-      id: SectionRouteEnum.BACKGROUND_INFO_EMPLOYMENT_OTHER,
+      id: `${SectionRouteEnum.BACKGROUND_INFO_EMPLOYMENT}.other`,
       title: disabilityPensionFormMessage.questions.employmentStatusOther,
       variant: 'textarea',
       rows: 3,

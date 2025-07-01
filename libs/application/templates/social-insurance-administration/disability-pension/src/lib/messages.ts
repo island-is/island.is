@@ -726,6 +726,61 @@ export const disabilityPensionFormMessage: MessageDir = {
       defaultMessage: 'Í hvaða starfsgrein starfaðir þú síðast?',
       description: 'In what profession did you work last?',
     },
+    educationLevelTitle: {
+      id: 'dp.application:selfEvaluation.questions.educationLevel.title',
+      defaultMessage: 'Hvað er hæsta námsstig sem þú hefur lokið?',
+      description: 'What is the highest level of education you have completed?',
+    },
+    employmentCapabilityTitle: {
+      id: 'dp.application:selfEvaluation.questions.employmentCapability.title',
+      defaultMessage: 'Hvernig metur þú starfsgetu þína í dag ef 0 er engin starfsgeta og 100 full starfsgeta?',
+      description: 'How do you rate your work capacity today if 0 is no work capacity and 100 is full work capacity?',
+    },
+    employmentCapabilityLabel: {
+      id: 'dp.application:selfEvaluation.questions.employmentCapability.label',
+      defaultMessage: 'Starfsgeta (0-100)',
+      description: 'Work capacity (0-100)',
+    },
+    employmentImportanceTitle: {
+      id: 'dp.application:selfEvaluation.questions.employmentImportance.title',
+      defaultMessage: 'Hversu mikilvægt er fyrir þig að vera í vinnu?',
+      description: 'How important is it for you to be in employment?',
+    },
+    employmentImportanceNotImportantAtAll: {
+      id: 'dp.application:selfEvaluation.questions.employmentImportance.notImportantAtAll',
+      defaultMessage: 'Alls ekki mikilvægt',
+      description: 'Not important at all',
+    },
+    employmentImportanceNotImportant: {
+      id: 'dp.application:selfEvaluation.questions.employmentImportance.notImportant',
+      defaultMessage: 'Ekki mikilvægt',
+      description: 'Not important',
+    },
+    employmentImportanceNeutral: {
+      id: 'dp.application:selfEvaluation.questions.employmentImportance.neutral',
+      defaultMessage: 'Hvorki né',
+      description: 'Neither',
+    },
+    employmentImportanceImportant: {
+      id: 'dp.application:selfEvaluation.questions.employmentImportance.important',
+      defaultMessage: 'Mikilvægt',
+      description: 'Important',
+    },
+    employmentImportanceVeryImportant: {
+      id: 'dp.application:selfEvaluation.questions.employmentImportance.veryImportant',
+      defaultMessage: 'Mjög mikilvægt',
+      description: 'Very important',
+    },
+    rehabilitationOrTherapyTitle: {
+      id: 'dp.application:selfEvaluation.questions.rehabilitationOrTherapy.title',
+      defaultMessage: 'Hefur þú verið í endurhæfingu eða meðferð áður vegna þess vanda sem leiðir til óvinnufærni?',
+      description: 'Have you been in rehabilitation or treatment before due to the problem that leads to disability?',
+    },
+    biggestIssueTitle: {
+      id: 'dp.application:selfEvaluation.questions.biggestIssue.title',
+      defaultMessage: 'Hvað telur þú vera þinn helsta vanda sem leiðir til óvinnufærni?',
+      description: 'What do you consider to be your main problem that leads to disability?',
+    },
   }),
   errors: defineMessages({
     emptyForeignResidence: {
@@ -772,6 +827,11 @@ export const disabilityPensionFormMessage: MessageDir = {
       id: 'dp.application:errors.previousEmploymentFieldRequired',
       defaultMessage: 'Nauðsynlegt er að taka fram hvaða grein þú starfaðir við',
       description: 'You must specify in what profession you worked',
+    },
+    emptyEmploymentStatus: {
+      id: 'dp.application:errors.employmentStatusRequired',
+      defaultMessage: 'Nauðsynlegt er að velja a.m.k einn valkost eða útskýra í texta',
+      description: 'You must select at least one option or provide a description',
     },
   }),
 }

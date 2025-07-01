@@ -7,7 +7,6 @@ import {
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { LanguageEnum } from '../../../../lib/constants'
 import { SectionRouteEnum } from '../../../../lib/routes'
-import { FormValue } from '@island.is/application/types'
 
 export const languageField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_LANGUAGE,

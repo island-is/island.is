@@ -9,6 +9,11 @@ import { icelandicCapabilityField } from './icelandicCapability'
 import { languageField } from './language'
 import { employmentField } from './employment'
 import { previousEmploymentField } from './previousEmployment'
+import { educationLevelField } from './educationLevel'
+import { employmentCapabilityField } from './employmentCapability'
+import { employmentImportanceField } from './employmentImportance'
+import { rehabilitationOrTherapyField } from './rehabilitationOrTherapy'
+import { biggestIssueField } from './biggestIssue'
 import { SectionRouteEnum } from '../../../../lib/routes'
 
 export const backgroundInfoSubSection =
@@ -23,5 +28,10 @@ export const backgroundInfoSubSection =
       languageField,
       employmentField,
       previousEmploymentField,
+      educationLevelField,
+      employmentCapabilityField,
+      employmentImportanceField,
+      rehabilitationOrTherapyField,
+      biggestIssueField,
     ],
   })

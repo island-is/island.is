@@ -65,3 +65,13 @@ export enum EmploymentStatusEnum {
   voluntaryWork = 'VOLUNTARY_WORK',
   noParticipationHealthDisability = 'NO_PARTICIPATION_HEALTH_DISABILITY',
 }
+
+export enum EmploymentImportanceEnum {
+  notImportantAtAll = 'NOT_IMPORTANT_AT_ALL',
+  notImportant = 'NOT_IMPORTANT',
+  neutral = 'NEUTRAL',
+  important = 'IMPORTANT',
+  veryImportant = 'VERY_IMPORTANT',
+}
+
+
