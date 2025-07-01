@@ -156,7 +156,7 @@ export const guardiansSubSection = buildSubSection({
           },
         }),
         buildHiddenInput({
-          id: 'guardians[0].citizenship',
+          id: 'guardians[0].citizenshipCode',
           defaultValue: (application: Application) =>
             (
               application.externalData.nationalRegistry?.data as {
@@ -280,11 +280,16 @@ export const guardiansSubSection = buildSubSection({
           },
         }),
         buildHiddenInput({
-          id: 'guardians[1].citizenship',
+          id: 'guardians[1].citizenshipCode',
           condition: (answers, externalData) =>
             hasOtherGuardian(answers, externalData),
-          defaultValue: (application: Application) =>
-            getOtherGuardian(application)?.citizenship,
+          defaultValue: (application: Application) => {
+            const { otherGuardianCitizenshipCode } = getApplicationExternalData(
+              application.externalData,
+            )
+
+            return otherGuardianCitizenshipCode
+          },
         }),
       ],
     }),
