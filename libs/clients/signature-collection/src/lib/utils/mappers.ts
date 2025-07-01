@@ -1,4 +1,5 @@
 import { MedmaelasofnunExtendedDTO } from '../../../gen/fetch/'
+import { Area } from '../types/area.dto'
 import {
   Collection,
   CollectionStatus,
@@ -7,13 +8,13 @@ import {
 } from '../types/collection.dto'
 export const collapseGovernment = (
   collections: MedmaelasofnunExtendedDTO[],
-  activeAreas: string[],
+  participatingAreas: Area[],
 ): Collection => {
   let earliestStart: Date = new Date(8640000000000000) // Max date
   let latestEndTime: Date = new Date(0)
 
   const localGovernmentalCollection: Collection = {
-    ...mapCollection(collections[0], activeAreas),
+    ...mapCollection(collections[0], participatingAreas),
     areas: [],
     candidates: [],
     collectionType: CollectionType.LocalGovernmental,
@@ -21,7 +22,7 @@ export const collapseGovernment = (
   for (const collection of collections) {
     const { status, startTime, endTime, areas, candidates } = mapCollection(
       collection,
-      activeAreas,
+      participatingAreas,
     )
 
     // Aggregate time over collection for maximal range
