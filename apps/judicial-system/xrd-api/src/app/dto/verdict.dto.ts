@@ -2,7 +2,10 @@ import { IsBoolean, IsEnum, IsOptional, IsString } from 'class-validator'
 
 import { ApiPropertyOptional } from '@nestjs/swagger'
 
-import { DefenderChoice } from '@island.is/judicial-system/types'
+import {
+  DefenderChoice,
+  VerdictAppealDecision,
+} from '@island.is/judicial-system/types'
 
 // TODO: update fields
 export class UpdateVerdictDto {
@@ -10,6 +13,12 @@ export class UpdateVerdictDto {
   @IsBoolean()
   @ApiPropertyOptional({ type: Boolean, required: false })
   acknowledged?: boolean
+
+  // should this be required?
+  @IsOptional()
+  @IsEnum(VerdictAppealDecision)
+  @ApiPropertyOptional({ enum: VerdictAppealDecision })
+  verdictAppealDecision?: VerdictAppealDecision
 
   @IsOptional()
   @IsString()
@@ -25,16 +34,6 @@ export class UpdateVerdictDto {
   @IsString()
   @ApiPropertyOptional({ type: String, required: false })
   servedAt?: string
-
-  @IsOptional()
-  @IsEnum(DefenderChoice)
-  @ApiPropertyOptional({ enum: DefenderChoice, required: false })
-  defenderChoice?: DefenderChoice
-
-  @IsOptional()
-  @IsString()
-  @ApiPropertyOptional({ type: String, required: false })
-  defenderNationalId?: string
 
   @IsOptional()
   @IsBoolean()

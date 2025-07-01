@@ -216,11 +216,54 @@ export class AppService {
     return await this.auditTrailService.audit(
       'digital-mailbox-api',
       AuditedAction.UPDATE_SUBPOENA,
-      this.updateVerdictState(),
+      this.updateVerdictInfo(),
       caseId,
     )
   }
-  private async updateVerdictState() {
-    return ''
+  private async updateVerdictInfo() {
+    // TODO: update both appeal decision + comment and service status
+    // note that this can be triggered in two separate calls
+    try {
+      // TODO
+      // `${this.config.backendUrl}/api/internal/case/${caseId}/defendant/${nationalId}/verdict-appeal`
+      const res = await fetch(
+        `${this.config.backend.url}/api/internal/subpoena/${policeSubpoenaId}`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${this.config.backend.accessToken}`,
+          },
+          body: JSON.stringify(updateToSend),
+        },
+      )
+
+      const response = await res.json()
+
+      if (res.ok) {
+        return {
+          subpoenaComment: response.comment,
+          defenderInfo: {
+            defenderChoice: response.defendant.requestedDefenderChoice,
+            defenderName: response.defendant.requestedDefenderName,
+          },
+        } as SubpoenaResponse
+      }
+
+      if (res.status < 500) {
+        throw new BadRequestException(response?.detail)
+      }
+
+      throw response
+    } catch (reason) {
+      if (reason instanceof BadRequestException) {
+        throw reason
+      }
+
+      throw new BadGatewayException({
+        ...reason,
+        message: 'Failed to update subpoena',
+      })
+    }
   }
 }
