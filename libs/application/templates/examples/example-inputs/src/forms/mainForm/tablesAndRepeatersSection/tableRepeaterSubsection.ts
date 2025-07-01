@@ -90,6 +90,11 @@ export const tableRepeaterSubsection = buildSubSection({
                 { label: 'Option 3', value: 'option3' },
               ],
             },
+            titleAboveCheckbox: {
+              component: 'description',
+              title: 'Title above checkbox',
+              titleVariant: 'h5',
+            },
             checkbox: {
               component: 'checkbox',
               options: [

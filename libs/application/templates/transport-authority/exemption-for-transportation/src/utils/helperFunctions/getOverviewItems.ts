@@ -37,8 +37,10 @@ import {
 } from './spacingUtils'
 import { ExemptionFor } from '../../shared'
 import {
+  checkHasSelectedConvoyInFreightPairing,
   getFreightItem,
   getFreightPairingItem,
+  getFilteredFreightPairingItems,
   getFreightPairingItems,
 } from './freightUtils'
 import { format as formatKennitala } from 'kennitala'
@@ -357,53 +359,60 @@ export const getFreightOverviewLongTermItems = (
   return [
     ...pairingItems
       .map((pairingItem, convoyIndex) => {
+        if (!pairingItem) return {}
+
         const convoyItem = getConvoyItem(answers, convoyIndex)
-        const convoyWithPairing: KeyValueItem = convoyItem
-          ? {
-              width: 'full',
-              keyText: {
-                ...overview.freight.convoyLabel,
-                values: {
-                  convoyNumber: convoyIndex + 1,
-                  vehicleAndTrailerPermno: getConvoyShortName(convoyItem),
-                },
+        if (!convoyItem) return {}
+
+        const convoyIsSelected = checkHasSelectedConvoyInFreightPairing(
+          answers,
+          freightIndex,
+          convoyIndex,
+        )
+        if (!convoyIsSelected) return {}
+
+        const convoyWithPairing: KeyValueItem = {
+          width: 'full',
+          keyText: {
+            ...overview.freight.convoyLabel,
+            values: {
+              convoyNumber: convoyIndex + 1,
+              vehicleAndTrailerPermno: getConvoyShortName(convoyItem),
+            },
+          },
+          valueText: [
+            {
+              ...overview.freight.heightLabel,
+              values: {
+                height: formatNumberWithMeters(pairingItem.height),
               },
-              valueText: [
-                {
-                  ...overview.freight.heightLabel,
-                  values: {
-                    height: formatNumberWithMeters(pairingItem.height),
-                  },
-                },
-                {
-                  ...overview.freight.widthLabel,
-                  values: {
-                    width: formatNumberWithMeters(pairingItem.width),
-                  },
-                },
-                {
-                  ...overview.freight.totalLengthLabel,
-                  values: {
-                    totalLength: formatNumberWithMeters(
-                      pairingItem.totalLength,
-                    ),
-                  },
-                },
-                ...(pairingItem.exemptionFor.includes(ExemptionFor.WIDTH)
-                  ? [overview.freight.exemptionForWidthLabel]
-                  : []),
-                ...(pairingItem.exemptionFor.includes(ExemptionFor.HEIGHT)
-                  ? [overview.freight.exemptionForHeightLabel]
-                  : []),
-                ...(pairingItem.exemptionFor.includes(ExemptionFor.LENGTH)
-                  ? [overview.freight.exemptionForLengthLabel]
-                  : []),
-                ...(pairingItem.exemptionFor.includes(ExemptionFor.WEIGHT)
-                  ? [overview.freight.exemptionForWeightLabel]
-                  : []),
-              ],
-            }
-          : {}
+            },
+            {
+              ...overview.freight.widthLabel,
+              values: {
+                width: formatNumberWithMeters(pairingItem.width),
+              },
+            },
+            {
+              ...overview.freight.totalLengthLabel,
+              values: {
+                totalLength: formatNumberWithMeters(pairingItem.totalLength),
+              },
+            },
+            ...(pairingItem.exemptionFor.includes(ExemptionFor.WIDTH)
+              ? [overview.freight.exemptionForWidthLabel]
+              : []),
+            ...(pairingItem.exemptionFor.includes(ExemptionFor.HEIGHT)
+              ? [overview.freight.exemptionForHeightLabel]
+              : []),
+            ...(pairingItem.exemptionFor.includes(ExemptionFor.LENGTH)
+              ? [overview.freight.exemptionForLengthLabel]
+              : []),
+            ...(pairingItem.exemptionFor.includes(ExemptionFor.WEIGHT)
+              ? [overview.freight.exemptionForWeightLabel]
+              : []),
+          ],
+        }
         return convoyWithPairing
       })
       .filter((obj) => Object.keys(obj).length > 0),
@@ -567,7 +576,7 @@ export const getOverviewErrorMessage = (
 ): StaticText | undefined => {
   // Convoy missing in freight pairing error
   const convoyItems = getConvoyItems(answers)
-  const freightPairingAllItems = getFreightPairingItems(answers)
+  const freightPairingAllItems = getFilteredFreightPairingItems(answers)
   for (let idx = 0; idx < convoyItems.length; idx++) {
     const convoyItem = convoyItems[idx]
     const isPaired = freightPairingAllItems.some(

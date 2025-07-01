@@ -224,12 +224,15 @@ const FreightPairingSchema = z
       z
         .object({
           convoyId: z.string(),
-          height: z.string().min(1),
-          width: z.string().min(1),
-          totalLength: z.string().min(1),
+          // Note: these fields need to be nullable in case convoy is selected in dropdown
+          // and then removed without filling in all fields
+          height: z.string().nullable(),
+          width: z.string().nullable(),
+          totalLength: z.string().nullable(),
           exemptionFor: z
             .array(z.nativeEnum(ExemptionFor).nullable())
-            .optional(),
+            .optional()
+            .nullable(),
         })
         // Note: need to be optional/nullable, since there can be items/convoys in between that are not selected and therefor undefined/null
         // (needs to be optional for zod validation, and nullable for graphql validation)
@@ -237,29 +240,31 @@ const FreightPairingSchema = z
         .nullable(),
     ),
   })
-  .superRefine(({ limit, items }, ctx) => {
-    if (!limit) return
+  .superRefine(({ limit, items, convoyIdList }, ctx) => {
+    if (!items) return
 
-    const keysToCheck: {
-      key: keyof NonNullable<typeof items[number]>
-      limitKey: keyof NonNullable<typeof limit>
-    }[] = [
-      { key: 'height', limitKey: 'maxHeight' },
-      { key: 'width', limitKey: 'maxWidth' },
-      { key: 'totalLength', limitKey: 'maxTotalLength' },
-    ]
-    keysToCheck.forEach(({ key, limitKey }) => {
-      const max = limit[limitKey]
-      if (max === undefined) return
+    items.forEach((item, index) => {
+      if (!item) return
 
-      items.forEach((item, index) => {
-        if (!item) return
+      const shouldValidateFields = convoyIdList.includes(item.convoyId)
+      if (!shouldValidateFields) return
 
+      // Limit check
+      if (!limit) return
+      const keysToCheck: {
+        key: keyof typeof item
+        limitKey: keyof typeof limit
+      }[] = [
+        { key: 'height', limitKey: 'maxHeight' },
+        { key: 'width', limitKey: 'maxWidth' },
+        { key: 'totalLength', limitKey: 'maxTotalLength' },
+      ]
+      keysToCheck.forEach(({ key, limitKey }) => {
+        const max = limit[limitKey]
+        if (max === undefined) return
         const valueStr = item[key]
         if (valueStr === undefined) return
-
         const valueNum = Number(valueStr)
-
         if (isNaN(valueNum) || valueNum <= 0 || valueNum > max) {
           ctx.addIssue({
             code: z.ZodIssueCode.custom,
@@ -268,6 +273,22 @@ const FreightPairingSchema = z
               values: { min: '0', max },
             },
             path: ['items', index, key],
+          })
+        }
+      })
+
+      // Required field checks
+      const fields = [
+        { key: 'height', value: item.height },
+        { key: 'width', value: item.width },
+        { key: 'totalLength', value: item.totalLength },
+      ]
+      fields.forEach(({ key, value }) => {
+        if (!value || value.trim() === '') {
+          ctx.addIssue({
+            path: ['items', index, key],
+            code: z.ZodIssueCode.custom,
+            params: coreErrorMessages.defaultError,
           })
         }
       })
