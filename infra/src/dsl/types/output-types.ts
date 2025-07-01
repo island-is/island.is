@@ -159,7 +159,6 @@ export interface FeatureKubeJob {
         serviceAccountName: 'feature-deployment'
         containers: {
           command: string[]
-          args?: string[]
           image: string
           name: string
           env: { name: string; value: string }[]
