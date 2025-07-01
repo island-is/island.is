@@ -254,7 +254,7 @@ export class UserProfileService {
         include: {
           model: Emails,
           as: 'emails',
-          required: true,
+          required: false,
           where: {
             primary: true,
           },
@@ -353,10 +353,11 @@ export class UserProfileService {
           const email = await this.emailModel.findOne({
             where: {
               email: userProfile.email,
+              nationalId,
             },
+            transaction,
+            useMaster: true,
           })
-
-          await new Promise((resolve) => setTimeout(resolve, 2500))
 
           if (email) {
             await email.update(
@@ -383,20 +384,6 @@ export class UserProfileService {
             )
           }
         }
-      }
-
-      // Update islykill settings
-      if (
-        isEmailDefined ||
-        isMobilePhoneNumberDefined ||
-        isDefined(userProfile.emailNotifications)
-      ) {
-        await this.islykillService.upsertIslykillSettings({
-          nationalId,
-          phoneNumber: formattedPhoneNumber,
-          email: userProfile.email,
-          canNudge: userProfile.emailNotifications,
-        })
       }
     })
 
