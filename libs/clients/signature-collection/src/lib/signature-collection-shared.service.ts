@@ -190,6 +190,7 @@ export class SignatureCollectionSharedClientService {
     electionApi: ElectionApi,
   ): Promise<List[]> {
     let lists: Array<MedmaelalistiDTO>
+    let electionId!: string
     if (collectionType && collectionType === CollectionType.LocalGovernmental) {
       const electionIds = (
         await electionApi.kosningGet({
@@ -206,10 +207,10 @@ export class SignatureCollectionSharedClientService {
         )
         .map((election) => election.id)
       lists = []
-
-      for (const electionId of electionIds) {
+      for (const eId of electionIds) {
+        electionId = eId?.toString() ?? ''
         const electionLists = await listApi.medmaelalistarGet({
-          kosningID: electionId,
+          kosningID: eId,
           svaediID: areaId ? parseInt(areaId) : undefined,
         })
         lists.push(...electionLists)
@@ -220,12 +221,10 @@ export class SignatureCollectionSharedClientService {
         svaediID: areaId ? parseInt(areaId) : undefined,
         frambodID: candidateId ? parseInt(candidateId) : undefined,
       })
+      electionId = lists[0]?.medmaelasofnun?.kosningID?.toString() ?? ''
     }
 
-    const activeAreas = await this.getActiveAreas(
-      lists[0]?.medmaelasofnun?.kosningID?.toString() ?? '',
-      electionApi,
-    )
+    const activeAreas = await this.getActiveAreas(electionId, electionApi)
 
     const listsMapped = lists.map((list) => mapList(list, activeAreas))
     return onlyActive ? listsMapped.filter((list) => list.active) : listsMapped
