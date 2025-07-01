@@ -42,8 +42,12 @@ export class FormUrlsService {
   }
 
   async deleteFormUrl(auth: User, input: FormUrlDto): Promise<void> {
-    await this.formUrlsApiWithAuth(auth).formUrlsControllerDelete({
-      formUrlDto: input,
-    } as FormUrlsControllerDeleteRequest)
+    try {
+      await this.formUrlsApiWithAuth(auth).formUrlsControllerDelete({
+        formUrlDto: input,
+      } as FormUrlsControllerDeleteRequest)
+    } catch (error) {
+      this.handleError(error, 'Error deleting form URL')
+    }
   }
 }
