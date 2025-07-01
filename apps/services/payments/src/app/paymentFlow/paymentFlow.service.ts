@@ -718,6 +718,7 @@ export class PaymentFlowService {
         `Failed to delete payment confirmation for flow ${paymentFlowId}, correlation ID ${correlationId}`,
         { error },
       )
+      // Not re-throwing, to prevent disruption of a primary flow (e.g., refund)
     }
   }
 
