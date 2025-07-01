@@ -1,4 +1,11 @@
-import { FC, useCallback, useContext, useEffect, useState } from 'react'
+import {
+  FC,
+  Fragment,
+  useCallback,
+  useContext,
+  useEffect,
+  useState,
+} from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -182,45 +189,44 @@ const Subpoena: FC = () => {
     })
   }
 
-  const handleCourtArrangementUpdates = (update?: string) => {
+  const updateCourtArrangement = (update: {
+    date?: Date | null
+    location?: string
+  }) => {
     setUpdates((prev) => {
-      if (!prev) {
-        return
-      }
+      if (!prev) return
 
       return {
         defendants: prev.defendants,
         theCase: {
           ...prev.theCase,
           arraignmentDate: {
-            ...prev,
-            location: update,
+            date:
+              update.date !== undefined
+                ? update.date
+                  ? update.date.toISOString()
+                  : null
+                : prev.theCase.arraignmentDate?.date,
+            location:
+              update.location !== undefined
+                ? update.location
+                : prev.theCase.arraignmentDate?.location,
           },
         },
       }
     })
   }
 
-  const handleCourtArrangementUpdates2 = (
-    update: Date | undefined | null,
+  const handleCourtDateChange = (
+    date: Date | undefined | null,
     valid: boolean,
   ) => {
-    setUpdates((prev) => {
-      if (!prev) {
-        return
-      }
+    if (!valid) return
+    updateCourtArrangement({ date })
+  }
 
-      return {
-        defendants: prev.defendants,
-        theCase: {
-          ...prev.theCase,
-          arraignmentDate: {
-            ...prev,
-            date: update ? update.toISOString() : null,
-          },
-        },
-      }
-    })
+  const handleCourtRoomChange = (courtRoom?: string) => {
+    updateCourtArrangement({ location: courtRoom })
   }
 
   useEffect(() => {
@@ -247,7 +253,6 @@ const Subpoena: FC = () => {
 
   const stepIsValid = isSubpoenaStepValid(workingCase, courtDate)
 
-  console.log(isArraignmentScheduled, newSubpoenas, newAlternativeServices)
   return (
     <PageLayout
       workingCase={workingCase}
@@ -328,8 +333,8 @@ const Subpoena: FC = () => {
             title={formatMessage(strings.courtArrangementsHeading)}
           />
           <CourtArrangements
-            handleCourtDateChange={handleCourtArrangementUpdates2}
-            handleCourtRoomChange={handleCourtArrangementUpdates}
+            handleCourtDateChange={handleCourtDateChange}
+            handleCourtRoomChange={handleCourtRoomChange}
             courtDate={updates?.theCase.arraignmentDate}
             dateTimeDisabled={!isSchedulingArraignmentDate}
             courtRoomDisabled={!isSchedulingArraignmentDate}
@@ -337,43 +342,46 @@ const Subpoena: FC = () => {
           />
         </Box>
         <Box component="section" className={pdfButtonGrid} marginBottom={10}>
-          {workingCase.defendants?.map((defendant) => (
-            <>
-              {isIssuingSubpoenaForDefendant(defendant) && (
-                <PdfButton
-                  key={`subpoena-${defendant.id}`}
-                  caseId={workingCase.id}
-                  title={`Fyrirkall - ${defendant.name} nýtt - PDF`}
-                  pdfType="subpoena"
-                  disabled={
-                    !courtDate?.date ||
-                    !courtDate?.location ||
-                    !defendant.subpoenaType
-                  }
-                  elementId={[
-                    defendant.id,
-                    `Fyrirkall - ${defendant.name} nýtt - PDF`,
-                  ]}
-                  queryParameters={`arraignmentDate=${courtDate?.date}&location=${courtDate?.location}&subpoenaType=${defendant.subpoenaType}`}
-                />
-              )}
-              {defendant.subpoenas?.map((subpoena) => {
-                const fileName = `Fyrirkall - ${defendant.name} ${formatDate(
-                  subpoena.created,
-                )} - PDF`
+          {updates?.defendants?.map((defendant) => {
+            const courtDate = updates.theCase.arraignmentDate?.date
+            const location = updates.theCase.arraignmentDate?.location
 
-                return (
+            return (
+              <Fragment key={defendant.id}>
+                {isIssuingSubpoenaForDefendant(defendant) && (
                   <PdfButton
-                    key={`subpoena-${subpoena.id}`}
+                    key={`subpoena-${defendant.id}`}
                     caseId={workingCase.id}
-                    title={fileName}
+                    title={`Fyrirkall - ${defendant.name} nýtt - PDF`}
                     pdfType="subpoena"
-                    elementId={[defendant.id, subpoena.id, fileName]}
+                    disabled={
+                      !courtDate || !location || !defendant.subpoenaType
+                    }
+                    elementId={[
+                      defendant.id,
+                      `Fyrirkall - ${defendant.name} nýtt - PDF`,
+                    ]}
+                    queryParameters={`arraignmentDate=${courtDate}&location=${location}&subpoenaType=${defendant.subpoenaType}`}
                   />
-                )
-              })}
-            </>
-          ))}
+                )}
+                {defendant.subpoenas?.map((subpoena) => {
+                  const fileName = `Fyrirkall - ${defendant.name} ${formatDate(
+                    subpoena.created,
+                  )} - PDF`
+
+                  return (
+                    <PdfButton
+                      key={`subpoena-${subpoena.id}`}
+                      caseId={workingCase.id}
+                      title={fileName}
+                      pdfType="subpoena"
+                      elementId={[defendant.id, subpoena.id, fileName]}
+                    />
+                  )
+                })}
+              </Fragment>
+            )
+          })}
         </Box>
       </FormContentContainer>
       <FormContentContainer isFooter>
