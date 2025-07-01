@@ -153,6 +153,33 @@ export const dataSchema = z.object({
     EmploymentStatusEnum.noParticipationHealthDisability,
   ])).optional(),
   backgroundInfoEmploymentOther: z.string().optional(),
+  backgroundInfoPreviousEmployment: z.object({
+    hasEmployment: z.enum([YES, NO]),
+    when: z.string().optional(),
+    field: z.string().optional(),
+  }).refine(
+    ({ hasEmployment, when }) => {
+      if (hasEmployment === YES) {
+        return when && when.length > 0
+      }
+      return true
+    },
+    {
+      path: ['when'],
+      params: disabilityPensionFormMessage.errors.emptyPreviousEmploymentWhen,
+    }
+  ).refine(
+    ({ hasEmployment, field }) => {
+      if (hasEmployment === YES) {
+        return field && field.length > 0
+      }
+      return true
+    },
+    {
+      path: ['field'],
+      params: disabilityPensionFormMessage.errors.emptyPreviousEmploymentField,
+    }
+  ),
   paymentInfo: z
     .object({
       bankAccountType: z.enum([

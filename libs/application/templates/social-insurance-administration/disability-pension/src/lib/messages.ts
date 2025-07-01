@@ -711,6 +711,21 @@ export const disabilityPensionFormMessage: MessageDir = {
       defaultMessage: 'Annað',
       description: 'Other',
     },
+    previousEmploymentTitle: {
+      id: 'dp.application:selfEvaluation.questions.previousEmployment.title',
+      defaultMessage: 'Hefur þú verið í launuðu starfi áður?',
+      description: 'Have you been in paid employment before?',
+    },
+    previousEmploymentWhen: {
+      id: 'dp.application:selfEvaluation.questions.previousEmployment.when',
+      defaultMessage: 'Hvenær varst þú í launuðu starfi?',
+      description: 'When were you in paid employment?',
+    },
+    previousEmploymentField: {
+      id: 'dp.application:selfEvaluation.questions.previousEmployment.field',
+      defaultMessage: 'Í hvaða starfsgrein starfaðir þú síðast?',
+      description: 'In what profession did you work last?',
+    },
   }),
   errors: defineMessages({
     emptyForeignResidence: {
@@ -747,6 +762,16 @@ export const disabilityPensionFormMessage: MessageDir = {
       id: 'dp.application:errors.endDateRequired',
       defaultMessage: 'Nauðsynlegt er að velja enda tímabils, og að dagsetningin sé á eftir upphafsdagsetningu',
       description: 'You must select the end of period. The end date must be after the start date.',
+    },
+    emptyPreviousEmploymentWhen: {
+      id: 'dp.application:errors.previousEmploymentWhenRequired',
+      defaultMessage: 'Nauðsynlegt er að taka fram hvenær þú varst í launuðu starfi',
+      description: 'You must specify when you were in paid employment',
+    },
+    emptyPreviousEmploymentField: {
+      id: 'dp.application:errors.previousEmploymentFieldRequired',
+      defaultMessage: 'Nauðsynlegt er að taka fram hvaða grein þú starfaðir við',
+      description: 'You must specify in what profession you worked',
     },
   }),
 }

@@ -19,4 +19,5 @@ export enum SectionRouteEnum {
   BACKGROUND_INFO_LANGUAGE_OTHER = 'backgroundInfoLanguageOther',
   BACKGROUND_INFO_EMPLOYMENT = 'backgroundInfoEmployment',
   BACKGROUND_INFO_EMPLOYMENT_OTHER = 'backgroundInfoEmploymentOther',
+  BACKGROUND_INFO_PREVIOUS_EMPLOYMENT = 'backgroundInfoPreviousEmployment',
 }
