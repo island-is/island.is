@@ -27,6 +27,7 @@ import { SetActorProfileEmailInput } from './dto/setActorProfileEmail.input'
 import { UserProfileUpdateActorProfileInput } from './dto/userProfileUpdateActorProfile.input'
 import { UserProfileSetActorProfileEmailInput } from './dto/userProfileSetActorProfileEmail.input'
 import { UpdateActorProfileEmailInput } from './dto/updateActorProfileEmail.input'
+import { ActorProfileDetails } from './dto/actorProfileDetails'
 
 @Injectable()
 export class UserProfileService {
@@ -120,30 +121,27 @@ export class UserProfileService {
       user,
     ).meUserProfileControllerFindUserProfile()
 
-    let bankInfo
-    let bankInfoError = false
-    try {
-      bankInfo = await this.getBankInfo(user)
-    } catch (error) {
-      bankInfoError = true
-    }
-
     return {
       ...userProfile,
-      bankInfo,
-      bankInfoError,
       canNudge: userProfile.emailNotifications,
     }
   }
 
   async createSmsVerification(input: CreateSmsVerificationInput, user: User) {
+    await this.v2ActorApiWithAuth(
+      user,
+    ).actorUserProfileControllerCreateVerification({
+      createVerificationDto: input,
+    })
+  }
+
+  async createMeSmsVerification(input: CreateSmsVerificationInput, user: User) {
     await this.v2MeUserProfileApiWithAuth(
       user,
     ).meUserProfileControllerCreateVerification({
       createVerificationDto: input,
     })
   }
-
   async createEmailVerification(
     input: CreateEmailVerificationInput,
     user: User,

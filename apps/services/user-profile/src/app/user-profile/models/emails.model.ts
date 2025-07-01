@@ -10,8 +10,8 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { ApiProperty } from '@nestjs/swagger'
-import { UserProfile } from '../../user-profile/userProfile.model'
-import { DataStatus } from '../../user-profile/types/dataStatusTypes'
+import { UserProfile } from './userProfile.model'
+import { DataStatus } from '../types/dataStatusTypes'
 import type {
   CreationOptional,
   InferAttributes,

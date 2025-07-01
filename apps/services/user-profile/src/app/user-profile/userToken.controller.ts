@@ -15,7 +15,6 @@ import { Documentation } from '@island.is/nest/swagger'
 
 import { UserTokenService } from './userToken.service'
 import { UserDeviceTokenDto } from './dto/userDeviceToken.dto'
-import { UserProfileService } from './user-profile.service'
 
 const namespace = '@island.is/user-profile/v2/userTokens'
 
@@ -29,10 +28,7 @@ const namespace = '@island.is/user-profile/v2/userTokens'
 })
 @Audit({ namespace })
 export class UserTokenController {
-  constructor(
-    private readonly userTokenService: UserTokenService,
-    private readonly userProfileService: UserProfileService,
-  ) {}
+  constructor(private readonly userTokenService: UserTokenService) {}
 
   @Get()
   @Documentation({
