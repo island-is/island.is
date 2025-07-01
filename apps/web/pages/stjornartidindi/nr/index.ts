@@ -6,10 +6,13 @@ import { CustomNextError } from '@island.is/web/units/errors'
 const idParser = parseAsString
 
 export const getServerSideProps: GetServerSideProps = async ({ query }) => {
-  const recordId = idParser.parseServerSide(query.recordId)
-  const recordIdCapitalized = idParser.parseServerSide(query.RecordId)
-  const recordIdFromStjr = idParser.parseServerSide(query.RecordID)
-  const idToUse = recordIdCapitalized || recordId || recordIdFromStjr
+  const recordIdKey = Object.keys(query).find(
+    (key) => key.toLowerCase() === 'recordid',
+  )
+  const idToUse = recordIdKey
+    ? idParser.parseServerSide(query[recordIdKey])
+    : null
+
   if (!idToUse) {
     throw new CustomNextError(404, 'Advert not found')
   }
