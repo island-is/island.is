@@ -21,7 +21,7 @@ export class SignatureCollectionArea {
   @Field()
   min!: number
 
-  @Field(() => boolean, { nullable: true })
+  @Field(() => Boolean, { nullable: true })
   isActive?: boolean
 
   @Field({ nullable: true })
