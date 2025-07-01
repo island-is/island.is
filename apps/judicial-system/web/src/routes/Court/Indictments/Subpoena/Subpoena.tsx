@@ -63,7 +63,7 @@ const Subpoena: FC = () => {
 
   const { updateDefendantState, updateDefendant } = useDefendants()
   const { formatMessage } = useIntl()
-  const { courtDate, sendCourtDateToServer } = useCourtArrangements(
+  const { sendCourtDateToServer } = useCourtArrangements(
     workingCase,
     setWorkingCase,
     'arraignmentDate',
@@ -106,27 +106,25 @@ const Subpoena: FC = () => {
 
     const promises: Promise<boolean>[] = []
 
-    if (workingCase.defendants) {
-      workingCase.defendants.forEach((defendant) => {
-        promises.push(
-          updateDefendant({
-            caseId: workingCase.id,
-            defendantId: defendant.id,
-            isAlternativeService: defendant.isAlternativeService,
-            // Clear the alternative service description if the defendant
-            // is not being served by alternative means
-            alternativeServiceDescription: defendant.isAlternativeService
-              ? defendant.alternativeServiceDescription
-              : null,
-            // Only change the subpoena type if the defendant is not
-            // being served by alternative means
-            subpoenaType: defendant.isAlternativeService
-              ? undefined
-              : defendant.subpoenaType,
-          }),
-        )
-      })
-    }
+    updates?.defendants?.forEach((defendant) => {
+      promises.push(
+        updateDefendant({
+          caseId: workingCase.id,
+          defendantId: defendant.id,
+          isAlternativeService: defendant.isAlternativeService,
+          // Clear the alternative service description if the defendant
+          // is not being served by alternative means
+          alternativeServiceDescription: defendant.isAlternativeService
+            ? defendant.alternativeServiceDescription
+            : null,
+          // Only change the subpoena type if the defendant is not
+          // being served by alternative means
+          subpoenaType: defendant.isAlternativeService
+            ? undefined
+            : defendant.subpoenaType,
+        }),
+      )
+    })
 
     // Make sure defendants are updated before submitting the court date
     const allDefendantsUpdated = await Promise.all(promises)
@@ -251,7 +249,10 @@ const Subpoena: FC = () => {
     newSubpoenas.length,
   ])
 
-  const stepIsValid = isSubpoenaStepValid(workingCase, courtDate)
+  const stepIsValid = isSubpoenaStepValid(
+    workingCase,
+    updates?.theCase.arraignmentDate,
+  )
 
   return (
     <PageLayout
