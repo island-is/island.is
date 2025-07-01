@@ -24,6 +24,7 @@ import {
   Case,
   CourtSessionType,
   Defendant,
+  UpdateCaseInput,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { SubpoenaType } from '@island.is/judicial-system-web/src/routes/Court/components'
@@ -168,7 +169,7 @@ const Subpoena: FC = () => {
     workingCase.indictmentDecision,
   ])
 
-  const handleUpdates = (update: UpdateDefendantInput) => {
+  const handleDefendantUpdates = (update: UpdateDefendantInput) => {
     setUpdates((prev) => {
       if (!prev) {
         return updates
@@ -179,6 +180,25 @@ const Subpoena: FC = () => {
           item.id === update.defendantId ? { ...item, ...update } : item,
         ),
         theCase: prev.theCase,
+      }
+    })
+  }
+
+  const handleCourtArrangementUpdates = (update?: string) => {
+    setUpdates((prev) => {
+      if (!prev) {
+        return updates
+      }
+
+      return {
+        defendants: prev.defendants,
+        theCase: {
+          ...prev.theCase,
+          arraignmentDate: {
+            date: prev.theCase.arraignmentDate?.date,
+            location: update,
+          },
+        },
       }
     })
   }
@@ -232,7 +252,7 @@ const Subpoena: FC = () => {
                 toggleNewAlternativeService: isArraignmentScheduled
                   ? toggleNewAlternativeService(defendant)
                   : undefined,
-                onUpdate: handleUpdates,
+                onUpdate: handleDefendantUpdates,
                 children: isArraignmentScheduled ? (
                   <Button
                     variant="text"
@@ -288,8 +308,8 @@ const Subpoena: FC = () => {
           />
           <CourtArrangements
             handleCourtDateChange={handleCourtDateChange}
-            handleCourtRoomChange={handleCourtRoomChange}
-            courtDate={workingCase.arraignmentDate}
+            handleCourtRoomChange={handleCourtArrangementUpdates}
+            courtDate={updates?.theCase.arraignmentDate}
             dateTimeDisabled={!isSchedulingArraignmentDate}
             courtRoomDisabled={!isSchedulingArraignmentDate}
             courtRoomRequired
