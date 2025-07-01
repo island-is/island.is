@@ -25,7 +25,6 @@ import {
   PageTitle,
   PdfButton,
   SectionHeading,
-  useCourtArrangements,
 } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
@@ -35,7 +34,10 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { SubpoenaType } from '@island.is/judicial-system-web/src/routes/Court/components'
 import type { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
-import { useDefendants } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  useCase,
+  useDefendants,
+} from '@island.is/judicial-system-web/src/utils/hooks'
 import { isSubpoenaStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { subpoena as strings } from './Subpoena.strings'
@@ -63,11 +65,8 @@ const Subpoena: FC = () => {
 
   const { updateDefendantState, updateDefendant } = useDefendants()
   const { formatMessage } = useIntl()
-  const { sendCourtDateToServer } = useCourtArrangements(
-    workingCase,
-    setWorkingCase,
-    'arraignmentDate',
-  )
+
+  const { setAndSendCaseToServer } = useCase()
 
   const isIssuingSubpoenaForDefendant = (defendant: Defendant) =>
     !defendant.isAlternativeService &&
@@ -153,7 +152,17 @@ const Subpoena: FC = () => {
       },
     ]
 
-    const courtDateUpdated = await sendCourtDateToServer(additionalUpdates)
+    const courtDateUpdated = await setAndSendCaseToServer(
+      [
+        ...additionalUpdates,
+        {
+          arraignmentDate: updates?.theCase.arraignmentDate,
+          force: true,
+        },
+      ],
+      workingCase,
+      setWorkingCase,
+    )
 
     if (!courtDateUpdated) {
       setIsCreatingSubpoena(false)
@@ -165,7 +174,6 @@ const Subpoena: FC = () => {
   }, [
     isArraignmentScheduled,
     navigateTo,
-    sendCourtDateToServer,
     updateDefendant,
     workingCase.defendants,
     workingCase.id,
