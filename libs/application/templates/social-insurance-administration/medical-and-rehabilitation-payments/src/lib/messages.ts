@@ -921,11 +921,6 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Staðfesting á námi',
       description: 'Confirmation of study',
     },
-    unionSickPayConfirmation: {
-      id: 'marp.application:overview.union.sick.pay.confirmation',
-      defaultMessage: 'Sjúkradagpeningar frá stéttarfélagi',
-      description: 'Sick pay from union',
-    },
     rehabilitationPlanConfirmed: {
       id: 'marp.application:overiew.rehabilitation.plan.confirmed',
       defaultMessage: 'Þú hefur staðfest endurhæfingaráætlunina',

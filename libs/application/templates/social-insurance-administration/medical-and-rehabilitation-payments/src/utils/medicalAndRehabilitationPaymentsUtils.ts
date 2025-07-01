@@ -95,11 +95,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'unionSickPay.unionNationalId',
   )
 
-  const unionSickPayFileUpload = getValueViaPath<FileType[]>(
-    answers,
-    'unionSickPay.fileupload',
-  )
-
   const rehabilitationPlanConfirmation = getValueViaPath<string[]>(
     answers,
     'rehabilitationPlanConfirmation',
@@ -190,7 +185,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     hasUtilizedUnionSickPayRights,
     unionSickPayEndDate,
     unionNationalId,
-    unionSickPayFileUpload,
     rehabilitationPlanConfirmation,
     hadAssistance,
     highestLevelOfEducation,
@@ -334,8 +328,6 @@ export const getAttachments = (application: Application) => {
   const {
     isStudying,
     isStudyingFileUpload,
-    hasUtilizedUnionSickPayRights,
-    unionSickPayFileUpload,
   } = getApplicationAnswers(answers)
   const attachments: Attachments[] = []
 
@@ -343,13 +335,6 @@ export const getAttachments = (application: Application) => {
     getAttachmentDetails(
       isStudyingFileUpload,
       AttachmentTypes.STUDY_CONFIRMATION,
-    )
-  }
-
-  if (hasUtilizedUnionSickPayRights === YES) {
-    getAttachmentDetails(
-      unionSickPayFileUpload,
-      AttachmentTypes.UNION_SICK_PAY_CONFIRMATION,
     )
   }
 
