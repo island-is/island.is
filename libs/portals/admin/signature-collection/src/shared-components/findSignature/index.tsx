@@ -1,4 +1,12 @@
-import { Box, FilterInput, Text, Table as T } from '@island.is/island-ui/core'
+import {
+  Box,
+  FilterInput,
+  Text,
+  Table as T,
+  GridColumn,
+  GridRow,
+  GridContainer,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { useState } from 'react'
@@ -22,24 +30,21 @@ const FindSignature = ({ collectionId }: { collectionId: string }) => {
 
   return (
     <Box>
-      <Box
-        width="full"
-        marginBottom={6}
-        display="flex"
-        justifyContent="spaceBetween"
-      >
-        <Box width="half">
-          <FilterInput
-            name="searchSignee"
-            value={searchTerm}
-            onChange={(v) => {
-              setSearchTerm(v)
-            }}
-            placeholder={formatMessage(m.searchNationalIdPlaceholder)}
-            backgroundColor="blue"
-          />
-        </Box>
-      </Box>
+      <GridContainer>
+        <GridRow marginBottom={6}>
+          <GridColumn span={['12/12', '12/12', '8/12', '8/12']}>
+            <FilterInput
+              name="searchSignee"
+              value={searchTerm}
+              onChange={(v) => {
+                setSearchTerm(v)
+              }}
+              placeholder={formatMessage(m.searchNationalIdPlaceholder)}
+              backgroundColor="blue"
+            />
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
       {loading && (
         <Box marginBottom={6}>
           <SkeletonSingleRow />

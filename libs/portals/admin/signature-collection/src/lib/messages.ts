@@ -194,6 +194,11 @@ export const m = defineMessages({
     defaultMessage: 'Opna söfnun',
     description: '',
   },
+  municipalityCollectionOpen: {
+    id: 'admin-portal.signature-collection:municipalityCollectionOpen',
+    defaultMessage: 'Söfnun opin',
+    description: '',
+  },
   openMunicipalCollectionSuccess: {
     id: 'admin-portal.signature-collection:openMunicipalCollectionSuccess',
     defaultMessage: 'Tókst að opna söfnun',
@@ -211,7 +216,7 @@ export const m = defineMessages({
   },
   noListsDescription: {
     id: 'admin-portal.signature-collection:noListsDescription',
-    defaultMessage: 'Engin meðmælasöfnun hefur verið stöfnuð að því stöddu.',
+    defaultMessage: 'Engin meðmælasöfnun hefur verið stofnuð að því stöddu.',
     description: '',
   },
   noListsFoundBySearch: {

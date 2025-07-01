@@ -1,5 +1,4 @@
 import {
-  Text,
   ActionCard,
   Box,
   GridColumn,
@@ -21,14 +20,17 @@ import { signatureCollectionNavigation } from '../../lib/navigation'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import { SignatureCollectionPaths } from '../../lib/paths'
-import { SignatureCollectionList } from '@island.is/api/schema'
 import FindSignature from '../../shared-components/findSignature'
 import EmptyState from '../../shared-components/emptyState'
 import StartAreaCollection from './startCollection'
 import { useStartCollectionMutation } from './startCollection/startCollection.generated'
 
-const AllMunicipalities = ({ isAdmin }: { isAdmin: boolean }) => {
-  const { allLists, collection } = useLoaderData() as ListsLoaderReturn
+const AllMunicipalities = ({
+  isProcurationHolder,
+}: {
+  isProcurationHolder: boolean
+}) => {
+  const { collection } = useLoaderData() as ListsLoaderReturn
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
 
@@ -55,25 +57,6 @@ const AllMunicipalities = ({ isAdmin }: { isAdmin: boolean }) => {
       },
     })
   }
-
-  const areaCounts: Record<string, number> = {}
-  const municipalityMap = new Map<string, SignatureCollectionList>()
-
-  // Group lists by municipality
-  allLists.forEach((list) => {
-    const key = list?.area?.name
-    if (!key) return
-
-    areaCounts[key] = (areaCounts[key] || 0) + 1
-
-    if (!municipalityMap.has(key)) {
-      municipalityMap.set(key, list)
-    }
-  })
-
-  const municipalities = Array.from(municipalityMap.values()).sort((a, b) =>
-    a.area.name.localeCompare(b.area.name),
-  )
 
   return (
     <GridContainer>
@@ -111,42 +94,29 @@ const AllMunicipalities = ({ isAdmin }: { isAdmin: boolean }) => {
           />
           <Divider />
           <Box marginTop={9} />
-          {municipalities.length > 0 ? (
-            <Box>
-              <FindSignature collectionId={collection.id} />
-              <Box marginBottom={3} display="flex" justifyContent="flexEnd">
-                <Text variant="eyebrow">
-                  {formatMessage(m.totalListResults) +
-                    ': ' +
-                    municipalities.length}
-                </Text>
-              </Box>
-            </Box>
+          {collection.areas.length > 0 ? (
+            <FindSignature collectionId={collection.id} />
           ) : (
             <EmptyState
               title={formatMessage(m.noLists)}
               description={formatMessage(m.noListsDescription)}
             />
           )}
-          {/* For municipalities to start their collection if its not already active */}
-          {!isAdmin &&
-            municipalities.length > 0 &&
-            !municipalities[0]?.area?.isActive && (
-              <StartAreaCollection areaId={municipalities[0]?.area.id} />
+          {/* For municipalities to start their collection if its not already active.
+              Note: municipalities only see their own area. */}
+          {isProcurationHolder &&
+            collection.areas?.length > 0 &&
+            !collection.areas[0]?.isActive && (
+              <StartAreaCollection areaId={collection.areas[0]?.id} />
             )}
           <Stack space={3}>
-            {municipalities.map((municipality) => {
+            {collection.areas.map((area) => {
               return (
                 <ActionCard
-                  key={municipality.area.id}
-                  heading={municipality.area.name}
+                  key={area.id}
+                  heading={area.name}
                   eyebrow={formatMessage(m.municipality)}
-                  text={
-                    formatMessage(m.totalListsPerMunicipality) +
-                    (areaCounts[municipality.area.name]
-                      ? areaCounts[municipality.area.name].toString()
-                      : '0')
-                  }
+                  text={formatMessage(m.totalListsPerMunicipality) + 'TODO'}
                   cta={{
                     label: formatMessage(m.viewMunicipality),
                     variant: 'text',
@@ -154,13 +124,13 @@ const AllMunicipalities = ({ isAdmin }: { isAdmin: boolean }) => {
                       navigate(
                         SignatureCollectionPaths.SingleMunicipality.replace(
                           ':municipality',
-                          municipality.area.name,
+                          area.name,
                         ),
                       )
                     },
                   }}
                   tag={
-                    isAdmin && !municipality.area.isActive
+                    !isProcurationHolder && !area.isActive
                       ? {
                           label: 'Open collection',
                           renderTag: () => (
@@ -169,9 +139,11 @@ const AllMunicipalities = ({ isAdmin }: { isAdmin: boolean }) => {
                               title={
                                 formatMessage(m.openMunicipalCollection) +
                                 ' - ' +
-                                municipality.area.name
+                                area.name
                               }
-                              description=""
+                              description={formatMessage(
+                                m.openMunicipalCollectionDescription,
+                              )}
                               ariaLabel="open_collection"
                               disclosureElement={
                                 <Tag outlined variant="blue">
@@ -185,7 +157,7 @@ const AllMunicipalities = ({ isAdmin }: { isAdmin: boolean }) => {
                                 </Tag>
                               }
                               onConfirm={() => {
-                                onStartCollection(municipality.area.id)
+                                onStartCollection(area.id)
                               }}
                               buttonTextConfirm={formatMessage(
                                 m.confirmOpenMunicipalCollectionButton,
@@ -193,7 +165,11 @@ const AllMunicipalities = ({ isAdmin }: { isAdmin: boolean }) => {
                             />
                           ),
                         }
-                      : undefined
+                      : {
+                          label: formatMessage(m.municipalityCollectionOpen),
+                          variant: 'mint',
+                          outlined: false,
+                        }
                   }
                 />
               )
