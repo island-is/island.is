@@ -6,6 +6,7 @@ import { formatBankInfo, validIBAN, validSWIFT } from '@island.is/application/te
 import { isValidPhoneNumber } from './utils'
 import { disabilityPensionFormMessage } from './messages'
 import { EmploymentEnum, MaritalStatusEnum, ResidenceEnum, ChildrenCountEnum, IcelandicCapabilityEnum, LanguageEnum, EmploymentStatusEnum, EmploymentImportanceEnum } from './constants'
+import { OptionsValueEnum } from '../forms/mainForm/capabilityImpairmentSection/mockData'
 
 
 export const fileSchema = z.object({
@@ -399,7 +400,16 @@ export const dataSchema = z.object({
     }),
   selfEvaluation: z.object({
     assistance: z.enum([YES, NO]),
-  })
+  }),
+  capabilityImpairment: z.object({
+    questionAnswers: z.array(
+      z.object({
+        id: z.string(),
+        title: z.string(),
+        answer: z.enum([OptionsValueEnum.EXTREME, OptionsValueEnum.LITTLE, OptionsValueEnum.MODERATE, OptionsValueEnum.NONE, OptionsValueEnum.REFUSE_TO_ANSWER, OptionsValueEnum.SEVERE]),
+      })
+    ),
+  }),
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>
