@@ -5,5 +5,6 @@ export const lawyersModuleConfig = defineConfig({
   load: (env) => ({
     lawyerRegistryAPI: 'https://lmfi.is/api',
     lawyerRegistryAPIKey: env.required('LAWYERS_ICELAND_API_KEY'),
+    backendUrl: env.required('BACKEND_URL', 'http://localhost:3344'),
   }),
 })

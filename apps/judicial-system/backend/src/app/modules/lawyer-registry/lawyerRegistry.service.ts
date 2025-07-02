@@ -1,6 +1,6 @@
 import { plainToClass } from 'class-transformer'
 import { validate } from 'class-validator'
-import type { Transaction } from 'sequelize'
+import type { Transaction, WhereOptions } from 'sequelize'
 import { Sequelize } from 'sequelize'
 
 import {
@@ -15,6 +15,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   Lawyer,
+  LawyerRegistryResponse,
   LawyersService,
   LawyerType,
 } from '@island.is/judicial-system/lawyers'
@@ -111,6 +112,29 @@ export class LawyerRegistryService {
       this.logger.error('Error populating lawyer registry', error)
 
       throw new InternalServerErrorException('Error populating lawyer registry')
+    }
+  }
+
+  async getAll(lawyerType: LawyerType) {
+    try {
+      const whereOptions: WhereOptions | undefined =
+        lawyerType === LawyerType.LITIGATORS
+          ? {
+              isLitigator: true,
+            }
+          : undefined
+
+      const lawyers = await this.lawyerRegistryModel.findAll({
+        where: whereOptions,
+      })
+
+      return lawyers
+    } catch (error) {
+      this.logger.error('Error getting all lawyers from lawyer registry', error)
+
+      throw new InternalServerErrorException(
+        'Error getting all lawyers from lawyer registry',
+      )
     }
   }
 }
