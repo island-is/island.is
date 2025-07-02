@@ -3,8 +3,8 @@ import {
   buildRadioField,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
-import { MaritalStatusEnum } from '../../../../lib/constants'
-import { SectionRouteEnum } from '../../../../lib/routes'
+import { MaritalStatusEnum } from '../../../../types'
+import { SectionRouteEnum } from '../../../../types'
 
 export const maritalStatusField =
   buildMultiField({

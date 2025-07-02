@@ -1,6 +1,6 @@
 # disability-pension
 
-This template for an application was generated with the `nx generate-template disability-pension` command.
+This template for an application was generated with the `nx generate-template disability-pension` command. It provides a scaffold for submitting disability pension applications to the Social Insurance Administration (TR)
 
 
 //TODO!!!!! 

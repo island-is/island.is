@@ -2,8 +2,8 @@ import {
   buildSelectField,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
-import { ChildrenCountEnum } from '../../../../lib/constants'
-import { SectionRouteEnum } from '../../../../lib/routes'
+import { ChildrenCountEnum } from '../../../../types'
+import { SectionRouteEnum } from '../../../../types'
 
 export const childrenField =
   buildSelectField({

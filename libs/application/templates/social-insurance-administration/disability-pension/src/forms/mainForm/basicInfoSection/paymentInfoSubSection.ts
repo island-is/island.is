@@ -19,7 +19,7 @@ import { socialInsuranceAdministrationMessage } from '@island.is/application/tem
 import { BankInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { friendlyFormatIBAN, friendlyFormatSWIFT, getCurrencies, getTaxOptions, getYesNoOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import isEmpty from 'lodash/isEmpty'
-import { SectionRouteEnum } from '../../../lib/routes'
+import { SectionRouteEnum } from '../../../types'
 
 export const paymentInfoSubSection =
     buildSubSection({

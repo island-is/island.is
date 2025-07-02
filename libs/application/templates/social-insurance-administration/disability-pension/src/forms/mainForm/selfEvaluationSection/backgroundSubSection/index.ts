@@ -14,7 +14,7 @@ import { employmentCapabilityField } from './employmentCapability'
 import { employmentImportanceField } from './employmentImportance'
 import { rehabilitationOrTherapyField } from './rehabilitationOrTherapy'
 import { biggestIssueField } from './biggestIssue'
-import { SectionRouteEnum } from '../../../../lib/routes'
+import { SectionRouteEnum } from '../../../../types'
 
 export const backgroundInfoSubSection =
   buildSubSection({

@@ -3,7 +3,7 @@ import {
   buildSection,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../lib/messages'
-import { SectionRouteEnum } from '../../../lib/routes'
+import { SectionRouteEnum } from '../../../types'
 
 export const disabilityCertificateSection =
   buildSection({

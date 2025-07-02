@@ -9,7 +9,7 @@ import {
 import { disabilityPensionFormMessage } from '../../../lib/messages'
 import { Application, NationalRegistryIndividual, NationalRegistrySpouse } from '@island.is/application/types'
 import { applicantInformationArray } from '@island.is/application/ui-forms'
-import { SectionRouteEnum } from '../../../lib/routes'
+import { SectionRouteEnum } from '../../../types'
 
 export const personalInfoSubSection =
     buildSubSection({

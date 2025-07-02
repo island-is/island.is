@@ -6,8 +6,8 @@ import {
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { YesOrNoOptions } from '../../../../lib/options'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { EmploymentEnum } from '../../../../lib/constants'
-import { SectionRouteEnum } from '../../../../lib/routes'
+import { EmploymentEnum } from '../../../../types'
+import { SectionRouteEnum } from '../../../../types'
 
 export const paidWorkSubSection = buildMultiField({
   id: SectionRouteEnum.PAID_WORK,

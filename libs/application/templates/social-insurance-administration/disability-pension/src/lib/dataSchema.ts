@@ -3,9 +3,9 @@ import { errorMessages } from '@island.is/application/templates/social-insurance
 import { BankAccountType, INCOME, ISK, RatioType, TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { NO, YES } from '@island.is/application/core'
 import { formatBankInfo, validIBAN, validSWIFT } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
-import { isValidPhoneNumber } from './utils'
+import { isValidPhoneNumber } from '../utils/isValidPhoneNumber'
 import { disabilityPensionFormMessage } from './messages'
-import { EmploymentEnum, MaritalStatusEnum, ResidenceEnum, ChildrenCountEnum, IcelandicCapabilityEnum, LanguageEnum, EmploymentStatusEnum, EmploymentImportanceEnum } from './constants'
+import { EmploymentEnum, MaritalStatusEnum, ResidenceEnum, ChildrenCountEnum, IcelandicCapabilityEnum, LanguageEnum, EmploymentStatusEnum, EmploymentImportanceEnum } from '../types/enums'
 import { OptionsValueEnum } from '../forms/mainForm/capabilityImpairmentSection/mockData'
 
 

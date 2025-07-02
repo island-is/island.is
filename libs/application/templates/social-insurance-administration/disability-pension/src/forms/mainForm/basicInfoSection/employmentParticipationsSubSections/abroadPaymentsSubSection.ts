@@ -8,8 +8,8 @@ import {
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { FormValue } from '@island.is/application/types'
-import { YesOrNoOptions, countryOptions } from '../../../../lib/options'
-import { SectionRouteEnum } from '../../../../lib/routes'
+import { SectionRouteEnum } from '../../../../types'
+import { YesOrNoOptions, countryOptions } from '../../../../utils'
 
 const abroadPaymentsCondition = (formValue: FormValue) => {
   const hasAbroadPayments = getValueViaPath<YesOrNoEnum>(

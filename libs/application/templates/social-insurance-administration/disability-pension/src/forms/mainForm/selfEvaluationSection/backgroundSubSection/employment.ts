@@ -4,8 +4,8 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
-import { EmploymentStatusEnum } from '../../../../lib/constants'
-import { SectionRouteEnum } from '../../../../lib/routes'
+import { EmploymentStatusEnum } from '../../../../types'
+import { SectionRouteEnum } from '../../../../types'
 
 export const employmentField =
   buildMultiField({

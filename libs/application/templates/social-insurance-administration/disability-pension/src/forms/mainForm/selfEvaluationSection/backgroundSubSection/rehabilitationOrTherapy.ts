@@ -4,7 +4,7 @@ import {
   NO,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
-import { SectionRouteEnum } from '../../../../lib/routes'
+import { SectionRouteEnum } from '../../../../types'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 
 export const rehabilitationOrTherapyField =

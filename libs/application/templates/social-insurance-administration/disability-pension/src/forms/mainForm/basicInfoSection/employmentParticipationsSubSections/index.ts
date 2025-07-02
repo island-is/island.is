@@ -3,7 +3,7 @@ import { livedAbroadSubSection } from './livedAbroadSubSection'
 import { abroadPaymentsSubSection } from './abroadPaymentsSubSection'
 import { buildSubSection } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
-import { SectionRouteEnum } from '../../../../lib/routes'
+import { SectionRouteEnum } from '../../../../types'
 
 export const employmentParticipationSubSection =
     buildSubSection({

@@ -10,8 +10,8 @@ import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { FormValue } from '@island.is/application/types'
 import format from 'date-fns/format'
 import addMonths from 'date-fns/addMonths'
-import { YesOrNoOptions, countryOptions } from '../../../../lib/options'
-import { SectionRouteEnum } from '../../../../lib/routes'
+import { SectionRouteEnum } from '../../../../types'
+import { YesOrNoOptions, countryOptions } from '../../../../utils'
 
 const livedAbroadCondition = (formValue: FormValue) => {
   const livedAbroad = getValueViaPath<YesOrNoEnum>(

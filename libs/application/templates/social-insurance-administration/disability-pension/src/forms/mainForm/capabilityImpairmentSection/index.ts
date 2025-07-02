@@ -6,7 +6,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../lib/messages'
-import { SectionRouteEnum } from '../../../lib/routes'
+import { SectionRouteEnum } from '../../../types'
 import { MOCK_QUESTIONS, OptionsValueEnum } from './mockData'
 
 const questions = MOCK_QUESTIONS.map(question => {

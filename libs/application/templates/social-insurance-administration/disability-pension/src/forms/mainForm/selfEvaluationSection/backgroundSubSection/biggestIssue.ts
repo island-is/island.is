@@ -2,7 +2,7 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
-import { SectionRouteEnum } from '../../../../lib/routes'
+import { SectionRouteEnum } from '../../../../types'
 
 export const biggestIssueField = buildTextField({
   id: SectionRouteEnum.BACKGROUND_INFO_BIGGEST_ISSUE,

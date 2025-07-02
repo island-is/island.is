@@ -6,7 +6,7 @@ import {
 import { disabilityPensionFormMessage } from '../../../lib/messages'
 import { YesOrNoOptions } from '../../../lib/options'
 import { backgroundInfoSubSection } from './backgroundSubSection'
-import { SectionRouteEnum } from '../../../lib/routes'
+import { SectionRouteEnum } from '../../../types'
 
 export const selfEvaluationSection =
   buildSection({
