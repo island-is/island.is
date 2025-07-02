@@ -16,14 +16,18 @@ import {
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
 import { LawyersService } from '@island.is/judicial-system/lawyers'
-import { DefenderChoice, ServiceStatus } from '@island.is/judicial-system/types'
+import {
+  DefenderChoice,
+  PoliceFileTypeCode,
+  ServiceStatus,
+} from '@island.is/judicial-system/types'
 
 import { CreateCaseDto } from './dto/createCase.dto'
+import { UpdatePoliceDocumentDeliveryDto } from './dto/policeDocument.dto'
 import { UpdateSubpoenaDto } from './dto/subpoena.dto'
-import { UpdateVerdictDto } from './dto/verdict.dto'
 import { Case } from './models/case.model'
+import { PoliceDocumentDelivery } from './models/policeDocumentDelivery.response'
 import { SubpoenaResponse } from './models/subpoena.response'
-import { VerdictResponse } from './models/verdict.model'
 import appModuleConfig from './app.config'
 
 @Injectable()
@@ -182,6 +186,7 @@ export class AppService {
       const response = await res.json()
 
       if (res.ok) {
+        // why are we returning this again?
         return {
           subpoenaComment: response.comment,
           defenderInfo: {
@@ -208,33 +213,41 @@ export class AppService {
     }
   }
 
-  // TODO
-  async updateVerdict(
-    caseId: string,
-    updateVerdict: UpdateVerdictDto,
-  ): Promise<VerdictResponse> {
-    return await this.auditTrailService.audit(
-      'digital-mailbox-api',
-      AuditedAction.UPDATE_SUBPOENA,
-      this.updateVerdictInfo(),
-      caseId,
-    )
+  async updatePoliceDocumentDelivery(
+    policeDocumentId: string,
+    updatePoliceDocumentDelivery: UpdatePoliceDocumentDeliveryDto,
+  ): Promise<PoliceDocumentDelivery> {
+    switch (updatePoliceDocumentDelivery.fileTypeCode) {
+      case PoliceFileTypeCode.VERDICT:
+        return await this.auditTrailService.audit(
+          'digital-mailbox-api',
+          AuditedAction.UPDATE_VERDICT,
+          this.updateVerdictDelivery(
+            policeDocumentId,
+            updatePoliceDocumentDelivery,
+          ),
+          policeDocumentId,
+        )
+    }
+
+    throw new BadRequestException('Police file type code not supported')
   }
-  private async updateVerdictInfo() {
-    // TODO: update both appeal decision + comment and service status
-    // note that this can be triggered in two separate calls
+
+  private async updateVerdictDelivery(
+    policeDocumentId: string,
+    updatePoliceDocumentDelivery: UpdatePoliceDocumentDeliveryDto,
+  ) {
     try {
-      // TODO
-      // `${this.config.backendUrl}/api/internal/case/${caseId}/defendant/${nationalId}/verdict-appeal`
       const res = await fetch(
-        `${this.config.backend.url}/api/internal/subpoena/${policeSubpoenaId}`,
+        // TODO: implement endpoint, backend + table
+        `${this.config.backend.url}/api/internal/verdict/${policeDocumentId}`,
         {
           method: 'PATCH',
           headers: {
             'Content-Type': 'application/json',
             authorization: `Bearer ${this.config.backend.accessToken}`,
           },
-          body: JSON.stringify(updateToSend),
+          body: JSON.stringify(updatePoliceDocumentDelivery),
         },
       )
 
@@ -242,12 +255,9 @@ export class AppService {
 
       if (res.ok) {
         return {
-          subpoenaComment: response.comment,
-          defenderInfo: {
-            defenderChoice: response.defendant.requestedDefenderChoice,
-            defenderName: response.defendant.requestedDefenderName,
-          },
-        } as SubpoenaResponse
+          // TODO: not supported atm
+          policeDocumentId: response.policeDocumentId,
+        } as PoliceDocumentDelivery
       }
 
       if (res.status < 500) {
@@ -262,7 +272,7 @@ export class AppService {
 
       throw new BadGatewayException({
         ...reason,
-        message: 'Failed to update subpoena',
+        message: `Failed to update document delivery information for file type code ${updatePoliceDocumentDelivery.fileTypeCode}`,
       })
     }
   }
