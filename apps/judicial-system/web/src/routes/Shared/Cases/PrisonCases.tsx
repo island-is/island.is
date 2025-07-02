@@ -7,6 +7,7 @@ import {
   capitalize,
   districtCourtAbbreviation,
 } from '@island.is/judicial-system/formatters'
+import { isPrisonAdminUser } from '@island.is/judicial-system/types'
 import {
   core,
   errors,
@@ -43,7 +44,6 @@ import {
   CaseListEntry,
   CaseState,
   CaseType,
-  InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 
@@ -56,7 +56,7 @@ export const PrisonCases: FC = () => {
   const { user } = useContext(UserContext)
   const { openCaseInNewTab } = useOpenCaseInNewTab()
 
-  const isPrisonAdmin = user?.institution?.type === InstitutionType.PRISON_ADMIN
+  const isPrisonAdmin = isPrisonAdminUser(user)
 
   const { data, error, loading } = usePrisonCasesQuery({
     fetchPolicy: 'no-cache',

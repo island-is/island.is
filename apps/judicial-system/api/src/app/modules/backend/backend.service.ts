@@ -19,7 +19,7 @@ import {
   SignatureConfirmationResponse,
 } from '../case'
 import { CaseListEntry, CaseStatistics } from '../case-list'
-import { CaseTableResponse } from '../case-table'
+import { CaseTableResponse, SearchCasesResponse } from '../case-table'
 import {
   CivilClaimant,
   Defendant,
@@ -206,6 +206,13 @@ export class BackendService extends DataSource<{ req: Request }> {
       `case-table?type=${type}`,
       this.caseTransformer,
     )
+  }
+
+  searchCases(query: string): Promise<SearchCasesResponse> {
+    const params = new URLSearchParams()
+    params.append('query', query)
+
+    return this.get(`search-cases?${params.toString()}`)
   }
 
   getCaseStatistics(
@@ -614,14 +621,20 @@ export class BackendService extends DataSource<{ req: Request }> {
   }
 
   findUsersByNationalId(nationalId: string): Promise<User[]> {
-    return this.callBackend<User[]>(`user/?nationalId=${nationalId}`, {
+    const params = new URLSearchParams()
+    params.append('nationalId', nationalId)
+
+    return this.callBackend<User[]>(`user?${params.toString()}`, {
       headers: this.secretTokenHeaders,
     })
   }
 
   findDefenderByNationalId(nationalId: string): Promise<User> {
+    const params = new URLSearchParams()
+    params.append('nationalId', nationalId)
+
     return this.callBackend<User>(
-      `cases/limitedAccess/defender?nationalId=${nationalId}`,
+      `cases/limitedAccess/defender?${params.toString()}`,
       {
         headers: this.secretTokenHeaders,
       },

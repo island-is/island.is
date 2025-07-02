@@ -52,6 +52,8 @@ export {
   DefenderSubRole,
   prosecutionRoles,
   isProsecutionUser,
+  isProsecutorUser,
+  isProsecutorRepresentativeUser,
   getContactInformation,
   publicProsecutionOfficeRoles,
   isPublicProsecutionOfficeUser,

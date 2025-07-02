@@ -1,9 +1,17 @@
-import { FC, isValidElement, PropsWithChildren, ReactNode } from 'react'
+import {
+  FC,
+  isValidElement,
+  PropsWithChildren,
+  ReactNode,
+  useEffect,
+} from 'react'
 import ReactDOM from 'react-dom'
 import FocusLock from 'react-focus-lock'
+import cn from 'classnames'
 import { motion } from 'motion/react'
 
 import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
+import { useKeyboardCombo } from '@island.is/judicial-system-web/src/utils/hooks/useKeyboardCombo/useKeyboardCombo'
 
 import * as styles from './Modal.css'
 
@@ -23,6 +31,7 @@ interface ModalProps {
   children?: ReactNode
   invertButtonColors?: boolean
   loading?: boolean
+  position?: 'center' | 'top' | 'bottom'
 }
 
 const Modal: FC<PropsWithChildren<ModalProps>> = ({
@@ -132,6 +141,72 @@ const Modal: FC<PropsWithChildren<ModalProps>> = ({
               </Text>
             </Box>
           )}
+        </motion.div>
+      </motion.div>
+    </FocusLock>
+  )
+}
+
+export const ModalContainer = ({
+  children,
+  onClose,
+  position = 'center',
+}: ModalProps) => {
+  const modalVariants = {
+    open: {
+      translateY: 0,
+      opacity: 1,
+    },
+    closed: {
+      translateY: 50,
+      opacity: 0,
+      transition: { duration: 0.2 },
+    },
+  }
+
+  useKeyboardCombo('Escape', () => {
+    onClose && onClose()
+  })
+
+  useEffect(() => {
+    document.body.style.overflow = 'hidden'
+    document.body.style.userSelect = 'none'
+
+    return () => {
+      document.body.style.overflow = ''
+      document.body.style.userSelect = ''
+    }
+  }, [])
+
+  return (
+    <FocusLock autoFocus={false}>
+      <motion.div
+        key="modal"
+        className={cn(styles.container, {
+          [styles.alignItems[position]]: position,
+        })}
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+        exit={{ opacity: 0 }}
+        role="dialog"
+        aria-modal="true"
+        data-testid="modal"
+        onClick={() => {
+          onClose && onClose()
+        }}
+      >
+        <motion.div
+          className={styles.modalContainerBare}
+          initial="closed"
+          animate="open"
+          exit="closed"
+          variants={modalVariants}
+          onClick={(e) => {
+            // Prevent click events from bubbling up to the container
+            e.stopPropagation()
+          }}
+        >
+          {children}
         </motion.div>
       </motion.div>
     </FocusLock>
