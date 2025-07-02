@@ -1,8 +1,7 @@
 import { Injectable, NotFoundException } from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 import { FormUrl } from './models/formUrl.model'
-import { CreateFormUrlDto } from './models/dto/createFormUrl.dto'
-import { FormUrlDto } from './models/dto/formUrl.dto'
+import { FormUrlDto } from '@island.is/form-system/shared'
 import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.model'
 
 @Injectable()
@@ -14,7 +13,7 @@ export class FormUrlsService {
     private readonly organizationUrlModel: typeof OrganizationUrl,
   ) {}
 
-  async create(createFormUrlDto: CreateFormUrlDto): Promise<FormUrlDto> {
+  async create(createFormUrlDto: FormUrlDto): Promise<FormUrlDto> {
     const organizationUrl = await this.organizationUrlModel.findByPk(
       createFormUrlDto.organizationUrlId,
     )
@@ -32,23 +31,25 @@ export class FormUrlsService {
     await newFormUrl.save()
 
     const formUrlDto: FormUrlDto = {
-      id: newFormUrl.id,
       organizationUrlId: newFormUrl.organizationUrlId,
-      url: organizationUrl.url,
-      isXroad: organizationUrl.isXroad,
-      isTest: organizationUrl.isTest,
-      type: organizationUrl.type,
-      method: organizationUrl.method,
+      formId: newFormUrl.formId,
     }
 
     return formUrlDto
   }
 
-  async delete(id: string): Promise<void> {
-    const formUrl = await this.formUrlModel.findByPk(id)
+  async delete(deleteFormUrlDto: FormUrlDto): Promise<void> {
+    const formUrl = await this.formUrlModel.findOne({
+      where: {
+        formId: deleteFormUrlDto.formId,
+        organizationUrlId: deleteFormUrlDto.organizationUrlId,
+      },
+    })
 
     if (!formUrl) {
-      throw new NotFoundException(`Form url with id '${id}' not found`)
+      throw new NotFoundException(
+        `Form url with formId '${deleteFormUrlDto.formId}' and organizationUrlId '${deleteFormUrlDto.organizationUrlId}' not found`,
+      )
     }
 
     formUrl.destroy()
