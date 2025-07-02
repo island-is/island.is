@@ -174,10 +174,12 @@ const Subpoena: FC = () => {
   }, [
     isArraignmentScheduled,
     navigateTo,
+    setAndSendCaseToServer,
+    setWorkingCase,
     updateDefendant,
-    workingCase.defendants,
-    workingCase.id,
-    workingCase.indictmentDecision,
+    updates?.defendants,
+    updates?.theCase.arraignmentDate,
+    workingCase,
   ])
 
   const handleDefendantUpdates = (update: UpdateDefendantInput) => {
