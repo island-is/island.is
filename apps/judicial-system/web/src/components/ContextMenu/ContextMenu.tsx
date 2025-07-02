@@ -65,7 +65,7 @@ export const ContextMenu = forwardRef<HTMLButtonElement, ContextMenuProps>(
       flexDirection: 'column',
       borderRadius: 'large',
       zIndex: 10,
-      marginTop: 1,
+      marginY: 1,
     })
 
     const handleClick = (evt: React.MouseEvent, item: ContextMenuItem) => {

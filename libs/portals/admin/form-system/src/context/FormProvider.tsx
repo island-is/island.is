@@ -72,6 +72,7 @@ export const FormProvider: React.FC<{
   const [updateFieldDisplayOrder] = useMutation(UPDATE_FIELDS_DISPLAY_ORDER)
   const [updateForm] = useMutation(UPDATE_FORM)
   const [getGoogleTranslation] = useMutation(GET_GOOGLE_TRANSLATION)
+  const [selectedUrls, setSelectedUrls] = useState<string[]>([])
 
   const getTranslation = async (text: string): Promise<GoogleTranslation> => {
     const result = await getGoogleTranslation({
@@ -145,8 +146,10 @@ export const FormProvider: React.FC<{
       formUpdate,
       applicantTypes,
       getTranslation,
+      selectedUrls,
+      setSelectedUrls,
     }),
-    [control, controlDispatch, inListBuilder, selectStatus],
+    [control, controlDispatch, inListBuilder, selectStatus, selectedUrls],
   )
 
   return (

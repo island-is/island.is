@@ -1,6 +1,6 @@
 import faker from 'faker'
 import { MockedProvider } from '@apollo/client/testing'
-import { act, render, screen, within } from '@testing-library/react'
+import { render, screen, within } from '@testing-library/react'
 import userEvent from '@testing-library/user-event'
 
 import {
@@ -56,9 +56,7 @@ describe('Summary', () => {
 
     const continueButton = screen.getByRole('button', { name: 'Ljúka máli' })
 
-    await act(async () => {
-      await userEvent.click(continueButton)
-    })
+    await userEvent.click(continueButton)
 
     const { getByRole } = within(screen.getByRole('dialog'))
 
@@ -98,9 +96,7 @@ describe('Summary', () => {
 
     const continueButton = screen.getByRole('button', { name: 'Ljúka máli' })
 
-    await act(async () => {
-      await userEvent.click(continueButton)
-    })
+    await userEvent.click(continueButton)
 
     const { getByRole } = within(screen.getByRole('dialog'))
 
