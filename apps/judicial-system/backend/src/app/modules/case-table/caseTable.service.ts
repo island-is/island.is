@@ -273,7 +273,7 @@ export class CaseTableService {
   }
 
   async searchCases(query: string, user: TUser): Promise<SearchCasesResponse> {
-    const safeQuery = this.sequelize.escape(`%${query}%`).slice(1, -1)
+    const safeQuery = this.sequelize.escape(`%${query}%`)
 
     const results = await this.caseModel.findAndCountAll({
       attributes: [
@@ -290,7 +290,7 @@ export class CaseTableService {
               FROM "defendant" d
               WHERE d."case_id" = "Case"."id"
               ORDER BY
-                (d."name" ILIKE '${safeQuery}' OR d."national_id" ILIKE '${safeQuery}') DESC,
+                (d."name" ILIKE ${safeQuery} OR d."national_id" ILIKE ${safeQuery}) DESC,
                 d."created" ASC
               LIMIT 1
             )
@@ -304,7 +304,7 @@ export class CaseTableService {
               FROM "defendant" d
               WHERE d."case_id" = "Case"."id"
               ORDER BY
-                (d."name" ILIKE '${safeQuery}' OR d."national_id" ILIKE '${safeQuery}') DESC,
+                (d."name" ILIKE ${safeQuery} OR d."national_id" ILIKE ${safeQuery}) DESC,
                 d."created" ASC
               LIMIT 1
             )
@@ -322,22 +322,22 @@ export class CaseTableService {
                 SELECT unnest("Case"."police_case_numbers") AS match, 'policeCaseNumbers' AS match_source
                 UNION ALL
                 SELECT "Case"."court_case_number", 'courtCaseNumber'
-                WHERE "Case"."court_case_number" ILIKE '${safeQuery}'
+                WHERE "Case"."court_case_number" ILIKE ${safeQuery}
                 UNION ALL
                 SELECT "Case"."appeal_case_number", 'appealCaseNumber'
-                WHERE "Case"."appeal_case_number" ILIKE '${safeQuery}'
+                WHERE "Case"."appeal_case_number" ILIKE ${safeQuery}
                 UNION ALL
                 SELECT d."national_id", 'defendantNationalId'
                 FROM "defendant" d
                 WHERE d."case_id" = "Case"."id"
-                  AND d."national_id" ILIKE '${safeQuery}'
+                  AND d."national_id" ILIKE ${safeQuery}
                 UNION ALL
                 SELECT d."name", 'defendantName'
                 FROM "defendant" d
                 WHERE d."case_id" = "Case"."id"
-                  AND d."name" ILIKE '${safeQuery}'
+                  AND d."name" ILIKE ${safeQuery}
               ) AS matches
-              WHERE match ILIKE '${safeQuery}'
+              WHERE match ILIKE ${safeQuery}
               LIMIT 1
             )
           `),
@@ -361,13 +361,13 @@ export class CaseTableService {
               literal(`
                 EXISTS (
                   SELECT 1 FROM unnest("Case"."police_case_numbers") AS n
-                  WHERE n ILIKE '${safeQuery}'
+                  WHERE n ILIKE ${safeQuery}
                 )
             `),
               { court_case_number: { [Op.iLike]: `%${query}%` } },
               { appeal_case_number: { [Op.iLike]: `%${query}%` } },
-              literal(`defendants.name ILIKE '${safeQuery}'`),
-              literal(`defendants.national_id ILIKE '${safeQuery}'`),
+              { '$defendants.name$': { [Op.iLike]: `%${query}%` } },
+              { '$defendants.national_id$': { [Op.iLike]: `%${query}%` } },
             ],
           },
         ],
