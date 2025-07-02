@@ -418,12 +418,12 @@ const Subpoena: FC = () => {
       {navigateTo !== undefined && (
         <Modal
           title={
-            isIssuingSubpoenas
+            isIssuingSubpoenas || isCreatingSubpoena
               ? formatMessage(strings.modalTitle)
               : strings.modalAlternativeServiceTitle
           }
           text={
-            isIssuingSubpoenas
+            isIssuingSubpoenas || isCreatingSubpoena
               ? formatMessage(strings.modalText)
               : strings.modalAlternativeServiceText
           }
@@ -434,7 +434,7 @@ const Subpoena: FC = () => {
             setNavigateTo(undefined)
           }}
           primaryButtonText={
-            isIssuingSubpoenas
+            isIssuingSubpoenas || isCreatingSubpoena
               ? formatMessage(strings.modalPrimaryButtonText)
               : strings.modalAlternativeServicePrimaryButtonText
           }
