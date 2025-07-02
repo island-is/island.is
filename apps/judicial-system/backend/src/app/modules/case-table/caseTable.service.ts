@@ -364,6 +364,7 @@ export class CaseTableService {
                   WHERE n ILIKE ${safeQuery}
                 )
             `),
+              // Op.iLike makes it safe to use the original query string
               { court_case_number: { [Op.iLike]: `%${query}%` } },
               { appeal_case_number: { [Op.iLike]: `%${query}%` } },
               { '$defendants.name$': { [Op.iLike]: `%${query}%` } },
