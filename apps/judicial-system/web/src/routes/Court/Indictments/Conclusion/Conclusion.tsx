@@ -34,7 +34,6 @@ import {
   CourtSessionType,
   IndictmentDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   formatDateForServer,
   UpdateCase,
