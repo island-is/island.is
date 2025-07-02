@@ -37,7 +37,6 @@ env:
   CI_DEBUG: ${{ contains(github.event.pull_request.labels.*.name, 'ci debug') }}
   SKIP_TESTS: ${{ contains(github.event.pull_request.labels.*.name, 'test nothing') }}
   DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
-  CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache
   YARN_ENABLE_HARDENED_MODE: '0'
 
 jobs:
@@ -145,6 +144,7 @@ jobs:
       NODE_OPTIONS: --max-old-space-size=4096
       E2E_BUILD_ID: '${{ needs.prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}'
       NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+      NX_HEAD: ${{ needs.prepare.outputs.NX_HEAD }}
       AFFECTED_PROJECTS: ${{ matrix.projects }}
     strategy:
       fail-fast: false
@@ -208,22 +208,14 @@ jobs:
         with:
           token: ${{ secrets.DIRTY_FIX_BOT_TOKEN }}
           ref: ${{ github.event.pull_request.head.ref }}
+          # Need full repo for Nx to find the commits at NX_*
+          fetch-depth: 0
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 
-      - name: load-deps
-        uses: ./.github/actions/load-deps
-
       - name: NX format:check
-        if: ${{ github.ref == 'ref/heads/main' }}
-        run: ./scripts/ci/20_check-formatting.sh "check"
-
-      # - name: NX format:write
-      #   if: ${{ github.event_name == 'pull_request' }}
-      #   run: |
-      #     ./scripts/ci/20_check-formatting.sh "write"
-      #     ./infra/scripts/ci/git-check-dirty.sh "/" "nx format:write" "dirtybot"
+        run: yarn nx format:check
 
   lintfix-changed-files:
     name: Lintfix Changed Files

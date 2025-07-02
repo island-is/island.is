@@ -17,9 +17,7 @@ import { GetWorkMachineInput } from '../dto/getWorkMachine.input'
 @Resolver(() => WorkMachine)
 @Audit({ namespace: '@island.is/api/work-machines' })
 export class WorkMachineResolver {
-  constructor(
-    private readonly workMachinesService: WorkMachinesService,
-  ) {}
+  constructor(private readonly workMachinesService: WorkMachinesService) {}
 
   @Scopes(ApiScope.workMachines)
   @Query(() => WorkMachine, {

@@ -31,6 +31,7 @@ export const MainContent = () => {
   const { activeItem } = control
   const [openPreview, setOpenPreview] = useState(false)
   const { formatMessage } = useIntl()
+
   return (
     <Box padding={2}>
       {activeItem.type === 'Field' ? (
@@ -40,11 +41,11 @@ export const MainContent = () => {
         <BaseSettings />
       ) : activeItem.type === 'Section' &&
         (activeItem.data as FormSystemSection).sectionType ===
-        SectionTypes.PREMISES ? (
+          SectionTypes.PREMISES ? (
         <Premises />
       ) : activeItem.type === 'Section' &&
         (activeItem.data as FormSystemSection).sectionType ===
-        SectionTypes.PARTIES ? (
+          SectionTypes.PARTIES ? (
         <RelevantParties />
       ) : openPreview ? (
         <PreviewStepOrGroup setOpenPreview={setOpenPreview} />

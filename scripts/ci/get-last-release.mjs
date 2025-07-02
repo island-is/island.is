@@ -1,6 +1,6 @@
 const releases = process.argv
   .slice(2)
-  .flatMap(arg => arg.split(/\s+/))
+  .flatMap((arg) => arg.split(/\s+/))
   .map((release) => release.replace('origin/release/', ''))
   .filter((release) => /^\d+\.\d+\.\d+$/.test(release))
   .sort((a, b) => {

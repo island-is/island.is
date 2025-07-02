@@ -345,12 +345,10 @@ export class NotificationsWorkerService {
 
         if (message.onBehalfOf) {
           profile =
-            await this.userProfileApi.userProfileControllerGetActorProfileByDelegation(
-              {
-                xParamToNationalId: message.recipient,
-                xParamFromNationalId: message.onBehalfOf.nationalId,
-              },
-            )
+            await this.userProfileApi.userProfileControllerGetActorProfile({
+              xParamToNationalId: message.recipient,
+              xParamFromNationalId: message.onBehalfOf.nationalId,
+            })
         } else {
           profile =
             await this.userProfileApi.userProfileControllerFindUserProfile({
@@ -409,6 +407,17 @@ export class NotificationsWorkerService {
               if (delegations.data.length > 0) {
                 recipientName = await this.getName(message.recipient)
               }
+
+              // Filter out duplicate delegations that have the same fromNationalId and toNationalId
+              delegations.data = delegations.data.filter(
+                (delegation, index, self) =>
+                  index ===
+                  self.findIndex(
+                    (d) =>
+                      d.fromNationalId === delegation.fromNationalId &&
+                      d.toNationalId === delegation.toNationalId,
+                  ),
+              )
 
               await Promise.all(
                 delegations.data.map((delegation) =>

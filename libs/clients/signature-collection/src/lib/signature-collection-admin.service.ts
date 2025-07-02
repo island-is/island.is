@@ -24,12 +24,22 @@ import {
   AdminListApi,
   AdminSignatureApi,
   AdminApi,
+  ManagerListApi,
+  MunicipalityListApi,
+  ManagerCollectionApi,
+  ManagerCandidateApi,
+  ManagerSignatureApi,
+  MunicipalityCandidateApi,
+  MunicipalityCollectionApi,
+  MunicipalitySignatureApi,
+  ManagerAdminApi,
 } from './apis'
 import { SignatureCollectionSharedClientService } from './signature-collection-shared.service'
 import {
   AreaSummaryReport,
   mapAreaSummaryReport,
 } from './types/areaSummaryReport.dto'
+import { SignatureCollectionAdminClient } from './types/adminClient'
 
 type Api =
   | AdminListApi
@@ -37,20 +47,31 @@ type Api =
   | AdminSignatureApi
   | AdminCandidateApi
   | AdminApi
+  | ManagerListApi
+  | ManagerCollectionApi
+  | ManagerSignatureApi
+  | ManagerCandidateApi
+  | ManagerAdminApi
+  | MunicipalityListApi
+  | MunicipalityCollectionApi
+  | MunicipalitySignatureApi
+  | MunicipalityCandidateApi
   | KosningApi
 
 @Injectable()
-export class SignatureCollectionAdminClientService {
+export class SignatureCollectionAdminClientService
+  implements SignatureCollectionAdminClient
+{
   constructor(
-    private listsApi: AdminListApi,
-    private collectionsApi: AdminCollectionApi,
-    private electionsApi: KosningApi,
-    private sharedService: SignatureCollectionSharedClientService,
-    private candidateApi: AdminCandidateApi,
-    private adminApi: AdminApi,
+    protected listsApi: AdminListApi,
+    protected collectionsApi: AdminCollectionApi,
+    protected electionsApi: KosningApi,
+    protected sharedService: SignatureCollectionSharedClientService,
+    protected candidateApi: AdminCandidateApi,
+    protected adminApi: AdminApi,
   ) {}
 
-  private getApiWithAuth<T extends Api>(api: T, auth: Auth) {
+  protected getApiWithAuth<T extends Api>(api: T, auth: Auth) {
     return api.withMiddleware(new AuthMiddleware(auth)) as T
   }
 
@@ -68,7 +89,7 @@ export class SignatureCollectionAdminClientService {
     auth: Auth,
     collectionType: CollectionType,
   ): Promise<Collection> {
-    return await this.sharedService.getLatestCollectionForType(
+    return this.sharedService.getLatestCollectionForType(
       this.getApiWithAuth(this.electionsApi, auth),
       collectionType,
     )
@@ -97,6 +118,9 @@ export class SignatureCollectionAdminClientService {
       })
       return { success: !!list }
     } catch (error) {
+      if (error.status === 403) {
+        error.body = 'Þú hefur ekki aðgang að þessari aðgerð.'
+      }
       return {
         success: false,
         reasons: error.body ? [error.body] : [],
@@ -115,6 +139,12 @@ export class SignatureCollectionAdminClientService {
   }
 
   async getLists(input: GetListInput, auth: Auth): Promise<List[]> {
+    if (
+      input.collectionType &&
+      input.collectionType === CollectionType.LocalGovernmental
+    ) {
+      input.areaId = await this.getMunicipalityAreaId(auth)
+    }
     return await this.sharedService.getLists(
       input,
       this.getApiWithAuth(this.listsApi, auth),
@@ -128,6 +158,7 @@ export class SignatureCollectionAdminClientService {
       this.getApiWithAuth(this.listsApi, auth),
       this.getApiWithAuth(this.candidateApi, auth),
       this.getApiWithAuth(this.collectionsApi, auth),
+      this.getApiWithAuth(this.electionsApi, auth),
     )
   }
 
@@ -252,7 +283,14 @@ export class SignatureCollectionAdminClientService {
 
     const ownedLists =
       user.medmaelalistar && candidate
-        ? user.medmaelalistar?.map((list) => mapListBase(list))
+        ? user.medmaelalistar?.map((list) =>
+            mapListBase(
+              list,
+              collection.areas.some(
+                (area) => area.id === list.svaedi?.id?.toString(),
+              ),
+            ),
+          )
         : []
 
     const { success: canCreate, reasons: canCreateInfo } =
@@ -513,5 +551,37 @@ export class SignatureCollectionAdminClientService {
         reasons: error.body ? [error.body] : [],
       }
     }
+  }
+
+  async startMunicipalityCollection(
+    auth: Auth,
+    areaId: string,
+  ): Promise<Success> {
+    const current = await this.getLatestCollectionForType(
+      auth,
+      CollectionType.LocalGovernmental,
+    )
+    try {
+      const collection = await this.getApiWithAuth(
+        this.adminApi,
+        auth,
+      ).adminKosningIDSveitSofnunPost({
+        iD: parseInt(current.electionId ?? ''),
+        sveitarfelagID: parseInt(areaId),
+      })
+      return { success: !!collection }
+    } catch (error) {
+      return { success: false, reasons: error.body ? [error.body] : [] }
+    }
+  }
+
+  async getMunicipalityAreaId(auth: Auth): Promise<string> {
+    const info = await this.getApiWithAuth(
+      this.adminApi,
+      auth,
+    ).adminSveitarfelagInfoGet({
+      kennitala: auth.nationalId,
+    })
+    return info?.[0]?.sveitarfelagID?.toString()
   }
 }

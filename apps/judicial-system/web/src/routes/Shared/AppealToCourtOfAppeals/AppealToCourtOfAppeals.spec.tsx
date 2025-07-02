@@ -1,5 +1,5 @@
 import { ApolloClient, ApolloProvider, InMemoryCache } from '@apollo/client'
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 
 import {
   CaseAppealRulingDecision,
@@ -29,7 +29,7 @@ jest.mock('next/router', () => ({
 }))
 
 describe('AppealToCourtOfAppeals', () => {
-  it('should render checkbox for prosecutors to request the court of appeal ruling be not published', () => {
+  it('should render checkbox for prosecutors to request the court of appeal ruling be not published', async () => {
     render(
       <IntlProviderWrapper>
         <ApolloProvider
@@ -51,10 +51,10 @@ describe('AppealToCourtOfAppeals', () => {
       </IntlProviderWrapper>,
     )
 
-    expect(screen.getByRole('checkbox')).toBeInTheDocument()
+    expect(await screen.findByRole('checkbox')).toBeInTheDocument()
   })
 
-  it('should not render a checkbox for defenders to request the court of appeal ruling be not published', () => {
+  it('should not render a checkbox for defenders to request the court of appeal ruling be not published', async () => {
     render(
       <IntlProviderWrapper>
         <ApolloProvider
@@ -76,6 +76,8 @@ describe('AppealToCourtOfAppeals', () => {
       </IntlProviderWrapper>,
     )
 
-    expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
+    await waitFor(() => {
+      expect(screen.queryByRole('checkbox')).not.toBeInTheDocument()
+    })
   })
 })
