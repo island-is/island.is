@@ -70,7 +70,6 @@ export {
   isPublicProsecutionUser,
   getAdminUserInstitutionScope,
   getAdminUserInstitutionUserRoles,
-  hasCaseGroupListsEnabled,
 } from './lib/user'
 export type { User, UserDescriptor, InstitutionUser } from './lib/user'
 

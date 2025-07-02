@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren, ReactNode, useMemo } from 'react'
+import { FC, ReactNode, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { useLocalStorage } from 'react-use'
 import parseISO from 'date-fns/parseISO'
@@ -34,7 +34,6 @@ import { compareLocaleIS } from '../../utils/sortHelper'
 import { mapCaseStateToTagVariant } from '../Tags/TagCaseState/TagCaseState'
 import DurationDate, { getDurationDate } from './DurationDate/DurationDate'
 import SortButton from './SortButton/SortButton'
-import TableSkeleton from './TableSkeleton/TableSkeleton'
 import { table as strings } from './Table.strings'
 import * as styles from './Table.css'
 
@@ -49,17 +48,6 @@ interface TableProps {
   generateContextMenuItems?: (row: CaseListEntry) => ContextMenuItem[]
   onClick?: (row: CaseListEntry) => boolean
 }
-
-interface TableWrapperProps {
-  loading: boolean
-}
-
-export const TableWrapper: FC<PropsWithChildren<TableWrapperProps>> = ({
-  loading,
-  children,
-}) => (
-  <Box marginBottom={[5, 5, 12]}>{loading ? <TableSkeleton /> : children}</Box>
-)
 
 export const useTable = () => {
   const [sortConfig, setSortConfig] = useLocalStorage<SortConfig>(
