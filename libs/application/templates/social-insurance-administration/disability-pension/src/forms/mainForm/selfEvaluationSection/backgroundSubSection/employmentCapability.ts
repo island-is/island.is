@@ -10,4 +10,6 @@ export const employmentCapabilityField = buildTextField({
   placeholder: disabilityPensionFormMessage.questions.employmentCapabilityLabel,
   variant: 'number',
   width: 'full',
+  min: 0,
+  max: 100
 })

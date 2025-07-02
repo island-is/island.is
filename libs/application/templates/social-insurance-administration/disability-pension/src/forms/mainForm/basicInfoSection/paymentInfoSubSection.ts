@@ -138,8 +138,7 @@ export const paymentInfoSubSection =
             }),
             buildTextField({
               id: 'paymentInfo.bankAddress',
-              title:
-                socialInsuranceAdministrationMessage.payment.bankAddress,
+              title: socialInsuranceAdministrationMessage.payment.bank,
               width: 'half',
               defaultValue: (application: Application) => {
                 const bankInfo = getValueViaPath<BankInfo>(

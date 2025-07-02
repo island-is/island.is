@@ -83,7 +83,10 @@ export const dataSchema = z.object({
     MaritalStatusEnum.divorced,
     MaritalStatusEnum.widowed,
     MaritalStatusEnum.unknown,
-  ]),
+  ]).refine((value) => {
+    console.log(value)
+    return value !== undefined
+  }),
   backgroundInfoResidence: z.object({
     status: z.enum([
       ResidenceEnum.ownHome,
@@ -159,6 +162,7 @@ export const dataSchema = z.object({
       return (status && status.length > 0) || (other && other.length > 0)
     },
     {
+      path: ['status'],
       params: disabilityPensionFormMessage.errors.emptyEmploymentStatus,
     }
   ),
@@ -189,7 +193,14 @@ export const dataSchema = z.object({
       params: disabilityPensionFormMessage.errors.emptyPreviousEmploymentField,
     }
   ),
-  backgroundInfoEmploymentCapability: z.number().min(0).max(100),
+  backgroundInfoEmploymentCapability: z
+    .string()
+    .refine(
+      (data): data is string =>
+        typeof data === 'string' &&
+        !isNaN(Number(data)) &&
+        (data.length === 3 || data.length === 0),
+    ),
   backgroundInfoEmploymentImportance: z.enum([
     EmploymentImportanceEnum.notImportantAtAll,
     EmploymentImportanceEnum.notImportant,
