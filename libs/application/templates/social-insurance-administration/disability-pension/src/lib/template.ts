@@ -11,18 +11,26 @@ import {
   ApplicationConfigurations,
   NationalRegistrySpouseApi,
   NationalRegistryUserApi,
+  defineTemplateApi,
 } from '@island.is/application/types'
-import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
-import { socialInsuranceAdministrationMessage} from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import { socialInsuranceAdministrationMessage, statesMessages} from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
+  YES,
+  coreHistoryMessages,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { assign } from 'xstate'
 import { disabilityPensionFormMessage } from './messages'
 import { SocialInsuranceAdministrationCategorizedIncomeTypesApi, SocialInsuranceAdministrationCurrenciesApi, SocialInsuranceAdministrationWithholdingTaxApi, SocialInsuranceAdministrationLatestIncomePlan, SocialInsuranceAdministrationIncomePlanConditionsApi } from '../dataProviders'
+import { Actions, Events, INCOME, RatioType, Roles, States, defaultIncomeTypes } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { ApiScope } from '@island.is/auth/scopes'
+import set from 'lodash/set'
+import unset from 'lodash/unset'
+import { IncomePlanRow } from '@island.is/application/templates/social-insurance-administration-core/types'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -35,14 +43,16 @@ const template: ApplicationTemplate<
   institution: socialInsuranceAdministrationMessage.shared.institution,
   translationNamespaces: ApplicationConfigurations.DisabilityPension.translation,
   dataSchema,
+  allowMultipleApplicationsInDraft: false,
+  requiredScopes: [ApiScope.socialInsuranceAdministration],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
       [States.PREREQUISITES]: {
+        exit: ['populateIncomeTable'],
         meta: {
-          name: 'Gagnaöflun',
+          name: States.PREREQUISITES,
           status: FormModes.DRAFT,
-          progress: 0.1,
           lifecycle: EphemeralStateLifeCycle,
           roles: [
             {
@@ -73,11 +83,25 @@ const template: ApplicationTemplate<
         },
       },
       [States.DRAFT]: {
+        exit: ['unsetIncomePlan'],
         meta: {
           name: 'Main form',
           progress: 0.8,
           status: FormModes.DRAFT,
           lifecycle: DefaultStateLifeCycle,
+          actionCard: {
+            description: statesMessages.draftDescription,
+            historyLogs: {
+              onEvent: DefaultEvents.SUBMIT,
+              logMessage: coreHistoryMessages.applicationSent,
+            },
+          },
+          onExit: defineTemplateApi({
+            action: Actions.SEND_APPLICATION,
+            namespace: 'SocialInsuranceAdministration',
+            triggerEvent: DefaultEvents.SUBMIT,
+            throwOnError: true,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -96,15 +120,21 @@ const template: ApplicationTemplate<
         },
         on: {
           [DefaultEvents.SUBMIT]: {
-            target: States.COMPLETED,
+            target: States.APPROVED,
           },
         },
       },
-      [States.COMPLETED]: {
+      [States.APPROVED]: {
         meta: {
-          name: 'Completed form',
-          progress: 1,
-          status: FormModes.COMPLETED,
+          name: States.APPROVED,
+          status: 'approved',
+          actionCard: {
+            pendingAction: {
+              title: socialInsuranceAdministrationMessage.applicationApproved,
+              content: statesMessages.applicationApproved,
+              displayStatus: 'success',
+            },
+          },
           lifecycle: DefaultStateLifeCycle,
           roles: [
             {
@@ -114,7 +144,6 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.completedForm),
                 ),
               read: 'all',
-              delete: true,
             },
           ],
         },
@@ -123,6 +152,67 @@ const template: ApplicationTemplate<
   },
   stateMachineOptions: {
     actions: {
+      populateIncomeTable: assign((context) => {
+        const { application } = context
+        const { answers } = application
+
+        set(answers, 'incomePlanTable', defaultIncomeTypes)
+
+        return context
+      }),
+      unsetIncomePlan: assign((context) => {
+        const { application } = context
+        const { answers } = application
+        const incomePlan = getValueViaPath<IncomePlanRow[]>(answers, 'incomePlan') ?? []
+
+        incomePlan?.forEach((income, index) => {
+          if (
+            (income.income === RatioType.MONTHLY &&
+              income.incomeCategory === INCOME &&
+              income.unevenIncomePerYear?.[0] === YES) ||
+            income.income === RatioType.YEARLY
+          ) {
+            unset(
+              application.answers,
+              `incomePlanTable[${index}].equalIncomePerMonth`,
+            )
+            unset(
+              application.answers,
+              `incomePlanTable[${index}].equalForeignIncomePerMonth`,
+            )
+          }
+          if (
+            (income.income === RatioType.MONTHLY &&
+              income.unevenIncomePerYear?.[0] !== YES) ||
+            income.income === RatioType.YEARLY ||
+            income.incomeCategory !== INCOME
+          ) {
+            unset(application.answers, `incomePlanTable[${index}].january`)
+            unset(application.answers, `incomePlanTable[${index}].february`)
+            unset(application.answers, `incomePlanTable[${index}].march`)
+            unset(application.answers, `incomePlanTable[${index}].april`)
+            unset(application.answers, `incomePlanTable[${index}].may`)
+            unset(application.answers, `incomePlanTable[${index}].june`)
+            unset(application.answers, `incomePlanTable[${index}].july`)
+            unset(application.answers, `incomePlanTable[${index}].august`)
+            unset(application.answers, `incomePlanTable[${index}].september`)
+            unset(application.answers, `incomePlanTable[${index}].october`)
+            unset(application.answers, `incomePlanTable[${index}].november`)
+            unset(application.answers, `incomePlanTable[${index}].december`)
+          }
+          if (
+            income.income === RatioType.YEARLY ||
+            income.incomeCategory !== INCOME
+          ) {
+            unset(
+              application.answers,
+              `incomePlanTable[${index}].unevenIncomePerYear`,
+            )
+          }
+        })
+
+        return context
+      }),
       clearAssignees: assign((context) => ({
         ...context,
         application: {
