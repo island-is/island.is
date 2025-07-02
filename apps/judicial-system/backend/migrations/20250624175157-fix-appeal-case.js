@@ -1,15 +1,16 @@
 'use strict'
 
 module.exports = {
-  up: (queryInterface, Sequelize) => {
+  up: (queryInterface) => {
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.bulkUpdate(
         'case',
         {
           prosecutor_appeal_announcement: null,
           prosecutor_appeal_decision: 'ACCEPT',
-          appeal_received_by_court_date: null,
+          prosecutor_postponed_appeal_date: null,
           appeal_state: null,
+          appeal_received_by_court_date: null,
         },
         {
           id: '4c91ffb7-164a-4688-8012-6156b875bbac',
