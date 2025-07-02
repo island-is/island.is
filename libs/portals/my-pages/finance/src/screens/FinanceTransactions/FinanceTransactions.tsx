@@ -195,7 +195,9 @@ const FinanceTransactions = () => {
                             locale="is"
                             backgroundColor="blue"
                             size="xs"
-                            handleChange={(d) => setFromDate(d)}
+                            handleChange={(d) => {
+                              setFromDate(d)
+                            }}
                             selected={fromDate}
                             appearInline
                           />

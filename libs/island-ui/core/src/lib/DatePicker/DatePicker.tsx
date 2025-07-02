@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import * as React from 'react'
 import { useEffect, useRef, useState, forwardRef } from 'react'
 import cn from 'classnames'
@@ -26,6 +27,7 @@ import * as coreStyles from './react-datepicker.css'
 import { Input } from '../Input/Input'
 import { InputProps } from '../Input/types'
 import { DatePickerProps, DatePickerCustomHeaderProps } from './types'
+import { Select } from '../Select/Select'
 
 const languageConfig = {
   is: {
@@ -70,9 +72,12 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   showTimeInput = false,
   timeInputLabel = 'Tími:',
   readOnly = false,
-  calendarStartDay = 0,
+  calendarStartDay = 1,
+  range = false,
 }) => {
   const [startDate, setStartDate] = useState<Date | null>(selected ?? null)
+  const [endDate, setEndDate] = useState<Date | null>(null)
+
   const [datePickerState, setDatePickerState] = useState<'open' | 'closed'>(
     'closed',
   )
@@ -136,11 +141,26 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
             setDatePickerState('closed')
             handleCloseCalendar && handleCloseCalendar(startDate)
           }}
-          onChange={(date: Date) => {
-            setStartDate(date)
-            handleChange && handleChange(date)
-          }}
+          onChange={
+            range
+              ? (date: any) => {
+                  const [start, end] = date
+                  setStartDate(start)
+                  range && setEndDate(end)
+                  if (range && end) {
+                    start && handleChange && handleChange(start, end)
+                  } else {
+                    start && handleChange && handleChange(start)
+                  }
+                }
+              : (date: any) => {
+                  setStartDate(date)
+                  handleChange && handleChange(date)
+                }
+          }
           startDate={startDate}
+          endDate={range ? endDate : undefined}
+          selectsRange={range}
           required={required}
           autoComplete="off"
           calendarClassName={cn({
@@ -224,6 +244,7 @@ const CustomHeader = ({
 }: DatePickerCustomHeaderProps) => {
   const monthRef = useRef<HTMLSpanElement>(null)
   const month = locale.localize ? locale.localize.month(date.getMonth()) : ''
+  const shortMonth = month.slice(0, 3)
   const months = monthsIndex.map((i) => {
     if (locale.localize) {
       return locale.localize.month(i)
@@ -250,25 +271,27 @@ const CustomHeader = ({
             {month}
           </Text>
         </VisuallyHidden>
-        <select
+        <Select
+          size="xs"
           aria-label="Select month"
           className={styles.headerSelect}
-          value={month}
-          onChange={({ target: { value } }) =>
-            changeMonth(months.indexOf(value))
+          value={{ label: shortMonth, value: month }}
+          onChange={(selectedOption) =>
+            changeMonth(months.indexOf(selectedOption?.value))
           }
-          style={{
-            textAlign: 'center',
-            width: 'auto',
-            marginRight: 8,
+          options={months.map((option) => ({
+            label: option.slice(0, 3),
+            value: option,
+          }))}
+          styles={{
+            control: (base) => ({
+              ...base,
+              textAlign: 'center',
+              width: 'auto',
+              marginRight: 8,
+            }),
           }}
-        >
-          {months.map((option) => (
-            <option key={option} value={option}>
-              {option}
-            </option>
-          ))}
-        </select>
+        />
         {years && years.length > 0 ? (
           <select
             className={styles.headerSelect}
