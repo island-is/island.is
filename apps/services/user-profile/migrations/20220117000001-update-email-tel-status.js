@@ -2,7 +2,7 @@
 
 module.exports = {
   up: (queryInterface, Sequelize) => {
-    return queryInterface.sequelize.transaction((t) =>
+    return queryInterface.sequelize.transaction(() =>
       Promise.all([
         queryInterface.addColumn('user_profile', 'email_status', {
           type: Sequelize.ENUM(
@@ -28,7 +28,7 @@ module.exports = {
     )
   },
 
-  down: (queryInterface, Sequelize) => {
+  down: (queryInterface) => {
     return queryInterface.sequelize.transaction((t) =>
       Promise.all([
         queryInterface.removeColumn('user_profile', 'email_status', {

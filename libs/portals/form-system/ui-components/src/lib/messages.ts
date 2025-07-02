@@ -268,6 +268,14 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:time-input',
     defaultMessage: 'Klukkinnsláttur',
   },
+  hourInput: {
+    id: 'portals-admin.form-system:hour-input',
+    defaultMessage: 'Klukkustund',
+  },
+  minuteInput: {
+    id: 'portals-admin.form-system:minute-input',
+    defaultMessage: 'Mínúta',
+  },
   iskNumberBox: {
     id: 'portals-admin.form-system:currency-number',
     defaultMessage: 'Krónutölubox',
@@ -564,6 +572,54 @@ export const m = defineMessages({
     id: 'form-system:basic-error-message',
     defaultMessage: 'Villa kom upp',
     description: 'Basic error message',
+  },
+  maxBankNumbers: {
+    id: 'form-system:max-bank-numbers',
+    defaultMessage: 'Hámark 4 tölustafir leyfðir',
+    description: 'Maximum 4 digits allowed',
+    value: 4,
+  },
+  maxLedgerNumbers: {
+    id: 'form-system:max-ledger-numbers',
+    defaultMessage: 'Hámark 2 tölustafir leyfðir',
+    description: 'Maximum 2 digits allowed',
+    value: 2,
+  },
+  maxAccountNumbers: {
+    id: 'form-system:max-account-numbers',
+    defaultMessage: 'Hámark 6 tölustafir leyfðir',
+    description: 'Maximum 6 digits allowed',
+    value: 6,
+  },
+  onlyNumbers: {
+    id: 'form-system:only-numbers',
+    defaultMessage: 'Reitur má aðeins innihalda tölustafi',
+    description: 'Field must only contain numbers',
+  },
+  InvalidNationalId: {
+    id: 'form-system:invalid-national-id',
+    defaultMessage: 'Ógild kennitala',
+    description: 'Invalid national ID',
+  },
+  invalidPhoneNumber: {
+    id: 'form-system:invalid-phone-number',
+    defaultMessage: 'Ógilt símanúmer',
+    description: 'Invalid phone number',
+  },
+  invalidPropertyNumber: {
+    id: 'form-system:invalid-property-number',
+    defaultMessage: 'Ógilt fasteignanúmer',
+    description: 'Invalid property number',
+  },
+  pickHour: {
+    id: 'form-system:pick-hour',
+    defaultMessage: 'Veldu klukkustund',
+    description: 'Pick hour',
+  },
+  pickMinute: {
+    id: 'form-system:pick-minute',
+    defaultMessage: 'Veldu mínútu',
+    description: 'Pick minute',
   },
 })
 

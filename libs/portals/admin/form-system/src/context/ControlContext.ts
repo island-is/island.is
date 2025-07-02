@@ -27,6 +27,8 @@ export interface IControlContext {
   listTypes: Maybe<Maybe<FormSystemListType>[]> | undefined
   submitUrls: Maybe<Maybe<FormSystemOrganizationUrl>[]> | undefined
   validationUrls: Maybe<Maybe<FormSystemOrganizationUrl>[]> | undefined
+  selectedUrls: string[]
+  setSelectedUrls: Dispatch<SetStateAction<string[]>>
   setInSettings: Dispatch<boolean>
   inSettings: boolean
   updateActiveItem: (updatedActiveItem?: ActiveItem) => void
@@ -52,6 +54,10 @@ export const ControlContext = createContext<IControlContext>({
   listTypes: [] as Maybe<Maybe<FormSystemListType>[]>,
   submitUrls: [] as Maybe<Maybe<FormSystemOrganizationUrl>[]>,
   validationUrls: [] as Maybe<Maybe<FormSystemOrganizationUrl>[]>,
+  selectedUrls: [],
+  setSelectedUrls: function (_value: SetStateAction<string[]>): void {
+    throw new Error('Function not implemented.')
+  },
   setInSettings: function (_value: boolean): void {
     throw new Error('Function not implemented.')
   },

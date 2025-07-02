@@ -266,10 +266,8 @@
       "@island.is/api/domains/work-machines": [
         "libs/api/domains/work-machines/src/index.ts"
       ],
-      "@island.is/api/mocks-react": [
-        "libs/api/mocks/src/react.ts"
-      ],
       "@island.is/api/mocks": ["libs/api/mocks/src/index.ts"],
+      "@island.is/api/mocks-react": ["libs/api/mocks/src/react.ts"],
       "@island.is/api/mocks/native": ["libs/api/mocks/src/native.ts"],
       "@island.is/api/schema": ["libs/api/schema/src/index.ts"],
       "@island.is/application/api/core": [
@@ -346,6 +344,9 @@
       ],
       "@island.is/application/templates/car-recycling": [
         "libs/application/templates/car-recycling/src/index.ts"
+      ],
+      "@island.is/application/templates/car-rental-fee-category": [
+        "libs/application/templates/car-rental-fee-category/src/index.ts"
       ],
       "@island.is/application/templates/children-residence-change": [
         "libs/application/templates/family-matters/children-residence-change/src/index.ts"
@@ -644,29 +645,17 @@
       "@island.is/application/ui-shell": [
         "libs/application/ui-shell/src/index.ts"
       ],
-      "@island.is/application/utils": [
-        "libs/application/utils/src/index.ts"
-      ],
-      "@island.is/auth-api-lib": [
-        "libs/auth-api-lib/src/index.ts"
-      ],
-      "@island.is/auth-nest-tools": [
-        "libs/auth-nest-tools/src/index.ts"
-      ],
-      "@island.is/auth/scopes": [
-        "libs/auth/scopes/src/index.ts"
-      ],
-      "@island.is/auth/shared": [
-        "libs/auth/shared/src/index.ts"
-      ],
-      "@island.is/cache": [
-        "libs/cache/src/index.ts"
+      "@island.is/application/utils": ["libs/application/utils/src/index.ts"],
+      "@island.is/auth-api-lib": ["libs/auth-api-lib/src/index.ts"],
+      "@island.is/auth-nest-tools": ["libs/auth-nest-tools/src/index.ts"],
+      "@island.is/auth/scopes": ["libs/auth/scopes/src/index.ts"],
+      "@island.is/auth/shared": ["libs/auth/shared/src/index.ts"],
+      "@island.is/cache": ["libs/cache/src/index.ts"],
+      "@island.is/clients-rental-day-rate": [
+        "libs/clients/rsk/rental-day-rate/src/index.ts"
       ],
       "@island.is/clients-rsk-relationships": [
         "libs/clients/rsk/relationships/src/index.ts"
-      ],
-      "@island.is/clients-rental-day-rate": [
-        "libs/clients/rsk/rental-day-rate/src/index.ts"
       ],
       "@island.is/clients/administration-of-occupational-safety-and-health": [
         "libs/clients/administration-of-occupational-safety-and-health/src/index.ts"
@@ -1457,9 +1446,6 @@
       ],
       "application/templates/name-of-application": [
         "libs/application/templates/name-of-application/src/index.ts"
-      ],
-      "@island.is/application/templates/car-rental-fee-category": [
-        "libs/application/templates/car-rental-fee-category/src/index.ts"
       ],
       "delegation-admin": ["libs/portals/admin/delegation-admin/src/index.ts"]
     }

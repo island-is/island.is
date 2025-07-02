@@ -17,6 +17,7 @@ export interface ApplicationState {
     data?: FormSystemScreen
   }
   errors?: string[]
+  isValid?: boolean
 }
 
 export interface Action {
