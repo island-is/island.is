@@ -88,6 +88,7 @@ const InputNationalId: FC<Props> = (props) => {
       replacement={{ _: /\d/ }}
       component={Input}
       value={inputValue ?? value}
+      data-testid="inputNationalId"
       onChange={handleChange}
       onBlur={handleBlur}
       disabled={disabled}
