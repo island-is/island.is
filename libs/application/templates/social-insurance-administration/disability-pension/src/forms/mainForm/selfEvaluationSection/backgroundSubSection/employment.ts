@@ -7,7 +7,8 @@ import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { EmploymentStatusEnum } from '../../../../lib/constants'
 import { SectionRouteEnum } from '../../../../lib/routes'
 
-export const employmentField = buildMultiField({
+export const employmentField =
+  buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_EMPLOYMENT,
   title: disabilityPensionFormMessage.questions.employmentStatusTitle,
   children: [

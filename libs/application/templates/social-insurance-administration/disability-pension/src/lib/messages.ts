@@ -450,6 +450,23 @@ export const disabilityPensionFormMessage: MessageDir = {
       description: 'TODO',
     },
   }),
+  capabilityImpairment: defineMessages({
+    tabTitle: {
+      id: 'dp.application:capabilityImpairment.tabTitle',
+      defaultMessage: 'Skerðing á færni',
+      description: 'Work capability impairment',
+    },
+    title: {
+      id: 'dp.application:capabilityImpairment.title',
+      defaultMessage: 'Færnisskerðing',
+      description: 'Work capability impairment',
+    },
+    description: {
+      id: 'dp.application:capabilityImpairment.description',
+      defaultMessage: 'Þessi hluti inniheldur spurningar um hvernig þú upplifir eigin færni í daglegu lífi og starfi. Hér getur verið um að ræða líkamlega, andlega eða félagslega þætti sem geta haft áhrif á getu þína til að sinna daglegum athöfnum, starfi og frístundum. <br/> Hafðu í huga að um er að ræða umfangsmikinn lista yfir atriði sem eiga ekki endilega við þig. Því er mikilvægt að þú metir hvernig þú upplifir stöðuna eins og hún er núna, ekki hvernig hún var áður eða hvernig þú vilt að hún verði.',
+      description: 'Here you can describe in more detail the problem that affects your work capacity.',
+    },
+  }),
   questions: defineMessages({
     maritalStatusTitle: {
       id: 'dp.application:selfEvaluation.questions.maritalStatus.title',

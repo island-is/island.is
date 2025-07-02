@@ -8,8 +8,6 @@ import { YesOrNoOptions } from '../../../lib/options'
 import { backgroundInfoSubSection } from './backgroundSubSection'
 import { SectionRouteEnum } from '../../../lib/routes'
 
-export const selfEvaluationRoute = 'selfEvaluation'
-
 export const selfEvaluationSection =
   buildSection({
     id: SectionRouteEnum.SELF_EVALUATION,
