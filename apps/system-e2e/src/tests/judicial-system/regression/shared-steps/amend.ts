@@ -8,6 +8,7 @@ export const judgeAmendsCase = async (page: Page, caseId: string) => {
   ])
 
   // Yfirlit
+  await expect(page).toHaveURL(`/krafa/yfirlit/${caseId}`)
   await page.getByTestId('continueButton').click()
   await Promise.all([
     page.getByTestId('modalPrimaryButton').click(),
@@ -15,25 +16,25 @@ export const judgeAmendsCase = async (page: Page, caseId: string) => {
   ])
 
   // Móttaka
+  await expect(page).toHaveURL(`/domur/mottaka/${caseId}`)
   await Promise.all([
     page.getByTestId('continueButton').click(),
     verifyRequestCompletion(page, '/api/graphql', 'Case'),
   ])
 
   // Yfirlit
+  await expect(page).toHaveURL(`/domur/krafa/${caseId}`)
   await Promise.all([
     page.getByTestId('continueButton').click(),
     verifyRequestCompletion(page, '/api/graphql', 'Case'),
   ])
 
   // Fyrirtaka
+  await expect(page).toHaveURL(`/domur/fyrirtokutimi/${caseId}`)
   await page.getByTestId('continueButton').click()
-  await Promise.all([
-    page.getByTestId('modalSecondaryButton').click(),
-    verifyRequestCompletion(page, '/api/graphql', 'Case'),
-  ])
 
   // Úrskurður
+  await expect(page).toHaveURL(`/domur/urskurdur/${caseId}`)
   await page
     .locator('textarea[id=courtLegalArguments]')
     .fill('Dómari hefur ákveðið að breyta úrskurði')
@@ -43,34 +44,28 @@ export const judgeAmendsCase = async (page: Page, caseId: string) => {
   ])
 
   // Þingbók
+  await expect(page).toHaveURL(`/domur/thingbok/${caseId}`)
   await Promise.all([
     page.getByTestId('continueButton').click(),
     verifyRequestCompletion(page, '/api/graphql', 'Case'),
   ])
 
-  // Samantekt - ATH the frontend uses the presence of a RULING nofication
-  // to determine if the case is being amended or not.
-  // This does not work in this test because the ruling was not signed and
-  // therefore no notification was created. Fix later.
-  // await page.getByTestId('continueButton').click()
-  // await page.locator('input[name=reason]').fill('Dómari breytti úrskurði')
-  // await Promise.all([
-  //   page.getByTestId('modalPrimaryButton').click(),
-  //   verifyRequestCompletion(page, '/api/graphql', 'TransitionCase'),
-  // ])
-  // await page.getByTestId('modalSecondaryButton').click()
+  // Samantekt
+  await expect(page).toHaveURL(`/domur/stadfesta/${caseId}`)
+  await page.getByTestId('continueButton').click()
+  await page.locator('textarea[name=reason]').fill('Dómari breytti úrskurði')
   await Promise.all([
-    page.getByTestId('continueButton').click(),
+    page.getByTestId('modalPrimaryButton').click(),
     verifyRequestCompletion(page, '/api/graphql', 'TransitionCase'),
   ])
   await Promise.all([
-    page.getByTestId('modalPrimaryButton').click(),
+    page.getByTestId('modalSecondaryButton').click(),
     verifyRequestCompletion(page, '/api/graphql', 'Case'),
   ])
 
+  // Yfirlit
   await expect(page).toHaveURL(`/krafa/yfirlit/${caseId}`)
-
-  // await expect(page.getByText('Dómari breytti úrskurði')).toBeVisible()
+  await expect(page.getByText('Dómari breytti úrskurði')).toBeVisible()
 
   await page.getByRole('button', { name: 'Úrskurður héraðsdóms' }).click()
   await expect(

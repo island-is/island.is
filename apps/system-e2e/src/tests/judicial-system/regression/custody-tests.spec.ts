@@ -49,8 +49,9 @@ test.describe.serial('Custody tests', () => {
       }
     })
 
-    // Case list
+    // Case list groups
     await page.goto('/malalistar')
+    await expect(page).toHaveURL('/malalistar')
     await page.getByRole('button', { name: 'Nýtt mál' }).click()
     await page.getByRole('menuitem', { name: 'Gæsluvarðhald' }).click()
     await expect(page).toHaveURL('/krafa/ny/gaesluvardhald')
@@ -228,7 +229,7 @@ test.describe.serial('Custody tests', () => {
       page.getByTestId('continueButton').click(),
       verifyRequestCompletion(page, '/api/graphql', 'TransitionCase'),
     ])
-    await page.getByTestId('modalPrimaryButton').click()
+    await page.getByTestId('modalSecondaryButton').click()
   })
 
   test('judge should amend case', async ({ judgePage }) => {
