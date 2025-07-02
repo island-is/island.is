@@ -19,7 +19,7 @@ export class LawyerRegistryController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  // @UseGuards(TokenGuard)
+  @UseGuards(TokenGuard)
   @Post('lawyer-registry/reset')
   @ApiOkResponse({ description: 'Resets a local copy of lawyer registry' })
   async resetLawyerRegistry(): Promise<LawyerRegistryResponse[]> {
