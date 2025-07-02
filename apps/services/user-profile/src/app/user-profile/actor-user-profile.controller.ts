@@ -27,7 +27,6 @@ import {
   ApiSecurity,
   ApiTags,
 } from '@nestjs/swagger'
-
 import {
   ActorProfileEmailDto,
   UpdateActorProfileEmailDto,
@@ -66,7 +65,6 @@ export class ActorUserProfileController {
   })
   async getActorLocale(@CurrentActor() actor: User): Promise<ActorLocale> {
     const userProfile = await this.userProfileService.findById(actor.nationalId)
-
     return {
       nationalId: userProfile.nationalId,
       locale: userProfile.locale ?? Locale.ICELANDIC,

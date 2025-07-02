@@ -290,7 +290,6 @@ describe('MeUserProfileController', () => {
     let app: TestApp
     let server: SuperTest<Test>
     let fixtureFactory: FixtureFactory
-    const islyklarApi = null
 
     beforeEach(async () => {
       app = await setupApp({
