@@ -43,14 +43,16 @@ import { isSubpoenaStepValid } from '@island.is/judicial-system-web/src/utils/va
 import { subpoena as strings } from './Subpoena.strings'
 import { pdfButtonGrid } from './Subpoena.css'
 
+export interface Updates {
+  defendants?: Defendant[] | null
+  theCase: Case
+}
+
 const Subpoena: FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
-  const [updates, setUpdates] = useState<{
-    defendants?: Defendant[] | null
-    theCase: Case
-  }>()
+  const [updates, setUpdates] = useState<Updates>()
   const [newSubpoenas, setNewSubpoenas] = useState<string[]>([])
   // Note: we keep the arraignment scheduled state in a subpoena specific state otherwise
   // re-renders (when updating case and defendants) will cause unexpected states within the subpoena component
@@ -258,10 +260,7 @@ const Subpoena: FC = () => {
     newSubpoenas.length,
   ])
 
-  const stepIsValid = isSubpoenaStepValid(
-    workingCase,
-    updates?.theCase.arraignmentDate,
-  )
+  const stepIsValid = isSubpoenaStepValid(workingCase, updates)
 
   return (
     <PageLayout
