@@ -50,7 +50,7 @@ describe('Overview', () => {
     )
 
     expect(
-      screen.getByTestId('requestAppealRulingNotToBePublished'),
+      await screen.findByTestId('requestAppealRulingNotToBePublished'),
     ).toBeInTheDocument()
   })
 })
