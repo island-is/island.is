@@ -467,6 +467,23 @@ export const disabilityPensionFormMessage: MessageDir = {
       description: 'Here you can describe in more detail the problem that affects your work capacity.',
     },
   }),
+  disabilityCertificate: defineMessages({
+    tabTitle: {
+      id: 'dp.application:disabilityCertificate.tabTitle',
+      defaultMessage: 'Grunnvottorð',
+      description: 'TODO',
+    },
+    title: {
+      id: 'dp.application:disabilityCertificate.title',
+      defaultMessage: 'Grunnvottorð / Vottorð um örorku',
+      description: 'TODO',
+    },
+    description: {
+      id: 'dp.application:disabilityCertificate.description',
+      defaultMessage: 'Forsenda fyrir greiðslum er að heilsubrestur einstaklings sé afleiðing af sjúkdómi, slysi eða áfalli. Grunnvottorð þarf að innihalda staðfestingu þess efnis.',
+      description: 'TODO',
+    },
+  }),
   questions: defineMessages({
     maritalStatusTitle: {
       id: 'dp.application:selfEvaluation.questions.maritalStatus.title',

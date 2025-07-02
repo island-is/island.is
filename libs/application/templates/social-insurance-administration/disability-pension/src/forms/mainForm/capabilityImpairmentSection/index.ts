@@ -14,6 +14,7 @@ const questions = MOCK_QUESTIONS.map(question => {
     id: `${SectionRouteEnum.CAPABILITY_IMPAIRMENT}.questionAnswers`,
     title: question.label,
     children: [
+      //check if works!
       buildRadioField({
         id: `${SectionRouteEnum.CAPABILITY_IMPAIRMENT}.questionAnswers`,
         title: disabilityPensionFormMessage.questions.employmentImportanceTitle,
