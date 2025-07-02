@@ -2,8 +2,7 @@ import {
   buildRadioField,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
-import { EmploymentImportanceEnum } from '../../../../types'
-import { SectionRouteEnum } from '../../../../types'
+import { EmploymentImportanceEnum, SectionRouteEnum } from '../../../../types'
 
 export const employmentImportanceField =
   buildRadioField({

@@ -5,8 +5,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
-import { ResidenceEnum } from '../../../../types'
-import { SectionRouteEnum } from '../../../../types'
+import { ResidenceEnum, SectionRouteEnum } from '../../../../types'
 
 export const residenceField =
   buildMultiField({

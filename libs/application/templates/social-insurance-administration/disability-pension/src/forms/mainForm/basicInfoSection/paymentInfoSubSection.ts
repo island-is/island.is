@@ -14,7 +14,7 @@ import {
 import { disabilityPensionFormMessage } from '../../../lib/messages'
 import { Application, FormValue } from '@island.is/application/types'
 import { BankAccountType, TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
-import { accountNationality } from '../../../lib/utils'
+import { accountNationality } from '../../../utils'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { BankInfo } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { friendlyFormatIBAN, friendlyFormatSWIFT, getCurrencies, getTaxOptions, getYesNoOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'

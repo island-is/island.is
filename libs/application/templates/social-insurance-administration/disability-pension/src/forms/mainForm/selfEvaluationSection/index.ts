@@ -1,12 +1,12 @@
 import {
-    buildMultiField,
+  buildMultiField,
   buildRadioField,
   buildSection,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../lib/messages'
-import { YesOrNoOptions } from '../../../lib/options'
 import { backgroundInfoSubSection } from './backgroundSubSection'
 import { SectionRouteEnum } from '../../../types'
+import { yesOrNoOptions } from '../../../utils'
 
 export const selfEvaluationSection =
   buildSection({
@@ -23,7 +23,7 @@ export const selfEvaluationSection =
             title: disabilityPensionFormMessage.selfEvaluation.assistance,
             width: 'half',
             backgroundColor: 'blue',
-            options: YesOrNoOptions,
+            options: yesOrNoOptions,
           }),
         ]
       }),

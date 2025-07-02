@@ -1,24 +1,13 @@
 import {
   buildRadioField,
-  YES,
-  NO,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { SectionRouteEnum } from '../../../../types'
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import { yesOrNoOptions } from '../../../../utils'
 
 export const rehabilitationOrTherapyField =
   buildRadioField({
     id: SectionRouteEnum.BACKGROUND_INFO_REHABILITATION_OR_THERAPY,
     title: disabilityPensionFormMessage.questions.rehabilitationOrTherapyTitle,
-    options: [
-      {
-        value: YES,
-        label: socialInsuranceAdministrationMessage.shared.yes,
-      },
-      {
-        value: NO,
-        label: socialInsuranceAdministrationMessage.shared.no,
-      },
-    ]
+    options: yesOrNoOptions,
   })

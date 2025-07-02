@@ -1,5 +1,5 @@
 import {
-    buildMultiField,
+  buildMultiField,
   buildRadioField,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
