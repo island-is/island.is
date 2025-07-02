@@ -12,6 +12,8 @@ export enum SectionRouteEnum {
   SELF_EVALUATION = 'selfEvaluation',
   CAPABILITY_IMPAIRMENT = 'capabilityImpairment',
   DISABILITY_CERTIFICATE = 'disabilityCertificate',
+  EXTRA_INFO = 'extraInfo',
+  OVERVIEW = 'overview',
 
   BACKGROUND_INFO = 'backgroundInfo',
   BACKGROUND_INFO_RESIDENCE = 'backgroundInfoResidence',

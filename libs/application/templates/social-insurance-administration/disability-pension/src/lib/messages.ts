@@ -467,6 +467,40 @@ export const disabilityPensionFormMessage: MessageDir = {
       description: 'Here you can describe in more detail the problem that affects your work capacity.',
     },
   }),
+  extraInfo: defineMessages({
+    tabTitle: {
+      id: 'dp.application:extraInfo.tabTitle',
+      defaultMessage: 'Viðbótarupplýsingar',
+      description: 'Additional information',
+    },
+    title: {
+      id: 'dp.application:extraInfo.title',
+      defaultMessage: 'Athugasemd',
+      description: 'Comment',
+    },
+    description: {
+      id: 'dp.application:extraInfo.description',
+      defaultMessage: 'Hafir þú athugasemd sem þú vilt koma á framfæri, skrifaðu hana hér',
+      description: 'TODO',
+    },
+    placeholder: {
+      id: 'dp.application:extraInfo.placeholder',
+      defaultMessage: 'Skrifaðu athugasemd hér',
+      description: 'TODO',
+    },
+  }),
+  overview: defineMessages({
+    title: {
+      id: 'dp.application:overview.tabTitle',
+      defaultMessage: 'Yfirlit',
+      description: 'Overview',
+    },
+    description: {
+      id: 'dp.application:overview.description',
+      defaultMessage: 'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
+      description: 'TODO',
+    },
+  }),
   disabilityCertificate: defineMessages({
     tabTitle: {
       id: 'dp.application:disabilityCertificate.tabTitle',

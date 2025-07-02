@@ -3,11 +3,12 @@ import { FormModes } from '@island.is/application/types'
 import { selfEvaluationSection } from './selfEvaluationSection'
 import { basicInfoSection } from './basicInfoSection'
 import { capabilityImpairmentSection } from './capabilityImpairmentSection'
+import { extraDataSection } from './extraData'
 
 export const MainForm = buildForm({
   id: 'MainForm',
   mode: FormModes.DRAFT,
   renderLastScreenButton: true,
   renderLastScreenBackButton: true,
-  children: [basicInfoSection, selfEvaluationSection, capabilityImpairmentSection],
+  children: [basicInfoSection, selfEvaluationSection, capabilityImpairmentSection, extraDataSection],
 })
