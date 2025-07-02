@@ -10,6 +10,7 @@ import {
   CertificationInput,
   FormCertificationTypeDtoInput,
 } from './certification.input'
+import { FormUrlDto } from '@island.is/form-system/shared'
 
 @InputType('FormSystemDependencyInput')
 export class DependencyInput {
@@ -45,30 +46,6 @@ export class GetFormInput {
 export class GetFormsInput {
   @Field(() => String, { nullable: true })
   nationalId?: string
-}
-
-@InputType('FormSystemFormUrlInput')
-export class FormUrlInput {
-  @Field(() => String, { nullable: true })
-  id?: string
-
-  @Field(() => String, { nullable: true })
-  organizationUrlId?: string
-
-  @Field(() => String, { nullable: true })
-  url?: string
-
-  @Field(() => Boolean, { nullable: true })
-  isXroad?: boolean
-
-  @Field(() => Boolean, { nullable: true })
-  isTest?: boolean
-
-  @Field(() => String, { nullable: true })
-  type?: string
-
-  @Field(() => String, { nullable: true })
-  method?: string
 }
 
 @InputType('FormSystemOrganizationUrlInput')
@@ -129,9 +106,6 @@ export class UpdateFormDtoInput {
 
   @Field(() => String, { nullable: true })
   status?: string
-
-  @Field(() => [FormUrlInput], { nullable: true })
-  urls?: FormUrlInput[]
 }
 
 @InputType('FormSystemUpdateFormInput')
@@ -208,8 +182,8 @@ export class FormInput {
   @Field(() => String, { nullable: true })
   status?: string
 
-  @Field(() => [FormUrlInput], { nullable: 'itemsAndList' })
-  urls?: FormUrlInput[]
+  @Field(() => [FormUrlDto], { nullable: 'itemsAndList' })
+  urls?: FormUrlDto[]
 }
 
 @InputType('FormSystemFormResponseInput')

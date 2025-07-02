@@ -1,7 +1,6 @@
 import { Box, Button, ToggleSwitchButton } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
-import * as styles from '../../../tableHeader.css'
 import { TableHeader } from './TableHeader'
 import { FormSystemOrganizationUrl } from '@island.is/api/schema'
 import { TableRow } from './TableRow'
@@ -38,7 +37,7 @@ export const SubmitUrls = ({ submitUrls }: SubmitUrlsProps) => {
 
   const createSubmitUrl = async (isTest: boolean, method: string) => {
     try {
-      const { data } = await formSystemCreateOrganizationUrlMutation({
+      await formSystemCreateOrganizationUrlMutation({
         variables: {
           input: {
             isTest,
@@ -66,8 +65,11 @@ export const SubmitUrls = ({ submitUrls }: SubmitUrlsProps) => {
       })
       setSubmitUrls((prev) => prev.filter((item) => item.id !== id))
     } catch (error) {
-      // Optionally handle error here
-      // e.g. show a toast or log error
+      throw new Error(
+        `Error deleting submit URL: ${
+          error instanceof Error ? error.message : 'Unknown error'
+        }`,
+      )
     }
   }
 
@@ -111,7 +113,6 @@ export const SubmitUrls = ({ submitUrls }: SubmitUrlsProps) => {
             <TableRow
               key={url.id}
               submitUrl={url}
-              setSubmitUrlsState={setSubmitUrls}
               handleDelete={handleDelete}
             />
           ))}
@@ -160,7 +161,6 @@ export const SubmitUrls = ({ submitUrls }: SubmitUrlsProps) => {
             <TableRow
               key={url.id}
               submitUrl={url}
-              setSubmitUrlsState={setSubmitUrls}
               handleDelete={handleDelete}
             />
           ))}
