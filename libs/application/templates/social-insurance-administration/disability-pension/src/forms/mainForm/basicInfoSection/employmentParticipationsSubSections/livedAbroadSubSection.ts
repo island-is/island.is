@@ -11,7 +11,7 @@ import { FormValue } from '@island.is/application/types'
 import format from 'date-fns/format'
 import addMonths from 'date-fns/addMonths'
 import { SectionRouteEnum } from '../../../../types'
-import { YesOrNoOptions, countryOptions } from '../../../../utils'
+import { yesOrNoOptions, countryOptions } from '../../../../utils'
 
 const livedAbroadCondition = (formValue: FormValue) => {
   const livedAbroad = getValueViaPath<YesOrNoEnum>(
@@ -32,7 +32,7 @@ export const livedAbroadSubSection = buildMultiField({
       width: 'half',
       backgroundColor: 'blue',
       required: true,
-      options: YesOrNoOptions
+      options: yesOrNoOptions
     }),
     buildTableRepeaterField({
       id: `${SectionRouteEnum.LIVED_ABROAD}.list`,

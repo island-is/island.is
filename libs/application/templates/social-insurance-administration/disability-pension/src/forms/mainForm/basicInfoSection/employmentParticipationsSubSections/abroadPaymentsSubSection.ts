@@ -9,7 +9,7 @@ import {
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { FormValue } from '@island.is/application/types'
 import { SectionRouteEnum } from '../../../../types'
-import { YesOrNoOptions, countryOptions } from '../../../../utils'
+import {  countryOptions, yesOrNoOptions } from '../../../../utils'
 
 const abroadPaymentsCondition = (formValue: FormValue) => {
   const hasAbroadPayments = getValueViaPath<YesOrNoEnum>(
@@ -30,7 +30,7 @@ export const abroadPaymentsSubSection = buildMultiField({
       width: 'half',
       backgroundColor: 'blue',
       required: true,
-      options: YesOrNoOptions,
+      options: yesOrNoOptions,
     }),
     buildTableRepeaterField({
       id: `${SectionRouteEnum.ABROAD_PAYMENT}.list`,

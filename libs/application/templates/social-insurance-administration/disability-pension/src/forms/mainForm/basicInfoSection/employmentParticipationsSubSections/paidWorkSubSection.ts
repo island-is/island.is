@@ -4,7 +4,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
-import { YesOrNoOptions } from '../../../../utils'
+import { yesOrNoOptions } from '../../../../utils'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { EmploymentEnum, SectionRouteEnum } from '../../../../types'
 
@@ -45,7 +45,7 @@ export const paidWorkSubSection = buildMultiField({
         )
         return isWorking === EmploymentEnum.YES
       },
-      options: YesOrNoOptions,
+      options: yesOrNoOptions,
     }),
   ],
 })

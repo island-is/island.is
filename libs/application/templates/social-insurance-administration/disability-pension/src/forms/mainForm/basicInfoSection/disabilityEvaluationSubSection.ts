@@ -8,8 +8,8 @@ import {
   buildRadioField
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../lib/messages'
-import { YesOrNoOptions } from '../../../utils'
 import { SectionRouteEnum } from '../../../types'
+import { yesOrNoOptions } from '../../../utils'
 
 export const disabilityEvaluationSubSection =
     buildSubSection({
@@ -28,7 +28,7 @@ export const disabilityEvaluationSubSection =
               description: disabilityPensionFormMessage.disabilityEvaluation.appliedBeforeDescription,
               required: true,
               width: 'half',
-              options: YesOrNoOptions,
+              options: yesOrNoOptions,
             }),
             buildFileUploadField({
               id: `${SectionRouteEnum.DISABILITY_EVALUATION}.fileUpload`,
