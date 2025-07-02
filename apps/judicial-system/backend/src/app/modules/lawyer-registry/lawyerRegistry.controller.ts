@@ -5,7 +5,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { TokenGuard } from '@island.is/judicial-system/auth'
-import { Lawyer } from '@island.is/judicial-system/lawyers'
+import { LawyerRegistryResponse } from '@island.is/judicial-system/lawyers'
 
 import { EventService } from '../event'
 import { LawyerRegistryService } from './lawyerRegistry.service'
@@ -19,10 +19,10 @@ export class LawyerRegistryController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(TokenGuard)
+  // @UseGuards(TokenGuard)
   @Post('lawyer-registry/reset')
   @ApiOkResponse({ description: 'Resets a local copy of lawyer registry' })
-  async resetLawyerRegistry(): Promise<Lawyer[]> {
+  async resetLawyerRegistry(): Promise<LawyerRegistryResponse[]> {
     this.logger.debug('Resetting lawyer registry')
     try {
       const lawyers = await this.lawyerRegistryService.populate()

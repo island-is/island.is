@@ -13,7 +13,11 @@ import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { Lawyer, LawyersService } from '@island.is/judicial-system/lawyers'
+import {
+  Lawyer,
+  LawyersService,
+  LawyerType,
+} from '@island.is/judicial-system/lawyers'
 
 import { LawyerRegistry } from './lawyerRegistry.model'
 
@@ -39,9 +43,9 @@ export class LawyerRegistryService {
     }
   }
 
-  private async getLawyerRegistry() {
+  private async getLawyerRegistry(lawyerType?: LawyerType) {
     try {
-      const lawyers = await this.lawyersService.getLawyers()
+      const lawyers = await this.lawyersService.getLawyers(lawyerType)
 
       if (lawyers.length === 0) {
         throw new InternalServerErrorException(
@@ -60,15 +64,7 @@ export class LawyerRegistryService {
     transaction: Transaction,
   ) {
     try {
-      const formattedLawyers = lawyers.map((lawyer) => ({
-        name: lawyer.Name,
-        nationalId: lawyer.SSN,
-        email: lawyer.Email,
-        phoneNumber: lawyer.Phone,
-        practice: lawyer.Practice,
-      }))
-
-      for (const lawyer of formattedLawyers) {
+      for (const lawyer of lawyers) {
         const lawyerInstance = plainToClass(LawyerRegistry, lawyer)
         const errors = await validate(lawyerInstance)
 
@@ -79,7 +75,7 @@ export class LawyerRegistryService {
         }
       }
 
-      await this.lawyerRegistryModel.bulkCreate(formattedLawyers, {
+      await this.lawyerRegistryModel.bulkCreate(lawyers, {
         transaction,
       })
     } catch (error) {
@@ -93,8 +89,20 @@ export class LawyerRegistryService {
 
     try {
       const lawyers = await this.getLawyerRegistry()
+      const litigators = await this.getLawyerRegistry(LawyerType.LITIGATORS)
+      const litigatorNationalIds = new Set(litigators.map((l) => l.SSN))
+
+      const formattedLawyers: Lawyer[] = lawyers.map((lawyer) => ({
+        name: lawyer.Name,
+        nationalId: lawyer.SSN,
+        email: lawyer.Email,
+        phoneNumber: lawyer.Phone,
+        practice: lawyer.Practice,
+        isLitigator: litigatorNationalIds.has(lawyer.SSN),
+      }))
+
       await this.clearLawyerRegistry(transaction)
-      await this.populateLawyerRegistry(lawyers, transaction)
+      await this.populateLawyerRegistry(formattedLawyers, transaction)
       await transaction.commit()
 
       return lawyers
