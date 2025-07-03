@@ -3,6 +3,8 @@ import { useApplicationContext } from '../../../../context/ApplicationProvider'
 import { webMessages } from '@island.is/form-system/ui'
 import { useIntl } from 'react-intl'
 import { Markdown } from '@island.is/shared/components'
+import { useQuery } from '@apollo/client'
+import { GET_NAME_BY_NATIONALID } from 'libs/portals/form-system/graphql/src/lib/queries/getIndividual'
 
 interface Props {
   setExternalDataAgreement: (value: boolean) => void
@@ -13,7 +15,16 @@ export const ExternalData = ({ setExternalDataAgreement }: Props) => {
   const { application } = state
   const { certificationTypes } = application
   const { formatMessage } = useIntl()
-
+  const id = '1912982179'
+    const { data, error, loading } = useQuery(GET_NAME_BY_NATIONALID, {
+      variables: { input:  id },
+      skip: !id,
+      fetchPolicy: 'cache-first',
+    })
+  
+  console.log('data', data)
+  console.log('error', error)
+  console.log('loading', loading)
   return (
     <Box>
       <Box marginTop={2} marginBottom={5}>
