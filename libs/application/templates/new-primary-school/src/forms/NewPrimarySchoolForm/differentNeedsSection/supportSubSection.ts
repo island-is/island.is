@@ -168,18 +168,9 @@ export const supportSubSection = buildSubSection({
           width: 'half',
           required: true,
           condition: (answers) => {
-            const {
-              hasDiagnoses,
-              hasHadSupport,
-              hasCaseManager,
-              hasWelfareContact,
-            } = getApplicationAnswers(answers)
+            const { hasCaseManager } = getApplicationAnswers(answers)
 
-            return (
-              (hasDiagnoses === YES || hasHadSupport === YES) &&
-              hasCaseManager === YES &&
-              hasWelfareContact === YES
-            )
+            return isWelfareContactSelected(answers) && hasCaseManager === YES
           },
         }),
         buildTextField({
