@@ -22,7 +22,7 @@ export class DefenderService {
   async getLawyers(): Promise<Lawyer[]> {
     const response = await fetch(`${this.config.lawyerRegistryAPI}/lawyers`, {
       headers: {
-        Authorization: `Basic  ${this.config.lawyerRegistryAPIKey}`,
+        Authorization: `Basic ${this.config.lawyerRegistryAPIKey}`,
         Accept: 'application/json',
       },
     })

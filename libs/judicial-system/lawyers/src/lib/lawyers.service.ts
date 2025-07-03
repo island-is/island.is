@@ -4,6 +4,8 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 
+import { type Lawyer, mapToLawyer } from '@island.is/judicial-system/types'
+
 import { lawyersModuleConfig } from './lawyers.config'
 import { LawyerRegistryResponse, LawyerType } from './lawyers.types'
 @Injectable()
@@ -50,6 +52,42 @@ export class LawyersService {
 
     if (response.ok) {
       return response.json()
+    }
+
+    const reason = await response.text()
+    this.logger.info('Failed to get lawyer from lawyer registry:', reason)
+
+    if (response.status === 404) {
+      throw new NotFoundException('Lawyer not found')
+    }
+
+    throw new Error(reason)
+  }
+
+  async getLawyersBackend(): Promise<LawyerRegistryResponse[]> {
+    const response = await fetch(`${this.config.backendUrl}/lawyer-registry`)
+
+    if (response.ok) {
+      return response.json()
+    }
+
+    const reason = await response.text()
+    this.logger.info('Failed to get lawyers from lawyer registry:', reason)
+    throw new Error(reason)
+  }
+
+  async getLawyerBackend(nationalId: string): Promise<Lawyer> {
+    const response = await fetch(
+      `${this.config.backendUrl}/lawyer/${nationalId}`,
+    )
+
+    if (response.ok) {
+      const lawyer = await response.json()
+      const lawyerMapped = {
+        ...mapToLawyer(lawyer),
+      }
+
+      return lawyerMapped
     }
 
     const reason = await response.text()
