@@ -95,6 +95,12 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'unionSickPay.unionNationalId',
   )
 
+  const certificateForSicknessAndRehabilitationReferenceId =
+    getValueViaPath<string>(
+      answers,
+      'certificateForSicknessAndRehabilitationReferenceId',
+    )
+
   const rehabilitationPlanConfirmation = getValueViaPath<string[]>(
     answers,
     'rehabilitationPlanConfirmation',
@@ -185,6 +191,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     hasUtilizedUnionSickPayRights,
     unionSickPayEndDate,
     unionNationalId,
+    certificateForSicknessAndRehabilitationReferenceId,
     rehabilitationPlanConfirmation,
     hadAssistance,
     highestLevelOfEducation,
@@ -325,10 +332,7 @@ export const getAttachments = (application: Application) => {
   }
 
   const { answers } = application
-  const {
-    isStudying,
-    isStudyingFileUpload,
-  } = getApplicationAnswers(answers)
+  const { isStudying, isStudyingFileUpload } = getApplicationAnswers(answers)
   const attachments: Attachments[] = []
 
   if (isStudying === YES) {
@@ -431,16 +435,16 @@ export const getSelfAssessmentCurrentEmploymentStatusOptions = () => {
   return options
 }
 
-export const hasUtilizedRights = (hasUtilizedSickPayRights?: YesOrNo | NotApplicable) => {
-  return hasUtilizedSickPayRights === YES
-  ? new Date()
-  : undefined
+export const hasUtilizedRights = (
+  hasUtilizedSickPayRights?: YesOrNo | NotApplicable,
+) => {
+  return hasUtilizedSickPayRights === YES ? new Date() : undefined
 }
 
-export const hasNotUtilizedRights = (hasUtilizedSickPayRights?: YesOrNo | NotApplicable) => {
-  return hasUtilizedSickPayRights === NO
-  ? new Date()
-  : undefined
+export const hasNotUtilizedRights = (
+  hasUtilizedSickPayRights?: YesOrNo | NotApplicable,
+) => {
+  return hasUtilizedSickPayRights === NO ? new Date() : undefined
 }
 
 // Returns an array of year options from current year to 30 years in the past
