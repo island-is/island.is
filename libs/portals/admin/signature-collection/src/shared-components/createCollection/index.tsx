@@ -20,8 +20,7 @@ import { useCandidateLookupLazyQuery } from './candidateLookup.generated'
 import { setReason } from './utils'
 import { useCreateCollectionMutation } from './createCollection.generated'
 import { m } from '../../lib/messages'
-import { useLoaderData, useParams, useRevalidator } from 'react-router-dom'
-import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
+import { useParams, useRevalidator } from 'react-router-dom'
 import {
   SignatureCollection,
   SignatureCollectionCollectionType,
@@ -32,7 +31,6 @@ const CreateCollection = ({
 }: {
   collection: SignatureCollection
 }) => {
-  const { allLists } = useLoaderData() as ListsLoaderReturn
   const { id, collectionType } = collection
 
   const params = useParams() as {
@@ -73,7 +71,10 @@ const CreateCollection = ({
     variables: {
       input: {
         collectionType: collectionType,
-        collectionId: currentArea?.collectionId || '',
+        collectionId:
+          collectionType === SignatureCollectionCollectionType.Presidential
+            ? id
+            : currentArea?.collectionId || '',
         collectionName: collectionName || undefined,
         owner: {
           name: name,

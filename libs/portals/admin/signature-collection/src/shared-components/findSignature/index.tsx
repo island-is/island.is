@@ -15,7 +15,6 @@ import { SkeletonSingleRow } from '../compareLists/skeleton'
 
 const FindSignature = ({ collectionId }: { collectionId: string }) => {
   const { formatMessage } = useLocale()
-
   const [searchTerm, setSearchTerm] = useState('')
 
   const { data, loading } = useSignatureCollectionSignatureLookupQuery({

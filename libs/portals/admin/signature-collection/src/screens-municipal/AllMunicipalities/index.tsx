@@ -149,6 +149,7 @@ const AllMunicipalities = ({
                     },
                   }}
                   tag={
+                    // This action is only available for the Admins (LKS and ÞÍ)
                     !isProcurationHolder && !area.isActive
                       ? {
                           label: 'Open collection',
