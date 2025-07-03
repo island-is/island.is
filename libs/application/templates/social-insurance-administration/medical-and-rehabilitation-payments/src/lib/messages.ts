@@ -33,11 +33,16 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Réttinum lýkur',
       description: 'Your entitlement ends',
     },
+    uploadConfirmationDocument: {
+      id: 'marp.application:upload.confirmation.document',
+      defaultMessage: 'Hlaða inn staðfestingarskjali',
+      description: 'Upload confirmation document',
+    },
     jobTitle: {
       id: 'marp.application:job.title',
       defaultMessage: 'Starfsheiti',
       description: 'Job title',
-    },  
+    },
   }),
 
   pre: defineMessages({
