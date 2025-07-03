@@ -4,6 +4,7 @@ import {
   IncomePlanStatus as IncomeStatus,
   SocialInsuranceAdministrationClientService,
   TrWebExternalModelsServicePortalRehabilitationPlan,
+  TrWebExternalModelsServicePortalBaseCertificate,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
 } from '@island.is/clients/social-insurance-administration'
 import {
@@ -237,5 +238,13 @@ export class SocialInsuranceService {
     user: User,
   ): Promise<TrWebExternalModelsServicePortalRehabilitationPlan> {
     return await this.socialInsuranceApi.getRehabilitationPlan(user)
+  }
+
+  async getCertificateForSicknessAndRehabilitation(
+    user: User,
+  ): Promise<TrWebExternalModelsServicePortalBaseCertificate> {
+    return await this.socialInsuranceApi.getCertificateForSicknessAndRehabilitation(
+      user,
+    )
   }
 }

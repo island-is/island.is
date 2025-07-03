@@ -74,3 +74,54 @@ export const siaRehabilitationPlanQuery = gql`
     }
   }
 `
+
+export const siaCertificateForSicknessAndRehabilitationQuery = gql`
+  query SiaCertificateForSicknessAndRehabilitation {
+    socialInsuranceCertificateForSicknessAndRehabilitation {
+      referenceId
+      doctor {
+        name
+        doctorNumber
+        residence
+      }
+      lastExaminationDate
+      certificateDate
+      disabilityDate
+      diagnoses {
+        icd
+        others
+      }
+      previousHealthHistory
+      currentStatus
+      physicalDifficulty {
+        value
+        explanation
+      }
+      mentalDifficulty {
+        value
+        explanation
+      }
+      activityParticipationDifficulty {
+        value
+        explanation
+      }
+      other
+      confirmation {
+        type {
+          value
+          name
+          display
+        }
+        typeName
+        treatmentMeasures
+        explanation
+        progress
+        estimatedDuration {
+          start
+          end
+          months
+        }
+      }
+    }
+  }
+`
