@@ -8,6 +8,7 @@ import {
   FormSubmitSuccessModel,
   UserModel,
 } from '../../gen/fetch'
+import { logger } from '@island.is/logging'
 
 @Injectable()
 export class FriggClientService {
@@ -30,9 +31,26 @@ export class FriggClientService {
   }
 
   async getUserById(user: User, childNationalId: string): Promise<UserModel> {
-    return await this.friggApiWithAuth(user).getUserBySourcedId({
-      nationalId: childNationalId,
-    })
+    try {
+      return await this.friggApiWithAuth(user).getUserBySourcedId({
+        nationalId: childNationalId,
+      })
+    } catch (error) {
+      // If the student is not found in Frigg
+      if (
+        error?.status === 404 &&
+        error?.body.message === 'Student not found'
+      ) {
+        logger.warn(
+          `Student with nationalId ${childNationalId.slice(
+            0,
+            6,
+          )} not found in Frigg`,
+        )
+        return { nationalId: childNationalId } as UserModel
+      }
+      throw error
+    }
   }
 
   sendApplication(user: User, form: FormDto): Promise<FormSubmitSuccessModel> {
