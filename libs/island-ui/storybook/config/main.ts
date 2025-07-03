@@ -13,6 +13,7 @@ const config: StorybookConfig = {
     '../../../application/ui-fields/src/lib/AsGuide.stories.mdx',
     '../../../application/ui-fields/**/*.stories.@(tsx|mdx)',
     '../../../application/ui-components/**/*.stories.@(tsx|mdx)',
+    '../../../portals/my-pages/core/src/**/*.stories.@(tsx|mdx)',
   ],
   addons: [
     '@storybook/addon-a11y',
@@ -96,6 +97,17 @@ const config: StorybookConfig = {
         '@island.is/feature-flags': rootDir('../../../feature-flags/src'),
         '@island.is/react-spa/shared': rootDir('../../../react-spa/shared/src'),
         '@island.is/react-spa/bff': rootDir('../../../react-spa/bff/src'),
+        '@island.is/portals/my-pages/core': rootDir(
+          '../../../portals/my-pages/core/src',
+        ),
+        '@island.is/portals/my-pages/constants': rootDir(
+          '../../../portals/my-pages/constants/src',
+        ),
+        '@island.is/portals/core': rootDir('../../../portals/core/src'),
+        '@island.is/portals/my-pages/graphql': rootDir(
+          '../../../portals/my-pages/graphql/src',
+        ),
+        '@island.is/plausible': rootDir('../../../plausible/src'),
       },
     }
     return config

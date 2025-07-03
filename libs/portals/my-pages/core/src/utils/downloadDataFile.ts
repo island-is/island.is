@@ -2,7 +2,6 @@ import CSVStringify from 'csv-stringify'
 import XLSX from 'xlsx'
 import { sanitizeSheetName } from './utils'
 import format from 'date-fns/format'
-import { formatDateWithTime } from './dateUtils'
 
 export const downloadFile = async (
   name: string,
