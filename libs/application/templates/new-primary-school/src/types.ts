@@ -52,6 +52,7 @@ export type Person = {
   }
   requiresInterpreter: string[]
   preferredLanguage?: string
+  citizenshipCode?: string
 }
 
 export type SelectOption = {

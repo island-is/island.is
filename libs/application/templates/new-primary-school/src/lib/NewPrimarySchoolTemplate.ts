@@ -69,11 +69,19 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               },
             ],
           },
-          onExit: defineTemplateApi({
-            action: ApiModuleActions.getChildInformation,
-            externalDataId: 'childInformation',
-            throwOnError: true,
-          }),
+          onExit: [
+            defineTemplateApi({
+              action: ApiModuleActions.getChildInformation,
+              externalDataId: 'childInformation',
+              throwOnError: true,
+              order: 0,
+            }),
+            defineTemplateApi({
+              action: ApiModuleActions.getCitizenship,
+              externalDataId: 'citizenship',
+              order: 1,
+            }),
+          ],
           roles: [
             {
               id: Roles.APPLICANT,
@@ -119,10 +127,6 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               },
             ],
           },
-          onEntry: defineTemplateApi({
-            action: ApiModuleActions.getCitizenship,
-            externalDataId: 'citizenship',
-          }),
           onExit: defineTemplateApi({
             action: ApiModuleActions.sendApplication,
             triggerEvent: DefaultEvents.SUBMIT,

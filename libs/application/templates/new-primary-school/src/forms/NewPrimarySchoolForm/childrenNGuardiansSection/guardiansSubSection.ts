@@ -1,6 +1,7 @@
 import {
   buildCheckboxField,
   buildDescriptionField,
+  buildHiddenInput,
   buildMultiField,
   buildPhoneField,
   buildSelectField,
@@ -154,6 +155,15 @@ export const guardiansSubSection = buildSubSection({
             return !!guardians?.[0]?.requiresInterpreter?.includes(YES)
           },
         }),
+        buildHiddenInput({
+          id: 'guardians[0].citizenshipCode',
+          defaultValue: (application: Application) =>
+            (
+              application.externalData.nationalRegistry?.data as {
+                citizenship?: { code: string }
+              }
+            )?.citizenship?.code,
+        }),
 
         buildDescriptionField({
           id: 'guardiansInfo2',
@@ -267,6 +277,18 @@ export const guardiansSubSection = buildSubSection({
               hasOtherGuardian(answers, externalData) &&
               !!guardians?.[1]?.requiresInterpreter?.includes(YES)
             )
+          },
+        }),
+        buildHiddenInput({
+          id: 'guardians[1].citizenshipCode',
+          condition: (answers, externalData) =>
+            hasOtherGuardian(answers, externalData),
+          defaultValue: (application: Application) => {
+            const { otherGuardianCitizenshipCode } = getApplicationExternalData(
+              application.externalData,
+            )
+
+            return otherGuardianCitizenshipCode
           },
         }),
       ],
