@@ -11,6 +11,7 @@ import {
 import { ApplicationType, SchoolType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
+import { isWelfareContactSelected } from '../../../utils/conditionUtils'
 
 export const supportSubSection = buildSubSection({
   id: 'supportSubSection',
@@ -125,13 +126,7 @@ export const supportSubSection = buildSubSection({
           width: 'half',
           required: true,
           condition: (answers) => {
-            const { hasDiagnoses, hasHadSupport, hasWelfareContact } =
-              getApplicationAnswers(answers)
-
-            return (
-              (hasDiagnoses === YES || hasHadSupport === YES) &&
-              hasWelfareContact === YES
-            )
+            return isWelfareContactSelected(answers)
           },
         }),
         buildTextField({
@@ -140,13 +135,7 @@ export const supportSubSection = buildSubSection({
           width: 'half',
           required: true,
           condition: (answers) => {
-            const { hasDiagnoses, hasHadSupport, hasWelfareContact } =
-              getApplicationAnswers(answers)
-
-            return (
-              (hasDiagnoses === YES || hasHadSupport === YES) &&
-              hasWelfareContact === YES
-            )
+            return isWelfareContactSelected(answers)
           },
         }),
         buildRadioField({
@@ -170,13 +159,7 @@ export const supportSubSection = buildSubSection({
             },
           ],
           condition: (answers) => {
-            const { hasDiagnoses, hasHadSupport, hasWelfareContact } =
-              getApplicationAnswers(answers)
-
-            return (
-              (hasDiagnoses === YES || hasHadSupport === YES) &&
-              hasWelfareContact === YES
-            )
+            return isWelfareContactSelected(answers)
           },
         }),
         buildTextField({
@@ -205,18 +188,9 @@ export const supportSubSection = buildSubSection({
           width: 'half',
           required: true,
           condition: (answers) => {
-            const {
-              hasDiagnoses,
-              hasHadSupport,
-              hasCaseManager,
-              hasWelfareContact,
-            } = getApplicationAnswers(answers)
+            const { hasCaseManager } = getApplicationAnswers(answers)
 
-            return (
-              (hasDiagnoses === YES || hasHadSupport === YES) &&
-              hasCaseManager === YES &&
-              hasWelfareContact === YES
-            )
+            return isWelfareContactSelected(answers) && hasCaseManager === YES
           },
         }),
         buildRadioField({
@@ -241,13 +215,7 @@ export const supportSubSection = buildSubSection({
             },
           ],
           condition: (answers) => {
-            const { hasDiagnoses, hasHadSupport, hasWelfareContact } =
-              getApplicationAnswers(answers)
-
-            return (
-              (hasDiagnoses === YES || hasHadSupport === YES) &&
-              hasWelfareContact === YES
-            )
+            return isWelfareContactSelected(answers)
           },
         }),
         buildAlertMessageField({
