@@ -168,5 +168,9 @@ export interface Answer {
 }
 export interface SelfAssessment {
   hadAssistance: boolean
+  currentEmploymentStatus: string[]
+  currentEmploymentStatusAdditional?: string
+  lastEmploymentTitle?: string
+  lastEmploymentYear?: number
   answers: Answer[]
 }

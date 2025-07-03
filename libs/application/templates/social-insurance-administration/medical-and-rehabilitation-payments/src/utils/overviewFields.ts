@@ -13,6 +13,7 @@ import {
   selfAssessmentQuestionnaireItems,
   selfAssessmentQuestionsOneItems,
   selfAssessmentQuestionsThreeItems,
+  selfAssessmentQuestionsTwoItems,
   unionSickPayItems,
 } from './overviewItems'
 
@@ -58,6 +59,11 @@ export const overviewFields = (editable?: boolean) => {
       id: 'overview.selfAssessmentQuestionsOne',
       backId: editable ? 'selfAssessmentQuestionsOne' : undefined,
       items: selfAssessmentQuestionsOneItems,
+    }),
+    buildOverviewField({
+      id: 'overview.selfAssessmentQuestionsTwo',
+      backId: editable ? 'selfAssessmentQuestionsTwo' : undefined,
+      items: selfAssessmentQuestionsTwoItems,
     }),
     buildOverviewField({
       id: 'overview.selfAssessmentQuestionsThree',

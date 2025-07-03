@@ -127,8 +127,7 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
           <Label>
             {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
-                .serviceProviderJobTitle,
+              medicalAndRehabilitationPaymentsFormMessage.shared.jobTitle,
             )}
           </Label>
           <Text>
