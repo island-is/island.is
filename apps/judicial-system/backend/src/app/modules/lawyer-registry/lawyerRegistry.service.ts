@@ -1,5 +1,6 @@
 import { plainToClass } from 'class-transformer'
 import { validate } from 'class-validator'
+import { NotFoundError } from 'rxjs'
 import type { Transaction, WhereOptions } from 'sequelize'
 import { Sequelize } from 'sequelize'
 
@@ -7,6 +8,7 @@ import {
   Inject,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
@@ -134,6 +136,31 @@ export class LawyerRegistryService {
 
       throw new InternalServerErrorException(
         'Error getting all lawyers from lawyer registry',
+      )
+    }
+  }
+
+  async getByNationalId(nationalId: string) {
+    try {
+      const lawyer = await this.lawyerRegistryModel.findOne({
+        where: {
+          nationalId,
+        },
+      })
+
+      if (!lawyer) {
+        throw new NotFoundException()
+      }
+
+      return lawyer
+    } catch (error) {
+      this.logger.error(
+        `Error getting lawyer with national id ${nationalId}`,
+        error,
+      )
+
+      throw new InternalServerErrorException(
+        `Error getting lawyer with national id ${nationalId}`,
       )
     }
   }

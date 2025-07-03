@@ -1,4 +1,12 @@
-import { Controller, Get, Inject, Post, Query, UseGuards } from '@nestjs/common'
+import {
+  Controller,
+  Get,
+  Inject,
+  Param,
+  Post,
+  Query,
+  UseGuards,
+} from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 
 import type { Logger } from '@island.is/logging'
@@ -60,6 +68,31 @@ export class LawyerRegistryController {
       return lawyers
     } catch (error) {
       this.logger.error('Failed to get all lawyers from lawyer registry', error)
+      throw error
+    }
+  }
+
+  // @UseGuards(TokenGuard)
+  @Get('lawyer/:nationalId')
+  @ApiOkResponse({
+    description: 'Gets a lawyer in lawyer registry by nationalId',
+  })
+  async getByNationalId(
+    @Param('nationalId') nationalId: string,
+  ): Promise<LawyerRegistry> {
+    this.logger.debug('Getting a lawyer in lawyer registry by nationalId')
+
+    try {
+      const lawyer = await this.lawyerRegistryService.getByNationalId(
+        nationalId,
+      )
+
+      return lawyer
+    } catch (error) {
+      this.logger.error(
+        `Failed to get lawyer with nationalId: ${nationalId}`,
+        error,
+      )
       throw error
     }
   }
