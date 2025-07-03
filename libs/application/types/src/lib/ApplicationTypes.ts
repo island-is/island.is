@@ -1,7 +1,7 @@
 export enum ApplicationTypes {
-  EXAMPLE = 'ExampleForm',
   EXAMPLE_AUTH_DELEGATION = 'ExampleAuthDelegation',
   EXAMPLE_COMMON_ACTIONS = 'ExampleCommonActions',
+  EXAMPLE_FOLDER_STRUCTURE_AND_CONVENTIONS = 'ExampleFolderStructureAndConventions',
   EXAMPLE_INPUTS = 'ExampleInputs',
   EXAMPLE_NO_INPUTS = 'ExampleNoInputs',
   EXAMPLE_PAYMENT = 'ExamplePayment',
@@ -35,7 +35,6 @@ export enum ApplicationTypes {
   MARRIAGE_CONDITIONS = 'MarriageConditions',
   NO_DEBT_CERTIFICATE = 'NoDebtCertificate',
   FINANCIAL_STATEMENT_CEMETERY = 'FinancialStatementCemetery',
-  FINANCIAL_STATEMENTS_INAO = 'FinancialStatementsInao',
   FINANCIAL_STATEMENT_INDIVIDUAL_ELECTION = 'FinancialStatementIndividualElection',
   FINANCIAL_STATEMENT_POLITICAL_PARTY = 'FinancialStatementPoliticalParty',
   OPERATING_LICENSE = 'OperatingLicense',
@@ -83,21 +82,28 @@ export enum ApplicationTypes {
   NEW_PRIMARY_SCHOOL = 'NewPrimarySchool',
   WORK_ACCIDENT_NOTIFICATION = 'WorkAccidentNotification',
   MACHINE_REGISTRATION = 'MachineRegistration',
+  PRACTICAL_EXAM = 'PracticalExam',
   RENTAL_AGREEMENT = 'RentalAgreement',
+  TERMINATE_RENTAL_AGREEMENT = 'TerminateRentalAgreement',
   SEMINAR_REGISTRATION = 'SeminarRegistration',
   TRAINING_LICENSE_ON_A_WORK_MACHINE = 'TrainingLicenseOnAWorkMachine',
   SECONDARY_SCHOOL = 'SecondarySchool',
   ACTIVATION_ALLOWANCE = 'ActivationAllowance',
+  CAR_RENTAL_FEE_CATEGORY = 'CarRentalFeeCategory',
+  MEDICAL_AND_REHABILITATION_PAYMENTS = 'MedicalAndRehabilitationPayments',
+  FIRE_COMPENSATION_APPRAISAL = 'FireCompensationAppraisal',
+  LEGAL_GAZETTE = 'LegalGazette',
+  EXEMPTION_FOR_TRANSPORTATION = 'ExemptionForTransportation',
 }
 
 export const ApplicationConfigurations = {
-  [ApplicationTypes.EXAMPLE]: {
-    slug: 'example',
-    translation: 'example.application',
-  },
   [ApplicationTypes.EXAMPLE_COMMON_ACTIONS]: {
     slug: 'example-common-actions',
     translation: 'eca.application',
+  },
+  [ApplicationTypes.EXAMPLE_FOLDER_STRUCTURE_AND_CONVENTIONS]: {
+    slug: 'example-folder-structure-and-conventions',
+    translation: 'exfsc.application',
   },
   [ApplicationTypes.EXAMPLE_INPUTS]: {
     slug: 'example-inputs',
@@ -238,10 +244,6 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.FINANCIAL_STATEMENT_CEMETERY]: {
     slug: 'skil-arsreikninga-kirkjugardar',
     translation: 'fsc.application',
-  },
-  [ApplicationTypes.FINANCIAL_STATEMENTS_INAO]: {
-    slug: 'skilarsreikninga',
-    translation: 'fsn.application',
   },
   [ApplicationTypes.FINANCIAL_STATEMENT_INDIVIDUAL_ELECTION]: {
     slug: 'skil-arsreikninga-einstaklingsframbod',
@@ -431,9 +433,17 @@ export const ApplicationConfigurations = {
     slug: 'nyskraning-taekis',
     translation: ['aosh.rnm.application'],
   },
+  [ApplicationTypes.PRACTICAL_EXAM]: {
+    slug: 'verklegt-prof',
+    translation: ['aosh.pe.application'],
+  },
   [ApplicationTypes.RENTAL_AGREEMENT]: {
     slug: 'leigusamningur',
     translation: 'ra.application',
+  },
+  [ApplicationTypes.TERMINATE_RENTAL_AGREEMENT]: {
+    slug: 'uppsogn-og-riftun-leigusamninga',
+    translation: 'tra.application',
   },
   [ApplicationTypes.SEMINAR_REGISTRATION]: {
     slug: 'vinnueftirlitid-namskeid',
@@ -450,5 +460,25 @@ export const ApplicationConfigurations = {
   [ApplicationTypes.ACTIVATION_ALLOWANCE]: {
     slug: 'virknistyrkur',
     translation: ['aa.application'],
+  },
+  [ApplicationTypes.CAR_RENTAL_FEE_CATEGORY]: {
+    slug: 'bilaleigu-gjaldflokkur',
+    translation: 'crfc.application',
+  },
+  [ApplicationTypes.MEDICAL_AND_REHABILITATION_PAYMENTS]: {
+    slug: 'sjukra-og-endurhaefingargreidslur',
+    translation: ['marp.application', 'sia.application', 'uiForms.application'],
+  },
+  [ApplicationTypes.FIRE_COMPENSATION_APPRAISAL]: {
+    slug: 'endurmat-brunabotamats',
+    translation: 'fca.application',
+  },
+  [ApplicationTypes.LEGAL_GAZETTE]: {
+    slug: 'logbirtingarblad',
+    translation: 'lg.application',
+  },
+  [ApplicationTypes.EXEMPTION_FOR_TRANSPORTATION]: {
+    slug: 'undanthaga-vegna-flutnings',
+    translation: 'ta.eft.application',
   },
 }

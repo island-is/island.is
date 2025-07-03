@@ -98,6 +98,7 @@ const VehicleBulkMileage = () => {
                 vehicleId: v.vehicleId,
                 vehicleType: v.make,
                 lastMileageRegistration,
+                co2: v.co2 ?? undefined,
               }
             })
             .filter(isDefined) ?? []
@@ -122,6 +123,17 @@ const VehicleBulkMileage = () => {
       setDisplayFilters((data?.vehiclesListV3?.totalRecords ?? 0) > 10)
     }
   }, [data, displayFilters])
+
+  const buttons = [
+    <LinkButton
+      key="finance"
+      to={AssetsPaths.LinkFinanceTransactionVehicleMileage}
+      text={formatMessage(vehicleMessage.financeMileageLink)}
+      icon="arrowForward"
+      variant="utility"
+      colorScheme="white"
+    />,
+  ]
 
   return (
     <Stack space={2}>
@@ -151,6 +163,7 @@ const VehicleBulkMileage = () => {
           buttonGroup={
             displayFilters
               ? [
+                  ...buttons,
                   <LinkButton
                     key="upload"
                     to={AssetsPaths.AssetsVehiclesBulkMileageUpload}
@@ -166,7 +179,7 @@ const VehicleBulkMileage = () => {
                     variant="utility"
                   />,
                 ]
-              : undefined
+              : buttons
           }
         >
           {displayFilters && (

@@ -7,6 +7,7 @@ import {
   capitalize,
   districtCourtAbbreviation,
 } from '@island.is/judicial-system/formatters'
+import { isPrisonAdminUser } from '@island.is/judicial-system/types'
 import {
   core,
   errors,
@@ -14,16 +15,16 @@ import {
   titles,
 } from '@island.is/judicial-system-web/messages'
 import {
+  CasesLayout,
   CaseTag,
   Logo,
   PageHeader,
   SectionHeading,
-  SharedPageLayout,
   TagAppealState,
   TagCaseState,
+  useOpenCaseInNewTab,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { useContextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import {
   ColumnCaseType,
   CourtCaseNumber,
@@ -43,7 +44,6 @@ import {
   CaseListEntry,
   CaseState,
   CaseType,
-  InstitutionType,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 
@@ -54,9 +54,9 @@ import * as styles from './Cases.css'
 export const PrisonCases: FC = () => {
   const { formatMessage } = useIntl()
   const { user } = useContext(UserContext)
-  const { openCaseInNewTabMenuItem } = useContextMenu()
+  const { openCaseInNewTab } = useOpenCaseInNewTab()
 
-  const isPrisonAdmin = user?.institution?.type === InstitutionType.PRISON_ADMIN
+  const isPrisonAdmin = isPrisonAdminUser(user)
 
   const { data, error, loading } = usePrisonCasesQuery({
     fetchPolicy: 'no-cache',
@@ -166,11 +166,11 @@ export const PrisonCases: FC = () => {
               ),
             },
           ]}
-          generateContextMenuItems={(row) => [openCaseInNewTabMenuItem(row.id)]}
+          generateContextMenuItems={(row) => [openCaseInNewTab(row.id)]}
         />
       )
     },
-    [formatMessage, openCaseInNewTabMenuItem],
+    [formatMessage, openCaseInNewTab],
   )
 
   const renderIndictmentTable = useMemo(
@@ -267,11 +267,11 @@ export const PrisonCases: FC = () => {
               },
             },
           ]}
-          generateContextMenuItems={(row) => [openCaseInNewTabMenuItem(row.id)]}
+          generateContextMenuItems={(row) => [openCaseInNewTab(row.id)]}
         />
       )
     },
-    [formatMessage, openCaseInNewTabMenuItem],
+    [formatMessage, openCaseInNewTab],
   )
 
   const renderAlertMessage = () => {
@@ -287,7 +287,7 @@ export const PrisonCases: FC = () => {
   }
 
   return (
-    <SharedPageLayout>
+    <CasesLayout>
       <PageHeader title={formatMessage(titles.shared.cases)} />
       <div className={styles.logoContainer}>
         <Logo />
@@ -359,7 +359,7 @@ export const PrisonCases: FC = () => {
             : renderAlertMessage()}
         </>
       )}
-    </SharedPageLayout>
+    </CasesLayout>
   )
 }
 

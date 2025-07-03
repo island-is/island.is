@@ -1,9 +1,7 @@
 import { GetServerSideProps } from 'next'
 import { FormProvider, useForm } from 'react-hook-form'
-import { useRouter } from 'next/router'
-import Link from 'next/link'
 
-import { Box, Button } from '@island.is/island-ui/core'
+import { Box, Button, Link, LinkV2 } from '@island.is/island-ui/core'
 import { Features } from '@island.is/feature-flags'
 import { useLocale } from '@island.is/localization'
 import { findProblemInApolloError } from '@island.is/shared/problem'
@@ -42,6 +40,7 @@ import { PaymentReceipt } from '../../../components/PaymentReceipt'
 import { ThreeDSecure } from '../../../components/ThreeDSecure/ThreeDSecure'
 import { InvoiceReceipt } from '../../../components/InvoiceReceipt'
 import { usePaymentOrchestration } from '../../../hooks/usePaymentOrchestration'
+import { withLocale } from '../../../i18n/withLocale'
 
 interface PaymentPageProps {
   locale: string
@@ -170,12 +169,11 @@ export const getServerSideProps: GetServerSideProps<PaymentPageProps> = async (
   }
 }
 
-export default function PaymentPage({
+function PaymentPage({
   paymentFlow,
   organization,
   productInformation,
 }: PaymentPageProps) {
-  const router = useRouter()
   const methods = useForm({
     mode: 'onBlur',
     reValidateMode: 'onChange',
@@ -250,11 +248,11 @@ export default function PaymentPage({
               />
 
               <Box marginTop={4} width="full">
-                <Link href={paymentFlow.returnUrl ?? 'https://island.is'}>
-                  <Button fluid>
+                <LinkV2 href={paymentFlow.returnUrl ?? 'https://island.is'}>
+                  <Button fluid unfocusable>
                     {formatMessage(generic.buttonFinishAndReturn)}
                   </Button>
-                </Link>
+                </LinkV2>
               </Box>
             </>
           }
@@ -313,19 +311,17 @@ export default function PaymentPage({
                       : formatMessage(invoice.create)}
                   </Button>
                   <Box display="flex" justifyContent="center">
-                    <Button
-                      variant="text"
-                      disabled={overallIsSubmitting}
-                      onClick={() => {
-                        if (!overallIsSubmitting) {
-                          router.push(
-                            paymentFlow.returnUrl ?? 'https://island.is',
-                          )
-                        }
-                      }}
+                    <LinkV2
+                      href={
+                        paymentFlow.cancelUrl ??
+                        paymentFlow.returnUrl ??
+                        'https://island.is'
+                      }
                     >
-                      {formatMessage(generic.buttonCancel)}
-                    </Button>
+                      <Button unfocusable variant="text">
+                        {formatMessage(generic.buttonCancel)}
+                      </Button>
+                    </LinkV2>
                   </Box>
                 </Box>
               </form>
@@ -362,3 +358,5 @@ export default function PaymentPage({
     </>
   )
 }
+
+export default withLocale(PaymentPage)

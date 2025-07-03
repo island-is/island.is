@@ -1,3 +1,4 @@
+name: Feature deployments
 on:
   workflow_dispatch:
   pull_request:
@@ -8,11 +9,17 @@ on:
 
 concurrency:
   # See https://docs.github.com/en/actions/using-workflows/workflow-syntax-for-github-actions#example-using-a-fallback-value
+  # We want feature modifications to happen sequentially to completion,
+  # to avoid race conditions and orphaned deployments
   group: push-${{ github.head_ref || github.run_id }}
   cancel-in-progress: false
 
+env:
+  RUNS_ON_BUCKET_NAME: ${{ vars.RUNS_ON_BUCKET_NAME }}
+
 jobs:
   close_feature:
+    name: Terminate feature deployment
     runs-on: arc-shared
     if: ${{ github.event.label.name == 'deploy-feature' }}
     permissions:
@@ -25,8 +32,6 @@ jobs:
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
-        with:
-          RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
 
       - name: Generate feature name
         id: git-feature-name

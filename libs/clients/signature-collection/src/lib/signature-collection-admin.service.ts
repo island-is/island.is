@@ -1,12 +1,11 @@
 import { Injectable } from '@nestjs/common'
-import { MedmaeliBulkItemDTO } from '../../gen/fetch'
+import { KosningApi, MedmaeliBulkItemDTO } from '../../gen/fetch'
 import {
   GetListInput,
   CreateListInput,
   BulkUploadInput,
-  ReasonKey,
 } from './signature-collection.types'
-import { Collection } from './types/collection.dto'
+import { Collection, CollectionType } from './types/collection.dto'
 import { getSlug, List, ListStatus, mapListBase } from './types/list.dto'
 import { Signature, mapSignature } from './types/signature.dto'
 import { CandidateLookup } from './types/user.dto'
@@ -25,12 +24,22 @@ import {
   AdminListApi,
   AdminSignatureApi,
   AdminApi,
+  ManagerListApi,
+  MunicipalityListApi,
+  ManagerCollectionApi,
+  ManagerCandidateApi,
+  ManagerSignatureApi,
+  MunicipalityCandidateApi,
+  MunicipalityCollectionApi,
+  MunicipalitySignatureApi,
+  ManagerAdminApi,
 } from './apis'
 import { SignatureCollectionSharedClientService } from './signature-collection-shared.service'
 import {
   AreaSummaryReport,
   mapAreaSummaryReport,
 } from './types/areaSummaryReport.dto'
+import { SignatureCollectionAdminClient } from './types/adminClient'
 
 type Api =
   | AdminListApi
@@ -38,40 +47,68 @@ type Api =
   | AdminSignatureApi
   | AdminCandidateApi
   | AdminApi
+  | ManagerListApi
+  | ManagerCollectionApi
+  | ManagerSignatureApi
+  | ManagerCandidateApi
+  | ManagerAdminApi
+  | MunicipalityListApi
+  | MunicipalityCollectionApi
+  | MunicipalitySignatureApi
+  | MunicipalityCandidateApi
+  | KosningApi
 
 @Injectable()
-export class SignatureCollectionAdminClientService {
+export class SignatureCollectionAdminClientService
+  implements SignatureCollectionAdminClient
+{
   constructor(
-    private listsApi: AdminListApi,
-    private collectionsApi: AdminCollectionApi,
-    private sharedService: SignatureCollectionSharedClientService,
-    private candidateApi: AdminCandidateApi,
-    private adminApi: AdminApi,
+    protected listsApi: AdminListApi,
+    protected collectionsApi: AdminCollectionApi,
+    protected electionsApi: KosningApi,
+    protected sharedService: SignatureCollectionSharedClientService,
+    protected candidateApi: AdminCandidateApi,
+    protected adminApi: AdminApi,
   ) {}
 
-  private getApiWithAuth<T extends Api>(api: T, auth: Auth) {
+  protected getApiWithAuth<T extends Api>(api: T, auth: Auth) {
     return api.withMiddleware(new AuthMiddleware(auth)) as T
   }
 
-  async currentCollection(auth: Auth): Promise<Collection> {
+  async currentCollection(
+    auth: Auth,
+    collectionTypeFilter?: CollectionType,
+  ): Promise<Collection[]> {
     return await this.sharedService.currentCollection(
-      this.getApiWithAuth(this.collectionsApi, auth),
+      this.getApiWithAuth(this.electionsApi, auth),
+      collectionTypeFilter,
+    )
+  }
+
+  async getLatestCollectionForType(
+    auth: Auth,
+    collectionType: CollectionType,
+  ): Promise<Collection> {
+    return this.sharedService.getLatestCollectionForType(
+      this.getApiWithAuth(this.electionsApi, auth),
+      collectionType,
     )
   }
 
   async listStatus(listId: string, auth: Auth): Promise<ListStatus> {
     const list = await this.getList(listId, auth)
-    const { status } = await this.currentCollection(auth)
+    const { status } = await this.getLatestCollectionForType(
+      auth,
+      list.collectionType,
+    )
     return this.sharedService.getListStatus(list, status)
   }
 
   async toggleListStatus(listId: string, auth: Auth): Promise<Success> {
     const listStatus = await this.listStatus(listId, auth)
     // Can only toggle list if it is in review or reviewed
-    if (
-      listStatus === ListStatus.InReview ||
-      listStatus === ListStatus.Reviewed
-    ) {
+
+    try {
       const list = await this.getApiWithAuth(
         this.adminApi,
         auth,
@@ -80,8 +117,15 @@ export class SignatureCollectionAdminClientService {
         shouldToggle: listStatus === ListStatus.InReview,
       })
       return { success: !!list }
+    } catch (error) {
+      if (error.status === 403) {
+        error.body = 'Þú hefur ekki aðgang að þessari aðgerð.'
+      }
+      return {
+        success: false,
+        reasons: error.body ? [error.body] : [],
+      }
     }
-    return { success: false }
   }
 
   async processCollection(collectionId: string, auth: Auth): Promise<Success> {
@@ -95,9 +139,16 @@ export class SignatureCollectionAdminClientService {
   }
 
   async getLists(input: GetListInput, auth: Auth): Promise<List[]> {
+    if (
+      input.collectionType &&
+      input.collectionType === CollectionType.LocalGovernmental
+    ) {
+      input.areaId = await this.getMunicipalityAreaId(auth)
+    }
     return await this.sharedService.getLists(
       input,
       this.getApiWithAuth(this.listsApi, auth),
+      this.getApiWithAuth(this.electionsApi, auth),
     )
   }
 
@@ -106,6 +157,8 @@ export class SignatureCollectionAdminClientService {
       listId,
       this.getApiWithAuth(this.listsApi, auth),
       this.getApiWithAuth(this.candidateApi, auth),
+      this.getApiWithAuth(this.collectionsApi, auth),
+      this.getApiWithAuth(this.electionsApi, auth),
     )
   }
 
@@ -117,67 +170,84 @@ export class SignatureCollectionAdminClientService {
   }
 
   async createListsAdmin(
-    { collectionId, owner, areas }: CreateListInput,
+    {
+      collectionId,
+      owner,
+      areas,
+      collectionType,
+      collectionName,
+    }: CreateListInput,
     auth: Auth,
-  ): Promise<Slug> {
-    const { id, areas: collectionAreas } = await this.currentCollection(auth)
+  ): Promise<Slug & Success> {
+    const { id, areas: collectionAreas } =
+      await this.getLatestCollectionForType(auth, collectionType)
     // check if collectionId is current collection and current collection is open
     if (collectionId !== id) {
       throw new Error('Collection id input wrong')
     }
 
-    const candidates = await this.getApiWithAuth(
-      this.candidateApi,
-      auth,
-    ).frambodGet({
-      sofnunID: parseInt(collectionId),
-    })
-
-    const adminApi = this.getApiWithAuth(this.adminApi, auth)
-
-    const filteredAreas = areas
-      ? collectionAreas.filter((area) =>
-          areas.flatMap((a) => a.areaId).includes(area.id),
-        )
-      : collectionAreas
-
-    let candidacy = candidates.find((c) => c.kennitala === owner.nationalId)
-
-    // If no candidacy exists, create one
-    if (!candidacy) {
-      candidacy = await adminApi.adminFrambodPost({
-        frambodRequestDTO: {
-          sofnunID: parseInt(id),
-          kennitala: owner.nationalId,
-          simi: owner.phone,
-          netfang: owner.email,
-          medmaelalistar: filteredAreas.map((area) => ({
-            svaediID: parseInt(area.id),
-            listiNafn: `${owner.name} - ${area.name}`,
-          })),
-        },
+    try {
+      const candidates = await this.getApiWithAuth(
+        this.candidateApi,
+        auth,
+      ).frambodGet({
+        sofnunID: parseInt(collectionId),
       })
-    }
-    // Candidacy exists, add area
-    else {
-      await adminApi.adminMedmaelalistiPost({
-        medmaelalistarRequestDTO: {
-          frambodID: candidacy.id,
-          medmaelalistar: filteredAreas.map((area) => ({
-            svaediID: parseInt(area.id),
-            listiNafn: `${owner.name} - ${area.name}`,
-          })),
-        },
+
+      const adminApi = this.getApiWithAuth(this.adminApi, auth)
+
+      const filteredAreas = areas?.length
+        ? collectionAreas.filter((area) =>
+            areas.flatMap((a) => a.areaId).includes(area.id),
+          )
+        : collectionAreas
+
+      let candidacy = candidates.find((c) => c.kennitala === owner.nationalId)
+
+      // If no candidacy exists, create one
+      if (!candidacy) {
+        candidacy = await adminApi.adminFrambodPost({
+          frambodRequestDTO: {
+            sofnunID: parseInt(id),
+            kennitala: owner.nationalId,
+            simi: owner.phone,
+            netfang: owner.email,
+            frambodNafn: collectionName,
+            medmaelalistar: filteredAreas.map((area) => ({
+              svaediID: parseInt(area.id),
+              listiNafn: `${owner.name} - ${area.name}`,
+            })),
+          },
+        })
+      }
+      // Candidacy exists, add area
+      else {
+        await adminApi.adminMedmaelalistiPost({
+          medmaelalistarRequestDTO: {
+            frambodID: candidacy.id,
+            medmaelalistar: filteredAreas.map((area) => ({
+              svaediID: parseInt(area.id),
+              listiNafn: `${owner.name} - ${area.name}`,
+            })),
+          },
+        })
+      }
+
+      const collectionsApi = this.getApiWithAuth(this.collectionsApi, auth)
+      const votingType = await collectionsApi.medmaelasofnunIDGet({
+        iD: candidacy.medmaelasofnunID ?? -1,
       })
-    }
 
-    const collectionsApi = this.getApiWithAuth(this.collectionsApi, auth)
-    const votingType = await collectionsApi.medmaelasofnunIDGet({
-      iD: candidacy.medmaelasofnunID ?? -1,
-    })
-
-    return {
-      slug: getSlug(candidacy.id ?? '', votingType.kosningTegund),
+      return {
+        slug: getSlug(candidacy.id ?? '', votingType.kosningTegund),
+        success: true,
+      }
+    } catch (error) {
+      return {
+        slug: '',
+        success: false,
+        reasons: error.body ? [error.body] : [],
+      }
     }
   }
 
@@ -188,16 +258,20 @@ export class SignatureCollectionAdminClientService {
       })
       return { success: true }
     } catch (error) {
-      return { success: false }
+      return { success: false, reasons: error.body ? [error.body] : [] }
     }
   }
 
   async candidateLookup(
     nationalId: string,
+    collectionType: CollectionType,
     auth: Auth,
   ): Promise<CandidateLookup> {
-    const collection = await this.currentCollection(auth)
-    const { id, collectionType, areas } = collection
+    const collection = await this.getLatestCollectionForType(
+      auth,
+      collectionType,
+    )
+    const { id, areas } = collection
     const user = await this.getApiWithAuth(
       this.adminApi,
       auth,
@@ -209,7 +283,14 @@ export class SignatureCollectionAdminClientService {
 
     const ownedLists =
       user.medmaelalistar && candidate
-        ? user.medmaelalistar?.map((list) => mapListBase(list))
+        ? user.medmaelalistar?.map((list) =>
+            mapListBase(
+              list,
+              collection.areas.some(
+                (area) => area.id === list.svaedi?.id?.toString(),
+              ),
+            ),
+          )
         : []
 
     const { success: canCreate, reasons: canCreateInfo } =
@@ -279,27 +360,34 @@ export class SignatureCollectionAdminClientService {
     newEndDate: Date,
     auth: Auth,
   ): Promise<Success> {
-    const list = await this.getApiWithAuth(
-      this.adminApi,
-      auth,
-    ).adminMedmaelalistiIDExtendTimePatch({
-      iD: parseInt(listId),
-      newEndDate: newEndDate,
-    })
-    const { dagsetningLokar } = list
-    const success = dagsetningLokar
-      ? newEndDate.getTime() === dagsetningLokar.getTime()
-      : false
-
-    // Can only toggle list if it is in review or reviewed
-    if (success && list.lokadHandvirkt) {
-      await this.getApiWithAuth(
+    try {
+      const list = await this.getApiWithAuth(
         this.adminApi,
         auth,
-      ).adminMedmaelalistiIDToggleListPatch({ iD: parseInt(listId) })
-    }
-    return {
-      success,
+      ).adminMedmaelalistiIDExtendTimePatch({
+        iD: parseInt(listId),
+        newEndDate: newEndDate,
+      })
+      const { dagsetningLokar } = list
+      const success = dagsetningLokar
+        ? newEndDate.getTime() === dagsetningLokar.getTime()
+        : false
+
+      // Can only toggle list if it is in review or reviewed
+      if (success && list.lokadHandvirkt) {
+        await this.getApiWithAuth(
+          this.adminApi,
+          auth,
+        ).adminMedmaelalistiIDToggleListPatch({ iD: parseInt(listId) })
+      }
+      return {
+        success,
+      }
+    } catch (error) {
+      return {
+        success: false,
+        reasons: error.body ? [error.body] : [],
+      }
     }
   }
 
@@ -330,7 +418,7 @@ export class SignatureCollectionAdminClientService {
       })
       return { success: true }
     } catch (error) {
-      return { success: false, reasons: [ReasonKey.DeniedByService] }
+      return { success: false, reasons: error.body ? [error.body] : [] }
     }
   }
 
@@ -343,7 +431,7 @@ export class SignatureCollectionAdminClientService {
       )
       return { success: true }
     } catch (error) {
-      return { success: false, reasons: [ReasonKey.DeniedByService] }
+      return { success: false, reasons: error.body ? [error.body] : [] }
     }
   }
 
@@ -361,8 +449,8 @@ export class SignatureCollectionAdminClientService {
         blsNr: pageNumber,
       })
       return { success: res.bladsidaNr === pageNumber }
-    } catch {
-      return { success: false }
+    } catch (error) {
+      return { success: false, reasons: error.body ? [error.body] : [] }
     }
   }
 
@@ -417,8 +505,8 @@ export class SignatureCollectionAdminClientService {
         iD: parseInt(listId, 10),
       })
       return { success: res.listaLokad ?? false }
-    } catch {
-      return { success: false }
+    } catch (error) {
+      return { success: false, reasons: error.body ? [error.body] : [] }
     }
   }
 
@@ -457,11 +545,43 @@ export class SignatureCollectionAdminClientService {
           ? []
           : getReasonKeyForPaperSignatureUpload(signature, nationalId),
       }
-    } catch {
+    } catch (error) {
       return {
         success: false,
-        reasons: [ReasonKey.DeniedByService],
+        reasons: error.body ? [error.body] : [],
       }
     }
+  }
+
+  async startMunicipalityCollection(
+    auth: Auth,
+    areaId: string,
+  ): Promise<Success> {
+    const current = await this.getLatestCollectionForType(
+      auth,
+      CollectionType.LocalGovernmental,
+    )
+    try {
+      const collection = await this.getApiWithAuth(
+        this.adminApi,
+        auth,
+      ).adminKosningIDSveitSofnunPost({
+        iD: parseInt(current.electionId ?? ''),
+        sveitarfelagID: parseInt(areaId),
+      })
+      return { success: !!collection }
+    } catch (error) {
+      return { success: false, reasons: error.body ? [error.body] : [] }
+    }
+  }
+
+  async getMunicipalityAreaId(auth: Auth): Promise<string> {
+    const info = await this.getApiWithAuth(
+      this.adminApi,
+      auth,
+    ).adminSveitarfelagInfoGet({
+      kennitala: auth.nationalId,
+    })
+    return info?.[0]?.sveitarfelagID?.toString()
   }
 }

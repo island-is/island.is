@@ -1,9 +1,15 @@
 import { ActivationAllowanceModule } from './activation-allowance/activation-allowance.module'
 import { ActivationAllowanceService } from './activation-allowance/activation-allowance.service'
+import { CarRentalFeeCategoryModule } from './car-rental-fee-category/car-rental-fee-category.module'
+import { CarRentalFeeCategoryService } from './car-rental-fee-category/car-rental-fee-category.service'
+import { TerminateRentalAgreementModule } from './hms/terminate-rental-agreement/terminate-rental-agreement.module'
+import { TerminateRentalAgreementService } from './hms/terminate-rental-agreement/terminate-rental-agreement.service'
+import { FireCompensationAppraisalModule } from './hms/fire-compensation-appraisal/fire-compensation-appraisal.module'
+import { FireCompensationAppraisalService } from './hms/fire-compensation-appraisal/fire-compensation-appraisal.service'
+import { ExampleFolderStructureAndConventionsModule } from './examples/example-folder-structure-and-conventions/example-folder-structure-and-conventions.module'
+import { ExampleFolderStructureAndConventionsService } from './examples/example-folder-structure-and-conventions/example-folder-structure-and-conventions.service'
 import { ExampleAuthDelegationModule } from './examples/example-auth-delegation/example-auth-delegation.module'
 import { ExampleAuthDelegationService } from './examples/example-auth-delegation/example-auth-delegation.service'
-import { ReferenceTemplateModule } from './reference-template/reference-template.module'
-import { ReferenceTemplateService } from './reference-template/reference-template.service'
 import { ExamplePaymentActionsModule } from './example-payment-actions/examplePaymentActions.module'
 import { ExamplePaymentActionsService } from './example-payment-actions/examplePaymentActions.service'
 import { ExampleCommonActionsModule } from './examples/example-common-actions/example-common-actions.module'
@@ -38,8 +44,6 @@ import { FinancialAidModule } from './financial-aid/financial-aid.module'
 import { FinancialAidService } from './financial-aid/financial-aid.service'
 import { FinancialStatementCemeteryTemplateModule } from './financial-statement-cemetery/financial-statement-cemetery.module'
 import { FinancialStatementCemeteryTemplateService } from './financial-statement-cemetery/financial-statement-cemetery.service'
-import { FinancialStatementsInaoTemplateModule } from './financial-statements-inao/financial-statements-inao.module'
-import { FinancialStatementsInaoTemplateService } from './financial-statements-inao/financial-statements-inao.service'
 import { FinancialStatementIndividualElectionModule } from './financial-statement-individual-election/financial-statement-individual-election.module'
 import { FinancialStatementIndividualElectionService } from './financial-statement-individual-election/financial-statement-individual-election.service'
 import { FinancialStatementPoliticalPartyTemplateModule } from './financial-statement-political-party/financial-statement-political-party.modules'
@@ -160,13 +164,18 @@ import { SecondarySchoolModule } from './secondary-school/secondary-school.modul
 import { SecondarySchoolService } from './secondary-school/secondary-school.service'
 import { TrainingLicenseOnAWorkMachineTemplateModule } from './aosh/training-license-on-a-work-machine/training-license-on-a-work-machine.module'
 import { TrainingLicenseOnAWorkMachineTemplateService } from './aosh/training-license-on-a-work-machine/training-license-on-a-work-machine.service'
+import { PracticalExamTemplateModule } from './aosh/practical-exam/practical-exam.module'
+import { PracticalExamTemplateService } from './aosh/practical-exam/practical-exam.service'
+import { LegalGazetteTemplateModule } from './legal-gazette/legal-gazette.module'
+import { LegalGazetteTemplateService } from './legal-gazette/legal-gazette.service'
 import { RentalAgreementModule } from './rental-agreement/rental-agreement.module'
 import { RentalAgreementService } from './rental-agreement/rental-agreement.service'
+import { ExemptionForTransportationModule } from './transport-authority/exemption-for-transportation/exemption-for-transportation.module'
+import { ExemptionForTransportationService } from './transport-authority/exemption-for-transportation/exemption-for-transportation.service'
 
 export const dynamicModules = [GeneralPetitionModule]
 
 export const modules = [
-  ReferenceTemplateModule,
   ExampleCommonActionsModule,
   ExampleStateTransfersModule,
   ExampleInputsModule,
@@ -194,7 +203,6 @@ export const modules = [
   PassportModule,
   OperatingLicenseModule,
   FinancialStatementCemeteryTemplateModule,
-  FinancialStatementsInaoTemplateModule,
   FinancialStatementIndividualElectionModule,
   FinancialStatementPoliticalPartyTemplateModule,
   NoDebtCertificateModule,
@@ -243,13 +251,19 @@ export const modules = [
   SeminarsTemplateModule,
   SecondarySchoolModule,
   TrainingLicenseOnAWorkMachineTemplateModule,
+  CarRentalFeeCategoryModule,
+  PracticalExamTemplateModule,
+  ExampleFolderStructureAndConventionsModule,
+  LegalGazetteTemplateModule,
   ExampleAuthDelegationModule,
   RentalAgreementModule,
   ActivationAllowanceModule,
+  TerminateRentalAgreementModule,
+  FireCompensationAppraisalModule,
+  ExemptionForTransportationModule,
 ]
 
 export const services = [
-  ReferenceTemplateService,
   ExampleCommonActionsService,
   ExampleStateTransfersService,
   ExampleInputsService,
@@ -278,7 +292,6 @@ export const services = [
   PassportService,
   OperatingLicenseService,
   FinancialStatementCemeteryTemplateService,
-  FinancialStatementsInaoTemplateService,
   FinancialStatementIndividualElectionService,
   FinancialStatementPoliticalPartyTemplateService,
   MarriageConditionsSubmissionService,
@@ -327,7 +340,14 @@ export const services = [
   MunicipalListSigningService,
   SecondarySchoolService,
   TrainingLicenseOnAWorkMachineTemplateService,
+  CarRentalFeeCategoryService,
+  PracticalExamTemplateService,
+  ExampleFolderStructureAndConventionsService,
+  LegalGazetteTemplateService,
   ExampleAuthDelegationService,
   RentalAgreementService,
   ActivationAllowanceService,
+  TerminateRentalAgreementService,
+  FireCompensationAppraisalService,
+  ExemptionForTransportationService,
 ]

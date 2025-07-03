@@ -11,6 +11,7 @@ import {
   CaseState,
   CaseType,
   DateType,
+  EventType,
   indictmentCases,
   InstitutionType,
   investigationCases,
@@ -24,6 +25,7 @@ import { createTestingCaseModule } from '../createTestingCaseModule'
 
 import { nowFactory } from '../../../../factories'
 import { randomDate } from '../../../../test'
+import { EventLogService } from '../../../event-log/eventLog.service'
 import { FileService } from '../../../file'
 import { UserService } from '../../../user'
 import { UpdateCaseDto } from '../../dto/updateCase.dto'
@@ -68,6 +70,7 @@ describe('CaseController - Update', () => {
   } as Case
 
   let mockMessageService: MessageService
+  let mockEventLogService: EventLogService
   let mockUserService: UserService
   let mockFileService: FileService
   let transaction: Transaction
@@ -79,6 +82,7 @@ describe('CaseController - Update', () => {
   beforeEach(async () => {
     const {
       messageService,
+      eventLogService,
       userService,
       fileService,
       sequelize,
@@ -89,6 +93,7 @@ describe('CaseController - Update', () => {
     } = await createTestingCaseModule()
 
     mockMessageService = messageService
+    mockEventLogService = eventLogService
     mockUserService = userService
     mockFileService = fileService
     mockCaseModel = caseModel
@@ -875,14 +880,11 @@ describe('CaseController - Update', () => {
         { dateType: DateType.ARRAIGNMENT_DATE, caseId, ...arraignmentDate },
         { transaction },
       )
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
-        {
-          type: MessageType.NOTIFICATION,
-          user,
-          caseId,
-          body: { type: CaseNotificationType.COURT_DATE },
-        },
-      ])
+      expect(mockEventLogService.createWithUser).toHaveBeenCalledWith(
+        EventType.COURT_DATE_SCHEDULED,
+        caseId,
+        user,
+      )
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
           type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_FILE,
@@ -891,7 +893,7 @@ describe('CaseController - Update', () => {
           elementId: [defendantId1, subpoenaId1],
         },
         {
-          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
+          type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA,
           user,
           caseId: theCase.id,
           elementId: [defendantId1, subpoenaId1],
@@ -909,7 +911,7 @@ describe('CaseController - Update', () => {
           elementId: [defendantId2, subpoenaId2],
         },
         {
-          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
+          type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA,
           user,
           caseId: theCase.id,
           elementId: [defendantId2, subpoenaId2],
@@ -945,14 +947,11 @@ describe('CaseController - Update', () => {
         { dateType: DateType.COURT_DATE, caseId, ...courtDate },
         { transaction },
       )
-      expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
-        {
-          type: MessageType.NOTIFICATION,
-          user,
-          caseId,
-          body: { type: CaseNotificationType.COURT_DATE },
-        },
-      ])
+      expect(mockEventLogService.createWithUser).toHaveBeenCalledWith(
+        EventType.COURT_DATE_SCHEDULED,
+        caseId,
+        user,
+      )
     })
   })
 

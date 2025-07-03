@@ -183,7 +183,7 @@ export const PoliceCaseNumbers: FC<Props> = ({
       <SectionHeading title={formatMessage(m.heading)} required />
       <MultipleValueList
         name="policeCaseNumbers"
-        inputMask="999-9999-9999999"
+        inputMask="police-case-numbers"
         inputLabel={formatMessage(m.label)}
         inputPlaceholder={formatMessage(m.placeholder, {
           prefix:

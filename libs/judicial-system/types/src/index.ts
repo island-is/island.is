@@ -9,6 +9,7 @@ export {
   ServiceStatus,
   PunishmentType,
   VerdictAppealDecision,
+  InformationForDefendant,
   isSuccessfulServiceStatus,
   isFailedServiceStatus,
 } from './lib/defendant'
@@ -51,6 +52,9 @@ export {
   DefenderSubRole,
   prosecutionRoles,
   isProsecutionUser,
+  isProsecutorUser,
+  isProsecutorRepresentativeUser,
+  getContactInformation,
   publicProsecutionOfficeRoles,
   isPublicProsecutionOfficeUser,
   districtCourtRoles,
@@ -68,8 +72,9 @@ export {
   isPublicProsecutionUser,
   getAdminUserInstitutionScope,
   getAdminUserInstitutionUserRoles,
+  hasCaseGroupListsEnabled,
 } from './lib/user'
-export type { User } from './lib/user'
+export type { User, UserDescriptor, InstitutionUser } from './lib/user'
 
 export {
   CaseOrigin,
@@ -141,4 +146,13 @@ export { Substance } from './lib/substances'
 
 export { type Lawyer, mapToLawyer } from './lib/lawyer'
 
-export type { CourtDocument } from './lib/courtDocument'
+export { type CourtDocument } from './lib/courtDocument'
+
+export { type CaseTableColumnKey } from './lib/tables/caseTableColumnTypes'
+export { getCaseTableType, caseTables } from './lib/tables/caseTable'
+export {
+  CaseActionType,
+  ContextMenuCaseActionType,
+  CaseTableType,
+} from './lib/tables/caseTableTypes'
+export { getCaseTableGroups } from './lib/tables/caseTableGroup'

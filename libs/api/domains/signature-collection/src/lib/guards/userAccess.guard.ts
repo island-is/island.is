@@ -10,6 +10,10 @@ import {
   IS_OWNER_KEY,
   RESTRICT_GUARANTOR_KEY,
 } from './constants'
+import {
+  CollectionType,
+  isCollectionType,
+} from '@island.is/clients/signature-collection'
 
 enum UserDelegationContext {
   Person = 'Person',
@@ -48,6 +52,20 @@ export class UserAccessGuard implements CanActivate {
     return UserDelegationContext.Person
   }
 
+  private determineCollectionType = (context: ExecutionContext) => {
+    const { body } = getRequest(context)
+    if (body && body.collectionType && isCollectionType(body.collectionType)) {
+      return body.collectionType as CollectionType
+    } else if (
+      body &&
+      body?.variables?.input?.collectionType &&
+      isCollectionType(body.variables.input.collectionType)
+    ) {
+      return body.variables.input.collectionType as CollectionType
+    }
+    return CollectionType.OtherUnknown
+  }
+
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const m = new MetadataAbstractor(this.reflector, context)
     const isOwnerRestriction = m.getMetadataIfExists<boolean>(IS_OWNER_KEY)
@@ -56,7 +74,6 @@ export class UserAccessGuard implements CanActivate {
     const restrictGuarantors = m.getMetadataIfExists<boolean>(
       RESTRICT_GUARANTOR_KEY,
     )
-
     if (bypassAuth) {
       return true
     }
@@ -80,8 +97,12 @@ export class UserAccessGuard implements CanActivate {
       return false
     }
 
+    const collectionType = this.determineCollectionType(context)
     // IsOwner needs signee
-    const signee = await this.signatureCollectionService.signee(user)
+    const signee = await this.signatureCollectionService.signee(
+      user,
+      collectionType,
+    )
     request.body = { ...request.body, signee }
 
     const { candidate } = signee
@@ -99,7 +120,6 @@ export class UserAccessGuard implements CanActivate {
       }
       return signee.isOwner
     }
-
     return true
   }
 }

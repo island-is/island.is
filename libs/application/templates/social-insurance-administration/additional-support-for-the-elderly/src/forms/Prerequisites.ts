@@ -20,6 +20,7 @@ import Logo from '@island.is/application/templates/social-insurance-administrati
 import {
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
+  NationalRegistryCohabitantsApi,
 } from '../dataProviders'
 import { isEligible } from '../lib/additionalSupportForTheElderlyUtils'
 
@@ -63,6 +64,10 @@ export const PrerequisitesForm: Form = buildForm({
               subTitle:
                 additionalSupportForTheElderyFormMessage.pre
                   .skraInformationSubTitle,
+            }),
+            buildDataProviderItem({
+              provider: NationalRegistryCohabitantsApi,
+              title: '',
             }),
             buildDataProviderItem({
               provider: UserProfileApi,

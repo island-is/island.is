@@ -1,12 +1,14 @@
 import { ApplicationTypes } from '@island.is/application/types'
 
 const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
-  [ApplicationTypes.EXAMPLE]: () =>
-    import('@island.is/application/templates/reference-template'),
   [ApplicationTypes.EXAMPLE_AUTH_DELEGATION]: () =>
     import('@island.is/application/templates/examples/example-auth-delegation'),
   [ApplicationTypes.EXAMPLE_COMMON_ACTIONS]: () =>
     import('@island.is/application/templates/examples/example-common-actions'),
+  [ApplicationTypes.EXAMPLE_FOLDER_STRUCTURE_AND_CONVENTIONS]: () =>
+    import(
+      '@island.is/application/templates/examples/example-folder-structure-and-conventions'
+    ),
   [ApplicationTypes.EXAMPLE_INPUTS]: () =>
     import('@island.is/application/templates/examples/example-inputs'),
   [ApplicationTypes.EXAMPLE_NO_INPUTS]: () =>
@@ -73,8 +75,6 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/no-debt-certificate'),
   [ApplicationTypes.FINANCIAL_STATEMENT_CEMETERY]: () =>
     import('@island.is/application/templates/financial-statement-cemetery'),
-  [ApplicationTypes.FINANCIAL_STATEMENTS_INAO]: () =>
-    import('@island.is/application/templates/financial-statements-inao'),
   [ApplicationTypes.FINANCIAL_STATEMENT_INDIVIDUAL_ELECTION]: () =>
     import(
       '@island.is/application/templates/financial-statement-individual-election'
@@ -219,8 +219,12 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/new-primary-school'),
   [ApplicationTypes.MACHINE_REGISTRATION]: () =>
     import('@island.is/application/templates/aosh/register-new-machine'),
+  [ApplicationTypes.PRACTICAL_EXAM]: () =>
+    import('@island.is/application/templates/aosh/practical-exam'),
   [ApplicationTypes.RENTAL_AGREEMENT]: () =>
     import('@island.is/application/templates/rental-agreement'),
+  [ApplicationTypes.TERMINATE_RENTAL_AGREEMENT]: () =>
+    import('@island.is/application/templates/hms/terminate-rental-agreement'),
   [ApplicationTypes.SEMINAR_REGISTRATION]: () =>
     import('@island.is/application/templates/aosh/seminars'),
   [ApplicationTypes.TRAINING_LICENSE_ON_A_WORK_MACHINE]: () =>
@@ -231,6 +235,20 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     import('@island.is/application/templates/secondary-school'),
   [ApplicationTypes.ACTIVATION_ALLOWANCE]: () =>
     import('@island.is/application/templates/activation-allowance'),
+  [ApplicationTypes.CAR_RENTAL_FEE_CATEGORY]: () =>
+    import('@island.is/application/templates/car-rental-fee-category'),
+  [ApplicationTypes.MEDICAL_AND_REHABILITATION_PAYMENTS]: () =>
+    import(
+      '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
+    ),
+  [ApplicationTypes.FIRE_COMPENSATION_APPRAISAL]: () =>
+    import('@island.is/application/templates/hms/fire-compensation-appraisal'),
+  [ApplicationTypes.LEGAL_GAZETTE]: () =>
+    import('@island.is/application/templates/legal-gazette'),
+  [ApplicationTypes.EXEMPTION_FOR_TRANSPORTATION]: () =>
+    import(
+      '@island.is/application/templates/transport-authority/exemption-for-transportation'
+    ),
 }
 
 export default templates

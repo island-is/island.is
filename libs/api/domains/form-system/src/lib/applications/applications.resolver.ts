@@ -8,13 +8,19 @@ import {
   type User,
 } from '@island.is/auth-nest-tools'
 import { ApplicationsService } from './applications.service'
-import { Application } from '../../models/applications.model'
 import {
+  Application,
+  ApplicationResponse,
+} from '../../models/applications.model'
+import {
+  ApplicationsInput,
   CreateApplicationInput,
   GetApplicationInput,
   SubmitScreenInput,
+  UpdateApplicationInput,
 } from '../../dto/application.input'
 import { UpdateApplicationDependenciesInput } from '../../dto/application.input'
+import { Screen } from '../../models/screen.model'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
@@ -33,7 +39,18 @@ export class ApplicationsResolver {
     return this.applicationsService.getApplication(user, input)
   }
 
-  @Mutation(() => Boolean, {
+  @Query(() => ApplicationResponse, {
+    name: 'formSystemApplications',
+  })
+  async getApplications(
+    @Args('input', { type: () => ApplicationsInput })
+    input: ApplicationsInput,
+    @CurrentUser() user: User,
+  ): Promise<ApplicationResponse> {
+    return this.applicationsService.getApplications(user, input)
+  }
+
+  @Mutation(() => Application, {
     name: 'createFormSystemApplication',
   })
   async createApplication(
@@ -66,14 +83,37 @@ export class ApplicationsResolver {
     return this.applicationsService.submitApplication(user, input)
   }
 
+  // @Mutation(() => SubmitScreenResponse, {
+  //   name: 'submitFormSystemScreen',
+  // })
+  // async submitScreen(
+  //   @Args('input', { type: () => SubmitScreenInput })
+  //   input: SubmitScreenInput,
+  //   @CurrentUser() user: User,
+  // ): Promise<SubmitScreenResponse> {
+  //   console.log('submitScreen', input)
+  //   return this.applicationsService.submitScreen(user, input)
+  // }
+
   @Mutation(() => Boolean, {
-    name: 'submitFormSystemScreen',
+    name: 'updateFormSystemApplication',
   })
-  async submitScreen(
+  async updateApplication(
+    @Args('input', { type: () => UpdateApplicationInput })
+    input: UpdateApplicationInput,
+    @CurrentUser() user: User,
+  ): Promise<void> {
+    return this.applicationsService.updateApplication(user, input)
+  }
+
+  @Mutation(() => Screen, {
+    name: 'saveFormSystemScreen',
+  })
+  async saveScreen(
     @Args('input', { type: () => SubmitScreenInput })
     input: SubmitScreenInput,
     @CurrentUser() user: User,
-  ): Promise<void> {
-    return this.applicationsService.submitScreen(user, input)
+  ): Promise<Screen> {
+    return this.applicationsService.saveScreen(user, input)
   }
 }

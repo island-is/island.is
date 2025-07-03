@@ -1,14 +1,16 @@
 import { EmailTemplateGenerator } from '../../../../types'
+import { logger } from '@island.is/logging'
 
 export const generateSyslumennNotifyErrorEmail: EmailTemplateGenerator = (
   props,
 ) => {
+  logger.info('AfgreidaSakavottord Generating error email')
   const {
     application,
     options: { email },
   } = props
 
-  const syslumennEmail = 'vefur@syslumenn.is'
+  const syslumennEmail = 'hjalp@syslumenn.is'
 
   const subject = 'Umsókn um sakavottorð'
   const body = `

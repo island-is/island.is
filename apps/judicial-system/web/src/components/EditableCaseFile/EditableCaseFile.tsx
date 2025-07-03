@@ -1,11 +1,11 @@
 import { FC, useMemo, useState } from 'react'
-import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
 import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
 import { AnimatePresence, motion } from 'motion/react'
+import { InputMask } from '@react-input/mask'
 
 import {
   Box,
@@ -35,6 +35,7 @@ export interface TEditableCaseFile {
   canEdit?: boolean
   status?: FileUploadStatus
   size?: number | null
+  submissionDate?: string | null
 }
 
 interface Props {
@@ -61,16 +62,20 @@ const EditableCaseFile: FC<Props> = (props) => {
   } = props
   const { formatMessage } = useIntl()
   const [ref, { width }] = useMeasure<HTMLDivElement>()
+
+  const initialDate =
+    caseFile.displayDate || caseFile.submissionDate || caseFile.created
+  const displayName = caseFile.userGeneratedFilename ?? caseFile.displayText
+
+  const [editedDisplayDate, setEditedDisplayDate] = useState<
+    string | undefined
+  >(formatDate(initialDate))
+
   const [isEditing, setIsEditing] = useState<boolean>(false)
 
   const [editedFilename, setEditedFilename] = useState<
     string | undefined | null
   >(caseFile.userGeneratedFilename)
-
-  const [editedDisplayDate, setEditedDisplayDate] = useState<
-    string | undefined
-  >(formatDate(caseFile.displayDate ?? caseFile.created) ?? undefined)
-  const displayName = caseFile.userGeneratedFilename ?? caseFile.displayText
 
   const handleEditFileButtonClick = () => {
     const trimmedFilename = editedFilename?.trim()
@@ -155,20 +160,18 @@ const EditableCaseFile: FC<Props> = (props) => {
                   </Box>
                   <Box className={styles.editCaseFileDisplayDate}>
                     <InputMask
-                      mask="99.99.9999"
-                      maskPlaceholder={null}
+                      component={Input}
+                      mask="__.__.____"
+                      replacement={{ _: /\d/ }}
                       value={editedDisplayDate || ''}
                       onChange={(evt) => {
                         setEditedDisplayDate(evt.target.value)
                       }}
-                    >
-                      <Input
-                        name="fileDisplayDate"
-                        size="xs"
-                        placeholder={formatDate(new Date())}
-                        autoComplete="off"
-                      />
-                    </InputMask>
+                      name="fileDisplayDate"
+                      size="xs"
+                      placeholder={formatDate(new Date())}
+                      autoComplete="off"
+                    />
                   </Box>
                 </Box>
                 <Box display="flex" alignItems="center">

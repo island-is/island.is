@@ -35,8 +35,8 @@ air-discount-scheme-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 20
       replicas:
-        max: 10
-        min: 2
+        max: 3
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-api'
   ingress:
@@ -58,9 +58,9 @@ air-discount-scheme-api:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
-    max: 10
-    min: 2
+    default: 1
+    max: 3
+    min: 1
   resources:
     limits:
       cpu: '400m'
@@ -101,7 +101,7 @@ air-discount-scheme-backend:
     XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1'
-    XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
+    XROAD_TJODSKRA_API_PATH: '/SKRA-Cloud-Protected/Einstaklingar-v1'
     XROAD_TJODSKRA_MEMBER_CODE: '10001'
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
@@ -123,8 +123,8 @@ air-discount-scheme-backend:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 20
       replicas:
-        max: 10
-        min: 2
+        max: 3
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-backend'
   ingress:
@@ -170,9 +170,9 @@ air-discount-scheme-backend:
     maxUnavailable: 1
   pvcs: []
   replicaCount:
-    default: 2
-    max: 10
-    min: 2
+    default: 1
+    max: 3
+    min: 1
   resources:
     limits:
       cpu: '400m'
@@ -223,8 +223,8 @@ air-discount-scheme-web:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 20
       replicas:
-        max: 10
-        min: 2
+        max: 3
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/air-discount-scheme-web'
   ingress:
@@ -249,9 +249,9 @@ air-discount-scheme-web:
     maxUnavailable: 1
   pvcs: []
   replicaCount:
-    default: 2
-    max: 10
-    min: 2
+    default: 1
+    max: 3
+    min: 1
   resources:
     limits:
       cpu: '200m'
@@ -353,6 +353,7 @@ api:
     XROAD_DRIVING_LICENSE_V4_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Okuskirteini-v4'
     XROAD_DRIVING_LICENSE_V5_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Okuskirteini-v5'
     XROAD_ENERGY_FUNDS_PATH: 'IS-DEV/GOV/10021/FJS-Public/ElectricCarSubSidyService_v1'
+    XROAD_EXEMPTION_FOR_TRANSPORTATION_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Leyfur-V1'
     XROAD_FINANCES_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeIsland'
     XROAD_FINANCES_TIMEOUT: '20000'
     XROAD_FINANCES_V2_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeServicesFJS_v2'
@@ -365,10 +366,14 @@ api:
     XROAD_HEALTH_INSURANCE_ID: 'IS-DEV/GOV/10007/SJUKRA-Protected'
     XROAD_HEALTH_INSURANCE_MY_PAGES_PATH: 'IS-DEV/GOV/10007/SJUKRA-Protected/minarsidur'
     XROAD_HEALTH_INSURANCE_WSDLURL: 'https://test-huld.sjukra.is/islandrg?wsdl'
+    XROAD_HMS_APPLICATION_SYSTEM_CLIENT_HEADER: 'IS-DEV/GOV/10000/island-is-client'
+    XROAD_HMS_APPLICATION_SYSTEM_PATH: 'IS-DEV/GOV/10033/HMS-Protected/formbuilder-v1'
     XROAD_HMS_HOUSING_BENEFITS_PATH: 'IS-DEV/GOV/10033/HMS-Protected/husbot-v1'
     XROAD_HMS_LOANS_PATH: 'IS-DEV/GOV/10033/HMS-Protected/libra-v1'
     XROAD_HMS_PROPERTY_SEARCH_CLIENT_HEADER: 'IS-DEV/GOV/10000/island-is-client'
     XROAD_HMS_PROPERTY_SEARCH_PATH: 'IS-DEV/GOV/10033/HMS-Protected/fasteignir-v2-beta'
+    XROAD_HMS_RENTAL_SERVICE_CLIENT_HEADER: 'IS-DEV/GOV/10000/island-is-client'
+    XROAD_HMS_RENTAL_SERVICE_PATH: 'IS-DEV/GOV/10033/HMS-Protected/Leigusamningar-v1'
     XROAD_HOLAR_UNIVERSITY_PATH: 'IS-DEV/EDU/10055/Holar-Protected/brautskraning-v1'
     XROAD_HOUSING_BENEFIT_CALCULATOR_PATH: 'IS-DEV/GOV/10033/HMS-Protected/calc-v1'
     XROAD_HUNTING_LICENSE_PATH: 'IS-DEV/GOV/10009/Umhverfisstofnun-Protected/api'
@@ -377,6 +382,8 @@ api:
     XROAD_INNA_PATH: 'IS-DEV/GOV/10066/MMS-Protected/inna-v1'
     XROAD_INTELLECTUAL_PROPERTIES_PATH: 'IS-DEV/GOV/10030/WebAPI-Public/HUG-webAPI'
     XROAD_JUDICIAL_SYSTEM_SP_PATH: 'IS-DEV/GOV/10014/Rettarvorslugatt-Private/judicial-system-mailbox-api'
+    XROAD_LEGAL_GAZETTE_PATH: 'IS-DEV/GOV/10014/DMR-Protected/legal-gazette-api'
+    XROAD_LSH_PATH: 'IS-DEV/GOV/10022/Landspitali-Protected/external-patient-api-v1'
     XROAD_MMS_FRIGG_PATH: 'IS-DEV/GOV/10066/MMS-Protected/frigg-form-api'
     XROAD_MMS_GRADE_SERVICE_ID: 'IS-DEV/GOV/10066/MMS-Protected/grade-api-v1'
     XROAD_MMS_LICENSE_SERVICE_ID: 'IS-DEV/GOV/10066/MMS-Protected/license-api-v1'
@@ -390,16 +397,18 @@ api:
     XROAD_PAYMENT_BASE_CALLBACK_URL: 'XROAD:/IS-DEV/GOV/10000/island-is/application-callback-v2/application-payment/'
     XROAD_PAYMENT_PROVIDER_ID: 'IS-DEV/GOV/10021/FJS-Public'
     XROAD_PAYMENT_SCHEDULE_PATH: 'IS-DEV/GOV/10021/FJS-Public/paymentSchedule_v1'
+    XROAD_PRACTICAL_EXAMS_PATH: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/verkleg-prof-token'
     XROAD_PROPERTIES_SERVICE_V2_PATH: 'IS-DEV/GOV/10033/HMS-Protected/Fasteignir-v1'
     XROAD_PROPERTIES_TIMEOUT: '35000'
     XROAD_RSK_PROCURING_PATH: 'IS-DEV/GOV/10006/Skatturinn/relationships-v1'
     XROAD_RSK_PROCURING_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     XROAD_RSK_PROCURING_SCOPE: '["@rsk.is/prokura","@rsk.is/prokura:admin"]'
+    XROAD_RSK_RENTAL_RATE_PATH: 'IS-DEV/GOV/10006/Skatturinn/rentaldayrate-v1'
     XROAD_SECONDARY_SCHOOL_PATH: 'IS-DEV/GOV/10066/MMS-Protected/umsoknagatt'
     XROAD_SEMINARS_VER_PATH: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/namskeid'
     XROAD_SHIP_REGISTRY_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/skipaskra-V1'
     XROAD_SIGNATURE_COLLECTION_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Medmaeli-v1'
-    XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
+    XROAD_TJODSKRA_API_PATH: '/SKRA-Cloud-Protected/Einstaklingar-v1'
     XROAD_TJODSKRA_MEMBER_CODE: '10001'
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
@@ -449,8 +458,8 @@ api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 50
-        min: 2
+        max: 3
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/api'
   ingress:
@@ -472,9 +481,9 @@ api:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
-    max: 50
-    min: 2
+    default: 1
+    max: 3
+    min: 1
   resources:
     limits:
       cpu: '1200m'
@@ -525,6 +534,7 @@ api:
     FISKISTOFA_ZENTER_CLIENT_PASSWORD: '/k8s/api/FISKISTOFA_ZENTER_CLIENT_PASSWORD'
     FISKISTOFA_ZENTER_EMAIL: '/k8s/api/FISKISTOFA_ZENTER_EMAIL'
     FISKISTOFA_ZENTER_PASSWORD: '/k8s/api/FISKISTOFA_ZENTER_PASSWORD'
+    FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY: '/k8s/form-system/FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY'
     HOUSING_BENEFIT_CALCULATOR_PASSWORD: '/k8s/xroad/client/HOUSING_BENEFIT_CALCULATOR_PASSWORD'
     HOUSING_BENEFIT_CALCULATOR_USERNAME: '/k8s/xroad/client/HOUSING_BENEFIT_CALCULATOR_USERNAME'
     HSN_WEB_FORM_RESPONSE_SECRET: '/k8s/api/HSN_WEB_FORM_RESPONSE_SECRET'
@@ -649,7 +659,7 @@ application-system-api:
     USER_NOTIFICATION_API_URL: 'http://user-notification.user-notification.svc.cluster.local'
     WORKPOINT_ARBORG_SERVICE_PATH: 'IS-DEV/MUN/10036/Arborg-Protected/tengill-application-v1'
     XROAD_AGRICULTURAL_UNIVERSITY_OF_ICELAND_PATH: 'IS-DEV/EDU/10056/LBHI-Protected/brautskraning-v1'
-    XROAD_ALTHINGI_OMBUDSMAN_SERVICE_PATH: 'IS-DEV/GOV/10047/UA-Protected/kvortun-v1/'
+    XROAD_ALTHINGI_OMBUDSMAN_SERVICE_PATH: 'IS-DEV/GOV/10047/UA-Protected/kvortun-v1'
     XROAD_BASE_PATH: 'http://securityserver.dev01.devland.is'
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_BIFROST_UNIVERSITY_PATH: 'IS-DEV/EDU/10057/Bifrost-Protected/brautskraning-v1'
@@ -665,6 +675,7 @@ application-system-api:
     XROAD_DRIVING_LICENSE_V4_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Okuskirteini-v4'
     XROAD_DRIVING_LICENSE_V5_PATH: 'r1/IS-DEV/GOV/10005/Logreglan-Protected/Okuskirteini-v5'
     XROAD_ENERGY_FUNDS_PATH: 'IS-DEV/GOV/10021/FJS-Public/ElectricCarSubSidyService_v1'
+    XROAD_EXEMPTION_FOR_TRANSPORTATION_PATH: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Leyfur-V1'
     XROAD_FINANCES_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeIsland'
     XROAD_FINANCES_V2_PATH: 'IS-DEV/GOV/10021/FJS-Public/financeServicesFJS_v2'
     XROAD_FINANCIAL_AID_BACKEND_PATH: 'IS-DEV/MUN/10023/samband-sveitarfelaga/financial-aid-backend'
@@ -675,11 +686,16 @@ application-system-api:
     XROAD_HEALTH_INSURANCE_ID: 'IS-DEV/GOV/10007/SJUKRA-Protected'
     XROAD_HEALTH_INSURANCE_MY_PAGES_PATH: 'IS-DEV/GOV/10007/SJUKRA-Protected/minarsidur'
     XROAD_HEALTH_INSURANCE_WSDLURL: 'https://test-huld.sjukra.is/islandrg?wsdl'
+    XROAD_HMS_APPLICATION_SYSTEM_CLIENT_HEADER: 'IS-DEV/GOV/10000/island-is-client'
+    XROAD_HMS_APPLICATION_SYSTEM_PATH: 'IS-DEV/GOV/10033/HMS-Protected/formbuilder-v1'
     XROAD_HMS_HOUSING_BENEFITS_PATH: 'IS-DEV/GOV/10033/HMS-Protected/husbot-v1'
     XROAD_HMS_LOANS_PATH: 'IS-DEV/GOV/10033/HMS-Protected/libra-v1'
+    XROAD_HMS_RENTAL_SERVICE_CLIENT_HEADER: 'IS-DEV/GOV/10000/island-is-client'
+    XROAD_HMS_RENTAL_SERVICE_PATH: 'IS-DEV/GOV/10033/HMS-Protected/Leigusamningar-v1'
     XROAD_HOLAR_UNIVERSITY_PATH: 'IS-DEV/EDU/10055/Holar-Protected/brautskraning-v1'
     XROAD_ICELAND_UNIVERSITY_OF_THE_ARTS_PATH: 'IS-DEV/EDU/10049/LHI-Protected/brautskraning-v1'
     XROAD_INNA_PATH: 'IS-DEV/GOV/10066/MMS-Protected/inna-v1'
+    XROAD_LEGAL_GAZETTE_PATH: 'IS-DEV/GOV/10014/DMR-Protected/legal-gazette-api'
     XROAD_MMS_FRIGG_PATH: 'IS-DEV/GOV/10066/MMS-Protected/frigg-form-api'
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1'
@@ -690,11 +706,13 @@ application-system-api:
     XROAD_PAYMENT_BASE_CALLBACK_URL: 'XROAD:/IS-DEV/GOV/10000/island-is/application-callback-v2/application-payment/'
     XROAD_PAYMENT_PROVIDER_ID: 'IS-DEV/GOV/10021/FJS-Public'
     XROAD_PAYMENT_SCHEDULE_PATH: 'IS-DEV/GOV/10021/FJS-Public/paymentSchedule_v1'
+    XROAD_PRACTICAL_EXAMS_PATH: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/verkleg-prof-token'
     XROAD_PROPERTIES_SERVICE_V2_PATH: 'IS-DEV/GOV/10033/HMS-Protected/Fasteignir-v1'
+    XROAD_RSK_RENTAL_RATE_PATH: 'IS-DEV/GOV/10006/Skatturinn/rentaldayrate-v1'
     XROAD_SECONDARY_SCHOOL_PATH: 'IS-DEV/GOV/10066/MMS-Protected/umsoknagatt'
     XROAD_SEMINARS_VER_PATH: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/namskeid'
     XROAD_SIGNATURE_COLLECTION_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Medmaeli-v1'
-    XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
+    XROAD_TJODSKRA_API_PATH: '/SKRA-Cloud-Protected/Einstaklingar-v1'
     XROAD_TJODSKRA_MEMBER_CODE: '10001'
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
@@ -737,8 +755,8 @@ application-system-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 60
-        min: 2
+        max: 3
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/application-system-api'
   ingress:
@@ -787,9 +805,9 @@ application-system-api:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
-    max: 60
-    min: 2
+    default: 1
+    max: 3
+    min: 1
   resources:
     limits:
       cpu: '600m'
@@ -1104,8 +1122,8 @@ consultation-portal:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 30
-        min: 2
+        max: 3
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/consultation-portal'
   ingress:
@@ -1124,9 +1142,9 @@ consultation-portal:
     maxUnavailable: 1
   pvcs: []
   replicaCount:
-    default: 2
-    max: 30
-    min: 2
+    default: 1
+    max: 3
+    min: 1
   resources:
     limits:
       cpu: '400m'
@@ -1164,7 +1182,7 @@ contentful-apps:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 10
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/contentful-apps'
@@ -1185,7 +1203,7 @@ contentful-apps:
   pvcs: []
   replicaCount:
     default: 1
-    max: 10
+    max: 3
     min: 1
   resources:
     limits:
@@ -1403,7 +1421,7 @@ endorsement-system-api:
     XROAD_CLIENT_ID: 'IS-DEV/GOV/10000/island-is-client'
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1'
-    XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
+    XROAD_TJODSKRA_API_PATH: '/SKRA-Cloud-Protected/Einstaklingar-v1'
     XROAD_TJODSKRA_MEMBER_CODE: '10001'
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
@@ -1493,7 +1511,7 @@ external-contracts-tests:
     XROAD_BASE_PATH_WITH_ENV: 'http://securityserver.dev01.devland.is/r1/IS-DEV'
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     XROAD_NATIONAL_REGISTRY_SERVICE_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1'
-    XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1'
+    XROAD_TJODSKRA_API_PATH: '/SKRA-Cloud-Protected/Einstaklingar-v1'
     XROAD_TJODSKRA_MEMBER_CODE: '10001'
     XROAD_TLS_BASE_PATH: 'https://securityserver.dev01.devland.is'
     XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.dev01.devland.is/r1/IS-DEV'
@@ -1539,6 +1557,71 @@ external-contracts-tests:
   securityContext:
     allowPrivilegeEscalation: false
     privileged: false
+form-system-web:
+  enabled: true
+  env:
+    BASEPATH: '/form'
+    CODE_OWNER: 'Advania'
+    LOG_LEVEL: 'info'
+    NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps'
+    SERVERSIDE_FEATURES_ON: ''
+    SI_PUBLIC_ENVIRONMENT: 'dev'
+  grantNamespaces:
+    - 'nginx-ingress-external'
+  grantNamespacesEnabled: true
+  healthCheck:
+    liveness:
+      initialDelaySeconds: 3
+      path: '/liveness'
+      timeoutSeconds: 3
+    readiness:
+      initialDelaySeconds: 3
+      path: '/readiness'
+      timeoutSeconds: 3
+  hpa:
+    scaling:
+      metric:
+        cpuAverageUtilization: 90
+        nginxRequestsIrate: 5
+      replicas:
+        max: 3
+        min: 1
+  image:
+    repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/form-system-web'
+  ingress:
+    primary-alb:
+      annotations:
+        kubernetes.io/ingress.class: 'nginx-external-alb'
+        nginx.ingress.kubernetes.io/proxy-buffer-size: '8k'
+        nginx.ingress.kubernetes.io/proxy-buffering: 'on'
+        nginx.ingress.kubernetes.io/service-upstream: 'true'
+      hosts:
+        - host: 'beta.dev01.devland.is'
+          paths:
+            - '/form'
+  namespace: 'form-system-web'
+  podDisruptionBudget:
+    maxUnavailable: 1
+  pvcs: []
+  replicaCount:
+    default: 1
+    max: 3
+    min: 1
+  resources:
+    limits:
+      cpu: '400m'
+      memory: '512Mi'
+    requests:
+      cpu: '25m'
+      memory: '256Mi'
+  secrets:
+    CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    SI_PUBLIC_CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
+    SI_PUBLIC_DD_RUM_APPLICATION_ID: '/k8s/DD_RUM_APPLICATION_ID'
+    SI_PUBLIC_DD_RUM_CLIENT_TOKEN: '/k8s/DD_RUM_CLIENT_TOKEN'
+  securityContext:
+    allowPrivilegeEscalation: false
+    privileged: false
 github-actions-cache:
   args:
     - '--tls-min-v1.0'
@@ -1569,8 +1652,8 @@ github-actions-cache:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 8
-        min: 3
+        max: 3
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/github-actions-cache'
   ingress:
@@ -1590,9 +1673,9 @@ github-actions-cache:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 5
-    max: 8
-    min: 3
+    default: 1
+    max: 3
+    min: 1
   resources:
     limits:
       cpu: '400m'
@@ -1808,8 +1891,8 @@ license-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 10
-        min: 2
+        max: 3
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/license-api'
   ingress:
@@ -1826,9 +1909,9 @@ license-api:
     maxUnavailable: 1
   pvcs: []
   replicaCount:
-    default: 2
-    max: 10
-    min: 2
+    default: 1
+    max: 3
+    min: 1
   resources:
     limits:
       cpu: '400m'
@@ -1895,11 +1978,13 @@ namespaces:
     - 'portals-my-pages'
     - 'unicorn-app'
     - 'services-form-system-api'
+    - 'form-system-web'
 payments:
   enabled: true
   env:
     API_EXTERNAL_BASEPATH: 'https://beta.dev01.devland.is'
     API_INTERNAL_BASEPATH: 'http://api.islandis.svc.cluster.local'
+    APP_EXTERNAL_BASEPATH: 'https://beta.dev01.devland.is'
     BASEPATH: '/greida'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
@@ -1991,8 +2076,8 @@ portals-admin:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 8
       replicas:
-        max: 30
-        min: 2
+        max: 3
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/portals-admin'
   ingress:
@@ -2011,9 +2096,9 @@ portals-admin:
     maxUnavailable: 1
   pvcs: []
   replicaCount:
-    default: 2
-    max: 30
-    min: 2
+    default: 1
+    max: 3
+    min: 1
   resources:
     limits:
       cpu: '400m'
@@ -2289,8 +2374,8 @@ service-portal:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 30
-        min: 2
+        max: 3
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/service-portal'
   ingress:
@@ -2309,9 +2394,9 @@ service-portal:
     maxUnavailable: 1
   pvcs: []
   replicaCount:
-    default: 2
-    max: 30
-    min: 2
+    default: 1
+    max: 3
+    min: 1
   resources:
     limits:
       cpu: '300m'
@@ -2379,8 +2464,8 @@ service-portal-api:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 30
-        min: 2
+        max: 3
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-profile'
   ingress:
@@ -2422,9 +2507,9 @@ service-portal-api:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
-    max: 30
-    min: 2
+    default: 1
+    max: 3
+    min: 1
   resources:
     limits:
       cpu: '800m'
@@ -2472,7 +2557,7 @@ services-bff-portals-admin:
     BFF_PROXY_API_ENDPOINT: 'http://api.islandis.svc.cluster.local/api/graphql'
     CODE_OWNER: 'core'
     IDENTITY_SERVER_CLIENT_ID: '@admin.island.is/bff-stjornbord'
-    IDENTITY_SERVER_CLIENT_SCOPES: '["@admin.island.is/delegations","@admin.island.is/ads","@admin.island.is/regulations","@admin.island.is/regulations:manage","@admin.island.is/icelandic-names-registry","@admin.island.is/application-system:admin","@admin.island.is/application-system:institution","@admin.island.is/document-provider","@admin.island.is/auth","@admin.island.is/auth:admin","@admin.island.is/petitions","@admin.island.is/service-desk","@admin.island.is/ads:explicit","@admin.island.is/signature-collection:manage","@admin.island.is/signature-collection:process","@admin.island.is/form-system","@admin.island.is/form-system:admin","@admin.island.is/delegation-system","@admin.island.is/delegation-system:admin"]'
+    IDENTITY_SERVER_CLIENT_SCOPES: '["@admin.island.is/delegations","@admin.island.is/ads","@admin.island.is/regulations","@admin.island.is/regulations:manage","@admin.island.is/icelandic-names-registry","@admin.island.is/application-system:admin","@admin.island.is/application-system:institution","@admin.island.is/document-provider","@admin.island.is/auth","@admin.island.is/auth:admin","@admin.island.is/petitions","@admin.island.is/service-desk","@admin.island.is/ads:explicit","@admin.island.is/signature-collection:manage","@admin.island.is/signature-collection:process","@admin.island.is/signature-collection:municipality","@admin.island.is/form-system","@admin.island.is/form-system:admin","@admin.island.is/delegation-system","@admin.island.is/delegation-system:admin"]'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -2497,8 +2582,8 @@ services-bff-portals-admin:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 10
-        min: 2
+        max: 3
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-bff'
   ingress:
@@ -2520,9 +2605,9 @@ services-bff-portals-admin:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
-    max: 10
-    min: 2
+    default: 1
+    max: 3
+    min: 1
   resources:
     limits:
       cpu: '400m'
@@ -2546,7 +2631,7 @@ services-bff-portals-my-pages:
   enabled: true
   env:
     BFF_ALLOWED_EXTERNAL_API_URLS: '["https://api.dev01.devland.is"]'
-    BFF_ALLOWED_REDIRECT_URIS: '["https://beta.dev01.devland.is/minarsidur","https://beta.dev01.devland.is/umsoknir"]'
+    BFF_ALLOWED_REDIRECT_URIS: '["https://beta.dev01.devland.is/minarsidur","https://beta.dev01.devland.is/umsoknir","https://beta.dev01.devland.is/form"]'
     BFF_CACHE_USER_PROFILE_TTL_MS: '3595000'
     BFF_CALLBACKS_BASE_PATH: 'https://beta.dev01.devland.is/bff/callbacks'
     BFF_CLIENT_BASE_PATH: '/minarsidur'
@@ -2558,7 +2643,7 @@ services-bff-portals-my-pages:
     BFF_PAR_SUPPORT_ENABLED: 'false'
     BFF_PROXY_API_ENDPOINT: 'http://api.islandis.svc.cluster.local/api/graphql'
     IDENTITY_SERVER_CLIENT_ID: '@island.is/web'
-    IDENTITY_SERVER_CLIENT_SCOPES: '["api_resource.scope","@island.is/applications:read","@island.is/applications:write","@island.is/user-profile:read","@island.is/user-profile:write","@island.is/auth/actor-delegations","@island.is/auth/delegations:write","@island.is/auth/consents","@skra.is/individuals","@island.is/documents","@island.is/endorsements","@admin.island.is/petitions","@island.is/assets/ip","@island.is/assets","@island.is/education","@island.is/education-license","@island.is/finance:overview","@island.is/finance/salary","@island.is/finance/schedule:read","@island.is/finance/loans","@island.is/internal","@island.is/internal:procuring","@island.is/me:details","@island.is/law-and-order","@island.is/licenses","@island.is/licenses:verify","@island.is/company","@island.is/vehicles","@island.is/work-machines","@island.is/health/payments","@island.is/health/medicines","@island.is/health/assistive-devices-and-nutrition","@island.is/health/therapies","@island.is/health/healthcare","@island.is/health/rights-status","@island.is/health/dentists","@island.is/health/organ-donation","@island.is/health/vaccinations","@island.is/signature-collection","@island.is/applications/urvinnslusjodur","@island.is/applications/orkusjodur","@island.is/fishing-license","@island.is/applications/samgongustofa-vehicles","@island.is/applications/ver","@island.is/applications/ver:accidents","@island.is/applications/mms","@samband.is/financial-aid/applicant","@samband.is/financial-aid:read","@samband.is/financial-aid:write"]'
+    IDENTITY_SERVER_CLIENT_SCOPES: '["api_resource.scope","@island.is/applications:read","@island.is/applications:write","@island.is/user-profile:read","@island.is/user-profile:write","@island.is/auth/actor-delegations","@island.is/auth/delegations:write","@island.is/auth/consents","@skra.is/individuals","@island.is/documents","@island.is/endorsements","@admin.island.is/petitions","@island.is/assets/ip","@island.is/assets","@island.is/education","@island.is/education-license","@island.is/finance:overview","@island.is/finance/salary","@island.is/finance/schedule:read","@island.is/finance/loans","@island.is/internal","@island.is/internal:procuring","@island.is/me:details","@island.is/law-and-order","@island.is/licenses","@island.is/licenses:verify","@island.is/company","@island.is/vehicles","@island.is/work-machines","@island.is/health/payments","@island.is/health/medicines","@island.is/health/assistive-devices-and-nutrition","@island.is/health/therapies","@island.is/health/healthcare","@island.is/health/rights-status","@island.is/health/dentists","@island.is/health/organ-donation","@island.is/health/vaccinations","@island.is/signature-collection","@island.is/applications/urvinnslusjodur","@island.is/applications/orkusjodur","@island.is/fishing-license","@island.is/applications/iceland-health","@island.is/applications/samgongustofa-vehicles","@island.is/applications/social-insurance-administration","@island.is/applications/rsk","@island.is/applications/ver","@island.is/applications/ver:accidents","@island.is/applications/mms","@island.is/applications/dmr:stjornartidindi","@island.is/applications/hms","@samband.is/financial-aid/applicant","@samband.is/financial-aid:read","@samband.is/financial-aid:write"]'
     IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
     LOG_LEVEL: 'info'
     NODE_OPTIONS: '--max-old-space-size=460 --enable-source-maps -r dd-trace/init'
@@ -2583,8 +2668,8 @@ services-bff-portals-my-pages:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 10
-        min: 2
+        max: 3
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-bff'
   ingress:
@@ -2606,9 +2691,9 @@ services-bff-portals-my-pages:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
-    max: 10
-    min: 2
+    default: 1
+    max: 3
+    min: 1
   resources:
     limits:
       cpu: '400m'
@@ -2749,7 +2834,7 @@ services-form-system-api:
       hosts:
         - host: 'beta.dev01.devland.is'
           paths:
-            - '/form'
+            - '/form-api'
   initContainer:
     containers:
       - args:
@@ -2814,6 +2899,7 @@ services-payments:
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
     NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
+    PAYMENTS_JWT_SIGNING_EXPIRES_IN_MINUTES: '5'
     PAYMENTS_WEB_URL: 'https://beta.dev01.devland.is/greida'
     REDIS_NODES: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     SERVERSIDE_FEATURES_ON: ''
@@ -2915,6 +3001,11 @@ services-payments:
     PAYMENTS_GATEWAY_API_SECRET: '/k8s/services-payments/PAYMENTS_GATEWAY_API_SECRET'
     PAYMENTS_GATEWAY_API_URL: '/k8s/services-payments/PAYMENTS_GATEWAY_API_URL'
     PAYMENTS_GATEWAY_SYSTEM_CALLING: '/k8s/services-payments/PAYMENTS_GATEWAY_SYSTEM_CALLING'
+    PAYMENTS_JWT_SIGNING_KEY_ID: '/k8s/services-payments/PAYMENTS_JWT_SIGNING_KEY_ID'
+    PAYMENTS_JWT_SIGNING_PRIVATE_KEY: '/k8s/services-payments/PAYMENTS_JWT_SIGNING_PRIVATE_KEY'
+    PAYMENTS_JWT_SIGNING_PUBLIC_KEY: '/k8s/services-payments/PAYMENTS_JWT_SIGNING_PUBLIC_KEY'
+    PAYMENTS_PREVIOUS_KEY_ID: '/k8s/services-payments/PAYMENTS_PREVIOUS_KEY_ID'
+    PAYMENTS_PREVIOUS_PUBLIC_KEY: '/k8s/services-payments/PAYMENTS_PREVIOUS_PUBLIC_KEY'
     PAYMENTS_TOKEN_SIGNING_ALGORITHM: '/k8s/services-payments/PAYMENTS_TOKEN_SIGNING_ALGORITHM'
     PAYMENTS_TOKEN_SIGNING_SECRET: '/k8s/services-payments/PAYMENTS_TOKEN_SIGNING_SECRET'
   securityContext:
@@ -2954,7 +3045,7 @@ services-sessions:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 10
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-sessions'
@@ -2973,7 +3064,7 @@ services-sessions:
   pvcs: []
   replicaCount:
     default: 1
-    max: 10
+    max: 3
     min: 1
   resources:
     limits:
@@ -3196,8 +3287,8 @@ services-university-gateway:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 10
-        min: 2
+        max: 3
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-university-gateway'
   ingress:
@@ -3252,9 +3343,9 @@ services-university-gateway:
     fsGroup: 65534
   pvcs: []
   replicaCount:
-    default: 2
-    max: 10
-    min: 2
+    default: 1
+    max: 3
+    min: 1
   resources:
     limits:
       cpu: '200m'
@@ -3386,8 +3477,8 @@ skilavottord-web:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 8
       replicas:
-        max: 10
-        min: 2
+        max: 3
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/skilavottord-web'
   ingress:
@@ -3406,9 +3497,9 @@ skilavottord-web:
     maxUnavailable: 1
   pvcs: []
   replicaCount:
-    default: 2
-    max: 10
-    min: 2
+    default: 1
+    max: 3
+    min: 1
   resources:
     limits:
       cpu: '400m'
@@ -3644,6 +3735,7 @@ user-notification-birthday-worker:
     - '--no-experimental-fetch'
     - 'main.js'
     - '--job=worker'
+    - '--isBirthdayWorker'
   command:
     - 'node'
   enabled: true
@@ -3668,7 +3760,7 @@ user-notification-birthday-worker:
     NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
     NATIONAL_REGISTRY_B2C_PATH: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Midlun-v1'
     NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitydev.onmicrosoft.com/midlun/.default'
-    NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
+    NODE_OPTIONS: '--max-old-space-size=345 --enable-source-maps -r dd-trace/init'
     REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.5fzau3.euw1.cache.amazonaws.com:6379"]'
     REDIS_USE_SSL: 'true'
     SERVERSIDE_FEATURES_ON: ''
@@ -3717,11 +3809,11 @@ user-notification-birthday-worker:
     min: 1
   resources:
     limits:
-      cpu: '200m'
-      memory: '256Mi'
+      cpu: '400m'
+      memory: '384Mi'
     requests:
-      cpu: '100m'
-      memory: '128Mi'
+      cpu: '150m'
+      memory: '256Mi'
   schedule: '0 12 * * *'
   secrets:
     CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'
@@ -3897,7 +3989,7 @@ user-notification-worker:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 2
+        max: 3
         min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/services-user-notification'
@@ -3932,7 +4024,7 @@ user-notification-worker:
   pvcs: []
   replicaCount:
     default: 1
-    max: 2
+    max: 3
     min: 1
   resources:
     limits:
@@ -3992,8 +4084,8 @@ web:
         cpuAverageUtilization: 90
         nginxRequestsIrate: 5
       replicas:
-        max: 50
-        min: 2
+        max: 3
+        min: 1
   image:
     repository: '821090935708.dkr.ecr.eu-west-1.amazonaws.com/web'
   ingress:
@@ -4012,9 +4104,9 @@ web:
     maxUnavailable: 1
   pvcs: []
   replicaCount:
-    default: 2
-    max: 50
-    min: 2
+    default: 1
+    max: 3
+    min: 1
   resources:
     limits:
       cpu: '1000m'

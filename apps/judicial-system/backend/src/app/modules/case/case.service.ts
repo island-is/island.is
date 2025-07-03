@@ -184,6 +184,7 @@ export interface UpdateCase
     | 'mergeCaseId'
     | 'mergeCaseNumber'
     | 'isCompletedWithoutRuling'
+    | 'hasCivilClaims'
     | 'isRegisteredInPrisonSystem'
   > {
   type?: CaseType
@@ -951,6 +952,12 @@ export class CaseService {
       })
     }
 
+    messages.push({
+      type: MessageType.DELIVERY_TO_COURT_SIGNED_COURT_RECORD,
+      user,
+      caseId: theCase.id,
+    })
+
     return this.messageService.sendMessagesToQueue(messages)
   }
   private addMessagesForSignedRulingToQueue(
@@ -1144,10 +1151,10 @@ export class CaseService {
       theCase.id,
     )
 
-    if (theCase.origin === CaseOrigin.LOKE && subpoenasToRevoke?.length > 0) {
+    if (subpoenasToRevoke?.length > 0) {
       messages.push(
         ...subpoenasToRevoke.map((subpoena) => ({
-          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA_REVOCATION,
+          type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA_REVOCATION,
           user,
           caseId: theCase.id,
           elementId: [subpoena.defendantId, subpoena.id],
@@ -1364,20 +1371,6 @@ export class CaseService {
     )
   }
 
-  private addMessagesForNewCourtDateToQueue(
-    theCase: Case,
-    user: TUser,
-  ): Promise<void> {
-    return this.messageService.sendMessagesToQueue([
-      {
-        type: MessageType.NOTIFICATION,
-        user,
-        caseId: theCase.id,
-        body: { type: CaseNotificationType.COURT_DATE },
-      },
-    ])
-  }
-
   private addMessagesForNewSubpoenasToQueue(
     theCase: Case,
     updatedCase: Case,
@@ -1405,7 +1398,7 @@ export class CaseService {
             ]
           : []),
         {
-          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
+          type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA,
           user,
           caseId: theCase.id,
           elementId: [
@@ -1664,8 +1657,11 @@ export class CaseService {
         updatedCourtDate.date.getTime() !== courtDate?.date.getTime()
 
       if (hasUpdatedArraignmentDate || hasUpdatedCourtDate) {
-        // New arraignment date or new court date
-        await this.addMessagesForNewCourtDateToQueue(updatedCase, user)
+        await this.eventLogService.createWithUser(
+          EventType.COURT_DATE_SCHEDULED,
+          theCase.id,
+          user,
+        )
       }
 
       if (hasUpdatedArraignmentDate) {
@@ -2052,6 +2048,7 @@ export class CaseService {
                   transaction,
                   updatedArraignmentDate?.date,
                   updatedArraignmentDate?.location,
+                  defendant.subpoenaType,
                 ),
               ),
           )
@@ -2292,6 +2289,9 @@ export class CaseService {
             creatingProsecutorId: user.id,
             prosecutorId: user.id,
             prosecutorsOfficeId: user.institution?.id,
+            demands: isInvestigationCase(theCase.type)
+              ? theCase.demands
+              : undefined,
           } as CreateCaseDto,
           transaction,
         )

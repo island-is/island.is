@@ -90,8 +90,18 @@ export const JudicialSystem = new XroadConf({
       staging: '5309672079',
       prod: '5309672079',
     },
+    XROAD_DMR_MEMBER_CODE: {
+      dev: '10014',
+      staging: '5804170510',
+      prod: '5804170510',
+    },
     XROAD_COURT_API_PATH: '/Domstolasyslan/JusticePortal-v1',
     XROAD_POLICE_API_PATH: '/Logreglan-Private/rettarvarsla-v1',
+    XROAD_DMR_CRIMINAL_RECORD_API_PATH: {
+      dev: '/DMR-Protected/sakaskra-dev',
+      staging: '/DMR-Protected/sakaskra-dev',
+      prod: '/DMR-Protected/sakaskra',
+    },
   },
   secrets: {
     XROAD_CLIENT_CERT: '/k8s/judicial-system/XROAD_CLIENT_CERT',
@@ -170,6 +180,16 @@ export const RskProcuring = new XroadConf({
   },
 })
 
+export const RskCarRentalRate = new XroadConf({
+  env: {
+    XROAD_RSK_RENTAL_RATE_PATH: {
+      dev: 'IS-DEV/GOV/10006/Skatturinn/rentaldayrate-v1',
+      staging: 'IS-TEST/GOV/5402696029/Skatturinn/rentaldayrate-v1',
+      prod: 'IS/GOV/5402696029/Skatturinn/rentaldayrate-v1',
+    },
+  },
+})
+
 export const Payment = new XroadConf({
   env: {
     XROAD_PAYMENT_PROVIDER_ID: {
@@ -215,6 +235,21 @@ export const Finance = new XroadConf({
   },
 })
 
+export const FireCompensation = new XroadConf({
+  env: {
+    XROAD_HMS_APPLICATION_SYSTEM_PATH: {
+      dev: 'IS-DEV/GOV/10033/HMS-Protected/formbuilder-v1',
+      staging: 'IS-TEST/GOV/5812191480/HMS-Protected/formbuilder-v1',
+      prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/formbuilder-v1',
+    },
+    XROAD_HMS_APPLICATION_SYSTEM_CLIENT_HEADER: {
+      dev: 'IS-DEV/GOV/10000/island-is-client',
+      staging: 'IS-TEST/GOV/5501692829/test-client',
+      prod: 'IS/GOV/5501692829/island-is-client',
+    },
+  },
+})
+
 export const Properties = new XroadConf({
   env: {
     XROAD_PROPERTIES_SERVICE_V2_PATH: {
@@ -237,6 +272,21 @@ export const PropertySearch = new XroadConf({
       prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Fasteignir-v2',
     },
     XROAD_HMS_PROPERTY_SEARCH_CLIENT_HEADER: {
+      dev: 'IS-DEV/GOV/10000/island-is-client',
+      staging: 'IS-TEST/GOV/5501692829/test-client',
+      prod: 'IS/GOV/5501692829/island-is-client',
+    },
+  },
+})
+
+export const RentalService = new XroadConf({
+  env: {
+    XROAD_HMS_RENTAL_SERVICE_PATH: {
+      dev: 'IS-DEV/GOV/10033/HMS-Protected/Leigusamningar-v1',
+      staging: 'IS-TEST/GOV/5812191480/HMS-Protected/Leigusamningar-v1',
+      prod: 'IS/GOV/5812191480/Husnaeds-og-mannvirkjastofnun-Protected/Leigusamningar-v1',
+    },
+    XROAD_HMS_RENTAL_SERVICE_CLIENT_HEADER: {
       dev: 'IS-DEV/GOV/10000/island-is-client',
       staging: 'IS-TEST/GOV/5501692829/test-client',
       prod: 'IS/GOV/5501692829/island-is-client',
@@ -283,6 +333,17 @@ export const WorkMachines = new XroadConf({
       staging:
         'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token',
       prod: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token',
+    },
+  },
+})
+
+export const PracticalExams = new XroadConf({
+  env: {
+    XROAD_PRACTICAL_EXAMS_PATH: {
+      dev: 'IS-DEV/GOV/10013/Vinnueftirlitid-Protected/verkleg-prof-token',
+      staging:
+        'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/verkleg-prof-token',
+      prod: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/verkleg-prof-token',
     },
   },
 })
@@ -424,8 +485,8 @@ export const NationalRegistry = new XroadConf({
   env: {
     XROAD_NATIONAL_REGISTRY_SERVICE_PATH: {
       dev: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1',
-      staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
-      prod: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
+      staging: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Einstaklingar-v1',
+      prod: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Einstaklingar-v1',
     },
     XROAD_NATIONAL_REGISTRY_REDIS_NODES: {
       dev: json([
@@ -439,7 +500,7 @@ export const NationalRegistry = new XroadConf({
       ]),
     },
     // Deprecated:
-    XROAD_TJODSKRA_API_PATH: '/SKRA-Protected/Einstaklingar-v1',
+    XROAD_TJODSKRA_API_PATH: '/SKRA-Cloud-Protected/Einstaklingar-v1',
     XROAD_TJODSKRA_MEMBER_CODE: {
       prod: '6503760649',
       dev: '10001',
@@ -753,6 +814,11 @@ export const TransportAuthority = new XroadConf({
       staging: 'IS-TEST/GOV/10017/Samgongustofa-Protected/Okuritar-V1',
       prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Okuritar-V1',
     },
+    XROAD_EXEMPTION_FOR_TRANSPORTATION_PATH: {
+      dev: 'IS-DEV/GOV/10017/Samgongustofa-Protected/Leyfur-V1',
+      staging: 'IS-TEST/GOV/10017/Samgongustofa-Protected/Leyfur-V1',
+      prod: 'IS/GOV/5405131040/Samgongustofa-Protected/Leyfur-V1',
+    },
   },
 })
 
@@ -939,12 +1005,22 @@ export const OfficialJournalOfIcelandApplication = new XroadConf({
   },
 })
 
+export const LegalGazette = new XroadConf({
+  env: {
+    XROAD_LEGAL_GAZETTE_PATH: {
+      dev: 'IS-DEV/GOV/10014/DMR-Protected/legal-gazette-api',
+      staging: 'IS-TEST/GOV/10014/DMR-Protected/legal-gazette-api',
+      prod: 'IS/GOV/5804170510/DMR-Protected/legal-gazette-api',
+    },
+  },
+})
+
 export const Frigg = new XroadConf({
   env: {
     XROAD_MMS_FRIGG_PATH: {
       dev: 'IS-DEV/GOV/10066/MMS-Protected/frigg-form-api',
-      staging: 'IS-TEST/GOV/10066/MMS-Protected/frigg-form-api',
-      prod: 'IS/GOV/10066/MMS-Protected/frigg-form-api',
+      staging: 'IS-TEST/GOV/6601241280/MMS-Protected/frigg-form-api',
+      prod: 'IS/GOV/6601241280/MMS-Protected/frigg-form-api',
     },
   },
 })
@@ -988,6 +1064,17 @@ export const SecondarySchool = new XroadConf({
       dev: 'IS-DEV/GOV/10066/MMS-Protected/umsoknagatt',
       staging: 'IS-TEST/GOV/10066/MMS-Protected/umsoknagatt',
       prod: 'IS/GOV/6601241280/MMS-Protected/umsoknagatt',
+    },
+  },
+})
+
+export const LSH = new XroadConf({
+  env: {
+    XROAD_LSH_PATH: {
+      dev: 'IS-DEV/GOV/10022/Landspitali-Protected/external-patient-api-v1',
+      staging:
+        'IS-TEST/GOV/10022/Landspitali-Protected/external-patient-api-v1',
+      prod: 'IS/GOV/5003002130/Landspitali-Protected/external-patient-api-v1',
     },
   },
 })

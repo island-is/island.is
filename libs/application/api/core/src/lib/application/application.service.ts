@@ -160,17 +160,20 @@ export class ApplicationService {
       }
     }
 
+    const applicantAccessConditions: WhereOptions = {
+      [Op.or]: [
+        { applicant: { [Op.eq]: applicantNationalId } },
+        { assignees: { [Op.contains]: [applicantNationalId] } },
+      ],
+    }
+
     return this.applicationModel.findAndCountAll({
       where: {
         ...{ typeId: { [Op.in]: typeIds } },
         ...(statuses ? { status: { [Op.in]: statuses } } : {}),
         [Op.and]: [
-          applicantNationalId
-            ? {
-                [Op.or]: [[{ applicant: { [Op.eq]: applicantNationalId } }]],
-              }
-            : {},
-          applicationIsNotSetToBePruned(),
+          applicantNationalId ? applicantAccessConditions : {},
+
           fromDate && toDate
             ? {
                 [Op.and]: [
@@ -194,27 +197,17 @@ export class ApplicationService {
     nationalId: string,
     typeId?: string,
     status?: string,
-    actor?: string,
     showPruned?: boolean,
   ): Promise<Application[]> {
     const typeIds = typeId?.split(',')
     const statuses = status?.split(',')
 
-    const applicantAccessConditions: WhereOptions = actor
-      ? {
-          // Delegation Is active we get applications for the delegator AND where we are one of the actors
-          [Op.and]: [
-            { applicant: { [Op.eq]: nationalId } },
-            { applicantActors: { [Op.contains]: [actor] } },
-          ],
-        }
-      : {
-          // Delegation Is not active we get applications for the nationalId OR where we are one of the assignees
-          [Op.or]: [
-            { applicant: { [Op.eq]: nationalId } },
-            { assignees: { [Op.contains]: [nationalId] } },
-          ],
-        }
+    const applicantAccessConditions: WhereOptions = {
+      [Op.or]: [
+        { applicant: { [Op.eq]: nationalId } },
+        { assignees: { [Op.contains]: [nationalId] } },
+      ],
+    }
 
     return this.applicationModel.findAll({
       where: {
@@ -396,5 +389,18 @@ export class ApplicationService {
 
   async delete(id: string) {
     return this.applicationModel.destroy({ where: { id } })
+  }
+
+  async softDelete(id: string) {
+    return this.applicationModel.update(
+      {
+        isListed: false,
+        userDeleted: true,
+        userDeletedAt: new Date(),
+        externalData: {},
+        answers: {},
+      },
+      { where: { id } },
+    )
   }
 }

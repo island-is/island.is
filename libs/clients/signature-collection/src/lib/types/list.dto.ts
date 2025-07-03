@@ -7,6 +7,7 @@ import {
 } from '../../../gen/fetch'
 import { Candidate, mapCandidate } from './candidate.dto'
 import { logger } from '@island.is/logging'
+import { CollectionType } from './collection.dto'
 
 export enum ListStatus {
   Active = 'active',
@@ -19,7 +20,7 @@ export enum ListStatus {
 export enum ListType {
   Parliamentary = 'alþingiskosning',
   Presidential = 'forsetakosning',
-  Municipal = 'sveitarstjornarkosning',
+  Municipal = 'sveitarstjórnarkosningar',
 }
 
 export interface ListBase {
@@ -43,6 +44,7 @@ export interface List {
   maxReached: boolean
   reviewed: boolean
   isExtended: boolean
+  collectionType: CollectionType
 }
 
 export interface SignedList extends List {
@@ -64,7 +66,10 @@ export const getSlug = (id: number | string, type: string): string => {
   }
 }
 
-export const mapListBase = (list: MedmaelalistiBaseDTO): ListBase => {
+export const mapListBase = (
+  list: MedmaelalistiBaseDTO,
+  isAreaActive: boolean,
+): ListBase => {
   const { id: id, svaedi: areas } = list
   if (!id || !areas) {
     logger.warn(
@@ -73,7 +78,7 @@ export const mapListBase = (list: MedmaelalistiBaseDTO): ListBase => {
     )
     throw new Error('List has no area')
   }
-  const area = mapArea(areas)
+  const area = mapArea(areas, isAreaActive)
   return {
     id: list.id?.toString() ?? '',
     title: list.listiNafn ?? '',
@@ -83,6 +88,8 @@ export const mapListBase = (list: MedmaelalistiBaseDTO): ListBase => {
 
 export const mapList = (
   list: MedmaelalistiDTO,
+  participatingAreas: Area[],
+  collectionType?: CollectionType,
   collectors?: UmbodBaseDTO[],
 ): List => {
   const {
@@ -108,7 +115,12 @@ export const mapList = (
       'Fetch list failed. Received partial collection information from the national registry.',
     )
   }
-  const area = mapArea(areas)
+  const area = mapArea(
+    areas,
+    participatingAreas.find((area) => area.id === areas.id?.toString())
+      ?.isActive ?? false,
+    collection.id?.toString(),
+  )
   const numberOfSignatures = list.fjoldiMedmaela ?? 0
 
   const isActive = !list.listaLokad
@@ -135,5 +147,6 @@ export const mapList = (
     maxReached: area.max <= numberOfSignatures,
     reviewed,
     isExtended,
+    collectionType: collectionType ?? CollectionType.OtherUnknown,
   }
 }

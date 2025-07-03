@@ -39,7 +39,7 @@ export const PropertyTableUnits = ({
   checkedUnits,
   isTableExpanded,
   unitSizeValue,
-  numOfRoomsValue,
+  numOfRoomsValue = 0,
   isUnitSizeDisabled,
   isNumOfRoomsDisabled,
   unitInputErrorMessage,
@@ -48,7 +48,6 @@ export const PropertyTableUnits = ({
   onUnitRoomsChange,
 }: PropertyUnitsProps) => {
   const { formatMessage } = useLocale()
-
   // Prevent scrolling from changing the number input value
   const preventScrollChange = (event: React.WheelEvent<HTMLInputElement>) => {
     event.currentTarget.blur()
@@ -62,7 +61,9 @@ export const PropertyTableUnits = ({
 
   const roomsInputError =
     unitInputErrorMessage ===
-    formatMessage(registerProperty.search.numOfRoomsMinimumError)
+      formatMessage(registerProperty.search.numOfRoomsMinimumError) ||
+    unitInputErrorMessage ===
+      formatMessage(registerProperty.search.numOfRoomsMaximumError)
 
   return (
     <tr key={unitCode}>
@@ -143,11 +144,16 @@ export const PropertyTableUnits = ({
               className={`${input} ${noInputArrows} ${
                 checkedUnits && roomsInputError ? inputError : ''
               }`}
-              type="number"
+              type="text"
               name="numOfRooms"
               min={0}
-              value={numOfRoomsValue}
-              onChange={onUnitRoomsChange}
+              value={Number(numOfRoomsValue)}
+              onChange={(e) => {
+                if (!/^\d*$/.test(e.target.value)) {
+                  return
+                }
+                onUnitRoomsChange?.(e)
+              }}
               onWheel={preventScrollChange}
               disabled={isNumOfRoomsDisabled}
             />

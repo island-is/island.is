@@ -16,14 +16,23 @@ import { useLinkResolver } from '@island.is/web/hooks'
 
 import * as styles from './DigitalIcelandLatestNewsSlice.css'
 
-const SeeMoreLink = ({ slice, slug }: SliceProps) => {
+const SeeMoreLink = ({
+  slice,
+  slug,
+  seeMoreLinkVariant = 'organization',
+}: SliceProps) => {
   const { linkResolver } = useLinkResolver()
   return (
     <LinkV2
       href={
         slice.readMoreLink?.url
           ? slice.readMoreLink.url
-          : linkResolver('organizationnewsoverview', [slug]).href
+          : linkResolver(
+              seeMoreLinkVariant === 'organization'
+                ? 'organizationnewsoverview'
+                : 'projectnewsoverview',
+              [slug],
+            ).href
       }
     >
       <Button as="span" unfocusable={true} variant="text" icon="arrowForward">
@@ -36,11 +45,12 @@ const SeeMoreLink = ({ slice, slug }: SliceProps) => {
 interface SliceProps {
   slice: LatestNewsSliceSchema
   slug: string
+  seeMoreLinkVariant?: 'organization' | 'project'
 }
 
 export const DigitalIcelandLatestNewsSlice: React.FC<
   React.PropsWithChildren<SliceProps>
-> = ({ slice, slug }) => {
+> = ({ slice, slug, seeMoreLinkVariant = 'organization' }) => {
   const { linkResolver } = useLinkResolver()
   return (
     <Box component="section" aria-labelledby="news-items-title">
@@ -63,14 +73,25 @@ export const DigitalIcelandLatestNewsSlice: React.FC<
               {slice.title}
             </Text>
             <Hidden below="md">
-              <SeeMoreLink slice={slice} slug={slug} />
+              <SeeMoreLink
+                slice={slice}
+                slug={slug}
+                seeMoreLinkVariant={seeMoreLinkVariant}
+              />
             </Hidden>
           </Box>
           <Box className={styles.itemListContainer}>
             {slice.news.slice(0, 3).map((news) => (
               <DigitalIcelandLatestNewsCard
                 key={news.id}
-                href={linkResolver('organizationnews', [slug, news.slug]).href}
+                href={
+                  linkResolver(
+                    seeMoreLinkVariant === 'organization'
+                      ? 'organizationnews'
+                      : 'projectnews',
+                    [slug, news.slug],
+                  ).href
+                }
                 date={news.date}
                 description={news.intro}
                 imageSrc={news.image?.url ?? ''}
@@ -83,7 +104,11 @@ export const DigitalIcelandLatestNewsSlice: React.FC<
           </Box>
           <Hidden above="sm">
             <Box display="flex" justifyContent="center">
-              <SeeMoreLink slice={slice} slug={slug} />
+              <SeeMoreLink
+                slice={slice}
+                slug={slug}
+                seeMoreLinkVariant={seeMoreLinkVariant}
+              />
             </Box>
           </Hidden>
         </Stack>
