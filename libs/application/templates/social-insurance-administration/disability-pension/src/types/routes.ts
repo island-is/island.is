@@ -21,6 +21,7 @@ export enum SectionRouteEnum {
   BACKGROUND_INFO_ICELANDIC_CAPABILITY = 'backgroundInfoIcelandicCapability',
   BACKGROUND_INFO_MARITAL_STATUS = 'backgroundInfoMaritalStatus',
   BACKGROUND_INFO_LANGUAGE = 'backgroundInfoLanguage',
+  BACKGROUND_INFO_EDUCATION_LEVEL = 'backgroundInfoEducationLevel',
 
   BACKGROUND_INFO_EMPLOYMENT = 'backgroundInfoEmployment',
   BACKGROUND_INFO_PREVIOUS_EMPLOYMENT = 'backgroundInfoPreviousEmployment',

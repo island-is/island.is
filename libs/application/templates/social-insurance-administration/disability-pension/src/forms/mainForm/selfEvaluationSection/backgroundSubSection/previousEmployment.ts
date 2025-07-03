@@ -15,10 +15,12 @@ import { socialInsuranceAdministrationMessage } from '@island.is/application/tem
 
 export const previousEmploymentField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT,
-  title: disabilityPensionFormMessage.questions.previousEmploymentTitle,
+  title: disabilityPensionFormMessage.selfEvaluation.questionFormTitle,
+  description: disabilityPensionFormMessage.selfEvaluation.questionFormDescription,
   children: [
     buildRadioField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT}.hasEmployment`,
+      title: disabilityPensionFormMessage.questions.previousEmploymentTitle,
       width: 'half',
       options: [
         {

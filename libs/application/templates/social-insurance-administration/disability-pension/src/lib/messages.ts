@@ -387,29 +387,27 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
       description: 'Where have you received payments?',
     },
   }),
-  backgroundInfo: defineMessages({
-    title: {
-      id: 'dp.application:backgroundInfo.title',
+  selfEvaluation: defineMessages({
+    backgroundTitle:  {
+      id: 'dp.application:selfEvaluation.backgroundTitle',
       defaultMessage: 'Bakgrunnur',
       description: 'Background',
     },
-    description: {
-      id: 'dp.application:backgroundInfo.description',
+    backgroundDescription:  {
+      id: 'dp.application:selfEvaluation.backgroundDescription',
       defaultMessage: 'Bakgrunnsupplýsingar',
-      description: 'Background information',
+      description: 'Background',
     },
     questionFormTitle: {
-      id: 'dp.application:backgroundInfo.questionFormTitle',
+      id: 'dp.application:selfEvaluation.questionFormTitle',
       defaultMessage: 'Bakgrunnur og aðstæður',
       description: 'TODO',
     },
     questionFormDescription: {
-      id: 'dp.application:backgroundInfo.questionFormDescription',
+      id: 'dp.application:selfEvaluation.questionFormDescription',
       defaultMessage: 'Umsækjandi leggur hér mat á eigin heilsu.',
       description: 'TODO',
-    }
-  }),
-  selfEvaluation: defineMessages({
+    },
     title: {
       id: 'dp.application:selfEvaluation.title',
       defaultMessage: 'Sjálfsmat',

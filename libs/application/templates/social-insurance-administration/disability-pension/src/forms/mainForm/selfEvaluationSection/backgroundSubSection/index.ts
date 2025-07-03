@@ -10,27 +10,27 @@ import { languageField } from './language'
 import { employmentField } from './employment'
 import { previousEmploymentField } from './previousEmployment'
 import { educationLevelField } from './educationLevel'
-import { employmentCapabilityField } from './employmentCapability'
 import { employmentImportanceField } from './employmentImportance'
 import { rehabilitationOrTherapyField } from './rehabilitationOrTherapy'
 import { biggestIssueField } from './biggestIssue'
 import { SectionRouteEnum } from '../../../../types'
 import { assistanceField } from './assistance'
+import { employmentCapabilityField } from './employmentCapability'
 
 export const backgroundInfoSubSection =
   buildSubSection({
     id: SectionRouteEnum.BACKGROUND_INFO,
-    title: disabilityPensionFormMessage.backgroundInfo.title,
+    title: disabilityPensionFormMessage.selfEvaluation.questionFormTitle,
     children: [
-      assistanceField,
-      maritalStatusField,
-      residenceField,
-      childrenField,
-      icelandicCapabilityField,
-      languageField,
-      employmentField,
-      previousEmploymentField,
-      educationLevelField,
+      //assistanceField,
+      //maritalStatusField,
+      //residenceField,
+      //childrenField,
+      //icelandicCapabilityField,
+      //languageField,
+     //employmentField,
+      //previousEmploymentField,
+      //educationLevelField, //TODO - need data from service
       employmentCapabilityField,
       employmentImportanceField,
       rehabilitationOrTherapyField,

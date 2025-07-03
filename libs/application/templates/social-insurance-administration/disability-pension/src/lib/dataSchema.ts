@@ -85,10 +85,8 @@ export const dataSchema = z.object({
     path: ['list'],
     params: disabilityPensionFormMessage.errors.emptyForeignResidence,
   }),
-  backgroundInfoMaritalStatus: z.nativeEnum(MaritalStatusEnum).refine((value) => {
-    console.log('bign')
-    console.log(value)
-    return value !== undefined
+  backgroundInfoMaritalStatus: z.object({
+    status: z.nativeEnum(MaritalStatusEnum),
   }),
   backgroundInfoResidence: z.object({
     status: z.nativeEnum(ResidenceEnum),
@@ -102,7 +100,9 @@ export const dataSchema = z.object({
     },
   ),
   backgroundInfoChildren: z.nativeEnum(ChildrenCountEnum),
-  backgroundInfoIcelandicCapability: z.nativeEnum(IcelandicCapabilityEnum),
+  backgroundInfoIcelandicCapability: z.object({
+    capability: z.nativeEnum(IcelandicCapabilityEnum),
+  }),
   backgroundInfoLanguage: z.object({
     language: z.nativeEnum(LanguageEnum),
     other: z.string().optional(),
@@ -153,10 +153,22 @@ export const dataSchema = z.object({
       params: disabilityPensionFormMessage.errors.emptyPreviousEmploymentField,
     }
   ),
-  backgroundInfoEmploymentCapability: z.coerce.number().min(0).max(100),
+  backgroundInfoEmploymentCapability: z.object({
+    capability: z.coerce.number().min(0).max(100),
+  }) .refine(
+    ({ capability }) => {
+      console.log('bjrioabn')
+      console.log(capability)
+      return capability !== undefined
+    },
+    { path: ['capability'] },
+  ),
   backgroundInfoEmploymentImportance: z.nativeEnum(EmploymentImportanceEnum),
   backgroundInfoRehabilitationOrTherapy: z.enum([YES, NO]),
   backgroundInfoBiggestIssue: z.string(),
+  backgroundInfoEducationLevel: z.object({
+    level: z.string()
+  }),
   paymentInfo: z
     .object({
       accountType: z.nativeEnum(BankAccountType),

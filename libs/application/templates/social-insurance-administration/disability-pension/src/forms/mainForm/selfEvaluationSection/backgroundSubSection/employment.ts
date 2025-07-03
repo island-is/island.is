@@ -9,7 +9,8 @@ import { EmploymentStatusEnum, SectionRouteEnum } from '../../../../types'
 export const employmentField =
   buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_EMPLOYMENT,
-  title: disabilityPensionFormMessage.questions.employmentStatusTitle,
+  title: disabilityPensionFormMessage.selfEvaluation.questionFormTitle,
+  description: disabilityPensionFormMessage.selfEvaluation.questionFormDescription,
   children: [
     buildCheckboxField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_EMPLOYMENT}.status`,

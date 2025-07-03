@@ -10,8 +10,8 @@ import { ResidenceEnum, SectionRouteEnum } from '../../../../types'
 export const residenceField =
   buildMultiField({
     id: SectionRouteEnum.BACKGROUND_INFO_RESIDENCE,
-    title: disabilityPensionFormMessage.selfEvaluation.title,
-    description: disabilityPensionFormMessage.selfEvaluation.description,
+    title: disabilityPensionFormMessage.selfEvaluation.questionFormTitle,
+    description: disabilityPensionFormMessage.selfEvaluation.questionFormDescription,
     children: [
       buildRadioField({
         id: `${SectionRouteEnum.BACKGROUND_INFO_RESIDENCE}.status`,

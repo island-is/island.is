@@ -9,11 +9,11 @@ import { SectionRouteEnum } from '../../../../types'
 export const maritalStatusField =
   buildMultiField({
     id: SectionRouteEnum.BACKGROUND_INFO_MARITAL_STATUS,
-    title: disabilityPensionFormMessage.selfEvaluation.title,
-    description: disabilityPensionFormMessage.selfEvaluation.description,
+    title: disabilityPensionFormMessage.selfEvaluation.questionFormTitle,
+    description: disabilityPensionFormMessage.selfEvaluation.questionFormDescription,
     children: [
       buildRadioField({
-        id: SectionRouteEnum.BACKGROUND_INFO_MARITAL_STATUS,
+        id: `${SectionRouteEnum.BACKGROUND_INFO_MARITAL_STATUS}.status`,
         title: disabilityPensionFormMessage.questions.maritalStatusTitle,
         options: [
           {
