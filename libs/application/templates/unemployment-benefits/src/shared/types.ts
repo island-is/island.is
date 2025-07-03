@@ -1,3 +1,5 @@
+import { YesOrNo } from '@island.is/application/core'
+
 export enum EmploymentStatus {
   UNEMPLOYED = 'unemployed',
   EMPLOYED = 'employed',
@@ -31,4 +33,47 @@ export interface PreviousJobInAnswers {
   percentage: number
   startDate: string
   endDate: string
+}
+
+export interface VacationDaysInAnswers {
+  startDate: string
+  endDate: string
+}
+
+export interface PaymentsFromPensionInAnswers {
+  paymentAmount: string
+  typeOfPayment: string
+}
+
+export interface PaymentsFromPrivatePensionInAnswers {
+  privatePensionFund: string
+  paymentAmount: string
+}
+
+export interface CapitalIncomeInAnswers {
+  amount: string
+}
+
+export interface PaymentsFromSicknessAllowanceInAnswers {
+  dateFrom: string
+  dateTo: string
+  union: string
+  file: Array<string>
+}
+
+export interface EducationHistoryInAnswers {
+  degree: string
+  levelOfStudy: string
+  courseOfStudy?: string
+  studyNotCompleted: Array<YesOrNo>
+}
+
+export interface LanguagesInAnswers {
+  language: string
+  skill: string
+}
+
+export interface FileInAnswers {
+  key: string
+  name: string
 }

@@ -4,6 +4,7 @@ import {
   GaldurApplicationApplicationsUnemploymentApplicationsCommandsConfirmCreateUnemploymentApplicationConfirmCreateUnemploymentApplicationCommand,
   GaldurDomainModelsApplicationsUnemploymentApplicationsQueriesUnemploymentApplicationViewModel,
   UnemploymentApplicationApi,
+  UnemploymentApplicationCreateUnemploymentApplicationRequest,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import { XRoadConfig } from '@island.is/nest/config'
@@ -72,5 +73,15 @@ export class VmstUnemploymentClientService {
         { applicantSSN: auth.nationalId },
       )
     return response
+  }
+
+  async submitApplication(
+    auth: User,
+    request: UnemploymentApplicationCreateUnemploymentApplicationRequest,
+  ): Promise<GaldurDomainModelsApplicationsUnemploymentApplicationsQueriesUnemploymentApplicationViewModel> {
+    const api = await this.create()
+    return await api.unemploymentApplicationCreateUnemploymentApplication(
+      request,
+    )
   }
 }

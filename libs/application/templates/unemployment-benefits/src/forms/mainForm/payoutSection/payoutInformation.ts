@@ -137,7 +137,7 @@ export const payoutInformationSubSection = buildSubSection({
         }),
         buildSelectField({
           id: 'payout.privatePensionFund',
-          title: payoutMessages.payoutInformation.pensionFundLabel,
+          title: payoutMessages.payoutInformation.privatePensionFundLabel,
           width: 'half',
           options: (application: Application) => {
             const pensionFundOptions =

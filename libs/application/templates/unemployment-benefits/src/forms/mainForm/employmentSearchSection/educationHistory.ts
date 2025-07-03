@@ -9,7 +9,10 @@ import {
 } from '@island.is/application/core'
 import { employmentSearch as employmentSearchMessages } from '../../../lib/messages'
 import { Application } from '@island.is/application/types'
-import { GaldurDomainModelsEducationItem } from '@island.is/clients/vmst-unemployment'
+import {
+  GaldurDomainModelsEducationItem,
+  GaldurDomainModelsEducationProgramDTO,
+} from '@island.is/clients/vmst-unemployment'
 import { formatDate } from '../../../utils'
 import {
   isCurrentlyStudying,
@@ -45,9 +48,9 @@ export const educationHistorySubSection = buildSubSection({
                 'education.currentEducation.programName',
               ) ?? ''
             const education =
-              getValueViaPath<GaldurDomainModelsEducationItem[]>(
+              getValueViaPath<GaldurDomainModelsEducationProgramDTO[]>(
                 application.externalData,
-                'unemploymentApplication.data.supportData.education',
+                'unemploymentApplication.data.supportData.educationPrograms',
               ) ?? []
             const program = education.find((item) => item.id === programId)
             return program?.name ?? ''
@@ -136,22 +139,19 @@ export const educationHistorySubSection = buildSubSection({
                 employmentSearchMessages.educationHistory.levelOfStudyLabel,
               component: 'select',
               options: (application, _, locale) => {
-                const education = getValueViaPath<
-                  GaldurDomainModelsEducationItem[]
-                >(
-                  application.externalData,
-                  'unemploymentApplication.data.supportData.education',
-                )
+                const education =
+                  getValueViaPath<GaldurDomainModelsEducationProgramDTO[]>(
+                    application.externalData,
+                    'unemploymentApplication.data.supportData.educationPrograms',
+                  ) ?? []
                 return (
-                  education
-                    ?.filter((level) => level.level === 1)
-                    .map((level) => ({
-                      value: level.id ?? '',
-                      label:
-                        (locale === 'is'
-                          ? level.name
-                          : level.english ?? level.name) || '',
-                    })) ?? []
+                  education.map((program) => ({
+                    value: program.id ?? '',
+                    label:
+                      (locale === 'is'
+                        ? program.name
+                        : program.english ?? program.name) || '',
+                  })) ?? []
                 )
               },
             },
@@ -159,26 +159,23 @@ export const educationHistorySubSection = buildSubSection({
               label: employmentSearchMessages.educationHistory.degreeLabel,
               component: 'select',
               options: (application, activeField, locale) => {
-                const education = getValueViaPath<
-                  GaldurDomainModelsEducationItem[]
-                >(
-                  application.externalData,
-                  'unemploymentApplication.data.supportData.education',
-                )
+                const education =
+                  getValueViaPath<GaldurDomainModelsEducationProgramDTO[]>(
+                    application.externalData,
+                    'unemploymentApplication.data.supportData.educationPrograms',
+                  ) ?? []
                 const levelOfStudy = (activeField?.levelOfStudy as string) ?? ''
+                const chosenLevelDegrees = education?.filter(
+                  (program) => program.id === levelOfStudy,
+                )[0]?.degrees
                 return (
-                  education
-                    ?.filter(
-                      (level) =>
-                        level.level === 2 && level.parentId === levelOfStudy,
-                    )
-                    .map((level) => ({
-                      value: level.id ?? '',
-                      label:
-                        (locale === 'is'
-                          ? level.name
-                          : level.english ?? level.name) || '',
-                    })) ?? []
+                  chosenLevelDegrees?.map((degree) => ({
+                    value: degree.id ?? '',
+                    label:
+                      (locale === 'is'
+                        ? degree.name
+                        : degree.english ?? degree.name) || '',
+                  })) ?? []
                 )
               },
             },
@@ -188,25 +185,25 @@ export const educationHistorySubSection = buildSubSection({
               component: 'select',
               options: (application, activeField) => {
                 const education = getValueViaPath<
-                  GaldurDomainModelsEducationItem[]
+                  GaldurDomainModelsEducationProgramDTO[]
                 >(
                   application.externalData,
-                  'unemploymentApplication.data.supportData.education',
+                  'unemploymentApplication.data.supportData.educationPrograms',
                 )
                 const levelOfStudy = (activeField?.levelOfStudy as string) ?? ''
-                const degree = (activeField?.degree as string) ?? ''
+                const degreeAnswer = (activeField?.degree as string) ?? ''
+                const chosenLevelDegrees = education?.filter(
+                  (program) => program.id === levelOfStudy,
+                )[0]?.degrees
+
+                const chosenDegreeSubjects = chosenLevelDegrees?.find(
+                  (degree) => degree.id === degreeAnswer,
+                )?.subjects
                 return (
-                  education
-                    ?.find(
-                      (level) =>
-                        level.level === 2 &&
-                        level.parentId === levelOfStudy &&
-                        level.id === degree,
-                    )
-                    ?.relations?.map((relation) => ({
-                      value: relation.code ?? '',
-                      label: relation.name ?? '',
-                    })) ?? []
+                  chosenDegreeSubjects?.map((subject) => ({
+                    value: subject.id ?? '',
+                    label: subject.name ?? '',
+                  })) ?? []
                 )
               },
             },

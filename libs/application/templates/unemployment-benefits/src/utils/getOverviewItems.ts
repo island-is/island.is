@@ -2,22 +2,41 @@ import { ExternalData } from '@island.is/application/types'
 
 import { FormValue } from '@island.is/application/types'
 
-import { getValueViaPath } from '@island.is/application/core'
+import {
+  coreMessages,
+  getValueViaPath,
+  NO,
+  YES,
+  YesOrNo,
+  YesOrNoEnum,
+} from '@island.is/application/core'
 import { KeyValueItem } from '@island.is/application/types'
 import { overview as overviewMessages } from '../lib/messages'
 import {
   ChildrenInAnswers,
+  EducationHistoryInAnswers,
   EmploymentStatus,
+  FileInAnswers,
+  LanguagesInAnswers,
   PreviousJobInAnswers,
   WorkingAbility,
 } from '../shared'
 import * as kennitala from 'kennitala'
 import {
   getCurrentSituationString,
+  getEducationStrings,
+  getJobString,
+  getLocationString,
   getWorkingAbilityString,
 } from './stringMappers'
+import {
+  useOtherPaymentsAnswers,
+  usePayoutAnswers,
+  useVacationAnswers,
+} from './overviewAnswers'
+import { useLocale } from '@island.is/localization'
 
-export const getApplicantOverviewItems = (
+export const useApplicantOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
@@ -60,7 +79,7 @@ export const getApplicantOverviewItems = (
   ]
 }
 
-export const getEmploymentInformationOverviewItems = (
+export const useEmploymentInformationOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
@@ -111,88 +130,130 @@ export const getEmploymentInformationOverviewItems = (
   ]
 }
 
-export const getEducationOverviewItems = (
+export const useEducationOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
   const lastTvelveMonths =
-    getValueViaPath<string>(answers, 'education.lastTwelveMonths', '') ?? ''
+    getValueViaPath<YesOrNo>(answers, 'education.lastTwelveMonths', NO) === 'no'
+      ? overviewMessages.labels.education.notLastTvelveMonths
+      : ''
+
+  const educationAnswer =
+    getValueViaPath<WorkingAbility>(answers, 'education.typeOfEducation') ?? ''
+
+  const educationString = educationAnswer
+    ? getWorkingAbilityString(educationAnswer)
+    : ''
   return [
     {
       width: 'full',
       keyText: overviewMessages.labels.education.education,
-      valueText:
-        getValueViaPath<string>(answers, 'education.lastTwelveMonths', '') ??
-        '',
+      valueText: [lastTvelveMonths, educationString],
     },
   ]
 }
 
-export const getPayoutOverviewItems = (
+export const usePayoutOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
+  const { formatMessage, locale } = useLocale()
+  const payoutAnswers = usePayoutAnswers(answers, _externalData)
+  const vacationAnswers = useVacationAnswers(answers)
+  const otherPaymentsAnswers = useOtherPaymentsAnswers(
+    answers,
+    _externalData,
+    locale,
+  )
   return [
     {
       width: 'half',
       keyText: overviewMessages.labels.payout.paymentInformation,
-      valueText: getValueViaPath<string>(answers, 'applicant.name') ?? '',
+      valueText: payoutAnswers,
     },
     {
       width: 'half',
-      keyText: overviewMessages.labels.payout.personalDiscount,
-      valueText:
-        getValueViaPath<string>(answers, 'applicant.phoneNumber') ?? '',
+      keyText: overviewMessages.labels.payout.taxDiscount,
+      valueText: `${formatMessage(overviewMessages.labels.payout.taxUsage)}: ${
+        getValueViaPath<string>(answers, 'taxDiscount.taxDiscount') ?? ''
+      }%`,
     },
     {
       width: 'half',
       keyText: overviewMessages.labels.payout.vacation,
-      valueText:
-        getValueViaPath<string>(answers, 'applicant.phoneNumber') ?? '',
+      valueText: vacationAnswers,
     },
     {
       width: 'half',
       keyText: overviewMessages.labels.payout.otherPayouts,
-      valueText:
-        getValueViaPath<string>(answers, 'applicant.phoneNumber') ?? '',
+      valueText: otherPaymentsAnswers,
     },
   ]
 }
 
-export const getEmploymentSearchOverviewItems = (
+export const useEmploymentSearchOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
+  const { locale } = useLocale()
+  const requestedEmployment =
+    getValueViaPath<Array<string>>(answers, 'jobWishes.jobList', []) ?? []
+
+  const requestedEmploymentString = requestedEmployment.map((job) => {
+    return getJobString(job, _externalData, locale)
+  })
+
+  const outsideYourLocation =
+    getValueViaPath<Array<string>>(answers, 'jobWishes.location', []) ?? []
+
+  const outsideYourLocationStrings = outsideYourLocation.map((location) => {
+    return getLocationString(location, _externalData, locale)
+  })
+
   return [
     {
       width: 'half',
       keyText: overviewMessages.labels.employmentSearch.employmentWishes,
-      valueText: getValueViaPath<string>(answers, 'applicant.name') ?? '',
+      valueText: requestedEmploymentString,
     },
     {
       width: 'half',
       keyText: overviewMessages.labels.employmentSearch.otherRegions,
-      valueText:
-        getValueViaPath<string>(answers, 'applicant.phoneNumber') ?? '',
+      valueText: outsideYourLocationStrings,
     },
   ]
 }
 
-export const getEducationHistoryOverviewItems = (
+export const useEducationHistoryOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const educationHistory = getValueViaPath(answers, 'educationHistory', [])
-  return [
-    {
+  const { formatMessage, locale } = useLocale()
+  const educationHistory =
+    getValueViaPath<Array<EducationHistoryInAnswers>>(
+      answers,
+      'educationHistory.educationHistory',
+      [],
+    ) ?? []
+
+  return educationHistory.map((item, index) => {
+    const educationStrings = getEducationStrings(item, _externalData, locale)
+    return {
       width: 'half',
-      keyText: overviewMessages.labels.employmentSearch.otherRegions,
-      valueText: getValueViaPath<string>(answers, 'applicant.name') ?? '',
-    },
-  ]
+      keyText: `${formatMessage(
+        overviewMessages.labels.educationHistory.educationHistory,
+      )} ${index + 1}`,
+      valueText: [
+        educationStrings.degree,
+        educationStrings.levelOfStudy,
+        educationStrings.courseOfStudy,
+      ],
+    }
+  })
 }
 
-export const getLicenseOverviewItems = (
+export const useLicenseOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
@@ -200,52 +261,83 @@ export const getLicenseOverviewItems = (
     {
       width: 'half',
       keyText: overviewMessages.labels.license.drivingLicense,
-      valueText: getValueViaPath<string>(answers, 'applicant.name') ?? '',
+      valueText:
+        getValueViaPath<string>(answers, 'drivingLicense.drivingLicenseType') ??
+        '',
     },
     {
       width: 'half',
       keyText: overviewMessages.labels.license.workMachineLicense,
       valueText:
-        getValueViaPath<string>(answers, 'applicant.phoneNumber') ?? '',
+        getValueViaPath<string>(
+          answers,
+          'drivingLicense.heavyMachineryLicenses',
+        ) ?? '',
     },
   ]
 }
 
-export const getLanguageOverviewItems = (
+export const useLanguageOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
+  const allLanguages =
+    getValueViaPath<Array<LanguagesInAnswers>>(answers, 'languageSkills', []) ??
+    []
+  const allLanguageStrings = allLanguages.map(
+    (language: LanguagesInAnswers) => {
+      return `${language.language}: ${language.skill}`
+    },
+  )
   return [
     {
       width: 'full',
       keyText: overviewMessages.labels.languages.languages,
-      valueText: getValueViaPath<string>(answers, 'applicant.name') ?? '',
+      valueText: allLanguageStrings,
     },
   ]
 }
 
-export const getEURESOverviewItems = (
+export const useEURESOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
+  const aggreement =
+    getValueViaPath<string>(answers, 'euresJobSearch.agreement') ?? ''
   return [
     {
       width: 'full',
       keyText: overviewMessages.labels.eures.eures,
-      valueText: getValueViaPath<string>(answers, 'applicant.name') ?? '',
+      valueText:
+        aggreement === YES ? coreMessages.radioYes : coreMessages.radioNo,
     },
   ]
 }
 
-export const getResumeOverviewItems = (
+export const useResumeOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
+  const fileName =
+    getValueViaPath<Array<FileInAnswers>>(
+      answers,
+      'resume.resumeFile.file',
+      [],
+    ) ?? []
   return [
     {
       width: 'full',
       keyText: overviewMessages.labels.resume.resume,
-      valueText: getValueViaPath<string>(answers, 'applicant.name') ?? '',
+      valueText: [
+        getValueViaPath<YesOrNoEnum>(
+          answers,
+          'resume.doesOwnResume',
+          YesOrNoEnum.NO,
+        ) === YES
+          ? coreMessages.radioYes
+          : coreMessages.radioNo,
+        fileName[0]?.name,
+      ],
     },
   ]
 }

@@ -11,21 +11,19 @@ import {
   NationalRegistrySpouseApi,
   NationalRegistryUserApi,
   ChildrenCustodyInformationApi,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
-import { dataSchema } from './dataSchema'
+import { UnemploymentBenefitsSchema } from './dataSchema'
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import { assign } from 'xstate'
 import { application as applicationMessages } from './messages'
-import {
-  UnemploymentApi,
-  UserProfileApi,
-  WorkMachineLicensesApi,
-} from '../dataProviders'
+import { UnemploymentApi, UserProfileApi } from '../dataProviders'
+import { ApiActions } from '../shared/constants'
 
 const UnemploymentBenefitsTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -39,7 +37,7 @@ const UnemploymentBenefitsTemplate: ApplicationTemplate<
   translationNamespaces: [
     ApplicationConfigurations.UnemploymentBenefits.translation,
   ],
-  dataSchema,
+  dataSchema: UnemploymentBenefitsSchema,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -63,8 +61,6 @@ const UnemploymentBenefitsTemplate: ApplicationTemplate<
               read: 'all',
               api: [
                 UserProfileApi,
-                WorkMachineLicensesApi,
-                // DrivingLicenseApi,
                 NationalRegistrySpouseApi,
                 NationalRegistryUserApi,
                 ChildrenCustodyInformationApi,
@@ -86,6 +82,9 @@ const UnemploymentBenefitsTemplate: ApplicationTemplate<
           progress: 0.4,
           status: FormModes.DRAFT,
           lifecycle: DefaultStateLifeCycle,
+          onExit: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,
@@ -93,6 +92,7 @@ const UnemploymentBenefitsTemplate: ApplicationTemplate<
                 import('../forms/mainForm').then((module) =>
                   Promise.resolve(module.MainForm),
                 ),
+
               actions: [
                 { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
               ],

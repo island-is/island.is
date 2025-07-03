@@ -174,7 +174,7 @@ export const educationSection = buildSection({
               GaldurDomainModelsEducationItem[]
             >(
               application.externalData,
-              'unemploymentApplication.data.supportData.education',
+              'unemploymentApplication.data.supportData.educationPrograms',
             )
             return (
               education?.map(({ name, english, id }) => {
