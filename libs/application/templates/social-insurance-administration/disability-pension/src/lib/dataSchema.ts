@@ -38,14 +38,14 @@ export const dataSchema = z.object({
     emailDisabled: true,
   }),
   applicantMaritalStatus: z.object({
-    status: z.enum([MaritalStatusEnum.SINGLE, MaritalStatusEnum.MARRIED, MaritalStatusEnum.WIDOWED, MaritalStatusEnum.DIVORCED]),
+    status: z.nativeEnum(MaritalStatusEnum),
     spouseName: z.string().min(2).max(100).optional(),
     spouseNationalId: z.string().min(4).max(10).optional()
   }),
   disabilityEvaluation: z.object({
-    appliedBefore: z.enum([YES, NO]),
+    appliedBefore: z.enum([YES, NO]).optional(),
     fileUpload: z.array(fileSchema).optional()
-  }),
+  }).optional(),
   livedAbroad: livedAbroadSchema
     .refine(({ list, hasLivedAbroad }) => {
       if ((hasLivedAbroad === NO) || (list && list.length > 0)) {
@@ -57,14 +57,16 @@ export const dataSchema = z.object({
     params: disabilityPensionFormMessage.errors.emptyForeignResidence,
   }),
   paidWork: z.object({
-    inPaidWork: z.enum([EmploymentEnum.YES, EmploymentEnum.NO, EmploymentEnum.DONT_KNOW]),
+    inPaidWork: z.nativeEnum(EmploymentEnum),
     continuedWork: z.enum([YES, NO]).optional()
   }).refine(({inPaidWork, continuedWork}) => {
     if (inPaidWork === EmploymentEnum.YES) {
       return continuedWork !== undefined
     }
     return true
-  }),
+  }, {
+  path: ['continuedWork'],
+}),
   abroadPayments: z.object({
     hasAbroadPayments: z.enum([YES, NO]),
     list: z.array(
@@ -83,26 +85,13 @@ export const dataSchema = z.object({
     path: ['list'],
     params: disabilityPensionFormMessage.errors.emptyForeignResidence,
   }),
-  backgroundInfoMaritalStatus: z.enum([
-    MaritalStatusEnum.SINGLE,
-    MaritalStatusEnum.IN_RELATIONSHIP,
-    MaritalStatusEnum.MARRIED,
-    MaritalStatusEnum.DIVORCED,
-    MaritalStatusEnum.WIDOWED,
-    MaritalStatusEnum.UNKNOWN,
-  ]).refine((value) => {
+  backgroundInfoMaritalStatus: z.nativeEnum(MaritalStatusEnum).refine((value) => {
+    console.log('bign')
     console.log(value)
     return value !== undefined
   }),
   backgroundInfoResidence: z.object({
-    status: z.enum([
-      ResidenceEnum.OWN_HOME,
-      ResidenceEnum.RENTAL_MARKET,
-      ResidenceEnum.SOCIAL_HOUSING,
-      ResidenceEnum.HOMELESS,
-      ResidenceEnum.WITH_FAMILY,
-      ResidenceEnum.OTHER,
-    ]),
+    status: z.nativeEnum(ResidenceEnum),
     other: z.string().optional(),
   }).refine(
     ({ status, other }) => {
@@ -112,36 +101,10 @@ export const dataSchema = z.object({
       return true
     },
   ),
-  backgroundInfoChildren: z.enum([
-    ChildrenCountEnum.ONE,
-    ChildrenCountEnum.TWO,
-    ChildrenCountEnum.THREE,
-    ChildrenCountEnum.FOUR,
-    ChildrenCountEnum.FIVE,
-    ChildrenCountEnum.SIX_OR_MORE,
-  ]),
-  backgroundInfoIcelandicCapability: z.enum([
-    IcelandicCapabilityEnum.POOR,
-    IcelandicCapabilityEnum.FAIR,
-    IcelandicCapabilityEnum.GOOD,
-    IcelandicCapabilityEnum.VERY_GOOD,
-  ]),
+  backgroundInfoChildren: z.nativeEnum(ChildrenCountEnum),
+  backgroundInfoIcelandicCapability: z.nativeEnum(IcelandicCapabilityEnum),
   backgroundInfoLanguage: z.object({
-    language: z.enum([
-      LanguageEnum.ICELANDIC,
-      LanguageEnum.POLISH,
-      LanguageEnum.ENGLISH,
-      LanguageEnum.LITHUANIAN,
-      LanguageEnum.ROMANIAN,
-      LanguageEnum.CZECH_SLOVAK,
-      LanguageEnum.PORTUGUESE,
-      LanguageEnum.SPANISH,
-      LanguageEnum.THAI,
-      LanguageEnum.FILIPINO,
-      LanguageEnum.UKRAINIAN,
-      LanguageEnum.ARABIC,
-      LanguageEnum.OTHER,
-    ]),
+    language: z.nativeEnum(LanguageEnum),
     other: z.string().optional(),
   }).refine(
     ({ language, other }) => {
@@ -152,17 +115,7 @@ export const dataSchema = z.object({
     },
   ),
   backgroundInfoEmployment: z.object({
-    status: z.array(z.enum([
-      EmploymentStatusEnum.NEVER_EMPLOYED,
-      EmploymentStatusEnum.SELF_EMPLOYED,
-      EmploymentStatusEnum.FULL_TIME_EMPLOYEE,
-      EmploymentStatusEnum.PART_TIME_EMPLOYEE,
-      EmploymentStatusEnum.IN_EDUCATION,
-      EmploymentStatusEnum.JOB_SEEKING_REGISTERED,
-      EmploymentStatusEnum.JOB_SEEKING_NOT_REGISTERED,
-      EmploymentStatusEnum.VOLUNTARY_WORK,
-      EmploymentStatusEnum.NO_PARTICIPATION_HEALTH_DISABILITY,
-    ])).optional(),
+    status: z.array(z.nativeEnum(EmploymentStatusEnum)).optional(),
     other: z.string().optional(),
   }).refine(
     ({ status, other }) => {
@@ -201,24 +154,12 @@ export const dataSchema = z.object({
     }
   ),
   backgroundInfoEmploymentCapability: z.coerce.number().min(0).max(100),
-  backgroundInfoEmploymentImportance: z.enum([
-    EmploymentImportanceEnum.NOT_IMPORTANT_AT_ALL,
-    EmploymentImportanceEnum.NOT_IMPORTANT,
-    EmploymentImportanceEnum.NEUTRAL,
-    EmploymentImportanceEnum.IMPORTANT,
-    EmploymentImportanceEnum.VERY_IMPORTANT,
-  ]),
+  backgroundInfoEmploymentImportance: z.nativeEnum(EmploymentImportanceEnum),
   backgroundInfoRehabilitationOrTherapy: z.enum([YES, NO]),
   backgroundInfoBiggestIssue: z.string(),
   paymentInfo: z
     .object({
-      accountType: z.enum([
-        BankAccountType.ICELANDIC,
-        BankAccountType.FOREIGN,
-      ]).refine(value => {
-        console.log(value)
-        return true
-      }),
+      accountType: z.nativeEnum(BankAccountType),
       bank: z.string(),
       bankAddress: z.string(),
       bankName: z.string(),
@@ -408,7 +349,7 @@ export const dataSchema = z.object({
       z.object({
         id: z.string(),
         title: z.string(),
-        answer: z.enum([OptionsValueEnum.EXTREME, OptionsValueEnum.LITTLE, OptionsValueEnum.MODERATE, OptionsValueEnum.NONE, OptionsValueEnum.REFUSE_TO_ANSWER, OptionsValueEnum.SEVERE]),
+        answer: z.nativeEnum(OptionsValueEnum),
       })
     ),
   }),

@@ -230,19 +230,14 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
       description: 'Applied for disability evaluation at pension fund',
     },
     description: {
-      id: 'dp.application:disabilityEvaluation.description',
-      defaultMessage: 'Þú þarft að sækja um örorkumat frá lífeyrissjóði og senda staðfestingu á því til Tryggingarstofnunar. Ef þú átt þessa staðfestingu, þá getur þú sett hana inn sem viðhengi hér að neðan. Umsóknarferli þitt um örorkumat getur farið fram þó þú sért ekki búinn að sækja um örorkumat hjá lífeyrissjóði. En greiðslur fyrir örorku geta ekki farið fram fyrr en þessi staðfesting liggur fyrir.',
+      id: 'dp.application:disabilityEvaluation.description#markdown',
+      defaultMessage: 'Þú þarft að sækja um örorkumat frá lífeyrissjóði og senda staðfestingu á því til Tryggingarstofnunar. Ef þú átt þessa staðfestingu, þá getur þú sett hana inn sem viðhengi hér að neðan.\n\nUmsóknarferli þitt um örorkumat getur farið fram þó þú sért ekki búinn að sækja um örorkumat hjá lífeyrissjóði.\n\nEn greiðslur fyrir örorku geta ekki farið fram fyrr en þessi staðfesting liggur fyrir.',
       description: 'Description for disability evaluation process',
     },
     appliedBeforeTitle: {
       id: 'dp.application:disabilityEvaluation.appliedBeforeTitle',
       defaultMessage: 'Hefur þú sótt um örorkumat hjá lífeyrissjóði?',
       description: 'Have you applied for disability evaluation at pension fund?',
-    },
-    appliedBeforeDescription: {
-      id: 'dp.application:disabilityEvaluation.appliedBeforeDescription',
-      defaultMessage: 'Ef þú hefur sótt um örorkumat hjá lífeyrissjóði, þá getur þú sett hana inn sem viðhengi hér að neðan.',
-      description: 'If you have applied for disability evaluation at pension fund, you can attach it below',
     },
     fileUploadTitle: {
       id: 'dp.application:disabilityEvaluation.fileUploadTitle',

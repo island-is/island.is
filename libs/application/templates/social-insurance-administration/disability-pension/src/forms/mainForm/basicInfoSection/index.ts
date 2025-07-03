@@ -15,7 +15,7 @@ export const basicInfoSection =
     id: SectionRouteEnum.BASIC_INFO,
     title: disabilityPensionFormMessage.basicInfo.title,
     children: [
-      //personalInfoSubSection,
+      personalInfoSubSection,
       paymentInfoSubSection,
       incomePlanInstructionsSubSection,
       incomePlanSubSection,

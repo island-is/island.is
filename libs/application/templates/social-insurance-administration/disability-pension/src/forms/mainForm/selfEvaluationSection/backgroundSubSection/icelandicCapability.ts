@@ -2,7 +2,7 @@ import {
   buildRadioField,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
-import { IcelandicCapabilityEnum, SectionRouteEnum} from '../../../../types'
+import { IcelandicCapabilityEnum, SectionRouteEnum } from '../../../../types'
 
 export const icelandicCapabilityField =
   buildRadioField({

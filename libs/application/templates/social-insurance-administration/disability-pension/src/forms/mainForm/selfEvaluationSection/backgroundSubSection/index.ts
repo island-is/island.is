@@ -15,12 +15,14 @@ import { employmentImportanceField } from './employmentImportance'
 import { rehabilitationOrTherapyField } from './rehabilitationOrTherapy'
 import { biggestIssueField } from './biggestIssue'
 import { SectionRouteEnum } from '../../../../types'
+import { assistanceField } from './assistance'
 
 export const backgroundInfoSubSection =
   buildSubSection({
     id: SectionRouteEnum.BACKGROUND_INFO,
     title: disabilityPensionFormMessage.backgroundInfo.title,
     children: [
+      assistanceField,
       maritalStatusField,
       residenceField,
       childrenField,

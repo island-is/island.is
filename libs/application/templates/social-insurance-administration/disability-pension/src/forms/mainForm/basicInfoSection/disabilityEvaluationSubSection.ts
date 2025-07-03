@@ -25,7 +25,6 @@ export const disabilityEvaluationSubSection =
             buildRadioField({
               id: `${SectionRouteEnum.DISABILITY_EVALUATION}.appliedBefore`,
               title: disabilityPensionFormMessage.disabilityEvaluation.appliedBeforeTitle,
-              description: disabilityPensionFormMessage.disabilityEvaluation.appliedBeforeDescription,
               required: true,
               width: 'half',
               options: yesOrNoOptions,

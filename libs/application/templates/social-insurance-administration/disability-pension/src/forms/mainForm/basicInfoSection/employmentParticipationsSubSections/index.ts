@@ -11,7 +11,7 @@ export const employmentParticipationSubSection =
       title: disabilityPensionFormMessage.basicInfo.employmentParticipationTitle,
       children: [
         paidWorkSubSection,
-        livedAbroadSubSection,
-        abroadPaymentsSubSection
+        livedAbroadSubSection, //TODO - NOT READY - DATE PICK AND COUNTRY SELECT
+        abroadPaymentsSubSection //TODO - NOT READY - COUNTRY SELECT
       ],
     })

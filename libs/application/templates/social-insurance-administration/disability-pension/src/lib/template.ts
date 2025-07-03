@@ -157,7 +157,7 @@ const template: ApplicationTemplate<
         const { application } = context
         const { answers } = application
 
-        set(answers, 'incomePlanTable', defaultIncomeTypes)
+        set(answers, 'incomePlan', defaultIncomeTypes)
 
         return context
       }),
@@ -165,7 +165,7 @@ const template: ApplicationTemplate<
         const { application } = context
         const { answers } = application
         const incomePlan = getValueViaPath<IncomePlanRow[]>(answers, 'incomePlan') ?? []
-
+          console.log(incomePlan)
         incomePlan?.forEach((income, index) => {
           if (
             (income.income === RatioType.MONTHLY &&
@@ -175,11 +175,11 @@ const template: ApplicationTemplate<
           ) {
             unset(
               application.answers,
-              `incomePlanTable[${index}].equalIncomePerMonth`,
+              `incomePlan[${index}].equalIncomePerMonth`,
             )
             unset(
               application.answers,
-              `incomePlanTable[${index}].equalForeignIncomePerMonth`,
+              `incomePlan[${index}].equalForeignIncomePerMonth`,
             )
           }
           if (
@@ -188,18 +188,18 @@ const template: ApplicationTemplate<
             income.income === RatioType.YEARLY ||
             income.incomeCategory !== INCOME
           ) {
-            unset(application.answers, `incomePlanTable[${index}].january`)
-            unset(application.answers, `incomePlanTable[${index}].february`)
-            unset(application.answers, `incomePlanTable[${index}].march`)
-            unset(application.answers, `incomePlanTable[${index}].april`)
-            unset(application.answers, `incomePlanTable[${index}].may`)
-            unset(application.answers, `incomePlanTable[${index}].june`)
-            unset(application.answers, `incomePlanTable[${index}].july`)
-            unset(application.answers, `incomePlanTable[${index}].august`)
-            unset(application.answers, `incomePlanTable[${index}].september`)
-            unset(application.answers, `incomePlanTable[${index}].october`)
-            unset(application.answers, `incomePlanTable[${index}].november`)
-            unset(application.answers, `incomePlanTable[${index}].december`)
+            unset(application.answers, `incomePlan[${index}].january`)
+            unset(application.answers, `incomePlan[${index}].february`)
+            unset(application.answers, `incomePlan[${index}].march`)
+            unset(application.answers, `incomePlan[${index}].april`)
+            unset(application.answers, `incomePlan[${index}].may`)
+            unset(application.answers, `incomePlan[${index}].june`)
+            unset(application.answers, `incomePlan[${index}].july`)
+            unset(application.answers, `incomePlan[${index}].august`)
+            unset(application.answers, `incomePlan[${index}].september`)
+            unset(application.answers, `incomePlan[${index}].october`)
+            unset(application.answers, `incomePlan[${index}].november`)
+            unset(application.answers, `incomePlan[${index}].december`)
           }
           if (
             income.income === RatioType.YEARLY ||
@@ -207,7 +207,7 @@ const template: ApplicationTemplate<
           ) {
             unset(
               application.answers,
-              `incomePlanTable[${index}].unevenIncomePerYear`,
+              `incomePlan[${index}].unevenIncomePerYear`,
             )
           }
         })
