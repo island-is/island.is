@@ -7,17 +7,18 @@ import {
   Stack,
   Breadcrumbs,
   Divider,
-  DialogPrompt,
+  toast,
   Tag,
   Icon,
-  toast,
+  DialogPrompt,
+  Text,
 } from '@island.is/island-ui/core'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { signatureCollectionNavigation } from '../../lib/navigation'
-import { useLoaderData, useNavigate } from 'react-router-dom'
+import { useLoaderData, useNavigate, useRevalidator } from 'react-router-dom'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import FindSignature from '../../shared-components/findSignature'
@@ -33,6 +34,7 @@ const AllMunicipalities = ({
   const { collection } = useLoaderData() as ListsLoaderReturn
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
+  const { revalidate } = useRevalidator()
 
   const [startCollectionMutation] = useStartCollectionMutation()
 
@@ -46,9 +48,10 @@ const AllMunicipalities = ({
       onCompleted: (response) => {
         if (
           response.signatureCollectionAdminStartMunicipalityCollection.success
-        )
+        ) {
           toast.success(formatMessage(m.openMunicipalCollectionSuccess))
-        else {
+          revalidate()
+        } else {
           toast.error(
             response.signatureCollectionAdminStartMunicipalityCollection
               .reasons?.[0] ?? formatMessage(m.openMunicipalCollectionError),
@@ -95,7 +98,18 @@ const AllMunicipalities = ({
           <Divider />
           <Box marginTop={9} />
           {collection.areas.length > 0 ? (
-            <FindSignature collectionId={collection.id} />
+            <Box>
+              <FindSignature collectionId={collection.id} />
+              {collection.areas.length > 1 && (
+                <Box display="flex" justifyContent="flexEnd">
+                  <Text marginBottom={2} variant="eyebrow">
+                    {formatMessage(m.totalListResults) +
+                      ': ' +
+                      collection.areas.length}
+                  </Text>
+                </Box>
+              )}
+            </Box>
           ) : (
             <EmptyState
               title={formatMessage(m.noLists)}
@@ -120,6 +134,7 @@ const AllMunicipalities = ({
                   cta={{
                     label: formatMessage(m.viewMunicipality),
                     variant: 'text',
+                    disabled: !area.isActive,
                     onClick: () => {
                       navigate(
                         SignatureCollectionPaths.SingleMunicipality.replace(
@@ -165,11 +180,13 @@ const AllMunicipalities = ({
                             />
                           ),
                         }
-                      : {
+                      : area.isActive
+                      ? {
                           label: formatMessage(m.municipalityCollectionOpen),
                           variant: 'mint',
                           outlined: false,
                         }
+                      : undefined
                   }
                 />
               )

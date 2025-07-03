@@ -50,7 +50,7 @@ const StartAreaCollection = ({ areaId }: { areaId: string }) => {
           justifyContent="spaceBetween"
           alignItems="center"
           padding={3}
-          marginTop={5}
+          marginY={5}
         >
           <Text marginBottom={[2, 0, 0]} variant="medium" color="blue600">
             {formatMessage(m.startCollectionDescriptionInBox)}
