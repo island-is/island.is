@@ -98,7 +98,6 @@ export const Support = ({
                     />
                   </GridColumn>
                 </GridRow>
-
                 <GridRow>
                   <GridColumn span="12/12">
                     <RadioValue
@@ -146,7 +145,6 @@ export const Support = ({
             )}
           </>
         )}
-
         <GridRow>
           <GridColumn span="12/12">
             <RadioValue
