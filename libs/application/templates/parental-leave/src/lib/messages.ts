@@ -409,7 +409,7 @@ export const parentalLeaveFormMessages = {
       id: 'pl.application:grant.multiple.rights.description',
       defaultMessage:
         'Fæðingarstyrksréttur eru 12 mánuðir sem skiptast jafnt milli foreldra, en þó má færa allt að 45 daga frá einu foreldri til hins. Fyrir hvert barn sem fæðist bætist við sex mánaða sameiginlegur réttur foreldra til fæðingarstyrks.',
-      description: `Parental grant allowance is a total of 12 months which is divided equally between two parents. However, you can move up to 45 days from one parent to another. For each child that is born, three months of the parents' joint right is added.`,
+      description: `Parental grant allowance is a total of 12 months which is divided equally between two parents. However, you can move up to 45 days from one parent to another. For each child that is born, six months of the parents' joint right is added.`,
     },
     singleParentRightsDescription: {
       id: 'pl.application:single.parent.rights.description',
@@ -480,7 +480,7 @@ export const parentalLeaveFormMessages = {
       defaultMessage:
         'Fyrir hvert barn sem fæðist bætist við sex mánaða sameiginlegur réttur foreldra til fæðingarstyrks',
       description:
-        'For each child the parents’ joint entitlement to a parental grant is extended by wix months.',
+        'For each child the parents’ joint entitlement to a parental grant is extended by six months.',
     },
     requestMultipleBirthsDay: {
       id: 'pl.application:request.multipleBirths.day',
