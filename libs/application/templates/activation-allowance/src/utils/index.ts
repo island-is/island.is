@@ -1,2 +1,2 @@
 export * from './isValidPhoneNumber'
-export * from './isSamePlaceOfResidence'
+export * from './isOtherAddressChecked'

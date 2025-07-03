@@ -2,8 +2,13 @@ import {
   buildFieldsRepeaterField,
   buildMultiField,
   buildSection,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { jobHistory } from '../../lib/messages'
+import { GaldurDomainModelsSettingsJobCodesJobCodeDTO } from '@island.is/clients/vmst-unemployment'
+import { Application } from '@island.is/application/types'
+import { isValidJob } from '../../utils/isValidJobCode'
+import { Locale } from '@island.is/shared/types'
 
 export const jobHistorySection = buildSection({
   id: 'jobHistorySection',
@@ -22,20 +27,33 @@ export const jobHistorySection = buildSection({
           addItemButtonText: jobHistory.labels.addNewButton,
           fields: {
             company: {
-              component: 'nationalIdWithName',
-              searchCompanies: true,
-              customNameLabel: jobHistory.labels.companyName,
-              customNationalIdLabel: jobHistory.labels.companySsn,
+              component: 'input',
+              label: jobHistory.labels.companyName,
+              type: 'text',
+              width: 'full',
             },
             jobName: {
               component: 'select',
               label: jobHistory.labels.jobName,
-              width: 'half',
-              options: [
-                // TODO: Get from API
-                { value: 'option1', label: 'Almenn afgreiðsla' },
-                { value: 'option2', label: 'Ekki almenn afgreiðsla' },
-              ],
+              width: 'full',
+              options: (
+                application: Application,
+                _activeField: Record<string, string> | undefined,
+                locale: Locale | undefined,
+              ) => {
+                const escoJobs = getValueViaPath<
+                  GaldurDomainModelsSettingsJobCodesJobCodeDTO[]
+                >(
+                  application.externalData,
+                  'activityGrantApplication.data.activationGrant.supportData.jobCodes',
+                )
+
+                return (escoJobs ?? []).filter(isValidJob).map((job) => {
+                  const label = locale === 'is' ? job.name : job.english
+                  const value = job.id
+                  return { value, label }
+                })
+              },
             },
             employmentRate: {
               component: 'input',

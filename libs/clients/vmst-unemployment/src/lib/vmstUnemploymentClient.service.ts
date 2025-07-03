@@ -2,6 +2,7 @@ import {
   ActivationGrantApi,
   AuthApi,
   Configuration,
+  GaldurDomainModelsApplicationsActivationGrantApplicationsViewModelsActivationGrantViewModel,
   GaldurDomainModelsApplicationsUnemploymentApplicationsQueriesUnemploymentApplicationViewModel,
   UnemploymentApplicationApi,
 } from '../../gen/fetch'
@@ -83,7 +84,7 @@ export class VmstUnemploymentClientService {
 
   async getEmptyActivityGrantApplication(
     auth: User,
-  ): Promise<GaldurDomainModelsApplicationsUnemploymentApplicationsQueriesUnemploymentApplicationViewModel> {
+  ): Promise<GaldurDomainModelsApplicationsActivationGrantApplicationsViewModelsActivationGrantViewModel> {
     const api = await this.createApiClient(
       ActivationGrantApi,
       'clients-vmst-unemployment',

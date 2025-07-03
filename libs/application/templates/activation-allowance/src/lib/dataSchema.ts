@@ -19,8 +19,8 @@ const applicantSchema = z
     address: z.string().min(1),
     postalCode: z.string().min(1),
     city: z.string().min(1),
-    email: z.string().email(),
-    phoneNumber: z.string().refine((v) => isValidPhoneNumber(v)),
+    //email: z.string().email(),
+    //phoneNumber: z.string().refine((v) => isValidPhoneNumber(v)),
     isSamePlaceOfResidence: z.array(z.string()).optional(),
     password: z.string().min(4),
     other: z

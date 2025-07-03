@@ -3,8 +3,13 @@ import {
   buildMultiField,
   buildSection,
   buildSelectField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { jobWishes } from '../../lib/messages'
+import { Application, Field } from '@island.is/application/types'
+import { Locale } from '@island.is/shared/types'
+import { GaldurDomainModelsSettingsJobCodesJobCodeDTO } from '@island.is/clients/vmst-unemployment'
+import { isValidJob } from '../../utils/isValidJobCode'
 
 export const jobWishesSection = buildSection({
   id: 'jobWishesSection',
@@ -25,12 +30,24 @@ export const jobWishesSection = buildSection({
           id: 'jobWishes.jobs',
           title: jobWishes.labels.jobs,
           isMulti: true,
-          options: [
-            // TODO: get from API
-            { value: 'option1', label: 'Veitingastörf' },
-            { value: 'option2', label: 'Skrifstofustarf' },
-            { value: 'option3', label: 'Þjónustustörf' },
-          ],
+          options: (
+            application: Application,
+            _field: Field,
+            locale: Locale,
+          ) => {
+            const escoJobs = getValueViaPath<
+              GaldurDomainModelsSettingsJobCodesJobCodeDTO[]
+            >(
+              application.externalData,
+              'activityGrantApplication.data.activationGrant.supportData.jobCodes',
+            )
+
+            return (escoJobs ?? []).filter(isValidJob).map((job) => {
+              const label = locale === 'is' ? job.name : job.english
+              const value = job.id
+              return { value, label }
+            })
+          },
         }),
       ],
     }),

@@ -5,7 +5,7 @@ import { getValueViaPath } from '@island.is/application/core'
 import { KeyValueItem } from '@island.is/application/types'
 import { applicant } from '../lib/messages'
 import { overview } from '../lib/messages/overview'
-import { isSamePlaceOfResidence } from './isSamePlaceOfResidence'
+import { isOtherAddressChecked } from './isOtherAddressChecked'
 
 export const getApplicantOverviewItems = (
   answers: FormValue,
@@ -28,7 +28,7 @@ export const getApplicantOverviewItems = (
               '',
           },
         },
-        isSamePlaceOfResidence(answers)
+        isOtherAddressChecked(answers)
           ? `${getValueViaPath<string>(
               answers,
               'applicant.other.address',

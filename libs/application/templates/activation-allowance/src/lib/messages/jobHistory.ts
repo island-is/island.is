@@ -25,11 +25,6 @@ export const jobHistory = {
       defaultMessage: 'Starf',
       description: 'Job title label',
     },
-    companySsn: {
-      id: 'aa.application:jobHistory.labels.companySsn',
-      defaultMessage: 'Kennitala fyrirtækis',
-      description: 'Company ssn label',
-    },
     companyName: {
       id: 'aa.application:jobHistory.labels.companyName',
       defaultMessage: 'Nafn fyrirtækis',

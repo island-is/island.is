@@ -20,11 +20,6 @@ export const academicBackground = {
     },
   }),
   labels: defineMessages({
-    areYouStudying: {
-      id: 'aa.application:academicBackground.labels.areYouStudying',
-      defaultMessage: 'Ertu í námi núna?',
-      description: 'Academic background are you studying label',
-    },
     educationTitle: {
       id: 'aa.application:academicBackground.labels.educationTitle',
       defaultMessage: 'Menntun',
@@ -51,10 +46,10 @@ export const academicBackground = {
       defaultMessage: 'Námsgrein',
       description: 'Subject label',
     },
-    units: {
-      id: 'aa.application:academicBackground.labels.units',
-      defaultMessage: 'Einingar',
-      description: 'Units label',
+    levelOfStudy: {
+      id: 'aa.application:academicBackground.labels.levelOfStudy',
+      defaultMessage: 'Námsstig',
+      description: 'Level of study label',
     },
     degree: {
       id: 'aa.application:academicBackground.labels.degree',
@@ -65,6 +60,16 @@ export const academicBackground = {
       id: 'aa.application:academicBackground.labels.endOfStudies',
       defaultMessage: 'Námslok',
       description: 'End of studies label',
+    },
+    education: {
+      id: 'aa.application:academicBackground.labels.education',
+      defaultMessage: 'Nám',
+      description: 'curriculum',
+    },
+    currentlyStudying: {
+      id: 'aa.application:academicBackground.labels.currentlyStudying',
+      defaultMessage: 'Er í þessu námi',
+      description: 'Is currently studying',
     },
   }),
 }
