@@ -84,6 +84,11 @@ export const m = defineMessages({
     defaultMessage: 'Stofna söfnun',
     description: '',
   },
+  createCollectionDescription: {
+    id: 'admin-portal.signature-collection:createCollectionDescription',
+    defaultMessage: 'Texti sem útskýrir þessa aðgerð betur kemur hér.',
+    description: '',
+  },
   createCollectionSuccess: {
     id: 'admin-portal.signature-collection:createCollectionSuccess',
     defaultMessage: 'Tókst að stofna meðmælasöfnun',
@@ -242,6 +247,11 @@ export const m = defineMessages({
     defaultMessage: 'Eyða söfnun',
     description: '',
   },
+  cancelCollectionDescription: {
+    id: 'admin-portal.signature-collection:cancelCollectionDescription',
+    defaultMessage: 'Texti sem útskýrir þessa aðgerð betur kemur hér.',
+    description: '',
+  },
   cancelCollectionModalMessage: {
     id: 'admin-portal.signature-collection:cancelCollectionModalMessage',
     defaultMessage: 'Þú ert að fara að eyða þessum lista. Ertu viss?',
@@ -350,7 +360,7 @@ export const m = defineMessages({
   downloadReportsDescription: {
     id: 'admin-portal.signature-collection:downloadReportsDescription',
     defaultMessage:
-      'Hlaðið niður yfirlitsskýrslum yfir stöðu safnana í hverju kjördæmi fyrir sig eftir yfirferð.',
+      'Hlaðið niður yfirlitsskýrslum yfir stöðu safnana eftir yfirferð.',
     description: '',
   },
   downloadButton: {
@@ -744,6 +754,11 @@ export const m = defineMessages({
   reviewCandidatesModalDescription: {
     id: 'admin-portal.signature-collection:reviewCandidatesModalDescription',
     defaultMessage: 'Fara yfir lista af frambjóðendum',
+    description: '',
+  },
+  reviewCandidatesDrawerDescription: {
+    id: 'admin-portal.signature-collection:reviewCandidatesDrawerDescription',
+    defaultMessage: 'Texti sem útskýrir þessa aðgerð betur kemur hér.',
     description: '',
   },
   removeCandidateFromListModalDescription: {

@@ -154,7 +154,7 @@ const CreateCollection = ({
             <Box marginLeft={5}>
               <Text variant="h4">{formatMessage(m.createCollection)}</Text>
               <Text marginBottom={2}>
-                Texti sem útskýrir þessa aðgerð betur kemur hér.
+                {formatMessage(m.createCollectionDescription)}
               </Text>
               <Button
                 variant="text"
