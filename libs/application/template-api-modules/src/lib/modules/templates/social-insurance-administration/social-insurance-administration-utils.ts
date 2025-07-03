@@ -390,7 +390,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     isStudying,
     educationalInstitution,
     // ectsUnits,
-    isReceivingPaymentsFromOtherCountry,
+    isReceivingBenefitsFromAnotherCountry,
     // countries,
     hasUtilizedEmployeeSickPayRights,
     employeeSickPayEndDate,
@@ -434,7 +434,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
       isStudying: isStudying === YES,
       isPartTimeEmployed: isPartTimeEmployed === YES,
       receivingPaymentsFromOtherCountry:
-        isReceivingPaymentsFromOtherCountry === YES,
+        isReceivingBenefitsFromAnotherCountry === YES,
       ...(isSelfEmployed === YES && {
         calculatedRemunerationDate,
       }),

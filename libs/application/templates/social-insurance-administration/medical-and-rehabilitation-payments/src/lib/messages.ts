@@ -94,13 +94,45 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
   }),
 
   generalInformation: defineMessages({
-    // Payment information
-
     // Income Plan - Instructions
     incomePlanInstructionsSubSectionTitle: {
       id: 'marp.application:general.information.income.plan.instructions.sub.section.title',
       defaultMessage: 'Tekjuáætlun - Leiðbeiningar',
       description: 'Income Plan - Instructions',
+    },
+
+    // Benefits from another country
+    benefitsFromAnotherCountrySubSectionTitle: {
+      id: 'marp.application:general.information.benefits.from.another.country.sub.section.title',
+      defaultMessage: 'Greiðslur frá öðru landi',
+      description: 'Benefits from another country',
+    },
+    benefitsFromAnotherCountryTitle: {
+      id: 'marp.application:general.information.benefits.from.another.country.title',
+      defaultMessage:
+        'Færðu greiðslur frá öðru landi vegna heilsubrests eða óvinnufærni?',
+      description:
+        'Do you receive benefits from another country due to ill health or incapacity?',
+    },
+    countryRegistration: {
+      id: 'marp.application:general.information.country.registration',
+      defaultMessage: 'Skráning lands',
+      description: 'Country registration',
+    },
+    country: {
+      id: 'marp.application:general.information.country',
+      defaultMessage: 'Land',
+      description: 'Country',
+    },
+    selectCountry: {
+      id: 'marp.application:general.information.select.country',
+      defaultMessage: 'Veldu land',
+      description: 'Select country',
+    },
+    countryIdNumber: {
+      id: 'marp.application:general.information.country.id.number',
+      defaultMessage: 'Kennitala/persónunúmer í landi',
+      description: 'Country ID number/personal ID number',
     },
 
     // Questions
@@ -160,33 +192,6 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       id: 'marp.application:general.information.questions.select.number.of.credits',
       defaultMessage: 'Veldu fjölda eininga',
       description: 'Select number of credits',
-    },
-    questionsBenefitsFromAnotherCountry: {
-      id: 'marp.application:general.information.questions.benefits.from.another.country',
-      defaultMessage:
-        'Færðu greiðslur frá öðru landi vegna heilsubrests eða óvinnufærni?',
-      description:
-        'Do you receive benefits from another country due to ill health or incapacity?',
-    },
-    questionsCountryRegistration: {
-      id: 'marp.application:general.information.questions.country.registration',
-      defaultMessage: 'Skráning lands',
-      description: 'Country registration',
-    },
-    questionsCountry: {
-      id: 'marp.application:general.information.questions.country',
-      defaultMessage: 'Land',
-      description: 'Country',
-    },
-    questionsSelectCountry: {
-      id: 'marp.application:general.information.questions.select.country',
-      defaultMessage: 'Veldu land',
-      description: 'Select country',
-    },
-    questionsCountryIdNumber: {
-      id: 'marp.application:general.information.questions.country.id.number',
-      defaultMessage: 'Kennitala/persónunúmer í landi',
-      description: 'Country ID number/personal ID number',
     },
 
     // Employee sick pay
@@ -260,8 +265,6 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Þitt stéttarfélag',
       description: 'Your union',
     },
-
-    // Tengdar umsóknir?
   }),
 
   certificateForSicknessAndRehabilitation: defineMessages({

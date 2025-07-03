@@ -48,6 +48,17 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   const incomePlan =
     getValueViaPath<IncomePlanRow[]>(answers, 'incomePlanTable') ?? []
 
+  const isReceivingBenefitsFromAnotherCountry = getValueViaPath<YesOrNo>(
+    answers,
+    'benefitsFromAnotherCountry.isReceivingBenefitsFromAnotherCountry',
+  )
+
+  const countries =
+    getValueViaPath<Countries[]>(
+      answers,
+      'benefitsFromAnotherCountry.countries',
+    ) ?? []
+
   const isSelfEmployed = getValueViaPath<YesOrNo>(
     answers,
     'questions.isSelfEmployed',
@@ -71,14 +82,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   )
 
   const ectsUnits = getValueViaPath<string>(answers, 'questions.ectsUnits')
-
-  const isReceivingPaymentsFromOtherCountry = getValueViaPath<YesOrNo>(
-    answers,
-    'questions.isReceivingPaymentsFromOtherCountry',
-  )
-
-  const countries =
-    getValueViaPath<Countries[]>(answers, 'questions.countries') ?? []
 
   const hasUtilizedEmployeeSickPayRights = getValueViaPath<
     YesOrNo | NotApplicable
@@ -183,14 +186,14 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     personalAllowanceUsage,
     taxLevel,
     incomePlan,
+    isReceivingBenefitsFromAnotherCountry,
+    countries,
     isSelfEmployed,
     calculatedRemunerationDate,
     isPartTimeEmployed,
     isStudying,
     educationalInstitution,
     ectsUnits,
-    isReceivingPaymentsFromOtherCountry,
-    countries,
     hasUtilizedEmployeeSickPayRights,
     employeeSickPayEndDate,
     hasUtilizedUnionSickPayRights,

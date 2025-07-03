@@ -6,7 +6,7 @@ import {
   bankInfoToString,
   getTaxLevelOption,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
-import { SiaGeneralQuery } from '@island.is/application/templates/social-insurance-administration-core/types/schema'
+import { SiaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/types/schema'
 import {
   ExternalData,
   FormValue,
@@ -167,6 +167,47 @@ export const incomePlanTable = (
   }
 }
 
+export const benefitsFromAnotherCountryItems = (
+  answers: FormValue,
+): Array<KeyValueItem> => {
+  const { isReceivingBenefitsFromAnotherCountry } =
+    getApplicationAnswers(answers)
+
+  return [
+    {
+      width: 'full',
+      keyText:
+        medicalAndRehabilitationPaymentsFormMessage.generalInformation
+          .benefitsFromAnotherCountryTitle,
+      valueText:
+        isReceivingBenefitsFromAnotherCountry === YES
+          ? socialInsuranceAdministrationMessage.shared.yes
+          : socialInsuranceAdministrationMessage.shared.no,
+    },
+  ]
+}
+
+export const benefitsFromAnotherCountryTable = (
+  answers: FormValue,
+  _externalData: ExternalData,
+): TableData => {
+  const { isReceivingBenefitsFromAnotherCountry, countries } =
+    getApplicationAnswers(answers)
+
+  if (isReceivingBenefitsFromAnotherCountry === YES) {
+    return {
+      header: [
+        medicalAndRehabilitationPaymentsFormMessage.generalInformation.country,
+        medicalAndRehabilitationPaymentsFormMessage.generalInformation
+          .countryIdNumber,
+      ],
+      rows: countries.map((e) => [e.country?.split('::')[1], e.nationalId]),
+    }
+  }
+
+  return { header: [], rows: [] }
+}
+
 export const questionsItems = (answers: FormValue): Array<KeyValueItem> => {
   const {
     isSelfEmployed,
@@ -175,7 +216,6 @@ export const questionsItems = (answers: FormValue): Array<KeyValueItem> => {
     isStudying,
     educationalInstitution,
     ectsUnits,
-    isReceivingPaymentsFromOtherCountry,
   } = getApplicationAnswers(answers)
 
   const baseItems: Array<KeyValueItem> = [
@@ -251,48 +291,12 @@ export const questionsItems = (answers: FormValue): Array<KeyValueItem> => {
         ]
       : []
 
-  const baseItems3: Array<KeyValueItem> = [
-    {
-      width: 'full',
-      keyText:
-        medicalAndRehabilitationPaymentsFormMessage.generalInformation
-          .questionsBenefitsFromAnotherCountry,
-      valueText:
-        isReceivingPaymentsFromOtherCountry === YES
-          ? socialInsuranceAdministrationMessage.shared.yes
-          : socialInsuranceAdministrationMessage.shared.no,
-    },
-  ]
-
   return [
     ...baseItems,
     ...calculatedRemunerationDateItem,
     ...baseItems2,
     ...isStudyingItems,
-    ...baseItems3,
   ]
-}
-
-export const questionsCountryTable = (
-  answers: FormValue,
-  _externalData: ExternalData,
-): TableData => {
-  const { isReceivingPaymentsFromOtherCountry, countries } =
-    getApplicationAnswers(answers)
-
-  if (isReceivingPaymentsFromOtherCountry === YES) {
-    return {
-      header: [
-        medicalAndRehabilitationPaymentsFormMessage.generalInformation
-          .questionsCountry,
-        medicalAndRehabilitationPaymentsFormMessage.generalInformation
-          .questionsCountryIdNumber,
-      ],
-      rows: countries.map((e) => [e.country?.split('::')[1], e.nationalId]),
-    }
-  }
-
-  return { header: [], rows: [] }
 }
 
 export const employeeSickPayItems = (
@@ -345,7 +349,7 @@ export const unionSickPayItems = async (
     unionNationalId,
   } = getApplicationAnswers(answers)
 
-  const { data } = await apolloClient.query<SiaGeneralQuery>({
+  const { data } = await apolloClient.query<SiaUnionsQuery>({
     query: siaUnionsQuery,
   })
   const unionName = data?.socialInsuranceGeneral?.unions?.find(

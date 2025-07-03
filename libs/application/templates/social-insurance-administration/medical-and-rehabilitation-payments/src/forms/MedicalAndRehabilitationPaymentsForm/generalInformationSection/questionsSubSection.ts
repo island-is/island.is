@@ -6,26 +6,18 @@ import {
   buildRadioField,
   buildSelectField,
   buildSubSection,
-  buildTableRepeaterField,
   coreErrorMessages,
-  YES,
 } from '@island.is/application/core'
-import {
-  siaCountriesQuery,
-  siaEducationalInstitutionsQuery,
-} from '@island.is/application/templates/social-insurance-administration-core/graphql/queries'
+import { siaEducationalInstitutionsQuery } from '@island.is/application/templates/social-insurance-administration-core/graphql/queries'
 import { getYesNoOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
-import { SiaGeneralQuery } from '@island.is/application/templates/social-insurance-administration-core/types/schema'
+import { SiaEducationalInstitutionsQuery } from '@island.is/application/templates/social-insurance-administration-core/types/schema'
 import { Application } from '@island.is/application/types'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
 import {
   shouldShowCalculatedRemunerationDate,
   shouldShowIsStudyingFields,
 } from '../../../utils/conditionUtils'
-import {
-  getApplicationAnswers,
-  getApplicationExternalData,
-} from '../../../utils/medicalAndRehabilitationPaymentsUtils'
+import { getApplicationExternalData } from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 
 export const questionsSubSection = buildSubSection({
   id: 'questionsSubSection',
@@ -109,9 +101,10 @@ export const questionsSubSection = buildSubSection({
           width: 'half',
           loadingError: coreErrorMessages.failedDataProvider,
           loadOptions: async ({ apolloClient }) => {
-            const { data } = await apolloClient.query<SiaGeneralQuery>({
-              query: siaEducationalInstitutionsQuery,
-            })
+            const { data } =
+              await apolloClient.query<SiaEducationalInstitutionsQuery>({
+                query: siaEducationalInstitutionsQuery,
+              })
 
             return (
               data?.socialInsuranceGeneral?.educationalInstitutions
@@ -144,76 +137,6 @@ export const questionsSubSection = buildSubSection({
             }))
           },
           condition: (answers) => shouldShowIsStudyingFields(answers),
-        }),
-        buildRadioField({
-          id: 'questions.isReceivingPaymentsFromOtherCountry',
-          title:
-            medicalAndRehabilitationPaymentsFormMessage.generalInformation
-              .questionsBenefitsFromAnotherCountry,
-          space: 4,
-          options: getYesNoOptions(),
-          width: 'half',
-          required: true,
-        }),
-        buildTableRepeaterField({
-          id: 'questions.countries',
-          title:
-            medicalAndRehabilitationPaymentsFormMessage.generalInformation
-              .questionsCountryRegistration,
-          editField: true,
-          condition: (answers) => {
-            const { isReceivingPaymentsFromOtherCountry } =
-              getApplicationAnswers(answers)
-
-            return isReceivingPaymentsFromOtherCountry === YES
-          },
-          fields: {
-            country: {
-              component: 'selectAsync',
-              label:
-                medicalAndRehabilitationPaymentsFormMessage.generalInformation
-                  .questionsCountry,
-              placeholder:
-                medicalAndRehabilitationPaymentsFormMessage.generalInformation
-                  .questionsSelectCountry,
-              width: 'half',
-              loadingError: coreErrorMessages.failedDataProvider,
-              loadOptions: async ({ apolloClient }) => {
-                const { data } = await apolloClient.query<SiaGeneralQuery>({
-                  query: siaCountriesQuery,
-                })
-
-                // Piggyback the name as part of the value
-                return (
-                  data?.socialInsuranceGeneral?.countries
-                    ?.map(({ code, name }) => ({
-                      value: `${code}::${name}`,
-                      label: name || '',
-                    }))
-                    .sort((a, b) => a.label.localeCompare(b.label)) ?? []
-                )
-              },
-            },
-            nationalId: {
-              component: 'input',
-              label:
-                medicalAndRehabilitationPaymentsFormMessage.generalInformation
-                  .questionsCountryIdNumber,
-              width: 'half',
-              backgroundColor: 'blue',
-            },
-          },
-          table: {
-            format: {
-              country: (value) => value?.split('::')[1],
-            },
-            header: [
-              medicalAndRehabilitationPaymentsFormMessage.generalInformation
-                .questionsCountry,
-              medicalAndRehabilitationPaymentsFormMessage.generalInformation
-                .questionsCountryIdNumber,
-            ],
-          },
         }),
       ],
     }),
