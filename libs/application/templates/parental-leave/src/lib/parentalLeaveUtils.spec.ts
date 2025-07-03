@@ -421,7 +421,7 @@ describe('getMaxMultipleBirthsDays', () => {
 
     const res = getMaxMultipleBirthsDays(application.answers)
 
-    expect(res).toEqual(90)
+    expect(res).toEqual(180)
   })
 
   it('should return the number of maximum multiple request days for 3 children', () => {
@@ -473,7 +473,7 @@ describe('getMaxMultipleBirthsAndDefaultMonths', () => {
 
     const res = getMaxMultipleBirthsAndDefaultMonths(application.answers)
 
-    expect(res).toEqual(9)
+    expect(res).toEqual(12)
   })
 })
 
@@ -482,7 +482,7 @@ describe('getAvailableRightsInDays', () => {
     const application = buildApplication({
       answers: {
         selectedChild: 0,
-        multipleBirthsRequestDays: 90,
+        multipleBirthsRequestDays: 180,
         multipleBirths: {
           hasMultipleBirths: YES,
           multipleBirths: 2,
@@ -514,7 +514,7 @@ describe('getAvailableRightsInDays', () => {
 
     const res = getAvailableRightsInDays(application)
 
-    expect(res).toBe(300)
+    expect(res).toBe(390)
   })
 
   it('should return the number of available right with multiple births and giving days for primary parent', () => {
@@ -958,7 +958,7 @@ describe('getAvailableRightsInMonths', () => {
     const application = buildApplication({
       answers: {
         selectedChild: 0,
-        multipleBirthsRequestDays: 90,
+        multipleBirthsRequestDays: 180,
         multipleBirths: {
           hasMultipleBirths: YES,
           multipleBirths: 2,
@@ -990,7 +990,7 @@ describe('getAvailableRightsInMonths', () => {
 
     const res = getAvailableRightsInMonths(application)
 
-    expect(res).toBe(10)
+    expect(res).toBe(13)
   })
 })
 
