@@ -1,77 +1,75 @@
 export enum EmploymentEnum {
-  YES = 'yes',
-  NO = 'no',
-  DONT_KNOW = 'dontKnow',
+  YES = 'YES',
+  NO = 'NO',
+  DONT_KNOW = 'DONT_KNOW',
 }
 
 export enum MaritalStatusEnum {
-  single = 'SINGLE',
-  inRelationship = 'IN_RELATIONSHIP',
-  married = 'MARRIED',
-  divorced = 'DIVORCED',
-  widowed = 'WIDOWED',
-  unknown = 'UNKNOWN',
+  SINGLE = 'SINGLE',
+  IN_RELATIONSHIP = 'IN_RELATIONSHIP',
+  MARRIED = 'MARRIED',
+  DIVORCED = 'DIVORCED',
+  WIDOWED = 'WIDOWED',
+  UNKNOWN = 'UNKNOWN',
 }
 
 export enum ResidenceEnum {
-  ownHome = 'OWN_HOME',
-  rentalMarket = 'RENTAL_MARKET',
-  socialHousing = 'SOCIAL_HOUSING',
-  homeless = 'HOMELESS',
-  withFamily = 'WITH_FAMILY',
-  other = 'OTHER',
+  OWN_HOME = 'OWN_HOME',
+  RENTAL_MARKET = 'RENTAL_MARKET',
+  SOCIAL_HOUSING = 'SOCIAL_HOUSING',
+  HOMELESS = 'HOMELESS',
+  WITH_FAMILY = 'WITH_FAMILY',
+  OTHER = 'OTHER',
 }
 
 export enum ChildrenCountEnum {
-  one = '1',
-  two = '2',
-  three = '3',
-  four = '4',
-  five = '5',
-  sixOrMore = '6+',
+  ONE = '1',
+  TWO = '2',
+  THREE = '3',
+  FOUR = '4',
+  FIVE = '5',
+  SIX_OR_MORE = '6+',
 }
 
 export enum IcelandicCapabilityEnum {
-  poor = 'POOR',
-  fair = 'FAIR',
-  good = 'GOOD',
-  veryGood = 'VERY_GOOD',
+  POOR = 'POOR',
+  FAIR = 'FAIR',
+  GOOD = 'GOOD',
+  VERY_GOOD = 'VERY_GOOD',
 }
 
 export enum LanguageEnum {
-  icelandic = 'ICELANDIC',
-  polish = 'POLISH',
-  english = 'ENGLISH',
-  lithuanian = 'LITHUANIAN',
-  romanian = 'ROMANIAN',
-  czechSlovak = 'CZECH_SLOVAK',
-  portuguese = 'PORTUGUESE',
-  spanish = 'SPANISH',
-  thai = 'THAI',
-  filipino = 'FILIPINO',
-  ukrainian = 'UKRAINIAN',
-  arabic = 'ARABIC',
-  other = 'OTHER',
+  ICELANDIC = 'ICELANDIC',
+  POLISH = 'POLISH',
+  ENGLISH = 'ENGLISH',
+  LITHUANIAN = 'LITHUANIAN',
+  ROMANIAN = 'ROMANIAN',
+  CZECH_SLOVAK = 'CZECH_SLOVAK',
+  PORTUGUESE = 'PORTUGUESE',
+  SPANISH = 'SPANISH',
+  THAI = 'THAI',
+  FILIPINO = 'FILIPINO',
+  UKRAINIAN = 'UKRAINIAN',
+  ARABIC = 'ARABIC',
+  OTHER = 'OTHER',
 }
 
 export enum EmploymentStatusEnum {
-  neverEmployed = 'NEVER_EMPLOYED',
-  selfEmployed = 'SELF_EMPLOYED',
-  fullTimeEmployee = 'FULL_TIME_EMPLOYEE',
-  partTimeEmployee = 'PART_TIME_EMPLOYEE',
-  inEducation = 'IN_EDUCATION',
-  jobSeekingRegistered = 'JOB_SEEKING_REGISTERED',
-  jobSeekingNotRegistered = 'JOB_SEEKING_NOT_REGISTERED',
-  voluntaryWork = 'VOLUNTARY_WORK',
-  noParticipationHealthDisability = 'NO_PARTICIPATION_HEALTH_DISABILITY',
+  NEVER_EMPLOYED = 'NEVER_EMPLOYED',
+  SELF_EMPLOYED = 'SELF_EMPLOYED',
+  FULL_TIME_EMPLOYEE = 'FULL_TIME_EMPLOYEE',
+  PART_TIME_EMPLOYEE = 'PART_TIME_EMPLOYEE',
+  IN_EDUCATION = 'IN_EDUCATION',
+  JOB_SEEKING_REGISTERED = 'JOB_SEEKING_REGISTERED',
+  JOB_SEEKING_NOT_REGISTERED = 'JOB_SEEKING_NOT_REGISTERED',
+  VOLUNTARY_WORK = 'VOLUNTARY_WORK',
+  NO_PARTICIPATION_HEALTH_DISABILITY = 'NO_PARTICIPATION_HEALTH_DISABILITY',
 }
 
 export enum EmploymentImportanceEnum {
-  notImportantAtAll = 'NOT_IMPORTANT_AT_ALL',
-  notImportant = 'NOT_IMPORTANT',
-  neutral = 'NEUTRAL',
-  important = 'IMPORTANT',
-  veryImportant = 'VERY_IMPORTANT',
+  NOT_IMPORTANT_AT_ALL = 'NOT_IMPORTANT_AT_ALL',
+  NOT_IMPORTANT = 'NOT_IMPORTANT',
+  NEUTRAL = 'NEUTRAL',
+  IMPORTANT = 'IMPORTANT',
+  VERY_IMPORTANT = 'VERY_IMPORTANT',
 }
-
-

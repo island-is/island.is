@@ -17,27 +17,27 @@ export const maritalStatusField =
         title: disabilityPensionFormMessage.questions.maritalStatusTitle,
         options: [
           {
-            value: MaritalStatusEnum.single,
+            value: MaritalStatusEnum.SINGLE,
             label: disabilityPensionFormMessage.questions.maritalStatusSingle,
           },
           {
-            value: MaritalStatusEnum.inRelationship,
+            value: MaritalStatusEnum.IN_RELATIONSHIP,
             label: disabilityPensionFormMessage.questions.maritalStatusInRelationship,
           },
           {
-            value: MaritalStatusEnum.married,
+            value: MaritalStatusEnum.MARRIED,
             label: disabilityPensionFormMessage.questions.maritalStatusMarried,
           },
           {
-            value: MaritalStatusEnum.divorced,
+            value: MaritalStatusEnum.DIVORCED,
             label: disabilityPensionFormMessage.questions.maritalStatusDivorced,
           },
           {
-            value: MaritalStatusEnum.widowed,
+            value: MaritalStatusEnum.WIDOWED,
             label: disabilityPensionFormMessage.questions.maritalStatusWidowed,
           },
           {
-            value: MaritalStatusEnum.unknown,
+            value: MaritalStatusEnum.UNKNOWN,
             label: disabilityPensionFormMessage.questions.maritalStatusUnknown,
           },
         ]

@@ -10,19 +10,19 @@ export const icelandicCapabilityField =
     title: disabilityPensionFormMessage.questions.icelandicCapabilityTitle,
     options: [
       {
-        value: IcelandicCapabilityEnum.poor,
+        value: IcelandicCapabilityEnum.POOR,
         label: disabilityPensionFormMessage.questions.icelandicCapabilityPoor,
       },
       {
-        value: IcelandicCapabilityEnum.fair,
+        value: IcelandicCapabilityEnum.FAIR,
         label: disabilityPensionFormMessage.questions.icelandicCapabilityFair,
       },
       {
-        value: IcelandicCapabilityEnum.good,
+        value: IcelandicCapabilityEnum.GOOD,
         label: disabilityPensionFormMessage.questions.icelandicCapabilityGood,
       },
       {
-        value: IcelandicCapabilityEnum.veryGood,
+        value: IcelandicCapabilityEnum.VERY_GOOD,
         label: disabilityPensionFormMessage.questions.icelandicCapabilityVeryGood,
       },
     ]

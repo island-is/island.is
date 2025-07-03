@@ -3,10 +3,10 @@ import { errorMessages } from '@island.is/application/templates/social-insurance
 import { BankAccountType, INCOME, ISK, RatioType, TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { NO, YES } from '@island.is/application/core'
 import { formatBankInfo, validIBAN, validSWIFT } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
-import { isValidPhoneNumber } from '../utils/isValidPhoneNumber'
 import { disabilityPensionFormMessage } from './messages'
 import { EmploymentEnum, MaritalStatusEnum, ResidenceEnum, ChildrenCountEnum, IcelandicCapabilityEnum, LanguageEnum, EmploymentStatusEnum, EmploymentImportanceEnum } from '../types/enums'
 import { OptionsValueEnum } from '../forms/mainForm/capabilityImpairmentSection/mockData'
+import { applicantInformationSchema } from '@island.is/application/ui-forms'
 
 
 export const fileSchema = z.object({
@@ -30,11 +30,17 @@ const livedAbroadSchema = z.object({
 
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
-  applicant: z.object({
-    email: z.string().email().min(1),
-    phoneNumber: z.string().refine((v) => isValidPhoneNumber(v), {
-      params: errorMessages.phoneNumber,
-    }),
+  applicant: applicantInformationSchema({
+    phoneRequired: true,
+    phoneDisabled: false,
+    phoneEnableCountrySelector: true,
+    emailRequired: false,
+    emailDisabled: true,
+  }),
+  applicantMaritalStatus: z.object({
+    status: z.enum([MaritalStatusEnum.SINGLE, MaritalStatusEnum.MARRIED, MaritalStatusEnum.WIDOWED, MaritalStatusEnum.DIVORCED]),
+    spouseName: z.string().min(2).max(100).optional(),
+    spouseNationalId: z.string().min(4).max(10).optional()
   }),
   disabilityEvaluation: z.object({
     appliedBefore: z.enum([YES, NO]),
@@ -78,68 +84,68 @@ export const dataSchema = z.object({
     params: disabilityPensionFormMessage.errors.emptyForeignResidence,
   }),
   backgroundInfoMaritalStatus: z.enum([
-    MaritalStatusEnum.single,
-    MaritalStatusEnum.inRelationship,
-    MaritalStatusEnum.married,
-    MaritalStatusEnum.divorced,
-    MaritalStatusEnum.widowed,
-    MaritalStatusEnum.unknown,
+    MaritalStatusEnum.SINGLE,
+    MaritalStatusEnum.IN_RELATIONSHIP,
+    MaritalStatusEnum.MARRIED,
+    MaritalStatusEnum.DIVORCED,
+    MaritalStatusEnum.WIDOWED,
+    MaritalStatusEnum.UNKNOWN,
   ]).refine((value) => {
     console.log(value)
     return value !== undefined
   }),
   backgroundInfoResidence: z.object({
     status: z.enum([
-      ResidenceEnum.ownHome,
-      ResidenceEnum.rentalMarket,
-      ResidenceEnum.socialHousing,
-      ResidenceEnum.homeless,
-      ResidenceEnum.withFamily,
-      ResidenceEnum.other,
+      ResidenceEnum.OWN_HOME,
+      ResidenceEnum.RENTAL_MARKET,
+      ResidenceEnum.SOCIAL_HOUSING,
+      ResidenceEnum.HOMELESS,
+      ResidenceEnum.WITH_FAMILY,
+      ResidenceEnum.OTHER,
     ]),
     other: z.string().optional(),
   }).refine(
     ({ status, other }) => {
-      if (status === ResidenceEnum.other) {
+      if (status === ResidenceEnum.OTHER) {
         return other && other.length > 0
       }
       return true
     },
   ),
   backgroundInfoChildren: z.enum([
-    ChildrenCountEnum.one,
-    ChildrenCountEnum.two,
-    ChildrenCountEnum.three,
-    ChildrenCountEnum.four,
-    ChildrenCountEnum.five,
-    ChildrenCountEnum.sixOrMore,
+    ChildrenCountEnum.ONE,
+    ChildrenCountEnum.TWO,
+    ChildrenCountEnum.THREE,
+    ChildrenCountEnum.FOUR,
+    ChildrenCountEnum.FIVE,
+    ChildrenCountEnum.SIX_OR_MORE,
   ]),
   backgroundInfoIcelandicCapability: z.enum([
-    IcelandicCapabilityEnum.poor,
-    IcelandicCapabilityEnum.fair,
-    IcelandicCapabilityEnum.good,
-    IcelandicCapabilityEnum.veryGood,
+    IcelandicCapabilityEnum.POOR,
+    IcelandicCapabilityEnum.FAIR,
+    IcelandicCapabilityEnum.GOOD,
+    IcelandicCapabilityEnum.VERY_GOOD,
   ]),
   backgroundInfoLanguage: z.object({
     language: z.enum([
-      LanguageEnum.icelandic,
-      LanguageEnum.polish,
-      LanguageEnum.english,
-      LanguageEnum.lithuanian,
-      LanguageEnum.romanian,
-      LanguageEnum.czechSlovak,
-      LanguageEnum.portuguese,
-      LanguageEnum.spanish,
-      LanguageEnum.thai,
-      LanguageEnum.filipino,
-      LanguageEnum.ukrainian,
-      LanguageEnum.arabic,
-      LanguageEnum.other,
+      LanguageEnum.ICELANDIC,
+      LanguageEnum.POLISH,
+      LanguageEnum.ENGLISH,
+      LanguageEnum.LITHUANIAN,
+      LanguageEnum.ROMANIAN,
+      LanguageEnum.CZECH_SLOVAK,
+      LanguageEnum.PORTUGUESE,
+      LanguageEnum.SPANISH,
+      LanguageEnum.THAI,
+      LanguageEnum.FILIPINO,
+      LanguageEnum.UKRAINIAN,
+      LanguageEnum.ARABIC,
+      LanguageEnum.OTHER,
     ]),
     other: z.string().optional(),
   }).refine(
     ({ language, other }) => {
-      if (language === LanguageEnum.other) {
+      if (language === LanguageEnum.OTHER) {
         return other && other.length > 0
       }
       return true
@@ -147,15 +153,15 @@ export const dataSchema = z.object({
   ),
   backgroundInfoEmployment: z.object({
     status: z.array(z.enum([
-      EmploymentStatusEnum.neverEmployed,
-      EmploymentStatusEnum.selfEmployed,
-      EmploymentStatusEnum.fullTimeEmployee,
-      EmploymentStatusEnum.partTimeEmployee,
-      EmploymentStatusEnum.inEducation,
-      EmploymentStatusEnum.jobSeekingRegistered,
-      EmploymentStatusEnum.jobSeekingNotRegistered,
-      EmploymentStatusEnum.voluntaryWork,
-      EmploymentStatusEnum.noParticipationHealthDisability,
+      EmploymentStatusEnum.NEVER_EMPLOYED,
+      EmploymentStatusEnum.SELF_EMPLOYED,
+      EmploymentStatusEnum.FULL_TIME_EMPLOYEE,
+      EmploymentStatusEnum.PART_TIME_EMPLOYEE,
+      EmploymentStatusEnum.IN_EDUCATION,
+      EmploymentStatusEnum.JOB_SEEKING_REGISTERED,
+      EmploymentStatusEnum.JOB_SEEKING_NOT_REGISTERED,
+      EmploymentStatusEnum.VOLUNTARY_WORK,
+      EmploymentStatusEnum.NO_PARTICIPATION_HEALTH_DISABILITY,
     ])).optional(),
     other: z.string().optional(),
   }).refine(
@@ -194,29 +200,25 @@ export const dataSchema = z.object({
       params: disabilityPensionFormMessage.errors.emptyPreviousEmploymentField,
     }
   ),
-  backgroundInfoEmploymentCapability: z
-    .string()
-    .refine(
-      (data): data is string =>
-        typeof data === 'string' &&
-        !isNaN(Number(data)) &&
-        (data.length === 3 || data.length === 0),
-    ),
+  backgroundInfoEmploymentCapability: z.coerce.number().min(0).max(100),
   backgroundInfoEmploymentImportance: z.enum([
-    EmploymentImportanceEnum.notImportantAtAll,
-    EmploymentImportanceEnum.notImportant,
-    EmploymentImportanceEnum.neutral,
-    EmploymentImportanceEnum.important,
-    EmploymentImportanceEnum.veryImportant,
+    EmploymentImportanceEnum.NOT_IMPORTANT_AT_ALL,
+    EmploymentImportanceEnum.NOT_IMPORTANT,
+    EmploymentImportanceEnum.NEUTRAL,
+    EmploymentImportanceEnum.IMPORTANT,
+    EmploymentImportanceEnum.VERY_IMPORTANT,
   ]),
   backgroundInfoRehabilitationOrTherapy: z.enum([YES, NO]),
   backgroundInfoBiggestIssue: z.string(),
   paymentInfo: z
     .object({
-      bankAccountType: z.enum([
+      accountType: z.enum([
         BankAccountType.ICELANDIC,
         BankAccountType.FOREIGN,
-      ]),
+      ]).refine(value => {
+        console.log(value)
+        return true
+      }),
       bank: z.string(),
       bankAddress: z.string(),
       bankName: z.string(),
@@ -233,8 +235,8 @@ export const dataSchema = z.object({
     })
     .partial()
     .refine(
-      ({ bank, bankAccountType }) => {
-        if (bankAccountType === BankAccountType.ICELANDIC) {
+      ({ bank, accountType }) => {
+        if (accountType === BankAccountType.ICELANDIC) {
           const bankAccount = formatBankInfo(bank ?? '')
           return bankAccount.length === 12 // 4 (bank) + 2 (ledger) + 6 (number)
         }
@@ -243,8 +245,8 @@ export const dataSchema = z.object({
       { params: errorMessages.bank, path: ['bank'] },
     )
     .refine(
-      ({ iban, bankAccountType }) => {
-        if (bankAccountType === BankAccountType.FOREIGN) {
+      ({ iban, accountType }) => {
+        if (accountType === BankAccountType.FOREIGN) {
           const formattedIBAN = iban?.replace(/[\s]+/g, '')
           return formattedIBAN ? validIBAN(formattedIBAN) : false
         }
@@ -253,8 +255,8 @@ export const dataSchema = z.object({
       { params: errorMessages.iban, path: ['iban'] },
     )
     .refine(
-      ({ swift, bankAccountType }) => {
-        if (bankAccountType === BankAccountType.FOREIGN) {
+      ({ swift, accountType }) => {
+        if (accountType === BankAccountType.FOREIGN) {
           const formattedSWIFT = swift?.replace(/[\s]+/g, '')
           return formattedSWIFT ? validSWIFT(formattedSWIFT) : false
         }
@@ -263,18 +265,18 @@ export const dataSchema = z.object({
       { params: errorMessages.swift, path: ['swift'] },
     )
     .refine(
-      ({ bankName, bankAccountType }) =>
-        bankAccountType === BankAccountType.FOREIGN ? !!bankName : true,
+      ({ bankName, accountType }) =>
+        accountType === BankAccountType.FOREIGN ? !!bankName : true,
       { path: ['bankName'] },
     )
     .refine(
-      ({ bankAddress, bankAccountType }) =>
-        bankAccountType === BankAccountType.FOREIGN ? !!bankAddress : true,
+      ({ bankAddress, accountType }) =>
+        accountType === BankAccountType.FOREIGN ? !!bankAddress : true,
       { path: ['bankAddress'] },
     )
     .refine(
-      ({ currency, bankAccountType }) =>
-        bankAccountType === BankAccountType.FOREIGN ? !!currency : true,
+      ({ currency, accountType }) =>
+        accountType === BankAccountType.FOREIGN ? !!currency : true,
       { path: ['currency'] },
     )
     .refine(

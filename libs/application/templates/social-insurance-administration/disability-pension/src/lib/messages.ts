@@ -133,10 +133,10 @@ export const disabilityPensionFormMessage: MessageDir = {
       description: 'Notice title',
     },
     notice: {
-      id: 'dp.application:paymentInfo.notice',
-      defaultMessage: `Allar þínar greiðslur frá Tryggingastofnun eru greiddar inná bankareikninginn hér að neðan. Ef þú breytir bankaupplýsingunum þínum munu allar þínar greiðslur frá Tryggingastofnun verða greiddar inná þann reikning.<br/>
-      Mikilvægt er að bankaupplýsingarnar séu réttar. Gott er að hafa sambvand við viðskiptabanka sinn til að ganga úr skugga um að upplýsingarnar séu réttar ásamt því að fá upplýsingar um ÍBAN-númer og SWIFT-númer.<br/>
-      Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 daga. Banki sem sér um millifærslu leggur á þjónustugjald fyrir millifærslunni.`,
+      id: 'dp.application:paymentInfo.notice#markdown',
+      defaultMessage: `Allar þínar greiðslur frá Tryggingastofnun eru greiddar inná bankareikninginn hér að neðan. Ef þú breytir bankaupplýsingunum þínum munu allar þínar greiðslur frá Tryggingastofnun verða greiddar inná þann reikning. \n\n
+Mikilvægt er að bankaupplýsingarnar séu réttar. Gott er að hafa sambvand við viðskiptabanka sinn til að ganga úr skugga um að upplýsingarnar séu réttar ásamt því að fá upplýsingar um ÍBAN-númer og SWIFT-númer. \n\n
+Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 daga. Banki sem sér um millifærslu leggur á þjónustugjald fyrir millifærslunni.`,
       description: 'TODO',
     },
     accountType: {
@@ -211,36 +211,17 @@ export const disabilityPensionFormMessage: MessageDir = {
       defaultMessage: 'Leiðbeiningar um skráningu tekjuáætlunar',
       description: 'Instructions for recording income plan',
     },
-    instructionBullet1: {
-      id: 'dp.application:incomePlan.instructionBullet1',
-      defaultMessage: '* Skrá skal heildartekjur fyrir skatt í tekjuáætlun.',
-      description: 'Total income before tax must be recorded in income plan',
+    instructionsBullets: {
+      id: 'dp.application:incomePlan.instructionsBullets#markdown',
+      defaultMessage: '* Á næstu síðu er að finna tillögu að tekjuáætlun. Þar getur þú breytt upphæðum og bætt við tekjum. \n\n* Skrá skal heildartekjur fyrir skatt í tekjuáætlun. \n\n* Fjármagnstekjur eru sameignlegar hjá hjónum/sambúðarfólki og skal skrá heildar fjármagnstekjur hjóna/sambúðarfólks í tekjuáætlun.\n\n* Ef maki er á lífeyri verða greiðslur hans einnig endurreiknaðar ef fjármagnstekjum er breytt.\n\n* Heimilt er að skrá atvinnutekjur á þá mánuði sem þeirra er aflað. Reiknast þá þær atvinnutekjur eingöngu í þeim mánuði. Vakin er athygli á að það þarf að haka sérstaklega við þann kost að óska eftir mánaðarskiptingu atvinnutekna í tekjuáætlun.\n\n* Laun / lífeyrisgreiðslur skal skrá í þeim gjaldmiðli sem þau eru greidd.\n\n* Það er á ábyrgð umsækjanda að tekjuáætlun sé rétt og að nauðsynlegar upplýsingar liggi fyrir til að hægt sé að ákvarða réttar greiðslur.',
+      description: 'Instructions for recording income plan',
     },
-    instructionBullet2: {
-      id: 'dp.application:incomePlan.instructionBullet2',
-      defaultMessage: '* Fjármagnstekjur eru sameignlegar hjá hjónum/sambúðarfólki og skal skrá heildar fjármagnstekjur hjóna/sambúðarfólks í tekjuáætlun.',
-      description: 'Capital income is joint for spouses/cohabitants and total capital income should be recorded',
+    instructionsLink: {
+      id: 'dp.application:incomePlan.instructionsLink#markdown',
+      defaultMessage: '[Tekjuáætlun - Upplýsingar um tekjur lífeyrisþega | Ísland.is](https://island.is/tekjuaaetlun-tr-upplysingar-um-tekjur-lifeyristhega/vinna-med-lifeyri)',
+      description: 'Instructions for recording income plan',
     },
-    instructionBullet3: {
-      id: 'dp.application:incomePlan.instructionBullet3',
-      defaultMessage: '* Ef maki er á lífeyri verða greiðslur hans einnig endurreiknaðar ef fjármagnstekjum er breytt.',
-      description: 'If spouse is on pension, their payments will also be recalculated if capital income changes',
-    },
-    instructionBullet4: {
-      id: 'dp.application:incomePlan.instructionBullet4',
-      defaultMessage: '* Heimilt er að skrá atvinnutekjur á þá mánuði sem þeirra er aflað. Reiknast þá þær atvinnutekjur eingöngu í þeim mánuði. Vakin er athygli á að það þarf að haka sérstaklega við þann kost að óska eftir mánaðarskiptingu atvinnutekna í tekjuáætlun.',
-      description: 'Employment income can be recorded for specific months when earned, requiring special selection for monthly division',
-    },
-    instructionBullet5: {
-      id: 'dp.application:incomePlan.instructionBullet5',
-      defaultMessage: '* Laun / lífeyrisgreiðslur skal skrá í þeim gjaldmiðli sem þau eru greidd.',
-      description: 'Wages and pension payments should be recorded in the currency they are paid in',
-    },
-    instructionBullet6: {
-      id: 'dp.application:incomePlan.instructionBullet6',
-      defaultMessage: '* Það er á ábyrgð umsækjanda að tekjuáætlun sé rétt og að nauðsynlegar upplýsingar liggi fyrir til að hægt sé að ákvarða réttar greiðslur.',
-      description: 'It is the applicants responsibility that income plan is correct and necessary information is available',
-    },
+
   }),
   disabilityEvaluation: defineMessages({
     title: {

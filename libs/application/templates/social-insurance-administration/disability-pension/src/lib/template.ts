@@ -12,6 +12,7 @@ import {
   NationalRegistrySpouseApi,
   NationalRegistryUserApi,
   defineTemplateApi,
+  IdentityApi,
 } from '@island.is/application/types'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
@@ -66,7 +67,7 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [UserProfileApi, NationalRegistryUserApi, NationalRegistrySpouseApi, SocialInsuranceAdministrationCategorizedIncomeTypesApi,
+              api: [UserProfileApi, IdentityApi,NationalRegistryUserApi, NationalRegistrySpouseApi, SocialInsuranceAdministrationCategorizedIncomeTypesApi,
               SocialInsuranceAdministrationCurrenciesApi,
               SocialInsuranceAdministrationWithholdingTaxApi,
               SocialInsuranceAdministrationLatestIncomePlan,

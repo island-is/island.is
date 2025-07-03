@@ -16,55 +16,55 @@ export const languageField = buildMultiField({
       width: 'full',
       options: [
         {
-          value: LanguageEnum.icelandic,
+          value: LanguageEnum.ICELANDIC,
           label: disabilityPensionFormMessage.questions.languageIcelandic,
         },
         {
-          value: LanguageEnum.polish,
+          value: LanguageEnum.POLISH,
           label: disabilityPensionFormMessage.questions.languagePolish,
         },
         {
-          value: LanguageEnum.english,
+          value: LanguageEnum.ENGLISH,
           label: disabilityPensionFormMessage.questions.languageEnglish,
         },
         {
-          value: LanguageEnum.lithuanian,
+          value: LanguageEnum.LITHUANIAN,
           label: disabilityPensionFormMessage.questions.languageLithuanian,
         },
         {
-          value: LanguageEnum.romanian,
+          value: LanguageEnum.ROMANIAN,
           label: disabilityPensionFormMessage.questions.languageRomanian,
         },
         {
-          value: LanguageEnum.czechSlovak,
+          value: LanguageEnum.CZECH_SLOVAK,
           label: disabilityPensionFormMessage.questions.languageCzechSlovak,
         },
         {
-          value: LanguageEnum.portuguese,
+          value: LanguageEnum.PORTUGUESE,
           label: disabilityPensionFormMessage.questions.languagePortuguese,
         },
         {
-          value: LanguageEnum.spanish,
+          value: LanguageEnum.SPANISH,
           label: disabilityPensionFormMessage.questions.languageSpanish,
         },
         {
-          value: LanguageEnum.thai,
+          value: LanguageEnum.THAI,
           label: disabilityPensionFormMessage.questions.languageThai,
         },
         {
-          value: LanguageEnum.filipino,
+          value: LanguageEnum.FILIPINO,
           label: disabilityPensionFormMessage.questions.languageFilipino,
         },
         {
-          value: LanguageEnum.ukrainian,
+          value: LanguageEnum.UKRAINIAN,
           label: disabilityPensionFormMessage.questions.languageUkrainian,
         },
         {
-          value: LanguageEnum.arabic,
+          value: LanguageEnum.ARABIC,
           label: disabilityPensionFormMessage.questions.languageArabic,
         },
         {
-          value: LanguageEnum.other,
+          value: LanguageEnum.OTHER,
           label: disabilityPensionFormMessage.questions.languageOther,
         },
       ]
@@ -77,7 +77,7 @@ export const languageField = buildMultiField({
           formValue,
           SectionRouteEnum.BACKGROUND_INFO_LANGUAGE,
         )
-        return language === LanguageEnum.other
+        return language === LanguageEnum.OTHER
       },
       variant: 'textarea',
     }),

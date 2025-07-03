@@ -10,23 +10,23 @@ export const employmentImportanceField =
     title: disabilityPensionFormMessage.questions.employmentImportanceTitle,
     options: [
       {
-        value: EmploymentImportanceEnum.notImportantAtAll,
+        value: EmploymentImportanceEnum.NOT_IMPORTANT_AT_ALL,
         label: disabilityPensionFormMessage.questions.employmentImportanceNotImportantAtAll,
       },
       {
-        value: EmploymentImportanceEnum.notImportant,
+        value: EmploymentImportanceEnum.NOT_IMPORTANT,
         label: disabilityPensionFormMessage.questions.employmentImportanceNotImportant,
       },
       {
-        value: EmploymentImportanceEnum.neutral,
+        value: EmploymentImportanceEnum.NEUTRAL,
         label: disabilityPensionFormMessage.questions.employmentImportanceNeutral,
       },
       {
-        value: EmploymentImportanceEnum.important,
+        value: EmploymentImportanceEnum.IMPORTANT,
         label: disabilityPensionFormMessage.questions.employmentImportanceImportant,
       },
       {
-        value: EmploymentImportanceEnum.veryImportant,
+        value: EmploymentImportanceEnum.VERY_IMPORTANT,
         label: disabilityPensionFormMessage.questions.employmentImportanceVeryImportant,
       },
     ]

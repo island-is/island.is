@@ -16,27 +16,27 @@ export const residenceField =
         title: disabilityPensionFormMessage.questions.residenceTitle,
         options: [
           {
-            value: ResidenceEnum.ownHome,
+            value: ResidenceEnum.OWN_HOME,
             label: disabilityPensionFormMessage.questions.residenceOwnHome,
           },
           {
-            value: ResidenceEnum.rentalMarket,
+            value: ResidenceEnum.RENTAL_MARKET,
             label: disabilityPensionFormMessage.questions.residenceRentalMarket,
           },
           {
-            value: ResidenceEnum.socialHousing,
+            value: ResidenceEnum.SOCIAL_HOUSING,
             label: disabilityPensionFormMessage.questions.residenceSocialHousing,
           },
           {
-            value: ResidenceEnum.homeless,
+            value: ResidenceEnum.HOMELESS,
             label: disabilityPensionFormMessage.questions.residenceHomeless,
           },
           {
-            value: ResidenceEnum.withFamily,
+            value: ResidenceEnum.WITH_FAMILY,
             label: disabilityPensionFormMessage.questions.residenceWithFamily,
           },
           {
-            value: ResidenceEnum.other,
+            value: ResidenceEnum.OTHER,
             label: disabilityPensionFormMessage.questions.residenceOther,
           },
         ]
@@ -50,7 +50,7 @@ export const residenceField =
             formValue,
             `${SectionRouteEnum.BACKGROUND_INFO_RESIDENCE}.status`,
           )
-          return residenceStatus === ResidenceEnum.other
+          return residenceStatus === ResidenceEnum.OTHER
         },
       })
     ]

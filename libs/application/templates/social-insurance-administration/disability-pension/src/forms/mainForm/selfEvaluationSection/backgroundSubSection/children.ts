@@ -10,27 +10,27 @@ export const childrenField =
     title: disabilityPensionFormMessage.questions.childrenCountTitle,
     options: [
       {
-        value: ChildrenCountEnum.one,
+        value: ChildrenCountEnum.ONE,
         label: disabilityPensionFormMessage.questions.childrenCountOne,
       },
       {
-        value: ChildrenCountEnum.two,
+        value: ChildrenCountEnum.TWO,
         label: disabilityPensionFormMessage.questions.childrenCountTwo,
       },
       {
-        value: ChildrenCountEnum.three,
+        value: ChildrenCountEnum.THREE,
         label: disabilityPensionFormMessage.questions.childrenCountThree,
       },
       {
-        value: ChildrenCountEnum.four,
+        value: ChildrenCountEnum.FOUR,
         label: disabilityPensionFormMessage.questions.childrenCountFour,
       },
       {
-        value: ChildrenCountEnum.five,
+        value: ChildrenCountEnum.FIVE,
         label: disabilityPensionFormMessage.questions.childrenCountFive,
       },
       {
-        value: ChildrenCountEnum.sixOrMore,
+        value: ChildrenCountEnum.SIX_OR_MORE,
         label: disabilityPensionFormMessage.questions.childrenCountSixOrMore,
       },
     ]

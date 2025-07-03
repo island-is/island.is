@@ -16,39 +16,39 @@ export const employmentField =
       width: 'full',
       options: [
         {
-          value: EmploymentStatusEnum.neverEmployed,
+          value: EmploymentStatusEnum.NEVER_EMPLOYED,
           label: disabilityPensionFormMessage.questions.employmentStatusNeverEmployed,
         },
         {
-          value: EmploymentStatusEnum.selfEmployed,
+          value: EmploymentStatusEnum.SELF_EMPLOYED,
           label: disabilityPensionFormMessage.questions.employmentStatusSelfEmployed,
         },
         {
-          value: EmploymentStatusEnum.fullTimeEmployee,
+          value: EmploymentStatusEnum.FULL_TIME_EMPLOYEE,
           label: disabilityPensionFormMessage.questions.employmentStatusFullTimeEmployee,
         },
         {
-          value: EmploymentStatusEnum.partTimeEmployee,
+          value: EmploymentStatusEnum.PART_TIME_EMPLOYEE,
           label: disabilityPensionFormMessage.questions.employmentStatusPartTimeEmployee,
         },
         {
-          value: EmploymentStatusEnum.inEducation,
+          value: EmploymentStatusEnum.IN_EDUCATION,
           label: disabilityPensionFormMessage.questions.employmentStatusInEducation,
         },
         {
-          value: EmploymentStatusEnum.jobSeekingRegistered,
+          value: EmploymentStatusEnum.JOB_SEEKING_REGISTERED,
           label: disabilityPensionFormMessage.questions.employmentStatusJobSeekingRegistered,
         },
         {
-          value: EmploymentStatusEnum.jobSeekingNotRegistered,
+          value: EmploymentStatusEnum.JOB_SEEKING_NOT_REGISTERED,
           label: disabilityPensionFormMessage.questions.employmentStatusJobSeekingNotRegistered,
         },
         {
-          value: EmploymentStatusEnum.voluntaryWork,
+          value: EmploymentStatusEnum.VOLUNTARY_WORK,
           label: disabilityPensionFormMessage.questions.employmentStatusVoluntaryWork,
         },
         {
-          value: EmploymentStatusEnum.noParticipationHealthDisability,
+          value: EmploymentStatusEnum.NO_PARTICIPATION_HEALTH_DISABILITY,
           label: disabilityPensionFormMessage.questions.employmentStatusNoParticipationHealthDisability,
         },
       ]

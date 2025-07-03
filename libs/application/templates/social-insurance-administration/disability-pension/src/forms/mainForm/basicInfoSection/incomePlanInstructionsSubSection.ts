@@ -29,28 +29,22 @@ const bulletMessage: Record<(typeof bullets)[number], FormTextWithLocale> = {
 export const incomePlanInstructionsSubSection =
     buildSubSection({
       id: SectionRouteEnum.INCOME_PLAN_INSTRUCTION,
-      tabTitle: disabilityPensionFormMessage.basicInfo.incomePlanInstructionsTitle,
       title: disabilityPensionFormMessage.basicInfo.incomePlanInstructionsTitle,
       children: [
         buildMultiField({
           id: SectionRouteEnum.INCOME_PLAN_INSTRUCTION,
+          title: disabilityPensionFormMessage.incomePlan.instructionsTitle,
+          description: disabilityPensionFormMessage.incomePlan.instructionsDescription,
+          space: 'gutter',
           children: [
-            buildTitleField({
-              title: disabilityPensionFormMessage.incomePlan.instructionsTitle,
-              titleVariant: 'h2',
-              marginBottom: 'p2',
+            buildDescriptionField({
+              id: `${SectionRouteEnum.INCOME_PLAN_INSTRUCTION}.bullets`,
+              description:disabilityPensionFormMessage.incomePlan.instructionsBullets,
             }),
             buildDescriptionField({
-              id: `${SectionRouteEnum.INCOME_PLAN_INSTRUCTION}.instructionsDescription`,
-              description: disabilityPensionFormMessage.incomePlan.instructionsDescription,
-              marginBottom: 'p4',
+              id: `${SectionRouteEnum.INCOME_PLAN_INSTRUCTION}.link`,
+              description:disabilityPensionFormMessage.incomePlan.instructionsLink,
             }),
-            ...bullets.map(bullet => {
-              return buildDescriptionField({
-                id: `${SectionRouteEnum.INCOME_PLAN_INSTRUCTION}.${bullet}`,
-                description: bulletMessage[bullet]
-              });
-            })
           ],
         }),
       ],
