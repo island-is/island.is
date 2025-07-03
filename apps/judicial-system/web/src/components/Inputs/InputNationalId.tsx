@@ -88,6 +88,7 @@ const InputNationalId: FC<Props> = (props) => {
       replacement={{ _: /\d/ }}
       component={Input}
       value={inputValue ?? value}
+      data-testid="inputNationalId"
       onChange={handleChange}
       onBlur={handleBlur}
       disabled={disabled}
@@ -102,7 +103,6 @@ const InputNationalId: FC<Props> = (props) => {
       required={required}
       name="nationalId"
       id="nationalId"
-      data-testid="inputNationalId"
       autoComplete="off"
       label={
         label ??

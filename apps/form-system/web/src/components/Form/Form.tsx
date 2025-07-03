@@ -15,7 +15,6 @@ import { useEffect } from 'react'
 export const Form = () => {
   const { setInfo } = useHeaderInfo()
   const { state } = useApplicationContext()
-
   useEffect(() => {
     setInfo({
       applicationName: state.application?.formName?.is ?? '',
