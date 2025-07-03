@@ -84,7 +84,7 @@ const PassportTemplate: ApplicationTemplate<
           status: 'draft',
           lifecycle: pruneAfter(twoDays),
           onExit: defineTemplateApi({
-            action: ApiActions.checkForDiscount,
+            action: ApiActions.verifyCode,
           }),
           roles: [
             {
@@ -136,11 +136,6 @@ const PassportTemplate: ApplicationTemplate<
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.SYSLUMENN,
         chargeItems: getCode,
-        onEntry: [
-          defineTemplateApi({
-            action: ApiActions.verifyCode,
-          }),
-        ],
         submitTarget: [
           {
             target: States.PARENT_B_CONFIRM,
