@@ -200,7 +200,7 @@ export const supportSubSection = buildSubSection({
             newPrimarySchoolMessages.differentNeeds
               .hasIntegratedServicesDescription,
           width: 'half',
-          //required: true,
+          required: true,
           space: 4,
           options: [
             {
