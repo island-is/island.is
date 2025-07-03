@@ -157,7 +157,7 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
     },
     employeeSickPayDoesEndDateTitle: {
       id: 'marp.application:general.information.employee.sick.pay.does.end.date.title',
-      defaultMessage: 'Hvenær líkur rétti þínum til veikindalauna?',
+      defaultMessage: 'Hvenær lýkur rétti þínum til veikindalauna?',
       description: 'When does your sick pay entitlement end?',
     },
     employeeSickPayDidEndDateTitle: {
@@ -925,11 +925,6 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       id: 'marp.application:overview.study.confirmation',
       defaultMessage: 'Staðfesting á námi',
       description: 'Confirmation of study',
-    },
-    unionSickPayConfirmation: {
-      id: 'marp.application:overview.union.sick.pay.confirmation',
-      defaultMessage: 'Sjúkradagpeningar frá stéttarfélagi',
-      description: 'Sick pay from union',
     },
     rehabilitationPlanConfirmed: {
       id: 'marp.application:overiew.rehabilitation.plan.confirmed',

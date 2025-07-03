@@ -1,4 +1,4 @@
-import { getValueViaPath, YES, YesOrNo } from '@island.is/application/core'
+import { getValueViaPath, NO, YES, YesOrNo } from '@island.is/application/core'
 import { TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { getYesNoOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
@@ -95,11 +95,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'unionSickPay.unionNationalId',
   )
 
-  const unionSickPayFileUpload = getValueViaPath<FileType[]>(
-    answers,
-    'unionSickPay.fileupload',
-  )
-
   const rehabilitationPlanConfirmation = getValueViaPath<string[]>(
     answers,
     'rehabilitationPlanConfirmation',
@@ -190,7 +185,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     hasUtilizedUnionSickPayRights,
     unionSickPayEndDate,
     unionNationalId,
-    unionSickPayFileUpload,
     rehabilitationPlanConfirmation,
     hadAssistance,
     highestLevelOfEducation,
@@ -334,8 +328,6 @@ export const getAttachments = (application: Application) => {
   const {
     isStudying,
     isStudyingFileUpload,
-    hasUtilizedUnionSickPayRights,
-    unionSickPayFileUpload,
   } = getApplicationAnswers(answers)
   const attachments: Attachments[] = []
 
@@ -343,13 +335,6 @@ export const getAttachments = (application: Application) => {
     getAttachmentDetails(
       isStudyingFileUpload,
       AttachmentTypes.STUDY_CONFIRMATION,
-    )
-  }
-
-  if (hasUtilizedUnionSickPayRights === YES) {
-    getAttachmentDetails(
-      unionSickPayFileUpload,
-      AttachmentTypes.UNION_SICK_PAY_CONFIRMATION,
     )
   }
 
@@ -444,6 +429,18 @@ export const getSelfAssessmentCurrentEmploymentStatusOptions = () => {
     },
   ]
   return options
+}
+
+export const hasUtilizedRights = (hasUtilizedSickPayRights?: YesOrNo | NotApplicable) => {
+  return hasUtilizedSickPayRights === YES
+  ? new Date()
+  : undefined
+}
+
+export const hasNotUtilizedRights = (hasUtilizedSickPayRights?: YesOrNo | NotApplicable) => {
+  return hasUtilizedSickPayRights === NO
+  ? new Date()
+  : undefined
 }
 
 // Returns an array of year options from current year to 30 years in the past
