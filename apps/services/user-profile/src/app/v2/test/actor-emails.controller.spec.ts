@@ -418,6 +418,67 @@ describe('Emails controller', () => {
       expect(emails[0]).toMatchObject({
         email: 'test@example.com',
         emailStatus: 'VERIFIED',
+        primary: true, // First email should be primary
+      })
+    })
+
+    it('should set first email as primary and subsequent emails as non-primary', async () => {
+      await fixtureFactory.createUserProfile({
+        ...testUserProfile,
+        emails: [],
+      })
+
+      // Create verification for first email
+      await fixtureFactory.createEmailVerification({
+        nationalId: testUserProfile.nationalId,
+        email: 'first@example.com',
+        hash: '123',
+      })
+
+      // Add first email - should be primary
+      const firstRes = await server.post('/v2/actor/emails').send({
+        email: 'first@example.com',
+        code: '123',
+      } as CreateEmailDto)
+
+      expect(firstRes.status).toEqual(200)
+      expect(firstRes.body).toMatchObject({
+        email: 'first@example.com',
+        primary: true,
+      })
+
+      // Create verification for second email
+      await fixtureFactory.createEmailVerification({
+        nationalId: testUserProfile.nationalId,
+        email: 'second@example.com',
+        hash: '456',
+      })
+
+      // Add second email - should not be primary
+      const secondRes = await server.post('/v2/actor/emails').send({
+        email: 'second@example.com',
+        code: '456',
+      } as CreateEmailDto)
+
+      expect(secondRes.status).toEqual(200)
+      expect(secondRes.body).toMatchObject({
+        email: 'second@example.com',
+        primary: false,
+      })
+
+      // Verify both emails in database
+      const emails = await emailsModel.findAll({
+        where: { nationalId: testUserProfile.nationalId },
+        order: [['created', 'ASC']],
+      })
+
+      expect(emails).toHaveLength(2)
+      expect(emails[0]).toMatchObject({
+        email: 'first@example.com',
+        primary: true,
+      })
+      expect(emails[1]).toMatchObject({
+        email: 'second@example.com',
         primary: false,
       })
     })
