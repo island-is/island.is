@@ -388,6 +388,10 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     calculatedRemunerationDate,
     isPartTimeEmployed,
     isStudying,
+    educationalInstitution,
+    // ectsUnits,
+    isReceivingBenefitsFromAnotherCountry,
+    // countries,
     hasUtilizedEmployeeSickPayRights,
     employeeSickPayEndDate,
     hasUtilizedUnionSickPayRights,
@@ -420,17 +424,22 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     //   },
     // }),
     taxInfo: {
-      personalAllowance: YES === personalAllowance,
+      personalAllowance: personalAllowance === YES,
       personalAllowanceUsage:
-        YES === personalAllowance ? +personalAllowanceUsage : 0,
+        personalAllowance === YES ? +personalAllowanceUsage : 0,
       taxLevel: +taxLevel,
     },
     occupation: {
-      isSelfEmployed: YES === isSelfEmployed,
-      isStudying: YES === isStudying,
-      isPartTimeEmployed: YES === isPartTimeEmployed,
-      ...(YES === isSelfEmployed && {
+      isSelfEmployed: isSelfEmployed === YES,
+      isStudying: isStudying === YES,
+      isPartTimeEmployed: isPartTimeEmployed === YES,
+      receivingPaymentsFromOtherCountry:
+        isReceivingBenefitsFromAnotherCountry === YES,
+      ...(isSelfEmployed === YES && {
         calculatedRemunerationDate,
+      }),
+      ...(isStudying === YES && {
+        educationalInstitution,
       }),
     },
     employeeSickPay: {

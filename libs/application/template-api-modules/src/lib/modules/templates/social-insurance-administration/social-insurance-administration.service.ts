@@ -629,4 +629,8 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       languages,
     )
   }
+
+  async getEctsUnits({ auth }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getEctsUnits(auth)
+  }
 }

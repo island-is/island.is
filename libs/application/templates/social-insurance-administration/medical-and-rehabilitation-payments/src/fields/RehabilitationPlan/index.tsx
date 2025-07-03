@@ -26,6 +26,7 @@ import { FC } from 'react'
 import { siaRehabilitationPlanQuery } from '../../graphql/queries'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../lib/messages'
 import { SiaRehabilitationPlanQuery } from '../../types/schema'
+import { getApplicationAnswers } from '../../utils/medicalAndRehabilitationPaymentsUtils'
 
 export const RehabilitationPlan: FC<FieldBaseProps> = ({
   application,
@@ -42,9 +43,21 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
   } = useQuery<SiaRehabilitationPlanQuery>(siaRehabilitationPlanQuery)
 
   setBeforeSubmitCallback?.(async () => {
+    const { rehabilitationPlanConfirmation } = getApplicationAnswers(
+      application.answers,
+    )
+
+    // If the user confirmed the rehabilitation plan, allow submission
+    if (rehabilitationPlanConfirmation?.includes(YES)) {
+      return [true, null]
+    }
+
+    // If data is still loading or there's an error, prevent submission
     if (loading || rehabilitationPlanError) {
       return [false, '']
     }
+
+    // In all other cases, allow submission
     return [true, null]
   })
 
