@@ -289,7 +289,6 @@ export const dataSchema = z.object({
           email: z.string().email().optional().or(z.literal('')),
         })
         .optional(),
-      hasIntegratedServices: z.string().optional(),
       hasCaseManager: z.string().optional(),
       caseManager: z
         .object({
@@ -297,35 +296,33 @@ export const dataSchema = z.object({
           email: z.string().email().optional().or(z.literal('')),
         })
         .optional(),
+      hasIntegratedServices: z.string().optional(),
       requestingMeeting: z.array(z.enum([YES, NO])).optional(),
     })
     .refine(
-      ({
-        hasDiagnoses,
-        hasHadSupport,
-        hasIntegratedServices,
-        hasWelfareContact,
-      }) =>
-        (hasDiagnoses === YES || hasHadSupport === YES) &&
-        hasWelfareContact === YES
-          ? !!hasIntegratedServices
+      ({ hasDiagnoses, hasHadSupport, hasWelfareContact }) =>
+        hasDiagnoses === YES || hasHadSupport === YES
+          ? !!hasWelfareContact
           : true,
-      { path: ['hasIntegratedServices'] },
+      { path: ['hasWelfareContact'] },
     )
     .refine(
-      ({
-        hasDiagnoses,
-        hasHadSupport,
-        hasWelfareContact,
-        hasCaseManager,
-        caseManager,
-      }) =>
+      ({ hasDiagnoses, hasHadSupport, hasWelfareContact, welfareContact }) =>
         (hasDiagnoses === YES || hasHadSupport === YES) &&
-        hasWelfareContact === YES &&
-        hasCaseManager === YES
-          ? caseManager && caseManager.name.length > 0
+        hasWelfareContact === YES
+          ? welfareContact && welfareContact.name.length > 0
           : true,
-      { path: ['caseManager', 'name'] },
+      { path: ['welfareContact', 'name'] },
+    )
+    .refine(
+      ({ hasDiagnoses, hasHadSupport, hasWelfareContact, welfareContact }) =>
+        (hasDiagnoses === YES || hasHadSupport === YES) &&
+        hasWelfareContact === YES
+          ? welfareContact &&
+            welfareContact.email &&
+            welfareContact.email.length > 0
+          : true,
+      { path: ['welfareContact', 'email'] },
     )
     .refine(
       ({ hasDiagnoses, hasHadSupport, hasWelfareContact, hasCaseManager }) =>
@@ -368,29 +365,17 @@ export const dataSchema = z.object({
       },
     )
     .refine(
-      ({ hasDiagnoses, hasHadSupport, hasWelfareContact }) =>
-        hasDiagnoses === YES || hasHadSupport === YES
-          ? !!hasWelfareContact
-          : true,
-      { path: ['hasWelfareContact'] },
-    )
-    .refine(
-      ({ hasDiagnoses, hasHadSupport, hasWelfareContact, welfareContact }) =>
+      ({
+        hasDiagnoses,
+        hasHadSupport,
+        hasIntegratedServices,
+        hasWelfareContact,
+      }) =>
         (hasDiagnoses === YES || hasHadSupport === YES) &&
         hasWelfareContact === YES
-          ? welfareContact && welfareContact.name.length > 0
+          ? !!hasIntegratedServices
           : true,
-      { path: ['welfareContact', 'name'] },
-    )
-    .refine(
-      ({ hasDiagnoses, hasHadSupport, hasWelfareContact, welfareContact }) =>
-        (hasDiagnoses === YES || hasHadSupport === YES) &&
-        hasWelfareContact === YES
-          ? welfareContact &&
-            welfareContact.email &&
-            welfareContact.email.length > 0
-          : true,
-      { path: ['welfareContact', 'email'] },
+      { path: ['hasIntegratedServices'] },
     ),
 })
 
