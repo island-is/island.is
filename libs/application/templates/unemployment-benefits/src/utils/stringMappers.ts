@@ -1,4 +1,5 @@
 import {
+  EducationHistoryInAnswers,
   EducationType,
   EmploymentStatus,
   PaymentsFromPensionInAnswers,
@@ -10,6 +11,7 @@ import { education as educationMessages } from '../lib/messages'
 import { ExternalData, FormText } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import {
+  GaldurDomainModelsEducationItem,
   GaldurDomainModelsSettingsIncomeTypesIncomeTypeDTO,
   GaldurDomainModelsSettingsJobCodesJobCodeDTO,
   GaldurDomainModelsSettingsPensionFundsPensionFundDTO,
@@ -156,4 +158,53 @@ export const getLocationString = (
       ? chosenLocation?.name
       : chosenLocation?.english ?? chosenLocation?.name) || ''
   )
+}
+
+export const getEducationStrings = (
+  historyItem: EducationHistoryInAnswers,
+  externalData: ExternalData,
+  locale: string,
+): EducationHistoryInAnswers => {
+  const education =
+    getValueViaPath<GaldurDomainModelsEducationItem[]>(
+      externalData,
+      'unemploymentApplication.data.supportData.education',
+    ) ?? []
+
+  const educationItemLevel1 = education?.filter(
+    (item) => item.level === 1 && item.id === historyItem.levelOfStudy,
+  )[0]
+  const educationItemLevel2 = education?.filter(
+    (item) =>
+      item.level === 2 &&
+      item.parentId === historyItem.levelOfStudy &&
+      item.id === historyItem.degree,
+  )[0]
+
+  const degreeString =
+    (locale === 'is'
+      ? educationItemLevel2?.name
+      : educationItemLevel2?.english ?? educationItemLevel2?.name) || ''
+
+  const levelOfStudyString =
+    (locale === 'is'
+      ? educationItemLevel1?.name
+      : educationItemLevel1?.english ?? educationItemLevel1?.name) || ''
+
+  const courseOfStudy = education
+    ?.find(
+      (level) =>
+        level.level === 2 &&
+        level.parentId === historyItem.levelOfStudy &&
+        level.id === historyItem.degree,
+    )
+    ?.relations?.find((relation) => relation.code === historyItem.courseOfStudy)
+
+  const courseOfStudyString = courseOfStudy?.name ?? ''
+  return {
+    ...historyItem,
+    degree: degreeString,
+    levelOfStudy: levelOfStudyString,
+    courseOfStudy: courseOfStudyString,
+  }
 }

@@ -1,4 +1,4 @@
-import { string } from 'zod'
+import { YesOrNo } from '@island.is/application/core'
 
 export enum EmploymentStatus {
   UNEMPLOYED = 'unemployed',
@@ -59,4 +59,21 @@ export interface PaymentsFromSicknessAllowanceInAnswers {
   dateTo: string
   union: string
   file: Array<string>
+}
+
+export interface EducationHistoryInAnswers {
+  degree: string
+  levelOfStudy: string
+  courseOfStudy?: string
+  studyNotCompleted: Array<YesOrNo>
+}
+
+export interface LanguagesInAnswers {
+  language: string
+  skill: string
+}
+
+export interface FileInAnswers {
+  key: string
+  name: string
 }

@@ -170,8 +170,8 @@ export const overview = {
 
     educationHistory: defineMessages({
       educationHistory: {
-        id: 'vmst.ub.application:overview.labels.educationHistory.educationHistory#markdown',
-        defaultMessage: 'Námsferill {index}',
+        id: 'vmst.ub.application:overview.labels.educationHistory.educationHistory',
+        defaultMessage: 'Námsferill',
         description: 'overview section education history label',
       },
     }),

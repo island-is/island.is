@@ -14,6 +14,7 @@ export const applicantInformationSchema = z
       ),
     name: z.string(),
     address: z.string(),
+    city: z.string(),
     postalCode: z.string(),
     email: z.string(),
     phoneNumber: z.string(),

@@ -13,11 +13,7 @@ import {
   NationalRegistrySpouseApi,
   ChildrenCustodyInformationApi,
 } from '@island.is/application/types'
-import {
-  UnemploymentApi,
-  UserProfileApi,
-  WorkMachineLicensesApi,
-} from '../../dataProviders'
+import { UnemploymentApi, UserProfileApi } from '../../dataProviders'
 import Logo from '../../assets/Logo'
 import { externalData } from '../../lib/messages'
 
@@ -54,9 +50,6 @@ export const Prerequisites = buildForm({
               // TODO: I'm guessing that the tax is suppose to be somewhere else?
               title: externalData.tax.title,
               subTitle: externalData.tax.subTitle,
-            }),
-            buildDataProviderItem({
-              provider: WorkMachineLicensesApi,
             }),
             buildDataProviderItem({
               provider: UnemploymentApi,

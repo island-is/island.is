@@ -3,68 +3,25 @@ import { SharedTemplateApiService } from '../../shared'
 import { ApplicationTypes } from '@island.is/application/types'
 import { NotificationsService } from '../../../notification/notifications.service'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { coreErrorMessages } from '@island.is/application/core'
-import {
-  MachineLicenseDto,
-  WorkMachinesClientService,
-} from '@island.is/clients/work-machines'
 import { TemplateApiModuleActionProps } from '../../../types'
-import { TemplateApiError } from '@island.is/nest/problem'
+import { UnemploymentBenefitsAnswers } from '@island.is/application/templates/unemployment-benefits'
 import {
-  DriversLicense,
-  DrivingLicenseApi,
-} from '@island.is/clients/driving-license'
-import {
-  GaldurDomainModelsApplicationsUnemploymentApplicationsQueriesUnemploymentApplicationViewModel,
+  GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsUnemploymentApplicationInformation,
   GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationDto,
+  UnemploymentApplicationCreateUnemploymentApplicationRequest,
   VmstUnemploymentClientService,
 } from '@island.is/clients/vmst-unemployment'
+import { getValueViaPath } from '@island.is/application/core'
+import { name } from '@azure/msal-node/dist/packageMetadata'
 
 @Injectable()
 export class UnemploymentBenefitsService extends BaseTemplateApiService {
   constructor(
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly notificationsService: NotificationsService,
-    private readonly workMachineClientService: WorkMachinesClientService,
-    private readonly drivingLicenceClientService: DrivingLicenseApi,
     private readonly vmstUnemploymentClientService: VmstUnemploymentClientService,
   ) {
     super(ApplicationTypes.UNEMPLOYMENT_BENEFITS)
-  }
-
-  async getWorkMachineLicenses({
-    auth,
-    application,
-  }: TemplateApiModuleActionProps): Promise<MachineLicenseDto> {
-    const result = await this.workMachineClientService.getLicenses(auth, {
-      xCorrelationID: application.id,
-    })
-    if (
-      !result ||
-      !result.licenseCategories ||
-      !result.licenseCategories.length
-    ) {
-      throw new TemplateApiError(
-        {
-          title: coreErrorMessages.licensesEmptyListDefault,
-          summary: coreErrorMessages.licensesEmptyListDefault,
-        },
-        400,
-      )
-    }
-    return {
-      nationalId: result.nationalId,
-      licenseCategories: result.licenseCategories,
-    }
-  }
-
-  async getDrivingLicense({
-    auth,
-    application,
-  }: TemplateApiModuleActionProps): Promise<DriversLicense> {
-    return await this.drivingLicenceClientService.getCurrentLicense({
-      token: auth.authorization,
-    })
   }
 
   async getEmptyApplication({
@@ -80,5 +37,58 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
     // reopenApplication: false
     // success: true
     return results.unemploymentApplication || null
+  }
+
+  async submitApplication({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps): Promise<void> {
+    const answers = application.answers as UnemploymentBenefitsAnswers
+
+    //unchanged:
+    // applicationInformation
+    // applicationAccess
+
+    const personalInformationFromService =
+      getValueViaPath<GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsUnemploymentApplicationInformation>(
+        application.externalData,
+        'unemploymentApplication.data.personalInformation',
+        {},
+      )
+
+    const personalInformationFromAnswers = {
+      ssn: answers.applicant.nationalId,
+      name: answers.applicant.name,
+      address: answers.applicant.address,
+      city: answers.applicant.city,
+      email: answers.applicant.email,
+      mobile: answers.applicant.phoneNumber,
+      phone: answers.applicant.phoneNumber,
+      passCode: answers.applicant.password,
+      currentAddressDifferent:
+        answers.applicant.otherAddressCheckbox &&
+        answers.applicant.otherAddressCheckbox[0] === 'YES',
+      currentAddress: answers.applicant.otherAddress,
+      currentPostCodeId: answers.applicant.otherPostcode,
+      postalCode: answers.applicant.postalCode,
+    }
+
+    const personalInformation = {
+      ...personalInformationFromService,
+      ...personalInformationFromAnswers,
+    }
+    console.log('personalInformation', personalInformation)
+
+    throw new Error('dont work please')
+
+    // const submitResponse: UnemploymentApplicationCreateUnemploymentApplicationRequest =
+    //   {
+    //     galdurApplicationApplicationsUnemploymentApplicationsCommandsCreateUnemploymentApplicationCreateUnemploymentApplicationCommand:
+    //       {
+    //         unemploymentApplication: {},
+    //         save: true,
+    //       },
+    //   }
+    // this.vmstUnemploymentClientService.submitApplication(auth, submitResponse)
   }
 }

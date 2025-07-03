@@ -69,7 +69,7 @@ const introductoryMeetingSchema = z.object({
   language: z.string(),
 })
 
-export const dataSchema = z.object({
+export const UnemploymentBenefitsSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicant: applicantInformationSchema,
   familyInformation: familyInformationSchema,
@@ -129,4 +129,4 @@ export const dataSchema = z.object({
     }),
 })
 
-export type ApplicationAnswers = z.TypeOf<typeof dataSchema>
+export type UnemploymentBenefits = z.TypeOf<typeof UnemploymentBenefitsSchema>

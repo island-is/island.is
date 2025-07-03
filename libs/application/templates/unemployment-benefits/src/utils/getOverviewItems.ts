@@ -2,18 +2,29 @@ import { ExternalData } from '@island.is/application/types'
 
 import { FormValue } from '@island.is/application/types'
 
-import { getValueViaPath, NO, YesOrNo } from '@island.is/application/core'
+import {
+  coreMessages,
+  getValueViaPath,
+  NO,
+  YES,
+  YesOrNo,
+  YesOrNoEnum,
+} from '@island.is/application/core'
 import { KeyValueItem } from '@island.is/application/types'
 import { overview as overviewMessages } from '../lib/messages'
 import {
   ChildrenInAnswers,
+  EducationHistoryInAnswers,
   EmploymentStatus,
+  FileInAnswers,
+  LanguagesInAnswers,
   PreviousJobInAnswers,
   WorkingAbility,
 } from '../shared'
 import * as kennitala from 'kennitala'
 import {
   getCurrentSituationString,
+  getEducationStrings,
   getJobString,
   getLocationString,
   getWorkingAbilityString,
@@ -218,14 +229,28 @@ export const useEducationHistoryOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const educationHistory = getValueViaPath(answers, 'educationHistory', [])
-  return [
-    {
+  const { formatMessage, locale } = useLocale()
+  const educationHistory =
+    getValueViaPath<Array<EducationHistoryInAnswers>>(
+      answers,
+      'educationHistory.educationHistory',
+      [],
+    ) ?? []
+
+  return educationHistory.map((item, index) => {
+    const educationStrings = getEducationStrings(item, _externalData, locale)
+    return {
       width: 'half',
-      keyText: overviewMessages.labels.employmentSearch.otherRegions,
-      valueText: getValueViaPath<string>(answers, 'applicant.name') ?? '',
-    },
-  ]
+      keyText: `${formatMessage(
+        overviewMessages.labels.educationHistory.educationHistory,
+      )} ${index + 1}`,
+      valueText: [
+        educationStrings.degree,
+        educationStrings.levelOfStudy,
+        educationStrings.courseOfStudy,
+      ],
+    }
+  })
 }
 
 export const useLicenseOverviewItems = (
@@ -236,13 +261,18 @@ export const useLicenseOverviewItems = (
     {
       width: 'half',
       keyText: overviewMessages.labels.license.drivingLicense,
-      valueText: getValueViaPath<string>(answers, 'applicant.name') ?? '',
+      valueText:
+        getValueViaPath<string>(answers, 'drivingLicense.drivingLicenseType') ??
+        '',
     },
     {
       width: 'half',
       keyText: overviewMessages.labels.license.workMachineLicense,
       valueText:
-        getValueViaPath<string>(answers, 'applicant.phoneNumber') ?? '',
+        getValueViaPath<string>(
+          answers,
+          'drivingLicense.heavyMachineryLicenses',
+        ) ?? '',
     },
   ]
 }
@@ -251,11 +281,19 @@ export const useLanguageOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
+  const allLanguages =
+    getValueViaPath<Array<LanguagesInAnswers>>(answers, 'languageSkills', []) ??
+    []
+  const allLanguageStrings = allLanguages.map(
+    (language: LanguagesInAnswers) => {
+      return `${language.language}: ${language.skill}`
+    },
+  )
   return [
     {
       width: 'full',
       keyText: overviewMessages.labels.languages.languages,
-      valueText: getValueViaPath<string>(answers, 'applicant.name') ?? '',
+      valueText: allLanguageStrings,
     },
   ]
 }
@@ -264,11 +302,14 @@ export const useEURESOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
+  const aggreement =
+    getValueViaPath<string>(answers, 'euresJobSearch.agreement') ?? ''
   return [
     {
       width: 'full',
       keyText: overviewMessages.labels.eures.eures,
-      valueText: getValueViaPath<string>(answers, 'applicant.name') ?? '',
+      valueText:
+        aggreement === YES ? coreMessages.radioYes : coreMessages.radioNo,
     },
   ]
 }
@@ -277,11 +318,26 @@ export const useResumeOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
+  const fileName =
+    getValueViaPath<Array<FileInAnswers>>(
+      answers,
+      'resume.resumeFile.file',
+      [],
+    ) ?? []
   return [
     {
       width: 'full',
       keyText: overviewMessages.labels.resume.resume,
-      valueText: getValueViaPath<string>(answers, 'applicant.name') ?? '',
+      valueText: [
+        getValueViaPath<YesOrNoEnum>(
+          answers,
+          'resume.doesOwnResume',
+          YesOrNoEnum.NO,
+        ) === YES
+          ? coreMessages.radioYes
+          : coreMessages.radioNo,
+        fileName[0]?.name,
+      ],
     },
   ]
 }
