@@ -86,6 +86,7 @@ export class AppController {
     return this.appService.updateSubpoena(policeSubpoenaId, updateSubpoena)
   }
 
+  // called by the police centralized file service
   @Patch('policeDocumentDelivery/:policeDocumentId')
   @ApiResponse({ status: 400, description: 'Invalid input' })
   @ApiResponse({
