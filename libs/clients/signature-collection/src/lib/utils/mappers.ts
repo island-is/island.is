@@ -20,7 +20,7 @@ export const collapseGovernment = (
     collectionType: CollectionType.LocalGovernmental,
   }
   for (const collection of collections) {
-    const { status, startTime, endTime, areas, candidates } = mapCollection(
+    const { status, startTime, endTime, candidates } = mapCollection(
       collection,
       participatingAreas,
     )
@@ -35,8 +35,13 @@ export const collapseGovernment = (
     }
 
     // Aggregate areas and candidates
-    localGovernmentalCollection.areas.push(...areas)
     localGovernmentalCollection.candidates.push(...candidates)
+    const area = participatingAreas.find(
+      (a) => a.id === collection.svaedi?.[0].id?.toString(),
+    )
+    if (area) {
+      area.collectionId = collection.id?.toString()
+    }
 
     if (status === CollectionStatus.Active) {
       localGovernmentalCollection.status = status
@@ -44,6 +49,7 @@ export const collapseGovernment = (
   }
   localGovernmentalCollection.startTime = earliestStart
   localGovernmentalCollection.endTime = latestEndTime
+  localGovernmentalCollection.areas = participatingAreas
 
   return localGovernmentalCollection
 }

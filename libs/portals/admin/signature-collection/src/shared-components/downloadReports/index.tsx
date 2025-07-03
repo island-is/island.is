@@ -92,7 +92,7 @@ export const DownloadReports = ({
             <Box marginLeft={5}>
               <Text variant="h4">{formatMessage(m.downloadReports)}</Text>
               <Text marginBottom={2}>
-                Texti sem útskýrir þessa aðgerð betur kemur hér.
+                {formatMessage(m.downloadReportsDescription)}
               </Text>
               <Button
                 variant="text"

@@ -179,11 +179,21 @@ export class SignatureCollectionAdminClientService
     }: CreateListInput,
     auth: Auth,
   ): Promise<Slug & Success> {
-    const { id, areas: collectionAreas } =
-      await this.getLatestCollectionForType(auth, collectionType)
+    const collection = await this.getLatestCollectionForType(
+      auth,
+      collectionType,
+    )
+    const { areas: collectionAreas } = collection
+    let id = collection.id
     // check if collectionId is current collection and current collection is open
-    if (collectionId !== id) {
+    // In case of LocalGovernmental, collectionId is different from current collection id
+    if (
+      collectionType !== CollectionType.LocalGovernmental &&
+      collectionId !== id
+    ) {
       throw new Error('Collection id input wrong')
+    } else {
+      id = collectionId
     }
 
     try {

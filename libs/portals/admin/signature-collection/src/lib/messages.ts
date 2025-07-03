@@ -84,6 +84,11 @@ export const m = defineMessages({
     defaultMessage: 'Stofna söfnun',
     description: '',
   },
+  createCollectionDescription: {
+    id: 'admin-portal.signature-collection:createCollectionDescription',
+    defaultMessage: 'Texti sem útskýrir þessa aðgerð betur kemur hér.',
+    description: '',
+  },
   createCollectionSuccess: {
     id: 'admin-portal.signature-collection:createCollectionSuccess',
     defaultMessage: 'Tókst að stofna meðmælasöfnun',
@@ -189,9 +194,24 @@ export const m = defineMessages({
       'Opnaðu fyrir meðmælasöfnun ef yfirkjörstjórn sveitarfélagsins hefur tekið þá ákvörðun að nýta sér rafræna meðmælakerfið.',
     description: '',
   },
-  confirmOpenMunicipalCollection: {
-    id: 'admin-portal.signature-collection:confirmOpenMunicipalCollection',
-    defaultMessage: 'Opna fyrir meðmælasöfnun',
+  confirmOpenMunicipalCollectionButton: {
+    id: 'admin-portal.signature-collection:confirmOpenMunicipalCollectionButton',
+    defaultMessage: 'Opna söfnun',
+    description: '',
+  },
+  municipalityCollectionOpen: {
+    id: 'admin-portal.signature-collection:municipalityCollectionOpen',
+    defaultMessage: 'Söfnun opin',
+    description: '',
+  },
+  openMunicipalCollectionSuccess: {
+    id: 'admin-portal.signature-collection:openMunicipalCollectionSuccess',
+    defaultMessage: 'Tókst að opna söfnun',
+    description: '',
+  },
+  openMunicipalCollectionError: {
+    id: 'admin-portal.signature-collection:openMunicipalCollectionError',
+    defaultMessage: 'Ekki tókst að opna söfnun',
     description: '',
   },
   noLists: {
@@ -201,7 +221,7 @@ export const m = defineMessages({
   },
   noListsDescription: {
     id: 'admin-portal.signature-collection:noListsDescription',
-    defaultMessage: 'Engin meðmælasöfnun hefur verið stöfnuð að því stöddu.',
+    defaultMessage: 'Engin meðmælasöfnun hefur verið stofnuð að því stöddu.',
     description: '',
   },
   noListsFoundBySearch: {
@@ -225,6 +245,11 @@ export const m = defineMessages({
   cancelCollectionButton: {
     id: 'admin-portal.signature-collection:cancelCollectionButton',
     defaultMessage: 'Eyða söfnun',
+    description: '',
+  },
+  cancelCollectionDescription: {
+    id: 'admin-portal.signature-collection:cancelCollectionDescription',
+    defaultMessage: 'Texti sem útskýrir þessa aðgerð betur kemur hér.',
     description: '',
   },
   cancelCollectionModalMessage: {
@@ -335,7 +360,7 @@ export const m = defineMessages({
   downloadReportsDescription: {
     id: 'admin-portal.signature-collection:downloadReportsDescription',
     defaultMessage:
-      'Hlaðið niður yfirlitsskýrslum yfir stöðu safnana í hverju kjördæmi fyrir sig eftir yfirferð.',
+      'Hlaðið niður yfirlitsskýrslum yfir stöðu safnana eftir yfirferð.',
     description: '',
   },
   downloadButton: {
@@ -471,8 +496,7 @@ export const m = defineMessages({
   },
   confirmListReviewActionDescription: {
     id: 'admin-portal.signature-collection:confirmListReviewActionDescription',
-    defaultMessage:
-      'Þegar búið er að fara yfir meðmæli er hakað við hér.',
+    defaultMessage: 'Þegar búið er að fara yfir meðmæli er hakað við hér.',
     description: '',
   },
   confirmListReviewedToggleBack: {
@@ -661,7 +685,8 @@ export const m = defineMessages({
   },
   startCollectionDescription: {
     id: 'admin-portal.signature-collection:startCollectionDescription',
-    defaultMessage: 'Opnaðu fyrir meðmælasöfnun ef yfirkjörstjórn sveitarfélagsins hefur tekið þá ákvörðun að nýta sér rafræna meðmælakerfið.',
+    defaultMessage:
+      'Opnaðu fyrir meðmælasöfnun ef yfirkjörstjórn sveitarfélagsins hefur tekið þá ákvörðun að nýta sér rafræna meðmælakerfið.',
     description: '',
   },
   startCollectionDescriptionInBox: {
@@ -729,6 +754,11 @@ export const m = defineMessages({
   reviewCandidatesModalDescription: {
     id: 'admin-portal.signature-collection:reviewCandidatesModalDescription',
     defaultMessage: 'Fara yfir lista af frambjóðendum',
+    description: '',
+  },
+  reviewCandidatesDrawerDescription: {
+    id: 'admin-portal.signature-collection:reviewCandidatesDrawerDescription',
+    defaultMessage: 'Texti sem útskýrir þessa aðgerð betur kemur hér.',
     description: '',
   },
   removeCandidateFromListModalDescription: {

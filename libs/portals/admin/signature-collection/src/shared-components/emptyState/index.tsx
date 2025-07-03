@@ -10,7 +10,7 @@ export const EmptyState = ({
 }) => {
   return (
     <Box display="flex" marginTop={10}>
-      <EmptyImageSmall style={{ maxHeight: 200 }} />
+      <EmptyImageSmall style={{ maxHeight: 160 }} />
       <Box marginLeft="containerGutter">
         <Text marginBottom={1} variant="h3">
           {title}

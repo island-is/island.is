@@ -21,6 +21,7 @@ import { getTagConfig } from '../../lib/utils'
 import ActionDrawer from '../../shared-components/actionDrawer'
 import { Actions } from '../../shared-components/actionDrawer/ListActions'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
+import EmptyState from '../../shared-components/emptyState'
 
 export const Constituency = () => {
   const { formatMessage } = useLocale()
@@ -83,44 +84,51 @@ export const Constituency = () => {
           />
           <Divider />
           <Box marginTop={9} />
-          <GridRow>
-            <GridColumn span="12/12">
-              <Box marginBottom={3} display="flex" justifyContent="flexEnd">
-                <Text variant="eyebrow">
-                  {formatMessage(m.totalListResults) +
-                    ': ' +
-                    constituencyLists.length}
-                </Text>
-              </Box>
-              <Stack space={3}>
-                {constituencyLists.map((list) => (
-                  <ActionCard
-                    key={list.id}
-                    date={format(new Date(list.endTime), 'dd.MM.yyyy HH:mm')}
-                    heading={list.candidate.name}
-                    progressMeter={{
-                      currentProgress: list.numberOfSignatures ?? 0,
-                      maxProgress: list.area.min,
-                      withLabel: true,
-                    }}
-                    cta={{
-                      label: formatMessage(m.viewList),
-                      variant: 'text',
-                      onClick: () => {
-                        navigate(
-                          SignatureCollectionPaths.ParliamentaryConstituencyList.replace(
-                            ':constituencyName',
-                            constituencyName,
-                          ).replace(':listId', list.id),
-                        )
-                      },
-                    }}
-                    tag={getTagConfig(list)}
-                  />
-                ))}
-              </Stack>
-            </GridColumn>
-          </GridRow>
+          {constituencyLists.length === 0 ? (
+            <EmptyState
+              title={formatMessage(m.noLists) + ' í ' + constituencyName}
+              description={formatMessage(m.noListsDescription)}
+            />
+          ) : (
+            <GridRow>
+              <GridColumn span="12/12">
+                <Box marginBottom={3} display="flex" justifyContent="flexEnd">
+                  <Text variant="eyebrow">
+                    {formatMessage(m.totalListResults) +
+                      ': ' +
+                      constituencyLists.length}
+                  </Text>
+                </Box>
+                <Stack space={3}>
+                  {constituencyLists.map((list) => (
+                    <ActionCard
+                      key={list.id}
+                      date={format(new Date(list.endTime), 'dd.MM.yyyy HH:mm')}
+                      heading={list.candidate.name}
+                      progressMeter={{
+                        currentProgress: list.numberOfSignatures ?? 0,
+                        maxProgress: list.area.min,
+                        withLabel: true,
+                      }}
+                      cta={{
+                        label: formatMessage(m.viewList),
+                        variant: 'text',
+                        onClick: () => {
+                          navigate(
+                            SignatureCollectionPaths.ParliamentaryConstituencyList.replace(
+                              ':constituencyName',
+                              constituencyName,
+                            ).replace(':listId', list.id),
+                          )
+                        },
+                      }}
+                      tag={getTagConfig(list)}
+                    />
+                  ))}
+                </Stack>
+              </GridColumn>
+            </GridRow>
+          )}
         </GridColumn>
       </GridRow>
     </GridContainer>
