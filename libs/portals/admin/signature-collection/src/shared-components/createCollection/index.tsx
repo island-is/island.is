@@ -48,12 +48,10 @@ const CreateCollection = ({
 
   // Find the area by name if we have an area name
   const currentArea =
-    collectionType === SignatureCollectionCollectionType.Parliamentary &&
-    areaName
+    collectionType === SignatureCollectionCollectionType.Parliamentary ||
+    (collectionType === SignatureCollectionCollectionType.LocalGovernmental &&
+      areaName)
       ? collection.areas.find((area) => area.name === areaName)
-      : collectionType ===
-          SignatureCollectionCollectionType.LocalGovernmental && areaName
-      ? allLists.find((list) => list.area.name === areaName)?.area || null
       : null
 
   const { formatMessage } = useLocale()
@@ -75,7 +73,7 @@ const CreateCollection = ({
     variables: {
       input: {
         collectionType: collectionType,
-        collectionId: id,
+        collectionId: currentArea?.collectionId || '',
         collectionName: collectionName || undefined,
         owner: {
           name: name,
