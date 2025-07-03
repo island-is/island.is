@@ -56,6 +56,7 @@ export { default as Loading } from './Loading/Loading'
 export { default as Logo } from './Logo/Logo'
 export { default as MarkdownWrapper } from './MarkdownWrapper/MarkdownWrapper'
 export { default as Modal } from './Modals/Modal/Modal'
+
 export { default as MultipleValueList } from './MultipleValueList/MultipleValueList'
 export { default as PageHeader } from './PageHeader/PageHeader'
 export { default as PageLayout } from './PageLayout/PageLayout'
@@ -88,7 +89,6 @@ export {
   useRequestRulingSignature,
 } from './Modals/SigningModal/SigningModal'
 export { default as Skeleton } from './Skeleton/Skeleton'
-export { default as TimeInputField } from './TimeInputField/TimeInputField'
 export { UserProvider, UserContext, userRef } from './UserProvider/UserProvider'
 export {
   ViewportProvider,
@@ -96,6 +96,8 @@ export {
   type Rect,
 } from './ViewportProvider/ViewportProvider'
 export { default as FileNotFoundModal } from './Modals/FileNotFoundModal/FileNotFoundModal'
+export { default as SearchModal } from './Modals/SearchModal/SearchModal'
+
 export { default as AppealCaseFilesOverview } from './AppealCaseFilesOverview/AppealCaseFilesOverview'
 export { default as Conclusion } from './Conclusion/Conclusion'
 export { conclusion } from './Conclusion/Conclusion.strings'
@@ -130,3 +132,4 @@ export { default as RequiredStar } from './RequiredStar/RequiredStar'
 export { VictimInfo } from './VictimInfo/VictimInfo'
 export { LabelValue } from './LabelValue/LabelValue'
 export { default as IconButton } from './IconButton/IconButton'
+export { LawyerRegistryContext } from './LawyerRegistryProvider/LawyerRegistryProvider'
