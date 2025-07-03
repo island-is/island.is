@@ -35,7 +35,7 @@ export class DefenderController {
     try {
       this.logger.debug('Retrieving litigators from lawyer registry')
 
-      const lawyers = await this.lawyersService.getLawyers(
+      const lawyers = await this.lawyersService.getLawyersBackend(
         LawyerType.LITIGATORS,
       )
 
@@ -61,7 +61,7 @@ export class DefenderController {
     try {
       this.logger.debug(`Retrieving lawyer by national id ${nationalId}`)
 
-      const lawyer = await this.lawyersService.getLawyer(nationalId)
+      const lawyer = await this.lawyersService.getLawyerBackend(nationalId)
       return {
         nationalId: lawyer.SSN,
         name: lawyer.Name,
