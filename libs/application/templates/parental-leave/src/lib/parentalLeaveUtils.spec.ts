@@ -437,7 +437,7 @@ describe('getMaxMultipleBirthsDays', () => {
 
     const res = getMaxMultipleBirthsDays(application.answers)
 
-    expect(res).toEqual(180)
+    expect(res).toEqual(360)
   })
 })
 
@@ -455,7 +455,7 @@ describe('getMaxMultipleBirthsInMonths', () => {
 
     const res = getMaxMultipleBirthsInMonths(application.answers)
 
-    expect(res).toEqual(3)
+    expect(res).toEqual(6)
   })
 })
 
@@ -1064,7 +1064,7 @@ describe('Single Parent', () => {
 
     const res = getAvailableRightsInDays(application)
 
-    expect(res).toBe(450)
+    expect(res).toBe(540)
   })
 
   it('getAvailablePersonalRightsSingleParentInMonths - should return 12 months for single parents', () => {
