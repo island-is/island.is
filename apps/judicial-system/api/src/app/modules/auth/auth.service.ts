@@ -10,7 +10,11 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
 import { LawyersService } from '@island.is/judicial-system/lawyers'
-import { type User, UserRole } from '@island.is/judicial-system/types'
+import {
+  mapToLawyer,
+  type User,
+  UserRole,
+} from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
 import { authModuleConfig } from './auth.config'
@@ -183,9 +187,13 @@ export class AuthService {
     // case list for them to avoid confusion about them not having access to
     // the judicial system
     try {
-      const lawyerRegistryInfo = await this.lawyersService.getLawyerBackend(
+      const lawyerRegistryResponse = await this.lawyersService.getLawyerBackend(
         nationalId,
       )
+
+      const lawyerRegistryInfo = {
+        ...mapToLawyer(lawyerRegistryResponse),
+      }
 
       if (lawyerRegistryInfo && lawyerRegistryInfo.nationalId === nationalId) {
         return [

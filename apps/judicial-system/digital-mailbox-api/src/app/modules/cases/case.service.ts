@@ -161,7 +161,7 @@ export class CaseService {
         )
       }
 
-      chosenLawyer = await this.lawyersService.getLawyer(
+      chosenLawyer = await this.lawyersService.getLawyerBackend(
         defenderAssignment.defenderNationalId,
       )
 
