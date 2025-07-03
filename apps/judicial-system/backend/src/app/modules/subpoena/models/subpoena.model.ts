@@ -25,20 +25,6 @@ import { Defendant } from '../../defendant/models/defendant.model'
   timestamps: true,
 })
 export class Subpoena extends Model {
-  static serviceStatusText(serviceStatus: ServiceStatus) {
-    return serviceStatus === ServiceStatus.DEFENDER
-      ? 'Birt fyrir verjanda'
-      : serviceStatus === ServiceStatus.ELECTRONICALLY
-      ? 'Birt rafrænt'
-      : serviceStatus === ServiceStatus.IN_PERSON
-      ? 'Birt persónulega'
-      : serviceStatus === ServiceStatus.FAILED
-      ? 'Árangurslaus birting'
-      : serviceStatus === ServiceStatus.EXPIRED
-      ? 'Rann út á tíma'
-      : 'Í birtingarferli' // This should never happen
-  }
-
   @Column({
     type: DataType.UUID,
     primaryKey: true,
