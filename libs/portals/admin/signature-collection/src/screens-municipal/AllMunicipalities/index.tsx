@@ -31,7 +31,7 @@ const AllMunicipalities = ({
 }: {
   isProcurationHolder: boolean
 }) => {
-  const { collection } = useLoaderData() as ListsLoaderReturn
+  const { collection, allLists } = useLoaderData() as ListsLoaderReturn
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
   const { revalidate } = useRevalidator()
@@ -130,7 +130,10 @@ const AllMunicipalities = ({
                   key={area.id}
                   heading={area.name}
                   eyebrow={formatMessage(m.municipality)}
-                  text={formatMessage(m.totalListsPerMunicipality) + 'TODO'}
+                  text={
+                    formatMessage(m.totalListsPerMunicipality) +
+                    allLists.filter((list) => list.area.id === area.id).length
+                  }
                   cta={{
                     label: formatMessage(m.viewMunicipality),
                     variant: 'text',

@@ -52,14 +52,16 @@ export const signatureCollectionModule: PortalModule = {
       path: SignatureCollectionPaths.MunicipalRoot,
       element: (
         <AllMunicipalities
-          isProcurationHolder={props.userInfo.scopes.some(
-            // If the user is NOT an admin (LKS or ÞÍ) & have a procuration holder delegation type
-            (scope) =>
-              !allowedScopesAdmin.includes(scope) &&
-              props.userInfo.profile.delegationType?.includes(
-                AuthDelegationType.ProcurationHolder,
-              ),
-          )}
+          // If the user is NOT an admin (LKS or ÞÍ) & have a procuration holder delegation type
+          isProcurationHolder={
+            !props.userInfo.scopes.some(
+              (scope) =>
+                allowedScopesAdmin.includes(scope) &&
+                props.userInfo.profile.delegationType?.includes(
+                  AuthDelegationType.ProcurationHolder,
+                ),
+            )
+          }
         />
       ),
       loader: municipalListsLoader(props),
