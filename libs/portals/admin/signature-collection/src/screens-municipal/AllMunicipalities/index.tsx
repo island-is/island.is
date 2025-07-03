@@ -25,6 +25,7 @@ import FindSignature from '../../shared-components/findSignature'
 import EmptyState from '../../shared-components/emptyState'
 import StartAreaCollection from './startCollection'
 import { useStartCollectionMutation } from './startCollection/startCollection.generated'
+import sortBy from 'lodash/sortBy'
 
 const AllMunicipalities = ({
   isProcurationHolder,
@@ -124,7 +125,7 @@ const AllMunicipalities = ({
               <StartAreaCollection areaId={collection.areas[0]?.id} />
             )}
           <Stack space={3}>
-            {collection.areas.map((area) => {
+            {sortBy(collection.areas, 'name').map((area) => {
               return (
                 <ActionCard
                   key={area.id}
