@@ -2,7 +2,7 @@
 
 ## About
 
-Application for secondary school
+Application for secondary school. Applicants can apply for up to 3 different schools and select 1-2 tracks (braut) within those schools. The application period is decided by MMS, during this period applicants should be able to make changes to their existing application and only the latest submitted version is considered by MMS.
 
 ## URLs
 
