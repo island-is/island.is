@@ -182,7 +182,7 @@ export const m = {
       defaultMessage: 'Allir stofnanir',
     },
     allYears: {
-      id: 'web.ojoi:search.allyears',
+      id: 'web.ojoi:search.allYears',
       defaultMessage: 'Öll ár',
     },
 
