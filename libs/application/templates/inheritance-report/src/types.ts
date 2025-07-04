@@ -194,8 +194,8 @@ export interface RealEstate {
 }
 
 export interface OtherAssetsData extends DeceasedShare {
-  info: string
-  value: string
+  description: string
+  propertyValuation: string
   taxFreeInheritance: number
 }
 export interface OtherAssets {

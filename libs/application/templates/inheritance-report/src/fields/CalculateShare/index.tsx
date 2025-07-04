@@ -214,7 +214,7 @@ export const CalculateShare: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     const otherAssets: CalcShared = (
       (answers.assets as unknown as EstateAssets)?.otherAssets?.data ?? []
     ).map((item) => {
-      const value = valueToNumber(item.value)
+      const value = valueToNumber(item.propertyValuation)
       const deceasedShare = valueToNumber(item.deceasedShare)
       const { shareValue, deceasedShareValue } = getShareValue(
         value,
