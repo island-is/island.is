@@ -31,7 +31,7 @@ export class FriggOrganizationModel {
   gradeLevels?: string[]
 
   @Field(() => [FriggOrganizationModel], { nullable: true })
-  children?: FriggOrganizationModel[]
+  managing?: FriggOrganizationModel[]
 
   @Field({ nullable: true })
   unitId?: string

@@ -41,7 +41,7 @@ export const School = ({
   )
   const selectedSchoolName = useMemo(() => {
     return data?.friggSchoolsByMunicipality
-      ?.flatMap((municipality) => municipality.children)
+      ?.flatMap((municipality) => municipality.managing)
       .find((school) => school?.id === selectedSchool)?.name
   }, [data, selectedSchool])
 
