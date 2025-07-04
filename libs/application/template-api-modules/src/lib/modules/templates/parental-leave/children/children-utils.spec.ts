@@ -367,7 +367,7 @@ describe('getChildren', () => {
       applicationsWhereOtherParent,
       pregnancyStatus,
     )
-    expect(result[0].multipleBirthsDays).toBe(70)
+    expect(result[0].multipleBirthsDays).toBe(250)
   })
 
   it('should return the number of days requested and "common" days is 0 by the primary parent', () => {
@@ -389,7 +389,7 @@ describe('getChildren', () => {
           hasMultipleBirths: 'yes',
           multipleBirths: 2,
         },
-        multipleBirthsRequestDays: 90,
+        multipleBirthsRequestDays: 180,
         requestRights: {
           isRequestingRights: 'yes',
           requestDays: 30,
@@ -445,7 +445,7 @@ describe('getChildren', () => {
       pregnancyStatus,
     )
     expect(result[0].transferredDays).toBe(0)
-    expect(result[0].multipleBirthsDays).toBe(45)
+    expect(result[0].multipleBirthsDays).toBe(135)
   })
 
   it('should return the number of days given and "common" days by the primary parent', () => {
@@ -486,7 +486,7 @@ describe('getChildren', () => {
       pregnancyStatus,
     )
 
-    expect(result[0].multipleBirthsDays).toBe(90)
+    expect(result[0].multipleBirthsDays).toBe(180)
     expect(result[0].transferredDays).toBe(45)
   })
 
@@ -528,7 +528,7 @@ describe('getChildren', () => {
       pregnancyStatus,
     )
 
-    expect(result[0].multipleBirthsDays).toBe(80)
+    expect(result[0].multipleBirthsDays).toBe(260)
     expect(result[0].transferredDays).toBe(0)
   })
 })
