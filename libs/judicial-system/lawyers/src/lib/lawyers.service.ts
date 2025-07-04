@@ -4,8 +4,11 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 
+import { LawyerFull, LawyerRegistry } from '@island.is/judicial-system/types'
+
 import { lawyersModuleConfig } from './lawyers.config'
-import { LawyerRegistryResponse, LawyerType } from './lawyers.types'
+import { LawyerType } from './lawyers.types'
+
 @Injectable()
 export class LawyersService {
   constructor(
@@ -15,7 +18,7 @@ export class LawyersService {
     private readonly logger: Logger,
   ) {}
 
-  async getLawyers(lawyerType?: LawyerType): Promise<LawyerRegistryResponse[]> {
+  async getLawyersFromLFMI(lawyerType?: LawyerType): Promise<LawyerFull[]> {
     const response = await fetch(
       `${this.config.lawyerRegistryAPI}/lawyers${
         lawyerType && lawyerType === LawyerType.LITIGATORS ? '?verjendur=1' : ''
@@ -37,15 +40,25 @@ export class LawyersService {
     throw new Error(reason)
   }
 
-  async getLawyer(nationalId: string): Promise<LawyerRegistryResponse> {
+  async getLawyers(lawyerType?: LawyerType): Promise<LawyerRegistry[]> {
     const response = await fetch(
-      `${this.config.lawyerRegistryAPI}/lawyer/${nationalId}`,
-      {
-        headers: {
-          Authorization: `Basic ${this.config.lawyerRegistryAPIKey}`,
-          Accept: 'application/json',
-        },
-      },
+      `${this.config.backendUrl}/lawyer-registry${
+        lawyerType ? `?${lawyerType}` : ''
+      }`,
+    )
+
+    if (response.ok) {
+      return response.json()
+    }
+
+    const reason = await response.text()
+    this.logger.info('Failed to get lawyers from lawyer registry:', reason)
+    throw new Error(reason)
+  }
+
+  async getLawyer(nationalId: string): Promise<LawyerRegistry> {
+    const response = await fetch(
+      `${this.config.backendUrl}/lawyer/${nationalId}`,
     )
 
     if (response.ok) {

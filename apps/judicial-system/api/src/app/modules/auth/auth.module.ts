@@ -1,12 +1,13 @@
 import { Module } from '@nestjs/common'
 
+import { LawyersModule } from '@island.is/judicial-system/lawyers'
+
 import { BackendModule } from '../backend/backend.module'
-import { DefenderModule } from '../defender'
 import { AuthController } from './auth.controller'
 import { AuthService } from './auth.service'
 
 @Module({
-  imports: [DefenderModule, BackendModule],
+  imports: [BackendModule, LawyersModule],
   controllers: [AuthController],
   providers: [AuthService],
 })

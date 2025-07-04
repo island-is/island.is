@@ -172,7 +172,7 @@ export class AppService {
   private async resetLawyerRegistry() {
     try {
       const res = await fetch(
-        `${this.config.backendUrl}/api/lawyer-registry/reset`,
+        `${this.config.backendUrl}/lawyer-registry/reset`,
         {
           method: 'POST',
           headers: {

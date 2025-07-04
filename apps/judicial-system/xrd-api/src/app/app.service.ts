@@ -127,7 +127,6 @@ export class AppService {
           defenderPhoneNumber: chosenLawyer.Phone,
         }
       } catch (reason) {
-        // TODO: Reconsider throwing - what happens if registry is down?
         this.logger.error(
           `Failed to retrieve lawyer with national id ${updateSubpoena.defenderNationalId}`,
           reason,

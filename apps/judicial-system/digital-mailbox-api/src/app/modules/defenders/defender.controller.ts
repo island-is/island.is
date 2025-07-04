@@ -40,9 +40,9 @@ export class DefenderController {
       )
 
       return lawyers.map((lawyer) => ({
-        nationalId: lawyer.SSN,
-        name: lawyer.Name,
-        practice: lawyer.Practice,
+        nationalId: lawyer.nationalId,
+        name: lawyer.name,
+        practice: lawyer.practice,
       }))
     } catch (error) {
       this.logger.error('Failed to retrieve lawyers', error)
@@ -63,9 +63,9 @@ export class DefenderController {
 
       const lawyer = await this.lawyersService.getLawyer(nationalId)
       return {
-        nationalId: lawyer.SSN,
-        name: lawyer.Name,
-        practice: lawyer.Practice,
+        nationalId: lawyer.nationalId,
+        name: lawyer.name,
+        practice: lawyer.practice,
       }
     } catch (error) {
       if (error instanceof NotFoundException) {

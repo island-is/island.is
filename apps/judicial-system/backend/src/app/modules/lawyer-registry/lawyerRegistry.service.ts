@@ -1,12 +1,13 @@
 import { plainToClass } from 'class-transformer'
 import { validate } from 'class-validator'
-import type { Transaction } from 'sequelize'
+import type { Transaction, WhereOptions } from 'sequelize'
 import { Sequelize } from 'sequelize'
 
 import {
   Inject,
   Injectable,
   InternalServerErrorException,
+  NotFoundException,
 } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
@@ -45,7 +46,7 @@ export class LawyerRegistryService {
 
   private async getLawyerRegistry(lawyerType?: LawyerType) {
     try {
-      const lawyers = await this.lawyersService.getLawyers(lawyerType)
+      const lawyers = await this.lawyersService.getLawyersFromLFMI(lawyerType)
 
       if (lawyers.length === 0) {
         throw new InternalServerErrorException(
@@ -111,6 +112,54 @@ export class LawyerRegistryService {
       this.logger.error('Error populating lawyer registry', error)
 
       throw new InternalServerErrorException('Error populating lawyer registry')
+    }
+  }
+
+  async getAll(lawyerType: LawyerType) {
+    try {
+      const whereOptions: WhereOptions | undefined =
+        lawyerType === LawyerType.LITIGATORS
+          ? {
+              isLitigator: true,
+            }
+          : undefined
+
+      const lawyers = await this.lawyerRegistryModel.findAll({
+        where: whereOptions,
+      })
+
+      return lawyers
+    } catch (error) {
+      this.logger.error('Error getting all lawyers from lawyer registry', error)
+
+      throw new InternalServerErrorException(
+        'Error getting all lawyers from lawyer registry',
+      )
+    }
+  }
+
+  async getByNationalId(nationalId: string) {
+    try {
+      const lawyer = await this.lawyerRegistryModel.findOne({
+        where: {
+          nationalId,
+        },
+      })
+
+      if (!lawyer) {
+        throw new NotFoundException()
+      }
+
+      return lawyer
+    } catch (error) {
+      this.logger.error(
+        `Error getting lawyer with national id ${nationalId}`,
+        error,
+      )
+
+      throw new InternalServerErrorException(
+        `Error getting lawyer with national id ${nationalId}`,
+      )
     }
   }
 }

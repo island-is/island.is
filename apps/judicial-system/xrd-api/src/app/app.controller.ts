@@ -61,9 +61,9 @@ export class AppController {
       )
 
       return lawyers.map((lawyer) => ({
-        nationalId: lawyer.SSN,
-        name: lawyer.Name,
-        practice: lawyer.Practice,
+        nationalId: lawyer.nationalId,
+        name: lawyer.name,
+        practice: lawyer.practice,
       }))
     } catch (error) {
       this.logger.error('Failed to retrieve lawyers', error)
