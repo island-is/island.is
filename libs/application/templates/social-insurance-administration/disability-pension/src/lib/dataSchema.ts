@@ -154,15 +154,27 @@ export const dataSchema = z.object({
     }
   ),
   backgroundInfoEmploymentCapability: z.object({
-    capability: z
-        .string()
-        .refine(
-          (data): data is string =>
-            typeof data === 'string' &&
-            !isNaN(Number(data)) &&
-            (data.length === 3 || data.length === 0),
-        ),
-  }),
+    capability: z.preprocess(
+      (value) => {
+        if (typeof value === 'string' && value !== "") {
+          const number = Number.parseInt(value as string, 10);
+          return isNaN(number) ? undefined : number
+        }
+      },
+      z.number({ required_error: 'capability must be a valid number' })
+    ),
+  }).refine(
+    ({ capability }) => {
+      if (capability < 0 || capability > 100) {
+        return false
+      }
+      return true
+    },
+    {
+      path: ['capability'],
+      params: disabilityPensionFormMessage.errors.capabilityBetween0And100,
+    }
+  ),
   backgroundInfoEmploymentImportance: z.nativeEnum(EmploymentImportanceEnum),
   backgroundInfoRehabilitationOrTherapy: z.enum([YES, NO]),
   backgroundInfoBiggestIssue: z.string(),

@@ -875,5 +875,10 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
       defaultMessage: 'Nauðsynlegt er að velja a.m.k einn valkost eða útskýra í texta',
       description: 'You must select at least one option or provide a description',
     },
+    capabilityBetween0And100: {
+      id: 'dp.application:errors.capabilityBetween0And100',
+      defaultMessage: 'Starfsgeta þarf að vera á bilinu 0-100',
+      description: 'Todo',
+    },
   }),
 }
