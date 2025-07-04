@@ -15,9 +15,8 @@ const applicantSchema = z
     nationalId: z
       .string()
       .refine((nationalId) => nationalId && kennitala.isValid(nationalId)),
-    nationalAddress: z.string().min(1),
     address: z.string().min(1),
-    postalCode: z.string().min(1),
+    //postalCode: z.string().min(1),
     city: z.string().min(1),
     //email: z.string().email(),
     //phoneNumber: z.string().refine((v) => isValidPhoneNumber(v)),
@@ -26,7 +25,7 @@ const applicantSchema = z
     other: z
       .object({
         address: z.string().optional(),
-        // postalCode: z.string().optional(),
+        postalCode: z.string().optional(),
       })
       .optional(),
   })
@@ -54,9 +53,9 @@ const applicantSchema = z
 // )
 
 const paymentInformationSchema = z.object({
-  bankNumber: z.string().min(1),
-  ledger: z.string().min(1),
-  accountNumber: z.string().min(1),
+  bankNumber: z.string().regex(/^\d{4}$/),
+  ledger: z.string().regex(/^\d{2}$/),
+  accountNumber: z.string().regex(/^\d{6}$/),
 })
 
 const jobHistorySchema = z.object({

@@ -86,7 +86,7 @@ const template: ApplicationTemplate<
               api: [
                 IdentityApi,
                 UserProfileApi,
-                //WorkMachineLicensesApi,
+                // WorkMachineLicensesApi,
                 // DrivingLicenseApi,
                 ActivationAllowanceApi,
               ],

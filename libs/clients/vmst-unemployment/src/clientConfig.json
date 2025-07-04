@@ -281,6 +281,42 @@
         ]
       }
     },
+    "/api/ActivationGrant/canapply/{applicantSSN}": {
+      "get": {
+        "tags": [
+          "ActivationGrant"
+        ],
+        "operationId": "ActivationGrant_CanApply",
+        "parameters": [
+          {
+            "name": "applicantSSN",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string"
+            },
+            "x-position": 1
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "boolean"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
     "/api/ApplicantInfo/getApplicantInfoForRVK/{ssn}": {
       "get": {
         "tags": [
@@ -1905,6 +1941,9 @@
               "visibleInMyDocumentsMS": {
                 "type": "boolean"
               },
+              "visibleInApplicationDataRequest": {
+                "type": "boolean"
+              },
               "locked": {
                 "type": "boolean"
               },
@@ -3058,6 +3097,13 @@
               "$ref": "#/components/schemas/Galdur_Domain_Models_EducationItem"
             }
           },
+          "educationPrograms": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Galdur_Domain_Models_EducationProgramDTO"
+            }
+          },
           "drivingLicenses": {
             "type": "array",
             "nullable": true,
@@ -3208,6 +3254,14 @@
             "nullable": true,
             "items": {
               "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_IntroductoryMeetingLanguage_IntroductoryMeetingLanguageDTO"
+            }
+          },
+          "privatePensionFundPercents": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "integer",
+              "format": "int32"
             }
           }
         }
@@ -3456,6 +3510,74 @@
             "nullable": true
           },
           "relationId": {
+            "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Galdur_Domain_Models_EducationProgramDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "english": {
+            "type": "string",
+            "nullable": true
+          },
+          "degrees": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Galdur_Domain_Models_Education_EducationDegreeDTO"
+            }
+          }
+        }
+      },
+      "Galdur_Domain_Models_Education_EducationDegreeDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "english": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "subjects": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Galdur_Domain_Models_Education_EducationSubjectDTO"
+            }
+          }
+        }
+      },
+      "Galdur_Domain_Models_Education_EducationSubjectDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "name": {
+            "type": "string",
+            "nullable": true
+          },
+          "id": {
+            "type": "string",
+            "nullable": true
+          },
+          "degreeId": {
             "type": "string",
             "nullable": true
           }
@@ -4079,6 +4201,15 @@
           },
           "statusColor": {
             "type": "string",
+            "nullable": true
+          },
+          "lastVerdict": {
+            "type": "string",
+            "nullable": true
+          },
+          "lastVerdictDate": {
+            "type": "string",
+            "format": "date-time",
             "nullable": true
           }
         }
@@ -6958,6 +7089,13 @@
               "$ref": "#/components/schemas/Galdur_Domain_Models_EducationItem"
             }
           },
+          "educationPrograms": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Galdur_Domain_Models_EducationProgramDTO"
+            }
+          },
           "drivingLicenses": {
             "type": "array",
             "nullable": true,
@@ -7136,6 +7274,14 @@
             "nullable": true,
             "items": {
               "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_IntroductoryMeetingLanguage_IntroductoryMeetingLanguageDTO"
+            }
+          },
+          "privatePensionFundPercents": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "type": "integer",
+              "format": "int32"
             }
           }
         }

@@ -12,7 +12,7 @@ import { Application } from '@island.is/application/types'
 import { applicant } from '../../lib/messages'
 import { applicantInformationMultiField } from '@island.is/application/ui-forms'
 import { GaldurDomainModelsSettingsPostcodesPostcodeDTO } from '@island.is/clients/vmst-unemployment'
-import { isOtherAddressChecked } from '../../utils'
+import { isSamePlaceOfResidenceChecked } from '../../utils'
 
 export const applicantSection = buildSection({
   id: 'applicantSection',
@@ -27,8 +27,8 @@ export const applicantSection = buildSection({
           emailRequired: true,
           phoneRequired: true,
           phoneEnableCountrySelector: true,
-          readOnlyEmailAndPhone: true,
-          readOnly: true,
+          baseInfoReadOnly: true,
+          emailAndPhoneReadOnly: true,
         }).children,
         buildCheckboxField({
           id: 'applicant.isSamePlaceOfResidence',
@@ -41,13 +41,14 @@ export const applicantSection = buildSection({
               label: applicant.labels.checkboxLabel,
             },
           ],
+          // TODO Clear on change ??
         }),
         buildTextField({
           id: 'applicant.other.address',
           title: applicant.labels.address,
           width: 'half',
           required: true,
-          condition: isOtherAddressChecked,
+          condition: isSamePlaceOfResidenceChecked,
         }),
         buildSelectField({
           id: 'applicant.other.postalCode',
@@ -59,8 +60,9 @@ export const applicantSection = buildSection({
               GaldurDomainModelsSettingsPostcodesPostcodeDTO[]
             >(
               application.externalData,
-              'unemploymentApplication.data.supportData.postCodes',
+              'activityGrantApplication.data.activationGrant.supportData.postCodes',
             )
+
             return (
               nameAndPostcode
                 ?.filter(
@@ -74,7 +76,7 @@ export const applicantSection = buildSection({
                 }) ?? []
             )
           },
-          condition: isOtherAddressChecked,
+          condition: isSamePlaceOfResidenceChecked,
         }),
         buildAlertMessageField({
           id: 'applicant.passwordDescription',
