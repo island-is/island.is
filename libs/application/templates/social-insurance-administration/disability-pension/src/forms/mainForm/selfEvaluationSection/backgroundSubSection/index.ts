@@ -31,9 +31,9 @@ export const backgroundInfoSubSection =
      //employmentField,
       //previousEmploymentField,
       //educationLevelField, //TODO - need data from service
-      employmentCapabilityField,
-      employmentImportanceField,
-      rehabilitationOrTherapyField,
+      //employmentCapabilityField,
+      //employmentImportanceField,
+      //rehabilitationOrTherapyField,
       biggestIssueField,
     ],
   })

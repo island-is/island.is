@@ -175,9 +175,15 @@ export const dataSchema = z.object({
       params: disabilityPensionFormMessage.errors.capabilityBetween0And100,
     }
   ),
-  backgroundInfoEmploymentImportance: z.nativeEnum(EmploymentImportanceEnum),
-  backgroundInfoRehabilitationOrTherapy: z.enum([YES, NO]),
-  backgroundInfoBiggestIssue: z.string(),
+  backgroundInfoEmploymentImportance: z.object({
+    importance: z.nativeEnum(EmploymentImportanceEnum),
+  }),
+  backgroundInfoRehabilitationOrTherapy: z.object({
+    rehabilitationOrTherapy: z.enum([YES, NO]),
+  }),
+  backgroundInfoBiggestIssue: z.object({
+    text: z.string(),
+  }),
   backgroundInfoEducationLevel: z.object({
     level: z.string()
   }),
