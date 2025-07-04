@@ -91,6 +91,7 @@ export type RepeaterFields =
   | 'hiddenInput'
   | 'alertMessage'
   | 'vehiclePermnoWithInfo'
+  | 'description'
 
 type RepeaterOption = { label: StaticText; value: string; tooltip?: StaticText }
 
@@ -106,7 +107,19 @@ type MaybeWithApplicationAndActiveField<T> =
   | T
   | ((application: Application, activeField?: Record<string, string>) => T)
 
+type MaybeWithApplicationAndActiveFieldAndIndex<T> =
+  | T
+  | ((
+      application: Application,
+      activeField?: Record<string, string>,
+      index?: number,
+    ) => T)
+
 type MaybeWithIndex<T> = T | ((index: number) => T)
+
+type MaybeWithIndexAndApplication<T> =
+  | T
+  | ((index: number, application: Application) => T)
 
 type MaybeWithAnswersAndExternalData<T> =
   | T
@@ -146,7 +159,7 @@ export type RepeaterItem = {
   readonly?: MaybeWithApplicationAndActiveField<boolean>
   disabled?: MaybeWithApplicationAndActiveField<boolean>
   isClearable?: MaybeWithApplicationAndActiveField<boolean>
-  defaultValue?: MaybeWithApplicationAndActiveField<unknown>
+  defaultValue?: MaybeWithApplicationAndActiveFieldAndIndex<unknown>
   updateValueObj?: {
     valueModifier: (
       application: Application,
@@ -252,6 +265,11 @@ export type RepeaterItem = {
       errorTitle?: FormText
       fallbackErrorMessage?: FormText
       validationFailedErrorMessage?: FormText
+    }
+  | {
+      component: 'description'
+      title: StaticText
+      titleVariant?: TitleVariants
     }
 )
 
@@ -789,12 +807,16 @@ export type FieldsRepeaterField = BaseField & {
   readonly type: FieldTypes.FIELDS_REPEATER
   component: FieldComponents.FIELDS_REPEATER
   titleVariant?: TitleVariants
-  formTitle?: MaybeWithIndex<StaticText>
+  formTitle?: MaybeWithIndexAndApplication<StaticText>
   formTitleVariant?: TitleVariants
   formTitleNumbering?: 'prefix' | 'suffix' | 'none'
   removeItemButtonText?: StaticText
   addItemButtonText?: StaticText
   saveItemButtonText?: StaticText
+  hideRemoveButton?: boolean
+  hideAddButton?: boolean
+  displayTitleAsAccordion?: boolean
+  itemCondition?: MaybeWithIndexAndApplication<boolean>
   fields: Record<string, RepeaterItem>
   /**
    * Maximum rows that can be added to the table.
