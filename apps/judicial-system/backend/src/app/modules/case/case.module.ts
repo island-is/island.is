@@ -19,6 +19,7 @@ import {
   UserModule,
   VictimModule,
 } from '../index'
+import { VerdictModule } from '../verdict/verdict.module'
 import { Case } from './models/case.model'
 import { CaseArchive } from './models/caseArchive.model'
 import { CaseString } from './models/caseString.model'
@@ -38,6 +39,7 @@ import { PdfService } from './pdf.service'
     MessageModule,
     forwardRef(() => DefendantModule),
     forwardRef(() => SubpoenaModule),
+    forwardRef(() => VerdictModule),
     forwardRef(() => UserModule),
     forwardRef(() => FileModule),
     forwardRef(() => IndictmentCountModule),
