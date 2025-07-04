@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 import { InputMask } from '@react-input/mask'
 
 import { Box, Icon, Input, Select, Tag } from '@island.is/island-ui/core'
+import { SUBSTANCE_ALCOHOL } from '@island.is/judicial-system/consts'
 import { SubstanceMap } from '@island.is/judicial-system/types'
 import { SectionHeading } from '@island.is/judicial-system-web/src/components'
 import {
@@ -254,7 +255,7 @@ export const Offenses = ({
           <InputMask
             component={Input}
             replacement={{ _: /\d/ }}
-            mask="_,__"
+            mask={SUBSTANCE_ALCOHOL}
             value={drunkDrivingOffense.substances?.ALCOHOL ?? ''}
             onChange={async (event) => {
               const alcoholValue = event.target.value
