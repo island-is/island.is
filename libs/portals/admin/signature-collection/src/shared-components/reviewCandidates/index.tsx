@@ -79,7 +79,7 @@ const ReviewCandidates = ({
                 {formatMessage(m.reviewCandidatesModalDescription)}
               </Text>
               <Text marginBottom={2}>
-                Texti sem útskýrir þessa aðgerð betur kemur hér.
+                {formatMessage(m.reviewCandidatesDrawerDescription)}
               </Text>
               <Button
                 variant="text"
