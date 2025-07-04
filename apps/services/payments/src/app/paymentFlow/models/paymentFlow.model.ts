@@ -10,14 +10,22 @@ import {
   DataType,
   ForeignKey,
   HasMany,
+  HasOne,
   Model,
   PrimaryKey,
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
+import { PaymentFlowFjsChargeConfirmation } from './paymentFlowFjsChargeConfirmation.model'
 
 @Table({
   tableName: 'payment_flow_charge',
+  indexes: [
+    {
+      name: 'payment_flow_charge_payment_flow_id_idx',
+      fields: ['payment_flow_id'],
+    },
+  ],
 })
 export class PaymentFlowCharge extends Model<
   InferAttributes<PaymentFlowCharge>,
@@ -129,6 +137,9 @@ export class PaymentFlow extends Model<
   @ApiProperty({ type: [PaymentFlowCharge] }) // Link to the charges model
   @HasMany(() => PaymentFlowCharge, 'paymentFlowId')
   charges!: PaymentFlowCharge[]
+
+  @HasOne(() => PaymentFlowFjsChargeConfirmation, 'paymentFlowId')
+  fjsChargeConfirmation?: PaymentFlowFjsChargeConfirmation
 
   @ApiProperty({ type: [String] })
   @Column({
