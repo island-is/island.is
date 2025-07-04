@@ -27,7 +27,10 @@ import { serviceSetup as consultationPortalSetup } from '../../../apps/consultat
 import { serviceSetup as xroadCollectorSetup } from '../../../apps/services/xroad-collector/infra/xroad-collector'
 
 import { serviceSetup as licenseApiSetup } from '../../../apps/services/license-api/infra/license-api'
-import { workerSetup as cmsImporterSetup } from '../../../apps/services/cms-importer/infra/cms-importer-worker'
+import {
+  workerSetup as cmsImporterSetup,
+  energyFundImportSetup as cmsImporterEnergyFundImportSetup,
+} from '../../../apps/services/cms-importer/infra/cms-importer-worker'
 
 import { serviceSetup as skilavottordWebSetup } from '../../../apps/skilavottord/web/infra/skilavottord-web'
 import { serviceSetup as skilavottordWsSetup } from '../../../apps/skilavottord/ws/infra/skilavottord-ws'
@@ -155,6 +158,7 @@ const xroadCollector = xroadCollectorSetup()
 
 const licenseApi = licenseApiSetup()
 const cmsImporter = cmsImporterSetup()
+const cmsImporterEnergyGrantImport = cmsImporterEnergyFundImportSetup()
 
 const storybook = storybookSetup({})
 
@@ -206,6 +210,7 @@ export const Services: EnvironmentServices = {
     userNotificationBirthdayWorkerService,
     licenseApi,
     cmsImporter,
+    cmsImporterEnergyGrantImport,
     sessionsService,
     sessionsWorker,
     sessionsCleanupWorker,
@@ -248,6 +253,7 @@ export const Services: EnvironmentServices = {
     userNotificationBirthdayWorkerService,
     licenseApi,
     cmsImporter,
+    cmsImporterEnergyGrantImport,
     sessionsService,
     sessionsWorker,
     sessionsCleanupWorker,
@@ -290,6 +296,7 @@ export const Services: EnvironmentServices = {
     appSystemApiWorker,
     contentfulEntryTagger,
     cmsImporter,
+    cmsImporterEnergyGrantImport,
     licenseApi,
     sessionsService,
     sessionsWorker,

@@ -1,47 +1,23 @@
 import { Injectable } from '@nestjs/common'
-import { CmsRepository } from './repositories/cms.repository'
-import { ClientGrantsRepository } from './repositories/clientGrants.repository'
+import { CmsRepository } from '../repositories/cms/cms.repository'
+import { GrantsRepository } from '../repositories/grants/grants.repository'
 import { logger } from '@island.is/logging'
-import { CmsGrantInput } from './app.types'
 import { isDefined } from '@island.is/shared/utils'
+import { parseGrantDate } from './utils'
+import { CONTENT_TYPE } from '../constants'
+import { EntryInput } from '../repositories/cms/cms.types'
 
 @Injectable()
-export class AppService {
+export class GrantImportService {
   constructor(
     private readonly cmsRepository: CmsRepository,
-    private readonly clientsRepository: ClientGrantsRepository,
+    private readonly clientsRepository: GrantsRepository,
   ) {}
 
   public async run() {
-    logger.info('Starting cms import worker...')
-
+    logger.info('Grant import worker starting...')
     await this.processGrants()
-
-    logger.info('...cms import worker finished.')
-  }
-
-  private parseGrantDate = (date: Date): { date: string; hour?: number } => {
-    const dateHour: number = date.getHours()
-
-    const parsedDate = {
-      date: date.toISOString().split('T')[0],
-    }
-
-    if (dateHour > 0 && dateHour < 24) {
-      return {
-        ...parsedDate,
-        hour: dateHour,
-      }
-    }
-
-    if (dateHour === 0) {
-      return {
-        ...parsedDate,
-        hour: 0,
-      }
-    }
-
-    return parsedDate
+    logger.info('...grant import worker finished.')
   }
 
   private async processGrants() {
@@ -50,7 +26,7 @@ export class AppService {
       this.clientsRepository.getGrants(),
     ])
 
-    const grantsToUpdate: CmsGrantInput = clientGrants
+    const grantsToUpdate: EntryInput = clientGrants
       .map((grant) => {
         const clientGrant = cmsGrants.find((cg) => cg.grantId === grant.id)
 
@@ -97,8 +73,8 @@ export class AppService {
           return
         }
 
-        const parsedGrantDateTo = this.parseGrantDate(grantDateTo)
-        const parsedGrantDateFrom = this.parseGrantDate(grantDateFrom)
+        const parsedGrantDateTo = parseGrantDate(grantDateTo)
+        const parsedGrantDateFrom = parseGrantDate(grantDateFrom)
 
         logger.info('Grant values parsed successfully', {
           referenceId: clientGrant.referenceId,
@@ -106,7 +82,7 @@ export class AppService {
 
         return {
           referenceId: clientGrant.referenceId,
-          cmsGrantEntry: clientGrant.entry,
+          cmsEntry: clientGrant.entry,
           inputFields: [
             {
               key: 'grantDateFrom',
@@ -140,6 +116,6 @@ export class AppService {
       .filter(isDefined)
 
     logger.info('All grants processed. Continuing to update...')
-    return await this.cmsRepository.updateContentfulGrants(grantsToUpdate)
+    return await this.cmsRepository.updateEntries(grantsToUpdate, CONTENT_TYPE)
   }
 }
