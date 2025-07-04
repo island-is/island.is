@@ -3,9 +3,10 @@ import { Injectable } from '@nestjs/common'
 import {
   Adalmatseining,
   AdalmatseiningApi,
-  ApiFasteignByStadfangNrGetRequest,
+  ApiAdalmatseiningByFasteignNrGetRequest,
   ApiStadfangSearchGetRequest,
   BaseAPI,
+  Fasteign,
   FasteignApi,
   StadfangApi,
 } from '../../gen/fetch'
@@ -54,12 +55,18 @@ export class HmsService {
     }
   }
 
-  async hmsPropertyInfo(user: User, input: ApiFasteignByStadfangNrGetRequest) {
+  async hmsPropertyInfo(
+    user: User,
+    input: { stadfangNr: number; fasteignNr?: number },
+  ) {
+    const stadFangNr = input.stadfangNr
+    const fasteignNr = input.fasteignNr
+
     try {
       const fasteignir = await this.apiWithAuth(
         this.fasteignApi,
         user,
-      ).apiFasteignByStadfangNrGet(input)
+      ).apiFasteignByStadfangNrGet({ stadfangNr: stadFangNr })
 
       const adalmatseiningarPromise = fasteignir.reduce((acc, fasteign) => {
         if (fasteign.fasteignNr) {
@@ -79,7 +86,8 @@ export class HmsService {
       const adalMatseiningar = await Promise.all(adalmatseiningarPromise).then(
         (res) => res.flat(),
       )
-      return fasteignir.map((fasteign) => {
+
+      const transformFasteignir = (fasteign: Fasteign) => {
         const adalmatseining = adalMatseiningar.filter(
           (a) => a.fasteignNr === fasteign.fasteignNr,
         )
@@ -98,34 +106,79 @@ export class HmsService {
           sizeUnit: fasteign.eining ?? undefined,
           propertyValue: fasteign.fasteignamat,
           propertyLandValue: fasteign.lhlmat,
-          appraisalUnits: adalmatseining.map((a) => {
-            return {
-              propertyNumber: a.fastnum,
-              propertyCode: a.fasteignNr,
-              propertyValue: a.fasteignamat,
-              propertyLandValue: a.lhlmat,
-              propertyUsageDescription: a.notkunTexti ?? undefined,
-              addressCode: a.stadfangNr,
-              address: a.stadfangBirting ?? undefined,
-              unitCode: a.merking ?? undefined,
-              units: a.matseiningar?.map((m) => {
-                return {
-                  appraisalUnitCode: m.fnum,
-                  propertyValue: m.fasteignamat,
-                  propertyCode: m.fastnum,
-                  propertyUsageDescription: m.notkunTexti ?? undefined,
-                  unitCode: m.merking ?? undefined,
-                  addressCode: m.stadfangNr,
-                  address: m.stadfangBirting ?? undefined,
-                  fireInsuranceValuation: m.brunabotamat,
-                  sizeUnit: m.eining ?? undefined,
-                  size: m.einflm ?? undefined,
-                }
-              }),
-            }
-          }),
+          appraisalUnits: adalmatseining.map((a) => ({
+            propertyNumber: a.fastnum,
+            propertyCode: a.fasteignNr,
+            propertyValue: a.fasteignamat,
+            propertyLandValue: a.lhlmat,
+            propertyUsageDescription: a.notkunTexti ?? undefined,
+            addressCode: a.stadfangNr,
+            address: a.stadfangBirting ?? undefined,
+            unitCode: a.merking ?? undefined,
+            units: a.matseiningar?.map((m) => ({
+              appraisalUnitCode: m.fnum,
+              propertyValue: m.fasteignamat,
+              propertyCode: m.fastnum,
+              propertyUsageDescription: m.notkunTexti ?? undefined,
+              unitCode: m.merking ?? undefined,
+              addressCode: m.stadfangNr,
+              address: m.stadfangBirting ?? undefined,
+              fireInsuranceValuation: m.brunabotamat,
+              sizeUnit: m.eining ?? undefined,
+              size: m.einflm ?? undefined,
+            })),
+          })),
         }
+      }
+
+      const filteredFasteignir = fasteignNr
+        ? fasteignir.filter((f) => f.fasteignNr === fasteignNr)
+        : fasteignir
+
+      return filteredFasteignir.map(transformFasteignir)
+    } catch (error) {
+      const errorMessage =
+        error.response?.data?.message || error.message || 'Unknown error'
+      throw new Error(
+        `Failed to retrieve property information: ${errorMessage}`,
+      )
+    }
+  }
+
+  async hmsPropertyCodeInfo(
+    user: User,
+    input: ApiAdalmatseiningByFasteignNrGetRequest,
+  ) {
+    try {
+      const adalmatseiningar = await this.apiWithAuth(
+        this.adalmatseiningApi,
+        user,
+      ).apiAdalmatseiningByFasteignNrGet({
+        fasteignNr: input.fasteignNr,
       })
+
+      if (!adalmatseiningar?.length) {
+        throw new Error('No appraisal data found for this property number.')
+      }
+
+      const adalmatseining = adalmatseiningar[0]
+
+      if (!adalmatseining.stadfangNr) {
+        throw new Error('Missing address code (stadfangNr) in appraisal data.')
+      }
+
+      return {
+        address: adalmatseining.stadfangBirting ?? undefined,
+        addressCode: adalmatseining.stadfangNr,
+        landCode: undefined,
+        municipalityCode: undefined,
+        municipalityName: undefined,
+        numOfConnectedProperties: undefined,
+        postalCode: undefined,
+        propertyCode: input.fasteignNr,
+        streetName: undefined,
+        streetNumber: undefined,
+      }
     } catch (error) {
       const errorMessage =
         error.response?.data?.message || error.message || 'Unknown error'
