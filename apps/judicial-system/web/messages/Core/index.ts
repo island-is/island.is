@@ -85,11 +85,6 @@ export const core = defineMessages({
     defaultMessage: 'Sækjandi',
     description: 'Notað fyrir orðið sækjandi í öllum flæðum.',
   },
-  defender: {
-    id: 'judicial.system.core:defender_v2',
-    defaultMessage: 'Verjandi',
-    description: 'Notað fyrir orðið verjandi í öllum flæðum.',
-  },
   accused: {
     id: 'judicial.system.core:accused-v3',
     defaultMessage: 'kærð{suffix}',
@@ -194,11 +189,6 @@ export const core = defineMessages({
     defaultMessage: 'og',
     description: 'Notað fyrir orðið og',
   },
-  modify: {
-    id: 'judicial.system.core:modify',
-    defaultMessage: 'leiðrétta',
-    description: 'Notað fyrir orðið "leiðrétta" í öllum flæðum.',
-  },
   back: {
     id: 'judicial.system.core:back',
     defaultMessage: 'Til baka',
@@ -218,11 +208,6 @@ export const core = defineMessages({
     id: 'judicial.system.core:create_case',
     defaultMessage: 'Stofna mál',
     description: 'Notað fyrir "Stofna mál" takka í öllum flæðum.',
-  },
-  linkCopied: {
-    id: 'judicial.system.core:link_copied',
-    defaultMessage: 'Hlekkur afritaður',
-    description: 'Notaður sem skilaboð þegar tekst að afrita hlekk',
   },
   serviceInterruptionTitle: {
     id: 'judicial.system.core:service_interruption_title',

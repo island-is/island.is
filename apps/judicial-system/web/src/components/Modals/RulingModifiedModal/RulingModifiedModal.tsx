@@ -82,6 +82,7 @@ const RulingModifiedModal: FC<Props> = ({
     >
       <Box marginBottom={5}>
         <Input
+          id="reason"
           name="reason"
           label={formatMessage(strings.label)}
           value={explanation}
