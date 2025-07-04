@@ -82,8 +82,8 @@ export const OJOIHomeIntro = (props: OJOIHomeIntroProps) => {
                 <Inline space={1}>
                   {props.quickLinks
                     .filter((item) => item.variant !== 'mint')
-                    .map((q, i) => (
-                      <Tag key={i} href={q.href} variant={q.variant}>
+                    .map((q) => (
+                      <Tag key={q.href} href={q.href} variant={q.variant}>
                         {q.title}
                       </Tag>
                     ))}
@@ -93,8 +93,8 @@ export const OJOIHomeIntro = (props: OJOIHomeIntroProps) => {
                 <Box marginLeft={'auto'}>
                   {props.quickLinks
                     .filter((item) => item.variant === 'mint')
-                    .map((q, i) => (
-                      <Tag key={i} href={q.href} variant={q.variant}>
+                    .map((q) => (
+                      <Tag key={q.href} href={q.href} variant={q.variant}>
                         {q.title}
                       </Tag>
                     ))}
