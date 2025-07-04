@@ -41,6 +41,7 @@ import {
   emptyOption,
   findValueOption,
   mapEntityToOptions,
+  mapYearOptions,
   OJOISearchGridView,
   OJOISearchListView,
   OJOIWrapper,
@@ -238,20 +239,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
   const departmentsOptions = mapEntityToOptions(departments)
   const typesOptions = mapEntityToOptions(types)
   const institutionsOptions = mapEntityToOptions(institutions)
-  const yearOptions = [
-    {
-      label: '2015',
-      value: '2015',
-    },
-    {
-      label: '1999',
-      value: '1999',
-    },
-    {
-      label: '1996',
-      value: '1996',
-    },
-  ]
+  const yearOptions = mapYearOptions()
 
   const breadcrumbItems = [
     {

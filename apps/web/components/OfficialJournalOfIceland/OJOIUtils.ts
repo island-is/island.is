@@ -94,6 +94,19 @@ export const mapEntityToOptions = (
   })
 }
 
+export const mapYearOptions = () => {
+  const currentYear = new Date().getFullYear()
+
+  const years: { label: string; value: string }[] = Array.from(
+    { length: currentYear - 1995 + 1 },
+    (_, i) => {
+      const year = (1995 + i).toString()
+      return { label: year, value: year }
+    },
+  ).reverse()
+  return years
+}
+
 export const sortCategories = (cats: EntityOption[]) => {
   return [...cats].sort(sortAlpha('label'))
 }
