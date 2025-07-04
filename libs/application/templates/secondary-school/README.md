@@ -4,10 +4,12 @@
 
 Application for secondary school. Applicants can apply for up to 3 different schools and select 1-2 tracks (braut) within those schools. The application period is decided by MMS, during this period applicants should be able to make changes to their existing application and only the latest submitted version is considered by MMS.
 
+[Template-api-module](https://github.com/island-is/island.is/blob/main/libs/application/template-api-modules/src/lib/modules/templates/secondary-school/secondary-school.service.ts)
+
 ## URLs
 
 - [Dev](https://beta.dev01.devland.is/umsoknir/framhaldsskoli)
-- [Staging]()
+- ~~[Staging]()~~
 - [Production](https://island.is/umsoknir/framhaldsskoli)
 
 ## States
@@ -51,29 +53,41 @@ If MMS considers an application invalid for whatever reason (usually the applica
 ## External Services
 
 ### MMS 
-* [Swagger](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/island-is/island.is/refs/heads/main/libs/clients/secondary-school/src/clientConfig.json)
-* [Client](https://github.com/island-is/island.is/blob/main/libs/clients/secondary-school/src/lib/secondarySchoolClient.service.ts)
+
+- [Swagger](https://redocly.github.io/redoc/?url=https://raw.githubusercontent.com/island-is/island.is/refs/heads/main/libs/clients/secondary-school/src/clientConfig.json)
+- [Client](https://github.com/island-is/island.is/blob/main/libs/clients/secondary-school/src/lib/secondarySchoolClient.service.ts)
 
 Used to fetch student info (including if the applicant has an active application already, if true the user is stopped from moving beyond pre-requsites), submit application and edit application
+
 ### User Profile
 
 Used to fetch email and phone number to be used in the application. This also allows us to send confirmed email and phone number to MMS for use by the selected school(s)
 
+- [Service](https://github.com/island-is/island.is/blob/main/libs/application/template-api-modules/src/lib/modules/shared/api/user-profile/user-profile.service.ts)
+
 ### National Registry
 
-Used to fetch base information about the applicant, as well as information about legal guardians.
+Used to fetch base information about the applicant, as well as information about legal guardians. Note: currently uses a mix of v1 and v3 of the national registry service
+
+- [Service](https://github.com/island-is/island.is/blob/main/libs/application/template-api-modules/src/lib/modules/shared/api/national-registry/national-registry.service.ts)
 
 ## Testing
 Any fake user should be able to submit an application, but applicants under the age of 18 have special handling to add their Legal Guardians as contacts. Furthermore, MMS has pre-flagged some users as Freshmen so those users skip the Freshman/General Applicant choice.
 
 - Birta Hlín ÞÍ Lulic (160-1430)
   - Marked as freshman
-  - Has Legal Guardians
+  - Has Legal Guardians (can use delegation to act on Birta's behalf)
     - Elmar ÞÍ Þórarinsson (070-1429)
     - Viktoría Ösp ÞÍ Sveinsdóttir (190-1419)
 - María Sól ÞÍ Torp (220-1499)
   - Marked as fresman
 
+## Localization
+
+All localisation can be found on Contentful.
+
+- [Secondary School application translation](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/ss.application)
+- [Application system translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
 
 ## Project owner
 
