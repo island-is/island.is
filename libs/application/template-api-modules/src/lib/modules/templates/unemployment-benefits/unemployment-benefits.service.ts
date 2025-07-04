@@ -6,6 +6,8 @@ import { BaseTemplateApiService } from '../../base-template-api.service'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { UnemploymentBenefitsAnswers } from '@island.is/application/templates/unemployment-benefits'
 import {
+  GaldurDomainModelsApplicantsApplicantProfileDTOsPersonalInformation,
+  GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsOtherInformationDTO,
   GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsUnemploymentApplicationInformation,
   GaldurDomainModelsApplicationsUnemploymentApplicationsUnemploymentApplicationDto,
   UnemploymentApplicationCreateUnemploymentApplicationRequest,
@@ -48,9 +50,10 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
     //unchanged:
     // applicationInformation
     // applicationAccess
+    //electronicCommunication
 
     const personalInformationFromService =
-      getValueViaPath<GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsUnemploymentApplicationInformation>(
+      getValueViaPath<GaldurDomainModelsApplicantsApplicantProfileDTOsPersonalInformation>(
         application.externalData,
         'unemploymentApplication.data.personalInformation',
         {},
@@ -77,7 +80,13 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
       ...personalInformationFromService,
       ...personalInformationFromAnswers,
     }
-    console.log('personalInformation', personalInformation)
+
+    const otherInformationFromService =
+      getValueViaPath<GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsOtherInformationDTO>(
+        application.externalData,
+        'unemploymentApplication.data.personalInformation',
+        {},
+      )
 
     throw new Error('dont work please')
 

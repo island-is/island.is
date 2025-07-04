@@ -176,7 +176,7 @@ export const employmentSearch = {
     },
     drivingLicenseTypeLabel: {
       id: 'vmst.ub.application:employmentSearch.drivingLicense.drivingLicenseTypeLabel',
-      defaultMessage: 'Tegund ökuréttinda',
+      defaultMessage: 'Merktu við þau réttindi sem þú ert með',
       description: 'Driving licence type label',
     },
     heavyMachineryLicenses: {

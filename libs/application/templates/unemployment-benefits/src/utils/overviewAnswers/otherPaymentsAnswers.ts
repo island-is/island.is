@@ -97,6 +97,7 @@ export const useOtherPaymentsAnswers = (
         parseInt(paymentString.paymentAmount),
       )} ${formatMessage(overviewMessages.labels.payout.paymentPerMonth)}`
     }),
+    //TODO add capital income together for one value
     capitalIncome.map(
       (income) =>
         `${formatMessage(

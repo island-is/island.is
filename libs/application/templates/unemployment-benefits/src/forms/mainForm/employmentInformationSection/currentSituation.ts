@@ -173,6 +173,7 @@ export const currentSituationSubSection = buildSubSection({
                 application.answers,
                 'currentSituation.currentJob.endDate',
               ) || ''
+            //TODO setja þetta 2 vikur frammí tímann
             return endDate ? new Date(endDate) : new Date()
           },
           condition: isEmployedAtAll,

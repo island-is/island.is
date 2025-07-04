@@ -42,7 +42,7 @@ export const applicant = {
     passwordDescription: {
       id: 'vmst.ub.application:applicant.labels.passwordDescription',
       defaultMessage:
-        'Vinsamlegast veljið lykilorð vegna mögulegra símasamskipta. Leyniorð verður að vera minnst 4 stafir, tölustafir og/eða bókstafir.',
+        'Vinsamlegast veljið lykilorð vegna mögulegra símasamskipta. Lykilorð verður að vera minnst 4 stafir, tölustafir og/eða bókstafir. Hámarkslengd eru 10 stafir.',
       description: 'password label description',
     },
     passwordLabel: {
