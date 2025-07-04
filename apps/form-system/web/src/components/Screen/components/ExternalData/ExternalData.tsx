@@ -41,21 +41,15 @@ export const ExternalData = ({ setExternalDataAgreement }: Props) => {
             <Text variant="h4" color="blue400">
               {formatMessage(webMessages.icelandicRegistryTitle)}
             </Text>
-            <Text>
-              <Markdown>
-                {formatMessage(webMessages.icelandicRegistryDescription)}
-              </Markdown>
-            </Text>
+            <Markdown>
+              {formatMessage(webMessages.icelandicRegistryDescription)}
+            </Markdown>
           </div>
           <div>
             <Text variant="h4" color="blue400">
               {formatMessage(webMessages.myPagesTitle)}
             </Text>
-            <Text>
-              <Markdown>
-                {formatMessage(webMessages.myPagesDescription)}
-              </Markdown>
-            </Text>
+            <Markdown>{formatMessage(webMessages.myPagesDescription)}</Markdown>
           </div>
 
           {certificationTypes?.map((certificationType) => (
@@ -63,10 +57,7 @@ export const ExternalData = ({ setExternalDataAgreement }: Props) => {
               <Text variant="h4" color="blue400">
                 {certificationType?.certificationTypeId}
               </Text>
-
-              <Text>
-                <Markdown>{certificationType?.id ?? ''}</Markdown>
-              </Text>
+              <Markdown>{certificationType?.id ?? ''}</Markdown>
             </div>
           ))}
         </Stack>
