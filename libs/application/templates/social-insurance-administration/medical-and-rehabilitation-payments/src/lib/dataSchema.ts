@@ -8,7 +8,10 @@ import {
 import { errorMessages as coreSIAErrorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import { NOT_APPLICABLE } from '../utils/constants'
+import {
+  NOT_APPLICABLE,
+  SelfAssessmentCurrentEmploymentStatus,
+} from '../utils/constants'
 import { errorMessages } from './messages'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
@@ -248,6 +251,13 @@ export const dataSchema = z.object({
     .object({
       hadAssistance: z.enum([YES, NO]).optional(),
       highestLevelOfEducation: z.string().optional(),
+      currentEmploymentStatus: z
+        .array(z.nativeEnum(SelfAssessmentCurrentEmploymentStatus))
+        .min(1)
+        .optional(),
+      currentEmploymentStatusAdditional: z.string().optional(),
+      lastEmploymentTitle: z.string().optional(),
+      lastEmploymentYear: z.string().optional().nullable(),
       mainProblem: z.string().min(1).optional(),
       hasPreviouslyReceivedRehabilitationOrTreatment: z
         .enum([YES, NO])
@@ -298,6 +308,16 @@ export const dataSchema = z.object({
           ? !!previousRehabilitationSuccessfulFurtherExplanations
           : true,
       { path: ['previousRehabilitationSuccessfulFurtherExplanations'] },
+    )
+    .refine(
+      ({ currentEmploymentStatus, currentEmploymentStatusAdditional }) =>
+        currentEmploymentStatus &&
+        currentEmploymentStatus.includes(
+          SelfAssessmentCurrentEmploymentStatus.OTHER,
+        )
+          ? !!currentEmploymentStatusAdditional
+          : true,
+      { path: ['currentEmploymentStatusAdditional'] },
     ),
 })
 
