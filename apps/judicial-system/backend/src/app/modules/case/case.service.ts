@@ -2033,7 +2033,7 @@ export class CaseService {
           )
         }
 
-        // Create new subpoeans if scheduling a new arraignment date for an indictment case
+        // Create new subpoenas if scheduling a new arraignment date for an indictment case
         if (
           schedulingNewArraignmentDateForIndictmentCase &&
           theCase.defendants
