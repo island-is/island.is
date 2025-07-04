@@ -9,7 +9,7 @@ Application for secondary school. Applicants can apply for up to 3 different sch
 ## URLs
 
 - [Dev](https://beta.dev01.devland.is/umsoknir/framhaldsskoli)
-- ~~[Staging]()~~
+- ~~Staging~~
 - [Production](https://island.is/umsoknir/framhaldsskoli)
 
 ## States
