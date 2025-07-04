@@ -16,11 +16,17 @@ import {
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
 import { LawyersService } from '@island.is/judicial-system/lawyers'
-import { DefenderChoice, ServiceStatus } from '@island.is/judicial-system/types'
+import {
+  DefenderChoice,
+  PoliceFileTypeCode,
+  ServiceStatus,
+} from '@island.is/judicial-system/types'
 
 import { CreateCaseDto } from './dto/createCase.dto'
+import { UpdatePoliceDocumentDeliveryDto } from './dto/policeDocument.dto'
 import { UpdateSubpoenaDto } from './dto/subpoena.dto'
 import { Case } from './models/case.model'
+import { PoliceDocumentDelivery } from './models/policeDocumentDelivery.response'
 import { SubpoenaResponse } from './models/subpoena.response'
 import appModuleConfig from './app.config'
 
@@ -180,6 +186,7 @@ export class AppService {
       const response = await res.json()
 
       if (res.ok) {
+        // why are we returning this again?
         return {
           subpoenaComment: response.comment,
           defenderInfo: {
@@ -202,6 +209,70 @@ export class AppService {
       throw new BadGatewayException({
         ...reason,
         message: 'Failed to update subpoena',
+      })
+    }
+  }
+
+  async updatePoliceDocumentDelivery(
+    policeDocumentId: string,
+    updatePoliceDocumentDelivery: UpdatePoliceDocumentDeliveryDto,
+  ): Promise<PoliceDocumentDelivery> {
+    switch (updatePoliceDocumentDelivery.fileTypeCode) {
+      case PoliceFileTypeCode.VERDICT:
+        return await this.auditTrailService.audit(
+          'digital-mailbox-api',
+          AuditedAction.UPDATE_VERDICT,
+          this.updateVerdictDelivery(
+            policeDocumentId,
+            updatePoliceDocumentDelivery,
+          ),
+          policeDocumentId,
+        )
+    }
+
+    throw new BadRequestException('Police file type code not supported')
+  }
+
+  private async updateVerdictDelivery(
+    policeDocumentId: string,
+    updatePoliceDocumentDelivery: UpdatePoliceDocumentDeliveryDto,
+  ) {
+    try {
+      const res = await fetch(
+        // TODO: implement endpoint, backend + table
+        `${this.config.backend.url}/api/internal/verdict/${policeDocumentId}`,
+        {
+          method: 'PATCH',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${this.config.backend.accessToken}`,
+          },
+          body: JSON.stringify(updatePoliceDocumentDelivery),
+        },
+      )
+
+      const response = await res.json()
+
+      if (res.ok) {
+        return {
+          // TODO: not supported atm
+          policeDocumentId: response.policeDocumentId,
+        } as PoliceDocumentDelivery
+      }
+
+      if (res.status < 500) {
+        throw new BadRequestException(response?.detail)
+      }
+
+      throw response
+    } catch (reason) {
+      if (reason instanceof BadRequestException) {
+        throw reason
+      }
+
+      throw new BadGatewayException({
+        ...reason,
+        message: `Failed to update document delivery information for file type code ${updatePoliceDocumentDelivery.fileTypeCode}`,
       })
     }
   }
