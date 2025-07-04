@@ -21,6 +21,9 @@ export const Support = ({
     applicationType,
     hasDiagnoses,
     hasHadSupport,
+    hasWelfareContact,
+    welfareContactName,
+    welfareContactEmail,
     hasIntegratedServices,
     hasCaseManager,
     caseManagerName,
@@ -67,15 +70,34 @@ export const Support = ({
               <GridColumn span="12/12">
                 <RadioValue
                   label={formatMessage(
-                    newPrimarySchoolMessages.differentNeeds
-                      .hasIntegratedServices,
+                    newPrimarySchoolMessages.differentNeeds.hasWelfareContact,
                   )}
-                  value={hasIntegratedServices}
+                  value={hasWelfareContact || ''}
                 />
               </GridColumn>
             </GridRow>
-            {hasIntegratedServices === YES && (
+            {hasWelfareContact === YES && (
               <>
+                <GridRow rowGap={2}>
+                  <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                    <DataValue
+                      label={formatMessage(
+                        newPrimarySchoolMessages.differentNeeds
+                          .welfareContactName,
+                      )}
+                      value={welfareContactName}
+                    />
+                  </GridColumn>
+                  <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                    <DataValue
+                      label={formatMessage(
+                        newPrimarySchoolMessages.differentNeeds
+                          .welfareContactEmail,
+                      )}
+                      value={welfareContactEmail}
+                    />
+                  </GridColumn>
+                </GridRow>
                 <GridRow>
                   <GridColumn span="12/12">
                     <RadioValue
@@ -108,6 +130,17 @@ export const Support = ({
                     </GridColumn>
                   </GridRow>
                 )}
+                <GridRow>
+                  <GridColumn span="12/12">
+                    <RadioValue
+                      label={formatMessage(
+                        newPrimarySchoolMessages.differentNeeds
+                          .hasIntegratedServices,
+                      )}
+                      value={hasIntegratedServices}
+                    />
+                  </GridColumn>
+                </GridRow>
               </>
             )}
           </>

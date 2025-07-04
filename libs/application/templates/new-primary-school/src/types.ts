@@ -50,6 +50,9 @@ export type Person = {
     postalCode: string
     city: string
   }
+  requiresInterpreter: string[]
+  preferredLanguage?: string
+  citizenshipCode?: string
 }
 
 export type SelectOption = {

@@ -2,17 +2,19 @@ import { NationalRegistryXRoadService } from '@island.is/api/domains/national-re
 import {
   errorMessages,
   getApplicationAnswers,
+  getOtherGuardian,
+  getSelectedChild,
 } from '@island.is/application/templates/new-primary-school'
 import { ApplicationTypes } from '@island.is/application/types'
 import { FriggClientService } from '@island.is/clients/mms/frigg'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { isRunningOnEnvironment } from '@island.is/shared/utils'
 import { Inject, Injectable } from '@nestjs/common'
 import * as kennitala from 'kennitala'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { transformApplicationToNewPrimarySchoolDTO } from './new-primary-school.utils'
-import { isRunningOnEnvironment } from '@island.is/shared/utils'
 
 @Injectable()
 export class NewPrimarySchoolService extends BaseTemplateApiService {
@@ -30,117 +32,22 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps) {
     const { childNationalId } = getApplicationAnswers(application.answers)
 
-    if (!childNationalId) {
-      return undefined
-    }
+    if (!childNationalId) return undefined
 
     return await this.friggClientService.getUserById(auth, childNationalId)
   }
 
   async getChildren({ auth }: TemplateApiModuleActionProps) {
-    let children =
-      await this.nationalRegistryService.getChildrenCustodyInformation(auth)
-
     const currentYear = new Date().getFullYear()
     const maxYear = currentYear - 7 // 2nd grade
     const minYear = currentYear - 16 // 10th grade
 
-    // Mock test children
-    if (isRunningOnEnvironment('local') || isRunningOnEnvironment('dev')) {
-      // If Gervimaður Afríka
-      // else others
-      if (auth.audkenniSimNumber == '0103019') {
-        children = [
-          {
-            // eslint-disable-next-line local-rules/disallow-kennitalas
-            nationalId: '2007104360',
-            livesWithApplicant: true,
-            fullName: 'Elsa Inga Bergdísardóttir Wilson',
-            genderCode: '2',
-          },
-          {
-            // eslint-disable-next-line local-rules/disallow-kennitalas
-            nationalId: '2203122590',
-            livesWithApplicant: true,
-            fullName: 'Ylur Poncet Maximesson',
-            genderCode: '1',
-          },
-          {
-            // eslint-disable-next-line local-rules/disallow-kennitalas
-            nationalId: '1810183720',
-            livesWithApplicant: true,
-            fullName: 'Bríet Alva Þorsteinsdóttir',
-            genderCode: '2',
-          },
-          {
-            // eslint-disable-next-line local-rules/disallow-kennitalas
-            nationalId: '1007112730',
-            livesWithApplicant: true,
-            fullName: 'Ægir Daðason',
-            genderCode: '1',
-          },
-          {
-            // eslint-disable-next-line local-rules/disallow-kennitalas
-            nationalId: '1311132690',
-            livesWithApplicant: true,
-            fullName: 'Hafdís Arna Gunnarsdóttir',
-            genderCode: '2',
-          },
-        ]
-      } else {
-        children = [
-          {
-            // eslint-disable-next-line local-rules/disallow-kennitalas
-            nationalId: '0801093420',
-            livesWithApplicant: true,
-            fullName: 'Júlía Huld Birkisdóttir',
-            genderCode: '2',
-          },
-          {
-            // eslint-disable-next-line local-rules/disallow-kennitalas
-            nationalId: '0801093690',
-            livesWithApplicant: true,
-            fullName: 'Hilmar Atli Birkisson',
-            genderCode: '1',
-          },
-          {
-            // eslint-disable-next-line local-rules/disallow-kennitalas
-            nationalId: '1311143460',
-            livesWithApplicant: true,
-            fullName: 'Hrannar Árni Birkisson',
-            genderCode: '2',
-          },
-          {
-            nationalId: '1111111119',
-            livesWithApplicant: true,
-            fullName: 'Stubbur Maack',
-            genderCode: '1',
-          },
-          {
-            nationalId: '2222222229',
-            livesWithApplicant: true,
-            fullName: 'Stúfur Maack',
-            genderCode: '1',
-          },
-          {
-            nationalId: '5555555559',
-            livesWithApplicant: true,
-            fullName: 'Bína Maack',
-            genderCode: '2',
-          },
-          {
-            nationalId: '6666666669',
-            livesWithApplicant: true,
-            fullName: 'Snúður Maack',
-            genderCode: '10',
-          },
-        ]
-      }
-    }
+    const children =
+      await this.nationalRegistryService.getChildrenCustodyInformation(auth)
 
     // Check if the child is at primary school age and lives with the applicant
     const filteredChildren = children.filter((child) => {
-      // Allow children to pass through
+      // Allow test children to pass through
       const validChildren = [
         '1111111119',
         '2222222229',
@@ -180,6 +87,34 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
     }
 
     return filteredChildren
+  }
+
+  async getCitizenship({ application }: TemplateApiModuleActionProps) {
+    const child = getSelectedChild(application)
+    const guardian = getOtherGuardian(application)
+
+    let childCitizenshipCode = ''
+    if (child) {
+      const citizenship = await this.nationalRegistryService.getCitizenship(
+        child.nationalId,
+      )
+
+      childCitizenshipCode = citizenship?.code || ''
+    }
+
+    let otherGuardianCitizenshipCode = ''
+    if (guardian) {
+      const citizenship = await this.nationalRegistryService.getCitizenship(
+        guardian.nationalId,
+      )
+
+      otherGuardianCitizenshipCode = citizenship?.code || ''
+    }
+
+    return {
+      childCitizenshipCode,
+      otherGuardianCitizenshipCode,
+    }
   }
 
   async sendApplication({ auth, application }: TemplateApiModuleActionProps) {
