@@ -473,7 +473,7 @@ export const parentalLeaveFormMessages = {
       defaultMessage:
         'Fyrir hvert barn sem fæðist bætist við sex mánaða sameiginlegur réttur foreldra til fæðingarorlofs',
       description:
-        'For each child the parents’ joint entitlement to a parental leave is extended by 6 months.',
+        'For each child the parents’ joint entitlement to a parental leave is extended by six months.',
     },
     multipleBirthsDaysDescriptionGrant: {
       id: 'pl.application:multipleBirths.daysDescription.grant',
