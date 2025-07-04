@@ -14,7 +14,6 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { TokenGuard } from '@island.is/judicial-system/auth'
 import {
-  Lawyer,
   LawyerRegistryResponse,
   LawyerType,
 } from '@island.is/judicial-system/lawyers'

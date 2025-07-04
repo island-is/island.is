@@ -1,6 +1,5 @@
 import { plainToClass } from 'class-transformer'
 import { validate } from 'class-validator'
-import { NotFoundError } from 'rxjs'
 import type { Transaction, WhereOptions } from 'sequelize'
 import { Sequelize } from 'sequelize'
 
@@ -17,7 +16,6 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   Lawyer,
-  LawyerRegistryResponse,
   LawyersService,
   LawyerType,
 } from '@island.is/judicial-system/lawyers'
