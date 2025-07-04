@@ -158,6 +158,7 @@ export class SignatureCollectionAdminClientService
       this.getApiWithAuth(this.listsApi, auth),
       this.getApiWithAuth(this.candidateApi, auth),
       this.getApiWithAuth(this.collectionsApi, auth),
+      this.getApiWithAuth(this.electionsApi, auth),
     )
   }
 
@@ -178,11 +179,21 @@ export class SignatureCollectionAdminClientService
     }: CreateListInput,
     auth: Auth,
   ): Promise<Slug & Success> {
-    const { id, areas: collectionAreas } =
-      await this.getLatestCollectionForType(auth, collectionType)
+    const collection = await this.getLatestCollectionForType(
+      auth,
+      collectionType,
+    )
+    const { areas: collectionAreas } = collection
+    let id = collection.id
     // check if collectionId is current collection and current collection is open
-    if (collectionId !== id) {
+    // In case of LocalGovernmental, collectionId is different from current collection id
+    if (
+      collectionType !== CollectionType.LocalGovernmental &&
+      collectionId !== id
+    ) {
       throw new Error('Collection id input wrong')
+    } else {
+      id = collectionId
     }
 
     try {
@@ -282,7 +293,14 @@ export class SignatureCollectionAdminClientService
 
     const ownedLists =
       user.medmaelalistar && candidate
-        ? user.medmaelalistar?.map((list) => mapListBase(list))
+        ? user.medmaelalistar?.map((list) =>
+            mapListBase(
+              list,
+              collection.areas.some(
+                (area) => area.id === list.svaedi?.id?.toString(),
+              ),
+            ),
+          )
         : []
 
     const { success: canCreate, reasons: canCreateInfo } =
