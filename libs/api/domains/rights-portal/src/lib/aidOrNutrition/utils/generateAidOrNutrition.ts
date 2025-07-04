@@ -44,6 +44,7 @@ export const generateAidOrNutrition = (
       value: data.refund.value,
     },
     type,
+    valid: data.valid ?? undefined,
     explanation: data.explanation ?? undefined,
     allowed12MonthPeriod: data.allowed12MonthPeriod ?? undefined,
     validUntil: data.validUntil ? data.validUntil : undefined,

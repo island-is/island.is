@@ -31,7 +31,7 @@ export class DentistService {
   async getDentistStatus(user: User): Promise<DentistStatus | null> {
     const res = await this.api
       .withMiddleware(new AuthMiddleware(user as Auth))
-      .dentiststatus()
+      .getDentistStatus()
       .catch(handle404)
 
     if (!res) return null
@@ -51,7 +51,7 @@ export class DentistService {
     const api = this.api.withMiddleware(new AuthMiddleware(user as Auth))
     const res = await Promise.all([
       api.getCurrentDentist().catch(handle404),
-      api.dentiststatus().catch(handle404),
+      api.getDentistStatus().catch(handle404),
       api
         .getDentistBills({
           dateFrom: dateFrom ? dateFrom : subYears(new Date(), 5),
