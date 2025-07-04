@@ -43,7 +43,7 @@ export const m = {
 
     inputPlaceholder: {
       id: 'web.ojoi:home.inputPlaceholder',
-      defaultMessage: 'Leitaðu í stjórnartíðindum',
+      defaultMessage: 'Leitaðu í Stjórnartíðindum',
     },
     shortcuts: {
       id: 'web.ojoi:home.shortcuts',
@@ -137,6 +137,10 @@ export const m = {
       id: 'web.ojoi:search.typeAll',
       defaultMessage: 'Allar tegundir',
     },
+    chooseYear: {
+      id: 'web.ojoi:search.chooseYear',
+      defaultMessage: 'Veldu ártal',
+    },
     categoriesLabel: {
       id: 'web.ojoi:search.categoriesLabel',
       defaultMessage: 'Málaflokkur',
@@ -151,15 +155,15 @@ export const m = {
     },
     dateFromLabel: {
       id: 'web.ojoi:search.dateFromLabel',
-      defaultMessage: 'Dags. frá',
+      defaultMessage: 'Útgáfudagsetning frá',
+    },
+    dateToLabel: {
+      id: 'web.ojoi:search.dateToLabel',
+      defaultMessage: 'Útgáfudagsetning til',
     },
     dateFromPlaceholder: {
       id: 'web.ojoi:search.dateFromPlaceholder',
       defaultMessage: 'Veldu upphafsdagsetningu',
-    },
-    dateToLabel: {
-      id: 'web.ojoi:search.dateToLabel',
-      defaultMessage: 'Dags. til',
     },
     dateToPlaceholder: {
       id: 'web.ojoi:search.dateToPlaceholder',
@@ -176,6 +180,10 @@ export const m = {
     institutionAll: {
       id: 'web.ojoi:search.institutionAll',
       defaultMessage: 'Allir stofnanir',
+    },
+    allYears: {
+      id: 'web.ojoi:search.allYears',
+      defaultMessage: 'Öll ár',
     },
 
     listView: {
@@ -266,6 +274,11 @@ export const m = {
       id: 'web.ojoi:advert.description',
       defaultMessage:
         'Sé munur á uppsetningu texta hér að neðan og í PDF skjali gildir PDF skjalið.',
+    },
+    descriptionEmpty: {
+      id: 'web.ojoi:advert.description-empty',
+      defaultMessage:
+        'Þessi auglýsing var birt fyrir gildistöku laga nr. 15/2005 og er eingöngu á PDF-formi.',
     },
 
     sidebarTitle: {

@@ -84,6 +84,13 @@
             "schema": { "type": "array", "items": { "type": "string" } }
           },
           {
+            "name": "year",
+            "required": false,
+            "in": "query",
+            "description": "Year (signature year) to filter by.",
+            "schema": { "type": "string" }
+          },
+          {
             "name": "type",
             "required": false,
             "in": "query",
