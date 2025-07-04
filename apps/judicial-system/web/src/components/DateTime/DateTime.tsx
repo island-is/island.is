@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 import { InputMask } from '@react-input/mask'
 
 import { DatePicker, Input } from '@island.is/island-ui/core'
+import { DATE_PICKER_TIME } from '@island.is/judicial-system/consts'
 import {
   validate,
   Validation,
@@ -64,6 +65,7 @@ const DateTime: FC<Props> = ({
   }
 
   const [currentDate, setCurrentDate] = useState(date(selectedDate))
+
   const [currentTime, setCurrentTime] = useState(
     dateOnly ? '00:00' : getTimeFromDate(date(selectedDate)),
   )
@@ -174,6 +176,7 @@ const DateTime: FC<Props> = ({
       onChange(undefined, isValid)
     }
   }
+  console.log({ currentDate })
 
   const renderDateTime = () => {
     return (
@@ -201,7 +204,7 @@ const DateTime: FC<Props> = ({
         {!dateOnly && (
           <InputMask
             component={Input}
-            mask="  :  "
+            mask={DATE_PICKER_TIME}
             showMask
             replacement={{ ' ': /\d/ }}
             disabled={disabled || locked || currentDate === undefined}
