@@ -10,6 +10,7 @@ export enum States {
   DONE = 'done',
   PARENT_B_CONFIRM = 'parentBConfirm',
   PAYMENT = 'payment',
+  VERIFY_CODE = 'verifyCode',
 }
 export enum Roles {
   APPLICANT = 'applicant',
@@ -32,6 +33,7 @@ export enum ApiActions {
   assignParentB = 'assignParentB',
   submitApplication = 'submitApplication',
   createCharge = 'createCharge',
+  verifyCode = 'verifyCode',
   submitPassportApplication = 'submitPassportApplication',
   checkForDiscount = 'checkForDiscount',
 }
