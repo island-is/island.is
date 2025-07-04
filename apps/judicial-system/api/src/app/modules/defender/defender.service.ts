@@ -19,6 +19,7 @@ export class DefenderService {
 
     if (lawyers.length > 0) {
       const lawyersMapped = lawyers.map(mapToLawyer)
+
       return lawyersMapped
     }
 

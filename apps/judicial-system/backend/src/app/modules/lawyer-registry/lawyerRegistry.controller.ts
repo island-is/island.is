@@ -13,16 +13,14 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { TokenGuard } from '@island.is/judicial-system/auth'
-import {
-  LawyerRegistryResponse,
-  LawyerType,
-} from '@island.is/judicial-system/lawyers'
+import { LawyerType } from '@island.is/judicial-system/lawyers'
+import { LawyerFull } from '@island.is/judicial-system/types'
 
 import { EventService } from '../event'
 import { LawyerRegistry } from './lawyerRegistry.model'
 import { LawyerRegistryService } from './lawyerRegistry.service'
 
-@Controller('api')
+@Controller()
 @ApiTags('lawyer-registry')
 export class LawyerRegistryController {
   constructor(
@@ -34,7 +32,7 @@ export class LawyerRegistryController {
   // @UseGuards(TokenGuard)
   @Post('lawyer-registry/reset')
   @ApiOkResponse({ description: 'Resets a local copy of lawyer registry' })
-  async resetLawyerRegistry(): Promise<LawyerRegistryResponse[]> {
+  async resetLawyerRegistry(): Promise<LawyerFull[]> {
     this.logger.debug('Resetting lawyer registry')
     try {
       const lawyers = await this.lawyerRegistryService.populate()
@@ -72,7 +70,7 @@ export class LawyerRegistryController {
   }
 
   // @UseGuards(TokenGuard)
-  @Get('lawyer/:nationalId')
+  @Get('lawyer-registry/:nationalId')
   @ApiOkResponse({
     description: 'Gets a lawyer in lawyer registry by nationalId',
   })
