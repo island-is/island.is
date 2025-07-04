@@ -22,6 +22,7 @@ export type UseAdvertsVariables = {
   involvedParty?: Array<string>
   dateFrom?: string
   dateTo?: string
+  year?: string
 }
 
 export type UseAdvertsInput = {

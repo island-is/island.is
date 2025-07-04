@@ -94,6 +94,20 @@ export const mapEntityToOptions = (
   })
 }
 
+export const mapYearOptions = () => {
+  const currentYear = new Date().getFullYear()
+  const firstYear = 1995 // The oldest available year in OJOI
+
+  const years: { label: string; value: string }[] = Array.from(
+    { length: currentYear - firstYear + 1 },
+    (_, i) => {
+      const year = (firstYear + i).toString()
+      return { label: year, value: year }
+    },
+  ).reverse()
+  return years
+}
+
 export const sortCategories = (cats: EntityOption[]) => {
   return [...cats].sort(sortAlpha('label'))
 }
