@@ -762,16 +762,16 @@ export const newPrimarySchoolMessages: MessageDir = {
     supportDescription: {
       id: 'nps.application:different.needs.support.description',
       defaultMessage:
-        'Ef barnið þitt er með greiningu um fötlun, þroskafrávik, langvinn veikindi eða alvarlegan sjúkdóm sem gætu haft áhrif á skólagöngu þess, þá sér núverandi skóli barns um að miðla þeim upplýsingum áfram til þess skóla sem sótt er um í.',
+        'Börn eru eins ólík og þau eru mörg. Sum börn þurfa á stuðningi að halda til að líða betur og nýta styrkleika sína sem best. Stuðningur við barn í skólastarfi er veittur af stoðþjónustu skóla og hefur það að markmiðið að tryggja að sérhvert barn fái rétta aðstoð, á réttum tíma, frá réttum aðila. \n\nEf barnið þitt er með greiningu um fötlun, þroskafrávik, langvinn veikindi eða alvarlegan sjúkdóm sem gætu haft áhrif á skólagöngu þess, þá sér núverandi skóli barns um að miðla þeim upplýsingum áfram til þess skóla sem sótt er um í',
       description:
-        "If your child has a diagnosis of a disability, developmental disorder, chronic illness or serious illness that could affect their schooling, the child's current school will forward that information to the school they are applying to.",
+        'Children are as diverse as they are numerous. Some need support in order to feel better and make the best use of their strengths. Support for children in school is provided by the schools support services, with the aim of ensuring that every child receives the right assistance, at the right time, from the right professional. \n\nIf your child has a diagnosis of a disability, developmental delay, chronic illness, or serious condition that may impact their schooling, their current school is responsible for passing that information on to the school you are applying to.',
     },
     enrollmentSupportDescription: {
       id: 'nps.application:different.needs.enrollment.support.description',
       defaultMessage:
-        'Ef barnið þitt er með greiningu um fötlun, þroskafrávik, langvinn veikindi eða alvarlegan sjúkdóm sem gætu haft áhrif á skólagöngu þess, þá sér núverandi leikskóli barns um að miðla þeim upplýsingum áfram til þess skóla sem sótt er um í.',
+        'Börn eru eins ólík og þau eru mörg. Sum börn þurfa á stuðningi að halda til að líða betur og nýta styrkleika sína sem best. Stuðningur við barn í skólastarfi er veittur af stoðþjónustu skóla og hefur það að markmiðið að tryggja að sérhvert barn fái rétta aðstoð, á réttum tíma, frá réttum aðila. \n\nEf barnið þitt er með greiningu um fötlun, þroskafrávik, langvinn veikindi eða alvarlegan sjúkdóm sem gætu haft áhrif á skólagöngu þess, þá sér núverandi leikskóli barns um að miðla þeim upplýsingum áfram til þess skóla sem sótt er um í.',
       description:
-        "If your child has a diagnosis of a disability, developmental disorder, chronic illness or serious illness that could affect their schooling, the child's current nursery will forward that information to the school they are applying to.",
+        'Children are as different as they are many. Some children need support to feel better and make the most of their strengths. Support in school is provided by the school’s support services and aims to ensure that every child receives the right help, at the right time, from the right person. \n\nIf your child has been diagnosed with a disability, developmental delay, chronic illness, or serious medical condition that could affect their schooling, their current nursery is responsible for passing that information on to the school you are applying to.',
     },
     hasDiagnoses: {
       id: 'nps.application:different.needs.has.diagnoses',
@@ -800,6 +800,35 @@ export const newPrimarySchoolMessages: MessageDir = {
         'Hefur nemandinn áður notið sérkennslu eða stuðnings í leikskóla?',
       description:
         'Has the student previously received special education or support in nursery?',
+    },
+    hasWelfareContact: {
+      id: 'nps.application:different.needs.has.welfare.contact',
+      defaultMessage: 'Hefur barnið verið með tengilið farsældar?',
+      description: 'Has the child had a welfare contact person?',
+    },
+    hasWelfarePrimarySchoolContactDescription: {
+      id: 'nps.application:different.needs.has.welfare.contact.description',
+      defaultMessage:
+        'Tengiliður farsældar er sá aðili innan grunnskólans sem veitir upplýsingar og leiðbeiningar og hefur verið foreldrum innan handar við að sækja um þjónustu fyrir barnið sitt.',
+      description:
+        'The welfare contact person is the individual within the primary school who provides information and guidance, and has assisted parents in applying for services for their child.',
+    },
+    hasWelfareNurserySchoolContactDescription: {
+      id: 'nps.application:different.needs.has.welfare.contact.description',
+      defaultMessage:
+        'Tengiliður farsældar er sá aðili innan leikskólans sem veitir upplýsingar og leiðbeiningar og hefur verið foreldrum innan handar við að sækja um þjónustu fyrir barnið sitt.',
+      description:
+        'The welfare contact person is the individual within the nursery who provides information and guidance, and has assisted parents in applying for services for their child.',
+    },
+    welfareContactName: {
+      id: 'nps.application:different.needs.welfare.contact.name',
+      defaultMessage: 'Nafn tengiliðs',
+      description: 'Contact name',
+    },
+    welfareContactEmail: {
+      id: 'nps.application:different.needs.welfare.contact.email',
+      defaultMessage: 'Netfang tengiliðs',
+      description: 'Contact email',
     },
     hasIntegratedServices: {
       id: 'nps.application:different.needs.has.integrated.services',
@@ -845,9 +874,9 @@ export const newPrimarySchoolMessages: MessageDir = {
     supportAlertMessage: {
       id: 'nps.application:different.needs.support.alert.message#markdown',
       defaultMessage:
-        'Við flutning barns milli leik- og/eða grunnskóla sjá stjórnendur skólanna til þess að persónuupplýsingum um barnið sem nauðsynlegar eru fyrir velferð og aðlögun þess í nýjum skóla, sé miðlað með tryggum og öruggum hætti. \n\nPersónuupplýsingar geta verið:\n\na. Almennar upplýsingar um félagslega stöðu og þroska barna.\n\nb. Kennslufræðilegar, læknisfræðilegar, sálfræðilegar, sérkennslufræðilegar greiningar og aðrar greiningar og sérúrræði fyrir börn, sérkennsluumsóknir, námsáætlanir vegna sérúrræða, einstaklingsnámskrár og aðrar bakgrunnsupplýsingar sem að gagni geta komið fyrir velferð og aðlögun barna í grunnskóla.\n\nc. Hvers konar skrifleg eða stafræn gögn svo sem skýrslur, greinargerðir og umsagnir er varða velferð og skólagöngu barns.',
+        'Við flutning barns milli leik- og/eða grunnskóla sjá stjórnendur skólanna til þess að persónuupplýsingum um barnið sem nauðsynlegar eru fyrir velferð og aðlögun þess í nýjum skóla, sé miðlað með tryggum og öruggum hætti. \n\nPersónuupplýsingar geta verið:\n\n1. Almennar upplýsingar um félagslega stöðu og þroska barna.\n\n2. Læknisfræðilegar, sálfræðilegar og sérkennslufræðilegar greiningar eða aðrar greiningar og sérúrræði fyrir barn.\n\n3. Sérkennsluumsóknir, námsáætlanir vegna sérúrræða, einstaklingsnámskrár og aðrar bakgrunnsupplýsingar sem að gagni geta komið fyrir velferð og aðlögun barns í skólanum.\n\n4. Prófeinkunnir og vitnisburðir barns, mætingar og/eða agabrot\n\n5. Hverskonar skrifleg eða stafræn gögn svo sem skýrslur, greinargerðir og umsagnir er varða velferð og skólagöngu barns.',
       description:
-        "When a child transfers between nursery and/or primary schools, school administrators ensure that personal information about the child that is necessary for their well-being and adjustment to the new school is communicated in a secure and safe manner. \n\nPersonal data can be: \n\na. General information about the social status and development of children. \n\nb. Educational, medical, psychological, special educational and other diagnoses and special needs for children, special education applications, curricula for special needs, individual curricula and other background information that may be useful for the well-being and adjustment of children in primary school. \n\nc. Any written or digital data such as reports, analyses and comments on the child's well-being and schooling.",
+        "When a child transfers between nursery and/or primary schools, school administrators ensure that personal information about the child that is necessary for their well-being and adjustment to the new school is communicated in a secure and safe manner. \n\nPersonal data can be: \n\n1. General information about the social status and development of children. \n\n2. Medical, psychological, and special education assessments or other evaluations and specialized interventions for a child. \n\n3. Applications for special education, educational plans related to specialized support, individualized learning programs, and other background information that may be useful for the welfare and adaptation of a child in school.\n\n4. The child's exam results and testimonials, attendance, and/or disciplinary infractions.\n\n5. Any kind of written or digital data such as reports, statements, and evaluations concerning the welfare and schooling of the child.",
     },
     requestingMeeting: {
       id: 'nps.application:different.needs.requesting.meeting',
