@@ -29,7 +29,7 @@ export class LawyerRegistryController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  // @UseGuards(TokenGuard)
+  @UseGuards(TokenGuard)
   @Post('lawyer-registry/reset')
   @ApiOkResponse({ description: 'Resets a local copy of lawyer registry' })
   async resetLawyerRegistry(): Promise<LawyerFull[]> {
@@ -51,7 +51,7 @@ export class LawyerRegistryController {
     }
   }
 
-  // @UseGuards(TokenGuard)
+  @UseGuards(TokenGuard)
   @Get('lawyer-registry')
   @ApiOkResponse({ description: 'Gets all lawyers in lawyer registry' })
   async getAll(
@@ -69,7 +69,7 @@ export class LawyerRegistryController {
     }
   }
 
-  // @UseGuards(TokenGuard)
+  @UseGuards(TokenGuard)
   @Get('lawyer-registry/:nationalId')
   @ApiOkResponse({
     description: 'Gets a lawyer in lawyer registry by nationalId',
