@@ -65,7 +65,6 @@ const DateTime: FC<Props> = ({
   }
 
   const [currentDate, setCurrentDate] = useState(date(selectedDate))
-
   const [currentTime, setCurrentTime] = useState(
     dateOnly ? '00:00' : getTimeFromDate(date(selectedDate)),
   )
@@ -176,7 +175,6 @@ const DateTime: FC<Props> = ({
       onChange(undefined, isValid)
     }
   }
-  console.log({ currentDate })
 
   const renderDateTime = () => {
     return (
