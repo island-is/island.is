@@ -140,7 +140,7 @@ describe('answerValidators', () => {
 
       const appAnswers = {
         ...application.answers,
-        multipleBirthsRequestDays: 90,
+        multipleBirthsRequestDays: 180,
         multipleBirths: {
           hasMultipleBirths: YES,
           multipleBirths: 2,
