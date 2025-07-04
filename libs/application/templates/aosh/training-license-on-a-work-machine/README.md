@@ -12,7 +12,7 @@ The Training License On A Work Machine application allows individual users to ap
 
 ### Clients and template-api-modules
 
-- [Client]('https://github.com/island-is/island.is/blob/main/libs/clients/work-machines/src/lib/workMachines.service.ts')
+- [Client](https://github.com/island-is/island.is/blob/main/libs/clients/work-machines/src/lib/workMachines.service.ts)
 - [Domains]('https://github.com/island-is/island.is/blob/main/libs/api/domains/work-machines/src/lib/workMachines.service.ts')
 - [Template-api-module]('https://github.com/island-is/island.is/blob/main/libs/application/template-api-modules/src/lib/modules/templates/aosh/training-license-on-a-work-machine/training-license-on-a-work-machine.service.ts')
 
