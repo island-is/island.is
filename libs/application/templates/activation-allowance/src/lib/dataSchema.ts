@@ -59,13 +59,12 @@ const paymentInformationSchema = z.object({
 })
 
 const jobHistorySchema = z.object({
-  company: z
-    .object({
-      name: z.string().optional(),
-      nationalId: z.string().optional(),
-    })
+  companyName: z.string().optional(),
+  jobName: z
+    .string()
+    .nullable()
+    .transform((val) => (val === null ? undefined : val))
     .optional(),
-  jobName: z.string().optional(),
   employmentRate: z.string().optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),

@@ -24,10 +24,20 @@ export const drivingLicenses = {
       defaultMessage: 'Tegund ökuréttinda',
       description: 'Driving license type label',
     },
+    hasDrivingLicenseLabel: {
+      id: 'aa.application:drivingLicenses.labels.hasDrivingLicenseLabel',
+      defaultMessage: 'Ég er með ökuréttindi',
+      description: 'Driving license checkbox label',
+    },
     workMachineRights: {
       id: 'aa.application:drivingLicenses.labels.workMachineRights',
       defaultMessage: 'Vinnuvélaréttindi',
       description: 'Work machine rights  label',
+    },
+    hasHeavyMachineryLicenseLabel: {
+      id: 'aa.application:drivingLicenses.labels.hasHeavyMachineryLicenseLabel',
+      defaultMessage: 'Ég er með vinnuvélaréttindi',
+      description: 'Work machine checkbox label',
     },
   }),
 }

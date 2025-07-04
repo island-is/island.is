@@ -29,5 +29,15 @@ export const languageSkills = {
       defaultMessage: 'Bæta við tungumáli',
       description: 'Add language button label',
     },
+    english: {
+      id: 'aa.application:languageSkills.labels.english',
+      defaultMessage: 'Enska',
+      description: 'English',
+    },
+    icelandic: {
+      id: 'aa.application:languageSkills.labels.icelandic',
+      defaultMessage: 'Íslenska',
+      description: 'Icelandic',
+    },
   }),
 }

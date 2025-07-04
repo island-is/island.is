@@ -47,7 +47,7 @@ export const jobHistory = {
     },
     endDate: {
       id: 'aa.application:jobHistory.labels.endDate',
-      defaultMessage: 'Hvenær lýkur uppsagnarfresti þínum',
+      defaultMessage: 'Lauk starfi',
       description: 'End date label',
     },
     addNewButton: {

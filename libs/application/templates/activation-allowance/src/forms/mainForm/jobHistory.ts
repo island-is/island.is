@@ -25,8 +25,9 @@ export const jobHistorySection = buildSection({
           marginTop: 0,
           formTitle: jobHistory.labels.jobTitle,
           addItemButtonText: jobHistory.labels.addNewButton,
+          doesNotRequireAnswer: true,
           fields: {
-            company: {
+            companyName: {
               component: 'input',
               label: jobHistory.labels.companyName,
               type: 'text',
@@ -58,8 +59,9 @@ export const jobHistorySection = buildSection({
             employmentRate: {
               component: 'input',
               label: jobHistory.labels.employmentRate,
-              width: 'half',
+              width: 'full',
               type: 'number',
+              placeholder: '0%',
               suffix: '%',
             },
             startDate: {
