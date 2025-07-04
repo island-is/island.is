@@ -1,11 +1,10 @@
-import fetch from 'isomorphic-fetch'
-
 import { Inject, Injectable } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
+import { LawyersService } from '@island.is/judicial-system/lawyers'
 import { type Lawyer, mapToLawyer } from '@island.is/judicial-system/types'
 
 import { defenderModuleConfig } from './defender.config'
@@ -15,50 +14,34 @@ export class DefenderService {
   constructor(
     @Inject(defenderModuleConfig.KEY)
     private readonly config: ConfigType<typeof defenderModuleConfig>,
+    private readonly lawyersService: LawyersService,
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
   ) {}
 
   async getLawyers(): Promise<Lawyer[]> {
-    const response = await fetch(`${this.config.lawyerRegistryAPI}/lawyers`, {
-      headers: {
-        Authorization: `Basic  ${this.config.lawyerRegistryAPIKey}`,
-        Accept: 'application/json',
-      },
-    })
+    const lawyers = await this.lawyersService.getLawyers()
 
-    if (response.ok) {
-      const lawyers = await response.json()
-      const lawyersMapped = (lawyers || []).map(mapToLawyer)
+    if (lawyers.length > 0) {
+      const lawyersMapped = lawyers.map(mapToLawyer)
       return lawyersMapped
     }
 
-    const reason = await response.text()
-    this.logger.info('Failed to get lawyers from lawyer registry:', reason)
-    throw new Error(reason)
+    this.logger.info('Failed to get lawyers from lawyer registry')
+    throw new Error()
   }
 
   async getLawyer(nationalId: string): Promise<Lawyer> {
-    const response = await fetch(
-      `${this.config.lawyerRegistryAPI}/lawyer/${nationalId}`,
-      {
-        headers: {
-          Authorization: `Basic ${this.config.lawyerRegistryAPIKey}`,
-          Accept: 'application/json',
-        },
-      },
-    )
+    const lawyer = await this.lawyersService.getLawyer(nationalId)
 
-    if (response.ok) {
-      const lawyer = await response.json()
+    if (lawyer) {
       const lawyerMapped = {
         ...mapToLawyer(lawyer),
       }
       return lawyerMapped
     }
 
-    const reason = await response.text()
-    this.logger.info('Failed to get lawyer from lawyer registry:', reason)
-    throw new Error(reason)
+    this.logger.info('Failed to get lawyer from lawyer registry')
+    throw new Error()
   }
 }

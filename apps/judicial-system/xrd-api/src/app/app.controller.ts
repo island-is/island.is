@@ -56,7 +56,7 @@ export class AppController {
     try {
       this.logger.debug('Retrieving litigators from lawyer registry')
 
-      const lawyers = await this.lawyersService.getLawyersBackend(
+      const lawyers = await this.lawyersService.getLawyers(
         LawyerType.LITIGATORS,
       )
 

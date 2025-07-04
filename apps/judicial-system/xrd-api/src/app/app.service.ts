@@ -117,7 +117,7 @@ export class AppService {
 
     if (updateSubpoena.defenderNationalId) {
       try {
-        const chosenLawyer = await this.lawyersService.getLawyerBackend(
+        const chosenLawyer = await this.lawyersService.getLawyer(
           updateSubpoena.defenderNationalId,
         )
 

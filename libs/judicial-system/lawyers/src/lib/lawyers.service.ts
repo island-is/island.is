@@ -16,7 +16,9 @@ export class LawyersService {
     private readonly logger: Logger,
   ) {}
 
-  async getLawyers(lawyerType?: LawyerType): Promise<LawyerRegistryResponse[]> {
+  async getLawyersFromLFMI(
+    lawyerType?: LawyerType,
+  ): Promise<LawyerRegistryResponse[]> {
     const response = await fetch(
       `${this.config.lawyerRegistryAPI}/lawyers${
         lawyerType && lawyerType === LawyerType.LITIGATORS ? '?verjendur=1' : ''
@@ -38,34 +40,7 @@ export class LawyersService {
     throw new Error(reason)
   }
 
-  async getLawyer(nationalId: string): Promise<LawyerRegistryResponse> {
-    const response = await fetch(
-      `${this.config.lawyerRegistryAPI}/lawyer/${nationalId}`,
-      {
-        headers: {
-          Authorization: `Basic ${this.config.lawyerRegistryAPIKey}`,
-          Accept: 'application/json',
-        },
-      },
-    )
-
-    if (response.ok) {
-      return response.json()
-    }
-
-    const reason = await response.text()
-    this.logger.info('Failed to get lawyer from lawyer registry:', reason)
-
-    if (response.status === 404) {
-      throw new NotFoundException('Lawyer not found')
-    }
-
-    throw new Error(reason)
-  }
-
-  async getLawyersBackend(
-    lawyerType?: LawyerType,
-  ): Promise<LawyerRegistryResponse[]> {
+  async getLawyers(lawyerType?: LawyerType): Promise<LawyerRegistryResponse[]> {
     const response = await fetch(
       `${this.config.backendUrl}/lawyer-registry${
         lawyerType ? `?${lawyerType}` : ''
@@ -81,7 +56,7 @@ export class LawyersService {
     throw new Error(reason)
   }
 
-  async getLawyerBackend(nationalId: string): Promise<LawyerRegistryResponse> {
+  async getLawyer(nationalId: string): Promise<LawyerRegistryResponse> {
     const response = await fetch(
       `${this.config.backendUrl}/lawyer/${nationalId}`,
     )

@@ -187,7 +187,7 @@ export class AuthService {
     // case list for them to avoid confusion about them not having access to
     // the judicial system
     try {
-      const lawyerRegistryResponse = await this.lawyersService.getLawyerBackend(
+      const lawyerRegistryResponse = await this.lawyersService.getLawyer(
         nationalId,
       )
 

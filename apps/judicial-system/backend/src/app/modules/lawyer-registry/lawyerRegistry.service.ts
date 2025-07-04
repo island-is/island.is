@@ -46,7 +46,7 @@ export class LawyerRegistryService {
 
   private async getLawyerRegistry(lawyerType?: LawyerType) {
     try {
-      const lawyers = await this.lawyersService.getLawyers(lawyerType)
+      const lawyers = await this.lawyersService.getLawyersFromLFMI(lawyerType)
 
       if (lawyers.length === 0) {
         throw new InternalServerErrorException(
