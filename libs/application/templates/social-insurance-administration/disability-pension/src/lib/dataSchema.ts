@@ -154,15 +154,15 @@ export const dataSchema = z.object({
     }
   ),
   backgroundInfoEmploymentCapability: z.object({
-    capability: z.coerce.number().min(0).max(100),
-  }) .refine(
-    ({ capability }) => {
-      console.log('bjrioabn')
-      console.log(capability)
-      return capability !== undefined
-    },
-    { path: ['capability'] },
-  ),
+    capability: z
+        .string()
+        .refine(
+          (data): data is string =>
+            typeof data === 'string' &&
+            !isNaN(Number(data)) &&
+            (data.length === 3 || data.length === 0),
+        ),
+  }),
   backgroundInfoEmploymentImportance: z.nativeEnum(EmploymentImportanceEnum),
   backgroundInfoRehabilitationOrTherapy: z.enum([YES, NO]),
   backgroundInfoBiggestIssue: z.string(),
