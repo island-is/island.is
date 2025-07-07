@@ -280,3 +280,9 @@ export const FEEDBACK_FORM_URL =
 
 // Masks
 export const POLICE_CASE_NUMBER = '___-____-_______'
+export const SSN = '______-____'
+export const PHONE_NUMBER = '___-____'
+export const EDITABLE_DATE = '__.__.____'
+export const DATE_PICKER_TIME = '  :  '
+export const SUBSTANCE_ALCOHOL = '_,__'
+export const SPEED = '___'
