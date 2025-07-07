@@ -14,10 +14,6 @@ import {
   SharedAuthModule,
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
-import {
-  LawyersModule,
-  lawyersModuleConfig,
-} from '@island.is/judicial-system/lawyers'
 
 import {
   AuthModule,
@@ -84,7 +80,6 @@ const autoSchemaFile = production
     EventLogModule,
     VictimModule,
     CaseTableModule,
-    LawyersModule,
     ProblemModule.forRoot({ logAllErrors: true }),
     ConfigModule.forRoot({
       isGlobal: true,
@@ -95,7 +90,6 @@ const autoSchemaFile = production
         featureModuleConfig,
         authModuleConfig,
         backendModuleConfig,
-        lawyersModuleConfig,
       ],
     }),
   ],

@@ -643,7 +643,7 @@ export class BackendService extends DataSource<{ req: Request }> {
     )
   }
 
-  getLawyers(lawyerType: LawyerType): Promise<LawyerRegistry[]> {
+  getLawyers(lawyerType?: LawyerType): Promise<LawyerRegistry[]> {
     return this.get(`/lawyer-registry?lawyer-type=${lawyerType}`)
   }
 
