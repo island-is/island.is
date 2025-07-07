@@ -410,8 +410,7 @@ export const rehabilitationPlanItems = (): Array<KeyValueItem> => [
 export const selfAssessmentQuestionsOneItems = (
   answers: FormValue,
 ): Array<KeyValueItem> => {
-  const { hadAssistance, highestLevelOfEducation } =
-    getApplicationAnswers(answers)
+  const { hadAssistance, educationalLevel } = getApplicationAnswers(answers)
 
   return [
     {
@@ -429,7 +428,7 @@ export const selfAssessmentQuestionsOneItems = (
       keyText:
         medicalAndRehabilitationPaymentsFormMessage.selfAssessment
           .highestlevelOfEducationDescription,
-      valueText: highestLevelOfEducation,
+      valueText: educationalLevel,
     },
   ]
 }
