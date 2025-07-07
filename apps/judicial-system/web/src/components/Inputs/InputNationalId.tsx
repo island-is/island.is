@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 import { InputMask } from '@react-input/mask'
 
 import { Input } from '@island.is/island-ui/core'
+import { EDITABLE_DATE, SSN } from '@island.is/judicial-system/consts'
 import { core } from '@island.is/judicial-system-web/messages'
 
 import { validate } from '../../utils/validate'
@@ -84,10 +85,11 @@ const InputNationalId: FC<Props> = (props) => {
 
   return (
     <InputMask
-      mask={isDateOfBirth ? '__.__.____' : '______-____'}
+      mask={isDateOfBirth ? EDITABLE_DATE : SSN}
       replacement={{ _: /\d/ }}
       component={Input}
       value={inputValue ?? value}
+      data-testid="inputNationalId"
       onChange={handleChange}
       onBlur={handleBlur}
       disabled={disabled}
@@ -102,7 +104,6 @@ const InputNationalId: FC<Props> = (props) => {
       required={required}
       name="nationalId"
       id="nationalId"
-      data-testid="inputNationalId"
       autoComplete="off"
       label={
         label ??

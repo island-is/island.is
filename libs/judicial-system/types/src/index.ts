@@ -52,6 +52,8 @@ export {
   DefenderSubRole,
   prosecutionRoles,
   isProsecutionUser,
+  isProsecutorUser,
+  isProsecutorRepresentativeUser,
   getContactInformation,
   publicProsecutionOfficeRoles,
   isPublicProsecutionOfficeUser,
@@ -70,7 +72,6 @@ export {
   isPublicProsecutionUser,
   getAdminUserInstitutionScope,
   getAdminUserInstitutionUserRoles,
-  hasCaseGroupListsEnabled,
 } from './lib/user'
 export type { User, UserDescriptor, InstitutionUser } from './lib/user'
 

@@ -217,19 +217,6 @@ export const isCoreUser = (user?: InstitutionUser): boolean => {
   )
 }
 
-// TEMP: Use this check to gradually rollout case group to users
-// Once a case group list is ready for a role we include it here to release
-export const hasCaseGroupListsEnabled = (user?: InstitutionUser): boolean => {
-  return (
-    isProsecutionUser(user) || // saksoknarar
-    isDistrictCourtUser(user) || // Heradsdomur
-    isPublicProsecutionOfficeUser(user) || // Skrifstofa rikissaksoknara
-    isCourtOfAppealsUser(user) || // Landsrettur
-    isPrisonAdminUser(user) || // Fangelsismalastofnun
-    isPrisonStaffUser(user) // Fangelsi
-  )
-}
-
 export const getAdminUserInstitutionScope = (
   user?: InstitutionUser,
 ): InstitutionType[] => {

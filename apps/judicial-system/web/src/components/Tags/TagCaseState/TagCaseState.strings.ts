@@ -52,11 +52,6 @@ export const strings = defineMessages({
     description:
       'Notað sem merki þegar mál í stöðu "Endurúthlutun" í málalista',
   },
-  beingReviewed: {
-    id: 'judicial.system.core:tag_case_state.being_reviewed',
-    defaultMessage: 'Í yfirlestri',
-    description: 'Notað sem merki þegar mál í stöðu "Í yfirlestri" í málalista',
-  },
   new: {
     id: 'judicial.system.core:tag_case_state.new',
     defaultMessage: 'Nýtt',

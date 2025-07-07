@@ -71,12 +71,19 @@ const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
     },
   ]
 
+  const isAdvertHtmlEmpty =
+    !advert.document.html || advert.document.html.trim() === ''
+
   return (
     <OJOIWrapper
       pageTitle={advert.title}
       hideTitle
       organization={organization ?? undefined}
-      pageDescription={formatMessage(m.advert.description)}
+      pageDescription={
+        isAdvertHtmlEmpty
+          ? formatMessage(m.advert.descriptionEmpty)
+          : formatMessage(m.advert.description)
+      }
       pageFeaturedImage={formatMessage(m.home.featuredImage)}
       breadcrumbItems={breadcrumbItems}
       goBackUrl={searchUrl}

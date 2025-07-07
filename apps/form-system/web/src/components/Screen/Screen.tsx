@@ -56,13 +56,7 @@ export const Screen = () => {
               (field): field is NonNullable<typeof field> => field != null,
             )
             .map((field, index) => {
-              return (
-                <Field
-                  field={field}
-                  key={index}
-                  hasError={state.errors?.includes(field.id) ?? false}
-                />
-              )
+              return <Field field={field} key={index} />
             })}
       </GridColumn>
       <Footer externalDataAgreement={externalDataAgreement} />

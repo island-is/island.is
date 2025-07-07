@@ -5,8 +5,8 @@ import {
   YES,
 } from '@island.is/application/core'
 import {
-  defaultIncomeTypes,
   Actions,
+  defaultIncomeTypes,
   Events,
   INCOME,
   RatioType,
@@ -33,26 +33,27 @@ import {
   UserProfileApi,
 } from '@island.is/application/types'
 import { ApiScope } from '@island.is/auth/scopes'
+import { Features } from '@island.is/feature-flags'
 import { CodeOwners } from '@island.is/shared/constants'
+import { AuthDelegationType } from '@island.is/shared/types'
 import set from 'lodash/set'
 import unset from 'lodash/unset'
-import { AuthDelegationType } from '@island.is/shared/types'
 import { assign } from 'xstate'
 import {
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationCategorizedIncomeTypesApi,
   SocialInsuranceAdministrationCurrenciesApi,
+  SocialInsuranceAdministrationEctsUnitsApi,
   SocialInsuranceAdministrationIncomePlanConditionsApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
   SocialInsuranceAdministrationQuestionnairesApi,
 } from '../dataProviders'
-import { dataSchema } from './dataSchema'
 import { getApplicationAnswers } from '../utils/medicalAndRehabilitationPaymentsUtils'
+import { dataSchema } from './dataSchema'
 import {
   medicalAndRehabilitationPaymentsFormMessage,
   statesMessages,
 } from './messages'
-import { Features } from '@island.is/feature-flags'
 
 const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -113,6 +114,7 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
                 SocialInsuranceAdministrationCurrenciesApi,
                 SocialInsuranceAdministrationIncomePlanConditionsApi,
                 SocialInsuranceAdministrationQuestionnairesApi,
+                SocialInsuranceAdministrationEctsUnitsApi,
               ],
               delete: true,
             },
