@@ -116,7 +116,7 @@ export class AppService {
     if (updateSubpoena.defenderNationalId) {
       try {
         const res = await fetch(
-          `${this.config.backend.url}/lawyer-registry/${updateSubpoena.defenderNationalId}`,
+          `${this.config.backend.url}/api/lawyer-registry/${updateSubpoena.defenderNationalId}`,
           {
             method: 'GET',
             headers: {
