@@ -63,7 +63,7 @@ export const shouldShowCalculatedRemunerationDate = (
   return isSelfEmployed === YES
 }
 
-export const shouldShowIsStudyingFileUpload = (answers: FormValue): boolean => {
+export const shouldShowIsStudyingFields = (answers: FormValue): boolean => {
   const { isStudying } = getApplicationAnswers(answers)
   return isStudying === YES
 }

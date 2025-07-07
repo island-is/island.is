@@ -661,17 +661,17 @@
             "content": {
               "text/plain": {
                 "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.Applicant.NationalRegistryAddress"
+                  "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.NationalRegistryAddress"
                 }
               },
               "application/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.Applicant.NationalRegistryAddress"
+                  "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.NationalRegistryAddress"
                 }
               },
               "text/json": {
                 "schema": {
-                  "$ref": "#/components/schemas/TrWeb.Commons.ExternalPortals.Api.Models.Applicant.NationalRegistryAddress"
+                  "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.NationalRegistryAddress"
                 }
               }
             }
@@ -4309,32 +4309,6 @@
         },
         "additionalProperties": false
       },
-      "TrWeb.Commons.ExternalPortals.Api.Models.Applicant.NationalRegistryAddress": {
-        "type": "object",
-        "properties": {
-          "address": {
-            "type": "string",
-            "description": "The address e.g. Suðurgata 1",
-            "nullable": true
-          },
-          "municipality": {
-            "type": "string",
-            "description": "The municipality of residence",
-            "nullable": true
-          },
-          "postalCode": {
-            "type": "string",
-            "description": "The postal code of residence",
-            "nullable": true
-          },
-          "apartmentNumber": {
-            "type": "string",
-            "description": "The apartment number of residence, especially relevant when living in block.",
-            "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
       "TrWeb.Commons.ExternalPortals.Api.Models.Applications.IsEligibleForApplicationReturn": {
         "type": "object",
         "properties": {
@@ -5470,6 +5444,16 @@
           "city": { "type": "string", "nullable": true },
           "phoneNumber": { "type": "string", "nullable": true },
           "email": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.External.Models.ServicePortal.NationalRegistryAddress": {
+        "type": "object",
+        "properties": {
+          "address": { "type": "string", "nullable": true },
+          "municipality": { "type": "string", "nullable": true },
+          "postalCode": { "type": "string", "nullable": true },
+          "apartmentNumber": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },

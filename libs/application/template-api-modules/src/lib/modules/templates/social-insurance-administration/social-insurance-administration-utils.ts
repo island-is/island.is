@@ -23,7 +23,10 @@ import {
   getApplicationAnswers as getIPApplicationAnswers,
   getApplicationExternalData as getIPApplicationExternalData,
 } from '@island.is/application/templates/social-insurance-administration/income-plan'
-import { getApplicationAnswers as getMARPApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
+import {
+  getApplicationAnswers as getMARPApplicationAnswers,
+  SelfAssessmentCurrentEmploymentStatus,
+} from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
 import {
   ApplicationType,
   Employer,
@@ -385,6 +388,10 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     calculatedRemunerationDate,
     isPartTimeEmployed,
     isStudying,
+    educationalInstitution,
+    // ectsUnits,
+    isReceivingBenefitsFromAnotherCountry,
+    // countries,
     hasUtilizedEmployeeSickPayRights,
     employeeSickPayEndDate,
     hasUtilizedUnionSickPayRights,
@@ -392,6 +399,11 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     unionNationalId,
     comment,
     questionnaire,
+    currentEmploymentStatus,
+    currentEmploymentStatusAdditional,
+    lastEmploymentTitle,
+    lastEmploymentYear,
+    certificateForSicknessAndRehabilitationReferenceId,
   } = getMARPApplicationAnswers(application.answers)
 
   //  const { bankInfo } = getMARPApplicationExternalData(application.externalData)
@@ -413,17 +425,22 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     //   },
     // }),
     taxInfo: {
-      personalAllowance: YES === personalAllowance,
+      personalAllowance: personalAllowance === YES,
       personalAllowanceUsage:
-        YES === personalAllowance ? +personalAllowanceUsage : 0,
+        personalAllowance === YES ? +personalAllowanceUsage : 0,
       taxLevel: +taxLevel,
     },
     occupation: {
-      isSelfEmployed: YES === isSelfEmployed,
-      isStudying: YES === isStudying,
-      isPartTimeEmployed: YES === isPartTimeEmployed,
-      ...(YES === isSelfEmployed && {
+      isSelfEmployed: isSelfEmployed === YES,
+      isStudying: isStudying === YES,
+      isPartTimeEmployed: isPartTimeEmployed === YES,
+      receivingPaymentsFromOtherCountry:
+        isReceivingBenefitsFromAnotherCountry === YES,
+      ...(isSelfEmployed === YES && {
         calculatedRemunerationDate,
+      }),
+      ...(isStudying === YES && {
+        educationalInstitution,
       }),
     },
     employeeSickPay: {
@@ -445,10 +462,17 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
         unionSickPayEndDate,
       }),
     },
-    baseCertificateReference: 'test', //TODO:
+    baseCertificateReference:
+      certificateForSicknessAndRehabilitationReferenceId ?? '',
     rehabilitationPlanReference: 'test', //TODO:
     selfAssessment: {
       hadAssistance: true, //TODO:
+      currentEmploymentStatus,
+      ...(currentEmploymentStatus?.includes(
+        SelfAssessmentCurrentEmploymentStatus.OTHER,
+      ) && { currentEmploymentStatusAdditional }),
+      ...(lastEmploymentTitle && { lastEmploymentTitle }),
+      ...(lastEmploymentYear && { lastEmploymentYear: +lastEmploymentYear }),
       answers: questionnaire.map((question) => ({
         questionId: question.questionId,
         answer: question.answer === '5' ? '-1' : question.answer, //TODO: TR teymið er ekki klárt hvort að við eigum að senda -1 eða null

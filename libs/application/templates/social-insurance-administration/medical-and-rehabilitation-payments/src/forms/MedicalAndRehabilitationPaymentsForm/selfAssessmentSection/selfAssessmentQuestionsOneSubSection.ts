@@ -22,10 +22,10 @@ export const selfAssessmentQuestionsOneSubSection = buildSubSection({
           .sectionDescription,
       children: [
         buildRadioField({
+          id: 'selfAssessment.hadAssistance',
           title:
             medicalAndRehabilitationPaymentsFormMessage.selfAssessment
               .hadAssistance,
-          id: 'selfAssessment.hadAssistance',
           options: getYesNoOptions(),
           required: true,
           width: 'half',
