@@ -122,9 +122,9 @@ export class AppService {
         )
 
         defenderInfo = {
-          defenderName: chosenLawyer.Name,
-          defenderEmail: chosenLawyer.Email,
-          defenderPhoneNumber: chosenLawyer.Phone,
+          defenderName: chosenLawyer.name,
+          defenderEmail: chosenLawyer.email,
+          defenderPhoneNumber: chosenLawyer.phoneNumber,
         }
       } catch (reason) {
         this.logger.error(
