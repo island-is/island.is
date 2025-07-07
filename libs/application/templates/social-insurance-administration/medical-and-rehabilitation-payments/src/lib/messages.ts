@@ -33,11 +33,6 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Réttinum lýkur',
       description: 'Your entitlement ends',
     },
-    uploadConfirmationDocument: {
-      id: 'marp.application:upload.confirmation.document',
-      defaultMessage: 'Hlaða inn staðfestingarskjali',
-      description: 'Upload confirmation document',
-    },
     jobTitle: {
       id: 'marp.application:job.title',
       defaultMessage: 'Starfsheiti',
@@ -99,13 +94,45 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
   }),
 
   generalInformation: defineMessages({
-    // Payment information
-
     // Income Plan - Instructions
     incomePlanInstructionsSubSectionTitle: {
       id: 'marp.application:general.information.income.plan.instructions.sub.section.title',
       defaultMessage: 'Tekjuáætlun - Leiðbeiningar',
       description: 'Income Plan - Instructions',
+    },
+
+    // Benefits from another country
+    benefitsFromAnotherCountrySubSectionTitle: {
+      id: 'marp.application:general.information.benefits.from.another.country.sub.section.title',
+      defaultMessage: 'Greiðslur frá öðru landi',
+      description: 'Benefits from another country',
+    },
+    benefitsFromAnotherCountryTitle: {
+      id: 'marp.application:general.information.benefits.from.another.country.title',
+      defaultMessage:
+        'Færðu greiðslur frá öðru landi vegna heilsubrests eða óvinnufærni?',
+      description:
+        'Do you receive benefits from another country due to ill health or incapacity?',
+    },
+    countryRegistration: {
+      id: 'marp.application:general.information.country.registration',
+      defaultMessage: 'Skráning lands',
+      description: 'Country registration',
+    },
+    country: {
+      id: 'marp.application:general.information.country',
+      defaultMessage: 'Land',
+      description: 'Country',
+    },
+    selectCountry: {
+      id: 'marp.application:general.information.select.country',
+      defaultMessage: 'Veldu land',
+      description: 'Select country',
+    },
+    countryIdNumber: {
+      id: 'marp.application:general.information.country.id.number',
+      defaultMessage: 'Kennitala/persónunúmer í landi',
+      description: 'Country ID number/personal ID number',
     },
 
     // Questions
@@ -128,8 +155,8 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
     },
     questionsCalculatedRemunerationDate: {
       id: 'marp.application:general.information.questions.calculated.remuneration.date',
-      defaultMessage: 'Hvenær fellur niður reiknað endurgjald?',
-      description: 'When does the calculated remuneration expire?',
+      defaultMessage: 'Hvenær féll/fellur niður reiknað endurgjald?',
+      description: 'When did/does the calculated remuneration expire?',
     },
     questionsIsPartTimeEmployed: {
       id: 'marp.application:general.information.questions.is.part.time.employed',
@@ -140,6 +167,31 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       id: 'marp.application:general.information.questions.is.studying',
       defaultMessage: 'Ertu í námi?',
       description: 'Are you studying?',
+    },
+    questionsSchoolRegistration: {
+      id: 'marp.application:general.information.questions.school.registration',
+      defaultMessage: 'Skráning skóla',
+      description: 'School registration',
+    },
+    questionsSchool: {
+      id: 'marp.application:general.information.questions.school',
+      defaultMessage: 'Skóli',
+      description: 'School',
+    },
+    questionsSelectSchool: {
+      id: 'marp.application:general.information.questions.select.school',
+      defaultMessage: 'Veldu skóla',
+      description: 'Select school',
+    },
+    questionsNumberOfCredits: {
+      id: 'marp.application:general.information.questions.number.of.credits',
+      defaultMessage: 'Fjöldi eininga á núverandi önn',
+      description: 'Number of ECTS credits per current semester',
+    },
+    questionsSelectNumberOfCredits: {
+      id: 'marp.application:general.information.questions.select.number.of.credits',
+      defaultMessage: 'Veldu fjölda eininga',
+      description: 'Select number of credits',
     },
 
     // Employee sick pay
@@ -213,8 +265,6 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Þitt stéttarfélag',
       description: 'Your union',
     },
-
-    // Tengdar umsóknir?
   }),
 
   certificateForSicknessAndRehabilitation: defineMessages({
@@ -745,11 +795,6 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
   }),
 
   overview: defineMessages({
-    studyConfirmation: {
-      id: 'marp.application:overview.study.confirmation',
-      defaultMessage: 'Staðfesting á námi',
-      description: 'Confirmation of study',
-    },
     rehabilitationPlanConfirmed: {
       id: 'marp.application:overiew.rehabilitation.plan.confirmed',
       defaultMessage: 'Þú hefur staðfest endurhæfingaráætlunina',
@@ -812,6 +857,28 @@ export const errorMessages = defineMessages({
     id: 'marp.application:error.date.required',
     defaultMessage: 'Það þarf að velja dagsetningu',
     description: 'You must select a date',
+  },
+  countriesRequired: {
+    id: 'marp.application:error.countries.required',
+    defaultMessage: 'Það þarf að skrá að minnsta kosti eitt land',
+    description: 'You must add at least one country',
+  },
+  countryRequired: {
+    id: 'marp.application:error.country.required',
+    defaultMessage: 'Það þarf að velja land',
+    description: 'You must select a country',
+  },
+  countryIdNumberRequired: {
+    id: 'marp.application:error.country.id.number.required',
+    defaultMessage: 'Kennitala/persónunúmer í landi þarf að vera gilt',
+    description: 'Country ID number/personal ID number must be valid',
+  },
+  countryIdNumberMin: {
+    id: 'marp.application:error.country.id.number.min',
+    defaultMessage:
+      'Kennitala/persónunúmer í landi þarf að vera að minnsta kosti 5 stafir eða tákn',
+    description:
+      'Country ID number/personal ID number must be at least 5 characters or symbols',
   },
 })
 
