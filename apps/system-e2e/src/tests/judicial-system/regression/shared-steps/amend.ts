@@ -7,47 +7,64 @@ export const judgeAmendsCase = async (page: Page, caseId: string) => {
     verifyRequestCompletion(page, '/api/graphql', 'Case'),
   ])
 
-  await page.getByTestId('continueButton').click()
-
-  await page.getByTestId('modalPrimaryButton').click()
-
-  // Móttaka
-  await page.getByTestId('continueButton').click()
-
   // Yfirlit
+  await expect(page).toHaveURL(`/krafa/yfirlit/${caseId}`)
   await page.getByTestId('continueButton').click()
-
-  // Fyrirtaka
   await Promise.all([
-    page.getByRole('button', { name: 'Staðfesta' }).click(),
+    page.getByTestId('modalPrimaryButton').click(),
     verifyRequestCompletion(page, '/api/graphql', 'Case'),
   ])
 
+  // Móttaka
+  await expect(page).toHaveURL(`/domur/mottaka/${caseId}`)
+  await Promise.all([
+    page.getByTestId('continueButton').click(),
+    verifyRequestCompletion(page, '/api/graphql', 'Case'),
+  ])
+
+  // Yfirlit
+  await expect(page).toHaveURL(`/domur/krafa/${caseId}`)
+  await Promise.all([
+    page.getByTestId('continueButton').click(),
+    verifyRequestCompletion(page, '/api/graphql', 'Case'),
+  ])
+
+  // Fyrirtaka
+  await expect(page).toHaveURL(`/domur/fyrirtokutimi/${caseId}`)
+  await page.getByTestId('continueButton').click()
+
   // Úrskurður
+  await expect(page).toHaveURL(`/domur/urskurdur/${caseId}`)
   await page
     .locator('textarea[id=courtLegalArguments]')
     .fill('Dómari hefur ákveðið að breyta úrskurði')
-
-  await page.getByTestId('continueButton').click()
+  await Promise.all([
+    page.getByTestId('continueButton').click(),
+    verifyRequestCompletion(page, '/api/graphql', 'Case'),
+  ])
 
   // Þingbók
-  await page.getByTestId('continueButton').click()
+  await expect(page).toHaveURL(`/domur/thingbok/${caseId}`)
+  await Promise.all([
+    page.getByTestId('continueButton').click(),
+    verifyRequestCompletion(page, '/api/graphql', 'Case'),
+  ])
 
   // Samantekt
-  await page
-    .getByRole('button', { name: 'Samþykkja kröfu og undirrita úrskurð' })
-    .click()
-  await page.getByRole('dialog').waitFor({ state: 'visible' })
-  await page.locator('textarea[id=reason]').fill('Dómari breytti úrskurði')
+  await expect(page).toHaveURL(`/domur/stadfesta/${caseId}`)
+  await page.getByTestId('continueButton').click()
+  await page.locator('textarea[name=reason]').fill('Dómari breytti úrskurði')
   await Promise.all([
     page.getByTestId('modalPrimaryButton').click(),
     verifyRequestCompletion(page, '/api/graphql', 'TransitionCase'),
   ])
+  await Promise.all([
+    page.getByTestId('modalSecondaryButton').click(),
+    verifyRequestCompletion(page, '/api/graphql', 'Case'),
+  ])
 
-  await page.getByTestId('modalSecondaryButton').click()
-
+  // Yfirlit
   await expect(page).toHaveURL(`/krafa/yfirlit/${caseId}`)
-
   await expect(page.getByText('Dómari breytti úrskurði')).toBeVisible()
 
   await page.getByRole('button', { name: 'Úrskurður héraðsdóms' }).click()
