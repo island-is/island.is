@@ -4,7 +4,7 @@ import { useRouter } from 'next/router'
 
 import { Accordion, Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { getCourtDashboardRoute } from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
   ConnectedCaseFilesAccordionItem,
@@ -122,7 +122,7 @@ const OverviewBody = ({
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={getCourtDashboardRoute(user)}
+          previousUrl={getStandardUserDashboardRoute(user)}
           nextIsLoading={isLoadingWorkingCase}
           onNextButtonClick={() =>
             handleNavigationTo(
@@ -146,7 +146,7 @@ const OverviewBody = ({
           workingCase={workingCase}
           setWorkingCase={setWorkingCase}
           onClose={() => setModalVisible(undefined)}
-          onComplete={() => router.push(getCourtDashboardRoute(user))}
+          onComplete={() => router.push(getStandardUserDashboardRoute(user))}
         />
       )}
     </>

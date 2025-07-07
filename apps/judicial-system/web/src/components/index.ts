@@ -80,10 +80,7 @@ export { default as SignedDocument } from './SignedDocument/SignedDocument'
 export { default as TagAppealState } from './Tags/TagAppealState/TagAppealState'
 export { default as TagCaseState } from './Tags/TagCaseState/TagCaseState'
 export { default as CaseTag } from './Tags/CaseTag'
-export {
-  getIndictmentRulingDecisionTag,
-  getIndictmentCaseStateTag,
-} from './Tags/utils'
+export { getIndictmentRulingDecisionTag } from './Tags/utils'
 export {
   SigningModal,
   useRequestRulingSignature,

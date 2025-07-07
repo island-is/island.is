@@ -49,8 +49,9 @@ test.describe.serial('Custody tests', () => {
       }
     })
 
-    // Case list
+    // Case list groups
     await page.goto('/malalistar')
+    await expect(page).toHaveURL('/malalistar')
     await page.getByRole('button', { name: 'Nýtt mál' }).click()
     await page.getByRole('menuitem', { name: 'Gæsluvarðhald' }).click()
     await expect(page).toHaveURL('/krafa/ny/gaesluvardhald')

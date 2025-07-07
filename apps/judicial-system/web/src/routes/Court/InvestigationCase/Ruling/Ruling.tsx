@@ -114,6 +114,7 @@ const Ruling = () => {
     workingCase.caseFiles?.filter((file) => !file.category) ?? []
 
   const isRulingRequired = !workingCase.isCompletedWithoutRuling
+
   return (
     <PageLayout
       workingCase={workingCase}
