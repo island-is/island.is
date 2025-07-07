@@ -3,6 +3,8 @@ import { socialInsuranceAdministrationMessage } from '@island.is/application/tem
 import { getApplicationAnswers } from './medicalAndRehabilitationPaymentsUtils'
 import {
   applicantItems,
+  benefitsFromAnotherCountryItems,
+  benefitsFromAnotherCountryTable,
   commentItems,
   employeeSickPayItems,
   incomePlanTable,
@@ -30,9 +32,15 @@ export const overviewFields = (editable?: boolean) => {
     }),
     buildOverviewField({
       id: 'overview.incomePlanTable',
-      backId: editable ? 'incomePlanTable' : undefined,
       title: socialInsuranceAdministrationMessage.incomePlan.subSectionTitle,
+      backId: editable ? 'incomePlanTable' : undefined,
       tableData: incomePlanTable,
+    }),
+    buildOverviewField({
+      id: 'overview.benefitsFromAnotherCountry',
+      backId: editable ? 'benefitsFromAnotherCountry' : undefined,
+      items: benefitsFromAnotherCountryItems,
+      tableData: benefitsFromAnotherCountryTable,
     }),
     buildOverviewField({
       id: 'overview.questions',

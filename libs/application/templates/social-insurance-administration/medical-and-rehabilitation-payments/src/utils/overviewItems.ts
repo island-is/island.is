@@ -167,12 +167,55 @@ export const incomePlanTable = (
   }
 }
 
+export const benefitsFromAnotherCountryItems = (
+  answers: FormValue,
+): Array<KeyValueItem> => {
+  const { isReceivingBenefitsFromAnotherCountry } =
+    getApplicationAnswers(answers)
+
+  return [
+    {
+      width: 'full',
+      keyText:
+        medicalAndRehabilitationPaymentsFormMessage.generalInformation
+          .benefitsFromAnotherCountryTitle,
+      valueText:
+        isReceivingBenefitsFromAnotherCountry === YES
+          ? socialInsuranceAdministrationMessage.shared.yes
+          : socialInsuranceAdministrationMessage.shared.no,
+    },
+  ]
+}
+
+export const benefitsFromAnotherCountryTable = (
+  answers: FormValue,
+  _externalData: ExternalData,
+): TableData => {
+  const { isReceivingBenefitsFromAnotherCountry, countries } =
+    getApplicationAnswers(answers)
+
+  if (isReceivingBenefitsFromAnotherCountry === YES) {
+    return {
+      header: [
+        medicalAndRehabilitationPaymentsFormMessage.generalInformation.country,
+        medicalAndRehabilitationPaymentsFormMessage.generalInformation
+          .countryIdNumber,
+      ],
+      rows: countries.map((e) => [e.country?.split('::')[1], e.nationalId]),
+    }
+  }
+
+  return { header: [], rows: [] }
+}
+
 export const questionsItems = (answers: FormValue): Array<KeyValueItem> => {
   const {
     isSelfEmployed,
     calculatedRemunerationDate,
     isPartTimeEmployed,
     isStudying,
+    educationalInstitution,
+    ectsUnits,
   } = getApplicationAnswers(answers)
 
   const baseItems: Array<KeyValueItem> = [
@@ -228,7 +271,32 @@ export const questionsItems = (answers: FormValue): Array<KeyValueItem> => {
     },
   ]
 
-  return [...baseItems, ...calculatedRemunerationDateItem, ...baseItems2]
+  const isStudyingItems: Array<KeyValueItem> =
+    isStudying === YES
+      ? [
+          {
+            width: 'half',
+            keyText:
+              medicalAndRehabilitationPaymentsFormMessage.generalInformation
+                .questionsSchool,
+            valueText: educationalInstitution,
+          },
+          {
+            width: 'half',
+            keyText:
+              medicalAndRehabilitationPaymentsFormMessage.generalInformation
+                .questionsNumberOfCredits,
+            valueText: ectsUnits,
+          },
+        ]
+      : []
+
+  return [
+    ...baseItems,
+    ...calculatedRemunerationDateItem,
+    ...baseItems2,
+    ...isStudyingItems,
+  ]
 }
 
 export const employeeSickPayItems = (
@@ -284,7 +352,7 @@ export const unionSickPayItems = async (
   const { data } = await apolloClient.query<SiaUnionsQuery>({
     query: siaUnionsQuery,
   })
-  const unionName = data?.socialInsuranceUnions.find(
+  const unionName = data?.socialInsuranceGeneral?.unions?.find(
     (union) => union?.nationalId === unionNationalId,
   )?.name
 

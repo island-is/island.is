@@ -6,6 +6,7 @@ import {
   buildRadioField,
   buildSubSection,
   buildTextField,
+  coreErrorMessages,
   YES,
 } from '@island.is/application/core'
 import { siaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/graphql/queries'
@@ -95,19 +96,14 @@ export const unionSickPaySubSection = buildSubSection({
             medicalAndRehabilitationPaymentsFormMessage.generalInformation
               .unionSickPayUnionSelectPlaceholder,
           required: true,
-          condition: (answers) =>
-            shouldShowUnionSickPayUnionAndEndDate(answers),
+          loadingError: coreErrorMessages.failedDataProvider,
           loadOptions: async ({ apolloClient }) => {
-            const { data, error } = await apolloClient.query<SiaUnionsQuery>({
+            const { data } = await apolloClient.query<SiaUnionsQuery>({
               query: siaUnionsQuery,
             })
 
-            if (error) {
-              return []
-            }
-
             return (
-              data?.socialInsuranceUnions
+              data?.socialInsuranceGeneral?.unions
                 ?.map(({ name, nationalId }) => ({
                   value: nationalId || '',
                   label: name || '',
@@ -115,6 +111,8 @@ export const unionSickPaySubSection = buildSubSection({
                 .sort((a, b) => a.label.localeCompare(b.label)) ?? []
             )
           },
+          condition: (answers) =>
+            shouldShowUnionSickPayUnionAndEndDate(answers),
         }),
         buildDescriptionField({
           id: 'unionSickPay.endDate.description',
