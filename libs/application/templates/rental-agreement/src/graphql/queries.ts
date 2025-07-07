@@ -60,3 +60,21 @@ export const PROPERTY_INFO_QUERY = gql`
     }
   }
 `
+
+export const PROPERTY_CODE_INFO_QUERY = gql`
+  query PropertyCodeInfoQuery($input: HmsPropertyCodeInfoInput!) {
+    hmsPropertyCodeInfo(input: $input) {
+      address {
+        address
+        addressCode
+        landCode
+        municipalityCode
+        municipalityName
+        numOfConnectedProperties
+        postalCode
+        streetName
+        streetNumber
+      }
+    }
+  }
+`
