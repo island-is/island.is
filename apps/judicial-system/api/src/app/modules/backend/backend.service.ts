@@ -6,7 +6,7 @@ import { Inject, Injectable } from '@nestjs/common'
 import { type ConfigType } from '@island.is/nest/config'
 import { ProblemError } from '@island.is/nest/problem'
 
-import { LawyerType } from '@island.is/judicial-system/lawyers'
+import { LawyerType } from '@island.is/judicial-system/types'
 import {
   CaseTableType,
   DateType,

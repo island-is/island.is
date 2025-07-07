@@ -15,11 +15,19 @@ import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { Lawyer, LawyerType } from '@island.is/judicial-system/lawyers'
-import { LawyerFull } from '@island.is/judicial-system/types'
+import { LawyerFull, LawyerType } from '@island.is/judicial-system/types'
 
 import { lawyerRegistryConfig } from './lawyerRegistry.config'
 import { LawyerRegistry } from './lawyerRegistry.model'
+
+type Lawyer = {
+  name: string
+  nationalId: string
+  email: string
+  phoneNumber: string
+  practice: string
+  isLitigator: boolean
+}
 
 @Injectable()
 export class LawyerRegistryService {

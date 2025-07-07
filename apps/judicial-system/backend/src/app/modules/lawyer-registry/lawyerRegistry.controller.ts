@@ -13,8 +13,7 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { TokenGuard } from '@island.is/judicial-system/auth'
-import { LawyerType } from '@island.is/judicial-system/lawyers'
-import { LawyerFull } from '@island.is/judicial-system/types'
+import { LawyerFull, LawyerType } from '@island.is/judicial-system/types'
 
 import { EventService } from '../event'
 import { LawyerRegistry } from './lawyerRegistry.model'

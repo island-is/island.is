@@ -15,8 +15,6 @@ import { ApiCreatedResponse, ApiOkResponse, ApiResponse } from '@nestjs/swagger'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { LawyerType } from '@island.is/judicial-system/lawyers'
-
 import { CreateCaseDto } from './dto/createCase.dto'
 import { UpdateSubpoenaDto } from './dto/subpoena.dto'
 import { Case } from './models/case.model'

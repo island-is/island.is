@@ -1,6 +1,5 @@
 import { CacheInterceptor } from '@nestjs/cache-manager'
 import {
-  BadGatewayException,
   BadRequestException,
   Controller,
   Get,
@@ -14,8 +13,7 @@ import { ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-import { LawyerType } from '@island.is/judicial-system/lawyers'
-import { LawyerRegistry } from '@island.is/judicial-system/types'
+import { LawyerRegistry, LawyerType } from '@island.is/judicial-system/types'
 
 import { appModuleConfig } from '../../app.config'
 import { Defender } from './models/defender.response'

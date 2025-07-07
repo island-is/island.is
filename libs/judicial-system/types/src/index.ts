@@ -149,6 +149,7 @@ export {
   mapToLawyer,
   type LawyerFull,
   type LawyerRegistry,
+  LawyerType,
 } from './lib/lawyer'
 
 export { type CourtDocument } from './lib/courtDocument'

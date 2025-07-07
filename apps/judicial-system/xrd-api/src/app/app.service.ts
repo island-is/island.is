@@ -15,10 +15,10 @@ import {
   AuditedAction,
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
-import { LawyerType } from '@island.is/judicial-system/lawyers'
 import {
   DefenderChoice,
   LawyerRegistry,
+  LawyerType,
   ServiceStatus,
 } from '@island.is/judicial-system/types'
 

@@ -63,3 +63,7 @@ export const mapToLawyer = (lawyer: LawyerRegistry): Lawyer => {
     nationalId: lawyer.nationalId.replace(/\D/g, ''), // Remove all non-numeric characters
   }
 }
+
+export enum LawyerType {
+  LITIGATORS = 'LITIGATORS',
+}
