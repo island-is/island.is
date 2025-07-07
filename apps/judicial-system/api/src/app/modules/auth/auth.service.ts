@@ -9,7 +9,6 @@ import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { type ConfigType } from '@island.is/nest/config'
 
-import { LawyersService } from '@island.is/judicial-system/lawyers'
 import {
   mapToLawyer,
   type User,
@@ -23,7 +22,6 @@ import { authModuleConfig } from './auth.config'
 export class AuthService {
   constructor(
     private readonly backendService: BackendService,
-    private readonly lawyersService: LawyersService,
     @Inject(authModuleConfig.KEY)
     private readonly config: ConfigType<typeof authModuleConfig>,
     @Inject(LOGGER_PROVIDER)
@@ -187,7 +185,7 @@ export class AuthService {
     // case list for them to avoid confusion about them not having access to
     // the judicial system
     try {
-      const lawyerRegistryResponse = await this.lawyersService.getLawyer(
+      const lawyerRegistryResponse = await this.backendService.getLawyer(
         nationalId,
       )
 

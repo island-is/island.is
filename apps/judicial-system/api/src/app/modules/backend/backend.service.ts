@@ -6,9 +6,11 @@ import { Inject, Injectable } from '@nestjs/common'
 import { type ConfigType } from '@island.is/nest/config'
 import { ProblemError } from '@island.is/nest/problem'
 
+import { LawyerType } from '@island.is/judicial-system/lawyers'
 import {
   CaseTableType,
   DateType,
+  LawyerRegistry,
   type User,
 } from '@island.is/judicial-system/types'
 
@@ -639,6 +641,14 @@ export class BackendService extends DataSource<{ req: Request }> {
         headers: this.secretTokenHeaders,
       },
     )
+  }
+
+  getLawyers(lawyerType: LawyerType): Promise<LawyerRegistry[]> {
+    return this.get(`/lawyer-registry?lawyer-type=${lawyerType}`)
+  }
+
+  getLawyer(nationalId: string): Promise<LawyerRegistry> {
+    return this.get(`/lawyer-registry/${nationalId}`)
   }
 }
 
