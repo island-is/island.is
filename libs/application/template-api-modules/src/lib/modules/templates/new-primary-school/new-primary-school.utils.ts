@@ -184,7 +184,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         : {}),
     },
     language: {
-      languageEnvironment: '', // LanguageDtoLanguageEnvironmentEnum.OnlyIcelandic, // LAGA
+      languageEnvironment: '', // LAGA
       signLanguage: signLanguage === YES,
       ...(languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
         ? {
