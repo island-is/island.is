@@ -43,7 +43,7 @@ export class LawyersService {
   async getLawyers(lawyerType?: LawyerType): Promise<LawyerRegistry[]> {
     const response = await fetch(
       `${this.config.backendUrl}/lawyer-registry${
-        lawyerType ? `?${lawyerType}` : ''
+        lawyerType ? `?lawyer-type=${lawyerType}` : ''
       }`,
     )
 
