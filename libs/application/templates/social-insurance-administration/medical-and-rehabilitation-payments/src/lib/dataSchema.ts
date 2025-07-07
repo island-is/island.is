@@ -8,7 +8,10 @@ import {
 import { errorMessages as coreSIAErrorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { z } from 'zod'
-import { NOT_APPLICABLE } from '../utils/constants'
+import {
+  NOT_APPLICABLE,
+  SelfAssessmentCurrentEmploymentStatus,
+} from '../utils/constants'
 import { errorMessages } from './messages'
 
 const isValidPhoneNumber = (phoneNumber: string) => {
@@ -156,12 +159,70 @@ export const dataSchema = z.object({
     .refine((i) => i === undefined || i.length > 0, {
       params: coreSIAErrorMessages.incomePlanRequired,
     }),
+  benefitsFromAnotherCountry: z
+    .object({
+      isReceivingBenefitsFromAnotherCountry: z.enum([YES, NO]),
+      countries: z
+        .array(
+          z.object({
+            country: z.string().optional().nullable(),
+            nationalId: z.string().optional(),
+          }),
+        )
+        .optional(),
+    })
+    .superRefine(
+      ({ isReceivingBenefitsFromAnotherCountry, countries }, ctx) => {
+        if (isReceivingBenefitsFromAnotherCountry === YES) {
+          // Validate that at least one country has been provided
+          if (!countries || countries.length === 0) {
+            ctx.addIssue({
+              code: z.ZodIssueCode.custom,
+              params: errorMessages.countriesRequired,
+              path: ['countries'],
+            })
+            return // Stop further validation since the array is required
+          }
+
+          countries.forEach(({ country, nationalId }, index) => {
+            // Validate that a country is selected
+            if (!country) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                params: errorMessages.countryRequired,
+                path: ['countries', index, 'country'],
+              })
+            }
+
+            // Validate that nationalId is not empty
+            if (!nationalId) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                params: errorMessages.countryIdNumberRequired,
+                path: ['countries', index, 'nationalId'],
+              })
+            }
+
+            // Validate that nationalId is at least 5 characters or symbols
+            if (nationalId && nationalId.length < 5) {
+              ctx.addIssue({
+                code: z.ZodIssueCode.custom,
+                params: errorMessages.countryIdNumberMin,
+                path: ['countries', index, 'nationalId'],
+              })
+            }
+          })
+        }
+      },
+    ),
   questions: z
     .object({
       isSelfEmployed: z.enum([YES, NO]),
       isPartTimeEmployed: z.enum([YES, NO]),
       isStudying: z.enum([YES, NO]),
       calculatedRemunerationDate: z.string().optional(),
+      educationalInstitution: z.string().optional().nullable(),
+      ectsUnits: z.string().optional().nullable(),
     })
     .refine(
       ({ isSelfEmployed, calculatedRemunerationDate }) =>
@@ -169,6 +230,19 @@ export const dataSchema = z.object({
       {
         path: ['calculatedRemunerationDate'],
         params: errorMessages.dateRequired,
+      },
+    )
+    .refine(
+      ({ isStudying, educationalInstitution }) =>
+        isStudying === YES ? !!educationalInstitution : true,
+      {
+        path: ['educationalInstitution'],
+      },
+    )
+    .refine(
+      ({ isStudying, ectsUnits }) => (isStudying === YES ? !!ectsUnits : true),
+      {
+        path: ['ectsUnits'],
       },
     ),
   employeeSickPay: z
@@ -248,6 +322,13 @@ export const dataSchema = z.object({
     .object({
       hadAssistance: z.enum([YES, NO]).optional(),
       highestLevelOfEducation: z.string().optional(),
+      currentEmploymentStatus: z
+        .array(z.nativeEnum(SelfAssessmentCurrentEmploymentStatus))
+        .min(1)
+        .optional(),
+      currentEmploymentStatusAdditional: z.string().optional(),
+      lastEmploymentTitle: z.string().optional(),
+      lastEmploymentYear: z.string().optional().nullable(),
       mainProblem: z.string().min(1).optional(),
       hasPreviouslyReceivedRehabilitationOrTreatment: z
         .enum([YES, NO])
@@ -298,6 +379,16 @@ export const dataSchema = z.object({
           ? !!previousRehabilitationSuccessfulFurtherExplanations
           : true,
       { path: ['previousRehabilitationSuccessfulFurtherExplanations'] },
+    )
+    .refine(
+      ({ currentEmploymentStatus, currentEmploymentStatusAdditional }) =>
+        currentEmploymentStatus &&
+        currentEmploymentStatus.includes(
+          SelfAssessmentCurrentEmploymentStatus.OTHER,
+        )
+          ? !!currentEmploymentStatusAdditional
+          : true,
+      { path: ['currentEmploymentStatusAdditional'] },
     ),
 })
 
