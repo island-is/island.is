@@ -31,6 +31,7 @@ export const MainContent = () => {
   const { activeItem } = control
   const [openPreview, setOpenPreview] = useState(false)
   const { formatMessage } = useIntl()
+
   return (
     <Box padding={2}>
       {activeItem.type === 'Field' ? (

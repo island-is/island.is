@@ -180,6 +180,7 @@ export type RepeaterItem = {
       rows?: number
       maxLength?: number
       currency?: boolean
+      thousandSeparator?: boolean
       suffix?: FormText
     }
   | {
@@ -230,6 +231,7 @@ export type RepeaterItem = {
         setValueAtIndex?: (key: string, value: any) => void,
       ): Promise<Option[]>
       updateOnSelect?: MaybeWithIndex<string[]>
+      loadingError?: FormText
     }
   | { component: 'hiddenInput' }
   | {
@@ -498,6 +500,7 @@ export interface TextField extends InputField {
   variant?: TextFieldVariant
   backgroundColor?: InputBackgroundColor
   format?: string | FormatInputValueFunction
+  thousandSeparator?: boolean
   suffix?: FormText
   rows?: number
   tooltip?: FormText
@@ -538,6 +541,10 @@ export interface FileUploadField extends BaseField {
    * Defaults to 100MB
    */
   readonly totalMaxSize?: number
+  /**
+   * Defaults to no limit
+   */
+  readonly maxFileCount?: number
   readonly forImageUpload?: boolean
 }
 

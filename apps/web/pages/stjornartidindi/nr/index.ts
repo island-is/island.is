@@ -1,11 +1,29 @@
-import withApollo from '@island.is/web/graphql/withApollo'
-import { withLocale } from '@island.is/web/i18n'
-import OJOIMissingRecordId from '@island.is/web/screens/OfficialJournalOfIceland/OJOIMissingRecordId'
-import { getServerSidePropsWrapper } from '@island.is/web/utils/getServerSidePropsWrapper'
-// eslint-disable-next-line @typescript-eslint/ban-ts-comment
-// @ts-ignore make web strict
-const Screen = withApollo(withLocale('is')(OJOIMissingRecordId))
+import type { GetServerSideProps } from 'next'
+import { parseAsString } from 'next-usequerystate'
 
-export default Screen
+import { CustomNextError } from '@island.is/web/units/errors'
 
-export const getServerSideProps = getServerSidePropsWrapper(Screen)
+const idParser = parseAsString
+
+export const getServerSideProps: GetServerSideProps = async ({ query }) => {
+  const recordIdKey = Object.keys(query).find(
+    (key) => key.toLowerCase() === 'recordid',
+  )
+  const idToUse = recordIdKey
+    ? idParser.parseServerSide(query[recordIdKey])
+    : null
+
+  if (!idToUse) {
+    throw new CustomNextError(404, 'Advert not found')
+  }
+
+  const redirectUrl = '/stjornartidindi/nr/' + idToUse
+  return {
+    redirect: {
+      permanent: true,
+      destination: redirectUrl,
+    },
+  }
+}
+
+export default () => null

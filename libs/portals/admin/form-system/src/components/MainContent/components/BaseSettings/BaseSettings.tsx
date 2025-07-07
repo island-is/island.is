@@ -13,6 +13,7 @@ import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
 import { UpdateFormResponse } from '@island.is/form-system/shared'
 import { convertToSlug } from '../../../../lib/utils/convertToSlug'
+import { Urls } from '../Urls/Urls'
 
 export const BaseSettings = () => {
   const {
@@ -263,6 +264,7 @@ export const BaseSettings = () => {
           />
         </Column>
       </Row>
+      <Urls />
     </Stack>
   )
 }

@@ -1,8 +1,9 @@
 import { ChangeEvent, FC, FocusEvent, useEffect, useState } from 'react'
-import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
+import { InputMask } from '@react-input/mask'
 
 import { Input } from '@island.is/island-ui/core'
+import { EDITABLE_DATE, SSN } from '@island.is/judicial-system/consts'
 import { core } from '@island.is/judicial-system-web/messages'
 
 import { validate } from '../../utils/validate'
@@ -46,7 +47,9 @@ const InputNationalId: FC<Props> = (props) => {
   const [errorMessage, setErrorMessage] = useState<string>()
   const [inputValue, setInputValue] = useState<string>(value || '')
 
-  const handleBlur = (evt: FocusEvent<HTMLInputElement, Element>) => {
+  const handleBlur = (
+    evt: FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>,
+  ) => {
     const inputValidator = validate([
       [
         evt.target.value,
@@ -64,7 +67,9 @@ const InputNationalId: FC<Props> = (props) => {
     }
   }
 
-  const handleChange = (evt: ChangeEvent<HTMLInputElement>) => {
+  const handleChange = (
+    evt: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
+  ) => {
     if (evt.target.value) {
       setErrorMessage(undefined)
     }
@@ -80,36 +85,31 @@ const InputNationalId: FC<Props> = (props) => {
 
   return (
     <InputMask
-      // eslint-disable-next-line local-rules/disallow-kennitalas
-      mask={isDateOfBirth ? '99.99.9999' : '999999-9999'}
-      maskPlaceholder={null}
+      mask={isDateOfBirth ? EDITABLE_DATE : SSN}
+      replacement={{ _: /\d/ }}
+      component={Input}
       value={inputValue ?? value}
+      data-testid="inputNationalId"
       onChange={handleChange}
       onBlur={handleBlur}
       disabled={disabled}
-    >
-      <Input
-        data-testid="inputNationalId"
-        name="inputNationalId"
-        autoComplete="off"
-        label={
-          label
-            ? label
-            : formatMessage(isDateOfBirth ? core.dateOfBirth : core.nationalId)
-        }
-        placeholder={
-          placeholder
-            ? placeholder
-            : formatMessage(
-                isDateOfBirth ? core.dateOfBirthPlaceholder : core.nationalId,
-              )
-        }
-        errorMessage={errorMessage}
-        hasError={errorMessage !== undefined}
-        required={required}
-        disabled={disabled}
-      />
-    </InputMask>
+      errorMessage={errorMessage}
+      hasError={Boolean(errorMessage)}
+      placeholder={
+        placeholder ??
+        formatMessage(
+          isDateOfBirth ? core.dateOfBirthPlaceholder : core.nationalId,
+        )
+      }
+      required={required}
+      name="nationalId"
+      id="nationalId"
+      autoComplete="off"
+      label={
+        label ??
+        formatMessage(isDateOfBirth ? core.dateOfBirth : core.nationalId)
+      }
+    />
   )
 }
 

@@ -37,7 +37,6 @@ import {
 import { PaginatedUserProfileDto } from './dto/paginated-user-profile.dto'
 import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
 import { UserProfileDto } from './dto/user-profile.dto'
-import { IslykillService } from './islykill.service'
 import { ActorProfile } from './models/actor-profile.model'
 import { Emails } from './models/emails.model'
 import kennitala from 'kennitala'
@@ -54,7 +53,6 @@ export class UserProfileService {
     private readonly delegationPreference: typeof ActorProfile,
     @Inject(VerificationService)
     private readonly verificationService: VerificationService,
-    private readonly islykillService: IslykillService,
     private sequelize: Sequelize,
     @Inject(UserProfileConfig.KEY)
     private config: ConfigType<typeof UserProfileConfig>,
@@ -127,7 +125,7 @@ export class UserProfileService {
         {
           model: Emails,
           as: 'emails',
-          required: true,
+          required: false,
           where: {
             primary: true,
           },
@@ -200,7 +198,9 @@ export class UserProfileService {
         const { confirmed, message, remainingAttempts } =
           await this.verificationService.confirmEmail(
             {
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               email: userProfile.email!,
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               hash: userProfile.emailVerificationCode!,
             },
             ...commonArgs,
@@ -222,7 +222,9 @@ export class UserProfileService {
         const { confirmed, message, remainingAttempts } =
           await this.verificationService.confirmSms(
             {
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               mobilePhoneNumber: userProfile.mobilePhoneNumber!,
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               code: userProfile.mobilePhoneNumberVerificationCode!,
             },
             ...commonArgs,
@@ -250,7 +252,7 @@ export class UserProfileService {
         include: {
           model: Emails,
           as: 'emails',
-          required: true,
+          required: false,
           where: {
             primary: true,
           },
@@ -349,10 +351,11 @@ export class UserProfileService {
           const email = await this.emailModel.findOne({
             where: {
               email: userProfile.email,
+              nationalId,
             },
+            transaction,
+            useMaster: true,
           })
-
-          await new Promise((resolve) => setTimeout(resolve, 2500))
 
           if (email) {
             await email.update(
@@ -379,20 +382,6 @@ export class UserProfileService {
             )
           }
         }
-      }
-
-      // Update islykill settings
-      if (
-        isEmailDefined ||
-        isMobilePhoneNumberDefined ||
-        isDefined(userProfile.emailNotifications)
-      ) {
-        await this.islykillService.upsertIslykillSettings({
-          nationalId,
-          phoneNumber: formattedPhoneNumber,
-          email: userProfile.email,
-          canNudge: userProfile.emailNotifications,
-        })
       }
     })
 
@@ -690,6 +679,18 @@ export class UserProfileService {
     toNationalId: string,
   ): Promise<PaginatedActorProfileDto> {
     const incomingDelegations = await this.getIncomingDelegations(toNationalId)
+
+    // Filter out duplicate delegations
+    incomingDelegations.data = incomingDelegations.data.filter(
+      (delegation, index, self) =>
+        index ===
+        self.findIndex(
+          (d) =>
+            d.fromNationalId === delegation.fromNationalId &&
+            d.toNationalId === delegation.toNationalId,
+        ),
+    )
+
     const emailPreferences = await this.delegationPreference.findAll({
       where: {
         toNationalId,
@@ -1065,6 +1066,7 @@ export class UserProfileService {
             await this.verificationService.confirmEmail(
               {
                 email,
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 hash: emailVerificationCode!,
               },
               toNationalId,
@@ -1371,16 +1373,16 @@ export class UserProfileService {
 
     let filteredUserProfile: UserProfileDto = {
       nationalId: userProfile.nationalId,
-      email: userProfile.emails?.[0].email ?? null,
+      email: userProfile.emails?.[0]?.email ?? null,
       mobilePhoneNumber: userProfile.mobilePhoneNumber,
       locale: userProfile.locale,
       mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified ?? false,
       emailVerified:
-        userProfile.emails?.[0].emailStatus === DataStatus.VERIFIED,
+        userProfile.emails?.[0]?.emailStatus === DataStatus.VERIFIED,
       documentNotifications: userProfile.documentNotifications,
       needsNudge: this.checkNeedsNudge({
-        email: userProfile.emails?.[0].email,
-        emailStatus: userProfile.emails?.[0].emailStatus,
+        email: userProfile.emails?.[0]?.email,
+        emailStatus: userProfile.emails?.[0]?.emailStatus,
         nextNudge: userProfile.nextNudge,
         mobilePhoneNumber: userProfile.mobilePhoneNumber,
         mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified,
@@ -1396,7 +1398,7 @@ export class UserProfileService {
       (this.config.migrationDate ?? new Date()) > userProfile.lastNudge
     ) {
       const isEmailVerified =
-        userProfile.emails?.[0].emailStatus === DataStatus.VERIFIED
+        userProfile.emails?.[0]?.emailStatus === DataStatus.VERIFIED
 
       filteredUserProfile = {
         ...filteredUserProfile,

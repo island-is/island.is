@@ -19,6 +19,7 @@ export const ApplicationFragment = gql`
       ...Section
     }
     status
+    stopProgressOnValidatingScreen
     certificationTypes {
       id
       certificationTypeId

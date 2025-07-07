@@ -5,7 +5,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { ConfigType } from '@island.is/nest/config'
 
 import { lawyersModuleConfig } from './lawyers.config'
-import { Lawyer, LawyerType } from './lawyers.types'
+import { LawyerRegistryResponse, LawyerType } from './lawyers.types'
 @Injectable()
 export class LawyersService {
   constructor(
@@ -15,7 +15,7 @@ export class LawyersService {
     private readonly logger: Logger,
   ) {}
 
-  async getLawyers(lawyerType?: LawyerType): Promise<Lawyer[]> {
+  async getLawyers(lawyerType?: LawyerType): Promise<LawyerRegistryResponse[]> {
     const response = await fetch(
       `${this.config.lawyerRegistryAPI}/lawyers${
         lawyerType && lawyerType === LawyerType.LITIGATORS ? '?verjendur=1' : ''
@@ -37,7 +37,7 @@ export class LawyersService {
     throw new Error(reason)
   }
 
-  async getLawyer(nationalId: string): Promise<Lawyer> {
+  async getLawyer(nationalId: string): Promise<LawyerRegistryResponse> {
     const response = await fetch(
       `${this.config.lawyerRegistryAPI}/lawyer/${nationalId}`,
       {

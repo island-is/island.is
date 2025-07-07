@@ -17,6 +17,6 @@ const prodConfig = {
 }
 
 export default getStaticEnv('PROD_MODE') === 'true' ||
-  process.env.NODE_ENV === 'production'
+process.env.NODE_ENV === 'production'
   ? prodConfig
   : devConfig
