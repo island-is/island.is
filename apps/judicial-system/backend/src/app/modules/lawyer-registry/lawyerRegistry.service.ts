@@ -9,26 +9,26 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
+import { ConfigType } from '@nestjs/config'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import {
-  Lawyer,
-  LawyersService,
-  LawyerType,
-} from '@island.is/judicial-system/lawyers'
+import { Lawyer, LawyerType } from '@island.is/judicial-system/lawyers'
+import { LawyerFull } from '@island.is/judicial-system/types'
 
+import { lawyerRegistryConfig } from './lawyerRegistry.config'
 import { LawyerRegistry } from './lawyerRegistry.model'
 
 @Injectable()
 export class LawyerRegistryService {
   constructor(
+    @Inject(lawyerRegistryConfig.KEY)
+    private readonly config: ConfigType<typeof lawyerRegistryConfig>,
     @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(LawyerRegistry)
     private readonly lawyerRegistryModel: typeof LawyerRegistry,
-    private readonly lawyersService: LawyersService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -44,9 +44,31 @@ export class LawyerRegistryService {
     }
   }
 
+  async getLawyersFromLFMI(lawyerType?: LawyerType): Promise<LawyerFull[]> {
+    const response = await fetch(
+      `${this.config.lawyerRegistryAPI}/lawyers${
+        lawyerType && lawyerType === LawyerType.LITIGATORS ? '?verjendur=1' : ''
+      }`,
+      {
+        headers: {
+          Authorization: `Basic ${this.config.lawyerRegistryAPIKey}`,
+          Accept: 'application/json',
+        },
+      },
+    )
+
+    if (response.ok) {
+      return response.json()
+    }
+
+    const reason = await response.text()
+    this.logger.info('Failed to get lawyers from lawyer registry:', reason)
+    throw new Error(reason)
+  }
+
   private async getLawyerRegistry(lawyerType?: LawyerType) {
     try {
-      const lawyers = await this.lawyersService.getLawyersFromLFMI(lawyerType)
+      const lawyers = await this.getLawyersFromLFMI(lawyerType)
 
       if (lawyers.length === 0) {
         throw new InternalServerErrorException(
