@@ -24,7 +24,10 @@ export class CmsService {
       headers: {
         Authorization: `Bearer ${process.env.CONTENTFUL_ACCESS_TOKEN}`,
       },
-      fetch: this.fetch,
+      fetch: this.fetch as unknown as (
+        input: RequestInfo | URL,
+        init?: RequestInit,
+      ) => Promise<Response>,
     })
   }
 

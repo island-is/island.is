@@ -135,7 +135,9 @@ export const createCache = (options: Options) =>
 
 export const createRedisApolloCache = (options: Options) => {
   return new KeyvAdapter(
-    new Keyv({ store: new KeyvRedis(createRedisCluster(options)) }),
+    new Keyv({
+      store: new KeyvRedis(createRedisCluster(options) as any),
+    }) as any,
     {
       disableBatchReads: true,
     },
@@ -149,5 +151,7 @@ export const createRedisCluster = (options: Options) => {
 }
 
 export const createRedisCacheManager = (options: Options & Config) => {
-  return caching(() => redisInsStore(createRedisCluster(options), options))
+  return caching(() =>
+    redisInsStore(createRedisCluster(options) as any, options),
+  )
 }

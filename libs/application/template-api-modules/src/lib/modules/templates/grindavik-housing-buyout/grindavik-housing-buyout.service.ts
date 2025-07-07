@@ -81,8 +81,7 @@ export class GrindavikHousingBuyoutService extends BaseTemplateApiService {
     const confirmsLoanTakeover =
       answers.confirmLoanTakeover?.includes(YES) ?? false
     const hasLoanFromOtherProvider =
-      answers.loanProviders.loans?.findIndex((x) => !!x.otherProvider) !== -1 ??
-      false
+      answers.loanProviders.loans?.findIndex((x) => !!x.otherProvider) !== -1
     const noLoanCheckbox =
       answers.loanProviders.hasNoLoans?.includes(YES) ?? false
     const hasNoLoans =

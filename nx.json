@@ -18,7 +18,7 @@
       }
     },
     "ci": {
-      "runner": "nx-cloud",
+      "runner": "nx/tasks-runners/default",
       "options": {
         "cacheableOperations": [
           "build",
@@ -30,7 +30,8 @@
           "codegen/frontend-client",
           "generateDevIndexHTML"
         ],
-        "nxCloudId": "64e4eb6a54304f090734e8df"
+        "cacheDirectory": ".cache/nx",
+        "parallel": 1
       }
     },
     "docker-test": {
@@ -42,7 +43,7 @@
     }
   },
   "generators": {
-    "@nrwl/nx-plugin": {
+    "@nx/nx-plugin": {
       "plugin": {
         "linter": "eslint"
       }

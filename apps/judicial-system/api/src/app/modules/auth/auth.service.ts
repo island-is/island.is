@@ -96,10 +96,14 @@ export class AuthService {
 
   getExpiry(token: string) {
     const decodedToken = jwt.decode(token, { complete: true })
-    if (decodedToken && typeof decodedToken === 'object') {
-      const payload = decodedToken.payload
+    if (
+      decodedToken &&
+      typeof decodedToken === 'object' &&
+      decodedToken !== null
+    ) {
+      const payload = decodedToken.payload as any
       if (payload && 'exp' in payload) {
-        const expiredTimestamp = payload['exp']
+        const expiredTimestamp = payload['exp'] as number
         return expiredTimestamp
       }
     }
