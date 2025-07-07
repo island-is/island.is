@@ -3,23 +3,21 @@ import { TaxLevelOptions } from '@island.is/application/templates/social-insuran
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { getYesNoOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import {
-  Attachments,
   BankInfo,
   CategorizedIncomeTypes,
-  FileType,
   IncomePlanConditions,
   IncomePlanRow,
   PaymentInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
-import { medicalAndRehabilitationPaymentsFormMessage } from '../lib/messages'
 import { Application, Option } from '@island.is/application/types'
+import { medicalAndRehabilitationPaymentsFormMessage } from '../lib/messages'
 import {
+  Countries,
+  EctsUnits,
   SelfAssessmentQuestionnaire,
   SelfAssessmentQuestionnaireAnswers,
 } from '../types'
 import {
-  AttachmentLabel,
-  AttachmentTypes,
   NOT_APPLICABLE,
   NotApplicable,
   SelfAssessmentCurrentEmploymentStatus,
@@ -50,6 +48,17 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   const incomePlan =
     getValueViaPath<IncomePlanRow[]>(answers, 'incomePlanTable') ?? []
 
+  const isReceivingBenefitsFromAnotherCountry = getValueViaPath<YesOrNo>(
+    answers,
+    'benefitsFromAnotherCountry.isReceivingBenefitsFromAnotherCountry',
+  )
+
+  const countries =
+    getValueViaPath<Countries[]>(
+      answers,
+      'benefitsFromAnotherCountry.countries',
+    ) ?? []
+
   const isSelfEmployed = getValueViaPath<YesOrNo>(
     answers,
     'questions.isSelfEmployed',
@@ -67,10 +76,12 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const isStudying = getValueViaPath<YesOrNo>(answers, 'questions.isStudying')
 
-  const isStudyingFileUpload = getValueViaPath<FileType[]>(
+  const educationalInstitution = getValueViaPath<string>(
     answers,
-    'questions.isStudyingFileUpload',
+    'questions.educationalInstitution',
   )
+
+  const ectsUnits = getValueViaPath<string>(answers, 'questions.ectsUnits')
 
   const hasUtilizedEmployeeSickPayRights = getValueViaPath<
     YesOrNo | NotApplicable
@@ -181,11 +192,14 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     personalAllowanceUsage,
     taxLevel,
     incomePlan,
+    isReceivingBenefitsFromAnotherCountry,
+    countries,
     isSelfEmployed,
     calculatedRemunerationDate,
     isPartTimeEmployed,
     isStudying,
-    isStudyingFileUpload,
+    educationalInstitution,
+    ectsUnits,
     hasUtilizedEmployeeSickPayRights,
     employeeSickPayEndDate,
     hasUtilizedUnionSickPayRights,
@@ -297,6 +311,12 @@ export const getApplicationExternalData = (
       'socialInsuranceAdministrationQuestionnairesSelfAssessment.data',
     ) ?? []
 
+  const ectsUnits =
+    getValueViaPath<EctsUnits[]>(
+      externalData,
+      'socialInsuranceAdministrationEctsUnits.data',
+    ) ?? []
+
   return {
     applicantName,
     applicantNationalId,
@@ -315,34 +335,8 @@ export const getApplicationExternalData = (
     currencies,
     incomePlanConditions,
     selfAssessmentQuestionnaire,
+    ectsUnits,
   }
-}
-
-export const getAttachments = (application: Application) => {
-  const getAttachmentDetails = (
-    attachmentsArr: FileType[] | undefined,
-    attachmentType: AttachmentTypes,
-  ) => {
-    if (attachmentsArr && attachmentsArr.length > 0) {
-      attachments.push({
-        attachments: attachmentsArr,
-        label: AttachmentLabel[attachmentType],
-      })
-    }
-  }
-
-  const { answers } = application
-  const { isStudying, isStudyingFileUpload } = getApplicationAnswers(answers)
-  const attachments: Attachments[] = []
-
-  if (isStudying === YES) {
-    getAttachmentDetails(
-      isStudyingFileUpload,
-      AttachmentTypes.STUDY_CONFIRMATION,
-    )
-  }
-
-  return attachments
 }
 
 export const getYesNoNotApplicableOptions = () => {

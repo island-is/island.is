@@ -15,7 +15,10 @@ import {
   PaymentPlanApi,
   PensionCalculatorApi,
   QuestionnairesApi,
+  TrWebApiServicesCommonCountriesModelsCountryDto,
   TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn,
+  TrWebApiServicesDomainEducationalInstitutionsModelsEctsUnitDto,
+  TrWebApiServicesDomainEducationalInstitutionsModelsEducationalInstitutionsDto,
   TrWebApiServicesDomainQuestionnairesModelsQuestionnaireDto,
   TrWebApiServicesDomainUnionsModelsUnionDto,
   TrWebApiServicesUseCaseDeathBenefitsModelsExternalSpousalInfo,
@@ -240,5 +243,29 @@ export class SocialInsuranceAdministrationClientService {
     return this.medicalDocumentsApiWithAuth(
       user,
     ).apiProtectedV1MedicalDocumentsBasecertificateGet()
+  }
+
+  async getCountries(
+    user: User,
+  ): Promise<Array<TrWebApiServicesCommonCountriesModelsCountryDto>> {
+    return this.generalApiWithAuth(user).apiProtectedV1GeneralCountriesGet()
+  }
+
+  async getEducationalInstitutions(
+    user: User,
+  ): Promise<
+    Array<TrWebApiServicesDomainEducationalInstitutionsModelsEducationalInstitutionsDto>
+  > {
+    return this.generalApiWithAuth(
+      user,
+    ).apiProtectedV1GeneralEducationalinstitutionsGet()
+  }
+
+  async getEctsUnits(
+    user: User,
+  ): Promise<
+    Array<TrWebApiServicesDomainEducationalInstitutionsModelsEctsUnitDto>
+  > {
+    return this.generalApiWithAuth(user).apiProtectedV1GeneralEctsUnitsGet()
   }
 }
