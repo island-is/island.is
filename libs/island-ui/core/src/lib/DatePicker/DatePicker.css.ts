@@ -198,6 +198,7 @@ export const popperInline = style({
   position: `relative !important` as never,
   transform: 'none !important',
   marginBottom: '-7px',
+  top: '-12px !important',
 })
 
 // Overwrite default ReactDatepicker styles
@@ -209,7 +210,7 @@ globalStyle(`${root}.island-ui-datepicker .react-datepicker`, {
   borderBottomLeftRadius: '8px',
   boxShadow: `inset -3px -3px 0px ${theme.color.mint400}, inset 3px -3px 0px ${theme.color.mint400}`,
   border: 'none',
-  padding: `${theme.spacing[2]}px ${theme.spacing[3]}px`,
+  padding: `${theme.spacing.gutter}px ${theme.spacing.gutter}px`,
   paddingTop: 0,
 })
 
@@ -296,10 +297,15 @@ globalStyle(
   },
 )
 
+globalStyle(`${root}.island-ui-datepickerreact-datepicker__day--range-end`, {
+  background: `${theme.color.blue400} !important`,
+  color: `${theme.color.white} !important`,
+})
+
 globalStyle(
   `${root}.island-ui-datepicker .react-datepicker-popper[data-placement^="top"]`,
   {
-    top: '11px !important',
+    top: '33px !important',
   },
 )
 
@@ -307,6 +313,13 @@ globalStyle(
   `${root}.island-ui-datepicker .react-datepicker-popper[data-placement^="bottom"]`,
   {
     top: '-17px !important',
+  },
+)
+
+globalStyle(
+  `${root}.island-ui-datepicker ${popperInline}.react-datepicker-popper[data-placement^="bottom"]`,
+  {
+    top: '-12px !important',
   },
 )
 
@@ -352,4 +365,17 @@ globalStyle(`${root} .react-datepicker__input-time-container`, {
   marginTop: '15px',
   float: 'none !important' as any,
   margin: '30px 0px 0px 5px !important',
+})
+
+globalStyle(`${root} .react-datepicker__day--in-range `, {
+  backgroundColor: `${theme.color.blue200} !important`,
+})
+
+globalStyle(`${root} .react-datepicker__day--range-end`, {
+  backgroundColor: `${theme.color.blue400} !important`,
+  color: `${theme.color.white} !important`,
+})
+
+globalStyle(`${root} .react-datepicker__day--in-selecting-range`, {
+  backgroundColor: `${theme.color.blue200} !important`,
 })

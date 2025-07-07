@@ -195,24 +195,14 @@ const FinanceTransactions = () => {
                             locale="is"
                             backgroundColor="blue"
                             size="xs"
-                            handleChange={(d) => {
+                            handleChange={(d, e) => {
                               setFromDate(d)
+                              setToDate(e)
                             }}
                             selected={fromDate}
                             appearInline
+                            range
                           />
-                          <Box marginTop={3}>
-                            <DatePicker
-                              label={formatMessage(m.datepickerToLabel)}
-                              placeholderText={formatMessage(m.datepickLabel)}
-                              locale="is"
-                              backgroundColor="blue"
-                              size="xs"
-                              handleChange={(d) => setToDate(d)}
-                              selected={toDate}
-                              appearInline
-                            />
-                          </Box>
                         </Box>
                       </AccordionItem>
                     </Accordion>

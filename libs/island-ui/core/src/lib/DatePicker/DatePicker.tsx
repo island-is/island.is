@@ -28,6 +28,8 @@ import { Input } from '../Input/Input'
 import { InputProps } from '../Input/types'
 import { DatePickerProps, DatePickerCustomHeaderProps } from './types'
 import { Select } from '../Select/Select'
+import { Box } from '../Box/Box'
+import { ScrollToSelectedMenuList } from '../Select/Components/ScrollToSelectedMenuList'
 
 const languageConfig = {
   is: {
@@ -251,8 +253,15 @@ const CustomHeader = ({
     }
     return undefined
   })
+
+  const year = getYear(date)
+  const currentYear = new Date().getFullYear()
+  const defaultMin = currentYear - 100
+  const defaultMax = currentYear + 10
   const years =
-    minYear && maxYear && minYear < maxYear && range(minYear, maxYear + 1)
+    (minYear && maxYear && minYear < maxYear && range(minYear, maxYear + 1)) ??
+    range(defaultMin, defaultMax + 1)
+
   return (
     <div
       className={cn(styles.customHeaderContainer, 'date-picker-custom-header')}
@@ -265,7 +274,14 @@ const CustomHeader = ({
       >
         <Icon icon="chevronBack" type="outline" color="blue400" />
       </button>
-      <div>
+      <Box
+        display="flex"
+        flexDirection="row"
+        alignItems="center"
+        columnGap={1}
+        flexWrap="wrap"
+        justifyContent="center"
+      >
         <VisuallyHidden>
           <Text variant="h4" as="span" ref={monthRef}>
             {month}
@@ -288,28 +304,40 @@ const CustomHeader = ({
               ...base,
               textAlign: 'center',
               width: 'auto',
-              marginRight: 8,
+              marginRight: 4,
             }),
           }}
         />
-        {years && years.length > 0 ? (
-          <select
+        {years && years.length > 0 && (
+          <Select
+            size="xs"
+            aria-label="Select year"
             className={styles.headerSelect}
-            value={date.getFullYear()}
-            onChange={({ target: { value } }) => changeYear(parseInt(value))}
-          >
-            {years.map((option) => (
-              <option key={option} value={option}>
-                {option}
-              </option>
-            ))}
-          </select>
-        ) : (
-          <Text variant="h4" as="span">
-            {getYear(date)}
-          </Text>
+            value={{
+              label: year.toString(),
+              value: year,
+            }}
+            onChange={(selectedOption) =>
+              changeYear(Number(selectedOption?.value) ?? year)
+            }
+            options={years.map((option) => ({
+              label: option.toString(),
+              value: option,
+            }))}
+            styles={{
+              control: (base) => ({
+                ...base,
+                textAlign: 'center',
+                width: 'auto',
+                marginRight: 4,
+              }),
+            }}
+            components={{
+              MenuList: ScrollToSelectedMenuList,
+            }}
+          />
         )}
-      </div>
+      </Box>
       <button
         data-testid="datepickerIncreaseMonth"
         type="button"
