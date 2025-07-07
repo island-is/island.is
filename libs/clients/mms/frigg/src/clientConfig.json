@@ -332,9 +332,13 @@
         "properties": {
           "name": { "type": "string" },
           "email": { "type": "string" },
-          "phone": { "type": "string" }
+          "phone": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": ["caseManager", "supportManager"]
+          }
         },
-        "required": ["name", "email"]
+        "required": ["name", "email", "type"]
       },
       "SocialInput": {
         "type": "object",
@@ -535,9 +539,7 @@
           },
           "epipen": { "type": "boolean" },
           "medicalDiagnoses": { "type": "boolean" },
-          "medicationAssistance": { "type": "boolean" },
-          "createdAt": { "format": "date-time", "type": "string" },
-          "updatedAt": { "format": "date-time", "type": "string" }
+          "medicationAssistance": { "type": "boolean" }
         },
         "required": [
           "id",
@@ -545,7 +547,56 @@
           "allergies",
           "epipen",
           "medicalDiagnoses",
-          "medicationAssistance",
+          "medicationAssistance"
+        ]
+      },
+      "CaseWorkerModel": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "name": { "type": "string" },
+          "email": { "type": "string" },
+          "phone": { "type": "string" },
+          "type": {
+            "type": "string",
+            "enum": ["caseManager", "supportManager"]
+          },
+          "createdAt": { "format": "date-time", "type": "string" },
+          "updatedAt": { "format": "date-time", "type": "string" }
+        },
+        "required": [
+          "id",
+          "name",
+          "email",
+          "phone",
+          "type",
+          "createdAt",
+          "updatedAt"
+        ]
+      },
+      "SocialProfileModel": {
+        "type": "object",
+        "properties": {
+          "id": { "type": "string" },
+          "userId": { "type": "string" },
+          "diagnoses": { "type": "boolean", "default": false },
+          "integratedServices": { "type": "boolean", "default": false },
+          "caseWorkers": {
+            "nullable": true,
+            "type": "array",
+            "items": { "$ref": "#/components/schemas/CaseWorkerModel" }
+          },
+          "previousSupport": { "type": "boolean", "default": false },
+          "createdAt": { "format": "date-time", "type": "string" },
+          "updatedAt": { "format": "date-time", "type": "string" }
+        },
+        "required": [
+          "id",
+          "userId",
+          "diagnoses",
+          "integratedServices",
+          "caseWorkers",
+          "previousSupport",
           "createdAt",
           "updatedAt"
         ]
@@ -658,9 +709,13 @@
             "nullable": true,
             "allOf": [{ "$ref": "#/components/schemas/AddressModel" }]
           },
-          "health": {
+          "healthProfile": {
             "nullable": true,
             "allOf": [{ "$ref": "#/components/schemas/HealthProfileModel" }]
+          },
+          "socialProfile": {
+            "nullable": true,
+            "allOf": [{ "$ref": "#/components/schemas/SocialProfileModel" }]
           },
           "primaryOrgId": { "type": "object" },
           "affiliations": {
@@ -689,7 +744,8 @@
           "email",
           "domicile",
           "residence",
-          "health",
+          "healthProfile",
+          "socialProfile",
           "primaryOrgId",
           "affiliations",
           "agents",
