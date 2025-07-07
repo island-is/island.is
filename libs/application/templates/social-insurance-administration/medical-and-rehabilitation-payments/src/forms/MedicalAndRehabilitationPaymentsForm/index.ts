@@ -18,7 +18,7 @@ export const MedicalAndRehabilitationPaymentsForm: Form = buildForm({
   children: [
     generalInformationSection,
     certificateForSicknessAndRehabilitationSection,
-    //  rehabilitationPlanSection,
+    rehabilitationPlanSection,
     selfAssessmentSection,
     commentSection,
     overviewSection,

@@ -42,6 +42,7 @@ import {
   transformApplicationToOldAgePensionDTO,
   transformApplicationToPensionSupplementDTO,
 } from './social-insurance-administration-utils'
+import { getApplicationExternalData } from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 
@@ -634,10 +635,15 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     return await this.siaClientService.getEctsUnits(auth)
   }
 
-  async getEducationLevels({ auth }: TemplateApiModuleActionProps) {
-    return await this.siaClientService.getEducationLevels(
-      auth,
-      ApplicationTypes.MEDICAL_AND_REHABILITATION_PAYMENTS,
-    )
+  async getEducationLevels({
+    // application,
+    auth,
+  }: TemplateApiModuleActionProps) {
+    //TODO: Add applicationType when Eligible is implemented
+    // const { applicationType } = getApplicationExternalData(
+    //   application.externalData,
+    // )
+
+    return await this.siaClientService.getEducationLevels(auth, '')
   }
 }
