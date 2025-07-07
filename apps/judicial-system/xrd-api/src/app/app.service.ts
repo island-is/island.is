@@ -15,7 +15,6 @@ import {
   AuditedAction,
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
-import { LawyersService } from '@island.is/judicial-system/lawyers'
 import { DefenderChoice, ServiceStatus } from '@island.is/judicial-system/types'
 
 import { CreateCaseDto } from './dto/createCase.dto'
@@ -30,7 +29,6 @@ export class AppService {
     @Inject(appModuleConfig.KEY)
     private readonly config: ConfigType<typeof appModuleConfig>,
     private readonly auditTrailService: AuditTrailService,
-    private readonly lawyersService: LawyersService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
   async create(caseToCreate: CreateCaseDto): Promise<Case> {
@@ -117,14 +115,25 @@ export class AppService {
 
     if (updateSubpoena.defenderNationalId) {
       try {
-        const chosenLawyer = await this.lawyersService.getLawyer(
-          updateSubpoena.defenderNationalId,
+        const res = await fetch(
+          `${this.config.backend.url}/lawyer-registry/${updateSubpoena.defenderNationalId}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              authorization: `Bearer ${this.config.backend.accessToken}`,
+            },
+          },
         )
 
-        defenderInfo = {
-          defenderName: chosenLawyer.name,
-          defenderEmail: chosenLawyer.email,
-          defenderPhoneNumber: chosenLawyer.phoneNumber,
+        if (res.ok) {
+          const chosenLawyer = await res.json()
+
+          defenderInfo = {
+            defenderName: chosenLawyer.name,
+            defenderEmail: chosenLawyer.email,
+            defenderPhoneNumber: chosenLawyer.phoneNumber,
+          }
         }
       } catch (reason) {
         this.logger.error(
