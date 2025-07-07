@@ -106,6 +106,12 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'unionSickPay.unionNationalId',
   )
 
+  const certificateForSicknessAndRehabilitationReferenceId =
+    getValueViaPath<string>(
+      answers,
+      'certificateForSicknessAndRehabilitationReferenceId',
+    )
+
   const rehabilitationPlanConfirmation = getValueViaPath<string[]>(
     answers,
     'rehabilitationPlanConfirmation',
@@ -199,6 +205,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     hasUtilizedUnionSickPayRights,
     unionSickPayEndDate,
     unionNationalId,
+    certificateForSicknessAndRehabilitationReferenceId,
     rehabilitationPlanConfirmation,
     hadAssistance,
     highestLevelOfEducation,
