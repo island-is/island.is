@@ -403,6 +403,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     currentEmploymentStatusAdditional,
     lastEmploymentTitle,
     lastEmploymentYear,
+    certificateForSicknessAndRehabilitationReferenceId,
   } = getMARPApplicationAnswers(application.answers)
 
   //  const { bankInfo } = getMARPApplicationExternalData(application.externalData)
@@ -461,7 +462,8 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
         unionSickPayEndDate,
       }),
     },
-    baseCertificateReference: 'test', //TODO:
+    baseCertificateReference:
+      certificateForSicknessAndRehabilitationReferenceId ?? '',
     rehabilitationPlanReference: 'test', //TODO:
     selfAssessment: {
       hadAssistance: true, //TODO:

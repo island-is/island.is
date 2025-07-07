@@ -292,11 +292,6 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Starfsstöð',
       description: 'Location',
     },
-    managedByAddress: {
-      id: 'marp.application:certificate.for.sickness.and.rehabilitation.managed.by.address',
-      defaultMessage: 'Heimilisfang',
-      description: 'Address',
-    },
 
     // Information
     information: {
@@ -323,9 +318,16 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
     },
     informationICDAnalysis: {
       id: 'marp.application:certificate.for.sickness.and.rehabilitation.information.ICD.analysis',
-      defaultMessage: 'ICD greiningar sem valda megin heisuvanda / óvinnufærni',
+      defaultMessage:
+        'ICD greiningar sem valda megin heilsuvanda / óvinnufærni',
       description:
         'ICD analysis causing the main health issue / incapacitation',
+    },
+    informationOtherICDAnalysis: {
+      id: 'marp.application:certificate.for.sickness.and.rehabilitation.information.other.ICD.analysis',
+      defaultMessage:
+        'Aðrar ICD greiningar sem valda heilsuvanda / óvinnufærni',
+      description: 'Other ICD analysis causing health issue / incapacitation',
     },
     informationMedicalHistory: {
       id: 'marp.application:certificate.for.sickness.and.rehabilitation.information.medical.history',
@@ -412,8 +414,15 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       description:
         'Further explanation of the activity and participation impairment',
     },
-    activityAndParticipationImpairmentMainImpairmentExplanation: {
-      id: 'marp.application:certificate.for.sickness.and.rehabilitation.activity.and.participation.impairment.main.impairment.explanation',
+
+    // Main impairment
+    mainImpairment: {
+      id: 'marp.application:certificate.for.sickness.and.rehabilitation.main.impairment',
+      defaultMessage: 'Megin vandi',
+      description: 'Main impairment',
+    },
+    mainImpairmentExplanation: {
+      id: 'marp.application:certificate.for.sickness.and.rehabilitation.main.impairment.explanation',
       defaultMessage: 'Annað varðandi megin vanda',
       description: 'Further information on main impairment',
     },
@@ -423,31 +432,6 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       id: 'marp.application:certificate.for.sickness.and.rehabilitation.application',
       defaultMessage: 'Sótt er um sjúkra- og endurhæfingargreiðslur',
       description: 'Application for medical and rehabilitation payments',
-    },
-    applicationCertificateRequestedBy: {
-      id: 'marp.application:certificate.for.sickness.and.rehabilitation.application.certificate.requested.by',
-      defaultMessage: 'Hver óskaði eftir vottorði',
-      description: 'Certificate requested by',
-    },
-    applicationApplyingDueTo: {
-      id: 'marp.application:certificate.for.sickness.and.rehabilitation.application.applying.due.to',
-      defaultMessage: 'Sótt er um eftirfarandi greiðslu vegna',
-      description: 'Applying for payments due to',
-    },
-    applicationApplyingFor: {
-      id: 'marp.application:certificate.for.sickness.and.rehabilitation.application.applying.for',
-      defaultMessage: 'Sótt er um',
-      description: 'Applying for',
-    },
-    applicationTypeOfTreatment: {
-      id: 'marp.application:certificate.for.sickness.and.rehabilitation.application.type.of.treatment',
-      defaultMessage: 'Tegund meðferðar',
-      description: 'Type of treatment',
-    },
-    applicationIncludedInTreatment: {
-      id: 'marp.application:certificate.for.sickness.and.rehabilitation.application.included.in.treatment',
-      defaultMessage: 'Innihald meðferðar',
-      description: 'Included in treatment',
     },
     applicationStartOfTreatment: {
       id: 'marp.application:certificate.for.sickness.and.rehabilitation.application.start.of.treatment',
@@ -459,10 +443,20 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Áætluð lok meðferðar',
       description: 'Estimated end of treatment',
     },
+    applicationEstimatedTimeUnclear: {
+      id: 'marp.application:certificate.for.sickness.and.rehabilitation.application.estimated.time.unclear',
+      defaultMessage: 'Óljóst',
+      description: 'Unclear',
+    },
     applicationEstimatedTime: {
       id: 'marp.application:certificate.for.sickness.and.rehabilitation.application.estimated.time',
       defaultMessage: 'Áætluð tímalengd',
       description: 'Estimated time',
+    },
+    applicationEstimatedTimeMonths: {
+      id: 'marp.application:certificate.for.sickness.and.rehabilitation.application.estimated.time.months',
+      defaultMessage: '{months} mánuðir',
+      description: '{months} months',
     },
   }),
 
