@@ -190,4 +190,10 @@ export const errors = defineMessages({
     description:
       'Notaður sem villuskilaboð þegar ekki tekst að hlaða upp skjali',
   },
+  updateVerdict: {
+    id: 'judicial.system.core:errors.update_verdict',
+    defaultMessage: 'Upp kom villa við að uppfæra dóm',
+    description:
+      'Notaður sem villuskilaboð þegar ekki gengur að uppfæra dóm',
+  },
 })

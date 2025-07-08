@@ -37,6 +37,7 @@ import {
   PoliceModule,
   SubpoenaModule,
   UserModule,
+  VerdictModule,
   VictimModule,
 } from './modules'
 
@@ -80,6 +81,7 @@ const autoSchemaFile = production
     PoliceModule,
     EventLogModule,
     VictimModule,
+    VerdictModule,
     CaseTableModule,
     ProblemModule.forRoot({ logAllErrors: true }),
     ConfigModule.forRoot({
