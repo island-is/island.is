@@ -346,7 +346,7 @@ export const formatFamilyChild = (
     lastName: child.fulltNafn?.kenniNafn ?? undefined,
     gender: child.kyn?.kynKodi ?? undefined,
     genderDisplay: child.kyn?.kynTexti ?? undefined,
-    birthday: birthday ? (birthday as Date).toISOString() : undefined,
+    birthday: birthday ? new Date(birthday).toISOString() : undefined,
     parent1: parent1?.logForeldriKennitala ?? undefined,
     nameParent1: parent1?.logForeldriNafn ?? undefined,
     parent2: parent2?.logForeldriKennitala ?? undefined,

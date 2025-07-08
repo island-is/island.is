@@ -11,6 +11,7 @@ import { ConfigType } from '@nestjs/config'
 import { UploadProcessor } from './upload.processor'
 import { FileStorageModule } from '@island.is/file-storage'
 import { ApplicationApiCoreModule } from '@island.is/application/api/core'
+import type { Redis } from 'ioredis'
 
 @Module({
   imports: [
@@ -34,6 +35,7 @@ export const createBullModule = () => {
       useFactory: (config: ConfigType<typeof ApplicationFilesConfig>) => ({
         prefix: `{${config.bullModuleName}}`,
         createClient: () =>
+          // Type assertion needed due to Bull's Redis client interface requirements
           createRedisCluster({
             name: config.bullModuleName,
             ssl: config.redis.ssl,
