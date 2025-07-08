@@ -364,6 +364,7 @@ globalStyle(
 
 globalStyle(`${root} .react-datepicker__input-time-container`, {
   marginTop: '15px',
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   float: 'none !important' as any,
   margin: '30px 0px 0px 5px !important',
 })
