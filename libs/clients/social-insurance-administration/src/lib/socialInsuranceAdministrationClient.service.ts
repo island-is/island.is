@@ -282,4 +282,14 @@ export class SocialInsuranceAdministrationClientService {
       applicationType,
     })
   }
+
+  async getMedicalAndRehabilitationApplicationType(
+    user: User,
+    applicationType: string,
+  ): Promise<unknown> {
+    return {
+      applicationType: 'ENDURHAEFINGARGREIDSLUR_FYRSTA',
+      confirmationType: 'ENDURHAEFING',
+    }
+  }
 }

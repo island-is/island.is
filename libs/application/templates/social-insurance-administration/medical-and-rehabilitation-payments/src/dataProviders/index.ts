@@ -62,3 +62,10 @@ export const SocialInsuranceAdministrationEducationLevelsApi =
     externalDataId: 'socialInsuranceAdministrationEducationLevels',
     namespace: 'SocialInsuranceAdministration',
   })
+
+export const SocialInsuranceAdministrationMARPApplicationTypeApi =
+  defineTemplateApi({
+    action: 'getMedicalAndRehabilitationPaymentsType',
+    externalDataId: 'socialInsuranceAdministrationMARPApplicationType',
+    namespace: 'SocialInsuranceAdministration',
+  })

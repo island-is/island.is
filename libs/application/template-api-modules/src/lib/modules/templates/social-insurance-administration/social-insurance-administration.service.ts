@@ -648,4 +648,13 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       'SJUKRAGREIDSLUR_FYRSTA',
     )
   }
+
+  async getMedicalAndRehabilitationApplicationType({
+    auth,
+  }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getMedicalAndRehabilitationApplicationType(
+      auth,
+      ApplicationTypes.MEDICAL_AND_REHABILITATION_PAYMENTS,
+    )
+  }
 }
