@@ -109,12 +109,6 @@ export const titles = {
         description:
           'Notaður sem titill fyrir Yfirlit ákæru skjá hjá saksóknara í ákærum',
       }),
-      addFiles: defineMessage({
-        id: 'judicial.system.core:titles.prosecutor.indictments.add_files',
-        defaultMessage: 'Bæta við gögnum - Réttarvörslugátt',
-        description:
-          'Notaður sem titill fyrir Bæta við gögnum skjá hjá saksóknara í ákærum',
-      }),
     },
   },
   court: {
@@ -236,11 +230,6 @@ export const titles = {
     }),
   },
   shared: {
-    cases: defineMessage({
-      id: 'judicial.system.core:titles.shared.cases',
-      defaultMessage: 'Öll mál - Réttarvörslugátt',
-      description: 'Notaður sem titill fyrir öll mál skjá',
-    }),
     closedCaseOverview: defineMessage({
       id: 'judicial.system.core:titles.shared.closed_case_overview',
       defaultMessage: '{courtCaseNumber} - Réttarvörslugátt',
