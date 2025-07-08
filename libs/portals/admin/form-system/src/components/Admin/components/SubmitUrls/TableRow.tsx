@@ -4,19 +4,12 @@ import {
   GridColumn,
   Text,
   Divider,
-  Button,
   Icon,
-  ToggleSwitchCheckbox,
-  ToggleSwitchButton,
 } from '@island.is/island-ui/core'
 import { FormSystemOrganizationUrl } from '@island.is/api/schema'
-import { Dispatch, SetStateAction } from 'react'
-import { useMutation } from '@apollo/client'
-import { DELETE_ORGANIZATION_URL } from '@island.is/form-system/graphql'
 
 interface TableRowProps {
   submitUrl: FormSystemOrganizationUrl
-  setSubmitUrlsState: Dispatch<SetStateAction<FormSystemOrganizationUrl[]>>
   handleDelete: (id: string) => void
 }
 
@@ -30,12 +23,8 @@ const ColumnText = ({ text }: ColumnTextProps) => (
   </Box>
 )
 
-export const TableRow = ({
-  submitUrl,
-  setSubmitUrlsState,
-  handleDelete,
-}: TableRowProps) => {
-  const { id, url, method, isXroad } = submitUrl
+export const TableRow = ({ submitUrl, handleDelete }: TableRowProps) => {
+  const { id, url } = submitUrl
 
   return (
     <Box paddingTop={2} paddingBottom={1} style={{ cursor: '' }}>

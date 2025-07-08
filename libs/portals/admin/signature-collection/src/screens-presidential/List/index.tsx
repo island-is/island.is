@@ -15,11 +15,11 @@ import {
 } from '@island.is/island-ui/core'
 import { format as formatNationalId } from 'kennitala'
 import Signees from '../../shared-components/signees'
-import ActionDrawer from '../../shared-components/compareLists/ActionDrawer'
+import ActionDrawer from '../../shared-components/actionDrawer'
 import { PaperSignees } from '../../shared-components/paperSignees'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import { SignatureCollectionPaths } from '../../lib/paths'
-import { Actions } from '../../shared-components/compareLists/ActionDrawer/ListActions'
+import { Actions } from '../../shared-components/actionDrawer/ListActions'
 
 export const List = () => {
   const { list } = useLoaderData() as {
@@ -44,7 +44,7 @@ export const List = () => {
           offset={['0', '0', '0', '1/12']}
           span={['12/12', '12/12', '12/12', '8/12']}
         >
-          <Box marginBottom={2}>
+          <Box marginBottom={3}>
             <Breadcrumbs
               items={[
                 {
@@ -58,7 +58,7 @@ export const List = () => {
             />
           </Box>
           {!!list && (
-            <>
+            <Box>
               <IntroHeader
                 title={list.title}
                 intro={formatMessage(m.singleListIntro)}
@@ -99,7 +99,7 @@ export const List = () => {
                 listId={list.id}
                 collectionType={list.collectionType}
               />
-            </>
+            </Box>
           )}
         </GridColumn>
       </GridRow>

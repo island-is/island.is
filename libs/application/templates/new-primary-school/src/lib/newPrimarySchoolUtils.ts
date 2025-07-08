@@ -127,6 +127,21 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'support.hasHadSupport',
   ) as YesOrNo
 
+  const hasWelfareContact = getValueViaPath(
+    answers,
+    'support.hasWelfareContact',
+  ) as YesOrNo
+
+  const welfareContactName = getValueViaPath<string>(
+    answers,
+    'support.welfareContact.name',
+  )
+
+  const welfareContactEmail = getValueViaPath<string>(
+    answers,
+    'support.welfareContact.email',
+  )
+
   const hasIntegratedServices = getValueViaPath(
     answers,
     'support.hasIntegratedServices',
@@ -238,6 +253,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     requestsMedicationAdministration,
     hasDiagnoses,
     hasHadSupport,
+    hasWelfareContact,
+    welfareContactName,
+    welfareContactEmail,
     hasIntegratedServices,
     hasCaseManager,
     caseManagerName,
@@ -321,6 +339,16 @@ export const getApplicationExternalData = (
     [],
   ) as Affiliation[]
 
+  const childCitizenshipCode = getValueViaPath<string>(
+    externalData,
+    'citizenship.data.childCitizenshipCode',
+  )
+
+  const otherGuardianCitizenshipCode = getValueViaPath<string>(
+    externalData,
+    'citizenship.data.otherGuardianCitizenshipCode',
+  )
+
   return {
     children,
     applicantName,
@@ -333,6 +361,8 @@ export const getApplicationExternalData = (
     childGradeLevel,
     primaryOrgId,
     childAffiliations,
+    childCitizenshipCode,
+    otherGuardianCitizenshipCode,
   }
 }
 

@@ -92,11 +92,18 @@ export class UserProfileServiceV2 {
       user,
     ).meUserProfileControllerFindUserProfile()
 
-    const bankInfo = await this.getBankInfo(user)
+    let bankInfo
+    let bankInfoError = false
+    try {
+      bankInfo = await this.getBankInfo(user)
+    } catch (error) {
+      bankInfoError = true
+    }
 
     return {
       ...userProfile,
       bankInfo,
+      bankInfoError,
       canNudge: userProfile.emailNotifications,
     }
   }
@@ -109,6 +116,14 @@ export class UserProfileServiceV2 {
     })
   }
 
+  async createMeSmsVerification(input: CreateSmsVerificationInput, user: User) {
+    await this.v2MeUserProfileApiWithAuth(
+      user,
+    ).meUserProfileControllerCreateVerification({
+      createVerificationDto: input,
+    })
+  }
+
   async createEmailVerification(
     input: CreateEmailVerificationInput,
     user: User,
@@ -116,6 +131,17 @@ export class UserProfileServiceV2 {
     await this.v2ActorApiWithAuth(
       user,
     ).actorUserProfileControllerCreateVerification({
+      createVerificationDto: input,
+    })
+  }
+
+  async createMeEmailVerification(
+    input: CreateEmailVerificationInput,
+    user: User,
+  ): Promise<void> {
+    await this.v2MeUserProfileApiWithAuth(
+      user,
+    ).meUserProfileControllerCreateVerification({
       createVerificationDto: input,
     })
   }

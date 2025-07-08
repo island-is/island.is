@@ -49,6 +49,9 @@ export function useDeepLinkHandling() {
         return false
       }
       lastUrl.current = url
+      if (url.startsWith('is.island.app') && url.includes('wallet/')) {
+        return false
+      }
 
       navigateToUniversalLink({ link: url, openBrowser })
       return true
