@@ -17,6 +17,7 @@ import {
   toast,
   UploadFile,
 } from '@island.is/island-ui/core'
+import { EDITABLE_DATE } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 
 import { CaseFileCategory } from '../../graphql/schema'
@@ -161,7 +162,7 @@ const EditableCaseFile: FC<Props> = (props) => {
                   <Box className={styles.editCaseFileDisplayDate}>
                     <InputMask
                       component={Input}
-                      mask="__.__.____"
+                      mask={EDITABLE_DATE}
                       replacement={{ _: /\d/ }}
                       value={editedDisplayDate || ''}
                       onChange={(evt) => {
