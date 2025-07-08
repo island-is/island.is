@@ -409,8 +409,13 @@ export const rehabilitationPlanItems = (): Array<KeyValueItem> => [
 
 export const selfAssessmentQuestionsOneItems = (
   answers: FormValue,
+  externalData: ExternalData,
 ): Array<KeyValueItem> => {
   const { hadAssistance, educationalLevel } = getApplicationAnswers(answers)
+  const { educationLevels } = getApplicationExternalData(externalData)
+  const educationLevelOption = educationLevels.find(
+    (level) => level.code === educationalLevel,
+  )
 
   return [
     {
@@ -427,8 +432,8 @@ export const selfAssessmentQuestionsOneItems = (
       width: 'full',
       keyText:
         medicalAndRehabilitationPaymentsFormMessage.selfAssessment
-          .highestlevelOfEducationDescription,
-      valueText: educationalLevel,
+          .educationLevelDescription,
+      valueText: educationLevelOption?.description,
     },
   ]
 }

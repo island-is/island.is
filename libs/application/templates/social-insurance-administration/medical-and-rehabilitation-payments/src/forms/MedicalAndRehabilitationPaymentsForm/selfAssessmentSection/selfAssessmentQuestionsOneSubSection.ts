@@ -33,10 +33,10 @@ export const selfAssessmentQuestionsOneSubSection = buildSubSection({
           width: 'half',
         }),
         buildDescriptionField({
-          id: 'selfAssessment.highestLevelOfEducationDescriptionField',
+          id: 'selfAssessment.educationLevelDescriptionField',
           title:
             medicalAndRehabilitationPaymentsFormMessage.selfAssessment
-              .highestlevelOfEducationDescription,
+              .educationLevelDescription,
           titleVariant: 'h4',
           space: 4,
         }),
@@ -48,7 +48,6 @@ export const selfAssessmentQuestionsOneSubSection = buildSubSection({
           placeholder:
             medicalAndRehabilitationPaymentsFormMessage.selfAssessment
               .levelOfEducationPlaceholder,
-          required: true,
           options: (application: Application) => {
             const { educationLevels } = getApplicationExternalData(
               application.externalData,
