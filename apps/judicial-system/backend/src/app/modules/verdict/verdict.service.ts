@@ -1,6 +1,10 @@
 import { Transaction } from 'sequelize'
 
-import { Inject, NotFoundException } from '@nestjs/common'
+import {
+  Inject,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common'
 import { InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
@@ -38,17 +42,24 @@ export class VerdictService {
   async updateVerdict(
     verdict: Verdict,
     update: UpdateVerdictDto,
-  ): Promise<void> {
-    const [numberOfAffectedRows] = await this.verdictModel.update(update, {
-      where: { id: verdict.id },
-      returning: true,
-    })
+  ): Promise<Verdict> {
+    const [numberOfAffectedRows, updatedVerdict] =
+      await this.verdictModel.update(update, {
+        where: { id: verdict.id },
+        returning: true,
+      })
 
     if (numberOfAffectedRows > 1) {
       // Tolerate failure, but log error
       this.logger.error(
         `Unexpected number of rows ${numberOfAffectedRows} affected when updating subpoena`,
       )
+    } else if (numberOfAffectedRows < 1) {
+      throw new InternalServerErrorException(
+        `Could not update verdict ${verdict.id}`,
+      )
     }
+
+    return updatedVerdict[0]
   }
 }

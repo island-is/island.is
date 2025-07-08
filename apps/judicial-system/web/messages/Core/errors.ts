@@ -182,7 +182,6 @@ export const errors = defineMessages({
   updateVerdict: {
     id: 'judicial.system.core:errors.update_verdict',
     defaultMessage: 'Upp kom villa við að uppfæra dóm',
-    description:
-      'Notaður sem villuskilaboð þegar ekki gengur að uppfæra dóm',
+    description: 'Notaður sem villuskilaboð þegar ekki gengur að uppfæra dóm',
   },
 })

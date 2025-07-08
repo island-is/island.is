@@ -75,4 +75,3 @@ const useVerdict = () => {
 }
 
 export default useVerdict
-
