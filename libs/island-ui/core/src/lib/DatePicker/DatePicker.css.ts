@@ -251,10 +251,11 @@ globalStyle(
     fontFamily: 'IBM Plex Sans',
     fontStyle: 'normal',
     fontWeight: 600,
-    fontSize: `${theme.typography.baseFontSize}px`,
+    fontSize: 14,
     lineHeight: `${theme.typography.baseLineHeight}`,
     textAlign: 'center',
     color: `${theme.color.dark400}`,
+    textTransform: 'capitalize',
   },
 )
 

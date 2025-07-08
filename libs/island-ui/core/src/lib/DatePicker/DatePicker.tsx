@@ -128,6 +128,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
           minDate={minDate}
           maxDate={maxDate}
           excludeDates={excludeDates}
+          formatWeekDay={(nameOfDay) => nameOfDay.toString().substr(0, 3)}
           dateFormat={
             showTimeInput
               ? currentLanguage.formatWithTime
