@@ -117,7 +117,7 @@ export class AppService {
         }))
       }
 
-      return []
+      throw new BadRequestException()
     } catch (error) {
       this.logger.error('Failed to retrieve litigator lawyers', error)
 
