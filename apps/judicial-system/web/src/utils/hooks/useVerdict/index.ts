@@ -27,7 +27,7 @@ const useVerdict = () => {
           (defendant) => defendant.id === update.defendantId,
         )
 
-        const newDefendants = prevWorkingCase.defendants
+        const newDefendants = [...prevWorkingCase.defendants]
 
         newDefendants[indexOfDefendantToUpdate] = {
           ...newDefendants[indexOfDefendantToUpdate],

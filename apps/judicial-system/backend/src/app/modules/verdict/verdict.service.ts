@@ -52,7 +52,7 @@ export class VerdictService {
     if (numberOfAffectedRows > 1) {
       // Tolerate failure, but log error
       this.logger.error(
-        `Unexpected number of rows ${numberOfAffectedRows} affected when updating subpoena`,
+        `Unexpected number of rows ${numberOfAffectedRows} affected when updating verdict`,
       )
     } else if (numberOfAffectedRows < 1) {
       throw new InternalServerErrorException(

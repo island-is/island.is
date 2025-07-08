@@ -9,7 +9,7 @@ import { Verdict } from '../models/verdict.model'
 import { createTestingVerdictModule } from './creatingTestingVerdictModule'
 
 interface Then {
-  result: void
+  result: Verdict
   error: Error
 }
 
