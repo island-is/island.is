@@ -4,6 +4,7 @@ export const OwnerRequirementsApi = defineTemplateApi({
   action: 'ownerRequirements',
 })
 
-export const CurrentCollectionApi = defineTemplateApi({
-  action: 'currentCollection',
+export const LatestCollectionApi = defineTemplateApi({
+  action: 'getLatestCollection',
+  externalDataId: 'currentCollection',
 })

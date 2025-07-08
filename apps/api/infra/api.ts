@@ -42,8 +42,10 @@ import {
   PaymentSchedule,
   Properties,
   PropertySearch,
+  RentalService,
   RskCompanyInfo,
   RskProcuring,
+  RskCarRentalRate,
   SeminarsVer,
   ShipRegistry,
   SignatureCollection,
@@ -56,7 +58,9 @@ import {
   WorkAccidents,
   WorkMachines,
   SecondarySchool,
+  LSH,
   PracticalExams,
+  FireCompensation,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -375,6 +379,8 @@ export const serviceSetup = (services: {
       FISKISTOFA_POWERBI_CLIENT_SECRET:
         '/k8s/api/FISKISTOFA_POWERBI_CLIENT_SECRET',
       FISKISTOFA_POWERBI_TENANT_ID: '/k8s/api/FISKISTOFA_POWERBI_TENANT_ID',
+      FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY:
+        '/k8s/form-system/FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY',
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
       HSN_WEB_FORM_RESPONSE_URL: '/k8s/api/HSN_WEB_FORM_RESPONSE_URL',
@@ -422,10 +428,12 @@ export const serviceSetup = (services: {
       DistrictCommissionersPCard,
       DistrictCommissionersLicenses,
       Finance,
+      FireCompensation,
       Education,
       NationalRegistry,
       Properties,
       PropertySearch,
+      RentalService,
       PaymentSchedule,
       CriminalRecord,
       RskCompanyInfo,
@@ -443,6 +451,7 @@ export const serviceSetup = (services: {
       WorkMachines,
       IcelandicGovernmentInstitutionVacancies,
       RskProcuring,
+      RskCarRentalRate,
       NationalRegistryB2C,
       AircraftRegistry,
       HousingBenefitCalculator,
@@ -461,6 +470,7 @@ export const serviceSetup = (services: {
       WorkAccidents,
       SeminarsVer,
       SecondarySchool,
+      LSH,
       PracticalExams,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })

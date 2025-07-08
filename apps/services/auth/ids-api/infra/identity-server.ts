@@ -78,6 +78,16 @@ export const serviceSetup = (services: {
         staging: 'http://service-portal-api.service-portal.svc.cluster.local',
         prod: 'https://service-portal-api.internal.island.is',
       },
+      ActorUserProfileApiSettings__BaseAddress: {
+        dev: 'https://service-portal-api.internal.dev01.devland.is',
+        staging: 'http://service-portal-api.service-portal.svc.cluster.local',
+        prod: 'https://service-portal-api.internal.island.is',
+      },
+      EmailsApiSettings__BaseAddress: {
+        dev: 'https://service-portal-api.internal.dev01.devland.is',
+        staging: 'http://service-portal-api.service-portal.svc.cluster.local',
+        prod: 'https://service-portal-api.internal.island.is',
+      },
       Application__MinCompletionPortThreads: '10',
       ContentfulSettings__BaseAddress: {
         dev: 'https://preview.contentful.com',

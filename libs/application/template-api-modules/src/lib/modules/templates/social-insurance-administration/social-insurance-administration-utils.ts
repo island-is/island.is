@@ -1,20 +1,4 @@
-import { Application } from '@island.is/application/types'
-import parse from 'date-fns/parse'
-import {
-  ApplicationDTO,
-  TrWebCommonsExternalPortalsApiModelsDocumentsDocument as Attachment,
-  Employer as TrWebEmployer,
-  IncomeTypes,
-} from '@island.is/clients/social-insurance-administration'
-import {
-  ApplicationType,
-  Employer,
-  Employment,
-  RatioType,
-  getApplicationAnswers as getOAPApplicationAnswers,
-  getApplicationExternalData as getOAPApplicationExternalData,
-} from '@island.is/application/templates/social-insurance-administration/old-age-pension'
-import { getValueViaPath, YES, YesOrNo } from '@island.is/application/core'
+import { getValueViaPath, NO, YES, YesOrNo } from '@island.is/application/core'
 import {
   BankAccountType,
   INCOME,
@@ -24,28 +8,46 @@ import {
   shouldNotUpdateBankAccount,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import {
-  getApplicationAnswers as getHSApplicationAnswers,
-  getApplicationExternalData as getHSApplicationExternalData,
-} from '@island.is/application/templates/social-insurance-administration/household-supplement'
-import {
   getApplicationAnswers as getASFTEApplicationAnswers,
   getApplicationExternalData as getASFTEApplicationExternalData,
 } from '@island.is/application/templates/social-insurance-administration/additional-support-for-the-elderly'
-
-import {
-  getApplicationAnswers as getPSApplicationAnswers,
-  getApplicationExternalData as getPSApplicationExternalData,
-} from '@island.is/application/templates/social-insurance-administration/pension-supplement'
-
 import {
   getApplicationAnswers as getDBApplicationAnswers,
   getApplicationExternalData as getDBApplicationExternalData,
 } from '@island.is/application/templates/social-insurance-administration/death-benefits'
-
+import {
+  getApplicationAnswers as getHSApplicationAnswers,
+  getApplicationExternalData as getHSApplicationExternalData,
+} from '@island.is/application/templates/social-insurance-administration/household-supplement'
 import {
   getApplicationAnswers as getIPApplicationAnswers,
   getApplicationExternalData as getIPApplicationExternalData,
 } from '@island.is/application/templates/social-insurance-administration/income-plan'
+import {
+  getApplicationAnswers as getMARPApplicationAnswers,
+  SelfAssessmentCurrentEmploymentStatus,
+} from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
+import {
+  ApplicationType,
+  Employer,
+  Employment,
+  getApplicationAnswers as getOAPApplicationAnswers,
+  getApplicationExternalData as getOAPApplicationExternalData,
+  RatioType,
+} from '@island.is/application/templates/social-insurance-administration/old-age-pension'
+import {
+  getApplicationAnswers as getPSApplicationAnswers,
+  getApplicationExternalData as getPSApplicationExternalData,
+} from '@island.is/application/templates/social-insurance-administration/pension-supplement'
+import { Application } from '@island.is/application/types'
+import {
+  ApplicationDTO,
+  TrWebCommonsExternalPortalsApiModelsDocumentsDocument as Attachment,
+  IncomeTypes,
+  MedicalAndRehabilitationPaymentsDTO,
+  Employer as TrWebEmployer,
+} from '@island.is/clients/social-insurance-administration'
+import parse from 'date-fns/parse'
 
 export const transformApplicationToOldAgePensionDTO = (
   application: Application,
@@ -185,6 +187,7 @@ export const transformApplicationToAdditionalSupportForTheElderlyDTO = (
     personalAllowance,
     personalAllowanceUsage,
     taxLevel,
+    higherPayments,
   } = getASFTEApplicationAnswers(application.answers)
   const { bankInfo, userProfileEmail } = getASFTEApplicationExternalData(
     application.externalData,
@@ -207,6 +210,8 @@ export const transformApplicationToAdditionalSupportForTheElderlyDTO = (
         YES === personalAllowance ? +personalAllowanceUsage : 0,
       taxLevel: +taxLevel,
     },
+    livesAloneUserReply: YES === higherPayments,
+    livesAloneNationalRegistryData: livesAlone(application),
     period: {
       year: +selectedYear,
       month: getMonthNumber(selectedMonth),
@@ -368,6 +373,116 @@ export const transformApplicationToIncomePlanDTO = (
   return incomePlanDTO
 }
 
+export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
+  application: Application,
+): MedicalAndRehabilitationPaymentsDTO => {
+  const {
+    applicantPhonenumber,
+    applicantEmail,
+    // bank,
+    //paymentInfo,
+    personalAllowance,
+    personalAllowanceUsage,
+    taxLevel,
+    isSelfEmployed,
+    calculatedRemunerationDate,
+    isPartTimeEmployed,
+    isStudying,
+    educationalInstitution,
+    // ectsUnits,
+    isReceivingBenefitsFromAnotherCountry,
+    // countries,
+    hasUtilizedEmployeeSickPayRights,
+    employeeSickPayEndDate,
+    hasUtilizedUnionSickPayRights,
+    unionSickPayEndDate,
+    unionNationalId,
+    comment,
+    questionnaire,
+    currentEmploymentStatus,
+    currentEmploymentStatusAdditional,
+    lastEmploymentTitle,
+    lastEmploymentYear,
+    certificateForSicknessAndRehabilitationReferenceId,
+  } = getMARPApplicationAnswers(application.answers)
+
+  //  const { bankInfo } = getMARPApplicationExternalData(application.externalData)
+
+  const marpDTO: MedicalAndRehabilitationPaymentsDTO = {
+    applicantInfo: {
+      email: applicantEmail,
+      phonenumber: applicantPhonenumber,
+    },
+    period: {
+      year: new Date().getFullYear(), //TODO: remove when backend is ready
+      month: new Date().getMonth(), //TODO: remove when backend is ready
+    },
+    comment,
+    applicationId: application.id,
+    // ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && { // LAGA shouldNotUpdateBankAccount(bankInfo
+    //   domesticBankInfo: {
+    //     bank: getBankIsk(bank),
+    //   },
+    // }),
+    taxInfo: {
+      personalAllowance: personalAllowance === YES,
+      personalAllowanceUsage:
+        personalAllowance === YES ? +personalAllowanceUsage : 0,
+      taxLevel: +taxLevel,
+    },
+    occupation: {
+      isSelfEmployed: isSelfEmployed === YES,
+      isStudying: isStudying === YES,
+      isPartTimeEmployed: isPartTimeEmployed === YES,
+      receivingPaymentsFromOtherCountry:
+        isReceivingBenefitsFromAnotherCountry === YES,
+      ...(isSelfEmployed === YES && {
+        calculatedRemunerationDate,
+      }),
+      ...(isStudying === YES && {
+        educationalInstitution,
+      }),
+    },
+    employeeSickPay: {
+      hasUtilizedEmployeeSickPayRights: getYesNoNotApplicableValue(
+        hasUtilizedEmployeeSickPayRights,
+      ),
+      ...((hasUtilizedEmployeeSickPayRights === YES ||
+        hasUtilizedEmployeeSickPayRights === NO) && {
+        employeeSickPayEndDate,
+      }),
+    },
+    unionSickPay: {
+      hasUtilizedUnionSickPayRights: getYesNoNotApplicableValue(
+        hasUtilizedUnionSickPayRights,
+      ),
+      ...((hasUtilizedUnionSickPayRights === YES ||
+        hasUtilizedUnionSickPayRights === NO) && {
+        unionNationalId,
+        unionSickPayEndDate,
+      }),
+    },
+    baseCertificateReference:
+      certificateForSicknessAndRehabilitationReferenceId ?? '',
+    rehabilitationPlanReference: 'test', //TODO:
+    selfAssessment: {
+      hadAssistance: true, //TODO:
+      currentEmploymentStatus,
+      ...(currentEmploymentStatus?.includes(
+        SelfAssessmentCurrentEmploymentStatus.OTHER,
+      ) && { currentEmploymentStatusAdditional }),
+      ...(lastEmploymentTitle && { lastEmploymentTitle }),
+      ...(lastEmploymentYear && { lastEmploymentYear: +lastEmploymentYear }),
+      answers: questionnaire.map((question) => ({
+        questionId: question.questionId,
+        answer: question.answer === '5' ? '-1' : question.answer, //TODO: TR teymið er ekki klárt hvort að við eigum að senda -1 eða null
+      })),
+    },
+  }
+
+  return marpDTO
+}
+
 export const getIncomeTypes = (application: Application): IncomeTypes[] => {
   const { incomePlan } = getIPApplicationAnswers(application.answers)
   const { categorizedIncomeTypes } = getIPApplicationExternalData(
@@ -432,6 +547,13 @@ export const shouldDistributeIncomeByMonth = (application: Application) => {
     (i) => i?.unevenIncomePerYear?.[0] === YES && i?.incomeCategory === INCOME,
   )
   return hasUnevenIncome
+}
+
+export const livesAlone = (application: Application) => {
+  const { cohabitants } = getASFTEApplicationExternalData(
+    application.externalData,
+  )
+  return cohabitants.length === 0
 }
 
 export const getMonthNumber = (monthName: string): number => {
@@ -510,4 +632,15 @@ export const getEmployers = (employers: Employer[]): Array<TrWebEmployer> => {
   }
 
   return employersInfo
+}
+
+export const getYesNoNotApplicableValue = (value?: string): number | null => {
+  switch (value) {
+    case YES:
+      return 1
+    case NO:
+      return 0
+    default:
+      return null
+  }
 }

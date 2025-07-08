@@ -317,43 +317,48 @@ export const newPrimarySchoolMessages: MessageDir = {
         'Information about guardians is retrieved from Registers Iceland and from My Pages on Ísland.is. Check that phone numbers and email addresses are entered correctly before proceeding.',
     },
 
-    // Contacts
-    contactsSubSectionTitle: {
-      id: 'nps.application:childrenNGuardians.contacts.sub.section.title',
-      defaultMessage: 'Tengiliðir',
-      description: 'Contacts',
+    // Relatives
+    relativesSubSectionTitle: {
+      id: 'nps.application:childrenNGuardians.relatives.sub.section.title',
+      defaultMessage: 'Aðstandendur',
+      description: 'Relatives',
     },
-    contactsTitle: {
-      id: 'nps.application:childrenNGuardians.contacts.title',
-      defaultMessage: 'Tengiliðir barns',
-      description: "The child's contacts",
+    relativesTitle: {
+      id: 'nps.application:childrenNGuardians.relatives.title',
+      defaultMessage: 'Aðstandendur barns',
+      description: "The child's relatives",
     },
-    contactsDescription: {
-      id: 'nps.application:childrenNGuardians.contacts.description',
+    relativesDescription: {
+      id: 'nps.application:childrenNGuardians.relatives.description',
       defaultMessage:
-        'Skráðu að minnsta kosti einn tengilið sem má hafa samband við ef ekki næst í forsjáraðila barnsins. Þú getur bætt við allt að fjórum tengiliðum. Vinsamlegast látið tengiliði vita af skráningunni.',
+        'Aðstandandi er aðili sem er náinn fjölskyldunni og barni og veitir stuðning þegar svo ber við. Skráðu að minnsta kosti einn aðstandanda sem má hafa samband við ef ekki næst í forsjáraðila barnsins. Þú getur bætt allt að fjórum aðilum. Vinsamlegast látið aðstandendur vita af skráningunni.',
       description:
-        "List at least one contact person who can be contacted if the child's guardian cannot be reached. You can add up to four contacts. Please inform the contacts of the registration.",
+        "A relative is a person who is close to the family and child and provides support when needed. Register at least one relative who can be contacted if the child's guardian cannot be reached. You can add up to four people. Please notify the relatives of the registration.",
     },
-    contactsRegistrationTitle: {
-      id: 'nps.application:childrenNGuardians.contacts.registration.title',
-      defaultMessage: 'Skráning tengiliðs',
-      description: 'Registration of a contact',
+    relativesRegistrationTitle: {
+      id: 'nps.application:childrenNGuardians.relatives.registration.title',
+      defaultMessage: 'Skráning aðstandanda',
+      description: 'Registration of a relative',
     },
-    contactsAddContact: {
-      id: 'nps.application:childrenNGuardians.contacts.add.contact',
-      defaultMessage: 'Bæta við tengilið',
-      description: 'Add a contact',
+    relativesAddRelative: {
+      id: 'nps.application:childrenNGuardians.relatives.add.relative',
+      defaultMessage: 'Bæta við aðstandanda',
+      description: 'Add a relative',
     },
-    contactsRegisterContact: {
-      id: 'nps.application:childrenNGuardians.contacts.register.contact',
-      defaultMessage: 'Skrá tengilið',
-      description: 'Register contact',
+    relativesRegisterRelative: {
+      id: 'nps.application:childrenNGuardians.relatives.register.relative',
+      defaultMessage: 'Skrá aðstandanda',
+      description: 'Register relative',
     },
-    contactsDeleteContact: {
-      id: 'nps.application:childrenNGuardians.contacts.delete.contact',
-      defaultMessage: 'Eyða tengilið',
-      description: 'Remove contact',
+    relativesDeleteRelative: {
+      id: 'nps.application:childrenNGuardians.relatives.delete.relative',
+      defaultMessage: 'Eyða aðstandanda',
+      description: 'Remove relative',
+    },
+    relativesEditRelative: {
+      id: 'nps.application:childrenNGuardians.relatives.edit.relative',
+      defaultMessage: 'Breyta aðstandanda',
+      description: 'Edit relative',
     },
   }),
 
@@ -647,86 +652,100 @@ export const newPrimarySchoolMessages: MessageDir = {
       description: 'Do the parents need an interpreter?',
     },
 
-    // Allergies and intolerances
-    allergiesAndIntolerancesSubSectionTitle: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.sub.section.title',
-      defaultMessage: 'Ofnæmi og óþol',
-      description: 'Allergies and intolerances',
+    // Health protection
+    healthProtectionSubSectionTitle: {
+      id: 'nps.application:different.needs.health.protection.sub.section.title',
+      defaultMessage: 'Heilsuvernd',
+      description: 'Health protection',
     },
-    allergiesAndIntolerancesDescription: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.description',
+    healthProtectionSubSectionDescription: {
+      id: 'nps.application:different.needs.health.protection.sub.section.description',
+      defaultMessage:
+        'Heilsuvernd skólabarna er hluti af heilsugæslunni og framhald af ung- og smábarnavernd. Til að skólahjúkrunarfræðingur geti sinnt heilsuvernd skólabarns, haft umsjón með umönnun þess þegar svo ber við og veitt starfsfólki skólans viðeigandi fræðslu og ráðgjöf um rétt viðbrögð, er mikilvægt að hann hafi nauðsynlegar upplýsingar um heilsu barnsins.',
+      description:
+        'Health protection for school children is part of the healthcare system and follows from child health care. For the school nurse to be able to provide health protection for the school child, manage their care when needed, and provide appropriate education and advice to school staff on the right responses, it is important that they have necessary information about the childs health.',
+    },
+    allergiesAndIntolerances: {
+      id: 'nps.application:different.needs.health.protection.allergies.and.intolerances',
       defaultMessage:
         'Er barnið með ofnæmi eða óþol sem starfsfólk skóla þarf að vera meðvitað um?',
       description:
         'Does the child have any allergies or intolerances that school staff need to be aware of?',
     },
     hasFoodAllergiesOrIntolerances: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.has.food.allergies.or.intolerances',
+      id: 'nps.application:different.needs.health.protection.has.food.allergies.or.intolerances',
       defaultMessage: 'Barnið er með fæðuofnæmi eða -óþol',
       description: 'The child has food allergies or intolerances',
     },
     typeOfFoodAllergiesOrIntolerances: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.type.of.food.allergies.or.intolerances',
+      id: 'nps.application:different.needs.health.protection.type.of.food.allergies.or.intolerances',
       defaultMessage: 'Tegund fæðuofnæmis eða -óþols',
       description: 'Type of food allergies or intolerances',
     },
     typeOfFoodAllergiesOrIntolerancesPlaceholder: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.type.of.food.allergies.or.intolerances.placeholder',
+      id: 'nps.application:different.needs.health.protection.type.of.food.allergies.or.intolerances.placeholder',
       defaultMessage: 'Veldu tegund fæðuofnæmis eða -óþols',
       description: 'Select type of food allergies or intolerances',
     },
     hasOtherAllergies: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.has.other.allergies',
+      id: 'nps.application:different.needs.health.protection.has.other.allergies',
       defaultMessage: 'Barnið er með annað ofnæmi',
       description: 'The child has other allergies',
     },
     typeOfOtherAllergies: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.type.of.other.allergies',
+      id: 'nps.application:different.needs.health.protection.type.of.other.allergies',
       defaultMessage: 'Tegund ofnæmis',
       description: 'Type of allergies',
     },
     typeOfOtherAllergiesPlaceholder: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.type.of.other.allergies.placeholder',
+      id: 'nps.application:different.needs.health.protection.type.of.other.allergies.placeholder',
       defaultMessage: 'Veldu tegund ofnæmis',
       description: 'Select type of allergies',
     },
     allergiesCertificateAlertMessage: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.allergies.certificate.alert.message',
+      id: 'nps.application:different.needs.health.protection.allergies.certificate.alert.message',
       defaultMessage:
         'Athugið að skóli getur óskað eftir vottorði til staðfestingar á ofnæmi.',
       description:
         'Please note that the school may request a certificate to confirm allergies.',
     },
     usesEpiPen: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.uses.epi.pen',
+      id: 'nps.application:different.needs.health.protection.uses.epi.pen',
       defaultMessage:
         'Þarf barnið að hafa tiltækan adrenalínpenna (epi-pen) vegna ofnæmis?',
       description:
         'Does the child need to have an epi-pen available for allergies?',
     },
     hasConfirmedMedicalDiagnoses: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.has.confirmed.medical.diagnoses',
+      id: 'nps.application:different.needs.health.protection.has.confirmed.medical.diagnoses',
       defaultMessage:
-        'Hefur barnið staðfestar læknisfræðilegar greiningar sem mikilvægt er að skólinn kunni að bregðast rétt við?',
+        'Er barnið með staðfesta læknisfræðilega greiningu sem skólinn þarf að kunna að bregðast rétt við?',
       description:
-        'Does the child have confirmed medical diagnoses that are important for the school to be able to respond appropriately?',
+        'Does the child have a confirmed medical diagnosis that the school needs to know how to respond to correctly?',
     },
     hasConfirmedMedicalDiagnosesDescription: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.has.confirmed.medical.diagnoses.description',
+      id: 'nps.application:different.needs.health.protection.has.confirmed.medical.diagnoses.description',
       defaultMessage:
         'Hér er átt við greiningar eins og flogaveiki, sykursýki eða blóðstorknunarsjúkdóm',
       description:
         'This refers to diagnoses such as epilepsy, diabetes, or blood clotting disorders',
     },
     requestsMedicationAdministration: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.requests.medication.administration',
+      id: 'nps.application:different.needs.health.protection.requests.medication.administration',
       defaultMessage:
         'Er óskað eftir aðstoð við barn vegna lyfjagjafar á skólatíma?',
       description:
         'Is assistance requested for a child due to medication administration during school hours?',
     },
+    requestsMedicationAdministrationTooltip: {
+      id: 'nps.application:different.needs.health.protection.requests.medication.administration.tooltip',
+      defaultMessage:
+        'Í fæstum tilvikum geta börn borið ábyrgð á lyfjatöku sinni. Þar skiptir þó aldur og lyfjategund máli. Ábyrgðin er forráðamanna en hjúkrunarfræðingar og starfsmenn skóla aðstoða við lyfjatökuna. Meginreglan er sú að barn á aðeins að fá lyf á skólatíma sem forráðamenn hafa komið með í skólann og óskað eftir að barnið fái.',
+      description:
+        'In most cases, children cannot be responsible for taking their own medication. However, age and type of medication matter. The responsibility lies with the guardians, but nurses and school staff assist with medication administration. The main rule is that a child should only receive medication at school that the guardians have brought to the school and requested the child to take.',
+    },
     schoolNurseAlertMessage: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.school.nurse.alert.message',
+      id: 'nps.application:different.needs.health.protection.school.nurse.alert.message',
       defaultMessage:
         'Skólahjúkrunarfræðingur mun setja sig í samband við þig til að tryggja rétta skráningu upplýsinga og miðlun þeirra til starfsfólks skóla.',
       description:
@@ -961,19 +980,20 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Kennitala þarf að vera gild.',
     description: 'National id must be valid',
   },
-  contactsRequired: {
-    id: 'nps.application:error.contacts.required',
-    defaultMessage: 'Nauðsynlegt er að bæta við a.m.k einum tengilið',
-    description: 'You must add at least one contact',
+  relativesRequired: {
+    id: 'nps.application:error.relatives.required',
+    defaultMessage:
+      'Nauðsynlegt er að bæta við að minnsta kosti einum aðstandanda.',
+    description: 'You must add at least one relative',
   },
   siblingsRequired: {
     id: 'nps.application:error.siblings.required',
-    defaultMessage: 'Nauðsynlegt er að bæta við a.m.k einu systkini',
+    defaultMessage: 'Nauðsynlegt er að bæta við að minnsta kosti einu systkini',
     description: 'You must add at least one sibling',
   },
   languagesRequired: {
     id: 'nps.application:error.languages.required',
-    defaultMessage: 'Það þarf að velja a.m.k eitt tungumál',
+    defaultMessage: 'Það þarf að velja að minnsta kosti eitt tungumál',
     description: 'At least one language must be selected',
   },
   languageRequired: {
@@ -983,7 +1003,7 @@ export const errorMessages = defineMessages({
   },
   twoLanguagesRequired: {
     id: 'nps.application:error.two.languages.required',
-    defaultMessage: 'Það þarf að velja a.m.k tvö tungumál',
+    defaultMessage: 'Það þarf að velja að minnsta kosti tvö tungumál',
     description: 'At least two language must be selected',
   },
   expectedEndDateRequired: {
@@ -1011,12 +1031,13 @@ export const errorMessages = defineMessages({
   },
   foodAllergiesOrIntolerancesRequired: {
     id: 'nps.application:error.food.allergies.or.intolerances.required',
-    defaultMessage: 'Það þarf að velja a.m.k eitt fæðuofnæmi eða -óþol',
+    defaultMessage:
+      'Það þarf að velja að minnsta kosti eitt fæðuofnæmi eða -óþol',
     description: 'At least one food allergy or intolerance must be selected',
   },
   otherAllergiesRequired: {
     id: 'nps.application:error.other.allergies.required',
-    defaultMessage: 'Það þarf að velja a.m.k eitt ofnæmi',
+    defaultMessage: 'Það þarf að velja að minnsta kosti eitt ofnæmi',
     description: 'At least one allergy must be selected',
   },
 })

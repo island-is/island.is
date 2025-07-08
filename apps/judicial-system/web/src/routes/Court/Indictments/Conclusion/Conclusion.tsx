@@ -11,6 +11,7 @@ import {
   Select,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { courtSessionTypeNames } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -25,6 +26,7 @@ import {
   PageTitle,
   SectionHeading,
   useCourtArrangements,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   CaseFileCategory,
@@ -32,7 +34,6 @@ import {
   CourtSessionType,
   IndictmentDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   formatDateForServer,
   UpdateCase,
@@ -86,6 +87,7 @@ const courtSessionOptions = [
 ]
 
 const Conclusion: FC = () => {
+  const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
@@ -102,7 +104,7 @@ const Conclusion: FC = () => {
   const { handleUpload, handleRetry, handleRemove } = useS3Upload(
     workingCase.id,
   )
-  const { onOpen } = useFileList({
+  const { onOpenFile } = useFileList({
     caseId: workingCase.id,
   })
 
@@ -117,7 +119,7 @@ const Conclusion: FC = () => {
     useState<string>()
 
   const handleNavigationTo = useCallback(
-    async (destination: keyof stepValidationsType) => {
+    async (destination: string) => {
       if (!selectedAction) {
         return
       }
@@ -597,7 +599,7 @@ const Conclusion: FC = () => {
               }}
               onRemove={(file) => handleRemove(file, removeUploadFile)}
               onRetry={(file) => handleRetry(file, updateUploadFile)}
-              onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
+              onOpenFile={(file) => onOpenFile(file)}
             />
           </Box>
         )}
@@ -634,7 +636,7 @@ const Conclusion: FC = () => {
                 }}
                 onRemove={(file) => handleRemove(file, removeUploadFile)}
                 onRetry={(file) => handleRetry(file, updateUploadFile)}
-                onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
+                onOpenFile={(file) => onOpenFile(file)}
               />
             </Box>
           )}
@@ -648,7 +650,7 @@ const Conclusion: FC = () => {
               selectedAction === IndictmentDecision.COMPLETING
                 ? constants.INDICTMENTS_SUMMARY_ROUTE
                 : selectedAction === IndictmentDecision.REDISTRIBUTING
-                ? constants.CASES_ROUTE
+                ? getStandardUserDashboardRoute(user)
                 : constants.INDICTMENTS_COURT_OVERVIEW_ROUTE,
             )
           }

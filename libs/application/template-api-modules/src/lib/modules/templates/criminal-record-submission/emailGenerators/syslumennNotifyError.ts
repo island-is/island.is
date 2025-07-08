@@ -1,5 +1,5 @@
 import { EmailTemplateGenerator } from '../../../../types'
-import {logger} from "@island.is/logging";
+import { logger } from '@island.is/logging'
 
 export const generateSyslumennNotifyErrorEmail: EmailTemplateGenerator = (
   props,
@@ -10,7 +10,7 @@ export const generateSyslumennNotifyErrorEmail: EmailTemplateGenerator = (
     options: { email },
   } = props
 
-  const syslumennEmail = 'vefur@syslumenn.is'
+  const syslumennEmail = 'hjalp@syslumenn.is'
 
   const subject = 'Umsókn um sakavottorð'
   const body = `

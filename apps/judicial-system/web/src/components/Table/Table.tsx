@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren, ReactNode, useMemo } from 'react'
+import { FC, ReactNode, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { useLocalStorage } from 'react-use'
 import parseISO from 'date-fns/parseISO'
@@ -15,6 +15,11 @@ import {
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
 import { core } from '@island.is/judicial-system-web/messages'
+import {
+  ContextMenu,
+  ContextMenuItem,
+  IconButton,
+} from '@island.is/judicial-system-web/src/components'
 
 import { CaseListEntry, CaseState, CaseType } from '../../graphql/schema'
 import MobileCase from '../../routes/Shared/Cases/MobileCase'
@@ -26,12 +31,9 @@ import {
 } from '../../types'
 import { useCase, useCaseList, useViewport } from '../../utils/hooks'
 import { compareLocaleIS } from '../../utils/sortHelper'
-import ContextMenu, { ContextMenuItem } from '../ContextMenu/ContextMenu'
-import IconButton from '../IconButton/IconButton'
 import { mapCaseStateToTagVariant } from '../Tags/TagCaseState/TagCaseState'
 import DurationDate, { getDurationDate } from './DurationDate/DurationDate'
 import SortButton from './SortButton/SortButton'
-import TableSkeleton from './TableSkeleton/TableSkeleton'
 import { table as strings } from './Table.strings'
 import * as styles from './Table.css'
 
@@ -46,17 +48,6 @@ interface TableProps {
   generateContextMenuItems?: (row: CaseListEntry) => ContextMenuItem[]
   onClick?: (row: CaseListEntry) => boolean
 }
-
-interface TableWrapperProps {
-  loading: boolean
-}
-
-export const TableWrapper: FC<PropsWithChildren<TableWrapperProps>> = ({
-  loading,
-  children,
-}) => (
-  <Box marginBottom={[5, 5, 12]}>{loading ? <TableSkeleton /> : children}</Box>
-)
 
 export const useTable = () => {
   const [sortConfig, setSortConfig] = useLocalStorage<SortConfig>(

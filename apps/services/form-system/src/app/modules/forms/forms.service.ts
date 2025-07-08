@@ -46,7 +46,6 @@ import { FormCertificationTypeDto } from '../formCertificationTypes/models/dto/f
 import { OrganizationUrlDto } from '../organizationUrls/models/dto/organizationUrl.dto'
 import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.model'
 import { FormUrl } from '../formUrls/models/formUrl.model'
-import { FormUrlDto } from '../formUrls/models/dto/formUrl.dto'
 import { FormStatus } from '@island.is/form-system/shared'
 import { Option } from '../../dataTypes/option.model'
 import { Op, UniqueConstraintError } from 'sequelize'
@@ -55,6 +54,7 @@ import { Sequelize } from 'sequelize-typescript'
 import { User } from '@island.is/auth-nest-tools'
 import { jwtDecode } from 'jwt-decode'
 import { OrganizationPermission } from '../organizationPermissions/models/organizationPermission.model'
+import { UrlTypes } from '@island.is/form-system/enums'
 
 @Injectable()
 export class FormsService {
@@ -406,15 +406,22 @@ export class FormsService {
       certificationTypes: await this.getCertificationTypes(form.organizationId),
       applicantTypes: await this.getApplicantTypes(),
       listTypes: await this.getListTypes(form.organizationId),
-      urls: await this.getUrls(form.organizationId),
+      submitUrls: await this.getUrls(form.organizationId, UrlTypes.SUBMIT),
+      validationUrls: await this.getUrls(
+        form.organizationId,
+        UrlTypes.VALIDATION,
+      ),
     }
 
     return response
   }
 
-  private async getUrls(organizationId: string): Promise<OrganizationUrlDto[]> {
+  private async getUrls(
+    organizationId: string,
+    type: string,
+  ): Promise<OrganizationUrlDto[]> {
     const organizationUrls = await this.organizationUrlModel.findAll({
-      where: { organizationId: organizationId },
+      where: { organizationId: organizationId, type: type },
     })
 
     const keys = ['id', 'url', 'isXroad', 'isTest', 'type', 'method']
@@ -575,20 +582,8 @@ export class FormsService {
       )
     })
 
-    form.formUrls?.map(async (formUrl) => {
-      const organizationUrl = await this.organizationUrlModel.findByPk(
-        formUrl.organizationUrlId,
-      )
-
-      formDto.urls?.push({
-        id: formUrl.id,
-        organizationUrlId: organizationUrl?.id,
-        url: organizationUrl?.url,
-        isXroad: organizationUrl?.isXroad,
-        isTest: organizationUrl?.isTest,
-        type: organizationUrl?.type,
-        method: organizationUrl?.method,
-      } as FormUrlDto)
+    form.formUrls?.map((formUrl) => {
+      formDto.urls?.push(formUrl.organizationUrlId)
     })
 
     const sectionKeys = [

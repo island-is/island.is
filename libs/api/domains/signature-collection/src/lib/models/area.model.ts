@@ -20,6 +20,12 @@ export class SignatureCollectionArea {
   @Field()
   min!: number
 
+  @Field(() => Boolean, { nullable: true })
+  isActive?: boolean
+
   @Field({ nullable: true })
   max!: number
+
+  @Field({ nullable: true })
+  collectionId?: string
 }

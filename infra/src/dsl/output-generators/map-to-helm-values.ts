@@ -48,6 +48,7 @@ const serializeService: SerializeMethod<HelmService> = async (
   } = serviceDef
   const hackListForNonExistentTracer = [
     'application-system-form',
+    'form-system-web',
     'github-actions-cache',
     'portals-admin',
     'service-portal',
@@ -109,7 +110,10 @@ const serializeService: SerializeMethod<HelmService> = async (
   result.resources = serviceDef.resources
 
   // replicas
-  if ((env1.type == 'staging' || env1.type == 'dev') && service.name.indexOf('search-indexer') == -1) {
+  if (
+    (env1.type == 'staging' || env1.type == 'dev') &&
+    service.name.indexOf('search-indexer') == -1
+  ) {
     result.replicaCount = {
       min: 1,
       max: 3,
@@ -352,9 +356,8 @@ function serializeIngress(
   ingressConf: IngressForEnv,
   env: EnvironmentConfig,
 ): NonNullable<HelmService['ingress']>[string] {
-  const hosts = (typeof ingressConf.host === 'string'
-    ? [ingressConf.host]
-    : ingressConf.host
+  const hosts = (
+    typeof ingressConf.host === 'string' ? [ingressConf.host] : ingressConf.host
   ).map((host) =>
     ingressConf.public ?? true
       ? hostFullName(host, env)

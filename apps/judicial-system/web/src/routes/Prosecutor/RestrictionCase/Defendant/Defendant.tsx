@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 
 import { Box, Input, Text, Tooltip } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   accused as m,
   core,
@@ -17,6 +18,7 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
@@ -43,6 +45,7 @@ import {
 } from '../../components'
 
 export const Defendant = () => {
+  const { user } = useContext(UserContext)
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const [leadInvestigatorErrorMessage, setLeadInvestigatorErrorMessage] =
@@ -226,7 +229,7 @@ export const Defendant = () => {
           <FormContentContainer isFooter>
             <FormFooter
               nextButtonIcon="arrowForward"
-              previousUrl={constants.CASES_ROUTE}
+              previousUrl={getStandardUserDashboardRoute(user)}
               nextIsLoading={isCreatingCase}
               nextIsDisabled={!stepIsValid}
               onNextButtonClick={() =>
