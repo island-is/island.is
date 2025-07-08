@@ -10,3 +10,4 @@ const Screen = withApollo(withLocale('is')(homeScreen))
 export default Screen
 
 export const getServerSideProps = getServerSidePropsWrapper(Screen)
+// This is a comment so this gets rebuild
