@@ -57,7 +57,7 @@ export class DefenderController {
         }))
       }
 
-      throw new BadGatewayException('Failed to retrieve defenders from backend')
+      throw new BadRequestException()
     } catch (error) {
       this.logger.error('Failed to retrieve litigator lawyers', error)
 
