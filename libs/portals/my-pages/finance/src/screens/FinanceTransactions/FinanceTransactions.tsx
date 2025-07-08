@@ -190,8 +190,10 @@ const FinanceTransactions = () => {
                           flexDirection="column"
                         >
                           <DatePicker
-                            label={formatMessage(m.datepickerFromLabel)}
-                            placeholderText={formatMessage(m.datepickLabel)}
+                            label={formatMessage(m.datepickPeriod)}
+                            placeholderText={formatMessage(
+                              m.datepickPeriodLabel,
+                            )}
                             locale="is"
                             backgroundColor="blue"
                             size="xs"
