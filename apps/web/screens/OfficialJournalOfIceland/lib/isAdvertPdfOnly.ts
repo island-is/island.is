@@ -16,10 +16,6 @@ export const isAdvertPdfOnly = (
   htmlString: string,
   date?: string,
 ): MessageDescriptor => {
-  if (!date) {
-    return m.advert.description
-  }
-
   const isHtmlEmpty = !htmlString || htmlString.trim() === ''
   const isSinglePara = isSingleParagraph(htmlString)
 
@@ -27,7 +23,7 @@ export const isAdvertPdfOnly = (
 
   if (isMainTextEmpty) {
     const lawChangedDate = new Date('2005-03-22') // 22. mars 2005
-    const isDateBeforeLawChange = new Date(date) < lawChangedDate
+    const isDateBeforeLawChange = date && new Date(date) < lawChangedDate
 
     return isDateBeforeLawChange
       ? m.advert.descriptionEmpty
