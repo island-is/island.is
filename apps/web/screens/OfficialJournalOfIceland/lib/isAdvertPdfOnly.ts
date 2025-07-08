@@ -1,0 +1,35 @@
+import { MessageDescriptor } from 'react-intl'
+
+import { m } from '../messages'
+
+export const isSingleParagraph = (htmlString: string) => {
+  const parser = new DOMParser()
+  const doc = parser.parseFromString(htmlString, 'text/html')
+  const bodyChildren = Array.from(doc.body.children)
+
+  return (
+    bodyChildren.length === 1 && bodyChildren[0].tagName.toLowerCase() === 'p'
+  )
+}
+
+export const isAdvertPdfOnly = (
+  htmlString: string,
+  date?: string,
+): MessageDescriptor => {
+  if (!date) {
+    return m.advert.description
+  }
+
+  const lawChangedDate = new Date('2005-03-22') // 22. mars 2005
+  const isHtmlEmpty = !htmlString || htmlString.trim() === ''
+  const isSinglePara = isSingleParagraph(htmlString)
+  const isDateBeforeLawChange = new Date(date) < lawChangedDate
+
+  if (!isHtmlEmpty || !isSinglePara) {
+    return m.advert.description
+  }
+
+  return isDateBeforeLawChange
+    ? m.advert.descriptionEmpty
+    : m.advert.descriptionPdfOnly
+}
