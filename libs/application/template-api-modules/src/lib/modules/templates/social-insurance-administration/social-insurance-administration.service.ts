@@ -639,11 +639,14 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     // application,
     auth,
   }: TemplateApiModuleActionProps) {
-    //TODO: Add applicationType when Eligible is implemented
+    //TODO: Add applicationType when we get it from TR
     // const { applicationType } = getApplicationExternalData(
     //   application.externalData,
     // )
 
-    return await this.siaClientService.getEducationLevels(auth, '')
+    return await this.siaClientService.getEducationLevels(
+      auth,
+      'SJUKRAGREIDSLUR_FYRSTA',
+    )
   }
 }
