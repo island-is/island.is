@@ -20,16 +20,19 @@ export const isAdvertPdfOnly = (
     return m.advert.description
   }
 
-  const lawChangedDate = new Date('2005-03-22') // 22. mars 2005
   const isHtmlEmpty = !htmlString || htmlString.trim() === ''
   const isSinglePara = isSingleParagraph(htmlString)
-  const isDateBeforeLawChange = new Date(date) < lawChangedDate
 
-  if (!isHtmlEmpty || !isSinglePara) {
-    return m.advert.description
+  const isMainTextEmpty = isHtmlEmpty || isSinglePara
+
+  if (isMainTextEmpty) {
+    const lawChangedDate = new Date('2005-03-22') // 22. mars 2005
+    const isDateBeforeLawChange = new Date(date) < lawChangedDate
+
+    return isDateBeforeLawChange
+      ? m.advert.descriptionEmpty
+      : m.advert.descriptionPdfOnly
   }
 
-  return isDateBeforeLawChange
-    ? m.advert.descriptionEmpty
-    : m.advert.descriptionPdfOnly
+  return m.advert.description
 }
