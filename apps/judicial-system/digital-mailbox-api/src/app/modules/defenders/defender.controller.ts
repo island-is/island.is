@@ -55,11 +55,9 @@ export class DefenderController {
           name: lawyer.name,
           practice: lawyer.practice,
         }))
-      } else {
-        throw new BadGatewayException(
-          'Failed to retrieve defenders from backend',
-        )
       }
+
+      throw new BadGatewayException('Failed to retrieve defenders from backend')
     } catch (error) {
       this.logger.error('Failed to retrieve litigator lawyers', error)
 
@@ -95,9 +93,9 @@ export class DefenderController {
           name: lawyer.name,
           practice: lawyer.practice,
         }
-      } else {
-        throw new NotFoundException('Lawyer not found in lawyer registry')
       }
+
+      throw new NotFoundException('Lawyer not found in lawyer registry')
     } catch (error) {
       this.logger.error('Failed to retrieve lawyer from lawyer registry', error)
 
