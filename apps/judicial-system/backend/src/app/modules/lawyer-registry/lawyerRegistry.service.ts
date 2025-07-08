@@ -182,6 +182,10 @@ export class LawyerRegistryService {
 
       return lawyer
     } catch (error) {
+      if (error instanceof NotFoundException) {
+        throw error
+      }
+
       this.logger.error(
         `Error getting lawyer with national id ${nationalId}`,
         error,
