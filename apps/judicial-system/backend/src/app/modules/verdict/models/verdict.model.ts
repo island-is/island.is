@@ -83,7 +83,7 @@ export class Verdict extends Model {
 
   @Column({ type: DataType.DATE, allowNull: true })
   @ApiPropertyOptional({ type: Date })
-  serviceDate?: Date // birtingardagsetning
+  serviceDate?: Date // birtingardagsetningin
 
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
@@ -92,6 +92,10 @@ export class Verdict extends Model {
   @Column({ type: DataType.TEXT, allowNull: true })
   @ApiPropertyOptional({ type: String })
   comment?: string
+
+  @Column({ type: DataType.STRING, allowNull: true })
+  @ApiPropertyOptional({ type: String })
+  hash?: string
 
   @Column({
     type: DataType.ENUM,

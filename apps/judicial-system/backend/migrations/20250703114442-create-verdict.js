@@ -1,7 +1,5 @@
 'use strict'
 
-const { K } = require('handlebars')
-
 module.exports = {
   up: (queryInterface, Sequelize) => {
     return queryInterface.sequelize.transaction((t) =>
