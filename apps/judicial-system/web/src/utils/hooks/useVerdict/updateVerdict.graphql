@@ -1,0 +1,5 @@
+mutation UpdateVerdict($input: UpdateVerdictInput!) {
+  updateVerdict(input: $input) {
+    id
+  }
+}
