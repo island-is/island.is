@@ -9,7 +9,6 @@ const { BundleAnalyzerPlugin } = require('webpack-bundle-analyzer')
 const StatoscopeWebpackPlugin = require('@statoscope/webpack-plugin').default
 const { DuplicatesPlugin } = require('inspectpack/plugin')
 
-
 const graphqlPath = '/api/graphql'
 const {
   API_URL = 'http://localhost:4444',
@@ -190,21 +189,21 @@ const nextConfig = {
     graphqlEndpoint: graphqlPath,
   },
   modularizeImports: {
-          ...transformLib('@island.is/island-ui/core'),
-         ...transformLib('@island.is/island-ui/contentful'),
-         ...transformLib(
-           '@island.is/web/components',
-           `${workspaceRoot}/apps/web/components/real.ts`,
+    ...transformLib('@island.is/island-ui/core'),
+    ...transformLib('@island.is/island-ui/contentful'),
+    ...transformLib(
+      '@island.is/web/components',
+      `${workspaceRoot}/apps/web/components/real.ts`,
     ),
-  "lodash": {
-    transform: "lodash/{{member}}",
-    preventFullImport: true
+    lodash: {
+      transform: 'lodash/{{member}}',
+      preventFullImport: true,
+    },
+    'date-fns': {
+      transform: 'date-fns/{{member}}',
+      preventFullImport: true,
+    },
   },
-  "date-fns": {
-    transform: "date-fns/{{member}}",
-    preventFullImport: true
-  }
-},
 
   publicRuntimeConfig: {
     // Will be available on both server and client

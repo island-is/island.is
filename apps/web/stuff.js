@@ -15,16 +15,13 @@ const defaultMainPath = (libName) =>
     'index.ts',
   )
 
-const transformLib = (
-  libName,
-  mainPath = defaultMainPath(libName),
-) => {
-  const exports = exportFinderCached(mainPath);
+const transformLib = (libName, mainPath = defaultMainPath(libName)) => {
+  const exports = exportFinderCached(mainPath)
   const transforms = Object.keys(exports).reduce((acc, exportName) => {
     acc[`${exportName}`] = exports[exportName]
     return acc
-  }, {});
-  
+  }, {})
+
   return {
     [libName]: {
       transform: transforms,

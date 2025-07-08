@@ -3,7 +3,6 @@ const path = require('path')
 const resolveSync = require('resolve').sync
 const { parse } = require('@babel/parser')
 
-
 const barf = (msg) => {
   throw new Error('exportFinder: ' + msg)
 }
@@ -53,10 +52,7 @@ const findExportedNames = (declaration) => {
 }
 
 // eslint-disable-next-line func-style
-function getExportDeclarations(
-  ast,
-  moduleDir,
-) {
+function getExportDeclarations(ast, moduleDir) {
   const declarations = ast.program.body.filter(
     (node) =>
       node.type === 'ExportDefaultDeclaration' ||
@@ -135,7 +131,6 @@ const getExports = (modulePath) => {
 
   return exports
 }
-
 
 const visitModule = (
   modulePath,
