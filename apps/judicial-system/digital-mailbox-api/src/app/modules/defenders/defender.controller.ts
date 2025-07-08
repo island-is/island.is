@@ -1,6 +1,5 @@
 import { CacheInterceptor } from '@nestjs/cache-manager'
 import {
-  BadGatewayException,
   BadRequestException,
   Controller,
   Get,
