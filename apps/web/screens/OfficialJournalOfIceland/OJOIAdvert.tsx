@@ -42,6 +42,7 @@ import {
   ADVERT_QUERY,
   ADVERT_SIMILAR_QUERY,
 } from '../queries/OfficialJournalOfIceland'
+import { isSingleParagraph } from './lib/isSingleParagraph'
 import { ORGANIZATION_SLUG } from './constants'
 import { m } from './messages'
 
@@ -80,7 +81,7 @@ const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
       hideTitle
       organization={organization ?? undefined}
       pageDescription={
-        isAdvertHtmlEmpty
+        isAdvertHtmlEmpty || isSingleParagraph(advert.document.html)
           ? formatMessage(m.advert.descriptionEmpty)
           : formatMessage(m.advert.description)
       }
