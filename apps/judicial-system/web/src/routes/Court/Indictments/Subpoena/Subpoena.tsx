@@ -74,7 +74,7 @@ const Subpoena: FC = () => {
     !defendant.isAlternativeService &&
     (!isArraignmentScheduled || newSubpoenas.includes(defendant.id))
 
-  const isIssuingSubpoenas = workingCase.defendants?.some((defendant) =>
+  const isIssuingSubpoenas = updates?.defendants?.some((defendant) =>
     isIssuingSubpoenaForDefendant(defendant),
   )
 
