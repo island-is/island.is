@@ -5,6 +5,7 @@ import {
   districtCourtAbbreviation,
   formatCaseType,
   formatDate,
+  formatNationalId,
   getAllReadableIndictmentSubtypes,
   getAppealResultTextByValue,
   getInitials,
@@ -526,7 +527,7 @@ const defendants: CaseTableCellGenerator<StringGroupValue> = {
       c.defendants[0].name ?? '',
       c.defendants.length > 1
         ? `+ ${c.defendants.length - 1}`
-        : c.defendants[0].nationalId ?? '',
+        : formatNationalId(c.defendants[0].nationalId),
     ]
 
     return generateCell({ strList }, strList.join(''))
