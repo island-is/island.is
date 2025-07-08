@@ -18,7 +18,7 @@
       }
     },
     "ci": {
-      "runner": "nx/tasks-runners/default",
+      "runner": "nx-cloud",
       "options": {
         "cacheableOperations": [
           "build",
@@ -30,8 +30,7 @@
           "codegen/frontend-client",
           "generateDevIndexHTML"
         ],
-        "cacheDirectory": ".cache/nx",
-        "parallel": 1
+        "nxCloudId": "64e4eb6a54304f090734e8df"
       }
     },
     "docker-test": {
