@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 import { InputMask } from '@react-input/mask'
 
 import { Box, Input } from '@island.is/island-ui/core'
+import { SPEED } from '@island.is/judicial-system/consts'
 import { SectionHeading } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
@@ -49,7 +50,7 @@ export const SpeedingOffenseFields = ({
       <Box marginBottom={1}>
         <InputMask
           component={Input}
-          mask="___"
+          mask={SPEED}
           replacement={{ _: /\d/ }}
           value={indictmentCount.recordedSpeed?.toString() ?? ''}
           onChange={(event) => {
@@ -91,7 +92,7 @@ export const SpeedingOffenseFields = ({
       </Box>
       <InputMask
         component={Input}
-        mask="___"
+        mask={SPEED}
         replacement={{ _: /\d/ }}
         value={indictmentCount.speedLimit?.toString() ?? ''}
         onChange={(event) => {

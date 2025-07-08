@@ -33,10 +33,10 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Réttinum lýkur',
       description: 'Your entitlement ends',
     },
-    uploadConfirmationDocument: {
-      id: 'marp.application:upload.confirmation.document',
-      defaultMessage: 'Hlaða inn staðfestingarskjali',
-      description: 'Upload confirmation document',
+    jobTitle: {
+      id: 'marp.application:job.title',
+      defaultMessage: 'Starfsheiti',
+      description: 'Job title',
     },
   }),
 
@@ -94,13 +94,45 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
   }),
 
   generalInformation: defineMessages({
-    // Payment information
-
     // Income Plan - Instructions
     incomePlanInstructionsSubSectionTitle: {
       id: 'marp.application:general.information.income.plan.instructions.sub.section.title',
       defaultMessage: 'Tekjuáætlun - Leiðbeiningar',
       description: 'Income Plan - Instructions',
+    },
+
+    // Benefits from another country
+    benefitsFromAnotherCountrySubSectionTitle: {
+      id: 'marp.application:general.information.benefits.from.another.country.sub.section.title',
+      defaultMessage: 'Greiðslur frá öðru landi',
+      description: 'Benefits from another country',
+    },
+    benefitsFromAnotherCountryTitle: {
+      id: 'marp.application:general.information.benefits.from.another.country.title',
+      defaultMessage:
+        'Færðu greiðslur frá öðru landi vegna heilsubrests eða óvinnufærni?',
+      description:
+        'Do you receive benefits from another country due to ill health or incapacity?',
+    },
+    countryRegistration: {
+      id: 'marp.application:general.information.country.registration',
+      defaultMessage: 'Skráning lands',
+      description: 'Country registration',
+    },
+    country: {
+      id: 'marp.application:general.information.country',
+      defaultMessage: 'Land',
+      description: 'Country',
+    },
+    selectCountry: {
+      id: 'marp.application:general.information.select.country',
+      defaultMessage: 'Veldu land',
+      description: 'Select country',
+    },
+    countryIdNumber: {
+      id: 'marp.application:general.information.country.id.number',
+      defaultMessage: 'Kennitala/persónunúmer í landi',
+      description: 'Country ID number/personal ID number',
     },
 
     // Questions
@@ -123,8 +155,8 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
     },
     questionsCalculatedRemunerationDate: {
       id: 'marp.application:general.information.questions.calculated.remuneration.date',
-      defaultMessage: 'Hvenær fellur niður reiknað endurgjald?',
-      description: 'When does the calculated remuneration expire?',
+      defaultMessage: 'Hvenær féll/fellur niður reiknað endurgjald?',
+      description: 'When did/does the calculated remuneration expire?',
     },
     questionsIsPartTimeEmployed: {
       id: 'marp.application:general.information.questions.is.part.time.employed',
@@ -135,6 +167,31 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       id: 'marp.application:general.information.questions.is.studying',
       defaultMessage: 'Ertu í námi?',
       description: 'Are you studying?',
+    },
+    questionsSchoolRegistration: {
+      id: 'marp.application:general.information.questions.school.registration',
+      defaultMessage: 'Skráning skóla',
+      description: 'School registration',
+    },
+    questionsSchool: {
+      id: 'marp.application:general.information.questions.school',
+      defaultMessage: 'Skóli',
+      description: 'School',
+    },
+    questionsSelectSchool: {
+      id: 'marp.application:general.information.questions.select.school',
+      defaultMessage: 'Veldu skóla',
+      description: 'Select school',
+    },
+    questionsNumberOfCredits: {
+      id: 'marp.application:general.information.questions.number.of.credits',
+      defaultMessage: 'Fjöldi eininga á núverandi önn',
+      description: 'Number of ECTS credits per current semester',
+    },
+    questionsSelectNumberOfCredits: {
+      id: 'marp.application:general.information.questions.select.number.of.credits',
+      defaultMessage: 'Veldu fjölda eininga',
+      description: 'Select number of credits',
     },
 
     // Employee sick pay
@@ -152,7 +209,7 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
     },
     employeeSickPayDoesEndDateTitle: {
       id: 'marp.application:general.information.employee.sick.pay.does.end.date.title',
-      defaultMessage: 'Hvenær líkur rétti þínum til veikindalauna?',
+      defaultMessage: 'Hvenær lýkur rétti þínum til veikindalauna?',
       description: 'When does your sick pay entitlement end?',
     },
     employeeSickPayDidEndDateTitle: {
@@ -208,8 +265,6 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Þitt stéttarfélag',
       description: 'Your union',
     },
-
-    // Tengdar umsóknir?
   }),
 
   certificateForSicknessAndRehabilitation: defineMessages({
@@ -232,20 +287,10 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Utanumhaldandi',
       description: 'Managed by',
     },
-    managedByJobTitle: {
-      id: 'marp.application:certificate.for.sickness.and.rehabilitation.managed.by.job.title',
-      defaultMessage: 'Starfsheiti',
-      description: 'Job title',
-    },
     managedByLocation: {
       id: 'marp.application:certificate.for.sickness.and.rehabilitation.managed.by.location',
       defaultMessage: 'Starfsstöð',
       description: 'Location',
-    },
-    managedByAddress: {
-      id: 'marp.application:certificate.for.sickness.and.rehabilitation.managed.by.address',
-      defaultMessage: 'Heimilisfang',
-      description: 'Address',
     },
 
     // Information
@@ -273,9 +318,16 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
     },
     informationICDAnalysis: {
       id: 'marp.application:certificate.for.sickness.and.rehabilitation.information.ICD.analysis',
-      defaultMessage: 'ICD greiningar sem valda megin heisuvanda / óvinnufærni',
+      defaultMessage:
+        'ICD greiningar sem valda megin heilsuvanda / óvinnufærni',
       description:
         'ICD analysis causing the main health issue / incapacitation',
+    },
+    informationOtherICDAnalysis: {
+      id: 'marp.application:certificate.for.sickness.and.rehabilitation.information.other.ICD.analysis',
+      defaultMessage:
+        'Aðrar ICD greiningar sem valda heilsuvanda / óvinnufærni',
+      description: 'Other ICD analysis causing health issue / incapacitation',
     },
     informationMedicalHistory: {
       id: 'marp.application:certificate.for.sickness.and.rehabilitation.information.medical.history',
@@ -362,8 +414,15 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       description:
         'Further explanation of the activity and participation impairment',
     },
-    activityAndParticipationImpairmentMainImpairmentExplanation: {
-      id: 'marp.application:certificate.for.sickness.and.rehabilitation.activity.and.participation.impairment.main.impairment.explanation',
+
+    // Main impairment
+    mainImpairment: {
+      id: 'marp.application:certificate.for.sickness.and.rehabilitation.main.impairment',
+      defaultMessage: 'Megin vandi',
+      description: 'Main impairment',
+    },
+    mainImpairmentExplanation: {
+      id: 'marp.application:certificate.for.sickness.and.rehabilitation.main.impairment.explanation',
       defaultMessage: 'Annað varðandi megin vanda',
       description: 'Further information on main impairment',
     },
@@ -373,31 +432,6 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       id: 'marp.application:certificate.for.sickness.and.rehabilitation.application',
       defaultMessage: 'Sótt er um sjúkra- og endurhæfingargreiðslur',
       description: 'Application for medical and rehabilitation payments',
-    },
-    applicationCertificateRequestedBy: {
-      id: 'marp.application:certificate.for.sickness.and.rehabilitation.application.certificate.requested.by',
-      defaultMessage: 'Hver óskaði eftir vottorði',
-      description: 'Certificate requested by',
-    },
-    applicationApplyingDueTo: {
-      id: 'marp.application:certificate.for.sickness.and.rehabilitation.application.applying.due.to',
-      defaultMessage: 'Sótt er um eftirfarandi greiðslu vegna',
-      description: 'Applying for payments due to',
-    },
-    applicationApplyingFor: {
-      id: 'marp.application:certificate.for.sickness.and.rehabilitation.application.applying.for',
-      defaultMessage: 'Sótt er um',
-      description: 'Applying for',
-    },
-    applicationTypeOfTreatment: {
-      id: 'marp.application:certificate.for.sickness.and.rehabilitation.application.type.of.treatment',
-      defaultMessage: 'Tegund meðferðar',
-      description: 'Type of treatment',
-    },
-    applicationIncludedInTreatment: {
-      id: 'marp.application:certificate.for.sickness.and.rehabilitation.application.included.in.treatment',
-      defaultMessage: 'Innihald meðferðar',
-      description: 'Included in treatment',
     },
     applicationStartOfTreatment: {
       id: 'marp.application:certificate.for.sickness.and.rehabilitation.application.start.of.treatment',
@@ -409,10 +443,20 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Áætluð lok meðferðar',
       description: 'Estimated end of treatment',
     },
+    applicationEstimatedTimeUnclear: {
+      id: 'marp.application:certificate.for.sickness.and.rehabilitation.application.estimated.time.unclear',
+      defaultMessage: 'Óljóst',
+      description: 'Unclear',
+    },
     applicationEstimatedTime: {
       id: 'marp.application:certificate.for.sickness.and.rehabilitation.application.estimated.time',
       defaultMessage: 'Áætluð tímalengd',
       description: 'Estimated time',
+    },
+    applicationEstimatedTimeMonths: {
+      id: 'marp.application:certificate.for.sickness.and.rehabilitation.application.estimated.time.months',
+      defaultMessage: '{months} mánuðir',
+      description: '{months} months',
     },
   }),
 
@@ -446,10 +490,181 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Endurhæfingaraðili',
       description: 'Rehabilitation provider',
     },
-    serviceProviderJobTitle: {
-      id: 'marp.application:rehabilitation.plan.service.provider.job.title',
-      defaultMessage: 'Starfsheiti',
-      description: 'Job title',
+
+    // Information
+    information: {
+      id: 'marp.application:rehabilitation.plan.information',
+      defaultMessage: 'Upplýsingar',
+      description: 'Information',
+    },
+    informationCurrentPosition: {
+      id: 'marp.application:rehabilitation.plan.information.current.position',
+      defaultMessage: 'Staða umsækjanda gagnvart vinnumarkaði eða námi í dag',
+      description:
+        'The applicant’s current position in relation to the labour market or study.',
+    },
+    informationApplyingFor: {
+      id: 'marp.application:rehabilitation.plan.information.applying.for',
+      defaultMessage: 'Sótt er um',
+      description: 'Applying for',
+    },
+    informationProgress: {
+      id: 'marp.application:rehabilitation.plan.information.progress',
+      defaultMessage: 'Hver var framvinda fyrri endurhæfingartímabils?',
+      description:
+        'What was the progress of the previous rehabilitation period',
+    },
+    informationExplanationOfProgress: {
+      id: 'marp.application:rehabilitation.plan.information.explanation.of.progress',
+      defaultMessage:
+        'Nánari útskýring á framvindu fyrri endurhæfingartímabils',
+      description:
+        'Further explanation of the progress of the previous rehabilitation period',
+    },
+    informationAttendance: {
+      id: 'marp.application:rehabilitation.plan.information.attendance',
+      defaultMessage:
+        'Hvernig hefur umsækjandi sinnt endurhæfingarúrræðum á fyrra endurhæfingartímabili?',
+      description:
+        'How has the applicant’s attendance to rehabilitation measures during the previous rehabilitation period been',
+    },
+    informationExplanationOfAttendance: {
+      id: 'marp.application:rehabilitation.plan.information.explanation.of.attendance',
+      defaultMessage:
+        'Nánari útskýring varðandi mætingar í endurhæfingarúrræði á fyrra tímabili',
+      description:
+        'Further explanation regarding attendance to rehabilitation measures during the previous rehabilitation period',
+    },
+    informationChange: {
+      id: 'marp.application:rehabilitation.plan.information.change',
+      defaultMessage:
+        'Varð breyting á þeim endurhæfingarúrræðum eða stefnu sem lögð var upp með í fyrri áætlun?',
+      description:
+        'Was there any change to the rehabilitation measures or direction that were established in the previous plan?',
+    },
+    informationExplanationOfChange: {
+      id: 'marp.application:rehabilitation.plan.information.explanation.of.change',
+      defaultMessage: 'Nánari útskýring á þeim breytingum og ástæðum þeirra',
+      description: 'Further explanation of those changes and their reasons',
+    },
+    informationApplicantCircumstancesChanges: {
+      id: 'marp.application:rehabilitation.plan.information.applicant.circumstances.changes',
+      defaultMessage:
+        'Hefur orðið breyting á aðstæðum umsækjanda frá fyrra endurhæfingartímabili?',
+      description:
+        "Has there been a change in the applicant's situation since the previous rehabilitation period?",
+    },
+    informationExplanationOfApplicantCircumstancesChanges: {
+      id: 'marp.application:rehabilitation.plan.information.explanation.of.applicant.circumstances.changes',
+      defaultMessage:
+        'Nánari útskýring á breytingum á aðstæðum umsækjanda og ástæðum þeirra',
+      description:
+        "Further explanation of changes in the applicant's situation and their reasons",
+    },
+
+    // Comprehensive assessment
+    comprehensiveAssessment: {
+      id: 'marp.application:rehabilitation.plan.comprehensive.assessment',
+      defaultMessage:
+        'Heildrænt mat á færni umsækjanda í daglegu lífi og þátttöku',
+      description:
+        'A comprehensive assessment of the applicant’s skills and participation in everyday life',
+    },
+    comprehensiveAssessmentTooltip: {
+      id: 'marp.application:rehabilitation.plan.comprehensive.assessment.tooltip',
+      defaultMessage:
+        'Lagt er mat á færniskerðingu umsækjanda og áhrif hennar á getu hans til að sinna eftirfarandi þáttum er varða virkni, þátttöku og sjálfstæði eins og staða hans er í dag með hjálpartækjum ef við á.',
+      description:
+        'The applicant’s current skills impairment and its impact on their ability to perform the following factors related to activity, participation and independence, with assistive devices if applicable, is assessed.',
+    },
+    comprehensiveAssessmentLearningAndApplyingKnowledge: {
+      id: 'marp.application:rehabilitation.plan.comprehensive.assessment.learning.and.applying.knowledge',
+      defaultMessage: 'Nám og beiting þekkingar',
+      description: 'Learning and applying knowledge',
+    },
+    comprehensiveAssessmentGeneralTasksAndRequirements: {
+      id: 'marp.application:rehabilitation.plan.comprehensive.assessment.general.tasks.and.requirements',
+      defaultMessage: 'Almenn verkefni og kröfur',
+      description: 'General tasks and requirements',
+    },
+    comprehensiveAssessmentGeneralTasksAndRequirementsTooltip: {
+      id: 'marp.application:rehabilitation.plan.comprehensive.assessment.general.tasks.and.requirements.tooltip',
+      defaultMessage:
+        'Hvernig gengur umsækjanda að skipuleggja og framkvæma athafnir í daglegu lífi t.d. að stýra tíma, klára það sem byrjað er á og takast á við streitu og álag?',
+      description:
+        'How is the applicant at planning and performing tasks in their daily life, e.g. managing time, finishing what they started and managing stress and pressure?',
+    },
+    comprehensiveAssessmentCommunicationAndRelationships: {
+      id: 'marp.application:rehabilitation.plan.comprehensive.assessment.communication.and.relationships',
+      defaultMessage: 'Samskipti og tengsl',
+      description: 'Communication and relationships',
+    },
+    comprehensiveAssessmentCommunicationAndRelationshipsTooltip: {
+      id: 'marp.application:rehabilitation.plan.comprehensive.assessment.communication.and.relationships.tooltip',
+      defaultMessage:
+        'Hvernig gengur umsækjanda að eiga í samskiptum, byggja upp tengsl og viðhalda þeim, við fjölskyldu, vini, samstarfsfélaga eða aðra?',
+      description:
+        'How is the applicant at communicating, building and maintaining relationships with family, friends, collegues or others?',
+    },
+    comprehensiveAssessmentMobility: {
+      id: 'marp.application:rehabilitation.plan.comprehensive.assessment.mobility',
+      defaultMessage: 'Hreyfanleiki',
+      description: 'Mobility',
+    },
+    comprehensiveAssessmentMobilityTooltip: {
+      id: 'marp.application:rehabilitation.plan.comprehensive.assessment.mobility.tooltip',
+      defaultMessage:
+        'Hvernig gengur umsækjanda að flytja sig/fara á milli staða, t.d. við að ganga, halda jafnvægi og færa sig til?',
+      description:
+        'How is the applicant at moving between places, e.g. at walking, balacing and moving.',
+    },
+    comprehensiveAssessmentSelfCare: {
+      id: 'marp.application:rehabilitation.plan.comprehensive.assessment.self.care',
+      defaultMessage: 'Eigin umsjá / sjálfsumönnun',
+      description: 'Self-care',
+    },
+    comprehensiveAssessmentSelfCareTooltip: {
+      id: 'marp.application:rehabilitation.plan.comprehensive.assessment.self.care.tooltip',
+      defaultMessage:
+        'Hvernig gengur umsækjanda að sinna eigin umsjá, t.d. að þvo sér, klæða og sinna persónulegu hreinlæti?',
+      description:
+        'How is the applicant at performing their own self-care, e.g. washing, dressing themselves and maintaining personal hygiene.',
+    },
+    comprehensiveAssessmentDomesticLife: {
+      id: 'marp.application:rehabilitation.plan.comprehensive.assessment.domestic.life',
+      defaultMessage: 'Heimilislíf',
+      description: 'Domestic life',
+    },
+    comprehensiveAssessmentDomesticLifeTooltip: {
+      id: 'marp.application:rehabilitation.plan.comprehensive.assessment.domestic.life.tooltip',
+      defaultMessage:
+        'Hvernig gengur umsækjanda að sinna heimilislífi t.d. að elda mat og þrífa húsnæði?',
+      description:
+        'How is the applicant at handling household chores, e.g. cooking food and cleaning the house?',
+    },
+    comprehensiveAssessmentDailyLife: {
+      id: 'marp.application:rehabilitation.plan.comprehensive.assessment.daily.life',
+      defaultMessage: 'Meginsvið daglegs lífs',
+      description: 'Daily life',
+    },
+    comprehensiveAssessmentDailyLifeTooltip: {
+      id: 'marp.application:rehabilitation.plan.comprehensive.assessment.daily.life.tooltip',
+      defaultMessage:
+        'Hvernig gengur umsækjanda að taka þátt í námi, starfi eða öðrum verkefnum sem tengjast starfsþjálfun eða vinnu?',
+      description:
+        'How is the applicant at undertaking study, a job or other activities related to vocational training or work?',
+    },
+    comprehensiveAssessmentLeisureAndInterests: {
+      id: 'marp.application:rehabilitation.plan.comprehensive.assessment.leisure.and.interests',
+      defaultMessage: 'Frístundir og áhugamál',
+      description: 'Leisure and interests',
+    },
+    comprehensiveAssessmentLeisureAndInterestsTooltip: {
+      id: 'marp.application:rehabilitation.plan.comprehensive.assessment.leisure.and.interests.tooltip',
+      defaultMessage:
+        'Hvernig gengur umsækjanda að taka þátt í tómstundum, félagsstörfum eða öðrum viðburðum utan heimilis?',
+      description:
+        'How is the applicant at participating in leisure activities, social activities or other events outside of the home.',
     },
 
     // Rehabilitation objective
@@ -539,6 +754,8 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Sjálfsmat',
       description: 'Self-assessment',
     },
+
+    // Questionnaire
     title: {
       id: 'marp.application:self.assessment.title',
       defaultMessage: 'Spurningalisti vegna færniskerðingar',
@@ -601,6 +818,8 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Ljúka sjálfsmati',
       description: 'Complete self-assessment',
     },
+
+    // Questions One
     sectionDescription: {
       id: 'marp.application:self.assessment.section.description',
       defaultMessage:
@@ -627,6 +846,87 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       id: 'marp.application:self.assessment.level.of.education.placeholder',
       defaultMessage: 'Veldu námsstig',
       description: 'Select a level of education',
+    },
+
+    // Questions Two
+    currentEmploymentStatusTitle: {
+      id: 'marp.application:self.assessment.current.employment.status.title',
+      defaultMessage: 'Hver er núverandi staða þín á vinnumarkaði?',
+      description: 'What is your current status in the labour market?',
+    },
+    neverOption: {
+      id: 'marp.application:self.assessment.never.option',
+      defaultMessage: 'Hef aldrei verið í launuðu starfi',
+      description: 'I have never had a paid job',
+    },
+    selfEmployedOption: {
+      id: 'marp.application:self.assessment.self.employed.option',
+      defaultMessage: 'Sjálfstætt starfandi',
+      description: 'Self-employed',
+    },
+    fullTimeOption: {
+      id: 'marp.application:self.assessment.full.time.option',
+      defaultMessage: 'Launþegi í fullu starfi',
+      description: 'Full-time worker',
+    },
+    partTimeOption: {
+      id: 'marp.application:self.assessment.part.time.option',
+      defaultMessage: 'Launþegi í hlutastarfi',
+      description: 'Part-time worker',
+    },
+    studyingOption: {
+      id: 'marp.application:self.assessment.studying.option',
+      defaultMessage: 'Er í námi',
+      description: 'I am currently studying',
+    },
+    jobSearchRegisteredOption: {
+      id: 'marp.application:self.assessment.job.search.registered.option',
+      defaultMessage: 'Í atvinnuleit (á skrá hjá VMST)',
+      description: 'In job search (registered with VMST)',
+    },
+    jobSearchNotRegisteredOption: {
+      id: 'marp.application:self.assessment.job.search.not.registered.option',
+      defaultMessage: 'Í atvinnuleit (ekki á skrá hjá VMST)',
+      description: 'In job search (not registered with VMST)',
+    },
+    volunteerOrTestWorkOption: {
+      id: 'marp.application:self.assessment.volunteer.or.test.work.option',
+      defaultMessage: 'Í sjálfboðavinnu/vinnuprófun',
+      description: 'In volunteer work/test work',
+    },
+    noParticipationOption: {
+      id: 'marp.application:self.assessment.no.participation.option',
+      defaultMessage:
+        'Engin þátttaka á vinnumarkaði vegna heilsubrests eða fötlunar',
+      description:
+        'No participation in the labour market due to illness or disability',
+    },
+    otherOption: {
+      id: 'marp.application:self.assessment.other.option',
+      defaultMessage: 'Annað',
+      description: 'Other',
+    },
+    furtherExplanation: {
+      id: 'marp.application:self.assessment.further.explanation',
+      defaultMessage: 'Frekari skýring',
+      description: 'Further explanation',
+    },
+    lastEmployment: {
+      id: 'marp.application:self.assessment.last.employment.title',
+      defaultMessage:
+        'Skráðu núverandi eða síðasta starfsheiti og ártal þegar þú varst síðast í starfi:',
+      description:
+        'Enter your current or last job title and the year in which you were last employed:',
+    },
+    lastEmploymentYear: {
+      id: 'marp.application:self.assessment.last.employment.year',
+      defaultMessage: 'Ártal',
+      description: 'Year',
+    },
+    lastEmploymentYearPlaceholder: {
+      id: 'marp.application:self.assessment.last.employment.year.placeholder',
+      defaultMessage: 'Veldu ártal',
+      description: 'Select year',
     },
 
     // Questions Three
@@ -665,16 +965,6 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
   }),
 
   overview: defineMessages({
-    studyConfirmation: {
-      id: 'marp.application:overview.study.confirmation',
-      defaultMessage: 'Staðfesting á námi',
-      description: 'Confirmation of study',
-    },
-    unionSickPayConfirmation: {
-      id: 'marp.application:overview.union.sick.pay.confirmation',
-      defaultMessage: 'Sjúkradagpeningar frá stéttarfélagi',
-      description: 'Sick pay from union',
-    },
     rehabilitationPlanConfirmed: {
       id: 'marp.application:overiew.rehabilitation.plan.confirmed',
       defaultMessage: 'Þú hefur staðfest endurhæfingaráætlunina',
@@ -685,9 +975,51 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Þú hefur lokið við að svara spurningalista',
       description: 'You have completed answering the questionnaire',
     },
+    selfAssessmentLastEmploymentTitle: {
+      id: 'marp.application:overiew.self.assessment.last.employment.title',
+      defaultMessage: 'Núverandi eða síðasta starfsheiti',
+      description: 'Current or last job title',
+    },
+    selfAssessmentLastEmploymentYear: {
+      id: 'marp.application:overiew.self.assessment.last.employment.year',
+      defaultMessage: 'Ártal þegar þú varst síðast í starfi',
+      description: 'Year in which you were last employed',
+    },
   }),
 
-  conclusion: defineMessages({}),
+  conclusion: defineMessages({
+    title: {
+      id: 'marp.application:conclusionScreen.expandableDescriptionField.title',
+      defaultMessage: 'Umsókn móttekin',
+      description: 'Application received',
+    },
+    alertTitle: {
+      id: 'marp.application:conclusionScreen.expandableDescriptionField.alertTitle',
+      defaultMessage: 'Umsókn þín hefur verið móttekin',
+      description: 'Your application has been received',
+    },
+    alertMessage: {
+      id: 'marp.application:conclusionScreen.expandableDescriptionField.alertMessage',
+      defaultMessage:
+        'Umsókn um sjúkra- og endurhæfingargreiðslur hefur verið send til Tryggingastofnunar',
+      description:
+        'Your application for medical and rehabilitation payments has been sent to the Social Insurance Administration',
+    },
+    next: {
+      id: 'marp.application:conclusionScreen.expandableDescriptionField.next#markdown',
+      defaultMessage:
+        '* Tryggingastofnun fer yfir umsóknina og staðfestir að allar upplýsingar eru réttar.\n* Ef þörf er á er kallað eftir frekari upplýsingum/gögnum.\n* Þegar öll nauðsynleg gögn hafa borist, fer Tryggingastofnun yfir umsókn og er afstaða tekin til sjúkra- og endurhæfingargreiðslna. Vinnslutími umsókna um sjúkra- og endurhæfingargreiðslur er fjórar til sex vikur.',
+      description:
+        '* The Social Insurance Administration will review your application and confirm that all information provided is accurate.\n* If required, they will call for additional information/documents.\n* Once all necessary documents have been received, the Social Insurance Administration will review the application and determine whether medical and rehabilitation payments will be granted. The processing time for medical and rehabilitation payments applications is four to six weeks.',
+    },
+    entitlements: {
+      id: 'marp.application:conclusionScreen.entitlements#markdown',
+      defaultMessage:
+        '# **Þú gætir átt rétt á:**\n\n Tryggingastofnun vekur athygli þína á að því þú gætir átt rétt á öðrum greiðslum samhliða sjúkra- og endurhæfingargreiðslum, svo sem:\n* Heimilisuppbót\n* Barnalífeyri\n* Greiðslum vegna bifreiðakostnaðar\n\nTryggingastofnun hvetur þig til að sækja um þessar greiðslur teljir þú þig eiga rétt á þeim. Hægt er að finna umsóknirnar á Mínum síðum á tr.is. Innskráning  á Mínar síður fer fram með rafrænum skilríkjum.\n\n Ef þú hefur spurningar eða athugasemdir er ávallt hægt að hafa samband í síma 560 4400 eða senda fyrirspurn í gegnum Mínar síður á tr.is.',
+      description:
+        '# **You may be entitled to:**\n\nThe Social Insurance Administration would like to point out that you may be entitled to other payments along side the medical and rehabilitation payments, such as:\n* Household supplement\n* Child pension\n* Payments for car expenses\n\nThe Social Insurance Administration encourages you to apply for these payments if you think you may be entitled to them. You can find these applications on My Pages at the Social Insurance Administration. Login to My Pages is done using electronic ID.\n\nIf you have any questions or comments please contact us via telephone at 560 4400 or send an enquiry through My Pages at tr.is.',
+    },
+  }),
 }
 
 export const errorMessages = defineMessages({
@@ -695,6 +1027,28 @@ export const errorMessages = defineMessages({
     id: 'marp.application:error.date.required',
     defaultMessage: 'Það þarf að velja dagsetningu',
     description: 'You must select a date',
+  },
+  countriesRequired: {
+    id: 'marp.application:error.countries.required',
+    defaultMessage: 'Það þarf að skrá að minnsta kosti eitt land',
+    description: 'You must add at least one country',
+  },
+  countryRequired: {
+    id: 'marp.application:error.country.required',
+    defaultMessage: 'Það þarf að velja land',
+    description: 'You must select a country',
+  },
+  countryIdNumberRequired: {
+    id: 'marp.application:error.country.id.number.required',
+    defaultMessage: 'Kennitala/persónunúmer í landi þarf að vera gilt',
+    description: 'Country ID number/personal ID number must be valid',
+  },
+  countryIdNumberMin: {
+    id: 'marp.application:error.country.id.number.min',
+    defaultMessage:
+      'Kennitala/persónunúmer í landi þarf að vera að minnsta kosti 5 stafir eða tákn',
+    description:
+      'Country ID number/personal ID number must be at least 5 characters or symbols',
   },
 })
 

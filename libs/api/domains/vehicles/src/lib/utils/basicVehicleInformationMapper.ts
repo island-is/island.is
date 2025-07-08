@@ -115,7 +115,7 @@ export const basicVehicleInformationMapper = (
       lastInspectionDate: data.inspections?.[0]?.date ?? null,
       insuranceStatus: excludeInsurance ? undefined : data.insurancestatus,
       mortages: data?.fees?.hasEncumbrances,
-      carTax: data?.fees?.gjold?.bifreidagjald,
+      carTax: data?.fees?.gjold?.total,
       inspectionFine: data?.fees?.inspectionfine,
     },
     technicalInfo: {

@@ -21,7 +21,8 @@ export const Appendixes = memo((props: AppendixesProps) => {
     if (
       lastElement &&
       lastElement.tagName === 'P' &&
-      lastElement.textContent?.includes('Útgáfud.:')
+      (lastElement.textContent?.includes('Útgáfud.:') ||
+        lastElement.textContent?.includes('Útgáfudagur:'))
     ) {
       const clonedText = lastElement.textContent
       wrapper.removeChild(lastElement)
