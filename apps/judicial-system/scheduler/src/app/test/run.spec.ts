@@ -100,7 +100,7 @@ describe('AppService - Run', () => {
         },
       )
       expect(fetch).toHaveBeenCalledWith(
-        `${appModuleConfig().backendUrl}/lawyer-registry/reset`,
+        `${appModuleConfig().backendUrl}/api/lawyer-registry/reset`,
         {
           method: 'POST',
           headers: {
