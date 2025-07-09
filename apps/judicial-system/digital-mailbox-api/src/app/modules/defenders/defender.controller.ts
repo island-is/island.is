@@ -1,6 +1,6 @@
 import { CacheInterceptor } from '@nestjs/cache-manager'
 import {
-  BadRequestException,
+  BadGatewayException,
   Controller,
   Get,
   Inject,
@@ -56,11 +56,11 @@ export class DefenderController {
         }))
       }
 
-      throw new BadRequestException()
+      throw new BadGatewayException('Failed to retrieve litigator lawyers')
     } catch (error) {
       this.logger.error('Failed to retrieve litigator lawyers', error)
 
-      throw new BadRequestException('Failed to retrieve litigator lawyers')
+      throw new BadGatewayException('Failed to retrieve litigator lawyers')
     }
   }
 
@@ -98,7 +98,7 @@ export class DefenderController {
     } catch (error) {
       this.logger.error('Failed to retrieve lawyer from lawyer registry', error)
 
-      throw new BadRequestException(
+      throw new BadGatewayException(
         'Failed to retrieve lawyer from lawyer registry',
       )
     }
