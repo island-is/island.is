@@ -523,7 +523,6 @@
     "url-parse": "1.5.2",
     "path-parse": "1.0.7",
     "@types/react": "18.3.3",
-
     "cache-manager-ioredis-yet@1.1.0": "patch:cache-manager-ioredis-yet@npm%3A1.1.0#./.yarn/patches/cache-manager-ioredis-yet-npm-1.1.0-da7d1a9865.patch",
     "jest-config": "patch:jest-config@npm%3A29.7.0#./.yarn/patches/jest-config-npm-29.7.0-97d8544d74.patch",
     "@nestjs/terminus@10.2.0": "patch:@nestjs/terminus@npm%3A10.2.0#./.yarn/patches/@nestjs-terminus-npm-10.2.0-9e24c129e0.patch",
