@@ -643,11 +643,9 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       application.externalData,
     )
 
-    console.log('getEducationLevels', marpApplicationType)
-
     return await this.siaClientService.getEducationLevels(
       auth,
-      marpApplicationType || '',
+      marpApplicationType || 'SJUKRAGREIDSLUR_FYRSTA',
     )
   }
 
