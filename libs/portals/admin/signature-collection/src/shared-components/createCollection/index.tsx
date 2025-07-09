@@ -20,8 +20,7 @@ import { useCandidateLookupLazyQuery } from './candidateLookup.generated'
 import { setReason } from './utils'
 import { useCreateCollectionMutation } from './createCollection.generated'
 import { m } from '../../lib/messages'
-import { useLoaderData, useParams, useRevalidator } from 'react-router-dom'
-import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
+import { useParams, useRevalidator } from 'react-router-dom'
 import {
   SignatureCollection,
   SignatureCollectionCollectionType,
@@ -32,7 +31,6 @@ const CreateCollection = ({
 }: {
   collection: SignatureCollection
 }) => {
-  const { allLists } = useLoaderData() as ListsLoaderReturn
   const { id, collectionType } = collection
 
   const params = useParams() as {
@@ -48,12 +46,10 @@ const CreateCollection = ({
 
   // Find the area by name if we have an area name
   const currentArea =
-    collectionType === SignatureCollectionCollectionType.Parliamentary &&
-    areaName
+    collectionType === SignatureCollectionCollectionType.Parliamentary ||
+    (collectionType === SignatureCollectionCollectionType.LocalGovernmental &&
+      areaName)
       ? collection.areas.find((area) => area.name === areaName)
-      : collectionType ===
-          SignatureCollectionCollectionType.LocalGovernmental && areaName
-      ? allLists.find((list) => list.area.name === areaName)?.area || null
       : null
 
   const { formatMessage } = useLocale()
@@ -75,7 +71,10 @@ const CreateCollection = ({
     variables: {
       input: {
         collectionType: collectionType,
-        collectionId: id,
+        collectionId:
+          collectionType === SignatureCollectionCollectionType.Presidential
+            ? id
+            : currentArea?.collectionId || '',
         collectionName: collectionName || undefined,
         owner: {
           name: name,
@@ -154,7 +153,7 @@ const CreateCollection = ({
             <Box marginLeft={5}>
               <Text variant="h4">{formatMessage(m.createCollection)}</Text>
               <Text marginBottom={2}>
-                Texti sem útskýrir þessa aðgerð betur kemur hér.
+                {formatMessage(m.createCollectionDescription)}
               </Text>
               <Button
                 variant="text"

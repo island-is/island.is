@@ -119,7 +119,6 @@ export const PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE =
 //#endregion Public prosecutor user routes
 
 //#region Prison user routes
-export const PRISON_CASES_ROUTE = '/fangelsi/krofur'
 export const PRISON_SIGNED_VERDICT_OVERVIEW_ROUTE = '/fangelsi/krafa/yfirlit'
 export const PRISON_CLOSED_INDICTMENT_OVERVIEW_ROUTE =
   '/fangelsi/akaera/yfirlit'
@@ -127,7 +126,6 @@ export const PRISON_CLOSED_INDICTMENT_OVERVIEW_ROUTE =
 
 //#region Court of appeals user routes
 export const COURT_OF_APPEAL_OVERVIEW_ROUTE = '/landsrettur/yfirlit'
-export const COURT_OF_APPEAL_CASES_ROUTE = '/landsrettur/krofur'
 export const COURT_OF_APPEAL_CASE_ROUTE = '/landsrettur/kaera'
 export const COURT_OF_APPEAL_RULING_ROUTE = '/landsrettur/urskurdur'
 export const COURT_OF_APPEAL_RESULT_ROUTE = '/landsrettur/nidurstada'
@@ -222,7 +220,6 @@ export const STATISTICS_ROUTE = '/notendur/tolfraedi'
 //#endregion Admin user routes
 
 //#region Shared routes
-export const CASES_ROUTE = '/krofur'
 export const CASE_TABLE_GROUPS_ROUTE = '/malalistar'
 export const SIGNED_VERDICT_OVERVIEW_ROUTE = '/krafa/yfirlit'
 export const ROUTE_HANDLER_ROUTE = '/beinir'
@@ -280,3 +277,9 @@ export const FEEDBACK_FORM_URL =
 
 // Masks
 export const POLICE_CASE_NUMBER = '___-____-_______'
+export const SSN = '______-____'
+export const PHONE_NUMBER = '___-____'
+export const EDITABLE_DATE = '__.__.____'
+export const DATE_PICKER_TIME = '  :  '
+export const SUBSTANCE_ALCOHOL = '_,__'
+export const SPEED = '___'

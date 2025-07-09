@@ -18,4 +18,9 @@ export const photoMessages = defineMessages({
       'Þú þarft að hlaða upp í það minnsta 3 myndum til að geta sótt um endurmat brunabótamats.',
     description: 'Photo section alert message',
   },
+  maxPhotos: {
+    id: 'fca.application:photo.maxPhotos',
+    defaultMessage: 'Þú getur ekki hlaðið upp fleiri en 10 myndum.',
+    description: 'Photo section max photos',
+  },
 })

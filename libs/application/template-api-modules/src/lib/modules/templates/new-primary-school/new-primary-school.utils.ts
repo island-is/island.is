@@ -10,31 +10,31 @@ import {
 } from '@island.is/application/templates/new-primary-school'
 import { Application } from '@island.is/application/types'
 import {
-  AgentDto,
-  AgentDtoTypeEnum,
-  FormDto,
-  FormDtoTypeEnum,
-  UserDtoGenderEnum,
+  AgentInput,
+  AgentInputTypeEnum,
+  ApplicationInput,
+  ApplicationInputTypeEnum,
+  UserInputGenderEnum,
 } from '@island.is/clients/mms/frigg'
 
 export const getGenderCode = (genderCode: string) => {
   switch (genderCode) {
     case '1':
     case '3':
-      return UserDtoGenderEnum.Male
+      return UserInputGenderEnum.Male
     case '2':
     case '4':
-      return UserDtoGenderEnum.Female
+      return UserInputGenderEnum.Female
     case '7':
     case '8':
     default:
-      return UserDtoGenderEnum.Other
+      return UserInputGenderEnum.Other
   }
 }
 
 export const transformApplicationToNewPrimarySchoolDTO = (
   application: Application,
-): FormDto => {
+): ApplicationInput => {
   const {
     applicationType,
     childInfo,
@@ -72,12 +72,12 @@ export const transformApplicationToNewPrimarySchoolDTO = (
   )
   const selectedChild = getSelectedChild(application)
 
-  const agents: AgentDto[] = [
+  const agents: AgentInput[] = [
     ...guardians.map((guardian) => ({
       name: guardian.fullName,
       nationalId: guardian.nationalId,
       nationality: guardian.citizenshipCode,
-      type: AgentDtoTypeEnum.Guardian,
+      type: AgentInputTypeEnum.Guardian,
       domicile: {
         address: guardian.address.streetAddress,
         postCode: guardian.address.postalCode,
@@ -92,7 +92,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     ...relatives.map((relative) => ({
       name: relative.fullName,
       nationalId: relative.nationalId,
-      type: AgentDtoTypeEnum.EmergencyContact,
+      type: AgentInputTypeEnum.EmergencyContact,
       phone: relative.phoneNumber,
       relationTypeId: relative.relation,
     })),
@@ -101,13 +101,13 @@ export const transformApplicationToNewPrimarySchoolDTO = (
       ? siblings.map((sibling) => ({
           name: sibling.fullName,
           nationalId: sibling.nationalId,
-          type: AgentDtoTypeEnum.Sibling,
+          type: AgentInputTypeEnum.Sibling,
         }))
       : []),
   ]
 
-  const newPrimarySchoolDTO: FormDto = {
-    type: FormDtoTypeEnum.Registration,
+  const newPrimarySchoolDTO: ApplicationInput = {
+    type: ApplicationInputTypeEnum.Registration,
     user: {
       name: childInfo.name,
       nationalId: childInfo.nationalId,

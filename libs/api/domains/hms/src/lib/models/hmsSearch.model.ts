@@ -28,10 +28,19 @@ export class Address {
 
   @Field(() => Number, { nullable: true })
   readonly numOfConnectedProperties?: number
+
+  @Field(() => Number, { nullable: true })
+  readonly propertyCode?: number
 }
 
 @ObjectType()
 export class Addresses {
   @Field(() => [Address])
   addresses!: Address[]
+}
+
+@ObjectType('HmsPropertyCodeInfo')
+export class PropertyCodeInfo {
+  @Field(() => Address)
+  address?: Address
 }
