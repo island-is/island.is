@@ -29,3 +29,8 @@ export interface Countries {
   country: string
   nationalId: string
 }
+
+export interface EducationLevels {
+  code: string
+  description: string
+}

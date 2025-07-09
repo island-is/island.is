@@ -832,8 +832,8 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Ég fæ aðstoð við að svara sjálfsmatinu',
       description: 'I get an assistance to answer the self-assessment',
     },
-    highestlevelOfEducationDescription: {
-      id: 'marp.application:self.assessment.highest.level.of.education.description',
+    educationLevelDescription: {
+      id: 'marp.application:self.assessment.education.level.description',
       defaultMessage: 'Hvert er hæsta námsstig sem þú hefur lokið?',
       description: 'What is the highest level of education you have completed?',
     },

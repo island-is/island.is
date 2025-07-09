@@ -19,6 +19,7 @@ import {
   TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn,
   TrWebApiServicesDomainEducationalInstitutionsModelsEctsUnitDto,
   TrWebApiServicesDomainEducationalInstitutionsModelsEducationalInstitutionsDto,
+  TrWebApiServicesDomainEducationalInstitutionsModelsEducationLevelDto,
   TrWebApiServicesDomainQuestionnairesModelsQuestionnaireDto,
   TrWebApiServicesDomainUnionsModelsUnionDto,
   TrWebApiServicesUseCaseDeathBenefitsModelsExternalSpousalInfo,
@@ -267,5 +268,18 @@ export class SocialInsuranceAdministrationClientService {
     Array<TrWebApiServicesDomainEducationalInstitutionsModelsEctsUnitDto>
   > {
     return this.generalApiWithAuth(user).apiProtectedV1GeneralEctsUnitsGet()
+  }
+
+  async getEducationLevels(
+    user: User,
+    applicationType: string,
+  ): Promise<
+    Array<TrWebApiServicesDomainEducationalInstitutionsModelsEducationLevelDto>
+  > {
+    return this.generalApiWithAuth(
+      user,
+    ).apiProtectedV1GeneralEducationlevelsApplicationTypeGet({
+      applicationType,
+    })
   }
 }

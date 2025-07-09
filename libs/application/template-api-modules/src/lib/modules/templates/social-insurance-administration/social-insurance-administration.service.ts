@@ -633,4 +633,19 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   async getEctsUnits({ auth }: TemplateApiModuleActionProps) {
     return await this.siaClientService.getEctsUnits(auth)
   }
+
+  async getEducationLevels({
+    // application,
+    auth,
+  }: TemplateApiModuleActionProps) {
+    //TODO: Add applicationType when we get it from TR
+    // const { applicationType } = getApplicationExternalData(
+    //   application.externalData,
+    // )
+
+    return await this.siaClientService.getEducationLevels(
+      auth,
+      'SJUKRAGREIDSLUR_FYRSTA',
+    )
+  }
 }
