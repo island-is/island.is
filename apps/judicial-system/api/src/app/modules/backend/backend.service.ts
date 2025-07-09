@@ -637,9 +637,7 @@ export class BackendService extends DataSource<{ req: Request }> {
 
     return this.callBackend<User>(
       `cases/limitedAccess/defender?${params.toString()}`,
-      {
-        headers: this.secretTokenHeaders,
-      },
+      { headers: this.secretTokenHeaders },
     )
   }
 
@@ -653,6 +651,12 @@ export class BackendService extends DataSource<{ req: Request }> {
 
   getLawyer(nationalId: string): Promise<LawyerRegistry> {
     return this.get(`lawyer-registry/${nationalId}`)
+  }
+
+  getLawyerForLogin(nationalId: string): Promise<LawyerRegistry> {
+    return this.callBackend(`lawyer-registry/${nationalId}`, {
+      headers: this.secretTokenHeaders,
+    })
   }
 }
 
