@@ -1,4 +1,4 @@
-import { Inject, Injectable } from '@nestjs/common'
+import { Inject, Injectable, NotFoundException } from '@nestjs/common'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -25,7 +25,8 @@ export class DefenderService {
     }
 
     this.logger.info('Failed to get lawyers from lawyer registry')
-    throw new Error()
+
+    throw new NotFoundException('No lawyers found in the lawyer registry')
   }
 
   async getLawyer(nationalId: string): Promise<Lawyer> {
@@ -39,6 +40,9 @@ export class DefenderService {
     }
 
     this.logger.info('Failed to get lawyer from lawyer registry')
-    throw new Error()
+
+    throw new NotFoundException(
+      'The lawyer with the given national id was not found',
+    )
   }
 }
