@@ -1,6 +1,7 @@
 import { Fasteign } from '@island.is/clients/assets'
 
 const getMockedNotkunareining = (
+  fasteignanumer: string,
   notkunBirting: string,
   brunabotamat: number,
   notkunareininganumer: string,
@@ -8,7 +9,7 @@ const getMockedNotkunareining = (
   return {
     birtStaerdMaelieining: 'm²',
     notkunareininganumer,
-    fasteignanumer: '2240134',
+    fasteignanumer,
     stadfang: {
       birtingStutt: 'RVK',
       birting: 'Reykjavík',
@@ -96,6 +97,7 @@ export const getMockedFasteign = (
       notkunareiningar: [
         ...notkunareiningar.map((notkun) =>
           getMockedNotkunareining(
+            fasteignanumer,
             notkun.notkunBirting,
             notkun.brunabotamat,
             notkun.notkunareininganumer,
