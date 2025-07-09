@@ -20,6 +20,7 @@ import {
   SocialInsuranceAdministrationCurrenciesApi,
   SocialInsuranceAdministrationEctsUnitsApi,
   SocialInsuranceAdministrationEducationLevelsApi,
+  SocialInsuranceAdministrationEducationLevelsApi,
   SocialInsuranceAdministrationIncomePlanConditionsApi,
   SocialInsuranceAdministrationMARPApplicationTypeApi,
   SocialInsuranceAdministrationQuestionnairesApi,

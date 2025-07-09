@@ -45,6 +45,7 @@ import {
   SocialInsuranceAdministrationCurrenciesApi,
   SocialInsuranceAdministrationEctsUnitsApi,
   SocialInsuranceAdministrationEducationLevelsApi,
+  SocialInsuranceAdministrationEducationLevelsApi,
   SocialInsuranceAdministrationIncomePlanConditionsApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
   SocialInsuranceAdministrationMARPApplicationTypeApi,
