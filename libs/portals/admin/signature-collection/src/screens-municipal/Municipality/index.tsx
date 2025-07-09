@@ -22,6 +22,7 @@ import { getTagConfig } from '../../lib/utils'
 import CompareLists from '../../shared-components/compareLists'
 import ActionDrawer from '../../shared-components/actionDrawer'
 import { Actions } from '../../shared-components/actionDrawer/ListActions'
+import EmptyState from '../../shared-components/emptyState'
 
 export const Municipality = () => {
   const { formatMessage } = useLocale()
@@ -29,6 +30,7 @@ export const Municipality = () => {
 
   const { collection, allLists } = useLoaderData() as ListsLoaderReturn
   const params = useParams()
+
   const municipality = params.municipality ?? ''
   const municipalityLists = allLists.filter(
     (list) => list.area.name === municipality,
@@ -82,51 +84,60 @@ export const Municipality = () => {
           />
           <Divider />
           <Box marginTop={9} />
-          <GridRow>
-            <GridColumn span="12/12">
-              <Box display="flex" justifyContent="flexEnd" marginBottom={3}>
-                <Text variant="eyebrow">
-                  {formatMessage(m.totalListResults) +
-                    ': ' +
-                    municipalityLists.length}
-                </Text>
-              </Box>
-              <Stack space={3}>
-                {municipalityLists.map((list) => (
-                  <ActionCard
-                    key={list.id}
-                    eyebrow={municipality}
-                    heading={list.candidate.name}
-                    text={
-                      formatMessage(m.numberOfSignatures) +
+          {municipalityLists.length === 0 ? (
+            <EmptyState
+              title={formatMessage(m.noLists) + ' í ' + municipality}
+              description={formatMessage(m.noListsDescription)}
+            />
+          ) : (
+            <GridRow>
+              <GridColumn span="12/12">
+                <Box display="flex" justifyContent="flexEnd" marginBottom={3}>
+                  <Text variant="eyebrow">
+                    {formatMessage(m.totalListResults) +
                       ': ' +
-                      list.numberOfSignatures
-                    }
-                    cta={{
-                      label: formatMessage(m.viewList),
-                      variant: 'text',
-                      onClick: () => {
-                        navigate(
-                          replaceParams({
-                            href: SignatureCollectionPaths.MunicipalList,
-                            params: {
-                              municipality: municipality,
-                              listId: list.id,
-                            },
-                          }),
-                        )
-                      },
-                    }}
-                    tag={getTagConfig(list)}
-                  />
-                ))}
-              </Stack>
-            </GridColumn>
-          </GridRow>
-          <CompareLists
-            collectionId={collection?.id}
-            collectionType={collection?.collectionType}
-          />
+                      municipalityLists.length}
+                  </Text>
+                </Box>
+                <Stack space={3}>
+                  {municipalityLists.map((list) => (
+                    <ActionCard
+                      key={list.id}
+                      eyebrow={municipality}
+                      heading={list.candidate.name}
+                      text={
+                        formatMessage(m.numberOfSignatures) +
+                        ': ' +
+                        list.numberOfSignatures
+                      }
+                      cta={{
+                        label: formatMessage(m.viewList),
+                        variant: 'text',
+                        onClick: () => {
+                          navigate(
+                            replaceParams({
+                              href: SignatureCollectionPaths.MunicipalList,
+                              params: {
+                                municipality: municipality,
+                                listId: list.id,
+                              },
+                            }),
+                          )
+                        },
+                      }}
+                      tag={getTagConfig(list)}
+                    />
+                  ))}
+                </Stack>
+              </GridColumn>
+            </GridRow>
+          )}
+          {municipalityLists.length > 0 && (
+            <CompareLists
+              collectionId={collection?.id}
+              collectionType={collection?.collectionType}
+            />
+          )}
         </GridColumn>
       </GridRow>
     </GridContainer>

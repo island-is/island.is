@@ -18,6 +18,10 @@ import {
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
+  formatNationalId,
+  formatPhoneNumber,
+} from '@island.is/judicial-system/formatters'
+import {
   getAdminUserInstitutionScope,
   getAdminUserInstitutionUserRoles,
   isCoreUser,
@@ -161,7 +165,11 @@ export const UserForm: FC<Props> = ({
 }) => {
   const { user: admin } = useContext(UserContext)
 
-  const [user, setUser] = useState<User>(existingUser)
+  const [user, setUser] = useState<User>({
+    ...existingUser,
+    nationalId: formatNationalId(existingUser.nationalId),
+    mobileNumber: formatPhoneNumber(existingUser.mobileNumber),
+  })
 
   const { personData, personError } = useNationalRegistry(user.nationalId)
 
@@ -255,20 +263,20 @@ export const UserForm: FC<Props> = ({
         <Box marginBottom={2}>
           <InputMask
             component={Input}
-            mask="______-____"
+            mask={constants.SSN}
             replacement={{ _: /\d/ }}
             value={user.nationalId || ''}
             onChange={(event) =>
               storeAndRemoveErrorIfValid(
                 'nationalId',
-                event.target.value.replace('-', ''),
+                event.target.value,
                 ['empty', 'national-id'],
                 setNationalIdErrorMessage,
               )
             }
             onBlur={(event) =>
               validateAndSetError(
-                event.target.value.replace('-', ''),
+                event.target.value,
                 ['empty', 'national-id'],
                 setNationalIdErrorMessage,
               )
@@ -385,20 +393,20 @@ export const UserForm: FC<Props> = ({
         <Box marginBottom={2}>
           <InputMask
             component={Input}
-            mask="___-____"
+            mask={constants.PHONE_NUMBER}
             replacement={{ _: /\d/ }}
             value={user.mobileNumber || ''}
             onChange={(event) =>
               storeAndRemoveErrorIfValid(
                 'mobileNumber',
-                event.target.value.replace('-', ''),
+                event.target.value,
                 ['empty'],
                 setMobileNumberErrorMessage,
               )
             }
             onBlur={(event) =>
               validateAndSetError(
-                event.target.value.replace('-', ''),
+                event.target.value,
                 ['empty'],
                 setMobileNumberErrorMessage,
               )

@@ -63,11 +63,11 @@ export const newSchoolSubSection = buildSubSection({
             return (
               data?.friggSchoolsByMunicipality
                 ?.filter(
-                  ({ type, children }) =>
+                  ({ type, managing }) =>
                     type === OrganizationModelTypeEnum.Municipality &&
-                    children &&
-                    children.length > 0 &&
-                    children.filter(({ gradeLevels }) =>
+                    managing &&
+                    managing.length > 0 &&
+                    managing.filter(({ gradeLevels }) =>
                       !childGradeLevel
                         ? true
                         : gradeLevels?.includes(childGradeLevel),
@@ -110,8 +110,8 @@ export const newSchoolSubSection = buildSubSection({
                   ({ type }) => type === OrganizationModelTypeEnum.PrivateOwner,
                 )
                 ?.flatMap(
-                  ({ children }) =>
-                    children
+                  ({ managing }) =>
+                    managing
                       ?.filter(
                         ({ type, gradeLevels, unitId }) =>
                           unitId &&
@@ -136,7 +136,7 @@ export const newSchoolSubSection = buildSubSection({
             const municipalitySchools =
               data?.friggSchoolsByMunicipality
                 ?.find(({ unitId }) => unitId === municipalityCode)
-                ?.children?.filter(
+                ?.managing?.filter(
                   ({ type, gradeLevels }) =>
                     // if no childGradeLevel then skip grade level check. This is the case if student is not registered in Frigg
                     type === OrganizationModelTypeEnum.School &&

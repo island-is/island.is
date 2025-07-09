@@ -19,7 +19,7 @@ const applicantSchema = z.object({
   postalCode: z.string().refine((v) => !!v),
 })
 
-const realEstateSchema = z.string().min(2)
+const realEstateSchema = z.string().length(7)
 
 const usageUnitsSchema = z.array(z.string()).min(1)
 
@@ -40,6 +40,11 @@ export const dataSchema = z.object({
     if (data.length < 3) {
       ctx.addIssue({
         params: m.photoMessages.alertMessage,
+        code: z.ZodIssueCode.custom,
+      })
+    } else if (data.length > 10) {
+      ctx.addIssue({
+        params: m.photoMessages.maxPhotos,
         code: z.ZodIssueCode.custom,
       })
     }
