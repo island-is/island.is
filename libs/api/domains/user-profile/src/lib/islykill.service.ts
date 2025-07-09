@@ -32,20 +32,29 @@ export class IslykillService {
       ...(canNudge !== undefined && { canNudge }),
     }
     const errorMsg = 'Unable to update islykill settings for user'
-    const apiData = await this.islyklarApi
-      .islyklarPut({
-        user: inputUserData,
+
+    const existingUser = await this.getIslykillSettings(nationalId)
+
+    if (existingUser.noUserFound) {
+      // Create user first if they don't exist
+      return this.createIslykillSettings(nationalId, {
+        bankInfo,
       })
-      .then(() => {
-        return {
-          nationalId,
-          valid: true,
-        }
-      })
-      .catch((e) => {
-        throw new BadRequestException(e, errorMsg)
-      })
-    return apiData
+    } else {
+      return this.islyklarApi
+        .islyklarPut({
+          user: inputUserData,
+        })
+        .then(() => {
+          return {
+            nationalId,
+            valid: true,
+          }
+        })
+        .catch((e) => {
+          throw new BadRequestException(e, errorMsg)
+        })
+    }
   }
 
   async getIslykillSettings(
@@ -84,18 +93,15 @@ export class IslykillService {
 
   async createIslykillSettings(
     nationalId: User['nationalId'],
-    { email, mobile }: { email?: string; mobile?: string },
+    userData: Pick<PublicUser, 'email' | 'mobile' | 'bankInfo'>,
   ): Promise<CreateIslykillSettings> {
-    const inputUserData: PublicUser = {
-      ssn: nationalId,
-      email,
-      mobile,
-    }
-
     const errorMsg = 'Unable to create islykill settings for user'
     const apiData = await this.islyklarApi
       .islyklarPost({
-        user: inputUserData,
+        user: {
+          ssn: nationalId,
+          ...userData,
+        },
       })
       .then(() => {
         return {
