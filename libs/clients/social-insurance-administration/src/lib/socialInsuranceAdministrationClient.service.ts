@@ -16,6 +16,7 @@ import {
   PensionCalculatorApi,
   QuestionnairesApi,
   TrWebApiServicesCommonCountriesModelsCountryDto,
+  TrWebApiServicesDomainApplicationsModelsApplicationTypeDto,
   TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn,
   TrWebApiServicesDomainEducationalInstitutionsModelsEctsUnitDto,
   TrWebApiServicesDomainEducationalInstitutionsModelsEducationalInstitutionsDto,
@@ -285,11 +286,9 @@ export class SocialInsuranceAdministrationClientService {
 
   async getMedicalAndRehabilitationApplicationType(
     user: User,
-    applicationType: string,
-  ): Promise<unknown> {
-    return {
-      applicationType: 'ENDURHAEFINGARGREIDSLUR_FYRSTA',
-      confirmationType: 'ENDURHAEFING',
-    }
+  ): Promise<TrWebApiServicesDomainApplicationsModelsApplicationTypeDto> {
+    return this.applicantApiWithAuth(
+      user,
+    ).apiProtectedV1ApplicantMedicalandrehabilitationpaymentsTypeGet()
   }
 }
