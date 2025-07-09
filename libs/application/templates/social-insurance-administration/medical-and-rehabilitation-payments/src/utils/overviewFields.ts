@@ -1,5 +1,6 @@
 import { buildOverviewField } from '@island.is/application/core'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import { isEHApplication, isFirstApplication } from './conditionUtils'
 import { getApplicationAnswers } from './medicalAndRehabilitationPaymentsUtils'
 import {
   applicantItems,
@@ -17,7 +18,6 @@ import {
   selfAssessmentQuestionsTwoItems,
   unionSickPayItems,
 } from './overviewItems'
-import { isFirstApplication } from './conditionUtils'
 
 export const overviewFields = (editable?: boolean) => {
   return [
@@ -42,9 +42,7 @@ export const overviewFields = (editable?: boolean) => {
       backId: editable ? 'benefitsFromAnotherCountry' : undefined,
       items: benefitsFromAnotherCountryItems,
       tableData: benefitsFromAnotherCountryTable,
-      condition: (_, externalData) => {
-        return isFirstApplication(externalData)
-      },
+      condition: (_, externalData) => isFirstApplication(externalData),
     }),
     buildOverviewField({
       id: 'overview.questions',
@@ -55,21 +53,18 @@ export const overviewFields = (editable?: boolean) => {
       id: 'overview.employeeSickPay',
       backId: editable ? 'employeeSickPay' : undefined,
       items: employeeSickPayItems,
-      condition: (_, externalData) => {
-        return isFirstApplication(externalData)
-      },
+      condition: (_, externalData) => isFirstApplication(externalData),
     }),
     buildOverviewField({
       id: 'overview.unionSickPay',
       backId: editable ? 'unionSickPay' : undefined,
       loadItems: unionSickPayItems,
-      condition: (_, externalData) => {
-        return isFirstApplication(externalData)
-      },
+      condition: (_, externalData) => isFirstApplication(externalData),
     }),
     buildOverviewField({
       id: 'overview.rehabilitationPlan',
       items: rehabilitationPlanItems,
+      condition: (_, externalData) => isEHApplication(externalData),
     }),
     buildOverviewField({
       id: 'overview.selfAssessmentQuestionsOne',

@@ -25,6 +25,8 @@ import {
 } from '@island.is/application/templates/social-insurance-administration/income-plan'
 import {
   getApplicationAnswers as getMARPApplicationAnswers,
+  isEHApplication,
+  isFirstApplication,
   SelfAssessmentCurrentEmploymentStatus,
 } from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
 import {
@@ -405,6 +407,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     lastEmploymentYear,
     certificateForSicknessAndRehabilitationReferenceId,
     educationalLevel,
+    hadAssistance,
   } = getMARPApplicationAnswers(application.answers)
 
   //  const { bankInfo } = getMARPApplicationExternalData(application.externalData)
@@ -435,8 +438,10 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
       isSelfEmployed: isSelfEmployed === YES,
       isStudying: isStudying === YES,
       isPartTimeEmployed: isPartTimeEmployed === YES,
-      receivingPaymentsFromOtherCountry:
-        isReceivingBenefitsFromAnotherCountry === YES,
+      ...(isFirstApplication(application.externalData) && {
+        receivingPaymentsFromOtherCountry:
+          isReceivingBenefitsFromAnotherCountry === YES,
+      }),
       ...(isSelfEmployed === YES && {
         calculatedRemunerationDate,
       }),
@@ -444,30 +449,36 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
         educationalInstitution,
       }),
     },
-    employeeSickPay: {
-      hasUtilizedEmployeeSickPayRights: getYesNoNotApplicableValue(
-        hasUtilizedEmployeeSickPayRights,
-      ),
-      ...((hasUtilizedEmployeeSickPayRights === YES ||
-        hasUtilizedEmployeeSickPayRights === NO) && {
-        employeeSickPayEndDate,
-      }),
-    },
-    unionSickPay: {
-      hasUtilizedUnionSickPayRights: getYesNoNotApplicableValue(
-        hasUtilizedUnionSickPayRights,
-      ),
-      ...((hasUtilizedUnionSickPayRights === YES ||
-        hasUtilizedUnionSickPayRights === NO) && {
-        unionNationalId,
-        unionSickPayEndDate,
-      }),
-    },
+    ...(isFirstApplication(application.externalData) && {
+      employeeSickPay: {
+        hasUtilizedEmployeeSickPayRights: getYesNoNotApplicableValue(
+          hasUtilizedEmployeeSickPayRights,
+        ),
+        ...((hasUtilizedEmployeeSickPayRights === YES ||
+          hasUtilizedEmployeeSickPayRights === NO) && {
+          employeeSickPayEndDate,
+        }),
+      },
+      unionSickPay: {
+        hasUtilizedUnionSickPayRights: getYesNoNotApplicableValue(
+          hasUtilizedUnionSickPayRights,
+        ),
+        ...((hasUtilizedUnionSickPayRights === YES ||
+          hasUtilizedUnionSickPayRights === NO) && {
+          unionNationalId,
+          unionSickPayEndDate,
+        }),
+      },
+    }),
     baseCertificateReference:
       certificateForSicknessAndRehabilitationReferenceId ?? '',
-    rehabilitationPlanReference: 'test', //TODO:
+    ...(isEHApplication(application.externalData) && {
+      rehabilitationPlanReference: 'test', //TODO:
+    }),
     selfAssessment: {
-      hadAssistance: true, //TODO:
+      ...(isFirstApplication(application.externalData) && {
+        hadAssistance: hadAssistance === YES,
+      }),
       educationalLevel: educationalLevel || '',
       currentEmploymentStatus,
       ...(currentEmploymentStatus?.includes(

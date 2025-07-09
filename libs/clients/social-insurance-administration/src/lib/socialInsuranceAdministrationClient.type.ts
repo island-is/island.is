@@ -147,7 +147,7 @@ export interface Occupation {
   isStudying: boolean
   educationalInstitution?: string
   isPartTimeEmployed: boolean
-  receivingPaymentsFromOtherCountry: boolean
+  receivingPaymentsFromOtherCountry?: boolean
   calculatedRemunerationDate?: string
 }
 
@@ -167,7 +167,7 @@ export interface Answer {
   answer: string | null
 }
 export interface SelfAssessment {
-  hadAssistance: boolean
+  hadAssistance?: boolean
   educationalLevel: string
   currentEmploymentStatus: string[]
   currentEmploymentStatusAdditional?: string

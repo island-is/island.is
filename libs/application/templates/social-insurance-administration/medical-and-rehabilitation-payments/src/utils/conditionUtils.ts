@@ -96,3 +96,13 @@ export const isFirstApplication = (externalData: ExternalData) => {
     marpApplicationType === MedicalAndRehabilitationPaymentsApplicationType.SG1
   )
 }
+
+export const isEHApplication = (externalData: ExternalData) => {
+  const { marpApplicationType } = getApplicationExternalData(externalData)
+
+  return (
+    marpApplicationType ===
+      MedicalAndRehabilitationPaymentsApplicationType.EH1 ||
+    marpApplicationType === MedicalAndRehabilitationPaymentsApplicationType.EH2
+  )
+}
