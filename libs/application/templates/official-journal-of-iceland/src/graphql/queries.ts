@@ -408,6 +408,7 @@ export const GET_APPLICATION_CASE_QUERY = gql`
       communicationStatus
       categories
       html
+      expectedPublishDate
     }
   }
 `

@@ -1671,7 +1671,8 @@
           },
           "department": { "$ref": "#/components/schemas/Department" },
           "type": { "$ref": "#/components/schemas/AdvertType" },
-          "html": { "type": "string" }
+          "html": { "type": "string" },
+          "expectedPublishDate": { "type": "string" }
         },
         "required": [
           "categories",

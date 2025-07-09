@@ -87,7 +87,7 @@
             "name": "year",
             "required": false,
             "in": "query",
-            "description": "Year (signature year) to filter by.",
+            "description": "Year (signature year) to filter by",
             "schema": { "type": "string" }
           },
           {

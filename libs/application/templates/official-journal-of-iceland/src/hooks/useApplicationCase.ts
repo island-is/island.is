@@ -13,6 +13,7 @@ type GetApplicationCaseResponse = {
     communicationStatus: string
     categories: string[]
     html: string
+    expectedPublishDate?: string
   }
 }
 
