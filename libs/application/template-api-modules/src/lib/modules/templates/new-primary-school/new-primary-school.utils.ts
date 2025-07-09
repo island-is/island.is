@@ -9,16 +9,15 @@ import {
 } from '@island.is/application/templates/new-primary-school'
 import { Application } from '@island.is/application/types'
 import {
-  AgentDto,
-  AgentDtoTypeEnum,
-  FormDto,
-  FormDtoTypeEnum,
-  LanguageDtoLanguageEnvironmentEnum,
+  AgentInput,
+  AgentInputTypeEnum,
+  ApplicationInput,
+  ApplicationInputTypeEnum,
 } from '@island.is/clients/mms/frigg'
 
 export const transformApplicationToNewPrimarySchoolDTO = (
   application: Application,
-): FormDto => {
+): ApplicationInput => {
   const {
     applicationType,
     childInfo,
@@ -56,12 +55,12 @@ export const transformApplicationToNewPrimarySchoolDTO = (
 
   const { primaryOrgId } = getApplicationExternalData(application.externalData)
 
-  const agents: AgentDto[] = [
+  const agents: AgentInput[] = [
     ...guardians.map((guardian) => ({
       name: guardian.fullName,
       nationalId: guardian.nationalId,
       nationality: '', // LAGA
-      type: AgentDtoTypeEnum.Guardian,
+      type: AgentInputTypeEnum.Guardian,
       domicile: {
         address: guardian.address.streetAddress,
         postCode: guardian.address.postalCode,
@@ -73,7 +72,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
       name: relative.fullName,
       nationalId: relative.nationalId,
       nationality: '', // LAGA
-      type: AgentDtoTypeEnum.EmergencyContact,
+      type: AgentInputTypeEnum.EmergencyContact,
       phone: relative.phoneNumber,
       relationTypeId: relative.relation,
     })),
@@ -83,13 +82,13 @@ export const transformApplicationToNewPrimarySchoolDTO = (
           name: sibling.fullName,
           nationalId: sibling.nationalId,
           nationality: '', // LAGA
-          type: AgentDtoTypeEnum.Sibling,
+          type: AgentInputTypeEnum.Sibling,
         }))
       : []),
   ]
 
-  const newPrimarySchoolDTO: FormDto = {
-    type: FormDtoTypeEnum.Registration,
+  const newPrimarySchoolDTO: ApplicationInput = {
+    type: ApplicationInputTypeEnum.Registration,
     user: {
       name: childInfo.name,
       nationalId: childInfo.nationalId,
@@ -185,7 +184,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         : {}),
     },
     language: {
-      languageEnvironment: LanguageDtoLanguageEnvironmentEnum.OnlyIcelandic, // LAGA
+      languageEnvironment: '', // LAGA
       signLanguage: signLanguage === YES,
       ...(languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
         ? {
