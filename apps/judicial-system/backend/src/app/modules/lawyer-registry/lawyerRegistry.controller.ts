@@ -19,7 +19,7 @@ import { EventService } from '../event'
 import { LawyerRegistry } from './lawyerRegistry.model'
 import { LawyerRegistryService } from './lawyerRegistry.service'
 
-@Controller()
+@Controller('api')
 @ApiTags('lawyer-registry')
 export class LawyerRegistryController {
   constructor(

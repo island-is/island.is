@@ -160,7 +160,7 @@ export class CaseService {
       }
 
       const res = await fetch(
-        `${this.config.backendUrl}/lawyer-registry/${defenderAssignment.defenderNationalId}`,
+        `${this.config.backendUrl}/api/lawyer-registry/${defenderAssignment.defenderNationalId}`,
         {
           method: 'GET',
           headers: {

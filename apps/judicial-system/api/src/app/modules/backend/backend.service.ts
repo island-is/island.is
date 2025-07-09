@@ -644,12 +644,15 @@ export class BackendService extends DataSource<{ req: Request }> {
   }
 
   getLawyers(lawyerType?: LawyerType): Promise<LawyerRegistry[]> {
-    const params = lawyerType ? `?lawyerType=${lawyerType}` : ''
-    return this.get(`/lawyer-registry${params}`)
+    const params = new URLSearchParams()
+    if (lawyerType) {
+      params.append('lawyerType', lawyerType)
+    }
+    return this.get(`lawyer-registry${params.toString()}`)
   }
 
   getLawyer(nationalId: string): Promise<LawyerRegistry> {
-    return this.get(`/lawyer-registry/${nationalId}`)
+    return this.get(`lawyer-registry/${nationalId}`)
   }
 }
 

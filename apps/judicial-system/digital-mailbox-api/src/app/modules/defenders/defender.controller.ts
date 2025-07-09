@@ -37,7 +37,7 @@ export class DefenderController {
   async getLawyers(): Promise<Defender[]> {
     try {
       const res = await fetch(
-        `${this.config.backendUrl}/lawyer-registry?lawyerType=${LawyerType.LITIGATORS}`,
+        `${this.config.backendUrl}/api/lawyer-registry?lawyerType=${LawyerType.LITIGATORS}`,
         {
           method: 'GET',
           headers: {
@@ -74,7 +74,7 @@ export class DefenderController {
   async getLawyer(@Param('nationalId') nationalId: string): Promise<Defender> {
     try {
       const res = await fetch(
-        `${this.config.backendUrl}/lawyer-registry/${nationalId}`,
+        `${this.config.backendUrl}/api/lawyer-registry/${nationalId}`,
         {
           method: 'GET',
           headers: {
