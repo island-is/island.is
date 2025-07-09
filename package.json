@@ -332,7 +332,6 @@
   },
   "devDependencies": {
     "@anatine/esbuild-decorators": "0.2.4",
-    "@anatine/esbuildnx": "0.2.0",
     "@anev/ts-mountebank": "^1.6.0",
     "@aws-sdk/client-ses": "3.145.0",
     "@aws-sdk/client-ssm": "3.145.0",
@@ -361,6 +360,7 @@
     "@nestjs/testing": "10.0.5",
     "@nx/cypress": "21.2.2",
     "@nx/devkit": "21.2.2",
+    "@nx/esbuild": "21.2.2",
     "@nx/eslint": "21.2.2",
     "@nx/eslint-plugin": "21.2.2",
     "@nx/express": "21.2.2",
@@ -523,7 +523,7 @@
     "url-parse": "1.5.2",
     "path-parse": "1.0.7",
     "@types/react": "18.3.3",
-    "@anatine/esbuildnx@0.2.0": "patch:@anatine/esbuildnx@patch%3A@anatine/esbuildnx@npm%253A0.2.0%23./.yarn/patches/@anatine-esbuildnx-npm-0.2.0-b2ba626748.patch%3A%3Aversion=0.2.0&hash=9054d7&locator=island.is%2540workspace%253A.#./.yarn/patches/@anatine-esbuildnx-patch-9f523e0a95.patch",
+
     "cache-manager-ioredis-yet@1.1.0": "patch:cache-manager-ioredis-yet@npm%3A1.1.0#./.yarn/patches/cache-manager-ioredis-yet-npm-1.1.0-da7d1a9865.patch",
     "jest-config": "patch:jest-config@npm%3A29.7.0#./.yarn/patches/jest-config-npm-29.7.0-97d8544d74.patch",
     "@nestjs/terminus@10.2.0": "patch:@nestjs/terminus@npm%3A10.2.0#./.yarn/patches/@nestjs-terminus-npm-10.2.0-9e24c129e0.patch",

@@ -11563,6 +11563,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@nx/esbuild@npm:21.2.2":
+  version: 21.2.2
+  resolution: "@nx/esbuild@npm:21.2.2"
+  dependencies:
+    "@nx/devkit": "npm:21.2.2"
+    "@nx/js": "npm:21.2.2"
+    picocolors: "npm:^1.1.0"
+    tinyglobby: "npm:^0.2.12"
+    tsconfig-paths: "npm:^4.1.2"
+    tslib: "npm:^2.3.0"
+  peerDependencies:
+    esbuild: ">=0.19.2 <1.0.0"
+  peerDependenciesMeta:
+    esbuild:
+      optional: true
+  checksum: 10/c28bf571b02acfdf3365f65be5f6ad222bc979998e80e0d782c26020debe3f0fa700ad2e7f5e385f75f7342d4ab70403f8e4ae478a764510faec07472149dac8
+  languageName: node
+  linkType: hard
+
 "@nx/eslint-plugin@npm:21.2.2":
   version: 21.2.2
   resolution: "@nx/eslint-plugin@npm:21.2.2"
@@ -34423,6 +34442,7 @@ __metadata:
     "@nestjs/testing": "npm:10.0.5"
     "@nx/cypress": "npm:21.2.2"
     "@nx/devkit": "npm:21.2.2"
+    "@nx/esbuild": "npm:21.2.2"
     "@nx/eslint": "npm:21.2.2"
     "@nx/eslint-plugin": "npm:21.2.2"
     "@nx/express": "npm:21.2.2"
