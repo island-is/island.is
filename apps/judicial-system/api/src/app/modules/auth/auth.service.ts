@@ -181,9 +181,7 @@ export class AuthService {
     // case list for them to avoid confusion about them not having access to
     // the judicial system
     try {
-      const lawyerRegistryInfo = await this.backendService.getLawyerForLogin(
-        nationalId,
-      )
+      const lawyerRegistryInfo = await this.backendService.getLawyer(nationalId)
 
       if (lawyerRegistryInfo && lawyerRegistryInfo.nationalId === nationalId) {
         return [

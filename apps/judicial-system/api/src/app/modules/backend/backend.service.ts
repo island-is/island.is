@@ -657,14 +657,14 @@ export class BackendService extends DataSource<{ req: Request }> {
       queryString = `?${query}`
     }
 
-    return this.get(`lawyer-registry${queryString}`, lawyersTransformer)
+    return this.callBackend(
+      `lawyer-registry${queryString}`,
+      { headers: this.secretTokenHeaders },
+      lawyersTransformer,
+    )
   }
 
   getLawyer(nationalId: string): Promise<Lawyer> {
-    return this.get(`lawyer-registry/${nationalId}`, lawyerTransformer)
-  }
-
-  getLawyerForLogin(nationalId: string): Promise<Lawyer> {
     return this.callBackend(
       `lawyer-registry/${nationalId}`,
       { headers: this.secretTokenHeaders },

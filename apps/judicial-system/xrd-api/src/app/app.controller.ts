@@ -57,7 +57,8 @@ export class AppController {
 
       return litigators
     } catch (error) {
-      this.logger.error('Failed to retrieve lawyers', error)
+      this.logger.error('Failed to retrieve lawyers', { error })
+
       throw new BadGatewayException('Failed to retrieve lawyers')
     }
   }

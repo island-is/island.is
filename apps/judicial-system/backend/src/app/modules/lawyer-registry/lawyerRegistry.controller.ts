@@ -1,7 +1,10 @@
 import {
+  BadGatewayException,
   Controller,
   Get,
   Inject,
+  InternalServerErrorException,
+  NotFoundException,
   Param,
   Post,
   Query,
@@ -19,6 +22,7 @@ import { EventService } from '../event'
 import { LawyerRegistry } from './lawyerRegistry.model'
 import { LawyerRegistryService } from './lawyerRegistry.service'
 
+@UseGuards(TokenGuard)
 @Controller('api')
 @ApiTags('lawyer-registry')
 export class LawyerRegistryController {
@@ -28,29 +32,35 @@ export class LawyerRegistryController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(TokenGuard)
   @Post('lawyer-registry/reset')
   @ApiOkResponse({ description: 'Resets a local copy of lawyer registry' })
   async resetLawyerRegistry(): Promise<LawyerFull[]> {
     this.logger.debug('Resetting lawyer registry')
+
     try {
       const lawyers = await this.lawyerRegistryService.populate()
 
-      if (lawyers && lawyers.length > 0) {
-        this.logger.info('Lawyer registry reset successfully')
-        await this.eventService.postDailyLawyerRegistryResetEvent(
-          lawyers.length,
-        )
-      }
+      this.logger.info('Lawyer registry reset successfully')
+      await this.eventService.postDailyLawyerRegistryResetEvent(lawyers.length)
 
       return lawyers
     } catch (error) {
-      this.logger.error('Failed to reset lawyer registry', error)
-      throw error
+      if (
+        error instanceof NotFoundException ||
+        error instanceof BadGatewayException
+      ) {
+        throw error
+      }
+
+      this.logger.error('Failed to reset lawyer registry', { error })
+
+      throw new InternalServerErrorException(
+        'Failed to reset lawyer registry',
+        error,
+      )
     }
   }
 
-  @UseGuards(TokenGuard)
   @Get('lawyer-registry')
   @ApiOkResponse({ description: 'Gets all lawyers in lawyer registry' })
   async getAll(
@@ -59,16 +69,23 @@ export class LawyerRegistryController {
     this.logger.debug('Getting all lawyers in lawyer registry')
 
     try {
-      const lawyers = await this.lawyerRegistryService.getAll(lawyerType)
-
-      return lawyers
+      return await this.lawyerRegistryService.getAll(lawyerType)
     } catch (error) {
-      this.logger.error('Failed to get all lawyers from lawyer registry', error)
-      throw error
+      if (error instanceof NotFoundException) {
+        throw error
+      }
+
+      this.logger.error('Failed to get all lawyers from lawyer registry', {
+        error,
+      })
+
+      throw new InternalServerErrorException(
+        'Failed to get all lawyers from lawyer registry',
+        error,
+      )
     }
   }
 
-  @UseGuards(TokenGuard)
   @Get('lawyer-registry/:nationalId')
   @ApiOkResponse({
     description: 'Gets a lawyer in lawyer registry by nationalId',
@@ -79,17 +96,20 @@ export class LawyerRegistryController {
     this.logger.debug('Getting a lawyer in lawyer registry by nationalId')
 
     try {
-      const lawyer = await this.lawyerRegistryService.getByNationalId(
-        nationalId,
-      )
-
-      return lawyer
+      return await this.lawyerRegistryService.getByNationalId(nationalId)
     } catch (error) {
-      this.logger.error(
-        `Failed to get lawyer with nationalId: ${nationalId}`,
+      if (error instanceof NotFoundException) {
+        throw error
+      }
+
+      this.logger.error(`Failed to get a lawyer by national id ${nationalId}`, {
+        error,
+      })
+
+      throw new InternalServerErrorException(
+        'Failed to get lawyer by national id',
         error,
       )
-      throw error
     }
   }
 }
