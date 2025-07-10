@@ -239,6 +239,7 @@ const Completed: FC = () => {
     },
   ]
 
+  console.log({ defendants: workingCase.defendants })
   return (
     <PageLayout
       workingCase={workingCase}

@@ -12,6 +12,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Subpoena } from '../../subpoena'
+import { Verdict } from '../../verdict/models/verdict.model'
 
 registerEnumType(Gender, { name: 'Gender' })
 registerEnumType(DefendantPlea, { name: 'DefendantPlea' })
@@ -104,6 +105,9 @@ export class Defendant {
 
   @Field(() => [Subpoena], { nullable: true })
   readonly subpoenas?: Subpoena[]
+
+  @Field(() => [Verdict], { nullable: true })
+  readonly verdict?: Verdict
 
   @Field(() => Boolean, { nullable: true })
   readonly isDefenderChoiceConfirmed?: boolean
