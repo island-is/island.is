@@ -25,18 +25,19 @@ export const jobHistorySection = buildSection({
           marginTop: 0,
           formTitle: jobHistory.labels.jobTitle,
           addItemButtonText: jobHistory.labels.addNewButton,
+          minRows: 0,
           doesNotRequireAnswer: true,
           fields: {
             companyName: {
               component: 'input',
               label: jobHistory.labels.companyName,
               type: 'text',
-              width: 'full',
+              width: 'half',
             },
             jobName: {
               component: 'select',
               label: jobHistory.labels.jobName,
-              width: 'full',
+              width: 'half',
               options: (
                 application: Application,
                 _activeField: Record<string, string> | undefined,
@@ -55,14 +56,6 @@ export const jobHistorySection = buildSection({
                   return { value, label }
                 })
               },
-            },
-            employmentRate: {
-              component: 'input',
-              label: jobHistory.labels.employmentRate,
-              width: 'full',
-              type: 'number',
-              placeholder: '0%',
-              suffix: '%',
             },
             startDate: {
               component: 'date',

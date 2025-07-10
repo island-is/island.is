@@ -22,3 +22,8 @@ export const ActivationAllowanceApi = defineTemplateApi({
   action: 'createApplication',
   externalDataId: 'activityGrantApplication',
 })
+
+export const LocaleApi = defineTemplateApi({
+  action: 'getStartingLocale',
+  externalDataId: 'startingLocale',
+})

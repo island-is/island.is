@@ -13,7 +13,7 @@ import {
   VmstUnemploymentClientService,
 } from '@island.is/clients/vmst-unemployment'
 import { TemplateApiModuleActionProps } from '../../../types'
-
+import { Locale } from '@island.is/shared/types'
 @Injectable()
 export class ActivationAllowanceService extends BaseTemplateApiService {
   constructor(
@@ -27,6 +27,12 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
   }
   // TODO: Implement functions as needed
 
+  getStartingLocale({
+    currentUserLocale,
+  }: TemplateApiModuleActionProps): Locale {
+    return currentUserLocale
+  }
+
   async createApplication({
     auth,
   }: TemplateApiModuleActionProps): Promise<GaldurDomainModelsApplicationsUnemploymentApplicationsQueriesUnemploymentApplicationViewModel> {
@@ -38,7 +44,7 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
 
       return application
     } catch (error) {
-      console.log(error)
+      // TODO Inject logger and log
       throw new Error(error)
     }
   }

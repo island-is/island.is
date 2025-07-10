@@ -6,7 +6,9 @@ import {
 } from '@island.is/application/core'
 import {
   getApplicantOverviewItems,
-  getOverviewItems,
+  getContactOverviewItems,
+  useGetJobWishesOverviewItems,
+  getPaymentOverviewItems,
 } from '../../utils/getOverviewItems'
 
 // TODO Finish this screen
@@ -20,18 +22,42 @@ export const overviewSection = buildSection({
       children: [
         buildOverviewField({
           id: 'overview.applicant',
-          title: '',
           backId: 'applicantMultiField',
           items: getApplicantOverviewItems,
         }),
+
         buildOverviewField({
-          id: 'overview',
-          title: 'Overview',
-          description: 'This is an overview, should come from messages.ts',
-          backId: 'idToSomeField',
-          bottomLine: false,
-          items: getOverviewItems,
+          id: 'overview.paymentInfo',
+          backId: 'paymentInformationMultiField',
+          items: getPaymentOverviewItems,
         }),
+
+        // Income (conditional)
+
+        buildOverviewField({
+          id: 'overview.contact',
+          backId: 'contact',
+          items: getContactOverviewItems,
+        }),
+
+        buildOverviewField({
+          id: 'overview.jobWish`es',
+          backId: 'jobWishesMultiField',
+          items: useGetJobWishesOverviewItems,
+        }),
+
+        // Job history
+
+        // Academic history
+
+        // Driving/Machine licenses
+
+        // Language skills
+
+        // Resumé
+
+        //
+
         buildSubmitField({
           id: 'submit',
           title: 'Submit',

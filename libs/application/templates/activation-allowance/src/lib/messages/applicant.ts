@@ -4,7 +4,7 @@ export const applicant = {
   general: defineMessages({
     sectionTitle: {
       id: 'aa.application:applicant.general.sectionTitle',
-      defaultMessage: 'Umsækjandi',
+      defaultMessage: 'Persónuupplýsingar',
       description: 'Applicant section title',
     },
     pageTitle: {

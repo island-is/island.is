@@ -29,8 +29,10 @@ import { ApiScope } from '@island.is/auth/scopes'
 import {
   ActivationAllowanceApi,
   DrivingLicenseApi,
+  LocaleApi,
   WorkMachineLicensesApi,
 } from '../dataProviders'
+import { Features } from '@island.is/feature-flags'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -44,7 +46,7 @@ const template: ApplicationTemplate<
   translationNamespaces:
     ApplicationConfigurations.ActivationAllowance.translation,
   dataSchema: ActivationAllowanceAnswersSchema,
-  // featureFlag: Add feature flag!
+  featureFlag: Features.ActivationAllowanceApplicationEnabled,
   // allowedDelegations: What delegations are allowed?
   // requiredScopes: [ApiScope.], Whats the scope?
   stateMachineConfig: {
@@ -86,6 +88,7 @@ const template: ApplicationTemplate<
               api: [
                 IdentityApi,
                 UserProfileApi,
+                LocaleApi,
                 // WorkMachineLicensesApi,
                 // DrivingLicenseApi,
                 ActivationAllowanceApi,

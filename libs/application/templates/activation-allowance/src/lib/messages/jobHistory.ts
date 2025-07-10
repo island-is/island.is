@@ -35,11 +35,6 @@ export const jobHistory = {
       defaultMessage: 'Starfsheiti',
       description: 'Job name label',
     },
-    employmentRate: {
-      id: 'aa.application:jobHistory.labels.employmentRate',
-      defaultMessage: 'Starfshlutfall',
-      description: 'Employment rate label',
-    },
     startDate: {
       id: 'aa.application:jobHistory.labels.startDate',
       defaultMessage: 'Hóf störf',

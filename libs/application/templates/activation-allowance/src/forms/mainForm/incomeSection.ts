@@ -39,16 +39,17 @@ const getIncomeSections = (index: number) => {
       description: 'Testing',
     }),
     buildTextField({
-      id: 'income.month',
+      id: `income[${index}].month`,
       readOnly: true,
       title: income.labels.incomeMonth,
       backgroundColor: 'white',
       defaultValue: (application: Application) => {
         return 'Apríl'
       },
+      doesNotRequireAnswer: true,
     }),
     buildTextField({
-      id: 'income.salaryIncome',
+      id: `income[${index}].salaryIncome`,
       readOnly: true,
       variant: 'currency',
       title: income.labels.salaryIncome,
@@ -56,9 +57,10 @@ const getIncomeSections = (index: number) => {
       defaultValue: (application: Application) => {
         return 1000000
       },
+      doesNotRequireAnswer: true,
     }),
     buildTextField({
-      id: 'income.employer',
+      id: `income[${index}].employer`,
       readOnly: true,
       title: income.labels.employer,
       backgroundColor: 'white',
@@ -66,30 +68,34 @@ const getIncomeSections = (index: number) => {
         return 'Fyrirtæki ehf.'
       },
       marginBottom: 4,
+      doesNotRequireAnswer: true,
     }),
 
     buildDescriptionField({
-      id: 'income.hasEmploymentEndedDescription',
+      id: `income[${index}].hasEmploymentEndedDescription`,
       title: income.labels.hasEmploymentEnded,
       titleVariant: 'h5',
     }),
     buildRadioField({
-      id: 'income.hasEmploymentEnded',
+      id: `income[${index}].hasEmploymentEnded`,
       width: 'half',
       options: [
         { value: YES, label: application.yesLabel },
         { value: NO, label: application.noLabel },
       ],
+      doesNotRequireAnswer: true,
     }),
     buildDescriptionField({
-      id: 'income.endOfEmployment',
+      id: `income[${index}].endOfEmployment`,
       title: income.labels.endOfEmployment,
       titleVariant: 'h5',
+      doesNotRequireAnswer: true,
       //condition: employmentHasNotEnded
     }),
     buildDateField({
-      id: 'income.endOfEmploymentDate',
+      id: `income[${index}].endOfEmploymentDate`,
       title: income.labels.endOfEmploymentDate,
+      doesNotRequireAnswer: true,
       //condition: employmentHasNotEnded
       minDate: () => {
         const today = new Date()
@@ -112,59 +118,63 @@ const getIncomeSections = (index: number) => {
       },
     }),
     buildCheckboxField({
-      id: 'income.checkbox',
+      id: `income[${index}].checkbox`,
       options: [
         {
           value: IncomeCheckboxValues.INCOME_FROM_OTHER_THAN_JOB,
           label: income.labels.incomeFromOtherThanJob,
         },
       ],
+      doesNotRequireAnswer: true,
     }),
     buildDescriptionField({
-      id: 'income.explanationDescription',
+      id: `income[${index}].explanationDescription`,
       title: income.labels.explanationDescription,
       titleVariant: 'h5',
       //condition: incommeFromOtherThanJobChecked
     }),
     buildTextField({
-      id: 'income.explanation',
+      id: `income[${index}].explanation`,
       title: income.labels.explanation,
       placeholder: income.labels.explanationPlaceholder,
       variant: 'textarea',
       rows: 4,
       maxLength: 200, // TODO Get actual max number
       showMaxLength: true,
+      doesNotRequireAnswer: true,
       //condition: incomeFromOtherThanJobChecked
     }),
 
     buildDescriptionField({
-      id: 'income.leaveDescription',
+      id: `income[${index}].leaveDescription`,
       title: income.labels.leaveDescription,
       titleVariant: 'h5',
     }),
     buildRadioField({
-      id: 'income.hasLeaveDays',
+      id: `income[${index}].hasLeaveDays`,
       width: 'half',
       options: [
         { value: YES, label: application.yesLabel },
         { value: NO, label: application.noLabel },
       ],
+      doesNotRequireAnswer: true,
     }),
 
     buildDescriptionField({
-      id: 'income.numberAndUsageOfLeaveDescription',
+      id: `income[${index}].numberAndUsageOfLeaveDescription`,
       title: income.labels.numberAndUsageOfLeaveDescription,
       titleVariant: 'h5',
     }),
     buildTextField({
-      id: 'income.numberOfLeaveDays',
+      id: `income[${index}].numberOfLeaveDays`,
       title: income.labels.numberOfLeaveDays,
       variant: 'number',
       min: 1,
       max: 99,
+      doesNotRequireAnswer: true,
     }),
     buildFieldsRepeaterField({
-      id: 'income.leaveDates',
+      id: `income[${index}].leaveDates`,
       fields: {
         dateFrom: {
           component: 'date',
@@ -179,6 +189,7 @@ const getIncomeSections = (index: number) => {
       },
       addItemButtonText: income.labels.addLine,
       formTitleNumbering: 'none',
+      doesNotRequireAnswer: true,
     }),
   ]
 
@@ -188,5 +199,6 @@ const getIncomeSections = (index: number) => {
 export const incomeSection = buildSection({
   id: 'incomeSection',
   title: income.general.sectionTitle,
+  condition: () => false,
   children: [buildRepeatableSections()],
 })

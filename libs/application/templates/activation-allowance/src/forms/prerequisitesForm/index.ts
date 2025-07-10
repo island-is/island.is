@@ -12,6 +12,7 @@ import { externalData } from '../../lib/messages'
 import {
   ActivationAllowanceApi,
   DrivingLicenseApi,
+  LocaleApi,
   UserProfileApiWithValidation,
   WorkMachineLicensesApi,
 } from '../../dataProviders'
@@ -55,14 +56,9 @@ export const Prerequisites = buildForm({
               provider: ActivationAllowanceApi,
               // TODO(Balli): Add title and subtitle
             }),
-            // buildDataProviderItem({
-            //   provider: DrivingLicenseApi,
-            //   // TODO(Balli): Add title and subtitle
-            // }),
-            // buildDataProviderItem({
-            //   provider: WorkMachineLicensesApi,
-            //   // TODO(Balli): Add title and subtitle
-            // }),
+            buildDataProviderItem({
+              provider: LocaleApi,
+            }),
           ],
           submitField: buildSubmitField({
             id: 'submit',

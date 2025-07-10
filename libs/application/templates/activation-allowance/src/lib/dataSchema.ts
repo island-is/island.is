@@ -1,7 +1,8 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { isValidPhoneNumber } from '../utils'
-import { YesOrNoEnum } from '@island.is/application/core'
+import { YES, YesOrNoEnum } from '@island.is/application/core'
+import { isValidEmail } from '../utils/isValidEmail'
 
 const FileSchema = z.object({
   name: z.string(),
@@ -75,15 +76,14 @@ const jobWishesSchema = z.object({
 })
 
 const academicBackgroundSchema = z.object({
-  areYouStudying: z.nativeEnum(YesOrNoEnum),
   education: z
     .array(
       z.object({
         school: z.string().optional(),
         subject: z.string().optional(),
-        units: z.string().optional(),
         degree: z.string().optional(),
-        endOfStudies: z.string().optional(),
+        endOfStudies: z.string().optional(), // Transform if disabled
+        isStillStudying: z.array(z.enum([YES])).optional(),
       }),
     )
     .optional(),
@@ -95,8 +95,16 @@ const drivingLicensesSchema = z.object({
 })
 
 const languageSkillsSchema = z.object({
-  language: z.string().optional(),
-  skills: z.string().optional(),
+  icelandic: z.string(),
+  english: z.string(),
+  icelandicAbility: z.string(),
+  englishAbility: z.string(),
+  other: z.array(
+    z.object({
+      language: z.string().optional(),
+      skills: z.string().optional(),
+    }),
+  ),
 })
 
 const cvSchema = z.object({
@@ -105,16 +113,59 @@ const cvSchema = z.object({
   other: z.string().optional(),
 })
 
+const contactSchema = z
+  .object({
+    isSameAsApplicant: z.array(z.enum([YES])).optional(),
+    name: z.string().optional(),
+    connection: z.string().optional(),
+    email: z.string().optional(),
+    phone: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    const isSame = !data.isSameAsApplicant?.includes(YES)
+
+    if (isSame) {
+      if (!data.name) {
+        ctx.addIssue({
+          path: ['name'],
+          code: z.ZodIssueCode.custom,
+        })
+      }
+
+      if (!data.connection) {
+        ctx.addIssue({
+          path: ['connection'],
+          code: z.ZodIssueCode.custom,
+        })
+      }
+
+      if (!data.email || !isValidEmail(data.email)) {
+        ctx.addIssue({
+          path: ['email'],
+          code: z.ZodIssueCode.custom,
+        })
+      }
+
+      if (!data.phone || !isValidPhoneNumber(data.phone)) {
+        ctx.addIssue({
+          path: ['phone'],
+          code: z.ZodIssueCode.custom,
+        })
+      }
+    }
+  })
+
 export const ActivationAllowanceAnswersSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   approveTerms: z.array(z.string()).refine((v) => v.length > 0),
   applicant: applicantSchema,
+  contact: contactSchema,
   paymentInformation: paymentInformationSchema,
   jobHistory: z.array(jobHistorySchema),
   jobWishes: jobWishesSchema,
   academicBackground: academicBackgroundSchema,
   drivingLicenses: drivingLicensesSchema,
-  languageSkills: z.array(languageSkillsSchema),
+  languageSkills: languageSkillsSchema,
   cv: cvSchema,
 })
 

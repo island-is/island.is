@@ -20,15 +20,36 @@ export const overview = {
     },
   }),
   labels: defineMessages({
-    nationalAddress: {
-      id: 'aa.application:overview.labels.nationalAddress',
-      defaultMessage: 'Ríkisfang: {value}',
-      description: 'National address label for overview information',
-    },
     phoneNumber: {
       id: 'aa.application:overview.labels.phoneNumber',
-      defaultMessage: 'Sími: {value}',
+      defaultMessage: 'Símanúmer: {value}',
       description: 'Phonenumber label for overview information',
+    },
+    bank: {
+      id: 'aa.application:overview.labels.bank',
+      defaultMessage: 'Banki: {value}',
+      description: 'bank label for overview information',
+    },
+    contactIsSameAsApplicant: {
+      id: 'aa.application:overview.labels.contactIsSameAsApplicant',
+      defaultMessage: 'Tengiliður er sá sami og umsækjandi',
+      description:
+        'contact is same as applicant label for overview information',
+    },
+    name: {
+      id: 'aa.application:overview.labels.name',
+      defaultMessage: 'Nafn: {value}',
+      description: 'name label for overview information',
+    },
+    contactConnection: {
+      id: 'aa.application:overview.labels.contactConnection',
+      defaultMessage: 'Tengsl: {value}',
+      description: 'contact connection label for overview information',
+    },
+    email: {
+      id: 'aa.application:overview.labels.email',
+      defaultMessage: 'Netfang: {value}',
+      description: 'email label for overview information',
     },
   }),
 }

@@ -20,17 +20,6 @@ export const academicBackground = {
     },
   }),
   labels: defineMessages({
-    educationTitle: {
-      id: 'aa.application:academicBackground.labels.educationTitle',
-      defaultMessage: 'Menntun',
-      description: 'Education title label',
-    },
-    educationDescription: {
-      id: 'aa.application:academicBackground.labels.educationDescription',
-      defaultMessage:
-        'Hérna getur þú bætt við hvaða menntun þú hefur lokið. Gott er að setja inn alla þá menntun sem gæti gagnast þér í leið að vinnu.',
-      description: 'Education description label',
-    },
     addEducationButton: {
       id: 'aa.application:academicBackground.labels.addEducationButton',
       defaultMessage: 'Bæta við námi',
@@ -60,6 +49,11 @@ export const academicBackground = {
       id: 'aa.application:academicBackground.labels.endOfStudies',
       defaultMessage: 'Námslok',
       description: 'End of studies label',
+    },
+    endOfStudiesPlaceholder: {
+      id: 'aa.application:academicBackground.labels.endOfStudiesPlaceholder',
+      defaultMessage: 'Námi ólokið',
+      description: 'End of studies placeholder label',
     },
     education: {
       id: 'aa.application:academicBackground.labels.education',

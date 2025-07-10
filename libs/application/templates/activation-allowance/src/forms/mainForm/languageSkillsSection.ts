@@ -4,8 +4,16 @@ import {
   buildSection,
   buildSelectField,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { languageSkills } from '../../lib/messages'
+import {
+  getLanguageSkills,
+  getLanguageSkillsRepeater,
+} from '../../utils/getLanguageSkills'
+import { getLanguagesForRepeater } from '../../utils/getLanguages'
+import { Application, Field } from '@island.is/application/types'
+import { Locale } from '@island.is/shared/types'
 
 export const languageSkillsSection = buildSection({
   id: 'languageSkillsSection',
@@ -16,45 +24,49 @@ export const languageSkillsSection = buildSection({
       title: languageSkills.general.pageTitle,
       children: [
         buildTextField({
-          id: 'languageSkills.icelandic', // TOOD Rename maybe
+          id: 'languageSkills.icelandic',
           readOnly: true,
           backgroundColor: 'white',
           title: languageSkills.labels.language,
-          defaultValue: 'Íslenska',
+          defaultValue: (application: Application, _field: Field) => {
+            const locale = getValueViaPath<Locale>(
+              application.externalData,
+              'startingLocale',
+            )
+            return locale === 'is' ? 'Íslenska' : 'Icelandic'
+          },
           width: 'half',
         }),
         buildSelectField({
           id: 'languageSkills.icelandicAbility',
           title: languageSkills.labels.skills,
-          options: [
-            // TODO: get from API
-            { value: 'basic', label: 'Grunnfærni' },
-            { value: 'intermediate', label: 'Millistig' },
-            { value: 'advanced', label: 'Framúrskarandi' },
-          ],
+          required: true,
+          options: getLanguageSkills,
           width: 'half',
         }),
         buildTextField({
-          id: 'languageSkills.english', // TOOD Rename maybe
+          id: 'languageSkills.english',
           readOnly: true,
           title: languageSkills.labels.language,
           backgroundColor: 'white',
-          defaultValue: 'Enska',
+          defaultValue: (application: Application, _field: Field) => {
+            const locale = getValueViaPath<Locale>(
+              application.externalData,
+              'startingLocale',
+            )
+            return locale === 'is' ? 'Enska' : 'English'
+          },
           width: 'half',
         }),
         buildSelectField({
           id: 'languageSkills.englishAbility',
           title: languageSkills.labels.skills,
-          options: [
-            // TODO: get from API
-            { value: 'basic', label: 'Grunnfærni' },
-            { value: 'intermediate', label: 'Millistig' },
-            { value: 'advanced', label: 'Framúrskarandi' },
-          ],
+          options: getLanguageSkills,
+          required: true,
           width: 'half',
         }),
         buildFieldsRepeaterField({
-          id: 'languageSkills',
+          id: 'languageSkills.other',
           titleVariant: 'h5',
           marginTop: 0,
           minRows: 0,
@@ -65,24 +77,15 @@ export const languageSkillsSection = buildSection({
               component: 'select',
               width: 'half',
               label: languageSkills.labels.language,
-              options: [
-                // TODO: get from API
-                { value: 'english', label: 'Enska' },
-                { value: 'icelandic', label: 'Íslenska' },
-                { value: 'swedish', label: 'Sænska' },
-                { value: 'norwegian', label: 'Norska' },
-              ],
+              required: true,
+              options: getLanguagesForRepeater,
             },
             skills: {
               component: 'select',
               label: languageSkills.labels.skills,
               width: 'half',
-              options: [
-                // TODO: get from API
-                { value: 'basic', label: 'Grunnfærni' },
-                { value: 'intermediate', label: 'Millistig' },
-                { value: 'advanced', label: 'Framúrskarandi' },
-              ],
+              required: true,
+              options: getLanguageSkillsRepeater,
             },
           },
         }),

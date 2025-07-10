@@ -2,21 +2,21 @@ import {
   buildAlertMessageField,
   buildCheckboxField,
   buildMultiField,
-  buildSection,
   buildSelectField,
+  buildSubSection,
   buildTextField,
   getValueViaPath,
   YES,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { applicant } from '../../lib/messages'
+import { applicant } from '../../../lib/messages'
 import { applicantInformationMultiField } from '@island.is/application/ui-forms'
 import { GaldurDomainModelsSettingsPostcodesPostcodeDTO } from '@island.is/clients/vmst-unemployment'
-import { isSamePlaceOfResidenceChecked } from '../../utils'
+import { isSamePlaceOfResidenceChecked } from '../../../utils'
 
-export const applicantSection = buildSection({
-  id: 'applicantSection',
-  title: applicant.general.sectionTitle,
+export const applicantSubSection = buildSubSection({
+  id: 'applicantSubSection',
+  title: applicant.general.pageTitle,
   children: [
     buildMultiField({
       id: 'applicantMultiField',
@@ -41,7 +41,10 @@ export const applicantSection = buildSection({
               label: applicant.labels.checkboxLabel,
             },
           ],
-          // TODO Clear on change ??
+          clearOnChange: [
+            'applicant.other.address',
+            'applicant.other.postalCode',
+          ],
         }),
         buildTextField({
           id: 'applicant.other.address',

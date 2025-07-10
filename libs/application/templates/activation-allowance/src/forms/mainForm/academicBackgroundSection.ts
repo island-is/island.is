@@ -18,15 +18,8 @@ export const academicBackgroundSection = buildSection({
       title: academicBackground.general.pageTitle,
       description: academicBackground.general.description,
       children: [
-        buildDescriptionField({
-          id: 'academicBackground.educationDescription',
-          title: academicBackground.labels.educationTitle,
-          description: academicBackground.labels.educationDescription,
-          titleVariant: 'h5',
-          marginBottom: 0,
-        }),
         buildFieldsRepeaterField({
-          id: 'educationHistory.educationHistory',
+          id: 'academicBackground.education',
           formTitle: academicBackground.labels.education,
           formTitleNumbering: 'suffix',
           minRows: 0,
@@ -103,8 +96,27 @@ export const academicBackgroundSection = buildSection({
                 )
               },
             },
-            // TODO Namslok
-            checkbox: {
+            endOfStudy: {
+              label: academicBackground.labels.endOfStudies,
+              component: 'select',
+              placeholder: academicBackground.labels.endOfStudiesPlaceholder,
+              disabled: (_application, activeField) => {
+                const isNotFinished =
+                  activeField?.isStillStudying as unknown as Array<string>
+                if (!isNotFinished || isNotFinished.length < 1) return false
+                if (isNotFinished[0] === YES) return true
+                return false
+              },
+              options: () => {
+                const currentYear = new Date().getFullYear()
+                const years = Array.from({ length: 51 }, (_, i) => {
+                  const year = (currentYear - i).toString()
+                  return { value: year, label: year }
+                })
+                return years
+              },
+            },
+            isStillStudying: {
               component: 'checkbox',
               large: false,
               backgroundColor: 'white',
@@ -114,45 +126,25 @@ export const academicBackgroundSection = buildSection({
                   label: academicBackground.labels.currentlyStudying,
                 },
               ],
+              setOnChange: async (
+                option,
+                _application,
+                index,
+                _activeField,
+              ) => {
+                if (option && option.length > 0 && option[0] === YES) {
+                  return [
+                    {
+                      key: `academicBackground.education[${index}].endOfStudy`,
+                      value: undefined,
+                    },
+                  ]
+                }
+                return []
+              },
             },
           },
         }),
-        // buildFieldsRepeaterField({
-        //   id: 'academicBackground.education',
-        //   titleVariant: 'h5',
-        //   marginTop: 0,
-        //   minRows: 0,
-        //   formTitleNumbering: 'none',
-        //   addItemButtonText: academicBackground.labels.addEducationButton,
-        //   fields: {
-        //     school: {
-        //       component: 'input',
-        //       width: 'half',
-        // label: academicBackground.labels.school,
-        //     },
-        //     subject: {
-        //       component: 'input',
-        //       label: academicBackground.labels.subject,
-        //       width: 'half',
-        //     },
-        //     units: {
-        //       component: 'input',
-        //       label: academicBackground.labels.units,
-        //       width: 'half',
-        //       type: 'number',
-        //     },
-        //     degree: {
-        //       component: 'input',
-        //       label: academicBackground.labels.degree,
-        //       width: 'half',
-        //     },
-        //     endOfStudies: {
-        //       component: 'date',
-        //       label: academicBackground.labels.endOfStudies,
-        //       width: 'half',
-        //     },
-        //   },
-        // }),
       ],
     }),
   ],

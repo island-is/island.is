@@ -7,6 +7,20 @@ import {
   YES,
 } from '@island.is/application/core'
 import { drivingLicenses } from '../../lib/messages'
+import {
+  A,
+  A1,
+  A2,
+  AM,
+  B,
+  BE,
+  C1E,
+  CE,
+  D,
+  D1,
+  D1E,
+  DE,
+} from '../../assets/drivingLicenses'
 
 export const drivingLicensesSection = buildSection({
   id: 'drivingLicensesSection',
@@ -26,6 +40,7 @@ export const drivingLicensesSection = buildSection({
               label: drivingLicenses.labels.hasDrivingLicenseLabel,
             },
           ],
+          clearOnChange: ['drivingLicense.drivingLicenseType'],
         }),
         buildCheckboxField({
           id: 'drivingLicense.drivingLicenseType',
@@ -35,7 +50,7 @@ export const drivingLicensesSection = buildSection({
             const drivingLicenseTypes =
               getValueViaPath<{ name: string }[]>(
                 application.externalData,
-                'unemploymentApplication.data.supportData.drivingLicenses',
+                'activityGrantApplication.data.activationGrant.supportData.drivingLicenses',
               ) || []
             return drivingLicenseTypes.map((type) => {
               const licenseComponents: Record<string, React.ComponentType> = {
@@ -81,6 +96,7 @@ export const drivingLicensesSection = buildSection({
               label: drivingLicenses.labels.hasHeavyMachineryLicenseLabel,
             },
           ],
+          clearOnChange: ['drivingLicense.heavyMachineryLicenses'],
         }),
         buildSelectField({
           id: 'drivingLicense.heavyMachineryLicenses',
@@ -90,12 +106,14 @@ export const drivingLicensesSection = buildSection({
             const heavyMachineryLicenses =
               getValueViaPath<{ name: string }[]>(
                 application.externalData,
-                'unemploymentApplication.data.supportData.heavyMachineryLicenses',
+                'activityGrantApplication.data.activationGrant.supportData.heavyMachineryLicenses',
               ) || []
-            return heavyMachineryLicenses.map((right) => ({
-              value: right.name,
-              label: right.name,
-            }))
+            return heavyMachineryLicenses
+              .map((right) => ({
+                value: right.name,
+                label: right.name,
+              }))
+              .sort((a, b) => a.label.localeCompare(b.label))
           },
           condition: (answers) => {
             return (
