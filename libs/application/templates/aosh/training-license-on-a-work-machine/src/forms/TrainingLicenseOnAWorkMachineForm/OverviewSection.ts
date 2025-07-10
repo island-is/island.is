@@ -35,11 +35,12 @@ export const overviewSection = buildSection({
           title: overview.labels.machineTenure,
           backId: 'certificateOfTenureMultiField',
           bottomLine: false,
-          items: (answers, externalData, userNationalId, _locale) =>
+          items: (answers, externalData, userNationalId) =>
             getMachineTenureOverviewInformation(
               answers,
               externalData,
               userNationalId,
+              true,
             ),
         }),
         buildOverviewField({
@@ -47,8 +48,8 @@ export const overviewSection = buildSection({
           title: '',
           backId: 'assigneeInformationMultiField',
           bottomLine: false,
-          items: (answers, externalData, userNationalId, _locale) =>
-            getMachineTenureOverviewInformation(
+          items: (answers, externalData, userNationalId) =>
+            getAssigneeOverviewInformation(
               answers,
               externalData,
               userNationalId,

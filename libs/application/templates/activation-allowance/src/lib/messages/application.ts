@@ -7,7 +7,7 @@ export const application = defineMessages({
     description: `Application's name`,
   },
   institutionName: {
-    id: 'aa.application:institution',
+    id: 'aa.application:institutionName',
     defaultMessage: 'Vinnumálastofnun',
     description: `Institution's name`,
   },

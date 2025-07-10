@@ -26,12 +26,7 @@ import {
 } from '@island.is/application/core'
 import { assign } from 'xstate'
 import { ApiScope } from '@island.is/auth/scopes'
-import {
-  ActivationAllowanceApi,
-  DrivingLicenseApi,
-  LocaleApi,
-  WorkMachineLicensesApi,
-} from '../dataProviders'
+import { ActivationAllowanceApi, LocaleApi } from '../dataProviders'
 import { Features } from '@island.is/feature-flags'
 
 const template: ApplicationTemplate<
@@ -89,8 +84,6 @@ const template: ApplicationTemplate<
                 IdentityApi,
                 UserProfileApi,
                 LocaleApi,
-                // WorkMachineLicensesApi,
-                // DrivingLicenseApi,
                 ActivationAllowanceApi,
               ],
               delete: true,
