@@ -18,9 +18,11 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { LawyersService, LawyerType } from '@island.is/judicial-system/lawyers'
 
 import { CreateCaseDto } from './dto/createCase.dto'
+import { UpdatePoliceDocumentDeliveryDto } from './dto/policeDocument.dto'
 import { UpdateSubpoenaDto } from './dto/subpoena.dto'
 import { Case } from './models/case.model'
 import { Defender } from './models/defender.model'
+import { PoliceDocumentDelivery } from './models/policeDocumentDelivery.response'
 import { SubpoenaResponse } from './models/subpoena.response'
 import { EventInterceptor } from './app.interceptor'
 import { AppService } from './app.service'
@@ -82,5 +84,23 @@ export class AppController {
     this.logger.info(`Updating subpoena ${policeSubpoenaId}`)
 
     return this.appService.updateSubpoena(policeSubpoenaId, updateSubpoena)
+  }
+
+  @Patch('policeDocumentDelivery/:policeDocumentId')
+  @ApiResponse({ status: 400, description: 'Invalid input' })
+  @ApiResponse({
+    status: 502,
+    description: 'Failed to update police document delivery information',
+  })
+  async updatePoliceDocumentDelivery(
+    @Param('policeDocumentId', new ParseUUIDPipe()) policeDocumentId: string,
+    @Body() updatePoliceDocumentDelivery: UpdatePoliceDocumentDeliveryDto,
+  ): Promise<PoliceDocumentDelivery> {
+    this.logger.info(`Updating police document ${policeDocumentId}`)
+
+    return this.appService.updatePoliceDocumentDelivery(
+      policeDocumentId,
+      updatePoliceDocumentDelivery,
+    )
   }
 }
