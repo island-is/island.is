@@ -1022,9 +1022,6 @@
       "@island.is/judicial-system/formatters": [
         "libs/judicial-system/formatters/src/index.ts"
       ],
-      "@island.is/judicial-system/lawyers": [
-        "libs/judicial-system/lawyers/src/index.ts"
-      ],
       "@island.is/judicial-system/message": [
         "libs/judicial-system/message/src/index.ts"
       ],

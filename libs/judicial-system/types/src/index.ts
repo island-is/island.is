@@ -143,7 +143,13 @@ export type { SubstanceMap } from './lib/indictmentCount'
 
 export { Substance } from './lib/substances'
 
-export { type Lawyer, mapToLawyer } from './lib/lawyer'
+export {
+  type Lawyer,
+  mapToLawyer,
+  type LawyerFull,
+  type LawyerRegistry,
+  LawyerType,
+} from './lib/lawyer'
 
 export { type CourtDocument } from './lib/courtDocument'
 
