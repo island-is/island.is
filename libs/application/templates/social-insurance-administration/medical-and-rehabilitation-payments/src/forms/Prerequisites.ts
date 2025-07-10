@@ -144,6 +144,9 @@ export const Prerequisites: Form = buildForm({
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationEducationLevelsApi,
             }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationIsApplicantEligibleApi,
+            }),
           ],
         }),
       ],

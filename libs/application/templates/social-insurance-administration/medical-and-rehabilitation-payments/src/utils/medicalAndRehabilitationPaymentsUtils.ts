@@ -331,6 +331,11 @@ export const getApplicationExternalData = (
       'socialInsuranceAdministrationEducationLevels.data',
     ) ?? []
 
+  const isEligible = getValueViaPath<Eligible>(
+    externalData,
+    'socialInsuranceAdministrationIsApplicantEligible.data',
+  )
+
   return {
     applicantName,
     applicantNationalId,
@@ -352,6 +357,7 @@ export const getApplicationExternalData = (
     ectsUnits,
     isEligible,
     educationLevels,
+    isEligible,
   }
 }
 
