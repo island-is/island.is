@@ -48,7 +48,7 @@ export const overviewSection = buildSection({
           backId: 'assigneeInformationMultiField',
           bottomLine: false,
           items: (answers, externalData, userNationalId) =>
-            getMachineTenureOverviewInformation(
+            getAssigneeOverviewInformation(
               answers,
               externalData,
               userNationalId,
