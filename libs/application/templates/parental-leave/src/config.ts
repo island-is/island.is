@@ -17,5 +17,5 @@ export const maxMonths =
   (defaultMonths * DAYS_IN_MONTH + maxDaysToGiveOrReceive) / DAYS_IN_MONTH
 export const daysInMonth = DAYS_IN_MONTH
 
-export const defaultMultipleBirthsMonths = 3
-export const multipleBirthsDefaultDays = 90
+export const defaultMultipleBirthsMonths = 6
+export const multipleBirthsDefaultDays = 180

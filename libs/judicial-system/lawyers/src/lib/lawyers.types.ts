@@ -1,4 +1,4 @@
-export type Lawyer = {
+export type LawyerRegistryResponse = {
   Id: number
   Name: string
   Title: string
@@ -32,6 +32,15 @@ export type Lawyer = {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   Languages: null | any
   InternationConnection: string
+}
+
+export type Lawyer = {
+  name: string
+  nationalId: string
+  email: string
+  phoneNumber: string
+  practice: string
+  isLitigator: boolean
 }
 
 export enum LawyerType {
