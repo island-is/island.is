@@ -238,20 +238,25 @@ export const getApplicationExternalData = (
 
   const applicantAddress = getValueViaPath<string>(
     externalData,
-    'nationalRegistry.data.address.streetAddress',
+    'socialInsuranceAdministrationResidenceInformation.data.address',
   )
 
   const applicantPostalCode = getValueViaPath<string>(
     externalData,
-    'nationalRegistry.data.address.postalCode',
+    'socialInsuranceAdministrationResidenceInformation.data.postalCode',
   )
 
-  const applicantLocality = getValueViaPath<string>(
+  const applicantMunicipality = getValueViaPath<string>(
     externalData,
-    'nationalRegistry.data.address.locality',
+    'socialInsuranceAdministrationResidenceInformation.data.municipality',
   )
 
-  const applicantMunicipality = `${applicantPostalCode}, ${applicantLocality}`
+  const apartmentNumber = getValueViaPath<string>(
+    externalData,
+    'socialInsuranceAdministrationResidenceInformation.data.apartmentNumber',
+  )
+
+  const applicantLocation = `${applicantPostalCode}, ${applicantMunicipality}`
 
   const bankInfo = getValueViaPath<BankInfo>(
     externalData,
@@ -322,8 +327,9 @@ export const getApplicationExternalData = (
     applicantNationalId,
     applicantAddress,
     applicantPostalCode,
-    applicantLocality,
+    apartmentNumber,
     applicantMunicipality,
+    applicantLocation,
     bankInfo,
     userProfileEmail,
     userProfilePhoneNumber,
