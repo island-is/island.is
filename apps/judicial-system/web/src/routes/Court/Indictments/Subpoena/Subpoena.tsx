@@ -74,7 +74,7 @@ const Subpoena: FC = () => {
     !defendant.isAlternativeService &&
     (!isArraignmentScheduled || newSubpoenas.includes(defendant.id))
 
-  const isIssuingSubpoenas = workingCase.defendants?.some((defendant) =>
+  const isIssuingSubpoenas = updates?.defendants?.some((defendant) =>
     isIssuingSubpoenaForDefendant(defendant),
   )
 
@@ -158,7 +158,10 @@ const Subpoena: FC = () => {
       [
         ...additionalUpdates,
         {
-          arraignmentDate: updates?.theCase.arraignmentDate,
+          arraignmentDate: {
+            date: updates?.theCase.arraignmentDate?.date,
+            location: updates?.theCase.arraignmentDate?.location,
+          },
           force: true,
         },
       ],
@@ -418,12 +421,12 @@ const Subpoena: FC = () => {
       {navigateTo !== undefined && (
         <Modal
           title={
-            isIssuingSubpoenas || isCreatingSubpoena
+            isIssuingSubpoenas
               ? formatMessage(strings.modalTitle)
               : strings.modalAlternativeServiceTitle
           }
           text={
-            isIssuingSubpoenas || isCreatingSubpoena
+            isIssuingSubpoenas
               ? formatMessage(strings.modalText)
               : strings.modalAlternativeServiceText
           }
@@ -434,7 +437,7 @@ const Subpoena: FC = () => {
             setNavigateTo(undefined)
           }}
           primaryButtonText={
-            isIssuingSubpoenas || isCreatingSubpoena
+            isIssuingSubpoenas
               ? formatMessage(strings.modalPrimaryButtonText)
               : strings.modalAlternativeServicePrimaryButtonText
           }

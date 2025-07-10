@@ -54,6 +54,14 @@ export enum SelfAssessmentCurrentEmploymentStatus {
   OTHER = 'other', // Other
 }
 
+export enum EligibleReasonCodes {
+  APPLICANT_AGE_OUT_OF_RANGE = 'APPLICANT_AGE_OUT_OF_RANGE',
+  BASE_CERT_NOT_FOUND = 'BASE_CERT_NOT_FOUND',
+  BASE_CERT_DATE_INVALID = 'BASE_CERT_DATE_INVALID',
+  BASE_CERT_OLDER_THAN_7YEARS = 'BASE_CERT_OLDER_THAN_7YEARS',
+  BASE_CERT_OLDER_THAN_6MONTHS = 'BASE_CERT_OLDER_THAN_6MONTHS',
+}
+
 export enum MedicalAndRehabilitationPaymentsApplicationType {
   SG1 = 'SJUKRAGREIDSLUR_FYRSTA',
   SG2 = 'SJUKRAGREIDSLUR_FRAMHALDS',
