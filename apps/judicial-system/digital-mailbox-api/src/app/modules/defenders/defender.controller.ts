@@ -8,12 +8,14 @@ import {
   Param,
   UseInterceptors,
 } from '@nestjs/common'
+import { ConfigType } from '@nestjs/config'
 import { ApiOkResponse, ApiResponse, ApiTags } from '@nestjs/swagger'
 
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
 
-import { LawyersService, LawyerType } from '@island.is/judicial-system/lawyers'
+import { LawyerRegistry, LawyerType } from '@island.is/judicial-system/types'
 
+import { appModuleConfig } from '../../app.config'
 import { Defender } from './models/defender.response'
 
 @Controller('api')
@@ -21,8 +23,9 @@ import { Defender } from './models/defender.response'
 @UseInterceptors(CacheInterceptor)
 export class DefenderController {
   constructor(
+    @Inject(appModuleConfig.KEY)
+    private readonly config: ConfigType<typeof appModuleConfig>,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-    private readonly lawyersService: LawyersService,
   ) {}
 
   @Get('defenders')
@@ -33,20 +36,31 @@ export class DefenderController {
   @ApiResponse({ status: 502, description: 'Failed to retrieve defenders' })
   async getLawyers(): Promise<Defender[]> {
     try {
-      this.logger.debug('Retrieving litigators from lawyer registry')
-
-      const lawyers = await this.lawyersService.getLawyers(
-        LawyerType.LITIGATORS,
+      const res = await fetch(
+        `${this.config.backendUrl}/api/lawyer-registry?lawyerType=${LawyerType.LITIGATORS}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${this.config.secretToken}`,
+          },
+        },
       )
+      if (res.ok) {
+        const lawyers = await res.json()
 
-      return lawyers.map((lawyer) => ({
-        nationalId: lawyer.SSN,
-        name: lawyer.Name,
-        practice: lawyer.Practice,
-      }))
+        return lawyers.map((lawyer: LawyerRegistry) => ({
+          nationalId: lawyer.nationalId,
+          name: lawyer.name,
+          practice: lawyer.practice,
+        }))
+      }
+
+      throw new BadGatewayException('Failed to retrieve litigator lawyers')
     } catch (error) {
-      this.logger.error('Failed to retrieve lawyers', error)
-      throw new BadGatewayException('Failed to retrieve lawyers')
+      this.logger.error('Failed to retrieve litigator lawyers', error)
+
+      throw new BadGatewayException('Failed to retrieve litigator lawyers')
     }
   }
 
@@ -59,21 +73,34 @@ export class DefenderController {
   @ApiResponse({ status: 502, description: 'Failed to retrieve defender' })
   async getLawyer(@Param('nationalId') nationalId: string): Promise<Defender> {
     try {
-      this.logger.debug(`Retrieving lawyer by national id ${nationalId}`)
+      const res = await fetch(
+        `${this.config.backendUrl}/api/lawyer-registry/${nationalId}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${this.config.secretToken}`,
+          },
+        },
+      )
 
-      const lawyer = await this.lawyersService.getLawyer(nationalId)
-      return {
-        nationalId: lawyer.SSN,
-        name: lawyer.Name,
-        practice: lawyer.Practice,
+      if (res.ok) {
+        const lawyer = await res.json()
+
+        return {
+          nationalId: lawyer.nationalId,
+          name: lawyer.name,
+          practice: lawyer.practice,
+        }
       }
+
+      throw new NotFoundException('Lawyer not found in lawyer registry')
     } catch (error) {
-      if (error instanceof NotFoundException) {
-        throw error
-      }
+      this.logger.error('Failed to retrieve lawyer from lawyer registry', error)
 
-      this.logger.error('Failed to retrieve lawyer', error)
-      throw new BadGatewayException('Failed to retrieve lawyer')
+      throw new BadGatewayException(
+        'Failed to retrieve lawyer from lawyer registry',
+      )
     }
   }
 }
