@@ -25,7 +25,7 @@ import { Events, Roles, States, TemplateApiActions } from '../types'
 import { Contract } from '@island.is/clients/hms-rental-agreement'
 import { Features } from '@island.is/feature-flags'
 import { AuthDelegationType } from '@island.is/shared/types'
-import { ApiScope } from '@island.is/auth/scopes'
+import { ApiScope, HmsScope } from '@island.is/auth/scopes'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -52,7 +52,7 @@ const template: ApplicationTemplate<
       type: AuthDelegationType.Custom,
     },
   ],
-  requiredScopes: [ApiScope.hms],
+  requiredScopes: [HmsScope.properties, ApiScope.hms],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
