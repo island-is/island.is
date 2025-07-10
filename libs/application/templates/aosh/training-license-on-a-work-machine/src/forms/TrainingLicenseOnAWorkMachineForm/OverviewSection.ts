@@ -35,14 +35,26 @@ export const overviewSection = buildSection({
           title: overview.labels.machineTenure,
           backId: 'certificateOfTenureMultiField',
           bottomLine: false,
-          items: getMachineTenureOverviewInformation,
+          items: (answers, externalData, userNationalId) =>
+            getMachineTenureOverviewInformation(
+              answers,
+              externalData,
+              userNationalId,
+              true,
+            ),
         }),
         buildOverviewField({
           id: 'overviewAssignee',
           title: '',
           backId: 'assigneeInformationMultiField',
           bottomLine: false,
-          items: getAssigneeOverviewInformation,
+          items: (answers, externalData, userNationalId) =>
+            getMachineTenureOverviewInformation(
+              answers,
+              externalData,
+              userNationalId,
+              true,
+            ),
           condition: (answers) => !isContractor(answers),
         }),
         buildDescriptionField({
