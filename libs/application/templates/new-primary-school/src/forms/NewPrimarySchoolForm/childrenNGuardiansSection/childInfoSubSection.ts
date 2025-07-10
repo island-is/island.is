@@ -15,6 +15,7 @@ import {
   getApplicationAnswers,
   getApplicationExternalData,
   getGenderMessage,
+  getSelectedChild,
 } from '../../../lib/newPrimarySchoolUtils'
 
 export const childInfoSubSection = buildSubSection({
@@ -33,8 +34,7 @@ export const childInfoSubSection = buildSubSection({
           title: newPrimarySchoolMessages.shared.fullName,
           disabled: true,
           defaultValue: (application: Application) =>
-            getApplicationExternalData(application.externalData)
-              .childInformation.name,
+            getSelectedChild(application)?.fullName,
         }),
         buildTextField({
           id: 'childInfo.nationalId',
@@ -43,8 +43,7 @@ export const childInfoSubSection = buildSubSection({
           format: '######-####',
           disabled: true,
           defaultValue: (application: Application) =>
-            getApplicationExternalData(application.externalData)
-              .childInformation.nationalId,
+            getSelectedChild(application)?.nationalId,
         }),
         buildTextField({
           id: 'childInfo.address.streetAddress',
