@@ -93,6 +93,51 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
     },
   }),
 
+  notEligible: defineMessages({
+    title: {
+      id: 'marp.application:not.eligible.title',
+      defaultMessage:
+        'Því miður átt þú ekki rétt á sjúkra- og endurhæfingargreiðslum',
+      description:
+        'Unfortunately, you are not eligible for medical and rehabilitation payments.',
+    },
+    applicantAgeOutOfRangeDescription: {
+      id: 'marp.application:not.eligible.applicant.age.out.of.range.description#markdown',
+      defaultMessage:
+        'Ástæðan fyrir því er eftirfarandi:\n* Þú ert ekki á aldrinum 18-67 ára.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
+      description:
+        'The reason for this is the following:\n* You are not aged 18-67.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [tr@tr.is](mailto:tr@tr.is)',
+    },
+    baseCertNotFoundDescription: {
+      id: 'marp.application:not.eligible.base.cert.not.found.description#markdown',
+      defaultMessage:
+        'Ástæðan fyrir því er eftirfarandi:\n* Ekkert grunnvottorð fannst.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
+      description:
+        'The reason for this is the following:\n* No certificate for sickness and rehabilitation found.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [tr@tr.is](mailto:tr@tr.is)',
+    },
+    baseCertDateInvalidDescription: {
+      id: 'marp.application:not.eligible.base.cert.date.invalid.description#markdown',
+      defaultMessage:
+        'Ástæðan fyrir því er eftirfarandi:\n* Þú ert ekki með gilt grunnvottorð.\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
+      description:
+        'The reason for this is the following:\n* You do not have a valid certificate for sickness and rehabilitation.\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [tr@tr.is](mailto:tr@tr.is)',
+    },
+    baseCertOlderThanSevenYearsDescription: {
+      id: 'marp.application:not.eligible.base.cert.older.than.seven.years.description#markdown',
+      defaultMessage:
+        'Ástæðan fyrir því er eftirfarandi:\n* Þú ert ekki með gilt grunnvottorð (má vera mest 7 ára gamalt).\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
+      description:
+        'The reason for this is the following:\n* You do not have a valid certificate for sickness and rehabilitation (issued within the last 7 years).\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [tr@tr.is](mailto:tr@tr.is)',
+    },
+    baseCertOlderThanSixMonthsDescription: {
+      id: 'marp.application:not.eligible.base.cert.older.than.six.months.description#markdown',
+      defaultMessage:
+        'Ástæðan fyrir því er eftirfarandi:\n* Þú er ekki með gilt grunnvottorð (má vera mest 6 mánaða gamalt).\n\nEf þú telur þetta ekki eiga við um þig, vinsamlegast hafið samband við [tr@tr.is](mailto:tr@tr.is)',
+      description:
+        'The reason for this is the following:\n* You do not have a valid certificate for sickness and rehabilitation (issued within the last  6 months).\n\nIf you do not think the above applies to you, please contact the Social Insurance Administration at [tr@tr.is](mailto:tr@tr.is)',
+    },
+  }),
+
   generalInformation: defineMessages({
     // Income Plan - Instructions
     incomePlanInstructionsSubSectionTitle: {

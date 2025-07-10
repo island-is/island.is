@@ -18,6 +18,9 @@ export enum Roles {
 
 export enum States {
   PREREQUISITES = 'prerequisites',
+
+  NOT_ELIGIBLE = 'notEligible',
+
   DRAFT = 'draft',
 
   TRYGGINGASTOFNUN_SUBMITTED = 'tryggingastofnunSubmitted', // NYSKRAD = 91
