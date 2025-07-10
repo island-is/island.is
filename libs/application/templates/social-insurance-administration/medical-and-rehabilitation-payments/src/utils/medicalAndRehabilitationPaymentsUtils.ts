@@ -5,11 +5,12 @@ import { getYesNoOptions } from '@island.is/application/templates/social-insuran
 import {
   BankInfo,
   CategorizedIncomeTypes,
+  Eligible,
   IncomePlanConditions,
   IncomePlanRow,
   PaymentInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
-import { Application, Option } from '@island.is/application/types'
+import { Application, ExternalData, Option } from '@island.is/application/types'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../lib/messages'
 import {
   Countries,
@@ -19,6 +20,7 @@ import {
   SelfAssessmentQuestionnaireAnswers,
 } from '../types'
 import {
+  EligibleReasonCodes,
   NOT_APPLICABLE,
   NotApplicable,
   SelfAssessmentCurrentEmploymentStatus,
@@ -324,6 +326,11 @@ export const getApplicationExternalData = (
       'socialInsuranceAdministrationEducationLevels.data',
     ) ?? []
 
+  const isEligible = getValueViaPath<Eligible>(
+    externalData,
+    'socialInsuranceAdministrationIsApplicantEligible.data',
+  )
+
   return {
     applicantName,
     applicantNationalId,
@@ -344,6 +351,7 @@ export const getApplicationExternalData = (
     selfAssessmentQuestionnaire,
     ectsUnits,
     educationLevels,
+    isEligible,
   }
 }
 
@@ -460,4 +468,34 @@ export const getSelfAssessmentLastEmploymentYearOptions = () => {
       label: year.toString(),
     }
   })
+}
+
+export const isEligible = (externalData: ExternalData): boolean => {
+  const { isEligible } = getApplicationExternalData(externalData)
+
+  return !!isEligible && isEligible.isEligible
+}
+
+export const eligibleText = (externalData: ExternalData) => {
+  const { isEligible } = getApplicationExternalData(externalData)
+
+  switch (isEligible?.reasonCode) {
+    case EligibleReasonCodes.APPLICANT_AGE_OUT_OF_RANGE:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .applicantAgeOutOfRangeDescription
+    case EligibleReasonCodes.BASE_CERT_NOT_FOUND:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .baseCertNotFoundDescription
+    case EligibleReasonCodes.BASE_CERT_DATE_INVALID:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .baseCertDateInvalidDescription
+    case EligibleReasonCodes.BASE_CERT_OLDER_THAN_7YEARS:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .baseCertOlderThanSevenYearsDescription
+    case EligibleReasonCodes.BASE_CERT_OLDER_THAN_6MONTHS:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .baseCertOlderThanSixMonthsDescription
+    default:
+      return undefined
+  }
 }
