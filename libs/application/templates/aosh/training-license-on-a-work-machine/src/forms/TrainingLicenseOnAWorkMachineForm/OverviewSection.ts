@@ -40,7 +40,6 @@ export const overviewSection = buildSection({
               answers,
               externalData,
               userNationalId,
-              true,
             ),
         }),
         buildOverviewField({
@@ -53,7 +52,6 @@ export const overviewSection = buildSection({
               answers,
               externalData,
               userNationalId,
-              true,
             ),
           condition: (answers) => !isContractor(answers),
         }),
