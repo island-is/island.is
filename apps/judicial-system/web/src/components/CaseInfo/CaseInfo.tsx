@@ -96,10 +96,9 @@ const Prosecutor: FC<Props> = ({ workingCase }) => {
   )
 }
 
-export const ProsecutorCaseInfo: FC<Props & { hideCourt?: boolean }> = ({
-  workingCase,
-  hideCourt = false,
-}) => {
+export const ProsecutorCaseInfo: FC<
+  Props & { hideCourt?: boolean; hideDefendants?: boolean }
+> = ({ workingCase, hideCourt = false, hideDefendants = false }) => {
   const { policeCaseNumbers, court } = workingCase
   const { formatMessage } = useIntl()
 
@@ -111,7 +110,7 @@ export const ProsecutorCaseInfo: FC<Props & { hideCourt?: boolean }> = ({
       {!hideCourt && court?.name && (
         <Entry label={formatMessage(core.court)} value={court?.name} />
       )}
-      <Defendants workingCase={workingCase} />
+      {!hideDefendants && <Defendants workingCase={workingCase} />}
     </Box>
   )
 }
