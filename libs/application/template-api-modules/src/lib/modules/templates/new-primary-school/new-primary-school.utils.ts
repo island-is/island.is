@@ -25,8 +25,7 @@ export const getGenderCode = (genderCode: string) => {
     case '2':
     case '4':
       return UserInputGenderEnum.Female
-    case '7':
-    case '8':
+
     default:
       return UserInputGenderEnum.Other
   }

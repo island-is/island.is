@@ -29,7 +29,10 @@ export class FriggClientService {
     return await this.friggApiWithAuth(user).getAllSchoolsByMunicipality({})
   }
 
-  async getUserById(user: User, childNationalId: string): Promise<UserModel> {
+  async getUserById(
+    user: User,
+    childNationalId: string,
+  ): Promise<UserModel | { nationalId: string }> {
     try {
       return await this.friggApiWithAuth(user).getUserBySourcedId({
         nationalId: childNationalId,
@@ -38,9 +41,9 @@ export class FriggClientService {
       // If the student is not found in Frigg
       if (
         error?.status === 404 &&
-        error?.body.message === 'Student not found'
+        error?.body?.message === 'Student not found'
       ) {
-        return { nationalId: childNationalId } as UserModel
+        return { nationalId: childNationalId }
       }
       throw error
     }
