@@ -28,6 +28,7 @@ export const ReasonForApplication = ({
   const { formatMessage } = useLocale()
   const {
     reasonForApplication,
+    reasonForApplicationId,
     reasonForApplicationStreetAddress,
     reasonForApplicationPostalCode,
     selectedSchoolType,
@@ -66,7 +67,7 @@ export const ReasonForApplication = ({
                 value={
                   getSelectedOptionLabel(
                     relationFriggOptions,
-                    reasonForApplication,
+                    reasonForApplicationId,
                   ) || ''
                 }
                 error={
