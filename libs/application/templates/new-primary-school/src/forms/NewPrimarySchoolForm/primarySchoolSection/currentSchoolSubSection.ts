@@ -108,10 +108,10 @@ export const currentSchoolSubSection = buildSubSection({
             return (
               data?.friggSchoolsByMunicipality
                 ?.filter(
-                  ({ type, children }) =>
+                  ({ type, managing }) =>
                     type === OrganizationModelTypeEnum.Municipality &&
-                    children &&
-                    children.length > 0,
+                    managing &&
+                    managing.length > 0,
                 )
                 ?.map(({ name, unitId }) => ({
                   value: unitId || '',
@@ -146,8 +146,8 @@ export const currentSchoolSubSection = buildSubSection({
                   ({ type }) => type === OrganizationModelTypeEnum.PrivateOwner,
                 )
                 ?.flatMap(
-                  ({ children }) =>
-                    children
+                  ({ managing }) =>
+                    managing
                       ?.filter(
                         ({ type, unitId }) =>
                           unitId &&
@@ -169,7 +169,7 @@ export const currentSchoolSubSection = buildSubSection({
             const municipalitySchools =
               data?.friggSchoolsByMunicipality
                 ?.find(({ unitId }) => unitId === municipalityCode)
-                ?.children?.filter(
+                ?.managing?.filter(
                   ({ type }) => type === OrganizationModelTypeEnum.School,
                 )
                 ?.map((school) => ({
