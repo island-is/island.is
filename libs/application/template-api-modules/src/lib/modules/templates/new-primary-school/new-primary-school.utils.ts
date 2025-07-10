@@ -14,6 +14,7 @@ import {
   AgentInputTypeEnum,
   ApplicationInput,
   ApplicationInputTypeEnum,
+  CaseWorkerInputTypeEnum,
   UserInputGenderEnum,
 } from '@island.is/clients/mms/frigg'
 
@@ -58,6 +59,12 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     requestsMedicationAdministration,
     hasDiagnoses,
     hasHadSupport,
+    hasWelfareContact,
+    welfareContactName,
+    welfareContactEmail,
+    hasCaseManager,
+    caseManagerName,
+    caseManagerEmail,
     hasIntegratedServices,
     requestingMeeting,
     expectedStartDate,
@@ -174,15 +181,31 @@ export const transformApplicationToNewPrimarySchoolDTO = (
       hasDiagnoses: hasDiagnoses === YES,
       ...((hasHadSupport === YES || hasDiagnoses === YES) && {
         hasIntegratedServices: hasIntegratedServices === YES,
-        // ...(hasIntegratedServices === YES && {
-        //   caseWorkers: [
-        //     {
-        //       name: 'caseWorker',
-        //       email: 'caseWorker@caseWorker.is',
-        //       phone: '',
-        //     },
-        //   ],
-        // }),
+        caseworkers: [
+          ...(hasWelfareContact === YES &&
+          welfareContactName &&
+          welfareContactEmail
+            ? [
+                {
+                  name: welfareContactName,
+                  email: welfareContactEmail,
+                  type: CaseWorkerInputTypeEnum.SupportManager,
+                },
+              ]
+            : []),
+          ...(hasWelfareContact === YES &&
+          hasCaseManager === YES &&
+          caseManagerName &&
+          caseManagerEmail
+            ? [
+                {
+                  name: caseManagerName,
+                  email: caseManagerEmail,
+                  type: CaseWorkerInputTypeEnum.CaseManager,
+                },
+              ]
+            : []),
+        ],
       }),
     },
     language: {
