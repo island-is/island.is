@@ -50,12 +50,14 @@ export const OverviewFormField = ({
   const [loadedItems, setLoadedItems] = useState<KeyValueItem[] | undefined>([])
   const [hasLoadingError, setHasLoadingError] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const { formatMessage, lang: locale } = useLocale()
 
   const userInfo = useUserInfo()
   const items = rawItems?.(
     application.answers,
     application.externalData,
     userInfo?.profile?.nationalId,
+    locale,
   )
   const filteredItems = items?.filter(
     (item) =>
@@ -74,7 +76,6 @@ export const OverviewFormField = ({
     application.externalData,
   )
 
-  const { formatMessage, lang: locale } = useLocale()
   const changeScreens = (screen: string) => {
     if (goToScreen) goToScreen(screen)
   }
