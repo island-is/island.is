@@ -8,7 +8,6 @@ import {
   FormSubmitSuccessModel,
   UserModel,
 } from '../../gen/fetch'
-import { logger } from '@island.is/logging'
 
 @Injectable()
 export class FriggClientService {
@@ -41,12 +40,6 @@ export class FriggClientService {
         error?.status === 404 &&
         error?.body.message === 'Student not found'
       ) {
-        logger.warn(
-          `Student with nationalId ${childNationalId.slice(
-            0,
-            6,
-          )} not found in Frigg`,
-        )
         return { nationalId: childNationalId } as UserModel
       }
       throw error
