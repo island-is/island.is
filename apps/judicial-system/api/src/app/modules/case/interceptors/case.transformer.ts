@@ -220,9 +220,6 @@ export const getIndictmentDefendantsInfo = (theCase: Case) => {
 
 const transformIndictmentCase = (theCase: Case): Case => {
   const { rulingDate, defendants, indictmentRulingDecision } = theCase
-  if (rulingDate) {
-    console.log({ defendants })
-  }
 
   return {
     ...theCase,
