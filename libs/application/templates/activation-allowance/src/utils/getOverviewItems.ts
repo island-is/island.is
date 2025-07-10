@@ -9,7 +9,7 @@ import { isSamePlaceOfResidenceChecked } from './isSamePlaceOfResidenceChecked'
 import { contact } from '../lib/messages/contact'
 import { isContactDifferentFromApplicant } from './isContactSameAsApplicant'
 import { GaldurDomainModelsSettingsJobCodesJobCodeDTO } from '@island.is/clients/vmst-unemployment'
-import { useLocale } from '@island.is/localization'
+import { Locale } from '@island.is/shared/types'
 
 export const getApplicantOverviewItems = (
   answers: FormValue,
@@ -132,9 +132,9 @@ export const getContactOverviewItems = (
 export const useGetJobWishesOverviewItems = (
   answers: FormValue,
   externalData: ExternalData,
+  _userNationalId: string,
+  locale: Locale,
 ): Array<KeyValueItem> => {
-  const { locale } = useLocale()
-
   console.log('LOCALE', locale)
 
   const jobWishes = getValueViaPath<Array<string>>(answers, 'jobWishes.jobs')
