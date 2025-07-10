@@ -513,7 +513,7 @@ const defendants: CaseTableCellGenerator<StringGroupValue> = {
   includes: {
     defendants: {
       model: Defendant,
-      attributes: ['nationalId', 'name'],
+      attributes: ['noNationalId', 'nationalId', 'name'],
       order: [['created', 'ASC']],
       separate: true,
     },
@@ -525,9 +525,13 @@ const defendants: CaseTableCellGenerator<StringGroupValue> = {
 
     const strList = [
       c.defendants[0].name ?? '',
-      c.defendants.length > 1
-        ? `+ ${c.defendants.length - 1}`
-        : formatNationalId(c.defendants[0].nationalId),
+      c.defendants.length === 1
+        ? c.defendants[0].noNationalId
+          ? c.defendants[0].nationalId
+            ? `fd. ${c.defendants[0].nationalId}`
+            : ''
+          : `kt. ${formatNationalId(c.defendants[0].nationalId)}`
+        : `+ ${c.defendants.length - 1}`,
     ]
 
     return generateCell({ strList }, strList.join(''))
