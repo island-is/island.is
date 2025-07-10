@@ -53,7 +53,7 @@ export const application = defineMessages({
   },
   approve: {
     id: 'ra.application:application.approve',
-    defaultMessage: 'Samþyggja',
+    defaultMessage: 'Samþykkja',
     description: `Button text for approving`,
   },
 })
