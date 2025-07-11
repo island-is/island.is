@@ -227,6 +227,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'school.applyForNeighbourhoodSchool',
   ) as YesOrNo
 
+  const currentSchoolId = getValueViaPath<string>(
+    answers,
+    'currentSchool.school',
+  )
+
   return {
     applicationType,
     childNationalId,
@@ -270,6 +275,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     currentNurseryMunicipality,
     currentNursery,
     applyForNeighbourhoodSchool,
+    currentSchoolId,
   }
 }
 
@@ -584,4 +590,9 @@ export const getMunicipalityCodeBySchoolUnitId = (schoolUnitId: string) => {
   )?.municipalityCode
 
   return municipalityCode
+}
+
+export const getInternationalSchoolsIds = () => {
+  // Since the data from Frigg is not structured for international schools, we need to manually identify them
+  return ['G-2250-A', 'G-2250-B', 'G-1157-A', 'G-1157-B'] //Alþjóðaskólinn G-2250-x & Landkotsskóli G-1157-x
 }

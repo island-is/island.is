@@ -195,6 +195,13 @@ const RentalAgreementTemplate: ApplicationTemplate<
               write: 'all',
               read: 'all',
               delete: true,
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: application.approve,
+                  type: 'primary',
+                },
+              ],
             },
           ],
         },

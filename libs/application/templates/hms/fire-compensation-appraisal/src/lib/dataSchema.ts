@@ -19,7 +19,7 @@ const applicantSchema = z.object({
   postalCode: z.string().refine((v) => !!v),
 })
 
-const realEstateSchema = z.string().length(7)
+const realEstateSchema = z.string()
 
 const usageUnitsSchema = z.array(z.string()).min(1)
 
