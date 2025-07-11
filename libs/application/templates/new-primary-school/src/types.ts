@@ -50,6 +50,9 @@ export type Person = {
     postalCode: string
     city: string
   }
+  requiresInterpreter: string[]
+  preferredLanguage?: string
+  citizenshipCode?: string
 }
 
 export type SelectOption = {
@@ -137,4 +140,11 @@ export type FriggChildInformation = {
   preferredLanguage: string | null
   phone: string // Is set as object in MMS data
   mobile: string // Is set as object in MMS data
+}
+
+export type CurrentSchool = {
+  name?: string
+  grade?: string
+  school?: string
+  municipality?: string
 }
