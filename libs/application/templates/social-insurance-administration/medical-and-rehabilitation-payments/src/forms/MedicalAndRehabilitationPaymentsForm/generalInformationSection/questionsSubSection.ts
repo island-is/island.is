@@ -14,6 +14,7 @@ import { SiaEducationalInstitutionsQuery } from '@island.is/application/template
 import { Application } from '@island.is/application/types'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
 import {
+  isFirstApplication,
   shouldShowCalculatedRemunerationDate,
   shouldShowIsStudyingFields,
 } from '../../../utils/conditionUtils'
@@ -42,6 +43,7 @@ export const questionsSubSection = buildSubSection({
           options: getYesNoOptions(),
           width: 'half',
           required: true,
+          condition: (_, externalData) => isFirstApplication(externalData),
         }),
         buildDescriptionField({
           id: 'questions.calculatedRemunerationDate.description',

@@ -7,7 +7,10 @@ import {
   YES,
 } from '@island.is/application/core'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
-import { shouldShowEmployeeSickPayEndDate } from '../../../utils/conditionUtils'
+import {
+  isFirstApplication,
+  shouldShowEmployeeSickPayEndDate,
+} from '../../../utils/conditionUtils'
 import {
   getApplicationAnswers,
   getYesNoNotApplicableOptions,
@@ -20,6 +23,7 @@ export const employeeSickPaySubSection = buildSubSection({
   title:
     medicalAndRehabilitationPaymentsFormMessage.generalInformation
       .employeeSickPaySubSectionTitle,
+  condition: (_, externalData) => isFirstApplication(externalData),
   children: [
     buildMultiField({
       id: 'employeeSickPay',
