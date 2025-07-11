@@ -2,14 +2,20 @@ import { MessageDescriptor } from 'react-intl'
 
 import { m } from '../messages'
 
-export const isSingleParagraph = (htmlString: string) => {
-  const parser = new DOMParser()
-  const doc = parser.parseFromString(htmlString, 'text/html')
-  const bodyChildren = Array.from(doc.body.children)
+export const isSingleParagraph = (htmlString: string): boolean => {
+  if (!htmlString) return false
 
-  return (
-    bodyChildren.length === 1 && bodyChildren[0].tagName.toLowerCase() === 'p'
-  )
+  const trimmed = htmlString.trim()
+
+  const match = trimmed.match(/^<p[^>]*>[\s\S]*<\/p>$/i)
+
+  if (!match) return false
+
+  const innerContent = trimmed.replace(/^<p[^>]*>|<\/p>$/gi, '').trim()
+
+  const blockTagPattern =
+    /<(div|section|article|table|ul|ol|h\d|blockquote|p)[\s>]/i
+  return !blockTagPattern.test(innerContent)
 }
 
 export const isAdvertPdfOnly = (
