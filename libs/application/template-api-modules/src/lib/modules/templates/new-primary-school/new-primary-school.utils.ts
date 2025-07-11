@@ -40,6 +40,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     guardians,
     relatives,
     reasonForApplication,
+    reasonForApplicationId,
     reasonForApplicationStreetAddress,
     reasonForApplicationPostalCode,
     siblings,
@@ -147,7 +148,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
         : {
             expectedStartDate: new Date(), // Temporary until we start working on the "Enrollment in primary school" application
           }),
-      reason: reasonForApplication, // LAGA: Add a condition for this when Júní has added school type
+      reason: reasonForApplicationId, // LAGA: Add a condition for this when Júní has added school type
       ...(reasonForApplication ===
         ReasonForApplicationOptions.MOVING_MUNICIPALITY && {
         tempDomicile: {

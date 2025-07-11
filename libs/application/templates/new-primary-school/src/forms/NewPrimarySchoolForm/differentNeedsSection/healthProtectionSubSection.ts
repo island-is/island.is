@@ -62,7 +62,6 @@ export const healthProtectionSubSection = buildSubSection({
               newPrimarySchoolMessages.differentNeeds
                 .typeOfFoodAllergiesOrIntolerancesPlaceholder,
             isMulti: true,
-            useId: true,
           },
         ),
         buildCheckboxField({
@@ -92,7 +91,6 @@ export const healthProtectionSubSection = buildSubSection({
               newPrimarySchoolMessages.differentNeeds
                 .typeOfOtherAllergiesPlaceholder,
             isMulti: true,
-            useId: true,
           },
         ),
         buildAlertMessageField({

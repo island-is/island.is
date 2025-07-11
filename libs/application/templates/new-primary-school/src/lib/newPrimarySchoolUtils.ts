@@ -40,10 +40,13 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const relatives = getValueViaPath(answers, 'relatives') as RelativesRow[]
 
-  const reasonForApplication = getValueViaPath(
+  const reasonForApplicationIdAndKey = getValueViaPath(
     answers,
     'reasonForApplication.reason',
   ) as ReasonForApplicationOptions
+
+  const [reasonForApplicationId, reasonForApplication] =
+    reasonForApplicationIdAndKey?.split('::') ?? []
 
   const reasonForApplicationStreetAddress = getValueViaPath(
     answers,
@@ -236,6 +239,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     guardians,
     relatives,
     reasonForApplication,
+    reasonForApplicationId,
     reasonForApplicationStreetAddress,
     reasonForApplicationPostalCode,
     siblings,
