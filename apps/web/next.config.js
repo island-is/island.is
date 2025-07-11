@@ -1,4 +1,6 @@
 const path = require('path')
+const { workspaceRoot } = require('@nx/devkit')
+const transformLib = require('./stuff')
 const { IgnorePlugin } = require('webpack')
 const { composePlugins, withNx } = require('@nx/next')
 const { createVanillaExtractPlugin } = require('@vanilla-extract/next-plugin')
@@ -55,7 +57,7 @@ const nextConfig = {
         permanent: true,
       },
       {
-        source: '/stofnanir',
+        source: '/stofnanirs',
         destination: '/s',
         permanent: true,
       },
@@ -185,6 +187,22 @@ const nextConfig = {
     // Requests made by the server are internal request made directly to the api hostname
     graphqlUrl: API_URL,
     graphqlEndpoint: graphqlPath,
+  },
+  modularizeImports: {
+    ...transformLib('@island.is/island-ui/core'),
+    ...transformLib('@island.is/island-ui/contentful'),
+    ...transformLib(
+      '@island.is/web/components',
+      `${workspaceRoot}/apps/web/components/real.ts`,
+    ),
+    lodash: {
+      transform: 'lodash/{{member}}',
+      preventFullImport: true,
+    },
+    'date-fns': {
+      transform: 'date-fns/{{member}}',
+      preventFullImport: true,
+    },
   },
 
   publicRuntimeConfig: {
