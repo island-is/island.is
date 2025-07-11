@@ -104,6 +104,9 @@ describe('UserMenu', () => {
     )
 
   beforeEach(() => {
+    // eslint-disable-next-line @typescript-eslint/no-empty-function
+    window.HTMLElement.prototype.scrollIntoView = function () {}
+
     switchUser = jest.fn()
     signOut = jest.fn()
   })

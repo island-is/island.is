@@ -24,6 +24,7 @@ import {
 import { Option as OptionType, SelectProps } from './Select.types'
 
 import * as styles from './Select.css'
+import { ScrollToSelectedMenuList } from './Components/ScrollToSelectedMenuList'
 
 export const Select = <
   Value,
@@ -185,6 +186,7 @@ export const Select = <
           MultiValueLabel,
           ClearIndicator,
           NoOptionsMessage,
+          MenuList: ScrollToSelectedMenuList,
         }}
         isClearable={isClearable}
         backspaceRemovesValue={isClearable}
