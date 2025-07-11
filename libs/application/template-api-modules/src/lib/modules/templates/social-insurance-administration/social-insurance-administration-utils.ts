@@ -435,7 +435,9 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
       taxLevel: +taxLevel,
     },
     occupation: {
-      isSelfEmployed: isSelfEmployed === YES,
+      ...(isFirstApplication(application.externalData) && {
+        isSelfEmployed: isSelfEmployed === YES,
+      }),
       isStudying: isStudying === YES,
       isPartTimeEmployed: isPartTimeEmployed === YES,
       ...(isFirstApplication(application.externalData) && {
@@ -476,9 +478,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
       rehabilitationPlanReference: 'test', //TODO:
     }),
     selfAssessment: {
-      ...(isFirstApplication(application.externalData) && {
-        hadAssistance: hadAssistance === YES,
-      }),
+      hadAssistance: hadAssistance === YES,
       educationalLevel: educationalLevel || '',
       currentEmploymentStatus,
       ...(currentEmploymentStatus?.includes(
