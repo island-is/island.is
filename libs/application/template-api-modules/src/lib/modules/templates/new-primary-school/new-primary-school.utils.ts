@@ -26,8 +26,7 @@ export const getGenderCode = (genderCode: string) => {
     case '2':
     case '4':
       return UserInputGenderEnum.Female
-    case '7':
-    case '8':
+
     default:
       return UserInputGenderEnum.Other
   }
@@ -72,6 +71,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     expectedEndDate,
     selectedSchool,
     selectedSchoolType,
+    currentSchoolId,
   } = getApplicationAnswers(application.answers)
 
   const { primaryOrgId, childCitizenshipCode } = getApplicationExternalData(
@@ -138,7 +138,9 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     },
     agents,
     registration: {
-      defaultOrganizationId: primaryOrgId,
+      ...((primaryOrgId || currentSchoolId) && {
+        defaultOrganizationId: primaryOrgId || currentSchoolId,
+      }),
       selectedOrganizationId: selectedSchool,
       requestingMeeting: requestingMeeting === YES,
       ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
