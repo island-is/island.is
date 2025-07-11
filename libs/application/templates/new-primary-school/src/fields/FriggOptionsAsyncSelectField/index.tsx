@@ -36,7 +36,6 @@ const FriggOptionsAsyncSelectField: FC<
     isMulti = false,
     optionsType,
     placeholder,
-
     useIdAndKey = false,
   } = props
 
