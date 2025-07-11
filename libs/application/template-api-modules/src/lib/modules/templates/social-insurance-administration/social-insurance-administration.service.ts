@@ -6,6 +6,7 @@ import {
   getApplicationAnswers as getDBApplicationAnswers,
 } from '@island.is/application/templates/social-insurance-administration/death-benefits'
 import { getApplicationAnswers as getHSApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/household-supplement'
+import { getApplicationExternalData as getMARPApplicationExternalData } from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
 import {
   ApplicationType,
   Employment,
@@ -635,17 +636,24 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   }
 
   async getEducationLevels({
-    // application,
+    application,
     auth,
   }: TemplateApiModuleActionProps) {
-    //TODO: Add applicationType when we get it from TR
-    // const { applicationType } = getApplicationExternalData(
-    //   application.externalData,
-    // )
+    const { marpApplicationType } = getMARPApplicationExternalData(
+      application.externalData,
+    )
 
     return await this.siaClientService.getEducationLevels(
       auth,
-      'SJUKRAGREIDSLUR_FYRSTA',
+      marpApplicationType || '',
+    )
+  }
+
+  async getMedicalAndRehabilitationApplicationType({
+    auth,
+  }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getMedicalAndRehabilitationApplicationType(
+      auth,
     )
   }
 }

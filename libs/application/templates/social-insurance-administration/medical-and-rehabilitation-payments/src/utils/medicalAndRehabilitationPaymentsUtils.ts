@@ -326,6 +326,11 @@ export const getApplicationExternalData = (
       'socialInsuranceAdministrationEducationLevels.data',
     ) ?? []
 
+  const marpApplicationType = getValueViaPath<string>(
+    externalData,
+    'socialInsuranceAdministrationMARPApplicationType.data.applicationType',
+  )
+
   const isEligible = getValueViaPath<Eligible>(
     externalData,
     'socialInsuranceAdministrationIsApplicantEligible.data',
@@ -351,6 +356,7 @@ export const getApplicationExternalData = (
     selfAssessmentQuestionnaire,
     ectsUnits,
     educationLevels,
+    marpApplicationType,
     isEligible,
   }
 }
