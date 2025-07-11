@@ -1,12 +1,11 @@
 import {
   buildAlertMessageField,
-  buildCheckboxField,
   buildDescriptionField,
+  buildFieldsRepeaterField,
   buildHiddenInput,
   buildMultiField,
   buildSelectField,
   buildSubSection,
-  buildTextField,
 } from '@island.is/application/core'
 import { freight } from '../../../lib/messages'
 import { Application, SubSection } from '@island.is/application/types'
@@ -22,6 +21,7 @@ import {
   formatNumberWithMeters,
   formatNumberWithTons,
   checkHasSelectedConvoyInFreightPairing,
+  getSelectedConvoyIdsInFreightPairing,
 } from '../../../utils'
 import { ExemptionFor } from '../../../shared'
 import { FreightCommonHiddenInputs } from './freightCommonHiddenInputs'
@@ -93,155 +93,124 @@ const FreightPairingSubSection = (freightIndex: number) =>
               }))
             },
           }),
-          ...Array(MAX_CNT_CONVOY)
-            .fill(null)
-            .flatMap((_, convoyIndex) => {
-              return [
-                buildDescriptionField({
-                  id: `freightLongTermPairingDescription.${freightIndex}.${convoyIndex}.subtitle`,
-                  condition: (answers) =>
-                    checkHasSelectedConvoyInFreightPairing(
-                      answers,
-                      freightIndex,
-                      convoyIndex,
-                    ),
-                  title: (application) => {
-                    const convoyItem = getConvoyItem(
-                      application.answers,
-                      convoyIndex,
-                    )
-                    if (!convoyItem) return ''
-                    return {
-                      ...freight.labels.pairingFreightWithConvoySubtitle,
-                      values: {
-                        convoyNumber: convoyIndex + 1,
-                        vehicleAndTrailerPermno: getConvoyShortName(convoyItem),
-                      },
-                    }
+
+          buildFieldsRepeaterField({
+            id: `freightPairing.${freightIndex}.items`,
+            displayTitleAsAccordion: true,
+            formTitle: (convoyIndex, application) => {
+              const convoyItem = getConvoyItem(application.answers, convoyIndex)
+              if (!convoyItem) return ''
+              return {
+                ...freight.labels.pairingFreightWithConvoySubtitle,
+                values: {
+                  convoyNumber: convoyIndex + 1,
+                  vehicleAndTrailerPermno: getConvoyShortName(convoyItem),
+                },
+              }
+            },
+            titleVariant: 'h5',
+            formTitleNumbering: 'none',
+            hideAddButton: true,
+            hideRemoveButton: true,
+            minRows: MAX_CNT_CONVOY, // To set the initial numberOfItems to loop through
+            condition: (answers) =>
+              getSelectedConvoyIdsInFreightPairing(answers, freightIndex)
+                .length > 0,
+            itemCondition: (convoyIndex, application) =>
+              checkHasSelectedConvoyInFreightPairing(
+                application.answers,
+                freightIndex,
+                convoyIndex,
+              ),
+            fields: {
+              convoyId: {
+                component: 'hiddenInput',
+                defaultValue: (
+                  application: Application,
+                  _: unknown,
+                  index: number,
+                ) => getConvoyItem(application.answers, index)?.convoyId,
+                displayInTable: false,
+              },
+              height: {
+                component: 'input',
+                type: 'number',
+                label: freight.labels.heightWithConvoy,
+                width: 'half',
+                suffix: freight.labels.metersSuffix,
+                thousandSeparator: true,
+                required: true,
+              },
+              width: {
+                component: 'input',
+                type: 'number',
+                label: freight.labels.widthWithConvoy,
+                width: 'half',
+                suffix: freight.labels.metersSuffix,
+                thousandSeparator: true,
+                required: true,
+              },
+              totalLength: {
+                component: 'input',
+                type: 'number',
+                label: freight.labels.totalLengthWithConvoy,
+                width: 'full',
+                suffix: freight.labels.metersSuffix,
+                thousandSeparator: true,
+                required: true,
+              },
+              exemptionForTitle: {
+                component: 'description',
+                title: freight.labels.exemptionFor,
+                titleVariant: 'h5',
+              },
+              exemptionFor: {
+                component: 'checkbox',
+                label: freight.labels.exemptionFor,
+                large: true,
+                backgroundColor: 'blue',
+                width: 'half',
+                required: true,
+                options: [
+                  {
+                    value: ExemptionFor.WIDTH,
+                    label: freight.exemptionFor.widthOptionTitle,
                   },
-                  titleVariant: 'h3',
-                }),
-                buildHiddenInput({
-                  id: `freightPairing.${freightIndex}.items.${convoyIndex}.convoyId`,
-                  condition: (answers) =>
-                    checkHasSelectedConvoyInFreightPairing(
-                      answers,
-                      freightIndex,
-                      convoyIndex,
-                    ),
-                  defaultValue: (application: Application) =>
-                    getConvoyItem(application.answers, convoyIndex)?.convoyId,
-                }),
-                buildTextField({
-                  id: `freightPairing.${freightIndex}.items.${convoyIndex}.height`,
-                  condition: (answers) =>
-                    checkHasSelectedConvoyInFreightPairing(
-                      answers,
-                      freightIndex,
-                      convoyIndex,
-                    ),
-                  title: freight.labels.heightWithConvoy,
-                  backgroundColor: 'blue',
-                  width: 'half',
-                  required: true,
-                  variant: 'number',
-                  thousandSeparator: true,
-                  suffix: freight.labels.metersSuffix,
-                }),
-                buildTextField({
-                  id: `freightPairing.${freightIndex}.items.${convoyIndex}.width`,
-                  condition: (answers) =>
-                    checkHasSelectedConvoyInFreightPairing(
-                      answers,
-                      freightIndex,
-                      convoyIndex,
-                    ),
-                  title: freight.labels.widthWithConvoy,
-                  backgroundColor: 'blue',
-                  width: 'half',
-                  required: true,
-                  variant: 'number',
-                  thousandSeparator: true,
-                  suffix: freight.labels.metersSuffix,
-                }),
-                buildTextField({
-                  id: `freightPairing.${freightIndex}.items.${convoyIndex}.totalLength`,
-                  condition: (answers) =>
-                    checkHasSelectedConvoyInFreightPairing(
-                      answers,
-                      freightIndex,
-                      convoyIndex,
-                    ),
-                  title: freight.labels.totalLengthWithConvoy,
-                  backgroundColor: 'blue',
-                  width: 'full',
-                  required: true,
-                  variant: 'number',
-                  thousandSeparator: true,
-                  suffix: freight.labels.metersSuffix,
-                }),
-                buildAlertMessageField({
-                  id: `freightPairing.alertValidation.${freightIndex}`,
-                  title: freight.create.errorAlertMessageTitle,
-                  message: (application) =>
-                    getFreightPairingErrorMessage(
-                      application.externalData,
-                      application.answers,
-                      freightIndex,
-                    ) || '',
-                  condition: (answers, externalData) =>
-                    !!getFreightPairingErrorMessage(
-                      externalData,
-                      answers,
-                      freightIndex,
-                    ),
-                  doesNotRequireAnswer: true,
-                  alertType: 'error',
-                  shouldBlockInSetBeforeSubmitCallback: true,
-                }),
-                buildDescriptionField({
-                  id: `freightLongTermPairingDescription.${freightIndex}.${convoyIndex}.exemptionFor`,
-                  condition: (answers) =>
-                    checkHasSelectedConvoyInFreightPairing(
-                      answers,
-                      freightIndex,
-                      convoyIndex,
-                    ),
-                  title: freight.labels.exemptionFor,
-                  titleVariant: 'h5',
-                }),
-                buildCheckboxField({
-                  id: `freightPairing.${freightIndex}.items.${convoyIndex}.exemptionFor`,
-                  condition: (answers) =>
-                    checkHasSelectedConvoyInFreightPairing(
-                      answers,
-                      freightIndex,
-                      convoyIndex,
-                    ),
-                  large: true,
-                  backgroundColor: 'blue',
-                  width: 'half',
-                  options: [
-                    {
-                      value: ExemptionFor.WIDTH,
-                      label: freight.exemptionFor.widthOptionTitle,
-                    },
-                    {
-                      value: ExemptionFor.HEIGHT,
-                      label: freight.exemptionFor.heightOptionTitle,
-                    },
-                    {
-                      value: ExemptionFor.LENGTH,
-                      label: freight.exemptionFor.lengthOptionTitle,
-                    },
-                    {
-                      value: ExemptionFor.WEIGHT,
-                      label: freight.exemptionFor.weightOptionTitle,
-                    },
-                  ],
-                }),
-              ]
-            }),
+                  {
+                    value: ExemptionFor.HEIGHT,
+                    label: freight.exemptionFor.heightOptionTitle,
+                  },
+                  {
+                    value: ExemptionFor.LENGTH,
+                    label: freight.exemptionFor.lengthOptionTitle,
+                  },
+                  {
+                    value: ExemptionFor.WEIGHT,
+                    label: freight.exemptionFor.weightOptionTitle,
+                  },
+                ],
+              },
+            },
+          }),
+          buildAlertMessageField({
+            id: `freightPairing.alertValidation.${freightIndex}`,
+            title: freight.create.errorAlertMessageTitle,
+            message: (application) =>
+              getFreightPairingErrorMessage(
+                application.externalData,
+                application.answers,
+                freightIndex,
+              ) || '',
+            condition: (answers, externalData) =>
+              !!getFreightPairingErrorMessage(
+                externalData,
+                answers,
+                freightIndex,
+              ),
+            doesNotRequireAnswer: true,
+            alertType: 'error',
+            shouldBlockInSetBeforeSubmitCallback: true,
+          }),
         ],
       }),
     ],
