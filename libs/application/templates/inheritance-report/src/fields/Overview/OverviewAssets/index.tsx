@@ -156,6 +156,18 @@ export const OverviewAssets: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       totalTitle: isPrePaid ? m.totalValuePrePaid : m.totalValue,
     })
 
+  // const gunsDataRow = getGunsDataRow(answers)
+  // const gunsDataTotal = formatCurrency(
+  //   String(getValueViaPath(answers, 'assets.guns.total')) ?? '',
+  // )
+
+  // sections.push({
+  //   title: m.guns,
+  //   data: gunsDataRow,
+  //   total: gunsDataTotal,
+  //   totalTitle: m.marketValueTotal,
+  // })
+
   const totalAssets = calculateTotalAssets(answers)
 
   return (

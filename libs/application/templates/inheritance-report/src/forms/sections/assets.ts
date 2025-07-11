@@ -612,7 +612,7 @@ export const assets = buildSection({
       ],
     }),
     buildSubSection({
-      id: 'otherAssets',
+      id: 'assets.otherAssets',
       title: m.otherAssetsTitle,
       condition: (answers) => {
         return answers.applicationFor === PREPAID_INHERITANCE
@@ -646,13 +646,13 @@ export const assets = buildSection({
               {
                 title: '',
                 id: 'assets.otherAssets.data',
-                component: 'OtherAssetsRepeater',
+                component: 'ReportFieldsRepeater',
               },
               {
                 fields: [
                   {
                     title: m.otherAssetsText,
-                    id: 'info',
+                    id: 'description',
                     required: true,
                   },
                   {
@@ -660,12 +660,16 @@ export const assets = buildSection({
                       [ESTATE_INHERITANCE]: m.otherAssetsValue,
                       [PREPAID_INHERITANCE]: m.marketValue,
                     },
-                    id: 'value',
-                    required: true,
+                    id: 'propertyValuation',
                     currency: true,
+                    required: true,
                   },
                 ],
+                assetKey: 'otherAssets',
+                calcWithShareValue: false,
                 repeaterButtonText: m.otherAssetRepeaterButton,
+                fromExternalData: 'otherAssets',
+                sumField: 'propertyValuation',
               },
             ),
           ],
