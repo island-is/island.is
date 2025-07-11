@@ -64,6 +64,12 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         defendantId
         policeSubpoenaId
       }
+      verdict {
+        id
+        serviceRequirement
+        serviceDate
+        serviceInformationForDefendant
+      }
     }
     defenderName
     defenderNationalId

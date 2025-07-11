@@ -155,6 +155,7 @@ export class Defendant extends Model {
   @ApiProperty({ enum: DefendantPlea })
   defendantPlea?: DefendantPlea
 
+  // Deprecated: moved to verdict
   @Column({
     type: DataType.ENUM,
     allowNull: true,
@@ -163,10 +164,12 @@ export class Defendant extends Model {
   @ApiProperty({ enum: ServiceRequirement })
   serviceRequirement?: ServiceRequirement
 
+  // Deprecated: moved to verdict - named serviceDate
   @Column({ type: DataType.DATE, allowNull: true })
   @ApiPropertyOptional({ type: Date })
   verdictViewDate?: Date
 
+  // Deprecated: moved to verdict
   @Column({
     type: DataType.ENUM,
     allowNull: true,
@@ -175,6 +178,7 @@ export class Defendant extends Model {
   @ApiPropertyOptional({ enum: VerdictAppealDecision })
   verdictAppealDecision?: VerdictAppealDecision
 
+  // Deprecated: moved to verdict
   @Column({ type: DataType.DATE, allowNull: true })
   @ApiPropertyOptional({ type: Date })
   verdictAppealDate?: Date
@@ -235,6 +239,7 @@ export class Defendant extends Model {
   @ApiPropertyOptional({ type: () => DefendantEventLog, isArray: true })
   eventLogs?: DefendantEventLog[]
 
+  // Note: specific for subpoena service, if it was delivered via specific process like the legal paper
   @Column({ type: DataType.BOOLEAN, allowNull: true })
   @ApiPropertyOptional({ type: Boolean })
   isAlternativeService?: boolean
@@ -243,6 +248,7 @@ export class Defendant extends Model {
   @ApiPropertyOptional({ type: String })
   alternativeServiceDescription?: string
 
+  // Deprecated: moved to verdict
   @Column({
     type: DataType.ARRAY(DataType.ENUM),
     allowNull: true,

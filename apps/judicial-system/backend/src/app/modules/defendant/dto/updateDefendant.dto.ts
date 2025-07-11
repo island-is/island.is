@@ -96,22 +96,26 @@ export class UpdateDefendantDto {
   @ApiPropertyOptional({ enum: DefendantPlea })
   readonly defendantPlea?: DefendantPlea
 
+  // Deprecated: moved to verdict
   @IsOptional()
   @IsEnum(ServiceRequirement)
   @ApiPropertyOptional({ enum: ServiceRequirement })
   readonly serviceRequirement?: ServiceRequirement
 
+  // Deprecated: moved to verdict
   @IsOptional()
   @Type(() => Date)
   @IsDate()
   @ApiPropertyOptional({ type: Date })
   readonly verdictViewDate?: Date | null
 
+  // Deprecated: moved to verdict
   @IsOptional()
   @IsEnum(VerdictAppealDecision)
   @ApiPropertyOptional({ enum: VerdictAppealDecision })
   readonly verdictAppealDecision?: VerdictAppealDecision
 
+  // Deprecated: moved to verdict
   @IsOptional()
   @Type(() => Date)
   @IsDate()
@@ -172,6 +176,7 @@ export class UpdateDefendantDto {
   @ApiPropertyOptional({ type: String })
   readonly alternativeServiceDescription?: string
 
+  // Deprecated: moved to verdict
   @IsOptional()
   @IsArray()
   @IsEnum(InformationForDefendant, { each: true })

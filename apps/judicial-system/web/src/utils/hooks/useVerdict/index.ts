@@ -29,9 +29,10 @@ const useVerdict = () => {
 
         const newDefendants = [...prevWorkingCase.defendants]
 
+        const currentVerdict = newDefendants[indexOfDefendantToUpdate].verdict
         newDefendants[indexOfDefendantToUpdate] = {
           ...newDefendants[indexOfDefendantToUpdate],
-          verdict: update,
+          verdict: { ...currentVerdict, ...update },
         } as Defendant
 
         return { ...prevWorkingCase, defendants: newDefendants }

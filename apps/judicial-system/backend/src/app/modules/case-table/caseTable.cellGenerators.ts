@@ -45,6 +45,7 @@ import { EventLog } from '../event-log/models/eventLog.model'
 import { Institution } from '../institution'
 import { Subpoena } from '../subpoena'
 import { User } from '../user'
+import { Verdict } from '../verdict/models/verdict.model'
 import {
   CaseTableCellValue,
   StringGroupValue,
@@ -956,9 +957,15 @@ const subpoenaServiceState: CaseTableCellGenerator<TagValue> = {
   includes: {
     defendants: {
       model: Defendant,
-      attributes: ['serviceRequirement', 'verdictViewDate'],
       order: [['created', 'ASC']],
       separate: true,
+      includes: {
+        verdict: {
+          model: Verdict,
+          attributes: ['serviceRequirement', 'serviceDate'],
+          order: [['created', 'ASC']],
+        },
+      },
     },
   },
   generate: (c: Case): CaseTableCell<TagValue> => {
@@ -968,9 +975,9 @@ const subpoenaServiceState: CaseTableCellGenerator<TagValue> = {
 
     const verdictInfo = c.defendants?.map<[boolean, Date | undefined]>((d) => [
       true,
-      d.serviceRequirement === ServiceRequirement.NOT_REQUIRED
+      d.verdict?.serviceRequirement === ServiceRequirement.NOT_REQUIRED
         ? c.rulingDate
-        : d.verdictViewDate,
+        : d.verdict?.serviceDate,
     ])
     const [
       indictmentVerdictViewedByAll,

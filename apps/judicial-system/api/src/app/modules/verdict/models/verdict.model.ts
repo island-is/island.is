@@ -47,6 +47,6 @@ export class Verdict {
   @Field(() => Date, { nullable: true })
   appealDate?: Date
 
-  @Field(() => InformationForDefendant, { nullable: true })
-  serviceInformationForDefendant?: InformationForDefendant
+  @Field(() => [InformationForDefendant], { nullable: true })
+  serviceInformationForDefendant?: InformationForDefendant[]
 }
