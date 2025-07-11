@@ -1,6 +1,6 @@
 {
   "title": "Custom Node Application Build Target",
-  "description": "Wraps @nx/node:webpack locally and @anatine/esbuildnx:build for production builds.",
+  "description": "Wraps @nx/webpack:webpack locally and @nx/esbuild:esbuild for production builds.",
   "cli": "nx",
   "type": "object",
   "properties": {
@@ -162,6 +162,18 @@
       "type": "string",
       "description": "Name of the main output file. (defaults to `main.js`)",
       "default": "main.js"
+    },
+    "showCircularDependencies": {
+      "type": "boolean",
+      "description": "Show circular dependencies in the build output.",
+      "default": false
+    },
+    "external": {
+      "type": "array",
+      "description": "Mark one or more module as external. Can use * wildcards, such as '*.png'.",
+      "items": {
+        "type": "string"
+      }
     }
   },
   "required": ["tsConfig", "main"],

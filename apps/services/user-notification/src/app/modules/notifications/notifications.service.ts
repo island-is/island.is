@@ -64,10 +64,10 @@ export class NotificationsService {
       nationalId: senderId,
       locale: mapToContentfulLocale(locale),
     }
-    const res = await this.cmsService.fetchData(
+    const res = (await this.cmsService.fetchData(
       GetOrganizationByNationalId,
       queryVariables,
-    )
+    )) as any
     const items = res.organizationCollection.items
     if (items.length > 0) {
       const [item] = items
@@ -122,7 +122,10 @@ export class NotificationsService {
   async getTemplates(locale?: Locale): Promise<HnippTemplate[]> {
     locale = mapToLocale(locale as Locale)
     const queryVariables = { locale: mapToContentfulLocale(locale) }
-    const res = await this.cmsService.fetchData(GetTemplates, queryVariables)
+    const res = (await this.cmsService.fetchData(
+      GetTemplates,
+      queryVariables,
+    )) as any
 
     return res.hnippTemplateCollection.items.map((template: HnippTemplate) => ({
       ...template,
@@ -139,10 +142,10 @@ export class NotificationsService {
       templateId,
       locale: mapToContentfulLocale(locale),
     }
-    const res = await this.cmsService.fetchData(
+    const res = (await this.cmsService.fetchData(
       GetTemplateByTemplateId,
       queryVariables,
-    )
+    )) as any
     const items = res.hnippTemplateCollection.items
     if (items.length > 0) {
       const template = items[0]

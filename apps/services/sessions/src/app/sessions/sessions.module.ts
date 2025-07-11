@@ -32,7 +32,7 @@ if (process.env.INIT_SCHEMA === 'true' || process.env.TESTS === 'true') {
           nodes: config.redis.nodes,
           ssl: config.redis.ssl,
           noPrefix: true,
-        }),
+        }) as any,
     }),
     inject: [SessionsConfig.KEY],
   })

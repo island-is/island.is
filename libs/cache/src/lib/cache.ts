@@ -3,7 +3,13 @@ import KeyvRedis from '@keyv/redis'
 import { caching } from 'cache-manager'
 import type { Config } from 'cache-manager'
 import { redisInsStore } from 'cache-manager-ioredis-yet'
-import { Cluster, ClusterNode, RedisOptions, ClusterOptions } from 'ioredis'
+import {
+  Cluster,
+  ClusterNode,
+  RedisOptions,
+  ClusterOptions,
+  Redis,
+} from 'ioredis'
 import { DEFAULT_CLUSTER_OPTIONS } from 'ioredis/built/cluster/ClusterOptions'
 
 import { logger } from '@island.is/logging'
@@ -15,6 +21,9 @@ type Options = {
   ssl: boolean
   noPrefix?: boolean
 }
+
+// Type that works with both KeyvRedis and redisInsStore
+type RedisClient = Cluster | Redis
 
 const DEFAULT_PORT = 6379
 
@@ -135,19 +144,23 @@ export const createCache = (options: Options) =>
 
 export const createRedisApolloCache = (options: Options) => {
   return new KeyvAdapter(
-    new Keyv({ store: new KeyvRedis(createRedisCluster(options)) }),
+    new Keyv({
+      store: new KeyvRedis(createRedisCluster(options) as any),
+    }) as any,
     {
       disableBatchReads: true,
     },
   )
 }
 
-export const createRedisCluster = (options: Options) => {
+export const createRedisCluster = (options: Options): Cluster => {
   const nodes = parseNodes(options.nodes)
   logger.info(`Making caching connection with nodes: `, nodes)
   return new Cluster(nodes, getRedisClusterOptions(options))
 }
 
 export const createRedisCacheManager = (options: Options & Config) => {
-  return caching(() => redisInsStore(createRedisCluster(options), options))
+  return caching(() =>
+    redisInsStore(createRedisCluster(options) as any, options),
+  )
 }

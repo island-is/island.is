@@ -7,7 +7,7 @@
   "tags": ["scope:nest"],
   "targets": {
     "build": {
-      "executor": "@anatine/esbuildnx:build",
+      "executor": "@nx/esbuild:esbuild",
       "options": {
         "outputPath": "dist/apps/services/regulations-admin-backend",
         "main": "apps/services/regulations-admin-backend/src/main.ts",
