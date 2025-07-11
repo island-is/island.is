@@ -69,11 +69,19 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               },
             ],
           },
-          onExit: defineTemplateApi({
-            action: ApiModuleActions.getChildInformation,
-            externalDataId: 'childInformation',
-            throwOnError: true,
-          }),
+          onExit: [
+            defineTemplateApi({
+              action: ApiModuleActions.getChildInformation,
+              externalDataId: 'childInformation',
+              throwOnError: true,
+              order: 0,
+            }),
+            defineTemplateApi({
+              action: ApiModuleActions.getCitizenship,
+              externalDataId: 'citizenship',
+              order: 1,
+            }),
+          ],
           roles: [
             {
               id: Roles.APPLICANT,
@@ -219,7 +227,6 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         if (!hasForeignLanguages(application.answers)) {
           unset(application.answers, 'languages.selectedLanguages')
           unset(application.answers, 'languages.preferredLanguage')
-          unset(application.answers, 'languages.guardianRequiresInterpreter')
         }
         return context
       }),

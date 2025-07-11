@@ -3,6 +3,7 @@ import {
   ApplicationType,
   getApplicationAnswers,
   getApplicationExternalData,
+  getSelectedChild,
   LanguageEnvironmentOptions,
   ReasonForApplicationOptions,
   SchoolType,
@@ -13,7 +14,22 @@ import {
   AgentInputTypeEnum,
   ApplicationInput,
   ApplicationInputTypeEnum,
+  UserInputGenderEnum,
 } from '@island.is/clients/mms/frigg'
+
+export const getGenderCode = (genderCode: string) => {
+  switch (genderCode) {
+    case '1':
+    case '3':
+      return UserInputGenderEnum.Male
+    case '2':
+    case '4':
+      return UserInputGenderEnum.Female
+
+    default:
+      return UserInputGenderEnum.Other
+  }
+}
 
 export const transformApplicationToNewPrimarySchoolDTO = (
   application: Application,
@@ -27,11 +43,11 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     reasonForApplicationStreetAddress,
     reasonForApplicationPostalCode,
     siblings,
+    languageEnvironmentId,
     languageEnvironment,
-    //selectedLanguages,
+    selectedLanguages,
     preferredLanguage,
     signLanguage,
-    guardianRequiresInterpreter,
     hasFoodAllergiesOrIntolerances,
     foodAllergiesOrIntolerances,
     hasOtherAllergies,
@@ -42,24 +58,25 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     hasDiagnoses,
     hasHadSupport,
     hasIntegratedServices,
-    hasCaseManager,
-    caseManagerName,
-    caseManagerEmail,
     requestingMeeting,
     expectedStartDate,
     temporaryStay,
     expectedEndDate,
     selectedSchool,
     selectedSchoolType,
+    currentSchoolId,
   } = getApplicationAnswers(application.answers)
 
-  const { primaryOrgId } = getApplicationExternalData(application.externalData)
+  const { primaryOrgId, childCitizenshipCode } = getApplicationExternalData(
+    application.externalData,
+  )
+  const selectedChild = getSelectedChild(application)
 
   const agents: AgentInput[] = [
     ...guardians.map((guardian) => ({
       name: guardian.fullName,
       nationalId: guardian.nationalId,
-      nationality: '', // LAGA
+      nationality: guardian.citizenshipCode,
       type: AgentInputTypeEnum.Guardian,
       domicile: {
         address: guardian.address.streetAddress,
@@ -67,11 +84,14 @@ export const transformApplicationToNewPrimarySchoolDTO = (
       },
       email: guardian.email,
       phone: guardian.phoneNumber,
+      requiresInterpreter: guardian.requiresInterpreter.includes(YES),
+      ...(guardian.requiresInterpreter.includes(YES) && {
+        preferredLanguage: guardian.preferredLanguage,
+      }),
     })),
     ...relatives.map((relative) => ({
       name: relative.fullName,
       nationalId: relative.nationalId,
-      nationality: '', // LAGA
       type: AgentInputTypeEnum.EmergencyContact,
       phone: relative.phoneNumber,
       relationTypeId: relative.relation,
@@ -81,7 +101,6 @@ export const transformApplicationToNewPrimarySchoolDTO = (
       ? siblings.map((sibling) => ({
           name: sibling.fullName,
           nationalId: sibling.nationalId,
-          nationality: '', // LAGA
           type: AgentInputTypeEnum.Sibling,
         }))
       : []),
@@ -92,71 +111,62 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     user: {
       name: childInfo.name,
       nationalId: childInfo.nationalId,
-      nationality: '', // LAGA
-      ...(childInfo.usePronounAndPreferredName?.includes(YES)
-        ? {
-            preferredName: childInfo.preferredName,
-            pronouns: childInfo.pronouns,
-          }
-        : {}),
+      nationality: childCitizenshipCode,
+      gender: getGenderCode(selectedChild?.genderCode || ''),
+      ...(childInfo.usePronounAndPreferredName?.includes(YES) && {
+        preferredName: childInfo.preferredName,
+        pronouns: childInfo.pronouns,
+      }),
       domicile: {
         address: childInfo.address.streetAddress,
         postCode: childInfo.address.postalCode,
       },
       ...(childInfo.differentPlaceOfResidence === YES &&
-      childInfo.placeOfResidence
-        ? {
-            residence: {
-              address: childInfo.placeOfResidence.streetAddress,
-              postCode: childInfo.placeOfResidence.postalCode,
-            },
-          }
-        : {}),
+        childInfo.placeOfResidence && {
+          residence: {
+            address: childInfo.placeOfResidence.streetAddress,
+            postCode: childInfo.placeOfResidence.postalCode,
+          },
+        }),
     },
     agents,
     registration: {
-      defaultOrganizationId: primaryOrgId,
+      ...((primaryOrgId || currentSchoolId) && {
+        defaultOrganizationId: primaryOrgId || currentSchoolId,
+      }),
       selectedOrganizationId: selectedSchool,
       requestingMeeting: requestingMeeting === YES,
       ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
         ? {
             expectedStartDate: new Date(expectedStartDate),
             ...(selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL &&
-            temporaryStay === YES
-              ? { expectedEndDate: new Date(expectedEndDate) }
-              : {}),
+              temporaryStay === YES && {
+                expectedEndDate: new Date(expectedEndDate),
+              }),
           }
         : {
             expectedStartDate: new Date(), // Temporary until we start working on the "Enrollment in primary school" application
           }),
-      reason: reasonForApplication, //LAGA: Add a condition for this when Júní has added school type
+      reason: reasonForApplication, // LAGA: Add a condition for this when Júní has added school type
       ...(reasonForApplication ===
-      ReasonForApplicationOptions.MOVING_MUNICIPALITY
-        ? {
-            newDomicile: {
-              address: reasonForApplicationStreetAddress,
-              postCode: reasonForApplicationPostalCode,
-            },
-          }
-        : {}),
+        ReasonForApplicationOptions.MOVING_MUNICIPALITY && {
+        tempDomicile: {
+          address: reasonForApplicationStreetAddress,
+          postCode: reasonForApplicationPostalCode,
+        },
+      }),
     },
     health: {
-      ...(hasFoodAllergiesOrIntolerances?.includes(YES)
-        ? {
-            foodAllergiesOrIntolerances,
-          }
-        : {}),
-      ...(hasOtherAllergies?.includes(YES)
-        ? {
-            allergies: otherAllergies,
-          }
-        : {}),
-      ...(hasFoodAllergiesOrIntolerances?.includes(YES) ||
-      hasOtherAllergies?.includes(YES)
-        ? {
-            usesEpipen: usesEpiPen === YES,
-          }
-        : {}),
+      ...(hasFoodAllergiesOrIntolerances?.includes(YES) && {
+        foodAllergiesOrIntolerances,
+      }),
+      ...(hasOtherAllergies?.includes(YES) && {
+        allergies: otherAllergies,
+      }),
+      ...((hasFoodAllergiesOrIntolerances?.includes(YES) ||
+        hasOtherAllergies?.includes(YES)) && {
+        usesEpipen: usesEpiPen === YES,
+      }),
       hasConfirmedMedicalDiagnoses: hasConfirmedMedicalDiagnoses === YES,
       requestsMedicationAdministration:
         requestsMedicationAdministration === YES,
@@ -164,43 +174,31 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     social: {
       hasHadSupport: hasHadSupport === YES,
       hasDiagnoses: hasDiagnoses === YES,
-      ...(hasHadSupport === YES || hasDiagnoses === YES
-        ? {
-            hasIntegratedServices: hasIntegratedServices === YES,
-            ...(hasIntegratedServices === YES
-              ? {
-                  hasCaseManager: hasCaseManager === YES,
-                  ...(hasCaseManager === YES
-                    ? {
-                        caseManager: {
-                          name: caseManagerName,
-                          email: caseManagerEmail,
-                        },
-                      }
-                    : {}),
-                }
-              : {}),
-          }
-        : {}),
+      ...((hasHadSupport === YES || hasDiagnoses === YES) && {
+        hasIntegratedServices: hasIntegratedServices === YES,
+        // ...(hasIntegratedServices === YES && {
+        //   caseWorkers: [
+        //     {
+        //       name: 'caseWorker',
+        //       email: 'caseWorker@caseWorker.is',
+        //       phone: '',
+        //     },
+        //   ],
+        // }),
+      }),
     },
     language: {
-      languageEnvironment: '', // LAGA
+      languageEnvironment: languageEnvironmentId,
       signLanguage: signLanguage === YES,
       ...(languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
         ? {
             preferredLanguage,
-            guardianRequiresInterpreter: guardianRequiresInterpreter === YES,
-            // firstLanguage: selectedLanguages[0]?.code,// LAGA
-            // secondLanguage: selectedLanguages[1]?.code,// LAGA
-            // thirdLanguage: selectedLanguages[2]?.code,// LAGA
-            // fourthLanguage: selectedLanguages[3]?.code,// LAGA
+            languages: selectedLanguages.map((language) => language.code),
           }
         : {
             preferredLanguage: 'is',
-            guardianRequiresInterpreter: false,
-            // firstLanguage: 'is', // LAGA
+            languages: ['is'],
           }),
-      languages: [], // LAGA
     },
   }
 
