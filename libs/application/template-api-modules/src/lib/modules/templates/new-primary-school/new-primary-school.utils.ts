@@ -181,32 +181,28 @@ export const transformApplicationToNewPrimarySchoolDTO = (
       hasHadSupport: hasHadSupport === YES,
       hasDiagnoses: hasDiagnoses === YES,
       ...((hasHadSupport === YES || hasDiagnoses === YES) && {
-        hasIntegratedServices: hasIntegratedServices === YES,
-        caseworkers: [
-          ...(hasWelfareContact === YES &&
-          welfareContactName &&
-          welfareContactEmail
-            ? [
-                {
-                  name: welfareContactName,
-                  email: welfareContactEmail,
-                  type: CaseWorkerInputTypeEnum.SupportManager,
-                },
-              ]
-            : []),
-          ...(hasWelfareContact === YES &&
-          hasCaseManager === YES &&
-          caseManagerName &&
-          caseManagerEmail
-            ? [
-                {
-                  name: caseManagerName,
-                  email: caseManagerEmail,
-                  type: CaseWorkerInputTypeEnum.CaseManager,
-                },
-              ]
-            : []),
-        ],
+        ...(hasWelfareContact === YES && {
+          hasIntegratedServices: hasIntegratedServices === YES,
+          caseWorkers: [
+            {
+              name: welfareContactName ?? '',
+              email: welfareContactEmail ?? '',
+              type: CaseWorkerInputTypeEnum.SupportManager,
+            },
+            ...(hasWelfareContact === YES &&
+            hasCaseManager === YES &&
+            caseManagerName &&
+            caseManagerEmail
+              ? [
+                  {
+                    name: caseManagerName ?? '',
+                    email: caseManagerEmail ?? '',
+                    type: CaseWorkerInputTypeEnum.CaseManager,
+                  },
+                ]
+              : []),
+          ],
+        }),
       }),
     },
     language: {
