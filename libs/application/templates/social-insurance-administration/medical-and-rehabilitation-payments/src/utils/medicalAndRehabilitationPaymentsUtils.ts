@@ -15,6 +15,7 @@ import { medicalAndRehabilitationPaymentsFormMessage } from '../lib/messages'
 import {
   Countries,
   EctsUnits,
+  EducationLevels,
   SelfAssessmentQuestionnaire,
   SelfAssessmentQuestionnaireAnswers,
 } from '../types'
@@ -124,9 +125,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'selfAssessment.hadAssistance',
   )
 
-  const highestLevelOfEducation = getValueViaPath<string>(
+  const educationalLevel = getValueViaPath<string>(
     answers,
-    'selfAssessment.highestLevelOfEducation',
+    'selfAssessment.educationalLevel',
   )
 
   const comment = getValueViaPath<string>(answers, 'comment')
@@ -210,7 +211,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     certificateForSicknessAndRehabilitationReferenceId,
     rehabilitationPlanConfirmation,
     hadAssistance,
-    highestLevelOfEducation,
+    educationalLevel,
     comment,
     questionnaire,
     mainProblem,
@@ -324,6 +325,12 @@ export const getApplicationExternalData = (
     'socialInsuranceAdministrationIsApplicantEligible.data',
   )
 
+  const educationLevels =
+    getValueViaPath<EducationLevels[]>(
+      externalData,
+      'socialInsuranceAdministrationEducationLevels.data',
+    ) ?? []
+
   return {
     applicantName,
     applicantNationalId,
@@ -344,6 +351,7 @@ export const getApplicationExternalData = (
     selfAssessmentQuestionnaire,
     ectsUnits,
     isEligible,
+    educationLevels,
   }
 }
 
