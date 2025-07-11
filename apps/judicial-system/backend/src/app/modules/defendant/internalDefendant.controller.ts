@@ -105,6 +105,7 @@ export class InternalDefendantController {
     )
   }
 
+  // TODO: MOVE TO VERDICT controller (internal)
   @UseGuards(
     new CaseTypeGuard(indictmentCases),
     CaseCompletedGuard,

@@ -31,11 +31,13 @@ import {
   Defendant,
   IndictmentCaseReviewDecision,
   ServiceRequirement,
+  Verdict,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCase,
   useDefendants,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
 
 import { ReviewDecision } from '../../components/ReviewDecision/ReviewDecision'
 import {
@@ -58,6 +60,7 @@ export const Overview = () => {
   const { formatMessage: fm } = useIntl()
   const { updateCase, setAndSendCaseToServer } = useCase()
   const { setAndSendDefendantToServer, isUpdatingDefendant } = useDefendants()
+  const { setAndSendVerdictToServer } = useVerdict()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const [selectedIndictmentReviewer, setSelectedIndictmentReviewer] =
@@ -92,12 +95,13 @@ export const Overview = () => {
     )
   }
 
-  const handleRevokeAppeal = (defendant: Defendant) => {
-    setAndSendDefendantToServer(
+  const handleRevokeAppeal = (defendant: Defendant, verdict: Verdict) => {
+    setAndSendVerdictToServer(
       {
+        verdictId: verdict.id,
         caseId: workingCase.id,
         defendantId: defendant.id,
-        verdictAppealDate: null,
+        appealDate: null,
       },
       setWorkingCase,
     )
@@ -147,41 +151,44 @@ export const Overview = () => {
         <PageTitle>{fm(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         {workingCase.defendants?.map((defendant) => {
+          const { verdict } = defendant
           const isFine =
             workingCase.indictmentRulingDecision ===
             CaseIndictmentRulingDecision.FINE
 
-          const serviceRequired =
-            defendant.serviceRequirement === ServiceRequirement.REQUIRED
+          const isServiceRequired =
+            verdict?.serviceRequirement === ServiceRequirement.REQUIRED
 
-          const serviceNotApplicable =
-            defendant.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
+          const isServiceNotApplicable =
+            verdict?.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
 
           return (
             <Fragment key={defendant.id}>
               <Box component="section" marginBottom={2}>
                 <BlueBoxWithDate defendant={defendant} icon="calendar" />
               </Box>
-              {(serviceNotApplicable ||
-                (serviceRequired && defendant.verdictViewDate)) && (
-                <Box component="section" marginBottom={2}>
-                  <BlueBox>
-                    <SectionHeading
-                      title="Afstaða dómfellda til dóms"
-                      heading="h4"
-                      marginBottom={2}
-                      required
-                    />
-                    <Box marginBottom={2}>
-                      <Text variant="eyebrow">{defendant.name}</Text>
-                    </Box>
-                    <VerdictAppealDecisionChoice
-                      defendant={defendant}
-                      disabled={!!defendant.isSentToPrisonAdmin}
-                    />
-                  </BlueBox>
-                </Box>
-              )}
+              {verdict &&
+                (isServiceNotApplicable ||
+                  (isServiceRequired && verdict.serviceDate)) && (
+                  <Box component="section" marginBottom={2}>
+                    <BlueBox>
+                      <SectionHeading
+                        title="Afstaða dómfellda til dóms"
+                        heading="h4"
+                        marginBottom={2}
+                        required
+                      />
+                      <Box marginBottom={2}>
+                        <Text variant="eyebrow">{defendant.name}</Text>
+                      </Box>
+                      <VerdictAppealDecisionChoice
+                        defendant={defendant}
+                        verdict={verdict}
+                        disabled={!!defendant.isSentToPrisonAdmin}
+                      />
+                    </BlueBox>
+                  </Box>
+                )}
               <Box
                 display="flex"
                 justifyContent="flexEnd"
@@ -214,10 +221,10 @@ export const Overview = () => {
                     ? 'Afskrá í LÖKE'
                     : 'Skráð í LÖKE'}
                 </Button>
-                {defendant.verdictAppealDate ? (
+                {verdict?.appealDate ? (
                   <Button
                     variant="text"
-                    onClick={() => handleRevokeAppeal(defendant)}
+                    onClick={() => handleRevokeAppeal(defendant, verdict)}
                     size="small"
                     colorScheme="destructive"
                   >
@@ -244,7 +251,7 @@ export const Overview = () => {
                     size="small"
                     disabled={
                       !workingCase.indictmentReviewDecision ||
-                      (!isFine && !defendant.verdictViewDate && serviceRequired)
+                      (!isFine && !verdict?.serviceDate && isServiceRequired)
                     }
                   >
                     Senda til fullnustu

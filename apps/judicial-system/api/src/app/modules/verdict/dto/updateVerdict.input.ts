@@ -49,6 +49,11 @@ export class UpdateVerdictInput {
 
   @Allow()
   @IsOptional()
+  @Field(() => Date, { nullable: true })
+  readonly appealDate?: string
+
+  @Allow()
+  @IsOptional()
   @Field(() => [InformationForDefendant], { nullable: true })
   readonly serviceInformationForDefendant?: InformationForDefendant[]
 }

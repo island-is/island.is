@@ -18,8 +18,10 @@ import {
   CaseIndictmentRulingDecision,
   Defendant,
   ServiceRequirement,
+  Verdict,
 } from '../../graphql/schema'
-import { formatDateForServer, useDefendants } from '../../utils/hooks'
+import { formatDateForServer } from '../../utils/hooks'
+import useVerdict from '../../utils/hooks/useVerdict'
 import DateTime from '../DateTime/DateTime'
 import { FormContext } from '../FormProvider/FormProvider'
 import { getAppealExpirationInfo } from '../InfoCard/DefendantInfo/DefendantInfo'
@@ -34,27 +36,29 @@ interface Props {
 
 const BlueBoxWithDate: FC<Props> = (props) => {
   const { defendant, icon } = props
+  const { verdict } = defendant
+
   const { formatMessage } = useIntl()
   const [dates, setDates] = useState<{
-    verdictViewDate?: Date
-    verdictAppealDate?: Date
+    serviceDate?: Date
+    appealDate?: Date
   }>({
-    verdictViewDate: undefined,
-    verdictAppealDate: undefined,
+    serviceDate: undefined,
+    appealDate: undefined,
   })
   const [triggerAnimation, setTriggerAnimation] = useState<boolean>(false)
   const [triggerAnimation2, setTriggerAnimation2] = useState<boolean>(false)
-  const { setAndSendDefendantToServer } = useDefendants()
+  const { setAndSendVerdictToServer } = useVerdict()
   const { workingCase, setWorkingCase } = useContext(FormContext)
 
   const isFine =
     workingCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
 
-  const serviceRequired =
-    defendant.serviceRequirement === ServiceRequirement.REQUIRED
+  const isServiceRequired =
+    verdict?.serviceRequirement === ServiceRequirement.REQUIRED
 
   const shouldHideDatePickers = Boolean(
-    defendant.verdictAppealDate ||
+    verdict?.appealDate ||
       defendant.isVerdictAppealDeadlineExpired ||
       defendant.isSentToPrisonAdmin ||
       isFine,
@@ -78,7 +82,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     setDates((prev) => ({ ...prev, [type]: date }))
   }
 
-  const handleSetDate = (type: keyof typeof dates) => {
+  const handleSetDate = (verdict: Verdict, type: keyof typeof dates) => {
     const date = dates[type]
 
     if (!date) {
@@ -87,14 +91,15 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     }
 
     const payload = {
+      verdictId: verdict.id,
       caseId: workingCase.id,
       defendantId: defendant.id,
       [type]: formatDateForServer(date),
     }
 
-    setAndSendDefendantToServer(payload, setWorkingCase)
+    setAndSendVerdictToServer(payload, setWorkingCase)
 
-    if (type === 'verdictAppealDate') {
+    if (type === 'appealDate') {
       setTriggerAnimation2(true)
     }
   }
@@ -102,24 +107,21 @@ const BlueBoxWithDate: FC<Props> = (props) => {
   const appealExpirationInfo = useMemo(() => {
     const deadline =
       defendant.verdictAppealDeadline ||
-      (dates.verdictViewDate &&
-        getIndictmentAppealDeadlineDate(
-          dates.verdictViewDate,
-          false,
-        ).toISOString())
+      (dates.serviceDate &&
+        getIndictmentAppealDeadlineDate(dates.serviceDate, false).toISOString())
 
     return getAppealExpirationInfo(
       deadline,
       defendant.isVerdictAppealDeadlineExpired,
     )
   }, [
-    dates.verdictViewDate,
+    dates.serviceDate,
     defendant.isVerdictAppealDeadlineExpired,
     defendant.verdictAppealDeadline,
   ])
 
   const serviceRequirementText = useMemo(() => {
-    switch (defendant.serviceRequirement) {
+    switch (verdict?.serviceRequirement) {
       case ServiceRequirement.REQUIRED:
         return 'Birta skal dómfellda dóminn'
       case ServiceRequirement.NOT_REQUIRED:
@@ -129,7 +131,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
       default:
         return null
     }
-  }, [defendant.serviceRequirement])
+  }, [verdict?.serviceRequirement])
 
   const textItems = useMemo(() => {
     const texts: string[] = []
@@ -149,11 +151,11 @@ const BlueBoxWithDate: FC<Props> = (props) => {
           appealDeadline: formatDate(defendant.verdictAppealDeadline),
         }),
       )
-    } else if (defendant.verdictViewDate) {
+    } else if (verdict?.serviceDate) {
       pushIf(
-        !!serviceRequired,
+        !!isServiceRequired,
         formatMessage(strings.defendantVerdictViewedDate, {
-          date: formatDate(defendant.verdictViewDate),
+          date: formatDate(verdict?.serviceDate),
         }),
       )
 
@@ -164,9 +166,9 @@ const BlueBoxWithDate: FC<Props> = (props) => {
       )
 
       pushIf(
-        !!defendant.verdictAppealDate,
+        !!verdict?.appealDate,
         formatMessage(strings.defendantAppealDate, {
-          date: formatDate(defendant.verdictAppealDate),
+          date: formatDate(verdict?.appealDate),
         }),
       )
     }
@@ -185,11 +187,12 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     defendant,
     formatMessage,
     isFine,
-    serviceRequired,
+    isServiceRequired,
     serviceRequirementText,
+    verdict,
   ])
 
-  const verdictViewDateVariants = {
+  const serviceDateVariants = {
     hidden: { opacity: 0, y: 15, marginTop: '16px' },
     visible: { opacity: 1, y: 0 },
     exit: {
@@ -259,8 +262,8 @@ const BlueBoxWithDate: FC<Props> = (props) => {
         ))}
       </AnimatePresence>
       <AnimatePresence mode="wait">
-        {shouldHideDatePickers ? null : !serviceRequired ||
-          defendant.verdictViewDate ? (
+        {shouldHideDatePickers || !verdict ? null : !isServiceRequired ||
+          verdict.serviceDate ? (
           <motion.div
             key="defendantAppealDate"
             variants={appealDateVariants}
@@ -279,15 +282,15 @@ const BlueBoxWithDate: FC<Props> = (props) => {
                 )}
                 size="sm"
                 onChange={(date, valid) =>
-                  handleDateChange(date, valid, 'verdictAppealDate')
+                  handleDateChange(date, valid, 'appealDate')
                 }
                 maxDate={new Date()}
                 blueBox={false}
                 dateOnly
               />
               <Button
-                onClick={() => handleSetDate('verdictAppealDate')}
-                disabled={!dates.verdictAppealDate}
+                onClick={() => handleSetDate(verdict, 'appealDate')}
+                disabled={!dates.appealDate}
               >
                 {formatMessage(strings.defendantAppealDateButtonText)}
               </Button>
@@ -295,8 +298,8 @@ const BlueBoxWithDate: FC<Props> = (props) => {
           </motion.div>
         ) : (
           <motion.div
-            key="defendantVerdictViewDate"
-            variants={verdictViewDateVariants}
+            key="defendantServiceDate"
+            variants={serviceDateVariants}
             initial={false}
             animate="visible"
             exit="exit"
@@ -304,27 +307,27 @@ const BlueBoxWithDate: FC<Props> = (props) => {
           >
             <Box className={styles.dataContainer}>
               <DateTime
-                name="defendantVerdictViewDate"
+                name="defendantServiceDate"
                 datepickerLabel={formatMessage(
-                  strings.defendantVerdictViewDateLabel,
+                  strings.defendantVerdictServiceDateLabel,
                 )}
                 datepickerPlaceholder={formatMessage(
-                  strings.defendantVerdictViewDatePlaceholder,
+                  strings.defendantVerdictServiceDatePlaceholder,
                 )}
                 size="sm"
-                selectedDate={dates.verdictViewDate}
+                selectedDate={dates.serviceDate}
                 onChange={(date, valid) =>
-                  handleDateChange(date, valid, 'verdictViewDate')
+                  handleDateChange(date, valid, 'serviceDate')
                 }
                 blueBox={false}
                 maxDate={new Date()}
                 dateOnly
               />
               <Button
-                onClick={() => handleSetDate('verdictViewDate')}
-                disabled={!dates.verdictViewDate}
+                onClick={() => handleSetDate(verdict, 'serviceDate')}
+                disabled={!dates.serviceDate}
               >
-                {formatMessage(strings.defendantVerdictViewDateButtonText)}
+                {formatMessage(strings.defendantVerdictServiceDateButtonText)}
               </Button>
             </Box>
           </motion.div>

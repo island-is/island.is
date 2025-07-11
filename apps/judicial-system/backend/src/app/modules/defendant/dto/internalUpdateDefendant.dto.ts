@@ -55,6 +55,7 @@ export class InternalUpdateDefendantDto {
   @ApiPropertyOptional({ type: String })
   readonly requestedDefenderName?: string
 
+  // Deprecated: moved to verdict
   @IsOptional()
   @IsEnum(VerdictAppealDecision)
   @ApiPropertyOptional({ enum: VerdictAppealDecision })
