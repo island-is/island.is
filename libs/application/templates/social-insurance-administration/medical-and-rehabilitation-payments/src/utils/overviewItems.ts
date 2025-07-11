@@ -20,6 +20,7 @@ import parseISO from 'date-fns/parseISO'
 import { format as formatKennitala } from 'kennitala'
 import { formatNumber } from 'libphonenumber-js'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../lib/messages'
+import { isFirstApplication } from './conditionUtils'
 import {
   NOT_APPLICABLE,
   SelfAssessmentCurrentEmploymentStatus,
@@ -208,7 +209,10 @@ export const benefitsFromAnotherCountryTable = (
   return { header: [], rows: [] }
 }
 
-export const questionsItems = (answers: FormValue): Array<KeyValueItem> => {
+export const questionsItems = (
+  answers: FormValue,
+  externalData: ExternalData,
+): Array<KeyValueItem> => {
   const {
     isSelfEmployed,
     calculatedRemunerationDate,
@@ -218,18 +222,21 @@ export const questionsItems = (answers: FormValue): Array<KeyValueItem> => {
     ectsUnits,
   } = getApplicationAnswers(answers)
 
-  const baseItems: Array<KeyValueItem> = [
-    {
-      width: 'half',
-      keyText:
-        medicalAndRehabilitationPaymentsFormMessage.generalInformation
-          .questionsIsSelfEmployed,
-      valueText:
-        isSelfEmployed === YES
-          ? socialInsuranceAdministrationMessage.shared.yes
-          : socialInsuranceAdministrationMessage.shared.no,
-    },
-  ]
+  let baseItems: Array<KeyValueItem> = []
+  if (isFirstApplication(externalData)) {
+    baseItems = [
+      {
+        width: 'half',
+        keyText:
+          medicalAndRehabilitationPaymentsFormMessage.generalInformation
+            .questionsIsSelfEmployed,
+        valueText:
+          isSelfEmployed === YES
+            ? socialInsuranceAdministrationMessage.shared.yes
+            : socialInsuranceAdministrationMessage.shared.no,
+      },
+    ]
+  }
 
   const calculatedRemunerationDateItem: Array<KeyValueItem> =
     isSelfEmployed === YES

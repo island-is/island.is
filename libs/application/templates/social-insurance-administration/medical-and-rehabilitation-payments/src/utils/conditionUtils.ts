@@ -9,6 +9,7 @@ import {
   getApplicationAnswers,
   getApplicationExternalData,
 } from './medicalAndRehabilitationPaymentsUtils'
+import { MedicalAndRehabilitationPaymentsApplicationType } from './constants'
 
 export const shouldShowEmployeeSickPayEndDate = (
   answers: FormValue,
@@ -84,4 +85,24 @@ export const shouldShowPreviousRehabilitationOrTreatmentFields = (
   const { hasPreviouslyReceivedRehabilitationOrTreatment } =
     getApplicationAnswers(answers)
   return hasPreviouslyReceivedRehabilitationOrTreatment === YES
+}
+
+export const isFirstApplication = (externalData: ExternalData) => {
+  const { marpApplicationType } = getApplicationExternalData(externalData)
+
+  return (
+    marpApplicationType ===
+      MedicalAndRehabilitationPaymentsApplicationType.EH1 ||
+    marpApplicationType === MedicalAndRehabilitationPaymentsApplicationType.SG1
+  )
+}
+
+export const isEHApplication = (externalData: ExternalData) => {
+  const { marpApplicationType } = getApplicationExternalData(externalData)
+
+  return (
+    marpApplicationType ===
+      MedicalAndRehabilitationPaymentsApplicationType.EH1 ||
+    marpApplicationType === MedicalAndRehabilitationPaymentsApplicationType.EH2
+  )
 }
