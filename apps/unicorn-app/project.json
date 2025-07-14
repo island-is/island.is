@@ -30,7 +30,7 @@
         "maxWorkers": 2,
         "assets": [],
         "compiler": "tsc",
-        "target": "node",
+        "target": "node20",
         "webpackConfig": "apps/unicorn-app/webpack.config.js"
       },
       "configurations": {

@@ -31,7 +31,7 @@
         "maxWorkers": 2,
         "assets": [],
         "compiler": "tsc",
-        "target": "node",
+        "target": "node20",
         "webpackConfig": "apps/reference-next-app/webpack.config.js"
       },
       "configurations": {

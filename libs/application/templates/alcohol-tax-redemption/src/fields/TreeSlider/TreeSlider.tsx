@@ -27,7 +27,7 @@ export const TreeSlider = () => {
                 className={styles.treeWrapper}
                 initial={{ scale: 0 }}
                 animate={{ scale: 1 }}
-                exit={{ scale: 0, transition: { type: 'linear' } }}
+                exit={{ scale: 0, transition: { ease: 'linear' } }}
                 transition={{ type: 'spring', bounce: 0.25 }}
                 style={{
                   fontSize: `${sizes[i]}px`,

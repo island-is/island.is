@@ -31,7 +31,7 @@
         "maxWorkers": 2,
         "assets": [],
         "compiler": "tsc",
-        "target": "node",
+        "target": "node20",
         "webpackConfig": "apps/air-discount-scheme/web/webpack.config.js"
       },
       "configurations": {

@@ -34195,6 +34195,7 @@ __metadata:
     pg-hstore: "npm:2.3.4"
     powerbi-client: "npm:2.21.1"
     powerbi-client-react: "npm:1.3.5"
+    powerbi-models: "npm:1.15.2"
     prettier: "npm:2.6.2"
     prom-client: "npm:14.1.0"
     pubsub-js: "npm:1.8.0"
@@ -43030,6 +43031,13 @@ __metadata:
     powerbi-router: "npm:^0.1"
     window-post-message-proxy: "npm:^0.2.7"
   checksum: 10/7af13cead2226bb61848f436d43e3a52f4e1d41af515d13d89171f651987a604ad95b2b1251458a6f89d00e6691da8fd388cc3cf50b18312a8abb3925de86a75
+  languageName: node
+  linkType: hard
+
+"powerbi-models@npm:1.15.2":
+  version: 1.15.2
+  resolution: "powerbi-models@npm:1.15.2"
+  checksum: 10/ddc2288dd40151f7fc3320e95e0559c6d640fe71ab5059963bbb93a9cb5452ad6b6f28051dcc10228cae10f102c29c9103e07e4ce3206472ed94e2b4239b13db
   languageName: node
   linkType: hard
 

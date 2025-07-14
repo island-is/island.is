@@ -66,5 +66,8 @@
     "@mikro-orm/core"
   ],
   "keepNames": true,
-  "sourcemap": true
+  "sourcemap": true,
+  "format": [
+    "cjs"
+  ]
 }

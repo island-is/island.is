@@ -69,7 +69,9 @@ export const IframeModal: FC<React.PropsWithChildren<IframeModalProps>> = ({
     <>
       {!!disclosure && (
         <DialogDisclosure {...dialog} {...disclosure.props}>
-          {(disclosureProps) => React.cloneElement(disclosure, disclosureProps)}
+          {(disclosureProps: any) =>
+            React.cloneElement(disclosure, disclosureProps)
+          }
         </DialogDisclosure>
       )}
       <DialogBackdrop {...dialog} as={IframeModalDiv}>

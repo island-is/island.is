@@ -58,5 +58,8 @@
     "@mikro-orm/core",
     "uuidv4"
   ],
-  "keepNames": true
+  "keepNames": true,
+  "format": [
+    "cjs"
+  ]
 }

@@ -1,5 +1,13 @@
 {
   "platform": "node",
-  "external": ["express", "http-errors", "logform", "safer-buffer"],
-  "keepNames": true
+  "external": [
+    "express",
+    "http-errors",
+    "logform",
+    "safer-buffer"
+  ],
+  "keepNames": true,
+  "format": [
+    "cjs"
+  ]
 }

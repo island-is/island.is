@@ -85,6 +85,7 @@ export default async function* buildExecutor(
       buildLibsFromSource: options.buildLibsFromSource ?? true,
       showCircularDependencies: options.showCircularDependencies ?? false,
       external: options.external ?? [],
+      format: ['cjs'], // Add format option for Node.js applications
     }
 
     // Call esbuild executor directly
