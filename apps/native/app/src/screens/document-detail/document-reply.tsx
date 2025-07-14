@@ -54,15 +54,13 @@ const HeaderTitle = styled(Row)`
 
 const TextAreaWrapper = styled.View`
   flex: 1;
-  height: 170px;
+  height: 170;
 `
 
 const TextArea = styled(TextField)(({ theme }) => ({
   flex: 1,
-  // Android needs extra padding to make sure when multiline is present, then the last line is not cut off.
-  ...(isAndroid && {
-    paddingBottom: theme.spacing[4],
-  }),
+  // Extra padding is needed to make sure when multiline is present, then the last line is not cut off.
+  paddingBottom: theme.spacing[isAndroid ? 4 : 2],
 }))
 
 const Footer = styled(Container)(({ theme }) => ({
