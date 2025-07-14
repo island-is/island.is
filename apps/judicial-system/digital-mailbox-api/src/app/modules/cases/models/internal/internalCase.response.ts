@@ -48,6 +48,7 @@ interface Defendant {
   verdictAppealDate?: Date
   informationForDefendant?: InformationForDefendant[]
   serviceRequirement?: ServiceRequirement
+  verdict: Verdict
 }
 
 interface DateLog {
@@ -64,4 +65,14 @@ interface Subpoena {
   subpoenaId: string
   serviceStatus?: ServiceStatus
   serviceRequirement?: ServiceRequirement
+}
+
+interface Verdict {
+  id: string
+  created: Date
+  externalPoliceDocumentId: string
+  serviceStatus?: ServiceStatus
+  serviceRequirement?: ServiceRequirement
+  serviceDate?: Date
+  appealDecision?: VerdictAppealDecision
 }

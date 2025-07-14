@@ -35,6 +35,8 @@ import {
   CaseTypeGuard,
   CurrentCase,
 } from '../case'
+import { Verdict } from '../verdict/models/verdict.model'
+import { VerdictService } from '../verdict/verdict.service'
 import { DeliverDto } from './dto/deliver.dto'
 import { InternalUpdateDefendantDto } from './dto/internalUpdateDefendant.dto'
 import { UpdateVerdictAppealDto } from './dto/updateVerdictAppeal.dto'
@@ -51,6 +53,8 @@ import { DefendantService } from './defendant.service'
 export class InternalDefendantController {
   constructor(
     private readonly defendantService: DefendantService,
+    private readonly verdictService: VerdictService,
+
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -105,7 +109,6 @@ export class InternalDefendantController {
     )
   }
 
-  // TODO: MOVE TO VERDICT controller (internal)
   @UseGuards(
     new CaseTypeGuard(indictmentCases),
     CaseCompletedGuard,
@@ -122,21 +125,21 @@ export class InternalDefendantController {
     @CurrentCase() theCase: Case,
     @CurrentDefendant() defendant: Defendant,
     @Body() verdictAppeal: UpdateVerdictAppealDto,
-  ): Promise<Defendant> {
+  ): Promise<Verdict> {
     this.logger.debug(`Updating verdict appeal for defendant in case ${caseId}`)
-
-    if (!theCase.rulingDate) {
+    const { verdict } = defendant
+    if (!verdict || !theCase.rulingDate) {
       throw new BadRequestException(
         `No verdict has been issued for case ${theCase.id}`,
       )
     }
     // Validate appeal deadline
-    const serviceRequired =
-      defendant.serviceRequirement === ServiceRequirement.REQUIRED
+    const isServiceRequired =
+      verdict.serviceRequirement === ServiceRequirement.REQUIRED
     const isFine =
       theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
-    const baseDate = serviceRequired
-      ? defendant.verdictViewDate
+    const baseDate = isServiceRequired
+      ? verdict.serviceDate
       : theCase.rulingDate
 
     if (!baseDate) {
@@ -157,11 +160,10 @@ export class InternalDefendantController {
       )
     }
 
-    return this.defendantService.updateRestricted(
-      theCase,
-      defendant,
-      verdictAppeal,
-    )
+    const updatedVerdict = this.verdictService.updateRestricted(verdict, {
+      appealDecision: verdictAppeal.verdictAppealDecision,
+    })
+    return updatedVerdict
   }
 
   @UseGuards(new CaseTypeGuard(indictmentCases), DefendantExistsGuard)

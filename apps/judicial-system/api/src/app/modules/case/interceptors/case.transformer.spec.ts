@@ -685,9 +685,9 @@ describe('getIndictmentInfo', () => {
     const rulingDate = '2022-06-14T19:50:08.033Z'
 
     const defendants = [
-      { verdictViewDate: '2022-06-15T19:50:08.033Z' } as Defendant,
-      { verdictViewDate: undefined } as Defendant,
-    ]
+      { verdict: { serviceDate: '2022-06-15T19:50:08.033Z' } },
+      { verdict: { serviceDate: undefined } },
+    ] as Defendant[]
 
     const indictmentInfo = getIndictmentInfo({
       indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
@@ -758,10 +758,12 @@ describe('getIndictmentInfo', () => {
     const rulingDate = '2024-05-26T21:51:19.156Z'
     const defendants = [
       {
-        serviceRequirement: ServiceRequirement.NOT_REQUIRED,
-        verdictViewDate: undefined,
-      } as Defendant,
-    ]
+        verdict: {
+          serviceRequirement: ServiceRequirement.NOT_REQUIRED,
+          serviceDate: undefined,
+        },
+      },
+    ] as Defendant[]
 
     const indictmentInfo = getIndictmentInfo({
       indictmentRulingDecision: CaseIndictmentRulingDecision.FINE,
