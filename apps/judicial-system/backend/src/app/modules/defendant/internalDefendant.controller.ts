@@ -54,7 +54,6 @@ export class InternalDefendantController {
   constructor(
     private readonly defendantService: DefendantService,
     private readonly verdictService: VerdictService,
-
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
