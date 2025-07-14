@@ -30,7 +30,7 @@ const Label = styled(Typography)`
   margin-bottom: ${({ theme }) => theme.spacing.smallGutter}px;
 `
 
-const Input = styled.TextInput<{ value: string }>`
+const Input = styled(TextInput)<{ value: string }>`
   padding-left: ${({ theme }) => theme.spacing[1]}px;
   padding-top: 0px;
   padding-bottom: 0px;
