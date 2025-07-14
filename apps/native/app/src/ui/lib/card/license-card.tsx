@@ -299,7 +299,7 @@ export function LicenseCard({
           )}
         </BarcodeWrapper>
       )}
-      {((error && allowLicenseBarcode) || showBarcodeOfflineMessage) && (
+      {allowLicenseBarcode && (error || showBarcodeOfflineMessage) && (
         <BarcodeWrapper minHeight={barcodeHeight}>
           <BarcodeContainer
             style={{ backgroundColor: 'rgba(255,255,255,0.4)' }}
