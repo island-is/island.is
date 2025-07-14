@@ -13954,8 +13954,8 @@ __metadata:
     "@formatjs/intl-numberformat": "npm:7.1.5"
     "@formatjs/intl-pluralrules": "npm:4.1.4"
     "@formatjs/intl-relativetimeformat": "npm:11.1.8"
+    "@react-native-async-storage/async-storage": "npm:2.2.0"
     "@react-native-clipboard/clipboard": "npm:1.11.2"
-    "@react-native-community/async-storage": "npm:1.12.1"
     "@react-native-community/netinfo": "npm:11.3.1"
     "@react-native-community/progress-bar-android": "npm:1.0.5"
     "@react-native-community/progress-view": "npm:1.3.1"
@@ -17880,6 +17880,17 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@react-native-async-storage/async-storage@npm:2.2.0":
+  version: 2.2.0
+  resolution: "@react-native-async-storage/async-storage@npm:2.2.0"
+  dependencies:
+    merge-options: "npm:^3.0.4"
+  peerDependencies:
+    react-native: ^0.0.0-0 || >=0.65 <1.0
+  checksum: 10/625e42134f0c487acfd4ba9b3ba182e6f6f29581485004cc658850ef024372cdb7381b7399393f4416fda39df2d822e3008427d7671d635a7363f9a65430a2dd
+  languageName: node
+  linkType: hard
+
 "@react-native-clipboard/clipboard@npm:1.11.2":
   version: 1.11.2
   resolution: "@react-native-clipboard/clipboard@npm:1.11.2"
@@ -17887,18 +17898,6 @@ __metadata:
     react: ">=16.0"
     react-native: ">=0.57.0"
   checksum: 10/aa269a05023fd0c14d535071fb514e6433ece0dceedefd89d8f13decc4f953a8643a69b831b0983a7610c6e1d9fde58c2443e3cbde0ec3c410ef88ba2b82bc9f
-  languageName: node
-  linkType: hard
-
-"@react-native-community/async-storage@npm:1.12.1":
-  version: 1.12.1
-  resolution: "@react-native-community/async-storage@npm:1.12.1"
-  dependencies:
-    deep-assign: "npm:^3.0.0"
-  peerDependencies:
-    react: ^16.8
-    react-native: ">=0.59"
-  checksum: 10/a4549c930e47fc1cbdb5c45fe6ca4d8487ecd94ce17c76109ed710845ba42f21e78653ecea142dbedfd9e4687995237a9e1585d7400ed8fd5efe0d0c4f2a017e
   languageName: node
   linkType: hard
 
@@ -31785,15 +31784,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"deep-assign@npm:^3.0.0":
-  version: 3.0.0
-  resolution: "deep-assign@npm:3.0.0"
-  dependencies:
-    is-obj: "npm:^1.0.0"
-  checksum: 10/9041ccc72ae1980f014d4b745d6135d8f0e71d60ac433397550789c27e6b4d14bc0de2af69777e09f97e1d0da3007a8d78de36f7bf9df931c9968b68fc9546ab
-  languageName: node
-  linkType: hard
-
 "deep-equal@npm:2.0.5, deep-equal@npm:^2.0.5":
   version: 2.0.5
   resolution: "deep-equal@npm:2.0.5"
@@ -39600,13 +39590,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"is-obj@npm:^1.0.0":
-  version: 1.0.1
-  resolution: "is-obj@npm:1.0.1"
-  checksum: 10/3ccf0efdea12951e0b9c784e2b00e77e87b2f8bd30b42a498548a8afcc11b3287342a2030c308e473e93a7a19c9ea7854c99a8832a476591c727df2a9c79796c
-  languageName: node
-  linkType: hard
-
 "is-observable@npm:^1.1.0":
   version: 1.1.0
   resolution: "is-observable@npm:1.1.0"
@@ -44519,6 +44502,15 @@ __metadata:
   version: 1.0.1
   resolution: "merge-descriptors@npm:1.0.1"
   checksum: 10/5abc259d2ae25bb06d19ce2b94a21632583c74e2a9109ee1ba7fd147aa7362b380d971e0251069f8b3eb7d48c21ac839e21fa177b335e82c76ec172e30c31a26
+  languageName: node
+  linkType: hard
+
+"merge-options@npm:^3.0.4":
+  version: 3.0.4
+  resolution: "merge-options@npm:3.0.4"
+  dependencies:
+    is-plain-obj: "npm:^2.1.0"
+  checksum: 10/d86ddb3dd6e85d558dbf25dc944f3527b6bacb944db3fdda6e84a3f59c4e4b85231095f58b835758b9a57708342dee0f8de0dffa352974a48221487fe9f4584f
   languageName: node
   linkType: hard
 

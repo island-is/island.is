@@ -29,7 +29,7 @@ configure(() => {
 export const StorybookUI = getStorybookUI({
   host: Platform.OS === 'android' ? '10.0.2.2' : '0.0.0.0',
   // eslint-disable-next-line @typescript-eslint/no-var-requires
-  asyncStorage: require('@react-native-community/async-storage').default,
+  asyncStorage: require('@react-native-async-storage/async-storage').default,
 })
 
 export const StorybookScreen = () => {

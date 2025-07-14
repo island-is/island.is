@@ -1,4 +1,4 @@
-import AsyncStorage from '@react-native-community/async-storage'
+import AsyncStorage from '@react-native-async-storage/async-storage'
 import { Navigation } from 'react-native-navigation'
 import createUse from 'zustand'
 import { persist } from 'zustand/middleware'
