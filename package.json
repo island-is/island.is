@@ -423,7 +423,7 @@
     "@types/lodash": "4.17.1",
     "@types/mailparser": "3.4.0",
     "@types/memoizee": "0.4.5",
-    "@types/node": "18.16.9",
+    "@types/node": "20.15.0",
     "@types/opossum": "4.1.1",
     "@types/passport-jwt": "3.0.8",
     "@types/pg": "8.6.4",

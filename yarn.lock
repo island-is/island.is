@@ -17923,19 +17923,21 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/node@npm:18.16.9":
-  version: 18.16.9
-  resolution: "@types/node@npm:18.16.9"
-  checksum: 10/65b41dbe4655fd107b0e406edbb9634f10fa28ebf7f57c944ef8317c825fa3c4d8333e6724a6c04f71c3d16be9511efb4fba34e62b77b4cbb5f00d052f7b9081
-  languageName: node
-  linkType: hard
-
 "@types/node@npm:18.19.64":
   version: 18.19.64
   resolution: "@types/node@npm:18.19.64"
   dependencies:
     undici-types: "npm:~5.26.4"
   checksum: 10/c6383d4f6f3b3f1d48234b2e71e20d1ead4ac4ee31bbca7ef8719eedd1e79a425b35952d4b1ba3eff0a4e3eebd37b8a6e85e9af3bb88aa7b3fdae9cb66630820
+  languageName: node
+  linkType: hard
+
+"@types/node@npm:20.15.0":
+  version: 20.15.0
+  resolution: "@types/node@npm:20.15.0"
+  dependencies:
+    undici-types: "npm:~6.13.0"
+  checksum: 10/bec475ee6c54dc575ec4d322753df484af2b96e3afdd3f6f8e594353b3918ca5f420e7c30845225661a14a7522fa421d15294fbf68ed7ae16f4ae7942ca809bd
   languageName: node
   linkType: hard
 
@@ -34012,7 +34014,7 @@ __metadata:
     "@types/lodash": "npm:4.17.1"
     "@types/mailparser": "npm:3.4.0"
     "@types/memoizee": "npm:0.4.5"
-    "@types/node": "npm:18.16.9"
+    "@types/node": "npm:20.15.0"
     "@types/nodemailer": "npm:6.4.1"
     "@types/opossum": "npm:4.1.1"
     "@types/passport-jwt": "npm:3.0.8"
@@ -50953,6 +50955,13 @@ __metadata:
   version: 5.26.5
   resolution: "undici-types@npm:5.26.5"
   checksum: 10/0097779d94bc0fd26f0418b3a05472410408877279141ded2bd449167be1aed7ea5b76f756562cb3586a07f251b90799bab22d9019ceba49c037c76445f7cddd
+  languageName: node
+  linkType: hard
+
+"undici-types@npm:~6.13.0":
+  version: 6.13.0
+  resolution: "undici-types@npm:6.13.0"
+  checksum: 10/da52e37cbc6da3a75da86fa08dd795ca8924430deb91005eb884b840e46e19013ccd4c1c289f70018e8cf0c338add24a500e7c3acfcd49b1ffb27ff9f91e38b9
   languageName: node
   linkType: hard
 
