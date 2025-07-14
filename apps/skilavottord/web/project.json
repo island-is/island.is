@@ -31,7 +31,7 @@
         "maxWorkers": 2,
         "assets": [],
         "compiler": "tsc",
-        "target": "node20",
+        "target": "node",
         "webpackConfig": "apps/skilavottord/web/webpack.config.js"
       },
       "configurations": {

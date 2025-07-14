@@ -38,7 +38,7 @@
         "maxWorkers": 2,
         "assets": [],
         "compiler": "tsc",
-        "target": "node20",
+        "target": "node",
         "webpackConfig": "apps/financial-aid/web-veita/webpack.config.js"
       },
       "configurations": {

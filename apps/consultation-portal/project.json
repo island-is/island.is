@@ -32,7 +32,7 @@
         "maxWorkers": 2,
         "assets": [],
         "compiler": "tsc",
-        "target": "node20",
+        "target": "node",
         "webpackConfig": "apps/consultation-portal/webpack.config.js"
       },
       "configurations": {
