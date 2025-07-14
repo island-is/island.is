@@ -181,7 +181,8 @@ const Completed: FC = () => {
       workingCase.indictmentRulingDecision ===
       CaseIndictmentRulingDecision.RULING
         ? workingCase.defendants?.every((defendant) =>
-            defendant.verdict?.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
+            defendant.verdict?.serviceRequirement ===
+            ServiceRequirement.NOT_APPLICABLE
               ? Boolean(defendant.verdict?.appealDecision)
               : Boolean(defendant.verdict?.serviceRequirement),
           )
