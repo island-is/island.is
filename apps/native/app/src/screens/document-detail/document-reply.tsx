@@ -54,7 +54,7 @@ const HeaderTitle = styled(Row)`
 
 const TextAreaWrapper = styled.View`
   flex: 1;
-  height: 170;
+  height: 170px;
 `
 
 const TextArea = styled(TextField)(({ theme }) => ({
