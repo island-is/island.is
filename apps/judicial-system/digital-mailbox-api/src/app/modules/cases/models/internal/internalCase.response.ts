@@ -4,7 +4,6 @@ import {
   DateType,
   DefenderChoice,
   Gender,
-  InformationForDefendant,
   Institution,
   ServiceRequirement,
   ServiceStatus,

@@ -5,7 +5,6 @@ import { MessageModule } from '@island.is/judicial-system/message'
 
 import { CaseModule } from '../case/case.module'
 import { CourtModule } from '../court/court.module'
-import { VerdictModule } from '../verdict/verdict.module'
 import { CivilClaimant } from './models/civilClaimant.model'
 import { Defendant } from './models/defendant.model'
 import { DefendantEventLog } from './models/defendantEventLog.model'

@@ -19,7 +19,7 @@ import {
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
-import { ServiceRequirement, type User } from '@island.is/judicial-system/types'
+import { type User } from '@island.is/judicial-system/types'
 
 import {
   districtCourtAssistantRule,
