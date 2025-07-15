@@ -37,7 +37,7 @@ export const ParentRepeaterItem: FC<Props & FieldBaseProps> = ({
   const { application, errors, field } = props
   const { formatMessage } = useLocale()
   return (
-    <Box key={`parentBox${index}`} hidden={isHidden}>
+    <Box hidden={isHidden}>
       <Box paddingTop={3} paddingBottom={1}>
         {DescriptionFormField({
           application: application,
