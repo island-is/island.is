@@ -11,10 +11,10 @@ import {
   verifyUpload,
 } from '../utils/helpers'
 import { test } from '../utils/judicialSystemTest'
+import { judgeAmendsCase } from './shared-steps/amend'
 import { coaJudgesCompleteAppealCaseTest } from './shared-steps/complete-appeal'
 import { judgeReceivesAppealTest } from './shared-steps/receive-appeal'
 import { prosecutorAppealsCaseTest } from './shared-steps/send-appeal'
-import { judgeAmendsCase } from './shared-steps/amend'
 
 test.use({ baseURL: urls.judicialSystemBaseUrl })
 
