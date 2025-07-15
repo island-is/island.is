@@ -35,8 +35,8 @@ export class Verdict {
   @Field(() => ServiceStatus, { nullable: true })
   serviceStatus?: ServiceStatus
 
-  @Field(() => Date, { nullable: true })
-  serviceDate?: Date
+  @Field(() => String, { nullable: true })
+  serviceDate?: string
 
   @Field(() => String, { nullable: true })
   servedBy?: string
@@ -44,8 +44,8 @@ export class Verdict {
   @Field(() => VerdictAppealDecision, { nullable: true })
   appealDecision?: VerdictAppealDecision
 
-  @Field(() => Date, { nullable: true })
-  appealDate?: Date
+  @Field(() => String, { nullable: true })
+  appealDate?: string
 
   @Field(() => [InformationForDefendant], { nullable: true })
   serviceInformationForDefendant?: InformationForDefendant[]

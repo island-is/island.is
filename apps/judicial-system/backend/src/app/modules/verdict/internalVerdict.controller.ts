@@ -34,10 +34,48 @@ import { Verdict } from '../verdict/models/verdict.model'
 import { VerdictService } from '../verdict/verdict.service'
 import { UpdateVerdictAppealDto } from './dto/updateVerdictAppeal.dto'
 
+const validateVerdictAppealUpdate = ({
+  caseId,
+  indictmentRulingDecision,
+  rulingDate,
+  verdict,
+}: {
+  caseId: string
+  indictmentRulingDecision?: CaseIndictmentRulingDecision
+  rulingDate?: Date
+  verdict: Verdict
+}) => {
+  if (!rulingDate) {
+    throw new BadRequestException(
+      `Cannot register appeal – No ruling date has been set for case ${caseId}`,
+    )
+  }
+  const isServiceRequired =
+    verdict.serviceRequirement === ServiceRequirement.REQUIRED
+  const isFine = indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
+  const baseDate = isServiceRequired ? verdict.serviceDate : rulingDate
+
+  // this can only be thrown if service date is not set
+  if (!baseDate) {
+    throw new BadRequestException(
+      `Cannot register appeal – Service date not set for case ${caseId}`,
+    )
+  }
+  const appealDeadline = getIndictmentAppealDeadlineDate(
+    new Date(baseDate),
+    isFine,
+  )
+  if (hasDatePassed(appealDeadline)) {
+    throw new BadRequestException(
+      `Appeal deadline has passed for case ${caseId}. Deadline was ${appealDeadline.toISOString()}`,
+    )
+  }
+}
+
 @Controller('api/internal/case/:caseId')
-@ApiTags('internal defendants')
+@ApiTags('internal verdict')
 @UseGuards(TokenGuard, CaseExistsGuard)
-export class InternalDefendantController {
+export class InternalVerdictController {
   constructor(
     private readonly verdictService: VerdictService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
@@ -61,38 +99,20 @@ export class InternalDefendantController {
     @Body() verdictAppeal: UpdateVerdictAppealDto,
   ): Promise<Verdict> {
     this.logger.debug(`Updating verdict appeal for defendant in case ${caseId}`)
+
     const { verdict } = defendant
-    if (!verdict || !theCase.rulingDate) {
+    if (!verdict) {
       throw new BadRequestException(
-        `No verdict has been issued for case ${theCase.id}`,
-      )
-    }
-    // Validate appeal deadline
-    const isServiceRequired =
-      verdict.serviceRequirement === ServiceRequirement.REQUIRED
-    const isFine =
-      theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
-    const baseDate = isServiceRequired
-      ? verdict.serviceDate
-      : theCase.rulingDate
-
-    if (!baseDate) {
-      throw new BadRequestException(
-        `Cannot register appeal – ruling date not available for case ${theCase.id}`,
+        `Cannot register appeal – No verdict has been issued for case ${caseId}`,
       )
     }
 
-    const appealDeadline = getIndictmentAppealDeadlineDate(
-      new Date(baseDate),
-      isFine,
-    )
-    if (hasDatePassed(appealDeadline)) {
-      throw new BadRequestException(
-        `Appeal deadline has passed for case ${
-          theCase.id
-        }. Deadline was ${appealDeadline.toISOString()}`,
-      )
-    }
+    validateVerdictAppealUpdate({
+      caseId: theCase.id,
+      indictmentRulingDecision: theCase.indictmentRulingDecision,
+      rulingDate: theCase.rulingDate,
+      verdict,
+    })
 
     const updatedVerdict = this.verdictService.updateRestricted(verdict, {
       appealDecision: verdictAppeal.verdictAppealDecision,
