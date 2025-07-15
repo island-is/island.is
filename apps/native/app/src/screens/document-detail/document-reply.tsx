@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 
 import { NavigationFunctionComponent } from 'react-native-navigation'
 
+import { ScrollView } from 'react-native'
 import styled from 'styled-components/native'
 import { LoadingIcon } from '../../components/nav-loading-spinner/loading-icon'
 import { Pressable } from '../../components/pressable/pressable'
@@ -25,6 +26,10 @@ import {
 } from '../../ui'
 import { ComponentRegistry } from '../../utils/component-registry'
 import { isAndroid } from '../../utils/devices'
+
+const Wrapper = styled.View`
+  flex: 1;
+`
 
 const Host = styled.SafeAreaView`
   flex: 1;
@@ -49,14 +54,16 @@ const HeaderTitle = styled(Row)`
 
 const TextAreaWrapper = styled.View`
   flex: 1;
-`
-
-const TextArea = styled(TextField)`
   height: 170px;
 `
 
-const Footer = styled(Container)(({ theme }) => ({
+const TextArea = styled(TextField)(({ theme }) => ({
   flex: 1,
+  // Extra padding is needed to make sure when multiline is present, then the last line is not cut off.
+  paddingBottom: theme.spacing[isAndroid ? 4 : 2],
+}))
+
+const Footer = styled(Container)(({ theme }) => ({
   justifyContent: 'flex-end',
   ...(isAndroid && {
     paddingBottom: theme.spacing.p2,
@@ -159,70 +166,77 @@ export const DocumentReplyScreen: NavigationFunctionComponent<
         ) : error ? (
           <Problem type="error" error={error} withContainer />
         ) : (
-          <>
-            <HeaderTitle>
-              <Typography
-                variant="heading5"
-                numberOfLines={1}
-                ellipsizeMode="tail"
-              >
-                {subject}
-              </Typography>
-            </HeaderTitle>
-            <Row>
-              <Typography
-                variant="body3"
-                numberOfLines={1}
-                ellipsizeMode="tail"
-              >
-                {intl.formatMessage({ id: 'documentReply.to' })}
-                {': '}
-              </Typography>
-              <Typography
-                variant="eyebrow"
-                numberOfLines={1}
-                ellipsizeMode="tail"
-              >
-                {senderName}
-              </Typography>
-            </Row>
-            <Row>
-              <Typography
-                variant="body3"
-                numberOfLines={1}
-                ellipsizeMode="tail"
-              >
-                {intl.formatMessage({ id: 'documentReply.from' })}
-                {': '}
-              </Typography>
-              <Typography
-                variant="eyebrow"
-                numberOfLines={1}
-                ellipsizeMode="tail"
-              >
-                {userProfile?.email}
-              </Typography>
-              <EmailIconWrapper onPress={onEmailPress}>
-                <Icon
-                  source={require('../../assets/icons/chevron-forward.png')}
-                  width={16}
-                  height={16}
-                />
-              </EmailIconWrapper>
-            </Row>
-            <Row hasBottomBorder={false} paddingVertical={2}>
-              <TextAreaWrapper>
-                <TextArea
-                  label={intl.formatMessage({ id: 'documentReply.message' })}
-                  multiline
-                  value={message}
-                  placeholder={intl.formatMessage({
-                    id: 'documentReply.messagePlaceholder',
-                  })}
-                  onChangeText={setMessage}
-                />
-              </TextAreaWrapper>
-            </Row>
+          <ScrollView
+            contentContainerStyle={{ flexGrow: 1 }}
+            keyboardShouldPersistTaps="handled"
+          >
+            <Wrapper>
+              <HeaderTitle>
+                <Typography
+                  variant="heading5"
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
+                  {subject}
+                </Typography>
+              </HeaderTitle>
+              <Row>
+                <Typography
+                  variant="body3"
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
+                  {intl.formatMessage({ id: 'documentReply.to' })}
+                  {': '}
+                </Typography>
+                <Typography
+                  variant="eyebrow"
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
+                  {senderName}
+                </Typography>
+              </Row>
+              <Row>
+                <Typography
+                  variant="body3"
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
+                  {intl.formatMessage({ id: 'documentReply.from' })}
+                  {': '}
+                </Typography>
+                <Typography
+                  variant="eyebrow"
+                  numberOfLines={1}
+                  ellipsizeMode="tail"
+                >
+                  {userProfile?.email}
+                </Typography>
+                <EmailIconWrapper onPress={onEmailPress}>
+                  <Icon
+                    source={require('../../assets/icons/chevron-forward.png')}
+                    width={16}
+                    height={16}
+                  />
+                </EmailIconWrapper>
+              </Row>
+              <Row hasBottomBorder={false} paddingVertical={2}>
+                <TextAreaWrapper>
+                  <TextArea
+                    label={intl.formatMessage({ id: 'documentReply.message' })}
+                    multiline
+                    value={message}
+                    placeholder={intl.formatMessage({
+                      id: 'documentReply.messagePlaceholder',
+                    })}
+                    textAlignVertical="top"
+                    scrollEnabled
+                    onChangeText={setMessage}
+                  />
+                </TextAreaWrapper>
+              </Row>
+            </Wrapper>
             <Footer>
               <Button
                 title={intl.formatMessage({ id: 'documentReply.sendMessage' })}
@@ -230,7 +244,7 @@ export const DocumentReplyScreen: NavigationFunctionComponent<
                 disabled={!message.trim() || sendMessageLoading}
               />
             </Footer>
-          </>
+          </ScrollView>
         )}
       </Host>
     </>

@@ -63,7 +63,6 @@ import {
   districtCourtAssistantRule,
   districtCourtJudgeRule,
   districtCourtRegistrarRule,
-  prisonSystemStaffRule,
   prosecutorRepresentativeRule,
   prosecutorRule,
   publicProsecutorStaffRule,
@@ -355,19 +354,7 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthUserGuard, RolesGuard)
-  @RolesRules(
-    prosecutorRule,
-    prosecutorRepresentativeRule,
-    publicProsecutorStaffRule,
-    districtCourtJudgeRule,
-    districtCourtRegistrarRule,
-    districtCourtAssistantRule,
-    courtOfAppealsJudgeRule,
-    courtOfAppealsRegistrarRule,
-    courtOfAppealsAssistantRule,
-    prisonSystemStaffRule,
-    defenderRule,
-  )
+  @RolesRules(defenderRule)
   @UseInterceptors(CaseListInterceptor)
   @Get('cases')
   @ApiOkResponse({

@@ -20,7 +20,7 @@ test.describe.serial('Travel ban tests', () => {
   }) => {
     const page = prosecutorPage
 
-    await page.goto('/krofur')
+    await page.goto('/malalistar')
     await page.getByRole('button', { name: 'Nýtt mál' }).click()
     await page.getByRole('menuitem', { name: 'Farbann' }).click()
     await expect(page).toHaveURL('/krafa/ny/farbann')
@@ -102,7 +102,7 @@ test.describe.serial('Travel ban tests', () => {
     await expect(page).toHaveURL(`/krafa/stadfesta/${caseId}`)
     await page.getByRole('button', { name: 'Senda kröfu á héraðsdóm' }).click()
     await page.getByRole('button', { name: 'Loka glugga' }).click()
-    await expect(page).toHaveURL('/krofur')
+    await expect(page).toHaveURL('/malalistar')
   })
 
   test('court should submit decision on travel ban case', async ({

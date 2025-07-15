@@ -7,10 +7,15 @@ import {
   YES,
 } from '@island.is/application/core'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
-import { shouldShowEmployeeSickPayEndDate } from '../../../utils/conditionUtils'
+import {
+  isFirstApplication,
+  shouldShowEmployeeSickPayEndDate,
+} from '../../../utils/conditionUtils'
 import {
   getApplicationAnswers,
   getYesNoNotApplicableOptions,
+  hasNotUtilizedRights,
+  hasUtilizedRights,
 } from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 
 export const employeeSickPaySubSection = buildSubSection({
@@ -18,6 +23,7 @@ export const employeeSickPaySubSection = buildSubSection({
   title:
     medicalAndRehabilitationPaymentsFormMessage.generalInformation
       .employeeSickPaySubSectionTitle,
+  condition: (_, externalData) => isFirstApplication(externalData),
   children: [
     buildMultiField({
       id: 'employeeSickPay',
@@ -51,6 +57,18 @@ export const employeeSickPaySubSection = buildSubSection({
         }),
         buildDateField({
           id: 'employeeSickPay.endDate',
+          minDate: (application) => {
+            const { hasUtilizedEmployeeSickPayRights } = getApplicationAnswers(
+              application.answers,
+            )
+            return hasNotUtilizedRights(hasUtilizedEmployeeSickPayRights)
+          },
+          maxDate: (application) => {
+            const { hasUtilizedEmployeeSickPayRights } = getApplicationAnswers(
+              application.answers,
+            )
+            return hasUtilizedRights(hasUtilizedEmployeeSickPayRights)
+          },
           title: medicalAndRehabilitationPaymentsFormMessage.shared.date,
           placeholder:
             medicalAndRehabilitationPaymentsFormMessage.shared.datePlaceholder,

@@ -51,6 +51,11 @@ export const application = defineMessages({
     defaultMessage: 'Senda í undirritun',
     description: `Button text for going to signing`,
   },
+  approve: {
+    id: 'ra.application:application.approve',
+    defaultMessage: 'Samþykkja',
+    description: `Button text for approving`,
+  },
 })
 
 export const prerequisites = {

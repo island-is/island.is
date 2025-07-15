@@ -23,7 +23,12 @@ import {
   getApplicationAnswers as getIPApplicationAnswers,
   getApplicationExternalData as getIPApplicationExternalData,
 } from '@island.is/application/templates/social-insurance-administration/income-plan'
-import { getApplicationAnswers as getMARPApplicationAnswers } from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
+import {
+  getApplicationAnswers as getMARPApplicationAnswers,
+  isEHApplication,
+  isFirstApplication,
+  SelfAssessmentCurrentEmploymentStatus,
+} from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
 import {
   ApplicationType,
   Employer,
@@ -385,6 +390,10 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     calculatedRemunerationDate,
     isPartTimeEmployed,
     isStudying,
+    educationalInstitution,
+    // ectsUnits,
+    isReceivingBenefitsFromAnotherCountry,
+    // countries,
     hasUtilizedEmployeeSickPayRights,
     employeeSickPayEndDate,
     hasUtilizedUnionSickPayRights,
@@ -392,6 +401,13 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     unionNationalId,
     comment,
     questionnaire,
+    currentEmploymentStatus,
+    currentEmploymentStatusAdditional,
+    lastEmploymentTitle,
+    lastEmploymentYear,
+    certificateForSicknessAndRehabilitationReferenceId,
+    educationalLevel,
+    hadAssistance,
   } = getMARPApplicationAnswers(application.answers)
 
   //  const { bankInfo } = getMARPApplicationExternalData(application.externalData)
@@ -413,42 +429,63 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     //   },
     // }),
     taxInfo: {
-      personalAllowance: YES === personalAllowance,
+      personalAllowance: personalAllowance === YES,
       personalAllowanceUsage:
-        YES === personalAllowance ? +personalAllowanceUsage : 0,
+        personalAllowance === YES ? +personalAllowanceUsage : 0,
       taxLevel: +taxLevel,
     },
     occupation: {
-      isSelfEmployed: YES === isSelfEmployed,
-      isStudying: YES === isStudying,
-      isPartTimeEmployed: YES === isPartTimeEmployed,
-      ...(YES === isSelfEmployed && {
+      ...(isFirstApplication(application.externalData) && {
+        isSelfEmployed: isSelfEmployed === YES,
+      }),
+      isStudying: isStudying === YES,
+      isPartTimeEmployed: isPartTimeEmployed === YES,
+      ...(isFirstApplication(application.externalData) && {
+        receivingPaymentsFromOtherCountry:
+          isReceivingBenefitsFromAnotherCountry === YES,
+      }),
+      ...(isSelfEmployed === YES && {
         calculatedRemunerationDate,
       }),
-    },
-    employeeSickPay: {
-      hasUtilizedEmployeeSickPayRights: getYesNoNotApplicableValue(
-        hasUtilizedEmployeeSickPayRights,
-      ),
-      ...((hasUtilizedEmployeeSickPayRights === YES ||
-        hasUtilizedEmployeeSickPayRights === NO) && {
-        employeeSickPayEndDate,
+      ...(isStudying === YES && {
+        educationalInstitution,
       }),
     },
-    unionSickPay: {
-      hasUtilizedUnionSickPayRights: getYesNoNotApplicableValue(
-        hasUtilizedUnionSickPayRights,
-      ),
-      ...((hasUtilizedUnionSickPayRights === YES ||
-        hasUtilizedUnionSickPayRights === NO) && {
-        unionNationalId,
-        unionSickPayEndDate,
-      }),
-    },
-    baseCertificateReference: 'test', //TODO:
-    rehabilitationPlanReference: 'test', //TODO:
+    ...(isFirstApplication(application.externalData) && {
+      employeeSickPay: {
+        hasUtilizedEmployeeSickPayRights: getYesNoNotApplicableValue(
+          hasUtilizedEmployeeSickPayRights,
+        ),
+        ...((hasUtilizedEmployeeSickPayRights === YES ||
+          hasUtilizedEmployeeSickPayRights === NO) && {
+          employeeSickPayEndDate,
+        }),
+      },
+      unionSickPay: {
+        hasUtilizedUnionSickPayRights: getYesNoNotApplicableValue(
+          hasUtilizedUnionSickPayRights,
+        ),
+        ...((hasUtilizedUnionSickPayRights === YES ||
+          hasUtilizedUnionSickPayRights === NO) && {
+          unionNationalId,
+          unionSickPayEndDate,
+        }),
+      },
+    }),
+    baseCertificateReference:
+      certificateForSicknessAndRehabilitationReferenceId ?? '',
+    ...(isEHApplication(application.externalData) && {
+      rehabilitationPlanReference: 'test', //TODO:
+    }),
     selfAssessment: {
-      hadAssistance: true, //TODO:
+      hadAssistance: hadAssistance === YES,
+      educationalLevel: educationalLevel || '',
+      currentEmploymentStatus,
+      ...(currentEmploymentStatus?.includes(
+        SelfAssessmentCurrentEmploymentStatus.OTHER,
+      ) && { currentEmploymentStatusAdditional }),
+      ...(lastEmploymentTitle && { lastEmploymentTitle }),
+      ...(lastEmploymentYear && { lastEmploymentYear: +lastEmploymentYear }),
       answers: questionnaire.map((question) => ({
         questionId: question.questionId,
         answer: question.answer === '5' ? '-1' : question.answer, //TODO: TR teymið er ekki klárt hvort að við eigum að senda -1 eða null

@@ -1,27 +1,29 @@
-import { getValueViaPath, YES, YesOrNo } from '@island.is/application/core'
+import { getValueViaPath, NO, YES, YesOrNo } from '@island.is/application/core'
 import { TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { getYesNoOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import {
-  Attachments,
   BankInfo,
   CategorizedIncomeTypes,
-  FileType,
+  Eligible,
   IncomePlanConditions,
   IncomePlanRow,
   PaymentInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
-import { Application } from '@island.is/application/types'
+import { Application, ExternalData, Option } from '@island.is/application/types'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../lib/messages'
 import {
+  Countries,
+  EctsUnits,
+  EducationLevels,
   SelfAssessmentQuestionnaire,
   SelfAssessmentQuestionnaireAnswers,
 } from '../types'
 import {
-  AttachmentLabel,
-  AttachmentTypes,
+  EligibleReasonCodes,
   NOT_APPLICABLE,
   NotApplicable,
+  SelfAssessmentCurrentEmploymentStatus,
 } from './constants'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
@@ -49,6 +51,17 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
   const incomePlan =
     getValueViaPath<IncomePlanRow[]>(answers, 'incomePlanTable') ?? []
 
+  const isReceivingBenefitsFromAnotherCountry = getValueViaPath<YesOrNo>(
+    answers,
+    'benefitsFromAnotherCountry.isReceivingBenefitsFromAnotherCountry',
+  )
+
+  const countries =
+    getValueViaPath<Countries[]>(
+      answers,
+      'benefitsFromAnotherCountry.countries',
+    ) ?? []
+
   const isSelfEmployed = getValueViaPath<YesOrNo>(
     answers,
     'questions.isSelfEmployed',
@@ -66,10 +79,12 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const isStudying = getValueViaPath<YesOrNo>(answers, 'questions.isStudying')
 
-  const isStudyingFileUpload = getValueViaPath<FileType[]>(
+  const educationalInstitution = getValueViaPath<string>(
     answers,
-    'questions.isStudyingFileUpload',
+    'questions.educationalInstitution',
   )
+
+  const ectsUnits = getValueViaPath<string>(answers, 'questions.ectsUnits')
 
   const hasUtilizedEmployeeSickPayRights = getValueViaPath<
     YesOrNo | NotApplicable
@@ -94,10 +109,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'unionSickPay.unionNationalId',
   )
 
-  const unionSickPayFileUpload = getValueViaPath<FileType[]>(
-    answers,
-    'unionSickPay.fileupload',
-  )
+  const certificateForSicknessAndRehabilitationReferenceId =
+    getValueViaPath<string>(
+      answers,
+      'certificateForSicknessAndRehabilitationReferenceId',
+    )
 
   const rehabilitationPlanConfirmation = getValueViaPath<string[]>(
     answers,
@@ -109,9 +125,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'selfAssessment.hadAssistance',
   )
 
-  const highestLevelOfEducation = getValueViaPath<string>(
+  const educationalLevel = getValueViaPath<string>(
     answers,
-    'selfAssessment.highestLevelOfEducation',
+    'selfAssessment.educationalLevel',
   )
 
   const comment = getValueViaPath<string>(answers, 'comment')
@@ -149,6 +165,27 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
       'selfAssessment.previousRehabilitationSuccessfulFurtherExplanations',
     )
 
+  const currentEmploymentStatus =
+    getValueViaPath<SelfAssessmentCurrentEmploymentStatus[]>(
+      answers,
+      'selfAssessment.currentEmploymentStatus',
+    ) ?? []
+
+  const currentEmploymentStatusAdditional = getValueViaPath<string>(
+    answers,
+    'selfAssessment.currentEmploymentStatusAdditional',
+  )
+
+  const lastEmploymentTitle = getValueViaPath<string>(
+    answers,
+    'selfAssessment.lastEmploymentTitle',
+  )
+
+  const lastEmploymentYear = getValueViaPath<string>(
+    answers,
+    'selfAssessment.lastEmploymentYear',
+  )
+
   return {
     applicantPhonenumber,
     applicantEmail,
@@ -158,20 +195,23 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     personalAllowanceUsage,
     taxLevel,
     incomePlan,
+    isReceivingBenefitsFromAnotherCountry,
+    countries,
     isSelfEmployed,
     calculatedRemunerationDate,
     isPartTimeEmployed,
     isStudying,
-    isStudyingFileUpload,
+    educationalInstitution,
+    ectsUnits,
     hasUtilizedEmployeeSickPayRights,
     employeeSickPayEndDate,
     hasUtilizedUnionSickPayRights,
     unionSickPayEndDate,
     unionNationalId,
-    unionSickPayFileUpload,
+    certificateForSicknessAndRehabilitationReferenceId,
     rehabilitationPlanConfirmation,
     hadAssistance,
-    highestLevelOfEducation,
+    educationalLevel,
     comment,
     questionnaire,
     mainProblem,
@@ -179,6 +219,10 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     previousRehabilitationOrTreatment,
     previousRehabilitationSuccessful,
     previousRehabilitationSuccessfulFurtherExplanations,
+    currentEmploymentStatus,
+    currentEmploymentStatusAdditional,
+    lastEmploymentTitle,
+    lastEmploymentYear,
   }
 }
 
@@ -270,6 +314,28 @@ export const getApplicationExternalData = (
       'socialInsuranceAdministrationQuestionnairesSelfAssessment.data',
     ) ?? []
 
+  const ectsUnits =
+    getValueViaPath<EctsUnits[]>(
+      externalData,
+      'socialInsuranceAdministrationEctsUnits.data',
+    ) ?? []
+
+  const educationLevels =
+    getValueViaPath<EducationLevels[]>(
+      externalData,
+      'socialInsuranceAdministrationEducationLevels.data',
+    ) ?? []
+
+  const marpApplicationType = getValueViaPath<string>(
+    externalData,
+    'socialInsuranceAdministrationMARPApplicationType.data.applicationType',
+  )
+
+  const isEligible = getValueViaPath<Eligible>(
+    externalData,
+    'socialInsuranceAdministrationIsApplicantEligible.data',
+  )
+
   return {
     applicantName,
     applicantNationalId,
@@ -288,46 +354,11 @@ export const getApplicationExternalData = (
     currencies,
     incomePlanConditions,
     selfAssessmentQuestionnaire,
+    ectsUnits,
+    educationLevels,
+    marpApplicationType,
+    isEligible,
   }
-}
-
-export const getAttachments = (application: Application) => {
-  const getAttachmentDetails = (
-    attachmentsArr: FileType[] | undefined,
-    attachmentType: AttachmentTypes,
-  ) => {
-    if (attachmentsArr && attachmentsArr.length > 0) {
-      attachments.push({
-        attachments: attachmentsArr,
-        label: AttachmentLabel[attachmentType],
-      })
-    }
-  }
-
-  const { answers } = application
-  const {
-    isStudying,
-    isStudyingFileUpload,
-    hasUtilizedUnionSickPayRights,
-    unionSickPayFileUpload,
-  } = getApplicationAnswers(answers)
-  const attachments: Attachments[] = []
-
-  if (isStudying === YES) {
-    getAttachmentDetails(
-      isStudyingFileUpload,
-      AttachmentTypes.STUDY_CONFIRMATION,
-    )
-  }
-
-  if (hasUtilizedUnionSickPayRights === YES) {
-    getAttachmentDetails(
-      unionSickPayFileUpload,
-      AttachmentTypes.UNION_SICK_PAY_CONFIRMATION,
-    )
-  }
-
-  return attachments
 }
 
 export const getYesNoNotApplicableOptions = () => {
@@ -354,4 +385,123 @@ export const getSickPayEndDateLabel = (hasUtilizedSickPayRights?: YesOrNo) => {
   return hasUtilizedSickPayRights === YES
     ? medicalAndRehabilitationPaymentsFormMessage.shared.sickPayDidEndDate
     : medicalAndRehabilitationPaymentsFormMessage.shared.sickPayDoesEndDate
+}
+
+export const getSelfAssessmentCurrentEmploymentStatusOptions = () => {
+  const options: Option[] = [
+    {
+      value: SelfAssessmentCurrentEmploymentStatus.NEVER_HAD_A_PAID_JOB,
+      label:
+        medicalAndRehabilitationPaymentsFormMessage.selfAssessment.neverOption,
+    },
+    {
+      value: SelfAssessmentCurrentEmploymentStatus.SELF_EMPLOYED,
+      label:
+        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+          .selfEmployedOption,
+    },
+    {
+      value: SelfAssessmentCurrentEmploymentStatus.FULL_TIME_WORKER,
+      label:
+        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+          .fullTimeOption,
+    },
+    {
+      value: SelfAssessmentCurrentEmploymentStatus.PART_TIME_WORKER,
+      label:
+        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+          .partTimeOption,
+    },
+    {
+      value: SelfAssessmentCurrentEmploymentStatus.CURRENTLY_STUDYING,
+      label:
+        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+          .studyingOption,
+    },
+    {
+      value: SelfAssessmentCurrentEmploymentStatus.JOB_SEARCH_REGISTERED,
+      label:
+        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+          .jobSearchRegisteredOption,
+    },
+    {
+      value: SelfAssessmentCurrentEmploymentStatus.JOB_SEARCH_NOT_REGISTERED,
+      label:
+        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+          .jobSearchNotRegisteredOption,
+    },
+    {
+      value: SelfAssessmentCurrentEmploymentStatus.VOLOUNTEER_OR_TEST_WORK,
+      label:
+        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+          .volunteerOrTestWorkOption,
+    },
+    {
+      value: SelfAssessmentCurrentEmploymentStatus.NO_PARTICIPATION,
+      label:
+        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+          .noParticipationOption,
+    },
+    {
+      value: SelfAssessmentCurrentEmploymentStatus.OTHER,
+      label:
+        medicalAndRehabilitationPaymentsFormMessage.selfAssessment.otherOption,
+    },
+  ]
+  return options
+}
+
+export const hasUtilizedRights = (
+  hasUtilizedSickPayRights?: YesOrNo | NotApplicable,
+) => {
+  return hasUtilizedSickPayRights === YES ? new Date() : undefined
+}
+
+export const hasNotUtilizedRights = (
+  hasUtilizedSickPayRights?: YesOrNo | NotApplicable,
+) => {
+  return hasUtilizedSickPayRights === NO ? new Date() : undefined
+}
+
+// Returns an array of year options from current year to 30 years in the past
+export const getSelfAssessmentLastEmploymentYearOptions = () => {
+  const currentYear = new Date().getFullYear()
+
+  return Array.from({ length: 31 }, (_, index) => {
+    const year = currentYear - index
+    return {
+      value: year.toString(),
+      label: year.toString(),
+    }
+  })
+}
+
+export const isEligible = (externalData: ExternalData): boolean => {
+  const { isEligible } = getApplicationExternalData(externalData)
+
+  return !!isEligible && isEligible.isEligible
+}
+
+export const eligibleText = (externalData: ExternalData) => {
+  const { isEligible } = getApplicationExternalData(externalData)
+
+  switch (isEligible?.reasonCode) {
+    case EligibleReasonCodes.APPLICANT_AGE_OUT_OF_RANGE:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .applicantAgeOutOfRangeDescription
+    case EligibleReasonCodes.BASE_CERT_NOT_FOUND:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .baseCertNotFoundDescription
+    case EligibleReasonCodes.BASE_CERT_DATE_INVALID:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .baseCertDateInvalidDescription
+    case EligibleReasonCodes.BASE_CERT_OLDER_THAN_7YEARS:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .baseCertOlderThanSevenYearsDescription
+    case EligibleReasonCodes.BASE_CERT_OLDER_THAN_6MONTHS:
+      return medicalAndRehabilitationPaymentsFormMessage.notEligible
+        .baseCertOlderThanSixMonthsDescription
+    default:
+      return undefined
+  }
 }

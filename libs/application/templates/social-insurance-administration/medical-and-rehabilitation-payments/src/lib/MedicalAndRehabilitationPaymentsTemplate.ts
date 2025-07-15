@@ -5,8 +5,8 @@ import {
   YES,
 } from '@island.is/application/core'
 import {
-  defaultIncomeTypes,
   Actions,
+  defaultIncomeTypes,
   Events,
   INCOME,
   RatioType,
@@ -33,26 +33,32 @@ import {
   UserProfileApi,
 } from '@island.is/application/types'
 import { ApiScope } from '@island.is/auth/scopes'
+import { Features } from '@island.is/feature-flags'
 import { CodeOwners } from '@island.is/shared/constants'
+import { AuthDelegationType } from '@island.is/shared/types'
 import set from 'lodash/set'
 import unset from 'lodash/unset'
-import { AuthDelegationType } from '@island.is/shared/types'
 import { assign } from 'xstate'
 import {
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationCategorizedIncomeTypesApi,
   SocialInsuranceAdministrationCurrenciesApi,
+  SocialInsuranceAdministrationEctsUnitsApi,
+  SocialInsuranceAdministrationEducationLevelsApi,
   SocialInsuranceAdministrationIncomePlanConditionsApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
+  SocialInsuranceAdministrationMARPApplicationTypeApi,
   SocialInsuranceAdministrationQuestionnairesApi,
 } from '../dataProviders'
+import {
+  getApplicationAnswers,
+  isEligible,
+} from '../utils/medicalAndRehabilitationPaymentsUtils'
 import { dataSchema } from './dataSchema'
-import { getApplicationAnswers } from '../utils/medicalAndRehabilitationPaymentsUtils'
 import {
   medicalAndRehabilitationPaymentsFormMessage,
   statesMessages,
 } from './messages'
-import { Features } from '@island.is/feature-flags'
 
 const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -113,15 +119,42 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
                 SocialInsuranceAdministrationCurrenciesApi,
                 SocialInsuranceAdministrationIncomePlanConditionsApi,
                 SocialInsuranceAdministrationQuestionnairesApi,
+                SocialInsuranceAdministrationEctsUnitsApi,
+                SocialInsuranceAdministrationMARPApplicationTypeApi,
+                SocialInsuranceAdministrationEducationLevelsApi,
               ],
               delete: true,
             },
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: {
-            target: States.DRAFT,
-          },
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.DRAFT,
+              cond: (application) =>
+                isEligible(application?.application?.externalData),
+            },
+            {
+              target: States.NOT_ELIGIBLE,
+            },
+          ],
+        },
+      },
+      [States.NOT_ELIGIBLE]: {
+        meta: {
+          name: States.NOT_ELIGIBLE,
+          status: FormModes.DRAFT,
+          lifecycle: EphemeralStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/NotEligible').then((module) =>
+                  Promise.resolve(module.NotEligible),
+                ),
+              read: 'all',
+            },
+          ],
         },
       },
       [States.DRAFT]: {
@@ -174,7 +207,7 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
       [States.APPROVED]: {
         meta: {
           name: States.APPROVED,
-          status: 'approved',
+          status: FormModes.APPROVED,
           actionCard: {
             pendingAction: {
               title: coreSIAStatesMessages.applicationApproved,

@@ -1,8 +1,9 @@
 import { Dispatch, SetStateAction, useState } from 'react'
-import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
+import { InputMask } from '@react-input/mask'
 
 import { Box, Input } from '@island.is/island-ui/core'
+import { SPEED } from '@island.is/judicial-system/consts'
 import { SectionHeading } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
@@ -48,8 +49,9 @@ export const SpeedingOffenseFields = ({
       />
       <Box marginBottom={1}>
         <InputMask
-          mask={'999'}
-          maskPlaceholder={null}
+          component={Input}
+          mask={SPEED}
+          replacement={{ _: /\d/ }}
           value={indictmentCount.recordedSpeed?.toString() ?? ''}
           onChange={(event) => {
             const recordedSpeed = parseInt(event.target.value)
@@ -79,21 +81,19 @@ export const SpeedingOffenseFields = ({
               recordedSpeed,
             })
           }}
-        >
-          <Input
-            name="recordedSpeed"
-            autoComplete="off"
-            label={formatMessage(strings.recordedSpeedLabel)}
-            placeholder="0"
-            required
-            errorMessage={recordedSpeedErrorMessage}
-            hasError={recordedSpeedErrorMessage !== ''}
-          />
-        </InputMask>
+          name="recordedSpeed"
+          autoComplete="off"
+          label={formatMessage(strings.recordedSpeedLabel)}
+          placeholder="0"
+          required
+          errorMessage={recordedSpeedErrorMessage}
+          hasError={recordedSpeedErrorMessage !== ''}
+        />
       </Box>
       <InputMask
-        mask={'999'}
-        maskPlaceholder={null}
+        component={Input}
+        mask={SPEED}
+        replacement={{ _: /\d/ }}
         value={indictmentCount.speedLimit?.toString() ?? ''}
         onChange={(event) => {
           const speedLimit = parseInt(event.target.value)
@@ -123,17 +123,14 @@ export const SpeedingOffenseFields = ({
             speedLimit,
           })
         }}
-      >
-        <Input
-          name="speedLimit"
-          autoComplete="off"
-          label={formatMessage(strings.speedLimitLabel)}
-          placeholder="0"
-          required
-          errorMessage={speedLimitErrorMessage}
-          hasError={speedLimitErrorMessage !== ''}
-        />
-      </InputMask>
+        name="speedLimit"
+        autoComplete="off"
+        label={formatMessage(strings.speedLimitLabel)}
+        placeholder="0"
+        required
+        errorMessage={speedLimitErrorMessage}
+        hasError={speedLimitErrorMessage !== ''}
+      />
     </Box>
   )
 }

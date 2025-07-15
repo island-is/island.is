@@ -25,8 +25,9 @@ test.describe.serial('Indictment tests', () => {
 
     const policeCaseNumber = randomPoliceCaseNumber()
 
-    // Case list
-    await page.goto('/krofur')
+    // Case list groups
+    await page.goto('/malalistar')
+    await expect(page).toHaveURL('/malalistar')
     await page.getByRole('button', { name: 'Nýtt mál' }).click()
     await page.getByRole('menuitem', { name: 'Ákæra' }).click()
     await expect(page).toHaveURL('/akaera/ny')
@@ -154,7 +155,8 @@ test.describe.serial('Indictment tests', () => {
     const page = prosecutorPage
 
     // Case list
-    await page.goto('/krofur')
+    await page.goto('/malalistar/sakamal-sem-bida-stadfestingar')
+    await expect(page).toHaveURL('/malalistar/sakamal-sem-bida-stadfestingar')
     await page.getByText(accusedName).click()
 
     // Indictment case
@@ -174,7 +176,8 @@ test.describe.serial('Indictment tests', () => {
     const nextWeek = getDaysFromNow(7)
 
     // Case list
-    await page.goto('/krofur')
+    await page.goto('/malalistar/sakamal-sem-bida-uthlutunar')
+    await expect(page).toHaveURL('/malalistar/sakamal-sem-bida-uthlutunar')
     await page.getByText(accusedName).click()
 
     // Indictment Overview

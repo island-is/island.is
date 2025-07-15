@@ -7,7 +7,7 @@ import {
   useEffect,
   useState,
 } from 'react'
-import InputMask from 'react-input-mask'
+import { InputMask } from '@react-input/mask'
 
 import {
   Box,
@@ -17,6 +17,10 @@ import {
   Select,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import {
+  formatNationalId,
+  formatPhoneNumber,
+} from '@island.is/judicial-system/formatters'
 import {
   getAdminUserInstitutionScope,
   getAdminUserInstitutionUserRoles,
@@ -161,7 +165,11 @@ export const UserForm: FC<Props> = ({
 }) => {
   const { user: admin } = useContext(UserContext)
 
-  const [user, setUser] = useState<User>(existingUser)
+  const [user, setUser] = useState<User>({
+    ...existingUser,
+    nationalId: formatNationalId(existingUser.nationalId),
+    mobileNumber: formatPhoneNumber(existingUser.mobileNumber),
+  })
 
   const { personData, personError } = useNationalRegistry(user.nationalId)
 
@@ -254,38 +262,35 @@ export const UserForm: FC<Props> = ({
         <PageTitle>Notandi</PageTitle>
         <Box marginBottom={2}>
           <InputMask
-            // eslint-disable-next-line local-rules/disallow-kennitalas
-            mask="999999-9999"
-            maskPlaceholder={null}
+            component={Input}
+            mask={constants.SSN}
+            replacement={{ _: /\d/ }}
             value={user.nationalId || ''}
             onChange={(event) =>
               storeAndRemoveErrorIfValid(
                 'nationalId',
-                event.target.value.replace('-', ''),
+                event.target.value,
                 ['empty', 'national-id'],
                 setNationalIdErrorMessage,
               )
             }
             onBlur={(event) =>
               validateAndSetError(
-                event.target.value.replace('-', ''),
+                event.target.value,
                 ['empty', 'national-id'],
                 setNationalIdErrorMessage,
               )
             }
             readOnly={!isNewUser}
-          >
-            <Input
-              data-testid="nationalId"
-              name="nationalId"
-              label="Kennitala"
-              placeholder="Kennitala"
-              autoComplete="off"
-              required
-              hasError={nationalIdErrorMessage !== undefined}
-              errorMessage={nationalIdErrorMessage}
-            />
-          </InputMask>
+            data-testid="nationalId"
+            name="nationalId"
+            label="Kennitala"
+            placeholder="Kennitala"
+            autoComplete="off"
+            required
+            hasError={nationalIdErrorMessage !== undefined}
+            errorMessage={nationalIdErrorMessage}
+          />
         </Box>
         <Box marginBottom={2}>
           <Input
@@ -387,36 +392,34 @@ export const UserForm: FC<Props> = ({
         </Box>
         <Box marginBottom={2}>
           <InputMask
-            mask="999-9999"
-            maskPlaceholder={null}
+            component={Input}
+            mask={constants.PHONE_NUMBER}
+            replacement={{ _: /\d/ }}
             value={user.mobileNumber || ''}
             onChange={(event) =>
               storeAndRemoveErrorIfValid(
                 'mobileNumber',
-                event.target.value.replace('-', ''),
+                event.target.value,
                 ['empty'],
                 setMobileNumberErrorMessage,
               )
             }
             onBlur={(event) =>
               validateAndSetError(
-                event.target.value.replace('-', ''),
+                event.target.value,
                 ['empty'],
                 setMobileNumberErrorMessage,
               )
             }
-          >
-            <Input
-              data-testid="mobileNumber"
-              name="mobileNumber"
-              label="Símanúmer"
-              placeholder="Símanúmer"
-              autoComplete="off"
-              required
-              hasError={mobileNumberErrorMessage !== undefined}
-              errorMessage={mobileNumberErrorMessage}
-            />
-          </InputMask>
+            data-testid="mobileNumber"
+            name="mobileNumber"
+            label="Símanúmer"
+            placeholder="Símanúmer"
+            autoComplete="off"
+            required
+            hasError={mobileNumberErrorMessage !== undefined}
+            errorMessage={mobileNumberErrorMessage}
+          />
         </Box>
         <Box marginBottom={2}>
           <Input

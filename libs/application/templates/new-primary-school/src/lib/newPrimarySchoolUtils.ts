@@ -40,10 +40,13 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const relatives = getValueViaPath(answers, 'relatives') as RelativesRow[]
 
-  const reasonForApplication = getValueViaPath(
+  const reasonForApplicationIdAndKey = getValueViaPath(
     answers,
     'reasonForApplication.reason',
   ) as ReasonForApplicationOptions
+
+  const [reasonForApplicationId, reasonForApplication] =
+    reasonForApplicationIdAndKey?.split('::') ?? []
 
   const reasonForApplicationStreetAddress = getValueViaPath(
     answers,
@@ -57,10 +60,13 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const siblings = getValueViaPath(answers, 'siblings') as SiblingsRow[]
 
-  const languageEnvironment = getValueViaPath(
+  const languageEnvironmentIdAndKey = getValueViaPath(
     answers,
     'languages.languageEnvironment',
   ) as string
+
+  const [languageEnvironmentId, languageEnvironment] =
+    languageEnvironmentIdAndKey?.split('::') ?? []
 
   const selectedLanguages = getValueViaPath(
     answers,
@@ -78,11 +84,6 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     answers,
     'languages.preferredLanguage',
   ) as string
-
-  const guardianRequiresInterpreter = getValueViaPath(
-    answers,
-    'languages.guardianRequiresInterpreter',
-  ) as YesOrNo
 
   const hasFoodAllergiesOrIntolerances = getValueViaPath(
     answers,
@@ -128,6 +129,21 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     answers,
     'support.hasHadSupport',
   ) as YesOrNo
+
+  const hasWelfareContact = getValueViaPath(
+    answers,
+    'support.hasWelfareContact',
+  ) as YesOrNo
+
+  const welfareContactName = getValueViaPath<string>(
+    answers,
+    'support.welfareContact.name',
+  )
+
+  const welfareContactEmail = getValueViaPath<string>(
+    answers,
+    'support.welfareContact.email',
+  )
 
   const hasIntegratedServices = getValueViaPath(
     answers,
@@ -211,6 +227,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'school.applyForNeighbourhoodSchool',
   ) as YesOrNo
 
+  const currentSchoolId = getValueViaPath<string>(
+    answers,
+    'currentSchool.school',
+  )
+
   return {
     applicationType,
     childNationalId,
@@ -218,14 +239,15 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     guardians,
     relatives,
     reasonForApplication,
+    reasonForApplicationId,
     reasonForApplicationStreetAddress,
     reasonForApplicationPostalCode,
     siblings,
+    languageEnvironmentId,
     languageEnvironment,
     selectedLanguages,
     preferredLanguage,
     signLanguage,
-    guardianRequiresInterpreter,
     hasFoodAllergiesOrIntolerances,
     foodAllergiesOrIntolerances,
     hasOtherAllergies,
@@ -235,6 +257,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     requestsMedicationAdministration,
     hasDiagnoses,
     hasHadSupport,
+    hasWelfareContact,
+    welfareContactName,
+    welfareContactEmail,
     hasIntegratedServices,
     hasCaseManager,
     caseManagerName,
@@ -250,6 +275,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     currentNurseryMunicipality,
     currentNursery,
     applyForNeighbourhoodSchool,
+    currentSchoolId,
   }
 }
 
@@ -317,6 +343,16 @@ export const getApplicationExternalData = (
     [],
   ) as Affiliation[]
 
+  const childCitizenshipCode = getValueViaPath<string>(
+    externalData,
+    'citizenship.data.childCitizenshipCode',
+  )
+
+  const otherGuardianCitizenshipCode = getValueViaPath<string>(
+    externalData,
+    'citizenship.data.otherGuardianCitizenshipCode',
+  )
+
   return {
     children,
     applicantName,
@@ -329,6 +365,8 @@ export const getApplicationExternalData = (
     childGradeLevel,
     primaryOrgId,
     childAffiliations,
+    childCitizenshipCode,
+    otherGuardianCitizenshipCode,
   }
 }
 
@@ -552,4 +590,9 @@ export const getMunicipalityCodeBySchoolUnitId = (schoolUnitId: string) => {
   )?.municipalityCode
 
   return municipalityCode
+}
+
+export const getInternationalSchoolsIds = () => {
+  // Since the data from Frigg is not structured for international schools, we need to manually identify them
+  return ['G-2250-A', 'G-2250-B', 'G-1157-A', 'G-1157-B'] //Alþjóðaskólinn G-2250-x & Landkotsskóli G-1157-x
 }

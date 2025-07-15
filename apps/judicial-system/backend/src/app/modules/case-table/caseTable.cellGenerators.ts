@@ -5,6 +5,7 @@ import {
   districtCourtAbbreviation,
   formatCaseType,
   formatDate,
+  formatNationalId,
   getAllReadableIndictmentSubtypes,
   getAppealResultTextByValue,
   getInitials,
@@ -275,13 +276,11 @@ const generateIndictmentCaseStateTag = (
 
   const courtDate = getIndictmentCourtDate(c)
 
-  const allServed = () => {
-    return c.defendants?.every(
-      (d) =>
-        d.isAlternativeService ||
-        d.subpoenas?.some((s) => isSuccessfulServiceStatus(s.serviceStatus)),
-    )
-  }
+  const allServed = c.defendants?.every(
+    (d) =>
+      d.isAlternativeService ||
+      d.subpoenas?.some((s) => isSuccessfulServiceStatus(s.serviceStatus)),
+  )
 
   const generateReceivedIndictmentStateTag = (): CaseTableCell<TagValue> => {
     switch (indictmentDecision) {
@@ -295,7 +294,7 @@ const generateIndictmentCaseStateTag = (
         return generateCell({ color: 'blue', text: 'Endurúthlutun' }, 'F')
       default:
         return courtDate
-          ? allServed()
+          ? allServed
             ? generateCell({ color: 'mint', text: 'Á dagskrá' }, 'D')
             : generateCell({ color: 'red', text: 'Óbirt' })
           : generateCell({ color: 'blueberry', text: 'Móttekið' }, 'C')
@@ -514,7 +513,7 @@ const defendants: CaseTableCellGenerator<StringGroupValue> = {
   includes: {
     defendants: {
       model: Defendant,
-      attributes: ['nationalId', 'name'],
+      attributes: ['noNationalId', 'nationalId', 'name'],
       order: [['created', 'ASC']],
       separate: true,
     },
@@ -526,9 +525,13 @@ const defendants: CaseTableCellGenerator<StringGroupValue> = {
 
     const strList = [
       c.defendants[0].name ?? '',
-      c.defendants.length > 1
-        ? `+ ${c.defendants.length - 1}`
-        : c.defendants[0].nationalId ?? '',
+      c.defendants.length === 1
+        ? c.defendants[0].noNationalId
+          ? c.defendants[0].nationalId
+            ? `fd. ${c.defendants[0].nationalId}`
+            : ''
+          : `kt. ${formatNationalId(c.defendants[0].nationalId)}`
+        : `+ ${c.defendants.length - 1}`,
     ]
 
     return generateCell({ strList }, strList.join(''))

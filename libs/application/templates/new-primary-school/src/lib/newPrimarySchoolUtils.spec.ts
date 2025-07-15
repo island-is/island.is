@@ -1,4 +1,5 @@
 import { ExternalData } from '@island.is/application/types'
+import { uuid } from 'uuidv4'
 import { LanguageEnvironmentOptions } from './constants'
 import {
   getMunicipalityCodeBySchoolUnitId,
@@ -53,7 +54,9 @@ describe('showPreferredLanguageFields', () => {
   it('should return false when languageEnvironment only icelandic', () => {
     const answers = {
       languages: {
-        languageEnvironment: LanguageEnvironmentOptions.ONLY_ICELANDIC,
+        languageEnvironment: `${uuid()}::${
+          LanguageEnvironmentOptions.ONLY_ICELANDIC
+        }`,
       },
     }
     expect(showPreferredLanguageFields(answers)).toBe(false)
@@ -62,8 +65,9 @@ describe('showPreferredLanguageFields', () => {
   it('should return false when languageEnvironment is ONLY_OTHER_THAN_ICELANDIC and non language is selected', () => {
     const answers = {
       languages: {
-        languageEnvironment:
-          LanguageEnvironmentOptions.ONLY_OTHER_THAN_ICELANDIC,
+        languageEnvironment: `${uuid()}::${
+          LanguageEnvironmentOptions.ONLY_OTHER_THAN_ICELANDIC
+        }`,
         selectedLanguages: [],
       },
     }
@@ -73,8 +77,9 @@ describe('showPreferredLanguageFields', () => {
   it('should return true when languageEnvironment is ONLY_OTHER_THAN_ICELANDIC and one language is selected', () => {
     const answers = {
       languages: {
-        languageEnvironment:
-          LanguageEnvironmentOptions.ONLY_OTHER_THAN_ICELANDIC,
+        languageEnvironment: `${uuid()}::${
+          LanguageEnvironmentOptions.ONLY_OTHER_THAN_ICELANDIC
+        }`,
         selectedLanguages: [{ code: 'en' }],
       },
     }
@@ -84,7 +89,9 @@ describe('showPreferredLanguageFields', () => {
   it('should return false when languageEnvironment is ICELANDIC_AND_OTHER and non language is selected', () => {
     const answers = {
       languages: {
-        languageEnvironment: LanguageEnvironmentOptions.ICELANDIC_AND_OTHER,
+        languageEnvironment: `${uuid()}::${
+          LanguageEnvironmentOptions.ICELANDIC_AND_OTHER
+        }`,
         selectedLanguages: [],
       },
     }
@@ -94,7 +101,9 @@ describe('showPreferredLanguageFields', () => {
   it('should return false when languageEnvironment is ICELANDIC_AND_OTHER and one language is selected', () => {
     const answers = {
       languages: {
-        languageEnvironment: LanguageEnvironmentOptions.ICELANDIC_AND_OTHER,
+        languageEnvironment: `${uuid()}::${
+          LanguageEnvironmentOptions.ICELANDIC_AND_OTHER
+        }`,
         selectedLanguages: [{ code: 'en' }],
       },
     }
@@ -104,22 +113,23 @@ describe('showPreferredLanguageFields', () => {
   it('should return true when languageEnvironment is ICELANDIC_AND_OTHER and two language is selected', () => {
     const answers = {
       languages: {
-        languageEnvironment: LanguageEnvironmentOptions.ICELANDIC_AND_OTHER,
+        languageEnvironment: `${uuid()}::${
+          LanguageEnvironmentOptions.ICELANDIC_AND_OTHER
+        }`,
         selectedLanguages: [{ code: 'en' }, { code: 'is' }],
       },
     }
     expect(showPreferredLanguageFields(answers)).toBe(true)
   })
+})
+describe('getMunicipalityCodeBySchoolUnitId', () => {
+  it('should return the correct municipality code for a given school unitId', () => {
+    const schoolId = 'G-2297-A'
+    expect(getMunicipalityCodeBySchoolUnitId(schoolId)).toBe('1000')
+  })
 
-  describe('getMunicipalityCodeBySchoolUnitId', () => {
-    it('should return the correct municipality code for a given school unitId', () => {
-      const schoolId = 'G-2297-A'
-      expect(getMunicipalityCodeBySchoolUnitId(schoolId)).toBe('1000')
-    })
-
-    it('should return undefined for an unknown school unit id', () => {
-      const schoolId = 'unknown-school-id'
-      expect(getMunicipalityCodeBySchoolUnitId(schoolId)).toBeUndefined()
-    })
+  it('should return undefined for an unknown school unit id', () => {
+    const schoolId = 'unknown-school-id'
+    expect(getMunicipalityCodeBySchoolUnitId(schoolId)).toBeUndefined()
   })
 })
