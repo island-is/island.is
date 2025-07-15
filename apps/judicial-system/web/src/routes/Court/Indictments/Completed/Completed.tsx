@@ -472,11 +472,13 @@ const Completed: FC = () => {
                           <BlueBox>
                             {defendantCheckboxes.map(
                               (checkbox, indexChecbox) => (
-                                <React.Fragment key={checkbox.value}>
+                                <React.Fragment
+                                  key={`${verdict.id}-${checkbox.value}`}
+                                >
                                   <Checkbox
                                     label={checkbox.label}
-                                    id={checkbox.value}
-                                    name={checkbox.value}
+                                    id={`${verdict.id}-${checkbox.value}`}
+                                    name={`${verdict.id}-${checkbox.value}`}
                                     checked={verdict.serviceInformationForDefendant?.includes(
                                       checkbox.value,
                                     )}
