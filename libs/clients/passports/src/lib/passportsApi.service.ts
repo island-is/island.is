@@ -23,6 +23,7 @@ import {
 } from './passportsApi.types'
 import PDFDocument from 'pdfkit'
 import getStream from 'get-stream'
+import { PassThrough } from 'stream'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ApolloError } from 'apollo-server-express'
@@ -353,7 +354,9 @@ export class PassportsService {
       .moveDown()
       .text('guId: ' + guid)
 
+    const stream = new PassThrough()
+    doc.pipe(stream)
     doc.end()
-    return await getStream.buffer(doc)
+    return await getStream.buffer(stream)
   }
 }
