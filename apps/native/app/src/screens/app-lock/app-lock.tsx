@@ -14,7 +14,7 @@ import {
 import {
   useNavigationComponentDidAppear,
   useNavigationComponentDidDisappear,
-} from 'react-native-navigation-hooks/dist'
+} from 'react-native-navigation-hooks'
 import styled from 'styled-components/native'
 
 import { dynamicColor, font } from '../../ui'
