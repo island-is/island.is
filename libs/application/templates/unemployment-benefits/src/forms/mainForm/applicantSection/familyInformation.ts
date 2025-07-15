@@ -20,7 +20,7 @@ export const familyInformationSubSection = buildSubSection({
       children: [
         buildFieldsRepeaterField({
           id: 'familyInformation.children',
-          minRows: 2,
+          minRows: 2, // TODO check this
           title: applicantMessages.labels.dependentChildren,
           titleVariant: 'h5',
           marginTop: 0,

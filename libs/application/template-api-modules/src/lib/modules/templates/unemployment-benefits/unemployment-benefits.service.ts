@@ -15,6 +15,7 @@ import {
 } from '@island.is/clients/vmst-unemployment'
 import { getValueViaPath } from '@island.is/application/core'
 import { name } from '@azure/msal-node/dist/packageMetadata'
+// import { getJobString } from 'libs/application/templates/unemployment-benefits/src/utils/stringMappers'
 
 @Injectable()
 export class UnemploymentBenefitsService extends BaseTemplateApiService {
@@ -81,12 +82,56 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
       ...personalInformationFromAnswers,
     }
 
-    const otherInformationFromService =
-      getValueViaPath<GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsOtherInformationDTO>(
-        application.externalData,
-        'unemploymentApplication.data.personalInformation',
-        {},
-      )
+    // TODO otherinformation from answers after refactoring
+
+    const preferredJobsFromAnswers = {
+      preferredJobs: {
+        jobs: answers.jobWishes.jobList.map((job) => {
+          return {
+            id: job,
+          }
+        }),
+      },
+    }
+
+    const educationHistoryFromAnswers = {
+      educationHistory: answers.educationHistory?.educationHistory.map(
+        (education) => {
+          return {
+            educationId: education.levelOfStudy,
+            educationSubCategoryId: education.degree,
+            educationSubSubCategoryId: education.courseOfStudy,
+          }
+        },
+      ),
+    }
+
+    const lasJobFromAnswers = {
+      lastJob: {
+        employerSSN: answers.employmentHistory?.lastJob?.companyNationalId,
+        employer: answers.employmentHistory?.lastJob?.companyName,
+        started: answers.employmentHistory?.lastJob?.startDate,
+        quit: answers.employmentHistory?.lastJob?.endDate,
+        workRatio: answers.employmentHistory?.lastJob?.percentage,
+        // workHours: answers.currentSituation.currentJob?.workHours,
+        // salary: answers.currentSituation?.currentJob?.salary,
+        jobName: answers.employmentHistory?.lastJob?.title,
+      },
+    }
+    // const previousJobsFromAnswers = {
+    //   jobCareer: answers.employmentHistory?.previousJobs.map((job) => {
+    //     return {
+    //       employer: job.employer,
+    //       percentage: job.percentage,
+    //       startDate: job.startDate,
+    //       workHours: job.workHours,
+    //       salary: job.salary,
+    //       endDate: job.endDate,
+    //       jobTitle: job.jobTitle,
+    //       jobDescription: job.jobDescription,
+    //     }
+    //   })
+    // }
 
     throw new Error('dont work please')
 

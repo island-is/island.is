@@ -15,6 +15,7 @@ import {
   jobWishesSchema,
   drivingLicenseSchema,
 } from './schemas'
+import { EmploymentStatus } from '../shared'
 
 const FileSchema = z.object({
   name: z.string(),
@@ -22,26 +23,95 @@ const FileSchema = z.object({
   url: z.string().optional(),
 })
 
-const currentJobSchema = z.object({
-  employer: z
-    .object({
-      nationalId: z.string().optional(),
-      name: z.string().optional(),
-    })
-    .optional(),
-  percentage: z.string().optional(),
-  startDate: z.string().optional(),
-  workHours: z.string().optional(),
-  salary: z.string().optional(),
-  endDate: z.string().optional(),
-})
+const currentJobSchema = z
+  .object({
+    employer: z
+      .object({
+        nationalId: z.string().optional(),
+        name: z.string().optional(),
+      })
+      .optional(),
+    nationalIdWithName: z.string().optional(),
+    percentage: z.string().optional(),
+    startDate: z.string().optional(),
+    workHours: z.string().optional(),
+    salary: z.string().optional(),
+    endDate: z.string().optional(),
+    title: z.string().optional(),
+  })
+  .refine(
+    ({ percentage, employer }) => {
+      if (employer) {
+        return !!percentage
+      }
+      return true
+    },
+    {
+      path: ['percentage'],
+    },
+  )
+  .refine(
+    ({ startDate, employer }) => {
+      if (employer) {
+        return !!startDate
+      }
+      return true
+    },
+    {
+      path: ['startDate'],
+    },
+  )
+  .refine(
+    ({ workHours, employer }) => {
+      if (employer) {
+        return !!workHours
+      }
+      return true
+    },
+    {
+      path: ['workHours'],
+    },
+  )
+  .refine(
+    ({ salary, employer }) => {
+      if (employer) {
+        return !!salary
+      }
+      return true
+    },
+    {
+      path: ['salary'],
+    },
+  )
+  .refine(
+    ({ title, employer }) => {
+      if (employer) {
+        return !!title
+      }
+      return true
+    },
+    {
+      path: ['title'],
+    },
+  )
 
-const currentSituationSchema = z.object({
-  status: z.string().optional(),
-  currentJob: currentJobSchema.optional(),
-  wantedJobPercentage: z.string().optional(),
-  jobTimelineStartDate: z.string().optional(),
-})
+const currentSituationSchema = z
+  .object({
+    status: z.string().min(1),
+    currentJob: currentJobSchema.optional(),
+    currentSituationRepeater: z.array(currentJobSchema),
+  })
+  .refine(
+    ({ status, currentJob }) => {
+      if (status === EmploymentStatus.EMPLOYED) {
+        return !!currentJob?.endDate
+      }
+      return true
+    },
+    {
+      path: ['endDate'],
+    },
+  )
 
 const languageSkillsSchema = z.object({
   language: z.string(),

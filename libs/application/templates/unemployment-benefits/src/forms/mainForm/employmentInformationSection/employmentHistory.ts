@@ -17,15 +17,20 @@ import { Application, FormValue } from '@island.is/application/types'
 import {
   isIndependent,
   workOnOwnSSN,
-  hasEmployer,
-  getCombinedPercentage,
+  getEmployerNameFromSSN,
+  getEmploymentFromRsk,
 } from '../../../utils'
-import { GaldurDomainModelsApplicantsApplicantProfileDTOsJob } from '@island.is/clients/vmst-unemployment'
+import { CurrentEmploymentInAnswers } from '../../../shared'
+import { GaldurDomainModelsSettingsJobCodesJobCodeDTO } from '@island.is/clients/vmst-unemployment'
 
 export const employmentHistorySubSection = buildSubSection({
   id: 'employmentHistorySubSection',
   title: employmentMessages.employmentHistory.general.sectionTitle,
   children: [
+    //TODO þarf ekki að skila neinu starfi,
+    // TODO þarf að skoða ef notandi valdi "ekki i neinu starfi" -> þá á bara að vera tómt og möguleiki að bæta við starfi
+    // TODO required dálkar -> ef þú velur starf úr dropdown þá verða allir reitir required, annars er enginn required
+    // TODO hvenær lýkur uppsagnafresti þínum vs lauk störfum label
     buildMultiField({
       id: 'employmentHistorySubSection',
       title: employmentMessages.employmentHistory.general.pageTitle,
@@ -37,6 +42,7 @@ export const employmentHistorySubSection = buildSubSection({
             employmentMessages.employmentHistory.labels.independentCheckbox,
           width: 'half',
           marginBottom: 2,
+          defaultValue: NO, // TODO check if this breaks any conditions
           options: [
             {
               value: YES,
@@ -55,139 +61,198 @@ export const employmentHistorySubSection = buildSubSection({
           titleVariant: 'h5',
           condition: (answers) => !isIndependent(answers),
         }),
-        buildTextField({
-          id: 'employmentHistory.lastJob.companyNationalId',
-          title:
-            employmentMessages.employmentHistory.labels
-              .lastJobCompanyNationalId,
-          width: 'half',
-          readOnly: true,
-          defaultValue: (application: Application) => {
-            //TODO get most recent job from the job list
-            const jobList =
-              getValueViaPath<
-                Array<GaldurDomainModelsApplicantsApplicantProfileDTOsJob>
-              >(
-                application.externalData,
-                'unemploymentApplication.data.jobCareer.jobs',
+        buildFieldsRepeaterField({
+          id: 'employmentHistory.lastJobs',
+          minRows: (answers: FormValue) => {
+            const currentSituation =
+              getValueViaPath<CurrentEmploymentInAnswers>(
+                answers,
+                'currentSituation.currentJob',
+                undefined,
+              )
+            const currentSituationRepeater =
+              getValueViaPath<Array<CurrentEmploymentInAnswers>>(
+                answers,
+                'currentSituation.currentSituationRepeater',
                 [],
               ) ?? []
-            const manualInputCompanyNationalId =
-              getValueViaPath<string>(
-                application.answers,
-                'currentSituation.currentJob.employer.nationalId',
-              ) ?? ''
-
-            const companyNationalId = hasEmployer(application.answers)
-              ? manualInputCompanyNationalId
-              : jobList[0]?.workRatio
-
-            return companyNationalId
+            const minRows =
+              (currentSituation ? 1 : 0) + currentSituationRepeater.length
+            return minRows
           },
-
+          marginTop: 0,
+          formTitle:
+            employmentMessages.employmentHistory.labels.lastJobRepeater,
+          formTitleVariant: 'h5',
+          hideAddItemButton: true,
           condition: (answers) => !isIndependent(answers),
-        }),
-        buildTextField({
-          id: 'employmentHistory.lastJob.companyName',
-          title: employmentMessages.employmentHistory.labels.lastJobCompanyName,
-          width: 'half',
-          readOnly: true,
-          defaultValue: (application: Application) => {
-            //TODO get most recent job from the job list
-            const jobList =
-              getValueViaPath<
-                Array<GaldurDomainModelsApplicantsApplicantProfileDTOsJob>
-              >(
-                application.externalData,
-                'unemploymentApplication.data.jobCareer.jobs',
-                [],
-              ) ?? []
-            const manualInputEmployerName =
-              getValueViaPath<string>(
-                application.answers,
-                'currentSituation.currentJob.employer.name',
-              ) ?? ''
+          fields: {
+            'employer.nationalId': {
+              component: 'input',
+              label:
+                employmentMessages.employmentHistory.labels
+                  .lastJobCompanyNationalId,
+              width: 'half',
+              type: 'text',
+              readonly: (application) => {
+                console.log('application', application)
+                return true
+              },
+              defaultValue: (
+                application: Application,
+                _activeField: Record<string, string>,
+                index: number,
+              ) => {
+                const firstCurrentJob =
+                  getValueViaPath<CurrentEmploymentInAnswers>(
+                    application.answers,
+                    'currentSituation.currentJob',
+                    undefined,
+                  )
 
-            const employerName = hasEmployer(application.answers)
-              ? manualInputEmployerName
-              : jobList[0]?.workRatio
+                const repeaterJobs =
+                  getValueViaPath<CurrentEmploymentInAnswers[]>(
+                    application.answers,
+                    'currentSituation.currentSituationRepeater',
+                    [],
+                  ) ?? []
 
-            return employerName
+                return index === 0
+                  ? firstCurrentJob?.nationalIdWithName
+                    ? firstCurrentJob?.nationalIdWithName
+                    : firstCurrentJob?.employer?.nationalId
+                  : repeaterJobs[index - 1].employer?.nationalId
+              },
+            },
+            'employer.name': {
+              component: 'input',
+              label:
+                employmentMessages.employmentHistory.labels.lastJobCompanyName,
+              width: 'half',
+              type: 'text',
+              readonly: true,
+              defaultValue: (
+                application: Application,
+                _activeField: Record<string, string>,
+                index: number,
+              ) => {
+                const firstCurrentJob =
+                  getValueViaPath<CurrentEmploymentInAnswers>(
+                    application.answers,
+                    'currentSituation.currentJob',
+                    undefined,
+                  )
+                const repeaterJobs =
+                  getValueViaPath<CurrentEmploymentInAnswers[]>(
+                    application.answers,
+                    'currentSituation.currentSituationRepeater',
+                    [],
+                  ) ?? []
+
+                const nationalId =
+                  index === 0
+                    ? firstCurrentJob?.nationalIdWithName
+                      ? firstCurrentJob?.nationalIdWithName
+                      : firstCurrentJob?.employer?.nationalId
+                    : repeaterJobs[index - 1].employer?.nationalId
+
+                const name =
+                  index === 0 && firstCurrentJob?.employer?.name
+                    ? firstCurrentJob?.employer?.name
+                    : index > 0 && repeaterJobs[index - 1].employer?.name
+                    ? repeaterJobs[index - 1].employer?.name
+                    : getEmployerNameFromSSN(
+                        application.externalData,
+                        nationalId || '',
+                      )
+
+                return name
+              },
+            },
+            title: {
+              component: 'select',
+              label: employmentMessages.employmentHistory.labels.lastJobTitle,
+              width: 'half',
+              options: (application, _, locale) => {
+                const jobList =
+                  getValueViaPath<
+                    GaldurDomainModelsSettingsJobCodesJobCodeDTO[]
+                  >(
+                    application.externalData,
+                    'unemploymentApplication.data.supportData.jobCodes',
+                  ) ?? []
+                return jobList.map((job) => ({
+                  value: job.id ?? '',
+                  label:
+                    (locale === 'is' ? job.name : job.english ?? job.name) ||
+                    '',
+                }))
+              },
+            },
+            percentage: {
+              component: 'input',
+              label:
+                employmentMessages.employmentHistory.labels.lastJobPercentage,
+              width: 'half',
+              type: 'number',
+              suffix: '%',
+              defaultValue: (
+                application: Application,
+                _activeField: Record<string, string>,
+                index: number,
+              ) => {
+                const firstCurrentJob =
+                  getValueViaPath<CurrentEmploymentInAnswers>(
+                    application.answers,
+                    'currentSituation.currentJob',
+                    undefined,
+                  )
+                const repeaterJobs =
+                  getValueViaPath<CurrentEmploymentInAnswers[]>(
+                    application.answers,
+                    'currentSituation.currentSituationRepeater',
+                    [],
+                  ) ?? []
+
+                return index === 0
+                  ? firstCurrentJob?.percentage
+                  : repeaterJobs[index - 1].percentage
+              },
+            },
+            startDate: {
+              component: 'date',
+              label:
+                employmentMessages.employmentHistory.labels.lastJobStartDate,
+              width: 'half',
+              defaultValue: (
+                application: Application,
+                _activeField: Record<string, string>,
+                index: number,
+              ) => {
+                const firstCurrentJob =
+                  getValueViaPath<CurrentEmploymentInAnswers>(
+                    application.answers,
+                    'currentSituation.currentJob',
+                    undefined,
+                  )
+                const repeaterJobs =
+                  getValueViaPath<CurrentEmploymentInAnswers[]>(
+                    application.answers,
+                    'currentSituation.currentSituationRepeater',
+                    [],
+                  ) ?? []
+
+                return index === 0
+                  ? firstCurrentJob?.startDate
+                  : repeaterJobs[index - 1].startDate
+              },
+            },
+            endDate: {
+              component: 'date',
+              label: employmentMessages.employmentHistory.labels.lastJobEndDate,
+              width: 'half',
+            },
           },
-
-          condition: (answers) => !isIndependent(answers),
-        }),
-        buildTextField({
-          // TODO: this should maybe be a select field
-          id: 'employmentHistory.lastJob.title',
-          title: employmentMessages.employmentHistory.labels.lastJobTitle,
-          width: 'half',
-          condition: (answers) => !isIndependent(answers),
-        }),
-        buildTextField({
-          id: 'employmentHistory.lastJob.percentage',
-          title: employmentMessages.employmentHistory.labels.lastJobPercentage,
-          width: 'half',
-          variant: 'number',
-          suffix: '%',
-          defaultValue: (application: Application) => {
-            //TODO get most recent job from the job list
-            const jobList =
-              getValueViaPath<
-                Array<GaldurDomainModelsApplicantsApplicantProfileDTOsJob>
-              >(
-                application.externalData,
-                'unemploymentApplication.data.jobCareer.jobs',
-                [],
-              ) ?? []
-            const manualInputPercentage =
-              getValueViaPath<string>(
-                application.answers,
-                'currentSituation.currentJob.percentage',
-              ) ?? ''
-
-            const percentage = hasEmployer(application.answers)
-              ? manualInputPercentage
-              : jobList[0]?.workRatio
-
-            return percentage
-          },
-
-          condition: (answers) => !isIndependent(answers),
-        }),
-        buildDateField({
-          id: 'employmentHistory.lastJob.startDate',
-          title: employmentMessages.employmentHistory.labels.lastJobStartDate,
-          width: 'half',
-          maxDate: new Date(),
-          defaultValue: (application: Application) => {
-            //TODO get most recent job from the job list
-            const jobList =
-              getValueViaPath<
-                Array<GaldurDomainModelsApplicantsApplicantProfileDTOsJob>
-              >(
-                application.externalData,
-                'unemploymentApplication.data.jobCareer.jobs',
-                [],
-              ) ?? []
-            const manualInputStartDate =
-              getValueViaPath<string>(
-                application.answers,
-                'currentSituation.currentJob.startDate',
-              ) ?? ''
-            const startDate = hasEmployer(application.answers)
-              ? manualInputStartDate
-              : jobList[0]?.started
-            return startDate ? new Date(startDate).toISOString() : ''
-          },
-          condition: (answers) => !isIndependent(answers),
-        }),
-        buildDateField({
-          id: 'employmentHistory.lastJob.endDate',
-          title: employmentMessages.employmentHistory.labels.lastJobEndDate,
-          width: 'half',
-          minDate: new Date(),
-          condition: (answers) => !isIndependent(answers),
         }),
         /* IS INDEPENDENT */
         buildAlertMessageField({
@@ -233,23 +298,6 @@ export const employmentHistorySubSection = buildSubSection({
           width: 'half',
           condition: (answers) => isIndependent(answers),
         }),
-        buildAlertMessageField({
-          id: 'employmentHistoryAlertMessage',
-          message:
-            employmentMessages.employmentHistory.labels.lastJobAlertInformation,
-          alertType: 'warning',
-          doesNotRequireAnswer: true,
-          condition: (answers) => getCombinedPercentage(answers) < 100,
-        }),
-        buildAlertMessageField({
-          id: 'employmentHistoryJobPercentageMessage',
-          message:
-            employmentMessages.employmentHistory.labels
-              .lastJobPercentageAchievedInformation,
-          alertType: 'warning',
-          doesNotRequireAnswer: true,
-          condition: (answers) => getCombinedPercentage(answers) >= 100,
-        }),
         /* OLD JOBS */
 
         buildFieldsRepeaterField({
@@ -261,9 +309,32 @@ export const employmentHistorySubSection = buildSubSection({
           width: 'full',
           addItemButtonText: employmentMessages.employmentHistory.labels.addJob,
           fields: {
-            company: {
+            nationalIdWithName: {
+              component: 'select',
+              label: 'TODO',
+              options(application) {
+                const employmentList = getEmploymentFromRsk(
+                  application.externalData,
+                )
+                return employmentList.map((job) => ({
+                  value: job.employerSSN ?? '',
+                  label:
+                    job.employerSSN !== '-'
+                      ? `${job.employer}, ${job.employerSSN}`
+                      : job.employer,
+                }))
+              },
+            },
+            employer: {
               component: 'nationalIdWithName',
               required: true,
+              condition: (_, activeField) => {
+                const nationalIdChosen = activeField?.nationalIdWithName
+                  ? activeField?.nationalIdWithName
+                  : ''
+
+                return nationalIdChosen === '-'
+              },
             },
             title: {
               component: 'input',
@@ -307,7 +378,6 @@ export const employmentHistorySubSection = buildSubSection({
               label: coreMessages.radioNo,
             },
           ],
-          condition: (answers) => getCombinedPercentage(answers) < 100,
         }),
         buildAlertMessageField({
           id: 'employmentHistoryEesAlertMessage',

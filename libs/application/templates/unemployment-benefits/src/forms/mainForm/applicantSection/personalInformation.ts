@@ -53,7 +53,8 @@ export const applicantInformationSubSection = buildSubSection({
           id: 'applicant.otherPostcode',
           title: applicantMessages.labels.postcode,
           width: 'half',
-          required: true,
+          required: false,
+          doesNotRequireAnswer: true,
           options: (application) => {
             const nameAndPostcode = getValueViaPath<
               GaldurDomainModelsSettingsPostcodesPostcodeDTO[]
@@ -90,6 +91,7 @@ export const applicantInformationSubSection = buildSubSection({
           placeholder: applicantMessages.labels.passwordPlaceholder,
           required: true,
           maxLength: 10,
+          minLength: 4,
           defaultValue: (application: Application) => {
             return (
               getValueViaPath<string>(

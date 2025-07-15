@@ -153,6 +153,16 @@ export const employment = {
         defaultMessage: 'Nafn fyrirtækis',
         description: 'part time job employer name label',
       },
+      partTimeJobEmployerCombination: {
+        id: 'vmst.ub.application:employment.currentSituation.labels.partTimeJobEmployerCombination',
+        defaultMessage: 'Starf',
+        description: 'part time job employer combination label',
+      },
+      jobRepeaterEmployment: {
+        id: 'vmst.ub.application:employment.currentSituation.labels.jobRepeaterEmployment#markdown',
+        defaultMessage: 'Starf {index}',
+        description: 'job repeater label',
+      },
       partTimeJobPercentage: {
         id: 'vmst.ub.application:employment.currentSituation.labels.partTimeJobPercentage',
         defaultMessage: 'Starfshlutfall',
@@ -178,44 +188,17 @@ export const employment = {
         defaultMessage: 'Laun á mánuði fyrir skatt',
         description: 'part time job salary label',
       },
-      wantedJobDescription: {
-        id: 'vmst.ub.application:employment.currentSituation.labels.wantedJobDescription',
-        defaultMessage: 'Hve háu starfshlutfalli óskar þú eftir?',
-        description: 'wanted job description',
-      },
-      wantedJobInfoBox: {
-        id: 'vmst.ub.application:employment.currentSituation.labels.wantedJobInfoBox',
-        defaultMessage:
-          'Athugaðu að atvinnuleysisbætur miðast við það hlutastarf sem þú velur. Ef þú velur 50% hlutastarf áttu rétt á 50% atvinnuleysisbótum. geta aldrei verið hærri en það starfshlutfall sem þú ert tilbúinn að ráða þig í',
-        description: 'wanted job info box description',
-      },
-      wantedJobSecondInfoBox: {
-        id: 'vmst.ub.application:employment.currentSituation.labels.wantedJobSecondInfoBox',
-        defaultMessage:
-          'Hafðu í huga að atvinnleysisbætur geta aldrei verið hærri en það starfshlutfall sem þú óskar eftir.',
-        description: 'wanted job info box description',
-      },
-      jobTimelineDescription: {
-        id: 'vmst.ub.application:employment.currentSituation.labels.jobTimelineDescription',
-        defaultMessage: 'Hvenær getur þú hafið störf?',
-        description: 'job timeline description',
-      },
-      jobTimelineDateLabel: {
-        id: 'vmst.ub.application:employment.currentSituation.labels.jobTimelineDateLabel',
-        defaultMessage: 'Dagsetning',
-        description: 'job timeline date label',
-      },
-      jobTimelineInfoBox: {
-        id: 'vmst.ub.application:employment.currentSituation.labels.jobTimelineInfoBox',
-        defaultMessage:
-          'Athugaðu að atvinnuleysisbætur eru greiddar frá þeim degi sem þú getur hafið störf en þó aldrei fyrr en í fyrsta lagi að loknum uppsagnarfresti. Þú getur ekki skráð lengra tímabil en einn mánuð fram í tímann.',
-        description: 'job timeline info box description',
-      },
+
       occasionalJobInfoBox: {
         id: 'vmst.ub.application:employment.currentSituation.labels.occasionalJobInfoBox',
         defaultMessage:
           'Ef að þú ert í tilfallandi vinnu þarftu að tilkynna um vinnu fyrirfram í hvert skipti og skila upplýsingum um tekjur af tilfallandi vinnu á Mínum síðum. Þú gerir það með aðgerðinni „Tilkynna vinnu eða tekjur“.',
         description: 'occasional job info box description',
+      },
+      jobEstimatedSalary: {
+        id: 'vmst.ub.application:employment.currentSituation.labels.jobEstimatedSalary',
+        defaultMessage: 'Áætlað laun á mánuði fyrir skatt',
+        description: 'Last job estimated salary label',
       },
     }),
   },
@@ -328,7 +311,8 @@ export const employment = {
       },
       lastJobLabel: {
         id: 'vmst.ub.application:employment.employmentHistory.labels.lastJobLabel',
-        defaultMessage: 'Síðasta starf',
+        defaultMessage:
+          'Vinsamlegast settu inn fyrri störf sem þú hefur unnið. Við mælum með því að setja inn eins ítarlega atvinnusögu og hægt er.',
         description: 'Last job label',
       },
       lastJobCompanyNationalId: {
@@ -387,9 +371,15 @@ export const employment = {
         defaultMessage: 'Fyrra starf',
         description: 'Last jobs label',
       },
+      lastJobRepeater: {
+        id: 'vmst.ub.application:employment.employmentHistory.labels.lastJobRepeater',
+        defaultMessage: 'Starf',
+        description: 'Last jobs repeater label',
+      },
       radioEesLabel: {
         id: 'vmst.ub.application:employment.employmentHistory.labels.radioEesLabel',
-        defaultMessage: 'Hefurðu unnið á EES svæðinu síðastliðin 5 ár?',
+        defaultMessage:
+          'Hefurðu unnið á EES svæðinu, utan Íslands, síðastliðin 5 ár?',
         description: 'EES country radio button label',
       },
       eesAlertInformation: {

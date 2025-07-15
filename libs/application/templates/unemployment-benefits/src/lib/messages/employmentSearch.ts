@@ -49,6 +49,38 @@ export const employmentSearch = {
       defaultMessage: 'Svæði',
       description: 'Location label',
     },
+    wantedJobDescription: {
+      id: 'vmst.ub.application:employmentSearch.jobWishes.wantedJobDescription',
+      defaultMessage: 'Hve háu starfshlutfalli óskar þú eftir?',
+      description: 'wanted job description',
+    },
+    wantedJobInfoBox: {
+      id: 'vmst.ub.application:employmentSearch.jobWishes.wantedJobInfoBox',
+      defaultMessage:
+        'Athugaðu að atvinnuleysisbætur miðast við það hlutastarf sem þú velur. Ef þú velur 50% hlutastarf áttu rétt á 50% atvinnuleysisbótum. geta aldrei verið hærri en það starfshlutfall sem þú ert tilbúinn að ráða þig í',
+      description: 'wanted job info box description',
+    },
+    jobTimelineDescription: {
+      id: 'vmst.ub.application:employmentSearch.jobWishes.jobTimelineDescription',
+      defaultMessage: 'Hvenær getur þú hafið störf?',
+      description: 'job timeline description',
+    },
+    jobTimelineDateLabel: {
+      id: 'vmst.ub.application:employmentSearch.jobWishes.jobTimelineDateLabel',
+      defaultMessage: 'Dagsetning',
+      description: 'job timeline date label',
+    },
+    jobTimelineInfoBox: {
+      id: 'vmst.ub.application:employmentSearch.jobWishes.jobTimelineInfoBox',
+      defaultMessage:
+        'Athugaðu að atvinnuleysisbætur eru greiddar frá þeim degi sem þú getur hafið störf en þó aldrei fyrr en í fyrsta lagi að loknum uppsagnarfresti. Þú getur ekki skráð lengra tímabil en einn mánuð fram í tímann.',
+      description: 'job timeline info box description',
+    },
+    jobPercentage: {
+      id: 'vmst.ub.application:employmentSearch.jobWishes.jobPercentage',
+      defaultMessage: 'Starfshlutfall',
+      description: 'job percentage label',
+    },
   }),
   interviewAndMeetingAgreement: defineMessages({
     sectionTitle: {

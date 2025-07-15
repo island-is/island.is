@@ -27,12 +27,26 @@ export interface ChildrenInAnswers {
 export interface PreviousJobInAnswers {
   company: {
     nationalId: string
-    name: string
+    name?: string
   }
   title: string
   percentage: number
   startDate: string
   endDate: string
+}
+
+export interface CurrentEmploymentInAnswers {
+  employer: {
+    nationalId: string
+    name?: string
+  }
+  nationalIdWithName?: string
+  title: string
+  percentage: number
+  startDate: string
+  salary: string
+  workHours: string
+  endDate?: string
 }
 
 export interface VacationDaysInAnswers {

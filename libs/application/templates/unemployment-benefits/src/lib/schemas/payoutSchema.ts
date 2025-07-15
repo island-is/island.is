@@ -12,6 +12,7 @@ export const payoutSchema = z
       // TODO get this error to SHOW UP!!
       .refine(
         ({ bankNumber, ledger, accountNumber }) => {
+          console.log('bankNumber', bankNumber)
           return !!bankNumber
         },
         { path: ['bankNumber'] },

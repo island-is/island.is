@@ -25,6 +25,7 @@ import {
   wasStudyingLastTwelveMonths,
 } from '../../../utils/educationInformation'
 import { GaldurDomainModelsEducationItem } from '@island.is/clients/vmst-unemployment'
+import { Application } from '@island.is/application/types'
 
 export const educationSection = buildSection({
   id: 'educationSection',
@@ -219,7 +220,14 @@ export const educationSection = buildSection({
         }),
         buildDateField({
           id: 'education.currentEducation.programEnd',
-          title: educationMessages.labels.currentSchoolEndDateLabel,
+          title: (application: Application) => {
+            const previousLabel =
+              wasStudyingInTheLastYear(application.answers) ||
+              wasStudyingLastSemester(application.answers)
+            return previousLabel
+              ? educationMessages.labels.previousSchoolEndDate
+              : educationMessages.labels.currentSchoolEndDateLabel
+          },
           width: 'half',
           doesNotRequireAnswer: true,
           condition: (answers) =>

@@ -21,8 +21,7 @@ export const applicantInformationSchema = z
     password: z.string().min(4),
     otherAddressCheckbox: z.array(z.string()).optional(),
     otherAddress: z.string().optional(),
-    otherPostcode: z.string().optional(),
-    serviceOffice: z.string().optional(),
+    otherPostcode: z.string().optional().nullable(),
   })
   .refine(
     ({ otherAddressCheckbox, otherAddress }) => {
@@ -37,6 +36,7 @@ export const applicantInformationSchema = z
   )
   .refine(
     ({ otherAddressCheckbox, otherPostcode }) => {
+      console.log('outside of here?')
       if (otherAddressCheckbox && otherAddressCheckbox[0] === YES) {
         return !!otherPostcode
       }

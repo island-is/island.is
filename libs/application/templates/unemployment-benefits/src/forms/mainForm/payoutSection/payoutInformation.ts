@@ -161,16 +161,16 @@ export const payoutInformationSubSection = buildSubSection({
             payoutMessages.payoutInformation.privatePensionFundPercentageLabel,
           width: 'half',
           options: (_application: Application) => {
-            return [
-              {
-                label: '2%',
-                value: '2',
-              },
-              {
-                label: '4%',
-                value: '4',
-              },
-            ]
+            const privatePensionFundPercents =
+              getValueViaPath<Array<number>>(
+                _application.externalData,
+                'unemploymentApplication.data.supportData.privatePensionFundPercents',
+                [],
+              ) ?? []
+            return privatePensionFundPercents.map((percent) => ({
+              value: percent.toString(),
+              label: `${percent}%`,
+            }))
           },
           condition: payPrivatePensionFund,
         }),

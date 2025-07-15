@@ -8,12 +8,22 @@ import {
   coreMessages,
   NO,
   buildRadioField,
+  buildTextField,
+  buildAlertMessageField,
+  buildDateField,
 } from '@island.is/application/core'
 import { employmentSearch as employmentSearchMessages } from '../../../lib/messages'
 import {
   GaldurDomainModelsSettingsJobCodesJobCodeDTO,
   GaldurDomainModelsSettingsServiceAreasServiceAreaDTO,
 } from '@island.is/clients/vmst-unemployment'
+import {
+  isEmployed,
+  isEmployedAtAll,
+  isEmployedPartTime,
+  isOccasionallyEmployed,
+} from '../../../utils'
+import { Application } from '@island.is/application/types'
 
 export const jobWishesSubSection = buildSubSection({
   id: 'jobWishesSubSection',
@@ -46,6 +56,49 @@ export const jobWishesSubSection = buildSubSection({
                 (locale === 'is' ? job.name : job.english ?? job.name) || '',
             }))
           },
+        }),
+        buildDescriptionField({
+          id: 'currentSituation.wantedJobDescription',
+          title: employmentSearchMessages.jobWishes.wantedJobDescription,
+          titleVariant: 'h5',
+          marginTop: 2,
+        }),
+        buildTextField({
+          id: 'currentSituation.wantedJobPercentage',
+          title: employmentSearchMessages.jobWishes.jobPercentage,
+          variant: 'number',
+          suffix: '%',
+        }),
+        buildAlertMessageField({
+          id: 'currentSituation.wantedJobAlert',
+          message: employmentSearchMessages.jobWishes.wantedJobInfoBox,
+          alertType: 'info',
+          doesNotRequireAnswer: true,
+        }),
+        buildDescriptionField({
+          id: 'currentSituation.jobTimelineDescription',
+          title: employmentSearchMessages.jobWishes.jobTimelineDescription,
+          titleVariant: 'h5',
+          marginTop: 2,
+        }),
+        buildDateField({
+          id: 'currentSituation.jobTimelineStartDate',
+          title: employmentSearchMessages.jobWishes.jobTimelineDateLabel,
+          minDate: (application: Application) => {
+            const endDate =
+              getValueViaPath<string>(
+                application.answers,
+                'currentSituation.currentJob.endDate',
+              ) || ''
+            //TODO setja þetta 2 vikur frammí tímann
+            return endDate ? new Date(endDate) : new Date()
+          },
+        }),
+        buildAlertMessageField({
+          id: 'currentSituation.jobTimelineAlert',
+          message: employmentSearchMessages.jobWishes.jobTimelineInfoBox,
+          alertType: 'info',
+          doesNotRequireAnswer: true,
         }),
         buildDescriptionField({
           id: 'jobWishes.outsideYourLocation.description',

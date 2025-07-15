@@ -47,6 +47,7 @@ export const drivingLicenseSubSection = buildSubSection({
           title:
             employmentSearchMessages.drivingLicense.drivingLicenseTypeLabel,
           spacing: 0,
+
           options: (application) => {
             const drivingLicenseTypes =
               getValueViaPath<{ name: string }[]>(

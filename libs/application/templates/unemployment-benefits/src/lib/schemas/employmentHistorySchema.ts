@@ -11,6 +11,10 @@ export const employmentHistorySchema = z
       percentage: z.string().optional(),
       startDate: z.string().optional(),
       endDate: z.string().optional(),
+      employer: z.object({
+        nationalId: z.string().optional(),
+        name: z.string().optional(),
+      }),
     }),
     ownSSNJob: z
       .object({
@@ -22,10 +26,11 @@ export const employmentHistorySchema = z
       .optional(),
     previousJobs: z.array(
       z.object({
-        company: z.object({
+        employer: z.object({
           nationalId: z.string().optional(),
           name: z.string().optional(),
         }),
+        nationalIdWithName: z.string().optional(),
         title: z.string().optional(),
         percentage: z.string().optional(),
         startDate: z.string().optional(),

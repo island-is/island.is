@@ -76,6 +76,11 @@ export const education = {
       defaultMessage: 'Áætluð námslok',
       description: 'School end date label',
     },
+    previousSchoolEndDate: {
+      id: 'vmst.ub.application:education.labels.previousSchoolEndDate',
+      defaultMessage: 'Námslok',
+      description: 'School end date label',
+    },
     currentSchoolDegreeFileLabel: {
       id: 'vmst.ub.application:education.labels.schoolDegreeFileLabel',
       defaultMessage:
