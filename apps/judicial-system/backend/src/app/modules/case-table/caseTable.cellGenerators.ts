@@ -1064,9 +1064,15 @@ const indictmentReviewDecision: CaseTableCellGenerator<TagPairValue> = {
   includes: {
     defendants: {
       model: Defendant,
-      attributes: ['verdictAppealDate'],
       order: [['created', 'ASC']],
       separate: true,
+      includes: {
+        verdict: {
+          model: Verdict,
+          attributes: ['appealDate'],
+          order: [['created', 'ASC']],
+        },
+      },
     },
   },
   generate: (c: Case): CaseTableCell<TagPairValue> => {
@@ -1080,7 +1086,7 @@ const indictmentReviewDecision: CaseTableCellGenerator<TagPairValue> = {
           : 'Una',
     }
 
-    const defendantAppealed = c.defendants?.some((d) => d.verdictAppealDate)
+    const defendantAppealed = c.defendants?.some((d) => d.verdict?.appealDate)
 
     const secondTag = defendantAppealed
       ? { color: 'red', text: 'Ákærði áfrýjar' }

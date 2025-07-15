@@ -21,7 +21,6 @@ import { LimitedAccessDefendantController } from './limitedAccessDefendant.contr
     MessageModule,
     forwardRef(() => CourtModule),
     forwardRef(() => CaseModule),
-    forwardRef(() => VerdictModule),
     SequelizeModule.forFeature([Defendant, CivilClaimant, DefendantEventLog]),
   ],
   controllers: [

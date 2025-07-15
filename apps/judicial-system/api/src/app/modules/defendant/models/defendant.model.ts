@@ -4,11 +4,8 @@ import {
   DefendantPlea,
   DefenderChoice,
   Gender,
-  InformationForDefendant,
   PunishmentType,
-  ServiceRequirement,
   SubpoenaType,
-  VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 
 import { Subpoena } from '../../subpoena'
@@ -16,12 +13,9 @@ import { Verdict } from '../../verdict/models/verdict.model'
 
 registerEnumType(Gender, { name: 'Gender' })
 registerEnumType(DefendantPlea, { name: 'DefendantPlea' })
-registerEnumType(ServiceRequirement, { name: 'ServiceRequirement' })
 registerEnumType(DefenderChoice, { name: 'DefenderChoice' })
 registerEnumType(SubpoenaType, { name: 'SubpoenaType' })
 registerEnumType(PunishmentType, { name: 'PunishmentType' })
-registerEnumType(VerdictAppealDecision, { name: 'VerdictAppealDecision' })
-registerEnumType(InformationForDefendant, { name: 'InformationForDefendant' })
 
 @ObjectType()
 export class Defendant {
@@ -70,21 +64,11 @@ export class Defendant {
   @Field(() => DefendantPlea, { nullable: true })
   readonly defendantPlea?: DefendantPlea
 
-  @Field(() => ServiceRequirement, { nullable: true })
-  readonly serviceRequirement?: ServiceRequirement
-
-  @Field(() => String, { nullable: true })
-  readonly verdictViewDate?: string
-
+  // TODO: move to verdict api model
   @Field(() => String, { nullable: true })
   readonly verdictAppealDeadline?: string
 
-  @Field(() => VerdictAppealDecision, { nullable: true })
-  readonly verdictAppealDecision?: VerdictAppealDecision
-
-  @Field(() => String, { nullable: true })
-  readonly verdictAppealDate?: string
-
+  // TODO: move to verdict api model
   @Field(() => Boolean, { nullable: true })
   readonly isVerdictAppealDeadlineExpired?: boolean
 
@@ -132,7 +116,4 @@ export class Defendant {
 
   @Field(() => String, { nullable: true })
   readonly alternativeServiceDescription?: string
-
-  @Field(() => [InformationForDefendant], { nullable: true })
-  readonly informationForDefendant?: InformationForDefendant[]
 }

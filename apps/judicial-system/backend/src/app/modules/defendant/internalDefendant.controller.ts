@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Inject,
@@ -19,27 +18,14 @@ import {
   MessageType,
 } from '@island.is/judicial-system/message'
 import {
-  CaseIndictmentRulingDecision,
-  getIndictmentAppealDeadlineDate,
-  hasDatePassed,
   indictmentCases,
   investigationCases,
   restrictionCases,
-  ServiceRequirement,
 } from '@island.is/judicial-system/types'
 
-import {
-  Case,
-  CaseCompletedGuard,
-  CaseExistsGuard,
-  CaseTypeGuard,
-  CurrentCase,
-} from '../case'
-import { Verdict } from '../verdict/models/verdict.model'
-import { VerdictService } from '../verdict/verdict.service'
+import { Case, CaseExistsGuard, CaseTypeGuard, CurrentCase } from '../case'
 import { DeliverDto } from './dto/deliver.dto'
 import { InternalUpdateDefendantDto } from './dto/internalUpdateDefendant.dto'
-import { UpdateVerdictAppealDto } from './dto/updateVerdictAppeal.dto'
 import { CurrentDefendant } from './guards/defendant.decorator'
 import { DefendantExistsGuard } from './guards/defendantExists.guard'
 import { DefendantNationalIdExistsGuard } from './guards/defendantNationalIdExists.guard'
@@ -53,7 +39,6 @@ import { DefendantService } from './defendant.service'
 export class InternalDefendantController {
   constructor(
     private readonly defendantService: DefendantService,
-    private readonly verdictService: VerdictService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -106,63 +91,6 @@ export class InternalDefendantController {
       defendant,
       updatedDefendantChoice,
     )
-  }
-
-  @UseGuards(
-    new CaseTypeGuard(indictmentCases),
-    CaseCompletedGuard,
-    DefendantNationalIdExistsGuard,
-  )
-  @Patch('defendant/:defendantNationalId/verdict-appeal')
-  @ApiOkResponse({
-    type: Defendant,
-    description: 'Updates defendant verdict appeal decision',
-  })
-  updateVerdictAppeal(
-    @Param('caseId') caseId: string,
-    @Param('defendantNationalId') _: string,
-    @CurrentCase() theCase: Case,
-    @CurrentDefendant() defendant: Defendant,
-    @Body() verdictAppeal: UpdateVerdictAppealDto,
-  ): Promise<Verdict> {
-    this.logger.debug(`Updating verdict appeal for defendant in case ${caseId}`)
-    const { verdict } = defendant
-    if (!verdict || !theCase.rulingDate) {
-      throw new BadRequestException(
-        `No verdict has been issued for case ${theCase.id}`,
-      )
-    }
-    // Validate appeal deadline
-    const isServiceRequired =
-      verdict.serviceRequirement === ServiceRequirement.REQUIRED
-    const isFine =
-      theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
-    const baseDate = isServiceRequired
-      ? verdict.serviceDate
-      : theCase.rulingDate
-
-    if (!baseDate) {
-      throw new BadRequestException(
-        `Cannot register appeal – ruling date not available for case ${theCase.id}`,
-      )
-    }
-
-    const appealDeadline = getIndictmentAppealDeadlineDate(
-      new Date(baseDate),
-      isFine,
-    )
-    if (hasDatePassed(appealDeadline)) {
-      throw new BadRequestException(
-        `Appeal deadline has passed for case ${
-          theCase.id
-        }. Deadline was ${appealDeadline.toISOString()}`,
-      )
-    }
-
-    const updatedVerdict = this.verdictService.updateRestricted(verdict, {
-      appealDecision: verdictAppeal.verdictAppealDecision,
-    })
-    return updatedVerdict
   }
 
   @UseGuards(new CaseTypeGuard(indictmentCases), DefendantExistsGuard)

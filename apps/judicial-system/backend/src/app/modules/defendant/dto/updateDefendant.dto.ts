@@ -1,8 +1,6 @@
-import { Transform, Type } from 'class-transformer'
+import { Transform } from 'class-transformer'
 import {
-  IsArray,
   IsBoolean,
-  IsDate,
   IsEnum,
   IsOptional,
   IsString,
@@ -16,11 +14,8 @@ import {
   DefendantPlea,
   DefenderChoice,
   Gender,
-  InformationForDefendant,
   PunishmentType,
-  ServiceRequirement,
   SubpoenaType,
-  VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 
 import { nationalIdTransformer } from '../../../transformers'
@@ -96,32 +91,6 @@ export class UpdateDefendantDto {
   @ApiPropertyOptional({ enum: DefendantPlea })
   readonly defendantPlea?: DefendantPlea
 
-  // Deprecated: moved to verdict
-  @IsOptional()
-  @IsEnum(ServiceRequirement)
-  @ApiPropertyOptional({ enum: ServiceRequirement })
-  readonly serviceRequirement?: ServiceRequirement
-
-  // Deprecated: moved to verdict
-  @IsOptional()
-  @Type(() => Date)
-  @IsDate()
-  @ApiPropertyOptional({ type: Date })
-  readonly verdictViewDate?: Date | null
-
-  // Deprecated: moved to verdict
-  @IsOptional()
-  @IsEnum(VerdictAppealDecision)
-  @ApiPropertyOptional({ enum: VerdictAppealDecision })
-  readonly verdictAppealDecision?: VerdictAppealDecision
-
-  // Deprecated: moved to verdict
-  @IsOptional()
-  @Type(() => Date)
-  @IsDate()
-  @ApiPropertyOptional({ type: Date })
-  readonly verdictAppealDate?: Date
-
   @IsOptional()
   @IsEnum(SubpoenaType)
   @ApiPropertyOptional({ enum: SubpoenaType })
@@ -175,11 +144,4 @@ export class UpdateDefendantDto {
   @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   readonly alternativeServiceDescription?: string
-
-  // Deprecated: moved to verdict
-  @IsOptional()
-  @IsArray()
-  @IsEnum(InformationForDefendant, { each: true })
-  @ApiPropertyOptional({ enum: InformationForDefendant, isArray: true })
-  readonly informationForDefendant?: InformationForDefendant[]
 }

@@ -22,13 +22,9 @@ import {
   districtCourtAssistantRule,
   districtCourtJudgeRule,
   districtCourtRegistrarRule,
+  publicProsecutorStaffRule,
 } from '../../guards'
-import {
-  Case,
-  CurrentCase,
-  MinimalCaseAccessGuard,
-  MinimalCaseExistsGuard,
-} from '../case'
+import { Case, CaseExistsGuard, CurrentCase } from '../case'
 import { UpdateVerdictDto } from './dto/updateVerdict.dto'
 import { ValidateVerdictGuard } from './guards/validateVerdict.guard'
 import { CurrentVerdict } from './guards/verdict.decorator'
@@ -38,13 +34,7 @@ import { VerdictService } from './verdict.service'
 
 @Controller('api/case/:caseId/defendant/:defendantId/verdict')
 @ApiTags('verdicts')
-@UseGuards(
-  JwtAuthUserGuard,
-  RolesGuard,
-  MinimalCaseExistsGuard,
-  MinimalCaseAccessGuard,
-  ValidateVerdictGuard,
-)
+@UseGuards(JwtAuthUserGuard, RolesGuard, CaseExistsGuard, ValidateVerdictGuard)
 export class VerdictController {
   constructor(
     private readonly verdictService: VerdictService,
@@ -56,6 +46,7 @@ export class VerdictController {
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
     districtCourtAssistantRule,
+    publicProsecutorStaffRule,
   )
   @Patch(':verdictId')
   @ApiOkResponse({

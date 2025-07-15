@@ -43,11 +43,6 @@ interface Defendant {
   requestedDefenderNationalId?: string
   requestedDefenderName?: string
   subpoenaType?: SubpoenaType
-  verdictViewDate?: Date
-  verdictAppealDecision?: VerdictAppealDecision
-  verdictAppealDate?: Date
-  informationForDefendant?: InformationForDefendant[]
-  serviceRequirement?: ServiceRequirement
   verdict: Verdict
 }
 

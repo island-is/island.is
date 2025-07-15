@@ -18,11 +18,8 @@ import {
   DefendantPlea,
   DefenderChoice,
   Gender,
-  InformationForDefendant,
   PunishmentType,
-  ServiceRequirement,
   SubpoenaType,
-  VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../../case/models/case.model'
@@ -155,34 +152,6 @@ export class Defendant extends Model {
   @ApiProperty({ enum: DefendantPlea })
   defendantPlea?: DefendantPlea
 
-  // Deprecated: moved to verdict
-  @Column({
-    type: DataType.ENUM,
-    allowNull: true,
-    values: Object.values(ServiceRequirement),
-  })
-  @ApiProperty({ enum: ServiceRequirement })
-  serviceRequirement?: ServiceRequirement
-
-  // Deprecated: moved to verdict - named serviceDate
-  @Column({ type: DataType.DATE, allowNull: true })
-  @ApiPropertyOptional({ type: Date })
-  verdictViewDate?: Date
-
-  // Deprecated: moved to verdict
-  @Column({
-    type: DataType.ENUM,
-    allowNull: true,
-    values: Object.values(VerdictAppealDecision),
-  })
-  @ApiPropertyOptional({ enum: VerdictAppealDecision })
-  verdictAppealDecision?: VerdictAppealDecision
-
-  // Deprecated: moved to verdict
-  @Column({ type: DataType.DATE, allowNull: true })
-  @ApiPropertyOptional({ type: Date })
-  verdictAppealDate?: Date
-
   // This is the currently selected subpoena type per defendant but we also
   // store the subpoena type in the subpoenas table to keep the history.
   // We will later remove it from the defendant table when we fix the
@@ -247,15 +216,6 @@ export class Defendant extends Model {
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
   alternativeServiceDescription?: string
-
-  // Deprecated: moved to verdict
-  @Column({
-    type: DataType.ARRAY(DataType.ENUM),
-    allowNull: true,
-    values: Object.values(InformationForDefendant),
-  })
-  @ApiPropertyOptional({ enum: InformationForDefendant, isArray: true })
-  informationForDefendant?: InformationForDefendant[]
 
   @HasOne(() => Verdict, { foreignKey: 'defendantId' })
   @ApiPropertyOptional({ type: () => Verdict })
