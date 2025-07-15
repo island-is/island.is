@@ -16,9 +16,11 @@ import {
   PensionCalculatorApi,
   QuestionnairesApi,
   TrWebApiServicesCommonCountriesModelsCountryDto,
+  TrWebApiServicesDomainApplicationsModelsApplicationTypeDto,
   TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn,
   TrWebApiServicesDomainEducationalInstitutionsModelsEctsUnitDto,
   TrWebApiServicesDomainEducationalInstitutionsModelsEducationalInstitutionsDto,
+  TrWebApiServicesDomainEducationalInstitutionsModelsEducationLevelDto,
   TrWebApiServicesDomainQuestionnairesModelsQuestionnaireDto,
   TrWebApiServicesDomainUnionsModelsUnionDto,
   TrWebApiServicesUseCaseDeathBenefitsModelsExternalSpousalInfo,
@@ -267,5 +269,26 @@ export class SocialInsuranceAdministrationClientService {
     Array<TrWebApiServicesDomainEducationalInstitutionsModelsEctsUnitDto>
   > {
     return this.generalApiWithAuth(user).apiProtectedV1GeneralEctsUnitsGet()
+  }
+
+  async getEducationLevels(
+    user: User,
+    applicationType: string,
+  ): Promise<
+    Array<TrWebApiServicesDomainEducationalInstitutionsModelsEducationLevelDto>
+  > {
+    return this.generalApiWithAuth(
+      user,
+    ).apiProtectedV1GeneralEducationlevelsApplicationTypeGet({
+      applicationType,
+    })
+  }
+
+  async getMedicalAndRehabilitationApplicationType(
+    user: User,
+  ): Promise<TrWebApiServicesDomainApplicationsModelsApplicationTypeDto> {
+    return this.applicantApiWithAuth(
+      user,
+    ).apiProtectedV1ApplicantMedicalandrehabilitationpaymentsTypeGet()
   }
 }

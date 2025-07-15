@@ -13,12 +13,12 @@ import {
   AuditedAction,
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
-import { LawyersService } from '@island.is/judicial-system/lawyers'
 import {
   DefenderChoice,
   isCompletedCase,
 } from '@island.is/judicial-system/types'
 
+import { appModuleConfig } from '../../app.config'
 import { UpdateSubpoenaDto } from './dto/subpoena.dto'
 import { UpdateVerdictAppealDecisionDto } from './dto/verdictAppeal.dto'
 import { CaseResponse } from './models/case.response'
@@ -28,15 +28,13 @@ import { InternalCasesResponse } from './models/internal/internalCases.response'
 import { InternalDefendantResponse } from './models/internal/internalDefendant.response'
 import { SubpoenaResponse } from './models/subpoena.response'
 import { VerdictResponse } from './models/verdict.response'
-import { caseModuleConfig } from './case.config'
 
 @Injectable()
 export class CaseService {
   constructor(
-    @Inject(caseModuleConfig.KEY)
-    private readonly config: ConfigType<typeof caseModuleConfig>,
+    @Inject(appModuleConfig.KEY)
+    private readonly config: ConfigType<typeof appModuleConfig>,
     private readonly auditTrailService: AuditTrailService,
-    private readonly lawyersService: LawyersService,
   ) {}
 
   async getCases(nationalId: string, lang?: string): Promise<CasesResponse[]> {
@@ -161,26 +159,37 @@ export class CaseService {
         )
       }
 
-      chosenLawyer = await this.lawyersService.getLawyer(
-        defenderAssignment.defenderNationalId,
+      const res = await fetch(
+        `${this.config.backendUrl}/api/lawyer-registry/${defenderAssignment.defenderNationalId}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${this.config.secretToken}`,
+          },
+        },
       )
 
-      if (!chosenLawyer) {
-        throw new NotFoundException(
-          'Selected lawyer was not found in the lawyer registry',
-        )
+      if (res.ok) {
+        chosenLawyer = await res.json()
+
+        if (!chosenLawyer) {
+          throw new NotFoundException(
+            'Selected lawyer was not found in the lawyer registry',
+          )
+        }
       }
     }
 
     const defenderChoice = {
       defenderChoice: defenderAssignment.defenderChoice,
       defenderNationalId: defenderAssignment.defenderNationalId,
-      defenderName: chosenLawyer?.Name,
-      defenderEmail: chosenLawyer?.Email,
-      defenderPhoneNumber: chosenLawyer?.Phone,
+      defenderName: chosenLawyer?.name,
+      defenderEmail: chosenLawyer?.email,
+      defenderPhoneNumber: chosenLawyer?.phoneNumber,
       requestedDefenderChoice: defenderAssignment.defenderChoice,
       requestedDefenderNationalId: defenderAssignment.defenderNationalId,
-      requestedDefenderName: chosenLawyer?.Name,
+      requestedDefenderName: chosenLawyer?.name,
     }
 
     await this.patchDefendant(caseId, nationalId, defenderChoice)
