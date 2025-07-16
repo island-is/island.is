@@ -44,6 +44,7 @@ import { VerdictService } from '../verdict/verdict.service'
 import { DeliverDto } from './dto/deliver.dto'
 import { UpdateVerdictAppealDto } from './dto/updateVerdictAppeal.dto'
 import { CurrentVerdict } from './guards/verdict.decorator'
+import { VerdictExistsGuard } from './guards/verdictExists.guard'
 import { DeliverResponse } from './models/deliver.response'
 
 const validateVerdictAppealUpdate = ({
@@ -95,10 +96,9 @@ export class InternalVerdictController {
   ) {}
 
   @UseGuards(
-    CaseExistsGuard,
     new CaseTypeGuard(indictmentCases),
     DefendantExistsGuard,
-    // VerdictExistGuard, // TODO
+    VerdictExistsGuard,
   )
   @Post([
     `case/:caseId/${
@@ -116,7 +116,7 @@ export class InternalVerdictController {
     @Param('defendantId') defendantId: string,
     @Param('verdictId') verdictId: string,
     @CurrentCase() theCase: Case,
-    @CurrentDefendant() defendant: Defendant, // maybe we can only use defendant
+    @CurrentDefendant() defendant: Defendant,
     @CurrentVerdict() verdict: Verdict,
     @Body() deliverDto: DeliverDto,
   ): Promise<DeliverResponse> {
@@ -128,10 +128,10 @@ export class InternalVerdictController {
     const getDeliveredVerdictNationalCommissionersOfficeLogDetails = async (
       results: DeliverResponse,
     ) => {
-      const currentVerdict = await this.verdictService.findById(verdict.id)
+      const currentVerdict = await this.verdictService.findById(verdictId)
       return {
         deliveredToPolice: results.delivered,
-        verdictId: verdict.id,
+        verdictId: verdictId,
         verdictCreated: verdict.created,
         externalPoliceDocumentId: currentVerdict.externalPoliceDocumentId,
         subpoenaHash: currentVerdict.hash,

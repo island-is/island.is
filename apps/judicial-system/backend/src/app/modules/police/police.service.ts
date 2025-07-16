@@ -630,25 +630,23 @@ export class PoliceService {
   }) {
     const { name: actor } = user
 
+    const createDocumentPath = `${this.xRoadPath}/CreateDocument`
     try {
-      const res = await this.fetchPoliceCaseApi(
-        `${this.xRoadPath}/CreateDocument`,
-        {
-          method: 'POST',
-          headers: {
-            accept: '*/*',
-            'Content-Type': 'application/json',
-            'X-Road-Client': this.config.clientId,
-            'X-API-KEY': this.config.policeApiKey,
-          },
-          agent: this.agent,
-          body: JSON.stringify({
-            documentName: documentName,
-            documentsBase64,
-            fileTypeCode,
-          }),
-        } as RequestInit,
-      )
+      const res = await this.fetchPoliceCaseApi(createDocumentPath, {
+        method: 'POST',
+        headers: {
+          accept: '*/*',
+          'Content-Type': 'application/json',
+          'X-Road-Client': this.config.clientId,
+          'X-API-KEY': this.config.policeApiKey,
+        },
+        agent: this.agent,
+        body: JSON.stringify({
+          documentName: documentName,
+          documentsBase64,
+          fileTypeCode,
+        }),
+      } as RequestInit)
 
       if (res.ok) {
         const policeResponse = await res.json()
@@ -658,14 +656,14 @@ export class PoliceService {
       throw await res.text()
     } catch (error) {
       this.logger.error(
-        `Failed create police document for file type code ${fileTypeCode} for case ${caseId}`,
+        `${createDocumentPath} - create external police document for file type code ${fileTypeCode} for case ${caseId}`,
         {
           error,
         },
       )
 
       this.eventService.postErrorEvent(
-        'Failed to create police document file',
+        'Failed to create external police document file',
         {
           caseId,
           defendantId,

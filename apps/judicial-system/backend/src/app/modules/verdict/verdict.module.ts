@@ -2,7 +2,7 @@ import { forwardRef, Module } from '@nestjs/common'
 import { ConfigModule } from '@nestjs/config'
 import { SequelizeModule } from '@nestjs/sequelize'
 
-import { auditTrailModuleConfig } from '@island.is/judicial-system/audit-trail'
+import { AuditTrailModule, auditTrailModuleConfig } from '@island.is/judicial-system/audit-trail'
 
 import { CaseModule } from '../case/case.module'
 import { FileModule } from '../file/file.module'
@@ -14,6 +14,7 @@ import { VerdictService } from './verdict.service'
 
 @Module({
   imports: [
+    AuditTrailModule,
     forwardRef(() => CaseModule),
     forwardRef(() => PoliceModule),
     forwardRef(() => FileModule),
