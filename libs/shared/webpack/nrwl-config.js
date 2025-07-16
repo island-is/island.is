@@ -122,6 +122,32 @@ function addFallbackSvgLoader(config) {
 }
 
 /**
+ * Add TypeScript loader for node_modules that contain TypeScript files
+ * @param {*} config Webpack config object
+ */
+function addTypeScriptLoaderForNodeModules(config) {
+  // Add TypeScript loader for node_modules that contain .ts files
+  config.module.rules.push({
+    test: /\.ts$/,
+    include: /node_modules/,
+    use: [
+      {
+        loader: require.resolve('babel-loader'),
+        options: {
+          presets: [
+            [require.resolve('@babel/preset-env'), { targets: 'defaults' }],
+            [
+              require.resolve('@babel/preset-typescript'),
+              { isTSX: false, allExtensions: false },
+            ],
+          ],
+        },
+      },
+    ],
+  })
+}
+
+/**
  * Adds common web related configs to webpack
  * @param {*} config Webpack config object
  * @param {*} context  NxWebpackExecutionContext
@@ -131,6 +157,7 @@ module.exports = function (config) {
   addNodeModulesPolyfill(config)
   ignoreSourceMapWarnings(config)
   addFallbackSvgLoader(config)
+  addTypeScriptLoaderForNodeModules(config)
 
   fixPostcss(config)
 
