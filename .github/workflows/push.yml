@@ -268,6 +268,7 @@ jobs:
       matrix:
         chunk: ${{ fromJson(needs.prepare.outputs.BUILD_CHUNKS) }}
     uses: ./.github/workflows/docker.yml
+    secrets: inherit
     with:
       docker_tag: ${{ needs.prepare.outputs.MQ_DOCKER_TAG}}
       project: ${{ fromJSON(matrix.chunk).projects }}
