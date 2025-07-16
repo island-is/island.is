@@ -82,14 +82,10 @@ jobs:
         run: |
           set -euo pipefail
           AFFECTED_PROJECTS="$(echo '${{ matrix.chunk }}' | jq -r '.projects')"
-          DOCKER_TYPE="$(echo '${{ matrix.chunk }}' | jq -r '.docker_type')"
-          APP_HOME="$(echo '${{ matrix.chunk }}' | jq -r '.home')"
-          APP_DIST_HOME="$(echo '${{ matrix.chunk }}' | jq -r '.dist')"
+          echo "$AFFECTED_PROJECTS" | grep -v ',' # Forbid multiple projects
           {
             echo "AFFECTED_PROJECTS=$AFFECTED_PROJECTS"
-            echo "DOCKER_TYPE=$DOCKER_TYPE"
-            echo "APP_HOME=$APP_HOME"
-            echo "APP_DIST_HOME=$APP_DIST_HOME"
+            echo "PROJECT=$AFFECTED_PROJECTS"
           } >> "$GITHUB_ENV"
         continue-on-error: true
       - name: checkout
@@ -108,36 +104,6 @@ jobs:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
 
-      - name: Prepare Docker build arguments
-        id: dockerargs
-        if: steps.gather.outcome == 'success'
-        env:
-          DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
-        run: |
-          set -x
-          # Strip protocol prefix and .git postfix
-          SERVER_URL="${{ github.server_url }}/${{ github.repository }}"
-          SERVER_URL="${SERVER_URL#*://}"
-          SERVER_URL="${SERVER_URL%.git}"
-          build_args=(
-            --build-arg="DOCKER_IMAGE_REGISTRY=${DOCKER_BASE_IMAGE_REGISTRY}"
-            --build-arg="NODE_IMAGE_VERSION=${NODE_IMAGE_VERSION}"
-            --build-arg="GIT_BRANCH=${GIT_BRANCH}"
-            --build-arg="GIT_COMMIT_SHA=${GIT_COMMIT_SHA}"
-            --build-arg="GIT_REPOSITORY_URL=${SERVER_URL}"
-            --build-arg="NX_PARALLEL=${NX_PARALLEL}"
-            --build-arg="NX_MAX_PARALLEL=${NX_MAX_PARALLEL}"
-            --build-arg="NX_TASKS_RUNNER=ci"
-          )
-          export EXTRA_DOCKER_BUILD_ARGS="${build_args[*]}"
-          echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS}" >> "${GITHUB_ENV}"
-
-          # Create a temporary file with the NX_CLOUD_ACCESS_TOKEN
-          echo "${{ secrets.NX_CLOUD_ACCESS_TOKEN }}" > nx_cloud_access_token.txt
-
-          # Add secret to EXTRA_DOCKER_BUILD_ARGS
-          echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS} --secret id=nx_cloud_access_token,src=nx_cloud_access_token.txt" >> "${GITHUB_ENV}"
-
       - name: Check if cached buildx image exists
         id: cache-check
         run: |
@@ -147,33 +113,32 @@ jobs:
             docker push ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
           fi
 
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.PROJECT }}
+          tags: |
+            type=raw,value=${{ env.DOCKER_TAG }}
+
       - name: Building Docker images
-        continue-on-error: true
         id: dockerbuild
         if: steps.gather.outcome == 'success'
         env:
-          GIT_COMMIT_SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
           S3_DOCKER_CACHE_BUCKET: ${{ vars.S3_DOCKER_CACHE_BUCKET }}
+          TAGS: ${{ steps.meta.outputs.tags }}
+          LABELS: ${{ steps.meta.outputs.labels }}
+          TOKEN_PATH: ${{ runner.temp }}/nx_cloud_access_token.txt
         run: |
-          set -x
-          echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
-          echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
-          export EXTRA_DOCKER_BUILD_ARGS
-          ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
+          echo "${{ secrets.NX_CLOUD_ACCESS_TOKEN }}" > "$TOKEN_PATH"
+          yarn nx docker "$PROJECT" \
+            --tags "$TAGS" \
+            --labels "$LABELS" \
+            --secret id=nx_cloud_access_token,src="$TOKEN_PATH" \
+            --cache-from="type=s3,region=eu-west-1,bucket=${S3_DOCKER_CACHE_BUCKET},name=deps-cache" \
+            --cache-to="type=s3,region=eu-west-1,bucket=${S3_DOCKER_CACHE_BUCKET},name=deps-cache,mode=max" \
 
-      - name: Building Docker images Retry
-        if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
-        env:
-          GIT_COMMIT_SHA: ${{ github.sha }}
-          DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
-          S3_DOCKER_CACHE_BUCKET: ${{ vars.S3_DOCKER_CACHE_BUCKET }}
-        run: |
-          set -x
-          echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
-          echo "Docker build args are: 'EXTRA_DOCKER_BUILD_ARGS'"
-          export EXTRA_DOCKER_BUILD_ARGS
-          ./scripts/ci/run-in-parallel.sh "90_${DOCKER_TYPE}"
       - name: Docker build output
         uses: cloudposse/github-action-matrix-outputs-write@v1
         with:
@@ -185,6 +150,7 @@ jobs:
             target: ${{ env.JSON_target }}
             imageName: ${{ env.JSON_imageName }}
             imageTag: ${{ env.JSON_imageTag }}
+
   tests:
     needs:
       - prepare
