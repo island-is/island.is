@@ -62,6 +62,12 @@
         "parallel": true
       }
     },
+    "docker": {
+      "executor": "@nx-tools/nx-container:build",
+      "options": {
+        "target": "output-next"
+      }
+    },
     "docker-express": {
       "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
     }
