@@ -1,10 +1,7 @@
 import { Page } from '@playwright/test'
-import mergeWith from 'lodash/merge'
 import camelCase from 'lodash/camelCase'
+import mergeWith from 'lodash/mergeWith'
 import { debug } from '../helpers/utils'
-
-// Helper function to always overwrite with source value in merge operations
-const overwriteMerge = (_: unknown, source: unknown): unknown => source
 
 type Matchable = string | RegExp
 
@@ -34,7 +31,10 @@ const deepMock = <T = Dictionary>(
   original: T | T[],
   mockKey: Matchable,
   mockData: unknown = {},
-  { exactMatch = false, deepPath = 'data' } = {},
+  {
+    exactMatch = false,
+    deepPath = 'data',
+  }: { exactMatch?: boolean; deepPath?: string } = {},
 ): T | T[] | Dictionary | Dictionary[] => {
   if (Array.isArray(original)) {
     debug('Applying deep mock to array:', original)
@@ -81,6 +81,11 @@ const deepMock = <T = Dictionary>(
 
   return mockedObject
 }
+
+/**
+ * Helper function to always overwrite with source value in merge operations
+ */
+const overwriteMerge = (_: unknown, source: unknown): unknown => source
 
 /**
  * Sets up a GraphQL request mock, optionally modifying the response structure.
@@ -170,21 +175,43 @@ export const mockGraphQL = async <T>(
 /**
  * Mocks GraphQL response for translations, providing a fixed mock.
  *
- * @param {Page} page - The Playwright page to apply the mock to.
- * @returns {Promise<void>}
+ * @param page - The Playwright page to apply the mock to.
  */
-export const disableTranslations = async (page: Page): Promise<void> => {
-  await mockGraphQL(page, 'GetTranslations', {
+export const disableObjectKey = async <T>(
+  page: Page,
+  key: Matchable,
+  mockData?: T,
+): Promise<void> => {
+  return await mockGraphQL(page, '**', mockData ?? `MOCKED-${key}`, {
+    deepMockKey: key,
+    patchResponse: true,
+  })
+}
+
+export const disablePreviousApplications = async (page: Page) => {
+  await mockGraphQL(page, 'ApplicationApplications', [])
+  //syslumennOnEntry.data.estates
+  /*
+  await mockQGL(
+    page,
+    'UpdateApplication',
+    {
+      externalData: {
+        existingApplication: { data: [] },
+        syslumennOnEntry: { data: {} },
+      },
+    },
+    { patchResponse: true },
+  )
+  */
+}
+
+export const disableI18n = async (page: Page) => {
+  return await mockGraphQL(page, 'GetTranslations', {
     'mock.translation': 'YES-mocked',
   })
 }
 
-/**
- * Mocks GraphQL response for delegations, returning an empty array.
- *
- * @param {Page} page - The Playwright page to apply the mock to.
- * @returns {Promise<void>}
- */
-export const disableDelegations = async (page: Page): Promise<void> => {
-  await mockGraphQL(page, 'ActorDelegations', [])
+export const disableDelegations = async (page: Page) => {
+  return await mockGraphQL(page, 'ActorDelegations', [])
 }
