@@ -53,7 +53,7 @@ jobs:
         run: |
           set -euo pipefail
           AFFECTED_PROJECTS="${{ inputs.project }}"
-          echo "$AFFECTED_PROJECTS" | grep -v ',' # Forbid multiple projects
+          echo "$AFFECTED_PROJECTS" | grep -v ',' | grep '.' # Forbid multiple projects
           {
             echo "AFFECTED_PROJECTS=$AFFECTED_PROJECTS"
             echo "PROJECT=$AFFECTED_PROJECTS"
