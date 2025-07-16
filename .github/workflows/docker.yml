@@ -1,0 +1,79 @@
+name: 'Prep Dependencies'
+on:
+  workflow_call:
+    inputs:
+      docker_tag:
+        description: 'Tag for the docker image'
+        required: false
+        type: string
+      project:
+        description: 'Project name to build'
+        required: true
+        type: string
+
+env:
+  COMPOSE_HTTP_TIMEOUT: 180
+  SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
+  NX_AFFECTED_ALL: ${{ inputs.force_all_to_be_affected || contains(github.event.pull_request.labels.*.name, 'nx-affected-all') }}
+  DISABLE_CHUNKS: 'true'
+  DISABLE_GROUPING: 'false'
+  DISABLE_PROBLEMATIC: 'false'
+  CHUNK_SIZE: '8'
+  MAX_JOBS: '3'
+  NX_PARALLEL: '2'
+  NX_MAX_PARALLEL: '4'
+  NX_TASKS_RUNNER: ci
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  RUNS_ON_BUCKET_NAME: ${{ vars.RUNS_ON_BUCKET_NAME }}
+  AWS_REGION: eu-west-1
+  GENERATED_FILES: ${{ github.sha }}.tar.gz
+  AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
+  SERVERSIDE_FEATURES_ON: ''
+  DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
+  DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
+  CI_DEBUG: ${{ contains(github.event.pull_request.labels.*.name, 'ci debug') }}
+  SKIP_TESTS: ${{ contains(github.event.pull_request.labels.*.name, 'test nothing') }}
+  DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
+  YARN_ENABLE_HARDENED_MODE: '0'
+
+jobs:
+  docker-build:
+    runs-on: arc-shared
+    permissions:
+      actions: read
+      contents: read
+    env:
+      DISABLE_CHUNKS: true
+      MAX_JOBS: 3
+      NX_PARALLEL: 1
+    steps:
+      - name: Gather apps
+        id: gather
+        run: |
+          set -euo pipefail
+          AFFECTED_PROJECTS="${{ inputs.project }}"
+          echo "$AFFECTED_PROJECTS" | grep -v ',' # Forbid multiple projects
+          {
+            echo "AFFECTED_PROJECTS=$AFFECTED_PROJECTS"
+            echo "PROJECT=$AFFECTED_PROJECTS"
+          } >> "$GITHUB_ENV"
+
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+
+      - name: Set id for matrix
+        run: |
+          node ./scripts/ci/docker/create-id.mjs
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+
+      - name: Docker login to ECR repo
+        if: steps.gather.outcome == 'success'
+        run: ./scripts/ci/docker-login-ecr.sh
+        env:
+          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
