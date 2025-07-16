@@ -46,6 +46,7 @@ jobs:
       DISABLE_CHUNKS: true
       MAX_JOBS: 3
       NX_PARALLEL: 1
+      AFFECTED_PROJECTS: ${{ inputs.project }}
     steps:
       - name: Gather apps
         id: gather
@@ -77,3 +78,50 @@ jobs:
         env:
           AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
           AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+
+      - name: Check if cached buildx image exists
+        id: cache-check
+        run: |
+          if ! docker pull ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1 ; then
+            docker pull docker.io/moby/buildkit:buildx-stable-1
+            docker tag docker.io/moby/buildkit:buildx-stable-1 ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
+            docker push ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
+          fi
+
+      - name: Docker meta
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.PROJECT }}
+          tags: |
+            type=raw,value=${{ env.DOCKER_TAG }}
+
+      - name: Building Docker images
+        id: dockerbuild
+        if: steps.gather.outcome == 'success'
+        env:
+          DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
+          S3_DOCKER_CACHE_BUCKET: ${{ vars.S3_DOCKER_CACHE_BUCKET }}
+          TAGS: ${{ steps.meta.outputs.tags }}
+          LABELS: ${{ steps.meta.outputs.labels }}
+          TOKEN_PATH: ${{ runner.temp }}/nx_cloud_access_token.txt
+        run: |
+          echo "${{ secrets.NX_CLOUD_ACCESS_TOKEN }}" > "$TOKEN_PATH"
+          yarn nx docker "$PROJECT" \
+            --tags "$TAGS" \
+            --labels "$LABELS" \
+            --secret id=nx_cloud_access_token,src="$TOKEN_PATH" \
+            --cache-from="type=s3,region=eu-west-1,bucket=${S3_DOCKER_CACHE_BUCKET},name=deps-cache" \
+            --cache-to="type=s3,region=eu-west-1,bucket=${S3_DOCKER_CACHE_BUCKET},name=deps-cache,mode=max" \
+
+      - name: Docker build output
+        uses: cloudposse/github-action-matrix-outputs-write@v1
+        with:
+          matrix-step-name: ${{ github.job }}
+          matrix-key: ${{ env.MATRIX_ID }}
+          outputs: |-
+            value: ${{ env.JSON_value }}
+            project: ${{ env.JSON_project }}
+            target: ${{ env.JSON_target }}
+            imageName: ${{ env.JSON_imageName }}
+            imageTag: ${{ env.JSON_imageTag }}
