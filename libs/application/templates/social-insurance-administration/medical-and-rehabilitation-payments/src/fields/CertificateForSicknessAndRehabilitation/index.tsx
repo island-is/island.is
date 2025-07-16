@@ -51,8 +51,7 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
         <GridColumn span="1/1">
           <Text variant="h3">
             {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage
-                .certificateForSicknessAndRehabilitation.managedBy,
+              medicalAndRehabilitationPaymentsFormMessage.shared.managedBy,
             )}
           </Text>
         </GridColumn>
@@ -84,8 +83,7 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
           <Label>
             {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage
-                .certificateForSicknessAndRehabilitation.managedByLocation,
+              medicalAndRehabilitationPaymentsFormMessage.shared.location,
             )}
           </Label>
           <Text>
@@ -105,8 +103,7 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
         <GridColumn span="1/1">
           <Text variant="h3">
             {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage
-                .certificateForSicknessAndRehabilitation.information,
+              medicalAndRehabilitationPaymentsFormMessage.shared.information,
             )}
           </Text>
         </GridColumn>
@@ -442,17 +439,15 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
         <GridColumn span="1/1">
           <Text variant="h3">
             {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage
-                .certificateForSicknessAndRehabilitation.application,
+              medicalAndRehabilitationPaymentsFormMessage.shared.application,
             )}
           </Text>
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/3']}>
           <Label>
             {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage
-                .certificateForSicknessAndRehabilitation
-                .applicationStartOfTreatment,
+              medicalAndRehabilitationPaymentsFormMessage.shared
+                .startOfTreatment,
             )}
           </Label>
           <Text>
@@ -470,9 +465,8 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
         <GridColumn span={['1/1', '1/1', '1/1', '1/3']}>
           <Label>
             {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage
-                .certificateForSicknessAndRehabilitation
-                .applicationEstimatedEndOfTreatment,
+              medicalAndRehabilitationPaymentsFormMessage.shared
+                .estimatedEndOfTreatment,
             )}
           </Label>
           <Text>
@@ -485,25 +479,21 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
                   'dd.MM.yyyy',
                 )
               : formatMessage(
-                  medicalAndRehabilitationPaymentsFormMessage
-                    .certificateForSicknessAndRehabilitation
-                    .applicationEstimatedTimeUnclear,
+                  medicalAndRehabilitationPaymentsFormMessage.shared
+                    .estimatedTimeUnclear,
                 )}
           </Text>
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/3']}>
           <Label>
             {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage
-                .certificateForSicknessAndRehabilitation
-                .applicationEstimatedTime,
+              medicalAndRehabilitationPaymentsFormMessage.shared.estimatedTime,
             )}
           </Label>
           <Text>
             {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage
-                .certificateForSicknessAndRehabilitation
-                .applicationEstimatedTimeMonths,
+              medicalAndRehabilitationPaymentsFormMessage.shared
+                .estimatedTimeMonths,
               {
                 months:
                   data?.socialInsuranceCertificateForSicknessAndRehabilitation

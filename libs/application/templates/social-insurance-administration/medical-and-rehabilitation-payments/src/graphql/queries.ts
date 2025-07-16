@@ -125,3 +125,95 @@ export const siaCertificateForSicknessAndRehabilitationQuery = gql`
     }
   }
 `
+
+export const siaConfirmedTreatmentQuery = gql`
+  query SiaConfirmedTreatment {
+    socialInsuranceConfirmedTreatment {
+      referenceId
+      caseManager {
+        name
+        jobTitle
+        workplace
+      }
+      confimationDate
+      previousTreatment {
+        description
+        application
+        type
+        other
+        content
+      }
+      treatmentPlan {
+        applicationType
+        treatmentType
+        explanation
+        discharge
+        plannedFollowup
+      }
+      treatmentType
+      estimatedDuration {
+        start
+        end
+        months
+      }
+    }
+  }
+`
+
+export const siaConfirmationOfPendingResolutionQuery = gql`
+  query SiaConfirmationOfPendingResolution {
+    socialInsuranceConfirmationOfPendingResolution {
+      referenceId
+      serviceProvider {
+        serviceProviderName
+        coordinatorName
+        coordinatorTitle
+        workplace
+        phoneNumber
+      }
+      requestedTreatment {
+        treatmentType {
+          value
+          name
+          display
+        }
+        otherTreatmentDescription
+      }
+      treatmentExplanation
+      previousApplication {
+        hasPreviousApproval
+        additionalDetails
+      }
+      requestedPeriod {
+        startDate
+        endDate
+        totalRequestedMonths
+      }
+    }
+  }
+`
+
+export const siaConfirmationOfIllHealthQuery = gql`
+  query SiaConfirmationOfIllHealth {
+    socialInsuranceConfirmationOfIllHealth {
+      referenceId
+      serviceProvider {
+        serviceProviderName
+        coordinatorName
+        coordinatorTitle
+        workplace
+        phoneNumber
+      }
+      currentMedicalStatus
+      previousApplication {
+        hasPreviousApproval
+        additionalDetails
+      }
+      requestedPeriod {
+        startDate
+        endDate
+        totalRequestedMonths
+      }
+    }
+  }
+`

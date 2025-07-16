@@ -86,8 +86,7 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
           <Label>
             {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
-                .serviceProviderLocation,
+              medicalAndRehabilitationPaymentsFormMessage.shared.location,
             )}
           </Label>
           <Text>
@@ -147,8 +146,7 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
         <GridColumn span="1/1">
           <Text variant="h3">
             {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
-                .information,
+              medicalAndRehabilitationPaymentsFormMessage.shared.information,
             )}
           </Text>
         </GridColumn>
@@ -683,7 +681,7 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
         application={application}
         error={error}
         field={{
-          id: field.id,
+          id: `${field.id}.confirmation`,
           large: true,
           backgroundColor: 'blue',
           type: FieldTypes.CHECKBOX,
