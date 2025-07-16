@@ -28,8 +28,8 @@ export const Languages = ({
 }: ReviewGroupProps) => {
   const { formatMessage } = useLocale()
   const {
-    guardianRequiresInterpreter,
     languageEnvironment,
+    languageEnvironmentId,
     selectedLanguages,
     preferredLanguage,
     signLanguage,
@@ -59,7 +59,7 @@ export const Languages = ({
                 value={
                   getSelectedOptionLabel(
                     languageEnvironmentOptions,
-                    languageEnvironment,
+                    languageEnvironmentId,
                   ) || ''
                 }
                 error={
@@ -107,9 +107,8 @@ export const Languages = ({
               )}
             </>
           )}
-
           <GridRow rowGap={2}>
-            <GridColumn span={['12/12', '5/12', '5/12', '5/12']}>
+            <GridColumn span="12/12">
               <RadioValue
                 label={formatMessage(
                   newPrimarySchoolMessages.differentNeeds.signLanguage,
@@ -117,18 +116,6 @@ export const Languages = ({
                 value={signLanguage}
               />
             </GridColumn>
-
-            {languageEnvironment !==
-              LanguageEnvironmentOptions.ONLY_ICELANDIC && (
-              <GridColumn span={['12/12', '5/12', '5/12', '5/12']}>
-                <RadioValue
-                  label={formatMessage(
-                    newPrimarySchoolMessages.differentNeeds.interpreter,
-                  )}
-                  value={guardianRequiresInterpreter}
-                />
-              </GridColumn>
-            )}
           </GridRow>
         </Stack>
       )}

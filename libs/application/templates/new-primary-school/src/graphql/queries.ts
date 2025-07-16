@@ -27,7 +27,7 @@ export const friggSchoolsByMunicipalityQuery = gql`
       email
       phone
       website
-      children {
+      managing {
         id
         unitId
         nationalId

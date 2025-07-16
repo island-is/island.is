@@ -12,6 +12,7 @@ import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
+  getInternationalSchoolsIds,
   getMunicipalityCodeBySchoolUnitId,
 } from '../../../lib/newPrimarySchoolUtils'
 import {
@@ -62,12 +63,14 @@ export const newSchoolSubSection = buildSubSection({
             return (
               data?.friggSchoolsByMunicipality
                 ?.filter(
-                  ({ type, children }) =>
+                  ({ type, managing }) =>
                     type === OrganizationModelTypeEnum.Municipality &&
-                    children &&
-                    children.length > 0 &&
-                    children.filter(({ gradeLevels }) =>
-                      gradeLevels?.includes(childGradeLevel),
+                    managing &&
+                    managing.length > 0 &&
+                    managing.filter(({ gradeLevels }) =>
+                      !childGradeLevel
+                        ? true
+                        : gradeLevels?.includes(childGradeLevel),
                     )?.length > 0,
                 )
                 ?.map(({ name, unitId }) => ({
@@ -96,14 +99,6 @@ export const newSchoolSubSection = buildSubSection({
 
             const municipalityCode = selectedValues?.[0]
 
-            // Since the data from Frigg is not structured for international schools, we need to manually identify them
-            const internationalSchoolsIds = [
-              'G-2250-A',
-              'G-2250-B',
-              'G-1157-A',
-              'G-1157-B',
-            ] //Alþjóðaskólinn G-2250-x & Landkotsskóli G-1157-x
-
             const { childGradeLevel } = getApplicationExternalData(
               application.externalData,
             )
@@ -115,19 +110,21 @@ export const newSchoolSubSection = buildSubSection({
                   ({ type }) => type === OrganizationModelTypeEnum.PrivateOwner,
                 )
                 ?.flatMap(
-                  ({ children }) =>
-                    children
+                  ({ managing }) =>
+                    managing
                       ?.filter(
                         ({ type, gradeLevels, unitId }) =>
-                          gradeLevels?.includes(childGradeLevel) &&
                           unitId &&
                           getMunicipalityCodeBySchoolUnitId(unitId) ===
                             municipalityCode &&
-                          type === OrganizationModelTypeEnum.School,
+                          type === OrganizationModelTypeEnum.School &&
+                          (!childGradeLevel
+                            ? true
+                            : gradeLevels?.includes(childGradeLevel)),
                       )
                       ?.map((school) => ({
                         ...school,
-                        type: internationalSchoolsIds.some(
+                        type: getInternationalSchoolsIds().some(
                           (id) => id === school.unitId, // Hack to identify international schools from private ownded schools
                         )
                           ? SchoolType.INTERNATIONAL_SCHOOL
@@ -139,10 +136,13 @@ export const newSchoolSubSection = buildSubSection({
             const municipalitySchools =
               data?.friggSchoolsByMunicipality
                 ?.find(({ unitId }) => unitId === municipalityCode)
-                ?.children?.filter(
+                ?.managing?.filter(
                   ({ type, gradeLevels }) =>
+                    // if no childGradeLevel then skip grade level check. This is the case if student is not registered in Frigg
                     type === OrganizationModelTypeEnum.School &&
-                    gradeLevels?.includes(childGradeLevel),
+                    (!childGradeLevel
+                      ? true
+                      : gradeLevels?.includes(childGradeLevel)),
                 )
                 ?.map((school) => ({
                   ...school,

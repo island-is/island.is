@@ -44,12 +44,17 @@ import {
   SocialInsuranceAdministrationCategorizedIncomeTypesApi,
   SocialInsuranceAdministrationCurrenciesApi,
   SocialInsuranceAdministrationEctsUnitsApi,
+  SocialInsuranceAdministrationEducationLevelsApi,
   SocialInsuranceAdministrationIncomePlanConditionsApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
+  SocialInsuranceAdministrationMARPApplicationTypeApi,
   SocialInsuranceAdministrationQuestionnairesApi,
   SocialInsuranceAdministrationResidenceInformationApi,
 } from '../dataProviders'
-import { getApplicationAnswers } from '../utils/medicalAndRehabilitationPaymentsUtils'
+import {
+  getApplicationAnswers,
+  isEligible,
+} from '../utils/medicalAndRehabilitationPaymentsUtils'
 import { dataSchema } from './dataSchema'
 import {
   medicalAndRehabilitationPaymentsFormMessage,
@@ -117,15 +122,41 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
                 SocialInsuranceAdministrationQuestionnairesApi,
                 SocialInsuranceAdministrationEctsUnitsApi,
                 SocialInsuranceAdministrationResidenceInformationApi,
+                SocialInsuranceAdministrationMARPApplicationTypeApi,
+                SocialInsuranceAdministrationEducationLevelsApi,
               ],
               delete: true,
             },
           ],
         },
         on: {
-          [DefaultEvents.SUBMIT]: {
-            target: States.DRAFT,
-          },
+          [DefaultEvents.SUBMIT]: [
+            {
+              target: States.DRAFT,
+              cond: (application) =>
+                isEligible(application?.application?.externalData),
+            },
+            {
+              target: States.NOT_ELIGIBLE,
+            },
+          ],
+        },
+      },
+      [States.NOT_ELIGIBLE]: {
+        meta: {
+          name: States.NOT_ELIGIBLE,
+          status: FormModes.DRAFT,
+          lifecycle: EphemeralStateLifeCycle,
+          roles: [
+            {
+              id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/NotEligible').then((module) =>
+                  Promise.resolve(module.NotEligible),
+                ),
+              read: 'all',
+            },
+          ],
         },
       },
       [States.DRAFT]: {
@@ -178,7 +209,7 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
       [States.APPROVED]: {
         meta: {
           name: States.APPROVED,
-          status: 'approved',
+          status: FormModes.APPROVED,
           actionCard: {
             pendingAction: {
               title: coreSIAStatesMessages.applicationApproved,
