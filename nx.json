@@ -116,7 +116,9 @@
           "APP={projectName}",
           "APP_HOME={projectName}",
           "APP_DIST_HOME=dist/{projectName}"
-        ]
+        ],
+        "tags": [],
+        "push": false
       }
     },
     "build": {
