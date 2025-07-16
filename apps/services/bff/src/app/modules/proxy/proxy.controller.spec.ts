@@ -77,7 +77,7 @@ describe('ProxyController', () => {
   }
 
   beforeAll(async () => {
-    const app = await setupTestServer({
+    app = await setupTestServer({
       override: (builder) =>
         builder
           .overrideProvider(CACHE_MANAGER)
