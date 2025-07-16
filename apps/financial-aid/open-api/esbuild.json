@@ -25,7 +25,5 @@
     "swagger-ui-dist"
   ],
   "keepNames": true,
-  "format": [
-    "cjs"
-  ]
+  "format": ["cjs"]
 }

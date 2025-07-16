@@ -32,7 +32,5 @@
     "@mikro-orm/core"
   ],
   "keepNames": true,
-  "format": [
-    "cjs"
-  ]
+  "format": ["cjs"]
 }

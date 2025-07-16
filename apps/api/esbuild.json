@@ -67,7 +67,5 @@
   ],
   "keepNames": true,
   "sourcemap": true,
-  "format": [
-    "cjs"
-  ]
+  "format": ["cjs"]
 }

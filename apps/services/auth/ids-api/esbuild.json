@@ -59,7 +59,5 @@
     "uuidv4"
   ],
   "keepNames": true,
-  "format": [
-    "cjs"
-  ]
+  "format": ["cjs"]
 }

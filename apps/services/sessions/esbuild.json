@@ -61,7 +61,5 @@
     "ip3country"
   ],
   "keepNames": true,
-  "format": [
-    "cjs"
-  ]
+  "format": ["cjs"]
 }

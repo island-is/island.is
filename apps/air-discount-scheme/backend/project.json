@@ -35,7 +35,19 @@
             "glob": "sequelize.config.js"
           }
         ],
-        "external": ["@nestjs/microservices", "@nestjs/websockets", "cache-manager", "cache-manager-redis-store", "amqp-connection-manager", "amqplib", "nats", "kafkajs", "mqtt", "redis", "pg-native"]
+        "external": [
+          "@nestjs/microservices",
+          "@nestjs/websockets",
+          "cache-manager",
+          "cache-manager-redis-store",
+          "amqp-connection-manager",
+          "amqplib",
+          "nats",
+          "kafkajs",
+          "mqtt",
+          "redis",
+          "pg-native"
+        ]
       },
       "configurations": {
         "production": {
