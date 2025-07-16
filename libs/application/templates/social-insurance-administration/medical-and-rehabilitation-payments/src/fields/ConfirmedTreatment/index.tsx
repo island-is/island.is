@@ -218,10 +218,10 @@ export const ConfirmedTreatment: FC<FieldBaseProps> = ({
             )}
           </Label>
           <Text>
-            {data?.socialInsuranceConfirmedTreatment?.estimatedDuration?.start
+            {data?.socialInsuranceConfirmedTreatment?.estimatedDuration?.end
               ? format(
                   new Date(
-                    data.socialInsuranceConfirmedTreatment.estimatedDuration.start,
+                    data.socialInsuranceConfirmedTreatment.estimatedDuration.end,
                   ),
                   'dd.MM.yyyy',
                 )

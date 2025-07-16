@@ -61,7 +61,7 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
     furtherExplanation: {
       id: 'marp.application:further.explanation',
       defaultMessage: 'Nánari útskýring',
-      description: 'Further explanationt',
+      description: 'Further explanation',
     },
     application: {
       id: 'marp.application:application',
