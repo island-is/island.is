@@ -9,46 +9,47 @@ export default {
   title: 'Form/ToggleSwitch',
 }
 
+const DefaultComponent = () => {
+  const [checked, setChecked] = useState(false)
+
+  return (
+    <>
+      <ToggleSwitchCheckbox
+        label="Basic Toggle Switch"
+        checked={checked}
+        onChange={setChecked}
+      />
+      <ToggleSwitchCheckbox
+        label="Large version"
+        large
+        checked={checked}
+        onChange={setChecked}
+      />
+      <ToggleSwitchCheckbox
+        label="Full-width version"
+        wide
+        checked={checked}
+        onChange={setChecked}
+      />
+      <ToggleSwitchCheckbox
+        label="Disabled version"
+        disabled
+        checked={checked}
+        onChange={setChecked}
+      />
+      <p>In rare instances you may need to hide the label:</p>
+      <ToggleSwitchCheckbox
+        label="The label is still required!"
+        hiddenLabel={true}
+        checked={checked}
+        onChange={setChecked}
+      />
+    </>
+  )
+}
+
 export const Default = {
-  render: () => {
-    const [checked, setChecked] = useState(false)
-
-    return (
-      <>
-        <ToggleSwitchCheckbox
-          label="Basic Toggle Switch"
-          checked={checked}
-          onChange={setChecked}
-        />
-        <ToggleSwitchCheckbox
-          label="Large version"
-          large
-          checked={checked}
-          onChange={setChecked}
-        />
-        <ToggleSwitchCheckbox
-          label="Full-width version"
-          wide
-          checked={checked}
-          onChange={setChecked}
-        />
-        <ToggleSwitchCheckbox
-          label="Disabled version"
-          disabled
-          checked={checked}
-          onChange={setChecked}
-        />
-        <p>In rare instances you may need to hide the label:</p>
-        <ToggleSwitchCheckbox
-          label="The label is still required!"
-          hiddenLabel={true}
-          checked={checked}
-          onChange={setChecked}
-        />
-      </>
-    )
-  },
-
+  render: () => <DefaultComponent />,
   name: 'Default',
 }
 

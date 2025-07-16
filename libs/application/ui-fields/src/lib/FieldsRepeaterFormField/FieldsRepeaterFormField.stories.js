@@ -36,6 +36,7 @@ export const Default = {
             component: 'input',
             type: 'email',
             label: 'Email',
+            width: 'half',
           },
 
           phone: {
@@ -44,13 +45,6 @@ export const Default = {
             type: 'tel',
             format: '###-####',
             placeholder: '000-0000',
-          },
-
-          email: {
-            component: 'input',
-            label: 'Email',
-            type: 'email',
-            width: 'half',
           },
 
           radio: {
