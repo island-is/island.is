@@ -8,11 +8,11 @@ on:
         type: string
       nx_base:
         description: 'Base SHA for Nx'
-        default: '${{ github.base_sha }}'
+        required: false
         type: string
       nx_head:
         description: 'Head SHA for Nx'
-        default: '${{ github.head_sha }}'
+        required: false
         type: string
       affected_projects:
         description: 'Affected projects (comma,separated,list)'
@@ -52,7 +52,6 @@ jobs:
       CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
       API_MOCKS: 'true'
       NODE_OPTIONS: --max-old-space-size=4096
-      AFFECTED_PROJECT: ${{ matrix.projects }}
       E2E_BUILD_ID: ${{ inputs.e2e_build_id }}
       NX_BASE: ${{ inputs.nx_base }}
       NX_HEAD: ${{ inputs.nx_head }}
