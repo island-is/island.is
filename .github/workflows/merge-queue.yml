@@ -42,6 +42,7 @@ jobs:
   pre-checks:
     uses: ./.github/workflows/pre-checks.yml
     secrets: inherit
+
   prepare:
     uses: ./.github/workflows/install.yml
     secrets: inherit
@@ -51,105 +52,23 @@ jobs:
       main_branch: ${{ github.event.merge_group.base_ref || github.ref_name }}
     needs:
       - pre-checks
+
   docker-build:
     needs:
       - prepare
       - pre-checks
-    runs-on: arc-shared
     if: ${{ needs.prepare.outputs.MQ_SHOULD_RUN_BUILD == 'true' && needs.prepare.outputs.DOCKER_CHUNKS }}
     permissions:
       actions: read
       contents: read
-    env:
-      # Just so this is not an unassigned variable
-      AFFECTED_ALL: ''
-      DOCKER_TAG: ${{ needs.prepare.outputs.MQ_DOCKER_TAG}}
-      GIT_BRANCH: ${{ needs.prepare.outputs.MQ_GIT_BRANCH }}
-      GIT_COMMIT_SHA: ${{ needs.prepare.outputs.MQ_SHA }}
-      # Fix this
-      NODE_IMAGE_VERSION: ${{ needs.pre-checks.outputs.NODE_IMAGE_VERSION}}
-      PUBLISH: true
-      DISABLE_CHUNKS: true
-      MAX_JOBS: 3
-      NX_PARALLEL: 1
     strategy:
       fail-fast: false
       matrix:
         chunk: ${{ fromJson(needs.prepare.outputs.DOCKER_CHUNKS) }}
-    steps:
-      - name: Gather apps
-        id: gather
-        run: |
-          set -euo pipefail
-          AFFECTED_PROJECTS="$(echo '${{ matrix.chunk }}' | jq -r '.projects')"
-          echo "$AFFECTED_PROJECTS" | grep -v ',' # Forbid multiple projects
-          {
-            echo "AFFECTED_PROJECTS=$AFFECTED_PROJECTS"
-            echo "PROJECT=$AFFECTED_PROJECTS"
-          } >> "$GITHUB_ENV"
-        continue-on-error: true
-      - name: checkout
-        uses: actions/checkout@v4
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
-      - name: Set id for matrix
-        run: |
-          node ./scripts/ci/docker/create-id.mjs
-      - name: load-deps
-        uses: ./.github/actions/load-deps
-      - name: Docker login to ECR repo
-        if: steps.gather.outcome == 'success'
-        run: ./scripts/ci/docker-login-ecr.sh
-        env:
-          AWS_ACCESS_KEY_ID: ${{ secrets.AWS_ACCESS_KEY_ID }}
-          AWS_SECRET_ACCESS_KEY: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
-
-      - name: Check if cached buildx image exists
-        id: cache-check
-        run: |
-          if ! docker pull ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1 ; then
-            docker pull docker.io/moby/buildkit:buildx-stable-1
-            docker tag docker.io/moby/buildkit:buildx-stable-1 ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
-            docker push ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
-          fi
-
-      - name: Docker meta
-        id: meta
-        uses: docker/metadata-action@v5
-        with:
-          images: ${{ env.PROJECT }}
-          tags: |
-            type=raw,value=${{ env.DOCKER_TAG }}
-
-      - name: Building Docker images
-        id: dockerbuild
-        if: steps.gather.outcome == 'success'
-        env:
-          DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
-          S3_DOCKER_CACHE_BUCKET: ${{ vars.S3_DOCKER_CACHE_BUCKET }}
-          TAGS: ${{ steps.meta.outputs.tags }}
-          LABELS: ${{ steps.meta.outputs.labels }}
-          TOKEN_PATH: ${{ runner.temp }}/nx_cloud_access_token.txt
-        run: |
-          echo "${{ secrets.NX_CLOUD_ACCESS_TOKEN }}" > "$TOKEN_PATH"
-          yarn nx docker "$PROJECT" \
-            --tags "$TAGS" \
-            --labels "$LABELS" \
-            --secret id=nx_cloud_access_token,src="$TOKEN_PATH" \
-            --cache-from="type=s3,region=eu-west-1,bucket=${S3_DOCKER_CACHE_BUCKET},name=deps-cache" \
-            --cache-to="type=s3,region=eu-west-1,bucket=${S3_DOCKER_CACHE_BUCKET},name=deps-cache,mode=max" \
-
-      - name: Docker build output
-        uses: cloudposse/github-action-matrix-outputs-write@v1
-        with:
-          matrix-step-name: ${{ github.job }}
-          matrix-key: ${{ env.MATRIX_ID }}
-          outputs: |-
-            value: ${{ env.JSON_value }}
-            project: ${{ env.JSON_project }}
-            target: ${{ env.JSON_target }}
-            imageName: ${{ env.JSON_imageName }}
-            imageTag: ${{ env.JSON_imageTag }}
+    uses: ./.github/workflows/docker.yml
+    with:
+      docker_tag: ${{ needs.prepare.outputs.MQ_DOCKER_TAG}}
+      project: ${{ fromJSON(matrix.chunk).projects }}
 
   tests:
     needs:
