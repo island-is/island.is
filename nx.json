@@ -1,4 +1,5 @@
 {
+  "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "tasksRunnerOptions": {
     "default": {
       "runner": "nx/tasks-runners/default",
@@ -107,8 +108,17 @@
       }
     }
   },
-  "$schema": "./node_modules/nx/schemas/nx-schema.json",
   "targetDefaults": {
+    "@nx-tools/nx-container:build": {
+      "options": {
+        "file": "./scripts/ci/Dockerfile",
+        "build-args": [
+          "APP={projectName}",
+          "APP_HOME={projectName}",
+          "APP_DIST_HOME=dist/{projectName}"
+        ]
+      }
+    },
     "build": {
       "dependsOn": ["^build"],
       "inputs": ["production", "^production", "DevOps"]
@@ -231,5 +241,20 @@
     ]
   },
   "useInferencePlugins": false,
-  "defaultBase": "main"
+  "defaultBase": "main",
+  "plugins": [
+    {
+      "plugin": "@nx/playwright/plugin",
+      "options": {
+        "targetName": "e2e"
+      }
+    },
+    {
+      "plugin": "@nx-tools/nx-container",
+      "options": {
+        "defaultEngine": "docker",
+        "defaultRegistry": "docker.io"
+      }
+    }
+  ]
 }
