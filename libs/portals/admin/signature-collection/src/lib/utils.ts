@@ -109,13 +109,13 @@ export const getFileData = async (newFile: File[]) => {
   const buffer = await newFile[0].arrayBuffer()
   const file = XLSX.read(buffer, { type: 'buffer' })
 
-  const data = [] as any
+  const data: Record<string, unknown>[] = []
   const sheets = file.SheetNames
 
   for (let i = 0; i < sheets.length; i++) {
     const temp = XLSX.utils.sheet_to_json(file.Sheets[file.SheetNames[i]])
     temp.forEach((res) => {
-      data.push(res)
+      data.push(res as Record<string, unknown>)
     })
   }
 

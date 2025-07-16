@@ -33,7 +33,8 @@ const CompareLists = ({
   const { formatMessage } = useLocale()
   const [modalIsOpen, setModalIsOpen] = useState(false)
   const [fileList, setFileList] = useState<Array<UploadFileDeprecated>>([])
-  const [uploadResults, setUploadResults] = useState<Array<any>>()
+  const [uploadResults, setUploadResults] =
+    useState<Array<SignatureCollectionSignature>>()
   const [compareMutation, { loading }] = useBulkCompareMutation()
   const [unSignMutation] = useUnsignAdminMutation()
 
@@ -89,13 +90,14 @@ const CompareLists = ({
 
   const onChange = async (newFile: File[]) => {
     setFileList(createFileList(newFile, fileList))
-    let data = await getFileData(newFile)
+    const data = await getFileData(newFile)
 
-    data = data.map((d: { Kennitala: any }) => {
-      return String(d.Kennitala).replace('-', '')
+    const nationalIds = data.map((d: Record<string, unknown>) => {
+      const kennitala = d.Kennitala
+      return String(kennitala).replace('-', '')
     })
 
-    compareLists(data)
+    compareLists(nationalIds)
   }
 
   return (
