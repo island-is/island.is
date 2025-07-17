@@ -231,5 +231,13 @@
     ]
   },
   "useInferencePlugins": false,
-  "defaultBase": "main"
+  "defaultBase": "main",
+  "plugins": [
+    {
+      "plugin": "@nx/playwright/plugin",
+      "options": {
+        "targetName": "e2e"
+      }
+    }
+  ]
 }
