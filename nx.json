@@ -114,8 +114,8 @@
       "inputs": ["production", "^production", "DevOps"]
     },
     "e2e": {
-      "dependsOn": ["build"],
-      "inputs": [],
+      "dependsOn": [],
+      "inputs": ["production", "^production", "DevOps"],
       "outputs": [],
       "cache": true
     },
