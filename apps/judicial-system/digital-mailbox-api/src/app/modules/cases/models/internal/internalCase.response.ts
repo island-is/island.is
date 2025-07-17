@@ -4,6 +4,7 @@ import {
   DateType,
   DefenderChoice,
   Gender,
+  InformationForDefendant,
   Institution,
   ServiceRequirement,
   ServiceStatus,
@@ -69,4 +70,5 @@ interface Verdict {
   serviceRequirement?: ServiceRequirement
   serviceDate?: Date
   appealDecision?: VerdictAppealDecision
+  serviceInformationForDefendant?: InformationForDefendant[]
 }
