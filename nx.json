@@ -114,7 +114,9 @@
       "inputs": ["production", "^production", "DevOps"]
     },
     "e2e": {
-      "inputs": ["default", "^production"],
+      "dependsOn": [],
+      "inputs": ["production", "^production", "DevOps"],
+      "outputs": [],
       "cache": true
     },
     "lint": {
