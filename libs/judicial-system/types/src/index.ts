@@ -5,14 +5,18 @@ export {
   DefenderChoice,
   SubpoenaType,
   DefendantPlea,
-  ServiceRequirement,
   ServiceStatus,
   PunishmentType,
-  VerdictAppealDecision,
-  InformationForDefendant,
   isSuccessfulServiceStatus,
   isFailedServiceStatus,
 } from './lib/defendant'
+
+export {
+  ServiceRequirement,
+  VerdictAppealDecision,
+  InformationForDefendant,
+  InformationForDefendantMap,
+} from './lib/verdict'
 
 export {
   InstitutionType,
