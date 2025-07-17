@@ -9,9 +9,9 @@ import {
   NO,
   YES,
 } from '@island.is/application/core'
-import { OptionsType } from '../../../lib/constants'
+import { OptionsType } from '../../../utils/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
+import { getApplicationAnswers } from '../../../utils/newPrimarySchoolUtils'
 
 export const healthProtectionSubSection = buildSubSection({
   id: 'healthProtectionSubSection',

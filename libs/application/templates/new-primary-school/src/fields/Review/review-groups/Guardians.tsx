@@ -6,7 +6,7 @@ import { getLanguageByCode } from '@island.is/shared/utils'
 import { format as formatKennitala } from 'kennitala'
 import { formatNumber } from 'libphonenumber-js'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
+import { getApplicationAnswers } from '../../../utils/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
 
 export const Guardians = ({

@@ -10,7 +10,7 @@ import { AsyncSelectFormField } from '@island.is/application/ui-fields'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import { friggOptionsQuery } from '../../graphql/queries'
-import { OptionsType } from '../../lib/constants'
+import { OptionsType } from '../../utils/constants'
 import {
   FriggOptionsQuery,
   FriggOptionsQueryVariables,

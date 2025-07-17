@@ -18,9 +18,9 @@ import {
   ApplicationType,
   ReasonForApplicationOptions,
   States,
-} from '../../lib/constants'
+} from '../../utils/constants'
 import { newPrimarySchoolMessages } from '../../lib/messages'
-import { getApplicationAnswers } from '../../lib/newPrimarySchoolUtils'
+import { getApplicationAnswers } from '../../utils/newPrimarySchoolUtils'
 
 import { HealthProtection } from './review-groups/HealthProtection'
 import { Child } from './review-groups/Child'

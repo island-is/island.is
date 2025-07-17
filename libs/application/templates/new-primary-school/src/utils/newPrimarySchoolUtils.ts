@@ -22,7 +22,7 @@ import {
   ReasonForApplicationOptions,
   SchoolType,
 } from './constants'
-import { newPrimarySchoolMessages } from './messages'
+import { newPrimarySchoolMessages } from '../lib/messages'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   let applicationType = getValueViaPath(

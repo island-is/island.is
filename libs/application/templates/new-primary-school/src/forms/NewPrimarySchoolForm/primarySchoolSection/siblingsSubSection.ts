@@ -4,9 +4,9 @@ import {
   buildTableRepeaterField,
 } from '@island.is/application/core'
 import { format as formatKennitala } from 'kennitala'
-import { ReasonForApplicationOptions } from '../../../lib/constants'
+import { ReasonForApplicationOptions } from '../../../utils/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
+import { getApplicationAnswers } from '../../../utils/newPrimarySchoolUtils'
 
 export const siblingsSubSection = buildSubSection({
   id: 'siblingsSubSection',

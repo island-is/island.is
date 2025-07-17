@@ -5,12 +5,12 @@ import {
   NO,
   YES,
 } from '@island.is/application/core'
-import { ApplicationType } from '../../../lib/constants'
+import { ApplicationType } from '../../../utils/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
   getNeighbourhoodSchoolName,
-} from '../../../lib/newPrimarySchoolUtils'
+} from '../../../utils/newPrimarySchoolUtils'
 
 export const schoolSubSection = buildSubSection({
   id: 'schoolSubSection',

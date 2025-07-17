@@ -5,7 +5,7 @@ import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { format as formatKennitala } from 'kennitala'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
+import { getApplicationAnswers } from '../../../utils/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
 
 export const Siblings = ({

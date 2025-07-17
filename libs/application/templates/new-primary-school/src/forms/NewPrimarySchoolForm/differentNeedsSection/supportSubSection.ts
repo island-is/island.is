@@ -8,9 +8,9 @@ import {
   NO,
   YES,
 } from '@island.is/application/core'
-import { ApplicationType, SchoolType } from '../../../lib/constants'
+import { ApplicationType, SchoolType } from '../../../utils/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
+import { getApplicationAnswers } from '../../../utils/newPrimarySchoolUtils'
 import { isWelfareContactSelected } from '../../../utils/conditionUtils'
 
 export const supportSubSection = buildSubSection({

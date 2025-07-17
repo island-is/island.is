@@ -32,14 +32,14 @@ import {
   Roles,
   SchoolType,
   States,
-} from './constants'
+} from '../utils/constants'
 import { dataSchema } from './dataSchema'
 import { newPrimarySchoolMessages } from './messages'
 import {
   determineNameFromApplicationAnswers,
   getApplicationAnswers,
   hasForeignLanguages,
-} from './newPrimarySchoolUtils'
+} from '../utils/newPrimarySchoolUtils'
 
 const NewPrimarySchoolTemplate: ApplicationTemplate<
   ApplicationContext,

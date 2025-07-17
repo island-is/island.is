@@ -1,7 +1,7 @@
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
-import { SchoolType } from '../../lib/constants'
+import { SchoolType } from '../../utils/constants'
 import { newPrimarySchoolMessages } from '../../lib/messages'
-import { getApplicationAnswers } from '../../lib/newPrimarySchoolUtils'
+import { getApplicationAnswers } from '../../utils/newPrimarySchoolUtils'
 
 export const conclusionSection = buildFormConclusionSection({
   expandableIntro: '',

@@ -13,12 +13,12 @@ import {
 import { useLocale } from '@island.is/localization'
 import { getLanguageByCode } from '@island.is/shared/utils'
 import { useFriggOptions } from '../../../hooks/useFriggOptions'
-import { LanguageEnvironmentOptions, OptionsType } from '../../../lib/constants'
+import { LanguageEnvironmentOptions, OptionsType } from '../../../utils/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
   getSelectedOptionLabel,
-} from '../../../lib/newPrimarySchoolUtils'
+} from '../../../utils/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
 
 export const Languages = ({
