@@ -313,7 +313,7 @@ export const en: TranslatedMessages = {
 
   'walletPass.barcodeErrorNotConnected':
     'Not possible to scan barcode if the device is not connected to the internet.',
-  'walletPass.barcodeErrorFailedToFetch': 'Could not fetch barcode',
+  'walletPass.barcodeErrorFailedToFetch': 'Unable to fetch barcode',
   'walletPass.barcodeErrorBadSession':
     'The barcode was recently retrieved on another device. Please try again later.',
   'walletPass.validLicense': 'Valid',
