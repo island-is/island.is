@@ -450,7 +450,7 @@ export const is = {
     'Ekki er hægt að skanna skírteini nema að tækið sé nettengt.',
   'walletPass.barcodeErrorFailedToFetch': 'Ekki tókst að sækja barkóða',
   'walletPass.barcodeErrorBadSession':
-    'Of stutt síðan skírteini var sótt á öðru tæki',
+    'Strikamerki var nýverið sótt á öðru tæki. Vinsamlegast reyndu aftur síðar.',
   'walletPass.validLicense': 'Í gildi',
   'walletPass.expiredLicense': 'Útrunnið',
   'walletPass.errorFetchingLicense': 'Ekki tókst að uppfæra',
