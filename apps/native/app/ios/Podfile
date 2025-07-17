@@ -53,6 +53,9 @@ target 'IslandApp' do
   pod 'GoogleUtilities', :modular_headers => true
   pod 'FirebaseABTesting', :modular_headers => true
   pod 'FirebaseInstallations', :modular_headers => true
+  pod 'FirebaseCoreExtension', :modular_headers => true
+  pod 'GoogleDataTransport', :modular_headers => true
+  pod 'nanopb', :modular_headers => true
   pod 'RNFS', :path => '../../../../node_modules/react-native-fs'
 
 
