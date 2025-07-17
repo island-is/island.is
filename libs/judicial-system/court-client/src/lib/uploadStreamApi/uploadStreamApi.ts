@@ -1,6 +1,6 @@
+import axios from 'axios'
 import FormData from 'form-data'
 import { Agent } from 'http'
-import axios from 'axios'
 
 export interface UploadFile {
   value: Buffer
