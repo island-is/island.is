@@ -21762,13 +21762,6 @@ __metadata:
   languageName: node
   linkType: hard
 
-"@types/caseless@npm:*":
-  version: 0.12.2
-  resolution: "@types/caseless@npm:0.12.2"
-  checksum: 10/8bd3c34109d528364ee231813538ff17afaa3bc62cd079172e8c1e3dceda9e912ae7cae442008bb6e4dff0d57d8b24f44bbb07b8539bdf4efdb30f3c476eb450
-  languageName: node
-  linkType: hard
-
 "@types/classnames@npm:2.2.10":
   version: 2.2.10
   resolution: "@types/classnames@npm:2.2.10"
@@ -22915,18 +22908,6 @@ __metadata:
   dependencies:
     "@types/node": "npm:*"
   checksum: 10/58625586589a2cbcf19d7bff5a9b61e961b42e438e5a4f537633785efdcacfad15d3b32df3d27926696b36b43eb86eeb790fce9373fa357ab87720c64f86618b
-  languageName: node
-  linkType: hard
-
-"@types/request@npm:2.48.12":
-  version: 2.48.12
-  resolution: "@types/request@npm:2.48.12"
-  dependencies:
-    "@types/caseless": "npm:*"
-    "@types/node": "npm:*"
-    "@types/tough-cookie": "npm:*"
-    form-data: "npm:^2.5.0"
-  checksum: 10/a7b3f9f14cacc18fe235bb8e57eff1232a04bd3fa3dad29371f24a5d96db2cd295a0c8b6b34ed7efa3efbbcff845febb02c9635cd68c54811c947ea66ae22090
   languageName: node
   linkType: hard
 
@@ -36110,7 +36091,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"form-data@npm:^2.3.1, form-data@npm:^2.3.3, form-data@npm:^2.5.0":
+"form-data@npm:^2.3.1, form-data@npm:^2.3.3":
   version: 2.5.1
   resolution: "form-data@npm:2.5.1"
   dependencies:
@@ -40213,7 +40194,6 @@ __metadata:
     "@types/react-input-mask": "npm:3.0.0"
     "@types/react-modal": "npm:3.13.1"
     "@types/react-table": "npm:7.0.24"
-    "@types/request": "npm:2.48.12"
     "@types/resolve": "npm:^1.20.2"
     "@types/sanitize-html": "npm:2.9.0"
     "@types/smoothscroll-polyfill": "npm:0.3.1"
@@ -40422,7 +40402,6 @@ __metadata:
     reflect-metadata: "npm:0.1.13"
     regenerator-runtime: "npm:0.13.7"
     remark-parse: "npm:9.0.0"
-    request: "npm:2.88.2"
     rosetta: "npm:1.0.0"
     rxjs: "npm:7.8.1"
     sanitize-html: "npm:2.10.0"
@@ -50803,10 +50782,19 @@ __metadata:
   languageName: node
   linkType: hard
 
-"psl@npm:^1.1.28, psl@npm:^1.1.33":
+"psl@npm:^1.1.28":
   version: 1.8.0
   resolution: "psl@npm:1.8.0"
   checksum: 10/5f62a8eca06cb4a017983d15b92b0d38dc8699d637eabc8cb482c59b4106c9760f59cc8afabcb8bb7b98f0322907680d8f0f59226386fffab5248d180bc04578
+  languageName: node
+  linkType: hard
+
+"psl@npm:^1.1.33":
+  version: 1.15.0
+  resolution: "psl@npm:1.15.0"
+  dependencies:
+    punycode: "npm:^2.3.1"
+  checksum: 10/5e7467eb5196eb7900d156783d12907d445c0122f76c73203ce96b148a6ccf8c5450cc805887ffada38ff92d634afcf33720c24053cb01d5b6598d1c913c5caf
   languageName: node
   linkType: hard
 
@@ -53412,7 +53400,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"request@npm:2.88.2, request@npm:^2.87.0":
+"request@npm:^2.87.0":
   version: 2.88.2
   resolution: "request@npm:2.88.2"
   dependencies:
@@ -54619,7 +54607,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:7.5.4, semver@npm:^7.0.0, semver@npm:^7.5.3, semver@npm:^7.5.4":
+"semver@npm:7.5.4, semver@npm:^7.0.0":
   version: 7.5.4
   resolution: "semver@npm:7.5.4"
   dependencies:
@@ -54668,7 +54656,7 @@ __metadata:
   languageName: node
   linkType: hard
 
-"semver@npm:^7.1.3, semver@npm:^7.6.2, semver@npm:^7.6.3, semver@npm:^7.7.1, semver@npm:^7.7.2":
+"semver@npm:^7.1.3, semver@npm:^7.5.3, semver@npm:^7.5.4, semver@npm:^7.6.2, semver@npm:^7.6.3, semver@npm:^7.7.1, semver@npm:^7.7.2":
   version: 7.7.2
   resolution: "semver@npm:7.7.2"
   bin:
