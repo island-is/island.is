@@ -613,6 +613,69 @@ export class PoliceService {
       })
   }
 
+  async createDocument({
+    caseId,
+    defendantId,
+    user,
+    documentName,
+    documentsBase64,
+    fileTypeCode,
+  }: {
+    caseId: string
+    defendantId: string
+    user: User
+    documentName: string
+    documentsBase64: string[]
+    fileTypeCode: string
+  }) {
+    const { name: actor } = user
+
+    const createDocumentPath = `${this.xRoadPath}/CreateDocument`
+    try {
+      const res = await this.fetchPoliceCaseApi(createDocumentPath, {
+        method: 'POST',
+        headers: {
+          accept: '*/*',
+          'Content-Type': 'application/json',
+          'X-Road-Client': this.config.clientId,
+          'X-API-KEY': this.config.policeApiKey,
+        },
+        agent: this.agent,
+        body: JSON.stringify({
+          documentName: documentName,
+          documentsBase64,
+          fileTypeCode,
+        }),
+      } as RequestInit)
+
+      if (res.ok) {
+        const policeResponse = await res.json()
+        return { externalPoliceDocumentId: policeResponse.id }
+      }
+
+      throw await res.text()
+    } catch (error) {
+      this.logger.error(
+        `${createDocumentPath} - create external police document for file type code ${fileTypeCode} for case ${caseId}`,
+        {
+          error,
+        },
+      )
+
+      this.eventService.postErrorEvent(
+        'Failed to create external police document file',
+        {
+          caseId,
+          defendantId,
+          actor,
+        },
+        error,
+      )
+
+      throw error
+    }
+  }
+
   async createSubpoena(
     theCase: Case,
     defendant: Defendant,

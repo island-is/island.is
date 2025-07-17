@@ -43,6 +43,7 @@ export enum MessageType {
   CIVIL_CLAIMANT_NOTIFICATION = 'CIVIL_CLAIMANT_NOTIFICATION',
   INDICTMENT_CASE_NOTIFICATION = 'INDICTMENT_CASE_NOTIFICATION',
   EVENT_NOTIFICATION_DISPATCH = 'EVENT_NOTIFICATION_DISPATCH',
+  DELIVER_VERDICT_TO_NATIONAL_COMMISSIONERS_OFFICE = 'DELIVER_VERDICT_TO_NATIONAL_COMMISSIONERS_OFFICE',
 }
 
 export const messageEndpoint: { [key in MessageType]: string } = {
@@ -95,6 +96,8 @@ export const messageEndpoint: { [key in MessageType]: string } = {
   CIVIL_CLAIMANT_NOTIFICATION: 'civilClaimantNotification',
   INDICTMENT_CASE_NOTIFICATION: 'indictmentCaseNotification',
   EVENT_NOTIFICATION_DISPATCH: 'eventNotification/dispatch',
+  DELIVER_VERDICT_TO_NATIONAL_COMMISSIONERS_OFFICE:
+    'deliverVerdictToNationalCommissionersOffice',
 }
 
 export type Message = {
