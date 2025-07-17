@@ -39,6 +39,7 @@ query Case($input: CaseQueryInput!) {
       subpoenas {
         id
         created
+        modified
         serviceStatus
         serviceDate
         servedBy
