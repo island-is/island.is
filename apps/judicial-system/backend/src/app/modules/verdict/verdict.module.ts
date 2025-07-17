@@ -3,6 +3,7 @@ import { SequelizeModule } from '@nestjs/sequelize'
 
 import { CaseModule } from '../case/case.module'
 import { Verdict } from './models/verdict.model'
+import { InternalVerdictController } from './internalVerdict.controller'
 import { VerdictController } from './verdict.controller'
 import { VerdictService } from './verdict.service'
 
@@ -11,7 +12,7 @@ import { VerdictService } from './verdict.service'
     forwardRef(() => CaseModule),
     SequelizeModule.forFeature([Verdict]),
   ],
-  controllers: [VerdictController],
+  controllers: [VerdictController, InternalVerdictController],
   providers: [VerdictService],
   exports: [VerdictService],
 })

@@ -10,6 +10,7 @@ import { InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import { InternalUpdateVerdictDto } from './dto/internalUpdateVerdict.dto'
 import { UpdateVerdictDto } from './dto/updateVerdict.dto'
 import { Verdict } from './models/verdict.model'
 
@@ -61,5 +62,13 @@ export class VerdictService {
     }
 
     return updatedVerdict[0]
+  }
+
+  async updateRestricted(
+    verdict: Verdict,
+    update: InternalUpdateVerdictDto,
+  ): Promise<Verdict> {
+    const updatedVerdict = await this.updateVerdict(verdict, update)
+    return updatedVerdict
   }
 }

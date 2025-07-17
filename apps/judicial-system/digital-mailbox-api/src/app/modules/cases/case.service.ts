@@ -277,7 +277,6 @@ export class CaseService {
       id: updatedDefendant.id,
       defenderChoice: updatedDefendant.defenderChoice,
       defenderName: updatedDefendant.defenderName,
-      verdictAppealDecision: updatedDefendant.verdictAppealDecision,
     } as InternalDefendantResponse
   }
 

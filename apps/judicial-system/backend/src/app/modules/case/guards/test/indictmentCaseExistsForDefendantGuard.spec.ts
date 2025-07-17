@@ -16,6 +16,7 @@ import { Defendant } from '../../../defendant'
 import { Institution } from '../../../institution'
 import { Subpoena } from '../../../subpoena'
 import { User } from '../../../user'
+import { Verdict } from '../../../verdict/models/verdict.model'
 import { Case } from '../../models/case.model'
 import { DateLog } from '../../models/dateLog.model'
 import { IndictmentCaseExistsForDefendantGuard } from '../indictmentCaseExistsForDefendant.guard'
@@ -80,6 +81,12 @@ describe('Indictment Case Exists For Defendant Guard', () => {
               {
                 model: Subpoena,
                 as: 'subpoenas',
+                order: [['created', 'DESC']],
+              },
+              {
+                model: Verdict,
+                as: 'verdict',
+                required: false,
                 order: [['created', 'DESC']],
               },
             ],
