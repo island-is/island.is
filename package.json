@@ -355,6 +355,7 @@
     "@mockoon/cli": "8.4.0",
     "@nestjs/schematics": "10.0.1",
     "@nestjs/testing": "10.0.5",
+    "@nx-tools/nx-container": "6.8.0",
     "@nx/cypress": "19.4.0",
     "@nx/devkit": "19.4.0",
     "@nx/eslint": "19.4.0",
