@@ -21,6 +21,7 @@ export type DetailedProps = BaseProps & {
   logo?: string
   logoAlt?: string
   subEyebrow?: string
+  subDescription?: string
   //max 5 lines
   detailLines?: Array<{
     icon: IconMapIcon
@@ -35,6 +36,7 @@ export const DetailedInfoCard = ({
   size = 'medium',
   eyebrow,
   subEyebrow,
+  subDescription,
   detailLines,
   tags,
   logo,
@@ -149,6 +151,13 @@ export const DetailedInfoCard = ({
                 </Text>
               </Box>
             )}
+            {subDescription && (
+              <Box flexGrow={1} marginTop={3}>
+                <Text variant="small" fontWeight="regular">
+                  {subDescription}
+                </Text>
+              </Box>
+            )}
           </GridColumn>
           <GridColumn span="4/12">{renderDetails()}</GridColumn>
         </GridRow>
@@ -163,6 +172,13 @@ export const DetailedInfoCard = ({
           <Box marginTop={1}>
             <Text variant="medium" fontWeight="light">
               {description}
+            </Text>
+          </Box>
+        )}
+        {subDescription && (
+          <Box flexGrow={1} marginTop={2}>
+            <Text variant="small" fontWeight="regular">
+              {subDescription}
             </Text>
           </Box>
         )}
