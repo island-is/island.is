@@ -63,6 +63,7 @@ import {
   districtCourtAssistantRule,
   districtCourtJudgeRule,
   districtCourtRegistrarRule,
+  localAdminRule,
   prosecutorRepresentativeRule,
   prosecutorRule,
   publicProsecutorStaffRule,
@@ -899,7 +900,7 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthUserGuard, RolesGuard)
-  @RolesRules(adminRule)
+  @RolesRules(adminRule, localAdminRule)
   @Get('cases/statistics')
   @ApiOkResponse({
     type: CaseStatistics,
