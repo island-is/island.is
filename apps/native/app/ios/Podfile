@@ -1,4 +1,5 @@
 require File.join(File.dirname(`node --print "require.resolve('expo/package.json')"`), "scripts/autolinking")
+
 # Resolve react_native_pods.rb with node to allow for hoisting
 require Pod::Executable.execute_command('node', ['-p',
   'require.resolve(
@@ -6,7 +7,7 @@ require Pod::Executable.execute_command('node', ['-p',
     {paths: [process.argv[1]]},
   )', __dir__]).strip
 
-platform :ios, '13.4'
+platform :ios, '15.6'
 prepare_react_native_project!
 
 $RNFirebaseAnalyticsWithoutAdIdSupport = true
@@ -68,10 +69,19 @@ target 'IslandApp' do
       :mac_catalyst_enabled => false,
       # :ccache_enabled => true
     )
+
     installer.pods_project.targets.each do |target|
+      if target.name == 'IslandApp'
+        target.build_configurations.each do |config|
+          config.build_settings['HEADER_SEARCH_PATHS'] ||= '$(inherited)'
+          config.build_settings['HEADER_SEARCH_PATHS'] << ' $(SDKROOT)/usr/include/c++/v1'
+          config.build_settings['SYSTEM_HEADER_SEARCH_PATHS'] = '$(SDKROOT)/usr/include/c++/v1'
+        end
+      end
+
       target.build_configurations.each do |config|
         config.build_settings['GCC_PREPROCESSOR_DEFINITIONS'] ||= ['$(inherited)', '_LIBCPP_ENABLE_CXX17_REMOVED_UNARY_BINARY_FUNCTION']
-        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '13.4'
+        config.build_settings['IPHONEOS_DEPLOYMENT_TARGET'] = '15.6'
       end
     end
   end

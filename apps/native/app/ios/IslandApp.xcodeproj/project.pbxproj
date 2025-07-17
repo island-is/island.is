@@ -7,14 +7,12 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
-		06B57887E4E7C792A55DB13A /* libPods-IslandApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 17DEFEB231A515D219409813 /* libPods-IslandApp.a */; };
-		13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB01A68108700A75B9A /* AppDelegate.mm */; };
 		13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 13B07FB51A68108700A75B9A /* Images.xcassets */; };
-		13B07FC11A68108700A75B9A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = 13B07FB71A68108700A75B9A /* main.m */; };
 		5423FF0F80BB983A63A1370D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DCA6BB3F9BC0A645D723048 /* ExpoModulesProvider.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
+		8420ABB22E27FD0200D04F8A /* RNIsland.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8420ABB12E27FD0200D04F8A /* RNIsland.mm */; };
+		84F83AE72E26677800498F0E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F83AE62E26677800498F0E /* AppDelegate.swift */; };
 		E367D424298A854E007054A4 /* noop.swift in Sources */ = {isa = PBXBuildFile; fileRef = E367D423298A854E007054A4 /* noop.swift */; };
-		E367D426298AB63B007054A4 /* RNIsland.m in Sources */ = {isa = PBXBuildFile; fileRef = E367D425298AB63B007054A4 /* RNIsland.m */; };
 		E367D42B298DEB5F007054A4 /* Config in Resources */ = {isa = PBXBuildFile; fileRef = E367D42A298DEB5F007054A4 /* Config */; };
 		E367D43B298DF24D007054A4 /* IBMPlexSans-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E367D42D298DF24C007054A4 /* IBMPlexSans-SemiBoldItalic.ttf */; };
 		E367D43C298DF24D007054A4 /* IBMPlexSans-BoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E367D42E298DF24C007054A4 /* IBMPlexSans-BoldItalic.ttf */; };
@@ -36,6 +34,7 @@
 		E3C8A6902E09E933006111E3 /* SwiftUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E3C8A68F2E09E933006111E3 /* SwiftUI.framework */; };
 		E3C8A6A12E09E934006111E3 /* LicenseWidgetExtension.appex in Embed Foundation Extensions */ = {isa = PBXBuildFile; fileRef = E3C8A68C2E09E932006111E3 /* LicenseWidgetExtension.appex */; settings = {ATTRIBUTES = (RemoveHeadersOnCopy, ); }; };
 		F1211DB68E885E77FC7E4BB7 /* PrivacyInfo.xcprivacy in Resources */ = {isa = PBXBuildFile; fileRef = 941A2A9F3CFC44F91E0A673C /* PrivacyInfo.xcprivacy */; };
+		FF707B993DAA2AB5BFE797F9 /* libPods-IslandApp.a in Frameworks */ = {isa = PBXBuildFile; fileRef = AC9E3DEE6F006FAA5025A373 /* libPods-IslandApp.a */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -64,22 +63,20 @@
 
 /* Begin PBXFileReference section */
 		13B07F961A680F5B00A75B9A /* IslandApp.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = IslandApp.app; sourceTree = BUILT_PRODUCTS_DIR; };
-		13B07FAF1A68108700A75B9A /* AppDelegate.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; name = AppDelegate.h; path = IslandApp/AppDelegate.h; sourceTree = "<group>"; };
-		13B07FB01A68108700A75B9A /* AppDelegate.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; name = AppDelegate.mm; path = IslandApp/AppDelegate.mm; sourceTree = "<group>"; };
 		13B07FB51A68108700A75B9A /* Images.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; name = Images.xcassets; path = IslandApp/Images.xcassets; sourceTree = "<group>"; };
 		13B07FB61A68108700A75B9A /* Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = Info.plist; path = IslandApp/Info.plist; sourceTree = "<group>"; };
-		13B07FB71A68108700A75B9A /* main.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; name = main.m; path = IslandApp/main.m; sourceTree = "<group>"; };
-		17DEFEB231A515D219409813 /* libPods-IslandApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-IslandApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		53BFAD2CC243DF4051226B06 /* Pods-IslandApp.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IslandApp.debug.xcconfig"; path = "Target Support Files/Pods-IslandApp/Pods-IslandApp.debug.xcconfig"; sourceTree = "<group>"; };
 		54B034D314460DA252CA27C7 /* Pods-IslandApp.testing.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IslandApp.testing.xcconfig"; path = "Target Support Files/Pods-IslandApp/Pods-IslandApp.testing.xcconfig"; sourceTree = "<group>"; };
 		5BD3F84B09D28615BB8D415C /* Pods-IslandApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IslandApp.release.xcconfig"; path = "Target Support Files/Pods-IslandApp/Pods-IslandApp.release.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = IslandApp/LaunchScreen.storyboard; sourceTree = "<group>"; };
+		8420ABB12E27FD0200D04F8A /* RNIsland.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RNIsland.mm; sourceTree = "<group>"; };
+		84F83AE62E26677800498F0E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		890AA6A42E10000B000E7D37 /* IslandAppRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = IslandAppRelease.entitlements; path = IslandApp/IslandAppRelease.entitlements; sourceTree = "<group>"; };
 		8DCA6BB3F9BC0A645D723048 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-IslandApp/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		941A2A9F3CFC44F91E0A673C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = IslandApp/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
+		AC9E3DEE6F006FAA5025A373 /* libPods-IslandApp.a */ = {isa = PBXFileReference; explicitFileType = archive.ar; includeInIndex = 0; path = "libPods-IslandApp.a"; sourceTree = BUILT_PRODUCTS_DIR; };
 		E367D422298A854E007054A4 /* IslandApp-Bridging-Header.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = "IslandApp-Bridging-Header.h"; sourceTree = "<group>"; };
 		E367D423298A854E007054A4 /* noop.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = noop.swift; sourceTree = "<group>"; };
-		E367D425298AB63B007054A4 /* RNIsland.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = RNIsland.m; sourceTree = "<group>"; };
 		E367D427298AB652007054A4 /* RNIsland.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = RNIsland.h; sourceTree = "<group>"; };
 		E367D428298AB95F007054A4 /* IslandApp.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = IslandApp.entitlements; path = IslandApp/IslandApp.entitlements; sourceTree = "<group>"; };
 		E367D42A298DEB5F007054A4 /* Config */ = {isa = PBXFileReference; lastKnownFileType = folder; path = Config; sourceTree = "<group>"; };
@@ -133,7 +130,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				E367D44C2991CA7C007054A4 /* PassKit.framework in Frameworks */,
-				06B57887E4E7C792A55DB13A /* libPods-IslandApp.a in Frameworks */,
+				FF707B993DAA2AB5BFE797F9 /* libPods-IslandApp.a in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -152,21 +149,19 @@
 		13B07FAE1A68108700A75B9A /* IslandApp */ = {
 			isa = PBXGroup;
 			children = (
+				84F83AE62E26677800498F0E /* AppDelegate.swift */,
 				890AA6A42E10000B000E7D37 /* IslandAppRelease.entitlements */,
 				E367D428298AB95F007054A4 /* IslandApp.entitlements */,
-				13B07FAF1A68108700A75B9A /* AppDelegate.h */,
-				13B07FB01A68108700A75B9A /* AppDelegate.mm */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
 				13B07FB61A68108700A75B9A /* Info.plist */,
 				81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */,
 				E367D4552991DB42007054A4 /* SplashScreen.storyboard */,
-				13B07FB71A68108700A75B9A /* main.m */,
 				E367D423298A854E007054A4 /* noop.swift */,
 				E367D422298A854E007054A4 /* IslandApp-Bridging-Header.h */,
-				E367D425298AB63B007054A4 /* RNIsland.m */,
 				E367D427298AB652007054A4 /* RNIsland.h */,
 				E367D4592991E530007054A4 /* main.jsbundle */,
 				941A2A9F3CFC44F91E0A673C /* PrivacyInfo.xcprivacy */,
+				8420ABB12E27FD0200D04F8A /* RNIsland.mm */,
 			);
 			name = IslandApp;
 			sourceTree = "<group>";
@@ -176,9 +171,9 @@
 			children = (
 				E367D44B2991CA7B007054A4 /* PassKit.framework */,
 				ED297162215061F000B7C4FE /* JavaScriptCore.framework */,
-				17DEFEB231A515D219409813 /* libPods-IslandApp.a */,
 				E3C8A68D2E09E932006111E3 /* WidgetKit.framework */,
 				E3C8A68F2E09E933006111E3 /* SwiftUI.framework */,
+				AC9E3DEE6F006FAA5025A373 /* libPods-IslandApp.a */,
 			);
 			name = Frameworks;
 			sourceTree = "<group>";
@@ -535,10 +530,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
-				13B07FBC1A68108700A75B9A /* AppDelegate.mm in Sources */,
-				E367D426298AB63B007054A4 /* RNIsland.m in Sources */,
+				8420ABB22E27FD0200D04F8A /* RNIsland.mm in Sources */,
 				E367D424298A854E007054A4 /* noop.swift in Sources */,
-				13B07FC11A68108700A75B9A /* main.m in Sources */,
+				84F83AE72E26677800498F0E /* AppDelegate.swift in Sources */,
 				5423FF0F80BB983A63A1370D /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -645,6 +639,17 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon/ReactCommon.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon/ReactCommon.framework/Headers/react/nativemodule/core",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon-Samples/ReactCommon_Samples.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon-Samples/ReactCommon_Samples.framework/Headers/platform/ios",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-Fabric/React_Fabric.framework/Headers/react/renderer/components/view/platform/cxx",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-NativeModulesApple/React_NativeModulesApple.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers/react/renderer/graphics/platform/ios",
+				);
 				INFOPLIST_KEY_CFBundleDisplayName = "Ísland.dev";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD = "";
@@ -720,6 +725,17 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon/ReactCommon.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon/ReactCommon.framework/Headers/react/nativemodule/core",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon-Samples/ReactCommon_Samples.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon-Samples/ReactCommon_Samples.framework/Headers/platform/ios",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-Fabric/React_Fabric.framework/Headers/react/renderer/components/view/platform/cxx",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-NativeModulesApple/React_NativeModulesApple.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers/react/renderer/graphics/platform/ios",
+				);
 				INFOPLIST_KEY_CFBundleDisplayName = "Ísland.is";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD = "";
@@ -842,6 +858,17 @@
 				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
+				HEADER_SEARCH_PATHS = (
+					"$(inherited)",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon/ReactCommon.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon/ReactCommon.framework/Headers/react/nativemodule/core",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon-Samples/ReactCommon_Samples.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/ReactCommon-Samples/ReactCommon_Samples.framework/Headers/platform/ios",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-Fabric/React_Fabric.framework/Headers/react/renderer/components/view/platform/cxx",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-NativeModulesApple/React_NativeModulesApple.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers",
+					"${PODS_CONFIGURATION_BUILD_DIR}/React-graphics/React_graphics.framework/Headers/react/renderer/graphics/platform/ios",
+				);
 				INFOPLIST_KEY_CFBundleDisplayName = "Ísland.is";
 				IPHONEOS_DEPLOYMENT_TARGET = 13.4;
 				LD = "";
@@ -869,6 +896,7 @@
 				);
 				REACT_NATIVE_PATH = "${PODS_ROOT}/../../../../../node_modules/react-native";
 				SDKROOT = iphoneos;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = "$(inherited) DEBUG";
 				USE_HERMES = true;
 			};
 			name = Debug;

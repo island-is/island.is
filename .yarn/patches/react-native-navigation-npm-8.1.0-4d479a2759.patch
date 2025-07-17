@@ -1,0 +1,26 @@
+diff --git a/ReactNativeNavigation.podspec b/ReactNativeNavigation.podspec
+index f189f90792f4d569f26364f40eabd0dd1658b479..9366a294d1bdf7e32a3e704903bc2af4fdaba189 100644
+--- a/ReactNativeNavigation.podspec
++++ b/ReactNativeNavigation.podspec
+@@ -6,9 +6,7 @@ fabric_enabled = ENV['RCT_NEW_ARCH_ENABLED'] == '1'
+ 
+ # Detect if this is a Swift project by looking for user AppDelegate.swift files
+ dependency_paths = ['/node_modules/', '/Pods/', '/build/', '/Build/', '/DerivedData/']
+-swift_project = Dir.glob('**/AppDelegate.swift')
+-                   .reject { |file| dependency_paths.any? { |path| file.include?(path) } }
+-                   .any?
++swift_project = true
+ 
+ # Debug output
+ if swift_project
+@@ -37,7 +35,9 @@ Pod::Spec.new do |s|
+     # Only expose headers for Swift projects
+     if swift_project
+       s.public_header_files = [
+-          'lib/ios/RNNAppDelegate.h'
++          'lib/ios/RNNAppDelegate.h',
++          'lib/ios/ReactNativeNavigation.h',
++          'lib/ios/TurboModules/RNNTurboManager.h'
+         ]
+     end
+   end
