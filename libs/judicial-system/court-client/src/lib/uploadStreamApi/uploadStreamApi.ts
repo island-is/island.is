@@ -1,6 +1,6 @@
 import FormData from 'form-data'
 import { Agent } from 'http'
-import request from 'request'
+import axios from 'axios'
 
 export interface UploadFile {
   value: Buffer
@@ -21,40 +21,39 @@ export class UploadStreamApi {
     this.url = `${basePath}/UploadStream`
   }
 
-  uploadStream(authenticationToken: string, file: UploadFile): Promise<string> {
+  async uploadStream(
+    authenticationToken: string,
+    file: UploadFile,
+  ): Promise<string> {
     const formData = new FormData()
     formData.append('File', file.value, file.options)
 
-    const requstOptions: request.Options = {
+    const url = `${this.url}?authenticationToken=${authenticationToken}`
+
+    const requestOptions = {
       method: 'POST',
-      qs: { authenticationToken },
       headers: {
         ...this.headers,
-        'Content-Type': 'application/json',
         Accept: 'application/json',
+        ...formData.getHeaders(),
       },
-      uri: `${this.url}?authenticationToken=${authenticationToken}`,
-      json: true,
-      formData: { File: file },
-      agent: this.agent,
+      data: formData,
+      httpsAgent: this.agent,
     }
 
-    return new Promise<string>((resolve, reject) => {
-      request(requstOptions, (error, response, body) => {
-        if (error) {
-          reject(error)
-        } else {
-          if (
-            response.statusCode &&
-            response.statusCode >= 200 &&
-            response.statusCode < 300
-          ) {
-            resolve(body)
-          } else {
-            reject({ status: response.statusCode, message: body })
-          }
-        }
-      })
-    })
+    try {
+      const response = await axios(url, requestOptions)
+
+      if (response.status >= 200 && response.status < 300) {
+        return response.data
+      } else {
+        throw { status: response.status, message: response.data }
+      }
+    } catch (error) {
+      if (error.response) {
+        throw { status: error.response.status, message: error.response.data }
+      }
+      throw new Error(`Request failed: ${error.message}`)
+    }
   }
 }
