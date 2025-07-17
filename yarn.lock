@@ -15392,7 +15392,7 @@ __metadata:
     react: "npm:18.3.1"
     react-intl: "npm:5.20.12"
     react-native: "npm:0.77.2"
-    react-native-app-auth: "npm:7.2.0"
+    react-native-app-auth: "npm:8.0.3"
     react-native-blob-util: "npm:0.19.9"
     react-native-code-push: "npm:8.2.2"
     react-native-date-picker: "npm:5.0.4"
@@ -53062,15 +53062,15 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-app-auth@npm:7.2.0":
-  version: 7.2.0
-  resolution: "react-native-app-auth@npm:7.2.0"
+"react-native-app-auth@npm:8.0.3":
+  version: 8.0.3
+  resolution: "react-native-app-auth@npm:8.0.3"
   dependencies:
     invariant: "npm:2.2.4"
     react-native-base64: "npm:0.0.2"
   peerDependencies:
     react-native: ">=0.63.0"
-  checksum: 10/032324b7315d3e7ef74fdcd9211f32011496990ccbb69a2c383e98ad99ea5fa4fa85525e1191479e20b3d3ac3a171143e16ddc06cf6b9f70dd2df0f8dfde710f
+  checksum: 10/b77170280fc2bfd44d98424b499e38725fe184deecd541d45e84108dc1229100bf376caec6168fda130abe71ff7a95986af5a34d31deae034b503b1fd5adb116
   languageName: node
   linkType: hard
 

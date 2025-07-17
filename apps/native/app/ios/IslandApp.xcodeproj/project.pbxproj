@@ -11,7 +11,7 @@
 		5423FF0F80BB983A63A1370D /* ExpoModulesProvider.swift in Sources */ = {isa = PBXBuildFile; fileRef = 8DCA6BB3F9BC0A645D723048 /* ExpoModulesProvider.swift */; };
 		81AB9BB82411601600AC10FF /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */; };
 		8420ABB22E27FD0200D04F8A /* RNIsland.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8420ABB12E27FD0200D04F8A /* RNIsland.mm */; };
-		84F83AE72E26677800498F0E /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 84F83AE62E26677800498F0E /* AppDelegate.swift */; };
+		842B6C7E2E299962000AE0B2 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 842B6C7D2E29995F000AE0B2 /* AppDelegate.swift */; };
 		E367D424298A854E007054A4 /* noop.swift in Sources */ = {isa = PBXBuildFile; fileRef = E367D423298A854E007054A4 /* noop.swift */; };
 		E367D42B298DEB5F007054A4 /* Config in Resources */ = {isa = PBXBuildFile; fileRef = E367D42A298DEB5F007054A4 /* Config */; };
 		E367D43B298DF24D007054A4 /* IBMPlexSans-SemiBoldItalic.ttf in Resources */ = {isa = PBXBuildFile; fileRef = E367D42D298DF24C007054A4 /* IBMPlexSans-SemiBoldItalic.ttf */; };
@@ -70,7 +70,7 @@
 		5BD3F84B09D28615BB8D415C /* Pods-IslandApp.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-IslandApp.release.xcconfig"; path = "Target Support Files/Pods-IslandApp/Pods-IslandApp.release.xcconfig"; sourceTree = "<group>"; };
 		81AB9BB72411601600AC10FF /* LaunchScreen.storyboard */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.storyboard; name = LaunchScreen.storyboard; path = IslandApp/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		8420ABB12E27FD0200D04F8A /* RNIsland.mm */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.cpp.objcpp; path = RNIsland.mm; sourceTree = "<group>"; };
-		84F83AE62E26677800498F0E /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		842B6C7D2E29995F000AE0B2 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		890AA6A42E10000B000E7D37 /* IslandAppRelease.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = IslandAppRelease.entitlements; path = IslandApp/IslandAppRelease.entitlements; sourceTree = "<group>"; };
 		8DCA6BB3F9BC0A645D723048 /* ExpoModulesProvider.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; name = ExpoModulesProvider.swift; path = "Pods/Target Support Files/Pods-IslandApp/ExpoModulesProvider.swift"; sourceTree = "<group>"; };
 		941A2A9F3CFC44F91E0A673C /* PrivacyInfo.xcprivacy */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xml; name = PrivacyInfo.xcprivacy; path = IslandApp/PrivacyInfo.xcprivacy; sourceTree = "<group>"; };
@@ -149,7 +149,7 @@
 		13B07FAE1A68108700A75B9A /* IslandApp */ = {
 			isa = PBXGroup;
 			children = (
-				84F83AE62E26677800498F0E /* AppDelegate.swift */,
+				842B6C7D2E29995F000AE0B2 /* AppDelegate.swift */,
 				890AA6A42E10000B000E7D37 /* IslandAppRelease.entitlements */,
 				E367D428298AB95F007054A4 /* IslandApp.entitlements */,
 				13B07FB51A68108700A75B9A /* Images.xcassets */,
@@ -530,9 +530,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				842B6C7E2E299962000AE0B2 /* AppDelegate.swift in Sources */,
 				8420ABB22E27FD0200D04F8A /* RNIsland.mm in Sources */,
 				E367D424298A854E007054A4 /* noop.swift in Sources */,
-				84F83AE72E26677800498F0E /* AppDelegate.swift in Sources */,
 				5423FF0F80BB983A63A1370D /* ExpoModulesProvider.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

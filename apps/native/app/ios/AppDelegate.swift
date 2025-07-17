@@ -5,7 +5,6 @@
 //  Created by Snær Þóroddsson on 15.7.2025.
 //
 
-
 import AppAuth
 import FirebaseCore
 import React
@@ -14,9 +13,9 @@ import ReactNativeNavigation
 import UIKit
 
 @main
-class AppDelegate: RNNAppDelegate {
-    var authorizationFlowManagerDelegate: OIDExternalUserAgentSession?
-  
+class AppDelegate: RNNAppDelegate, RNAppAuthAuthorizationFlowManager {
+    weak var authorizationFlowManagerDelegate: RNAppAuthAuthorizationFlowManagerDelegate?
+
     override func application(_ application: UIApplication, didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]? = nil) -> Bool {
         FirebaseApp.configure()
         moduleName = "IslandApp"
@@ -42,6 +41,13 @@ class AppDelegate: RNNAppDelegate {
         continue userActivity: NSUserActivity,
         restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void
     ) -> Bool {
+        if userActivity.activityType == NSUserActivityTypeBrowsingWeb,
+           let delegate = authorizationFlowManagerDelegate,
+           delegate.resumeExternalUserAgentFlow(with: userActivity.webpageURL)
+        {
+            return true
+        }
+
         return RCTLinkingManager.application(
             application,
             continue: userActivity,

@@ -1457,8 +1457,8 @@ PODS:
     - React-jsiexecutor
     - React-RCTFBReactNativeSpec
     - ReactCommon/turbomodule/core
-  - react-native-app-auth (7.2.0):
-    - AppAuth (>= 1.7.3)
+  - react-native-app-auth (8.0.3):
+    - AppAuth (>= 1.7.6)
     - React-Core
   - react-native-blob-util (0.19.9):
     - DoubleConversion
@@ -2706,7 +2706,7 @@ SPEC CHECKSUMS:
   React-logger: 592d84bed2e04db64c0b3725f9970b437473f3d3
   React-Mapbuffer: 595c88852c1dcb1c4faafad88148de8690a70aae
   React-microtasksnativemodule: b56986b155ae82e9bcb1d1c0ca8726bac52dbb6e
-  react-native-app-auth: 5bf64c0d0e7cbea8ff6ea0b90e4397c8dcfc656a
+  react-native-app-auth: eb42594042a25455119a8c57194b4fd25b9352f4
   react-native-blob-util: 43549f2896e768f0894f46737c4f3f7e4ceef74d
   react-native-cookies: d648ab7025833b977c0b19e142503034f5f29411
   react-native-date-picker: d992b90d598a20a551a419e835023d9368958a31
