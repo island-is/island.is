@@ -1,0 +1,72 @@
+name: 'Run E2E tests'
+on:
+  workflow_call:
+    inputs:
+      e2e_build_id:
+        description: 'Build ID'
+        required: false
+        type: string
+      nx_base:
+        description: 'Base SHA for Nx'
+        required: false
+        type: string
+      nx_head:
+        description: 'Head SHA for Nx'
+        required: false
+        type: string
+      affected_projects:
+        description: 'Affected projects (comma,separated,list)'
+        required: true
+        type: string
+
+env:
+  COMPOSE_HTTP_TIMEOUT: 180
+  SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
+  DISABLE_CHUNKS: 'true'
+  DISABLE_GROUPING: 'false'
+  DISABLE_PROBLEMATIC: 'false'
+  CHUNK_SIZE: '8'
+  MAX_JOBS: '3'
+  NX_PARALLEL: '2'
+  NX_MAX_PARALLEL: '4'
+  NX_TASKS_RUNNER: ci
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  RUNS_ON_BUCKET_NAME: ${{ vars.RUNS_ON_BUCKET_NAME }}
+  AWS_REGION: eu-west-1
+  GENERATED_FILES: ${{ github.sha }}.tar.gz
+  AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
+  SERVERSIDE_FEATURES_ON: ''
+  DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
+  DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
+  CI_DEBUG: ${{ contains(github.event.pull_request.labels.*.name, 'ci debug') }}
+  SKIP_TESTS: ${{ contains(github.event.pull_request.labels.*.name, 'test nothing') }}
+  DEPLOY_FEATURE: ${{ contains(github.event.pull_request.labels.*.name, 'deploy-feature') }}
+  YARN_ENABLE_HARDENED_MODE: '0'
+
+jobs:
+  e2e:
+    runs-on: arc-shared
+    env:
+      CYPRESS_PROJECT_ID: 4q7jz8
+      CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
+      API_MOCKS: 'true'
+      NODE_OPTIONS: --max-old-space-size=4096
+      E2E_BUILD_ID: ${{ inputs.e2e_build_id }}
+      NX_BASE: ${{ inputs.nx_base }}
+      NX_HEAD: ${{ inputs.nx_head }}
+      AFFECTED_PROJECTS: ${{ inputs.affected_projects }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+
+      - name: Setup Playwright
+        uses: ./.github/actions/setup-playwright
+
+      - name: Running e2e tests
+        run: yarn nx run-many --target=e2e --projects="${AFFECTED_PROJECTS}" --parallel 3

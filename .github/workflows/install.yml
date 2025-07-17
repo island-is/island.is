@@ -198,6 +198,20 @@ jobs:
       - name: test-everything
         uses: ./.github/actions/test-everything
 
+      - name: Set unicorn
+        id: unicorn
+        env:
+          NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
+          NX_HEAD: ${{ steps.export-sha.outputs.NX_HEAD }}
+        run: |
+          meta_obj="{\"head\": \"${NX_HEAD}\", \"base\": \"${NX_BASE}\" }"
+          is_unicorn=$(node scripts/ci/unicorn-utils.mjs is-unicorn "$meta_obj")
+          unicorns=$(node scripts/ci/unicorn-utils.mjs show-unicorns "$meta_obj")
+          unicorns_json=$(node scripts/ci/unicorn-utils.mjs show-unicorns "$meta_obj" --json)
+          echo is-unicorn="$is_unicorn" | tee -a "$GITHUB_OUTPUT"
+          echo unicorns="$unicorns" | tee -a "$GITHUB_OUTPUT"
+          echo unicorn-chunks="$unicorns_json" | tee -a "$GITHUB_OUTPUT"
+
       - name: Prepare lint targets
         id: lint_projects
         env:
@@ -275,12 +289,3 @@ jobs:
         run: |
           echo "## WARN permissions" >> "$GITHUB_STEP_SUMMARY"
           echo "User '$GITHUB_ACTOR' does not have the required permissions to apply the 'test everything' label" >> "$GITHUB_STEP_SUMMARY"
-
-      - name: Set unicorn
-        id: unicorn
-        env:
-          NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
-          NX_HEAD: ${{ steps.export-sha.outputs.NX_HEAD }}
-        run: |
-          is_unicorn=$(node scripts/ci/unicorn-utils.mjs is-unicorn "{\"head\": \"${NX_HEAD}\", \"base\": \"${NX_BASE}\" }")
-          echo is-unicorn="$is_unicorn" | tee -a "$GITHUB_OUTPUT"
