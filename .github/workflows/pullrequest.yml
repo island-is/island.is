@@ -131,36 +131,19 @@ jobs:
           echo "All projects ($projects) have tests."
 
   e2e:
+    uses: ./.github/workflows/e2e.yml
     needs:
       - prepare
     if: ${{ needs.prepare.outputs.E2E_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
-    runs-on: arc-shared
-    timeout-minutes: 45
-    env:
-      AFFECTED_PROJECT: ${{ matrix.projects }}
-      CYPRESS_PROJECT_ID: 4q7jz8
-      CYPRESS_RECORD_KEY: ${{ secrets.CYPRESS_RECORD_KEY }}
-      API_MOCKS: 'true'
-      NODE_OPTIONS: --max-old-space-size=4096
-      E2E_BUILD_ID: '${{ needs.prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}'
-      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
-      NX_HEAD: ${{ needs.prepare.outputs.NX_HEAD }}
-      AFFECTED_PROJECTS: ${{ matrix.projects }}
+    secrets: inherit
+    with:
+      e2e_build_id: '${{ needs.prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}'
+      nx_base: ${{ needs.prepare.outputs.NX_BASE }}
+      nx_head: ${{ needs.prepare.outputs.NX_HEAD }}
+      affected_projects: ${{ matrix.projects }}
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
-
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
-
-      - name: load-deps
-        uses: ./.github/actions/load-deps
-
-      - name: Running e2e tests
-        run: yarn nx run-many --target=e2e --projects="${AFFECTED_PROJECTS}" --parallel 3
 
   linting-workspace:
     needs:

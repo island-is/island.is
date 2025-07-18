@@ -124,6 +124,7 @@ interface LicenseCardProps {
   backgroundImage?: ImageSourcePropType
   backgroundColor?: string
   showBarcodeOfflineMessage?: boolean
+  allowLicenseBarcode?: boolean
   loading?: boolean
   error?: ApolloError
   barcode?: {
@@ -144,6 +145,7 @@ export function LicenseCard({
   type,
   barcode,
   showBarcodeOfflineMessage,
+  allowLicenseBarcode,
   loading,
   error,
   ...props
@@ -297,7 +299,7 @@ export function LicenseCard({
           )}
         </BarcodeWrapper>
       )}
-      {(error || showBarcodeOfflineMessage) && (
+      {allowLicenseBarcode && (error || showBarcodeOfflineMessage) && (
         <BarcodeWrapper minHeight={barcodeHeight}>
           <BarcodeContainer
             style={{ backgroundColor: 'rgba(255,255,255,0.4)' }}
