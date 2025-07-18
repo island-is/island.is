@@ -17,9 +17,7 @@ const config: StorybookConfig = {
   addons: [
     getAbsolutePath('@storybook/addon-a11y'),
     getAbsolutePath('storybook-addon-apollo-client'),
-    getAbsolutePath('@storybook/addon-mdx-gfm'),
     getAbsolutePath('@storybook/addon-essentials'),
-    '@storybook/addon-mdx-gfm',
   ],
   babel: (options: any) => ({
     ...options,
