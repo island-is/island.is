@@ -452,9 +452,9 @@ judicial-system-scheduler:
     privileged: false
   serviceAccount:
     annotations:
-      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/judicial-system-scheduler'
+      eks.amazonaws.com/role-arn: 'arn:aws:iam::261174024191:role/web-judicial-system-scheduler'
     create: true
-    name: 'judicial-system-scheduler'
+    name: 'web-judicial-system-scheduler'
 judicial-system-web:
   enabled: true
   env:
