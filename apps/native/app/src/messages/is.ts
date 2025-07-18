@@ -448,9 +448,9 @@ export const is = {
     'Þú getur ekki bætt við skírteinum á þetta tæki.',
   'walletPass.barcodeErrorNotConnected':
     'Ekki er hægt að skanna skírteini nema að tækið sé nettengt.',
-  'walletPass.barcodeErrorFailedToFetch': 'Ekki tókst að sækja barkóða',
+  'walletPass.barcodeErrorFailedToFetch': 'Ekki tókst að sækja strikamerki',
   'walletPass.barcodeErrorBadSession':
-    'Of stutt síðan skírteini var sótt á öðru tæki',
+    'Strikamerki var nýverið sótt á öðru tæki. Vinsamlegast reyndu aftur síðar.',
   'walletPass.validLicense': 'Í gildi',
   'walletPass.expiredLicense': 'Útrunnið',
   'walletPass.errorFetchingLicense': 'Ekki tókst að uppfæra',
