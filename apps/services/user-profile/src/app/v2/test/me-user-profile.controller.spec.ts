@@ -286,7 +286,7 @@ describe('MeUserProfileController', () => {
     )
   })
 
-  describe('PATCH user-profile - nudge dates', () => {
+  describe('PATCH user-profile - date nudging and edge cases', () => {
     let app: TestApp
     let server: SuperTest<Test>
     let fixtureFactory: FixtureFactory
@@ -501,6 +501,21 @@ describe('MeUserProfileController', () => {
       expect(userProfile.nextNudge.toString()).toBe(
         addMonths(userProfile.lastNudge, NUDGE_INTERVAL).toString(),
       )
+    })
+
+    it('BUG - PATCH /v2/me should return 200 when user has no email addresses registered', async () => {
+      // Arrange
+      await fixtureFactory.createUserProfile({
+        ...testUserProfile,
+        emails: [],
+      })
+
+      // Act - send an empty PATCH request
+      const res = await server.patch('/v2/me').send({})
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body.nationalId).toEqual(testUserProfile.nationalId)
     })
   })
 
