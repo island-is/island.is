@@ -60,13 +60,6 @@ export const overviewSection = buildSection({
           bottomLine: false,
           items: getRentalAgreementOverviewItems,
         }),
-        buildOverviewField({
-          id: 'terminationTypeOverview',
-          title: m.overviewMessages.terminationTypeTitle,
-          backId: 'terminationTypeMultiField',
-          bottomLine: false,
-          items: getTerminationTypeOverviewItems,
-        }),
 
         buildOverviewField({
           condition: isCancellation,
