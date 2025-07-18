@@ -43,17 +43,18 @@ export class UploadStreamApi {
 
     try {
       const response = await axios(url, requestOptions)
-
-      if (response.status >= 200 && response.status < 300) {
-        return response.data
-      } else {
-        throw { status: response.status, message: response.data }
-      }
+      return response.data
     } catch (error) {
-      if (error.response) {
-        throw { status: error.response.status, message: error.response.data }
+      if (axios.isAxiosError(error)) {
+        const status = error.response?.status
+        const message = error.response?.data || error.message
+        throw new Error(`Upload failed with status ${status}: ${message}`)
       }
-      throw new Error(`Request failed: ${error.message}`)
+      throw new Error(
+        `Request failed: ${
+          error instanceof Error ? error.message : String(error)
+        }`,
+      )
     }
   }
 }
