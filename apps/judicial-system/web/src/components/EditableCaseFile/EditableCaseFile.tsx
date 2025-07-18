@@ -1,11 +1,11 @@
 import { FC, useMemo, useState } from 'react'
-import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
 import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
 import { AnimatePresence, motion } from 'motion/react'
+import { InputMask } from '@react-input/mask'
 
 import {
   Box,
@@ -160,20 +160,18 @@ const EditableCaseFile: FC<Props> = (props) => {
                   </Box>
                   <Box className={styles.editCaseFileDisplayDate}>
                     <InputMask
-                      mask="99.99.9999"
-                      maskPlaceholder={null}
+                      component={Input}
+                      mask="__.__.____"
+                      replacement={{ _: /\d/ }}
                       value={editedDisplayDate || ''}
                       onChange={(evt) => {
                         setEditedDisplayDate(evt.target.value)
                       }}
-                    >
-                      <Input
-                        name="fileDisplayDate"
-                        size="xs"
-                        placeholder={formatDate(new Date())}
-                        autoComplete="off"
-                      />
-                    </InputMask>
+                      name="fileDisplayDate"
+                      size="xs"
+                      placeholder={formatDate(new Date())}
+                      autoComplete="off"
+                    />
                   </Box>
                 </Box>
                 <Box display="flex" alignItems="center">

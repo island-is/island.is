@@ -275,3 +275,6 @@ export const courtInvestigationCasesRoutes = [
 // Feedback
 export const FEEDBACK_FORM_URL =
   'https://form.asana.com?k=45fPB_e65kYFDjvG-18f0w&d=203394141643832'
+
+// Masks
+export const POLICE_CASE_NUMBER = '___-____-_______'
