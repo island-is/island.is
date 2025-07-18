@@ -1,12 +1,14 @@
 import {
-  buildAsyncSelectField,
   buildDescriptionField,
   buildMultiField,
   buildRadioField,
+  buildSelectField,
   buildSubSection,
 } from '@island.is/application/core'
 import { getYesNoOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
+import { Application } from '@island.is/application/types'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
+import { getApplicationExternalData } from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 
 export const selfAssessmentQuestionsOneSubSection = buildSubSection({
   id: 'selfAssessmentQuestionsOneSubSection',
@@ -31,40 +33,30 @@ export const selfAssessmentQuestionsOneSubSection = buildSubSection({
           width: 'half',
         }),
         buildDescriptionField({
-          id: 'selfAssessment.highestLevelOfEducationDescriptionField',
+          id: 'selfAssessment.educationLevelDescriptionField',
           title:
             medicalAndRehabilitationPaymentsFormMessage.selfAssessment
-              .highestlevelOfEducationDescription,
+              .educationLevelDescription,
           titleVariant: 'h4',
           space: 4,
         }),
-        buildAsyncSelectField({
-          id: 'selfAssessment.highestLevelOfEducation',
+        buildSelectField({
+          id: 'selfAssessment.educationalLevel',
           title:
             medicalAndRehabilitationPaymentsFormMessage.selfAssessment
               .levelOfEducationTitle,
           placeholder:
             medicalAndRehabilitationPaymentsFormMessage.selfAssessment
               .levelOfEducationPlaceholder,
-          required: true,
-          loadOptions: async () => {
-            return [
-              // TODO: Here we need to get the data from the API
-              {
-                label: 'TBD',
-                value: 'TBD',
-              },
-              {
-                label: 'Hef lokið grunnskólaprófi eða minna',
-                value: 'Hef lokið grunnskólaprófi eða minna',
-              },
-              {
-                label:
-                  'Hef lokið stúdentsprófi, iðnnámi eða starfsnámi í framhaldsskóla',
-                value:
-                  'Hef lokið stúdentsprófi, iðnnámi eða starfsnámi í framhaldsskóla',
-              },
-            ]
+          options: (application: Application) => {
+            const { educationLevels } = getApplicationExternalData(
+              application.externalData,
+            )
+
+            return educationLevels.map(({ code, description }) => ({
+              value: code,
+              label: description,
+            }))
           },
         }),
       ],
