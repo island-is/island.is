@@ -63,17 +63,14 @@ export async function runLocalServices({
   print = false,
   json = false,
   updateSecrets = true,
-  dependencies,
+  dependencies = [],
   startProxies = false,
 }: LocalServicesArgs & {
-  dependencies: typeof services
+  dependencies: string[]
   startProxies: boolean
 }) {
   logger.debug('runLocalServices', { services, dependencies })
   const neverFail = !!dryRun
-
-  // Add the service itself to the list of dependencies
-  dependencies.push(...services)
 
   const renderedLocalServices = await renderLocalServices({
     services,
@@ -117,7 +114,11 @@ export async function runLocalServices({
   for (const [name, service] of Object.entries(
     renderedLocalServices.services,
   )) {
-    if (dependencies.length > 0 && !dependencies.includes(name)) {
+    if (
+      dependencies.length > 0 &&
+      !dependencies.includes(name) &&
+      !services.includes(name)
+    ) {
       logger.info(`Skipping ${name} (not a dependency)`)
       continue
     }
