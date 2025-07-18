@@ -233,6 +233,7 @@ export type EstateMember = {
 
 export type InheritanceEstateMember = EstateMember & {
   address?: string
+  heirsPercentage?: string
 }
 
 export type EstateAsset = {
@@ -302,6 +303,24 @@ export interface InheritanceReportAsset {
   exchangeRateOrInterest: string
 }
 
+export enum FuneralAssetItem {
+  Casket, // Smíði kistu og umbúnaður
+  Announcements, // Dánartilkynningar
+  Printing,
+  Flowers,
+  Music,
+  Venue,
+  Wake,
+  Tombstone,
+  FuneralServices,
+  Cremation,
+  Other,
+}
+
+export interface InheritanceReportFuneralAsset extends InheritanceReportAsset {
+  funeralAssetItem: FuneralAssetItem
+}
+
 export interface InheritanceReportInfo {
   assets: Array<InheritanceReportAsset>
   vehicles: Array<InheritanceReportAsset>
@@ -314,7 +333,7 @@ export interface InheritanceReportInfo {
   depositsAndMoney: Array<InheritanceReportAsset>
   guns: Array<InheritanceReportAsset>
   sharesAndClaims: Array<InheritanceReportAsset>
-  funeralCosts: Array<InheritanceReportAsset>
+  funeralCosts: Array<InheritanceReportFuneralAsset>
   officialFees: Array<InheritanceReportAsset>
   otherDebts: Array<InheritanceReportAsset>
   assetsInBusiness: Array<InheritanceReportAsset>

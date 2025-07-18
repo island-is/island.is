@@ -17,15 +17,20 @@ import {
   InputController,
 } from '@island.is/shared/form-fields'
 import { Box, GridColumn, GridRow } from '@island.is/island-ui/core'
-import { valueToNumber } from '../../lib/utils/helpers'
+import {
+  getEstateDataFromApplication,
+  valueToNumber,
+} from '../../lib/utils/helpers'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
 import { m } from '../../lib/messages'
 import { Answers } from '../../types'
 import { YES } from '@island.is/application/core'
+import { FuneralAssetItem } from '@island.is/clients/syslumenn'
 
 type CustomField = {
   id: string
   title: string
+  type: FuneralAssetItem
 }
 
 type FieldProps = {
@@ -38,7 +43,7 @@ type FieldProps = {
 
 export const FuneralCost: FC<
   PropsWithChildren<FieldBaseProps<Answers> & FieldProps>
-> = ({ field, errors }) => {
+> = ({ field, errors, application }) => {
   const { id, props } = field
 
   const otherField = `${id}.other`
@@ -104,6 +109,24 @@ export const FuneralCost: FC<
 
     calculateTotal()
   }, [calculateTotal, hasOther, id, otherDetailsField, otherField, setValue])
+
+  useEffect(() => {
+    const { inheritanceReportInfo } = getEstateDataFromApplication(application)
+    if (!inheritanceReportInfo) {
+      return
+    }
+    const { funeralCosts } = inheritanceReportInfo
+
+    for (const customField of props.fields) {
+      const { type } = customField
+      const cost = funeralCosts.find((cost) => cost.funeralAssetItem === type)
+      if (cost) {
+        const fieldValueId = `${id}.${customField.id}`
+        setValue(fieldValueId, String(cost.propertyValuation ?? '0'))
+      }
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     const items = refs?.current ?? []
