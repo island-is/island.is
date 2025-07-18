@@ -68,7 +68,7 @@ interface SliceProps {
     readMoreText: string
     readMoreLink?: {
       url: string
-    }
+    } | null
   }
   slug?: string
   seeMoreLinkVariant?: 'organization' | 'project' | 'frontpage'
