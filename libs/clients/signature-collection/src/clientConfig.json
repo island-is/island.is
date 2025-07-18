@@ -90,6 +90,42 @@
         }
       }
     },
+    "/Admin/Kosning/{ID}/SveitSofnun": {
+      "post": {
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "name": "ID",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          {
+            "name": "sveitarfelagID",
+            "in": "query",
+            "required": true,
+            "schema": { "type": "integer", "format": "int32" }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/MedmaelasofnunDTO" }
+              }
+            }
+          },
+          "204": { "description": "No Content" },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
     "/Admin/Listabokstafur": {
       "post": {
         "tags": ["Admin"],
@@ -124,6 +160,33 @@
       }
     },
     "/Admin/SveitarfelagInfo": {
+      "get": {
+        "tags": ["Admin"],
+        "parameters": [
+          {
+            "name": "sveitarfelagID",
+            "in": "query",
+            "schema": { "type": "integer", "format": "int32" }
+          },
+          { "name": "kennitala", "in": "query", "schema": { "type": "string" } }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/SveitInfoDTO" }
+              }
+            }
+          },
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "application/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      },
       "put": {
         "tags": ["Admin"],
         "requestBody": {
@@ -2239,8 +2302,19 @@
         },
         "additionalProperties": false
       },
+      "SveitInfoDTO": {
+        "required": ["sveitarfelagID"],
+        "type": "object",
+        "properties": {
+          "sveitarfelagID": { "type": "integer", "format": "int32" },
+          "kennitala": { "type": "string" },
+          "postfang": { "type": "string", "nullable": true },
+          "sveitarfelagNafn": { "type": "string" }
+        },
+        "additionalProperties": false
+      },
       "SveitInfoRequestDTO": {
-        "required": ["kennitala", "sveitarfelagID"],
+        "required": ["sveitarfelagID"],
         "type": "object",
         "properties": {
           "sveitarfelagID": { "type": "integer", "format": "int32" },
