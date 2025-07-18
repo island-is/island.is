@@ -4,8 +4,8 @@ import { Box } from '@island.is/island-ui/core'
 import { Locale } from '@island.is/shared/types'
 import {
   CategoryItems,
+  DigitalIcelandLatestNewsSlice,
   LifeEventsSection,
-  NewsItems,
   SearchSection,
   WatsonChatPanel,
 } from '@island.is/web/components'
@@ -125,19 +125,21 @@ const Home: Screen<HomeProps> = ({ categories, news, page, locale }) => {
         paddingTop={[8, 8, 6]}
         aria-labelledby="news-items-title"
       >
-        <NewsItems
-          heading={gn(
-            'newsAndAnnouncements',
-            activeLocale === 'is'
-              ? 'Fréttir og tilkynningar'
-              : 'News and announcements',
-          )}
-          headingTitle="news-items-title"
-          seeMoreText={gn(
-            'seeMore',
-            activeLocale === 'is' ? 'Sjá meira' : 'See more',
-          )}
-          items={news}
+        <DigitalIcelandLatestNewsSlice
+          slice={{
+            title: gn(
+              'newsAndAnnouncements',
+              activeLocale === 'is'
+                ? 'Fréttir og tilkynningar'
+                : 'News and announcements',
+            ),
+            news: news,
+            readMoreText: gn(
+              'seeMore',
+              activeLocale === 'is' ? 'Sjá meira' : 'See more',
+            ),
+          }}
+          seeMoreLinkVariant="frontpage"
         />
       </Box>
       {watsonConfig[locale] && (
