@@ -60,6 +60,13 @@ globalStyle(
   },
 )
 
+globalStyle(
+  `${wrapper} .island-select__value-container.island-select__value-container--has-value`,
+  {
+    maxWidth: '100%',
+  },
+)
+
 globalStyle(`${wrapper} .island-select__multi-value__label`, {
   borderRadius: 0,
   paddingLeft: '0.5rem',
