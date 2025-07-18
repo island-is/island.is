@@ -152,7 +152,7 @@ export const DetailedInfoCard = ({
               </Box>
             )}
             {subDescription && (
-              <Box flexGrow={1} marginTop={3}>
+              <Box flexGrow={1} marginTop={description ? 3 : 1}>
                 <Text variant="small" fontWeight="regular">
                   {subDescription}
                 </Text>
@@ -176,7 +176,7 @@ export const DetailedInfoCard = ({
           </Box>
         )}
         {subDescription && (
-          <Box flexGrow={1} marginTop={2}>
+          <Box flexGrow={1} marginTop={description ? 2 : 1}>
             <Text variant="small" fontWeight="regular">
               {subDescription}
             </Text>
