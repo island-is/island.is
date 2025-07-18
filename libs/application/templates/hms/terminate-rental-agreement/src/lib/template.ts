@@ -159,7 +159,6 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.completedForm),
                 ),
               read: 'all',
-              delete: true,
             },
             {
               // This state is set for development purposes, shouldn't be reachable on prod
