@@ -120,11 +120,7 @@ const Home: Screen<HomeProps> = ({ categories, news, page, locale }) => {
           items={categories}
         />
       </Box>
-      <Box
-        component="section"
-        paddingTop={[8, 8, 6]}
-        aria-labelledby="news-items-title"
-      >
+      <Box paddingTop={[8, 8, 6]}>
         <DigitalIcelandLatestNewsSlice
           slice={{
             title: gn(
