@@ -359,7 +359,7 @@ const NewsListNew: Screen<NewsListProps> = ({
                 return (
                   <Box marginBottom={mini ? spacingMini : spacing}>
                     <DigitalIcelandNewsCard
-                      key={index}
+                      key={slug}
                       title={title}
                       description={intro}
                       imageSrc={image?.url ?? ''}
