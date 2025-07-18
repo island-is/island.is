@@ -115,7 +115,7 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "yarn nx run-many -t serve --projects api consultation-portal"
+          "yarn infra run-local-env --no-secrets consultation-portal api"
         ],
         "parallel": true
       }
