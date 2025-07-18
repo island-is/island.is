@@ -11,4 +11,9 @@ export const miscMessages = defineMessages({
     defaultMessage: 'Persónuupplýsingar',
     description: 'Personal information section title',
   },
+  actionCardDone: {
+    id: 'tra.application:misc.actionCardDone',
+    defaultMessage: 'Send til HMS',
+    description: 'Action card done',
+  },
 })

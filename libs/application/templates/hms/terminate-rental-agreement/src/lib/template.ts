@@ -151,6 +151,11 @@ const template: ApplicationTemplate<
               action: TemplateApiActions.submitApplication,
             }),
           ],
+          actionCard: {
+            tag: {
+              label: m.miscMessages.actionCardDone,
+            },
+          },
           roles: [
             {
               id: Roles.APPLICANT,
