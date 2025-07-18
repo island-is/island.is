@@ -55,6 +55,9 @@ const CarRecyclingTemplate: ApplicationTemplate<
     {
       type: AuthDelegationType.Custom,
     },
+    {
+      type: AuthDelegationType.GeneralMandate,
+    },
   ],
   allowMultipleApplicationsInDraft: true,
   requiredScopes: [ApiScope.carRecycling],
