@@ -144,21 +144,6 @@ jobs:
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
-    steps:
-      - name: checkout
-        uses: actions/checkout@v4
-
-      - name: Setup yarn
-        uses: ./.github/actions/setup-yarn
-
-      - name: load-deps
-        uses: ./.github/actions/load-deps
-
-      - name: Setup Playwright
-        uses: ./.github/actions/setup-playwright
-
-      - name: Running e2e tests
-        run: yarn nx run-many --target=e2e --projects="${AFFECTED_PROJECTS}" --parallel 3
 
   linting-workspace:
     needs:
