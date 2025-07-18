@@ -1,0 +1,78 @@
+name: Test all
+
+on:
+  workflow_dispatch: {}
+  schedule:
+    - cron: '0 3 * * *'
+concurrency:
+  group: test-nightly
+  cancel-in-progress: true
+
+env:
+  ACTIONS_STEP_DEBUG: 'true'
+  DOCKER_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com
+  DOCKER_BASE_IMAGE_REGISTRY: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/ecr-public
+  COMPOSE_HTTP_TIMEOUT: 180
+  GITHUB_ACTIONS_CACHE_URL: https://cache.dev01.devland.is/
+  NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
+  NX_TASKS_RUNNER: ci
+  CONFIGCAT_MAIN_CONFIG_ID: 08d8c761-021c-46f0-8671-6244663a372f
+  CONFIGCAT_MOBILE_APP_CONFIG_ID: 08daf234-7573-4b3b-85f6-189fc7502542
+  DISABLE_CHUNKS: 'false'
+  NX_SKIP_NX_CACHE: 'true'
+  NX_SKIP_REMOTE_CACHE: 'true'
+  DISABLE_GROUPING: 'false'
+  DISABLE_PROBLEMATIC: 'false'
+  CHUNK_SIZE: '3'
+  MAX_JOBS: '2'
+  NX_PARALLEL: '2'
+  NX_MAX_PARALLEL: '4'
+  NODE_IMAGE_VERSION: 20
+  RUNS_ON_BUCKET_NAME: ${{ vars.RUNS_ON_BUCKET_NAME }}
+  AWS_REGION: eu-west-1
+  AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
+  SERVERSIDE_FEATURES_ON: ''
+  GENERATED_FILES: ${{ github.sha }}.tar.gz
+  YARN_ENABLE_HARDENED_MODE: '0'
+
+jobs:
+  pre-checks:
+    uses: ./.github/workflows/pre-checks.yml
+    secrets: inherit
+  prepare:
+    uses: ./.github/workflows/install.yml
+    secrets: inherit
+    with:
+      run_merge_queue: true
+      force_all_to_be_affected: true
+      main_branch: ${{ github.event.merge_group.base_ref || github.ref_name }}
+    needs:
+      - pre-checks
+  tests:
+    needs:
+      - prepare
+    if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
+    runs-on: arc-shared
+    timeout-minutes: 45
+    env:
+      AFFECTED_PROJECTS: ${{ matrix.projects }}
+      NX_BASE: ${{ needs.prepare.outputs.NX_BASE }}
+      NX_HEAD: ${{ needs.prepare.outputs.NX_HEAD }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare.outputs.TEST_CHUNKS) }}
+    steps:
+      - name: checkout
+        uses: actions/checkout@v4
+      - name: Setup yarn
+        uses: ./.github/actions/setup-yarn
+      - name: load-deps
+        uses: ./.github/actions/load-deps
+      - name: Run unit tests
+        uses: ./.github/actions/unit-test
+        with:
+          dd-api-key: '${{ secrets.DD_API_KEY }}'
+          codecov-token: ${{ secrets.CODECOV_TOKEN }}
+          aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
+          aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
+          docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/
