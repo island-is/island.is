@@ -23,7 +23,7 @@ runs:
         AWS_ACCESS_KEY_ID: ${{ inputs.aws-access-key-id }}
         AWS_SECRET_ACCESS_KEY: ${{ inputs.aws-secret-access-key }}
         DOCKER_REGISTRY: ${{ inputs.docker-registry }}
-    
+
     - name: Running tests
       run: ./scripts/ci/30_test.sh
       shell: bash

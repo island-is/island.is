@@ -11,15 +11,6 @@ set -euxo pipefail
 
 # Default to big old-space, and more options for testing, but allow overriding
 NODE_OPTIONS="--max-old-space-size=8193 --unhandled-rejections=warn --trace-warnings --require=dd-trace/ci/init ${NODE_OPTIONS:-}"
-EXTRA_OPTS=""
-
-projects_uncollectible_coverage=(
-  "application-templates-no-debt-certificate"
-  "api-domains-email-signup"
-  "skilavottord-web"
-  "shared-babel"
-  "portals-my-pages-core"
-)
 
 # Array of services to skip during testing
 services_to_skip=(
