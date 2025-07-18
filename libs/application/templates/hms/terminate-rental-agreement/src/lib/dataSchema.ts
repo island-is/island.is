@@ -37,7 +37,7 @@ export const dataSchema = z.object({
     cancelationReason: z.string().refine((v) => !!v),
   }),
 
-  fileUpload: z.array(fileSchema).length(1),
+  fileUpload: z.array(fileSchema).min(1).max(3),
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>
