@@ -30,7 +30,7 @@ import { FuneralAssetItem } from '@island.is/clients/syslumenn'
 type CustomField = {
   id: string
   title: string
-  type: FuneralAssetItem
+  assetType: FuneralAssetItem
 }
 
 type FieldProps = {
@@ -118,8 +118,16 @@ export const FuneralCost: FC<
     const { funeralCosts } = inheritanceReportInfo
 
     for (const customField of props.fields) {
-      const { type } = customField
-      const cost = funeralCosts.find((cost) => cost.funeralAssetItem === type)
+      console.log('DOING LOOP WHOOPEE')
+      const { assetType } = customField
+      console.log('FOUND ASSET TYPE', assetType)
+      console.log('GONNA SEARCH THROUGH FUNERAL COSTS')
+      console.log({
+        funeralCosts,
+      })
+      const cost = funeralCosts.find(
+        (cost) => cost.funeralAssetItem === assetType,
+      )
       if (cost) {
         const fieldValueId = `${id}.${customField.id}`
         setValue(fieldValueId, String(cost.propertyValuation ?? '0'))

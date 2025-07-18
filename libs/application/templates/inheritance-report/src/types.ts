@@ -303,3 +303,21 @@ export enum DebtTypes {
   PublicCharges = 'Opinber gjöld',
   InsuranceInstitute = 'Tryggingarstofnun ríkisins',
 }
+
+// Note: Please keep this in lockstep with the FuneralAssetItem
+//       found in clients/syslumenn.
+//       application-system-form refuses to build if this enum
+//       is imported from '@island.is/clients/syslumenn'
+export enum FuneralAssetItem {
+  Casket, // Smíði kistu og umbúnaður
+  Announcements, // Dánartilkynningar
+  Printing,
+  Flowers,
+  Music,
+  Venue,
+  Wake,
+  Tombstone,
+  FuneralServices,
+  Cremation,
+  Other,
+}

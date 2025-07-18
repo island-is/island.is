@@ -767,7 +767,9 @@ const mapInheritanceReportAssets = (
       case TegundAndlags.NUMBER_12:
         funeralCosts.push({
           ...asset,
-          funeralAssetItem: FuneralAssetItem.Other,
+          funeralAssetItem: mapDCDescriptionToFuneralItem(
+            asset.description ?? '',
+          ),
         })
         break
       case TegundAndlags.NUMBER_13:
