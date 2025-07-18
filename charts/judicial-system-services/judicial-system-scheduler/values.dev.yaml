@@ -80,6 +80,6 @@ securityContext:
   privileged: false
 serviceAccount:
   annotations:
-    eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/judicial-system-scheduler'
+    eks.amazonaws.com/role-arn: 'arn:aws:iam::013313053092:role/web-judicial-system-scheduler'
   create: true
-  name: 'judicial-system-scheduler'
+  name: 'web-judicial-system-scheduler'
