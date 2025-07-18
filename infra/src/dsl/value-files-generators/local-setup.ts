@@ -143,79 +143,8 @@ export const getLocalrunValueFile = async (
       },
     ),
   )
-  const mocksConfigs = Object.entries(runtime.mocks).reduce(
-    (acc, [name, target]) => {
-      return {
-        ports: [...acc.ports, runtime.ports[name]],
-        configs: [
-          ...acc.configs,
-          {
-            protocol: 'http',
-            name: name,
-            port: runtime.ports[name],
-            stubs: [
-              {
-                predicates: [{ equals: {} }],
-                responses: [
-                  {
-                    proxy: {
-                      to: target.replace('localhost', 'host.docker.internal'),
-                      mode: 'proxyAlways',
-                      predicateGenerators: [
-                        {
-                          matches: {
-                            method: true,
-                            path: true,
-                            query: true,
-                            body: true,
-                          },
-                        },
-                      ],
-                    },
-                  },
-                ],
-              },
-            ],
-          },
-        ],
-      }
-    },
-    { ports: [] as number[], configs: [] as any[] },
-  )
-  const defaultMountebankConfig = 'mountebank-imposter-config.json'
-  logger.debug('Writing default mountebank config to file', {
-    defaultMountebankConfig,
-    mocksConfigs,
-  })
-  if (!options.dryRun)
-    await writeFile(
-      defaultMountebankConfig,
-      JSON.stringify({ imposters: mocksConfigs.configs }),
-      { encoding: 'utf-8' },
-    )
-
-  const mocksObj = {
-    containerer: 'docker',
-    containererCommand: 'run',
-    containererFlags: '-it --rm',
-    ports: ['2525', ...mocksConfigs.ports],
-    mounts: [`${process.cwd()}/${defaultMountebankConfig}:/app/default.json:z`],
-    image: 'docker.io/bbyars/mountebank:2.8.1',
-    command: 'start --configfile=/app/default.json',
-  }
-
-  const mocks = [
-    mocksObj.containerer,
-    mocksObj.containererCommand,
-    `--name ${mocksObj.image.split(':')[0].split('/').pop()}`,
-    mocksObj.containererFlags,
-    mocksObj.ports.map((p) => `-p ${p}:${p}`).join(' '),
-    mocksObj.mounts.map((m) => `-v ${m}`).join(' '),
-    mocksObj.image,
-    mocksObj.command,
-  ]
-  const mocksStr = mocks.join(' ')
-  logger.debug(`Docker command for mocks:`, { mocks })
+  const mocksStr = `mockoon-cli start --data $(git rev-parse --show-toplevel)/mockoon_environment.json --port 3004 --hostname 0.0.0.0`
+  logger.debug(`Mockoon command for mocks:`, { mocksStr })
 
   const renderedServices: Services<LocalrunService> = {}
   logger.debug('Debugging dockerComposeServices', {

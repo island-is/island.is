@@ -37,7 +37,7 @@ export const baseConfig = ({
     fullyParallel: true,
     /* Run your local dev server before starting the tests */
     webServer: {
-      command: `yarn dev ${project}`,
+      command: `yarn nx dev ${project} --configuration=production`,
       url: baseURL,
       reuseExistingServer: !process.env.CI,
       stdout: 'pipe',

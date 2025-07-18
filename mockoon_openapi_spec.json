@@ -1,0 +1,1445 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "Mockoon Generated API",
+    "version": "1.0.0"
+  },
+  "paths": {
+    "/api/v1/einstaklingar/0101303019": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "kennitala": "0101303019",
+                    "nafn": "Gervima\u00f0ur Afr\u00edka",
+                    "eiginnafn": "Gervima\u00f0ur",
+                    "millinafn": null,
+                    "kenninafn": "Afr\u00edka",
+                    "fulltNafn": "Gervima\u00f0ur Afr\u00edka",
+                    "kynkodi": "1",
+                    "bannmerking": false,
+                    "faedingardagur": "1930-01-01T00:00:00",
+                    "logheimili": {
+                      "heiti": "Engihjalli 3",
+                      "postnumer": "200",
+                      "stadur": "K\u00f3pavogur",
+                      "sveitarfelagsnumer": "1000"
+                    },
+                    "adsetur": {
+                      "heiti": "Fellsm\u00fali 2",
+                      "postnumer": "108",
+                      "stadur": "Reykjav\u00edk",
+                      "sveitarfelagsnumer": "0000"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/einstaklingar/0101303019/hjuskapur": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "kennitalaMaka": "0101307789",
+                    "nafnMaka": "Gervima\u00f0ur \u00fatl\u00f6nd",
+                    "hjuskaparkodi": "3",
+                    "breytt": "2021-05-26T22:23:40.513"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/einstaklingar/0101303019/rikisfang": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "kodi": "IS",
+                    "land": "\u00cdsland"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/einstaklingar/0101303019/buseta": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": [
+                    {
+                      "huskodi": "000031440040",
+                      "fasteignanumer": "",
+                      "heimilisfang": "Gullengi 4",
+                      "postnumer": "112",
+                      "stadur": "Reykjav\u00edk",
+                      "sveitarfelagsnumer": "0000",
+                      "landakodi": "IS",
+                      "breytt": "2022-07-04T00:00:00"
+                    },
+                    {
+                      "huskodi": "99XT00000000",
+                      "fasteignanumer": "",
+                      "heimilisfang": "Afr\u00edka \u00f3tilgreint",
+                      "postnumer": null,
+                      "stadur": "Afr\u00edka \u00f3tilgreint",
+                      "sveitarfelagsnumer": null,
+                      "landakodi": "XT",
+                      "breytt": "1992-11-16T00:00:00"
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/einstaklingar/0101303019/samibuar": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": ["0101303019"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/einstaklingar/0101303019/forsja": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": ["1111111119"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/einstaklingar/0101303019/forsja/1111111119": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": ["0101307789"]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/einstaklingar/0101303019/fjolskyldumedlimir": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "fjolskyldunumer": "0101303019",
+                    "einstaklingar": [
+                      {
+                        "kennitala": "0101303019",
+                        "nafn": "Gervima\u00f0ur Afr\u00edka",
+                        "eiginnafn": "Gervima\u00f0ur",
+                        "millinafn": null,
+                        "kenninafn": "Afr\u00edka",
+                        "fulltNafn": "Gervima\u00f0ur Afr\u00edka",
+                        "kynkodi": "1",
+                        "bannmerking": false,
+                        "faedingardagur": "1930-01-01T00:00:00",
+                        "logheimili": {
+                          "heiti": "Engihjalli 3",
+                          "postnumer": "200",
+                          "stadur": "K\u00f3pavogur",
+                          "sveitarfelagsnumer": "1000"
+                        },
+                        "adsetur": {
+                          "heiti": "Fellsm\u00fali 2",
+                          "postnumer": "108",
+                          "stadur": "Reykjav\u00edk",
+                          "sveitarfelagsnumer": "0000"
+                        }
+                      },
+                      {
+                        "kennitala": "0101307789",
+                        "nafn": "Gervima\u00f0ur \u00fatl\u00f6nd",
+                        "eiginnafn": "Gervima\u00f0ur",
+                        "millinafn": null,
+                        "kenninafn": "\u00fatl\u00f6nd",
+                        "fulltNafn": "Gervima\u00f0ur \u00fatl\u00f6nd",
+                        "kynkodi": "1",
+                        "bannmerking": false,
+                        "faedingardagur": "1930-01-01T00:00:00",
+                        "logheimili": {
+                          "heiti": "Engihjalli 3",
+                          "postnumer": "200",
+                          "stadur": "K\u00f3pavogur",
+                          "sveitarfelagsnumer": "1000"
+                        },
+                        "adsetur": {
+                          "heiti": "Fellsm\u00fali 2",
+                          "postnumer": "108",
+                          "stadur": "Reykjav\u00edk",
+                          "sveitarfelagsnumer": "0000"
+                        }
+                      },
+                      {
+                        "kennitala": "1111111119",
+                        "nafn": "Stubbur Maack",
+                        "eiginnafn": "Stubbur",
+                        "millinafn": null,
+                        "kenninafn": "Maack",
+                        "fulltNafn": "Stubbur Maack",
+                        "kynkodi": "3",
+                        "bannmerking": false,
+                        "faedingardagur": "2011-11-11T00:00:00",
+                        "logheimili": {
+                          "heiti": "Engihjalli 3",
+                          "postnumer": "200",
+                          "stadur": "K\u00f3pavogur",
+                          "sveitarfelagsnumer": "1000"
+                        },
+                        "adsetur": {
+                          "heiti": "Fellsm\u00fali 2",
+                          "postnumer": "108",
+                          "stadur": "Reykjav\u00edk",
+                          "sveitarfelagsnumer": "0000"
+                        }
+                      }
+                    ]
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/einstaklingar/0101307789": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "kennitala": "0101307789",
+                    "nafn": "Gervima\u00f0ur \u00fatl\u00f6nd",
+                    "eiginnafn": "Gervima\u00f0ur",
+                    "millinafn": null,
+                    "kenninafn": "\u00fatl\u00f6nd",
+                    "fulltNafn": "Gervima\u00f0ur \u00fatl\u00f6nd",
+                    "kynkodi": "1",
+                    "bannmerking": false,
+                    "faedingardagur": "1930-01-01T00:00:00",
+                    "logheimili": {
+                      "heiti": "Engihjalli 3",
+                      "postnumer": "200",
+                      "stadur": "K\u00f3pavogur",
+                      "sveitarfelagsnumer": "1000"
+                    },
+                    "adsetur": {
+                      "heiti": "Fellsm\u00fali 2",
+                      "postnumer": "108",
+                      "stadur": "Reykjav\u00edk",
+                      "sveitarfelagsnumer": "0000"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/einstaklingar/0101307789/hjuskapur": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "kennitalaMaka": "0101303019",
+                    "nafnMaka": "Gervima\u00f0ur Afr\u00edka",
+                    "hjuskaparkodi": "1",
+                    "breytt": "2021-05-26T22:23:40.513"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/einstaklingar/0101307789/rikisfang": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "kodi": "IS",
+                    "land": "\u00cdsland"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/einstaklingar/0101307789/faedingarstadur": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "sveitarfelagsnumer": "0000",
+                    "stadur": "Reykjav\u00edk",
+                    "faedingardagur": "1930-01-01T00:00:00"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/einstaklingar/1111111119": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "kennitala": "1111111119",
+                    "nafn": "Stubbur Maack",
+                    "eiginnafn": "Stubbur",
+                    "millinafn": null,
+                    "kenninafn": "Maack",
+                    "fulltNafn": "Stubbur Maack",
+                    "kynkodi": "3",
+                    "bannmerking": false,
+                    "faedingardagur": "2011-11-11T00:00:00",
+                    "logheimili": {
+                      "heiti": "Engihjalli 3",
+                      "postnumer": "200",
+                      "stadur": "K\u00f3pavogur",
+                      "sveitarfelagsnumer": "1000"
+                    },
+                    "adsetur": {
+                      "heiti": "Fellsm\u00fali 2",
+                      "postnumer": "108",
+                      "stadur": "Reykjav\u00edk",
+                      "sveitarfelagsnumer": "0000"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/v1/lyklar/hjuskaparkodar/1/1": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "kodi": "1",
+                    "lysing": "\u00d3giftur"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/students/1111111119": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "id": "fda34e23-f838-4a59-8bb9-90a0b52a6cd4",
+                    "nationalId": "1111111119",
+                    "name": "Stubbur Maack",
+                    "preferredName": null,
+                    "pronouns": [],
+                    "email": null,
+                    "primaryOrgId": "05ffcc36-7e44-45f0-8cb2-8f296a7f0808",
+                    "memberships": [
+                      {
+                        "id": "cda47c98-ae75-4939-8659-1b7fe45c8097",
+                        "role": "student",
+                        "beginDate": "2024-08-26T01:48:24.888Z",
+                        "endDate": null,
+                        "organization": {
+                          "id": "05ffcc36-7e44-45f0-8cb2-8f296a7f0808",
+                          "name": "Hl\u00ed\u00f0ask\u00f3li",
+                          "nationalId": "5509244710",
+                          "type": "school"
+                        }
+                      }
+                    ],
+                    "agents": [
+                      {
+                        "id": "982afa53-0b47-4f57-8eec-53f16563bc93",
+                        "nationalId": "0101303019",
+                        "name": "Gervima\u00f0ur Afr\u00edka",
+                        "phone": "555-1234",
+                        "email": "frika@gervimadur.is",
+                        "role": "guardian",
+                        "domicile": {
+                          "id": "fb94c164-c037-49ac-ae31-7501c9a90467",
+                          "address": "S 4th Street 66",
+                          "municipality": "Dillontown",
+                          "postCode": "103",
+                          "country": "IS",
+                          "createdAt": "2025-02-05T15:52:53.728Z",
+                          "updatedAt": "2025-02-05T15:52:53.728Z"
+                        }
+                      }
+                    ],
+                    "gradeLevel": "01"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/key-options?type=pronoun": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": [
+                    {
+                      "type": "pronoun",
+                      "options": [
+                        {
+                          "id": "6bb71a28-2177-496b-a38b-034c83ae5f6a",
+                          "key": "he",
+                          "value": [
+                            {
+                              "content": "He/Him",
+                              "language": "is"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "105b1208-fd7b-4b18-9bb2-041dbc65f580",
+                          "key": "hes",
+                          "value": [
+                            {
+                              "content": "H\u00e9/H\u00e9s",
+                              "language": "is"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "de4ca207-7add-4a50-9411-2bb298dbde14",
+                          "key": "hun",
+                          "value": [
+                            {
+                              "content": "H\u00fan/Hennar",
+                              "language": "is"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "13def032-c733-48cf-b214-122c249313db",
+                          "key": "she",
+                          "value": [
+                            {
+                              "content": "She/Her",
+                              "language": "is"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "f92087e5-f020-46af-959f-572b7f95a400",
+                          "key": "hin",
+                          "value": [
+                            {
+                              "content": "H\u00edn/H\u00edns",
+                              "language": "is"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "4330c443-29b6-4773-a870-f35e485449f7",
+                          "key": "they",
+                          "value": [
+                            {
+                              "content": "They/Them",
+                              "language": "is"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "ed47b45a-f733-47ce-92c2-8409f5c39178",
+                          "key": "hann",
+                          "value": [
+                            {
+                              "content": "Hann/Hans",
+                              "language": "is"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "eaa15c86-f7cd-493e-b368-2d66da2ab809",
+                          "key": "hed",
+                          "value": [
+                            {
+                              "content": "H\u00e9\u00f0/H\u00e9\u00f0s",
+                              "language": "is"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "f7f7f6a5-2e29-4eae-8345-03d3af73a6b6",
+                          "key": "han",
+                          "value": [
+                            {
+                              "content": "H\u00e1n/H\u00e1ns",
+                              "language": "is"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "0f16870b-c796-4fde-8cfc-a015ce6e5662",
+                          "key": "thad",
+                          "value": [
+                            {
+                              "content": "\u00dea\u00f0/\u00dev\u00ed",
+                              "language": "is"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "454440af-e3d4-4e28-9810-30ab9a79957d",
+                          "key": "thau",
+                          "value": [
+                            {
+                              "content": "\u00deau/\u00deeirra",
+                              "language": "is"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/key-options?type=relation": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": [
+                    {
+                      "type": "relation",
+                      "options": [
+                        {
+                          "id": "4fc642a2-6268-4de5-8f78-8f6a66840a95",
+                          "key": "parent",
+                          "value": [
+                            {
+                              "content": "Foreldri",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Parent",
+                              "language": "en"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "c66345c5-22af-47a9-891c-a8ab6a9f487d",
+                          "key": "grandparent",
+                          "value": [
+                            {
+                              "content": "St\u00f3rforeldri",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Grandparent",
+                              "language": "en"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "451a61ee-80b2-4d4f-ae26-9bcb6c23dc7a",
+                          "key": "stepParent",
+                          "value": [
+                            {
+                              "content": "Stj\u00fapforeldri",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Stepparent",
+                              "language": "en"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "0063446c-ecbf-42c6-a277-c2b82bcbdeef",
+                          "key": "relative",
+                          "value": [
+                            {
+                              "content": "Fr\u00e6nd f\u00f3lk",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Relative",
+                              "language": "en"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "3734709c-a6a4-4c00-9a0f-a6466983e353",
+                          "key": "sibling",
+                          "value": [
+                            {
+                              "content": "Systkini",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Sibling",
+                              "language": "en"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "cc09ed0e-af86-4ef7-a18d-6d6a40ed9eec",
+                          "key": "other",
+                          "value": [
+                            {
+                              "content": "Anna\u00f0",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Other",
+                              "language": "en"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "a9ad6d6f-59b6-47ca-a5b9-7261f3f7f4b5",
+                          "key": "friend",
+                          "value": [
+                            {
+                              "content": "Vinaf\u00f3lk",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Friend",
+                              "language": "en"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/key-options?type=registrationReason": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": [
+                    {
+                      "type": "registrationReason",
+                      "options": [
+                        {
+                          "id": "6352fa7a-03d2-45b2-9d48-6e19448a64b2",
+                          "key": "custodianParliamentarianship",
+                          "value": [
+                            {
+                              "content": "\u00deingmennska foreldra",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Custodian\u2019s parliamentarianship",
+                              "language": "en"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "203eea2b-df15-4d60-a2ef-24b1bf948707",
+                          "key": "livesInTwoPlaces",
+                          "value": [
+                            {
+                              "content": "B\u00fdr \u00e1 tveimur heimilum",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Has two places of residence",
+                              "language": "en"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "de0d4b39-824a-4ea3-83cd-8e020fd3ac91",
+                          "key": "temporaryFoster",
+                          "value": [
+                            {
+                              "content": "T\u00edmabundi\u00f0 f\u00f3stur",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Temporary foster care",
+                              "language": "en"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "1062a711-1970-4c62-b89e-0abeadf86266",
+                          "key": "specialService",
+                          "value": [
+                            {
+                              "content": "S\u00e9rfr\u00e6\u00f0i\u00fej\u00f3nusta",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Special support service",
+                              "language": "en"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "f05096f6-5d2d-4ae7-ae59-b81087829f39",
+                          "key": "hospitalization",
+                          "value": [
+                            {
+                              "content": "Sj\u00fakralega",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Hospitalization",
+                              "language": "en"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "d6f66018-bfd7-46bc-8c47-3412d1734f4a",
+                          "key": "movingMuniciplaity",
+                          "value": [
+                            {
+                              "content": "Flutningur l\u00f6gheimilis",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Moving legal domicile",
+                              "language": "en"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "e82101e6-bd18-41d4-b123-758e9c4315ff",
+                          "key": "custodianStudyStay",
+                          "value": [
+                            {
+                              "content": "N\u00e1msdv\u00f6l foreldra",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Custodians\u2018s study stay",
+                              "language": "en"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "bc87de56-9999-4b91-ab59-7ff832c6d987",
+                          "key": "other",
+                          "value": [
+                            {
+                              "content": "A\u00f0rar \u00e1st\u00e6\u00f0ur",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Other",
+                              "language": "en"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "5efdbc33-56d5-4c1f-824f-8d469c19dfb6",
+                          "key": "generalSchoolPolicy",
+                          "value": [
+                            {
+                              "content": "Sk\u00f3lastefna",
+                              "language": "is"
+                            },
+                            {
+                              "content": "General school policy",
+                              "language": "en"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "900bbc89-a459-444c-943f-f6ff55291e33",
+                          "key": "siblingsInSameSchool",
+                          "value": [
+                            {
+                              "content": "Systkini \u00ed sama sk\u00f3la",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Siblings in the same school",
+                              "language": "en"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/key-options?type=languageEnvironment": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": [
+                    {
+                      "type": "languageEnvironment",
+                      "options": [
+                        {
+                          "id": "8622c1fa-0ba0-46d8-a621-016202d1e648",
+                          "key": "onlyIcelandic",
+                          "value": [
+                            {
+                              "content": "A\u00f0eins t\u00f6lu\u00f0 \u00edslenska",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Only Icelandic spoken",
+                              "language": "en"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "7d1fc5a1-18b5-45dc-98d3-96f6cf4bf366",
+                          "key": "icelandicAndOther",
+                          "value": [
+                            {
+                              "content": "T\u00f6lu\u00f0 \u00edslenska og anna\u00f0/\u00f6nnur tungum\u00e1l",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Icelandic and other languages spoken",
+                              "language": "en"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "70a48a9b-f671-4f69-9d19-bc2d5becb377",
+                          "key": "onlyOtherThanIcelandic",
+                          "value": [
+                            {
+                              "content": "A\u00f0eins t\u00f6lu\u00f0 \u00f6nnur tungum\u00e1l en \u00edslenska",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Only other languages than Icelandic spoken",
+                              "language": "en"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/key-options?type=foodAllergyAndIntolerance": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": [
+                    {
+                      "type": "foodAllergyAndIntolerance",
+                      "options": [
+                        {
+                          "id": "4b6a6815-ffa2-4c62-824f-5611de1b20b8",
+                          "key": "meat",
+                          "value": [
+                            {
+                              "content": "Kj\u00f6t",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Meat",
+                              "language": "en"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "d3e54e41-db09-4af6-862a-1b226440a560",
+                          "key": "dairy",
+                          "value": [
+                            {
+                              "content": "Mj\u00f3lkurv\u00f6rur",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Dairy products",
+                              "language": "en"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "c3f5d18e-9a2c-4d37-b697-814d815f3f75",
+                          "key": "vegetables",
+                          "value": [
+                            {
+                              "content": "Gr\u00e6nmeti",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Vegetable",
+                              "language": "en"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "c8530592-a490-471b-8d6d-24ab630ffb4b",
+                          "key": "other",
+                          "value": [
+                            {
+                              "content": "Anna\u00f0",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Another",
+                              "language": "en"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "545ab73d-dcb2-4ed7-83ee-f2a813fa208a",
+                          "key": "egg",
+                          "value": [
+                            {
+                              "content": "Egg",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Eggs",
+                              "language": "en"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "9e6ba6af-32a5-492f-8258-73ca55ca9e6a",
+                          "key": "fish",
+                          "value": [
+                            {
+                              "content": "Fiskur/fiskafur\u00f0ir",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Fish/fish products",
+                              "language": "en"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "4c5f5e1b-06e1-403b-b216-e1017ee258e9",
+                          "key": "cocunut",
+                          "value": [
+                            {
+                              "content": "K\u00f3kos",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Coconut",
+                              "language": "en"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "8736bceb-2a30-4cfb-82e5-dcd916904ffd",
+                          "key": "nuts",
+                          "value": [
+                            {
+                              "content": "Hnetur/M\u00f6ndlur",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Nuts/almonds",
+                              "language": "en"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "d45bdda2-145c-458d-8c6a-cdedac984df5",
+                          "key": "sesame",
+                          "value": [
+                            {
+                              "content": "Sesamfr\u00e6",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Sesame seed",
+                              "language": "en"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "a9bbb0a9-e17e-4a41-8610-73938838e75b",
+                          "key": "fruits",
+                          "value": [
+                            {
+                              "content": "\u00c1vextir",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Fruit",
+                              "language": "en"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "4b0105b6-7c1a-412b-80fa-4360654972d9",
+                          "key": "wheat",
+                          "value": [
+                            {
+                              "content": "Hveiti/gl\u00faten",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Wheat/gluten",
+                              "language": "en"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "afadc899-035d-4689-8e69-21ac21264fa8",
+                          "key": "soy",
+                          "value": [
+                            {
+                              "content": "Sojaafur\u00f0ir",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Soy products",
+                              "language": "en"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "3ba5b679-172a-4ae9-bcb3-3dedd2bebc7d",
+                          "key": "beans",
+                          "value": [
+                            {
+                              "content": "Baunir",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Beans",
+                              "language": "en"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/key-options?type=allergy": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": [
+                    {
+                      "type": "allergy",
+                      "options": [
+                        {
+                          "id": "8d1e5882-b126-4f74-a915-a61e0d073584",
+                          "key": "antiInflammatoryDrugs",
+                          "value": [
+                            {
+                              "content": "B\u00f3lguey\u00f0andi lyf",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Anti inflammatory drugs",
+                              "language": "en"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "f1f6b800-a3c2-4ad5-8ea7-dff44aefadca",
+                          "key": "wasp",
+                          "value": [
+                            {
+                              "content": "Geitunga-/skord\u00fdrabit",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Wasp/insect bites",
+                              "language": "en"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "98f92024-90a7-486d-99cc-6b91c5e87e4c",
+                          "key": "pollen",
+                          "value": [
+                            {
+                              "content": "Frj\u00f3korn/gras/birki",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Pollen/grass/birch",
+                              "language": "en"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "5869aa4d-809e-4d57-9640-a2387f5aad3e",
+                          "key": "latex",
+                          "value": [
+                            {
+                              "content": "Latex",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Latex",
+                              "language": "en"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "64d65290-179d-401e-ad5a-4dcd51455989",
+                          "key": "nickel",
+                          "value": [
+                            {
+                              "content": "Nikkel",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Nickel",
+                              "language": "en"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "56256b3f-6a83-4511-893e-e760f039ff13",
+                          "key": "animals",
+                          "value": [
+                            {
+                              "content": "Hundar/kettir/\u00f6nnur d\u00fdr",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Dogs/cats/other animals",
+                              "language": "en"
+                            }
+                          ]
+                        },
+                        {
+                          "id": "535ba7a7-82ad-4e38-9edf-73e6c9758b63",
+                          "key": "other",
+                          "value": [
+                            {
+                              "content": "Anna\u00f0",
+                              "language": "is"
+                            },
+                            {
+                              "content": "Other",
+                              "language": "en"
+                            }
+                          ]
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/schools": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": [
+                    {
+                      "id": "86ee7c01-bbfb-428c-b4c6-801f8525a70a",
+                      "nationalId": "5612241530",
+                      "name": "K\u00f3pavogur",
+                      "type": "municipality",
+                      "children": [
+                        {
+                          "id": "cf2b139b-11af-466f-8705-54d341deae88",
+                          "nationalId": "6403244490",
+                          "name": "Sm\u00e1rask\u00f3li",
+                          "type": "school",
+                          "gradeLevels": [
+                            "01",
+                            "02",
+                            "03",
+                            "04",
+                            "05",
+                            "06",
+                            "07",
+                            "08",
+                            "09",
+                            "10"
+                          ],
+                          "children": null
+                        }
+                      ]
+                    },
+                    {
+                      "id": "9b9b9989-72d4-4310-b206-0069ffbdcc1b",
+                      "nationalId": "6605247030",
+                      "name": "Reykjav\u00edkurborg",
+                      "type": "municipality",
+                      "children": [
+                        {
+                          "id": "05ffcc36-7e44-45f0-8cb2-8f296a7f0808",
+                          "nationalId": "5509244710",
+                          "name": "Hl\u00ed\u00f0ask\u00f3li",
+                          "type": "school",
+                          "gradeLevels": [
+                            "01",
+                            "02",
+                            "03",
+                            "04",
+                            "05",
+                            "06",
+                            "07",
+                            "08",
+                            "09",
+                            "10"
+                          ],
+                          "children": null
+                        },
+                        {
+                          "id": "f4819ff5-ca00-40db-8bd6-a7dc41a82fe3",
+                          "nationalId": "4801253980",
+                          "name": "H\u00e1teigssk\u00f3li",
+                          "type": "school",
+                          "gradeLevels": ["01", "02", "03", "04"],
+                          "children": null
+                        }
+                      ]
+                    }
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/protected/v1/General/currencies": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": [
+                    "ZAR",
+                    "AUD",
+                    "CAD",
+                    "CHF",
+                    "DKK",
+                    "EUR",
+                    "GBP",
+                    "NOK",
+                    "PLN",
+                    "SEK",
+                    "USD",
+                    "LVL",
+                    "CZK",
+                    "SKK",
+                    "IKR",
+                    "LTL",
+                    "VND",
+                    "BGN",
+                    "RUB",
+                    "CNY",
+                    "ALL",
+                    "LEI",
+                    "UAH",
+                    "HUF"
+                  ]
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/protected/v1/Applicant": {
+      "get": {
+        "responses": {
+          "200": {
+            "description": "Successful response",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "example": {
+                    "emailAddress": "mail@mail.is",
+                    "phoneNumber": null,
+                    "bankAccount": {
+                      "bank": "2222",
+                      "ledger": "00",
+                      "accountNumber": "123456"
+                    }
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}
+

@@ -115,14 +115,24 @@
     },
     "dev": {
       "executor": "nx:run-commands",
-      "options": {
-        "commands": [
-          "./scripts/run-es-proxy.sh",
-          "yarn nx run api:dev",
-          "yarn start web"
-        ],
-        "parallel": true
-      }
+      "defaultConfiguration": "development",
+      "configurations": {
+        "development": {
+          "commands": [
+            "echo ./scripts/run-es-proxy.sh",
+            "nx serve web --configuration=development"
+          ],
+          "parallel": true
+        },
+        "production": {
+          "commands": [
+            "echo ./scripts/run-es-proxy.sh",
+            "export NX_TASK_TARGET_CONFIGURATION=production && nx build web --configuration=production && nx serve web --configuration=production"
+          ],
+          "parallel": true
+        }
+      },
+      "dependsOn": ["^dev"]
     },
     "docker-next": {
       "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-next`"
