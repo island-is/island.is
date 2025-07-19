@@ -6,25 +6,27 @@ import { logger, runCommand } from '../common'
 import { ChildProcess } from 'child_process'
 import { LocalrunValueFile } from '../dsl/types/output-types'
 
+type LocalServicesArgs = {
+  services: string[]
+  print?: boolean
+  json?: boolean
+  dryRun?: boolean
+  updateSecrets?: boolean
+}
+
 export async function renderLocalServices({
   services,
   print = false,
   json = false,
   dryRun = false,
-  noUpdateSecrets = false,
-}: {
-  services: string[]
-  print?: boolean
-  json?: boolean
-  dryRun?: boolean
-  noUpdateSecrets?: boolean
-}): Promise<LocalrunValueFile> {
+  updateSecrets = true,
+}: LocalServicesArgs): Promise<LocalrunValueFile> {
   logger.debug('renderLocalServices', {
     services,
     print,
     json,
     dryRun,
-    noUpdateSecrets,
+    updateSecrets,
   })
   const chartName = 'islandis'
   const env = 'dev'
@@ -37,7 +39,7 @@ export async function renderLocalServices({
     habitat,
     uberChart,
     habitat.filter((s) => services.includes(s.name())),
-    { dryRun, noUpdateSecrets },
+    { dryRun, noUpdateSecrets: !updateSecrets },
   )
 
   if (print) {
@@ -55,36 +57,27 @@ export async function renderLocalServices({
   return renderedLocalServices
 }
 
-export async function runLocalServices(
-  services: string[],
-  dependencies: string[] = [],
-  {
-    dryRun = false,
-    neverFail = !!dryRun,
-    print = false,
-    json = false,
-    noUpdateSecrets = false,
-    startProxies = false,
-  }: {
-    dryRun?: boolean
-    neverFail?: boolean
-    print?: boolean
-    json?: boolean
-    noUpdateSecrets?: boolean
-    startProxies?: boolean
-  } = {},
-) {
+export async function runLocalServices({
+  services,
+  dryRun = false,
+  print = false,
+  json = false,
+  updateSecrets = true,
+  dependencies = [],
+  startProxies = false,
+}: LocalServicesArgs & {
+  dependencies: string[]
+  startProxies: boolean
+}) {
   logger.debug('runLocalServices', { services, dependencies })
-
-  // Add the service itself to the list of dependencies
-  dependencies.push(...services)
+  const neverFail = !!dryRun
 
   const renderedLocalServices = await renderLocalServices({
     services,
     print,
     json,
     dryRun,
-    noUpdateSecrets,
+    updateSecrets,
   })
 
   // Verify that all dependencies exist in the rendered dependency list
@@ -121,7 +114,11 @@ export async function runLocalServices(
   for (const [name, service] of Object.entries(
     renderedLocalServices.services,
   )) {
-    if (dependencies.length > 0 && !dependencies.includes(name)) {
+    if (
+      dependencies.length > 0 &&
+      !dependencies.includes(name) &&
+      !services.includes(name)
+    ) {
       logger.info(`Skipping ${name} (not a dependency)`)
       continue
     }
