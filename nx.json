@@ -42,7 +42,7 @@
     }
   },
   "generators": {
-    "@nrwl/nx-plugin": {
+    "@nx/nx-plugin": {
       "plugin": {
         "linter": "eslint"
       }

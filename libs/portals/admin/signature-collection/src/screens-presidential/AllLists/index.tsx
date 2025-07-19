@@ -19,9 +19,7 @@ import { IntroHeader, PortalNavigation } from '@island.is/portals/core'
 import { SignatureCollectionPaths } from '../../lib/paths'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
-import {
-  SignatureCollectionList,
-} from '@island.is/api/schema'
+import { SignatureCollectionList } from '@island.is/api/schema'
 import format from 'date-fns/format'
 import { signatureCollectionNavigation } from '../../lib/navigation'
 import {
@@ -85,7 +83,7 @@ const Lists = () => {
 
     setPage(1)
     setLists(filteredList)
-  }, [filters])
+  }, [filters, allLists])
 
   useEffect(() => {
     // set candidates on initial load of lists
@@ -108,7 +106,7 @@ const Lists = () => {
 
       setCandidates(candidates)
     }
-  }, [])
+  }, [lists])
 
   return (
     <GridContainer>
