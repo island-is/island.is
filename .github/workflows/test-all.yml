@@ -43,7 +43,7 @@ jobs:
     uses: ./.github/workflows/install.yml
     secrets: inherit
     with:
-      run_merge_queue: true
+      run_merge_queue: false
       force_all_to_be_affected: true
       main_branch: ${{ github.event.merge_group.base_ref || github.ref_name }}
     needs:
