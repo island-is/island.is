@@ -3,7 +3,7 @@ import { ExternalData, FormValue } from '@island.is/application/types'
 import {
   getApplicationExternalData,
   getApplicationAnswers,
-} from '../lib/newPrimarySchoolUtils'
+} from '../utils/newPrimarySchoolUtils'
 
 export const isCurrentSchoolRegistered = (externalData: ExternalData) => {
   const { primaryOrgId } = getApplicationExternalData(externalData)

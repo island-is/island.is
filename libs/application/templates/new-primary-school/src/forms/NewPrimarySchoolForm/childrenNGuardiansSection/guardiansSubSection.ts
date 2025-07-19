@@ -21,7 +21,7 @@ import {
   getApplicationExternalData,
   getOtherGuardian,
   hasOtherGuardian,
-} from '../../../lib/newPrimarySchoolUtils'
+} from '../../../utils/newPrimarySchoolUtils'
 
 export const guardiansSubSection = buildSubSection({
   id: 'guardiansSubSection',

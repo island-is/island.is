@@ -17,7 +17,7 @@ import {
   getApplicationAnswers,
   getApplicationExternalData,
   getCurrentSchoolName,
-} from '../../../lib/newPrimarySchoolUtils'
+} from '../../../utils/newPrimarySchoolUtils'
 import { FriggSchoolsByMunicipalityQuery } from '../../../types/schema'
 import { ReviewGroupProps } from './props'
 

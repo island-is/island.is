@@ -10,13 +10,13 @@ import {
   NO,
 } from '@island.is/application/core'
 import { getAllLanguageCodes } from '@island.is/shared/utils'
-import { LanguageEnvironmentOptions, OptionsType } from '../../../lib/constants'
+import { LanguageEnvironmentOptions, OptionsType } from '../../../utils/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
   hasForeignLanguages,
   showPreferredLanguageFields,
-} from '../../../lib/newPrimarySchoolUtils'
+} from '../../../utils/newPrimarySchoolUtils'
 
 export const languageSubSection = buildSubSection({
   id: 'languageSubSection',

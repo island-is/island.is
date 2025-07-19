@@ -9,14 +9,14 @@ import {
   YES,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { OptionsType } from '../../../lib/constants'
+import { OptionsType } from '../../../utils/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
   getGenderMessage,
   getSelectedChild,
-} from '../../../lib/newPrimarySchoolUtils'
+} from '../../../utils/newPrimarySchoolUtils'
 
 export const childInfoSubSection = buildSubSection({
   id: 'childInfoSubSection',

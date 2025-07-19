@@ -12,12 +12,12 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { useFriggOptions } from '../../../hooks/useFriggOptions'
-import { OptionsType } from '../../../lib/constants'
+import { OptionsType } from '../../../utils/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
   getSelectedOptionLabel,
-} from '../../../lib/newPrimarySchoolUtils'
+} from '../../../utils/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
 
 export const HealthProtection = ({

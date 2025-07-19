@@ -12,12 +12,12 @@ import {
   OptionsType,
   ReasonForApplicationOptions,
   SchoolType,
-} from '../../../lib/constants'
+} from '../../../utils/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
   getSelectedOptionLabel,
-} from '../../../lib/newPrimarySchoolUtils'
+} from '../../../utils/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
 
 export const ReasonForApplication = ({

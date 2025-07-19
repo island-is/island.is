@@ -10,13 +10,13 @@ import {
 import { useLocale } from '@island.is/localization'
 import { format as formatKennitala } from 'kennitala'
 import { useFriggOptions } from '../../../hooks/useFriggOptions'
-import { OptionsType } from '../../../lib/constants'
+import { OptionsType } from '../../../utils/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
   getGenderMessage,
   getSelectedOptionLabel,
-} from '../../../lib/newPrimarySchoolUtils'
+} from '../../../utils/newPrimarySchoolUtils'
 import { ReviewGroupProps } from './props'
 
 export const Child = ({
