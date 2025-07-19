@@ -30,7 +30,9 @@ export class IncomingDelegationsCompanyService {
   ): Promise<DelegationDTO[]> {
     const procuringHolderApiScopes = clientAllowedApiScopes?.filter((s) =>
       s.supportedDelegationTypes?.some(
-        (dt) => dt.delegationType == AuthDelegationType.ProcurationHolder,
+        (dt) =>
+          dt.delegationType == AuthDelegationType.ProcurationHolder ||
+          dt.delegationType == AuthDelegationType.ExecutiveDirector,
       ),
     )
     if (
@@ -47,15 +49,38 @@ export class IncomingDelegationsCompanyService {
       )
 
       if (person && person.relationships) {
-        const delegations = person.relationships.map(
-          (relationship) =>
-            <DelegationDTO>{
+        const delegations = await Promise.all(
+          person.relationships.map(async (relationship) => {
+            if (relationship.nationalId) {
+              const relationshipType =
+                await this.rskProcuringClient.getLegalEntityRelationships(
+                  user,
+                  relationship.nationalId,
+                )
+
+              /**
+               * TODO: Get the relationship through the /individual endpoint instead...
+               * And then check if the relationship is a ProcuringHolder or ExecutiveDirector
+               * and set the type accordingly.
+               * DO I NEED TO SET BOTH ProcuringHolder and ExecutiveDirector if USER HAS BOTH?
+               */
+
+              console.log(
+                'test',
+                relationshipType?.relationships
+                  .filter((rs) => rs.nationalId === user.nationalId)
+                  .map((rs) => rs.type),
+              )
+            }
+
+            return <DelegationDTO>{
               toNationalId: user.nationalId,
               fromNationalId: relationship.nationalId,
               fromName: relationship.name,
-              type: AuthDelegationType.ProcurationHolder,
+              type: AuthDelegationType.ExecutiveDirector,
               provider: AuthDelegationProvider.CompanyRegistry,
-            },
+            }
+          }),
         )
 
         if (
