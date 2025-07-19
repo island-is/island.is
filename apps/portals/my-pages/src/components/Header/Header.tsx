@@ -132,7 +132,11 @@ export const Header = ({ position, includeSearchInHeader = false }: Props) => {
                     printHidden
                   >
                     {includeSearchInHeader && (
-                      <Box marginRight={[1, 1, 2]} flexGrow={isMobile ? 0 : 1}>
+                      <Box
+                        marginRight={[1, 1, 2]}
+                        flexGrow={isMobile ? 0 : 1}
+                        className={styles.search}
+                      >
                         <SearchInput
                           placeholder={formatMessage(m.searchOnMyPages)}
                           buttonAriaLabel={formatMessage(m.searchOnMyPages)}
