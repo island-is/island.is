@@ -49,11 +49,11 @@ export class InheritanceReportService extends BaseTemplateApiService {
     return result
   }
 
-  async syslumennOnEntry({ application, auth }: TemplateApiModuleActionProps) {
+  async syslumennOnEntry({ application }: TemplateApiModuleActionProps) {
     const [relationOptions, inheritanceReportInfos] = await Promise.all([
       this.syslumennService.getEstateRelations(),
       // Get estate info from syslumenn or fakedata depending on application.applicant
-      application.applicant.startsWith('010130') &&
+      application.applicant.startsWith('110130') &&
       application.applicant.endsWith('2399')
         ? [
             getFakeData('2022-14-14', 'Gervimaður Útlönd', '0101307789'),
@@ -102,10 +102,7 @@ export class InheritanceReportService extends BaseTemplateApiService {
     }
   }
 
-  async completeApplication({
-    application,
-    auth,
-  }: TemplateApiModuleActionProps) {
+  async completeApplication({ application }: TemplateApiModuleActionProps) {
     const nationalRegistryData = application.externalData.nationalRegistry
       ?.data as NationalRegistryIndividual
 
@@ -133,11 +130,9 @@ export class InheritanceReportService extends BaseTemplateApiService {
       attachments.push(
         ...(await Promise.all(
           answers.heirsAdditionalInfoPrivateTransferFiles.map(async (file) => {
-            const filename = (
-              application.attachments as {
-                [key: string]: string
-              }
-            )[file.key]
+            const filename = (application.attachments as {
+              [key: string]: string
+            })[file.key]
             const content = await this.getFileContentBase64(filename)
             return {
               name: file.name,
@@ -152,11 +147,9 @@ export class InheritanceReportService extends BaseTemplateApiService {
       attachments.push(
         ...(await Promise.all(
           answers.heirsAdditionalInfoFilesOtherDocuments.map(async (file) => {
-            const filename = (
-              application.attachments as {
-                [key: string]: string
-              }
-            )[file.key]
+            const filename = (application.attachments as {
+              [key: string]: string
+            })[file.key]
             const content = await this.getFileContentBase64(filename)
             return {
               name: file.name,

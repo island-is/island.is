@@ -76,6 +76,8 @@ import {
   MortgageCertificate,
   BurningPermit,
   ReligiousOrganization,
+  InheritanceReportFuneralAsset,
+  FuneralAssetItem,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -660,7 +662,34 @@ const mapInheritanceReportHeirs = (
     phone: heir.simi ?? undefined,
     relationWithApplicant: heir.tengsl ?? undefined,
     address: heir.heimilisfang ?? undefined,
+    heirsPercentage: String(heir.arfshlutfall ?? '0'),
   }))
+}
+
+export const mapDCDescriptionToFuneralItem = (
+  description: string,
+): FuneralAssetItem => {
+  switch (description) {
+    case 'Legsteinn (áætlaður kostnaður)':
+      return FuneralAssetItem.Tombstone
+    case 'Smíði kistu og umbúnaður':
+      return FuneralAssetItem.Casket
+    case 'Prentun':
+      return FuneralAssetItem.Printing
+    case 'Blóm':
+      return FuneralAssetItem.Flowers
+    case 'Tónlistarflutningur':
+      return FuneralAssetItem.Music
+    case 'Erfidrykkja':
+      return FuneralAssetItem.Wake
+    case 'Leiga á sal':
+      return FuneralAssetItem.Venue
+    case 'Líkbrennsla':
+      return FuneralAssetItem.Cremation
+    default:
+      console.log('REACHED DEFAULT WITH', description)
+      return FuneralAssetItem.Other
+  }
 }
 
 const mapInheritanceReportAssets = (
@@ -677,7 +706,7 @@ const mapInheritanceReportAssets = (
   const depositsAndMoney: Array<InheritanceReportAsset> = []
   const guns: Array<InheritanceReportAsset> = []
   const sharesAndClaims: Array<InheritanceReportAsset> = []
-  const funeralCosts: Array<InheritanceReportAsset> = []
+  const funeralCosts: Array<InheritanceReportFuneralAsset> = []
   const officialFees: Array<InheritanceReportAsset> = []
   const otherDebts: Array<InheritanceReportAsset> = []
   const assetsInBusiness: Array<InheritanceReportAsset> = []
@@ -723,6 +752,7 @@ const mapInheritanceReportAssets = (
           exchangeRateOrInterest: String(
             Math.round(parseShare(iAsset.gengiVextir ?? 0)),
           ),
+          propertyValuation: String(asset.amount),
         })
         break
       case TegundAndlags.NUMBER_9:
@@ -735,7 +765,10 @@ const mapInheritanceReportAssets = (
         sharesAndClaims.push(asset)
         break
       case TegundAndlags.NUMBER_12:
-        funeralCosts.push(asset)
+        funeralCosts.push({
+          ...asset,
+          funeralAssetItem: FuneralAssetItem.Other,
+        })
         break
       case TegundAndlags.NUMBER_13:
         officialFees.push(asset)
