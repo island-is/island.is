@@ -1,0 +1,113 @@
+name: Code lint/format
+# Lint and format code. Only run when applicable (e.g. not after editing PR title or adding labels)
+
+on:
+  pull_request:
+    types:
+      - opened
+      - reopened
+      - synchronize
+
+defaults:
+  run:
+    shell: bash -euo pipefail {0}
+
+jobs:
+  language-split:
+    name: Paralellize languge checks
+    runs-on: arc-runners
+    outputs:
+      matrix: ${{ steps.split.outputs.matrix }}
+    steps:
+      - name: Split
+        id: split
+        env:
+          excluded_langs: 'openapi,ruby'
+          isolated_lang_chunks: '["tsx,typescript","jsx,javascript","java","gitleaks"]'
+        run: |
+          matrix=$(
+          jq -nc --argjson chunks "$isolated_lang_chunks" --arg ignores_raw "$excluded_langs" '{
+            include: [
+              [
+                $chunks | map({
+                  includes: "\(. | split(","))",
+                  excludes: "\([])"
+                }),
+                [{
+                  includes: "\([])",
+                  excludes: "\($chunks | map(split(",")) | flatten)",
+                  ignores: "\($ignores_raw | split(","))"
+                }]
+              ] | flatten(1)
+            ]
+          }')
+          echo "matrix (pretty):"
+          echo "$matrix" | jq
+          echo "matrix=$matrix" | tee -a "$GITHUB_OUTPUT"
+
+  super-linter:
+    name: Super-Linter
+    runs-on: arc-runners
+    needs: language-split
+    strategy:
+      matrix: ${{ fromJson(needs.language-split.outputs.matrix) }}
+    steps:
+      - env:
+          includes: ${{ matrix.includes }}
+          excludes: ${{ matrix.excludes }}
+          matrix: ${{ toJson(matrix) }}
+          outputs: ${{ toJson(needs.language-split.outputs) }}
+          # matrix: ${{ needs.language-split.outputs.matrix }}
+        run: |
+          set -x
+          echo "outputs=$outputs"
+          echo "matrix=$matrix"
+          echo "includes=$includes"
+          echo "excludes=$excludes"
+
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set env (includes)
+        if: ${{ matrix.excludes == '[]' }}
+        env:
+          includes: ${{ matrix.includes }}
+        run: |
+          set -x
+          jq -nre --argjson includes "$includes" '
+            $includes
+          | map("VALIDATE_\(. | ascii_upcase)=true")
+          | join("\n")
+          ' | while read -r line; do echo "$line" >> "$GITHUB_ENV"; done
+
+      - name: Set env (includes)
+        if: ${{ matrix.excludes != '[]' }}
+        env:
+          excludes: ${{ matrix.excludes }}
+          ignores: ${{ matrix.ignores }}
+        run: |
+          set -x
+          jq -nre --argjson excludes "$excludes" --argjson ignores "$ignores" '
+            [$excludes,$ignores]
+          | flatten
+          | map("VALIDATE_\(. | ascii_upcase)=false")
+          | join("\n")
+          ' | while read -r line; do echo "$line" >> "$GITHUB_ENV"; done
+
+      - name: Super-Linter
+        uses: super-linter/super-linter@v7
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          # Set your fix mode variables to true
+          FIX_SHELL_SHFMT: true
+          FIX_YAML_PRETTIER: true
+
+      - name: Commit and push linting fixes
+        if: ${{ !github.event.localrun }}
+        uses: stefanzweifel/git-auto-commit-action@v5
+        with:
+          branch: ${{ github.event.pull_request.head.ref || github.head_ref || github.ref }}
+          commit_message: 'chore: fix linting issues'
+          commit_user_name: super-linter
+          commit_user_email: super-linter@super-linter.dev
