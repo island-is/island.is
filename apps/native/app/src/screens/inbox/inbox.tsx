@@ -15,7 +15,7 @@ import {
   NavigationFunctionComponent,
 } from 'react-native-navigation'
 import { useNavigationButtonPress } from 'react-native-navigation-hooks'
-import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks/dist'
+import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
 import styled, { useTheme } from 'styled-components/native'
 
 import { useApolloClient } from '@apollo/client'
