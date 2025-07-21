@@ -68,7 +68,7 @@ yargs(process.argv.slice(2))
           .option('dry', { type: 'boolean', default: false })
           .option('secrets', {
             type: 'boolean',
-            default: false,
+            default: true,
             alias: ['update-secrets'],
           })
           .option('print', { type: 'boolean', default: true })
@@ -109,7 +109,7 @@ yargs(process.argv.slice(2))
           .option('dry', { type: 'boolean', default: false })
           .option('secrets', {
             type: 'boolean',
-            default: false,
+            default: true,
             alias: ['update-secrets'],
           })
           .option('print', { type: 'boolean', default: false })
