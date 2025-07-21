@@ -11,7 +11,7 @@ const unicornApps = ['unicorn-app', 'payments', 'services-payments']
  *
  * @param {string} jsonString - A JSON string of the form {"head": "<head>", "base": "<base>" }
  */
-const getUnicorns = (jsonString) => {
+const affectedUnicorns = (jsonString) => {
   const arg = JSON.parse(jsonString ?? '{}')
   const baseBranch = process.env.GIT_BASE || process.env.NX_BASE || arg.base
 
@@ -67,8 +67,8 @@ const isUnicorn = (app) => {
 const cmd = process.argv[2]
 const args = process.argv.slice(3)
 switch (cmd) {
-  case 'get-unicorns':
-    getUnicorns(args[0])
+  case 'affected':
+    affectedUnicorns(args[0])
     break
   case 'is-unicorn':
     isUnicorn(args[0])
