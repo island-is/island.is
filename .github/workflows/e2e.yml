@@ -73,6 +73,7 @@ jobs:
         uses: ./.github/actions/setup-playwright
 
       - name: Running e2e tests
+        continue-on-error: ${{ inputs.allow_failure && inputs.allow_failure == 'true' }}
         env:
           ALLOW_FAILURE: ${{ inputs.allow_failure && inputs.allow_failure == 'true' }}
         run: |
