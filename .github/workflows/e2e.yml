@@ -18,6 +18,10 @@ on:
         description: 'Affected projects (comma,separated,list)'
         required: true
         type: string
+      allow_failure:
+        description: 'Allow tests to fail'
+        required: true
+        type: boolean
 
 env:
   COMPOSE_HTTP_TIMEOUT: 180
@@ -70,3 +74,4 @@ jobs:
 
       - name: Running e2e tests
         run: yarn nx run-many --target=e2e --projects="${AFFECTED_PROJECTS}" --parallel 3
+        continue-on-error: ${{ inputs.allow_failure }}
