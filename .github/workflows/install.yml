@@ -247,8 +247,6 @@ jobs:
         if: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE != 'true' }}
         env:
           CHUNK_SIZE: 1
-          UNICORNS: ${{ steps.unicorns.outputs.UNICORNS }}
-          UNICORNS_ONLY: ${{ github.event_name == 'merge_group' }}
         run: |
           set -euo pipefail
           CHUNKS="$(./scripts/ci/generate-chunks.sh e2e)"
