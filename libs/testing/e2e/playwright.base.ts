@@ -40,7 +40,7 @@ export const baseConfig = ({
     fullyParallel: true,
     /* Run your local dev server before starting the tests */
     webServer: {
-      command: `yarn run-local-env --no-secrets ${project} ${
+      command: `yarn infra run-local-env --no-secrets ${project} ${
         dependencies.length > 0
           ? `--dependencies ${dependencies.join(' ')}`
           : ''
