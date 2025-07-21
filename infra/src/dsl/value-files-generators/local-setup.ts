@@ -136,6 +136,7 @@ export const getLocalrunValueFile = async (
 
               return exportedKeyValue
             })
+            .concat(`export NODE_OPTIONS='${process.env.NODE_OPTIONS}'`)
             .join('\n'),
           { encoding: 'utf-8' },
         )
