@@ -74,4 +74,4 @@ jobs:
 
       - name: Running e2e tests
         run: yarn nx run-many --target=e2e --projects="${AFFECTED_PROJECTS}" --parallel 3
-        continue-on-error: ${{ inputs.allow_failure }}
+        continue-on-error: ${{ inputs.allow_failure && inputs.allow_failure == 'true' }}
