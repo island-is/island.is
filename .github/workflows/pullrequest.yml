@@ -80,7 +80,7 @@ jobs:
     name: All projects have some tests
     needs:
       - prepare
-    if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' && needs.prepare.outputs.is-unicorn == 'true' }}
+    if: ${{ needs.prepare.outputs.TEST_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' && needs.prepare.outputs.IS_UNICORN == 'true' }}
     runs-on: arc-shared
     env:
       CHUNKS: ${{ needs.prepare.outputs.TEST_CHUNKS }}
