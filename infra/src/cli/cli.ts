@@ -7,7 +7,7 @@ import { OpsEnv } from '../dsl/types/input-types'
 import { renderServiceEnvVars } from './render-env-vars'
 import { renderLocalServices, runLocalServices } from './render-local-mocks'
 
-yargs(process.argv.slice(2))
+const cli = yargs(process.argv.slice(2))
   .scriptName('yarn infra')
   .command(
     'render-env',
@@ -66,10 +66,10 @@ yargs(process.argv.slice(2))
           })
           .option('json', { type: 'boolean', default: false })
           .option('dry', { type: 'boolean', default: false })
-          .option('secrets', {
+          .option('no-update-secrets', {
             type: 'boolean',
             default: false,
-            alias: ['update-secrets'],
+            alias: ['nosecrets', 'no-secrets'],
           })
           // Custom check for 'services' since yargs lack built-in validation
           .check((argv) => {
@@ -88,7 +88,7 @@ yargs(process.argv.slice(2))
         dryRun: argv.dry,
         json: argv.json,
         print: true,
-        updateSecrets: argv['secrets'],
+        noUpdateSecrets: argv['no-update-secrets'],
       })
     },
   )
@@ -106,13 +106,18 @@ yargs(process.argv.slice(2))
           .option('dependencies', { array: true, type: 'string', default: [] })
           .option('json', { type: 'boolean', default: false })
           .option('dry', { type: 'boolean', default: false })
-          .option('secrets', {
+          .option('no-update-secrets', {
             type: 'boolean',
             default: false,
-            alias: ['update-secrets'],
+            alias: ['nosecrets', 'no-secrets'],
           })
           .option('print', { type: 'boolean', default: false })
           .option('proxies', { type: 'boolean', default: false })
+          .option('never-fail', {
+            alias: 'nofail',
+            type: 'boolean',
+            default: false,
+          })
           // Custom check for 'services' since yargs lack built-in validation
           .check((argv) => {
             const svc = argv.services
@@ -125,12 +130,11 @@ yargs(process.argv.slice(2))
       )
     },
     async (argv) => {
-      await runLocalServices({
-        services: argv.services,
-        dependencies: argv.dependencies,
+      await runLocalServices(argv.services, argv.dependencies, {
         dryRun: argv.dry,
         json: argv.json,
-        updateSecrets: argv['secrets'],
+        neverFail: argv['never-fail'],
+        noUpdateSecrets: argv['no-update-secrets'],
         print: argv.print,
         startProxies: argv.proxies,
       })
