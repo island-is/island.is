@@ -1,5 +1,6 @@
 import {
   ActivationGrantApi,
+  ActivationGrantCreateActivationGrantRequest,
   AuthApi,
   Configuration,
   GaldurDomainModelsApplicationsActivationGrantApplicationsViewModelsActivationGrantViewModel,
@@ -82,7 +83,7 @@ export class VmstUnemploymentClientService {
     return response
   }
 
-  async getEmptyActivityGrantApplication(
+  async getEmptyActivationGrantApplication(
     auth: User,
   ): Promise<GaldurDomainModelsApplicationsActivationGrantApplicationsViewModelsActivationGrantViewModel> {
     const api = await this.createApiClient(
@@ -95,6 +96,21 @@ export class VmstUnemploymentClientService {
       await api.activationGrantGetEmptyActivationGrantWithProfile({
         applicantSSN: auth.nationalId,
       })
+    return response
+  }
+
+  async submitActivationGrantApplication(
+    requestParameter: ActivationGrantCreateActivationGrantRequest,
+  ): Promise<GaldurDomainModelsApplicationsActivationGrantApplicationsViewModelsActivationGrantViewModel> {
+    const api = await this.createApiClient(
+      ActivationGrantApi,
+      'clients-vmst-unemployment',
+      'Activation Grant API auth failed',
+    )
+
+    const response = await api.activationGrantCreateActivationGrant(
+      requestParameter,
+    )
     return response
   }
 }

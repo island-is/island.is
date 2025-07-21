@@ -17,10 +17,10 @@ const applicantSchema = z
       .string()
       .refine((nationalId) => nationalId && kennitala.isValid(nationalId)),
     address: z.string().min(1),
-    //postalCode: z.string().min(1),
+    postalCode: z.string().optional(), //min(1),
     city: z.string().min(1),
-    //email: z.string().email(),
-    //phoneNumber: z.string().refine((v) => isValidPhoneNumber(v)),
+    email: z.string().optional(), //.email(),
+    phoneNumber: z.string().optional(), //refine((v) => isValidPhoneNumber(v)),
     isSamePlaceOfResidence: z.array(z.string()).optional(),
     password: z.string().min(4),
     other: z
@@ -66,7 +66,6 @@ const jobHistorySchema = z.object({
     .nullable()
     .transform((val) => (val === null ? undefined : val))
     .optional(),
-  employmentRate: z.string().optional(),
   startDate: z.string().optional(),
   endDate: z.string().optional(),
 })
@@ -79,7 +78,7 @@ const academicBackgroundSchema = z.object({
   education: z
     .array(
       z.object({
-        school: z.string().optional(),
+        levelOfStudy: z.string().optional(),
         subject: z.string().optional(),
         degree: z.string().optional(),
         endOfStudies: z.string().optional(), // Transform if disabled
@@ -91,7 +90,9 @@ const academicBackgroundSchema = z.object({
 
 const drivingLicensesSchema = z.object({
   drivingLicenseType: z.array(z.string()).optional(),
-  workMachineRights: z.array(z.string()).optional(),
+  heavyMachineryLicenses: z.array(z.string()).optional(),
+  hasDrivingLicense: z.array(z.enum([YES])).optional(),
+  hasHeavyMachineryLicense: z.array(z.enum([YES])).optional(),
 })
 
 const languageSkillsSchema = z.object({
@@ -172,3 +173,12 @@ export const ActivationAllowanceAnswersSchema = z.object({
 export type ActivationAllowanceAnswers = z.TypeOf<
   typeof ActivationAllowanceAnswersSchema
 >
+
+export type JobHistoryAnswer = z.TypeOf<typeof jobHistorySchema>
+export type EducationAnswer = z.TypeOf<typeof academicBackgroundSchema>
+export type LanguageAnswers = z.TypeOf<typeof languageSkillsSchema>
+export type ApplicantAnswer = z.TypeOf<typeof applicantSchema>
+export type ContactAnswer = z.TypeOf<typeof contactSchema>
+export type DrivingLicensesAnswer = z.TypeOf<typeof drivingLicensesSchema>
+export type JobWishesAnswer = z.TypeOf<typeof jobWishesSchema>
+export type PaymentInformationAnswer = z.TypeOf<typeof paymentInformationSchema>

@@ -1,15 +1,35 @@
-import { ExternalData, FormTextArray } from '@island.is/application/types'
+import {
+  AttachmentItem,
+  ExternalData,
+  FormTextArray,
+} from '@island.is/application/types'
 import { FormValue } from '@island.is/application/types'
 import { format as formatKennitala } from 'kennitala'
 import { getValueViaPath } from '@island.is/application/core'
 import { KeyValueItem } from '@island.is/application/types'
-import { applicant, paymentInformation } from '../lib/messages'
+import {
+  academicBackground,
+  applicant,
+  jobWishes,
+  languageSkills,
+  paymentInformation,
+} from '../lib/messages'
 import { overview } from '../lib/messages/overview'
 import { isSamePlaceOfResidenceChecked } from './isSamePlaceOfResidenceChecked'
 import { contact } from '../lib/messages/contact'
 import { isContactDifferentFromApplicant } from './isContactSameAsApplicant'
-import { GaldurDomainModelsSettingsJobCodesJobCodeDTO } from '@island.is/clients/vmst-unemployment'
+import {
+  GaldurDomainModelsEducationProgramDTO,
+  GaldurDomainModelsSelectItem,
+  GaldurDomainModelsSettingsJobCodesJobCodeDTO,
+} from '@island.is/clients/vmst-unemployment'
 import { Locale } from '@island.is/shared/types'
+import {
+  EducationAnswer,
+  JobHistoryAnswer,
+  LanguageAnswers,
+} from '../lib/dataSchema'
+import { drivingLicenses } from '../lib/messages'
 
 export const getApplicantOverviewItems = (
   answers: FormValue,
@@ -129,14 +149,12 @@ export const getContactOverviewItems = (
   ]
 }
 
-export const useGetJobWishesOverviewItems = (
+export const getJobWishesOverviewItems = (
   answers: FormValue,
   externalData: ExternalData,
   _userNationalId: string,
   locale: Locale,
 ): Array<KeyValueItem> => {
-  console.log('LOCALE', locale)
-
   const jobWishes = getValueViaPath<Array<string>>(answers, 'jobWishes.jobs')
   const escoJobs = getValueViaPath<
     GaldurDomainModelsSettingsJobCodesJobCodeDTO[]
@@ -155,74 +173,240 @@ export const useGetJobWishesOverviewItems = (
     {
       width: 'full',
       keyText: paymentInformation.general.pageTitle,
-      valueText: [],
+      valueText: matchedJobs.map((job) =>
+        locale === 'is' ? job.name : job.english,
+      ),
     },
   ]
 }
 
-export const getOverviewItems = (
+export const getJobHistoryOverviewItems = (
   answers: FormValue,
-  _externalData: ExternalData,
+  externalData: ExternalData,
+  _userNationalId: string,
+  _locale: Locale,
 ): Array<KeyValueItem> => {
+  const jobHistory =
+    getValueViaPath<JobHistoryAnswer[]>(answers, 'jobHistory') ?? []
+  const escoJobs =
+    getValueViaPath<GaldurDomainModelsSettingsJobCodesJobCodeDTO[]>(
+      externalData,
+      'activityGrantApplication.data.activationGrant.supportData.jobCodes',
+    ) ?? []
+
+  // Create a lookup map from esco job ID → full job
+  const escoJobMap = new Map(escoJobs.map((job) => [job.id, job]))
+
+  // Combine job history and matched esco job names
+  const combinedJobs = jobHistory
+    .map((history) => {
+      const escoJob = escoJobMap.get(history.jobName) // jobName is the ID
+      if (!escoJob) return null
+
+      return {
+        companyName: history.companyName,
+        jobNameFromEscojobs: escoJob.name,
+        jobDate: `${history.startDate} - ${history.endDate}`,
+      }
+    })
+    .filter(
+      (
+        job,
+      ): job is {
+        companyName: string
+        jobNameFromEscojobs: string
+        jobDate: string
+      } => Boolean(job),
+    )
+
   return [
     {
       width: 'full',
-      keyText: 'Full width',
-      valueText: getValueViaPath<string>(answers, 'applicant.name') ?? '',
+      keyText: jobWishes.general.pageTitle,
+      valueText: combinedJobs.map(
+        (job) =>
+          `${job.companyName}: ${job.jobNameFromEscojobs}, ${job.jobDate}`,
+      ),
     },
-    {
-      width: 'half',
-      keyText: 'Half width',
-      valueText:
-        getValueViaPath<string>(answers, 'applicant.phoneNumber') ?? '',
-    },
-    {
-      width: 'half',
-      keyText: 'Half width',
-      valueText: 'Hvassaleiti 5',
-    },
+  ]
+}
+
+export const getAcademicBackgroundOverviewItems = (
+  answers: FormValue,
+  externalData: ExternalData,
+  _userNationalId: string,
+  locale: Locale,
+): Array<KeyValueItem> => {
+  const educationAnswers =
+    getValueViaPath<EducationAnswer>(answers, 'academicBackground')
+      ?.education ?? []
+
+  const educationPrograms =
+    getValueViaPath<GaldurDomainModelsEducationProgramDTO[]>(
+      externalData,
+      'activityGrantApplication.data.activationGrant.supportData.educationPrograms',
+    ) ?? []
+
+  const getLocalized = (
+    icelandic: string | undefined,
+    english: string | undefined,
+  ) => (locale === 'is' ? icelandic : english)
+
+  // Helper to combine defined parts
+  const joinDefined = (parts: Array<string | undefined | null>) =>
+    parts.filter(Boolean).join(', ')
+
+  const combinedEducations = educationAnswers.map((program) => {
+    const programData = educationPrograms.find(
+      (x) => x.id === program.levelOfStudy,
+    )
+    const degreeData = programData?.degrees?.find(
+      (x) => x.id === program.degree,
+    )
+    const subjectData = degreeData?.subjects?.find(
+      (x) => x.id === program.subject,
+    )
+
+    const level = getLocalized(
+      programData?.name || '',
+      programData?.english || '',
+    )
+    const degree = getLocalized(
+      degreeData?.name || '',
+      degreeData?.english || '',
+    )
+    const subject = getLocalized(
+      subjectData?.name || '',
+      subjectData?.name || '', // Missing translation from web service
+    )
+
+    return joinDefined([level, degree, subject])
+  })
+
+  return [
     {
       width: 'full',
-      // empty item to end line
+      keyText: academicBackground.general.pageTitle,
+      valueText: combinedEducations,
     },
-    {
-      width: 'snug',
-      keyText: 'Snug width',
-      valueText: 'test@test.is',
-    },
-    {
-      width: 'snug',
-      keyText: 'Snug width',
-      valueText: '+354 123 4567',
-    },
-    {
-      width: 'snug',
-      keyText: 'Snug width',
-      valueText: '+354 123 4567',
-    },
-    {
-      width: 'snug',
-      keyText: 'Snug width',
-      valueText: '+354 123 4567',
-    },
+  ]
+}
+
+export const getDrivingLicensesOverviewItems = (
+  answers: FormValue,
+  _externalData: ExternalData,
+  _userNationalId: string,
+  _locale: Locale,
+): Array<KeyValueItem> => {
+  const drivingLicenseAnswers =
+    getValueViaPath<Array<string>>(
+      answers,
+      'drivingLicense.drivingLicenseType',
+    ) || []
+  const heavyMachineryLicenseAnswers =
+    getValueViaPath<Array<string>>(
+      answers,
+      'drivingLicense.heavyMachineryLicenses',
+    ) || []
+
+  return [
     {
       width: 'full',
-      // empty item to end line
+      keyText: drivingLicenses.general.pageTitle,
+      valueText: [
+        {
+          ...overview.labels.drivingLicenses,
+          values: {
+            value: drivingLicenseAnswers.filter(Boolean).join(', '),
+          },
+        },
+        {
+          ...overview.labels.heavyMachineryLicenses,
+          values: {
+            value: heavyMachineryLicenseAnswers.filter(Boolean).join(', '),
+          },
+        },
+      ],
     },
+  ]
+}
+
+export const getLanguageSkillsOverviewItems = (
+  answers: FormValue,
+  externalData: ExternalData,
+  _userNationalId: string,
+  locale: Locale,
+): Array<KeyValueItem> => {
+  const languageSkillAnswers = getValueViaPath<LanguageAnswers>(
+    answers,
+    'languageSkills',
+  )
+  const languageKnowledge = getValueViaPath<GaldurDomainModelsSelectItem[]>(
+    externalData,
+    'activityGrantApplication.data.activationGrant.supportData.languageKnowledge',
+  )
+  const languageValues = getValueViaPath<GaldurDomainModelsSelectItem[]>(
+    externalData,
+    'activityGrantApplication.data.activationGrant.supportData.languageValues',
+  )
+
+  const findSkillValue = (key: string) =>
+    languageValues?.find((val) => val.id === key)
+  const findLanguageValue = (key: string) =>
+    languageKnowledge?.find((val) => val.id === key)
+  const getLocalized = (
+    icelandic: string | undefined,
+    english: string | undefined,
+  ) => (locale === 'is' ? icelandic : english)
+
+  const icelandicAbility = findSkillValue(
+    languageSkillAnswers?.icelandicAbility || '',
+  )
+  const englishAbility = findSkillValue(
+    languageSkillAnswers?.englishAbility || '',
+  )
+
+  const otherLanguagesToDisplay =
+    languageSkillAnswers?.other.map((skills) => {
+      const languageSkill = findSkillValue(skills.skills || '')
+      const languageNames = findLanguageValue(skills.language || '')
+      return `${getLocalized(
+        languageNames?.name || '',
+        languageNames?.english || '',
+      )}: ${getLocalized(
+        languageSkill?.name || '',
+        languageSkill?.english || '',
+      )}`
+    }) || []
+
+  return [
     {
-      width: 'snug',
-      keyText: 'Snug width',
-      valueText: 'Reykjavík',
+      width: 'full',
+      keyText: languageSkills.general.pageTitle,
+      valueText: [
+        `${languageSkillAnswers?.icelandic}: ${getLocalized(
+          icelandicAbility?.name || '',
+          icelandicAbility?.english || '',
+        )}`,
+        `${languageSkillAnswers?.english}: ${getLocalized(
+          englishAbility?.name || '',
+          englishAbility?.english || '',
+        )}`,
+        otherLanguagesToDisplay.flat(),
+      ],
     },
+  ]
+}
+
+export const getCVData = (
+  _answers: FormValue,
+  _externalData: ExternalData,
+): Array<AttachmentItem> => {
+  return [
     {
-      width: 'half',
-      keyText: 'Half width',
-      valueText: 'test@test.is',
-    },
-    {
-      width: 'snug',
-      keyText: 'Snug width',
-      valueText: 'test@test.is',
+      width: 'full',
+      fileName: 'full-width-file.pdf',
+      fileType: 'pdf',
     },
   ]
 }

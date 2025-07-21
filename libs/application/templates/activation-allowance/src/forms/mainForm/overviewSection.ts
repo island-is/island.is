@@ -3,15 +3,23 @@ import {
   buildOverviewField,
   buildSection,
   buildSubmitField,
+  getValueViaPath,
+  YES,
 } from '@island.is/application/core'
 import {
   getApplicantOverviewItems,
   getContactOverviewItems,
-  useGetJobWishesOverviewItems,
   getPaymentOverviewItems,
+  getJobWishesOverviewItems,
+  getJobHistoryOverviewItems,
+  getAcademicBackgroundOverviewItems,
+  getDrivingLicensesOverviewItems,
+  getLanguageSkillsOverviewItems,
+  getCVData,
 } from '../../utils/getOverviewItems'
+import { FormValue } from '@island.is/application/types'
+import { EducationAnswer, JobHistoryAnswer } from '../../lib/dataSchema'
 
-// TODO Finish this screen
 export const overviewSection = buildSection({
   id: 'overviewSection',
   title: 'Overview',
@@ -41,22 +49,67 @@ export const overviewSection = buildSection({
         }),
 
         buildOverviewField({
-          id: 'overview.jobWish`es',
+          id: 'overview.jobWishes',
           backId: 'jobWishesMultiField',
-          items: useGetJobWishesOverviewItems,
+          items: getJobWishesOverviewItems,
         }),
 
-        // Job history
+        buildOverviewField({
+          id: 'overview.jobHistory',
+          backId: 'jobHistoryMultiField',
+          items: getJobHistoryOverviewItems,
+          condition: (formValue: FormValue) => {
+            const jobHistory =
+              getValueViaPath<JobHistoryAnswer[]>(formValue, 'jobHistory') ?? []
+            return !jobHistory ? false : true
+          },
+        }),
 
-        // Academic history
+        buildOverviewField({
+          id: 'overview.academicBackground',
+          backId: 'academicBackgroundMultiField',
+          items: getAcademicBackgroundOverviewItems,
+          condition: (formValue: FormValue) => {
+            const education =
+              getValueViaPath<EducationAnswer>(formValue, 'academicBackground')
+                ?.education ?? []
+            return !education
+          },
+        }),
 
-        // Driving/Machine licenses
+        buildOverviewField({
+          id: 'overview.drivingLicenses',
+          backId: 'drivingLicensesMultiField',
+          items: getDrivingLicensesOverviewItems,
+          condition: (formValue: FormValue) => {
+            const hasDrivingLicense =
+              getValueViaPath<Array<string>>(
+                formValue,
+                'drivingLicense.hasDrivingLicense',
+              ) || []
+            const hasHeavyMachineryLicense =
+              getValueViaPath<Array<string>>(
+                formValue,
+                'drivingLicense.hasHeavyMachineryLicense',
+              ) || []
 
-        // Language skills
+            return hasDrivingLicense
+              .concat(hasHeavyMachineryLicense)
+              .includes(YES)
+          },
+        }),
 
-        // Resumé
+        buildOverviewField({
+          id: 'overview.languageSkills',
+          backId: 'languageSkillsMultiField',
+          items: getLanguageSkillsOverviewItems,
+        }),
 
-        //
+        buildOverviewField({
+          id: 'overview.cv',
+          backId: 'cvMultiField',
+          attachments: getCVData,
+        }),
 
         buildSubmitField({
           id: 'submit',

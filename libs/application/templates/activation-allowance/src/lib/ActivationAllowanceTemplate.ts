@@ -10,6 +10,7 @@ import {
   UserProfileApi,
   ApplicationConfigurations,
   IdentityApi,
+  defineTemplateApi,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -28,6 +29,7 @@ import { assign } from 'xstate'
 import { ApiScope } from '@island.is/auth/scopes'
 import { ActivationAllowanceApi, LocaleApi } from '../dataProviders'
 import { Features } from '@island.is/feature-flags'
+import { ApiActions } from '../utils/enums'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -176,6 +178,9 @@ const template: ApplicationTemplate<
           progress: 1,
           status: FormModes.COMPLETED,
           lifecycle: DefaultStateLifeCycle,
+          onEntry: defineTemplateApi({
+            action: ApiActions.submitApplication,
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

@@ -1,26 +1,32 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
 import { SharedTemplateApiService } from '../../shared'
 import { ApplicationTypes } from '@island.is/application/types'
-import { NotificationsService } from '../../../notification/notifications.service'
 import { BaseTemplateApiService } from '../../base-template-api.service'
-import { WorkMachinesClientService } from '@island.is/clients/work-machines'
-import {
-  DriversLicense,
-  DrivingLicenseApi,
-} from '@island.is/clients/driving-license'
 import {
   GaldurDomainModelsApplicationsUnemploymentApplicationsQueriesUnemploymentApplicationViewModel,
   VmstUnemploymentClientService,
 } from '@island.is/clients/vmst-unemployment'
 import { TemplateApiModuleActionProps } from '../../../types'
 import { Locale } from '@island.is/shared/types'
+import {
+  getAcademicInfo,
+  getApplicantInfo,
+  getBankInfo,
+  getContactInfo,
+  getJobHistoryInfo,
+  getJobWishesInfo,
+  getLanguageInfo,
+  getLicenseInfo,
+  getSupportData,
+} from './activation-allowance.utils'
+import type { Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER } from '@island.is/logging'
+
 @Injectable()
 export class ActivationAllowanceService extends BaseTemplateApiService {
   constructor(
+    @Inject(LOGGER_PROVIDER) private logger: Logger,
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
-    private readonly notificationsService: NotificationsService,
-    private readonly workMachineClientService: WorkMachinesClientService,
-    private readonly drivingLicenceClientService: DrivingLicenseApi,
     private readonly vmstUnemploymentClientService: VmstUnemploymentClientService,
   ) {
     super(ApplicationTypes.ACTIVATION_ALLOWANCE)
@@ -38,7 +44,7 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
   }: TemplateApiModuleActionProps): Promise<GaldurDomainModelsApplicationsUnemploymentApplicationsQueriesUnemploymentApplicationViewModel> {
     try {
       const application =
-        this.vmstUnemploymentClientService.getEmptyActivityGrantApplication(
+        this.vmstUnemploymentClientService.getEmptyActivationGrantApplication(
           auth,
         )
 
@@ -49,20 +55,98 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
     }
   }
 
-  async getDrivingLicense({
+  async submitApplication({
+    application,
     auth,
-  }: TemplateApiModuleActionProps): Promise<DriversLicense> {
-    return await this.drivingLicenceClientService.getCurrentLicense({
-      token: auth.authorization,
-    })
-  }
+  }: TemplateApiModuleActionProps): Promise<void> {
+    const { answers, externalData } = application
+    const personalInfo = getApplicantInfo(answers)
+    const contact = getContactInfo(answers)
+    const licenses = getLicenseInfo(answers)
+    const jobWishesPayload = getJobWishesInfo(answers)
+    const jobHistoryPayload = getJobHistoryInfo(answers)
+    const bankInfo = getBankInfo(answers)
+    const languageSkillInfo = getLanguageInfo(answers, externalData)
+    const supportData = getSupportData(externalData)
+    const education = getAcademicInfo(answers)
 
-  async completeApplication() {
-    // TODO: Implement this
-    await new Promise((resolve) => setTimeout(resolve, 2000))
-
-    return {
-      id: 1337,
+    if (!bankInfo) {
+      this.logger.warn(
+        '[VMST-ActivationAllowance]: Missing payment information fields',
+      )
+      throw new Error() // TODO Better error or template api error
     }
+    // else if (!languageSkillInfo) {
+    //   this.logger.warn(
+    //     '[VMST-ActivationAllowance]: Missing language skills information fields',
+    //   )
+    //   throw new Error() // TODO Better error or template api error
+    // } else if (!personalInfo) {
+    //   this.logger.warn(
+    //     '[VMST-ActivationAllowance]: Missing personal information fields',
+    //   )
+    //   throw new Error() // TODO Better error or template api error
+    // }
+
+    const payload = {
+      galdurApplicationApplicationsActivationGrantsCommandsCreateActivationGrantCreateActivationGrantCommand:
+        {
+          activationGrant: {
+            applicationInformation: {}, // Do we use this ?
+            applicationAccess: {}, // Not used ?
+            personalInformation: personalInfo,
+            otherInformation: {}, // Not used ?
+            preferredJobs: {
+              jobs: jobWishesPayload, // Array of object with name, id (do we need name??) remove this comment later
+            },
+            educationHistory: {
+              education: education,
+            },
+            jobCareer: {
+              jobs: jobHistoryPayload,
+            },
+            drivingLicense: licenses,
+            attachments: {
+              files: [
+                {
+                  // Need anwers here, attachmentTypeId vs contentType vs attachmentTypeName
+                },
+              ],
+              //currentFiles: {} What is this ?
+            },
+            childrenSupported: {}, // Not used ?
+            bankingPensionUnion: {
+              //bankdId: bankInfo.bankNumber,
+              //ledgerId: bankInfo.ledger,
+              //accountNumber: bankInfo.accountNumber,
+              // Bunch of other stuff that is not asked for in the application
+            },
+            languageKnowledge: {
+              languages: languageSkillInfo,
+            },
+            educationalQuestions: {}, // Not used ?
+            //supportData: supportData,
+            assignedEmployees: [], // Not used ?
+            applicantId: '', // Unsure what this is
+            compensationInformation: {}, // Not used?
+          },
+          save: true,
+        },
+    }
+
+    //console.log('PAYLOAD', payload)
+    try {
+      const response =
+        this.vmstUnemploymentClientService.submitActivationGrantApplication(
+          payload,
+        )
+      console.log('RESPONSIBLEEE', response)
+    } catch (e) {
+      console.log('IN CATCH')
+      throw new Error(e)
+    }
+
+    throw new Error('I threw this error')
+    return Promise.resolve()
   }
 }

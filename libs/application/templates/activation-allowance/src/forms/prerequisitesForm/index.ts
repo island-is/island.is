@@ -11,10 +11,10 @@ import { Logo } from '../../assets/Logo'
 import { externalData } from '../../lib/messages'
 import {
   ActivationAllowanceApi,
-  DrivingLicenseApi,
+  //DrivingLicenseApi,
   LocaleApi,
   UserProfileApiWithValidation,
-  WorkMachineLicensesApi,
+  //WorkMachineLicensesApi,
 } from '../../dataProviders'
 
 export const Prerequisites = buildForm({

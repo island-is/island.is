@@ -8,15 +8,15 @@ export const UserProfileApiWithValidation = UserProfileApi.configure({
   },
 })
 
-export const WorkMachineLicensesApi = defineTemplateApi({
-  action: 'getWorkMachineLicenses',
-  externalDataId: 'workMachineLicenses',
-})
+// export const WorkMachineLicensesApi = defineTemplateApi({
+//   action: 'getWorkMachineLicenses',
+//   externalDataId: 'workMachineLicenses',
+// })
 
-export const DrivingLicenseApi = defineTemplateApi({
-  action: 'getDrivingLicense',
-  externalDataId: 'drivingLicense',
-})
+// export const DrivingLicenseApi = defineTemplateApi({
+//   action: 'getDrivingLicense',
+//   externalDataId: 'drivingLicense',
+// })
 
 export const ActivationAllowanceApi = defineTemplateApi({
   action: 'createApplication',

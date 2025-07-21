@@ -32,6 +32,7 @@ export const cvSection = buildSection({
           id: 'cv.haveCV',
           space: 0,
           width: 'half',
+          defaultValue: NO,
           options: [
             {
               value: YES,
@@ -59,6 +60,7 @@ export const cvSection = buildSection({
             const haveCV = getValueViaPath<YesOrNoEnum>(answers, 'cv.haveCV')
             return haveCV === YES
           },
+          doesNotRequireAnswer: true,
         }),
         buildDescriptionField({
           id: 'cv.otherDescription',
@@ -72,6 +74,7 @@ export const cvSection = buildSection({
           title: cv.labels.other,
           variant: 'textarea',
           rows: 6,
+          doesNotRequireAnswer: true,
         }),
       ],
     }),

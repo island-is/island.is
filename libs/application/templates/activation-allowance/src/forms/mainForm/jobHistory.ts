@@ -67,6 +67,15 @@ export const jobHistorySection = buildSection({
               component: 'date',
               label: jobHistory.labels.endDate,
               width: 'half',
+              maxDate: () => {
+                const today = new Date()
+                const endOfMonth = new Date(
+                  today.getFullYear(),
+                  today.getMonth() + 1,
+                  0,
+                )
+                return endOfMonth
+              },
             },
           },
         }),

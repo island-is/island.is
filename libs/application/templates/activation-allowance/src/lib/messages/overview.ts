@@ -51,5 +51,15 @@ export const overview = {
       defaultMessage: 'Netfang: {value}',
       description: 'email label for overview information',
     },
+    drivingLicenses: {
+      id: 'aa.application:overview.labels.drivingLicenses',
+      defaultMessage: 'Ökuréttindi: {value}',
+      description: 'driving license label for overview information',
+    },
+    heavyMachineryLicenses: {
+      id: 'aa.application:overview.labels.heavyMachineryLicenses',
+      defaultMessage: 'Vinnuvélaréttindi: {value}',
+      description: 'heavy machinery license label for overview information',
+    },
   }),
 }
