@@ -20,7 +20,7 @@ on:
         type: string
       allow_failure:
         description: 'Allow tests to fail'
-        required: true
+        default: false
         type: boolean
 
 env:
