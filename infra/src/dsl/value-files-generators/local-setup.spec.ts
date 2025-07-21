@@ -48,7 +48,7 @@ describe('Local setup', () => {
   })
   it('Should have mocks', async () => {
     expect(serviceDef.mocks).toStrictEqual(
-      `docker run --name mountebank -it --rm -p 2525:2525 -p 9453:9453 -v ${path.resolve(
+      `docker run --name mountebank --rm -p 2525:2525 -p 9453:9453 -v ${path.resolve(
         __dirname,
         '..',
         '..',
