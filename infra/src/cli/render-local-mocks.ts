@@ -81,9 +81,9 @@ export async function runLocalServices({
   })
 
   // Verify that all dependencies exist in the rendered dependency list
-  for (const dependency of dependencies) {
-    if (!renderedLocalServices.services[dependency]) {
-      throw new Error(`Dependency ${dependency} not found`)
+  for (const app of dependencies.concat(services)) {
+    if (!renderedLocalServices.services[app]) {
+      throw new Error(`Application ${app} not found`)
     }
   }
 
