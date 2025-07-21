@@ -44,8 +44,9 @@ jobs:
     secrets: inherit
     with:
       run_merge_queue: false
+      skip_user_check: true
       force_all_to_be_affected: true
-      main_branch: ${{ github.event.merge_group.base_ref || github.ref_name }}
+      main_branch: 'main'
     needs:
       - pre-checks
   tests:
