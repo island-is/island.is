@@ -55,7 +55,7 @@ const showUnicorns = (args) => {
 }
 
 /**
- * Exits 0 (success) if the requested application is a unicorn app, 1 (failure) otherwise
+ * Exits with exit code 0 (success) if the requested application is a unicorn app, 1 (failure) otherwise
  *
  * @param {string} app - Nx application to check for unicornity
  */
