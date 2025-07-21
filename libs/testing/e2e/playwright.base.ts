@@ -40,11 +40,9 @@ export const baseConfig = ({
     fullyParallel: true,
     /* Run your local dev server before starting the tests */
     webServer: {
-      command: `yarn infra run-local-env --no-secrets ${project} ${
-        dependencies.length > 0
-          ? `--dependencies ${dependencies.join(' ')}`
-          : ''
-      }`,
+      command: `yarn infra run-local-env --no-secrets ${project} --dependencies ${dependencies.join(
+        ' ',
+      )}`,
       url: baseURL,
       reuseExistingServer: !process.env.CI,
       stdout: 'pipe',
