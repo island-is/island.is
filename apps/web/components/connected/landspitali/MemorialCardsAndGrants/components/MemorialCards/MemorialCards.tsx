@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react'
+import { useEffect, useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 
@@ -118,6 +118,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
 
   const [submitted, setSubmitted] = useState(false)
   const selectedAmount = watch('amountISK')
+  const overviewTitleRef = useRef<HTMLDivElement>(null)
 
   const onSubmit = () => {
     setSubmitted(true)
@@ -129,6 +130,12 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
     })
   }, [methods, formatMessage])
 
+  useEffect(() => {
+    if (submitted) {
+      overviewTitleRef.current?.scrollIntoView({ behavior: 'smooth' })
+    }
+  }, [submitted])
+
   const formatCurrency = (amount: string | number) => {
     return amount.toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.')
   }
@@ -139,7 +146,9 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
     const data = methods.getValues()
     return (
       <Stack space={4}>
-        <Text variant="h2">{formatMessage(m.overview.title)}</Text>
+        <Text ref={overviewTitleRef} variant="h2">
+          {formatMessage(m.overview.title)}
+        </Text>
         <Stack space={2}>
           <Text variant="h3">{formatMessage(m.overview.senderTitle)}</Text>
           <Text>
