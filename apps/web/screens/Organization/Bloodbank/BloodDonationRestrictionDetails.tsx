@@ -99,7 +99,7 @@ const BloodDonationRestrictionDetails: CustomScreen<
               borderRadius="standard"
               width="full"
             >
-              <Text variant="h3" as="h2">
+              <Text variant="h2" as="h2">
                 {formatMessage(m.detailsPage.cardSubheading)}
               </Text>
               <Text as="div">{webRichText(item.cardText)}</Text>
@@ -107,7 +107,7 @@ const BloodDonationRestrictionDetails: CustomScreen<
           )}
           {item.hasDetailedText && (
             <Stack space={0}>
-              <Text variant="h3" as="h2">
+              <Text variant="h2" as="h2">
                 {formatMessage(m.detailsPage.detailTextHeading)}
               </Text>
               <Text as="div">{webRichText(item.detailedText)}</Text>
