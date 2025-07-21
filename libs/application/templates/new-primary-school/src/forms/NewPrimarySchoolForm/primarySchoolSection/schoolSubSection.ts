@@ -40,8 +40,9 @@ export const schoolSubSection = buildSubSection({
                   ...newPrimarySchoolMessages.primarySchool
                     .schoolApplyForNeighbourhoodSchoolSubLabel,
                   values: {
-                    neighbourhoodSchoolName:
-                      getNeighbourhoodSchoolName(application),
+                    neighbourhoodSchoolName: getNeighbourhoodSchoolName(
+                      application.externalData,
+                    ),
                   },
                 },
                 value: YES,

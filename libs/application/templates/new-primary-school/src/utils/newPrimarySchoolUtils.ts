@@ -370,9 +370,12 @@ export const getApplicationExternalData = (
   }
 }
 
-export const getSelectedChild = (application: Application) => {
-  const { childNationalId } = getApplicationAnswers(application.answers)
-  const { children } = getApplicationExternalData(application.externalData)
+export const getSelectedChild = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const { childNationalId } = getApplicationAnswers(answers)
+  const { children } = getApplicationExternalData(externalData)
 
   // Find the child name since we only have nationalId in the answers
   const selectedChild = children.find((child) => {
@@ -384,7 +387,10 @@ export const getSelectedChild = (application: Application) => {
 export const getOtherGuardian = (
   application: Application,
 ): Person | undefined => {
-  const selectedChild = getSelectedChild(application)
+  const selectedChild = getSelectedChild(
+    application.answers,
+    application.externalData,
+  )
 
   return selectedChild?.otherParent as Person | undefined
 }
@@ -432,10 +438,9 @@ export const formatGrade = (gradeLevel: string, lang: Locale) => {
   return grade
 }
 
-export const getCurrentSchoolName = (application: Application) => {
-  const { primaryOrgId, childAffiliations } = getApplicationExternalData(
-    application.externalData,
-  )
+export const getCurrentSchoolName = (externalData: ExternalData) => {
+  const { primaryOrgId, childAffiliations } =
+    getApplicationExternalData(externalData)
 
   if (!primaryOrgId || !childAffiliations) {
     return undefined
@@ -485,10 +490,9 @@ export const showPreferredLanguageFields = (answers: FormValue) => {
   return false
 }
 
-export const getNeighbourhoodSchoolName = (application: Application) => {
-  const { primaryOrgId, childAffiliations } = getApplicationExternalData(
-    application.externalData,
-  )
+export const getNeighbourhoodSchoolName = (externalData: ExternalData) => {
+  const { primaryOrgId, childAffiliations } =
+    getApplicationExternalData(externalData)
 
   if (!primaryOrgId || !childAffiliations) {
     return undefined
@@ -527,8 +531,11 @@ export const formatGender = (genderCode?: string): MessageDescriptor => {
   }
 }
 
-export const getGenderMessage = (application: Application) => {
-  const selectedChild = getSelectedChild(application)
+export const getGenderMessage = (
+  answers: FormValue,
+  externalData: ExternalData,
+) => {
+  const selectedChild = getSelectedChild(answers, externalData)
   const gender = formatGender(selectedChild?.genderCode)
   return gender
 }

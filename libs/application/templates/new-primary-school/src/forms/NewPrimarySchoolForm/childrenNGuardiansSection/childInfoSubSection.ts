@@ -34,7 +34,8 @@ export const childInfoSubSection = buildSubSection({
           title: newPrimarySchoolMessages.shared.fullName,
           disabled: true,
           defaultValue: (application: Application) =>
-            getSelectedChild(application)?.fullName,
+            getSelectedChild(application.answers, application.externalData)
+              ?.fullName,
         }),
         buildTextField({
           id: 'childInfo.nationalId',
@@ -43,7 +44,8 @@ export const childInfoSubSection = buildSubSection({
           format: '######-####',
           disabled: true,
           defaultValue: (application: Application) =>
-            getSelectedChild(application)?.nationalId,
+            getSelectedChild(application.answers, application.externalData)
+              ?.nationalId,
         }),
         buildTextField({
           id: 'childInfo.address.streetAddress',
@@ -78,7 +80,8 @@ export const childInfoSubSection = buildSubSection({
             title: newPrimarySchoolMessages.shared.gender,
           },
           {
-            value: (application: Application) => getGenderMessage(application),
+            value: (application: Application) =>
+              getGenderMessage(application.answers, application.externalData),
           },
         ),
         buildCheckboxField({

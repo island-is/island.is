@@ -71,7 +71,10 @@ export const transformApplicationToNewPrimarySchoolDTO = (
   const { primaryOrgId, childCitizenshipCode } = getApplicationExternalData(
     application.externalData,
   )
-  const selectedChild = getSelectedChild(application)
+  const selectedChild = getSelectedChild(
+    application.answers,
+    application.externalData,
+  )
 
   const agents: AgentInput[] = [
     ...guardians.map((guardian) => ({

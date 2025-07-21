@@ -57,9 +57,8 @@ export const currentSchoolSubSection = buildSubSection({
           condition: (_, externalData) => {
             return isCurrentSchoolRegistered(externalData)
           },
-
           defaultValue: (application: Application) =>
-            getCurrentSchoolName(application),
+            getCurrentSchoolName(application.externalData),
         }),
         buildCustomField(
           {
