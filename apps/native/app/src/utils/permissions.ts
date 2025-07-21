@@ -1,7 +1,8 @@
-import messaging from '@react-native-firebase/messaging'
+import { AuthorizationStatus } from '@react-native-firebase/messaging'
 import { PermissionsAndroid } from 'react-native'
 import { authStore } from '../stores/auth-store'
 import { androidIsVersion33OrAbove } from './versions-check'
+import { app } from '../lib/firebase'
 
 export const requestAndroidNotificationsPermission = async () => {
   const granted = await PermissionsAndroid.request(
@@ -21,10 +22,10 @@ export const requestNotificationsPermission = async () => {
     return await requestAndroidNotificationsPermission()
   }
 
-  const authStatus = await messaging().requestPermission()
+  const authStatus = await app.messaging().requestPermission()
 
   return (
-    authStatus === messaging.AuthorizationStatus.AUTHORIZED ||
-    authStatus === messaging.AuthorizationStatus.PROVISIONAL
+    authStatus === AuthorizationStatus.AUTHORIZED ||
+    authStatus === AuthorizationStatus.PROVISIONAL
   )
 }
