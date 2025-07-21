@@ -90,14 +90,13 @@ export const getLocalrunValueFile = async (
       ) as Record<string, string>,
       commands: [
         // Enable verbose logging for shell commands
+        // Expand as array to get empty or a string, never an empty string
         ...(logger.logLevel === 'debug' || logger.logLevel === 'trace'
           ? ['set -x']
           : []),
         `cd "${rootDir}"`, // Change directory to the root directory
         `. ./.env.${serviceNXName}`, // Source the environment variables for the service
-        `echo "Preparing dev-services for ${name}"`, // Log preparation message
-        `if yarn nx show projects --with-target dev-services | grep -q '^${serviceNXName}$'; then yarn nx dev-services ${serviceNXName} || exit $?; fi`, // Check and set up dev-services if needed
-        `echo "Starting ${name} in $PWD"`,
+        `yarn nx run-many -t dev-services -p ${serviceNXName}`, // Check and set up dev-services if needed
         `yarn nx serve ${serviceNXName}`, // Log start message and start the service
       ],
     }
