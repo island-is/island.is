@@ -114,12 +114,20 @@ export async function runLocalServices({
   for (const [name, service] of Object.entries(
     renderedLocalServices.services,
   )) {
+    if (services.length >= 2 && !services.includes(name)) {
+      logger.info(
+        `Skipping ${name} (not in service list [${services.join(',')}])`,
+      )
+      continue
+    }
     if (
       dependencies.length > 0 &&
       !dependencies.includes(name) &&
       !services.includes(name)
     ) {
-      logger.info(`Skipping ${name} (not a dependency)`)
+      logger.info(
+        `Skipping ${name} (not in dependency list [${dependencies.join(',')}])`,
+      )
       continue
     }
     const chainedCommand = [
