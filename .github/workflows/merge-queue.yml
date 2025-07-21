@@ -185,6 +185,22 @@ jobs:
             target: ${{ env.JSON_target }}
             imageName: ${{ env.JSON_imageName }}
             imageTag: ${{ env.JSON_imageTag }}
+
+  e2e:
+    uses: ./.github/workflows/e2e.yml
+    needs:
+      - prepare
+    if: ${{ needs.prepare.outputs.E2E_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
+    secrets: inherit
+    with:
+      e2e_build_id: '${{ needs.prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}'
+      nx_base: ${{ needs.prepare.outputs.NX_BASE }}
+      nx_head: ${{ needs.prepare.outputs.NX_HEAD }}
+      affected_projects: ${{ matrix.projects }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
+
   tests:
     needs:
       - prepare
