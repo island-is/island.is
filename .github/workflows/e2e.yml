@@ -73,5 +73,13 @@ jobs:
         uses: ./.github/actions/setup-playwright
 
       - name: Running e2e tests
-        run: yarn nx run-many --target=e2e --projects="${AFFECTED_PROJECTS}" --parallel 3
-        continue-on-error: ${{ inputs.allow_failure && inputs.allow_failure == 'true' }}
+        env:
+          ALLOW_FAILURE: ${{ inputs.allow_failure && inputs.allow_failure == 'true' }}
+        run: |
+          if ! yarn nx run-many --target=e2e --projects="${AFFECTED_PROJECTS}" --parallel 3 ; then
+            if [[ "$ALLOW_FAILURE" == true ]]; then
+              echo "::error title=e2e::Some of ${AFFECTED_PROJECTS} failed e2e tests"
+            else
+              exit 1
+            fi
+          fi
