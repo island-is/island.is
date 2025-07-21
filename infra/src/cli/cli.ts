@@ -71,6 +71,7 @@ yargs(process.argv.slice(2))
             default: false,
             alias: ['update-secrets'],
           })
+          .option('print', { type: 'boolean', default: true })
           // Custom check for 'services' since yargs lack built-in validation
           .check((argv) => {
             const svc = argv.services
@@ -87,7 +88,7 @@ yargs(process.argv.slice(2))
         services: argv.services,
         dryRun: argv.dry,
         json: argv.json,
-        print: true,
+        print: argv.print,
         updateSecrets: argv['secrets'],
       })
     },
