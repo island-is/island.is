@@ -26,6 +26,12 @@ export const serviceSetup = (services: {
     .env({
       API_URL: ref((h) => `http://${h.svc(services.api)}`),
       ENVIRONMENT: ref((h) => h.env.type),
+      NEXTAUTH_URL: {
+        local: 'http://localhost:4200/app/skilavottord/api/auth',
+        dev: 'https://beta.dev01.devland.is/app/skilavottord/api/auth',
+        staging: 'https://beta.staging01.devland.is/app/skilavottord/api/auth',
+        prod: 'https://island.is/app/skilavottord/api/auth',
+      },
     })
     .secrets({
       IDENTITY_SERVER_DOMAIN: '/k8s/skilavottord/web/IDENTITY_SERVER_DOMAIN',
@@ -33,7 +39,6 @@ export const serviceSetup = (services: {
         '/k8s/skilavottord/web/IDENTITY_SERVER_CLIENT_SECRET',
       IDENTITY_SERVER_LOGOUT_REDIRECT_URL:
         '/k8s/skilavottord/web/IDENTITY_SERVER_LOGOUT_REDIRECT_URL',
-      NEXTAUTH_URL: '/k8s/skilavottord/web/NEXTAUTH_URL',
       DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN',
     })
     .ingress({
