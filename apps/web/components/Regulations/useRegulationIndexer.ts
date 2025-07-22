@@ -155,12 +155,13 @@ type IndexerRet<Reg extends RegulationMaybeDiff> = {
   comments: HTMLText
 }
 
-const useRegulationIndexer = <Reg extends RegulationMaybeDiff>(
+// eslint-disable-next-line func-style
+function useRegulationIndexer<Reg extends RegulationMaybeDiff>(
   regulation: Reg,
   txt: NamespaceGetter<
     Partial<Record<'indexItem_regulation' | 'indexItem_comments', string>>
   >,
-): IndexerRet<Reg> => {
+): IndexerRet<Reg> {
   return useMemo(
     () => {
       if (regulation.showingDiff) {

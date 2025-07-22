@@ -133,7 +133,7 @@ jobs:
     uses: ./.github/workflows/e2e.yml
     needs:
       - prepare
-    if: ${{ needs.prepare.outputs.E2E_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' && contains(github.event.pull_request.labels.*.name, 'e2e') }}
+    if: ${{ needs.prepare.outputs.E2E_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
     secrets: inherit
     with:
       e2e_build_id: '${{ needs.prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}'
