@@ -13,6 +13,8 @@ export type BaseConfig = {
   baseURL?: string
   /** (Optional) The base path for playwright to use. */
   basePath?: string
+  /** (Optional) List of dependencies to start along with the service. */
+  dependencies?: string[]
 }
 
 /**
@@ -24,6 +26,7 @@ export const baseConfig = ({
   baseURL = process.env['BASE_URL'] ||
     `http://localhost:${process.env.PORT || 4200}`,
   basePath = process.env.BASE_PATH || '/',
+  dependencies = [],
 }: BaseConfig) => {
   baseURL = `${baseURL}/${basePath.replace(/^\//, '')}`
   return defineConfig({
@@ -37,7 +40,9 @@ export const baseConfig = ({
     fullyParallel: true,
     /* Run your local dev server before starting the tests */
     webServer: {
-      command: `yarn dev ${project}`,
+      command: `yarn infra run-local-env --no-secrets ${project} --dependencies ${dependencies.join(
+        ' ',
+      )}`,
       url: baseURL,
       reuseExistingServer: !process.env.CI,
       stdout: 'pipe',

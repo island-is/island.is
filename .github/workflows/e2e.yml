@@ -18,6 +18,10 @@ on:
         description: 'Affected projects (comma,separated,list)'
         required: true
         type: string
+      allow_failure:
+        description: 'Allow tests to fail'
+        default: false
+        type: boolean
 
 env:
   COMPOSE_HTTP_TIMEOUT: 180
@@ -27,7 +31,7 @@ env:
   DISABLE_PROBLEMATIC: 'false'
   CHUNK_SIZE: '8'
   MAX_JOBS: '3'
-  NX_PARALLEL: '2'
+  NX_PARALLEL: '3'
   NX_MAX_PARALLEL: '4'
   NX_TASKS_RUNNER: ci
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
@@ -56,11 +60,17 @@ jobs:
       NX_HEAD: ${{ inputs.nx_head }}
       AFFECTED_PROJECTS: ${{ inputs.affected_projects }}
     steps:
-      - name: checkout
+      - name: Checkout
         uses: actions/checkout@v4
 
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
+
+      # Need infra as well for run-local-env
+      - name: Setup yarn (infra)
+        uses: ./.github/actions/setup-yarn
+        with:
+          working-directory: infra
 
       - name: load-deps
         uses: ./.github/actions/load-deps
@@ -69,4 +79,8 @@ jobs:
         uses: ./.github/actions/setup-playwright
 
       - name: Running e2e tests
-        run: yarn nx run-many --target=e2e --projects="${AFFECTED_PROJECTS}" --parallel 3
+        run: |
+          if ! yarn nx run-many --target=e2e --projects="${AFFECTED_PROJECTS}"; then
+            echo "::error title=e2e::Project ${AFFECTED_PROJECTS} failed e2e tests"
+            exit ${{ inputs.allow_failure == 'true' && 0 || 1 }}
+          fi
