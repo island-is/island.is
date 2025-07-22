@@ -1,5 +1,5 @@
 import { Meta, Story, Canvas, Controls } from '@storybook/blocks'
-import * as ColumnsStories from './Columns.stories';
+import * as ColumnsStories from './Columns.stories'
 
 import { AlertMessage } from '../AlertMessage/AlertMessage'
 import { Box } from '../Box/Box'
@@ -20,7 +20,10 @@ export const DemoBox = ({ background, minHeight = 'auto', children }) => (
 ## Provides spacing between *Column*s
 
 <Box marginY={3}>
-  <AlertMessage type="error" title="Please use the Grid component for page layouts." />
+  <AlertMessage
+    type="error"
+    title="Please use the Grid component for page layouts."
+  />
 </Box>
 
 ### Default
