@@ -94,7 +94,10 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
       application.answers,
       application.externalData,
     )
-    const guardian = getOtherGuardian(application)
+    const guardian = getOtherGuardian(
+      application.answers,
+      application.externalData,
+    )
 
     let childCitizenshipCode = ''
     if (child) {

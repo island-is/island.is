@@ -6,6 +6,7 @@ import {
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { MessageDescriptor } from 'react-intl'
+import { newPrimarySchoolMessages } from '../lib/messages'
 import {
   Affiliation,
   Child,
@@ -18,11 +19,9 @@ import {
 } from '../types'
 import {
   ApplicationType,
-  LanguageEnvironmentOptions,
   ReasonForApplicationOptions,
   SchoolType,
 } from './constants'
-import { newPrimarySchoolMessages } from '../lib/messages'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
   let applicationType = getValueViaPath<ApplicationType>(
@@ -392,25 +391,11 @@ export const getSelectedChild = (
 }
 
 export const getOtherGuardian = (
-  application: Application,
-): Person | undefined => {
-  const selectedChild = getSelectedChild(
-    application.answers,
-    application.externalData,
-  )
-
-  return selectedChild?.otherParent as Person | undefined
-}
-
-export const hasOtherGuardian = (
   answers: FormValue,
   externalData: ExternalData,
-): boolean => {
-  const otherGuardian = getOtherGuardian({
-    answers,
-    externalData,
-  } as Application)
-  return !!otherGuardian
+): Person | undefined => {
+  const selectedChild = getSelectedChild(answers, externalData)
+  return selectedChild?.otherParent as Person | undefined
 }
 
 export const getSelectedOptionLabel = (
@@ -457,44 +442,6 @@ export const getCurrentSchoolName = (externalData: ExternalData) => {
   return childAffiliations
     .map((affiliation) => affiliation.organization)
     .find((organization) => organization?.id === primaryOrgId)?.name
-}
-
-export const hasForeignLanguages = (answers: FormValue) => {
-  const { languageEnvironment } = getApplicationAnswers(answers)
-
-  if (!languageEnvironment) {
-    return false
-  }
-
-  return languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
-}
-
-export const showPreferredLanguageFields = (answers: FormValue) => {
-  const { languageEnvironment, selectedLanguages } =
-    getApplicationAnswers(answers)
-
-  if (!selectedLanguages) {
-    return false
-  }
-
-  if (
-    languageEnvironment ===
-      LanguageEnvironmentOptions.ONLY_OTHER_THAN_ICELANDIC &&
-    selectedLanguages.length >= 1 &&
-    selectedLanguages.filter((language) => language.code).length >= 1
-  ) {
-    return true
-  }
-
-  if (
-    languageEnvironment === LanguageEnvironmentOptions.ICELANDIC_AND_OTHER &&
-    selectedLanguages.length >= 2 &&
-    selectedLanguages.filter((language) => language.code).length >= 2
-  ) {
-    return true
-  }
-
-  return false
 }
 
 export const getNeighbourhoodSchoolName = (externalData: ExternalData) => {

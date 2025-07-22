@@ -16,11 +16,11 @@ import {
 } from '@island.is/application/ui-components'
 import { getAllLanguageCodes } from '@island.is/shared/utils'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
+import { hasOtherGuardian } from '../../../utils/conditionUtils'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
   getOtherGuardian,
-  hasOtherGuardian,
 } from '../../../utils/newPrimarySchoolUtils'
 
 export const guardiansSubSection = buildSubSection({
@@ -164,7 +164,8 @@ export const guardiansSubSection = buildSubSection({
           condition: (answers, externalData) =>
             hasOtherGuardian(answers, externalData),
           defaultValue: (application: Application) =>
-            getOtherGuardian(application)?.fullName,
+            getOtherGuardian(application.answers, application.externalData)
+              ?.fullName,
         }),
         buildTextField({
           id: 'guardians[1].nationalId',
@@ -176,7 +177,8 @@ export const guardiansSubSection = buildSubSection({
           condition: (answers, externalData) =>
             hasOtherGuardian(answers, externalData),
           defaultValue: (application: Application) =>
-            getOtherGuardian(application)?.nationalId,
+            getOtherGuardian(application.answers, application.externalData)
+              ?.nationalId,
         }),
         buildTextField({
           id: 'guardians[1].address.streetAddress',
@@ -187,7 +189,8 @@ export const guardiansSubSection = buildSubSection({
           condition: (answers, externalData) =>
             hasOtherGuardian(answers, externalData),
           defaultValue: (application: Application) =>
-            getOtherGuardian(application)?.address.streetName,
+            getOtherGuardian(application.answers, application.externalData)
+              ?.address.streetName,
         }),
         buildTextField({
           id: 'guardians[1].address.postalCode',
@@ -198,7 +201,8 @@ export const guardiansSubSection = buildSubSection({
           condition: (answers, externalData) =>
             hasOtherGuardian(answers, externalData),
           defaultValue: (application: Application) =>
-            getOtherGuardian(application)?.address.postalCode,
+            getOtherGuardian(application.answers, application.externalData)
+              ?.address.postalCode,
         }),
         buildTextField({
           id: 'guardians[1].address.city',
@@ -209,7 +213,8 @@ export const guardiansSubSection = buildSubSection({
           condition: (answers, externalData) =>
             hasOtherGuardian(answers, externalData),
           defaultValue: (application: Application) =>
-            getOtherGuardian(application)?.address.city,
+            getOtherGuardian(application.answers, application.externalData)
+              ?.address.city,
         }),
         buildTextField({
           id: 'guardians[1].email',
