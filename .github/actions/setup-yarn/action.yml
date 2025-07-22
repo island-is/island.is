@@ -31,7 +31,7 @@ runs:
       run: |
         echo "yarn-cache=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
         # Set output only if cypress exists (empty otherwise)
-        CYPRESS_CACHE_FOLDER=
+        CYPRESS_CACHE_FOLDER=${CYPRESS_CACHE_FOLDER:-}
         if jq -e '(.dependencies // {}) * (.devDependencies // {}) | keys | .[] | select(. == "cypress")' package.json; then
           CYPRESS_CACHE_FOLDER="${{ runner.temp }}/.cypress-cache"
         fi
