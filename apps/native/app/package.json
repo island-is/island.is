@@ -110,10 +110,10 @@
     "@types/lodash": "4.17.1",
     "@types/react": "~18.2.79",
     "@types/react-test-renderer": "^18.0.0",
-    "babel-jest": "^29.6.3",
+    "babel-jest": "^30.0.5",
     "babel-loader": "^8.3.0",
     "babel-plugin-formatjs": "10.3.9",
-    "jest": "29.7.0",
+    "jest": "30.0.5",
     "react-test-renderer": "18.2.0",
     "typescript": "5.3.3"
   },

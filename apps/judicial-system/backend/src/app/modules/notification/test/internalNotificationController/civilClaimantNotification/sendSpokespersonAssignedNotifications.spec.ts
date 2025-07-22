@@ -124,8 +124,8 @@ describe('InternalNotificationController - Send spokesperson assigned notificati
         shouldSendEmail ? '' : 'not '
       }send a spokesperson assigned notification`, async () => {
         if (shouldSendEmail) {
-          expect(mockEmailService.sendEmail).toBeCalledTimes(1)
-          expect(mockEmailService.sendEmail).toBeCalledWith({
+          expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(1)
+          expect(mockEmailService.sendEmail).toHaveBeenCalledWith({
             from: {
               name: mockConfig.email.fromName,
               address: mockConfig.email.fromEmail,
@@ -159,7 +159,7 @@ describe('InternalNotificationController - Send spokesperson assigned notificati
             ],
           })
         } else {
-          expect(mockEmailService.sendEmail).not.toBeCalled()
+          expect(mockEmailService.sendEmail).not.toHaveBeenCalled()
         }
       })
     },

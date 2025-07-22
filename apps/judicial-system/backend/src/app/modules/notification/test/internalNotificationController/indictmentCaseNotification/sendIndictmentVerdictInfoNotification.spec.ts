@@ -91,7 +91,7 @@ describe('IndictmentCaseService', () => {
         IndictmentCaseNotificationType.INDICTMENT_VERDICT_INFO,
       )
 
-      expect(mockEmailService.sendEmail).toBeCalledTimes(0)
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(0)
       expect(then.result.delivered).toEqual(true)
     })
 
@@ -106,7 +106,7 @@ describe('IndictmentCaseService', () => {
         IndictmentCaseNotificationType.INDICTMENT_VERDICT_INFO,
       )
 
-      expect(mockEmailService.sendEmail).toBeCalledWith(
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [
             { address: prosecutorsOfficeEmail, name: prosecutorsOfficeName },
@@ -141,7 +141,7 @@ describe('IndictmentCaseService', () => {
         IndictmentCaseNotificationType.INDICTMENT_VERDICT_INFO,
       )
 
-      expect(mockEmailService.sendEmail).not.toBeCalled()
+      expect(mockEmailService.sendEmail).not.toHaveBeenCalled()
     })
   })
 })

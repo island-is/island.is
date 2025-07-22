@@ -59,7 +59,7 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
     })
 
     it('should call personal tax return api twice', () => {
-      expect(personalTaxReturnInPdf).toBeCalledTimes(2)
+      expect(personalTaxReturnInPdf).toHaveBeenCalledTimes(2)
     })
 
     it('should call personal tax return api with last year', () => {
@@ -119,7 +119,7 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
     })
 
     it('should call personal tax return api once', () => {
-      expect(personalTaxReturnInPdf).toBeCalledTimes(1)
+      expect(personalTaxReturnInPdf).toHaveBeenCalledTimes(1)
     })
 
     it('should call personal tax return api with last year', () => {
@@ -193,7 +193,7 @@ describe('PersonalTaxReturnController - Municipalities Personal Tax Return', () 
     })
 
     it('should call personal tax return api once', () => {
-      expect(personalTaxReturnInPdf).toBeCalledTimes(1)
+      expect(personalTaxReturnInPdf).toHaveBeenCalledTimes(1)
     })
 
     it('should call personal tax return api with last year', () => {

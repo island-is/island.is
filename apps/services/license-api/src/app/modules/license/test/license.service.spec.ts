@@ -508,7 +508,7 @@ describe('LicenseService', () => {
           })
 
           //assert
-          await expect(result).rejects.toThrowError(
+          await expect(result).rejects.toThrow(
             new BadRequestException(['some user error']),
           )
         })
@@ -520,7 +520,7 @@ describe('LicenseService', () => {
           })
 
           //assert
-          await expect(result).rejects.toThrowError(
+          await expect(result).rejects.toThrow(
             new InternalServerErrorException(['some service error']),
           )
         })

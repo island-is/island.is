@@ -119,8 +119,8 @@ describe('InternalNotificationController - Send defendant delegated defender cho
     })
 
     it('should send a confirmed defender assigned notification with a link to the case', () => {
-      expect(mockEmailService.sendEmail).toBeCalledTimes(2)
-      expect(mockEmailService.sendEmail).toBeCalledWith({
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(2)
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith({
         from: {
           name: mockConfig.email.fromName,
           address: mockConfig.email.fromEmail,
@@ -143,7 +143,7 @@ describe('InternalNotificationController - Send defendant delegated defender cho
         ),
       })
 
-      expect(mockEmailService.sendEmail).toBeCalledWith({
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith({
         from: {
           name: mockConfig.email.fromName,
           address: mockConfig.email.fromEmail,

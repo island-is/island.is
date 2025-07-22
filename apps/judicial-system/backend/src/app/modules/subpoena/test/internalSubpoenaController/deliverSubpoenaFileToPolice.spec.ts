@@ -80,14 +80,14 @@ describe('InternalSubpoenaController - Deliver subpoena to police', () => {
     })
 
     it('should call deliverSubpoenaFileToPolice', () => {
-      expect(mockPdfService.getSubpoenaPdf).toBeCalledWith(
+      expect(mockPdfService.getSubpoenaPdf).toHaveBeenCalledWith(
         theCase,
         defendant,
         subpoena,
       )
       expect(
         mockInternalCaseService.deliverCaseToPoliceWithFiles,
-      ).toBeCalledWith(theCase, user, [
+      ).toHaveBeenCalledWith(theCase, user, [
         {
           type: PoliceDocumentType.RVFK,
           courtDocument: Base64.btoa(subpoenaPdf.toString('binary')),

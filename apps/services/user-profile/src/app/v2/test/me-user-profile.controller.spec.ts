@@ -625,7 +625,7 @@ describe('MeUserProfileController', () => {
       expect(userProfile.mobileStatus).toBe(DataStatus.VERIFIED)
 
       // Check if confirmSms is called once, so we know it was not skipped with audkenniSimNumber
-      expect(confirmSmsSpy).toBeCalledTimes(1)
+      expect(confirmSmsSpy).toHaveBeenCalledTimes(1)
     })
 
     it('PATCH /v2/me should return 200 with changed mobile data in response and skip verification when when phone number matches audkenniSimNumber', async () => {
@@ -655,7 +655,7 @@ describe('MeUserProfileController', () => {
       expect(userProfile.mobilePhoneNumberVerified).toBe(true)
       expect(userProfile.mobileStatus).toBe(DataStatus.VERIFIED)
 
-      expect(confirmSmsSpy).toBeCalledTimes(0)
+      expect(confirmSmsSpy).toHaveBeenCalledTimes(0)
     })
 
     it('PATCH /v2/me should return 200 with changed email data in response', async () => {

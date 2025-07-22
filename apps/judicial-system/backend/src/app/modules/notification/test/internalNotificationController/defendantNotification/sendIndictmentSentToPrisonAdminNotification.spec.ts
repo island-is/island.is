@@ -107,9 +107,9 @@ describe('InternalNotificationController - Defendant - Send indictment sent to p
     })
 
     it('should send a notification to prison admin emails', () => {
-      expect(mockEmailService.sendEmail).toBeCalledTimes(emails.length)
+      expect(mockEmailService.sendEmail).toHaveBeenCalledTimes(emails.length)
       emails.forEach((email) => {
-        expect(mockEmailService.sendEmail).toBeCalledWith(
+        expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
           expect.objectContaining({
             to: [
               {

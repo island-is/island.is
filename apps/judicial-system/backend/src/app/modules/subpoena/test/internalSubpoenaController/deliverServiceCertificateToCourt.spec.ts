@@ -91,12 +91,12 @@ describe('InternalSubpoenaController - Deliver subpoena certificate to court', (
     })
 
     it('should deliver the service certificate', () => {
-      expect(mockPdfService.getServiceCertificatePdf).toBeCalledWith(
+      expect(mockPdfService.getServiceCertificatePdf).toHaveBeenCalledWith(
         theCase,
         defendant,
         subpoena,
       )
-      expect(mockCourtService.createDocument).toBeCalledWith(
+      expect(mockCourtService.createDocument).toHaveBeenCalledWith(
         user,
         caseId,
         courtId,

@@ -135,11 +135,15 @@ describe('TenantsService', () => {
         currentUser,
       )
 
-      expect(mockAdminDevApi.meTenantsControllerFindByIdRaw).toBeCalledTimes(1)
+      expect(
+        mockAdminDevApi.meTenantsControllerFindByIdRaw,
+      ).toHaveBeenCalledTimes(1)
       expect(
         mockAdminStagingApi.meTenantsControllerFindByIdRaw,
-      ).toBeCalledTimes(1)
-      expect(mockAdminProdApi.meTenantsControllerFindByIdRaw).toBeCalledTimes(1)
+      ).toHaveBeenCalledTimes(1)
+      expect(
+        mockAdminProdApi.meTenantsControllerFindByIdRaw,
+      ).toHaveBeenCalledTimes(1)
       expect(tenants).toEqual({
         id: mockTenants.tenant1.name,
         environments: [
@@ -166,11 +170,15 @@ describe('TenantsService', () => {
         currentUser,
       )
 
-      expect(mockAdminDevApi.meTenantsControllerFindByIdRaw).toBeCalledTimes(1)
+      expect(
+        mockAdminDevApi.meTenantsControllerFindByIdRaw,
+      ).toHaveBeenCalledTimes(1)
       expect(
         mockAdminStagingApi.meTenantsControllerFindByIdRaw,
-      ).toBeCalledTimes(1)
-      expect(mockAdminProdApi.meTenantsControllerFindByIdRaw).toBeCalledTimes(1)
+      ).toHaveBeenCalledTimes(1)
+      expect(
+        mockAdminProdApi.meTenantsControllerFindByIdRaw,
+      ).toHaveBeenCalledTimes(1)
       expect(tenants).toEqual({
         id: mockTenants.tenant3.name,
         environments: [
@@ -187,11 +195,15 @@ describe('TenantsService', () => {
       const tenants = await tenantsService.getTenants(currentUser)
 
       // Assert
-      expect(mockAdminDevApi.meTenantsControllerFindAllRaw).toBeCalledTimes(1)
-      expect(mockAdminStagingApi.meTenantsControllerFindAllRaw).toBeCalledTimes(
-        1,
-      )
-      expect(mockAdminProdApi.meTenantsControllerFindAllRaw).toBeCalledTimes(1)
+      expect(
+        mockAdminDevApi.meTenantsControllerFindAllRaw,
+      ).toHaveBeenCalledTimes(1)
+      expect(
+        mockAdminStagingApi.meTenantsControllerFindAllRaw,
+      ).toHaveBeenCalledTimes(1)
+      expect(
+        mockAdminProdApi.meTenantsControllerFindAllRaw,
+      ).toHaveBeenCalledTimes(1)
       expect(tenants).toEqual({
         totalCount: 3,
         data: [
@@ -267,7 +279,9 @@ describe('TenantsService', () => {
       const tenants = await tenantsService.getTenants(currentUser)
 
       // Assert
-      expect(mockAdminDevApi.meTenantsControllerFindAllRaw).toBeCalledTimes(1)
+      expect(
+        mockAdminDevApi.meTenantsControllerFindAllRaw,
+      ).toHaveBeenCalledTimes(1)
       expect(tenants).toEqual({
         totalCount: 3,
         data: [
@@ -331,8 +345,8 @@ describe('TenantsService', () => {
       })
 
       // Assert
-      expect(mockLogger.error).toBeCalledTimes(1)
-      expect(mockLogger.error).toBeCalledWith(
+      expect(mockLogger.error).toHaveBeenCalledTimes(1)
+      expect(mockLogger.error).toHaveBeenCalledWith(
         'No admin api clients configured, at least one configured api is required.',
       )
     })

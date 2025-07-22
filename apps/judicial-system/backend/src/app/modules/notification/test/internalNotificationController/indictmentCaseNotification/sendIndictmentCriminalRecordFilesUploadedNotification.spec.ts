@@ -71,7 +71,7 @@ describe('IndictmentCaseService', () => {
         IndictmentCaseNotificationType.CRIMINAL_RECORD_FILES_UPLOADED,
       )
 
-      expect(mockEmailService.sendEmail).toBeCalledWith(
+      expect(mockEmailService.sendEmail).toHaveBeenCalledWith(
         expect.objectContaining({
           to: [
             {

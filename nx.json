@@ -32,13 +32,6 @@
         ],
         "nxCloudId": "64e4eb6a54304f090734e8df"
       }
-    },
-    "docker-test": {
-      "runner": "@nx/workspace/tasks-runners/default",
-      "options": {
-        "cacheableOperations": [],
-        "cacheDirectory": ".cache/nx"
-      }
     }
   },
   "generators": {

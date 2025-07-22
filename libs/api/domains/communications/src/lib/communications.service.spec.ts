@@ -161,7 +161,7 @@ describe('communicationsService', () => {
 
       expect(async () => {
         await communicationsService.sendEmail(fakeContactUsInput)
-      }).rejects.not.toThrowError('Some unexpected error')
+      }).rejects.not.toThrow('Some unexpected error')
     })
   })
 })

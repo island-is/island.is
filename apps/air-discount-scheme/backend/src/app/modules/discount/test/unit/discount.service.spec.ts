@@ -263,7 +263,7 @@ describe('DiscountService', () => {
         unConnectedFlights,
         false,
       )
-      expect(explicitCodeSpy).toBeCalledTimes(1)
+      expect(explicitCodeSpy).toHaveBeenCalledTimes(1)
     })
     it('should not create a discount for an invalid national id', async () => {
       jest

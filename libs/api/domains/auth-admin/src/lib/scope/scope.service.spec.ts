@@ -182,9 +182,15 @@ describe('ScopeService', () => {
         ],
       })
 
-      expect(mockAdminDevApi.meScopesControllerCreateRaw).toBeCalledTimes(1)
-      expect(mockAdminStagingApi.meScopesControllerCreateRaw).toBeCalledTimes(1)
-      expect(mockAdminProdApi.meScopesControllerCreateRaw).toBeCalledTimes(1)
+      expect(mockAdminDevApi.meScopesControllerCreateRaw).toHaveBeenCalledTimes(
+        1,
+      )
+      expect(
+        mockAdminStagingApi.meScopesControllerCreateRaw,
+      ).toHaveBeenCalledTimes(1)
+      expect(
+        mockAdminProdApi.meScopesControllerCreateRaw,
+      ).toHaveBeenCalledTimes(1)
       expect(scopeResponses).toEqual([
         {
           scopeName: mockCreateScopes.scope1.name,
@@ -209,9 +215,15 @@ describe('ScopeService', () => {
         environments: [Environment.Production],
       })
 
-      expect(mockAdminDevApi.meScopesControllerCreateRaw).toBeCalledTimes(0)
-      expect(mockAdminStagingApi.meScopesControllerCreateRaw).toBeCalledTimes(0)
-      expect(mockAdminProdApi.meScopesControllerCreateRaw).toBeCalledTimes(1)
+      expect(mockAdminDevApi.meScopesControllerCreateRaw).toHaveBeenCalledTimes(
+        0,
+      )
+      expect(
+        mockAdminStagingApi.meScopesControllerCreateRaw,
+      ).toHaveBeenCalledTimes(0)
+      expect(
+        mockAdminProdApi.meScopesControllerCreateRaw,
+      ).toHaveBeenCalledTimes(1)
       expect(scopeResponses).toEqual([
         {
           scopeName: mockCreateScopes.scope1.name,
@@ -249,13 +261,13 @@ describe('ScopeService', () => {
       // Assert
       expect(
         mockAdminDevApi.meScopesControllerFindAllByTenantIdRaw,
-      ).toBeCalledTimes(1)
+      ).toHaveBeenCalledTimes(1)
       expect(
         mockAdminStagingApi.meScopesControllerFindAllByTenantIdRaw,
-      ).toBeCalledTimes(1)
+      ).toHaveBeenCalledTimes(1)
       expect(
         mockAdminProdApi.meScopesControllerFindAllByTenantIdRaw,
-      ).toBeCalledTimes(1)
+      ).toHaveBeenCalledTimes(1)
 
       expect(scopeResponses).toEqual({
         data: scopeModels,
@@ -288,13 +300,13 @@ describe('ScopeService', () => {
       // Assert
       expect(
         mockAdminDevApi.meScopesControllerFindByTenantIdAndScopeNameRaw,
-      ).toBeCalledTimes(1)
+      ).toHaveBeenCalledTimes(1)
       expect(
         mockAdminStagingApi.meScopesControllerFindByTenantIdAndScopeNameRaw,
-      ).toBeCalledTimes(1)
+      ).toHaveBeenCalledTimes(1)
       expect(
         mockAdminProdApi.meScopesControllerFindByTenantIdAndScopeNameRaw,
-      ).toBeCalledTimes(1)
+      ).toHaveBeenCalledTimes(1)
       expect(scopeResponses).toEqual({
         scopeName: mockedScope.name,
         environments: environments,

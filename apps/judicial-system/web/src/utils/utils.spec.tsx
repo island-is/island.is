@@ -269,7 +269,7 @@ describe('Utils', () => {
       )
 
       // Assert
-      expect(spy).toBeCalledWith(id, update)
+      expect(spy).toHaveBeenCalledWith(id, update)
     })
 
     test('should not call the updateCase function if the value is invalid', () => {
