@@ -51,8 +51,8 @@ on:
         value: ${{ jobs.install.outputs.NX_BASE }}
       DEPLOY_FEATURE:
         value: ${{ jobs.install.outputs.DEPLOY_FEATURE }}
-      IS_UNICORN:
-        value: ${{ jobs.install.outputs.IS_UNICORN }}
+      is-unicorn:
+        value: ${{ jobs.install.outputs.is-unicorn }}
 env:
   COMPOSE_HTTP_TIMEOUT: 180
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
@@ -96,8 +96,7 @@ jobs:
       NX_HEAD: ${{ steps.export-sha.outputs.NX_HEAD }}
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
       DEPLOY_FEATURE: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE }}
-      IS_UNICORN: ${{ steps.unicorn.outputs.IS_UNICORN }}
-      UNICORNS: ${{ steps.unicorn.outputs.UNICORNS }}
+      is-unicorn: ${{ steps.unicorn.outputs.is-unicorn }}
     runs-on: arc-shared
     permissions:
       contents: 'read'
@@ -211,12 +210,12 @@ jobs:
           NX_HEAD: ${{ steps.export-sha.outputs.NX_HEAD }}
         run: |
           meta_obj="{\"head\": \"${NX_HEAD}\", \"base\": \"${NX_BASE}\" }"
-          is_unicorn=$(node scripts/ci/unicorn-utils.mjs affected "$meta_obj")
+          is_unicorn=$(node scripts/ci/unicorn-utils.mjs is-unicorn "$meta_obj")
           unicorns=$(node scripts/ci/unicorn-utils.mjs show-unicorns "$meta_obj")
           unicorns_json=$(node scripts/ci/unicorn-utils.mjs show-unicorns "$meta_obj" --json)
-          echo IS_UNICORN="$is_unicorn" | tee -a "$GITHUB_OUTPUT"
-          echo UNICORNS="$unicorns" | tee -a "$GITHUB_OUTPUT"
-          echo UNICORN_CHUNKS="$unicorns_json" | tee -a "$GITHUB_OUTPUT"
+          echo is-unicorn="$is_unicorn" | tee -a "$GITHUB_OUTPUT"
+          echo unicorns="$unicorns" | tee -a "$GITHUB_OUTPUT"
+          echo unicorn-chunks="$unicorns_json" | tee -a "$GITHUB_OUTPUT"
 
       - name: Prepare lint targets
         id: lint_projects

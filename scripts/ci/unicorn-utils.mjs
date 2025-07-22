@@ -9,10 +9,10 @@ const unicornApps = ['unicorn-app', 'payments', 'services-payments']
 /**
  * Determines if there are any affected projects with the "unicorn" tag based on the current Git base branch.
  *
- * @param {string} jsonString - A JSON string of the form {"head": "<head>", "base": "<base>" }
+ * @param {string[]} args - The input arguments, expected to be a JSON string array where the first element contains the base branch information.
  */
-const affectedUnicorns = (jsonString) => {
-  const arg = JSON.parse(jsonString ?? '{}')
+const isUnicorn = (args) => {
+  const arg = JSON.parse(args[0] ?? '{}')
   const baseBranch = process.env.GIT_BASE || process.env.NX_BASE || arg.base
 
   const nxCmd = [
@@ -32,6 +32,7 @@ const affectedUnicorns = (jsonString) => {
       execSync(`cd ${workspaceRoot} && ${nxCmd.join(' ')}`).toString(),
     )
     console.error(`Affected projects:`, affected)
+    console.log(affected.length > 0)
   } catch (e) {
     console.error(e.message)
     process.exit(1)
@@ -54,24 +55,11 @@ const showUnicorns = (args) => {
   return unicornApps
 }
 
-/**
- * Exits with exit code 0 (success) if the requested application is a unicorn app, 1 (failure) otherwise
- *
- * @param {string} app - Nx application to check for unicornity
- */
-const isUnicorn = (app) => {
-  const included = unicornApps.includes(app)
-  process.exit(included ? 0 : 1)
-}
-
 const cmd = process.argv[2]
 const args = process.argv.slice(3)
 switch (cmd) {
-  case 'affected':
-    affectedUnicorns(args[0])
-    break
   case 'is-unicorn':
-    isUnicorn(args[0])
+    isUnicorn(args)
     break
   case 'show-unicorns':
     showUnicorns(args)
