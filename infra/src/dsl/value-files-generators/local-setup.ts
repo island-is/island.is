@@ -90,13 +90,14 @@ export const getLocalrunValueFile = async (
       ) as Record<string, string>,
       commands: [
         // Enable verbose logging for shell commands
-        // Expand as array to get empty or a string, never an empty string
         ...(logger.logLevel === 'debug' || logger.logLevel === 'trace'
           ? ['set -x']
           : []),
         `cd "${rootDir}"`, // Change directory to the root directory
         `. ./.env.${serviceNXName}`, // Source the environment variables for the service
-        `yarn nx run-many -t dev-services -p ${serviceNXName}`, // Check and set up dev-services if needed
+        `echo "Preparing dev-services for ${name}"`, // Log preparation message
+        `if yarn nx show projects --with-target dev-services | grep -q '^${serviceNXName}$'; then yarn nx dev-services ${serviceNXName} || exit $?; fi`, // Check and set up dev-services if needed
+        `echo "Starting ${name} in $PWD"`,
         `yarn nx serve ${serviceNXName}`, // Log start message and start the service
       ],
     }
@@ -196,7 +197,7 @@ export const getLocalrunValueFile = async (
   const mocksObj = {
     containerer: 'docker',
     containererCommand: 'run',
-    containererFlags: '--rm',
+    containererFlags: '-it --rm',
     ports: ['2525', ...mocksConfigs.ports],
     mounts: [`${process.cwd()}/${defaultMountebankConfig}:/app/default.json:z`],
     image: 'docker.io/bbyars/mountebank:2.8.1',
