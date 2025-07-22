@@ -1,5 +1,8 @@
 import Agent, { HttpsOptions, HttpsAgent } from 'agentkeepalive'
 import { SecureContextOptions } from 'tls'
+import { Agent as HttpAgent } from 'http'
+import { Agent as NodeHttpsAgent } from 'https'
+import { URL } from 'url'
 import { FetchMiddlewareOptions, MiddlewareAPI } from './nodeFetch'
 
 export type AgentOptions = HttpsOptions
@@ -41,7 +44,10 @@ export function withAgent({
   }
 
   return (request) => {
-    request.agent = request.agent || getAgent
+    request.agent =
+      request.agent ||
+      ((parsedUrl: any) =>
+        getAgent(parsedUrl as URL) as HttpAgent | NodeHttpsAgent)
     return fetch(request)
   }
 }

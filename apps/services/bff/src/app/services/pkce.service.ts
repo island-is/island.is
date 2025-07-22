@@ -37,7 +37,7 @@ export class PKCEService {
     const hashBuffer = await crypto.webcrypto.subtle.digest('SHA-256', data)
 
     // and then Base64 URL encode
-    return this.base64UrlEncode(Buffer.from(hashBuffer))
+    return this.base64UrlEncode(Buffer.from(new Uint8Array(hashBuffer)))
   }
 
   /**

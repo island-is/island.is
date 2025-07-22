@@ -135,7 +135,9 @@ export class PasskeysCoreService {
     await this.passkeyModel.upsert(
       {
         passkey_id: registrationInfo.credentialID,
-        public_key: Buffer.from(registrationInfo.credentialPublicKey),
+        public_key: new Uint8Array(
+          Buffer.from(registrationInfo.credentialPublicKey),
+        ),
         user_sub: getUserId(user),
         type: PASSKEY_TYPE,
         audkenni_sim_number: user.audkenniSimNumber ?? '',

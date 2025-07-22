@@ -30,11 +30,13 @@ export class WatsonAssistantChatService {
         padding: constants.RSA_PKCS1_OAEP_PADDING,
         oaepHash: 'sha1',
       },
-      Buffer.from(
-        JSON.stringify({
-          name: input.name,
-          email: input.email,
-        }),
+      new Uint8Array(
+        Buffer.from(
+          JSON.stringify({
+            name: input.name,
+            email: input.email,
+          }),
+        ),
       ),
     ).toString('base64')
 

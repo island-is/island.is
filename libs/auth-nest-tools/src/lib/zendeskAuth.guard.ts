@@ -36,6 +36,9 @@ export class ZendeskAuthGuard implements CanActivate {
     )
     const sig = hmac.update(timestamp + body).digest('base64')
 
-    return crypto.timingSafeEqual(Buffer.from(signature), Buffer.from(sig))
+    return crypto.timingSafeEqual(
+      new Uint8Array(Buffer.from(signature)),
+      new Uint8Array(Buffer.from(sig)),
+    )
   }
 }
