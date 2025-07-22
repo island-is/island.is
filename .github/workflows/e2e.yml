@@ -76,5 +76,5 @@ jobs:
         run: |
           if ! yarn nx run-many --target=e2e --projects="${AFFECTED_PROJECTS}"; then
             echo "::error title=e2e::Project ${AFFECTED_PROJECTS} failed e2e tests"
-            exit "${{ inputs.allow_failure == 'true' && 0 || exit 1 }}
+            exit ${{ inputs.allow_failure == 'true' && 0 || 1 }}
           fi
