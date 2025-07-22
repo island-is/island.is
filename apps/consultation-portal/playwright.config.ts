@@ -6,5 +6,6 @@ export default defineConfig({
     filename: __filename,
     project: 'consultation-portal',
     basePath: '/samradsgatt',
+    dependencies: ['api'],
   }),
 })

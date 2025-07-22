@@ -29,8 +29,7 @@
       "executor": "@nx/js:node",
       "options": {
         "buildTarget": "api:build"
-      },
-      "dependsOn": ["build"]
+      }
     },
     "lint": {
       "executor": "@nx/eslint:lint",
@@ -81,7 +80,7 @@
     "dev": {
       "executor": "nx:run-commands",
       "options": {
-        "commands": ["echo ./scripts/run-xroad-proxy.sh", "yarn start api"],
+        "commands": ["./scripts/run-xroad-proxy.sh", "yarn start api"],
         "parallel": true
       }
     },

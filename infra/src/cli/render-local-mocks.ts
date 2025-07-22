@@ -11,7 +11,7 @@ type LocalServicesArgs = {
   print?: boolean
   json?: boolean
   dryRun?: boolean
-  useSecrets?: boolean
+  updateSecrets?: boolean
 }
 
 export async function renderLocalServices({
@@ -19,14 +19,14 @@ export async function renderLocalServices({
   print = false,
   json = false,
   dryRun = false,
-  useSecrets = true,
+  updateSecrets = true,
 }: LocalServicesArgs): Promise<LocalrunValueFile> {
   logger.debug('renderLocalServices', {
     services,
     print,
     json,
     dryRun,
-    useSecrets: useSecrets,
+    updateSecrets,
   })
   const chartName = 'islandis'
   const env = 'dev'
@@ -39,7 +39,7 @@ export async function renderLocalServices({
     habitat,
     uberChart,
     habitat.filter((s) => services.includes(s.name())),
-    { dryRun, noUpdateSecrets: !useSecrets },
+    { dryRun, noUpdateSecrets: !updateSecrets },
   )
 
   if (print) {
@@ -57,29 +57,27 @@ export async function renderLocalServices({
   return renderedLocalServices
 }
 
-export async function runLocalServices(
-  services: string[],
-  dependencies: string[] = [],
-  {
-    dryRun = false,
-    print = false,
-    json = false,
-    useSecrets = true,
-    startProxies = false,
-  }: LocalServicesArgs & { startProxies: boolean },
-) {
+export async function runLocalServices({
+  services,
+  dryRun = false,
+  print = false,
+  json = false,
+  updateSecrets = true,
+  dependencies = [],
+  startProxies = false,
+}: LocalServicesArgs & {
+  dependencies: string[]
+  startProxies: boolean
+}) {
   logger.debug('runLocalServices', { services, dependencies })
   const neverFail = !!dryRun
-
-  // Add the service itself to the list of dependencies
-  dependencies.push(...services)
 
   const renderedLocalServices = await renderLocalServices({
     services,
     print,
     json,
     dryRun,
-    useSecrets,
+    updateSecrets,
   })
 
   // Verify that all dependencies exist in the rendered dependency list
