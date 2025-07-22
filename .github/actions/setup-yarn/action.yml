@@ -31,9 +31,10 @@ runs:
       run: |
         echo "yarn-cache=$(yarn config get cacheFolder)" >> $GITHUB_OUTPUT
         # Set output only if cypress exists (empty otherwise)
-        CYPRESS_CACHE_FOLDER=
+        CYPRESS_CACHE_FOLDER=${CYPRESS_CACHE_FOLDER:-}
         if jq -e '(.dependencies // {}) * (.devDependencies // {}) | keys | .[] | select(. == "cypress")' package.json; then
           CYPRESS_CACHE_FOLDER="${{ runner.temp }}/.cypress-cache"
+          echo "cypress-install=true" | tee -a "$GITHUB_OUTPUT"
         fi
         echo "CYPRESS_CACHE_FOLDER=$CYPRESS_CACHE_FOLDER" | tee -a "$GITHUB_ENV"
         echo "cypress-cache=$CYPRESS_CACHE_FOLDER" | tee -a "$GITHUB_OUTPUT"
@@ -69,4 +70,4 @@ runs:
       if: ${{ steps.restore-cache.outputs.cache-hit != 'true' }}
       run: |
         yarn install --immutable
-        if [[ -n "$CYPRESS_CACHE_FOLDER" ]]; then yarn cypress install; fi
+        if [[ "${{ steps.cache-paths.outputs.cypress-install }}" == true ]]; then yarn cypress install; fi

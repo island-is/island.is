@@ -43,8 +43,8 @@ runs:
           --inputsFile=${{ steps.prepare.outputs.INPUTS_LIST_FILE }} \
           --outputsFile=/dev/null
 
-    - name: Cache generated files
-      uses: runs-on/cache@v4
+    - name: Cache generated files (restore)
+      uses: runs-on/cache/restore@v4
       id: restore-codegen-cache
       with:
         path: |
@@ -53,10 +53,21 @@ runs:
 
     - name: Prepare generated files
       if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
+      id: codegen
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
         node ./scripts/ci/generate-files.mjs ${{ steps.prepare.outputs.GENERATED_FILES_PATH }}
+
+    # We need a dedicated save, because the input file list sometimes changes during generation,
+    # and the `hashFiles` function hashes on step evaluation, causing a cache miss
+    - name: Cache generated files (save)
+      if: steps.codegen.outcome == 'success'
+      uses: runs-on/cache/save@v4
+      with:
+        path: |
+          ${{ steps.prepare.outputs.GENERATED_FILES_PATH }}
+        key: ${{ steps.restore-codegen-cache.outputs.cache-primary-key }}
 
     - name: Extract generated files
       if: steps.restore-codegen-cache.outputs.cache-hit == 'true'
