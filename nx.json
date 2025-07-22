@@ -14,7 +14,7 @@
           "generateDevIndexHTML"
         ],
         "cacheDirectory": ".cache/nx",
-        "parallel": 1
+        "maxParallel": 1
       }
     },
     "ci": {
@@ -31,7 +31,7 @@
           "generateDevIndexHTML"
         ],
         "cacheDirectory": ".cache/nx",
-        "parallel": 1
+        "maxParallel": 1
       }
     }
   },
