@@ -25,115 +25,111 @@ import {
 import { newPrimarySchoolMessages } from '../lib/messages'
 
 export const getApplicationAnswers = (answers: Application['answers']) => {
-  let applicationType = getValueViaPath(
+  let applicationType = getValueViaPath<ApplicationType>(
     answers,
     'applicationType',
-  ) as ApplicationType
+  )
 
   if (!applicationType) applicationType = ApplicationType.NEW_PRIMARY_SCHOOL
 
-  const childNationalId = getValueViaPath(answers, 'childNationalId') as string
+  const childNationalId = getValueViaPath<string>(answers, 'childNationalId')
 
-  const childInfo = getValueViaPath(answers, 'childInfo') as ChildInformation
+  const childInfo = getValueViaPath<ChildInformation>(answers, 'childInfo')
 
-  const guardians = getValueViaPath(answers, 'guardians') as Person[]
+  const guardians = getValueViaPath<Person[]>(answers, 'guardians') ?? []
 
-  const relatives = getValueViaPath(answers, 'relatives') as RelativesRow[]
+  const relatives = getValueViaPath<RelativesRow[]>(answers, 'relatives') ?? []
 
-  const reasonForApplicationIdAndKey = getValueViaPath(
-    answers,
-    'reasonForApplication.reason',
-  ) as ReasonForApplicationOptions
+  const reasonForApplicationIdAndKey =
+    getValueViaPath<ReasonForApplicationOptions>(
+      answers,
+      'reasonForApplication.reason',
+    )
 
   const [reasonForApplicationId, reasonForApplication] =
     reasonForApplicationIdAndKey?.split('::') ?? []
 
-  const reasonForApplicationStreetAddress = getValueViaPath(
+  const reasonForApplicationStreetAddress = getValueViaPath<string>(
     answers,
     'reasonForApplication.transferOfLegalDomicile.streetAddress',
-  ) as string
+  )
 
-  const reasonForApplicationPostalCode = getValueViaPath(
+  const reasonForApplicationPostalCode = getValueViaPath<string>(
     answers,
     'reasonForApplication.transferOfLegalDomicile.postalCode',
-  ) as string
+  )
 
-  const siblings = getValueViaPath(answers, 'siblings') as SiblingsRow[]
+  const siblings = getValueViaPath<SiblingsRow[]>(answers, 'siblings') ?? []
 
-  const languageEnvironmentIdAndKey = getValueViaPath(
+  const languageEnvironmentIdAndKey = getValueViaPath<string>(
     answers,
     'languages.languageEnvironment',
-  ) as string
+  )
 
   const [languageEnvironmentId, languageEnvironment] =
     languageEnvironmentIdAndKey?.split('::') ?? []
 
-  const selectedLanguages = getValueViaPath(
-    answers,
-    'languages.selectedLanguages',
-  ) as Array<{
-    code: string
-  }>
+  const selectedLanguages =
+    getValueViaPath<Array<{ code: string }>>(
+      answers,
+      'languages.selectedLanguages',
+    ) ?? []
 
-  const signLanguage = getValueViaPath(
+  const signLanguage = getValueViaPath<YesOrNo>(
     answers,
     'languages.signLanguage',
-  ) as YesOrNo
+  )
 
-  const preferredLanguage = getValueViaPath(
+  const preferredLanguage = getValueViaPath<string>(
     answers,
     'languages.preferredLanguage',
-  ) as string
+  )
 
-  const hasFoodAllergiesOrIntolerances = getValueViaPath(
-    answers,
-    'healthProtection.hasFoodAllergiesOrIntolerances',
-  ) as string[]
+  const hasFoodAllergiesOrIntolerances =
+    getValueViaPath<string[]>(
+      answers,
+      'healthProtection.hasFoodAllergiesOrIntolerances',
+    ) ?? [] // TODO: Skoða hvort þetta á að vera default (er þetta ekki tómur listi hvort eð er ef ekkert er valið?)
 
-  const foodAllergiesOrIntolerances = getValueViaPath(
-    answers,
-    'healthProtection.foodAllergiesOrIntolerances',
-  ) as string[]
+  const foodAllergiesOrIntolerances =
+    getValueViaPath<string[]>(
+      answers,
+      'healthProtection.foodAllergiesOrIntolerances',
+    ) ?? []
 
-  const hasOtherAllergies = getValueViaPath(
-    answers,
-    'healthProtection.hasOtherAllergies',
-  ) as string[]
+  const hasOtherAllergies =
+    getValueViaPath<string[]>(answers, 'healthProtection.hasOtherAllergies') ??
+    [] // TODO: Skoða hvort þetta á að vera default (er þetta ekki tómur listi hvort eð er ef ekkert er valið?)
 
-  const otherAllergies = getValueViaPath(
-    answers,
-    'healthProtection.otherAllergies',
-  ) as string[]
+  const otherAllergies =
+    getValueViaPath<string[]>(answers, 'healthProtection.otherAllergies') ?? []
 
-  const usesEpiPen = getValueViaPath(
+  const usesEpiPen = getValueViaPath<YesOrNo>(
     answers,
     'healthProtection.usesEpiPen',
-  ) as YesOrNo
+  )
 
-  const hasConfirmedMedicalDiagnoses = getValueViaPath(
+  const hasConfirmedMedicalDiagnoses = getValueViaPath<YesOrNo>(
     answers,
     'healthProtection.hasConfirmedMedicalDiagnoses',
-  ) as YesOrNo
+  )
 
-  const requestsMedicationAdministration = getValueViaPath(
+  const requestsMedicationAdministration = getValueViaPath<YesOrNo>(
     answers,
     'healthProtection.requestsMedicationAdministration',
-  ) as YesOrNo
+  )
 
-  const hasDiagnoses = getValueViaPath(
-    answers,
-    'support.hasDiagnoses',
-  ) as YesOrNo
+  const hasDiagnoses = getValueViaPath<YesOrNo>(answers, 'support.hasDiagnoses')
 
-  const hasHadSupport = getValueViaPath(
+  const hasHadSupport = getValueViaPath<YesOrNo>(
     answers,
     'support.hasHadSupport',
-  ) as YesOrNo
+  )
 
-  const hasWelfareContact = getValueViaPath(
+  const hasWelfareContact = getValueViaPath<YesOrNo>(
     answers,
     'support.hasWelfareContact',
-  ) as YesOrNo
+  )
 
   const welfareContactName = getValueViaPath<string>(
     answers,
@@ -145,87 +141,89 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'support.welfareContact.email',
   )
 
-  const hasIntegratedServices = getValueViaPath(
+  const hasIntegratedServices = getValueViaPath<YesOrNo>(
     answers,
     'support.hasIntegratedServices',
-  ) as YesOrNo
+  )
 
-  const hasCaseManager = getValueViaPath(
+  const hasCaseManager = getValueViaPath<YesOrNo>(
     answers,
     'support.hasCaseManager',
-  ) as YesOrNo
+  )
 
-  const caseManagerName = getValueViaPath(
+  const caseManagerName = getValueViaPath<string>(
     answers,
     'support.caseManager.name',
-  ) as string
+  )
 
-  const caseManagerEmail = getValueViaPath(
+  const caseManagerEmail = getValueViaPath<string>(
     answers,
     'support.caseManager.email',
-  ) as string
+  )
 
-  const requestingMeeting = getValueViaPath(
+  // TODO: Skoða betur defaultValue??
+  const requestingMeeting = getValueViaPath<YesOrNo>(
     answers,
     'support.requestingMeeting[0]',
-    NO,
-  ) as YesOrNo
+    NO, // TODO: Þarf deafultValue hérna?
+  )
 
-  const expectedStartDate = getValueViaPath(
+  const expectedStartDate = getValueViaPath<string>(
     answers,
     'startingSchool.expectedStartDate',
-  ) as string
+  )
 
-  const expectedStartDateHiddenInput = getValueViaPath(
+  const expectedStartDateHiddenInput = getValueViaPath<string>(
     answers,
     'startingSchool.expectedStartDateHiddenInput',
   )
 
-  const temporaryStay = getValueViaPath(
+  // TODO: Skoða betur defaultValue??
+  const temporaryStay = getValueViaPath<YesOrNo>(
     answers,
     'startingSchool.temporaryStay',
-    NO,
-  ) as YesOrNo
+    NO, // TODO: Þarf deafultValue hérna?
+  )
 
-  const expectedEndDate = getValueViaPath(
+  const expectedEndDate = getValueViaPath<string>(
     answers,
     'startingSchool.expectedEndDate',
-  ) as string
+  )
 
-  const schoolMunicipality = getValueViaPath(
+  const schoolMunicipality = getValueViaPath<string>(
     answers,
     'newSchool.municipality',
-  ) as string
+  )
 
-  const selectedSchoolIdAndType = getValueViaPath(
+  const selectedSchoolIdAndType = getValueViaPath<string>(
     answers,
     'newSchool.school',
-  ) as string
+  )
 
   // School type is piggybacked on the value like 'id::type'
   const selectedSchool = selectedSchoolIdAndType
     ? selectedSchoolIdAndType.split('::')[0]
     : ''
 
-  const selectedSchoolType = getValueViaPath(
+  const selectedSchoolType = getValueViaPath<SchoolType>(
     answers,
     'newSchool.type',
-  ) as SchoolType
+  )
 
-  const currentNurseryMunicipality = getValueViaPath(
+  const currentNurseryMunicipality = getValueViaPath<string>(
     answers,
     'currentNursery.municipality',
-  ) as string
+  )
 
-  const currentNursery = getValueViaPath(
+  const currentNursery = getValueViaPath<string>(
     answers,
     'currentNursery.nursery',
-  ) as string
+  )
 
-  const applyForNeighbourhoodSchool = getValueViaPath(
+  const applyForNeighbourhoodSchool = getValueViaPath<YesOrNo>(
     answers,
     'school.applyForNeighbourhoodSchool',
-  ) as YesOrNo
+  )
 
   const currentSchoolId = getValueViaPath<string>(
     answers,
@@ -282,66 +280,72 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 export const getApplicationExternalData = (
   externalData: Application['externalData'],
 ) => {
-  const children = getValueViaPath(externalData, 'children.data', []) as Child[]
+  const children = getValueViaPath<Child[]>(externalData, 'children.data') ?? []
 
-  const applicantName = getValueViaPath(
+  const applicantName = getValueViaPath<string>(
     externalData,
-    'nationalRegistry.data.name',
-    '',
-  ) as string
+    'nationalRegistry.data.fullName',
+  )
 
-  const applicantNationalId = getValueViaPath(
+  const applicantNationalId = getValueViaPath<string>(
     externalData,
     'nationalRegistry.data.nationalId',
-    '',
-  ) as string
+  )
 
-  const applicantAddress = getValueViaPath(
+  const applicantAddress = getValueViaPath<string>(
     externalData,
     'nationalRegistry.data.address.streetAddress',
-    '',
-  ) as string
+  )
 
-  const applicantPostalCode = getValueViaPath(
+  const applicantPostalCode = getValueViaPath<string>(
     externalData,
     'nationalRegistry.data.address.postalCode',
-    '',
-  ) as string
+  )
 
-  const applicantCity = getValueViaPath(
+  const applicantCity = getValueViaPath<string>(
     externalData,
     'nationalRegistry.data.address.city',
-    '',
-  ) as string
+  )
 
-  const applicantMunicipalityCode = getValueViaPath(
+  const applicantMunicipalityCode = getValueViaPath<string>(
     externalData,
     'nationalRegistry.data.address.municipalityCode',
-    '',
-  ) as string
+  )
 
-  const childInformation = getValueViaPath(
+  const applicantitizenshipCode = getValueViaPath<string>(
+    externalData,
+    'nationalRegistry.data.citizenship.code',
+  )
+
+  const userProfileEmail = getValueViaPath<string>(
+    externalData,
+    'userProfile.data.email',
+  )
+
+  const userProfilePhoneNumber = getValueViaPath<string>(
+    externalData,
+    'userProfile.data.mobilePhoneNumber',
+  )
+
+  const childInformation = getValueViaPath<FriggChildInformation>(
     externalData,
     'childInformation.data',
-  ) as FriggChildInformation
+  )
 
-  const childGradeLevel = getValueViaPath(
+  const childGradeLevel = getValueViaPath<string>(
     externalData,
     'childInformation.data.gradeLevel',
-    '',
-  ) as string
+  )
 
-  const primaryOrgId = getValueViaPath(
+  const primaryOrgId = getValueViaPath<string>(
     externalData,
     'childInformation.data.primaryOrgId',
-    '',
-  ) as string
+  )
 
-  const childAffiliations = getValueViaPath(
+  const childAffiliations = getValueViaPath<Affiliation[]>(
     externalData,
     'childInformation.data.affiliations',
-    [],
-  ) as Affiliation[]
+  )
 
   const childCitizenshipCode = getValueViaPath<string>(
     externalData,
@@ -361,6 +365,9 @@ export const getApplicationExternalData = (
     applicantPostalCode,
     applicantCity,
     applicantMunicipalityCode,
+    applicantitizenshipCode,
+    userProfileEmail,
+    userProfilePhoneNumber,
     childInformation,
     childGradeLevel,
     primaryOrgId,

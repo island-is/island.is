@@ -78,7 +78,7 @@ export const currentSchoolSubSection = buildSubSection({
               return {
                 ...newPrimarySchoolMessages.primarySchool.currentGrade,
                 values: {
-                  grade: formatGrade(childGradeLevel, lang),
+                  grade: formatGrade(childGradeLevel ?? '', lang),
                 },
               }
             },

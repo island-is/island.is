@@ -97,7 +97,8 @@ export const startingSchoolSubSection = buildSubSection({
           },
           minDate: (application: Application) =>
             new Date(
-              getApplicationAnswers(application.answers).expectedStartDate,
+              getApplicationAnswers(application.answers).expectedStartDate ??
+                '',
             ),
         }),
         buildHiddenInputWithWatchedValue({

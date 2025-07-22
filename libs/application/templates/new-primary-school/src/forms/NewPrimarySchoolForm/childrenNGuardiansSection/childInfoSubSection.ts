@@ -110,7 +110,7 @@ export const childInfoSubSection = buildSubSection({
           },
           defaultValue: (application: Application) =>
             getApplicationExternalData(application.externalData)
-              .childInformation.preferredName ?? undefined,
+              .childInformation?.preferredName ?? undefined,
         }),
         buildCustomField(
           {
@@ -125,7 +125,7 @@ export const childInfoSubSection = buildSubSection({
             component: 'FriggOptionsAsyncSelectField',
             defaultValue: (application: Application) =>
               getApplicationExternalData(application.externalData)
-                .childInformation.pronouns,
+                .childInformation?.pronouns,
           },
           {
             optionsType: OptionsType.PRONOUN,

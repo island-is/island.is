@@ -98,22 +98,22 @@ export const childItems = async (
     {
       width: 'half',
       keyText: newPrimarySchoolMessages.shared.fullName,
-      valueText: childInfo.name,
+      valueText: childInfo?.name,
     },
     {
       width: 'half',
       keyText: newPrimarySchoolMessages.shared.nationalId,
-      valueText: formatKennitala(childInfo.nationalId ?? ''),
+      valueText: formatKennitala(childInfo?.nationalId ?? ''),
     },
     {
       width: 'half',
       keyText: newPrimarySchoolMessages.shared.address,
-      valueText: childInfo.address.streetAddress,
+      valueText: childInfo?.address?.streetAddress,
     },
     {
       width: 'half',
       keyText: newPrimarySchoolMessages.shared.municipality,
-      valueText: `${childInfo.address.postalCode}, ${childInfo.address.city}`,
+      valueText: `${childInfo?.address?.postalCode}, ${childInfo?.address?.city}`,
     },
 
     {
@@ -124,28 +124,28 @@ export const childItems = async (
   ]
 
   const preferredNameItems: Array<KeyValueItem> =
-    childInfo.usePronounAndPreferredName?.includes(YES) &&
-    childInfo.preferredName?.trim().length > 0
+    childInfo?.usePronounAndPreferredName?.includes(YES) &&
+    childInfo?.preferredName?.trim().length > 0
       ? [
           {
             width: 'half',
             keyText:
               newPrimarySchoolMessages.childrenNGuardians
                 .childInfoPreferredName,
-            valueText: childInfo.preferredName,
+            valueText: childInfo?.preferredName,
           },
         ]
       : []
 
   const pronounsItems: Array<KeyValueItem> =
-    childInfo.usePronounAndPreferredName?.includes(YES) &&
-    childInfo.pronouns?.length > 0
+    childInfo?.usePronounAndPreferredName?.includes(YES) &&
+    childInfo?.pronouns?.length > 0
       ? [
           {
             width: 'half',
             keyText:
               newPrimarySchoolMessages.childrenNGuardians.childInfoPronouns,
-            valueText: childInfo.pronouns
+            valueText: childInfo?.pronouns
               .map((pronoun) => getSelectedOptionLabel(pronounOptions, pronoun))
               .join(', '),
           },
@@ -153,14 +153,14 @@ export const childItems = async (
       : []
 
   const differentPlaceOfResidenceItems: Array<KeyValueItem> =
-    childInfo.differentPlaceOfResidence === YES
+    childInfo?.differentPlaceOfResidence === YES
       ? [
           {
             width: 'half',
             keyText:
               newPrimarySchoolMessages.childrenNGuardians
                 .childInfoPlaceOfResidence,
-            valueText: `${childInfo.placeOfResidence?.streetAddress}, ${childInfo.placeOfResidence?.postalCode}`,
+            valueText: `${childInfo?.placeOfResidence?.streetAddress}, ${childInfo.placeOfResidence?.postalCode}`,
           },
         ]
       : []
@@ -301,7 +301,7 @@ export const currentSchoolItems = async (
           valueText: {
             ...newPrimarySchoolMessages.primarySchool.currentGrade,
             values: {
-              grade: formatGrade(childGradeLevel, locale),
+              grade: formatGrade(childGradeLevel ?? '', locale),
             },
           },
         },
