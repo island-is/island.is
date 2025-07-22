@@ -3,7 +3,7 @@
 
 module.exports = {
   async up(queryInterface) {
-    queryInterface.sequelize.transaction((t) =>
+    return queryInterface.sequelize.transaction((t) =>
       Promise.all([
         queryInterface.bulkUpdate(
           'defendant',
@@ -28,7 +28,7 @@ module.exports = {
   },
 
   async down(queryInterface) {
-    queryInterface.sequelize.transaction((t) =>
+    return queryInterface.sequelize.transaction((t) =>
       queryInterface.bulkUpdate(
         'defendant',
         { defender_national_id: null },
