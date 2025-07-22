@@ -120,7 +120,11 @@ export async function runLocalServices({
       )
       continue
     }
-    if (!dependencies.includes(name) && !services.includes(name)) {
+    if (
+      dependencies.length > 0 &&
+      !dependencies.includes(name) &&
+      !services.includes(name)
+    ) {
       logger.info(
         `Skipping ${name} (not in dependency list [${dependencies.join(',')}])`,
       )
