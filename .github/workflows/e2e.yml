@@ -31,7 +31,7 @@ env:
   DISABLE_PROBLEMATIC: 'false'
   CHUNK_SIZE: '8'
   MAX_JOBS: '3'
-  NX_PARALLEL: '2'
+  NX_PARALLEL: '3'
   NX_MAX_PARALLEL: '4'
   NX_TASKS_RUNNER: ci
   NX_CLOUD_ACCESS_TOKEN: ${{ secrets.NX_CLOUD_ACCESS_TOKEN }}
@@ -74,7 +74,7 @@ jobs:
 
       - name: Running e2e tests
         run: |
-          if ! yarn nx run-many --target=e2e --projects="${AFFECTED_PROJECTS}" --parallel 3; then
+          if ! yarn nx run-many --target=e2e --projects="${AFFECTED_PROJECTS}"; then
             echo "::error title=e2e::Project ${AFFECTED_PROJECTS} failed e2e tests"
             exit "${{ inputs.allow_failure == 'true' && 0 || exit 1 }}
           fi
