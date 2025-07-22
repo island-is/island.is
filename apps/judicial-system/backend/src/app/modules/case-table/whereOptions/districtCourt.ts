@@ -34,14 +34,6 @@ export const districtCourtRequestCasesInProgressWhereOptions = (
           state: completedRequestCaseStates,
           ruling_signature_date: null,
           is_completed_without_ruling: null,
-          appeal_state: {
-            [Op.or]: [
-              null,
-              CaseAppealState.RECEIVED,
-              CaseAppealState.WITHDRAWN,
-              CaseAppealState.COMPLETED,
-            ],
-          },
         },
       ],
     },
@@ -67,14 +59,6 @@ export const districtCourtRequestCasesCompletedWhereOptions = (user: User) => ({
         { ruling_signature_date: { [Op.not]: null } },
         { is_completed_without_ruling: { [Op.not]: null } },
       ],
-      appeal_state: {
-        [Op.or]: [
-          null,
-          CaseAppealState.RECEIVED,
-          CaseAppealState.WITHDRAWN,
-          CaseAppealState.COMPLETED,
-        ],
-      },
     },
   ],
 })
