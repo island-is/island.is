@@ -39,7 +39,7 @@ export const createBullModule = () => {
             ssl: config.redis.ssl,
             nodes: config.redis.nodes,
             noPrefix: true,
-          }),
+          }) as any,
       }),
       inject: [ApplicationFilesConfig.KEY],
     })

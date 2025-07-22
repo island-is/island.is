@@ -16,7 +16,7 @@ if (process.env.NODE_ENV === 'test' || process.env.INIT_SCHEMA === 'true') {
         name: 'air_discount_scheme_backend_service_cache',
         ssl: production,
         nodes: redis.urls,
-      }),
+      }) as any,
     ),
   })
 }
