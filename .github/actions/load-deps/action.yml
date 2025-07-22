@@ -53,7 +53,7 @@ runs:
 
     - name: Prepare generated files
       if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
-      id: codgen
+      id: codegen
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
