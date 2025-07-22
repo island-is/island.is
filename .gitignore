@@ -31,6 +31,8 @@ node_modules/
 *.sublime-workspace
 TODO
 *.todo
+.env
+.env.*
 .envrc.private
 .nvmrc
 .node-version
@@ -61,11 +63,9 @@ Thumbs.db
 .cache
 
 # Used to store local secrets
-.env.local
-.env.*.local
 .env.secret
 .env.secret.*
-/.env.*
+.env
 helm/**/*.tgz
 /cache*
 
@@ -88,7 +88,6 @@ fragmentTypes.json
 *.generated.ts
 /apps/**/src/index.html
 nx_cloud_access_token.txt
-*.tgz
 
 # IDE - Visual Studio
 *.suo

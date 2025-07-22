@@ -1,0 +1,10 @@
+{
+  "presets": [
+    "@nrwl/js/babel",
+    "next/babel",
+    "../../libs/shared/babel/web",
+    "@babel/preset-env",
+    "@babel/preset-typescript"
+  ],
+  "plugins": ["@babel/plugin-proposal-class-properties"]
+}

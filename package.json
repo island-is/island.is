@@ -30,6 +30,7 @@
     "analyze": "cross-env ANALYZE=true nx build",
     "e2e": "nx e2e",
     "e2e-ci": "cross-env NODE_ENV=production node ./scripts/e2e-ci.js",
+    "system-e2e": "playwright test -c apps/system-e2e/src",
     "translations": "nx translations",
     "affected:apps": "nx affected:apps",
     "affected:build": "nx affected:build",

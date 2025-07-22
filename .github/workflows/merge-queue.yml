@@ -197,8 +197,6 @@ jobs:
       nx_base: ${{ needs.prepare.outputs.NX_BASE }}
       nx_head: ${{ needs.prepare.outputs.NX_HEAD }}
       affected_projects: ${{ matrix.projects }}
-      # TODO: Change to allow-listed
-      allow_failure: true
     strategy:
       fail-fast: false
       matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}

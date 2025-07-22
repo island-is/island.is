@@ -1,0 +1,23 @@
+{
+  "name": "system-e2e",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "dependencies": {
+    "@aws-sdk/client-ses": "^3.145.0",
+    "@formatjs/intl": "^1.8.1",
+    "@playwright/test": "^1.29.2",
+    "axios": "^0.21.4",
+    "dd-trace": "5.14.1",
+    "imap-simple": "^5.1.0",
+    "mailparser": "^3.5.0",
+    "nodemailer": "^6.7.2",
+    "playwright-tesults-reporter": "^1.0.1",
+    "react": "^18.2.0",
+    "react-intl": "^6.3.0",
+    "slack-notify": "^2.0.3"
+  },
+  "volta": {
+    "node": "16.17.0"
+  }
+}
