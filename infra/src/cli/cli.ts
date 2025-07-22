@@ -7,7 +7,7 @@ import { OpsEnv } from '../dsl/types/input-types'
 import { renderServiceEnvVars } from './render-env-vars'
 import { renderLocalServices, runLocalServices } from './render-local-mocks'
 
-const cli = yargs(process.argv.slice(2))
+yargs(process.argv.slice(2))
   .scriptName('yarn infra')
   .command(
     'render-env',
@@ -119,7 +119,9 @@ const cli = yargs(process.argv.slice(2))
           }
         }),
     async (argv) => {
-      await runLocalServices(argv.services, argv.dependencies, {
+      await runLocalServices({
+        services: argv.services,
+        dependencies: argv.dependencies,
         dryRun: argv.dry,
         json: argv.json,
         useSecrets: argv['secrets'],

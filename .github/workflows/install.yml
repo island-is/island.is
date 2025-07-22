@@ -10,6 +10,11 @@ on:
       main_branch:
         default: 'main'
         type: string
+      skip_user_check:
+        description: 'Skip user permission check'
+        required: false
+        type: boolean
+        default: false
       run_merge_queue:
         description: 'Should the merge queue step run'
         required: false
@@ -46,8 +51,8 @@ on:
         value: ${{ jobs.install.outputs.NX_BASE }}
       DEPLOY_FEATURE:
         value: ${{ jobs.install.outputs.DEPLOY_FEATURE }}
-      is-unicorn:
-        value: ${{ jobs.install.outputs.is-unicorn }}
+      IS_UNICORN:
+        value: ${{ jobs.install.outputs.IS_UNICORN }}
 env:
   COMPOSE_HTTP_TIMEOUT: 180
   SKIP_GENERATED_CACHE: ${{ contains(github.event.pull_request.labels.*.name, 'skip-generated-cache') }}
@@ -91,7 +96,8 @@ jobs:
       NX_HEAD: ${{ steps.export-sha.outputs.NX_HEAD }}
       NX_BASE: ${{ steps.export-sha.outputs.NX_BASE }}
       DEPLOY_FEATURE: ${{ steps.set-outputs.outputs.DEPLOY_FEATURE }}
-      is-unicorn: ${{ steps.unicorn.outputs.is-unicorn }}
+      IS_UNICORN: ${{ steps.unicorn.outputs.IS_UNICORN }}
+      UNICORNS: ${{ steps.unicorn.outputs.UNICORNS }}
     runs-on: arc-shared
     permissions:
       contents: 'read'
@@ -280,7 +286,7 @@ jobs:
         uses: actions-cool/check-user-permission@v2
         id: check-permission
         # This fails locally without a token, and only prevents "admin" label usage
-        if: ${{ !github.event.localrun }}
+        if: ${{ !github.event.localrun && !inputs.skip_user_check }}
 
       - name: Set magic env if test-everything label is set
         if: ${{ contains(github.event.pull_request.labels.*.name, 'test everything') && steps.check-permission.outcome == 'success' && steps.check-permission.outputs['user-permission'] == 'admin' }}

@@ -83,9 +83,9 @@ export async function runLocalServices(
   })
 
   // Verify that all dependencies exist in the rendered dependency list
-  for (const dependency of dependencies) {
-    if (!renderedLocalServices.services[dependency]) {
-      throw new Error(`Dependency ${dependency} not found`)
+  for (const app of dependencies.concat(services)) {
+    if (!renderedLocalServices.services[app]) {
+      throw new Error(`Application ${app} not found`)
     }
   }
 
@@ -116,8 +116,16 @@ export async function runLocalServices(
   for (const [name, service] of Object.entries(
     renderedLocalServices.services,
   )) {
-    if (dependencies.length > 0 && !dependencies.includes(name)) {
-      logger.info(`Skipping ${name} (not a dependency)`)
+    if (services.length >= 2 && !services.includes(name)) {
+      logger.info(
+        `Skipping ${name} (not in service list [${services.join(',')}])`,
+      )
+      continue
+    }
+    if (!dependencies.includes(name) && !services.includes(name)) {
+      logger.info(
+        `Skipping ${name} (not in dependency list [${dependencies.join(',')}])`,
+      )
       continue
     }
     const chainedCommand = [

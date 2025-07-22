@@ -65,7 +65,7 @@ Thumbs.db
 .env.*.local
 .env.secret
 .env.secret.*
-.env
+/.env.*
 helm/**/*.tgz
 /cache*
 
