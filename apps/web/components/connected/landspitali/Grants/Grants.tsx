@@ -133,7 +133,7 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
   const selectedProject = watch('project')
 
   const onSubmit = () => {
-    console.log('onSubmit')
+    //
   }
 
   useEffect(() => {
