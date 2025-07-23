@@ -211,7 +211,7 @@ const BloodDonationRestrictionList: CustomScreen<
                 onChange={(ev) => {
                   setQueryString(ev.target.value)
 
-                  // Make sure we don't create a new history entry when the user is alreadyon page 1
+                  // Make sure we don't create a new history entry when the user is already on page 1
                   if (currentPage !== 1) {
                     setPage(null)
                   }
