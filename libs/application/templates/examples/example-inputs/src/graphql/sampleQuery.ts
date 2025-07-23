@@ -6,7 +6,7 @@ export const friggSchoolsByMunicipalityQuery = gql`
       nationalId
       name
       type
-      children {
+      managing {
         id
         nationalId
         name

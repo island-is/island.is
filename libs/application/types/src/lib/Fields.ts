@@ -983,7 +983,9 @@ export interface OverviewField extends BaseField {
   title?: FormText
   titleVariant?: TitleVariants
   description?: FormText
-  backId?: string | ((answers: FormValue) => string | undefined)
+  backId?:
+    | string
+    | ((answers: FormValue, externalData: ExternalData) => string | undefined)
   bottomLine?: boolean
   items?: (
     answers: FormValue,
@@ -996,12 +998,19 @@ export interface OverviewField extends BaseField {
     externalData: ExternalData,
     userNationalId: string,
     apolloClient: ApolloClient<object>,
+    locale: Locale,
   ) => Promise<KeyValueItem[]>
   attachments?: (
     answers: FormValue,
     externalData: ExternalData,
   ) => Array<AttachmentItem>
   tableData?: (answers: FormValue, externalData: ExternalData) => TableData
+  loadTableData?: (
+    answers: FormValue,
+    externalData: ExternalData,
+    apolloClient: ApolloClient<object>,
+    locale: Locale,
+  ) => Promise<TableData>
   hideIfEmpty?: boolean
   displayTitleAsAccordion?: boolean
 }
