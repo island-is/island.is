@@ -8,7 +8,6 @@ import {
 import {
   getPersonalInformationOverviewItems,
   getRentalAgreementOverviewItems,
-  getTerminationTypeOverviewItems,
   getBoundTerminationOverviewItems,
   getUnboundTerminationOverviewItems,
   getCancelationDetailsOverviewItems,
@@ -27,9 +26,7 @@ export const overviewSection = buildSection({
   title: m.overviewMessages.overviewTitle,
   children: [
     buildMultiField({
-      condition: (answers, externalData) => {
-        console.log('answers: ', answers)
-        console.log('externalData: ', externalData)
+      condition: () => {
         return true
       },
       id: 'overviewMultiField',

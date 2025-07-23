@@ -155,7 +155,7 @@ const template: ApplicationTemplate<
             tag: {
               label: m.miscMessages.actionCardDone,
             },
-            pendingAction(application, role, nationalId) {
+            pendingAction(application) {
               return {
                 displayStatus: 'success',
                 title:
