@@ -250,6 +250,7 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
               size="xs"
               error={errors.senderName?.message}
               rules={requiredRule}
+              control={control}
             />
             <InputController
               id="senderNationalId"
@@ -265,6 +266,7 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
                   message: formatMessage(m.validation.invalidNationalId),
                 },
               }}
+              control={control}
             />
             <InputController
               id="senderAddress"
@@ -272,6 +274,7 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
               size="xs"
               error={errors.senderAddress?.message}
               rules={requiredRule}
+              control={control}
             />
             <InputController
               id="senderPostalCode"
@@ -279,6 +282,7 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
               size="xs"
               error={errors.senderPostalCode?.message}
               rules={requiredRule}
+              control={control}
             />
             <InputController
               id="senderPlace"
@@ -286,11 +290,13 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
               size="xs"
               error={errors.senderPlace?.message}
               rules={requiredRule}
+              control={control}
             />
             <InputController
               id="senderGrantExplanation"
               label={formatMessage(m.info.senderGrantExplanation)}
               size="xs"
+              control={control}
             />
           </Stack>
           <Box>

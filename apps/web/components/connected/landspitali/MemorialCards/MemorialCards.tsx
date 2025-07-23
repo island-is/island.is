@@ -321,6 +321,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
               size="xs"
               error={errors.recipientName?.message}
               rules={requiredRule}
+              control={control}
             />
             <InputController
               id="recipientAddress"
@@ -328,6 +329,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
               size="xs"
               error={errors.recipientAddress?.message}
               rules={requiredRule}
+              control={control}
             />
             <InputController
               id="recipientPostalCode"
@@ -335,6 +337,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
               size="xs"
               error={errors.recipientPostalCode?.message}
               rules={requiredRule}
+              control={control}
             />
             <InputController
               id="recipientPlace"
@@ -342,6 +345,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
               size="xs"
               error={errors.recipientPlace?.message}
               rules={requiredRule}
+              control={control}
             />
           </Stack>
 
@@ -353,6 +357,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
               size="xs"
               error={errors.senderName?.message}
               rules={requiredRule}
+              control={control}
             />
             <InputController
               id="senderNationalId"
@@ -368,6 +373,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
                   message: formatMessage(m.validation.invalidNationalId),
                 },
               }}
+              control={control}
             />
             <InputController
               id="senderAddress"
@@ -375,6 +381,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
               size="xs"
               error={errors.senderAddress?.message}
               rules={requiredRule}
+              control={control}
             />
             <InputController
               id="senderPostalCode"
@@ -382,6 +389,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
               size="xs"
               error={errors.senderPostalCode?.message}
               rules={requiredRule}
+              control={control}
             />
             <InputController
               id="senderPlace"
@@ -389,6 +397,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
               size="xs"
               error={errors.senderPlace?.message}
               rules={requiredRule}
+              control={control}
             />
           </Stack>
           <Box>
