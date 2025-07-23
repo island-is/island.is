@@ -5,7 +5,6 @@ import { useIntl } from 'react-intl'
 import {
   Box,
   Button,
-  FocusableBox,
   RadioButton,
   Stack,
   Text,
@@ -177,22 +176,17 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
           <Text variant="h2">{formatMessage(m.info.projectTitle)}</Text>
           <Box display="flex" flexWrap="wrap" columnGap={2} rowGap={2}>
             {PRESET_PROJECTS.map((project) => (
-              <FocusableBox
+              <RadioButton
                 key={project}
-                border="standard"
-                borderRadius="standard"
-                padding={2}
-              >
-                <RadioButton
-                  id={`amount-${project}`}
-                  name="project"
-                  label={project}
-                  checked={selectedProject === project}
-                  onChange={() =>
-                    setValue('project', project, { shouldValidate: true })
-                  }
-                />
-              </FocusableBox>
+                id={`amount-${project}`}
+                name="project"
+                label={project}
+                checked={selectedProject === project}
+                onChange={() =>
+                  setValue('project', project, { shouldValidate: true })
+                }
+                large={true}
+              />
             ))}
             {errors.project && (
               <Text color="red600" variant="small">
@@ -203,34 +197,28 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
           <Text variant="h2">{formatMessage(m.info.amountOfMoneyTitle)}</Text>
           <Box display="flex" flexWrap="wrap" columnGap={2} rowGap={2}>
             {PRESET_AMOUNTS.map((amount) => (
-              <FocusableBox
-                key={amount}
-                border="standard"
-                borderRadius="standard"
-                padding={2}
-              >
-                <RadioButton
-                  id={`amount-${amount}`}
-                  name="amountISK"
-                  label={amount}
-                  checked={selectedAmount === amount}
-                  onChange={() =>
-                    setValue('amountISK', amount, { shouldValidate: true })
-                  }
-                />
-              </FocusableBox>
-            ))}
-            <FocusableBox border="standard" borderRadius="standard" padding={2}>
               <RadioButton
-                id="amount-other-radio"
+                key={amount}
+                id={`amount-${amount}`}
                 name="amountISK"
-                label={formatMessage(m.info.amountOfMoneyOtherRadioLabel)}
-                checked={selectedAmount === 'other'}
+                label={amount}
+                checked={selectedAmount === amount}
                 onChange={() =>
-                  setValue('amountISK', 'other', { shouldValidate: true })
+                  setValue('amountISK', amount, { shouldValidate: true })
                 }
+                large={true}
               />
-            </FocusableBox>
+            ))}
+            <RadioButton
+              id="amount-other-radio"
+              name="amountISK"
+              label={formatMessage(m.info.amountOfMoneyOtherRadioLabel)}
+              checked={selectedAmount === 'other'}
+              onChange={() =>
+                setValue('amountISK', 'other', { shouldValidate: true })
+              }
+              large={true}
+            />
             {errors.amountISK && (
               <Text color="red600" variant="small">
                 {errors.amountISK.message}
