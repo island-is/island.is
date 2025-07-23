@@ -1,8 +1,6 @@
 [
   {
-    "context": [
-      "/bff/*"
-    ],
+    "context": ["/bff/*"],
     "target": "http://localhost:3010",
     "secure": false
   }
