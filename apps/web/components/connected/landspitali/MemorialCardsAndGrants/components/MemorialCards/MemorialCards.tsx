@@ -5,7 +5,6 @@ import { useIntl } from 'react-intl'
 import {
   Box,
   Button,
-  FocusableBox,
   RadioButton,
   Stack,
   Text,
@@ -197,10 +196,15 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
             {data.amountISK === 'other'
               ? formatCurrency(data.amountISKCustom)
               : data.amountISK}{' '}
-            kr.
+            {formatMessage(m.info.amountISKCurrency)}
           </Text>
           <Text>
-            {formatMessage(m.overview.fund)} {data.fund}
+            {formatMessage(m.overview.fund)}{' '}
+            {
+              fundOptions.find(
+                (opt: { value: string }) => opt.value === data.fund,
+              )?.label
+            }
           </Text>
         </Stack>
         <Box display="flex" justifyContent="spaceBetween" marginTop={5}>
@@ -261,34 +265,29 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
 
           <Box display="flex" flexWrap="wrap" columnGap={2} rowGap={2}>
             {PRESET_AMOUNTS.map((amount) => (
-              <FocusableBox
-                key={amount}
-                border="standard"
-                borderRadius="standard"
-                padding={2}
-              >
-                <RadioButton
-                  id={`amount-${amount}`}
-                  name="amountISK"
-                  label={amount}
-                  checked={selectedAmount === amount}
-                  onChange={() =>
-                    setValue('amountISK', amount, { shouldValidate: true })
-                  }
-                />
-              </FocusableBox>
-            ))}
-            <FocusableBox border="standard" borderRadius="standard" padding={2}>
               <RadioButton
-                id="amount-other-radio"
+                key={amount}
+                id={`amount-${amount}`}
                 name="amountISK"
-                label={formatMessage(m.info.amountOfMoneyOtherRadioLabel)}
-                checked={selectedAmount === 'other'}
+                label={amount}
+                checked={selectedAmount === amount}
                 onChange={() =>
-                  setValue('amountISK', 'other', { shouldValidate: true })
+                  setValue('amountISK', amount, { shouldValidate: true })
                 }
+                large={true}
               />
-            </FocusableBox>
+            ))}
+            <RadioButton
+              id="amount-other-radio"
+              name="amountISK"
+              label={formatMessage(m.info.amountOfMoneyOtherRadioLabel)}
+              checked={selectedAmount === 'other'}
+              onChange={() =>
+                setValue('amountISK', 'other', { shouldValidate: true })
+              }
+              large={true}
+            />
+
             {errors.amountISK && (
               <Text color="red600" variant="small">
                 {errors.amountISK.message}
