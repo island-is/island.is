@@ -155,6 +155,18 @@ const template: ApplicationTemplate<
             tag: {
               label: m.miscMessages.actionCardDone,
             },
+            pendingAction(application, role, nationalId) {
+              return {
+                displayStatus: 'success',
+                title:
+                  getValueViaPath<string>(
+                    application.answers,
+                    'terminationType.answer',
+                  ) === 'cancelation'
+                    ? m.miscMessages.actioncardDoneTitleCancelation
+                    : m.miscMessages.actioncardDoneTitleTermination,
+              }
+            },
           },
           roles: [
             {

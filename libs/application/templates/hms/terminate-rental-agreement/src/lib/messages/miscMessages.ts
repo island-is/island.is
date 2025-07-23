@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const miscMessages = defineMessages({
   applicationName: {
     id: 'tra.application:misc.applicationName',
-    defaultMessage: 'Uppsögn og riftun leigusamninga',
+    defaultMessage: 'Uppsögn eða riftun leigusamninga',
     description: 'Application name',
   },
   personalInformationSectionTitle: {
@@ -15,5 +15,15 @@ export const miscMessages = defineMessages({
     id: 'tra.application:misc.actionCardDone',
     defaultMessage: 'Send til HMS',
     description: 'Action card done',
+  },
+  actioncardDoneTitleCancelation: {
+    id: 'tra.application:misc.actioncardDoneTitleCancelation',
+    defaultMessage: 'Tilkynning um riftun send til HMS',
+    description: 'Action card done title cancelation',
+  },
+  actioncardDoneTitleTermination: {
+    id: 'tra.application:misc.actioncardDoneTitleTermination',
+    defaultMessage: 'Tilkynning um uppsögn send til HMS',
+    description: 'Action card done title termination',
   },
 })
