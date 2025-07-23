@@ -178,7 +178,7 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
             {PRESET_PROJECTS.map((project) => (
               <RadioButton
                 key={project}
-                id={`amount-${project}`}
+                id={`project-${project}`}
                 name="project"
                 label={project}
                 checked={selectedProject === project}
