@@ -42,6 +42,7 @@ import {
   ADVERT_QUERY,
   ADVERT_SIMILAR_QUERY,
 } from '../queries/OfficialJournalOfIceland'
+import { isAdvertPdfOnly } from './lib/isAdvertPdfOnly'
 import { ORGANIZATION_SLUG } from './constants'
 import { m } from './messages'
 
@@ -71,19 +72,17 @@ const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
     },
   ]
 
-  const isAdvertHtmlEmpty =
-    !advert.document.html || advert.document.html.trim() === ''
+  const advertPdfDisclaimer = isAdvertPdfOnly(
+    advert.document.html || '',
+    advert.publicationDate,
+  )
 
   return (
     <OJOIWrapper
       pageTitle={advert.title}
       hideTitle
       organization={organization ?? undefined}
-      pageDescription={
-        isAdvertHtmlEmpty
-          ? formatMessage(m.advert.descriptionEmpty)
-          : formatMessage(m.advert.description)
-      }
+      pageDescription={formatMessage(advertPdfDisclaimer)}
       pageFeaturedImage={formatMessage(m.home.featuredImage)}
       breadcrumbItems={breadcrumbItems}
       goBackUrl={searchUrl}

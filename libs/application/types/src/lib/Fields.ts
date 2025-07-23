@@ -5,7 +5,6 @@ import type {
   DatePickerProps,
   IconProps,
   InputBackgroundColor,
-  InputProps,
   SpanType,
 } from '@island.is/island-ui/core/types'
 import {
@@ -24,7 +23,7 @@ import { FormatInputValueFunction } from 'react-number-format'
 import React, { CSSProperties } from 'react'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { MessageDescriptor } from 'react-intl'
-import { BffUser, Locale } from '@island.is/shared/types'
+import { Locale } from '@island.is/shared/types'
 
 export type RecordObject<T = unknown> = Record<string, T>
 export type MaybeWithApplication<T> = T | ((application: Application) => T)
@@ -984,24 +983,34 @@ export interface OverviewField extends BaseField {
   title?: FormText
   titleVariant?: TitleVariants
   description?: FormText
-  backId?: string | ((answers: FormValue) => string | undefined)
+  backId?:
+    | string
+    | ((answers: FormValue, externalData: ExternalData) => string | undefined)
   bottomLine?: boolean
   items?: (
     answers: FormValue,
     externalData: ExternalData,
     userNationalId: string,
+    locale: Locale,
   ) => Array<KeyValueItem>
   loadItems?: (
     answers: FormValue,
     externalData: ExternalData,
     userNationalId: string,
     apolloClient: ApolloClient<object>,
+    locale: Locale,
   ) => Promise<KeyValueItem[]>
   attachments?: (
     answers: FormValue,
     externalData: ExternalData,
   ) => Array<AttachmentItem>
   tableData?: (answers: FormValue, externalData: ExternalData) => TableData
+  loadTableData?: (
+    answers: FormValue,
+    externalData: ExternalData,
+    apolloClient: ApolloClient<object>,
+    locale: Locale,
+  ) => Promise<TableData>
   hideIfEmpty?: boolean
   displayTitleAsAccordion?: boolean
 }
