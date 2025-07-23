@@ -63,20 +63,19 @@ const overwrite = (update: UpdateCase): UpdateCase => {
   return validUpdates
 }
 
-export const fieldHasValue =
-  (workingCase: Case) => (value: unknown, key: string) => {
-    const theKey = key as keyof UpdateCaseInput
+const fieldHasValue = (workingCase: Case) => (value: unknown, key: string) => {
+  const theKey = key as keyof UpdateCaseInput
 
-    if (
-      isChildKey(theKey) // check if key is f.example `judgeId`
-        ? isNil(workingCase[childof[theKey]])
-        : isNil(workingCase[theKey])
-    ) {
-      return value === undefined
-    }
-
-    return true
+  if (
+    isChildKey(theKey) // check if key is f.example `judgeId`
+      ? isNil(workingCase[childof[theKey]])
+      : isNil(workingCase[theKey])
+  ) {
+    return value === undefined
   }
+
+  return true
+}
 
 export const update = (update: UpdateCase, workingCase: Case): UpdateCase => {
   const validUpdates = omitBy<UpdateCase>(update, fieldHasValue(workingCase))
