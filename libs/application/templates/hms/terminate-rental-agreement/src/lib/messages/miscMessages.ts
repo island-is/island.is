@@ -3,7 +3,7 @@ import { defineMessages } from 'react-intl'
 export const miscMessages = defineMessages({
   applicationName: {
     id: 'tra.application:misc.applicationName',
-    defaultMessage: 'Uppsögn eða riftun leigusamninga',
+    defaultMessage: 'Uppsögn eða riftun leigusamnings',
     description: 'Application name',
   },
   personalInformationSectionTitle: {
