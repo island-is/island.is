@@ -14,7 +14,7 @@ export const completedForm = buildForm({
       tabTitle: m.conclusionMessages.title,
       alertTitle: m.conclusionMessages.alertTitle,
       alertMessage: (application) => {
-        const terminationType = getValueViaPath<string>(
+        const terminationType = getValueViaPath<{ answer: string }>(
           application.answers,
           'terminationType',
         )
@@ -23,7 +23,7 @@ export const completedForm = buildForm({
           ...m.conclusionMessages.alertMessage,
           values: {
             terminationType:
-              terminationType === 'cancelation' ? 'riftun' : 'uppsögn',
+              terminationType?.answer === 'cancelation' ? 'riftun' : 'uppsögn',
           },
         }
       },

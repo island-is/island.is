@@ -151,6 +151,23 @@ const template: ApplicationTemplate<
               action: TemplateApiActions.submitApplication,
             }),
           ],
+          actionCard: {
+            tag: {
+              label: m.miscMessages.actionCardDone,
+            },
+            pendingAction(application) {
+              return {
+                displayStatus: 'success',
+                title:
+                  getValueViaPath<string>(
+                    application.answers,
+                    'terminationType.answer',
+                  ) === 'cancelation'
+                    ? m.miscMessages.actioncardDoneTitleCancelation
+                    : m.miscMessages.actioncardDoneTitleTermination,
+              }
+            },
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -159,7 +176,6 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.completedForm),
                 ),
               read: 'all',
-              delete: true,
             },
             {
               // This state is set for development purposes, shouldn't be reachable on prod
