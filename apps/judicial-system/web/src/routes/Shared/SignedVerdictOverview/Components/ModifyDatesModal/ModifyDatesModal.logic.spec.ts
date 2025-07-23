@@ -1,13 +1,12 @@
-import { createIntl } from 'react-intl'
+import { createFormatMessage } from '@island.is/judicial-system-web/src/utils/testHelpers.logic'
 
-import { createCaseModifiedExplanation } from './ModifyDatesModal'
+import { createCaseModifiedExplanation } from './ModifyDatesModal.logic'
 
 describe('createCaseModifiedExplanation', () => {
-  const formatMessage = createIntl({
-    locale: 'is',
-    onError: jest.fn(),
-  }).formatMessage
-  beforeAll(() => jest.useFakeTimers())
+  const formatMessage = createFormatMessage()
+
+  beforeEach(() => jest.useFakeTimers())
+  afterEach(() => jest.useRealTimers())
 
   it('should append nextExplainantion', () => {
     const previousExplaination =
