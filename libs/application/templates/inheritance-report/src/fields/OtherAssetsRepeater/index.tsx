@@ -35,6 +35,9 @@ export const OtherAssetsRepeater: FC<
   const { id, props } = field
 
   const deceasedHadAssets = getDeceasedWasMarriedAndHadAssets(application)
+  const otherAssets =
+    getEstateDataFromApplication(application)?.inheritanceReportInfo
+      ?.otherAssets ?? []
 
   const getDefaultValue = (
     fieldName: keyof InheritanceReportAsset,
@@ -69,6 +72,22 @@ export const OtherAssetsRepeater: FC<
     setValue(addTotal, total)
     setTotal(total)
   }, [getValues, id, setValue])
+
+  useEffect(() => {
+    // Set up a flag to prevent multiple runs of this logic
+    // Although the dependency array is empty, it gets triggered twice in the UI
+    const otherAssetsFlagTrigger = getValues('ir.otherAssets.triggerHasRun')
+    if (!otherAssetsFlagTrigger && otherAssets.length) {
+      setValue('ir.otherAssets.triggerHasRun', true)
+
+      const initialRepeaterFields = otherAssets.map((oa) => ({
+        info: oa.description,
+        value: oa.propertyValuation,
+      }))
+      append(initialRepeaterFields)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   useEffect(() => {
     calculateTotal()

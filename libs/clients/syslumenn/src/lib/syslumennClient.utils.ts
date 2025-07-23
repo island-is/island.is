@@ -479,6 +479,7 @@ export const mapEstateRegistrant = (
           .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_10)
           .map(assetMapper)
       : [],
+    otherAssets: [],
     estateMembers: syslaData.adilarDanarbus
       ? syslaData.adilarDanarbus.map(estateMemberMapper)
       : [],
@@ -531,6 +532,7 @@ export const mapEstateInfo = (syslaData: DanarbuUpplRadstofun): EstateInfo => {
       : [],
     // TODO: update once implemented in District Commissioner's backend
     guns: [],
+    otherAssets: [],
     estateMembers: syslaData.erfingar
       ? syslaData.erfingar.map(estateMemberMapper)
       : [],

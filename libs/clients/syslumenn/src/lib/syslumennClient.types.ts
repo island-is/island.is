@@ -272,6 +272,7 @@ interface EstateCommon {
   flyers: EstateAsset[]
   cash: EstateAsset[]
   guns: EstateAsset[]
+  otherAssets: EstateAsset[]
   estateMembers: EstateMember[]
   caseNumber: string
   districtCommissionerHasWill: boolean
