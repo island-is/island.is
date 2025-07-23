@@ -114,7 +114,9 @@
       "inputs": ["production", "^production", "DevOps"]
     },
     "e2e": {
-      "inputs": ["default", "^production"],
+      "dependsOn": [],
+      "inputs": ["production", "^production", "DevOps"],
+      "outputs": [],
       "cache": true
     },
     "lint": {
@@ -231,5 +233,13 @@
     ]
   },
   "useInferencePlugins": false,
-  "defaultBase": "main"
+  "defaultBase": "main",
+  "plugins": [
+    {
+      "plugin": "@nx/playwright/plugin",
+      "options": {
+        "targetName": "e2e"
+      }
+    }
+  ]
 }
