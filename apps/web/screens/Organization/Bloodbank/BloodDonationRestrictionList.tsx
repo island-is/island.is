@@ -104,7 +104,12 @@ const BloodDonationRestrictionList: CustomScreen<
   const [currentPage, setPage] = useQueryState(
     'page',
     parseAsInteger
-      .withOptions({ shallow: true, clearOnDefault: true, scroll: true })
+      .withOptions({
+        shallow: true,
+        clearOnDefault: true,
+        scroll: true,
+        history: 'push',
+      })
       .withDefault(1),
   )
   const { activeLocale } = useI18n()
@@ -205,7 +210,12 @@ const BloodDonationRestrictionList: CustomScreen<
                 value={queryString}
                 onChange={(ev) => {
                   setQueryString(ev.target.value)
-                  setPage(null)
+
+                  // Make sure we don't create a new history entry when the user is already on page 1
+                  if (currentPage !== 1) {
+                    setPage(null)
+                  }
+
                   queryVariablesRef.current.queryString = ev.target.value
                   queryVariablesRef.current.page = 1
                 }}
