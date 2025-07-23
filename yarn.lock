@@ -56046,9 +56046,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"stylus@npm:^0.59.0":
+"stylus@github:stylus/stylus#0.59.0":
   version: 0.59.0
-  resolution: "stylus@npm:0.59.0"
+  resolution: "stylus@https://github.com/stylus/stylus.git#commit=8e29ff39fb563f91ef4eaff9b2c9f29e2a1910ec"
   dependencies:
     "@adobe/css-tools": "npm:^4.0.1"
     debug: "npm:^4.3.2"
@@ -56056,8 +56056,8 @@ __metadata:
     sax: "npm:~1.2.4"
     source-map: "npm:^0.7.3"
   bin:
-    stylus: bin/stylus
-  checksum: 10/f8414237d7b0edf57ddbb0d782de7876bba15dc71e475e8713377b8dbc4767a1b1f101f966e33beb7f0c8d092e17a42d557f73bc94cbae5a8311d3bc2f64bbbb
+    stylus: ./bin/stylus
+  checksum: 10/48933923842d013f0305b71a018f897fbc4b0ba3fd5802c7594cb51393fc937222aa27edc1423dfe35a60c9785894e1659fa43d9d9e439a1c577fd1759393c81
   languageName: node
   linkType: hard
 
