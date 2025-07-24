@@ -494,7 +494,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     }),
     preQuestionnaire: {
       highestEducation: educationalLevel || '',
-      currentEmploymentStatus: currentEmploymentStatus[0], // TODO: Smári needs to change to an array
+      currentEmploymentStatus: currentEmploymentStatus?.[0], // TODO: Smári needs to change to an array
       ...(currentEmploymentStatus?.includes(
         SelfAssessmentCurrentEmploymentStatus.OTHER,
       ) && {
