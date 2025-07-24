@@ -32,7 +32,7 @@ import { SubmitScreenDto } from './models/dto/submitScreen.dto'
 @ApiTags('applications')
 @Controller({ path: 'applications', version: ['1', VERSION_NEUTRAL] })
 export class ApplicationsController {
-  constructor(private readonly applicationsService: ApplicationsService) {}
+  constructor(private readonly applicationsService: ApplicationsService) { }
 
   @ApiOperation({ summary: 'Get an application by id' })
   @ApiOkResponse({
@@ -40,7 +40,7 @@ export class ApplicationsController {
     type: ApplicationDto,
   })
   @ApiParam({ name: 'id', type: String })
-  @Get(':id')
+  @Get('form/:id([0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})')
   async getApplication(@Param('id') id: string): Promise<ApplicationDto> {
     return await this.applicationsService.getApplication(id)
   }
@@ -82,6 +82,7 @@ export class ApplicationsController {
     @CurrentUser()
     user: User,
   ): Promise<ApplicationResponseDto> {
+    console.log('Finding applications for slug:', slug, 'isTest:', isTest)
     return await this.applicationsService.findAllBySlugAndUser(
       slug,
       user,

@@ -55,8 +55,8 @@ export const FormProvider: React.FC<{
       data: inSettings
         ? baseSettingsStep
         : removeTypename(form?.sections)?.find(
-            (s: FormSystemSection) => s?.sectionType === SectionTypes.INPUT,
-          ) ?? defaultStep,
+          (s: FormSystemSection) => s?.sectionType === SectionTypes.INPUT,
+        ) ?? defaultStep,
     },
     activeListItem: null,
     form: removeTypename(form) as FormSystemForm,
@@ -75,18 +75,25 @@ export const FormProvider: React.FC<{
   const [selectedUrls, setSelectedUrls] = useState<string[]>([])
 
   const getTranslation = async (text: string): Promise<GoogleTranslation> => {
-    const result = await getGoogleTranslation({
-      variables: {
-        input: {
-          q: text,
+    try {
+      const result = await getGoogleTranslation({
+        variables: {
+          input: {
+            q: text,
+          },
         },
-      },
-    })
-    return (
-      result.data?.formSystemGoogleTranslation ?? {
+      })
+      return (
+        result.data?.formSystemGoogleTranslation ?? {
+          translation: '',
+        }
+      )
+    } catch (error) {
+      console.error('Translation error:', error)
+      return {
         translation: '',
       }
-    )
+    }
   }
 
   const updateActiveItem = useCallback(

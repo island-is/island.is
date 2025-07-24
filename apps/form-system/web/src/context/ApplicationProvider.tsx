@@ -1,4 +1,4 @@
-import { createContext, Dispatch, useContext, useReducer, useMemo } from 'react'
+import { createContext, Dispatch, useContext, useReducer, useMemo, useEffect } from 'react'
 import { FormSystemApplication } from '@island.is/api/schema'
 import {
   applicationReducer,
@@ -41,6 +41,10 @@ export const ApplicationProvider: React.FC<{
   )
   const methods = useForm({ mode: 'onBlur' })
   const contextValue = useMemo(() => ({ state, dispatch }), [state])
+
+  useEffect(() => {
+    console.log(state.application)
+  }, [state.application])
   return (
     <ApplicationContext.Provider value={contextValue}>
       <FormProvider {...methods}>{state.application && <Form />}</FormProvider>

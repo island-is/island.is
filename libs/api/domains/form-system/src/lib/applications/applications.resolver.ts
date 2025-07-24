@@ -16,6 +16,7 @@ import {
   ApplicationsInput,
   CreateApplicationInput,
   GetApplicationInput,
+  GetApplicationsInput,
   SubmitScreenInput,
   UpdateApplicationInput,
 } from '../../dto/application.input'
@@ -26,7 +27,7 @@ import { Screen } from '../../models/screen.model'
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
 export class ApplicationsResolver {
-  constructor(private readonly applicationsService: ApplicationsService) {}
+  constructor(private readonly applicationsService: ApplicationsService) { }
 
   @Query(() => Application, {
     name: 'formSystemApplication',
@@ -48,6 +49,17 @@ export class ApplicationsResolver {
     @CurrentUser() user: User,
   ): Promise<ApplicationResponse> {
     return this.applicationsService.getApplications(user, input)
+  }
+
+  @Query(() => ApplicationResponse, {
+    name: 'formSystemGetApplications'
+  })
+  async getAllApplications(
+    @Args('input', { type: () => GetApplicationsInput })
+    input: GetApplicationsInput,
+    @CurrentUser() user: User,
+  ): Promise<ApplicationResponse> {
+    return this.applicationsService.getAllApplications(user, input)
   }
 
   @Mutation(() => Application, {

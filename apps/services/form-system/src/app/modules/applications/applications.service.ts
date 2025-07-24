@@ -58,7 +58,7 @@ export class ApplicationsService {
     @InjectModel(Screen) private screenModel: typeof Screen,
     @InjectModel(Field) private fieldModel: typeof Field,
     @InjectModel(Section) private sectionModel: typeof Section,
-  ) {}
+  ) { }
 
   async create(
     slug: string,
@@ -77,12 +77,11 @@ export class ApplicationsService {
       (!user.delegationType || user.delegationType.length === 0
         ? !form.allowedDelegationTypes.includes('Individual')
         : !user.delegationType.some((type) =>
-            form.allowedDelegationTypes.includes(type),
-          ))
+          form.allowedDelegationTypes.includes(type),
+        ))
     ) {
       throw new BadRequestException(
-        `User delegationTypes '${
-          user.delegationType ? user.delegationType.join(', ') : 'none'
+        `User delegationTypes '${user.delegationType ? user.delegationType.join(', ') : 'none'
         }' are not allowed for this form`,
       )
     }
@@ -318,11 +317,11 @@ export class ApplicationsService {
       .then((organizations) =>
         organizations.map(
           (org) =>
-            ({
-              value: org.nationalId,
-              label: org.name.is,
-              isSelected: org.nationalId === organizationNationalId,
-            } as Option),
+          ({
+            value: org.nationalId,
+            label: org.name.is,
+            isSelected: org.nationalId === organizationNationalId,
+          } as Option),
         ),
       )
     return applicationResponseDto
@@ -382,12 +381,11 @@ export class ApplicationsService {
       (!user.delegationType || user.delegationType.length === 0
         ? !form.allowedDelegationTypes.includes('Individual')
         : !user.delegationType.some((type) =>
-            form.allowedDelegationTypes.includes(type),
-          ))
+          form.allowedDelegationTypes.includes(type),
+        ))
     ) {
       throw new BadRequestException(
-        `User delegationTypes '${
-          user.delegationType ? user.delegationType.join(', ') : 'none'
+        `User delegationTypes '${user.delegationType ? user.delegationType.join(', ') : 'none'
         }' are not allowed for this form`,
       )
     }
@@ -398,7 +396,7 @@ export class ApplicationsService {
       form.id,
       isTest,
     )
-
+    console.log('Existing applications:', existingApplications)
     const responseDto = new ApplicationResponseDto()
     responseDto.applications = existingApplications
     return responseDto
@@ -449,27 +447,25 @@ export class ApplicationsService {
       // Only keep applications with a single applicant
       applicationIds = applicationIds.filter((id) => counts[id] === 1)
     }
-
     // 2. Find all applications that match the formId and filtered applicationIds
     const applications = applicationIds.length
       ? await this.applicationModel.findAll({
-          where: {
-            formId,
-            id: applicationIds,
-            status: ApplicationStatus.IN_PROGRESS,
-            isTest: isTest,
-          },
-        })
+        where: {
+          formId,
+          id: applicationIds,
+          status: ApplicationStatus.IN_PROGRESS,
+          isTest: isTest,
+        },
+      })
       : []
-
     // 3. Map the applications to ApplicationDto
     const applicationDtos = await Promise.all(
-      applications.map(async (application) => {
-        return this.getApplication(application.id)
+      applicationIds.map(async (applicationId) => {
+        return this.getApplication(applicationId)
       }),
     )
 
-    return applicationDtos
+    return applicationDtos.filter(application => application.formId === formId && application.status === ApplicationStatus.IN_PROGRESS)
   }
 
   private async getApplicationForm(

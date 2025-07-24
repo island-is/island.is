@@ -59,7 +59,7 @@ export const ApplicationCard = ({
           <Box display="flex" justifyContent="center">
             <Text variant="small">
               {format(
-                new Date(application.created || application.modified),
+                new Date(application.modified),
                 formattedDate,
               )}
             </Text>
@@ -67,10 +67,10 @@ export const ApplicationCard = ({
         </Box>
         <Inline alignY="center" justifyContent="flexEnd" space={1}>
           <ApplicationCardTag />
-          <ApplicationCardDelete
+          {/* <ApplicationCardDelete
             application={application}
             onDelete={onDelete}
-          />
+          /> */}
         </Inline>
       </Box>
 
