@@ -29,11 +29,11 @@
           "codegen/backend-schema",
           "codegen/frontend-client",
           "generateDevIndexHTML"
-        ],
-        "nxCloudId": "64e4eb6a54304f090734e8df"
+        ]
       }
     }
   },
+  "nxCloudId": "64e4eb6a54304f090734e8df",
   "generators": {
     "@nx/nx-plugin": {
       "plugin": {
