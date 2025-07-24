@@ -32,7 +32,7 @@ import { CurrentDefendant, Defendant } from '../defendant'
 import { DefendantNationalIdExistsGuard } from '../defendant/guards/defendantNationalIdExists.guard'
 import { Verdict } from '../verdict/models/verdict.model'
 import { VerdictService } from '../verdict/verdict.service'
-import { UpdateVerdictAppealDto } from './dto/updateVerdictAppeal.dto'
+import { InternalUpdateVerdictDto } from './dto/internalUpdateVerdict.dto'
 
 const validateVerdictAppealUpdate = ({
   caseId,
@@ -96,7 +96,7 @@ export class InternalVerdictController {
     @Param('defendantNationalId') _: string,
     @CurrentCase() theCase: Case,
     @CurrentDefendant() defendant: Defendant,
-    @Body() verdictAppeal: UpdateVerdictAppealDto,
+    @Body() verdictAppeal: InternalUpdateVerdictDto,
   ): Promise<Verdict> {
     this.logger.debug(`Updating verdict appeal for defendant in case ${caseId}`)
 
@@ -115,7 +115,7 @@ export class InternalVerdictController {
     })
 
     const updatedVerdict = this.verdictService.updateRestricted(verdict, {
-      appealDecision: verdictAppeal.verdictAppealDecision,
+      appealDecision: verdictAppeal.appealDecision,
     })
     return updatedVerdict
   }

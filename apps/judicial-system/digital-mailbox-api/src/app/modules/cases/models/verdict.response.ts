@@ -25,7 +25,7 @@ export class VerdictResponse {
   subtitle?: string
 
   @ApiProperty({ enum: VerdictAppealDecision })
-  verdictAppealDecision?: VerdictAppealDecision
+  appealDecision?: VerdictAppealDecision
 
   @ApiProperty({ type: [Groups] })
   groups?: Groups[]
@@ -63,7 +63,7 @@ export class VerdictResponse {
       caseId: internalCase.id,
       title: t.rulingTitle,
       // subtitle: 'TODO subtitle (if needed)',
-      verdictAppealDecision: defendant?.verdict?.appealDecision,
+      appealDecision: defendant?.verdict?.appealDecision,
       groups: [
         {
           label: t.rulingTitle,
