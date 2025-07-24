@@ -280,6 +280,10 @@ export const m = {
       defaultMessage:
         'Þessi auglýsing var birt fyrir gildistöku laga nr. 15/2005 og er eingöngu á PDF-formi.',
     },
+    descriptionPdfOnly: {
+      id: 'web.ojoi:advert.description-empty-pdf-only',
+      defaultMessage: 'Þessi auglýsing er eingöngu á PDF-formi.',
+    },
 
     sidebarTitle: {
       id: 'web.ojoi:advert.sidebarTitle',

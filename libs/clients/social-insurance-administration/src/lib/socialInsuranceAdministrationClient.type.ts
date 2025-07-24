@@ -143,11 +143,11 @@ export enum DocumentTypeEnum {
 export type IncomePlanStatus = 'Accepted' | 'Cancelled' | 'InProgress'
 
 export interface Occupation {
-  isSelfEmployed: boolean
+  isSelfEmployed?: boolean
   isStudying: boolean
   educationalInstitution?: string
   isPartTimeEmployed: boolean
-  receivingPaymentsFromOtherCountry: boolean
+  receivingPaymentsFromOtherCountry?: boolean
   calculatedRemunerationDate?: string
 }
 
@@ -168,6 +168,7 @@ export interface Answer {
 }
 export interface SelfAssessment {
   hadAssistance: boolean
+  educationalLevel: string
   currentEmploymentStatus: string[]
   currentEmploymentStatusAdditional?: string
   lastEmploymentTitle?: string

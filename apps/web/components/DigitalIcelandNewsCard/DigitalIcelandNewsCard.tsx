@@ -22,6 +22,7 @@ interface ItemProps {
   tags: string[]
   href: string
   mini?: boolean
+  titleAs?: 'h2'
 }
 
 export const DigitalIcelandNewsCard = (item: ItemProps) => {
@@ -74,7 +75,9 @@ export const DigitalIcelandNewsCard = (item: ItemProps) => {
                     {formattedDate}
                   </Text>
                 )}
-                <Text variant="h3">{item.title}</Text>
+                <Text variant="h3" as={item.titleAs}>
+                  {item.title}
+                </Text>
                 <Text variant="default">
                   {shortenText(item.description ?? '', 80)}
                 </Text>

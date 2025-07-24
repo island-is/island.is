@@ -170,6 +170,8 @@ const RentalAgreementTemplate: ApplicationTemplate<
         },
       },
       [States.SIGNING]: {
+        entry: 'assignToInstitution',
+        exit: 'clearAssignees',
         meta: {
           name: States.SIGNING,
           status: 'inprogress',
@@ -193,13 +195,17 @@ const RentalAgreementTemplate: ApplicationTemplate<
               write: 'all',
               read: 'all',
               delete: true,
+              actions: [
+                {
+                  event: DefaultEvents.APPROVE,
+                  name: application.approve,
+                  type: 'primary',
+                },
+              ],
             },
           ],
         },
         on: {
-          [DefaultEvents.EDIT]: {
-            target: States.INREVIEW,
-          },
           [DefaultEvents.APPROVE]: {
             target: States.COMPLETED,
           },
@@ -239,6 +245,15 @@ const RentalAgreementTemplate: ApplicationTemplate<
         if (assigneesNationalIds && assigneesNationalIds.length > 0) {
           set(application, 'assignees', assigneesNationalIds)
         }
+
+        return context
+      }),
+      assignToInstitution: assign((context) => {
+        const { application } = context
+
+        set(application, 'assignees', [
+          InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
+        ])
 
         return context
       }),

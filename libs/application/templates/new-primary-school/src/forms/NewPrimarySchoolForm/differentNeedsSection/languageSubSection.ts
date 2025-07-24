@@ -20,7 +20,7 @@ import {
 
 export const languageSubSection = buildSubSection({
   id: 'languageSubSection',
-  title: newPrimarySchoolMessages.differentNeeds.languageSubSectionTitle,
+  title: newPrimarySchoolMessages.shared.language,
   children: [
     buildMultiField({
       id: 'languages',
@@ -45,12 +45,12 @@ export const languageSubSection = buildSubSection({
             placeholder:
               newPrimarySchoolMessages.differentNeeds
                 .languageEnvironmentPlaceholder,
+            useIdAndKey: true,
           },
         ),
         buildDescriptionField({
           id: 'languages.selectedLanguages.title',
-          title:
-            newPrimarySchoolMessages.differentNeeds.languageSubSectionTitle,
+          title: newPrimarySchoolMessages.shared.language,
           description:
             newPrimarySchoolMessages.differentNeeds.languagesDescription,
           titleVariant: 'h4',
@@ -84,9 +84,7 @@ export const languageSubSection = buildSubSection({
               component: 'select',
               label:
                 newPrimarySchoolMessages.differentNeeds.languageSelectionTitle,
-              placeholder:
-                newPrimarySchoolMessages.differentNeeds
-                  .languageSelectionPlaceholder,
+              placeholder: newPrimarySchoolMessages.shared.languagePlaceholder,
               width: 'full',
               options: (application) => {
                 const { languageEnvironment } = getApplicationAnswers(
@@ -124,11 +122,8 @@ export const languageSubSection = buildSubSection({
         }),
         buildSelectField({
           id: 'languages.preferredLanguage',
-          title:
-            newPrimarySchoolMessages.differentNeeds.languageSubSectionTitle,
-          placeholder:
-            newPrimarySchoolMessages.differentNeeds
-              .languageSelectionPlaceholder,
+          title: newPrimarySchoolMessages.shared.language,
+          placeholder: newPrimarySchoolMessages.shared.languagePlaceholder,
           options: (application) => {
             const { selectedLanguages } = getApplicationAnswers(
               application.answers,
@@ -174,28 +169,6 @@ export const languageSubSection = buildSubSection({
           condition: (answers) => {
             const { languageEnvironment } = getApplicationAnswers(answers)
             return !!languageEnvironment
-          },
-        }),
-        buildRadioField({
-          id: 'languages.guardianRequiresInterpreter',
-          title: newPrimarySchoolMessages.differentNeeds.interpreter,
-          width: 'half',
-          required: true,
-          space: 4,
-          options: [
-            {
-              label: newPrimarySchoolMessages.shared.yes,
-              dataTestId: 'guardian-requires-interpreter',
-              value: YES,
-            },
-            {
-              label: newPrimarySchoolMessages.shared.no,
-              dataTestId: 'no-guardian-requires-interpreter',
-              value: NO,
-            },
-          ],
-          condition: (answers) => {
-            return hasForeignLanguages(answers)
           },
         }),
       ],
