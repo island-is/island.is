@@ -130,9 +130,11 @@ export class InheritanceReportService extends BaseTemplateApiService {
       attachments.push(
         ...(await Promise.all(
           answers.heirsAdditionalInfoPrivateTransferFiles.map(async (file) => {
-            const filename = (application.attachments as {
-              [key: string]: string
-            })[file.key]
+            const filename = (
+              application.attachments as {
+                [key: string]: string
+              }
+            )[file.key]
             const content = await this.getFileContentBase64(filename)
             return {
               name: file.name,
@@ -147,9 +149,11 @@ export class InheritanceReportService extends BaseTemplateApiService {
       attachments.push(
         ...(await Promise.all(
           answers.heirsAdditionalInfoFilesOtherDocuments.map(async (file) => {
-            const filename = (application.attachments as {
-              [key: string]: string
-            })[file.key]
+            const filename = (
+              application.attachments as {
+                [key: string]: string
+              }
+            )[file.key]
             const content = await this.getFileContentBase64(filename)
             return {
               name: file.name,
