@@ -103,6 +103,35 @@ LABEL branch=${GIT_BRANCH} commit=${GIT_COMMIT_SHA}
 CMD ["node", "--no-experimental-fetch", "main.js"]
 
 # ------------------------------------------------
+# Express yarn output
+# ------------------------------------------------
+FROM output-base-with-pg AS output-express-yarn
+
+ARG APP_DIST_HOME
+ARG GIT_BRANCH
+ARG GIT_COMMIT_SHA
+ARG GIT_REPOSITORY_URL
+
+COPY --from=builder /build/${APP_DIST_HOME} /webapp/
+COPY .yarnrc.yml /webapp/
+COPY .yarn/patches /webapp/.yarn/patches
+COPY .yarn/releases /webapp/.yarn/releases
+
+RUN --mount=type=cache,target=.yarn/cache,sharing=locked \
+  yarn install --immutable --production
+
+ENV GIT_BRANCH=${GIT_BRANCH} \
+  GIT_COMMIT_SHA=${GIT_COMMIT_SHA} \
+  GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL} \
+  DD_GIT_BRANCH=${GIT_BRANCH} \
+  DD_GIT_COMMIT_SHA=${GIT_COMMIT_SHA} \
+  DD_GIT_REPOSITORY_URL=${GIT_REPOSITORY_URL}
+
+LABEL branch=${GIT_BRANCH} commit=${GIT_COMMIT_SHA}
+
+CMD ["node", "--no-experimental-fetch", "main.cjs"]
+
+# ------------------------------------------------
 # Next.js output
 # ------------------------------------------------
 FROM output-base-with-pg AS output-next

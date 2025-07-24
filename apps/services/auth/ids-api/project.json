@@ -27,41 +27,43 @@
       "outputs": ["{workspaceRoot}/dist/apps/services/auth/ids-api"]
     },
     "esbuild": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "options": {
         "outputPath": "dist/apps/services/auth/ids-api",
         "main": "apps/services/auth/ids-api/src/main.ts",
         "tsConfig": "apps/services/auth/ids-api/tsconfig.app.json",
-        "assets": [
-          "apps/services/auth/ids-api/src/assets",
-          {
-            "glob": "*",
-            "input": "libs/auth-api-lib/migrations",
-            "output": "./migrations"
-          },
-          {
-            "glob": "*",
-            "input": "libs/auth-api-lib/seeders",
-            "output": "./seeders"
-          },
-          {
-            "glob": ".sequelizerc",
-            "input": "libs/auth-api-lib",
-            "output": "./"
-          },
-          {
-            "glob": "sequelize.config.js",
-            "input": "libs/auth-api-lib",
-            "output": "./"
-          }
-        ],
-        "maxWorkers": 2
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"]
       },
       "configurations": {
         "production": {
           "optimization": true,
           "extractLicenses": true,
-          "inspect": false
+          "inspect": false,
+          "assets": [
+            "apps/services/auth/ids-api/src/assets",
+            {
+              "glob": "*",
+              "input": "libs/auth-api-lib/migrations",
+              "output": "./migrations"
+            },
+            {
+              "glob": "*",
+              "input": "libs/auth-api-lib/seeders",
+              "output": "./seeders"
+            },
+            {
+              "glob": ".sequelizerc",
+              "input": "libs/auth-api-lib",
+              "output": "./"
+            },
+            {
+              "glob": "sequelize.config.js",
+              "input": "libs/auth-api-lib",
+              "output": "./"
+            }
+          ]
         }
       },
       "outputs": ["{options.outputPath}"]
@@ -93,13 +95,16 @@
       },
       "outputs": ["{workspaceRoot}/coverage/apps/services/auth/ids-api"]
     },
-    "docker-express": {
+    "docker-express-yarn": {
       "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
     },
     "dev-services": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "docker compose up -d",
+        "commands": [
+          "docker compose up -d",
+          "docker compose -f ../../../../scripts/docker-compose/redis-cluster.yml up -d"
+        ],
         "cwd": "apps/services/auth/ids-api"
       }
     },
