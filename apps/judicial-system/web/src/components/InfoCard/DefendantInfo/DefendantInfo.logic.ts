@@ -11,7 +11,7 @@ export const getAppealExpirationInfo = (
   serviceRequirement?: ServiceRequirement | null,
 ) => {
   if (serviceRequirement === ServiceRequirement.NOT_REQUIRED) {
-    return { message: strings.serviceNotRequired, data: null }
+    return { message: strings.serviceNotRequired, date: null }
   }
 
   if (!verdictAppealDeadline) {
