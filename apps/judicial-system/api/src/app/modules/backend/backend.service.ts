@@ -24,6 +24,10 @@ import {
   SignatureConfirmationResponse,
 } from '../case'
 import { CaseListEntry, CaseStatistics } from '../case-list'
+import {
+  IndictmentCaseStatistics,
+  RequestCaseStatistics,
+} from '../case-list/models/caseStatistics.model'
 import { CaseTableResponse, SearchCasesResponse } from '../case-table'
 import {
   CivilClaimant,
@@ -239,6 +243,34 @@ export class BackendService extends DataSource<{ req: Request }> {
     if (institutionId) params.append('institutionId', institutionId)
 
     return this.get(`cases/statistics?${params.toString()}`)
+  }
+
+  getIndictmentCaseStatistics(
+    fromDate?: Date,
+    toDate?: Date,
+    institutionId?: string,
+  ): Promise<IndictmentCaseStatistics> {
+    const params = new URLSearchParams()
+
+    if (fromDate) params.append('fromDate', fromDate.toISOString())
+    if (toDate) params.append('toDate', toDate.toISOString())
+    if (institutionId) params.append('institutionId', institutionId)
+
+    return this.get(`cases/indictment/statistics?${params.toString()}`)
+  }
+
+  getRequestCaseStatistics(
+    fromDate?: Date,
+    toDate?: Date,
+    institutionId?: string,
+  ): Promise<RequestCaseStatistics> {
+    const params = new URLSearchParams()
+
+    if (fromDate) params.append('fromDate', fromDate.toISOString())
+    if (toDate) params.append('toDate', toDate.toISOString())
+    if (institutionId) params.append('institutionId', institutionId)
+
+    return this.get(`cases/request/statistics?${params.toString()}`)
   }
 
   getConnectedCases(id: string): Promise<Case[]> {

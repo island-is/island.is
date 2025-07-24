@@ -2355,6 +2355,110 @@ export class CaseService {
     return updatedCase
   }
 
+  // TODO: MOVE TO STATISTIC SERVICE
+  async getIndictmentCaseStatistics(
+    from?: Date,
+    to?: Date,
+    institutionId?: string,
+  ): Promise<IndictmentCaseStatistics> {
+    let where: WhereOptions = {
+      state: {
+        [Op.not]: [
+          CaseState.DELETED,
+          CaseState.DRAFT,
+          CaseState.NEW,
+          CaseState.WAITING_FOR_CONFIRMATION,
+        ],
+      },
+      type: [CaseType.INDICTMENT],
+    }
+
+    // currently only using the creation date of a case
+    if (from || to) {
+      where.created = {}
+      if (from) {
+        where.created[Op.gte] = from
+      }
+      if (to) {
+        where.created[Op.lte] = to
+      }
+    }
+
+    if (institutionId) {
+      where = {
+        ...where,
+        [Op.or]: [
+          { courtId: institutionId },
+          { prosecutorsOfficeId: institutionId },
+        ],
+      }
+    }
+
+    const cases = await this.caseModel.findAll({
+      where,
+      include: [
+        {
+          model: EventLog,
+          required: false,
+          attributes: ['created', 'eventType'],
+          where: {
+            eventType: EventType.INDICTMENT_CONFIRMED,
+          },
+        },
+      ],
+    })
+
+    const indictmentCases = this.getIndictmentStatistics(cases)
+    return indictmentCases
+  }
+
+  async getRequestCasesStatistics(
+    from?: Date,
+    to?: Date,
+    institutionId?: string,
+  ): Promise<RequestCaseStatistics> {
+    let where: WhereOptions = {
+      state: {
+        [Op.not]: [
+          CaseState.DELETED,
+          CaseState.DRAFT,
+          CaseState.NEW,
+          CaseState.WAITING_FOR_CONFIRMATION,
+        ],
+        type: {
+          [Op.not]: [CaseType.INDICTMENT],
+        },
+      },
+    }
+
+    if (from || to) {
+      where.created = {}
+      if (from) {
+        where.created[Op.gte] = from
+      }
+      if (to) {
+        where.created[Op.lte] = to
+      }
+    }
+
+    if (institutionId) {
+      where = {
+        ...where,
+        [Op.or]: [
+          { courtId: institutionId },
+          { prosecutorsOfficeId: institutionId },
+        ],
+      }
+    }
+
+    const cases = await this.caseModel.findAll({
+      where,
+    })
+
+    const requestCases = this.getRequestCaseStatistics(cases)
+    return requestCases
+  }
+
   async getCaseStatistics(
     from?: Date,
     to?: Date,

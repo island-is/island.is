@@ -19,7 +19,11 @@ import { CaseListQueryInput } from './dto/caseList.input'
 import { CaseStatisticsInput } from './dto/caseStatistics.input'
 import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 import { CaseListEntry } from './models/caseList.model'
-import { CaseStatistics } from './models/caseStatistics.model'
+import {
+  CaseStatistics,
+  IndictmentCaseStatistics,
+  RequestCaseStatistics,
+} from './models/caseStatistics.model'
 
 @UseGuards(JwtGraphQlAuthUserGuard)
 @Resolver(() => [CaseListEntry])
@@ -81,6 +85,58 @@ export class CaseListResolver {
         input.institutionId,
       ),
       (caseStatistics: CaseStatistics) => caseStatistics.count.toString(),
+    )
+
+    return result
+  }
+
+  @Query(() => IndictmentCaseStatistics, { nullable: true })
+  indictmentCaseStatistics(
+    @Args('input', { type: () => CaseStatisticsInput, nullable: true })
+    input: CaseStatisticsInput,
+    @CurrentGraphQlUser()
+    user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<IndictmentCaseStatistics> {
+    this.logger.debug('Getting indictment case statistics')
+
+    const result = this.auditTrailService.audit(
+      user.id,
+      AuditedAction.GET_CASES_STATISTICS,
+      backendService.getIndictmentCaseStatistics(
+        input.fromDate,
+        input.toDate,
+        input.institutionId,
+      ),
+      (caseStatistics: IndictmentCaseStatistics) =>
+        caseStatistics.count.toString(),
+    )
+
+    return result
+  }
+
+  @Query(() => RequestCaseStatistics, { nullable: true })
+  requestCaseStatistics(
+    @Args('input', { type: () => CaseStatisticsInput, nullable: true })
+    input: CaseStatisticsInput,
+    @CurrentGraphQlUser()
+    user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<RequestCaseStatistics> {
+    this.logger.debug('Getting case statistics')
+
+    const result = this.auditTrailService.audit(
+      user.id,
+      AuditedAction.GET_CASES_STATISTICS,
+      backendService.getRequestCaseStatistics(
+        input.fromDate,
+        input.toDate,
+        input.institutionId,
+      ),
+      (caseStatistics: RequestCaseStatistics) =>
+        caseStatistics.count.toString(),
     )
 
     return result

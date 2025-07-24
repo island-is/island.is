@@ -1,0 +1,7 @@
+query RequestCaseStatistics($input: CaseStatisticsInput) {
+  requestCaseStatistics(input: $input) {
+    count
+    inProgressCount
+    completedCount
+  }
+}

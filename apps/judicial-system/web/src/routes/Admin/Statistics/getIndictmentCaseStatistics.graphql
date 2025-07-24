@@ -1,0 +1,9 @@
+query IndictmentCaseStatistics($input: CaseStatisticsInput) {
+  indictmentCaseStatistics(input: $input) {
+    count
+    inProgressCount
+    rulingCount
+    averageRulingTimeMs
+    averageRulingTimeDays
+  }
+}
