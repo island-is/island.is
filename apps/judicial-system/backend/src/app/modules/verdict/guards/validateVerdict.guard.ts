@@ -1,8 +1,8 @@
 import {
+  BadRequestException,
   CanActivate,
   ExecutionContext,
   Injectable,
-  InternalServerErrorException,
 } from '@nestjs/common'
 
 import { VerdictService } from '../verdict.service'
@@ -27,11 +27,11 @@ export class ValidateVerdictGuard implements CanActivate {
 
     // We don't want to allow the user to access a verdict without the case being specified first
     if (!theCase) {
-      throw new InternalServerErrorException('Missing case')
+      throw new BadRequestException('Missing case')
     }
 
     if (theCase.id !== request.verdict.caseId) {
-      throw new InternalServerErrorException('Verdict does not belong to case')
+      throw new BadRequestException('Verdict does not belong to case')
     }
 
     return true

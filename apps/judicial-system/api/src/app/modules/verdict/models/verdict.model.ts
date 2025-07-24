@@ -7,7 +7,6 @@ import {
   VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 
-registerEnumType(ServiceStatus, { name: 'ServiceStatus' })
 registerEnumType(ServiceRequirement, { name: 'ServiceRequirement' })
 registerEnumType(VerdictAppealDecision, { name: 'VerdictAppealDecision' })
 registerEnumType(InformationForDefendant, { name: 'InformationForDefendant' })
