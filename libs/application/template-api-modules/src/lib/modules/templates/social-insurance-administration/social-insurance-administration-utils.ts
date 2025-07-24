@@ -28,6 +28,9 @@ import {
   isEHApplication,
   isFirstApplication,
   SelfAssessmentCurrentEmploymentStatus,
+  shouldShowCalculatedRemunerationDate,
+  shouldShowIsStudyingFields,
+  shouldShowPreviousRehabilitationOrTreatmentFields,
 } from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
 import {
   ApplicationType,
@@ -391,9 +394,9 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     isPartTimeEmployed,
     isStudying,
     educationalInstitution,
-    // ectsUnits,
+    ectsUnits,
     isReceivingBenefitsFromAnotherCountry,
-    // countries,
+    countries,
     hasUtilizedEmployeeSickPayRights,
     employeeSickPayEndDate,
     hasUtilizedUnionSickPayRights,
@@ -408,6 +411,11 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     certificateForSicknessAndRehabilitationReferenceId,
     educationalLevel,
     hadAssistance,
+    mainProblem,
+    hasPreviouslyReceivedRehabilitationOrTreatment,
+    previousRehabilitationOrTreatment,
+    previousRehabilitationSuccessful,
+    previousRehabilitationSuccessfulFurtherExplanations,
   } = getMARPApplicationAnswers(application.answers)
 
   //  const { bankInfo } = getMARPApplicationExternalData(application.externalData)
@@ -437,18 +445,25 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     occupation: {
       ...(isFirstApplication(application.externalData) && {
         isSelfEmployed: isSelfEmployed === YES,
+        ...(shouldShowCalculatedRemunerationDate(application.answers) && {
+          calculatedRemunerationDate,
+        }),
+        receivesForeignPayments: isReceivingBenefitsFromAnotherCountry === YES,
+        ...(isReceivingBenefitsFromAnotherCountry === YES && {
+          foreignPayments: countries.map(({ country, nationalId }) => {
+            return {
+              countryName: country.split('::')[1],
+              countryCode: country.split('::')[0],
+              foreignNationalId: nationalId,
+            }
+          }),
+        }),
       }),
       isStudying: isStudying === YES,
       isPartTimeEmployed: isPartTimeEmployed === YES,
-      ...(isFirstApplication(application.externalData) && {
-        receivingPaymentsFromOtherCountry:
-          isReceivingBenefitsFromAnotherCountry === YES,
-      }),
-      ...(isSelfEmployed === YES && {
-        calculatedRemunerationDate,
-      }),
-      ...(isStudying === YES && {
+      ...(shouldShowIsStudyingFields(application.answers) && {
         educationalInstitution,
+        currentSemesterEcts: ectsUnits,
       }),
     },
     ...(isFirstApplication(application.externalData) && {
@@ -477,15 +492,34 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     ...(isEHApplication(application.externalData) && {
       rehabilitationPlanReference: 'test', //TODO:
     }),
-    selfAssessment: {
-      hadAssistance: hadAssistance === YES,
-      educationalLevel: educationalLevel || '',
-      currentEmploymentStatus,
+    preQuestionnaire: {
+      highestEducation: educationalLevel || '',
+      currentEmploymentStatus: currentEmploymentStatus[0], // TODO: Smári needs to change to an array
       ...(currentEmploymentStatus?.includes(
         SelfAssessmentCurrentEmploymentStatus.OTHER,
-      ) && { currentEmploymentStatusAdditional }),
-      ...(lastEmploymentTitle && { lastEmploymentTitle }),
-      ...(lastEmploymentYear && { lastEmploymentYear: +lastEmploymentYear }),
+      ) && {
+        currentEmploymentStatusExplanation: currentEmploymentStatusAdditional,
+      }),
+      ...(lastEmploymentTitle && { lastJobTitle: lastEmploymentTitle }),
+      ...(lastEmploymentYear && { lastJobYear: +lastEmploymentYear }),
+      disabilityReason: mainProblem || '',
+      hasParticipatedInRehabilitationBefore:
+        hasPreviouslyReceivedRehabilitationOrTreatment === YES,
+      ...(shouldShowPreviousRehabilitationOrTreatmentFields(
+        application.answers,
+      ) && {
+        rehabilitationDetails: previousRehabilitationOrTreatment,
+        previousRehabilitationSuccessful:
+          previousRehabilitationSuccessful === YES,
+        ...((previousRehabilitationSuccessful === YES ||
+          previousRehabilitationSuccessful === NO) && {
+          additionalRehabilitationInformation:
+            previousRehabilitationSuccessfulFurtherExplanations,
+        }),
+      }),
+    },
+    selfAssessment: {
+      hadAssistance: hadAssistance === YES,
       answers: questionnaire.map((question) => ({
         questionId: question.questionId,
         answer: question.answer === '5' ? '-1' : question.answer, //TODO: TR teymið er ekki klárt hvort að við eigum að senda -1 eða null
