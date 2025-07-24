@@ -968,7 +968,6 @@ const subpoenaServiceState: CaseTableCellGenerator<TagValue> = {
         verdict: {
           model: Verdict,
           attributes: ['serviceRequirement', 'serviceDate'],
-          order: [['created', 'ASC']],
         },
       },
     },
@@ -1075,7 +1074,6 @@ const indictmentReviewDecision: CaseTableCellGenerator<TagPairValue> = {
         verdict: {
           model: Verdict,
           attributes: ['appealDate'],
-          order: [['created', 'ASC']],
         },
       },
     },
