@@ -42,7 +42,7 @@ export const Prerequisites: Form = buildForm({
           subTitle:
             socialInsuranceAdministrationMessage.pre.externalDataDescription,
           checkboxLabel:
-            socialInsuranceAdministrationMessage.pre.checkboxProvider,
+            medicalAndRehabilitationPaymentsFormMessage.pre.checkboxProvider,
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
@@ -130,7 +130,7 @@ export const Prerequisites: Form = buildForm({
                 socialInsuranceAdministrationMessage.pre
                   .socialInsuranceAdministrationPrivacyTitle,
               subTitle:
-                socialInsuranceAdministrationMessage.pre
+                medicalAndRehabilitationPaymentsFormMessage.pre
                   .socialInsuranceAdministrationPrivacyDescription,
             }),
             buildDataProviderItem({

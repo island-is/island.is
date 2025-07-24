@@ -91,6 +91,17 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       description:
         'The Social Insurance Administration retrieves the rehabilitation plan from the service provider responsible for rehabilitation or treatment.',
     },
+    socialInsuranceAdministrationPrivacyDescription: {
+      id: 'marp.application:pre.socialInsuranceAdministration.privacy.description#markdown',
+      defaultMessage:
+        'Frekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna [hér](https://www.tr.is/tryggingastofnun/personuvernd). \n\nEf tekjur eða aðrar aðstæður þínar breytast verður þú að láta Tryggingastofnun vita þar sem það getur haft áhrif á greiðslur þínar.\n\nRangar eða ófullnægjandi upplýsingar geta haft áhrif á afgreiðslu umsóknarinnar og hugsanlega leitt til endurkröfu eða annarra viðurlaga.\n\nTryggingastofnun getur ákveðið að vísa máli þínu til samhæfingarteymis sem í sitja fulltrúar þjónustuaðila og Tryggingastofnunar. Þjónustuaðilar eru VIRK, starfsendurhæfingarsjóður, félagsþjónusta sveitarfélaga, Vinnumálastofnun, sjúkrahús og heilsugæslur. Ákveði Tryggingastofnun að vísa máli þínu til samhæfingarteymis verður þú upplýst/ur um það og gefinn kostur á að hafna þjónustu teymisins.',
+      description: 'english translation',
+    },
+    checkboxProvider: {
+      id: 'marp.application:pre.checkbox.provider',
+      defaultMessage: 'Ég skil ofangreindar upplýsingar',
+      description: 'I understand the above information',
+    },
   }),
 
   notEligible: defineMessages({
