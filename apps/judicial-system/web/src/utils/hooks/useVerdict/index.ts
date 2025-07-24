@@ -56,7 +56,7 @@ const useVerdict = () => {
         return false
       }
     },
-    [formatMessage, updateVerdictMutation],
+    [updateVerdictMutation],
   )
 
   const setAndSendVerdictToServer = useCallback(
