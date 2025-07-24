@@ -1,5 +1,4 @@
 import { Dispatch, SetStateAction, useCallback } from 'react'
-import { useIntl } from 'react-intl'
 
 import { toast } from '@island.is/island-ui/core'
 import {
@@ -11,8 +10,6 @@ import {
 import { useUpdateVerdictMutation } from './updateVerdict.generated'
 
 const useVerdict = () => {
-  const { formatMessage } = useIntl()
-
   const updateDefendantVerdictState = useCallback(
     (
       update: UpdateVerdictInput,
