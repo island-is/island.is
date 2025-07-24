@@ -115,24 +115,25 @@ export const FuneralCost: FC<
     if (!inheritanceReportInfo) {
       return
     }
-    const { funeralCosts } = inheritanceReportInfo
 
-    for (const customField of props.fields) {
-      console.log('DOING LOOP WHOOPEE')
-      const { assetType } = customField
-      console.log('FOUND ASSET TYPE', assetType)
-      console.log('GONNA SEARCH THROUGH FUNERAL COSTS')
-      console.log({
-        funeralCosts,
-      })
-      const cost = funeralCosts.find(
-        (cost) => cost.funeralAssetItem === assetType,
-      )
-      if (cost) {
-        const fieldValueId = `${id}.${customField.id}`
-        setValue(fieldValueId, String(cost.propertyValuation ?? '0'))
+    // Stop pre-filling from running multiple times with a trigger
+    const funeralAssetsFlagTrigger = getValues('ir.funeralAssets.triggerHasRun')
+    if (!funeralAssetsFlagTrigger) {
+      setValue('ir.funeralAssets.triggerHasRun', true)
+      const { funeralCosts } = inheritanceReportInfo
+
+      for (const customField of props.fields) {
+        const { assetType } = customField
+        const cost = funeralCosts.find(
+          (cost) => cost.funeralAssetItem === assetType,
+        )
+        if (cost) {
+          const fieldValueId = `${id}.${customField.id}`
+          setValue(fieldValueId, String(cost.propertyValuation ?? '0'))
+        }
       }
     }
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
