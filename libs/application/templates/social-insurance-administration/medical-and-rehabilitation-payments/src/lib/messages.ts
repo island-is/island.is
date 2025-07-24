@@ -159,6 +159,13 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       description:
         'Do you receive benefits from another country due to ill health or incapacity?',
     },
+    benefitsFromAnotherCountryDescription: {
+      id: 'marp.application:general.information.benefits.from.another.country.description',
+      defaultMessage:
+        'Rangar eða ófullnægjandi upplýsingar geta haft áhrif á afgreiðslu umsóknarinnar og hugsanlega leitt til endurkröfu eða annarra viðurlaga.',
+      description:
+        'Incorrect or insufficient information may affect the processing of the application and possibly lead to a chargeback or other sanctions.',
+    },
     countryRegistration: {
       id: 'marp.application:general.information.country.registration',
       defaultMessage: 'Skráning lands',
