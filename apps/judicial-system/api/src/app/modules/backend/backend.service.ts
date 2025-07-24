@@ -58,7 +58,7 @@ import {
   UploadPoliceCaseFileResponse,
 } from '../police'
 import { Subpoena } from '../subpoena'
-import { Verdict } from '../verdict/models/verdict.model'
+import { Verdict } from '../verdict'
 import { DeleteVictimResponse, Victim } from '../victim'
 import { backendModuleConfig } from './backend.config'
 

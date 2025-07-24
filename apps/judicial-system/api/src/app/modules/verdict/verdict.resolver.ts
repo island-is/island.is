@@ -48,7 +48,7 @@ export class VerdictResolver {
         verdictId,
         updateVerdict,
       ),
-      (verdict) => verdict.id,
+      verdictId,
     )
   }
 }

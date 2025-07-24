@@ -2,7 +2,6 @@ import { Dispatch, SetStateAction, useCallback } from 'react'
 import { useIntl } from 'react-intl'
 
 import { toast } from '@island.is/island-ui/core'
-import { errors } from '@island.is/judicial-system-web/messages'
 import {
   Case,
   Defendant,
@@ -54,11 +53,11 @@ const useVerdict = () => {
 
         return Boolean(data)
       } catch (error) {
-        toast.error(formatMessage(errors.updateVerdict))
+        toast.error('Upp kom villa við að uppfæra dóm')
         return false
       }
     },
-    [formatMessage, updateVerdictMutation],
+    [updateVerdictMutation],
   )
 
   const setAndSendVerdictToServer = useCallback(
