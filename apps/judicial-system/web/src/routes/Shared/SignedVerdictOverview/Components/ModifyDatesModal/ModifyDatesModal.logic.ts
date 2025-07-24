@@ -10,16 +10,14 @@ import { signedVerdictOverview as m } from '@island.is/judicial-system-web/messa
 
 export const createCaseModifiedExplanation = (
   formatMessage: IntlShape['formatMessage'],
-  previousExplaination: string | null | undefined,
+  previousExplanation: string | null | undefined,
   nextExplanation: string,
   userName?: string | null,
   userTitle?: string | null,
   institutionName?: string | null,
 ): string => {
   const now = new Date()
-  const history = previousExplaination
-    ? `${previousExplaination}<br/><br/>`
-    : ''
+  const history = previousExplanation ? `${previousExplanation}<br/><br/>` : ''
 
   return `${history}${formatMessage(m.sections.modifyDatesInfo.explanation, {
     date: capitalize(formatDate(now, 'PPPP', true) || ''),

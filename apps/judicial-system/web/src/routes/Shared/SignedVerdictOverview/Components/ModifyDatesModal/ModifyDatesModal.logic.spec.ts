@@ -9,7 +9,7 @@ describe('createCaseModifiedExplanation', () => {
   afterEach(() => jest.useRealTimers())
 
   it('should append nextExplainantion', () => {
-    const previousExplaination =
+    const previousExplanation =
       'Föstud. 10. júní 2022 kl. 10:29 - Test Testsen dómari, Héraðsdómur Reykjavíkur<br/>Ástæða: Testing'
     const nextExplainantion = 'Testing2'
     const userName = 'Test Testsen'
@@ -20,7 +20,7 @@ describe('createCaseModifiedExplanation', () => {
 
     const res = createCaseModifiedExplanation(
       formatMessage,
-      previousExplaination,
+      previousExplanation,
       nextExplainantion,
       userName,
       userTitle,
@@ -32,8 +32,8 @@ describe('createCaseModifiedExplanation', () => {
     )
   })
 
-  it('should format correctly without previousExplaination', () => {
-    const previousExplaination = undefined
+  it('should format correctly without previousExplanation', () => {
+    const previousExplanation = undefined
     const nextExplainantion = 'Testing'
     const userName = 'Test Testsen'
     const userTitle = 'Dómari'
@@ -43,7 +43,7 @@ describe('createCaseModifiedExplanation', () => {
 
     const res = createCaseModifiedExplanation(
       formatMessage,
-      previousExplaination,
+      previousExplanation,
       nextExplainantion,
       userName,
       userTitle,
