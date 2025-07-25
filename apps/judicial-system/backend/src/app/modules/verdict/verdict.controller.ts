@@ -16,7 +16,7 @@ import {
   RolesGuard,
   RolesRules,
 } from '@island.is/judicial-system/auth'
-import { ServiceRequirement } from '@island.is/judicial-system/types'
+import { indictmentCases } from '@island.is/judicial-system/types'
 
 import {
   districtCourtAssistantRule,
@@ -24,24 +24,39 @@ import {
   districtCourtRegistrarRule,
   publicProsecutorStaffRule,
 } from '../../guards'
-import { Case, CaseExistsGuard, CurrentCase } from '../case'
+import {
+  Case,
+  CaseCompletedGuard,
+  CaseExistsGuard,
+  CaseReadGuard,
+  CaseTypeGuard,
+  CurrentCase,
+} from '../case'
+import { DefendantExistsGuard } from '../defendant'
 import { UpdateVerdictDto } from './dto/updateVerdict.dto'
-import { ValidateVerdictGuard } from './guards/validateVerdict.guard'
 import { CurrentVerdict } from './guards/verdict.decorator'
-import { VerdictWriteGuard } from './guards/verdictWrite.guard'
+import { VerdictExistGuard } from './guards/verdictExistGuard.guard'
 import { Verdict } from './models/verdict.model'
 import { VerdictService } from './verdict.service'
 
 @Controller('api/case/:caseId/defendant/:defendantId/verdict')
 @ApiTags('verdicts')
-@UseGuards(JwtAuthUserGuard, RolesGuard, CaseExistsGuard, ValidateVerdictGuard)
+@UseGuards(
+  JwtAuthUserGuard,
+  RolesGuard,
+  CaseExistsGuard,
+  new CaseTypeGuard(indictmentCases),
+  CaseReadGuard,
+  CaseCompletedGuard,
+  DefendantExistsGuard,
+  VerdictExistGuard,
+)
 export class VerdictController {
   constructor(
     private readonly verdictService: VerdictService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(VerdictWriteGuard)
   @RolesRules(
     districtCourtJudgeRule,
     districtCourtRegistrarRule,
@@ -53,7 +68,7 @@ export class VerdictController {
     type: Verdict,
     description: 'Updates a verdict',
   })
-  update(
+  async update(
     @Param('caseId') caseId: string,
     @Param('defendantId') defendantId: string,
     @Param('verdictId') verdictId: string,
@@ -61,15 +76,17 @@ export class VerdictController {
     @CurrentVerdict() verdict: Verdict,
     @Body() verdictToUpdate: UpdateVerdictDto,
   ): Promise<Verdict> {
-    this.logger.debug(`Updating verdict for ${verdictId} of ${caseId}`)
+    this.logger.debug(
+      `Updating verdict for ${verdict.id} of ${defendantId} in ${caseId}`,
+    )
 
-    // when defendant is present in court hearing, we set the service date as the ruling date
-    if (
-      verdictToUpdate.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
-    ) {
-      verdictToUpdate = { ...verdictToUpdate, serviceDate: theCase.rulingDate }
-    }
+    const enhancedUpdate =
+      await this.verdictService.handleServiceRequirementUpdate(
+        verdictId,
+        verdictToUpdate,
+        theCase.rulingDate,
+      )
 
-    return this.verdictService.updateVerdict(verdict, verdictToUpdate)
+    return this.verdictService.updateVerdict(verdict, enhancedUpdate)
   }
 }
