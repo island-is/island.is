@@ -58,7 +58,7 @@ export class ApplicationsService {
     @InjectModel(Screen) private screenModel: typeof Screen,
     @InjectModel(Field) private fieldModel: typeof Field,
     @InjectModel(Section) private sectionModel: typeof Section,
-  ) { }
+  ) {}
 
   async create(
     slug: string,
@@ -77,11 +77,12 @@ export class ApplicationsService {
       (!user.delegationType || user.delegationType.length === 0
         ? !form.allowedDelegationTypes.includes('Individual')
         : !user.delegationType.some((type) =>
-          form.allowedDelegationTypes.includes(type),
-        ))
+            form.allowedDelegationTypes.includes(type),
+          ))
     ) {
       throw new BadRequestException(
-        `User delegationTypes '${user.delegationType ? user.delegationType.join(', ') : 'none'
+        `User delegationTypes '${
+          user.delegationType ? user.delegationType.join(', ') : 'none'
         }' are not allowed for this form`,
       )
     }
@@ -317,11 +318,11 @@ export class ApplicationsService {
       .then((organizations) =>
         organizations.map(
           (org) =>
-          ({
-            value: org.nationalId,
-            label: org.name.is,
-            isSelected: org.nationalId === organizationNationalId,
-          } as Option),
+            ({
+              value: org.nationalId,
+              label: org.name.is,
+              isSelected: org.nationalId === organizationNationalId,
+            } as Option),
         ),
       )
     return applicationResponseDto
@@ -381,11 +382,12 @@ export class ApplicationsService {
       (!user.delegationType || user.delegationType.length === 0
         ? !form.allowedDelegationTypes.includes('Individual')
         : !user.delegationType.some((type) =>
-          form.allowedDelegationTypes.includes(type),
-        ))
+            form.allowedDelegationTypes.includes(type),
+          ))
     ) {
       throw new BadRequestException(
-        `User delegationTypes '${user.delegationType ? user.delegationType.join(', ') : 'none'
+        `User delegationTypes '${
+          user.delegationType ? user.delegationType.join(', ') : 'none'
         }' are not allowed for this form`,
       )
     }
@@ -410,7 +412,6 @@ export class ApplicationsService {
     const delegationType = user.delegationType
     const nationalId = delegationType ? user.actor?.nationalId : user.nationalId
     const delegatorNationalId = delegationType ? user.nationalId : null
-
 
     // 1. Find all applicants by nationalId
     const applicants = await this.applicantModel.findAll({
