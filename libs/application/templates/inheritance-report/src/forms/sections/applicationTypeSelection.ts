@@ -49,19 +49,22 @@ export const preSelection = buildSection({
               application.externalData.syslumennOnEntry?.data as {
                 inheritanceReportInfos: Array<InheritanceReportInfo>
               }
-            ).inheritanceReportInfos[0]?.caseNumber
+            ).inheritanceReportInfos[1]?.caseNumber
           },
           options: (application) => {
             return (
-              application.externalData.syslumennOnEntry?.data as {
-                inheritanceReportInfos: Array<InheritanceReportInfo>
-              }
-            ).inheritanceReportInfos.map((estate) => {
-              return {
-                value: estate.caseNumber ?? '',
-                label: estate.nameOfDeceased ?? '',
-              }
-            })
+              (
+                application.externalData.syslumennOnEntry?.data as {
+                  inheritanceReportInfos: Array<InheritanceReportInfo>
+                }
+              ).inheritanceReportInfos.map((estate) => {
+                return {
+                  value: estate.caseNumber ?? '',
+                  label:
+                    `${estate.caseNumber} ${estate.nameOfDeceased} `.trim(),
+                }
+              }) ?? []
+            )
           },
           required: true,
         }),

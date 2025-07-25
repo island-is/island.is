@@ -179,14 +179,28 @@ export const expandAnswers = (
         deceasedShareEnabled: answers.assets.money?.deceasedShareEnabled ?? [],
         deceasedShareAmount: answers.assets.money?.deceasedShareAmount ?? 0,
       },
+      // otherAssets: {
+      //   data: (answers.assets.otherAssets?.data ?? []).map((otherAsset) => {
+      //     return {
+      //       info: otherAsset?.info ?? '',
+      //       value: otherAsset?.value ?? '',
+      //       deceasedShare: otherAsset?.deceasedShare ?? '0',
+      //       deceasedShareEnabled: otherAsset?.deceasedShareEnabled ?? [],
+      //       deceasedShareAmount: otherAsset?.deceasedShareAmount ?? 0,
+      //     }
+      //   }),
+      //   total: answers.assets.otherAssets?.total ?? 0,
+      // },
       otherAssets: {
         data: (answers.assets.otherAssets?.data ?? []).map((otherAsset) => {
           return {
-            info: otherAsset?.info ?? '',
-            value: otherAsset?.value ?? '',
-            deceasedShare: otherAsset?.deceasedShare ?? '0',
-            deceasedShareEnabled: otherAsset?.deceasedShareEnabled ?? [],
-            deceasedShareAmount: otherAsset?.deceasedShareAmount ?? 0,
+            assetNumber: otherAsset.assetNumber ?? '',
+            description: otherAsset.description ?? '',
+            propertyValuation: otherAsset.propertyValuation ?? '0',
+            deceasedShare: otherAsset.deceasedShare ?? '0',
+            deceasedShareEnabled: otherAsset.deceasedShareEnabled ?? [],
+            deceasedShareAmount: otherAsset.deceasedShareAmount ?? 0,
+            enabled: otherAsset.enabled ?? true,
           }
         }),
         total: answers.assets.otherAssets?.total ?? 0,
@@ -195,7 +209,7 @@ export const expandAnswers = (
         data: (answers.assets.realEstate?.data ?? []).map((realEstate) => {
           return {
             assetNumber:
-              realEstate.assetNumber.replace('-', '').replace(/\D/g, '') ?? '',
+              realEstate.assetNumber?.replace('-', '').replace(/\D/g, '') ?? '',
             description: realEstate.description ?? '',
             propertyValuation: realEstate.propertyValuation ?? '0',
             share: realEstate.share ?? '0',

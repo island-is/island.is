@@ -250,10 +250,10 @@ export const getOtherAssetsDataRow = (answers: FormValue): RowType[] => {
   )
 
   const data = (values ?? []).map((item) => {
-    const value = roundedValueToNumber(item.value)
+    const value = roundedValueToNumber(item.propertyValuation)
     const items: RowItemsType = [
       {
-        title: item.info,
+        title: item.description,
         value: formatCurrency(String(value)),
       },
     ]
