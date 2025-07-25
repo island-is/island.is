@@ -1,6 +1,7 @@
 import { ProblemTemplate } from '@island.is/island-ui/core'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { useLocale } from '@island.is/localization'
+import { useUserInfo } from '@island.is/react-spa/bff'
 import { useEffect } from 'react'
 import { m } from '../../lib/messages'
 
@@ -68,6 +69,7 @@ export const Problem = ({
   error,
   title,
   titleSize,
+  debugMessage,
   message,
   tag,
   imgSrc,
@@ -78,6 +80,7 @@ export const Problem = ({
   expand,
 }: ProblemProps) => {
   const { formatMessage } = useLocale()
+  const userInfo = useUserInfo()
 
   const defaultProps = {
     title,
@@ -87,11 +90,15 @@ export const Problem = ({
     noBorder,
     dataTestId,
     expand,
+    debugMessage,
   }
 
   const fallbackProps = {
     title: title ?? formatMessage(m.internalServerErrorTitle),
     message: message ?? formatMessage(m.internalServerErrorMessage),
+    debugMessage:
+      debugMessage ??
+      formatMessage(m.debugCode, { code: userInfo.profile.sid }),
     withIcon: true,
     variant: 'error',
     dataTestId,
@@ -116,6 +123,7 @@ export const Problem = ({
               size={size ?? 'small'}
               dataTestId={dataTestId}
               expand={expand}
+              debugMessage={fallbackProps.debugMessage}
             />
           )
         }
@@ -126,6 +134,7 @@ export const Problem = ({
           {...defaultProps}
           size={size ?? 'large'}
           tag={tag ?? formatMessage(m.error)}
+          debugMessage={fallbackProps.debugMessage}
         />
       )
 
