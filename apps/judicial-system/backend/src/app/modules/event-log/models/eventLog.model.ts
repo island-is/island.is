@@ -28,11 +28,14 @@ export class EventLog extends Model {
     }
 
     const eventTypes = Array.isArray(eventType) ? eventType : [eventType]
-    const relevantLogs = eventLogs.filter(
-      (eventLog) =>
-        eventTypes.includes(eventLog.eventType) &&
-        (!userRole || eventLog.userRole === userRole),
-    )
+    const relevantLogs = eventLogs
+      .filter(
+        (eventLog) =>
+          eventTypes.includes(eventLog.eventType) &&
+          (!userRole || eventLog.userRole === userRole),
+      )
+      // Don't assume any ordering
+      .sort((a, b) => b.created.getTime() - a.created.getTime())
 
     if (relevantLogs.length === 0) {
       return undefined
