@@ -14,10 +14,7 @@ interface Props {
   focused?: boolean
 }
 
-export const ApplicationCard = ({
-  application,
-  focused = false,
-}: Props) => {
+export const ApplicationCard = ({ application, focused = false }: Props) => {
   const { status } = application
   const { slug } = useParams()
   const navigate = useNavigate()
