@@ -18,7 +18,6 @@ import {
   CaseIndictmentRulingDecision,
   Defendant,
   ServiceRequirement,
-  Verdict,
 } from '../../graphql/schema'
 import { formatDateForServer } from '../../utils/hooks'
 import useVerdict from '../../utils/hooks/useVerdict'
