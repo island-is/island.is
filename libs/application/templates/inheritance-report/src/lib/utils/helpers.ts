@@ -6,10 +6,11 @@ import {
   FormValue,
 } from '@island.is/application/types'
 import { InheritanceReportInfo } from '@island.is/clients/syslumenn'
+import { DebtTypes as ClientDebtType } from '@island.is/clients/syslumenn'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { MessageDescriptor } from 'react-intl'
 import { ZodTypeAny } from 'zod'
-import { Answers } from '../../types'
+import { Answers, DebtTypes } from '../../types'
 import { PrePaidInheritanceOptions } from '../constants'
 import { InheritanceReport } from '../dataSchema'
 
@@ -40,6 +41,23 @@ export const getEstateDataFromApplication = (
 
   return {
     inheritanceReportInfo: estateData,
+  }
+}
+
+export const parseDebtType = (debtType: ClientDebtType): DebtTypes => {
+  switch (debtType) {
+    case 'propertyFees':
+      return DebtTypes.PropertyFees
+    case 'overdraft':
+      return DebtTypes.Overdraft
+    case 'creditCard':
+      return DebtTypes.CreditCard
+    case 'insuranceCompany':
+      return DebtTypes.InsuranceInstitute
+    case 'loan':
+      return DebtTypes.Loan
+    default:
+      return DebtTypes.OtherDebts
   }
 }
 
