@@ -48,14 +48,7 @@ describe('VerdictController - Update', () => {
       const then = {} as Then
 
       await verdictController
-        .update(
-          theCase.id,
-          defendant.id,
-          verdict.id,
-          theCase,
-          verdict,
-          verdictUpdate,
-        )
+        .update(theCase.id, defendant.id, theCase, verdict, verdictUpdate)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 

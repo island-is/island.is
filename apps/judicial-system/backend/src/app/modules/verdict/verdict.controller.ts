@@ -39,7 +39,7 @@ import { VerdictExistGuard } from './guards/verdictExistGuard.guard'
 import { Verdict } from './models/verdict.model'
 import { VerdictService } from './verdict.service'
 
-@Controller('api/case/:caseId/defendant/:defendantId/verdict')
+@Controller('api/case/:caseId/defendant/verdict')
 @ApiTags('verdicts')
 @UseGuards(
   JwtAuthUserGuard,
@@ -63,7 +63,7 @@ export class VerdictController {
     districtCourtAssistantRule,
     publicProsecutorStaffRule,
   )
-  @Patch(':verdictId')
+  @Patch(':defendantId')
   @ApiOkResponse({
     type: Verdict,
     description: 'Updates a verdict',
@@ -71,7 +71,6 @@ export class VerdictController {
   async update(
     @Param('caseId') caseId: string,
     @Param('defendantId') defendantId: string,
-    @Param('verdictId') verdictId: string,
     @CurrentCase() theCase: Case,
     @CurrentVerdict() verdict: Verdict,
     @Body() verdictToUpdate: UpdateVerdictDto,
@@ -82,7 +81,7 @@ export class VerdictController {
 
     const enhancedUpdate =
       await this.verdictService.handleServiceRequirementUpdate(
-        verdictId,
+        verdict.id,
         verdictToUpdate,
         theCase.rulingDate,
       )

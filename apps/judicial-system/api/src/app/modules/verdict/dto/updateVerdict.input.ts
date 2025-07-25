@@ -11,10 +11,6 @@ import {
 export class UpdateVerdictInput {
   @Allow()
   @Field(() => ID)
-  readonly verdictId!: string
-
-  @Allow()
-  @Field(() => ID)
   readonly defendantId!: string
 
   @Allow()
