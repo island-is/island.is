@@ -311,7 +311,7 @@ export class DefendantService {
         )
 
         if (update.isSentToPrisonAdmin) {
-          this.createDefendantEvent(
+          await this.createDefendantEvent(
             {
               caseId: theCase.id,
               defendantId: defendant.id,
