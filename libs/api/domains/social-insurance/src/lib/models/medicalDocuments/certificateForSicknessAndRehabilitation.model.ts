@@ -1,5 +1,6 @@
-import { Field, GraphQLISODateTime, ObjectType, Int } from '@nestjs/graphql'
+import { Field, GraphQLISODateTime, Int, ObjectType } from '@nestjs/graphql'
 import { EnumType } from './enumType.model'
+import { EstimatedDuration } from './estimatedDuration.model'
 
 @ObjectType('SocialInsuranceMedicalDocumentsDoctor')
 class Doctor {
@@ -29,18 +30,6 @@ class Difficulty {
 
   @Field({ nullable: true })
   explanation?: string
-}
-
-@ObjectType('SocialInsuranceMedicalDocumentsEstimatedDuration')
-class EstimatedDuration {
-  @Field(() => GraphQLISODateTime, { nullable: true })
-  start?: Date
-
-  @Field(() => GraphQLISODateTime, { nullable: true })
-  end?: Date
-
-  @Field(() => Int, { nullable: true })
-  months?: number
 }
 
 @ObjectType('SocialInsuranceMedicalDocumentsConfirmation')
@@ -74,13 +63,13 @@ export class CertificateForSicknessAndRehabilitation {
   @Field(() => Doctor, { nullable: true })
   doctor?: Doctor
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   lastExaminationDate?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   certificateDate?: Date
 
-  @Field(() => Date, { nullable: true })
+  @Field(() => GraphQLISODateTime, { nullable: true })
   disabilityDate?: Date
 
   @Field(() => Diagnosis, { nullable: true })

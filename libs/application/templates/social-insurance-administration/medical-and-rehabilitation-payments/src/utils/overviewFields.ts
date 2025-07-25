@@ -1,12 +1,21 @@
 import { buildOverviewField } from '@island.is/application/core'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { isEHApplication, isFirstApplication } from './conditionUtils'
+import {
+  isFirstApplication,
+  shouldShowConfirmationOfIllHealth,
+  shouldShowConfirmationOfPendingResolution,
+  shouldShowConfirmedTreatment,
+  shouldShowRehabilitationPlan,
+} from './conditionUtils'
 import { getApplicationAnswers } from './medicalAndRehabilitationPaymentsUtils'
 import {
   applicantItems,
   benefitsFromAnotherCountryItems,
   benefitsFromAnotherCountryTable,
   commentItems,
+  confirmationOfIllHealthItems,
+  confirmationOfPendingResolutionItems,
+  confirmedTreatmentItems,
   employeeSickPayItems,
   incomePlanTable,
   paymentItems,
@@ -64,7 +73,26 @@ export const overviewFields = (editable?: boolean) => {
     buildOverviewField({
       id: 'overview.rehabilitationPlan',
       items: rehabilitationPlanItems,
-      condition: (_, externalData) => isEHApplication(externalData),
+      condition: (_, externalData) =>
+        shouldShowRehabilitationPlan(externalData),
+    }),
+    buildOverviewField({
+      id: 'overview.confirmedTreatment',
+      items: confirmedTreatmentItems,
+      condition: (_, externalData) =>
+        shouldShowConfirmedTreatment(externalData),
+    }),
+    buildOverviewField({
+      id: 'overview.confirmationOfPendingResolution',
+      items: confirmationOfPendingResolutionItems,
+      condition: (_, externalData) =>
+        shouldShowConfirmationOfPendingResolution(externalData),
+    }),
+    buildOverviewField({
+      id: 'overview.confirmationOfIllHealth',
+      items: confirmationOfIllHealthItems,
+      condition: (_, externalData) =>
+        shouldShowConfirmationOfIllHealth(externalData),
     }),
     buildOverviewField({
       id: 'overview.selfAssessmentQuestionsOne',
