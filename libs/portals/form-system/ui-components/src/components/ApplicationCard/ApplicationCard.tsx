@@ -4,7 +4,6 @@ import { useLocale } from '@island.is/localization'
 import { FormSystemApplication } from '@island.is/api/schema'
 import { dateFormat } from '@island.is/shared/constants'
 import { ApplicationCardTag } from './components/ApplicationCardTag'
-import { ApplicationCardDelete } from './components/ApplicationCardDelete'
 import * as styles from './ApplicationCard.css'
 import { ApplicationCardProgress } from './components/ApplicationCardProgress'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -18,7 +17,6 @@ interface Props {
 export const ApplicationCard = ({
   application,
   focused = false,
-  onDelete,
 }: Props) => {
   const { status } = application
   const { slug } = useParams()
