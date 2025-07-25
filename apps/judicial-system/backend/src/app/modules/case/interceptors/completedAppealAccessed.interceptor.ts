@@ -1,4 +1,4 @@
-import { map } from 'rxjs/operators'
+import { mergeMap } from 'rxjs/operators'
 import { Sequelize } from 'sequelize-typescript'
 
 import {
@@ -32,7 +32,7 @@ export class CompletedAppealAccessedInterceptor implements NestInterceptor {
     const user: User = request.user?.currentUser
 
     return next.handle().pipe(
-      map(async (data) => {
+      mergeMap(async (data) => {
         if (
           data.appealState === CaseAppealState.COMPLETED &&
           (isProsecutionUser(user) ||
