@@ -121,9 +121,7 @@ describe('EducationService', () => {
 
     it('should return yourself', async () => {
       expect(
-        family.find(
-          ({ nationalId }) => nationalId === CHILD1.barnKennitala ?? '',
-        ),
+        family.find(({ nationalId }) => nationalId === CHILD1.barnKennitala),
       ).not.toBeUndefined()
     })
   })

@@ -10,7 +10,7 @@
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
-        "target": "node",
+        "target": "node20",
         "compiler": "tsc",
         "outputPath": "dist/apps/services/payments",
         "main": "apps/services/payments/src/main.ts",

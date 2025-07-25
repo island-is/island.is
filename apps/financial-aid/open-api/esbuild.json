@@ -24,5 +24,6 @@
     "@mikro-orm/core",
     "swagger-ui-dist"
   ],
-  "keepNames": true
+  "keepNames": true,
+  "format": ["cjs"]
 }

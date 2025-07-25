@@ -62,8 +62,7 @@
     "serve": {
       "executor": "@nx/webpack:dev-server",
       "options": {
-        "buildTarget": "service-portal:build",
-        "proxyConfig": "apps/portals/my-pages/proxy.config.json"
+        "buildTarget": "service-portal:build"
       },
       "configurations": {
         "production": {

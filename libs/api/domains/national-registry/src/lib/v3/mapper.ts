@@ -80,7 +80,7 @@ export const formatPerson = async (
     nationalId: individual.kennitala,
     fullName: individual.nafn,
     nationalIdType: mapNationalIdType(individual.tegundEinstaklingsNr ?? -1),
-    exceptionFromDirectMarketing: individual.bannmerking === true ?? false,
+    exceptionFromDirectMarketing: individual.bannmerking === true,
     gender: mapGender(individual.kyn?.kynKodi ?? ''),
     religion: individual.trufelag?.trufelagHeiti ?? null,
     maritalStatus: mapMaritalStatus(
@@ -101,7 +101,7 @@ export const formatPerson = async (
     //DEPRECATION LINE -- below shall be removed
     legalResidence: formatLegalResidence(individual.heimilisfang),
     banMarking: {
-      banMarked: individual.bannmerking === true ?? false,
+      banMarked: individual.bannmerking === true,
     },
     firstName: individual.fulltNafn?.eiginNafn ?? null,
     middleName: individual.fulltNafn?.milliNafn ?? null,
@@ -290,7 +290,7 @@ export const formatUser = (
     religion: individual.trufelag?.trufelagHeiti ?? null,
     familyNr: individual.logheimilistengsl?.logheimilistengsl,
     banMarking: {
-      banMarked: individual.bannmerking === true ?? false,
+      banMarked: individual.bannmerking === true,
     },
     citizenship: {
       code: individual.rikisfang?.rikisfangKodi ?? '',
@@ -346,7 +346,7 @@ export const formatFamilyChild = (
     lastName: child.fulltNafn?.kenniNafn ?? undefined,
     gender: child.kyn?.kynKodi ?? undefined,
     genderDisplay: child.kyn?.kynTexti ?? undefined,
-    birthday: birthday ? birthday.toISOString() : undefined,
+    birthday: birthday ? new Date(birthday).toISOString() : undefined,
     parent1: parent1?.logForeldriKennitala ?? undefined,
     nameParent1: parent1?.logForeldriNafn ?? undefined,
     parent2: parent2?.logForeldriKennitala ?? undefined,
@@ -362,6 +362,6 @@ export const formatFamilyChild = (
     nationality: child.rikisfang?.rikisfangLand ?? undefined,
     homeAddress: child.heimilisfang?.husHeiti ?? undefined,
     municipality: child.heimilisfang?.sveitarfelag ?? undefined,
-    postal: formatPostal(child.heimilisfang) ?? undefined,
+    postal: formatPostal(child.heimilisfang) || undefined,
   }
 }

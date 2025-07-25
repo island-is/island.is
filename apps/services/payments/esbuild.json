@@ -60,5 +60,6 @@
     "@mikro-orm/core",
     "ip3country"
   ],
-  "keepNames": true
+  "keepNames": true,
+  "format": ["cjs"]
 }
