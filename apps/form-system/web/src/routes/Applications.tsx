@@ -1,5 +1,8 @@
 import { useNavigate, useParams } from 'react-router-dom'
-import { CREATE_APPLICATION, GET_ALL_APPLICATIONS } from '@island.is/form-system/graphql'
+import {
+  CREATE_APPLICATION,
+  GET_ALL_APPLICATIONS,
+} from '@island.is/form-system/graphql'
 import { useLazyQuery, useMutation } from '@apollo/client'
 import { useEffect, useState } from 'react'
 import { FormSystemApplication } from '@island.is/api/schema'
@@ -9,7 +12,7 @@ import {
   GridContainer,
   Text,
   Button,
-  LoadingDots
+  LoadingDots,
 } from '@island.is/island-ui/core'
 import { ApplicationList } from '@island.is/form-system/ui'
 import { useIntl } from 'react-intl'
@@ -98,7 +101,9 @@ export const Applications = () => {
         marginBottom={4}
       >
         <Text variant="h1">{formatMessage(m.yourApplications)}</Text>
-        <Button variant="primary" onClick={createApplication}>{formatMessage(m.newApplication)}</Button>
+        <Button variant="primary" onClick={createApplication}>
+          {formatMessage(m.newApplication)}
+        </Button>
       </Box>
       <Box marginTop={4}>
         <Page>

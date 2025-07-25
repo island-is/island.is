@@ -55,8 +55,8 @@ export const FormProvider: React.FC<{
       data: inSettings
         ? baseSettingsStep
         : removeTypename(form?.sections)?.find(
-          (s: FormSystemSection) => s?.sectionType === SectionTypes.INPUT,
-        ) ?? defaultStep,
+            (s: FormSystemSection) => s?.sectionType === SectionTypes.INPUT,
+          ) ?? defaultStep,
     },
     activeListItem: null,
     form: removeTypename(form) as FormSystemForm,

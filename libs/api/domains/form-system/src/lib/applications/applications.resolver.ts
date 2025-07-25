@@ -27,7 +27,7 @@ import { Screen } from '../../models/screen.model'
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
 export class ApplicationsResolver {
-  constructor(private readonly applicationsService: ApplicationsService) { }
+  constructor(private readonly applicationsService: ApplicationsService) {}
 
   @Query(() => Application, {
     name: 'formSystemApplication',
@@ -52,7 +52,7 @@ export class ApplicationsResolver {
   }
 
   @Query(() => ApplicationResponse, {
-    name: 'formSystemGetApplications'
+    name: 'formSystemGetApplications',
   })
   async getAllApplications(
     @Args('input', { type: () => GetApplicationsInput })

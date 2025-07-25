@@ -58,10 +58,7 @@ export const ApplicationCard = ({
           </Box>
           <Box display="flex" justifyContent="center">
             <Text variant="small">
-              {format(
-                new Date(application.modified),
-                formattedDate,
-              )}
+              {format(new Date(application.modified), formattedDate)}
             </Text>
           </Box>
         </Box>

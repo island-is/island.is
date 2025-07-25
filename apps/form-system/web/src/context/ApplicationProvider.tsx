@@ -1,4 +1,11 @@
-import { createContext, Dispatch, useContext, useReducer, useMemo, useEffect } from 'react'
+import {
+  createContext,
+  Dispatch,
+  useContext,
+  useReducer,
+  useMemo,
+  useEffect,
+} from 'react'
 import { FormSystemApplication } from '@island.is/api/schema'
 import {
   applicationReducer,
