@@ -4,7 +4,7 @@ import {
   GET_ALL_APPLICATIONS,
 } from '@island.is/form-system/graphql'
 import { useLazyQuery, useMutation } from '@apollo/client'
-import { useEffect, useState } from 'react'
+import { useEffect, useState, useCallback } from 'react'
 import { FormSystemApplication } from '@island.is/api/schema'
 import {
   Box,
@@ -38,7 +38,7 @@ export const Applications = () => {
 
   const [getApplications] = useLazyQuery(GET_ALL_APPLICATIONS)
 
-  const createApplication = async () => {
+  const createApplication = useCallback(async () => {
     try {
       const app = await createApplicationMutation({
         variables: {
@@ -58,9 +58,9 @@ export const Applications = () => {
       console.error('Error creating application:', error)
       return null
     }
-  }
+  }, [createApplicationMutation, slug, navigate])
 
-  const fetchApplications = async () => {
+  const fetchApplications = useCallback(async () => {
     try {
       const app = await getApplications({
         variables: {
@@ -75,7 +75,7 @@ export const Applications = () => {
       console.error('Error fetching applications:', error)
       return null
     }
-  }
+  }, [getApplications, slug])
 
   useEffect(() => {
     const fetchData = async () => {
@@ -88,7 +88,7 @@ export const Applications = () => {
       setLoading(false)
     }
     fetchData()
-  }, [slug])
+  }, [slug, createApplication, fetchApplications])
 
   if (loading) return <LoadingDots />
 
