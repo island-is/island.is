@@ -26,9 +26,19 @@ import { FileService } from '../file'
 import { PoliceService } from '../police'
 import { InternalUpdateVerdictDto } from './dto/internalUpdateVerdict.dto'
 import { UpdateVerdictDto } from './dto/updateVerdict.dto'
-import { UpdateVerdictExternalPoliceDocumentIdDto } from './dto/updateVerdictExternalPoliceDocumentId.dto'
 import { DeliverResponse } from './models/deliver.response'
 import { Verdict } from './models/verdict.model'
+
+type UpdateVerdict = Pick<
+  Verdict,
+  | 'externalPoliceDocumentId'
+  | 'serviceRequirement'
+  | 'serviceDate'
+  | 'servedBy'
+  | 'appealDecision'
+  | 'appealDate'
+  | 'serviceInformationForDefendant'
+>
 
 export class VerdictService {
   constructor(
@@ -40,10 +50,7 @@ export class VerdictService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  private async update(
-    verdictId: string,
-    update: UpdateVerdictDto | UpdateVerdictExternalPoliceDocumentIdDto,
-  ) {
+  private async update(verdictId: string, update: UpdateVerdict) {
     const [numberOfAffectedRows, updatedVerdict] =
       await this.verdictModel.update(update, {
         where: { id: verdictId },

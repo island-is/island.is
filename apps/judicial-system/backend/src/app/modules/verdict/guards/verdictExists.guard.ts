@@ -6,43 +6,28 @@ import {
   NotFoundException,
 } from '@nestjs/common'
 
-import { Case } from '../../case'
-
 @Injectable()
-export class VerdictExistsGuard implements CanActivate {
-  canActivate(context: ExecutionContext): boolean {
+export class VerdictExistGuard implements CanActivate {
+  async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest()
-
-    const theCase: Case = request.case
-
+    const theCase = request.case
+    // We don't want to allow the user to access a verdict without the case being specified first
     if (!theCase) {
       throw new BadRequestException('Missing case')
     }
 
-    const defendantId = request.params.defendantId
-
-    if (!defendantId) {
-      throw new BadRequestException('Missing defendant id')
+    // We populate the defendant to access the verdict
+    const defendant = request.defendant
+    if (!defendant) {
+      throw new BadRequestException('Missing defendant')
     }
 
-    const verdictId = request.params.verdictId
-
-    if (!verdictId) {
-      throw new BadRequestException('Missing verdict id')
-    }
-
-    const verdict = theCase.defendants?.find(
-      (defendant) => defendant.verdict?.id === verdictId,
-    )
-
+    const { verdict } = defendant
     if (!verdict) {
-      throw new NotFoundException(
-        `Verdict ${verdict} for defendant ${defendantId} of case ${theCase.id} does not exist`,
-      )
+      throw new NotFoundException(`Defendant is missing verdict`)
     }
 
     request.verdict = verdict
-
     return true
   }
 }

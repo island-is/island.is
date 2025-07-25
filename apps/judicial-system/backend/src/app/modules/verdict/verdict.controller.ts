@@ -35,7 +35,7 @@ import {
 import { DefendantExistsGuard } from '../defendant'
 import { UpdateVerdictDto } from './dto/updateVerdict.dto'
 import { CurrentVerdict } from './guards/verdict.decorator'
-import { VerdictExistGuard } from './guards/verdictExistGuard.guard'
+import { VerdictExistGuard } from './guards/verdictExists.guard'
 import { Verdict } from './models/verdict.model'
 import { VerdictService } from './verdict.service'
 

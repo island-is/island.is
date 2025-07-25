@@ -33,6 +33,7 @@ import {
 import {
   Case,
   CaseCompletedGuard,
+  CaseExistsGuard,
   CaseTypeGuard,
   CurrentCase,
   MinimalCaseExistsGuard,
@@ -44,8 +45,7 @@ import { VerdictService } from '../verdict/verdict.service'
 import { DeliverDto } from './dto/deliver.dto'
 import { InternalUpdateVerdictDto } from './dto/internalUpdateVerdict.dto'
 import { CurrentVerdict } from './guards/verdict.decorator'
-import { VerdictExistGuard } from './guards/verdictExistGuard.guard'
-import { VerdictExistsGuard } from './guards/verdictExists.guard'
+import { VerdictExistGuard } from './guards/verdictExists.guard'
 import { DeliverResponse } from './models/deliver.response'
 
 const validateVerdictAppealUpdate = ({
@@ -88,12 +88,7 @@ const validateVerdictAppealUpdate = ({
 
 @Controller('api/internal/case/:caseId')
 @ApiTags('internal verdict')
-@UseGuards(
-  TokenGuard,
-  MinimalCaseExistsGuard,
-  new CaseTypeGuard(indictmentCases),
-  CaseCompletedGuard,
-)
+@UseGuards(TokenGuard)
 export class InternalVerdictController {
   constructor(
     private readonly verdictService: VerdictService,
@@ -101,13 +96,19 @@ export class InternalVerdictController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(DefendantExistsGuard, VerdictExistsGuard)
+  @UseGuards(
+    CaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    CaseCompletedGuard,
+    DefendantExistsGuard,
+    VerdictExistsGuard,
+  )
   @Post([
     `case/:caseId/${
       messageEndpoint[
-        MessageType.DELIVER_VERDICT_TO_NATIONAL_COMMISSIONERS_OFFICE
+        MessageType.DELIVER_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT
       ]
-    }/:defendantId/:verdictId`,
+    }/:defendantId`,
   ])
   @ApiOkResponse({
     type: DeliverResponse,
@@ -116,24 +117,23 @@ export class InternalVerdictController {
   deliverVerdictToNationalCommissionersOffice(
     @Param('caseId') caseId: string,
     @Param('defendantId') defendantId: string,
-    @Param('verdictId') verdictId: string,
     @CurrentCase() theCase: Case,
     @CurrentDefendant() defendant: Defendant,
     @CurrentVerdict() verdict: Verdict,
     @Body() deliverDto: DeliverDto,
   ): Promise<DeliverResponse> {
     this.logger.debug(
-      `Delivering verdict ${verdictId} pdf to the police centralized file service for defendant ${defendantId} of case ${caseId}`,
+      `Delivering verdict ${verdict.id} pdf to the police centralized file service for defendant ${defendantId} of case ${caseId}`,
     )
 
     // callback function to fetch the updated verdict fields after delivering verdict to police
     const getDeliveredVerdictNationalCommissionersOfficeLogDetails = async (
       results: DeliverResponse,
     ) => {
-      const currentVerdict = await this.verdictService.findById(verdictId)
+      const currentVerdict = await this.verdictService.findById(verdict.id)
       return {
         deliveredToPolice: results.delivered,
-        verdictId: verdictId,
+        verdictId: verdict.id,
         verdictCreated: verdict.created,
         externalPoliceDocumentId: currentVerdict.externalPoliceDocumentId,
         subpoenaHash: currentVerdict.hash,
@@ -144,7 +144,7 @@ export class InternalVerdictController {
 
     return this.auditTrailService.audit(
       deliverDto.user.id,
-      AuditedAction.DELIVER_VERDICT_TO_NATIONAL_COMMISSIONERS_OFFICE,
+      AuditedAction.DELIVER_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
       this.verdictService.deliverVerdictToNationalCommissionersOffice(
         theCase,
         defendant,
@@ -156,7 +156,13 @@ export class InternalVerdictController {
     )
   }
 
-  @UseGuards(DefendantNationalIdExistsGuard, VerdictExistGuard)
+  @UseGuards(
+    MinimalCaseExistsGuard,
+    new CaseTypeGuard(indictmentCases),
+    CaseCompletedGuard,
+    DefendantNationalIdExistsGuard,
+    VerdictExistGuard,
+  )
   @Patch('defendant/:defendantNationalId/verdict-appeal')
   @ApiOkResponse({
     type: Verdict,
