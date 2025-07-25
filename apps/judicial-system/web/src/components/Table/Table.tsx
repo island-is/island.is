@@ -6,15 +6,11 @@ import { AnimatePresence, motion } from 'motion/react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import {
-  districtCourtAbbreviation,
-  formatDate,
-} from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
-import { core } from '@island.is/judicial-system-web/messages'
 import {
   ContextMenu,
   ContextMenuItem,
@@ -148,17 +144,11 @@ const Table: FC<TableProps> = (props) => {
       entry: CaseListEntry,
       column: keyof CaseListEntry,
     ) => {
-      const courtAbbreviation = districtCourtAbbreviation(entry.court?.name)
-
       switch (column) {
         case 'defendants':
           return entry.defendants?.[0]?.name ?? ''
-        case 'defendantsPunishmentType':
-          return entry.defendants?.[0]?.punishmentType ?? ''
         case 'courtCaseNumber':
-          return courtAbbreviation
-            ? `${courtAbbreviation}: ${entry.courtCaseNumber}`
-            : entry.courtCaseNumber ?? ''
+          return entry.courtCaseNumber ?? ''
         case 'state':
           return mapCaseStateToTagVariant(formatMessage, entry).text
         case 'policeCaseNumbers':

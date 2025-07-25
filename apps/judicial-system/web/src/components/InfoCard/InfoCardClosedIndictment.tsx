@@ -5,7 +5,6 @@ import {
   isPublicProsecutionOfficeUser,
 } from '@island.is/judicial-system/types'
 
-import { EventType } from '../../graphql/schema'
 import { FormContext } from '../FormProvider/FormProvider'
 import { UserContext } from '../UserProvider/UserProvider'
 import InfoCard from './InfoCard'
