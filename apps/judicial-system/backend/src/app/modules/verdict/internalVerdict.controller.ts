@@ -45,7 +45,7 @@ import { VerdictService } from '../verdict/verdict.service'
 import { DeliverDto } from './dto/deliver.dto'
 import { InternalUpdateVerdictDto } from './dto/internalUpdateVerdict.dto'
 import { CurrentVerdict } from './guards/verdict.decorator'
-import { VerdictExistGuard } from './guards/verdictExists.guard'
+import { VerdictExistsGuard } from './guards/verdictExists.guard'
 import { DeliverResponse } from './models/deliver.response'
 
 const validateVerdictAppealUpdate = ({
@@ -161,7 +161,7 @@ export class InternalVerdictController {
     new CaseTypeGuard(indictmentCases),
     CaseCompletedGuard,
     DefendantNationalIdExistsGuard,
-    VerdictExistGuard,
+    VerdictExistsGuard,
   )
   @Patch('defendant/:defendantNationalId/verdict-appeal')
   @ApiOkResponse({

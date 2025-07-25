@@ -7,7 +7,7 @@ import {
 } from '@nestjs/common'
 
 @Injectable()
-export class VerdictExistGuard implements CanActivate {
+export class VerdictExistsGuard implements CanActivate {
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const request = context.switchToHttp().getRequest()
     const theCase = request.case
