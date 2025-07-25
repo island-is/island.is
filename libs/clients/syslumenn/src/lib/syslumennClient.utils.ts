@@ -689,7 +689,6 @@ export const mapDCDescriptionToFuneralItem = (
     case 'Líkbrennsla':
       return FuneralAssetItem.Cremation
     default:
-      console.log('REACHED DEFAULT WITH', description)
       return FuneralAssetItem.Other
   }
 }

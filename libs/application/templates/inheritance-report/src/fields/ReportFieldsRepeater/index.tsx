@@ -131,8 +131,6 @@ export const ReportFieldsRepeater: FC<
     const values = props.fields.map((field: object) => {
       return Object.values(field)[1]
     })
-    console.log('HAVE VALUES', values)
-
     // All additional fields should be enabled by default
     values.push('enabled')
 
@@ -142,8 +140,6 @@ export const ReportFieldsRepeater: FC<
         elem === 'enabled' ? true : elem === 'foreignBankAccount' ? [] : '',
       ]),
     )
-
-    console.log('ABOUT TO ADD REPEATERFIELDS')
 
     append(repeaterFields)
   }
@@ -203,9 +199,11 @@ export const ReportFieldsRepeater: FC<
         : getEstateDataFromApplication(application).inheritanceReportInfo
     const extData: Array<InheritanceReportAsset> =
       estateData && props.fromExternalData
-        ? (estateData[
-            props.fromExternalData as keyof InheritanceReportInfo
-          ] as InheritanceReportAsset[]).map((data: any) => {
+        ? (
+            estateData[
+              props.fromExternalData as keyof InheritanceReportInfo
+            ] as InheritanceReportAsset[]
+          ).map((data: any) => {
             return {
               ...data,
               debtType: parseDebtType(data.debtType ?? ''),
@@ -229,13 +227,11 @@ export const ReportFieldsRepeater: FC<
 
   useEffect(() => {
     const indexes = fields.reduce<number[]>((acc, _, index) => {
-      const fieldData:
-        | { foreignBankAccount?: string[] }[]
-        | undefined = getValueViaPath(answers, id)
+      const fieldData: { foreignBankAccount?: string[] }[] | undefined =
+        getValueViaPath(answers, id)
 
-      const isForeignBankAccount = fieldData?.[
-        index
-      ]?.foreignBankAccount?.includes(YES)
+      const isForeignBankAccount =
+        fieldData?.[index]?.foreignBankAccount?.includes(YES)
 
       if (isForeignBankAccount) {
         acc.push(index)

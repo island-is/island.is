@@ -119,7 +119,7 @@ export const getFakeData = (
 
   // This code is only used in local or dev environments since
   // a 'gervimaður' can not log in on prod.
-  return ({
+  return {
     caseNumber,
     nameOfDeceased,
     nationalId,
@@ -134,5 +134,5 @@ export const getFakeData = (
       generateRandomHeir('Ísak Miri ÞÍ Jarrah', '2409151460', true),
     ],
     ...assetStructure,
-  } as unknown) as InheritanceReportInfo
+  } as unknown as InheritanceReportInfo
 }
