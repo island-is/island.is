@@ -11,10 +11,6 @@ import {
 export class UpdateVerdictInput {
   @Allow()
   @Field(() => ID)
-  readonly verdictId!: string
-
-  @Allow()
-  @Field(() => ID)
   readonly defendantId!: string
 
   @Allow()
@@ -38,6 +34,16 @@ export class UpdateVerdictInput {
 
   @Allow()
   @IsOptional()
-  @Field(() => InformationForDefendant, { nullable: true })
-  readonly serviceInformationForDefendant?: InformationForDefendant
+  @Field(() => String, { nullable: true })
+  readonly appealDecision?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => Date, { nullable: true })
+  readonly appealDate?: string
+
+  @Allow()
+  @IsOptional()
+  @Field(() => [InformationForDefendant], { nullable: true })
+  readonly serviceInformationForDefendant?: InformationForDefendant[]
 }
