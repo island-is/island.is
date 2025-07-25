@@ -4,12 +4,17 @@ import {
   buildSubSection,
   buildDescriptionField,
   getValueViaPath,
+  buildDateField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { Application } from '@island.is/api/schema'
 import { formatDate } from '../../../utils'
 import { Routes } from '../../../lib/constants'
-import { NationalRegistrySpouseV3 } from '@island.is/application/types'
+import {
+  Answer,
+  ExternalData,
+  NationalRegistrySpouseV3,
+} from '@island.is/application/types'
 
 export const MaritalStatusSubSection = buildSubSection({
   id: Routes.MARITALSTATUS,
@@ -81,12 +86,18 @@ export const MaritalStatusSubSection = buildSubSection({
             return spouseInformation?.maritalDescription
           },
         }),
-        buildTextField({
+        buildDateField({
           id: 'maritalStatus.dateOfMaritalStatusStr',
           title: information.labels.maritalStatus.marriedStatusDate,
-          backgroundColor: 'white',
           width: 'half',
-          readOnly: true,
+          readOnly: (_, externalData: ExternalData) => {
+            const spouseDetails = getValueViaPath<NationalRegistrySpouseV3>(
+              externalData,
+              'spouseDetails.data',
+              undefined,
+            )
+            return spouseDetails?.lastModified ? true : false
+          },
           defaultValue: (application: Application) => {
             const spouseDetails = getValueViaPath<NationalRegistrySpouseV3>(
               application.externalData,
@@ -94,9 +105,7 @@ export const MaritalStatusSubSection = buildSubSection({
               undefined,
             )
 
-            return spouseDetails?.lastModified
-              ? formatDate(new Date(spouseDetails.lastModified))
-              : ''
+            return spouseDetails?.lastModified ? spouseDetails.lastModified : ''
           },
         }),
         buildTextField({
