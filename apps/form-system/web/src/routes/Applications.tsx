@@ -22,6 +22,7 @@ export const Applications = () => {
   const { slug } = useParams() as Params
   const navigate = useNavigate()
   const [applications, setApplications] = useState<FormSystemApplication[]>([])
+  const [loading, setLoading] = useState<boolean>(true)
   const [createApplicationMutation] = useMutation(CREATE_APPLICATION, {
     onCompleted({ createApplication }) {
       if (slug) {
@@ -57,15 +58,20 @@ export const Applications = () => {
   }
 
   const fetchApplications = async () => {
-    const app = await getApplications({
-      variables: {
-        input: {
-          slug: slug,
-          isTest: true,
+    try {
+      const app = await getApplications({
+        variables: {
+          input: {
+            slug: slug,
+            isTest: true,
+          },
         },
-      },
-    })
-    return app.data?.formSystemGetApplications?.applications
+      })
+      return app.data?.formSystemGetApplications?.applications
+    } catch (error) {
+      console.error('Error fetching applications:', error)
+      return null
+    }
   }
 
   useEffect(() => {
@@ -76,11 +82,12 @@ export const Applications = () => {
       } else {
         createApplication()
       }
+      setLoading(false)
     }
     fetchData()
-  }, [])
+  }, [slug])
 
-  if (!applications) return <LoadingDots />
+  if (loading) return <LoadingDots />
 
   return (
     <>

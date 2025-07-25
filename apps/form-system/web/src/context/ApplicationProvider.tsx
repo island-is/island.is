@@ -43,7 +43,9 @@ export const ApplicationProvider: React.FC<{
   const contextValue = useMemo(() => ({ state, dispatch }), [state])
 
   useEffect(() => {
-    console.log(state.application)
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Application state changed:', state.application)
+    }
   }, [state.application])
   return (
     <ApplicationContext.Provider value={contextValue}>

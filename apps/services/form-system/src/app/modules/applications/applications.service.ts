@@ -396,7 +396,6 @@ export class ApplicationsService {
       form.id,
       isTest,
     )
-    console.log('Existing applications:', existingApplications)
     const responseDto = new ApplicationResponseDto()
     responseDto.applications = existingApplications
     return responseDto

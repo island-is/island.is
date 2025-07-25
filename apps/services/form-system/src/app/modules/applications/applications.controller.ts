@@ -82,7 +82,6 @@ export class ApplicationsController {
     @CurrentUser()
     user: User,
   ): Promise<ApplicationResponseDto> {
-    console.log('Finding applications for slug:', slug, 'isTest:', isTest)
     return await this.applicationsService.findAllBySlugAndUser(
       slug,
       user,
