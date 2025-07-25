@@ -1868,8 +1868,8 @@ export class CaseService {
   }
 
   private async handleStateChangeEventLogUpdatesForIndictments(
-    updatedCase: Case,
     theCase: Case,
+    updatedCase: Case,
     user: TUser,
     transaction: Transaction,
   ) {
@@ -1896,8 +1896,8 @@ export class CaseService {
   }
 
   private async handleStateChangeEventLogUpdatesForRequest(
-    updatedCase: Case,
     theCase: Case,
+    updatedCase: Case,
     user: TUser,
     transaction: Transaction,
   ) {
@@ -1915,8 +1915,8 @@ export class CaseService {
   }
 
   private async handleStateChangeEventLogUpdates(
-    updatedCase: Case,
     theCase: Case,
+    updatedCase: Case,
     user: TUser,
     transaction: Transaction,
   ) {
@@ -1934,8 +1934,8 @@ export class CaseService {
 
     if (isIndictmentCase(theCase.type)) {
       return this.handleStateChangeEventLogUpdatesForIndictments(
-        updatedCase,
         theCase,
+        updatedCase,
         user,
         transaction,
       )
@@ -1943,8 +1943,8 @@ export class CaseService {
 
     if (isRequestCase(theCase.type)) {
       return this.handleStateChangeEventLogUpdatesForRequest(
-        updatedCase,
         theCase,
+        updatedCase,
         user,
         transaction,
       )
@@ -1998,8 +1998,8 @@ export class CaseService {
   ) {
     if (updatedCase.state !== theCase.state) {
       await this.handleStateChangeEventLogUpdates(
-        updatedCase,
         theCase,
+        updatedCase,
         user,
         transaction,
       )
