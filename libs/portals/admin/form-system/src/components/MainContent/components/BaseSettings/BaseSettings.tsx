@@ -13,10 +13,17 @@ import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
 import { UpdateFormResponse } from '@island.is/form-system/shared'
 import { convertToSlug } from '../../../../lib/utils/convertToSlug'
+import { Urls } from '../Urls/Urls'
 
 export const BaseSettings = () => {
-  const { control, controlDispatch, setFocus, focus, formUpdate } =
-    useContext(ControlContext)
+  const {
+    control,
+    controlDispatch,
+    setFocus,
+    focus,
+    formUpdate,
+    getTranslation,
+  } = useContext(ControlContext)
   const { form } = control
   const { formatMessage } = useIntl()
   const [errorMsg, setErrorMsg] = useState('')
@@ -132,7 +139,16 @@ export const BaseSettings = () => {
             name="formNameEn"
             value={form?.name?.en ?? ''}
             backgroundColor="blue"
-            onFocus={(e) => setFocus(e.target.value)}
+            onFocus={async (e) => {
+              if (!form?.name?.en && form?.name?.is !== '') {
+                const translation = await getTranslation(form.name.is ?? '')
+                controlDispatch({
+                  type: 'CHANGE_FORM_NAME',
+                  payload: { lang: 'en', newValue: translation.translation },
+                })
+              }
+              setFocus(e.target.value)
+            }}
             onBlur={(e) => e.target.value !== focus && formUpdate()}
             onChange={(e) =>
               controlDispatch({
@@ -248,6 +264,7 @@ export const BaseSettings = () => {
           />
         </Column>
       </Row>
+      <Urls />
     </Stack>
   )
 }

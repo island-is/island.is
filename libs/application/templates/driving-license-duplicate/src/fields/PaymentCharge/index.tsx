@@ -97,7 +97,9 @@ export const PaymentCharge: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         <Text variant="h4" color="blue400">
           {getCurrencyString(
             (chargeItem?.priceAmount || 0) +
-              (deliveryFee?.priceAmount ? deliveryFee.priceAmount : 0),
+              (withDeliveryFee && deliveryFee?.priceAmount
+                ? deliveryFee.priceAmount
+                : 0),
           )}
         </Text>
       </Box>

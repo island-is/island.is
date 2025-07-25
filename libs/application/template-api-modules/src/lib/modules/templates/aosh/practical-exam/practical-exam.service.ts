@@ -198,6 +198,7 @@ export class PracticalExamTemplateService extends BaseTemplateApiService {
     } catch (e) {
       this.logger.warn(
         '[practical-exams-service]: Error registering practical exams',
+        e,
       )
       throw new TemplateApiError(
         {

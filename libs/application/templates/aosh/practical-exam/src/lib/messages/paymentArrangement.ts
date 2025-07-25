@@ -112,5 +112,11 @@ export const paymentArrangement = {
       defaultMessage: 'Skýring',
       description: 'Explanation label on conclusion screen',
     },
+    webServiceFailure: {
+      id: 'aosh.sem.application:paymentArrangement.labels.webServiceFailure',
+      defaultMessage:
+        'Vefþjónustan skilaði villu. Reyndu aftur síðar. Ef vandamálið varir, vinsamlegast hafðu samband við Vinnueftirlitið.',
+      description: 'Web service failed to respond',
+    },
   }),
 }

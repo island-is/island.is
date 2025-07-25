@@ -160,17 +160,20 @@ export class ApplicationService {
       }
     }
 
+    const applicantAccessConditions: WhereOptions = {
+      [Op.or]: [
+        { applicant: { [Op.eq]: applicantNationalId } },
+        { assignees: { [Op.contains]: [applicantNationalId] } },
+      ],
+    }
+
     return this.applicationModel.findAndCountAll({
       where: {
         ...{ typeId: { [Op.in]: typeIds } },
         ...(statuses ? { status: { [Op.in]: statuses } } : {}),
         [Op.and]: [
-          applicantNationalId
-            ? {
-                [Op.or]: [[{ applicant: { [Op.eq]: applicantNationalId } }]],
-              }
-            : {},
-          applicationIsNotSetToBePruned(),
+          applicantNationalId ? applicantAccessConditions : {},
+
           fromDate && toDate
             ? {
                 [Op.and]: [

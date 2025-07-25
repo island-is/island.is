@@ -30,9 +30,11 @@ export const getEstateDataFromApplication = (
 ): { inheritanceReportInfo?: InheritanceReportInfo } => {
   const selectedEstate = application.answers.estateInfoSelection
 
-  const estateData = (application.externalData.syslumennOnEntry?.data as {
-    inheritanceReportInfos?: Array<InheritanceReportInfo>
-  }).inheritanceReportInfos?.find(
+  const estateData = (
+    application.externalData.syslumennOnEntry?.data as {
+      inheritanceReportInfos?: Array<InheritanceReportInfo>
+    }
+  ).inheritanceReportInfos?.find(
     (estate) => estate.caseNumber === selectedEstate,
   )
 

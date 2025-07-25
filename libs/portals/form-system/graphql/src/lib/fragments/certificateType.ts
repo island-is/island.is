@@ -16,3 +16,10 @@ export const CertificateTypeFragment = gql`
   }
   ${LanguageFields}
 `
+
+export const CertificateTypeDtoFragment = gql`
+  fragment CertificateTypeDto on FormSystemFormCertificationTypeDto {
+    id
+    certificationTypeId
+  }
+`

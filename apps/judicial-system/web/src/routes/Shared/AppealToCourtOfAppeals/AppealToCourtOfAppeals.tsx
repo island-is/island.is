@@ -57,7 +57,7 @@ const AppealToCourtOfAppeals = () => {
     updateUploadFile,
   } = useUploadFiles(workingCase.caseFiles)
   const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
-  const { onOpen } = useFileList({
+  const { onOpenFile } = useFileList({
     caseId: workingCase.id,
   })
   const { transitionCase, isTransitioningCase } = useCase()
@@ -119,11 +119,14 @@ const AppealToCourtOfAppeals = () => {
         <PageTitle previousUrl={previousUrl}>
           {formatMessage(strings.title)}
         </PageTitle>
-        {workingCase.rulingDate && (
-          <Box marginBottom={7}>
-            <RulingDateLabel rulingDate={workingCase.rulingDate} />
-          </Box>
-        )}
+        <Box component="section" marginBottom={5}>
+          <Text variant="h2" as="h2">
+            {`Mál nr. ${workingCase.courtCaseNumber}`}
+          </Text>
+          {workingCase.rulingDate && (
+            <RulingDateLabel rulingDate={workingCase.rulingDate} as="h3" />
+          )}
+        </Box>
         <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(strings.appealBriefTitle)}
@@ -144,7 +147,7 @@ const AppealToCourtOfAppeals = () => {
             onRemove={(file) => {
               handleRemoveFile(file)
             }}
-            onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
+            onOpenFile={(file) => onOpenFile(file)}
             hideIcons={!allFilesDoneOrError}
             disabled={!allFilesDoneOrError}
           />
@@ -176,7 +179,7 @@ const AppealToCourtOfAppeals = () => {
             buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
             onChange={(files) => handleChange(files, appealCaseFilesType)}
             onRemove={(file) => handleRemoveFile(file)}
-            onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
+            onOpenFile={(file) => onOpenFile(file)}
             hideIcons={!allFilesDoneOrError}
             disabled={!allFilesDoneOrError}
           />

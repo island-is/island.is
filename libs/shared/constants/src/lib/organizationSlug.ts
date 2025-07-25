@@ -49,3 +49,4 @@ export type OrganizationSlugType =
   | 'umbodsmadur-skuldara'
   | 'rannis'
   | 'vinnumalastofnun'
+  | 'landspitali'

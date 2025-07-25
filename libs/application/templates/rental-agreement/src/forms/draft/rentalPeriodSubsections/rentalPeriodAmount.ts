@@ -7,15 +7,16 @@ import {
   buildSelectField,
   buildHiddenInput,
   YesOrNoEnum,
+  buildDisplayField,
+  buildHiddenInputWithWatchedValue,
 } from '@island.is/application/core'
+import { Application } from '@island.is/application/types'
 import {
   getPaymentMethodOptions,
-  getRentalAmountIndexTypes,
   getRentalAmountPaymentDateOptions,
 } from '../../../utils/utils'
 import {
   Routes,
-  RentalAmountIndexTypes,
   RentalAmountPaymentDateOptions,
   RentalPaymentMethodOptions,
 } from '../../../utils/enums'
@@ -25,6 +26,8 @@ import {
   rentalPaymentDateIsOther,
   rentalPaymentMethodIsBankTransfer,
   rentalPaymentMethodIsOther,
+  getConsumerIndexDateOptions,
+  getIndexRateForConsumerIndexDate,
 } from '../../../utils/rentalPeriodUtils'
 import { rentalAmount } from '../../../lib/messages'
 
@@ -53,16 +56,23 @@ export const RentalPeriodAmount = buildSubSection({
           maxLength: 15,
           required: true,
         }),
-        buildSelectField({
-          id: 'rentalAmount.indexTypes',
-          title: rentalAmount.indexOptionsLabel,
-          options: getRentalAmountIndexTypes(),
-          defaultValue: RentalAmountIndexTypes.CONSUMER_PRICE_INDEX,
-          condition: rentalAmountConnectedToIndex,
+
+        // Hidden fields  to capture rental period start and end dates
+        buildHiddenInputWithWatchedValue({
+          id: 'rentalAmount.rentalPeriodStartDate',
+          watchValue: 'rentalPeriod.startDate',
         }),
+        buildHiddenInputWithWatchedValue({
+          id: 'rentalAmount.rentalPeriodEndDate',
+          watchValue: 'rentalPeriod.endDate',
+        }),
+        buildHiddenInputWithWatchedValue({
+          id: 'rentalAmount.rentalPeriodIsDefinite',
+          watchValue: 'rentalPeriod.isDefinite',
+        }),
+
         buildCheckboxField({
           id: 'rentalAmount.isIndexConnected',
-          clearOnChange: ['rentalAmount.indexTypes'],
           options: [
             {
               value: YesOrNoEnum.YES,
@@ -70,6 +80,32 @@ export const RentalPeriodAmount = buildSubSection({
             },
           ],
           spacing: 0,
+          marginTop: 1,
+        }),
+        buildSelectField({
+          id: 'rentalAmount.indexDate',
+          title: rentalAmount.indexDateLabel,
+          options: (application: Application) => {
+            return getConsumerIndexDateOptions(application)
+          },
+          defaultValue: (application: Application) => {
+            const options = getConsumerIndexDateOptions(application)
+            return options.length > 0 ? options[0].value : undefined
+          },
+          condition: rentalAmountConnectedToIndex,
+          width: 'half',
+          marginTop: 1,
+        }),
+        buildDisplayField({
+          id: 'rentalAmount.indexRate',
+          label: rentalAmount.indexRateLabel,
+          variant: 'text',
+          value: (answers, externalData) => {
+            const rate = getIndexRateForConsumerIndexDate(answers, externalData)
+            return rate !== undefined ? rate.replace('.', ',') : ''
+          },
+          condition: rentalAmountConnectedToIndex,
+          width: 'half',
         }),
 
         // Payment details

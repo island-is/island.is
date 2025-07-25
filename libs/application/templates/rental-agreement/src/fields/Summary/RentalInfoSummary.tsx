@@ -3,13 +3,13 @@ import { GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps } from '@island.is/application/types'
 import { YesOrNoEnum } from '@island.is/application/core'
+import { applicationAnswers } from '../../shared'
 import {
   formatBankInfo,
   formatCurrency,
   formatDate,
   formatNationalId,
   getPaymentMethodOptions,
-  getRentalAmountIndexTypes,
   getRentalAmountPaymentDateOptions,
   getSecurityDepositTypeOptions,
 } from '../../utils/utils'
@@ -18,7 +18,7 @@ import {
   RentalPaymentMethodOptions,
   SecurityDepositTypeOptions,
 } from '../../utils/enums'
-import { extractRentalInfoData, getOptionLabel } from '../../utils/summaryUtils'
+import { getOptionLabel } from '../../utils/summaryUtils'
 import { SummaryCard } from './components/SummaryCard'
 import { SummaryCardRow } from './components/SummaryCardRow'
 import { KeyValue } from './components/KeyValue'
@@ -47,30 +47,30 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
   const {
     securityDepositRequired,
     searchResults,
-    searchResultUnits,
+    units,
     startDate,
     endDate,
     isDefinite,
     rentalAmount,
-    paymentDateOptions,
-    paymentMethodOptions,
-    paymentMethodNationalId,
-    paymentMethodAccountNumber,
-    paymentMethodOtherTextField,
-    indexConnected,
-    indexTypes,
+    paymentDay,
+    paymentMethod,
+    nationalIdOfAccountOwner,
+    bankAccountNumber,
+    paymentMethodOther,
+    isIndexConnected,
+    indexRate,
     securityAmountCalculated,
-    securityAmountOther,
-    securityType,
+    securityDepositAmountOther,
+    securityDepositType,
     bankGuaranteeInfo,
     thirdPartyGuaranteeInfo,
     insuranceCompanyInfo,
-    mutualFundInfo,
+    landlordsMutualFundInfo,
     otherInfo,
-  } = extractRentalInfoData(answers)
+  } = applicationAnswers(answers)
 
-  const securityAmount = securityAmountOther
-    ? securityAmountOther
+  const securityAmount = securityDepositAmountOther
+    ? securityDepositAmountOther
     : securityAmountCalculated
 
   return (
@@ -83,9 +83,7 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
               label={`${searchResults.label}`}
               value={
                 `${formatMessage(summary.rentalPropertyIdPrefix)}${[
-                  ...new Set(
-                    searchResultUnits?.map((unit) => `F${unit.propertyCode}`),
-                  ),
+                  ...new Set(units?.map((unit) => `F${unit.propertyCode}`)),
                 ].join(', ')}` || '-'
               }
               labelVariant="h4"
@@ -135,28 +133,26 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
             value={(rentalAmount && formatCurrency(rentalAmount)) || '-'}
           />
         </GridColumn>
+        {isIndexConnected?.includes(YesOrNoEnum.YES) &&
+          indexRate !== undefined &&
+          indexRate !== null && (
+            <GridColumn span={['12/12', '4/12']}>
+              <KeyValue
+                label={summary.indexRateLabel}
+                value={indexRate.toString()}
+              />
+            </GridColumn>
+          )}
         <GridColumn span={['12/12', '4/12']}>
           <KeyValue
             label={summary.paymentDateOptionsLabel}
             value={getOptionLabel(
-              paymentDateOptions || '',
+              paymentDay || '',
               getRentalAmountPaymentDateOptions,
               '',
             )}
           />
         </GridColumn>
-        {indexConnected?.includes(YesOrNoEnum.YES) && indexTypes && (
-          <GridColumn span={['12/12', '4/12']}>
-            <KeyValue
-              label={summary.indexTypeLabel}
-              value={getOptionLabel(
-                indexTypes || '',
-                getRentalAmountIndexTypes,
-                '',
-              )}
-            />
-          </GridColumn>
-        )}
       </SummaryCardRow>
       {/* Security deposit */}
       {securityDepositRequired?.includes(YesOrNoEnum.YES) && (
@@ -175,42 +171,43 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
             <KeyValue
               label={summary.securityTypeLabel}
               value={getOptionLabel(
-                securityType || '',
+                securityDepositType || '',
                 getSecurityDepositTypeOptions,
                 '',
               )}
             />
           </GridColumn>
-          {securityType !== SecurityDepositTypeOptions.CAPITAL && (
+          {securityDepositType !== SecurityDepositTypeOptions.CAPITAL && (
             <GridColumn span={['12/12', '4/12']}>
-              {securityType === SecurityDepositTypeOptions.BANK_GUARANTEE && (
+              {securityDepositType ===
+                SecurityDepositTypeOptions.BANK_GUARANTEE && (
                 <KeyValue
                   label={summary.securityTypeInstitutionLabel}
                   value={bankGuaranteeInfo || '-'}
                 />
               )}
-              {securityType ===
+              {securityDepositType ===
                 SecurityDepositTypeOptions.THIRD_PARTY_GUARANTEE && (
                 <KeyValue
                   label={summary.securityTypeThirdPartyGuaranteeLabel}
                   value={thirdPartyGuaranteeInfo || '-'}
                 />
               )}
-              {securityType ===
+              {securityDepositType ===
                 SecurityDepositTypeOptions.INSURANCE_COMPANY && (
                 <KeyValue
                   label={summary.securityTypeInsuranceLabel}
                   value={insuranceCompanyInfo || '-'}
                 />
               )}
-              {securityType ===
+              {securityDepositType ===
                 SecurityDepositTypeOptions.LANDLORDS_MUTUAL_FUND && (
                 <KeyValue
                   label={summary.securityTypeMutualFundLabel}
-                  value={mutualFundInfo || '-'}
+                  value={landlordsMutualFundInfo || '-'}
                 />
               )}
-              {securityType === SecurityDepositTypeOptions.OTHER && (
+              {securityDepositType === SecurityDepositTypeOptions.OTHER && (
                 <KeyValue
                   label={summary.securityTypeOtherLabel}
                   value={otherInfo || '-'}
@@ -228,7 +225,7 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
       >
         <GridColumn
           span={
-            paymentMethodOptions === RentalPaymentMethodOptions.OTHER
+            paymentMethod === RentalPaymentMethodOptions.OTHER
               ? ['12/12']
               : ['12/12', '4/12']
           }
@@ -236,29 +233,29 @@ export const RentalInfoSummary: FC<Props> = ({ ...props }) => {
           <KeyValue
             label={summary.paymentMethodTypeLabel}
             value={
-              paymentMethodOptions === RentalPaymentMethodOptions.OTHER
-                ? paymentMethodOtherTextField || '-'
+              paymentMethod === RentalPaymentMethodOptions.OTHER
+                ? paymentMethodOther || '-'
                 : getOptionLabel(
-                    paymentMethodOptions || '',
+                    paymentMethod || '',
                     getPaymentMethodOptions,
                     '',
                   )
             }
           />
         </GridColumn>
-        {paymentMethodOptions === RentalPaymentMethodOptions.BANK_TRANSFER && (
+        {paymentMethod === RentalPaymentMethodOptions.BANK_TRANSFER && (
           <>
             <GridColumn span={['12/12', '4/12']}>
               <KeyValue
                 label={summary.paymentMethodNationalIdLabel}
-                value={formatNationalId(paymentMethodNationalId || '-')}
+                value={formatNationalId(nationalIdOfAccountOwner || '-')}
               />
             </GridColumn>
 
             <GridColumn span={['12/12', '4/12']}>
               <KeyValue
                 label={summary.paymentMethodAccountLabel}
-                value={formatBankInfo(paymentMethodAccountNumber || '-')}
+                value={formatBankInfo(bankAccountNumber || '-')}
               />
             </GridColumn>
           </>

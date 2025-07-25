@@ -60,6 +60,30 @@ export const additionalSupportForTheElderyFormMessage: MessageDir = {
       defaultMessage: 'Ég staðfesti að ég hef lesið ofangreindar upplýsingar.',
       description: 'I confirm that I have read the above information.',
     },
+    higherPaymentsTitle: {
+      id: 'asfte.application:info.higher.payments.title',
+      defaultMessage: 'Vilt þú sækja um hærri greiðslur?',
+      description: 'Would you like to apply for higher payments?',
+    },
+    higherPaymentsDescription: {
+      id: 'asfte.application:info.higher.payments.description',
+      defaultMessage:
+        'Þeir sem búa einir og deila ekki eldunar- eða salernisaðstöðu með öðrum geta átt rétt á hærri greiðslum. Samkvæmt Þjóðskrá býrð þú ein/n. Vilt þú sækja um?',
+      description:
+        'Those who live alone and do not share cooking or bathroom facilities with others may be entitled to higher payments. According to Registers Iceland you live alone. Would you like to apply?',
+    },
+    higherPaymentsCohabTitle: {
+      id: 'asfte.application:info.higher.payments.cohab.title',
+      defaultMessage: 'Hærri greiðslur fyrir þá sem búa einir',
+      description: 'Higher payments for those who live alone',
+    },
+    higherPaymentsCohabDescription: {
+      id: 'asfte.application:info.higher.payments.cohab.description',
+      defaultMessage:
+        'Þeir sem búa einir og deila ekki eldunar- eða salernisaðstöðu með öðrum geta átt rétt á hærri greiðslum. Samkvæmt Þjóðskrá býrð þú ekki ein/n. Breytist aðstæður þínar getur þú sótt aftur um félagslegan viðbótarstuðning með hærri greiðslum, eftir að þú hefur uppfært skráningu þína í Þjóðskrá.',
+      description:
+        'Those who live alone and do not share cooking or bathroom facilities with others may be entitled to higher payments. According to Registers Iceland you do not live alone. Should your circumstances change, you can re-apply for additional support for the elderly and receive higher payments, after you have changed your cohabitation information at Registers Iceland.',
+    },
   }),
 
   conclusionScreen: defineMessages({

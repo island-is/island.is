@@ -69,6 +69,12 @@ export class Organisation extends Model {
   @ApiProperty()
   phoneNumber?: string
 
+  @Column({
+    type: DataType.STRING,
+  })
+  @ApiProperty()
+  zendeskId?: string
+
   @HasMany(() => Provider)
   @ApiPropertyOptional({ type: [Provider] })
   providers?: Provider[]

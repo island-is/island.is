@@ -6,6 +6,7 @@ import { uuid } from 'uuidv4'
 
 import { Box, Button, toast } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   CrimeScene,
   CrimeSceneMap,
@@ -20,6 +21,7 @@ import {
   PageLayout,
   PageTitle,
   SectionHeading,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
@@ -103,6 +105,7 @@ const getPoliceCasesForUpdate = (
   )
 
 const Defendant = () => {
+  const { user } = useContext(UserContext)
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { formatMessage } = useIntl()
@@ -621,7 +624,7 @@ const Defendant = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={constants.CASES_ROUTE}
+          previousUrl={getStandardUserDashboardRoute(user)}
           onNextButtonClick={() =>
             handleNavigationTo(constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE)
           }

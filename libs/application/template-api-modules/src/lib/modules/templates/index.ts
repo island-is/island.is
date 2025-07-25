@@ -1,7 +1,11 @@
 import { UnemploymentBenefitsModule } from './unemployment-benefits/unemployment-benefits.module'
 import { UnemploymentBenefitsService } from './unemployment-benefits/unemployment-benefits.service'
-import { ReferenceTemplateModule } from './reference-template/reference-template.module'
-import { ReferenceTemplateService } from './reference-template/reference-template.service'
+import { CarRentalFeeCategoryModule } from './car-rental-fee-category/car-rental-fee-category.module'
+import { CarRentalFeeCategoryService } from './car-rental-fee-category/car-rental-fee-category.service'
+import { TerminateRentalAgreementModule } from './hms/terminate-rental-agreement/terminate-rental-agreement.module'
+import { TerminateRentalAgreementService } from './hms/terminate-rental-agreement/terminate-rental-agreement.service'
+import { FireCompensationAppraisalModule } from './hms/fire-compensation-appraisal/fire-compensation-appraisal.module'
+import { FireCompensationAppraisalService } from './hms/fire-compensation-appraisal/fire-compensation-appraisal.service'
 import { ExampleFolderStructureAndConventionsModule } from './examples/example-folder-structure-and-conventions/example-folder-structure-and-conventions.module'
 import { ExampleFolderStructureAndConventionsService } from './examples/example-folder-structure-and-conventions/example-folder-structure-and-conventions.service'
 import { ExampleAuthDelegationModule } from './examples/example-auth-delegation/example-auth-delegation.module'
@@ -166,6 +170,8 @@ import { LegalGazetteTemplateModule } from './legal-gazette/legal-gazette.module
 import { LegalGazetteTemplateService } from './legal-gazette/legal-gazette.service'
 import { RentalAgreementModule } from './rental-agreement/rental-agreement.module'
 import { RentalAgreementService } from './rental-agreement/rental-agreement.service'
+import { ExemptionForTransportationModule } from './transport-authority/exemption-for-transportation/exemption-for-transportation.module'
+import { ExemptionForTransportationService } from './transport-authority/exemption-for-transportation/exemption-for-transportation.service'
 
 export const dynamicModules = [GeneralPetitionModule]
 
@@ -246,11 +252,15 @@ export const modules = [
   SecondarySchoolModule,
   TrainingLicenseOnAWorkMachineTemplateModule,
   UnemploymentBenefitsModule,
+  CarRentalFeeCategoryModule,
   PracticalExamTemplateModule,
   ExampleFolderStructureAndConventionsModule,
   LegalGazetteTemplateModule,
   ExampleAuthDelegationModule,
   RentalAgreementModule,
+  TerminateRentalAgreementModule,
+  FireCompensationAppraisalModule,
+  ExemptionForTransportationModule,
 ]
 
 export const services = [
@@ -331,9 +341,13 @@ export const services = [
   SecondarySchoolService,
   TrainingLicenseOnAWorkMachineTemplateService,
   UnemploymentBenefitsService,
+  CarRentalFeeCategoryService,
   PracticalExamTemplateService,
   ExampleFolderStructureAndConventionsService,
   LegalGazetteTemplateService,
   ExampleAuthDelegationService,
   RentalAgreementService,
+  TerminateRentalAgreementService,
+  FireCompensationAppraisalService,
+  ExemptionForTransportationService,
 ]

@@ -69,6 +69,9 @@ import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school
 import { WorkMachinesClientConfig } from '@island.is/clients/work-machines'
 import { PaymentsApiClientConfig } from '@island.is/clients/payments'
 import { VmstUnemploymentClientConfig } from '@island.is/clients/vmst-unemployment'
+import { HmsRentalAgreementClientConfig } from '@island.is/clients/hms-rental-agreement'
+import { ExemptionForTransportationClientConfig } from '@island.is/clients/transport-authority/exemption-for-transportation'
+
 @Module({
   imports: [
     SequelizeModule.forRootAsync({
@@ -136,6 +139,8 @@ import { VmstUnemploymentClientConfig } from '@island.is/clients/vmst-unemployme
         WorkMachinesClientConfig,
         PaymentsApiClientConfig,
         VmstUnemploymentClientConfig,
+        HmsRentalAgreementClientConfig,
+        ExemptionForTransportationClientConfig,
       ],
     }),
   ],

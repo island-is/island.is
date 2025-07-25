@@ -33,7 +33,7 @@ console.info(`Helm values branch: ${typeOfDeployment.dev ? 'main' : 'release'}`)
 
 function shouldRun() {
   if (eventName === 'workflow_dispatch') {
-    return true;
+    return true
   }
   if (eventName === 'merge_group') {
     return isTargetBranchCompatible(targetBranch)

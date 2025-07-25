@@ -8,7 +8,7 @@ import { Routes } from '../../../utils/enums'
 import { registerProperty } from '../../../lib/messages'
 
 export const RentalHousingPropertySearch: SubSection = buildSubSection({
-  id: Routes.PROPERTYINFORMATION,
+  id: Routes.REGISTERPROPERTY,
   title: registerProperty.search.subsectionName,
   children: [
     buildMultiField({

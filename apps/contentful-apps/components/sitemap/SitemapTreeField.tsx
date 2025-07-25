@@ -2,6 +2,20 @@ import { useCallback, useEffect, useState } from 'react'
 import { useDebounce } from 'react-use'
 import type { FieldExtensionSDK } from '@contentful/app-sdk'
 import { useSDK } from '@contentful/react-apps-toolkit'
+import {
+  closestCenter,
+  DndContext,
+  DragEndEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
+import {
+  arrayMove,
+  SortableContext,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable'
 
 import { AddNodeButton } from './AddNodeButton'
 import { EntryContext, useEntryContext } from './entryContext'
@@ -83,33 +97,66 @@ export const SitemapTreeField = () => {
     [tree],
   )
 
+  const sensors = useSensors(useSensor(PointerSensor))
+
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event
+      if (over && active.id !== over.id) {
+        const oldIndex = tree.childNodes.findIndex(
+          (item) => item.id === active.id,
+        )
+        const newIndex = tree.childNodes.findIndex(
+          (item) => item.id === over.id,
+        )
+        if (oldIndex >= 0 && newIndex >= 0) {
+          setTree((prevTree) => ({
+            ...prevTree,
+            childNodes: arrayMove(tree.childNodes, oldIndex, newIndex),
+          }))
+        }
+      }
+    },
+    [tree],
+  )
+
   return (
-    <EntryContext.Provider value={useEntryContext()}>
-      <div>
-        <div>
-          <div className={styles.childNodeContainer}>
-            {tree.childNodes.map((node) => (
-              <SitemapNode
-                parentNode={tree}
-                removeNode={removeNode}
-                addNode={addNode}
-                updateNode={updateNode}
-                key={node.id}
-                node={node}
-                root={tree}
-                onMarkEntryAsPrimary={onMarkEntryAsPrimary}
-              />
-            ))}
-            <div className={styles.addNodeButtonContainer}>
-              <AddNodeButton
-                addNode={(type, createNew) => {
-                  addNode(tree, type, createNew)
-                }}
-              />
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      modifiers={[restrictToVerticalAxis]}
+      onDragEnd={handleDragEnd}
+    >
+      <SortableContext
+        items={tree.childNodes}
+        strategy={verticalListSortingStrategy}
+      >
+        <EntryContext.Provider value={useEntryContext()}>
+          <div>
+            <div className={styles.childNodeContainer}>
+              {tree.childNodes.map((node) => (
+                <SitemapNode
+                  parentNode={tree}
+                  removeNode={removeNode}
+                  addNode={addNode}
+                  updateNode={updateNode}
+                  key={node.id}
+                  node={node}
+                  root={tree}
+                  onMarkEntryAsPrimary={onMarkEntryAsPrimary}
+                />
+              ))}
+              <div className={styles.addNodeButtonContainer}>
+                <AddNodeButton
+                  addNode={(type, createNew) => {
+                    addNode(tree, type, createNew)
+                  }}
+                />
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-    </EntryContext.Provider>
+        </EntryContext.Provider>
+      </SortableContext>
+    </DndContext>
   )
 }

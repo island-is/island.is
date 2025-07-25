@@ -32,14 +32,7 @@ export const BankAccountFormField = ({ field, application, errors }: Props) => {
     application,
     formatMessage,
   )
-  const defaultBankAccount = getDefaultValue(field, application)
-  const bankNumberValue = defaultBankAccount
-    ? defaultBankAccount.split('-')[0]
-    : ''
-  const ledgerValue = defaultBankAccount ? defaultBankAccount.split('-')[1] : ''
-  const accountNumberValue = defaultBankAccount
-    ? defaultBankAccount.split('-')[2]
-    : ''
+  const bankInfo = getDefaultValue(field, application)
 
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
@@ -55,7 +48,7 @@ export const BankAccountFormField = ({ field, application, errors }: Props) => {
           <Box marginBottom={[2, 2, 4]}>
             <InputController
               id={`${id}.bankNumber`}
-              defaultValue={bankNumberValue}
+              defaultValue={bankInfo?.bankNumber || ''}
               label={bankNumber}
               placeholder="0000"
               format="####"
@@ -72,7 +65,7 @@ export const BankAccountFormField = ({ field, application, errors }: Props) => {
           <Box marginBottom={[2, 2, 4]}>
             <InputController
               id={`${id}.ledger`}
-              defaultValue={ledgerValue}
+              defaultValue={bankInfo?.ledger || ''}
               label={ledger}
               placeholder="00"
               format="##"
@@ -88,7 +81,7 @@ export const BankAccountFormField = ({ field, application, errors }: Props) => {
           <Box marginBottom={[2, 2, 4]}>
             <InputController
               id={`${id}.accountNumber`}
-              defaultValue={accountNumberValue}
+              defaultValue={bankInfo?.accountNumber || ''}
               label={accountNumber}
               placeholder="000000"
               format="######"

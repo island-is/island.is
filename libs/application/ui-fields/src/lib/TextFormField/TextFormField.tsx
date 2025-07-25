@@ -35,6 +35,7 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
     backgroundColor,
     format,
     variant = 'text',
+    thousandSeparator,
     suffix,
     rows,
     required,
@@ -121,7 +122,16 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
             variant !== 'textarea' && variant !== 'currency' ? variant : 'text'
           }
           format={format}
-          suffix={suffix}
+          thousandSeparator={thousandSeparator}
+          suffix={
+            suffix &&
+            formatTextWithLocale(
+              suffix,
+              application,
+              locale as Locale,
+              formatMessage,
+            )
+          }
           defaultValue={getDefaultValue(field, application)}
           backgroundColor={backgroundColor}
           rows={rows}
@@ -131,7 +141,12 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
           min={min}
           step={step}
           clearOnChange={clearOnChange}
-          setOnChange={setOnChange}
+          setOnChange={
+            typeof setOnChange === 'function'
+              ? async (optionValue) =>
+                  await setOnChange(optionValue, application)
+              : setOnChange
+          }
         />
       </Box>
     </Box>

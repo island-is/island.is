@@ -20,10 +20,15 @@ export const DescriptionFormField: FC<
   const { getValues } = useFormContext()
   const values = getValues()
 
-  const updatedApplication = useMemo(
-    () => ({ ...application, answers: values }),
-    [application, values],
-  )
+  const updatedApplication = useMemo(() => {
+    return {
+      ...application,
+      answers: {
+        ...application.answers,
+        ...values,
+      },
+    }
+  }, [application, values])
 
   return (
     <Box

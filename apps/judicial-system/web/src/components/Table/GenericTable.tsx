@@ -2,8 +2,12 @@ import { useMemo } from 'react'
 import { useLocalStorage } from 'react-use'
 import { AnimatePresence, motion } from 'motion/react'
 
-import ContextMenu, { ContextMenuItem } from '../ContextMenu/ContextMenu'
-import IconButton from '../IconButton/IconButton'
+import {
+  ContextMenu,
+  ContextMenuItem,
+  IconButton,
+} from '@island.is/judicial-system-web/src/components'
+
 import SortButton from './SortButton/SortButton'
 import * as styles from './Table.css'
 
@@ -17,23 +21,19 @@ interface GenericTableProps<Cell> {
   rows: {
     id: string
     cells: Cell[]
+    contextMenuItems: ContextMenuItem[]
+    onClick: () => void
+    isDisabled: boolean
+    isLoading: boolean
   }[]
-  generateContextMenuItems: (id: string) => ContextMenuItem[]
   loadingIndicator: () => JSX.Element
-  rowIdBeingOpened: string | null
-  showLoading: boolean
-  onClick: (id: string) => void
 }
 
 const GenericTable = <Cell,>({
   tableId,
   rows,
   columns,
-  generateContextMenuItems,
   loadingIndicator: LoadingIndicator,
-  rowIdBeingOpened: isOpeningRow,
-  showLoading,
-  onClick,
 }: GenericTableProps<Cell>) => {
   const [sortConfig, setSortConfig] = useLocalStorage<{
     column: number
@@ -63,7 +63,7 @@ const GenericTable = <Cell,>({
             <th key={idx} className={styles.th}>
               <SortButton
                 title={c.title}
-                onClick={() => {
+                onClick={() =>
                   setSortConfig({
                     column: idx,
                     direction:
@@ -73,7 +73,7 @@ const GenericTable = <Cell,>({
                         ? 'descending'
                         : 'ascending',
                   })
-                }}
+                }
                 sortAsc={
                   sortConfig?.column === idx &&
                   sortConfig?.direction === 'ascending'
@@ -95,58 +95,53 @@ const GenericTable = <Cell,>({
             key={idx}
             role="button"
             aria-label="Opna kröfu"
+            aria-disabled={r.isDisabled}
             className={styles.tableRowContainer}
-            onClick={() => {
-              onClick(r.id)
-            }}
+            onClick={() => !r.isDisabled && r.onClick()}
           >
             {r.cells.map((cell, idx) => (
               <td key={idx}>{columns[idx].render(cell)}</td>
             ))}
-            {generateContextMenuItems && (
-              <td width="4%">
-                {generateContextMenuItems(r.id).length > 0 && (
-                  <AnimatePresence initial={false} mode="popLayout">
-                    {isOpeningRow === r.id && showLoading ? (
-                      <motion.div
-                        className={styles.smallContainer}
-                        key={r.id}
-                        initial={{ opacity: 0, y: 5 }}
-                        animate={{ opacity: 1, y: 1 }}
-                        exit={{
-                          opacity: 0,
-                          y: 5,
-                        }}
-                        transition={{ type: 'spring' }}
-                      >
-                        <LoadingIndicator />
-                      </motion.div>
-                    ) : (
-                      <ContextMenu
-                        items={generateContextMenuItems(r.id)}
-                        render={
-                          <motion.div
-                            className={styles.smallContainer}
-                            key={r.id}
-                            initial={{ opacity: 1 }}
-                            animate={{ opacity: 1, y: 1 }}
-                            exit={{ opacity: 0, y: 5 }}
-                            onClick={(evt) => {
-                              evt.stopPropagation()
-                            }}
-                          >
-                            <IconButton
-                              icon="ellipsisVertical"
-                              colorScheme="transparent"
-                            />
-                          </motion.div>
-                        }
-                      />
-                    )}
-                  </AnimatePresence>
+            <td width="4%">
+              <AnimatePresence initial={false} mode="popLayout">
+                {r.isLoading ? (
+                  <motion.div
+                    className={styles.smallContainer}
+                    key={r.id}
+                    initial={{ opacity: 0, y: 5 }}
+                    animate={{ opacity: 1, y: 1 }}
+                    exit={{
+                      opacity: 0,
+                      y: 5,
+                    }}
+                    transition={{ type: 'spring' }}
+                  >
+                    <LoadingIndicator />
+                  </motion.div>
+                ) : (
+                  r.contextMenuItems.length > 0 && (
+                    <ContextMenu
+                      items={r.contextMenuItems}
+                      render={
+                        <motion.div
+                          className={styles.smallContainer}
+                          key={r.id}
+                          initial={{ opacity: 1 }}
+                          animate={{ opacity: 1, y: 1 }}
+                          exit={{ opacity: 0, y: 5 }}
+                          onClick={(evt) => evt.stopPropagation()}
+                        >
+                          <IconButton
+                            icon="ellipsisVertical"
+                            colorScheme="transparent"
+                          />
+                        </motion.div>
+                      }
+                    />
+                  )
                 )}
-              </td>
-            )}
+              </AnimatePresence>
+            </td>
           </tr>
         ))}
       </tbody>

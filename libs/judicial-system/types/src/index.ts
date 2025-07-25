@@ -52,6 +52,8 @@ export {
   DefenderSubRole,
   prosecutionRoles,
   isProsecutionUser,
+  isProsecutorUser,
+  isProsecutorRepresentativeUser,
   getContactInformation,
   publicProsecutionOfficeRoles,
   isPublicProsecutionOfficeUser,
@@ -71,7 +73,7 @@ export {
   getAdminUserInstitutionScope,
   getAdminUserInstitutionUserRoles,
 } from './lib/user'
-export type { User, UserDescriptor } from './lib/user'
+export type { User, UserDescriptor, InstitutionUser } from './lib/user'
 
 export {
   CaseOrigin,
@@ -141,14 +143,21 @@ export type { SubstanceMap } from './lib/indictmentCount'
 
 export { Substance } from './lib/substances'
 
-export { type Lawyer, mapToLawyer } from './lib/lawyer'
+export {
+  type Lawyer,
+  mapToLawyer,
+  type LawyerFull,
+  type LawyerRegistry,
+  LawyerType,
+} from './lib/lawyer'
 
 export { type CourtDocument } from './lib/courtDocument'
 
-export { type CaseTableColumnKey } from './lib/tables/caseTableColumn'
+export { type CaseTableColumnKey } from './lib/tables/caseTableColumnTypes'
+export { getCaseTableType, caseTables } from './lib/tables/caseTable'
 export {
+  CaseActionType,
+  ContextMenuCaseActionType,
   CaseTableType,
-  getCaseTableType,
-  caseTables,
-} from './lib/tables/caseTable'
+} from './lib/tables/caseTableTypes'
 export { getCaseTableGroups } from './lib/tables/caseTableGroup'
