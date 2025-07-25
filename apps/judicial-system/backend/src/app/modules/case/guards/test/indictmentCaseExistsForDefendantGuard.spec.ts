@@ -87,7 +87,6 @@ describe('Indictment Case Exists For Defendant Guard', () => {
                 model: Verdict,
                 as: 'verdict',
                 required: false,
-                order: [['created', 'DESC']],
               },
             ],
           },

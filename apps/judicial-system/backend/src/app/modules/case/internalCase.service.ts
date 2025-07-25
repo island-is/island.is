@@ -1341,7 +1341,6 @@ export class InternalCaseService {
               model: Verdict,
               as: 'verdict',
               required: false,
-              order: [['created', 'DESC']],
             },
           ],
         },

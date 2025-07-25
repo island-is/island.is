@@ -310,7 +310,6 @@ const Completed: FC = () => {
                           onChange={() => {
                             setAndSendVerdictToServer(
                               {
-                                verdictId: verdict.id,
                                 defendantId: defendant.id,
                                 caseId: workingCase.id,
                                 serviceRequirement:
@@ -338,7 +337,6 @@ const Completed: FC = () => {
                           onChange={() => {
                             setAndSendVerdictToServer(
                               {
-                                verdictId: verdict.id,
                                 defendantId: defendant.id,
                                 caseId: workingCase.id,
                                 serviceRequirement: ServiceRequirement.REQUIRED,
@@ -364,7 +362,6 @@ const Completed: FC = () => {
                         onChange={() => {
                           setAndSendVerdictToServer(
                             {
-                              verdictId: verdict.id,
                               defendantId: defendant.id,
                               caseId: workingCase.id,
                               serviceRequirement:
@@ -457,7 +454,6 @@ const Completed: FC = () => {
                                     onChange={(target) => {
                                       setAndSendVerdictToServer(
                                         {
-                                          verdictId: verdict.id,
                                           defendantId: defendant.id,
                                           caseId: workingCase.id,
                                           serviceInformationForDefendant: target

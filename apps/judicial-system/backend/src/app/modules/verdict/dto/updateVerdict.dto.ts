@@ -25,8 +25,8 @@ export class UpdateVerdictDto {
   @IsOptional()
   @Type(() => Date)
   @IsDate()
-  @ApiPropertyOptional({ type: Date })
-  readonly serviceDate?: Date
+  @ApiPropertyOptional({ type: Date, nullable: true })
+  serviceDate?: Date | null
 
   @IsOptional()
   @IsString()

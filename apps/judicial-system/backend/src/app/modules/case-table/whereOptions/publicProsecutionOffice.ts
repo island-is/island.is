@@ -169,9 +169,8 @@ export const publicProsecutionOfficeIndictmentsAppealedWhereOptions = () => ({
         {
           [Op.and]: [
             literal(`EXISTS (
-              SELECT 1 FROM defendant
-              JOIN verdict ON defendant.id = verdict.defendant_id
-              WHERE defendant.case_id = "Case".id
+              SELECT 1 FROM verdict
+              WHERE verdict.case_id = "Case".id
                 AND verdict.appeal_date IS NOT NULL
             )`),
           ],

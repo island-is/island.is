@@ -24,15 +24,17 @@ import {
 import {
   Case,
   CaseCompletedGuard,
-  CaseExistsGuard,
   CaseTypeGuard,
   CurrentCase,
+  MinimalCaseExistsGuard,
 } from '../case'
 import { CurrentDefendant, Defendant } from '../defendant'
 import { DefendantNationalIdExistsGuard } from '../defendant/guards/defendantNationalIdExists.guard'
 import { Verdict } from '../verdict/models/verdict.model'
 import { VerdictService } from '../verdict/verdict.service'
-import { UpdateVerdictAppealDto } from './dto/updateVerdictAppeal.dto'
+import { InternalUpdateVerdictDto } from './dto/internalUpdateVerdict.dto'
+import { CurrentVerdict } from './guards/verdict.decorator'
+import { VerdictExistGuard } from './guards/verdictExistGuard.guard'
 
 const validateVerdictAppealUpdate = ({
   caseId,
@@ -74,18 +76,19 @@ const validateVerdictAppealUpdate = ({
 
 @Controller('api/internal/case/:caseId')
 @ApiTags('internal verdict')
-@UseGuards(TokenGuard, CaseExistsGuard)
+@UseGuards(
+  TokenGuard,
+  MinimalCaseExistsGuard,
+  new CaseTypeGuard(indictmentCases),
+  CaseCompletedGuard,
+)
 export class InternalVerdictController {
   constructor(
     private readonly verdictService: VerdictService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(
-    new CaseTypeGuard(indictmentCases),
-    CaseCompletedGuard,
-    DefendantNationalIdExistsGuard,
-  )
+  @UseGuards(DefendantNationalIdExistsGuard, VerdictExistGuard)
   @Patch('defendant/:defendantNationalId/verdict-appeal')
   @ApiOkResponse({
     type: Verdict,
@@ -96,16 +99,12 @@ export class InternalVerdictController {
     @Param('defendantNationalId') _: string,
     @CurrentCase() theCase: Case,
     @CurrentDefendant() defendant: Defendant,
-    @Body() verdictAppeal: UpdateVerdictAppealDto,
+    @CurrentVerdict() verdict: Verdict,
+    @Body() verdictAppeal: InternalUpdateVerdictDto,
   ): Promise<Verdict> {
-    this.logger.debug(`Updating verdict appeal for defendant in case ${caseId}`)
-
-    const { verdict } = defendant
-    if (!verdict) {
-      throw new BadRequestException(
-        `Cannot register appeal – No verdict has been issued for case ${caseId}`,
-      )
-    }
+    this.logger.debug(
+      `Updating verdict appeal for defendant ${defendant.id} in case ${caseId}`,
+    )
 
     validateVerdictAppealUpdate({
       caseId: theCase.id,
@@ -115,7 +114,7 @@ export class InternalVerdictController {
     })
 
     const updatedVerdict = this.verdictService.updateRestricted(verdict, {
-      appealDecision: verdictAppeal.verdictAppealDecision,
+      appealDecision: verdictAppeal.appealDecision,
     })
     return updatedVerdict
   }

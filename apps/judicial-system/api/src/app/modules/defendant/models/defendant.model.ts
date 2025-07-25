@@ -9,7 +9,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Subpoena } from '../../subpoena'
-import { Verdict } from '../../verdict/models/verdict.model'
+import { Verdict } from '../../verdict'
 
 registerEnumType(Gender, { name: 'Gender' })
 registerEnumType(DefendantPlea, { name: 'DefendantPlea' })

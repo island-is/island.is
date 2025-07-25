@@ -29,6 +29,7 @@ module.exports = {
               key: 'id',
             },
             allowNull: false,
+            unique: true,
           },
           case_id: {
             type: Sequelize.UUID,
@@ -36,7 +37,7 @@ module.exports = {
               model: 'case',
               key: 'id',
             },
-            allowNull: true,
+            allowNull: false,
           },
           external_police_document_id: {
             type: Sequelize.STRING,
