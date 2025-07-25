@@ -1,6 +1,8 @@
 import { useContext, useEffect, useState } from 'react'
+import { EntryProps } from 'contentful-management'
+import capitalize from 'lodash/capitalize'
 import type { FieldExtensionSDK } from '@contentful/app-sdk'
-import { DragHandle } from '@contentful/f36-components'
+import { Badge, DragHandle, Text } from '@contentful/f36-components'
 import { ChevronDownIcon, ChevronRightIcon } from '@contentful/f36-icons'
 import { useSDK } from '@contentful/react-apps-toolkit'
 import {
@@ -27,6 +29,52 @@ import { SitemapNodeContent } from './SitemapNodeContent'
 import { Tree, TreeNode, TreeNodeType } from './utils'
 import * as styles from './SitemapNode.css'
 
+const getEntryStatus = (
+  node: TreeNode,
+  entries: Record<string, EntryProps>,
+) => {
+  if (node.type !== TreeNodeType.ENTRY) {
+    return ''
+  }
+
+  const entry = entries[node.entryId]
+
+  if (!entry) {
+    return ''
+  }
+
+  const { archivedVersion, publishedVersion, version } = entry.sys
+
+  if (archivedVersion) {
+    return 'archived'
+  }
+
+  if (!publishedVersion) {
+    return 'draft'
+  }
+
+  if (publishedVersion < version - 1) {
+    return 'changed'
+  }
+
+  return 'published'
+}
+
+const getEntryStatusVariant = (
+  entryStatus: ReturnType<typeof getEntryStatus>,
+) => {
+  if (entryStatus === 'archived') {
+    return 'negative'
+  }
+  if (entryStatus === 'draft') {
+    return 'warning'
+  }
+  if (entryStatus === 'changed') {
+    return 'primary'
+  }
+  return 'positive'
+}
+
 interface SitemapNodeProps {
   node: TreeNode
   parentNode: Tree
@@ -52,7 +100,7 @@ export const SitemapNode = ({
 
   const [showChildNodes, setShowChildNodes] = useState(false)
 
-  const { fetchEntries, updateEntry } = useContext(EntryContext)
+  const { fetchEntries, updateEntry, entries } = useContext(EntryContext)
 
   useEffect(() => {
     const entryNodes = node.childNodes.filter(
@@ -106,25 +154,88 @@ export const SitemapNode = ({
       }
     }
   }
+
+  const clickProps = {
+    tabIndex: isClickable ? 0 : undefined,
+    style: {
+      cursor: isClickable ? 'pointer' : undefined,
+      width: '100%',
+    },
+    onKeyDown: (ev: React.KeyboardEvent<HTMLDivElement>) => {
+      if (ev.key === ' ') {
+        handleClick()
+      }
+    },
+    onClick: handleClick,
+  }
+
+  const entryStatus = getEntryStatus(node, entries)
+
   return (
     <div className={styles.mainContainer}>
       <div className={styles.nodeContainer} ref={setNodeRef} style={style}>
         <DragHandle {...listeners} {...attributes} label="Drag to reorder" />
         <div className={styles.nodeInnerContainer}>
-          <div
-            tabIndex={isClickable ? 0 : undefined}
-            style={{
-              cursor: isClickable ? 'pointer' : undefined,
-              width: '100%',
-            }}
-            onKeyDown={(ev) => {
-              if (ev.key === ' ') {
-                handleClick()
-              }
-            }}
-            onClick={handleClick}
-          >
-            <div className={styles.contentContainer}>
+          <div className={styles.fullWidth}>
+            <div className={styles.nodeTopRowContainer}>
+              <div>
+                <Text fontColor="gray600">{capitalize(node.type)}</Text>
+              </div>
+              <div className={styles.nodeTopRowContainerRight}>
+                {entryStatus && (
+                  <Badge variant={getEntryStatusVariant(entryStatus)}>
+                    {entryStatus}
+                  </Badge>
+                )}
+                <EditMenu
+                  entryId={
+                    node.type === TreeNodeType.ENTRY ? node.entryId : undefined
+                  }
+                  root={root}
+                  onMarkEntryAsPrimary={onMarkEntryAsPrimary}
+                  isEntryNodePrimaryLocation={
+                    node.type === TreeNodeType.ENTRY && node.primaryLocation
+                  }
+                  entryNodeId={node.id}
+                  onEdit={async () => {
+                    if (node.type === TreeNodeType.ENTRY) {
+                      const entry = await sdk.navigator.openEntry(
+                        node.entryId,
+                        {
+                          slideIn: { waitForClose: true },
+                        },
+                      )
+
+                      if (entry?.entity) {
+                        updateEntry(entry.entity)
+                      }
+
+                      return
+                    }
+
+                    const updatedNode = await sdk.dialogs.openCurrentApp({
+                      parameters: {
+                        node,
+                      },
+                      minHeight: 400,
+                    })
+                    updateNode(parentNode, updatedNode)
+                    return
+                  }}
+                  onRemove={async () => {
+                    const confirmed = await sdk.dialogs.openConfirm({
+                      title: 'Are you sure?',
+                      message: `Entry and everything below it will be removed`,
+                    })
+                    if (!confirmed) {
+                      return
+                    }
+                    removeNode(parentNode, node.id)
+                  }}
+                />
+              </div>
+            </div>
+            <div {...clickProps} className={styles.contentContainer}>
               <div
                 style={{
                   visibility: isClickable ? 'visible' : 'hidden',
@@ -134,51 +245,6 @@ export const SitemapNode = ({
               </div>
               <SitemapNodeContent node={node} />
             </div>
-          </div>
-          <div>
-            <EditMenu
-              entryId={
-                node.type === TreeNodeType.ENTRY ? node.entryId : undefined
-              }
-              root={root}
-              onMarkEntryAsPrimary={onMarkEntryAsPrimary}
-              isEntryNodePrimaryLocation={
-                node.type === TreeNodeType.ENTRY && node.primaryLocation
-              }
-              entryNodeId={node.id}
-              onEdit={async () => {
-                if (node.type === TreeNodeType.ENTRY) {
-                  const entry = await sdk.navigator.openEntry(node.entryId, {
-                    slideIn: { waitForClose: true },
-                  })
-
-                  if (entry?.entity) {
-                    updateEntry(entry.entity)
-                  }
-
-                  return
-                }
-
-                const updatedNode = await sdk.dialogs.openCurrentApp({
-                  parameters: {
-                    node,
-                  },
-                  minHeight: 400,
-                })
-                updateNode(parentNode, updatedNode)
-                return
-              }}
-              onRemove={async () => {
-                const confirmed = await sdk.dialogs.openConfirm({
-                  title: 'Are you sure?',
-                  message: `Entry and everything below it will be removed`,
-                })
-                if (!confirmed) {
-                  return
-                }
-                removeNode(parentNode, node.id)
-              }}
-            />
           </div>
         </div>
       </div>
