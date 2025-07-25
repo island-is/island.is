@@ -5,7 +5,6 @@ const RULING = 'RULING'
 
 module.exports = {
   async up(queryInterface) {
-    console.log('VERDICT MIGRATION')
     return queryInterface.sequelize.transaction((t) =>
       queryInterface.sequelize.query(
         `INSERT INTO "verdict" (id, defendant_id, case_id, service_requirement, service_status, service_date, appeal_decision, appeal_date, service_information_for_defendant)

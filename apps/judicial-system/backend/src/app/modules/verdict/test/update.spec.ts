@@ -48,14 +48,7 @@ describe('VerdictController - Update', () => {
       const then = {} as Then
 
       await verdictController
-        .update(
-          theCase.id,
-          defendant.id,
-          verdict.id,
-          theCase,
-          verdict,
-          verdictUpdate,
-        )
+        .update(theCase.id, defendant.id, theCase, verdict, verdictUpdate)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -71,8 +64,12 @@ describe('VerdictController - Update', () => {
     let then: Then
 
     beforeEach(async () => {
+      const mockFind = mockVerdictModel.findOne as jest.Mock
+      mockFind.mockResolvedValueOnce([1, [verdict]])
+
       const mockUpdate = mockVerdictModel.update as jest.Mock
       mockUpdate.mockResolvedValueOnce([1, [updateVerdict]])
+
       then = await givenWhenThen(verdictUpdate)
     })
 

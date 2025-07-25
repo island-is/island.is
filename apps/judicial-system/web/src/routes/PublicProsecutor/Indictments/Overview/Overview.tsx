@@ -31,7 +31,6 @@ import {
   Defendant,
   IndictmentCaseReviewDecision,
   ServiceRequirement,
-  Verdict,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCase,
@@ -95,10 +94,9 @@ export const Overview = () => {
     )
   }
 
-  const handleRevokeAppeal = (defendant: Defendant, verdict: Verdict) => {
+  const handleRevokeAppeal = (defendant: Defendant) => {
     setAndSendVerdictToServer(
       {
-        verdictId: verdict.id,
         caseId: workingCase.id,
         defendantId: defendant.id,
         appealDate: null,
@@ -224,7 +222,7 @@ export const Overview = () => {
                 {verdict?.appealDate ? (
                   <Button
                     variant="text"
-                    onClick={() => handleRevokeAppeal(defendant, verdict)}
+                    onClick={() => handleRevokeAppeal(defendant)}
                     size="small"
                     colorScheme="destructive"
                   >

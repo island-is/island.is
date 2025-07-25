@@ -18,7 +18,6 @@ import {
   CaseIndictmentRulingDecision,
   Defendant,
   ServiceRequirement,
-  Verdict,
 } from '../../graphql/schema'
 import { formatDateForServer } from '../../utils/hooks'
 import useVerdict from '../../utils/hooks/useVerdict'
@@ -82,7 +81,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     setDates((prev) => ({ ...prev, [type]: date }))
   }
 
-  const handleSetDate = (verdict: Verdict, type: keyof typeof dates) => {
+  const handleSetDate = (type: keyof typeof dates) => {
     const date = dates[type]
 
     if (!date) {
@@ -91,7 +90,6 @@ const BlueBoxWithDate: FC<Props> = (props) => {
     }
 
     const payload = {
-      verdictId: verdict.id,
       caseId: workingCase.id,
       defendantId: defendant.id,
       [type]: formatDateForServer(date),
@@ -289,7 +287,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
                 dateOnly
               />
               <Button
-                onClick={() => handleSetDate(verdict, 'appealDate')}
+                onClick={() => handleSetDate('appealDate')}
                 disabled={!dates.appealDate}
               >
                 {formatMessage(strings.defendantAppealDateButtonText)}
@@ -324,7 +322,7 @@ const BlueBoxWithDate: FC<Props> = (props) => {
                 dateOnly
               />
               <Button
-                onClick={() => handleSetDate(verdict, 'serviceDate')}
+                onClick={() => handleSetDate('serviceDate')}
                 disabled={!dates.serviceDate}
               >
                 {formatMessage(strings.defendantVerdictServiceDateButtonText)}

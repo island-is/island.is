@@ -27,7 +27,6 @@ const VerdictAppealDecisionChoice: FC<Props> = (props) => {
         onChange={() => {
           setAndSendVerdictToServer(
             {
-              verdictId: verdict.id,
               defendantId: defendant.id,
               caseId: workingCase.id,
               appealDecision: VerdictAppealDecision.POSTPONE,
@@ -47,7 +46,6 @@ const VerdictAppealDecisionChoice: FC<Props> = (props) => {
         onChange={() => {
           setAndSendVerdictToServer(
             {
-              verdictId: verdict.id,
               defendantId: defendant.id,
               caseId: workingCase.id,
               appealDecision: VerdictAppealDecision.ACCEPT,
