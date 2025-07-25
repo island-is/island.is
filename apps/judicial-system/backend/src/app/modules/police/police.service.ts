@@ -36,6 +36,7 @@ import { DateLog } from '../case/models/dateLog.model'
 import { Defendant } from '../defendant/models/defendant.model'
 import { EventService } from '../event'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
+import { CreateDocumentResponse } from './models/createDocument.response'
 import { CreateSubpoenaResponse } from './models/createSubpoena.response'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
 import { PoliceCaseInfo } from './models/policeCaseInfo.model'
@@ -611,6 +612,78 @@ export class PoliceService {
 
         return false
       })
+  }
+
+  async createDocument({
+    caseId,
+    defendantId,
+    defendantNationalId,
+    user,
+    documentName,
+    documentFiles,
+    documentDates,
+    fileTypeCode,
+  }: {
+    caseId: string
+    defendantId: string
+    defendantNationalId: string
+    user: User
+    documentName: string
+    documentFiles: { name: string; documentBase64: string }[]
+    documentDates: { code: string; value: Date }[]
+    fileTypeCode: string
+  }): Promise<CreateDocumentResponse> {
+    const { name: actor } = user
+
+    const createDocumentPath = `${this.xRoadPath}/CreateDocument`
+    try {
+      const res = await this.fetchPoliceCaseApi(createDocumentPath, {
+        method: 'POST',
+        headers: {
+          accept: '*/*',
+          'Content-Type': 'application/json',
+          'X-Road-Client': this.config.clientId,
+          'X-API-KEY': this.config.policeApiKey,
+        },
+        agent: this.agent,
+        body: JSON.stringify({
+          documentName: documentName,
+          documentFiles,
+          fileTypeCode,
+          supplements: [
+            { code: 'RVG_CASE_ID', value: caseId },
+            { code: 'RECEIVER_SSN', value: defendantNationalId },
+          ],
+          dates: documentDates,
+        }),
+      } as RequestInit)
+
+      if (res.ok) {
+        const policeResponse = await res.json()
+        return { externalPoliceDocumentId: policeResponse.id }
+      }
+
+      throw await res.text()
+    } catch (error) {
+      this.logger.error(
+        `${createDocumentPath} - create external police document for file type code ${fileTypeCode} for case ${caseId}`,
+        {
+          error,
+        },
+      )
+
+      this.eventService.postErrorEvent(
+        'Failed to create external police document file',
+        {
+          caseId,
+          defendantId,
+          actor,
+        },
+        error,
+      )
+
+      throw error
+    }
   }
 
   async createSubpoena(
