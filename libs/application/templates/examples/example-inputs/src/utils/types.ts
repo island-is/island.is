@@ -12,7 +12,7 @@ export type FriggSchoolsByMunicipality = {
     nationalId: string
     name: string
     type: OrganizationModelTypeEnum
-    children?: Array<{
+    managing?: Array<{
       __typename?: 'EducationFriggOrganizationModel'
       id: string
       nationalId: string

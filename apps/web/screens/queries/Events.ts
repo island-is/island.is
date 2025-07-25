@@ -13,6 +13,9 @@ export const GET_SINGLE_EVENT_QUERY = gql`
         startTime
         endTime
       }
+      organization {
+        slug
+      }
       location {
         streetAddress
         floor
