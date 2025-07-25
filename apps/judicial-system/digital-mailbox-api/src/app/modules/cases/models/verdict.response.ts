@@ -10,7 +10,7 @@ import {
   CaseIndictmentRulingDecision,
   getIndictmentAppealDeadlineDate,
   hasDatePassed,
-  InformationForDefendantMap,
+  informationForDefendantMap,
   ServiceRequirement,
   VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
@@ -67,7 +67,7 @@ export class VerdictResponse {
     const rulingInstructionsItems = pipe(
       defendant?.verdict?.serviceInformationForDefendant ?? [],
       filterMap((information) => {
-        const value = InformationForDefendantMap.get(information)
+        const value = informationForDefendantMap.get(information)
         if (!value) {
           return option.none
         }

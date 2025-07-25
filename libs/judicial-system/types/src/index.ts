@@ -15,7 +15,7 @@ export {
   ServiceRequirement,
   VerdictAppealDecision,
   InformationForDefendant,
-  InformationForDefendantMap,
+  informationForDefendantMap,
 } from './lib/verdict'
 
 export {

@@ -52,8 +52,7 @@ export class CaseResponse {
         // TODO: Rename to hasSubpoenaBeenServed?
         hasBeenServed:
           subpoenas.length > 0
-            ? // TODO: Don't we need to adjust the subpoena checked here in case of multiple subpoenas issued?
-              isSuccessfulServiceStatus(subpoenas[0].serviceStatus)
+            ? isSuccessfulServiceStatus(subpoenas[0].serviceStatus)
             : false,
         hasRulingBeenServed: isSuccessfulServiceStatus(verdict.serviceStatus),
         groups: [

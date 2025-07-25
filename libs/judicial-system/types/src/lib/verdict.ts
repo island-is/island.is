@@ -24,7 +24,7 @@ export enum InformationForDefendant {
 }
 
 // TODO: set final descriptions
-export const InformationForDefendantMap: Map<
+export const informationForDefendantMap: Map<
   InformationForDefendant,
   { label: string; description: string; detail?: string }
 > = new Map([

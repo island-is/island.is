@@ -15,7 +15,7 @@ import {
   UploadFile,
 } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
-import { InformationForDefendantMap } from '@island.is/judicial-system/types'
+import { informationForDefendantMap } from '@island.is/judicial-system/types'
 import { Feature } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -202,7 +202,7 @@ const Completed: FC = () => {
   const marginSpaceBetweenButtons = 2
 
   const defendantCheckboxes = Array.from(
-    InformationForDefendantMap.entries(),
+    informationForDefendantMap.entries(),
   ).map(([key, value]) => ({
     label: value.label,
     value: key,
