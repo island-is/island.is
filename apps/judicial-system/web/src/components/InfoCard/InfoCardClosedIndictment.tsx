@@ -46,10 +46,6 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
     displaySentToPrisonAdminDate,
   } = props
 
-  const reviewedDate = workingCase.eventLogs?.find(
-    (log) => log.eventType === EventType.INDICTMENT_REVIEWED,
-  )?.created
-
   return (
     <InfoCard
       sections={[
@@ -93,8 +89,12 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
                   ...(workingCase.indictmentReviewDecision
                     ? [indictmentReviewDecision]
                     : []),
-                  ...(reviewedDate
-                    ? [indictmentReviewedDate(reviewedDate)]
+                  ...(workingCase.indictmentReviewedDate
+                    ? [
+                        indictmentReviewedDate(
+                          workingCase.indictmentReviewedDate,
+                        ),
+                      ]
                     : []),
                 ],
                 columns: 2,

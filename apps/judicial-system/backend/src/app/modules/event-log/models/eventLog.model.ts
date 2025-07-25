@@ -18,12 +18,36 @@ import { Case } from '../../case/models/case.model'
   timestamps: false,
 })
 export class EventLog extends Model {
-  static caseSentToCourtEvent(eventLogs?: EventLog[]) {
-    return eventLogs?.find(
+  static getEventLogByEventType(
+    eventType: EventType | EventType[],
+    eventLogs: EventLog[] | undefined,
+    userRole?: UserRole,
+  ): EventLog | undefined {
+    if (!eventLogs) {
+      return undefined
+    }
+
+    const eventTypes = Array.isArray(eventType) ? eventType : [eventType]
+    const relevantLogs = eventLogs.filter(
       (eventLog) =>
-        eventLog.eventType === EventType.CASE_SENT_TO_COURT ||
-        eventLog.eventType === EventType.INDICTMENT_CONFIRMED,
+        eventTypes.includes(eventLog.eventType) &&
+        (!userRole || eventLog.userRole === userRole),
     )
+
+    if (relevantLogs.length === 0) {
+      return undefined
+    }
+
+    return relevantLogs[0]
+  }
+
+  static getEventLogDateByEventType(
+    eventType: EventType | EventType[],
+    eventLogs: EventLog[] | undefined,
+    userRole?: UserRole,
+  ): Date | undefined {
+    return EventLog.getEventLogByEventType(eventType, eventLogs, userRole)
+      ?.created
   }
 
   @Column({

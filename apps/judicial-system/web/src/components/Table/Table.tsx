@@ -97,24 +97,6 @@ const Table: FC<TableProps> = (props) => {
     }
   }
 
-  const renderProsecutorText = (
-    state?: CaseState | null,
-    prosecutorName?: string | null,
-  ) => {
-    if (
-      state &&
-      state === CaseState.WAITING_FOR_CONFIRMATION &&
-      prosecutorName
-    ) {
-      return (
-        <Text fontWeight="medium" variant="small">
-          {`${formatMessage(core.prosecutorPerson)}: ${prosecutorName}`}
-        </Text>
-      )
-    }
-    return null
-  }
-
   const renderPostponedOrCourtDateText = (
     postponedIndefinitelyExplanation?: string | null,
     caseState?: CaseState | null,
@@ -242,7 +224,6 @@ const Table: FC<TableProps> = (props) => {
             theCase={theCase}
             isLoading={isOpeningCaseId === theCase.id && showLoading}
           >
-            {renderProsecutorText(theCase.state, theCase.prosecutor?.name)}
             {renderPostponedOrCourtDateText(
               theCase.postponedIndefinitelyExplanation,
               theCase.state,
