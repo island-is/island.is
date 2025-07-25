@@ -1,6 +1,6 @@
 import { defineMessage, defineMessages } from 'react-intl'
 
-export const rcRuling = {
+export const strings = {
   title: defineMessage({
     id: 'judicial.system.core:restriction_cases.ruling.title',
     defaultMessage: 'Úrskurður',

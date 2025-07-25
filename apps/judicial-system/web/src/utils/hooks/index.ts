@@ -1,8 +1,5 @@
-export {
-  type UpdateCase,
-  default as useCase,
-  formatDateForServer,
-} from './useCase'
+export { default as useCase } from './useCase'
+export { type UpdateCase, formatDateForServer } from './useCase/useCase.logic'
 export { default as useFileList } from './useFileList'
 export { default as useInstitution } from './useInstitution'
 export {

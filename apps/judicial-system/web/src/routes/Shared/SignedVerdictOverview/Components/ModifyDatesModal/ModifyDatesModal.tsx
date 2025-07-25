@@ -6,11 +6,7 @@ import { AnimatePresence, motion } from 'motion/react'
 
 import { Box, Input } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import {
-  capitalize,
-  formatDate,
-  lowercase,
-} from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   core,
   signedVerdictOverview as m,
@@ -31,6 +27,8 @@ import { hasDateChanged } from '@island.is/judicial-system-web/src/utils/formHel
 import { UpdateCase } from '@island.is/judicial-system-web/src/utils/hooks'
 import { validate } from '@island.is/judicial-system-web/src/utils/validate'
 
+import { createCaseModifiedExplanation } from './ModifyDatesModal.logic'
+
 interface DateTime {
   value?: Date
   isValid: boolean
@@ -42,29 +40,6 @@ interface Props {
   isSendingNotification: boolean
   isUpdatingCase: boolean
   closeModal: () => void
-}
-
-export const createCaseModifiedExplanation = (
-  formatMessage: IntlShape['formatMessage'],
-  previousExplaination: string | null | undefined,
-  nextExplanation: string,
-  userName?: string | null,
-  userTitle?: string | null,
-  institutionName?: string | null,
-): string => {
-  const now = new Date()
-  const history = previousExplaination
-    ? `${previousExplaination}<br/><br/>`
-    : ''
-
-  return `${history}${formatMessage(m.sections.modifyDatesInfo.explanation, {
-    date: capitalize(formatDate(now, 'PPPP', true) || ''),
-    time: formatDate(now, constants.TIME_FORMAT),
-    userName: userName ?? '',
-    userTitle: lowercase(userTitle),
-    institutionName: institutionName ?? '',
-    explanation: nextExplanation,
-  })}`
 }
 
 const getModificationSuccessText = (

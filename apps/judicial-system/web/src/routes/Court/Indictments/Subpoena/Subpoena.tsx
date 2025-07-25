@@ -263,7 +263,11 @@ const Subpoena: FC = () => {
     newSubpoenas.length,
   ])
 
-  const stepIsValid = isSubpoenaStepValid(workingCase, updates)
+  const stepIsValid = isSubpoenaStepValid(
+    workingCase,
+    updates?.defendants,
+    updates?.theCase.arraignmentDate,
+  )
 
   return (
     <PageLayout

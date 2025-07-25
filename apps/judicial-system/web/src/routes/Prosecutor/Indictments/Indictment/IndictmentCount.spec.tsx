@@ -1,13 +1,10 @@
-import { createIntl } from 'react-intl'
+import { createFormatMessage } from '@island.is/judicial-system-web/src/utils/testHelpers.logic'
 
 import { getLegalArguments } from './IndictmentCount'
 
-const formatMessage = createIntl({
-  locale: 'is',
-  onError: jest.fn,
-}).formatMessage
-
 describe('getLegalArguments', () => {
+  const formatMessage = createFormatMessage()
+
   test('should format legal arguments with article 95 and one other article', () => {
     const lawsBroken = [
       [58, 1],
