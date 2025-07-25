@@ -158,18 +158,26 @@ export class VerdictService {
       verdictFile,
     )
 
-    // deliver the verdict by creating the document at the police
     const normalizedNationalId = normalizeAndFormatNationalId(
       defendant.nationalId,
     )[0]
-    const documentName = `Dómur í máli ${theCase.courtCaseNumber} - kt: ${normalizedNationalId}`
+    const documentName = `Dómur í máli ${theCase.courtCaseNumber}`
 
+    // deliver the verdict by creating the document at the police
+    // TODO: Adjust the document in collaboration with RLS
     const createdDocument = await this.policeService.createDocument({
       caseId: theCase.id,
       defendantId: defendant.id,
+      defendantNationalId: normalizedNationalId,
       user,
       documentName,
-      documentsBase64: [Base64.btoa(verdictPdf.toString('binary'))],
+      documentFiles: [
+        {
+          name: verdictFile.name,
+          documentBase64: Base64.btoa(verdictPdf.toString('binary')),
+        },
+      ],
+      documentDates: [{ code: 'ORDER_BY_DATE', value: verdictFile.created }],
       fileTypeCode: 'BRTNG_DOMUR',
     })
     if (!createdDocument) {

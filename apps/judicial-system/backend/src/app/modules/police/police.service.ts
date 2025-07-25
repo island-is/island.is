@@ -617,16 +617,20 @@ export class PoliceService {
   async createDocument({
     caseId,
     defendantId,
+    defendantNationalId,
     user,
     documentName,
-    documentsBase64,
+    documentFiles,
+    documentDates,
     fileTypeCode,
   }: {
     caseId: string
     defendantId: string
+    defendantNationalId: string
     user: User
     documentName: string
-    documentsBase64: string[]
+    documentFiles: { name: string; documentBase64: string }[]
+    documentDates: { code: string; value: Date }[]
     fileTypeCode: string
   }): Promise<CreateDocumentResponse> {
     const { name: actor } = user
@@ -644,8 +648,13 @@ export class PoliceService {
         agent: this.agent,
         body: JSON.stringify({
           documentName: documentName,
-          documentsBase64,
+          documentFiles,
           fileTypeCode,
+          supplements: [
+            { code: 'RVG_CASE_ID', value: caseId },
+            { code: 'RECEIVER_SSN', value: defendantNationalId },
+          ],
+          dates: documentDates,
         }),
       } as RequestInit)
 

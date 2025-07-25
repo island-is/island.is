@@ -125,6 +125,11 @@ export class InternalVerdictController {
     this.logger.debug(
       `Delivering verdict ${verdict.id} pdf to the police centralized file service for defendant ${defendantId} of case ${caseId}`,
     )
+    if (defendant.noNationalId) {
+      throw new BadRequestException(
+        `National id is required for ${defendant.id} when delivering verdict to national commissioners office`,
+      )
+    }
 
     // callback function to fetch the updated verdict fields after delivering verdict to police
     const getDeliveredVerdictNationalCommissionersOfficeLogDetails = async (
@@ -141,7 +146,6 @@ export class InternalVerdictController {
         indictmentHash: theCase.indictmentHash,
       }
     }
-
     return this.auditTrailService.audit(
       deliverDto.user.id,
       AuditedAction.DELIVER_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
