@@ -6,16 +6,6 @@ export const employmentHistorySchema = z
     isIndependent: z
       .nativeEnum(YesOrNoEnum)
       .refine((v) => Object.values(YesOrNoEnum).includes(v)),
-    lastJob: z.object({
-      title: z.string().optional(),
-      percentage: z.string().optional(),
-      startDate: z.string().optional(),
-      endDate: z.string().optional(),
-      employer: z.object({
-        nationalId: z.string().optional(),
-        name: z.string().optional(),
-      }),
-    }),
     ownSSNJob: z
       .object({
         title: z.string().optional(),
@@ -24,34 +14,39 @@ export const employmentHistorySchema = z
         endDate: z.string().optional(),
       })
       .optional(),
-    previousJobs: z.array(
+    lastJobs: z.array(
       z.object({
-        employer: z.object({
-          nationalId: z.string().optional(),
-          name: z.string().optional(),
-        }),
+        employer: z
+          .object({
+            nationalId: z.string().optional(),
+            name: z.string().optional(),
+          })
+          .optional(),
         nationalIdWithName: z.string().optional(),
+        hiddenNationalIdWithName: z.string().optional(),
         title: z.string().optional(),
         percentage: z.string().optional(),
         startDate: z.string().optional(),
         endDate: z.string().optional(),
+        predictedEndDate: z.string().optional(),
       }),
     ),
     hasWorkedEes: z.nativeEnum(YesOrNoEnum).optional(),
   })
-  .refine(
-    ({ hasWorkedEes, lastJob, previousJobs }) => {
-      const lastJobPercentage = parseFloat(lastJob.percentage || '')
-      const previousJobsPercentage = previousJobs.reduce((acc, job) => {
-        return acc + (job.percentage ? parseFloat(job.percentage) : 0)
-      }, 0)
-
-      return (
-        (hasWorkedEes && Object.values(YesOrNoEnum).includes(hasWorkedEes)) ||
-        lastJobPercentage + previousJobsPercentage >= 100
-      )
-    },
-    {
-      path: ['hasWorkedEes'],
-    },
-  )
+  .superRefine((data, ctx) => {
+    data.lastJobs.forEach((job, index) => {
+      //So nationalId is not a valid job choice
+      if (!job.nationalIdWithName && !job.hiddenNationalIdWithName) {
+        ctx.addIssue({
+          path: ['lastJobs', index, 'nationalIdWithName'],
+          code: z.ZodIssueCode.custom,
+        })
+      }
+      if (job.nationalIdWithName === '-' && !job.employer?.nationalId) {
+        ctx.addIssue({
+          path: ['lastJobs', index, 'employer'],
+          code: z.ZodIssueCode.custom,
+        })
+      }
+    })
+  })

@@ -140,7 +140,7 @@ export type RepeaterItem = {
   backgroundColor?: 'blue' | 'white'
   width?: 'half' | 'full' | 'third'
   required?: MaybeWithApplicationAndActiveField<boolean>
-  condition?: MaybeWithApplicationAndActiveField<boolean>
+  condition?: MaybeWithApplicationAndActiveFieldAndIndex<boolean>
   dataTestId?: string
   showPhoneField?: boolean
   phoneRequired?: boolean
@@ -148,8 +148,8 @@ export type RepeaterItem = {
   emailRequired?: boolean
   searchCompanies?: boolean
   searchPersons?: boolean
-  readonly?: MaybeWithApplicationAndActiveField<boolean>
-  disabled?: MaybeWithApplicationAndActiveField<boolean>
+  readonly?: MaybeWithApplicationAndActiveFieldAndIndex<boolean>
+  disabled?: MaybeWithApplicationAndActiveFieldAndIndex<boolean>
   isClearable?: MaybeWithApplicationAndActiveField<boolean>
   defaultValue?: MaybeWithApplicationAndActiveFieldAndIndex<unknown>
   index?: MaybeWithApplicationAndActiveField<number>
@@ -219,6 +219,8 @@ export type RepeaterItem = {
     }
   | {
       component: 'nationalIdWithName'
+      nationalIdDefaultValue?: string
+      nameDefaultValue?: string
     }
   | {
       component: 'phone'

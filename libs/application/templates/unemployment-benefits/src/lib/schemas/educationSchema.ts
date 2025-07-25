@@ -13,7 +13,7 @@ export const educationSchema = z
     appliedForNextSemester: z.nativeEnum(YesOrNoEnum).optional(),
     currentEducation: z
       .object({
-        programName: z
+        levelOfStudy: z
           .preprocess((val) => {
             if (!val) {
               return ''
@@ -24,6 +24,7 @@ export const educationSchema = z
         programUnits: z.string().optional(),
         programDegree: z.string().optional(),
         programEnd: z.string().optional(),
+        courseOfStudy: z.string().optional(),
         degreeFile: z.array(FileSchema).optional(),
       })
       .optional(),
@@ -38,6 +39,28 @@ export const educationSchema = z
     },
     {
       path: ['typeOfEducation'],
+    },
+  )
+  .refine(
+    ({ didFinishLastSemester, typeOfEducation }) => {
+      if (typeOfEducation === EducationType.LAST_SEMESTER) {
+        return didFinishLastSemester !== undefined
+      }
+      return true
+    },
+    {
+      path: ['didFinishLastSemester'],
+    },
+  )
+  .refine(
+    ({ didFinishLastSemester, appliedForNextSemester }) => {
+      if (didFinishLastSemester === YesOrNoEnum.NO) {
+        return appliedForNextSemester !== undefined
+      }
+      return true
+    },
+    {
+      path: ['appliedForNextSemester'],
     },
   )
   .refine(
@@ -57,12 +80,37 @@ export const educationSchema = z
                 appliedForNextSemester !== NO))) ||
           typeOfEducation === EducationType.LAST_YEAR)
       ) {
-        return currentEducation && currentEducation.programName
+        return currentEducation && currentEducation.levelOfStudy
       }
       return true
     },
     {
-      path: ['currentEducation', 'programName'],
+      path: ['currentEducation', 'levelOfStudy'],
+    },
+  )
+  .refine(
+    ({
+      lastTwelveMonths,
+      typeOfEducation,
+      didFinishLastSemester,
+      appliedForNextSemester,
+      currentEducation,
+    }) => {
+      if (
+        lastTwelveMonths === YES &&
+        (typeOfEducation === EducationType.CURRENT ||
+          (typeOfEducation === EducationType.LAST_SEMESTER &&
+            (didFinishLastSemester === YES ||
+              (didFinishLastSemester === NO &&
+                appliedForNextSemester !== NO))) ||
+          typeOfEducation === EducationType.LAST_YEAR)
+      ) {
+        return currentEducation && currentEducation.courseOfStudy
+      }
+      return true
+    },
+    {
+      path: ['currentEducation', 'courseOfStudy'],
     },
   )
   .refine(

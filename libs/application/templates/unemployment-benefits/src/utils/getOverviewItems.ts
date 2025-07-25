@@ -13,7 +13,7 @@ import {
 import { KeyValueItem } from '@island.is/application/types'
 import { overview as overviewMessages } from '../lib/messages'
 import {
-  ChildrenInAnswers,
+  FamilyInformationInAnswers,
   EducationHistoryInAnswers,
   EmploymentStatus,
   FileInAnswers,
@@ -40,21 +40,16 @@ export const useApplicantOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const childrenInCustody =
-    getValueViaPath<Array<ChildrenInAnswers>>(
-      answers,
-      'familyInformation.children',
-      [],
-    ) || []
-  const addedChildren =
-    getValueViaPath<Array<ChildrenInAnswers>>(
-      answers,
-      'familyInformation.additionalChildren',
-      [],
-    ) || []
+  const children = getValueViaPath<FamilyInformationInAnswers>(
+    answers,
+    'familyInformation',
+    undefined,
+  )
+  const childrenInCustody = children?.children ?? []
+  const addedChildren = children?.additionalChildren?.map((x) => x.child) ?? []
 
   const combinedChildren = [...childrenInCustody, ...addedChildren]
-  const childrenValueText = combinedChildren.map((x) => x.name)
+  const childrenValueText = combinedChildren.map((x) => x?.name)
   return [
     {
       width: 'half',

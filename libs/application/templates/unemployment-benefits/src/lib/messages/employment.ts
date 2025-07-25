@@ -163,6 +163,11 @@ export const employment = {
         defaultMessage: 'Starf {index}',
         description: 'job repeater label',
       },
+      partTimeJobTitle: {
+        id: 'vmst.ub.application:employment.currentSituation.labels.partTimeJobTitle',
+        defaultMessage: 'Starfsheiti',
+        description: 'part time job title label',
+      },
       partTimeJobPercentage: {
         id: 'vmst.ub.application:employment.currentSituation.labels.partTimeJobPercentage',
         defaultMessage: 'Starfshlutfall',
@@ -194,6 +199,12 @@ export const employment = {
         defaultMessage:
           'Ef að þú ert í tilfallandi vinnu þarftu að tilkynna um vinnu fyrirfram í hvert skipti og skila upplýsingum um tekjur af tilfallandi vinnu á Mínum síðum. Þú gerir það með aðgerðinni „Tilkynna vinnu eða tekjur“.',
         description: 'occasional job info box description',
+      },
+      stillEmployedEndDateAlert: {
+        id: 'vmst.ub.application:employment.currentSituation.labels.stillEmployedEndDateAlert',
+        defaultMessage:
+          'Athugaðu að atvinnuleysisbætur eru greiddar frá þeim degi sem þú getur hafið störf en þó aldrei fyrr en í fyrsta lagi að loknum uppsagnarfresti. Þú getur ekki skráð lengra tímabil en tvær vikur fram í tímann.',
+        description: 'Still employed end date alert',
       },
       jobEstimatedSalary: {
         id: 'vmst.ub.application:employment.currentSituation.labels.jobEstimatedSalary',
@@ -273,7 +284,7 @@ export const employment = {
       },
       partTimeFileUploadLabel: {
         id: 'vmst.ub.application:employment.workingAbility.labels.partTimeFileUploadLabel',
-        defaultMessage: 'Læknisvottorð',
+        defaultMessage: 'Starfshæfnisvottorð',
         description: 'Working ability part time file upload label',
       },
       partTimeFileUploadDescription: {
@@ -305,9 +316,13 @@ export const employment = {
     labels: defineMessages({
       independentCheckbox: {
         id: 'vmst.ub.application:employment.employmentHistory.labels.independentCheckbox',
-        defaultMessage:
-          'Ertu eða varstu sjálfstætt starfandi á eigin kennitölu?',
+        defaultMessage: 'Ertu eða varstu sjálfstætt starfandi?',
         description: 'Independent checkbox label',
+      },
+      independentOwnSSNCheckbox: {
+        id: 'vmst.ub.application:employment.employmentHistory.labels.independentOwnSSNCheckbox',
+        defaultMessage: 'Varstu starfandi á eigin kennitölu ?',
+        description: 'Independent own ssn checkbox label',
       },
       lastJobLabel: {
         id: 'vmst.ub.application:employment.employmentHistory.labels.lastJobLabel',

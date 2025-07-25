@@ -1,6 +1,5 @@
 import {
   buildAlertMessageField,
-  buildCheckboxField,
   buildDateField,
   buildDescriptionField,
   buildFileUploadField,
@@ -24,7 +23,7 @@ import {
   wasStudyingLastSemester,
   wasStudyingLastTwelveMonths,
 } from '../../../utils/educationInformation'
-import { GaldurDomainModelsEducationItem } from '@island.is/clients/vmst-unemployment'
+import { GaldurDomainModelsEducationProgramDTO } from '@island.is/clients/vmst-unemployment'
 import { Application } from '@island.is/application/types'
 
 export const educationSection = buildSection({
@@ -44,7 +43,7 @@ export const educationSection = buildSection({
           id: 'education.lastTwelveMonths',
           width: 'half',
           space: 0,
-          doesNotRequireAnswer: true,
+          required: true,
           options: [
             {
               value: YES,
@@ -66,7 +65,7 @@ export const educationSection = buildSection({
         buildRadioField({
           id: 'education.typeOfEducation',
           space: 0,
-          doesNotRequireAnswer: true,
+          required: true,
           options: [
             {
               value: EducationType.CURRENT,
@@ -96,7 +95,7 @@ export const educationSection = buildSection({
           id: 'education.didFinishLastSemester',
           width: 'half',
           space: 0,
-          doesNotRequireAnswer: true,
+          required: true,
           options: [
             {
               value: YES,
@@ -137,7 +136,7 @@ export const educationSection = buildSection({
           id: 'education.appliedForNextSemester',
           width: 'half',
           space: 0,
-          doesNotRequireAnswer: true,
+          required: true,
           options: [
             {
               value: YES,
@@ -166,24 +165,24 @@ export const educationSection = buildSection({
                 appliedForNextSemester(answers) !== NO)),
         }),
         buildSelectField({
-          id: 'education.currentEducation.programName',
-          title: educationMessages.labels.schoolProgramLabel,
+          id: 'education.currentEducation.levelOfStudy',
+          title: educationMessages.labels.levelOfStudyLabel,
           width: 'half',
-          doesNotRequireAnswer: true,
-          options: (application, _field, locale) => {
-            const education = getValueViaPath<
-              GaldurDomainModelsEducationItem[]
-            >(
-              application.externalData,
-              'unemploymentApplication.data.supportData.educationPrograms',
-            )
+          required: true,
+          options: (application, _, locale) => {
+            const education =
+              getValueViaPath<GaldurDomainModelsEducationProgramDTO[]>(
+                application.externalData,
+                'unemploymentApplication.data.supportData.educationPrograms',
+              ) ?? []
             return (
-              education?.map(({ name, english, id }) => {
-                return {
-                  label: locale === 'is' ? name ?? '' : english ?? '',
-                  value: id ?? '',
-                }
-              }) ?? []
+              education.map((program) => ({
+                value: program.id ?? '',
+                label:
+                  (locale === 'is'
+                    ? program.name
+                    : program.english ?? program.name) || '',
+              })) ?? []
             )
           },
           condition: (answers) =>
@@ -198,7 +197,7 @@ export const educationSection = buildSection({
           title: educationMessages.labels.schoolProgramUnitsLabel,
           width: 'half',
           variant: 'number',
-          doesNotRequireAnswer: true,
+          required: true,
           condition: (answers) =>
             wasStudyingLastTwelveMonths(answers) &&
             (isCurrentlyStudying(answers) ||
@@ -206,11 +205,83 @@ export const educationSection = buildSection({
               (wasStudyingLastSemester(answers) &&
                 appliedForNextSemester(answers) !== NO)),
         }),
-        buildTextField({
+        buildSelectField({
           id: 'education.currentEducation.programDegree',
           title: educationMessages.labels.schoolDegreeLabel,
           width: 'half',
-          doesNotRequireAnswer: true,
+          required: true,
+          options: (application, _, locale) => {
+            const education =
+              getValueViaPath<GaldurDomainModelsEducationProgramDTO[]>(
+                application.externalData,
+                'unemploymentApplication.data.supportData.educationPrograms',
+              ) ?? []
+
+            const levelOfStudy =
+              getValueViaPath<string>(
+                application.answers,
+                'education.currentEducation.levelOfStudy',
+                '',
+              ) ?? ''
+            const chosenLevelDegrees = education?.filter(
+              (program) => program.id === levelOfStudy,
+            )[0]?.degrees
+            return (
+              chosenLevelDegrees?.map((degree) => ({
+                value: degree.id ?? '',
+                label:
+                  (locale === 'is'
+                    ? degree.name
+                    : degree.english ?? degree.name) || '',
+              })) ?? []
+            )
+          },
+          condition: (answers) =>
+            wasStudyingLastTwelveMonths(answers) &&
+            (isCurrentlyStudying(answers) ||
+              wasStudyingInTheLastYear(answers) ||
+              (wasStudyingLastSemester(answers) &&
+                appliedForNextSemester(answers) !== NO)),
+        }),
+        buildSelectField({
+          id: 'education.currentEducation.courseOfStudy',
+          title: educationMessages.labels.courseOfStudyLabel,
+          width: 'half',
+          required: true,
+          options: (application) => {
+            const education = getValueViaPath<
+              GaldurDomainModelsEducationProgramDTO[]
+            >(
+              application.externalData,
+              'unemploymentApplication.data.supportData.educationPrograms',
+            )
+            const levelOfStudy =
+              getValueViaPath<string>(
+                application.answers,
+                'education.currentEducation.levelOfStudy',
+                '',
+              ) ?? ''
+
+            const degreeAnswer =
+              getValueViaPath<string>(
+                application.answers,
+                'education.currentEducation.programDegree',
+                '',
+              ) ?? ''
+            const chosenLevelDegrees = education?.filter(
+              (program) => program.id === levelOfStudy,
+            )[0]?.degrees
+
+            const chosenDegreeSubjects = chosenLevelDegrees?.find(
+              (degree) => degree.id === degreeAnswer,
+            )?.subjects
+            return (
+              chosenDegreeSubjects?.map((subject) => ({
+                value: subject.id ?? '',
+                label: subject.name ?? '',
+              })) ?? []
+            )
+          },
           condition: (answers) =>
             wasStudyingLastTwelveMonths(answers) &&
             (isCurrentlyStudying(answers) ||
@@ -220,16 +291,17 @@ export const educationSection = buildSection({
         }),
         buildDateField({
           id: 'education.currentEducation.programEnd',
+
           title: (application: Application) => {
             const previousLabel =
               wasStudyingInTheLastYear(application.answers) ||
               wasStudyingLastSemester(application.answers)
             return previousLabel
               ? educationMessages.labels.previousSchoolEndDate
-              : educationMessages.labels.currentSchoolEndDateLabel
+              : educationMessages.labels.expectedEndOfStudyLabel
           },
           width: 'half',
-          doesNotRequireAnswer: true,
+          required: true,
           condition: (answers) =>
             wasStudyingLastTwelveMonths(answers) &&
             (isCurrentlyStudying(answers) ||
@@ -237,11 +309,10 @@ export const educationSection = buildSection({
               (wasStudyingLastSemester(answers) &&
                 appliedForNextSemester(answers) !== NO)),
         }),
-        buildDescriptionField({
+        buildAlertMessageField({
           id: 'education.currentEducation.description',
-          title: educationMessages.labels.currentSchoolDegreeFileLabel,
-          titleVariant: 'h5',
-          marginTop: 2,
+          message: educationMessages.labels.currentSchoolDegreeInformation,
+          alertType: 'info',
           condition: (answers) =>
             wasStudyingLastTwelveMonths(answers) &&
             (isCurrentlyStudying(answers) ||
@@ -269,7 +340,7 @@ export const educationSection = buildSection({
           id: 'education.notAppliedForNextSemesterExplanation',
           title: educationMessages.labels.appliedForNextSemesterTextarea,
           variant: 'textarea',
-          doesNotRequireAnswer: true,
+          required: true,
           rows: 6,
           condition: (answers) =>
             wasStudyingLastTwelveMonths(answers) &&

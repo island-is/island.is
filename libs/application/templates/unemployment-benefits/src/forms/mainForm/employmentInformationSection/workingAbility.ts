@@ -28,6 +28,7 @@ export const workingAbilitySubSection = buildSubSection({
           id: 'workingAbility.status',
           title: employmentMessages.workingAbility.labels.workingAbilityLabel,
           backgroundColor: 'blue',
+          required: true,
           options: [
             {
               value: WorkingAbility.ABLE,
@@ -51,7 +52,7 @@ export const workingAbilitySubSection = buildSubSection({
           condition: needsMedicalReport,
         }),
         buildFileUploadField({
-          id: 'workingAbility.medicalReport',
+          id: 'workingAbility.medicalReport.file',
           title:
             employmentMessages.workingAbility.labels.partTimeFileUploadLabel,
           uploadHeader:

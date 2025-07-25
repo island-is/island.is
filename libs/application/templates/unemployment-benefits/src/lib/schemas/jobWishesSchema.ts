@@ -8,6 +8,8 @@ export const jobWishesSchema = z
       .nativeEnum(YesOrNoEnum)
       .refine((v) => Object.values(YesOrNoEnum).includes(v)),
     location: z.array(z.string()).optional(),
+    wantedJobPercentage: z.string().optional(),
+    jobTimelineStartDate: z.string().optional(),
   })
   .refine(
     ({ outsideYourLocation, location }) => {

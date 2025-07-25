@@ -53,8 +53,7 @@ export const applicantInformationSubSection = buildSubSection({
           id: 'applicant.otherPostcode',
           title: applicantMessages.labels.postcode,
           width: 'half',
-          required: false,
-          doesNotRequireAnswer: true,
+          required: true,
           options: (application) => {
             const nameAndPostcode = getValueViaPath<
               GaldurDomainModelsSettingsPostcodesPostcodeDTO[]

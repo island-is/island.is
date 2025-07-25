@@ -1,36 +1,39 @@
 import {
   buildAlertMessageField,
-  buildDateField,
   buildDescriptionField,
   buildFieldsRepeaterField,
   buildMultiField,
   buildRadioField,
   buildSubSection,
-  buildTextField,
   coreMessages,
   getValueViaPath,
   NO,
   YES,
+  YesOrNoEnum,
 } from '@island.is/application/core'
 import { employment as employmentMessages } from '../../../lib/messages'
 import { Application, FormValue } from '@island.is/application/types'
 import {
   isIndependent,
-  workOnOwnSSN,
   getEmployerNameFromSSN,
   getEmploymentFromRsk,
+  isEmployed,
+  isOccasionallyEmployed,
+  isEmployedPartTime,
+  isUnemployed,
+  hasDataFromCurrentStatusItem,
+  hasDataWithoutField,
+  getDefaultFromCurrentStatus,
+  hasEmployer,
+  hasDataFromCurrentStatus,
 } from '../../../utils'
-import { CurrentEmploymentInAnswers } from '../../../shared'
+import { CurrentEmploymentInAnswers, EmploymentStatus } from '../../../shared'
 import { GaldurDomainModelsSettingsJobCodesJobCodeDTO } from '@island.is/clients/vmst-unemployment'
 
 export const employmentHistorySubSection = buildSubSection({
   id: 'employmentHistorySubSection',
   title: employmentMessages.employmentHistory.general.sectionTitle,
   children: [
-    //TODO þarf ekki að skila neinu starfi,
-    // TODO þarf að skoða ef notandi valdi "ekki i neinu starfi" -> þá á bara að vera tómt og möguleiki að bæta við starfi
-    // TODO required dálkar -> ef þú velur starf úr dropdown þá verða allir reitir required, annars er enginn required
-    // TODO hvenær lýkur uppsagnafresti þínum vs lauk störfum label
     buildMultiField({
       id: 'employmentHistorySubSection',
       title: employmentMessages.employmentHistory.general.pageTitle,
@@ -42,7 +45,7 @@ export const employmentHistorySubSection = buildSubSection({
             employmentMessages.employmentHistory.labels.independentCheckbox,
           width: 'half',
           marginBottom: 2,
-          defaultValue: NO, // TODO check if this breaks any conditions
+          defaultValue: NO,
           options: [
             {
               value: YES,
@@ -54,6 +57,42 @@ export const employmentHistorySubSection = buildSubSection({
             },
           ],
         }),
+        buildRadioField({
+          id: 'employmentHistory.independentOwnSsn',
+          title:
+            employmentMessages.employmentHistory.labels
+              .independentOwnSSNCheckbox,
+          width: 'half',
+          marginBottom: 2,
+          defaultValue: NO,
+          condition: (answers) => {
+            const isIndependent = getValueViaPath<YesOrNoEnum>(
+              answers,
+              'employmentHistory.isIndependent',
+              undefined,
+            )
+            return isIndependent === YesOrNoEnum.YES
+          },
+          options: [
+            {
+              value: YES,
+              label: coreMessages.radioYes,
+            },
+            {
+              value: NO,
+              label: coreMessages.radioNo,
+            },
+          ],
+        }),
+        /* IS INDEPENDENT */
+        buildAlertMessageField({
+          id: 'employmentHistoryIndependentAlertMessage',
+          message:
+            employmentMessages.employmentHistory.labels.workOnOwnSSNAlert,
+          alertType: 'info',
+          doesNotRequireAnswer: true,
+          condition: isIndependent,
+        }),
         /* IS NOT INDEPENDENT */
         buildDescriptionField({
           id: 'employmentHistoryNotIndependentDescription',
@@ -64,52 +103,32 @@ export const employmentHistorySubSection = buildSubSection({
         buildFieldsRepeaterField({
           id: 'employmentHistory.lastJobs',
           minRows: (answers: FormValue) => {
-            const currentSituation =
-              getValueViaPath<CurrentEmploymentInAnswers>(
-                answers,
-                'currentSituation.currentJob',
-                undefined,
-              )
             const currentSituationRepeater =
               getValueViaPath<Array<CurrentEmploymentInAnswers>>(
                 answers,
                 'currentSituation.currentSituationRepeater',
                 [],
               ) ?? []
-            const minRows =
-              (currentSituation ? 1 : 0) + currentSituationRepeater.length
+
+            const minRows = isEmployed(answers)
+              ? 1
+              : isOccasionallyEmployed(answers) || isEmployedPartTime(answers)
+              ? currentSituationRepeater.length
+              : 0
             return minRows
           },
           marginTop: 0,
           formTitle:
             employmentMessages.employmentHistory.labels.lastJobRepeater,
           formTitleVariant: 'h5',
-          hideAddItemButton: true,
-          condition: (answers) => !isIndependent(answers),
           fields: {
-            'employer.nationalId': {
-              component: 'input',
-              label:
-                employmentMessages.employmentHistory.labels
-                  .lastJobCompanyNationalId,
-              width: 'half',
-              type: 'text',
-              readonly: (application) => {
-                console.log('application', application)
-                return true
-              },
+            hiddenNationalIdWithName: {
+              component: 'hiddenInput',
               defaultValue: (
                 application: Application,
                 _activeField: Record<string, string>,
                 index: number,
               ) => {
-                const firstCurrentJob =
-                  getValueViaPath<CurrentEmploymentInAnswers>(
-                    application.answers,
-                    'currentSituation.currentJob',
-                    undefined,
-                  )
-
                 const repeaterJobs =
                   getValueViaPath<CurrentEmploymentInAnswers[]>(
                     application.answers,
@@ -117,31 +136,93 @@ export const employmentHistorySubSection = buildSubSection({
                     [],
                   ) ?? []
 
-                return index === 0
-                  ? firstCurrentJob?.nationalIdWithName
-                    ? firstCurrentJob?.nationalIdWithName
-                    : firstCurrentJob?.employer?.nationalId
-                  : repeaterJobs[index - 1].employer?.nationalId
+                const status =
+                  getValueViaPath<EmploymentStatus>(
+                    application.answers,
+                    'currentSituation.status',
+                    undefined,
+                  ) ?? undefined
+
+                if (
+                  repeaterJobs.length === 0 ||
+                  !repeaterJobs[index] ||
+                  status === EmploymentStatus.UNEMPLOYED
+                ) {
+                  return ''
+                }
+
+                return repeaterJobs[index]?.nationalIdWithName || ''
               },
             },
-            'employer.name': {
-              component: 'input',
+            nationalIdWithName: {
+              component: 'select',
+              required: true,
               label:
-                employmentMessages.employmentHistory.labels.lastJobCompanyName,
-              width: 'half',
-              type: 'text',
-              readonly: true,
+                employmentMessages.employmentHistory.labels.lastJobRepeater,
+              condition: (application, activeField, index) => {
+                return !hasDataFromCurrentStatusItem(
+                  application.answers,
+                  index,
+                  'nationalIdWithName',
+                )
+              },
+              options(application) {
+                const employmentList = getEmploymentFromRsk(
+                  application.externalData,
+                )
+                return employmentList.map((job) => ({
+                  value: job.employerSSN ?? '',
+                  label:
+                    job.employerSSN !== '-'
+                      ? `${job.employer}, ${job.employerSSN}`
+                      : job.employer,
+                }))
+              },
+            },
+            employer: {
+              component: 'nationalIdWithName',
+              required: true,
+              searchPersons: true,
+              searchCompanies: true,
+              readonly: (application, _, index) => {
+                return (
+                  hasDataFromCurrentStatusItem(
+                    application.answers,
+                    index,
+                    'nationalIdWithName',
+                  ) ||
+                  hasDataFromCurrentStatusItem(
+                    application.answers,
+                    index,
+                    'employer',
+                  )
+                )
+              },
+              condition: (application, activeField, index) => {
+                const hasData =
+                  hasDataFromCurrentStatusItem(
+                    application.answers,
+                    index,
+                    'nationalIdWithName',
+                  ) ||
+                  hasDataFromCurrentStatusItem(
+                    application.answers,
+                    index,
+                    'employer',
+                  )
+                if (hasData) return true
+                const nationalIdChosen = activeField?.nationalIdWithName
+                  ? activeField?.nationalIdWithName
+                  : ''
+
+                return nationalIdChosen === '-'
+              },
+
               defaultValue: (
                 application: Application,
                 _activeField: Record<string, string>,
                 index: number,
               ) => {
-                const firstCurrentJob =
-                  getValueViaPath<CurrentEmploymentInAnswers>(
-                    application.answers,
-                    'currentSituation.currentJob',
-                    undefined,
-                  )
                 const repeaterJobs =
                   getValueViaPath<CurrentEmploymentInAnswers[]>(
                     application.answers,
@@ -149,24 +230,37 @@ export const employmentHistorySubSection = buildSubSection({
                     [],
                   ) ?? []
 
-                const nationalId =
-                  index === 0
-                    ? firstCurrentJob?.nationalIdWithName
-                      ? firstCurrentJob?.nationalIdWithName
-                      : firstCurrentJob?.employer?.nationalId
-                    : repeaterJobs[index - 1].employer?.nationalId
+                if (
+                  isUnemployed(application.answers) ||
+                  repeaterJobs.length === 0 ||
+                  !repeaterJobs[index]
+                ) {
+                  return ''
+                }
+
+                // TODO when currentSituation changes, this returns a wrong value while the cache is active, fix this
+
+                const nationalIdChosen =
+                  repeaterJobs[index]?.nationalIdWithName &&
+                  repeaterJobs[index]?.nationalIdWithName !== '-'
+                    ? repeaterJobs[index]?.nationalIdWithName
+                    : repeaterJobs[index]?.employer?.nationalId ?? ''
 
                 const name =
-                  index === 0 && firstCurrentJob?.employer?.name
-                    ? firstCurrentJob?.employer?.name
-                    : index > 0 && repeaterJobs[index - 1].employer?.name
-                    ? repeaterJobs[index - 1].employer?.name
-                    : getEmployerNameFromSSN(
+                  repeaterJobs[index]?.nationalIdWithName &&
+                  repeaterJobs[index]?.nationalIdWithName !== '-'
+                    ? getEmployerNameFromSSN(
                         application.externalData,
-                        nationalId || '',
+                        nationalIdChosen || '',
                       )
+                    : repeaterJobs[index]?.employer?.name
 
-                return name
+                const defaultValue = {
+                  nationalId: nationalIdChosen,
+                  name: name,
+                }
+
+                return defaultValue
               },
             },
             title: {
@@ -188,6 +282,43 @@ export const employmentHistorySubSection = buildSubSection({
                     '',
                 }))
               },
+              // isSearchable: (application, _, index) => {
+              //   const a = hasDataFromCurrentStatus(
+              //     application.answers,
+              //     index,
+              //     'title',
+              //   )
+              //   console.log('a', a)
+              //   return a
+              // },
+              defaultValue: (
+                application: Application,
+                _activeField: Record<string, string>,
+                index: number,
+              ) => {
+                const repeaterJobs =
+                  getValueViaPath<CurrentEmploymentInAnswers[]>(
+                    application.answers,
+                    'currentSituation.currentSituationRepeater',
+                    [],
+                  ) ?? []
+
+                const status =
+                  getValueViaPath<EmploymentStatus>(
+                    application.answers,
+                    'currentSituation.status',
+                    undefined,
+                  ) ?? undefined
+
+                if (
+                  !hasDataFromCurrentStatus(application.answers, index) ||
+                  status === EmploymentStatus.UNEMPLOYED
+                ) {
+                  return ''
+                }
+
+                return repeaterJobs[index]?.title || ''
+              },
             },
             percentage: {
               component: 'input',
@@ -196,27 +327,34 @@ export const employmentHistorySubSection = buildSubSection({
               width: 'half',
               type: 'number',
               suffix: '%',
+              condition: (application, _activeField, index) => {
+                return (
+                  !hasDataFromCurrentStatus(application.answers, index) ||
+                  (hasEmployer(application.answers) &&
+                    hasDataFromCurrentStatusItem(
+                      application.answers,
+                      index,
+                      'percentage',
+                    ))
+                )
+              },
+              readonly: (application, _, index) => {
+                return hasDataFromCurrentStatusItem(
+                  application.answers,
+                  index,
+                  'percentage',
+                )
+              },
               defaultValue: (
                 application: Application,
                 _activeField: Record<string, string>,
                 index: number,
               ) => {
-                const firstCurrentJob =
-                  getValueViaPath<CurrentEmploymentInAnswers>(
-                    application.answers,
-                    'currentSituation.currentJob',
-                    undefined,
-                  )
-                const repeaterJobs =
-                  getValueViaPath<CurrentEmploymentInAnswers[]>(
-                    application.answers,
-                    'currentSituation.currentSituationRepeater',
-                    [],
-                  ) ?? []
-
-                return index === 0
-                  ? firstCurrentJob?.percentage
-                  : repeaterJobs[index - 1].percentage
+                return getDefaultFromCurrentStatus(
+                  application.answers,
+                  index,
+                  'percentage',
+                )
               },
             },
             startDate: {
@@ -224,146 +362,79 @@ export const employmentHistorySubSection = buildSubSection({
               label:
                 employmentMessages.employmentHistory.labels.lastJobStartDate,
               width: 'half',
+              condition: (application, _activeField, index) => {
+                return (
+                  !hasDataFromCurrentStatus(application.answers, index) ||
+                  (isEmployedPartTime(application.answers) &&
+                    hasDataFromCurrentStatusItem(
+                      application.answers,
+                      index,
+                      'startDate',
+                    ))
+                )
+              },
+              readonly: (application, _, index) => {
+                return hasDataFromCurrentStatusItem(
+                  application.answers,
+                  index,
+                  'startDate',
+                )
+              },
               defaultValue: (
                 application: Application,
                 _activeField: Record<string, string>,
                 index: number,
               ) => {
-                const firstCurrentJob =
-                  getValueViaPath<CurrentEmploymentInAnswers>(
-                    application.answers,
-                    'currentSituation.currentJob',
-                    undefined,
-                  )
-                const repeaterJobs =
-                  getValueViaPath<CurrentEmploymentInAnswers[]>(
-                    application.answers,
-                    'currentSituation.currentSituationRepeater',
-                    [],
-                  ) ?? []
-
-                return index === 0
-                  ? firstCurrentJob?.startDate
-                  : repeaterJobs[index - 1].startDate
+                return getDefaultFromCurrentStatus(
+                  application.answers,
+                  index,
+                  'startDate',
+                )
               },
             },
-            endDate: {
+            predictedEndDate: {
               component: 'date',
               label: employmentMessages.employmentHistory.labels.lastJobEndDate,
               width: 'half',
-            },
-          },
-        }),
-        /* IS INDEPENDENT */
-        buildAlertMessageField({
-          id: 'employmentHistoryIndependentAlertMessage',
-          message:
-            employmentMessages.employmentHistory.labels.workOnOwnSSNAlert,
-          alertType: 'info',
-          doesNotRequireAnswer: true,
-          condition: (answers) => isIndependent(answers),
-        }),
-        buildDescriptionField({
-          id: 'employmentHistoryPreviousJobsDescription',
-          title: employmentMessages.employmentHistory.labels.howLongOnOwnSSN,
-          titleVariant: 'h5',
-          condition: (answers) => isIndependent(answers),
-        }),
-        // TODO: Get from service
-        buildTextField({
-          id: 'employmentHistory.ownSSNJob.title',
-          title: employmentMessages.employmentHistory.labels.lastJobTitle,
-          width: 'half',
-          condition: (answers) => isIndependent(answers),
-        }),
-        buildTextField({
-          id: 'employmentHistory.ownSSNJob.percentage',
-          title: employmentMessages.employmentHistory.labels.lastJobPercentage,
-          width: 'half',
-          variant: 'number',
-          suffix: '%',
-          condition: (answers) => isIndependent(answers),
-        }),
-        buildDateField({
-          id: 'employmentHistory.ownSSNJob.startDate',
-          title: employmentMessages.employmentHistory.labels.lastJobStartDate,
-          width: 'half',
-          maxDate: new Date(),
-          condition: (answers) =>
-            isIndependent(answers) && workOnOwnSSN(answers),
-        }),
-        buildDateField({
-          id: 'employmentHistory.ownSSNJob.endDate',
-          title: employmentMessages.employmentHistory.labels.lastOldJobEndDate,
-          width: 'half',
-          condition: (answers) => isIndependent(answers),
-        }),
-        /* OLD JOBS */
+              condition: (application, _activeField, index) => {
+                if (hasDataFromCurrentStatus(application.answers, index)) {
+                  return isEmployed(application.answers)
+                }
 
-        buildFieldsRepeaterField({
-          id: 'employmentHistory.previousJobs',
-          minRows: 0,
-          marginTop: 0,
-          formTitle: employmentMessages.employmentHistory.labels.lastJobs,
-          formTitleVariant: 'h5',
-          width: 'full',
-          addItemButtonText: employmentMessages.employmentHistory.labels.addJob,
-          fields: {
-            nationalIdWithName: {
-              component: 'select',
-              label: 'TODO',
-              options(application) {
-                const employmentList = getEmploymentFromRsk(
-                  application.externalData,
+                return false
+              },
+              readonly: (application, _, index) => {
+                return hasDataFromCurrentStatusItem(
+                  application.answers,
+                  index,
+                  'predictedEndDate',
                 )
-                return employmentList.map((job) => ({
-                  value: job.employerSSN ?? '',
-                  label:
-                    job.employerSSN !== '-'
-                      ? `${job.employer}, ${job.employerSSN}`
-                      : job.employer,
-                }))
               },
-            },
-            employer: {
-              component: 'nationalIdWithName',
-              required: true,
-              condition: (_, activeField) => {
-                const nationalIdChosen = activeField?.nationalIdWithName
-                  ? activeField?.nationalIdWithName
-                  : ''
-
-                return nationalIdChosen === '-'
+              defaultValue: (
+                application: Application,
+                _activeField: Record<string, string>,
+                index: number,
+              ) => {
+                return getDefaultFromCurrentStatus(
+                  application.answers,
+                  index,
+                  'predictedEndDate',
+                )
               },
-            },
-            title: {
-              component: 'input',
-              label: employmentMessages.employmentHistory.labels.lastJobTitle,
-              width: 'half',
-              type: 'text',
-            },
-            percentage: {
-              component: 'input',
-              label:
-                employmentMessages.employmentHistory.labels.lastJobPercentage,
-              width: 'half',
-              type: 'number',
-              suffix: '%',
-            },
-            startDate: {
-              component: 'date',
-              label:
-                employmentMessages.employmentHistory.labels.lastJobStartDate,
-              width: 'half',
             },
             endDate: {
               component: 'date',
+              required: true,
               label:
                 employmentMessages.employmentHistory.labels.lastOldJobEndDate,
               width: 'half',
+              condition: (application, _activeField, index) => {
+                return !hasDataFromCurrentStatus(application.answers, index)
+              },
             },
           },
         }),
+
         buildRadioField({
           id: 'employmentHistory.hasWorkedEes',
           title: employmentMessages.employmentHistory.labels.radioEesLabel,

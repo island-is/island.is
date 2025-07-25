@@ -12,7 +12,6 @@ import {
   HiddenInputField,
   RepeaterItem,
   RepeaterOptionValue,
-  StaticText,
 } from '@island.is/application/types'
 import { GridColumn, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -204,14 +203,14 @@ export const Item = ({
 
   let readonlyVal: boolean | undefined
   if (typeof readonly === 'function') {
-    readonlyVal = readonly(application, activeValues)
+    readonlyVal = readonly(application, activeValues, index)
   } else {
     readonlyVal = readonly
   }
 
   let disabledVal: boolean | undefined
   if (typeof disabled === 'function') {
-    disabledVal = disabled(application, activeValues)
+    disabledVal = disabled(application, activeValues, index)
   } else {
     disabledVal = disabled
   }
@@ -255,6 +254,9 @@ export const Item = ({
       getDefaultValue(item, application, activeValues)
   }
   if (component === 'hiddenInput') {
+    defaultVal = getDefaultValue(item, application, activeValues)
+  }
+  if (component === 'nationalIdWithName') {
     defaultVal = getDefaultValue(item, application, activeValues)
   }
 
@@ -360,7 +362,7 @@ export const Item = ({
 
   if (
     typeof condition === 'function'
-      ? condition && !condition(application, activeValues)
+      ? condition && !condition(application, activeValues, index)
       : condition
   ) {
     return null
@@ -430,6 +432,15 @@ export const Item = ({
             {...props}
             {...(component === 'date'
               ? { maxDate: maxDateVal, minDate: minDateVal }
+              : {})}
+            {...(component === 'nationalIdWithName'
+              ? {
+                  nationalIdDefaultValue: defaultVal
+                    ? defaultVal.nationalId
+                    : '',
+                  nameDefaultValue: defaultVal ? defaultVal.name : '',
+                  errorMessage: getFieldError(itemId),
+                }
               : {})}
           />
         )}

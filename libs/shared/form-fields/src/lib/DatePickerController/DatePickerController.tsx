@@ -59,7 +59,6 @@ export const DatePickerController: FC<React.PropsWithChildren<Props>> = ({
   clearOnChange,
 }) => {
   const { clearErrors, setValue } = useFormContext()
-  console.log('defaultValue', defaultValue)
   return (
     <Controller
       defaultValue={defaultValue}

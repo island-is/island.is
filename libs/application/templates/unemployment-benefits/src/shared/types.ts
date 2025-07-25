@@ -1,4 +1,10 @@
 import { YesOrNo } from '@island.is/application/core'
+import { z } from 'zod'
+import {
+  currentJobSchema,
+  employmentHistorySchema,
+  familyInformationSchema,
+} from '../lib/schemas'
 
 export enum EmploymentStatus {
   UNEMPLOYED = 'unemployed',
@@ -19,11 +25,9 @@ export enum EducationType {
   LAST_YEAR = 'lastYear',
 }
 
-export interface ChildrenInAnswers {
-  name: string
-  nationalId: string
-}
-
+export type FamilyInformationInAnswers = z.TypeOf<
+  typeof familyInformationSchema
+>
 export interface PreviousJobInAnswers {
   company: {
     nationalId: string
@@ -35,19 +39,10 @@ export interface PreviousJobInAnswers {
   endDate: string
 }
 
-export interface CurrentEmploymentInAnswers {
-  employer: {
-    nationalId: string
-    name?: string
-  }
-  nationalIdWithName?: string
-  title: string
-  percentage: number
-  startDate: string
-  salary: string
-  workHours: string
-  endDate?: string
-}
+export type CurrentEmploymentInAnswers = z.TypeOf<typeof currentJobSchema>
+export type EmploymentHistoryInAnswers = z.TypeOf<
+  typeof employmentHistorySchema
+>
 
 export interface VacationDaysInAnswers {
   startDate: string

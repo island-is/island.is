@@ -56,10 +56,15 @@ export const education = {
       defaultMessage: 'Skóli',
       description: 'School name label',
     },
-    schoolProgramLabel: {
-      id: 'vmst.ub.application:education.labels.schoolProgramLabel',
+    levelOfStudyLabel: {
+      id: 'vmst.ub.application:education.labels.levelOfStudyLabel',
       defaultMessage: 'Námsstig',
-      description: 'School program label',
+      description: 'School level of study label',
+    },
+    courseOfStudyLabel: {
+      id: 'vmst.ub.application:education.labels.courseOfStudyLabel',
+      defaultMessage: 'Námsbraut',
+      description: 'Course of study label',
     },
     schoolProgramUnitsLabel: {
       id: 'vmst.ub.application:education.labels.schoolProgramUnitsLabel',
@@ -71,7 +76,7 @@ export const education = {
       defaultMessage: 'Námsgráða',
       description: 'School degree label',
     },
-    currentSchoolEndDateLabel: {
+    expectedEndOfStudyLabel: {
       id: 'vmst.ub.application:education.labels.schoolEndDateLabel',
       defaultMessage: 'Áætluð námslok',
       description: 'School end date label',
@@ -81,10 +86,10 @@ export const education = {
       defaultMessage: 'Námslok',
       description: 'School end date label',
     },
-    currentSchoolDegreeFileLabel: {
-      id: 'vmst.ub.application:education.labels.schoolDegreeFileLabel',
+    currentSchoolDegreeInformation: {
+      id: 'vmst.ub.application:education.labels.currentSchoolDegreeInformation',
       defaultMessage:
-        'Þú þarft alltaf að skila inn staðfestingu á námi og/eða prófgráðu. Þú getur hlaðið því inn hér að neðan.',
+        'Þú þarft alltaf að skila inn staðfestingu á námi og/eða prófgráðu. Engar áhyggjur þó þú s ért ekki með skjalið klárt. Þú getur vel klárað umsóknina og skilað inn skjalinu á Mínum síðum Vinnumálastofnunar síðar.',
       description: 'School degree file label',
     },
     currentSchoolDegreeFileNameLabel: {
@@ -117,6 +122,21 @@ export const education = {
       id: 'vmst.ub.application:education.labels.appliedForNextSemesterTextarea',
       defaultMessage: 'Skýringar á námslokum',
       description: 'Applied for next semester textarea label',
+    },
+    studyNotCompletedLabel: {
+      id: 'vmst.ub.application:education.labels.studyNotCompletedLabel',
+      defaultMessage: 'Námi ólokið',
+      description: 'Study not completed label',
+    },
+    addItemButtonText: {
+      id: 'vmst.ub.application:education.labels.addItemButtonText',
+      defaultMessage: 'Bæta við námi',
+      description: 'Add item button text',
+    },
+    educationHistoryTitle: {
+      id: 'vmst.ub.application:education.labels.educationHistoryTitle',
+      defaultMessage: 'Nám {value}',
+      description: 'Education history title',
     },
   }),
 }

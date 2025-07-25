@@ -114,61 +114,6 @@ export const employmentSearch = {
       defaultMessage: 'Námsferill',
       description: 'Education history page description',
     },
-    currentStudiesLabel: {
-      id: 'vmst.ub.application:employmentSearch.educationHistory.currentStudiesLabel',
-      defaultMessage: 'Núverandi nám',
-      description: 'Current studies label',
-    },
-    educationHistoryTitle: {
-      id: 'vmst.ub.application:employmentSearch.educationHistory.educationHistoryTitle',
-      defaultMessage: 'Nám {value}',
-      description: 'Education history title',
-    },
-    programNameLabel: {
-      id: 'vmst.ub.application:employmentSearch.educationHistory.schoolNameLabel',
-      defaultMessage: 'Námsstig',
-      description: 'School name label',
-    },
-    courseSubjectLabel: {
-      id: 'vmst.ub.application:employmentSearch.educationHistory.courseSubjectLabel',
-      defaultMessage: 'Námsgrein',
-      description: 'Course subject label',
-    },
-    unitsLabel: {
-      id: 'vmst.ub.application:employmentSearch.educationHistory.unitsLabel',
-      defaultMessage: 'Einingar',
-      description: 'Units label',
-    },
-    expectedEndOfStudyLabel: {
-      id: 'vmst.ub.application:employmentSearch.educationHistory.expectedEndOfStudyLabel',
-      defaultMessage: 'Áætluð námslok',
-      description: 'Expected end of study label',
-    },
-    addItemButtonText: {
-      id: 'vmst.ub.application:employmentSearch.educationHistory.addItemButtonText',
-      defaultMessage: 'Bæta við námi',
-      description: 'Add item button text',
-    },
-    levelOfStudyLabel: {
-      id: 'vmst.ub.application:employmentSearch.educationHistory.levelOfStudyLabel',
-      defaultMessage: 'Námsstig',
-      description: 'Level of study label',
-    },
-    degreeLabel: {
-      id: 'vmst.ub.application:employmentSearch.educationHistory.degreeLabel',
-      defaultMessage: 'Prófgráða',
-      description: 'Degree label',
-    },
-    courseOfStudyLabel: {
-      id: 'vmst.ub.application:employmentSearch.educationHistory.courseOfStudyLabel',
-      defaultMessage: 'Námsbraut',
-      description: 'Course of study label',
-    },
-    studyNotCompletedLabel: {
-      id: 'vmst.ub.application:employmentSearch.educationHistory.studyNotCompletedLabel',
-      defaultMessage: 'Námi ólokið',
-      description: 'Study not completed label',
-    },
   }),
   drivingLicense: defineMessages({
     sectionTitle: {

@@ -13,7 +13,7 @@ import { getDefaultValue } from '../../getDefaultValue'
 interface Props extends FieldBaseProps {
   field: BankAccountField
 }
-export const BankAccountFormField = ({ field, application, error }: Props) => {
+export const BankAccountFormField = ({ field, application, errors }: Props) => {
   const { formatMessage, lang: locale } = useLocale()
   const { marginBottom, marginTop, title, titleVariant, id, clearOnChange } =
     field
@@ -41,8 +41,6 @@ export const BankAccountFormField = ({ field, application, error }: Props) => {
     ? defaultBankAccount.split('-')[2]
     : ''
 
-  console.log('error', error)
-
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
       {title && (
@@ -65,8 +63,7 @@ export const BankAccountFormField = ({ field, application, error }: Props) => {
               autoFocus
               clearOnChange={clearOnChange}
               error={
-                getErrorViaPath(application.answers, `${id}.bankNumber`) ||
-                undefined
+                errors ? getErrorViaPath(errors, `${id}.bankNumber`) : undefined
               }
             />
           </Box>
@@ -81,6 +78,9 @@ export const BankAccountFormField = ({ field, application, error }: Props) => {
               format="##"
               backgroundColor="blue"
               clearOnChange={clearOnChange}
+              error={
+                errors ? getErrorViaPath(errors, `${id}.ledger`) : undefined
+              }
             />
           </Box>
         </GridColumn>
@@ -94,6 +94,11 @@ export const BankAccountFormField = ({ field, application, error }: Props) => {
               format="######"
               backgroundColor="blue"
               clearOnChange={clearOnChange}
+              error={
+                errors
+                  ? getErrorViaPath(errors, `${id}.accountNumber`)
+                  : undefined
+              }
             />
           </Box>
         </GridColumn>

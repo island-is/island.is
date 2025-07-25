@@ -106,18 +106,18 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
       ),
     }
 
-    const lasJobFromAnswers = {
-      lastJob: {
-        employerSSN: answers.employmentHistory?.lastJob?.companyNationalId,
-        employer: answers.employmentHistory?.lastJob?.companyName,
-        started: answers.employmentHistory?.lastJob?.startDate,
-        quit: answers.employmentHistory?.lastJob?.endDate,
-        workRatio: answers.employmentHistory?.lastJob?.percentage,
-        // workHours: answers.currentSituation.currentJob?.workHours,
-        // salary: answers.currentSituation?.currentJob?.salary,
-        jobName: answers.employmentHistory?.lastJob?.title,
-      },
-    }
+    // const lasJobFromAnswers = {
+    //   lastJob: {
+    //     employerSSN: answers.employmentHistory?.lastJob?.employer?.nationalId,
+    //     employer: answers.employmentHistory?.lastJob?.employer?.name,
+    //     started: answers.employmentHistory?.lastJob?.startDate,
+    //     quit: answers.employmentHistory?.lastJob?.endDate,
+    //     workRatio: answers.employmentHistory?.lastJob?.percentage,
+    //     // workHours: answers.currentSituation.currentJob?.workHours,
+    //     // salary: answers.currentSituation?.currentJob?.salary,
+    //     jobName: answers.employmentHistory?.lastJob?.title,
+    //   },
+    // }
     // const previousJobsFromAnswers = {
     //   jobCareer: answers.employmentHistory?.previousJobs.map((job) => {
     //     return {

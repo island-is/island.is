@@ -4,7 +4,7 @@ import { FormValue } from '@island.is/application/types'
 export const isIndependent = (answers: FormValue) => {
   const isIndependent = getValueViaPath<string>(
     answers,
-    'employmentHistory.isIndependent',
+    'employmentHistory.independentOwnSsn',
   )
   return isIndependent === YES
 }

@@ -1,13 +1,11 @@
 import {
   buildAlertMessageField,
-  buildDateField,
+  buildCustomField,
   buildDescriptionField,
   buildFieldsRepeaterField,
   buildMultiField,
-  buildNationalIdWithNameField,
   buildSelectField,
   buildSubSection,
-  buildTextField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { employment as employmentMessages } from '../../../lib/messages'
@@ -16,9 +14,11 @@ import {
   getEmploymentFromRsk,
   hasEmployer,
   isEmployed,
+  isEmployedAtAll,
   isEmployedPartTime,
   isOccasionallyEmployed,
 } from '../../../utils'
+import { GaldurDomainModelsSettingsJobCodesJobCodeDTO } from '@island.is/clients/vmst-unemployment'
 
 export const currentSituationSubSection = buildSubSection({
   id: 'currentSituationSubSection',
@@ -66,118 +66,39 @@ export const currentSituationSubSection = buildSubSection({
             },
           ],
         }),
-        buildDescriptionField({
-          id: 'currentjobDescription',
-          title: {
-            id: employmentMessages.currentSituation.labels.jobRepeaterEmployment
-              .id,
-            values: { index: 1 },
-          },
-          titleVariant: 'h5',
-          marginTop: 2,
-          condition: hasEmployer,
-        }),
-        buildSelectField({
-          id: 'currentSituation.currentJob.nationalIdWithName',
-          required: true,
-          title:
-            employmentMessages.currentSituation.labels
-              .partTimeJobEmployerCombination,
-          options: (application) => {
-            const employmentList = getEmploymentFromRsk(
-              application.externalData,
-            )
-            return employmentList.map((job) => ({
-              value: job.employerSSN ?? '',
-              label:
-                job.employerSSN !== '-'
-                  ? `${job.employer}, ${job.employerSSN}`
-                  : job.employer,
-            }))
-          },
-          condition: (answers, externalData) => {
-            const employmentList = getEmploymentFromRsk(externalData)
-            return employmentList.length > 0 && hasEmployer(answers)
-          },
-        }),
-        buildNationalIdWithNameField({
-          id: 'currentSituation.currentJob.employer',
-          searchCompanies: true,
-          searchPersons: false,
-          required: true,
-          condition: (answers, externalData) => {
-            const nationalIdChosen =
-              getValueViaPath<string>(
-                answers,
-                'currentSituation.currentJob.nationalIdWithName',
-                '',
-              ) ?? ''
-            return nationalIdChosen === '-' && hasEmployer(answers)
-          },
-        }),
-        buildTextField({
-          id: 'currentSituation.currentJob.percentage',
-          title:
-            employmentMessages.currentSituation.labels.partTimeJobPercentage,
-          width: 'half',
-          variant: 'number',
-          suffix: '%',
-          required: true,
-          condition: hasEmployer,
-        }),
-        buildDateField({
-          id: 'currentSituation.currentJob.startDate',
-          width: 'half',
-          title:
-            employmentMessages.currentSituation.labels.partTimeJobStartDate,
-          maxDate: new Date(),
-          required: true,
-          condition: isEmployedPartTime,
-        }),
-        buildTextField({
-          id: 'currentSituation.currentJob.workHours',
-          width: 'half',
-          title:
-            employmentMessages.currentSituation.labels.partTimeJobWorkHours,
-          required: true,
-          condition: isEmployedPartTime,
-        }),
-        buildTextField({
-          id: 'currentSituation.currentJob.salary',
-          width: 'half',
-          variant: 'currency',
-          title: employmentMessages.currentSituation.labels.partTimeJobSalary,
-          required: true,
-          condition: isEmployedPartTime,
-        }),
-        buildDateField({
-          id: 'currentSituation.currentJob.endDate',
-          width: 'half',
-          title: employmentMessages.currentSituation.labels.jobEndDate,
-          //TODO ef meira en 2 vikur þá kemur viðvörunargluggi
-          minDate: new Date(),
-          required: true,
-          condition: isEmployed,
+        buildAlertMessageField({
+          id: 'currentSituation.occasionalJobAlert',
+          message:
+            employmentMessages.currentSituation.labels.occasionalJobInfoBox,
+          alertType: 'info',
+          doesNotRequireAnswer: true,
+          condition: isOccasionallyEmployed,
         }),
         buildFieldsRepeaterField({
           id: 'currentSituation.currentSituationRepeater',
-          minRows: 0,
+          minRows: (answers) => {
+            return isEmployedAtAll(answers) ? 1 : 0
+          },
+          maxRows: (answers) => {
+            return isEmployed(answers) ? 1 : 10
+          },
           marginTop: 0,
           formTitle: (index) => {
             return {
-              id: employmentMessages.currentSituation.labels
-                .jobRepeaterEmployment.id,
+              ...employmentMessages.currentSituation.labels
+                .jobRepeaterEmployment,
               values: { index: index + 1 },
             }
           },
           formTitleVariant: 'h5',
           formTitleNumbering: 'none',
           width: 'full',
-          condition: isEmployedPartTime,
+          condition: isEmployedAtAll,
           addItemButtonText: employmentMessages.employmentHistory.labels.addJob,
           fields: {
             nationalIdWithName: {
               component: 'select',
+              required: true,
               label:
                 employmentMessages.employmentHistory.labels.lastJobRepeater,
               options(application) {
@@ -195,6 +116,8 @@ export const currentSituationSubSection = buildSubSection({
             },
             employer: {
               component: 'nationalIdWithName',
+              searchPersons: true,
+              searchCompanies: true,
               required: true,
               condition: (_, activeField) => {
                 const nationalIdChosen = activeField?.nationalIdWithName
@@ -202,6 +125,27 @@ export const currentSituationSubSection = buildSubSection({
                   : ''
 
                 return nationalIdChosen === '-'
+              },
+            },
+            title: {
+              component: 'select',
+              label: employmentMessages.employmentHistory.labels.lastJobTitle,
+              width: 'half',
+              required: true,
+              options: (application, _, locale) => {
+                const jobList =
+                  getValueViaPath<
+                    GaldurDomainModelsSettingsJobCodesJobCodeDTO[]
+                  >(
+                    application.externalData,
+                    'unemploymentApplication.data.supportData.jobCodes',
+                  ) ?? []
+                return jobList.map((job) => ({
+                  value: job.id ?? '',
+                  label:
+                    (locale === 'is' ? job.name : job.english ?? job.name) ||
+                    '',
+                }))
               },
             },
             percentage: {
@@ -213,12 +157,26 @@ export const currentSituationSubSection = buildSubSection({
               type: 'number',
               suffix: '%',
               required: true,
+              condition: (application) => hasEmployer(application.answers),
             },
             startDate: {
               component: 'date',
               label:
                 employmentMessages.currentSituation.labels.partTimeJobStartDate,
               width: 'half',
+              required: true,
+              condition: (application) =>
+                isEmployedPartTime(application.answers),
+            },
+            predictedEndDate: {
+              component: 'date',
+              label: employmentMessages.currentSituation.labels.jobEndDate,
+              width: 'half',
+              condition: (application) => isEmployed(application.answers),
+              minDate: new Date(),
+              maxDate: new Date(
+                new Date().getTime() + 14 * 24 * 60 * 60 * 1000,
+              ),
               required: true,
             },
             workHours: {
@@ -227,6 +185,8 @@ export const currentSituationSubSection = buildSubSection({
                 employmentMessages.currentSituation.labels.partTimeJobWorkHours,
               width: 'half',
               required: true,
+              condition: (application) =>
+                isEmployedPartTime(application.answers),
             },
             salary: {
               component: 'input',
@@ -235,68 +195,31 @@ export const currentSituationSubSection = buildSubSection({
               width: 'half',
               currency: true,
               required: true,
-            },
-          },
-        }),
-        buildAlertMessageField({
-          id: 'currentSituation.occasionalJobAlert',
-          message:
-            employmentMessages.currentSituation.labels.occasionalJobInfoBox,
-          alertType: 'info',
-          doesNotRequireAnswer: true,
-          condition: isOccasionallyEmployed,
-        }),
-        buildFieldsRepeaterField({
-          id: 'currentSituation.currentSituationRepeater',
-          minRows: 1,
-          marginTop: 0,
-          formTitle: (index) => {
-            return {
-              id: employmentMessages.currentSituation.labels
-                .jobRepeaterEmployment.id,
-              values: { index: index },
-            }
-          },
-          formTitleVariant: 'h5',
-          formTitleNumbering: 'none',
-          width: 'full',
-          condition: isOccasionallyEmployed,
-          addItemButtonText: employmentMessages.employmentHistory.labels.addJob,
-          fields: {
-            nationalIdWithName: {
-              component: 'select',
-              label: 'TODO',
-              options(application) {
-                const employmentList = getEmploymentFromRsk(
-                  application.externalData,
-                )
-                return employmentList.map((job) => ({
-                  value: job.employerSSN ?? '',
-                  label:
-                    job.employerSSN !== '-'
-                      ? `${job.employer}, ${job.employerSSN}`
-                      : job.employer,
-                }))
-              },
-            },
-            employer: {
-              component: 'nationalIdWithName',
-              required: true,
-              condition: (application, activeField) => {
-                const nationalIdChosen = activeField?.nationalIdWithName
-                  ? activeField?.nationalIdWithName
-                  : ''
-
-                return nationalIdChosen === '-'
-              },
+              condition: (application) =>
+                isEmployedPartTime(application.answers),
             },
             estimatedSalary: {
               label:
                 employmentMessages.currentSituation.labels.jobEstimatedSalary,
               component: 'input',
+              width: 'half',
               currency: true,
+              condition: (application) =>
+                isOccasionallyEmployed(application.answers),
             },
           },
+        }),
+        buildAlertMessageField({
+          id: 'currentSituation.ocassionalEndDateAlert',
+          alertType: 'warning',
+          message:
+            employmentMessages.currentSituation.labels
+              .stillEmployedEndDateAlert,
+          condition: isEmployed,
+        }),
+        buildCustomField({
+          id: 'currentSituation.updateEmploymentHistory',
+          component: 'UpdateEmploymentHistory',
         }),
       ],
     }),

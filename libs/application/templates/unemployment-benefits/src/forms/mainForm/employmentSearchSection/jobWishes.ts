@@ -17,12 +17,6 @@ import {
   GaldurDomainModelsSettingsJobCodesJobCodeDTO,
   GaldurDomainModelsSettingsServiceAreasServiceAreaDTO,
 } from '@island.is/clients/vmst-unemployment'
-import {
-  isEmployed,
-  isEmployedAtAll,
-  isEmployedPartTime,
-  isOccasionallyEmployed,
-} from '../../../utils'
 import { Application } from '@island.is/application/types'
 
 export const jobWishesSubSection = buildSubSection({
@@ -58,44 +52,45 @@ export const jobWishesSubSection = buildSubSection({
           },
         }),
         buildDescriptionField({
-          id: 'currentSituation.wantedJobDescription',
+          id: 'jobWishes.wantedJobDescription',
           title: employmentSearchMessages.jobWishes.wantedJobDescription,
           titleVariant: 'h5',
           marginTop: 2,
         }),
         buildTextField({
-          id: 'currentSituation.wantedJobPercentage',
+          id: 'jobWishes.wantedJobPercentage',
           title: employmentSearchMessages.jobWishes.jobPercentage,
           variant: 'number',
           suffix: '%',
         }),
         buildAlertMessageField({
-          id: 'currentSituation.wantedJobAlert',
+          id: 'jobWishes.wantedJobAlert',
           message: employmentSearchMessages.jobWishes.wantedJobInfoBox,
           alertType: 'info',
           doesNotRequireAnswer: true,
         }),
         buildDescriptionField({
-          id: 'currentSituation.jobTimelineDescription',
+          id: 'jobWishes.jobTimelineDescription',
           title: employmentSearchMessages.jobWishes.jobTimelineDescription,
           titleVariant: 'h5',
           marginTop: 2,
         }),
         buildDateField({
-          id: 'currentSituation.jobTimelineStartDate',
+          id: 'jobWishes.jobTimelineStartDate',
           title: employmentSearchMessages.jobWishes.jobTimelineDateLabel,
-          minDate: (application: Application) => {
-            const endDate =
-              getValueViaPath<string>(
-                application.answers,
-                'currentSituation.currentJob.endDate',
-              ) || ''
-            //TODO setja þetta 2 vikur frammí tímann
-            return endDate ? new Date(endDate) : new Date()
-          },
+          //TODO tengja þetta við rétt starf -> ef var valið með uppsagnafrest
+          // minDate: (application: Application) => {
+          //   const endDate =
+          //     getValueViaPath<string>(
+          //       application.answers,
+          //       'currentSituation.currentJob.endDate',
+          //     ) || ''
+          //   //TODO setja þetta 2 vikur frammí tímann
+          //   return endDate ? new Date(endDate) : new Date()
+          // },
         }),
         buildAlertMessageField({
-          id: 'currentSituation.jobTimelineAlert',
+          id: 'jobWishes.jobTimelineAlert',
           message: employmentSearchMessages.jobWishes.jobTimelineInfoBox,
           alertType: 'info',
           doesNotRequireAnswer: true,

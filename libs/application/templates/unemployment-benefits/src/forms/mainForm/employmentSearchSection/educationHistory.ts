@@ -8,11 +8,10 @@ import {
   YES,
 } from '@island.is/application/core'
 import { employmentSearch as employmentSearchMessages } from '../../../lib/messages'
+import { education as educationMessages } from '../../../lib/messages'
+
 import { Application } from '@island.is/application/types'
-import {
-  GaldurDomainModelsEducationItem,
-  GaldurDomainModelsEducationProgramDTO,
-} from '@island.is/clients/vmst-unemployment'
+import { GaldurDomainModelsEducationProgramDTO } from '@island.is/clients/vmst-unemployment'
 import { formatDate } from '../../../utils'
 import {
   isCurrentlyStudying,
@@ -29,7 +28,12 @@ export const educationHistorySubSection = buildSubSection({
       children: [
         buildDescriptionField({
           id: 'educationHistory.currentStudies.description',
-          title: employmentSearchMessages.educationHistory.currentStudiesLabel,
+          title: {
+            ...educationMessages.labels.educationHistoryTitle,
+            values: {
+              value: 1,
+            },
+          },
           titleVariant: 'h5',
           condition: (answers) =>
             wasStudyingLastTwelveMonths(answers) &&
@@ -37,7 +41,7 @@ export const educationHistorySubSection = buildSubSection({
         }),
         buildTextField({
           id: 'educationHistory.currentStudies.programName',
-          title: employmentSearchMessages.educationHistory.programNameLabel,
+          title: educationMessages.labels.levelOfStudyLabel,
           width: 'half',
           backgroundColor: 'white',
           readOnly: true,
@@ -61,7 +65,7 @@ export const educationHistorySubSection = buildSubSection({
         }),
         buildTextField({
           id: 'educationHistory.currentStudies.programUnits',
-          title: employmentSearchMessages.educationHistory.unitsLabel,
+          title: educationMessages.labels.schoolProgramUnitsLabel,
           width: 'half',
           backgroundColor: 'white',
           readOnly: true,
@@ -79,7 +83,7 @@ export const educationHistorySubSection = buildSubSection({
         }),
         buildTextField({
           id: 'educationHistory.currentStudies.programDegree',
-          title: employmentSearchMessages.educationHistory.degreeLabel,
+          title: educationMessages.labels.schoolDegreeLabel,
           width: 'half',
           backgroundColor: 'white',
           readOnly: true,
@@ -97,8 +101,7 @@ export const educationHistorySubSection = buildSubSection({
         }),
         buildTextField({
           id: 'educationHistory.currentStudies.programEnd',
-          title:
-            employmentSearchMessages.educationHistory.expectedEndOfStudyLabel,
+          title: educationMessages.labels.expectedEndOfStudyLabel,
           width: 'half',
           backgroundColor: 'white',
           readOnly: true,
@@ -118,8 +121,7 @@ export const educationHistorySubSection = buildSubSection({
           id: 'educationHistory.educationHistory',
           formTitle: (index, application) => {
             return {
-              ...employmentSearchMessages.educationHistory
-                .educationHistoryTitle,
+              ...educationMessages.labels.educationHistoryTitle,
               values: {
                 value:
                   wasStudyingLastTwelveMonths(application.answers) &&
@@ -131,12 +133,10 @@ export const educationHistorySubSection = buildSubSection({
           },
           formTitleNumbering: 'none',
           minRows: 0,
-          addItemButtonText:
-            employmentSearchMessages.educationHistory.addItemButtonText,
+          addItemButtonText: educationMessages.labels.addItemButtonText,
           fields: {
             levelOfStudy: {
-              label:
-                employmentSearchMessages.educationHistory.levelOfStudyLabel,
+              label: educationMessages.labels.levelOfStudyLabel,
               component: 'select',
               options: (application, _, locale) => {
                 const education =
@@ -156,7 +156,7 @@ export const educationHistorySubSection = buildSubSection({
               },
             },
             degree: {
-              label: employmentSearchMessages.educationHistory.degreeLabel,
+              label: educationMessages.labels.schoolDegreeLabel,
               component: 'select',
               options: (application, activeField, locale) => {
                 const education =
@@ -180,8 +180,7 @@ export const educationHistorySubSection = buildSubSection({
               },
             },
             courseOfStudy: {
-              label:
-                employmentSearchMessages.educationHistory.courseOfStudyLabel,
+              label: educationMessages.labels.courseOfStudyLabel,
               component: 'select',
               options: (application, activeField) => {
                 const education = getValueViaPath<
@@ -214,9 +213,7 @@ export const educationHistorySubSection = buildSubSection({
               options: [
                 {
                   value: YES,
-                  label:
-                    employmentSearchMessages.educationHistory
-                      .studyNotCompletedLabel,
+                  label: educationMessages.labels.studyNotCompletedLabel,
                 },
               ],
             },
