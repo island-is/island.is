@@ -21,7 +21,7 @@ import { Defendant } from './defendant.model'
 })
 export class DefendantEventLog extends Model {
   static getEventLogByEventType(
-    eventType: DefendantEventType,
+    eventType: DefendantEventType | DefendantEventType[],
     eventLogs: DefendantEventLog[] | undefined,
   ): DefendantEventLog | undefined {
     if (!eventLogs) {
@@ -42,7 +42,7 @@ export class DefendantEventLog extends Model {
   }
 
   static getEventLogDateByEventType(
-    eventType: DefendantEventType,
+    eventType: DefendantEventType | DefendantEventType[],
     eventLogs: DefendantEventLog[] | undefined,
   ): Date | undefined {
     return DefendantEventLog.getEventLogByEventType(eventType, eventLogs)
