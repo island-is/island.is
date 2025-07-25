@@ -4,6 +4,7 @@ import {
   EmployeeSickPay,
   Occupation,
   Period,
+  PreQuestionnaire,
   SelfAssessment,
   TaxInfo,
   UnionSickPay,
@@ -20,6 +21,7 @@ export interface MedicalAndRehabilitationPaymentsDTO {
   occupation?: Occupation
   employeeSickPay?: EmployeeSickPay
   unionSickPay?: UnionSickPay
+  preQuestionnaire?: PreQuestionnaire
   selfAssessment?: SelfAssessment
   baseCertificateReference: string
   rehabilitationPlanReference?: string
