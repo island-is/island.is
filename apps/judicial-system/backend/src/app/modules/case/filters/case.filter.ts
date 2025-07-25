@@ -23,6 +23,7 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { CivilClaimant, Defendant } from '../../defendant'
+import { EventLog } from '../../event-log'
 import { Victim } from '../../victim'
 import { Case } from '../models/case.model'
 import { MinimalCase } from '../models/case.types'
@@ -101,16 +102,12 @@ const canPublicProsecutionUserAccessCase = (theCase: Case): boolean => {
   }
 
   // Make sure the indictment has been sent to the public prosecutor
-  if (
-    !theCase.eventLogs?.some(
-      (eventLog) =>
-        eventLog.eventType === EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
-    )
-  ) {
-    return false
-  }
-
-  return true
+  return Boolean(
+    EventLog.getEventLogByEventType(
+      EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+      theCase.eventLogs,
+    ),
+  )
 }
 
 const canDistrictCourtUserAccessCase = (theCase: Case, user: User): boolean => {

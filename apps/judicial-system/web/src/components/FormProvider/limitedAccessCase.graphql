@@ -189,11 +189,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       name
     }
     courtSessionType
-    eventLogs {
-      id
-      created
-      eventType
-    }
     mergeCase {
       id
       courtCaseNumber
@@ -280,6 +275,8 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     }
     isCompletedWithoutRuling
     caseSentToCourtDate
+    indictmentReviewedDate
+    indictmentSentToPublicProsecutorDate
     isRegisteredInPrisonSystem
   }
 }

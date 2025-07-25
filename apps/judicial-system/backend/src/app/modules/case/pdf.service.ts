@@ -35,6 +35,7 @@ import {
 } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
 import { Defendant } from '../defendant'
+import { EventLog } from '../event-log'
 import { Subpoena, SubpoenaService } from '../subpoena'
 import { UserService } from '../user'
 import { Case } from './models/case.model'
@@ -219,8 +220,9 @@ export class PdfService {
         }
       }
 
-      const confirmationEvent = theCase.eventLogs?.find(
-        (event) => event.eventType === EventType.INDICTMENT_CONFIRMED,
+      const confirmationEvent = EventLog.getEventLogByEventType(
+        EventType.INDICTMENT_CONFIRMED,
+        theCase.eventLogs,
       )
 
       if (

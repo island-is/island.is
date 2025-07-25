@@ -1,7 +1,7 @@
 import { plainToClass } from 'class-transformer'
 import { validate } from 'class-validator'
 import type { Transaction, WhereOptions } from 'sequelize'
-import { Sequelize } from 'sequelize'
+import { Sequelize } from 'sequelize-typescript'
 
 import {
   BadGatewayException,

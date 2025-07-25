@@ -1,12 +1,13 @@
 import { literal, Op } from 'sequelize'
 import { Transaction } from 'sequelize/types'
+import { Sequelize } from 'sequelize-typescript'
 
 import {
   Inject,
   Injectable,
   InternalServerErrorException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
+import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -40,6 +41,7 @@ import { DeliverResponse } from './models/deliver.response'
 @Injectable()
 export class DefendantService {
   constructor(
+    @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Defendant) private readonly defendantModel: typeof Defendant,
     @InjectModel(DefendantEventLog)
     private readonly defendantEventLogModel: typeof DefendantEventLog,
@@ -260,7 +262,7 @@ export class DefendantService {
     return defendants[0]
   }
 
-  async updateRequestCaseDefendant(
+  private async updateRequestCaseDefendant(
     theCase: Case,
     defendant: Defendant,
     update: UpdateDefendantDto,
@@ -282,41 +284,46 @@ export class DefendantService {
     return updatedDefendant
   }
 
-  async createDefendantEvent({
-    caseId,
-    defendantId,
-    eventType,
-  }: {
-    caseId: string
-    defendantId: string
-    eventType: DefendantEventType
-  }): Promise<void> {
-    await this.defendantEventLogModel.create({
-      caseId,
-      defendantId,
-      eventType,
-    })
+  async createDefendantEvent(
+    event: {
+      caseId: string
+      defendantId: string
+      eventType: DefendantEventType
+    },
+    transaction?: Transaction,
+  ): Promise<void> {
+    await this.defendantEventLogModel.create(event, { transaction })
   }
 
-  async updateIndictmentCaseDefendant(
+  private async updateIndictmentCaseDefendant(
     theCase: Case,
     defendant: Defendant,
     update: UpdateDefendantDto,
     user: User,
   ): Promise<Defendant> {
-    const updatedDefendant = await this.updateDatabaseDefendant(
-      theCase.id,
-      defendant.id,
-      update,
-    )
+    const updatedDefendant = await this.sequelize.transaction(
+      async (transaction) => {
+        const updatedDefendant = await this.updateDatabaseDefendant(
+          theCase.id,
+          defendant.id,
+          update,
+          transaction,
+        )
 
-    if (update.isSentToPrisonAdmin) {
-      this.createDefendantEvent({
-        caseId: theCase.id,
-        defendantId: defendant.id,
-        eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
-      })
-    }
+        if (update.isSentToPrisonAdmin) {
+          await this.createDefendantEvent(
+            {
+              caseId: theCase.id,
+              defendantId: defendant.id,
+              eventType: DefendantEventType.SENT_TO_PRISON_ADMIN,
+            },
+            transaction,
+          )
+        }
+
+        return updatedDefendant
+      },
+    )
 
     await this.sendIndictmentCaseUpdateDefendantMessages(
       theCase,

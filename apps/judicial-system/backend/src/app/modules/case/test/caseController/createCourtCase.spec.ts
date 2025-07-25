@@ -140,6 +140,7 @@ describe('CaseController - Create court case', () => {
           id: caseId,
           isArchived: false,
         },
+        transaction,
       })
       expect(then.result).toBe(returnedCase)
     })
@@ -205,6 +206,7 @@ describe('CaseController - Create court case', () => {
           id: caseId,
           isArchived: false,
         },
+        transaction,
       })
       expect(then.result).toBe(returnedCase)
     })

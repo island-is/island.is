@@ -18,12 +18,68 @@ import {
 import {
   CaseDecision,
   CaseState,
-  EventLog,
-  EventType,
   UserRole,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { courtOfAppealCaseOverviewHeader as strings } from './CaseOverviewHeader.strings'
+
+const AppealResultAccessed = () => {
+  const { formatMessage } = useIntl()
+  const { workingCase } = useContext(FormContext)
+
+  if (!workingCase.appealRulingDecision) {
+    return null
+  }
+
+  if (
+    !workingCase.defenceAppealResultAccessDate &&
+    !workingCase.prosecutionAppealResultAccessDate &&
+    !workingCase.prisonStaffAppealResultAccessDate
+  ) {
+    return null
+  }
+
+  const AppealResultAccessedByRole = ({
+    role,
+    date,
+  }: {
+    role: UserRole
+    date: string
+  }) => (
+    <Box marginBottom={2}>
+      <AlertMessage
+        message={formatMessage(strings.appealResultOpenedBy, {
+          userRole: role as UserRole,
+          when: formatDate(date, 'PPPp'),
+        })}
+        type="info"
+      />
+    </Box>
+  )
+
+  return (
+    <Box marginTop={8}>
+      {workingCase.defenceAppealResultAccessDate && (
+        <AppealResultAccessedByRole
+          role={UserRole.DEFENDER}
+          date={workingCase.defenceAppealResultAccessDate}
+        />
+      )}
+      {workingCase.prosecutionAppealResultAccessDate && (
+        <AppealResultAccessedByRole
+          role={UserRole.PROSECUTOR}
+          date={workingCase.prosecutionAppealResultAccessDate}
+        />
+      )}
+      {workingCase.prisonStaffAppealResultAccessDate && (
+        <AppealResultAccessedByRole
+          role={UserRole.PRISON_SYSTEM_STAFF}
+          date={workingCase.prisonStaffAppealResultAccessDate}
+        />
+      )}
+    </Box>
+  )
+}
 
 interface Props {
   alerts?: { message: string }[]
@@ -36,31 +92,6 @@ const CaseOverviewHeader: FC<Props> = (props) => {
 
   const { formatMessage } = useIntl()
   const router = useRouter()
-
-  const filteredEvents = workingCase?.eventLogs
-    ?.filter(
-      (e) =>
-        e.eventType === EventType.APPEAL_RESULT_ACCESSED &&
-        [
-          UserRole.DEFENDER,
-          UserRole.PROSECUTOR,
-          UserRole.PRISON_SYSTEM_STAFF,
-        ].includes(e.userRole as UserRole),
-    )
-    .reduce((acc, event) => {
-      const userRole = event.userRole as UserRole
-      const existingEventIndex = acc.findIndex((e) => e.userRole === userRole)
-
-      if (existingEventIndex === -1) {
-        acc.push(event)
-      } else if (
-        (event.created ?? '') < (acc[existingEventIndex].created ?? '')
-      ) {
-        acc[existingEventIndex] = event
-      }
-
-      return acc
-    }, [] as EventLog[])
 
   const wasAppealedAfterDeadline =
     workingCase.appealedDate &&
@@ -88,23 +119,7 @@ const CaseOverviewHeader: FC<Props> = (props) => {
           />
         </Box>
       )}
-      {workingCase.appealRulingDecision &&
-        filteredEvents &&
-        filteredEvents.length > 0 && (
-          <Box marginBottom={2} marginTop={8}>
-            {filteredEvents?.map((event, index) => (
-              <Box marginBottom={2} key={`event${index}`}>
-                <AlertMessage
-                  message={formatMessage(strings.appealResultOpenedBy, {
-                    userRole: event.userRole as UserRole,
-                    when: formatDate(event.created, 'PPPp'),
-                  })}
-                  type="info"
-                />
-              </Box>
-            ))}
-          </Box>
-        )}
+      <AppealResultAccessed />
       {alerts?.map((alert) => (
         <Box key={alert.message} marginBottom={2}>
           <AlertMessage

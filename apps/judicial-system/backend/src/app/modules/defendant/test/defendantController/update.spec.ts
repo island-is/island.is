@@ -1,3 +1,4 @@
+import { Transaction } from 'sequelize/types'
 import { uuid } from 'uuidv4'
 
 import { MessageService, MessageType } from '@island.is/judicial-system/message'
@@ -38,15 +39,22 @@ describe('DefendantController - Update', () => {
   } as Defendant
 
   let mockMessageService: MessageService
+  let transaction: Transaction
   let mockDefendantModel: typeof Defendant
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { messageService, defendantModel, defendantController } =
+    const { messageService, sequelize, defendantModel, defendantController } =
       await createTestingDefendantModule()
 
     mockMessageService = messageService
     mockDefendantModel = defendantModel
+
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
     const mockUpdate = mockDefendantModel.update as jest.Mock
     mockUpdate.mockRejectedValue(new Error('Some error'))
