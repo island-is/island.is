@@ -118,7 +118,7 @@ COPY .yarn/patches /webapp/.yarn/patches
 COPY .yarn/releases /webapp/.yarn/releases
 
 RUN --mount=type=cache,target=.yarn/cache,sharing=locked \
-  yarn install --immutable --production
+  yarn install --immutable && yarn workspaces focus --production
 
 ENV GIT_BRANCH=${GIT_BRANCH} \
   GIT_COMMIT_SHA=${GIT_COMMIT_SHA} \
