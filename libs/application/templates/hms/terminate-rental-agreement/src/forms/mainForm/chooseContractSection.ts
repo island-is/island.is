@@ -13,7 +13,7 @@ export const chooseContractSection = buildSection({
     buildMultiField({
       id: 'chooseContract',
       title: m.chooseContractMessages.multiFieldTitle,
-      description: m.chooseContractMessages.multiFieldDescription,
+      description: m.chooseContractMessages.multiFieldDescriptionMarkdown,
       children: [
         buildRadioField({
           id: 'rentalAgreement.answer',

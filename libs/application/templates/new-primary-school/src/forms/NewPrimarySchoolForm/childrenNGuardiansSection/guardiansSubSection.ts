@@ -1,17 +1,23 @@
 import {
+  buildCheckboxField,
   buildDescriptionField,
+  buildHiddenInput,
   buildMultiField,
   buildPhoneField,
+  buildSelectField,
   buildSubSection,
   buildTextField,
+  YES,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import {
   formatPhoneNumber,
   removeCountryCode,
 } from '@island.is/application/ui-components'
+import { getAllLanguageCodes } from '@island.is/shared/utils'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
+  getApplicationAnswers,
   getApplicationExternalData,
   getOtherGuardian,
   hasOtherGuardian,
@@ -123,6 +129,41 @@ export const guardiansSubSection = buildSubSection({
           placeholder: '000-0000',
           required: true,
         }),
+        buildCheckboxField({
+          id: 'guardians[0].requiresInterpreter',
+          spacing: 0,
+          options: [
+            {
+              value: YES,
+              label:
+                newPrimarySchoolMessages.childrenNGuardians.requiresInterpreter,
+            },
+          ],
+        }),
+        buildSelectField({
+          id: 'guardians[0].preferredLanguage',
+          title: newPrimarySchoolMessages.shared.language,
+          placeholder: newPrimarySchoolMessages.shared.languagePlaceholder,
+          options: () =>
+            getAllLanguageCodes().map((language) => ({
+              label: language.name,
+              value: language.code,
+            })),
+          condition: (answers) => {
+            const { guardians } = getApplicationAnswers(answers)
+
+            return !!guardians?.[0]?.requiresInterpreter?.includes(YES)
+          },
+        }),
+        buildHiddenInput({
+          id: 'guardians[0].citizenshipCode',
+          defaultValue: (application: Application) =>
+            (
+              application.externalData.nationalRegistry?.data as {
+                citizenship?: { code: string }
+              }
+            )?.citizenship?.code,
+        }),
 
         buildDescriptionField({
           id: 'guardiansInfo2',
@@ -206,6 +247,49 @@ export const guardiansSubSection = buildSubSection({
           required: true,
           condition: (answers, externalData) =>
             hasOtherGuardian(answers, externalData),
+        }),
+        buildCheckboxField({
+          id: 'guardians[1].requiresInterpreter',
+          spacing: 0,
+          options: [
+            {
+              value: YES,
+              label:
+                newPrimarySchoolMessages.childrenNGuardians.requiresInterpreter,
+            },
+          ],
+          condition: (answers, externalData) =>
+            hasOtherGuardian(answers, externalData),
+        }),
+        buildSelectField({
+          id: 'guardians[1].preferredLanguage',
+          title: newPrimarySchoolMessages.shared.language,
+          placeholder: newPrimarySchoolMessages.shared.languagePlaceholder,
+          options: () =>
+            getAllLanguageCodes().map((language) => ({
+              label: language.name,
+              value: language.code,
+            })),
+          condition: (answers, externalData) => {
+            const { guardians } = getApplicationAnswers(answers)
+
+            return (
+              hasOtherGuardian(answers, externalData) &&
+              !!guardians?.[1]?.requiresInterpreter?.includes(YES)
+            )
+          },
+        }),
+        buildHiddenInput({
+          id: 'guardians[1].citizenshipCode',
+          condition: (answers, externalData) =>
+            hasOtherGuardian(answers, externalData),
+          defaultValue: (application: Application) => {
+            const { otherGuardianCitizenshipCode } = getApplicationExternalData(
+              application.externalData,
+            )
+
+            return otherGuardianCitizenshipCode
+          },
         }),
       ],
     }),

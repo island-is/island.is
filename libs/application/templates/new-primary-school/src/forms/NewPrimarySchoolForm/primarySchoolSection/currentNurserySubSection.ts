@@ -61,7 +61,7 @@ export const currentNurserySubSection = buildSubSection({
             return (
               data?.friggSchoolsByMunicipality
                 ?.find(({ name }) => name === selectedValues?.[0])
-                ?.children?.map((nursery) => ({
+                ?.managing?.map((nursery) => ({
                   value: nursery.id,
                   label: nursery.name,
                 })) ?? []

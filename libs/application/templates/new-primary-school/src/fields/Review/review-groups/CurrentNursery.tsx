@@ -30,7 +30,7 @@ export const CurrentNursery = ({
   )
   const currentNurseryName = useMemo(() => {
     return data?.friggSchoolsByMunicipality
-      ?.flatMap((municipality) => municipality.children)
+      ?.flatMap((municipality) => municipality.managing)
       .find((nursery) => nursery?.id === currentNursery)?.name
   }, [data, currentNursery])
 

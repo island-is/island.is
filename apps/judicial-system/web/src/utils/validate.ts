@@ -11,6 +11,7 @@ import {
   CaseIndictmentRulingDecision,
   CaseType,
   DateLog,
+  Defendant,
   DefenderChoice,
   IndictmentCount,
   IndictmentCountOffense,
@@ -21,6 +22,7 @@ import {
   Victim,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { Updates } from '../routes/Court/Indictments/Subpoena/Subpoena'
 import { isBusiness } from './utils'
 
 export type Validation =
@@ -514,30 +516,24 @@ export const isCourtRecordStepValidIC = (workingCase: Case): boolean => {
 
 export const isSubpoenaStepValid = (
   workingCase: Case,
-  arraignmentDate?: DateLog,
+  updates?: Updates,
 ): boolean => {
+  const { arraignmentDate } = updates?.theCase || workingCase
+  const { defendants } = updates || workingCase
+
+  const validateDefendants = (defendants?: Defendant[] | null) => {
+    return defendants?.every((defendant) =>
+      defendant.isAlternativeService
+        ? defendant.alternativeServiceDescription
+        : defendant.subpoenaType,
+    )
+  }
+
   return (
     validate([
-      [
-        arraignmentDate
-          ? arraignmentDate.date
-          : workingCase.arraignmentDate?.date,
-        ['empty', 'date-format'],
-      ],
-      [
-        arraignmentDate
-          ? arraignmentDate.location
-          : workingCase.arraignmentDate?.location,
-        ['empty'],
-      ],
-    ]).isValid &&
-    Boolean(
-      workingCase.defendants?.every((defendant) =>
-        defendant.isAlternativeService
-          ? defendant.alternativeServiceDescription
-          : defendant.subpoenaType,
-      ),
-    )
+      [arraignmentDate?.date, ['empty', 'date-format']],
+      [arraignmentDate?.location, ['empty']],
+    ]).isValid && Boolean(validateDefendants(defendants))
   )
 }
 
