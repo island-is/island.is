@@ -635,6 +635,12 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     return await this.siaClientService.getEctsUnits(auth)
   }
 
+  async getResidenceInformation({ auth }: TemplateApiModuleActionProps) {
+    const res = await this.siaClientService.getResidenceInformation(auth)
+    console.log('RES: ', res)
+    return res
+  }
+
   async getEducationLevels({
     application,
     auth,
