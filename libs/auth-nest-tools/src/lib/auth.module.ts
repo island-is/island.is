@@ -1,4 +1,6 @@
 import { DynamicModule, Module } from '@nestjs/common'
+import { APP_INTERCEPTOR } from '@nestjs/core'
+import { AuthInterceptor } from './auth.interceptor'
 import { JwtStrategy } from './jwt.strategy'
 
 export interface AuthConfig {
@@ -16,6 +18,10 @@ export class AuthModule {
         {
           provide: JwtStrategy,
           useValue: new JwtStrategy(options),
+        },
+        {
+          provide: APP_INTERCEPTOR,
+          useClass: AuthInterceptor,
         },
       ],
       exports: [JwtStrategy],

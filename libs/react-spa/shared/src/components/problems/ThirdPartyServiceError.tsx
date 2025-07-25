@@ -7,22 +7,25 @@ import {
 } from '@island.is/island-ui/core'
 import { useMemo } from 'react'
 
-import { ProblemSize } from './problem.types'
+import { CommonProblemProps, ProblemSize } from './problem.types'
 import { m } from '../../lib/messages'
 import { useGetOrganizationsQuery } from './GetOrganization.generated'
 
 type ThirdPartyServiceErrorProps = {
   organizationSlug: string
   size?: ProblemSize
-} & Pick<ProblemTemplateProps, 'expand'>
+} & CommonProblemProps
 
 export const ThirdPartyServiceError = ({
   organizationSlug,
   size = 'large',
+  imgSrc,
+  imgAlt,
+  tag,
   ...rest
 }: ThirdPartyServiceErrorProps & TestSupport) => {
   const { formatMessage } = useLocale()
-  const { data, error, loading } = useGetOrganizationsQuery()
+  const { data, loading } = useGetOrganizationsQuery()
 
   const organization = useMemo(
     () =>
@@ -40,6 +43,11 @@ export const ThirdPartyServiceError = ({
     message: formatMessage(m.thirdPartyServiceErrorMessage),
   }
 
+  const imgProps = {
+    src: imgSrc ?? './assets/images/hourglass.svg',
+    alt: imgAlt ?? errorTemplateProps.title,
+  }
+
   if (size === 'small') {
     return <AlertMessage type="warning" {...errorTemplateProps} />
   }
@@ -47,8 +55,12 @@ export const ThirdPartyServiceError = ({
   return (
     <ProblemTemplate
       variant="warning"
-      {...(organization ? { tag: organization.title } : { showIcon: true })}
+      {...(organization || tag
+        ? { tag: organization?.title ?? tag }
+        : { showIcon: true })}
       {...errorTemplateProps}
+      imgSrc={imgProps.src}
+      imgAlt={imgProps.alt}
       {...rest}
       titleSize="h2"
     />
