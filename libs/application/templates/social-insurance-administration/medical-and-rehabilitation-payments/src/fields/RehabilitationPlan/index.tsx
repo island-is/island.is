@@ -166,118 +166,142 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
             }
           </Text>
         </GridColumn>
-        <GridColumn span="1/1">
-          <Label>
-            {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
-                .informationProgress,
-            )}
-          </Label>
-          <Text>
-            {
-              data?.socialInsuranceRehabilitationPlan?.followUpEvaluation
-                ?.rehabilitationProgress?.display
-            }
-          </Text>
-        </GridColumn>
-        <GridColumn span="1/1">
-          <Label>
-            {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
-                .informationExplanationOfProgress,
-            )}
-          </Label>
-          <Text>
-            {
-              data?.socialInsuranceRehabilitationPlan?.followUpEvaluation
-                ?.rehabilitationProgressDetails
-            }
-          </Text>
-        </GridColumn>
-        <GridColumn span="1/1">
-          <Label>
-            {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
-                .informationAttendance,
-            )}
-          </Label>
-          <Text>
-            {
-              data?.socialInsuranceRehabilitationPlan?.followUpEvaluation
-                ?.rehabilitationMeasuresProgress?.display
-            }
-          </Text>
-        </GridColumn>
-        <GridColumn span="1/1">
-          <Label>
-            {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
-                .informationExplanationOfAttendance,
-            )}
-          </Label>
-          <Text>
-            {
-              data?.socialInsuranceRehabilitationPlan?.followUpEvaluation
-                ?.rehabilitationMeasuresProgressDetails
-            }
-          </Text>
-        </GridColumn>
-        <GridColumn span="1/1">
-          <Label>
-            {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
-                .informationChange,
-            )}
-          </Label>
-          <Text>
-            {
-              data?.socialInsuranceRehabilitationPlan?.followUpEvaluation
-                ?.rehabilitationChanges?.display
-            }
-          </Text>
-        </GridColumn>
-        <GridColumn span="1/1">
-          <Label>
-            {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
-                .informationExplanationOfChange,
-            )}
-          </Label>
-          <Text>
-            {
-              data?.socialInsuranceRehabilitationPlan?.followUpEvaluation
-                ?.rehabilitationChangesDetails
-            }
-          </Text>
-        </GridColumn>
-        <GridColumn span="1/1">
-          <Label>
-            {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
-                .informationApplicantCircumstancesChanges,
-            )}
-          </Label>
-          <Text>
-            {
-              data?.socialInsuranceRehabilitationPlan?.followUpEvaluation
-                ?.applicantCircumstancesChanges?.display
-            }
-          </Text>
-        </GridColumn>
-        <GridColumn span="1/1">
-          <Label>
-            {formatMessage(
-              medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
-                .informationExplanationOfApplicantCircumstancesChanges,
-            )}
-          </Label>
-          <Text>
-            {
-              data?.socialInsuranceRehabilitationPlan?.followUpEvaluation
-                ?.applicantCircumstancesChangesDetails
-            }
-          </Text>
-        </GridColumn>
+        {data?.socialInsuranceRehabilitationPlan?.followUpEvaluation
+          ?.rehabilitationProgress?.display && (
+          <GridColumn span="1/1">
+            <Label>
+              {formatMessage(
+                medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
+                  .informationProgress,
+              )}
+            </Label>
+            <Text>
+              {
+                data.socialInsuranceRehabilitationPlan.followUpEvaluation
+                  .rehabilitationProgress.display
+              }
+            </Text>
+          </GridColumn>
+        )}
+        {data?.socialInsuranceRehabilitationPlan?.followUpEvaluation
+          ?.rehabilitationProgressDetails && (
+          <GridColumn span="1/1">
+            <Label>
+              {formatMessage(
+                medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
+                  .informationExplanationOfProgress,
+              )}
+            </Label>
+            <Text>
+              {
+                data.socialInsuranceRehabilitationPlan.followUpEvaluation
+                  .rehabilitationProgressDetails
+              }
+            </Text>
+          </GridColumn>
+        )}
+        {data?.socialInsuranceRehabilitationPlan?.followUpEvaluation
+          ?.rehabilitationMeasuresProgress?.display && (
+          <GridColumn span="1/1">
+            <Label>
+              {formatMessage(
+                medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
+                  .informationAttendance,
+              )}
+            </Label>
+            <Text>
+              {
+                data.socialInsuranceRehabilitationPlan.followUpEvaluation
+                  .rehabilitationMeasuresProgress.display
+              }
+            </Text>
+          </GridColumn>
+        )}
+        {data?.socialInsuranceRehabilitationPlan?.followUpEvaluation
+          ?.rehabilitationMeasuresProgressDetails && (
+          <GridColumn span="1/1">
+            <Label>
+              {formatMessage(
+                medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
+                  .informationExplanationOfAttendance,
+              )}
+            </Label>
+            <Text>
+              {
+                data.socialInsuranceRehabilitationPlan.followUpEvaluation
+                  .rehabilitationMeasuresProgressDetails
+              }
+            </Text>
+          </GridColumn>
+        )}
+        {data?.socialInsuranceRehabilitationPlan?.followUpEvaluation
+          ?.rehabilitationChanges?.display && (
+          <GridColumn span="1/1">
+            <Label>
+              {formatMessage(
+                medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
+                  .informationChange,
+              )}
+            </Label>
+            <Text>
+              {
+                data.socialInsuranceRehabilitationPlan.followUpEvaluation
+                  .rehabilitationChanges.display
+              }
+            </Text>
+          </GridColumn>
+        )}
+        {data?.socialInsuranceRehabilitationPlan?.followUpEvaluation
+          ?.rehabilitationChangesDetails && (
+          <GridColumn span="1/1">
+            <Label>
+              {formatMessage(
+                medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
+                  .informationExplanationOfChange,
+              )}
+            </Label>
+            <Text>
+              {
+                data.socialInsuranceRehabilitationPlan.followUpEvaluation
+                  .rehabilitationChangesDetails
+              }
+            </Text>
+          </GridColumn>
+        )}
+        {data?.socialInsuranceRehabilitationPlan?.followUpEvaluation
+          ?.applicantCircumstancesChanges?.display && (
+          <GridColumn span="1/1">
+            <Label>
+              {formatMessage(
+                medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
+                  .informationApplicantCircumstancesChanges,
+              )}
+            </Label>
+            <Text>
+              {
+                data.socialInsuranceRehabilitationPlan.followUpEvaluation
+                  .applicantCircumstancesChanges.display
+              }
+            </Text>
+          </GridColumn>
+        )}
+        {data?.socialInsuranceRehabilitationPlan?.followUpEvaluation
+          ?.applicantCircumstancesChangesDetails && (
+          <GridColumn span="1/1">
+            <Label>
+              {formatMessage(
+                medicalAndRehabilitationPaymentsFormMessage.rehabilitationPlan
+                  .informationExplanationOfApplicantCircumstancesChanges,
+              )}
+            </Label>
+            <Text>
+              {
+                data.socialInsuranceRehabilitationPlan.followUpEvaluation
+                  .applicantCircumstancesChangesDetails
+              }
+            </Text>
+          </GridColumn>
+        )}
       </GridRow>
     </Stack>
   )
