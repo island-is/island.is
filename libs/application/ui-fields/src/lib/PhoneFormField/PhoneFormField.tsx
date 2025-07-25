@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 import {
+  buildFieldReadOnly,
   buildFieldRequired,
   formatText,
   formatTextWithLocale,
@@ -62,7 +63,7 @@ export const PhoneFormField: FC<React.PropsWithChildren<Props>> = ({
       <Box paddingTop={2}>
         <PhoneInputController
           disabled={disabled}
-          readOnly={readOnly}
+          readOnly={buildFieldReadOnly(application, readOnly)}
           id={id}
           dataTestId={dataTestId}
           allowedCountryCodes={allowedCountryCodes}
