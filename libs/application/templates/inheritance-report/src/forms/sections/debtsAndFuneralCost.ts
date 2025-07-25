@@ -66,6 +66,7 @@ export const debtsAndFuneralCost = buildSection({
                 ],
                 hideDeceasedShare: true,
                 repeaterButtonText: m.debtsRepeaterButton,
+                fromExternalData: 'otherDebts',
                 sumField: 'propertyValuation',
                 selections: [
                   {

@@ -22,6 +22,7 @@ import DoubleColumnRow from '../../components/DoubleColumnRow'
 import {
   getDeceasedWasMarriedAndHadAssets,
   getEstateDataFromApplication,
+  parseDebtType,
   parseLabel,
 } from '../../lib/utils/helpers'
 import {
@@ -130,6 +131,7 @@ export const ReportFieldsRepeater: FC<
     const values = props.fields.map((field: object) => {
       return Object.values(field)[1]
     })
+    console.log('HAVE VALUES', values)
 
     // All additional fields should be enabled by default
     values.push('enabled')
@@ -141,6 +143,8 @@ export const ReportFieldsRepeater: FC<
       ]),
     )
 
+    console.log('ABOUT TO ADD REPEATERFIELDS')
+
     append(repeaterFields)
   }
 
@@ -149,8 +153,10 @@ export const ReportFieldsRepeater: FC<
     explicitAVal = '0',
     explicitBVal = '0',
   ) => {
-    const stockValues: { amount?: string; exchangeRateOrInterest?: string } =
-      getValues(fieldIndex)
+    const stockValues: {
+      amount?: string
+      exchangeRateOrInterest?: string
+    } = getValues(fieldIndex)
 
     const faceValue = stockValues?.amount
     const rateOfExchange = stockValues?.exchangeRateOrInterest
@@ -197,13 +203,12 @@ export const ReportFieldsRepeater: FC<
         : getEstateDataFromApplication(application).inheritanceReportInfo
     const extData: Array<InheritanceReportAsset> =
       estateData && props.fromExternalData
-        ? (
-            estateData[
-              props.fromExternalData as keyof InheritanceReportInfo
-            ] as InheritanceReportAsset[]
-          ).map((data: any) => {
+        ? (estateData[
+            props.fromExternalData as keyof InheritanceReportInfo
+          ] as InheritanceReportAsset[]).map((data: any) => {
             return {
               ...data,
+              debtType: parseDebtType(data.debtType ?? ''),
               initial: true,
               enabled: true,
             }
@@ -224,11 +229,13 @@ export const ReportFieldsRepeater: FC<
 
   useEffect(() => {
     const indexes = fields.reduce<number[]>((acc, _, index) => {
-      const fieldData: { foreignBankAccount?: string[] }[] | undefined =
-        getValueViaPath(answers, id)
+      const fieldData:
+        | { foreignBankAccount?: string[] }[]
+        | undefined = getValueViaPath(answers, id)
 
-      const isForeignBankAccount =
-        fieldData?.[index]?.foreignBankAccount?.includes(YES)
+      const isForeignBankAccount = fieldData?.[
+        index
+      ]?.foreignBankAccount?.includes(YES)
 
       if (isForeignBankAccount) {
         acc.push(index)

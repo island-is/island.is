@@ -717,12 +717,13 @@ const mapInheritanceReportAssets = (
   iAssets?.forEach((iAsset) => {
     const asset = mapInheritanceReportAsset(iAsset)
 
-    const assetTypeTodebtType = {
-      [TegundAndlags.NUMBER_17]: DebtTypes.PropertyFees,
-      [TegundAndlags.NUMBER_18]: DebtTypes.InsuranceCompany,
-      [TegundAndlags.NUMBER_19]: DebtTypes.Loan,
-      [TegundAndlags.NUMBER_20]: DebtTypes.CreditCard,
-      [TegundAndlags.NUMBER_21]: DebtTypes.Overdraft,
+    const assetTypeTodebtType: Partial<Record<TegundAndlags, DebtTypes>> = {
+      [TegundAndlags.NUMBER_14]: 'otherDebts',
+      [TegundAndlags.NUMBER_17]: 'propertyFees',
+      [TegundAndlags.NUMBER_18]: 'insuranceCompany',
+      [TegundAndlags.NUMBER_19]: 'loan',
+      [TegundAndlags.NUMBER_20]: 'creditCard',
+      [TegundAndlags.NUMBER_21]: 'overdraft',
     }
 
     switch (iAsset.tegundAngalgs) {
@@ -777,15 +778,13 @@ const mapInheritanceReportAssets = (
       case TegundAndlags.NUMBER_13:
         officialFees.push(asset)
         break
-      case TegundAndlags.NUMBER_14:
-        otherDebts.push(asset)
-        break
       case TegundAndlags.NUMBER_15:
         assetsInBusiness.push(asset)
         break
       case TegundAndlags.NUMBER_16:
         debtsInBusiness.push(asset)
         break
+      case TegundAndlags.NUMBER_14:
       case TegundAndlags.NUMBER_17:
       case TegundAndlags.NUMBER_18:
       case TegundAndlags.NUMBER_19:
@@ -830,7 +829,8 @@ export const mapEstateToInheritanceReportInfo = (
     will: estate.erfdaskra ?? undefined,
     knowledgeOfOtherWill: estate.erfdakraVitneskja,
     settlement: estate.kaupmali,
-    nameOfDeceased: estate.nafn ?? undefined,
+    nameOfDeceased: `${estate.nafn} - ${estate.malsnumer}`,
+    //nameOfDeceased: estate.nafn ?? undefined,
     nationalId: estate.kennitala ?? undefined,
     addressOfDeceased: estate.logheimili ?? undefined,
     heirs: mapInheritanceReportHeirs(estate.erfingar ?? []),

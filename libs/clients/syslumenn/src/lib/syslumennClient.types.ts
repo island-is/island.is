@@ -456,10 +456,16 @@ export interface VehicleRegistration {
   color?: string
 }
 
-export enum DebtTypes {
-  Overdraft = 'overdraft',
-  CreditCard = 'creditCard',
-  Loan = 'loan',
-  InsuranceCompany = 'insuranceCompany',
-  PropertyFees = 'propertyFees',
-}
+// application system form doesn't seem to be able to start
+// if you import an enum like `import {DebtTypes} from '@island.is/clients/syslumenn'`
+// so we use the const trickery to circumvent it
+export const DebtConstants = {
+  Overdraft: 'overdraft',
+  CreditCard: 'creditCard',
+  Loan: 'loan',
+  InsuranceCompany: 'insuranceCompany',
+  PropertyFees: 'propertyFees',
+  OtherDebts: 'otherDebts',
+} as const
+
+export type DebtTypes = typeof DebtConstants[keyof typeof DebtConstants]

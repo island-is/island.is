@@ -117,9 +117,10 @@ export const FuneralCost: FC<
     }
 
     // Stop pre-filling from running multiple times with a trigger
-    const funeralAssetsFlagTrigger = getValues('ir.funeralAssets.triggerHasRun')
+    const triggerName = 'ir.funeralAssets.triggerHasRun'
+    const funeralAssetsFlagTrigger = getValues(triggerName)
     if (!funeralAssetsFlagTrigger) {
-      setValue('ir.funeralAssets.triggerHasRun', true)
+      setValue(triggerName, true)
       const { funeralCosts } = inheritanceReportInfo
 
       for (const customField of props.fields) {

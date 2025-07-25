@@ -78,15 +78,17 @@ export const OtherAssetsRepeater: FC<
     // Although the dependency array is empty, it gets triggered twice in the UI
     // Furthermore, this trigger will stop this logic from running on every
     // UI re-attachment
-    const otherAssetsFlagTrigger = getValues('ir.otherAssets.triggerHasRun')
+    const triggerName = 'ir.otherAssets.triggerHasRun'
+    const otherAssetsFlagTrigger = getValues(triggerName)
     if (!otherAssetsFlagTrigger && otherAssets.length) {
+      setValue(triggerName, true)
       const initialRepeaterFields = otherAssets.map((oa) => ({
         info: oa.description,
         value: oa.propertyValuation,
       }))
       append(initialRepeaterFields)
     } else if (!otherAssetsFlagTrigger) {
-      setValue('ir.otherAssets.triggerHasRun', true)
+      setValue(triggerName, true)
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])

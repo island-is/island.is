@@ -1,5 +1,5 @@
 import {
-  DebtTypes,
+  DebtConstants,
   InheritanceEstateMember,
   InheritanceReportAsset,
   InheritanceReportInfo,
@@ -34,11 +34,11 @@ const generateRandomAsset = (n: number, i = 1): InheritanceReportAsset => {
     amount: String(1_000_000 + Math.round(Math.random() * 9_000_000)),
     exchangeRateOrInterest: String(1 + Math.round(Math.random() * 99)),
     debtType: [
-      DebtTypes.CreditCard,
-      DebtTypes.Loan,
-      DebtTypes.InsuranceCompany,
-      DebtTypes.Overdraft,
-      DebtTypes.PropertyFees,
+      DebtConstants.PropertyFees,
+      DebtConstants.CreditCard,
+      DebtConstants.InsuranceCompany,
+      DebtConstants.Overdraft,
+      DebtConstants.Loan,
     ].sort(() => 0.5 - Math.random())[0],
   }
 }
@@ -119,7 +119,7 @@ export const getFakeData = (
 
   // This code is only used in local or dev environments since
   // a 'gervimaður' can not log in on prod.
-  return {
+  return ({
     caseNumber,
     nameOfDeceased,
     nationalId,
@@ -134,5 +134,5 @@ export const getFakeData = (
       generateRandomHeir('Ísak Miri ÞÍ Jarrah', '2409151460', true),
     ],
     ...assetStructure,
-  } as unknown as InheritanceReportInfo
+  } as unknown) as InheritanceReportInfo
 }
