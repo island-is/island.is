@@ -391,6 +391,18 @@ OrganizationEventArticle.getProps = async ({
     )
   }
 
+  const eventBelongsToOrganization =
+    Boolean(event.organization?.slug) &&
+    Boolean(organizationPage.organization?.slug) &&
+    event.organization?.slug === organizationPage.organization?.slug
+
+  if (!eventBelongsToOrganization) {
+    throw new CustomNextError(
+      404,
+      `Event ${event.slug} does not belong to organization ${organizationPage.organization?.slug}`,
+    )
+  }
+
   let hasEventOccurred = true
   if (Boolean(event.endDate) || Boolean(event.startDate)) {
     const dateString = event.endDate ? event.endDate : event.startDate

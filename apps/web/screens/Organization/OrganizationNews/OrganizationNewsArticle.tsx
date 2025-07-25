@@ -232,6 +232,18 @@ OrganizationNewsArticle.getProps = async ({
     throw new CustomNextError(404, 'News not found')
   }
 
+  const newsItemBelongsToOrganization =
+    Boolean(newsItem.organization?.slug) &&
+    Boolean(organizationPage.organization?.slug) &&
+    newsItem.organization?.slug === organizationPage.organization?.slug
+
+  if (!newsItemBelongsToOrganization) {
+    throw new CustomNextError(
+      404,
+      `News item ${newsItem.slug} does not belong to organization ${organizationPage.organization?.slug}`,
+    )
+  }
+
   const organizationNamespace = extractNamespaceFromOrganization(
     organizationPage.organization,
   )

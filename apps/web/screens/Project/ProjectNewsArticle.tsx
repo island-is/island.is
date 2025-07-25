@@ -171,6 +171,17 @@ ProjectNewsArticle.getProps = async ({ apolloClient, locale, query }) => {
     throw new CustomNextError(404, 'News not found')
   }
 
+  const newsItemBelongsToProject = newsItem.genericTags.some(
+    (tag) => tag.id === projectPage.newsTag?.id,
+  )
+
+  if (!newsItemBelongsToProject) {
+    throw new CustomNextError(
+      404,
+      `News item ${newsItem.slug} does not belong to project ${projectPage.slug}`,
+    )
+  }
+
   return {
     projectPage: projectPage,
     newsItem,
