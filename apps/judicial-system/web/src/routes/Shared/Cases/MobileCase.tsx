@@ -78,7 +78,7 @@ const MobileCase: FC<PropsWithChildren<Props>> = ({
       <Text title={theCase.policeCaseNumbers?.join(', ')}>
         {displayFirstPlusRemaining(theCase.policeCaseNumbers)}
       </Text>
-      {theCase.courtCaseNumber && <Text>theCase.courtCaseNumber</Text>}
+      {theCase.courtCaseNumber && <Text>{theCase.courtCaseNumber}</Text>}
       {theCase.defendants && theCase.defendants.length > 0 && (
         <Box marginTop={3}>
           <Text>{theCase.defendants[0].name ?? ''}</Text>
