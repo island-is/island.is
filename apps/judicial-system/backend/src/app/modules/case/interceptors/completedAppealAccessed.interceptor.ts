@@ -40,7 +40,7 @@ export class CompletedAppealAccessedInterceptor implements NestInterceptor {
             isPrisonStaffUser(user))
         ) {
           await this.sequelize.transaction(async (transaction) => {
-            this.eventLogService.createWithUser(
+            return this.eventLogService.createWithUser(
               EventType.APPEAL_RESULT_ACCESSED,
               data.id,
               user,
