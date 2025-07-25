@@ -1,4 +1,4 @@
-import { AffiliationOrganizationType, AffiliationRole } from './lib/constants'
+import { AffiliationOrganizationType, AffiliationRole } from './utils/constants'
 
 export interface RelativesRow {
   fullName: string
