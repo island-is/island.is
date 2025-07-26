@@ -268,7 +268,7 @@
     "react-is": "18.3.1",
     "react-keyed-flatten-children": "1.2.0",
     "react-modal": "3.15.1",
-    "react-native": "0.77.2",
+    "react-native": "patch:react-native@npm%3A0.77.2#~/.yarn/patches/react-native-npm-0.77.2-4866978a5b.patch",
     "react-native-fs": "2.20.0",
     "react-native-url-polyfill": "2.0.0",
     "react-number-format": "4.9.1",
