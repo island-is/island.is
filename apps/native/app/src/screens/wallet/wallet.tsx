@@ -7,6 +7,7 @@ import {
   Linking,
   ListRenderItemInfo,
   RefreshControl,
+  SafeAreaView,
   View,
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
@@ -298,107 +299,109 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   return (
     <>
-      <Animated.FlatList
-        ref={flatListRef}
-        testID={testIDs.SCREEN_HOME}
-        style={{
-          zIndex: 9,
-        }}
-        contentInset={{
-          bottom: 32,
-        }}
-        refreshControl={
-          <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
-        }
-        scrollEventThrottle={16}
-        scrollToOverflowEnabled={true}
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          {
-            useNativeDriver: true,
-          },
-        )}
-        ListHeaderComponent={
-          (isIos && !isBarcodeEnabled) || hasChildLicenses ? (
-            <View style={{ marginBottom: 16 }}>
-              {isIos && !isBarcodeEnabled && (
-                <Alert
-                  type="info"
-                  visible={!dismissed.includes('howToUseLicence')}
-                  message={intl.formatMessage({ id: 'wallet.alertMessage' })}
-                  onClose={() => dismiss('howToUseLicence')}
-                />
-              )}
-              {hasChildLicenses && (
-                <Tabs>
-                  <TabButtons
-                    buttons={[
-                      {
-                        title: intl.formatMessage({
-                          id: 'wallet.yourLicenses',
-                        }),
-                      },
-                      {
-                        title: intl.formatMessage({
-                          id: 'wallet.childLicenses',
-                        }),
-                      },
-                    ]}
-                    selectedTab={selectedTab}
-                    setSelectedTab={setSelectedTab}
+      <SafeAreaView>
+        <Animated.FlatList
+          ref={flatListRef}
+          testID={testIDs.SCREEN_HOME}
+          style={{
+            zIndex: 9,
+          }}
+          contentInset={{
+            bottom: 32,
+          }}
+          refreshControl={
+            <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
+          }
+          scrollEventThrottle={16}
+          scrollToOverflowEnabled={true}
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+            {
+              useNativeDriver: true,
+            },
+          )}
+          ListHeaderComponent={
+            (isIos && !isBarcodeEnabled) || hasChildLicenses ? (
+              <View style={{ marginBottom: 16 }}>
+                {isIos && !isBarcodeEnabled && (
+                  <Alert
+                    type="info"
+                    visible={!dismissed.includes('howToUseLicence')}
+                    message={intl.formatMessage({ id: 'wallet.alertMessage' })}
+                    onClose={() => dismiss('howToUseLicence')}
                   />
-                </Tabs>
-              )}
-            </View>
-          ) : null
-        }
-        ListEmptyComponent={
-          <View style={{ marginTop: 80, paddingHorizontal: 16 }}>
-            <EmptyList
-              title={intl.formatMessage({ id: 'wallet.emptyListTitle' })}
-              description={intl.formatMessage({
-                id: 'wallet.emptyListDescription',
-              })}
-              image={
-                <Image
-                  source={illustrationSrc}
-                  style={{ width: 146, height: 198 }}
-                  resizeMode="contain"
-                />
-              }
-            />
-          </View>
-        }
-        ListFooterComponent={
-          <View
-            style={{
-              justifyContent: 'center',
-              alignItems: 'center',
-              marginTop: theme.spacing[3],
-            }}
-          >
-            {lastUpdatedFormatted && (
-              <Typography variant="body3">
-                {intl.formatMessage(
-                  { id: 'wallet.lastUpdated' },
-                  { date: lastUpdatedFormatted },
                 )}
-              </Typography>
-            )}
-            <Button
-              onPress={() =>
-                isIos ? programmaticScrollWhenRefreshing() : onRefresh()
-              }
-              title={intl.formatMessage({ id: 'wallet.update' })}
-              isTransparent={true}
-              icon={refreshIcon}
-            />
-          </View>
-        }
-        data={data}
-        keyExtractor={keyExtractor}
-        renderItem={renderItem}
-      />
+                {hasChildLicenses && (
+                  <Tabs>
+                    <TabButtons
+                      buttons={[
+                        {
+                          title: intl.formatMessage({
+                            id: 'wallet.yourLicenses',
+                          }),
+                        },
+                        {
+                          title: intl.formatMessage({
+                            id: 'wallet.childLicenses',
+                          }),
+                        },
+                      ]}
+                      selectedTab={selectedTab}
+                      setSelectedTab={setSelectedTab}
+                    />
+                  </Tabs>
+                )}
+              </View>
+            ) : null
+          }
+          ListEmptyComponent={
+            <View style={{ marginTop: 80, paddingHorizontal: 16 }}>
+              <EmptyList
+                title={intl.formatMessage({ id: 'wallet.emptyListTitle' })}
+                description={intl.formatMessage({
+                  id: 'wallet.emptyListDescription',
+                })}
+                image={
+                  <Image
+                    source={illustrationSrc}
+                    style={{ width: 146, height: 198 }}
+                    resizeMode="contain"
+                  />
+                }
+              />
+            </View>
+          }
+          ListFooterComponent={
+            <View
+              style={{
+                justifyContent: 'center',
+                alignItems: 'center',
+                marginTop: theme.spacing[3],
+              }}
+            >
+              {lastUpdatedFormatted && (
+                <Typography variant="body3">
+                  {intl.formatMessage(
+                    { id: 'wallet.lastUpdated' },
+                    { date: lastUpdatedFormatted },
+                  )}
+                </Typography>
+              )}
+              <Button
+                onPress={() =>
+                  isIos ? programmaticScrollWhenRefreshing() : onRefresh()
+                }
+                title={intl.formatMessage({ id: 'wallet.update' })}
+                isTransparent={true}
+                icon={refreshIcon}
+              />
+            </View>
+          }
+          data={data}
+          keyExtractor={keyExtractor}
+          renderItem={renderItem}
+        />
+      </SafeAreaView>
       <TopLine scrollY={scrollY} />
       <BottomTabsIndicator index={1} total={5} />
     </>
