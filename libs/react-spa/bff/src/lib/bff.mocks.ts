@@ -1,5 +1,5 @@
+import { LoggedInState } from '@island.is/react-spa/shared'
 import { BffUser } from '@island.is/shared/types'
-import { LoggedInState } from './bff.state'
 
 export const createMockedInitialState = (
   user?: Partial<BffUser>,

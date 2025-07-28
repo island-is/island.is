@@ -1,7 +1,7 @@
 import { ProblemTemplate } from '@island.is/island-ui/core'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { useLocale } from '@island.is/localization'
-import { useUserInfo } from '@island.is/react-spa/bff'
+import { useUserInfo } from '../../bff/bff.hooks'
 import { useEffect } from 'react'
 import { m } from '../../lib/messages'
 

@@ -19,7 +19,6 @@ export const NoData = ({
   title: titleStr,
   message,
   tag,
-  size = 'large',
   imgSrc,
   imgAlt,
   noBorder,
