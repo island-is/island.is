@@ -13,33 +13,31 @@
         "outputPath": "dist/apps/reference-backend",
         "main": "apps/reference-backend/src/main.ts",
         "tsConfig": "apps/reference-backend/tsconfig.app.json",
-        "maxWorkers": 2,
         "generatePackageJson": true,
         "esbuildConfig": "tools/esbuild.config.js",
-        "format": ["cjs"]
+        "format": ["cjs"],
+        "assets": [
+          {
+            "glob": "*",
+            "input": "apps/reference-backend/migrations",
+            "output": "./migrations"
+          },
+          {
+            "glob": ".sequelizerc",
+            "input": "apps/reference-backend",
+            "output": "./"
+          },
+          {
+            "glob": "sequelize.config.js",
+            "input": "apps/reference-backend",
+            "output": "./"
+          }
+        ]
       },
       "configurations": {
         "production": {
           "optimization": true,
-          "extractLicenses": true,
-          "inspect": false,
-          "assets": [
-            {
-              "glob": "*",
-              "input": "apps/reference-backend/migrations",
-              "output": "./migrations"
-            },
-            {
-              "glob": ".sequelizerc",
-              "input": "apps/reference-backend",
-              "output": "./"
-            },
-            {
-              "glob": "sequelize.config.js",
-              "input": "apps/reference-backend",
-              "output": "./"
-            }
-          ]
+          "extractLicenses": true
         }
       },
       "outputs": ["{options.outputPath}"]

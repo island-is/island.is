@@ -13,33 +13,31 @@
         "outputPath": "dist/apps/judicial-system/backend",
         "main": "apps/judicial-system/backend/src/main.ts",
         "tsConfig": "apps/judicial-system/backend/tsconfig.app.json",
-        "maxWorkers": 2,
         "generatePackageJson": true,
         "esbuildConfig": "tools/esbuild.config.js",
-        "format": ["cjs"]
+        "format": ["cjs"],
+        "assets": [
+          {
+            "glob": "*",
+            "input": "apps/judicial-system/backend/migrations",
+            "output": "./migrations"
+          },
+          {
+            "glob": ".sequelizerc",
+            "input": "apps/judicial-system/backend",
+            "output": "./"
+          },
+          {
+            "glob": "sequelize.config.js",
+            "input": "apps/judicial-system/backend",
+            "output": "./"
+          }
+        ]
       },
       "configurations": {
         "production": {
           "optimization": true,
-          "extractLicenses": true,
-          "inspect": false,
-          "assets": [
-            {
-              "glob": "*",
-              "input": "apps/judicial-system/backend/migrations",
-              "output": "./migrations"
-            },
-            {
-              "glob": ".sequelizerc",
-              "input": "apps/judicial-system/backend",
-              "output": "./"
-            },
-            {
-              "glob": "sequelize.config.js",
-              "input": "apps/judicial-system/backend",
-              "output": "./"
-            }
-          ]
+          "extractLicenses": true
         }
       },
       "outputs": ["{options.outputPath}"]

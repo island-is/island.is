@@ -17,29 +17,28 @@
         "tsConfig": "apps/services/payments/tsconfig.app.json",
         "generatePackageJson": true,
         "esbuildConfig": "tools/esbuild.config.js",
-        "format": ["cjs"]
+        "format": ["cjs"],
+        "assets": [
+          {
+            "glob": "*",
+            "input": "apps/services/payments/migrations",
+            "output": "./migrations"
+          },
+          {
+            "glob": ".sequelizerc",
+            "input": "apps/services/payments",
+            "output": "./"
+          },
+          {
+            "glob": "sequelize.config.js",
+            "input": "apps/services/payments",
+            "output": "./"
+          }
+        ]
       },
       "configurations": {
         "development": {},
-        "production": {
-          "assets": [
-            {
-              "glob": "*",
-              "input": "apps/services/payments/migrations",
-              "output": "./migrations"
-            },
-            {
-              "glob": ".sequelizerc",
-              "input": "apps/services/payments",
-              "output": "./"
-            },
-            {
-              "glob": "sequelize.config.js",
-              "input": "apps/services/payments",
-              "output": "./"
-            }
-          ]
-        }
+        "production": {}
       }
     },
     "serve": {

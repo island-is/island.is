@@ -14,31 +14,30 @@
         "tsConfig": "apps/services/sessions/tsconfig.app.json",
         "generatePackageJson": true,
         "esbuildConfig": "tools/esbuild.config.js",
-        "format": ["cjs"]
+        "format": ["cjs"],
+        "assets": [
+          {
+            "glob": "*",
+            "input": "apps/services/sessions/migrations",
+            "output": "./migrations"
+          },
+          {
+            "glob": ".sequelizerc",
+            "input": "apps/services/sessions",
+            "output": "./"
+          },
+          {
+            "glob": "sequelize.config.js",
+            "input": "apps/services/sessions",
+            "output": "./"
+          }
+        ]
       },
       "configurations": {
         "production": {
           "outputPath": "dist/apps/services/sessions",
           "optimization": true,
-          "extractLicenses": true,
-          "inspect": false,
-          "assets": [
-            {
-              "glob": "*",
-              "input": "apps/services/sessions/migrations",
-              "output": "./migrations"
-            },
-            {
-              "glob": ".sequelizerc",
-              "input": "apps/services/sessions",
-              "output": "./"
-            },
-            {
-              "glob": "sequelize.config.js",
-              "input": "apps/services/sessions",
-              "output": "./"
-            }
-          ]
+          "extractLicenses": true
         }
       }
     },

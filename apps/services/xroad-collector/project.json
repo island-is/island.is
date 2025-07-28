@@ -13,7 +13,6 @@
         "outputPath": "dist/apps/services/xroad-collector",
         "main": "apps/services/xroad-collector/src/main.ts",
         "tsConfig": "apps/services/xroad-collector/tsconfig.app.json",
-        "maxWorkers": 2,
         "generatePackageJson": true,
         "esbuildConfig": "tools/esbuild.config.js",
         "format": ["cjs"]
@@ -22,7 +21,6 @@
         "production": {
           "optimization": true,
           "extractLicenses": true,
-          "inspect": false,
           "assets": ["apps/services/xroad-collector/src/assets"]
         }
       },

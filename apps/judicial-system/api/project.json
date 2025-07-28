@@ -14,7 +14,6 @@
         "main": "apps/judicial-system/api/src/main.ts",
         "tsConfig": "apps/judicial-system/api/tsconfig.app.json",
         "assets": [],
-        "maxWorkers": 2,
         "generatePackageJson": true,
         "esbuildConfig": "tools/esbuild.config.js",
         "format": ["cjs"]
@@ -22,8 +21,7 @@
       "configurations": {
         "production": {
           "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
+          "extractLicenses": true
         }
       },
       "outputs": ["{options.outputPath}"]

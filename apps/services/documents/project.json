@@ -16,31 +16,30 @@
         "showCircularDependencies": false,
         "generatePackageJson": true,
         "esbuildConfig": "tools/esbuild.config.js",
-        "format": ["cjs"]
+        "format": ["cjs"],
+        "assets": [
+          "apps/services/documents/src/assets",
+          {
+            "glob": "*",
+            "input": "apps/services/documents/migrations",
+            "output": "./migrations"
+          },
+          {
+            "glob": ".sequelizerc",
+            "input": "apps/services/documents",
+            "output": "./"
+          },
+          {
+            "glob": "sequelize.config.js",
+            "input": "apps/services/documents",
+            "output": "./"
+          }
+        ]
       },
       "configurations": {
         "production": {
           "optimization": true,
-          "extractLicenses": true,
-          "inspect": false,
-          "assets": [
-            "apps/services/documents/src/assets",
-            {
-              "glob": "*",
-              "input": "apps/services/documents/migrations",
-              "output": "./migrations"
-            },
-            {
-              "glob": ".sequelizerc",
-              "input": "apps/services/documents",
-              "output": "./"
-            },
-            {
-              "glob": "sequelize.config.js",
-              "input": "apps/services/documents",
-              "output": "./"
-            }
-          ]
+          "extractLicenses": true
         }
       },
       "outputs": ["{options.outputPath}"]

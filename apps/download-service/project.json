@@ -21,7 +21,6 @@
         "production": {
           "optimization": true,
           "extractLicenses": true,
-          "inspect": false,
           "assets": ["apps/download-service/src/assets"]
         }
       }

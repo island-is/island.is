@@ -13,8 +13,6 @@
         "outputPath": "dist/apps/services/search-indexer",
         "main": "apps/services/search-indexer/src/main.ts",
         "tsConfig": "apps/services/search-indexer/tsconfig.app.json",
-        "webpackConfig": "apps/services/search-indexer/webpack.config.js",
-        "maxWorkers": 2,
         "generatePackageJson": true,
         "esbuildConfig": "tools/esbuild.config.js",
         "format": ["cjs"]
@@ -23,7 +21,6 @@
         "production": {
           "optimization": true,
           "extractLicenses": true,
-          "inspect": false,
           "assets": [
             {
               "glob": "config/**",

@@ -13,33 +13,31 @@
         "outputPath": "dist/apps/financial-aid/backend",
         "main": "apps/financial-aid/backend/src/main.ts",
         "tsConfig": "apps/financial-aid/backend/tsconfig.app.json",
-        "maxWorkers": 2,
         "generatePackageJson": true,
         "esbuildConfig": "tools/esbuild.config.js",
-        "format": ["cjs"]
+        "format": ["cjs"],
+        "assets": [
+          {
+            "glob": "*",
+            "input": "apps/financial-aid/backend/migrations",
+            "output": "./migrations"
+          },
+          {
+            "glob": ".sequelizerc",
+            "input": "apps/financial-aid/backend",
+            "output": "./"
+          },
+          {
+            "glob": "sequelize.config.js",
+            "input": "apps/financial-aid/backend",
+            "output": "./"
+          }
+        ]
       },
       "configurations": {
         "production": {
           "optimization": true,
-          "extractLicenses": true,
-          "inspect": false,
-          "assets": [
-            {
-              "glob": "*",
-              "input": "apps/financial-aid/backend/migrations",
-              "output": "./migrations"
-            },
-            {
-              "glob": ".sequelizerc",
-              "input": "apps/financial-aid/backend",
-              "output": "./"
-            },
-            {
-              "glob": "sequelize.config.js",
-              "input": "apps/financial-aid/backend",
-              "output": "./"
-            }
-          ]
+          "extractLicenses": true
         }
       },
       "outputs": ["{options.outputPath}"]

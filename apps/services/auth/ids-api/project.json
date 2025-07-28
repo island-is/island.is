@@ -34,36 +34,35 @@
         "tsConfig": "apps/services/auth/ids-api/tsconfig.app.json",
         "generatePackageJson": true,
         "esbuildConfig": "tools/esbuild.config.js",
-        "format": ["cjs"]
+        "format": ["cjs"],
+        "assets": [
+          "apps/services/auth/ids-api/src/assets",
+          {
+            "glob": "*",
+            "input": "libs/auth-api-lib/migrations",
+            "output": "./migrations"
+          },
+          {
+            "glob": "*",
+            "input": "libs/auth-api-lib/seeders",
+            "output": "./seeders"
+          },
+          {
+            "glob": ".sequelizerc",
+            "input": "libs/auth-api-lib",
+            "output": "./"
+          },
+          {
+            "glob": "sequelize.config.js",
+            "input": "libs/auth-api-lib",
+            "output": "./"
+          }
+        ]
       },
       "configurations": {
         "production": {
           "optimization": true,
-          "extractLicenses": true,
-          "inspect": false,
-          "assets": [
-            "apps/services/auth/ids-api/src/assets",
-            {
-              "glob": "*",
-              "input": "libs/auth-api-lib/migrations",
-              "output": "./migrations"
-            },
-            {
-              "glob": "*",
-              "input": "libs/auth-api-lib/seeders",
-              "output": "./seeders"
-            },
-            {
-              "glob": ".sequelizerc",
-              "input": "libs/auth-api-lib",
-              "output": "./"
-            },
-            {
-              "glob": "sequelize.config.js",
-              "input": "libs/auth-api-lib",
-              "output": "./"
-            }
-          ]
+          "extractLicenses": true
         }
       },
       "outputs": ["{options.outputPath}"]

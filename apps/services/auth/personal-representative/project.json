@@ -21,7 +21,6 @@
         "production": {
           "optimization": true,
           "extractLicenses": true,
-          "inspect": false,
           "assets": ["apps/services/auth/personal-representative/src/assets"]
         }
       }

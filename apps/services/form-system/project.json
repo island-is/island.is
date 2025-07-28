@@ -14,31 +14,30 @@
         "tsConfig": "apps/services/form-system/tsconfig.app.json",
         "generatePackageJson": true,
         "esbuildConfig": "tools/esbuild.config.js",
-        "format": ["cjs"]
+        "format": ["cjs"],
+        "assets": [
+          "apps/services/form-system/src/assets",
+          {
+            "glob": "*",
+            "input": "apps/services/form-system/migrations",
+            "output": "./migrations"
+          },
+          {
+            "glob": ".sequelizerc",
+            "input": "apps/services/form-system",
+            "output": "./"
+          },
+          {
+            "glob": "sequelize.config.js",
+            "input": "apps/services/form-system",
+            "output": "./"
+          }
+        ]
       },
       "configurations": {
         "production": {
           "optimization": true,
-          "extractLicenses": true,
-          "inspect": false,
-          "assets": [
-            "apps/services/form-system/src/assets",
-            {
-              "glob": "*",
-              "input": "apps/services/form-system/migrations",
-              "output": "./migrations"
-            },
-            {
-              "glob": ".sequelizerc",
-              "input": "apps/services/form-system",
-              "output": "./"
-            },
-            {
-              "glob": "sequelize.config.js",
-              "input": "apps/services/form-system",
-              "output": "./"
-            }
-          ]
+          "extractLicenses": true
         }
       }
     },

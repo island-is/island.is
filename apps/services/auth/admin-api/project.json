@@ -13,7 +13,6 @@
         "outputPath": "dist/apps/services/auth/admin-api",
         "main": "apps/services/auth/admin-api/src/main.ts",
         "tsConfig": "apps/services/auth/admin-api/tsconfig.app.json",
-        "maxWorkers": 2,
         "generatePackageJson": true,
         "esbuildConfig": "tools/esbuild.config.js",
         "format": ["cjs"]
@@ -22,7 +21,6 @@
         "production": {
           "optimization": true,
           "extractLicenses": true,
-          "inspect": false,
           "assets": ["apps/services/auth/admin-api/src/assets"]
         }
       },

@@ -13,7 +13,6 @@
         "outputPath": "dist/apps/judicial-system/scheduler",
         "main": "apps/judicial-system/scheduler/src/main.ts",
         "tsConfig": "apps/judicial-system/scheduler/tsconfig.app.json",
-        "maxWorkers": 2,
         "generatePackageJson": true,
         "esbuildConfig": "tools/esbuild.config.js",
         "format": ["cjs"]
@@ -21,8 +20,7 @@
       "configurations": {
         "production": {
           "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
+          "extractLicenses": true
         }
       }
     },

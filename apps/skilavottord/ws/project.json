@@ -14,39 +14,37 @@
         "showCircularDependencies": false,
         "main": "apps/skilavottord/ws/src/main.ts",
         "tsConfig": "apps/skilavottord/ws/tsconfig.app.json",
-        "maxWorkers": 2,
         "generatePackageJson": true,
         "esbuildConfig": "tools/esbuild.config.js",
-        "format": ["cjs"]
+        "format": ["cjs"],
+        "assets": [
+          "apps/skilavottord/ws/src/assets",
+          {
+            "glob": "*",
+            "input": "apps/skilavottord/ws/migrations",
+            "output": "./migrations"
+          },
+          {
+            "glob": "*",
+            "input": "apps/skilavottord/ws/seeders",
+            "output": "./seeders"
+          },
+          {
+            "glob": ".sequelizerc",
+            "input": "apps/skilavottord/ws",
+            "output": "./"
+          },
+          {
+            "glob": "sequelize.config.js",
+            "input": "apps/skilavottord/ws",
+            "output": "./"
+          }
+        ]
       },
       "configurations": {
         "production": {
           "optimization": true,
-          "extractLicenses": true,
-          "inspect": false,
-          "assets": [
-            "apps/skilavottord/ws/src/assets",
-            {
-              "glob": "*",
-              "input": "apps/skilavottord/ws/migrations",
-              "output": "./migrations"
-            },
-            {
-              "glob": "*",
-              "input": "apps/skilavottord/ws/seeders",
-              "output": "./seeders"
-            },
-            {
-              "glob": ".sequelizerc",
-              "input": "apps/skilavottord/ws",
-              "output": "./"
-            },
-            {
-              "glob": "sequelize.config.js",
-              "input": "apps/skilavottord/ws",
-              "output": "./"
-            }
-          ]
+          "extractLicenses": true
         }
       },
       "outputs": ["{options.outputPath}"]

@@ -26828,6 +26828,18 @@ __metadata:
   languageName: node
   linkType: hard
 
+"esbuild-plugin-svgr@npm:3.1.1":
+  version: 3.1.1
+  resolution: "esbuild-plugin-svgr@npm:3.1.1"
+  dependencies:
+    "@svgr/core": "npm:^8.1.0"
+    "@svgr/plugin-jsx": "npm:^8.1.0"
+  peerDependencies:
+    esbuild: ^0.25.2
+  checksum: 10/917c84b7a2650c4b4450269cbe18372a93ef641e335fb3320bd2f79af234c95c5a2dd8601779e1ca562f0e288d10972fce45ab3f24cbd87334bdcf1efa8c8645
+  languageName: node
+  linkType: hard
+
 "esbuild-register@npm:^3.5.0":
   version: 3.6.0
   resolution: "esbuild-register@npm:3.6.0"
@@ -33050,6 +33062,7 @@ __metadata:
     downshift: "npm:5.4.3"
     entropy-string: "npm:4.2.0"
     esbuild: "npm:0.25.8"
+    esbuild-plugin-svgr: "npm:3.1.1"
     escape-html: "npm:1.0.3"
     eslint: "npm:8.57.0"
     eslint-config-next: "npm:15.3.5"
