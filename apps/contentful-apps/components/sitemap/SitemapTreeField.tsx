@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useDebounce } from 'react-use'
 import type { FieldExtensionSDK } from '@contentful/app-sdk'
+import { FormControl, Radio } from '@contentful/f36-components'
 import { useSDK } from '@contentful/react-apps-toolkit'
 import {
   closestCenter,
@@ -22,6 +23,7 @@ import { EntryContext, useEntryContext } from './entryContext'
 import { SitemapNode } from './SitemapNode'
 import {
   addNode as addNodeUtil,
+  type EntryType,
   findNodes,
   removeNode as removeNodeUtil,
   type Tree,
@@ -41,6 +43,7 @@ export const SitemapTreeField = () => {
       childNodes: [],
     },
   )
+  const [language, setLanguage] = useState<'is-IS' | 'en'>('is-IS')
 
   useDebounce(
     () => {
@@ -58,8 +61,13 @@ export const SitemapTreeField = () => {
   }, [sdk.window, tree.childNodes.length])
 
   const addNode = useCallback(
-    async (parentNode: Tree, type: TreeNodeType, createNew?: boolean) => {
-      await addNodeUtil(parentNode, type, sdk, tree, createNew)
+    async (
+      parentNode: Tree,
+      type: TreeNodeType,
+      createNew?: boolean,
+      entryType?: EntryType,
+    ) => {
+      await addNodeUtil(parentNode, type, sdk, tree, createNew, entryType)
       setTree((prevTree) => ({
         ...prevTree,
       }))
@@ -133,6 +141,31 @@ export const SitemapTreeField = () => {
       >
         <EntryContext.Provider value={useEntryContext()}>
           <div>
+            <div className={styles.languageSelectorContainer}>
+              <FormControl.Label>Language preview</FormControl.Label>
+              <div>
+                <div className={styles.languageSelector}>
+                  <Radio
+                    id="is"
+                    name="language"
+                    value="is"
+                    isChecked={language === 'is-IS'}
+                    onChange={() => setLanguage('is-IS')}
+                  >
+                    Icelandic
+                  </Radio>
+                  <Radio
+                    id="en"
+                    name="language"
+                    value="en"
+                    isChecked={language === 'en'}
+                    onChange={() => setLanguage('en')}
+                  >
+                    English
+                  </Radio>
+                </div>
+              </div>
+            </div>
             <div className={styles.childNodeContainer}>
               {tree.childNodes.map((node) => (
                 <SitemapNode
@@ -144,12 +177,13 @@ export const SitemapTreeField = () => {
                   node={node}
                   root={tree}
                   onMarkEntryAsPrimary={onMarkEntryAsPrimary}
+                  language={language}
                 />
               ))}
               <div className={styles.addNodeButtonContainer}>
                 <AddNodeButton
-                  addNode={(type, createNew) => {
-                    addNode(tree, type, createNew)
+                  addNode={(type, createNew, entryType) => {
+                    addNode(tree, type, createNew, entryType)
                   }}
                 />
               </div>

@@ -1,6 +1,7 @@
 import { useContext, useEffect, useState } from 'react'
+import { EntryProps } from 'contentful-management'
 import type { FieldExtensionSDK } from '@contentful/app-sdk'
-import { DragHandle } from '@contentful/f36-components'
+import { Badge, DragHandle, Text } from '@contentful/f36-components'
 import { ChevronDownIcon, ChevronRightIcon } from '@contentful/f36-icons'
 import { useSDK } from '@contentful/react-apps-toolkit'
 import {
@@ -24,18 +25,83 @@ import { AddNodeButton } from './AddNodeButton'
 import { EditMenu } from './EditMenu'
 import { EntryContext } from './entryContext'
 import { SitemapNodeContent } from './SitemapNodeContent'
-import { Tree, TreeNode, TreeNodeType } from './utils'
+import {
+  CATEGORY_DIALOG_MIN_HEIGHT,
+  type EntryType,
+  optionMap,
+  Tree,
+  TreeNode,
+  TreeNodeType,
+  URL_DIALOG_MIN_HEIGHT,
+} from './utils'
 import * as styles from './SitemapNode.css'
+
+const entryTypeMap = {
+  organizationParentSubpage: 'Organization Parent Subpage',
+  organizationSubpage: 'Organization Subpage',
+}
+
+const getEntryStatus = (
+  node: TreeNode,
+  entries: Record<string, EntryProps>,
+) => {
+  if (node.type !== TreeNodeType.ENTRY) {
+    return ''
+  }
+
+  const entry = entries[node.entryId]
+
+  if (!entry) {
+    return ''
+  }
+
+  const { archivedVersion, publishedVersion, version } = entry.sys
+
+  if (archivedVersion) {
+    return 'archived'
+  }
+
+  if (!publishedVersion) {
+    return 'draft'
+  }
+
+  if (publishedVersion < version - 1) {
+    return 'changed'
+  }
+
+  return 'published'
+}
+
+const getEntryStatusVariant = (
+  entryStatus: ReturnType<typeof getEntryStatus>,
+) => {
+  if (entryStatus === 'archived') {
+    return 'negative'
+  }
+  if (entryStatus === 'draft') {
+    return 'warning'
+  }
+  if (entryStatus === 'changed') {
+    return 'primary'
+  }
+  return 'positive'
+}
 
 interface SitemapNodeProps {
   node: TreeNode
   parentNode: Tree
   root: Tree
   indent?: number
-  addNode: (parentNode: Tree, type: TreeNodeType, createNew?: boolean) => void
+  addNode: (
+    parentNode: Tree,
+    type: TreeNodeType,
+    createNew?: boolean,
+    entryType?: EntryType,
+  ) => void
   removeNode: (parentNode: Tree, idOfNodeToRemove: number) => void
   updateNode: (parentNode: Tree, updatedNode: TreeNode) => void
   onMarkEntryAsPrimary: (nodeId: number, entryId: string) => void
+  language: 'is-IS' | 'en'
 }
 
 export const SitemapNode = ({
@@ -47,12 +113,13 @@ export const SitemapNode = ({
   removeNode,
   updateNode,
   onMarkEntryAsPrimary,
+  language,
 }: SitemapNodeProps) => {
   const sdk = useSDK<FieldExtensionSDK>()
 
   const [showChildNodes, setShowChildNodes] = useState(false)
 
-  const { fetchEntries, updateEntry } = useContext(EntryContext)
+  const { fetchEntries, updateEntry, entries } = useContext(EntryContext)
 
   useEffect(() => {
     const entryNodes = node.childNodes.filter(
@@ -106,25 +173,116 @@ export const SitemapNode = ({
       }
     }
   }
+
+  const entryStatus = getEntryStatus(node, entries)
+
   return (
     <div className={styles.mainContainer}>
       <div className={styles.nodeContainer} ref={setNodeRef} style={style}>
         <DragHandle {...listeners} {...attributes} label="Drag to reorder" />
         <div className={styles.nodeInnerContainer}>
-          <div
-            tabIndex={isClickable ? 0 : undefined}
-            style={{
-              cursor: isClickable ? 'pointer' : undefined,
-              width: '100%',
-            }}
-            onKeyDown={(ev) => {
-              if (ev.key === ' ') {
-                handleClick()
-              }
-            }}
-            onClick={handleClick}
-          >
-            <div className={styles.contentContainer}>
+          <div className={styles.fullWidth}>
+            <div className={styles.nodeTopRowContainer}>
+              <div>
+                <Text fontColor="gray600">
+                  {node.type === TreeNodeType.ENTRY
+                    ? entryTypeMap[
+                        node.contentType ?? 'organizationParentSubpage'
+                      ]
+                    : optionMap[node.type]}
+                </Text>
+              </div>
+              <div className={styles.nodeTopRowContainerRight}>
+                {entryStatus && (
+                  <Badge variant={getEntryStatusVariant(entryStatus)}>
+                    {entryStatus}
+                  </Badge>
+                )}
+                <EditMenu
+                  entryId={
+                    node.type === TreeNodeType.ENTRY ? node.entryId : undefined
+                  }
+                  root={root}
+                  onMarkEntryAsPrimary={onMarkEntryAsPrimary}
+                  isEntryNodePrimaryLocation={
+                    node.type === TreeNodeType.ENTRY && node.primaryLocation
+                  }
+                  entryNodeId={node.id}
+                  onEdit={async () => {
+                    if (node.type === TreeNodeType.ENTRY) {
+                      const entry = await sdk.navigator.openEntry(
+                        node.entryId,
+                        {
+                          slideIn: { waitForClose: true },
+                        },
+                      )
+
+                      if (entry?.entity) {
+                        updateEntry(entry.entity)
+                      }
+
+                      return
+                    }
+
+                    const otherCategories = parentNode.childNodes.filter(
+                      (child) =>
+                        child.type === TreeNodeType.CATEGORY &&
+                        child.id !== node.id,
+                    )
+
+                    const updatedNode = await sdk.dialogs.openCurrentApp({
+                      parameters: {
+                        node,
+                        otherCategorySlugs: otherCategories
+                          .map((child) =>
+                            child.type === TreeNodeType.CATEGORY
+                              ? child.slug
+                              : '',
+                          )
+                          .filter(Boolean),
+                        otherCategorySlugsEN: otherCategories
+                          .map((child) =>
+                            child.type === TreeNodeType.CATEGORY
+                              ? child.slugEN
+                              : '',
+                          )
+                          .filter(Boolean),
+                      },
+                      minHeight:
+                        node.type === TreeNodeType.URL
+                          ? URL_DIALOG_MIN_HEIGHT
+                          : CATEGORY_DIALOG_MIN_HEIGHT,
+                    })
+                    updateNode(parentNode, updatedNode)
+                    return
+                  }}
+                  onRemove={async () => {
+                    const confirmed = await sdk.dialogs.openConfirm({
+                      title: 'Are you sure?',
+                      message: `Entry and everything below it will be removed`,
+                    })
+                    if (!confirmed) {
+                      return
+                    }
+                    removeNode(parentNode, node.id)
+                  }}
+                />
+              </div>
+            </div>
+            <div
+              tabIndex={isClickable ? 0 : undefined}
+              style={{
+                cursor: isClickable ? 'pointer' : undefined,
+                width: '100%',
+              }}
+              onKeyDown={(ev: React.KeyboardEvent<HTMLDivElement>) => {
+                if (ev.key === ' ') {
+                  handleClick()
+                }
+              }}
+              onClick={handleClick}
+              className={styles.contentContainer}
+            >
               <div
                 style={{
                   visibility: isClickable ? 'visible' : 'hidden',
@@ -132,53 +290,8 @@ export const SitemapNode = ({
               >
                 {showChildNodes ? <ChevronDownIcon /> : <ChevronRightIcon />}
               </div>
-              <SitemapNodeContent node={node} />
+              <SitemapNodeContent node={node} language={language} />
             </div>
-          </div>
-          <div>
-            <EditMenu
-              entryId={
-                node.type === TreeNodeType.ENTRY ? node.entryId : undefined
-              }
-              root={root}
-              onMarkEntryAsPrimary={onMarkEntryAsPrimary}
-              isEntryNodePrimaryLocation={
-                node.type === TreeNodeType.ENTRY && node.primaryLocation
-              }
-              entryNodeId={node.id}
-              onEdit={async () => {
-                if (node.type === TreeNodeType.ENTRY) {
-                  const entry = await sdk.navigator.openEntry(node.entryId, {
-                    slideIn: { waitForClose: true },
-                  })
-
-                  if (entry?.entity) {
-                    updateEntry(entry.entity)
-                  }
-
-                  return
-                }
-
-                const updatedNode = await sdk.dialogs.openCurrentApp({
-                  parameters: {
-                    node,
-                  },
-                  minHeight: 400,
-                })
-                updateNode(parentNode, updatedNode)
-                return
-              }}
-              onRemove={async () => {
-                const confirmed = await sdk.dialogs.openConfirm({
-                  title: 'Are you sure?',
-                  message: `Entry and everything below it will be removed`,
-                })
-                if (!confirmed) {
-                  return
-                }
-                removeNode(parentNode, node.id)
-              }}
-            />
           </div>
         </div>
       </div>
@@ -210,12 +323,13 @@ export const SitemapNode = ({
                   indent={indent + 1}
                   root={root}
                   onMarkEntryAsPrimary={onMarkEntryAsPrimary}
+                  language={language}
                 />
               ))}
               <div className={styles.addNodeButtonContainer}>
                 <AddNodeButton
-                  addNode={(type, createNew) => {
-                    addNode(node, type, createNew)
+                  addNode={(type, createNew, entryType) => {
+                    addNode(node, type, createNew, entryType)
                   }}
                   options={
                     indent > 1 || node.type === TreeNodeType.ENTRY
