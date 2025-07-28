@@ -3,6 +3,12 @@ const { esbuildDecorators } = require('@anatine/esbuild-decorators')
 const svgrPlugin = require('esbuild-plugin-svgr')
 
 module.exports = {
+  external: [
+    'dd-trace', 
+    'dd-trace/init',
+    // Add all dd-trace submodules to prevent bundling issues
+    'dd-trace/**'
+  ],
   plugins: [
     // Add eslint plugin for basic emitDecoratorMetadata support.
     // This is required by many features in NestJS.
