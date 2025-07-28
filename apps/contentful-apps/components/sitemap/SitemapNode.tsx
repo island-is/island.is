@@ -174,20 +174,6 @@ export const SitemapNode = ({
     }
   }
 
-  const clickProps = {
-    tabIndex: isClickable ? 0 : undefined,
-    style: {
-      cursor: isClickable ? 'pointer' : undefined,
-      width: '100%',
-    },
-    onKeyDown: (ev: React.KeyboardEvent<HTMLDivElement>) => {
-      if (ev.key === ' ') {
-        handleClick()
-      }
-    },
-    onClick: handleClick,
-  }
-
   const entryStatus = getEntryStatus(node, entries)
 
   return (
@@ -283,7 +269,20 @@ export const SitemapNode = ({
                 />
               </div>
             </div>
-            <div {...clickProps} className={styles.contentContainer}>
+            <div
+              tabIndex={isClickable ? 0 : undefined}
+              style={{
+                cursor: isClickable ? 'pointer' : undefined,
+                width: '100%',
+              }}
+              onKeyDown={(ev: React.KeyboardEvent<HTMLDivElement>) => {
+                if (ev.key === ' ') {
+                  handleClick()
+                }
+              }}
+              onClick={handleClick}
+              className={styles.contentContainer}
+            >
               <div
                 style={{
                   visibility: isClickable ? 'visible' : 'hidden',
