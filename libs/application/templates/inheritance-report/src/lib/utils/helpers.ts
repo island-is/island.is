@@ -11,7 +11,7 @@ import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { MessageDescriptor } from 'react-intl'
 import { ZodTypeAny } from 'zod'
 import type { Answers } from '../../types'
-import { DebtTypes } from '../../types'
+import { DebtTypes } from '../../index'
 import { PrePaidInheritanceOptions } from '../constants'
 import { InheritanceReport } from '../dataSchema'
 
