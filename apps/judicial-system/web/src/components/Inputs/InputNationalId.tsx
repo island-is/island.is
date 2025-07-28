@@ -4,6 +4,7 @@ import { InputMask } from '@react-input/mask'
 
 import { Input } from '@island.is/island-ui/core'
 import { EDITABLE_DATE, SSN } from '@island.is/judicial-system/consts'
+import { formatNationalId } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 
 import { validate } from '../../utils/validate'
@@ -45,8 +46,7 @@ const InputNationalId: FC<Props> = (props) => {
   const { formatMessage } = useIntl()
 
   const [errorMessage, setErrorMessage] = useState<string>()
-  const [inputValue, setInputValue] = useState<string>(value || '')
-
+  const [inputValue, setInputValue] = useState<string>(value ?? '')
   const handleBlur = (
     evt: FocusEvent<HTMLInputElement | HTMLTextAreaElement, Element>,
   ) => {
@@ -73,7 +73,6 @@ const InputNationalId: FC<Props> = (props) => {
     if (evt.target.value) {
       setErrorMessage(undefined)
     }
-
     setInputValue(evt.target.value)
     onChange && onChange(evt.target.value)
   }
@@ -88,7 +87,7 @@ const InputNationalId: FC<Props> = (props) => {
       mask={isDateOfBirth ? EDITABLE_DATE : SSN}
       replacement={{ _: /\d/ }}
       component={Input}
-      value={inputValue ?? value}
+      value={formatNationalId(inputValue)}
       data-testid="inputNationalId"
       onChange={handleChange}
       onBlur={handleBlur}
