@@ -7,19 +7,22 @@
   "tags": ["scope:nest"],
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/services/contentful-entry-tagger",
         "main": "apps/services/contentful-entry-tagger/src/main.ts",
         "tsConfig": "apps/services/contentful-entry-tagger/tsconfig.app.json",
-        "assets": ["apps/services/contentful-entry-tagger/src/assets"]
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"]
       },
       "configurations": {
         "production": {
           "optimization": true,
           "extractLicenses": true,
-          "inspect": false
+          "inspect": false,
+          "assets": ["apps/services/contentful-entry-tagger/src/assets"]
         }
       }
     },

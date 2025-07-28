@@ -8,19 +8,22 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "options": {
         "outputPath": "dist/apps/services/xroad-collector",
         "main": "apps/services/xroad-collector/src/main.ts",
         "tsConfig": "apps/services/xroad-collector/tsconfig.app.json",
-        "assets": ["apps/services/xroad-collector/src/assets"],
-        "maxWorkers": 2
+        "maxWorkers": 2,
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"]
       },
       "configurations": {
         "production": {
           "optimization": true,
           "extractLicenses": true,
-          "inspect": false
+          "inspect": false,
+          "assets": ["apps/services/xroad-collector/src/assets"]
         }
       },
       "outputs": ["{options.outputPath}"]

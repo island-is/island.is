@@ -6,20 +6,23 @@
   "tags": ["scope:nest"],
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "options": {
         "outputPath": "dist/apps/services/cms-importer",
         "main": "apps/services/cms-importer/src/main.ts",
         "tsConfig": "apps/services/cms-importer/tsconfig.app.json",
-        "assets": ["apps/services/cms-importer/src/assets"],
-        "maxWorkers": 2
+        "maxWorkers": 2,
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"]
       },
       "configurations": {
         "development": {},
         "production": {
           "optimization": true,
           "extractLicenses": true,
-          "inspect": false
+          "inspect": false,
+          "assets": ["apps/services/cms-importer/src/assets"]
         }
       },
       "outputs": ["{options.outputPath}"]

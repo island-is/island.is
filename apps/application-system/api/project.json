@@ -8,111 +8,114 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "options": {
         "outputPath": "dist/apps/application-system/api",
         "main": "apps/application-system/api/src/main.ts",
         "tsConfig": "apps/application-system/api/tsconfig.app.json",
-        "assets": [
-          {
-            "glob": "*",
-            "input": "apps/application-system/api/migrations",
-            "output": "./migrations"
-          },
-          {
-            "glob": "*",
-            "input": "apps/application-system/api/seeders",
-            "output": "./seeders"
-          },
-          {
-            "glob": ".sequelizerc",
-            "input": "apps/application-system/api",
-            "output": "./"
-          },
-          {
-            "glob": "sequelize.config.js",
-            "input": "apps/application-system/api",
-            "output": "./"
-          },
-          {
-            "glob": "*",
-            "input": "libs/application/template-api-modules/src/lib/modules/templates/parental-leave/emailGenerators/assets",
-            "output": "./parental-leave-assets"
-          },
-          {
-            "glob": "*",
-            "input": "libs/application/template-api-modules/src/lib/modules/templates/accident-notification/emailGenerators/assets",
-            "output": "./accident-notification-assets"
-          },
-          {
-            "glob": "*",
-            "input": "libs/email-service/src/tools/design",
-            "output": "./email-service-assets"
-          },
-          {
-            "glob": "*",
-            "input": "libs/application/template-api-modules/src/lib/modules/templates/driving-license-submission/emailGenerators/assets",
-            "output": "./driving-license-assets"
-          },
-          {
-            "glob": "*",
-            "input": "libs/application/template-api-modules/src/lib/modules/templates/passport/emailGenerators/assets",
-            "output": "./passport-assets"
-          },
-          {
-            "glob": "*",
-            "input": "libs/application/template-api-modules/src/lib/modules/templates/marriage-conditions-submission/emailGenerators/assets",
-            "output": "./marriage-conditions-assets"
-          },
-          {
-            "glob": "*",
-            "input": "libs/application/template-api-modules/src/lib/modules/templates/transport-authority/transfer-of-vehicle-ownership/emailGenerators/assets",
-            "output": "./transport-authority-transfer-of-vehicle-ownership-assets"
-          },
-          {
-            "glob": "*",
-            "input": "libs/application/template-api-modules/src/lib/modules/templates/transport-authority/change-operator-of-vehicle/emailGenerators/assets",
-            "output": "./transport-authority-change-operator-of-vehicle-assets"
-          },
-          {
-            "glob": "*",
-            "input": "libs/application/template-api-modules/src/lib/modules/templates/transport-authority/change-co-owner-of-vehicle/emailGenerators/assets",
-            "output": "./transport-authority-change-co-owner-of-vehicle-assets"
-          },
-          {
-            "glob": "*",
-            "input": "libs/application/template-api-modules/src/lib/modules/templates/complaints-to-althingi-ombudsman/emailGenerators/assets",
-            "output": "./complaints-to-althingi-ombudsman-assets"
-          },
-          {
-            "glob": "*",
-            "input": "libs/application/template-api-modules/src/lib/modules/templates/aosh/transfer-of-machine-ownership/emailGenerators/assets",
-            "output": "./aosh-transfer-of-machine-ownership-assets"
-          },
-          {
-            "glob": "*",
-            "input": "libs/application/template-api-modules/src/lib/modules/templates/aosh/training-license-on-a-work-machine/emailGenerators/assets",
-            "output": "./aosh-training-license-on-a-work-machine-assets"
-          },
-          {
-            "glob": "*",
-            "input": "libs/application/template-api-modules/src/lib/modules/templates/secondary-school/emailGenerators/assets",
-            "output": "./secondary-school-assets"
-          },
-          {
-            "glob": "*",
-            "input": "libs/application/template-api-modules/src/lib/modules/templates/id-card/emailGenerators/assets",
-            "output": "./id-card-assets"
-          }
-        ],
         "webpackConfig": "apps/application-system/api/webpack.config.js",
-        "maxWorkers": 2
+        "maxWorkers": 2,
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"]
       },
       "configurations": {
         "production": {
           "optimization": true,
           "extractLicenses": true,
-          "inspect": false
+          "inspect": false,
+          "assets": [
+            {
+              "glob": "*",
+              "input": "apps/application-system/api/migrations",
+              "output": "./migrations"
+            },
+            {
+              "glob": "*",
+              "input": "apps/application-system/api/seeders",
+              "output": "./seeders"
+            },
+            {
+              "glob": ".sequelizerc",
+              "input": "apps/application-system/api",
+              "output": "./"
+            },
+            {
+              "glob": "sequelize.config.js",
+              "input": "apps/application-system/api",
+              "output": "./"
+            },
+            {
+              "glob": "*",
+              "input": "libs/application/template-api-modules/src/lib/modules/templates/parental-leave/emailGenerators/assets",
+              "output": "./parental-leave-assets"
+            },
+            {
+              "glob": "*",
+              "input": "libs/application/template-api-modules/src/lib/modules/templates/accident-notification/emailGenerators/assets",
+              "output": "./accident-notification-assets"
+            },
+            {
+              "glob": "*",
+              "input": "libs/email-service/src/tools/design",
+              "output": "./email-service-assets"
+            },
+            {
+              "glob": "*",
+              "input": "libs/application/template-api-modules/src/lib/modules/templates/driving-license-submission/emailGenerators/assets",
+              "output": "./driving-license-assets"
+            },
+            {
+              "glob": "*",
+              "input": "libs/application/template-api-modules/src/lib/modules/templates/passport/emailGenerators/assets",
+              "output": "./passport-assets"
+            },
+            {
+              "glob": "*",
+              "input": "libs/application/template-api-modules/src/lib/modules/templates/marriage-conditions-submission/emailGenerators/assets",
+              "output": "./marriage-conditions-assets"
+            },
+            {
+              "glob": "*",
+              "input": "libs/application/template-api-modules/src/lib/modules/templates/transport-authority/transfer-of-vehicle-ownership/emailGenerators/assets",
+              "output": "./transport-authority-transfer-of-vehicle-ownership-assets"
+            },
+            {
+              "glob": "*",
+              "input": "libs/application/template-api-modules/src/lib/modules/templates/transport-authority/change-operator-of-vehicle/emailGenerators/assets",
+              "output": "./transport-authority-change-operator-of-vehicle-assets"
+            },
+            {
+              "glob": "*",
+              "input": "libs/application/template-api-modules/src/lib/modules/templates/transport-authority/change-co-owner-of-vehicle/emailGenerators/assets",
+              "output": "./transport-authority-change-co-owner-of-vehicle-assets"
+            },
+            {
+              "glob": "*",
+              "input": "libs/application/template-api-modules/src/lib/modules/templates/complaints-to-althingi-ombudsman/emailGenerators/assets",
+              "output": "./complaints-to-althingi-ombudsman-assets"
+            },
+            {
+              "glob": "*",
+              "input": "libs/application/template-api-modules/src/lib/modules/templates/aosh/transfer-of-machine-ownership/emailGenerators/assets",
+              "output": "./aosh-transfer-of-machine-ownership-assets"
+            },
+            {
+              "glob": "*",
+              "input": "libs/application/template-api-modules/src/lib/modules/templates/aosh/training-license-on-a-work-machine/emailGenerators/assets",
+              "output": "./aosh-training-license-on-a-work-machine-assets"
+            },
+            {
+              "glob": "*",
+              "input": "libs/application/template-api-modules/src/lib/modules/templates/secondary-school/emailGenerators/assets",
+              "output": "./secondary-school-assets"
+            },
+            {
+              "glob": "*",
+              "input": "libs/application/template-api-modules/src/lib/modules/templates/id-card/emailGenerators/assets",
+              "output": "./id-card-assets"
+            }
+          ]
         }
       },
       "outputs": ["{options.outputPath}"]

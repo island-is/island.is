@@ -7,19 +7,22 @@
   "tags": ["scope:nest"],
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/download-service",
         "main": "apps/download-service/src/main.ts",
         "tsConfig": "apps/download-service/tsconfig.app.json",
-        "assets": ["apps/download-service/src/assets"]
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"]
       },
       "configurations": {
         "production": {
           "optimization": true,
           "extractLicenses": true,
-          "inspect": false
+          "inspect": false,
+          "assets": ["apps/download-service/src/assets"]
         }
       }
     },

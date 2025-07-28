@@ -6,36 +6,39 @@
   "tags": ["scope:nest"],
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/services/sessions/api",
         "main": "apps/services/sessions/src/main.ts",
         "tsConfig": "apps/services/sessions/tsconfig.app.json",
-        "assets": [
-          {
-            "glob": "*",
-            "input": "apps/services/sessions/migrations",
-            "output": "./migrations"
-          },
-          {
-            "glob": ".sequelizerc",
-            "input": "apps/services/sessions",
-            "output": "./"
-          },
-          {
-            "glob": "sequelize.config.js",
-            "input": "apps/services/sessions",
-            "output": "./"
-          }
-        ]
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"]
       },
       "configurations": {
         "production": {
           "outputPath": "dist/apps/services/sessions",
           "optimization": true,
           "extractLicenses": true,
-          "inspect": false
+          "inspect": false,
+          "assets": [
+            {
+              "glob": "*",
+              "input": "apps/services/sessions/migrations",
+              "output": "./migrations"
+            },
+            {
+              "glob": ".sequelizerc",
+              "input": "apps/services/sessions",
+              "output": "./"
+            },
+            {
+              "glob": "sequelize.config.js",
+              "input": "apps/services/sessions",
+              "output": "./"
+            }
+          ]
         }
       }
     },

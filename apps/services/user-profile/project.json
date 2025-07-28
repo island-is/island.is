@@ -8,41 +8,44 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "options": {
         "outputPath": "dist/apps/services/user-profile",
         "main": "apps/services/user-profile/src/main.ts",
         "tsConfig": "apps/services/user-profile/tsconfig.app.json",
-        "assets": [
-          "apps/services/user-profile/src/assets",
-          {
-            "glob": "*",
-            "input": "apps/services/user-profile/migrations",
-            "output": "./migrations"
-          },
-          {
-            "glob": ".sequelizerc",
-            "input": "apps/services/user-profile",
-            "output": "./"
-          },
-          {
-            "glob": "sequelize.config.js",
-            "input": "apps/services/user-profile",
-            "output": "./"
-          },
-          {
-            "glob": "*",
-            "input": "libs/email-service/src/tools/design",
-            "output": "./email-service-assets"
-          }
-        ],
-        "maxWorkers": 2
+        "maxWorkers": 2,
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"]
       },
       "configurations": {
         "production": {
           "optimization": true,
           "extractLicenses": true,
-          "inspect": false
+          "inspect": false,
+          "assets": [
+            "apps/services/user-profile/src/assets",
+            {
+              "glob": "*",
+              "input": "apps/services/user-profile/migrations",
+              "output": "./migrations"
+            },
+            {
+              "glob": ".sequelizerc",
+              "input": "apps/services/user-profile",
+              "output": "./"
+            },
+            {
+              "glob": "sequelize.config.js",
+              "input": "apps/services/user-profile",
+              "output": "./"
+            },
+            {
+              "glob": "*",
+              "input": "libs/email-service/src/tools/design",
+              "output": "./email-service-assets"
+            }
+          ]
         }
       },
       "outputs": ["{options.outputPath}"]

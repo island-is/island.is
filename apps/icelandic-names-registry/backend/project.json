@@ -7,46 +7,49 @@
   "tags": ["scope:nest"],
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/icelandic-names-registry/backend",
         "main": "apps/icelandic-names-registry/backend/src/main.ts",
         "tsConfig": "apps/icelandic-names-registry/backend/tsconfig.app.json",
-        "assets": [
-          {
-            "glob": "*sequelize*",
-            "input": "apps/icelandic-names-registry/backend",
-            "output": "./"
-          },
-          {
-            "glob": "migrations/**",
-            "input": "apps/icelandic-names-registry/backend",
-            "output": "./"
-          },
-          {
-            "glob": "seeders/**",
-            "input": "apps/icelandic-names-registry/backend",
-            "output": "./"
-          },
-          {
-            "glob": "data/**",
-            "input": "apps/icelandic-names-registry/backend",
-            "output": "./"
-          },
-          {
-            "glob": ".sequelizerc",
-            "input": "apps/icelandic-names-registry/backend",
-            "output": "./"
-          }
-        ],
-        "maxWorkers": 2
+        "maxWorkers": 2,
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"]
       },
       "configurations": {
         "production": {
           "optimization": true,
           "extractLicenses": true,
-          "inspect": false
+          "inspect": false,
+          "assets": [
+            {
+              "glob": "*sequelize*",
+              "input": "apps/icelandic-names-registry/backend",
+              "output": "./"
+            },
+            {
+              "glob": "migrations/**",
+              "input": "apps/icelandic-names-registry/backend",
+              "output": "./"
+            },
+            {
+              "glob": "seeders/**",
+              "input": "apps/icelandic-names-registry/backend",
+              "output": "./"
+            },
+            {
+              "glob": "data/**",
+              "input": "apps/icelandic-names-registry/backend",
+              "output": "./"
+            },
+            {
+              "glob": ".sequelizerc",
+              "input": "apps/icelandic-names-registry/backend",
+              "output": "./"
+            }
+          ]
         }
       }
     },

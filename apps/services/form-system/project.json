@@ -6,36 +6,39 @@
   "tags": ["scope:nest"],
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/services/form-system",
         "main": "apps/services/form-system/src/main.ts",
         "tsConfig": "apps/services/form-system/tsconfig.app.json",
-        "assets": [
-          "apps/services/form-system/src/assets",
-          {
-            "glob": "*",
-            "input": "apps/services/form-system/migrations",
-            "output": "./migrations"
-          },
-          {
-            "glob": ".sequelizerc",
-            "input": "apps/services/form-system",
-            "output": "./"
-          },
-          {
-            "glob": "sequelize.config.js",
-            "input": "apps/services/form-system",
-            "output": "./"
-          }
-        ]
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"]
       },
       "configurations": {
         "production": {
           "optimization": true,
           "extractLicenses": true,
-          "inspect": false
+          "inspect": false,
+          "assets": [
+            "apps/services/form-system/src/assets",
+            {
+              "glob": "*",
+              "input": "apps/services/form-system/migrations",
+              "output": "./migrations"
+            },
+            {
+              "glob": ".sequelizerc",
+              "input": "apps/services/form-system",
+              "output": "./"
+            },
+            {
+              "glob": "sequelize.config.js",
+              "input": "apps/services/form-system",
+              "output": "./"
+            }
+          ]
         }
       }
     },

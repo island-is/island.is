@@ -6,7 +6,7 @@
   "tags": ["scope:nest"],
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "defaultConfiguration": "production",
       "options": {
@@ -15,27 +15,31 @@
         "outputPath": "dist/apps/services/payments",
         "main": "apps/services/payments/src/main.ts",
         "tsConfig": "apps/services/payments/tsconfig.app.json",
-        "assets": [
-          {
-            "glob": "*",
-            "input": "apps/services/payments/migrations",
-            "output": "./migrations"
-          },
-          {
-            "glob": ".sequelizerc",
-            "input": "apps/services/payments",
-            "output": "./"
-          },
-          {
-            "glob": "sequelize.config.js",
-            "input": "apps/services/payments",
-            "output": "./"
-          }
-        ]
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"]
       },
       "configurations": {
         "development": {},
-        "production": {}
+        "production": {
+          "assets": [
+            {
+              "glob": "*",
+              "input": "apps/services/payments/migrations",
+              "output": "./migrations"
+            },
+            {
+              "glob": ".sequelizerc",
+              "input": "apps/services/payments",
+              "output": "./"
+            },
+            {
+              "glob": "sequelize.config.js",
+              "input": "apps/services/payments",
+              "output": "./"
+            }
+          ]
+        }
       }
     },
     "serve": {

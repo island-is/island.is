@@ -8,33 +8,11 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "options": {
         "outputPath": "dist/apps/air-discount-scheme/backend",
         "main": "apps/air-discount-scheme/backend/src/main.ts",
         "tsConfig": "apps/air-discount-scheme/backend/tsconfig.app.json",
-        "assets": [
-          {
-            "glob": "**/*",
-            "input": "apps/air-discount-scheme/backend/src/assets",
-            "output": "assets"
-          },
-          {
-            "input": "apps/air-discount-scheme/backend",
-            "output": ".",
-            "glob": "migrations/**/*"
-          },
-          {
-            "input": "apps/air-discount-scheme/backend",
-            "output": ".",
-            "glob": ".sequelizerc"
-          },
-          {
-            "input": "apps/air-discount-scheme/backend",
-            "output": ".",
-            "glob": "sequelize.config.js"
-          }
-        ],
         "external": [
           "@nestjs/microservices",
           "@nestjs/websockets",
@@ -47,13 +25,38 @@
           "mqtt",
           "redis",
           "pg-native"
-        ]
+        ],
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"]
       },
       "configurations": {
         "production": {
           "optimization": true,
           "extractLicenses": true,
-          "inspect": false
+          "inspect": false,
+          "assets": [
+            {
+              "glob": "**/*",
+              "input": "apps/air-discount-scheme/backend/src/assets",
+              "output": "assets"
+            },
+            {
+              "input": "apps/air-discount-scheme/backend",
+              "output": ".",
+              "glob": "migrations/**/*"
+            },
+            {
+              "input": "apps/air-discount-scheme/backend",
+              "output": ".",
+              "glob": ".sequelizerc"
+            },
+            {
+              "input": "apps/air-discount-scheme/backend",
+              "output": ".",
+              "glob": "sequelize.config.js"
+            }
+          ]
         }
       },
       "outputs": ["{options.outputPath}"]

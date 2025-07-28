@@ -7,19 +7,22 @@
   "tags": ["scope:node"],
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/github-actions-cache",
         "main": "apps/github-actions-cache/src/main.ts",
         "tsConfig": "apps/github-actions-cache/tsconfig.app.json",
-        "assets": ["apps/github-actions-cache/src/assets"]
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"]
       },
       "configurations": {
         "production": {
           "optimization": true,
           "extractLicenses": true,
-          "inspect": false
+          "inspect": false,
+          "assets": ["apps/github-actions-cache/src/assets"]
         }
       }
     },

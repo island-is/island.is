@@ -8,40 +8,43 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "options": {
         "outputPath": "dist/apps/services/university-gateway",
         "main": "apps/services/university-gateway/src/main.ts",
         "tsConfig": "apps/services/university-gateway/tsconfig.app.json",
-        "assets": [
-          {
-            "glob": "*",
-            "input": "apps/services/university-gateway/migrations",
-            "output": "./migrations"
-          },
-          {
-            "glob": "*",
-            "input": "apps/services/university-gateway/seeders",
-            "output": "./seeders"
-          },
-          {
-            "glob": ".sequelizerc",
-            "input": "apps/services/university-gateway",
-            "output": "./"
-          },
-          {
-            "glob": "sequelize.config.js",
-            "input": "apps/services/university-gateway",
-            "output": "./"
-          }
-        ],
-        "maxWorkers": 2
+        "maxWorkers": 2,
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"]
       },
       "configurations": {
         "production": {
           "optimization": true,
           "extractLicenses": true,
-          "inspect": false
+          "inspect": false,
+          "assets": [
+            {
+              "glob": "*",
+              "input": "apps/services/university-gateway/migrations",
+              "output": "./migrations"
+            },
+            {
+              "glob": "*",
+              "input": "apps/services/university-gateway/seeders",
+              "output": "./seeders"
+            },
+            {
+              "glob": ".sequelizerc",
+              "input": "apps/services/university-gateway",
+              "output": "./"
+            },
+            {
+              "glob": "sequelize.config.js",
+              "input": "apps/services/university-gateway",
+              "output": "./"
+            }
+          ]
         }
       },
       "outputs": ["{options.outputPath}"]

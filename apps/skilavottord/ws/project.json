@@ -8,42 +8,45 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "options": {
         "outputPath": "dist/apps/skilavottord/ws",
         "showCircularDependencies": false,
         "main": "apps/skilavottord/ws/src/main.ts",
         "tsConfig": "apps/skilavottord/ws/tsconfig.app.json",
-        "assets": [
-          "apps/skilavottord/ws/src/assets",
-          {
-            "glob": "*",
-            "input": "apps/skilavottord/ws/migrations",
-            "output": "./migrations"
-          },
-          {
-            "glob": "*",
-            "input": "apps/skilavottord/ws/seeders",
-            "output": "./seeders"
-          },
-          {
-            "glob": ".sequelizerc",
-            "input": "apps/skilavottord/ws",
-            "output": "./"
-          },
-          {
-            "glob": "sequelize.config.js",
-            "input": "apps/skilavottord/ws",
-            "output": "./"
-          }
-        ],
-        "maxWorkers": 2
+        "maxWorkers": 2,
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"]
       },
       "configurations": {
         "production": {
           "optimization": true,
           "extractLicenses": true,
-          "inspect": false
+          "inspect": false,
+          "assets": [
+            "apps/skilavottord/ws/src/assets",
+            {
+              "glob": "*",
+              "input": "apps/skilavottord/ws/migrations",
+              "output": "./migrations"
+            },
+            {
+              "glob": "*",
+              "input": "apps/skilavottord/ws/seeders",
+              "output": "./seeders"
+            },
+            {
+              "glob": ".sequelizerc",
+              "input": "apps/skilavottord/ws",
+              "output": "./"
+            },
+            {
+              "glob": "sequelize.config.js",
+              "input": "apps/skilavottord/ws",
+              "output": "./"
+            }
+          ]
         }
       },
       "outputs": ["{options.outputPath}"]
