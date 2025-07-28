@@ -28,8 +28,8 @@ import {
   Case,
   CaseCompletedGuard,
   CaseExistsGuard,
-  CaseReadGuard,
   CaseTypeGuard,
+  CaseWriteGuard,
   CurrentCase,
 } from '../case'
 import { DefendantExistsGuard } from '../defendant'
@@ -39,14 +39,14 @@ import { VerdictExistsGuard } from './guards/verdictExists.guard'
 import { Verdict } from './models/verdict.model'
 import { VerdictService } from './verdict.service'
 
-@Controller('api/case/:caseId/defendant/verdict')
+@Controller('api/case/:caseId')
 @ApiTags('verdicts')
 @UseGuards(
   JwtAuthUserGuard,
   RolesGuard,
   CaseExistsGuard,
   new CaseTypeGuard(indictmentCases),
-  CaseReadGuard,
+  CaseWriteGuard,
   CaseCompletedGuard,
   DefendantExistsGuard,
   VerdictExistsGuard,
@@ -63,7 +63,7 @@ export class VerdictController {
     districtCourtAssistantRule,
     publicProsecutorStaffRule,
   )
-  @Patch(':defendantId')
+  @Patch('defendant/:defendantId/verdict')
   @ApiOkResponse({
     type: Verdict,
     description: 'Updates a verdict',

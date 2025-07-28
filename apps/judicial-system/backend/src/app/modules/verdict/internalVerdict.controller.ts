@@ -36,7 +36,6 @@ import {
   CaseExistsGuard,
   CaseTypeGuard,
   CurrentCase,
-  MinimalCaseExistsGuard,
 } from '../case'
 import { CurrentDefendant, Defendant, DefendantExistsGuard } from '../defendant'
 import { DefendantNationalIdExistsGuard } from '../defendant/guards/defendantNationalIdExists.guard'
@@ -88,7 +87,12 @@ const validateVerdictAppealUpdate = ({
 
 @Controller('api/internal/case/:caseId')
 @ApiTags('internal verdict')
-@UseGuards(TokenGuard)
+@UseGuards(
+  TokenGuard,
+  CaseExistsGuard,
+  new CaseTypeGuard(indictmentCases),
+  CaseCompletedGuard,
+)
 export class InternalVerdictController {
   constructor(
     private readonly verdictService: VerdictService,
@@ -96,13 +100,7 @@ export class InternalVerdictController {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  @UseGuards(
-    CaseExistsGuard,
-    new CaseTypeGuard(indictmentCases),
-    CaseCompletedGuard,
-    DefendantExistsGuard,
-    VerdictExistsGuard,
-  )
+  @UseGuards(DefendantExistsGuard, VerdictExistsGuard)
   @Post([
     `case/:caseId/${
       messageEndpoint[
@@ -160,13 +158,7 @@ export class InternalVerdictController {
     )
   }
 
-  @UseGuards(
-    MinimalCaseExistsGuard,
-    new CaseTypeGuard(indictmentCases),
-    CaseCompletedGuard,
-    DefendantNationalIdExistsGuard,
-    VerdictExistsGuard,
-  )
+  @UseGuards(DefendantNationalIdExistsGuard, VerdictExistsGuard)
   @Patch('defendant/:defendantNationalId/verdict-appeal')
   @ApiOkResponse({
     type: Verdict,
