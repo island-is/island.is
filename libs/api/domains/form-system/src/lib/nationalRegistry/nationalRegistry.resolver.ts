@@ -1,19 +1,11 @@
-import {
-  CurrentUser,
-  IdsUserGuard,
-  type User,
-} from '@island.is/auth-nest-tools'
+import { IdsUserGuard } from '@island.is/auth-nest-tools'
 import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
 import { UseGuards } from '@nestjs/common'
-import {
-  Args,
-  Query,
-  Resolver,
-} from '@nestjs/graphql'
+import { Args, Query, Resolver } from '@nestjs/graphql'
 import { NationalRegistryV3ClientService } from '@island.is/clients/national-registry-v3'
-import { formSystemNameByNationalId } from '../../models/nationalRegistryName.model'
-import { formSystemHomeByNationalId } from '../../models/nationalRegistryHome.model'
+import { FormSystemNameByNationalId } from '../../models/nationalRegistryName.model'
+import { FormSystemHomeByNationalId } from '../../models/nationalRegistryHome.model'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
@@ -21,21 +13,21 @@ import { formSystemHomeByNationalId } from '../../models/nationalRegistryHome.mo
 export class NationalRegistryResolver {
   constructor(private readonly service: NationalRegistryV3ClientService) {}
 
-  @Query(() => formSystemNameByNationalId, {
+  @Query(() => FormSystemNameByNationalId, {
     name: 'formSystemNameByNationalId',
   })
   async getName(
     @Args('input', { type: () => String }) input: string,
-  ): Promise<formSystemNameByNationalId | null> {
+  ): Promise<FormSystemNameByNationalId | null> {
     return this.service.getName(input)
   }
 
-  @Query(() => formSystemHomeByNationalId, {
+  @Query(() => FormSystemHomeByNationalId, {
     name: 'formSystemHomeByNationalId',
   })
   async getAddress(
     @Args('input', { type: () => String }) input: string,
-  ): Promise<formSystemHomeByNationalId | null> {
+  ): Promise<FormSystemHomeByNationalId | null> {
     return this.service.getHousing(input)
   }
 }

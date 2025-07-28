@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class formSystemAddressByNationalId {
+export class FormSystemAddressByNationalId {
   @Field(() => String, { nullable: true })
   husHeiti?: string | null
 
@@ -22,7 +22,7 @@ export class formSystemAddressByNationalId {
 }
 
 @ObjectType()
-export class formSystemHomeByNationalId {
+export class FormSystemHomeByNationalId {
   @Field(() => String, { nullable: true })
   logheimiliskodi?: string | null
 
@@ -32,9 +32,9 @@ export class formSystemHomeByNationalId {
   @Field(() => String, { nullable: true })
   logheimiliskodiSIsl?: string | null
 
-  @Field(() => formSystemAddressByNationalId, { nullable: true })
-  adsetur?: formSystemAddressByNationalId | null
+  @Field(() => FormSystemAddressByNationalId, { nullable: true })
+  adsetur?: FormSystemAddressByNationalId | null
 
-  @Field(() => formSystemAddressByNationalId, { nullable: true })
-  heimilisfang?: formSystemAddressByNationalId | null
+  @Field(() => FormSystemAddressByNationalId, { nullable: true })
+  heimilisfang?: FormSystemAddressByNationalId | null
 }

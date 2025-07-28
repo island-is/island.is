@@ -63,6 +63,10 @@ import { FormUrlsService } from './formUrls/formUrls.service'
     NationalRegistryResolver,
   ],
   exports: [],
-  imports: [FormSystemClientModule, LoggingModule, NationalRegistryV3ClientModule,],
+  imports: [
+    FormSystemClientModule,
+    LoggingModule,
+    NationalRegistryV3ClientModule,
+  ],
 })
 export class FormSystemModule {}

@@ -1,7 +1,7 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
-export class formSystemNameByNationalId {
+export class FormSystemNameByNationalId {
   @Field(() => String, { nullable: true })
   eiginNafn?: string | null
 

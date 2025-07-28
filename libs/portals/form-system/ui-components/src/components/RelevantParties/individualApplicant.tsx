@@ -12,15 +12,22 @@ import { m, webMessages } from '../../lib/messages'
 import { NationalIdField } from './components/nationalIdField'
 
 interface Props {
-  applicantType: FormSystemApplicant,
-  nationalId: string,
-  name: string,
-  address: string,
-  postalCode: string,
+  applicantType: FormSystemApplicant
+  nationalId: string
+  name: string
+  address: string
+  postalCode: string
   lang: 'is' | 'en'
 }
 
-export const IndividualApplicant = ({ applicantType, lang, nationalId, name, address, postalCode }: Props) => {
+export const IndividualApplicant = ({
+  applicantType,
+  lang,
+  nationalId,
+  name,
+  address,
+  postalCode,
+}: Props) => {
   const { formatMessage } = useIntl()
   return (
     <Box marginTop={4}>

@@ -7,9 +7,9 @@ import {
 } from '@island.is/form-system/ui'
 import { useQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
-import { GET_NAME_BY_NATIONALID } from 'libs/portals/form-system/graphql/src/lib/queries/getName'
-import { GET_ADDRESS_BY_NATIONALID } from 'libs/portals/form-system/graphql/src/lib/queries/getAddress'
-import { USER_PROFILE } from 'libs/portals/my-pages/graphql/src/lib/queries/getUserProfile'
+import { GET_NAME_BY_NATIONALID } from '@island.is/form-system/graphql'
+import { GET_ADDRESS_BY_NATIONALID } from '@island.is/form-system/graphql'
+
 interface Props {
   applicantTypes: FormSystemApplicant[]
 }
@@ -17,14 +17,14 @@ interface Props {
 export const Applicants = ({ applicantTypes }: Props) => {
   const { lang } = useLocale()
   const id = '0101302399'
-  const { data, error, loading } = useQuery(GET_NAME_BY_NATIONALID, {
-    variables: { input:  id },
+  const { data } = useQuery(GET_NAME_BY_NATIONALID, {
+    variables: { input: id },
     skip: !id,
     fetchPolicy: 'cache-first',
   })
 
-    const { data: addressData, error: addressError, loading: addressLoading } = useQuery(GET_ADDRESS_BY_NATIONALID, {
-    variables: { input:  id },
+  const { data: addressData } = useQuery(GET_ADDRESS_BY_NATIONALID, {
+    variables: { input: id },
     skip: !id,
     fetchPolicy: 'cache-first',
   })
@@ -43,8 +43,14 @@ export const Applicants = ({ applicantTypes }: Props) => {
               key={applicantType.id}
               nationalId={id || ''}
               name={data?.formSystemNameByNationalId?.fulltNafn || ''}
-              address={addressData?.formSystemHomeByNationalId?.heimilisfang?.husHeiti || ''}
-              postalCode={addressData?.formSystemHomeByNationalId?.heimilisfang?.postnumer || ''}
+              address={
+                addressData?.formSystemHomeByNationalId?.heimilisfang
+                  ?.husHeiti || ''
+              }
+              postalCode={
+                addressData?.formSystemHomeByNationalId?.heimilisfang
+                  ?.postnumer || ''
+              }
             />
           )
         } else if (applicantType.applicantTypeId === agentType) {
