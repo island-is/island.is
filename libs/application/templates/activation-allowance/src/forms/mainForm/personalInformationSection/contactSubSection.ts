@@ -29,6 +29,12 @@ export const contactSubSection = buildSubSection({
             },
           ],
           doesNotRequireAnswer: true,
+          clearOnChange: [
+            'contact.name',
+            'contact.connection',
+            'contact.email',
+            'contact.phone',
+          ],
         }),
         buildTextField({
           id: 'contact.name',

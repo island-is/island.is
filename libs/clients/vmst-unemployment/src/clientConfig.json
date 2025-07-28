@@ -244,43 +244,6 @@
         ]
       }
     },
-    "/api/ActivationGrant/confirm": {
-      "put": {
-        "tags": [
-          "ActivationGrant"
-        ],
-        "operationId": "ActivationGrant_Confirm",
-        "requestBody": {
-          "x-name": "command",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Galdur_Application_Applications_ActivationGrants_Commands_ConfirmCreateActivationGrant_ConfirmCreateActivationGrantCommand"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 1
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Galdur_Domain_Models_Applications_ActivationGrantApplications_ViewModels_ActivationGrantViewModel"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
     "/api/ActivationGrant/canapply/{applicantSSN}": {
       "get": {
         "tags": [
@@ -298,6 +261,80 @@
             "x-position": 1
           }
         ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Models_ActivationGrantValidation_ValidateBeforeActivationGrantDTO"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/ActivationGrant/validate": {
+      "post": {
+        "tags": [
+          "ActivationGrant"
+        ],
+        "operationId": "ActivationGrant_ValidateApplication",
+        "requestBody": {
+          "x-name": "command",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Galdur_Application_Applications_ActivationGrants_Commands_CreateActivationGrant_CreateActivationGrantCommand"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/ActivationGrant/validatebankinformation": {
+      "post": {
+        "tags": [
+          "ActivationGrant"
+        ],
+        "operationId": "ActivationGrant_ValidateBankInformation",
+        "requestBody": {
+          "x-name": "command",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Galdur_Application_Applications_B2B_Queries_ValidateBankInformationQuery"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
         "responses": {
           "200": {
             "description": "",
@@ -1098,14 +1135,6 @@
               }
             ]
           },
-          "applicationAccess": {
-            "nullable": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/Galdur_Domain_Models_Applications_ActivationGrants_DTOs_ActivationGrantAccessDTO"
-              }
-            ]
-          },
           "personalInformation": {
             "nullable": true,
             "oneOf": [
@@ -1233,6 +1262,14 @@
             "oneOf": [
               {
                 "$ref": "#/components/schemas/Galdur_Domain_Models_Applications_UnemploymentApplications_DTOs_CompensationDTO"
+              }
+            ]
+          },
+          "rskLatestIncomeList": {
+            "nullable": true,
+            "oneOf": [
+              {
+                "$ref": "#/components/schemas/Galdur_Domain_Models_RSK_RSKIncomeListListViewModel"
               }
             ]
           }
@@ -2017,16 +2054,6 @@
           }
         ]
       },
-      "Galdur_Domain_Models_Applications_ActivationGrants_DTOs_ActivationGrantAccessDTO": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "canChangeApplicationDate": {
-            "type": "boolean",
-            "description": "Getur breytt umsóknardagsetningu"
-          }
-        }
-      },
       "Galdur_Domain_Models_Applicants_ApplicantProfile_DTOs_PersonalInformation": {
         "type": "object",
         "additionalProperties": false,
@@ -2718,6 +2745,16 @@
             "type": "string",
             "description": "Skrá - Tegund nafn",
             "nullable": true
+          },
+          "created": {
+            "type": "string",
+            "description": "Skrá - Stofnað",
+            "format": "date-time",
+            "nullable": true
+          },
+          "isCreatedByMS": {
+            "type": "boolean",
+            "description": "Skrá - Stofnað af MS"
           }
         }
       },
@@ -4174,6 +4211,45 @@
           }
         }
       },
+      "Galdur_Domain_Models_RSK_RSKIncomeListListViewModel": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "incomeList": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Galdur_Domain_Models_RSK_RSKIncomeListDTO"
+            }
+          }
+        }
+      },
+      "Galdur_Domain_Models_RSK_RSKIncomeListDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "employerSSN": {
+            "type": "string",
+            "nullable": true
+          },
+          "employerName": {
+            "type": "string",
+            "nullable": true
+          },
+          "year": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "month": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "amount": {
+            "type": "number",
+            "format": "decimal"
+          }
+        }
+      },
       "Galdur_Domain_Models_Applications_ActivationGrant_DTOs_ActivationGrantSimpleDTO": {
         "type": "object",
         "additionalProperties": false,
@@ -4248,9 +4324,6 @@
           },
           "external": {
             "type": "boolean"
-          },
-          "liteVersion": {
-            "type": "boolean"
           }
         }
       },
@@ -4264,14 +4337,6 @@
             "oneOf": [
               {
                 "$ref": "#/components/schemas/Galdur_Domain_Models_Applications_ActivationGrantApplications_DTOs_ActivationGrantInformation"
-              }
-            ]
-          },
-          "applicationAccess": {
-            "nullable": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/Galdur_Domain_Models_Applications_ActivationGrants_DTOs_ActivationGrantAccessDTO"
               }
             ]
           },
@@ -4336,15 +4401,6 @@
               }
             ]
           },
-          "childrenSupported": {
-            "description": "Börn á framfæri",
-            "nullable": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/Galdur_Domain_Models_Applicants_ApplicantProfile_DTOs_ChildrenSupported"
-              }
-            ]
-          },
           "bankingPensionUnion": {
             "nullable": true,
             "oneOf": [
@@ -4361,14 +4417,6 @@
               }
             ]
           },
-          "educationalQuestions": {
-            "nullable": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/Galdur_Domain_Models_Applications_UnemploymentApplications_DTOs_EducationalQuestionsDTO"
-              }
-            ]
-          },
           "supportData": {
             "nullable": true,
             "oneOf": [
@@ -4377,25 +4425,10 @@
               }
             ]
           },
-          "assignedEmployees": {
-            "type": "array",
-            "nullable": true,
-            "items": {
-              "$ref": "#/components/schemas/Galdur_Domain_Models_Persons_PersonDTO"
-            }
-          },
           "applicantId": {
             "type": "string",
             "format": "guid",
             "nullable": true
-          },
-          "compensationInformation": {
-            "nullable": true,
-            "oneOf": [
-              {
-                "$ref": "#/components/schemas/Galdur_Domain_Models_Applications_UnemploymentApplications_DTOs_CompensationDTO"
-              }
-            ]
           }
         }
       },
@@ -4424,17 +4457,38 @@
           }
         }
       },
-      "Galdur_Application_Applications_ActivationGrants_Commands_ConfirmCreateActivationGrant_ConfirmCreateActivationGrantCommand": {
+      "Galdur_Domain_Models_ActivationGrantValidation_ValidateBeforeActivationGrantDTO": {
         "type": "object",
         "additionalProperties": false,
         "properties": {
-          "activationGrantId": {
+          "canApplyForActivationGrant": {
+            "type": "boolean"
+          },
+          "reason": {
             "type": "string",
-            "format": "guid",
+            "nullable": true
+          }
+        }
+      },
+      "Galdur_Application_Applications_B2B_Queries_ValidateBankInformationQuery": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "applicantSSN": {
+            "type": "string",
             "nullable": true
           },
-          "isExternal": {
-            "type": "boolean"
+          "bankNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "ledger": {
+            "type": "string",
+            "nullable": true
+          },
+          "accountNumber": {
+            "type": "string",
+            "nullable": true
           }
         }
       },

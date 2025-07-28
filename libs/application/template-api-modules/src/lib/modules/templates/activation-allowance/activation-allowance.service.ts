@@ -3,7 +3,7 @@ import { SharedTemplateApiService } from '../../shared'
 import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
-  GaldurDomainModelsApplicationsUnemploymentApplicationsQueriesUnemploymentApplicationViewModel,
+  GaldurDomainModelsApplicationsActivationGrantApplicationsViewModelsActivationGrantViewModel,
   VmstUnemploymentClientService,
 } from '@island.is/clients/vmst-unemployment'
 import { TemplateApiModuleActionProps } from '../../../types'
@@ -21,12 +21,12 @@ import {
 } from './activation-allowance.utils'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { TemplateApiError } from '@island.is/nest/problem'
 
 @Injectable()
 export class ActivationAllowanceService extends BaseTemplateApiService {
   constructor(
     @Inject(LOGGER_PROVIDER) private logger: Logger,
-    private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly vmstUnemploymentClientService: VmstUnemploymentClientService,
   ) {
     super(ApplicationTypes.ACTIVATION_ALLOWANCE)
@@ -41,13 +41,23 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
 
   async createApplication({
     auth,
-  }: TemplateApiModuleActionProps): Promise<GaldurDomainModelsApplicationsUnemploymentApplicationsQueriesUnemploymentApplicationViewModel> {
+  }: TemplateApiModuleActionProps): Promise<GaldurDomainModelsApplicationsActivationGrantApplicationsViewModelsActivationGrantViewModel> {
     try {
       const application =
-        this.vmstUnemploymentClientService.getEmptyActivationGrantApplication(
+        await this.vmstUnemploymentClientService.getEmptyActivationGrantApplication(
           auth,
         )
 
+      if (!application.canApply) {
+        throw new TemplateApiError(
+          {
+            title: 'Cannot apply, [replace witih contentful msg]',
+            summary: 'Cannot apply, [replace witih contentful msg]',
+          },
+          400,
+        )
+      }
+      // TODO canApply check this...
       return application
     } catch (error) {
       // TODO Inject logger and log
@@ -57,7 +67,6 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
 
   async submitApplication({
     application,
-    auth,
   }: TemplateApiModuleActionProps): Promise<void> {
     const { answers, externalData } = application
     const personalInfo = getApplicantInfo(answers)
@@ -65,9 +74,9 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
     const licenses = getLicenseInfo(answers)
     const jobWishesPayload = getJobWishesInfo(answers)
     const jobHistoryPayload = getJobHistoryInfo(answers)
-    const bankInfo = getBankInfo(answers)
+    const bankInfo = getBankInfo(answers, externalData)
     const languageSkillInfo = getLanguageInfo(answers, externalData)
-    const supportData = getSupportData(externalData)
+    //const supportData = getSupportData(externalData)
     const education = getAcademicInfo(answers)
 
     if (!bankInfo) {
@@ -75,13 +84,13 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
         '[VMST-ActivationAllowance]: Missing payment information fields',
       )
       throw new Error() // TODO Better error or template api error
+    } else if (!languageSkillInfo) {
+      this.logger.warn(
+        '[VMST-ActivationAllowance]: Missing language skills information fields',
+      )
+      throw new Error() // TODO Better error or template api error
     }
-    // else if (!languageSkillInfo) {
-    //   this.logger.warn(
-    //     '[VMST-ActivationAllowance]: Missing language skills information fields',
-    //   )
-    //   throw new Error() // TODO Better error or template api error
-    // } else if (!personalInfo) {
+    //  else if (!personalInfo) {
     //   this.logger.warn(
     //     '[VMST-ActivationAllowance]: Missing personal information fields',
     //   )
@@ -92,12 +101,15 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
       galdurApplicationApplicationsActivationGrantsCommandsCreateActivationGrantCreateActivationGrantCommand:
         {
           activationGrant: {
-            applicationInformation: {}, // Do we use this ?
-            applicationAccess: {}, // Not used ?
+            applicationInformation: {
+              applicationLanguage: 'IS',
+            },
             personalInformation: personalInfo,
-            otherInformation: {}, // Not used ?
+            otherInformation: {
+              canStartAt: new Date(),
+            },
             preferredJobs: {
-              jobs: jobWishesPayload, // Array of object with name, id (do we need name??) remove this comment later
+              jobs: jobWishesPayload,
             },
             educationHistory: {
               education: education,
@@ -114,30 +126,21 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
               ],
               //currentFiles: {} What is this ?
             },
-            childrenSupported: {}, // Not used ?
-            bankingPensionUnion: {
-              //bankdId: bankInfo.bankNumber,
-              //ledgerId: bankInfo.ledger,
-              //accountNumber: bankInfo.accountNumber,
-              // Bunch of other stuff that is not asked for in the application
-            },
+            bankingPensionUnion: bankInfo,
             languageKnowledge: {
               languages: languageSkillInfo,
             },
-            educationalQuestions: {}, // Not used ?
-            //supportData: supportData,
-            assignedEmployees: [], // Not used ?
-            applicantId: '', // Unsure what this is
-            compensationInformation: {}, // Not used?
+            applicantId: null,
           },
           save: true,
+          finalize: true,
         },
     }
 
     //console.log('PAYLOAD', payload)
     try {
       const response =
-        this.vmstUnemploymentClientService.submitActivationGrantApplication(
+        await this.vmstUnemploymentClientService.submitActivationGrantApplication(
           payload,
         )
       console.log('RESPONSIBLEEE', response)

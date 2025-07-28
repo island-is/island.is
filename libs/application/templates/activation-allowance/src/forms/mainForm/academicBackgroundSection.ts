@@ -28,6 +28,7 @@ export const academicBackgroundSection = buildSection({
             levelOfStudy: {
               label: academicBackground.labels.levelOfStudy,
               component: 'select',
+              required: true,
               options: (application, _, locale) => {
                 const education =
                   getValueViaPath<GaldurDomainModelsEducationProgramDTO[]>(
@@ -48,6 +49,7 @@ export const academicBackgroundSection = buildSection({
             degree: {
               label: academicBackground.labels.degree,
               component: 'select',
+              required: true,
               options: (application, activeField, locale) => {
                 const education =
                   getValueViaPath<GaldurDomainModelsEducationProgramDTO[]>(
@@ -100,6 +102,7 @@ export const academicBackgroundSection = buildSection({
               label: academicBackground.labels.endOfStudies,
               component: 'select',
               placeholder: academicBackground.labels.endOfStudiesPlaceholder,
+              required: true,
               disabled: (_application, activeField) => {
                 const isNotFinished =
                   activeField?.isStillStudying as unknown as Array<string>

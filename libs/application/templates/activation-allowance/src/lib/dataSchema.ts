@@ -26,7 +26,7 @@ const applicantSchema = z
     other: z
       .object({
         address: z.string().optional(),
-        postalCode: z.string().optional(),
+        postalCode: z.string().nullish(),
       })
       .optional(),
   })
@@ -60,30 +60,38 @@ const paymentInformationSchema = z.object({
 })
 
 const jobHistorySchema = z.object({
-  companyName: z.string().optional(),
-  jobName: z
-    .string()
-    .nullable()
-    .transform((val) => (val === null ? undefined : val))
-    .optional(),
-  startDate: z.string().optional(),
-  endDate: z.string().optional(),
+  companyName: z.string(),
+  jobName: z.string(),
+  startDate: z.string(),
+  endDate: z.string(),
 })
 
+const jobHistoryArraySchema = z.array(jobHistorySchema)
+
 const jobWishesSchema = z.object({
-  jobs: z.array(z.string()).optional(),
+  jobs: z
+    .array(z.string())
+    .nullish()
+    .transform((val) => val ?? []),
 })
 
 const academicBackgroundSchema = z.object({
   education: z
     .array(
-      z.object({
-        levelOfStudy: z.string().optional(),
-        subject: z.string().optional(),
-        degree: z.string().optional(),
-        endOfStudies: z.string().optional(), // Transform if disabled
-        isStillStudying: z.array(z.enum([YES])).optional(),
-      }),
+      z
+        .object({
+          levelOfStudy: z.string(),
+          degree: z.string(),
+          subject: z.string().nullish(),
+          endOfStudies: z.string().optional(), // Will be transformed
+          isStillStudying: z.array(z.enum([YES])).optional(),
+        })
+        .transform((entry) => ({
+          ...entry,
+          endOfStudies: entry.isStillStudying?.includes(YES)
+            ? undefined
+            : entry.endOfStudies,
+        })),
     )
     .optional(),
 })
@@ -162,7 +170,7 @@ export const ActivationAllowanceAnswersSchema = z.object({
   applicant: applicantSchema,
   contact: contactSchema,
   paymentInformation: paymentInformationSchema,
-  jobHistory: z.array(jobHistorySchema),
+  jobHistory: jobHistoryArraySchema,
   jobWishes: jobWishesSchema,
   academicBackground: academicBackgroundSchema,
   drivingLicenses: drivingLicensesSchema,

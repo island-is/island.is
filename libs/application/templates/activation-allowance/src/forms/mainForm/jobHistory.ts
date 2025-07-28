@@ -33,11 +33,13 @@ export const jobHistorySection = buildSection({
               label: jobHistory.labels.companyName,
               type: 'text',
               width: 'half',
+              required: true,
             },
             jobName: {
               component: 'select',
               label: jobHistory.labels.jobName,
               width: 'half',
+              required: true,
               options: (
                 application: Application,
                 _activeField: Record<string, string> | undefined,
@@ -62,11 +64,13 @@ export const jobHistorySection = buildSection({
               label: jobHistory.labels.startDate,
               width: 'half',
               maxDate: new Date(),
+              required: true,
             },
             endDate: {
               component: 'date',
               label: jobHistory.labels.endDate,
               width: 'half',
+              required: true,
               maxDate: () => {
                 const today = new Date()
                 const endOfMonth = new Date(

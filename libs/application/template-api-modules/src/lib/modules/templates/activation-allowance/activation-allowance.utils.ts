@@ -11,6 +11,7 @@ import {
 } from '@island.is/application/templates/activation-allowance'
 import { ExternalData, FormValue } from '@island.is/application/types'
 import {
+  GaldurDomainModelsApplicantsApplicantProfileDTOsBankingPensionUnion,
   GaldurDomainModelsApplicantsApplicantProfileDTOsDrivingLicense,
   GaldurDomainModelsApplicantsApplicantProfileDTOsEducation,
   GaldurDomainModelsApplicantsApplicantProfileDTOsJob,
@@ -118,12 +119,12 @@ export const getLicenseInfo = (
 
 export const getJobWishesInfo = (
   answers: FormValue,
-): { id: string; name: string }[] | undefined => {
+): { id: string; orderIndex: number }[] | undefined => {
   const jobWishes = getValueViaPath<JobWishesAnswer>(answers, 'jobWishes')
-  const jobWishesPayload = (jobWishes?.jobs || []).map((job) => {
+  const jobWishesPayload = (jobWishes?.jobs || []).map((job, index) => {
     return {
       id: job,
-      name: 'Fetch job name here via id',
+      orderIndex: index + 1,
     }
   })
   return jobWishesPayload
@@ -134,24 +135,41 @@ export const getJobHistoryInfo = (
 ): GaldurDomainModelsApplicantsApplicantProfileDTOsJob[] | undefined => {
   const jobHistoryAnswers =
     getValueViaPath<JobHistoryAnswer[]>(answers, 'jobHistory', []) || []
-  jobHistoryAnswers.map((job) => ({
-    employer: job.companyName,
-    started: parseDateSafe(job.startDate),
-    quit: parseDateSafe(job.endDate),
-    jobName: job.jobName,
-  }))
+  jobHistoryAnswers
+    .map((job) => ({
+      employer: job.companyName,
+      started: parseDateSafe(job.startDate),
+      quit: parseDateSafe(job.endDate),
+      jobName: job.jobName,
+    }))
+    .filter((item) => item.jobName !== null)
 
   return jobHistoryAnswers
 }
 
 export const getBankInfo = (
   answers: FormValue,
-): PaymentInformationAnswer | undefined => {
+  externalData: ExternalData,
+):
+  | GaldurDomainModelsApplicantsApplicantProfileDTOsBankingPensionUnion
+  | undefined => {
   const bankInfo = getValueViaPath<PaymentInformationAnswer>(
     answers,
     'paymentInformation',
   )
-  return bankInfo
+
+  const supportData = getSupportData(externalData)
+
+  const ledgerId = supportData?.ledgers?.find(
+    (ledger) => ledger.number === bankInfo?.ledger,
+  )?.id
+  const bankId = supportData?.banks?.find(
+    (bank) => bank.bankNo === bankInfo?.bankNumber,
+  )?.id
+  const accountNumber = bankInfo?.accountNumber
+  if (!ledgerId || !bankId || !accountNumber) return undefined
+
+  return { bankId, ledgerId, accountNumber }
 }
 
 export const getLanguageInfo = (
