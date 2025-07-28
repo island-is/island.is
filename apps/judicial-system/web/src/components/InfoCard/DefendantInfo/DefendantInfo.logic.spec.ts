@@ -1,6 +1,6 @@
 import { ServiceRequirement } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { getAppealExpirationInfo } from './DefendantInfo'
+import { getAppealExpirationInfo } from './DefendantInfo.logic'
 
 describe('DefendantInfo', () => {
   describe('getAdditionalDataSections', () => {

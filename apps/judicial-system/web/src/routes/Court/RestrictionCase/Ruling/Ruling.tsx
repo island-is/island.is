@@ -1,5 +1,5 @@
 import { useCallback, useContext, useState } from 'react'
-import { IntlShape, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 import formatISO from 'date-fns/formatISO'
 import { useRouter } from 'next/router'
 
@@ -12,7 +12,7 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import { isAcceptingCaseDecision } from '@island.is/judicial-system/types'
 import { core, ruling, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -30,12 +30,7 @@ import {
   RestrictionLength,
   RulingInput,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  Case,
-  CaseDecision,
-  CaseType,
-  Defendant,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { CaseDecision } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   removeTabsValidateAndSet,
   validateAndSendToServer,
@@ -47,66 +42,8 @@ import {
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import { isRulingValidRC } from '@island.is/judicial-system-web/src/utils/validate'
 
-import { rcRuling as m } from './Ruling.strings'
-
-export const getConclusionAutofill = (
-  formatMessage: IntlShape['formatMessage'],
-  workingCase: Case,
-  decision: CaseDecision,
-  defendant: Defendant,
-  validToDate?: string | null,
-  isCustodyIsolation?: boolean | null,
-  isolationToDate?: string | null,
-) => {
-  const isolationEndsBeforeValidToDate =
-    validToDate &&
-    isolationToDate &&
-    new Date(validToDate) > new Date(isolationToDate)
-
-  const defendantDOB = formatDOB(
-    defendant.nationalId,
-    defendant.noNationalId,
-    '',
-  )
-
-  return decision === CaseDecision.DISMISSING
-    ? formatMessage(m.sections.conclusion.dismissingAutofill, {
-        defendantName: defendant.name,
-        isExtended:
-          workingCase.parentCase &&
-          isAcceptingCaseDecision(workingCase.parentCase.decision),
-        caseType: workingCase.type,
-      })
-    : decision === CaseDecision.REJECTING
-    ? formatMessage(m.sections.conclusion.rejectingAutofill, {
-        defendantName: defendant.name,
-        defendantDOB: defendantDOB ? `, ${defendantDOB}, ` : ', ',
-        isExtended:
-          workingCase.parentCase &&
-          isAcceptingCaseDecision(workingCase.parentCase.decision),
-        caseType: workingCase.type,
-      })
-    : formatMessage(m.sections.conclusion.acceptingAutofill, {
-        defendantName: defendant.name,
-        defendantDOB: defendantDOB ? `, ${defendantDOB}, ` : ', ',
-        isExtended:
-          workingCase.parentCase &&
-          isAcceptingCaseDecision(workingCase.parentCase.decision) &&
-          decision !== CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN,
-        caseType:
-          decision === CaseDecision.ACCEPTING_ALTERNATIVE_TRAVEL_BAN
-            ? CaseType.TRAVEL_BAN
-            : workingCase.type,
-        validToDate: `${formatDate(validToDate, 'PPPPp')
-          ?.replace('dagur,', 'dagsins')
-          ?.replace(' kl.', ', kl.')}`,
-        hasIsolation: isAcceptingCaseDecision(decision) && isCustodyIsolation,
-        isolationEndsBeforeValidToDate,
-        isolationToDate: formatDate(isolationToDate, 'PPPPp')
-          ?.replace('dagur,', 'dagsins')
-          ?.replace(' kl.', ', kl.'),
-      })
-}
+import { getConclusionAutofill } from './Ruling.logic'
+import { strings } from './Ruling.strings'
 
 export const Ruling = () => {
   const {
@@ -142,7 +79,7 @@ export const Ruling = () => {
     setAndSendCaseToServer(
       [
         {
-          introduction: formatMessage(m.sections.introduction.autofill, {
+          introduction: formatMessage(strings.sections.introduction.autofill, {
             date: formatDate(workingCase.arraignmentDate?.date, 'PPP'),
           }),
           prosecutorDemands: workingCase.demands,
@@ -338,7 +275,7 @@ export const Ruling = () => {
     >
       <PageHeader title={formatMessage(titles.court.restrictionCases.ruling)} />
       <FormContentContainer>
-        <PageTitle>{formatMessage(m.title)}</PageTitle>
+        <PageTitle>{formatMessage(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
         <Box component="section" marginBottom={5}>
           <Accordion>
@@ -354,15 +291,17 @@ export const Ruling = () => {
           <Box component="section" marginBottom={5}></Box>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              {formatMessage(m.sections.introduction.title)}
+              {formatMessage(strings.sections.introduction.title)}
             </Text>
           </Box>
           <Input
             data-testid="introduction"
             name="introduction"
-            label={formatMessage(m.sections.introduction.label)}
+            label={formatMessage(strings.sections.introduction.label)}
             value={workingCase.introduction || ''}
-            placeholder={formatMessage(m.sections.introduction.placeholder)}
+            placeholder={formatMessage(
+              strings.sections.introduction.placeholder,
+            )}
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'introduction',
@@ -394,16 +333,16 @@ export const Ruling = () => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              {formatMessage(m.sections.prosecutorDemands.title)}
+              {formatMessage(strings.sections.prosecutorDemands.title)}
             </Text>
           </Box>
           <Input
             data-testid="prosecutorDemands"
             name="prosecutorDemands"
-            label={formatMessage(m.sections.prosecutorDemands.label)}
+            label={formatMessage(strings.sections.prosecutorDemands.label)}
             value={workingCase.prosecutorDemands || ''}
             placeholder={formatMessage(
-              m.sections.prosecutorDemands.placeholder,
+              strings.sections.prosecutorDemands.placeholder,
             )}
             onChange={(event) =>
               removeTabsValidateAndSet(
@@ -436,9 +375,9 @@ export const Ruling = () => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              {`${formatMessage(m.sections.courtCaseFacts.title)} `}
+              {`${formatMessage(strings.sections.courtCaseFacts.title)} `}
               <Tooltip
-                text={formatMessage(m.sections.courtCaseFacts.tooltip)}
+                text={formatMessage(strings.sections.courtCaseFacts.tooltip)}
               />
             </Text>
           </Box>
@@ -446,9 +385,11 @@ export const Ruling = () => {
             <Input
               data-testid="courtCaseFacts"
               name="courtCaseFacts"
-              label={formatMessage(m.sections.courtCaseFacts.label)}
+              label={formatMessage(strings.sections.courtCaseFacts.label)}
               value={workingCase.courtCaseFacts || ''}
-              placeholder={formatMessage(m.sections.courtCaseFacts.placeholder)}
+              placeholder={formatMessage(
+                strings.sections.courtCaseFacts.placeholder,
+              )}
               onChange={(event) =>
                 removeTabsValidateAndSet(
                   'courtCaseFacts',
@@ -481,9 +422,11 @@ export const Ruling = () => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              {`${formatMessage(m.sections.courtLegalArguments.title)} `}
+              {`${formatMessage(strings.sections.courtLegalArguments.title)} `}
               <Tooltip
-                text={formatMessage(m.sections.courtLegalArguments.tooltip)}
+                text={formatMessage(
+                  strings.sections.courtLegalArguments.tooltip,
+                )}
               />
             </Text>
           </Box>
@@ -491,10 +434,10 @@ export const Ruling = () => {
             <Input
               data-testid="courtLegalArguments"
               name="courtLegalArguments"
-              label={formatMessage(m.sections.courtLegalArguments.label)}
+              label={formatMessage(strings.sections.courtLegalArguments.label)}
               value={workingCase.courtLegalArguments || ''}
               placeholder={formatMessage(
-                m.sections.courtLegalArguments.placeholder,
+                strings.sections.courtLegalArguments.placeholder,
               )}
               onChange={(event) =>
                 removeTabsValidateAndSet(
@@ -528,7 +471,7 @@ export const Ruling = () => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              {formatMessage(m.sections.ruling.title)}
+              {formatMessage(strings.sections.ruling.title)}
             </Text>
           </Box>
           <RulingInput
@@ -539,7 +482,7 @@ export const Ruling = () => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={3}>
             <Text as="h3" variant="h3">
-              {formatMessage(m.sections.decision.title)}
+              {formatMessage(strings.sections.decision.title)}
             </Text>
           </Box>
           <Box marginBottom={5}>
@@ -651,15 +594,15 @@ export const Ruling = () => {
         <Box component="section" marginBottom={5}>
           <Box marginBottom={2}>
             <Text as="h3" variant="h3">
-              {formatMessage(m.sections.conclusion.title)}
+              {formatMessage(strings.sections.conclusion.title)}
             </Text>
           </Box>
           <Input
             name="conclusion"
             data-testid="conclusion"
-            label={formatMessage(m.sections.conclusion.label)}
+            label={formatMessage(strings.sections.conclusion.label)}
             value={workingCase.conclusion || ''}
-            placeholder={formatMessage(m.sections.conclusion.placeholder)}
+            placeholder={formatMessage(strings.sections.conclusion.placeholder)}
             onChange={(event) =>
               removeTabsValidateAndSet(
                 'conclusion',

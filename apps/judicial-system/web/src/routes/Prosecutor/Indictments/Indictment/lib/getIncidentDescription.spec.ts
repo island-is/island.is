@@ -4,11 +4,13 @@ import {
   IndictmentSubtype,
   Offense,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { formatMessage } from '@island.is/judicial-system-web/src/utils/testHelpers'
+import { createFormatMessage } from '@island.is/judicial-system-web/src/utils/testHelpers.logic'
 
 import { getIncidentDescription } from './getIncidentDescription'
 
 describe('getIncidentDescription', () => {
+  const formatMessage = createFormatMessage()
+
   test('should return an empty string if there are no offenses in traffic violations', () => {
     const result = getIncidentDescription(
       {
