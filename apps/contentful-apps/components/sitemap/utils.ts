@@ -139,10 +139,13 @@ export const addNode = async (
   let entryId = ''
 
   let label = ''
+  let labelEN = ''
   let slug = ''
+  let slugEN = ''
   let description = ''
-
+  let descriptionEN = ''
   let url = ''
+  let urlEN = ''
 
   if (type === TreeNodeType.ENTRY) {
     if (createNew) {
@@ -181,6 +184,10 @@ export const addNode = async (
       entryId = entry.sys.id
     }
   } else if (type === TreeNodeType.CATEGORY) {
+    const otherCategories = parentNode.childNodes.filter(
+      (child) => child.type === TreeNodeType.CATEGORY,
+    )
+
     const data = await sdk.dialogs.openCurrentApp({
       parameters: {
         node: {
@@ -188,7 +195,20 @@ export const addNode = async (
           label: '',
           description: '',
           slug: '',
+          labelEN: '',
+          slugEN: '',
+          descriptionEN: '',
         },
+        otherCategorySlugs: otherCategories
+          .map((child) =>
+            child.type === TreeNodeType.CATEGORY ? child.slug : '',
+          )
+          .filter(Boolean),
+        otherCategorySlugsEN: otherCategories
+          .map((child) =>
+            child.type === TreeNodeType.CATEGORY ? child.slugEN : '',
+          )
+          .filter(Boolean),
       },
       minHeight: CATEGORY_DIALOG_MIN_HEIGHT,
     })
@@ -198,8 +218,11 @@ export const addNode = async (
     }
 
     label = data.label
+    labelEN = data.labelEN
     slug = data.slug
+    slugEN = data.slugEN
     description = data.description
+    descriptionEN = data.descriptionEN
   } else if (type === TreeNodeType.URL) {
     const data = await sdk.dialogs.openCurrentApp({
       parameters: {
@@ -216,7 +239,9 @@ export const addNode = async (
     }
 
     label = data.label
+    labelEN = data.labelEN
     url = data.url
+    urlEN = data.urlEN
   }
 
   const node: TreeNode = {
@@ -226,6 +251,7 @@ export const addNode = async (
       ? {
           type: TreeNodeType.ENTRY,
           entryId,
+          contentType: entryType,
           // It's the primary location if the same entry isn't already present in the sitemap
           primaryLocation: !findNode(
             root,
@@ -238,13 +264,18 @@ export const addNode = async (
       ? {
           type: TreeNodeType.CATEGORY,
           label,
+          labelEN,
           slug,
+          slugEN,
           description,
+          descriptionEN,
         }
       : {
           type: TreeNodeType.URL,
           label,
+          labelEN,
           url,
+          urlEN,
         }),
   }
   parentNode.childNodes = [...parentNode.childNodes].concat(node)

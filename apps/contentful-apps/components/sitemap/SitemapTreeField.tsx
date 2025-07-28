@@ -152,7 +152,7 @@ export const SitemapTreeField = () => {
                     isChecked={language === 'is-IS'}
                     onChange={() => setLanguage('is-IS')}
                   >
-                    IS
+                    Icelandic
                   </Radio>
                   <Radio
                     id="en"
@@ -161,7 +161,7 @@ export const SitemapTreeField = () => {
                     isChecked={language === 'en'}
                     onChange={() => setLanguage('en')}
                   >
-                    EN
+                    English
                   </Radio>
                 </div>
               </div>

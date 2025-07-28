@@ -36,6 +36,11 @@ import {
 } from './utils'
 import * as styles from './SitemapNode.css'
 
+const entryTypeMap = {
+  organizationParentSubpage: 'Organization Parent Subpage',
+  organizationSubpage: 'Organization Subpage',
+}
+
 const getEntryStatus = (
   node: TreeNode,
   entries: Record<string, EntryProps>,
@@ -193,7 +198,13 @@ export const SitemapNode = ({
           <div className={styles.fullWidth}>
             <div className={styles.nodeTopRowContainer}>
               <div>
-                <Text fontColor="gray600">{optionMap[node.type]}</Text>
+                <Text fontColor="gray600">
+                  {node.type === TreeNodeType.ENTRY
+                    ? entryTypeMap[
+                        node.contentType ?? 'organizationParentSubpage'
+                      ]
+                    : optionMap[node.type]}
+                </Text>
               </div>
               <div className={styles.nodeTopRowContainerRight}>
                 {entryStatus && (
@@ -227,9 +238,29 @@ export const SitemapNode = ({
                       return
                     }
 
+                    const otherCategories = parentNode.childNodes.filter(
+                      (child) =>
+                        child.type === TreeNodeType.CATEGORY &&
+                        child.id !== node.id,
+                    )
+
                     const updatedNode = await sdk.dialogs.openCurrentApp({
                       parameters: {
                         node,
+                        otherCategorySlugs: otherCategories
+                          .map((child) =>
+                            child.type === TreeNodeType.CATEGORY
+                              ? child.slug
+                              : '',
+                          )
+                          .filter(Boolean),
+                        otherCategorySlugsEN: otherCategories
+                          .map((child) =>
+                            child.type === TreeNodeType.CATEGORY
+                              ? child.slugEN
+                              : '',
+                          )
+                          .filter(Boolean),
                       },
                       minHeight:
                         node.type === TreeNodeType.URL
