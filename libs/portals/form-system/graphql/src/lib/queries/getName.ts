@@ -1,13 +1,11 @@
 import { gql } from '@apollo/client'
-import { IndividualFragment } from '../fragments/individual'
 
 export const GET_NAME_BY_NATIONALID = gql`
-  query GetNameByNationalId(
+  query formSystemNameByNationalId(
     $input: String!
     ) {
     formSystemNameByNationalId(input: $input) {
-      fullName
+      fulltNafn
     }
   }
-
 `

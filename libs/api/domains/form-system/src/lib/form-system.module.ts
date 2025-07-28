@@ -26,8 +26,8 @@ import { TranslationsService } from './translations/translations.service'
 import { TranslationsResolver } from './translations/translations.resolver'
 import { OrganizationUrlsResolver } from './organizationUrls/organizationUrls.resolver'
 import { OrganizationUrlsService } from './organizationUrls/organizationUrls.service'
-import { NationalRegistryModule, NationalRegistryService } from '@island.is/api/domains/national-registry'
-import { NationalRegistryResolver } from './nationalId/nationalId.resolver'
+import { NationalRegistryResolver } from './nationalRegistry/nationalRegistry.resolver'
+import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
 
 @Module({
   providers: [
@@ -59,6 +59,6 @@ import { NationalRegistryResolver } from './nationalId/nationalId.resolver'
     NationalRegistryResolver,
   ],
   exports: [],
-  imports: [FormSystemClientModule, LoggingModule, NationalRegistryModule,],
+  imports: [FormSystemClientModule, LoggingModule, NationalRegistryV3ClientModule,],
 })
 export class FormSystemModule {}

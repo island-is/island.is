@@ -12,20 +12,23 @@ import { m, webMessages } from '../../lib/messages'
 import { NationalIdField } from './components/nationalIdField'
 
 interface Props {
-  applicantType: FormSystemApplicant
+  applicantType: FormSystemApplicant,
+  nationalId: string,
+  name: string,
+  address: string,
+  postalCode: string,
   lang: 'is' | 'en'
 }
 
-export const IndividualApplicant = ({ applicantType, lang }: Props) => {
+export const IndividualApplicant = ({ applicantType, lang, nationalId, name, address, postalCode }: Props) => {
   const { formatMessage } = useIntl()
-
   return (
     <Box marginTop={4}>
       <Text variant="h2" as="h2" marginBottom={3}>
         {applicantType?.name?.[lang]}
       </Text>
       <Stack space={2}>
-        <NationalIdField disabled={true} />
+        <NationalIdField disabled={true} nationalId={nationalId} name={name} />
         <GridRow>
           <GridColumn span={['12/12', '12/12', '6/12', '6/12']}>
             <Input
@@ -33,6 +36,7 @@ export const IndividualApplicant = ({ applicantType, lang }: Props) => {
               name="address"
               placeholder={formatMessage(m.address)}
               disabled={true}
+              value={address}
             />
           </GridColumn>
           <GridColumn span={['12/12', '12/12', '6/12', '6/12']}>
@@ -42,6 +46,7 @@ export const IndividualApplicant = ({ applicantType, lang }: Props) => {
                 name="postalCode"
                 placeholder={formatMessage(webMessages.postalCode)}
                 disabled={true}
+                value={postalCode}
               />
             </Box>
           </GridColumn>

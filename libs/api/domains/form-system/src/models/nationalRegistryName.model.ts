@@ -1,19 +1,22 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType('Name')
-export class Name {
+@ObjectType()
+export class formSystemNameByNationalId {
   @Field(() => String, { nullable: true })
-  firstName?: string | null
+  eiginNafn?: string | null
 
   @Field(() => String, { nullable: true })
-  middleName?: string | null
+  milliNafn?: string | null
 
   @Field(() => String, { nullable: true })
-  lastName?: string | null
+  kenniNafn?: string | null
 
   @Field(() => String, { nullable: true })
-  fullName?: string | null
+  fulltNafn?: string | null
 
   @Field(() => String, { nullable: true })
-  displayName?: string | null
+  nafnStadfest?: string | null
+
+  @Field(() => String, { nullable: true })
+  birtNafn?: string | null
 }

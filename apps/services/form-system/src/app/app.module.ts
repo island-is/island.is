@@ -18,6 +18,13 @@ import { OrganizationUrlsModule } from './modules/organizationUrls/organizationU
 import { FormUrlsModule } from './modules/formUrls/formUrls.module'
 import { ServicesModule } from './modules/services/services.module'
 import { OrganizationPermissionsModule } from './modules/organizationPermissions/organizationPermissions.module'
+import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
+import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
+import {
+  ConfigModule,
+  IdsClientConfig,
+  XRoadConfig,
+} from '@island.is/nest/config'
 
 @Module({
   imports: [
@@ -40,6 +47,13 @@ import { OrganizationPermissionsModule } from './modules/organizationPermissions
     OrganizationPermissionsModule,
     OrganizationUrlsModule,
     ServicesModule,
+    ConfigModule.forRoot({
+      isGlobal: true,
+      load: [
+        NationalRegistryV3ClientConfig,
+        XRoadConfig,
+      ],
+    }),
   ],
 })
 export class AppModule {}
