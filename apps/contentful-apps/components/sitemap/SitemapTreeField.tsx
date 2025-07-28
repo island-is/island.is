@@ -1,6 +1,7 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useDebounce } from 'react-use'
 import type { FieldExtensionSDK } from '@contentful/app-sdk'
+import { FormControl, Radio } from '@contentful/f36-components'
 import { useSDK } from '@contentful/react-apps-toolkit'
 import {
   closestCenter,
@@ -42,6 +43,7 @@ export const SitemapTreeField = () => {
       childNodes: [],
     },
   )
+  const [language, setLanguage] = useState<'is-IS' | 'en'>('is-IS')
 
   useDebounce(
     () => {
@@ -139,6 +141,31 @@ export const SitemapTreeField = () => {
       >
         <EntryContext.Provider value={useEntryContext()}>
           <div>
+            <div className={styles.languageSelectorContainer}>
+              <FormControl.Label>Language preview</FormControl.Label>
+              <div>
+                <div className={styles.languageSelector}>
+                  <Radio
+                    id="is"
+                    name="language"
+                    value="is"
+                    isChecked={language === 'is-IS'}
+                    onChange={() => setLanguage('is-IS')}
+                  >
+                    IS
+                  </Radio>
+                  <Radio
+                    id="en"
+                    name="language"
+                    value="en"
+                    isChecked={language === 'en'}
+                    onChange={() => setLanguage('en')}
+                  >
+                    EN
+                  </Radio>
+                </div>
+              </div>
+            </div>
             <div className={styles.childNodeContainer}>
               {tree.childNodes.map((node) => (
                 <SitemapNode
@@ -150,6 +177,7 @@ export const SitemapTreeField = () => {
                   node={node}
                   root={tree}
                   onMarkEntryAsPrimary={onMarkEntryAsPrimary}
+                  language={language}
                 />
               ))}
               <div className={styles.addNodeButtonContainer}>

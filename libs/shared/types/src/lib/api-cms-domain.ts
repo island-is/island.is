@@ -38,13 +38,19 @@ export type SitemapTreeNode = SitemapTree &
     | {
         type: SitemapTreeNodeType.CATEGORY
         label: string
+        labelEN?: string
         slug: string
+        slugEN?: string
         description: string
+        descriptionEN?: string
       }
     | {
         type: SitemapTreeNodeType.URL
         label: string
+        labelEN?: string
         url: string
+        urlEN?: string
+        urlType?: 'custom'
       }
   )
 

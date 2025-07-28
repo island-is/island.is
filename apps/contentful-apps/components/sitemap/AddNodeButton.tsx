@@ -1,13 +1,7 @@
 import { Button, Menu } from '@contentful/f36-components'
 import { ChevronDownIcon, PlusIcon } from '@contentful/f36-icons'
 
-import { type EntryType, TreeNodeType } from './utils'
-
-const optionMap = {
-  [TreeNodeType.CATEGORY]: 'Category',
-  [TreeNodeType.ENTRY]: 'Page',
-  [TreeNodeType.URL]: 'URL',
-}
+import { type EntryType, optionMap, TreeNodeType } from './utils'
 
 interface AddNodeButtonProps {
   addNode: (

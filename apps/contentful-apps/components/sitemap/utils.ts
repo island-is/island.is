@@ -15,6 +15,15 @@ export const ENTRY_CONTENT_TYPE_IDS: EntryType[] = [
   'organizationSubpage',
 ]
 
+export const optionMap = {
+  [TreeNodeType.CATEGORY]: 'Category',
+  [TreeNodeType.ENTRY]: 'Page',
+  [TreeNodeType.URL]: 'Link',
+}
+
+export const URL_DIALOG_MIN_HEIGHT = 520
+export const CATEGORY_DIALOG_MIN_HEIGHT = 700
+
 const getHighestId = (tree: Tree) => {
   let highestId = tree.id
   for (const child of tree.childNodes) {
@@ -181,7 +190,7 @@ export const addNode = async (
           slug: '',
         },
       },
-      minHeight: 400,
+      minHeight: CATEGORY_DIALOG_MIN_HEIGHT,
     })
 
     if (!data) {
@@ -199,7 +208,7 @@ export const addNode = async (
           url: '',
         },
       },
-      minHeight: 400,
+      minHeight: URL_DIALOG_MIN_HEIGHT,
     })
 
     if (!data) {

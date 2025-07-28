@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from 'react'
 import { EntryProps } from 'contentful-management'
-import capitalize from 'lodash/capitalize'
 import type { FieldExtensionSDK } from '@contentful/app-sdk'
 import { Badge, DragHandle, Text } from '@contentful/f36-components'
 import { ChevronDownIcon, ChevronRightIcon } from '@contentful/f36-icons'
@@ -26,7 +25,15 @@ import { AddNodeButton } from './AddNodeButton'
 import { EditMenu } from './EditMenu'
 import { EntryContext } from './entryContext'
 import { SitemapNodeContent } from './SitemapNodeContent'
-import { type EntryType, Tree, TreeNode, TreeNodeType } from './utils'
+import {
+  CATEGORY_DIALOG_MIN_HEIGHT,
+  type EntryType,
+  optionMap,
+  Tree,
+  TreeNode,
+  TreeNodeType,
+  URL_DIALOG_MIN_HEIGHT,
+} from './utils'
 import * as styles from './SitemapNode.css'
 
 const getEntryStatus = (
@@ -89,6 +96,7 @@ interface SitemapNodeProps {
   removeNode: (parentNode: Tree, idOfNodeToRemove: number) => void
   updateNode: (parentNode: Tree, updatedNode: TreeNode) => void
   onMarkEntryAsPrimary: (nodeId: number, entryId: string) => void
+  language: 'is-IS' | 'en'
 }
 
 export const SitemapNode = ({
@@ -100,6 +108,7 @@ export const SitemapNode = ({
   removeNode,
   updateNode,
   onMarkEntryAsPrimary,
+  language,
 }: SitemapNodeProps) => {
   const sdk = useSDK<FieldExtensionSDK>()
 
@@ -184,7 +193,7 @@ export const SitemapNode = ({
           <div className={styles.fullWidth}>
             <div className={styles.nodeTopRowContainer}>
               <div>
-                <Text fontColor="gray600">{capitalize(node.type)}</Text>
+                <Text fontColor="gray600">{optionMap[node.type]}</Text>
               </div>
               <div className={styles.nodeTopRowContainerRight}>
                 {entryStatus && (
@@ -222,7 +231,10 @@ export const SitemapNode = ({
                       parameters: {
                         node,
                       },
-                      minHeight: 400,
+                      minHeight:
+                        node.type === TreeNodeType.URL
+                          ? URL_DIALOG_MIN_HEIGHT
+                          : CATEGORY_DIALOG_MIN_HEIGHT,
                     })
                     updateNode(parentNode, updatedNode)
                     return
@@ -248,7 +260,7 @@ export const SitemapNode = ({
               >
                 {showChildNodes ? <ChevronDownIcon /> : <ChevronRightIcon />}
               </div>
-              <SitemapNodeContent node={node} />
+              <SitemapNodeContent node={node} language={language} />
             </div>
           </div>
         </div>
@@ -281,6 +293,7 @@ export const SitemapNode = ({
                   indent={indent + 1}
                   root={root}
                   onMarkEntryAsPrimary={onMarkEntryAsPrimary}
+                  language={language}
                 />
               ))}
               <div className={styles.addNodeButtonContainer}>
