@@ -110,17 +110,18 @@ const CategoryForm = ({
       </div>
       <div>
         <FormControl.Label>Description (English)</FormControl.Label>
-      </div>
-      <div>
-        <Textarea
-          value={state.descriptionEN}
-          onChange={(ev) => {
-            setState((prevState) => ({
-              ...prevState,
-              descriptionEN: ev.target.value,
-            }))
-          }}
-        />
+
+        <div>
+          <Textarea
+            value={state.descriptionEN}
+            onChange={(ev) => {
+              setState((prevState) => ({
+                ...prevState,
+                descriptionEN: ev.target.value,
+              }))
+            }}
+          />
+        </div>
       </div>
       <Button
         variant="primary"
