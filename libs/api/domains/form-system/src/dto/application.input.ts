@@ -93,6 +93,9 @@ export class ApplicationInput {
   @Field(() => String, { nullable: true })
   status?: string
 
+  @Field(() => Boolean, { nullable: true })
+  stopProgressOnValidatingScreen?: boolean
+
   @Field(() => [ApplicationEventDtoInput], { nullable: 'itemsAndList' })
   events?: ApplicationEventDtoInput[]
 

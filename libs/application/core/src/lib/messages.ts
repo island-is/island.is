@@ -429,6 +429,12 @@ export const coreErrorMessages = defineMessages({
       'Skrárnar eru samtals of stórar. Hægt er að hlaða inn skrám sem eru samtals {maxSizeInMb}MB eða minni.',
     description: 'Error message when sum of file sizes exceeds max size limit',
   },
+  fileMaxCountLimitExceeded: {
+    id: 'application.system:core.error.file.maxCountLimitExceeded',
+    defaultMessage:
+      'Of margar skrár. Mest er hægt að hlaða inn {maxFileCount} skrám.',
+    description: 'Error message when file count exceeds max count limit',
+  },
   fileInvalidExtension: {
     id: 'application.system:core.error.file.invalidExtension',
     defaultMessage:

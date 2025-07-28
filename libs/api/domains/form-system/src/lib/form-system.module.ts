@@ -26,8 +26,13 @@ import { TranslationsService } from './translations/translations.service'
 import { TranslationsResolver } from './translations/translations.resolver'
 import { OrganizationUrlsResolver } from './organizationUrls/organizationUrls.resolver'
 import { OrganizationUrlsService } from './organizationUrls/organizationUrls.service'
+<<<<<<< HEAD
 import { NationalRegistryResolver } from './nationalRegistry/nationalRegistry.resolver'
 import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
+=======
+import { FormUrlsResolver } from './formUrls/formUrls.resolver'
+import { FormUrlsService } from './formUrls/formUrls.service'
+>>>>>>> b258c0282119f66c4c79e13cae0305add50dc8b5
 
 @Module({
   providers: [
@@ -55,6 +60,8 @@ import { NationalRegistryV3ClientModule } from '@island.is/clients/national-regi
     OrganizationPermissionsService,
     OrganizationUrlsResolver,
     OrganizationUrlsService,
+    FormUrlsResolver,
+    FormUrlsService,
     CmsModule,
     NationalRegistryResolver,
   ],

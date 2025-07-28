@@ -4,7 +4,7 @@ import {
   formatDate,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
-import { EventType } from '@island.is/judicial-system/types'
+import { DefendantEventType, EventType } from '@island.is/judicial-system/types'
 
 import { Case } from '../modules/case'
 import {
@@ -66,7 +66,10 @@ export const createFineSentToPrisonAdminPdf = (
 
   const sentToPrisonAdminDate = theCase.defendants
     ?.flatMap((defendant) => defendant.eventLogs || [])
-    .filter((eventLog) => eventLog.eventType === 'SENT_TO_PRISON_ADMIN')
+    .filter(
+      (eventLog) =>
+        eventLog.eventType === DefendantEventType.SENT_TO_PRISON_ADMIN,
+    )
     .sort(
       (a, b) => new Date(b.created).getTime() - new Date(a.created).getTime(),
     )[0]?.created

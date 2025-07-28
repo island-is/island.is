@@ -27,7 +27,21 @@ and The Administration of Occupational Safety and Health
 
 ### Draft
 
+The application begins with the personal information screen, where the user selects whether they're registering only themselves or multiple examinees. This choice slightly alters the application flow. Solo registrations follow a simpler process and include more detailed error messages (for GDPR compliance).
+
+Next, the user selects examinees or confirms their own information. At this stage, we perform a basic validation via VER web services to ensure all examinees are eligible for at least one exam.
+
+The instructor selection screen follows. Here, we validate instructors with VER to confirm their eligibility. The main matching screen then connects each examinee with their intended exams and designated instructors, including further VER validation.
+
+The user then selects the exam location and registers a contact person.
+
+On the payment screen, direct payment is the default. If registering on behalf of a company, users can opt for invoicing instead.
+
+Finally, the application presents an overview before submitting the completed data to VER.
+
 ### Completed
+
+Information of what happens next, process is now in VER's hands.
 
 ## Localisation
 
@@ -38,8 +52,9 @@ All localisation can be found on Contentful.
 
 ## Test users
 
-- **Gervimaður Bretland 010130-2429 as Examinee**
+- **Gervimaður Bretland 010130-2429 as Examinee (J category)**
 - **Gervimaður Ameríka 010130-2989 as Instructor**
+- **If more users are required or different categories contact VER**
 
 ## Codeowners
 

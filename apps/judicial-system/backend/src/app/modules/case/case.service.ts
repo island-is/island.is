@@ -935,6 +935,7 @@ export class CaseService {
       this.getDeliverProsecutorToCourtMessages(theCase, user),
     )
   }
+
   private addMessagesForSignedCourtRecordToQueue(
     theCase: Case,
     user: TUser,
@@ -960,6 +961,7 @@ export class CaseService {
 
     return this.messageService.sendMessagesToQueue(messages)
   }
+
   private addMessagesForSignedRulingToQueue(
     theCase: Case,
     user: TUser,

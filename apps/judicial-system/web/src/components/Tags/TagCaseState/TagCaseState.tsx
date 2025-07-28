@@ -46,23 +46,6 @@ const haveAllSubpoenasBeenServiced = (defendants: Defendant[]): boolean => {
   })
 }
 
-export const mapIndictmentCaseStateToTagVariant = (
-  formatMessage: IntlShape['formatMessage'],
-  theCase: CaseListEntry,
-): CaseStateTag => {
-  switch (theCase.state) {
-    case CaseState.COMPLETED:
-      return {
-        color: theCase.indictmentReviewer ? 'mint' : 'purple',
-        text: formatMessage(
-          theCase.indictmentReviewer ? strings.beingReviewed : strings.new,
-        ),
-      }
-    default:
-      return { color: 'white', text: formatMessage(strings.unknown) }
-  }
-}
-
 export const mapCaseStateToTagVariant = (
   formatMessage: IntlShape['formatMessage'],
   theCase: CaseListEntry,

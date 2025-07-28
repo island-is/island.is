@@ -3,8 +3,11 @@ import { handle404 } from '@island.is/clients/middlewares'
 import {
   IncomePlanStatus as IncomeStatus,
   SocialInsuranceAdministrationClientService,
-  TrWebExternalModelsServicePortalRehabilitationPlan,
+  TrWebApiServicesCommonCountriesModelsCountryDto,
+  TrWebApiServicesDomainEducationalInstitutionsModelsEducationalInstitutionsDto,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
+  TrWebExternalModelsServicePortalBaseCertificate,
+  TrWebExternalModelsServicePortalRehabilitationPlan,
 } from '@island.is/clients/social-insurance-administration'
 import {
   CmsElasticsearchService,
@@ -237,5 +240,27 @@ export class SocialInsuranceService {
     user: User,
   ): Promise<TrWebExternalModelsServicePortalRehabilitationPlan> {
     return await this.socialInsuranceApi.getRehabilitationPlan(user)
+  }
+
+  async getCertificateForSicknessAndRehabilitation(
+    user: User,
+  ): Promise<TrWebExternalModelsServicePortalBaseCertificate> {
+    return await this.socialInsuranceApi.getCertificateForSicknessAndRehabilitation(
+      user,
+    )
+  }
+
+  async getCountries(
+    user: User,
+  ): Promise<Array<TrWebApiServicesCommonCountriesModelsCountryDto>> {
+    return await this.socialInsuranceApi.getCountries(user)
+  }
+
+  async getEducationalInstitutions(
+    user: User,
+  ): Promise<
+    Array<TrWebApiServicesDomainEducationalInstitutionsModelsEducationalInstitutionsDto>
+  > {
+    return await this.socialInsuranceApi.getEducationalInstitutions(user)
   }
 }
