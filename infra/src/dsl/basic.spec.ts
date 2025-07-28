@@ -29,7 +29,7 @@ describe('Basic serialization', () => {
     })
     .serviceAccount()
     .command('node')
-    .args('main.js')
+    .args('main.cjs')
     .resources({
       requests: { memory: '1MB', cpu: '100m' },
       limits: { memory: '512MB', cpu: '500m' },
