@@ -56,7 +56,7 @@ const DraftProgressMeter = ({
       {shouldShowCardButtons && (
         <Box marginLeft={[0, 0, 'auto']} paddingTop={[2, 2, 0]}>
           <Button variant="ghost" onClick={onOpenApplication} size="small">
-            {formatMessage(webMessages.open)}
+            {formatMessage(webMessages.openApplication)}
           </Button>
         </Box>
       )}
@@ -90,7 +90,7 @@ const DefaultProgressMeter = ({
       {shouldShowCardButtons && (
         <Box marginLeft={[0, 0, 'auto']} paddingTop={[2, 2, 0]}>
           <Button variant="ghost" onClick={onOpenApplication} size="small">
-            {formatMessage(webMessages.open)}
+            {formatMessage(webMessages.openApplication)}
           </Button>
         </Box>
       )}

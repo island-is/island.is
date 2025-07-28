@@ -13,6 +13,10 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:new-form',
     defaultMessage: 'Nýtt',
   },
+  newApplication: {
+    id: 'portals-admin.form-system:new-application',
+    defaultMessage: 'Ný umsókn',
+  },
   organization: {
     id: 'portals-admin.form-system:organization',
     defaultMessage: 'Stofnun',
@@ -20,6 +24,10 @@ export const m = defineMessages({
   applications: {
     id: 'portals-admin.form-system:applications',
     defaultMessage: 'Umsóknir',
+  },
+  yourApplications: {
+    id: 'portals-admin.form-system:your-applications',
+    defaultMessage: 'Þínar umsóknir',
   },
   administration: {
     id: 'portals-admin.form-system:administration',
@@ -682,10 +690,10 @@ export const webMessages = defineMessages({
     defaultMessage: 'Fullt nafn',
     description: 'Full name',
   },
-  open: {
-    id: 'form-system:open',
-    defaultMessage: 'Opna',
-    description: 'Open',
+  openApplication: {
+    id: 'form-system:open-application',
+    defaultMessage: 'Opna umsókn',
+    description: 'Open application',
   },
   yourProperties: {
     id: 'form-system:your-properties',
@@ -706,5 +714,10 @@ export const webMessages = defineMessages({
     id: 'form-system:upload-box-description',
     defaultMessage: 'Tekið er við skjölum með endingu: {fileEndings}',
     description: 'Notaður fyrir texta í Hlaða upp skrám svæði.',
+  },
+  tagsDraft: {
+    id: 'form-system:tags.draft',
+    defaultMessage: 'Umsókn í vinnslu hjá þér',
+    description: 'Draft status for an application',
   },
 })

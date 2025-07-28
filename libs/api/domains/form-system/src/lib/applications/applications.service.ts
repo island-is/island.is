@@ -7,6 +7,7 @@ import {
   ApplicationsApi,
   ApplicationsControllerCreateRequest,
   ApplicationsControllerFindAllByOrganizationRequest,
+  ApplicationsControllerFindAllBySlugAndUserRequest,
   ApplicationsControllerGetApplicationRequest,
   ApplicationsControllerSaveScreenRequest,
   ApplicationsControllerSubmitRequest,
@@ -16,6 +17,7 @@ import {
   ApplicationsInput,
   CreateApplicationInput,
   GetApplicationInput,
+  GetApplicationsInput,
   SubmitScreenInput,
   UpdateApplicationInput,
 } from '../../dto/application.input'
@@ -79,6 +81,20 @@ export class ApplicationsService {
     const response = await this.applicationsApiWithAuth(auth)
       .applicationsControllerFindAllByOrganization(
         input as ApplicationsControllerFindAllByOrganizationRequest,
+      )
+      .catch((e) =>
+        handle4xx(e, this.handleError, 'failed to get applications'),
+      )
+    return response as ApplicationResponse
+  }
+
+  async getAllApplications(
+    auth: User,
+    input: GetApplicationsInput,
+  ): Promise<ApplicationResponse> {
+    const response = await this.applicationsApiWithAuth(auth)
+      .applicationsControllerFindAllBySlugAndUser(
+        input as ApplicationsControllerFindAllBySlugAndUserRequest,
       )
       .catch((e) =>
         handle4xx(e, this.handleError, 'failed to get applications'),
