@@ -10,7 +10,8 @@ import { DebtTypes as ClientDebtType } from '@island.is/clients/syslumenn'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { MessageDescriptor } from 'react-intl'
 import { ZodTypeAny } from 'zod'
-import { type Answers, DebtTypes } from '../../types'
+import type { Answers } from '../../types'
+import { DebtTypes } from '../../types'
 import { PrePaidInheritanceOptions } from '../constants'
 import { InheritanceReport } from '../dataSchema'
 
@@ -31,11 +32,9 @@ export const getEstateDataFromApplication = (
 ): { inheritanceReportInfo?: InheritanceReportInfo } => {
   const selectedEstate = application.answers.estateInfoSelection
 
-  const estateData = (
-    application.externalData.syslumennOnEntry?.data as {
-      inheritanceReportInfos?: Array<InheritanceReportInfo>
-    }
-  ).inheritanceReportInfos?.find(
+  const estateData = (application.externalData.syslumennOnEntry?.data as {
+    inheritanceReportInfos?: Array<InheritanceReportInfo>
+  }).inheritanceReportInfos?.find(
     (estate) => estate.caseNumber === selectedEstate,
   )
 
