@@ -1,6 +1,6 @@
 import { useMemo } from 'react'
 import { IconButton, Menu } from '@contentful/f36-components'
-import { MoreVerticalIcon } from '@contentful/f36-icons'
+import { MoreHorizontalIcon } from '@contentful/f36-icons'
 
 import { findNodes, type Tree, TreeNodeType } from './utils'
 
@@ -35,7 +35,7 @@ export const EditMenu = ({
   return (
     <Menu>
       <Menu.Trigger>
-        <IconButton icon={<MoreVerticalIcon />} aria-label="Edit" />
+        <IconButton icon={<MoreHorizontalIcon />} aria-label="Edit" />
       </Menu.Trigger>
       <Menu.List>
         <Menu.Item onClick={onEdit}>Edit</Menu.Item>
