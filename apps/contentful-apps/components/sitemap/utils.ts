@@ -4,6 +4,7 @@ import {
   SitemapTree as Tree,
   SitemapTreeNode as TreeNode,
   SitemapTreeNodeType as TreeNodeType,
+  SitemapUrlType,
 } from '@island.is/shared/types'
 
 export { type Tree, type TreeNode, TreeNodeType }
@@ -146,6 +147,7 @@ export const addNode = async (
   let descriptionEN = ''
   let url = ''
   let urlEN = ''
+  let urlType: SitemapUrlType = 'custom'
 
   if (type === TreeNodeType.ENTRY) {
     if (createNew) {
@@ -242,6 +244,7 @@ export const addNode = async (
     labelEN = data.labelEN
     url = data.url
     urlEN = data.urlEN
+    urlType = data.urlType
   }
 
   const node: TreeNode = {
@@ -276,6 +279,7 @@ export const addNode = async (
           labelEN,
           url,
           urlEN,
+          urlType,
         }),
   }
   parentNode.childNodes = [...parentNode.childNodes].concat(node)

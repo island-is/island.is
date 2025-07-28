@@ -110,7 +110,6 @@ const CategoryForm = ({
       </div>
       <div>
         <FormControl.Label>Description (English)</FormControl.Label>
-
         <div>
           <Textarea
             value={state.descriptionEN}
@@ -243,7 +242,10 @@ const UrlForm = ({ initialState, onSubmit }: FormProps<UrlState>) => {
       <Button
         variant="primary"
         onClick={() => {
-          onSubmit(state)
+          onSubmit({
+            ...state,
+            urlType: state.urlType || 'organizationFrontpage',
+          })
         }}
       >
         Save changes
