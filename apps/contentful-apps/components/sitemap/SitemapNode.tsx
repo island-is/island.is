@@ -26,7 +26,7 @@ import { AddNodeButton } from './AddNodeButton'
 import { EditMenu } from './EditMenu'
 import { EntryContext } from './entryContext'
 import { SitemapNodeContent } from './SitemapNodeContent'
-import { Tree, TreeNode, TreeNodeType } from './utils'
+import { type EntryType, Tree, TreeNode, TreeNodeType } from './utils'
 import * as styles from './SitemapNode.css'
 
 const getEntryStatus = (
@@ -80,7 +80,12 @@ interface SitemapNodeProps {
   parentNode: Tree
   root: Tree
   indent?: number
-  addNode: (parentNode: Tree, type: TreeNodeType, createNew?: boolean) => void
+  addNode: (
+    parentNode: Tree,
+    type: TreeNodeType,
+    createNew?: boolean,
+    entryType?: EntryType,
+  ) => void
   removeNode: (parentNode: Tree, idOfNodeToRemove: number) => void
   updateNode: (parentNode: Tree, updatedNode: TreeNode) => void
   onMarkEntryAsPrimary: (nodeId: number, entryId: string) => void
@@ -280,8 +285,8 @@ export const SitemapNode = ({
               ))}
               <div className={styles.addNodeButtonContainer}>
                 <AddNodeButton
-                  addNode={(type, createNew) => {
-                    addNode(node, type, createNew)
+                  addNode={(type, createNew, entryType) => {
+                    addNode(node, type, createNew, entryType)
                   }}
                   options={
                     indent > 1 || node.type === TreeNodeType.ENTRY

@@ -8,7 +8,12 @@ import {
 
 export { type Tree, type TreeNode, TreeNodeType }
 
-export const ENTRY_CONTENT_TYPE_ID = 'organizationParentSubpage'
+export type EntryType = 'organizationParentSubpage' | 'organizationSubpage'
+
+export const ENTRY_CONTENT_TYPE_IDS: EntryType[] = [
+  'organizationParentSubpage',
+  'organizationSubpage',
+]
 
 const getHighestId = (tree: Tree) => {
   let highestId = tree.id
@@ -120,6 +125,7 @@ export const addNode = async (
   sdk: FieldExtensionSDK,
   root: Tree,
   createNew?: boolean,
+  entryType: EntryType = 'organizationParentSubpage',
 ) => {
   let entryId = ''
 
@@ -131,7 +137,7 @@ export const addNode = async (
 
   if (type === TreeNodeType.ENTRY) {
     if (createNew) {
-      const entry = await sdk.navigator.openNewEntry(ENTRY_CONTENT_TYPE_ID, {
+      const entry = await sdk.navigator.openNewEntry(entryType, {
         slideIn: { waitForClose: true },
       })
       if (!entry?.entity?.sys?.id) {
@@ -142,7 +148,7 @@ export const addNode = async (
       const entry = await sdk.dialogs.selectSingleEntry<{
         sys: { id: string }
       } | null>({
-        contentTypes: [ENTRY_CONTENT_TYPE_ID],
+        contentTypes: ENTRY_CONTENT_TYPE_IDS,
       })
       if (!entry?.sys?.id) {
         return

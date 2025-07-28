@@ -1,7 +1,7 @@
 import { Button, Menu } from '@contentful/f36-components'
 import { ChevronDownIcon, PlusIcon } from '@contentful/f36-icons'
 
-import { TreeNodeType } from './utils'
+import { type EntryType, TreeNodeType } from './utils'
 
 const optionMap = {
   [TreeNodeType.CATEGORY]: 'Category',
@@ -10,7 +10,11 @@ const optionMap = {
 }
 
 interface AddNodeButtonProps {
-  addNode: (type: TreeNodeType, createNew?: boolean) => void
+  addNode: (
+    type: TreeNodeType,
+    createNew?: boolean,
+    entryType?: EntryType,
+  ) => void
   options?: TreeNodeType[]
 }
 
@@ -45,10 +49,17 @@ export const AddNodeButton = ({
               <Menu.List>
                 <Menu.Item
                   onClick={() => {
-                    addNode(option, true)
+                    addNode(option, true, 'organizationParentSubpage')
                   }}
                 >
-                  Create new
+                  Create new organization parent subpage
+                </Menu.Item>
+                <Menu.Item
+                  onClick={() => {
+                    addNode(option, true, 'organizationSubpage')
+                  }}
+                >
+                  Create new organization subpage
                 </Menu.Item>
                 <Menu.Item
                   onClick={() => {

@@ -22,6 +22,7 @@ import { EntryContext, useEntryContext } from './entryContext'
 import { SitemapNode } from './SitemapNode'
 import {
   addNode as addNodeUtil,
+  type EntryType,
   findNodes,
   removeNode as removeNodeUtil,
   type Tree,
@@ -58,8 +59,13 @@ export const SitemapTreeField = () => {
   }, [sdk.window, tree.childNodes.length])
 
   const addNode = useCallback(
-    async (parentNode: Tree, type: TreeNodeType, createNew?: boolean) => {
-      await addNodeUtil(parentNode, type, sdk, tree, createNew)
+    async (
+      parentNode: Tree,
+      type: TreeNodeType,
+      createNew?: boolean,
+      entryType?: EntryType,
+    ) => {
+      await addNodeUtil(parentNode, type, sdk, tree, createNew, entryType)
       setTree((prevTree) => ({
         ...prevTree,
       }))
@@ -148,8 +154,8 @@ export const SitemapTreeField = () => {
               ))}
               <div className={styles.addNodeButtonContainer}>
                 <AddNodeButton
-                  addNode={(type, createNew) => {
-                    addNode(tree, type, createNew)
+                  addNode={(type, createNew, entryType) => {
+                    addNode(tree, type, createNew, entryType)
                   }}
                 />
               </div>
