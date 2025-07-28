@@ -36,6 +36,7 @@ import { AwsS3Service } from '../aws-s3'
 import { InternalCaseService } from '../case/internalCase.service'
 import { Case } from '../case/models/case.model'
 import { CourtDocumentFolder, CourtService } from '../court'
+import { EventLog } from '../event-log'
 import { PoliceDocumentType } from '../police'
 import { CreateFileDto } from './dto/createFile.dto'
 import { CreatePresignedPostDto } from './dto/createPresignedPost.dto'
@@ -173,8 +174,9 @@ export class FileService {
       return undefined // This should never happen
     }
 
-    const completedEvent = theCase.eventLogs?.find(
-      (event) => event.eventType === EventType.INDICTMENT_COMPLETED,
+    const completedDate = EventLog.getEventLogDateByEventType(
+      EventType.INDICTMENT_COMPLETED,
+      theCase.eventLogs,
     )
 
     return createConfirmedPdf(
@@ -182,7 +184,7 @@ export class FileService {
         actor: theCase.judge?.name ?? '',
         title: theCase.judge?.title,
         institution: theCase.judge?.institution?.name ?? '',
-        date: completedEvent?.created || theCase.rulingDate,
+        date: completedDate ?? theCase.rulingDate,
       },
       pdf,
       file.category,

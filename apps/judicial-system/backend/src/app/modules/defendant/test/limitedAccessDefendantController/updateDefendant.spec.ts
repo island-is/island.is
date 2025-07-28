@@ -1,3 +1,4 @@
+import { Transaction } from 'sequelize/types'
 import { uuid } from 'uuidv4'
 
 import { MessageService } from '@island.is/judicial-system/message'
@@ -36,15 +37,26 @@ describe('LimitedAccessDefendantController - UpdateDefendant', () => {
   } as Defendant
 
   let mockMessageService: MessageService
+  let transaction: Transaction
   let mockDefendantModel: typeof Defendant
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { messageService, defendantModel, limitedAccessDefendantController } =
-      await createTestingDefendantModule()
+    const {
+      messageService,
+      sequelize,
+      defendantModel,
+      limitedAccessDefendantController,
+    } = await createTestingDefendantModule()
 
     mockMessageService = messageService
     mockDefendantModel = defendantModel
+
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
     const mockUpdate = mockDefendantModel.update as jest.Mock
     mockUpdate.mockRejectedValue(new Error('Some error'))
@@ -87,6 +99,7 @@ describe('LimitedAccessDefendantController - UpdateDefendant', () => {
       expect(mockDefendantModel.update).toHaveBeenCalledWith(defendantUpdate, {
         where: { id: defendantId, caseId },
         returning: true,
+        transaction,
       })
       expect(then.result).toBe(updatedDefendant)
       expect(mockMessageService.sendMessagesToQueue).not.toHaveBeenCalled()

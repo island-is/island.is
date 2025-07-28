@@ -6,15 +6,11 @@ import { AnimatePresence, motion } from 'motion/react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import {
-  districtCourtAbbreviation,
-  formatDate,
-} from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
-import { core } from '@island.is/judicial-system-web/messages'
 import {
   ContextMenu,
   ContextMenuItem,
@@ -97,24 +93,6 @@ const Table: FC<TableProps> = (props) => {
     }
   }
 
-  const renderProsecutorText = (
-    state?: CaseState | null,
-    prosecutorName?: string | null,
-  ) => {
-    if (
-      state &&
-      state === CaseState.WAITING_FOR_CONFIRMATION &&
-      prosecutorName
-    ) {
-      return (
-        <Text fontWeight="medium" variant="small">
-          {`${formatMessage(core.prosecutorPerson)}: ${prosecutorName}`}
-        </Text>
-      )
-    }
-    return null
-  }
-
   const renderPostponedOrCourtDateText = (
     postponedIndefinitelyExplanation?: string | null,
     caseState?: CaseState | null,
@@ -166,17 +144,11 @@ const Table: FC<TableProps> = (props) => {
       entry: CaseListEntry,
       column: keyof CaseListEntry,
     ) => {
-      const courtAbbreviation = districtCourtAbbreviation(entry.court?.name)
-
       switch (column) {
         case 'defendants':
           return entry.defendants?.[0]?.name ?? ''
-        case 'defendantsPunishmentType':
-          return entry.defendants?.[0]?.punishmentType ?? ''
         case 'courtCaseNumber':
-          return courtAbbreviation
-            ? `${courtAbbreviation}: ${entry.courtCaseNumber}`
-            : entry.courtCaseNumber ?? ''
+          return entry.courtCaseNumber ?? ''
         case 'state':
           return mapCaseStateToTagVariant(formatMessage, entry).text
         case 'policeCaseNumbers':
@@ -242,7 +214,6 @@ const Table: FC<TableProps> = (props) => {
             theCase={theCase}
             isLoading={isOpeningCaseId === theCase.id && showLoading}
           >
-            {renderProsecutorText(theCase.state, theCase.prosecutor?.name)}
             {renderPostponedOrCourtDateText(
               theCase.postponedIndefinitelyExplanation,
               theCase.state,

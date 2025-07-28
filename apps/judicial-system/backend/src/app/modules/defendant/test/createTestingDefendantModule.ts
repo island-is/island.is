@@ -1,3 +1,5 @@
+import { Sequelize } from 'sequelize-typescript'
+
 import { getModelToken } from '@nestjs/sequelize'
 import { Test } from '@nestjs/testing'
 
@@ -51,6 +53,7 @@ export const createTestingDefendantModule = async () => {
           error: jest.fn(),
         },
       },
+      { provide: Sequelize, useValue: { transaction: jest.fn() } },
       {
         provide: getModelToken(Defendant),
         useValue: {
@@ -95,6 +98,8 @@ export const createTestingDefendantModule = async () => {
 
   const courtService = defendantModule.get<CourtService>(CourtService)
 
+  const sequelize = defendantModule.get<Sequelize>(Sequelize)
+
   const defendantModel = await defendantModule.resolve<typeof Defendant>(
     getModelToken(Defendant),
   )
@@ -132,6 +137,7 @@ export const createTestingDefendantModule = async () => {
     messageService,
     userService,
     courtService,
+    sequelize,
     defendantModel,
     defendantService,
     defendantController,

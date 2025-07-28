@@ -286,6 +286,7 @@ describe('CaseController - Transition', () => {
                   id: caseId,
                   isArchived: false,
                 },
+                transaction,
               })
               expect(then.result).toBe(updatedCase)
             }
@@ -558,6 +559,7 @@ describe('CaseController - Transition', () => {
                 id: caseId,
                 isArchived: false,
               },
+              transaction,
             })
             expect(then.result).toBe(updatedCase)
           }
