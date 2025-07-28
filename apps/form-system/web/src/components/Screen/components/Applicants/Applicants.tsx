@@ -7,8 +7,10 @@ import {
 } from '@island.is/form-system/ui'
 import { useQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
-import { GET_NAME_BY_NATIONALID } from '@island.is/form-system/graphql'
-import { GET_ADDRESS_BY_NATIONALID } from '@island.is/form-system/graphql'
+import {
+  GET_NAME_BY_NATIONALID,
+  GET_ADDRESS_BY_NATIONALID,
+} from '@island.is/form-system/graphql'
 
 interface Props {
   applicantTypes: FormSystemApplicant[]
