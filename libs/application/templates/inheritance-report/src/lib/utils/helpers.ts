@@ -9,9 +9,8 @@ import { InheritanceReportInfo } from '@island.is/clients/syslumenn'
 import { DebtTypes as ClientDebtType } from '@island.is/clients/syslumenn'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { MessageDescriptor } from 'react-intl'
-import { ZodTypeAny } from 'zod'
 import type { Answers } from '../../types'
-import { DebtTypes } from '../../index'
+import { DebtConstants } from '../../types'
 import { PrePaidInheritanceOptions } from '../constants'
 import { InheritanceReport } from '../dataSchema'
 
@@ -32,11 +31,9 @@ export const getEstateDataFromApplication = (
 ): { inheritanceReportInfo?: InheritanceReportInfo } => {
   const selectedEstate = application.answers.estateInfoSelection
 
-  const estateData = (
-    application.externalData.syslumennOnEntry?.data as {
-      inheritanceReportInfos?: Array<InheritanceReportInfo>
-    }
-  ).inheritanceReportInfos?.find(
+  const estateData = (application.externalData.syslumennOnEntry?.data as {
+    inheritanceReportInfos?: Array<InheritanceReportInfo>
+  }).inheritanceReportInfos?.find(
     (estate) => estate.caseNumber === selectedEstate,
   )
 
@@ -45,20 +42,20 @@ export const getEstateDataFromApplication = (
   }
 }
 
-export const parseDebtType = (debtType: ClientDebtType): DebtTypes => {
+export const parseDebtType = (debtType: ClientDebtType) => {
   switch (debtType) {
     case 'propertyFees':
-      return DebtTypes.PropertyFees
+      return DebtConstants.PropertyFees
     case 'overdraft':
-      return DebtTypes.Overdraft
+      return DebtConstants.Overdraft
     case 'creditCard':
-      return DebtTypes.CreditCard
+      return DebtConstants.CreditCard
     case 'insuranceCompany':
-      return DebtTypes.InsuranceInstitute
+      return DebtConstants.InsuranceInstitute
     case 'loan':
-      return DebtTypes.Loan
+      return DebtConstants.Loan
     default:
-      return DebtTypes.OtherDebts
+      return DebtConstants.OtherDebts
   }
 }
 
@@ -116,19 +113,6 @@ export const getPrePaidTotalValueFromApplication = (
   return (
     money + stocksTotal + realEstateTotal + otherAssetsTotal + bankAccountTotal
   )
-}
-
-export const customZodError = (
-  zodValidation: ZodTypeAny,
-  errorMessage: MessageDescriptor,
-): ZodTypeAny => {
-  if (zodValidation._def.checks) {
-    for (const check of zodValidation._def.checks) {
-      check['params'] = errorMessage
-      check['code'] = 'custom_error'
-    }
-  }
-  return zodValidation
 }
 
 export const isValidEmail = (value: string) => EMAIL_REGEX.test(value)

@@ -8,7 +8,8 @@ import {
   YES,
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
-import { DebtTypes, FuneralAssetItem } from '../../types'
+import { FuneralAssetItem } from '../../types'
+import { DebtConstants as DebtTypes } from '../../types'
 
 export const debtsAndFuneralCost = buildSection({
   id: 'debts',
