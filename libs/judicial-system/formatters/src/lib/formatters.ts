@@ -68,13 +68,13 @@ export const formatNationalId = (nationalId?: string | null): string => {
     return ''
   }
 
-  const regex = new RegExp(/^\d{10}$/)
+  const regex = /^\d{10}$/
 
   if (regex.test(nationalId)) {
     return `${nationalId.slice(0, 6)}-${nationalId.slice(6)}`
-  } else {
-    return nationalId
   }
+
+  return nationalId
 }
 
 export const normalizeAndFormatNationalId = (
@@ -100,12 +100,13 @@ export const formatPhoneNumber = (phoneNumber?: string | null) => {
     return
   }
 
-  const value = phoneNumber.replace('-', '')
+  const regex = /^\d{7}$/
 
-  const splitAt = (index: number) => (x: string) =>
-    [x.slice(0, index), x.slice(index)]
-  if (value.length > 3) return splitAt(3)(value).join('-')
-  return value
+  if (regex.test(phoneNumber)) {
+    return `${phoneNumber.slice(0, 3)}-${phoneNumber.slice(3)}`
+  }
+
+  return phoneNumber
 }
 
 export const laws = {

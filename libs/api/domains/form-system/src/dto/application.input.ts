@@ -43,6 +43,15 @@ export class ApplicationsInput {
   isTest!: boolean
 }
 
+@InputType('FormSystemGetApplicationsInput')
+export class GetApplicationsInput {
+  @Field(() => String, { nullable: true })
+  slug?: string
+
+  @Field(() => Boolean, { nullable: false })
+  isTest!: boolean
+}
+
 @InputType('FormSystemApplicationEventDtoInput')
 export class ApplicationEventDtoInput {
   @Field(() => Date, { nullable: true })

@@ -398,7 +398,6 @@ export class ApplicationsService {
       form.id,
       isTest,
     )
-
     const responseDto = new ApplicationResponseDto()
     responseDto.applications = existingApplications
     return responseDto
@@ -407,6 +406,7 @@ export class ApplicationsService {
   private async findAllByUserAndForm(
     user: User,
     formId: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isTest: boolean,
   ): Promise<ApplicationDto[]> {
     const delegationType = user.delegationType
@@ -449,27 +449,29 @@ export class ApplicationsService {
       // Only keep applications with a single applicant
       applicationIds = applicationIds.filter((id) => counts[id] === 1)
     }
-
     // 2. Find all applications that match the formId and filtered applicationIds
-    const applications = applicationIds.length
-      ? await this.applicationModel.findAll({
-          where: {
-            formId,
-            id: applicationIds,
-            status: ApplicationStatus.IN_PROGRESS,
-            isTest: isTest,
-          },
-        })
-      : []
-
+    // const applications = applicationIds.length
+    //   ? await this.applicationModel.findAll({
+    //       where: {
+    //         formId,
+    //         id: applicationIds,
+    //         status: ApplicationStatus.IN_PROGRESS,
+    //         isTest: isTest,
+    //       },
+    //     })
+    //   : []
     // 3. Map the applications to ApplicationDto
     const applicationDtos = await Promise.all(
-      applications.map(async (application) => {
-        return this.getApplication(application.id)
+      applicationIds.map(async (applicationId) => {
+        return this.getApplication(applicationId)
       }),
     )
 
-    return applicationDtos
+    return applicationDtos.filter(
+      (application) =>
+        application.formId === formId &&
+        application.status === ApplicationStatus.IN_PROGRESS,
+    )
   }
 
   private async getApplicationForm(
