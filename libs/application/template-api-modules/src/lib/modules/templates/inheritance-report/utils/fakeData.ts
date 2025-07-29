@@ -34,11 +34,11 @@ const generateRandomAsset = (n: number, i = 1): InheritanceReportAsset => {
     amount: String(1_000_000 + Math.round(Math.random() * 9_000_000)),
     exchangeRateOrInterest: String(1 + Math.round(Math.random() * 99)),
     debtType: [
-      DebtTypes.PropertyFees,
       DebtTypes.CreditCard,
+      DebtTypes.Loan,
       DebtTypes.InsuranceCompany,
       DebtTypes.Overdraft,
-      DebtTypes.Loan,
+      DebtTypes.PropertyFees,
     ].sort(() => 0.5 - Math.random())[0],
   }
 }
