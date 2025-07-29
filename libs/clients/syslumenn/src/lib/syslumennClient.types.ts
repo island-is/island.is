@@ -318,8 +318,7 @@ export const FuneralAssetItem = {
   Other: 10,
 } as const
 
-export type FuneralAssetItem =
-  typeof FuneralAssetItem[keyof typeof FuneralAssetItem]
+export type FuneralAssetItem = typeof FuneralAssetItem[keyof typeof FuneralAssetItem]
 
 export interface InheritanceReportFuneralAsset extends InheritanceReportAsset {
   funeralAssetItem: FuneralAssetItem
@@ -459,9 +458,6 @@ export interface VehicleRegistration {
   color?: string
 }
 
-// application system form doesn't seem to be able to start
-// if you import an enum like `import {DebtTypes} from '@island.is/clients/syslumenn'`
-// so we use the const trickery to circumvent it
 export enum DebtTypes {
   Overdraft = 'overdraft',
   CreditCard = 'creditCard',
