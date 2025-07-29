@@ -22,7 +22,7 @@ import {
   PresignedPostOptions,
 } from '@aws-sdk/s3-presigned-post'
 import stream, { Readable } from 'stream'
-import { defaultProvider } from '@aws-sdk/credential-provider-node/dist-types/defaultProvider'
+import { defaultProvider } from '@aws-sdk/credential-provider-node'
 
 export interface BucketKeyPair {
   bucket: string
