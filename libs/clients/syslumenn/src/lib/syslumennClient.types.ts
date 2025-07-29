@@ -304,19 +304,21 @@ export interface InheritanceReportAsset {
   exchangeRateOrInterest: string
 }
 
-export enum FuneralAssetItem {
-  Casket, // Smíði kistu og umbúnaður
-  Announcements, // Dánartilkynningar
-  Printing,
-  Flowers,
-  Music,
-  Venue,
-  Wake,
-  Tombstone,
-  FuneralServices,
-  Cremation,
-  Other,
-}
+export const FuneralAssetItem = {
+  Casket: 0, // Smíði kistu og umbúnaður
+  Announcements: 1, // Dánartilkynningar
+  Printing: 2,
+  Flowers: 3,
+  Music: 4,
+  Venue: 5,
+  Wake: 6,
+  Tombstone: 7,
+  FuneralServices: 8,
+  Cremation: 9,
+  Other: 10,
+} as const
+
+export type FuneralAssetItem = typeof FuneralAssetItem[keyof typeof FuneralAssetItem]
 
 export interface InheritanceReportFuneralAsset extends InheritanceReportAsset {
   funeralAssetItem: FuneralAssetItem
