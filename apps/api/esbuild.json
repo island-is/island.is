@@ -63,7 +63,8 @@
     "mimic-response",
     "pdfkit",
     "path-scurry",
-    "@mikro-orm/core"
+    "@mikro-orm/core",
+    "ts-dedent"
   ],
   "keepNames": true,
   "sourcemap": true,
