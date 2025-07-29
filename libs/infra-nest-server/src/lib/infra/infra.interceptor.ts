@@ -7,7 +7,11 @@ import {
   NestInterceptor,
 } from '@nestjs/common'
 import { getRequest } from '@island.is/auth-nest-tools'
-import { Logger, LOGGER_PROVIDER, withLoggingContext } from '@island.is/logging'
+import {
+  type Logger,
+  LOGGER_PROVIDER,
+  withLoggingContext,
+} from '@island.is/logging'
 
 export class InfraInterceptor implements NestInterceptor {
   private readonly logger: Logger
