@@ -318,7 +318,8 @@ export const FuneralAssetItem = {
   Other: 10,
 } as const
 
-export type FuneralAssetItem = typeof FuneralAssetItem[keyof typeof FuneralAssetItem]
+export type FuneralAssetItem =
+  typeof FuneralAssetItem[keyof typeof FuneralAssetItem]
 
 export interface InheritanceReportFuneralAsset extends InheritanceReportAsset {
   funeralAssetItem: FuneralAssetItem
