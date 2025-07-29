@@ -23,6 +23,7 @@ import {
   CaseStatistics,
   IndictmentCaseStatistics,
   RequestCaseStatistics,
+  SubpoenaStatistics,
 } from './models/caseStatistics.model'
 
 @UseGuards(JwtGraphQlAuthUserGuard)
@@ -111,6 +112,31 @@ export class CaseListResolver {
       ),
       (caseStatistics: IndictmentCaseStatistics) =>
         caseStatistics.count.toString(),
+    )
+
+    return result
+  }
+
+  @Query(() => SubpoenaStatistics, { nullable: true })
+  subpoenaStatistics(
+    @Args('input', { type: () => CaseStatisticsInput, nullable: true })
+    input: CaseStatisticsInput,
+    @CurrentGraphQlUser()
+    user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<SubpoenaStatistics> {
+    this.logger.debug('Getting subpoena statistics')
+
+    const result = this.auditTrailService.audit(
+      user.id,
+      AuditedAction.GET_CASES_STATISTICS,
+      backendService.getSubpoenaStatistics(
+        input.fromDate,
+        input.toDate,
+        input.institutionId,
+      ),
+      (caseStatistics: SubpoenaStatistics) => caseStatistics.count.toString(),
     )
 
     return result

@@ -75,6 +75,7 @@ import { Offense } from '../indictment-count/models/offense.model'
 import { Institution } from '../institution'
 import { Notification } from '../notification'
 import { Subpoena, SubpoenaService } from '../subpoena'
+import { SubpoenaStatistics } from '../subpoena/models/subpoenaStatistics.response'
 import { User } from '../user'
 import { Victim } from '../victim/models/victim.model'
 import { CreateCaseDto } from './dto/createCase.dto'
@@ -2408,8 +2409,15 @@ export class CaseService {
       ],
     })
 
-    const indictmentCases = this.getIndictmentStatistics(cases)
-    return indictmentCases
+    return this.getIndictmentStatistics(cases)
+  }
+
+  async getSubpoenaStatistics(
+    from?: Date,
+    to?: Date,
+    institutionId?: string,
+  ): Promise<SubpoenaStatistics> {
+    return await this.subpoenaService.getStatistics(from, to, institutionId)
   }
 
   async getRequestCasesStatistics(
@@ -2425,9 +2433,9 @@ export class CaseService {
           CaseState.NEW,
           CaseState.WAITING_FOR_CONFIRMATION,
         ],
-        type: {
-          [Op.not]: [CaseType.INDICTMENT],
-        },
+      },
+      type: {
+        [Op.not]: [CaseType.INDICTMENT],
       },
     }
 
@@ -2455,8 +2463,7 @@ export class CaseService {
       where,
     })
 
-    const requestCases = this.getRequestCaseStatistics(cases)
-    return requestCases
+    return this.getRequestCaseStatistics(cases)
   }
 
   async getCaseStatistics(

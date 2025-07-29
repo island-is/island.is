@@ -70,6 +70,7 @@ import {
 } from '../../guards'
 import { CivilClaimantService } from '../defendant'
 import { EventService } from '../event'
+import { SubpoenaStatistics } from '../subpoena/models/subpoenaStatistics.response'
 import { UserService } from '../user'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { TransitionCaseDto } from './dto/transitionCase.dto'
@@ -928,7 +929,7 @@ export class CaseController {
   @RolesRules(adminRule, localAdminRule)
   @Get('cases/indictments/statistics')
   @ApiOkResponse({
-    type: CaseStatistics,
+    type: IndictmentCaseStatistics,
     description: 'Gets court centered statistics for cases',
   })
   @ApiQuery({ name: 'fromDate', required: false, type: String })
@@ -950,6 +951,30 @@ export class CaseController {
 
   @UseGuards(JwtAuthUserGuard, RolesGuard)
   @RolesRules(adminRule, localAdminRule)
+  @Get('cases/subpoenas/statistics')
+  @ApiOkResponse({
+    type: SubpoenaStatistics,
+    description: 'Gets court centered statistics for subpoenas',
+  })
+  @ApiQuery({ name: 'fromDate', required: false, type: String })
+  @ApiQuery({ name: 'toDate', required: false, type: String })
+  @ApiQuery({ name: 'institutionId', required: false, type: String })
+  getSubpoenaStatistics(
+    @Query('fromDate') fromDate?: Date,
+    @Query('toDate') toDate?: Date,
+    @Query('institutionId') institutionId?: string,
+  ): Promise<SubpoenaStatistics> {
+    this.logger.debug('Getting statistics for subpoenas')
+
+    return this.caseService.getSubpoenaStatistics(
+      fromDate,
+      toDate,
+      institutionId,
+    )
+  }
+
+  @UseGuards(JwtAuthUserGuard, RolesGuard)
+  @RolesRules(adminRule, localAdminRule)
   @Get('cases/requests/statistics')
   @ApiOkResponse({
     type: RequestCaseStatistics,
@@ -963,7 +988,7 @@ export class CaseController {
     @Query('toDate') toDate?: Date,
     @Query('institutionId') institutionId?: string,
   ): Promise<RequestCaseStatistics> {
-    this.logger.debug('Getting statistics for all cases')
+    this.logger.debug('Getting statistics for request cases')
 
     return this.caseService.getRequestCasesStatistics(
       fromDate,

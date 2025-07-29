@@ -74,7 +74,6 @@ const Statistics = () => {
     },
     fetchPolicy: 'cache-and-network',
   })
-
   console.log({ indictments, requestCases })
 
   useEffect(() => {
