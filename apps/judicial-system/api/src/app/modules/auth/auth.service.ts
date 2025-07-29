@@ -12,14 +12,12 @@ import { type ConfigType } from '@island.is/nest/config'
 import { type User, UserRole } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
-import { DefenderService } from '../defender'
 import { authModuleConfig } from './auth.config'
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly backendService: BackendService,
-    private readonly defenderService: DefenderService,
     @Inject(authModuleConfig.KEY)
     private readonly config: ConfigType<typeof authModuleConfig>,
     @Inject(LOGGER_PROVIDER)
@@ -183,9 +181,7 @@ export class AuthService {
     // case list for them to avoid confusion about them not having access to
     // the judicial system
     try {
-      const lawyerRegistryInfo = await this.defenderService.getLawyer(
-        nationalId,
-      )
+      const lawyerRegistryInfo = await this.backendService.getLawyer(nationalId)
 
       if (lawyerRegistryInfo && lawyerRegistryInfo.nationalId === nationalId) {
         return [

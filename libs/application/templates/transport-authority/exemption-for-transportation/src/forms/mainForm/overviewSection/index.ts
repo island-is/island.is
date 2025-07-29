@@ -1,4 +1,5 @@
 import {
+  buildAlertMessageField,
   buildCheckboxField,
   buildMultiField,
   buildOverviewField,
@@ -16,6 +17,18 @@ import {
   getUserInformationOverviewItems,
   checkIfExemptionTypeLongTerm,
   checkIfExemptionTypeShortTerm,
+  getConvoyOverviewItems,
+  getAxleSpacingOverviewItems,
+  getVehicleSpacingOverviewItems,
+  MAX_CNT_FREIGHT,
+  getFreightItem,
+  formatNumberWithMeters,
+  formatNumberWithTons,
+  getFreightOverviewShortTermItems,
+  getFreightOverviewLongTermItems,
+  getOverviewErrorMessage,
+  checkHasFreightPairingItemWithExemptionForWeight,
+  checkHasAnyConvoyWithTrailer,
 } from '../../../utils'
 import { overview } from '../../../lib/messages'
 import { DefaultEvents } from '@island.is/application/types'
@@ -45,9 +58,7 @@ export const overviewSection = buildSection({
           title: overview.shortTermlocation.subtitle,
           backId: 'locationMultiField',
           items: getShortTermLocationOverviewItems,
-          condition: (answers) => {
-            return checkIfExemptionTypeShortTerm(answers)
-          },
+          condition: checkIfExemptionTypeShortTerm,
         }),
         buildOverviewField({
           id: 'overview.longTermlocation',
@@ -55,9 +66,75 @@ export const overviewSection = buildSection({
           backId: 'locationMultiField',
           items: getLongTermLocationOverviewItems,
           attachments: getLongTermLocationOverviewAttachments,
-          condition: (answers) => {
-            return checkIfExemptionTypeLongTerm(answers)
-          },
+          condition: checkIfExemptionTypeLongTerm,
+        }),
+        buildOverviewField({
+          id: 'overview.convoy',
+          title: overview.convoy.subtitle,
+          backId: (answers) =>
+            checkIfExemptionTypeShortTerm(answers)
+              ? 'convoyShortTermMultiField'
+              : 'convoyLongTermMultiField',
+          items: getConvoyOverviewItems,
+        }),
+        buildOverviewField({
+          id: `overview.freightShortTerm`,
+          condition: checkIfExemptionTypeShortTerm,
+          title: overview.freight.subtitle,
+          backId: 'freightShortTermCreateMultiField',
+          items: getFreightOverviewShortTermItems,
+        }),
+        ...Array(MAX_CNT_FREIGHT)
+          .fill(null)
+          .flatMap((_, freightIndex) => {
+            return [
+              buildOverviewField({
+                id: `overview.freightLongTerm.${freightIndex}`,
+                condition: (answers) =>
+                  checkIfExemptionTypeLongTerm(answers) &&
+                  !!getFreightItem(answers, freightIndex),
+
+                title: (application) => {
+                  const freightItem = getFreightItem(
+                    application.answers,
+                    freightIndex,
+                  )
+                  return {
+                    ...overview.freight.label,
+                    values: {
+                      freightNumber: freightIndex + 1,
+                      freightName: freightItem?.name,
+                      length: formatNumberWithMeters(freightItem?.length),
+                      weight: formatNumberWithTons(freightItem?.weight),
+                    },
+                  }
+                },
+                displayTitleAsAccordion: true,
+                backId: `freightLongTermPairingMultiField.${freightIndex}`,
+                items: (answers, externalData) =>
+                  getFreightOverviewLongTermItems(
+                    answers,
+                    externalData,
+                    freightIndex,
+                  ),
+              }),
+            ]
+          }),
+        buildOverviewField({
+          id: 'overview.axleSpacing',
+          title: overview.axleSpacing.subtitle,
+          backId: 'axleSpacingMultiField',
+          items: getAxleSpacingOverviewItems,
+          condition: checkHasFreightPairingItemWithExemptionForWeight,
+        }),
+        buildOverviewField({
+          id: 'overview.vehicleSpacing',
+          title: overview.vehicleSpacing.subtitle,
+          backId: 'vehicleSpacingMultiField',
+          items: getVehicleSpacingOverviewItems,
+          condition: (answers) =>
+            checkHasAnyConvoyWithTrailer(answers) &&
+            checkHasFreightPairingItemWithExemptionForWeight(answers),
         }),
         buildOverviewField({
           id: 'overview.supportingDocuments',
@@ -79,6 +156,16 @@ export const overviewSection = buildSection({
               label: overview.buttons.confirm,
             },
           ],
+        }),
+        buildAlertMessageField({
+          id: 'overview.alertMessageValidation',
+          title: overview.freight.convoyMissingErrorTitle,
+          message: (application) =>
+            getOverviewErrorMessage(application.answers) || '',
+          condition: (answers) => !!getOverviewErrorMessage(answers),
+          doesNotRequireAnswer: true,
+          alertType: 'error',
+          shouldBlockInSetBeforeSubmitCallback: true,
         }),
         buildSubmitField({
           id: 'submit',

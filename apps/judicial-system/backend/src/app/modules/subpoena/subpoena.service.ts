@@ -1,14 +1,7 @@
 import { Base64 } from 'js-base64'
-import {
-  col,
-  fn,
-  Includeable,
-  literal,
-  Op,
-  Sequelize,
-  WhereOptions,
-} from 'sequelize'
+import { col, fn, Includeable, literal, Op, WhereOptions } from 'sequelize'
 import { Transaction } from 'sequelize/types'
+import { Sequelize } from 'sequelize-typescript'
 
 import {
   forwardRef,
@@ -240,15 +233,6 @@ export class SubpoenaService {
           requestedDefenderNationalId ||
           requestedDefenderName)
       ) {
-        // If there is a change in the defender choice after the judge has confirmed the choice,
-        // we need to set the isDefenderChoiceConfirmed to false
-        const resetDefenderChoiceConfirmed =
-          subpoena.defendant?.isDefenderChoiceConfirmed &&
-          ((defenderChoice &&
-            subpoena.defendant?.defenderChoice !== defenderChoice) ||
-            (defenderNationalId &&
-              subpoena.defendant?.defenderNationalId !== defenderNationalId))
-
         // Færa message handling í defendant service
         await this.defendantService.updateRestricted(
           subpoena.case,
@@ -263,7 +247,6 @@ export class SubpoenaService {
             requestedDefenderNationalId,
             requestedDefenderName,
           },
-          resetDefenderChoiceConfirmed ? false : undefined,
           transaction,
         )
       }

@@ -12,12 +12,14 @@ import {
   Icon,
   Table as T,
   Pagination,
+  Blockquote,
 } from '@island.is/island-ui/core'
 import {
   UserInfoLine,
   CardLoader,
   ErrorScreen,
   m as coreMessages,
+  LinkButton,
 } from '@island.is/portals/my-pages/core'
 import { m } from '../../../lib/messages'
 import { gql, useQuery } from '@apollo/client'
@@ -29,7 +31,7 @@ import {
   GenericUserLicenseMetaLinksType,
   Query,
 } from '@island.is/api/schema'
-import { PkPass } from '../../../components/QRCodeModal/PkPass'
+
 import {
   getLicenseDetailHeading,
   getTypeFromPath,
@@ -380,15 +382,25 @@ const LicenseDetail = () => {
             marginBottom={2}
             rowGap={2}
           >
-            {!expired &&
-              genericLicense?.license.pkpass &&
-              genericLicense?.license.pkpassStatus === 'Available' &&
-              licenseType && (
-                <>
-                  <PkPass licenseType={licenseType} />
-                  <Box marginX={[0, 1]} marginY={[1, 0]} />
-                </>
-              )}
+            <GridRow marginBottom={2}>
+              <GridColumn span={['12/12', '10/12']}>
+                <Blockquote>
+                  <Text>
+                    {formatMessage(m.pkpassRemoved, {
+                      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                      link: (str: any) => (
+                        <LinkButton
+                          to="https://island.is/app"
+                          text={str}
+                          variant="text"
+                          size="small"
+                        />
+                      ),
+                    })}
+                  </Text>
+                </Blockquote>
+              </GridColumn>
+            </GridRow>
             {genericLicense?.payload?.metadata?.links
               ?.map((link, index) => {
                 if (link.label && link.value) {

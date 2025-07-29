@@ -5,7 +5,7 @@ export class UpdateOrganizationPermissionDto {
   @IsNotEmpty()
   @IsString()
   @ApiProperty()
-  organizationId!: string
+  organizationNationalId!: string
 
   @IsNotEmpty()
   @IsString()

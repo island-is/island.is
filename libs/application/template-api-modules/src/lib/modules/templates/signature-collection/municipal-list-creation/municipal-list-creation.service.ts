@@ -61,7 +61,9 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
       .filter(
         (collection) =>
           collection.collectionType === this.collectionType &&
-          collection.areas.some((area) => area.id === candidate.area?.id),
+          collection.areas.some(
+            (area) => area.id === candidate.area?.id && area.isActive,
+          ),
       )
 
     if (!currentCollection.length) {

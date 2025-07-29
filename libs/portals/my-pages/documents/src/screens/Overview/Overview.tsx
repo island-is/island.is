@@ -114,174 +114,178 @@ export const DocumentsOverview = () => {
           hiddenBelow={activeDocument?.document ? 'lg' : undefined}
           span={['12/12', '12/12', '12/12', '5/12']}
         >
-          <Box marginY={2} printHidden>
-            <Box
-              className={styles.btn}
-              display={'inlineFlex'}
-              alignItems={'center'}
-            >
-              <GoBack display="inline" noUnderline marginBottom={0} />
+          <Box className={styles.documentList}>
+            <Box marginY={2} printHidden>
               <Box
-                borderRadius="full"
-                display={'inlineBlock'}
-                marginY={0}
-                marginX={1}
-                className={styles.bullet}
-              />
-              <Text
-                as="h1"
-                variant="eyebrow"
-                color="blue400"
-                fontWeight="semiBold"
+                className={styles.btn}
+                display={'inlineFlex'}
+                alignItems={'center'}
               >
-                <button
-                  onClick={() =>
-                    navigate(DocumentsPaths.ElectronicDocumentsRoot, {
-                      replace: true,
-                    })
-                  }
+                <GoBack display="inline" noUnderline marginBottom={0} />
+                <Box
+                  borderRadius="full"
+                  display={'inlineBlock'}
+                  marginY={0}
+                  marginX={1}
+                  className={styles.bullet}
+                />
+                <Text
+                  as="h1"
+                  variant="eyebrow"
+                  color="blue400"
+                  fontWeight="semiBold"
                 >
-                  {formatMessage(m.documents)}
-                </button>
-              </Text>
+                  <button
+                    onClick={() =>
+                      navigate(DocumentsPaths.ElectronicDocumentsRoot, {
+                        replace: true,
+                      })
+                    }
+                  >
+                    {formatMessage(m.documents)}
+                  </button>
+                </Text>
+              </Box>
             </Box>
-          </Box>
-          <DocumentsFilter
-            filterValue={filterValue}
-            categories={categoriesAvailable}
-            senders={sendersAvailable}
-            debounceChange={debouncedResults}
-            clearCategories={() =>
-              setFilterValue((oldFilter) => ({
-                ...oldFilter,
-                activeCategories: [],
-              }))
-            }
-            clearSenders={() =>
-              setFilterValue((oldFilter) => ({
-                ...oldFilter,
-                activeSenders: [],
-              }))
-            }
-            documentsLength={totalCount}
-          />
-          <Box marginTop={[2, 2, 4]}>
-            <Box
-              background="blue100"
-              width="full"
-              borderColor="blue200"
-              borderBottomWidth="standard"
-              display="flex"
-              justifyContent="spaceBetween"
-              padding={2}
-            >
-              <Box display="flex">
-                <Box className={styles.checkboxWrap} marginRight={3}>
-                  <Checkbox
-                    name="checkbox-select-all"
-                    ariaLabel={formatMessage(messages.selectAll)}
-                    checked={selectedLines.length > 0}
-                    onChange={(e) => {
-                      if (e.target.checked) {
-                        const allDocumentIds = filteredDocuments
-                          .filter((x) => !x.isUrgent)
-                          .map((item) => item.id)
-                        setSelectedLines([...allDocumentIds])
-                      } else {
-                        setSelectedLines([])
-                      }
-                    }}
-                  />
+            <DocumentsFilter
+              filterValue={filterValue}
+              categories={categoriesAvailable}
+              senders={sendersAvailable}
+              debounceChange={debouncedResults}
+              clearCategories={() =>
+                setFilterValue((oldFilter) => ({
+                  ...oldFilter,
+                  activeCategories: [],
+                }))
+              }
+              clearSenders={() =>
+                setFilterValue((oldFilter) => ({
+                  ...oldFilter,
+                  activeSenders: [],
+                }))
+              }
+              documentsLength={totalCount}
+            />
+            <Box marginTop={[2, 2, 4]}>
+              <Box
+                background="blue100"
+                width="full"
+                borderColor="blue200"
+                borderBottomWidth="standard"
+                display="flex"
+                justifyContent="spaceBetween"
+                padding={2}
+              >
+                <Box display="flex">
+                  <Box className={styles.checkboxWrap} marginRight={3}>
+                    <Checkbox
+                      name="checkbox-select-all"
+                      ariaLabel={formatMessage(messages.selectAll)}
+                      checked={selectedLines.length > 0}
+                      onChange={(e) => {
+                        if (e.target.checked) {
+                          const allDocumentIds = filteredDocuments
+                            .filter((x) => !x.isUrgent)
+                            .map((item) => item.id)
+                          setSelectedLines([...allDocumentIds])
+                        } else {
+                          setSelectedLines([])
+                        }
+                      }}
+                    />
+                  </Box>
+                  {selectedLines.length > 0 ? null : (
+                    <Text variant="eyebrow">{formatMessage(m.info)}</Text>
+                  )}
                 </Box>
-                {selectedLines.length > 0 ? null : (
-                  <Text variant="eyebrow">{formatMessage(m.info)}</Text>
+
+                {selectedLines.length > 0 ? (
+                  <FavAndStash
+                    loading={batchActionLoading}
+                    onStash={() =>
+                      submitBatchAction(
+                        activeArchive ? 'unarchive' : 'archive',
+                        selectedLines,
+                        filteredDocuments.length === selectedLines.length,
+                      )
+                    }
+                    archived={activeArchive}
+                    onFav={() => submitBatchAction('bookmark', selectedLines)}
+                    onRead={() => submitBatchAction('read', selectedLines)}
+                  />
+                ) : (
+                  <Text variant="eyebrow">{formatMessage(m.date)}</Text>
                 )}
               </Box>
-
-              {selectedLines.length > 0 ? (
-                <FavAndStash
-                  loading={batchActionLoading}
-                  onStash={() =>
-                    submitBatchAction(
-                      activeArchive ? 'unarchive' : 'archive',
-                      selectedLines,
-                      filteredDocuments.length === selectedLines.length,
-                    )
-                  }
-                  archived={activeArchive}
-                  onFav={() => submitBatchAction('bookmark', selectedLines)}
-                  onRead={() => submitBatchAction('read', selectedLines)}
-                />
-              ) : (
-                <Text variant="eyebrow">{formatMessage(m.date)}</Text>
+              {loading && (
+                <Box marginTop={2}>
+                  <SkeletonLoader
+                    space={2}
+                    repeat={pageSize}
+                    display="block"
+                    width="full"
+                    height={57}
+                  />
+                </Box>
               )}
-            </Box>
-            {loading && (
-              <Box marginTop={2}>
-                <SkeletonLoader
-                  space={2}
-                  repeat={pageSize}
-                  display="block"
-                  width="full"
-                  height={57}
-                />
-              </Box>
-            )}
-            <Stack space={0}>
-              {filteredDocuments.map((doc) => (
-                <Box key={doc.id}>
-                  <DocumentLine
-                    img={
-                      doc?.sender?.name
-                        ? getOrganizationLogoUrl(
-                            doc?.sender?.name,
-                            organizations,
-                            60,
-                            'none',
-                          )
-                        : undefined
-                    }
-                    documentLine={doc}
-                    hasInitialFocus={doc.id === focusId}
-                    active={doc.id === activeDocument?.id}
-                    bookmarked={!!doc.bookmarked}
-                    selected={selectedLines.includes(doc.id)}
-                    setSelectLine={(docId) => {
-                      if (selectedLines.includes(doc.id)) {
-                        const filtered = selectedLines.filter(
-                          (item) => item !== doc.id,
-                        )
-                        setSelectedLines([...filtered])
-                      } else {
-                        // Urgent documents can't be selected and marked "read"
-                        // Can be put in storage when being opened otherwise not
-                        if (!doc.isUrgent) {
-                          setSelectedLines([...selectedLines, docId])
-                        }
+              <Stack space={0}>
+                {filteredDocuments.map((doc) => (
+                  <Box key={doc.id}>
+                    <DocumentLine
+                      img={
+                        doc?.sender?.name
+                          ? getOrganizationLogoUrl(
+                              doc?.sender?.name,
+                              organizations,
+                              60,
+                              'none',
+                            )
+                          : undefined
                       }
-                    }}
-                  />
-                </Box>
-              ))}
-              {totalPages ? (
-                <Box paddingBottom={4} marginTop={4}>
-                  <Pagination
-                    page={page}
-                    totalPages={totalPages}
-                    renderLink={(page, className, children) => (
-                      <button
-                        type="button"
-                        className={className}
-                        onClick={handlePageChange.bind(null, page)}
-                        aria-label={formatMessage(messages.goToPage, { page })}
-                      >
-                        {children}
-                      </button>
-                    )}
-                  />
-                </Box>
-              ) : undefined}
-            </Stack>
+                      documentLine={doc}
+                      hasInitialFocus={doc.id === focusId}
+                      active={doc.id === activeDocument?.id}
+                      bookmarked={!!doc.bookmarked}
+                      selected={selectedLines.includes(doc.id)}
+                      setSelectLine={(docId) => {
+                        if (selectedLines.includes(doc.id)) {
+                          const filtered = selectedLines.filter(
+                            (item) => item !== doc.id,
+                          )
+                          setSelectedLines([...filtered])
+                        } else {
+                          // Urgent documents can't be selected and marked "read"
+                          // Can be put in storage when being opened otherwise not
+                          if (!doc.isUrgent) {
+                            setSelectedLines([...selectedLines, docId])
+                          }
+                        }
+                      }}
+                    />
+                  </Box>
+                ))}
+                {totalPages ? (
+                  <Box paddingBottom={4} marginTop={4}>
+                    <Pagination
+                      page={page}
+                      totalPages={totalPages}
+                      renderLink={(page, className, children) => (
+                        <button
+                          type="button"
+                          className={className}
+                          onClick={handlePageChange.bind(null, page)}
+                          aria-label={formatMessage(messages.goToPage, {
+                            page,
+                          })}
+                        >
+                          {children}
+                        </button>
+                      )}
+                    />
+                  </Box>
+                ) : undefined}
+              </Stack>
+            </Box>
           </Box>
         </GridColumn>
         <GridColumn

@@ -102,6 +102,174 @@ export const overview = {
       description: 'Overview long-term location directions label',
     },
   }),
+  convoy: defineMessages({
+    subtitle: {
+      id: 'ta.eft.application:overview.convoy.subtitle',
+      defaultMessage: 'Vagnlest',
+      description: 'Overview convoy subtitle',
+    },
+    label: {
+      id: 'ta.eft.application:overview.convoy.label',
+      defaultMessage: 'Vagnlest {convoyNumber}',
+      description: 'Overview convoy number label',
+    },
+    vehicleLabel: {
+      id: 'ta.eft.application:overview.convoy.vehicleLabel',
+      defaultMessage: 'Ökutæki: {permno}',
+      description: 'Overview convoy vehicle label',
+    },
+    trailerLabel: {
+      id: 'ta.eft.application:overview.convoy.trailerLabel',
+      defaultMessage: 'Eftirvagn: {permno}',
+      description: 'Overview convoy trailer label',
+    },
+    dollySingleLabel: {
+      id: 'ta.eft.application:overview.convoy.dollySingleLabel',
+      defaultMessage: 'Dollý: Einfalt',
+      description: 'Overview convoy dolly single label',
+    },
+    dollyDoubleLabel: {
+      id: 'ta.eft.application:overview.convoy.dollyDoubleLabel',
+      defaultMessage: 'Dollý: Tvöfalt',
+      description: 'Overview convoy dolly double label',
+    },
+  }),
+  freight: defineMessages({
+    subtitle: {
+      id: 'ta.eft.application:overview.freight.subtitle',
+      defaultMessage: 'Farmur',
+      description: 'Overview freight subtitle',
+    },
+    label: {
+      id: 'ta.eft.application:overview.freight.label',
+      defaultMessage: 'Farmur {freightNumber}: {freightName} {length}/{weight}',
+      description: 'Overview freight label',
+    },
+    convoyLabel: {
+      id: 'ta.eft.application:overview.freight.convoyLabel',
+      defaultMessage: 'Vagnlest {convoyNumber}: {vehicleAndTrailerPermno}',
+      description: 'Overview freight convoy pairing label',
+    },
+    freightNameLabel: {
+      id: 'ta.eft.application:overview.freight.freightNameLabel',
+      defaultMessage: 'Tegund farms: {freightName}',
+      description: 'Overview freight name label',
+    },
+    lengthLabel: {
+      id: 'ta.eft.application:overview.freight.lengthLabel',
+      defaultMessage: 'Lengd farms: {length}',
+      description: 'Overview freight length label',
+    },
+    weightLabel: {
+      id: 'ta.eft.application:overview.freight.weightLabel',
+      defaultMessage: 'Þyngd farms: {weight}',
+      description: 'Overview freight weight label',
+    },
+    heightLabel: {
+      id: 'ta.eft.application:overview.freight.heightLabel',
+      defaultMessage: 'Mesta hæð: {height}',
+      description: 'Overview freight height label',
+    },
+    widthLabel: {
+      id: 'ta.eft.application:overview.freight.widthLabel',
+      defaultMessage: 'Mesta breidd: {width}',
+      description: 'Overview freight width label',
+    },
+    totalLengthLabel: {
+      id: 'ta.eft.application:overview.freight.totalLengthLabel',
+      defaultMessage: 'Heildarlengd: {totalLength}',
+      description: 'Overview freight total length label',
+    },
+    exemptionForWidthLabel: {
+      id: 'ta.eft.application:overview.freight.exemptionForWidthLabel',
+      defaultMessage: 'Undanþága vegna breiddar: Já',
+      description: 'Overview freight exemption for width label',
+    },
+    exemptionForHeightLabel: {
+      id: 'ta.eft.application:overview.freight.exemptionForHeightLabel',
+      defaultMessage: 'Undanþága vegna hæðar: Já',
+      description: 'Overview freight exemption for height label',
+    },
+    exemptionForLengthLabel: {
+      id: 'ta.eft.application:overview.freight.exemptionForLengthLabel',
+      defaultMessage: 'Undanþága vegna lengdar: Já',
+      description: 'Overview freight exemption for length label',
+    },
+    exemptionForWeightLabel: {
+      id: 'ta.eft.application:overview.freight.exemptionForWeightLabel',
+      defaultMessage: 'Undanþága vegna þyngdar: Já',
+      description: 'Overview freight exemption for weight label',
+    },
+    convoyMissingErrorTitle: {
+      id: 'ta.eft.application:overview.freight.convoyMissingErrorTitle',
+      defaultMessage: 'Athugið',
+      description: 'Overview convoy missing in freight pairing error title',
+    },
+    convoyMissingErrorMessage: {
+      id: 'ta.eft.application:overview.freight.convoyMissingErrorMessage',
+      defaultMessage:
+        'Vantar að para vagnlest {convoyNumber}: {vehicleAndTrailerPermno} við farm',
+      description: 'Overview convoy missing in freight pairing error message',
+    },
+  }),
+  axleSpacing: defineMessages({
+    subtitle: {
+      id: 'ta.eft.application:overview.axleSpacing.subtitle',
+      defaultMessage: 'Bil á milli öxla',
+      description: 'Overview axle spacing subtitle',
+    },
+    vehicleLabel: {
+      id: 'ta.eft.application:overview.axleSpacing.vehicleLabel',
+      defaultMessage:
+        'Ökutæki - {permno} ({axleCount} öxlar): {axleSpacingList}',
+      description:
+        'Overview axle spacing label for vehicle with permno and axle spacing',
+    },
+    trailerLabel: {
+      id: 'ta.eft.application:overview.axleSpacing.trailerLabel',
+      defaultMessage:
+        'Eftirvagn - {permno} ({axleCount} öxlar): {axleSpacingList}',
+      description:
+        'Overview axle spacing label for trailer with permno and axle spacing',
+    },
+    dollyLabel: {
+      id: 'ta.eft.application:overview.axleSpacing.dollyLabel',
+      defaultMessage: 'Tvöfalt dollý (2 öxlar): {axleSpacingList}',
+      description:
+        'Overview axle spacing label for double dolly with axle spacing',
+    },
+  }),
+  vehicleSpacing: defineMessages({
+    subtitle: {
+      id: 'ta.eft.application:overview.vehicleSpacing.subtitle',
+      defaultMessage: 'Bil á milli vagna',
+      description: 'Overview vehicle spacing subtitle',
+    },
+    shortTermVehicleToTrailerLabel: {
+      id: 'ta.eft.application:overview.vehicleSpacing.shortTermVehicleToTrailerLabel',
+      defaultMessage: 'Ökutæki í eftirvagn: {vehicleSpacing}',
+      description:
+        'Overview vehicle spacing short-term label for vehicle to trailer',
+    },
+    shortTermVehicleToDollyLabel: {
+      id: 'ta.eft.application:overview.vehicleSpacing.shortTermVehicleToDollyLabel',
+      defaultMessage: 'Ökutæki í dollý: {vehicleSpacing}',
+      description:
+        'Overview vehicle spacing short-term label for vehicle to dolly',
+    },
+    shortTermDollyToTrailerLabel: {
+      id: 'ta.eft.application:overview.vehicleSpacing.shortTermDollyToTrailerLabel',
+      defaultMessage: 'Dollý í eftirvagn: {vehicleSpacing}',
+      description:
+        'Overview vehicle spacing short-term label for dolly to trailer',
+    },
+    longTermLabel: {
+      id: 'ta.eft.application:overview.vehicleSpacing.longTermLabel',
+      defaultMessage:
+        'Bil í vagnlest {convoyNumber}, ökutæki ({vehiclePermno}) í eftirvagn ({trailerPermno}): {vehicleSpacing}',
+      description: 'Overview vehicle spacing long-term label for convoy',
+    },
+  }),
   supportingDocuments: defineMessages({
     subtitle: {
       id: 'ta.eft.application:overview.supportingDocuments.subtitle',

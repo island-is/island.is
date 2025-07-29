@@ -38,9 +38,8 @@ export const locationSection = buildSection({
       children: [
         buildHiddenInput({
           id: 'location.exemptionPeriodType',
-          defaultValue: (application: Application) => {
-            return getExemptionType(application.answers)
-          },
+          defaultValue: (application: Application) =>
+            getExemptionType(application.answers),
         }),
 
         // Short term exemption:
@@ -49,27 +48,21 @@ export const locationSection = buildSection({
           id: 'location.shortTerm.fromSubtitle',
           title: location.shortTerm.fromSubtitle,
           titleVariant: 'h5',
-          condition: (answers) => {
-            return checkIfExemptionTypeShortTerm(answers)
-          },
+          condition: checkIfExemptionTypeShortTerm,
         }),
         buildTextField({
           id: 'location.shortTerm.addressFrom',
           title: location.shortTerm.addressFrom,
           width: 'half',
           required: true,
-          condition: (answers) => {
-            return checkIfExemptionTypeShortTerm(answers)
-          },
+          condition: checkIfExemptionTypeShortTerm,
         }),
         buildTextField({
           id: 'location.shortTerm.postalCodeAndCityFrom',
           title: location.shortTerm.postalCodeAndCityFrom,
           width: 'half',
           required: true,
-          condition: (answers) => {
-            return checkIfExemptionTypeShortTerm(answers)
-          },
+          condition: checkIfExemptionTypeShortTerm,
         }),
 
         // Location to
@@ -77,27 +70,21 @@ export const locationSection = buildSection({
           id: 'location.shortTerm.toSubtitle',
           title: location.shortTerm.toSubtitle,
           titleVariant: 'h5',
-          condition: (answers) => {
-            return checkIfExemptionTypeShortTerm(answers)
-          },
+          condition: checkIfExemptionTypeShortTerm,
         }),
         buildTextField({
           id: 'location.shortTerm.addressTo',
           title: location.shortTerm.addressTo,
           width: 'half',
           required: true,
-          condition: (answers) => {
-            return checkIfExemptionTypeShortTerm(answers)
-          },
+          condition: checkIfExemptionTypeShortTerm,
         }),
         buildTextField({
           id: 'location.shortTerm.postalCodeAndCityTo',
           title: location.shortTerm.postalCodeAndCityTo,
           width: 'half',
           required: true,
-          condition: (answers) => {
-            return checkIfExemptionTypeShortTerm(answers)
-          },
+          condition: checkIfExemptionTypeShortTerm,
         }),
 
         // Directions
@@ -108,9 +95,7 @@ export const locationSection = buildSection({
           rows: 5,
           title: location.shortTerm.directions,
           placeholder: location.shortTerm.directionsPlaceholder,
-          condition: (answers) => {
-            return checkIfExemptionTypeShortTerm(answers)
-          },
+          condition: checkIfExemptionTypeShortTerm,
         }),
 
         // Long term exemption:
@@ -119,9 +104,7 @@ export const locationSection = buildSection({
           id: 'location.longTerm.regionsSubtitle',
           title: location.longTerm.regionsSubtitle,
           titleVariant: 'h5',
-          condition: (answers) => {
-            return checkIfExemptionTypeLongTerm(answers)
-          },
+          condition: checkIfExemptionTypeLongTerm,
         }),
         buildSelectField({
           id: 'location.longTerm.regions',
@@ -135,9 +118,7 @@ export const locationSection = buildSection({
               label: getValueViaPath(location.regionOptions, key) || '',
             }))
           },
-          condition: (answers) => {
-            return checkIfExemptionTypeLongTerm(answers)
-          },
+          condition: checkIfExemptionTypeLongTerm,
         }),
 
         // Directions
@@ -147,9 +128,7 @@ export const locationSection = buildSection({
           rows: 5,
           title: location.longTerm.directions,
           placeholder: location.longTerm.directionsPlaceholder,
-          condition: (answers) => {
-            return checkIfExemptionTypeLongTerm(answers)
-          },
+          condition: checkIfExemptionTypeLongTerm,
         }),
 
         // Location documents
@@ -165,9 +144,7 @@ export const locationSection = buildSection({
             values: { allowedTypes: FILE_TYPES_ALLOWED },
           },
           uploadButtonLabel: location.longTerm.fileUploadButtonLabel,
-          condition: (answers) => {
-            return checkIfExemptionTypeLongTerm(answers)
-          },
+          condition: checkIfExemptionTypeLongTerm,
         }),
       ],
     }),

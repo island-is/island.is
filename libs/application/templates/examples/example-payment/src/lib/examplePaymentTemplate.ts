@@ -29,6 +29,8 @@ const getCodes = (application: Application): BasicChargeItem[] => {
   // This is where you'd pick and validate that you are going to create a charge for a
   // particular charge item code. Note that creating these charges creates an actual "krafa"
   // with FJS
+  // NOTE: This is a simplified example, in a real application you should inspect the application
+  // answers and external data to pick the correct charge item code.
   const chargeItemCode = getValueViaPath<CatalogItem['chargeItemCode']>(
     application.answers,
     'userSelectedChargeItemCode',

@@ -5,12 +5,15 @@ import {
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
 import {
+  DefendantEventType,
   EventType,
   ServiceRequirement,
   VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../modules/case'
+import { DefendantEventLog } from '../modules/defendant'
+import { EventLog } from '../modules/event-log'
 import {
   addEmptyLines,
   addLargeHeading,
@@ -59,16 +62,15 @@ export const createRulingSentToPrisonAdminPdf = (
 
   doc.moveDown(1.5)
 
-  const sentToPrisonAdminDate = theCase.defendants
-    ?.flatMap((defendant) => defendant.eventLogs || [])
-    .filter((eventLog) => eventLog.eventType === 'SENT_TO_PRISON_ADMIN')
-    .sort(
-      (a, b) => new Date(b.created).getTime() - new Date(a.created).getTime(),
-    )[0]?.created
+  const sentToPrisonAdminDate = DefendantEventLog.getEventLogDateByEventType(
+    DefendantEventType.SENT_TO_PRISON_ADMIN,
+    theCase.defendants?.flatMap((defendant) => defendant.eventLogs || []),
+  )
 
-  const getSignatureDate = theCase.eventLogs?.find(
-    (eventLog) => eventLog.eventType === EventType.INDICTMENT_REVIEWED,
-  )?.created
+  const getSignatureDate = EventLog.getEventLogDateByEventType(
+    EventType.INDICTMENT_REVIEWED,
+    theCase.eventLogs,
+  )
 
   addMediumCenteredText(
     doc,

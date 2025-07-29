@@ -13,7 +13,7 @@ import {
   RouteApplicationAddModel,
   VehicleType,
 } from '@island.is/clients/transport-authority/exemption-for-transportation'
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES } from '@island.is/application/core'
 import {
   Application,
   ApplicationWithAttachments,
@@ -192,6 +192,7 @@ export const mapHaulUnits = (application: Application): HaulUnitModel[] => {
           },
           ...(axleSpacingAnswers?.exemptionPeriodType ===
             ExemptionType.SHORT_TERM &&
+          item.trailer?.permno &&
           (axleSpacingAnswers?.dolly?.type === DollyType.SINGLE ||
             axleSpacingAnswers?.dolly?.type === DollyType.DOUBLE)
             ? [
@@ -213,7 +214,7 @@ export const mapHaulUnits = (application: Application): HaulUnitModel[] => {
                   vehicleType: VehicleType.TRAILER,
                   // Axle spacing
                   axleSpacing: (axleSpacingAnswers?.hasExemptionForWeight
-                    ? (trailerAxleSpacing?.useSameValues
+                    ? (trailerAxleSpacing?.useSameValues?.includes(YES)
                         ? Array(
                             Math.max(
                               (trailerAxleSpacing?.axleCount ?? 0) - 1,

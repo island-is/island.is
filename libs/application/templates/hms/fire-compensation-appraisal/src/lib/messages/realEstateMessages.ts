@@ -22,6 +22,12 @@ export const realEstateMessages = defineMessages({
     defaultMessage: 'Notkunareining',
     description: 'Usage unit',
   },
+  usageUnitDescription: {
+    id: 'fca.application:realEstate.usageUnitDescription',
+    defaultMessage:
+      'Athugaðu að endurmat mun aðeins fara fram á þeim notkunareiningum sem valdar eru. Ef ekki er hakað í einhverja notkunareiningu þarf að sækja um aftur ef taka á hana með til endurmats.',
+    description: 'Usage unit description',
+  },
   usageUnitsFireCompensation: {
     id: 'fca.application:realEstate.usageUnitsFireCompensation',
     defaultMessage: 'Brunabótamat valdra notkunareininga',

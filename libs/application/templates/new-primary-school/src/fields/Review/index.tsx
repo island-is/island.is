@@ -22,7 +22,7 @@ import {
 import { newPrimarySchoolMessages } from '../../lib/messages'
 import { getApplicationAnswers } from '../../lib/newPrimarySchoolUtils'
 
-import { AllergiesAndIntolerances } from './review-groups/AllergiesAndIntolerances'
+import { HealthProtection } from './review-groups/HealthProtection'
 import { Child } from './review-groups/Child'
 import { CurrentNursery } from './review-groups/CurrentNursery'
 import { CurrentSchool } from './review-groups/CurrentSchool'
@@ -185,7 +185,7 @@ export const Review: FC<ReviewScreenProps> = ({
         <Siblings {...childProps} />
       )}
       <Languages {...childProps} />
-      <AllergiesAndIntolerances {...childProps} />
+      <HealthProtection {...childProps} />
       <Support {...childProps} />
     </>
   )

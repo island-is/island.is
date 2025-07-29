@@ -24,7 +24,8 @@ const listTypePlaceholder = {
 
 export const List = ({ item, dispatch, lang = 'is', hasError }: Props) => {
   const mapToListItems = (items: (FormSystemListItem | null)[]): ListItem[] =>
-    items?.filter((item): item is FormSystemListItem => item !== null)
+    items
+      ?.filter((item): item is FormSystemListItem => item !== null)
       .map((item) => ({
         label: item.label?.[lang] ?? '',
         value: item.label?.[lang] ?? '',
@@ -50,7 +51,7 @@ export const List = ({ item, dispatch, lang = 'is', hasError }: Props) => {
       required={item.isRequired ?? false}
       placeholder={
         listTypePlaceholder[
-        item.fieldSettings?.listType as keyof typeof listTypePlaceholder
+          item.fieldSettings?.listType as keyof typeof listTypePlaceholder
         ] ?? 'Select an option'
       }
       backgroundColor="blue"

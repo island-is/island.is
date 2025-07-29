@@ -15,8 +15,12 @@ import {
   AuditedAction,
   AuditTrailService,
 } from '@island.is/judicial-system/audit-trail'
-import { LawyersService } from '@island.is/judicial-system/lawyers'
-import { DefenderChoice, ServiceStatus } from '@island.is/judicial-system/types'
+import {
+  DefenderChoice,
+  LawyerRegistry,
+  LawyerType,
+  ServiceStatus,
+} from '@island.is/judicial-system/types'
 
 import { CreateCaseDto } from './dto/createCase.dto'
 import { UpdateSubpoenaDto } from './dto/subpoena.dto'
@@ -30,7 +34,6 @@ export class AppService {
     @Inject(appModuleConfig.KEY)
     private readonly config: ConfigType<typeof appModuleConfig>,
     private readonly auditTrailService: AuditTrailService,
-    private readonly lawyersService: LawyersService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
   async create(caseToCreate: CreateCaseDto): Promise<Case> {
@@ -92,6 +95,36 @@ export class AppService {
     )
   }
 
+  async getLitigators(): Promise<LawyerRegistry[]> {
+    try {
+      const res = await fetch(
+        `${this.config.backend.url}/lawyer-registry?lawyerType=${LawyerType.LITIGATORS}`,
+        {
+          method: 'GET',
+          headers: {
+            'Content-Type': 'application/json',
+            authorization: `Bearer ${this.config.backend.accessToken}`,
+          },
+        },
+      )
+      if (res.ok) {
+        const lawyers = await res.json()
+
+        return lawyers.map((lawyer: LawyerRegistry) => ({
+          nationalId: lawyer.nationalId,
+          name: lawyer.name,
+          practice: lawyer.practice,
+        }))
+      }
+
+      throw new BadRequestException()
+    } catch (error) {
+      this.logger.error('Failed to retrieve litigator lawyers', error)
+
+      throw new BadRequestException('Failed to retrieve litigator lawyers')
+    }
+  }
+
   private async updateSubpoenaInfo(
     policeSubpoenaId: string,
     updateSubpoena: UpdateSubpoenaDto,
@@ -117,17 +150,27 @@ export class AppService {
 
     if (updateSubpoena.defenderNationalId) {
       try {
-        const chosenLawyer = await this.lawyersService.getLawyer(
-          updateSubpoena.defenderNationalId,
+        const res = await fetch(
+          `${this.config.backend.url}/lawyer-registry/${updateSubpoena.defenderNationalId}`,
+          {
+            method: 'GET',
+            headers: {
+              'Content-Type': 'application/json',
+              authorization: `Bearer ${this.config.backend.accessToken}`,
+            },
+          },
         )
 
-        defenderInfo = {
-          defenderName: chosenLawyer.Name,
-          defenderEmail: chosenLawyer.Email,
-          defenderPhoneNumber: chosenLawyer.Phone,
+        if (res.ok) {
+          const chosenLawyer = await res.json()
+
+          defenderInfo = {
+            defenderName: chosenLawyer.name,
+            defenderEmail: chosenLawyer.email,
+            defenderPhoneNumber: chosenLawyer.phoneNumber,
+          }
         }
       } catch (reason) {
-        // TODO: Reconsider throwing - what happens if registry is down?
         this.logger.error(
           `Failed to retrieve lawyer with national id ${updateSubpoena.defenderNationalId}`,
           reason,

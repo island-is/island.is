@@ -14,6 +14,7 @@ export const WatchCompanyNationalId: FC<
   const { setBeforeSubmitCallback, application } = props
   const { getValues, setValue } = useFormContext()
   const { formatMessage } = useLocale()
+  const [isCompanyCallValid, setIsCompanyCallValid] = useState<boolean>(true)
   const [isCompanyValid, setIsCompanyValid] = useState<boolean>(true)
   const getIsValidCompany = useLazyIsCompanyValid()
   const getIsCompanyValidCallback = useCallback(
@@ -38,6 +39,7 @@ export const WatchCompanyNationalId: FC<
 
   setBeforeSubmitCallback?.(async () => {
     setIsCompanyValid(true)
+    setIsCompanyCallValid(true)
     const paymentOptions = getValues('paymentArrangement.paymentOptions')
     if (paymentOptions === PaymentOptions.cashOnDelivery) {
       return [true, null]
@@ -46,27 +48,42 @@ export const WatchCompanyNationalId: FC<
       'paymentArrangement.companyInfo.nationalId',
     )
     if (companyNationalId) {
-      const response = await getIsCompanyValidCallback(companyNationalId)
-      if (response?.seminarsVerIsCompanyValid?.mayPayWithAnAccount) {
-        return [true, null]
+      try {
+        const response = await getIsCompanyValidCallback(companyNationalId)
+        if (response?.seminarsVerIsCompanyValid?.mayPayWithAnAccount) {
+          return [true, null]
+        }
+        setIsCompanyValid(false)
+      } catch (error) {
+        setIsCompanyCallValid(false)
+        return [false, '']
       }
-      setIsCompanyValid(false)
     }
-
     return [false, '']
   })
 
   return (
-    !isCompanyValid && (
-      <Box marginTop={5}>
-        <AlertMessage
-          type="error"
-          title=""
-          message={formatMessage(
-            paymentArrangement.labels.contactOrganizationAlert,
-          )}
-        />
-      </Box>
-    )
+    <>
+      {!isCompanyValid && (
+        <Box marginTop={5}>
+          <AlertMessage
+            type="warning"
+            title=""
+            message={formatMessage(
+              paymentArrangement.labels.contactOrganizationAlert,
+            )}
+          />
+        </Box>
+      )}
+      {!isCompanyCallValid && (
+        <Box marginTop={5}>
+          <AlertMessage
+            type="error"
+            title=""
+            message={formatMessage(paymentArrangement.labels.webServiceFailure)}
+          />
+        </Box>
+      )}
+    </>
   )
 }

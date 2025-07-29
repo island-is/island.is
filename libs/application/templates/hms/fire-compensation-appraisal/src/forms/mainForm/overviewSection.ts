@@ -1,4 +1,6 @@
 import {
+  buildDisplayField,
+  buildDividerField,
   buildMultiField,
   buildOverviewField,
   buildSection,
@@ -12,6 +14,7 @@ import {
 } from '../../utils/getOverviewItems'
 import * as m from '../../lib/messages'
 import { DefaultEvents } from '@island.is/application/types'
+import { getAmountToPay } from '../../utils/utils'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
@@ -46,7 +49,15 @@ export const overviewSection = buildSection({
           backId: 'appraisalMethod',
           items: changesOverviewItems,
         }),
-
+        buildDividerField({}),
+        buildDisplayField({
+          id: 'amountToPay',
+          title: m.overviewMessages.amountToPay,
+          titleVariant: 'h3',
+          value: getAmountToPay,
+          rightAlign: true,
+          variant: 'currency',
+        }),
         buildSubmitField({
           id: 'submit',
           title: m.overviewMessages.pay,

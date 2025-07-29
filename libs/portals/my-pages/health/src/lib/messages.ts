@@ -1178,6 +1178,10 @@ export const messages = defineMessages({
     defaultMessage: 'Greiðslur og réttindi',
     id: 'sp.health:payments-and-rights',
   },
+  rights: {
+    defaultMessage: 'Réttindi',
+    id: 'sp.health:rights',
+  },
   paymentsAndRightsDescription: {
     defaultMessage: 'Upplýsingar um greiðslustöðu þína',
     id: 'sp.health:payments-and-rights-description',
@@ -1665,5 +1669,9 @@ export const messages = defineMessages({
   expiredOn: {
     id: 'sp.health:expired-on',
     defaultMessage: 'Rann út {arg}',
+  },
+  renewEhicUrl: {
+    id: 'sp.health:renew-ehic-url',
+    defaultMessage: 'https://island.is/evropska-sjukratryggingakortid',
   },
 })

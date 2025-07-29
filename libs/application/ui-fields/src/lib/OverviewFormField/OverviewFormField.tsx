@@ -7,9 +7,12 @@ import {
   FieldBaseProps,
   KeyValueItem,
   OverviewField,
+  TableData,
 } from '@island.is/application/types'
 import { ReviewGroup } from '@island.is/application/ui-components'
 import {
+  Accordion,
+  AccordionItem,
   Box,
   Divider,
   GridColumn,
@@ -43,17 +46,23 @@ export const OverviewFormField = ({
     loadItems: rawLoadItems,
     attachments: rawAttachments,
     tableData: rawTableData,
+    loadTableData: rawLoadTableData,
   } = field
   const apolloClient = useApolloClient()
   const [loadedItems, setLoadedItems] = useState<KeyValueItem[] | undefined>([])
+  const [loadedTableData, setLoadedTableData] = useState<
+    TableData | undefined
+  >()
   const [hasLoadingError, setHasLoadingError] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
+  const { formatMessage, lang: locale } = useLocale()
 
   const userInfo = useUserInfo()
   const items = rawItems?.(
     application.answers,
     application.externalData,
     userInfo?.profile?.nationalId,
+    locale,
   )
   const filteredItems = items?.filter(
     (item) =>
@@ -72,7 +81,13 @@ export const OverviewFormField = ({
     application.externalData,
   )
 
-  const { formatMessage, lang: locale } = useLocale()
+  let backIdVal: string | undefined
+  if (typeof backId === 'function') {
+    backIdVal = backId(application.answers, application.externalData)
+  } else {
+    backIdVal = backId
+  }
+
   const changeScreens = (screen: string) => {
     if (goToScreen) goToScreen(screen)
   }
@@ -86,8 +101,25 @@ export const OverviewFormField = ({
         application.externalData,
         userInfo?.profile?.nationalId,
         apolloClient,
+        locale,
       )
-      setLoadedItems(loaded)
+      const filteredLoadedItems = loaded?.filter(
+        (item) =>
+          !(
+            item.hideIfEmpty &&
+            (!item.valueText ||
+              (Array.isArray(item.valueText) && item.valueText.length === 0))
+          ),
+      )
+
+      const loadedTable = await rawLoadTableData?.(
+        application.answers,
+        application.externalData,
+        apolloClient,
+        locale,
+      )
+      setLoadedItems(filteredLoadedItems)
+      setLoadedTableData(loadedTable)
       setIsLoading(false)
     } catch {
       setHasLoadingError(true)
@@ -192,6 +224,51 @@ export const OverviewFormField = ({
     )
   }
 
+  const renderTableData = (data: TableData) => {
+    return (
+      <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+        <Box
+          marginTop={
+            filteredItems || loadedItems || description || title ? 0 : 8
+          }
+        >
+          <Table.Table>
+            <Table.Head>
+              <Table.Row>
+                {data.header.map((cell, index) => (
+                  <Table.HeadData key={`${cell}-${index}`}>
+                    {formatTextWithLocale(
+                      cell,
+                      application,
+                      locale,
+                      formatMessage,
+                    )}
+                  </Table.HeadData>
+                ))}
+              </Table.Row>
+            </Table.Head>
+            <Table.Body>
+              {data.rows.map((row, rowIndex) => (
+                <Table.Row key={`row-${rowIndex}`}>
+                  {row.map((cell, cellIndex) => (
+                    <Table.Data key={`row-${rowIndex}-cell-${cellIndex}`}>
+                      {formatTextWithLocale(
+                        cell,
+                        application,
+                        locale,
+                        formatMessage,
+                      )}
+                    </Table.Data>
+                  ))}
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Table.Table>
+        </Box>
+      </GridColumn>
+    )
+  }
+
   if (
     field.hideIfEmpty &&
     !filteredItems?.length &&
@@ -201,139 +278,157 @@ export const OverviewFormField = ({
     return null
   }
 
-  return (
-    <ReviewGroup
-      isLast={!bottomLine}
-      editAction={() =>
-        changeScreens(
-          typeof backId === 'function'
-            ? backId(application.answers) ?? ''
-            : backId ?? '',
-        )
-      }
-      isEditable={backId !== undefined}
-    >
-      <Box marginRight={12}>
-        {title && (
-          <Text
-            variant={titleVariant}
-            as={titleVariant}
-            paddingTop={2}
-            paddingBottom={description ? 2 : 5}
-          >
-            {formatTextWithLocale(title, application, locale, formatMessage)}
-          </Text>
-        )}
-        {description && (
-          <Text as="p" paddingTop={0} paddingBottom={2}>
+  const rowData = (
+    <GridRow rowGap={3}>
+      {isLoading ? (
+        <SkeletonLoader
+          height={40}
+          width={title || description ? '100%' : '80%'}
+          borderRadius="large"
+        />
+      ) : hasLoadingError ? (
+        <GridColumn>
+          <Text variant="eyebrow" color="red600" paddingTop={2}>
             {formatTextWithLocale(
-              description,
+              coreErrorMessages.failedDataProvider,
               application,
               locale,
               formatMessage,
             )}
           </Text>
-        )}
-      </Box>
-      <GridRow rowGap={3}>
-        {filteredItems && filteredItems?.map((item, i) => renderItems(item, i))}
-        {isLoading ? (
-          <SkeletonLoader
-            height={40}
-            width={title || description ? '100%' : '80%'}
-            borderRadius="large"
-          />
-        ) : hasLoadingError ? (
-          <GridColumn>
-            <Text variant="eyebrow" color="red600" paddingTop={2}>
+        </GridColumn>
+      ) : (
+        <>
+          {filteredItems &&
+            filteredItems?.map((item, i) => renderItems(item, i))}
+          {loadedItems && loadedItems?.map((item, i) => renderItems(item, i))}
+          {attachments &&
+            attachments?.map((attachment, i) => {
+              return (
+                <GridColumn
+                  key={i}
+                  span={[
+                    '12/12',
+                    '12/12',
+                    '12/12',
+                    attachment.width === 'half' ? '6/12' : '12/12',
+                  ]}
+                >
+                  <Box marginTop={!description && !title && i === 0 ? 8 : 0}>
+                    <FileItem
+                      key={i}
+                      fileName={formatTextWithLocale(
+                        attachment.fileName,
+                        application,
+                        locale,
+                        formatMessage,
+                      )}
+                      fileSize={formatTextWithLocale(
+                        attachment.fileSize ?? '',
+                        application,
+                        locale,
+                        formatMessage,
+                      )}
+                      fileType={formatTextWithLocale(
+                        attachment.fileType ?? '',
+                        application,
+                        locale,
+                        formatMessage,
+                      )}
+                    />
+                  </Box>
+                </GridColumn>
+              )
+            })}
+          {tableData &&
+            tableData.header.length > 0 &&
+            renderTableData(tableData)}
+          {loadedTableData &&
+            loadedTableData.header.length > 0 &&
+            renderTableData(loadedTableData)}
+        </>
+      )}
+    </GridRow>
+  )
+
+  if (field.displayTitleAsAccordion) {
+    return (
+      <Accordion>
+        <AccordionItem
+          key={`${field.id}-accordion-item`}
+          id={`${field.id}-accordion-item`}
+          label={
+            <Box marginRight={12}>
+              {title && (
+                <Text
+                  variant={titleVariant}
+                  as={titleVariant}
+                  paddingTop={2}
+                  paddingBottom={2}
+                >
+                  {formatTextWithLocale(
+                    title,
+                    application,
+                    locale,
+                    formatMessage,
+                  )}
+                </Text>
+              )}
+              {description && (
+                <Text as="p" paddingTop={0} paddingBottom={2}>
+                  {formatTextWithLocale(
+                    description,
+                    application,
+                    locale,
+                    formatMessage,
+                  )}
+                </Text>
+              )}
+            </Box>
+          }
+        >
+          <ReviewGroup
+            isLast={!bottomLine}
+            hideTopDivider={true}
+            editAction={() => changeScreens(backIdVal ?? '')}
+            isEditable={backIdVal !== undefined}
+          >
+            {rowData}
+          </ReviewGroup>
+        </AccordionItem>
+      </Accordion>
+    )
+  } else {
+    return (
+      <ReviewGroup
+        isLast={!bottomLine}
+        editAction={() => changeScreens(backIdVal ?? '')}
+        isEditable={backIdVal !== undefined}
+      >
+        <Box marginRight={12}>
+          {title && (
+            <Text
+              variant={titleVariant}
+              as={titleVariant}
+              paddingTop={2}
+              paddingBottom={description ? 2 : 5}
+            >
+              {formatTextWithLocale(title, application, locale, formatMessage)}
+            </Text>
+          )}
+          {description && (
+            <Text as="p" paddingTop={0} paddingBottom={2}>
               {formatTextWithLocale(
-                coreErrorMessages.failedDataProvider,
+                description,
                 application,
                 locale,
                 formatMessage,
               )}
             </Text>
-          </GridColumn>
-        ) : (
-          loadedItems && loadedItems?.map((item, i) => renderItems(item, i))
-        )}
-        {attachments &&
-          attachments?.map((attachment, i) => {
-            return (
-              <GridColumn
-                key={i}
-                span={[
-                  '12/12',
-                  '12/12',
-                  '12/12',
-                  attachment.width === 'half' ? '6/12' : '12/12',
-                ]}
-              >
-                <Box marginTop={!description && !title && i === 0 ? 8 : 0}>
-                  <FileItem
-                    key={i}
-                    fileName={formatTextWithLocale(
-                      attachment.fileName,
-                      application,
-                      locale,
-                      formatMessage,
-                    )}
-                    fileSize={formatTextWithLocale(
-                      attachment.fileSize ?? '',
-                      application,
-                      locale,
-                      formatMessage,
-                    )}
-                    fileType={formatTextWithLocale(
-                      attachment.fileType ?? '',
-                      application,
-                      locale,
-                      formatMessage,
-                    )}
-                  />
-                </Box>
-              </GridColumn>
-            )
-          })}
-        {tableData && (
-          <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
-            <Box marginTop={description || title ? 0 : 8}>
-              <Table.Table>
-                <Table.Head>
-                  <Table.Row>
-                    {tableData.header.map((cell, index) => (
-                      <Table.HeadData key={`${cell}-${index}`}>
-                        {formatTextWithLocale(
-                          cell,
-                          application,
-                          locale,
-                          formatMessage,
-                        )}
-                      </Table.HeadData>
-                    ))}
-                  </Table.Row>
-                </Table.Head>
-                <Table.Body>
-                  {tableData.rows.map((row, rowIndex) => (
-                    <Table.Row key={`row-${rowIndex}`}>
-                      {row.map((cell, cellIndex) => (
-                        <Table.Data key={`row-${rowIndex}-cell-${cellIndex}`}>
-                          {formatTextWithLocale(
-                            cell,
-                            application,
-                            locale,
-                            formatMessage,
-                          )}
-                        </Table.Data>
-                      ))}
-                    </Table.Row>
-                  ))}
-                </Table.Body>
-              </Table.Table>
-            </Box>
-          </GridColumn>
-        )}
-      </GridRow>
-    </ReviewGroup>
-  )
+          )}
+        </Box>
+        {rowData}
+      </ReviewGroup>
+    )
+  }
 }

@@ -78,6 +78,7 @@ export class SignatureCollectionClientService {
       this.getApiWithAuth(this.listsApi, auth),
       this.getApiWithAuth(this.candidateApi, auth),
       this.getApiWithAuth(this.collectionsApi, auth),
+      this.getApiWithAuth(this.electionsApi, auth),
     )
     if (!list.active) {
       throw new Error('List is not active')
@@ -495,6 +496,7 @@ export class SignatureCollectionClientService {
           this.getApiWithAuth(this.listsApi, auth),
           this.getApiWithAuth(this.candidateApi, auth),
           this.getApiWithAuth(this.collectionsApi, auth),
+          this.getApiWithAuth(this.electionsApi, auth),
         )
         const isExtended = list.endTime > endTime
         const signedThisPeriod = signature.isInitialType === !isExtended
@@ -563,7 +565,14 @@ export class SignatureCollectionClientService {
       )
       const ownedLists =
         user.medmaelalistar && candidate
-          ? user.medmaelalistar?.map((list) => mapListBase(list))
+          ? user.medmaelalistar?.map((list) =>
+              mapListBase(
+                list,
+                collection.areas.some(
+                  (area) => area.id === list.svaedi?.id?.toString(),
+                ),
+              ),
+            )
           : []
 
       const { success: canCreate, reasons: canCreateInfo } =
@@ -594,7 +603,12 @@ export class SignatureCollectionClientService {
         area: user.svaedi && {
           id: user.svaedi?.id?.toString() ?? '',
           name: user.svaedi?.nafn?.toString() ?? '',
+          isActive:
+            collection.areas.find(
+              (area) => area.id === user.svaedi?.id?.toString(),
+            )?.isActive ?? false,
         },
+
         signatures,
         ownedLists,
         isOwner: user.medmaelalistar ? user.medmaelalistar?.length > 0 : false,

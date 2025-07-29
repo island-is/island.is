@@ -13,6 +13,10 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:new-form',
     defaultMessage: 'Nýtt',
   },
+  newApplication: {
+    id: 'portals-admin.form-system:new-application',
+    defaultMessage: 'Ný umsókn',
+  },
   organization: {
     id: 'portals-admin.form-system:organization',
     defaultMessage: 'Stofnun',
@@ -20,6 +24,10 @@ export const m = defineMessages({
   applications: {
     id: 'portals-admin.form-system:applications',
     defaultMessage: 'Umsóknir',
+  },
+  yourApplications: {
+    id: 'portals-admin.form-system:your-applications',
+    defaultMessage: 'Þínar umsóknir',
   },
   administration: {
     id: 'portals-admin.form-system:administration',
@@ -207,6 +215,22 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:allowed-file-types',
     defaultMessage: 'Eftirfarandi skjalatýpur eru leyfðar',
   },
+  addProdUrl: {
+    id: 'portals-admin.form-system:add-prod-url',
+    defaultMessage: '+ Raunslóð',
+  },
+  addDevUrl: {
+    id: 'portals-admin.form-system:add-dev-url',
+    defaultMessage: '+ Prófunarslóð',
+  },
+  prodUrl: {
+    id: 'portals-admin.form-system:prod-url',
+    defaultMessage: 'Raunslóð',
+  },
+  devUrl: {
+    id: 'portals-admin.form-system:dev-url',
+    defaultMessage: 'Prófunarslóð',
+  },
   // Input types
   bankAccount: {
     id: 'portals-admin.form-system:bank-account',
@@ -252,6 +276,14 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:time-input',
     defaultMessage: 'Klukkinnsláttur',
   },
+  hourInput: {
+    id: 'portals-admin.form-system:hour-input',
+    defaultMessage: 'Klukkustund',
+  },
+  minuteInput: {
+    id: 'portals-admin.form-system:minute-input',
+    defaultMessage: 'Mínúta',
+  },
   iskNumberBox: {
     id: 'portals-admin.form-system:currency-number',
     defaultMessage: 'Krónutölubox',
@@ -267,6 +299,18 @@ export const m = defineMessages({
   message: {
     id: 'portals-admin.form-system:message',
     defaultMessage: 'Textalýsing',
+  },
+  submitUrls: {
+    id: 'portals-admin.form-system:submitUrls',
+    defaultMessage: 'Málakerfi',
+  },
+  validationUrls: {
+    id: 'portals-admin.form-system:validationUrls',
+    defaultMessage: 'Reglukerfi',
+  },
+  permissions: {
+    id: 'portals-admin.form-system:permissions',
+    defaultMessage: 'Heimildir',
   },
   phoneNumber: {
     id: 'portals-admin.form-system:phone-number',
@@ -536,7 +580,55 @@ export const m = defineMessages({
     id: 'form-system:basic-error-message',
     defaultMessage: 'Villa kom upp',
     description: 'Basic error message',
-  }
+  },
+  maxBankNumbers: {
+    id: 'form-system:max-bank-numbers',
+    defaultMessage: 'Hámark 4 tölustafir leyfðir',
+    description: 'Maximum 4 digits allowed',
+    value: 4,
+  },
+  maxLedgerNumbers: {
+    id: 'form-system:max-ledger-numbers',
+    defaultMessage: 'Hámark 2 tölustafir leyfðir',
+    description: 'Maximum 2 digits allowed',
+    value: 2,
+  },
+  maxAccountNumbers: {
+    id: 'form-system:max-account-numbers',
+    defaultMessage: 'Hámark 6 tölustafir leyfðir',
+    description: 'Maximum 6 digits allowed',
+    value: 6,
+  },
+  onlyNumbers: {
+    id: 'form-system:only-numbers',
+    defaultMessage: 'Reitur má aðeins innihalda tölustafi',
+    description: 'Field must only contain numbers',
+  },
+  InvalidNationalId: {
+    id: 'form-system:invalid-national-id',
+    defaultMessage: 'Ógild kennitala',
+    description: 'Invalid national ID',
+  },
+  invalidPhoneNumber: {
+    id: 'form-system:invalid-phone-number',
+    defaultMessage: 'Ógilt símanúmer',
+    description: 'Invalid phone number',
+  },
+  invalidPropertyNumber: {
+    id: 'form-system:invalid-property-number',
+    defaultMessage: 'Ógilt fasteignanúmer',
+    description: 'Invalid property number',
+  },
+  pickHour: {
+    id: 'form-system:pick-hour',
+    defaultMessage: 'Veldu klukkustund',
+    description: 'Pick hour',
+  },
+  pickMinute: {
+    id: 'form-system:pick-minute',
+    defaultMessage: 'Veldu mínútu',
+    description: 'Pick minute',
+  },
 })
 
 export const webMessages = defineMessages({
@@ -598,10 +690,10 @@ export const webMessages = defineMessages({
     defaultMessage: 'Fullt nafn',
     description: 'Full name',
   },
-  open: {
-    id: 'form-system:open',
-    defaultMessage: 'Opna',
-    description: 'Open',
+  openApplication: {
+    id: 'form-system:open-application',
+    defaultMessage: 'Opna umsókn',
+    description: 'Open application',
   },
   yourProperties: {
     id: 'form-system:your-properties',
@@ -622,5 +714,10 @@ export const webMessages = defineMessages({
     id: 'form-system:upload-box-description',
     defaultMessage: 'Tekið er við skjölum með endingu: {fileEndings}',
     description: 'Notaður fyrir texta í Hlaða upp skrám svæði.',
+  },
+  tagsDraft: {
+    id: 'form-system:tags.draft',
+    defaultMessage: 'Umsókn í vinnslu hjá þér',
+    description: 'Draft status for an application',
   },
 })

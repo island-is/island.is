@@ -4,6 +4,7 @@ import {
   useContext,
   useReducer,
   useMemo,
+  useEffect,
 } from 'react'
 import { FormSystemApplication } from '@island.is/api/schema'
 import {
@@ -14,6 +15,7 @@ import {
 import { Action, ApplicationState } from '@island.is/form-system/ui'
 import { Form } from '../components/Form/Form'
 import { fieldReducer } from '../reducers/fieldReducer'
+import { useForm, FormProvider } from 'react-hook-form'
 
 interface ApplicationContextProvider {
   state: ApplicationState
@@ -44,12 +46,17 @@ export const ApplicationProvider: React.FC<{
     },
     initialReducer,
   )
-
+  const methods = useForm({ mode: 'onBlur' })
   const contextValue = useMemo(() => ({ state, dispatch }), [state])
 
+  useEffect(() => {
+    if (process.env.NODE_ENV === 'development') {
+      console.log('Application state changed:', state.application)
+    }
+  }, [state.application])
   return (
     <ApplicationContext.Provider value={contextValue}>
-      <Form />
+      <FormProvider {...methods}>{state.application && <Form />}</FormProvider>
     </ApplicationContext.Provider>
   )
 }

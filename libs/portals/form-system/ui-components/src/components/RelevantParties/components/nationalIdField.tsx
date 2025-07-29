@@ -1,10 +1,5 @@
 import { m, webMessages } from '../../../lib/messages'
-import {
-  GridColumn,
-  GridRow,
-  Input,
-  Box,
-} from '@island.is/island-ui/core'
+import { GridColumn, GridRow, Input, Box } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
 
 interface Props {

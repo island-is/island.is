@@ -18,6 +18,12 @@ import {
 
 @Table({
   tableName: 'payment_flow_fjs_charge_confirmation',
+  indexes: [
+    {
+      name: 'payment_flow_fjs_charge_confirmation_payment_flow_id_idx',
+      fields: ['payment_flow_id'],
+    },
+  ],
 })
 export class PaymentFlowFjsChargeConfirmation extends Model<
   InferAttributes<PaymentFlowFjsChargeConfirmation>,

@@ -1,13 +1,29 @@
 import { useCallback, useEffect, useState } from 'react'
 import { useDebounce } from 'react-use'
 import type { FieldExtensionSDK } from '@contentful/app-sdk'
+import { FormControl, Radio } from '@contentful/f36-components'
 import { useSDK } from '@contentful/react-apps-toolkit'
+import {
+  closestCenter,
+  DndContext,
+  DragEndEvent,
+  PointerSensor,
+  useSensor,
+  useSensors,
+} from '@dnd-kit/core'
+import { restrictToVerticalAxis } from '@dnd-kit/modifiers'
+import {
+  arrayMove,
+  SortableContext,
+  verticalListSortingStrategy,
+} from '@dnd-kit/sortable'
 
 import { AddNodeButton } from './AddNodeButton'
 import { EntryContext, useEntryContext } from './entryContext'
 import { SitemapNode } from './SitemapNode'
 import {
   addNode as addNodeUtil,
+  type EntryType,
   findNodes,
   removeNode as removeNodeUtil,
   type Tree,
@@ -27,6 +43,7 @@ export const SitemapTreeField = () => {
       childNodes: [],
     },
   )
+  const [language, setLanguage] = useState<'is-IS' | 'en'>('is-IS')
 
   useDebounce(
     () => {
@@ -44,8 +61,13 @@ export const SitemapTreeField = () => {
   }, [sdk.window, tree.childNodes.length])
 
   const addNode = useCallback(
-    async (parentNode: Tree, type: TreeNodeType, createNew?: boolean) => {
-      await addNodeUtil(parentNode, type, sdk, tree, createNew)
+    async (
+      parentNode: Tree,
+      type: TreeNodeType,
+      createNew?: boolean,
+      entryType?: EntryType,
+    ) => {
+      await addNodeUtil(parentNode, type, sdk, tree, createNew, entryType)
       setTree((prevTree) => ({
         ...prevTree,
       }))
@@ -83,33 +105,92 @@ export const SitemapTreeField = () => {
     [tree],
   )
 
+  const sensors = useSensors(useSensor(PointerSensor))
+
+  const handleDragEnd = useCallback(
+    (event: DragEndEvent) => {
+      const { active, over } = event
+      if (over && active.id !== over.id) {
+        const oldIndex = tree.childNodes.findIndex(
+          (item) => item.id === active.id,
+        )
+        const newIndex = tree.childNodes.findIndex(
+          (item) => item.id === over.id,
+        )
+        if (oldIndex >= 0 && newIndex >= 0) {
+          setTree((prevTree) => ({
+            ...prevTree,
+            childNodes: arrayMove(tree.childNodes, oldIndex, newIndex),
+          }))
+        }
+      }
+    },
+    [tree],
+  )
+
   return (
-    <EntryContext.Provider value={useEntryContext()}>
-      <div>
-        <div>
-          <div className={styles.childNodeContainer}>
-            {tree.childNodes.map((node) => (
-              <SitemapNode
-                parentNode={tree}
-                removeNode={removeNode}
-                addNode={addNode}
-                updateNode={updateNode}
-                key={node.id}
-                node={node}
-                root={tree}
-                onMarkEntryAsPrimary={onMarkEntryAsPrimary}
-              />
-            ))}
-            <div className={styles.addNodeButtonContainer}>
-              <AddNodeButton
-                addNode={(type, createNew) => {
-                  addNode(tree, type, createNew)
-                }}
-              />
+    <DndContext
+      sensors={sensors}
+      collisionDetection={closestCenter}
+      modifiers={[restrictToVerticalAxis]}
+      onDragEnd={handleDragEnd}
+    >
+      <SortableContext
+        items={tree.childNodes}
+        strategy={verticalListSortingStrategy}
+      >
+        <EntryContext.Provider value={useEntryContext()}>
+          <div>
+            <div className={styles.languageSelectorContainer}>
+              <FormControl.Label>Language preview</FormControl.Label>
+              <div>
+                <div className={styles.languageSelector}>
+                  <Radio
+                    id="is"
+                    name="language"
+                    value="is"
+                    isChecked={language === 'is-IS'}
+                    onChange={() => setLanguage('is-IS')}
+                  >
+                    Icelandic
+                  </Radio>
+                  <Radio
+                    id="en"
+                    name="language"
+                    value="en"
+                    isChecked={language === 'en'}
+                    onChange={() => setLanguage('en')}
+                  >
+                    English
+                  </Radio>
+                </div>
+              </div>
+            </div>
+            <div className={styles.childNodeContainer}>
+              {tree.childNodes.map((node) => (
+                <SitemapNode
+                  parentNode={tree}
+                  removeNode={removeNode}
+                  addNode={addNode}
+                  updateNode={updateNode}
+                  key={node.id}
+                  node={node}
+                  root={tree}
+                  onMarkEntryAsPrimary={onMarkEntryAsPrimary}
+                  language={language}
+                />
+              ))}
+              <div className={styles.addNodeButtonContainer}>
+                <AddNodeButton
+                  addNode={(type, createNew, entryType) => {
+                    addNode(tree, type, createNew, entryType)
+                  }}
+                />
+              </div>
             </div>
           </div>
-        </div>
-      </div>
-    </EntryContext.Provider>
+        </EntryContext.Provider>
+      </SortableContext>
+    </DndContext>
   )
 }

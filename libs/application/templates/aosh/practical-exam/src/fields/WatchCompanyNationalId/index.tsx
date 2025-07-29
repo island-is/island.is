@@ -15,6 +15,7 @@ export const WatchCompanyNationalId: FC<
   const { getValues, setValue } = useFormContext()
   const { formatMessage } = useLocale()
   const [isCompanyValid, setIsCompanyValid] = useState<boolean>(true)
+  const [isCompanyCallValid, setIsCompanyCallValid] = useState<boolean>(true)
   const getIsValidCompany = useLazyIsCompanyValid()
   const getIsCompanyValidCallback = useCallback(
     async (nationalId: string) => {
@@ -38,6 +39,7 @@ export const WatchCompanyNationalId: FC<
 
   setBeforeSubmitCallback?.(async () => {
     setIsCompanyValid(true)
+    setIsCompanyCallValid(true)
     const paymentOptions = getValues('paymentArrangement.paymentOptions')
     if (paymentOptions !== PaymentOptions.putIntoAccount) {
       return [true, null]
@@ -47,28 +49,43 @@ export const WatchCompanyNationalId: FC<
     )
 
     if (companyNationalId) {
-      const response = await getIsCompanyValidCallback(companyNationalId)
+      try {
+        const response = await getIsCompanyValidCallback(companyNationalId)
 
-      if (response?.practicalExamIsCompanyValid.mayPayReceiveInvoice) {
-        return [true, null]
+        if (response?.practicalExamIsCompanyValid.mayPayReceiveInvoice) {
+          return [true, null]
+        }
+      } catch (error) {
+        setIsCompanyCallValid(false)
+        return [false, '']
       }
-      setIsCompanyValid(false)
     }
 
     return [false, '']
   })
 
   return (
-    !isCompanyValid && (
-      <Box marginTop={5}>
-        <AlertMessage
-          type="warning"
-          title=""
-          message={formatMessage(
-            paymentArrangement.labels.contactOrganizationAlert,
-          )}
-        />
-      </Box>
-    )
+    <>
+      {!isCompanyValid && (
+        <Box marginTop={5}>
+          <AlertMessage
+            type="warning"
+            title=""
+            message={formatMessage(
+              paymentArrangement.labels.contactOrganizationAlert,
+            )}
+          />
+        </Box>
+      )}
+      {!isCompanyCallValid && (
+        <Box marginTop={5}>
+          <AlertMessage
+            type="error"
+            title=""
+            message={formatMessage(paymentArrangement.labels.webServiceFailure)}
+          />
+        </Box>
+      )}
+    </>
   )
 }

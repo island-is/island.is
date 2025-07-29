@@ -11,7 +11,7 @@ export const PaymentsApiClientConfig = defineConfig({
   schema,
   load(env) {
     return {
-      basePath: env.required('PAYMENTS_API_URL', 'http://localhost:3333'),
+      basePath: env.required('PAYMENTS_API_URL', 'http://localhost:5555'),
     }
   },
 })

@@ -42,6 +42,7 @@ import {
   ADVERT_QUERY,
   ADVERT_SIMILAR_QUERY,
 } from '../queries/OfficialJournalOfIceland'
+import { isAdvertPdfOnly } from './lib/isAdvertPdfOnly'
 import { ORGANIZATION_SLUG } from './constants'
 import { m } from './messages'
 
@@ -71,12 +72,17 @@ const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
     },
   ]
 
+  const advertPdfDisclaimer = isAdvertPdfOnly(
+    advert.document.html || '',
+    advert.publicationDate,
+  )
+
   return (
     <OJOIWrapper
       pageTitle={advert.title}
       hideTitle
       organization={organization ?? undefined}
-      pageDescription={formatMessage(m.advert.description)}
+      pageDescription={formatMessage(advertPdfDisclaimer)}
       pageFeaturedImage={formatMessage(m.home.featuredImage)}
       breadcrumbItems={breadcrumbItems}
       goBackUrl={searchUrl}
@@ -150,27 +156,26 @@ const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
               </Stack>
             </Box>
           )}
-          {advert.corrections && advert.corrections.length > 0
-            ? advert.corrections.map((correction) => (
-                <Box
-                  background="purple100"
-                  padding={[2, 2, 3]}
-                  borderRadius="large"
-                  key={correction.id}
-                >
-                  <Stack space={[1, 1, 2]}>
-                    <Text variant="h4">
-                      {formatMessage(m.advert.sidebarCorrectionTitle)}
-                    </Text>
+          {advert.corrections && advert.corrections.length > 0 ? (
+            <Box
+              background="purple100"
+              padding={[2, 2, 3]}
+              borderRadius="large"
+            >
+              <Box marginBottom={2}>
+                <Text variant="h4">
+                  {formatMessage(m.advert.sidebarCorrectionTitle)}
+                </Text>
+              </Box>
 
+              <Stack space={[1, 1, 2]} dividers>
+                {advert.corrections.map((correction, index) => (
+                  <Box key={correction.id || index}>
                     {correction.legacyDate ||
                     (correction.createdDate && !correction.isLegacy) ? (
-                      <Box>
-                        <Text variant="h5">
-                          {formatMessage(m.advert.correctedDate)}
-                        </Text>
+                      <Box marginBottom={1}>
                         {correction.isLegacy ? (
-                          <Text variant="small">
+                          <Text variant="eyebrow">
                             {correction.legacyDate
                               ? formatDate(
                                   correction.legacyDate,
@@ -179,18 +184,13 @@ const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
                               : ''}
                           </Text>
                         ) : (
-                          <Text variant="small">
+                          <Text variant="eyebrow">
                             {formatDate(correction.createdDate, 'd. MMMM yyyy')}
                           </Text>
                         )}
                       </Box>
                     ) : undefined}
-
                     <Box>
-                      <Text variant="h5">
-                        {correction.title ??
-                          formatMessage(m.advert.correctionSingular)}
-                      </Text>
                       <Text variant="small">{correction.description}</Text>
                     </Box>
                     {correction.documentPdfUrl ? (
@@ -208,10 +208,11 @@ const OJOIAdvertPage: CustomScreen<OJOIAdvertProps> = ({
                         </Link>
                       </Box>
                     ) : undefined}
-                  </Stack>
-                </Box>
-              ))
-            : undefined}
+                  </Box>
+                ))}
+              </Stack>
+            </Box>
+          ) : undefined}
         </Stack>
       }
       preFooter={

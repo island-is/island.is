@@ -65,6 +65,10 @@ export const m = defineMessages({
     id: 'api.license-service:valid-to',
     defaultMessage: 'Gildir til',
   },
+  extraCodes: {
+    id: 'api.license-service:extra-codes',
+    defaultMessage: 'Tákntölur',
+  },
   fullName: {
     id: 'api.license-service:full-name',
     defaultMessage: 'Fullt nafn',

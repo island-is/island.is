@@ -4,7 +4,6 @@ import { useLocale } from '@island.is/localization'
 import { FormSystemApplication } from '@island.is/api/schema'
 import { dateFormat } from '@island.is/shared/constants'
 import { ApplicationCardTag } from './components/ApplicationCardTag'
-import { ApplicationCardDelete } from './components/ApplicationCardDelete'
 import * as styles from './ApplicationCard.css'
 import { ApplicationCardProgress } from './components/ApplicationCardProgress'
 import { useNavigate, useParams } from 'react-router-dom'
@@ -15,7 +14,7 @@ interface Props {
   focused?: boolean
 }
 
-export const ApplicationCard = ({ application, focused = false, onDelete }: Props) => {
+export const ApplicationCard = ({ application, focused = false }: Props) => {
   const { status } = application
   const { slug } = useParams()
   const navigate = useNavigate()
@@ -53,15 +52,17 @@ export const ApplicationCard = ({ application, focused = false, onDelete }: Prop
             <Icon icon="time" size="medium" type="outline" color="blue400" />
           </Box>
           <Box display="flex" justifyContent="center">
-            <Text variant="small">{format(new Date(application.created || application.modified), formattedDate)}</Text>
+            <Text variant="small">
+              {format(new Date(application.modified), formattedDate)}
+            </Text>
           </Box>
         </Box>
         <Inline alignY="center" justifyContent="flexEnd" space={1}>
           <ApplicationCardTag />
-          <ApplicationCardDelete
+          {/* <ApplicationCardDelete
             application={application}
             onDelete={onDelete}
-          />
+          /> */}
         </Inline>
       </Box>
 

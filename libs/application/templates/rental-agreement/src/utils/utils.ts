@@ -3,10 +3,9 @@ import parseISO from 'date-fns/parseISO'
 import is from 'date-fns/locale/is'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { EMAIL_REGEX } from '@island.is/application/core'
-import { StateLifeCycle } from '@island.is/application/types'
+import { RepeaterItem, StateLifeCycle } from '@island.is/application/types'
 import {
   ApplicantsInfo,
-  CostField,
   PropertyUnit,
   RentalHousingCategoryClass,
 } from '../shared'
@@ -24,7 +23,6 @@ import {
 } from './enums'
 import * as m from '../lib/messages'
 
-export const IS_REPRESENTATIVE = 'isRepresentative'
 export const SPECIALPROVISIONS_DESCRIPTION_MAXLENGTH = 1500
 export const minChangedUnitSize = 3
 export const maxChangedUnitSize = 500
@@ -63,9 +61,6 @@ export const isValidMeterStatus = (value: string) => {
   return meterStatusRegex.test(value)
 }
 
-export const hasInvalidCostItems = (items: CostField[]) =>
-  items.some((i) => i.hasError)
-
 export const formatPhoneNumber = (phoneNumber: string): string => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
   return phone?.formatNational() || phoneNumber
@@ -77,17 +72,6 @@ export const formatBankInfo = (bankInfo: string) => {
     return formattedBankInfo
   }
   return bankInfo
-}
-
-export const filterRepresentativesFromApplicants = <T extends ApplicantsInfo>(
-  applicants?: T[],
-): T[] => {
-  return (
-    applicants?.filter(
-      (applicant) =>
-        !applicant.isRepresentative || applicant.isRepresentative.length === 0,
-    ) ?? []
-  )
 }
 
 export const hasAnyMatchingNationalId = (
@@ -117,16 +101,6 @@ export const hasDuplicateApplicants = (
   return false
 }
 
-export const isCostItemValid = (item: CostField) =>
-  ((item.description ?? '').trim() !== '' && item.amount !== undefined) ||
-  ((item.description ?? '').trim() === '' && item.amount === undefined)
-
-export const isEmptyCostItem = (item: CostField) =>
-  (item.description ?? '').trim() === '' && item.amount === undefined
-
-export const filterEmptyCostItems = (items: CostField[]) =>
-  items.filter((item) => !isEmptyCostItem(item)) ?? []
-
 export const formatCurrency = (answer: string) =>
   answer.replace(/\B(?=(\d{3})+(?!\d))/g, '.') + ' kr.'
 
@@ -144,6 +118,48 @@ export const getRentalPropertySize = (units: PropertyUnit[]) =>
         : unit.size || 0),
     0,
   )
+
+export const applicantTableFields: Record<string, RepeaterItem> = {
+  nationalIdWithName: {
+    component: 'nationalIdWithName',
+    required: true,
+    searchCompanies: true,
+  },
+  phone: {
+    component: 'phone',
+    required: true,
+    label: m.landlordAndTenantDetails.phoneInputLabel,
+    enableCountrySelector: true,
+    width: 'half',
+  },
+  email: {
+    component: 'input',
+    required: true,
+    label: m.landlordAndTenantDetails.emailInputLabel,
+    type: 'email',
+    width: 'half',
+  },
+  address: {
+    component: 'input',
+    required: true,
+    label: m.landlordAndTenantDetails.addressInputLabel,
+    maxLength: 100,
+  },
+}
+
+export const applicantTableConfig = {
+  format: {
+    phone: (value: string) => value && formatPhoneNumber(value),
+    nationalId: (value: string) => value && formatNationalId(value),
+  },
+  header: [
+    m.landlordAndTenantDetails.nameInputLabel,
+    m.landlordAndTenantDetails.phoneInputLabel,
+    m.landlordAndTenantDetails.nationalIdHeaderLabel,
+    m.landlordAndTenantDetails.emailInputLabel,
+  ],
+  rows: ['name', 'phone', 'nationalId', 'email'],
+}
 
 export const getPropertyTypeOptions = () => [
   {

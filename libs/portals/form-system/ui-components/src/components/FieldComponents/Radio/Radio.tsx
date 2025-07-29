@@ -72,7 +72,9 @@ export const Radio = ({ item, dispatch, lang, hasError }: Props) => {
           </Text>
         )}
       </Inline>
-      {hasError && <InputError errorMessage={formatMessage(m.basicErrorMessage)} />}
+      {hasError && (
+        <InputError errorMessage={formatMessage(m.basicErrorMessage)} />
+      )}
       <Box
         marginTop={2}
         marginBottom={2}

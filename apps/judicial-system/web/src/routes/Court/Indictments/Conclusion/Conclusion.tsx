@@ -11,7 +11,7 @@ import {
   Select,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { getCourtDashboardRoute } from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { courtSessionTypeNames } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -34,7 +34,6 @@ import {
   CourtSessionType,
   IndictmentDecision,
 } from '@island.is/judicial-system-web/src/graphql/schema'
-import { stepValidationsType } from '@island.is/judicial-system-web/src/utils/formHelper'
 import {
   formatDateForServer,
   UpdateCase,
@@ -120,7 +119,7 @@ const Conclusion: FC = () => {
     useState<string>()
 
   const handleNavigationTo = useCallback(
-    async (destination: keyof stepValidationsType) => {
+    async (destination: string) => {
       if (!selectedAction) {
         return
       }
@@ -651,7 +650,7 @@ const Conclusion: FC = () => {
               selectedAction === IndictmentDecision.COMPLETING
                 ? constants.INDICTMENTS_SUMMARY_ROUTE
                 : selectedAction === IndictmentDecision.REDISTRIBUTING
-                ? getCourtDashboardRoute(user)
+                ? getStandardUserDashboardRoute(user)
                 : constants.INDICTMENTS_COURT_OVERVIEW_ROUTE,
             )
           }

@@ -20,10 +20,15 @@ import parseISO from 'date-fns/parseISO'
 import { format as formatKennitala } from 'kennitala'
 import { formatNumber } from 'libphonenumber-js'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../lib/messages'
-import { NOT_APPLICABLE } from './constants'
+import { isFirstApplication } from './conditionUtils'
+import {
+  NOT_APPLICABLE,
+  SelfAssessmentCurrentEmploymentStatus,
+} from './constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
+  getSelfAssessmentCurrentEmploymentStatusOptions,
   getSickPayEndDateLabel,
   getYesNoNotApplicableTranslation,
 } from './medicalAndRehabilitationPaymentsUtils'
@@ -163,26 +168,75 @@ export const incomePlanTable = (
   }
 }
 
-export const questionsItems = (answers: FormValue): Array<KeyValueItem> => {
+export const benefitsFromAnotherCountryItems = (
+  answers: FormValue,
+): Array<KeyValueItem> => {
+  const { isReceivingBenefitsFromAnotherCountry } =
+    getApplicationAnswers(answers)
+
+  return [
+    {
+      width: 'full',
+      keyText:
+        medicalAndRehabilitationPaymentsFormMessage.generalInformation
+          .benefitsFromAnotherCountryTitle,
+      valueText:
+        isReceivingBenefitsFromAnotherCountry === YES
+          ? socialInsuranceAdministrationMessage.shared.yes
+          : socialInsuranceAdministrationMessage.shared.no,
+    },
+  ]
+}
+
+export const benefitsFromAnotherCountryTable = (
+  answers: FormValue,
+  _externalData: ExternalData,
+): TableData => {
+  const { isReceivingBenefitsFromAnotherCountry, countries } =
+    getApplicationAnswers(answers)
+
+  if (isReceivingBenefitsFromAnotherCountry === YES) {
+    return {
+      header: [
+        medicalAndRehabilitationPaymentsFormMessage.generalInformation.country,
+        medicalAndRehabilitationPaymentsFormMessage.generalInformation
+          .countryIdNumber,
+      ],
+      rows: countries.map((e) => [e.country?.split('::')[1], e.nationalId]),
+    }
+  }
+
+  return { header: [], rows: [] }
+}
+
+export const questionsItems = (
+  answers: FormValue,
+  externalData: ExternalData,
+): Array<KeyValueItem> => {
   const {
     isSelfEmployed,
     calculatedRemunerationDate,
     isPartTimeEmployed,
     isStudying,
+    educationalInstitution,
+    ectsUnits,
   } = getApplicationAnswers(answers)
 
-  const baseItems: Array<KeyValueItem> = [
-    {
-      width: 'half',
-      keyText:
-        medicalAndRehabilitationPaymentsFormMessage.generalInformation
-          .questionsIsSelfEmployed,
-      valueText:
-        isSelfEmployed === YES
-          ? socialInsuranceAdministrationMessage.shared.yes
-          : socialInsuranceAdministrationMessage.shared.no,
-    },
-  ]
+  let baseItems: Array<KeyValueItem> = []
+  if (isFirstApplication(externalData)) {
+    baseItems = [
+      {
+        width: 'half',
+        keyText:
+          medicalAndRehabilitationPaymentsFormMessage.generalInformation
+            .questionsIsSelfEmployed,
+        valueText:
+          isSelfEmployed === YES
+            ? socialInsuranceAdministrationMessage.shared.yes
+            : socialInsuranceAdministrationMessage.shared.no,
+      },
+    ]
+  }
 
   const calculatedRemunerationDateItem: Array<KeyValueItem> =
     isSelfEmployed === YES
@@ -224,7 +278,32 @@ export const questionsItems = (answers: FormValue): Array<KeyValueItem> => {
     },
   ]
 
-  return [...baseItems, ...calculatedRemunerationDateItem, ...baseItems2]
+  const isStudyingItems: Array<KeyValueItem> =
+    isStudying === YES
+      ? [
+          {
+            width: 'half',
+            keyText:
+              medicalAndRehabilitationPaymentsFormMessage.generalInformation
+                .questionsSchool,
+            valueText: educationalInstitution,
+          },
+          {
+            width: 'half',
+            keyText:
+              medicalAndRehabilitationPaymentsFormMessage.generalInformation
+                .questionsNumberOfCredits,
+            valueText: ectsUnits,
+          },
+        ]
+      : []
+
+  return [
+    ...baseItems,
+    ...calculatedRemunerationDateItem,
+    ...baseItems2,
+    ...isStudyingItems,
+  ]
 }
 
 export const employeeSickPayItems = (
@@ -280,7 +359,7 @@ export const unionSickPayItems = async (
   const { data } = await apolloClient.query<SiaUnionsQuery>({
     query: siaUnionsQuery,
   })
-  const unionName = data?.socialInsuranceUnions.find(
+  const unionName = data?.socialInsuranceGeneral?.unions?.find(
     (union) => union?.nationalId === unionNationalId,
   )?.name
 
@@ -337,9 +416,13 @@ export const rehabilitationPlanItems = (): Array<KeyValueItem> => [
 
 export const selfAssessmentQuestionsOneItems = (
   answers: FormValue,
+  externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const { hadAssistance, highestLevelOfEducation } =
-    getApplicationAnswers(answers)
+  const { hadAssistance, educationalLevel } = getApplicationAnswers(answers)
+  const { educationLevels } = getApplicationExternalData(externalData)
+  const educationLevelOption = educationLevels.find(
+    (level) => level.code === educationalLevel,
+  )
 
   return [
     {
@@ -356,9 +439,79 @@ export const selfAssessmentQuestionsOneItems = (
       width: 'full',
       keyText:
         medicalAndRehabilitationPaymentsFormMessage.selfAssessment
-          .highestlevelOfEducationDescription,
-      valueText: highestLevelOfEducation,
+          .educationLevelDescription,
+      valueText: educationLevelOption?.description,
     },
+  ]
+}
+
+export const selfAssessmentQuestionsTwoItems = (
+  answers: FormValue,
+): Array<KeyValueItem> => {
+  const {
+    currentEmploymentStatus,
+    currentEmploymentStatusAdditional,
+    lastEmploymentTitle,
+    lastEmploymentYear,
+  } = getApplicationAnswers(answers)
+
+  const currentEmploymentStatusOptions =
+    getSelfAssessmentCurrentEmploymentStatusOptions()
+
+  const statuses = currentEmploymentStatus.map((status) => {
+    return currentEmploymentStatusOptions.find(
+      (option) => option.value === status,
+    )?.label
+  })
+
+  const baseItems: Array<KeyValueItem> = [
+    {
+      width: 'full',
+      keyText:
+        medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+          .currentEmploymentStatusTitle,
+      valueText: statuses,
+    },
+  ]
+
+  const previousRehabilitationOrTreatmentItems: Array<KeyValueItem> =
+    currentEmploymentStatus?.includes(
+      SelfAssessmentCurrentEmploymentStatus.OTHER,
+    )
+      ? [
+          {
+            width: 'full',
+            keyText:
+              medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+                .furtherExplanation,
+            valueText: currentEmploymentStatusAdditional,
+          },
+        ]
+      : []
+
+  const baseItems2: Array<KeyValueItem> = [
+    {
+      width: 'half',
+      keyText:
+        medicalAndRehabilitationPaymentsFormMessage.overview
+          .selfAssessmentLastEmploymentTitle,
+      valueText: lastEmploymentTitle,
+      hideIfEmpty: true,
+    },
+    {
+      width: 'half',
+      keyText:
+        medicalAndRehabilitationPaymentsFormMessage.overview
+          .selfAssessmentLastEmploymentYear,
+      valueText: lastEmploymentYear,
+      hideIfEmpty: true,
+    },
+  ]
+
+  return [
+    ...baseItems,
+    ...previousRehabilitationOrTreatmentItems,
+    ...baseItems2,
   ]
 }
 

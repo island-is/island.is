@@ -3,7 +3,7 @@ import type { EntryProps } from 'contentful-management'
 import { useCMA } from '@contentful/react-apps-toolkit'
 
 export const EntryContext = createContext({
-  entries: {},
+  entries: {} as Record<string, EntryProps>,
   updateEntry: (_entry: EntryProps) => {
     // Empty function
   },

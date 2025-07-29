@@ -6,5 +6,13 @@ export const formatDate = (date: Date): string =>
 export const formatDateStr = (dateStr: string | undefined): string =>
   dateStr ? formatDate(new Date(dateStr)) : ''
 
-export const formatNumber = (num?: number) =>
-  num !== undefined && num !== null ? num.toLocaleString('de-DE') : ''
+export const formatNumber = (value?: number | string) => {
+  const num = Number(value)
+  return Number.isFinite(num) ? num.toLocaleString('de-DE') : ''
+}
+
+export const formatNumberWithMeters = (value?: number | string) =>
+  formatNumber(value) ? `${formatNumber(value)}m` : ''
+
+export const formatNumberWithTons = (value?: number | string) =>
+  formatNumber(value) ? `${formatNumber(value)}t` : ''

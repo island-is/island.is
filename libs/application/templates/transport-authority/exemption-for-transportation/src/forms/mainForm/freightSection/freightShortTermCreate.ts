@@ -23,9 +23,7 @@ const convoyIndex = 0
 
 export const FreightShortTermCreateMultiField = buildMultiField({
   id: 'freightShortTermCreateMultiField',
-  condition: (answers) => {
-    return checkIfExemptionTypeShortTerm(answers)
-  },
+  condition: checkIfExemptionTypeShortTerm,
   title: freight.create.pageTitle,
   description: freight.create.description,
   children: [
@@ -37,41 +35,36 @@ export const FreightShortTermCreateMultiField = buildMultiField({
     // The overlap doesn't cause issues, and also convoyId isn't sent over to SGS
     buildHiddenInput({
       id: `freight.items.${freightIndex}.freightId`,
-      defaultValue: (application: Application) => {
-        return getValueViaPath<string>(
+      defaultValue: (application: Application) =>
+        getValueViaPath<string>(
           application.answers,
           `convoy.items.${convoyIndex}.convoyId`,
-        )
-      },
+        ),
     }),
     buildHiddenInput({
       id: `freightPairing.${freightIndex}.freightId`,
-      defaultValue: (application: Application) => {
-        return getValueViaPath<string>(
+      defaultValue: (application: Application) =>
+        getValueViaPath<string>(
           application.answers,
           `convoy.items.${convoyIndex}.convoyId`,
-        )
-      },
+        ),
     }),
     buildHiddenInput({
       id: `freightPairing.${freightIndex}.items.${convoyIndex}.convoyId`,
-      defaultValue: (application: Application) => {
-        return getValueViaPath<string>(
+      defaultValue: (application: Application) =>
+        getValueViaPath<string>(
           application.answers,
           `convoy.items.${convoyIndex}.convoyId`,
-        )
-      },
+        ),
     }),
     buildHiddenInput({
       id: `freightPairing.${freightIndex}.convoyIdList`,
-      defaultValue: (application: Application) => {
-        return [
-          getValueViaPath<string>(
-            application.answers,
-            `convoy.items.${convoyIndex}.convoyId`,
-          ),
-        ]
-      },
+      defaultValue: (application: Application) => [
+        getValueViaPath<string>(
+          application.answers,
+          `convoy.items.${convoyIndex}.convoyId`,
+        ),
+      ],
     }),
 
     buildDescriptionField({
@@ -94,6 +87,7 @@ export const FreightShortTermCreateMultiField = buildMultiField({
       width: 'half',
       required: true,
       variant: 'number',
+      thousandSeparator: true,
       suffix: freight.labels.metersSuffix,
     }),
     buildTextField({
@@ -103,6 +97,7 @@ export const FreightShortTermCreateMultiField = buildMultiField({
       width: 'half',
       required: true,
       variant: 'number',
+      thousandSeparator: true,
       suffix: freight.labels.tonsSuffix,
     }),
     buildDescriptionField({
@@ -117,6 +112,7 @@ export const FreightShortTermCreateMultiField = buildMultiField({
       width: 'half',
       required: true,
       variant: 'number',
+      thousandSeparator: true,
       suffix: freight.labels.metersSuffix,
     }),
     buildTextField({
@@ -126,6 +122,7 @@ export const FreightShortTermCreateMultiField = buildMultiField({
       width: 'half',
       required: true,
       variant: 'number',
+      thousandSeparator: true,
       suffix: freight.labels.metersSuffix,
     }),
     buildTextField({
@@ -135,6 +132,7 @@ export const FreightShortTermCreateMultiField = buildMultiField({
       width: 'full',
       required: true,
       variant: 'number',
+      thousandSeparator: true,
       suffix: freight.labels.metersSuffix,
     }),
     buildAlertMessageField({

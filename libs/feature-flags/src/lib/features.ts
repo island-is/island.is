@@ -31,12 +31,12 @@ export enum Features {
   rentalAgreement = 'isRentalAgreementEnabled',
   SeminarRegistrationEnabled = 'isSeminarRegistrationEnabled',
   TrainingLicenseOnAWorkMachineEnabled = 'isTrainingLicenseOnAWorkMachineEnabled',
-  SecondarySchoolEnabled = 'isSecondarySchoolEnabled',
   medicalAndRehabilitationPayments = 'isMedicalAndRehabilitationPaymentsEnabled',
   PracticalExamEnabled = 'isPracticalExamEnabled',
   pensionSupplementEnabled = 'isPensionSupplementEnabled',
   fireCompensationAppraisalEnabled = 'isFireCompensationAppraisalEnabled',
   ExemptionForTransportation = 'isExemptionForTransportationEnabled',
+  TerminateRentalAgreementEnabled = 'isterminaterentalagreementsenabled',
 
   // Application System Delegations active
   applicationSystemDelegations = 'applicationSystemDelegations',

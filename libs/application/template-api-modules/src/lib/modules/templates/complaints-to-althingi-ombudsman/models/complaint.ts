@@ -1,5 +1,3 @@
-import { GenderAnswerOptions } from '@island.is/application/templates/complaints-to-althingi-ombudsman'
-
 export interface ComplainerContactInfo {
   name: string
   nationalId: string
@@ -9,7 +7,6 @@ export interface ComplainerContactInfo {
   phone: string
   postalCode: string
   city: string
-  gender?: GenderAnswerOptions
 }
 
 export interface ComplaineeContactInfo {

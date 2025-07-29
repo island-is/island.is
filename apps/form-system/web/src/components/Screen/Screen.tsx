@@ -34,7 +34,9 @@ export const Screen = () => {
         offset={['0', '0', '1/12', '1/9']}
       >
         <Text variant="h2" as="h2" marginBottom={1}>
-          {currentSectionType !== SectionTypes.PREMISES && screenTitle}
+          {currentSectionType !== SectionTypes.PREMISES &&
+            currentSectionType !== SectionTypes.PARTIES &&
+            screenTitle}
         </Text>
         {currentSectionType === SectionTypes.PREMISES && (
           <ExternalData setExternalDataAgreement={setExternalDataAgreement} />
@@ -54,13 +56,7 @@ export const Screen = () => {
               (field): field is NonNullable<typeof field> => field != null,
             )
             .map((field, index) => {
-              return (
-                <Field
-                  field={field}
-                  key={index}
-                  hasError={state.errors?.includes(field.id) ?? false}
-                />
-              )
+              return <Field field={field} key={index} />
             })}
       </GridColumn>
       <Footer externalDataAgreement={externalDataAgreement} />

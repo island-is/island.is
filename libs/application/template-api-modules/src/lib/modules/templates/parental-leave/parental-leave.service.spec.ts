@@ -407,9 +407,9 @@ describe('ParentalLeaveService', () => {
           rightsUnit: 'EITTFOR',
         },
         {
-          days: '90',
-          daysLeft: '42',
-          months: '3.0',
+          days: '180',
+          daysLeft: '132',
+          months: '6.0',
           rightsDescription: 'Fjölburafæðing (orlof)',
           rightsUnit: 'ORLOF-FBF',
         },
