@@ -1,6 +1,12 @@
 import { useCallback, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
-import { Image, RefreshControl, ScrollView, View } from 'react-native'
+import {
+  Image,
+  RefreshControl,
+  SafeAreaView,
+  ScrollView,
+  View,
+} from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
 import { useTheme } from 'styled-components'
@@ -145,7 +151,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   }
 
   return (
-    <>
+    <SafeAreaView>
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
@@ -196,7 +202,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
         />
       </ScrollView>
       <BottomTabsIndicator index={3} total={5} />
-    </>
+    </SafeAreaView>
   )
 }
 

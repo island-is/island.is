@@ -15405,7 +15405,7 @@ __metadata:
     react-native-keychain: "npm:8.1.1"
     react-native-markdown-display: "npm:7.0.2"
     react-native-mmkv-storage: "npm:0.11.0"
-    react-native-navigation: "patch:react-native-navigation@npm%3A8.1.0#~/.yarn/patches/react-native-navigation-npm-8.1.0-4d479a2759.patch"
+    react-native-navigation: "patch:react-native-navigation@npm%3A8.2.1#~/.yarn/patches/react-native-navigation-npm-8.2.1-3ecf2d9a52.patch"
     react-native-navigation-hooks: "npm:6.3.0"
     react-native-passkey: "npm:2.1.1"
     react-native-passkit-wallet: "npm:0.1.6"
@@ -53262,9 +53262,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-navigation@npm:8.1.0":
-  version: 8.1.0
-  resolution: "react-native-navigation@npm:8.1.0"
+"react-native-navigation@npm:8.2.1":
+  version: 8.2.1
+  resolution: "react-native-navigation@npm:8.2.1"
   dependencies:
     hoist-non-react-statics: "npm:3.x.x"
     lodash: "npm:4.17.x"
@@ -53283,13 +53283,13 @@ __metadata:
       optional: true
   bin:
     rnn-link: autolink/postlink/run.js
-  checksum: 10/434f0f93fd86e768aadb36ed6adc72137e10056dee50aa64c9607260e4762780e436616502cc3e44769eb8bff7b833452d9551d4beb666d5c33d5d37c9df5755
+  checksum: 10/a1d49a374ccfa59bfb9b64a86f791338f909bee1a3809a3c9df720f59ff47a24f5388444a9f635523143c524c6025466b6b39202378636c0824f3bec3b481c22
   languageName: node
   linkType: hard
 
-"react-native-navigation@patch:react-native-navigation@npm%3A8.1.0#~/.yarn/patches/react-native-navigation-npm-8.1.0-4d479a2759.patch":
-  version: 8.1.0
-  resolution: "react-native-navigation@patch:react-native-navigation@npm%3A8.1.0#~/.yarn/patches/react-native-navigation-npm-8.1.0-4d479a2759.patch::version=8.1.0&hash=1dcf17"
+"react-native-navigation@patch:react-native-navigation@npm%3A8.2.1#~/.yarn/patches/react-native-navigation-npm-8.2.1-3ecf2d9a52.patch":
+  version: 8.2.1
+  resolution: "react-native-navigation@patch:react-native-navigation@npm%3A8.2.1#~/.yarn/patches/react-native-navigation-npm-8.2.1-3ecf2d9a52.patch::version=8.2.1&hash=a7cf9e"
   dependencies:
     hoist-non-react-statics: "npm:3.x.x"
     lodash: "npm:4.17.x"
@@ -53308,7 +53308,7 @@ __metadata:
       optional: true
   bin:
     rnn-link: autolink/postlink/run.js
-  checksum: 10/7cacd69d008594124d459c9cc5b6986a750162055a5a1c87a4ed5ce870e9bc89bddf912306dfde503f14e2a0c6651c37fd0d030cf7378f00f930f59940161c84
+  checksum: 10/20d032d08a6be558c2f2effbf358f88c9364826fde2bc54034944c26b6446b2c8992c0e20bd07cec5b8014e6f646c427f3274d32a06d305a99097a930718717f
   languageName: node
   linkType: hard
 
@@ -53593,7 +53593,7 @@ __metadata:
 
 "react-native@patch:react-native@npm%3A0.77.2#~/.yarn/patches/react-native-npm-0.77.2-4866978a5b.patch":
   version: 0.77.2
-  resolution: "react-native@patch:react-native@npm%3A0.77.2#~/.yarn/patches/react-native-npm-0.77.2-4866978a5b.patch::version=0.77.2&hash=c99ef6"
+  resolution: "react-native@patch:react-native@npm%3A0.77.2#~/.yarn/patches/react-native-npm-0.77.2-4866978a5b.patch::version=0.77.2&hash=1f40da"
   dependencies:
     "@jest/create-cache-key-function": "npm:^29.6.3"
     "@react-native/assets-registry": "npm:0.77.2"
@@ -53640,7 +53640,7 @@ __metadata:
       optional: true
   bin:
     react-native: cli.js
-  checksum: 10/8922d457764d1747f20c484ce85d60be9222b6fb6b85335c03d6090a36ce5ae89dc2061325ded12849dd8d9c875b352cea5ffda81acfe8faa829785fa05c7036
+  checksum: 10/0e9f0663cc4c149b53d163539d935866c904f2646a17a7bb3146b97cf85b74530cd65e8d41f7bccdaa5c5a3382019aa5443117b49974d7f09be25370d388f109
   languageName: node
   linkType: hard
 

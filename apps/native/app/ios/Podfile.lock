@@ -1901,7 +1901,7 @@ PODS:
     - IQKeyboardManagerSwift (= 6.5.4)
     - React-Core
     - React-RCTText
-  - ReactNativeNavigation (8.1.0):
+  - ReactNativeNavigation (8.2.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -1932,9 +1932,9 @@ PODS:
     - ReactCommon
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
-    - ReactNativeNavigation/Core (= 8.1.0)
+    - ReactNativeNavigation/Core (= 8.2.1)
     - Yoga
-  - ReactNativeNavigation/Core (8.1.0):
+  - ReactNativeNavigation/Core (8.2.1):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2751,7 +2751,7 @@ SPEC CHECKSUMS:
   ReactCodegen: 9650b56765b60200605a1bf0469c5a522d55f394
   ReactCommon: 7763e59534d58e15f8f22121cdfe319040e08888
   ReactNativeKeyboardManager: f1b1faae318f9338846530682a58333b0f94ae40
-  ReactNativeNavigation: 629c26415b16f59e77561c90ff37cd7f862aecfc
+  ReactNativeNavigation: 2cc0bef39faf13150b34a10ffd46de516ede530f
   RNCAsyncStorage: 79cfba789fca205b204f3ce7948b874500129eb4
   RNCClipboard: efe1b27ad1ea378c60c8c8aabfd130961bbeb474
   RNDeviceInfo: 32413a6eefa0de704834b9d2afe5be596b44a66d

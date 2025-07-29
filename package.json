@@ -523,10 +523,7 @@
     "@nestjs/terminus@10.2.0": "patch:@nestjs/terminus@npm%3A10.2.0#./.yarn/patches/@nestjs-terminus-npm-10.2.0-9e24c129e0.patch",
     "node-request-interceptor@^0.5.1": "patch:node-request-interceptor@npm%3A0.5.9#./.yarn/patches/node-request-interceptor-npm-0.5.9-77e9d9c058.patch",
     "dd-trace@5.10.0": "patch:dd-trace@npm%3A5.10.0#./.yarn/patches/dd-trace-npm-5.10.0-184ed36e96.patch",
-    "expo-modules-core@1.1.1": "patch:expo-modules-core@npm%3A1.1.1#./.yarn/patches/expo-modules-core-npm-1.1.1-c3861d47cb.patch",
-    "dd-trace@5.14.1": "patch:dd-trace@npm%3A5.14.1#./.yarn/patches/dd-trace-npm-5.14.1-8d45ad14d6.patch",
-    "react-native-navigation@7.40.0": "patch:react-native-navigation@npm%3A7.40.0#./.yarn/patches/react-native-navigation-npm-7.40.0-68d0a0ab0d.patch",
-    "expo-modules-core@1.12.15": "patch:expo-modules-core@npm%3A1.12.15#./.yarn/patches/expo-modules-core-npm-1.12.15-fdd209ec99.patch"
+    "dd-trace@5.14.1": "patch:dd-trace@npm%3A5.14.1#./.yarn/patches/dd-trace-npm-5.14.1-8d45ad14d6.patch"
   },
   "volta": {
     "node": "20.15.0",

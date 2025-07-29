@@ -1,4 +1,7 @@
-import { AuthorizationStatus } from '@react-native-firebase/messaging'
+import {
+  AuthorizationStatus,
+  requestPermission,
+} from '@react-native-firebase/messaging'
 import { PermissionsAndroid } from 'react-native'
 import { authStore } from '../stores/auth-store'
 import { androidIsVersion33OrAbove } from './versions-check'
@@ -22,7 +25,7 @@ export const requestNotificationsPermission = async () => {
     return await requestAndroidNotificationsPermission()
   }
 
-  const authStatus = await app.messaging().requestPermission()
+  const authStatus = await requestPermission(app.messaging())
 
   return (
     authStatus === AuthorizationStatus.AUTHORIZED ||

@@ -17,13 +17,15 @@ const customConfig = {
   resolver: {
     assetExts: assetExts.filter((ext) => ext !== 'svg'),
     sourceExts: [...sourceExts, 'cjs', 'mjs', 'svg'],
+    // Force Metro to resolve (sub)dependencies only from the `nodeModulesPaths`
+    disableHierarchicalLookup: true,
   },
 }
 
 module.exports = withNxMetro(mergeConfig(defaultConfig, customConfig), {
   // Change this to true to see debugging info.
   // Useful if you have issues resolving modules
-  debug: false,
+  debug: true,
   // all the file extensions used for imports other than 'ts', 'tsx', 'js', 'jsx', 'json'
   extensions: [],
   // Specify folders to watch, in addition to Nx defaults (workspace libraries and node_modules)
