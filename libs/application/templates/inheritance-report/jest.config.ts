@@ -9,7 +9,7 @@ export default {
       {
         cwd: __dirname,
         configFile: `${__dirname}/babel-jest.config.json`,
-        tsConfig: `${__dirname}/tsconfig.json`,
+        tsConfig: `${__dirname}/tsconfig-spec.json`,
       },
     ],
   },
