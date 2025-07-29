@@ -63,7 +63,6 @@
     "serve": {
       "executor": "@nx/webpack:dev-server",
       "options": {
-        "memoryLimit": 16384,
         "port": 4242,
         "buildTarget": "application-system-form:build",
         "proxyConfig": "apps/application-system/form/proxy.config.json"
