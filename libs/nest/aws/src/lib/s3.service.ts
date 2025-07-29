@@ -44,9 +44,12 @@ export class S3Service {
 
   getS3Client(): S3Client {
     const now = Date.now()
-    
+
     // Create new client if none exists or credentials are stale
-    if (!this.s3Client || (now - this.lastCredentialTime) > this.CREDENTIAL_REFRESH_INTERVAL) {
+    if (
+      !this.s3Client ||
+      now - this.lastCredentialTime > this.CREDENTIAL_REFRESH_INTERVAL
+    ) {
       this.s3Client = new S3Client({
         credentials: defaultProvider(),
         maxAttempts: 3,
