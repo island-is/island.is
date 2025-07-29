@@ -58,7 +58,7 @@ export class ConfirmedTreatment {
   caseManager?: CaseManager
 
   @Field(() => GraphQLISODateTime, { nullable: true })
-  confimationDate?: Date
+  confirmationDate?: Date
 
   @Field(() => PreviousTreatment, { nullable: true })
   previousTreatment?: PreviousTreatment

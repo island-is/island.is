@@ -135,7 +135,7 @@ export const siaConfirmedTreatmentQuery = gql`
         jobTitle
         workplace
       }
-      confimationDate
+      confirmationDate
       previousTreatment {
         description
         application
