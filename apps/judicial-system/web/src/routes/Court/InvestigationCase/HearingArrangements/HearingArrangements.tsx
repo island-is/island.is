@@ -1,4 +1,4 @@
-import { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -10,6 +10,7 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import { isDistrictCourtUser } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -91,6 +92,15 @@ const HearingArrangements = () => {
 
   useOnceOn(isCaseUpToDate, initialize)
 
+  const courtDateNotification = useMemo(
+    () =>
+      hasSentNotification(
+        NotificationType.COURT_DATE,
+        workingCase.notifications,
+      ),
+    [workingCase.notifications],
+  )
+
   const handleNavigationTo = useCallback(
     async (destination: keyof stepValidationsType) => {
       await sendCourtDateToServer()
@@ -101,11 +111,7 @@ const HearingArrangements = () => {
 
       if (
         isCorrectingRuling ||
-        (hasSentNotification(
-          NotificationType.COURT_DATE,
-          workingCase.notifications,
-        ).hasSent &&
-          !courtDateHasChanged)
+        (courtDateNotification.hasSent && !courtDateHasChanged)
       ) {
         router.push(`${destination}/${workingCase.id}`)
       } else {
@@ -116,6 +122,7 @@ const HearingArrangements = () => {
       sendCourtDateToServer,
       workingCase.notifications,
       workingCase.id,
+      courtDateNotification.hasSent,
       courtDateHasChanged,
     ],
   )
@@ -155,15 +162,32 @@ const HearingArrangements = () => {
                 />
               </Box>
             )}
-          {workingCase.comments && (
-            <Box marginBottom={5}>
-              <AlertMessage
-                type="warning"
-                title={formatMessage(m.comments.title)}
-                message={workingCase.comments}
-              />
-            </Box>
-          )}
+          <Box marginBottom={5}>
+            <AlertMessage
+              type="info"
+              title="Upplýsingar um fyrirtöku"
+              message={
+                <Box display="flex" flexDirection="column">
+                  <Text variant="small">
+                    {courtDateNotification.hasSent
+                      ? `Síðasta tilkynnning var send ${formatDate(
+                          courtDateNotification.date,
+                          'PPPp',
+                        )}.`
+                      : 'Tilkynning um fyrirtökutíma hefur ekki verið send.'}
+                  </Text>
+                  {workingCase.comments && (
+                    <Text variant="small" marginTop={2}>
+                      <Text variant="small" as="span" fontWeight="semiBold">
+                        Athugasemdir vegna málsmeðferðar:{' '}
+                      </Text>
+                      {workingCase.comments}
+                    </Text>
+                  )}
+                </Box>
+              }
+            />
+          </Box>
           <PageTitle>{formatMessage(m.title)}</PageTitle>
           <CourtCaseInfo workingCase={workingCase} />
           <Box component="section" marginBottom={8}>
