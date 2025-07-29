@@ -140,7 +140,7 @@ const SidePanel: FC<SidePanelProps> = ({
   )
   const showCourtCaseNumber = isDistrictCourtUser(user)
 
-  const courtCaseNumber = useRef(() => workingCase.courtCaseNumber)
+  const courtCaseNumber = useRef(workingCase.courtCaseNumber)
 
   return (
     <GridColumn span={['12/12', '12/12', '4/12', '3/12']}>
@@ -167,8 +167,8 @@ const SidePanel: FC<SidePanelProps> = ({
               )}
             </Text>
             <Text>
-              {showCourtCaseNumber && courtCaseNumber.current()
-                ? courtCaseNumber.current()
+              {showCourtCaseNumber && courtCaseNumber.current
+                ? courtCaseNumber.current
                 : '\u00A0'}
             </Text>
           </Box>
