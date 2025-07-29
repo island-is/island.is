@@ -294,16 +294,15 @@ export interface EstateMember {
 
 export const heirAgeValidation = 'heirAgeValidation'
 
-export const DebtConstants = {
-  Overdraft: 'Yfirdráttur',
-  CreditCard: 'Kreditkort',
-  Loan: 'Lán',
-  PropertyFees: 'Fasteignagjöld',
-  OtherDebts: 'Aðrar skuldir',
-  PublicCharges: 'Opinber gjöld',
-  InsuranceInstitute: 'Tryggingarstofnun ríkisins',
-} as const
-export type DebtTypes = typeof DebtConstants[keyof typeof DebtConstants]
+export enum DebtTypes {
+  Overdraft = 'Yfirdráttur',
+  CreditCard = 'Kreditkort',
+  Loan = 'Lán',
+  PropertyFees = 'Fasteignagjöld',
+  OtherDebts = 'Aðrar skuldir',
+  PublicCharges = 'Opinber gjöld',
+  InsuranceInstitute = 'Tryggingarstofnun ríkisins',
+}
 
 // Note: Please keep this in lockstep with the FuneralAssetItem
 //       found in clients/syslumenn.

@@ -9,7 +9,7 @@ import {
 } from '@island.is/application/core'
 import { m } from '../../lib/messages'
 import { FuneralAssetItem } from '../../types'
-import { DebtConstants as DebtTypes } from '../../types'
+import { DebtTypes } from '../../types'
 
 export const debtsAndFuneralCost = buildSection({
   id: 'debts',

@@ -23,9 +23,8 @@ import {
 } from '../../lib/utils/helpers'
 import DoubleColumnRow from '../../components/DoubleColumnRow'
 import { m } from '../../lib/messages'
-import { Answers } from '../../types'
+import { Answers, FuneralAssetItem } from '../../types'
 import { YES } from '@island.is/application/core'
-import { FuneralAssetItem } from '@island.is/clients/syslumenn'
 
 type CustomField = {
   id: string

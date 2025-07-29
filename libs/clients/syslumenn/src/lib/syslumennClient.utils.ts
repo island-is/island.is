@@ -716,13 +716,13 @@ const mapInheritanceReportAssets = (
   iAssets?.forEach((iAsset) => {
     const asset = mapInheritanceReportAsset(iAsset)
 
-    const assetTypeTodebtType: Partial<Record<TegundAndlags, DebtTypes>> = {
-      [TegundAndlags.NUMBER_14]: 'otherDebts',
-      [TegundAndlags.NUMBER_17]: 'propertyFees',
-      [TegundAndlags.NUMBER_18]: 'insuranceCompany',
-      [TegundAndlags.NUMBER_19]: 'loan',
-      [TegundAndlags.NUMBER_20]: 'creditCard',
-      [TegundAndlags.NUMBER_21]: 'overdraft',
+    const assetTypeTodebtType = {
+      [TegundAndlags.NUMBER_14]: DebtTypes.OtherDebts,
+      [TegundAndlags.NUMBER_17]: DebtTypes.PropertyFees,
+      [TegundAndlags.NUMBER_18]: DebtTypes.InsuranceCompany,
+      [TegundAndlags.NUMBER_19]: DebtTypes.Loan,
+      [TegundAndlags.NUMBER_20]: DebtTypes.CreditCard,
+      [TegundAndlags.NUMBER_21]: DebtTypes.Overdraft,
     }
 
     switch (iAsset.tegundAngalgs) {

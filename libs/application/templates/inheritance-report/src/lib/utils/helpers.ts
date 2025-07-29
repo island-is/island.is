@@ -10,7 +10,7 @@ import { DebtTypes as ClientDebtType } from '@island.is/clients/syslumenn'
 import { parsePhoneNumberFromString } from 'libphonenumber-js'
 import { MessageDescriptor } from 'react-intl'
 import type { Answers } from '../../types'
-import { DebtConstants } from '../../types'
+import { DebtTypes } from '../../types'
 import { PrePaidInheritanceOptions } from '../constants'
 import { InheritanceReport } from '../dataSchema'
 
@@ -45,17 +45,17 @@ export const getEstateDataFromApplication = (
 export const parseDebtType = (debtType: ClientDebtType) => {
   switch (debtType) {
     case 'propertyFees':
-      return DebtConstants.PropertyFees
+      return DebtTypes.PropertyFees
     case 'overdraft':
-      return DebtConstants.Overdraft
+      return DebtTypes.Overdraft
     case 'creditCard':
-      return DebtConstants.CreditCard
+      return DebtTypes.CreditCard
     case 'insuranceCompany':
-      return DebtConstants.InsuranceInstitute
+      return DebtTypes.InsuranceInstitute
     case 'loan':
-      return DebtConstants.Loan
+      return DebtTypes.Loan
     default:
-      return DebtConstants.OtherDebts
+      return DebtTypes.OtherDebts
   }
 }
 
