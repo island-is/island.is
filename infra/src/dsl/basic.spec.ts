@@ -69,7 +69,7 @@ describe('Basic serialization', () => {
 
   it('command and args', () => {
     expect(result.serviceDef[0].command).toStrictEqual(['node'])
-    expect(result.serviceDef[0].args).toStrictEqual(['main.js'])
+    expect(result.serviceDef[0].args).toStrictEqual(['main.cjs'])
   })
   it('network policies', () => {
     expect(result.serviceDef[0].grantNamespaces).toStrictEqual([])
