@@ -324,7 +324,7 @@ export const findEntryNodePaths = (
   root: Tree,
   entryId: string,
   entries: Record<string, EntryProps>,
-  language: 'is-IS' | 'en',
+  language: 'is-IS' | 'en' = 'is-IS',
 ) => {
   const nodePaths: { node: TreeNode; path: string[] }[] = []
 

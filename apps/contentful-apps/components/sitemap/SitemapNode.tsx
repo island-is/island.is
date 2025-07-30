@@ -33,7 +33,6 @@ import {
   CATEGORY_DIALOG_MIN_HEIGHT,
   type EntryType,
   findEntryNodePaths,
-  findNodes,
   optionMap,
   Tree,
   TreeNode,
@@ -134,20 +133,26 @@ const PageTooltip = ({
   root,
   entryId,
   entries,
-  language,
-  nodeId,
+  type,
 }: {
   root: Tree
   entryId: string
   entries: Record<string, EntryProps>
-  language: 'is-IS' | 'en'
-  nodeId: number
+  type: 'showOnlyPrimaryLocation' | 'showAllExceptPrimaryLocation'
 }) => {
   const [isOpen, setIsOpen] = useState(false)
 
-  const nodePaths = findEntryNodePaths(root, entryId, entries, language).filter(
-    ({ node }) => node.id !== nodeId,
+  const nodePaths = findEntryNodePaths(root, entryId, entries).filter(
+    ({ node }) =>
+      node.type === TreeNodeType.ENTRY &&
+      (type === 'showOnlyPrimaryLocation'
+        ? node.primaryLocation
+        : !node.primaryLocation),
   )
+
+  if (nodePaths.length === 0) {
+    return null
+  }
 
   return (
     <Popover isOpen={isOpen}>
@@ -168,27 +173,16 @@ const PageTooltip = ({
       </Popover.Trigger>
       <Popover.Content>
         <div className={styles.tooltipContent}>
-          <Text>This entry is in other locations:</Text>
+          <Text fontWeight="fontWeightDemiBold">
+            {type === 'showOnlyPrimaryLocation'
+              ? 'This entry points to:'
+              : `${nodePaths.length} other entries point to this entry:`}
+          </Text>
           {nodePaths.map((nodePath) => {
             const path = nodePath.path.join(' / ')
             return (
               <div key={path}>
-                <Text
-                  fontColor={
-                    nodePath.node.type === TreeNodeType.ENTRY &&
-                    nodePath.node.primaryLocation
-                      ? 'blue600'
-                      : undefined
-                  }
-                >
-                  {path}{' '}
-                  <span style={{ color: 'black' }}>
-                    {nodePath.node.type === TreeNodeType.ENTRY &&
-                    nodePath.node.primaryLocation
-                      ? ' (Primary location)'
-                      : ''}
-                  </span>
-                </Text>
+                <Text>{path}</Text>
               </div>
             )
           })}
@@ -302,13 +296,16 @@ export const SitemapNode = ({
                       ]
                     : optionMap[node.type]}
                 </Text>
-                {node.type === TreeNodeType.ENTRY && !node.primaryLocation && (
+                {node.type === TreeNodeType.ENTRY && language === 'is-IS' && (
                   <PageTooltip
                     root={root}
                     entryId={node.entryId}
                     entries={entries}
-                    language={language}
-                    nodeId={node.id}
+                    type={
+                      !node.primaryLocation
+                        ? 'showOnlyPrimaryLocation'
+                        : 'showAllExceptPrimaryLocation'
+                    }
                   />
                 )}
               </div>
