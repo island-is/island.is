@@ -135,9 +135,42 @@ const Defendant = () => {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
     onCompleted: (data) => {
-      if (!data.policeCaseInfo || data.policeCaseInfo.length === 0) {
+      if (!data.policeCaseInfo) {
         return
       }
+
+      // Update place and date if not previously set
+      data.policeCaseInfo.forEach((policeCaseInfo) => {
+        const idx = policeCases.findIndex(
+          (pc) => pc.number === policeCaseInfo.policeCaseNumber,
+        )
+
+        if (idx < 0) {
+          return
+        }
+
+        const policeCase = policeCases[idx]
+
+        let place: string | undefined = undefined
+        let date: Date | undefined = undefined
+
+        if (!policeCase.place && policeCaseInfo.place) {
+          place = policeCaseInfo.place
+        }
+
+        if (!policeCase.date && policeCaseInfo.date) {
+          date = new Date(policeCaseInfo.date)
+        }
+
+        if (place || date) {
+          handleUpdatePoliceCase(idx, {
+            crimeScene: {
+              place: place ?? policeCase.place,
+              date: date ?? policeCase.date,
+            },
+          })
+        }
+      })
 
       if (
         policeCases.length > 0 &&
