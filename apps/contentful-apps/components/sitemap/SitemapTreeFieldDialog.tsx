@@ -44,7 +44,7 @@ const CategoryForm = ({
   return (
     <FormControl className={styles.formContainer}>
       <div>
-        <FormControl.Label>Label (Icelandic)</FormControl.Label>
+        <FormControl.Label>Title (Icelandic)</FormControl.Label>
         <TextInput
           value={state.label}
           onChange={(ev) => {
@@ -53,7 +53,7 @@ const CategoryForm = ({
         />
       </div>
       <div>
-        <FormControl.Label>Label (English)</FormControl.Label>
+        <FormControl.Label>Title (English)</FormControl.Label>
         <div>
           <TextInput
             value={state.labelEN}
@@ -156,7 +156,7 @@ const UrlForm = ({ initialState, onSubmit }: FormProps<UrlState>) => {
     <FormControl className={styles.formContainer}>
       <div>
         <Box paddingBottom="spacingXs">
-          <FormControl.Label>Label (Icelandic)</FormControl.Label>
+          <FormControl.Label>Title (Icelandic)</FormControl.Label>
           <TextInput
             value={state.label}
             onChange={(ev) => {
@@ -168,7 +168,7 @@ const UrlForm = ({ initialState, onSubmit }: FormProps<UrlState>) => {
           />
         </Box>
         <div>
-          <FormControl.Label>Label (English)</FormControl.Label>
+          <FormControl.Label>Title (English)</FormControl.Label>
           <TextInput
             value={state.labelEN}
             onChange={(ev) => {
