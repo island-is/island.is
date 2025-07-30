@@ -1,4 +1,4 @@
-import { useContext, useEffect, useState } from 'react'
+import { useContext, useEffect, useMemo, useState } from 'react'
 import { EntryProps } from 'contentful-management'
 import type { FieldExtensionSDK } from '@contentful/app-sdk'
 import { Badge, DragHandle, Popover, Text } from '@contentful/f36-components'
@@ -143,12 +143,16 @@ const PageTooltip = ({
 }) => {
   const [isOpen, setIsOpen] = useState(false)
 
-  const nodePaths = findEntryNodePaths(root, entryId, entries).filter(
-    ({ node }) =>
-      node.type === TreeNodeType.ENTRY &&
-      (type === 'showOnlyPrimaryLocation'
-        ? node.primaryLocation
-        : !node.primaryLocation),
+  const nodePaths = useMemo(
+    () =>
+      findEntryNodePaths(root, entryId, entries).filter(
+        ({ node }) =>
+          node.type === TreeNodeType.ENTRY &&
+          (type === 'showOnlyPrimaryLocation'
+            ? node.primaryLocation
+            : !node.primaryLocation),
+      ),
+    [entries, entryId, root, type],
   )
 
   if (nodePaths.length === 0) {
@@ -163,8 +167,12 @@ const PageTooltip = ({
           onMouseLeave={() => setIsOpen(false)}
           onClick={() => setIsOpen(!isOpen)}
           tabIndex={0}
+          role="button"
+          aria-label="Show entry references"
+          aria-expanded
           onKeyDown={(ev: React.KeyboardEvent<HTMLDivElement>) => {
             if (ev.key === ' ') {
+              ev.preventDefault()
               setIsOpen(!isOpen)
             }
           }}
