@@ -309,6 +309,9 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
           contentInset={{
             bottom: 32,
           }}
+          contentContainerStyle={{
+            paddingTop: theme.spacing[2],
+          }}
           refreshControl={
             <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
           }
