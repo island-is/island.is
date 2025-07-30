@@ -105,6 +105,7 @@ export const SubpoenaStatistics = () => {
   return (
     <Box marginTop={4}>
       <Filters
+        id={'subpoena'}
         types={subpoenaFilterKeys}
         filters={filters}
         setFilters={setFilters}

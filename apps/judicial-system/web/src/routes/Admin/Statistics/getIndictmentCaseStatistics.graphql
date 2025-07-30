@@ -1,4 +1,4 @@
-query IndictmentCaseStatistics($input: CaseStatisticsInput) {
+query IndictmentCaseStatistics($input: IndictmentStatisticsInput) {
   indictmentCaseStatistics(input: $input) {
     count
     inProgressCount

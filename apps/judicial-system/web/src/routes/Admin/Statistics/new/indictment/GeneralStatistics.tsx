@@ -61,13 +61,13 @@ const Statistics = ({
 }
 
 type IndictmentFilterType = {
-  created?: DateFilter
+  sentToCourt?: DateFilter
   institution?: { label: string; value: string }
 }
 
 const indictmentFilterKeys = [
   'institution',
-  'created',
+  'sentToCourt',
 ] as (keyof IndictmentFilterType)[]
 
 export const GeneralStatistics = () => {
@@ -76,7 +76,7 @@ export const GeneralStatistics = () => {
 
   const queryVariables = useMemo(() => {
     return {
-      created: filters.created,
+      sentToCourt: filters.sentToCourt,
       institutionId: filters.institution?.value,
     }
   }, [filters])
@@ -96,6 +96,7 @@ export const GeneralStatistics = () => {
   return (
     <Box marginTop={4}>
       <Filters
+        id="indictments"
         types={indictmentFilterKeys}
         filters={filters}
         setFilters={setFilters}

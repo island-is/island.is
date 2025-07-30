@@ -103,6 +103,7 @@ const RequestStatistics = () => {
         <StatisticReturnButton />
         <StatisticHeader title="Tölfræði úr rannsóknarmálum" />
         <Filters
+          id="request"
           types={requestFilterKeys}
           filters={filters}
           setFilters={setFilters}

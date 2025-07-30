@@ -137,20 +137,23 @@ const FilterComponent = <T extends object>({
 }
 
 export const Filters = <T extends object>({
+  id,
   types,
   filters,
   setFilters,
   onClear,
 }: {
+  id: string
   types: FilterType[]
   filters: T
   setFilters: Dispatch<SetStateAction<T>>
   onClear: () => void
 }) => {
   return (
-    <FilterLayout onClear={onClear}>
-      {types.map((type) => (
+    <FilterLayout id={id} onClear={onClear}>
+      {types.map((type, key) => (
         <FilterComponent
+          key={`${id}-${type}-${key}`}
           type={type}
           filters={filters}
           setFilters={setFilters}

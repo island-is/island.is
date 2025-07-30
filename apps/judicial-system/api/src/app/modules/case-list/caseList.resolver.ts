@@ -18,7 +18,9 @@ import { BackendService } from '../backend'
 import { CaseListQueryInput } from './dto/caseList.input'
 import {
   CaseStatisticsInput,
+  IndictmentStatisticsInput,
   RequestStatisticsInput,
+  SubpoenaStatisticsInput,
 } from './dto/caseStatistics.input'
 import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 import { CaseListEntry } from './models/caseList.model'
@@ -96,8 +98,8 @@ export class CaseListResolver {
 
   @Query(() => IndictmentCaseStatistics, { nullable: true })
   indictmentCaseStatistics(
-    @Args('input', { type: () => CaseStatisticsInput, nullable: true })
-    input: CaseStatisticsInput,
+    @Args('input', { type: () => IndictmentStatisticsInput, nullable: true })
+    input: IndictmentStatisticsInput,
     @CurrentGraphQlUser()
     user: User,
     @Context('dataSources')
@@ -108,11 +110,7 @@ export class CaseListResolver {
     const result = this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_CASES_STATISTICS,
-      backendService.getIndictmentCaseStatistics(
-        input.fromDate,
-        input.toDate,
-        input.institutionId,
-      ),
+      backendService.getIndictmentCaseStatistics(input),
       (caseStatistics: IndictmentCaseStatistics) =>
         caseStatistics.count.toString(),
     )
@@ -122,8 +120,8 @@ export class CaseListResolver {
 
   @Query(() => SubpoenaStatistics, { nullable: true })
   subpoenaStatistics(
-    @Args('input', { type: () => CaseStatisticsInput, nullable: true })
-    input: CaseStatisticsInput,
+    @Args('input', { type: () => SubpoenaStatisticsInput, nullable: true })
+    input: SubpoenaStatisticsInput,
     @CurrentGraphQlUser()
     user: User,
     @Context('dataSources')
@@ -134,11 +132,7 @@ export class CaseListResolver {
     const result = this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_CASES_STATISTICS,
-      backendService.getSubpoenaStatistics(
-        input.fromDate,
-        input.toDate,
-        input.institutionId,
-      ),
+      backendService.getSubpoenaStatistics(input),
       (caseStatistics: SubpoenaStatistics) => caseStatistics.count.toString(),
     )
 

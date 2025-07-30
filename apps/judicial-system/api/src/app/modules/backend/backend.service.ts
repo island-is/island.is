@@ -24,7 +24,11 @@ import {
   SignatureConfirmationResponse,
 } from '../case'
 import { CaseListEntry, CaseStatistics } from '../case-list'
-import { RequestStatisticsInput } from '../case-list/dto/caseStatistics.input'
+import {
+  IndictmentStatisticsInput,
+  RequestStatisticsInput,
+  SubpoenaStatisticsInput,
+} from '../case-list/dto/caseStatistics.input'
 import {
   IndictmentCaseStatistics,
   RequestCaseStatistics,
@@ -248,17 +252,10 @@ export class BackendService extends DataSource<{ req: Request }> {
   }
 
   getIndictmentCaseStatistics(
-    fromDate?: Date,
-    toDate?: Date,
-    institutionId?: string,
+    query: IndictmentStatisticsInput,
   ): Promise<IndictmentCaseStatistics> {
-    const params = new URLSearchParams()
-
-    if (fromDate) params.append('fromDate', fromDate.toISOString())
-    if (toDate) params.append('toDate', toDate.toISOString())
-    if (institutionId) params.append('institutionId', institutionId)
-
-    return this.get(`cases/indictments/statistics?${params.toString()}`)
+    const searchParams = this.serializeNestedObject(query)
+    return this.get(`cases/indictments/statistics?${searchParams.toString()}`)
   }
 
   private serializeNestedObject<T extends object>(
@@ -296,17 +293,10 @@ export class BackendService extends DataSource<{ req: Request }> {
   }
 
   getSubpoenaStatistics(
-    fromDate?: Date,
-    toDate?: Date,
-    institutionId?: string,
+    query: SubpoenaStatisticsInput,
   ): Promise<SubpoenaStatistics> {
-    const params = new URLSearchParams()
-
-    if (fromDate) params.append('fromDate', fromDate.toISOString())
-    if (toDate) params.append('toDate', toDate.toISOString())
-    if (institutionId) params.append('institutionId', institutionId)
-
-    return this.get(`cases/subpoenas/statistics?${params.toString()}`)
+    const searchParams = this.serializeNestedObject(query)
+    return this.get(`cases/subpoenas/statistics?${searchParams.toString()}`)
   }
 
   getConnectedCases(id: string): Promise<Case[]> {

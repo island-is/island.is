@@ -1,3 +1,4 @@
+import isWithinInterval from 'date-fns/isWithinInterval'
 import { Op, WhereOptions } from 'sequelize'
 import { Includeable, Transaction } from 'sequelize/types'
 import { Sequelize } from 'sequelize-typescript'
@@ -2359,8 +2360,7 @@ export class CaseService {
 
   // TODO: MOVE TO STATISTIC SERVICE
   async getIndictmentCaseStatistics(
-    from?: Date,
-    to?: Date,
+    sentToCourt?: DateFilter,
     institutionId?: string,
   ): Promise<IndictmentCaseStatistics> {
     let where: WhereOptions = {
@@ -2373,17 +2373,6 @@ export class CaseService {
         ],
       },
       type: [CaseType.INDICTMENT],
-    }
-
-    // currently only using the creation date of a case
-    if (from || to) {
-      where.created = {}
-      if (from) {
-        where.created[Op.gte] = from
-      }
-      if (to) {
-        where.created[Op.lte] = to
-      }
     }
 
     if (institutionId) {
@@ -2410,15 +2399,44 @@ export class CaseService {
       ],
     })
 
-    return this.getIndictmentStatistics(cases)
+    const filterOnSentToCourt = () => {
+      if (sentToCourt) {
+        console.log({ sentToCourt })
+        const sortedCase = cases.sort(
+          (a, b) => a.created.getTime() - b.created.getTime(),
+        )
+        if (!sortedCase.length) {
+          return undefined
+        }
+
+        const start = sentToCourt.fromDate ?? sortedCase[0]?.created
+        const end = sentToCourt.toDate ?? new Date()
+
+        return cases.filter(({ eventLogs }) =>
+          eventLogs?.some(
+            ({ created, eventType }) =>
+              eventType === EventType.INDICTMENT_CONFIRMED &&
+              isWithinInterval(new Date(created), {
+                start: new Date(start),
+                end: new Date(end),
+              }),
+          ),
+        )
+      }
+    }
+    const filteredCases = filterOnSentToCourt() ?? cases
+    return this.getIndictmentStatistics(filteredCases)
   }
 
   async getSubpoenaStatistics(
-    from?: Date,
-    to?: Date,
+    created?: DateFilter,
     institutionId?: string,
   ): Promise<SubpoenaStatistics> {
-    return await this.subpoenaService.getStatistics(from, to, institutionId)
+    return await this.subpoenaService.getStatistics(
+      created?.fromDate,
+      created?.toDate,
+      institutionId,
+    )
   }
 
   async getRequestCasesStatistics(
@@ -2461,12 +2479,46 @@ export class CaseService {
       }
     }
 
-    console.log({ fromDate: created?.fromDate, where })
     const cases = await this.caseModel.findAll({
       where,
+      include: [
+        {
+          model: EventLog,
+          required: false,
+          attributes: ['created', 'eventType'],
+          where: {
+            eventType: EventType.CASE_SENT_TO_COURT,
+          },
+        },
+      ],
     })
 
-    return this.getRequestCaseStatistics(cases)
+    const filterOnSentToCourt = () => {
+      if (sentToCourt) {
+        const sortedCase = cases.sort(
+          (a, b) => a.created.getTime() - b.created.getTime(),
+        )
+        if (!sortedCase.length) {
+          return undefined
+        }
+
+        const start = sentToCourt.fromDate ?? sortedCase[0]?.created
+        const end = sentToCourt.toDate ?? new Date()
+
+        return cases.filter(({ eventLogs }) =>
+          eventLogs?.some(
+            ({ created, eventType }) =>
+              eventType === EventType.CASE_SENT_TO_COURT &&
+              isWithinInterval(new Date(created), {
+                start: new Date(start),
+                end: new Date(end),
+              }),
+          ),
+        )
+      }
+    }
+    const filteredCases = filterOnSentToCourt() ?? cases
+    return this.getRequestCaseStatistics(filteredCases)
   }
 
   async getCaseStatistics(

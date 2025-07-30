@@ -117,7 +117,9 @@ import {
 } from './models/caseStatistics.response'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
+import { IndictmentStatisticsDto } from './statistics/indictmentStatistics.dto'
 import { RequestStatisticsDto } from './statistics/requestStatistics.dto'
+import { SubpoenaStatisticsDto } from './statistics/subpoenaStatistics.dto'
 import { CaseService, UpdateCase } from './case.service'
 import { PdfService } from './pdf.service'
 
@@ -933,20 +935,14 @@ export class CaseController {
     type: IndictmentCaseStatistics,
     description: 'Gets court centered statistics for cases',
   })
-  @ApiQuery({ name: 'fromDate', required: false, type: String })
-  @ApiQuery({ name: 'toDate', required: false, type: String })
-  @ApiQuery({ name: 'institutionId', required: false, type: String })
   getIndictmentCaseStatistics(
-    @Query('fromDate') fromDate?: Date,
-    @Query('toDate') toDate?: Date,
-    @Query('institutionId') institutionId?: string,
+    @Query('query') query?: IndictmentStatisticsDto,
   ): Promise<IndictmentCaseStatistics> {
     this.logger.debug('Getting statistics for indictment cases')
 
     return this.caseService.getIndictmentCaseStatistics(
-      fromDate,
-      toDate,
-      institutionId,
+      query?.sentToCourt,
+      query?.institutionId,
     )
   }
 
@@ -957,20 +953,14 @@ export class CaseController {
     type: SubpoenaStatistics,
     description: 'Gets court centered statistics for subpoenas',
   })
-  @ApiQuery({ name: 'fromDate', required: false, type: String })
-  @ApiQuery({ name: 'toDate', required: false, type: String })
-  @ApiQuery({ name: 'institutionId', required: false, type: String })
   getSubpoenaStatistics(
-    @Query('fromDate') fromDate?: Date,
-    @Query('toDate') toDate?: Date,
-    @Query('institutionId') institutionId?: string,
+    @Query('query') query?: SubpoenaStatisticsDto,
   ): Promise<SubpoenaStatistics> {
     this.logger.debug('Getting statistics for subpoenas')
 
     return this.caseService.getSubpoenaStatistics(
-      fromDate,
-      toDate,
-      institutionId,
+      query?.created,
+      query?.institutionId,
     )
   }
 

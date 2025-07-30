@@ -8,13 +8,15 @@ import {
 
 export const FilterLayout = ({
   children,
+  id,
   onClear,
 }: {
   children?: ReactNode | undefined
+  id: string
   onClear: () => void
 }) => {
   return (
-    <Box marginBottom={4}>
+    <Box key={id} marginBottom={4}>
       <SectionHeading title="Síur" />
       <BlueBox>
         <Box display="flex" flexDirection="column" rowGap={2}>

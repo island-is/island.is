@@ -1,4 +1,4 @@
-query SubpoenaStatistics($input: CaseStatisticsInput) {
+query SubpoenaStatistics($input: SubpoenaStatisticsInput) {
   subpoenaStatistics(input: $input) {
     count
     serviceStatusStatistics {
