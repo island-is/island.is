@@ -29,6 +29,12 @@ COPY .yarn/patches .yarn/patches
 COPY .yarn/releases .yarn/releases
 COPY apps/native/app/package.json ./apps/native/app/
 
+# Add logging to show what package.json files we're installing from
+RUN echo "=== Installing dependencies from the following package.json files ===" && \
+  echo "Root package.json:" && cat package.json | jq '.name' && \
+  echo "Native app package.json:" && cat apps/native/app/package.json | jq '.name' && \
+  echo "=== Starting yarn install ==="
+
 RUN --mount=type=cache,target=.yarn/cache,sharing=locked \
   yarn install --immutable
 
@@ -119,8 +125,19 @@ COPY .yarnrc.yml /webapp/
 COPY .yarn/patches /webapp/.yarn/patches
 COPY .yarn/releases /webapp/.yarn/releases
 
+# Add logging to show what package.json files we're installing from in production
+RUN echo "=== Installing production dependencies from the following package.json files ===" && \
+  echo "Current working directory:" && pwd && \
+  echo "Available package.json files:" && find . -name "package.json" -type f && \
+  echo "Root package.json:" && cat package.json | jq '.name' && \
+  echo "=== Starting yarn install for production ==="
+
 RUN --mount=type=cache,target=.yarn/cache,sharing=locked \
-  yarn install
+  yarn workspaces focus --production
+
+RUN find node_modules/ts-dedent/package.json
+
+RUN echo "=== ts-dedent package.json ===" && cat node_modules/ts-dedent/package.json
 
 USER runner
 
