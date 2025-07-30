@@ -168,7 +168,10 @@ const PageTooltip = ({
             }
           }}
         >
-          <LinkIcon variant="muted" size="tiny" />
+          <LinkIcon
+            variant={type === 'showOnlyPrimaryLocation' ? 'muted' : 'primary'}
+            size="small"
+          />
         </div>
       </Popover.Trigger>
       <Popover.Content>
