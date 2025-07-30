@@ -170,3 +170,12 @@ export class SubmitScreenInput {
   @Field(() => SubmitScreenDtoInput, { nullable: true })
   submitScreenDto?: SubmitScreenDtoInput
 }
+
+@InputType('SubmitFormSystemSectionInput')
+export class SubmitSectionInput {
+  @Field(() => String, { nullable: true })
+  applicationId?: string
+
+  @Field(() => String, { nullable: true })
+  sectionId?: string
+}

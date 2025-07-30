@@ -32,7 +32,7 @@ import { SubmitScreenDto } from './models/dto/submitScreen.dto'
 @ApiTags('applications')
 @Controller({ path: 'applications', version: ['1', VERSION_NEUTRAL] })
 export class ApplicationsController {
-  constructor(private readonly applicationsService: ApplicationsService) {}
+  constructor(private readonly applicationsService: ApplicationsService) { }
 
   @ApiOperation({ summary: 'Get an application by id' })
   @ApiOkResponse({
@@ -163,6 +163,18 @@ export class ApplicationsController {
     @Body() screenDto: SubmitScreenDto,
   ): Promise<ScreenDto> {
     return await this.applicationsService.saveScreen(screenId, screenDto)
+  }
+
+  @ApiOperation({ summary: 'Set section to completed' })
+  @ApiCreatedResponse({
+    description: 'Section set to completed successfully',
+  })
+  @Put('submitSection/:applicationId/:sectionId')
+  async submitSection(
+    @Param('applicationId') applicationId: string,
+    @Param('sectionId') sectionId: string,
+  ): Promise<void> {
+    await this.applicationsService.submitSection(applicationId, sectionId)
   }
 
   // @ApiOperation({ summary: 'Get all applications by user and formId' })

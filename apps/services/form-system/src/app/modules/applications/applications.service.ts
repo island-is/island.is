@@ -58,7 +58,7 @@ export class ApplicationsService {
     @InjectModel(Screen) private screenModel: typeof Screen,
     @InjectModel(Field) private fieldModel: typeof Field,
     @InjectModel(Section) private sectionModel: typeof Section,
-  ) {}
+  ) { }
 
   async create(
     slug: string,
@@ -77,12 +77,11 @@ export class ApplicationsService {
       (!user.delegationType || user.delegationType.length === 0
         ? !form.allowedDelegationTypes.includes('Individual')
         : !user.delegationType.some((type) =>
-            form.allowedDelegationTypes.includes(type),
-          ))
+          form.allowedDelegationTypes.includes(type),
+        ))
     ) {
       throw new BadRequestException(
-        `User delegationTypes '${
-          user.delegationType ? user.delegationType.join(', ') : 'none'
+        `User delegationTypes '${user.delegationType ? user.delegationType.join(', ') : 'none'
         }' are not allowed for this form`,
       )
     }
@@ -318,11 +317,11 @@ export class ApplicationsService {
       .then((organizations) =>
         organizations.map(
           (org) =>
-            ({
-              value: org.nationalId,
-              label: org.name.is,
-              isSelected: org.nationalId === organizationNationalId,
-            } as Option),
+          ({
+            value: org.nationalId,
+            label: org.name.is,
+            isSelected: org.nationalId === organizationNationalId,
+          } as Option),
         ),
       )
     return applicationResponseDto
@@ -382,12 +381,11 @@ export class ApplicationsService {
       (!user.delegationType || user.delegationType.length === 0
         ? !form.allowedDelegationTypes.includes('Individual')
         : !user.delegationType.some((type) =>
-            form.allowedDelegationTypes.includes(type),
-          ))
+          form.allowedDelegationTypes.includes(type),
+        ))
     ) {
       throw new BadRequestException(
-        `User delegationTypes '${
-          user.delegationType ? user.delegationType.join(', ') : 'none'
+        `User delegationTypes '${user.delegationType ? user.delegationType.join(', ') : 'none'
         }' are not allowed for this form`,
       )
     }
@@ -669,5 +667,44 @@ export class ApplicationsService {
       throw new NotFoundException(`Screen with id '${screenId}' not found`)
     }
     return screenResult as unknown as ScreenDto
+  }
+
+  async submitSection(
+    applicationId: string,
+    sectionId: string,
+  ): Promise<void> {
+    const application = await this.applicationModel.findByPk(applicationId)
+
+    if (!application) {
+      throw new NotFoundException(
+        `Application with id '${applicationId}' not found`,
+      )
+    }
+
+    const section = await this.sectionModel.findByPk(sectionId, {
+      include: [
+        {
+          model: Screen,
+          as: 'screens',
+          include: [
+            {
+              model: Field,
+              as: 'fields',
+              include: [this.valueModel],
+            },
+          ],
+        },
+      ],
+    })
+
+    if (!section) {
+      throw new NotFoundException(`Section with id '${sectionId}' not found`)
+    }
+
+    // Mark the section as completed
+    if (!application.completed?.includes(section.id)) {
+      application.completed = [...(application.completed ?? []), section.id]
+    }
+    await application.save()
   }
 }

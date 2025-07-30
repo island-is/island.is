@@ -18,16 +18,18 @@ import {
   GetApplicationInput,
   GetApplicationsInput,
   SubmitScreenInput,
+  SubmitSectionInput,
   UpdateApplicationInput,
 } from '../../dto/application.input'
 import { UpdateApplicationDependenciesInput } from '../../dto/application.input'
 import { Screen } from '../../models/screen.model'
+import { string } from 'zod'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
 export class ApplicationsResolver {
-  constructor(private readonly applicationsService: ApplicationsService) {}
+  constructor(private readonly applicationsService: ApplicationsService) { }
 
   @Query(() => Application, {
     name: 'formSystemApplication',
@@ -127,5 +129,17 @@ export class ApplicationsResolver {
     @CurrentUser() user: User,
   ): Promise<Screen> {
     return this.applicationsService.saveScreen(user, input)
+  }
+
+  @Mutation(() => Boolean, {
+    name: 'submitFormSystemSection',
+    nullable: true
+  })
+  async submitSection(
+    @Args('input', { type: () => SubmitSectionInput })
+    input: SubmitSectionInput,
+    @CurrentUser() user: User,
+  ): Promise<void> {
+    return this.applicationsService.submitSection(user, input)
   }
 }

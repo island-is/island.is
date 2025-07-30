@@ -5,10 +5,9 @@ import { FormSystemApplication } from '@island.is/api/schema'
 
 interface Props {
   application: FormSystemApplication
-  onDelete?: () => void
 }
 
-export const ApplicationCardDelete = ({ application: _application }: Props) => {
+export const ApplicationCardDelete = ({ application }: Props) => {
   const { formatMessage } = useLocale()
 
   return (
