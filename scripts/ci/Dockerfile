@@ -125,19 +125,8 @@ COPY .yarnrc.yml /webapp/
 COPY .yarn/patches /webapp/.yarn/patches
 COPY .yarn/releases /webapp/.yarn/releases
 
-# Add logging to show what package.json files we're installing from in production
-RUN echo "=== Installing production dependencies from the following package.json files ===" && \
-  echo "Current working directory:" && pwd && \
-  echo "Available package.json files:" && find . -name "package.json" -type f && \
-  echo "Root package.json:" && cat package.json | jq '.name' && \
-  echo "=== Starting yarn install for production ==="
-
 RUN --mount=type=cache,target=.yarn/cache,sharing=locked \
-  yarn workspaces focus --production
-
-RUN find node_modules/ts-dedent/package.json
-
-RUN echo "=== ts-dedent package.json ===" && cat node_modules/ts-dedent/package.json
+  yarn workspaces focus --production --immutable
 
 USER runner
 
