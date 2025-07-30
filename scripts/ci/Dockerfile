@@ -126,7 +126,7 @@ COPY .yarn/patches /webapp/.yarn/patches
 COPY .yarn/releases /webapp/.yarn/releases
 
 RUN --mount=type=cache,target=.yarn/cache,sharing=locked \
-  yarn workspaces focus --production --immutable
+  yarn workspaces focus --production
 
 USER runner
 
