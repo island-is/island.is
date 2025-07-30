@@ -210,6 +210,7 @@ interface SitemapNodeProps {
   updateNode: (parentNode: Tree, updatedNode: TreeNode) => void
   onMarkEntryAsPrimary: (nodeId: number, entryId: string) => void
   language: 'is-IS' | 'en'
+  status: 'draft' | 'published'
 }
 
 export const SitemapNode = ({
@@ -222,6 +223,7 @@ export const SitemapNode = ({
   updateNode,
   onMarkEntryAsPrimary,
   language,
+  status,
 }: SitemapNodeProps) => {
   const sdk = useSDK<FieldExtensionSDK>()
 
@@ -284,10 +286,16 @@ export const SitemapNode = ({
 
   const nodeStatus = getNodeStatus(node, entries)
 
+  if (status === 'published' && nodeStatus !== 'published') {
+    return null
+  }
+
   return (
     <div className={styles.mainContainer}>
       <div className={styles.nodeContainer} ref={setNodeRef} style={style}>
-        <DragHandle {...listeners} {...attributes} label="Drag to reorder" />
+        {status !== 'published' && (
+          <DragHandle {...listeners} {...attributes} label="Drag to reorder" />
+        )}
         <div className={styles.nodeInnerContainer}>
           <div className={styles.fullWidth}>
             <div className={styles.nodeTopRowContainer}>
@@ -319,90 +327,98 @@ export const SitemapNode = ({
                     {nodeStatus}
                   </Badge>
                 )}
-                <EditMenu
-                  entryId={
-                    node.type === TreeNodeType.ENTRY ? node.entryId : undefined
-                  }
-                  root={root}
-                  onMarkEntryAsPrimary={onMarkEntryAsPrimary}
-                  isEntryNodePrimaryLocation={
-                    node.type === TreeNodeType.ENTRY && node.primaryLocation
-                  }
-                  entryNodeId={node.id}
-                  onPublish={
-                    node.type === TreeNodeType.CATEGORY &&
-                    node.status !== 'published'
-                      ? async () => {
-                          const nextVersion = (node.version || 1) + 1
-                          const updatedNode = {
-                            ...node,
-                            status: 'published' as const,
-                            version: nextVersion,
-                            publishedVersion: nextVersion,
+                <div
+                  style={{
+                    visibility: status === 'published' ? 'hidden' : 'visible',
+                  }}
+                >
+                  <EditMenu
+                    entryId={
+                      node.type === TreeNodeType.ENTRY
+                        ? node.entryId
+                        : undefined
+                    }
+                    root={root}
+                    onMarkEntryAsPrimary={onMarkEntryAsPrimary}
+                    isEntryNodePrimaryLocation={
+                      node.type === TreeNodeType.ENTRY && node.primaryLocation
+                    }
+                    entryNodeId={node.id}
+                    onPublish={
+                      node.type === TreeNodeType.CATEGORY &&
+                      node.status !== 'published'
+                        ? async () => {
+                            const nextVersion = (node.version || 1) + 1
+                            const updatedNode = {
+                              ...node,
+                              status: 'published' as const,
+                              version: nextVersion,
+                              publishedVersion: nextVersion,
+                            }
+                            updateNode(parentNode, updatedNode)
                           }
-                          updateNode(parentNode, updatedNode)
-                        }
-                      : undefined
-                  }
-                  onEdit={async () => {
-                    if (node.type === TreeNodeType.ENTRY) {
-                      const entry = await sdk.navigator.openEntry(
-                        node.entryId,
-                        {
-                          slideIn: { waitForClose: true },
-                        },
-                      )
+                        : undefined
+                    }
+                    onEdit={async () => {
+                      if (node.type === TreeNodeType.ENTRY) {
+                        const entry = await sdk.navigator.openEntry(
+                          node.entryId,
+                          {
+                            slideIn: { waitForClose: true },
+                          },
+                        )
 
-                      if (entry?.entity) {
-                        updateEntry(entry.entity)
+                        if (entry?.entity) {
+                          updateEntry(entry.entity)
+                        }
+
+                        return
                       }
 
-                      return
-                    }
+                      const otherCategories = parentNode.childNodes.filter(
+                        (child) =>
+                          child.type === TreeNodeType.CATEGORY &&
+                          child.id !== node.id,
+                      )
 
-                    const otherCategories = parentNode.childNodes.filter(
-                      (child) =>
-                        child.type === TreeNodeType.CATEGORY &&
-                        child.id !== node.id,
-                    )
-
-                    const updatedNode = await sdk.dialogs.openCurrentApp({
-                      parameters: {
-                        node,
-                        otherCategorySlugs: otherCategories
-                          .map((child) =>
-                            child.type === TreeNodeType.CATEGORY
-                              ? child.slug
-                              : '',
-                          )
-                          .filter(Boolean),
-                        otherCategorySlugsEN: otherCategories
-                          .map((child) =>
-                            child.type === TreeNodeType.CATEGORY
-                              ? child.slugEN
-                              : '',
-                          )
-                          .filter(Boolean),
-                      },
-                      minHeight:
-                        node.type === TreeNodeType.URL
-                          ? URL_DIALOG_MIN_HEIGHT
-                          : CATEGORY_DIALOG_MIN_HEIGHT,
-                    })
-                    updateNode(parentNode, updatedNode)
-                    return
-                  }}
-                  onRemove={async () => {
-                    const confirmed = await sdk.dialogs.openConfirm({
-                      title: 'Are you sure?',
-                      message: `Entry and everything below it will be removed`,
-                    })
-                    if (!confirmed) {
+                      const updatedNode = await sdk.dialogs.openCurrentApp({
+                        parameters: {
+                          node,
+                          otherCategorySlugs: otherCategories
+                            .map((child) =>
+                              child.type === TreeNodeType.CATEGORY
+                                ? child.slug
+                                : '',
+                            )
+                            .filter(Boolean),
+                          otherCategorySlugsEN: otherCategories
+                            .map((child) =>
+                              child.type === TreeNodeType.CATEGORY
+                                ? child.slugEN
+                                : '',
+                            )
+                            .filter(Boolean),
+                        },
+                        minHeight:
+                          node.type === TreeNodeType.URL
+                            ? URL_DIALOG_MIN_HEIGHT
+                            : CATEGORY_DIALOG_MIN_HEIGHT,
+                      })
+                      updateNode(parentNode, updatedNode)
                       return
-                    }
-                    removeNode(parentNode, node.id)
-                  }}
-                />
+                    }}
+                    onRemove={async () => {
+                      const confirmed = await sdk.dialogs.openConfirm({
+                        title: 'Are you sure?',
+                        message: `Entry and everything below it will be removed`,
+                      })
+                      if (!confirmed) {
+                        return
+                      }
+                      removeNode(parentNode, node.id)
+                    }}
+                  />
+                </div>
               </div>
             </div>
             <div
@@ -424,14 +440,18 @@ export const SitemapNode = ({
                   visibility: isClickable ? 'visible' : 'hidden',
                 }}
               >
-                {showChildNodes ? <ChevronDownIcon /> : <ChevronRightIcon />}
+                {showChildNodes || status === 'published' ? (
+                  <ChevronDownIcon />
+                ) : (
+                  <ChevronRightIcon />
+                )}
               </div>
               <SitemapNodeContent node={node} language={language} />
             </div>
           </div>
         </div>
       </div>
-      {showChildNodes && (
+      {(showChildNodes || status === 'published') && (
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
@@ -460,24 +480,27 @@ export const SitemapNode = ({
                   root={root}
                   onMarkEntryAsPrimary={onMarkEntryAsPrimary}
                   language={language}
+                  status={status}
                 />
               ))}
-              <div className={styles.addNodeButtonContainer}>
-                <AddNodeButton
-                  addNode={(type, createNew, entryType) => {
-                    addNode(node, type, createNew, entryType)
-                  }}
-                  options={
-                    indent > 1 || node.type === TreeNodeType.ENTRY
-                      ? [TreeNodeType.ENTRY, TreeNodeType.URL]
-                      : [
-                          TreeNodeType.CATEGORY,
-                          TreeNodeType.ENTRY,
-                          TreeNodeType.URL,
-                        ]
-                  }
-                />
-              </div>
+              {status !== 'published' && (
+                <div className={styles.addNodeButtonContainer}>
+                  <AddNodeButton
+                    addNode={(type, createNew, entryType) => {
+                      addNode(node, type, createNew, entryType)
+                    }}
+                    options={
+                      indent > 1 || node.type === TreeNodeType.ENTRY
+                        ? [TreeNodeType.ENTRY, TreeNodeType.URL]
+                        : [
+                            TreeNodeType.CATEGORY,
+                            TreeNodeType.ENTRY,
+                            TreeNodeType.URL,
+                          ]
+                    }
+                  />
+                </div>
+              )}
             </div>
           </SortableContext>
         </DndContext>

@@ -44,6 +44,7 @@ export const SitemapTreeField = () => {
     },
   )
   const [language, setLanguage] = useState<'is-IS' | 'en'>('is-IS')
+  const [status, setStatus] = useState<'draft' | 'published'>('draft')
 
   useDebounce(
     () => {
@@ -141,28 +142,55 @@ export const SitemapTreeField = () => {
       >
         <EntryContext.Provider value={useEntryContext()}>
           <div>
-            <div className={styles.languageSelectorContainer}>
-              <FormControl.Label>Language preview</FormControl.Label>
-              <div>
-                <div className={styles.languageSelector}>
-                  <Radio
-                    id="is"
-                    name="language"
-                    value="is"
-                    isChecked={language === 'is-IS'}
-                    onChange={() => setLanguage('is-IS')}
-                  >
-                    Icelandic
-                  </Radio>
-                  <Radio
-                    id="en"
-                    name="language"
-                    value="en"
-                    isChecked={language === 'en'}
-                    onChange={() => setLanguage('en')}
-                  >
-                    English
-                  </Radio>
+            <div className={styles.topRowContainer}>
+              <div className={styles.statusSelectorContainer}>
+                <FormControl.Label>Preview mode</FormControl.Label>
+                <div>
+                  <div className={styles.statusSelector}>
+                    <Radio
+                      id="draft"
+                      name="status"
+                      value="draft"
+                      isChecked={status === 'draft'}
+                      onChange={() => setStatus('draft')}
+                    >
+                      Draft
+                    </Radio>
+                    <Radio
+                      id="published"
+                      name="status"
+                      value="published"
+                      isChecked={status === 'published'}
+                      onChange={() => setStatus('published')}
+                    >
+                      Published
+                    </Radio>
+                  </div>
+                </div>
+              </div>
+              <div className={styles.languageSelectorContainer}>
+                <FormControl.Label>Language </FormControl.Label>
+                <div>
+                  <div className={styles.languageSelector}>
+                    <Radio
+                      id="is"
+                      name="language"
+                      value="is"
+                      isChecked={language === 'is-IS'}
+                      onChange={() => setLanguage('is-IS')}
+                    >
+                      Icelandic
+                    </Radio>
+                    <Radio
+                      id="en"
+                      name="language"
+                      value="en"
+                      isChecked={language === 'en'}
+                      onChange={() => setLanguage('en')}
+                    >
+                      English
+                    </Radio>
+                  </div>
                 </div>
               </div>
             </div>
@@ -178,15 +206,18 @@ export const SitemapTreeField = () => {
                   root={tree}
                   onMarkEntryAsPrimary={onMarkEntryAsPrimary}
                   language={language}
+                  status={status}
                 />
               ))}
-              <div className={styles.addNodeButtonContainer}>
-                <AddNodeButton
-                  addNode={(type, createNew, entryType) => {
-                    addNode(tree, type, createNew, entryType)
-                  }}
-                />
-              </div>
+              {status !== 'published' && (
+                <div className={styles.addNodeButtonContainer}>
+                  <AddNodeButton
+                    addNode={(type, createNew, entryType) => {
+                      addNode(tree, type, createNew, entryType)
+                    }}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </EntryContext.Provider>
