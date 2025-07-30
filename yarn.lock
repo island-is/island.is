@@ -33230,7 +33230,7 @@ __metadata:
     testcontainers: "npm:7.23.2"
     to-querystring: "npm:1.1.1"
     triple-beam: "npm:1.3.0"
-    ts-dedent: "npm:2.2.0"
+    ts-dedent: "npm:2.0.0"
     ts-jest: "npm:29.1.0"
     ts-morph: "npm:16.0.0"
     ts-node: "npm:10.9.2"
@@ -48629,7 +48629,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"ts-dedent@npm:2.2.0, ts-dedent@npm:^2.0.0, ts-dedent@npm:^2.2.0":
+"ts-dedent@npm:2.0.0":
+  version: 2.0.0
+  resolution: "ts-dedent@npm:2.0.0"
+  checksum: 10/6a155072be186cdf9dca922ac1c213220a09f4fff44243dd345870a3efe7bb9c1666bb69eb62c07ad01da38130e033a2f204558615fc9d2ed76294ba0a012944
+  languageName: node
+  linkType: hard
+
+"ts-dedent@npm:^2.0.0, ts-dedent@npm:^2.2.0":
   version: 2.2.0
   resolution: "ts-dedent@npm:2.2.0"
   checksum: 10/93ed8f7878b6d5ed3c08d99b740010eede6bccfe64bce61c5a4da06a2c17d6ddbb80a8c49c2d15251de7594a4f93ffa21dd10e7be75ef66a4dc9951b4a94e2af
