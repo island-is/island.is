@@ -52,6 +52,8 @@ export {
   DefenderSubRole,
   prosecutionRoles,
   isProsecutionUser,
+  isProsecutorUser,
+  isProsecutorRepresentativeUser,
   getContactInformation,
   publicProsecutionOfficeRoles,
   isPublicProsecutionOfficeUser,
@@ -70,7 +72,6 @@ export {
   isPublicProsecutionUser,
   getAdminUserInstitutionScope,
   getAdminUserInstitutionUserRoles,
-  hasCaseGroupListsEnabled,
 } from './lib/user'
 export type { User, UserDescriptor, InstitutionUser } from './lib/user'
 
@@ -142,7 +143,13 @@ export type { SubstanceMap } from './lib/indictmentCount'
 
 export { Substance } from './lib/substances'
 
-export { type Lawyer, mapToLawyer } from './lib/lawyer'
+export {
+  type Lawyer,
+  mapToLawyer,
+  type LawyerFull,
+  type LawyerRegistry,
+  LawyerType,
+} from './lib/lawyer'
 
 export { type CourtDocument } from './lib/courtDocument'
 

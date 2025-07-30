@@ -26,6 +26,8 @@ import { TranslationsService } from './translations/translations.service'
 import { TranslationsResolver } from './translations/translations.resolver'
 import { OrganizationUrlsResolver } from './organizationUrls/organizationUrls.resolver'
 import { OrganizationUrlsService } from './organizationUrls/organizationUrls.service'
+import { FormUrlsResolver } from './formUrls/formUrls.resolver'
+import { FormUrlsService } from './formUrls/formUrls.service'
 
 @Module({
   providers: [
@@ -53,6 +55,8 @@ import { OrganizationUrlsService } from './organizationUrls/organizationUrls.ser
     OrganizationPermissionsService,
     OrganizationUrlsResolver,
     OrganizationUrlsService,
+    FormUrlsResolver,
+    FormUrlsService,
     CmsModule,
   ],
   exports: [],

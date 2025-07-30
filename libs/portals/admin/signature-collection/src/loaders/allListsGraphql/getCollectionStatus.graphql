@@ -13,6 +13,7 @@ query collection($input: SignatureCollectionBaseInput!) {
       min
       max
       isActive
+      collectionId
     }
     candidates {
       id
