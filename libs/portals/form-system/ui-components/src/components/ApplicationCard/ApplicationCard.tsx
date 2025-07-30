@@ -61,7 +61,7 @@ export const ApplicationCard = ({ application, focused = false }: Props) => {
         <Inline alignY="center" justifyContent="flexEnd" space={1}>
           <ApplicationCardTag />
           <ApplicationCardDelete
-          // application={application} 
+          // application={application}
           />
         </Inline>
       </Box>
