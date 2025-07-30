@@ -1,3 +1,4 @@
+import { EntryProps } from 'contentful-management'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
 
 import {
@@ -317,4 +318,45 @@ export const updateNode = (parentNode: Tree, updatedNode: TreeNode) => {
 
     parentNode.childNodes[nodeIndex] = updatedNode
   }
+}
+
+export const findEntryNodePaths = (
+  root: Tree,
+  entryId: string,
+  entries: Record<string, EntryProps>,
+  language: 'is-IS' | 'en',
+) => {
+  const nodePaths: { node: TreeNode; path: string[] }[] = []
+
+  // DFS down until we find a node with the entryId and keep track of the path
+  const findEntryNodePathsRecursive = (
+    node: TreeNode,
+    currentPath: string[],
+  ) => {
+    if (node.type === TreeNodeType.ENTRY && node.entryId === entryId) {
+      nodePaths.push({
+        node,
+        path: [
+          ...currentPath,
+          entries[entryId]?.fields?.title?.[language] ?? '',
+        ],
+      })
+      return
+    }
+
+    if (node.type === TreeNodeType.CATEGORY) {
+      for (const child of node.childNodes) {
+        findEntryNodePathsRecursive(child, [
+          ...currentPath,
+          language === 'is-IS' ? node.label : node.labelEN,
+        ])
+      }
+    }
+  }
+
+  for (const child of root.childNodes) {
+    findEntryNodePathsRecursive(child, [])
+  }
+
+  return nodePaths
 }

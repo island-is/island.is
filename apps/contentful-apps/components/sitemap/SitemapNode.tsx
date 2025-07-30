@@ -1,8 +1,12 @@
 import { useContext, useEffect, useState } from 'react'
 import { EntryProps } from 'contentful-management'
 import type { FieldExtensionSDK } from '@contentful/app-sdk'
-import { Badge, DragHandle, Text } from '@contentful/f36-components'
-import { ChevronDownIcon, ChevronRightIcon } from '@contentful/f36-icons'
+import { Badge, DragHandle, Popover, Text } from '@contentful/f36-components'
+import {
+  ChevronDownIcon,
+  ChevronRightIcon,
+  LinkIcon,
+} from '@contentful/f36-icons'
 import { useSDK } from '@contentful/react-apps-toolkit'
 import {
   closestCenter,
@@ -28,6 +32,8 @@ import { SitemapNodeContent } from './SitemapNodeContent'
 import {
   CATEGORY_DIALOG_MIN_HEIGHT,
   type EntryType,
+  findEntryNodePaths,
+  findNodes,
   optionMap,
   Tree,
   TreeNode,
@@ -122,6 +128,74 @@ const getStatusVariant = (status: ReturnType<typeof getNodeStatus>) => {
     return 'primary'
   }
   return 'positive'
+}
+
+const PageTooltip = ({
+  root,
+  entryId,
+  entries,
+  language,
+  nodeId,
+}: {
+  root: Tree
+  entryId: string
+  entries: Record<string, EntryProps>
+  language: 'is-IS' | 'en'
+  nodeId: number
+}) => {
+  const [isOpen, setIsOpen] = useState(false)
+
+  const nodePaths = findEntryNodePaths(root, entryId, entries, language).filter(
+    ({ node }) => node.id !== nodeId,
+  )
+
+  return (
+    <Popover isOpen={isOpen}>
+      <Popover.Trigger>
+        <div
+          onMouseEnter={() => setIsOpen(true)}
+          onMouseLeave={() => setIsOpen(false)}
+          onClick={() => setIsOpen(!isOpen)}
+          tabIndex={0}
+          onKeyDown={(ev: React.KeyboardEvent<HTMLDivElement>) => {
+            if (ev.key === ' ') {
+              setIsOpen(!isOpen)
+            }
+          }}
+        >
+          <LinkIcon variant="muted" size="tiny" />
+        </div>
+      </Popover.Trigger>
+      <Popover.Content>
+        <div className={styles.tooltipContent}>
+          <Text>This entry is in other locations:</Text>
+          {nodePaths.map((nodePath) => {
+            const path = nodePath.path.join(' / ')
+            return (
+              <div key={path}>
+                <Text
+                  fontColor={
+                    nodePath.node.type === TreeNodeType.ENTRY &&
+                    nodePath.node.primaryLocation
+                      ? 'blue600'
+                      : undefined
+                  }
+                >
+                  {path}{' '}
+                  <span style={{ color: 'black' }}>
+                    {nodePath.node.type === TreeNodeType.ENTRY &&
+                    nodePath.node.primaryLocation
+                      ? ' (Primary location)'
+                      : ''}
+                  </span>
+                </Text>
+              </div>
+            )
+          })}
+        </div>
+      </Popover.Content>
+    </Popover>
+  )
 }
 
 interface SitemapNodeProps {
@@ -220,7 +294,7 @@ export const SitemapNode = ({
         <div className={styles.nodeInnerContainer}>
           <div className={styles.fullWidth}>
             <div className={styles.nodeTopRowContainer}>
-              <div>
+              <div className={styles.nodeTopRowContainerLeft}>
                 <Text fontColor="gray600">
                   {node.type === TreeNodeType.ENTRY
                     ? entryTypeMap[
@@ -228,7 +302,17 @@ export const SitemapNode = ({
                       ]
                     : optionMap[node.type]}
                 </Text>
+                {node.type === TreeNodeType.ENTRY && !node.primaryLocation && (
+                  <PageTooltip
+                    root={root}
+                    entryId={node.entryId}
+                    entries={entries}
+                    language={language}
+                    nodeId={node.id}
+                  />
+                )}
               </div>
+
               <div className={styles.nodeTopRowContainerRight}>
                 {nodeStatus && (
                   <Badge variant={getStatusVariant(nodeStatus)}>
