@@ -26,7 +26,7 @@ module.exports = {
       await queryInterface.sequelize.query(
         `
         DELETE FROM event_log
-        WHERE type = 'REQUEST_COMPLETED'
+        WHERE event_type = 'REQUEST_COMPLETED'
         `,
         { transaction },
       )
