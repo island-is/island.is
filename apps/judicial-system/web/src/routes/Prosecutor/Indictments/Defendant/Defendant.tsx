@@ -125,7 +125,7 @@ const Defendant = () => {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
     onCompleted: (data) => {
-      if (!data.policeCaseInfo || data.policeCaseInfo.length === 0) {
+      if (!data.policeCaseInfo) {
         return
       }
 
