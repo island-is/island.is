@@ -245,21 +245,21 @@ export const SitemapNode = ({
                     node.type === TreeNodeType.ENTRY && node.primaryLocation
                   }
                   entryNodeId={node.id}
-                  onPublish={async () => {
-                    if (
-                      node.type === TreeNodeType.CATEGORY &&
-                      node.status !== 'published'
-                    ) {
-                      const nextVersion = (node.version || 1) + 1
-                      const updatedNode = {
-                        ...node,
-                        status: 'published' as const,
-                        version: nextVersion,
-                        publishedVersion: nextVersion,
-                      }
-                      updateNode(parentNode, updatedNode)
-                    }
-                  }}
+                  onPublish={
+                    node.type === TreeNodeType.CATEGORY &&
+                    node.status !== 'published'
+                      ? async () => {
+                          const nextVersion = (node.version || 1) + 1
+                          const updatedNode = {
+                            ...node,
+                            status: 'published' as const,
+                            version: nextVersion,
+                            publishedVersion: nextVersion,
+                          }
+                          updateNode(parentNode, updatedNode)
+                        }
+                      : undefined
+                  }
                   onEdit={async () => {
                     if (node.type === TreeNodeType.ENTRY) {
                       const entry = await sdk.navigator.openEntry(
