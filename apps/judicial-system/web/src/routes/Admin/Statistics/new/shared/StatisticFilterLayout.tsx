@@ -17,7 +17,7 @@ export const FilterLayout = ({
     <Box marginBottom={4}>
       <SectionHeading title="Síur" />
       <BlueBox>
-        <Box display="flex" flexDirection="row" columnGap={2}>
+        <Box display="flex" flexDirection="column" rowGap={2}>
           {children}
         </Box>
         <Box display="flex" justifyContent="flexEnd" marginTop={1}>

@@ -117,6 +117,7 @@ import {
 } from './models/caseStatistics.response'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
+import { RequestStatisticsDto } from './statistics/requestStatistics.dto'
 import { CaseService, UpdateCase } from './case.service'
 import { PdfService } from './pdf.service'
 
@@ -980,20 +981,15 @@ export class CaseController {
     type: RequestCaseStatistics,
     description: 'Gets court centered statistics for requests cases',
   })
-  @ApiQuery({ name: 'fromDate', required: false, type: String })
-  @ApiQuery({ name: 'toDate', required: false, type: String })
-  @ApiQuery({ name: 'institutionId', required: false, type: String })
   getRequestCaseStatistics(
-    @Query('fromDate') fromDate?: Date,
-    @Query('toDate') toDate?: Date,
-    @Query('institutionId') institutionId?: string,
+    @Query('query') query?: RequestStatisticsDto,
   ): Promise<RequestCaseStatistics> {
     this.logger.debug('Getting statistics for request cases')
 
     return this.caseService.getRequestCasesStatistics(
-      fromDate,
-      toDate,
-      institutionId,
+      query?.created,
+      query?.sentToCourt,
+      query?.institutionId,
     )
   }
 }

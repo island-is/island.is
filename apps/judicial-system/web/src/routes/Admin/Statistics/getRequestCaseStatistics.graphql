@@ -1,4 +1,4 @@
-query RequestCaseStatistics($input: CaseStatisticsInput) {
+query RequestCaseStatistics($input: RequestStatisticsInput) {
   requestCaseStatistics(input: $input) {
     count
     inProgressCount

@@ -19,3 +19,34 @@ export class CaseStatisticsInput {
   @Field(() => String, { nullable: true })
   readonly institutionId?: string
 }
+
+@InputType()
+class DateFilter {
+  @Allow()
+  @IsOptional()
+  @Field(() => Date, { nullable: true })
+  readonly fromDate?: Date
+
+  @Allow()
+  @IsOptional()
+  @Field(() => Date, { nullable: true })
+  readonly toDate?: Date
+}
+
+@InputType()
+export class RequestStatisticsInput {
+  @Allow()
+  @IsOptional()
+  @Field(() => DateFilter, { nullable: true })
+  readonly created?: DateFilter
+
+  @Allow()
+  @IsOptional()
+  @Field(() => DateFilter, { nullable: true })
+  readonly sentToCourt?: DateFilter
+
+  @Allow()
+  @IsOptional()
+  @Field(() => String, { nullable: true })
+  readonly institutionId?: string
+}

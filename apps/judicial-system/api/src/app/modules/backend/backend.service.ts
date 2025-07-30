@@ -24,6 +24,7 @@ import {
   SignatureConfirmationResponse,
 } from '../case'
 import { CaseListEntry, CaseStatistics } from '../case-list'
+import { RequestStatisticsInput } from '../case-list/dto/caseStatistics.input'
 import {
   IndictmentCaseStatistics,
   RequestCaseStatistics,
@@ -260,18 +261,38 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.get(`cases/indictments/statistics?${params.toString()}`)
   }
 
-  getRequestCaseStatistics(
-    fromDate?: Date,
-    toDate?: Date,
-    institutionId?: string,
-  ): Promise<RequestCaseStatistics> {
+  private serializeNestedObject<T extends object>(
+    object: T,
+    rootKey = 'query',
+  ): string {
     const params = new URLSearchParams()
+    Object.entries(object).forEach(([key, value]) => {
+      if (value && typeof value === 'object' && !(value instanceof Date)) {
+        // Note: currently only handle one level of nested object
+        Object.entries(value).forEach(([subKey, subValue]) => {
+          if (subValue !== undefined && subValue !== null && subValue !== '') {
+            const valStr =
+              subValue instanceof Date
+                ? subValue.toISOString()
+                : subValue.toString()
+            params.append(`${rootKey}[${key}][${subKey}]`, valStr)
+          }
+        })
+      } else if (value) {
+        const valStr =
+          value instanceof Date ? value.toISOString() : value.toString()
+        params.append(`${rootKey}[${key}]`, valStr)
+      }
+    })
 
-    if (fromDate) params.append('fromDate', fromDate.toISOString())
-    if (toDate) params.append('toDate', toDate.toISOString())
-    if (institutionId) params.append('institutionId', institutionId)
+    return params.toString()
+  }
 
-    return this.get(`cases/requests/statistics?${params.toString()}`)
+  getRequestCaseStatistics(
+    query: RequestStatisticsInput,
+  ): Promise<RequestCaseStatistics> {
+    const searchParams = this.serializeNestedObject(query)
+    return this.get(`cases/requests/statistics?${searchParams}`)
   }
 
   getSubpoenaStatistics(

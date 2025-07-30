@@ -1,16 +1,13 @@
 import { useEffect, useState } from 'react'
 
 import { Box, Tabs } from '@island.is/island-ui/core'
-import {
-  CasesLayout,
-  PageHeader,
-} from '@island.is/judicial-system-web/src/components'
+import { PageHeader } from '@island.is/judicial-system-web/src/components'
 
 import { StatisticHeader } from '../shared/StatisticHeader'
+import StatisticPageLayout from '../shared/StatisticPageLayout'
 import { StatisticReturnButton } from '../shared/StatisticReturnButton'
 import { GeneralStatistics } from './GeneralStatistics'
 import { SubpoenaStatistics } from './SubpoenaStatistics'
-import * as styles from '../../Statistics.css'
 
 const IndictmentStatistics = () => {
   const [activeTab, setActiveTab] = useState<string>('general')
@@ -20,9 +17,9 @@ const IndictmentStatistics = () => {
   }, [activeTab])
 
   return (
-    <CasesLayout>
+    <StatisticPageLayout>
       <PageHeader title="Tölfræði úr sakamálum" />
-      <Box className={styles.statisticsContentBox}>
+      <Box>
         <StatisticReturnButton />
         <StatisticHeader title="Tölfræði úr sakamálum" />
         <Tabs
@@ -47,7 +44,7 @@ const IndictmentStatistics = () => {
           ]}
         />
       </Box>
-    </CasesLayout>
+    </StatisticPageLayout>
   )
 }
 

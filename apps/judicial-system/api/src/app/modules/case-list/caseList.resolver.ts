@@ -16,7 +16,10 @@ import type { User } from '@island.is/judicial-system/types'
 
 import { BackendService } from '../backend'
 import { CaseListQueryInput } from './dto/caseList.input'
-import { CaseStatisticsInput } from './dto/caseStatistics.input'
+import {
+  CaseStatisticsInput,
+  RequestStatisticsInput,
+} from './dto/caseStatistics.input'
 import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 import { CaseListEntry } from './models/caseList.model'
 import {
@@ -144,8 +147,8 @@ export class CaseListResolver {
 
   @Query(() => RequestCaseStatistics, { nullable: true })
   requestCaseStatistics(
-    @Args('input', { type: () => CaseStatisticsInput, nullable: true })
-    input: CaseStatisticsInput,
+    @Args('input', { type: () => RequestStatisticsInput, nullable: true })
+    input: RequestStatisticsInput,
     @CurrentGraphQlUser()
     user: User,
     @Context('dataSources')
@@ -156,11 +159,7 @@ export class CaseListResolver {
     const result = this.auditTrailService.audit(
       user.id,
       AuditedAction.GET_CASES_STATISTICS,
-      backendService.getRequestCaseStatistics(
-        input.fromDate,
-        input.toDate,
-        input.institutionId,
-      ),
+      backendService.getRequestCaseStatistics(input),
       (caseStatistics: RequestCaseStatistics) =>
         caseStatistics.count.toString(),
     )

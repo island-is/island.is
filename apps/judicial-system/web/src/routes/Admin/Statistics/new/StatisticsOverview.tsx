@@ -15,14 +15,14 @@ const StatisticsOverview: FC = () => {
     title: 'Tölfræði',
     pages: [
       {
-        route: 'sakamal',
-        title: 'Sakamál',
-        description: 'Tölfræði úr sakamálum.',
-      },
-      {
         route: 'rannsoknarmal',
         title: 'Rannsóknarnarmál',
         description: 'Tölfræði úr rannsóknarmálum.',
+      },
+      {
+        route: 'sakamal',
+        title: 'Sakamál',
+        description: 'Tölfræði úr sakamálum.',
       },
     ],
   }

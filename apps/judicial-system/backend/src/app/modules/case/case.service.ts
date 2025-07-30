@@ -92,6 +92,7 @@ import { CaseString } from './models/caseString.model'
 import { DateLog } from './models/dateLog.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
+import { DateFilter } from './statistics/types'
 import { caseModuleConfig } from './case.config'
 
 interface UpdateDateLog {
@@ -2421,8 +2422,8 @@ export class CaseService {
   }
 
   async getRequestCasesStatistics(
-    from?: Date,
-    to?: Date,
+    created?: DateFilter,
+    sentToCourt?: DateFilter,
     institutionId?: string,
   ): Promise<RequestCaseStatistics> {
     let where: WhereOptions = {
@@ -2439,13 +2440,14 @@ export class CaseService {
       },
     }
 
-    if (from || to) {
+    if (created?.fromDate || created?.toDate) {
+      const { fromDate, toDate } = created
       where.created = {}
-      if (from) {
-        where.created[Op.gte] = from
+      if (fromDate) {
+        where.created[Op.gte] = fromDate
       }
-      if (to) {
-        where.created[Op.lte] = to
+      if (toDate) {
+        where.created[Op.lte] = toDate
       }
     }
 
@@ -2459,6 +2461,7 @@ export class CaseService {
       }
     }
 
+    console.log({ fromDate: created?.fromDate, where })
     const cases = await this.caseModel.findAll({
       where,
     })
