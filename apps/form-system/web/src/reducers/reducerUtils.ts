@@ -105,11 +105,11 @@ export const incrementWithScreens = (
       },
       currentScreen: hasScreens(nextSection)
         ? {
-          index: 0,
-          data: nextSection.screens
-            ? (nextSection.screens[0] as FormSystemScreen)
-            : undefined,
-        }
+            index: 0,
+            data: nextSection.screens
+              ? (nextSection.screens[0] as FormSystemScreen)
+              : undefined,
+          }
         : undefined,
       errors: [],
     }
@@ -135,7 +135,7 @@ export const incrementWithoutScreens = (
     DefaultContext,
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     ApolloCache<any>
-  >
+  >,
 ): ApplicationState => {
   const nextSection = state.sections[nextSectionIndex]
   const [submitSection] = submitSectionMutation
@@ -145,8 +145,8 @@ export const incrementWithoutScreens = (
       input: {
         applicationId: state.application.id,
         sectionId: state.currentSection.data.id,
-      }
-    }
+      },
+    },
   })
 
   return {
@@ -157,9 +157,9 @@ export const incrementWithoutScreens = (
     },
     currentScreen: hasScreens(nextSection)
       ? {
-        data: nextSection.screens?.[0] as FormSystemScreen,
-        index: 0,
-      }
+          data: nextSection.screens?.[0] as FormSystemScreen,
+          index: 0,
+        }
       : undefined,
   }
 }
@@ -193,13 +193,13 @@ export const decrementWithScreens = (
       },
       currentScreen: hasScreens(prevSection)
         ? {
-          data: prevSection.screens
-            ? (prevSection.screens[
-              prevSection.screens.length - 1
-            ] as FormSystemScreen)
-            : undefined,
-          index: prevSection.screens ? prevSection.screens.length - 1 : 0,
-        }
+            data: prevSection.screens
+              ? (prevSection.screens[
+                  prevSection.screens.length - 1
+                ] as FormSystemScreen)
+              : undefined,
+            index: prevSection.screens ? prevSection.screens.length - 1 : 0,
+          }
         : undefined,
       errors: [],
     }
@@ -222,13 +222,13 @@ export const decrementWithoutScreens = (
     },
     currentScreen: hasScreens(prevSection)
       ? {
-        data: prevSection.screens
-          ? (prevSection.screens[
-            prevSection.screens.length - 1
-          ] as FormSystemScreen)
-          : undefined,
-        index: prevSection.screens ? prevSection.screens.length - 1 : 0,
-      }
+          data: prevSection.screens
+            ? (prevSection.screens[
+                prevSection.screens.length - 1
+              ] as FormSystemScreen)
+            : undefined,
+          index: prevSection.screens ? prevSection.screens.length - 1 : 0,
+        }
       : undefined,
     errors: [],
   }

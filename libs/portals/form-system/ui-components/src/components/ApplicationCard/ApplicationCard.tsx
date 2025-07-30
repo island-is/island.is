@@ -60,9 +60,7 @@ export const ApplicationCard = ({ application, focused = false }: Props) => {
         </Box>
         <Inline alignY="center" justifyContent="flexEnd" space={1}>
           <ApplicationCardTag />
-          <ApplicationCardDelete
-            application={application}
-          />
+          <ApplicationCardDelete application={application} />
         </Inline>
       </Box>
 

@@ -42,7 +42,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
       type: 'INCREMENT',
       payload: {
         submitScreen,
-        submitSection
+        submitSection,
       },
     })
   }

@@ -23,7 +23,6 @@ import {
 } from '../../dto/application.input'
 import { UpdateApplicationDependenciesInput } from '../../dto/application.input'
 import { Screen } from '../../models/screen.model'
-import { string } from 'zod'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
@@ -133,7 +132,7 @@ export class ApplicationsResolver {
 
   @Mutation(() => Boolean, {
     name: 'submitFormSystemSection',
-    nullable: true
+    nullable: true,
   })
   async submitSection(
     @Args('input', { type: () => SubmitSectionInput })

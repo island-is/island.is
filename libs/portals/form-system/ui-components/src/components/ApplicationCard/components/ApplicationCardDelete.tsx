@@ -7,7 +7,7 @@ interface Props {
   application: FormSystemApplication
 }
 
-export const ApplicationCardDelete = ({ application }: Props) => {
+export const ApplicationCardDelete = ({ }: Props) => {
   const { formatMessage } = useLocale()
 
   return (

@@ -36,7 +36,7 @@ export class ApplicationsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private applicationsApi: ApplicationsApi,
-  ) { }
+  ) {}
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -140,13 +140,11 @@ export class ApplicationsService {
     return response
   }
 
-  async submitSection(
-    auth: User,
-    input: SubmitSectionInput,
-  ): Promise<void> {
-    await this.applicationsApiWithAuth(auth).applicationsControllerSubmitSection(
+  async submitSection(auth: User, input: SubmitSectionInput): Promise<void> {
+    await this.applicationsApiWithAuth(
+      auth,
+    ).applicationsControllerSubmitSection(
       input as ApplicationsControllerSubmitSectionRequest,
     )
   }
-
 }

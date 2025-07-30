@@ -32,7 +32,7 @@ import { SubmitScreenDto } from './models/dto/submitScreen.dto'
 @ApiTags('applications')
 @Controller({ path: 'applications', version: ['1', VERSION_NEUTRAL] })
 export class ApplicationsController {
-  constructor(private readonly applicationsService: ApplicationsService) { }
+  constructor(private readonly applicationsService: ApplicationsService) {}
 
   @ApiOperation({ summary: 'Get an application by id' })
   @ApiOkResponse({
