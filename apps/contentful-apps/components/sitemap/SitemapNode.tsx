@@ -32,6 +32,7 @@ import { SitemapNodeContent } from './SitemapNodeContent'
 import {
   CATEGORY_DIALOG_MIN_HEIGHT,
   type EntryType,
+  extractNodeContent,
   findEntryNodePaths,
   optionMap,
   Tree,
@@ -286,7 +287,11 @@ export const SitemapNode = ({
 
   const nodeStatus = getNodeStatus(node, entries)
 
-  if (status === 'published' && nodeStatus !== 'published') {
+  if (
+    status === 'published' &&
+    (nodeStatus !== 'published' ||
+      !extractNodeContent(node, language, entries)?.label)
+  ) {
     return null
   }
 

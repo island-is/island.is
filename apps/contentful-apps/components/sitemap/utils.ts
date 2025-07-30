@@ -360,3 +360,28 @@ export const findEntryNodePaths = (
 
   return nodePaths
 }
+
+export const extractNodeContent = (
+  node: TreeNode,
+  language: 'is-IS' | 'en',
+  entries: Record<string, EntryProps>,
+) => {
+  const label: string =
+    node.type !== TreeNodeType.ENTRY
+      ? language === 'en'
+        ? node.labelEN
+        : node.label
+      : entries[node.entryId]?.fields?.title?.[language] || ''
+  const slug =
+    node.type === TreeNodeType.CATEGORY
+      ? language === 'en'
+        ? node.slugEN
+        : node.slug
+      : node.type === TreeNodeType.URL
+      ? language === 'en'
+        ? node.urlEN
+        : node.url
+      : entries[node.entryId]?.fields?.slug?.[language] || ''
+
+  return { label, slug }
+}
