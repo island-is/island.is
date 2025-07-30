@@ -41,7 +41,7 @@ const CategoryForm = ({
   onSubmit,
   formError,
 }: FormProps<CategoryState> & {
-  formError: { slug: string; slugEN: string }
+  formError: { slug: string; slugEN: string; label: string }
 }) => {
   const [state, setState] = useState<CategoryState>(initialState)
   return (
@@ -54,6 +54,7 @@ const CategoryForm = ({
             setState((prevState) => ({ ...prevState, label: ev.target.value }))
           }}
         />
+        {formError.label && <Text fontColor="red600">{formError.label}</Text>}
       </div>
       <div>
         <FormControl.Label>Title (English)</FormControl.Label>
@@ -163,7 +164,13 @@ interface UrlState {
   urlType?: SitemapUrlType
 }
 
-const UrlForm = ({ initialState, onSubmit }: FormProps<UrlState>) => {
+const UrlForm = ({
+  initialState,
+  onSubmit,
+  formError,
+}: FormProps<UrlState> & {
+  formError: { label: string }
+}) => {
   const [state, setState] = useState<UrlState>(initialState)
 
   return (
@@ -180,6 +187,7 @@ const UrlForm = ({ initialState, onSubmit }: FormProps<UrlState>) => {
               }))
             }}
           />
+          {formError.label && <Text fontColor="red600">{formError.label}</Text>}
         </Box>
         <div>
           <FormControl.Label>Title (English)</FormControl.Label>
@@ -281,6 +289,11 @@ export const SitemapTreeFieldDialog = () => {
   const [categoryFormError, setCategoryFormError] = useState({
     slug: '',
     slugEN: '',
+    label: '',
+  })
+
+  const [urlFormError, setUrlFormError] = useState({
+    label: '',
   })
 
   return (
@@ -299,15 +312,18 @@ export const SitemapTreeFieldDialog = () => {
           formError={categoryFormError}
           initialState={node}
           onSubmit={(state) => {
-            const error = { slug: '', slugEN: '' }
+            const error = { slug: '', slugEN: '', label: '' }
             if (otherCategorySlugs?.includes(state.slug)) {
               error.slug = 'Slug already exists'
             }
             if (otherCategorySlugsEN?.includes(state.slugEN)) {
               error.slugEN = 'Slug already exists'
             }
+            if (!state.label) {
+              error.label = 'Title is required'
+            }
 
-            if (error.slug || error.slugEN) {
+            if (error.slug || error.slugEN || error.label) {
               setCategoryFormError(error)
               return
             }
@@ -317,7 +333,22 @@ export const SitemapTreeFieldDialog = () => {
         />
       )}
       {node.type === TreeNodeType.URL && (
-        <UrlForm initialState={node} onSubmit={sdk.close} />
+        <UrlForm
+          formError={urlFormError}
+          initialState={node}
+          onSubmit={(state) => {
+            const error = { label: '' }
+            if (!state.label) {
+              error.label = 'Title is required'
+            }
+            if (error.label) {
+              setUrlFormError(error)
+              return
+            }
+
+            sdk.close(state)
+          }}
+        />
       )}
     </div>
   )
