@@ -51,6 +51,9 @@ export type SitemapTreeNode = SitemapTree &
         slugEN?: string
         description: string
         descriptionEN?: string
+        status?: 'draft' | 'changed' | 'published'
+        version?: number
+        publishedVersion?: number
       }
     | {
         type: SitemapTreeNodeType.URL

@@ -26,6 +26,9 @@ interface CategoryState {
   slugEN?: string
   description: string
   descriptionEN?: string
+  status?: 'draft' | 'changed' | 'published'
+  version?: number
+  publishedVersion?: number
 }
 
 interface FormProps<State> {
@@ -69,7 +72,7 @@ const CategoryForm = ({
       <div>
         <FormControl.Label>Slug (Icelandic)</FormControl.Label>
         <TextInput
-          placeholder={slugify(state.label)}
+          placeholder={slugify(state.label ?? '')}
           value={state.slug}
           onChange={(ev) => {
             setState((prevState) => ({ ...prevState, slug: ev.target.value }))
@@ -82,7 +85,7 @@ const CategoryForm = ({
 
         <div>
           <TextInput
-            placeholder={slugify(state.labelEN)}
+            placeholder={slugify(state.labelEN ?? '')}
             value={state.slugEN}
             onChange={(ev) => {
               setState((prevState) => ({
@@ -106,6 +109,7 @@ const CategoryForm = ({
               description: ev.target.value,
             }))
           }}
+          resize="none"
         />
       </div>
       <div>
@@ -119,6 +123,7 @@ const CategoryForm = ({
                 descriptionEN: ev.target.value,
               }))
             }}
+            resize="none"
           />
         </div>
       </div>
@@ -127,10 +132,19 @@ const CategoryForm = ({
         onClick={() => {
           const stateToSubmit = { ...state }
           if (!stateToSubmit.slug) {
-            stateToSubmit.slug = slugify(stateToSubmit.label)
+            stateToSubmit.slug = slugify(stateToSubmit.label ?? '')
           }
           if (!stateToSubmit.slugEN) {
-            stateToSubmit.slugEN = slugify(stateToSubmit.labelEN)
+            stateToSubmit.slugEN = slugify(stateToSubmit.labelEN ?? '')
+          }
+
+          if (!stateToSubmit.status) {
+            stateToSubmit.status = 'draft'
+          } else if (
+            stateToSubmit.status === 'published' &&
+            initialState.status === 'published'
+          ) {
+            stateToSubmit.status = 'changed'
           }
           onSubmit(stateToSubmit)
         }}

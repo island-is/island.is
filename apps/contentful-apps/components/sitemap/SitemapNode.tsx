@@ -72,16 +72,53 @@ const getEntryStatus = (
   return 'published'
 }
 
-const getEntryStatusVariant = (
-  entryStatus: ReturnType<typeof getEntryStatus>,
-) => {
-  if (entryStatus === 'archived') {
+const getCategoryStatus = (node: TreeNode) => {
+  if (node.type !== TreeNodeType.CATEGORY) {
+    return ''
+  }
+
+  // If no status is set, default to draft
+  if (!node.status) {
+    return 'draft'
+  }
+
+  // If status is explicitly set, use it
+  if (node.status === 'published') {
+    return 'published'
+  }
+
+  // Check if there are unpublished changes
+  if (
+    node.version &&
+    node.publishedVersion &&
+    node.version > node.publishedVersion
+  ) {
+    return 'changed'
+  }
+
+  return node.status
+}
+
+const getNodeStatus = (node: TreeNode, entries: Record<string, EntryProps>) => {
+  if (node.type === TreeNodeType.ENTRY) {
+    return getEntryStatus(node, entries)
+  }
+
+  if (node.type === TreeNodeType.CATEGORY) {
+    return getCategoryStatus(node)
+  }
+
+  return ''
+}
+
+const getStatusVariant = (status: ReturnType<typeof getNodeStatus>) => {
+  if (status === 'archived') {
     return 'negative'
   }
-  if (entryStatus === 'draft') {
+  if (status === 'draft') {
     return 'warning'
   }
-  if (entryStatus === 'changed') {
+  if (status === 'changed') {
     return 'primary'
   }
   return 'positive'
@@ -174,7 +211,7 @@ export const SitemapNode = ({
     }
   }
 
-  const entryStatus = getEntryStatus(node, entries)
+  const nodeStatus = getNodeStatus(node, entries)
 
   return (
     <div className={styles.mainContainer}>
@@ -193,9 +230,9 @@ export const SitemapNode = ({
                 </Text>
               </div>
               <div className={styles.nodeTopRowContainerRight}>
-                {entryStatus && (
-                  <Badge variant={getEntryStatusVariant(entryStatus)}>
-                    {entryStatus}
+                {nodeStatus && (
+                  <Badge variant={getStatusVariant(nodeStatus)}>
+                    {nodeStatus}
                   </Badge>
                 )}
                 <EditMenu
@@ -208,6 +245,21 @@ export const SitemapNode = ({
                     node.type === TreeNodeType.ENTRY && node.primaryLocation
                   }
                   entryNodeId={node.id}
+                  onPublish={async () => {
+                    if (
+                      node.type === TreeNodeType.CATEGORY &&
+                      node.status !== 'published'
+                    ) {
+                      const nextVersion = (node.version || 1) + 1
+                      const updatedNode = {
+                        ...node,
+                        status: 'published' as const,
+                        version: nextVersion,
+                        publishedVersion: nextVersion,
+                      }
+                      updateNode(parentNode, updatedNode)
+                    }
+                  }}
                   onEdit={async () => {
                     if (node.type === TreeNodeType.ENTRY) {
                       const entry = await sdk.navigator.openEntry(
