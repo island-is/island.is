@@ -16,6 +16,7 @@ import {
   ApplicationsInput,
   CreateApplicationInput,
   GetApplicationInput,
+  GetApplicationsInput,
   SubmitScreenInput,
   UpdateApplicationInput,
 } from '../../dto/application.input'
@@ -48,6 +49,17 @@ export class ApplicationsResolver {
     @CurrentUser() user: User,
   ): Promise<ApplicationResponse> {
     return this.applicationsService.getApplications(user, input)
+  }
+
+  @Query(() => ApplicationResponse, {
+    name: 'formSystemGetApplications',
+  })
+  async getAllApplications(
+    @Args('input', { type: () => GetApplicationsInput })
+    input: GetApplicationsInput,
+    @CurrentUser() user: User,
+  ): Promise<ApplicationResponse> {
+    return this.applicationsService.getAllApplications(user, input)
   }
 
   @Mutation(() => Application, {

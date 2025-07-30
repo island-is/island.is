@@ -40,7 +40,9 @@ export class ApplicationsController {
     type: ApplicationDto,
   })
   @ApiParam({ name: 'id', type: String })
-  @Get(':id')
+  @Get(
+    'form/:id([0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12})',
+  )
   async getApplication(@Param('id') id: string): Promise<ApplicationDto> {
     return await this.applicationsService.getApplication(id)
   }

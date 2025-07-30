@@ -1,6 +1,6 @@
 import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
 
-import { formatUpdates, update, UpdateCase } from './'
+import { formatUpdates, update, UpdateCase } from './useCase.logic'
 
 describe('useCase', () => {
   describe('update', () => {
