@@ -1,11 +1,11 @@
 import { Box, DialogPrompt, Icon, Tag } from '@island.is/island-ui/core'
 import { coreMessages } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
-import { FormSystemApplication } from '@island.is/api/schema'
+// import { FormSystemApplication } from '@island.is/api/schema'
 
-interface Props {
-  application: FormSystemApplication
-}
+// interface Props {
+//   application: FormSystemApplication
+// }
 
 export const ApplicationCardDelete = () => {
   const { formatMessage } = useLocale()
