@@ -119,8 +119,6 @@ COPY .yarnrc.yml /webapp/
 COPY .yarn/patches /webapp/.yarn/patches
 COPY .yarn/releases /webapp/.yarn/releases
 
-WORKDIR /webapp
-
 RUN --mount=type=cache,target=.yarn/cache,sharing=locked \
   yarn workspaces focus --production
 
