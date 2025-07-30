@@ -87,39 +87,3 @@ jobs:
           payload: |
             channel: ${{ secrets.SLACK_CHANNEL_ID }}
             text: "A new PR has been created: ${{ steps.create_pr.outputs.PR }}"
-
-  cleanup:
-    name: Clean up feature deployment
-    runs-on: arc-shared
-    steps:
-      - name: Get git branch
-        run: |
-          set -euo pipefail
-          GIT_BRANCH="${GITHUB_HEAD_REF:-${GITHUB_REF/refs\/heads\//}}"
-          echo "GIT_BRANCH=$GIT_BRANCH" >> "$GITHUB_ENV"
-      - name: Generate deployment branch name
-        id: git-branch-deploy
-        run: |
-          set -euo pipefail
-          GIT_BRANCH_DEPLOY="$GIT_BRANCH"
-          if [[ ! ("$GIT_BRANCH_DEPLOY" =~ "feature/") ]]; then
-            # If event is pull request but branch is not prefixed with feature/
-            GIT_BRANCH_DEPLOY=feature/$GIT_BRANCH_DEPLOY
-          fi
-          # Avoid too long resource names
-          GIT_BRANCH_DEPLOY="${GIT_BRANCH_DEPLOY:0:50}"
-          echo "GIT_BRANCH_DEPLOY=$GIT_BRANCH_DEPLOY" >> "$GITHUB_ENV"
-      - name: Clean up feature
-        env:
-          SPINNAKER_WEBHOOK_TOKEN: ${{ secrets.SPINNAKER_WEBHOOK_TOKEN }}
-          SPINNAKER_URL: https://spinnaker-gate.shared.devland.is
-        run: |
-          set -euo pipefail
-          curl "$SPINNAKER_URL/webhooks/webhook/feature-cleanup" -H "content-type: application/json" --data-binary @- <<BODY
-          {
-            "token": "$SPINNAKER_WEBHOOK_TOKEN",
-            "parameters": {
-              "feature_name": "$(echo "$GIT_BRANCH_DEPLOY" | cut -d"/" -f2- | tr -cd '[:alnum:]-' | tr '[:upper:]' '[:lower:]' | cut -c1-50)"
-            }
-          }
-          BODY
