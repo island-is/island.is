@@ -50,3 +50,16 @@ export const topRowContainer = style({
   gap: '12px',
   justifyContent: 'space-between',
 })
+
+export const modeSelectorContainer = style({
+  display: 'flex',
+  flexFlow: 'column nowrap',
+  gap: '4px',
+  marginBottom: '16px',
+})
+
+export const modeSelector = style({
+  display: 'flex',
+  flexFlow: 'row nowrap',
+  gap: '12px',
+})

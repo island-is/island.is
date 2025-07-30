@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
 import type { FieldExtensionSDK } from '@contentful/app-sdk'
 import { FormControl, Radio } from '@contentful/f36-components'
@@ -20,11 +20,13 @@ import {
 
 import { AddNodeButton } from './AddNodeButton'
 import { EntryContext, useEntryContext } from './entryContext'
+import { MoveNodesButton } from './MoveNodesButton'
 import { SitemapNode } from './SitemapNode'
 import {
   addNode as addNodeUtil,
   type EntryType,
   findNodes,
+  findParentNode,
   removeNode as removeNodeUtil,
   type Tree,
   TreeNode,
@@ -45,6 +47,8 @@ export const SitemapTreeField = () => {
   )
   const [language, setLanguage] = useState<'is-IS' | 'en'>('is-IS')
   const [status, setStatus] = useState<'draft' | 'published'>('draft')
+  const [mode, setMode] = useState<'edit' | 'select'>('edit')
+  const selectedNodesRef = useRef<TreeNode[]>([])
 
   useDebounce(
     () => {
@@ -79,6 +83,26 @@ export const SitemapTreeField = () => {
   const removeNode = useCallback(
     (parentNode: Tree, idOfNodeToRemove: number) => {
       removeNodeUtil(parentNode, idOfNodeToRemove, tree)
+      setTree((prevTree) => ({ ...prevTree }))
+    },
+    [tree],
+  )
+
+  const moveNodesToBottom = useCallback(
+    (nodes: TreeNode[], parentNode: Tree) => {
+      for (const node of nodes) {
+        const parent = findParentNode(tree, node.id)
+        console.log({ parent, node })
+        if (parent) {
+          removeNodeUtil(parent, node.id, tree)
+        }
+      }
+
+      console.log({ parentNode })
+
+      parentNode.childNodes.push(...nodes)
+
+      selectedNodesRef.current = []
       setTree((prevTree) => ({ ...prevTree }))
     },
     [tree],
@@ -194,6 +218,33 @@ export const SitemapTreeField = () => {
                 </div>
               </div>
             </div>
+            {status !== 'published' && (
+              <div className={styles.modeSelectorContainer}>
+                <FormControl.Label>Actions</FormControl.Label>
+                <div>
+                  <div className={styles.modeSelector}>
+                    <Radio
+                      id="edit"
+                      name="mode"
+                      value="edit"
+                      isChecked={mode === 'edit'}
+                      onChange={() => setMode('edit')}
+                    >
+                      Edit
+                    </Radio>
+                    <Radio
+                      id="select"
+                      name="mode"
+                      value="select"
+                      isChecked={mode === 'select'}
+                      onChange={() => setMode('select')}
+                    >
+                      Select
+                    </Radio>
+                  </div>
+                </div>
+              </div>
+            )}
             <div className={styles.childNodeContainer}>
               {tree.childNodes.map((node) => (
                 <SitemapNode
@@ -201,19 +252,33 @@ export const SitemapTreeField = () => {
                   removeNode={removeNode}
                   addNode={addNode}
                   updateNode={updateNode}
+                  moveNodesToBottom={moveNodesToBottom}
                   key={node.id}
                   node={node}
                   root={tree}
                   onMarkEntryAsPrimary={onMarkEntryAsPrimary}
                   language={language}
                   status={status}
+                  mode={mode}
+                  selectedNodesRef={selectedNodesRef}
                 />
               ))}
-              {status !== 'published' && (
+              {status !== 'published' && mode === 'edit' && (
                 <div className={styles.addNodeButtonContainer}>
                   <AddNodeButton
                     addNode={(type, createNew, entryType) => {
                       addNode(tree, type, createNew, entryType)
+                    }}
+                  />
+                </div>
+              )}
+              {mode === 'select' && (
+                <div className={styles.addNodeButtonContainer}>
+                  <MoveNodesButton
+                    selectedNodes={selectedNodesRef.current}
+                    currentNodeId={tree.id}
+                    onClick={() => {
+                      moveNodesToBottom(selectedNodesRef.current, tree)
                     }}
                   />
                 </div>

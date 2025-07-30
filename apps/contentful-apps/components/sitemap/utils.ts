@@ -385,3 +385,14 @@ export const extractNodeContent = (
 
   return { label, slug }
 }
+
+export const findParentNode = (root: Tree, nodeId: number) => {
+  for (const child of root.childNodes) {
+    if (child.id === nodeId) {
+      return root
+    }
+    const parent = findParentNode(child, nodeId)
+    if (parent) return parent
+  }
+  return null
+}

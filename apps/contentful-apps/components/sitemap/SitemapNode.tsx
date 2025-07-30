@@ -1,7 +1,14 @@
 import { useContext, useEffect, useMemo, useState } from 'react'
 import { EntryProps } from 'contentful-management'
 import type { FieldExtensionSDK } from '@contentful/app-sdk'
-import { Badge, DragHandle, Popover, Text } from '@contentful/f36-components'
+import {
+  Badge,
+  Box,
+  Checkbox,
+  DragHandle,
+  Popover,
+  Text,
+} from '@contentful/f36-components'
 import {
   ChevronDownIcon,
   ChevronRightIcon,
@@ -28,6 +35,7 @@ import { CSS } from '@dnd-kit/utilities'
 import { AddNodeButton } from './AddNodeButton'
 import { EditMenu } from './EditMenu'
 import { EntryContext } from './entryContext'
+import { MoveNodesButton } from './MoveNodesButton'
 import { SitemapNodeContent } from './SitemapNodeContent'
 import {
   CATEGORY_DIALOG_MIN_HEIGHT,
@@ -218,8 +226,11 @@ interface SitemapNodeProps {
   removeNode: (parentNode: Tree, idOfNodeToRemove: number) => void
   updateNode: (parentNode: Tree, updatedNode: TreeNode) => void
   onMarkEntryAsPrimary: (nodeId: number, entryId: string) => void
+  moveNodesToBottom: (nodes: TreeNode[], parentNode: Tree) => void
   language: 'is-IS' | 'en'
   status: 'draft' | 'published'
+  mode: 'edit' | 'select'
+  selectedNodesRef: React.RefObject<TreeNode[]>
 }
 
 export const SitemapNode = ({
@@ -231,8 +242,11 @@ export const SitemapNode = ({
   removeNode,
   updateNode,
   onMarkEntryAsPrimary,
+  moveNodesToBottom,
   language,
   status,
+  mode,
+  selectedNodesRef,
 }: SitemapNodeProps) => {
   const sdk = useSDK<FieldExtensionSDK>()
 
@@ -340,8 +354,27 @@ export const SitemapNode = ({
                     {nodeStatus}
                   </Badge>
                 )}
+                {mode === 'select' && (
+                  <Box padding="spacingS">
+                    <Checkbox
+                      onChange={(ev) => {
+                        if (ev.target.checked) {
+                          selectedNodesRef.current.push(node)
+                        } else {
+                          const index = selectedNodesRef.current.findIndex(
+                            (n) => n.id === node.id,
+                          )
+                          if (index >= 0) {
+                            selectedNodesRef.current.splice(index, 1)
+                          }
+                        }
+                      }}
+                    />
+                  </Box>
+                )}
                 <div
                   style={{
+                    display: mode === 'select' ? 'none' : 'block',
                     visibility: status === 'published' ? 'hidden' : 'visible',
                   }}
                 >
@@ -453,18 +486,14 @@ export const SitemapNode = ({
                   visibility: isClickable ? 'visible' : 'hidden',
                 }}
               >
-                {showChildNodes || status === 'published' ? (
-                  <ChevronDownIcon />
-                ) : (
-                  <ChevronRightIcon />
-                )}
+                {showChildNodes ? <ChevronDownIcon /> : <ChevronRightIcon />}
               </div>
               <SitemapNodeContent node={node} language={language} />
             </div>
           </div>
         </div>
       </div>
-      {(showChildNodes || status === 'published') && (
+      {showChildNodes && (
         <DndContext
           sensors={sensors}
           collisionDetection={closestCenter}
@@ -494,9 +523,12 @@ export const SitemapNode = ({
                   onMarkEntryAsPrimary={onMarkEntryAsPrimary}
                   language={language}
                   status={status}
+                  mode={mode}
+                  selectedNodesRef={selectedNodesRef}
+                  moveNodesToBottom={moveNodesToBottom}
                 />
               ))}
-              {status !== 'published' && (
+              {status !== 'published' && mode === 'edit' && (
                 <div className={styles.addNodeButtonContainer}>
                   <AddNodeButton
                     addNode={(type, createNew, entryType) => {
@@ -511,6 +543,17 @@ export const SitemapNode = ({
                             TreeNodeType.URL,
                           ]
                     }
+                  />
+                </div>
+              )}
+              {mode === 'select' && (
+                <div className={styles.addNodeButtonContainer}>
+                  <MoveNodesButton
+                    selectedNodes={selectedNodesRef.current}
+                    currentNodeId={node.id}
+                    onClick={() => {
+                      moveNodesToBottom(selectedNodesRef.current, node)
+                    }}
                   />
                 </div>
               )}
