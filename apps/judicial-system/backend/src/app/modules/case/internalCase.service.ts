@@ -53,6 +53,7 @@ import { CourtDocumentFolder, CourtService } from '../court'
 import { courtSubtypes } from '../court/court.service'
 import { Defendant, DefendantService } from '../defendant'
 import { EventService } from '../event'
+import { EventLog } from '../event-log'
 import { CaseFile, FileService } from '../file'
 import { IndictmentCount, IndictmentCountService } from '../indictment-count'
 import { Offense } from '../indictment-count/models/offense.model'
@@ -648,9 +649,10 @@ export class InternalCaseService {
 
     const mappedSubtypes = subtypeList.flatMap((key) => courtSubtypes[key])
     const indictmentIssuedByProsecutorAndReceivedByCourt =
-      theCase.eventLogs?.find(
-        (eventLog) => eventLog.eventType === EventType.INDICTMENT_CONFIRMED,
-      )?.created
+      EventLog.getEventLogDateByEventType(
+        EventType.INDICTMENT_CONFIRMED,
+        theCase.eventLogs,
+      )
 
     return this.courtService
       .updateIndictmentCaseWithIndictmentInfo(
