@@ -29,6 +29,7 @@ import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { isPartiallyVisible } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { policeCaseInfo } from './PoliceCaseInfo.strings'
 
@@ -88,8 +89,10 @@ export const PoliceCaseInfo: FC<Props> = ({
   )
   const [policeCaseNumberErrorMessage, setPoliceCaseNumberErrorMessage] =
     useState<string>('')
+  const [indexDate, setIndexDate] = useState({ index, date: crimeScene?.date })
 
   const subtypesArray = subtypes || []
+  const crimeSceneDateId = `crime-scene-date-${originalPoliceCaseNumber}`
 
   useEffect(() => {
     if (policeCaseNumbers[index] !== originalPoliceCaseNumber) {
@@ -121,6 +124,39 @@ export const PoliceCaseInfo: FC<Props> = ({
     policeCaseNumberInput,
     policeCaseNumbers,
     updatePoliceCase,
+  ])
+
+  useEffect(() => {
+    console.log(
+      'Updating index date',
+      index,
+      indexDate.index,
+      typeof indexDate.date,
+      indexDate.date,
+      typeof crimeScene?.date,
+      crimeScene?.date,
+      crimeSceneDateId,
+    )
+    if (
+      index !== indexDate.index &&
+      crimeScene?.date?.getTime() !== indexDate.date?.getTime()
+    ) {
+      // Our position in the list has changed because we changed the crime scene date
+      const dateElement = document.getElementById(crimeSceneDateId)
+
+      // Make sure the date element is visible
+      if (dateElement && !isPartiallyVisible(dateElement)) {
+        dateElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+
+      setIndexDate({ index, date: crimeScene?.date })
+    }
+  }, [
+    index,
+    indexDate.index,
+    indexDate.date,
+    crimeScene?.date,
+    crimeSceneDateId,
   ])
 
   const options = useMemo(
@@ -307,7 +343,7 @@ export const PoliceCaseInfo: FC<Props> = ({
         />
       </Box>
       <DateTime
-        name="arrestDate"
+        name={crimeSceneDateId}
         maxDate={new Date()}
         blueBox={false}
         selectedDate={crimeScene?.date}

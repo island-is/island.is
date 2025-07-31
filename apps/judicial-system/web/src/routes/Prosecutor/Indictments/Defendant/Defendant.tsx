@@ -53,7 +53,7 @@ export interface PoliceCase {
   date?: Date
 }
 
-const getPoliceCases: (theCase: Case) => PoliceCase[] = (theCase: Case) =>
+const getPoliceCases = (theCase: Case): PoliceCase[] =>
   theCase.policeCaseNumbers && theCase.policeCaseNumbers.length > 0
     ? theCase.policeCaseNumbers.map((policeCaseNumber) => ({
         number: policeCaseNumber,
@@ -63,7 +63,9 @@ const getPoliceCases: (theCase: Case) => PoliceCase[] = (theCase: Case) =>
         place:
           theCase.crimeScenes && theCase.crimeScenes[policeCaseNumber]?.place,
         date:
-          theCase.crimeScenes && theCase.crimeScenes[policeCaseNumber]?.date,
+          theCase.crimeScenes &&
+          theCase.crimeScenes[policeCaseNumber]?.date &&
+          new Date(theCase.crimeScenes[policeCaseNumber].date),
       }))
     : [{ number: '' }]
 
@@ -75,33 +77,41 @@ const getPoliceCasesForUpdate = (
     subtypes?: IndictmentSubtype[]
     crimeScene?: CrimeScene
   },
-) =>
-  policeCases.reduce<[string[], IndictmentSubtypeMap, CrimeSceneMap]>(
-    (
-      [prevPoliceCaseNumbers, prevIndictmentSubtypes, prevCrimeScenes],
-      policeCase,
-      idx,
-    ) => {
-      const policeCaseNumber =
-        idx === index && update?.policeCaseNumber !== undefined
-          ? update.policeCaseNumber
-          : policeCase.number
-      const subtypes =
-        idx === index && update?.subtypes !== undefined
-          ? update.subtypes
-          : policeCase.subtypes
-      const crimeScene =
-        idx === index && update?.crimeScene !== undefined
-          ? update.crimeScene
-          : { place: policeCase.place, date: policeCase.date }
-      return [
-        [...prevPoliceCaseNumbers, policeCaseNumber],
-        { ...prevIndictmentSubtypes, [policeCaseNumber]: subtypes ?? [] },
-        { ...prevCrimeScenes, [policeCaseNumber]: crimeScene },
-      ]
-    },
-    [[], {}, {}],
-  )
+): [string[], IndictmentSubtypeMap, CrimeSceneMap] => {
+  const policeCaseNumbers: string[] = []
+  const indictmentSubtypes: IndictmentSubtypeMap = {}
+  const crimeScenes: CrimeSceneMap = {}
+
+  policeCases.forEach((policeCase, idx) => {
+    const isUpdated = idx === index
+    const number =
+      isUpdated && update?.policeCaseNumber !== undefined
+        ? update.policeCaseNumber
+        : policeCase.number
+    const subtypes =
+      isUpdated && update?.subtypes !== undefined
+        ? update.subtypes
+        : policeCase.subtypes ?? []
+    const crimeScene =
+      isUpdated && update?.crimeScene !== undefined
+        ? update.crimeScene
+        : { place: policeCase.place, date: policeCase.date }
+
+    policeCaseNumbers.push(number)
+    indictmentSubtypes[number] = subtypes
+    crimeScenes[number] = crimeScene
+  })
+
+  const sortedPoliceCaseNumbers = policeCaseNumbers.sort((a, b) => {
+    // We want police case numbers with missing dates to be at the end of the list
+    const aDate = crimeScenes[a].date?.toISOString() ?? '9'
+    const bDate = crimeScenes[b].date?.toISOString() ?? '9'
+
+    return aDate.localeCompare(bDate)
+  })
+
+  return [sortedPoliceCaseNumbers, indictmentSubtypes, crimeScenes]
+}
 
 const Defendant = () => {
   const router = useRouter()
@@ -125,11 +135,7 @@ const Defendant = () => {
   const policeCases = useMemo(() => getPoliceCases(workingCase), [workingCase])
 
   const { data, loading, error } = usePoliceCaseInfoQuery({
-    variables: {
-      input: {
-        caseId: workingCase.id,
-      },
-    },
+    variables: { input: { caseId: workingCase.id } },
     skip: workingCase.origin !== CaseOrigin.LOKE,
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
@@ -170,22 +176,6 @@ const Defendant = () => {
           })
         }
       })
-
-      if (
-        policeCases.length > 0 &&
-        (policeCases[0].place === undefined || policeCases[0].place === null) &&
-        (policeCases[0].date === undefined || policeCases[0].date === null) &&
-        (data.policeCaseInfo[0].place || data.policeCaseInfo[0].date)
-      ) {
-        handleUpdatePoliceCase(0, {
-          crimeScene: {
-            place: data.policeCaseInfo[0].place ?? '',
-            date: data.policeCaseInfo[0].date
-              ? new Date(data.policeCaseInfo[0].date)
-              : undefined,
-          },
-        })
-      }
     },
   })
 
@@ -207,56 +197,16 @@ const Defendant = () => {
     return [first, ...sortedRest]
   }, [data])
 
-  const handleCreatePoliceCase = async (policeCase?: PoliceCase) => {
-    const newPoliceCase = policeCase ?? { number: '' }
-
-    const [policeCaseNumbers, indictmentSubtypes, crimeScenes] =
-      getPoliceCasesForUpdate([...getPoliceCases(workingCase), newPoliceCase])
-
-    setAndSendCaseToServer(
-      [
-        {
-          policeCaseNumbers,
-          indictmentSubtypes,
-          crimeScenes,
-          force: true,
-        },
-      ],
-      workingCase,
-      setWorkingCase,
-    )
+  const handleCreatePoliceCase = () => {
+    handleCreatePoliceCases([{ number: '' }])
   }
 
   const handleCreatePoliceCases = (policeCases: PoliceCase[]) => {
-    const cases = getPoliceCases(workingCase)
-    const allCases = [...cases, ...policeCases]
+    const [policeCaseNumbers, indictmentSubtypes, crimeScenes] =
+      getPoliceCasesForUpdate([...getPoliceCases(workingCase), ...policeCases])
 
     setAndSendCaseToServer(
-      [
-        {
-          policeCaseNumbers: [
-            ...allCases.map((policeCase) => policeCase.number),
-          ],
-          indictmentSubtypes: allCases.reduce<IndictmentSubtypeMap>(
-            (acc, policeCase) => ({
-              ...acc,
-              [policeCase.number]: policeCase.subtypes ?? [],
-            }),
-            {},
-          ),
-          crimeScenes: allCases.reduce<CrimeSceneMap>(
-            (acc, policeCase) => ({
-              ...acc,
-              [policeCase.number]: {
-                place: policeCase.place,
-                date: policeCase.date,
-              },
-            }),
-            {},
-          ),
-          force: true,
-        },
-      ],
+      [{ policeCaseNumbers, indictmentSubtypes, crimeScenes, force: true }],
       workingCase,
       setWorkingCase,
     )
@@ -549,9 +499,9 @@ const Defendant = () => {
             />
           )}
           <AnimatePresence>
-            {policeCases.map((_policeCase, index) => (
+            {policeCases.map((policeCase, index) => (
               <motion.div
-                key={index}
+                key={policeCase.number}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
@@ -572,9 +522,14 @@ const Defendant = () => {
                       }
                       crimeScene={
                         workingCase.crimeScenes &&
-                        workingCase.crimeScenes[
-                          workingCase.policeCaseNumbers[index]
-                        ]
+                        ((c: { place?: string; date?: string }) => ({
+                          place: c.place,
+                          date: c.date ? new Date(c.date) : undefined,
+                        }))(
+                          workingCase.crimeScenes[
+                            workingCase.policeCaseNumbers[index]
+                          ],
+                        )
                       }
                       setPoliceCase={handleSetPoliceCase}
                       deletePoliceCase={
@@ -604,9 +559,7 @@ const Defendant = () => {
               data-testid="addPoliceCaseInfoButton"
               variant="ghost"
               icon="add"
-              onClick={() => {
-                handleCreatePoliceCase()
-              }}
+              onClick={handleCreatePoliceCase}
               disabled={policeCases.some(
                 (policeCase) =>
                   !policeCase.number ||
