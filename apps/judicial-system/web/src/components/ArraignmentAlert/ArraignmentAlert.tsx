@@ -20,7 +20,6 @@ const ArraignmentAlert = () => {
 
   return (
     <Box marginBottom={5}>
-      {' '}
       <AlertMessage
         type="info"
         title="Upplýsingar um fyrirtöku"
