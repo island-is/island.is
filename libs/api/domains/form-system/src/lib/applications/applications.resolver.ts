@@ -16,7 +16,9 @@ import {
   ApplicationsInput,
   CreateApplicationInput,
   GetApplicationInput,
+  GetApplicationsInput,
   SubmitScreenInput,
+  SubmitSectionInput,
   UpdateApplicationInput,
 } from '../../dto/application.input'
 import { UpdateApplicationDependenciesInput } from '../../dto/application.input'
@@ -48,6 +50,17 @@ export class ApplicationsResolver {
     @CurrentUser() user: User,
   ): Promise<ApplicationResponse> {
     return this.applicationsService.getApplications(user, input)
+  }
+
+  @Query(() => ApplicationResponse, {
+    name: 'formSystemGetApplications',
+  })
+  async getAllApplications(
+    @Args('input', { type: () => GetApplicationsInput })
+    input: GetApplicationsInput,
+    @CurrentUser() user: User,
+  ): Promise<ApplicationResponse> {
+    return this.applicationsService.getAllApplications(user, input)
   }
 
   @Mutation(() => Application, {
@@ -115,5 +128,17 @@ export class ApplicationsResolver {
     @CurrentUser() user: User,
   ): Promise<Screen> {
     return this.applicationsService.saveScreen(user, input)
+  }
+
+  @Mutation(() => Boolean, {
+    name: 'submitFormSystemSection',
+    nullable: true,
+  })
+  async submitSection(
+    @Args('input', { type: () => SubmitSectionInput })
+    input: SubmitSectionInput,
+    @CurrentUser() user: User,
+  ): Promise<void> {
+    return this.applicationsService.submitSection(user, input)
   }
 }
