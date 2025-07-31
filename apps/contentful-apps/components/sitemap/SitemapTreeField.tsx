@@ -257,7 +257,9 @@ export const SitemapTreeField = () => {
                   addNode={addNode}
                   updateNode={updateNode}
                   moveNodesToBottom={moveNodesToBottom}
-                  key={node.id}
+                  key={`${node.id}-${selectedNodesRef.current.findIndex(
+                    (n) => n.id === node.id,
+                  )}`}
                   node={node}
                   root={tree}
                   onMarkEntryAsPrimary={onMarkEntryAsPrimary}

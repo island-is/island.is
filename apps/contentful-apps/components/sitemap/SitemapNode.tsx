@@ -234,7 +234,7 @@ export const SitemapNode = ({
   const [showChildNodes, setShowChildNodes] = useState(false)
 
   const { fetchEntries, updateEntry, entries } = useContext(EntryContext)
-
+  const [isChecked, setIsChecked] = useState(false)
   useEffect(() => {
     const entryNodes = node.childNodes.filter(
       (node) => node.type === TreeNodeType.ENTRY,
@@ -338,10 +338,13 @@ export const SitemapNode = ({
                 {mode === 'select' && (
                   <Box padding="spacingS">
                     <Checkbox
+                      isChecked={isChecked}
                       onChange={(ev) => {
                         if (ev.target.checked) {
                           selectedNodesRef.current.push(node)
+                          setIsChecked(true)
                         } else {
+                          setIsChecked(false)
                           const index = selectedNodesRef.current.findIndex(
                             (n) => n.id === node.id,
                           )
@@ -508,7 +511,9 @@ export const SitemapNode = ({
                   parentNode={node}
                   removeNode={removeNode}
                   updateNode={updateNode}
-                  key={child.id}
+                  key={`${child.id}-${selectedNodesRef.current.findIndex(
+                    (n) => n.id === child.id,
+                  )}`}
                   node={child}
                   indent={indent + 1}
                   root={root}
