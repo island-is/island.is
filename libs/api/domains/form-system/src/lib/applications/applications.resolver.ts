@@ -18,6 +18,7 @@ import {
   GetApplicationInput,
   GetApplicationsInput,
   SubmitScreenInput,
+  SubmitSectionInput,
   UpdateApplicationInput,
 } from '../../dto/application.input'
 import { UpdateApplicationDependenciesInput } from '../../dto/application.input'
@@ -127,5 +128,17 @@ export class ApplicationsResolver {
     @CurrentUser() user: User,
   ): Promise<Screen> {
     return this.applicationsService.saveScreen(user, input)
+  }
+
+  @Mutation(() => Boolean, {
+    name: 'submitFormSystemSection',
+    nullable: true,
+  })
+  async submitSection(
+    @Args('input', { type: () => SubmitSectionInput })
+    input: SubmitSectionInput,
+    @CurrentUser() user: User,
+  ): Promise<void> {
+    return this.applicationsService.submitSection(user, input)
   }
 }
