@@ -10,10 +10,10 @@ import {
   Tooltip,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { formatDate } from '@island.is/judicial-system/formatters'
 import { isDistrictCourtUser } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
+  ArraignmentAlert,
   BlueBox,
   CourtArrangements,
   CourtCaseInfo,
@@ -162,32 +162,7 @@ const HearingArrangements = () => {
                 />
               </Box>
             )}
-          <Box marginBottom={5}>
-            <AlertMessage
-              type="info"
-              title="Upplýsingar um fyrirtöku"
-              message={
-                <Box display="flex" flexDirection="column">
-                  <Text variant="small">
-                    {courtDateNotification.hasSent
-                      ? `Síðasta tilkynnning var send ${formatDate(
-                          courtDateNotification.date,
-                          'PPPp',
-                        )}.`
-                      : 'Tilkynning um fyrirtökutíma hefur ekki verið send.'}
-                  </Text>
-                  {workingCase.comments && (
-                    <Text variant="small" marginTop={2}>
-                      <Text variant="small" as="span" fontWeight="semiBold">
-                        Athugasemdir vegna málsmeðferðar:{' '}
-                      </Text>
-                      {workingCase.comments}
-                    </Text>
-                  )}
-                </Box>
-              }
-            />
-          </Box>
+          <ArraignmentAlert />
           <PageTitle>{formatMessage(m.title)}</PageTitle>
           <CourtCaseInfo workingCase={workingCase} />
           <Box component="section" marginBottom={8}>
