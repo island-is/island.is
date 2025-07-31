@@ -77,7 +77,7 @@ definitions:
       script: |
         cd ios
         APP_STORE_BUILD=$(app-store-connect get-latest-build-number "$APP_STORE_APPLE_ID")
-        PROJECT_BUILD=$(agvtool what-version -terse)
+        PROJECT_BUILD=$(agvtool what-version -terse | tail -n 1) # tail -n 1takes the last line from the output
 
         if [ "$PROJECT_BUILD" -gt "$APP_STORE_BUILD" ]; then
           echo "Using project build: $PROJECT_BUILD"
