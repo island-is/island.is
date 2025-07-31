@@ -127,16 +127,6 @@ export const PoliceCaseInfo: FC<Props> = ({
   ])
 
   useEffect(() => {
-    console.log(
-      'Updating index date',
-      index,
-      indexDate.index,
-      typeof indexDate.date,
-      indexDate.date,
-      typeof crimeScene?.date,
-      crimeScene?.date,
-      crimeSceneDateId,
-    )
     if (
       index !== indexDate.index &&
       crimeScene?.date?.getTime() !== indexDate.date?.getTime()

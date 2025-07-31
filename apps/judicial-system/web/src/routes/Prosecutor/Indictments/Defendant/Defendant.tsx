@@ -1,4 +1,4 @@
-import { useCallback, useContext, useMemo } from 'react'
+import { useCallback, useContext, useMemo, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
@@ -69,50 +69,6 @@ const getPoliceCases = (theCase: Case): PoliceCase[] =>
       }))
     : [{ number: '' }]
 
-const getPoliceCasesForUpdate = (
-  policeCases: PoliceCase[],
-  index?: number,
-  update?: {
-    policeCaseNumber?: string
-    subtypes?: IndictmentSubtype[]
-    crimeScene?: CrimeScene
-  },
-): [string[], IndictmentSubtypeMap, CrimeSceneMap] => {
-  const policeCaseNumbers: string[] = []
-  const indictmentSubtypes: IndictmentSubtypeMap = {}
-  const crimeScenes: CrimeSceneMap = {}
-
-  policeCases.forEach((policeCase, idx) => {
-    const isUpdated = idx === index
-    const number =
-      isUpdated && update?.policeCaseNumber !== undefined
-        ? update.policeCaseNumber
-        : policeCase.number
-    const subtypes =
-      isUpdated && update?.subtypes !== undefined
-        ? update.subtypes
-        : policeCase.subtypes ?? []
-    const crimeScene =
-      isUpdated && update?.crimeScene !== undefined
-        ? update.crimeScene
-        : { place: policeCase.place, date: policeCase.date }
-
-    policeCaseNumbers.push(number)
-    indictmentSubtypes[number] = subtypes
-    crimeScenes[number] = crimeScene
-  })
-
-  const sortedPoliceCaseNumbers = policeCaseNumbers.sort((a, b) => {
-    // We want police case numbers with missing dates to be at the end of the list
-    const aDate = crimeScenes[a].date?.toISOString() ?? '9'
-    const bDate = crimeScenes[b].date?.toISOString() ?? '9'
-
-    return aDate.localeCompare(bDate)
-  })
-
-  return [sortedPoliceCaseNumbers, indictmentSubtypes, crimeScenes]
-}
-
 const Defendant = () => {
   const router = useRouter()
   const { user } = useContext(UserContext)
@@ -128,11 +84,24 @@ const Defendant = () => {
   } = useDefendants()
   const { updateIndictmentCount, deleteIndictmentCount } = useIndictmentCounts()
 
+  const policeCaseIds = useRef<{ [key: string]: string }>({})
+
   const gender = useMemo(
     () => getDefaultDefendantGender(workingCase.defendants),
     [workingCase.defendants],
   )
-  const policeCases = useMemo(() => getPoliceCases(workingCase), [workingCase])
+  const policeCases = useMemo(() => {
+    const policeCases = getPoliceCases(workingCase)
+
+    const current = policeCaseIds.current
+    policeCaseIds.current = policeCases.reduce((acc, c) => {
+      acc[c.number] = current[c.number] ?? uuid()
+
+      return acc
+    }, {} as { [key: string]: string })
+
+    return policeCases
+  }, [workingCase])
 
   const { data, loading, error } = usePoliceCaseInfoQuery({
     variables: { input: { caseId: workingCase.id } },
@@ -196,6 +165,55 @@ const Defendant = () => {
 
     return [first, ...sortedRest]
   }, [data])
+
+  const getPoliceCasesForUpdate = (
+    policeCases: PoliceCase[],
+    index?: number,
+    update?: {
+      policeCaseNumber?: string
+      subtypes?: IndictmentSubtype[]
+      crimeScene?: CrimeScene
+    },
+  ): [string[], IndictmentSubtypeMap, CrimeSceneMap] => {
+    const policeCaseNumbers: string[] = []
+    const indictmentSubtypes: IndictmentSubtypeMap = {}
+    const crimeScenes: CrimeSceneMap = {}
+
+    policeCases.forEach((policeCase, idx) => {
+      const isUpdated = idx === index
+      const number =
+        isUpdated && update?.policeCaseNumber !== undefined
+          ? update.policeCaseNumber
+          : policeCase.number
+      const subtypes =
+        isUpdated && update?.subtypes !== undefined
+          ? update.subtypes
+          : policeCase.subtypes ?? []
+      const crimeScene =
+        isUpdated && update?.crimeScene !== undefined
+          ? update.crimeScene
+          : { place: policeCase.place, date: policeCase.date }
+
+      if (number !== policeCase.number) {
+        // If the police case number has changed, we need to update the policeCaseIds ref
+        policeCaseIds.current[number] = policeCaseIds.current[policeCase.number]
+      }
+
+      policeCaseNumbers.push(number)
+      indictmentSubtypes[number] = subtypes
+      crimeScenes[number] = crimeScene
+    })
+
+    const sortedPoliceCaseNumbers = policeCaseNumbers.sort((a, b) => {
+      // We want police case numbers with missing dates to be at the end of the list
+      const aDate = crimeScenes[a].date?.toISOString() ?? '9'
+      const bDate = crimeScenes[b].date?.toISOString() ?? '9'
+
+      return aDate.localeCompare(bDate)
+    })
+
+    return [sortedPoliceCaseNumbers, indictmentSubtypes, crimeScenes]
+  }
 
   const handleCreatePoliceCase = () => {
     handleCreatePoliceCases([{ number: '' }])
@@ -501,7 +519,7 @@ const Defendant = () => {
           <AnimatePresence>
             {policeCases.map((policeCase, index) => (
               <motion.div
-                key={policeCase.number}
+                key={policeCaseIds.current[policeCase.number]}
                 initial={{ opacity: 0, y: 10 }}
                 animate={{ opacity: 1, y: 0 }}
                 exit={{ opacity: 0, y: 10 }}
