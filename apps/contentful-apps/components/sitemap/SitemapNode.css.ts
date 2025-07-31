@@ -49,6 +49,13 @@ export const nodeTopRowContainer = style({
   marginBottom: '8px',
 })
 
+export const nodeTopRowContainerLeft = style({
+  display: 'flex',
+  flexFlow: 'row nowrap',
+  gap: '4px',
+  alignItems: 'center',
+})
+
 export const fullWidth = style({
   width: '100%',
 })
@@ -58,4 +65,11 @@ export const nodeTopRowContainerRight = style({
   flexFlow: 'row nowrap',
   gap: '8px',
   alignItems: 'center',
+})
+
+export const tooltipContent = style({
+  display: 'flex',
+  flexFlow: 'column nowrap',
+  gap: '8px',
+  padding: '8px',
 })

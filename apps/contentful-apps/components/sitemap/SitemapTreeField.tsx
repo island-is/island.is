@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useState } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
 import type { FieldExtensionSDK } from '@contentful/app-sdk'
 import { FormControl, Radio } from '@contentful/f36-components'
@@ -20,11 +20,13 @@ import {
 
 import { AddNodeButton } from './AddNodeButton'
 import { EntryContext, useEntryContext } from './entryContext'
+import { MoveNodesButton } from './MoveNodesButton'
 import { SitemapNode } from './SitemapNode'
 import {
   addNode as addNodeUtil,
   type EntryType,
   findNodes,
+  findParentNode,
   removeNode as removeNodeUtil,
   type Tree,
   TreeNode,
@@ -44,6 +46,9 @@ export const SitemapTreeField = () => {
     },
   )
   const [language, setLanguage] = useState<'is-IS' | 'en'>('is-IS')
+  const [status, setStatus] = useState<'draft' | 'published'>('draft')
+  const [mode, setMode] = useState<'edit' | 'select'>('edit')
+  const selectedNodesRef = useRef<TreeNode[]>([])
 
   useDebounce(
     () => {
@@ -54,7 +59,13 @@ export const SitemapTreeField = () => {
   )
 
   useEffect(() => {
-    sdk.window.startAutoResizer()
+    if (tree.childNodes.length < 1) {
+      sdk.window.stopAutoResizer()
+      sdk.window.updateHeight(200)
+    } else {
+      sdk.window.startAutoResizer()
+    }
+
     return () => {
       sdk.window.stopAutoResizer()
     }
@@ -78,6 +89,24 @@ export const SitemapTreeField = () => {
   const removeNode = useCallback(
     (parentNode: Tree, idOfNodeToRemove: number) => {
       removeNodeUtil(parentNode, idOfNodeToRemove, tree)
+      setTree((prevTree) => ({ ...prevTree }))
+    },
+    [tree],
+  )
+
+  const moveNodesToBottom = useCallback(
+    (nodes: TreeNode[], parentNode: Tree) => {
+      for (const node of nodes) {
+        const parent = findParentNode(tree, node.id)
+
+        if (parent) {
+          removeNodeUtil(parent, node.id, tree)
+        }
+      }
+
+      parentNode.childNodes.push(...nodes)
+
+      selectedNodesRef.current = []
       setTree((prevTree) => ({ ...prevTree }))
     },
     [tree],
@@ -141,31 +170,85 @@ export const SitemapTreeField = () => {
       >
         <EntryContext.Provider value={useEntryContext()}>
           <div>
-            <div className={styles.languageSelectorContainer}>
-              <FormControl.Label>Language preview</FormControl.Label>
-              <div>
-                <div className={styles.languageSelector}>
-                  <Radio
-                    id="is"
-                    name="language"
-                    value="is"
-                    isChecked={language === 'is-IS'}
-                    onChange={() => setLanguage('is-IS')}
-                  >
-                    Icelandic
-                  </Radio>
-                  <Radio
-                    id="en"
-                    name="language"
-                    value="en"
-                    isChecked={language === 'en'}
-                    onChange={() => setLanguage('en')}
-                  >
-                    English
-                  </Radio>
+            <div className={styles.topRowContainer}>
+              <div className={styles.statusSelectorContainer}>
+                <FormControl.Label>Preview mode</FormControl.Label>
+                <div>
+                  <div className={styles.statusSelector}>
+                    <Radio
+                      id="draft"
+                      name="status"
+                      value="draft"
+                      isChecked={status === 'draft'}
+                      onChange={() => setStatus('draft')}
+                    >
+                      Draft
+                    </Radio>
+                    <Radio
+                      id="published"
+                      name="status"
+                      value="published"
+                      isChecked={status === 'published'}
+                      onChange={() => setStatus('published')}
+                    >
+                      Published
+                    </Radio>
+                  </div>
+                </div>
+              </div>
+              <div className={styles.languageSelectorContainer}>
+                <FormControl.Label>Language </FormControl.Label>
+                <div>
+                  <div className={styles.languageSelector}>
+                    <Radio
+                      id="is"
+                      name="language"
+                      value="is"
+                      isChecked={language === 'is-IS'}
+                      onChange={() => setLanguage('is-IS')}
+                    >
+                      Icelandic
+                    </Radio>
+                    <Radio
+                      id="en"
+                      name="language"
+                      value="en"
+                      isChecked={language === 'en'}
+                      onChange={() => setLanguage('en')}
+                    >
+                      English
+                    </Radio>
+                  </div>
                 </div>
               </div>
             </div>
+            {status !== 'published' && (
+              <div className={styles.modeSelectorContainer}>
+                <FormControl.Label>Actions</FormControl.Label>
+                <div>
+                  <div className={styles.modeSelector}>
+                    <Radio
+                      id="edit"
+                      name="mode"
+                      value="edit"
+                      isChecked={mode === 'edit'}
+                      onChange={() => setMode('edit')}
+                    >
+                      Edit
+                    </Radio>
+                    <Radio
+                      id="select"
+                      name="mode"
+                      value="select"
+                      isChecked={mode === 'select'}
+                      onChange={() => setMode('select')}
+                    >
+                      Select
+                    </Radio>
+                  </div>
+                </div>
+              </div>
+            )}
             <div className={styles.childNodeContainer}>
               {tree.childNodes.map((node) => (
                 <SitemapNode
@@ -173,20 +256,39 @@ export const SitemapTreeField = () => {
                   removeNode={removeNode}
                   addNode={addNode}
                   updateNode={updateNode}
-                  key={node.id}
+                  moveNodesToBottom={moveNodesToBottom}
+                  key={`${node.id}-${selectedNodesRef.current.findIndex(
+                    (n) => n.id === node.id,
+                  )}`}
                   node={node}
                   root={tree}
                   onMarkEntryAsPrimary={onMarkEntryAsPrimary}
                   language={language}
+                  status={status}
+                  mode={mode}
+                  selectedNodesRef={selectedNodesRef}
                 />
               ))}
-              <div className={styles.addNodeButtonContainer}>
-                <AddNodeButton
-                  addNode={(type, createNew, entryType) => {
-                    addNode(tree, type, createNew, entryType)
-                  }}
-                />
-              </div>
+              {status !== 'published' && mode === 'edit' && (
+                <div className={styles.addNodeButtonContainer}>
+                  <AddNodeButton
+                    addNode={(type, createNew, entryType) => {
+                      addNode(tree, type, createNew, entryType)
+                    }}
+                  />
+                </div>
+              )}
+              {mode === 'select' && (
+                <div className={styles.addNodeButtonContainer}>
+                  <MoveNodesButton
+                    selectedNodes={selectedNodesRef.current}
+                    currentNodeId={tree.id}
+                    onClick={() => {
+                      moveNodesToBottom(selectedNodesRef.current, tree)
+                    }}
+                  />
+                </div>
+              )}
             </div>
           </div>
         </EntryContext.Provider>
