@@ -1,4 +1,4 @@
-import { FC, useContext, useEffect, useState } from 'react'
+import { FC, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box } from '@island.is/island-ui/core'
@@ -15,7 +15,7 @@ import { lokeNumberList as strings } from './LokeNumberList.strings'
 interface Props {
   isLoading: boolean
   loadingError: boolean
-  policeCaseInfo?: PoliceCaseInfo[]
+  policeCaseInfo: PoliceCaseInfo[]
   addPoliceCaseNumbers: (policeCases: PoliceCase[]) => void
 }
 
@@ -25,17 +25,11 @@ export const LokeNumberList: FC<Props> = (props) => {
   const { formatMessage } = useIntl()
   const { workingCase } = useContext(FormContext)
 
-  const [availablePoliceCases, setAvailablePoliceCases] =
-    useState<PoliceCaseInfo[]>()
-
-  useEffect(() => {
-    if (policeCaseInfo) {
-      const available = policeCaseInfo?.filter(
-        (caseInfo) =>
-          !workingCase.policeCaseNumbers?.includes(caseInfo.policeCaseNumber),
-      )
-      setAvailablePoliceCases(available)
-    }
+  const availablePoliceCases = useMemo(() => {
+    return policeCaseInfo.filter(
+      (caseInfo) =>
+        !workingCase.policeCaseNumbers?.includes(caseInfo.policeCaseNumber),
+    )
   }, [workingCase, policeCaseInfo])
 
   const handleCreatePoliceCases = (selectedPoliceCases: Item[]) => {
