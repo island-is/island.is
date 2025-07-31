@@ -232,55 +232,6 @@ const Defendant = () => {
     return [sortedPoliceCaseNumbers, indictmentSubtypes, crimeScenes]
   }
 
-  const getPoliceCasesForUpdate = (
-    policeCases: PoliceCase[],
-    index?: number,
-    update?: {
-      policeCaseNumber?: string
-      subtypes?: IndictmentSubtype[]
-      crimeScene?: CrimeScene
-    },
-  ): [string[], IndictmentSubtypeMap, CrimeSceneMap] => {
-    const policeCaseNumbers: string[] = []
-    const indictmentSubtypes: IndictmentSubtypeMap = {}
-    const crimeScenes: CrimeSceneMap = {}
-
-    policeCases.forEach((policeCase, idx) => {
-      const isUpdated = idx === index
-      const number =
-        isUpdated && update?.policeCaseNumber !== undefined
-          ? update.policeCaseNumber
-          : policeCase.number
-      const subtypes =
-        isUpdated && update?.subtypes !== undefined
-          ? update.subtypes
-          : policeCase.subtypes ?? []
-      const crimeScene =
-        isUpdated && update?.crimeScene !== undefined
-          ? update.crimeScene
-          : { place: policeCase.place, date: policeCase.date }
-
-      if (number !== policeCase.number) {
-        // If the police case number has changed, we need to update the policeCaseIds ref
-        policeCaseIds.current[number] = policeCaseIds.current[policeCase.number]
-      }
-
-      policeCaseNumbers.push(number)
-      indictmentSubtypes[number] = subtypes
-      crimeScenes[number] = crimeScene
-    })
-
-    const sortedPoliceCaseNumbers = policeCaseNumbers.sort((a, b) => {
-      // We want police case numbers with missing dates to be at the end of the list
-      const aDate = crimeScenes[a].date?.toISOString() ?? '9'
-      const bDate = crimeScenes[b].date?.toISOString() ?? '9'
-
-      return aDate.localeCompare(bDate)
-    })
-
-    return [sortedPoliceCaseNumbers, indictmentSubtypes, crimeScenes]
-  }
-
   const handleCreatePoliceCase = () => {
     handleCreatePoliceCases([{ number: '' }])
   }
