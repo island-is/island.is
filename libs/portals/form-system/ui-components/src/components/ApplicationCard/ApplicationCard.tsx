@@ -7,6 +7,7 @@ import { ApplicationCardTag } from './components/ApplicationCardTag'
 import * as styles from './ApplicationCard.css'
 import { ApplicationCardProgress } from './components/ApplicationCardProgress'
 import { useNavigate, useParams } from 'react-router-dom'
+import { ApplicationCardDelete } from './components/ApplicationCardDelete'
 
 interface Props {
   application: FormSystemApplication
@@ -59,10 +60,9 @@ export const ApplicationCard = ({ application, focused = false }: Props) => {
         </Box>
         <Inline alignY="center" justifyContent="flexEnd" space={1}>
           <ApplicationCardTag />
-          {/* <ApplicationCardDelete
-            application={application}
-            onDelete={onDelete}
-          /> */}
+          <ApplicationCardDelete
+          // application={application}
+          />
         </Inline>
       </Box>
 
