@@ -25,7 +25,6 @@ export const useEntryContext = () => {
       const response = await cma.entry.getMany({
         query: {
           'sys.id[in]': entryIds.join(','),
-          'sys.archivedVersion[exists]': false,
           limit: 1000,
         },
       })
