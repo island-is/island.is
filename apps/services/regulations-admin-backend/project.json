@@ -13,6 +13,8 @@
         "main": "apps/services/regulations-admin-backend/src/main.ts",
         "tsConfig": "apps/services/regulations-admin-backend/tsconfig.app.json",
         "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"],
         "assets": [
           {
             "glob": "*",
@@ -34,8 +36,7 @@
             "input": "apps/services/regulations-admin-backend",
             "output": "./"
           }
-        ],
-        "maxWorkers": 2
+        ]
       },
       "configurations": {
         "production": {
