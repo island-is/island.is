@@ -103,7 +103,7 @@ const getNodeStatus = (node: TreeNode, entries: Record<string, EntryProps>) => {
     return 'draft'
   }
 
-  return ''
+  return 'draft'
 }
 
 const getStatusVariant = (status: ReturnType<typeof getNodeStatus>) => {
@@ -112,6 +112,9 @@ const getStatusVariant = (status: ReturnType<typeof getNodeStatus>) => {
   }
   if (status === 'draft') {
     return 'warning'
+  }
+  if (status === 'changed') {
+    return 'primary'
   }
   return 'positive'
 }
