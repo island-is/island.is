@@ -28,6 +28,8 @@ const allowMultiple: EventType[] = [
   EventType.INDICTMENT_CRIMINAL_RECORD_UPDATED_BY_COURT,
 ]
 
+const allowOnePerUserRole: EventType[] = [EventType.APPEAL_RESULT_ACCESSED]
+
 const eventToNotificationMap: Partial<
   Record<EventType, EventNotificationType>
 > = {
@@ -72,14 +74,7 @@ export class EventLogService {
     event: CreateEventLogDto,
     transaction?: Transaction,
   ): Promise<boolean> {
-    const {
-      eventType,
-      caseId,
-      userName,
-      userRole,
-      nationalId,
-      institutionName,
-    } = event
+    const { eventType, caseId, userName, userRole, institutionName } = event
 
     if (!allowMultiple.includes(event.eventType)) {
       const where = Object.fromEntries(
@@ -87,13 +82,16 @@ export class EventLogService {
         Object.entries({
           eventType,
           caseId,
-          nationalId,
-          userRole,
-          institutionName,
+          userRole: allowOnePerUserRole.includes(eventType)
+            ? userRole
+            : undefined,
         }).filter(([_, value]) => value !== undefined),
       )
 
-      const eventExists = await this.eventLogModel.findOne({ where })
+      const eventExists = await this.eventLogModel.findOne({
+        where,
+        transaction,
+      })
 
       if (eventExists) {
         return true
