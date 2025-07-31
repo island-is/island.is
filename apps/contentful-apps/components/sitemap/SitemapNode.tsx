@@ -86,53 +86,21 @@ const getEntryStatus = (
   return 'published'
 }
 
-const getCategoryStatus = (node: TreeNode) => {
-  if (node.type !== TreeNodeType.CATEGORY) {
-    return ''
-  }
-
-  // If no status is set, default to draft
-  if (!node.status) {
-    return 'draft'
-  }
-
-  // If status is explicitly set, use it
-  if (node.status === 'published') {
-    return 'published'
-  }
-
-  return 'draft'
-}
-
-const getUrlStatus = (node: TreeNode) => {
-  if (node.type !== TreeNodeType.URL) {
-    return ''
-  }
-
-  // If no status is set, default to draft
-  if (!node.status) {
-    return 'draft'
-  }
-
-  // If status is explicitly set, use it
-  if (node.status === 'published') {
-    return 'published'
-  }
-
-  return 'draft'
-}
-
 const getNodeStatus = (node: TreeNode, entries: Record<string, EntryProps>) => {
   if (node.type === TreeNodeType.ENTRY) {
     return getEntryStatus(node, entries)
   }
 
-  if (node.type === TreeNodeType.CATEGORY) {
-    return getCategoryStatus(node)
-  }
+  if (node.type === TreeNodeType.CATEGORY || node.type === TreeNodeType.URL) {
+    if (!node.status) {
+      return 'draft'
+    }
 
-  if (node.type === TreeNodeType.URL) {
-    return getUrlStatus(node)
+    if (node.status === 'published') {
+      return 'published'
+    }
+
+    return 'draft'
   }
 
   return ''
