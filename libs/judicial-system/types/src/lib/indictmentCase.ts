@@ -9,7 +9,7 @@ import { getIndictmentAppealDeadlineDate, hasDatePassed } from './dates'
   - The second boolean indicates whether all defendant appeal deadlines have expired.
 */
 export const getIndictmentVerdictAppealDeadlineStatus = (
-  verdictInfo?: [boolean, Date | undefined | null][],
+  verdictInfo?: [boolean, Date | undefined][],
   isFine?: boolean,
 ): [boolean, boolean] => {
   if (

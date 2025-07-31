@@ -36,7 +36,6 @@ import { DateLog } from '../case/models/dateLog.model'
 import { Defendant } from '../defendant/models/defendant.model'
 import { EventService } from '../event'
 import { UploadPoliceCaseFileDto } from './dto/uploadPoliceCaseFile.dto'
-import { CreateDocumentResponse } from './models/createDocument.response'
 import { CreateSubpoenaResponse } from './models/createSubpoena.response'
 import { PoliceCaseFile } from './models/policeCaseFile.model'
 import { PoliceCaseInfo } from './models/policeCaseInfo.model'
@@ -68,6 +67,10 @@ export interface SubpoenaInfo {
   servedBy?: string
   defenderNationalId?: string
   serviceDate?: Date
+}
+
+interface CreateDocumentResponse {
+  externalPoliceDocumentId: string
 }
 
 const getChapter = (category?: string): number | undefined => {

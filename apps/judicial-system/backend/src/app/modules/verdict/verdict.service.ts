@@ -29,11 +29,10 @@ import { UpdateVerdictDto } from './dto/updateVerdict.dto'
 import { DeliverResponse } from './models/deliver.response'
 import { Verdict } from './models/verdict.model'
 
-type UpdateVerdict = Pick<
+type UpdateVerdict = { serviceDate?: Date | null } & Pick<
   Verdict,
   | 'externalPoliceDocumentId'
   | 'serviceRequirement'
-  | 'serviceDate'
   | 'servedBy'
   | 'appealDecision'
   | 'appealDate'

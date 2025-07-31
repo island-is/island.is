@@ -83,7 +83,7 @@ export class Verdict extends Model {
 
   @Column({ type: DataType.DATE, allowNull: true })
   @ApiPropertyOptional({ type: Date })
-  serviceDate?: Date | null
+  serviceDate?: Date
 
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
