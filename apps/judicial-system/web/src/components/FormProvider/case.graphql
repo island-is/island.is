@@ -418,6 +418,7 @@ query Case($input: CaseQueryInput!) {
     defenceAppealResultAccessDate
     prosecutionAppealResultAccessDate
     prisonStaffAppealResultAccessDate
+    requestCompletedDate
     caseRepresentatives {
       name
       nationalId

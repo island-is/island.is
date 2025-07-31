@@ -101,39 +101,24 @@ const HearingArrangements = () => {
     [workingCase.notifications],
   )
 
-  const handleNavigationTo = useCallback(
-    async (destination: keyof stepValidationsType) => {
-      await sendCourtDateToServer()
+  const isCorrectingRuling = Boolean(workingCase.requestCompletedDate)
 
-      const isCorrectingRuling = workingCase.notifications?.some(
-        (notification) => notification.type === NotificationType.RULING,
-      )
+  const handleNavigationTo = async (destination: keyof stepValidationsType) => {
+    await sendCourtDateToServer()
 
-      if (
-        isCorrectingRuling ||
-        (courtDateNotification.hasSent && !courtDateHasChanged)
-      ) {
-        router.push(`${destination}/${workingCase.id}`)
-      } else {
-        setNavigateTo(destination)
-      }
-    },
-    [
-      sendCourtDateToServer,
-      workingCase.notifications,
-      workingCase.id,
-      courtDateNotification.hasSent,
-      courtDateHasChanged,
-    ],
-  )
+    if (
+      isCorrectingRuling ||
+      (courtDateNotification.hasSent && !courtDateHasChanged)
+    ) {
+      router.push(`${destination}/${workingCase.id}`)
+    } else {
+      setNavigateTo(destination)
+    }
+  }
 
   const stepIsValid = isCourtHearingArrangementsStepValidIC(
     workingCase,
     courtDate,
-  )
-
-  const isCorrectingRuling = workingCase.notifications?.some(
-    (notification) => notification.type === NotificationType.RULING,
   )
 
   return (
