@@ -35,7 +35,7 @@ import {
 import { DefendantExistsGuard } from '../defendant'
 import { UpdateVerdictDto } from './dto/updateVerdict.dto'
 import { CurrentVerdict } from './guards/verdict.decorator'
-import { VerdictExistGuard } from './guards/verdictExistGuard.guard'
+import { VerdictExistsGuard } from './guards/verdictExists.guard'
 import { Verdict } from './models/verdict.model'
 import { VerdictService } from './verdict.service'
 
@@ -49,7 +49,7 @@ import { VerdictService } from './verdict.service'
   CaseWriteGuard,
   CaseCompletedGuard,
   DefendantExistsGuard,
-  VerdictExistGuard,
+  VerdictExistsGuard,
 )
 export class VerdictController {
   constructor(

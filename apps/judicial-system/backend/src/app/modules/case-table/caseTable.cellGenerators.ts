@@ -977,6 +977,7 @@ const subpoenaServiceState: CaseTableCellGenerator<TagValue> = {
       return generateCell()
     }
 
+    // TODO: fix this in the database so we can always fetch the service date
     const verdictInfo = c.defendants?.map<[boolean, Date | undefined]>((d) => [
       true,
       d.verdict?.serviceRequirement === ServiceRequirement.NOT_REQUIRED
