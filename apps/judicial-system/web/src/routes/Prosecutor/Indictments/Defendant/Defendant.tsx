@@ -28,7 +28,6 @@ import {
   CaseOrigin,
   Defendant as TDefendant,
   IndictmentSubtype,
-  PoliceCaseInfo as TPoliceCaseInfo,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
