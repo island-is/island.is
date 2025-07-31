@@ -53,6 +53,8 @@
 	<string/>
 	<key>NSMicrophoneUsageDescription</key>
 	<string>Used for license scanning capabilities</string>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>$(PRODUCT_NAME) needs access to your Photo Library to save captured photos and videos.</string>
 	<key>UIAppFonts</key>
 	<array>
 		<string>IBMPlexSans.ttf</string>
