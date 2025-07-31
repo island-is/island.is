@@ -11,7 +11,8 @@ import { setupGlobals } from './utils/lifecycle/setup-globals'
 import { setupRoutes } from './utils/lifecycle/setup-routes'
 import { performanceMetricsAppLaunched } from './utils/performance-metrics'
 
-async function startApp() {
+// Wait until React Native is initialized
+Navigation.events().registerAppLaunchedListener(async () => {
   // setup global packages and polyfills
   setupGlobals()
 
@@ -32,31 +33,24 @@ async function startApp() {
 
   // Set default navigation theme options
   Navigation.setDefaultOptions(getDefaultOptions())
+  // Read authorize result from keychain
+  await readAuthorizeResult()
 
-  // Wait until React Native is initialized
-  Navigation.events().registerAppLaunchedListener(async () => {
-    // Read authorize result from keychain
-    await readAuthorizeResult()
+  // Get app root
+  const root = await getAppRoot()
 
-    // Get app root
-    const root = await getAppRoot()
+  // Dismiss all overlays
+  await Navigation.dismissAllOverlays()
 
-    // Dismiss all overlays
-    await Navigation.dismissAllOverlays()
+  // Show lock screen overlay
+  void showAppLockOverlay({ enforceActivated: true })
 
-    // Show lock screen overlay
-    void showAppLockOverlay({ enforceActivated: true })
+  // Dismiss all modals
+  await Navigation.dismissAllModals()
 
-    // Dismiss all modals
-    await Navigation.dismissAllModals()
+  // Set the app root
+  await Navigation.setRoot({ root })
 
-    // Set the app root
-    await Navigation.setRoot({ root })
-
-    // Mark app launched
-    performanceMetricsAppLaunched()
-  })
-}
-
-// Start the app
-void startApp()
+  // Mark app launched
+  performanceMetricsAppLaunched()
+})

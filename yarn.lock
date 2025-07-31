@@ -15404,7 +15404,7 @@ __metadata:
     react-native-keyboard-manager: "npm:6.5.4-3"
     react-native-keychain: "npm:8.1.1"
     react-native-markdown-display: "npm:7.0.2"
-    react-native-mmkv-storage: "npm:0.11.0"
+    react-native-mmkv-storage: "npm:0.11.2"
     react-native-navigation: "patch:react-native-navigation@npm%3A8.2.1#~/.yarn/patches/react-native-navigation-npm-8.2.1-3ecf2d9a52.patch"
     react-native-navigation-hooks: "npm:6.3.0"
     react-native-passkey: "npm:2.1.1"
@@ -53238,14 +53238,14 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-mmkv-storage@npm:0.11.0":
-  version: 0.11.0
-  resolution: "react-native-mmkv-storage@npm:0.11.0"
+"react-native-mmkv-storage@npm:0.11.2":
+  version: 0.11.2
+  resolution: "react-native-mmkv-storage@npm:0.11.2"
   peerDependencies:
     react-native: "*"
   bin:
     mmkv-link: autolink/postlink/run.js
-  checksum: 10/1df94f8b57c918e01abd31c8123b7ac8b6329265be250c3a0771a02588368709ced49869cdd7a9cd9211c6a056412e42898d51b1ee26769f5692121f1cb15d7f
+  checksum: 10/e9e21850f70bfe809eb1441131a66e15e483a0955426d03368413730948fc167afe6c3feae1ce4cd69b62c1af4e992574f2d02f08b165fa3982aa438f97e3fa7
   languageName: node
   linkType: hard
 

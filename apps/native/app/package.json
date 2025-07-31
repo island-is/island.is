@@ -83,7 +83,7 @@
     "react-native-keyboard-manager": "6.5.4-3",
     "react-native-keychain": "8.1.1",
     "react-native-markdown-display": "7.0.2",
-    "react-native-mmkv-storage": "0.11.0",
+    "react-native-mmkv-storage": "0.11.2",
     "react-native-navigation": "patch:react-native-navigation@npm%3A8.2.1#~/.yarn/patches/react-native-navigation-npm-8.2.1-3ecf2d9a52.patch",
     "react-native-navigation-hooks": "6.3.0",
     "react-native-passkey": "2.1.1",

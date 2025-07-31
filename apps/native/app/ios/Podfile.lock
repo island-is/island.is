@@ -1504,7 +1504,7 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
-  - react-native-mmkv-storage (0.11.0):
+  - react-native-mmkv-storage (0.11.2):
     - DoubleConversion
     - glog
     - hermes-engine
@@ -2710,7 +2710,7 @@ SPEC CHECKSUMS:
   react-native-blob-util: 43549f2896e768f0894f46737c4f3f7e4ceef74d
   react-native-cookies: d648ab7025833b977c0b19e142503034f5f29411
   react-native-date-picker: d992b90d598a20a551a419e835023d9368958a31
-  react-native-mmkv-storage: 13424f9f6ac7ccfdbfb3f4f0ec0b0cf9d9e63495
+  react-native-mmkv-storage: bf2246266e029348acd3ac3af290f70695b2d7ff
   react-native-netinfo: 2e3c27627db7d49ba412bfab25834e679db41e21
   react-native-passkey: 4e8eda7f96f5a0e10faab0f2d935f7ad78f17737
   react-native-passkit-wallet: c86648b0c21265b06505bab8c33aabef08cb4c41
