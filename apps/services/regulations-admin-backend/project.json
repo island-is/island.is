@@ -12,6 +12,7 @@
         "outputPath": "dist/apps/services/regulations-admin-backend",
         "main": "apps/services/regulations-admin-backend/src/main.ts",
         "tsConfig": "apps/services/regulations-admin-backend/tsconfig.app.json",
+        "generatePackageJson": true,
         "assets": [
           {
             "glob": "*",
