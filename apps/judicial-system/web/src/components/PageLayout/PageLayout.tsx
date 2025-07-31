@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren, ReactNode, useContext } from 'react'
+import { FC, PropsWithChildren, ReactNode, useContext, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 
@@ -133,11 +133,14 @@ const SidePanel: FC<SidePanelProps> = ({
   const { getSections } = useSections(isValid, onNavigationTo)
   const sections = getSections(workingCase, user)
   const { formatMessage } = useIntl()
+
   const activeSection = sections.findIndex((s) => s.isActive)
   const activeSubSection = sections[activeSection]?.children.findIndex(
     (s) => s.isActive,
   )
   const showCourtCaseNumber = isDistrictCourtUser(user)
+
+  const courtCaseNumber = useRef(workingCase.courtCaseNumber)
 
   return (
     <GridColumn span={['12/12', '12/12', '4/12', '3/12']}>
@@ -164,8 +167,8 @@ const SidePanel: FC<SidePanelProps> = ({
               )}
             </Text>
             <Text>
-              {showCourtCaseNumber && workingCase.courtCaseNumber
-                ? workingCase.courtCaseNumber
+              {showCourtCaseNumber && courtCaseNumber.current
+                ? courtCaseNumber.current
                 : '\u00A0'}
             </Text>
           </Box>
