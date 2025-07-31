@@ -41,11 +41,11 @@ export class AuthService {
 
     if (response.ok) {
       return await response.json()
-    } else {
-      throw new UnauthorizedException(
-        `Authorization request failed with status ${response.status} - ${response.statusText}`,
-      )
     }
+
+    throw new UnauthorizedException(
+      `Authorization request failed with status ${response.status} - ${response.statusText}`,
+    )
   }
 
   async refreshToken(refreshToken: string) {
@@ -64,11 +64,11 @@ export class AuthService {
 
     if (response.ok) {
       return await response.json()
-    } else {
-      throw new UnauthorizedException(
-        `Authorization request failed with status ${response.status} - ${response.statusText}`,
-      )
     }
+
+    throw new UnauthorizedException(
+      `Authorization request failed with status ${response.status} - ${response.statusText}`,
+    )
   }
 
   async revokeRefreshToken(token: string) {
@@ -94,60 +94,59 @@ export class AuthService {
 
   getExpiry(token: string) {
     const decodedToken = jwt.decode(token, { complete: true })
+
     if (decodedToken && typeof decodedToken === 'object') {
       const payload = decodedToken.payload
+
       if (payload && 'exp' in payload) {
         const expiredTimestamp = payload['exp']
+
         return expiredTimestamp
       }
     }
+
     return undefined
   }
 
   isTokenExpired(token: string) {
     const currentTime = Math.floor(Date.now() / 1000)
     const expiredTimestamp = this.getExpiry(token)
+
     return expiredTimestamp && expiredTimestamp < currentTime
   }
 
   async verifyIdsToken(token: string) {
-    try {
-      const secretClient = jwksClient({
-        cache: true,
-        rateLimit: true,
-        jwksUri: `${this.config.issuer}/.well-known/openid-configuration/jwks`,
-      })
+    const secretClient = jwksClient({
+      cache: true,
+      rateLimit: true,
+      jwksUri: `${this.config.issuer}/.well-known/openid-configuration/jwks`,
+    })
 
-      const decodedToken = jwt.decode(token, { complete: true })
-      const tokenHeader = decodedToken?.header
+    const decodedToken = jwt.decode(token, { complete: true })
+    const tokenHeader = decodedToken?.header
 
-      if (!tokenHeader) {
-        throw new Error('Invalid access token header')
-      }
+    if (!tokenHeader) {
+      throw new Error('Invalid access token header')
+    }
 
-      const signingKeys = await secretClient.getSigningKeys()
-      const matchingKey = signingKeys.find((sk) => sk.kid === tokenHeader.kid)
+    const signingKeys = await secretClient.getSigningKeys()
+    const matchingKey = signingKeys.find((sk) => sk.kid === tokenHeader.kid)
 
-      if (!matchingKey) {
-        throw new Error(`No matching key found for kid ${tokenHeader.kid}`)
-      }
+    if (!matchingKey) {
+      throw new Error(`No matching key found for kid ${tokenHeader.kid}`)
+    }
 
-      const publicKey = matchingKey.getPublicKey()
+    const publicKey = matchingKey.getPublicKey()
 
-      const verifiedToken = jwt.verify(token, publicKey, {
-        issuer: this.config.issuer,
-        clockTimestamp: Date.now() / 1000,
-        ignoreNotBefore: false,
-        audience: this.config.clientId,
-      })
+    const verifiedToken = jwt.verify(token, publicKey, {
+      issuer: this.config.issuer,
+      clockTimestamp: Date.now() / 1000,
+      ignoreNotBefore: false,
+      audience: this.config.clientId,
+    })
 
-      return verifiedToken as {
-        nationalId: string
-      }
-    } catch (error) {
-      this.logger.error('Token verification failed:', { error })
-
-      throw error
+    return verifiedToken as {
+      nationalId: string
     }
   }
 
