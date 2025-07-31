@@ -44,22 +44,22 @@ export class UploadProcessor {
     const maxRetries = 3
     let attempt = 0
     
+    if (!destinationBucket) {
+      throw new Error('Application attachment bucket not configured.')
+    }
+
+    const { key: sourceKey } = AmazonS3URI(attachmentUrl)
+    const destinationKey = `${applicationId}/${sourceKey}`
+
+    // Add file existence check before copy
+    const fileExists = await this.fileStorageService.fileExists(sourceKey)
+    
+    if (!fileExists) {
+      throw new Error(`Source file ${sourceKey} not found in upload bucket`)
+    }
+
     while (attempt < maxRetries) {
       try {
-        if (!destinationBucket) {
-          throw new Error('Application attachment bucket not configured.')
-        }
-  
-        const { key: sourceKey } = AmazonS3URI(attachmentUrl)
-        const destinationKey = `${applicationId}/${sourceKey}`
-        
-        // Add file existence check before copy
-        const fileExists = await this.fileStorageService.fileExists(sourceKey)
-        
-        if (!fileExists) {
-          throw new Error(`Source file ${sourceKey} not found in upload bucket`)
-        }
-        
         const resultUrl = await this.fileStorageService.copyObjectFromUploadBucket(
           sourceKey,
           destinationBucket,
@@ -80,7 +80,7 @@ export class UploadProcessor {
           
           this.logger.warn(
             `Access denied on attempt ${attempt}/${maxRetries}, retrying in ${delay}ms`,
-            { applicationId, sourceKey: attachmentUrl }
+            { applicationId, sourceKey, destinationKey, destinationBucket }
           )
           continue
         }
@@ -101,7 +101,7 @@ export class UploadProcessor {
 
     this.logger.error(
       'Failed to copy file after max retries',
-      { applicationId, sourceKey: attachmentUrl },
+      { applicationId, sourceKey, destinationKey, destinationBucket },
     )
     throw new Error('Failed to copy file after max retries')
   }
