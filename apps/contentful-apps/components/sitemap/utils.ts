@@ -274,8 +274,6 @@ export const addNode = async (
           description,
           descriptionEN,
           status: 'draft',
-          version: 1,
-          publishedVersion: undefined,
         }
       : {
           type: TreeNodeType.URL,
@@ -284,6 +282,7 @@ export const addNode = async (
           url,
           urlEN,
           urlType,
+          status: 'draft',
         }),
   }
   parentNode.childNodes = [...parentNode.childNodes].concat(node)
@@ -294,28 +293,6 @@ export const updateNode = (parentNode: Tree, updatedNode: TreeNode) => {
     (node) => node.id === updatedNode.id,
   )
   if (nodeIndex >= 0) {
-    const existingNode = parentNode.childNodes[nodeIndex]
-
-    // Handle version tracking for categories
-    if (
-      existingNode.type === TreeNodeType.CATEGORY &&
-      updatedNode.type === TreeNodeType.CATEGORY
-    ) {
-      // If the category is being published, update the publishedVersion
-      if (updatedNode.status === 'published') {
-        updatedNode.publishedVersion = updatedNode.version
-      }
-      // If the category is being modified but not published, increment version
-      else if (
-        updatedNode.status === 'draft' ||
-        updatedNode.status === 'changed'
-      ) {
-        updatedNode.version = (existingNode.version || 1) + 1
-        // Keep the publishedVersion unchanged if not publishing
-        updatedNode.publishedVersion = existingNode.publishedVersion
-      }
-    }
-
     parentNode.childNodes[nodeIndex] = updatedNode
   }
 }

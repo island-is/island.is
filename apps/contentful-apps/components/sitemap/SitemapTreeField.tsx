@@ -59,7 +59,14 @@ export const SitemapTreeField = () => {
   )
 
   useEffect(() => {
-    sdk.window.startAutoResizer()
+    // Set minimum height when there are few children, use auto-resizer when there are many
+    if (tree.childNodes.length < 1) {
+      sdk.window.stopAutoResizer()
+      sdk.window.updateHeight(200) // Set a reasonable minimum height
+    } else {
+      sdk.window.startAutoResizer()
+    }
+
     return () => {
       sdk.window.stopAutoResizer()
     }
@@ -92,13 +99,11 @@ export const SitemapTreeField = () => {
     (nodes: TreeNode[], parentNode: Tree) => {
       for (const node of nodes) {
         const parent = findParentNode(tree, node.id)
-        console.log({ parent, node })
+
         if (parent) {
           removeNodeUtil(parent, node.id, tree)
         }
       }
-
-      console.log({ parentNode })
 
       parentNode.childNodes.push(...nodes)
 

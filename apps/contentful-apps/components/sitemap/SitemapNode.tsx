@@ -101,16 +101,25 @@ const getCategoryStatus = (node: TreeNode) => {
     return 'published'
   }
 
-  // Check if there are unpublished changes
-  if (
-    node.version &&
-    node.publishedVersion &&
-    node.version > node.publishedVersion
-  ) {
-    return 'changed'
+  return 'draft'
+}
+
+const getUrlStatus = (node: TreeNode) => {
+  if (node.type !== TreeNodeType.URL) {
+    return ''
   }
 
-  return node.status
+  // If no status is set, default to draft
+  if (!node.status) {
+    return 'draft'
+  }
+
+  // If status is explicitly set, use it
+  if (node.status === 'published') {
+    return 'published'
+  }
+
+  return 'draft'
 }
 
 const getNodeStatus = (node: TreeNode, entries: Record<string, EntryProps>) => {
@@ -122,6 +131,10 @@ const getNodeStatus = (node: TreeNode, entries: Record<string, EntryProps>) => {
     return getCategoryStatus(node)
   }
 
+  if (node.type === TreeNodeType.URL) {
+    return getUrlStatus(node)
+  }
+
   return ''
 }
 
@@ -131,9 +144,6 @@ const getStatusVariant = (status: ReturnType<typeof getNodeStatus>) => {
   }
   if (status === 'draft') {
     return 'warning'
-  }
-  if (status === 'changed') {
-    return 'primary'
   }
   return 'positive'
 }
@@ -391,15 +401,26 @@ export const SitemapNode = ({
                     }
                     entryNodeId={node.id}
                     onPublish={
-                      node.type === TreeNodeType.CATEGORY &&
+                      (node.type === TreeNodeType.CATEGORY ||
+                        node.type === TreeNodeType.URL) &&
                       node.status !== 'published'
                         ? async () => {
-                            const nextVersion = (node.version || 1) + 1
                             const updatedNode = {
                               ...node,
                               status: 'published' as const,
-                              version: nextVersion,
-                              publishedVersion: nextVersion,
+                            }
+                            updateNode(parentNode, updatedNode)
+                          }
+                        : undefined
+                    }
+                    onUnpublish={
+                      (node.type === TreeNodeType.CATEGORY ||
+                        node.type === TreeNodeType.URL) &&
+                      node.status === 'published'
+                        ? async () => {
+                            const updatedNode = {
+                              ...node,
+                              status: 'draft' as const,
                             }
                             updateNode(parentNode, updatedNode)
                           }
