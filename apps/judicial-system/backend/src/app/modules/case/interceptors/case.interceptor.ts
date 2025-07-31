@@ -10,6 +10,8 @@ import {
 import {
   CaseFileCategory,
   DefendantEventType,
+  EventType,
+  UserRole,
 } from '@island.is/judicial-system/types'
 
 import { Defendant, DefendantEventLog } from '../../defendant'
@@ -21,12 +23,12 @@ export const transformDefendants = (defendants?: Defendant[]) => {
   return defendants?.map((defendant) => ({
     ...defendant.toJSON(),
     sentToPrisonAdminDate: defendant.isSentToPrisonAdmin
-      ? DefendantEventLog.getDefendantEventLogTypeDate(
+      ? DefendantEventLog.getEventLogDateByEventType(
           DefendantEventType.SENT_TO_PRISON_ADMIN,
           defendant.eventLogs,
         )
       : undefined,
-    openedByPrisonAdminDate: DefendantEventLog.getDefendantEventLogTypeDate(
+    openedByPrisonAdminDate: DefendantEventLog.getEventLogDateByEventType(
       DefendantEventType.OPENED_BY_PRISON_ADMIN,
       defendant.eventLogs,
     ),
@@ -90,8 +92,33 @@ const transformCase = (theCase: Case) => {
     postponedIndefinitelyExplanation:
       CaseString.postponedIndefinitelyExplanation(theCase.caseStrings),
     civilDemands: CaseString.civilDemands(theCase.caseStrings),
-    caseSentToCourtDate: EventLog.caseSentToCourtEvent(theCase.eventLogs)
-      ?.created,
+    caseSentToCourtDate: EventLog.getEventLogDateByEventType(
+      [EventType.CASE_SENT_TO_COURT, EventType.INDICTMENT_CONFIRMED],
+      theCase.eventLogs,
+    ),
+    indictmentReviewedDate: EventLog.getEventLogDateByEventType(
+      EventType.INDICTMENT_REVIEWED,
+      theCase.eventLogs,
+    ),
+    indictmentSentToPublicProsecutorDate: EventLog.getEventLogDateByEventType(
+      EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+      theCase.eventLogs,
+    ),
+    defenceAppealResultAccessDate: EventLog.getEventLogDateByEventType(
+      EventType.APPEAL_RESULT_ACCESSED,
+      theCase.eventLogs,
+      UserRole.DEFENDER,
+    ),
+    prosecutionAppealResultAccessDate: EventLog.getEventLogDateByEventType(
+      EventType.APPEAL_RESULT_ACCESSED,
+      theCase.eventLogs,
+      UserRole.PROSECUTOR,
+    ),
+    prisonStaffAppealResultAccessDate: EventLog.getEventLogDateByEventType(
+      EventType.APPEAL_RESULT_ACCESSED,
+      theCase.eventLogs,
+      UserRole.PRISON_SYSTEM_STAFF,
+    ),
     caseRepresentatives: transformCaseRepresentatives(theCase),
   }
 }
