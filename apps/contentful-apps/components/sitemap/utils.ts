@@ -1,3 +1,4 @@
+import { EntryProps } from 'contentful-management'
 import { FieldExtensionSDK } from '@contentful/app-sdk'
 
 import {
@@ -272,6 +273,7 @@ export const addNode = async (
           slugEN,
           description,
           descriptionEN,
+          status: 'draft',
         }
       : {
           type: TreeNodeType.URL,
@@ -280,6 +282,7 @@ export const addNode = async (
           url,
           urlEN,
           urlType,
+          status: 'draft',
         }),
   }
   parentNode.childNodes = [...parentNode.childNodes].concat(node)
@@ -292,4 +295,81 @@ export const updateNode = (parentNode: Tree, updatedNode: TreeNode) => {
   if (nodeIndex >= 0) {
     parentNode.childNodes[nodeIndex] = updatedNode
   }
+}
+
+export const findEntryNodePaths = (
+  root: Tree,
+  entryId: string,
+  entries: Record<string, EntryProps>,
+  language: 'is-IS' | 'en' = 'is-IS',
+) => {
+  const nodePaths: { node: TreeNode; path: string[] }[] = []
+
+  // DFS down until we find a node with the entryId and keep track of the path
+  const findEntryNodePathsRecursive = (
+    node: TreeNode,
+    currentPath: string[],
+  ) => {
+    if (node.type === TreeNodeType.ENTRY && node.entryId === entryId) {
+      nodePaths.push({
+        node,
+        path: [
+          ...currentPath,
+          entries[entryId]?.fields?.title?.[language] ?? '',
+        ],
+      })
+      return
+    }
+
+    if (node.type === TreeNodeType.CATEGORY) {
+      for (const child of node.childNodes) {
+        findEntryNodePathsRecursive(child, [
+          ...currentPath,
+          language === 'is-IS' ? node.label : node.labelEN,
+        ])
+      }
+    }
+  }
+
+  for (const child of root.childNodes) {
+    findEntryNodePathsRecursive(child, [])
+  }
+
+  return nodePaths
+}
+
+export const extractNodeContent = (
+  node: TreeNode,
+  language: 'is-IS' | 'en',
+  entries: Record<string, EntryProps>,
+) => {
+  const label: string =
+    node.type !== TreeNodeType.ENTRY
+      ? language === 'en'
+        ? node.labelEN
+        : node.label
+      : entries[node.entryId]?.fields?.title?.[language] || ''
+  const slug =
+    node.type === TreeNodeType.CATEGORY
+      ? language === 'en'
+        ? node.slugEN
+        : node.slug
+      : node.type === TreeNodeType.URL
+      ? language === 'en'
+        ? node.urlEN
+        : node.url
+      : entries[node.entryId]?.fields?.slug?.[language] || ''
+
+  return { label, slug }
+}
+
+export const findParentNode = (root: Tree, nodeId: number) => {
+  for (const child of root.childNodes) {
+    if (child.id === nodeId) {
+      return root
+    }
+    const parent = findParentNode(child, nodeId)
+    if (parent) return parent
+  }
+  return null
 }
