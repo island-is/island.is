@@ -68,6 +68,13 @@ jobs:
           git config --global user.name "${ACTOR} (automated)"
           echo "${MERGE_COMMIT_SHA}"
           echo "${HEAD_REF}"
+
+          # Check for differences between the merge_commit and release branch
+          if git diff --quiet "$MERGE_COMMIT_SHA" "$TARGET_BRANCH"; then
+              echo "No differences found between '$MERGE_COMMIT_SHA' and '$TARGET_BRANCH' branch"
+              exit 0
+          fi
+
           git checkout "${TARGET_BRANCH}"
           git checkout -b "${PR_BRANCH}"
           git cherry-pick -x "${MERGE_COMMIT_SHA}"
@@ -79,7 +86,7 @@ jobs:
           echo "PR=${PR}" >> "$GITHUB_OUTPUT"
 
       - name: Send slack message
-        if: ${{ steps.unicorn_affected.outputs.IS_UNICORN == 'true' }}
+        if: ${{ steps.unicorn_affected.outputs.IS_UNICORN == 'true' && steps.create_pr.outputs.PR != '' }}
         uses: slackapi/slack-github-action@v2.0.0
         with:
           method: chat.postMessage
