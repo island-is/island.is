@@ -61,6 +61,7 @@ import { Institution } from '../institution'
 import { PoliceDocument, PoliceDocumentType, PoliceService } from '../police'
 import { Subpoena, SubpoenaService } from '../subpoena'
 import { User, UserService } from '../user'
+import { Verdict } from '../verdict/models/verdict.model'
 import { InternalCreateCaseDto } from './dto/internalCreateCase.dto'
 import { archiveFilter } from './filters/case.archiveFilter'
 import { ArchiveResponse } from './models/archive.response'
@@ -1337,6 +1338,11 @@ export class InternalCaseService {
               model: Subpoena,
               as: 'subpoenas',
               order: [['created', 'DESC']],
+            },
+            {
+              model: Verdict,
+              as: 'verdict',
+              required: false,
             },
           ],
         },

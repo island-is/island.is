@@ -34,6 +34,7 @@ export enum ServiceStatus {
   IN_PERSON = 'IN_PERSON',
   FAILED = 'FAILED',
   EXPIRED = 'EXPIRED', // If a subpoena expires
+  NOT_APPLICABLE = 'NOT_APPLICABLE', // Note: ONLY used for old verdicts prior to delivering verdicts automatically to the police
 }
 
 export enum PunishmentType {

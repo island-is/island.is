@@ -76,6 +76,7 @@ import { Institution } from '../institution'
 import { Notification } from '../notification'
 import { Subpoena, SubpoenaService } from '../subpoena'
 import { User } from '../user'
+import { Verdict } from '../verdict/models/verdict.model'
 import { VerdictService } from '../verdict/verdict.service'
 import { Victim } from '../victim/models/victim.model'
 import { CreateCaseDto } from './dto/createCase.dto'
@@ -314,6 +315,11 @@ export const include: Includeable[] = [
         where: { eventType: defendantEventTypes },
         separate: true,
       },
+      {
+        model: Verdict,
+        as: 'verdict',
+        required: false,
+      },
     ],
     separate: true,
   },
@@ -398,6 +404,11 @@ export const include: Includeable[] = [
             order: [['created', 'DESC']],
             separate: true,
           },
+          {
+            model: Verdict,
+            as: 'verdict',
+            required: false,
+          },
         ],
         separate: true,
       },
@@ -456,6 +467,11 @@ export const caseListInclude: Includeable[] = [
         required: false,
         order: [['created', 'DESC']],
         separate: true,
+      },
+      {
+        model: Verdict,
+        as: 'verdict',
+        required: false,
       },
     ],
     separate: true,

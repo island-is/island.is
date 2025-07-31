@@ -57,7 +57,7 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
   const appealExpirationInfo = getAppealExpirationInfo(
     defendant.verdictAppealDeadline,
     defendant.isVerdictAppealDeadlineExpired,
-    defendant.serviceRequirement,
+    defendant.verdict?.serviceRequirement,
   )
 
   return (
@@ -104,10 +104,14 @@ export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
         </Text>
       )}
       {displayVerdictViewDate &&
-        defendant.serviceRequirement &&
-        defendant.serviceRequirement !== ServiceRequirement.NOT_REQUIRED && (
+        defendant.verdict?.serviceRequirement &&
+        defendant.verdict?.serviceRequirement !==
+          ServiceRequirement.NOT_REQUIRED && (
           <Text marginTop={1} fontWeight="semiBold">
-            {getVerdictViewDateText(formatMessage, defendant.verdictViewDate)}
+            {getVerdictViewDateText(
+              formatMessage,
+              defendant.verdict?.serviceDate,
+            )}
           </Text>
         )}
       {displaySentToPrisonAdminDate && defendant.sentToPrisonAdminDate && (
