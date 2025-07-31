@@ -286,6 +286,9 @@ export class PaymentFlowService {
           {
             model: PaymentFlowCharge,
           },
+          {
+            model: PaymentFlowFjsChargeConfirmation,
+          },
         ],
       })
     )?.toJSON()
@@ -604,8 +607,58 @@ export class PaymentFlowService {
     }
   }
 
-  async deletePaymentFlow(id: string) {
-    // TODO
+  async deletePaymentFlow(id: string): Promise<GetPaymentFlowDTO> {
+    const paymentFlowDetails = await this.getPaymentFlowDetails(id)
+
+    const { paymentStatus, updatedAt } = await this.getPaymentFlowStatus(
+      paymentFlowDetails,
+    )
+
+    if (paymentStatus === PaymentStatus.PAID) {
+      throw new BadRequestException(PaymentServiceCode.PaymentFlowAlreadyPaid)
+    }
+
+    // Construct the DTO to be returned before deleting
+    const paymentDetails = await this.getPaymentFlowChargeDetails(
+      paymentFlowDetails.organisationId,
+      paymentFlowDetails.charges,
+    )
+    const payerName = await this.getPayerName(
+      paymentFlowDetails.payerNationalId,
+    )
+
+    const paymentFlowDTO: GetPaymentFlowDTO = {
+      ...paymentFlowDetails,
+      productTitle:
+        paymentFlowDetails.productTitle ?? paymentDetails.firstProductTitle,
+      productPrice: paymentDetails.totalPrice,
+      payerName,
+      availablePaymentMethods:
+        paymentFlowDetails.availablePaymentMethods as PaymentMethod[],
+      paymentStatus,
+      updatedAt,
+    }
+
+    if (paymentFlowDetails.onUpdateUrl) {
+      await this.logPaymentFlowUpdate({
+        paymentFlowId: id,
+        type: 'deleted',
+        occurredAt: new Date(),
+        paymentMethod: 'system' as PaymentMethod,
+        reason: 'deleted_admin', // TODO: connect with systemId when we have machine clients?
+        message: 'Payment flow deleted by admin action.', // TODO: same as above?
+      })
+    }
+
+    if (paymentFlowDetails.fjsChargeConfirmation) {
+      await this.deletePaymentCharge(id)
+    }
+
+    // By deleting the payment flow, the related charges, events, and other
+    // associated records will be deleted automatically by the database cascade.
+    await this.paymentFlowModel.destroy({ where: { id } })
+
+    return paymentFlowDTO
   }
 
   async deletePaymentConfirmation(
