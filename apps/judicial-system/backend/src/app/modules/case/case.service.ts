@@ -2146,7 +2146,7 @@ export class CaseService {
             ),
           )
         }
-        const updatedCase = await this.findById(theCase.id, true)
+        const updatedCase = await this.findById(theCase.id, true, transaction)
 
         await this.handleEventLogUpdates(
           theCase,
