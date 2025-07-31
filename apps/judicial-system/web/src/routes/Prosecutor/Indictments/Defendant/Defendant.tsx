@@ -53,6 +53,18 @@ export interface PoliceCase {
   date?: Date
 }
 
+const compareIsoStringDates = (
+  a: string | undefined | null,
+  b: string | undefined | null,
+) => {
+  // We assume that dates are in ISO format (YYYY-MM-DD)
+  // We want info with missing dates to be at the end of the list and '9' is sufficient for that
+  const aDate = a ?? '9'
+  const bDate = b ?? '9'
+
+  return aDate.localeCompare(bDate)
+}
+
 const getPoliceCases = (theCase: Case): PoliceCase[] =>
   theCase.policeCaseNumbers && theCase.policeCaseNumbers.length > 0
     ? theCase.policeCaseNumbers.map((policeCaseNumber) => ({
@@ -149,21 +161,16 @@ const Defendant = () => {
   })
 
   const policeCaseInfo = useMemo(() => {
-    if (!data || !data.policeCaseInfo || data.policeCaseInfo.length === 0) {
+    if (!data || !data.policeCaseInfo) {
       return []
     }
 
-    const [first, ...rest] = data.policeCaseInfo
+    // Sort modifies an array in place, so we create a copy first
+    const sorted = [...data.policeCaseInfo].sort((a, b) =>
+      compareIsoStringDates(a.date, b.date),
+    )
 
-    const sortedRest = rest.sort((a, b) => {
-      // We want info with missing dates to be at the end of the list
-      const aDate = a.date ?? '9'
-      const bDate = b.date ?? '9'
-
-      return aDate.localeCompare(bDate)
-    })
-
-    return [first, ...sortedRest]
+    return sorted
   }, [data])
 
   const getPoliceCasesForUpdate = (
@@ -204,13 +211,17 @@ const Defendant = () => {
       crimeScenes[number] = crimeScene
     })
 
-    const sortedPoliceCaseNumbers = policeCaseNumbers.sort((a, b) => {
-      // We want police case numbers with missing dates to be at the end of the list
-      const aDate = crimeScenes[a].date?.toISOString() ?? '9'
-      const bDate = crimeScenes[b].date?.toISOString() ?? '9'
+    const [first, ...rest] = policeCaseNumbers
 
-      return aDate.localeCompare(bDate)
-    })
+    const sortedPoliceCaseNumbers = [
+      first,
+      ...rest.sort((a, b) =>
+        compareIsoStringDates(
+          crimeScenes[a].date?.toISOString(),
+          crimeScenes[b].date?.toISOString(),
+        ),
+      ),
+    ]
 
     return [sortedPoliceCaseNumbers, indictmentSubtypes, crimeScenes]
   }
