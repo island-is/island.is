@@ -165,6 +165,18 @@ export class ApplicationsController {
     return await this.applicationsService.saveScreen(screenId, screenDto)
   }
 
+  @ApiOperation({ summary: 'Set section to completed' })
+  @ApiCreatedResponse({
+    description: 'Section set to completed successfully',
+  })
+  @Put('submitSection/:applicationId/:sectionId')
+  async submitSection(
+    @Param('applicationId') applicationId: string,
+    @Param('sectionId') sectionId: string,
+  ): Promise<void> {
+    await this.applicationsService.submitSection(applicationId, sectionId)
+  }
+
   // @ApiOperation({ summary: 'Get all applications by user and formId' })
   // @ApiOkResponse({
   //   type: ApplicationResponseDto,
