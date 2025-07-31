@@ -26,6 +26,7 @@ const allowMultiple: EventType[] = [
   EventType.INDICTMENT_CONFIRMED,
   EventType.COURT_DATE_SCHEDULED,
   EventType.INDICTMENT_CRIMINAL_RECORD_UPDATED_BY_COURT,
+  EventType.REQUEST_COMPLETED,
 ]
 
 const allowOnePerUserRole: EventType[] = [EventType.APPEAL_RESULT_ACCESSED]
