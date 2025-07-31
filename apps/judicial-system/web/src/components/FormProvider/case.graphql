@@ -278,14 +278,6 @@ query Case($input: CaseQueryInput!) {
     requestAppealRulingNotToBePublished
     indictmentDeniedExplanation
     indictmentReturnedExplanation
-    eventLogs {
-      id
-      created
-      caseId
-      eventType
-      nationalId
-      userRole
-    }
     arraignmentDate {
       date
       location
@@ -430,6 +422,11 @@ query Case($input: CaseQueryInput!) {
     hasCivilClaims
     isCompletedWithoutRuling
     caseSentToCourtDate
+    indictmentReviewedDate
+    indictmentSentToPublicProsecutorDate
+    defenceAppealResultAccessDate
+    prosecutionAppealResultAccessDate
+    prisonStaffAppealResultAccessDate
     caseRepresentatives {
       name
       nationalId

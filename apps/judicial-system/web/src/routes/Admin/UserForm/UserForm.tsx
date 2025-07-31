@@ -167,8 +167,8 @@ export const UserForm: FC<Props> = ({
 
   const [user, setUser] = useState<User>({
     ...existingUser,
-    nationalId: formatNationalId(existingUser.nationalId),
-    mobileNumber: formatPhoneNumber(existingUser.mobileNumber),
+    nationalId: existingUser.nationalId,
+    mobileNumber: existingUser.mobileNumber,
   })
 
   const { personData, personError } = useNationalRegistry(user.nationalId)
@@ -265,7 +265,7 @@ export const UserForm: FC<Props> = ({
             component={Input}
             mask={constants.SSN}
             replacement={{ _: /\d/ }}
-            value={user.nationalId || ''}
+            value={formatNationalId(user.nationalId)}
             onChange={(event) =>
               storeAndRemoveErrorIfValid(
                 'nationalId',
@@ -395,7 +395,7 @@ export const UserForm: FC<Props> = ({
             component={Input}
             mask={constants.PHONE_NUMBER}
             replacement={{ _: /\d/ }}
-            value={user.mobileNumber || ''}
+            value={formatPhoneNumber(user.mobileNumber)}
             onChange={(event) =>
               storeAndRemoveErrorIfValid(
                 'mobileNumber',

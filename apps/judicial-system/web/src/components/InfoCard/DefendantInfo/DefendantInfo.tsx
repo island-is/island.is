@@ -1,5 +1,5 @@
 import { FC } from 'react'
-import { IntlShape, useIntl } from 'react-intl'
+import { useIntl } from 'react-intl'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { formatDate, formatDOB } from '@island.is/judicial-system/formatters'
@@ -11,6 +11,10 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import RenderPersonalData from '../RenderPersonalInfo/RenderPersonalInfo'
+import {
+  getAppealExpirationInfo,
+  getVerdictViewDateText,
+} from './DefendantInfo.logic'
 import { strings as infoCardStrings } from '../useInfoCardItems.strings'
 import { strings } from './DefendantInfo.strings'
 
@@ -28,41 +32,6 @@ interface DefendantInfoProps {
   displayVerdictViewDate?: boolean
   displaySentToPrisonAdminDate?: boolean
   defender?: Defender
-}
-
-export const getAppealExpirationInfo = (
-  verdictAppealDeadline?: string | null,
-  isVerdictAppealDeadlineExpired?: boolean | null,
-  serviceRequirement?: ServiceRequirement | null,
-) => {
-  if (serviceRequirement === ServiceRequirement.NOT_REQUIRED) {
-    return { message: strings.serviceNotRequired, data: null }
-  }
-
-  if (!verdictAppealDeadline) {
-    return { message: strings.appealDateNotBegun, date: null }
-  }
-
-  const expiryDate = new Date(verdictAppealDeadline)
-
-  const message = isVerdictAppealDeadlineExpired
-    ? strings.appealDateExpired
-    : strings.appealExpirationDate
-
-  return { message, date: formatDate(expiryDate) }
-}
-
-const getVerdictViewDateText = (
-  formatMessage: IntlShape['formatMessage'],
-  verdictViewDate?: string | null,
-): string => {
-  if (verdictViewDate) {
-    return formatMessage(strings.verdictDisplayedDate, {
-      date: formatDate(verdictViewDate, 'PPP'),
-    })
-  } else {
-    return formatMessage(strings.serviceRequired)
-  }
 }
 
 export const DefendantInfo: FC<DefendantInfoProps> = (props) => {
