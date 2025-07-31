@@ -26,8 +26,6 @@ import CountAndDays from './components/CountAndDays'
 import { FiltersPanel } from './components/FiltersPanel'
 import { StatisticsCSVButton } from './components/StatisticsCSVButton'
 import { useCaseStatisticsQuery } from './getCaseStatistics.generated'
-import { useIndictmentCaseStatisticsQuery } from './getIndictmentCaseStatistics.generated'
-import { useRequestCaseStatisticsQuery } from './getRequestCaseStatistics.generated'
 import { mapServiceStatusTitle } from './helpers'
 import { strings } from './Statistics.strings'
 import * as styles from './Statistics.css'
@@ -60,21 +58,6 @@ const Statistics = () => {
     },
     fetchPolicy: 'cache-and-network',
   })
-
-  const { data: indictments } = useIndictmentCaseStatisticsQuery({
-    variables: {
-      input: queryVariables,
-    },
-    fetchPolicy: 'cache-and-network',
-  })
-
-  const { data: requestCases } = useRequestCaseStatisticsQuery({
-    variables: {
-      input: queryVariables,
-    },
-    fetchPolicy: 'cache-and-network',
-  })
-  console.log({ indictments, requestCases })
 
   useEffect(() => {
     if (data?.caseStatistics) {
