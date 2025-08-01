@@ -46,29 +46,52 @@ export const needAssignment = (
   return !userHasPassport && thereIsSecondGuardian
 }
 
-export const hasDiscount = (answers: FormValue, externalData: ExternalData) => {
+export const isChild = (answers: FormValue): boolean => {
   const isChildPassport = (answers.passport as Passport)?.childPassport !== ''
+  return isChildPassport
+}
+
+export const isDisabled = (answers: FormValue): boolean => {
   const hasDisabilityDiscount =
     (answers.passport as Passport)?.userPassport !== '' &&
     (answers.personalInfo as PersonalInfo)?.disabilityCheckbox?.length &&
     (answers.personalInfo as PersonalInfo)?.hasDisabilityLicense
+  return !!hasDisabilityDiscount
+}
+
+export const isElder = (externalData: ExternalData): boolean => {
   const age = (
     externalData.nationalRegistry?.data as {
       age?: number
     }
   )?.age
-  const isElder = age ? age >= 67 : false
-  return hasDisabilityDiscount || isChildPassport || isElder
+  const elder = age ? age >= 67 : false
+  return elder
+}
+
+export const hasDiscount = (answers: FormValue, externalData: ExternalData) => {
+  const child = isChild(answers)
+  const disabled = isDisabled(answers)
+  const elder = isElder(externalData)
+  return child || disabled || elder
 }
 
 export const getChargeCode = (
   answers: FormValue,
   externalData: ExternalData,
-  type?: string,
+  options?: {
+    type?: string
+    withDiscount?: boolean
+  },
 ): string => {
-  const withDiscount = hasDiscount(answers, externalData)
+  const withDiscount =
+    typeof options?.withDiscount === 'boolean'
+      ? options.withDiscount
+      : hasDiscount(answers, externalData)
 
-  const serviceType = type ? type : (answers.service as Service).type
+  const serviceType = options?.type
+    ? options.type
+    : (answers.service as Service).type
 
   const chargeCode = withDiscount
     ? serviceType === Services.REGULAR
@@ -96,3 +119,5 @@ export const getPrice = (
 
   return getCurrencyString(chargeItem?.priceAmount || 0)
 }
+
+export const ageCanHaveDiscount = (age: number) => age < 18 || age >= 67
