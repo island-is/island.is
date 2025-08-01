@@ -1,5 +1,5 @@
 import fetch from 'isomorphic-fetch'
-import jwt from 'jsonwebtoken'
+import jwt, { JwtPayload } from 'jsonwebtoken'
 import jwksClient from 'jwks-rsa'
 import { uuid } from 'uuidv4'
 
@@ -96,7 +96,7 @@ export class AuthService {
     const decodedToken = jwt.decode(token, { complete: true })
 
     if (decodedToken && typeof decodedToken === 'object') {
-      const payload = decodedToken.payload
+      const payload = decodedToken.payload as JwtPayload
 
       if (payload && 'exp' in payload) {
         const expiredTimestamp = payload['exp']

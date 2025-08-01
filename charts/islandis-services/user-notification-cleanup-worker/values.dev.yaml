@@ -19,7 +19,7 @@ global:
 name: 'user-notification-cleanup-worker'
 args:
   - '--no-experimental-fetch'
-  - 'main.js'
+  - 'main.cjs'
   - '--job=cleanup'
 command:
   - 'node'

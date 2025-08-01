@@ -47,5 +47,6 @@
     "safer-buffer",
     "@mikro-orm/core"
   ],
-  "keepNames": true
+  "keepNames": true,
+  "format": ["cjs"]
 }

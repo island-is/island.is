@@ -1,0 +1,15 @@
+import { Meta, Story, Canvas } from '@storybook/blocks'
+import * as PageStories from './Page.stories'
+
+import { Page } from './Page'
+import { Text } from '../Text/Text'
+
+<Meta of={PageStories} />
+
+# Page
+
+Used to wrap each project's app with this global wrapper component.
+
+<Canvas>
+  <Story of={PageStories.Default} />
+</Canvas>
