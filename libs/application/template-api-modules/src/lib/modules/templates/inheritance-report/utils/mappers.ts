@@ -61,6 +61,9 @@ export const estateTransformer = (estate: EstateInfo): InheritanceData => {
   const realEstate = estate.assets.map((el) => initialMapper<EstateAsset>(el))
   const vehicles = estate.vehicles.map((el) => initialMapper<EstateAsset>(el))
   const guns = estate.guns.map((el) => initialMapper<EstateAsset>(el))
+  const otherAssets = estate.otherAssets.map((el) =>
+    initialMapper<EstateAsset>(el),
+  )
   const estateMembers = estate.estateMembers.map((el) => estateMemberMapper(el))
 
   const data = {
@@ -76,6 +79,9 @@ export const estateTransformer = (estate: EstateInfo): InheritanceData => {
     },
     guns: {
       data: guns,
+    },
+    otherAssets: {
+      data: otherAssets,
     },
   }
 
