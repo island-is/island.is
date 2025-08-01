@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   Param,
   Post,
@@ -177,18 +178,13 @@ export class ApplicationsController {
     await this.applicationsService.submitSection(applicationId, sectionId)
   }
 
-  // @ApiOperation({ summary: 'Get all applications by user and formId' })
-  // @ApiOkResponse({
-  //   type: ApplicationResponseDto,
-  //   description: 'Get all applications by user and formId',
-  // })
-  // @ApiParam({ name: 'formId', type: String })
-  // @Get('nationalId/:nationalId/formId/:formId')
-  // async findAllByUserAndFormId(
-  //   @Param('formId') formId: string,
-  //   @CurrentUser()
-  //   user: User,
-  // ): Promise<ApplicationResponseDto> {
-  //   return await this.applicationsService.findAllByUserAndFormId(user, formId)
-  // }
+  @ApiOperation({ summary: 'Delete an application by id' })
+  @ApiNoContentResponse({
+    description: 'Delete an application by id',
+  })
+  @ApiParam({ name: 'id', type: String })
+  @Delete('deleteApplication/:id')
+  async deleteApplication(@Param('id') id: string): Promise<void> {
+    return await this.applicationsService.deleteApplication(id)
+  }
 }
