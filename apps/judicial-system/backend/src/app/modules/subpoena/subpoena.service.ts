@@ -544,6 +544,13 @@ export class SubpoenaService {
       },
     }
 
+    // fetch all cases with the base filter to fetch the earliest case
+    const allSubpoenas = await this.subpoenaModel.findAll({
+      where,
+      order: [['created', 'ASC']],
+    })
+    const earliestCase = allSubpoenas.length > 0 ? allSubpoenas[0] : undefined
+
     if (from || to) {
       where.created = {}
       if (from) {
@@ -570,7 +577,7 @@ export class SubpoenaService {
       })
     }
 
-    const count = await this.subpoenaModel.count({
+    const subpoenas = await this.subpoenaModel.findAll({
       where,
       include,
     })
@@ -608,8 +615,9 @@ export class SubpoenaService {
     )
 
     const stats: SubpoenaStatistics = {
-      count,
+      count: subpoenas.length,
       serviceStatusStatistics,
+      minDate: earliestCase?.created ?? new Date(),
     }
 
     return stats

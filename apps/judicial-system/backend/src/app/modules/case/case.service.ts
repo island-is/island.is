@@ -2449,6 +2449,14 @@ export class CaseService {
       type: [CaseType.INDICTMENT],
     }
 
+    // fetch all cases with the base filter to fetch the earliest case
+    const allCases = await this.caseModel.findAll({
+      where,
+      order: [['created', 'ASC']],
+    })
+    const earliestCase = allCases.length > 0 ? allCases[0] : undefined
+
+    // apply dto filters
     if (institutionId) {
       where = {
         ...where,
@@ -2471,19 +2479,16 @@ export class CaseService {
           },
         },
       ],
+      order: [['created', 'ASC']],
     })
 
     const filterOnSentToCourt = () => {
       if (sentToCourt) {
-        console.log({ sentToCourt })
-        const sortedCase = cases.sort(
-          (a, b) => a.created.getTime() - b.created.getTime(),
-        )
-        if (!sortedCase.length) {
+        if (!cases.length) {
           return undefined
         }
 
-        const start = sentToCourt.fromDate ?? sortedCase[0]?.created
+        const start = sentToCourt.fromDate ?? cases[0]?.created
         const end = sentToCourt.toDate ?? new Date()
 
         return cases.filter(({ eventLogs }) =>
@@ -2499,7 +2504,11 @@ export class CaseService {
       }
     }
     const filteredCases = filterOnSentToCourt() ?? cases
-    return this.getIndictmentStatistics(filteredCases)
+    const indictmentCaseStatistics = this.getIndictmentStatistics(filteredCases)
+    return {
+      ...indictmentCaseStatistics,
+      minDate: earliestCase?.created ?? new Date(),
+    }
   }
 
   async getSubpoenaStatistics(
@@ -2532,6 +2541,14 @@ export class CaseService {
       },
     }
 
+    // fetch all cases with the base filter to fetch the earliest case
+    const allCases = await this.caseModel.findAll({
+      where,
+      order: [['created', 'ASC']],
+    })
+    const earliestCase = allCases.length > 0 ? allCases[0] : undefined
+
+    // apply dto filters
     if (created?.fromDate || created?.toDate) {
       const { fromDate, toDate } = created
       where.created = {}
@@ -2592,7 +2609,14 @@ export class CaseService {
       }
     }
     const filteredCases = filterOnSentToCourt() ?? cases
-    return this.getRequestCaseStatistics(filteredCases)
+    const requestCaseStatistics = this.getRequestCaseStatistics(filteredCases)
+
+    const res = {
+      ...requestCaseStatistics,
+      minDate: earliestCase?.created ?? new Date(),
+    }
+    console.log(res)
+    return res
   }
 
   async getCaseStatistics(
@@ -2659,15 +2683,17 @@ export class CaseService {
 
     const stats: CaseStatistics = {
       count: cases.length,
-      requestCases,
-      indictmentCases,
+      requestCases: { ...requestCases, minDate: new Date() },
+      indictmentCases: { ...indictmentCases, minDate: new Date() },
       subpoenas,
     }
 
     return stats
   }
 
-  getIndictmentStatistics(cases: Case[]): IndictmentCaseStatistics {
+  getIndictmentStatistics(
+    cases: Case[],
+  ): Omit<IndictmentCaseStatistics, 'minDate'> {
     const inProgressCount = cases.filter(
       (caseItem) => caseItem.state !== CaseState.COMPLETED,
     ).length
@@ -2708,7 +2734,9 @@ export class CaseService {
     }
   }
 
-  getRequestCaseStatistics(cases: Case[]): RequestCaseStatistics {
+  getRequestCaseStatistics(
+    cases: Case[],
+  ): Omit<RequestCaseStatistics, 'minDate'> {
     const inProgressCount = cases.filter(
       (c) => !isCompletedCase(c.state),
     ).length

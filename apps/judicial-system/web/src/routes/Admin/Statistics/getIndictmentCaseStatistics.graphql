@@ -5,5 +5,6 @@ query IndictmentCaseStatistics($input: IndictmentStatisticsInput) {
     rulingCount
     averageRulingTimeMs
     averageRulingTimeDays
+    minDate
   }
 }

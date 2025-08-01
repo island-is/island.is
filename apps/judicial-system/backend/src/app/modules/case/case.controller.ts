@@ -971,15 +971,17 @@ export class CaseController {
     type: RequestCaseStatistics,
     description: 'Gets court centered statistics for requests cases',
   })
-  getRequestCaseStatistics(
+  async getRequestCaseStatistics(
     @Query('query') query?: RequestStatisticsDto,
   ): Promise<RequestCaseStatistics> {
     this.logger.debug('Getting statistics for request cases')
 
-    return this.caseService.getRequestCasesStatistics(
+    const test = await this.caseService.getRequestCasesStatistics(
       query?.created,
       query?.sentToCourt,
       query?.institutionId,
     )
+    console.log({ test })
+    return test
   }
 }

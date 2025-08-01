@@ -71,6 +71,7 @@ const requestFilterKeys = [
   'sentToCourt',
 ] as (keyof RequestFilterType)[]
 
+
 const RequestStatistics = () => {
   const [stats, setStats] = useState<RequestCaseStatistics | undefined>()
   const [filters, setFilters] = useState<RequestFilterType>({})
@@ -83,6 +84,10 @@ const RequestStatistics = () => {
     }
   }, [filters])
 
+  // Currently always aggregating on the server
+  // should we create endpoint to return ranges for each field, just send the dataset and get the range from the raw data
+  // for simplicity, I think we should just return earliest creation date for request, indictment and subpoena - flag that and use it as min date in the
+  // date pickers
   const { data, loading } = useRequestCaseStatisticsQuery({
     variables: {
       input: queryVariables,
