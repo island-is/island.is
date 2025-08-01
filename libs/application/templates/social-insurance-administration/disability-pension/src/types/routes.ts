@@ -1,0 +1,33 @@
+export enum SectionRouteEnum {
+  ABROAD_PAYMENT = 'abroadPayments',
+  EMPLOYMENT_PARTICIPATION = 'employmentParticipation',
+  LIVED_ABROAD = 'livedAbroad',
+  PAID_WORK = 'paidWork',
+  DISABILITY_EVALUATION = 'disabilityEvaluation',
+  INCOME_PLAN_INSTRUCTION = 'incomePlanInstruction',
+  INCOME_PLAN = 'incomePlan',
+  PAYMENT_INFO = 'paymentInfo',
+  BASIC_INFO = 'basicInfo',
+  PERSONAL_INFO = 'personalInfo',
+  SELF_EVALUATION = 'selfEvaluation',
+  CAPABILITY_IMPAIRMENT = 'capabilityImpairment',
+  DISABILITY_CERTIFICATE = 'disabilityCertificate',
+  EXTRA_INFO = 'extraInfo',
+  OVERVIEW = 'overview',
+
+  BACKGROUND_INFO = 'backgroundInfo',
+  BACKGROUND_INFO_RESIDENCE = 'backgroundInfoResidence',
+  BACKGROUND_INFO_CHILDREN = 'backgroundInfoChildren',
+  BACKGROUND_INFO_ICELANDIC_CAPABILITY = 'backgroundInfoIcelandicCapability',
+  BACKGROUND_INFO_MARITAL_STATUS = 'backgroundInfoMaritalStatus',
+  BACKGROUND_INFO_LANGUAGE = 'backgroundInfoLanguage',
+  BACKGROUND_INFO_EDUCATION_LEVEL = 'backgroundInfoEducationLevel',
+
+  BACKGROUND_INFO_EMPLOYMENT = 'backgroundInfoEmployment',
+  BACKGROUND_INFO_PREVIOUS_EMPLOYMENT = 'backgroundInfoPreviousEmployment',
+
+  BACKGROUND_INFO_EMPLOYMENT_CAPABILITY = 'backgroundInfoEmploymentCapability',
+  BACKGROUND_INFO_EMPLOYMENT_IMPORTANCE = 'backgroundInfoEmploymentImportance',
+  BACKGROUND_INFO_REHABILITATION_OR_THERAPY = 'backgroundInfoRehabilitationOrTherapy',
+  BACKGROUND_INFO_BIGGEST_ISSUE = 'backgroundInfoBiggestIssue',
+}
