@@ -6,6 +6,7 @@ import { handle4xx } from '../../utils/errorHandler'
 import {
   ApplicationsApi,
   ApplicationsControllerCreateRequest,
+  ApplicationsControllerDeleteApplicationRequest,
   ApplicationsControllerFindAllByOrganizationRequest,
   ApplicationsControllerFindAllBySlugAndUserRequest,
   ApplicationsControllerGetApplicationRequest,
@@ -146,5 +147,13 @@ export class ApplicationsService {
     ).applicationsControllerSubmitSection(
       input as ApplicationsControllerSubmitSectionRequest,
     )
+  }
+
+  async deleteApplication(auth: User, input: string): Promise<void> {
+    await this.applicationsApiWithAuth(
+      auth,
+    ).applicationsControllerDeleteApplication({
+      id: input,
+    } as ApplicationsControllerDeleteApplicationRequest)
   }
 }
