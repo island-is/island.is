@@ -2479,7 +2479,6 @@ export class CaseService {
           },
         },
       ],
-      order: [['created', 'ASC']],
     })
 
     const filterOnSentToCourt = () => {
