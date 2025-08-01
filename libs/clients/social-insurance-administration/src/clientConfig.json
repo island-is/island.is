@@ -816,6 +816,110 @@
         }
       }
     },
+    "/api/protected/v1/Application/{applicationType}/contract": {
+      "get": {
+        "tags": ["Application"],
+        "summary": "Returns the contract associated with application type. This is used for developers to retrieve the\ncorrect contract to send in via X-Road.",
+        "parameters": [
+          {
+            "name": "applicationType",
+            "in": "path",
+            "required": true,
+            "schema": { "type": "string" }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": { "schema": { "type": "string" } },
+              "application/json": { "schema": { "type": "string" } },
+              "text/json": { "schema": { "type": "string" } }
+            }
+          }
+        }
+      }
+    },
     "/api/protected/v1/Application/{applicationGuid}/documents": {
       "post": {
         "tags": ["Application"],
@@ -3803,10 +3907,134 @@
         }
       }
     },
-    "/api/protected/v1/Questionnaires/selfassessment": {
+    "/api/protected/v1/Questionnaires/medicalandrehabilitationpayments/selfassessment": {
       "get": {
         "tags": ["Questionnaires"],
-        "summary": "Returns a self assessment questionnaire (ísl. sjálfsmat)\n<param name=\"languages\">A list of questionnaire languages to return. Defaults to \"IS\", \"EN\"</param>",
+        "summary": "Returns a self assessment questionnaire (ísl. sjálfsmat) for medical and rehabilitation payments\n<param name=\"languages\">A list of questionnaire languages to return. Defaults to \"IS\", \"EN\"</param>",
+        "parameters": [
+          {
+            "name": "languages",
+            "in": "query",
+            "schema": { "type": "array", "items": { "type": "string" } }
+          }
+        ],
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Questionnaires.Models.QuestionnaireDto"
+                  }
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Questionnaires.Models.QuestionnaireDto"
+                  }
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "type": "array",
+                  "items": {
+                    "$ref": "#/components/schemas/TrWeb.Api.Services.Domain.Questionnaires.Models.QuestionnaireDto"
+                  }
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/protected/v1/Questionnaires/disabilitypension/selfassessment": {
+      "get": {
+        "tags": ["Questionnaires"],
+        "summary": "Returns a self assessment questionnaire (ísl. sjálfsmat) for disability pension\n<param name=\"languages\">A list of questionnaire languages to return. Defaults to \"IS\", \"EN\"</param>",
         "parameters": [
           {
             "name": "languages",
@@ -5448,6 +5676,14 @@
         },
         "additionalProperties": false
       },
+      "TrWeb.External.Models.ServicePortal.AbilityRating": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "integer", "format": "int32" },
+          "score": { "type": "integer", "format": "int32" }
+        },
+        "additionalProperties": false
+      },
       "TrWeb.External.Models.ServicePortal.BaseCertificate": {
         "type": "object",
         "properties": {
@@ -5503,17 +5739,6 @@
           "phoneNumber": { "type": "string", "nullable": true },
           "email": { "type": "string", "nullable": true },
           "workplace": { "type": "string", "nullable": true }
-        },
-        "additionalProperties": false
-      },
-      "TrWeb.External.Models.ServicePortal.CertificateInformation": {
-        "type": "object",
-        "properties": {
-          "doctorName": { "type": "string", "nullable": true },
-          "position": { "type": "string", "nullable": true },
-          "institution": { "type": "string", "nullable": true },
-          "submissionDate": { "type": "string", "format": "date-time" },
-          "hasCompletedFunctionalAssessment": { "type": "boolean" }
         },
         "additionalProperties": false
       },
@@ -5643,7 +5868,7 @@
           "caseManager": {
             "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.CaseManager"
           },
-          "confimationDate": {
+          "confirmationDate": {
             "type": "string",
             "format": "date-time",
             "nullable": true
@@ -5670,12 +5895,16 @@
         "properties": {
           "icd": {
             "type": "array",
-            "items": { "type": "string" },
+            "items": {
+              "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.IcdCode"
+            },
             "nullable": true
           },
           "others": {
             "type": "array",
-            "items": { "type": "string" },
+            "items": {
+              "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.IcdCode"
+            },
             "nullable": true
           }
         },
@@ -5685,7 +5914,16 @@
         "type": "object",
         "properties": {
           "value": { "type": "integer", "format": "int32", "nullable": true },
+          "displayValue": { "type": "string", "nullable": true },
           "explanation": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.External.Models.ServicePortal.DisabilityDiagnosis": {
+        "type": "object",
+        "properties": {
+          "description": { "type": "string", "nullable": true },
+          "code": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -5694,6 +5932,61 @@
         "properties": {
           "individual": {
             "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.Individual"
+          },
+          "doctorInfo": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.DoctorInfo"
+          },
+          "lastInspectionDate": { "type": "string", "format": "date-time" },
+          "certificateDate": { "type": "string", "format": "date-time" },
+          "dateOfWorkIncapacityStart": {
+            "type": "string",
+            "format": "date-time"
+          },
+          "diagnosis": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.DisabilityDiagnosis"
+            },
+            "nullable": true
+          },
+          "diagnosesOthers": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.DisabilityDiagnosis"
+            },
+            "nullable": true
+          },
+          "healthHistorySummary": { "type": "string", "nullable": true },
+          "healthImpact": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.HealthImpact"
+          },
+          "participationLimitationCause": {
+            "type": "integer",
+            "format": "int32"
+          },
+          "abilityChangePotential": { "type": "integer", "format": "int32" },
+          "medicationAndSupports": { "type": "string", "nullable": true },
+          "assessmentToolsUsed": { "type": "string", "nullable": true },
+          "physicalAbilityRatings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.AbilityRating"
+            },
+            "nullable": true
+          },
+          "cognitiveAndMentalAbilityRatings": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.AbilityRating"
+            },
+            "nullable": true
+          },
+          "functionalAssessment": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.AbilityRating"
+            },
+            "nullable": true
           },
           "referenceId": { "type": "string", "nullable": true },
           "impairments": {
@@ -5709,17 +6002,22 @@
               "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.EnvironmentalFactor"
             },
             "nullable": true
-          },
-          "certificate": {
-            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.CertificateInformation"
-          },
-          "healthAssessment": {
-            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.HealthAssessment"
           }
         },
         "additionalProperties": false
       },
       "TrWeb.External.Models.ServicePortal.Doctor": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "nullable": true },
+          "doctorNumber": { "type": "string", "nullable": true },
+          "phoneNumber": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true },
+          "residence": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.External.Models.ServicePortal.DoctorInfo": {
         "type": "object",
         "properties": {
           "name": { "type": "string", "nullable": true },
@@ -5822,15 +6120,6 @@
         },
         "additionalProperties": false
       },
-      "TrWeb.External.Models.ServicePortal.HealthAssessment": {
-        "type": "object",
-        "properties": {
-          "recentHealthChanges": { "type": "string", "nullable": true },
-          "healthProgress": { "type": "string", "nullable": true },
-          "condition": { "type": "boolean" }
-        },
-        "additionalProperties": false
-      },
       "TrWeb.External.Models.ServicePortal.HealthGoals": {
         "type": "object",
         "properties": {
@@ -5840,6 +6129,23 @@
             "items": { "type": "string" },
             "nullable": true
           }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.External.Models.ServicePortal.HealthImpact": {
+        "type": "object",
+        "properties": {
+          "description": { "type": "string", "nullable": true },
+          "impactLevel": { "type": "integer", "format": "int32" }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.External.Models.ServicePortal.IcdCode": {
+        "type": "object",
+        "properties": {
+          "code": { "type": "string", "nullable": true },
+          "displayValue": { "type": "string", "nullable": true },
+          "category": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -5922,6 +6228,7 @@
       "TrWeb.External.Models.ServicePortal.RehabilitationPlan": {
         "type": "object",
         "properties": {
+          "referenceId": { "type": "string", "nullable": true },
           "person": {
             "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.Person"
           },
@@ -5962,7 +6269,8 @@
           },
           "activityAndParticipationGoals": {
             "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.HealthGoals"
-          }
+          },
+          "followupEvaluationExists": { "type": "boolean", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -6006,7 +6314,8 @@
           "coordinatorTitle": { "type": "string", "nullable": true },
           "workplace": { "type": "string", "nullable": true },
           "phoneNumber": { "type": "string", "nullable": true },
-          "email": { "type": "string", "nullable": true }
+          "email": { "type": "string", "nullable": true },
+          "registrationNumber": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
