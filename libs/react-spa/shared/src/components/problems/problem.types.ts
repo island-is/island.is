@@ -3,7 +3,13 @@ import { ReactNode } from 'react'
 
 export type CommonProblemProps = Pick<
   ProblemTemplateProps,
-  'noBorder' | 'tag' | 'imgAlt' | 'imgSrc' | 'expand' | 'titleSize'
+  | 'noBorder'
+  | 'tag'
+  | 'imgAlt'
+  | 'imgSrc'
+  | 'expand'
+  | 'titleSize'
+  | 'debugMessage'
 >
 
 export type ProblemSize = 'small' | 'large'

@@ -1,9 +1,9 @@
-import { createBroadcasterHook } from '@island.is/react-spa/shared'
 import { BffUser } from '@island.is/shared/types'
 import { isDefined } from '@island.is/shared/utils'
 import * as kennitala from 'kennitala'
 import { useContext, useMemo } from 'react'
 import { BffContext, BffContextType } from './BffContext'
+import { createBroadcasterHook } from '../hooks/useBroadcaster'
 
 /**
  * This hook is used to get the BFF authentication context.

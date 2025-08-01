@@ -3,7 +3,7 @@ import { APP_INTERCEPTOR } from '@nestjs/core'
 
 import { LoggingModule } from '@island.is/logging'
 
-import { ApmInterceptor } from './apm.interceptor'
+import { InfraInterceptor } from './infra.interceptor'
 import { InfraController } from './infra.controller'
 import { HealthModule } from './health/health.module'
 import { HealthCheckOptions } from './health/types'
@@ -18,7 +18,7 @@ interface InfraModuleOptions {
   providers: [
     {
       provide: APP_INTERCEPTOR,
-      useClass: ApmInterceptor,
+      useClass: InfraInterceptor,
     },
   ],
   imports: [LoggingModule],

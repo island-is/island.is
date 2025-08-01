@@ -1,16 +1,20 @@
-import { useEffectOnce } from '@island.is/react-spa/shared'
+import {
+  BffBroadcastEvents,
+  BffContext,
+  BffError,
+  LoggedInState,
+  useBffBroadcaster,
+  useEffectOnce,
+} from '@island.is/react-spa/shared'
 import { ReactNode, useCallback, useEffect, useReducer, useState } from 'react'
 
 import { LoadingScreen } from '@island.is/react/components'
 import { LOGIN_ATTEMPT_FAILED_ACTIVE_SESSION } from '@island.is/shared/constants'
-import { BffContext } from './BffContext'
 import { BffDoubleSessionModal } from './BffDoubleSession'
-import { BffError } from './BffError'
 import { BffPoller } from './BffPoller'
 import { BffSessionExpiredModal } from './BffSessionExpiredModal'
 import { ErrorScreen } from './ErrorScreen'
-import { BffBroadcastEvents, useBffBroadcaster } from './bff.hooks'
-import { ActionType, LoggedInState, initialState, reducer } from './bff.state'
+import { ActionType, initialState, reducer } from './bff.state'
 import { createBffUrlGenerator, isNewUser } from './bff.utils'
 
 const BFF_SERVER_UNAVAILABLE = 'BFF_SERVER_UNAVAILABLE'
