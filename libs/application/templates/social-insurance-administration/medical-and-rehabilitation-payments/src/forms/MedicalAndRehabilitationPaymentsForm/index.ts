@@ -5,6 +5,9 @@ import { Form, FormModes } from '@island.is/application/types'
 import { certificateForSicknessAndRehabilitationSection } from './certificateForSicknessAndRehabilitationSection'
 import { commentSection } from './commentSection'
 import { conclusionSection } from './conclusionSection'
+import { confirmationOfIllHealthSection } from './confirmationOfIllHealthSection'
+import { confirmationOfPendingResolutionSection } from './confirmationOfPendingResolutionSection'
+import { confirmedTreatmentSection } from './confirmedTreatmentSection'
 import { generalInformationSection } from './generalInformationSection'
 import { overviewSection } from './overviewSection'
 import { rehabilitationPlanSection } from './rehabilitationPlanSection'
@@ -19,6 +22,9 @@ export const MedicalAndRehabilitationPaymentsForm: Form = buildForm({
     generalInformationSection,
     certificateForSicknessAndRehabilitationSection,
     rehabilitationPlanSection,
+    confirmedTreatmentSection,
+    confirmationOfPendingResolutionSection,
+    confirmationOfIllHealthSection,
     selfAssessmentSection,
     commentSection,
     overviewSection,

@@ -120,6 +120,36 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'rehabilitationPlanConfirmation',
   )
 
+  const confirmedTreatmentConfirmation = getValueViaPath<string[]>(
+    answers,
+    'confirmedTreatment.confirmation',
+  )
+
+  const confirmedTreatmentReferenceId = getValueViaPath<string>(
+    answers,
+    'confirmedTreatment.referenceId',
+  )
+
+  const confirmationOfPendingResolutionConfirmation = getValueViaPath<string[]>(
+    answers,
+    'confirmationOfPendingResolution.confirmation',
+  )
+
+  const confirmationOfPendingResolutionReferenceId = getValueViaPath<string>(
+    answers,
+    'confirmationOfPendingResolution.referenceId',
+  )
+
+  const confirmationOfIllHealthConfirmation = getValueViaPath<string[]>(
+    answers,
+    'confirmationOfIllHealth.confirmation',
+  )
+
+  const confirmationOfIllHealthReferenceId = getValueViaPath<string>(
+    answers,
+    'confirmationOfIllHealth.referenceId',
+  )
+
   const hadAssistance = getValueViaPath<YesOrNo>(
     answers,
     'selfAssessment.hadAssistance',
@@ -210,6 +240,12 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     unionNationalId,
     certificateForSicknessAndRehabilitationReferenceId,
     rehabilitationPlanConfirmation,
+    confirmedTreatmentConfirmation,
+    confirmedTreatmentReferenceId,
+    confirmationOfPendingResolutionConfirmation,
+    confirmationOfPendingResolutionReferenceId,
+    confirmationOfIllHealthConfirmation,
+    confirmationOfIllHealthReferenceId,
     hadAssistance,
     educationalLevel,
     comment,
@@ -331,6 +367,11 @@ export const getApplicationExternalData = (
     'socialInsuranceAdministrationMARPApplicationType.data.applicationType',
   )
 
+  const marpConfirmationType = getValueViaPath<string>(
+    externalData,
+    'socialInsuranceAdministrationMARPApplicationType.data.confirmationType',
+  )
+
   const isEligible = getValueViaPath<Eligible>(
     externalData,
     'socialInsuranceAdministrationIsApplicantEligible.data',
@@ -357,6 +398,7 @@ export const getApplicationExternalData = (
     ectsUnits,
     educationLevels,
     marpApplicationType,
+    marpConfirmationType,
     isEligible,
   }
 }

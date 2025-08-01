@@ -9,7 +9,10 @@ import {
   getApplicationAnswers,
   getApplicationExternalData,
 } from './medicalAndRehabilitationPaymentsUtils'
-import { MedicalAndRehabilitationPaymentsApplicationType } from './constants'
+import {
+  MedicalAndRehabilitationPaymentsApplicationType,
+  MedicalAndRehabilitationPaymentsConfirmationType,
+} from './constants'
 
 export const shouldShowEmployeeSickPayEndDate = (
   answers: FormValue,
@@ -97,12 +100,62 @@ export const isFirstApplication = (externalData: ExternalData) => {
   )
 }
 
-export const isEHApplication = (externalData: ExternalData) => {
-  const { marpApplicationType } = getApplicationExternalData(externalData)
+export const shouldShowRehabilitationPlan = (externalData: ExternalData) => {
+  const { marpApplicationType, marpConfirmationType } =
+    getApplicationExternalData(externalData)
 
   return (
-    marpApplicationType ===
+    (marpApplicationType ===
       MedicalAndRehabilitationPaymentsApplicationType.EH1 ||
-    marpApplicationType === MedicalAndRehabilitationPaymentsApplicationType.EH2
+      marpApplicationType ===
+        MedicalAndRehabilitationPaymentsApplicationType.EH2) &&
+    marpConfirmationType ===
+      MedicalAndRehabilitationPaymentsConfirmationType.ENDURHAEFING
+  )
+}
+
+export const shouldShowConfirmedTreatment = (externalData: ExternalData) => {
+  const { marpApplicationType, marpConfirmationType } =
+    getApplicationExternalData(externalData)
+
+  return (
+    (marpApplicationType ===
+      MedicalAndRehabilitationPaymentsApplicationType.SG1 ||
+      marpApplicationType ===
+        MedicalAndRehabilitationPaymentsApplicationType.SG2) &&
+    marpConfirmationType ===
+      MedicalAndRehabilitationPaymentsConfirmationType.VIDURKENND_MEDFERD
+  )
+}
+
+export const shouldShowConfirmationOfPendingResolution = (
+  externalData: ExternalData,
+) => {
+  const { marpApplicationType, marpConfirmationType } =
+    getApplicationExternalData(externalData)
+
+  return (
+    (marpApplicationType ===
+      MedicalAndRehabilitationPaymentsApplicationType.SG1 ||
+      marpApplicationType ===
+        MedicalAndRehabilitationPaymentsApplicationType.SG2) &&
+    marpConfirmationType ===
+      MedicalAndRehabilitationPaymentsConfirmationType.BID_EFTIR_URRAEDI
+  )
+}
+
+export const shouldShowConfirmationOfIllHealth = (
+  externalData: ExternalData,
+) => {
+  const { marpApplicationType, marpConfirmationType } =
+    getApplicationExternalData(externalData)
+
+  return (
+    (marpApplicationType ===
+      MedicalAndRehabilitationPaymentsApplicationType.SG1 ||
+      marpApplicationType ===
+        MedicalAndRehabilitationPaymentsApplicationType.SG2) &&
+    marpConfirmationType ===
+      MedicalAndRehabilitationPaymentsConfirmationType.HEILSUBRESTUR
   )
 }
