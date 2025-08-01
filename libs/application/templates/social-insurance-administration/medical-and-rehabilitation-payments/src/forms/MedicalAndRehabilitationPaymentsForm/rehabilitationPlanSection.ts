@@ -22,7 +22,7 @@ export const rehabilitationPlanSection = buildSection({
           .description,
       children: [
         buildCustomField({
-          id: 'rehabilitationPlan',
+          id: 'rehabilitationPlanConfirmation',
           component: 'RehabilitationPlan',
         }),
       ],

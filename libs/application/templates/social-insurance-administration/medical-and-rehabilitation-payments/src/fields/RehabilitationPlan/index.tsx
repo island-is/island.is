@@ -681,7 +681,7 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
         application={application}
         error={error}
         field={{
-          id: `${field.id}.confirmation`,
+          id: field.id,
           large: true,
           backgroundColor: 'blue',
           type: FieldTypes.CHECKBOX,

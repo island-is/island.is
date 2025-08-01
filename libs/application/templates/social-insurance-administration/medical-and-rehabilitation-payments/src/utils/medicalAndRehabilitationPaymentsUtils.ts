@@ -117,7 +117,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const rehabilitationPlanConfirmation = getValueViaPath<string[]>(
     answers,
-    'rehabilitationPlan.confirmation',
+    'rehabilitationPlanConfirmation',
   )
 
   const confirmedTreatmentConfirmation = getValueViaPath<string[]>(
