@@ -30,6 +30,30 @@ export const getFreightItem = (
 
 export const getFreightPairingItems = (
   answers: FormValue,
+  freightIndex: number,
+): (FreightPairing | null)[] => {
+  const freightPairing = getValueViaPath<
+    ExemptionForTransportationAnswers['freightPairing']
+  >(answers, 'freightPairing')
+
+  const items = freightPairing?.[freightIndex]?.items || []
+
+  return items.map((item) => {
+    if (item?.convoyId)
+      return {
+        convoyId: item.convoyId,
+        height: item.height || '',
+        width: item.width || '',
+        totalLength: item.totalLength || '',
+        exemptionFor:
+          item.exemptionFor?.filter((x): x is ExemptionFor => !!x) || [],
+      }
+    else return null
+  })
+}
+
+export const getFilteredFreightPairingItems = (
+  answers: FormValue,
   freightIndex?: number,
 ): FreightPairing[] => {
   const freightPairing = getValueViaPath<
@@ -54,17 +78,29 @@ export const getFreightPairingItem = (
   freightIndex: number,
   convoyIndex: number,
 ): FreightPairing | undefined => {
-  const pairingItems = getFreightPairingItems(answers, freightIndex)
+  const pairingItems = getFilteredFreightPairingItems(answers, freightIndex)
   return pairingItems[convoyIndex]
 }
 
 export const checkHasFreightPairingItemWithExemptionForWeight = (
   answers: FormValue,
 ): boolean => {
-  const freightPairingAllItems = getFreightPairingItems(answers)
+  const freightPairingAllItems = getFilteredFreightPairingItems(answers)
   return freightPairingAllItems.some((item) =>
     item?.exemptionFor?.includes(ExemptionFor.WEIGHT),
   )
+}
+
+export const getSelectedConvoyIdsInFreightPairing = (
+  answers: FormValue,
+  freightIndex: number,
+): string[] => {
+  const convoyIdList =
+    getValueViaPath<string[]>(
+      answers,
+      `freightPairing.${freightIndex}.convoyIdList`,
+    ) || []
+  return convoyIdList
 }
 
 export const checkHasSelectedConvoyInFreightPairing = (
@@ -72,14 +108,14 @@ export const checkHasSelectedConvoyInFreightPairing = (
   freightIndex: number,
   convoyIndex: number,
 ): boolean => {
+  const convoyIdList = getSelectedConvoyIdsInFreightPairing(
+    answers,
+    freightIndex,
+  )
+
   const convoyItem = getConvoyItem(answers, convoyIndex)
   if (!convoyItem) return false
 
-  const convoyIdList =
-    getValueViaPath<string[]>(
-      answers,
-      `freightPairing.${freightIndex}.convoyIdList`,
-    ) || []
   return convoyIdList.indexOf(convoyItem.convoyId) !== -1
 }
 
@@ -120,7 +156,10 @@ export const getFreightPairingErrorMessage = (
   if (!convoyIdList?.length) return freight.pairing.errorEmptyListAlertMessage
 
   // Police escort error
-  const freightPairingItems = getFreightPairingItems(answers, freightIndex)
+  const freightPairingItems = getFilteredFreightPairingItems(
+    answers,
+    freightIndex,
+  )
   const rules = getExemptionRules(externalData)
   const maxHeight = rules?.policeEscort.maxHeight
   const maxWidth = rules?.policeEscort.maxWidth
