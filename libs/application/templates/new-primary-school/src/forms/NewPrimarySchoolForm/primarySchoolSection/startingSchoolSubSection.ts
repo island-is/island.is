@@ -8,9 +8,9 @@ import {
   NO,
   YES,
 } from '@island.is/application/core'
-import { ApplicationType, SchoolType } from '../../../lib/constants'
+import { ApplicationType, SchoolType } from '../../../utils/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
+import { getApplicationAnswers } from '../../../utils/newPrimarySchoolUtils'
 import { Application } from '@island.is/application/types'
 
 export const startingSchoolSubSection = buildSubSection({
@@ -97,7 +97,8 @@ export const startingSchoolSubSection = buildSubSection({
           },
           minDate: (application: Application) =>
             new Date(
-              getApplicationAnswers(application.answers).expectedStartDate,
+              getApplicationAnswers(application.answers).expectedStartDate ??
+                '',
             ),
         }),
         buildHiddenInputWithWatchedValue({

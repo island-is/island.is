@@ -921,8 +921,8 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
     guardians: {
       id: 'nps.application:overview.guardians',
-      defaultMessage: 'Forsjáraðili',
-      description: 'Guardian',
+      defaultMessage: 'Forsjáraðili {index}',
+      description: 'Guardian {index}',
     },
     languageEnvironment: {
       id: 'nps.application:overview.language.environment',
