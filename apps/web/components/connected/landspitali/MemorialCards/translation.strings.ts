@@ -116,6 +116,16 @@ export const m = {
     },
   }),
   overview: defineMessages({
+    errorTitle: {
+      id: 'web.landspitali.memorialCard:overview.errorTitle',
+      defaultMessage: 'Villa',
+      description: 'Titill á villuskilaboðum',
+    },
+    errorMessage: {
+      id: 'web.landspitali.memorialCard:overview.errorMessage',
+      defaultMessage: 'Ekki tókst að áframsenda þig á greiðslusíðuna',
+      description: 'Villuskilaboð',
+    },
     title: {
       id: 'web.landspitali.memorialCard:overview.title',
       defaultMessage: 'Yfirlit',

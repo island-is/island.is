@@ -47,4 +47,7 @@ export class CreateMemorialCardPaymentUrlInput {
 
   @Field(() => String)
   chargeItemCode!: string
+
+  @Field(() => String)
+  inMemoryOf!: string
 }

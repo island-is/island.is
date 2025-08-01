@@ -1,4 +1,4 @@
-import { Query, Resolver, Args } from '@nestjs/graphql'
+import { Resolver, Args, Mutation } from '@nestjs/graphql'
 
 import { LandspitaliService } from './landspitali.service'
 import { CreateMemorialCardPaymentUrlInput } from './dto/createMemorialCardPaymentUrl.input'
@@ -8,7 +8,7 @@ import { CreateMemorialCardPaymentUrlResponse } from './dto/createMemorialCardPa
 export class LandspitaliResolver {
   constructor(private landspitaliService: LandspitaliService) {}
 
-  @Query(() => CreateMemorialCardPaymentUrlResponse, {
+  @Mutation(() => CreateMemorialCardPaymentUrlResponse, {
     name: 'webLandspitaliMemorialCardPaymentUrl',
   })
   async createMemorialCardPaymentUrl(
