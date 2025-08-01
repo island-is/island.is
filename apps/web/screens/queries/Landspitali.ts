@@ -9,3 +9,13 @@ export const CREATE_LANDSPITALI_MEMORIAL_CARD_PAYMENT_URL = gql`
     }
   }
 `
+
+export const CREATE_LANDSPITALI_DIRECT_GRANT_PAYMENT_URL = gql`
+  mutation CreateDirectGrantPaymentUrl(
+    $input: CreateDirectGrantPaymentUrlInput!
+  ) {
+    webLandspitaliDirectGrantPaymentUrl(input: $input) {
+      url
+    }
+  }
+`

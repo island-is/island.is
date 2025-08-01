@@ -1,6 +1,7 @@
 import { useEffect } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
+import { useMutation } from '@apollo/client'
 
 import {
   Box,
@@ -9,11 +10,17 @@ import {
   Stack,
   Text,
 } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import {
   InputController,
   SelectController,
 } from '@island.is/shared/form-fields'
-import type { ConnectedComponent } from '@island.is/web/graphql/schema'
+import type {
+  ConnectedComponent,
+  CreateDirectGrantPaymentUrlMutation,
+  CreateDirectGrantPaymentUrlMutationVariables,
+} from '@island.is/web/graphql/schema'
+import { CREATE_LANDSPITALI_DIRECT_GRANT_PAYMENT_URL } from '@island.is/web/screens/queries/Landspitali'
 
 import { m } from './translation.strings'
 
@@ -132,8 +139,33 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
   const selectedAmount = watch('amountISK')
   const selectedProject = watch('project')
 
+  const { activeLocale } = useLocale()
+
+  const [createDirectGrantPaymentUrl, { loading }] = useMutation<
+    CreateDirectGrantPaymentUrlMutation,
+    CreateDirectGrantPaymentUrlMutationVariables
+  >(CREATE_LANDSPITALI_DIRECT_GRANT_PAYMENT_URL)
+
   const onSubmit = () => {
-    //
+    const data = methods.getValues()
+    const amountISK =
+      data.amountISK === 'other' ? data.amountISKCustom : data.amountISK
+    createDirectGrantPaymentUrl({
+      variables: {
+        input: {
+          grant: data.grant,
+          project: data.project,
+          payerAddress: data.senderAddress,
+          payerGrantExplanation: data.senderGrantExplanation,
+          payerName: data.senderName,
+          payerNationalId: data.senderNationalId,
+          payerPostalCode: data.senderPostalCode,
+          payerPlace: data.senderPlace,
+          amountISK: parseInt(amountISK.replace(/\./g, '')),
+          locale: activeLocale,
+        },
+      },
+    })
   }
 
   useEffect(() => {
