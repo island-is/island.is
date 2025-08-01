@@ -1,4 +1,4 @@
-import { Query, Resolver } from '@nestjs/graphql'
+import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import {
   IdsUserGuard,
   ScopesGuard,
@@ -11,6 +11,8 @@ import { Audit } from '@island.is/nest/audit'
 import { ApiScope } from '@island.is/auth/scopes'
 import { PaginatedAidOrNutritionResponse } from './models/aidOrNutrition.model'
 import { AidOrNutritionService } from './aidOrNutrition.service'
+import { RenewAidsOrNutritionInput } from './dto/renewInput.dto'
+import { Renew } from './models/renewAidOrNutrition.model'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -26,5 +28,15 @@ export class AidOrNutritionResolver {
   @Audit()
   async getRightsPortalAidOrNutrition(@CurrentUser() user: User) {
     return this.service.getAidOrNutrition(user)
+  }
+
+  @Scopes(ApiScope.healthAssistiveAndNutrition, ApiScope.health)
+  @Mutation(() => Renew, { name: 'rightsPortalRenewAidOrNutrition' })
+  @Audit()
+  async postRightsPortalRenewAidsOrNutrition(
+    @CurrentUser() user: User,
+    @Args('input') input: RenewAidsOrNutritionInput,
+  ): Promise<Renew | null> {
+    return this.service.postRenewAidsOrNutrition(user, input.id)
   }
 }
