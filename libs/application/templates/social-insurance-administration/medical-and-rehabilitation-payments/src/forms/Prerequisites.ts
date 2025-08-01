@@ -24,6 +24,7 @@ import {
   SocialInsuranceAdministrationIsApplicantEligibleApi,
   SocialInsuranceAdministrationMARPApplicationTypeApi,
   SocialInsuranceAdministrationQuestionnairesApi,
+  SocialInsuranceAdministrationResidenceInformationApi,
 } from '../dataProviders'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../lib/messages'
 
@@ -138,6 +139,9 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationEctsUnitsApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationResidenceInformationApi,
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationMARPApplicationTypeApi,

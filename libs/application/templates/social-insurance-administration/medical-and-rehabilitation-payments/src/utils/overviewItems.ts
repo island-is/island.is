@@ -42,7 +42,7 @@ export const applicantItems = (
     applicantName,
     applicantNationalId,
     applicantAddress,
-    applicantMunicipality,
+    applicantLocation,
     userProfileEmail,
     spouseName,
     spouseNationalId,
@@ -73,7 +73,7 @@ export const applicantItems = (
     {
       width: 'half',
       keyText: socialInsuranceAdministrationMessage.confirm.municipality,
-      valueText: applicantMunicipality,
+      valueText: applicantLocation,
     },
     {
       width: 'half',

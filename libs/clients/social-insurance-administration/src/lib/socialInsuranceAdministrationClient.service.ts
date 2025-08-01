@@ -32,6 +32,7 @@ import {
   TrWebCommonsExternalPortalsApiModelsIncomePlanWithholdingTaxDto,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanLegitimatePayments,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
+  TrWebExternalModelsServicePortalNationalRegistryAddress,
   TrWebExternalModelsServicePortalBaseCertificate,
   TrWebExternalModelsServicePortalRehabilitationPlan,
 } from '../../gen/fetch'
@@ -269,6 +270,14 @@ export class SocialInsuranceAdministrationClientService {
     Array<TrWebApiServicesDomainEducationalInstitutionsModelsEctsUnitDto>
   > {
     return this.generalApiWithAuth(user).apiProtectedV1GeneralEctsUnitsGet()
+  }
+
+  async getResidenceInformation(
+    user: User,
+  ): Promise<TrWebExternalModelsServicePortalNationalRegistryAddress> {
+    return this.applicantApiWithAuth(
+      user,
+    ).apiProtectedV1ApplicantResidenceInformationGet()
   }
 
   async getEducationLevels(
