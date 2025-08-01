@@ -202,11 +202,6 @@ const devConfig = () => ({
   audit: {
     defaultNamespace: '@island.is/api',
   },
-  islykill: {
-    cert: process.env.ISLYKILL_CERT,
-    passphrase: process.env.ISLYKILL_SERVICE_PASSPHRASE,
-    basePath: process.env.ISLYKILL_SERVICE_BASEPATH,
-  },
 })
 
 export const getConfig =
