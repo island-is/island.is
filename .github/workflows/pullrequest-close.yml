@@ -69,6 +69,7 @@ jobs:
           echo "${MERGE_COMMIT_SHA}"
           echo "${HEAD_REF}"
 
+          git fetch origin "$TARGET_BRANCH:$TARGET_BRANCH"
           # Check for differences between the merge_commit and release branch
           if git diff --quiet "$MERGE_COMMIT_SHA" "$TARGET_BRANCH"; then
               echo "No differences found between '$MERGE_COMMIT_SHA' and '$TARGET_BRANCH' branch"
