@@ -170,6 +170,7 @@ export const buildDescriptionField = (
     titleTooltip,
     space,
     doesNotRequireAnswer = true,
+    eyebrow,
   } = data
   return {
     ...extractCommonFields(data),
@@ -182,6 +183,7 @@ export const buildDescriptionField = (
     space,
     type: FieldTypes.DESCRIPTION,
     component: FieldComponents.DESCRIPTION,
+    eyebrow,
   }
 }
 
