@@ -720,4 +720,5 @@ export class ApplicationsService {
 
     await application.destroy()
   }
+
 }

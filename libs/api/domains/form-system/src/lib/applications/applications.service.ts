@@ -156,4 +156,5 @@ export class ApplicationsService {
       id: input,
     } as ApplicationsControllerDeleteApplicationRequest)
   }
+
 }
