@@ -16,7 +16,6 @@ import {
   CaseOrigin,
   CaseState,
   CaseType,
-  Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { api } from '../../services'
@@ -61,7 +60,7 @@ const initialState: Case = {
   type: CaseType.CUSTODY,
   state: CaseState.NEW,
   policeCaseNumbers: [],
-  defendants: [{ id: '', noNationalId: false } as Defendant],
+  defendants: [{ id: '', noNationalId: false }],
   defendantWaivesRightToCounsel: false,
 }
 
