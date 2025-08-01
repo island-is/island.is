@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { Box } from '@island.is/island-ui/core'
 import {
@@ -71,8 +71,7 @@ const requestFilterKeys = [
   'sentToCourt',
 ] as (keyof RequestFilterType)[]
 
-
-const RequestStatistics = () => {
+const RequestStatisticsBody = ({ minDate }: { minDate?: Date }) => {
   const [stats, setStats] = useState<RequestCaseStatistics | undefined>()
   const [filters, setFilters] = useState<RequestFilterType>({})
 
@@ -84,10 +83,6 @@ const RequestStatistics = () => {
     }
   }, [filters])
 
-  // Currently always aggregating on the server
-  // should we create endpoint to return ranges for each field, just send the dataset and get the range from the raw data
-  // for simplicity, I think we should just return earliest creation date for request, indictment and subpoena - flag that and use it as min date in the
-  // date pickers
   const { data, loading } = useRequestCaseStatisticsQuery({
     variables: {
       input: queryVariables,
@@ -113,11 +108,27 @@ const RequestStatistics = () => {
           filters={filters}
           setFilters={setFilters}
           onClear={() => setFilters({})}
+          minDate={minDate}
         />
         <Statistics stats={stats} loading={loading} />
       </Box>
     </StatisticPageLayout>
   )
+}
+
+const RequestStatistics = () => {
+  // We extract the initial call to fetch the request statistics data to a specific parent component
+  // to fetch defined statistical constraints (minDate) once. The child component is
+  // currently re-rendered on each filter change.
+  const { data } = useRequestCaseStatisticsQuery({
+    variables: {
+      input: {},
+    },
+    fetchPolicy: 'cache-and-network',
+  })
+  const minDate = data?.requestCaseStatistics?.minDate ?? new Date()
+
+  return <RequestStatisticsBody minDate={new Date(minDate)} />
 }
 
 export default RequestStatistics

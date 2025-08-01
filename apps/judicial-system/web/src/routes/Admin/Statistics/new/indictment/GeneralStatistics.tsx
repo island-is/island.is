@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 
 import { Box } from '@island.is/island-ui/core'
 import {
@@ -70,7 +70,7 @@ const indictmentFilterKeys = [
   'sentToCourt',
 ] as (keyof IndictmentFilterType)[]
 
-export const GeneralStatistics = () => {
+const GeneralStatisticsBody = ({ minDate }: { minDate?: Date }) => {
   const [stats, setStats] = useState<IndictmentCaseStatistics | undefined>()
   const [filters, setFilters] = useState<IndictmentFilterType>({})
 
@@ -93,6 +93,7 @@ export const GeneralStatistics = () => {
       setStats(data.indictmentCaseStatistics)
     }
   }, [data])
+
   return (
     <Box marginTop={4}>
       <Filters
@@ -101,8 +102,24 @@ export const GeneralStatistics = () => {
         filters={filters}
         setFilters={setFilters}
         onClear={() => setFilters({})}
+        minDate={minDate}
       />
       <Statistics stats={stats} loading={loading} />
     </Box>
   )
+}
+
+export const GeneralStatistics = () => {
+  // We extract the initial call to fetch the request statistics data to a specific parent component
+  // to fetch defined statistical constraints (minDate) once. The child component is
+  // currently re-rendered on each filter change.
+  const { data } = useIndictmentCaseStatisticsQuery({
+    variables: {
+      input: {},
+    },
+    fetchPolicy: 'cache-and-network',
+  })
+  const minDate = data?.indictmentCaseStatistics?.minDate ?? new Date()
+
+  return <GeneralStatisticsBody minDate={new Date(minDate)} />
 }
