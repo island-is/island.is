@@ -2610,12 +2610,10 @@ export class CaseService {
     const filteredCases = filterOnSentToCourt() ?? cases
     const requestCaseStatistics = this.getRequestCaseStatistics(filteredCases)
 
-    const res = {
+    return {
       ...requestCaseStatistics,
       minDate: earliestCase?.created ?? new Date(),
     }
-    console.log(res)
-    return res
   }
 
   async getCaseStatistics(
