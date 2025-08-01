@@ -94,4 +94,4 @@ jobs:
           token: ${{ secrets.SLACK_BOT_TOKEN }}
           payload: |
             channel: ${{ secrets.SLACK_CHANNEL_ID }}
-            text: "A new PR has been created: ${{ steps.create_pr.outputs.PR }}"
+            text: "A new PR has been created on behalf of ${{ github.actor }}: ${{ steps.create_pr.outputs.PR }}"
