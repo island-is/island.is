@@ -82,7 +82,7 @@ export class FileStorageService {
     if (!this.config.uploadBucket) {
       throw new Error('Upload bucket not configured.')
     }
-    
+
     return this.s3Service.fileExists({
       bucket: this.config.uploadBucket,
       key,
