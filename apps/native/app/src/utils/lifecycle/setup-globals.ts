@@ -5,7 +5,7 @@ import {
   DdSdkReactNativeConfiguration,
 } from '@datadog/mobile-react-native'
 import messaging from '@react-native-firebase/messaging'
-import perf from '@react-native-firebase/perf'
+import { initializePerformance } from '@react-native-firebase/perf'
 import {
   DynamicColorIOS,
   ImageStyle,
@@ -43,6 +43,7 @@ import { getConfig } from '../../config'
 import { isIos } from '../devices'
 import { performanceMetrics } from '../performance-metrics'
 import { setupQuickActions } from '../quick-actions'
+import { app } from '../../lib/firebase'
 
 type PatchedStyleSheet = typeof StyleSheet & {
   _create: typeof StyleSheet.create
@@ -90,8 +91,7 @@ export function applyDynamicColorSupport() {
 applyDynamicColorSupport()
 
 if (__DEV__) {
-  perf().setPerformanceCollectionEnabled(false)
-  // require('../devtools/index')
+  initializePerformance(app)
 } else {
   // datadog rum config
   const ddconfig = new DdSdkReactNativeConfiguration(
