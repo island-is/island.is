@@ -4,47 +4,20 @@ import {
   buildSubSection,
   buildDescriptionField,
   getValueViaPath,
+  buildDateField,
 } from '@island.is/application/core'
 import { information } from '../../../lib/messages'
 import { Application } from '@island.is/api/schema'
-import { formatDate } from '../../../utils'
 import { Routes } from '../../../lib/constants'
-import { NationalRegistrySpouseV3 } from '@island.is/application/types'
+import {
+  ExternalData,
+  NationalRegistrySpouseV3,
+} from '@island.is/application/types'
 
 export const MaritalStatusSubSection = buildSubSection({
   id: Routes.MARITALSTATUS,
   title: information.labels.maritalStatus.subSectionTitle,
   condition: (_, externalData) => {
-    // TODO REVERT THIS WHEN UTL FIXES SERVICES
-    // Check if the only residence condition that the applicant can apply for, is related to marital status
-    // const residenceConditionInfo = getValueViaPath(
-    //   externalData,
-    //   'applicantInformation.data.residenceConditionInfo',
-    //   {},
-    // ) as ApplicantInformation
-
-    // const hasResConMaritalStatus =
-    //   residenceConditionInfo.cohabitationISCitizen5YearDomicile ||
-    //   residenceConditionInfo.cohabitationISCitizen5YrsDomicileMissingDate ||
-    //   residenceConditionInfo.marriedISCitizenDomicile4Years ||
-    //   residenceConditionInfo.marriedISCitizenDomicile4YrsMissingDate
-
-    // const hasOtherValidResidenceConditions =
-    //   residenceConditionInfo.domicileResidence7Years ||
-    //   residenceConditionInfo.asylumSeekerOrHumanitarianResPerm5year ||
-    //   residenceConditionInfo.noNationalityAnd5YearsDomicile ||
-    //   residenceConditionInfo.nordicCitizenship4YearDomicile
-
-    // const spouseIsCitizen = residenceConditionInfo.spouseIsCitizen
-    // const eesResidenceCondition = residenceConditionInfo.eesResidenceCondition
-    // const showThisPage = spouseIsCitizen && !eesResidenceCondition
-
-    // return (
-    //   (!!hasResConMaritalStatus && !hasOtherValidResidenceConditions) ||
-    //   !!showThisPage
-    // )
-
-    // TODO REMOVE THIS WHEN UTL FIXES SERVICES
     const spouseDetails = getValueViaPath(
       externalData,
       'spouseDetails.data',
@@ -81,12 +54,18 @@ export const MaritalStatusSubSection = buildSubSection({
             return spouseInformation?.maritalDescription
           },
         }),
-        buildTextField({
+        buildDateField({
           id: 'maritalStatus.dateOfMaritalStatusStr',
           title: information.labels.maritalStatus.marriedStatusDate,
-          backgroundColor: 'white',
           width: 'half',
-          readOnly: true,
+          readOnly: (_, externalData: ExternalData) => {
+            const spouseDetails = getValueViaPath<NationalRegistrySpouseV3>(
+              externalData,
+              'spouseDetails.data',
+              undefined,
+            )
+            return spouseDetails?.lastModified ? true : false
+          },
           defaultValue: (application: Application) => {
             const spouseDetails = getValueViaPath<NationalRegistrySpouseV3>(
               application.externalData,
@@ -94,9 +73,7 @@ export const MaritalStatusSubSection = buildSubSection({
               undefined,
             )
 
-            return spouseDetails?.lastModified
-              ? formatDate(new Date(spouseDetails.lastModified))
-              : ''
+            return spouseDetails?.lastModified ? spouseDetails.lastModified : ''
           },
         }),
         buildTextField({
