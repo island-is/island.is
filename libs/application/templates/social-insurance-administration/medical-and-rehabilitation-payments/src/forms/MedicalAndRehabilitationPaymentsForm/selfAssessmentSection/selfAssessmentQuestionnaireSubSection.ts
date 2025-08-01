@@ -12,7 +12,7 @@ import {
   getSelfAssessmentQuestionnaireQuestions,
 } from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 
-export const selfAssessmentQuestionnaireSubSection = (index: number) => [
+export const selfAssessmentQuestionnaireSubSection = (index: number) =>
   buildSubSection({
     id: 'selfAssessmentQuestionnaireSubSection',
     tabTitle:
@@ -118,5 +118,4 @@ export const selfAssessmentQuestionnaireSubSection = (index: number) => [
 
       return index < selfAssessmentQuestionnaireQuestions.length
     },
-  }),
-]
+  })

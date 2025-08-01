@@ -8,12 +8,10 @@ import { selfAssessmentQuestionsTwoSubSection } from './selfAssessmentQuestionsT
 
 export const MAX_QUESTIONS = 50
 
-const buildRepeatableQuestionnaireSubSections = (): SubSection[] => {
-  const sections = [...Array(MAX_QUESTIONS)].map((_key, index) => {
-    return selfAssessmentQuestionnaireSubSection(index)
-  })
-  return sections.flat()
-}
+const buildRepeatableQuestionnaireSubSections = (): SubSection[] =>
+  [...Array(MAX_QUESTIONS)].map((_key, index) =>
+    selfAssessmentQuestionnaireSubSection(index),
+  )
 
 export const selfAssessmentSection = buildSection({
   id: 'selfAssessmentSection',
