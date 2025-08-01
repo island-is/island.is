@@ -1,8 +1,10 @@
 import { useEffect, useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
+import { useMutation } from '@apollo/client'
 
 import {
+  AlertMessage,
   Box,
   Button,
   RadioButton,
@@ -13,7 +15,13 @@ import {
   InputController,
   SelectController,
 } from '@island.is/shared/form-fields'
-import type { ConnectedComponent } from '@island.is/web/graphql/schema'
+import type {
+  ConnectedComponent,
+  CreateMemorialCardPaymentUrlMutation,
+  CreateMemorialCardPaymentUrlMutationVariables,
+} from '@island.is/web/graphql/schema'
+import { useI18n } from '@island.is/web/i18n'
+import { CREATE_LANDSPITALI_MEMORIAL_CARD_PAYMENT_URL } from '@island.is/web/screens/queries/Landspitali'
 
 import { m } from './translation.strings'
 
@@ -107,6 +115,16 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
     },
   })
 
+  const [createMemorialCardPaymentUrl, { loading }] = useMutation<
+    CreateMemorialCardPaymentUrlMutation,
+    CreateMemorialCardPaymentUrlMutationVariables
+  >(CREATE_LANDSPITALI_MEMORIAL_CARD_PAYMENT_URL)
+
+  const [
+    errorOccuredWhenCreatingPaymentUrl,
+    setErrorOccuredWhenCreatingPaymentUrl,
+  ] = useState(false)
+
   const {
     handleSubmit,
     setValue,
@@ -141,8 +159,12 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
 
   const handleReset = () => setSubmitted(false)
 
+  const { activeLocale } = useI18n()
+
   if (submitted) {
     const data = methods.getValues()
+    const amountISK =
+      data.amountISK === 'other' ? data.amountISKCustom : data.amountISK
     return (
       <Stack space={4}>
         <Text ref={overviewTitleRef} variant="h2">
@@ -192,10 +214,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
             {formatMessage(m.overview.memorialCardTitle)}
           </Text>
           <Text>
-            {formatMessage(m.overview.amountISK)}{' '}
-            {data.amountISK === 'other'
-              ? formatCurrency(data.amountISKCustom)
-              : data.amountISK}{' '}
+            {formatMessage(m.overview.amountISK)} {amountISK}{' '}
             {formatMessage(m.info.amountISKCurrency)}
           </Text>
           <Text>
@@ -207,12 +226,61 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
             }
           </Text>
         </Stack>
-        <Box display="flex" justifyContent="spaceBetween" marginTop={5}>
+        <Box
+          display="flex"
+          justifyContent="spaceBetween"
+          marginTop={5}
+          columnGap={2}
+        >
           <Button onClick={handleReset} variant="ghost" preTextIcon="arrowBack">
             {formatMessage(m.overview.goBack)}
           </Button>
-          <Button>{formatMessage(m.overview.pay)}</Button>
+          <Button
+            loading={loading}
+            onClick={async () => {
+              const amountISKWithoutDots = amountISK.replace(/\./g, '')
+              try {
+                const response = await createMemorialCardPaymentUrl({
+                  variables: {
+                    input: {
+                      amountISK: parseInt(amountISKWithoutDots),
+                      chargeItemCode: data.fund,
+                      payerAddress: data.senderAddress,
+                      payerName: data.senderName,
+                      payerNationalId: data.senderNationalId,
+                      payerPostalCode: data.senderPostalCode,
+                      payerPlace: data.senderPlace,
+                      recipientAddress: data.recipientAddress,
+                      recipientName: data.recipientName,
+                      recipientPlace: data.recipientPlace,
+                      recipientPostalCode: data.recipientPostalCode,
+                      senderSignature: data.senderSignature,
+                      locale: activeLocale,
+                      inMemoryOf: data.inMemoryOf,
+                    },
+                  },
+                })
+                const url =
+                  response.data?.webLandspitaliMemorialCardPaymentUrl.url
+                setErrorOccuredWhenCreatingPaymentUrl(!url)
+                if (url) {
+                  window.open(url, '_self')
+                }
+              } catch {
+                setErrorOccuredWhenCreatingPaymentUrl(true)
+              }
+            }}
+          >
+            {formatMessage(m.overview.pay)}
+          </Button>
         </Box>
+        {errorOccuredWhenCreatingPaymentUrl && (
+          <AlertMessage
+            title={formatMessage(m.overview.errorTitle)}
+            message={formatMessage(m.overview.errorMessage)}
+            type="error"
+          />
+        )}
       </Stack>
     )
   }

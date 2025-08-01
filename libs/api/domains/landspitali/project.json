@@ -1,0 +1,52 @@
+{
+  "name": "api-domains-landspitali",
+  "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
+  "sourceRoot": "libs/api/domains/landspitali/src",
+  "projectType": "application",
+  "tags": ["lib:api", "scope:api"],
+  "targets": {
+    "build": {
+      "executor": "@nx/webpack:webpack",
+      "outputs": ["{options.outputPath}"],
+      "defaultConfiguration": "production",
+      "options": {
+        "target": "node",
+        "compiler": "tsc",
+        "outputPath": "dist/libs/api/domains/landspitali",
+        "main": "libs/api/domains/landspitali/src/main.ts",
+        "tsConfig": "libs/api/domains/landspitali/tsconfig.app.json",
+        "assets": ["libs/api/domains/landspitali/src/assets"],
+        "webpackConfig": "libs/api/domains/landspitali/webpack.config.js"
+      },
+      "configurations": {
+        "development": {},
+        "production": {}
+      }
+    },
+    "serve": {
+      "executor": "@nx/js:node",
+      "defaultConfiguration": "development",
+      "options": {
+        "buildTarget": "landspitali:build"
+      },
+      "configurations": {
+        "development": {
+          "buildTarget": "landspitali:build:development"
+        },
+        "production": {
+          "buildTarget": "landspitali:build:production"
+        }
+      }
+    },
+    "lint": {
+      "executor": "@nx/eslint:lint"
+    },
+    "test": {
+      "executor": "@nx/jest:jest",
+      "outputs": ["{workspaceRoot}/coverage/{projectRoot}"],
+      "options": {
+        "jestConfig": "libs/api/domains/landspitali/jest.config.ts"
+      }
+    }
+  }
+}
