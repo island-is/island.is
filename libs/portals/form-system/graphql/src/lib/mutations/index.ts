@@ -36,4 +36,3 @@ export { CREATE_FORM_URL } from './createFormUrl'
 export { DELETE_FORM_URL } from './deleteFormUrl'
 export { SUBMIT_SECTION } from './submitSection'
 export { DELETE_APPLICATION } from './deleteApplication'
-

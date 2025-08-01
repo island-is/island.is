@@ -187,5 +187,4 @@ export class ApplicationsController {
   async deleteApplication(@Param('id') id: string): Promise<void> {
     return await this.applicationsService.deleteApplication(id)
   }
-
 }

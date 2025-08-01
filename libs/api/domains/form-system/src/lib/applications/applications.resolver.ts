@@ -141,5 +141,4 @@ export class ApplicationsResolver {
   ): Promise<void> {
     return this.applicationsService.deleteApplication(user, input)
   }
-
 }
