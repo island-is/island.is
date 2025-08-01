@@ -1,5 +1,9 @@
 import { useQuery } from '@apollo/client'
-import { coreErrorMessages, YES } from '@island.is/application/core'
+import {
+  coreErrorMessages,
+  getErrorViaPath,
+  YES,
+} from '@island.is/application/core'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   FieldBaseProps,
@@ -23,6 +27,7 @@ import { useLocale } from '@island.is/localization'
 import { Markdown } from '@island.is/shared/components'
 import format from 'date-fns/format'
 import { FC } from 'react'
+import { useFormContext } from 'react-hook-form'
 import { siaRehabilitationPlanQuery } from '../../graphql/queries'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../lib/messages'
 import { SiaRehabilitationPlanQuery } from '../../types/schema'
@@ -31,10 +36,11 @@ import { getApplicationAnswers } from '../../utils/medicalAndRehabilitationPayme
 export const RehabilitationPlan: FC<FieldBaseProps> = ({
   application,
   field,
-  error,
+  errors,
   setBeforeSubmitCallback,
 }) => {
   const { formatMessage } = useLocale()
+  const { register } = useFormContext()
 
   const {
     data,
@@ -705,9 +711,9 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
       {rehabilitationObjective()}
       <CheckboxFormField
         application={application}
-        error={error}
+        error={errors && getErrorViaPath(errors, `${field.id}.confirmation`)}
         field={{
-          id: field.id,
+          id: `${field.id}.confirmation`,
           large: true,
           backgroundColor: 'blue',
           type: FieldTypes.CHECKBOX,
@@ -722,6 +728,15 @@ export const RehabilitationPlan: FC<FieldBaseProps> = ({
             },
           ],
         }}
+      />
+      <input
+        type="hidden"
+        value={
+          data?.socialInsuranceRehabilitationPlan?.referenceId
+            ? data.socialInsuranceRehabilitationPlan.referenceId
+            : undefined
+        }
+        {...register(`${field.id}.referenceId`)}
       />
     </Stack>
   )

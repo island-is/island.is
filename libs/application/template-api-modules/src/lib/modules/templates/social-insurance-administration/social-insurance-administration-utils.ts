@@ -406,6 +406,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     lastEmploymentTitle,
     lastEmploymentYear,
     certificateForSicknessAndRehabilitationReferenceId,
+    rehabilitationPlanReferenceId,
     educationalLevel,
     hadAssistance,
   } = getMARPApplicationAnswers(application.answers)
@@ -475,7 +476,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     baseCertificateReference:
       certificateForSicknessAndRehabilitationReferenceId ?? '',
     ...(isEHApplication(application.externalData) && {
-      rehabilitationPlanReference: 'test', //TODO:
+      rehabilitationPlanReference: rehabilitationPlanReferenceId,
     }),
     selfAssessment: {
       hadAssistance: hadAssistance === YES,

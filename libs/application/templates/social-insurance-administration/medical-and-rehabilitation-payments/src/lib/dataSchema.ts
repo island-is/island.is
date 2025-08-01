@@ -315,9 +315,9 @@ export const dataSchema = z.object({
         params: coreSIAErrorMessages.requireAttachment,
       },
     ),
-  rehabilitationPlanConfirmation: z
-    .array(z.string())
-    .refine((v) => v.includes(YES)),
+  rehabilitationPlan: z.object({
+    confirmation: z.array(z.string()).refine((v) => v.includes(YES)),
+  }),
   selfAssessment: z
     .object({
       hadAssistance: z.enum([YES, NO]).optional(),
