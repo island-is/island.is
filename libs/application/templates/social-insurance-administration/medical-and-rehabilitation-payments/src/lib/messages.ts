@@ -801,10 +801,10 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
     },
 
     // Questionnaire
-    questionNumber: {
+    questionnaire: {
       id: 'marp.application:self.assessment.question.number',
-      defaultMessage: 'Spurning {index} af {total}',
-      description: 'Question {index} of {total}',
+      defaultMessage: 'Sjálfsmat (Spurning {index} af {total})',
+      description: 'Self-assessment (Question {index} of {total})',
     },
     completeSelfAssessment: {
       id: 'marp.application:self.assessment.complete.self.assessment',

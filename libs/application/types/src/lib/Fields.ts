@@ -435,7 +435,6 @@ export interface DescriptionField extends BaseField {
   space?: BoxProps['paddingTop']
   titleVariant?: TitleVariants
   showFieldName?: boolean
-  eyebrow?: FormTextWithLocale
 }
 
 export interface RadioField extends InputField {

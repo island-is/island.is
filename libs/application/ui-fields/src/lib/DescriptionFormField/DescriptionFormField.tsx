@@ -35,70 +35,54 @@ export const DescriptionFormField: FC<
       paddingTop={paddingTop}
       marginBottom={marginBottom}
       marginTop={marginTop}
-      display="flex"
-      justifyContent="spaceBetween"
     >
-      <Box>
-        {showFieldName && (
-          <Text variant={field.titleVariant}>
-            {formatTextWithLocale(
-              field.title ?? '',
-              updatedApplication,
-              locale as Locale,
-              formatMessage,
-            )}
-            {field.titleTooltip && (
-              <Box marginLeft={1} display="inlineBlock">
-                <Tooltip
-                  placement="top"
-                  text={formatTextWithLocale(
-                    field.titleTooltip,
-                    updatedApplication,
-                    locale as Locale,
-                    formatMessage,
-                  )}
-                />
-              </Box>
-            )}
-          </Text>
-        )}
-        {(field.description || field.tooltip) && (
-          <Text>
-            {field.description && (
-              <Markdown>
-                {formatTextWithLocale(
-                  field.description,
-                  updatedApplication,
-                  locale as Locale,
-                  formatMessage,
-                )}
-              </Markdown>
-            )}
-            {field.tooltip && (
+      {showFieldName && (
+        <Text variant={field.titleVariant}>
+          {formatTextWithLocale(
+            field.title ?? '',
+            updatedApplication,
+            locale as Locale,
+            formatMessage,
+          )}
+          {field.titleTooltip && (
+            <Box marginLeft={1} display="inlineBlock">
               <Tooltip
                 placement="top"
                 text={formatTextWithLocale(
-                  field.tooltip,
+                  field.titleTooltip,
                   updatedApplication,
                   locale as Locale,
                   formatMessage,
                 )}
               />
-            )}
-          </Text>
-        )}
-      </Box>
-      {field.eyebrow && (
-        <Box display="flex" flexShrink={0}>
-          <Text variant="eyebrow" color="purple400">
-            {formatTextWithLocale(
-              field.eyebrow,
-              application,
-              locale as Locale,
-              formatMessage,
-            )}
-          </Text>
-        </Box>
+            </Box>
+          )}
+        </Text>
+      )}
+      {(field.description || field.tooltip) && (
+        <Text>
+          {field.description && (
+            <Markdown>
+              {formatTextWithLocale(
+                field.description,
+                updatedApplication,
+                locale as Locale,
+                formatMessage,
+              )}
+            </Markdown>
+          )}
+          {field.tooltip && (
+            <Tooltip
+              placement="top"
+              text={formatTextWithLocale(
+                field.tooltip,
+                updatedApplication,
+                locale as Locale,
+                formatMessage,
+              )}
+            />
+          )}
+        </Text>
       )}
     </Box>
   )

@@ -20,6 +20,22 @@ export const selfAssessmentQuestionnaireSubSection = (index: number) =>
     children: [
       buildMultiField({
         id: `selfAssessment.questionnaire[${index}]`,
+        title: (application, locale) => {
+          const selfAssessmentQuestionnaireQuestions =
+            getSelfAssessmentQuestionnaireQuestions(
+              application.externalData,
+              locale,
+            )
+
+          return {
+            ...medicalAndRehabilitationPaymentsFormMessage.selfAssessment
+              .questionnaire,
+            values: {
+              index: index + 1,
+              total: selfAssessmentQuestionnaireQuestions.length,
+            },
+          }
+        },
         nextButtonText: (application) => {
           const selfAssessmentQuestionnaireQuestions =
             getSelfAssessmentQuestionnaireQuestions(application.externalData)
@@ -30,30 +46,6 @@ export const selfAssessmentQuestionnaireSubSection = (index: number) =>
           }
         },
         children: [
-          buildDescriptionField({
-            id: `selfAssessment.questionnaire[${index}].title`,
-            title:
-              medicalAndRehabilitationPaymentsFormMessage.selfAssessment
-                .sectionTitle,
-            eyebrow: (application, locale) => {
-              const selfAssessmentQuestionnaireQuestions =
-                getSelfAssessmentQuestionnaireQuestions(
-                  application.externalData,
-                  locale,
-                )
-
-              return {
-                ...medicalAndRehabilitationPaymentsFormMessage.selfAssessment
-                  .questionNumber,
-                values: {
-                  index: index + 1,
-                  total: selfAssessmentQuestionnaireQuestions.length,
-                },
-              }
-            },
-            titleVariant: 'h2',
-            space: 0,
-          }),
           buildDescriptionField({
             id: `selfAssessment.questionnaire[${index}].description`,
             title: (application, locale) => {
@@ -66,7 +58,6 @@ export const selfAssessmentQuestionnaireSubSection = (index: number) =>
               return selfAssessmentQuestionnaireQuestions[index].explanationText
             },
             titleVariant: 'h4',
-            space: 4,
           }),
           buildRadioField({
             id: `selfAssessment.questionnaire[${index}].answer`,
