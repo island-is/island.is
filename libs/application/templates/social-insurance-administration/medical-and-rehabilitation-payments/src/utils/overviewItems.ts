@@ -42,7 +42,9 @@ export const applicantItems = (
     applicantName,
     applicantNationalId,
     applicantAddress,
+    apartmentNumber,
     applicantLocation,
+    applicantAddressAndApartment,
     userProfileEmail,
     spouseName,
     spouseNationalId,
@@ -68,7 +70,10 @@ export const applicantItems = (
     {
       width: 'half',
       keyText: socialInsuranceAdministrationMessage.confirm.address,
-      valueText: applicantAddress,
+      valueText:
+        apartmentNumber
+          ? applicantAddressAndApartment
+          : applicantAddress
     },
     {
       width: 'half',

@@ -163,7 +163,7 @@ export const socialInsuranceAdministrationMessage: MessageDir = {
     applicantApartmentNumber: {
       id: 'sia.application:info.applicant.apartment.number',
       defaultMessage: 'Íbúðarnúmer',
-      description: 'Flat number',
+      description: 'Apartment number',
     },
     applicantPostalcode: {
       id: 'sia.application:info.applicant.postalcode',

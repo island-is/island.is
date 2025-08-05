@@ -636,9 +636,7 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
   }
 
   async getResidenceInformation({ auth }: TemplateApiModuleActionProps) {
-    const res = await this.siaClientService.getResidenceInformation(auth)
-    console.log('RES: ', res)
-    return res
+    return await this.siaClientService.getResidenceInformation(auth)
   }
 
   async getEducationLevels({

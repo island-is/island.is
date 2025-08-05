@@ -261,6 +261,8 @@ export const getApplicationExternalData = (
 
   const applicantLocation = `${applicantPostalCode}, ${applicantMunicipality}`
 
+  const applicantAddressAndApartment = `${applicantAddress}, ${apartmentNumber}`
+
   const bankInfo = getValueViaPath<BankInfo>(
     externalData,
     'socialInsuranceAdministrationApplicant.data.bankAccount',
@@ -349,6 +351,7 @@ export const getApplicationExternalData = (
     apartmentNumber,
     applicantMunicipality,
     applicantLocation,
+    applicantAddressAndApartment,
     bankInfo,
     userProfileEmail,
     userProfilePhoneNumber,
