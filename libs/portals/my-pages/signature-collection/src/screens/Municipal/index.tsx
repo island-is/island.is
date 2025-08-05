@@ -22,7 +22,7 @@ const SignatureCollectionMunicipal = () => {
 
   const { listsForOwner } = useGetListsForOwner(
     collectionType,
-    currentCollection?.id,
+    currentCollection?.id || '',
   )
 
   return (

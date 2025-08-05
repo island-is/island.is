@@ -37,7 +37,6 @@ import {
 import { PaginatedUserProfileDto } from './dto/paginated-user-profile.dto'
 import { PatchUserProfileDto } from './dto/patch-user-profile.dto'
 import { UserProfileDto } from './dto/user-profile.dto'
-import { IslykillService } from './islykill.service'
 import { ActorProfile } from './models/actor-profile.model'
 import { Emails } from './models/emails.model'
 import kennitala from 'kennitala'
@@ -54,7 +53,6 @@ export class UserProfileService {
     private readonly delegationPreference: typeof ActorProfile,
     @Inject(VerificationService)
     private readonly verificationService: VerificationService,
-    private readonly islykillService: IslykillService,
     private sequelize: Sequelize,
     @Inject(UserProfileConfig.KEY)
     private config: ConfigType<typeof UserProfileConfig>,
@@ -127,7 +125,7 @@ export class UserProfileService {
         {
           model: Emails,
           as: 'emails',
-          required: true,
+          required: false,
           where: {
             primary: true,
           },
@@ -200,7 +198,9 @@ export class UserProfileService {
         const { confirmed, message, remainingAttempts } =
           await this.verificationService.confirmEmail(
             {
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               email: userProfile.email!,
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               hash: userProfile.emailVerificationCode!,
             },
             ...commonArgs,
@@ -222,7 +222,9 @@ export class UserProfileService {
         const { confirmed, message, remainingAttempts } =
           await this.verificationService.confirmSms(
             {
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               mobilePhoneNumber: userProfile.mobilePhoneNumber!,
+              // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
               code: userProfile.mobilePhoneNumberVerificationCode!,
             },
             ...commonArgs,
@@ -250,7 +252,7 @@ export class UserProfileService {
         include: {
           model: Emails,
           as: 'emails',
-          required: true,
+          required: false,
           where: {
             primary: true,
           },
@@ -290,11 +292,12 @@ export class UserProfileService {
       const calculatedEmailStatus = isEmailDefined
         ? userProfile.email
           ? DataStatus.VERIFIED
-          : currentUserProfile?.emails?.[0].emailStatus ===
+          : currentUserProfile?.emails?.[0]?.emailStatus ===
             DataStatus.NOT_VERIFIED
           ? DataStatus.NOT_DEFINED
           : DataStatus.EMPTY
-        : (currentUserProfile?.emails?.[0].emailStatus as DataStatus)
+        : (currentUserProfile?.emails?.[0]?.emailStatus as DataStatus) ||
+          DataStatus.EMPTY
 
       await this.userProfileModel.upsert(
         {
@@ -312,7 +315,7 @@ export class UserProfileService {
               emailStatus: calculatedEmailStatus,
               emailVerified:
                 updateEmailVerified ??
-                currentUserProfile?.emails?.[0].emailStatus ===
+                currentUserProfile?.emails?.[0]?.emailStatus ===
                   DataStatus.VERIFIED,
               mobileStatus:
                 update.mobileStatus ??
@@ -349,10 +352,11 @@ export class UserProfileService {
           const email = await this.emailModel.findOne({
             where: {
               email: userProfile.email,
+              nationalId,
             },
+            transaction,
+            useMaster: true,
           })
-
-          await new Promise((resolve) => setTimeout(resolve, 2500))
 
           if (email) {
             await email.update(
@@ -379,20 +383,6 @@ export class UserProfileService {
             )
           }
         }
-      }
-
-      // Update islykill settings
-      if (
-        isEmailDefined ||
-        isMobilePhoneNumberDefined ||
-        isDefined(userProfile.emailNotifications)
-      ) {
-        await this.islykillService.upsertIslykillSettings({
-          nationalId,
-          phoneNumber: formattedPhoneNumber,
-          email: userProfile.email,
-          canNudge: userProfile.emailNotifications,
-        })
       }
     })
 
@@ -689,15 +679,23 @@ export class UserProfileService {
   async getActorProfiles(
     toNationalId: string,
   ): Promise<PaginatedActorProfileDto> {
-    const incomingDelegations =
-      await this.delegationsApi.delegationsControllerGetAllDelegations({
-        xQueryNationalId: toNationalId,
-      })
+    const incomingDelegations = await this.getIncomingDelegations(toNationalId)
+
+    // Filter out duplicate delegations
+    incomingDelegations.data = incomingDelegations.data.filter(
+      (delegation, index, self) =>
+        index ===
+        self.findIndex(
+          (d) =>
+            d.fromNationalId === delegation.fromNationalId &&
+            d.toNationalId === delegation.toNationalId,
+        ),
+    )
 
     const emailPreferences = await this.delegationPreference.findAll({
       where: {
         toNationalId,
-        fromNationalId: incomingDelegations.map((d) => d.fromNationalId),
+        fromNationalId: incomingDelegations.data.map((d) => d.fromNationalId),
       },
       include: [
         {
@@ -709,7 +707,7 @@ export class UserProfileService {
     })
 
     const actorProfiles = await Promise.all(
-      incomingDelegations.map(async (delegation) => {
+      incomingDelegations.data.map(async (delegation) => {
         const emailPreference = emailPreferences.find(
           (preference) =>
             preference.fromNationalId === delegation.fromNationalId,
@@ -743,67 +741,6 @@ export class UserProfileService {
   }
 
   /* Fetch extended actor profile for a specific delegation */
-  async getActorProfileWithDocumentsScope({
-    toNationalId,
-    fromNationalId,
-  }: {
-    fromNationalId: string
-    toNationalId: string
-  }): Promise<ActorProfileDto> {
-    // Check if delegation exists using the getIncomingDelegations method
-    const incomingDelegation = await this.getIncomingDelegations(toNationalId)
-
-    const delegation = incomingDelegation.data.find(
-      (d) => d.fromNationalId === fromNationalId,
-    )
-
-    // If delegation does not exist, throw an error
-    if (!delegation) {
-      throw new BadRequestException('delegation does not exist')
-    }
-
-    const userProfile = await this.findById(
-      toNationalId,
-      false,
-      ClientType.FIRST_PARTY,
-    )
-
-    const emailPreferences = await this.delegationPreference.findOne({
-      where: {
-        toNationalId,
-        fromNationalId,
-      },
-      include: [
-        {
-          model: Emails,
-          as: 'emails',
-          attributes: ['email', 'emailStatus'],
-        },
-      ],
-    })
-
-    const actorProfile = {
-      fromNationalId,
-      ...(emailPreferences
-        ? {
-            emailNotifications: emailPreferences.emailNotifications,
-            email: emailPreferences.emails?.email,
-            emailVerified:
-              emailPreferences.emails?.emailStatus === DataStatus.VERIFIED,
-          }
-        : {
-            emailNotifications: true,
-            email: userProfile.email,
-            emailVerified: userProfile.emailVerified,
-          }),
-      documentNotifications: userProfile.documentNotifications,
-      locale: userProfile.locale,
-    }
-
-    return actorProfile
-  }
-
-  /* Fetch extended actor profile for a specific delegation */
   async getActorProfile({
     toNationalId,
     fromNationalId,
@@ -811,7 +748,15 @@ export class UserProfileService {
     fromNationalId: string
     toNationalId: string
   }): Promise<ActorProfileDto> {
-    await this.checkDelegationExists(fromNationalId, toNationalId)
+    const incomingDelegation = await this.getIncomingDelegations(toNationalId)
+
+    const delegation = incomingDelegation.data.find(
+      (d) => d.fromNationalId === fromNationalId,
+    )
+
+    if (!delegation) {
+      throw new BadRequestException('delegation does not exist')
+    }
 
     const userProfile = await this.findById(
       toNationalId,
@@ -876,7 +821,15 @@ export class UserProfileService {
     emailsId?: string
   }): Promise<MeActorProfileDto> {
     // Verify delegation exists
-    await this.checkDelegationExists(fromNationalId, toNationalId)
+    const incomingDelegations = await this.getIncomingDelegations(toNationalId)
+    const delegationExists = incomingDelegations.data.some(
+      (d) => d.fromNationalId === fromNationalId,
+    )
+
+    if (!delegationExists) {
+      throw new NoContentException()
+    }
+
     // Initialize email-related variables
     let email = null
     let emailStatus = DataStatus.NOT_DEFINED
@@ -942,7 +895,15 @@ export class UserProfileService {
     const date = new Date()
 
     // Verify the delegation exists
-    await this.checkDelegationExists(fromNationalId, toNationalId)
+    const incomingDelegations = await this.getIncomingDelegations(toNationalId)
+
+    const delegation = incomingDelegations.data.find(
+      (d) => d.fromNationalId === fromNationalId,
+    )
+
+    if (!delegation) {
+      throw new BadRequestException('Delegation does not exist')
+    }
 
     // Get the actor profile
     const [actorProfile] = await this.actorProfileModel.findOrCreate({
@@ -984,7 +945,16 @@ export class UserProfileService {
     toNationalId: string
     fromNationalId: string
   }): Promise<ActorProfileDetailsDto> {
-    await this.checkDelegationExists(fromNationalId, toNationalId)
+    const incomingDelegations = await this.getIncomingDelegations(toNationalId)
+
+    // Check if this delegation exists
+    const delegation = incomingDelegations.data.find(
+      (d) => d.fromNationalId === fromNationalId,
+    )
+
+    if (!delegation) {
+      throw new BadRequestException('Delegation does not exist')
+    }
 
     // Get actor profile (delegation preferences)
     const actorProfile = await this.actorProfileModel.findOne({
@@ -1064,7 +1034,14 @@ export class UserProfileService {
     emailNotifications?: boolean
   }): Promise<ActorProfileEmailDto> {
     // Verify the delegation exists first
-    await this.checkDelegationExists(fromNationalId, toNationalId)
+    const incomingDelegations = await this.getIncomingDelegations(toNationalId)
+    const delegation = incomingDelegations.data.find(
+      (d) => d.fromNationalId === fromNationalId,
+    )
+
+    if (!delegation) {
+      throw new BadRequestException('Delegation does not exist')
+    }
 
     let emailRecord: Emails | null = null
     let emailStatus = DataStatus.NOT_DEFINED
@@ -1090,6 +1067,7 @@ export class UserProfileService {
             await this.verificationService.confirmEmail(
               {
                 email,
+                // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
                 hash: emailVerificationCode!,
               },
               toNationalId,
@@ -1213,7 +1191,14 @@ export class UserProfileService {
     emailsId: string
   }): Promise<ActorProfileDetailsDto> {
     // Verify the delegation exists
-    await this.checkDelegationExists(fromNationalId, toNationalId)
+    const incomingDelegations = await this.getIncomingDelegations(toNationalId)
+    const delegation = incomingDelegations.data.find(
+      (d) => d.fromNationalId === fromNationalId,
+    )
+
+    if (!delegation) {
+      throw new BadRequestException('Delegation does not exist')
+    }
 
     // Verify the email exists
     const emailRecord = await this.emailModel.findByPk(emailsId)
@@ -1271,26 +1256,6 @@ export class UserProfileService {
     })
   }
 
-  private async checkDelegationExists(
-    fromNationalId: string,
-    toNationalId: string,
-  ) {
-    const delegationRecords =
-      await this.delegationsApi.delegationsControllerGetAllDelegations({
-        xQueryNationalId: toNationalId,
-      })
-
-    // find the delegation record with the fromNationalId
-    const delegationRecord = delegationRecords.find(
-      (d) => d.fromNationalId === fromNationalId,
-    )
-
-    // Throw error if delegation does not exist
-    if (!delegationRecord) {
-      throw new BadRequestException('Delegation does not exist')
-    }
-  }
-
   /**
    * Determines if a user needs to be nudged based on contact information and timing.
    *
@@ -1328,6 +1293,7 @@ export class UserProfileService {
     mobilePhoneNumberVerified?: boolean
     shouldValidatePhoneNumber?: boolean
   }): boolean | null {
+    // If emailStatus is undefined, we can't consider the email verified
     const isEmailVerified = emailStatus === DataStatus.VERIFIED
     const isPhoneValid = shouldValidatePhoneNumber
       ? mobilePhoneNumber && mobilePhoneNumberVerified
@@ -1409,16 +1375,16 @@ export class UserProfileService {
 
     let filteredUserProfile: UserProfileDto = {
       nationalId: userProfile.nationalId,
-      email: userProfile.emails?.[0].email ?? null,
+      email: userProfile.emails?.[0]?.email ?? null,
       mobilePhoneNumber: userProfile.mobilePhoneNumber,
       locale: userProfile.locale,
       mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified ?? false,
       emailVerified:
-        userProfile.emails?.[0].emailStatus === DataStatus.VERIFIED,
+        userProfile.emails?.[0]?.emailStatus === DataStatus.VERIFIED,
       documentNotifications: userProfile.documentNotifications,
       needsNudge: this.checkNeedsNudge({
-        email: userProfile.emails?.[0].email,
-        emailStatus: userProfile.emails?.[0].emailStatus,
+        email: userProfile.emails?.[0]?.email,
+        emailStatus: userProfile.emails?.[0]?.emailStatus,
         nextNudge: userProfile.nextNudge,
         mobilePhoneNumber: userProfile.mobilePhoneNumber,
         mobilePhoneNumberVerified: userProfile.mobilePhoneNumberVerified,
@@ -1434,7 +1400,7 @@ export class UserProfileService {
       (this.config.migrationDate ?? new Date()) > userProfile.lastNudge
     ) {
       const isEmailVerified =
-        userProfile.emails?.[0].emailStatus === DataStatus.VERIFIED
+        userProfile.emails?.[0]?.emailStatus === DataStatus.VERIFIED
 
       filteredUserProfile = {
         ...filteredUserProfile,

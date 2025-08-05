@@ -62,7 +62,7 @@ const RemoveCandidate = ({ list }: { list: SignatureCollectionList }) => {
                 {formatMessage(m.cancelCollectionButton)}
               </Text>
               <Text marginBottom={2}>
-                Texti sem útskýrir þessa aðgerð betur kemur hér.
+                {formatMessage(m.cancelCollectionDescription)}
               </Text>
               <Button
                 variant="text"

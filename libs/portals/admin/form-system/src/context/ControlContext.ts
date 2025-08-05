@@ -7,6 +7,7 @@ import {
   FormSystemFormApplicant,
   FormSystemFormCertificationType,
   FormSystemListType,
+  FormSystemOrganizationUrl,
 } from '@island.is/api/schema'
 import {
   ActiveItem,
@@ -24,6 +25,10 @@ export interface IControlContext {
     | undefined
   fieldTypes: Maybe<Maybe<FormSystemFieldType>[]> | undefined
   listTypes: Maybe<Maybe<FormSystemListType>[]> | undefined
+  submitUrls: Maybe<Maybe<FormSystemOrganizationUrl>[]> | undefined
+  validationUrls: Maybe<Maybe<FormSystemOrganizationUrl>[]> | undefined
+  selectedUrls: string[]
+  setSelectedUrls: Dispatch<SetStateAction<string[]>>
   setInSettings: Dispatch<boolean>
   inSettings: boolean
   updateActiveItem: (updatedActiveItem?: ActiveItem) => void
@@ -47,6 +52,12 @@ export const ControlContext = createContext<IControlContext>({
   certificationTypes: [] as Maybe<Maybe<FormSystemFormCertificationType>[]>,
   fieldTypes: [] as Maybe<Maybe<FormSystemFieldType>[]>,
   listTypes: [] as Maybe<Maybe<FormSystemListType>[]>,
+  submitUrls: [] as Maybe<Maybe<FormSystemOrganizationUrl>[]>,
+  validationUrls: [] as Maybe<Maybe<FormSystemOrganizationUrl>[]>,
+  selectedUrls: [],
+  setSelectedUrls: function (_value: SetStateAction<string[]>): void {
+    throw new Error('Function not implemented.')
+  },
   setInSettings: function (_value: boolean): void {
     throw new Error('Function not implemented.')
   },

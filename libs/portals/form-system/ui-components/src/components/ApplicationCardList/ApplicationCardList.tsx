@@ -24,6 +24,9 @@ export const ApplicationList = ({
 }: Props) => {
   const [page, setPage] = useState<number>(1)
   const handlePageChange = useCallback((page: number) => setPage(page), [])
+  const sortedApplications = [...applications].sort((a, b) => {
+    return new Date(b.modified).getTime() - new Date(a.modified).getTime()
+  })
 
   const pagedDocuments = {
     from: (page - 1) * pageSize,
@@ -43,7 +46,7 @@ export const ApplicationList = ({
   return (
     <>
       <Stack space={2}>
-        {applications
+        {sortedApplications
           .slice(pagedDocuments.from, pagedDocuments.to)
           .map((application) => (
             <ApplicationCard
@@ -54,7 +57,7 @@ export const ApplicationList = ({
             />
           ))}
       </Stack>
-      {applications.length > pageSize ? (
+      {sortedApplications.length > pageSize ? (
         <Box marginTop={4}>
           <Pagination
             page={page}

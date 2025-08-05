@@ -312,6 +312,7 @@ export const Item = ({
     selectAsyncProps = {
       id: id,
       title: label,
+      placeholder: placeholder,
       type: FieldTypes.ASYNC_SELECT,
       component: FieldComponents.ASYNC_SELECT,
       children: undefined,
@@ -332,6 +333,7 @@ export const Item = ({
       defaultValue: defaultVal,
       clearOnChange: clearOnChangeVal,
       setOnChange: setOnChangeFunc,
+      loadingError: item.loadingError,
     }
   }
 
@@ -412,7 +414,9 @@ export const Item = ({
       span={['1/1', '1/1', '1/1', span]}
       position={component === 'hiddenInput' ? 'absolute' : 'relative'}
       className={
-        component === 'nationalIdWithName' ? styles.removePaddingTop : undefined
+        component === 'nationalIdWithName' || component === 'selectAsync'
+          ? styles.removePaddingTop
+          : undefined
       }
     >
       {component === 'radio' && label && (

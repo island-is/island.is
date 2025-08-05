@@ -7,16 +7,20 @@ import {
   ApplicationsApi,
   ApplicationsControllerCreateRequest,
   ApplicationsControllerFindAllByOrganizationRequest,
+  ApplicationsControllerFindAllBySlugAndUserRequest,
   ApplicationsControllerGetApplicationRequest,
   ApplicationsControllerSaveScreenRequest,
   ApplicationsControllerSubmitRequest,
+  ApplicationsControllerSubmitSectionRequest,
   ApplicationsControllerUpdateRequest,
 } from '@island.is/clients/form-system'
 import {
   ApplicationsInput,
   CreateApplicationInput,
   GetApplicationInput,
+  GetApplicationsInput,
   SubmitScreenInput,
+  SubmitSectionInput,
   UpdateApplicationInput,
 } from '../../dto/application.input'
 import {
@@ -86,6 +90,20 @@ export class ApplicationsService {
     return response as ApplicationResponse
   }
 
+  async getAllApplications(
+    auth: User,
+    input: GetApplicationsInput,
+  ): Promise<ApplicationResponse> {
+    const response = await this.applicationsApiWithAuth(auth)
+      .applicationsControllerFindAllBySlugAndUser(
+        input as ApplicationsControllerFindAllBySlugAndUserRequest,
+      )
+      .catch((e) =>
+        handle4xx(e, this.handleError, 'failed to get applications'),
+      )
+    return response as ApplicationResponse
+  }
+
   async updateDependencies(
     auth: User,
     input: UpdateApplicationDependenciesInput,
@@ -120,5 +138,13 @@ export class ApplicationsService {
       input as ApplicationsControllerSaveScreenRequest,
     )
     return response
+  }
+
+  async submitSection(auth: User, input: SubmitSectionInput): Promise<void> {
+    await this.applicationsApiWithAuth(
+      auth,
+    ).applicationsControllerSubmitSection(
+      input as ApplicationsControllerSubmitSectionRequest,
+    )
   }
 }

@@ -1,5 +1,5 @@
 import { Action, ApplicationState } from '@island.is/form-system/ui'
-import { setFieldValue } from './reducerUtils'
+import { setError, setFieldValue } from './reducerUtils'
 
 export const fieldReducer = (
   state: ApplicationState,
@@ -45,6 +45,14 @@ export const fieldReducer = (
     case 'SET_PROPERTY_NUMBER': {
       const { value, id } = action.payload
       return setMultipleFieldValues(state, id, value)
+    }
+    case 'SET_TIME': {
+      const { value, id } = action.payload
+      return setFieldValue(state, 'time', id, value)
+    }
+    case 'SET_FIELD_ERROR': {
+      const { fieldId, hasError } = action.payload
+      return setError(state, fieldId, hasError)
     }
     default:
       return state

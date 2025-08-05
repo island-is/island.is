@@ -13,6 +13,7 @@ import {
 import { judgeReceivesAppealTest } from './shared-steps/receive-appeal'
 import { prosecutorAppealsCaseTest } from './shared-steps/send-appeal'
 import { coaJudgesCompleteAppealCaseTest } from './shared-steps/complete-appeal'
+import { judgeAmendsCase } from './shared-steps/amend'
 
 test.use({ baseURL: urls.judicialSystemBaseUrl })
 
@@ -48,8 +49,9 @@ test.describe.serial('Custody tests', () => {
       }
     })
 
-    // Case list
-    await page.goto('/krofur')
+    // Case list groups
+    await page.goto('/malalistar')
+    await expect(page).toHaveURL('/malalistar')
     await page.getByRole('button', { name: 'Nýtt mál' }).click()
     await page.getByRole('menuitem', { name: 'Gæsluvarðhald' }).click()
     await expect(page).toHaveURL('/krafa/ny/gaesluvardhald')
@@ -151,7 +153,7 @@ test.describe.serial('Custody tests', () => {
     await expect(page).toHaveURL(`/krafa/stadfesta/${caseId}`)
     await page.getByRole('button', { name: 'Senda kröfu á héraðsdóm' }).click()
     await page.getByRole('button', { name: 'Loka glugga' }).click()
-    await expect(page).toHaveURL('/krofur')
+    await expect(page).toHaveURL('/malalistar')
   })
 
   test('court should submit decision in case', async ({ judgePage }) => {
@@ -227,6 +229,11 @@ test.describe.serial('Custody tests', () => {
       page.getByTestId('continueButton').click(),
       verifyRequestCompletion(page, '/api/graphql', 'TransitionCase'),
     ])
+    await page.getByTestId('modalSecondaryButton').click()
+  })
+
+  test('judge should amend case', async ({ judgePage }) => {
+    await judgeAmendsCase(judgePage, caseId)
   })
 
   test('prosecutor should appeal case', async ({ prosecutorPage }) => {

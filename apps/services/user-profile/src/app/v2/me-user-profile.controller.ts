@@ -36,6 +36,7 @@ import { PostNudgeDto } from './dto/post-nudge.dto'
 import { SetActorProfileEmailDto } from './dto/set-actor-profile-email.dto'
 import { UserProfileDto } from './dto/user-profile.dto'
 import { UserProfileService } from './user-profile.service'
+import { CreateVerificationDto } from './dto/create-verification.dto'
 
 const namespace = '@island.is/user-profile/v2/me'
 
@@ -151,6 +152,44 @@ export class MeUserProfileController {
         },
       },
       this.userProfileService.setEmailAsPrimary(user.nationalId, emailId),
+    )
+  }
+
+  @Post('/create-verification')
+  @Documentation({
+    description:
+      'Creates a verification code for the user for either email or sms',
+    response: { status: 200 },
+  })
+  async createVerification(
+    @CurrentUser() user: User,
+    @Body() input: CreateVerificationDto,
+  ) {
+    const validateInputs = async () => {
+      if (input.email && !input.mobilePhoneNumber) {
+        await this.userProfileService.createEmailVerification({
+          nationalId: user.nationalId,
+          email: input.email,
+        })
+      } else if (input.mobilePhoneNumber && !input.email) {
+        await this.userProfileService.createSmsVerification({
+          nationalId: user.nationalId,
+          mobilePhoneNumber: input.mobilePhoneNumber,
+        })
+      } else {
+        throw new BadRequestException(
+          'Either email or mobile phone number must be provided',
+        )
+      }
+    }
+    return this.auditService.auditPromise(
+      {
+        auth: user,
+        namespace,
+        action: 'createVerification',
+        resources: user.nationalId,
+      },
+      validateInputs(),
     )
   }
 

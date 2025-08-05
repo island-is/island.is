@@ -99,15 +99,24 @@ describe('GET v2/actor/actor-profile', () => {
 
     // Mock delegations API to return a delegation between the test user and testNationalId1
     jest
-      .spyOn(delegationsApi, 'delegationsControllerGetAllDelegations')
-      .mockResolvedValue([
-        {
-          toNationalId: testNationalId1,
-          fromNationalId: testUserProfile.nationalId,
-          subjectId: null,
-          type: 'delegation',
+      .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
+      .mockResolvedValue({
+        data: [
+          {
+            toNationalId: testNationalId1,
+            fromNationalId: testUserProfile.nationalId,
+            subjectId: null,
+            type: 'delegation',
+          },
+        ],
+        pageInfo: {
+          hasNextPage: false,
+          hasPreviousPage: false,
+          startCursor: '',
+          endCursor: '',
         },
-      ])
+        totalCount: 1,
+      })
   })
 
   afterAll(async () => {
@@ -294,8 +303,17 @@ describe('GET v2/actor/actor-profile', () => {
   it('should return 400 when delegation does not exist', async () => {
     // Mock delegations API to return empty result
     jest
-      .spyOn(delegationsApi, 'delegationsControllerGetAllDelegations')
-      .mockResolvedValue([])
+      .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
+      .mockResolvedValueOnce({
+        data: [], // No delegations
+        pageInfo: {
+          hasNextPage: false,
+          hasPreviousPage: false,
+          startCursor: '',
+          endCursor: '',
+        },
+        totalCount: 0,
+      })
 
     try {
       // Create the actor profile directly without creating a user profile first
@@ -370,15 +388,24 @@ describe('POST /v2/actor/actor-profile/nudge', () => {
 
     // Mock delegations API to return a delegation between the test user and testNationalId1
     jest
-      .spyOn(delegationsApi, 'delegationsControllerGetAllDelegations')
-      .mockResolvedValue([
-        {
-          toNationalId: testNationalId1,
-          fromNationalId: testUserProfile.nationalId,
-          subjectId: null,
-          type: 'delegation',
+      .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
+      .mockResolvedValue({
+        data: [
+          {
+            toNationalId: testNationalId1,
+            fromNationalId: testUserProfile.nationalId,
+            subjectId: null,
+            type: 'delegation',
+          },
+        ],
+        pageInfo: {
+          hasNextPage: false,
+          hasPreviousPage: false,
+          startCursor: '',
+          endCursor: '',
         },
-      ])
+        totalCount: 1,
+      })
   })
 
   afterAll(async () => {
@@ -648,8 +675,17 @@ describe('POST /v2/actor/actor-profile/nudge', () => {
     // Arrange
     // Mock delegations API to return empty result
     jest
-      .spyOn(delegationsApi, 'delegationsControllerGetAllDelegations')
-      .mockResolvedValue([])
+      .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
+      .mockResolvedValueOnce({
+        data: [], // No delegations
+        pageInfo: {
+          hasNextPage: false,
+          hasPreviousPage: false,
+          startCursor: '',
+          endCursor: '',
+        },
+        totalCount: 0,
+      })
 
     // Act
     const res = await server
@@ -772,21 +808,30 @@ describe('GET v2/actor/actor-profiles', () => {
 
     // Arrange
     jest
-      .spyOn(delegationsApi, 'delegationsControllerGetAllDelegations')
-      .mockResolvedValue([
-        {
-          toNationalId: testUserProfile.nationalId,
-          fromNationalId: testNationalId1,
-          subjectId: null,
-          type: 'delegation',
+      .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
+      .mockResolvedValue({
+        data: [
+          {
+            toNationalId: testUserProfile.nationalId,
+            fromNationalId: testNationalId1,
+            subjectId: null,
+            type: 'delegation',
+          },
+          {
+            toNationalId: testUserProfile.nationalId,
+            fromNationalId: testNationalId2,
+            subjectId: null,
+            type: 'delegation',
+          },
+        ],
+        pageInfo: {
+          hasNextPage: false,
+          hasPreviousPage: false,
+          startCursor: '',
+          endCursor: '',
         },
-        {
-          toNationalId: testUserProfile.nationalId,
-          fromNationalId: testNationalId2,
-          subjectId: null,
-          type: 'delegation',
-        },
-      ])
+        totalCount: 2,
+      })
 
     await fixtureFactory.createUserProfile({
       nationalId: testNationalId1,
@@ -829,15 +874,28 @@ describe('GET v2/actor/actor-profiles', () => {
     })
 
     expect(
-      delegationsApi.delegationsControllerGetAllDelegations,
-    ).toHaveBeenCalledWith({ xQueryNationalId: testUserProfile.nationalId })
+      delegationsApi.delegationsControllerGetDelegationRecords,
+    ).toHaveBeenCalledWith({
+      xQueryNationalId: testUserProfile.nationalId,
+      scope: '@island.is/documents',
+      direction: 'incoming',
+    })
   })
 
   it('should return an empty array when there are no delegations', async () => {
     // Arrange
     jest
-      .spyOn(delegationsApi, 'delegationsControllerGetAllDelegations')
-      .mockResolvedValue([])
+      .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
+      .mockResolvedValue({
+        data: [],
+        pageInfo: {
+          hasNextPage: false,
+          hasPreviousPage: false,
+          startCursor: '',
+          endCursor: '',
+        },
+        totalCount: 0,
+      })
 
     // Act
     const res = await server.get('/v2/actor/actor-profiles')
@@ -859,21 +917,30 @@ describe('GET v2/actor/actor-profiles', () => {
 
     // Arrange
     jest
-      .spyOn(delegationsApi, 'delegationsControllerGetAllDelegations')
-      .mockResolvedValue([
-        {
-          toNationalId: testUserProfile.nationalId,
-          fromNationalId: testNationalId1,
-          subjectId: null,
-          type: 'delegation',
+      .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
+      .mockResolvedValue({
+        data: [
+          {
+            toNationalId: testUserProfile.nationalId,
+            fromNationalId: testNationalId1,
+            subjectId: null,
+            type: 'delegation',
+          },
+          {
+            toNationalId: testUserProfile.nationalId,
+            fromNationalId: testNationalId2,
+            subjectId: null,
+            type: 'delegation',
+          },
+        ],
+        pageInfo: {
+          hasNextPage: false,
+          hasPreviousPage: false,
+          startCursor: '',
+          endCursor: '',
         },
-        {
-          toNationalId: testUserProfile.nationalId,
-          fromNationalId: testNationalId2,
-          subjectId: null,
-          type: 'delegation',
-        },
-      ])
+        totalCount: 2,
+      })
 
     // Create user profiles and emails for both delegations
     await fixtureFactory.createUserProfile({
@@ -940,7 +1007,7 @@ describe('GET v2/actor/actor-profiles', () => {
   it('should handle delegations API errors gracefully', async () => {
     // Arrange
     jest
-      .spyOn(delegationsApi, 'delegationsControllerGetAllDelegations')
+      .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
       .mockRejectedValue(new Error('Service unavailable'))
 
     // Act
@@ -956,21 +1023,30 @@ describe('GET v2/actor/actor-profiles', () => {
 
     // Arrange
     jest
-      .spyOn(delegationsApi, 'delegationsControllerGetAllDelegations')
-      .mockResolvedValue([
-        {
-          toNationalId: testUserProfile.nationalId,
-          fromNationalId: testNationalId1,
-          subjectId: null,
-          type: 'delegation',
+      .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
+      .mockResolvedValue({
+        data: [
+          {
+            toNationalId: testUserProfile.nationalId,
+            fromNationalId: testNationalId1,
+            subjectId: null,
+            type: 'delegation',
+          },
+          {
+            toNationalId: testUserProfile.nationalId,
+            fromNationalId: testNationalId2,
+            subjectId: 'document-123',
+            type: 'document-delegation',
+          },
+        ],
+        pageInfo: {
+          hasNextPage: false,
+          hasPreviousPage: false,
+          startCursor: '',
+          endCursor: '',
         },
-        {
-          toNationalId: testUserProfile.nationalId,
-          fromNationalId: testNationalId2,
-          subjectId: 'document-123',
-          type: 'document-delegation',
-        },
-      ])
+        totalCount: 2,
+      })
 
     // Create actor profile for the first delegation only
     await fixtureFactory.createActorProfile({
@@ -1000,9 +1076,11 @@ describe('GET v2/actor/actor-profiles', () => {
 
     // Verify it used the correct parameters
     expect(
-      delegationsApi.delegationsControllerGetAllDelegations,
+      delegationsApi.delegationsControllerGetDelegationRecords,
     ).toHaveBeenCalledWith({
       xQueryNationalId: testUserProfile.nationalId,
+      scope: '@island.is/documents',
+      direction: 'incoming',
     })
   })
 })
@@ -1083,15 +1161,24 @@ describe('PATCH /v2/actor/actor-profile/email', () => {
 
     // Mock delegations API to return a delegation between the test user and testNationalId1
     jest
-      .spyOn(delegationsApi, 'delegationsControllerGetAllDelegations')
-      .mockResolvedValue([
-        {
-          toNationalId: testNationalId1,
-          fromNationalId: testUserProfile.nationalId,
-          subjectId: null,
-          type: 'delegation',
+      .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
+      .mockResolvedValue({
+        data: [
+          {
+            toNationalId: testNationalId1,
+            fromNationalId: testUserProfile.nationalId,
+            subjectId: null,
+            type: 'delegation',
+          },
+        ],
+        pageInfo: {
+          hasNextPage: false,
+          hasPreviousPage: false,
+          startCursor: '',
+          endCursor: '',
         },
-      ])
+        totalCount: 1,
+      })
   })
 
   afterAll(async () => {
@@ -1275,15 +1362,24 @@ describe('PATCH /v2/actor/actor-profile', () => {
 
     // Mock delegations API to return a delegation between the test user and testNationalId1
     jest
-      .spyOn(delegationsApi, 'delegationsControllerGetAllDelegations')
-      .mockResolvedValue([
-        {
-          toNationalId: testUserProfile.nationalId,
-          fromNationalId: testNationalId1,
-          subjectId: null,
-          type: 'delegation',
+      .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
+      .mockResolvedValue({
+        data: [
+          {
+            toNationalId: testUserProfile.nationalId,
+            fromNationalId: testNationalId1,
+            subjectId: null,
+            type: 'delegation',
+          },
+        ],
+        pageInfo: {
+          hasNextPage: false,
+          hasPreviousPage: false,
+          startCursor: '',
+          endCursor: '',
         },
-      ])
+        totalCount: 1,
+      })
 
     // Mock email verification
     jest
@@ -1702,15 +1798,24 @@ describe('PATCH v2/actor/actor-profiles/.from-national-id', () => {
     })
 
     jest
-      .spyOn(delegationsApi, 'delegationsControllerGetAllDelegations')
-      .mockResolvedValue([
-        {
-          toNationalId: testUserProfile.nationalId,
-          fromNationalId: testNationalId1,
-          subjectId: null,
-          type: 'delegation',
+      .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
+      .mockResolvedValue({
+        data: [
+          {
+            toNationalId: testUserProfile.nationalId,
+            fromNationalId: testNationalId1,
+            subjectId: null,
+            type: 'delegation',
+          },
+        ],
+        pageInfo: {
+          hasNextPage: false,
+          hasPreviousPage: false,
+          startCursor: '',
+          endCursor: '',
         },
-      ])
+        totalCount: 1,
+      })
 
     await fixtureFactory.createUserProfile({
       nationalId: testNationalId1,
@@ -1762,8 +1867,12 @@ describe('PATCH v2/actor/actor-profiles/.from-national-id', () => {
     expect(actorProfile[0]).not.toBeNull()
     expect(actorProfile[0].emailNotifications).toBe(false)
     expect(
-      delegationsApi.delegationsControllerGetAllDelegations,
-    ).toHaveBeenCalledWith({ xQueryNationalId: testUserProfile.nationalId })
+      delegationsApi.delegationsControllerGetDelegationRecords,
+    ).toHaveBeenCalledWith({
+      xQueryNationalId: testUserProfile.nationalId,
+      scope: '@island.is/documents',
+      direction: 'incoming',
+    })
   })
 
   it('should update existing actor profile', async () => {
@@ -1879,11 +1988,20 @@ describe('PATCH v2/actor/actor-profiles/.from-national-id', () => {
     expect(actorProfile[0].emailsId).toBe(testEmail2Id)
   })
 
-  it('should throw bad request exception if delegation is not found', async () => {
+  it('should throw no content exception if delegation is not found', async () => {
     // Arrange
     jest
-      .spyOn(delegationsApi, 'delegationsControllerGetAllDelegations')
-      .mockResolvedValue([])
+      .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
+      .mockResolvedValue({
+        data: [], // No delegations
+        pageInfo: {
+          hasNextPage: false,
+          hasPreviousPage: false,
+          startCursor: '',
+          endCursor: '',
+        },
+        totalCount: 1,
+      })
 
     // Act
     const res = await server
@@ -1892,11 +2010,6 @@ describe('PATCH v2/actor/actor-profiles/.from-national-id', () => {
       .send({ emailNotifications: false })
 
     // Assert
-    expect(res.status).toEqual(400)
-    expect(res.body).toMatchObject({
-      title: 'Bad Request',
-      status: 400,
-      detail: 'Delegation does not exist',
-    })
+    expect(res.status).toEqual(204)
   })
 })

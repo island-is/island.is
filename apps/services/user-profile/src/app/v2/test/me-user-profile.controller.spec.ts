@@ -7,7 +7,6 @@ import { v4 as uuid } from 'uuid'
 
 import { ApiScope, UserProfileScope } from '@island.is/auth/scopes'
 import { DelegationsApi } from '@island.is/clients/auth/delegation-api'
-import { IslyklarApi, PublicUser } from '@island.is/clients/islykill'
 import {
   createCurrentUser,
   createNationalId,
@@ -287,11 +286,10 @@ describe('MeUserProfileController', () => {
     )
   })
 
-  describe('PATCH user-profile - nudge dates', () => {
+  describe('PATCH user-profile - date nudging and edge cases', () => {
     let app: TestApp
     let server: SuperTest<Test>
     let fixtureFactory: FixtureFactory
-    let islyklarApi = null
 
     beforeEach(async () => {
       app = await setupApp({
@@ -315,22 +313,6 @@ describe('MeUserProfileController', () => {
       await fixtureFactory.createSmsVerification({
         ...testSMSVerification,
         mobilePhoneNumber: newPhoneNumber,
-      })
-
-      // Mock islyklar api responses
-      islyklarApi = app.get(IslyklarApi)
-      islyklarApi.islyklarPut = jest.fn()
-      islyklarApi.islyklarPost = jest
-        .fn()
-        .mockImplementation(({ user }: { user: PublicUser }) => {
-          return new Promise((resolve) => {
-            resolve(user)
-          })
-        })
-      islyklarApi.islyklarGet = jest.fn().mockResolvedValue({
-        ssn: testUserProfile.nationalId,
-        email: testUserProfileEmail.email,
-        mobile: testUserProfile.mobilePhoneNumber,
       })
     })
 
@@ -520,12 +502,26 @@ describe('MeUserProfileController', () => {
         addMonths(userProfile.lastNudge, NUDGE_INTERVAL).toString(),
       )
     })
+
+    it('BUG - PATCH /v2/me should return 200 when user has no email addresses registered', async () => {
+      // Arrange
+      await fixtureFactory.createUserProfile({
+        ...testUserProfile,
+        emails: [],
+      })
+
+      // Act - send an empty PATCH request
+      const res = await server.patch('/v2/me').send({})
+
+      // Assert
+      expect(res.status).toEqual(200)
+      expect(res.body.nationalId).toEqual(testUserProfile.nationalId)
+    })
   })
 
   describe('PATCH user-profile', () => {
     let app: TestApp
     let server: SuperTest<Test>
-    let islyklarApi: IslyklarApi
     let confirmSmsSpy: jest.SpyInstance
 
     beforeEach(async () => {
@@ -558,22 +554,6 @@ describe('MeUserProfileController', () => {
       verificationService.sendConfirmationEmail = jest.fn()
       verificationService.sendConfirmationSms = jest.fn()
       confirmSmsSpy = jest.spyOn(verificationService, 'confirmSms')
-
-      // Mock islyklar api responses
-      islyklarApi = app.get(IslyklarApi)
-      islyklarApi.islyklarPut = jest.fn()
-      islyklarApi.islyklarPost = jest
-        .fn()
-        .mockImplementation(({ user }: { user: PublicUser }) => {
-          return new Promise((resolve) => {
-            resolve(user)
-          })
-        })
-      islyklarApi.islyklarGet = jest.fn().mockResolvedValue({
-        ssn: testUserProfile.nationalId,
-        email: testUserProfileEmail.email,
-        mobile: testUserProfile.mobilePhoneNumber,
-      })
     })
 
     afterEach(async () => {
@@ -910,28 +890,10 @@ describe('MeUserProfileController', () => {
       expect(userProfile.nextNudge.toString()).toBe(
         addMonths(userProfile.lastNudge, NUDGE_INTERVAL).toString(),
       )
-
-      // Assert that islyklar api is called
-      expect(islyklarApi.islyklarPut).toBeCalledWith({
-        user: {
-          ssn: testUserProfile.nationalId,
-          email: '',
-          mobile: '',
-        },
-      })
     })
 
-    it('PATCH /v2/me should return 200 and create islyklar profile when it does not exist', async () => {
-      // Arrange
-      islyklarApi.islyklarGet = jest.fn().mockImplementation(() => {
-        return new Promise((resolve, reject) =>
-          reject({
-            status: 404,
-          }),
-        )
-      })
-
-      // Act
+    it('PATCH /v2/me should return 200', async () => {
+      // Arrange & Act
       const res = await server.patch('/v2/me').send({
         email: newEmail,
         emailVerificationCode: emailVerificationCode,
@@ -941,17 +903,9 @@ describe('MeUserProfileController', () => {
 
       // Assert
       expect(res.status).toEqual(200)
-      expect(islyklarApi.islyklarPut).not.toBeCalled()
-      expect(islyklarApi.islyklarPost).toBeCalledWith({
-        user: {
-          ssn: testUserProfile.nationalId,
-          email: newEmail,
-          mobile: formattedNewPhoneNumber,
-        },
-      })
     })
 
-    it('PATCH /v2/me should return 200 and should call the islyklar put method and not post', async () => {
+    it('PATCH /v2/me should return 200', async () => {
       // Act
       const res = await server.patch('/v2/me').send({
         mobilePhoneNumber: formattedNewPhoneNumber,
@@ -962,17 +916,9 @@ describe('MeUserProfileController', () => {
 
       // Assert
       expect(res.status).toEqual(200)
-      expect(islyklarApi.islyklarPost).not.toBeCalled()
-      expect(islyklarApi.islyklarPut).toBeCalledWith({
-        user: {
-          ssn: testUserProfile.nationalId,
-          email: newEmail,
-          mobile: formattedNewPhoneNumber,
-        },
-      })
     })
 
-    it('PATCH /v2/me should return 200 and should call the islyklar put method with new email and current mobilePhoneNumber', async () => {
+    it('PATCH /v2/me should return 200', async () => {
       // Act
       const res = await server.patch('/v2/me').send({
         email: newEmail,
@@ -981,17 +927,9 @@ describe('MeUserProfileController', () => {
 
       // Assert
       expect(res.status).toEqual(200)
-      expect(islyklarApi.islyklarPost).not.toBeCalled()
-      expect(islyklarApi.islyklarPut).toBeCalledWith({
-        user: {
-          ssn: testUserProfile.nationalId,
-          email: newEmail,
-          mobile: testUserProfile.mobilePhoneNumber,
-        },
-      })
     })
 
-    it('PATCH /v2/me should return 200 and should call the islyklar put method with new mobilePhoneNumber and current email', async () => {
+    it('PATCH /v2/me should return 200', async () => {
       // Act
       const res = await server.patch('/v2/me').send({
         mobilePhoneNumber: formattedNewPhoneNumber,
@@ -1000,14 +938,6 @@ describe('MeUserProfileController', () => {
 
       // Assert
       expect(res.status).toEqual(200)
-      expect(islyklarApi.islyklarPost).not.toBeCalled()
-      expect(islyklarApi.islyklarPut).toBeCalledWith({
-        user: {
-          ssn: testUserProfile.nationalId,
-          email: testUserProfileEmail.email,
-          mobile: formattedNewPhoneNumber,
-        },
-      })
     })
 
     it('PATCH /v2/me should return 200 and update emailNotifications', async () => {
@@ -1030,16 +960,6 @@ describe('MeUserProfileController', () => {
       })
 
       expect(userProfile.emailNotifications).toBe(false)
-
-      // Assert that islyklar api is called
-      expect(islyklarApi.islyklarPut).toBeCalledWith({
-        user: {
-          ssn: testUserProfile.nationalId,
-          email: testUserProfileEmail.email,
-          mobile: testUserProfile.mobilePhoneNumber,
-          canNudge: false,
-        },
-      })
     })
 
     it('PATCH /v2/me should return 200 and update emailNotifications and email', async () => {
@@ -1076,16 +996,6 @@ describe('MeUserProfileController', () => {
       expect(userProfile.emailNotifications).toBe(false)
       expect(userProfile?.emails?.[0].email).toBe(newEmail)
       expect(userProfile?.emails?.[0].emailStatus).toBe(DataStatus.VERIFIED)
-
-      // Assert that islyklar api is called
-      expect(islyklarApi.islyklarPut).toBeCalledWith({
-        user: {
-          ssn: testUserProfile.nationalId,
-          email: newEmail,
-          mobile: testUserProfile.mobilePhoneNumber,
-          canNudge: false,
-        },
-      })
     })
   })
 
@@ -1393,21 +1303,30 @@ describe('MeUserProfileController', () => {
 
       // Arrange
       jest
-        .spyOn(delegationsApi, 'delegationsControllerGetAllDelegations')
-        .mockResolvedValue([
-          {
-            toNationalId: testUserProfile.nationalId,
-            fromNationalId: testNationalId1,
-            subjectId: null,
-            type: 'delegation',
+        .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
+        .mockResolvedValue({
+          data: [
+            {
+              toNationalId: testUserProfile.nationalId,
+              fromNationalId: testNationalId1,
+              subjectId: null,
+              type: 'delegation',
+            },
+            {
+              toNationalId: testUserProfile.nationalId,
+              fromNationalId: testNationalId2,
+              subjectId: null,
+              type: 'delegation',
+            },
+          ],
+          pageInfo: {
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: '',
+            endCursor: '',
           },
-          {
-            toNationalId: testUserProfile.nationalId,
-            fromNationalId: testNationalId2,
-            subjectId: null,
-            type: 'delegation',
-          },
-        ])
+          totalCount: 2,
+        })
 
       await fixtureFactory.createUserProfile({
         nationalId: testNationalId1,
@@ -1450,17 +1369,28 @@ describe('MeUserProfileController', () => {
       })
 
       expect(
-        delegationsApi.delegationsControllerGetAllDelegations,
+        delegationsApi.delegationsControllerGetDelegationRecords,
       ).toHaveBeenCalledWith({
         xQueryNationalId: testUserProfile.nationalId,
+        scope: '@island.is/documents',
+        direction: 'incoming',
       })
     })
 
     it('should return an empty array when there are no delegations', async () => {
       // Arrange
       jest
-        .spyOn(delegationsApi, 'delegationsControllerGetAllDelegations')
-        .mockResolvedValue([])
+        .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
+        .mockResolvedValue({
+          data: [],
+          pageInfo: {
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: '',
+            endCursor: '',
+          },
+          totalCount: 0,
+        })
 
       // Act
       const res = await server.get('/v2/me/actor-profiles')
@@ -1482,21 +1412,30 @@ describe('MeUserProfileController', () => {
 
       // Arrange
       jest
-        .spyOn(delegationsApi, 'delegationsControllerGetAllDelegations')
-        .mockResolvedValue([
-          {
-            toNationalId: testUserProfile.nationalId,
-            fromNationalId: testNationalId1,
-            subjectId: null,
-            type: 'delegation',
+        .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
+        .mockResolvedValue({
+          data: [
+            {
+              toNationalId: testUserProfile.nationalId,
+              fromNationalId: testNationalId1,
+              subjectId: null,
+              type: 'delegation',
+            },
+            {
+              toNationalId: testUserProfile.nationalId,
+              fromNationalId: testNationalId2,
+              subjectId: null,
+              type: 'delegation',
+            },
+          ],
+          pageInfo: {
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: '',
+            endCursor: '',
           },
-          {
-            toNationalId: testUserProfile.nationalId,
-            fromNationalId: testNationalId2,
-            subjectId: null,
-            type: 'delegation',
-          },
-        ])
+          totalCount: 2,
+        })
 
       // Create user profiles and emails for both delegations
       await fixtureFactory.createUserProfile({
@@ -1563,7 +1502,7 @@ describe('MeUserProfileController', () => {
     it('should handle delegations API errors gracefully', async () => {
       // Arrange
       jest
-        .spyOn(delegationsApi, 'delegationsControllerGetAllDelegations')
+        .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
         .mockRejectedValue(new Error('Service unavailable'))
 
       // Act
@@ -1579,21 +1518,30 @@ describe('MeUserProfileController', () => {
 
       // Arrange
       jest
-        .spyOn(delegationsApi, 'delegationsControllerGetAllDelegations')
-        .mockResolvedValue([
-          {
-            toNationalId: testUserProfile.nationalId,
-            fromNationalId: testNationalId1,
-            subjectId: null,
-            type: 'delegation',
+        .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
+        .mockResolvedValue({
+          data: [
+            {
+              toNationalId: testUserProfile.nationalId,
+              fromNationalId: testNationalId1,
+              subjectId: null,
+              type: 'delegation',
+            },
+            {
+              toNationalId: testUserProfile.nationalId,
+              fromNationalId: testNationalId2,
+              subjectId: 'document-123',
+              type: 'document-delegation',
+            },
+          ],
+          pageInfo: {
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: '',
+            endCursor: '',
           },
-          {
-            toNationalId: testUserProfile.nationalId,
-            fromNationalId: testNationalId2,
-            subjectId: 'document-123',
-            type: 'document-delegation',
-          },
-        ])
+          totalCount: 2,
+        })
 
       // Create actor profile for the first delegation only
       await fixtureFactory.createActorProfile({
@@ -1624,9 +1572,11 @@ describe('MeUserProfileController', () => {
 
       // Verify it used the correct parameters
       expect(
-        delegationsApi.delegationsControllerGetAllDelegations,
+        delegationsApi.delegationsControllerGetDelegationRecords,
       ).toHaveBeenCalledWith({
         xQueryNationalId: testUserProfile.nationalId,
+        scope: '@island.is/documents',
+        direction: 'incoming',
       })
     })
   })
@@ -2026,15 +1976,24 @@ describe('MeUserProfileController', () => {
 
       // Mock delegations API to return a delegation between the test user and testNationalId1
       jest
-        .spyOn(delegationsApi, 'delegationsControllerGetAllDelegations')
-        .mockResolvedValue([
-          {
-            toNationalId: testUserProfile.nationalId,
-            fromNationalId: actorNationalId,
-            subjectId: null,
-            type: 'delegation',
+        .spyOn(delegationsApi, 'delegationsControllerGetDelegationRecords')
+        .mockResolvedValue({
+          data: [
+            {
+              toNationalId: testUserProfile.nationalId,
+              fromNationalId: actorNationalId,
+              subjectId: null,
+              type: 'delegation',
+            },
+          ],
+          pageInfo: {
+            hasNextPage: false,
+            hasPreviousPage: false,
+            startCursor: '',
+            endCursor: '',
           },
-        ])
+          totalCount: 1,
+        })
 
       // Mock email verification
       jest

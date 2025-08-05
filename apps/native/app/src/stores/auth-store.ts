@@ -27,6 +27,8 @@ import {
 } from '../graphql/types/schema'
 import { getAppRoot } from '../utils/lifecycle/get-app-root'
 import { deduplicatePromise } from '../utils/deduplicatePromise'
+import type { User } from 'configcat-js'
+import { clearWidgetData } from '../lib/widget-sync'
 
 const KEYCHAIN_AUTH_KEY = `@islandis_${bundleId}`
 const INVALID_REFRESH_TOKEN_ERROR = 'invalid_grant'
@@ -77,7 +79,7 @@ const clearPasskey = async (userNationalId?: string) => {
   const isPasskeyEnabled = await featureFlagClient?.getValueAsync(
     'isPasskeyEnabled',
     false,
-    userNationalId ? { identifier: userNationalId } : undefined,
+    userNationalId ? ({ identifier: userNationalId } as User) : undefined,
   )
 
   if (isPasskeyEnabled) {
@@ -217,6 +219,9 @@ export const authStore = create<AuthStore>((set, get) => ({
   async logout(skipPasskeyDeletion = false) {
     // Clear all MMKV storages
     clearAllStorages()
+
+    // Clear widgets
+    clearWidgetData()
 
     // Clear push token if exists
     const pushToken = notificationsStore.getState().pushToken

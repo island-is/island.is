@@ -3,9 +3,10 @@ import {
   buildMultiField,
   buildSubSection,
   buildTableRepeaterField,
+  coreErrorMessages,
 } from '@island.is/application/core'
-import { FriggSchoolsByMunicipality } from '../../../utils/types'
 import { friggSchoolsByMunicipalityQuery } from '../../../graphql/sampleQuery'
+import { FriggSchoolsByMunicipality } from '../../../utils/types'
 
 export const tableRepeaterSubsection = buildSubSection({
   id: 'repeater',
@@ -121,6 +122,8 @@ export const tableRepeaterSubsection = buildSubSection({
             selectAsyncPrimary: {
               component: 'selectAsync',
               label: 'Primary Select Async',
+              placeholder: 'Placeholder...',
+              loadingError: coreErrorMessages.failedDataProvider,
               loadOptions: async ({ apolloClient }) => {
                 const { data } =
                   await apolloClient.query<FriggSchoolsByMunicipality>({
@@ -139,6 +142,7 @@ export const tableRepeaterSubsection = buildSubSection({
               component: 'selectAsync',
               label: 'Reliant Select Async',
               updateOnSelect: ['selectAsyncPrimary'],
+              loadingError: coreErrorMessages.failedDataProvider,
               loadOptions: async ({ apolloClient, selectedValues }) => {
                 try {
                   const { data } =

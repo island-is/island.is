@@ -134,7 +134,11 @@ export const mapAnswersToApplicationDto = (
         flokkur: 'Eign',
         heiti: 'Fasteignanumer',
         tegund: 'fastanúmer',
-        gildi: selectedRealEstate?.fasteignanumer,
+        gildi:
+          selectedRealEstate?.notkunareiningar?.notkunareiningar?.[0]?.fasteignanumer?.replace(
+            /\D/g,
+            '',
+          ),
         guid: GUID,
       },
       {

@@ -43,6 +43,15 @@ export class ApplicationsInput {
   isTest!: boolean
 }
 
+@InputType('FormSystemGetApplicationsInput')
+export class GetApplicationsInput {
+  @Field(() => String, { nullable: true })
+  slug?: string
+
+  @Field(() => Boolean, { nullable: false })
+  isTest!: boolean
+}
+
 @InputType('FormSystemApplicationEventDtoInput')
 export class ApplicationEventDtoInput {
   @Field(() => Date, { nullable: true })
@@ -92,6 +101,9 @@ export class ApplicationInput {
 
   @Field(() => String, { nullable: true })
   status?: string
+
+  @Field(() => Boolean, { nullable: true })
+  stopProgressOnValidatingScreen?: boolean
 
   @Field(() => [ApplicationEventDtoInput], { nullable: 'itemsAndList' })
   events?: ApplicationEventDtoInput[]
@@ -157,4 +169,13 @@ export class SubmitScreenInput {
 
   @Field(() => SubmitScreenDtoInput, { nullable: true })
   submitScreenDto?: SubmitScreenDtoInput
+}
+
+@InputType('SubmitFormSystemSectionInput')
+export class SubmitSectionInput {
+  @Field(() => String, { nullable: true })
+  applicationId?: string
+
+  @Field(() => String, { nullable: true })
+  sectionId?: string
 }

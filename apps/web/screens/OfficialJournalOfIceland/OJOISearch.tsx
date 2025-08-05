@@ -41,6 +41,7 @@ import {
   emptyOption,
   findValueOption,
   mapEntityToOptions,
+  mapYearOptions,
   OJOISearchGridView,
   OJOISearchListView,
   OJOIWrapper,
@@ -72,6 +73,7 @@ type OJOISearchParams = {
   dagsTil?: string // DATE STRING
   sida?: number
   staerd?: number
+  year?: string
 }
 
 const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
@@ -110,6 +112,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
       search: defaultSearchParams.q,
       page: defaultSearchParams.sida,
       pageSize: defaultSearchParams.staerd,
+      year: defaultSearchParams.year,
     },
     fallbackData: initialAdverts,
   })
@@ -124,6 +127,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
     dagsFra: defaultSearchParams.dagsFra,
     dagsTil: defaultSearchParams.dagsTil,
     sida: defaultSearchParams.sida ?? 1,
+    year: defaultSearchParams.year,
     staerd: defaultSearchParams.staerd,
   })
 
@@ -185,6 +189,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
           search: searchValues.q,
           page: searchValues.sida,
           pageSize: searchValues.staerd,
+          year: searchValues.year,
         },
       })
     },
@@ -206,6 +211,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
       dagsTil: undefined,
       sida: 1,
       staerd: 20,
+      year: undefined,
     })
 
     refetch({
@@ -219,6 +225,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
         search: '',
         page: undefined,
         pageSize: undefined,
+        year: undefined,
       },
     })
 
@@ -232,6 +239,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
   const departmentsOptions = mapEntityToOptions(departments)
   const typesOptions = mapEntityToOptions(types)
   const institutionsOptions = mapEntityToOptions(institutions)
+  const yearOptions = mapYearOptions()
 
   const breadcrumbItems = [
     {
@@ -421,6 +429,22 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
                 updateSearchStateHandler('stofnun', v?.value ?? '')
               }
             />
+
+            <Select
+              key={`year-${resetTimestamp}`}
+              name="year"
+              label={formatMessage(m.search.chooseYear)}
+              size="xs"
+              placeholder={formatMessage(m.search.allYears)}
+              options={[
+                { ...emptyOption(formatMessage(m.search.allYears)) },
+                ...yearOptions,
+              ]}
+              isClearable
+              isSearchable
+              defaultValue={findValueOption(yearOptions, searchState.year)}
+              onChange={(v) => updateSearchStateHandler('year', v?.value ?? '')}
+            />
           </Stack>
         </Box>
       }
@@ -551,6 +575,7 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
   let dateTo: string | undefined
   let page: number | undefined
   let pageSize: number | undefined
+  let year: string | undefined
 
   if (query.dagsFra && typeof query.dagsFra === 'string') {
     const isValid = !Number.isNaN(Date.parse(query.dagsFra))
@@ -564,6 +589,10 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
     if (isValid) {
       dateTo = new Date(query.dagsTil).toISOString().split('T')[0]
     }
+  }
+
+  if (query.year && typeof query.year === 'string') {
+    year = query.year
   }
 
   if (query.sida && typeof query.sida === 'string') {
@@ -592,6 +621,7 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
     tegund: getStringFromQuery(query.tegund),
     timabil: getStringFromQuery(query.timabil),
     sida: page ?? 1,
+    year,
     pageSize,
   }
 
@@ -625,6 +655,7 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
           pageSize: defaultParams.pageSize,
           search: defaultParams.q,
           type: [defaultParams.tegund],
+          year: defaultParams.year,
         },
       },
     }),
@@ -689,6 +720,7 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
       timabil: defaultParams.timabil,
       sida: defaultParams.sida,
       staerd: defaultParams.pageSize,
+      year: defaultParams.year,
     },
   }
 }

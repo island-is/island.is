@@ -22,5 +22,5 @@ export interface MedicalAndRehabilitationPaymentsDTO {
   unionSickPay?: UnionSickPay
   selfAssessment?: SelfAssessment
   baseCertificateReference: string
-  rehabilitationPlanReference: string
+  rehabilitationPlanReference?: string
 }

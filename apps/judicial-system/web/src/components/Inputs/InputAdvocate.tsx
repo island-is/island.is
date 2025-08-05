@@ -6,11 +6,13 @@ import {
   useMemo,
   useState,
 } from 'react'
-import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 import { SingleValue } from 'react-select'
+import { InputMask } from '@react-input/mask'
 
 import { Box, Input, Select } from '@island.is/island-ui/core'
+import { PHONE_NUMBER } from '@island.is/judicial-system/consts'
+import { formatPhoneNumber } from '@island.is/judicial-system/formatters'
 import { type Lawyer } from '@island.is/judicial-system/types'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { replaceTabs } from '@island.is/judicial-system-web/src/utils/formatters'
@@ -222,23 +224,21 @@ const InputAdvocate: FC<Props> = ({
         />
       </Box>
       <InputMask
-        mask="999-9999"
-        maskPlaceholder={null}
-        value={lawyerPhoneNumber || ''}
+        component={Input}
+        replacement={{ _: /\d/ }}
+        mask={PHONE_NUMBER}
+        value={formatPhoneNumber(lawyerPhoneNumber)}
         disabled={Boolean(disabled)}
         onChange={handlePhoneNumberChange}
         onBlur={handlePhoneNumberBlur}
-      >
-        <Input
-          data-testid="defenderPhoneNumber"
-          name="defenderPhoneNumber"
-          autoComplete="off"
-          label={formatMessage(phoneNumberLabelStrings[advocateType])}
-          placeholder={formatMessage(placeholderStrings.phoneNumberPlaceholder)}
-          errorMessage={phoneNumberErrorMessage}
-          hasError={phoneNumberErrorMessage !== ''}
-        />
-      </InputMask>
+        data-testid="defenderPhoneNumber"
+        name="defenderPhoneNumber"
+        autoComplete="off"
+        label={formatMessage(phoneNumberLabelStrings[advocateType])}
+        placeholder={formatMessage(placeholderStrings.phoneNumberPlaceholder)}
+        errorMessage={phoneNumberErrorMessage}
+        hasError={phoneNumberErrorMessage !== ''}
+      />
     </>
   )
 }
