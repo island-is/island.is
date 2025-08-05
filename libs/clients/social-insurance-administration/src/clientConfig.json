@@ -2872,6 +2872,330 @@
         }
       }
     },
+    "/api/protected/v1/MedicalDocuments/confirmedtreatment": {
+      "get": {
+        "tags": ["MedicalDocuments"],
+        "summary": "Returns confirmation of treatment (ísl. staðfesting á viðurkenndri meðferð) for the logged-in user if it exists, 404 otherwise.",
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.ConfirmedTreatment"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.ConfirmedTreatment"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.ConfirmedTreatment"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/protected/v1/MedicalDocuments/confirmationofpendingresolution": {
+      "get": {
+        "tags": ["MedicalDocuments"],
+        "summary": "Returns confirmation of pending resolution (ísl. staðfesting á bið eftir úrræði) for the logged-in user if it exists, 404 otherwise.",
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.ConfirmationOfPendingResolution"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.ConfirmationOfPendingResolution"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.ConfirmationOfPendingResolution"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "/api/protected/v1/MedicalDocuments/confirmationofillhealth": {
+      "get": {
+        "tags": ["MedicalDocuments"],
+        "summary": "Returns confirmation of ill health (ísl. staðfesting á heilsubrest) for the logged-in user if it exists, 404 otherwise.",
+        "responses": {
+          "400": {
+            "description": "Bad Request",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "Not Found",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "500": {
+            "description": "Internal Server Error",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.Applications.ExternalPortals.Error"
+                }
+              }
+            }
+          },
+          "200": {
+            "description": "OK",
+            "content": {
+              "text/plain": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.ConfirmationOfIllHealth"
+                }
+              },
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.ConfirmationOfIllHealth"
+                }
+              },
+              "text/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.ConfirmationOfIllHealth"
+                }
+              }
+            }
+          }
+        }
+      }
+    },
     "/api/protected/v1/PaymentPlan": {
       "get": {
         "tags": ["PaymentPlan"],
@@ -5151,6 +5475,17 @@
         },
         "additionalProperties": false
       },
+      "TrWeb.External.Models.ServicePortal.CaseManager": {
+        "type": "object",
+        "properties": {
+          "name": { "type": "string", "nullable": true },
+          "jobTitle": { "type": "string", "nullable": true },
+          "phoneNumber": { "type": "string", "nullable": true },
+          "email": { "type": "string", "nullable": true },
+          "workplace": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
       "TrWeb.External.Models.ServicePortal.CertificateInformation": {
         "type": "object",
         "properties": {
@@ -5229,6 +5564,81 @@
           },
           "explanation": { "type": "string", "nullable": true },
           "progress": { "type": "string", "nullable": true },
+          "estimatedDuration": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.EstimatedDuration"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.External.Models.ServicePortal.ConfirmationOfIllHealth": {
+        "type": "object",
+        "properties": {
+          "referenceId": { "type": "string", "nullable": true },
+          "individual": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.Individual"
+          },
+          "serviceProvider": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.ServiceProvider"
+          },
+          "currentMedicalStatus": { "type": "string", "nullable": true },
+          "previousApplication": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.PreviousApplication"
+          },
+          "requestedPeriod": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.RequestedPeriod"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.External.Models.ServicePortal.ConfirmationOfPendingResolution": {
+        "type": "object",
+        "properties": {
+          "referenceId": { "type": "string", "nullable": true },
+          "individual": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.Individual"
+          },
+          "serviceProvider": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.ServiceProvider"
+          },
+          "requestedTreatment": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.RequestedTreatment"
+          },
+          "treatmentExplanation": { "type": "string", "nullable": true },
+          "previousApplication": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.PreviousApplication"
+          },
+          "requestedPeriod": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.RequestedPeriod"
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.External.Models.ServicePortal.ConfirmedTreatment": {
+        "type": "object",
+        "properties": {
+          "referenceId": { "type": "string", "nullable": true },
+          "individual": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.Individual"
+          },
+          "caseManager": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.CaseManager"
+          },
+          "confimationDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "previousTreatment": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.PreviousTreatment"
+          },
+          "treatmentPlan": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.TreatmentPlan"
+          },
+          "treatmentType": {
+            "type": "array",
+            "items": { "type": "string" },
+            "nullable": true
+          },
           "estimatedDuration": {
             "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.EstimatedDuration"
           }
@@ -5470,6 +5880,25 @@
         },
         "additionalProperties": false
       },
+      "TrWeb.External.Models.ServicePortal.PreviousApplication": {
+        "type": "object",
+        "properties": {
+          "hasPreviousApproval": { "type": "boolean" },
+          "additionalDetails": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.External.Models.ServicePortal.PreviousTreatment": {
+        "type": "object",
+        "properties": {
+          "description": { "type": "string", "nullable": true },
+          "application": { "type": "string", "nullable": true },
+          "type": { "type": "string", "nullable": true },
+          "other": { "type": "string", "nullable": true },
+          "content": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
       "TrWeb.External.Models.ServicePortal.RehabilitationPlan": {
         "type": "object",
         "properties": {
@@ -5517,6 +5946,37 @@
         },
         "additionalProperties": false
       },
+      "TrWeb.External.Models.ServicePortal.RequestedPeriod": {
+        "type": "object",
+        "properties": {
+          "startDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "endDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "totalRequestedMonths": {
+            "type": "integer",
+            "format": "int32",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.External.Models.ServicePortal.RequestedTreatment": {
+        "type": "object",
+        "properties": {
+          "treatmentType": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.EnumType"
+          },
+          "otherTreatmentDescription": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
       "TrWeb.External.Models.ServicePortal.ServiceProvider": {
         "type": "object",
         "properties": {
@@ -5527,6 +5987,17 @@
           "workplace": { "type": "string", "nullable": true },
           "phoneNumber": { "type": "string", "nullable": true },
           "email": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      },
+      "TrWeb.External.Models.ServicePortal.TreatmentPlan": {
+        "type": "object",
+        "properties": {
+          "applicationType": { "type": "string", "nullable": true },
+          "treatmentType": { "type": "string", "nullable": true },
+          "explanation": { "type": "string", "nullable": true },
+          "discharge": { "type": "string", "nullable": true },
+          "plannedFollowup": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },

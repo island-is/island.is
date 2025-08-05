@@ -404,6 +404,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     lastEmploymentTitle,
     lastEmploymentYear,
     certificateForSicknessAndRehabilitationReferenceId,
+    educationalLevel,
   } = getMARPApplicationAnswers(application.answers)
 
   //  const { bankInfo } = getMARPApplicationExternalData(application.externalData)
@@ -467,6 +468,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     rehabilitationPlanReference: 'test', //TODO:
     selfAssessment: {
       hadAssistance: true, //TODO:
+      educationalLevel: educationalLevel || '',
       currentEmploymentStatus,
       ...(currentEmploymentStatus?.includes(
         SelfAssessmentCurrentEmploymentStatus.OTHER,

@@ -55,3 +55,10 @@ export const SocialInsuranceAdministrationEctsUnitsApi = defineTemplateApi({
   externalDataId: 'socialInsuranceAdministrationEctsUnits',
   namespace: 'SocialInsuranceAdministration',
 })
+
+export const SocialInsuranceAdministrationEducationLevelsApi =
+  defineTemplateApi({
+    action: 'getEducationLevels',
+    externalDataId: 'socialInsuranceAdministrationEducationLevels',
+    namespace: 'SocialInsuranceAdministration',
+  })
