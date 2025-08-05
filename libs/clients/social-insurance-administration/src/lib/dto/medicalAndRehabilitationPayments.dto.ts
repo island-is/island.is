@@ -8,12 +8,12 @@ import {
   SelfAssessment,
   TaxInfo,
   UnionSickPay,
+  IncomePlanInfo,
 } from '../socialInsuranceAdministrationClient.type'
 
 export interface MedicalAndRehabilitationPaymentsDTO {
   period?: Period
   comment?: string
-  reasons?: Array<string>
   applicationId?: string
   domesticBankInfo?: DomesticBankInfo
   taxInfo?: TaxInfo
@@ -25,4 +25,5 @@ export interface MedicalAndRehabilitationPaymentsDTO {
   selfAssessment?: SelfAssessment
   baseCertificateReference: string
   rehabilitationPlanReference?: string
+  incomePlan?: IncomePlanInfo
 }
