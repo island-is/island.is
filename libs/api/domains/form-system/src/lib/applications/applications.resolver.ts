@@ -96,18 +96,6 @@ export class ApplicationsResolver {
     return this.applicationsService.submitApplication(user, input)
   }
 
-  // @Mutation(() => SubmitScreenResponse, {
-  //   name: 'submitFormSystemScreen',
-  // })
-  // async submitScreen(
-  //   @Args('input', { type: () => SubmitScreenInput })
-  //   input: SubmitScreenInput,
-  //   @CurrentUser() user: User,
-  // ): Promise<SubmitScreenResponse> {
-  //   console.log('submitScreen', input)
-  //   return this.applicationsService.submitScreen(user, input)
-  // }
-
   @Mutation(() => Boolean, {
     name: 'updateFormSystemApplication',
   })
@@ -140,5 +128,17 @@ export class ApplicationsResolver {
     @CurrentUser() user: User,
   ): Promise<void> {
     return this.applicationsService.submitSection(user, input)
+  }
+
+  @Mutation(() => Boolean, {
+    name: 'deleteFormSystemApplication',
+    nullable: true,
+  })
+  async deleteApplication(
+    @Args('input', { type: () => String })
+    input: string,
+    @CurrentUser() user: User,
+  ): Promise<void> {
+    return this.applicationsService.deleteApplication(user, input)
   }
 }

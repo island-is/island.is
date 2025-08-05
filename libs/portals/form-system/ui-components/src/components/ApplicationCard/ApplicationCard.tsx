@@ -15,7 +15,11 @@ interface Props {
   focused?: boolean
 }
 
-export const ApplicationCard = ({ application, focused = false }: Props) => {
+export const ApplicationCard = ({
+  application,
+  onDelete,
+  focused = false,
+}: Props) => {
   const { status } = application
   const { slug } = useParams()
   const navigate = useNavigate()
@@ -23,7 +27,7 @@ export const ApplicationCard = ({ application, focused = false }: Props) => {
   const formattedDate = locale === 'is' ? dateFormat.is : dateFormat.en
   const heading = application?.formName?.[locale]
   const logo = false // Do we implement logos?
-  const description = 'Description' // Do we implement descriptions?
+  // const description = 'Description' // Do we implement descriptions?
 
   const openApplication = () => {
     navigate(`../${slug}/${application.id}`)
@@ -60,9 +64,7 @@ export const ApplicationCard = ({ application, focused = false }: Props) => {
         </Box>
         <Inline alignY="center" justifyContent="flexEnd" space={1}>
           <ApplicationCardTag />
-          <ApplicationCardDelete
-          // application={application}
-          />
+          <ApplicationCardDelete onDelete={onDelete} />
         </Inline>
       </Box>
 
@@ -89,8 +91,7 @@ export const ApplicationCard = ({ application, focused = false }: Props) => {
             </Box>
           </Box>
         )}
-
-        {description && <Text paddingTop={heading ? 1 : 0}>{description}</Text>}
+        {/* {description && <Text paddingTop={heading ? 1 : 0}>{description}</Text>} */}
       </Box>
       {shouldRenderProgress && (
         <ApplicationCardProgress
