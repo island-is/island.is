@@ -84,10 +84,25 @@ export const m = {
     },
   }),
   validation: defineMessages({
-    invalidNationalId: {
-      id: 'web.landspitali.directGrants:validation.invalidNationalId',
+    errorTitle: {
+      id: 'web.landspitali.directGrants:validation.errorTitle',
+      defaultMessage: 'Villa',
+      description: 'Titill á villuskilaboðum',
+    },
+    errorMessage: {
+      id: 'web.landspitali.directGrants:validation.errorMessage',
+      defaultMessage: 'Ekki tókst að áframsenda þig á greiðslusíðuna',
+      description: 'Villuskilaboð',
+    },
+    invalidNationalIdLength: {
+      id: 'web.landspitali.directGrants:validation.invalidNationalIdLength',
       defaultMessage: 'Kennitala verður að vera 10 tölustafir',
       description: 'Kennitala verður að vera 10 tölustafir',
+    },
+    invalidNationalIdFormat: {
+      id: 'web.landspitali.directGrants:validation.invalidNationalIdFormat',
+      defaultMessage: 'Kennitala er ekki gild',
+      description: 'Kennitala er ekki gild',
     },
     required: {
       id: 'web.landspitali.directGrants:validation.required',

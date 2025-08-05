@@ -1,16 +1,17 @@
-import { useEffect } from 'react'
+import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
+import { isValid as isValidKennitala } from 'kennitala'
 import { useMutation } from '@apollo/client'
 
 import {
+  AlertMessage,
   Box,
   Button,
   RadioButton,
   Stack,
   Text,
 } from '@island.is/island-ui/core'
-import { useLocale } from '@island.is/localization'
 import {
   InputController,
   SelectController,
@@ -20,6 +21,7 @@ import type {
   CreateDirectGrantPaymentUrlMutation,
   CreateDirectGrantPaymentUrlMutationVariables,
 } from '@island.is/web/graphql/schema'
+import { useI18n } from '@island.is/web/i18n'
 import { CREATE_LANDSPITALI_DIRECT_GRANT_PAYMENT_URL } from '@island.is/web/screens/queries/Landspitali'
 
 import { m } from './translation.strings'
@@ -139,33 +141,53 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
   const selectedAmount = watch('amountISK')
   const selectedProject = watch('project')
 
-  const { activeLocale } = useLocale()
+  const { activeLocale } = useI18n()
 
-  const [createDirectGrantPaymentUrl, { loading }] = useMutation<
+  const [createDirectGrantPaymentUrl] = useMutation<
     CreateDirectGrantPaymentUrlMutation,
     CreateDirectGrantPaymentUrlMutationVariables
   >(CREATE_LANDSPITALI_DIRECT_GRANT_PAYMENT_URL)
+  const [
+    errorOccuredWhenCreatingPaymentUrl,
+    setErrorOccuredWhenCreatingPaymentUrl,
+  ] = useState(false)
+  const [loading, setLoading] = useState(false)
 
-  const onSubmit = () => {
+  const onSubmit = async () => {
     const data = methods.getValues()
     const amountISK =
       data.amountISK === 'other' ? data.amountISKCustom : data.amountISK
-    createDirectGrantPaymentUrl({
-      variables: {
-        input: {
-          grant: data.grant,
-          project: data.project,
-          payerAddress: data.senderAddress,
-          payerGrantExplanation: data.senderGrantExplanation,
-          payerName: data.senderName,
-          payerNationalId: data.senderNationalId,
-          payerPostalCode: data.senderPostalCode,
-          payerPlace: data.senderPlace,
-          amountISK: parseInt(amountISK.replace(/\./g, '')),
-          locale: activeLocale,
+    try {
+      setLoading(true)
+      console.log('data', data)
+
+      const response = await createDirectGrantPaymentUrl({
+        variables: {
+          input: {
+            grant: data.grant,
+            project: data.project,
+            payerAddress: data.senderAddress,
+            payerGrantExplanation: data.senderGrantExplanation,
+            payerName: data.senderName,
+            payerNationalId: data.senderNationalId,
+            payerPostalCode: data.senderPostalCode,
+            payerPlace: data.senderPlace,
+            amountISK: parseInt(amountISK.replace(/\./g, '')),
+            locale: activeLocale,
+          },
         },
-      },
-    })
+      })
+      const url = response.data?.webLandspitaliDirectGrantPaymentUrl.url
+      setErrorOccuredWhenCreatingPaymentUrl(!url)
+      if (url) {
+        window.location.href = url
+      } else {
+        setLoading(false)
+      }
+    } catch {
+      setErrorOccuredWhenCreatingPaymentUrl(true)
+      setLoading(false)
+    }
   }
 
   useEffect(() => {
@@ -295,7 +317,16 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
                 ...requiredRule,
                 pattern: {
                   value: /^\d{10}$/,
-                  message: formatMessage(m.validation.invalidNationalId),
+                  message: formatMessage(m.validation.invalidNationalIdLength),
+                },
+                validate: (value) => {
+                  if (value.length !== 10) {
+                    return formatMessage(m.validation.invalidNationalIdLength)
+                  }
+                  if (!isValidKennitala(value)) {
+                    return formatMessage(m.validation.invalidNationalIdFormat)
+                  }
+                  return true
                 },
               }}
               control={control}
@@ -342,8 +373,17 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
             <Text>{formatMessage(m.info.amountISKExtra)}</Text>
           </Box>
           <Box display="flex" justifyContent="flexEnd" marginTop={5}>
-            <Button type="submit">{formatMessage(m.info.pay)}</Button>
+            <Button loading={loading} type="submit">
+              {formatMessage(m.info.pay)}
+            </Button>
           </Box>
+          {errorOccuredWhenCreatingPaymentUrl && (
+            <AlertMessage
+              title={formatMessage(m.validation.errorTitle)}
+              message={formatMessage(m.validation.errorMessage)}
+              type="error"
+            />
+          )}
         </Stack>
       </form>
     </FormProvider>

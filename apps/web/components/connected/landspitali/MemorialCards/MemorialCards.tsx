@@ -1,6 +1,7 @@
 import { useEffect, useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
+import { isValid as isValidKennitala } from 'kennitala'
 import { useMutation } from '@apollo/client'
 
 import {
@@ -115,7 +116,9 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
     },
   })
 
-  const [createMemorialCardPaymentUrl, { loading }] = useMutation<
+  const [loading, setLoading] = useState(false)
+
+  const [createMemorialCardPaymentUrl] = useMutation<
     CreateMemorialCardPaymentUrlMutation,
     CreateMemorialCardPaymentUrlMutationVariables
   >(CREATE_LANDSPITALI_MEMORIAL_CARD_PAYMENT_URL)
@@ -240,6 +243,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
             onClick={async () => {
               const amountISKWithoutDots = amountISK.replace(/\./g, '')
               try {
+                setLoading(true)
                 const response = await createMemorialCardPaymentUrl({
                   variables: {
                     input: {
@@ -264,9 +268,12 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
                   response.data?.webLandspitaliMemorialCardPaymentUrl.url
                 setErrorOccuredWhenCreatingPaymentUrl(!url)
                 if (url) {
-                  window.open(url, '_self')
+                  window.location.href = url
+                } else {
+                  setLoading(false)
                 }
               } catch {
+                setLoading(false)
                 setErrorOccuredWhenCreatingPaymentUrl(true)
               }
             }}
@@ -438,7 +445,17 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
                 ...requiredRule,
                 pattern: {
                   value: /^\d{10}$/,
-                  message: formatMessage(m.validation.invalidNationalId),
+                  message: formatMessage(m.validation.invalidNationalIdLength),
+                },
+                validate: (value) => {
+                  if (value.length !== 10) {
+                    return formatMessage(m.validation.invalidNationalIdLength)
+                  }
+                  if (!isValidKennitala(value)) {
+                    return formatMessage(m.validation.invalidNationalIdFormat)
+                  }
+
+                  return true
                 },
               }}
               control={control}

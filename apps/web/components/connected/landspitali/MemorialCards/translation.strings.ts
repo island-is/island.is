@@ -218,10 +218,15 @@ export const m = {
     },
   }),
   validation: defineMessages({
-    invalidNationalId: {
-      id: 'web.landspitali.memorialCard:validation.invalidNationalId',
+    invalidNationalIdLength: {
+      id: 'web.landspitali.memorialCard:validation.invalidNationalIdLength',
       defaultMessage: 'Kennitala verður að vera 10 tölustafir',
       description: 'Kennitala verður að vera 10 tölustafir',
+    },
+    invalidNationalIdFormat: {
+      id: 'web.landspitali.memorialCard:validation.invalidNationalIdFormat',
+      defaultMessage: 'Kennitala er ekki gild',
+      description: 'Kennitala er ekki gild',
     },
     required: {
       id: 'web.landspitali.memorialCard:validation.required',

@@ -25,10 +25,7 @@ export class LandspitaliService {
         createPaymentFlowInput: {
           // TODO: Verify this should be the product title
           // TODO: Perhaps fetch product title from somewhere else?
-          productTitle:
-            locale === 'is'
-              ? 'Minningarsjóður Landspítali'
-              : 'Landspítali Memorial Fund',
+          productTitle: locale === 'is' ? 'Minningarkort' : 'Memorial card',
           availablePaymentMethods: [
             CreatePaymentFlowInputAvailablePaymentMethodsEnum.card,
           ],
@@ -106,7 +103,7 @@ export class LandspitaliService {
     const response =
       await this.paymentsClient.paymentFlowControllerCreatePaymentUrl({
         createPaymentFlowInput: {
-          productTitle: 'Direct Grant',
+          productTitle: locale === 'is' ? 'Beinn styrkur' : 'Direct grant',
           availablePaymentMethods: [
             CreatePaymentFlowInputAvailablePaymentMethodsEnum.card,
           ],

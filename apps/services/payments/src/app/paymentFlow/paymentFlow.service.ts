@@ -96,26 +96,27 @@ export class PaymentFlowService {
       const paymentFlowId = uuid()
       const processedCharges = processCharges(paymentInfo.charges)
 
-      const chargeDetails = await this.getPaymentFlowChargeDetails(
-        paymentInfo.organisationId,
-        processedCharges,
-      )
+      // TODO: Uncomment this when we have a real catalog
+      // const chargeDetails = await this.getPaymentFlowChargeDetails(
+      //   paymentInfo.organisationId,
+      //   processedCharges,
+      // )
 
-      await this.chargeFjsV2ClientService.validateCharge(
-        generateChargeFJSPayload({
-          paymentFlow: {
-            id: paymentFlowId,
-            organisationId: paymentInfo.organisationId,
-            payerNationalId: paymentInfo.payerNationalId,
-            extraData: paymentInfo.extraData,
-            chargeItemSubjectId: paymentInfo.chargeItemSubjectId,
-          },
-          charges: chargeDetails.catalogItems,
-          totalPrice: chargeDetails.totalPrice,
-          systemId: environment.chargeFjs.systemId,
-          returnUrl: '', // TODO
-        }),
-      )
+      // await this.chargeFjsV2ClientService.validateCharge(
+      //   generateChargeFJSPayload({
+      //     paymentFlow: {
+      //       id: paymentFlowId,
+      //       organisationId: paymentInfo.organisationId,
+      //       payerNationalId: paymentInfo.payerNationalId,
+      //       extraData: paymentInfo.extraData,
+      //       chargeItemSubjectId: paymentInfo.chargeItemSubjectId,
+      //     },
+      //     charges: chargeDetails.catalogItems,
+      //     totalPrice: chargeDetails.totalPrice,
+      //     systemId: environment.chargeFjs.systemId,
+      //     returnUrl: '', // TODO
+      //   }),
+      // )
 
       const paymentFlow = await this.paymentFlowModel.create({
         ...paymentInfo,
