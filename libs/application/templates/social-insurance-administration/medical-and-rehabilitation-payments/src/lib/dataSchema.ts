@@ -217,7 +217,7 @@ export const dataSchema = z.object({
     ),
   questions: z
     .object({
-      isSelfEmployed: z.enum([YES, NO]),
+      isSelfEmployed: z.enum([YES, NO]).optional(),
       isPartTimeEmployed: z.enum([YES, NO]),
       isStudying: z.enum([YES, NO]),
       calculatedRemunerationDate: z.string().optional(),

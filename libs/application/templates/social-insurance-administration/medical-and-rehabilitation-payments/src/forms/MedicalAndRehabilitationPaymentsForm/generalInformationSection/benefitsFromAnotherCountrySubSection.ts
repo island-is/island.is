@@ -10,6 +10,7 @@ import { siaCountriesQuery } from '@island.is/application/templates/social-insur
 import { getYesNoOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { SiaCountriesQuery } from '@island.is/application/templates/social-insurance-administration-core/types/schema'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
+import { isFirstApplication } from '../../../utils/conditionUtils'
 import { getApplicationAnswers } from '../../../utils/medicalAndRehabilitationPaymentsUtils'
 
 export const benefitsFromAnotherCountrySubSection = buildSubSection({
@@ -17,6 +18,7 @@ export const benefitsFromAnotherCountrySubSection = buildSubSection({
   title:
     medicalAndRehabilitationPaymentsFormMessage.generalInformation
       .benefitsFromAnotherCountrySubSectionTitle,
+  condition: (_, externalData) => isFirstApplication(externalData),
   children: [
     buildMultiField({
       id: 'benefitsFromAnotherCountry',
