@@ -1,21 +1,25 @@
+import { getModelToken } from '@nestjs/sequelize'
+import request, { SuperTest, Test } from 'supertest'
+import { v4 as uuid } from 'uuid'
+
 import { UserProfileScope } from '@island.is/auth/scopes'
 import {
   createCurrentUser,
   createNationalId,
   createPhoneNumber,
+  createVerificationCode,
 } from '@island.is/testing/fixtures'
 import { setupApp, TestApp } from '@island.is/testing/nest'
-import { getModelToken } from '@nestjs/sequelize'
+
 import faker from 'faker'
 import kennitala from 'kennitala'
-import request, { SuperTest, Test } from 'supertest'
 import { FixtureFactory } from '../../../../test/fixture-factory'
 import { AppModule } from '../../app.module'
 import { SequelizeConfigService } from '../../sequelizeConfig.service'
-import { EmailVerification } from '../../user-profile/emailVerification.model'
-import { DataStatus } from '../../user-profile/types/dataStatusTypes'
-import { UserProfile } from '../../user-profile/userProfile.model'
-import { formatPhoneNumber } from '../../utils/format-phone-number'
+import { EmailVerification } from '../models/emailVerification.model'
+import { DataStatus } from '../types/dataStatusTypes'
+import { UserProfile } from '../models/userProfile.model'
+import { formatPhoneNumber } from '../utils/format-phone-number'
 import { CreateEmailDto } from '../dto/create-emails.dto'
 import { ActorProfile } from '../models/actor-profile.model'
 import { Emails } from '../models/emails.model'
