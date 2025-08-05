@@ -60,6 +60,7 @@ export const FieldsRepeaterFormField = ({
 
   const { control, getValues, setValue } = useFormContext()
   const answers = getValues()
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const numberOfItemsInAnswers = getValueViaPath<Array<any>>(
     answers,
     id,
@@ -109,7 +110,7 @@ export const FieldsRepeaterFormField = ({
 
   const { formatMessage, lang: locale } = useLocale()
 
-  const { fields, remove } = useFieldArray({
+  const { remove } = useFieldArray({
     control: control,
     name: id,
   })
@@ -167,8 +168,7 @@ export const FieldsRepeaterFormField = ({
   }
 
   const showAddButton = !hideAddButton
-  const showRemoveButton =
-    !hideRemoveButton && numberOfItems > minRowsValue
+  const showRemoveButton = !hideRemoveButton && numberOfItems > minRowsValue
 
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
