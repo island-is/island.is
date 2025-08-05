@@ -11,6 +11,7 @@ import { CreateDirectGrantPaymentUrlResponse } from './dto/createDirectGrantPaym
 // eslint-disable-next-line local-rules/disallow-kennitalas
 const LANDSPITALI_NATIONAL_ID = '5003002130'
 const FEE_CHARGE_ITEM_CODE = 'MR101' // Styrktar- og gjafasjóður Landspítala (let's verify that is where the 500 kr fee should go)
+const ON_UPDATE_URL = '' // TODO: Create a service that listens to the payment success webhook and forwards that info to zendesk
 
 @Injectable()
 export class LandspitaliService {
@@ -45,7 +46,7 @@ export class LandspitaliService {
           ],
           payerNationalId: input.payerNationalId,
           organisationId: LANDSPITALI_NATIONAL_ID,
-          onUpdateUrl: '', // TODO: Create a service that listens to the payment success webhook and forwards that info to zendesk
+          onUpdateUrl: ON_UPDATE_URL,
           // TODO: Find out just how much data should be in "extraData"
           extraData: [
             {
@@ -123,7 +124,7 @@ export class LandspitaliService {
           ],
           payerNationalId: input.payerNationalId,
           organisationId: LANDSPITALI_NATIONAL_ID,
-          onUpdateUrl: '', // TODO: Create a service that listens to the payment success webhook and forwards that info to zendesk
+          onUpdateUrl: ON_UPDATE_URL,
           extraData: [
             {
               name: 'payerName',
