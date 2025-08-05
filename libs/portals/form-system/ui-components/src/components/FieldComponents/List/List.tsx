@@ -1,7 +1,9 @@
 import { FormSystemField, FormSystemListItem } from '@island.is/api/schema'
-import { Dispatch } from 'react'
+import { Dispatch, useEffect } from 'react'
 import { Select } from '@island.is/island-ui/core'
 import { Action } from '../../../lib/reducerTypes'
+import { getValue } from '../../../lib/getValue'
+import { get } from 'lodash'
 
 interface Props {
   item: FormSystemField
@@ -45,6 +47,17 @@ export const List = ({ item, dispatch, lang = 'is', hasError }: Props) => {
 
   const selected = item?.list?.find((listItem) => listItem?.isSelected === true)
 
+  useEffect(() => {
+    if (selected && dispatch) {
+      if (!getValue(item, 'listValue')) {
+        dispatch({
+          type: 'SET_LIST_VALUE',
+          payload: { id: item.id, value: selected.label?.[lang] ?? '' },
+        })
+      }
+    }
+  }, [])
+
   return (
     <Select
       name="list"
@@ -54,14 +67,14 @@ export const List = ({ item, dispatch, lang = 'is', hasError }: Props) => {
       defaultValue={
         selected
           ? {
-              label: selected.label?.[lang] ?? '',
-              value: selected.label?.[lang] ?? '',
-            }
+            label: selected.label?.[lang] ?? '',
+            value: selected.label?.[lang] ?? '',
+          }
           : undefined
       }
       placeholder={
         listTypePlaceholder[
-          item.fieldSettings?.listType as keyof typeof listTypePlaceholder
+        item.fieldSettings?.listType as keyof typeof listTypePlaceholder
         ] ?? 'Select an option'
       }
       backgroundColor="blue"
