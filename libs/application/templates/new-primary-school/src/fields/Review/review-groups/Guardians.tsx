@@ -1,6 +1,8 @@
+import { YES } from '@island.is/application/core'
 import { DataValue, ReviewGroup } from '@island.is/application/ui-components'
 import { GridColumn, GridRow, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
+import { getLanguageByCode } from '@island.is/shared/utils'
 import { format as formatKennitala } from 'kennitala'
 import { formatNumber } from 'libphonenumber-js'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
@@ -81,6 +83,33 @@ export const Guardians = ({
                   value={formatNumber(guardian.phoneNumber, 'International')}
                 />
               </GridColumn>
+            </GridRow>
+            <GridRow rowGap={2}>
+              <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                <DataValue
+                  label={formatMessage(
+                    newPrimarySchoolMessages.childrenNGuardians
+                      .requiresInterpreter,
+                  )}
+                  value={formatMessage(
+                    guardian.requiresInterpreter.includes(YES)
+                      ? newPrimarySchoolMessages.shared.yes
+                      : newPrimarySchoolMessages.shared.no,
+                  )}
+                />
+              </GridColumn>
+              {guardian.requiresInterpreter.includes(YES) && (
+                <GridColumn span={['12/12', '12/12', '12/12', '5/12']}>
+                  <DataValue
+                    label={formatMessage(
+                      newPrimarySchoolMessages.shared.language,
+                    )}
+                    value={
+                      getLanguageByCode(guardian.preferredLanguage ?? '')?.name
+                    }
+                  />
+                </GridColumn>
+              )}
             </GridRow>
           </Stack>
         </ReviewGroup>

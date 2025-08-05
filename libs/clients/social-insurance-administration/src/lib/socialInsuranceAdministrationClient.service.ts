@@ -15,9 +15,13 @@ import {
   PaymentPlanApi,
   PensionCalculatorApi,
   QuestionnairesApi,
+  TrWebApiServicesCommonCountriesModelsCountryDto,
+  TrWebApiServicesDomainApplicationsModelsApplicationTypeDto,
   TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn,
+  TrWebApiServicesDomainEducationalInstitutionsModelsEctsUnitDto,
+  TrWebApiServicesDomainEducationalInstitutionsModelsEducationalInstitutionsDto,
+  TrWebApiServicesDomainEducationalInstitutionsModelsEducationLevelDto,
   TrWebApiServicesDomainQuestionnairesModelsQuestionnaireDto,
-  TrWebExternalModelsServicePortalRehabilitationPlan,
   TrWebApiServicesDomainUnionsModelsUnionDto,
   TrWebApiServicesUseCaseDeathBenefitsModelsExternalSpousalInfo,
   TrWebCommonsExternalPortalsApiModelsApplicantApplicantInfoReturn,
@@ -28,6 +32,8 @@ import {
   TrWebCommonsExternalPortalsApiModelsIncomePlanWithholdingTaxDto,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanLegitimatePayments,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
+  TrWebExternalModelsServicePortalBaseCertificate,
+  TrWebExternalModelsServicePortalRehabilitationPlan,
 } from '../../gen/fetch'
 import { IncomePlanDto, mapIncomePlanDto } from './dto/incomePlan.dto'
 import { ApplicationWriteApi } from './socialInsuranceAdministrationClient.type'
@@ -231,5 +237,58 @@ export class SocialInsuranceAdministrationClientService {
     return this.questionnairesApiWithAuth(
       user,
     ).apiProtectedV1QuestionnairesSelfassessmentGet(languages)
+  }
+
+  async getCertificateForSicknessAndRehabilitation(
+    user: User,
+  ): Promise<TrWebExternalModelsServicePortalBaseCertificate> {
+    return this.medicalDocumentsApiWithAuth(
+      user,
+    ).apiProtectedV1MedicalDocumentsBasecertificateGet()
+  }
+
+  async getCountries(
+    user: User,
+  ): Promise<Array<TrWebApiServicesCommonCountriesModelsCountryDto>> {
+    return this.generalApiWithAuth(user).apiProtectedV1GeneralCountriesGet()
+  }
+
+  async getEducationalInstitutions(
+    user: User,
+  ): Promise<
+    Array<TrWebApiServicesDomainEducationalInstitutionsModelsEducationalInstitutionsDto>
+  > {
+    return this.generalApiWithAuth(
+      user,
+    ).apiProtectedV1GeneralEducationalinstitutionsGet()
+  }
+
+  async getEctsUnits(
+    user: User,
+  ): Promise<
+    Array<TrWebApiServicesDomainEducationalInstitutionsModelsEctsUnitDto>
+  > {
+    return this.generalApiWithAuth(user).apiProtectedV1GeneralEctsUnitsGet()
+  }
+
+  async getEducationLevels(
+    user: User,
+    applicationType: string,
+  ): Promise<
+    Array<TrWebApiServicesDomainEducationalInstitutionsModelsEducationLevelDto>
+  > {
+    return this.generalApiWithAuth(
+      user,
+    ).apiProtectedV1GeneralEducationlevelsApplicationTypeGet({
+      applicationType,
+    })
+  }
+
+  async getMedicalAndRehabilitationApplicationType(
+    user: User,
+  ): Promise<TrWebApiServicesDomainApplicationsModelsApplicationTypeDto> {
+    return this.applicantApiWithAuth(
+      user,
+    ).apiProtectedV1ApplicantMedicalandrehabilitationpaymentsTypeGet()
   }
 }

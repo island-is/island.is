@@ -11,6 +11,8 @@ import { SingleValue } from 'react-select'
 import { InputMask } from '@react-input/mask'
 
 import { Box, Input, Select } from '@island.is/island-ui/core'
+import { PHONE_NUMBER } from '@island.is/judicial-system/consts'
+import { formatPhoneNumber } from '@island.is/judicial-system/formatters'
 import { type Lawyer } from '@island.is/judicial-system/types'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { replaceTabs } from '@island.is/judicial-system-web/src/utils/formatters'
@@ -224,8 +226,8 @@ const InputAdvocate: FC<Props> = ({
       <InputMask
         component={Input}
         replacement={{ _: /\d/ }}
-        mask="___-____"
-        value={lawyerPhoneNumber || ''}
+        mask={PHONE_NUMBER}
+        value={formatPhoneNumber(lawyerPhoneNumber)}
         disabled={Boolean(disabled)}
         onChange={handlePhoneNumberChange}
         onBlur={handlePhoneNumberBlur}

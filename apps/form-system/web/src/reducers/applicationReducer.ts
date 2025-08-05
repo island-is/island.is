@@ -118,24 +118,23 @@ export const applicationReducer = (
 ): ApplicationState => {
   switch (action.type) {
     case 'INCREMENT': {
+      const { submitScreen, submitSection } = action.payload
       const {
         currentSectionData,
         maxSectionIndex,
         nextSectionIndex,
         currentScreenIndex,
       } = getIncrementVariables(state)
-
       if (hasScreens(currentSectionData)) {
         return incrementWithScreens(
           state,
           currentSectionData,
           maxSectionIndex,
           currentScreenIndex,
-          action.payload.submitScreen,
+          submitScreen,
         )
       }
-
-      return incrementWithoutScreens(state, nextSectionIndex)
+      return incrementWithoutScreens(state, nextSectionIndex, submitSection)
     }
     case 'DECREMENT': {
       const { currentSectionData, currentSectionIndex, currentScreenIndex } =
@@ -151,6 +150,13 @@ export const applicationReducer = (
       }
 
       return decrementWithoutScreens(state, currentSectionIndex)
+    }
+    case 'SET_VALIDITY': {
+      const { isValid } = action.payload
+      return {
+        ...state,
+        isValid,
+      }
     }
     default:
       return state

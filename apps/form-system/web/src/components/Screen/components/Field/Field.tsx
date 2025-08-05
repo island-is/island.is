@@ -19,10 +19,10 @@ import { FormSystemField } from '@island.is/api/schema'
 import { Box } from '@island.is/island-ui/core'
 import { useApplicationContext } from '../../../../context/ApplicationProvider'
 import { useLocale } from '@island.is/localization'
+import { useFormContext } from 'react-hook-form'
 
 interface Props {
   field: FormSystemField
-  hasError: boolean
 }
 
 const FIELD_COMPONENT_MAP = {
@@ -42,12 +42,14 @@ const FIELD_COMPONENT_MAP = {
   [FieldTypesEnum.MESSAGE]: MessageWithLink,
 } as const
 
-export const Field = ({ field, hasError }: Props) => {
+export const Field = ({ field }: Props) => {
   const { lang } = useLocale()
   const { dispatch } = useApplicationContext()
+  const { control } = useFormContext()
+
   const fieldItems = {
     item: field,
-    hasError,
+    control,
     dispatch,
     lang,
   }

@@ -96,6 +96,17 @@ export class EmailsService {
         throw new BadRequestException('User profile not found')
       }
 
+      // Check if this is the first email for this national ID
+      const existingEmails = await this.emailsModel.count({
+        where: {
+          nationalId,
+          emailStatus: DataStatus.VERIFIED,
+        },
+        transaction,
+      })
+
+      const isFirstEmail = existingEmails === 0
+
       // Create the email record
       const [emailRecord, created] = await this.emailsModel.findOrCreate({
         where: {
@@ -105,7 +116,7 @@ export class EmailsService {
         defaults: {
           id: uuid(),
           email,
-          primary: false,
+          primary: isFirstEmail,
           nationalId,
           emailStatus: DataStatus.VERIFIED,
         },

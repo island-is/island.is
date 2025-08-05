@@ -2,10 +2,27 @@ import { WhereOptions } from 'sequelize'
 
 import {
   CaseTableType,
+  isCourtOfAppealsUser,
   isDistrictCourtUser,
-  type User as TUser,
+  isPrisonAdminUser,
+  isPrisonStaffUser,
+  isProsecutorRepresentativeUser,
+  isProsecutorUser,
+  isPublicProsecutionOfficeUser,
+  isPublicProsecutionUser,
+  type User,
 } from '@island.is/judicial-system/types'
 
+import {
+  courtOfAppealsCasesAccessWhereOptions,
+  districtCourtCasesAccessWhereOptions,
+  prisonAdminCasesAccessWhereOptions,
+  prisonStaffCasesAccessWhereOptions,
+  prosecutorCasesAccessWhereOptions,
+  prosecutorRepresentativeCasesAccessWhereOptions,
+  publicProsecutionCasesAccessWhereOptions,
+  publicProsecutionOfficeCasesAccessWhereOptions,
+} from './whereOptions/access'
 import {
   courtOfAppealsRequestCasesCompletedWhereOptions,
   courtOfAppealsRequestCasesInProgressWhereOptions,
@@ -21,15 +38,15 @@ import {
   districtCourtRequestCasesInProgressWhereOptions,
 } from './whereOptions/districtCourt'
 import {
-  prisonRequestCasesActiveWhereOptions,
-  prisonRequestCasesDoneWhereOptions,
-} from './whereOptions/prison'
-import {
   prisonAdminIndictmentsRegisteredRulingWhereOptions,
   prisonAdminIndictmentsSentToPrisonAdminWhereOptions,
   prisonAdminRequestCasesActiveWhereOptions,
   prisonAdminRequestCasesDoneWhereOptions,
 } from './whereOptions/prisonAdmin'
+import {
+  prisonStaffRequestCasesActiveWhereOptions,
+  prisonStaffRequestCasesDoneWhereOptions,
+} from './whereOptions/prisonStaff'
 import {
   prosecutionIndictmentsCompletedWhereOptions,
   prosecutionIndictmentsInDraftWhereOptions,
@@ -53,81 +70,108 @@ import {
   publicProsecutionOfficeIndictmentsSentToPrisonAdminWhereOptions,
 } from './whereOptions/publicProsecutionOffice'
 
-const withUserFilter = (
-  whereOptions: WhereOptions,
-  user: TUser,
-): WhereOptions => {
-  return isDistrictCourtUser(user)
-    ? { ...whereOptions, court_id: user.institution?.id }
-    : whereOptions
+export const userAccessWhereOptions = (user: User): WhereOptions => {
+  if (isCourtOfAppealsUser(user)) {
+    return courtOfAppealsCasesAccessWhereOptions()
+  }
+
+  if (isDistrictCourtUser(user)) {
+    return districtCourtCasesAccessWhereOptions(user)
+  }
+
+  if (isPrisonStaffUser(user)) {
+    return prisonStaffCasesAccessWhereOptions()
+  }
+
+  if (isPrisonAdminUser(user)) {
+    return prisonAdminCasesAccessWhereOptions()
+  }
+
+  if (isPublicProsecutionOfficeUser(user)) {
+    return publicProsecutionOfficeCasesAccessWhereOptions()
+  }
+
+  if (isPublicProsecutionUser(user)) {
+    return publicProsecutionCasesAccessWhereOptions(user)
+  }
+
+  if (isProsecutorUser(user)) {
+    return prosecutorCasesAccessWhereOptions(user)
+  }
+
+  if (isProsecutorRepresentativeUser(user)) {
+    return prosecutorRepresentativeCasesAccessWhereOptions(user)
+  }
+
+  return { id: null }
 }
 
 export const caseTableWhereOptions: Record<
   CaseTableType,
-  (user: TUser) => WhereOptions
+  (user: User) => WhereOptions
 > = {
-  [CaseTableType.COURT_OF_APPEALS_REQUEST_CASES_IN_PROGRESS]: () =>
+  [CaseTableType.COURT_OF_APPEALS_REQUEST_CASES_IN_PROGRESS]:
     courtOfAppealsRequestCasesInProgressWhereOptions,
-  [CaseTableType.COURT_OF_APPEALS_REQUEST_CASES_COMPLETED]: () =>
+  [CaseTableType.COURT_OF_APPEALS_REQUEST_CASES_COMPLETED]:
     courtOfAppealsRequestCasesCompletedWhereOptions,
-  [CaseTableType.DISTRICT_COURT_REQUEST_CASES_IN_PROGRESS]: (user) =>
-    withUserFilter(districtCourtRequestCasesInProgressWhereOptions, user),
-  [CaseTableType.DISTRICT_COURT_REQUEST_CASES_APPEALED]: (user) =>
-    withUserFilter(districtCourtRequestCasesAppealedWhereOptions, user),
-  [CaseTableType.DISTRICT_COURT_REQUEST_CASES_COMPLETED]: (user) =>
-    withUserFilter(districtCourtRequestCasesCompletedWhereOptions, user),
-  [CaseTableType.DISTRICT_COURT_INDICTMENTS_NEW]: (user) =>
-    withUserFilter(districtCourtIndictmentsNewWhereOptions, user),
-  [CaseTableType.DISTRICT_COURT_INDICTMENTS_RECEIVED]: (user) =>
-    withUserFilter(districtCourtIndictmentsReceivedWhereOptions, user),
-  [CaseTableType.DISTRICT_COURT_INDICTMENTS_IN_PROGRESS]: (user) =>
-    withUserFilter(districtCourtIndictmentsInProgressWhereOptions, user),
-  [CaseTableType.DISTRICT_COURT_INDICTMENTS_FINALIZING]: (user) =>
-    withUserFilter(districtCourtIndictmentsFinalizingWhereOptions, user),
-  [CaseTableType.DISTRICT_COURT_INDICTMENTS_COMPLETED]: (user) =>
-    withUserFilter(districtCourtIndictmentsCompletedWhereOptions, user),
-  [CaseTableType.PRISON_REQUEST_CASES_ACTIVE]: () =>
-    prisonRequestCasesActiveWhereOptions,
-  [CaseTableType.PRISON_REQUEST_CASES_DONE]: () =>
-    prisonRequestCasesDoneWhereOptions,
-  [CaseTableType.PRISON_ADMIN_REQUEST_CASES_ACTIVE]: () =>
+  [CaseTableType.DISTRICT_COURT_REQUEST_CASES_IN_PROGRESS]:
+    districtCourtRequestCasesInProgressWhereOptions,
+  [CaseTableType.DISTRICT_COURT_REQUEST_CASES_APPEALED]:
+    districtCourtRequestCasesAppealedWhereOptions,
+  [CaseTableType.DISTRICT_COURT_REQUEST_CASES_COMPLETED]:
+    districtCourtRequestCasesCompletedWhereOptions,
+  [CaseTableType.DISTRICT_COURT_INDICTMENTS_NEW]:
+    districtCourtIndictmentsNewWhereOptions,
+  [CaseTableType.DISTRICT_COURT_INDICTMENTS_RECEIVED]:
+    districtCourtIndictmentsReceivedWhereOptions,
+  [CaseTableType.DISTRICT_COURT_INDICTMENTS_IN_PROGRESS]:
+    districtCourtIndictmentsInProgressWhereOptions,
+  [CaseTableType.DISTRICT_COURT_INDICTMENTS_FINALIZING]:
+    districtCourtIndictmentsFinalizingWhereOptions,
+  [CaseTableType.DISTRICT_COURT_INDICTMENTS_COMPLETED]:
+    districtCourtIndictmentsCompletedWhereOptions,
+  [CaseTableType.PRISON_STAFF_REQUEST_CASES_ACTIVE]:
+    prisonStaffRequestCasesActiveWhereOptions,
+  [CaseTableType.PRISON_STAFF_REQUEST_CASES_DONE]:
+    prisonStaffRequestCasesDoneWhereOptions,
+  [CaseTableType.PRISON_ADMIN_REQUEST_CASES_ACTIVE]:
     prisonAdminRequestCasesActiveWhereOptions,
-  [CaseTableType.PRISON_ADMIN_REQUEST_CASES_DONE]: () =>
+  [CaseTableType.PRISON_ADMIN_REQUEST_CASES_DONE]:
     prisonAdminRequestCasesDoneWhereOptions,
-  [CaseTableType.PRISON_ADMIN_INDICTMENTS_SENT_TO_PRISON_ADMIN]: () =>
+  [CaseTableType.PRISON_ADMIN_INDICTMENTS_SENT_TO_PRISON_ADMIN]:
     prisonAdminIndictmentsSentToPrisonAdminWhereOptions,
-  [CaseTableType.PRISON_ADMIN_INDICTMENTS_REGISTERED_RULING]: () =>
+  [CaseTableType.PRISON_ADMIN_INDICTMENTS_REGISTERED_RULING]:
     prisonAdminIndictmentsRegisteredRulingWhereOptions,
-  [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_NEW]: () =>
+  [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_NEW]:
     publicProsecutionOfficeIndictmentsNewWhereOptions,
-  [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_IN_REVIEW]: () =>
+  [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_IN_REVIEW]:
     publicProsecutionOfficeIndictmentsInReviewWhereOptions,
-  [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REVIEWED]: () =>
+  [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_REVIEWED]:
     publicProsecutionOfficeIndictmentsReviewedWhereOptions,
   [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEAL_PERIOD_EXPIRED]:
-    () => publicProsecutionOfficeIndictmentsAppealPeriodExpiredWhereOptions,
+    publicProsecutionOfficeIndictmentsAppealPeriodExpiredWhereOptions,
   [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_SENT_TO_PRISON_ADMIN]:
-    () => publicProsecutionOfficeIndictmentsSentToPrisonAdminWhereOptions,
-  [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEALED]: () =>
+    publicProsecutionOfficeIndictmentsSentToPrisonAdminWhereOptions,
+  [CaseTableType.PUBLIC_PROSECUTION_OFFICE_INDICTMENTS_APPEALED]:
     publicProsecutionOfficeIndictmentsAppealedWhereOptions,
-  [CaseTableType.PROSECUTION_REQUEST_CASES_IN_PROGRESS]: (user) =>
-    prosecutionRequestCasesInProgressWhereOptions(user),
-  [CaseTableType.PROSECUTION_REQUEST_CASES_ACTIVE]: (user) =>
-    prosecutionRequestCasesActiveWhereOptions(user),
-  [CaseTableType.PROSECUTION_REQUEST_CASES_APPEALED]: (user) =>
-    prosecutionRequestCasesAppealedWhereOptions(user),
-  [CaseTableType.PROSECUTION_REQUEST_CASES_COMPLETED]: (user) =>
-    prosecutionRequestCasesCompletedWhereOptions(user),
-  [CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_IN_REVIEW]: (user) =>
-    publicProsecutionIndictmentsInReviewWhereOptions(user),
-  [CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_REVIEWED]: (user) =>
-    publicProsecutionIndictmentsReviewedWhereOptions(user),
-  [CaseTableType.PROSECUTION_INDICTMENTS_IN_DRAFT]: (user) =>
-    prosecutionIndictmentsInDraftWhereOptions(user),
-  [CaseTableType.PROSECUTION_INDICTMENTS_WAITING_FOR_CONFIRMATION]: (user) =>
-    prosecutionIndictmentsWaitingForConfirmationWhereOptions(user),
-  [CaseTableType.PROSECUTION_INDICTMENTS_IN_PROGRESS]: (user) =>
-    prosecutionIndictmentsInProgressWhereOptions(user),
-  [CaseTableType.PROSECUTION_INDICTMENTS_COMPLETED]: (user) =>
-    prosecutionIndictmentsCompletedWhereOptions(user),
+  [CaseTableType.PROSECUTION_REQUEST_CASES_IN_PROGRESS]:
+    prosecutionRequestCasesInProgressWhereOptions,
+  [CaseTableType.PROSECUTION_REQUEST_CASES_ACTIVE]:
+    prosecutionRequestCasesActiveWhereOptions,
+  [CaseTableType.PROSECUTION_REQUEST_CASES_APPEALED]:
+    prosecutionRequestCasesAppealedWhereOptions,
+  [CaseTableType.PROSECUTION_REQUEST_CASES_COMPLETED]:
+    prosecutionRequestCasesCompletedWhereOptions,
+  [CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_IN_REVIEW]:
+    publicProsecutionIndictmentsInReviewWhereOptions,
+  [CaseTableType.PUBLIC_PROSECUTION_INDICTMENTS_REVIEWED]:
+    publicProsecutionIndictmentsReviewedWhereOptions,
+  [CaseTableType.PROSECUTION_INDICTMENTS_IN_DRAFT]:
+    prosecutionIndictmentsInDraftWhereOptions,
+  [CaseTableType.PROSECUTION_INDICTMENTS_WAITING_FOR_CONFIRMATION]:
+    prosecutionIndictmentsWaitingForConfirmationWhereOptions,
+  [CaseTableType.PROSECUTION_INDICTMENTS_IN_PROGRESS]:
+    prosecutionIndictmentsInProgressWhereOptions,
+  [CaseTableType.PROSECUTION_INDICTMENTS_COMPLETED]:
+    prosecutionIndictmentsCompletedWhereOptions,
 }

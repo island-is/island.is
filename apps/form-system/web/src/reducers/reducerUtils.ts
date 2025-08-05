@@ -1,6 +1,5 @@
 import { FormSystemScreen, FormSystemSection } from '@island.is/api/schema'
-import { ApplicationState } from '@island.is/form-system/ui'
-import { validateScreen } from '../utils/validation'
+import { ApplicationState, SectionTypes } from '@island.is/form-system/ui'
 import {
   ApolloCache,
   DefaultContext,
@@ -67,28 +66,29 @@ export const incrementWithScreens = (
   const screens = currentSectionData.screens ?? []
   const maxScreenIndex = screens.length - 1
   const [submitScreen] = submitScreenMutation
-  const errors = validateScreen(state)
-  if (errors.length > 0) {
+  const errors = state.errors ?? []
+  const isValid = state.isValid ?? true
+  if (errors.length > 0 || !isValid) {
     return {
       ...state,
       errors,
     }
   }
-
-  submitScreen({
-    variables: {
-      input: {
-        screenId: state.currentScreen?.data?.id,
-        submitScreenDto: {
-          applicationId: state.application.id,
-          screenDto: state.currentScreen?.data,
+  if (currentSectionData.sectionType === SectionTypes.INPUT) {
+    submitScreen({
+      variables: {
+        input: {
+          screenId: state.currentScreen?.data?.id,
+          submitScreenDto: {
+            applicationId: state.application.id,
+            screenDto: state.currentScreen?.data,
+          },
         },
       },
-    },
-  }).catch((error) => {
-    console.error('Error submitting screen:', error)
-  })
-
+    }).catch((error) => {
+      console.error('Error submitting screen:', error)
+    })
+  }
   if (currentScreenIndex === maxScreenIndex) {
     if (state.currentSection.index === maxSectionIndex) {
       return {
@@ -128,8 +128,27 @@ export const incrementWithScreens = (
 export const incrementWithoutScreens = (
   state: ApplicationState,
   nextSectionIndex: number,
+  submitSectionMutation: MutationTuple<
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    any,
+    OperationVariables,
+    DefaultContext,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ApolloCache<any>
+  >,
 ): ApplicationState => {
   const nextSection = state.sections[nextSectionIndex]
+  const [submitSection] = submitSectionMutation
+
+  submitSection({
+    variables: {
+      input: {
+        applicationId: state.application.id,
+        sectionId: state.currentSection.data.id,
+      },
+    },
+  })
+
   return {
     ...state,
     currentSection: {
@@ -215,6 +234,18 @@ export const decrementWithoutScreens = (
   }
 }
 
+export const setError = (
+  state: ApplicationState,
+  fieldId: string,
+  hasError: boolean,
+): ApplicationState => {
+  const errorArray = Array.isArray(state.errors) ? state.errors : []
+  const filteredArray = hasError
+    ? [...errorArray, fieldId]
+    : errorArray.filter((id) => id !== fieldId)
+  return { ...state, errors: filteredArray }
+}
+
 export const setFieldValue = (
   state: ApplicationState,
   fieldProperty: string,
@@ -227,7 +258,6 @@ export const setFieldValue = (
     return state
   }
   const screen = currentScreen.data
-
   const updatedFields = screen.fields?.map((field) => {
     if (field?.id === fieldId) {
       let newValue = field?.values?.[0] ?? {}
@@ -250,13 +280,6 @@ export const setFieldValue = (
   const updatedScreen = {
     ...screen,
     fields: updatedFields,
-  }
-  const updatedState = {
-    ...state,
-    currentScreen: {
-      ...currentScreen,
-      data: updatedScreen,
-    },
   }
 
   const updatedSections: FormSystemSection[] = state.sections.map((section) => {
@@ -284,9 +307,6 @@ export const setFieldValue = (
       ...currentScreen,
       data: updatedScreen,
     },
-    errors:
-      state.errors && state.errors.length > 0
-        ? validateScreen(updatedState)
-        : [],
+    errors: state.errors && state.errors.length > 0 ? state.errors ?? [] : [],
   }
 }

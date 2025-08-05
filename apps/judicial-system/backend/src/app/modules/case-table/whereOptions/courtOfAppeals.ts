@@ -1,33 +1,21 @@
 import { Op } from 'sequelize'
 
-import {
-  CaseAppealState,
-  completedRequestCaseStates,
-  investigationCases,
-  restrictionCases,
-} from '@island.is/judicial-system/types'
+import { CaseAppealState } from '@island.is/judicial-system/types'
+
+import { courtOfAppealsRequestCasesAccessWhereOptions } from './access'
 
 // Court of appeals request cases
 
-const courtOfAppealsSharedWhereOptions = {
-  is_archived: false,
-  type: [...restrictionCases, ...investigationCases],
-  state: completedRequestCaseStates,
-  appeal_state: { [Op.not]: null },
-}
-
-export const courtOfAppealsRequestCasesInProgressWhereOptions = {
-  ...courtOfAppealsSharedWhereOptions,
-  [Op.or]: [
-    { appeal_state: CaseAppealState.RECEIVED },
-    {
-      appeal_state: [CaseAppealState.WITHDRAWN],
-      appeal_received_by_court_date: { [Op.not]: null },
-    },
+export const courtOfAppealsRequestCasesInProgressWhereOptions = () => ({
+  [Op.and]: [
+    courtOfAppealsRequestCasesAccessWhereOptions,
+    { appeal_state: [CaseAppealState.RECEIVED, CaseAppealState.WITHDRAWN] },
   ],
-}
+})
 
-export const courtOfAppealsRequestCasesCompletedWhereOptions = {
-  ...courtOfAppealsSharedWhereOptions,
-  appeal_state: CaseAppealState.COMPLETED,
-}
+export const courtOfAppealsRequestCasesCompletedWhereOptions = () => ({
+  [Op.and]: [
+    courtOfAppealsRequestCasesAccessWhereOptions,
+    { appeal_state: CaseAppealState.COMPLETED },
+  ],
+})

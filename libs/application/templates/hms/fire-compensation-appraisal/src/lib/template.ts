@@ -26,7 +26,7 @@ import * as m from '../lib/messages'
 import { TemplateApiActions } from '../types'
 import { getChargeItems } from '../utils/paymentUtils'
 import { Features } from '@island.is/feature-flags'
-import { ApiScope } from '@island.is/auth/scopes'
+import { ApiScope, HmsScope } from '@island.is/auth/scopes'
 import { AuthDelegationType } from '@island.is/shared/types'
 
 const template: ApplicationTemplate<
@@ -54,7 +54,7 @@ const template: ApplicationTemplate<
       type: AuthDelegationType.Custom,
     },
   ],
-  requiredScopes: [ApiScope.hms],
+  requiredScopes: [HmsScope.properties, ApiScope.hms],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
