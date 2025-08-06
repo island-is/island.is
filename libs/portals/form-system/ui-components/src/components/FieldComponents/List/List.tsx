@@ -3,7 +3,6 @@ import { Dispatch, useEffect } from 'react'
 import { Select } from '@island.is/island-ui/core'
 import { Action } from '../../../lib/reducerTypes'
 import { getValue } from '../../../lib/getValue'
-import { get } from 'lodash'
 
 interface Props {
   item: FormSystemField
