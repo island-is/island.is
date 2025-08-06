@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
@@ -28,7 +28,6 @@ import {
   CaseOrigin,
   Defendant as TDefendant,
   IndictmentSubtype,
-  PoliceCaseInfo as TPoliceCaseInfo,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -105,6 +104,7 @@ const getPoliceCasesForUpdate = (
   )
 
 const Defendant = () => {
+  const router = useRouter()
   const { user } = useContext(UserContext)
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
@@ -116,17 +116,13 @@ const Defendant = () => {
     deleteDefendant,
     updateDefendantState,
   } = useDefendants()
-  const router = useRouter()
-
   const { updateIndictmentCount, deleteIndictmentCount } = useIndictmentCounts()
 
-  const [policeCases, setPoliceCases] = useState<PoliceCase[]>([])
-
-  const gender = getDefaultDefendantGender(workingCase.defendants)
-
-  useEffect(() => {
-    setPoliceCases(getPoliceCases(workingCase))
-  }, [workingCase])
+  const gender = useMemo(
+    () => getDefaultDefendantGender(workingCase.defendants),
+    [workingCase.defendants],
+  )
+  const policeCases = useMemo(() => getPoliceCases(workingCase), [workingCase])
 
   const { data, loading, error } = usePoliceCaseInfoQuery({
     variables: {
@@ -138,7 +134,7 @@ const Defendant = () => {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
     onCompleted: (data) => {
-      if (!data.policeCaseInfo) {
+      if (!data.policeCaseInfo || data.policeCaseInfo.length === 0) {
         return
       }
 
@@ -160,8 +156,26 @@ const Defendant = () => {
     },
   })
 
-  const handleCreatePoliceCase = async (policeCaseInfo?: PoliceCase) => {
-    const newPoliceCase = policeCaseInfo ?? { number: '' }
+  const policeCaseInfo = useMemo(() => {
+    if (!data || !data.policeCaseInfo || data.policeCaseInfo.length === 0) {
+      return []
+    }
+
+    const [first, ...rest] = data.policeCaseInfo
+
+    const sortedRest = rest.sort((a, b) => {
+      // We want info with missing dates to be at the end of the list
+      const aDate = a.date ?? '9'
+      const bDate = b.date ?? '9'
+
+      return aDate.localeCompare(bDate)
+    })
+
+    return [first, ...sortedRest]
+  }, [data])
+
+  const handleCreatePoliceCase = async (policeCase?: PoliceCase) => {
+    const newPoliceCase = policeCase ?? { number: '' }
 
     const [policeCaseNumbers, indictmentSubtypes, crimeScenes] =
       getPoliceCasesForUpdate([...getPoliceCases(workingCase), newPoliceCase])
@@ -497,7 +511,7 @@ const Defendant = () => {
             <LokeNumberList
               isLoading={loading}
               loadingError={Boolean(error)}
-              policeCaseInfo={data?.policeCaseInfo as TPoliceCaseInfo[]}
+              policeCaseInfo={policeCaseInfo}
               addPoliceCaseNumbers={handleCreatePoliceCases}
             />
           )}

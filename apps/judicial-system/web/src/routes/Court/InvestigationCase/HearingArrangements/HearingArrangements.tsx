@@ -1,4 +1,4 @@
-import { useCallback, useContext, useState } from 'react'
+import { useCallback, useContext, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import router from 'next/router'
 
@@ -13,6 +13,7 @@ import * as constants from '@island.is/judicial-system/consts'
 import { isDistrictCourtUser } from '@island.is/judicial-system/types'
 import { titles } from '@island.is/judicial-system-web/messages'
 import {
+  ArraignmentAlert,
   BlueBox,
   CourtArrangements,
   CourtCaseInfo,
@@ -91,42 +92,33 @@ const HearingArrangements = () => {
 
   useOnceOn(isCaseUpToDate, initialize)
 
-  const handleNavigationTo = useCallback(
-    async (destination: keyof stepValidationsType) => {
-      await sendCourtDateToServer()
-
-      const isCorrectingRuling = workingCase.notifications?.some(
-        (notification) => notification.type === NotificationType.RULING,
-      )
-
-      if (
-        isCorrectingRuling ||
-        (hasSentNotification(
-          NotificationType.COURT_DATE,
-          workingCase.notifications,
-        ).hasSent &&
-          !courtDateHasChanged)
-      ) {
-        router.push(`${destination}/${workingCase.id}`)
-      } else {
-        setNavigateTo(destination)
-      }
-    },
-    [
-      sendCourtDateToServer,
-      workingCase.notifications,
-      workingCase.id,
-      courtDateHasChanged,
-    ],
+  const courtDateNotification = useMemo(
+    () =>
+      hasSentNotification(
+        NotificationType.COURT_DATE,
+        workingCase.notifications,
+      ),
+    [workingCase.notifications],
   )
+
+  const isCorrectingRuling = Boolean(workingCase.requestCompletedDate)
+
+  const handleNavigationTo = async (destination: keyof stepValidationsType) => {
+    await sendCourtDateToServer()
+
+    if (
+      isCorrectingRuling ||
+      (courtDateNotification.hasSent && !courtDateHasChanged)
+    ) {
+      router.push(`${destination}/${workingCase.id}`)
+    } else {
+      setNavigateTo(destination)
+    }
+  }
 
   const stepIsValid = isCourtHearingArrangementsStepValidIC(
     workingCase,
     courtDate,
-  )
-
-  const isCorrectingRuling = workingCase.notifications?.some(
-    (notification) => notification.type === NotificationType.RULING,
   )
 
   return (
@@ -155,15 +147,7 @@ const HearingArrangements = () => {
                 />
               </Box>
             )}
-          {workingCase.comments && (
-            <Box marginBottom={5}>
-              <AlertMessage
-                type="warning"
-                title={formatMessage(m.comments.title)}
-                message={workingCase.comments}
-              />
-            </Box>
-          )}
+          <ArraignmentAlert />
           <PageTitle>{formatMessage(m.title)}</PageTitle>
           <CourtCaseInfo workingCase={workingCase} />
           <Box component="section" marginBottom={8}>

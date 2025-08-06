@@ -98,7 +98,7 @@ export class AppService {
   async getLitigators(): Promise<LawyerRegistry[]> {
     try {
       const res = await fetch(
-        `${this.config.backend.url}/lawyer-registry?lawyerType=${LawyerType.LITIGATORS}`,
+        `${this.config.backend.url}/api/lawyer-registry?lawyerType=${LawyerType.LITIGATORS}`,
         {
           method: 'GET',
           headers: {
@@ -151,7 +151,7 @@ export class AppService {
     if (updateSubpoena.defenderNationalId) {
       try {
         const res = await fetch(
-          `${this.config.backend.url}/lawyer-registry/${updateSubpoena.defenderNationalId}`,
+          `${this.config.backend.url}/api/lawyer-registry/${updateSubpoena.defenderNationalId}`,
           {
             method: 'GET',
             headers: {

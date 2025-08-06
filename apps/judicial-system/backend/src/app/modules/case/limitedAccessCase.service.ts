@@ -634,6 +634,7 @@ export class LimitedAccessCaseService {
           filesToZip,
         ),
       )
+
       if (!theCase.isCompletedWithoutRuling) {
         promises.push(
           this.tryAddGeneratedPdfToFilesToZip(

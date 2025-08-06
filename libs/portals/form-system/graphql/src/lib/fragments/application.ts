@@ -29,6 +29,7 @@ export const ApplicationFragment = gql`
     }
     modified
     submittedAt
+    completed
   }
   ${ApplicantTypeDtoFragment}
   ${LanguageFields}

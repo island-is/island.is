@@ -5,6 +5,7 @@ import {
   FormModes,
   FormText,
   SubmitField,
+  StaticText,
 } from '@island.is/application/types'
 import { Box, Button, ButtonTypes, GridColumn } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -86,6 +87,13 @@ export const ScreenFooter: FC<React.PropsWithChildren<FooterProps>> = ({
   const hasSubmitField = submitField !== undefined
   const isLastScreen = activeScreenIndex === numberOfScreens - 1
   const showGoBack = canGoBack && (!isLastScreen || renderLastScreenBackButton)
+
+  let nextButtonTextVal: StaticText | null | undefined
+  if (typeof nextButtonText === 'function') {
+    nextButtonTextVal = nextButtonText(application)
+  } else {
+    nextButtonTextVal = nextButtonText
+  }
 
   if (
     (isLastScreen && !renderLastScreenButton) ||
@@ -182,8 +190,8 @@ export const ScreenFooter: FC<React.PropsWithChildren<FooterProps>> = ({
                   type="submit"
                   disabled={submitButtonDisabled}
                 >
-                  {nextButtonText
-                    ? formatText(nextButtonText, application, formatMessage)
+                  {nextButtonTextVal
+                    ? formatText(nextButtonTextVal, application, formatMessage)
                     : formatMessage(coreMessages.buttonNext)}
                 </Button>
               </Box>

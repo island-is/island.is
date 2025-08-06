@@ -3,7 +3,7 @@ import * as styles from './Footer.css'
 import { useApplicationContext } from '../../context/ApplicationProvider'
 import { useIntl } from 'react-intl'
 import { webMessages } from '@island.is/form-system/ui'
-import { SAVE_SCREEN } from '@island.is/form-system/graphql'
+import { SAVE_SCREEN, SUBMIT_SECTION } from '@island.is/form-system/graphql'
 import { useMutation } from '@apollo/client'
 import { useFormContext } from 'react-hook-form'
 
@@ -30,13 +30,19 @@ export const Footer = ({ externalDataAgreement }: Props) => {
       : state.currentSection.index !== state.sections.length - 1
 
   const submitScreen = useMutation(SAVE_SCREEN)
+  const submitSection = useMutation(SUBMIT_SECTION)
   const handleIncrement = async () => {
     const isValid = await validate()
+    dispatch({
+      type: 'SET_VALIDITY',
+      payload: { isValid },
+    })
     if (!isValid) return
     dispatch({
       type: 'INCREMENT',
       payload: {
         submitScreen,
+        submitSection,
       },
     })
   }

@@ -68,7 +68,7 @@ export const incrementWithScreens = (
   const [submitScreen] = submitScreenMutation
   const errors = state.errors ?? []
   const isValid = state.isValid ?? true
-  if (errors.length > 0 || !!isValid) {
+  if (errors.length > 0 || !isValid) {
     return {
       ...state,
       errors,
@@ -128,8 +128,27 @@ export const incrementWithScreens = (
 export const incrementWithoutScreens = (
   state: ApplicationState,
   nextSectionIndex: number,
+  submitSectionMutation: MutationTuple<
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    any,
+    OperationVariables,
+    DefaultContext,
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    ApolloCache<any>
+  >,
 ): ApplicationState => {
   const nextSection = state.sections[nextSectionIndex]
+  const [submitSection] = submitSectionMutation
+
+  submitSection({
+    variables: {
+      input: {
+        applicationId: state.application.id,
+        sectionId: state.currentSection.data.id,
+      },
+    },
+  })
+
   return {
     ...state,
     currentSection: {

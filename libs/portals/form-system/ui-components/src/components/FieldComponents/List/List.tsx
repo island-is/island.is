@@ -43,12 +43,22 @@ export const List = ({ item, dispatch, lang = 'is', hasError }: Props) => {
     return undefined
   }
 
+  const selected = item?.list?.find((listItem) => listItem?.isSelected === true)
+
   return (
     <Select
       name="list"
       label={item.name?.[lang] ?? ''}
       options={mapToListItems(item?.list ?? [])}
       required={item.isRequired ?? false}
+      defaultValue={
+        selected
+          ? {
+              label: selected.label?.[lang] ?? '',
+              value: selected.label?.[lang] ?? '',
+            }
+          : undefined
+      }
       placeholder={
         listTypePlaceholder[
           item.fieldSettings?.listType as keyof typeof listTypePlaceholder

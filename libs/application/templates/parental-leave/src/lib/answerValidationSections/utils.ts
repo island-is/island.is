@@ -133,9 +133,10 @@ export const validatePeriod = (
     return buildError(null, errorMessages.dateOfBirth)
   }
 
-  const dob = StartDateOptions.ACTUAL_DATE_OF_BIRTH
-    ? parseISO(expectedDateOfBirthOrAdoptionDateOrBirthDate)
-    : parseISO(expectedDateOfBirthOrAdoptionDate)
+  const dob =
+    period.firstPeriodStart === StartDateOptions.ACTUAL_DATE_OF_BIRTH
+      ? parseISO(expectedDateOfBirthOrAdoptionDateOrBirthDate)
+      : parseISO(expectedDateOfBirthOrAdoptionDate)
   const today = new Date()
   const minimumStartDate = addMonths(
     dob,

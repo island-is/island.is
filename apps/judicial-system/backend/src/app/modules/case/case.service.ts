@@ -179,7 +179,6 @@ export interface UpdateCase
     | 'indictmentReviewerId'
     | 'indictmentReviewDecision'
     | 'indictmentDecision'
-    | 'rulingSignatureDate'
     | 'courtSessionType'
     | 'mergeCaseId'
     | 'mergeCaseNumber'
@@ -205,6 +204,7 @@ export interface UpdateCase
   courtDate?: UpdateDateLog
   postponedIndefinitelyExplanation?: string
   civilDemands?: string
+  rulingSignatureDate?: Date | null
 }
 
 type DateLogKeys = keyof Pick<UpdateCase, 'arraignmentDate' | 'courtDate'>
@@ -1907,6 +1907,15 @@ export class CaseService {
     ) {
       return this.eventLogService.createWithUser(
         EventType.CASE_SENT_TO_COURT,
+        theCase.id,
+        user,
+        transaction,
+      )
+    }
+
+    if (isCompletedCase(updatedCase.state)) {
+      return this.eventLogService.createWithUser(
+        EventType.REQUEST_COMPLETED,
         theCase.id,
         user,
         transaction,

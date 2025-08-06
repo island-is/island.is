@@ -72,5 +72,10 @@ export const ConvoyShortTermMultiField = buildMultiField({
       ],
       width: 'full',
     }),
+    buildHiddenInput({
+      id: `convoy.items.${convoyIndex}.dollyType`,
+      condition: (answers) => !checkIsConvoyWithTrailer(answers, convoyIndex),
+      defaultValue: DollyType.NONE,
+    }),
   ],
 })
