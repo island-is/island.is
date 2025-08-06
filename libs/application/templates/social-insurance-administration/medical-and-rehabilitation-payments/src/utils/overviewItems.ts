@@ -70,10 +70,9 @@ export const applicantItems = (
     {
       width: 'half',
       keyText: socialInsuranceAdministrationMessage.confirm.address,
-      valueText:
-        apartmentNumber
-          ? applicantAddressAndApartment
-          : applicantAddress
+      valueText: apartmentNumber
+        ? applicantAddressAndApartment
+        : applicantAddress,
     },
     {
       width: 'half',
