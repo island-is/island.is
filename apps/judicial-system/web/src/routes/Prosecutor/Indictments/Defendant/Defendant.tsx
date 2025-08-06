@@ -186,6 +186,12 @@ const Defendant = () => {
     const indictmentSubtypes: IndictmentSubtypeMap = {}
     const crimeScenes: CrimeSceneMap = {}
 
+    const compare = (a: string, b: string): number =>
+      compareIsoStringDates(
+        crimeScenes[a].date?.toISOString(),
+        crimeScenes[b].date?.toISOString(),
+      )
+
     policeCases.forEach((policeCase, idx) => {
       const isUpdated = idx === index
       const number =
@@ -213,15 +219,11 @@ const Defendant = () => {
 
     const [first, ...rest] = policeCaseNumbers
 
-    const sortedPoliceCaseNumbers = [
-      first,
-      ...rest.sort((a, b) =>
-        compareIsoStringDates(
-          crimeScenes[a].date?.toISOString(),
-          crimeScenes[b].date?.toISOString(),
-        ),
-      ),
-    ]
+    const sortedPoliceCaseNumbers =
+      workingCase.origin === CaseOrigin.LOKE
+        ? // If the case is a LÖKE case, we never change the first police case number
+          [first, ...rest.sort(compare)]
+        : policeCaseNumbers.sort(compare)
 
     return [sortedPoliceCaseNumbers, indictmentSubtypes, crimeScenes]
   }
