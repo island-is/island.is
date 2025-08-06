@@ -67,14 +67,14 @@ export const List = ({ item, dispatch, lang = 'is', hasError }: Props) => {
       defaultValue={
         selected
           ? {
-            label: selected.label?.[lang] ?? '',
-            value: selected.label?.[lang] ?? '',
-          }
+              label: selected.label?.[lang] ?? '',
+              value: selected.label?.[lang] ?? '',
+            }
           : undefined
       }
       placeholder={
         listTypePlaceholder[
-        item.fieldSettings?.listType as keyof typeof listTypePlaceholder
+          item.fieldSettings?.listType as keyof typeof listTypePlaceholder
         ] ?? 'Select an option'
       }
       backgroundColor="blue"
