@@ -25,7 +25,7 @@ export const applicantInfoSubSection = buildSubSection({
         buildTextField({
           id: 'applicantInfo.name',
           title: socialInsuranceAdministrationMessage.confirm.name,
-          width: 'half',
+          width: 'half', 
           disabled: true,
           defaultValue: (application: Application) => {
             const { applicantName } = getApplicationExternalData(
@@ -57,8 +57,7 @@ export const applicantInfoSubSection = buildSubSection({
         }),
         buildTextField({
           id: 'applicantInfo.apartmentNumber',
-          title:
-            socialInsuranceAdministrationMessage.info.applicantApartmentNumber,
+          title: socialInsuranceAdministrationMessage.info.applicantApartmentNumber,
           width: 'half',
           disabled: true,
           defaultValue: (application: Application) => {

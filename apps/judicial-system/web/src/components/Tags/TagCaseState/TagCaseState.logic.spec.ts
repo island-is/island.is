@@ -1,5 +1,3 @@
-import { createIntl } from 'react-intl'
-
 import { tables } from '@island.is/judicial-system-web/messages'
 import {
   CaseIndictmentRulingDecision,
@@ -10,18 +8,15 @@ import {
   User,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { mockJudge } from '@island.is/judicial-system-web/src/utils/mocks'
+import { createFormatMessage } from '@island.is/judicial-system-web/src/utils/testHelpers.logic'
 
-import { mapCaseStateToTagVariant } from './TagCaseState'
+import { mapCaseStateToTagVariant } from './TagCaseState.logic'
 import { strings } from './TagCaseState.strings'
-
-const formatMessage = createIntl({
-  locale: 'is-IS',
-  onError: jest.fn,
-}).formatMessage
 
 describe('mapCaseStateToTagVariant', () => {
   const theCase = { id: 'test' }
 
+  const formatMessage = createFormatMessage()
   const fn = (theCase: CaseListEntry, user?: User) =>
     mapCaseStateToTagVariant(formatMessage, theCase, user)
 

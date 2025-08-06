@@ -7,6 +7,7 @@ import {
   FieldBaseProps,
   KeyValueItem,
   OverviewField,
+  TableData,
 } from '@island.is/application/types'
 import { ReviewGroup } from '@island.is/application/ui-components'
 import {
@@ -45,9 +46,13 @@ export const OverviewFormField = ({
     loadItems: rawLoadItems,
     attachments: rawAttachments,
     tableData: rawTableData,
+    loadTableData: rawLoadTableData,
   } = field
   const apolloClient = useApolloClient()
   const [loadedItems, setLoadedItems] = useState<KeyValueItem[] | undefined>([])
+  const [loadedTableData, setLoadedTableData] = useState<
+    TableData | undefined
+  >()
   const [hasLoadingError, setHasLoadingError] = useState<boolean>(false)
   const [isLoading, setIsLoading] = useState<boolean>(false)
   const { formatMessage, lang: locale } = useLocale()
@@ -76,6 +81,13 @@ export const OverviewFormField = ({
     application.externalData,
   )
 
+  let backIdVal: string | undefined
+  if (typeof backId === 'function') {
+    backIdVal = backId(application.answers, application.externalData)
+  } else {
+    backIdVal = backId
+  }
+
   const changeScreens = (screen: string) => {
     if (goToScreen) goToScreen(screen)
   }
@@ -89,8 +101,25 @@ export const OverviewFormField = ({
         application.externalData,
         userInfo?.profile?.nationalId,
         apolloClient,
+        locale,
       )
-      setLoadedItems(loaded)
+      const filteredLoadedItems = loaded?.filter(
+        (item) =>
+          !(
+            item.hideIfEmpty &&
+            (!item.valueText ||
+              (Array.isArray(item.valueText) && item.valueText.length === 0))
+          ),
+      )
+
+      const loadedTable = await rawLoadTableData?.(
+        application.answers,
+        application.externalData,
+        apolloClient,
+        locale,
+      )
+      setLoadedItems(filteredLoadedItems)
+      setLoadedTableData(loadedTable)
       setIsLoading(false)
     } catch {
       setHasLoadingError(true)
@@ -195,6 +224,51 @@ export const OverviewFormField = ({
     )
   }
 
+  const renderTableData = (data: TableData) => {
+    return (
+      <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
+        <Box
+          marginTop={
+            filteredItems || loadedItems || description || title ? 0 : 8
+          }
+        >
+          <Table.Table>
+            <Table.Head>
+              <Table.Row>
+                {data.header.map((cell, index) => (
+                  <Table.HeadData key={`${cell}-${index}`}>
+                    {formatTextWithLocale(
+                      cell,
+                      application,
+                      locale,
+                      formatMessage,
+                    )}
+                  </Table.HeadData>
+                ))}
+              </Table.Row>
+            </Table.Head>
+            <Table.Body>
+              {data.rows.map((row, rowIndex) => (
+                <Table.Row key={`row-${rowIndex}`}>
+                  {row.map((cell, cellIndex) => (
+                    <Table.Data key={`row-${rowIndex}-cell-${cellIndex}`}>
+                      {formatTextWithLocale(
+                        cell,
+                        application,
+                        locale,
+                        formatMessage,
+                      )}
+                    </Table.Data>
+                  ))}
+                </Table.Row>
+              ))}
+            </Table.Body>
+          </Table.Table>
+        </Box>
+      </GridColumn>
+    )
+  }
+
   if (
     field.hideIfEmpty &&
     !filteredItems?.length &&
@@ -206,7 +280,6 @@ export const OverviewFormField = ({
 
   const rowData = (
     <GridRow rowGap={3}>
-      {filteredItems && filteredItems?.map((item, i) => renderItems(item, i))}
       {isLoading ? (
         <SkeletonLoader
           height={40}
@@ -225,87 +298,55 @@ export const OverviewFormField = ({
           </Text>
         </GridColumn>
       ) : (
-        loadedItems && loadedItems?.map((item, i) => renderItems(item, i))
-      )}
-      {attachments &&
-        attachments?.map((attachment, i) => {
-          return (
-            <GridColumn
-              key={i}
-              span={[
-                '12/12',
-                '12/12',
-                '12/12',
-                attachment.width === 'half' ? '6/12' : '12/12',
-              ]}
-            >
-              <Box marginTop={!description && !title && i === 0 ? 8 : 0}>
-                <FileItem
+        <>
+          {filteredItems &&
+            filteredItems?.map((item, i) => renderItems(item, i))}
+          {loadedItems && loadedItems?.map((item, i) => renderItems(item, i))}
+          {attachments &&
+            attachments?.map((attachment, i) => {
+              return (
+                <GridColumn
                   key={i}
-                  fileName={formatTextWithLocale(
-                    attachment.fileName,
-                    application,
-                    locale,
-                    formatMessage,
-                  )}
-                  fileSize={formatTextWithLocale(
-                    attachment.fileSize ?? '',
-                    application,
-                    locale,
-                    formatMessage,
-                  )}
-                  fileType={formatTextWithLocale(
-                    attachment.fileType ?? '',
-                    application,
-                    locale,
-                    formatMessage,
-                  )}
-                />
-              </Box>
-            </GridColumn>
-          )
-        })}
-      {tableData && tableData.header.length > 0 && (
-        <GridColumn span={['12/12', '12/12', '12/12', '12/12']}>
-          <Box
-            marginTop={
-              filteredItems || loadedItems || description || title ? 0 : 8
-            }
-          >
-            <Table.Table>
-              <Table.Head>
-                <Table.Row>
-                  {tableData.header.map((cell, index) => (
-                    <Table.HeadData key={`${cell}-${index}`}>
-                      {formatTextWithLocale(
-                        cell,
+                  span={[
+                    '12/12',
+                    '12/12',
+                    '12/12',
+                    attachment.width === 'half' ? '6/12' : '12/12',
+                  ]}
+                >
+                  <Box marginTop={!description && !title && i === 0 ? 8 : 0}>
+                    <FileItem
+                      key={i}
+                      fileName={formatTextWithLocale(
+                        attachment.fileName,
                         application,
                         locale,
                         formatMessage,
                       )}
-                    </Table.HeadData>
-                  ))}
-                </Table.Row>
-              </Table.Head>
-              <Table.Body>
-                {tableData.rows.map((row, rowIndex) => (
-                  <Table.Row key={`row-${rowIndex}`}>
-                    {row.map((cell, cellIndex) => (
-                      <Table.Data key={`row-${rowIndex}-cell-${cellIndex}`}>
-                        {formatTextWithLocale(
-                          cell,
-                          application,
-                          locale,
-                          formatMessage,
-                        )}
-                      </Table.Data>
-                    ))}
-                  </Table.Row>
-                ))}
-              </Table.Body>
-            </Table.Table>
-          </Box>
-        </GridColumn>
+                      fileSize={formatTextWithLocale(
+                        attachment.fileSize ?? '',
+                        application,
+                        locale,
+                        formatMessage,
+                      )}
+                      fileType={formatTextWithLocale(
+                        attachment.fileType ?? '',
+                        application,
+                        locale,
+                        formatMessage,
+                      )}
+                    />
+                  </Box>
+                </GridColumn>
+              )
+            })}
+          {tableData &&
+            tableData.header.length > 0 &&
+            renderTableData(tableData)}
+          {loadedTableData &&
+            loadedTableData.header.length > 0 &&
+            renderTableData(loadedTableData)}
+        </>
       )}
     </GridRow>
   )
@@ -349,14 +390,8 @@ export const OverviewFormField = ({
           <ReviewGroup
             isLast={!bottomLine}
             hideTopDivider={true}
-            editAction={() =>
-              changeScreens(
-                typeof backId === 'function'
-                  ? backId(application.answers) ?? ''
-                  : backId ?? '',
-              )
-            }
-            isEditable={backId !== undefined}
+            editAction={() => changeScreens(backIdVal ?? '')}
+            isEditable={backIdVal !== undefined}
           >
             {rowData}
           </ReviewGroup>
@@ -367,14 +402,8 @@ export const OverviewFormField = ({
     return (
       <ReviewGroup
         isLast={!bottomLine}
-        editAction={() =>
-          changeScreens(
-            typeof backId === 'function'
-              ? backId(application.answers) ?? ''
-              : backId ?? '',
-          )
-        }
-        isEditable={backId !== undefined}
+        editAction={() => changeScreens(backIdVal ?? '')}
+        isEditable={backIdVal !== undefined}
       >
         <Box marginRight={12}>
           {title && (
