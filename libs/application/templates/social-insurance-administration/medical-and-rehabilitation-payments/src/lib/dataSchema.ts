@@ -19,12 +19,6 @@ const isValidPhoneNumber = (phoneNumber: string) => {
   return phone && phone.isValid()
 }
 
-const FileSchema = z.object({
-  name: z.string(),
-  key: z.string(),
-  url: z.string().optional(),
-})
-
 export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   applicantInfo: z.object({
@@ -266,7 +260,6 @@ export const dataSchema = z.object({
       hasUtilizedUnionSickPayRights: z.string().optional().nullable(),
       unionNationalId: z.string().optional().nullable(),
       endDate: z.string().optional().nullable(),
-      fileupload: z.array(FileSchema).optional(),
       unionName: z.string().optional().nullable(),
     })
     .refine(
@@ -304,16 +297,6 @@ export const dataSchema = z.object({
         path: ['endDate'],
         params: errorMessages.dateRequired,
       },
-    )
-    .refine(
-      ({ hasUtilizedUnionSickPayRights, fileupload }) =>
-        hasUtilizedUnionSickPayRights === YES && fileupload !== undefined
-          ? fileupload.length !== 0
-          : true,
-      {
-        path: ['fileupload'],
-        params: coreSIAErrorMessages.requireAttachment,
-      },
     ),
   rehabilitationPlanConfirmation: z
     .array(z.string())
@@ -341,7 +324,12 @@ export const dataSchema = z.object({
       questionnaire: z
         .array(
           z.object({
-            answer: z.string(),
+            answer: z
+              .string()
+              .min(1)
+              .refine((v) => !!v && v.trim().length > 0, {
+                params: errorMessages.selfAssessmentQuestionnaireRequired,
+              }),
             questionId: z.string(),
           }),
         )

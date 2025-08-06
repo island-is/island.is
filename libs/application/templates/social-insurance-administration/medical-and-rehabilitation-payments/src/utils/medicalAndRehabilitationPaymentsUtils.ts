@@ -11,6 +11,7 @@ import {
   PaymentInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { Application, ExternalData, Option } from '@island.is/application/types'
+import { Locale } from '@island.is/shared/types'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../lib/messages'
 import {
   Countries,
@@ -318,7 +319,7 @@ export const getApplicationExternalData = (
   const selfAssessmentQuestionnaire =
     getValueViaPath<SelfAssessmentQuestionnaire[]>(
       externalData,
-      'socialInsuranceAdministrationQuestionnairesSelfAssessment.data',
+      'socialInsuranceAdministrationMARPQuestionnairesSelfAssessment.data',
     ) ?? []
 
   const ectsUnits =
@@ -513,4 +514,18 @@ export const eligibleText = (externalData: ExternalData) => {
     default:
       return undefined
   }
+}
+
+export const getSelfAssessmentQuestionnaireQuestions = (
+  externalData: ExternalData,
+  locale: Locale = 'is',
+) => {
+  const { selfAssessmentQuestionnaire } =
+    getApplicationExternalData(externalData)
+
+  return (
+    selfAssessmentQuestionnaire.find(
+      (questionnaire) => questionnaire.language.toLowerCase() === locale,
+    )?.questions ?? []
+  )
 }

@@ -5,7 +5,7 @@ import {
   ApiProtectedV1IncomePlanTemporaryCalculationsPostRequest,
   ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
   ApiProtectedV1PensionCalculatorPostRequest,
-  ApiProtectedV1QuestionnairesSelfassessmentGetRequest,
+  ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest,
   ApplicantApi,
   ApplicationApi,
   DeathBenefitsApi,
@@ -229,15 +229,17 @@ export class SocialInsuranceAdministrationClientService {
     ).apiProtectedV1MedicalDocumentsRehabilitationplanGet()
   }
 
-  async getSelfAssessmentQuestionnaire(
+  async getMARPSelfAssessmentQuestionnaire(
     user: User,
-    languages: ApiProtectedV1QuestionnairesSelfassessmentGetRequest,
+    languages: ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest,
   ): Promise<
     Array<TrWebApiServicesDomainQuestionnairesModelsQuestionnaireDto>
   > {
     return this.questionnairesApiWithAuth(
       user,
-    ).apiProtectedV1QuestionnairesSelfassessmentGet(languages)
+    ).apiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGet(
+      languages,
+    )
   }
 
   async getCertificateForSicknessAndRehabilitation(

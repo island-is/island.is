@@ -1,17 +1,23 @@
 export interface SelfAssessmentQuestionnaireQuestions {
-  icfCode: string
-  questionTitle: string
-  question: string
   questionCode: string
+  questionTitle: string
+  explanationText: string
+  question: string
+  icfCode: string
+}
+
+export interface SelfAssessmentQuestionnaireScaleOption {
+  value: number
+  display: string
+  order: number
 }
 
 export interface SelfAssessmentQuestionnaire {
-  scaleMax: number
-  scaleMin: number
-  questions: SelfAssessmentQuestionnaireQuestions[]
-  versionNumber: string
-  questionnaireCode: string
   questionnaireName: string
+  questionnaireCode: string
+  versionNumber: string
+  scale: SelfAssessmentQuestionnaireScaleOption[]
+  questions: SelfAssessmentQuestionnaireQuestions[]
   language: string
 }
 
