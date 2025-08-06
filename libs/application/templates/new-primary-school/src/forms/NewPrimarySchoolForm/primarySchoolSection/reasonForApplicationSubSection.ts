@@ -75,6 +75,7 @@ export const reasonForApplicationSubSection = buildSubSection({
             placeholder:
               newPrimarySchoolMessages.primarySchool
                 .reasonForApplicationPlaceholder,
+            useIdAndKey: true,
           },
         ),
         buildTextField({

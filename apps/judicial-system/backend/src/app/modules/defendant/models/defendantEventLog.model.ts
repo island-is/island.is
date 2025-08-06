@@ -20,14 +20,33 @@ import { Defendant } from './defendant.model'
   timestamps: true,
 })
 export class DefendantEventLog extends Model {
-  // gets the latest log date of a given type, since the defendant event logs are sorted
-  static getDefendantEventLogTypeDate(
-    eventType: DefendantEventType,
-    defendantEventLogs?: DefendantEventLog[],
-  ) {
-    return defendantEventLogs?.find(
-      (defendantEventLog) => defendantEventLog.eventType === eventType,
-    )?.created
+  static getEventLogByEventType(
+    eventType: DefendantEventType | DefendantEventType[],
+    eventLogs: DefendantEventLog[] | undefined,
+  ): DefendantEventLog | undefined {
+    if (!eventLogs) {
+      return undefined
+    }
+
+    const eventTypes = Array.isArray(eventType) ? eventType : [eventType]
+    const relevantLogs = eventLogs
+      .filter((eventLog) => eventTypes.includes(eventLog.eventType))
+      // Don't assume any ordering
+      .sort((a, b) => b.created.getTime() - a.created.getTime())
+
+    if (relevantLogs.length === 0) {
+      return undefined
+    }
+
+    return relevantLogs[0]
+  }
+
+  static getEventLogDateByEventType(
+    eventType: DefendantEventType | DefendantEventType[],
+    eventLogs: DefendantEventLog[] | undefined,
+  ): Date | undefined {
+    return DefendantEventLog.getEventLogByEventType(eventType, eventLogs)
+      ?.created
   }
 
   @Column({

@@ -5,6 +5,7 @@ import {
   districtCourtAbbreviation,
   formatCaseType,
   formatDate,
+  formatNationalId,
   getAllReadableIndictmentSubtypes,
   getAppealResultTextByValue,
   getInitials,
@@ -512,7 +513,7 @@ const defendants: CaseTableCellGenerator<StringGroupValue> = {
   includes: {
     defendants: {
       model: Defendant,
-      attributes: ['nationalId', 'name'],
+      attributes: ['noNationalId', 'nationalId', 'name'],
       order: [['created', 'ASC']],
       separate: true,
     },
@@ -524,9 +525,13 @@ const defendants: CaseTableCellGenerator<StringGroupValue> = {
 
     const strList = [
       c.defendants[0].name ?? '',
-      c.defendants.length > 1
-        ? `+ ${c.defendants.length - 1}`
-        : c.defendants[0].nationalId ?? '',
+      c.defendants.length === 1
+        ? c.defendants[0].noNationalId
+          ? c.defendants[0].nationalId
+            ? `fd. ${c.defendants[0].nationalId}`
+            : ''
+          : `kt. ${formatNationalId(c.defendants[0].nationalId)}`
+        : `+ ${c.defendants.length - 1}`,
     ]
 
     return generateCell({ strList }, strList.join(''))
@@ -702,7 +707,6 @@ const caseSentToCourtDate: CaseTableCellGenerator<StringValue> = {
     eventLogs: {
       model: EventLog,
       attributes: ['created', 'eventType'],
-      order: [['created', 'DESC']],
       where: {
         eventType: [
           EventType.CASE_SENT_TO_COURT,
@@ -713,9 +717,12 @@ const caseSentToCourtDate: CaseTableCellGenerator<StringValue> = {
     },
   },
   generate: (c: Case): CaseTableCell<StringValue> => {
-    const caseSentToCourtEvent = EventLog.caseSentToCourtEvent(c.eventLogs)
+    const caseSentToCourtDate = EventLog.getEventLogDateByEventType(
+      [EventType.CASE_SENT_TO_COURT, EventType.INDICTMENT_CONFIRMED],
+      c.eventLogs,
+    )
 
-    return generateDate(caseSentToCourtEvent?.created)
+    return generateDate(caseSentToCourtDate)
   },
 }
 
@@ -878,7 +885,6 @@ const prisonAdminReceivalDate: CaseTableCellGenerator<StringValue> = {
         eventLogs: {
           model: DefendantEventLog,
           attributes: ['created', 'eventType'],
-          order: [['created', 'DESC']],
           where: { eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN },
           separate: true,
         },
@@ -891,7 +897,7 @@ const prisonAdminReceivalDate: CaseTableCellGenerator<StringValue> = {
       return generateCell()
     }
 
-    const dateOpened = DefendantEventLog.getDefendantEventLogTypeDate(
+    const dateOpened = DefendantEventLog.getEventLogDateByEventType(
       DefendantEventType.OPENED_BY_PRISON_ADMIN,
       c.defendants[0].eventLogs,
     )
@@ -909,7 +915,6 @@ const prisonAdminState: CaseTableCellGenerator<TagValue> = {
         eventLogs: {
           model: DefendantEventLog,
           attributes: ['created', 'eventType'],
-          order: [['created', 'DESC']],
           where: { eventType: DefendantEventType.OPENED_BY_PRISON_ADMIN },
           separate: true,
         },
@@ -922,7 +927,7 @@ const prisonAdminState: CaseTableCellGenerator<TagValue> = {
       return generateCell({ color: 'red', text: 'Óþekkt' }, 'C') // This should never happen
     }
 
-    const dateOpened = DefendantEventLog.getDefendantEventLogTypeDate(
+    const dateOpened = DefendantEventLog.getEventLogDateByEventType(
       DefendantEventType.OPENED_BY_PRISON_ADMIN,
       c.defendants[0].eventLogs,
     )
@@ -1016,7 +1021,6 @@ const sentToPrisonAdminDate: CaseTableCellGenerator<StringValue> = {
         eventLogs: {
           model: DefendantEventLog,
           attributes: ['created', 'eventType'],
-          order: [['created', 'DESC']],
           where: { eventType: DefendantEventType.SENT_TO_PRISON_ADMIN },
           separate: true,
         },
@@ -1030,7 +1034,7 @@ const sentToPrisonAdminDate: CaseTableCellGenerator<StringValue> = {
     }
 
     const dateSent = c.defendants.reduce<Date | undefined>((firstSent, d) => {
-      const dateSent = DefendantEventLog.getDefendantEventLogTypeDate(
+      const dateSent = DefendantEventLog.getEventLogDateByEventType(
         DefendantEventType.SENT_TO_PRISON_ADMIN,
         d.eventLogs,
       )

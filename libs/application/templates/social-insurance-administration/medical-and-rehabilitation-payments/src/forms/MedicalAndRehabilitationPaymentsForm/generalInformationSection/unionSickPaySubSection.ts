@@ -12,7 +12,10 @@ import {
 import { siaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/graphql/queries'
 import { SiaUnionsQuery } from '@island.is/application/templates/social-insurance-administration-core/types/schema'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../../lib/messages'
-import { shouldShowUnionSickPayUnionAndEndDate } from '../../../utils/conditionUtils'
+import {
+  isFirstApplication,
+  shouldShowUnionSickPayUnionAndEndDate,
+} from '../../../utils/conditionUtils'
 import {
   getApplicationAnswers,
   getYesNoNotApplicableOptions,
@@ -25,6 +28,7 @@ export const unionSickPaySubSection = buildSubSection({
   title:
     medicalAndRehabilitationPaymentsFormMessage.generalInformation
       .unionSickPaySubSectionTitle,
+  condition: (_, externalData) => isFirstApplication(externalData),
   children: [
     buildMultiField({
       id: 'unionSickPay',

@@ -19,14 +19,17 @@ import {
   SocialInsuranceAdministrationCategorizedIncomeTypesApi,
   SocialInsuranceAdministrationCurrenciesApi,
   SocialInsuranceAdministrationEctsUnitsApi,
+  SocialInsuranceAdministrationEducationLevelsApi,
   SocialInsuranceAdministrationIncomePlanConditionsApi,
+  SocialInsuranceAdministrationIsApplicantEligibleApi,
+  SocialInsuranceAdministrationMARPApplicationTypeApi,
   SocialInsuranceAdministrationQuestionnairesApi,
+  SocialInsuranceAdministrationResidenceInformationApi,
 } from '../dataProviders'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../lib/messages'
 
 export const Prerequisites: Form = buildForm({
   id: 'medicalAndrehabilitationPaymentsPrerequisites',
-  title: socialInsuranceAdministrationMessage.shared.formTitle,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   children: [
@@ -136,6 +139,18 @@ export const Prerequisites: Form = buildForm({
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationEctsUnitsApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationResidenceInformationApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationMARPApplicationTypeApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationEducationLevelsApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationIsApplicantEligibleApi,
             }),
           ],
         }),

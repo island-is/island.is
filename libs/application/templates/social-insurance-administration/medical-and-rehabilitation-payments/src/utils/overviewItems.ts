@@ -20,6 +20,7 @@ import parseISO from 'date-fns/parseISO'
 import { format as formatKennitala } from 'kennitala'
 import { formatNumber } from 'libphonenumber-js'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../lib/messages'
+import { isFirstApplication } from './conditionUtils'
 import {
   NOT_APPLICABLE,
   SelfAssessmentCurrentEmploymentStatus,
@@ -41,7 +42,9 @@ export const applicantItems = (
     applicantName,
     applicantNationalId,
     applicantAddress,
-    applicantMunicipality,
+    apartmentNumber,
+    applicantLocation,
+    applicantAddressAndApartment,
     userProfileEmail,
     spouseName,
     spouseNationalId,
@@ -67,12 +70,14 @@ export const applicantItems = (
     {
       width: 'half',
       keyText: socialInsuranceAdministrationMessage.confirm.address,
-      valueText: applicantAddress,
+      valueText: apartmentNumber
+        ? applicantAddressAndApartment
+        : applicantAddress,
     },
     {
       width: 'half',
       keyText: socialInsuranceAdministrationMessage.confirm.municipality,
-      valueText: applicantMunicipality,
+      valueText: applicantLocation,
     },
     {
       width: 'half',
@@ -208,7 +213,10 @@ export const benefitsFromAnotherCountryTable = (
   return { header: [], rows: [] }
 }
 
-export const questionsItems = (answers: FormValue): Array<KeyValueItem> => {
+export const questionsItems = (
+  answers: FormValue,
+  externalData: ExternalData,
+): Array<KeyValueItem> => {
   const {
     isSelfEmployed,
     calculatedRemunerationDate,
@@ -218,18 +226,21 @@ export const questionsItems = (answers: FormValue): Array<KeyValueItem> => {
     ectsUnits,
   } = getApplicationAnswers(answers)
 
-  const baseItems: Array<KeyValueItem> = [
-    {
-      width: 'half',
-      keyText:
-        medicalAndRehabilitationPaymentsFormMessage.generalInformation
-          .questionsIsSelfEmployed,
-      valueText:
-        isSelfEmployed === YES
-          ? socialInsuranceAdministrationMessage.shared.yes
-          : socialInsuranceAdministrationMessage.shared.no,
-    },
-  ]
+  let baseItems: Array<KeyValueItem> = []
+  if (isFirstApplication(externalData)) {
+    baseItems = [
+      {
+        width: 'half',
+        keyText:
+          medicalAndRehabilitationPaymentsFormMessage.generalInformation
+            .questionsIsSelfEmployed,
+        valueText:
+          isSelfEmployed === YES
+            ? socialInsuranceAdministrationMessage.shared.yes
+            : socialInsuranceAdministrationMessage.shared.no,
+      },
+    ]
+  }
 
   const calculatedRemunerationDateItem: Array<KeyValueItem> =
     isSelfEmployed === YES
@@ -409,9 +420,13 @@ export const rehabilitationPlanItems = (): Array<KeyValueItem> => [
 
 export const selfAssessmentQuestionsOneItems = (
   answers: FormValue,
+  externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const { hadAssistance, highestLevelOfEducation } =
-    getApplicationAnswers(answers)
+  const { hadAssistance, educationalLevel } = getApplicationAnswers(answers)
+  const { educationLevels } = getApplicationExternalData(externalData)
+  const educationLevelOption = educationLevels.find(
+    (level) => level.code === educationalLevel,
+  )
 
   return [
     {
@@ -428,8 +443,8 @@ export const selfAssessmentQuestionsOneItems = (
       width: 'full',
       keyText:
         medicalAndRehabilitationPaymentsFormMessage.selfAssessment
-          .highestlevelOfEducationDescription,
-      valueText: highestLevelOfEducation,
+          .educationLevelDescription,
+      valueText: educationLevelOption?.description,
     },
   ]
 }
