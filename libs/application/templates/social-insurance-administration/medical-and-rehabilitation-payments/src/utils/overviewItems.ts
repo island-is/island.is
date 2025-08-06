@@ -598,10 +598,12 @@ export const selfAssessmentQuestionsThreeItems = (
 export const selfAssessmentQuestionnaireItems = (): Array<KeyValueItem> => [
   {
     width: 'full',
-    keyText: medicalAndRehabilitationPaymentsFormMessage.selfAssessment.title,
+    keyText:
+      medicalAndRehabilitationPaymentsFormMessage.overview
+        .selfAssessmentQuestionnaire,
     valueText:
       medicalAndRehabilitationPaymentsFormMessage.overview
-        .selfAssessmentConfirmed,
+        .selfAssessmentQuestionnaireConfirmed,
   },
 ]
 
