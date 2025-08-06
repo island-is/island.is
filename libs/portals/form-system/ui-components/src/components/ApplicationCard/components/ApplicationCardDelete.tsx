@@ -1,14 +1,12 @@
 import { Box, DialogPrompt, Icon, Tag } from '@island.is/island-ui/core'
 import { coreMessages } from '@island.is/application/core'
 import { useLocale } from '@island.is/localization'
-import { FormSystemApplication } from '@island.is/api/schema'
 
 interface Props {
-  application: FormSystemApplication
-  onDelete?: () => void
+  onDelete: () => void
 }
 
-export const ApplicationCardDelete = ({ application: _application }: Props) => {
+export const ApplicationCardDelete = ({ onDelete }: Props) => {
   const { formatMessage } = useLocale()
 
   return (
@@ -40,6 +38,7 @@ export const ApplicationCardDelete = ({ application: _application }: Props) => {
       buttonTextCancel={formatMessage(
         coreMessages.deleteApplicationDialogCancelLabel,
       )}
+      onConfirm={onDelete}
     />
   )
 }
