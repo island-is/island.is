@@ -1573,6 +1573,10 @@ export const messages = defineMessages({
     defaultMessage: 'Í gildi',
     id: 'sp.health:valid',
   },
+  invalid: {
+    defaultMessage: 'Ógild',
+    id: 'sp.health:invalid',
+  },
   validForRenewal: {
     defaultMessage: 'Endurnýja',
     id: 'sp.health:valid-for-renewal',
@@ -1673,5 +1677,100 @@ export const messages = defineMessages({
   renewEhicUrl: {
     id: 'sp.health:renew-ehic-url',
     defaultMessage: 'https://island.is/evropska-sjukratryggingakortid',
+  },
+  patientData: {
+    defaultMessage: 'Sjúkraskrá',
+    id: 'sp.health:patient-data',
+  },
+  myPatientData: {
+    defaultMessage: 'Mín sjúkraskrá',
+    id: 'sp.health:my-patient-data',
+  },
+  patientDataPermit: {
+    defaultMessage: 'Heimild til birtingar',
+    id: 'sp.health:patient-data-permit',
+  },
+  patientDataPermitTitle: {
+    defaultMessage: 'Heimild til birtingar sjúkraskrárupplýsinga milli landa',
+    id: 'sp.health:patient-data-permit-title',
+  },
+  patientDataPermitDescription: {
+    defaultMessage:
+      'Hér getur þú veitt heimild fyrir því að lykilheilsufarsupplýsingar þínar verða aðgengilegar heilbrigðisstarfsfólki í öðrum löndum innan Evrópska efnahagssvæðisins, í gegnum landstengigátt hjá Embætti landlæknis. ',
+    id: 'sp.health:patient-data-permit-description',
+  },
+  readAboutPermit: {
+    defaultMessage: 'Lesa um heimildina hér',
+    id: 'sp.health:read-about-permit',
+  },
+  addPermit: {
+    defaultMessage: 'Bæta við heimild',
+    id: 'sp.health:add-permit',
+  },
+  chooseDataToShare: {
+    defaultMessage: 'Veldu gögn sem þú vilt veita heimild til birtingar',
+    id: 'sp.health:choose-data-to-share',
+  },
+  permitApprovalDescription: {
+    id: 'sp.health:permit-approval-description',
+    defaultMessage:
+      '<link>Lykilheilsufarsupplýsingar</link> þínar verða aðgengilegar heilbrigðisstarfsfólki í öðrum löngum. Þú getur séð samantekt af þínum heilsufarsupplýsingum í sjúkraskránni.',
+  },
+  permitApproval: {
+    id: 'sp.health:permit-approval',
+    defaultMessage: 'Ég samþykki birtingu lykilheilsufarsupplýsinga minna.',
+  },
+  forward: {
+    defaultMessage: 'Áfram',
+    id: 'sp.health:forward',
+  },
+  goBack: {
+    defaultMessage: 'Til baka',
+    id: 'sp.health:go-back',
+  },
+  whatCountriesShouldPermitApply: {
+    defaultMessage:
+      'Hvaða land eða lönd viltu að geti fengið aðgang að þínum gögnum?',
+    id: 'sp.health:what-countries-should-permit-apply',
+  },
+  chooseAllCountries: {
+    defaultMessage: 'Velja öll löndin',
+    id: 'sp.health:choose-all-countries',
+  },
+  howLongShouldPermitApply: {
+    defaultMessage: 'Hversu lengi á heimildin að gilda?',
+    id: 'sp.health:how-long-should-permit-apply',
+  },
+  showExipredPermits: {
+    defaultMessage: 'Sýna útrunnar heimildir',
+    id: 'sp.health:show-expired-permits',
+  },
+  permit: {
+    defaultMessage: 'Heimild',
+    id: 'sp.health:permit',
+  },
+  permitValidFor: {
+    defaultMessage: 'Heimild gildir fyrir {country}.',
+    id: 'sp.health:permit-valid-for',
+  },
+  permitValidForShort: {
+    defaultMessage: 'Heimild gildir fyrir ',
+    id: 'sp.health:permit-valid-for-short',
+  },
+  validTime: {
+    defaultMessage: 'Gildistími',
+    id: 'sp.health:valid-time',
+  },
+  validToFrom: {
+    defaultMessage: 'Gildistími: {fromDate} til {toDate}',
+    id: 'sp.health:valid-to-from',
+  },
+  step: {
+    defaultMessage: 'Skref {first} af {second}',
+    id: 'sp.health:step',
+  },
+  downloadPDF: {
+    defaultMessage: 'Sækja PDF',
+    id: 'sp.health:download-pdf',
   },
 })

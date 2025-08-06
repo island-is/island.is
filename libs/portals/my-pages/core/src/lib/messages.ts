@@ -2113,6 +2113,10 @@ export const searchTagsMessages = defineMessages({
     id: 'sp.search.tags:health-payment-overview',
     defaultMessage: 'Greiðsluyfirlit',
   },
+  healthPatientData: {
+    id: 'sp.search.tags:health-patient-data',
+    defaultMessage: 'Sjúkraupplýsingar',
+  },
   licensesAlternative: {
     id: 'sp.search.tags:licenses-alternative',
     defaultMessage: 'Skilríki',
