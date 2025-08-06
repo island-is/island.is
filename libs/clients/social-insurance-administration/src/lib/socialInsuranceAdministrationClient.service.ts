@@ -32,6 +32,7 @@ import {
   TrWebCommonsExternalPortalsApiModelsIncomePlanWithholdingTaxDto,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanLegitimatePayments,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
+  TrWebExternalModelsServicePortalNationalRegistryAddress,
   TrWebExternalModelsServicePortalBaseCertificate,
   TrWebExternalModelsServicePortalConfirmationOfIllHealth,
   TrWebExternalModelsServicePortalConfirmationOfPendingResolution,
@@ -231,7 +232,7 @@ export class SocialInsuranceAdministrationClientService {
     ).apiProtectedV1MedicalDocumentsRehabilitationplanGet()
   }
 
-  async getSelfAssessmentQuestionnaire(
+  async getMARPSelfAssessmentQuestionnaire(
     user: User,
     languages: ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest,
   ): Promise<
@@ -298,6 +299,14 @@ export class SocialInsuranceAdministrationClientService {
     Array<TrWebApiServicesDomainEducationalInstitutionsModelsEctsUnitDto>
   > {
     return this.generalApiWithAuth(user).apiProtectedV1GeneralEctsUnitsGet()
+  }
+
+  async getResidenceInformation(
+    user: User,
+  ): Promise<TrWebExternalModelsServicePortalNationalRegistryAddress> {
+    return this.applicantApiWithAuth(
+      user,
+    ).apiProtectedV1ApplicantResidenceInformationGet()
   }
 
   async getEducationLevels(

@@ -1,16 +1,15 @@
-import { createIntl } from 'react-intl'
-
 import {
   Case,
   CaseDecision,
   CaseType,
   Defendant,
 } from '@island.is/judicial-system-web/src/graphql/schema'
+import { createFormatMessage } from '@island.is/judicial-system-web/src/utils/testHelpers.logic'
 
-import { getConclusionAutofill } from './Ruling'
+import { getConclusionAutofill } from './Ruling.logic'
 
 describe('getConclusionAutofill', () => {
-  const intl = createIntl({ locale: 'is', onError: jest.fn })
+  const formatMessage = createFormatMessage()
   const defendantBase = {
     name: 'Blær',
     noNationalId: true,
@@ -25,7 +24,7 @@ describe('getConclusionAutofill', () => {
     isolationToDate?: string,
   ) =>
     getConclusionAutofill(
-      intl.formatMessage,
+      formatMessage,
       theCase,
       decision,
       defendant,

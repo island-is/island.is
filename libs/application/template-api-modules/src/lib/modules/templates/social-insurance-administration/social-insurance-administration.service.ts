@@ -621,11 +621,11 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     return await this.siaClientService.getIncomePlanConditions(auth)
   }
 
-  async getSelfAssessmentQuestionnaire(
+  async getMARPSelfAssessmentQuestionnaire(
     { auth }: TemplateApiModuleActionProps,
     languages: ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest = {},
   ) {
-    return await this.siaClientService.getSelfAssessmentQuestionnaire(
+    return await this.siaClientService.getMARPSelfAssessmentQuestionnaire(
       auth,
       languages,
     )
@@ -633,6 +633,10 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
 
   async getEctsUnits({ auth }: TemplateApiModuleActionProps) {
     return await this.siaClientService.getEctsUnits(auth)
+  }
+
+  async getResidenceInformation({ auth }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getResidenceInformation(auth)
   }
 
   async getEducationLevels({

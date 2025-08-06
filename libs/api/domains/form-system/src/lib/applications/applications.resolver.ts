@@ -16,7 +16,9 @@ import {
   ApplicationsInput,
   CreateApplicationInput,
   GetApplicationInput,
+  GetApplicationsInput,
   SubmitScreenInput,
+  SubmitSectionInput,
   UpdateApplicationInput,
 } from '../../dto/application.input'
 import { UpdateApplicationDependenciesInput } from '../../dto/application.input'
@@ -48,6 +50,17 @@ export class ApplicationsResolver {
     @CurrentUser() user: User,
   ): Promise<ApplicationResponse> {
     return this.applicationsService.getApplications(user, input)
+  }
+
+  @Query(() => ApplicationResponse, {
+    name: 'formSystemGetApplications',
+  })
+  async getAllApplications(
+    @Args('input', { type: () => GetApplicationsInput })
+    input: GetApplicationsInput,
+    @CurrentUser() user: User,
+  ): Promise<ApplicationResponse> {
+    return this.applicationsService.getAllApplications(user, input)
   }
 
   @Mutation(() => Application, {
@@ -83,18 +96,6 @@ export class ApplicationsResolver {
     return this.applicationsService.submitApplication(user, input)
   }
 
-  // @Mutation(() => SubmitScreenResponse, {
-  //   name: 'submitFormSystemScreen',
-  // })
-  // async submitScreen(
-  //   @Args('input', { type: () => SubmitScreenInput })
-  //   input: SubmitScreenInput,
-  //   @CurrentUser() user: User,
-  // ): Promise<SubmitScreenResponse> {
-  //   console.log('submitScreen', input)
-  //   return this.applicationsService.submitScreen(user, input)
-  // }
-
   @Mutation(() => Boolean, {
     name: 'updateFormSystemApplication',
   })
@@ -115,5 +116,29 @@ export class ApplicationsResolver {
     @CurrentUser() user: User,
   ): Promise<Screen> {
     return this.applicationsService.saveScreen(user, input)
+  }
+
+  @Mutation(() => Boolean, {
+    name: 'submitFormSystemSection',
+    nullable: true,
+  })
+  async submitSection(
+    @Args('input', { type: () => SubmitSectionInput })
+    input: SubmitSectionInput,
+    @CurrentUser() user: User,
+  ): Promise<void> {
+    return this.applicationsService.submitSection(user, input)
+  }
+
+  @Mutation(() => Boolean, {
+    name: 'deleteFormSystemApplication',
+    nullable: true,
+  })
+  async deleteApplication(
+    @Args('input', { type: () => String })
+    input: string,
+    @CurrentUser() user: User,
+  ): Promise<void> {
+    return this.applicationsService.deleteApplication(user, input)
   }
 }

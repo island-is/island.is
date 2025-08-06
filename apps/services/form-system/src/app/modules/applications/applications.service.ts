@@ -234,9 +234,6 @@ export class ApplicationsService {
       throw new NotFoundException(`Application with id '${id}' not found.`)
     }
 
-    application.submittedAt = new Date()
-    await application.save()
-
     const applicationDto = await this.getApplication(id)
 
     const success = await this.serviceManager.send(applicationDto)
@@ -398,7 +395,6 @@ export class ApplicationsService {
       form.id,
       isTest,
     )
-
     const responseDto = new ApplicationResponseDto()
     responseDto.applications = existingApplications
     return responseDto
@@ -407,6 +403,7 @@ export class ApplicationsService {
   private async findAllByUserAndForm(
     user: User,
     formId: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isTest: boolean,
   ): Promise<ApplicationDto[]> {
     const delegationType = user.delegationType
@@ -449,27 +446,29 @@ export class ApplicationsService {
       // Only keep applications with a single applicant
       applicationIds = applicationIds.filter((id) => counts[id] === 1)
     }
-
     // 2. Find all applications that match the formId and filtered applicationIds
-    const applications = applicationIds.length
-      ? await this.applicationModel.findAll({
-          where: {
-            formId,
-            id: applicationIds,
-            status: ApplicationStatus.IN_PROGRESS,
-            isTest: isTest,
-          },
-        })
-      : []
-
+    // const applications = applicationIds.length
+    //   ? await this.applicationModel.findAll({
+    //       where: {
+    //         formId,
+    //         id: applicationIds,
+    //         status: ApplicationStatus.IN_PROGRESS,
+    //         isTest: isTest,
+    //       },
+    //     })
+    //   : []
     // 3. Map the applications to ApplicationDto
     const applicationDtos = await Promise.all(
-      applications.map(async (application) => {
-        return this.getApplication(application.id)
+      applicationIds.map(async (applicationId) => {
+        return this.getApplication(applicationId)
       }),
     )
 
-    return applicationDtos
+    return applicationDtos.filter(
+      (application) =>
+        application.formId === formId &&
+        application.status === ApplicationStatus.IN_PROGRESS,
+    )
   }
 
   private async getApplicationForm(
@@ -667,5 +666,55 @@ export class ApplicationsService {
       throw new NotFoundException(`Screen with id '${screenId}' not found`)
     }
     return screenResult as unknown as ScreenDto
+  }
+
+  async submitSection(applicationId: string, sectionId: string): Promise<void> {
+    const application = await this.applicationModel.findByPk(applicationId)
+
+    if (!application) {
+      throw new NotFoundException(
+        `Application with id '${applicationId}' not found`,
+      )
+    }
+
+    const section = await this.sectionModel.findByPk(sectionId, {
+      include: [
+        {
+          model: Screen,
+          as: 'screens',
+          include: [
+            {
+              model: Field,
+              as: 'fields',
+              include: [this.valueModel],
+            },
+          ],
+        },
+      ],
+    })
+
+    if (!section) {
+      throw new NotFoundException(`Section with id '${sectionId}' not found`)
+    }
+
+    // Mark the section as completed
+    if (!application.completed?.includes(section.id)) {
+      application.completed = [...(application.completed ?? []), section.id]
+    }
+    await application.save()
+  }
+
+  async deleteApplication(id: string): Promise<void> {
+    const application = await this.applicationModel.findByPk(id)
+
+    if (!application) {
+      throw new NotFoundException(`Application with id '${id}' not found`)
+    }
+
+    await this.valueModel.destroy({
+      where: { applicationId: id },
+    })
+
+    await application.destroy()
   }
 }
