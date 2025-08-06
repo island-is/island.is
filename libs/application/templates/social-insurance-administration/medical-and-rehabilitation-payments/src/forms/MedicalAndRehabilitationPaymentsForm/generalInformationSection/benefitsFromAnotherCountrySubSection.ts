@@ -25,6 +25,9 @@ export const benefitsFromAnotherCountrySubSection = buildSubSection({
       title:
         medicalAndRehabilitationPaymentsFormMessage.generalInformation
           .benefitsFromAnotherCountryTitle,
+      description:
+        medicalAndRehabilitationPaymentsFormMessage.generalInformation
+          .benefitsFromAnotherCountryDescription,
       children: [
         buildRadioField({
           id: 'benefitsFromAnotherCountry.isReceivingBenefitsFromAnotherCountry',
