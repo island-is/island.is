@@ -1,4 +1,4 @@
-import React, { Dispatch, SetStateAction, useContext, useState } from 'react'
+import React, { Dispatch, SetStateAction, useContext } from 'react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { isDistrictCourtUser } from '@island.is/judicial-system/types'
