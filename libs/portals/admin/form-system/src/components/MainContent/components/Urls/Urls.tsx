@@ -70,8 +70,6 @@ export const Urls = () => {
     }
   }
 
-  console.log('formUrls', formUrls)
-
   return (
     <GridRow>
       <GridColumn span="5/10">
