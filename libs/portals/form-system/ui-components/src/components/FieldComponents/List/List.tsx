@@ -55,6 +55,7 @@ export const List = ({ item, dispatch, lang = 'is', hasError }: Props) => {
         })
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (

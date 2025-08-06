@@ -73,6 +73,7 @@ export const Radio = ({ item, dispatch, lang = 'is', hasError }: Props) => {
         setValue(selected.label?.[lang] ?? '')
       }
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [])
 
   return (
