@@ -91,6 +91,18 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       description:
         'The Social Insurance Administration retrieves the rehabilitation plan from the service provider responsible for rehabilitation or treatment.',
     },
+    socialInsuranceAdministrationPrivacyDescription: {
+      id: 'marp.application:pre.socialInsuranceAdministration.privacy.description#markdown',
+      defaultMessage:
+        'Frekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna [hér](https://www.tr.is/tryggingastofnun/personuvernd). \n\nEf tekjur eða aðrar aðstæður þínar breytast verður þú að láta Tryggingastofnun vita þar sem það getur haft áhrif á greiðslur þínar.\n\nRangar eða ófullnægjandi upplýsingar geta haft áhrif á afgreiðslu umsóknarinnar og hugsanlega leitt til endurkröfu eða annarra viðurlaga.\n\nTryggingastofnun getur ákveðið að vísa máli þínu til samhæfingarteymis sem í sitja fulltrúar þjónustuaðila og Tryggingastofnunar. Þjónustuaðilar eru VIRK, starfsendurhæfingarsjóður, félagsþjónusta sveitarfélaga, Vinnumálastofnun, sjúkrahús og heilsugæslur. Ákveði Tryggingastofnun að vísa máli þínu til samhæfingarteymis verður þú upplýst/ur um það og gefinn kostur á að hafna þjónustu teymisins.',
+      description:
+        'More information on data collection authority and processing of personal information can be found in the privacy policy of the Insurance Administration [here](https://island.is/s/tryggingastofnun/personuverndarstefna-tr).\n\nIf your income or circumstances change you must notify the Social Insurance Administration, as it can effect your payments.\n\nIncorrect or insufficient information may affect the processing of the application and possibly lead to reclamation  or other penalties. \n\nThe Social Insurance Administration may decide to refer your case to a coordination team that includes representatives of service providers and the Social Insurance Administration. Service providers are VIRK, vocational rehabilitation fund, municipal social services, the Directorate of Labour, hospitals and health care clinics. If the Social Insurance Administration decides to refer your case to a coordination team, you will be informed and given the opportunity to reject the team’s services.',
+    },
+    checkboxProvider: {
+      id: 'marp.application:pre.checkbox.provider',
+      defaultMessage: 'Ég skil ofangreindar upplýsingar',
+      description: 'I understand the above information',
+    },
   }),
 
   notEligible: defineMessages({
