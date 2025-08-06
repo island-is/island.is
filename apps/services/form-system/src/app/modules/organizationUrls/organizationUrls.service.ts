@@ -9,6 +9,7 @@ import { OrganizationUrlDto } from './models/dto/organizationUrl.dto'
 import { UpdateOrganizationUrlDto } from './models/dto/updateOrganizationUrl.dto'
 import { UrlMethods, UrlTypes } from '@island.is/form-system/shared'
 import { Organization } from '../organizations/models/organization.model'
+import { FormUrl } from '../formUrls/models/formUrl.model'
 
 @Injectable()
 export class OrganizationUrlsService {
@@ -17,6 +18,8 @@ export class OrganizationUrlsService {
     private readonly organizationModel: typeof Organization,
     @InjectModel(OrganizationUrl)
     private readonly organizationUrlModel: typeof OrganizationUrl,
+    @InjectModel(FormUrl)
+    private readonly formUrlModel: typeof FormUrl,
   ) {}
 
   async create(
@@ -101,6 +104,10 @@ export class OrganizationUrlsService {
       throw new NotFoundException(`Organization url with id '${id}' not found`)
     }
 
-    organizationUrl.destroy()
+    await this.formUrlModel.destroy({
+      where: { organizationUrlId: id },
+    })
+
+    await organizationUrl.destroy()
   }
 }

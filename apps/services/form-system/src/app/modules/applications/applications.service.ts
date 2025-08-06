@@ -234,9 +234,6 @@ export class ApplicationsService {
       throw new NotFoundException(`Application with id '${id}' not found.`)
     }
 
-    application.submittedAt = new Date()
-    await application.save()
-
     const applicationDto = await this.getApplication(id)
 
     const success = await this.serviceManager.send(applicationDto)
