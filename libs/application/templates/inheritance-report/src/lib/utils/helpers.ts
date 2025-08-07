@@ -56,6 +56,8 @@ export const parseDebtType = (debtType: ClientDebtType) => {
       return DebtTypes.InsuranceInstitute
     case 'loan':
       return DebtTypes.Loan
+    case 'duties':
+      return DebtTypes.PublicCharges
     default:
       return DebtTypes.OtherDebts
   }

@@ -462,6 +462,7 @@ export interface VehicleRegistration {
 export enum DebtTypes {
   Overdraft = 'overdraft',
   CreditCard = 'creditCard',
+  Duties = 'duties',
   Loan = 'loan',
   InsuranceCompany = 'insuranceCompany',
   PropertyFees = 'propertyFees',

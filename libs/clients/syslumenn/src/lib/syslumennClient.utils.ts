@@ -717,6 +717,7 @@ const mapInheritanceReportAssets = (
     const asset = mapInheritanceReportAsset(iAsset)
 
     const assetTypeTodebtType = {
+      [TegundAndlags.NUMBER_13]: DebtTypes.Duties,
       [TegundAndlags.NUMBER_14]: DebtTypes.OtherDebts,
       [TegundAndlags.NUMBER_17]: DebtTypes.PropertyFees,
       [TegundAndlags.NUMBER_18]: DebtTypes.InsuranceCompany,
@@ -774,15 +775,13 @@ const mapInheritanceReportAssets = (
           ),
         })
         break
-      case TegundAndlags.NUMBER_13:
-        officialFees.push(asset)
-        break
       case TegundAndlags.NUMBER_15:
         assetsInBusiness.push(asset)
         break
       case TegundAndlags.NUMBER_16:
         debtsInBusiness.push(asset)
         break
+      case TegundAndlags.NUMBER_13:
       case TegundAndlags.NUMBER_14:
       case TegundAndlags.NUMBER_17:
       case TegundAndlags.NUMBER_18:
