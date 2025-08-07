@@ -22,7 +22,6 @@ type FriggOptionsAsyncSelectFieldProps = {
       optionsType: OptionsType | ((application: Application) => OptionsType)
       placeholder: FormText
       isMulti?: boolean
-      useId?: boolean
       useIdAndKey?: boolean
     }
   }
@@ -37,7 +36,6 @@ const FriggOptionsAsyncSelectField: FC<
     isMulti = false,
     optionsType,
     placeholder,
-    useId = false,
     useIdAndKey = false,
   } = props
 
@@ -84,11 +82,7 @@ const FriggOptionsAsyncSelectField: FC<
 
                 if (!content) return []
 
-                const contentValue = useIdAndKey
-                  ? `${id}::${key}`
-                  : useId
-                  ? id
-                  : key
+                const contentValue = useIdAndKey ? `${id}::${key}` : id
 
                 return { value: contentValue, label: content }
               }),

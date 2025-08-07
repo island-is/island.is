@@ -5,7 +5,7 @@ import {
   ApiProtectedV1IncomePlanTemporaryCalculationsPostRequest,
   ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
   ApiProtectedV1PensionCalculatorPostRequest,
-  ApiProtectedV1QuestionnairesSelfassessmentGetRequest,
+  ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest,
   ApplicantApi,
   ApplicationApi,
   DeathBenefitsApi,
@@ -16,6 +16,7 @@ import {
   PensionCalculatorApi,
   QuestionnairesApi,
   TrWebApiServicesCommonCountriesModelsCountryDto,
+  TrWebApiServicesDomainApplicationsModelsApplicationTypeDto,
   TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn,
   TrWebApiServicesDomainEducationalInstitutionsModelsEctsUnitDto,
   TrWebApiServicesDomainEducationalInstitutionsModelsEducationalInstitutionsDto,
@@ -31,6 +32,7 @@ import {
   TrWebCommonsExternalPortalsApiModelsIncomePlanWithholdingTaxDto,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanLegitimatePayments,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
+  TrWebExternalModelsServicePortalNationalRegistryAddress,
   TrWebExternalModelsServicePortalBaseCertificate,
   TrWebExternalModelsServicePortalRehabilitationPlan,
 } from '../../gen/fetch'
@@ -227,15 +229,17 @@ export class SocialInsuranceAdministrationClientService {
     ).apiProtectedV1MedicalDocumentsRehabilitationplanGet()
   }
 
-  async getSelfAssessmentQuestionnaire(
+  async getMARPSelfAssessmentQuestionnaire(
     user: User,
-    languages: ApiProtectedV1QuestionnairesSelfassessmentGetRequest,
+    languages: ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest,
   ): Promise<
     Array<TrWebApiServicesDomainQuestionnairesModelsQuestionnaireDto>
   > {
     return this.questionnairesApiWithAuth(
       user,
-    ).apiProtectedV1QuestionnairesSelfassessmentGet(languages)
+    ).apiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGet(
+      languages,
+    )
   }
 
   async getCertificateForSicknessAndRehabilitation(
@@ -270,6 +274,14 @@ export class SocialInsuranceAdministrationClientService {
     return this.generalApiWithAuth(user).apiProtectedV1GeneralEctsUnitsGet()
   }
 
+  async getResidenceInformation(
+    user: User,
+  ): Promise<TrWebExternalModelsServicePortalNationalRegistryAddress> {
+    return this.applicantApiWithAuth(
+      user,
+    ).apiProtectedV1ApplicantResidenceInformationGet()
+  }
+
   async getEducationLevels(
     user: User,
     applicationType: string,
@@ -281,5 +293,13 @@ export class SocialInsuranceAdministrationClientService {
     ).apiProtectedV1GeneralEducationlevelsApplicationTypeGet({
       applicationType,
     })
+  }
+
+  async getMedicalAndRehabilitationApplicationType(
+    user: User,
+  ): Promise<TrWebApiServicesDomainApplicationsModelsApplicationTypeDto> {
+    return this.applicantApiWithAuth(
+      user,
+    ).apiProtectedV1ApplicantMedicalandrehabilitationpaymentsTypeGet()
   }
 }

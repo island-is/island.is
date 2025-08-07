@@ -29,6 +29,7 @@ export const Languages = ({
   const { formatMessage } = useLocale()
   const {
     languageEnvironment,
+    languageEnvironmentId,
     selectedLanguages,
     preferredLanguage,
     signLanguage,
@@ -58,7 +59,7 @@ export const Languages = ({
                 value={
                   getSelectedOptionLabel(
                     languageEnvironmentOptions,
-                    languageEnvironment,
+                    languageEnvironmentId,
                   ) || ''
                 }
                 error={

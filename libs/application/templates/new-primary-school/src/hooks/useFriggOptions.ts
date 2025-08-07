@@ -4,11 +4,7 @@ import { friggOptionsQuery } from '../graphql/queries'
 import { OptionsType } from '../lib/constants'
 import { FriggOptionsQuery } from '../types/schema'
 
-export const useFriggOptions = (
-  type?: OptionsType,
-  useId = false,
-  useIdAndKey = false,
-) => {
+export const useFriggOptions = (type?: OptionsType, useIdAndKey = false) => {
   const { lang } = useLocale()
   const { data, loading, error } = useQuery<FriggOptionsQuery>(
     friggOptionsQuery,
@@ -28,7 +24,7 @@ export const useFriggOptions = (
 
         if (!content) return []
 
-        const contentValue = useIdAndKey ? `${id}::${key}` : useId ? id : key
+        const contentValue = useIdAndKey ? `${id}::${key}` : id
 
         return { value: contentValue, label: content }
       }),
