@@ -40,8 +40,10 @@ export const LocationSection: FC<
             {formatMessage(overview.labels.locationTitle)}
           </Text>
           <Text color="dark400">
-            {location?.address && location?.postCode
-              ? `${location.address} - ${location.postCode}`
+            {location?.address || location?.postCode
+              ? [location.address, location.postCode]
+                  .filter(Boolean)
+                  .join(' - ')
               : formatMessage(overview.labels.noLocation)}
           </Text>
           <Text color="dark400">
