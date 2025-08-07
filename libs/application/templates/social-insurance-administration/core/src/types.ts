@@ -10,7 +10,6 @@ export interface BankInfo {
   foreignBankName?: string
   foreignBankAddress?: string
   currency?: string
-  bankNumber?: string // used in BankAccountFormField
 }
 
 export interface ApplicantInfo {
@@ -29,6 +28,7 @@ export interface PaymentInfo {
   bankName?: string
   bankAddress?: string
   currency?: string
+  bankNumber?: string // used in BankAccountFormField
 }
 
 export interface Attachments {

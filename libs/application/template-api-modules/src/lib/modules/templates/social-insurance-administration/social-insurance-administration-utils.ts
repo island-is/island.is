@@ -5,8 +5,13 @@ import {
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
   formatBank,
+  getBankIsk,
   shouldNotUpdateBankAccount,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
+import {
+  CategorizedIncomeTypes,
+  IncomePlanRow,
+} from '@island.is/application/templates/social-insurance-administration-core/types'
 import {
   getApplicationAnswers as getASFTEApplicationAnswers,
   getApplicationExternalData as getASFTEApplicationExternalData,
@@ -25,9 +30,13 @@ import {
 } from '@island.is/application/templates/social-insurance-administration/income-plan'
 import {
   getApplicationAnswers as getMARPApplicationAnswers,
+  getApplicationExternalData as getMARPApplicationExternalData,
   isEHApplication,
   isFirstApplication,
   SelfAssessmentCurrentEmploymentStatus,
+  shouldShowCalculatedRemunerationDate,
+  shouldShowIsStudyingFields,
+  shouldShowPreviousRehabilitationOrTreatmentFields,
 } from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
 import {
   ApplicationType,
@@ -352,8 +361,14 @@ export const transformApplicationToDeathBenefitsDTO = (
 export const transformApplicationToIncomePlanDTO = (
   application: Application,
 ): ApplicationDTO => {
-  const { userProfileEmail, userProfilePhoneNumber, incomePlanConditions } =
-    getIPApplicationExternalData(application.externalData)
+  const {
+    userProfileEmail,
+    userProfilePhoneNumber,
+    incomePlanConditions,
+    categorizedIncomeTypes,
+  } = getIPApplicationExternalData(application.externalData)
+
+  const { incomePlan } = getIPApplicationAnswers(application.answers)
 
   const incomePlanDTO: ApplicationDTO = {
     applicantInfo: {
@@ -367,8 +382,8 @@ export const transformApplicationToIncomePlanDTO = (
     applicationId: application.id,
     incomePlan: {
       incomeYear: incomePlanConditions.incomePlanYear,
-      distributeIncomeByMonth: shouldDistributeIncomeByMonth(application),
-      incomeTypes: getIncomeTypes(application),
+      distributeIncomeByMonth: shouldDistributeIncomeByMonth(incomePlan),
+      incomeTypes: getIncomeTypes(incomePlan, categorizedIncomeTypes),
     },
   }
 
@@ -381,8 +396,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
   const {
     applicantPhonenumber,
     applicantEmail,
-    // bank,
-    //paymentInfo,
+    paymentInfo,
     personalAllowance,
     personalAllowanceUsage,
     taxLevel,
@@ -391,9 +405,9 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     isPartTimeEmployed,
     isStudying,
     educationalInstitution,
-    // ectsUnits,
+    ectsUnits,
     isReceivingBenefitsFromAnotherCountry,
-    // countries,
+    countries,
     hasUtilizedEmployeeSickPayRights,
     employeeSickPayEndDate,
     hasUtilizedUnionSickPayRights,
@@ -408,9 +422,16 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     certificateForSicknessAndRehabilitationReferenceId,
     educationalLevel,
     hadAssistance,
+    mainProblem,
+    hasPreviouslyReceivedRehabilitationOrTreatment,
+    previousRehabilitationOrTreatment,
+    previousRehabilitationSuccessful,
+    previousRehabilitationSuccessfulFurtherExplanations,
+    incomePlan,
   } = getMARPApplicationAnswers(application.answers)
 
-  //  const { bankInfo } = getMARPApplicationExternalData(application.externalData)
+  const { bankInfo, incomePlanConditions, categorizedIncomeTypes } =
+    getMARPApplicationExternalData(application.externalData)
 
   const marpDTO: MedicalAndRehabilitationPaymentsDTO = {
     applicantInfo: {
@@ -423,11 +444,11 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     },
     comment,
     applicationId: application.id,
-    // ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && { // LAGA shouldNotUpdateBankAccount(bankInfo
-    //   domesticBankInfo: {
-    //     bank: getBankIsk(bank),
-    //   },
-    // }),
+    ...(!shouldNotUpdateBankAccount(bankInfo, paymentInfo) && {
+      domesticBankInfo: {
+        bank: getBankIsk(paymentInfo),
+      },
+    }),
     taxInfo: {
       personalAllowance: personalAllowance === YES,
       personalAllowanceUsage:
@@ -437,18 +458,25 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     occupation: {
       ...(isFirstApplication(application.externalData) && {
         isSelfEmployed: isSelfEmployed === YES,
+        ...(shouldShowCalculatedRemunerationDate(application.answers) && {
+          calculatedRemunerationDate,
+        }),
+        receivesForeignPayments: isReceivingBenefitsFromAnotherCountry === YES,
+        ...(isReceivingBenefitsFromAnotherCountry === YES && {
+          foreignPayments: countries.map(({ country, nationalId }) => {
+            return {
+              countryName: country.split('::')[1],
+              countryCode: country.split('::')[0],
+              foreignNationalId: nationalId,
+            }
+          }),
+        }),
       }),
       isStudying: isStudying === YES,
       isPartTimeEmployed: isPartTimeEmployed === YES,
-      ...(isFirstApplication(application.externalData) && {
-        receivingPaymentsFromOtherCountry:
-          isReceivingBenefitsFromAnotherCountry === YES,
-      }),
-      ...(isSelfEmployed === YES && {
-        calculatedRemunerationDate,
-      }),
-      ...(isStudying === YES && {
+      ...(shouldShowIsStudyingFields(application.answers) && {
         educationalInstitution,
+        currentSemesterEcts: ectsUnits,
       }),
     },
     ...(isFirstApplication(application.externalData) && {
@@ -477,31 +505,51 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     ...(isEHApplication(application.externalData) && {
       rehabilitationPlanReference: 'test', //TODO:
     }),
-    selfAssessment: {
-      hadAssistance: hadAssistance === YES,
-      educationalLevel: educationalLevel || '',
-      currentEmploymentStatus,
+    preQuestionnaire: {
+      highestEducation: educationalLevel || '',
+      currentEmploymentStatus: currentEmploymentStatus?.[0], // TODO: Smári needs to change to an array
       ...(currentEmploymentStatus?.includes(
         SelfAssessmentCurrentEmploymentStatus.OTHER,
-      ) && { currentEmploymentStatusAdditional }),
-      ...(lastEmploymentTitle && { lastEmploymentTitle }),
-      ...(lastEmploymentYear && { lastEmploymentYear: +lastEmploymentYear }),
-      answers: questionnaire.map((question) => ({
-        questionId: question.questionId,
-        answer: question.answer,
-      })),
+      ) && {
+        currentEmploymentStatusExplanation: currentEmploymentStatusAdditional,
+      }),
+      ...(lastEmploymentTitle && { lastJobTitle: lastEmploymentTitle }),
+      ...(lastEmploymentYear && { lastJobYear: +lastEmploymentYear }),
+      disabilityReason: mainProblem || '',
+      hasParticipatedInRehabilitationBefore:
+        hasPreviouslyReceivedRehabilitationOrTreatment === YES,
+      ...(shouldShowPreviousRehabilitationOrTreatmentFields(
+        application.answers,
+      ) && {
+        rehabilitationDetails: previousRehabilitationOrTreatment,
+        previousRehabilitationSuccessful:
+          previousRehabilitationSuccessful === YES,
+        ...((previousRehabilitationSuccessful === YES ||
+          previousRehabilitationSuccessful === NO) && {
+          additionalRehabilitationInformation:
+            previousRehabilitationSuccessfulFurtherExplanations,
+        }),
+      }),
+    },
+    selfAssessment: {
+      hadAssistance: hadAssistance === YES,
+      answers: questionnaire,
+    },
+    incomePlan: {
+      incomeYear:
+        incomePlanConditions?.incomePlanYear ?? new Date().getFullYear(),
+      distributeIncomeByMonth: shouldDistributeIncomeByMonth(incomePlan),
+      incomeTypes: getIncomeTypes(incomePlan, categorizedIncomeTypes),
     },
   }
 
   return marpDTO
 }
 
-export const getIncomeTypes = (application: Application): IncomeTypes[] => {
-  const { incomePlan } = getIPApplicationAnswers(application.answers)
-  const { categorizedIncomeTypes } = getIPApplicationExternalData(
-    application.externalData,
-  )
-
+export const getIncomeTypes = (
+  incomePlan: IncomePlanRow[],
+  categorizedIncomeTypes: CategorizedIncomeTypes[],
+): IncomeTypes[] => {
   return incomePlan.map((i) => ({
     incomeTypeNumber:
       categorizedIncomeTypes.find((c) => c.incomeTypeName === i.incomeType)
@@ -552,10 +600,8 @@ export const getIncomeTypes = (application: Application): IncomeTypes[] => {
   }))
 }
 
-export const shouldDistributeIncomeByMonth = (application: Application) => {
+export const shouldDistributeIncomeByMonth = (incomePlan: IncomePlanRow[]) => {
   // Let TR know if there is any case where income is uneven during the year
-  const { incomePlan } = getIPApplicationAnswers(application.answers)
-
   const hasUnevenIncome = incomePlan.some(
     (i) => i?.unevenIncomePerYear?.[0] === YES && i?.incomeCategory === INCOME,
   )
