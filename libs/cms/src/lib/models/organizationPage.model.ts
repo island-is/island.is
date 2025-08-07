@@ -15,6 +15,7 @@ import {
 } from './organizationTheme.model'
 import { GenericTag, mapGenericTag } from './genericTag.model'
 import { AlertBanner, mapAlertBanner } from './alertBanner.model'
+import { resolveSitemapNodeUrl } from './utils'
 
 @ObjectType()
 class OrganizationPageTopLevelNavigationLink {
@@ -105,9 +106,18 @@ export const mapOrganizationPage = ({
   // Extract top level navigation from sitemap tree
   for (const node of (fields.sitemap?.fields?.tree as SitemapTree)
     ?.childNodes ?? []) {
+    if (node.type === SitemapTreeNodeType.URL) {
+      topLevelNavigation.links.push({
+        label: sys.locale === 'en' ? node.labelEN ?? '' : node.label ?? '',
+        href: resolveSitemapNodeUrl(node, slug, sys.locale),
+      })
+      continue
+    }
+
     if (node.type !== SitemapTreeNodeType.CATEGORY) {
       continue
     }
+
     if (sys.locale !== 'en' && Boolean(node.label) && Boolean(node.slug)) {
       topLevelNavigation.links.push({
         label: node.label,

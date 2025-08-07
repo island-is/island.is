@@ -89,11 +89,7 @@ import {
   OrganizationPageStandaloneSitemap,
   OrganizationPageStandaloneSitemapLevel2,
 } from './models/organizationPageStandaloneSitemap.model'
-import {
-  SitemapTree,
-  SitemapTreeNode,
-  SitemapTreeNodeType,
-} from '@island.is/shared/types'
+import { SitemapTree, SitemapTreeNodeType } from '@island.is/shared/types'
 import { getOrganizationPageUrlPrefix } from '@island.is/shared/utils'
 import { NewsList } from './models/newsList.model'
 import { GetCmsNewsInput } from './dto/getNews.input'
@@ -106,6 +102,7 @@ import {
   mapBloodDonationRestrictionDetails,
   mapBloodDonationRestrictionListItem,
 } from './models/bloodDonationRestriction.model'
+import { resolveSitemapNodeUrl } from './models/utils'
 
 const errorHandler = (name: string) => {
   return (error: Error) => {
@@ -1234,40 +1231,6 @@ export class CmsContentfulService {
     )
   }
 
-  private resolveSitemapUrl(
-    node: SitemapTreeNode,
-    organizationPageSlug: string,
-    lang: string,
-  ) {
-    if (node.type !== SitemapTreeNodeType.URL) {
-      return ''
-    }
-
-    switch (node.urlType) {
-      case 'custom':
-        return lang === 'en' ? node.urlEN ?? '' : node.url
-      case 'organizationFrontpage':
-        return `/${getOrganizationPageUrlPrefix(lang)}/${organizationPageSlug}`
-      case 'organizationEventOverview':
-        return `/${getOrganizationPageUrlPrefix(
-          lang,
-        )}/${organizationPageSlug}/${lang === 'en' ? 'events' : 'vidburdir'}`
-
-      case 'organizationNewsOverview':
-        return `/${getOrganizationPageUrlPrefix(
-          lang,
-        )}/${organizationPageSlug}/${lang === 'en' ? 'news' : 'frett'}`
-      case 'organizationPublishedMaterial':
-        return `/${getOrganizationPageUrlPrefix(
-          lang,
-        )}/${organizationPageSlug}/${
-          lang === 'en' ? 'published-material' : 'utgefid-efni'
-        }`
-      default:
-        return ''
-    }
-  }
-
   async getOrganizationPageStandaloneSitemapLevel1(
     input: GetOrganizationPageStandaloneSitemapLevel1Input,
   ): Promise<OrganizationPageStandaloneSitemap | null> {
@@ -1316,7 +1279,7 @@ export class CmsContentfulService {
         if (node.type === SitemapTreeNodeType.URL) {
           return {
             label: input.lang === 'en' ? node.labelEN ?? '' : node.label,
-            href: this.resolveSitemapUrl(
+            href: resolveSitemapNodeUrl(
               node,
               input.organizationPageSlug,
               input.lang,
@@ -1449,7 +1412,7 @@ export class CmsContentfulService {
               if (childNode.type === SitemapTreeNodeType.URL) {
                 return {
                   label: childNode.label,
-                  href: this.resolveSitemapUrl(
+                  href: resolveSitemapNodeUrl(
                     childNode,
                     input.organizationPageSlug,
                     input.lang,
@@ -1477,7 +1440,7 @@ export class CmsContentfulService {
         if (node.type === SitemapTreeNodeType.URL) {
           return {
             label: input.lang === 'en' ? node.labelEN ?? '' : node.label,
-            href: this.resolveSitemapUrl(
+            href: resolveSitemapNodeUrl(
               node,
               input.organizationPageSlug,
               input.lang,
