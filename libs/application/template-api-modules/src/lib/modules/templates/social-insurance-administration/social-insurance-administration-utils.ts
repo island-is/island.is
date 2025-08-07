@@ -25,9 +25,12 @@ import {
 } from '@island.is/application/templates/social-insurance-administration/income-plan'
 import {
   getApplicationAnswers as getMARPApplicationAnswers,
-  isEHApplication,
   isFirstApplication,
   SelfAssessmentCurrentEmploymentStatus,
+  shouldShowConfirmationOfIllHealth,
+  shouldShowConfirmationOfPendingResolution,
+  shouldShowConfirmedTreatment,
+  shouldShowRehabilitationPlan,
 } from '@island.is/application/templates/social-insurance-administration/medical-and-rehabilitation-payments'
 import {
   ApplicationType,
@@ -406,6 +409,9 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     lastEmploymentTitle,
     lastEmploymentYear,
     certificateForSicknessAndRehabilitationReferenceId,
+    confirmedTreatmentReferenceId,
+    confirmationOfPendingResolutionReferenceId,
+    confirmationOfIllHealthReferenceId,
     educationalLevel,
     hadAssistance,
   } = getMARPApplicationAnswers(application.answers)
@@ -474,8 +480,18 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     }),
     baseCertificateReference:
       certificateForSicknessAndRehabilitationReferenceId ?? '',
-    ...(isEHApplication(application.externalData) && {
+    ...(shouldShowRehabilitationPlan(application.externalData) && {
       rehabilitationPlanReference: 'test', //TODO:
+    }),
+    ...(shouldShowConfirmedTreatment(application.externalData) && {
+      confirmedTreatmentReference: confirmedTreatmentReferenceId,
+    }),
+    ...(shouldShowConfirmationOfPendingResolution(application.externalData) && {
+      confirmationOfPendingResolutionReference:
+        confirmationOfPendingResolutionReferenceId,
+    }),
+    ...(shouldShowConfirmationOfIllHealth(application.externalData) && {
+      confirmationOfIllHealthReference: confirmationOfIllHealthReferenceId,
     }),
     selfAssessment: {
       hadAssistance: hadAssistance === YES,
