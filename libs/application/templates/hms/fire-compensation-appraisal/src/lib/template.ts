@@ -10,6 +10,7 @@ import {
   UserProfileApi,
   ApplicationConfigurations,
   defineTemplateApi,
+  IdentityApi,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -83,6 +84,24 @@ const template: ApplicationTemplate<
               api: [UserProfileApi, NationalRegistryApi, propertiesApi],
               delete: true,
             },
+            {
+              id: Roles.DELEGATE,
+              formLoader: () =>
+                import('../forms/prerequisitesProcureForm').then((module) =>
+                  Promise.resolve(module.PrerequisitesProcureForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.SUBMIT,
+                  name: 'Staðfesta',
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+              read: 'all',
+              api: [UserProfileApi, IdentityApi, propertiesApi],
+              delete: true,
+            },
           ],
         },
         on: {
@@ -106,6 +125,23 @@ const template: ApplicationTemplate<
           roles: [
             {
               id: Roles.APPLICANT,
+              formLoader: () =>
+                import('../forms/mainForm').then((module) =>
+                  Promise.resolve(module.MainForm),
+                ),
+              actions: [
+                {
+                  event: DefaultEvents.PAYMENT,
+                  name: m.overviewMessages.pay,
+                  type: 'primary',
+                },
+              ],
+              write: 'all',
+              read: 'all',
+              delete: true,
+            },
+            {
+              id: Roles.DELEGATE,
               formLoader: () =>
                 import('../forms/mainForm').then((module) =>
                   Promise.resolve(module.MainForm),
@@ -153,6 +189,14 @@ const template: ApplicationTemplate<
                 ),
               read: 'all',
             },
+            {
+              id: Roles.DELEGATE,
+              formLoader: () =>
+                import('../forms/completedForm').then((module) =>
+                  Promise.resolve(module.completedForm),
+                ),
+              read: 'all',
+            },
           ],
         },
       },
@@ -173,6 +217,9 @@ const template: ApplicationTemplate<
     _nationalId: string,
     _application: Application,
   ): ApplicationRole | undefined => {
+    const { applicantActors } = _application
+
+    if (applicantActors.length) return Roles.DELEGATE
     return Roles.APPLICANT
   },
 }
