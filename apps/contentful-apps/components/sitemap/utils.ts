@@ -361,8 +361,12 @@ export const extractNodeContent = (
         ? node.urlEN
         : node.url
       : entries[node.entryId]?.fields?.slug?.[language] || ''
+  const entryContentType =
+    node.type === TreeNodeType.ENTRY
+      ? entries[node.entryId]?.sys?.contentType?.sys?.id ?? node.contentType
+      : ''
 
-  return { label, slug }
+  return { label, slug, entryContentType }
 }
 
 export const findParentNode = (root: Tree, nodeId: number) => {
