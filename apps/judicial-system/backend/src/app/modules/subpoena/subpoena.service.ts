@@ -41,14 +41,14 @@ import { EventService } from '../event'
 import { FileService } from '../file/file.service'
 import { Institution } from '../institution'
 import { PoliceDocumentType, PoliceService, SubpoenaInfo } from '../police'
+import {
+  ServiceStatusStatistics,
+  SubpoenaStatistics,
+} from '../statistics/models/subpoenaStatistics.response'
 import { User } from '../user'
 import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
 import { DeliverResponse } from './models/deliver.response'
 import { Subpoena } from './models/subpoena.model'
-import {
-  ServiceStatusStatistics,
-  SubpoenaStatistics,
-} from './models/subpoenaStatistics.response'
 
 export const include: Includeable[] = [
   {
@@ -531,95 +531,5 @@ export class SubpoenaService {
     }
 
     return this.update(subpoena, subpoenaInfo)
-  }
-
-  async getStatistics(
-    from?: Date,
-    to?: Date,
-    institutionId?: string,
-  ): Promise<SubpoenaStatistics> {
-    const where: WhereOptions = {
-      policeSubpoenaId: {
-        [Op.ne]: null,
-      },
-    }
-
-    // fetch all cases with the base filter to fetch the earliest case
-    const allSubpoenas = await this.subpoenaModel.findAll({
-      where,
-      order: [['created', 'ASC']],
-    })
-    const earliestCase = allSubpoenas.length > 0 ? allSubpoenas[0] : undefined
-
-    if (from || to) {
-      where.created = {}
-      if (from) {
-        where.created[Op.gte] = from
-      }
-      if (to) {
-        where.created[Op.lte] = to
-      }
-    }
-
-    const include: Includeable[] = []
-
-    if (institutionId) {
-      include.push({
-        model: Case,
-        required: true,
-        attributes: [],
-        where: {
-          [Op.or]: [
-            { courtId: institutionId },
-            { prosecutorsOfficeId: institutionId },
-          ],
-        },
-      })
-    }
-
-    const subpoenas = await this.subpoenaModel.findAll({
-      where,
-      include,
-    })
-
-    const grouped = (await this.subpoenaModel.findAll({
-      where,
-      include,
-      attributes: [
-        'serviceStatus',
-        [fn('COUNT', col('Subpoena.id')), 'count'],
-        [
-          literal(
-            'AVG(EXTRACT(EPOCH FROM "Subpoena"."service_date" - "Subpoena"."created") * 1000)',
-          ),
-          'averageServiceTimeMs',
-        ],
-      ],
-      group: ['serviceStatus'],
-      raw: true,
-    })) as unknown as {
-      serviceStatus: ServiceStatus | null
-      count: string
-      averageServiceTimeMs: string | null
-    }[]
-
-    const serviceStatusStatistics: ServiceStatusStatistics[] = grouped.map(
-      (row) => ({
-        serviceStatus: row.serviceStatus,
-        count: Number(row.count),
-        averageServiceTimeMs: Math.round(Number(row.averageServiceTimeMs) || 0),
-        averageServiceTimeDays:
-          Math.round(Number(row.averageServiceTimeMs) / 1000 / 60 / 60 / 24) ||
-          0,
-      }),
-    )
-
-    const stats: SubpoenaStatistics = {
-      count: subpoenas.length,
-      serviceStatusStatistics,
-      minDate: earliestCase?.created ?? new Date(),
-    }
-
-    return stats
   }
 }
