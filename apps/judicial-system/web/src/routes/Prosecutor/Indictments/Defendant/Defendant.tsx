@@ -53,16 +53,20 @@ export interface PoliceCase {
   date?: Date
 }
 
-const compareIsoStringDates = (
-  a: string | undefined | null,
-  b: string | undefined | null,
+const compareCrimeSceneDates = <T extends string | number>(
+  a: T | undefined | null,
+  b: T | undefined | null,
 ) => {
-  // We assume that dates are in ISO format (YYYY-MM-DD)
-  // We want info with missing dates to be at the end of the list and '9' is sufficient for that
-  const aDate = a ?? '9'
-  const bDate = b ?? '9'
+  // We want missing dates to be at the end of the list
+  if (a === undefined || a === null) {
+    return b === undefined || b === null ? 0 : 1
+  }
 
-  return aDate.localeCompare(bDate)
+  if (b === undefined || b === null) {
+    return -1
+  }
+
+  return a !== b ? (a < b ? -1 : 1) : 0
 }
 
 const getPoliceCases = (theCase: Case): PoliceCase[] =>
@@ -167,7 +171,7 @@ const Defendant = () => {
 
     // Sort modifies an array in place, so we create a copy first
     const sorted = [...data.policeCaseInfo].sort((a, b) =>
-      compareIsoStringDates(a.date, b.date),
+      compareCrimeSceneDates(a.date, b.date),
     )
 
     return sorted
@@ -185,6 +189,12 @@ const Defendant = () => {
     const policeCaseNumbers: string[] = []
     const indictmentSubtypes: IndictmentSubtypeMap = {}
     const crimeScenes: CrimeSceneMap = {}
+
+    const compare = (a: string, b: string): number =>
+      compareCrimeSceneDates(
+        crimeScenes[a].date?.getTime(),
+        crimeScenes[b].date?.getTime(),
+      )
 
     policeCases.forEach((policeCase, idx) => {
       const isUpdated = idx === index
@@ -213,15 +223,11 @@ const Defendant = () => {
 
     const [first, ...rest] = policeCaseNumbers
 
-    const sortedPoliceCaseNumbers = [
-      first,
-      ...rest.sort((a, b) =>
-        compareIsoStringDates(
-          crimeScenes[a].date?.toISOString(),
-          crimeScenes[b].date?.toISOString(),
-        ),
-      ),
-    ]
+    const sortedPoliceCaseNumbers =
+      workingCase.origin === CaseOrigin.LOKE
+        ? // If the case is a LÖKE case, we never change the first police case number
+          [first, ...rest.sort(compare)]
+        : policeCaseNumbers.sort(compare)
 
     return [sortedPoliceCaseNumbers, indictmentSubtypes, crimeScenes]
   }

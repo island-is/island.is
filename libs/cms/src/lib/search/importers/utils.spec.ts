@@ -91,6 +91,47 @@ describe('pruning entry hyperlink nodes', () => {
     expect(node.data.target.fields.slug).toBe(organizationSubpageSlug)
   })
 
+  it('should handle organizationParentSubpage content types correctly', () => {
+    const organizationParentSubpageSlug = 'some-slug'
+    const organizationPageSlug = 'some-other-slug'
+
+    const node = {
+      data: {
+        target: {
+          sys: {
+            contentType: {
+              sys: {
+                id: 'organizationParentSubpage',
+              },
+            },
+          },
+          fields: {
+            slug: organizationParentSubpageSlug,
+            organizationPage: {
+              sys: {
+                contentType: {
+                  sys: {
+                    id: 'organizationPage',
+                  },
+                },
+              },
+              fields: {
+                slug: organizationPageSlug,
+              },
+            },
+          },
+        },
+      },
+    }
+
+    pruneEntryHyperlink(node)
+
+    expect(node.data.target.fields.organizationPage.fields.slug).toBe(
+      organizationPageSlug,
+    )
+    expect(node.data.target.fields.slug).toBe(organizationParentSubpageSlug)
+  })
+
   it('should handle subArticle content types correctly', () => {
     const subArticleSlug = 'some-slug'
     const articleSlug = 'some-other-slug'
