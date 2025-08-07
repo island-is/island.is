@@ -18,6 +18,7 @@ import {
   GetApplicationInput,
   GetApplicationsInput,
   SubmitScreenInput,
+  SubmitSectionInput,
   UpdateApplicationInput,
 } from '../../dto/application.input'
 import { UpdateApplicationDependenciesInput } from '../../dto/application.input'
@@ -95,18 +96,6 @@ export class ApplicationsResolver {
     return this.applicationsService.submitApplication(user, input)
   }
 
-  // @Mutation(() => SubmitScreenResponse, {
-  //   name: 'submitFormSystemScreen',
-  // })
-  // async submitScreen(
-  //   @Args('input', { type: () => SubmitScreenInput })
-  //   input: SubmitScreenInput,
-  //   @CurrentUser() user: User,
-  // ): Promise<SubmitScreenResponse> {
-  //   console.log('submitScreen', input)
-  //   return this.applicationsService.submitScreen(user, input)
-  // }
-
   @Mutation(() => Boolean, {
     name: 'updateFormSystemApplication',
   })
@@ -127,5 +116,29 @@ export class ApplicationsResolver {
     @CurrentUser() user: User,
   ): Promise<Screen> {
     return this.applicationsService.saveScreen(user, input)
+  }
+
+  @Mutation(() => Boolean, {
+    name: 'submitFormSystemSection',
+    nullable: true,
+  })
+  async submitSection(
+    @Args('input', { type: () => SubmitSectionInput })
+    input: SubmitSectionInput,
+    @CurrentUser() user: User,
+  ): Promise<void> {
+    return this.applicationsService.submitSection(user, input)
+  }
+
+  @Mutation(() => Boolean, {
+    name: 'deleteFormSystemApplication',
+    nullable: true,
+  })
+  async deleteApplication(
+    @Args('input', { type: () => String })
+    input: string,
+    @CurrentUser() user: User,
+  ): Promise<void> {
+    return this.applicationsService.deleteApplication(user, input)
   }
 }
