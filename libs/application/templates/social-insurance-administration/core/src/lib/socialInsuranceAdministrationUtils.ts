@@ -14,7 +14,7 @@ export const formatBankInfo = (bankInfo: string) => {
   return bankInfo
 }
 
-export const bankInfoToString = (bankInfo?: BankInfo) => {
+export const formatBankAccount = (bankInfo?: PaymentInfo) => {
   return !isEmpty(bankInfo)
     ? `${bankInfo.bankNumber ?? ''}-${bankInfo.ledger ?? ''}-${
         bankInfo.accountNumber ?? ''
@@ -22,14 +22,16 @@ export const bankInfoToString = (bankInfo?: BankInfo) => {
     : ''
 }
 
-export const getBankIsk = (bankInfo?: BankInfo) => {
-  return !isEmpty(bankInfo) &&
-    (bankInfo.bank || bankInfo.bankNumber) &&
-    bankInfo.ledger &&
-    bankInfo.accountNumber
-    ? (bankInfo.bank || bankInfo.bankNumber) +
-        bankInfo.ledger +
-        bankInfo.accountNumber
+export const getBankIsk = (bankInfo?: BankInfo | PaymentInfo) => {
+  if (isEmpty(bankInfo)) {
+    return ''
+  }
+
+  // 'bankNumber' is used in BankAccountFormField
+  const bank = 'bankNumber' in bankInfo ? bankInfo.bankNumber : bankInfo.bank
+
+  return bank && bankInfo.ledger && bankInfo.accountNumber
+    ? bank + bankInfo.ledger + bankInfo.accountNumber
     : ''
 }
 
@@ -85,6 +87,7 @@ export const shouldNotUpdateBankAccount = (
   const {
     bankAccountType,
     bank,
+    bankNumber,
     iban,
     swift,
     bankName,
@@ -101,6 +104,11 @@ export const shouldNotUpdateBankAccount = (
       bankInfo.currency === currency
     )
   } else {
+    // used in BankAccountFormField
+    if (bankNumber) {
+      return getBankIsk(bankInfo) === getBankIsk(paymentInfo)
+    }
+
     return getBankIsk(bankInfo) === bank
   }
 }
