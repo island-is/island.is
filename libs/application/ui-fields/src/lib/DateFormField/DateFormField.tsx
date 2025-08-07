@@ -1,6 +1,7 @@
 import React, { FC, useMemo } from 'react'
 
 import {
+  buildFieldReadOnly,
   buildFieldRequired,
   formatText,
   formatTextWithLocale,
@@ -163,7 +164,7 @@ export const DateFormField: FC<React.PropsWithChildren<Props>> = ({
           minYear={minYear}
           maxYear={maxYear}
           backgroundColor={backgroundColor}
-          readOnly={readOnly}
+          readOnly={buildFieldReadOnly(application, readOnly)}
           label={formatTextWithLocale(title, application, lang, formatMessage)}
           placeholder={
             placeholder
