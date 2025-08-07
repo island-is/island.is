@@ -99,9 +99,12 @@ export const mapOrganizationPage = ({
   sys,
   fields,
 }: IOrganizationPage): OrganizationPage => {
-  const slug = ((fields.slug || fields.organization?.fields?.slug) ?? '').trim()
-
+  const organizationPageSlug = (
+    (fields.slug || fields.organization?.fields?.slug) ??
+    ''
+  ).trim()
   const topLevelNavigation: OrganizationPageTopLevelNavigation = { links: [] }
+  const englishLocale = sys.locale === 'en'
 
   // Extract top level navigation from sitemap tree
   for (const node of (fields.sitemap?.fields?.tree as SitemapTree)
@@ -109,32 +112,28 @@ export const mapOrganizationPage = ({
     if (node.type === SitemapTreeNodeType.URL) {
       topLevelNavigation.links.push({
         label: sys.locale === 'en' ? node.labelEN ?? '' : node.label ?? '',
-        href: resolveSitemapNodeUrl(node, slug, sys.locale),
+        href: resolveSitemapNodeUrl(node, organizationPageSlug, sys.locale),
       })
       continue
     }
 
-    if (node.type !== SitemapTreeNodeType.CATEGORY) {
+    if (node.type === SitemapTreeNodeType.ENTRY) {
       continue
     }
 
-    if (sys.locale !== 'en' && Boolean(node.label) && Boolean(node.slug)) {
+    if (!englishLocale && Boolean(node.label) && Boolean(node.slug)) {
       topLevelNavigation.links.push({
         label: node.label,
-        href: `/${getOrganizationPageUrlPrefix(sys.locale)}/${slug}/${
-          node.slug
-        }`,
+        href: `/${getOrganizationPageUrlPrefix(
+          sys.locale,
+        )}/${organizationPageSlug}/${node.slug}`,
       })
-    } else if (
-      sys.locale === 'en' &&
-      Boolean(node.labelEN) &&
-      Boolean(node.slugEN)
-    ) {
+    } else if (englishLocale && Boolean(node.labelEN) && Boolean(node.slugEN)) {
       topLevelNavigation.links.push({
         label: node.labelEN as string,
-        href: `/${getOrganizationPageUrlPrefix(sys.locale)}/${slug}/${
-          node.slugEN
-        }`,
+        href: `/${getOrganizationPageUrlPrefix(
+          sys.locale,
+        )}/${organizationPageSlug}/${node.slugEN}`,
       })
     }
   }
@@ -142,7 +141,7 @@ export const mapOrganizationPage = ({
   return {
     id: sys.id,
     title: fields.title ?? '',
-    slug,
+    slug: organizationPageSlug,
     description: fields.description ?? '',
     theme: fields.theme ?? 'default',
     themeProperties: mapOrganizationTheme(fields.themeProperties ?? {}),
