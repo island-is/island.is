@@ -149,6 +149,7 @@ export const addNode = async (
   let url = ''
   let urlEN = ''
   let urlType: SitemapUrlType = 'custom'
+  let chosenEntryType = entryType
 
   if (type === TreeNodeType.ENTRY) {
     if (createNew) {
@@ -161,7 +162,7 @@ export const addNode = async (
       entryId = entry.entity.sys.id
     } else {
       const entry = await sdk.dialogs.selectSingleEntry<{
-        sys: { id: string }
+        sys: { id: string; contentType: { sys: { id: string } } }
       } | null>({
         contentTypes: ENTRY_CONTENT_TYPE_IDS,
       })
@@ -185,6 +186,7 @@ export const addNode = async (
       }
 
       entryId = entry.sys.id
+      chosenEntryType = entry.sys.contentType.sys.id as EntryType
     }
   } else if (type === TreeNodeType.CATEGORY) {
     const otherCategories = parentNode.childNodes.filter(
@@ -255,7 +257,7 @@ export const addNode = async (
       ? {
           type: TreeNodeType.ENTRY,
           entryId,
-          contentType: entryType,
+          contentType: chosenEntryType,
           // It's the primary location if the same entry isn't already present in the sitemap
           primaryLocation: !findNode(
             root,
@@ -359,8 +361,12 @@ export const extractNodeContent = (
         ? node.urlEN
         : node.url
       : entries[node.entryId]?.fields?.slug?.[language] || ''
+  const entryContentType =
+    node.type === TreeNodeType.ENTRY
+      ? entries[node.entryId]?.sys?.contentType?.sys?.id ?? node.contentType
+      : ''
 
-  return { label, slug }
+  return { label, slug, entryContentType }
 }
 
 export const findParentNode = (root: Tree, nodeId: number) => {
