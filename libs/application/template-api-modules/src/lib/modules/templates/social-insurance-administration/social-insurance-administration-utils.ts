@@ -420,6 +420,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     lastEmploymentTitle,
     lastEmploymentYear,
     certificateForSicknessAndRehabilitationReferenceId,
+    rehabilitationPlanReferenceId,
     educationalLevel,
     hadAssistance,
     mainProblem,
@@ -503,7 +504,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     baseCertificateReference:
       certificateForSicknessAndRehabilitationReferenceId ?? '',
     ...(isEHApplication(application.externalData) && {
-      rehabilitationPlanReference: 'test', //TODO:
+      rehabilitationPlanReference: rehabilitationPlanReferenceId,
     }),
     preQuestionnaire: {
       highestEducation: educationalLevel || '',

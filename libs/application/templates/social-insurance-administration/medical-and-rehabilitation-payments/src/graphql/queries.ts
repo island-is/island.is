@@ -3,6 +3,7 @@ import gql from 'graphql-tag'
 export const siaRehabilitationPlanQuery = gql`
   query SiaRehabilitationPlan {
     socialInsuranceRehabilitationPlan {
+      referenceId
       serviceProvider {
         serviceProviderName
         coordinatorName
