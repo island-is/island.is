@@ -26,7 +26,7 @@ import { SubpoenaStatisticsDto } from './statistics/subpoenaStatistics.dto'
 import { StatisticsService } from './statistics.service'
 
 @Controller('api')
-@ApiTags('cases')
+@ApiTags('statistics')
 export class StatisticsController {
   constructor(
     private readonly statisticService: StatisticsService,

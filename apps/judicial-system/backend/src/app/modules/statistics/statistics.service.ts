@@ -23,7 +23,6 @@ import {
 
 import { AwsS3Service } from '../aws-s3'
 import { Case, DateLog, partition } from '../case'
-import { caseModuleConfig } from '../case/case.config'
 import { CaseString } from '../case/models/caseString.model'
 import { CourtService } from '../court'
 import { DefendantService } from '../defendant'
