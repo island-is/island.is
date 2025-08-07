@@ -159,11 +159,6 @@ export class SubmitScreenDtoInput {
 
 @InputType('SubmitFormSystemScreenInput')
 export class SubmitScreenInput {
-  // @Field(() => String, { nullable: true })
-  // screenId?: string
-
-  // @Field(() => ApplicationInput, { nullable: true })
-  // applicationDto?: ApplicationInput
   @Field(() => String, { nullable: true })
   screenId?: string
 
