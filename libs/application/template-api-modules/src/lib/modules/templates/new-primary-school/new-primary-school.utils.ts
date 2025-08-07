@@ -190,10 +190,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
               email: welfareContactEmail ?? '',
               type: CaseWorkerInputTypeEnum.SupportManager,
             },
-            ...(hasWelfareContact === YES &&
-            hasCaseManager === YES &&
-            caseManagerName &&
-            caseManagerEmail
+            ...(hasCaseManager === YES
               ? [
                   {
                     name: caseManagerName ?? '',
