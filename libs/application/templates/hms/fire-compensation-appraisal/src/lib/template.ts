@@ -169,20 +169,20 @@ const template: ApplicationTemplate<
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
         chargeItems: getChargeItems,
-        roles: [
-          {
-            id: Roles.APPLICANT,
-            formLoader: async () => {
-              return PaymentForm
-            },
-          },
-          {
-            id: Roles.DELEGATE,
-            formLoader: async () => {
-              return PaymentForm
-            },
-          },
-        ],
+        // roles: [
+        //   {
+        //     id: Roles.APPLICANT,
+        //     formLoader: async () => {
+        //       return PaymentForm
+        //     },
+        //   },
+        //   {
+        //     id: Roles.DELEGATE,
+        //     formLoader: async () => {
+        //       return PaymentForm
+        //     },
+        //   },
+        // ],
       }),
       [States.DONE]: {
         meta: {
