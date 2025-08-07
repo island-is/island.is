@@ -78,7 +78,7 @@ const subpoenaFilterKeys = [
   'created',
 ] as (keyof SubpoenaFilterType)[]
 
-export const SubpoenaStatistics = () => {
+const SubpoenaStatisticsBody = ({ minDate }: { minDate?: Date }) => {
   const [stats, setStats] = useState<SubpoenaStatisticsType | undefined>()
   const [filters, setFilters] = useState<SubpoenaFilterType>({})
 
@@ -110,8 +110,24 @@ export const SubpoenaStatistics = () => {
         filters={filters}
         setFilters={setFilters}
         onClear={() => setFilters({})}
+        minDate={minDate}
       />
       <Statistics stats={stats} loading={loading} />
     </Box>
   )
+}
+
+export const SubpoenaStatistics = () => {
+  // We extract the initial call to fetch the request statistics data to a specific parent component
+  // to fetch defined statistical constraints (minDate) once. The child component is
+  // currently re-rendered on each filter change.
+  const { data } = useSubpoenaStatisticsQuery({
+    variables: {
+      input: {},
+    },
+    fetchPolicy: 'cache-and-network',
+  })
+  const minDate = data?.subpoenaStatistics?.minDate ?? new Date()
+
+  return <SubpoenaStatisticsBody minDate={new Date(minDate)} />
 }
