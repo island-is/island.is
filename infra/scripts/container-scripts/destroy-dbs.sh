@@ -19,9 +19,14 @@ psql -tc "SELECT datname FROM pg_database WHERE datname like 'feature_${FEATURE_
 
 psql -tc "SELECT rolname FROM pg_roles WHERE rolname like 'feature_${FEATURE_DB_NAME}_%'" --field-separator ' ' --no-align --quiet |
   while read -r rolname; do
-    psql -c "DROP OWNED BY $rolname CASCADE;"
+    psql -c "DROP OWNED BY $rolname;"
+    echo "Dropping OWNED BY on the role $rolname"
+  done
+
+psql -tc "SELECT rolname FROM pg_roles WHERE rolname like 'feature_${FEATURE_DB_NAME}_%'" --field-separator ' ' --no-align --quiet |
+  while read -r rolname; do
     psql -c "DROP ROLE IF EXISTS $rolname;"
-    echo "Deleting the role $rolname"
+    echo "Dropping the role $rolname"
   done
 
 node secrets delete "/k8s/feature-$FEATURE_NAME"
