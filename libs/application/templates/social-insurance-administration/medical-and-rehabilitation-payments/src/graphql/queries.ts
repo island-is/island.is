@@ -89,21 +89,32 @@ export const siaCertificateForSicknessAndRehabilitationQuery = gql`
       certificateDate
       disabilityDate
       diagnoses {
-        icd
-        others
+        icd {
+          code
+          displayValue
+          category
+        }
+        others {
+          code
+          displayValue
+          category
+        }
       }
       previousHealthHistory
       currentStatus
       physicalDifficulty {
         value
+        displayValue
         explanation
       }
       mentalDifficulty {
         value
+        displayValue
         explanation
       }
       activityParticipationDifficulty {
         value
+        displayValue
         explanation
       }
       other
