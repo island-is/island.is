@@ -73,8 +73,7 @@ export const mapAnswersToApplicationDto = (
     const tegund = ending === 'pdf' ? 'application/pdf' : 'image/jpeg'
     return {
       flokkur: ending === 'pdf' ? 5 : 2,
-      heiti: file.key.replace(/^[^_]*_/, ''), // This is limited to varChar(100) in the HMS database but most opperating systems allow 256 characters j
-      dags: new Date(),
+      heiti: file.key.replace(/^[^_]*_/, ''),
       tegund,
       fileID: hashToLength20(file.key.split('_')[0]),
       ending: `.${ending}`,
