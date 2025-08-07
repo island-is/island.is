@@ -21,9 +21,10 @@ import { z } from 'zod'
 import { ApiActions } from '../shared'
 import { m } from './messages'
 import {
-  SyslumadurPaymentCatalogApi,
   CriminalRecordApi,
+  IdentityApi,
   MockableSyslumadurPaymentCatalogApi,
+  SyslumadurPaymentCatalogApi,
 } from '../dataProviders'
 import { buildPaymentState } from '@island.is/application/utils'
 import { getChargeItems } from '../utils'
@@ -83,6 +84,7 @@ const template: ApplicationTemplate<
                 SyslumadurPaymentCatalogApi,
                 MockableSyslumadurPaymentCatalogApi,
                 CriminalRecordApi,
+                IdentityApi,
               ],
             },
           ],
