@@ -6,7 +6,16 @@ import { Inject, Injectable } from '@nestjs/common'
 import { type ConfigType } from '@island.is/nest/config'
 import { ProblemError } from '@island.is/nest/problem'
 
-import { DateType, type User } from '@island.is/judicial-system/types'
+import {
+  Lawyer,
+  LawyerType,
+  mapToLawyer,
+} from '@island.is/judicial-system/types'
+import {
+  CaseTableType,
+  DateType,
+  type User,
+} from '@island.is/judicial-system/types'
 
 import {
   Case,
@@ -15,6 +24,7 @@ import {
   SignatureConfirmationResponse,
 } from '../case'
 import { CaseListEntry, CaseStatistics } from '../case-list'
+import { CaseTableResponse, SearchCasesResponse } from '../case-table'
 import {
   CivilClaimant,
   Defendant,
@@ -27,6 +37,7 @@ import {
   PresignedPost,
   SignedUrl,
   UpdateFilesResponse,
+  UploadCriminalRecordFileResponse,
   UploadFileToCourtResponse,
 } from '../file'
 import {
@@ -47,9 +58,32 @@ import {
   UploadPoliceCaseFileResponse,
 } from '../police'
 import { Subpoena } from '../subpoena'
-import { Victim } from '../victim'
-import { DeleteVictimResponse } from '../victim/models/deleteVictim.response'
+import { DeleteVictimResponse, Victim } from '../victim'
 import { backendModuleConfig } from './backend.config'
+
+type Transformer<TResult> = (data: never) => TResult
+
+// Find a way to get types from the backend
+const caseTransformer = <TCase>(data: never): TCase => {
+  const theCase = data as TCase & {
+    dateLogs?: { dateType: DateType; date: string }[]
+  }
+
+  return {
+    ...theCase,
+    arraignmentDate: theCase.dateLogs?.find(
+      (dateLog) => dateLog.dateType === DateType.ARRAIGNMENT_DATE,
+    ),
+    courtDate: theCase.dateLogs?.find(
+      (dateLog) => dateLog.dateType === DateType.COURT_DATE,
+    ),
+  }
+}
+
+const lawyerTransformer: Transformer<Lawyer> = (data) => mapToLawyer(data)
+
+const lawyersTransformer: Transformer<Lawyer[]> = (lawyers: []) =>
+  lawyers.map((lawyer) => mapToLawyer(lawyer))
 
 @Injectable()
 export class BackendService extends DataSource<{ req: Request }> {
@@ -78,14 +112,14 @@ export class BackendService extends DataSource<{ req: Request }> {
   private async callBackend<TResult>(
     route: string,
     options: RequestInit,
-    transformer?: (data: unknown) => TResult,
+    transformer?: Transformer<TResult>,
   ): Promise<TResult> {
     return fetch(`${this.config.backendUrl}/api/${route}`, options).then(
       async (res) => {
         const response = await res.json()
 
         if (res.ok) {
-          return transformer ? transformer(response) : response
+          return transformer ? transformer(response as never) : response
         }
 
         throw new ProblemError(response)
@@ -95,7 +129,7 @@ export class BackendService extends DataSource<{ req: Request }> {
 
   private get<TResult>(
     route: string,
-    transformer?: (data: unknown) => TResult,
+    transformer?: Transformer<TResult>,
   ): Promise<TResult> {
     return this.callBackend<TResult>(
       route,
@@ -107,7 +141,7 @@ export class BackendService extends DataSource<{ req: Request }> {
   private post<TBody, TResult>(
     route: string,
     body?: TBody,
-    transformer?: (data: unknown) => TResult,
+    transformer?: Transformer<TResult>,
   ): Promise<TResult> {
     return this.callBackend<TResult>(
       route,
@@ -119,7 +153,7 @@ export class BackendService extends DataSource<{ req: Request }> {
   private put<TBody, TResult>(
     route: string,
     body: TBody,
-    transformer?: (data: unknown) => TResult,
+    transformer?: Transformer<TResult>,
   ): Promise<TResult> {
     return this.callBackend<TResult>(
       route,
@@ -131,7 +165,7 @@ export class BackendService extends DataSource<{ req: Request }> {
   private patch<TBody, TResult>(
     route: string,
     body: TBody,
-    transformer?: (data: unknown) => TResult,
+    transformer?: Transformer<TResult>,
   ): Promise<TResult> {
     return this.callBackend<TResult>(
       route,
@@ -142,30 +176,13 @@ export class BackendService extends DataSource<{ req: Request }> {
 
   private delete<TResult>(
     route: string,
-    transformer?: (data: unknown) => TResult,
+    transformer?: Transformer<TResult>,
   ): Promise<TResult> {
     return this.callBackend<TResult>(
       route,
       { method: 'DELETE', headers: this.headers },
       transformer,
     )
-  }
-
-  // Find a way to get types from the backend
-  private caseTransformer<Case>(data: unknown): Case {
-    const theCase = data as Case & {
-      dateLogs?: { dateType: DateType; date: string }[]
-    }
-
-    return {
-      ...theCase,
-      arraignmentDate: theCase.dateLogs?.find(
-        (dateLog) => dateLog.dateType === DateType.ARRAIGNMENT_DATE,
-      ),
-      courtDate: theCase.dateLogs?.find(
-        (dateLog) => dateLog.dateType === DateType.COURT_DATE,
-      ),
-    }
   }
 
   getInstitutions(): Promise<Institution[]> {
@@ -193,8 +210,23 @@ export class BackendService extends DataSource<{ req: Request }> {
   }
 
   getCase(id: string): Promise<Case> {
-    return this.get<Case>(`case/${id}`, this.caseTransformer)
+    return this.get<Case>(`case/${id}`, caseTransformer)
   }
+
+  getCaseTable(type: CaseTableType): Promise<CaseTableResponse> {
+    return this.get<CaseTableResponse>(
+      `case-table?type=${type}`,
+      caseTransformer,
+    )
+  }
+
+  searchCases(query: string): Promise<SearchCasesResponse> {
+    const params = new URLSearchParams()
+    params.append('query', query)
+
+    return this.get(`search-cases?${params.toString()}`)
+  }
+
   getCaseStatistics(
     fromDate?: Date,
     toDate?: Date,
@@ -214,22 +246,18 @@ export class BackendService extends DataSource<{ req: Request }> {
   }
 
   createCase(createCase: unknown): Promise<Case> {
-    return this.post<unknown, Case>('case', createCase, this.caseTransformer)
+    return this.post<unknown, Case>('case', createCase, caseTransformer)
   }
 
   updateCase(id: string, updateCase: unknown): Promise<Case> {
-    return this.patch<unknown, Case>(
-      `case/${id}`,
-      updateCase,
-      this.caseTransformer,
-    )
+    return this.patch<unknown, Case>(`case/${id}`, updateCase, caseTransformer)
   }
 
   transitionCase(id: string, transitionCase: unknown): Promise<Case> {
     return this.patch<unknown, Case>(
       `case/${id}/state`,
       transitionCase,
-      this.caseTransformer,
+      caseTransformer,
     )
   }
 
@@ -270,7 +298,7 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.post<unknown, Case>(
       `case/${id}/extend`,
       undefined,
-      this.caseTransformer,
+      caseTransformer,
     )
   }
 
@@ -278,7 +306,7 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.post<unknown, Case>(
       `case/${id}/court`,
       undefined,
-      this.caseTransformer,
+      caseTransformer,
     )
   }
 
@@ -287,6 +315,15 @@ export class BackendService extends DataSource<{ req: Request }> {
     createPresignedPost: unknown,
   ): Promise<PresignedPost> {
     return this.post(`case/${id}/file/url`, createPresignedPost)
+  }
+
+  uploadCriminalRecordFile(
+    caseId: string,
+    defendantId: string,
+  ): Promise<UploadCriminalRecordFileResponse> {
+    return this.post(
+      `case/${caseId}/defendant/${defendantId}/criminalRecordFile`,
+    )
   }
 
   createCaseFile(id: string, createFile: unknown): Promise<CaseFile> {
@@ -504,14 +541,14 @@ export class BackendService extends DataSource<{ req: Request }> {
   }
 
   limitedAccessGetCase(id: string): Promise<Case> {
-    return this.get<Case>(`case/${id}/limitedAccess`, this.caseTransformer)
+    return this.get<Case>(`case/${id}/limitedAccess`, caseTransformer)
   }
 
   limitedAccessUpdateCase(id: string, updateCase: unknown): Promise<Case> {
     return this.patch<unknown, Case>(
       `case/${id}/limitedAccess`,
       updateCase,
-      this.caseTransformer,
+      caseTransformer,
     )
   }
 
@@ -522,7 +559,7 @@ export class BackendService extends DataSource<{ req: Request }> {
     return this.patch<unknown, Case>(
       `case/${id}/limitedAccess/state`,
       transitionCase,
-      this.caseTransformer,
+      caseTransformer,
     )
   }
 
@@ -592,17 +629,46 @@ export class BackendService extends DataSource<{ req: Request }> {
   }
 
   findUsersByNationalId(nationalId: string): Promise<User[]> {
-    return this.callBackend<User[]>(`user/?nationalId=${nationalId}`, {
+    const params = new URLSearchParams()
+    params.append('nationalId', nationalId)
+
+    return this.callBackend<User[]>(`user?${params.toString()}`, {
       headers: this.secretTokenHeaders,
     })
   }
 
   findDefenderByNationalId(nationalId: string): Promise<User> {
+    const params = new URLSearchParams()
+    params.append('nationalId', nationalId)
+
     return this.callBackend<User>(
-      `cases/limitedAccess/defender?nationalId=${nationalId}`,
-      {
-        headers: this.secretTokenHeaders,
-      },
+      `cases/limitedAccess/defender?${params.toString()}`,
+      { headers: this.secretTokenHeaders },
+    )
+  }
+
+  getLawyers(lawyerType?: LawyerType): Promise<Lawyer[]> {
+    let queryString = ''
+
+    if (lawyerType) {
+      const params = new URLSearchParams()
+      params.append('lawyerType', lawyerType)
+      const query = params.toString()
+      queryString = `?${query}`
+    }
+
+    return this.callBackend(
+      `lawyer-registry${queryString}`,
+      { headers: this.secretTokenHeaders },
+      lawyersTransformer,
+    )
+  }
+
+  getLawyer(nationalId: string): Promise<Lawyer> {
+    return this.callBackend(
+      `lawyer-registry/${nationalId}`,
+      { headers: this.secretTokenHeaders },
+      lawyerTransformer,
     )
   }
 }

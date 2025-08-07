@@ -33,6 +33,7 @@ import {
   TUploadFile,
   useCase,
   useDeb,
+  useFileList,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -77,6 +78,10 @@ export const CaseFiles = () => {
   } = useUploadFiles(workingCase.caseFiles)
   const { handleUpload, handleUploadFromPolice, handleRetry, handleRemove } =
     useS3Upload(workingCase.id)
+
+  const { onOpenFile } = useFileList({
+    caseId: workingCase.id,
+  })
   const { updateCase } = useCase()
 
   useDeb(workingCase, 'caseFilesComments')
@@ -235,6 +240,7 @@ export const CaseFiles = () => {
               onRetry={(file) => handleRetry(file, updateUploadFile)}
               errorMessage={uploadErrorMessage}
               disabled={isUploadingPoliceCaseFiles}
+              onOpenFile={(file) => onOpenFile(file)}
             />
           </ContentBlock>
         </Box>

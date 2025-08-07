@@ -13,7 +13,10 @@ import {
 import isAfter from 'date-fns/isAfter'
 import { Locale } from '@island.is/shared/types'
 import { Injectable } from '@nestjs/common'
-import { DriverLicenseDto as DriversLicense } from '@island.is/clients/driving-license'
+import {
+  DriverLicenseDto as DriversLicense,
+  LicenseComments,
+} from '@island.is/clients/driving-license'
 import { isDefined } from '@island.is/shared/utils'
 import { IntlService } from '@island.is/cms-translations'
 import { m } from '../messages'
@@ -107,6 +110,11 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
               ].filter(isDefined),
             })),
           },
+          {
+            type: GenericLicenseDataFieldType.Value,
+            label: formatMessage(m.extraCodes),
+            value: t.comments ? this.formatComments(t.comments) : '',
+          },
         ]
 
         return {
@@ -162,5 +170,14 @@ export class DrivingLicensePayloadMapper implements GenericLicenseMapper {
         }
       })
     return mappedPayload
+  }
+
+  formatComments(comments: Array<LicenseComments>): string {
+    return comments
+      .filter((comment) => comment.nr)
+      .map((comment) =>
+        comment.comment ? `${comment.nr} (${comment.comment})` : comment.nr,
+      )
+      .join('\n')
   }
 }

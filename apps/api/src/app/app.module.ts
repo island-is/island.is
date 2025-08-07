@@ -79,6 +79,7 @@ import {
   WatsonAssistantChatModule,
 } from '@island.is/api/domains/watson-assistant-chat'
 import { WorkMachinesModule } from '@island.is/api/domains/work-machines'
+import { PracticalExamsModule } from '@island.is/api/domains/practical-exams'
 import { SeminarsModule } from '@island.is/api/domains/seminars-ver'
 import { AuthConfig, AuthModule } from '@island.is/auth-nest-tools'
 import { AdrAndMachineLicenseClientConfig } from '@island.is/clients/adr-and-machine-license'
@@ -113,6 +114,10 @@ import {
   OfficialJournalOfIcelandClientConfig,
   OfficialJournalOfIcelandClientModule,
 } from '@island.is/clients/official-journal-of-iceland'
+import {
+  LegalGazetteClientConfig,
+  LegalGazetteClientModule,
+} from '@island.is/clients/legal-gazette'
 import { OfficialJournalOfIcelandApplicationClientConfig } from '@island.is/clients/official-journal-of-iceland/application'
 import { HmsLoansClientConfig } from '@island.is/clients/hms-loans'
 import { HousingBenefitCalculatorClientConfig } from '@island.is/clients/housing-benefit-calculator'
@@ -152,6 +157,7 @@ import { FileStorageConfig } from '@island.is/file-storage'
 import { AuditModule } from '@island.is/nest/audit'
 import { DocumentsClientV2Config } from '@island.is/clients/documents-v2'
 import { WorkAccidentClientConfig } from '@island.is/clients/work-accident-ver'
+import { PracticalExamsClientConfig } from '@island.is/clients/practical-exams-ver'
 
 import {
   ConfigModule,
@@ -169,6 +175,7 @@ import { IntellectualPropertiesModule } from '@island.is/api/domains/intellectua
 import { NationalRegistryModule } from '@island.is/api/domains/national-registry'
 import { SignatureCollectionModule } from '@island.is/api/domains/signature-collection'
 import { RskRelationshipsClientConfig } from '@island.is/clients-rsk-relationships'
+import { RskRentalDayRateClientConfig } from '@island.is/clients-rental-day-rate'
 import { FinanceClientV2Config } from '@island.is/clients/finance-v2'
 import { MMSClientConfig } from '@island.is/clients/mms'
 import { PCardClientConfig } from '@island.is/clients/p-card'
@@ -212,7 +219,10 @@ import { VerdictsClientConfig } from '@island.is/clients/verdicts'
 import { VerdictsModule } from '@island.is/api/domains/verdicts'
 import { SecondarySchoolClientConfig } from '@island.is/clients/secondary-school'
 import { SecondarySchoolApiModule } from '@island.is/api/domains/secondary-school'
+import { BloodClientConfig } from '@island.is/clients/blood'
 import { HmsConfig } from '@island.is/clients/hms'
+import { HmsApplicationSystemConfig } from '@island.is/clients/hms-application-system'
+import { HmsRentalAgreementClientConfig } from '@island.is/clients/hms-rental-agreement'
 
 const environment = getConfig
 
@@ -299,6 +309,7 @@ const environment = getConfig
     SocialInsuranceModule,
     HealthDirectorateClientModule,
     OfficialJournalOfIcelandClientModule,
+    LegalGazetteClientModule,
     DisabilityLicenseModule,
     FiskistofaModule,
     WatsonAssistantChatModule,
@@ -353,6 +364,7 @@ const environment = getConfig
     HealthDirectorateModule,
     VerdictsModule,
     SecondarySchoolApiModule,
+    PracticalExamsModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [
@@ -383,10 +395,13 @@ const environment = getConfig
         AuthPublicApiClientConfig,
         AuthDelegationApiClientConfig,
         DownloadServiceConfig,
+        BloodClientConfig,
         HuntingLicenseClientConfig,
         FeatureFlagConfig,
         HmsConfig,
+        HmsApplicationSystemConfig,
         HmsLoansClientConfig,
+        HmsRentalAgreementClientConfig,
         HousingBenefitsConfig,
         FinanceClientConfig,
         FinanceClientV2Config,
@@ -421,6 +436,7 @@ const environment = getConfig
         HealthDirectorateHealthClientConfig,
         OfficialJournalOfIcelandClientConfig,
         OfficialJournalOfIcelandApplicationClientConfig,
+        LegalGazetteClientConfig,
         InnaClientConfig,
         SessionsApiClientConfig,
         PaymentsApiClientConfig,
@@ -430,6 +446,7 @@ const environment = getConfig
         AuthIdsApiClientConfig,
         IcelandicGovernmentInstitutionVacanciesClientConfig,
         RskRelationshipsClientConfig,
+        RskRentalDayRateClientConfig,
         AircraftRegistryClientConfig,
         ShipRegistryClientConfig,
         HousingBenefitCalculatorClientConfig,
@@ -453,6 +470,7 @@ const environment = getConfig
         HealthInsuranceV2ClientConfig,
         UmbodsmadurSkuldaraClientConfig,
         WorkAccidentClientConfig,
+        PracticalExamsClientConfig,
         ZendeskServiceConfig,
         emailModuleConfig,
         VerdictsClientConfig,

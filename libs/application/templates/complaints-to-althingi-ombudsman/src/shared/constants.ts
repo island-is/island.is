@@ -13,6 +13,14 @@ export enum ComplainedForTypes {
   SOMEONEELSE = 'someoneelse',
 }
 
+export enum GenderAnswerOptions {
+  MALE = 'Karl/Karlkyns',
+  FEMALE = 'Kona/Kvenkyns',
+  NONBINARY = 'Kvár/Kynsegin',
+  OTHER = 'Annað',
+  DECLINED = 'Vil ekki svara',
+}
+
 export enum ApiActions {
   submitApplication = 'submitApplication',
 }

@@ -10,13 +10,19 @@ export const container = style({
   border: `1px dashed ${theme.color.blue200}`,
   borderRadius: theme.border.radius.large,
 
-  padding: `${theme.spacing[10]}px`,
+  padding: `${theme.spacing[2]}px`,
   marginBottom: `${theme.spacing[10]}px`,
   transition: 'border-color 0.2s ease-in-out',
 
   selectors: {
     '&:hover': {
       borderColor: theme.color.blue400,
+    },
+  },
+
+  '@media': {
+    [`screen and (min-width: ${theme.breakpoints.md}px)`]: {
+      padding: `${theme.spacing[10]}px`,
     },
   },
 })

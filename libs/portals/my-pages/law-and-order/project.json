@@ -3,6 +3,7 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/portals/my-pages/law-and-order/src",
   "projectType": "library",
+  "tags": ["lib:portals-mypages", "scope:portals-mypages"],
   "targets": {
     "lint": {
       "executor": "@nx/linter:eslint",
@@ -33,6 +34,5 @@
         "command": "graphql-codegen --config libs/portals/my-pages/law-and-order/codegen.yml"
       }
     }
-  },
-  "tags": ["lib:portals-mypages", "scope:portals-mypages"]
+  }
 }

@@ -94,7 +94,13 @@ describe('Indictment Case Exists For Defendant Guard', () => {
           },
           { model: DateLog, as: 'dateLogs' },
         ],
-        attributes: ['courtCaseNumber', 'id'],
+        attributes: [
+          'courtCaseNumber',
+          'id',
+          'state',
+          'indictmentRulingDecision',
+          'rulingDate',
+        ],
         where: {
           type: CaseType.INDICTMENT,
           id: caseId,

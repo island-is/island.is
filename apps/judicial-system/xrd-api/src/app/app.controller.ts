@@ -15,8 +15,6 @@ import { ApiCreatedResponse, ApiOkResponse, ApiResponse } from '@nestjs/swagger'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { LawyersService, LawyerType } from '@island.is/judicial-system/lawyers'
-
 import { CreateCaseDto } from './dto/createCase.dto'
 import { UpdateSubpoenaDto } from './dto/subpoena.dto'
 import { Case } from './models/case.model'
@@ -30,7 +28,6 @@ export class AppController {
   constructor(
     private readonly appService: AppService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
-    private readonly lawyersService: LawyersService,
   ) {}
 
   @UseInterceptors(EventInterceptor)
@@ -56,17 +53,12 @@ export class AppController {
     try {
       this.logger.debug('Retrieving litigators from lawyer registry')
 
-      const lawyers = await this.lawyersService.getLawyers(
-        LawyerType.LITIGATORS,
-      )
+      const litigators = await this.appService.getLitigators()
 
-      return lawyers.map((lawyer) => ({
-        nationalId: lawyer.SSN,
-        name: lawyer.Name,
-        practice: lawyer.Practice,
-      }))
+      return litigators
     } catch (error) {
-      this.logger.error('Failed to retrieve lawyers', error)
+      this.logger.error('Failed to retrieve lawyers', { error })
+
       throw new BadGatewayException('Failed to retrieve lawyers')
     }
   }

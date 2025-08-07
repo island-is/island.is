@@ -97,9 +97,7 @@ const generateOrganizationSubpageLink = (
       },
     },
     fields: {
-      text:
-        (subpage as IOrganizationSubpage).fields.shortTitle ||
-        subpage.fields.title,
+      text: subpage.fields.shortTitle || subpage.fields.title,
       url: `/${prefix}/${subpage.fields.organizationPage.fields.slug}/${subpage.fields.slug}`,
     },
   })

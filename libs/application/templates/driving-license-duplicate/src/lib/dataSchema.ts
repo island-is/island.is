@@ -7,6 +7,7 @@ export const dataSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   nationalId: z.string(),
   name: z.string(),
+  selectLicensePhoto: z.string().min(1),
   delivery: z
     .object({
       deliveryMethod: z.enum([Delivery.SEND_HOME, Delivery.PICKUP]).optional(),
@@ -15,14 +16,12 @@ export const dataSchema = z.object({
     .refine(({ deliveryMethod, district }) => {
       return deliveryMethod === Delivery.PICKUP ? !!district : true
     }),
-  reason: z.object({
-    confirmationCheckbox: z.array(z.string()).refine((v) => v.includes(YES), {
+  reasonCheckbox: z.array(z.string()).refine((v) => v.includes(YES), {
+    params: m.requiredCheckmark,
+  }),
+  overviewConfirmationCheckbox: z
+    .array(z.string())
+    .refine((v) => v.includes(YES), {
       params: m.requiredCheckmark,
     }),
-  }),
-  overview: z.object({
-    confirmationCheckbox: z.array(z.string()).refine((v) => v.includes(YES), {
-      params: m.requiredCheckmark,
-    }),
-  }),
 })

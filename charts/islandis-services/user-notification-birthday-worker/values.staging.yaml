@@ -21,6 +21,7 @@ args:
   - '--no-experimental-fetch'
   - 'main.js'
   - '--job=worker'
+  - '--isBirthdayWorker'
 command:
   - 'node'
 enabled: true
@@ -45,7 +46,7 @@ env:
   NATIONAL_REGISTRY_B2C_ENDPOINT: 'https://skraidentitystaging.b2clogin.com/skraidentitystaging.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token'
   NATIONAL_REGISTRY_B2C_PATH: 'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Midlun-v1'
   NATIONAL_REGISTRY_B2C_SCOPE: 'https://skraidentitystaging.onmicrosoft.com/midlun/.default'
-  NODE_OPTIONS: '--max-old-space-size=230 --enable-source-maps -r dd-trace/init'
+  NODE_OPTIONS: '--max-old-space-size=345 --enable-source-maps -r dd-trace/init'
   REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379"]'
   REDIS_USE_SSL: 'true'
   SERVERSIDE_FEATURES_ON: ''
@@ -94,11 +95,11 @@ replicaCount:
   min: 1
 resources:
   limits:
-    cpu: '200m'
-    memory: '256Mi'
+    cpu: '400m'
+    memory: '384Mi'
   requests:
-    cpu: '100m'
-    memory: '128Mi'
+    cpu: '150m'
+    memory: '256Mi'
 schedule: '@midnight'
 secrets:
   CONFIGCAT_SDK_KEY: '/k8s/configcat/CONFIGCAT_SDK_KEY'

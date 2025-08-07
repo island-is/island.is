@@ -34,8 +34,7 @@ const getEnv = (services: {
     (ctx) => `http://${ctx.svc(services.userProfileApi)}`,
   ),
   AUTH_DELEGATION_API_URL: {
-    dev:
-      'https://auth-delegation-api.internal.identity-server.dev01.devland.is',
+    dev: 'https://auth-delegation-api.internal.identity-server.dev01.devland.is',
     staging:
       'http://services-auth-delegation-api.identity-server-delegation.svc.cluster.local',
     prod: 'https://auth-delegation-api.internal.innskra.island.is',
@@ -209,7 +208,12 @@ export const userNotificationBirthdayWorkerSetup = (services: {
     .codeOwner(CodeOwners.Juni)
     .db({ name: 'user-notification' })
     .command('node')
-    .args('--no-experimental-fetch', 'main.js', '--job=worker')
+    .args(
+      '--no-experimental-fetch',
+      'main.js',
+      '--job=worker',
+      '--isBirthdayWorker',
+    )
     .redis()
     .env({ ...getEnv(services) })
     .secrets({
@@ -219,6 +223,16 @@ export const userNotificationBirthdayWorkerSetup = (services: {
       IDENTITY_SERVER_CLIENT_SECRET: `/k8s/${serviceName}/USER_NOTIFICATION_CLIENT_SECRET`,
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
+    })
+    .resources({
+      limits: {
+        cpu: '400m',
+        memory: '384Mi',
+      },
+      requests: {
+        cpu: '150m',
+        memory: '256Mi',
+      },
     })
     .xroad(Base, Client, NationalRegistryB2C, RskCompanyInfo)
     .extraAttributes({

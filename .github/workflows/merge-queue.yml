@@ -31,13 +31,11 @@ env:
   NX_PARALLEL: '2'
   NX_MAX_PARALLEL: '4'
   NODE_IMAGE_VERSION: 20
-  S3_DOCKER_CACHE_BUCKET: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
-  RUNS_ON_S3_BUCKET_CACHE: ${{ secrets.S3_DOCKER_CACHE_BUCKET }}
+  RUNS_ON_BUCKET_NAME: ${{ vars.RUNS_ON_BUCKET_NAME }}
   AWS_REGION: eu-west-1
   AFFECTED_ALL: ${{ secrets.AFFECTED_ALL }}
   SERVERSIDE_FEATURES_ON: ''
   GENERATED_FILES: ${{ github.sha }}.tar.gz
-  CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache
   YARN_ENABLE_HARDENED_MODE: '0'
 
 jobs:
@@ -62,8 +60,6 @@ jobs:
     permissions:
       actions: read
       contents: read
-    outputs:
-      json: ${{ steps.matrix-output.outputs.json }}
     env:
       # Just so this is not an unassigned variable
       AFFECTED_ALL: ''
@@ -89,10 +85,12 @@ jobs:
           DOCKER_TYPE="$(echo '${{ matrix.chunk }}' | jq -r '.docker_type')"
           APP_HOME="$(echo '${{ matrix.chunk }}' | jq -r '.home')"
           APP_DIST_HOME="$(echo '${{ matrix.chunk }}' | jq -r '.dist')"
-          echo AFFECTED_PROJECTS="$AFFECTED_PROJECTS" >> "$GITHUB_ENV"
-          echo DOCKER_TYPE="$DOCKER_TYPE" >> "$GITHUB_ENV"
-          echo APP_HOME="$APP_HOME" >> "$GITHUB_ENV"
-          echo APP_DIST_HOME="$APP_DIST_HOME" >> "$GITHUB_ENV"
+          {
+            echo "AFFECTED_PROJECTS=$AFFECTED_PROJECTS"
+            echo "DOCKER_TYPE=$DOCKER_TYPE"
+            echo "APP_HOME=$APP_HOME"
+            echo "APP_DIST_HOME=$APP_DIST_HOME"
+          } >> "$GITHUB_ENV"
         continue-on-error: true
 
       - name: checkout
@@ -162,7 +160,9 @@ jobs:
         id: dockerbuild
         if: steps.gather.outcome == 'success'
         env:
+          GIT_COMMIT_SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
+          S3_DOCKER_CACHE_BUCKET: ${{ vars.S3_DOCKER_CACHE_BUCKET }}
         run: |
           set -x
           echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
@@ -173,7 +173,9 @@ jobs:
       - name: Building Docker images Retry
         if: steps.gather.outcome == 'success' && steps.dockerbuild.outcome == 'failure'
         env:
+          GIT_COMMIT_SHA: ${{ github.sha }}
           DOCKER_BASE_IMAGE_REGISTRY: ${{ env.DOCKER_BASE_IMAGE_REGISTRY }}
+          S3_DOCKER_CACHE_BUCKET: ${{ vars.S3_DOCKER_CACHE_BUCKET }}
         run: |
           set -x
           echo "Node image tag is: '${NODE_IMAGE_VERSION}'"
@@ -191,6 +193,22 @@ jobs:
             target: ${{ env.JSON_target }}
             imageName: ${{ env.JSON_imageName }}
             imageTag: ${{ env.JSON_imageTag }}
+
+  e2e:
+    uses: ./.github/workflows/e2e.yml
+    needs:
+      - prepare
+    if: ${{ needs.prepare.outputs.E2E_CHUNKS && needs.prepare.outputs.DEPLOY_FEATURE == 'false' }}
+    secrets: inherit
+    with:
+      e2e_build_id: '${{ needs.prepare.outputs.E2E_BUILD_ID }}-${{ github.run_attempt }}'
+      nx_base: ${{ needs.prepare.outputs.NX_BASE }}
+      nx_head: ${{ needs.prepare.outputs.NX_HEAD }}
+      affected_projects: ${{ matrix.projects }}
+    strategy:
+      fail-fast: false
+      matrix: ${{ fromJson(needs.prepare.outputs.E2E_CHUNKS) }}
+
   tests:
     needs:
       - prepare
@@ -221,7 +239,6 @@ jobs:
         uses: ./.github/actions/unit-test
         with:
           dd-api-key: '${{ secrets.DD_API_KEY }}'
-          codecov-token: ${{ secrets.CODECOV_TOKEN }}
           aws-access-key-id: ${{ secrets.AWS_ACCESS_KEY_ID }}
           aws-secret-access-key: ${{ secrets.AWS_SECRET_ACCESS_KEY }}
           docker-registry: 821090935708.dkr.ecr.eu-west-1.amazonaws.com/

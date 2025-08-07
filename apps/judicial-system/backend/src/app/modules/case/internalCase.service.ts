@@ -53,6 +53,7 @@ import { CourtDocumentFolder, CourtService } from '../court'
 import { courtSubtypes } from '../court/court.service'
 import { Defendant, DefendantService } from '../defendant'
 import { EventService } from '../event'
+import { EventLog } from '../event-log'
 import { CaseFile, FileService } from '../file'
 import { IndictmentCount, IndictmentCountService } from '../indictment-count'
 import { Offense } from '../indictment-count/models/offense.model'
@@ -231,9 +232,11 @@ export class InternalCaseService {
   private async uploadCourtRecordPdfToCourt(
     theCase: Case,
     user: TUser,
+    buffer?: Buffer,
   ): Promise<boolean> {
     try {
-      const pdf = await getCourtRecordPdfAsBuffer(theCase, this.formatMessage)
+      const pdf =
+        buffer || (await getCourtRecordPdfAsBuffer(theCase, this.formatMessage))
 
       const fileName = this.formatMessage(courtUpload.courtRecord, {
         courtCaseNumber: theCase.courtCaseNumber,
@@ -323,6 +326,22 @@ export class InternalCaseService {
       .catch((reason) => {
         this.logger.error(
           `Faild to deliver the ruling for case ${theCase.id} to court`,
+          { reason },
+        )
+
+        return false
+      })
+  }
+
+  private async deliverSignedCourtRecordPdfToCourt(
+    theCase: Case,
+    user: TUser,
+  ): Promise<boolean> {
+    return this.getSignedCourtRecordPdf(theCase)
+      .then((pdf) => this.uploadCourtRecordPdfToCourt(theCase, user, pdf))
+      .catch((reason) => {
+        this.logger.error(
+          `Failed to deliver the signed court record for case ${theCase.id} to court`,
           { reason },
         )
 
@@ -630,9 +649,10 @@ export class InternalCaseService {
 
     const mappedSubtypes = subtypeList.flatMap((key) => courtSubtypes[key])
     const indictmentIssuedByProsecutorAndReceivedByCourt =
-      theCase.eventLogs?.find(
-        (eventLog) => eventLog.eventType === EventType.INDICTMENT_CONFIRMED,
-      )?.created
+      EventLog.getEventLogDateByEventType(
+        EventType.INDICTMENT_CONFIRMED,
+        theCase.eventLogs,
+      )
 
     return this.courtService
       .updateIndictmentCaseWithIndictmentInfo(
@@ -754,7 +774,10 @@ export class InternalCaseService {
               prosecutorsOffice: theCase.creatingProsecutor?.institution?.name,
               caseNumber,
             },
-          )} ${this.formatMessage(notifications.emailTail)}`,
+          )} ${this.formatMessage(notifications.emailTail, {
+            linkStart: `<a href="${this.config.clientUrl}">`,
+            linkEnd: '</a>',
+          })}`,
         ),
       )
       .then(() => ({ delivered: true }))
@@ -835,6 +858,17 @@ export class InternalCaseService {
     await this.refreshFormatMessage()
 
     return this.deliverSignedRulingPdfToCourt(theCase, user).then(
+      (delivered) => ({ delivered }),
+    )
+  }
+
+  async deliverSignedCourtRecordToCourt(
+    theCase: Case,
+    user: TUser,
+  ): Promise<DeliverResponse> {
+    await this.refreshFormatMessage()
+
+    return this.deliverSignedCourtRecordPdfToCourt(theCase, user).then(
       (delivered) => ({ delivered }),
     )
   }
@@ -1316,7 +1350,13 @@ export class InternalCaseService {
         },
         { model: DateLog, as: 'dateLogs' },
       ],
-      attributes: ['courtCaseNumber', 'id'],
+      attributes: [
+        'courtCaseNumber',
+        'id',
+        'state',
+        'indictmentRulingDecision',
+        'rulingDate',
+      ],
       where: {
         type: CaseType.INDICTMENT,
         id: caseId,

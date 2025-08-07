@@ -70,6 +70,12 @@ export class Applicant extends Model<Applicant> {
   municipality?: string
 
   @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  delegationType?: string
+
+  @Column({
     type: DataType.ENUM,
     allowNull: false,
     values: Object.values(ApplicantTypesEnum),

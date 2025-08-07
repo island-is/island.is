@@ -23,7 +23,7 @@ import {
   SignedDocument,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import { RequestRulingSignatureMutation } from '@island.is/judicial-system-web/src/components/SigningModal/requestRulingSignature.generated'
+import { RequestRulingSignatureMutation } from '@island.is/judicial-system-web/src/components/Modals/SigningModal/requestRulingSignature.generated'
 import {
   CaseDecision,
   CaseState,

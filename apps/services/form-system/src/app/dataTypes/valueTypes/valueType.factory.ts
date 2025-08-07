@@ -23,7 +23,7 @@ export class ValueTypeFactory {
       case FieldTypesEnum.HOMESTAY_NUMBER:
         keys = ['homestayNumber']
         return this.pickSettings(valueType, keys)
-      case FieldTypesEnum.CANDITATE:
+      case FieldTypesEnum.CANDIDATE:
         keys = [
           'kennitala',
           'name',

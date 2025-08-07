@@ -162,6 +162,8 @@ const FormProvider = ({ children }: Props) => {
 
             if (theCase) {
               onCompleted(theCase)
+            } else {
+              onError()
             }
           }
         })
@@ -171,7 +173,8 @@ const FormProvider = ({ children }: Props) => {
   )
 
   useEffect(() => {
-    if (!isAuthenticated) {
+    const isRoot = /^\/?$/.test(window.location.pathname)
+    if (!isRoot && !isAuthenticated) {
       window.location.assign(
         `${api.apiUrl}/api/auth/login?redirectRoute=${window.location.pathname}`,
       )

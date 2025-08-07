@@ -32,15 +32,12 @@ import { OJOIAIdInput } from '../models/id.input'
 import { OJOIAApplicationCaseResponse } from '../models/applicationCase.response'
 import { GetPdfResponse } from '../models/getPdf.response'
 import { GetInvolvedPartySignaturesInput } from '../models/getInvolvedPartySignatures.input'
-import {
-  GetInvolvedPartySignature,
-  InvolvedPartySignatures,
-} from '../models/getInvolvedPartySignatures.response'
+import { GetInvolvedPartySignature } from '../models/getInvolvedPartySignatures.response'
 import { OJOIApplicationAdvertTemplateTypesResponse } from '../models/applicationAdvertTemplateTypes.response'
 import { OJOIApplicationAdvertTemplateResponse } from '../models/applicationAdvertTemplate.response'
 import { GetAdvertTemplateInput } from '../models/getAdvertTemplate.input'
 
-@Scopes(ApiScope.internal)
+@Scopes(ApiScope.ojoiAdverts, ApiScope.internal)
 @UseGuards(IdsUserGuard, ScopesGuard)
 @FeatureFlag(Features.officialJournalOfIceland)
 @Resolver()

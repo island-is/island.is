@@ -23,6 +23,7 @@ export class CriminalRecordSubmissionService extends BaseTemplateApiService {
   }
 
   async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
+    logger.info('AfgreidaSakavottord Starting Submit Application Process')
     const { paymentUrl } = application.externalData.createCharge.data as {
       paymentUrl: string
     }

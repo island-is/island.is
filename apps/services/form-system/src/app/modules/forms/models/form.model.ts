@@ -58,6 +58,7 @@ export class Form extends Model<Form> {
   @Column({
     type: DataType.JSON,
     allowNull: true,
+    defaultValue: new LanguageType(),
   })
   organizationDisplayName?: LanguageType
 
@@ -134,6 +135,13 @@ export class Form extends Model<Form> {
     allowNull: true,
   })
   dependencies?: Dependency[]
+
+  @Column({
+    type: DataType.JSONB,
+    allowNull: false,
+    defaultValue: [],
+  })
+  allowedDelegationTypes!: string[]
 
   @HasMany(() => Section)
   sections!: Section[]

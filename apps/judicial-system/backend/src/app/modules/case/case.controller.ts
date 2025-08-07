@@ -18,7 +18,6 @@ import {
   UseInterceptors,
 } from '@nestjs/common'
 import {
-  ApiAcceptedResponse,
   ApiCreatedResponse,
   ApiOkResponse,
   ApiQuery,
@@ -64,11 +63,11 @@ import {
   districtCourtAssistantRule,
   districtCourtJudgeRule,
   districtCourtRegistrarRule,
-  prisonSystemStaffRule,
   prosecutorRepresentativeRule,
   prosecutorRule,
   publicProsecutorStaffRule,
 } from '../../guards'
+import { CivilClaimantService } from '../defendant'
 import { EventService } from '../event'
 import { UserService } from '../user'
 import { CreateCaseDto } from './dto/createCase.dto'
@@ -123,6 +122,7 @@ export class CaseController {
     private readonly userService: UserService,
     private readonly eventService: EventService,
     private readonly pdfService: PdfService,
+    private readonly civilClaimantService: CivilClaimantService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -280,6 +280,14 @@ export class CaseController {
       )
     }
 
+    if (update.hasCivilClaims !== undefined) {
+      if (update.hasCivilClaims) {
+        await this.civilClaimantService.create(theCase)
+      } else {
+        await this.civilClaimantService.deleteAll(theCase.id)
+      }
+    }
+
     // If the case comes from LOKE then we don't want to allow the removal or
     // moving around of the first police case number as that coupled with the
     // case id is the identifier used to update the case in LOKE.
@@ -346,19 +354,7 @@ export class CaseController {
   }
 
   @UseGuards(JwtAuthUserGuard, RolesGuard)
-  @RolesRules(
-    prosecutorRule,
-    prosecutorRepresentativeRule,
-    publicProsecutorStaffRule,
-    districtCourtJudgeRule,
-    districtCourtRegistrarRule,
-    districtCourtAssistantRule,
-    courtOfAppealsJudgeRule,
-    courtOfAppealsRegistrarRule,
-    courtOfAppealsAssistantRule,
-    prisonSystemStaffRule,
-    defenderRule,
-  )
+  @RolesRules(defenderRule)
   @UseInterceptors(CaseListInterceptor)
   @Get('cases')
   @ApiOkResponse({

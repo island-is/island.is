@@ -7,10 +7,11 @@ import {
   ApplicationTemplate,
   ApplicationTypes,
   DefaultEvents,
+  defineTemplateApi,
   NationalRegistryUserApi,
   UserProfileApi,
 } from '@island.is/application/types'
-import { Events, Roles, States } from './constants'
+import { ApiActions, Events, Roles, States } from './constants'
 import { dataSchema } from './dataSchema'
 import { m } from './messages'
 import {
@@ -18,7 +19,7 @@ import {
   pruneAfterDays,
 } from '@island.is/application/core'
 import { Features } from '@island.is/feature-flags'
-import { CanSignApi, CurrentCollectionApi, GetListApi } from '../dataProviders'
+import { CanSignApi, GetListApi } from '../dataProviders'
 import { CodeOwners } from '@island.is/shared/constants'
 
 const signListTemplate: ApplicationTemplate<
@@ -66,7 +67,6 @@ const signListTemplate: ApplicationTemplate<
               api: [
                 NationalRegistryUserApi,
                 UserProfileApi,
-                CurrentCollectionApi,
                 CanSignApi,
                 GetListApi,
               ],
@@ -121,12 +121,11 @@ const signListTemplate: ApplicationTemplate<
           status: 'completed',
           progress: 1,
           lifecycle: pruneAfterDays(30),
-          //Todo: add back once needed
-          /*onEntry: defineTemplateApi({
+          onEntry: defineTemplateApi({
             action: ApiActions.submitApplication,
             shouldPersistToExternalData: true,
             throwOnError: true,
-          }),*/
+          }),
           roles: [
             {
               id: Roles.APPLICANT,

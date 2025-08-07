@@ -16,6 +16,7 @@ import {
 } from '@island.is/judicial-system-web/src/components'
 import { CaseFileCategory } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
+  useFileList,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -37,6 +38,9 @@ const WithdrawnAppealCase = () => {
   const { handleUpload, handleRetry, handleRemove } = useS3Upload(
     workingCase.id,
   )
+  const { onOpenFile } = useFileList({
+    caseId: workingCase.id,
+  })
 
   const isStepValid = allFilesDoneOrError && workingCase.appealCaseNumber
 
@@ -77,6 +81,7 @@ const WithdrawnAppealCase = () => {
                 updateUploadFile,
               )
             }
+            onOpenFile={(file) => onOpenFile(file)}
             onRemove={(file) => handleRemove(file, removeUploadFile)}
             onRetry={(file) => handleRetry(file, updateUploadFile)}
           />

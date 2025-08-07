@@ -1,0 +1,10 @@
+query UserProfileActorProfile {
+  userProfileActorProfile {
+    email
+    emailStatus
+    needsNudge
+    nationalId
+    emailNotifications
+    emailVerified
+  }
+}

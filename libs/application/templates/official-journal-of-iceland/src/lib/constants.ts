@@ -14,6 +14,7 @@ export const DEPARTMENT_C = 'c-deild'
 export enum ApplicationAttachmentType {
   ORIGINAL = 'frumrit',
   ADDITIONS = 'fylgiskjol',
+  SUPPORTING = 'fylgigogn',
 }
 
 export const DEFAULT_PAGE = 1

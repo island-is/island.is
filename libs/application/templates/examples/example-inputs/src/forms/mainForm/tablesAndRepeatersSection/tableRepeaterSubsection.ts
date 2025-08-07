@@ -3,9 +3,10 @@ import {
   buildMultiField,
   buildSubSection,
   buildTableRepeaterField,
+  coreErrorMessages,
 } from '@island.is/application/core'
-import { FriggSchoolsByMunicipality } from '../../../utils/types'
 import { friggSchoolsByMunicipalityQuery } from '../../../graphql/sampleQuery'
+import { FriggSchoolsByMunicipality } from '../../../utils/types'
 
 export const tableRepeaterSubsection = buildSubSection({
   id: 'repeater',
@@ -39,6 +40,7 @@ export const tableRepeaterSubsection = buildSubSection({
           getStaticTableData: (_application) => {
             // Possibility to populate the table with data from the answers or external data
             // Populated data will not be editable or deletable
+            // The prepopulated data will not be automatically run through the format function
             return [
               {
                 input: 'John Doe',
@@ -115,6 +117,8 @@ export const tableRepeaterSubsection = buildSubSection({
             selectAsyncPrimary: {
               component: 'selectAsync',
               label: 'Primary Select Async',
+              placeholder: 'Placeholder...',
+              loadingError: coreErrorMessages.failedDataProvider,
               loadOptions: async ({ apolloClient }) => {
                 const { data } =
                   await apolloClient.query<FriggSchoolsByMunicipality>({
@@ -133,6 +137,7 @@ export const tableRepeaterSubsection = buildSubSection({
               component: 'selectAsync',
               label: 'Reliant Select Async',
               updateOnSelect: ['selectAsyncPrimary'],
+              loadingError: coreErrorMessages.failedDataProvider,
               loadOptions: async ({ apolloClient, selectedValues }) => {
                 try {
                   const { data } =
@@ -159,8 +164,11 @@ export const tableRepeaterSubsection = buildSubSection({
           },
           table: {
             // Format values for display in the table
+            // In the format function, you can use the value, index in the repeater and the application object
             format: {
-              input: (value) => `${value} - custom format`,
+              input: (value, _i, _application) => {
+                return `${value} - custom format`
+              },
               nationalIdWithName: (value) => {
                 return `${value} - custom format`
               },
