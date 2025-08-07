@@ -1,5 +1,4 @@
 import {
-  buildDescriptionField,
   buildFieldsRepeaterField,
   buildMultiField,
   buildRadioField,
@@ -40,6 +39,7 @@ export const capitalIncomeSubSection = buildSubSection({
           minRows: 1,
           formTitleNumbering: 'none',
           marginTop: 0,
+
           condition: (answers) =>
             getValueViaPath(answers, 'capitalIncome.otherIncome') === YES,
           fields: {
@@ -47,6 +47,7 @@ export const capitalIncomeSubSection = buildSubSection({
               component: 'input',
               label: payoutMessages.capitalIncome.amountLabel,
               currency: true,
+              required: true,
             },
           },
         }),

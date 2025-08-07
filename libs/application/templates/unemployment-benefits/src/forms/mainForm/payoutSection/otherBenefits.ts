@@ -1,24 +1,19 @@
 import {
-  buildAlertMessageField,
-  buildDateField,
   buildDescriptionField,
   buildFieldsRepeaterField,
-  buildFileUploadField,
   buildMultiField,
   buildRadioField,
-  buildSelectField,
   buildSubSection,
-  buildTextField,
   coreMessages,
   getValueViaPath,
   NO,
   YES,
+  YesOrNoEnum,
 } from '@island.is/application/core'
 import { payout as payoutMessages } from '../../../lib/messages'
 import {
   GaldurDomainModelsSettingsIncomeTypesIncomeTypeDTO,
   GaldurDomainModelsSettingsPensionFundsPensionFundDTO,
-  GaldurDomainModelsSettingsUnionsUnionDTO,
 } from '@island.is/clients/vmst-unemployment'
 
 export const otherBenefitsSubSection = buildSubSection({
@@ -31,30 +26,43 @@ export const otherBenefitsSubSection = buildSubSection({
       description: payoutMessages.otherBenefits.pageDescription,
       children: [
         buildDescriptionField({
-          id: 'otherBenefits.paymentsFromInsuraceDescription',
-          title: payoutMessages.otherBenefits.paymentsFromInsuraceDescription,
+          id: 'otherBenefits.paymentsDescription',
+          title: payoutMessages.otherBenefits.paymentsDescription,
           titleVariant: 'h5',
         }),
-        buildTextField({
-          id: 'otherBenefits.paymentsFromInsurace',
-          title: payoutMessages.otherBenefits.paymentsFromInsurace,
-          variant: 'currency',
-        }),
-        buildDescriptionField({
-          id: 'otherBenefits.paymentsFromPensionDescription',
-          title: payoutMessages.otherBenefits.paymentsFromPensionDescription,
-          titleVariant: 'h5',
+        buildRadioField({
+          id: 'otherBenefits.receivingBenefits',
+          width: 'half',
+          options: [
+            {
+              value: YES,
+              label: coreMessages.radioYes,
+            },
+            {
+              value: NO,
+              label: coreMessages.radioNo,
+            },
+          ],
         }),
         buildFieldsRepeaterField({
-          id: 'otherBenefits.paymentsFromPension',
+          id: 'otherBenefits.payments',
           minRows: 1,
           formTitleNumbering: 'none',
           marginTop: 0,
+          condition: (answers) => {
+            const receivingBenefits =
+              getValueViaPath<string>(
+                answers,
+                'otherBenefits.receivingBenefits',
+                '',
+              ) ?? ''
+
+            return receivingBenefits === YesOrNoEnum.YES
+          },
           fields: {
             typeOfPayment: {
               component: 'select',
               label: payoutMessages.otherBenefits.typeOfPayment,
-              width: 'half',
               options: (application, _, locale) => {
                 const incomeTypes =
                   getValueViaPath<
@@ -72,98 +80,9 @@ export const otherBenefitsSubSection = buildSubSection({
                 }))
               },
             },
-            paymentAmount: {
-              component: 'input',
-              label: payoutMessages.otherBenefits.paymentAmount,
-              width: 'half',
-              currency: true,
-            },
-          },
-        }),
-        buildDescriptionField({
-          id: 'otherBenefits.paymentsFromSicknessAllowance',
-          title: payoutMessages.otherBenefits.paymentsFromSicknessAllowance,
-          titleVariant: 'h5',
-        }),
-        buildSelectField({
-          id: 'otherBenefits.paymentsFromSicknessAllowance.union',
-          title: payoutMessages.otherBenefits.union,
-          options: (application, _, locale) => {
-            const unions =
-              getValueViaPath<GaldurDomainModelsSettingsUnionsUnionDTO[]>(
-                application.externalData,
-                'unemploymentApplication.data.supportData.unions',
-              ) ?? []
-            return unions.map((union) => ({
-              value: union.id ?? '',
-              label:
-                (locale === 'is' ? union.name : union.english ?? union.name) ??
-                '',
-            }))
-          },
-        }),
-        buildDateField({
-          id: 'otherBenefits.paymentsFromSicknessAllowance.dateFrom',
-          title: payoutMessages.otherBenefits.dateFrom,
-          width: 'half',
-        }),
-        buildDateField({
-          id: 'otherBenefits.paymentsFromSicknessAllowance.dateTo',
-          title: payoutMessages.otherBenefits.dateTo,
-          width: 'half',
-        }),
-        buildFileUploadField({
-          id: 'otherBenefits.paymentsFromSicknessAllowance.file',
-          uploadHeader: payoutMessages.otherBenefits.fileHeader,
-          uploadDescription: payoutMessages.otherBenefits.fileDescription,
-          uploadAccept: '.pdf, .docx, .rtf',
-        }),
-        buildDescriptionField({
-          id: 'otherBenefits.payedFromPrivatePensionFundQuestion',
-          title:
-            payoutMessages.otherBenefits.payedFromPrivatePensionFundQuestion,
-          titleVariant: 'h5',
-        }),
-        buildAlertMessageField({
-          id: 'otherBenefits.payedFromPrivatePensionFundAlertMessage',
-          message:
-            payoutMessages.otherBenefits
-              .payedFromPrivatePensionFundAlertMessage,
-          alertType: 'info',
-          doesNotRequireAnswer: true,
-          marginBottom: 0,
-        }),
-        buildRadioField({
-          id: 'otherBenefits.payedFromPrivatePensionFund',
-          width: 'half',
-          space: 0,
-          options: [
-            {
-              value: YES,
-              label: coreMessages.radioYes,
-            },
-            {
-              value: NO,
-              label: coreMessages.radioNo,
-            },
-          ],
-        }),
-        buildFieldsRepeaterField({
-          id: 'otherBenefits.payedFromPrivatePensionFundDetails',
-          condition: (answers) =>
-            getValueViaPath(
-              answers,
-              'otherBenefits.payedFromPrivatePensionFund',
-            ) === YES,
-          minRows: 1,
-          formTitleNumbering: 'none',
-          marginTop: 0,
-          fields: {
-            privatePensionFund: {
+            payer: {
               component: 'select',
-              label:
-                payoutMessages.otherBenefits.payedFromPrivatePensionFundLabel,
-              width: 'half',
+              label: payoutMessages.otherBenefits.payer,
               options: (application) => {
                 const incomeTypes =
                   getValueViaPath<
@@ -172,6 +91,8 @@ export const otherBenefitsSubSection = buildSubSection({
                     application.externalData,
                     'unemploymentApplication.data.supportData.privatePensionFunds',
                   ) ?? []
+
+                // TODO get other payment types and mix together in one list
                 return incomeTypes?.map((incomeTypes) => ({
                   value: incomeTypes.id ?? '',
                   label: incomeTypes.name ?? '',
@@ -180,12 +101,39 @@ export const otherBenefitsSubSection = buildSubSection({
             },
             paymentAmount: {
               component: 'input',
-              label: payoutMessages.otherBenefits.amountFromPrivatePensionFund,
-              width: 'half',
+              label: payoutMessages.otherBenefits.paymentAmount,
               currency: true,
+              type: 'number',
             },
           },
         }),
+
+        //TODO move this into repeater field when api is ready
+        // buildDateField({
+        //   id: 'otherBenefits.paymentsFromSicknessAllowance.dateFrom',
+        //   title: payoutMessages.otherBenefits.dateFrom,
+        //   width: 'half',
+        // }),
+        // buildDateField({
+        //   id: 'otherBenefits.paymentsFromSicknessAllowance.dateTo',
+        //   title: payoutMessages.otherBenefits.dateTo,
+        //   width: 'half',
+        // }),
+        // buildFileUploadField({
+        //   id: 'otherBenefits.paymentsFromSicknessAllowance.file',
+        //   uploadHeader: payoutMessages.otherBenefits.fileHeader,
+        //   uploadDescription: payoutMessages.otherBenefits.fileDescription,
+        //   uploadAccept: '.pdf, .docx, .rtf',
+        // }),
+        // buildAlertMessageField({
+        //   id: 'otherBenefits.payedFromPrivatePensionFundAlertMessage',
+        //   message:
+        //     payoutMessages.otherBenefits
+        //       .payedFromPrivatePensionFundAlertMessage,
+        //   alertType: 'info',
+        //   doesNotRequireAnswer: true,
+        //   marginBottom: 0,
+        // }),
       ],
     }),
   ],

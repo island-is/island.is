@@ -3,8 +3,13 @@ import {
   BaseField,
   FieldTypes,
 } from '@island.is/application/types'
+import { Locale } from '@island.is/shared/types'
 
-export const getDefaultValue = (field: BaseField, application: Application) => {
+export const getDefaultValue = (
+  field: BaseField,
+  application: Application,
+  locale: Locale,
+) => {
   const { defaultValue, type } = field
 
   if (type === FieldTypes.TEXT && !defaultValue) {
@@ -16,7 +21,7 @@ export const getDefaultValue = (field: BaseField, application: Application) => {
   }
 
   if (typeof defaultValue === 'function') {
-    return defaultValue(application, field)
+    return defaultValue(application, field, locale)
   }
 
   return defaultValue

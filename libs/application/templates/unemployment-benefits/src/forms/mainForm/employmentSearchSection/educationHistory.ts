@@ -10,13 +10,18 @@ import {
 import { employmentSearch as employmentSearchMessages } from '../../../lib/messages'
 import { education as educationMessages } from '../../../lib/messages'
 
-import { Application } from '@island.is/application/types'
-import { GaldurDomainModelsEducationProgramDTO } from '@island.is/clients/vmst-unemployment'
+import { Application, Field } from '@island.is/application/types'
+import {
+  GaldurDomainModelsEducationEducationDegreeDTO,
+  GaldurDomainModelsEducationEducationSubjectDTO,
+  GaldurDomainModelsEducationProgramDTO,
+} from '@island.is/clients/vmst-unemployment'
 import { formatDate } from '../../../utils'
 import {
   isCurrentlyStudying,
   wasStudyingLastTwelveMonths,
 } from '../../../utils/educationInformation'
+import { Locale } from '@island.is/shared/types'
 
 export const educationHistorySubSection = buildSubSection({
   id: 'educationHistorySubSection',
@@ -40,16 +45,20 @@ export const educationHistorySubSection = buildSubSection({
             isCurrentlyStudying(answers),
         }),
         buildTextField({
-          id: 'educationHistory.currentStudies.programName',
+          id: 'educationHistory.currentStudies.levelOfStudy',
           title: educationMessages.labels.levelOfStudyLabel,
           width: 'half',
           backgroundColor: 'white',
           readOnly: true,
-          defaultValue: (application: Application) => {
+          defaultValue: (
+            application: Application,
+            field: Field,
+            locale: Locale,
+          ) => {
             const programId =
               getValueViaPath<string>(
                 application.answers,
-                'education.currentEducation.programName',
+                'education.currentEducation.levelOfStudy',
               ) ?? ''
             const education =
               getValueViaPath<GaldurDomainModelsEducationProgramDTO[]>(
@@ -57,7 +66,99 @@ export const educationHistorySubSection = buildSubSection({
                 'unemploymentApplication.data.supportData.educationPrograms',
               ) ?? []
             const program = education.find((item) => item.id === programId)
-            return program?.name ?? ''
+            return program?.name
+              ? locale === 'is'
+                ? program?.name
+                : program?.english
+              : ''
+          },
+          condition: (answers) =>
+            wasStudyingLastTwelveMonths(answers) &&
+            isCurrentlyStudying(answers),
+        }),
+        buildTextField({
+          id: 'educationHistory.currentStudies.courseOfStudy',
+          title: educationMessages.labels.courseOfStudyLabel,
+          width: 'half',
+          backgroundColor: 'white',
+          readOnly: true,
+          defaultValue: (application: Application) => {
+            const education = getValueViaPath<
+              GaldurDomainModelsEducationProgramDTO[]
+            >(
+              application.externalData,
+              'unemploymentApplication.data.supportData.educationPrograms',
+            )
+
+            const courseOfStudyAnswer =
+              getValueViaPath<string>(
+                application.answers,
+                'education.currentEducation.courseOfStudy',
+                '',
+              ) ?? ''
+
+            let chosenSubject:
+              | GaldurDomainModelsEducationEducationSubjectDTO
+              | undefined
+
+            education?.find((program) => {
+              const courseOfStudy = program.degrees?.find((degree) => {
+                return degree.subjects?.find((subject) => {
+                  const match = subject.id === courseOfStudyAnswer
+                  if (match) {
+                    chosenSubject = subject
+                  }
+                  return match
+                })
+              })
+
+              return courseOfStudy
+            })
+            return chosenSubject ? chosenSubject.name : ''
+          },
+          condition: (answers) =>
+            wasStudyingLastTwelveMonths(answers) &&
+            isCurrentlyStudying(answers),
+        }),
+        buildTextField({
+          id: 'educationHistory.currentStudies.programDegree',
+          title: educationMessages.labels.schoolDegreeLabel,
+          width: 'half',
+          backgroundColor: 'white',
+          readOnly: true,
+          defaultValue: (
+            application: Application,
+            field: Field,
+            locale: Locale,
+          ) => {
+            const degreeAnswer =
+              getValueViaPath<string>(
+                application.answers,
+                'education.currentEducation.programDegree',
+              ) ?? ''
+            const education =
+              getValueViaPath<GaldurDomainModelsEducationProgramDTO[]>(
+                application.externalData,
+                'unemploymentApplication.data.supportData.educationPrograms',
+              ) ?? []
+            let degreeValue:
+              | GaldurDomainModelsEducationEducationDegreeDTO
+              | undefined
+
+            education?.find((program) => {
+              program.degrees?.find((degree) => {
+                const match = degree.id === degreeAnswer
+                if (match) {
+                  degreeValue = degree
+                }
+                return match
+              })
+            })
+            return degreeValue
+              ? locale === 'is'
+                ? degreeValue.name
+                : degreeValue.english
+              : ''
           },
           condition: (answers) =>
             wasStudyingLastTwelveMonths(answers) &&
@@ -81,24 +182,7 @@ export const educationHistorySubSection = buildSubSection({
             wasStudyingLastTwelveMonths(answers) &&
             isCurrentlyStudying(answers),
         }),
-        buildTextField({
-          id: 'educationHistory.currentStudies.programDegree',
-          title: educationMessages.labels.schoolDegreeLabel,
-          width: 'half',
-          backgroundColor: 'white',
-          readOnly: true,
-          defaultValue: (application: Application) => {
-            const degree =
-              getValueViaPath<string>(
-                application.answers,
-                'education.currentEducation.programDegree',
-              ) ?? ''
-            return degree
-          },
-          condition: (answers) =>
-            wasStudyingLastTwelveMonths(answers) &&
-            isCurrentlyStudying(answers),
-        }),
+
         buildTextField({
           id: 'educationHistory.currentStudies.programEnd',
           title: educationMessages.labels.expectedEndOfStudyLabel,

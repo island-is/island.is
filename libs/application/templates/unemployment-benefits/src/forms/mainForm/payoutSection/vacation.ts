@@ -58,6 +58,7 @@ export const vacationSubSection = buildSubSection({
           id: 'vacation.amount',
           title: payoutMessages.vacation.vacationDaysLabel,
           variant: 'number',
+          min: 0,
           condition: doYouHaveVacationDays,
         }),
         buildFieldsRepeaterField({
@@ -67,16 +68,17 @@ export const vacationSubSection = buildSubSection({
           marginTop: 0,
           condition: doYouHaveVacationDays,
           fields: {
-            //TODO bæði startDate og endDate eru bara frammí tímann
             startDate: {
               component: 'date',
               label: payoutMessages.vacation.dateStart,
               width: 'half',
+              minDate: new Date(),
             },
             endDate: {
               component: 'date',
               label: payoutMessages.vacation.dateEnd,
               width: 'half',
+              minDate: new Date(),
             },
           },
         }),

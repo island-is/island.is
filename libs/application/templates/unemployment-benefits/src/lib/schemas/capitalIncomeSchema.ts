@@ -14,15 +14,15 @@ export const capitalIncomeSchema = z
       )
       .optional(),
   })
-  .refine(
-    ({ otherIncome, capitalIncomeAmount }) => {
-      return otherIncome === YesOrNoEnum.YES
-        ? !!capitalIncomeAmount &&
-            capitalIncomeAmount.length > 0 &&
-            capitalIncomeAmount.every((val) => !!val.amount)
-        : true
-    },
-    {
-      path: ['capitalIncomeAmount'],
-    },
-  )
+  .superRefine((data, ctx) => {
+    if (data.otherIncome === YesOrNoEnum.YES) {
+      data.capitalIncomeAmount?.forEach((item, index) => {
+        if (!item.amount) {
+          ctx.addIssue({
+            path: ['capitalIncomeAmount', index, 'amount'],
+            code: z.ZodIssueCode.custom,
+          })
+        }
+      })
+    }
+  })

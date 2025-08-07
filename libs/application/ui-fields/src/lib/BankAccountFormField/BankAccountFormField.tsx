@@ -32,7 +32,7 @@ export const BankAccountFormField = ({ field, application, errors }: Props) => {
     application,
     formatMessage,
   )
-  const bankInfo = getDefaultValue(field, application)
+  const bankInfo = getDefaultValue(field, application, locale)
 
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>

@@ -27,8 +27,8 @@ export const applicantInformationSubSection = buildSubSection({
           emailRequired: true,
           phoneRequired: true,
           phoneEnableCountrySelector: true,
-          readOnlyEmailAndPhone: true,
-          readOnly: true,
+          emailAndPhoneReadOnly: true,
+          baseInfoReadOnly: true,
         }).children,
         buildCheckboxField({
           id: 'applicant.otherAddressCheckbox',

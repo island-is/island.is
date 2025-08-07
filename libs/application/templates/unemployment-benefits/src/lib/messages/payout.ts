@@ -201,25 +201,13 @@ export const payout = {
     },
     pageDescription: {
       id: 'vmst.ub.application:payout.otherBenefits.pageDescription#markdown',
-      defaultMessage: `Umsækjendur sem þiggja bætur frá stéttarfélagi eða sjúkradagpeninga þurfa að skila inn staðfestingu ef við á.\n
-Ef viðkomandi er að fá tekjur frá TR þá eru þær komnar inn í reit merktur Greiðslur frá Tryggingastofnun.\n
-Ef viðkomandi er að fá lífeyri þá er upphæðin komin frá RSK í reit merktur Lífeyrisgreiðslur`,
+      defaultMessage: `Ef þú ert að fá greiðslur frá stéttarfélagi, tryggingastofnun eða lífeyrissjóði þá fyllir þú það út hér. Hægt er að bæta við dálkum ef greiðslur berast frá fleiri en einum aðila. `,
       description: 'Other benefits page description',
     },
-    paymentsFromInsuraceDescription: {
-      id: 'vmst.ub.application:payout.otherBenefits.paymentsFromInsuraceDescription',
-      defaultMessage: `Greiðslur frá Tryggingastofnun`,
+    paymentsDescription: {
+      id: 'vmst.ub.application:payout.otherBenefits.paymentsDescription',
+      defaultMessage: `Ert þú að fá greiðslur frá Tryggingastofnun, lífeyrissjóði, séreignasjóði eða sjúkradagpeninga?`,
       description: 'Other benefits payments from insurance description',
-    },
-    paymentsFromInsurace: {
-      id: 'vmst.ub.application:payout.otherBenefits.paymentsFromInsurace',
-      defaultMessage: 'Upphæð á mánuði',
-      description: 'Other benefits payments from insurance label',
-    },
-    paymentsFromPensionDescription: {
-      id: 'vmst.ub.application:payout.otherBenefits.paymentsFromPensionDescription',
-      defaultMessage: `Greiðslur frá lífeyrissjóði/um`,
-      description: 'Other benefits payments from pension description',
     },
     typeOfPayment: {
       id: 'vmst.ub.application:payout.otherBenefits.typeOfPayment',
@@ -231,15 +219,10 @@ Ef viðkomandi er að fá lífeyri þá er upphæðin komin frá RSK í reit mer
       defaultMessage: 'Upphæð á mánuði',
       description: 'Other benefits payment amount label',
     },
-    paymentsFromSicknessAllowance: {
-      id: 'vmst.ub.application:payout.otherBenefits.paymentsFromSicknessAllowance',
-      defaultMessage: 'Greiðsla sjúkradagpeninga',
-      description: 'Other benefits payments from sickness allowance label',
-    },
-    union: {
-      id: 'vmst.ub.application:payout.otherBenefits.union',
-      defaultMessage: 'Stéttarfélag',
-      description: 'Other benefits union label',
+    payer: {
+      id: 'vmst.ub.application:payout.otherBenefits.payer',
+      defaultMessage: 'Greiðandi',
+      description: 'Payer label',
     },
     dateFrom: {
       id: 'vmst.ub.application:payout.otherBenefits.dateFrom',
@@ -261,26 +244,11 @@ Ef viðkomandi er að fá lífeyri þá er upphæðin komin frá RSK í reit mer
       defaultMessage: `Tekið er við skjölum með endingu: .pdf, .docx, .rtf`,
       description: 'Other benefits file description',
     },
-    payedFromPrivatePensionFundQuestion: {
-      id: 'vmst.ub.application:payout.otherBenefits.payedFromPrivatePensionFundQuestion',
-      defaultMessage: 'Ertu að fá greitt úr séreignarsjóði?',
-      description: 'Other benefits payed from private pension fund question',
-    },
     payedFromPrivatePensionFundAlertMessage: {
       id: 'vmst.ub.application:payout.otherBenefits.payedFromPrivatePensionFundAlertMessage#markdown',
       defaultMessage: `Þetta á aðeins við ef að séreignasjóðsgreiðslur eru greiddar út en ekki ef séreignasjóður er greiddur beint inn á lán.`,
       description:
         'Other benefits payed from private pension fund alert message',
-    },
-    payedFromPrivatePensionFundLabel: {
-      id: 'vmst.ub.application:payout.otherBenefits.payedFromPrivatePensionFundLabel',
-      defaultMessage: 'Séreignarsjóður',
-      description: 'Other benefits payed from private pension fund label',
-    },
-    amountFromPrivatePensionFund: {
-      id: 'vmst.ub.application:payout.otherBenefits.amountFromPrivatePensionFund',
-      defaultMessage: 'Upphæð',
-      description: 'Other benefits amount from private pension fund label',
     },
   }),
   capitalIncome: defineMessages({

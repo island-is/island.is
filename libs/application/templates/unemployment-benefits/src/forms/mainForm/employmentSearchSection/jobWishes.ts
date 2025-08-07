@@ -18,6 +18,7 @@ import {
   GaldurDomainModelsSettingsServiceAreasServiceAreaDTO,
 } from '@island.is/clients/vmst-unemployment'
 import { Application } from '@island.is/application/types'
+import { CurrentEmploymentInAnswers, EmploymentStatus } from '../../../shared'
 
 export const jobWishesSubSection = buildSubSection({
   id: 'jobWishesSubSection',
@@ -38,6 +39,7 @@ export const jobWishesSubSection = buildSubSection({
           id: 'jobWishes.jobList',
           title: employmentSearchMessages.jobWishes.employmentListLabel,
           isMulti: true,
+          required: true,
           options: (application, _, locale) => {
             const jobList =
               getValueViaPath<GaldurDomainModelsSettingsJobCodesJobCodeDTO[]>(
@@ -62,6 +64,7 @@ export const jobWishesSubSection = buildSubSection({
           title: employmentSearchMessages.jobWishes.jobPercentage,
           variant: 'number',
           suffix: '%',
+          required: true,
         }),
         buildAlertMessageField({
           id: 'jobWishes.wantedJobAlert',
@@ -78,16 +81,30 @@ export const jobWishesSubSection = buildSubSection({
         buildDateField({
           id: 'jobWishes.jobTimelineStartDate',
           title: employmentSearchMessages.jobWishes.jobTimelineDateLabel,
-          //TODO tengja þetta við rétt starf -> ef var valið með uppsagnafrest
-          // minDate: (application: Application) => {
-          //   const endDate =
-          //     getValueViaPath<string>(
-          //       application.answers,
-          //       'currentSituation.currentJob.endDate',
-          //     ) || ''
-          //   //TODO setja þetta 2 vikur frammí tímann
-          //   return endDate ? new Date(endDate) : new Date()
-          // },
+          required: true,
+          maxDate: new Date(new Date().getTime() + 14 * 24 * 60 * 60 * 1000),
+          minDate: (application: Application) => {
+            const repeaterJobs =
+              getValueViaPath<CurrentEmploymentInAnswers[]>(
+                application.answers,
+                'currentSituation.currentSituationRepeater',
+                [],
+              ) ?? []
+
+            const status =
+              getValueViaPath<EmploymentStatus>(
+                application.answers,
+                'currentSituation.status',
+                undefined,
+              ) ?? undefined
+            //If applicant has a job end timeline
+            if (status === EmploymentStatus.EMPLOYED) {
+              return repeaterJobs[0] && repeaterJobs[0].predictedEndDate
+                ? new Date(repeaterJobs[0].predictedEndDate)
+                : new Date()
+            }
+            return new Date()
+          },
         }),
         buildAlertMessageField({
           id: 'jobWishes.jobTimelineAlert',
@@ -104,6 +121,7 @@ export const jobWishesSubSection = buildSubSection({
         buildRadioField({
           id: 'jobWishes.outsideYourLocation',
           width: 'half',
+          required: true,
           space: 0,
           options: [
             {
@@ -120,6 +138,7 @@ export const jobWishesSubSection = buildSubSection({
           id: 'jobWishes.location',
           title: employmentSearchMessages.jobWishes.location,
           isMulti: true,
+          required: true,
           options: (application, _, locale) => {
             const locations =
               getValueViaPath<

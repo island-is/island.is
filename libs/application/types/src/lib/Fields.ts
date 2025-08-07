@@ -306,7 +306,7 @@ export interface BaseField extends FormItem {
   colSpan?: SpanType
   condition?: Condition
   isPartOfRepeater?: boolean
-  defaultValue?: MaybeWithApplicationAndField<unknown>
+  defaultValue?: MaybeWithApplicationAndFieldAndLocale<unknown>
   doesNotRequireAnswer?: boolean
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']
