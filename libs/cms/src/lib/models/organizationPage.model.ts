@@ -105,15 +105,25 @@ export const mapOrganizationPage = ({
   // Extract top level navigation from sitemap tree
   for (const node of (fields.sitemap?.fields?.tree as SitemapTree)
     ?.childNodes ?? []) {
-    if (
-      node.type === SitemapTreeNodeType.CATEGORY &&
-      Boolean(node.label) &&
-      Boolean(node.slug)
-    ) {
+    if (node.type !== SitemapTreeNodeType.CATEGORY) {
+      continue
+    }
+    if (sys.locale !== 'en' && Boolean(node.label) && Boolean(node.slug)) {
       topLevelNavigation.links.push({
         label: node.label,
         href: `/${getOrganizationPageUrlPrefix(sys.locale)}/${slug}/${
           node.slug
+        }`,
+      })
+    } else if (
+      sys.locale === 'en' &&
+      Boolean(node.labelEN) &&
+      Boolean(node.slugEN)
+    ) {
+      topLevelNavigation.links.push({
+        label: node.labelEN as string,
+        href: `/${getOrganizationPageUrlPrefix(sys.locale)}/${slug}/${
+          node.slugEN
         }`,
       })
     }

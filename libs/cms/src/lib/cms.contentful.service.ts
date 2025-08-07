@@ -89,7 +89,11 @@ import {
   OrganizationPageStandaloneSitemap,
   OrganizationPageStandaloneSitemapLevel2,
 } from './models/organizationPageStandaloneSitemap.model'
-import { SitemapTree, SitemapTreeNodeType } from '@island.is/shared/types'
+import {
+  SitemapTree,
+  SitemapTreeNode,
+  SitemapTreeNodeType,
+} from '@island.is/shared/types'
 import { getOrganizationPageUrlPrefix } from '@island.is/shared/utils'
 import { NewsList } from './models/newsList.model'
 import { GetCmsNewsInput } from './dto/getNews.input'
@@ -1230,6 +1234,40 @@ export class CmsContentfulService {
     )
   }
 
+  private resolveSitemapUrl(
+    node: SitemapTreeNode,
+    organizationPageSlug: string,
+    lang: string,
+  ) {
+    if (node.type !== SitemapTreeNodeType.URL) {
+      return ''
+    }
+
+    switch (node.urlType) {
+      case 'custom':
+        return lang === 'en' ? node.urlEN ?? '' : node.url
+      case 'organizationFrontpage':
+        return `/${getOrganizationPageUrlPrefix(lang)}/${organizationPageSlug}`
+      case 'organizationEventOverview':
+        return `/${getOrganizationPageUrlPrefix(
+          lang,
+        )}/${organizationPageSlug}/${lang === 'en' ? 'events' : 'vidburdir'}`
+
+      case 'organizationNewsOverview':
+        return `/${getOrganizationPageUrlPrefix(
+          lang,
+        )}/${organizationPageSlug}/${lang === 'en' ? 'news' : 'frett'}`
+      case 'organizationPublishedMaterial':
+        return `/${getOrganizationPageUrlPrefix(
+          lang,
+        )}/${organizationPageSlug}/${
+          lang === 'en' ? 'published-material' : 'utgefid-efni'
+        }`
+      default:
+        return ''
+    }
+  }
+
   async getOrganizationPageStandaloneSitemapLevel1(
     input: GetOrganizationPageStandaloneSitemapLevel1Input,
   ): Promise<OrganizationPageStandaloneSitemap | null> {
@@ -1250,10 +1288,12 @@ export class CmsContentfulService {
       return null
     }
 
+    const slugField = input.lang === 'en' ? 'slugEN' : 'slug'
+
     const category = tree.childNodes.find(
       (node) =>
         node.type === SitemapTreeNodeType.CATEGORY &&
-        node.slug === input.categorySlug,
+        node[slugField] === input.categorySlug,
     )
 
     if (!category) {
@@ -1266,17 +1306,21 @@ export class CmsContentfulService {
       childLinks: category.childNodes.map((node) => {
         if (node.type === SitemapTreeNodeType.CATEGORY) {
           return {
-            label: node.label,
+            label: input.lang === 'en' ? node.labelEN ?? '' : node.label,
             href: `/${getOrganizationPageUrlPrefix(input.lang)}/${
               input.organizationPageSlug
-            }/${input.categorySlug}/${node.slug}`,
+            }/${input.categorySlug}/${node[slugField]}`,
             description: node.description,
           }
         }
         if (node.type === SitemapTreeNodeType.URL) {
           return {
-            label: node.label,
-            href: node.url,
+            label: input.lang === 'en' ? node.labelEN ?? '' : node.label,
+            href: this.resolveSitemapUrl(
+              node,
+              input.organizationPageSlug,
+              input.lang,
+            ),
           }
         }
 
@@ -1293,31 +1337,42 @@ export class CmsContentfulService {
       }),
     }
 
-    const parentSubpageResponse =
-      await this.contentfulRepository.getLocalizedEntries<types.IOrganizationParentSubpageFields>(
-        input.lang,
-        {
-          content_type: 'organizationParentSubpage',
-          'sys.id[in]': Array.from(entryNodes.keys()).join(','),
-          limit: 1000,
-        },
-        1,
-      )
+    const pagesResponse = await this.contentfulRepository.getLocalizedEntries<
+      types.IOrganizationParentSubpageFields | types.IOrganizationSubpageFields
+    >(
+      input.lang,
+      {
+        'sys.id[in]': Array.from(entryNodes.keys()).join(','),
+        limit: 1000,
+      },
+      1,
+    )
 
-    for (const parentSubpage of parentSubpageResponse.items) {
-      const nodeList = entryNodes.get(parentSubpage.sys.id)
-      if (
-        !nodeList ||
-        !parentSubpage.fields.slug ||
-        !parentSubpage.fields.title
-      ) {
+    for (const page of pagesResponse.items) {
+      const nodeList = entryNodes.get(page.sys.id)
+      if (!nodeList || !page.fields.slug || !page.fields.title) {
         continue
       }
       for (const node of nodeList) {
-        node.label = parentSubpage.fields.title
-        node.href = `/${getOrganizationPageUrlPrefix(input.lang)}/${
+        node.label = page.fields.title
+        const organizationPageSlug =
+          page.fields.organizationPage.fields.slug ===
           input.organizationPageSlug
-        }/${parentSubpage.fields.slug}`
+            ? input.organizationPageSlug
+            : page.fields.organizationPage.fields.slug
+        if ('organizationParentSubpage' in page.fields) {
+          if (page.fields.organizationParentSubpage?.fields.slug) {
+            node.href = `/${getOrganizationPageUrlPrefix(
+              input.lang,
+            )}/${organizationPageSlug}/${
+              page.fields.organizationParentSubpage.fields.slug
+            }/${page.fields.slug}`
+          }
+        } else {
+          node.href = `/${getOrganizationPageUrlPrefix(
+            input.lang,
+          )}/${organizationPageSlug}/${page.fields.slug}`
+        }
       }
     }
 
@@ -1349,10 +1404,12 @@ export class CmsContentfulService {
       return null
     }
 
+    const slugField = input.lang === 'en' ? 'slugEN' : 'slug'
+
     const category = tree.childNodes.find(
       (node) =>
         node.type === SitemapTreeNodeType.CATEGORY &&
-        node.slug === input.categorySlug,
+        node[slugField] === input.categorySlug,
     )
 
     if (!category) {
@@ -1362,7 +1419,7 @@ export class CmsContentfulService {
     const subcategory = category.childNodes.find(
       (node) =>
         node.type === SitemapTreeNodeType.CATEGORY &&
-        node.slug === input.subcategorySlug,
+        node[slugField] === input.subcategorySlug,
     )
 
     if (!subcategory || subcategory.type !== SitemapTreeNodeType.CATEGORY) {
@@ -1392,7 +1449,11 @@ export class CmsContentfulService {
               if (childNode.type === SitemapTreeNodeType.URL) {
                 return {
                   label: childNode.label,
-                  href: childNode.url,
+                  href: this.resolveSitemapUrl(
+                    childNode,
+                    input.organizationPageSlug,
+                    input.lang,
+                  ),
                   childLinks: [],
                 }
               }
@@ -1415,8 +1476,12 @@ export class CmsContentfulService {
 
         if (node.type === SitemapTreeNodeType.URL) {
           return {
-            label: node.label,
-            href: node.url,
+            label: input.lang === 'en' ? node.labelEN ?? '' : node.label,
+            href: this.resolveSitemapUrl(
+              node,
+              input.organizationPageSlug,
+              input.lang,
+            ),
             childLinks: [],
           }
         }
@@ -1436,32 +1501,43 @@ export class CmsContentfulService {
       }),
     }
 
-    const parentSubpageResponse =
-      await this.contentfulRepository.getLocalizedEntries<types.IOrganizationParentSubpageFields>(
-        input.lang,
-        {
-          content_type: 'organizationParentSubpage',
-          'sys.id[in]': Array.from(entryNodes.keys()).join(','),
-          limit: 1000,
-        },
-        1,
-      )
+    const pagesResponse = await this.contentfulRepository.getLocalizedEntries<
+      types.IOrganizationParentSubpageFields | types.IOrganizationSubpageFields
+    >(
+      input.lang,
+      {
+        'sys.id[in]': Array.from(entryNodes.keys()).join(','),
+        limit: 1000,
+      },
+      1,
+    )
 
-    for (const parentSubpage of parentSubpageResponse.items) {
-      const nodeList = entryNodes.get(parentSubpage.sys.id)
-      if (
-        !nodeList ||
-        !parentSubpage.fields.slug ||
-        !parentSubpage.fields.title
-      ) {
+    for (const page of pagesResponse.items) {
+      const nodeList = entryNodes.get(page.sys.id)
+      if (!nodeList || !page.fields.slug || !page.fields.title) {
         continue
       }
 
+      const organizationPageSlug =
+        page.fields.organizationPage.fields.slug === input.organizationPageSlug
+          ? input.organizationPageSlug
+          : page.fields.organizationPage.fields.slug
+
       for (const node of nodeList) {
-        node.label = parentSubpage.fields.title
-        node.href = `/${getOrganizationPageUrlPrefix(input.lang)}/${
-          input.organizationPageSlug
-        }/${parentSubpage.fields.slug}`
+        node.label = page.fields.title
+        if ('organizationParentSubpage' in page.fields) {
+          if (page.fields.organizationParentSubpage?.fields.slug) {
+            node.href = `/${getOrganizationPageUrlPrefix(
+              input.lang,
+            )}/${organizationPageSlug}/${
+              page.fields.organizationParentSubpage.fields.slug
+            }/${page.fields.slug}`
+          }
+        } else {
+          node.href = `/${getOrganizationPageUrlPrefix(
+            input.lang,
+          )}/${organizationPageSlug}/${page.fields.slug}`
+        }
       }
     }
 
