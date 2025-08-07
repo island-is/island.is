@@ -15,11 +15,13 @@ interface Props {
   onClick?: (id: string) => void
   refetch?: (() => void) | undefined
   focus?: boolean
+  onDelete: (id: string) => void
 }
 
 export const ApplicationList = ({
   applications,
   refetch,
+  onDelete: deleteApplication,
   focus = false,
 }: Props) => {
   const [page, setPage] = useState<number>(1)
@@ -34,9 +36,12 @@ export const ApplicationList = ({
     totalPages: Math.ceil(applications.length / pageSize),
   }
 
-  const onApplicationDelete = () => {
+  const onApplicationDelete = async (id: string) => {
     if ((applications.length - 1) % pageSize === 0 && page > 1) {
       setPage(page - 1)
+    }
+    if (id && deleteApplication) {
+      deleteApplication(id)
     }
     if (refetch) {
       refetch()
@@ -53,7 +58,7 @@ export const ApplicationList = ({
               key={application.id}
               application={application}
               focused={focus}
-              onDelete={onApplicationDelete}
+              onDelete={() => onApplicationDelete(application.id)}
             />
           ))}
       </Stack>
