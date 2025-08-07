@@ -2,7 +2,7 @@
   "name": "api-domains-landspitali",
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/api/domains/landspitali/src",
-  "projectType": "application",
+  "projectType": "library",
   "tags": ["lib:api", "scope:api"],
   "targets": {
     "build": {
