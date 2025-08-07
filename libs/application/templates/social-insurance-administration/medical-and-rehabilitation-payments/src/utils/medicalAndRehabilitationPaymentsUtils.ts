@@ -11,6 +11,7 @@ import {
   PaymentInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { Application, ExternalData, Option } from '@island.is/application/types'
+import { Locale } from '@island.is/shared/types'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../lib/messages'
 import {
   Countries,
@@ -241,20 +242,27 @@ export const getApplicationExternalData = (
 
   const applicantAddress = getValueViaPath<string>(
     externalData,
-    'nationalRegistry.data.address.streetAddress',
+    'socialInsuranceAdministrationResidenceInformation.data.address',
   )
 
   const applicantPostalCode = getValueViaPath<string>(
     externalData,
-    'nationalRegistry.data.address.postalCode',
+    'socialInsuranceAdministrationResidenceInformation.data.postalCode',
   )
 
-  const applicantLocality = getValueViaPath<string>(
+  const applicantMunicipality = getValueViaPath<string>(
     externalData,
-    'nationalRegistry.data.address.locality',
+    'socialInsuranceAdministrationResidenceInformation.data.municipality',
   )
 
-  const applicantMunicipality = `${applicantPostalCode}, ${applicantLocality}`
+  const apartmentNumber = getValueViaPath<string>(
+    externalData,
+    'socialInsuranceAdministrationResidenceInformation.data.apartmentNumber',
+  )
+
+  const applicantLocation = `${applicantPostalCode}, ${applicantMunicipality}`
+
+  const applicantAddressAndApartment = `${applicantAddress}, ${apartmentNumber}`
 
   const bankInfo = getValueViaPath<BankInfo>(
     externalData,
@@ -311,7 +319,7 @@ export const getApplicationExternalData = (
   const selfAssessmentQuestionnaire =
     getValueViaPath<SelfAssessmentQuestionnaire[]>(
       externalData,
-      'socialInsuranceAdministrationQuestionnairesSelfAssessment.data',
+      'socialInsuranceAdministrationMARPQuestionnairesSelfAssessment.data',
     ) ?? []
 
   const ectsUnits =
@@ -341,8 +349,10 @@ export const getApplicationExternalData = (
     applicantNationalId,
     applicantAddress,
     applicantPostalCode,
-    applicantLocality,
+    apartmentNumber,
     applicantMunicipality,
+    applicantLocation,
+    applicantAddressAndApartment,
     bankInfo,
     userProfileEmail,
     userProfilePhoneNumber,
@@ -504,4 +514,18 @@ export const eligibleText = (externalData: ExternalData) => {
     default:
       return undefined
   }
+}
+
+export const getSelfAssessmentQuestionnaireQuestions = (
+  externalData: ExternalData,
+  locale: Locale = 'is',
+) => {
+  const { selfAssessmentQuestionnaire } =
+    getApplicationExternalData(externalData)
+
+  return (
+    selfAssessmentQuestionnaire.find(
+      (questionnaire) => questionnaire.language.toLowerCase() === locale,
+    )?.questions ?? []
+  )
 }
