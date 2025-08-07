@@ -19,6 +19,7 @@ psql -tc "SELECT datname FROM pg_database WHERE datname like 'feature_${FEATURE_
 
 psql -tc "SELECT rolname FROM pg_roles WHERE rolname like 'feature_${FEATURE_DB_NAME}_%'" --field-separator ' ' --no-align --quiet |
   while read -r rolname; do
+    psql -c "DROP OWNED BY $rolname CASCADE;"
     psql -c "DROP ROLE IF EXISTS $rolname;"
     echo "Deleting the role $rolname"
   done
