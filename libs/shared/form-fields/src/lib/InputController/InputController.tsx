@@ -14,7 +14,6 @@ import {
 import NumberFormat, { FormatInputValueFunction } from 'react-number-format'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { clearInputsOnChange, setInputsOnChange } from '@island.is/shared/utils'
-import { MultiValue, SingleValue } from 'react-select'
 
 interface Props {
   autoFocus?: boolean

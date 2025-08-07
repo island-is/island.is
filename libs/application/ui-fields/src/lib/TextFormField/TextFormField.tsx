@@ -1,6 +1,7 @@
 import React, { FC } from 'react'
 import { useFormContext } from 'react-hook-form'
 import {
+  buildFieldReadOnly,
   buildFieldRequired,
   formatTextWithLocale,
 } from '@island.is/application/core'
@@ -80,7 +81,7 @@ export const TextFormField: FC<React.PropsWithChildren<Props>> = ({
             formatMessage,
           )}
           disabled={disabled}
-          readOnly={readOnly}
+          readOnly={buildFieldReadOnly(application, readOnly)}
           id={id}
           dataTestId={dataTestId}
           placeholder={formatTextWithLocale(
