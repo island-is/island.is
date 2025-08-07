@@ -181,7 +181,10 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
           </Label>
           <Markdown>
             {data?.socialInsuranceCertificateForSicknessAndRehabilitation?.diagnoses?.icd
-              ?.map((value, index) => `${index + 1}. ` + value)
+              ?.map(
+                (value, index) =>
+                  `${index + 1}. ${value.code} ${value.displayValue}`,
+              )
               ?.join('\n\n') ?? ''}
           </Markdown>
         </GridColumn>
@@ -199,7 +202,7 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
               </Label>
               <Markdown>
                 {data.socialInsuranceCertificateForSicknessAndRehabilitation.diagnoses.others
-                  .map((value) => '* ' + value)
+                  .map((value) => `* ${value.code} ${value.displayValue}`)
                   ?.join('\n\n') ?? ''}
               </Markdown>
             </GridColumn>
@@ -268,10 +271,9 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
             )}
           </Label>
           <Text>
-            {/* Need to update when Smári returns a display value */}
             {
               data?.socialInsuranceCertificateForSicknessAndRehabilitation
-                ?.physicalDifficulty?.value
+                ?.physicalDifficulty?.displayValue
             }
           </Text>
         </GridColumn>
@@ -323,10 +325,9 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
             )}
           </Label>
           <Text>
-            {/* Need to update when Smári returns a display value */}
             {
               data?.socialInsuranceCertificateForSicknessAndRehabilitation
-                ?.mentalDifficulty?.value
+                ?.mentalDifficulty?.displayValue
             }
           </Text>
         </GridColumn>
@@ -380,10 +381,9 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
             )}
           </Label>
           <Text>
-            {/* Need to update when Smári returns a display value */}
             {
               data?.socialInsuranceCertificateForSicknessAndRehabilitation
-                ?.activityParticipationDifficulty?.value
+                ?.activityParticipationDifficulty?.displayValue
             }
           </Text>
         </GridColumn>
