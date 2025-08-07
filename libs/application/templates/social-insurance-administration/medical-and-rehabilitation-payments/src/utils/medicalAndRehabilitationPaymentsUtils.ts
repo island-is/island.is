@@ -118,7 +118,12 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const rehabilitationPlanConfirmation = getValueViaPath<string[]>(
     answers,
-    'rehabilitationPlanConfirmation',
+    'rehabilitationPlan.confirmation',
+  )
+
+  const rehabilitationPlanReferenceId = getValueViaPath<string>(
+    answers,
+    'rehabilitationPlan.referenceId',
   )
 
   const hadAssistance = getValueViaPath<YesOrNo>(
@@ -211,6 +216,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     unionNationalId,
     certificateForSicknessAndRehabilitationReferenceId,
     rehabilitationPlanConfirmation,
+    rehabilitationPlanReferenceId,
     hadAssistance,
     educationalLevel,
     comment,
