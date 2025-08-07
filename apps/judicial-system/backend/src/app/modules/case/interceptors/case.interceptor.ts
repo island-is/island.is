@@ -119,6 +119,10 @@ const transformCase = (theCase: Case) => {
       theCase.eventLogs,
       UserRole.PRISON_SYSTEM_STAFF,
     ),
+    requestCompletedDate: EventLog.getEventLogDateByEventType(
+      EventType.REQUEST_COMPLETED,
+      theCase.eventLogs,
+    ),
     caseRepresentatives: transformCaseRepresentatives(theCase),
   }
 }

@@ -234,9 +234,6 @@ export class ApplicationsService {
       throw new NotFoundException(`Application with id '${id}' not found.`)
     }
 
-    application.submittedAt = new Date()
-    await application.save()
-
     const applicationDto = await this.getApplication(id)
 
     const success = await this.serviceManager.send(applicationDto)
@@ -669,5 +666,55 @@ export class ApplicationsService {
       throw new NotFoundException(`Screen with id '${screenId}' not found`)
     }
     return screenResult as unknown as ScreenDto
+  }
+
+  async submitSection(applicationId: string, sectionId: string): Promise<void> {
+    const application = await this.applicationModel.findByPk(applicationId)
+
+    if (!application) {
+      throw new NotFoundException(
+        `Application with id '${applicationId}' not found`,
+      )
+    }
+
+    const section = await this.sectionModel.findByPk(sectionId, {
+      include: [
+        {
+          model: Screen,
+          as: 'screens',
+          include: [
+            {
+              model: Field,
+              as: 'fields',
+              include: [this.valueModel],
+            },
+          ],
+        },
+      ],
+    })
+
+    if (!section) {
+      throw new NotFoundException(`Section with id '${sectionId}' not found`)
+    }
+
+    // Mark the section as completed
+    if (!application.completed?.includes(section.id)) {
+      application.completed = [...(application.completed ?? []), section.id]
+    }
+    await application.save()
+  }
+
+  async deleteApplication(id: string): Promise<void> {
+    const application = await this.applicationModel.findByPk(id)
+
+    if (!application) {
+      throw new NotFoundException(`Application with id '${id}' not found`)
+    }
+
+    await this.valueModel.destroy({
+      where: { applicationId: id },
+    })
+
+    await application.destroy()
   }
 }
