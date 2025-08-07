@@ -24,7 +24,7 @@ import { SubpoenaType, type User } from '@island.is/judicial-system/types'
 
 import { FileService } from './file.service'
 
-@UseGuards(x)
+@UseGuards(JwtInjectBearerAuthGuard)
 @Controller('api/case/:id')
 export class FileController {
   constructor(
