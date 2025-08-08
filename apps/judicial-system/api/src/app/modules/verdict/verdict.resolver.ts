@@ -35,20 +35,15 @@ export class VerdictResolver {
     { backendService }: { backendService: BackendService },
   ): Promise<Verdict> {
     this.logger.debug(
-      `Updating verdict ${input.verdictId} for defendant ${input.defendantId} of case ${input.caseId}`,
+      `Updating verdict for defendant ${input.defendantId} of case ${input.caseId}`,
     )
-    const { caseId, defendantId, verdictId, ...updateVerdict } = input
+    const { caseId, defendantId, ...updateVerdict } = input
 
     return this.auditTrailService.audit(
       user.id,
       AuditedAction.UPDATE_VERDICT,
-      backendService.updateVerdict(
-        caseId,
-        defendantId,
-        verdictId,
-        updateVerdict,
-      ),
-      verdictId,
+      backendService.updateVerdict(caseId, defendantId, updateVerdict),
+      defendantId,
     )
   }
 }

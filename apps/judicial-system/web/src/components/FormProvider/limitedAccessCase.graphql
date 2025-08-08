@@ -41,8 +41,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       requestedDefenderName
       isDefenderChoiceConfirmed
       caseFilesSharedWithDefender
-      serviceRequirement
-      verdictViewDate
       verdictAppealDeadline
       isVerdictAppealDeadlineExpired
       subpoenaType
@@ -63,6 +61,14 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         caseId
         defendantId
         policeSubpoenaId
+      }
+      verdict {
+        id
+        appealDate
+        appealDecision
+        serviceRequirement
+        serviceDate
+        serviceInformationForDefendant
       }
     }
     defenderName

@@ -50,6 +50,7 @@ import { Offense } from '../indictment-count/models/offense.model'
 import { Institution } from '../institution'
 import { Subpoena } from '../subpoena'
 import { User } from '../user'
+import { Verdict } from '../verdict/models/verdict.model'
 import { Victim } from '../victim'
 import { Case } from './models/case.model'
 import { CaseString } from './models/caseString.model'
@@ -193,6 +194,11 @@ export const include: Includeable[] = [
         required: false,
         order: [['created', 'DESC']],
         separate: true,
+      },
+      {
+        model: Verdict,
+        as: 'verdict',
+        required: false,
       },
       {
         model: DefendantEventLog,

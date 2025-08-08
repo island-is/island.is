@@ -1,3 +1,4 @@
+import { Transaction } from 'sequelize'
 import { uuid } from 'uuidv4'
 
 import { ServiceRequirement } from '@island.is/judicial-system/types'
@@ -17,7 +18,7 @@ type GivenWhenThen = (verdictUpdate: UpdateVerdictDto) => Promise<Then>
 
 describe('VerdictController - Update', () => {
   const caseId = uuid()
-  const theCase = { id: caseId } as Case
+  const theCase = { id: caseId, rulingDate: new Date(2020, 1, 1) } as Case
 
   const defendantId = uuid()
   const defendant = {
@@ -33,13 +34,21 @@ describe('VerdictController - Update', () => {
   } as Verdict
 
   let mockVerdictModel: typeof Verdict
+  let transaction: Transaction
+
   let givenWhenThen: GivenWhenThen
 
   beforeEach(async () => {
-    const { verdictController, verdictModel } =
+    const { verdictController, sequelize, verdictModel } =
       await createTestingVerdictModule()
 
     mockVerdictModel = verdictModel
+
+    const mockTransaction = sequelize.transaction as jest.Mock
+    transaction = {} as Transaction
+    mockTransaction.mockImplementationOnce(
+      (fn: (transaction: Transaction) => unknown) => fn(transaction),
+    )
 
     const mockUpdate = mockVerdictModel.update as jest.Mock
     mockUpdate.mockRejectedValue(new Error('Some error'))
@@ -48,14 +57,7 @@ describe('VerdictController - Update', () => {
       const then = {} as Then
 
       await verdictController
-        .update(
-          theCase.id,
-          defendant.id,
-          verdict.id,
-          theCase,
-          verdict,
-          verdictUpdate,
-        )
+        .update(theCase.id, defendant.id, theCase, verdict, verdictUpdate)
         .then((result) => (then.result = result))
         .catch((error) => (then.error = error))
 
@@ -71,16 +73,24 @@ describe('VerdictController - Update', () => {
     let then: Then
 
     beforeEach(async () => {
+      const mockFind = mockVerdictModel.findOne as jest.Mock
+      mockFind.mockResolvedValueOnce([1, [verdict]])
+
       const mockUpdate = mockVerdictModel.update as jest.Mock
       mockUpdate.mockResolvedValueOnce([1, [updateVerdict]])
+
       then = await givenWhenThen(verdictUpdate)
     })
 
     it('should update the verdict ', () => {
-      expect(mockVerdictModel.update).toHaveBeenCalledWith(verdictUpdate, {
-        where: { id: verdictId },
-        returning: true,
-      })
+      expect(mockVerdictModel.update).toHaveBeenCalledWith(
+        { ...verdictUpdate, serviceDate: new Date(2020, 1, 1) },
+        {
+          where: { id: verdictId },
+          returning: true,
+          transaction,
+        },
+      )
       expect(then.result).toBe(updateVerdict)
     })
   })

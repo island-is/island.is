@@ -1,8 +1,14 @@
 import { Type } from 'class-transformer'
-import { IsDate, IsOptional } from 'class-validator'
-import { Column, DataType } from 'sequelize-typescript'
+import {
+  IsArray,
+  IsDate,
+  IsEnum,
+  IsOptional,
+  IsString,
+  MaxLength,
+} from 'class-validator'
 
-import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
+import { ApiPropertyOptional } from '@nestjs/swagger'
 
 import {
   InformationForDefendant,
@@ -11,41 +17,37 @@ import {
 } from '@island.is/judicial-system/types'
 
 export class UpdateVerdictDto {
-  @Column({
-    type: DataType.ENUM,
-    allowNull: true,
-    values: Object.values(ServiceRequirement),
-  })
-  @ApiProperty({ enum: ServiceRequirement })
+  @IsOptional()
+  @IsEnum(ServiceRequirement)
+  @ApiPropertyOptional({ enum: ServiceRequirement })
   serviceRequirement?: ServiceRequirement
 
   @IsOptional()
   @Type(() => Date)
   @IsDate()
-  @ApiPropertyOptional({ type: Date })
-  readonly serviceDate?: Date
+  @ApiPropertyOptional({ type: Date, nullable: true })
+  serviceDate?: Date | null
 
-  @Column({ type: DataType.STRING, allowNull: true })
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
   @ApiPropertyOptional({ type: String })
   servedBy?: string
 
-  @Column({
-    type: DataType.ENUM,
-    allowNull: true,
-    values: Object.values(VerdictAppealDecision),
-  })
+  @IsOptional()
+  @IsEnum(VerdictAppealDecision)
   @ApiPropertyOptional({ enum: VerdictAppealDecision })
   appealDecision?: VerdictAppealDecision
 
-  @Column({ type: DataType.DATE, allowNull: true })
+  @IsOptional()
+  @Type(() => Date)
+  @IsDate()
   @ApiPropertyOptional({ type: Date })
   appealDate?: Date
 
-  @Column({
-    type: DataType.ARRAY(DataType.ENUM),
-    allowNull: true,
-    values: Object.values(InformationForDefendant),
-  })
+  @IsOptional()
+  @IsArray()
+  @IsEnum(InformationForDefendant, { each: true })
   @ApiPropertyOptional({ enum: InformationForDefendant, isArray: true })
   serviceInformationForDefendant?: InformationForDefendant[]
 }

@@ -46,12 +46,12 @@ import {
   ServiceRequirement,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
-  useDefendants,
   useFileList,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
 import useEventLog from '@island.is/judicial-system-web/src/utils/hooks/useEventLog'
+import useVerdict from '@island.is/judicial-system-web/src/utils/hooks/useVerdict'
 
 import strings from './Completed.strings'
 import * as styles from './Completed.css'
@@ -59,7 +59,7 @@ import * as styles from './Completed.css'
 const Completed: FC = () => {
   const { user } = useContext(UserContext)
   const { formatMessage } = useIntl()
-  const { setAndSendDefendantToServer } = useDefendants()
+  const { setAndSendVerdictToServer } = useVerdict()
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
 
@@ -182,9 +182,10 @@ const Completed: FC = () => {
       workingCase.indictmentRulingDecision ===
       CaseIndictmentRulingDecision.RULING
         ? workingCase.defendants?.every((defendant) =>
-            defendant.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
-              ? Boolean(defendant.verdictAppealDecision)
-              : Boolean(defendant.serviceRequirement),
+            defendant.verdict?.serviceRequirement ===
+            ServiceRequirement.NOT_APPLICABLE
+              ? Boolean(defendant.verdict?.appealDecision)
+              : Boolean(defendant.verdict?.serviceRequirement),
           )
         : true
 
@@ -309,40 +310,96 @@ const Completed: FC = () => {
               title={formatMessage(strings.serviceRequirementTitle)}
               required
             />
-            {workingCase.defendants?.map((defendant, index) => (
-              <React.Fragment key={defendant.id}>
-                <Box
-                  component="section"
-                  marginBottom={
-                    workingCase.defendants &&
-                    workingCase.defendants.length - 1 === index
-                      ? 5
-                      : 3
-                  }
-                >
-                  <BlueBox>
-                    <SectionHeading
-                      title={defendant.name || ''}
-                      marginBottom={2}
-                      heading="h4"
-                    />
-                    {/* TODO: adjust to verdict post migration */}
-                    <Box marginBottom={2}>
+            {workingCase.defendants?.map((defendant, index) => {
+              const { verdict } = defendant
+              if (!verdict) return null
+
+              return (
+                <React.Fragment key={defendant.id}>
+                  <Box
+                    component="section"
+                    marginBottom={
+                      workingCase.defendants &&
+                      workingCase.defendants.length - 1 === index
+                        ? 5
+                        : 3
+                    }
+                  >
+                    <BlueBox>
+                      <SectionHeading
+                        title={defendant.name || ''}
+                        marginBottom={2}
+                        heading="h4"
+                      />
+                      <Box marginBottom={2}>
+                        <RadioButton
+                          id={`defendant-${defendant.id}-service-requirement-not-applicable`}
+                          name={`defendant-${defendant.id}-service-requirement`}
+                          checked={
+                            verdict.serviceRequirement ===
+                            ServiceRequirement.NOT_APPLICABLE
+                          }
+                          onChange={() => {
+                            setAndSendVerdictToServer(
+                              {
+                                defendantId: defendant.id,
+                                caseId: workingCase.id,
+                                serviceRequirement:
+                                  ServiceRequirement.NOT_APPLICABLE,
+                                serviceInformationForDefendant: [],
+                              },
+                              setWorkingCase,
+                            )
+                          }}
+                          large
+                          backgroundColor="white"
+                          label={formatMessage(
+                            strings.serviceRequirementNotApplicable,
+                          )}
+                        />
+                      </Box>
+                      <Box marginBottom={2}>
+                        <RadioButton
+                          id={`defendant-${defendant.id}-service-requirement-required`}
+                          name={`defendant-${defendant.id}-service-requirement`}
+                          checked={
+                            verdict.serviceRequirement ===
+                            ServiceRequirement.REQUIRED
+                          }
+                          onChange={() => {
+                            setAndSendVerdictToServer(
+                              {
+                                defendantId: defendant.id,
+                                caseId: workingCase.id,
+                                serviceRequirement: ServiceRequirement.REQUIRED,
+                                appealDecision: null,
+                              },
+                              setWorkingCase,
+                            )
+                          }}
+                          large
+                          backgroundColor="white"
+                          label={formatMessage(
+                            strings.serviceRequirementRequired,
+                          )}
+                        />
+                      </Box>
                       <RadioButton
-                        id={`defendant-${defendant.id}-service-requirement-not-applicable`}
+                        id={`defendant-${defendant.id}-service-requirement-not-required`}
                         name={`defendant-${defendant.id}-service-requirement`}
                         checked={
-                          defendant.serviceRequirement ===
-                          ServiceRequirement.NOT_APPLICABLE
+                          verdict.serviceRequirement ===
+                          ServiceRequirement.NOT_REQUIRED
                         }
                         onChange={() => {
-                          setAndSendDefendantToServer(
+                          setAndSendVerdictToServer(
                             {
                               defendantId: defendant.id,
                               caseId: workingCase.id,
                               serviceRequirement:
-                                ServiceRequirement.NOT_APPLICABLE,
-                              informationForDefendant: [],
+                                ServiceRequirement.NOT_REQUIRED,
+                              appealDecision: null,
+                              serviceInformationForDefendant: [],
                             },
                             setWorkingCase,
                           )
@@ -350,164 +407,123 @@ const Completed: FC = () => {
                         large
                         backgroundColor="white"
                         label={formatMessage(
-                          strings.serviceRequirementNotApplicable,
+                          strings.serviceRequirementNotRequired,
+                        )}
+                        tooltip={formatMessage(
+                          strings.serviceRequirementNotRequiredTooltip,
                         )}
                       />
-                    </Box>
-                    <Box marginBottom={2}>
-                      <RadioButton
-                        id={`defendant-${defendant.id}-service-requirement-required`}
-                        name={`defendant-${defendant.id}-service-requirement`}
-                        checked={
-                          defendant.serviceRequirement ===
-                          ServiceRequirement.REQUIRED
-                        }
-                        onChange={() => {
-                          setAndSendDefendantToServer(
-                            {
-                              defendantId: defendant.id,
-                              caseId: workingCase.id,
-                              serviceRequirement: ServiceRequirement.REQUIRED,
-                              verdictAppealDecision: null,
-                            },
-                            setWorkingCase,
-                          )
-                        }}
-                        large
-                        backgroundColor="white"
-                        label={formatMessage(
-                          strings.serviceRequirementRequired,
+                      <AnimatePresence>
+                        {verdict.serviceRequirement ===
+                          ServiceRequirement.NOT_APPLICABLE && (
+                          <motion.div
+                            key="verdict-appeal-decision"
+                            className={styles.motionBox}
+                            initial={{
+                              opacity: 0,
+                              height: 0,
+                            }}
+                            animate={{
+                              opacity: 1,
+                              height: 'auto',
+                              transition: {
+                                opacity: { delay: 0.2 },
+                              },
+                            }}
+                            exit={{
+                              opacity: 0,
+                              height: 0,
+                              transition: {
+                                height: { delay: 0.2 },
+                              },
+                            }}
+                          >
+                            <SectionHeading
+                              heading="h4"
+                              title="Afstaða dómfellda til dóms"
+                              marginBottom={2}
+                              required
+                            />
+                            <VerdictAppealDecisionChoice
+                              defendant={defendant}
+                              verdict={verdict}
+                            />
+                          </motion.div>
                         )}
-                      />
-                    </Box>
-                    <RadioButton
-                      id={`defendant-${defendant.id}-service-requirement-not-required`}
-                      name={`defendant-${defendant.id}-service-requirement`}
-                      checked={
-                        defendant.serviceRequirement ===
-                        ServiceRequirement.NOT_REQUIRED
-                      }
-                      onChange={() => {
-                        setAndSendDefendantToServer(
-                          {
-                            defendantId: defendant.id,
-                            caseId: workingCase.id,
-                            serviceRequirement: ServiceRequirement.NOT_REQUIRED,
-                            verdictAppealDecision: null,
-                            informationForDefendant: [],
-                          },
-                          setWorkingCase,
-                        )
-                      }}
-                      large
-                      backgroundColor="white"
-                      label={formatMessage(
-                        strings.serviceRequirementNotRequired,
-                      )}
-                      tooltip={formatMessage(
-                        strings.serviceRequirementNotRequiredTooltip,
-                      )}
-                    />
+                      </AnimatePresence>
+                    </BlueBox>
+                  </Box>
+                  {features?.includes(Feature.SERVICE_PORTAL) && (
                     <AnimatePresence>
-                      {defendant.serviceRequirement ===
-                        ServiceRequirement.NOT_APPLICABLE && (
-                        <motion.div
-                          key="verdict-appeal-decision"
-                          className={styles.motionBox}
-                          initial={{
-                            opacity: 0,
-                            height: 0,
-                          }}
-                          animate={{
-                            opacity: 1,
-                            height: 'auto',
-                            transition: {
-                              opacity: { delay: 0.2 },
-                            },
-                          }}
-                          exit={{
-                            opacity: 0,
-                            height: 0,
-                            transition: {
-                              height: { delay: 0.2 },
-                            },
-                          }}
-                        >
+                      {verdict.serviceRequirement ===
+                        ServiceRequirement.REQUIRED && (
+                        <Box>
                           <SectionHeading
-                            heading="h4"
-                            title="Afstaða dómfellda til dóms"
+                            title={'Upplýsingagjöf til dómfellda'}
                             marginBottom={2}
-                            required
+                            heading="h4"
                           />
-                          <VerdictAppealDecisionChoice defendant={defendant} />
-                        </motion.div>
+                          <Text marginBottom={3}>
+                            Vinsamlegast hakið við þau atriði sem upplýsa verður
+                            dómfellda um við birtingu dómsins.
+                          </Text>
+                          <BlueBox>
+                            {defendantCheckboxes.map(
+                              (checkbox, indexChecbox) => (
+                                <React.Fragment
+                                  key={`${verdict.id}-${checkbox.value}`}
+                                >
+                                  <Checkbox
+                                    label={checkbox.label}
+                                    id={`${verdict.id}-${checkbox.value}`}
+                                    name={`${verdict.id}-${checkbox.value}`}
+                                    checked={verdict.serviceInformationForDefendant?.includes(
+                                      checkbox.value,
+                                    )}
+                                    tooltip={checkbox?.tooltip}
+                                    large
+                                    filled
+                                    onChange={(target) => {
+                                      setAndSendVerdictToServer(
+                                        {
+                                          defendantId: defendant.id,
+                                          caseId: workingCase.id,
+                                          serviceInformationForDefendant: target
+                                            .target.checked
+                                            ? [
+                                                ...(verdict.serviceInformationForDefendant ||
+                                                  []),
+                                                checkbox.value,
+                                              ]
+                                            : (
+                                                verdict.serviceInformationForDefendant ||
+                                                []
+                                              ).filter(
+                                                (item) =>
+                                                  item !== checkbox.value,
+                                              ),
+                                        },
+                                        setWorkingCase,
+                                      )
+                                    }}
+                                  />
+                                  {defendantCheckboxes.length - 1 !==
+                                    indexChecbox && (
+                                    <Box
+                                      marginBottom={marginSpaceBetweenButtons}
+                                    />
+                                  )}
+                                </React.Fragment>
+                              ),
+                            )}
+                          </BlueBox>
+                        </Box>
                       )}
                     </AnimatePresence>
-                  </BlueBox>
-                </Box>
-                {features?.includes(Feature.SERVICE_PORTAL) && (
-                  <AnimatePresence>
-                    {defendant.serviceRequirement ===
-                      ServiceRequirement.REQUIRED && (
-                      <Box>
-                        <SectionHeading
-                          title={'Upplýsingagjöf til dómfellda'}
-                          marginBottom={2}
-                          heading="h4"
-                        />
-                        <Text marginBottom={3}>
-                          Vinsamlegast hakið við þau atriði sem upplýsa verður
-                          dómfellda um við birtingu dómsins.
-                        </Text>
-                        <BlueBox>
-                          {defendantCheckboxes.map((checkbox, indexChecbox) => (
-                            <React.Fragment key={checkbox.value}>
-                              <Checkbox
-                                label={checkbox.label}
-                                id={checkbox.value}
-                                name={checkbox.value}
-                                checked={defendant?.informationForDefendant?.includes(
-                                  checkbox.value,
-                                )}
-                                tooltip={checkbox?.tooltip}
-                                large
-                                filled
-                                onChange={(target) => {
-                                  setAndSendDefendantToServer(
-                                    {
-                                      defendantId: defendant.id,
-                                      caseId: workingCase.id,
-                                      informationForDefendant: target.target
-                                        .checked
-                                        ? [
-                                            ...(defendant.informationForDefendant ||
-                                              []),
-                                            checkbox.value,
-                                          ]
-                                        : (
-                                            defendant.informationForDefendant ||
-                                            []
-                                          ).filter(
-                                            (item) => item !== checkbox.value,
-                                          ),
-                                    },
-                                    setWorkingCase,
-                                  )
-                                }}
-                              />
-                              {defendantCheckboxes.length - 1 !==
-                                indexChecbox && (
-                                <Box marginBottom={marginSpaceBetweenButtons} />
-                              )}
-                            </React.Fragment>
-                          ))}
-                        </BlueBox>
-                      </Box>
-                    )}
-                  </AnimatePresence>
-                )}
-              </React.Fragment>
-            ))}
+                  )}
+                </React.Fragment>
+              )
+            })}
           </Box>
         )}
         {features?.includes(Feature.SERVICE_PORTAL) &&
