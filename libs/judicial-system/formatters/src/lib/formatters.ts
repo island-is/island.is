@@ -14,6 +14,7 @@ import {
   IndictmentSubtype,
   IndictmentSubtypeMap,
   isRestrictionCase,
+  ServiceStatus,
 } from '@island.is/judicial-system/types'
 
 const getAsDate = (date: Date | string | undefined | null): Date => {
@@ -507,4 +508,18 @@ export const applyDativeCaseToCourtName = (courtName: string) => {
     return courtName?.replace(target, 'dómi')
   }
   return courtName
+}
+
+export const getServiceStatusText = (serviceStatus: ServiceStatus) => {
+  return serviceStatus === ServiceStatus.DEFENDER
+    ? 'Birt fyrir verjanda'
+    : serviceStatus === ServiceStatus.ELECTRONICALLY
+    ? 'Birt rafrænt'
+    : serviceStatus === ServiceStatus.IN_PERSON
+    ? 'Birt persónulega'
+    : serviceStatus === ServiceStatus.FAILED
+    ? 'Árangurslaus birting'
+    : serviceStatus === ServiceStatus.EXPIRED
+    ? 'Rann út á tíma'
+    : 'Í birtingarferli' // This should never happen
 }
