@@ -5,6 +5,7 @@ import { Field, ID, InputType } from '@nestjs/graphql'
 import {
   InformationForDefendant,
   ServiceRequirement,
+  VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 
 @InputType()
@@ -34,12 +35,12 @@ export class UpdateVerdictInput {
 
   @Allow()
   @IsOptional()
-  @Field(() => String, { nullable: true })
-  readonly appealDecision?: string
+  @Field(() => VerdictAppealDecision, { nullable: true })
+  readonly appealDecision?: VerdictAppealDecision
 
   @Allow()
   @IsOptional()
-  @Field(() => Date, { nullable: true })
+  @Field(() => String, { nullable: true })
   readonly appealDate?: string
 
   @Allow()

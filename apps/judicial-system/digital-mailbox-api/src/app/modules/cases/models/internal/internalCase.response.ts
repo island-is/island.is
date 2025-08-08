@@ -69,4 +69,5 @@ interface Verdict {
   serviceRequirement?: ServiceRequirement
   serviceDate?: Date
   appealDecision?: VerdictAppealDecision
+  appealDate?: Date
 }

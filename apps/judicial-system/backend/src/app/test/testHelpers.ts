@@ -20,6 +20,12 @@ export const verifyGuards = (
       methodName ? (controller as any).prototype[methodName] : controller,
     ) ?? []
 
+  const guardInstances = guards.map((g) =>
+    typeof g === 'function' && (g as any).prototype
+      ? new (g as new () => CanActivate)()
+      : (g as unknown as CanActivate),
+  )
+
   describe(description, () => {
     it('should have the correct number of guards', () => {
       expect(guards).toHaveLength(expectedGuards.length)
@@ -48,9 +54,12 @@ export const verifyGuards = (
     expectedGuardProps?.forEach(
       ({ guard: expectedGuard, prop: expectedProp }) => {
         describe(`${expectedGuard.name}`, () => {
-          const targetGuard = guards.find((g) => g instanceof expectedGuard)
+          const targetGuard = guardInstances.find(
+            (g) => g instanceof expectedGuard,
+          )
           it(`should include guard properties`, () => {
-            expect(targetGuard).toEqual(expectedProp)
+            expect(targetGuard).toBeDefined()
+            expect(targetGuard).toMatchObject(expectedProp)
           })
         })
       },

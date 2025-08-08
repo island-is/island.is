@@ -54,6 +54,7 @@ query Case($input: CaseQueryInput!) {
         appealDate
         appealDecision
         serviceRequirement
+        serviceStatus
         serviceDate
         serviceInformationForDefendant
       }
