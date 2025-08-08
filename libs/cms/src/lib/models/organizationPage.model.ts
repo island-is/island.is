@@ -24,10 +24,13 @@ class OrganizationPageTopLevelNavigationLink {
 
   @Field()
   href!: string
+
+  @Field(() => String, { nullable: true })
+  entryId?: string
 }
 
 @ObjectType()
-class OrganizationPageTopLevelNavigation {
+export class OrganizationPageTopLevelNavigation {
   @CacheField(() => [OrganizationPageTopLevelNavigationLink])
   links!: OrganizationPageTopLevelNavigationLink[]
 }
@@ -93,6 +96,9 @@ export class OrganizationPage {
 
   @Field(() => Boolean, { nullable: true })
   showPastEventsOption?: boolean
+
+  @Field(() => String, { nullable: true })
+  lang?: string
 }
 
 export const mapOrganizationPage = ({
@@ -118,6 +124,11 @@ export const mapOrganizationPage = ({
     }
 
     if (node.type === SitemapTreeNodeType.ENTRY) {
+      topLevelNavigation.links.push({
+        label: '',
+        href: '',
+        entryId: node.entryId,
+      })
       continue
     }
 
@@ -173,5 +184,6 @@ export const mapOrganizationPage = ({
     topLevelNavigation,
     canBeFoundInSearchResults: fields.canBeFoundInSearchResults ?? true,
     showPastEventsOption: fields.showPastEventsOption ?? false,
+    lang: sys.locale,
   }
 }

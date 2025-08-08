@@ -1516,4 +1516,19 @@ export class CmsContentfulService {
 
     return result
   }
+
+  async getEntries(entryIds: string[], lang: string, include = 1) {
+    const params = {
+      'sys.id[in]': entryIds.join(','),
+      limit: 1000,
+    }
+
+    const response = await this.contentfulRepository.getLocalizedEntries(
+      lang,
+      params,
+      include,
+    )
+
+    return response.items
+  }
 }

@@ -57,7 +57,10 @@ import {
   GetOrganizationSubpageInput,
 } from './dto/getOrganizationSubpage.input'
 import { getElasticsearchIndex } from '@island.is/content-search-index-manager'
-import { OrganizationPage } from './models/organizationPage.model'
+import {
+  OrganizationPage,
+  OrganizationPageTopLevelNavigation,
+} from './models/organizationPage.model'
 import { GetOrganizationPageInput } from './dto/getOrganizationPage.input'
 import { GetAuctionsInput } from './dto/getAuctions.input'
 import { Auction } from './models/auction.model'
@@ -153,6 +156,11 @@ import {
   BloodDonationRestrictionGenericTagList,
   BloodDonationRestrictionList,
 } from './models/bloodDonationRestriction.model'
+import { generateOrganizationSubpageLink } from './models/linkGroup.model'
+import {
+  IOrganizationParentSubpage,
+  IOrganizationSubpage,
+} from './generated/contentfulTypes'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -1007,5 +1015,54 @@ export class IntroLinkImageResolver {
       return ''
     }
     return id
+  }
+}
+
+@Resolver(() => OrganizationPage)
+export class OrganizationPageResolver {
+  constructor(private cmsContentfulService: CmsContentfulService) {}
+
+  @ResolveField(() => OrganizationPageTopLevelNavigation, { nullable: true })
+  async topLevelNavigation(@Parent() organizationPage: OrganizationPage) {
+    const entryIds = (organizationPage.topLevelNavigation?.links
+      .map((link) => link.entryId)
+      .filter(Boolean) ?? []) as string[]
+
+    if (entryIds.length === 0) {
+      return organizationPage.topLevelNavigation
+    }
+
+    const entries = await this.cmsContentfulService.getEntries(
+      entryIds,
+      organizationPage.lang ?? 'is',
+      1,
+    )
+
+    const links =
+      organizationPage.topLevelNavigation?.links.map((link) => {
+        const entry = entries.find((entry) => entry.sys.id === link.entryId)
+        if (
+          !entry ||
+          (entry.sys.contentType.sys.id !== 'organizationSubpage' &&
+            entry.sys.contentType.sys.id !== 'organizationParentSubpage')
+        ) {
+          return link
+        }
+
+        const pageLink = generateOrganizationSubpageLink(
+          entry as IOrganizationSubpage | IOrganizationParentSubpage,
+        )
+
+        return {
+          ...link,
+          label: pageLink.text,
+          href: pageLink.url,
+        }
+      }) ?? []
+
+    return {
+      ...organizationPage.topLevelNavigation,
+      links,
+    }
   }
 }
