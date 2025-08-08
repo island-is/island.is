@@ -4,6 +4,7 @@ query GetAidsAndNutrition {
       name
       id
       type
+      valid
       iso
       available
       expiring
@@ -14,10 +15,19 @@ query GetAidsAndNutrition {
       maxUnitRefund
       maxMonthlyAmount
       allowed12MonthPeriod
+      renewalStatus
       refund {
         type
         value
       }
     }
+  }
+}
+
+mutation renewAidsAndNutrition($input: RightsPortalAidOrNutritionRenewInput!) {
+  rightsPortalRenewAidOrNutrition(input: $input) {
+    success
+    requestId
+    errorMessage
   }
 }
