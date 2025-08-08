@@ -121,6 +121,8 @@ export const generateCleanUpForFeature = async (
           const extensions = getPostgresExtensions(
             service.initContainers?.postgres?.extensions,
           )
+
+          // Just making a reduntant comment here to kickstart a deployment
           const commandArg = feature as string
           return {
             command: [`/app/destroy-dbs.sh ${commandArg}`],
