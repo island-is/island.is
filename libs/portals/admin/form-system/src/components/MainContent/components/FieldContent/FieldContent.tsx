@@ -6,6 +6,7 @@ import { Preview } from '../Preview/Preview'
 import { FormSystemField } from '@island.is/api/schema'
 import { FieldSettings } from './components/FieldSettings/FieldSettings'
 import { ListBuilder } from './components/ListBuilder/ListBuilder'
+import { ZendeskSettings } from './components/ZendeskSettings/ZendeskSettings'
 
 export const FieldContent = () => {
   const { control, inListBuilder } = useContext(ControlContext)
@@ -19,6 +20,7 @@ export const FieldContent = () => {
         <BaseInput />
         <FieldSettings />
         <Preview data={currentItem} />
+        <ZendeskSettings />
       </Stack>
     )
   }
