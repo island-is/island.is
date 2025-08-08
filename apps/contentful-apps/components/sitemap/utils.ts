@@ -350,7 +350,9 @@ export const extractNodeContent = (
       ? language === 'en'
         ? node.labelEN
         : node.label
-      : entries[node.entryId]?.fields?.title?.[language] || ''
+      : entries[node.entryId]?.fields?.shortTitle?.[language] ||
+        entries[node.entryId]?.fields?.title?.[language] ||
+        ''
   const slug =
     node.type === TreeNodeType.CATEGORY
       ? language === 'en'
