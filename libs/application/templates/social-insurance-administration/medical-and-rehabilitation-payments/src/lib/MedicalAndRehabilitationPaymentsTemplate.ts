@@ -88,6 +88,7 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
     initial: States.PREREQUISITES,
     states: {
       [States.PREREQUISITES]: {
+        exit: ['populateIncomeTable'],
         meta: {
           name: States.PREREQUISITES,
           status: FormModes.DRAFT,
@@ -352,6 +353,14 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
   },
   stateMachineOptions: {
     actions: {
+      populateIncomeTable: assign((context) => {
+        const { application } = context
+        const { answers } = application
+
+        set(answers, 'incomePlanTable', defaultIncomeTypes)
+
+        return context
+      }),
       unsetIncomePlan: assign((context) => {
         const { application } = context
         const { answers } = application
