@@ -19,8 +19,9 @@ const useVerdict = () => {
         if (!prevWorkingCase.defendants) {
           return prevWorkingCase
         }
+        const { defendantId, ...verdictFields } = update
         const indexOfDefendantToUpdate = prevWorkingCase.defendants.findIndex(
-          (defendant) => defendant.id === update.defendantId,
+          (defendant) => defendant.id === defendantId,
         )
 
         const newDefendants = [...prevWorkingCase.defendants]
@@ -28,7 +29,7 @@ const useVerdict = () => {
         const currentVerdict = newDefendants[indexOfDefendantToUpdate].verdict
         newDefendants[indexOfDefendantToUpdate] = {
           ...newDefendants[indexOfDefendantToUpdate],
-          verdict: { ...currentVerdict, ...update },
+          verdict: { ...currentVerdict, ...verdictFields },
         } as Defendant
 
         return { ...prevWorkingCase, defendants: newDefendants }

@@ -174,7 +174,10 @@ export const getIndictmentInfo = ({
     (defendant) => [
       isRuling || isFine,
       isFine ||
-      defendant.verdict?.serviceRequirement === ServiceRequirement.NOT_REQUIRED
+      defendant.verdict?.serviceRequirement ===
+        ServiceRequirement.NOT_REQUIRED ||
+      defendant.verdict?.serviceRequirement ===
+        ServiceRequirement.NOT_APPLICABLE
         ? theRulingDate
         : defendant.verdict?.serviceDate
         ? new Date(defendant.verdict.serviceDate)

@@ -1,5 +1,5 @@
 import { Base64 } from 'js-base64'
-import { Transaction } from 'sequelize'
+import { Sequelize, Transaction } from 'sequelize'
 
 import {
   BadRequestException,
@@ -8,7 +8,7 @@ import {
   InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common'
-import { InjectModel } from '@nestjs/sequelize'
+import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -41,6 +41,7 @@ type UpdateVerdict = { serviceDate?: Date | null } & Pick<
 
 export class VerdictService {
   constructor(
+    @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Verdict) private readonly verdictModel: typeof Verdict,
     @Inject(forwardRef(() => FileService))
     private readonly fileService: FileService,
@@ -49,30 +50,13 @@ export class VerdictService {
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
-  private async update(verdictId: string, update: UpdateVerdict) {
-    const [numberOfAffectedRows, updatedVerdict] =
-      await this.verdictModel.update(update, {
-        where: { id: verdictId },
-        returning: true,
-      })
-
-    if (numberOfAffectedRows > 1) {
-      // Tolerate failure, but log error
-      this.logger.error(
-        `Unexpected number of rows ${numberOfAffectedRows} affected when updating verdict`,
-      )
-    } else if (numberOfAffectedRows < 1) {
-      throw new InternalServerErrorException(
-        `Could not update verdict ${verdictId}`,
-      )
-    }
-
-    return updatedVerdict[0]
-  }
-
-  async findById(verdictId: string): Promise<Verdict> {
+  async findById(
+    verdictId: string,
+    transaction?: Transaction,
+  ): Promise<Verdict> {
     const verdict = await this.verdictModel.findOne({
       where: { id: verdictId },
+      transaction,
     })
 
     if (!verdict) {
@@ -90,16 +74,25 @@ export class VerdictService {
     return this.verdictModel.create({ defendantId, caseId }, { transaction })
   }
 
-  async handleServiceRequirementUpdate(
+  private async handleServiceRequirementUpdate(
     verdictId: string,
     update: UpdateVerdictDto,
+    transaction: Transaction,
     rulingDate?: Date,
   ): Promise<UpdateVerdictDto> {
+    // rulingDate should be set, but the case completed guard can not guarantee its presence
+    // ensure that ruling date is present to prevent side effects in handle service requirement update
+    if (!rulingDate) {
+      throw new BadRequestException(
+        'Missing rulingDate for service requirement update',
+      )
+    }
+
     if (!update.serviceRequirement) {
       return update
     }
 
-    const currentVerdict = await this.findById(verdictId)
+    const currentVerdict = await this.findById(verdictId, transaction)
 
     // prevent updating service requirement AGAIN after a verdict has been served by police and potentially override the service date
     if (
@@ -119,12 +112,47 @@ export class VerdictService {
     }
   }
 
-  async updateVerdict(
+  private async updateVerdict(
+    verdict: Verdict,
+    update: UpdateVerdict,
+    transaction?: Transaction,
+  ): Promise<Verdict> {
+    const [numberOfAffectedRows, updatedVerdict] =
+      await this.verdictModel.update(update, {
+        where: { id: verdict.id },
+        returning: true,
+        transaction,
+      })
+
+    if (numberOfAffectedRows > 1) {
+      // Tolerate failure, but log error
+      this.logger.error(
+        `Unexpected number of rows ${numberOfAffectedRows} affected when updating verdict`,
+      )
+    } else if (numberOfAffectedRows < 1) {
+      throw new InternalServerErrorException(
+        `Could not update verdict ${verdict.id}`,
+      )
+    }
+
+    return updatedVerdict[0]
+  }
+
+  async update(
     verdict: Verdict,
     update: UpdateVerdictDto,
+    rulingDate?: Date,
   ): Promise<Verdict> {
-    const updatedVerdict = await this.update(verdict.id, update)
-    return updatedVerdict
+    return this.sequelize.transaction(async (transaction) => {
+      const enhancedUpdate = await this.handleServiceRequirementUpdate(
+        verdict.id,
+        update,
+        transaction,
+        rulingDate,
+      )
+
+      return this.updateVerdict(verdict, enhancedUpdate, transaction)
+    })
   }
 
   async updateRestricted(
@@ -183,7 +211,7 @@ export class VerdictService {
       return { delivered: false }
     }
     // update existing verdict with the external document id returned from the police
-    await this.update(verdict.id, createdDocument)
+    await this.updateVerdict(verdict, createdDocument)
 
     return { delivered: true }
   }

@@ -79,13 +79,10 @@ export class VerdictController {
       `Updating verdict for ${verdict.id} of ${defendantId} in ${caseId}`,
     )
 
-    const enhancedUpdate =
-      await this.verdictService.handleServiceRequirementUpdate(
-        verdict.id,
-        verdictToUpdate,
-        theCase.rulingDate,
-      )
-
-    return this.verdictService.updateVerdict(verdict, enhancedUpdate)
+    return this.verdictService.update(
+      verdict,
+      verdictToUpdate,
+      theCase.rulingDate,
+    )
   }
 }

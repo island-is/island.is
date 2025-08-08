@@ -11,7 +11,7 @@ import {
 import { Application } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { friggSchoolsByMunicipalityQuery } from '../../../graphql/queries'
-import { ApplicationType, SchoolType } from '../../../lib/constants'
+import { ApplicationType, SchoolType } from '../../../utils/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   formatGrade,
@@ -20,7 +20,7 @@ import {
   getCurrentSchoolName,
   getInternationalSchoolsIds,
   getMunicipalityCodeBySchoolUnitId,
-} from '../../../lib/newPrimarySchoolUtils'
+} from '../../../utils/newPrimarySchoolUtils'
 import {
   FriggSchoolsByMunicipalityQuery,
   OrganizationModelTypeEnum,
@@ -57,9 +57,8 @@ export const currentSchoolSubSection = buildSubSection({
           condition: (_, externalData) => {
             return isCurrentSchoolRegistered(externalData)
           },
-
           defaultValue: (application: Application) =>
-            getCurrentSchoolName(application),
+            getCurrentSchoolName(application.externalData),
         }),
         buildCustomField(
           {
@@ -79,7 +78,7 @@ export const currentSchoolSubSection = buildSubSection({
               return {
                 ...newPrimarySchoolMessages.primarySchool.currentGrade,
                 values: {
-                  grade: formatGrade(childGradeLevel, lang),
+                  grade: formatGrade(childGradeLevel ?? '', lang),
                 },
               }
             },

@@ -47,6 +47,7 @@ export const createTestingVerdictModule = async () => {
           error: jest.fn(),
         },
       },
+      { provide: Sequelize, useValue: { transaction: jest.fn() } },
       {
         provide: getModelToken(Verdict),
         useValue: {
@@ -71,10 +72,13 @@ export const createTestingVerdictModule = async () => {
   const verdictController =
     verdictModule.get<VerdictController>(VerdictController)
 
+  const sequelize = verdictModule.get<Sequelize>(Sequelize)
+
   verdictModule.close()
 
   return {
     verdictController,
     verdictModel,
+    sequelize,
   }
 }
