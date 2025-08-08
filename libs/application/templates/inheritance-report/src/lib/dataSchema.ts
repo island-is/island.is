@@ -45,14 +45,23 @@ const validateAssetNumber = (assetNumber: string) => {
   return assetNumberPattern.test(assetNumber)
 }
 
-const assetSchema = ({ withShare }: { withShare?: boolean } = {}) =>
+const assetSchema = ({
+  withShare,
+  withAssetNumber = true,
+}: { withShare?: boolean; withAssetNumber?: boolean } = {}) =>
   z
     .object({
       data: z
         .object({
-          assetNumber: z
-            .string()
-            .refine((v) => (withShare ? validateAssetNumber(v) : true)),
+          ...(withAssetNumber
+            ? {
+                assetNumber: z
+                  .string()
+                  .refine((v) => (withShare ? validateAssetNumber(v) : true)),
+              }
+            : {
+                assetNumber: z.string().optional(),
+              }),
           description: z.string(),
           propertyValuation: z.string(),
           enabled: z.boolean(),
@@ -69,10 +78,17 @@ const assetSchema = ({ withShare }: { withShare?: boolean } = {}) =>
         )
         .refine(
           ({ assetNumber, enabled }) => {
-            return !enabled || isValidString(assetNumber)
+            return (
+              !enabled ||
+              (withAssetNumber &&
+                typeof assetNumber === 'string' &&
+                isValidString(assetNumber)) ||
+              !withAssetNumber
+            )
           },
           {
             path: ['assetNumber'],
+            message: 'MESSAGE!!!',
           },
         )
         .refine(
@@ -121,6 +137,7 @@ const assetSchema = ({ withShare }: { withShare?: boolean } = {}) =>
 
 const asset = assetSchema()
 const assetWithShare = assetSchema({ withShare: true })
+const otherAsset = assetSchema({ withAssetNumber: false })
 
 export const inheritanceReportSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
@@ -359,46 +376,47 @@ export const inheritanceReportSchema = z.object({
         },
       )
       .optional(),
-    otherAssets: z
-      .object({
-        data: z
-          .object({
-            info: z.string().optional(),
-            value: z.string().optional(),
-            ...deceasedShare,
-          })
-          .refine(
-            ({ info }) => {
-              return !!info
-            },
-            {
-              path: ['info'],
-            },
-          )
-          .refine(
-            ({ value }) => {
-              return !!value
-            },
-            {
-              path: ['value'],
-            },
-          )
-          .refine(
-            ({ deceasedShare, deceasedShareEnabled }) => {
-              return validateDeceasedShare({
-                deceasedShare,
-                deceasedShareEnabled,
-              })
-            },
-            {
-              path: ['deceasedShare'],
-            },
-          )
-          .array()
-          .optional(),
-        total: z.number().optional(),
-      })
-      .optional(),
+    // otherAssets: z
+    //   .object({
+    //     data: z
+    //       .object({
+    //         info: z.string().optional(),
+    //         value: z.string().optional(),
+    //         ...deceasedShare,
+    //       })
+    //       .refine(
+    //         ({ info }) => {
+    //           return !!info
+    //         },
+    //         {
+    //           path: ['info'],
+    //         },
+    //       )
+    //       .refine(
+    //         ({ value }) => {
+    //           return !!value
+    //         },
+    //         {
+    //           path: ['value'],
+    //         },
+    //       )
+    //       .refine(
+    //         ({ deceasedShare, deceasedShareEnabled }) => {
+    //           return validateDeceasedShare({
+    //             deceasedShare,
+    //             deceasedShareEnabled,
+    //           })
+    //         },
+    //         {
+    //           path: ['deceasedShare'],
+    //         },
+    //       )
+    //       .array()
+    //       .optional(),
+    //     total: z.number().optional(),
+    //   })
+    //   .optional(),
+    otherAssets: otherAsset,
     assetsTotal: z.number().optional(),
   }),
 
