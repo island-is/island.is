@@ -232,9 +232,16 @@ const template: ApplicationTemplate<
     _nationalId: string,
     _application: Application,
   ): ApplicationRole | undefined => {
-    const { applicantActors } = _application
+    const { applicant, applicantActors = [] } = _application
 
-    if (applicantActors.length) return Roles.DELEGATE
+    if (_nationalId === applicant) {
+      return Roles.APPLICANT
+    }
+
+    if (applicantActors.some((actor) => actor === _nationalId)) {
+      return Roles.DELEGATE
+    }
+
     return Roles.APPLICANT
   },
 }
