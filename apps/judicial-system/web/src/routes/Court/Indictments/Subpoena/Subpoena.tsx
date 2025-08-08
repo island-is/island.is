@@ -51,24 +51,29 @@ export interface Updates {
 const Subpoena: FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
+
   const [navigateTo, setNavigateTo] = useState<keyof stepValidationsType>()
   const [updates, setUpdates] = useState<Updates>()
   const [newSubpoenas, setNewSubpoenas] = useState<string[]>([])
-  // Note: we keep the arraignment scheduled state in a subpoena specific state otherwise
-  // re-renders (when updating case and defendants) will cause unexpected states within the subpoena component
-  const [isArraignmentScheduled, setIsArraignmentScheduled] =
-    useState<boolean>()
   const [newAlternativeServices, setNewAlternativeServices] = useState<
     string[]
   >([])
   const [isCreatingSubpoena, setIsCreatingSubpoena] = useState<boolean>(false)
   const [isSchedulingArraignmentDate, setIsSchedulingArraignmentDate] =
     useState<boolean>()
+  // Note: we keep the arraignment scheduled state in a subpoena specific state otherwise
+  // re-renders (when updating case and defendants) will cause unexpected states within the subpoena component
+  const [isArraignmentScheduled, setIsArraignmentScheduled] =
+    useState<boolean>()
+  const [modalContent, setModalContent] = useState<{
+    title: string
+    text: string
+    primaryButtonText: string
+  }>()
 
   const { updateDefendantState, updateDefendant } = useDefendants()
-  const { formatMessage } = useIntl()
-
   const { setAndSendCaseToServer } = useCase()
+  const { formatMessage } = useIntl()
 
   const isIssuingSubpoenaForDefendant = (defendant: Defendant) =>
     !defendant.isAlternativeService &&
@@ -81,6 +86,10 @@ const Subpoena: FC = () => {
   const isRegisteringAlternativeServiceForDefendant = (defendant: Defendant) =>
     defendant.isAlternativeService &&
     (!isArraignmentScheduled || newAlternativeServices.includes(defendant.id))
+
+  const isIssuingAlternativeServices = updates?.defendants?.some((defendant) =>
+    isRegisteringAlternativeServiceForDefendant(defendant),
+  )
 
   const toggleNewAlternativeService = (defendant: Defendant) => () => {
     setNewAlternativeServices((previous) =>
@@ -263,6 +272,31 @@ const Subpoena: FC = () => {
     newSubpoenas.length,
   ])
 
+  useEffect(() => {
+    if (navigateTo !== undefined) {
+      if (isIssuingAlternativeServices) {
+        setModalContent({
+          title: strings.modalAlternativeServiceTitle,
+          text: strings.modalAlternativeServiceText,
+          primaryButtonText: strings.modalAlternativeServicePrimaryButtonText,
+        })
+      } else if (isIssuingSubpoenas) {
+        setModalContent({
+          title: formatMessage(strings.modalTitle),
+          text: formatMessage(strings.modalText),
+          primaryButtonText: formatMessage(strings.modalPrimaryButtonText),
+        })
+      }
+    } else {
+      setModalContent(undefined) // cleanup
+    }
+  }, [
+    navigateTo,
+    isIssuingAlternativeServices,
+    isIssuingSubpoenas,
+    formatMessage,
+  ])
+
   const stepIsValid = isSubpoenaStepValid(
     workingCase,
     updates?.defendants,
@@ -422,29 +456,13 @@ const Subpoena: FC = () => {
           nextIsDisabled={!stepIsValid}
         />
       </FormContentContainer>
-      {navigateTo !== undefined && (
+      {modalContent && (
         <Modal
-          title={
-            isIssuingSubpoenas
-              ? formatMessage(strings.modalTitle)
-              : strings.modalAlternativeServiceTitle
-          }
-          text={
-            isIssuingSubpoenas
-              ? formatMessage(strings.modalText)
-              : strings.modalAlternativeServiceText
-          }
-          onPrimaryButtonClick={() => {
-            scheduleArraignmentDate()
-          }}
-          onSecondaryButtonClick={() => {
-            setNavigateTo(undefined)
-          }}
-          primaryButtonText={
-            isIssuingSubpoenas
-              ? formatMessage(strings.modalPrimaryButtonText)
-              : strings.modalAlternativeServicePrimaryButtonText
-          }
+          title={modalContent.title}
+          text={modalContent.text}
+          primaryButtonText={modalContent.primaryButtonText}
+          onPrimaryButtonClick={() => scheduleArraignmentDate()}
+          onSecondaryButtonClick={() => setNavigateTo(undefined)}
           secondaryButtonText={formatMessage(strings.modalSecondaryButtonText)}
           isPrimaryButtonLoading={isCreatingSubpoena}
         />
