@@ -74,6 +74,7 @@ export const mapAnswersToApplicationDto = (
     return {
       flokkur: ending === 'pdf' ? 5 : 2,
       heiti: file.key.replace(/^[^_]*_/, ''),
+      dags: new Date(),
       tegund,
       fileID: hashToLength20(file.key.split('_')[0]),
       ending: `.${ending}`,
