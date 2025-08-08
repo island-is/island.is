@@ -5,12 +5,12 @@ import {
   NO,
   YES,
 } from '@island.is/application/core'
-import { ApplicationType } from '../../../utils/constants'
+import { ApplicationType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
   getNeighbourhoodSchoolName,
-} from '../../../utils/newPrimarySchoolUtils'
+} from '../../../lib/newPrimarySchoolUtils'
 
 export const schoolSubSection = buildSubSection({
   id: 'schoolSubSection',
@@ -40,9 +40,8 @@ export const schoolSubSection = buildSubSection({
                   ...newPrimarySchoolMessages.primarySchool
                     .schoolApplyForNeighbourhoodSchoolSubLabel,
                   values: {
-                    neighbourhoodSchoolName: getNeighbourhoodSchoolName(
-                      application.externalData,
-                    ),
+                    neighbourhoodSchoolName:
+                      getNeighbourhoodSchoolName(application),
                   },
                 },
                 value: YES,

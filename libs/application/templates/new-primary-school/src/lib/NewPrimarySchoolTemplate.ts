@@ -25,7 +25,6 @@ import { CodeOwners } from '@island.is/shared/constants'
 import unset from 'lodash/unset'
 import { assign } from 'xstate'
 import { ChildrenApi } from '../dataProviders'
-import { hasForeignLanguages } from '../utils/conditionUtils'
 import {
   ApiModuleActions,
   Events,
@@ -33,13 +32,14 @@ import {
   Roles,
   SchoolType,
   States,
-} from '../utils/constants'
+} from './constants'
+import { dataSchema } from './dataSchema'
+import { newPrimarySchoolMessages } from './messages'
 import {
   determineNameFromApplicationAnswers,
   getApplicationAnswers,
-} from '../utils/newPrimarySchoolUtils'
-import { dataSchema } from './dataSchema'
-import { newPrimarySchoolMessages } from './messages'
+  hasForeignLanguages,
+} from './newPrimarySchoolUtils'
 
 const NewPrimarySchoolTemplate: ApplicationTemplate<
   ApplicationContext,

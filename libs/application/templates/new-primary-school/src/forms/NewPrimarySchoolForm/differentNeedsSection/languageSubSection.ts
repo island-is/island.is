@@ -6,20 +6,17 @@ import {
   buildRadioField,
   buildSelectField,
   buildSubSection,
-  NO,
   YES,
+  NO,
 } from '@island.is/application/core'
 import { getAllLanguageCodes } from '@island.is/shared/utils'
+import { LanguageEnvironmentOptions, OptionsType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
+  getApplicationAnswers,
   hasForeignLanguages,
   showPreferredLanguageFields,
-} from '../../../utils/conditionUtils'
-import {
-  LanguageEnvironmentOptions,
-  OptionsType,
-} from '../../../utils/constants'
-import { getApplicationAnswers } from '../../../utils/newPrimarySchoolUtils'
+} from '../../../lib/newPrimarySchoolUtils'
 
 export const languageSubSection = buildSubSection({
   id: 'languageSubSection',
@@ -58,7 +55,9 @@ export const languageSubSection = buildSubSection({
             newPrimarySchoolMessages.differentNeeds.languagesDescription,
           titleVariant: 'h4',
           space: 4,
-          condition: (answers) => hasForeignLanguages(answers),
+          condition: (answers) => {
+            return hasForeignLanguages(answers)
+          },
         }),
         buildFieldsRepeaterField({
           id: 'languages.selectedLanguages',
@@ -77,7 +76,9 @@ export const languageSubSection = buildSubSection({
           },
           maxRows: 4,
           marginTop: 0,
-          condition: (answers) => hasForeignLanguages(answers),
+          condition: (answers) => {
+            return hasForeignLanguages(answers)
+          },
           fields: {
             code: {
               component: 'select',
@@ -115,7 +116,9 @@ export const languageSubSection = buildSubSection({
           title: newPrimarySchoolMessages.differentNeeds.preferredLanguageTitle,
           titleVariant: 'h4',
           space: 4,
-          condition: (answers) => showPreferredLanguageFields(answers),
+          condition: (answers) => {
+            return showPreferredLanguageFields(answers)
+          },
         }),
         buildSelectField({
           id: 'languages.preferredLanguage',
@@ -141,7 +144,9 @@ export const languageSubSection = buildSubSection({
                 }
               })
           },
-          condition: (answers) => showPreferredLanguageFields(answers),
+          condition: (answers) => {
+            return showPreferredLanguageFields(answers)
+          },
         }),
         buildRadioField({
           id: 'languages.signLanguage',

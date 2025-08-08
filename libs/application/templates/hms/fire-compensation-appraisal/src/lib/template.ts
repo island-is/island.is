@@ -10,7 +10,6 @@ import {
   UserProfileApi,
   ApplicationConfigurations,
   defineTemplateApi,
-  IdentityApi,
 } from '@island.is/application/types'
 import { Events, Roles, States } from '../utils/constants'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -29,7 +28,6 @@ import { getChargeItems } from '../utils/paymentUtils'
 import { Features } from '@island.is/feature-flags'
 import { ApiScope, HmsScope } from '@island.is/auth/scopes'
 import { AuthDelegationType } from '@island.is/shared/types'
-import { PaymentForm } from '@island.is/application/ui-forms'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -85,24 +83,6 @@ const template: ApplicationTemplate<
               api: [UserProfileApi, NationalRegistryApi, propertiesApi],
               delete: true,
             },
-            {
-              id: Roles.DELEGATE,
-              formLoader: () =>
-                import('../forms/prerequisitesProcureForm').then((module) =>
-                  Promise.resolve(module.PrerequisitesProcureForm),
-                ),
-              actions: [
-                {
-                  event: DefaultEvents.SUBMIT,
-                  name: 'Staðfesta',
-                  type: 'primary',
-                },
-              ],
-              write: 'all',
-              read: 'all',
-              api: [UserProfileApi, IdentityApi, propertiesApi],
-              delete: true,
-            },
           ],
         },
         on: {
@@ -141,23 +121,6 @@ const template: ApplicationTemplate<
               read: 'all',
               delete: true,
             },
-            {
-              id: Roles.DELEGATE,
-              formLoader: () =>
-                import('../forms/mainForm').then((module) =>
-                  Promise.resolve(module.MainForm),
-                ),
-              actions: [
-                {
-                  event: DefaultEvents.PAYMENT,
-                  name: m.overviewMessages.pay,
-                  type: 'primary',
-                },
-              ],
-              write: 'all',
-              read: 'all',
-              delete: true,
-            },
           ],
         },
         on: {
@@ -169,20 +132,6 @@ const template: ApplicationTemplate<
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
         chargeItems: getChargeItems,
-        roles: [
-          {
-            id: Roles.APPLICANT,
-            formLoader: async () => {
-              return PaymentForm
-            },
-          },
-          {
-            id: Roles.DELEGATE,
-            formLoader: async () => {
-              return PaymentForm
-            },
-          },
-        ],
       }),
       [States.DONE]: {
         meta: {
@@ -198,14 +147,6 @@ const template: ApplicationTemplate<
           roles: [
             {
               id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/completedForm').then((module) =>
-                  Promise.resolve(module.completedForm),
-                ),
-              read: 'all',
-            },
-            {
-              id: Roles.DELEGATE,
               formLoader: () =>
                 import('../forms/completedForm').then((module) =>
                   Promise.resolve(module.completedForm),
@@ -232,16 +173,6 @@ const template: ApplicationTemplate<
     _nationalId: string,
     _application: Application,
   ): ApplicationRole | undefined => {
-    const { applicant, applicantActors = [] } = _application
-
-    if (_nationalId === applicant) {
-      return Roles.APPLICANT
-    }
-
-    if (applicantActors.some((actor) => actor === _nationalId)) {
-      return Roles.DELEGATE
-    }
-
     return Roles.APPLICANT
   },
 }

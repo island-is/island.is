@@ -1,4 +1,5 @@
 import { FC, useContext } from 'react'
+import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import {
@@ -18,11 +19,14 @@ import {
 import { CaseTransition } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useCase } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import { strings } from './ReopenModal.strings'
+
 interface Props {
   onClose: () => void
 }
 
 const ReopenModal: FC<Props> = ({ onClose }) => {
+  const { formatMessage } = useIntl()
   const router = useRouter()
   const { workingCase } = useContext(FormContext)
   const { user } = useContext(UserContext)
@@ -30,17 +34,13 @@ const ReopenModal: FC<Props> = ({ onClose }) => {
 
   return (
     <Modal
-      title={
-        isCourtOfAppealsUser(user)
-          ? 'Viltu leiðrétta úrskurðinn?'
-          : 'Viltu leiðrétta þingbókina eða úrskurðinn?'
-      }
+      title={formatMessage(strings.title)}
       text={
         isCourtOfAppealsUser(user)
-          ? 'Með því að halda áfram opnast ferlið aftur og hægt er að leiðrétta úrskurðinn. Til að breytingarnar skili sér til aðila máls þarf að ljúka málinu aftur.'
-          : 'Að lokinni leiðréttingu er hægt að velja að undirrita leiðréttan úrskurð eigi það við.'
+          ? formatMessage(strings.reopenAppealText)
+          : formatMessage(strings.reopenCaseText)
       }
-      primaryButtonText="Halda áfram"
+      primaryButtonText={formatMessage(strings.continue)}
       isPrimaryButtonLoading={isTransitioningCase}
       onPrimaryButtonClick={async () => {
         const caseTransitioned = await transitionCase(
@@ -60,7 +60,7 @@ const ReopenModal: FC<Props> = ({ onClose }) => {
           )
         }
       }}
-      secondaryButtonText="Hætta við"
+      secondaryButtonText={formatMessage(strings.cancel)}
       onSecondaryButtonClick={onClose}
     />
   )

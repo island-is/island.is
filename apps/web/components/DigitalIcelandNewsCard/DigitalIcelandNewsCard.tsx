@@ -97,7 +97,7 @@ export const DigitalIcelandNewsCard = (item: ItemProps) => {
             <BackgroundImage
               backgroundSize="cover"
               image={{ url: item.imageSrc }}
-              ratio="64:40"
+              ratio="200:122"
               boxProps={{
                 alignItems: 'center',
                 width: 'full',

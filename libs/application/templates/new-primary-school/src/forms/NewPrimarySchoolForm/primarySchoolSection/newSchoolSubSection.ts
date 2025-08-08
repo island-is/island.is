@@ -7,14 +7,14 @@ import {
   NO,
 } from '@island.is/application/core'
 import { friggSchoolsByMunicipalityQuery } from '../../../graphql/queries'
-import { ApplicationType, SchoolType } from '../../../utils/constants'
+import { ApplicationType, SchoolType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
   getInternationalSchoolsIds,
   getMunicipalityCodeBySchoolUnitId,
-} from '../../../utils/newPrimarySchoolUtils'
+} from '../../../lib/newPrimarySchoolUtils'
 import {
   Application,
   FriggSchoolsByMunicipalityQuery,

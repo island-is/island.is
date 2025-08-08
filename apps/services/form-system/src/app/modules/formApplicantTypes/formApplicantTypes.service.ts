@@ -60,7 +60,7 @@ export class FormApplicantTypesService {
       createFormApplicantTypeDto.applicantTypeId,
     )
     if (
-      delegationType !== 'Other' &&
+      delegationType !== 'Unknown' &&
       !allowedDelegationTypes.includes(delegationType)
     ) {
       allowedDelegationTypes.push(delegationType)
@@ -153,7 +153,7 @@ export class FormApplicantTypesService {
       case ApplicantTypesEnum.LEGAL_GUARDIAN:
         return 'LegalGuardian'
       default:
-        return 'Other'
+        throw new Error(`Unhandled ApplicantTypesEnum value: ${applicantType}`)
     }
   }
 }

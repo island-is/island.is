@@ -53,10 +53,6 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:name-english',
     defaultMessage: 'Heiti á ensku',
   },
-  englishTranslation: {
-    id: 'portals-admin.form-system:english-translation',
-    defaultMessage: 'Ensk þýðing',
-  },
   applicationName: {
     id: 'portals-admin.form-system:application-name',
     defaultMessage: 'Heiti umsóknar',

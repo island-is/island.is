@@ -90,14 +90,8 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
   }
 
   async getCitizenship({ application }: TemplateApiModuleActionProps) {
-    const child = getSelectedChild(
-      application.answers,
-      application.externalData,
-    )
-    const guardian = getOtherGuardian(
-      application.answers,
-      application.externalData,
-    )
+    const child = getSelectedChild(application)
+    const guardian = getOtherGuardian(application)
 
     let childCitizenshipCode = ''
     if (child) {

@@ -1,8 +1,11 @@
 import { ExternalData } from '@island.is/application/types'
 import { uuid } from 'uuidv4'
-import { hasOtherGuardian, showPreferredLanguageFields } from './conditionUtils'
 import { LanguageEnvironmentOptions } from './constants'
-import { getMunicipalityCodeBySchoolUnitId } from './newPrimarySchoolUtils'
+import {
+  getMunicipalityCodeBySchoolUnitId,
+  hasOtherGuardian,
+  showPreferredLanguageFields,
+} from './newPrimarySchoolUtils'
 
 describe('hasOtherGuardian', () => {
   it('should return true if otherParent exists in externalData', () => {

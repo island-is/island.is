@@ -1,4 +1,4 @@
-import { Dispatch, FC, SetStateAction, useContext } from 'react'
+import { Dispatch, FC, SetStateAction, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
 import { Box, RadioButton, Text, Tooltip } from '@island.is/island-ui/core'
@@ -18,6 +18,7 @@ import { UpdateCase, useCase } from '../../utils/hooks'
 import RequiredStar from '../RequiredStar/RequiredStar'
 import { UserContext } from '../UserProvider/UserProvider'
 import { BlueBox, InputAdvocate, SectionHeading } from '..'
+import DefenderNotFound from './DefenderNotFound'
 import { defenderInfo } from './DefenderInfo.strings'
 
 interface Props {
@@ -29,6 +30,8 @@ const DefenderInfo: FC<Props> = ({ workingCase, setWorkingCase }) => {
   const { formatMessage } = useIntl()
   const { updateCase, setAndSendCaseToServer } = useCase()
   const { user } = useContext(UserContext)
+
+  const [defenderNotFound, setDefenderNotFound] = useState<boolean>(false)
 
   const getSectionTitle = () => {
     if (isRestrictionCase(workingCase.type)) {
@@ -117,6 +120,7 @@ const DefenderInfo: FC<Props> = ({ workingCase, setWorkingCase }) => {
   return (
     <>
       <SectionHeading title={getSectionTitle()} tooltip={renderTooltip()} />
+      {defenderNotFound && <DefenderNotFound />}
       <BlueBox>
         <InputAdvocate
           advocateType={
@@ -130,6 +134,7 @@ const DefenderInfo: FC<Props> = ({ workingCase, setWorkingCase }) => {
           email={workingCase.defenderEmail}
           phoneNumber={workingCase.defenderPhoneNumber}
           onAdvocateChange={handleAdvocateChange}
+          onAdvocateNotFound={setDefenderNotFound}
           onEmailChange={(defenderEmail: string | null) =>
             setWorkingCase((prev) => ({ ...prev, defenderEmail }))
           }

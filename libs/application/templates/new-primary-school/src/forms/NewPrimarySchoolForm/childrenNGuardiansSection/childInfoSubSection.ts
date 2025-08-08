@@ -9,14 +9,14 @@ import {
   YES,
 } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
-import { OptionsType } from '../../../utils/constants'
+import { OptionsType } from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
   getGenderMessage,
   getSelectedChild,
-} from '../../../utils/newPrimarySchoolUtils'
+} from '../../../lib/newPrimarySchoolUtils'
 
 export const childInfoSubSection = buildSubSection({
   id: 'childInfoSubSection',
@@ -34,8 +34,7 @@ export const childInfoSubSection = buildSubSection({
           title: newPrimarySchoolMessages.shared.fullName,
           disabled: true,
           defaultValue: (application: Application) =>
-            getSelectedChild(application.answers, application.externalData)
-              ?.fullName,
+            getSelectedChild(application)?.fullName,
         }),
         buildTextField({
           id: 'childInfo.nationalId',
@@ -44,8 +43,7 @@ export const childInfoSubSection = buildSubSection({
           format: '######-####',
           disabled: true,
           defaultValue: (application: Application) =>
-            getSelectedChild(application.answers, application.externalData)
-              ?.nationalId,
+            getSelectedChild(application)?.nationalId,
         }),
         buildTextField({
           id: 'childInfo.address.streetAddress',
@@ -80,8 +78,7 @@ export const childInfoSubSection = buildSubSection({
             title: newPrimarySchoolMessages.shared.gender,
           },
           {
-            value: (application: Application) =>
-              getGenderMessage(application.answers, application.externalData),
+            value: (application: Application) => getGenderMessage(application),
           },
         ),
         buildCheckboxField({
@@ -110,7 +107,7 @@ export const childInfoSubSection = buildSubSection({
           },
           defaultValue: (application: Application) =>
             getApplicationExternalData(application.externalData)
-              .childInformation?.preferredName ?? undefined,
+              .childInformation.preferredName ?? undefined,
         }),
         buildCustomField(
           {
@@ -125,7 +122,7 @@ export const childInfoSubSection = buildSubSection({
             component: 'FriggOptionsAsyncSelectField',
             defaultValue: (application: Application) =>
               getApplicationExternalData(application.externalData)
-                .childInformation?.pronouns,
+                .childInformation.pronouns,
           },
           {
             optionsType: OptionsType.PRONOUN,

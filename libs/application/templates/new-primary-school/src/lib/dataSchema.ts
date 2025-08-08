@@ -5,7 +5,8 @@ import {
   ApplicationType,
   LanguageEnvironmentOptions,
   ReasonForApplicationOptions,
-} from '../utils/constants'
+} from './constants'
+
 import { NO, YES } from '@island.is/application/core'
 import { errorMessages } from './messages'
 

@@ -1,8 +1,9 @@
-import React, { Dispatch, SetStateAction, useContext } from 'react'
+import React, { Dispatch, SetStateAction, useContext, useState } from 'react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { isDistrictCourtUser } from '@island.is/judicial-system/types'
 import {
+  DefenderNotFound,
   InputAdvocate,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
@@ -28,6 +29,8 @@ export const LegalRightsProtectorInputFields = ({
     useVictim()
   const { user } = useContext(UserContext)
 
+  const [lawyerNotFound, setLawyerNotFound] = useState(false)
+
   return (
     <>
       <Box marginBottom={2}>
@@ -35,6 +38,7 @@ export const LegalRightsProtectorInputFields = ({
           {useVictimNameAsTitle ? victim.name : 'Réttargæslumaður'}
         </Text>
       </Box>
+      {lawyerNotFound && <DefenderNotFound />}
       <InputAdvocate
         advocateType="legalRightsProtector"
         name={victim.lawyerName}
@@ -64,6 +68,7 @@ export const LegalRightsProtectorInputFields = ({
             setWorkingCase,
           )
         }
+        onAdvocateNotFound={setLawyerNotFound}
         onEmailChange={(lawyerEmail) =>
           updateVictimState(
             {

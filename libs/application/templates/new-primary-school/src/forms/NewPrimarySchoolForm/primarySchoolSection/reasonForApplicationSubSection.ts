@@ -12,9 +12,9 @@ import {
   OptionsType,
   ReasonForApplicationOptions,
   SchoolType,
-} from '../../../utils/constants'
+} from '../../../lib/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import { getApplicationAnswers } from '../../../utils/newPrimarySchoolUtils'
+import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
 
 export const reasonForApplicationSubSection = buildSubSection({
   id: 'reasonForApplicationSubSection',
