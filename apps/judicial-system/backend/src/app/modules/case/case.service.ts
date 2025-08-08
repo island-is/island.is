@@ -76,6 +76,7 @@ import { Institution } from '../institution'
 import { Notification } from '../notification'
 import { Subpoena, SubpoenaService } from '../subpoena'
 import { User } from '../user'
+import { VerdictService } from '../verdict/verdict.service'
 import { Victim } from '../victim/models/victim.model'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { getCasesQueryFilter } from './filters/cases.filter'
@@ -520,6 +521,7 @@ export class CaseService {
     private readonly config: ConfigType<typeof caseModuleConfig>,
     private readonly defendantService: DefendantService,
     private readonly subpoenaService: SubpoenaService,
+    private readonly verdictService: VerdictService,
     private readonly fileService: FileService,
     private readonly awsS3Service: AwsS3Service,
     private readonly courtService: CourtService,
@@ -2033,9 +2035,11 @@ export class CaseService {
     const isReceivingCase =
       update.courtCaseNumber && theCase.state === CaseState.SUBMITTED
 
+    const completingIndictmentCase =
+      isIndictmentCase(theCase.type) && update.state === CaseState.COMPLETED
+
     const completingIndictmentCaseWithoutRuling =
-      isIndictmentCase(theCase.type) &&
-      update.state === CaseState.COMPLETED &&
+      completingIndictmentCase &&
       theCase.indictmentRulingDecision &&
       [
         CaseIndictmentRulingDecision.FINE,
@@ -2043,6 +2047,10 @@ export class CaseService {
         CaseIndictmentRulingDecision.MERGE,
         CaseIndictmentRulingDecision.WITHDRAWAL,
       ].includes(theCase.indictmentRulingDecision)
+
+    const completingIndictmentCaseWithRuling =
+      completingIndictmentCase &&
+      theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
 
     const requiresCourtTransition =
       theCase.courtId &&
@@ -2114,7 +2122,7 @@ export class CaseService {
           )
         }
 
-        // Create new subpoeans if scheduling a new arraignment date for an indictment case
+        // Create new subpoenas if scheduling a new arraignment date for an indictment case
         if (
           schedulingNewArraignmentDateForIndictmentCase &&
           theCase.defendants
@@ -2135,6 +2143,18 @@ export class CaseService {
           )
         }
 
+        // create new verdict for each defendant when indictment is completed with ruling
+        if (completingIndictmentCaseWithRuling && theCase.defendants) {
+          await Promise.all(
+            theCase.defendants.map((defendant) =>
+              this.verdictService.createVerdict(
+                defendant.id,
+                theCase.id,
+                transaction,
+              ),
+            ),
+          )
+        }
         const updatedCase = await this.findById(theCase.id, true, transaction)
 
         await this.handleEventLogUpdates(

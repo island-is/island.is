@@ -58,6 +58,7 @@ import {
   UploadPoliceCaseFileResponse,
 } from '../police'
 import { Subpoena } from '../subpoena'
+import { Verdict } from '../verdict'
 import { DeleteVictimResponse, Victim } from '../victim'
 import { backendModuleConfig } from './backend.config'
 
@@ -440,6 +441,18 @@ export class BackendService extends DataSource<{ req: Request }> {
   ): Promise<Subpoena> {
     return this.get(
       `case/${caseId}/defendant/${defendantId}/subpoena/${subpoenaId}`,
+    )
+  }
+
+  updateVerdict(
+    caseId: string,
+    defendantId: string,
+    verdictId: string,
+    updateVerdict: unknown,
+  ): Promise<Verdict> {
+    return this.patch(
+      `case/${caseId}/defendant/${defendantId}/verdict/${verdictId}`,
+      updateVerdict,
     )
   }
 

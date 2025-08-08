@@ -15,6 +15,7 @@ import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import { getServiceStatusText } from '@island.is/judicial-system/formatters'
 import {
   Message,
   MessageService,
@@ -264,7 +265,7 @@ export class SubpoenaService {
         'SUBPOENA_SERVICE_STATUS',
         subpoena.case,
         false,
-        { Staða: Subpoena.serviceStatusText(update.serviceStatus) },
+        { Staða: getServiceStatusText(update.serviceStatus) },
       )
     }
 
