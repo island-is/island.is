@@ -326,6 +326,7 @@ const Completed: FC = () => {
                       marginBottom={2}
                       heading="h4"
                     />
+                    {/* TODO: adjust to verdict post migration */}
                     <Box marginBottom={2}>
                       <RadioButton
                         id={`defendant-${defendant.id}-service-requirement-not-applicable`}
