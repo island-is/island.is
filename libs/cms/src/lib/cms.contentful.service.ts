@@ -1263,7 +1263,10 @@ export class CmsContentfulService {
       return null
     }
 
-    const entryNodes = new Map<string, { label: string; href: string }[]>()
+    const entryNodes = new Map<
+      string,
+      { label: string; href: string; description: string }[]
+    >()
 
     const result = {
       childLinks: category.childNodes.map((node) => {
@@ -1291,6 +1294,7 @@ export class CmsContentfulService {
         const entryNode = {
           label: '',
           href: '',
+          description: '',
           entryId: node.entryId,
         }
         const nodeList = entryNodes.get(node.entryId) ?? []
@@ -1318,6 +1322,7 @@ export class CmsContentfulService {
       }
       for (const node of nodeList) {
         node.label = page.fields.title
+        node.description = page.fields.shortDescription ?? ''
         const organizationPageSlug =
           page.fields.organizationPage.fields.slug ===
           input.organizationPageSlug
@@ -1391,7 +1396,7 @@ export class CmsContentfulService {
 
     const entryNodes = new Map<
       string,
-      { label: string; href: string; entryId: string }[]
+      { label: string; href: string; entryId: string; description: string }[]
     >()
 
     const result: OrganizationPageStandaloneSitemapLevel2 = {
@@ -1424,6 +1429,7 @@ export class CmsContentfulService {
               const entryNode = {
                 label: '',
                 href: '',
+                description: '',
                 entryId: childNode.entryId,
                 childLinks: [],
               }
@@ -1452,6 +1458,7 @@ export class CmsContentfulService {
         const entryNode = {
           label: '',
           href: '',
+          description: '',
           entryId: node.entryId,
           childLinks: [],
         }
@@ -1488,6 +1495,7 @@ export class CmsContentfulService {
 
       for (const node of nodeList) {
         node.label = page.fields.title
+        node.description = page.fields.shortDescription ?? ''
         if ('organizationParentSubpage' in page.fields) {
           if (page.fields.organizationParentSubpage?.fields.slug) {
             node.href = `/${getOrganizationPageUrlPrefix(
