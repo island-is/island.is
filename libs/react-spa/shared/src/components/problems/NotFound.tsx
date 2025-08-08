@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from 'react-router-dom'
+import { useNavigate } from 'react-router-dom'
 
 import { TestSupport } from '@island.is/island-ui/utils'
 import { useLocale } from '@island.is/localization'
@@ -25,7 +25,6 @@ export const NotFound = ({
 }: NotFoundProps & TestSupport) => {
   const { formatMessage } = useLocale()
   const navigate = useNavigate()
-  const { pathname } = useLocation()
   const title = titleStr ?? formatMessage(m.notFound)
 
   return (

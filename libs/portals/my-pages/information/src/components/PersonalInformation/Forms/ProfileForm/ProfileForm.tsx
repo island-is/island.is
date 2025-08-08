@@ -9,6 +9,7 @@ import {
   Link,
   PhoneInput,
   SkeletonLoader,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { LoadModal, m, parseNumber } from '@island.is/portals/my-pages/core'
@@ -304,7 +305,7 @@ export const ProfileForm = ({
                 title={formatMessage(m.bankAccountInfo)}
                 text={formatMessage(msg.editBankInfoText)}
                 loading={userLoading}
-                divider={false}
+                divider={true}
               >
                 {!userLoading && !userProfile?.bankInfoError && (
                   <BankInfoForm
@@ -314,6 +315,13 @@ export const ProfileForm = ({
                 {!userLoading && userProfile?.bankInfoError && (
                   <Problem size="small" />
                 )}
+              </InputSection>
+              <InputSection
+                title={formatMessage(m.debugTitle)}
+                text={formatMessage(m.debugDescription)}
+                divider={false}
+              >
+                <Text variant="eyebrow">{userInfo.profile.sid}</Text>
               </InputSection>
             </>
           )}

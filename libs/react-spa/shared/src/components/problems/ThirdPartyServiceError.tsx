@@ -14,7 +14,7 @@ import { useGetOrganizationsQuery } from './GetOrganization.generated'
 type ThirdPartyServiceErrorProps = {
   organizationSlug: string
   size?: ProblemSize
-} & Pick<ProblemTemplateProps, 'expand'>
+} & Pick<ProblemTemplateProps, 'expand' | 'debugMessage'>
 
 export const ThirdPartyServiceError = ({
   organizationSlug,
