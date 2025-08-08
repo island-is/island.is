@@ -7,10 +7,16 @@ export const itemListContainer = style({
   gap: theme.spacing[4],
   ...themeUtils.responsiveStyle({
     xs: {
-      gridTemplateColumns: 'minmax(230px, 500px)',
+      gridTemplateColumns: 'minmax(230px, 450px)',
       justifyContent: 'center',
     },
     md: {
+      gridTemplateColumns: 'repeat(auto-fit, minmax(302px, 340px))',
+    },
+    lg: {
+      gridTemplateColumns: 'repeat(auto-fit, minmax(302px, 400px))',
+    },
+    xl: {
       gridTemplateColumns: 'repeat(auto-fit, minmax(302px, 1fr))',
     },
   }),
