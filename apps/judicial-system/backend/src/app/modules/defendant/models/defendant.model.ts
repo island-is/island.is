@@ -5,6 +5,7 @@ import {
   DataType,
   ForeignKey,
   HasMany,
+  HasOne,
   Model,
   Table,
   UpdatedAt,
@@ -26,6 +27,7 @@ import {
 
 import { Case } from '../../case/models/case.model'
 import { Subpoena } from '../../subpoena/models/subpoena.model'
+import { Verdict } from '../../verdict/models/verdict.model'
 import { DefendantEventLog } from './defendantEventLog.model'
 
 @Table({
@@ -248,4 +250,8 @@ export class Defendant extends Model {
   })
   @ApiPropertyOptional({ enum: InformationForDefendant, isArray: true })
   informationForDefendant?: InformationForDefendant[]
+
+  @HasOne(() => Verdict, { foreignKey: 'defendantId' })
+  @ApiPropertyOptional({ type: () => Verdict })
+  verdict?: Verdict
 }
