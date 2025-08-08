@@ -77,7 +77,7 @@ export const SitemapTreeField = () => {
       parentNode: Tree,
       type: TreeNodeType,
       entries: Record<string, EntryProps>,
-      createNew?: boolean,
+      createNew = false,
       entryType?: EntryType,
     ) => {
       await addNodeUtil(

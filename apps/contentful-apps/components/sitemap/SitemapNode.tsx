@@ -202,7 +202,7 @@ interface SitemapNodeProps {
     parentNode: Tree,
     type: TreeNodeType,
     entries: Record<string, EntryProps>,
-    createNew?: boolean,
+    createNew: boolean,
     entryType?: EntryType,
   ) => void
   removeNode: (parentNode: Tree, idOfNodeToRemove: number) => void
