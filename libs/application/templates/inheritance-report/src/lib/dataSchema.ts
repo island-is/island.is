@@ -1,12 +1,12 @@
 import * as z from 'zod'
 import * as kennitala from 'kennitala'
 import {
-  customZodError,
   isValidEmail,
   isValidPhoneNumber,
   isValidString,
   valueToNumber,
 } from './utils/helpers'
+
 import { m } from './messages'
 import { NO, YES } from '@island.is/application/core'
 import {
@@ -15,6 +15,7 @@ import {
   PrePaidInheritanceOptions,
   RelationSpouse,
 } from './constants'
+import { customZodError } from './utils/validationHelpers'
 
 const deceasedShare = {
   deceasedShare: z.string().min(1).optional(),
