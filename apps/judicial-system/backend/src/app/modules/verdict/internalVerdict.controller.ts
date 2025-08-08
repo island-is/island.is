@@ -5,6 +5,7 @@ import {
   Inject,
   Param,
   Patch,
+  Post,
   UseGuards,
 } from '@nestjs/common'
 import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
@@ -12,7 +13,15 @@ import { ApiOkResponse, ApiTags } from '@nestjs/swagger'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import {
+  AuditedAction,
+  AuditTrailService,
+} from '@island.is/judicial-system/audit-trail'
 import { TokenGuard } from '@island.is/judicial-system/auth'
+import {
+  messageEndpoint,
+  MessageType,
+} from '@island.is/judicial-system/message'
 import {
   CaseIndictmentRulingDecision,
   getIndictmentAppealDeadlineDate,
@@ -28,13 +37,15 @@ import {
   CaseTypeGuard,
   CurrentCase,
 } from '../case'
-import { CurrentDefendant, Defendant } from '../defendant'
+import { CurrentDefendant, Defendant, DefendantExistsGuard } from '../defendant'
 import { DefendantNationalIdExistsGuard } from '../defendant/guards/defendantNationalIdExists.guard'
 import { Verdict } from '../verdict/models/verdict.model'
 import { VerdictService } from '../verdict/verdict.service'
+import { DeliverDto } from './dto/deliver.dto'
 import { InternalUpdateVerdictDto } from './dto/internalUpdateVerdict.dto'
 import { CurrentVerdict } from './guards/verdict.decorator'
-import { VerdictExistGuard } from './guards/verdictExistGuard.guard'
+import { VerdictExistsGuard } from './guards/verdictExists.guard'
+import { DeliverResponse } from './models/deliver.response'
 
 const validateVerdictAppealUpdate = ({
   caseId,
@@ -81,14 +92,73 @@ const validateVerdictAppealUpdate = ({
   CaseExistsGuard,
   new CaseTypeGuard(indictmentCases),
   CaseCompletedGuard,
-  DefendantNationalIdExistsGuard,
-  VerdictExistGuard,
 )
 export class InternalVerdictController {
   constructor(
     private readonly verdictService: VerdictService,
+    private readonly auditTrailService: AuditTrailService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
+
+  @UseGuards(DefendantExistsGuard, VerdictExistsGuard)
+  @Post([
+    `case/:caseId/${
+      messageEndpoint[
+        MessageType.DELIVER_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT
+      ]
+    }/:defendantId`,
+  ])
+  @ApiOkResponse({
+    type: DeliverResponse,
+    description: 'Delivers a verdict to the police centralized file service',
+  })
+  deliverVerdictToNationalCommissionersOffice(
+    @Param('caseId') caseId: string,
+    @Param('defendantId') defendantId: string,
+    @CurrentCase() theCase: Case,
+    @CurrentDefendant() defendant: Defendant,
+    @CurrentVerdict() verdict: Verdict,
+    @Body() deliverDto: DeliverDto,
+  ): Promise<DeliverResponse> {
+    this.logger.debug(
+      `Delivering verdict ${verdict.id} pdf to the police centralized file service for defendant ${defendantId} of case ${caseId}`,
+    )
+    if (defendant.noNationalId) {
+      throw new BadRequestException(
+        `National id is required for ${defendant.id} when delivering verdict to national commissioners office`,
+      )
+    }
+
+    // callback function to fetch the updated verdict fields after delivering verdict to police
+    const getDeliveredVerdictNationalCommissionersOfficeLogDetails = async (
+      results: DeliverResponse,
+    ) => {
+      const currentVerdict = await this.verdictService.findById(verdict.id)
+      return {
+        deliveredToPolice: results.delivered,
+        verdictId: verdict.id,
+        verdictCreated: verdict.created,
+        externalPoliceDocumentId: currentVerdict.externalPoliceDocumentId,
+        subpoenaHash: currentVerdict.hash,
+        verdictDeliveredToPolice: new Date(),
+        indictmentHash: theCase.indictmentHash,
+      }
+    }
+    return this.auditTrailService.audit(
+      deliverDto.user.id,
+      AuditedAction.DELIVER_TO_NATIONAL_COMMISSIONERS_OFFICE_VERDICT,
+      this.verdictService.deliverVerdictToNationalCommissionersOffice(
+        theCase,
+        defendant,
+        verdict,
+        deliverDto.user,
+      ),
+      caseId,
+      getDeliveredVerdictNationalCommissionersOfficeLogDetails,
+    )
+  }
+
+  @UseGuards(DefendantNationalIdExistsGuard, VerdictExistsGuard)
   @Patch('defendant/:defendantNationalId/verdict-appeal')
   @ApiOkResponse({
     type: Verdict,
