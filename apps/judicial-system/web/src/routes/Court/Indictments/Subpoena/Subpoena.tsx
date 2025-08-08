@@ -48,6 +48,12 @@ export interface Updates {
   theCase: Case
 }
 
+interface ModalContent {
+  title: string
+  text: string
+  primaryButtonText: string
+}
+
 const Subpoena: FC = () => {
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
@@ -65,11 +71,7 @@ const Subpoena: FC = () => {
   // re-renders (when updating case and defendants) will cause unexpected states within the subpoena component
   const [isArraignmentScheduled, setIsArraignmentScheduled] =
     useState<boolean>()
-  const [modalContent, setModalContent] = useState<{
-    title: string
-    text: string
-    primaryButtonText: string
-  }>()
+  const [modalContent, setModalContent] = useState<ModalContent>()
 
   const { updateDefendantState, updateDefendant } = useDefendants()
   const { setAndSendCaseToServer } = useCase()
