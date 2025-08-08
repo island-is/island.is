@@ -29,7 +29,7 @@ import { getChargeItems } from '../utils/paymentUtils'
 import { Features } from '@island.is/feature-flags'
 import { ApiScope, HmsScope } from '@island.is/auth/scopes'
 import { AuthDelegationType } from '@island.is/shared/types'
-// import { PaymentForm } from '@island.is/application/ui-forms'
+import { PaymentForm } from '@island.is/application/ui-forms'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -169,20 +169,20 @@ const template: ApplicationTemplate<
       [States.PAYMENT]: buildPaymentState({
         organizationId: InstitutionNationalIds.HUSNAEDIS_OG_MANNVIRKJASTOFNUN,
         chargeItems: getChargeItems,
-        // roles: [
-        //   {
-        //     id: Roles.APPLICANT,
-        //     formLoader: async () => {
-        //       return PaymentForm
-        //     },
-        //   },
-        //   {
-        //     id: Roles.DELEGATE,
-        //     formLoader: async () => {
-        //       return PaymentForm
-        //     },
-        //   },
-        // ],
+        roles: [
+          {
+            id: Roles.APPLICANT,
+            formLoader: async () => {
+              return PaymentForm
+            },
+          },
+          {
+            id: Roles.DELEGATE,
+            formLoader: async () => {
+              return PaymentForm
+            },
+          },
+        ],
       }),
       [States.DONE]: {
         meta: {
