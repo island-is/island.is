@@ -57,7 +57,9 @@ export class OrganizationUrlsService {
     newOrganizationUrl.isXroad = false
 
     if (createOrganizationUrlDto.method === UrlMethods.SEND_TO_ZENDESK) {
-      newOrganizationUrl.url = 'Zendesk'
+      newOrganizationUrl.url = createOrganizationUrlDto.isTest
+        ? 'Zendesk [prófun]'
+        : 'Zendesk [raun]'
     }
     await newOrganizationUrl.save()
 
@@ -104,10 +106,13 @@ export class OrganizationUrlsService {
       throw new NotFoundException(`Organization url with id '${id}' not found`)
     }
 
-    await this.formUrlModel.destroy({
-      where: { organizationUrlId: id },
+    const sequelize = this.organizationUrlModel.sequelize
+    await sequelize?.transaction(async (t) => {
+      await this.formUrlModel.destroy({
+        where: { organizationUrlId: id },
+        transaction: t,
+      })
+      await organizationUrl.destroy({ transaction: t })
     })
-
-    await organizationUrl.destroy()
   }
 }

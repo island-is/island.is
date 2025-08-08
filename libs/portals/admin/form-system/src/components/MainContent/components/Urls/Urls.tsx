@@ -1,5 +1,11 @@
-import { useContext, useState } from 'react'
-import { Box, Checkbox, GridColumn, GridRow } from '@island.is/island-ui/core'
+import { useContext, useEffect, useState } from 'react'
+import {
+  Box,
+  Checkbox,
+  GridColumn,
+  GridRow,
+  Text,
+} from '@island.is/island-ui/core'
 import { m } from '@island.is/form-system/ui'
 import { ControlContext } from '../../../../context/ControlContext'
 import { useIntl } from 'react-intl'
@@ -10,12 +16,19 @@ import {
 import { useMutation } from '@apollo/client'
 
 export const Urls = () => {
-  const { control, submitUrls } = useContext(ControlContext)
+  const { formatMessage } = useIntl()
+  const { control, submitUrls, controlDispatch } = useContext(ControlContext)
   const { form } = control
   const [formUrls, setFormUrls] = useState<string[]>(
     (form.urls ?? []).filter((url): url is string => typeof url === 'string'),
   )
-  const { formatMessage } = useIntl()
+
+  useEffect(() => {
+    controlDispatch({
+      type: 'UPDATE_FORM_URLS',
+      payload: { newValue: formUrls },
+    })
+  }, [formUrls])
 
   const [formSystemCreateFormUrlMutation] = useMutation(CREATE_FORM_URL, {
     onCompleted: (newUrlData) => {
@@ -71,69 +84,74 @@ export const Urls = () => {
   }
 
   return (
-    <GridRow>
-      <GridColumn span="5/10">
-        <Box marginTop={3}>
-          <strong>{formatMessage(m.prodUrl)}</strong>
-          {submitUrls &&
-            submitUrls
-              ?.filter((url) => !url?.isTest)
-              .map((url) => (
-                <Box
-                  key={url?.id}
-                  display="flex"
-                  alignItems="center"
-                  marginTop={1}
-                >
-                  <Checkbox
-                    checked={formUrls?.some((u) => u === url?.id)}
-                    onChange={(e) => {
-                      if (typeof url?.id === 'string') {
-                        if (e.target.checked) {
-                          handleCreateFormUrl(url.id)
-                        } else {
-                          handleDeleteFormUrl(url.id)
+    <Box marginTop={6}>
+      <Text variant="h4">
+        Veldu þær slóðir sem þú vilt nota fyrir þessa umsókn
+      </Text>
+      <GridRow>
+        <GridColumn span="5/10">
+          <Box marginTop={3}>
+            <strong>{formatMessage(m.prodUrl)}</strong>
+            {submitUrls &&
+              submitUrls
+                ?.filter((url) => !url?.isTest)
+                .map((url) => (
+                  <Box
+                    key={url?.id}
+                    display="flex"
+                    alignItems="center"
+                    marginTop={1}
+                  >
+                    <Checkbox
+                      checked={formUrls?.some((u) => u === url?.id)}
+                      onChange={(e) => {
+                        if (typeof url?.id === 'string') {
+                          if (e.target.checked) {
+                            handleCreateFormUrl(url.id)
+                          } else {
+                            handleDeleteFormUrl(url.id)
+                          }
                         }
-                      }
-                    }}
-                    name={`prod-url-${url?.id}`}
-                    label={url?.url}
-                  />
-                </Box>
-              ))}
-        </Box>
-      </GridColumn>
-      <GridColumn span="5/10">
-        <Box marginTop={3}>
-          <strong>{formatMessage(m.devUrl)}</strong>
-          {submitUrls &&
-            submitUrls
-              ?.filter((url) => url?.isTest)
-              .map((url) => (
-                <Box
-                  key={url?.id}
-                  display="flex"
-                  alignItems="center"
-                  marginTop={1}
-                >
-                  <Checkbox
-                    checked={formUrls?.some((u) => u === url?.id)}
-                    onChange={(e) => {
-                      if (typeof url?.id === 'string') {
-                        if (e.target.checked) {
-                          handleCreateFormUrl(url.id)
-                        } else {
-                          handleDeleteFormUrl(url.id)
+                      }}
+                      name={`prod-url-${url?.id}`}
+                      label={url?.url}
+                    />
+                  </Box>
+                ))}
+          </Box>
+        </GridColumn>
+        <GridColumn span="5/10">
+          <Box marginTop={3}>
+            <strong>{formatMessage(m.devUrl)}</strong>
+            {submitUrls &&
+              submitUrls
+                ?.filter((url) => url?.isTest)
+                .map((url) => (
+                  <Box
+                    key={url?.id}
+                    display="flex"
+                    alignItems="center"
+                    marginTop={1}
+                  >
+                    <Checkbox
+                      checked={formUrls?.some((u) => u === url?.id)}
+                      onChange={(e) => {
+                        if (typeof url?.id === 'string') {
+                          if (e.target.checked) {
+                            handleCreateFormUrl(url.id)
+                          } else {
+                            handleDeleteFormUrl(url.id)
+                          }
                         }
-                      }
-                    }}
-                    name={`test-url-${url?.id}`}
-                    label={url?.url}
-                  />
-                </Box>
-              ))}
-        </Box>
-      </GridColumn>
-    </GridRow>
+                      }}
+                      name={`test-url-${url?.id}`}
+                      label={url?.url}
+                    />
+                  </Box>
+                ))}
+          </Box>
+        </GridColumn>
+      </GridRow>
+    </Box>
   )
 }

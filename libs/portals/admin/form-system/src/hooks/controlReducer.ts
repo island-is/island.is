@@ -7,6 +7,7 @@ import {
   FormSystemFieldSettings,
   FormSystemFormCertificationTypeDto,
   FormSystemFormApplicant,
+  FormSystemFormUrl,
 } from '@island.is/api/schema'
 import { UniqueIdentifier } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
@@ -138,6 +139,10 @@ type ChangeActions =
   | {
       type: 'UPDATE_APPLICANT_TYPES'
       payload: { newValue: FormSystemFormApplicant[] }
+    }
+  | {
+      type: 'UPDATE_FORM_URLS'
+      payload: { newValue: string[] }
     }
 
 type InputSettingsActions =
@@ -553,6 +558,15 @@ export const controlReducer = (
         form: {
           ...form,
           applicantTypes: action.payload.newValue,
+        },
+      }
+    }
+    case 'UPDATE_FORM_URLS': {
+      return {
+        ...state,
+        form: {
+          ...form,
+          urls: action.payload.newValue,
         },
       }
     }
