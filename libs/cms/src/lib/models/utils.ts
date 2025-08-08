@@ -6,6 +6,10 @@ import type {
 } from '../generated/contentfulTypes'
 import { getOrganizationPageUrlPrefix } from '@island.is/shared/utils'
 import { mapLink, Link } from '../models/link.model'
+import {
+  type SitemapTreeNode,
+  SitemapTreeNodeType,
+} from '@island.is/shared/types'
 
 /** Make sure that links are relative in case someone links to production directly */
 export const getRelativeUrl = (url: string) => {
@@ -88,4 +92,36 @@ const generateOrganizationSubpageLinkFromLinkedPage = (
       url,
     },
   })
+}
+
+export const resolveSitemapNodeUrl = (
+  node: SitemapTreeNode,
+  organizationPageSlug: string,
+  lang: string,
+) => {
+  if (node.type !== SitemapTreeNodeType.URL) {
+    return ''
+  }
+
+  switch (node.urlType) {
+    case 'custom':
+      return lang === 'en' ? node.urlEN ?? '' : node.url
+    case 'organizationFrontpage':
+      return `/${getOrganizationPageUrlPrefix(lang)}/${organizationPageSlug}`
+    case 'organizationEventOverview':
+      return `/${getOrganizationPageUrlPrefix(lang)}/${organizationPageSlug}/${
+        lang === 'en' ? 'events' : 'vidburdir'
+      }`
+
+    case 'organizationNewsOverview':
+      return `/${getOrganizationPageUrlPrefix(lang)}/${organizationPageSlug}/${
+        lang === 'en' ? 'news' : 'frett'
+      }`
+    case 'organizationPublishedMaterial':
+      return `/${getOrganizationPageUrlPrefix(lang)}/${organizationPageSlug}/${
+        lang === 'en' ? 'published-material' : 'utgefid-efni'
+      }`
+    default:
+      return ''
+  }
 }
