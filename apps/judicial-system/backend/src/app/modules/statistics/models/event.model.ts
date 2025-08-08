@@ -35,10 +35,18 @@ type IndictmentCaseEventType =
   | 'CASE_RECEIVED_BY_PRISON_ADMIN'
 
 // TODO: Maybe have two models for request and indictments event
-export class Event {
+export class RequestEvent {
   @ApiProperty({ type: String })
   id!: string
 
   @ApiProperty({ type: String })
-  type!: RequestCaseEventType | IndictmentCaseEventType
+  type!: RequestCaseEventType
+}
+
+export class IndictmentEvent {
+  @ApiProperty({ type: String })
+  id!: string
+
+  @ApiProperty({ type: String })
+  type!: RequestCaseEventType
 }
