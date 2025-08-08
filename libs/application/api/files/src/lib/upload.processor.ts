@@ -40,38 +40,70 @@ export class UploadProcessor {
   async handleUpload(job: Job<JobData>): Promise<JobResult> {
     const { attachmentUrl, applicationId } = job.data
     const destinationBucket = this.config.attachmentBucket
-    try {
-      if (!destinationBucket) {
-        throw new Error('Application attachment bucket not configured.')
-      }
 
-      const { key: sourceKey } = AmazonS3URI(attachmentUrl)
-      const destinationKey = `${applicationId}/${sourceKey}`
-      const resultUrl =
-        await this.fileStorageService.copyObjectFromUploadBucket(
-          sourceKey,
-          destinationBucket,
-          destinationKey,
-        )
+    const maxRetries = 3
+    let attempt = 0
 
-      return {
-        attachmentKey: sourceKey,
-        resultUrl,
-      }
-    } catch (error) {
-      withLoggingContext(
-        {
-          applicationId: applicationId,
-        },
-        () => {
+    if (!destinationBucket) {
+      throw new Error('Application attachment bucket not configured.')
+    }
+
+    const { key: sourceKey } = AmazonS3URI(attachmentUrl)
+    const destinationKey = `${applicationId}/${sourceKey}`
+
+    // Add file existence check before copy
+    const fileExists = await this.fileStorageService.fileExists(sourceKey)
+
+    if (!fileExists) {
+      throw new Error(`Source file ${sourceKey} not found in upload bucket`)
+    }
+
+    while (attempt < maxRetries) {
+      try {
+        const resultUrl =
+          await this.fileStorageService.copyObjectFromUploadBucket(
+            sourceKey,
+            destinationBucket,
+            destinationKey,
+          )
+
+        return {
+          attachmentKey: sourceKey,
+          resultUrl,
+        }
+      } catch (error) {
+        attempt++
+
+        if (error?.$metadata?.httpStatusCode === 401 && attempt < maxRetries) {
+          // Exponential backoff: 1s, 2s, 4s
+          const delay = Math.pow(2, attempt) * 1000
+          await new Promise((resolve) => setTimeout(resolve, delay))
+
+          this.logger.warn(
+            `Access denied on attempt ${attempt}/${maxRetries}, retrying in ${delay}ms`,
+            { applicationId, sourceKey, destinationKey, destinationBucket },
+          )
+          continue
+        }
+
+        // Log and re-throw on final attempt or non-retryable errors
+        withLoggingContext({ applicationId: applicationId }, () => {
           this.logger.error(
-            'An error occurred while processing upload job',
+            'An error occurred while processing copy job on upload',
             error,
           )
-        },
-      )
-      throw error
+        })
+        throw error
+      }
     }
+
+    this.logger.error('Failed to copy file after max retries', {
+      applicationId,
+      sourceKey,
+      destinationKey,
+      destinationBucket,
+    })
+    throw new Error('Failed to copy file after max retries')
   }
 
   @OnQueueCompleted()

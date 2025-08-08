@@ -267,7 +267,7 @@ export class WorkMachinesClientService {
     regNumber: string,
     rel: string,
     parameters?: ApiMachinesGetRequest,
-  ): Promise<MachineDto> {
+  ): Promise<MachineDto | null> {
     const defaultOptions = {
       onlyShowOwnedMachines: true,
       searchQuery: regNumber,
@@ -277,7 +277,13 @@ export class WorkMachinesClientService {
       ...parameters,
     })
 
-    return await this.getMachineDetail(auth, result?.value?.[0]?.id || '', rel)
+    const machineId = result?.value?.[0]?.id ?? undefined
+
+    if (!machineId) {
+      return null
+    }
+
+    return await this.getMachineDetail(auth, machineId, rel)
   }
 
   async getMachineDetail(

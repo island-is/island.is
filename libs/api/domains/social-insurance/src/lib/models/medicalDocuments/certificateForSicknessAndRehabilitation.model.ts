@@ -13,19 +13,34 @@ class Doctor {
   residence?: string
 }
 
+@ObjectType('SocialInsuranceMedicalDocumentsIcdCode')
+class IcdCode {
+  @Field({ nullable: true })
+  code?: string
+
+  @Field({ nullable: true })
+  displayValue?: string
+
+  @Field({ nullable: true })
+  category?: string
+}
+
 @ObjectType('SocialInsuranceMedicalDocumentsDiagnosis')
 class Diagnosis {
-  @Field(() => [String], { nullable: true })
-  icd?: Array<string>
+  @Field(() => [IcdCode], { nullable: true })
+  icd?: Array<IcdCode>
 
-  @Field(() => [String], { nullable: true })
-  others?: Array<string>
+  @Field(() => [IcdCode], { nullable: true })
+  others?: Array<IcdCode>
 }
 
 @ObjectType('SocialInsuranceMedicalDocumentsDifficulty')
 class Difficulty {
   @Field(() => Int, { nullable: true })
   value?: number
+
+  @Field({ nullable: true })
+  displayValue?: string
 
   @Field({ nullable: true })
   explanation?: string

@@ -232,7 +232,7 @@ export class WorkMachinesService {
     auth: User,
     regNumber: string,
     rel: string,
-  ): Promise<MachineDto> {
+  ): Promise<MachineDto | null> {
     return this.machineService.getMachineByRegno(auth, regNumber, rel, {
       showDeregisteredMachines: true,
     })
