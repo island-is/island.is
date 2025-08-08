@@ -91,6 +91,18 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       description:
         'The Social Insurance Administration retrieves the rehabilitation plan from the service provider responsible for rehabilitation or treatment.',
     },
+    socialInsuranceAdministrationPrivacyDescription: {
+      id: 'marp.application:pre.socialInsuranceAdministration.privacy.description#markdown',
+      defaultMessage:
+        'Frekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna [hér](https://www.tr.is/tryggingastofnun/personuvernd). \n\nEf tekjur eða aðrar aðstæður þínar breytast verður þú að láta Tryggingastofnun vita þar sem það getur haft áhrif á greiðslur þínar.\n\nRangar eða ófullnægjandi upplýsingar geta haft áhrif á afgreiðslu umsóknarinnar og hugsanlega leitt til endurkröfu eða annarra viðurlaga.\n\nTryggingastofnun getur ákveðið að vísa máli þínu til samhæfingarteymis sem í sitja fulltrúar þjónustuaðila og Tryggingastofnunar. Þjónustuaðilar eru VIRK, starfsendurhæfingarsjóður, félagsþjónusta sveitarfélaga, Vinnumálastofnun, sjúkrahús og heilsugæslur. Ákveði Tryggingastofnun að vísa máli þínu til samhæfingarteymis verður þú upplýst/ur um það og gefinn kostur á að hafna þjónustu teymisins.',
+      description:
+        'More information on data collection authority and processing of personal information can be found in the privacy policy of the Insurance Administration [here](https://island.is/s/tryggingastofnun/personuverndarstefna-tr).\n\nIf your income or circumstances change you must notify the Social Insurance Administration, as it can effect your payments.\n\nIncorrect or insufficient information may affect the processing of the application and possibly lead to reclamation  or other penalties. \n\nThe Social Insurance Administration may decide to refer your case to a coordination team that includes representatives of service providers and the Social Insurance Administration. Service providers are VIRK, vocational rehabilitation fund, municipal social services, the Directorate of Labour, hospitals and health care clinics. If the Social Insurance Administration decides to refer your case to a coordination team, you will be informed and given the opportunity to reject the team’s services.',
+    },
+    checkboxProvider: {
+      id: 'marp.application:pre.checkbox.provider',
+      defaultMessage: 'Ég skil ofangreindar upplýsingar',
+      description: 'I understand the above information',
+    },
   }),
 
   notEligible: defineMessages({
@@ -158,6 +170,13 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
         'Færðu greiðslur frá öðru landi vegna heilsubrests eða óvinnufærni?',
       description:
         'Do you receive benefits from another country due to ill health or incapacity?',
+    },
+    benefitsFromAnotherCountryDescription: {
+      id: 'marp.application:general.information.benefits.from.another.country.description',
+      defaultMessage:
+        'Rangar eða ófullnægjandi upplýsingar geta haft áhrif á afgreiðslu umsóknarinnar og hugsanlega leitt til endurkröfu eða annarra viðurlaga.',
+      description:
+        'Incorrect or insufficient information may affect the processing of the application and possibly lead to a chargeback or other sanctions.',
     },
     countryRegistration: {
       id: 'marp.application:general.information.country.registration',
@@ -801,62 +820,10 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
     },
 
     // Questionnaire
-    title: {
-      id: 'marp.application:self.assessment.title',
-      defaultMessage: 'Spurningalisti vegna færniskerðingar',
-      description: 'Questionnaire for skills impairment',
-    },
-    description: {
-      id: 'marp.application:self.assessment.description',
-      defaultMessage:
-        'Þessi hluti inniheldur spurningar um hvernig þú upplifir eigin færni í daglegu lífi og starfi. Hér getur verið um að ræða líkamlega, andlega eða félagslega þætti sem geta haft áhrif á getu þína til að sinna daglegum athöfnum, starfi og frístundum. \n\nHafðu í huga að um er að ræða umfangsmikinn lista yfir atriði sem eiga ekki endilega við þig. Því er mikilvægt að þú metir hvernig þú upplifir stöðuna eins og hún er núna, ekki hvernig hún var áður eða hvernig þú vilt að hún verði.',
-      description:
-        'This section contains questions about how you experience your own skills in everyday life and work. These may include physical, mental, or social factors that can affect your ability to carry out daily activities, work, and leisure activities. \n\nKeep in mind that this is an extensive list of subjects that do not necessarily apply to you. Therefore, it is important that you evaluate how you experience your situation as it is at the present time, not how it was before or how you would like it to be.',
-    },
-    questionNumber: {
+    questionnaire: {
       id: 'marp.application:self.assessment.question.number',
-      defaultMessage: 'Spurning {index} af {total}',
-      description: 'Question {index} of {total}',
-    },
-    previousQuestion: {
-      id: 'marp.application:self.assessment.previous.question',
-      defaultMessage: 'Fyrri spurning',
-      description: 'Previous question',
-    },
-    nextQuestion: {
-      id: 'marp.application:self.assessment.next.question',
-      defaultMessage: 'Næsta spurning',
-      description: 'Next question',
-    },
-    noDifficultyOption: {
-      id: 'marp.application:self.assessment.no.difficulty.option',
-      defaultMessage: 'Enginn vandi',
-      description: 'No difficulty',
-    },
-    minorDifficultyOption: {
-      id: 'marp.application:self.assessment.minor.difficulty.option',
-      defaultMessage: 'Vægur vandi',
-      description: 'Minor difficulty',
-    },
-    moderateDifficultyOption: {
-      id: 'marp.application:self.assessment.moderate.difficulty.option',
-      defaultMessage: 'Miðlungs vandi',
-      description: 'Moderate difficulty',
-    },
-    majorDifficultyOption: {
-      id: 'marp.application:self.assessment.major.difficulty.option',
-      defaultMessage: 'Mikill vandi',
-      description: 'Major difficulty',
-    },
-    completeInabilityOption: {
-      id: 'marp.application:self.assessment.complete.inability.option',
-      defaultMessage: 'Algjör vandi',
-      description: 'Complete inability',
-    },
-    noAnswerOption: {
-      id: 'marp.application:self.assessment.no.answer.option',
-      defaultMessage: 'Get/vil ekki svara',
-      description: 'Cannot/will not answer',
+      defaultMessage: 'Sjálfsmat (Spurning {index} af {total})',
+      description: 'Self-assessment (Question {index} of {total})',
     },
     completeSelfAssessment: {
       id: 'marp.application:self.assessment.complete.self.assessment',
@@ -1015,8 +982,13 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Þú hefur staðfest endurhæfingaráætlunina',
       description: 'You have confirmed your rehabilitation plan',
     },
-    selfAssessmentConfirmed: {
-      id: 'marp.application:overiew.self.assessment.confirmed',
+    selfAssessmentQuestionnaire: {
+      id: 'marp.application:overiew.self.assessment.questionnaire',
+      defaultMessage: 'Spurningalisti vegna færniskerðingar',
+      description: 'Questionnaire for skills impairment',
+    },
+    selfAssessmentQuestionnaireConfirmed: {
+      id: 'marp.application:overiew.self.assessment.questionnaire.confirmed',
       defaultMessage: 'Þú hefur lokið við að svara spurningalista',
       description: 'You have completed answering the questionnaire',
     },
@@ -1094,6 +1066,11 @@ export const errorMessages = defineMessages({
       'Kennitala/persónunúmer í landi þarf að vera að minnsta kosti 5 stafir eða tákn',
     description:
       'Country ID number/personal ID number must be at least 5 characters or symbols',
+  },
+  selfAssessmentQuestionnaireRequired: {
+    id: 'marp.application:error.self.assessment.questionnaire.required',
+    defaultMessage: 'Þú átt eftir að fylla út í reit á þessari síðu',
+    description: 'You have to fill in a field on this page.',
   },
 })
 
