@@ -76,6 +76,7 @@ import { Institution } from '../institution'
 import { Notification } from '../notification'
 import { Subpoena, SubpoenaService } from '../subpoena'
 import { User } from '../user'
+import { VerdictService } from '../verdict/verdict.service'
 import { Victim } from '../victim/models/victim.model'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { getCasesQueryFilter } from './filters/cases.filter'
@@ -179,7 +180,6 @@ export interface UpdateCase
     | 'indictmentReviewerId'
     | 'indictmentReviewDecision'
     | 'indictmentDecision'
-    | 'rulingSignatureDate'
     | 'courtSessionType'
     | 'mergeCaseId'
     | 'mergeCaseNumber'
@@ -205,7 +205,7 @@ export interface UpdateCase
   courtDate?: UpdateDateLog
   postponedIndefinitelyExplanation?: string
   civilDemands?: string
-  caseSentToCourtDate?: string
+  rulingSignatureDate?: Date | null
 }
 
 type DateLogKeys = keyof Pick<UpdateCase, 'arraignmentDate' | 'courtDate'>
@@ -312,7 +312,6 @@ export const include: Includeable[] = [
         as: 'eventLogs',
         required: false,
         where: { eventType: defendantEventTypes },
-        order: [['created', 'DESC']],
         separate: true,
       },
     ],
@@ -355,7 +354,6 @@ export const include: Includeable[] = [
     as: 'eventLogs',
     required: false,
     where: { eventType: eventTypes },
-    order: [['created', 'DESC']],
     separate: true,
   },
   {
@@ -450,7 +448,6 @@ export const caseListInclude: Includeable[] = [
         as: 'eventLogs',
         required: false,
         where: { eventType: defendantEventTypes },
-        order: [['created', 'DESC']],
         separate: true,
       },
       {
@@ -508,7 +505,6 @@ export const caseListInclude: Includeable[] = [
     as: 'eventLogs',
     required: false,
     where: { eventType: eventTypes },
-    order: [['created', 'DESC']],
     separate: true,
   },
 ]
@@ -525,6 +521,7 @@ export class CaseService {
     private readonly config: ConfigType<typeof caseModuleConfig>,
     private readonly defendantService: DefendantService,
     private readonly subpoenaService: SubpoenaService,
+    private readonly verdictService: VerdictService,
     private readonly fileService: FileService,
     private readonly awsS3Service: AwsS3Service,
     private readonly courtService: CourtService,
@@ -1652,19 +1649,6 @@ export class CaseService {
         updatedArraignmentDate &&
         updatedArraignmentDate.date.getTime() !==
           arraignmentDate?.date.getTime()
-      const courtDate = DateLog.courtDate(theCase.dateLogs)
-      const updatedCourtDate = DateLog.courtDate(updatedCase.dateLogs)
-      const hasUpdatedCourtDate =
-        updatedCourtDate &&
-        updatedCourtDate.date.getTime() !== courtDate?.date.getTime()
-
-      if (hasUpdatedArraignmentDate || hasUpdatedCourtDate) {
-        await this.eventLogService.createWithUser(
-          EventType.COURT_DATE_SCHEDULED,
-          theCase.id,
-          user,
-        )
-      }
 
       if (hasUpdatedArraignmentDate) {
         await this.addMessagesForIndictmentArraignmentDate(updatedCase, user)
@@ -1691,7 +1675,11 @@ export class CaseService {
     )
   }
 
-  async findById(caseId: string, allowDeleted = false): Promise<Case> {
+  async findById(
+    caseId: string,
+    allowDeleted = false,
+    transaction?: Transaction,
+  ): Promise<Case> {
     const theCase = await this.caseModel.findOne({
       include,
       where: {
@@ -1699,6 +1687,7 @@ export class CaseService {
         ...(allowDeleted ? {} : { state: { [Op.not]: CaseState.DELETED } }),
         isArchived: false,
       },
+      transaction,
     })
 
     if (!theCase) {
@@ -1792,7 +1781,7 @@ export class CaseService {
       .then((caseId) => this.findById(caseId))
   }
 
-  private async handleDateUpdates(
+  private async handleDateLogUpdates(
     theCase: Case,
     update: UpdateCase,
     transaction: Transaction,
@@ -1838,7 +1827,7 @@ export class CaseService {
     }
   }
 
-  private async handleCommentUpdates(
+  private async handleCaseStringUpdates(
     theCase: Case,
     update: UpdateCase,
     transaction: Transaction,
@@ -1880,14 +1869,70 @@ export class CaseService {
     }
   }
 
-  private handleEventLogs(
+  private async handleStateChangeEventLogUpdatesForIndictments(
     theCase: Case,
-    update: UpdateCase,
+    updatedCase: Case,
     user: TUser,
     transaction: Transaction,
   ) {
     if (
-      update.state === CaseState.RECEIVED &&
+      updatedCase.state === CaseState.SUBMITTED &&
+      theCase.state === CaseState.WAITING_FOR_CONFIRMATION
+    ) {
+      return this.eventLogService.createWithUser(
+        EventType.INDICTMENT_CONFIRMED,
+        theCase.id,
+        user,
+        transaction,
+      )
+    }
+
+    if (updatedCase.state === CaseState.COMPLETED) {
+      return this.eventLogService.createWithUser(
+        EventType.INDICTMENT_COMPLETED,
+        theCase.id,
+        user,
+        transaction,
+      )
+    }
+  }
+
+  private async handleStateChangeEventLogUpdatesForRequest(
+    theCase: Case,
+    updatedCase: Case,
+    user: TUser,
+    transaction: Transaction,
+  ) {
+    if (
+      updatedCase.state === CaseState.SUBMITTED &&
+      theCase.state === CaseState.DRAFT
+    ) {
+      return this.eventLogService.createWithUser(
+        EventType.CASE_SENT_TO_COURT,
+        theCase.id,
+        user,
+        transaction,
+      )
+    }
+
+    if (isCompletedCase(updatedCase.state)) {
+      return this.eventLogService.createWithUser(
+        EventType.REQUEST_COMPLETED,
+        theCase.id,
+        user,
+        transaction,
+      )
+    }
+  }
+
+  private async handleStateChangeEventLogUpdates(
+    theCase: Case,
+    updatedCase: Case,
+    user: TUser,
+    transaction: Transaction,
+  ) {
+    if (
+      updatedCase.state === CaseState.RECEIVED &&
       theCase.state === CaseState.SUBMITTED
     ) {
       return this.eventLogService.createWithUser(
@@ -1899,49 +1944,85 @@ export class CaseService {
     }
 
     if (isIndictmentCase(theCase.type)) {
-      if (
-        update.state === CaseState.SUBMITTED &&
-        theCase.state === CaseState.WAITING_FOR_CONFIRMATION
-      ) {
-        return this.eventLogService.createWithUser(
-          EventType.INDICTMENT_CONFIRMED,
-          theCase.id,
-          user,
-          transaction,
-        )
-      }
-
-      if (update.state === CaseState.COMPLETED) {
-        return this.eventLogService.createWithUser(
-          EventType.INDICTMENT_COMPLETED,
-          theCase.id,
-          user,
-          transaction,
-        )
-      }
-
-      if (update.indictmentReviewDecision) {
-        return this.eventLogService.createWithUser(
-          EventType.INDICTMENT_REVIEWED,
-          theCase.id,
-          user,
-          transaction,
-        )
-      }
+      return this.handleStateChangeEventLogUpdatesForIndictments(
+        theCase,
+        updatedCase,
+        user,
+        transaction,
+      )
     }
 
     if (isRequestCase(theCase.type)) {
-      if (
-        update.state === CaseState.SUBMITTED &&
-        theCase.state === CaseState.DRAFT
-      ) {
-        return this.eventLogService.createWithUser(
-          EventType.CASE_SENT_TO_COURT,
-          theCase.id,
-          user,
-          transaction,
-        )
-      }
+      return this.handleStateChangeEventLogUpdatesForRequest(
+        theCase,
+        updatedCase,
+        user,
+        transaction,
+      )
+    }
+  }
+
+  private async handleEventLogUpdatesForIndictments(
+    theCase: Case,
+    updatedCase: Case,
+    user: TUser,
+    transaction: Transaction,
+  ) {
+    if (
+      updatedCase.indictmentReviewDecision &&
+      !theCase.indictmentReviewDecision
+    ) {
+      await this.eventLogService.createWithUser(
+        EventType.INDICTMENT_REVIEWED,
+        theCase.id,
+        user,
+        transaction,
+      )
+    }
+
+    const arraignmentDate = DateLog.arraignmentDate(theCase.dateLogs)
+    const updatedArraignmentDate = DateLog.arraignmentDate(updatedCase.dateLogs)
+    const hasUpdatedArraignmentDate =
+      updatedArraignmentDate &&
+      updatedArraignmentDate.date.getTime() !== arraignmentDate?.date.getTime()
+    const courtDate = DateLog.courtDate(theCase.dateLogs)
+    const updatedCourtDate = DateLog.courtDate(updatedCase.dateLogs)
+    const hasUpdatedCourtDate =
+      updatedCourtDate &&
+      updatedCourtDate.date.getTime() !== courtDate?.date.getTime()
+
+    if (hasUpdatedArraignmentDate || hasUpdatedCourtDate) {
+      await this.eventLogService.createWithUser(
+        EventType.COURT_DATE_SCHEDULED,
+        theCase.id,
+        user,
+        transaction,
+      )
+    }
+  }
+
+  private async handleEventLogUpdates(
+    theCase: Case,
+    updatedCase: Case,
+    user: TUser,
+    transaction: Transaction,
+  ) {
+    if (updatedCase.state !== theCase.state) {
+      await this.handleStateChangeEventLogUpdates(
+        theCase,
+        updatedCase,
+        user,
+        transaction,
+      )
+    }
+
+    if (isIndictmentCase(theCase.type)) {
+      await this.handleEventLogUpdatesForIndictments(
+        theCase,
+        updatedCase,
+        user,
+        transaction,
+      )
     }
   }
 
@@ -1954,9 +2035,11 @@ export class CaseService {
     const isReceivingCase =
       update.courtCaseNumber && theCase.state === CaseState.SUBMITTED
 
+    const completingIndictmentCase =
+      isIndictmentCase(theCase.type) && update.state === CaseState.COMPLETED
+
     const completingIndictmentCaseWithoutRuling =
-      isIndictmentCase(theCase.type) &&
-      update.state === CaseState.COMPLETED &&
+      completingIndictmentCase &&
       theCase.indictmentRulingDecision &&
       [
         CaseIndictmentRulingDecision.FINE,
@@ -1964,6 +2047,10 @@ export class CaseService {
         CaseIndictmentRulingDecision.MERGE,
         CaseIndictmentRulingDecision.WITHDRAWAL,
       ].includes(theCase.indictmentRulingDecision)
+
+    const completingIndictmentCaseWithRuling =
+      completingIndictmentCase &&
+      theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.RULING
 
     const requiresCourtTransition =
       theCase.courtId &&
@@ -1975,18 +2062,18 @@ export class CaseService {
     const schedulingNewArraignmentDateForIndictmentCase =
       isIndictmentCase(theCase.type) && Boolean(updatedArraignmentDate)
 
+    if (isReceivingCase) {
+      update = transitionCase(CaseTransition.RECEIVE, theCase, user, update)
+    }
+
+    if (requiresCourtTransition) {
+      update = transitionCase(CaseTransition.MOVE, theCase, user, update)
+    }
+
     return this.sequelize
       .transaction(async (transaction) => {
-        if (isReceivingCase) {
-          update = transitionCase(CaseTransition.RECEIVE, theCase, user, update)
-        }
-        if (requiresCourtTransition) {
-          update = transitionCase(CaseTransition.MOVE, theCase, user, update)
-        }
-
-        await this.handleDateUpdates(theCase, update, transaction)
-        await this.handleCommentUpdates(theCase, update, transaction)
-        await this.handleEventLogs(theCase, update, user, transaction)
+        await this.handleDateLogUpdates(theCase, update, transaction)
+        await this.handleCaseStringUpdates(theCase, update, transaction)
 
         if (Object.keys(update).length > 0) {
           const [numberOfAffectedRows] = await this.caseModel.update(update, {
@@ -2035,7 +2122,7 @@ export class CaseService {
           )
         }
 
-        // Create new subpoeans if scheduling a new arraignment date for an indictment case
+        // Create new subpoenas if scheduling a new arraignment date for an indictment case
         if (
           schedulingNewArraignmentDateForIndictmentCase &&
           theCase.defendants
@@ -2055,10 +2142,31 @@ export class CaseService {
               ),
           )
         }
-      })
-      .then(async () => {
-        const updatedCase = await this.findById(theCase.id, true)
 
+        // create new verdict for each defendant when indictment is completed with ruling
+        if (completingIndictmentCaseWithRuling && theCase.defendants) {
+          await Promise.all(
+            theCase.defendants.map((defendant) =>
+              this.verdictService.createVerdict(
+                defendant.id,
+                theCase.id,
+                transaction,
+              ),
+            ),
+          )
+        }
+        const updatedCase = await this.findById(theCase.id, true, transaction)
+
+        await this.handleEventLogUpdates(
+          theCase,
+          updatedCase,
+          user,
+          transaction,
+        )
+
+        return updatedCase
+      })
+      .then(async (updatedCase) => {
         await this.addMessagesForUpdatedCaseToQueue(theCase, updatedCase, user)
 
         if (isReceivingCase) {
@@ -2323,16 +2431,11 @@ export class CaseService {
   }
 
   async createCourtCase(theCase: Case, user: TUser): Promise<Case> {
-    let receivalDate: Date
-
-    if (isIndictmentCase(theCase.type)) {
-      receivalDate =
-        theCase.eventLogs?.find(
-          (eventLog) => eventLog.eventType === EventType.INDICTMENT_CONFIRMED,
-        )?.created ?? nowFactory()
-    } else {
-      receivalDate = nowFactory()
-    }
+    const receivalDate =
+      EventLog.getEventLogDateByEventType(
+        [EventType.CASE_RECEIVED_BY_COURT, EventType.INDICTMENT_CONFIRMED],
+        theCase.eventLogs,
+      ) ?? nowFactory()
 
     const courtCaseNumber = await this.courtService.createCourtCase(
       user,
@@ -2440,11 +2543,13 @@ export class CaseService {
 
     const caseDurations = cases
       .map((caseItem) => {
-        const confirmedEvent = caseItem.eventLogs?.[0]
-        if (!confirmedEvent?.created || !caseItem.rulingDate) return null
+        const confirmedDate = EventLog.getEventLogDateByEventType(
+          EventType.INDICTMENT_CONFIRMED,
+          caseItem.eventLogs,
+        )
+        if (!confirmedDate || !caseItem.rulingDate) return null
 
-        const diff =
-          caseItem.rulingDate.getTime() - confirmedEvent.created.getTime()
+        const diff = caseItem.rulingDate.getTime() - confirmedDate.getTime()
         return diff > 0 ? diff : null
       })
       .filter((ms): ms is number => ms !== null)

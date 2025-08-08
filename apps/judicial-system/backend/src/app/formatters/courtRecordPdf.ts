@@ -317,7 +317,7 @@ const constructInvestigationCourtRecordPdf = (
 
   doc.on('data', (chunk) => sinc.push(chunk))
 
-  const isCaseCompletedWithRuling = theCase.isCompletedWithoutRuling !== true
+  const isCaseCompletedWithRuling = !theCase.isCompletedWithoutRuling
 
   const title = formatMessage(courtRecord.title)
 

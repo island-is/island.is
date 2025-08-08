@@ -44,6 +44,7 @@ query Case($input: CaseQueryInput!) {
       subpoenas {
         id
         created
+        modified
         serviceStatus
         serviceDate
         servedBy
@@ -274,14 +275,6 @@ query Case($input: CaseQueryInput!) {
     requestAppealRulingNotToBePublished
     indictmentDeniedExplanation
     indictmentReturnedExplanation
-    eventLogs {
-      id
-      created
-      caseId
-      eventType
-      nationalId
-      userRole
-    }
     arraignmentDate {
       date
       location
@@ -421,6 +414,12 @@ query Case($input: CaseQueryInput!) {
     hasCivilClaims
     isCompletedWithoutRuling
     caseSentToCourtDate
+    indictmentReviewedDate
+    indictmentSentToPublicProsecutorDate
+    defenceAppealResultAccessDate
+    prosecutionAppealResultAccessDate
+    prisonStaffAppealResultAccessDate
+    requestCompletedDate
     caseRepresentatives {
       name
       nationalId

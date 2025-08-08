@@ -12,6 +12,7 @@ import { InputMask } from '@react-input/mask'
 
 import { Box, Input, Select } from '@island.is/island-ui/core'
 import { PHONE_NUMBER } from '@island.is/judicial-system/consts'
+import { formatPhoneNumber } from '@island.is/judicial-system/formatters'
 import { type Lawyer } from '@island.is/judicial-system/types'
 import { ReactSelectOption } from '@island.is/judicial-system-web/src/types'
 import { replaceTabs } from '@island.is/judicial-system-web/src/utils/formatters'
@@ -33,7 +34,6 @@ interface Props {
   name: string | undefined | null
   email: string | undefined | null
   phoneNumber: string | undefined | null
-  onAdvocateNotFound?: (advocateNotFound: boolean) => void
   onAdvocateChange: (
     name: string | null,
     nationalId: string | null,
@@ -66,9 +66,6 @@ const InputAdvocate: FC<Props> = ({
 
   // A function that is called when a new advocate is selected.
   onAdvocateChange,
-
-  // A function that is called if an advocate is not found.
-  onAdvocateNotFound,
 
   // A function that is called when an advocate email is changed.
   onEmailChange,
@@ -109,9 +106,7 @@ const InputAdvocate: FC<Props> = ({
       let phoneNumber: string | null = null
 
       if (selectedOption) {
-        const { label, value, __isNew__: defenderNotFound } = selectedOption
-
-        onAdvocateNotFound && onAdvocateNotFound(defenderNotFound || false)
+        const { label, value } = selectedOption
 
         const lawyer = lawyers?.find(
           (l: Lawyer) => l.email === (value as string),
@@ -127,7 +122,7 @@ const InputAdvocate: FC<Props> = ({
       setPhoneNumberErrorMessage('')
       onAdvocateChange(name, nationalId, email, phoneNumber)
     },
-    [onAdvocateChange, onAdvocateNotFound, lawyers],
+    [onAdvocateChange, lawyers],
   )
 
   const handleEmailChange = useCallback(
@@ -201,9 +196,8 @@ const InputAdvocate: FC<Props> = ({
             lawyerName ? { label: lawyerName, value: lawyerEmail ?? '' } : null
           }
           onChange={handleAdvocateChange}
-          noOptionsMessage="Ekki náðist samband við lögmannaskrá LMFÍ."
+          noOptionsMessage="Lögmaður fannst ekki í lögmannaskrá LMFÍ."
           isDisabled={Boolean(disabled)}
-          isCreatable
           isClearable
         />
       </Box>
@@ -226,7 +220,7 @@ const InputAdvocate: FC<Props> = ({
         component={Input}
         replacement={{ _: /\d/ }}
         mask={PHONE_NUMBER}
-        value={lawyerPhoneNumber || ''}
+        value={formatPhoneNumber(lawyerPhoneNumber)}
         disabled={Boolean(disabled)}
         onChange={handlePhoneNumberChange}
         onBlur={handlePhoneNumberBlur}
