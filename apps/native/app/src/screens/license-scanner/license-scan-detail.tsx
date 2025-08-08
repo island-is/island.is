@@ -4,7 +4,7 @@ import {
   NavigationFunctionComponent,
   OptionsTopBarButton,
 } from 'react-native-navigation'
-import { useNavigationButtonPress } from 'react-native-navigation-hooks/dist'
+import { useNavigationButtonPress } from 'react-native-navigation-hooks'
 import styled from 'styled-components/native'
 
 import { ScanResultCard, SupportedGenericLicenseTypes } from '../../ui'

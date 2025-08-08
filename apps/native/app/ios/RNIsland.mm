@@ -1,7 +1,6 @@
 #import "ReactNativeNavigation.h"
 #import "RNIsland.h"
-
-@import SafariServices;
+#import <SafariServices/SafariServices.h>
 
 @implementation RNIsland
 
