@@ -1,0 +1,71 @@
+import {
+  Meta,
+  Story,
+  Canvas,
+  Controls,
+  Description,
+  Source,
+} from '@storybook/blocks'
+import { dedent } from 'ts-dedent'
+import { gql } from '@apollo/client'
+import * as CompanySearchFormFieldStories from './CompanySearchFormField.stories'
+
+import { CompanySearchFormField } from './CompanySearchFormField'
+
+export const createMockApplication = (data = {}) => ({
+  id: '123',
+  assignees: [],
+  state: data.state || 'draft',
+  applicant: '111111-3000',
+  typeId: data.typeId || 'ExampleForm',
+  modified: new Date(),
+  created: new Date(),
+  attachments: {},
+  answers: data.answers || {},
+  externalData: data.externalData || {},
+})
+
+export const COMPANY_REGISTRY_COMPANIES = gql`
+  query SearchCompanies($input: RskCompanyInfoSearchInput!) {
+    companyRegistryCompanies(input: $input) {
+      data {
+        name
+        nationalId
+      }
+    }
+  }
+`
+
+<Meta of={CompanySearchFormFieldStories} />
+
+# CompanySearchFormField
+
+### Usage in a template
+
+You can create a CompanySearchFormField using the following function `buildCompanySearchField`
+
+<Source
+  language="typescript"
+  code={dedent(`
+    buildCompanySearchField({
+      id: 'field.id',
+      title: 'Field title',
+      placeholder: 'Field placeholder',
+      setLabelToDataSchema: true,
+    })`)}
+/>
+
+For this instance you have to search for "pru" to get an example of how it works.
+The previous configuration object will result in the following component:
+
+<Canvas>
+  <Story of={CompanySearchFormFieldStories.Default} />
+</Canvas>
+
+You can also use this field into a custom component by using `<CompanySearchFormField field={...} />` with the configuration object defined above.
+
+# Props
+
+## CompanySearchFormField
+
+<Controls />

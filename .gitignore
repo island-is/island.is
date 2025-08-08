@@ -177,3 +177,5 @@ service-account.json
 # testing
 /coverage
 charts/bootstrap
+.cursor/rules/nx-rules.mdc
+.github/instructions/nx.instructions.md

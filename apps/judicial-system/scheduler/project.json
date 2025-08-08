@@ -7,19 +7,20 @@
   "tags": ["scope:judicial-system-api"],
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/judicial-system/scheduler",
         "main": "apps/judicial-system/scheduler/src/main.ts",
         "tsConfig": "apps/judicial-system/scheduler/tsconfig.app.json",
-        "maxWorkers": 2
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"]
       },
       "configurations": {
         "production": {
           "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
+          "extractLicenses": true
         }
       }
     },
@@ -39,8 +40,8 @@
         "jestConfig": "apps/judicial-system/scheduler/jest.config.ts"
       }
     },
-    "docker-express": {
-      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    "docker-express-yarn": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express-yarn`"
     }
   }
 }

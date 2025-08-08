@@ -23,7 +23,10 @@ export const gqlClientFactory: Provider<GraphQLClient> = {
       },
       fetch: createEnhancedFetch({
         name: 'clients-smart-solutions-v2',
-      }),
+      }) as unknown as (
+        input: RequestInfo | URL,
+        init?: RequestInit,
+      ) => Promise<Response>,
     })
   },
   inject: [MODULE_OPTIONS_TOKEN],

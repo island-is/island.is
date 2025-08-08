@@ -7,12 +7,15 @@
   "tags": ["scope:nest"],
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "outputs": ["{options.outputPath}"],
       "options": {
         "outputPath": "dist/apps/icelandic-names-registry/backend",
         "main": "apps/icelandic-names-registry/backend/src/main.ts",
         "tsConfig": "apps/icelandic-names-registry/backend/tsconfig.app.json",
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"],
         "assets": [
           {
             "glob": "*sequelize*",
@@ -39,14 +42,12 @@
             "input": "apps/icelandic-names-registry/backend",
             "output": "./"
           }
-        ],
-        "maxWorkers": 2
+        ]
       },
       "configurations": {
         "production": {
           "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
+          "extractLicenses": true
         }
       }
     },
@@ -103,8 +104,8 @@
         "cwd": "apps/icelandic-names-registry/backend"
       }
     },
-    "docker-express": {
-      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    "docker-express-yarn": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express-yarn`"
     }
   }
 }

@@ -8,11 +8,14 @@
   "generators": {},
   "targets": {
     "build": {
-      "executor": "./tools/executors/node:build",
+      "executor": "@nx/esbuild:esbuild",
       "options": {
         "outputPath": "dist/apps/reference-backend",
         "main": "apps/reference-backend/src/main.ts",
         "tsConfig": "apps/reference-backend/tsconfig.app.json",
+        "generatePackageJson": true,
+        "esbuildConfig": "tools/esbuild.config.js",
+        "format": ["cjs"],
         "assets": [
           {
             "glob": "*",
@@ -29,14 +32,12 @@
             "input": "apps/reference-backend",
             "output": "./"
           }
-        ],
-        "maxWorkers": 2
+        ]
       },
       "configurations": {
         "production": {
           "optimization": true,
-          "extractLicenses": true,
-          "inspect": false
+          "extractLicenses": true
         }
       },
       "outputs": ["{options.outputPath}"]
@@ -57,8 +58,8 @@
       },
       "outputs": ["{workspaceRoot}/coverage/apps/reference-backend"]
     },
-    "docker-express": {
-      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express`"
+    "docker-express-yarn": {
+      "executor": "Intentionally left blank, only so this target is valid when using `nx show projects --with-target docker-express-yarn`"
     },
     "dev-services": {
       "executor": "nx:run-commands",

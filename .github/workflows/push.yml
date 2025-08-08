@@ -212,7 +212,7 @@ jobs:
           # Split ADDITIONAL_PROJECTS into an array to correctly pass multiple arguments
           # The ADDITIONAL_PROJECTS variable is exported for use by generate-docker-chunks.sh
           # The script expects positional arguments to be the docker targets.
-          CHUNKS="$(./scripts/ci/generate-docker-chunks.sh "docker-express" "docker-next" "docker-static" "docker-playwright" "docker-jest")"
+          CHUNKS="$(./scripts/ci/generate-docker-chunks.sh "docker-express" "docker-express-yarn" "docker-next" "docker-static" "docker-playwright" "docker-jest")"
           echo "CHUNKS: '$CHUNKS'"
           if [[ "$CHUNKS" != "[]" ]]; then
             echo "BUILD_CHUNKS=$(echo "$CHUNKS" | jq -cM '. | map("\(.|tostring)")')" >> "$GITHUB_OUTPUT"
