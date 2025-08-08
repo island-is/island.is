@@ -125,6 +125,7 @@ export const AsyncSearch = forwardRef<HTMLInputElement, AsyncSearchProps>(
         itemToString={(item: AsyncSearchOption | null) =>
           item ? item.label : ''
         }
+        inputValue={inputValue}
         {...props}
       >
         {(downshiftProps: ControllerStateAndHelpers<AsyncSearchOption>) => {
@@ -382,6 +383,7 @@ export const AsyncSearchInput = forwardRef<
             isOpen={isOpen}
             ref={ref}
             hasError={hasError}
+            placeholder={value ? undefined : inputProps.placeholder}
           />
           {!loading ? (
             <button
@@ -396,7 +398,7 @@ export const AsyncSearchInput = forwardRef<
               tabIndex={value ? 0 : -1}
               {...buttonProps}
             >
-              <Icon size={normalizedSize} icon="search" color={iconColor} />
+              <Icon size={normalizedSize} icon={'search'} color={iconColor} />
             </button>
           ) : (
             <span
