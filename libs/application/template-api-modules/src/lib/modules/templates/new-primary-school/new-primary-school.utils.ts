@@ -14,6 +14,7 @@ import {
   AgentInputTypeEnum,
   ApplicationInput,
   ApplicationInputTypeEnum,
+  CaseWorkerInputTypeEnum,
   UserInputGenderEnum,
 } from '@island.is/clients/mms/frigg'
 
@@ -25,7 +26,6 @@ export const getGenderCode = (genderCode: string) => {
     case '2':
     case '4':
       return UserInputGenderEnum.Female
-
     default:
       return UserInputGenderEnum.Other
   }
@@ -58,6 +58,12 @@ export const transformApplicationToNewPrimarySchoolDTO = (
     requestsMedicationAdministration,
     hasDiagnoses,
     hasHadSupport,
+    hasWelfareContact,
+    welfareContactName,
+    welfareContactEmail,
+    hasCaseManager,
+    caseManagerName,
+    caseManagerEmail,
     hasIntegratedServices,
     requestingMeeting,
     expectedStartDate,
@@ -176,16 +182,25 @@ export const transformApplicationToNewPrimarySchoolDTO = (
       hasHadSupport: hasHadSupport === YES,
       hasDiagnoses: hasDiagnoses === YES,
       ...((hasHadSupport === YES || hasDiagnoses === YES) && {
-        hasIntegratedServices: hasIntegratedServices === YES,
-        // ...(hasIntegratedServices === YES && {
-        //   caseWorkers: [
-        //     {
-        //       name: 'caseWorker',
-        //       email: 'caseWorker@caseWorker.is',
-        //       phone: '',
-        //     },
-        //   ],
-        // }),
+        ...(hasWelfareContact === YES && {
+          hasIntegratedServices: hasIntegratedServices === YES,
+          caseWorkers: [
+            {
+              name: welfareContactName ?? '',
+              email: welfareContactEmail ?? '',
+              type: CaseWorkerInputTypeEnum.SupportManager,
+            },
+            ...(hasCaseManager === YES
+              ? [
+                  {
+                    name: caseManagerName ?? '',
+                    email: caseManagerEmail ?? '',
+                    type: CaseWorkerInputTypeEnum.CaseManager,
+                  },
+                ]
+              : []),
+          ],
+        }),
       }),
     },
     language: {
