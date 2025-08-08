@@ -196,8 +196,6 @@ export const addNode = async (
         child.type === TreeNodeType.ENTRY,
     )
 
-    console.log({ otherCategoriesAndEntryNodes, entries })
-
     const otherSlugs = otherCategoriesAndEntryNodes
       .map((child) =>
         child.type === TreeNodeType.CATEGORY
