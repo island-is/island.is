@@ -21,14 +21,13 @@ import {
   SubmitSectionInput,
   UpdateApplicationInput,
 } from '../../dto/application.input'
-import { UpdateApplicationDependenciesInput } from '../../dto/application.input'
 import { Screen } from '../../models/screen.model'
 
 @Resolver()
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
 export class ApplicationsResolver {
-  constructor(private readonly applicationsService: ApplicationsService) { }
+  constructor(private readonly applicationsService: ApplicationsService) {}
 
   @Query(() => Application, {
     name: 'formSystemApplication',
@@ -76,7 +75,7 @@ export class ApplicationsResolver {
 
   @Mutation(() => Boolean, {
     name: 'updateFormSystemApplicationDependencies',
-    nullable: true
+    nullable: true,
   })
   async updateApplicationDependencies(
     @Args('input', { type: () => UpdateApplicationInput })
@@ -88,7 +87,7 @@ export class ApplicationsResolver {
 
   @Mutation(() => Boolean, {
     name: 'submitFormSystemApplication',
-    nullable: true
+    nullable: true,
   })
   async submitApplication(
     @Args('input', { type: () => GetApplicationInput })

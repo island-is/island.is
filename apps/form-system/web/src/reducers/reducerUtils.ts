@@ -1,5 +1,15 @@
-import { FormSystemDependency, FormSystemField, FormSystemScreen, FormSystemSection, Maybe } from '@island.is/api/schema'
-import { ApplicationState, FieldTypesEnum, SectionTypes } from '@island.is/form-system/ui'
+import {
+  FormSystemDependency,
+  FormSystemField,
+  FormSystemScreen,
+  FormSystemSection,
+  Maybe,
+} from '@island.is/api/schema'
+import {
+  ApplicationState,
+  FieldTypesEnum,
+  SectionTypes,
+} from '@island.is/form-system/ui'
 import {
   ApolloCache,
   DefaultContext,
@@ -103,11 +113,11 @@ export const incrementWithScreens = (
       },
       currentScreen: hasScreens(nextSection)
         ? {
-          index: 0,
-          data: nextSection.screens
-            ? (nextSection.screens[0] as FormSystemScreen)
-            : undefined,
-        }
+            index: 0,
+            data: nextSection.screens
+              ? (nextSection.screens[0] as FormSystemScreen)
+              : undefined,
+          }
         : undefined,
       errors: [],
     }
@@ -155,9 +165,9 @@ export const incrementWithoutScreens = (
     },
     currentScreen: hasScreens(nextSection)
       ? {
-        data: nextSection.screens?.[0] as FormSystemScreen,
-        index: 0,
-      }
+          data: nextSection.screens?.[0] as FormSystemScreen,
+          index: 0,
+        }
       : undefined,
   }
 }
@@ -191,13 +201,13 @@ export const decrementWithScreens = (
       },
       currentScreen: hasScreens(prevSection)
         ? {
-          data: prevSection.screens
-            ? (prevSection.screens[
-              prevSection.screens.length - 1
-            ] as FormSystemScreen)
-            : undefined,
-          index: prevSection.screens ? prevSection.screens.length - 1 : 0,
-        }
+            data: prevSection.screens
+              ? (prevSection.screens[
+                  prevSection.screens.length - 1
+                ] as FormSystemScreen)
+              : undefined,
+            index: prevSection.screens ? prevSection.screens.length - 1 : 0,
+          }
         : undefined,
       errors: [],
     }
@@ -220,13 +230,13 @@ export const decrementWithoutScreens = (
     },
     currentScreen: hasScreens(prevSection)
       ? {
-        data: prevSection.screens
-          ? (prevSection.screens[
-            prevSection.screens.length - 1
-          ] as FormSystemScreen)
-          : undefined,
-        index: prevSection.screens ? prevSection.screens.length - 1 : 0,
-      }
+          data: prevSection.screens
+            ? (prevSection.screens[
+                prevSection.screens.length - 1
+              ] as FormSystemScreen)
+            : undefined,
+          index: prevSection.screens ? prevSection.screens.length - 1 : 0,
+        }
       : undefined,
     errors: [],
   }
@@ -360,7 +370,8 @@ export const setFieldValue = (
       currentScreen: {
         ...currentScreen,
         data:
-          updatedSectionsWithDependencies[state.currentSection.index]?.screens?.[currentScreen.index] ?? undefined,
+          updatedSectionsWithDependencies[state.currentSection.index]
+            ?.screens?.[currentScreen.index] ?? undefined,
       },
       errors: state.errors && state.errors.length > 0 ? state.errors ?? [] : [],
     }
@@ -381,16 +392,20 @@ export const setFieldValue = (
   }
 }
 
-const isControllerField = (field: Maybe<FormSystemField> | undefined, dependencies: Maybe<Maybe<FormSystemDependency>[]> | undefined): boolean => {
+const isControllerField = (
+  field: Maybe<FormSystemField> | undefined,
+  dependencies: Maybe<Maybe<FormSystemDependency>[]> | undefined,
+): boolean => {
   if (
     field?.fieldType === FieldTypesEnum.CHECKBOX ||
     field?.fieldType === FieldTypesEnum.RADIO_BUTTONS ||
     field?.fieldType === FieldTypesEnum.DROPDOWN_LIST
   ) {
-    return dependencies?.some((dependency) => {
-      return dependency?.parentProp === field?.id
-    }) ?? false
+    return (
+      dependencies?.some((dependency) => {
+        return dependency?.parentProp === field?.id
+      }) ?? false
+    )
   }
   return false
-
 }

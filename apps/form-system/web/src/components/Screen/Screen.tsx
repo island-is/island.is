@@ -5,7 +5,7 @@ import { SectionTypes } from '@island.is/form-system/ui'
 import { ExternalData } from './components/ExternalData/ExternalData'
 import { Field } from './components/Field/Field'
 import { useState } from 'react'
-import { useLocale } from '@island.is/localization'
+// import { useLocale } from '@island.is/localization'
 import { Applicants } from './components/Applicants/Applicants'
 import { FormSystemApplicant } from '@island.is/api/schema'
 import { useMutation } from '@apollo/client'
@@ -13,11 +13,11 @@ import { SUBMIT_APPLICATION } from '@island.is/form-system/graphql'
 
 export const Screen = () => {
   const { state } = useApplicationContext()
-  const { lang } = useLocale()
+  // const { lang } = useLocale()
   const { currentSection, currentScreen, showSummary } = state
-  const screenTitle = currentScreen
-    ? state.screens?.[currentScreen.index]?.name?.[lang]
-    : state.sections?.[currentSection.index]?.name?.[lang]
+  // const screenTitle = currentScreen
+  //   ? state.screens?.[currentScreen.index]?.name?.[lang]
+  //   : state.sections?.[currentSection.index]?.name?.[lang]
   const currentSectionType = state.sections?.[currentSection.index]?.sectionType
   const [externalDataAgreement, setExternalDataAgreement] = useState(
     state.sections?.[0].isCompleted ?? false,
@@ -29,8 +29,8 @@ export const Screen = () => {
       variables: {
         input: {
           id: state.application.id,
-        }
-      }
+        },
+      },
     })
   }
 
@@ -51,10 +51,7 @@ export const Screen = () => {
             Summary
           </Text>
           {/* Summary component can be added here */}
-          <Button
-            variant="primary"
-            onClick={handleSubmit}
-          >
+          <Button variant="primary" onClick={handleSubmit}>
             Senda inn umsókn
           </Button>
         </GridColumn>
@@ -96,7 +93,8 @@ export const Screen = () => {
         {currentScreen &&
           currentScreen?.data?.fields
             ?.filter(
-              (field): field is NonNullable<typeof field> => field != null && !field.isHidden,
+              (field): field is NonNullable<typeof field> =>
+                field != null && !field.isHidden,
             )
             .map((field, index) => {
               return <Field field={field} key={index} />

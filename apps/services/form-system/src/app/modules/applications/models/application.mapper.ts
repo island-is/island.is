@@ -147,8 +147,8 @@ export class ApplicationMapper {
       return false
     }
 
-    const dependencyItems = dependencies.filter(
-      (dependency) => dependency.childProps.includes(id),
+    const dependencyItems = dependencies.filter((dependency) =>
+      dependency.childProps.includes(id),
     )
 
     const isHidden = dependencyItems.every(

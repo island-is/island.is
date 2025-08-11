@@ -26,7 +26,7 @@ export const initialState = {
   currentSection: { data: {} as FormSystemSection, index: 0 },
   currentScreen: undefined,
   errors: [],
-  showSummary: false
+  showSummary: false,
 }
 
 export const initialReducer = (state: ApplicationState): ApplicationState => {
