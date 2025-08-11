@@ -1,17 +1,19 @@
 import { Field, InputType, Int } from '@nestjs/graphql'
-import { Locale } from '@island.is/shared/types'
 import { IsNumber, Min } from 'class-validator'
 
 @InputType()
 export class CreateDirectGrantPaymentUrlInput {
   @Field(() => String)
-  locale: Locale = 'is'
+  locale = 'is'
 
   @Field(() => String)
   payerNationalId!: string
 
   @Field(() => String)
   payerName!: string
+
+  @Field(() => String)
+  payerEmail!: string
 
   @Field(() => String)
   payerAddress!: string

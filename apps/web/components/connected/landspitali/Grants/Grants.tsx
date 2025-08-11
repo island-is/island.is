@@ -35,6 +35,7 @@ interface DirectGrants {
   project: string
   amountISK: string
   senderName: string
+  senderEmail: string
   senderNationalId: string
   senderAddress: string
   senderPostalCode: string
@@ -121,6 +122,7 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
       project: '',
       amountISK: '',
       senderName: '',
+      senderEmail: '',
       senderNationalId: '',
       senderAddress: '',
       senderPostalCode: '',
@@ -169,6 +171,7 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
             payerAddress: data.senderAddress,
             payerGrantExplanation: data.senderGrantExplanation,
             payerName: data.senderName,
+            payerEmail: data.senderEmail,
             payerNationalId: data.senderNationalId,
             payerPostalCode: data.senderPostalCode,
             payerPlace: data.senderPlace,
@@ -304,6 +307,14 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
               size="xs"
               error={errors.senderName?.message}
               rules={requiredRule}
+              control={control}
+            />
+            <InputController
+              id="senderEmail"
+              type="email"
+              label={formatMessage(m.info.senderEmailLabel)}
+              size="xs"
+              error={errors.senderEmail?.message}
               control={control}
             />
             <InputController

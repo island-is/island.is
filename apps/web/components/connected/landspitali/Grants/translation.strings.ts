@@ -37,6 +37,11 @@ export const m = {
       defaultMessage: 'Nafn',
       description: 'Nafn',
     },
+    senderEmailLabel: {
+      id: 'web.landspitali.directGrants:info.senderEmailLabel',
+      defaultMessage: 'Netfang',
+      description: 'Netfang',
+    },
     senderNationalIdLabel: {
       id: 'web.landspitali.directGrants:info.senderNationalIdLabel',
       defaultMessage: 'Kennitala',
@@ -103,6 +108,11 @@ export const m = {
       id: 'web.landspitali.directGrants:validation.invalidNationalIdFormat',
       defaultMessage: 'Kennitala er ekki gild',
       description: 'Kennitala er ekki gild',
+    },
+    invalidEmail: {
+      id: 'web.landspitali.directGrants:validation.invalidEmail',
+      defaultMessage: 'Netfang er ekki gilt',
+      description: 'Netfang er ekki gilt',
     },
     required: {
       id: 'web.landspitali.directGrants:validation.required',

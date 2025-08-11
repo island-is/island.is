@@ -40,6 +40,7 @@ interface MemorialCard {
   recipientPostalCode: string
   recipientPlace: string
   senderName: string
+  senderEmail: string
   senderNationalId: string
   senderAddress: string
   senderPostalCode: string
@@ -108,6 +109,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
       recipientPostalCode: '',
       recipientPlace: '',
       senderName: '',
+      senderEmail: '',
       senderNationalId: '',
       senderAddress: '',
       senderPostalCode: '',
@@ -251,6 +253,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
                       chargeItemCode: data.fund,
                       payerAddress: data.senderAddress,
                       payerName: data.senderName,
+                      payerEmail: data.senderEmail,
                       payerNationalId: data.senderNationalId,
                       payerPostalCode: data.senderPostalCode,
                       payerPlace: data.senderPlace,
@@ -431,6 +434,15 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
               label={formatMessage(m.info.senderNameLabel)}
               size="xs"
               error={errors.senderName?.message}
+              rules={requiredRule}
+              control={control}
+            />
+            <InputController
+              id="senderEmail"
+              type="email"
+              label={formatMessage(m.info.senderEmailLabel)}
+              size="xs"
+              error={errors.senderEmail?.message}
               rules={requiredRule}
               control={control}
             />

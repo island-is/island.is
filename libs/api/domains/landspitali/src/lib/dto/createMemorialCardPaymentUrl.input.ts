@@ -1,11 +1,10 @@
 import { Field, InputType, Int } from '@nestjs/graphql'
 import { Min, IsNumber } from 'class-validator'
-import { Locale } from '@island.is/shared/types'
 
 @InputType()
 export class CreateMemorialCardPaymentUrlInput {
   @Field(() => String)
-  locale: Locale = 'is'
+  locale = 'is'
 
   /* Recipient */
   @Field(() => String)
@@ -23,6 +22,9 @@ export class CreateMemorialCardPaymentUrlInput {
   /* Payer */
   @Field(() => String)
   payerName!: string
+
+  @Field(() => String)
+  payerEmail!: string
 
   @Field(() => String)
   payerNationalId!: string

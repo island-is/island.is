@@ -74,6 +74,11 @@ export const m = {
       defaultMessage: 'Nafn',
       description: 'Nafn',
     },
+    senderEmailLabel: {
+      id: 'web.landspitali.memorialCard:info.senderEmailLabel',
+      defaultMessage: 'Netfang',
+      description: 'Netfang',
+    },
     senderNationalIdLabel: {
       id: 'web.landspitali.memorialCard:info.senderNationalIdLabel',
       defaultMessage: 'Kennitala',

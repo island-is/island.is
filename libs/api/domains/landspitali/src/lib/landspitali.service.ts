@@ -70,6 +70,10 @@ export class LandspitaliService {
               value: input.payerName,
             },
             {
+              name: 'payerEmail',
+              value: input.payerEmail,
+            },
+            {
               name: 'payerAddress',
               value: input.payerAddress,
             },
@@ -129,6 +133,10 @@ export class LandspitaliService {
             {
               name: 'payerName',
               value: input.payerName,
+            },
+            {
+              name: 'payerEmail',
+              value: input.payerEmail,
             },
             {
               name: 'payerAddress',
