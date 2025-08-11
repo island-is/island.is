@@ -67,11 +67,7 @@ export class InternalSubpoenaController {
     DefendantExistsGuard,
     SubpoenaExistsGuard,
   )
-  // TODO: Remove DELIVERY_TO_POLICE_SUBPOENA endpoint later
   @Post([
-    `case/:caseId/${
-      messageEndpoint[MessageType.DELIVERY_TO_POLICE_SUBPOENA]
-    }/:defendantId/:subpoenaId`,
     `case/:caseId/${
       messageEndpoint[
         MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA
