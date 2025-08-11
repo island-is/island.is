@@ -207,43 +207,6 @@
         ]
       }
     },
-    "/api/ActivationGrant/addattachment": {
-      "post": {
-        "tags": [
-          "ActivationGrant"
-        ],
-        "operationId": "ActivationGrant_AddAttachment",
-        "requestBody": {
-          "x-name": "command",
-          "content": {
-            "application/json": {
-              "schema": {
-                "$ref": "#/components/schemas/Galdur_Application_Applications_ActivationGrants_Commands_AddAttachment_AddAttachmentCommand"
-              }
-            }
-          },
-          "required": true,
-          "x-position": 1
-        },
-        "responses": {
-          "200": {
-            "description": "",
-            "content": {
-              "application/json": {
-                "schema": {
-                  "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
-                }
-              }
-            }
-          }
-        },
-        "security": [
-          {
-            "JWT": []
-          }
-        ]
-      }
-    },
     "/api/ActivationGrant/canapply/{applicantSSN}": {
       "get": {
         "tags": [
@@ -416,6 +379,89 @@
                 "schema": {
                   "type": "string",
                   "format": "binary"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/Attachment": {
+      "post": {
+        "tags": [
+          "Attachment"
+        ],
+        "operationId": "Attachment_CreateAttachment",
+        "requestBody": {
+          "x-name": "request",
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Galdur_Domain_Models_Attachments_CreateAttachmentRequest"
+              }
+            }
+          },
+          "required": true,
+          "x-position": 1
+        },
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Models_Attachments_AttachmentViewModel"
+                }
+              }
+            }
+          }
+        },
+        "security": [
+          {
+            "JWT": []
+          }
+        ]
+      }
+    },
+    "/api/Attachment/{id}": {
+      "get": {
+        "tags": [
+          "Attachment"
+        ],
+        "operationId": "Attachment_GetAttachment",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "string",
+              "format": "guid"
+            },
+            "x-position": 1
+          },
+          {
+            "name": "includeData",
+            "in": "query",
+            "schema": {
+              "type": "boolean",
+              "default": false
+            },
+            "x-position": 2
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Galdur_Domain_Models_Attachments_AttachmentViewModel"
                 }
               }
             }
@@ -1390,6 +1436,31 @@
           "applicationLanguage": {
             "type": "string",
             "description": "Tungumál sem umsókn er fyllt út í",
+            "nullable": true
+          },
+          "contactName": {
+            "type": "string",
+            "description": "Nafn tengiliðs",
+            "nullable": true
+          },
+          "contactConnection": {
+            "type": "string",
+            "description": "Tengsl tengiliðs",
+            "nullable": true
+          },
+          "contactEmail": {
+            "type": "string",
+            "description": "Netfang tengiliðs",
+            "nullable": true
+          },
+          "contactPhoneNumber": {
+            "type": "string",
+            "description": "Sími tengiliðs",
+            "nullable": true
+          },
+          "additionalInformation": {
+            "type": "string",
+            "description": "Aðrar upplýsingar",
             "nullable": true
           }
         }
@@ -4432,31 +4503,6 @@
           }
         }
       },
-      "Galdur_Application_Applications_ActivationGrants_Commands_AddAttachment_AddAttachmentCommand": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "attachmentId": {
-            "type": "string",
-            "format": "guid"
-          },
-          "applicationId": {
-            "type": "string",
-            "format": "guid"
-          },
-          "attachmentStatusId": {
-            "type": "string",
-            "format": "guid"
-          },
-          "applicationType": {
-            "type": "string",
-            "nullable": true
-          },
-          "isExternal": {
-            "type": "boolean"
-          }
-        }
-      },
       "Galdur_Domain_Models_ActivationGrantValidation_ValidateBeforeActivationGrantDTO": {
         "type": "object",
         "additionalProperties": false,
@@ -4488,6 +4534,89 @@
           },
           "accountNumber": {
             "type": "string",
+            "nullable": true
+          }
+        }
+      },
+      "Galdur_Domain_Models_Attachments_AttachmentViewModel": {
+        "allOf": [
+          {
+            "$ref": "#/components/schemas/Galdur_Domain_Models_BaseViewModel"
+          },
+          {
+            "type": "object",
+            "additionalProperties": false,
+            "properties": {
+              "attachment": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Galdur_Domain_Models_Attachments_AttachmentDto"
+                  }
+                ]
+              },
+              "canBeViewedInline": {
+                "type": "boolean"
+              },
+              "supportData": {
+                "nullable": true,
+                "oneOf": [
+                  {
+                    "$ref": "#/components/schemas/Galdur_Domain_Models_Attachments_SupportData"
+                  }
+                ]
+              }
+            }
+          }
+        ]
+      },
+      "Galdur_Domain_Models_Attachments_SupportData": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "attachmentStatuses": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_AttachmentStatus_AttachmentStatusDTO"
+            }
+          },
+          "attachmentTypes": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_AttachmentTypes_AttachmentTypeDTO"
+            }
+          },
+          "unemploymentApplicationStatuses": {
+            "type": "array",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Galdur_Domain_Models_Settings_ApplicationStatus_ApplicationStatusDTO"
+            }
+          }
+        }
+      },
+      "Galdur_Domain_Models_Attachments_CreateAttachmentRequest": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "fileName": {
+            "type": "string",
+            "nullable": true
+          },
+          "fileType": {
+            "type": "string",
+            "nullable": true
+          },
+          "data": {
+            "type": "string",
+            "format": "byte",
+            "nullable": true
+          },
+          "attachmentTypeId": {
+            "type": "string",
+            "format": "guid",
             "nullable": true
           }
         }

@@ -239,7 +239,11 @@ export const OverviewFormField = ({
                 attachment.width === 'half' ? '6/12' : '12/12',
               ]}
             >
-              <Box marginTop={!description && !title && i === 0 ? 8 : 0}>
+              <Box
+                marginTop={
+                  ((!description && !title) || items) && i === 0 ? 8 : 0
+                }
+              >
                 <FileItem
                   key={i}
                   fileName={formatTextWithLocale(

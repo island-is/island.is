@@ -16,9 +16,11 @@ import {
   getDrivingLicensesOverviewItems,
   getLanguageSkillsOverviewItems,
   getCVData,
+  getCVText,
 } from '../../utils/getOverviewItems'
 import { FormValue } from '@island.is/application/types'
 import { EducationAnswer, JobHistoryAnswer } from '../../lib/dataSchema'
+import { hasCv } from '../../utils/hasCv'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
@@ -33,27 +35,27 @@ export const overviewSection = buildSection({
           backId: 'applicantMultiField',
           items: getApplicantOverviewItems,
         }),
-
         buildOverviewField({
           id: 'overview.paymentInfo',
           backId: 'paymentInformationMultiField',
           items: getPaymentOverviewItems,
         }),
-
-        // Income (conditional)
-
         buildOverviewField({
           id: 'overview.contact',
           backId: 'contact',
           items: getContactOverviewItems,
         }),
-
         buildOverviewField({
           id: 'overview.jobWishes',
           backId: 'jobWishesMultiField',
           items: getJobWishesOverviewItems,
-        }),
+          condition: (formValue: FormValue) => {
+            const jobWishes =
+              getValueViaPath<string[]>(formValue, 'jobWishes.jobs') ?? []
 
+            return !jobWishes
+          },
+        }),
         buildOverviewField({
           id: 'overview.jobHistory',
           backId: 'jobHistoryMultiField',
@@ -61,10 +63,10 @@ export const overviewSection = buildSection({
           condition: (formValue: FormValue) => {
             const jobHistory =
               getValueViaPath<JobHistoryAnswer[]>(formValue, 'jobHistory') ?? []
-            return !jobHistory ? false : true
+
+            return !jobHistory
           },
         }),
-
         buildOverviewField({
           id: 'overview.academicBackground',
           backId: 'academicBackgroundMultiField',
@@ -76,7 +78,6 @@ export const overviewSection = buildSection({
             return !education
           },
         }),
-
         buildOverviewField({
           id: 'overview.drivingLicenses',
           backId: 'drivingLicensesMultiField',
@@ -98,19 +99,18 @@ export const overviewSection = buildSection({
               .includes(YES)
           },
         }),
-
         buildOverviewField({
           id: 'overview.languageSkills',
           backId: 'languageSkillsMultiField',
           items: getLanguageSkillsOverviewItems,
         }),
-
         buildOverviewField({
           id: 'overview.cv',
           backId: 'cvMultiField',
+          items: getCVText,
           attachments: getCVData,
+          condition: hasCv,
         }),
-
         buildSubmitField({
           id: 'submit',
           title: 'Submit',

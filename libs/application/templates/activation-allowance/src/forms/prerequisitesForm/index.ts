@@ -11,10 +11,8 @@ import { Logo } from '../../assets/Logo'
 import { externalData } from '../../lib/messages'
 import {
   ActivationAllowanceApi,
-  //DrivingLicenseApi,
   LocaleApi,
   UserProfileApiWithValidation,
-  //WorkMachineLicensesApi,
 } from '../../dataProviders'
 
 export const Prerequisites = buildForm({
@@ -25,6 +23,7 @@ export const Prerequisites = buildForm({
   children: [
     buildSection({
       id: 'conditions',
+      tabTitle: externalData.dataProvider.pageTitle,
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
@@ -43,18 +42,15 @@ export const Prerequisites = buildForm({
               subTitle: externalData.userProfile.subTitle,
             }),
             buildDataProviderItem({
-              // provider: '', // TODO: add tax data provider
               title: externalData.tax.title,
               subTitle: externalData.tax.subTitle,
             }),
             buildDataProviderItem({
-              // provider: '', // TODO: add national insurance data provider
               title: externalData.nationalInsuranceInstitute.title,
               subTitle: externalData.nationalInsuranceInstitute.subTitle,
             }),
             buildDataProviderItem({
               provider: ActivationAllowanceApi,
-              // TODO(Balli): Add title and subtitle
             }),
             buildDataProviderItem({
               provider: LocaleApi,

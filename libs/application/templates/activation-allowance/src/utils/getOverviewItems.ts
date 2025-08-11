@@ -10,9 +10,13 @@ import { KeyValueItem } from '@island.is/application/types'
 import {
   academicBackground,
   applicant,
-  jobWishes,
+  application,
+  cv,
+  jobWishes as jobWishesMsgs,
+  jobHistory as jobHistoryMsgs,
   languageSkills,
   paymentInformation,
+  drivingLicenses,
 } from '../lib/messages'
 import { overview } from '../lib/messages/overview'
 import { isSamePlaceOfResidenceChecked } from './isSamePlaceOfResidenceChecked'
@@ -25,11 +29,11 @@ import {
 } from '@island.is/clients/vmst-unemployment'
 import { Locale } from '@island.is/shared/types'
 import {
+  CVAnswers,
   EducationAnswer,
   JobHistoryAnswer,
   LanguageAnswers,
 } from '../lib/dataSchema'
-import { drivingLicenses } from '../lib/messages'
 
 export const getApplicantOverviewItems = (
   answers: FormValue,
@@ -172,7 +176,7 @@ export const getJobWishesOverviewItems = (
   return [
     {
       width: 'full',
-      keyText: paymentInformation.general.pageTitle,
+      keyText: jobWishesMsgs.general.pageTitle,
       valueText: matchedJobs.map((job) =>
         locale === 'is' ? job.name : job.english,
       ),
@@ -194,7 +198,7 @@ export const getJobHistoryOverviewItems = (
       'activityGrantApplication.data.activationGrant.supportData.jobCodes',
     ) ?? []
 
-  // Create a lookup map from esco job ID → full job
+  // Create a lookup map from esco job ID -> full job
   const escoJobMap = new Map(escoJobs.map((job) => [job.id, job]))
 
   // Combine job history and matched esco job names
@@ -222,7 +226,7 @@ export const getJobHistoryOverviewItems = (
   return [
     {
       width: 'full',
-      keyText: jobWishes.general.pageTitle,
+      keyText: jobHistoryMsgs.general.pageTitle,
       valueText: combinedJobs.map(
         (job) =>
           `${job.companyName}: ${job.jobNameFromEscojobs}, ${job.jobDate}`,
@@ -277,7 +281,7 @@ export const getAcademicBackgroundOverviewItems = (
     )
     const subject = getLocalized(
       subjectData?.name || '',
-      subjectData?.name || '', // Missing translation from web service
+      subjectData?.name || '',
     )
 
     return joinDefined([level, degree, subject])
@@ -399,14 +403,32 @@ export const getLanguageSkillsOverviewItems = (
 }
 
 export const getCVData = (
-  _answers: FormValue,
+  answers: FormValue,
   _externalData: ExternalData,
 ): Array<AttachmentItem> => {
+  const cv = getValueViaPath<CVAnswers>(answers, 'cv')
   return [
     {
       width: 'full',
-      fileName: 'full-width-file.pdf',
-      fileType: 'pdf',
+      fileName: cv?.cvFile?.file[0].name || '',
+      fileType: cv?.cvFile?.file[0].name.split('.')[1],
+    },
+  ]
+}
+
+export const getCVText = (
+  _answers: FormValue,
+  _externalData: ExternalData,
+): Array<KeyValueItem> => {
+  return [
+    {
+      width: 'full',
+      keyText: cv.general.pageTitle,
+      valueText: [
+        {
+          ...application.yesLabel,
+        },
+      ],
     },
   ]
 }

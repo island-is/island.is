@@ -2,6 +2,7 @@ import { getValueViaPath, YES } from '@island.is/application/core'
 import {
   ApplicantAnswer,
   ContactAnswer,
+  CVAnswers,
   DrivingLicensesAnswer,
   EducationAnswer,
   JobHistoryAnswer,
@@ -19,7 +20,11 @@ import {
   GaldurDomainModelsApplicantsApplicantProfileDTOsPersonalInformation,
   GaldurDomainModelsApplicationsUnemploymentApplicationsDTOsActivationGrantSupportData,
   GaldurDomainModelsSelectItem,
+  GaldurDomainModelsSettingsPostcodesPostcodeDTO,
 } from '@island.is/clients/vmst-unemployment'
+import { FileResponse } from './types'
+import { S3Service } from '@island.is/nest/aws'
+import { Locale } from '@island.is/shared/types'
 
 export const parseDateSafe = (dateStr?: string): Date | undefined => {
   if (!dateStr) return undefined
@@ -30,6 +35,7 @@ export const parseDateSafe = (dateStr?: string): Date | undefined => {
 
 export const getApplicantInfo = (
   answers: FormValue,
+  externalData: ExternalData,
 ):
   | GaldurDomainModelsApplicantsApplicantProfileDTOsPersonalInformation
   | undefined => {
@@ -52,6 +58,19 @@ export const getApplicantInfo = (
   const currentAddressDifferent =
     isSamePlaceOfResidence && isSamePlaceOfResidence.includes(YES)
 
+  let otherPostCodeId = null
+  if (currentAddressDifferent) {
+    const postCodes = getValueViaPath<
+      GaldurDomainModelsSettingsPostcodesPostcodeDTO[]
+    >(
+      externalData,
+      'activityGrantApplication.data.activationGrant.supportData.postCodes',
+    )
+    otherPostCodeId = postCodes?.find(
+      (postCode) => postCode.code === other?.postalCode?.slice(0, 3),
+    )
+  }
+
   const result: GaldurDomainModelsApplicantsApplicantProfileDTOsPersonalInformation =
     {
       ssn: nationalId,
@@ -63,7 +82,7 @@ export const getApplicantInfo = (
       passCode: password,
       currentAddressDifferent,
       currentAddress: other?.address,
-      currentPostCodeId: other?.postalCode,
+      currentPostCodeId: otherPostCodeId?.id,
     }
 
   // Required fields (excluding the two "current" fields)
@@ -87,12 +106,8 @@ export const getApplicantInfo = (
 
 export const getContactInfo = (
   answers: FormValue,
-):
-  | ContactAnswer // Add type when we have it
-  | undefined => {
+): ContactAnswer | undefined => {
   const contact = getValueViaPath<ContactAnswer>(answers, 'contact')
-
-  // Validate fields etc.
 
   return contact
 }
@@ -277,7 +292,6 @@ export const getAcademicInfo = (
       ?.education ?? []
 
   return education.map((item) => ({
-    //id: '', // What id is this ???
     educationId: item.levelOfStudy, // Nam
     educationSubCategoryId: item.degree, // Profgrada
     educationSubSubCategoryId: item.subject, // namsgrein
@@ -286,4 +300,66 @@ export const getAcademicInfo = (
         ? parseInt(item.endOfStudies)
         : undefined,
   }))
+}
+
+export const getCVInfo = async (
+  answers: FormValue,
+  s3Service: S3Service,
+  applicationId: string,
+  bucket: string,
+): Promise<FileResponse | undefined> => {
+  const CV = getValueViaPath<CVAnswers>(answers, 'cv')
+  if (!CV || CV.haveCV !== YES) return undefined
+  const fileName = CV.cvFile?.file[0].name || ''
+  const fileType = getFileExtension(fileName) || ''
+  const mimeType = getMimeType(fileType)
+  const key = CV.cvFile?.file[0].key || ''
+  const other = CV.other
+
+  if (!mimeType || !fileName || !key) return undefined
+
+  try {
+    const content = await s3Service.getFileContent(
+      {
+        bucket: bucket,
+        key: `${applicationId}/${key}`,
+      },
+      'base64',
+    )
+
+    const fileResponse: FileResponse = {
+      fileName,
+      fileType: mimeType,
+      data: content || '',
+      other: other,
+    }
+    return fileResponse
+  } catch (e) {
+    // CV is optional and can be turned in later, so we'd rather return no cv then stop user during submit
+    return undefined
+  }
+}
+
+export const getStartingLocale = (externalData: ExternalData) => {
+  return getValueViaPath<Locale>(externalData, 'startingLocale.data')
+}
+
+const getMimeType = (fileType: string): string | undefined => {
+  switch (fileType.toLowerCase()) {
+    case 'pdf':
+      return 'application/pdf'
+    case 'png':
+      return 'image/png'
+    case 'jpg':
+    case 'jpeg':
+      return 'image/jpeg'
+    default:
+      return undefined
+  }
+}
+
+const getFileExtension = (fileName: string): string | undefined => {
+  const parts = fileName.trim().split('.')
+  if (parts.length < 2) return undefined // no extension found
+  return parts.pop()?.toLowerCase()
 }

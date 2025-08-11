@@ -1,5 +1,4 @@
 import {
-  buildDescriptionField,
   buildFieldsRepeaterField,
   buildMultiField,
   buildSection,

@@ -1,8 +1,9 @@
 import { z } from 'zod'
 import * as kennitala from 'kennitala'
 import { isValidPhoneNumber } from '../utils'
-import { YES, YesOrNoEnum } from '@island.is/application/core'
+import { NO, YES, YesOrNoEnum } from '@island.is/application/core'
 import { isValidEmail } from '../utils/isValidEmail'
+import { IncomeCheckboxValues } from '../utils/enums'
 
 const FileSchema = z.object({
   name: z.string(),
@@ -19,8 +20,8 @@ const applicantSchema = z
     address: z.string().min(1),
     postalCode: z.string().optional(), //min(1),
     city: z.string().min(1),
-    email: z.string().optional(), //.email(),
-    phoneNumber: z.string().optional(), //refine((v) => isValidPhoneNumber(v)),
+    email: z.string().email(),
+    phoneNumber: z.string().refine((v) => isValidPhoneNumber(v)),
     isSamePlaceOfResidence: z.array(z.string()).optional(),
     password: z.string().min(4),
     other: z
@@ -41,17 +42,6 @@ const applicantSchema = z
       path: ['other', 'address'],
     },
   )
-// .refine(
-//   ({ isSamePlaceOfResidence, other }) => {
-//     if (isSamePlaceOfResidence?.length) {
-//       return other && other.postalCode && other.postalCode.length > 0
-//     }
-//     return true
-//   },
-//   {
-//     path: ['other', 'postalCode'],
-//   },
-// )
 
 const paymentInformationSchema = z.object({
   bankNumber: z.string().regex(/^\d{4}$/),
@@ -83,7 +73,7 @@ const academicBackgroundSchema = z.object({
           levelOfStudy: z.string(),
           degree: z.string(),
           subject: z.string().nullish(),
-          endOfStudies: z.string().optional(), // Will be transformed
+          endOfStudies: z.string().optional(),
           isStillStudying: z.array(z.enum([YES])).optional(),
         })
         .transform((entry) => ({
@@ -164,6 +154,34 @@ const contactSchema = z
     }
   })
 
+const incomeSchema = z
+  .array(
+    z
+      .object({
+        checkbox: z
+          .array(z.enum([IncomeCheckboxValues.INCOME_FROM_OTHER_THAN_JOB]))
+          .optional(),
+        employer: z.string(),
+        month: z.string(),
+        salaryIncome: z.number(),
+        hasEmploymentEnded: z.enum([YES, NO]),
+        endOfEmploymentDate: z.string().optional(),
+        explanation: z.string().optional(),
+        hasLeaveDays: z.enum([YES, NO]),
+        numberOfLeaveDays: z.string().optional(),
+        leaveDates: z
+          .array(
+            z.object({
+              dateFrom: z.string(),
+              dateTo: z.string(),
+            }),
+          )
+          .optional(),
+      })
+      .optional(),
+  )
+  .optional()
+
 export const ActivationAllowanceAnswersSchema = z.object({
   approveExternalData: z.boolean().refine((v) => v),
   approveTerms: z.array(z.string()).refine((v) => v.length > 0),
@@ -176,6 +194,7 @@ export const ActivationAllowanceAnswersSchema = z.object({
   drivingLicenses: drivingLicensesSchema,
   languageSkills: languageSkillsSchema,
   cv: cvSchema,
+  income: incomeSchema,
 })
 
 export type ActivationAllowanceAnswers = z.TypeOf<
@@ -190,3 +209,4 @@ export type ContactAnswer = z.TypeOf<typeof contactSchema>
 export type DrivingLicensesAnswer = z.TypeOf<typeof drivingLicensesSchema>
 export type JobWishesAnswer = z.TypeOf<typeof jobWishesSchema>
 export type PaymentInformationAnswer = z.TypeOf<typeof paymentInformationSchema>
+export type CVAnswers = z.TypeOf<typeof cvSchema>

@@ -26,7 +26,6 @@ import {
   EphemeralStateLifeCycle,
 } from '@island.is/application/core'
 import { assign } from 'xstate'
-import { ApiScope } from '@island.is/auth/scopes'
 import { ActivationAllowanceApi, LocaleApi } from '../dataProviders'
 import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../utils/enums'
@@ -44,8 +43,6 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.ActivationAllowance.translation,
   dataSchema: ActivationAllowanceAnswersSchema,
   featureFlag: Features.ActivationAllowanceApplicationEnabled,
-  // allowedDelegations: What delegations are allowed?
-  // requiredScopes: [ApiScope.], Whats the scope?
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {

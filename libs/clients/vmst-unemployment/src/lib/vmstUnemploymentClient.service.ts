@@ -1,10 +1,13 @@
 import {
   ActivationGrantApi,
   ActivationGrantCreateActivationGrantRequest,
+  AttachmentApi,
+  AttachmentCreateAttachmentRequest,
   AuthApi,
   Configuration,
   GaldurDomainModelsApplicationsActivationGrantApplicationsViewModelsActivationGrantViewModel,
   GaldurDomainModelsApplicationsUnemploymentApplicationsQueriesUnemploymentApplicationViewModel,
+  GaldurDomainModelsAttachmentsAttachmentViewModel,
   UnemploymentApplicationApi,
 } from '../../gen/fetch'
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
@@ -16,7 +19,7 @@ import { VmstUnemploymentClientConfig } from './vmstUnemploymentClient.config'
 
 type ApiConstructor<T> = new (config: Configuration) => T
 
-type VmstApis = UnemploymentApplicationApi | ActivationGrantApi
+type VmstApis = UnemploymentApplicationApi | ActivationGrantApi | AttachmentApi
 
 @Injectable()
 export class VmstUnemploymentClientService {
@@ -96,6 +99,20 @@ export class VmstUnemploymentClientService {
       await api.activationGrantGetEmptyActivationGrantWithProfile({
         applicantSSN: auth.nationalId,
       })
+    return response
+  }
+
+  async createAttachmentForActivationGrant(
+    requestParameter: AttachmentCreateAttachmentRequest,
+  ): Promise<GaldurDomainModelsAttachmentsAttachmentViewModel> {
+    const api = await this.createApiClient(
+      AttachmentApi,
+      'clients-vmst-unemployment',
+      'Activation Grant API auth failed',
+    )
+
+    const response = await api.attachmentCreateAttachment(requestParameter)
+
     return response
   }
 

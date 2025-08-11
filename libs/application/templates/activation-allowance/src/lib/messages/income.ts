@@ -12,6 +12,17 @@ export const income = {
       defaultMessage: 'Tekjur',
       description: `Income page title`,
     },
+    subSectionTitle: {
+      id: 'aa.application:income.general.subSectionTitle',
+      defaultMessage: 'Tekjulind {index}',
+      description: `Income page title`,
+    },
+    subSectionDescription: {
+      id: 'aa.application:income.general.subSectionDescription',
+      defaultMessage:
+        'Samkvæmt upplýsingum frá Skattinum varst þú með tekjur eins og hér kemur fram:',
+      description: `Income page title`,
+    },
   }),
   labels: defineMessages({
     incomeMonth: {
