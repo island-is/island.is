@@ -14,7 +14,6 @@ import {
 import { courtClientModuleConfig } from '@island.is/judicial-system/court-client'
 import { messageModuleConfig } from '@island.is/judicial-system/message'
 
-import { LawyerRegistryModule } from './modules/lawyer-registry/lawyerRegistry.module'
 import {
   awsS3ModuleConfig,
   CaseModule,
@@ -31,6 +30,7 @@ import {
   IndictmentCountModule,
   InstitutionModule,
   lawyerRegistryConfig,
+  LawyerRegistryModule,
   NotificationModule,
   notificationModuleConfig,
   PoliceModule,
@@ -39,6 +39,7 @@ import {
   SubpoenaModule,
   UserModule,
   userModuleConfig,
+  VerdictModule,
   VictimModule,
 } from './modules'
 import { SequelizeConfigService } from './sequelizeConfig.service'
@@ -60,6 +61,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     PoliceModule,
     EventLogModule,
     SubpoenaModule,
+    VerdictModule,
     VictimModule,
     CaseTableModule,
     LawyerRegistryModule,
