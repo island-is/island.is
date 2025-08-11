@@ -13,7 +13,7 @@ import { getDefaultValue } from '../../getDefaultValue'
 interface Props extends FieldBaseProps {
   field: BankAccountField
 }
-export const BankAccountFormField = ({ field, application, error }: Props) => {
+export const BankAccountFormField = ({ field, application }: Props) => {
   const { formatMessage, lang: locale } = useLocale()
   const {
     marginBottom,
