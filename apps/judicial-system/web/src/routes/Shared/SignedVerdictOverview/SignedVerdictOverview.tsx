@@ -13,7 +13,6 @@ import {
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
-import { capitalize } from '@island.is/judicial-system/formatters'
 import {
   isDistrictCourtUser,
   isInvestigationCase,
@@ -114,7 +113,7 @@ const getNextButtonText = (
     ? formatMessage(m.sections.caseExtension.buttonLabel, {
         caseType: workingCase.type,
       })
-    : capitalize(formatMessage(strings.nextButtonReopenText))
+    : 'Leiðrétta þingbók eða úrskurð'
 
 export const getExtensionInfoText = (
   formatMessage: IntlShape['formatMessage'],
