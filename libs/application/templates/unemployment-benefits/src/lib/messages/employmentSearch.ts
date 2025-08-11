@@ -115,49 +115,49 @@ export const employmentSearch = {
       description: 'Education history page description',
     },
   }),
-  drivingLicense: defineMessages({
+  licenses: defineMessages({
     sectionTitle: {
-      id: 'vmst.ub.application:employmentSearch.drivingLicense.sectionTitle',
+      id: 'vmst.ub.application:employmentSearch.licenses.sectionTitle',
       defaultMessage: 'Ökuréttindi',
       description: 'employment search driving licence section title',
     },
     pageTitle: {
-      id: 'vmst.ub.application:employmentSearch.drivingLicense.pageTitle',
+      id: 'vmst.ub.application:employmentSearch.licenses.pageTitle',
       defaultMessage: 'Ökuréttindi',
       description: 'Driving licence page description',
     },
     pageDescription: {
-      id: 'vmst.ub.application:employmentSearch.drivingLicense.pageDescription#markdown',
+      id: 'vmst.ub.application:employmentSearch.licenses.pageDescription#markdown',
       defaultMessage: 'Vinsamlegast skráðu réttindi ef einhver eru.',
       description: 'Driving licence page description',
     },
     hasDrivingLicenseLabel: {
-      id: 'vmst.ub.application:employmentSearch.drivingLicense.hasDrivingLicenseLabel',
+      id: 'vmst.ub.application:employmentSearch.licenses.hasDrivingLicenseLabel',
       defaultMessage: 'Ég er með ökuréttindi',
       description: 'Has driving license label',
     },
     drivingLicenseLabel: {
-      id: 'vmst.ub.application:employmentSearch.drivingLicense.drivingLicenseLabel',
+      id: 'vmst.ub.application:employmentSearch.licenses.drivingLicenseLabel',
       defaultMessage: 'Ökuréttindi {value}',
       description: 'Driving license label',
     },
     markCorrectDrivingLicenseLabel: {
-      id: 'vmst.ub.application:employmentSearch.drivingLicense.markCorrectDrivingLicenseLabel',
+      id: 'vmst.ub.application:employmentSearch.licenses.markCorrectDrivingLicenseLabel',
       defaultMessage: 'Merktu við þau réttindi sem þú ert með',
       description: 'Mark correct driving license label',
     },
     hasHeavyMachineryLicenseLabel: {
-      id: 'vmst.ub.application:employmentSearch.drivingLicense.hasHeavyMachineryLicenseLabel',
+      id: 'vmst.ub.application:employmentSearch.licenses.hasHeavyMachineryLicenseLabel',
       defaultMessage: 'Ég er með vinnuvélaréttindi',
       description: 'Has heavy machinery license label',
     },
     drivingLicenseTypeLabel: {
-      id: 'vmst.ub.application:employmentSearch.drivingLicense.drivingLicenseTypeLabel',
+      id: 'vmst.ub.application:employmentSearch.licenses.drivingLicenseTypeLabel',
       defaultMessage: 'Merktu við þau réttindi sem þú ert með',
       description: 'Driving licence type label',
     },
     heavyMachineryLicenses: {
-      id: 'vmst.ub.application:employmentSearch.drivingLicense.heavyMachineryLicenses',
+      id: 'vmst.ub.application:employmentSearch.licenses.heavyMachineryLicenses',
       defaultMessage: 'Vinnuvélaréttindi',
       description: 'Heavy machinery licenses rights label',
     },

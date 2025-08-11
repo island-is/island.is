@@ -4,6 +4,7 @@ import {
   getValueViaPath,
 } from '@island.is/application/core'
 import { employmentSearch as employmentSearchMessages } from '../../../lib/messages'
+import { Application } from '@island.is/application/types'
 
 export const languageSkillsSubSection = buildSubSection({
   id: 'languageSkillsSubSection',
@@ -13,7 +14,7 @@ export const languageSkillsSubSection = buildSubSection({
       id: 'languageSkills',
       title: employmentSearchMessages.languageSkills.pageTitle,
       formTitleNumbering: 'none',
-      minRows: 1,
+      minRows: 2,
       addItemButtonText:
         employmentSearchMessages.languageSkills.addItemButtonText,
       fields: {
@@ -32,7 +33,32 @@ export const languageSkillsSubSection = buildSubSection({
               label: language.name,
             }))
           },
+          readonly: (application, _, index) => {
+            if (index !== undefined && index < 2) {
+              return true
+            }
+            return false
+          },
+          defaultValue: (
+            application: Application,
+            _activeField: Record<string, string>,
+            index: number,
+          ) => {
+            const languages =
+              getValueViaPath<{ name: string }[]>(
+                application.externalData,
+                'unemploymentApplication.data.supportData.languageKnowledge',
+              ) || []
+            if (index === 0) {
+              return languages.find((x) => x.name === 'Íslenska')?.name
+            }
+            if (index === 1) {
+              return languages.find((x) => x.name === 'Enska')?.name
+            }
+            return ''
+          },
         },
+
         skill: {
           label: employmentSearchMessages.languageSkills.skill,
           component: 'select',

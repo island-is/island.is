@@ -106,6 +106,8 @@ export class UnemploymentBenefitsService extends BaseTemplateApiService {
       ),
     }
 
+    // TODO get id from jobCodes as the answer is a string -> t.d Framkvæmdarstjóri en ekki id sem á að vera
+
     // const lasJobFromAnswers = {
     //   lastJob: {
     //     employerSSN: answers.employmentHistory?.lastJob?.employer?.nationalId,

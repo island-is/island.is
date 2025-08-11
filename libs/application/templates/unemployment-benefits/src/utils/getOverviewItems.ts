@@ -18,14 +18,18 @@ import {
   EmploymentStatus,
   FileInAnswers,
   LanguagesInAnswers,
-  PreviousJobInAnswers,
   WorkingAbility,
+  LastJobsInAnswers,
+  EducationType,
+  CurrentEducationInAnswers,
+  PreviousEducationInAnswers,
 } from '../shared'
 import * as kennitala from 'kennitala'
 import {
   getCurrentSituationString,
   getEducationStrings,
   getJobString,
+  getLastTvelveMonthsEducationString,
   getLocationString,
   getWorkingAbilityString,
 } from './stringMappers'
@@ -94,23 +98,17 @@ export const useEmploymentInformationOverviewItems = (
   const abilityString = abilityAnswer
     ? getWorkingAbilityString(abilityAnswer)
     : ''
-  const lastJob =
-    getValueViaPath<string>(
+  const employmentHistory =
+    getValueViaPath<LastJobsInAnswers>(
       answers,
-      'employmentHistory.lastJob.companyName',
-      '',
-    ) || ''
-  const addedJobs =
-    getValueViaPath<Array<PreviousJobInAnswers>>(
-      answers,
-      'employmentHistory.previousJobs',
+      'employmentHistory.lastJobs',
       [],
-    ) || []
+    ) ?? []
 
-  const combinedEmploymentHistory = [
-    lastJob,
-    ...addedJobs.map((job) => job.company.name),
-  ]
+  const historyNames = employmentHistory.map((job) => {
+    return `${job.employer?.name}: ${job.title}`
+  })
+
   return [
     {
       width: 'half',
@@ -120,7 +118,7 @@ export const useEmploymentInformationOverviewItems = (
     {
       width: 'half',
       keyText: overviewMessages.labels.employmentInformation.history,
-      valueText: combinedEmploymentHistory,
+      valueText: historyNames,
     },
   ]
 }
@@ -135,10 +133,10 @@ export const useEducationOverviewItems = (
       : ''
 
   const educationAnswer =
-    getValueViaPath<WorkingAbility>(answers, 'education.typeOfEducation') ?? ''
+    getValueViaPath<EducationType>(answers, 'education.typeOfEducation') ?? ''
 
   const educationString = educationAnswer
-    ? getWorkingAbilityString(educationAnswer)
+    ? getLastTvelveMonthsEducationString(educationAnswer)
     : ''
   return [
     {
@@ -225,27 +223,47 @@ export const useEducationHistoryOverviewItems = (
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
   const { formatMessage, locale } = useLocale()
+  const currentEducation = getValueViaPath<CurrentEducationInAnswers>(
+    answers,
+    'educationHistory.currentStudies',
+  )
   const educationHistory =
-    getValueViaPath<Array<EducationHistoryInAnswers>>(
+    getValueViaPath<Array<PreviousEducationInAnswers>>(
       answers,
       'educationHistory.educationHistory',
       [],
     ) ?? []
+  const mappedHistory: Array<KeyValueItem> = educationHistory.map(
+    (item, index) => {
+      const educationStrings = getEducationStrings(item, _externalData, locale)
+      return {
+        width: 'half',
+        keyText: `${formatMessage(
+          overviewMessages.labels.educationHistory.educationHistory,
+        )} ${index + 2}`,
+        valueText: [
+          educationStrings.levelOfStudy,
+          educationStrings.degree,
+          educationStrings.courseOfStudy,
+        ],
+      }
+    },
+  )
 
-  return educationHistory.map((item, index) => {
-    const educationStrings = getEducationStrings(item, _externalData, locale)
-    return {
+  return [
+    {
       width: 'half',
       keyText: `${formatMessage(
         overviewMessages.labels.educationHistory.educationHistory,
-      )} ${index + 1}`,
+      )} ${1}`,
       valueText: [
-        educationStrings.degree,
-        educationStrings.levelOfStudy,
-        educationStrings.courseOfStudy,
+        currentEducation?.levelOfStudy,
+        currentEducation?.degree,
+        currentEducation?.courseOfStudy,
       ],
-    }
-  })
+    },
+    ...mappedHistory,
+  ]
 }
 
 export const useLicenseOverviewItems = (

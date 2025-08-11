@@ -193,7 +193,7 @@ export const educationSection = buildSection({
                 appliedForNextSemester(answers) !== NO)),
         }),
         buildTextField({
-          id: 'education.currentEducation.programUnits',
+          id: 'education.currentEducation.units',
           title: educationMessages.labels.schoolProgramUnitsLabel,
           width: 'half',
           variant: 'number',
@@ -206,7 +206,7 @@ export const educationSection = buildSection({
                 appliedForNextSemester(answers) !== NO)),
         }),
         buildSelectField({
-          id: 'education.currentEducation.programDegree',
+          id: 'education.currentEducation.degree',
           title: educationMessages.labels.schoolDegreeLabel,
           width: 'half',
           required: true,
@@ -290,8 +290,8 @@ export const educationSection = buildSection({
                 appliedForNextSemester(answers) !== NO)),
         }),
         buildDateField({
-          id: 'education.currentEducation.programEnd',
-
+          id: 'education.currentEducation.endDate',
+          minDate: new Date(),
           title: (application: Application) => {
             const previousLabel =
               wasStudyingInTheLastYear(application.answers) ||

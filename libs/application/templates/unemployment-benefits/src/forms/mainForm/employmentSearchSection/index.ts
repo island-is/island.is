@@ -3,7 +3,7 @@ import { employmentSearch as employmentSearchMessages } from '../../../lib/messa
 import { jobWishesSubSection } from './jobWishes'
 import { educationHistorySubSection } from './educationHistory'
 import { interviewAndMeetingAgreementSubSection } from './interviewAndMeetingAgreement'
-import { drivingLicenseSubSection } from './drivingLicense'
+import { licensesSubSection } from './licenses'
 import { languageSkillsSubSection } from './languageSkills'
 import { euresJobSearchSubSection } from './euresJobSearch'
 import { resumeSubSection } from './resume'
@@ -17,7 +17,7 @@ export const employmentSearchSection = buildSection({
     jobWishesSubSection,
     interviewAndMeetingAgreementSubSection,
     educationHistorySubSection,
-    drivingLicenseSubSection,
+    licensesSubSection,
     languageSkillsSubSection,
     euresJobSearchSubSection,
     resumeSubSection,

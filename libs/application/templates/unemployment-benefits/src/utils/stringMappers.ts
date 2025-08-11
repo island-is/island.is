@@ -1,8 +1,8 @@
 import {
-  EducationHistoryInAnswers,
   EducationType,
   EmploymentStatus,
   PaymentsFromPensionInAnswers,
+  PreviousEducationInAnswers,
   WorkingAbility,
 } from '../shared'
 import { employment as employmentMessages } from '../lib/messages'
@@ -11,7 +11,7 @@ import { education as educationMessages } from '../lib/messages'
 import { ExternalData, FormText } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import {
-  GaldurDomainModelsEducationItem,
+  GaldurDomainModelsEducationProgramDTO,
   GaldurDomainModelsSettingsIncomeTypesIncomeTypeDTO,
   GaldurDomainModelsSettingsJobCodesJobCodeDTO,
   GaldurDomainModelsSettingsPensionFundsPensionFundDTO,
@@ -161,24 +161,21 @@ export const getLocationString = (
 }
 
 export const getEducationStrings = (
-  historyItem: EducationHistoryInAnswers,
+  historyItem: PreviousEducationInAnswers,
   externalData: ExternalData,
   locale: string,
-): EducationHistoryInAnswers => {
+): PreviousEducationInAnswers => {
   const education =
-    getValueViaPath<GaldurDomainModelsEducationItem[]>(
+    getValueViaPath<GaldurDomainModelsEducationProgramDTO[]>(
       externalData,
-      'unemploymentApplication.data.supportData.education',
+      'unemploymentApplication.data.supportData.educationPrograms',
     ) ?? []
 
   const educationItemLevel1 = education?.filter(
-    (item) => item.level === 1 && item.id === historyItem.levelOfStudy,
+    (item) => item.id === historyItem.levelOfStudy,
   )[0]
-  const educationItemLevel2 = education?.filter(
-    (item) =>
-      item.level === 2 &&
-      item.parentId === historyItem.levelOfStudy &&
-      item.id === historyItem.degree,
+  const educationItemLevel2 = educationItemLevel1?.degrees?.filter(
+    (item) => item.id === historyItem.degree,
   )[0]
 
   const degreeString =
@@ -191,14 +188,9 @@ export const getEducationStrings = (
       ? educationItemLevel1?.name
       : educationItemLevel1?.english ?? educationItemLevel1?.name) || ''
 
-  const courseOfStudy = education
-    ?.find(
-      (level) =>
-        level.level === 2 &&
-        level.parentId === historyItem.levelOfStudy &&
-        level.id === historyItem.degree,
-    )
-    ?.relations?.find((relation) => relation.code === historyItem.courseOfStudy)
+  const courseOfStudy = educationItemLevel2?.subjects?.find(
+    (level) => level.id === historyItem.courseOfStudy,
+  )
 
   const courseOfStudyString = courseOfStudy?.name ?? ''
   return {

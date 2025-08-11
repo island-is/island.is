@@ -121,7 +121,7 @@ export const educationHistorySubSection = buildSubSection({
             isCurrentlyStudying(answers),
         }),
         buildTextField({
-          id: 'educationHistory.currentStudies.programDegree',
+          id: 'educationHistory.currentStudies.degree',
           title: educationMessages.labels.schoolDegreeLabel,
           width: 'half',
           backgroundColor: 'white',
@@ -134,7 +134,7 @@ export const educationHistorySubSection = buildSubSection({
             const degreeAnswer =
               getValueViaPath<string>(
                 application.answers,
-                'education.currentEducation.programDegree',
+                'education.currentEducation.degree',
               ) ?? ''
             const education =
               getValueViaPath<GaldurDomainModelsEducationProgramDTO[]>(
@@ -165,7 +165,7 @@ export const educationHistorySubSection = buildSubSection({
             isCurrentlyStudying(answers),
         }),
         buildTextField({
-          id: 'educationHistory.currentStudies.programUnits',
+          id: 'educationHistory.currentStudies.units',
           title: educationMessages.labels.schoolProgramUnitsLabel,
           width: 'half',
           backgroundColor: 'white',
@@ -184,7 +184,7 @@ export const educationHistorySubSection = buildSubSection({
         }),
 
         buildTextField({
-          id: 'educationHistory.currentStudies.programEnd',
+          id: 'educationHistory.currentStudies.endDate',
           title: educationMessages.labels.expectedEndOfStudyLabel,
           width: 'half',
           backgroundColor: 'white',
@@ -193,7 +193,7 @@ export const educationHistorySubSection = buildSubSection({
             const expectedEndOfStudy =
               getValueViaPath<string>(
                 application.answers,
-                'education.currentEducation.programEnd',
+                'education.currentEducation.endDate',
               ) ?? ''
             return formatDate(expectedEndOfStudy)
           },

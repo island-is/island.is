@@ -141,7 +141,9 @@ export const currentSituationSubSection = buildSubSection({
                     'unemploymentApplication.data.supportData.jobCodes',
                   ) ?? []
                 return jobList.map((job) => ({
-                  value: job.id ?? '',
+                  value:
+                    (locale === 'is' ? job.name : job.english ?? job.name) ||
+                    '',
                   label:
                     (locale === 'is' ? job.name : job.english ?? job.name) ||
                     '',

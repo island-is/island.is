@@ -13,7 +13,7 @@ import {
   familyInformationSchema,
   educationHistorySchema,
   jobWishesSchema,
-  drivingLicenseSchema,
+  licenseSchema,
   currentSituationSchema,
 } from './schemas'
 import { WorkingAbility } from '../shared'
@@ -60,7 +60,7 @@ export const UnemploymentBenefitsSchema = z.object({
   currentSituation: currentSituationSchema,
   educationHistory: educationHistorySchema,
   education: educationSchema,
-  drivingLicense: drivingLicenseSchema,
+  licenses: licenseSchema,
   languageSkills: z.array(languageSkillsSchema),
   euresJobSearch: euresSchema,
   workingAbility: workingAbilitySchema,

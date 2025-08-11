@@ -22,7 +22,6 @@ import {
   isEmployedPartTime,
   isUnemployed,
   hasDataFromCurrentStatusItem,
-  hasDataWithoutField,
   getDefaultFromCurrentStatus,
   hasEmployer,
   hasDataFromCurrentStatus,
@@ -282,15 +281,16 @@ export const employmentHistorySubSection = buildSubSection({
                     '',
                 }))
               },
-              // isSearchable: (application, _, index) => {
-              //   const a = hasDataFromCurrentStatus(
-              //     application.answers,
-              //     index,
-              //     'title',
-              //   )
-              //   console.log('a', a)
-              //   return a
-              // },
+              readonly: (application, activeField, index) => {
+                const repeaterJobs =
+                  getValueViaPath<CurrentEmploymentInAnswers[]>(
+                    application.answers,
+                    'currentSituation.currentSituationRepeater',
+                    [],
+                  ) ?? []
+
+                return index !== undefined && !!repeaterJobs[index]
+              },
               defaultValue: (
                 application: Application,
                 _activeField: Record<string, string>,

@@ -1,22 +1,23 @@
 import { z } from 'zod'
 
-export const educationHistorySchema = z
+export const currentStudiesSchema = z
   .object({
-    currentStudies: z
-      .object({
-        programName: z.string().optional(),
-        programUnits: z.string().optional(),
-        programDegree: z.string().optional(),
-        programEnd: z.string().optional(),
-      })
-      .optional(),
-    educationHistory: z.array(
-      z.object({
-        levelOfStudy: z.string(),
-        degree: z.string(),
-        courseOfStudy: z.string().optional(),
-        studyNotCompleted: z.array(z.string()).optional(),
-      }),
-    ),
+    levelOfStudy: z.string().optional(),
+    courseOfStudy: z.string().optional(),
+    degree: z.string().optional(),
+    endDate: z.string().optional(),
+    units: z.string().optional(),
   })
   .optional()
+
+export const previousEducationSchema = z.object({
+  levelOfStudy: z.string(),
+  degree: z.string(),
+  courseOfStudy: z.string().optional(),
+  studyNotCompleted: z.array(z.string()).optional(),
+})
+
+export const educationHistorySchema = z.object({
+  currentStudies: currentStudiesSchema,
+  educationHistory: z.array(previousEducationSchema),
+})

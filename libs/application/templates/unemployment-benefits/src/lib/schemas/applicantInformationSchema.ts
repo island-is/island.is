@@ -36,7 +36,6 @@ export const applicantInformationSchema = z
   )
   .refine(
     ({ otherAddressCheckbox, otherPostcode }) => {
-      console.log('outside of here?')
       if (otherAddressCheckbox && otherAddressCheckbox[0] === YES) {
         return !!otherPostcode
       }

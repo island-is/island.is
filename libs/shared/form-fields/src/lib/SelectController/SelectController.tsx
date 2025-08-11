@@ -6,6 +6,7 @@ import {
   SelectProps,
   Option,
   InputBackgroundColor,
+  Input,
 } from '@island.is/island-ui/core'
 import { TestSupport } from '@island.is/island-ui/utils'
 import { MultiValue, SingleValue } from 'react-select'
@@ -35,6 +36,7 @@ interface SelectControllerProps<Value, IsMulti extends boolean = false> {
   internalKey?: string
   filterConfig?: SelectProps<Value, IsMulti>['filterConfig']
   clearOnChange?: string[]
+  readOnly?: boolean
   setOnChange?:
     | { key: string; value: any }[]
     | ((
@@ -65,6 +67,7 @@ export const SelectController = <Value, IsMulti extends boolean = false>({
   filterConfig,
   clearOnChange,
   setOnChange,
+  readOnly,
 }: SelectControllerProps<Value, IsMulti> & TestSupport) => {
   const { clearErrors, setValue } = useFormContext()
 
@@ -93,6 +96,32 @@ export const SelectController = <Value, IsMulti extends boolean = false>({
       setValue(id, null)
     }
     return foundOption
+  }
+
+  console.log('defaultValue', defaultValue)
+  if (readOnly) {
+    return (
+      <Controller
+        {...(defaultValue !== undefined && { defaultValue })}
+        name={name}
+        rules={rules}
+        render={({ field: { value } }) => (
+          <Input
+            id={id}
+            name={name}
+            value={value}
+            disabled={disabled}
+            readOnly={true}
+            label={label}
+            backgroundColor={backgroundColor}
+            data-testid={dataTestId}
+            hasError={error !== undefined}
+            errorMessage={error}
+            required={required}
+          />
+        )}
+      />
+    )
   }
 
   return (

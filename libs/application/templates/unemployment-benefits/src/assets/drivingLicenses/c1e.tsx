@@ -29,8 +29,8 @@ export const C1E: React.FC<React.PropsWithChildren<unknown>> = () => (
       fill="#00003C"
     />
     <path
-      fill-rule="evenodd"
-      clip-rule="evenodd"
+      fillRule="evenodd"
+      clipRule="evenodd"
       d="M74.6667 15.5304H89.9447C89.1133 16.2662 88.4993 17.2435 88.2143 18.3539H74.4894C73.8644 15.9183 71.6602 14.1186 69.037 14.1186C66.4139 14.1186 64.2097 15.9183 63.5847 18.3539H62V10.5892L65.1667 3.53039H74.6667V15.5304ZM63.4074 10.6568V11.2951H71.1481V4.94215H65.8704L63.4074 10.6568Z"
       fill="#00003C"
     />

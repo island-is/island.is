@@ -22,32 +22,30 @@ import {
 } from '../../../assets/drivingLicenses'
 import { employmentSearch as employmentSearchMessages } from '../../../lib/messages'
 
-export const drivingLicenseSubSection = buildSubSection({
-  id: 'drivingLicenseSubSection',
-  title: employmentSearchMessages.drivingLicense.sectionTitle,
+export const licensesSubSection = buildSubSection({
+  id: 'licensesSubSection',
+  title: employmentSearchMessages.licenses.sectionTitle,
   children: [
     buildMultiField({
-      id: 'drivingLicenseSubSection',
-      title: employmentSearchMessages.drivingLicense.pageTitle,
-      description: employmentSearchMessages.drivingLicense.pageDescription,
+      id: 'licensesSubSection',
+      title: employmentSearchMessages.licenses.pageTitle,
+      description: employmentSearchMessages.licenses.pageDescription,
       children: [
         buildCheckboxField({
-          id: 'drivingLicense.hasDrivingLicense',
+          id: 'licenses.hasDrivingLicense',
 
           options: [
             {
               value: YES,
-              label:
-                employmentSearchMessages.drivingLicense.hasDrivingLicenseLabel,
+              label: employmentSearchMessages.licenses.hasDrivingLicenseLabel,
             },
           ],
         }),
         buildCheckboxField({
-          id: 'drivingLicense.drivingLicenseType',
-          title:
-            employmentSearchMessages.drivingLicense.drivingLicenseTypeLabel,
+          id: 'licenses.drivingLicenseTypes',
+          title: employmentSearchMessages.licenses.drivingLicenseTypeLabel,
           spacing: 0,
-
+          required: true,
           options: (application) => {
             const drivingLicenseTypes =
               getValueViaPath<{ name: string }[]>(
@@ -84,26 +82,26 @@ export const drivingLicenseSubSection = buildSubSection({
             return (
               getValueViaPath<string[]>(
                 answers,
-                'drivingLicense.hasDrivingLicense',
+                'licenses.hasDrivingLicense',
               )?.includes(YES) ?? false
             )
           },
         }),
         buildCheckboxField({
-          id: 'drivingLicense.hasHeavyMachineryLicense',
+          id: 'licenses.hasHeavyMachineryLicense',
           spacing: 0,
           options: [
             {
               value: YES,
               label:
-                employmentSearchMessages.drivingLicense
-                  .hasHeavyMachineryLicenseLabel,
+                employmentSearchMessages.licenses.hasHeavyMachineryLicenseLabel,
             },
           ],
         }),
         buildSelectField({
-          id: 'drivingLicense.heavyMachineryLicenses',
-          title: employmentSearchMessages.drivingLicense.heavyMachineryLicenses,
+          id: 'licenses.heavyMachineryLicensesTypes',
+          title: employmentSearchMessages.licenses.heavyMachineryLicenses,
+          required: true,
           isMulti: true,
           options: (application) => {
             const heavyMachineryLicenses =
@@ -120,7 +118,7 @@ export const drivingLicenseSubSection = buildSubSection({
             return (
               getValueViaPath<string[]>(
                 answers,
-                'drivingLicense.hasHeavyMachineryLicense',
+                'licenses.hasHeavyMachineryLicense',
               )?.includes(YES) ?? false
             )
           },

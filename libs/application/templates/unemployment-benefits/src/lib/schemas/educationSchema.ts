@@ -21,9 +21,9 @@ export const educationSchema = z
             return val
           }, z.string())
           .optional(),
-        programUnits: z.string().optional(),
-        programDegree: z.string().optional(),
-        programEnd: z.string().optional(),
+        units: z.string().optional(),
+        degree: z.string().optional(),
+        endDate: z.string().optional(),
         courseOfStudy: z.string().optional(),
         degreeFile: z.array(FileSchema).optional(),
       })
@@ -130,12 +130,12 @@ export const educationSchema = z
                 appliedForNextSemester !== NO))) ||
           typeOfEducation === EducationType.LAST_YEAR)
       ) {
-        return currentEducation && currentEducation.programUnits
+        return currentEducation && currentEducation.units
       }
       return true
     },
     {
-      path: ['currentEducation', 'programUnits'],
+      path: ['currentEducation', 'units'],
     },
   )
   .refine(
@@ -155,12 +155,12 @@ export const educationSchema = z
                 appliedForNextSemester !== NO))) ||
           typeOfEducation === EducationType.LAST_YEAR)
       ) {
-        return currentEducation && currentEducation.programDegree
+        return currentEducation && currentEducation.degree
       }
       return true
     },
     {
-      path: ['currentEducation', 'programDegree'],
+      path: ['currentEducation', 'degree'],
     },
   )
   .refine(
@@ -180,12 +180,12 @@ export const educationSchema = z
                 appliedForNextSemester !== NO))) ||
           typeOfEducation === EducationType.LAST_YEAR)
       ) {
-        return currentEducation && currentEducation.programEnd
+        return currentEducation && currentEducation.endDate
       }
       return true
     },
     {
-      path: ['currentEducation', 'programEnd'],
+      path: ['currentEducation', 'endDate'],
     },
   )
   .refine(

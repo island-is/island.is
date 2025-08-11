@@ -1,6 +1,22 @@
 import { YesOrNoEnum } from '@island.is/application/core'
 import { z } from 'zod'
 
+export const lastJobSchema = z.object({
+  employer: z
+    .object({
+      nationalId: z.string().optional(),
+      name: z.string().optional(),
+    })
+    .optional(),
+  nationalIdWithName: z.string().optional(),
+  hiddenNationalIdWithName: z.string().optional(),
+  title: z.string().optional(),
+  percentage: z.string().optional(),
+  startDate: z.string().optional(),
+  endDate: z.string().optional(),
+  predictedEndDate: z.string().optional(),
+})
+
 export const employmentHistorySchema = z
   .object({
     isIndependent: z
@@ -14,23 +30,7 @@ export const employmentHistorySchema = z
         endDate: z.string().optional(),
       })
       .optional(),
-    lastJobs: z.array(
-      z.object({
-        employer: z
-          .object({
-            nationalId: z.string().optional(),
-            name: z.string().optional(),
-          })
-          .optional(),
-        nationalIdWithName: z.string().optional(),
-        hiddenNationalIdWithName: z.string().optional(),
-        title: z.string().optional(),
-        percentage: z.string().optional(),
-        startDate: z.string().optional(),
-        endDate: z.string().optional(),
-        predictedEndDate: z.string().optional(),
-      }),
-    ),
+    lastJobs: z.array(lastJobSchema),
     hasWorkedEes: z.nativeEnum(YesOrNoEnum).optional(),
   })
   .superRefine((data, ctx) => {
