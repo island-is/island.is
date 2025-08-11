@@ -468,6 +468,11 @@ export const caseListInclude: Includeable[] = [
         order: [['created', 'DESC']],
         separate: true,
       },
+      {
+        model: Verdict,
+        as: 'verdict',
+        required: false,
+      },
     ],
     separate: true,
   },
