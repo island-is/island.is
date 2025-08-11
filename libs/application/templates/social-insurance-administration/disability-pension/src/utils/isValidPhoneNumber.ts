@@ -1,4 +1,4 @@
-import { parsePhoneNumberFromString } from "libphonenumber-js"
+import { parsePhoneNumberFromString } from 'libphonenumber-js'
 
 export const isValidPhoneNumber = (phoneNumber: string) => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')

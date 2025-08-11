@@ -3,18 +3,113 @@ type MessageDir = Record<string, Record<string, MessageDescriptor>>
 
 export const disabilityPensionFormMessage: MessageDir = {
   shared: defineMessages({
+    formTitle: {
+      id: 'dp.application:title',
+      defaultMessage: 'Umsókn',
+      description: 'Application',
+    },
     applicationTitle: {
       id: 'dp.application:application.title',
       defaultMessage: 'Umsókn um örorkulífeyri',
       description: 'Application for disability pension',
     },
-
+    year: {
+      id: 'dp.application:shared.year',
+      defaultMessage: 'Ár',
+      description: 'Year',
+    },
+    chooseYear: {
+      id: 'dp.application:shared.chooseYear',
+      defaultMessage: 'Veldu ár',
+      description: 'Select year',
+    },
+    month: {
+      id: 'dp.application:shared.month',
+      defaultMessage: 'Mánuður',
+      description: 'Month',
+    },
+    chooseMonth: {
+      id: 'dp.application:shared.chooseMonth',
+      defaultMessage: 'Veldu mánuð',
+      description: 'Select month',
+    },
   }),
   prerequisites: defineMessages({
     title: {
       id: 'dp.application:prerequisites.title',
       defaultMessage: 'Forsendur',
       description: 'Prerequisites',
+    },
+    checkboxLabel: {
+      id: 'dp.application:prerequisites.checkboxLabel',
+      defaultMessage:
+        'Ég skil að ofangreindra upplýsinga verður aflað í umsóknarferlinu',
+      description: 'Checkbox label for sharing data',
+    },
+    organizationDataTitle: {
+      id: 'dp.application:prerequisites.organizationDataTitle',
+      defaultMessage: 'Upplýsingar frá stofnunum',
+      description: 'Organization data title',
+    },
+    organizationDataText: {
+      id: 'dp.application:prerequisites.organizationDataText',
+      defaultMessage:
+        'Upplýsingar um þig, maka og börn frá Þjóðskrá, RSK, Útlendingastofnun, Vinnumálastofnun og Sjúkratryggingum Íslands.',
+      description: 'Organization data text',
+    },
+    myPagesTitle: {
+      id: 'dp.application:prerequisites.myPagesTitle',
+      defaultMessage: 'Upplýsingar af mínum síðum Ísland.is',
+      description: 'My pages title',
+    },
+    myPagesText: {
+      id: 'dp.application:prerequisites.myPagesText',
+      defaultMessage: 'Upplýsingar um símanúmer og netfang.',
+      description: 'My pages text',
+    },
+    healthDataTitle: {
+      id: 'dp.application:prerequisites.healthDataTitle',
+      defaultMessage: 'Upplýsingar frá heilbrigðisstofnun',
+      description: 'Health data title',
+    },
+    healthDataText: {
+      id: 'dp.application:prerequisites.healthDataText',
+      defaultMessage: 'Upplýsingar um læknisvottorð vegna örorku.',
+      description: 'Health data text',
+    },
+    rehabilitationTitle: {
+      id: 'dp.application:prerequisites.rehabilitationTitle',
+      defaultMessage:
+        'Upplýsingar frá þjónustuaðila, endurhæfingar- eða meðferðaraðila',
+      description: 'Rehabilitation information title',
+    },
+    rehabilitationText: {
+      id: 'dp.application:prerequisites.rehabilitationText#markdown',
+      defaultMessage:
+        'Tryggingastofnun sækir þjónustulokaskýrslu og færnimat til þjónustuaðila sem sér um __endurhæfingu eða meðferð__.',
+      description: 'Rehabilitation information text',
+    },
+    incomeTitle: {
+      id: 'dp.application:prerequisites.incomeTitle',
+      defaultMessage: 'Upplýsingar um tekjur og aðstæður',
+      description: 'Income information title',
+    },
+    incomeText: {
+      id: 'dp.application:prerequisites.incomeText#markdown',
+      defaultMessage:
+        'Í sumum tilfellum þarf Tryggingastofnun að sækja tekjuupplýsingar til Innheimtustofnunar sveitarfélaga, lífeyrissjóða, stéttarfélaga og RSK til að ákvarða réttindi.',
+      description: 'Income information text',
+    },
+    dataFetchTitle: {
+      id: 'dp.application:prerequisites.dataFetchTitle',
+      defaultMessage: 'Gagnaöflun og meðferð persónuupplýsinga',
+      description: 'Data fetch title',
+    },
+    dataFetchText: {
+      id: 'dp.application:prerequisites.dataFetchText#markdown',
+      defaultMessage:
+        'Frekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna hér.\n\nEf tekjur eða aðrar aðstæður þínar breytast verður þú að láta Tryggingastofnun vita þar sem það getur haft áhrif á greiðslur þínar.\n\nRangar eða ófullnægjandi upplýsingar geta haft áhrif á afgreiðslu umsóknarinnar og hugsanlega leitt til endurkröfu eða annara viðurlaga.\n\nEf umsókn kemur frá erlendri stofnun  getur Tryggingastofnun óskað eftir frekari gögnum frá þeirri stofnunn.\n\nAuk þess getur tryggingastofnun haft samband við erlendar stofnanir ef þú telur þig eiga réttindi í öðru EES- landi, Bandaríkjunum eða Kanada, vegna réttinda þinna þar fyrir þina hönd.',
+      description: 'Data fetch text',
     },
   }),
   basicInfo: defineMessages({
@@ -30,7 +125,8 @@ export const disabilityPensionFormMessage: MessageDir = {
     },
     personalInfoInstructions: {
       id: 'dp.application:basicInfo.personalInfoInstructions',
-      defaultMessage: 'Vinsamlegast farið yfir netfang og símanúmer til að tryggja að þær upplýsingar séu réttar. Netfangi er breytt hér. Athugið að ef að aðrar upplýsingar eru ekki réttar þarft þú að hafa samband við Þjóðskrá og fara fram á breytingu.',
+      defaultMessage:
+        'Vinsamlegast farið yfir netfang og símanúmer til að tryggja að þær upplýsingar séu réttar. Netfangi er breytt hér. Athugið að ef að aðrar upplýsingar eru ekki réttar þarft þú að hafa samband við Þjóðskrá og fara fram á breytingu.',
       description: 'Instructions for personal information',
     },
     paymentInfo: {
@@ -64,7 +160,7 @@ export const disabilityPensionFormMessage: MessageDir = {
       description: 'Related applications',
     },
   }),
-  personalInfo : defineMessages({
+  personalInfo: defineMessages({
     nationalId: {
       id: 'dp.application:basicInfo.personalInfo.nationalId',
       defaultMessage: 'Kennitala',
@@ -72,7 +168,7 @@ export const disabilityPensionFormMessage: MessageDir = {
     },
     address: {
       id: 'dp.application:basicInfo.personalInfo.address',
-      defaultMessage: 'Heimili/póstfang',
+      defaultMessage: 'Heimilisfang',
       description: 'Address',
     },
     name: {
@@ -156,7 +252,8 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
     },
     foreignAccountNotice: {
       id: 'dp.application:paymentInfo.foreignAccountNotice',
-      defaultMessage: 'Ef þú ert með erlendan bankareikning sér Tryggingastofnun um að millifæra greiðslur. Greiðslurnar samræmast milliríkjasamningi Íslands við EES, Bandaríkin og Kanada og verður reikningur því að vera skráður í þeim löndum (?). Millifærslur á erlenda reikninga fara í gegnum viðskiptabanka til erlendra banka, sem getur falið í sér kostnað vegna millifærslu. Einnig getur það falið í sér gengistap. Því er almennt dýrara að fá lífeyrisgreiðslur greiddar inn á erlendan reikning . ',
+      defaultMessage:
+        'Ef þú ert með erlendan bankareikning sér Tryggingastofnun um að millifæra greiðslur. Greiðslurnar samræmast milliríkjasamningi Íslands við EES, Bandaríkin og Kanada og verður reikningur því að vera skráður í þeim löndum (?). Millifærslur á erlenda reikninga fara í gegnum viðskiptabanka til erlendra banka, sem getur falið í sér kostnað vegna millifærslu. Einnig getur það falið í sér gengistap. Því er almennt dýrara að fá lífeyrisgreiðslur greiddar inn á erlendan reikning . ',
       description: 'TODO',
     },
     bank: {
@@ -164,10 +261,25 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
       defaultMessage: 'Banki',
       description: 'Bank',
     },
+    bankAddress: {
+      id: 'dp.application:paymentInfo.bankAddress',
+      defaultMessage: 'Heimilisfang banka',
+      description: 'Bank address',
+    },
+    personalAllowanceLabel: {
+      id: 'dp.application:paymentInfo.personalAllowanceLabel',
+      defaultMessage: 'Persónuafsláttur',
+      description: 'Personal allowance',
+    },
     personalAllowance: {
       id: 'dp.application:paymentInfo.personalAllowance',
       defaultMessage: 'Vilt þú nýta þér persónuafsláttinn þinn?',
       description: 'Do you want to use your personal allowance',
+    },
+    personalAllowanceRatio: {
+      id: 'dp.application:paymentInfo.personalAllowanceRatio',
+      defaultMessage: 'Hlutfall',
+      description: 'Personal allowance ratio',
     },
     taxationLevel: {
       id: 'dp.application:paymentInfo.taxationLevel',
@@ -176,17 +288,20 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
     },
     taxationLevelOptionOne: {
       id: 'dp.application:paymentInfo.taxationLevelOptionOne',
-      defaultMessage: 'Ég vil að viðeigandi skattþrep sé reiknað út frá öðrum tekjum sem ég er með',
+      defaultMessage:
+        'Ég vil að viðeigandi skattþrep sé reiknað út frá öðrum tekjum sem ég er með',
       description: 'Taxation level option 1',
     },
     taxationLevelOptionTwo: {
       id: 'dp.application:paymentInfo.taxationLevelOptionTwo',
-      defaultMessage: 'Ég vil að miðað sé við Skattþrep 1 í útreikningum staðgreiðslu (31,45% af tekjum: 0 - 409.986 kr.)',
+      defaultMessage:
+        'Ég vil að miðað sé við Skattþrep 1 í útreikningum staðgreiðslu (31,45% af tekjum: 0 - 409.986 kr.)',
       description: 'Taxation level option 2',
     },
     taxationLevelOptionThree: {
       id: 'dp.application:paymentInfo.taxationLevelOptionThree',
-      defaultMessage: 'Ég vil að miðað sé við Skattþrep 2 í útreikningum staðgreiðslu (37,95% af tekjum: 409.986 - 1.151.012 kr.)',
+      defaultMessage:
+        'Ég vil að miðað sé við Skattþrep 2 í útreikningum staðgreiðslu (37,95% af tekjum: 409.986 - 1.151.012 kr.)',
       description: 'Taxation level option 3',
     },
     yes: {
@@ -213,15 +328,31 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
     },
     instructionsBullets: {
       id: 'dp.application:incomePlan.instructionsBullets#markdown',
-      defaultMessage: '* Á næstu síðu er að finna tillögu að tekjuáætlun. Þar getur þú breytt upphæðum og bætt við tekjum. \n\n* Skrá skal heildartekjur fyrir skatt í tekjuáætlun. \n\n* Fjármagnstekjur eru sameignlegar hjá hjónum/sambúðarfólki og skal skrá heildar fjármagnstekjur hjóna/sambúðarfólks í tekjuáætlun.\n\n* Ef maki er á lífeyri verða greiðslur hans einnig endurreiknaðar ef fjármagnstekjum er breytt.\n\n* Heimilt er að skrá atvinnutekjur á þá mánuði sem þeirra er aflað. Reiknast þá þær atvinnutekjur eingöngu í þeim mánuði. Vakin er athygli á að það þarf að haka sérstaklega við þann kost að óska eftir mánaðarskiptingu atvinnutekna í tekjuáætlun.\n\n* Laun / lífeyrisgreiðslur skal skrá í þeim gjaldmiðli sem þau eru greidd.\n\n* Það er á ábyrgð umsækjanda að tekjuáætlun sé rétt og að nauðsynlegar upplýsingar liggi fyrir til að hægt sé að ákvarða réttar greiðslur.',
+      defaultMessage:
+        '* Á næstu síðu er að finna tillögu að tekjuáætlun. Þar getur þú breytt upphæðum og bætt við tekjum. \n\n* Skrá skal heildartekjur fyrir skatt í tekjuáætlun. \n\n* Fjármagnstekjur eru sameignlegar hjá hjónum/sambúðarfólki og skal skrá heildar fjármagnstekjur hjóna/sambúðarfólks í tekjuáætlun.\n\n* Ef maki er á lífeyri verða greiðslur hans einnig endurreiknaðar ef fjármagnstekjum er breytt.\n\n* Heimilt er að skrá atvinnutekjur á þá mánuði sem þeirra er aflað. Reiknast þá þær atvinnutekjur eingöngu í þeim mánuði. Vakin er athygli á að það þarf að haka sérstaklega við þann kost að óska eftir mánaðarskiptingu atvinnutekna í tekjuáætlun.\n\n* Laun / lífeyrisgreiðslur skal skrá í þeim gjaldmiðli sem þau eru greidd.\n\n* Það er á ábyrgð umsækjanda að tekjuáætlun sé rétt og að nauðsynlegar upplýsingar liggi fyrir til að hægt sé að ákvarða réttar greiðslur.',
       description: 'Instructions for recording income plan',
     },
     instructionsLink: {
       id: 'dp.application:incomePlan.instructionsLink#markdown',
-      defaultMessage: '[Tekjuáætlun - Upplýsingar um tekjur lífeyrisþega | Ísland.is](https://island.is/tekjuaaetlun-tr-upplysingar-um-tekjur-lifeyristhega/vinna-med-lifeyri)',
+      defaultMessage:
+        '[Tekjuáætlun - Upplýsingar um tekjur lífeyrisþega | Ísland.is](https://island.is/tekjuaaetlun-tr-upplysingar-um-tekjur-lifeyristhega/vinna-med-lifeyri)',
       description: 'Instructions for recording income plan',
     },
-
+    incomeType: {
+      id: 'dp.application:incomePlan.incomeType',
+      defaultMessage: 'Tekjutegund',
+      description: 'Income type',
+    },
+    yearlyIncome: {
+      id: 'dp.application:incomePlan.yearlyIncome',
+      defaultMessage: 'Tekjur á ári',
+      description: 'Yearly income',
+    },
+    currency: {
+      id: 'dp.application:incomePlan.currency',
+      defaultMessage: 'Gjaldmiðill',
+      description: 'Currency',
+    },
   }),
   disabilityEvaluation: defineMessages({
     title: {
@@ -231,13 +362,15 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
     },
     description: {
       id: 'dp.application:disabilityEvaluation.description#markdown',
-      defaultMessage: 'Þú þarft að sækja um örorkumat frá lífeyrissjóði og senda staðfestingu á því til Tryggingarstofnunar. Ef þú átt þessa staðfestingu, þá getur þú sett hana inn sem viðhengi hér að neðan.\n\nUmsóknarferli þitt um örorkumat getur farið fram þó þú sért ekki búinn að sækja um örorkumat hjá lífeyrissjóði.\n\nEn greiðslur fyrir örorku geta ekki farið fram fyrr en þessi staðfesting liggur fyrir.',
+      defaultMessage:
+        'Þeir sem eiga rétt á örorkulífeyri hjá lífeyrissjóði þurfa að sækja um þau réttindi áður en greiðslur frá TR geta hafist, nóg er að sækja um hjá einum lífeyrissjóði. TR sækir upplýsingar til lífeyrissjóða um hvort réttindi séu til staðar og hvort búið sé að sækja um.',
       description: 'Description for disability evaluation process',
     },
     appliedBeforeTitle: {
       id: 'dp.application:disabilityEvaluation.appliedBeforeTitle',
       defaultMessage: 'Hefur þú sótt um örorkumat hjá lífeyrissjóði?',
-      description: 'Have you applied for disability evaluation at pension fund?',
+      description:
+        'Have you applied for disability evaluation at pension fund?',
     },
     fileUploadTitle: {
       id: 'dp.application:disabilityEvaluation.fileUploadTitle',
@@ -263,6 +396,31 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
       id: 'dp.application:disabilityEvaluation.no',
       defaultMessage: 'Nei',
       description: 'No',
+    },
+    noInfo: {
+      id: 'dp.application:disabilityEvaluation.noInfo',
+      defaultMessage:
+        'Vakin er athygli á því að þeir sem eiga rétt á örorkulífeyri frá lífeyrissjóðum þurfa að sækja um þau hjá viðkomandi lífeyrissjóði. TR sækir upplýsingar til lífeyrissjóða um hvort réttindi séu til staðar og hvort búið sé að sækja um.',
+      description: 'Information if no is answered',
+    },
+  }),
+  disabilityPeriod: defineMessages({
+    title: {
+      id: 'dp.application:disabilityPeriod.title',
+      defaultMessage: 'Sækja aftur í tímann',
+      description: 'From what time are you applying for payments?',
+    },
+    description: {
+      id: 'dp.application:disabilityPeriod.description',
+      defaultMessage:
+        'Hægt er að sækja um greiðslur í allt að 2 ár afturvikt, athygli er vakin á að gögn þurfa að rökstyðja afturvirkar greiðslur.',
+      description: 'Description for disability period',
+    },
+
+    chooseDate: {
+      id: 'dp.application:disabilityPeriod.chooseDate',
+      defaultMessage: 'Veldu dagsetningu sem þú vilt hefja töku örorku',
+      description: 'Select date',
     },
   }),
   employmentParticipation: defineMessages({
@@ -373,27 +531,29 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
     },
     abroadPaymentsTitle: {
       id: 'dp.application:employmentParticipation.abroadPaymentsTitle',
-      defaultMessage: 'Færðu greiðslur frá öðru landi vegna heilsubrests eða óvinnufærni?',
+      defaultMessage:
+        'Færðu greiðslur frá öðru landi vegna heilsubrests eða óvinnufærni?',
       description: 'TODO',
     },
     abroadPaymentsDescription: {
       id: 'dp.application:employmentParticipation.abroadPaymentsDescription',
-      defaultMessage: 'Rangar eða ófullnægjandi upplýsingar geta haft áhrif á afgreiðslu umsóknarinnar og hugsanlega leitt til endurkröfu eða annarra viðurlaga.',
+      defaultMessage:
+        'Rangar eða ófullnægjandi upplýsingar geta haft áhrif á afgreiðslu umsóknarinnar og hugsanlega leitt til endurkröfu eða annarra viðurlaga.',
       description: 'TODO',
     },
     abroadPaymentsTableTitle: {
       id: 'dp.application:employmentParticipation.abroadPaymentsTableTitle',
-      defaultMessage: 'Hvar hefur þú fengið greiðslur?',
-      description: 'Where have you received payments?',
+      defaultMessage: 'Hvaðan hefur þú fengið greiðslur?',
+      description: 'Where have you received payments from?',
     },
   }),
   selfEvaluation: defineMessages({
-    backgroundTitle:  {
+    backgroundTitle: {
       id: 'dp.application:selfEvaluation.backgroundTitle',
       defaultMessage: 'Bakgrunnur',
       description: 'Background',
     },
-    backgroundDescription:  {
+    backgroundDescription: {
       id: 'dp.application:selfEvaluation.backgroundDescription',
       defaultMessage: 'Bakgrunnsupplýsingar',
       description: 'Background',
@@ -403,11 +563,6 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
       defaultMessage: 'Bakgrunnur og aðstæður',
       description: 'TODO',
     },
-    questionFormDescription: {
-      id: 'dp.application:selfEvaluation.questionFormDescription',
-      defaultMessage: 'Umsækjandi leggur hér mat á eigin heilsu.',
-      description: 'TODO',
-    },
     title: {
       id: 'dp.application:selfEvaluation.title',
       defaultMessage: 'Sjálfsmat',
@@ -415,10 +570,11 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
     },
     description: {
       id: 'dp.application:selfEvaluation.description',
-      defaultMessage: 'Vinsamlegast svaraðu eftir bestu getu og í samræmi við núverandi stöðu. Ef þú þarft aðstoð við að svara þá er í lagi að fá hjálp, helst frá einhverjum sem þekkir þig vel.',
+      defaultMessage:
+        'Vinsamlegast svaraðu eftir bestu getu og í samræmi við núverandi stöðu. Ef þú þarft aðstoð við að svara þá er í lagi að fá hjálp, helst frá einhverjum sem þekkir þig vel.',
       description: 'TODO',
     },
-    assistance:  {
+    assistance: {
       id: 'dp.application:selfEvaluation.assistance',
       defaultMessage: 'Ég fæ aðstoð við að svara sjálfsmatinu',
       description: 'TODO',
@@ -437,8 +593,10 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
     },
     description: {
       id: 'dp.application:capabilityImpairment.description',
-      defaultMessage: 'Þessi hluti inniheldur spurningar um hvernig þú upplifir eigin færni í daglegu lífi og starfi. Hér getur verið um að ræða líkamlega, andlega eða félagslega þætti sem geta haft áhrif á getu þína til að sinna daglegum athöfnum, starfi og frístundum. <br/> Hafðu í huga að um er að ræða umfangsmikinn lista yfir atriði sem eiga ekki endilega við þig. Því er mikilvægt að þú metir hvernig þú upplifir stöðuna eins og hún er núna, ekki hvernig hún var áður eða hvernig þú vilt að hún verði.',
-      description: 'Here you can describe in more detail the problem that affects your work capacity.',
+      defaultMessage:
+        'Þessi hluti inniheldur spurningar um hvernig þú upplifir eigin færni í daglegu lífi og starfi. Hér getur verið um að ræða líkamlega, andlega eða félagslega þætti sem geta haft áhrif á getu þína til að sinna daglegum athöfnum, starfi og frístundum. n- Hafðu í huga að um er að ræða umfangsmikinn lista yfir atriði sem eiga ekki endilega við þig. Því er mikilvægt að þú metir hvernig þú upplifir stöðuna eins og hún er núna, ekki hvernig hún var áður eða hvernig þú vilt að hún verði.',
+      description:
+        'Here you can describe in more detail the problem that affects your work capacity.',
     },
   }),
   extraInfo: defineMessages({
@@ -454,13 +612,19 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
     },
     description: {
       id: 'dp.application:extraInfo.description',
-      defaultMessage: 'Hafir þú athugasemd sem þú vilt koma á framfæri, skrifaðu hana hér',
+      defaultMessage:
+        'Hafir þú athugasemd sem þú vilt koma á framfæri, skrifaðu hana hér',
       description: 'TODO',
     },
     placeholder: {
       id: 'dp.application:extraInfo.placeholder',
       defaultMessage: 'Skrifaðu athugasemd hér',
       description: 'TODO',
+    },
+    noExtraInfo: {
+      id: 'dp.application:extraInfo.noExtraInfo',
+      defaultMessage: 'Engar athugasemdir',
+      description: 'No additional information',
     },
   }),
   overview: defineMessages({
@@ -471,8 +635,14 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
     },
     description: {
       id: 'dp.application:overview.description',
-      defaultMessage: 'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
+      defaultMessage:
+        'Vinsamlegast farðu yfir umsóknina áður en þú sendir hana inn.',
       description: 'TODO',
+    },
+    sendInApplication: {
+      id: 'dp.application:overview.sendInApplication',
+      defaultMessage: 'Senda inn umsókn',
+      description: 'Send application',
     },
   }),
   disabilityCertificate: defineMessages({
@@ -486,10 +656,26 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
       defaultMessage: 'Grunnvottorð / Vottorð um örorku',
       description: 'TODO',
     },
+    disabilityTitle: {
+      id: 'dp.application:disabilityCertificate.disabilityTitle',
+      defaultMessage: 'Vottorð um örorku',
+      description: 'Disability certificate',
+    },
     description: {
       id: 'dp.application:disabilityCertificate.description',
-      defaultMessage: 'Forsenda fyrir greiðslum er að heilsubrestur einstaklings sé afleiðing af sjúkdómi, slysi eða áfalli. Grunnvottorð þarf að innihalda staðfestingu þess efnis.',
+      defaultMessage:
+        'Forsenda fyrir greiðslum er að heilsubrestur einstaklings sé afleiðing af sjúkdómi, slysi eða áfalli. Grunnvottorð þarf að innihalda staðfestingu þess efnis.',
       description: 'TODO',
+    },
+    certificateAvailable: {
+      id: 'dp.application:disabilityCertificate.certificateAvailable',
+      defaultMessage: 'Til staðar er vottorð um örorku',
+      description: 'Disability certificate is available',
+    },
+    certificateNotAvailable: {
+      id: 'dp.application:disabilityCertificate.certificateNotAvailable',
+      defaultMessage: 'Ekki er til staðar vottorð um örorku',
+      description: 'Disability certificate is not available',
     },
   }),
   questions: defineMessages({
@@ -565,8 +751,10 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
     },
     childrenCountTitle: {
       id: 'dp.application:selfEvaluation.questions.childrenCount.title',
-      defaultMessage: 'Hversu mörg börn (eigin og/eða stjúp- og fósturbörn) eru á heimili þínu að jafnaði?',
-      description: 'How many children (own and/or step- and foster children) are in your household on average?',
+      defaultMessage:
+        'Hversu mörg börn (eigin og/eða stjúp- og fósturbörn) eru á heimili þínu að jafnaði?',
+      description:
+        'How many children (own and/or step- and foster children) are in your household on average?',
     },
     childrenCountOne: {
       id: 'dp.application:selfEvaluation.questions.childrenCount.one',
@@ -745,8 +933,10 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
     },
     employmentStatusNoParticipationHealthDisability: {
       id: 'dp.application:selfEvaluation.questions.employmentStatus.noParticipationHealthDisability',
-      defaultMessage: 'Engin þátttaka á vinnumarkaði vegna heilsubrests eða fötlunar',
-      description: 'No participation in job market due to health issues or disability',
+      defaultMessage:
+        'Engin þátttaka á vinnumarkaði vegna heilsubrests eða fötlunar',
+      description:
+        'No participation in job market due to health issues or disability',
     },
     employmentStatusOther: {
       id: 'dp.application:selfEvaluation.questions.employmentStatus.other',
@@ -760,13 +950,23 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
     },
     previousEmploymentWhen: {
       id: 'dp.application:selfEvaluation.questions.previousEmployment.when',
-      defaultMessage: 'Hvenær varst þú í launuðu starfi?',
+      defaultMessage: 'Hvenær varst þú síðast í launuðu starfi?',
       description: 'When were you in paid employment?',
     },
     previousEmploymentField: {
       id: 'dp.application:selfEvaluation.questions.previousEmployment.field',
       defaultMessage: 'Í hvaða starfsgrein starfaðir þú síðast?',
       description: 'In what profession did you work last?',
+    },
+    chooseProfession: {
+      id: 'dp.application:selfEvaluation.questions.chooseProfession',
+      defaultMessage: 'Veldu starfsgrein',
+      description: 'Choose profession',
+    },
+    profession: {
+      id: 'dp.application:selfEvaluation.questions.profession',
+      defaultMessage: 'Starfsgrein',
+      description: 'Profession',
     },
     educationLevelTitle: {
       id: 'dp.application:selfEvaluation.questions.educationLevel.title',
@@ -775,8 +975,10 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
     },
     employmentCapabilityTitle: {
       id: 'dp.application:selfEvaluation.questions.employmentCapability.title',
-      defaultMessage: 'Hvernig metur þú starfsgetu þína í dag ef 0 er engin starfsgeta og 100 full starfsgeta?',
-      description: 'How do you rate your work capacity today if 0 is no work capacity and 100 is full work capacity?',
+      defaultMessage:
+        'Hvernig metur þú starfsgetu þína í dag ef 0 er engin starfsgeta og 100 full starfsgeta?',
+      description:
+        'How do you rate your work capacity today if 0 is no work capacity and 100 is full work capacity?',
     },
     employmentCapabilityLabel: {
       id: 'dp.application:selfEvaluation.questions.employmentCapability.label',
@@ -815,13 +1017,63 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
     },
     rehabilitationOrTherapyTitle: {
       id: 'dp.application:selfEvaluation.questions.rehabilitationOrTherapy.title',
-      defaultMessage: 'Hefur þú verið í endurhæfingu eða meðferð áður vegna þess vanda sem leiðir til óvinnufærni?',
-      description: 'Have you been in rehabilitation or treatment before due to the problem that leads to disability?',
+      defaultMessage:
+        'Hefur þú verið í endurhæfingu eða meðferð áður vegna þess vanda sem leiðir til óvinnufærni?',
+      description:
+        'Have you been in rehabilitation or treatment before due to the problem that leads to disability?',
     },
     biggestIssueTitle: {
       id: 'dp.application:selfEvaluation.questions.biggestIssue.title',
-      defaultMessage: 'Hvað telur þú vera þinn helsta vanda sem leiðir til óvinnufærni?',
-      description: 'What do you consider to be your main problem that leads to disability?',
+      defaultMessage:
+        'Hvað telur þú vera þinn helsta vanda sem leiðir til óvinnufærni?',
+      description:
+        'What do you consider to be your main problem that leads to disability?',
+    },
+  }),
+  confirmation: defineMessages({
+    tabTitle: {
+      id: 'dp.application:confirmation.tabTitle',
+      defaultMessage: 'Staðfesting',
+      description: 'Confirmation tab title',
+    },
+    title: {
+      id: 'dp.application:confirmation.title',
+      defaultMessage:
+        'Umsókn um örorku hefur verið send og bíður tekjuáætlunar',
+      description:
+        'Application for disability benefits has been submitted and is awaiting income assessment.',
+    },
+    successTitle: {
+      id: 'dp.application:confirmation.successTitle',
+      defaultMessage: 'Umsókn þín hefur verið móttekin',
+      description: 'Confirmation',
+    },
+    successDescription: {
+      id: 'dp.application:confirmation.successDescription',
+      defaultMessage:
+        'Umsókn um örorku hefur verið send til Tryggingastofnunar',
+      description: 'Confirmation',
+    },
+    whatHappensNext: {
+      id: 'dp.application:confirmation.whatHappensNext',
+      defaultMessage: 'Hvað gerist næst?',
+      description: 'What happens next?',
+    },
+    whatHappensNextOptions: {
+      id: 'dp.application:confirmation.whatHappensNextOptions',
+      defaultMessage:
+        '* Tryggingastofnun fer yfir umsóknina og staðfestir að allar upplýsingar eru réttar.  \n\n* Ef þörf er á er kallað eftir frekari upplýsingum/gögnum. \n\n*         Þegar öll nauðsynleg gögn hafa borist, fer Tryggingastofnun yfir umsókn og er afstaða tekin til sjúkra- og endurhæfingarlífeyris. Vinnslutími umsókna um sjúkra- og endurhæfingarlífeyri er allt að fjórar vikur.',
+      description: 'What happens next options',
+    },
+    warningTitle: {
+      id: 'dp.application:confirmation.warningTitle',
+      defaultMessage: 'Tengdar umsóknir / Réttur til annarra greiðslna',
+      description: 'Warning title',
+    },
+    warningDescription: {
+      id: 'dp.application:confirmation.warningDescription#markdown',
+      defaultMessage: `Tryggingastofnun vekur athygli þína á því að þú getur átt rétt á greiðslum úr öðrum bótaflokkum sem tengjast heimilisaðstæðum. \n\nSérstaklega er bent á eftirfarandi umsóknir: \n\n* Umsókn um barnalífeyrir \n* Umsókn um heimilisuppbót \n\nTryggingastofnun hvetur þig til að fara í gegnum þessar umsóknir. Þær er hægt að nálgast inni á [tr.is](https://tr.is) og velur þar "Mínar síður". Innskráning fer fram með rafrænum skilríkjum.`,
+      description: 'Warning description',
     },
   }),
   errors: defineMessages({
@@ -832,7 +1084,8 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
     },
     emptyForeignPayments: {
       id: 'dp.application:errors.abroadPaymentsRequired',
-      defaultMessage: 'Nauðsynlegt er að bæta við a.m.k einni greiðslu erlendis',
+      defaultMessage:
+        'Nauðsynlegt er að bæta við a.m.k einni greiðslu erlendis',
       description: 'You must add at least one foreign payment',
     },
     emptyCountry: {
@@ -857,23 +1110,29 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
     },
     emptyEndDate: {
       id: 'dp.application:errors.endDateRequired',
-      defaultMessage: 'Nauðsynlegt er að velja enda tímabils, og að dagsetningin sé á eftir upphafsdagsetningu',
-      description: 'You must select the end of period. The end date must be after the start date.',
+      defaultMessage:
+        'Nauðsynlegt er að velja enda tímabils, og að dagsetningin sé á eftir upphafsdagsetningu',
+      description:
+        'You must select the end of period. The end date must be after the start date.',
     },
     emptyPreviousEmploymentWhen: {
       id: 'dp.application:errors.previousEmploymentWhenRequired',
-      defaultMessage: 'Nauðsynlegt er að taka fram hvenær þú varst í launuðu starfi',
+      defaultMessage:
+        'Nauðsynlegt er að taka fram hvenær þú varst í launuðu starfi',
       description: 'You must specify when you were in paid employment',
     },
     emptyPreviousEmploymentField: {
       id: 'dp.application:errors.previousEmploymentFieldRequired',
-      defaultMessage: 'Nauðsynlegt er að taka fram hvaða grein þú starfaðir við',
+      defaultMessage:
+        'Nauðsynlegt er að taka fram hvaða grein þú starfaðir við',
       description: 'You must specify in what profession you worked',
     },
     emptyEmploymentStatus: {
       id: 'dp.application:errors.employmentStatusRequired',
-      defaultMessage: 'Nauðsynlegt er að velja a.m.k einn valkost eða útskýra í texta',
-      description: 'You must select at least one option or provide a description',
+      defaultMessage:
+        'Nauðsynlegt er að velja a.m.k einn valkost eða útskýra í texta',
+      description:
+        'You must select at least one option or provide a description',
     },
     capabilityBetween0And100: {
       id: 'dp.application:errors.capabilityBetween0And100',

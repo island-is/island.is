@@ -1,6 +1,4 @@
-import {
-    buildSubSection,
-} from '@island.is/application/core'
+import { buildSubSection } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { maritalStatusField } from './maritalStatus'
 import { residenceField } from './residence'
@@ -17,23 +15,22 @@ import { SectionRouteEnum } from '../../../../types'
 import { assistanceField } from './assistance'
 import { employmentCapabilityField } from './employmentCapability'
 
-export const backgroundInfoSubSection =
-  buildSubSection({
-    id: SectionRouteEnum.BACKGROUND_INFO,
-    title: disabilityPensionFormMessage.selfEvaluation.questionFormTitle,
-    children: [
-      //assistanceField,
-      //maritalStatusField,
-      //residenceField,
-      //childrenField,
-      //icelandicCapabilityField,
-      //languageField,
-     //employmentField,
-      //previousEmploymentField,
-      //educationLevelField, //TODO - need data from service
-      //employmentCapabilityField,
-      //employmentImportanceField,
-      //rehabilitationOrTherapyField,
-      biggestIssueField,
-    ],
-  })
+export const backgroundInfoSubSection = buildSubSection({
+  id: SectionRouteEnum.BACKGROUND_INFO,
+  title: disabilityPensionFormMessage.selfEvaluation.questionFormTitle,
+  children: [
+    assistanceField,
+    maritalStatusField,
+    residenceField,
+    childrenField,
+    icelandicCapabilityField,
+    languageField,
+    employmentField,
+    previousEmploymentField,
+    educationLevelField, //TODO - need data from service
+    employmentCapabilityField,
+    employmentImportanceField,
+    rehabilitationOrTherapyField,
+    biggestIssueField,
+  ],
+})

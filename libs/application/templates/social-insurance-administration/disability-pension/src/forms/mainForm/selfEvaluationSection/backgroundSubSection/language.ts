@@ -7,11 +7,9 @@ import {
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { LanguageEnum, SectionRouteEnum } from '../../../../types'
 
-export const languageField =
-  buildMultiField({
+export const languageField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_LANGUAGE,
   title: disabilityPensionFormMessage.selfEvaluation.questionFormTitle,
-  description: disabilityPensionFormMessage.selfEvaluation.questionFormDescription,
   children: [
     buildRadioField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_LANGUAGE}.language`,
@@ -70,7 +68,7 @@ export const languageField =
           value: LanguageEnum.OTHER,
           label: disabilityPensionFormMessage.questions.languageOther,
         },
-      ]
+      ],
     }),
     buildTextField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_LANGUAGE}.other`,

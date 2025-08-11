@@ -16,7 +16,10 @@ import {
 } from '@island.is/application/types'
 import { CodeOwners } from '@island.is/shared/constants'
 import { dataSchema } from './dataSchema'
-import { socialInsuranceAdministrationMessage, statesMessages} from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import {
+  socialInsuranceAdministrationMessage,
+  statesMessages,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   DefaultStateLifeCycle,
   EphemeralStateLifeCycle,
@@ -26,8 +29,22 @@ import {
 } from '@island.is/application/core'
 import { assign } from 'xstate'
 import { disabilityPensionFormMessage } from './messages'
-import { SocialInsuranceAdministrationCategorizedIncomeTypesApi, SocialInsuranceAdministrationCurrenciesApi, SocialInsuranceAdministrationWithholdingTaxApi, SocialInsuranceAdministrationLatestIncomePlan, SocialInsuranceAdministrationIncomePlanConditionsApi } from '../dataProviders'
-import { Actions, Events, INCOME, RatioType, Roles, States, defaultIncomeTypes } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import {
+  SocialInsuranceAdministrationCategorizedIncomeTypesApi,
+  SocialInsuranceAdministrationCurrenciesApi,
+  SocialInsuranceAdministrationWithholdingTaxApi,
+  SocialInsuranceAdministrationLatestIncomePlan,
+  SocialInsuranceAdministrationIncomePlanConditionsApi,
+} from '../dataProviders'
+import {
+  Actions,
+  Events,
+  INCOME,
+  RatioType,
+  Roles,
+  States,
+  defaultIncomeTypes,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { ApiScope } from '@island.is/auth/scopes'
 import set from 'lodash/set'
 import unset from 'lodash/unset'
@@ -42,7 +59,8 @@ const template: ApplicationTemplate<
   name: disabilityPensionFormMessage.shared.applicationTitle,
   codeOwner: CodeOwners.Hugsmidjan,
   institution: socialInsuranceAdministrationMessage.shared.institution,
-  translationNamespaces: ApplicationConfigurations.DisabilityPension.translation,
+  translationNamespaces:
+    ApplicationConfigurations.DisabilityPension.translation,
   dataSchema,
   allowMultipleApplicationsInDraft: false,
   requiredScopes: [ApiScope.socialInsuranceAdministration],
@@ -67,12 +85,18 @@ const template: ApplicationTemplate<
               ],
               write: 'all',
               read: 'all',
-              api: [UserProfileApi, IdentityApi,NationalRegistryUserApi, NationalRegistrySpouseApi, SocialInsuranceAdministrationCategorizedIncomeTypesApi,
-              SocialInsuranceAdministrationCurrenciesApi,
-              SocialInsuranceAdministrationWithholdingTaxApi,
-              SocialInsuranceAdministrationLatestIncomePlan,
-              //SocialInsuranceAdministrationIsApplicantEligibleApi,
-              SocialInsuranceAdministrationIncomePlanConditionsApi,],
+              api: [
+                UserProfileApi,
+                IdentityApi,
+                NationalRegistryUserApi,
+                NationalRegistrySpouseApi,
+                SocialInsuranceAdministrationCategorizedIncomeTypesApi,
+                SocialInsuranceAdministrationCurrenciesApi,
+                SocialInsuranceAdministrationWithholdingTaxApi,
+                SocialInsuranceAdministrationLatestIncomePlan,
+                //SocialInsuranceAdministrationIsApplicantEligibleApi,
+                SocialInsuranceAdministrationIncomePlanConditionsApi,
+              ],
               delete: true,
             },
           ],
@@ -164,8 +188,9 @@ const template: ApplicationTemplate<
       unsetIncomePlan: assign((context) => {
         const { application } = context
         const { answers } = application
-        const incomePlan = getValueViaPath<IncomePlanRow[]>(answers, 'incomePlan') ?? []
-          console.log(incomePlan)
+        const incomePlan =
+          getValueViaPath<IncomePlanRow[]>(answers, 'incomePlan') ?? []
+        console.log(incomePlan)
         incomePlan?.forEach((income, index) => {
           if (
             (income.income === RatioType.MONTHLY &&
