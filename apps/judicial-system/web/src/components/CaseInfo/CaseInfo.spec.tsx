@@ -1,19 +1,14 @@
-import { createIntl } from 'react-intl'
-
 import {
   CaseType,
   Defendant,
   Gender,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
+import { createFormatMessage } from '../../utils/testHelpers.logic'
 import { getDefendantLabel } from './CaseInfo'
 
-const formatMessage = createIntl({
-  locale: 'is',
-  onError: jest.fn,
-}).formatMessage
-
 describe('getDefendantLabel - Indictment', () => {
+  const formatMessage = createFormatMessage()
   const fn = (defendants: Defendant[]) =>
     getDefendantLabel(formatMessage, defendants, CaseType.INDICTMENT)
 
@@ -44,11 +39,7 @@ describe('getDefendantLabel - Indictment', () => {
 })
 
 describe('getDefendantLabel - RestrictionCase/InvestigationCase', () => {
-  const formatMessage = createIntl({
-    locale: 'is',
-    onError: jest.fn,
-  }).formatMessage
-
+  const formatMessage = createFormatMessage()
   const fn = (defendants: Defendant[]) =>
     getDefendantLabel(formatMessage, defendants, CaseType.CUSTODY)
 
