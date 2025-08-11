@@ -28,3 +28,38 @@ export const languageSelectorContainer = style({
   alignItems: 'flex-end',
   marginBottom: '16px',
 })
+
+export const statusSelectorContainer = style({
+  display: 'flex',
+  flexFlow: 'column nowrap',
+  gap: '4px',
+
+  marginBottom: '16px',
+})
+
+export const statusSelector = style({
+  display: 'flex',
+  flexFlow: 'row nowrap',
+  gap: '12px',
+  justifyContent: 'flex-end',
+})
+
+export const topRowContainer = style({
+  display: 'flex',
+  flexFlow: 'row nowrap',
+  gap: '12px',
+  justifyContent: 'space-between',
+})
+
+export const modeSelectorContainer = style({
+  display: 'flex',
+  flexFlow: 'column nowrap',
+  gap: '4px',
+  marginBottom: '16px',
+})
+
+export const modeSelector = style({
+  display: 'flex',
+  flexFlow: 'row nowrap',
+  gap: '12px',
+})
