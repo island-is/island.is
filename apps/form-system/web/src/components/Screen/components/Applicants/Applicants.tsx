@@ -8,7 +8,7 @@ import {
 import { useQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { USER_PROFILE } from '@island.is/portals/my-pages/graphql'
-import { useApplicationContext } from 'apps/form-system/web/src/context/ApplicationProvider'
+import { useApplicationContext } from '@island.is/form-system/web/context/ApplicationProvider'
 interface Props {
   applicantTypes: FormSystemApplicant[]
 }
@@ -18,11 +18,11 @@ export const Applicants = ({ applicantTypes }: Props) => {
     ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL ||
     ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY
 
-  const state = useApplicationContext();
+  const state = useApplicationContext()
   console.log('state', state)
-    const { data } = useQuery(USER_PROFILE, {
-      fetchPolicy: 'cache-first',
-    })
+  const { data } = useQuery(USER_PROFILE, {
+    fetchPolicy: 'cache-first',
+  })
   return (
     <>
       {applicantTypes.map((applicantType) => {
@@ -41,6 +41,7 @@ export const Applicants = ({ applicantTypes }: Props) => {
               applicantType={applicantType}
               lang={lang}
               key={applicantType.id}
+              user={data?.getUserProfile}
             />
           )
         } else if (
@@ -51,6 +52,7 @@ export const Applicants = ({ applicantTypes }: Props) => {
               applicantType={applicantType}
               lang={lang}
               key={applicantType.id}
+              user={data?.getUserProfile}
             />
           )
         }

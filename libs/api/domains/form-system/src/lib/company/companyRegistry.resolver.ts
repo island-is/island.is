@@ -14,7 +14,7 @@ export class CompanyRegistryResolver {
 
   @Query(() => CompanyExtendedInfo, {
     name: 'formSystemCompanyByNationalId',
-    nullable: true, // This allows the query to return null if no company is found
+    nullable: true,
   })
   async getCompany(
     @Args('input', { type: () => String }) input: string,

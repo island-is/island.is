@@ -46,7 +46,12 @@ import { UserProfileClientConfig } from '@island.is/clients/user-profile'
     ServicesModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [NationalRegistryV3ClientConfig, XRoadConfig, CompanyRegistryConfig, UserProfileClientConfig],
+      load: [
+        NationalRegistryV3ClientConfig,
+        XRoadConfig,
+        CompanyRegistryConfig,
+        UserProfileClientConfig,
+      ],
     }),
   ],
 })

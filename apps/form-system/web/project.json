@@ -83,7 +83,10 @@
       "options": {
         "commands": [
           "yarn nx run form-system-web:start-bff",
-          "yarn start form-system-web"
+          "yarn start form-system-web",
+          "yarn start services-user-profile",
+          "yarn start service-portal",
+          "./scripts/run-xroad-proxy.sh"
         ],
         "parallel": true
       }

@@ -31,7 +31,7 @@ import { NationalRegistryV3ClientModule } from '@island.is/clients/national-regi
 import { CompanyRegistryClientModule } from '@island.is/clients/rsk/company-registry'
 import { FormUrlsResolver } from './formUrls/formUrls.resolver'
 import { FormUrlsService } from './formUrls/formUrls.service'
-import { CompanyRegistryResolver } from './company/companyRegistry.resolver' 
+import { CompanyRegistryResolver } from './company/companyRegistry.resolver'
 
 @Module({
   providers: [
@@ -63,7 +63,7 @@ import { CompanyRegistryResolver } from './company/companyRegistry.resolver'
     FormUrlsService,
     CmsModule,
     NationalRegistryResolver,
-    CompanyRegistryResolver
+    CompanyRegistryResolver,
   ],
   exports: [],
   imports: [

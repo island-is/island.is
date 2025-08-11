@@ -16,20 +16,25 @@ import {
 } from '@island.is/form-system/graphql'
 import { useQuery } from '@apollo/client'
 
+interface User {
+  nationalId: string
+  emails: Array<{ primary: boolean; email: string }>
+  mobilePhoneNumber: string
+}
+
 interface Props {
   applicantType: FormSystemApplicant
-  user: any
+  user: User
   lang: 'is' | 'en'
 }
 
-export const IndividualApplicant = ({
-  applicantType,
-  lang,
-  user,
-}: Props) => {
-const { formatMessage } = useIntl()
-const nationalId = user?.nationalId ?? '';
-const shouldQuery: boolean = !!nationalId;
+export const IndividualApplicant = ({ applicantType, lang, user }: Props) => {
+  const { formatMessage } = useIntl()
+  const nationalId = user?.nationalId ?? ''
+  const email =
+    user?.emails.find((email: { primary: boolean }) => email.primary)?.email ??
+    user?.emails[0]?.email
+  const shouldQuery = !!nationalId
   const { data: nameData } = useQuery(GET_NAME_BY_NATIONALID, {
     variables: { input: nationalId },
     fetchPolicy: 'cache-first',
@@ -40,14 +45,18 @@ const shouldQuery: boolean = !!nationalId;
     fetchPolicy: 'cache-first',
     skip: !shouldQuery,
   })
-  const address = addressData?.formSystemHomeByNationalId?.heimilisfang;
+  const address = addressData?.formSystemHomeByNationalId?.heimilisfang
   return (
     <Box marginTop={4}>
       <Text variant="h2" as="h2" marginBottom={3}>
         {applicantType?.name?.[lang]}
       </Text>
       <Stack space={2}>
-        <NationalIdField disabled={true} nationalId={nationalId} name={nameData?.formSystemNameByNationalId?.fulltNafn} />
+        <NationalIdField
+          disabled={true}
+          nationalId={nationalId}
+          name={nameData?.formSystemNameByNationalId?.fulltNafn}
+        />
         <GridRow>
           <GridColumn span={['12/12', '12/12', '6/12', '6/12']}>
             <Input
@@ -76,6 +85,7 @@ const shouldQuery: boolean = !!nationalId;
           placeholder="Email"
           backgroundColor="blue"
           required={true}
+          value={email}
         />
         <Input
           label={formatMessage(m.phoneNumber)}

@@ -1,4 +1,4 @@
-import { Field as FieldType, Int, ObjectType } from '@nestjs/graphql'
+import { Field as FieldType, ObjectType } from '@nestjs/graphql'
 
 @ObjectType()
 export class CompanyClassification {
