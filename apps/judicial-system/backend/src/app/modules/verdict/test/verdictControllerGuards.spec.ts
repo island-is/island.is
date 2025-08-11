@@ -9,7 +9,7 @@ import {
   CaseWriteGuard,
 } from '../../case'
 import { DefendantExistsGuard } from '../../defendant'
-import { VerdictExistGuard } from '../guards/verdictExistGuard.guard'
+import { VerdictExistsGuard } from '../guards/verdictExists.guard'
 import { VerdictController } from '../verdict.controller'
 
 describe('VerdictController - Top-level guards', () => {
@@ -24,7 +24,7 @@ describe('VerdictController - Top-level guards', () => {
       CaseWriteGuard,
       CaseCompletedGuard,
       DefendantExistsGuard,
-      VerdictExistGuard,
+      VerdictExistsGuard,
     ],
     [
       {
