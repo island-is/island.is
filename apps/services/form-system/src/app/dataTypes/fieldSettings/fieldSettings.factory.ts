@@ -12,7 +12,14 @@ export class FieldSettingsFactory {
     let keys: string[]
     switch (type) {
       case FieldTypesEnum.TEXTBOX:
-        keys = ['minLength', 'maxLength', 'isLarge']
+        keys = [
+          'minLength',
+          'maxLength',
+          'isLarge',
+          'zendeskIsPublic',
+          'zendeskIsCustomField',
+          'zendeskCustomFieldId',
+        ]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.NUMBERBOX:
         keys = ['minValue', 'maxValue']
