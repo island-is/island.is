@@ -18,7 +18,7 @@ export const completedMessages = defineMessages({
     description: 'Completed alert message',
   },
   actionCardDone: {
-    id: 'tra.application:misc.actionCardDone',
+    id: 'fca.application:completed.actionCardDone',
     defaultMessage: 'Send til HMS',
     description: 'Action card done',
   },
