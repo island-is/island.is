@@ -50,5 +50,3 @@ import { UserProfileConfig } from '../config'
   ],
 })
 export class AppModule {}
-
-// Trigger Deploy
