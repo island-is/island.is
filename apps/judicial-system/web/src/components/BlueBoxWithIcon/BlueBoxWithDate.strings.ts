@@ -6,14 +6,14 @@ export const strings = defineMessages({
     defaultMessage: 'Birting dóms',
     description: 'Notaður sem titill í lykildagsetningarsvæði dómfellda.',
   },
-  defendantVerdictViewDateLabel: {
-    id: 'judicial.system.core:blue_box_with_date.defendant_verdict_view_date_label',
+  defendantVerdictServiceDateLabel: {
+    id: 'judicial.system.core:blue_box_with_date.defendant_verdict_service_date_label',
     defaultMessage: 'Dagsetning birtingar',
     description:
       'Notaður sem titill í dagsetningarinnsláttarsvæði fyrir það hvenær dómur var birtur dómfellda.',
   },
-  defendantVerdictViewDatePlaceholder: {
-    id: 'judicial.system.core:blue_box_with_date.defendant_verdict_view_date_placeholder',
+  defendantVerdictServiceDatePlaceholder: {
+    id: 'judicial.system.core:blue_box_with_date.defendant_verdict_service_date_placeholder',
     defaultMessage: 'Veldu dagsetningu birtingar',
     description:
       'Notaður sem placeholder texti í dagsetningarinnsláttarsvæði fyrir það hvenær dómur var birtur dómfellda.',
@@ -28,8 +28,8 @@ export const strings = defineMessages({
     defaultMessage: 'Dómi áfrýjað {date}',
     description: 'Notaður sem texti fyrir dagsetningu áfrýjunar.',
   },
-  defendantVerdictViewDateButtonText: {
-    id: 'judicial.system.core:blue_box_with_date.defendant_verdict_view_date_button_text',
+  defendantVerdictServiceDateButtonText: {
+    id: 'judicial.system.core:blue_box_with_date.defendant_verdict_service_date_button_text',
     defaultMessage: 'Skrá birtingu dóms',
     description:
       'Notaður sem text í takka til að skrá hvenær dómur var birtur dómfellda.',
