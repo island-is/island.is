@@ -9,6 +9,8 @@ import com.facebook.react.PackageList;
 import com.facebook.react.ReactApplication;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
+import com.facebook.react.ReactHost;
+import com.facebook.react.defaults.DefaultReactHost;
 import java.util.List;
 
 import com.reactnativenavigation.NavigationApplication;
@@ -59,6 +61,11 @@ public class MainApplication extends NavigationApplication {
   @Override
   public ReactNativeHost getReactNativeHost() {
     return mReactNativeHost;
+  }
+
+  @Override
+  public ReactHost getReactHost() {
+    return DefaultReactHost.getDefaultReactHost(this, getReactNativeHost());
   }
 
   @Override
