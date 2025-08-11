@@ -120,8 +120,8 @@ export class FieldSettings {
 
   @IsOptional()
   @IsBoolean()
-  @ApiPropertyOptional({ type: Boolean, default: false })
-  zendeskIsCustomField: boolean = false
+  @ApiPropertyOptional({ type: Boolean })
+  zendeskIsCustomField?: boolean
 
   @IsOptional()
   @IsString()

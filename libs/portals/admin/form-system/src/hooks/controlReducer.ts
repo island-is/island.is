@@ -174,6 +174,17 @@ type InputSettingsActions =
       }
     }
   | {
+      type: 'SET_ZENDESK_FIELD_SETTINGS'
+      payload: {
+        property:
+          | 'zendeskIsPublic'
+          | 'zendeskIsCustomField'
+          | 'zendeskCustomFieldId'
+        value: boolean | string
+        update: (updatedActiveItem?: ActiveItem) => void
+      }
+    }
+  | {
       type: 'SET_LIST_ITEM_SELECTED'
       payload: {
         id: UniqueIdentifier
@@ -733,6 +744,29 @@ export const controlReducer = (
       }
     }
     case 'SET_FIELD_SETTINGS': {
+      const field = activeItem.data as FormSystemField
+      const { property, value, update } = action.payload
+      const newField = {
+        ...field,
+        fieldSettings: {
+          ...field.fieldSettings,
+          [property]: value,
+        },
+      }
+      update({ type: 'Field', data: newField })
+      return {
+        ...state,
+        activeItem: {
+          type: 'Field',
+          data: newField,
+        },
+        form: {
+          ...form,
+          fields: fields?.map((i) => (i?.id === field.id ? newField : i)),
+        },
+      }
+    }
+    case 'SET_ZENDESK_FIELD_SETTINGS': {
       const field = activeItem.data as FormSystemField
       const { property, value, update } = action.payload
       const newField = {
