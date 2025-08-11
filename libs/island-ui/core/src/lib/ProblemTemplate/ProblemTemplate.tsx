@@ -1,5 +1,5 @@
 import React, { ReactNode } from 'react'
-import { Colors, dark200 } from '@island.is/island-ui/theme'
+import { Colors } from '@island.is/island-ui/theme'
 import { TestSupport } from '@island.is/island-ui/utils'
 
 import { Box, Icon, Tag, Text } from '../..'
