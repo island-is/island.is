@@ -304,7 +304,6 @@ export class ChargeFjsV2ClientService {
   ): Promise<Catalog> {
     // TODO: Remove this once we have a real catalog
     if (performingOrganizationID === LANDSPITALI_PERFORMING_ORG_ID) {
-      console.log({ message: 'Using mock catalog' })
       return {
         item: LANDSPITALI_MOCK_CATALOG,
       }

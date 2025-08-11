@@ -161,7 +161,6 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
       data.amountISK === 'other' ? data.amountISKCustom : data.amountISK
     try {
       setLoading(true)
-      console.log('data', data)
 
       const response = await createDirectGrantPaymentUrl({
         variables: {
