@@ -22,11 +22,11 @@ export const Location: FC<
   React.PropsWithChildren<FieldBaseProps & ReviewScreenProps>
 > = ({ application, setLocation, setStep }) => {
   const { locale, formatMessage } = useLocale()
-  const { setValue } = useFormContext()
+  const { setValue, getValues } = useFormContext()
   const [updateApplication] = useMutation(UPDATE_APPLICATION)
 
   const savedSelectedValue = getValueViaPath(
-    application.answers,
+    getValues(),
     'location',
     undefined,
   ) as MachineLocation | undefined
