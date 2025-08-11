@@ -8,9 +8,7 @@
   "paths": {
     "/OpenApi": {
       "get": {
-        "tags": [
-          "OpenApi"
-        ],
+        "tags": ["OpenApi"],
         "operationId": "OpenApi_Get",
         "responses": {
           "200": {
@@ -29,9 +27,7 @@
     },
     "/api/ActivationGrant": {
       "post": {
-        "tags": [
-          "ActivationGrant"
-        ],
+        "tags": ["ActivationGrant"],
         "operationId": "ActivationGrant_CreateActivationGrant",
         "requestBody": {
           "x-name": "command",
@@ -66,9 +62,7 @@
     },
     "/api/ActivationGrant/{applicationId}": {
       "get": {
-        "tags": [
-          "ActivationGrant"
-        ],
+        "tags": ["ActivationGrant"],
         "operationId": "ActivationGrant_GetSingleActivationGrant",
         "parameters": [
           {
@@ -103,9 +97,7 @@
     },
     "/api/ActivationGrant/empty": {
       "get": {
-        "tags": [
-          "ActivationGrant"
-        ],
+        "tags": ["ActivationGrant"],
         "operationId": "ActivationGrant_GetEmptyActivationGrant",
         "responses": {
           "200": {
@@ -128,9 +120,7 @@
     },
     "/api/ActivationGrant/emptywithprofile/{applicantSSN}": {
       "get": {
-        "tags": [
-          "ActivationGrant"
-        ],
+        "tags": ["ActivationGrant"],
         "operationId": "ActivationGrant_GetEmptyActivationGrantWithProfile",
         "parameters": [
           {
@@ -164,9 +154,7 @@
     },
     "/api/ActivationGrant/latestbyapplicant/{applicantSSN}": {
       "get": {
-        "tags": [
-          "ActivationGrant"
-        ],
+        "tags": ["ActivationGrant"],
         "operationId": "ActivationGrant_GetLatestApplicationByApplicant",
         "parameters": [
           {
@@ -209,9 +197,7 @@
     },
     "/api/ActivationGrant/canapply/{applicantSSN}": {
       "get": {
-        "tags": [
-          "ActivationGrant"
-        ],
+        "tags": ["ActivationGrant"],
         "operationId": "ActivationGrant_CanApply",
         "parameters": [
           {
@@ -245,9 +231,7 @@
     },
     "/api/ActivationGrant/validate": {
       "post": {
-        "tags": [
-          "ActivationGrant"
-        ],
+        "tags": ["ActivationGrant"],
         "operationId": "ActivationGrant_ValidateApplication",
         "requestBody": {
           "x-name": "command",
@@ -282,9 +266,7 @@
     },
     "/api/ActivationGrant/validatebankinformation": {
       "post": {
-        "tags": [
-          "ActivationGrant"
-        ],
+        "tags": ["ActivationGrant"],
         "operationId": "ActivationGrant_ValidateBankInformation",
         "requestBody": {
           "x-name": "command",
@@ -319,9 +301,7 @@
     },
     "/api/ApplicantInfo/getApplicantInfoForRVK/{ssn}": {
       "get": {
-        "tags": [
-          "ApplicantInfo"
-        ],
+        "tags": ["ApplicantInfo"],
         "operationId": "ApplicantInfo_GetApplicantInfoForRSK",
         "parameters": [
           {
@@ -356,9 +336,7 @@
     },
     "/api/ApplicantInfo/getApplicantInfoForSI/{ssn}": {
       "get": {
-        "tags": [
-          "ApplicantInfo"
-        ],
+        "tags": ["ApplicantInfo"],
         "operationId": "ApplicantInfo_GetApplicantInfoForSI",
         "parameters": [
           {
@@ -393,9 +371,7 @@
     },
     "/api/Attachment": {
       "post": {
-        "tags": [
-          "Attachment"
-        ],
+        "tags": ["Attachment"],
         "operationId": "Attachment_CreateAttachment",
         "requestBody": {
           "x-name": "request",
@@ -430,9 +406,7 @@
     },
     "/api/Attachment/{id}": {
       "get": {
-        "tags": [
-          "Attachment"
-        ],
+        "tags": ["Attachment"],
         "operationId": "Attachment_GetAttachment",
         "parameters": [
           {
@@ -476,9 +450,7 @@
     },
     "/api/Auth/login": {
       "post": {
-        "tags": [
-          "Auth"
-        ],
+        "tags": ["Auth"],
         "operationId": "Auth_Login",
         "requestBody": {
           "x-name": "credentials",
@@ -508,9 +480,7 @@
     },
     "/api/jobadvertisements/{id}": {
       "get": {
-        "tags": [
-          "JobAdvertisement"
-        ],
+        "tags": ["JobAdvertisement"],
         "operationId": "JobAdvertisement_GetSingleJobAdvertisement",
         "parameters": [
           {
@@ -554,9 +524,7 @@
     },
     "/api/jobadvertisements": {
       "get": {
-        "tags": [
-          "JobAdvertisement"
-        ],
+        "tags": ["JobAdvertisement"],
         "operationId": "JobAdvertisement_GetAllJobAdvertisements",
         "parameters": [
           {
@@ -728,9 +696,7 @@
     },
     "/api/UnemploymentApplication": {
       "post": {
-        "tags": [
-          "UnemploymentApplication"
-        ],
+        "tags": ["UnemploymentApplication"],
         "operationId": "UnemploymentApplication_CreateUnemploymentApplication",
         "requestBody": {
           "x-name": "command",
@@ -763,9 +729,7 @@
         ]
       },
       "put": {
-        "tags": [
-          "UnemploymentApplication"
-        ],
+        "tags": ["UnemploymentApplication"],
         "operationId": "UnemploymentApplication_Edit",
         "requestBody": {
           "x-name": "command",
@@ -800,9 +764,7 @@
     },
     "/api/UnemploymentApplication/{applicationId}": {
       "get": {
-        "tags": [
-          "UnemploymentApplication"
-        ],
+        "tags": ["UnemploymentApplication"],
         "operationId": "UnemploymentApplication_GetSingleUnemploymentApplication",
         "parameters": [
           {
@@ -837,9 +799,7 @@
     },
     "/api/UnemploymentApplication/empty": {
       "get": {
-        "tags": [
-          "UnemploymentApplication"
-        ],
+        "tags": ["UnemploymentApplication"],
         "operationId": "UnemploymentApplication_GetEmptyUnemploymentApplication",
         "responses": {
           "200": {
@@ -862,9 +822,7 @@
     },
     "/api/UnemploymentApplication/emptywithprofile/{applicantSSN}": {
       "get": {
-        "tags": [
-          "UnemploymentApplication"
-        ],
+        "tags": ["UnemploymentApplication"],
         "operationId": "UnemploymentApplication_GetEmptyUnemploymentApplicationWithProfile",
         "parameters": [
           {
@@ -898,9 +856,7 @@
     },
     "/api/UnemploymentApplication/withdraw": {
       "put": {
-        "tags": [
-          "UnemploymentApplication"
-        ],
+        "tags": ["UnemploymentApplication"],
         "operationId": "UnemploymentApplication_WithdrawApplication",
         "requestBody": {
           "x-name": "cmd",
@@ -935,9 +891,7 @@
     },
     "/api/UnemploymentApplication/latestbyapplicant/{applicantSSN}": {
       "get": {
-        "tags": [
-          "UnemploymentApplication"
-        ],
+        "tags": ["UnemploymentApplication"],
         "operationId": "UnemploymentApplication_GetLatestApplicationByApplicant",
         "parameters": [
           {
@@ -980,9 +934,7 @@
     },
     "/api/UnemploymentApplication/addattachment": {
       "post": {
-        "tags": [
-          "UnemploymentApplication"
-        ],
+        "tags": ["UnemploymentApplication"],
         "operationId": "UnemploymentApplication_AddAttachment",
         "requestBody": {
           "x-name": "command",
@@ -1017,9 +969,7 @@
     },
     "/api/UnemploymentApplication/{applicantSSN}/status": {
       "get": {
-        "tags": [
-          "UnemploymentApplication"
-        ],
+        "tags": ["UnemploymentApplication"],
         "operationId": "UnemploymentApplication_GetStatusInfo",
         "parameters": [
           {
@@ -1053,9 +1003,7 @@
     },
     "/api/UnemploymentApplication/confirm": {
       "put": {
-        "tags": [
-          "UnemploymentApplication"
-        ],
+        "tags": ["UnemploymentApplication"],
         "operationId": "UnemploymentApplication_Confirm",
         "requestBody": {
           "x-name": "command",
@@ -1090,9 +1038,7 @@
     },
     "/api/UnemploymentApplication/deleteAttachment": {
       "delete": {
-        "tags": [
-          "UnemploymentApplication"
-        ],
+        "tags": ["UnemploymentApplication"],
         "operationId": "UnemploymentApplication_DeleteAttachment",
         "requestBody": {
           "x-name": "command",
@@ -2107,12 +2053,7 @@
           "JobAdvertisement",
           "DontKnow"
         ],
-        "enum": [
-          0,
-          1,
-          2,
-          3
-        ]
+        "enum": [0, 1, 2, 3]
       },
       "Galdur_Domain_Models_Settings_AttachmentStatus_AttachmentStatusDTO": {
         "allOf": [
@@ -2258,18 +2199,8 @@
       "Galdur_Domain_Enumerations_EWSApplicantCurrentStatus": {
         "type": "integer",
         "description": "",
-        "x-enumNames": [
-          "HasNoJob",
-          "HasJob",
-          "IsInSchool",
-          "Other"
-        ],
-        "enum": [
-          0,
-          1,
-          2,
-          3
-        ]
+        "x-enumNames": ["HasNoJob", "HasJob", "IsInSchool", "Other"],
+        "enum": [0, 1, 2, 3]
       },
       "Galdur_Domain_Models_Applications_UnemploymentApplications_DTOs_OtherInformationDTO": {
         "type": "object",
@@ -2996,14 +2927,8 @@
       "Galdur_Domain_Enumerations_PensionType": {
         "type": "integer",
         "description": "",
-        "x-enumNames": [
-          "PensionFund",
-          "PrivatePensionFund"
-        ],
-        "enum": [
-          0,
-          1
-        ]
+        "x-enumNames": ["PensionFund", "PrivatePensionFund"],
+        "enum": [0, 1]
       },
       "Galdur_Domain_Models_Applicants_ApplicantProfile_DTOs_Union": {
         "type": "object",
@@ -3945,16 +3870,7 @@
           "Suðurland",
           "Suðurnes"
         ],
-        "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6,
-          7
-        ]
+        "enum": [0, 1, 2, 3, 4, 5, 6, 7]
       },
       "Galdur_Domain_Enumerations_PostcodeDistrict": {
         "type": "integer",
@@ -3968,15 +3884,7 @@
           "Hafnarfjörður",
           "Mosfellsbær"
         ],
-        "enum": [
-          0,
-          1,
-          2,
-          3,
-          4,
-          5,
-          6
-        ]
+        "enum": [0, 1, 2, 3, 4, 5, 6]
       },
       "Galdur_Domain_Models_Settings_ApplicationStatus_ApplicationStatusDTO": {
         "allOf": [
@@ -5336,14 +5244,8 @@
       "Galdur_Domain_Enumerations_SkillType": {
         "type": "integer",
         "description": "",
-        "x-enumNames": [
-          "Driving",
-          "HeavyMachinery"
-        ],
-        "enum": [
-          0,
-          1
-        ]
+        "x-enumNames": ["Driving", "HeavyMachinery"],
+        "enum": [0, 1]
       },
       "Galdur_Domain_Models_JobAdvertisements_JobAdvertisementJobSkillDTO": {
         "type": "object",
