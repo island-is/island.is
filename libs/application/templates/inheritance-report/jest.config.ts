@@ -8,7 +8,7 @@ export default {
       'ts-jest',
       {
         cwd: __dirname,
-        tsConfig: `${__dirname}/tsconfig-spec.json`,
+        tsConfig: `${__dirname}/tsconfig.spec.json`,
       },
     ],
   },
