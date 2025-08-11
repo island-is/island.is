@@ -288,11 +288,12 @@ export class UserProfileService {
       const calculatedEmailStatus = isEmailDefined
         ? userProfile.email
           ? DataStatus.VERIFIED
-          : currentUserProfile?.emails?.[0].emailStatus ===
+          : currentUserProfile?.emails?.[0]?.emailStatus ===
             DataStatus.NOT_VERIFIED
           ? DataStatus.NOT_DEFINED
           : DataStatus.EMPTY
-        : (currentUserProfile?.emails?.[0].emailStatus as DataStatus)
+        : (currentUserProfile?.emails?.[0]?.emailStatus as DataStatus) ||
+          DataStatus.EMPTY
 
       await this.userProfileModel.upsert(
         {
@@ -310,7 +311,7 @@ export class UserProfileService {
               emailStatus: calculatedEmailStatus,
               emailVerified:
                 updateEmailVerified ??
-                currentUserProfile?.emails?.[0].emailStatus ===
+                currentUserProfile?.emails?.[0]?.emailStatus ===
                   DataStatus.VERIFIED,
               mobileStatus:
                 update.mobileStatus ??
@@ -1287,6 +1288,7 @@ export class UserProfileService {
     mobilePhoneNumberVerified?: boolean
     shouldValidatePhoneNumber?: boolean
   }): boolean | null {
+    // If emailStatus is undefined, we can't consider the email verified
     const isEmailVerified = emailStatus === DataStatus.VERIFIED
     const isPhoneValid = shouldValidatePhoneNumber
       ? mobilePhoneNumber && mobilePhoneNumberVerified

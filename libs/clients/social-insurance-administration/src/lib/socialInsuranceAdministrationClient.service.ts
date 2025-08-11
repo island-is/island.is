@@ -5,7 +5,7 @@ import {
   ApiProtectedV1IncomePlanTemporaryCalculationsPostRequest,
   ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
   ApiProtectedV1PensionCalculatorPostRequest,
-  ApiProtectedV1QuestionnairesSelfassessmentGetRequest,
+  ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest,
   ApplicantApi,
   ApplicationApi,
   DeathBenefitsApi,
@@ -16,9 +16,11 @@ import {
   PensionCalculatorApi,
   QuestionnairesApi,
   TrWebApiServicesCommonCountriesModelsCountryDto,
+  TrWebApiServicesDomainApplicationsModelsApplicationTypeDto,
   TrWebApiServicesDomainApplicationsModelsCreateApplicationFromPaperReturn,
   TrWebApiServicesDomainEducationalInstitutionsModelsEctsUnitDto,
   TrWebApiServicesDomainEducationalInstitutionsModelsEducationalInstitutionsDto,
+  TrWebApiServicesDomainEducationalInstitutionsModelsEducationLevelDto,
   TrWebApiServicesDomainQuestionnairesModelsQuestionnaireDto,
   TrWebApiServicesDomainUnionsModelsUnionDto,
   TrWebApiServicesUseCaseDeathBenefitsModelsExternalSpousalInfo,
@@ -226,15 +228,17 @@ export class SocialInsuranceAdministrationClientService {
     ).apiProtectedV1MedicalDocumentsRehabilitationplanGet()
   }
 
-  async getSelfAssessmentQuestionnaire(
+  async getMARPSelfAssessmentQuestionnaire(
     user: User,
-    languages: ApiProtectedV1QuestionnairesSelfassessmentGetRequest,
+    languages: ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest,
   ): Promise<
     Array<TrWebApiServicesDomainQuestionnairesModelsQuestionnaireDto>
   > {
     return this.questionnairesApiWithAuth(
       user,
-    ).apiProtectedV1QuestionnairesSelfassessmentGet(languages)
+    ).apiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGet(
+      languages,
+    )
   }
 
   async getCertificateForSicknessAndRehabilitation(
@@ -267,5 +271,26 @@ export class SocialInsuranceAdministrationClientService {
     Array<TrWebApiServicesDomainEducationalInstitutionsModelsEctsUnitDto>
   > {
     return this.generalApiWithAuth(user).apiProtectedV1GeneralEctsUnitsGet()
+  }
+
+  async getEducationLevels(
+    user: User,
+    applicationType: string,
+  ): Promise<
+    Array<TrWebApiServicesDomainEducationalInstitutionsModelsEducationLevelDto>
+  > {
+    return this.generalApiWithAuth(
+      user,
+    ).apiProtectedV1GeneralEducationlevelsApplicationTypeGet({
+      applicationType,
+    })
+  }
+
+  async getMedicalAndRehabilitationApplicationType(
+    user: User,
+  ): Promise<TrWebApiServicesDomainApplicationsModelsApplicationTypeDto> {
+    return this.applicantApiWithAuth(
+      user,
+    ).apiProtectedV1ApplicantMedicalandrehabilitationpaymentsTypeGet()
   }
 }

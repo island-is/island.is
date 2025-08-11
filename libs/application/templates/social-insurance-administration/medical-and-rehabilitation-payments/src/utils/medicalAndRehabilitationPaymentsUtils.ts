@@ -11,10 +11,12 @@ import {
   PaymentInfo,
 } from '@island.is/application/templates/social-insurance-administration-core/types'
 import { Application, ExternalData, Option } from '@island.is/application/types'
+import { Locale } from '@island.is/shared/types'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../lib/messages'
 import {
   Countries,
   EctsUnits,
+  EducationLevels,
   SelfAssessmentQuestionnaire,
   SelfAssessmentQuestionnaireAnswers,
 } from '../types'
@@ -116,7 +118,12 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
 
   const rehabilitationPlanConfirmation = getValueViaPath<string[]>(
     answers,
-    'rehabilitationPlanConfirmation',
+    'rehabilitationPlan.confirmation',
+  )
+
+  const rehabilitationPlanReferenceId = getValueViaPath<string>(
+    answers,
+    'rehabilitationPlan.referenceId',
   )
 
   const hadAssistance = getValueViaPath<YesOrNo>(
@@ -124,9 +131,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'selfAssessment.hadAssistance',
   )
 
-  const highestLevelOfEducation = getValueViaPath<string>(
+  const educationalLevel = getValueViaPath<string>(
     answers,
-    'selfAssessment.highestLevelOfEducation',
+    'selfAssessment.educationalLevel',
   )
 
   const comment = getValueViaPath<string>(answers, 'comment')
@@ -209,8 +216,9 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     unionNationalId,
     certificateForSicknessAndRehabilitationReferenceId,
     rehabilitationPlanConfirmation,
+    rehabilitationPlanReferenceId,
     hadAssistance,
-    highestLevelOfEducation,
+    educationalLevel,
     comment,
     questionnaire,
     mainProblem,
@@ -310,7 +318,7 @@ export const getApplicationExternalData = (
   const selfAssessmentQuestionnaire =
     getValueViaPath<SelfAssessmentQuestionnaire[]>(
       externalData,
-      'socialInsuranceAdministrationQuestionnairesSelfAssessment.data',
+      'socialInsuranceAdministrationMARPQuestionnairesSelfAssessment.data',
     ) ?? []
 
   const ectsUnits =
@@ -322,6 +330,17 @@ export const getApplicationExternalData = (
   const isEligible = getValueViaPath<Eligible>(
     externalData,
     'socialInsuranceAdministrationIsApplicantEligible.data',
+  )
+
+  const educationLevels =
+    getValueViaPath<EducationLevels[]>(
+      externalData,
+      'socialInsuranceAdministrationEducationLevels.data',
+    ) ?? []
+
+  const marpApplicationType = getValueViaPath<string>(
+    externalData,
+    'socialInsuranceAdministrationMARPApplicationType.data.applicationType',
   )
 
   return {
@@ -344,6 +363,8 @@ export const getApplicationExternalData = (
     selfAssessmentQuestionnaire,
     ectsUnits,
     isEligible,
+    educationLevels,
+    marpApplicationType,
   }
 }
 
@@ -490,4 +511,18 @@ export const eligibleText = (externalData: ExternalData) => {
     default:
       return undefined
   }
+}
+
+export const getSelfAssessmentQuestionnaireQuestions = (
+  externalData: ExternalData,
+  locale: Locale = 'is',
+) => {
+  const { selfAssessmentQuestionnaire } =
+    getApplicationExternalData(externalData)
+
+  return (
+    selfAssessmentQuestionnaire.find(
+      (questionnaire) => questionnaire.language.toLowerCase() === locale,
+    )?.questions ?? []
+  )
 }

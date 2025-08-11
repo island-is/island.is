@@ -1,6 +1,6 @@
 import { style } from '@vanilla-extract/css'
 
-import { themeUtils } from '@island.is/island-ui/theme'
+import { theme, themeUtils } from '@island.is/island-ui/theme'
 
 export const gridContainer = style({
   display: 'grid',
@@ -176,4 +176,23 @@ export const logoContainerMobileSubpage = style({
 
 export const title = style({
   zIndex: 0,
+})
+
+export const titleSubpage = style({
+  ...themeUtils.responsiveStyle({
+    xs: {
+      paddingLeft: theme.spacing[2],
+    },
+    lg: {
+      paddingLeft: 0,
+    },
+  }),
+})
+
+export const titleText = style({
+  ...themeUtils.responsiveStyle({
+    lg: {
+      fontSize: '34px',
+    },
+  }),
 })
