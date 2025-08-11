@@ -31,7 +31,6 @@ import {
 import {
   getApplicationAnswers as getMARPApplicationAnswers,
   getApplicationExternalData as getMARPApplicationExternalData,
-  isEHApplication,
   isFirstApplication,
   SelfAssessmentCurrentEmploymentStatus,
   shouldShowCalculatedRemunerationDate,
@@ -511,7 +510,7 @@ export const transformApplicationToMedicalAndRehabilitationPaymentsDTO = (
     baseCertificateReference:
       certificateForSicknessAndRehabilitationReferenceId ?? '',
     ...(shouldShowRehabilitationPlan(application.externalData) && {
-      rehabilitationPlanReference: rehabilitationPlanReferenceId
+      rehabilitationPlanReference: rehabilitationPlanReferenceId,
     }),
     preQuestionnaire: {
       highestEducation: educationalLevel || '',
