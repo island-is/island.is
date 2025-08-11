@@ -451,4 +451,17 @@ export class StatisticsService {
       completedCount,
     }
   }
+
+  // shared event model structure + json additional data for R-cases?
+  extractTransformLoadRvgDataToS3() {
+
+    const data = [
+      { test: '123', test2: '123' },
+      { test: 'mja', test2: 'mja' },
+    ]
+
+    const csv = json2csv(data)
+
+
+  }
 }

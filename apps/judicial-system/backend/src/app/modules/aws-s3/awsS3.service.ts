@@ -96,6 +96,7 @@ export class AwsS3Service {
   private async putObjectToS3(
     key: string,
     content: string | Buffer,
+    contentType?: string,
   ): Promise<string> {
     const Body =
       typeof content === 'string' ? Buffer.from(content, 'binary') : content
@@ -104,7 +105,7 @@ export class AwsS3Service {
         Bucket: this.config.bucket,
         Key: key,
         Body,
-        ContentType: 'application/pdf',
+        ContentType: contentType ?? 'application/pdf',
       })
       .promise()
       .then(() => key)
@@ -116,6 +117,10 @@ export class AwsS3Service {
     content: string | Buffer,
   ): Promise<string> {
     return this.putObjectToS3(formatS3Key(caseType, key), content)
+  }
+
+  uploadCsvToS3(key: string, content: string | Buffer): Promise<string> {
+    return this.putObjectToS3(`csv/${key}`, content, 'text/csv')
   }
 
   putGeneratedRequestCaseObject(

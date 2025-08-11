@@ -115,4 +115,25 @@ export class StatisticsController {
       query?.institutionId,
     )
   }
+
+  @UseGuards(JwtAuthUserGuard, RolesGuard)
+  @RolesRules(adminRule, localAdminRule)
+  @Get('cases/requests/statistics/export-csv')
+  @ApiOkResponse({
+    type: String,
+    description: 'Export transformed request case data',
+  })
+  exportRequestStatistics(
+    @Query('query') query?: RequestStatisticsDto,
+  ): Promise<string> {
+    this.logger.debug(
+      'Create and export csv file for transformed request case data',
+    )
+
+    // fetch, clean and transform to get raw data for statistical analysis
+    const transformedRequestCaseData = this.statisticService.extractTransformLoadRvgDataToS3()
+
+    // upload extracted date into S3 and return a signed url
+    // TODO: we can leverage caching for data stored in S3, for example periodical data
+  }
 }
