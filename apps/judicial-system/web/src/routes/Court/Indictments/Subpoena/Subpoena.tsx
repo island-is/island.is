@@ -275,28 +275,34 @@ const Subpoena: FC = () => {
   ])
 
   useEffect(() => {
-    if (navigateTo !== undefined) {
-      if (isIssuingAlternativeServices) {
-        setModalContent({
-          title: strings.modalAlternativeServiceTitle,
-          text: strings.modalAlternativeServiceText,
-          primaryButtonText: strings.modalAlternativeServicePrimaryButtonText,
-        })
-      } else if (isIssuingSubpoenas) {
-        setModalContent({
-          title: formatMessage(strings.modalTitle),
-          text: formatMessage(strings.modalText),
-          primaryButtonText: formatMessage(strings.modalPrimaryButtonText),
-        })
-      }
-    } else {
-      setModalContent(undefined) // cleanup
+    if (navigateTo === undefined) {
+      setModalContent(undefined)
+      return
+    }
+
+    if (modalContent) {
+      return
+    }
+
+    if (isIssuingAlternativeServices) {
+      setModalContent({
+        title: strings.modalAlternativeServiceTitle,
+        text: strings.modalAlternativeServiceText,
+        primaryButtonText: strings.modalAlternativeServicePrimaryButtonText,
+      })
+    } else if (isIssuingSubpoenas) {
+      setModalContent({
+        title: formatMessage(strings.modalTitle),
+        text: formatMessage(strings.modalText),
+        primaryButtonText: formatMessage(strings.modalPrimaryButtonText),
+      })
     }
   }, [
     navigateTo,
     isIssuingAlternativeServices,
     isIssuingSubpoenas,
     formatMessage,
+    modalContent,
   ])
 
   const stepIsValid = isSubpoenaStepValid(
