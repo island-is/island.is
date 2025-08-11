@@ -17,7 +17,7 @@ import { VehicleSearchApi } from '@island.is/clients/vehicles'
 import { YES, coreErrorMessages } from '@island.is/application/core'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { TemplateApiError } from '@island.is/nest/problem'
-import { mapVehicle } from '../transfer-of-vehicle-ownership/transfer-of-vehicle-ownership.utils'
+import { mapVehicle } from '../utils'
 
 @Injectable()
 export class OrderVehicleLicensePlateService extends BaseTemplateApiService {

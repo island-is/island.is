@@ -19,8 +19,8 @@ import {
   getAllRoles,
   getRecipients,
   getRecipientBySsn,
-  mapVehicle,
 } from './transfer-of-vehicle-ownership.utils'
+import { mapVehicle } from '../utils'
 import {
   ChargeFjsV2ClientService,
   getPaymentIdFromExternalData,

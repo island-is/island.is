@@ -35,7 +35,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
 import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { coreErrorMessages } from '@island.is/application/core'
-import { mapVehicle } from '../transfer-of-vehicle-ownership/transfer-of-vehicle-ownership.utils'
+import { mapVehicle } from '../utils'
 
 @Injectable()
 export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
