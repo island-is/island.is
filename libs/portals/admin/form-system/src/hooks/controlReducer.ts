@@ -6,6 +6,7 @@ import {
   FormSystemSection,
   FormSystemFieldSettings,
   FormSystemFormCertificationTypeDto,
+  FormSystemFormApplicant,
 } from '@island.is/api/schema'
 import { UniqueIdentifier } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
@@ -133,6 +134,10 @@ type ChangeActions =
         certificate: FormSystemFormCertificationTypeDto
         checked: boolean
       }
+    }
+  | {
+      type: 'UPDATE_APPLICANT_TYPES'
+      payload: { newValue: FormSystemFormApplicant[] }
     }
 
 type InputSettingsActions =
@@ -541,6 +546,15 @@ export const controlReducer = (
       }
       action.payload.update({ ...updatedState.form })
       return updatedState
+    }
+    case 'UPDATE_APPLICANT_TYPES': {
+      return {
+        ...state,
+        form: {
+          ...form,
+          applicantTypes: action.payload.newValue,
+        },
+      }
     }
 
     // Check whether dependencies has a dependency object with activeId in parentProp

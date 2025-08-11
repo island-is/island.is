@@ -290,10 +290,11 @@ export const SitemapNode = ({
 
   const nodeStatus = getNodeStatus(node, entries)
 
+  const nodeContent = extractNodeContent(node, language, entries)
+
   if (
     status === 'published' &&
-    (nodeStatus !== 'published' ||
-      !extractNodeContent(node, language, entries)?.label)
+    (nodeStatus !== 'published' || !nodeContent.label)
   ) {
     return null
   }
@@ -310,9 +311,7 @@ export const SitemapNode = ({
               <div className={styles.nodeTopRowContainerLeft}>
                 <Text fontColor="gray600">
                   {node.type === TreeNodeType.ENTRY
-                    ? entryTypeMap[
-                        node.contentType ?? 'organizationParentSubpage'
-                      ]
+                    ? entryTypeMap[nodeContent.entryContentType]
                     : optionMap[node.type]}
                 </Text>
                 {node.type === TreeNodeType.ENTRY && language === 'is-IS' && (

@@ -87,6 +87,9 @@ class HealthGoals {
 
 @ObjectType('SocialInsuranceMedicalDocumentsRehabilitationPlan')
 export class RehabilitationPlan {
+  @Field({ nullable: true })
+  referenceId?: string
+
   @Field(() => ServiceProvider, { nullable: true })
   serviceProvider?: ServiceProvider
 
