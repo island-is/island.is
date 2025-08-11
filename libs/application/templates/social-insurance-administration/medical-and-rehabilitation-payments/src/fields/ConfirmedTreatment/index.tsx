@@ -29,6 +29,7 @@ import { siaConfirmedTreatmentQuery } from '../../graphql/queries'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../../lib/messages'
 import { SiaConfirmedTreatmentQuery } from '../../types/schema'
 import { getApplicationAnswers } from '../../utils/medicalAndRehabilitationPaymentsUtils'
+import { Markdown } from '@island.is/shared/components'
 
 export const ConfirmedTreatment: FC<FieldBaseProps> = ({
   application,
@@ -161,7 +162,10 @@ export const ConfirmedTreatment: FC<FieldBaseProps> = ({
             )}
           </Label>
           <Text>
-            {data?.socialInsuranceConfirmedTreatment?.previousTreatment?.type}
+            {
+              data?.socialInsuranceConfirmedTreatment?.previousTreatment?.type
+                ?.display
+            }
           </Text>
         </GridColumn>
         <GridColumn span="1/1">
@@ -171,12 +175,11 @@ export const ConfirmedTreatment: FC<FieldBaseProps> = ({
                 .informationTreatmentType,
             )}
           </Label>
-          <Text>
-            {
-              data?.socialInsuranceConfirmedTreatment?.treatmentPlan
-                ?.treatmentType
-            }
-          </Text>
+          <Markdown>
+            {data?.socialInsuranceConfirmedTreatment?.treatmentPlan?.treatmentType
+              ?.map((type) => '* ' + type.display)
+              ?.join('\n\n') ?? ''}
+          </Markdown>
         </GridColumn>
       </GridRow>
     </Stack>

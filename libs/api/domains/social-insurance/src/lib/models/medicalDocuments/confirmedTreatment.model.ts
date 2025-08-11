@@ -1,5 +1,6 @@
 import { Field, GraphQLISODateTime, ObjectType } from '@nestjs/graphql'
 import { EstimatedDuration } from './estimatedDuration.model'
+import { EnumType } from './enumType.model'
 
 @ObjectType('SocialInsuranceMedicalDocumentsCaseManager')
 class CaseManager {
@@ -21,8 +22,8 @@ class PreviousTreatment {
   @Field({ nullable: true })
   application?: string
 
-  @Field({ nullable: true })
-  type?: string
+  @Field(() => EnumType, { nullable: true })
+  type?: EnumType
 
   @Field({ nullable: true })
   other?: string
@@ -36,8 +37,8 @@ class TreatmentPlan {
   @Field({ nullable: true })
   applicationType?: string
 
-  @Field({ nullable: true })
-  treatmentType?: string
+  @Field(() => [EnumType], { nullable: true })
+  treatmentType?: Array<EnumType>
 
   @Field({ nullable: true })
   explanation?: string

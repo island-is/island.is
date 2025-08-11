@@ -151,13 +151,21 @@ export const siaConfirmedTreatmentQuery = gql`
       previousTreatment {
         description
         application
-        type
+        type {
+          value
+          name
+          display
+        }
         other
         content
       }
       treatmentPlan {
         applicationType
-        treatmentType
+        treatmentType {
+          value
+          name
+          display
+        }
         explanation
         discharge
         plannedFollowup
