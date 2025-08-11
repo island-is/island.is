@@ -7,28 +7,38 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { ConfigModule } from '@island.is/nest/config'
 
 import {
+  auditTrailModuleConfig,
+  AuditTrailService,
+} from '@island.is/judicial-system/audit-trail'
+import {
   SharedAuthModule,
   sharedAuthModuleConfig,
 } from '@island.is/judicial-system/auth'
 
 import { CaseService } from '../../case'
+import { FileService } from '../../file'
+import { PoliceService } from '../../police'
 import { Verdict } from '../models/verdict.model'
 import { VerdictController } from '../verdict.controller'
 import { VerdictService } from '../verdict.service'
 
 jest.mock('../../case/case.service')
+jest.mock('../../police/police.service')
+jest.mock('../../file/file.service')
 
 export const createTestingVerdictModule = async () => {
   const verdictModule = await Test.createTestingModule({
     imports: [
       ConfigModule.forRoot({
-        load: [sharedAuthModuleConfig],
+        load: [sharedAuthModuleConfig, auditTrailModuleConfig],
       }),
     ],
     controllers: [VerdictController],
     providers: [
       SharedAuthModule,
       CaseService,
+      PoliceService,
+      FileService,
       {
         provide: LOGGER_PROVIDER,
         useValue: {
@@ -37,6 +47,7 @@ export const createTestingVerdictModule = async () => {
           error: jest.fn(),
         },
       },
+      { provide: Sequelize, useValue: { transaction: jest.fn() } },
       {
         provide: getModelToken(Verdict),
         useValue: {
@@ -49,6 +60,7 @@ export const createTestingVerdictModule = async () => {
         },
       },
       VerdictService,
+      AuditTrailService,
       { provide: Sequelize, useValue: { transaction: jest.fn() } },
     ],
   }).compile()
@@ -60,10 +72,13 @@ export const createTestingVerdictModule = async () => {
   const verdictController =
     verdictModule.get<VerdictController>(VerdictController)
 
+  const sequelize = verdictModule.get<Sequelize>(Sequelize)
+
   verdictModule.close()
 
   return {
     verdictController,
     verdictModel,
+    sequelize,
   }
 }
