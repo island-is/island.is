@@ -5,13 +5,7 @@ import {
   formatTextWithLocale,
 } from '@island.is/application/core'
 import { BankAccountField, FieldBaseProps } from '@island.is/application/types'
-import {
-  Box,
-  GridColumn,
-  GridRow,
-  InputError,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, GridColumn, GridRow, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { InputController } from '@island.is/shared/form-fields'
 import { getDefaultValue } from '../../getDefaultValue'
