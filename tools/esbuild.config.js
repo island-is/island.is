@@ -3,6 +3,7 @@ const { esbuildDecorators } = require('@anatine/esbuild-decorators')
 const svgrPlugin = require('esbuild-plugin-svgr')
 
 module.exports = {
+  keepNames: true,
   plugins: [
     // Add eslint plugin for basic emitDecoratorMetadata support.
     // This is required by many features in NestJS.
@@ -12,7 +13,7 @@ module.exports = {
       // Configure for both static and dynamic imports
       typescript: true,
       // Handle both default exports and named exports
-      exportType: 'default'
-    })
-  ]
+      exportType: 'default',
+    }),
+  ],
 }
