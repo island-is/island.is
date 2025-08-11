@@ -20,6 +20,8 @@ import { ServicesModule } from './modules/services/services.module'
 import { OrganizationPermissionsModule } from './modules/organizationPermissions/organizationPermissions.module'
 import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
 import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
+import { CompanyRegistryConfig } from '@island.is/clients/rsk/company-registry'
+import { UserProfileClientConfig } from '@island.is/clients/user-profile'
 
 @Module({
   imports: [
@@ -44,7 +46,7 @@ import { ConfigModule, XRoadConfig } from '@island.is/nest/config'
     ServicesModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [NationalRegistryV3ClientConfig, XRoadConfig],
+      load: [NationalRegistryV3ClientConfig, XRoadConfig, CompanyRegistryConfig, UserProfileClientConfig],
     }),
   ],
 })

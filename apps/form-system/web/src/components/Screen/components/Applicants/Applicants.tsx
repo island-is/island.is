@@ -7,33 +7,22 @@ import {
 } from '@island.is/form-system/ui'
 import { useQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
-import {
-  GET_NAME_BY_NATIONALID,
-  GET_ADDRESS_BY_NATIONALID,
-} from '@island.is/form-system/graphql'
-
+import { USER_PROFILE } from '@island.is/portals/my-pages/graphql'
+import { useApplicationContext } from 'apps/form-system/web/src/context/ApplicationProvider'
 interface Props {
   applicantTypes: FormSystemApplicant[]
 }
-
 export const Applicants = ({ applicantTypes }: Props) => {
   const { lang } = useLocale()
-  const id = '0101302399'
-  const { data } = useQuery(GET_NAME_BY_NATIONALID, {
-    variables: { input: id },
-    skip: !id,
-    fetchPolicy: 'cache-first',
-  })
-
-  const { data: addressData } = useQuery(GET_ADDRESS_BY_NATIONALID, {
-    variables: { input: id },
-    skip: !id,
-    fetchPolicy: 'cache-first',
-  })
-
   const agentType =
     ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL ||
     ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY
+
+  const state = useApplicationContext();
+  console.log('state', state)
+    const { data } = useQuery(USER_PROFILE, {
+      fetchPolicy: 'cache-first',
+    })
   return (
     <>
       {applicantTypes.map((applicantType) => {
@@ -43,16 +32,7 @@ export const Applicants = ({ applicantTypes }: Props) => {
               applicantType={applicantType}
               lang={lang}
               key={applicantType.id}
-              nationalId={id || ''}
-              name={data?.formSystemNameByNationalId?.fulltNafn || ''}
-              address={
-                addressData?.formSystemHomeByNationalId?.heimilisfang
-                  ?.husHeiti || ''
-              }
-              postalCode={
-                addressData?.formSystemHomeByNationalId?.heimilisfang
-                  ?.postnumer || ''
-              }
+              user={data?.getUserProfile}
             />
           )
         } else if (applicantType.applicantTypeId === agentType) {

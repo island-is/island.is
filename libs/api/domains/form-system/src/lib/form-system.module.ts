@@ -28,8 +28,10 @@ import { OrganizationUrlsResolver } from './organizationUrls/organizationUrls.re
 import { OrganizationUrlsService } from './organizationUrls/organizationUrls.service'
 import { NationalRegistryResolver } from './nationalRegistry/nationalRegistry.resolver'
 import { NationalRegistryV3ClientModule } from '@island.is/clients/national-registry-v3'
+import { CompanyRegistryClientModule } from '@island.is/clients/rsk/company-registry'
 import { FormUrlsResolver } from './formUrls/formUrls.resolver'
 import { FormUrlsService } from './formUrls/formUrls.service'
+import { CompanyRegistryResolver } from './company/companyRegistry.resolver' 
 
 @Module({
   providers: [
@@ -61,12 +63,14 @@ import { FormUrlsService } from './formUrls/formUrls.service'
     FormUrlsService,
     CmsModule,
     NationalRegistryResolver,
+    CompanyRegistryResolver
   ],
   exports: [],
   imports: [
     FormSystemClientModule,
     LoggingModule,
     NationalRegistryV3ClientModule,
+    CompanyRegistryClientModule,
   ],
 })
 export class FormSystemModule {}

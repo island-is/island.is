@@ -10,32 +10,44 @@ import {
 import { useIntl } from 'react-intl'
 import { m, webMessages } from '../../lib/messages'
 import { NationalIdField } from './components/nationalIdField'
+import {
+  GET_NAME_BY_NATIONALID,
+  GET_ADDRESS_BY_NATIONALID,
+} from '@island.is/form-system/graphql'
+import { useQuery } from '@apollo/client'
 
 interface Props {
   applicantType: FormSystemApplicant
-  nationalId: string
-  name: string
-  address: string
-  postalCode: string
+  user: any
   lang: 'is' | 'en'
 }
 
 export const IndividualApplicant = ({
   applicantType,
   lang,
-  nationalId,
-  name,
-  address,
-  postalCode,
+  user,
 }: Props) => {
-  const { formatMessage } = useIntl()
+const { formatMessage } = useIntl()
+const nationalId = user?.nationalId ?? '';
+const shouldQuery: boolean = !!nationalId;
+  const { data: nameData } = useQuery(GET_NAME_BY_NATIONALID, {
+    variables: { input: nationalId },
+    fetchPolicy: 'cache-first',
+    skip: !shouldQuery,
+  })
+  const { data: addressData } = useQuery(GET_ADDRESS_BY_NATIONALID, {
+    variables: { input: nationalId },
+    fetchPolicy: 'cache-first',
+    skip: !shouldQuery,
+  })
+  const address = addressData?.formSystemHomeByNationalId?.heimilisfang;
   return (
     <Box marginTop={4}>
       <Text variant="h2" as="h2" marginBottom={3}>
         {applicantType?.name?.[lang]}
       </Text>
       <Stack space={2}>
-        <NationalIdField disabled={true} nationalId={nationalId} name={name} />
+        <NationalIdField disabled={true} nationalId={nationalId} name={nameData?.formSystemNameByNationalId?.fulltNafn} />
         <GridRow>
           <GridColumn span={['12/12', '12/12', '6/12', '6/12']}>
             <Input
@@ -43,7 +55,7 @@ export const IndividualApplicant = ({
               name="address"
               placeholder={formatMessage(m.address)}
               disabled={true}
-              value={address}
+              value={address?.husHeiti}
             />
           </GridColumn>
           <GridColumn span={['12/12', '12/12', '6/12', '6/12']}>
@@ -53,7 +65,7 @@ export const IndividualApplicant = ({
                 name="postalCode"
                 placeholder={formatMessage(webMessages.postalCode)}
                 disabled={true}
-                value={postalCode}
+                value={address?.postnumer}
               />
             </Box>
           </GridColumn>
@@ -71,6 +83,7 @@ export const IndividualApplicant = ({
           placeholder={formatMessage(m.phoneNumber)}
           backgroundColor="blue"
           required={true}
+          value={user?.mobilePhoneNumber}
         />
       </Stack>
     </Box>
