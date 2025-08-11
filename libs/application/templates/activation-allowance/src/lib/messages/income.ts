@@ -105,7 +105,7 @@ export const income = {
     },
     pickDatePlaceHolder: {
       id: 'aa.application:income.labels.pickDatePlaceHolder',
-      defaultMessage: 'Veldur dagsetningu',
+      defaultMessage: 'Veldu dagsetningu',
       description: 'Pick a date placeholder label',
     },
     addLine: {

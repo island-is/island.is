@@ -37,6 +37,7 @@ export const Terms = buildForm({
             }),
             buildCheckboxField({
               id: 'approveTerms',
+              required: true,
               options: [
                 {
                   value: 'terms',

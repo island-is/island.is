@@ -7,7 +7,7 @@ import {
   YES,
 } from '@island.is/application/core'
 import { contact } from '../../../lib/messages/contact'
-import { isContactDifferentFromApplicant } from '../../../utils/isContactSameAsApplicant'
+import { isContactDifferentFromApplicant } from '../../../utils/isContactDifferentFromApplicant'
 
 export const contactSubSection = buildSubSection({
   id: 'contactSubSection',

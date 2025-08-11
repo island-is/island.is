@@ -36,7 +36,7 @@ export const applicant = {
       description: 'Address',
     },
     postalCode: {
-      id: 'aa.application:applicant.abels.postalCode',
+      id: 'aa.application:applicant.labels.postalCode',
       defaultMessage: 'Póstnúmer',
       description: 'Postal Code',
     },

@@ -21,7 +21,7 @@ export const jobHistory = {
   }),
   labels: defineMessages({
     jobTitle: {
-      id: 'aa.application:jobHistory.labels.defineMessages',
+      id: 'aa.application:jobHistory.labels.jobTitle',
       defaultMessage: 'Starf',
       description: 'Job title label',
     },

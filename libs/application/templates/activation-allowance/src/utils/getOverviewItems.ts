@@ -21,7 +21,7 @@ import {
 import { overview } from '../lib/messages/overview'
 import { isSamePlaceOfResidenceChecked } from './isSamePlaceOfResidenceChecked'
 import { contact } from '../lib/messages/contact'
-import { isContactDifferentFromApplicant } from './isContactSameAsApplicant'
+import { isContactDifferentFromApplicant } from './isContactDifferentFromApplicant'
 import {
   GaldurDomainModelsEducationProgramDTO,
   GaldurDomainModelsSelectItem,

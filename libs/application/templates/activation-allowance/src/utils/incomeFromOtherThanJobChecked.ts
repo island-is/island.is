@@ -6,14 +6,14 @@ export const incomeFromOtherThanJobChecked = (
   index: number,
   answers: FormValue,
 ) => {
-  const incomeFromOtherThanJobChecked = getValueViaPath<Array<string>>(
+  const incomeFromOtherThanJobCheckedAnswer = getValueViaPath<Array<string>>(
     answers,
     `income[${index}].checkbox`,
   )
 
   if (
-    incomeFromOtherThanJobChecked &&
-    incomeFromOtherThanJobChecked.includes(
+    incomeFromOtherThanJobCheckedAnswer &&
+    incomeFromOtherThanJobCheckedAnswer.includes(
       IncomeCheckboxValues.INCOME_FROM_OTHER_THAN_JOB,
     )
   ) {

@@ -17,12 +17,6 @@ export const application = defineMessages({
     description:
       'Description of application state/status when the application is in progress',
   },
-  actionCardPayment: {
-    id: 'aa.application:actionCardPayment',
-    defaultMessage: 'Greiðslu vantar',
-    description:
-      'Description of application state/status when payment is pending',
-  },
   actionCardRejected: {
     id: 'aa.application:actionCardRejected',
     defaultMessage: 'Hafnað',

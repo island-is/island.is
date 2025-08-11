@@ -52,9 +52,9 @@ export const overviewSection = buildSection({
           items: getJobWishesOverviewItems,
           condition: (formValue: FormValue) => {
             const jobWishes =
-              getValueViaPath<string[]>(formValue, 'jobWishes.jobs') ?? []
+              getValueViaPath<string[]>(formValue, 'jobWishes.jobs', []) ?? []
 
-            return !jobWishes
+            return jobWishes.length > 0
           },
         }),
         buildOverviewField({
@@ -63,9 +63,13 @@ export const overviewSection = buildSection({
           items: getJobHistoryOverviewItems,
           condition: (formValue: FormValue) => {
             const jobHistory =
-              getValueViaPath<JobHistoryAnswer[]>(formValue, 'jobHistory') ?? []
+              getValueViaPath<JobHistoryAnswer[]>(
+                formValue,
+                'jobHistory',
+                [],
+              ) ?? []
 
-            return !jobHistory
+            return jobHistory.length > 0
           },
         }),
         buildOverviewField({
@@ -76,7 +80,7 @@ export const overviewSection = buildSection({
             const education =
               getValueViaPath<EducationAnswer>(formValue, 'academicBackground')
                 ?.education ?? []
-            return !education
+            return education.length > 0
           },
         }),
         buildOverviewField({

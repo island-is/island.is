@@ -31,7 +31,7 @@ export const cv = {
       description: 'Upload header label',
     },
     uploadDescription: {
-      id: 'aa.application:cv.labels.uploadHeader',
+      id: 'aa.application:cv.labels.uploadDescription',
       defaultMessage:
         'Tekið er við skjölum með endingu: .pdf, .png, .jpg, .jpeg',
       description: 'Upload description label',

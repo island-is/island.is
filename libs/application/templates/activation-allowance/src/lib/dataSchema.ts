@@ -106,11 +106,17 @@ const languageSkillsSchema = z.object({
   ),
 })
 
-const cvSchema = z.object({
-  haveCV: z.nativeEnum(YesOrNoEnum),
-  cvFile: z.object({ file: z.array(FileSchema) }).optional(),
-  other: z.string().optional(),
-})
+const cvSchema = z
+  .object({
+    haveCV: z.nativeEnum(YesOrNoEnum),
+    cvFile: z.object({ file: z.array(FileSchema) }).optional(),
+    other: z.string().optional(),
+  })
+  .superRefine((data, ctx) => {
+    if (data.haveCV === YesOrNoEnum.YES && !data.cvFile?.file?.length) {
+      ctx.addIssue({ path: ['cvFile', 'file'], code: z.ZodIssueCode.custom })
+    }
+  })
 
 const contactSchema = z
   .object({

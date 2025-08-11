@@ -66,12 +66,12 @@ export const externalData = {
   }),
   nationalInsuranceInstitute: defineMessages({
     title: {
-      id: 'aa.application:externalData.tax.title',
+      id: 'aa.application:externalData.nationalInsuranceInstitute.title',
       defaultMessage: 'Tryggingastofnun ríkisins',
       description: 'National insurance institute data provider title',
     },
     subTitle: {
-      id: 'aa.application:externalData.tax.subTitle',
+      id: 'aa.application:externalData.nationalInsuranceInstitute.subTitle',
       defaultMessage:
         'Við framkvæmd laga um atvinnuleysistryggingar er VMST nauðsynlegt að afla upplýsinga um örorku, mæðra- og feðralaun og meðlag.',
       description: 'National insurance institute data provider subtitle',
