@@ -11,13 +11,13 @@ export const biggestIssueField = buildMultiField({
   title: disabilityPensionFormMessage.selfEvaluation.questionFormTitle,
   children: [
     buildTitleField({
-      marginTop: 6,
-      title: disabilityPensionFormMessage.questions.employmentCapabilityTitle,
+      marginTop: 2,
+      title: disabilityPensionFormMessage.questions.biggestIssueTitle,
     }),
     buildTextField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_BIGGEST_ISSUE}.text`,
       variant: 'textarea',
-      rows: 4,
+      rows: 6,
       width: 'full',
     }),
   ],

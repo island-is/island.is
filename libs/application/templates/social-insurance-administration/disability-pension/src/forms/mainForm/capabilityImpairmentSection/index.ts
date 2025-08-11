@@ -73,6 +73,7 @@ export const capabilityImpairmentSection = buildSubSection({
       description:
         disabilityPensionFormMessage.capabilityImpairment.description,
     }),
+    //TODO: validate and collect correct questions
     ...questions,
   ],
 })

@@ -22,12 +22,8 @@ export const personalInfoSubSection = buildSubSection({
   children: [
     buildMultiField({
       id: SectionRouteEnum.PERSONAL_INFO,
+      title: disabilityPensionFormMessage.basicInfo.personalInfo,
       children: [
-        buildTitleField({
-          title: disabilityPensionFormMessage.basicInfo.personalInfo,
-          titleVariant: 'h2',
-          marginBottom: 'p2',
-        }),
         buildDescriptionField({
           id: 'personalInfoInstructions',
           description:

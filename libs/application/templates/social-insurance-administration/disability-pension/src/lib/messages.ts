@@ -461,12 +461,13 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
     },
     livedAbroadTitle: {
       id: 'dp.application:employmentParticipation.livedAbroadTitle',
-      defaultMessage: 'Búseta erlendis',
+      defaultMessage: 'Hefur þú búið erlendis?',
       description: 'Lived abroad',
     },
     livedAbroadDescription: {
       id: 'dp.application:employmentParticipation.livedAbroadDescription',
-      defaultMessage: 'Hefur þú búið eða unnið erlendis?',
+      defaultMessage:
+        'Rangar eða ófullnægjandi upplýsingar geta haft áhrif á afgreiðslu umsóknarinnar og hugsanlega leitt til endurkröfu eða annarra viðurlaga.',
       description: 'Have you lived or worked abroad?',
     },
     livedAbroadQuestion: {
@@ -486,7 +487,7 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
     },
     abroadNationalId: {
       id: 'dp.application:employmentParticipation.abroadNationalId',
-      defaultMessage: 'Kennitala erlendis',
+      defaultMessage: 'Kennitala í landi',
       description: 'National ID abroad',
     },
     period: {
@@ -594,7 +595,7 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
     description: {
       id: 'dp.application:capabilityImpairment.description',
       defaultMessage:
-        'Þessi hluti inniheldur spurningar um hvernig þú upplifir eigin færni í daglegu lífi og starfi. Hér getur verið um að ræða líkamlega, andlega eða félagslega þætti sem geta haft áhrif á getu þína til að sinna daglegum athöfnum, starfi og frístundum. n- Hafðu í huga að um er að ræða umfangsmikinn lista yfir atriði sem eiga ekki endilega við þig. Því er mikilvægt að þú metir hvernig þú upplifir stöðuna eins og hún er núna, ekki hvernig hún var áður eða hvernig þú vilt að hún verði.',
+        'Þessi hluti inniheldur spurningar um hvernig þú upplifir eigin færni í daglegu lífi og starfi. Hér getur verið um að ræða líkamlega, andlega eða félagslega þætti sem geta haft áhrif á getu þína til að sinna daglegum athöfnum, starfi og frístundum. \n\n Hafðu í huga að um er að ræða umfangsmikinn lista yfir atriði sem eiga ekki endilega við þig. Því er mikilvægt að þú metir hvernig þú upplifir stöðuna eins og hún er núna, ekki hvernig hún var áður eða hvernig þú vilt að hún verði.',
       description:
         'Here you can describe in more detail the problem that affects your work capacity.',
     },
@@ -756,6 +757,16 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
       description:
         'How many children (own and/or step- and foster children) are in your household on average?',
     },
+    numberOfChildren: {
+      id: 'dp.application:selfEvaluation.questions.childrenCount.numberOfChildren',
+      defaultMessage: 'Fjöldi barna',
+      description: 'Number of children',
+    },
+    childrenCountZero: {
+      id: 'dp.application:selfEvaluation.questions.childrenCount.zero',
+      defaultMessage: 'Engin börn',
+      description: 'Zero children',
+    },
     childrenCountOne: {
       id: 'dp.application:selfEvaluation.questions.childrenCount.one',
       defaultMessage: '1',
@@ -883,7 +894,7 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
     },
     languageOtherSpecify: {
       id: 'dp.application:selfEvaluation.questions.language.otherSpecify',
-      defaultMessage: 'Tilgreindu hvaða tungumál',
+      defaultMessage: 'Annað, hvað?',
       description: 'Specify which language',
     },
     employmentStatusTitle: {
@@ -942,6 +953,11 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
       id: 'dp.application:selfEvaluation.questions.employmentStatus.other',
       defaultMessage: 'Annað',
       description: 'Other',
+    },
+    employmentStatusOtherWhat: {
+      id: 'dp.application:selfEvaluation.questions.employmentStatus.otherWhat',
+      defaultMessage: 'Annað, hvað?',
+      description: 'Other, what?',
     },
     previousEmploymentTitle: {
       id: 'dp.application:selfEvaluation.questions.previousEmployment.title',

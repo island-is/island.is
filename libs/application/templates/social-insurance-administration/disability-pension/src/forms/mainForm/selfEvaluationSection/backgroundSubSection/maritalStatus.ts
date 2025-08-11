@@ -32,10 +32,6 @@ export const maritalStatusField = buildMultiField({
           value: MaritalStatusEnum.WIDOWED,
           label: disabilityPensionFormMessage.questions.maritalStatusWidowed,
         },
-        {
-          value: MaritalStatusEnum.UNKNOWN,
-          label: disabilityPensionFormMessage.questions.maritalStatusUnknown,
-        },
       ],
     }),
   ],

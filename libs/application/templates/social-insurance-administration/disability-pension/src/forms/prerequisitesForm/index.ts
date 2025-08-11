@@ -47,7 +47,6 @@ export const Prerequisites = buildForm({
             disabilityPensionFormMessage.prerequisites.checkboxLabel,
           dataProviders: [
             buildDataProviderItem({
-              provider: SocialInsuranceAdministrationCurrenciesApi,
               title:
                 disabilityPensionFormMessage.prerequisites
                   .organizationDataTitle,

@@ -37,13 +37,9 @@ export const paymentInfoSubSection = buildSubSection({
   children: [
     buildMultiField({
       space: 'gutter',
+      title: disabilityPensionFormMessage.basicInfo.paymentInfo,
       id: SectionRouteEnum.PAYMENT_INFO,
       children: [
-        buildTitleField({
-          title: disabilityPensionFormMessage.basicInfo.paymentInfo,
-          titleVariant: 'h2',
-          marginBottom: 'p2',
-        }),
         buildAlertMessageField({
           id: `${SectionRouteEnum.PAYMENT_INFO}.notice`,
           alertType: 'info',
@@ -80,6 +76,7 @@ export const paymentInfoSubSection = buildSubSection({
         buildTextField({
           id: `${SectionRouteEnum.PAYMENT_INFO}.bank`,
           title: disabilityPensionFormMessage.paymentInfo.bank,
+          placeholder: '0000-00-000000',
           required: true,
           condition: (formValue: FormValue) =>
             accountNationality(formValue) === BankAccountType.ICELANDIC,

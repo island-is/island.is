@@ -2,6 +2,8 @@ import {
   buildCheckboxField,
   buildMultiField,
   buildTextField,
+  buildTitleField,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { EmploymentStatusEnum, SectionRouteEnum } from '../../../../types'
@@ -68,9 +70,14 @@ export const employmentField = buildMultiField({
         },
       ],
     }),
+    buildTitleField({
+      title: disabilityPensionFormMessage.questions.employmentStatusOtherWhat,
+      titleVariant: 'h5',
+      marginTop: 2,
+      marginBottom: 0,
+    }),
     buildTextField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_EMPLOYMENT}.other`,
-      title: disabilityPensionFormMessage.questions.employmentStatusOther,
       variant: 'textarea',
       rows: 3,
     }),
