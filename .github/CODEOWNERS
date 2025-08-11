@@ -402,8 +402,8 @@ codemagic.yaml                                                                  
 /libs/clients/seminars-ver/                                                                               @island-is/origo
 
 /libs/application/template-api-modules/src/lib/modules/templates/activation-allowance                     @island-is/origo
-/libs/application/templates/activation-allowance                                                          @island.is/origo
-/libs/clients/vmst-unemployment                                                                           @island.is/origo
+/libs/application/templates/activation-allowance                                                          @island-is/origo
+/libs/clients/vmst-unemployment                                                                           @island-is/origo
 
 /libs/clients/practical-exams-ver                                                                         @island-is/origo
 /libs/api/domains/practical-exams                                                                         @island-is/origo

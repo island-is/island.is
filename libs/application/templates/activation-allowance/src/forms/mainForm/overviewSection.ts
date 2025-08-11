@@ -21,6 +21,7 @@ import {
 import { FormValue } from '@island.is/application/types'
 import { EducationAnswer, JobHistoryAnswer } from '../../lib/dataSchema'
 import { hasCv } from '../../utils/hasCv'
+import { overview } from '../../lib/messages/overview'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
@@ -28,7 +29,7 @@ export const overviewSection = buildSection({
   children: [
     buildMultiField({
       id: 'overviewSection',
-      title: 'Overview',
+      title: overview.general.sectionTitle,
       children: [
         buildOverviewField({
           id: 'overview.applicant',

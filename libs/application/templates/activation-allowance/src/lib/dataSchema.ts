@@ -191,7 +191,7 @@ export const ActivationAllowanceAnswersSchema = z.object({
   jobHistory: jobHistoryArraySchema,
   jobWishes: jobWishesSchema,
   academicBackground: academicBackgroundSchema,
-  drivingLicenses: drivingLicensesSchema,
+  drivingLicense: drivingLicensesSchema,
   languageSkills: languageSkillsSchema,
   cv: cvSchema,
   income: incomeSchema,
