@@ -15,7 +15,7 @@ import {
   UploadFile,
 } from '@island.is/island-ui/core'
 import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
-import { InformationForDefendant } from '@island.is/judicial-system/types'
+import { informationForDefendantMap } from '@island.is/judicial-system/types'
 import { Feature } from '@island.is/judicial-system/types'
 import { core, titles } from '@island.is/judicial-system-web/messages'
 import {
@@ -202,44 +202,13 @@ const Completed: FC = () => {
 
   const marginSpaceBetweenButtons = 2
 
-  const defendantCheckboxes = [
-    {
-      label: 'Leiðbeiningar um endurupptöku útivistarmála',
-      value:
-        InformationForDefendant.INSTRUCTIONS_ON_REOPENING_OUT_OF_COURT_CASES,
-    },
-    {
-      label: 'Upplýsingar um áfrýjun til Landsréttar og áfrýjunarfresti',
-      value: InformationForDefendant.INFORMATION_ON_APPEAL_TO_COURT_OF_APPEALS,
-      tooltip:
-        'Einstaklingur getur áfrýjað dómi til Landsréttar ef viðkomandi hefur verið dæmdur í fangelsi eða til að greiða sekt eða sæta upptöku eigna sem nær áfrýjunarfjárhæð í einkamáli, kr. 1.420.488.',
-    },
-    {
-      label: 'Þýðing skilorðsbundinnar refsingar og skilorðsrofs',
-      value:
-        InformationForDefendant.CONDITIONAL_SENTENCE_AND_BREACH_OF_PROBATION_TRANSLATION,
-    },
-    {
-      label: 'Þýðing sviptingu ökuréttinda',
-      value: InformationForDefendant.DRIVING_RIGHTS_REVOKED_TRANSLATION,
-    },
-    {
-      label: 'Þýðing vararefsingu fésekta',
-      value: InformationForDefendant.ALTERNATIVE_FINES_TRANSLATION,
-    },
-    {
-      label: 'Upplýsingar um skilyrði og umsókn um samfélagsþjónustu',
-      value: InformationForDefendant.COMMUNITY_SERVICE,
-    },
-    {
-      label: 'Upplýsingar um greiðslu sekta, sakarkostnaðar og bóta',
-      value: InformationForDefendant.FINES_AND_COSTS,
-    },
-    {
-      label: 'Upplýsingar um upptöku muna/efna',
-      value: InformationForDefendant.ITEM_CONFISCATION,
-    },
-  ]
+  const defendantCheckboxes = Array.from(
+    informationForDefendantMap.entries(),
+  ).map(([key, value]) => ({
+    label: value.label,
+    value: key,
+    tooltip: value.detail,
+  }))
 
   return (
     <PageLayout

@@ -1,3 +1,7 @@
+import { option } from 'fp-ts'
+import { filterMap } from 'fp-ts/lib/Array'
+import { pipe } from 'fp-ts/lib/function'
+
 import { ApiProperty } from '@nestjs/swagger'
 
 import { formatDate } from '@island.is/judicial-system/formatters'
@@ -6,6 +10,7 @@ import {
   CaseIndictmentRulingDecision,
   getIndictmentAppealDeadlineDate,
   hasDatePassed,
+  informationForDefendantMap,
   ServiceRequirement,
   VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
@@ -58,6 +63,21 @@ export class VerdictResponse {
     const isAppealDeadlineExpired = appealDeadline
       ? hasDatePassed(appealDeadline)
       : false
+
+    const rulingInstructionsItems = pipe(
+      defendant?.verdict?.serviceInformationForDefendant ?? [],
+      filterMap((information) => {
+        const value = informationForDefendantMap.get(information)
+        if (!value) {
+          return option.none
+        }
+        return option.some({
+          label: value.label,
+          value: value.description,
+          type: 'text',
+        })
+      }),
+    )
 
     return {
       caseId: internalCase.id,
@@ -122,33 +142,7 @@ export class VerdictResponse {
           : []),
         {
           label: t.rulingInstructions,
-          //TODO: Replace with actual instructions
-          items: [
-            {
-              label: 'Endurupptaka útivistarmála (í fjarveru þinni)',
-              value:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum',
-              type: 'text',
-            },
-            {
-              label: 'Áfrýjun til Landsréttar og áfrýjunarfrestur',
-              value:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum',
-              type: 'text',
-            },
-            {
-              label: 'Skilorðsbundin refsing og skilorðsrof',
-              value:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum',
-              type: 'text',
-            },
-            {
-              label: 'Skilyrði og umsókn um samfélagsþjónustu',
-              value:
-                'Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum',
-              type: 'text',
-            },
-          ],
+          items: rulingInstructionsItems,
         },
       ],
     }
