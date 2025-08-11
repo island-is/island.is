@@ -27,7 +27,7 @@ export const Footer = ({ externalDataAgreement }: Props) => {
   const enableContinueButton =
     state.currentSection.index === 0
       ? externalDataAgreement
-      : state.currentSection.index !== state.sections.length - 1
+      : true //state.currentSection.index !== state.sections.length - 1
 
   const submitScreen = useMutation(SAVE_SCREEN)
   const submitSection = useMutation(SUBMIT_SECTION)

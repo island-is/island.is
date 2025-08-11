@@ -88,6 +88,7 @@ export class ApplicationsResolver {
 
   @Mutation(() => Boolean, {
     name: 'submitFormSystemApplication',
+    nullable: true
   })
   async submitApplication(
     @Args('input', { type: () => GetApplicationInput })

@@ -32,7 +32,7 @@ export const FormStepper = ({
           isComplete={section?.isCompleted ?? false}
           isActive={section.id === currentSection?.data?.id}
           key={section?.id}
-          subSections={section?.screens?.filter((screen) => !screen?.isHidden).map((screen) => {
+          subSections={section?.screens?.map((screen) => {
             return (
               <Text
                 key={screen?.id}

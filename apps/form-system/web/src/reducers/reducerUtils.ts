@@ -16,10 +16,8 @@ export const getIncrementVariables = (state: ApplicationState) => {
   const currentSectionIndex = currentSection.index
   const currentSectionData = sections[currentSectionIndex]
   const maxSectionIndex = sections.length - 1
-  const nextSectionIndex =
-    currentSectionIndex < maxSectionIndex
-      ? currentSectionIndex + 1
-      : maxSectionIndex
+  const nextSectionIndex = currentSectionIndex + 1
+
   const currentScreenIndex = hasScreens(currentSectionData)
     ? currentScreen?.index ?? 0
     : 0
