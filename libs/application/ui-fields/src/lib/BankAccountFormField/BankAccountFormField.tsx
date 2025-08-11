@@ -95,11 +95,6 @@ export const BankAccountFormField = ({ field, application }: Props) => {
             />
           </Box>
         </GridColumn>
-        {/* {error && (
-          <GridColumn span={['1/1']} paddingBottom={2}>
-            <InputError errorMessage={error} />
-          </GridColumn>
-        )} */}
       </GridRow>
     </Box>
   )
