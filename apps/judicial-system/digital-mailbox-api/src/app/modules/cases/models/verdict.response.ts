@@ -25,7 +25,7 @@ export class VerdictResponse {
   subtitle?: string
 
   @ApiProperty({ enum: VerdictAppealDecision })
-  verdictAppealDecision?: VerdictAppealDecision
+  appealDecision?: VerdictAppealDecision
 
   @ApiProperty({ type: [Groups] })
   groups?: Groups[]
@@ -41,14 +41,14 @@ export class VerdictResponse {
       internalCase.defendants?.find((def) => def.nationalId === nationalId) ||
       internalCase.defendants?.[0]
 
-    const serviceRequired =
-      defendant?.serviceRequirement === ServiceRequirement.REQUIRED
+    const isServiceRequired =
+      defendant?.verdict?.serviceRequirement === ServiceRequirement.REQUIRED
     const isFineCase =
       internalCase.indictmentRulingDecision ===
       CaseIndictmentRulingDecision.FINE
 
-    const baseDate = serviceRequired
-      ? defendant?.verdictViewDate
+    const baseDate = isServiceRequired
+      ? defendant?.verdict?.serviceDate
       : internalCase.rulingDate
 
     const appealDeadline = baseDate
@@ -63,7 +63,7 @@ export class VerdictResponse {
       caseId: internalCase.id,
       title: t.rulingTitle,
       // subtitle: 'TODO subtitle (if needed)',
-      verdictAppealDecision: defendant?.verdictAppealDecision,
+      appealDecision: defendant?.verdict?.appealDecision,
       groups: [
         {
           label: t.rulingTitle,

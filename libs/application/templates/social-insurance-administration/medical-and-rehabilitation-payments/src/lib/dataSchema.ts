@@ -298,9 +298,9 @@ export const dataSchema = z.object({
         params: errorMessages.dateRequired,
       },
     ),
-  rehabilitationPlanConfirmation: z
-    .array(z.string())
-    .refine((v) => v.includes(YES)),
+  rehabilitationPlan: z.object({
+    confirmation: z.array(z.string()).refine((v) => v.includes(YES)),
+  }),
   confirmedTreatment: z.object({
     confirmation: z.array(z.string()).refine((v) => v.includes(YES)),
   }),

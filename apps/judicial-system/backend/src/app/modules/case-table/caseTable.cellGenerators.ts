@@ -46,6 +46,7 @@ import { EventLog } from '../event-log/models/eventLog.model'
 import { Institution } from '../institution'
 import { Subpoena } from '../subpoena'
 import { User } from '../user'
+import { Verdict } from '../verdict/models/verdict.model'
 import {
   CaseTableCellValue,
   StringGroupValue,
@@ -961,9 +962,14 @@ const subpoenaServiceState: CaseTableCellGenerator<TagValue> = {
   includes: {
     defendants: {
       model: Defendant,
-      attributes: ['serviceRequirement', 'verdictViewDate'],
       order: [['created', 'ASC']],
       separate: true,
+      includes: {
+        verdict: {
+          model: Verdict,
+          attributes: ['serviceRequirement', 'serviceDate'],
+        },
+      },
     },
   },
   generate: (c: Case): CaseTableCell<TagValue> => {
@@ -973,9 +979,9 @@ const subpoenaServiceState: CaseTableCellGenerator<TagValue> = {
 
     const verdictInfo = c.defendants?.map<[boolean, Date | undefined]>((d) => [
       true,
-      d.serviceRequirement === ServiceRequirement.NOT_REQUIRED
+      d.verdict?.serviceRequirement === ServiceRequirement.NOT_REQUIRED
         ? c.rulingDate
-        : d.verdictViewDate,
+        : d.verdict?.serviceDate,
     ])
     const [
       indictmentVerdictViewedByAll,
@@ -1061,9 +1067,14 @@ const indictmentReviewDecision: CaseTableCellGenerator<TagPairValue> = {
   includes: {
     defendants: {
       model: Defendant,
-      attributes: ['verdictAppealDate'],
       order: [['created', 'ASC']],
       separate: true,
+      includes: {
+        verdict: {
+          model: Verdict,
+          attributes: ['appealDate'],
+        },
+      },
     },
   },
   generate: (c: Case): CaseTableCell<TagPairValue> => {
@@ -1077,7 +1088,7 @@ const indictmentReviewDecision: CaseTableCellGenerator<TagPairValue> = {
           : 'Una',
     }
 
-    const defendantAppealed = c.defendants?.some((d) => d.verdictAppealDate)
+    const defendantAppealed = c.defendants?.some((d) => d.verdict?.appealDate)
 
     const secondTag = defendantAppealed
       ? { color: 'red', text: 'Ákærði áfrýjar' }
