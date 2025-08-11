@@ -18,7 +18,7 @@
     "extract-strings": {
       "executor": "nx:run-commands",
       "options": {
-        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/activation-allowance/src/lib/messages.ts"
+        "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/activation-allowance/src/**/*.{js,ts,tsx}'"
       }
     }
   }

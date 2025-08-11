@@ -154,7 +154,7 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
               contactConnection: contact?.connection,
               contactEmail: contact?.email,
               contactName: contact?.name,
-              contactPhoneNumber: contact?.email,
+              contactPhoneNumber: contact?.phone,
             },
             personalInformation: personalInfo,
             otherInformation: {
