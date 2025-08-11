@@ -450,7 +450,7 @@ export class BackendService extends DataSource<{ req: Request }> {
     updateVerdict: unknown,
   ): Promise<Verdict> {
     return this.patch(
-      `case/${caseId}/defendant/verdict/${defendantId}`,
+      `case/${caseId}/defendant/${defendantId}/verdict`,
       updateVerdict,
     )
   }

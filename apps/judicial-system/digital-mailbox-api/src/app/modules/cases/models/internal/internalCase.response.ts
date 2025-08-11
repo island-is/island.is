@@ -71,4 +71,5 @@ interface Verdict {
   serviceDate?: Date
   appealDecision?: VerdictAppealDecision
   serviceInformationForDefendant?: InformationForDefendant[]
+  appealDate?: Date
 }

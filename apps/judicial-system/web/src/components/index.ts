@@ -30,7 +30,6 @@ export { default as CourtRecordAccordionItem } from './AccordionItems/CourtRecor
 export { default as DateTime } from './DateTime/DateTime'
 export { default as Decision } from './Decision/Decision'
 export { default as DefenderInfo } from './DefenderInfo/DefenderInfo'
-export { default as DefenderNotFound } from './DefenderInfo/DefenderNotFound'
 export {
   default as FeatureProvider,
   FeatureContext,
@@ -130,3 +129,4 @@ export { VictimInfo } from './VictimInfo/VictimInfo'
 export { LabelValue } from './LabelValue/LabelValue'
 export { default as IconButton } from './IconButton/IconButton'
 export { LawyerRegistryContext } from './LawyerRegistryProvider/LawyerRegistryProvider'
+export { default as ArraignmentAlert } from './ArraignmentAlert/ArraignmentAlert'

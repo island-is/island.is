@@ -76,8 +76,8 @@ const Completed: FC = () => {
   const [modalVisible, setModalVisible] =
     useState<'SENT_TO_PUBLIC_PROSECUTOR'>()
 
-  const isSentToPublicProsecutor = workingCase.eventLogs?.some(
-    (log) => log.eventType === EventType.INDICTMENT_SENT_TO_PUBLIC_PROSECUTOR,
+  const isSentToPublicProsecutor = Boolean(
+    workingCase.indictmentSentToPublicProsecutorDate,
   )
 
   const handleNextButtonClick = useCallback(async () => {
@@ -134,6 +134,7 @@ const Completed: FC = () => {
           return
         }
 
+        // TODO: Make sure to log an event if at least one file was uploaded
         const eventLogCreated = createEventLog({
           caseId: workingCase.id,
           eventType: EventType.INDICTMENT_CRIMINAL_RECORD_UPDATED_BY_COURT,

@@ -28,28 +28,28 @@ import {
   Case,
   CaseCompletedGuard,
   CaseExistsGuard,
-  CaseReadGuard,
   CaseTypeGuard,
+  CaseWriteGuard,
   CurrentCase,
 } from '../case'
 import { DefendantExistsGuard } from '../defendant'
 import { UpdateVerdictDto } from './dto/updateVerdict.dto'
 import { CurrentVerdict } from './guards/verdict.decorator'
-import { VerdictExistGuard } from './guards/verdictExistGuard.guard'
+import { VerdictExistsGuard } from './guards/verdictExists.guard'
 import { Verdict } from './models/verdict.model'
 import { VerdictService } from './verdict.service'
 
-@Controller('api/case/:caseId/defendant/verdict')
+@Controller('api/case/:caseId')
 @ApiTags('verdicts')
 @UseGuards(
   JwtAuthUserGuard,
   RolesGuard,
   CaseExistsGuard,
   new CaseTypeGuard(indictmentCases),
-  CaseReadGuard,
+  CaseWriteGuard,
   CaseCompletedGuard,
   DefendantExistsGuard,
-  VerdictExistGuard,
+  VerdictExistsGuard,
 )
 export class VerdictController {
   constructor(
@@ -63,7 +63,7 @@ export class VerdictController {
     districtCourtAssistantRule,
     publicProsecutorStaffRule,
   )
-  @Patch(':defendantId')
+  @Patch('defendant/:defendantId/verdict')
   @ApiOkResponse({
     type: Verdict,
     description: 'Updates a verdict',
@@ -79,13 +79,10 @@ export class VerdictController {
       `Updating verdict for ${verdict.id} of ${defendantId} in ${caseId}`,
     )
 
-    const enhancedUpdate =
-      await this.verdictService.handleServiceRequirementUpdate(
-        verdict.id,
-        verdictToUpdate,
-        theCase.rulingDate,
-      )
-
-    return this.verdictService.updateVerdict(verdict, enhancedUpdate)
+    return this.verdictService.update(
+      verdict,
+      verdictToUpdate,
+      theCase.rulingDate,
+    )
   }
 }

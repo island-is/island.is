@@ -1,6 +1,6 @@
 import { buildRadioField, buildSubSection } from '@island.is/application/core'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
-import { ApplicationType } from '../../lib/constants'
+import { ApplicationType } from '../../utils/constants'
 import { newPrimarySchoolMessages } from '../../lib/messages'
 
 const shouldRenderApplicationTypeSubSection =
