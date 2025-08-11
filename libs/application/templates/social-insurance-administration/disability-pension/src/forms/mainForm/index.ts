@@ -20,6 +20,6 @@ export const MainForm = buildForm({
     disabilityCertificateSection,
     extraInfoSection,
     overviewSection,
-    confirmationSection,
+    confirmationSection, // TODO: Remove from main form and move to completed form?
   ],
 })
