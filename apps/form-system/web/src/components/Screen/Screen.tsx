@@ -53,7 +53,7 @@ export const Screen = () => {
         {currentScreen &&
           currentScreen?.data?.fields
             ?.filter(
-              (field): field is NonNullable<typeof field> => field != null,
+              (field): field is NonNullable<typeof field> => field != null && !field.isHidden,
             )
             .map((field, index) => {
               return <Field field={field} key={index} />

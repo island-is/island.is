@@ -130,22 +130,13 @@ export class UpdateApplicationDependenciesInput {
   completed?: string[]
 }
 
-@InputType('UpdateFormSystemApplicationDtoInput')
-export class UpdateApplicationDtoInput {
-  @Field(() => [DependencyInput], { nullable: true })
-  dependencies?: DependencyInput[]
-
-  @Field(() => [String], { nullable: true })
-  completed?: string[]
-}
-
 @InputType('UpdateFormSystemApplicationInput')
 export class UpdateApplicationInput {
   @Field(() => String, { nullable: true })
   id?: string
 
-  @Field(() => UpdateApplicationDtoInput, { nullable: true })
-  updateApplicationDto?: UpdateApplicationDtoInput
+  @Field(() => UpdateApplicationDependenciesInput, { nullable: true })
+  updateApplicationDto?: UpdateApplicationDependenciesInput
 }
 
 @InputType('SaveFormSystemScreenInput')

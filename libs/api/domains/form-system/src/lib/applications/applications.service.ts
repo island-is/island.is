@@ -37,7 +37,7 @@ export class ApplicationsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private applicationsApi: ApplicationsApi,
-  ) {}
+  ) { }
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -107,7 +107,7 @@ export class ApplicationsService {
 
   async updateDependencies(
     auth: User,
-    input: UpdateApplicationDependenciesInput,
+    input: UpdateApplicationInput,
   ): Promise<void> {
     await this.applicationsApiWithAuth(auth).applicationsControllerUpdate(
       input as ApplicationsControllerUpdateRequest,
