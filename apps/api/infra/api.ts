@@ -293,6 +293,7 @@ export const serviceSetup = (services: {
         staging: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
         prod: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
       },
+      // TODO: Verify this is correct for all environments (dev, staging, prod)
       LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL: ref(
         (ctx) =>
           `http://${
