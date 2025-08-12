@@ -185,6 +185,13 @@ type InputSettingsActions =
       }
     }
   | {
+      type: 'SET_IS_ZENDESK_ENABLED'
+      payload: {
+        property: 'isZendeskEnabled'
+        value: boolean
+      }
+    }
+  | {
       type: 'SET_LIST_ITEM_SELECTED'
       payload: {
         id: UniqueIdentifier
@@ -786,6 +793,16 @@ export const controlReducer = (
         form: {
           ...form,
           fields: fields?.map((i) => (i?.id === field.id ? newField : i)),
+        },
+      }
+    }
+    case 'SET_IS_ZENDESK_ENABLED': {
+      const { value } = action.payload
+      return {
+        ...state,
+        form: {
+          ...form,
+          isZendeskEnabled: value,
         },
       }
     }

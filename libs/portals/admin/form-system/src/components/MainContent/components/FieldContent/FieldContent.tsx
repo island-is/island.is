@@ -12,10 +12,7 @@ export const FieldContent = () => {
   const { control, inListBuilder } = useContext(ControlContext)
   const currentItem = control.activeItem.data as FormSystemField
 
-  console.log('control', control)
-  const hasZendeskSettings = true
-  // 'zendeskIsPublic' in (currentItem.fieldSettings ?? {}) ||
-  // 'zendeskIsCustomField' in (currentItem.fieldSettings ?? {})
+  const hasZendeskSettings = control.form.isZendeskEnabled
 
   if (inListBuilder) {
     return <ListBuilder />

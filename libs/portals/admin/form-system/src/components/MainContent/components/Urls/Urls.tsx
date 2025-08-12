@@ -28,8 +28,10 @@ export const Urls = () => {
       type: 'UPDATE_FORM_URLS',
       payload: { newValue: formUrls },
     })
+    console.log('zendesk', control.form.isZendeskEnabled)
   }, [formUrls])
 
+  const [deleteUrl] = useMutation(DELETE_FORM_URL)
   const [formSystemCreateFormUrlMutation] = useMutation(CREATE_FORM_URL, {
     onCompleted: (newUrlData) => {
       if (newUrlData?.createFormSystemFormUrl) {
@@ -60,7 +62,6 @@ export const Urls = () => {
     }
   }
 
-  const [deleteUrl] = useMutation(DELETE_FORM_URL)
   const handleDeleteFormUrl = async (organizationUrlId: string) => {
     try {
       await deleteUrl({
@@ -104,10 +105,10 @@ export const Urls = () => {
                   >
                     <Checkbox
                       checked={formUrls?.some((u) => u === url?.id)}
-                      onChange={(e) => {
+                      onChange={async (e) => {
                         if (typeof url?.id === 'string') {
                           if (e.target.checked) {
-                            handleCreateFormUrl(url.id)
+                            await handleCreateFormUrl(url.id)
                           } else {
                             handleDeleteFormUrl(url.id)
                           }
@@ -135,14 +136,21 @@ export const Urls = () => {
                   >
                     <Checkbox
                       checked={formUrls?.some((u) => u === url?.id)}
-                      onChange={(e) => {
+                      onChange={async (e) => {
                         if (typeof url?.id === 'string') {
                           if (e.target.checked) {
-                            handleCreateFormUrl(url.id)
+                            await handleCreateFormUrl(url.id)
                           } else {
-                            handleDeleteFormUrl(url.id)
+                            await handleDeleteFormUrl(url.id)
                           }
                         }
+                        controlDispatch({
+                          type: 'SET_IS_ZENDESK_ENABLED',
+                          payload: {
+                            value: e.target.checked,
+                            property: 'isZendeskEnabled',
+                          },
+                        })
                       }}
                       name={`test-url-${url?.id}`}
                       label={url?.url}

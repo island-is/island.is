@@ -401,7 +401,7 @@ export class FormsService {
 
   private async buildFormResponse(form: Form): Promise<FormResponseDto> {
     const response: FormResponseDto = {
-      form: this.setArrays(form),
+      form: await this.setArrays(form),
       fieldTypes: await this.getFieldTypes(form.organizationId),
       certificationTypes: await this.getCertificationTypes(form.organizationId),
       applicantTypes: await this.getApplicantTypes(),
@@ -524,7 +524,31 @@ export class FormsService {
     return organizationListTypes
   }
 
-  private setArrays(form: Form): FormDto {
+  private async isZendeskEnabled(
+    organizationId: string,
+    formUrls: FormUrl[],
+  ): Promise<boolean> {
+    const organizationUrls = await this.organizationUrlModel.findAll({
+      where: { organizationId: organizationId },
+    })
+
+    return formUrls.some((formUrl) =>
+      organizationUrls.some(
+        (orgUrl) =>
+          orgUrl.id === formUrl.organizationUrlId &&
+          orgUrl.method === 'SEND_TO_ZENDESK',
+      ),
+    )
+  }
+
+  private async setArrays(form: Form): Promise<FormDto> {
+    const isZendesk = await this.isZendeskEnabled(
+      form.organizationId,
+      form.formUrls ?? [],
+    )
+
+    console.log('Is Zendesk enabled:', isZendesk) // Debugging line
+
     const formKeys = [
       'id',
       'organizationId',
@@ -556,6 +580,7 @@ export class FormsService {
         sections: [],
         screens: [],
         fields: [],
+        isZendeskEnabled: isZendesk,
       },
     ) as FormDto
 
