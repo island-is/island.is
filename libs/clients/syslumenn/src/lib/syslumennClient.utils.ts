@@ -759,7 +759,15 @@ const mapInheritanceReportAssets = (
         })
         break
       case TegundAndlags.NUMBER_9:
-        depositsAndMoney.push(asset)
+        if (depositsAndMoney.length) {
+          depositsAndMoney[0].description += '. ' + asset.description
+          depositsAndMoney[0].propertyValuation = String(
+            parseInt(depositsAndMoney[0]?.propertyValuation ?? '0', 10) +
+              parseInt(asset.propertyValuation ?? '0', 10),
+          )
+        } else {
+          depositsAndMoney.push(asset)
+        }
         break
       case TegundAndlags.NUMBER_10:
         guns.push(asset)
