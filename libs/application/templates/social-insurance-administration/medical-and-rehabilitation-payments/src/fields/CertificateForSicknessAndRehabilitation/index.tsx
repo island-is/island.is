@@ -436,7 +436,6 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
     </Stack>
   )
 
-
   if (loading) {
     return (
       <SkeletonLoader repeat={2} space={2} height={150} borderRadius="large" />
