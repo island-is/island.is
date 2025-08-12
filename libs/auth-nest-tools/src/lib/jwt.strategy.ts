@@ -1,3 +1,4 @@
+import { createTraceSid } from '@island.is/shared/utils'
 import { ExtractJwt, Strategy } from 'passport-jwt'
 import { PassportStrategy } from '@nestjs/passport'
 import { Injectable } from '@nestjs/common'
@@ -52,10 +53,12 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       request.headers?.authorization ||
       (bodyAuthorization && `Bearer ${bodyAuthorization}`) ||
       ''
+    const traceSid = payload.sid ? await createTraceSid(payload.sid) : undefined
 
     return {
       sub: payload.sub,
       sid: payload.sid,
+      traceSid,
       nationalId: payload.nationalId,
       scope: this.parseScopes(payload.scope),
       client: payload.client_id,

@@ -33,12 +33,12 @@ export abstract class BaseProblemFilter implements ExceptionFilter {
   catch(error: Error, host: ArgumentsHost) {
     const problem = (error as ProblemError).problem || this.getProblem(error)
     const request = getRequest(host)
-    const authSid = request.auth?.sid
+    const traceSid = request.auth?.traceSid
 
     if (problem.status && problem.status >= 500) {
-      this.logger.error({ ...error, authSid })
+      this.logger.error(traceSid ? { ...error, traceSid } : error)
     } else if (this.options.logAllErrors) {
-      this.logger.info({ ...error, authSid })
+      this.logger.info(traceSid ? { ...error, traceSid } : error)
     }
 
     if ((host.getType() as string) === 'graphql') {

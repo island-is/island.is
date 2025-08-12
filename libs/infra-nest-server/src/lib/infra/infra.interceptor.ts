@@ -17,24 +17,30 @@ export class InfraInterceptor implements NestInterceptor {
   private readonly logger: Logger
 
   constructor(@Inject(LOGGER_PROVIDER) logger: Logger) {
-    this.logger = logger.child({ context: 'AuthInterceptor' })
+    this.logger = logger.child
+      ? logger.child({ context: 'InfraInterceptor' })
+      : logger
   }
 
   async intercept(executionContext: ExecutionContext, next: CallHandler) {
     const req = getRequest(executionContext)
-    const authSid = req.auth?.sid
+    const traceSid = req.auth?.traceSid
     const handlerClass = executionContext.getClass()
     const handlerFn = executionContext.getHandler()
     const handlerName = `${handlerClass.name}#${handlerFn.name}`
 
-    this.logger.info(`Request: ${req.originalUrl}`, {
-      authSid,
-      req: {
-        path: req.originalUrl,
-        userAgent: req.headers['user-agent'],
-      },
-      handlerName,
-    })
+    // Only log authenticated requests for now. This is to reduce redundant log
+    // noise from the bff and health endpoints.
+    if (traceSid) {
+      this.logger.info(`Request: ${req.originalUrl}`, {
+        traceSid,
+        req: {
+          path: req.originalUrl,
+          userAgent: req.headers['user-agent'],
+        },
+        handlerName,
+      })
+    }
 
     return from(
       tracer.trace(
@@ -42,17 +48,17 @@ export class InfraInterceptor implements NestInterceptor {
         {
           resource: handlerName,
           tags: {
-            authSid,
+            traceSid,
           },
         },
-        () => lastValueFrom(this.maybeWrapLoggingContext(next, authSid)),
+        () => lastValueFrom(this.maybeWrapLoggingContext(next, traceSid)),
       ),
     )
   }
 
-  maybeWrapLoggingContext(next: CallHandler, authSid?: string) {
-    if (authSid) {
-      return withLoggingContext({ authSid }, () => next.handle())
+  maybeWrapLoggingContext(next: CallHandler, traceSid?: string) {
+    if (traceSid) {
+      return withLoggingContext({ traceSid }, () => next.handle())
     } else {
       return next.handle()
     }

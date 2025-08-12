@@ -1,4 +1,4 @@
-import { IdTokenClaims } from '@island.is/shared/types'
+import { BffProfile } from '@island.is/shared/types'
 
 import { TokenResponse } from '../ids/ids.types'
 
@@ -11,7 +11,7 @@ export type CachedTokenResponse = Omit<
   /**
    * Decoded id token claims
    */
-  userProfile: IdTokenClaims
+  userProfile: BffProfile
 
   /**
    * Expiration time of the access token

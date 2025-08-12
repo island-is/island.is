@@ -316,13 +316,15 @@ export const ProfileForm = ({
                   <Problem size="small" />
                 )}
               </InputSection>
-              <InputSection
-                title={formatMessage(m.debugTitle)}
-                text={formatMessage(m.debugDescription)}
-                divider={false}
-              >
-                <Text variant="eyebrow">{userInfo.profile.sid}</Text>
-              </InputSection>
+              {userInfo.profile.traceSid && (
+                <InputSection
+                  title={formatMessage(m.debugTitle)}
+                  text={formatMessage(m.debugDescription)}
+                  divider={false}
+                >
+                  <Text variant="eyebrow">{userInfo.profile.traceSid}</Text>
+                </InputSection>
+              )}
             </>
           )}
           {showDropModal && onCloseOverlay && !internalLoading && (
