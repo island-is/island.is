@@ -1,14 +1,7 @@
 import { Base64 } from 'js-base64'
-import {
-  col,
-  fn,
-  Includeable,
-  literal,
-  Op,
-  Sequelize,
-  WhereOptions,
-} from 'sequelize'
+import { col, fn, Includeable, literal, Op, WhereOptions } from 'sequelize'
 import { Transaction } from 'sequelize/types'
+import { Sequelize } from 'sequelize-typescript'
 
 import {
   forwardRef,
@@ -22,6 +15,7 @@ import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import { getServiceStatusText } from '@island.is/judicial-system/formatters'
 import {
   Message,
   MessageService,
@@ -271,7 +265,7 @@ export class SubpoenaService {
         'SUBPOENA_SERVICE_STATUS',
         subpoena.case,
         false,
-        { Staða: Subpoena.serviceStatusText(update.serviceStatus) },
+        { Staða: getServiceStatusText(update.serviceStatus) },
       )
     }
 

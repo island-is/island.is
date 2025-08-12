@@ -46,7 +46,6 @@ import { FormCertificationTypeDto } from '../formCertificationTypes/models/dto/f
 import { OrganizationUrlDto } from '../organizationUrls/models/dto/organizationUrl.dto'
 import { OrganizationUrl } from '../organizationUrls/models/organizationUrl.model'
 import { FormUrl } from '../formUrls/models/formUrl.model'
-import { FormUrlDto } from '../formUrls/models/dto/formUrl.dto'
 import { FormStatus } from '@island.is/form-system/shared'
 import { Option } from '../../dataTypes/option.model'
 import { Op, UniqueConstraintError } from 'sequelize'
@@ -583,20 +582,8 @@ export class FormsService {
       )
     })
 
-    form.formUrls?.map(async (formUrl) => {
-      const organizationUrl = await this.organizationUrlModel.findByPk(
-        formUrl.organizationUrlId,
-      )
-
-      formDto.urls?.push({
-        id: formUrl.id,
-        organizationUrlId: organizationUrl?.id,
-        url: organizationUrl?.url,
-        isXroad: organizationUrl?.isXroad,
-        isTest: organizationUrl?.isTest,
-        type: organizationUrl?.type,
-        method: organizationUrl?.method,
-      } as FormUrlDto)
+    form.formUrls?.map((formUrl) => {
+      formDto.urls?.push(formUrl.organizationUrlId)
     })
 
     const sectionKeys = [

@@ -142,11 +142,21 @@ export enum DocumentTypeEnum {
 
 export type IncomePlanStatus = 'Accepted' | 'Cancelled' | 'InProgress'
 
+export interface ForeignPayment {
+  countryName: string
+  countryCode: string
+  foreignNationalId: string
+}
+
 export interface Occupation {
-  isSelfEmployed: boolean
+  isSelfEmployed?: boolean
   isStudying: boolean
+  educationalInstitution?: string
   isPartTimeEmployed: boolean
   calculatedRemunerationDate?: string
+  currentSemesterEcts?: string
+  receivesForeignPayments?: boolean
+  foreignPayments?: ForeignPayment[]
 }
 
 export interface EmployeeSickPay {
@@ -167,4 +177,17 @@ export interface Answer {
 export interface SelfAssessment {
   hadAssistance: boolean
   answers: Answer[]
+}
+
+export interface PreQuestionnaire {
+  highestEducation: string
+  currentEmploymentStatus: string // TODO: Smári needs to change to an array
+  currentEmploymentStatusExplanation?: string
+  lastJobTitle?: string
+  lastJobYear?: number
+  disabilityReason: string
+  hasParticipatedInRehabilitationBefore: boolean
+  rehabilitationDetails?: string
+  previousRehabilitationSuccessful?: boolean
+  additionalRehabilitationInformation?: string
 }

@@ -53,6 +53,7 @@ import {
   OverviewField,
   CopyLinkField,
   VehiclePermnoWithInfoField,
+  MaybeWithAnswersAndExternalData,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { Colors } from '@island.is/island-ui/theme'
@@ -596,6 +597,16 @@ export const buildFieldRequired = (
   return maybeRequired
 }
 
+export const buildFieldReadOnly = (
+  application: Application,
+  maybeReadOnly?: MaybeWithAnswersAndExternalData<boolean>,
+) => {
+  if (typeof maybeReadOnly === 'function') {
+    return maybeReadOnly(application.answers, application.externalData)
+  }
+  return maybeReadOnly
+}
+
 export const buildRedirectToServicePortalField = (data: {
   id: string
   title?: FormText
@@ -948,6 +959,10 @@ export const buildFieldsRepeaterField = (
     removeItemButtonText,
     addItemButtonText,
     saveItemButtonText,
+    hideAddButton,
+    hideRemoveButton,
+    displayTitleAsAccordion,
+    itemCondition,
     minRows,
     maxRows,
   } = data
@@ -965,6 +980,10 @@ export const buildFieldsRepeaterField = (
     removeItemButtonText,
     addItemButtonText,
     saveItemButtonText,
+    hideAddButton,
+    hideRemoveButton,
+    displayTitleAsAccordion,
+    itemCondition,
     minRows,
     maxRows,
   }
@@ -1198,6 +1217,7 @@ export const buildOverviewField = (
     loadItems,
     attachments,
     tableData,
+    loadTableData,
     bottomLine,
     hideIfEmpty,
     displayTitleAsAccordion,
@@ -1213,6 +1233,7 @@ export const buildOverviewField = (
     loadItems,
     attachments,
     tableData,
+    loadTableData,
     bottomLine,
     hideIfEmpty,
     displayTitleAsAccordion,

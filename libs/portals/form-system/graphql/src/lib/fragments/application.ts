@@ -19,6 +19,7 @@ export const ApplicationFragment = gql`
       ...Section
     }
     status
+    stopProgressOnValidatingScreen
     certificationTypes {
       id
       certificationTypeId
@@ -28,6 +29,7 @@ export const ApplicationFragment = gql`
     }
     modified
     submittedAt
+    completed
   }
   ${ApplicantTypeDtoFragment}
   ${LanguageFields}

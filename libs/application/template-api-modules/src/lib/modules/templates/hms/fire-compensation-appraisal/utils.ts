@@ -73,7 +73,7 @@ export const mapAnswersToApplicationDto = (
     const tegund = ending === 'pdf' ? 'application/pdf' : 'image/jpeg'
     return {
       flokkur: ending === 'pdf' ? 5 : 2,
-      heiti: file.key.replace(/^[^_]*_/, ''), // This is limited to varChar(100) in the HMS database but most opperating systems allow 256 characters j
+      heiti: file.key.replace(/^[^_]*_/, ''),
       dags: new Date(),
       tegund,
       fileID: hashToLength20(file.key.split('_')[0]),
@@ -134,7 +134,11 @@ export const mapAnswersToApplicationDto = (
         flokkur: 'Eign',
         heiti: 'Fasteignanumer',
         tegund: 'fastanúmer',
-        gildi: selectedRealEstate?.fasteignanumer?.replace(/\D/g, ''),
+        gildi:
+          selectedRealEstate?.notkunareiningar?.notkunareiningar?.[0]?.fasteignanumer?.replace(
+            /\D/g,
+            '',
+          ),
         guid: GUID,
       },
       {
