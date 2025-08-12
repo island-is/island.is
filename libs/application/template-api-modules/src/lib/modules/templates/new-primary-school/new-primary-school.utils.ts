@@ -77,7 +77,10 @@ export const transformApplicationToNewPrimarySchoolDTO = (
   const { primaryOrgId, childCitizenshipCode } = getApplicationExternalData(
     application.externalData,
   )
-  const selectedChild = getSelectedChild(application)
+  const selectedChild = getSelectedChild(
+    application.answers,
+    application.externalData,
+  )
 
   const agents: AgentInput[] = [
     ...guardians.map((guardian) => ({
@@ -116,23 +119,23 @@ export const transformApplicationToNewPrimarySchoolDTO = (
   const newPrimarySchoolDTO: ApplicationInput = {
     type: ApplicationInputTypeEnum.Registration,
     user: {
-      name: childInfo.name,
-      nationalId: childInfo.nationalId,
+      name: childInfo?.name || '',
+      nationalId: childInfo?.nationalId || '',
       nationality: childCitizenshipCode,
       gender: getGenderCode(selectedChild?.genderCode || ''),
-      ...(childInfo.usePronounAndPreferredName?.includes(YES) && {
-        preferredName: childInfo.preferredName,
-        pronouns: childInfo.pronouns,
+      ...(childInfo?.usePronounAndPreferredName?.includes(YES) && {
+        preferredName: childInfo?.preferredName,
+        pronouns: childInfo?.pronouns,
       }),
       domicile: {
-        address: childInfo.address.streetAddress,
-        postCode: childInfo.address.postalCode,
+        address: childInfo?.address?.streetAddress || '',
+        postCode: childInfo?.address?.postalCode || '',
       },
-      ...(childInfo.differentPlaceOfResidence === YES &&
-        childInfo.placeOfResidence && {
+      ...(childInfo?.differentPlaceOfResidence === YES &&
+        childInfo?.placeOfResidence && {
           residence: {
-            address: childInfo.placeOfResidence.streetAddress,
-            postCode: childInfo.placeOfResidence.postalCode,
+            address: childInfo?.placeOfResidence?.streetAddress,
+            postCode: childInfo?.placeOfResidence?.postalCode,
           },
         }),
     },
@@ -145,10 +148,10 @@ export const transformApplicationToNewPrimarySchoolDTO = (
       requestingMeeting: requestingMeeting === YES,
       ...(applicationType === ApplicationType.NEW_PRIMARY_SCHOOL
         ? {
-            expectedStartDate: new Date(expectedStartDate),
+            expectedStartDate: new Date(expectedStartDate || ''),
             ...(selectedSchoolType === SchoolType.INTERNATIONAL_SCHOOL &&
               temporaryStay === YES && {
-                expectedEndDate: new Date(expectedEndDate),
+                expectedEndDate: new Date(expectedEndDate || ''),
               }),
           }
         : {
@@ -158,8 +161,8 @@ export const transformApplicationToNewPrimarySchoolDTO = (
       ...(reasonForApplication ===
         ReasonForApplicationOptions.MOVING_MUNICIPALITY && {
         tempDomicile: {
-          address: reasonForApplicationStreetAddress,
-          postCode: reasonForApplicationPostalCode,
+          address: reasonForApplicationStreetAddress || '',
+          postCode: reasonForApplicationPostalCode || '',
         },
       }),
     },
@@ -208,7 +211,7 @@ export const transformApplicationToNewPrimarySchoolDTO = (
       signLanguage: signLanguage === YES,
       ...(languageEnvironment !== LanguageEnvironmentOptions.ONLY_ICELANDIC
         ? {
-            preferredLanguage,
+            preferredLanguage: preferredLanguage || '',
             languages: selectedLanguages.map((language) => language.code),
           }
         : {
