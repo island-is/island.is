@@ -19,6 +19,8 @@ import {
 } from '@island.is/application/core'
 import { assign } from 'xstate'
 import { SkatturApi, VehiclesApi } from '../dataProviders'
+import { AuthDelegationType } from '@island.is/shared/types'
+import { ApiScope } from '@island.is/auth/scopes'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -115,6 +117,15 @@ const template: ApplicationTemplate<
       },
     },
   },
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.ProcurationHolder,
+    },
+    {
+      type: AuthDelegationType.Custom,
+    },
+  ],
+  requiredScopes: [ApiScope.rsk],
   stateMachineOptions: {
     actions: {
       clearAssignees: assign((context) => ({
