@@ -79,14 +79,14 @@ export const livedAbroadSubSection = buildMultiField({
               }
 
               const dateStart = new Date(periodStart)
-                           const dateEnd = new Date(periodEnd)
+              const dateEnd = new Date(periodEnd)
 
-                           if (!dateStart || !dateEnd) {
+              if (!dateStart || !dateEnd) {
                 return activeField.periodStart
               }
 
               if (dateStart.getMonth() > dateEnd.getMonth()) {
-                             const newDate = addMonths(dateEnd, -1);
+                const newDate = addMonths(dateEnd, -1);
                 return format(newDate, 'yyyy-MM-dd');
               }
 
