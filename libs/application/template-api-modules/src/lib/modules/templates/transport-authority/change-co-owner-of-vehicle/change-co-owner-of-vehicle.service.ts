@@ -7,23 +7,11 @@ import {
   applicationCheck,
   ChangeCoOwnerOfVehicleAnswers,
 } from '@island.is/application/templates/transport-authority/change-co-owner-of-vehicle'
-import {
-  OwnerChangeValidation,
-  VehicleOwnerChangeClient,
-} from '@island.is/clients/transport-authority/vehicle-owner-change'
+import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority/vehicle-owner-change'
 import { VehicleOperatorsClient } from '@island.is/clients/transport-authority/vehicle-operators'
-import {
-  VehicleDebtStatus,
-  VehicleServiceFjsV1Client,
-} from '@island.is/clients/vehicle-service-fjs-v1'
-import {
-  CurrentVehiclesWithMilageAndNextInspDto,
-  VehicleSearchApi,
-} from '@island.is/clients/vehicles'
-import {
-  MileageReadingApi,
-  MileageReadingDto,
-} from '@island.is/clients/vehicles-mileage'
+import { VehicleServiceFjsV1Client } from '@island.is/clients/vehicle-service-fjs-v1'
+import { VehicleSearchApi } from '@island.is/clients/vehicles'
+import { MileageReadingApi } from '@island.is/clients/vehicles-mileage'
 import { EmailRecipient, EmailRole, RejectType } from './types'
 import {
   getAllRoles,
@@ -47,8 +35,9 @@ import {
 } from './smsGenerators'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { coreErrorMessages } from '@island.is/application/core'
+import { mapVehicle } from '../utils'
 
 @Injectable()
 export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
@@ -117,61 +106,26 @@ export class ChangeCoOwnerOfVehicleService extends BaseTemplateApiService {
         // Case: 20 >= count > 5
         // Display dropdown, validate vehicle when selected in dropdown
         if (totalRecords > 5) {
-          return this.mapVehicle(auth, vehicle, false)
+          return mapVehicle(auth, vehicle, false, {
+            vehicleOwnerChangeClient: this.vehicleOwnerChangeClient,
+            vehicleServiceFjsV1Client: this.vehicleServiceFjsV1Client,
+            mileageReadingApi: this.mileageReadingApi,
+          })
         }
 
         // Case: count <= 5
         // Display radio buttons, validate all vehicles now
-        return this.mapVehicle(auth, vehicle, true)
+        return mapVehicle(auth, vehicle, true, {
+          vehicleOwnerChangeClient: this.vehicleOwnerChangeClient,
+          vehicleServiceFjsV1Client: this.vehicleServiceFjsV1Client,
+          mileageReadingApi: this.mileageReadingApi,
+        })
       }),
     )
 
     return {
       totalRecords: totalRecords,
       vehicles: vehicles,
-    }
-  }
-
-  private async mapVehicle(
-    auth: User,
-    vehicle: CurrentVehiclesWithMilageAndNextInspDto,
-    fetchExtraData: boolean,
-  ) {
-    let validation: OwnerChangeValidation | undefined
-    let debtStatus: VehicleDebtStatus | undefined
-    let mileageReadings: MileageReadingDto[] | undefined
-
-    if (fetchExtraData) {
-      // Get debt status
-      debtStatus = await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(
-        auth,
-        vehicle.permno || '',
-      )
-
-      // Get owner change validation
-      validation =
-        await this.vehicleOwnerChangeClient.validateVehicleForOwnerChange(
-          auth,
-          vehicle.permno || '',
-        )
-
-      // Get mileage reading
-      mileageReadings = await this.mileageReadingApiWithAuth(
-        auth,
-      ).getMileageReading({ permno: vehicle.permno || '' })
-    }
-
-    return {
-      permno: vehicle.permno || undefined,
-      make: vehicle.make || undefined,
-      color: vehicle.colorName || undefined,
-      role: vehicle.role || undefined,
-      requireMileage: vehicle.requiresMileageRegistration,
-      mileageReading: mileageReadings?.[0]?.mileage?.toString() ?? '',
-      isDebtLess: debtStatus?.isDebtLess,
-      validationErrorMessages: validation?.hasError
-        ? validation.errorMessages
-        : null,
     }
   }
 
