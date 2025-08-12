@@ -298,7 +298,15 @@ export class BackendService extends DataSource<{ req: Request }> {
     query: SubpoenaStatisticsInput,
   ): Promise<SubpoenaStatistics> {
     const searchParams = this.serializeNestedObject(query)
-    return this.get(`cases/subpoenas/statistics?${searchParams.toString()}`)
+    return this.get(`cases/subpoenas/statistics?${searchParams}`)
+  }
+
+  // TODO: STATS
+  getPreprocessedDataCsvSignedUrl(
+    query: RequestStatisticsInput,
+  ): Promise<SignedUrl> {
+    const searchParams = this.serializeNestedObject(query)
+    return this.get(`cases/requests/statistics/export-csv?${searchParams}`)
   }
 
   getConnectedCases(id: string): Promise<Case[]> {

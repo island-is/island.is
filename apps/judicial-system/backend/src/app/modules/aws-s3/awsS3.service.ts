@@ -21,9 +21,13 @@ const formatGeneratedRequestCaseKey = (key: string) =>
   `${generatedRequestPrefix}${key}`
 const formatConfirmedIndictmentCaseKey = (key: string) =>
   key.replace(/\/([^/]*)$/, '/confirmed/$1')
+const formatS3StatisticsKey = (key: string) => `csv/${key}`
 const formatS3RequestCaseKey = (key: string) => `${requestPrefix}${key}`
 const formatS3IndictmentCaseKey = (key: string) => `${indictmentPrefix}${key}`
-const formatS3Key = (caseType: CaseType, key: string) => {
+const formatS3Key = (caseType: CaseType | 'statistics', key: string) => {
+  if (caseType === 'statistics') {
+    return formatS3StatisticsKey(key)
+  }
   if (isRequestCase(caseType)) {
     return formatS3RequestCaseKey(key)
   }
@@ -136,7 +140,7 @@ export class AwsS3Service {
   }
 
   getSignedUrl(
-    caseType: CaseType,
+    caseType: CaseType | 'statistics',
     key?: string,
     timeToLive?: number,
     useFreshSession = false,

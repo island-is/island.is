@@ -12,6 +12,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useRequestCaseStatisticsQuery } from '../getRequestCaseStatistics.generated'
+import { useGetPreprocessedDataUrlQuery } from '../preprocessedDataUrl.generated'
 import { Filters } from './shared/StatisticFilter'
 import { StatisticHeader } from './shared/StatisticHeader'
 import { StatisticsLayout } from './shared/StatisticLayout'
@@ -117,6 +118,14 @@ const RequestStatisticsBody = ({ minDate }: { minDate?: Date }) => {
 }
 
 const RequestStatistics = () => {
+  // TODO: temp
+  const { data: url } = useGetPreprocessedDataUrlQuery({
+    variables: {
+      input: {},
+    },
+    fetchPolicy: 'cache-and-network',
+  })
+  console.log({ url })
   // We extract the initial call to fetch the request statistics data to a specific parent component
   // to fetch defined statistical constraints (minDate) once. The child component is
   // currently re-rendered on each filter change.

@@ -1,9 +1,9 @@
+import stringify from 'csv-stringify'
 import isWithinInterval from 'date-fns/isWithinInterval'
 import { col, fn, Includeable, literal, Op, WhereOptions } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import { Inject, Injectable } from '@nestjs/common'
-import { ConfigType } from '@nestjs/config'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
 import { IntlService } from '@island.is/cms-translations'
@@ -453,15 +453,30 @@ export class StatisticsService {
   }
 
   // shared event model structure + json additional data for R-cases?
-  extractTransformLoadRvgDataToS3() {
-
+  extractTransformLoadRvgDataToS3(): Promise<string> {
     const data = [
       { test: '123', test2: '123' },
       { test: 'mja', test2: 'mja' },
     ]
+    const columns = ['test', 'test2']
 
-    const csv = json2csv(data)
+    stringify(
+      data,
+      { header: true, columns: columns },
+      async (error, csvOutput) => {
+        if (error) {
+          this.logger.error('Failed to convert data to csv file')
+          return
+        }
+        const key = 'test'
+        try {
+          this.awsS3Service.uploadCsvToS3(key, csvOutput)
+        } catch (error) {
+          this.logger.error(`Failed to upload csv ${key} to AWS S3`, { error })
+        }
+      },
+    )
 
-
+    return this.awsS3Service.getSignedUrl('statistics', 'test', 60 * 60)
   }
 }
