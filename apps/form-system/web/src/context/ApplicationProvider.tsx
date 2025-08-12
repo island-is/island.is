@@ -51,7 +51,7 @@ export const ApplicationProvider: React.FC<{
 
   useEffect(() => {
     if (process.env.NODE_ENV === 'development') {
-      console.log('Application state changed:', state.application)
+      console.log('Application state changed:', state)
     }
   }, [state.application])
   return (

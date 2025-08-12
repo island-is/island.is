@@ -14,7 +14,7 @@ export const Screen = () => {
   const { lang } = useLocale()
   const { currentSection, currentScreen } = state
   const screenTitle = currentScreen
-    ? state.screens?.[currentScreen.index]?.name?.[lang]
+    ? currentScreen.data?.name?.[lang]
     : state.sections?.[currentSection.index]?.name?.[lang]
   const currentSectionType = state.sections?.[currentSection.index]?.sectionType
   const [externalDataAgreement, setExternalDataAgreement] = useState(
