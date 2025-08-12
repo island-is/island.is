@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 
-import { Box } from '@island.is/island-ui/core'
+import { Box, Button } from '@island.is/island-ui/core'
 import {
   InfoCard,
   LabelValue,
@@ -91,6 +91,13 @@ const RequestStatisticsBody = ({ minDate }: { minDate?: Date }) => {
     fetchPolicy: 'cache-and-network',
   })
 
+  const { data: preprocessedData } = useGetPreprocessedDataUrlQuery({
+    variables: {
+      input: {},
+    },
+    fetchPolicy: 'cache-and-network',
+  })
+
   useEffect(() => {
     if (data?.requestCaseStatistics) {
       setStats(data.requestCaseStatistics)
@@ -112,20 +119,30 @@ const RequestStatisticsBody = ({ minDate }: { minDate?: Date }) => {
           minDate={minDate}
         />
         <Statistics stats={stats} loading={loading} />
+        <Box display="flex" justifyContent="flexEnd" marginTop={2}>
+          <a
+            href={preprocessedData?.getPreprocessedDataCsvSignedUrl?.url}
+            target="_blank"
+            rel="noopener noreferrer"
+            download
+          >
+            <Button
+              variant="ghost"
+              size="small"
+              icon="download"
+              iconType="outline"
+              disabled={!preprocessedData}
+            >
+              Sækja gögn
+            </Button>
+          </a>
+        </Box>
       </Box>
     </StatisticPageLayout>
   )
 }
 
 const RequestStatistics = () => {
-  // TODO: temp
-  const { data: url } = useGetPreprocessedDataUrlQuery({
-    variables: {
-      input: {},
-    },
-    fetchPolicy: 'cache-and-network',
-  })
-  console.log({ url })
   // We extract the initial call to fetch the request statistics data to a specific parent component
   // to fetch defined statistical constraints (minDate) once. The child component is
   // currently re-rendered on each filter change.

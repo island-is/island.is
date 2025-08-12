@@ -5,6 +5,7 @@ import { Sequelize } from 'sequelize-typescript'
 
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
+import { Test } from '@nestjs/testing'
 
 import { IntlService } from '@island.is/cms-translations'
 import { SigningService } from '@island.is/dokobit-signing'
@@ -453,7 +454,7 @@ export class StatisticsService {
   }
 
   // shared event model structure + json additional data for R-cases?
-  extractTransformLoadRvgDataToS3(): Promise<string> {
+  async extractTransformLoadRvgDataToS3(): Promise<{ url: string }> {
     const data = [
       { test: '123', test2: '123' },
       { test: 'mja', test2: 'mja' },
@@ -477,6 +478,11 @@ export class StatisticsService {
       },
     )
 
-    return this.awsS3Service.getSignedUrl('statistics', 'test', 60 * 60)
+    const url = await this.awsS3Service.getSignedUrl(
+      'statistics',
+      'test',
+      60 * 60,
+    )
+    return { url }
   }
 }

@@ -123,11 +123,11 @@ export class StatisticsController {
     type: String,
     description: 'Export transformed request case data',
   })
-  async exportRequestStatistics(
+  exportRequestStatistics(
     @Query('query') query?: RequestStatisticsDto,
-  ): Promise<string> {
+  ): Promise<{ url: string }> {
     this.logger.debug('Create and export csv file for data analytics')
 
-    return await this.statisticService.extractTransformLoadRvgDataToS3()
+    return this.statisticService.extractTransformLoadRvgDataToS3()
   }
 }
