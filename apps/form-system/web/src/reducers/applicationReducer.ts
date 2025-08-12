@@ -26,6 +26,7 @@ export const initialState = {
   currentSection: { data: {} as FormSystemSection, index: 0 },
   currentScreen: undefined,
   errors: [],
+  showSummary: false,
 }
 
 export const initialReducer = (state: ApplicationState): ApplicationState => {
@@ -125,6 +126,12 @@ export const applicationReducer = (
         nextSectionIndex,
         currentScreenIndex,
       } = getIncrementVariables(state)
+      if (nextSectionIndex === maxSectionIndex + 1) {
+        return {
+          ...state,
+          showSummary: true,
+        }
+      }
       if (hasScreens(currentSectionData)) {
         return incrementWithScreens(
           state,
@@ -139,7 +146,12 @@ export const applicationReducer = (
     case 'DECREMENT': {
       const { currentSectionData, currentSectionIndex, currentScreenIndex } =
         getDecrementVariables(state)
-
+      if (state.showSummary) {
+        return {
+          ...state,
+          showSummary: false,
+        }
+      }
       if (hasScreens(currentSectionData)) {
         return decrementWithScreens(
           state,

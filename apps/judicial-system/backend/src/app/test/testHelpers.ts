@@ -6,16 +6,24 @@ import { RolesRule } from '@island.is/judicial-system/auth'
 export const verifyGuards = (
   controller: object,
   methodName: string | undefined,
-  expectedGuards: Type<CanActivate>[],
+  expectedGuards: Type<CanActivate>[], // verify defined guards and order
+  expectedGuardProps?: { guard: Type<CanActivate>; prop: any }[], // verify specific guard properties
 ): void => {
   const targetName = (controller as any).name ?? controller.constructor.name
   const description = methodName
     ? `${targetName}.${methodName}() guards`
     : `${targetName} (class-level) guards`
 
-  const guards: Array<new () => CanActivate> = Reflect.getMetadata(
-    '__guards__',
-    methodName ? (controller as any).prototype[methodName] : controller,
+  const guards: Array<new () => CanActivate> =
+    Reflect.getMetadata(
+      '__guards__',
+      methodName ? (controller as any).prototype[methodName] : controller,
+    ) ?? []
+
+  const guardInstances = guards.map((g) =>
+    typeof g === 'function' && (g as any).prototype
+      ? new (g as new () => CanActivate)()
+      : (g as unknown as CanActivate),
   )
 
   describe(description, () => {
@@ -23,19 +31,39 @@ export const verifyGuards = (
       expect(guards).toHaveLength(expectedGuards.length)
     })
 
-    expectedGuards.forEach((ExpectedGuard, index) => {
-      describe(`${ExpectedGuard.name}`, () => {
-        let guard: CanActivate
+    expectedGuards.forEach((expectedGuard, index) => {
+      describe(`${expectedGuard.name}`, () => {
+        // eslint-disable-next-line @typescript-eslint/ban-types
+        let guard: CanActivate | Function
 
         beforeEach(() => {
-          guard = new guards[index]()
+          const g = guards[index]
+          if (typeof g === 'function' && g.prototype) {
+            guard = new guards[index]()
+          } else {
+            guard = g
+          }
         })
 
         it(`should be guard at position ${index + 1}`, () => {
-          expect(guard).toBeInstanceOf(ExpectedGuard)
+          expect(guard).toBeInstanceOf(expectedGuard)
         })
       })
     })
+
+    expectedGuardProps?.forEach(
+      ({ guard: expectedGuard, prop: expectedProp }) => {
+        describe(`${expectedGuard.name}`, () => {
+          const targetGuard = guardInstances.find(
+            (g) => g instanceof expectedGuard,
+          )
+          it(`should include guard properties`, () => {
+            expect(targetGuard).toBeDefined()
+            expect(targetGuard).toMatchObject(expectedProp)
+          })
+        })
+      },
+    )
   })
 }
 
