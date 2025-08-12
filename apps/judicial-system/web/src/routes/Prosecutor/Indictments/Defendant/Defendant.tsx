@@ -1,4 +1,4 @@
-import { useCallback, useContext, useMemo, useRef } from 'react'
+import { useCallback, useContext, useEffect, useMemo, useRef } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
@@ -101,6 +101,8 @@ const Defendant = () => {
   const { updateIndictmentCount, deleteIndictmentCount } = useIndictmentCounts()
 
   const policeCaseIds = useRef<{ [key: string]: string }>({})
+  const childRefs = useRef<Record<string, HTMLDivElement | null>>({})
+  const scrollToId = useRef<string | null>(null)
 
   const gender = useMemo(
     () => getDefaultDefendantGender(workingCase.defendants),
@@ -302,6 +304,12 @@ const Defendant = () => {
       crimeScene?: CrimeScene
     },
   ) => {
+    const a = Object.keys(policeCaseIds.current).find((key) => {
+      return key === policeCases[index ?? 0].number
+    })
+
+    scrollToId.current = a ?? null
+
     const [policeCaseNumbers, indictmentSubtypes, crimeScenes] =
       getPoliceCasesForUpdate(getPoliceCases(workingCase), index, update)
 
@@ -318,6 +326,17 @@ const Defendant = () => {
       setWorkingCase,
     )
   }
+
+  useEffect(() => {
+    if (scrollToId.current !== null) {
+      const el = childRefs.current[scrollToId.current]
+      if (el) {
+        el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+      scrollToId.current = null
+    }
+    console.log(policeCases)
+  }, [policeCases])
 
   const handleUpdateIndictmentCount = (
     policeCaseNumber: string,
@@ -544,6 +563,9 @@ const Defendant = () => {
                 <Box component="section" marginBottom={3}>
                   {workingCase.policeCaseNumbers && (
                     <PoliceCaseInfo
+                      ref={(el) => {
+                        childRefs.current[policeCase.number] = el
+                      }}
                       index={index}
                       policeCaseNumbers={workingCase.policeCaseNumbers}
                       policeCaseNumberPrefix={
