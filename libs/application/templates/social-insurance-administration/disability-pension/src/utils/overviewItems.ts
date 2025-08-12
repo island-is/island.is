@@ -10,7 +10,7 @@ import kennitala from 'kennitala'
 import { TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { getTaxLevelOption } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { disabilityPensionFormMessage } from '../lib/messages'
-import { EmploymentEnum, SectionRouteEnum } from '../types'
+import { SectionRouteEnum } from '../types'
 
 export const aboutApplicantItems = (
   answers: FormValue,

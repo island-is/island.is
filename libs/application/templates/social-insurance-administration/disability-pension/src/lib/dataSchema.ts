@@ -16,7 +16,6 @@ import { applicantInformationSchema } from '@island.is/application/ui-forms'
 import { z } from 'zod'
 import {
   ChildrenCountEnum,
-  EmploymentEnum,
   EmploymentImportanceEnum,
   EmploymentStatusEnum,
   IcelandicCapabilityEnum,
@@ -64,9 +63,11 @@ export const dataSchema = z.object({
   disabilityAppliedBefore: z
     .object({
       appliedBefore: z.enum([YES, NO]).optional(),
-      fileUpload: z.array(fileSchema).optional(),
-    })
-    .optional(),
+    }),
+  disabilityPeriod: z.object({
+    year: z.string(),
+    month: z.string(),
+  }),
   // TODO: Add validation for disability period
   livedAbroad: livedAbroadSchema.refine(
     ({ list, hasLivedAbroad }) => {
@@ -82,12 +83,12 @@ export const dataSchema = z.object({
   ),
   paidWork: z
     .object({
-      inPaidWork: z.nativeEnum(EmploymentEnum),
+      inPaidWork: z.enum([YES, NO]),
       continuedWork: z.enum([YES, NO]).optional(),
-    })
+      })
     .refine(
       ({ inPaidWork, continuedWork }) => {
-        if (inPaidWork === EmploymentEnum.YES) {
+        if (inPaidWork === NO) {
           return continuedWork !== undefined
         }
         return true

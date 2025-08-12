@@ -1,9 +1,3 @@
-export enum EmploymentEnum {
-  YES = 'YES',
-  NO = 'NO',
-  DONT_KNOW = 'DONT_KNOW',
-}
-
 export enum MaritalStatusEnum {
   SINGLE = 'SINGLE',
   IN_RELATIONSHIP = 'IN_RELATIONSHIP',

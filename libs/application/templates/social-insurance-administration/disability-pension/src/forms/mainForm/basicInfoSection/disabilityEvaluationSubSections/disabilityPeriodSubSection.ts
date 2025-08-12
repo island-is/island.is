@@ -21,7 +21,6 @@ export const disabilityPeriodFields = buildMultiField({
       title: disabilityPensionFormMessage.shared.year,
       width: 'half',
       placeholder: disabilityPensionFormMessage.shared.chooseYear,
-      required: true,
       options: () => {
         //TODO: Validate that the user is not selecting more than two years (calculate months as well)
         const years = getYears(2)
@@ -35,7 +34,6 @@ export const disabilityPeriodFields = buildMultiField({
       id: `${SectionRouteEnum.DISABILITY_PERIOD}.month`,
       title: disabilityPensionFormMessage.shared.month,
       width: 'half',
-      required: true,
       placeholder: disabilityPensionFormMessage.shared.chooseMonth,
       options: () => {
         const months = getMonths()
