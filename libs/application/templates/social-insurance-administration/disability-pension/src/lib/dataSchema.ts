@@ -3,6 +3,7 @@ import {
   BankAccountType,
   INCOME,
   ISK,
+  OptionsValueEnum,
   RatioType,
   TaxLevelOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
@@ -163,8 +164,8 @@ export const dataSchema = z.object({
   backgroundInfoPreviousEmployment: z
     .object({
       hasEmployment: z.enum([YES, NO]),
-      when: z.string().optional(),
-      field: z.string().optional(),
+      when: z.string().nullable().optional(),
+      field: z.string().nullable().optional(),
     })
     .refine(
       ({ hasEmployment, when }) => {
@@ -413,15 +414,14 @@ export const dataSchema = z.object({
   selfEvaluation: z.object({
     assistance: z.enum([YES, NO]),
   }),
-  // capabilityImpairment: z.object({
-  //   questionAnswers: z.array(
-  //     z.object({
-  //       id: z.string(),
-  //       title: z.string(),
-  //       answer: z.nativeEnum(OptionsValueEnum),
-  //     }),
-  //   ),
-  // }), // TODO: FIX
+  capabilityImpairment: z.object({
+    questionAnswers: z.array(
+      z.object({
+        id: z.string().optional(),
+        answer: z.nativeEnum(OptionsValueEnum).optional(),
+      }),
+    ).optional().nullable(),
+  })
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

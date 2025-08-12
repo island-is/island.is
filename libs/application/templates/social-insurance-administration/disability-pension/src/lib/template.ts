@@ -190,7 +190,6 @@ const template: ApplicationTemplate<
         const { answers } = application
         const incomePlan =
           getValueViaPath<IncomePlanRow[]>(answers, 'incomePlan') ?? []
-        console.log(incomePlan)
         incomePlan?.forEach((income, index) => {
           if (
             (income.income === RatioType.MONTHLY &&

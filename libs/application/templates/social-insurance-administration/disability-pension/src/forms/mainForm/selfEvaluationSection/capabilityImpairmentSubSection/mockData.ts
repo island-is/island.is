@@ -1,12 +1,4 @@
-export enum OptionsValueEnum {
-  NONE = 'NONE',
-  LITTLE = 'LITTLE',
-  MODERATE = 'MODERATE',
-  SEVERE = 'SEVERE',
-  EXTREME = 'EXTREME',
-  NOT_APPLICABLE = 'NOT_APPLICABLE',
-  REFUSE_TO_ANSWER = 'REFUSE_TO_ANSWER',
-}
+import { OptionsValueEnum } from "@island.is/application/templates/social-insurance-administration-core/lib/constants"
 
 type QuestionOption = {
   title: string
