@@ -50,6 +50,7 @@ import { Offense } from '../indictment-count/models/offense.model'
 import { Institution } from '../institution'
 import { Subpoena } from '../subpoena'
 import { User } from '../user'
+import { Verdict } from '../verdict/models/verdict.model'
 import { Victim } from '../victim'
 import { Case } from './models/case.model'
 import { CaseString } from './models/caseString.model'
@@ -195,11 +196,15 @@ export const include: Includeable[] = [
         separate: true,
       },
       {
+        model: Verdict,
+        as: 'verdict',
+        required: false,
+      },
+      {
         model: DefendantEventLog,
         as: 'eventLogs',
         required: false,
         where: { eventType: defendantEventTypes },
-        order: [['created', 'DESC']],
         separate: true,
       },
     ],
@@ -272,7 +277,6 @@ export const include: Includeable[] = [
     as: 'eventLogs',
     required: false,
     where: { eventType: eventTypes },
-    order: [['created', 'DESC']],
     separate: true,
   },
   {
@@ -636,6 +640,7 @@ export class LimitedAccessCaseService {
           filesToZip,
         ),
       )
+
       if (!theCase.isCompletedWithoutRuling) {
         promises.push(
           this.tryAddGeneratedPdfToFilesToZip(

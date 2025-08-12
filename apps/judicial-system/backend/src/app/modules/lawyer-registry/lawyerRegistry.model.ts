@@ -50,4 +50,8 @@ export class LawyerRegistry extends Model {
   @Column({ type: DataType.STRING, allowNull: true })
   @ApiPropertyOptional({ type: String })
   practice?: string
+
+  @Column({ type: DataType.BOOLEAN, allowNull: true })
+  @ApiPropertyOptional({ type: Boolean })
+  isLitigator?: boolean
 }

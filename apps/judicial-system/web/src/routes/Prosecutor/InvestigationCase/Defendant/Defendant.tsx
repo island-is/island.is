@@ -19,6 +19,7 @@ import {
   PageHeader,
   PageLayout,
   PageTitle,
+  ProsecutorCaseInfo,
   SectionHeading,
   VictimInfo,
 } from '@island.is/judicial-system-web/src/components'
@@ -164,7 +165,11 @@ const Defendant = () => {
       <FormContentContainer>
         <Box marginBottom={10}>
           <PageTitle>{formatMessage(m.heading)}</PageTitle>
-
+          <ProsecutorCaseInfo
+            workingCase={workingCase}
+            hideDefendants
+            hideCourt
+          />
           <Box component="section" marginBottom={5}>
             <SectionHeading title="Varnaraðili" />
             <AnimatePresence>
