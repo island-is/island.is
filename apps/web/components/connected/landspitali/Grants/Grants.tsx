@@ -182,7 +182,7 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
       const response = await createDirectGrantPaymentUrl({
         variables: {
           input: {
-            grant: data.grant,
+            grantChargeItemCode: data.grant,
             project: data.project,
             payerAddress: data.senderAddress,
             payerGrantExplanation: data.senderGrantExplanation,

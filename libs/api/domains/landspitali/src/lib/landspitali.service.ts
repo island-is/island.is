@@ -11,6 +11,10 @@ import { CreateDirectGrantPaymentUrlResponse } from './dto/createDirectGrantPaym
 import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
 import { Catalog } from './dto/catalog.response'
 import { LandspitaliApiModuleConfig } from './landspitali.config'
+import {
+  DirectGrantPaymentFlowMetadata,
+  MemorialCardPaymentFlowMetadata,
+} from './types'
 
 // eslint-disable-next-line local-rules/disallow-kennitalas
 const LANDSPITALI_NATIONAL_ID = '5003002130'
@@ -47,7 +51,7 @@ export class LandspitaliService {
           charges: [
             {
               price: input.amountISK,
-              chargeItemCode: input.chargeItemCode,
+              chargeItemCode: input.fundChargeItemCode,
               chargeType: 'memorialCard', // TODO: What is a charge type?
               quantity: 1,
             },
@@ -107,8 +111,8 @@ export class LandspitaliService {
           // TODO: Find out just how much data should be sent to Zendesk
           metadata: {
             ...input,
-            typeOfPayment: 'memorialCard',
-          },
+            landspitaliType: 'memorialCard',
+          } as MemorialCardPaymentFlowMetadata,
         },
       })
 
@@ -131,7 +135,7 @@ export class LandspitaliService {
           charges: [
             {
               price: input.amountISK,
-              chargeItemCode: input.grant,
+              chargeItemCode: input.grantChargeItemCode,
               chargeType: 'directGrant', // TODO: What is a charge type?
               quantity: 1,
             },
@@ -175,8 +179,8 @@ export class LandspitaliService {
           // TODO: Find out just how much data should be sent to Zendesk
           metadata: {
             ...input,
-            typeOfPayment: 'directGrant',
-          },
+            landspitaliType: 'directGrant',
+          } as DirectGrantPaymentFlowMetadata,
         },
       })
 

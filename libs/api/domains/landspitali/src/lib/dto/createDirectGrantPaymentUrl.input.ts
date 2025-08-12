@@ -28,7 +28,7 @@ export class CreateDirectGrantPaymentUrlInput {
   payerGrantExplanation!: string
 
   @Field(() => String)
-  grant!: string
+  grantChargeItemCode!: string
 
   @Field(() => String)
   project!: string

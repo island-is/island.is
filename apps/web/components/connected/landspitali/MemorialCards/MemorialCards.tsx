@@ -267,7 +267,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
                   variables: {
                     input: {
                       amountISK: parseInt(amountISKWithoutDots),
-                      chargeItemCode: data.fund,
+                      fundChargeItemCode: data.fund,
                       payerAddress: data.senderAddress,
                       payerName: data.senderName,
                       payerEmail: data.senderEmail,
