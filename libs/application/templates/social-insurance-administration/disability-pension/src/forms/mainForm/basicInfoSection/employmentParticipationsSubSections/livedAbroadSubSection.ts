@@ -62,18 +62,11 @@ export const livedAbroadSubSection = buildMultiField({
         },
         //TODO: ONly month
         periodStart: {
-          component: 'select',
+          component: 'date',
           label: disabilityPensionFormMessage.employmentParticipation.periodStart,
           placeholder: disabilityPensionFormMessage.employmentParticipation.periodStartPlaceholder,
           width: 'half',
           displayInTable: false,
-          options: () => {
-            const months = getMonths()
-            return months.map((month, i) => ({
-              value: i.toString(),
-              label: month,
-            }))
-          },
           updateValueObj: {
             valueModifier: (_,  activeField) => {
               if (!activeField) {
@@ -85,17 +78,15 @@ export const livedAbroadSubSection = buildMultiField({
                 return activeField.periodStart
               }
 
-              const dateStart = Number.parseInt(periodStart) || -1;
-              const dateEnd = Number.parseInt(periodEnd) || -1;
+              const dateStart = new Date(periodStart)
+                           const dateEnd = new Date(periodEnd)
 
-              if (!dateEnd || !dateStart || dateEnd < 0 || dateStart < 0) {
+                           if (!dateStart || !dateEnd) {
                 return activeField.periodStart
               }
 
-              const months = getMonths()
-
-              if (dateStart > dateEnd) {
-                const newDate = months[dateEnd -1]
+              if (dateStart.getMonth() > dateEnd.getMonth()) {
+                             const newDate = addMonths(dateEnd, -1);
                 return format(newDate, 'yyyy-MM-dd');
               }
 
