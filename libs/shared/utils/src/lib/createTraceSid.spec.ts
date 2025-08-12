@@ -15,9 +15,7 @@ describe('createTraceSid', () => {
   it('uses the provided hash function and formats the result into 4-4-4 hex groups', async () => {
     // Arrange
     // Dummy async hash: returns a predictable hex string (>= 12 chars)
-    const dummyHash = jest.fn(
-      async (data) => '00112233445566778899aabbccddeeff',
-    )
+    const dummyHash = jest.fn(async () => '00112233445566778899aabbccddeeff')
     const sid = 'session-123'
 
     // Act
