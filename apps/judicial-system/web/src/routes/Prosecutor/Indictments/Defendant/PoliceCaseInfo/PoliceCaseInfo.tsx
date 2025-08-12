@@ -138,13 +138,13 @@ export const PoliceCaseInfo = forwardRef<HTMLDivElement, Props>(
         index !== indexDate.index &&
         crimeScene?.date?.getTime() !== indexDate.date?.getTime()
       ) {
-        // Our position in the list has changed because we changed the crime scene date
-        const dateElement = document.getElementById(crimeSceneDateId)
+        // // Our position in the list has changed because we changed the crime scene date
+        // const dateElement = document.getElementById(crimeSceneDateId)
 
-        // Make sure the date element is visible
-        if (dateElement && !isPartiallyVisible(dateElement)) {
-          dateElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
-        }
+        // // Make sure the date element is visible
+        // if (dateElement && !isPartiallyVisible(dateElement)) {
+        //   dateElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+        // }
 
         setIndexDate({ index, date: crimeScene?.date })
       }

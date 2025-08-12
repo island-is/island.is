@@ -304,19 +304,25 @@ const Defendant = () => {
       crimeScene?: CrimeScene
     },
   ) => {
-    const a = Object.keys(policeCaseIds.current).find((key) => {
-      return key === policeCases[index ?? 0].number
-    })
-
-    if (
-      update?.crimeScene?.date?.getDate() !==
-      policeCases[index ?? 0].date?.getDate()
-    ) {
-      scrollToId.current = a ?? null
-    }
-
     const [policeCaseNumbers, indictmentSubtypes, crimeScenes] =
       getPoliceCasesForUpdate(getPoliceCases(workingCase), index, update)
+
+    console.log(index, update?.crimeScene?.date, policeCases)
+
+    // Finding the police case number to scroll to
+    if (index && update?.crimeScene?.date) {
+      const policeCaseNumber =
+        Object.keys(policeCaseIds.current).find(
+          (key) => key === policeCases[index].number,
+        ) || null
+      console.log(
+        update?.crimeScene?.date.getTime(),
+        policeCases[index].date?.getTime(),
+        policeCaseNumber,
+      )
+
+      scrollToId.current = policeCaseNumber
+    }
 
     setAndSendCaseToServer(
       [
@@ -331,16 +337,6 @@ const Defendant = () => {
       setWorkingCase,
     )
   }
-
-  useEffect(() => {
-    if (scrollToId.current !== null) {
-      const el = childRefs.current[scrollToId.current]
-      if (el) {
-        el.scrollIntoView({ behavior: 'smooth', block: 'center' })
-      }
-      scrollToId.current = null
-    }
-  }, [policeCases])
 
   const handleUpdateIndictmentCount = (
     policeCaseNumber: string,
@@ -521,6 +517,23 @@ const Defendant = () => {
       ],
     }))
   }
+
+  // When dates in police cases are updated, we scroll to the updated police case.
+  // This is done because the police case list is sorted by date,
+  // and the updated police case might have moved in the list.
+  useEffect(() => {
+    if (scrollToId.current === null) {
+      return
+    }
+
+    const el = childRefs.current[scrollToId.current]
+
+    if (el) {
+      el.scrollIntoView({ behavior: 'smooth', block: 'center' })
+    }
+
+    scrollToId.current = null
+  }, [policeCases])
 
   const stepIsValid = isDefendantStepValidIndictments(workingCase)
 
