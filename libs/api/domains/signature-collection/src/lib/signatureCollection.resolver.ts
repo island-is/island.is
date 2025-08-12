@@ -57,17 +57,6 @@ export class SignatureCollectionResolver {
   }
 
   @BypassAuth()
-  @Query(() => [SignatureCollection])
-  async signatureCollectionCurrent(
-    @Args('input')
-    input: SignatureCollectionBaseInput,
-  ): Promise<SignatureCollection[]> {
-    return this.signatureCollectionService.currentCollection(
-      input.collectionType,
-    )
-  }
-
-  @BypassAuth()
   @Query(() => SignatureCollection)
   async signatureCollectionLatestForType(
     @Args('input') input: SignatureCollectionBaseInput,

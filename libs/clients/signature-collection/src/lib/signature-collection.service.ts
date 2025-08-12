@@ -46,15 +46,6 @@ export class SignatureCollectionClientService {
     return api.withMiddleware(new AuthMiddleware(auth)) as T
   }
 
-  async currentCollection(
-    collectionTypeFilter: CollectionType,
-  ): Promise<Collection[]> {
-    return await this.sharedService.currentCollection(
-      this.electionsApi,
-      collectionTypeFilter,
-    )
-  }
-
   async getLatestCollectionForType(
     collectionType: CollectionType,
   ): Promise<Collection> {
@@ -165,14 +156,14 @@ export class SignatureCollectionClientService {
     { collectionId, owner, areas, collectionType, listName }: CreateListInput,
     auth: User,
   ): Promise<Slug> {
-    const matchingCollection = (
-      await this.currentCollection(CollectionType.LocalGovernmental)
-    ).find((collection) => collection.id === collectionId)
-    if (!matchingCollection) {
+    const currentCollection = await this.getLatestCollectionForType(
+      CollectionType.LocalGovernmental,
+    )
+    if (currentCollection.id !== collectionId) {
       throw new Error('Collection not found')
     }
 
-    const { id, isActive, areas: collectionAreas } = matchingCollection
+    const { id, isActive, areas: collectionAreas } = currentCollection
 
     // check if collectionId is current collection and current collection is open
     if (collectionId !== id.toString() || !isActive) {

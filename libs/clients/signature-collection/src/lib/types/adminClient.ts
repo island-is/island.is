@@ -14,11 +14,6 @@ import { CandidateLookup } from './user.dto'
 import { Signature } from './signature.dto'
 
 export interface SignatureCollectionAdminClient {
-  currentCollection(
-    auth: Auth,
-    collectionTypeFilter?: CollectionType,
-  ): Promise<Collection[]>
-
   getLatestCollectionForType(
     auth: Auth,
     collectionType: CollectionType,

@@ -52,40 +52,41 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
       this.collectionType,
     )
 
-    const currentCollection = (
-      await this.signatureCollectionClientService.currentCollection(
-        CollectionType.LocalGovernmental,
-      )
-    )
-      .filter((collection) => collection.isActive)
-      .filter(
-        (collection) =>
-          collection.collectionType === this.collectionType &&
-          collection.areas.some(
-            (area) => area.id === candidate.area?.id && area.isActive,
-          ),
-      )
+    try {
+      const currentCollection =
+        await this.signatureCollectionClientService.getLatestCollectionForType(
+          CollectionType.LocalGovernmental,
+        )
+      if (
+        !currentCollection.isActive ||
+        !currentCollection.areas.some(
+          (area) => area.id === candidate.area?.id && area.isActive,
+        )
+      ) {
+        // Will be caught and handled in catch block
+        throw new Error()
+      }
 
-    if (!currentCollection.length) {
+      // Candidates are stored on user national id never the actors so should be able to check just the auth national id
+      if (
+        currentCollection.candidates.some(
+          (candidate) =>
+            candidate.nationalId.replace('-', '') === auth.nationalId,
+        )
+      ) {
+        throw new TemplateApiError(errorMessages.alreadyCandidate, 412)
+      }
+
+      return currentCollection
+    } catch (error) {
+      if (error instanceof TemplateApiError) {
+        throw error
+      }
       throw new TemplateApiError(
         errorMessages.currentCollectionNotMunicipal,
         405,
       )
     }
-
-    // Candidates are stored on user national id never the actors so should be able to check just the auth national id
-    if (
-      currentCollection.some((collection) =>
-        collection.candidates.some(
-          (candidate) =>
-            candidate.nationalId.replace('-', '') === auth.nationalId,
-        ),
-      )
-    ) {
-      throw new TemplateApiError(errorMessages.alreadyCandidate, 412)
-    }
-
-    return currentCollection
   }
 
   async municipalIdentity({ auth }: TemplateApiModuleActionProps) {
@@ -118,9 +119,8 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
 
   async submit({ application, auth }: TemplateApiModuleActionProps) {
     const answers = application.answers as CreateListSchema
-    const municipalCollection = (
-      application.externalData.municipalCollection.data as Array<Collection>
-    )[0]
+    const municipalCollection = application.externalData.municipalCollection
+      .data as Collection
 
     const candidateAreaId = getValueViaPath(
       application.externalData,

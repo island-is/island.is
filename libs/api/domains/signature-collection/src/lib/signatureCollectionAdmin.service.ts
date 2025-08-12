@@ -57,16 +57,6 @@ export class SignatureCollectionAdminService {
     }
   }
 
-  async currentCollection(
-    admin: SignatureCollectionAdmin,
-    collectionTypeFilter?: CollectionType,
-  ): Promise<SignatureCollection[]> {
-    return this.getService(admin.adminScope).currentCollection(
-      admin,
-      collectionTypeFilter,
-    )
-  }
-
   async getLatestCollectionForType(
     admin: SignatureCollectionAdmin,
     collectionType: CollectionType,
