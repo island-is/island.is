@@ -1,4 +1,5 @@
 export enum SignatureCollectionPaths {
+  // Almennir undirskriftalistar
   RootPath = '/min-gogn/listar',
   GeneralPetitions = '/min-gogn/listar/undirskriftalistar',
 
@@ -13,4 +14,8 @@ export enum SignatureCollectionPaths {
   // Presidential
   SignatureCollectionLists = '/min-gogn/listar/medmaelasofnun',
   ViewList = '/min-gogn/listar/medmaelasofnun/:id',
+
+  // Municipal
+  SignatureCollectionMunicipalLists = '/min-gogn/listar/sveitarstjornar-medmaelasofnun',
+  ViewMunicipalList = '/min-gogn/listar/sveitarstjornar-medmaelasofnun/:id',
 }

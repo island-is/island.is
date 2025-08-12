@@ -1,4 +1,6 @@
 <resources>
     <string moduleConfig="true" name="CodePushDeploymentKey">4sXtRa8Q7CWLTrTxKjvcH7g8WJYIDMCENhvYz</string>
     <string name="app_login_name">Handle Login</string>
+    <string name="app_name">Ísland.is</string>
+    <string name="license_widget_description">Flýtileið á skírteini</string>
 </resources>

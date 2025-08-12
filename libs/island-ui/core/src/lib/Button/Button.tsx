@@ -33,6 +33,7 @@ export const Button = forwardRef<
       nowrap,
       inline,
       as,
+      role,
       truncate,
       unfocusable,
       value,
@@ -45,6 +46,7 @@ export const Button = forwardRef<
       <Box
         component={ReaButton}
         as={as ? (as as string) : variant === 'text' ? 'span' : 'button'}
+        role={role ? role : as ? undefined : 'button'}
         ref={ref}
         value={value}
         name={name}

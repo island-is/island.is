@@ -5,6 +5,7 @@ import {
   Option,
   StaticText,
   NationalRegistrySpouse,
+  FormValue,
 } from '@island.is/application/types'
 import { format } from 'kennitala'
 import { HealthInsuranceDeclaration } from '../lib/dataSchema'
@@ -14,6 +15,7 @@ import {
   HealthInsuranceCountry,
   InsuranceStatementData,
 } from '../types'
+import { getValueViaPath } from '@island.is/application/core'
 
 export const getChildrenFromExternalData = (externalData: ExternalData) => {
   return (
@@ -63,14 +65,18 @@ export const hasFamilyAvailable = (answers: HealthInsuranceDeclaration) => {
   return answers.hasSpouse || answers.hasChildren
 }
 
-export const hasFamilySelected = (answers: HealthInsuranceDeclaration) => {
+export const hasFamilySelected = (answers: FormValue) => {
+  const spouseBoxChecked = getValueViaPath<Array<string>>(
+    answers,
+    'selectedApplicants.registerPersonsSpouseCheckboxField',
+  )
+  const childrenBoxChecked = getValueViaPath<Array<string>>(
+    answers,
+    'selectedApplicants.registerPersonsChildrenCheckboxField',
+  )
   return !!(
-    (answers.selectedApplicants?.registerPersonsSpouseCheckboxField &&
-      answers.selectedApplicants?.registerPersonsSpouseCheckboxField?.length >
-        0) ||
-    (answers.selectedApplicants?.registerPersonsChildrenCheckboxField &&
-      answers.selectedApplicants?.registerPersonsChildrenCheckboxField?.length >
-        0)
+    (spouseBoxChecked && spouseBoxChecked.length > 0) ||
+    (childrenBoxChecked && childrenBoxChecked.length > 0)
   )
 }
 
@@ -168,7 +174,7 @@ export const getSpouseAsOptions = (externalData: ExternalData): Option[] => {
 }
 
 export const getSelectedApplicants = (
-  answers: HealthInsuranceDeclaration,
+  answers: FormValue,
   externalData: ExternalData,
 ) => {
   const applicant = getApplicantFromExternalData(externalData)
@@ -176,51 +182,59 @@ export const getSelectedApplicants = (
   const children = getChildrenFromExternalData(externalData)
   let selectedApplicants: StaticText[][] = []
 
+  const personsBoxChecked = getValueViaPath<Array<string>>(
+    answers,
+    'selectedApplicants.registerPersonsApplicantCheckboxField',
+  )
+
   selectedApplicants = selectedApplicants.concat(
-    answers.selectedApplicants?.registerPersonsApplicantCheckboxField
-      ? answers.selectedApplicants?.registerPersonsApplicantCheckboxField?.map(
-          (a) => {
-            if (a === applicant.nationalId) {
-              return [
-                applicant.fullName,
-                applicant.nationalId,
-                m.overview.familyTableRelationApplicantText,
-              ]
-            } else return []
-          },
-        )
+    personsBoxChecked
+      ? personsBoxChecked.map((a) => {
+          if (a === applicant.nationalId) {
+            return [
+              applicant.fullName,
+              applicant.nationalId,
+              m.overview.familyTableRelationApplicantText,
+            ]
+          } else return []
+        })
       : [],
+  )
+
+  const spouseBoxChecked = getValueViaPath<Array<string>>(
+    answers,
+    'selectedApplicants.registerPersonsSpouseCheckboxField',
   )
 
   if (spouse) {
     selectedApplicants = selectedApplicants.concat(
-      answers.selectedApplicants?.registerPersonsSpouseCheckboxField
-        ? answers.selectedApplicants?.registerPersonsSpouseCheckboxField?.map(
-            (s) => {
-              if (s === spouse.nationalId) {
-                return [
-                  spouse.name,
-                  spouse.nationalId,
-                  m.overview.familyTableRelationSpouseText,
-                ]
-              } else return []
-            },
-          )
+      spouseBoxChecked
+        ? spouseBoxChecked.map((s) => {
+            if (s === spouse.nationalId) {
+              return [
+                spouse.name,
+                spouse.nationalId,
+                m.overview.familyTableRelationSpouseText,
+              ]
+            } else return []
+          })
         : [],
     )
   }
 
-  const selectedChildren =
-    answers.selectedApplicants?.registerPersonsChildrenCheckboxField?.map(
-      (childNationalId) => {
-        const childData = children.find((c) => c.nationalId === childNationalId)
-        return [
-          childData ? childData.fullName : '',
-          childData ? childData.nationalId : '',
-          m.overview.familyTableRelationChildText,
-        ]
-      },
-    )
+  const childrenBoxChecked = getValueViaPath<Array<string>>(
+    answers,
+    'selectedApplicants.registerPersonsChildrenCheckboxField',
+  )
+
+  const selectedChildren = childrenBoxChecked?.map((childNationalId) => {
+    const childData = children.find((c) => c.nationalId === childNationalId)
+    return [
+      childData ? childData.fullName : '',
+      childData ? childData.nationalId : '',
+      m.overview.familyTableRelationChildText,
+    ]
+  })
   if (selectedChildren) {
     selectedApplicants = selectedApplicants.concat(selectedChildren)
   }

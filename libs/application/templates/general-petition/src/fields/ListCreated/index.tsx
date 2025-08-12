@@ -4,11 +4,15 @@ import { useLocale } from '@island.is/localization'
 import { CopyLink } from '@island.is/application/ui-components'
 import { m } from '../../lib/messages'
 import Illustration from '../../assets/Illustration'
+import { getValueViaPath } from '@island.is/application/core'
 
 const ListCreated = ({ application }: { application: Application }) => {
   const { formatMessage } = useLocale()
-  const createdList =
-    (application.externalData.createEndorsementList?.data as any) || ''
+  const listId =
+    getValueViaPath<string>(
+      application.externalData,
+      'createEndorsementList.data.id',
+    ) ?? ''
   const baseUrl =
     document.location.origin === 'http://localhost:4242'
       ? 'http://localhost:4200'
@@ -22,7 +26,7 @@ const ListCreated = ({ application }: { application: Application }) => {
           {formatMessage(m.linkToList)}
         </Text>
         <CopyLink
-          linkUrl={baseUrlForm + createdList?.id}
+          linkUrl={baseUrlForm + listId}
           buttonTitle={formatMessage(m.copyLinkButton)}
         />
       </Box>

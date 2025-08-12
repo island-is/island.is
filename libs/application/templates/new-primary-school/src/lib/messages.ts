@@ -130,6 +130,16 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Kynsegin/Annað',
       description: 'non-binary/Other',
     },
+    language: {
+      id: 'nps.application:language',
+      defaultMessage: 'Tungumál',
+      description: 'Language',
+    },
+    languagePlaceholder: {
+      id: 'nps.application:language.placeholder',
+      defaultMessage: 'Veldu tungumál',
+      description: 'Choose language',
+    },
   }),
 
   pre: defineMessages({
@@ -283,9 +293,10 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
     differentPlaceOfResidenceDescription: {
       id: 'nps.application:childrenNGuardians.child.info.different.place.of.residence.description',
-      defaultMessage: 'Aðsetur er tímabundin búseta barns í öðru húsnæði',
+      defaultMessage:
+        'Aðsetur og lögheimili er ekki sama skráningin. Aðsetur er tímabundin skráning á búsetu sem notuð er þegar dvalið er utan lögheimilis í afmarkaðan tíma svo sem vegna náms eða veikinda.',
       description:
-        "Temporary residence is a child's place of residence in another home",
+        'Temporary residence and legal domicile are not the same registration. Temporary residence is a temporary registration of residence used when staying outside the legal domicile for a limited time, such as for education or illness.',
     },
     childInfoPlaceOfResidence: {
       id: 'nps.application:childrenNGuardians.child.info.place.of.residence',
@@ -316,44 +327,54 @@ export const newPrimarySchoolMessages: MessageDir = {
       description:
         'Information about guardians is retrieved from Registers Iceland and from My Pages on Ísland.is. Check that phone numbers and email addresses are entered correctly before proceeding.',
     },
+    requiresInterpreter: {
+      id: 'nps.application:childrenNGuardians.requires.interpreter',
+      defaultMessage: 'Þarf forsjáraðili túlk?',
+      description: 'Does the guardian need an interpreter?',
+    },
 
-    // Contacts
-    contactsSubSectionTitle: {
-      id: 'nps.application:childrenNGuardians.contacts.sub.section.title',
-      defaultMessage: 'Tengiliðir',
-      description: 'Contacts',
+    // Relatives
+    relativesSubSectionTitle: {
+      id: 'nps.application:childrenNGuardians.relatives.sub.section.title',
+      defaultMessage: 'Aðstandendur',
+      description: 'Relatives',
     },
-    contactsTitle: {
-      id: 'nps.application:childrenNGuardians.contacts.title',
-      defaultMessage: 'Tengiliðir barns',
-      description: "The child's contacts",
+    relativesTitle: {
+      id: 'nps.application:childrenNGuardians.relatives.title',
+      defaultMessage: 'Aðstandendur barns',
+      description: "The child's relatives",
     },
-    contactsDescription: {
-      id: 'nps.application:childrenNGuardians.contacts.description',
+    relativesDescription: {
+      id: 'nps.application:childrenNGuardians.relatives.description',
       defaultMessage:
-        'Skráðu að minnsta kosti einn tengilið sem má hafa samband við ef ekki næst í forsjáraðila barnsins. Þú getur bætt við allt að fjórum tengiliðum. Vinsamlegast látið tengiliði vita af skráningunni.',
+        'Aðstandandi er aðili sem er náinn fjölskyldunni og barni og veitir stuðning þegar svo ber við. Skráðu að minnsta kosti einn aðstandanda sem má hafa samband við ef ekki næst í forsjáraðila barnsins. Þú getur bætt allt að fjórum aðilum. Vinsamlegast látið aðstandendur vita af skráningunni.',
       description:
-        "List at least one contact person who can be contacted if the child's guardian cannot be reached. You can add up to four contacts. Please inform the contacts of the registration.",
+        "A relative is a person who is close to the family and child and provides support when needed. Register at least one relative who can be contacted if the child's guardian cannot be reached. You can add up to four people. Please notify the relatives of the registration.",
     },
-    contactsRegistrationTitle: {
-      id: 'nps.application:childrenNGuardians.contacts.registration.title',
-      defaultMessage: 'Skráning tengiliðs',
-      description: 'Registration of a contact',
+    relativesRegistrationTitle: {
+      id: 'nps.application:childrenNGuardians.relatives.registration.title',
+      defaultMessage: 'Skráning aðstandanda',
+      description: 'Registration of a relative',
     },
-    contactsAddContact: {
-      id: 'nps.application:childrenNGuardians.contacts.add.contact',
-      defaultMessage: 'Bæta við tengilið',
-      description: 'Add a contact',
+    relativesAddRelative: {
+      id: 'nps.application:childrenNGuardians.relatives.add.relative',
+      defaultMessage: 'Bæta við aðstandanda',
+      description: 'Add a relative',
     },
-    contactsRegisterContact: {
-      id: 'nps.application:childrenNGuardians.contacts.register.contact',
-      defaultMessage: 'Skrá tengilið',
-      description: 'Register contact',
+    relativesRegisterRelative: {
+      id: 'nps.application:childrenNGuardians.relatives.register.relative',
+      defaultMessage: 'Skrá aðstandanda',
+      description: 'Register relative',
     },
-    contactsDeleteContact: {
-      id: 'nps.application:childrenNGuardians.contacts.delete.contact',
-      defaultMessage: 'Eyða tengilið',
-      description: 'Remove contact',
+    relativesDeleteRelative: {
+      id: 'nps.application:childrenNGuardians.relatives.delete.relative',
+      defaultMessage: 'Eyða aðstandanda',
+      description: 'Remove relative',
+    },
+    relativesEditRelative: {
+      id: 'nps.application:childrenNGuardians.relatives.edit.relative',
+      defaultMessage: 'Breyta aðstandanda',
+      description: 'Edit relative',
     },
   }),
 
@@ -553,11 +574,6 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
 
     // Language
-    languageSubSectionTitle: {
-      id: 'nps.application:different.needs.language.sub.section.title',
-      defaultMessage: 'Tungumál',
-      description: 'Language',
-    },
     languageTitle: {
       id: 'nps.application:different.needs.language.title',
       defaultMessage: 'Tungumál barnsins',
@@ -624,11 +640,6 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Fjarlægja tungumál',
       description: 'Remove language',
     },
-    languageSelectionPlaceholder: {
-      id: 'nps.application:different.needs.language.selection.placeholder',
-      defaultMessage: 'Veldu tungumál',
-      description: 'Choose language',
-    },
     preferredLanguageTitle: {
       id: 'nps.application:different.needs.preferred.language.title',
       defaultMessage:
@@ -641,92 +652,101 @@ export const newPrimarySchoolMessages: MessageDir = {
       defaultMessage: 'Notar barnið táknmál?',
       description: 'Does the child use sign language?',
     },
-    interpreter: {
-      id: 'nps.application:different.needs.interpreter',
-      defaultMessage: 'Þurfa foreldrar túlk?',
-      description: 'Do the parents need an interpreter?',
-    },
 
-    // Allergies and intolerances
-    allergiesAndIntolerancesSubSectionTitle: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.sub.section.title',
-      defaultMessage: 'Ofnæmi og óþol',
-      description: 'Allergies and intolerances',
+    // Health protection
+    healthProtectionSubSectionTitle: {
+      id: 'nps.application:different.needs.health.protection.sub.section.title',
+      defaultMessage: 'Heilsuvernd',
+      description: 'Health protection',
     },
-    allergiesAndIntolerancesDescription: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.description',
+    healthProtectionSubSectionDescription: {
+      id: 'nps.application:different.needs.health.protection.sub.section.description',
+      defaultMessage:
+        'Heilsuvernd skólabarna er hluti af heilsugæslunni og framhald af ung- og smábarnavernd. Til að skólahjúkrunarfræðingur geti sinnt heilsuvernd skólabarns, haft umsjón með umönnun þess þegar svo ber við og veitt starfsfólki skólans viðeigandi fræðslu og ráðgjöf um rétt viðbrögð, er mikilvægt að hann hafi nauðsynlegar upplýsingar um heilsu barnsins.',
+      description:
+        'Health protection for school children is part of the healthcare system and follows from child health care. For the school nurse to be able to provide health protection for the school child, manage their care when needed, and provide appropriate education and advice to school staff on the right responses, it is important that they have necessary information about the childs health.',
+    },
+    allergiesAndIntolerances: {
+      id: 'nps.application:different.needs.health.protection.allergies.and.intolerances',
       defaultMessage:
         'Er barnið með ofnæmi eða óþol sem starfsfólk skóla þarf að vera meðvitað um?',
       description:
         'Does the child have any allergies or intolerances that school staff need to be aware of?',
     },
     hasFoodAllergiesOrIntolerances: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.has.food.allergies.or.intolerances',
+      id: 'nps.application:different.needs.health.protection.has.food.allergies.or.intolerances',
       defaultMessage: 'Barnið er með fæðuofnæmi eða -óþol',
       description: 'The child has food allergies or intolerances',
     },
     typeOfFoodAllergiesOrIntolerances: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.type.of.food.allergies.or.intolerances',
+      id: 'nps.application:different.needs.health.protection.type.of.food.allergies.or.intolerances',
       defaultMessage: 'Tegund fæðuofnæmis eða -óþols',
       description: 'Type of food allergies or intolerances',
     },
     typeOfFoodAllergiesOrIntolerancesPlaceholder: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.type.of.food.allergies.or.intolerances.placeholder',
+      id: 'nps.application:different.needs.health.protection.type.of.food.allergies.or.intolerances.placeholder',
       defaultMessage: 'Veldu tegund fæðuofnæmis eða -óþols',
       description: 'Select type of food allergies or intolerances',
     },
     hasOtherAllergies: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.has.other.allergies',
+      id: 'nps.application:different.needs.health.protection.has.other.allergies',
       defaultMessage: 'Barnið er með annað ofnæmi',
       description: 'The child has other allergies',
     },
     typeOfOtherAllergies: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.type.of.other.allergies',
+      id: 'nps.application:different.needs.health.protection.type.of.other.allergies',
       defaultMessage: 'Tegund ofnæmis',
       description: 'Type of allergies',
     },
     typeOfOtherAllergiesPlaceholder: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.type.of.other.allergies.placeholder',
+      id: 'nps.application:different.needs.health.protection.type.of.other.allergies.placeholder',
       defaultMessage: 'Veldu tegund ofnæmis',
       description: 'Select type of allergies',
     },
     allergiesCertificateAlertMessage: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.allergies.certificate.alert.message',
+      id: 'nps.application:different.needs.health.protection.allergies.certificate.alert.message',
       defaultMessage:
         'Athugið að skóli getur óskað eftir vottorði til staðfestingar á ofnæmi.',
       description:
         'Please note that the school may request a certificate to confirm allergies.',
     },
     usesEpiPen: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.uses.epi.pen',
+      id: 'nps.application:different.needs.health.protection.uses.epi.pen',
       defaultMessage:
         'Þarf barnið að hafa tiltækan adrenalínpenna (epi-pen) vegna ofnæmis?',
       description:
         'Does the child need to have an epi-pen available for allergies?',
     },
     hasConfirmedMedicalDiagnoses: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.has.confirmed.medical.diagnoses',
+      id: 'nps.application:different.needs.health.protection.has.confirmed.medical.diagnoses',
       defaultMessage:
-        'Hefur barnið staðfestar læknisfræðilegar greiningar sem mikilvægt er að skólinn kunni að bregðast rétt við?',
+        'Er barnið með staðfesta læknisfræðilega greiningu sem skólinn þarf að kunna að bregðast rétt við?',
       description:
-        'Does the child have confirmed medical diagnoses that are important for the school to be able to respond appropriately?',
+        'Does the child have a confirmed medical diagnosis that the school needs to know how to respond to correctly?',
     },
     hasConfirmedMedicalDiagnosesDescription: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.has.confirmed.medical.diagnoses.description',
+      id: 'nps.application:different.needs.health.protection.has.confirmed.medical.diagnoses.description',
       defaultMessage:
         'Hér er átt við greiningar eins og flogaveiki, sykursýki eða blóðstorknunarsjúkdóm',
       description:
         'This refers to diagnoses such as epilepsy, diabetes, or blood clotting disorders',
     },
     requestsMedicationAdministration: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.requests.medication.administration',
+      id: 'nps.application:different.needs.health.protection.requests.medication.administration',
       defaultMessage:
         'Er óskað eftir aðstoð við barn vegna lyfjagjafar á skólatíma?',
       description:
         'Is assistance requested for a child due to medication administration during school hours?',
     },
+    requestsMedicationAdministrationTooltip: {
+      id: 'nps.application:different.needs.health.protection.requests.medication.administration.tooltip',
+      defaultMessage:
+        'Í fæstum tilvikum geta börn borið ábyrgð á lyfjatöku sinni. Þar skiptir þó aldur og lyfjategund máli. Ábyrgðin er forráðamanna en hjúkrunarfræðingar og starfsmenn skóla aðstoða við lyfjatökuna. Meginreglan er sú að barn á aðeins að fá lyf á skólatíma sem forráðamenn hafa komið með í skólann og óskað eftir að barnið fái.',
+      description:
+        'In most cases, children cannot be responsible for taking their own medication. However, age and type of medication matter. The responsibility lies with the guardians, but nurses and school staff assist with medication administration. The main rule is that a child should only receive medication at school that the guardians have brought to the school and requested the child to take.',
+    },
     schoolNurseAlertMessage: {
-      id: 'nps.application:different.needs.allergies.and.intolerances.school.nurse.alert.message',
+      id: 'nps.application:different.needs.health.protection.school.nurse.alert.message',
       defaultMessage:
         'Skólahjúkrunarfræðingur mun setja sig í samband við þig til að tryggja rétta skráningu upplýsinga og miðlun þeirra til starfsfólks skóla.',
       description:
@@ -742,16 +762,16 @@ export const newPrimarySchoolMessages: MessageDir = {
     supportDescription: {
       id: 'nps.application:different.needs.support.description',
       defaultMessage:
-        'Ef barnið þitt er með greiningu um fötlun, þroskafrávik, langvinn veikindi eða alvarlegan sjúkdóm sem gætu haft áhrif á skólagöngu þess, þá sér núverandi skóli barns um að miðla þeim upplýsingum áfram til þess skóla sem sótt er um í.',
+        'Börn eru eins ólík og þau eru mörg. Sum börn þurfa á stuðningi að halda til að líða betur og nýta styrkleika sína sem best. Stuðningur við barn í skólastarfi er veittur af stoðþjónustu skóla og hefur það að markmiðið að tryggja að sérhvert barn fái rétta aðstoð, á réttum tíma, frá réttum aðila. \n\nEf barnið þitt er með greiningu um fötlun, þroskafrávik, langvinn veikindi eða alvarlegan sjúkdóm sem gætu haft áhrif á skólagöngu þess, þá sér núverandi skóli barns um að miðla þeim upplýsingum áfram til þess skóla sem sótt er um í',
       description:
-        "If your child has a diagnosis of a disability, developmental disorder, chronic illness or serious illness that could affect their schooling, the child's current school will forward that information to the school they are applying to.",
+        'Children are as diverse as they are numerous. Some need support in order to feel better and make the best use of their strengths. Support for children in school is provided by the schools support services, with the aim of ensuring that every child receives the right assistance, at the right time, from the right professional. \n\nIf your child has a diagnosis of a disability, developmental delay, chronic illness, or serious condition that may impact their schooling, their current school is responsible for passing that information on to the school you are applying to.',
     },
     enrollmentSupportDescription: {
       id: 'nps.application:different.needs.enrollment.support.description',
       defaultMessage:
-        'Ef barnið þitt er með greiningu um fötlun, þroskafrávik, langvinn veikindi eða alvarlegan sjúkdóm sem gætu haft áhrif á skólagöngu þess, þá sér núverandi leikskóli barns um að miðla þeim upplýsingum áfram til þess skóla sem sótt er um í.',
+        'Börn eru eins ólík og þau eru mörg. Sum börn þurfa á stuðningi að halda til að líða betur og nýta styrkleika sína sem best. Stuðningur við barn í skólastarfi er veittur af stoðþjónustu skóla og hefur það að markmiðið að tryggja að sérhvert barn fái rétta aðstoð, á réttum tíma, frá réttum aðila. \n\nEf barnið þitt er með greiningu um fötlun, þroskafrávik, langvinn veikindi eða alvarlegan sjúkdóm sem gætu haft áhrif á skólagöngu þess, þá sér núverandi leikskóli barns um að miðla þeim upplýsingum áfram til þess skóla sem sótt er um í.',
       description:
-        "If your child has a diagnosis of a disability, developmental disorder, chronic illness or serious illness that could affect their schooling, the child's current nursery will forward that information to the school they are applying to.",
+        'Children are as different as they are many. Some children need support to feel better and make the most of their strengths. Support in school is provided by the school’s support services and aims to ensure that every child receives the right help, at the right time, from the right person. \n\nIf your child has been diagnosed with a disability, developmental delay, chronic illness, or serious medical condition that could affect their schooling, their current nursery is responsible for passing that information on to the school you are applying to.',
     },
     hasDiagnoses: {
       id: 'nps.application:different.needs.has.diagnoses',
@@ -780,6 +800,35 @@ export const newPrimarySchoolMessages: MessageDir = {
         'Hefur nemandinn áður notið sérkennslu eða stuðnings í leikskóla?',
       description:
         'Has the student previously received special education or support in nursery?',
+    },
+    hasWelfareContact: {
+      id: 'nps.application:different.needs.has.welfare.contact',
+      defaultMessage: 'Hefur barnið verið með tengilið farsældar?',
+      description: 'Has the child had a welfare contact person?',
+    },
+    hasWelfarePrimarySchoolContactDescription: {
+      id: 'nps.application:different.needs.has.welfare.contact.description',
+      defaultMessage:
+        'Tengiliður farsældar er sá aðili innan grunnskólans sem veitir upplýsingar og leiðbeiningar og hefur verið foreldrum innan handar við að sækja um þjónustu fyrir barnið sitt.',
+      description:
+        'The welfare contact person is the individual within the primary school who provides information and guidance, and has assisted parents in applying for services for their child.',
+    },
+    hasWelfareNurserySchoolContactDescription: {
+      id: 'nps.application:different.needs.has.welfare.contact.description',
+      defaultMessage:
+        'Tengiliður farsældar er sá aðili innan leikskólans sem veitir upplýsingar og leiðbeiningar og hefur verið foreldrum innan handar við að sækja um þjónustu fyrir barnið sitt.',
+      description:
+        'The welfare contact person is the individual within the nursery who provides information and guidance, and has assisted parents in applying for services for their child.',
+    },
+    welfareContactName: {
+      id: 'nps.application:different.needs.welfare.contact.name',
+      defaultMessage: 'Nafn tengiliðs',
+      description: 'Contact name',
+    },
+    welfareContactEmail: {
+      id: 'nps.application:different.needs.welfare.contact.email',
+      defaultMessage: 'Netfang tengiliðs',
+      description: 'Contact email',
     },
     hasIntegratedServices: {
       id: 'nps.application:different.needs.has.integrated.services',
@@ -825,9 +874,9 @@ export const newPrimarySchoolMessages: MessageDir = {
     supportAlertMessage: {
       id: 'nps.application:different.needs.support.alert.message#markdown',
       defaultMessage:
-        'Við flutning barns milli leik- og/eða grunnskóla sjá stjórnendur skólanna til þess að persónuupplýsingum um barnið sem nauðsynlegar eru fyrir velferð og aðlögun þess í nýjum skóla, sé miðlað með tryggum og öruggum hætti. \n\nPersónuupplýsingar geta verið:\n\na. Almennar upplýsingar um félagslega stöðu og þroska barna.\n\nb. Kennslufræðilegar, læknisfræðilegar, sálfræðilegar, sérkennslufræðilegar greiningar og aðrar greiningar og sérúrræði fyrir börn, sérkennsluumsóknir, námsáætlanir vegna sérúrræða, einstaklingsnámskrár og aðrar bakgrunnsupplýsingar sem að gagni geta komið fyrir velferð og aðlögun barna í grunnskóla.\n\nc. Hvers konar skrifleg eða stafræn gögn svo sem skýrslur, greinargerðir og umsagnir er varða velferð og skólagöngu barns.',
+        'Við flutning barns milli leik- og/eða grunnskóla sjá stjórnendur skólanna til þess að persónuupplýsingum um barnið sem nauðsynlegar eru fyrir velferð og aðlögun þess í nýjum skóla, sé miðlað með tryggum og öruggum hætti. \n\nPersónuupplýsingar geta verið:\n\n1. Almennar upplýsingar um félagslega stöðu og þroska barna.\n\n2. Læknisfræðilegar, sálfræðilegar og sérkennslufræðilegar greiningar eða aðrar greiningar og sérúrræði fyrir barn.\n\n3. Sérkennsluumsóknir, námsáætlanir vegna sérúrræða, einstaklingsnámskrár og aðrar bakgrunnsupplýsingar sem að gagni geta komið fyrir velferð og aðlögun barns í skólanum.\n\n4. Prófeinkunnir og vitnisburðir barns, mætingar og/eða agabrot\n\n5. Hverskonar skrifleg eða stafræn gögn svo sem skýrslur, greinargerðir og umsagnir er varða velferð og skólagöngu barns.',
       description:
-        "When a child transfers between nursery and/or primary schools, school administrators ensure that personal information about the child that is necessary for their well-being and adjustment to the new school is communicated in a secure and safe manner. \n\nPersonal data can be: \n\na. General information about the social status and development of children. \n\nb. Educational, medical, psychological, special educational and other diagnoses and special needs for children, special education applications, curricula for special needs, individual curricula and other background information that may be useful for the well-being and adjustment of children in primary school. \n\nc. Any written or digital data such as reports, analyses and comments on the child's well-being and schooling.",
+        "When a child transfers between nursery and/or primary schools, school administrators ensure that personal information about the child that is necessary for their well-being and adjustment to the new school is communicated in a secure and safe manner. \n\nPersonal data can be: \n\n1. General information about the social status and development of children. \n\n2. Medical, psychological, and special education assessments or other evaluations and specialized interventions for a child. \n\n3. Applications for special education, educational plans related to specialized support, individualized learning programs, and other background information that may be useful for the welfare and adaptation of a child in school.\n\n4. The child's exam results and testimonials, attendance, and/or disciplinary infractions.\n\n5. Any kind of written or digital data such as reports, statements, and evaluations concerning the welfare and schooling of the child.",
     },
     requestingMeeting: {
       id: 'nps.application:different.needs.requesting.meeting',
@@ -872,8 +921,8 @@ export const newPrimarySchoolMessages: MessageDir = {
     },
     guardians: {
       id: 'nps.application:overview.guardians',
-      defaultMessage: 'Forsjáraðili',
-      description: 'Guardian',
+      defaultMessage: 'Forsjáraðili {index}',
+      description: 'Guardian {index}',
     },
     languageEnvironment: {
       id: 'nps.application:overview.language.environment',
@@ -961,19 +1010,20 @@ export const errorMessages = defineMessages({
     defaultMessage: 'Kennitala þarf að vera gild.',
     description: 'National id must be valid',
   },
-  contactsRequired: {
-    id: 'nps.application:error.contacts.required',
-    defaultMessage: 'Nauðsynlegt er að bæta við a.m.k einum tengilið',
-    description: 'You must add at least one contact',
+  relativesRequired: {
+    id: 'nps.application:error.relatives.required',
+    defaultMessage:
+      'Nauðsynlegt er að bæta við að minnsta kosti einum aðstandanda.',
+    description: 'You must add at least one relative',
   },
   siblingsRequired: {
     id: 'nps.application:error.siblings.required',
-    defaultMessage: 'Nauðsynlegt er að bæta við a.m.k einu systkini',
+    defaultMessage: 'Nauðsynlegt er að bæta við að minnsta kosti einu systkini',
     description: 'You must add at least one sibling',
   },
   languagesRequired: {
     id: 'nps.application:error.languages.required',
-    defaultMessage: 'Það þarf að velja a.m.k eitt tungumál',
+    defaultMessage: 'Það þarf að velja að minnsta kosti eitt tungumál',
     description: 'At least one language must be selected',
   },
   languageRequired: {
@@ -983,7 +1033,7 @@ export const errorMessages = defineMessages({
   },
   twoLanguagesRequired: {
     id: 'nps.application:error.two.languages.required',
-    defaultMessage: 'Það þarf að velja a.m.k tvö tungumál',
+    defaultMessage: 'Það þarf að velja að minnsta kosti tvö tungumál',
     description: 'At least two language must be selected',
   },
   expectedEndDateRequired: {
@@ -1011,12 +1061,13 @@ export const errorMessages = defineMessages({
   },
   foodAllergiesOrIntolerancesRequired: {
     id: 'nps.application:error.food.allergies.or.intolerances.required',
-    defaultMessage: 'Það þarf að velja a.m.k eitt fæðuofnæmi eða -óþol',
+    defaultMessage:
+      'Það þarf að velja að minnsta kosti eitt fæðuofnæmi eða -óþol',
     description: 'At least one food allergy or intolerance must be selected',
   },
   otherAllergiesRequired: {
     id: 'nps.application:error.other.allergies.required',
-    defaultMessage: 'Það þarf að velja a.m.k eitt ofnæmi',
+    defaultMessage: 'Það þarf að velja að minnsta kosti eitt ofnæmi',
     description: 'At least one allergy must be selected',
   },
 })

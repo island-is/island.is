@@ -1,5 +1,5 @@
 export * from './graphql.current.user.decorator'
-export * from './graphql.eligible.users.decorator'
+export * from './graphql.current.user.national.id.decorator'
 export * from './http.current.user.decorator'
-export * from './http.eligible.users.decorator'
+export * from './http.current.user.national.id.decorator'
 export * from './roles.decorator'

@@ -1,29 +1,21 @@
-import { ReactNode, useContext } from 'react'
-import { FieldExtensionSDK } from '@contentful/app-sdk'
+import { useContext } from 'react'
 import { Stack, Text } from '@contentful/f36-components'
-import { useSDK } from '@contentful/react-apps-toolkit'
 
 import { EntryContext } from './entryContext'
-import { TreeNode, TreeNodeType } from './utils'
+import { extractNodeContent, TreeNode } from './utils'
 
 interface SitemapNodeContentProps {
   node: TreeNode
+  language: 'is-IS' | 'en'
 }
 
-export const SitemapNodeContent = ({ node }: SitemapNodeContentProps) => {
+export const SitemapNodeContent = ({
+  node,
+  language,
+}: SitemapNodeContentProps) => {
   const { entries } = useContext(EntryContext)
-  const sdk = useSDK<FieldExtensionSDK>()
 
-  const label: string | ReactNode =
-    node.type !== TreeNodeType.ENTRY
-      ? node.label
-      : entries[node.entryId]?.fields?.title?.[sdk.field.locale] || '...'
-  const slug =
-    node.type === TreeNodeType.CATEGORY
-      ? node.slug
-      : node.type === TreeNodeType.URL
-      ? node.url
-      : entries[node.entryId]?.fields?.slug?.[sdk.field.locale] || '...'
+  const { label, slug } = extractNodeContent(node, language, entries)
 
   return (
     <Stack flexDirection="column" spacing="none" alignItems="flex-start">

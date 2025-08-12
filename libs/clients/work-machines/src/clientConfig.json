@@ -2162,41 +2162,28 @@
       "MachineLicenseTeachingApplicationCreateDto": {
         "type": "object",
         "properties": {
-          "applicant": {
-            "$ref": "#/components/schemas/TeachingLicenseApplicantDto"
-          },
-          "company": {
-            "$ref": "#/components/schemas/TeachingLicenseCompanyDto"
-          },
-          "machineRegistrationNumber": {
-            "type": "string",
-            "description": "The registration number of the Work machine the applicant has worked on.",
-            "nullable": true
-          },
           "licenseCategoryPrefix": {
             "type": "string",
             "description": "The letter code of the category of the category of machines the applicant is applying for a teaching license for.",
             "nullable": true
           },
-          "machineType": {
-            "type": "string",
-            "description": "The type of the work machine the applicant has worked on.",
+          "applicant": {
+            "$ref": "#/components/schemas/TeachingLicenseApplicantDto"
+          },
+          "companiesWorkedFor": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TeachingLicenseCompanyDto"
+            },
             "nullable": true
           },
-          "dateWorkedOnMachineFrom": {
-            "type": "string",
-            "description": "The date the applicant started working on the machine.",
-            "format": "date-time"
-          },
-          "dateWorkedOnMachineTo": {
-            "type": "string",
-            "description": "The date the applicant has worked on the machine to.",
-            "format": "date-time"
-          },
-          "hoursWorkedOnMachine": {
-            "type": "integer",
-            "description": "The number of hours the applicant has worked on the machine.",
-            "format": "int32"
+          "teachingLicenseMachineWorkedOnDtos": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TeachingLicenseMachineWorkedOnDto"
+            },
+            "description": "The registration number of the Work machine the applicant has worked on.",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -2742,12 +2729,13 @@
           },
           "postalCode": {
             "type": "integer",
-            "description": "The postal caode of the applicant.",
+            "description": "The postal code of the applicant.",
             "format": "int32"
           },
-          "isSelfEmployed": {
-            "type": "boolean",
-            "description": "Whether or not the applicant is self employed.\r\nIf they are not then filling out the Company information is required."
+          "drivingLicenseNumber": {
+            "type": "string",
+            "description": "The",
+            "nullable": true
           }
         },
         "additionalProperties": false
@@ -2784,6 +2772,47 @@
             "type": "string",
             "description": "The email of the company contact.",
             "nullable": true
+          },
+          "machineRegistrationNumbers": {
+            "type": "array",
+            "items": {
+              "type": "string"
+            },
+            "description": "A list of machines the applicant has worked on",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false
+      },
+      "TeachingLicenseMachineWorkedOnDto": {
+        "type": "object",
+        "properties": {
+          "machineRegistrationNumber": {
+            "type": "string",
+            "nullable": true
+          },
+          "machineType": {
+            "type": "string",
+            "description": "The type of the work machine the applicant has worked on.",
+            "nullable": true
+          },
+          "dateWorkedOnMachineFrom": {
+            "type": "string",
+            "description": "The date the applicant started working on the machine.",
+            "format": "date-time"
+          },
+          "dateWorkedOnMachineTo": {
+            "type": "string",
+            "description": "The date the applicant has worked on the machine to.",
+            "format": "date-time"
+          },
+          "hoursWorkedOnMachine": {
+            "type": "integer",
+            "description": "The number of hours the applicant has worked on the machine.",
+            "format": "int32"
+          },
+          "wasSelfEmployed": {
+            "type": "boolean"
           }
         },
         "additionalProperties": false

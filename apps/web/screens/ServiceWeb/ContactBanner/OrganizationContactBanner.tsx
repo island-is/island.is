@@ -26,12 +26,7 @@ const OrganizationContactBanner = ({
       <GridRow direction="row">
         <GridColumn>
           {organizationLogoUrl && (
-            <img
-              width={64}
-              height={64}
-              src={organizationLogoUrl}
-              alt="organization-logo"
-            ></img>
+            <img width={64} height={64} src={organizationLogoUrl} alt="" />
           )}
         </GridColumn>
         <GridColumn>

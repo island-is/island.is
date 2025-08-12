@@ -28,6 +28,7 @@ export const GetPaymentFlow = gql`
       organisationId
       metadata
       returnUrl
+      cancelUrl
       redirectToReturnUrlOnSuccess
       updatedAt
     }
@@ -38,6 +39,21 @@ export const GetVerificationStatus = gql`
   query getVerificationStatus($input: GetPaymentFlowInput!) {
     paymentsGetVerificationStatus(input: $input) {
       isVerified
+    }
+  }
+`
+
+export const GetJwks = gql`
+  query getJwks {
+    paymentsGetJwks {
+      keys {
+        kty
+        n
+        e
+        kid
+        use
+        alg
+      }
     }
   }
 `

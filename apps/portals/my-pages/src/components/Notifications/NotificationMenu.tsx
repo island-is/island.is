@@ -22,6 +22,7 @@ import NotificationLine from './NotificationLine'
 import cn from 'classnames'
 import * as styles from './Notifications.css'
 import * as mStyles from '../Sidemenu/Sidemenu.css'
+import { CloseButton } from '../Button/CloseButton/CloseButton'
 
 interface Props {
   closeNotificationMenu: () => void
@@ -44,16 +45,6 @@ const NotificationMenu = ({
   const onClose = () => {
     closeNotificationMenu()
   }
-
-  const closeButton = (
-    <button
-      className={mStyles.closeButton}
-      onClick={onClose}
-      aria-label={formatMessage(sharedMessages.close)}
-    >
-      <Icon icon="close" color="blue600" />
-    </button>
-  )
 
   const content = (
     <Box display="flex" justifyContent="flexEnd">
@@ -139,7 +130,12 @@ const NotificationMenu = ({
             </Box>
           </Box>
         </Box>
-        <Hidden below="md">{closeButton}</Hidden>
+        <Hidden below="md">
+          <CloseButton
+            onClick={onClose}
+            aria-label={formatMessage(sharedMessages.close)}
+          />
+        </Hidden>
       </Box>
     </Box>
   )

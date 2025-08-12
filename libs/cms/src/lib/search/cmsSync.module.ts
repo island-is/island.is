@@ -17,6 +17,7 @@ import { MenuSyncService } from './importers/menu.service'
 import { GroupedMenuSyncService } from './importers/groupedMenu.service'
 import { OrganizationPageSyncService } from './importers/organizationPage.service'
 import { OrganizationSubpageSyncService } from './importers/organizationSubpage.service'
+import { OrganizationParentSubpageSyncService } from './importers/organizationParentSubpage.service'
 import { FrontpageSyncService } from './importers/frontpage.service'
 import { SubArticleSyncService } from './importers/subArticle.service'
 import { SupportQNASyncService } from './importers/supportQNA.service'
@@ -58,6 +59,7 @@ import { BloodDonationRestrictionSyncService } from './importers/bloodDonationRe
     GroupedMenuSyncService,
     OrganizationPageSyncService,
     OrganizationSubpageSyncService,
+    OrganizationParentSubpageSyncService,
     ProjectPageSyncService,
     FrontpageSyncService,
     SupportQNASyncService,

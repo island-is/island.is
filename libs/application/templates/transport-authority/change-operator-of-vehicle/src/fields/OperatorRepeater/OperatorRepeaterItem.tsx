@@ -8,7 +8,10 @@ import {
   GridColumn,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { InputController } from '@island.is/shared/form-fields'
+import {
+  InputController,
+  PhoneInputController,
+} from '@island.is/shared/form-fields'
 import { FC, useEffect } from 'react'
 import { NationalIdWithName } from '../NationalIdWithName'
 import { information } from '../../lib/messages'
@@ -93,11 +96,9 @@ export const OperatorRepeaterItem: FC<
           />
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/2']} paddingTop={2}>
-          <InputController
+          <PhoneInputController
             id={phoneField}
             name={phoneField}
-            type="tel"
-            format="###-####"
             label={formatMessage(information.labels.operator.phone)}
             error={errors && getErrorViaPath(errors, phoneField)}
             backgroundColor="blue"
@@ -105,6 +106,8 @@ export const OperatorRepeaterItem: FC<
             defaultValue={
               getValueViaPath(application.answers, phoneField, '') as string
             }
+            allowedCountryCodes={['IS']}
+            disableDropdown={true}
           />
         </GridColumn>
       </GridRow>

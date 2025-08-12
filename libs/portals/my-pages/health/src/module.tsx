@@ -40,7 +40,7 @@ const MedicinePrescriptions = lazy(() =>
   import('./screens/MedicinePrescriptions/MedicinePrescriptions'),
 )
 const MedicinePrescriptionHistory = lazy(() =>
-  import('./screens/MedicinePrescriptions/MedicinePrescriptionHistory'),
+  import('./screens/MedicineHistory/MedicinePrescriptionHistory'),
 )
 const HealthCenterRegistration = lazy(() =>
   import('./screens/HealthCenterRegistration/HealthCenterRegistration'),
@@ -54,14 +54,18 @@ const MedicineCertificate = lazy(() =>
   import('./screens/MedicineCertificate/MedicineCertificate'),
 )
 
-const MedicineDelegation = lazy(() =>
-  import('./screens/MedicineDelegation/MedicineDelegation'),
-)
+// const MedicineDelegation = lazy(() =>
+//   import('./screens/MedicineDelegation/MedicineDelegation'),
+// )
 
 const PaymentParticipation = lazy(() =>
-  import('./screens/Payments/PaymentParticipation'),
+  import('./screens/PaymentsAndRights/PaymentParticipation'),
 )
-const PaymentOverview = lazy(() => import('./screens/Payments/PaymentOverview'))
+const PaymentOverview = lazy(() =>
+  import('./screens/PaymentsAndRights/PaymentOverview'),
+)
+
+const Rights = lazy(() => import('./screens/PaymentsAndRights/Rights'))
 
 const OrganDonation = lazy(() =>
   import('./screens/OrganDonation/OrganDonation'),
@@ -74,6 +78,18 @@ const OrganDonationRegistration = lazy(() =>
 const Vaccinations = lazy(() =>
   import('./screens/Vaccinations/VaccinationsWrapper'),
 )
+
+const Bloodtype = lazy(() => import('./screens/Bloodtype/Bloodtype'))
+
+const Referrals = lazy(() => import('./screens/Referrals/Referrals'))
+
+const ReferralsDetail = lazy(() =>
+  import('./screens/Referrals/ReferralsDetail'),
+)
+
+const Waitlist = lazy(() => import('./screens/Waitlists/Waitlists'))
+
+const WaitlistDetail = lazy(() => import('./screens/Waitlists/WaitlistsDetail'))
 
 const MEDICINE_LANDLAEKNIR_FLAG = 'HealthMedicineLandlaeknir'
 
@@ -150,16 +166,34 @@ export const healthModule: PortalModule = {
       element: <PaymentOverview />,
     },
     {
+      name: hm.rights,
+      path: HealthPaths.HealthPaymentRights,
+      enabled: userInfo.scopes.includes(ApiScope.healthPayments),
+      element: <Rights />,
+    },
+    {
       name: hm.dentistsTitle,
       path: HealthPaths.HealthDentists,
       enabled: userInfo.scopes.includes(ApiScope.healthDentists),
       element: <Dentists />,
     },
     {
+      name: hm.dentistsTitle,
+      path: HealthPaths.HealthDentistsOld,
+      enabled: userInfo.scopes.includes(ApiScope.healthDentists),
+      element: <Navigate to={HealthPaths.HealthDentists} replace />,
+    },
+    {
       name: hm.healthCenterTitle,
       path: HealthPaths.HealthCenter,
       enabled: userInfo.scopes.includes(ApiScope.healthHealthcare),
       element: <HealthCenter />,
+    },
+    {
+      name: hm.healthCenterTitle,
+      path: HealthPaths.HealthCenterOld,
+      enabled: userInfo.scopes.includes(ApiScope.healthHealthcare),
+      element: <Navigate to={HealthPaths.HealthCenter} replace />,
     },
     {
       name: hm.medicineTitle,
@@ -221,7 +255,6 @@ export const healthModule: PortalModule = {
       enabled: userInfo.scopes.includes(ApiScope.healthMedicines),
       element: <MedicineCertificate />,
     },
-
     {
       name: hm.healthCenterRegistrationTitle,
       path: HealthPaths.HealthCenterRegistration,
@@ -229,10 +262,22 @@ export const healthModule: PortalModule = {
       element: <HealthCenterRegistration />,
     },
     {
+      name: hm.healthCenterRegistrationTitle,
+      path: HealthPaths.HealthCenterRegistrationOld,
+      enabled: userInfo.scopes.includes(ApiScope.healthHealthcare),
+      element: <Navigate to={HealthPaths.HealthCenterRegistration} replace />,
+    },
+    {
       name: hm.dentistRegisterationPageTitle,
       path: HealthPaths.HealthDentistRegistration,
       enabled: userInfo.scopes.includes(ApiScope.healthDentists),
       element: <DentistRegistration />,
+    },
+    {
+      name: hm.dentistRegisterationPageTitle,
+      path: HealthPaths.HealthDentistRegistrationOld,
+      enabled: userInfo.scopes.includes(ApiScope.healthDentists),
+      element: <Navigate to={HealthPaths.HealthDentistRegistration} replace />,
     },
     {
       name: hm.organDonation,
@@ -243,10 +288,26 @@ export const healthModule: PortalModule = {
     },
     {
       name: hm.organDonation,
+      path: HealthPaths.HealthOrganDonationOld,
+      key: 'HealthOrganDonation',
+      enabled: userInfo.scopes.includes(ApiScope.healthOrganDonation),
+      element: <Navigate to={HealthPaths.HealthOrganDonation} replace />,
+    },
+    {
+      name: hm.organDonation,
       path: HealthPaths.HealthOrganDonationRegistration,
       key: 'HealthOrganDonation',
       enabled: userInfo.scopes.includes(ApiScope.healthOrganDonation),
       element: <OrganDonationRegistration />,
+    },
+    {
+      name: hm.organDonation,
+      path: HealthPaths.HealthOrganDonationRegistrationOld,
+      key: 'HealthOrganDonation',
+      enabled: userInfo.scopes.includes(ApiScope.healthOrganDonation),
+      element: (
+        <Navigate to={HealthPaths.HealthOrganDonationRegistration} replace />
+      ),
     },
     {
       name: hm.vaccinations,
@@ -254,6 +315,52 @@ export const healthModule: PortalModule = {
       key: 'HealthVaccinations',
       enabled: userInfo.scopes.includes(ApiScope.healthVaccinations),
       element: <Vaccinations />,
+    },
+
+    {
+      name: hm.bloodtype,
+      path: HealthPaths.HealthBloodtype,
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.health),
+      key: 'HealthBlood',
+      element: <Bloodtype />,
+    },
+    {
+      name: hm.referrals,
+      path: HealthPaths.HealthReferrals,
+      key: 'Referrals',
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.health),
+      element: <Referrals />,
+    },
+    {
+      name: hm.referrals,
+      path: HealthPaths.HealthReferralsDetail,
+      key: 'Referrals',
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.health),
+      element: <ReferralsDetail />,
+    },
+    {
+      name: hm.waitlists,
+      path: HealthPaths.HealthWaitlists,
+      key: 'HealthWaitlists',
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.health),
+      element: <Waitlist />,
+    },
+    {
+      name: hm.waitlists,
+      path: HealthPaths.HealthWaitlistsDetail,
+      key: 'HealthWaitlists',
+      enabled:
+        userInfo.scopes.includes(ApiScope.internal) ||
+        userInfo.scopes.includes(ApiScope.health),
+      element: <WaitlistDetail />,
     },
   ],
 }

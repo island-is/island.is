@@ -72,6 +72,6 @@ export const subpoena = {
   }),
   modalAlternativeServiceTitle: 'Skrá birtingu með öðrum hætti',
   modalAlternativeServiceText:
-    'Málið fer á dagskrá og aðilar máls fá boð í þingfestingu',
+    'Málið fer á dagskrá og aðilar máls fá boð í þingfestingu.',
   modalAlternativeServicePrimaryButtonText: 'Halda áfram',
 }

@@ -23,7 +23,7 @@ import {
 } from '@island.is/application/types'
 
 const ExampleForm: Form = buildForm({
-  id: ApplicationTypes.EXAMPLE,
+  id: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
   title: 'Atvinnuleysisbætur',
   children: [
     buildSection({
@@ -129,7 +129,7 @@ describe('formatText', () => {
     id: '',
     modified: new Date(),
     state: '',
-    typeId: ApplicationTypes.EXAMPLE,
+    typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
     status: ApplicationStatus.IN_PROGRESS,
   }
   const formatMessage: (descriptor: StaticText, values?: unknown) => string = (

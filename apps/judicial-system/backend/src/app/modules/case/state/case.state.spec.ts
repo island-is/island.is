@@ -1210,7 +1210,9 @@ describe('Transition Case', () => {
               {
                 id: uuid(),
                 role: UserRole.PROSECUTOR,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+                institution: {
+                  type: InstitutionType.POLICE_PROSECUTORS_OFFICE,
+                },
               } as User,
             )
 
@@ -1235,7 +1237,9 @@ describe('Transition Case', () => {
                 {
                   id: uuid(),
                   role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+                  institution: {
+                    type: InstitutionType.POLICE_PROSECUTORS_OFFICE,
+                  },
                 } as User,
               )
 
@@ -1266,7 +1270,9 @@ describe('Transition Case', () => {
                 {
                   id: uuid(),
                   role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+                  institution: {
+                    type: InstitutionType.POLICE_PROSECUTORS_OFFICE,
+                  },
                 } as User,
               )
 

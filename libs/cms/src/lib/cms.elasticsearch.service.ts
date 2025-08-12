@@ -674,7 +674,6 @@ export class CmsElasticsearchService {
 
     if (!input.orderBy) {
       sort = [
-        { _score: { order: SortDirection.DESC } },
         {
           [SortField.RELEASE_DATE]: {
             order: SortDirection.DESC,
@@ -682,33 +681,31 @@ export class CmsElasticsearchService {
         },
         { 'title.sort': { order: SortDirection.ASC } },
         { dateCreated: { order: SortDirection.DESC } },
+      ]
+    } else if (input.orderBy === GetTeamMembersInputOrderBy.Name) {
+      sort = [
+        { 'title.sort': { order: SortDirection.ASC } },
+        {
+          [SortField.RELEASE_DATE]: {
+            order: SortDirection.DESC,
+          },
+        },
+        { dateCreated: { order: SortDirection.DESC } },
+      ]
+    } else if (input.orderBy === GetTeamMembersInputOrderBy.Manual) {
+      sort = [
+        { dateCreated: { order: SortDirection.DESC } },
+        { 'title.sort': { order: SortDirection.ASC } },
+        {
+          [SortField.RELEASE_DATE]: {
+            order: SortDirection.DESC,
+          },
+        },
       ]
     }
 
-    if (input.orderBy === GetTeamMembersInputOrderBy.Name) {
-      sort = [
-        { _score: { order: SortDirection.DESC } },
-        { 'title.sort': { order: SortDirection.ASC } },
-        {
-          [SortField.RELEASE_DATE]: {
-            order: SortDirection.DESC,
-          },
-        },
-        { dateCreated: { order: SortDirection.DESC } },
-      ]
-    }
-
-    if (input.orderBy === GetTeamMembersInputOrderBy.Manual) {
-      sort = [
-        { _score: { order: SortDirection.DESC } },
-        { dateCreated: { order: SortDirection.DESC } },
-        { 'title.sort': { order: SortDirection.ASC } },
-        {
-          [SortField.RELEASE_DATE]: {
-            order: SortDirection.DESC,
-          },
-        },
-      ]
+    if (queryString.length > 0) {
+      sort.unshift({ _score: { order: SortDirection.DESC } })
     }
 
     if (input.tags && input.tags.length > 0 && input.tagGroups) {
@@ -840,17 +837,16 @@ export class CmsElasticsearchService {
     let sortRules: ('_score' | sortRule)[] = []
     if (!sort || sort === GrantsSortBy.RECENTLY_UPDATED) {
       sortRules = [
-        { dateUpdated: { order: SortDirection.DESC } },
+        { dateUpdated: { order: SortDirection.ASC } },
         { 'title.sort': { order: SortDirection.ASC } },
-        { dateCreated: { order: SortDirection.DESC } },
       ]
     } else if (sort === GrantsSortBy.ALPHABETICAL) {
       sortRules = [
         { 'title.sort': { order: SortDirection.ASC } },
         { dateUpdated: { order: SortDirection.DESC } },
-        { dateCreated: { order: SortDirection.DESC } },
       ]
     }
+
     if (queryString.length > 0 && queryString !== '*') {
       sortRules.unshift('_score')
     }
@@ -1104,7 +1100,7 @@ export class CmsElasticsearchService {
             must,
           },
         },
-        sort,
+        sort: sortRules,
         size,
         from: (page - 1) * size,
       })
@@ -1379,6 +1375,15 @@ export class CmsElasticsearchService {
 
     const size = 10
 
+    let sort = [
+      { _score: { order: SortDirection.DESC } },
+      { 'title.sort': { order: SortDirection.ASC } },
+    ]
+
+    if (queryString.length === 0) {
+      sort = [{ 'title.sort': { order: SortDirection.ASC } }]
+    }
+
     const response: ApiResponse<SearchResponse<MappedData>> =
       await this.elasticService.findByQuery(index, {
         query: {
@@ -1386,7 +1391,7 @@ export class CmsElasticsearchService {
             must,
           },
         },
-        sort: [{ _score: { order: SortDirection.DESC } }],
+        sort,
         size,
         from: ((input.page ?? 1) - 1) * size,
       })

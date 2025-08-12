@@ -40,7 +40,6 @@ const ParentCaseFiles: FC<Props> = ({ files }) => {
                   key: file.key ?? undefined,
                   size: file.size ?? undefined,
                 }}
-                showFileSize
                 hideIcons
                 defaultBackgroundColor={{
                   background: 'blue100',

@@ -197,7 +197,6 @@ export class ApplicationController {
       nationalId,
       typeId,
       status,
-      user.actor?.nationalId,
     )
     return this.filterApplicationsByAccess(
       applications,
@@ -217,14 +216,12 @@ export class ApplicationController {
     nationalId: string,
     typeId?: string,
     status?: string,
-    actorNationalId?: string,
   ): Promise<Application[]> {
     this.logger.debug(`Getting applications with status ${status}`)
     return this.applicationService.findAllByNationalIdAndFilters(
       nationalId,
       typeId,
       status,
-      actorNationalId,
     )
   }
 
@@ -331,17 +328,21 @@ export class ApplicationController {
   }
 
   private withApplicationInfo = <R, TArgs extends unknown[]>(
-    template : ApplicationTemplate<ApplicationContext, ApplicationStateSchema<EventObject>, EventObject>, 
-    application: Application, 
+    template: ApplicationTemplate<
+      ApplicationContext,
+      ApplicationStateSchema<EventObject>,
+      EventObject
+    >,
+    application: Application,
     callback: (...args: TArgs) => R,
     ...args: TArgs
   ): R => {
     const context = {
       templateId: template.type,
-      applicationId: application.id
+      applicationId: application.id,
     }
     return withCodeOwner(template.codeOwner, () =>
-      withLoggingContext(context, callback, ...args)
+      withLoggingContext(context, callback, ...args),
     )
   }
 
@@ -988,6 +989,8 @@ export class ApplicationController {
       )
     }
 
+    this.logger.info(`Deleting application ${id} as requested by user`)
+
     const template = await getApplicationTemplateByTypeId(
       existingApplication.typeId,
     )
@@ -1043,12 +1046,7 @@ export class ApplicationController {
 
     await this.fileService.deleteAttachmentsForApplication(existingApplication)
 
-    // delete history for application
-    await this.historyService.deleteHistoryByApplicationId(
-      existingApplication.id,
-    )
-
-    await this.applicationService.delete(existingApplication.id)
+    await this.applicationService.softDelete(existingApplication.id)
 
     this.auditService.audit({
       auth: user,

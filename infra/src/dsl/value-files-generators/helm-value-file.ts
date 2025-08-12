@@ -9,12 +9,21 @@ export const getHelmValueFile = (
   services: Services<HelmService>,
   withMocks: Mocks,
   env: EnvironmentConfig,
+  skipAppName: boolean = false,
 ): HelmValueFile => {
   const outputFormat = renderers.helm
   const helmServices: Services<HelmService> = Object.entries(services).reduce(
     (acc, [name, service]) => {
       const extras = service.extra
       delete service.extra
+      if (skipAppName) {
+        return {
+          ...acc,
+          ...Object.assign({}, service, extras),
+          name: name,
+        }
+      }
+
       return {
         ...acc,
         [name]: Object.assign({}, service, extras),

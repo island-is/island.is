@@ -18,6 +18,12 @@ export const SkilavottordRecyclingPartnerQuery = gql`
   }
 `
 
+export const SkilavottordRecyclingPartnerActive = gql`
+  query SkilavottordRecyclingPartnerActive($input: RecyclingPartnerInput!) {
+    skilavottordRecyclingPartnerActive(input: $input)
+  }
+`
+
 export const SkilavottordAllRecyclingPartnersQuery = gql`
   query skilavottordAllRecyclingPartnersQuery {
     skilavottordAllRecyclingPartners {
@@ -153,6 +159,99 @@ export const SkilavottordRecyclingPartnersQuery = gql`
       active
       municipalityId
       isMunicipality
+    }
+  }
+`
+export const SkilavottordVehicleReadyToDeregisteredQuery = gql`
+  query skilavottordVehicleReadyToDeregisteredQuery($permno: String!) {
+    skilavottordVehicleReadyToDeregistered(permno: $permno) {
+      vehicleId
+      vehicleType
+      newregDate
+      vinNumber
+      mileage
+      recyclingRequests {
+        nameOfRequestor
+      }
+    }
+  }
+`
+
+export const SkilavottordTrafficQuery = gql`
+  query skilavottordTrafficQuery($permno: String!) {
+    skilavottordTraffic(permno: $permno) {
+      permno
+      outInStatus
+      useStatus
+      useStatusName
+    }
+  }
+`
+
+export const SkilavottordRecyclingRequestMutation = gql`
+  mutation skilavottordRecyclingRequestMutation(
+    $permno: String!
+    $requestType: RecyclingRequestTypes!
+  ) {
+    createSkilavottordRecyclingRequest(
+      permno: $permno
+      requestType: $requestType
+    ) {
+      ... on RequestErrors {
+        message
+        operation
+      }
+      ... on RequestStatus {
+        status
+      }
+    }
+  }
+`
+
+export const UpdateSkilavottordVehicleInfoMutation = gql`
+  mutation updateSkilavottordVehicleInfo(
+    $permno: String!
+    $mileage: Float!
+    $plateCount: Float!
+    $plateLost: Boolean!
+  ) {
+    updateSkilavottordVehicleInfo(
+      permno: $permno
+      mileage: $mileage
+      plateCount: $plateCount
+      plateLost: $plateLost
+    )
+  }
+`
+
+export const SkilavottordVehiclesQuery = gql`
+  query skilavottordVehiclesQuery($after: String!) {
+    skilavottordAllDeregisteredVehicles(first: 20, after: $after) {
+      pageInfo {
+        endCursor
+        hasNextPage
+      }
+      count
+      items {
+        vehicleId
+        vehicleType
+        newregDate
+        createdAt
+        recyclingRequests {
+          id
+          recyclingPartnerId
+          nameOfRequestor
+          createdAt
+          recyclingPartner {
+            companyId
+            companyName
+            municipalityId
+            municipality {
+              companyName
+            }
+          }
+        }
+      }
     }
   }
 `

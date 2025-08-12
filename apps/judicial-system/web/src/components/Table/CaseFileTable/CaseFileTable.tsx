@@ -18,7 +18,6 @@ import {
 import { CaseFile } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useSort } from '@island.is/judicial-system-web/src/utils/hooks'
 
-import { strings } from './CaseFileTable.strings'
 import * as tableStyles from '../Table.css'
 import * as styles from './CaseFileTable.css'
 
@@ -70,6 +69,10 @@ const CaseFileTable: FC<Props> = ({
       }
     >
       {sortedData.map((file) => {
+        const initials = getInitials(
+          file.fileRepresentative ?? file.submittedBy,
+        )
+
         return (
           <tr key={file.id}>
             <td>
@@ -93,15 +96,11 @@ const CaseFileTable: FC<Props> = ({
                     : formatDate(file.created, "dd.MM.yyyy 'kl.' HH:mm")}
                 </Text>
                 <Text variant="small">
-                  {formatMessage(strings.submittedBy, {
-                    title: getRoleTitleFromCaseFileCategory(
-                      file.category ?? null,
-                    ),
-                    initials: getInitials(
-                      file.fileRepresentative ?? file.submittedBy,
-                    ),
-                    fileRepresentative: file.fileRepresentative,
-                  })}
+                  {`${getRoleTitleFromCaseFileCategory(
+                    file.category ?? null,
+                  )} ${initials ? `(${initials})` : ''} ${
+                    file.fileRepresentative ? 'lagði fram' : 'sendi inn'
+                  }`}
                 </Text>
               </Box>
             </td>

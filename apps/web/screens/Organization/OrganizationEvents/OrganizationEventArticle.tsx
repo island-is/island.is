@@ -82,7 +82,7 @@ const EventItemImage = ({
             ? eventItem.contentImage?.url + '?w=1000&fm=webp&q=80'
             : ''
         }
-        alt=""
+        alt={eventItem.contentImage?.description ?? ''}
       />
     </Box>
   )
@@ -388,6 +388,18 @@ OrganizationEventArticle.getProps = async ({
     throw new CustomNextError(
       404,
       `Could not find event with slug: ${query.eventSlug}`,
+    )
+  }
+
+  const eventBelongsToOrganization =
+    Boolean(event.organization?.slug) &&
+    Boolean(organizationPage.organization?.slug) &&
+    event.organization?.slug === organizationPage.organization?.slug
+
+  if (!eventBelongsToOrganization) {
+    throw new CustomNextError(
+      404,
+      `Event ${event.slug} does not belong to organization ${organizationPage.organization?.slug}`,
     )
   }
 

@@ -12,6 +12,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import {
   CaseFileCategory,
+  CaseIndictmentRulingDecision,
   EventType,
   hasIndictmentCaseBeenSubmittedToCourt,
   SubpoenaType,
@@ -21,6 +22,7 @@ import {
 import {
   Confirmation,
   createCaseFilesRecord,
+  createFineSentToPrisonAdminPdf,
   createIndictment,
   createRulingSentToPrisonAdminPdf,
   createServiceCertificate,
@@ -33,6 +35,7 @@ import {
 } from '../../formatters'
 import { AwsS3Service } from '../aws-s3'
 import { Defendant } from '../defendant'
+import { EventLog } from '../event-log'
 import { Subpoena, SubpoenaService } from '../subpoena'
 import { UserService } from '../user'
 import { Case } from './models/case.model'
@@ -217,8 +220,9 @@ export class PdfService {
         }
       }
 
-      const confirmationEvent = theCase.eventLogs?.find(
-        (event) => event.eventType === EventType.INDICTMENT_CONFIRMED,
+      const confirmationEvent = EventLog.getEventLogByEventType(
+        EventType.INDICTMENT_CONFIRMED,
+        theCase.eventLogs,
       )
 
       if (
@@ -366,6 +370,12 @@ export class PdfService {
   }
 
   async getRulingSentToPrisonAdminPdf(theCase: Case): Promise<Buffer> {
-    return await createRulingSentToPrisonAdminPdf(theCase)
+    if (
+      theCase.indictmentRulingDecision === CaseIndictmentRulingDecision.FINE
+    ) {
+      return await createFineSentToPrisonAdminPdf(theCase)
+    } else {
+      return await createRulingSentToPrisonAdminPdf(theCase)
+    }
   }
 }

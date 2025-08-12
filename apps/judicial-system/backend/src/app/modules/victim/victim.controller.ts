@@ -19,7 +19,12 @@ import {
   RolesRules,
 } from '@island.is/judicial-system/auth'
 
-import { districtCourtJudgeRule, prosecutorRule } from '../../guards'
+import {
+  districtCourtAssistantRule,
+  districtCourtJudgeRule,
+  districtCourtRegistrarRule,
+  prosecutorRule,
+} from '../../guards'
 import {
   MinimalCase,
   MinimalCaseAccessGuard,
@@ -51,7 +56,7 @@ export class VictimController {
   ) {}
 
   @UseGuards(VictimWriteGuard)
-  @RolesRules(prosecutorRule, districtCourtJudgeRule)
+  @RolesRules(prosecutorRule)
   @Post()
   @ApiCreatedResponse({
     type: Victim,
@@ -68,7 +73,12 @@ export class VictimController {
   }
 
   @UseGuards(VictimWriteGuard)
-  @RolesRules(prosecutorRule, districtCourtJudgeRule)
+  @RolesRules(
+    prosecutorRule,
+    districtCourtJudgeRule,
+    districtCourtRegistrarRule,
+    districtCourtAssistantRule,
+  )
   @Patch(':victimId')
   @ApiOkResponse({
     type: Victim,
@@ -86,7 +96,7 @@ export class VictimController {
   }
 
   @UseGuards(VictimWriteGuard)
-  @RolesRules(prosecutorRule, districtCourtJudgeRule)
+  @RolesRules(prosecutorRule)
   @Delete(':victimId')
   @ApiOkResponse({
     type: DeleteVictimResponse,

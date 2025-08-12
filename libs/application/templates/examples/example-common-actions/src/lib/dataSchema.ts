@@ -7,6 +7,14 @@ const validationSchema = z.object({
     params: m.customValidationMessage,
   }),
   validationRadioField: z.nativeEnum(RadioValidationExampleEnum),
+  validationSelectField: z
+    .preprocess((val) => {
+      if (!val) {
+        return ''
+      }
+      return val
+    }, z.string())
+    .optional(),
 })
 
 export const exampleSchema = z.object({

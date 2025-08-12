@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   ConflictException,
   InternalServerErrorException,
   NotFoundException,
@@ -109,5 +108,24 @@ export class RecyclingPartnerResolver {
       throw new NotFoundException("Recycling partner doesn't exists")
     }
     return this.recyclingPartnerService.update(input)
+  }
+
+  @Authorize({
+    roles: [
+      Role.developer,
+      Role.recyclingFund,
+      Role.municipality,
+      Role.recyclingCompany,
+      Role.recyclingCompanyAdmin,
+    ],
+  })
+  @Query(() => Boolean)
+  async skilavottordRecyclingPartnerActive(
+    @Args('input', { type: () => RecyclingPartnerInput })
+    input: RecyclingPartnerInput,
+  ) {
+    return this.recyclingPartnerService.isRecyclingPartnerActive(
+      input.companyId,
+    )
   }
 }

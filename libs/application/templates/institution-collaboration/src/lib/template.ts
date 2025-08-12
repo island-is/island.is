@@ -25,7 +25,7 @@ enum Roles {
   APPLICANT = 'applicant',
 }
 
-enum TEMPLATE_API_ACTIONS {
+enum TemplateApiActions {
   // Has to match name of action in template API module
   // (will be refactored when state machine is a part of API module)
   sendApplication = 'sendApplication',
@@ -91,7 +91,7 @@ const template: ApplicationTemplate<
             },
           ],
           onEntry: defineTemplateApi({
-            action: TEMPLATE_API_ACTIONS.sendApplication,
+            action: TemplateApiActions.sendApplication,
           }),
         },
       },

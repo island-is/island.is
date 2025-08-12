@@ -19,6 +19,7 @@ import {
   ParliamentaryCollectionApi,
   ParliamentaryIdentityApi,
   IsDelegatedToCompanyApi,
+  CandidateApi,
 } from '../dataProviders'
 import DigitalServices from '@island.is/application/templates/signature-collection/assets/DigitalServices'
 import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
@@ -81,10 +82,9 @@ export const Prerequisites: Form = buildForm({
             buildDataProviderItem({
               provider: ParliamentaryIdentityApi,
             }),
-            // Todo: Add back once needed
-            /*buildDataProviderItem({
+            buildDataProviderItem({
               provider: CandidateApi,
-            }),*/
+            }),
             buildDataProviderItem({
               provider: IsDelegatedToCompanyApi,
             }),

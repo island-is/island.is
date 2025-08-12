@@ -11,7 +11,6 @@ import {
   DefaultEvents,
   Form,
   FormModes,
-  MockablePaymentCatalogApi,
   PaymentCatalogApi,
 } from '@island.is/application/types'
 import * as m from '../lib/messages'
@@ -76,16 +75,6 @@ export const draft: Form = buildForm({
           ],
         }),
       ],
-    }),
-    buildSection({
-      id: 'payment',
-      title: m.step.paymentTitle,
-      children: [],
-    }),
-    buildSection({
-      id: 'confirm',
-      title: m.step.confirmTitle,
-      children: [],
     }),
   ],
 })

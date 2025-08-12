@@ -70,17 +70,24 @@ import { EmptyTable } from '../EmptyTable/EmptyTable'
 export const SortableTable = (props: SortableTableProps) => {
   const { items, requestSort, sortConfig } = useSortableData<SortableData>(
     props.items,
-    { direction: 'ascending', key: props.defaultSortByKey },
+    {
+      direction: props.sortBy ?? 'ascending',
+      key: props.defaultSortByKey,
+    },
   )
   const { width } = useWindowSize()
   const isMobile = width < theme.breakpoints.md
   const [headerSorted, setHeaderSorted] = useState<string[]>([])
 
   useEffect(() => {
-    const headerItems = props.items
-      .map(({ id, tag, lastNode, ...restItems }) => Object.keys(restItems))
-      .flat()
-      .filter((value, index, self) => self.indexOf(value) === index)
+    const headerItems = Array.from(
+      new Set(
+        props.items.flatMap(
+          ({ id, tag, lastNode, onExpandCallback, ...restItems }) =>
+            Object.keys(restItems),
+        ),
+      ),
+    )
 
     // If expandable, remove the last item and add an empty string at the beginning
     if (props.expandable) {
@@ -119,6 +126,7 @@ export const SortableTable = (props: SortableTableProps) => {
               lastNode,
               children,
               subTitleFirstCol,
+              onExpandCallback,
               ...itemObject
             } = item
             // Remove the key that matches the "mobileTitleKey"
@@ -130,6 +138,7 @@ export const SortableTable = (props: SortableTableProps) => {
               title: props.mobileTitleKey
                 ? item[props.mobileTitleKey]
                 : undefined,
+              onExpandCallback,
               data: valueItems
                 .map((valueItem, valueIndex) => {
                   if (
@@ -248,6 +257,7 @@ export const SortableTable = (props: SortableTableProps) => {
                   <EmptyTable
                     message={props.emptyTableMessage}
                     background="white"
+                    loading={props.tableLoading}
                   />
                 </Box>
               </Box>

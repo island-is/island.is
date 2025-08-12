@@ -3,6 +3,8 @@
   "$schema": "../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/clients/form-system/src",
   "projectType": "library",
+  "schema": "libs/clients/form-system/gen/fetch/api.graphql",
+  "tags": ["lib:client", "scope:client"],
   "implicitDependencies": ["services-form-system-api"],
   "targets": {
     "lint": {
@@ -33,7 +35,5 @@
       },
       "outputs": ["{projectRoot}/gen/fetch"]
     }
-  },
-  "schema": "libs/client/form-system/gen/fetch/api.graphql",
-  "tags": ["lib:client", "scope:client"]
+  }
 }

@@ -29,10 +29,12 @@ import {
   VehiclePlateOrderChecksByPermno,
   PlateOrderValidation,
   BasicVehicleInformation,
+  ExemptionValidation,
 } from './graphql/models'
 import { ApolloError } from 'apollo-server-express'
 import { CoOwnerChangeAnswers } from './graphql/dto/coOwnerChangeAnswers.input'
 import { MileageReadingApi } from '@island.is/clients/vehicles-mileage'
+import { ExemptionForTransportationClient } from '@island.is/clients/transport-authority/exemption-for-transportation'
 
 @Injectable()
 export class TransportAuthorityApi {
@@ -42,6 +44,7 @@ export class TransportAuthorityApi {
     private readonly vehicleOperatorsClient: VehicleOperatorsClient,
     private readonly vehiclePlateOrderingClient: VehiclePlateOrderingClient,
     private readonly vehiclePlateRenewalClient: VehiclePlateRenewalClient,
+    private readonly exemptionForTransportationClient: ExemptionForTransportationClient,
     private readonly vehicleServiceFjsV1Client: VehicleServiceFjsV1Client,
     private readonly vehiclesApi: VehicleSearchApi,
     private readonly mileageReadingApi: MileageReadingApi,
@@ -436,7 +439,7 @@ export class TransportAuthorityApi {
     return this.vehiclePlateRenewalClient.getPlateAvailability(regno)
   }
 
-  async getBasicVehicleInfoByPermno(
+  async getMyBasicVehicleInfoByPermno(
     auth: User,
     permno: string,
   ): Promise<BasicVehicleInformation | null | ApolloError> {
@@ -448,5 +451,45 @@ export class TransportAuthorityApi {
       make: vehicle.make,
       color: vehicle.colorName,
     }
+  }
+
+  async getBasicVehicleInfoByPermno(
+    auth: User,
+    permno: string,
+  ): Promise<BasicVehicleInformation | null> {
+    try {
+      const vehicle = await this.vehiclesApiWithAuth(
+        auth,
+      ).basicVehicleInformationGet({
+        clientPersidno: auth.nationalId,
+        permno: permno,
+      })
+
+      const model = vehicle.make
+      const subModel = [vehicle.vehcom, vehicle.speccom]
+        .filter(Boolean)
+        .join(' ')
+
+      return {
+        permno: vehicle.permno,
+        make: `${model} ${subModel}`,
+        color: vehicle.color,
+        numberOfAxles: vehicle.technical?.axle?.axleno || 0,
+      }
+    } catch (e) {
+      return null
+    }
+  }
+
+  async getVehicleExemptionValidation(
+    auth: User,
+    permno: string,
+    isTrailer: boolean,
+  ): Promise<ExemptionValidation | null> {
+    return await this.exemptionForTransportationClient.validateForExemption(
+      auth,
+      permno,
+      isTrailer,
+    )
   }
 }

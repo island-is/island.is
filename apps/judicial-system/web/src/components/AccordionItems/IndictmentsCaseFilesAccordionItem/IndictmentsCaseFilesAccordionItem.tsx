@@ -22,9 +22,9 @@ import {
   AccordionItem,
   AlertMessage,
   Box,
+  FileUploadStatus,
   Text,
   toast,
-  UploadFileStatus,
 } from '@island.is/island-ui/core'
 import {
   CrimeSceneMap,
@@ -161,7 +161,7 @@ export const sortedFilesInChapter = (
         userGeneratedFilename: file.userGeneratedFilename,
         displayDate: file.displayDate,
         canOpen: Boolean(file.key),
-        status: 'done' as UploadFileStatus,
+        status: FileUploadStatus.done,
         canEdit: true,
         size: file.size,
       }
@@ -210,8 +210,13 @@ const CaseFile: FC<CaseFileProps> = (props) => {
       return
     }
 
-    // Prevents text selection when dragging
-    evt.preventDefault()
+    const target = evt.target as HTMLElement
+    const tag = target.tagName.toLowerCase()
+
+    if (tag !== 'input') {
+      // Prevents text selection when dragging
+      evt.preventDefault()
+    }
 
     setIsDragging(true)
     controls.start(evt)
@@ -353,7 +358,7 @@ const IndictmentsCaseFilesAccordionItem: FC<Props> = (props) => {
             userGeneratedFilename: caseFile.userGeneratedFilename,
             displayDate: caseFile.displayDate,
             canOpen: Boolean(caseFile.key),
-            status: 'done' as UploadFileStatus,
+            status: FileUploadStatus.done,
             size: caseFile.size,
             canEdit: true,
           }

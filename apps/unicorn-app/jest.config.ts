@@ -8,4 +8,5 @@ export default {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '../../coverage/apps/unicorn-app',
+  testPathIgnorePatterns: ['.*/e2e'],
 }

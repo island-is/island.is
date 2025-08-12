@@ -47,4 +47,3 @@ const FULL_REBUILD_NEEDED = 'full_rebuild_needed'
   console.log(JSON.stringify(rev))
   process.exit(0)
 })()
-

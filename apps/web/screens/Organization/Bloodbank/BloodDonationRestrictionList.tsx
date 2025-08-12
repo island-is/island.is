@@ -104,7 +104,12 @@ const BloodDonationRestrictionList: CustomScreen<
   const [currentPage, setPage] = useQueryState(
     'page',
     parseAsInteger
-      .withOptions({ shallow: true, clearOnDefault: true })
+      .withOptions({
+        shallow: true,
+        clearOnDefault: true,
+        scroll: true,
+        history: 'push',
+      })
       .withDefault(1),
   )
   const { activeLocale } = useI18n()
@@ -205,7 +210,12 @@ const BloodDonationRestrictionList: CustomScreen<
                 value={queryString}
                 onChange={(ev) => {
                   setQueryString(ev.target.value)
-                  setPage(null)
+
+                  // Make sure we don't create a new history entry when the user is already on page 1
+                  if (currentPage !== 1) {
+                    setPage(null)
+                  }
+
                   queryVariablesRef.current.queryString = ev.target.value
                   queryVariablesRef.current.page = 1
                 }}
@@ -305,6 +315,11 @@ const BloodDonationRestrictionList: CustomScreen<
                   <Text variant="h4" color="blue400">
                     {item.title}
                   </Text>
+                  {Boolean(item.description) && (
+                    <Text variant="medium">
+                      {highlightMatch(item.description, trimmedQueryString)}
+                    </Text>
+                  )}
                   {item.hasCardText && (
                     <Box
                       background="dark100"
@@ -329,11 +344,6 @@ const BloodDonationRestrictionList: CustomScreen<
                         </Button>
                       )}
                     </Box>
-                  )}
-                  {Boolean(item.description) && (
-                    <Text variant="medium">
-                      {highlightMatch(item.description, trimmedQueryString)}
-                    </Text>
                   )}
                   {Boolean(item.keywordsText) && (
                     <Text variant="small">

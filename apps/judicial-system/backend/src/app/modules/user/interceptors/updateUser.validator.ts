@@ -4,9 +4,13 @@ import {
   ExecutionContext,
   Injectable,
   NestInterceptor,
+  UnauthorizedException,
 } from '@nestjs/common'
 
-import { isCoreUser } from '@island.is/judicial-system/types'
+import {
+  getAdminUserInstitutionScope,
+  User,
+} from '@island.is/judicial-system/types'
 
 import { UserService } from '../user.service'
 
@@ -17,12 +21,30 @@ export class UpdateUserValidator implements NestInterceptor {
   async intercept(context: ExecutionContext, next: CallHandler) {
     const request = context.switchToHttp().getRequest()
 
-    const user = await this.userService.findById(request.params.userId)
+    const user: User = request.user?.currentUser
 
-    const updatedUser = request.body
+    if (!user) {
+      throw new BadRequestException('Missing user')
+    }
 
-    if (!isCoreUser({ ...user, ...updatedUser })) {
-      throw new BadRequestException('Not a valid user')
+    const userId = request.params.userId
+
+    if (!userId) {
+      throw new BadRequestException('Missing user id')
+    }
+
+    const userToUpdate = await this.userService.findById(userId)
+
+    if (
+      userToUpdate.role === user.role ||
+      !userToUpdate.institution ||
+      !getAdminUserInstitutionScope(user).includes(
+        userToUpdate.institution.type,
+      )
+    ) {
+      throw new UnauthorizedException(
+        `User ${user.id} is not allowed to update user ${userToUpdate.id}`,
+      )
     }
 
     return next.handle()

@@ -75,15 +75,26 @@ export class DrivingLicenseDuplicateService extends BaseTemplateApiService {
     const districtId =
       getValueViaPath<string>(answers, 'delivery.district') ?? ''
 
+    // Get the selected photo option
+    const selectedPhoto =
+      getValueViaPath<string>(answers, 'selectLicensePhoto') ?? ''
+
+    // If selected photo is qualityPhoto (frá ökuskírteini) or empty, set to null
+    // Otherwise, use the biometricId from national registry photo
+    const imageBiometricsId =
+      !selectedPhoto ||
+      selectedPhoto === 'qualityPhoto' ||
+      selectedPhoto === 'fakePhoto'
+        ? null
+        : selectedPhoto
+
     await this.drivingLicenseService
       .drivingLicenseDuplicateSubmission({
         pickUpLicense: Boolean(pickUpLicense),
         districtId: pickUpLicense ? parseInt(districtId) : 37,
         token: auth.authorization,
-        // Always true since submission doesn't happen before
-        // user checks the required field which states
-        // that the license is lost or stolen
         stolenOrLost: true,
+        imageBiometricsId: imageBiometricsId,
       })
       .catch((e) => {
         this.logger.error('Error submitting application', {

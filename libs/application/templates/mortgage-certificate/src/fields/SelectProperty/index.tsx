@@ -1,6 +1,6 @@
 import React, { FC, useState } from 'react'
 import { FieldBaseProps } from '@island.is/application/types'
-import { Box, ErrorMessage, Text } from '@island.is/island-ui/core'
+import { Box, ErrorMessage } from '@island.is/island-ui/core'
 import { PropertyTypeSelectField } from './PropertyTypeSelectField'
 import { useLocale } from '@island.is/localization'
 import { PropertyTypes } from '../../lib/constants'

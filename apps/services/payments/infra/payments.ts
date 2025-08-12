@@ -49,9 +49,10 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
           'clustercfg.general-redis-cluster-group.ab9ckb.euw1.cache.amazonaws.com:6379',
         ]),
         prod: json([
-          'clustercfg.general-redis-cluster-group.dnugi2.euw1.cache.amazonaws.com:6379',
+          'clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379',
         ]),
       },
+      PAYMENTS_JWT_SIGNING_EXPIRES_IN_MINUTES: '5',
     })
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET:
@@ -72,8 +73,52 @@ export const serviceSetup = (): ServiceBuilder<'services-payments'> =>
         '/k8s/services-payments/PAYMENTS_GATEWAY_API_URL',
       PAYMENTS_GATEWAY_SYSTEM_CALLING:
         '/k8s/services-payments/PAYMENTS_GATEWAY_SYSTEM_CALLING',
+      PAYMENTS_JWT_SIGNING_KEY_ID:
+        '/k8s/services-payments/PAYMENTS_JWT_SIGNING_KEY_ID',
+      PAYMENTS_JWT_SIGNING_PRIVATE_KEY:
+        '/k8s/services-payments/PAYMENTS_JWT_SIGNING_PRIVATE_KEY',
+      PAYMENTS_JWT_SIGNING_PUBLIC_KEY:
+        '/k8s/services-payments/PAYMENTS_JWT_SIGNING_PUBLIC_KEY',
+      PAYMENTS_PREVIOUS_KEY_ID:
+        '/k8s/services-payments/PAYMENTS_PREVIOUS_KEY_ID',
+      PAYMENTS_PREVIOUS_PUBLIC_KEY:
+        '/k8s/services-payments/PAYMENTS_PREVIOUS_PUBLIC_KEY',
+    })
+    .ingress({
+      primary: {
+        host: {
+          dev: `${serviceName}-xrd`,
+          staging: `${serviceName}-xrd`,
+          prod: `${serviceName}-xrd`,
+        },
+        paths: ['/'],
+        public: false,
+        extraAnnotations: {
+          dev: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+          staging: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+          prod: {
+            'nginx.ingress.kubernetes.io/proxy-buffering': 'on',
+            'nginx.ingress.kubernetes.io/proxy-buffer-size': '8k',
+          },
+        },
+      },
+      internal: {
+        host: {
+          dev: serviceName,
+          staging: serviceName,
+          prod: serviceName,
+        },
+        paths: ['/'],
+        public: false,
+      },
     })
     .xroad(Base, Client, ChargeFjsV2, RskCompanyInfo, NationalRegistryB2C)
     .readiness('/liveness')
     .liveness('/liveness')
-    .grantNamespaces('nginx-ingress-internal', 'islandis')
+    .grantNamespaces('application-system', 'nginx-ingress-internal', 'islandis')

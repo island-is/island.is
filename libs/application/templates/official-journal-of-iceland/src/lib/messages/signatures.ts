@@ -91,7 +91,7 @@ export const signatures = {
     institution: defineMessages({
       label: {
         id: 'ojoi.application:signatures.inputs.institution.label',
-        defaultMessage: 'Stofnun',
+        defaultMessage: 'Staður eða stofnun (þgf.)',
         description: 'Label for the institution input',
       },
       placeholder: {

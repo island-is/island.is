@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 import isEmpty from 'lodash/isEmpty'
 import { useRouter } from 'next/router'
 
+import { FileUploadStatus } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import {
   isDefenceUser,
@@ -22,7 +23,9 @@ import {
   SectionHeading,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import UploadFiles from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
+import UploadFiles, {
+  FileWithPreviewURL,
+} from '@island.is/judicial-system-web/src/components/UploadFiles/UploadFiles'
 import {
   Case,
   CaseFileCategory,
@@ -35,6 +38,11 @@ import {
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import {
+  isCaseCivilClaimantLegalSpokesperson,
+  isCaseCivilClaimantSpokesperson,
+  isCaseDefendantDefender,
+} from '@island.is/judicial-system-web/src/utils/utils'
 
 import {
   RepresentativeSelectOption,
@@ -42,13 +50,20 @@ import {
 } from './SelectCaseFileRepresentative'
 import { strings } from './AddFiles.strings'
 
-const getUserProps = (user: User | undefined) => {
+const getUserProps = (user: User | undefined, workingCase: Case) => {
   const getCaseInfoNode = (workingCase: Case) => (
     <ProsecutorCaseInfo workingCase={workingCase} />
   )
   if (isDefenceUser(user)) {
+    const caseFileCategory = isCaseDefendantDefender(user, workingCase)
+      ? CaseFileCategory.DEFENDANT_CASE_FILE
+      : isCaseCivilClaimantLegalSpokesperson(user, workingCase)
+      ? CaseFileCategory.CIVIL_CLAIMANT_LEGAL_SPOKESPERSON_CASE_FILE
+      : isCaseCivilClaimantSpokesperson(user, workingCase)
+      ? CaseFileCategory.CIVIL_CLAIMANT_SPOKESPERSON_CASE_FILE
+      : CaseFileCategory.CASE_FILE // should never happen
     return {
-      caseFileCategory: CaseFileCategory.DEFENDANT_CASE_FILE,
+      caseFileCategory: caseFileCategory,
       previousRoute: constants.DEFENDER_INDICTMENT_ROUTE,
       getCaseInfoNode,
       hasFileRepresentativeSelection: false,
@@ -83,7 +98,7 @@ const AddFiles: FC = () => {
     caseFileCategory,
     getCaseInfoNode,
     hasFileRepresentativeSelection,
-  } = getUserProps(user)
+  } = getUserProps(user, workingCase)
 
   const previousRoute = `${previousRouteType}/${workingCase.id}`
 
@@ -104,13 +119,13 @@ const AddFiles: FC = () => {
   const { handleUpload } = useS3Upload(workingCase.id)
   const { sendNotification } = useCase()
 
-  const addFiles = (files: File[]) => {
+  const addFiles = (files: FileWithPreviewURL[]) => {
     const { selectedCaseRepresentative } = fileRepresentative
 
     addUploadFiles(
       files,
       {
-        status: 'done',
+        status: FileUploadStatus.done,
         submissionDate: formatDateForServer(submissionDate),
         fileRepresentative: selectedCaseRepresentative?.name,
         category: !isEmpty(selectedCaseRepresentative)
@@ -192,6 +207,7 @@ const AddFiles: FC = () => {
     }
     return !isEmpty(fileRepresentative) && !!submissionDate
   }
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -258,6 +274,7 @@ const AddFiles: FC = () => {
           )}
           onClose={() => setVisibleModal(undefined)}
           onSecondaryButtonClick={() => setVisibleModal(undefined)}
+          isPrimaryButtonDisabled={!allFilesDoneOrError}
           onPrimaryButtonClick={async () => {
             await handleNextButtonClick()
           }}

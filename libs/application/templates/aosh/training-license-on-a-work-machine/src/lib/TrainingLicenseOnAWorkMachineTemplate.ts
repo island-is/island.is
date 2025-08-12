@@ -18,7 +18,10 @@ import {
 } from '@island.is/application/core'
 import { Events, States, Roles, ApiActions } from './constants'
 import { AuthDelegationType } from '@island.is/shared/types'
-import { TrainingLicenseOnAWorkMachineAnswersSchema } from './dataSchema'
+import {
+  TrainingLicenseOnAWorkMachineAnswers,
+  TrainingLicenseOnAWorkMachineAnswersSchema,
+} from './dataSchema'
 import {
   application as applicationMessage,
   externalData,
@@ -119,6 +122,10 @@ const template: ApplicationTemplate<
         meta: {
           name: applicationMessage.name.defaultMessage,
           status: FormModes.DRAFT,
+          onExit: defineTemplateApi({
+            action: ApiActions.initReview,
+            triggerEvent: DefaultEvents.ASSIGN,
+          }),
           actionCard: {
             tag: {
               label: applicationMessage.actionCardDraft,
@@ -173,9 +180,6 @@ const template: ApplicationTemplate<
         meta: {
           name: applicationMessage.name.defaultMessage,
           status: FormModes.DRAFT,
-          onEntry: defineTemplateApi({
-            action: ApiActions.initReview,
-          }),
           onDelete: defineTemplateApi({
             action: ApiActions.deleteApplication,
           }),
@@ -235,13 +239,14 @@ const template: ApplicationTemplate<
                 },
               ],
               write: {
-                answers: ['rejected'],
+                answers: ['rejected', 'approved'],
               },
               read: 'all',
             },
           ],
         },
         on: {
+          [DefaultEvents.APPROVE]: { target: States.REVIEW },
           [DefaultEvents.SUBMIT]: { target: States.COMPLETED },
           [DefaultEvents.REJECT]: { target: States.REJECTED },
         },
@@ -321,13 +326,9 @@ const template: ApplicationTemplate<
       assignUsers: assign((context) => {
         const { application } = context
 
-        const assigneeNationalId = getValueViaPath<string>(
-          application.answers,
-          'assigneeInformation.assignee.nationalId',
-          '',
-        )
-        if (assigneeNationalId !== null && assigneeNationalId !== '') {
-          set(application, 'assignees', [assigneeNationalId])
+        const assignees = getNationalIdListOfAssignees(application)
+        if (assignees.length > 0) {
+          set(application, 'assignees', assignees)
         }
         return context
       }),
@@ -337,15 +338,11 @@ const template: ApplicationTemplate<
     id: string,
     application: Application,
   ): ApplicationRole | undefined {
-    const assigneeNationalId = getValueViaPath<string>(
-      application.answers,
-      'assigneeInformation.assignee.nationalId',
-      '',
-    )
-    if (id === application.applicant) {
+    const { assignees, applicant } = application
+    if (id === applicant) {
       return Roles.APPLICANT
     }
-    if (id === assigneeNationalId && application.assignees.includes(id)) {
+    if (assignees.includes(id)) {
       return Roles.ASSIGNEE
     }
 
@@ -354,3 +351,13 @@ const template: ApplicationTemplate<
 }
 
 export default template
+
+const getNationalIdListOfAssignees = (application: Application) => {
+  const assigneeInformation = getValueViaPath<
+    TrainingLicenseOnAWorkMachineAnswers['assigneeInformation']
+  >(application.answers, 'assigneeInformation')
+  const assignees = assigneeInformation?.map(
+    ({ assignee }) => assignee.nationalId,
+  )
+  return assignees ?? []
+}

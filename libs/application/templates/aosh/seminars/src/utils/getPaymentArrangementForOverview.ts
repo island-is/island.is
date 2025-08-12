@@ -26,9 +26,16 @@ export const getPaymentArrangementForOverviewMultiple = (
         PaymentOptions.cashOnDelivery
           ? overview.paymentArrangement.cashOnDelivery
           : overview.paymentArrangement.putIntoAccount,
-        `${paymentArrangementAnswers?.companyInfo?.name}, ${formatKennitala(
-          paymentArrangementAnswers?.companyInfo?.nationalId ?? '',
-        )}`,
+        {
+          ...overview.paymentArrangement.payer,
+          values: {
+            value: `${
+              paymentArrangementAnswers?.companyInfo?.name
+            }, ${formatKennitala(
+              paymentArrangementAnswers?.companyInfo?.nationalId ?? '',
+            )}`,
+          },
+        },
         {
           ...overview.paymentArrangement.contactEmail,
           values: {

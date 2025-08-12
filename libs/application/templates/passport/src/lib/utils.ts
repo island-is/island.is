@@ -5,7 +5,7 @@ import {
 } from '@island.is/application/types'
 import {
   IdentityDocumentData,
-  PASSPORT_CHARGE_CODES,
+  PassportChargeCodes,
   Passport,
   PersonalInfo,
   Service,
@@ -72,11 +72,11 @@ export const getChargeCode = (
 
   const chargeCode = withDiscount
     ? serviceType === Services.REGULAR
-      ? PASSPORT_CHARGE_CODES.DISCOUNT_REGULAR
-      : PASSPORT_CHARGE_CODES.DISCOUNT_EXPRESS
+      ? PassportChargeCodes.DISCOUNT_REGULAR
+      : PassportChargeCodes.DISCOUNT_EXPRESS
     : serviceType === Services.REGULAR
-    ? PASSPORT_CHARGE_CODES.REGULAR
-    : PASSPORT_CHARGE_CODES.EXPRESS
+    ? PassportChargeCodes.REGULAR
+    : PassportChargeCodes.EXPRESS
 
   return chargeCode
 }

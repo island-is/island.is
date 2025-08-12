@@ -60,7 +60,9 @@ export class User extends Model {
   @Column({
     type: DataType.ENUM,
     allowNull: false,
-    values: Object.values(UserRole),
+    values: Object.values(UserRole).filter(
+      (role) => ![UserRole.ADMIN, UserRole.DEFENDER].includes(role),
+    ),
   })
   @ApiProperty({ enum: UserRole })
   role!: UserRole

@@ -41,8 +41,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       requestedDefenderName
       isDefenderChoiceConfirmed
       caseFilesSharedWithDefender
-      serviceRequirement
-      verdictViewDate
       verdictAppealDeadline
       isVerdictAppealDeadlineExpired
       subpoenaType
@@ -62,7 +60,15 @@ query LimitedAccessCase($input: CaseQueryInput!) {
         defenderNationalId
         caseId
         defendantId
-        subpoenaId
+        policeSubpoenaId
+      }
+      verdict {
+        id
+        appealDate
+        appealDecision
+        serviceRequirement
+        serviceDate
+        serviceInformationForDefendant
       }
     }
     defenderName
@@ -181,7 +187,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
     postponedIndefinitelyExplanation
     indictmentDecision
     indictmentRulingDecision
-    indictmentCompletedDate
     indictmentReviewDecision
     indictmentVerdictViewedByAll
     indictmentVerdictAppealDeadlineExpired
@@ -190,11 +195,6 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       name
     }
     courtSessionType
-    eventLogs {
-      id
-      created
-      eventType
-    }
     mergeCase {
       id
       courtCaseNumber
@@ -265,8 +265,24 @@ query LimitedAccessCase($input: CaseQueryInput!) {
       spokespersonEmail
       spokespersonPhoneNumber
       caseFilesSharedWithSpokesperson
+      isSpokespersonConfirmed
+    }
+    victims {
+      id
+      name
+      hasNationalId
+      nationalId
+      hasLawyer
+      lawyerNationalId
+      lawyerName
+      lawyerEmail
+      lawyerPhoneNumber
+      lawyerAccessToRequest
     }
     isCompletedWithoutRuling
     caseSentToCourtDate
+    indictmentReviewedDate
+    indictmentSentToPublicProsecutorDate
+    isRegisteredInPrisonSystem
   }
 }

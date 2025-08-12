@@ -17,7 +17,7 @@ env:
 jobs:
   lint:
     name: Lint PR title
-    runs-on: arc-runners
+    runs-on: arc-shared
     steps:
       - uses: amannn/action-semantic-pull-request@v5
         with:

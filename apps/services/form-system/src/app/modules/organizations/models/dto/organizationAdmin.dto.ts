@@ -3,6 +3,7 @@ import { CertificationType } from '../../../../dataTypes/certificationTypes/cert
 import { Option } from '../../../../dataTypes/option.model'
 import { ListType } from '../../../../dataTypes/listTypes/listType.model'
 import { FieldType } from '../../../../dataTypes/fieldTypes/fieldType.model'
+import { OrganizationUrlDto } from '../../../organizationUrls/models/dto/organizationUrl.dto'
 
 export class OrganizationAdminDto {
   @ApiPropertyOptional()
@@ -25,6 +26,12 @@ export class OrganizationAdminDto {
 
   @ApiPropertyOptional({ type: [CertificationType] })
   certificationTypes?: CertificationType[]
+
+  @ApiPropertyOptional({ type: [OrganizationUrlDto] })
+  submitUrls?: OrganizationUrlDto[]
+
+  @ApiPropertyOptional({ type: [OrganizationUrlDto] })
+  validationUrls?: OrganizationUrlDto[]
 
   @ApiPropertyOptional({ type: [Option] })
   organizations?: Option[]

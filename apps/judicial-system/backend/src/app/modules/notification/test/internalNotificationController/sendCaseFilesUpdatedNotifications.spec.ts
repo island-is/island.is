@@ -98,7 +98,7 @@ describe('InternalNotificationController - Send case files updated notifications
     beforeEach(async () => {
       then = await givenWhenThen({
         role: UserRole.PROSECUTOR,
-        institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+        institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
       } as unknown as User)
     })
 
@@ -143,7 +143,7 @@ describe('InternalNotificationController - Send case files updated notifications
       then = await givenWhenThen(
         {
           role: UserRole.PROSECUTOR,
-          institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+          institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
         } as unknown as User,
         false,
       )

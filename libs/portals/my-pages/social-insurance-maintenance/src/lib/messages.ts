@@ -88,7 +88,7 @@ export const m = defineMessages({
   },
   totalPaymentsReceived: {
     id: 'sp.social-insurance-maintenance:total-payments-received',
-    defaultMessage: 'Útborgað samtals:',
+    defaultMessage: 'Útborgað',
   },
   noPaymentsFound: {
     id: 'sp.social-insurance-maintenance:no-payments-found',

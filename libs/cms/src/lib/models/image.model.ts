@@ -13,6 +13,9 @@ export class Image {
   @Field()
   title?: string
 
+  @Field(() => String, { nullable: true })
+  description?: string
+
   @Field()
   contentType?: string
 
@@ -43,6 +46,7 @@ export const mapImage = (entry: Asset): SystemMetadata<Image> => {
     id: sys?.id ?? '',
     url: url,
     title: fields?.title ?? '',
+    description: fields?.description?.trim() ?? '',
     contentType: fields?.file?.contentType ?? '',
     width: fields?.file?.details?.image?.width ?? 0,
     height: fields?.file?.details?.image?.height ?? 0,

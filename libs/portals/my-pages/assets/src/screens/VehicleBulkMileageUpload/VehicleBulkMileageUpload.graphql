@@ -14,16 +14,18 @@ query vehiclesList($input: VehiclesListInputV3!) {
     totalRecords
     data {
       vehicleId
-      registrationNumber
+      registration {
+        number
+      }
       userRole
-      type
-      color
+      make
+      color {
+        name
+      }
       mileageDetails {
         lastMileageRegistration {
           ...mileageRegistration
         }
-        canRegisterMileage
-        requiresMileageRegistration
       }
     }
   }

@@ -4,6 +4,7 @@ import {
   formatTextWithLocale,
 } from '@island.is/application/core'
 import {
+  Application,
   FieldBaseProps,
   TableRepeaterField,
 } from '@island.is/application/types'
@@ -20,12 +21,13 @@ import {
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { FieldDescription } from '@island.is/shared/form-fields'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { useFieldArray, useFormContext, useWatch } from 'react-hook-form'
 import {
   buildDefaultTableHeader,
   buildDefaultTableRows,
   handleCustomMappedValues,
+  setObjectWithNestedKey,
 } from './utils'
 import { Item } from './TableRepeaterItem'
 import { Locale } from '@island.is/shared/types'
@@ -60,6 +62,7 @@ export const TableRepeaterFormField: FC<Props> = ({
     maxRows,
     onSubmitLoad,
     loadErrorMessage,
+    initActiveFieldIfEmpty,
   } = data
 
   const apolloClient = useApolloClient()
@@ -150,14 +153,37 @@ export const TableRepeaterFormField: FC<Props> = ({
     setIsEditing(true)
   }
 
-  const formatTableValue = (key: string, item: Record<string, string>) => {
+  const formatTableValue = (
+    key: string,
+    item: Record<string, string>,
+    index: number,
+    application: Application,
+  ) => {
     item[key] = item[key] ?? ''
     const formatFn = table?.format?.[key]
-    const formatted = formatFn ? formatFn(item[key]) : item[key]
+    const formatted = formatFn
+      ? formatFn(item[key], index, application)
+      : item[key]
     return typeof formatted === 'string'
       ? formatted
+      : Array.isArray(formatted)
+      ? formatText(formatted, application, formatMessage).join(', ')
       : formatText(formatted, application, formatMessage)
   }
+
+  useEffect(() => {
+    const values = methods.getValues(data.id) || []
+    if (initActiveFieldIfEmpty && values?.length === 0) {
+      // Using setObjectValue to handle nested ids
+      const newValues = {}
+      setObjectWithNestedKey(newValues, data.id, [{}])
+      methods.reset({
+        ...newValues,
+      })
+      setActiveIndex(0)
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [])
 
   return (
     <Box marginTop={marginTop} marginBottom={marginBottom}>
@@ -199,9 +225,9 @@ export const TableRepeaterFormField: FC<Props> = ({
                 staticData.map((item, index) => (
                   <T.Row key={index}>
                     <T.Data></T.Data>
-                    {Object.keys(item).map((key, index) => (
-                      <T.Data key={`static-${key}-${index}`}>
-                        {formatTableValue(key, item)}
+                    {Object.keys(item).map((key, idx) => (
+                      <T.Data key={`static-${key}-${idx}`}>
+                        {formatTableValue(key, item, index, application)}
                       </T.Data>
                     ))}
                   </T.Row>
@@ -263,6 +289,8 @@ export const TableRepeaterFormField: FC<Props> = ({
                           customMappedValues.length
                             ? customMappedValues[index]
                             : values[index],
+                          index,
+                          application,
                         )}
                       </T.Data>
                     ))}

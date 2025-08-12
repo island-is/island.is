@@ -94,5 +94,23 @@
         <data android:scheme="is.island.app.dev" android:host="oauth" />
       </intent-filter>
     </activity>
+    <activity
+      android:name=".LicenseWidgetConfigActivity"
+      android:exported="false"
+      android:theme="@android:style/Theme.DeviceDefault.Dialog">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_CONFIGURE" />
+      </intent-filter>
+    </activity>
+    <receiver
+      android:name=".LicenseWidgetProvider"
+      android:exported="true">
+      <intent-filter>
+        <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+      </intent-filter>
+      <meta-data
+        android:name="android.appwidget.provider"
+        android:resource="@xml/license_widget_info" />
+    </receiver>
   </application>
 </manifest>

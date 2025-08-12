@@ -20,7 +20,7 @@ import {
   OverrideAnswerSchema,
   UploadFileType,
 } from '..'
-import { UploadFile } from '@island.is/island-ui/core'
+import { UploadFileDeprecated } from '@island.is/island-ui/core'
 import { ApplicationStates } from './constants'
 import sortBy from 'lodash/sortBy'
 import { EMAIL_REGEX } from '@island.is/application/core'
@@ -99,7 +99,9 @@ export const hasFiles = (
   fileType: UploadFileType,
   answers: OverrideAnswerSchema,
 ) => {
-  const files = answers[fileType as keyof OverrideAnswerSchema] as UploadFile[]
+  const files = answers[
+    fileType as keyof OverrideAnswerSchema
+  ] as UploadFileDeprecated[]
   return files && files.length > 0
 }
 

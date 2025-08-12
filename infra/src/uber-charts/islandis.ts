@@ -45,6 +45,7 @@ import {
   userNotificationCleanUpWorkerSetup,
   userNotificationServiceSetup,
   userNotificationWorkerSetup,
+  userNotificationBirthdayWorkerSetup,
 } from '../../../apps/services/user-notification/infra/user-notification'
 
 import { serviceSetup as adsApiSetup } from '../../../apps/air-discount-scheme/api/infra/api'
@@ -72,6 +73,7 @@ import { serviceSetup as unicornAppSetup } from '../../../apps/unicorn-app/infra
 import { EnvironmentServices } from '.././dsl/types/charts'
 import { ServiceBuilder } from '../dsl/dsl'
 import { serviceSetup as formSystemApiSetup } from '../../../apps/services/form-system/infra/form-system'
+import { serviceSetup as formSystemWebSetup } from '../../../apps/form-system/web/infra/form-system-web'
 
 const endorsement = endorsementServiceSetup({})
 
@@ -80,6 +82,7 @@ const skilavottordWeb = skilavottordWebSetup({ api: skilavottordWs })
 
 const documentsService = serviceDocumentsSetup()
 const servicePortalApi = servicePortalApiSetup()
+const paymentsService = paymentsServiceSetup()
 
 const userNotificationService = userNotificationServiceSetup({
   userProfileApi: servicePortalApi,
@@ -91,9 +94,11 @@ const appSystemApi = appSystemApiSetup({
   skilavottordWs,
   servicePortalApi,
   userNotificationService,
+  paymentsApi: paymentsService,
 })
 const appSystemApiWorker = appSystemApiWorkerSetup({
   userNotificationService,
+  paymentsApi: paymentsService,
 })
 
 const nameRegistryBackend = serviceNameRegistryBackendSetup()
@@ -112,9 +117,8 @@ const authAdminApi = authAdminApiSetup()
 const universityGatewayService = universityGatewaySetup()
 const universityGatewayWorker = universityGatewayWorkerSetup()
 
-const paymentsService = paymentsServiceSetup()
-
 const formSystemApi = formSystemApiSetup()
+const formSystemWeb = formSystemWebSetup()
 
 const api = apiSetup({
   appSystemApi,
@@ -163,6 +167,9 @@ const userNotificationWorkerService = userNotificationWorkerSetup({
 const userNotificationCleanupWorkerService =
   userNotificationCleanUpWorkerSetup()
 
+const userNotificationBirthdayWorkerService =
+  userNotificationBirthdayWorkerSetup({ userProfileApi: servicePortalApi })
+
 const unicornApp = unicornAppSetup()
 
 const githubActionsCache = githubActionsCacheSetup()
@@ -196,6 +203,7 @@ export const Services: EnvironmentServices = {
     userNotificationService,
     userNotificationWorkerService,
     userNotificationCleanupWorkerService,
+    userNotificationBirthdayWorkerService,
     licenseApi,
     cmsImporter,
     sessionsService,
@@ -208,6 +216,8 @@ export const Services: EnvironmentServices = {
     bffAdminPortalService,
     bffServicePortalService,
     unicornApp,
+    paymentsWebApp,
+    paymentsService,
   ],
   staging: [
     appSystemApi,
@@ -235,6 +245,7 @@ export const Services: EnvironmentServices = {
     userNotificationService,
     userNotificationWorkerService,
     userNotificationCleanupWorkerService,
+    userNotificationBirthdayWorkerService,
     licenseApi,
     cmsImporter,
     sessionsService,
@@ -245,6 +256,8 @@ export const Services: EnvironmentServices = {
     bffServicePortalService,
     bffAdminPortalService,
     unicornApp,
+    paymentsWebApp,
+    paymentsService,
   ],
   dev: [
     appSystemApi,
@@ -272,6 +285,7 @@ export const Services: EnvironmentServices = {
     userNotificationService,
     userNotificationWorkerService,
     userNotificationCleanupWorkerService,
+    userNotificationBirthdayWorkerService,
     externalContractsTests,
     appSystemApiWorker,
     contentfulEntryTagger,
@@ -289,6 +303,7 @@ export const Services: EnvironmentServices = {
     bffServicePortalService,
     unicornApp,
     formSystemApi,
+    formSystemWeb,
   ],
 }
 
@@ -300,8 +315,11 @@ export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
   userNotificationService,
   userNotificationWorkerService,
   userNotificationCleanupWorkerService,
+  userNotificationBirthdayWorkerService,
   contentfulEntryTagger,
   searchIndexer,
   contentfulApps,
   githubActionsCache,
+  xroadCollector,
+  nameRegistryBackend,
 ]

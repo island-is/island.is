@@ -30,7 +30,7 @@ export const OJOISearchListView = ({
           <T.Row key={ad.id}>
             <T.Data>
               <Text variant="small" whiteSpace="nowrap">
-                {formatDate(ad.publicationDate)}
+                {formatDate(ad.publicationDate, 'd.M.yyyy')}
               </Text>
             </T.Data>
             <T.Data>

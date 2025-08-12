@@ -83,6 +83,7 @@ const PaymentPlan = () => {
                     <LinkButton
                       to={formatMessage(m.maintenanceFooterLinkUrl)}
                       text={str ?? ''}
+                      variant="text"
                     />
                   ),
                 })}

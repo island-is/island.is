@@ -53,6 +53,8 @@ query getInstitutionApplications(
       assignees
       applicantActors
       name
+      pruned
+      pruneAt
       institution
       progress
       status

@@ -1,22 +1,23 @@
 import { FC, useMemo, useState } from 'react'
-import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
 import { useMeasure } from 'react-use'
 import cn from 'classnames'
 import isValid from 'date-fns/isValid'
 import parseISO from 'date-fns/parseISO'
 import { AnimatePresence, motion } from 'motion/react'
+import { InputMask } from '@react-input/mask'
 
 import {
   Box,
+  FileUploadStatus,
   Icon,
   Input,
   LoadingDots,
   Text,
   toast,
   UploadFile,
-  UploadFileStatus,
 } from '@island.is/island-ui/core'
+import { EDITABLE_DATE } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 
 import { CaseFileCategory } from '../../graphql/schema'
@@ -33,8 +34,9 @@ export interface TEditableCaseFile {
   displayDate?: string | null
   canOpen?: boolean
   canEdit?: boolean
-  status?: UploadFileStatus
+  status?: FileUploadStatus
   size?: number | null
+  submissionDate?: string | null
 }
 
 interface Props {
@@ -61,16 +63,20 @@ const EditableCaseFile: FC<Props> = (props) => {
   } = props
   const { formatMessage } = useIntl()
   const [ref, { width }] = useMeasure<HTMLDivElement>()
+
+  const initialDate =
+    caseFile.displayDate || caseFile.submissionDate || caseFile.created
+  const displayName = caseFile.userGeneratedFilename ?? caseFile.displayText
+
+  const [editedDisplayDate, setEditedDisplayDate] = useState<
+    string | undefined
+  >(formatDate(initialDate))
+
   const [isEditing, setIsEditing] = useState<boolean>(false)
 
   const [editedFilename, setEditedFilename] = useState<
     string | undefined | null
   >(caseFile.userGeneratedFilename)
-
-  const [editedDisplayDate, setEditedDisplayDate] = useState<
-    string | undefined
-  >(formatDate(caseFile.displayDate ?? caseFile.created) ?? undefined)
-  const displayName = caseFile.userGeneratedFilename ?? caseFile.displayText
 
   const handleEditFileButtonClick = () => {
     const trimmedFilename = editedFilename?.trim()
@@ -104,19 +110,20 @@ const EditableCaseFile: FC<Props> = (props) => {
   }, [caseFile.displayDate, caseFile.created])
 
   const isEmpty = caseFile.size === 0
-  const hasError = caseFile.status === 'error' || isEmpty
+  const hasError = caseFile.status === FileUploadStatus.error || isEmpty
   const color = hasError ? 'red400' : 'blue400'
   const styleIndex =
-    caseFile.status === 'done' && isEmpty
-      ? 'error'
-      : caseFile.status || 'uploading'
+    caseFile.status === FileUploadStatus.done && isEmpty
+      ? FileUploadStatus.error
+      : caseFile.status || FileUploadStatus.uploading
 
   return (
     <div
-      className={cn(
-        styles.caseFileWrapper,
-        styles.caseFileWrapperStates[styleIndex],
-      )}
+      className={cn(styles.caseFileWrapper, {
+        [styles.error]: styleIndex === FileUploadStatus.error,
+        [styles.done]: styleIndex === FileUploadStatus.done,
+        [styles.uploading]: styleIndex === FileUploadStatus.uploading,
+      })}
     >
       {enableDrag && (
         <Box
@@ -154,29 +161,28 @@ const EditableCaseFile: FC<Props> = (props) => {
                   </Box>
                   <Box className={styles.editCaseFileDisplayDate}>
                     <InputMask
-                      mask="99.99.9999"
-                      maskPlaceholder={null}
+                      component={Input}
+                      mask={EDITABLE_DATE}
+                      replacement={{ _: /\d/ }}
                       value={editedDisplayDate || ''}
                       onChange={(evt) => {
                         setEditedDisplayDate(evt.target.value)
                       }}
-                    >
-                      <Input
-                        name="fileDisplayDate"
-                        size="xs"
-                        placeholder={formatDate(new Date())}
-                        autoComplete="off"
-                      />
-                    </InputMask>
+                      name="fileDisplayDate"
+                      size="xs"
+                      placeholder={formatDate(new Date())}
+                      autoComplete="off"
+                    />
                   </Box>
                 </Box>
                 <Box display="flex" alignItems="center">
                   <button
                     onClick={handleEditFileButtonClick}
                     className={cn(styles.editCaseFileButton, {
-                      [styles.background.primary]: caseFile.status !== 'error',
+                      [styles.background.primary]:
+                        caseFile.status !== FileUploadStatus.error,
                       [styles.background.secondary]:
-                        caseFile.status === 'error' || isEmpty,
+                        caseFile.status === FileUploadStatus.error || isEmpty,
                     })}
                     aria-label="Vista breytingar"
                   >
@@ -190,9 +196,9 @@ const EditableCaseFile: FC<Props> = (props) => {
                       }}
                       className={cn(styles.editCaseFileButton, {
                         [styles.background.primary]:
-                          caseFile.status !== 'error',
+                          caseFile.status !== FileUploadStatus.error,
                         [styles.background.secondary]:
-                          caseFile.status === 'error' || isEmpty,
+                          caseFile.status === FileUploadStatus.error || isEmpty,
                       })}
                       aria-label="Eyða skrá"
                     >
@@ -250,11 +256,12 @@ const EditableCaseFile: FC<Props> = (props) => {
                   <Text variant="small">{displayDate}</Text>
                 </Box>
 
-                {caseFile.status === 'uploading' ? (
+                {caseFile.status === FileUploadStatus.uploading ? (
                   <Box className={styles.editCaseFileButton}>
                     <LoadingDots single />
                   </Box>
-                ) : (caseFile.status === 'error' || isEmpty) && onRetry ? (
+                ) : (caseFile.status === FileUploadStatus.error || isEmpty) &&
+                  onRetry ? (
                   <button
                     onClick={() => onRetry(caseFile as UploadFile)}
                     className={cn(
@@ -273,9 +280,10 @@ const EditableCaseFile: FC<Props> = (props) => {
                     }}
                     className={cn(styles.editCaseFileButton, {
                       [styles.background.primary]:
-                        caseFile.canEdit && caseFile.status !== 'error',
+                        caseFile.canEdit &&
+                        caseFile.status !== FileUploadStatus.error,
                       [styles.background.secondary]:
-                        caseFile.status === 'error' || isEmpty,
+                        caseFile.status === FileUploadStatus.error || isEmpty,
                     })}
                     disabled={!caseFile.canEdit}
                     aria-label="Breyta skrá"

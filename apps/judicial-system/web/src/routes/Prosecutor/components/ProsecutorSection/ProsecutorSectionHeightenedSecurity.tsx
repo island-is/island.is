@@ -3,7 +3,7 @@ import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
 import { Box, Checkbox } from '@island.is/island-ui/core'
-import * as constants from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   BlueBox,
   FormContext,
@@ -109,7 +109,7 @@ const ProsecutorSectionHeightenedSecurity = () => {
           onPrimaryButtonClick={async () => {
             if (substituteProsecutorId) {
               await setProsecutor(substituteProsecutorId)
-              router.push(constants.CASES_ROUTE)
+              router.push(getStandardUserDashboardRoute(user))
             }
           }}
           onSecondaryButtonClick={() => {

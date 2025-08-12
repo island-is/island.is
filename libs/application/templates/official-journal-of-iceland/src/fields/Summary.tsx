@@ -175,7 +175,7 @@ export const Summary = ({
           {!publishingCheck.success && (
             <AlertMessage
               type="warning"
-              title={f(error.missingFieldsTitle)}
+              title={f(error.missingFieldsAny)}
               message={
                 <Stack space={2}>
                   <BulletList color="black">

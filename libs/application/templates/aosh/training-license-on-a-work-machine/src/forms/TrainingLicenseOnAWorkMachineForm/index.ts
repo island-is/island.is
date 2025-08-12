@@ -7,7 +7,6 @@ import { conclusion } from '../../lib/messages'
 import { certificateOfTenureSection } from './CertificateOfTenureSection'
 import { assigneeInformationSection } from './AssigneeInformationSection'
 import { overviewSection } from './OverviewSection'
-import { isContractor } from '../../utils'
 
 export const TrainingLicenseOnAWorkMachineForm: Form = buildForm({
   id: 'TrainingLicenseOnAWorkMachineFormsDraft',

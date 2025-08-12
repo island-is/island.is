@@ -78,6 +78,11 @@ export const m = defineMessages({
     defaultMessage: 'Umsækjandi',
     description: 'Information title',
   },
+  applicantInstitution: {
+    id: 'dld.application:information.applicantInstitution',
+    defaultMessage: 'Ríkislögreglustjóri',
+    description: '',
+  },
   validTag: {
     id: 'dld.application:information.validTag',
     defaultMessage: 'Gildir til ',
@@ -88,25 +93,38 @@ export const m = defineMessages({
     defaultMessage: 'Ökuréttindi',
     description: 'Some description',
   },
-  signatureAndImageAlert: {
-    id: 'dld.application:information.signatureAndImageAlert',
+  imageAlert: {
+    id: 'dld.application:imageAlert',
     defaultMessage:
       'Ef þú þarft að uppfæra mynd eða undirskrift, þá þarft þú að fara til Sýslumanns til þess að gera það.',
     description: 'Some description',
   },
-  signatureAndImage: {
-    id: 'dld.application:information.signatureAndImage',
-    defaultMessage: 'Undirskrift og mynd',
-    description: 'Some description',
-  },
-  signature: {
-    id: 'dld.application:information.signature',
-    defaultMessage: 'Undirskrift á skrá',
-    description: 'Some description',
-  },
   image: {
-    id: 'dld.application:information.Mynd',
-    defaultMessage: 'Mynd á skrá',
+    id: 'dld.application:image',
+    defaultMessage: 'Mynd í ökuskírteini',
+    description: 'Some description',
+  },
+  imageDescription: {
+    id: 'dld.application:imageDescription',
+    defaultMessage:
+      'Hér fyrir neðan eru upplýsingar um þig og þín ökuréttindi og þær myndir sem hægt er að nota í ökuskírteinið.',
+    description: 'Some description',
+  },
+  useFakeImage: {
+    id: 'dld.application:useFakeImage',
+    defaultMessage: 'Ég staðfesti að nota fakeData mynd',
+    description: 'Some description',
+  },
+  useDriversLicenseImage: {
+    id: 'dld.application:useDriversLicenseImage#markdown',
+    defaultMessage:
+      'Ég staðfesti að nota núverandi mynd úr ökuskírteinaskrá í ökuskírteinið',
+    description: 'Some description',
+  },
+  usePassportImage: {
+    id: 'dld.application:usePassportImage#markdown',
+    defaultMessage:
+      'Ég staðfesti að nota núverandi mynd úr vegabréfa- og nafnskírteinaskrá í ökuskírteinið',
     description: 'Some description',
   },
 
@@ -132,17 +150,6 @@ export const m = defineMessages({
     defaultMessage: 'Það sem vantar fyrir umsókn',
     description: 'Some description',
   },
-  rejectedSignatureTitle: {
-    id: 'dld.application:rejected.signature.title',
-    defaultMessage: 'Undirskrift ekki til á skrá',
-    description: 'Some description',
-  },
-  rejectedSignatureMessage: {
-    id: 'dld.application:rejected.signature.message',
-    defaultMessage:
-      'Undirskrift ekki til í ökuskírteinaskrá og þarf því að koma til Sýslumanns og skrifa undir.',
-    description: 'Some description',
-  },
   rejectedImageTitle: {
     id: 'dld.application:rejected.image.title',
     defaultMessage: 'Ljósmynd í ökuskírteini ekki gæðamerkt',
@@ -152,6 +159,17 @@ export const m = defineMessages({
     id: 'dld.application:rejected.image.message',
     defaultMessage:
       'Núverandi ljósmynd þín í ökuskírteinaskrá stenst ekki gæðakröfur og þarf því að koma með nýja ljósmynd.',
+    description: 'Some description',
+  },
+  rejectedImageTitleNew: {
+    id: 'dld.application:rejectedImageTitleNew',
+    defaultMessage: 'Ljósmynd í ökuskírteinaskrá og skilríkjaskrá',
+    description: 'Some description',
+  },
+  rejectedImageMessageNew: {
+    id: 'dld.application:rejectedImageMessageNew#markdown',
+    defaultMessage:
+      'Núverandi ljósmynd í ökuskírteinaskrá uppfyllir ekki gæðakröfur og ekki er til mynd í skilríkjaskrá sem uppfyllir skilyrði. Það þarf að mæta með passamynd á ljósmyndapappír (4,5cm x 3,5cm) til næsta sýslumannsembættis og leggja inn umsókn á staðnum.',
     description: 'Some description',
   },
 
@@ -185,19 +203,9 @@ export const m = defineMessages({
     description: 'Description for reason section',
   },
   confirmReason: {
-    id: 'dld.application:confirmReason',
+    id: 'dld.application:confirmReason#markdown',
     defaultMessage: 'Ég staðfesti að ökuskírteinið hafi skemmst eða glatast',
     description: 'Confirm reason text',
-  },
-  reasonLostOption: {
-    id: 'dld.application:reasonLostOption',
-    defaultMessage: 'Glatað ökuskírteini',
-    description: 'Lost option',
-  },
-  reasonStolenOption: {
-    id: 'dld.application:reasonStolenOption',
-    defaultMessage: 'Stolið ökuskírteini',
-    description: 'Stolen option',
   },
 
   /* Quality Photo Section */
@@ -227,11 +235,6 @@ export const m = defineMessages({
     id: 'dld.application:qualityPhotoAltText',
     defaultMessage: 'Þín mynd skv. ökuskírteinaskrá',
     description: `Alt text for the user's quality photo`,
-  },
-  qualityPhotoNoPhotoAlertMessage: {
-    id: 'dld.application:qualityPhoto.qualityPhotoNoPhotoAlertMessage',
-    defaultMessage: 'Ath. Skylda er að hlaða inn mynd',
-    description: 'Alert on no photo attachment',
   },
 
   /* Delivery method Section */
@@ -276,28 +279,6 @@ export const m = defineMessages({
     defaultMessage: 'Veldu afhendingarstað',
   },
 
-  /* Digital License Section */
-  digitalLicenseInfoTitle: {
-    id: 'dld.application:digitalLicenseInfoTitle',
-    defaultMessage: 'Stafrænt ökuskírteini',
-    description: 'Digital driving license',
-  },
-  digitalLicenseInfoDescription: {
-    id: 'dld.application:digitalLicenseInfoDescription',
-    defaultMessage: 'Lorem ipsum dolor sit amet, consectetur adipiscing elit.',
-    description: 'Digital driving license',
-  },
-  digitalLicenseInfoAlertTitle: {
-    id: 'dld.application:digitalLicenseInfoAlertTitle',
-    defaultMessage: 'Athugið',
-    description: 'Digital driving license',
-  },
-  digitalLicenseInfoAlertMessage: {
-    id: 'dld.application:digitalLicenseInfoAlertMessage#markdown',
-    defaultMessage: 'Þú ert að sækja um samrit ökuskírteinis.',
-    description: 'Digital driving license',
-  },
-
   /* Overview Section */
   overviewTitle: {
     id: 'dld.application:overview.title',
@@ -315,16 +296,6 @@ export const m = defineMessages({
       'Vinsamlegast farðu yfir gögnin hér að neðan til að staðfesta að réttar upplýsingar hafi verið gefnar upp.',
     description: 'Description for overview section',
   },
-  overviewLicenseExpires: {
-    id: 'dld.application:overview.licenseExpires',
-    defaultMessage: 'Gildistími ökuskírteinis',
-    description: 'Some description',
-  },
-  notFilledOut: {
-    id: 'dld.application:notFilledOut',
-    defaultMessage: 'Ekki fyllt út',
-    description: '',
-  },
   confirmTitle: {
     id: 'dld.application:confirm.title',
     defaultMessage: 'Staðfesta',
@@ -335,16 +306,17 @@ export const m = defineMessages({
     defaultMessage:
       'Vinsamlegast farið yfir undirskrift og mynd. Ef nafn hefur breyst frá því að síðast var sótt um skírteini mun það stöðva umsókn. Fara þarf með nýja mynd eða veita nýja undirskrift hjá Sýslumanni ef svo ber undir.',
   },
-  confirmSignatureAndPhoto: {
-    id: 'dld.application:confirmSignatureAndPhoto',
+  confirmPhoto: {
+    id: 'dld.application:confirmPhoto',
     defaultMessage: 'Ég staðfesti að ofangreindar upplýsingar séu réttar.',
-    description: 'Text for confirmation of signature and photo',
+    description: 'Text for confirmation photo',
   },
   requiredCheckmark: {
     id: 'dld.application:requiredCheckmark',
     defaultMessage: 'Skylda er að haka við þennan reit',
     description: 'Text for required checkmark',
   },
+
   /*Payment Section*/
   proceedToPayment: {
     id: 'dld.application:payment.proceedToPayment',
@@ -361,11 +333,6 @@ export const m = defineMessages({
     defaultMessage: 'Greiðsla',
     description: 'Some description',
   },
-  paymentAmount: {
-    id: 'dld.application:payment.amount',
-    defaultMessage: 'Til greiðslu',
-    description: 'Some description',
-  },
   paymentSum: {
     id: 'dld.application:payment.sum',
     defaultMessage: 'Samtals',
@@ -374,11 +341,6 @@ export const m = defineMessages({
   payment: {
     id: 'dld.application:payment',
     defaultMessage: 'Ganga frá greiðslu',
-    description: 'Some description',
-  },
-  confirm: {
-    id: 'dld.application:confirm',
-    defaultMessage: 'Staðfesta',
     description: 'Some description',
   },
 
@@ -394,11 +356,6 @@ export const m = defineMessages({
     defaultMessage: 'Umsókn móttekin',
     description: 'Congratulations',
   },
-  congratulationsApplicationNumber: {
-    id: 'dld.application:congratulationsApplicationNumber',
-    defaultMessage: 'Númer umsóknar',
-    description: 'Congratulations',
-  },
   congratulationsNextStepsTitle: {
     id: 'dld.application:congratulations.nextSteps.title',
     defaultMessage: 'Næstu skref',
@@ -410,30 +367,8 @@ export const m = defineMessages({
       '* Ökuskírteinið verður tilbúið til afhendingar eftir þrjár vikur hjá því sýslumannsembætti sem þú valdir í umsókninni.\n\n* Á meðan getur þú notað [ökuskírteini í símanum](https://island.is/okuskirteini). Athugið að uppfæra þarf stafræna skírteinið ef þú ert þegar með það í símanum.',
     description: 'Congratulations Next steps title',
   },
-  errorDataProvider: {
-    id: 'dld.application:error.dataProvider',
-    defaultMessage: 'Reyndu aftur síðar',
-    description: 'Unhandled error in data provider',
-  },
-
-  /* Validation Error */
-  missingAttachmentValidationError: {
-    id: 'dld.application:error.missingAttachment',
-    defaultMessage: 'Vinsamlegast veldu mynd til að hlaða inn',
-    description: 'Validation error for attachment',
-  },
-  missingDistrictValidationError: {
-    id: 'dld.application:error.missingAttachmentDistrict',
-    defaultMessage: 'Vinsamlegast veldu embætti',
-    description: 'Validation error for district',
-  },
 
   /* Category Section */
-  categorySectionTitle: {
-    id: 'dld.application:categorySectionTitle',
-    defaultMessage: 'Réttindi',
-    description: 'text for category section after NR',
-  },
   noExpirationDate: {
     id: 'dld.application:noExpirationDate',
     defaultMessage: 'Villa: Enginn gildistími skilgreindur',

@@ -1,4 +1,4 @@
-import { render, screen } from '@testing-library/react'
+import { render, screen, waitFor } from '@testing-library/react'
 
 import {
   CaseDecision,
@@ -10,7 +10,7 @@ import { IntlProviderWrapper } from '@island.is/judicial-system-web/src/utils/te
 import RestrictionLength from './RestrictionLength'
 
 describe('RestrictionLength', () => {
-  it('should render isolation fields in custody cases if decision is accepting', () => {
+  it('should render isolation fields in custody cases if decision is accepting', async () => {
     render(
       <IntlProviderWrapper>
         <RestrictionLength
@@ -25,10 +25,10 @@ describe('RestrictionLength', () => {
       </IntlProviderWrapper>,
     )
 
-    expect(screen.queryByTestId('isolation-fields')).not.toBeNull()
+    expect(await screen.findByTestId('isolation-fields')).toBeInTheDocument()
   })
 
-  it('should not render isolation fields in custody cases if decision is not accepting', () => {
+  it('should not render isolation fields in custody cases if decision is not accepting', async () => {
     render(
       <IntlProviderWrapper>
         <RestrictionLength
@@ -43,10 +43,12 @@ describe('RestrictionLength', () => {
       </IntlProviderWrapper>,
     )
 
-    expect(screen.queryByTestId('isolation-fields')).toBeNull()
+    await waitFor(() => {
+      expect(screen.queryByTestId('isolation-fields')).toBeNull()
+    })
   })
 
-  it('should render isolation fields in admission to facility cases if decision is accepting', () => {
+  it('should render isolation fields in admission to facility cases if decision is accepting', async () => {
     render(
       <IntlProviderWrapper>
         <RestrictionLength
@@ -61,10 +63,10 @@ describe('RestrictionLength', () => {
       </IntlProviderWrapper>,
     )
 
-    expect(screen.queryByTestId('isolation-fields')).not.toBeNull()
+    expect(await screen.findByTestId('isolation-fields')).toBeInTheDocument()
   })
 
-  it('should not render isolation fields in admission to facility cases if decision is not accepting', () => {
+  it('should not render isolation fields in admission to facility cases if decision is not accepting', async () => {
     render(
       <IntlProviderWrapper>
         <RestrictionLength
@@ -79,10 +81,12 @@ describe('RestrictionLength', () => {
       </IntlProviderWrapper>,
     )
 
-    expect(screen.queryByTestId('isolation-fields')).toBeNull()
+    await waitFor(() => {
+      expect(screen.queryByTestId('isolation-fields')).toBeNull()
+    })
   })
 
-  it('should not render isolation fields in cases other then custody or admission to facility', () => {
+  it('should not render isolation fields in cases other then custody or admission to facility', async () => {
     render(
       <IntlProviderWrapper>
         <RestrictionLength
@@ -97,6 +101,8 @@ describe('RestrictionLength', () => {
       </IntlProviderWrapper>,
     )
 
-    expect(screen.queryByTestId('isolation-fields')).toBeNull()
+    await waitFor(() => {
+      expect(screen.queryByTestId('isolation-fields')).toBeNull()
+    })
   })
 })

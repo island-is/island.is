@@ -16,7 +16,10 @@ import {
   buildTextField,
 } from '@island.is/application/core'
 import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
-import { fileUploadSharedProps } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import {
+  fileUploadSharedProps,
+  maritalStatuses,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import {
   getBankIsk,
@@ -31,7 +34,6 @@ import {
 } from '@island.is/application/types'
 import { buildFormConclusionSection } from '@island.is/application/ui-forms'
 import * as kennitala from 'kennitala'
-import { maritalStatuses } from '../lib/constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,

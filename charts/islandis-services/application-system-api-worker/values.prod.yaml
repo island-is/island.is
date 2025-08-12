@@ -40,6 +40,8 @@ env:
   IDENTITY_SERVER_ISSUER_URL: 'https://innskra.island.is'
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=691 --enable-source-maps -r dd-trace/init'
+  PAYMENTS_API_URL: 'http://services-payments.services-payments.svc.cluster.local'
+  PAYMENT_API_CALLBACK_URL: 'http://application-system-api.application-system.svc.cluster.local'
   REDIS_URL_NODE_01: '["clustercfg.general-redis-cluster-group.whakos.euw1.cache.amazonaws.com:6379"]'
   SERVERSIDE_FEATURES_ON: 'driving-license-use-v1-endpoint-for-v2-comms'
   USER_NOTIFICATION_API_URL: 'http://user-notification.user-notification.svc.cluster.local'
@@ -55,6 +57,7 @@ env:
   XROAD_TLS_BASE_PATH_WITH_ENV: 'https://securityserver.island.is/r1/IS'
   XROAD_WORK_MACHINE_LICENSE_PATH: 'IS/GOV/4201810439/Vinnueftirlitid-Protected/vinnuvelar-token'
 grantNamespaces:
+  - 'services-payments'
   - 'nginx-ingress-internal'
   - 'islandis'
 grantNamespacesEnabled: true

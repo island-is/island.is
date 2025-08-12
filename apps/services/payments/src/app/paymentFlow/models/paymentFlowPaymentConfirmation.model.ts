@@ -14,7 +14,7 @@ import {
   Table,
   UpdatedAt,
 } from 'sequelize-typescript'
-import { PaymentFlow } from './paymentFlow.model' // Update the path to match your project structure
+import { PaymentFlow } from './paymentFlow.model'
 
 @Table({
   tableName: 'payment_flow_payment_confirmation',
@@ -88,6 +88,14 @@ export class PaymentFlowPaymentConfirmation extends Model<
     field: 'card_usage',
   })
   cardUsage!: string
+
+  @ApiProperty()
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+    field: 'merchant_reference_data',
+  })
+  merchantReferenceData!: string
 
   @CreatedAt
   @ApiProperty()

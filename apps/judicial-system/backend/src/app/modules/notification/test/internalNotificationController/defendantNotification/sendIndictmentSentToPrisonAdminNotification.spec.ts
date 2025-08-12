@@ -2,7 +2,7 @@ import { uuid } from 'uuidv4'
 
 import { EmailService } from '@island.is/email-service'
 
-import { PRISON_CASES_ROUTE } from '@island.is/judicial-system/consts'
+import { CASE_TABLE_GROUPS_ROUTE } from '@island.is/judicial-system/consts'
 import {
   CaseType,
   DefendantNotificationType,
@@ -120,7 +120,7 @@ describe('InternalNotificationController - Defendant - Send indictment sent to p
 
             attachments: undefined,
             subject: `Mál S-123-456/2024 til fullnustu`,
-            html: expect.stringContaining(PRISON_CASES_ROUTE),
+            html: expect.stringContaining(CASE_TABLE_GROUPS_ROUTE),
             text: expect.stringContaining(
               'Ríkissaksóknari hefur sent mál S-123-456/2024 til fullnustu.',
             ),

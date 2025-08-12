@@ -1,9 +1,10 @@
 import { PortalNavigationItem } from '@island.is/portals/core'
-import { m } from '@island.is/portals/my-pages/core'
+import { m, searchTagsMessages as s } from '@island.is/portals/my-pages/core'
 import { AssetsPaths } from './paths'
 
 export const assetsNavigation: PortalNavigationItem = {
   name: m.assets,
+  description: m.assetsDescription,
   path: AssetsPaths.AssetsRoot,
   icon: {
     icon: 'homeWithCar',
@@ -11,6 +12,8 @@ export const assetsNavigation: PortalNavigationItem = {
   children: [
     {
       name: m.realEstate,
+      description: m.realEstateDescription,
+      searchTags: [s.assetsHouse],
       path: AssetsPaths.AssetsRealEstate,
       children: [
         {
@@ -22,10 +25,14 @@ export const assetsNavigation: PortalNavigationItem = {
     },
     {
       name: m.vehicles,
+      searchHide: true,
       path: AssetsPaths.AssetsVehicles,
       children: [
         {
           name: m.myVehicles,
+          description: m.vehiclesDescription,
+          searchTags: [s.assetsVehicle, s.assetsVehicles],
+
           path: AssetsPaths.AssetsMyVehicles,
           breadcrumbHide: true,
           children: [
@@ -46,6 +53,7 @@ export const assetsNavigation: PortalNavigationItem = {
         },
         {
           name: m.vehiclesRegisterMileage,
+          description: m.vehiclesRegisterMileageIntro,
           path: AssetsPaths.AssetsVehiclesBulkMileage,
           children: [
             {
@@ -74,12 +82,14 @@ export const assetsNavigation: PortalNavigationItem = {
 
         {
           name: m.vehiclesHistory,
+          description: m.vehiclesHistory,
           path: AssetsPaths.AssetsVehiclesHistory,
         },
       ],
     },
     {
       name: m.intellectualProperties,
+      description: m.intellectualPropertiesIntro,
       path: AssetsPaths.AssetsIntellectualProperties,
       children: [
         {
@@ -101,6 +111,8 @@ export const assetsNavigation: PortalNavigationItem = {
     },
     {
       name: m.workMachines,
+      description: m.workMachinesIntro,
+      searchTags: [s.assetsWorkMachines, s.assetsMachines],
       path: AssetsPaths.AssetsWorkMachines,
       children: [
         {
@@ -111,5 +123,4 @@ export const assetsNavigation: PortalNavigationItem = {
       ],
     },
   ],
-  description: m.realEstateDescription,
 }

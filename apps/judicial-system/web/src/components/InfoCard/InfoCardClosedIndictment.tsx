@@ -2,10 +2,9 @@ import { FC, useContext } from 'react'
 
 import {
   isPrisonAdminUser,
-  isPublicProsecutorUser,
+  isPublicProsecutionOfficeUser,
 } from '@island.is/judicial-system/types'
 
-import { EventType } from '../../graphql/schema'
 import { FormContext } from '../FormProvider/FormProvider'
 import { UserContext } from '../UserProvider/UserProvider'
 import InfoCard from './InfoCard'
@@ -46,10 +45,6 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
     displaySentToPrisonAdminDate,
   } = props
 
-  const reviewedDate = workingCase.eventLogs?.find(
-    (log) => log.eventType === EventType.INDICTMENT_REVIEWED,
-  )?.created
-
   return (
     <InfoCard
       sections={[
@@ -84,7 +79,7 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
           columns: 2,
         },
         ...(workingCase.indictmentReviewer?.name &&
-        (isPublicProsecutorUser(user) || isPrisonAdminUser(user))
+        (isPublicProsecutionOfficeUser(user) || isPrisonAdminUser(user))
           ? [
               {
                 id: 'additional-data-section',
@@ -93,8 +88,12 @@ const InfoCardClosedIndictment: FC<Props> = (props) => {
                   ...(workingCase.indictmentReviewDecision
                     ? [indictmentReviewDecision]
                     : []),
-                  ...(reviewedDate
-                    ? [indictmentReviewedDate(reviewedDate)]
+                  ...(workingCase.indictmentReviewedDate
+                    ? [
+                        indictmentReviewedDate(
+                          workingCase.indictmentReviewedDate,
+                        ),
+                      ]
                     : []),
                 ],
                 columns: 2,

@@ -31,9 +31,11 @@ import { FavAndStash } from '../FavAndStash/FavAndStash'
 import UrgentTag from '../UrgentTag/UrgentTag'
 import AvatarImage from './AvatarImage'
 import * as styles from './DocumentLine.css'
+import { Reply } from '../../lib/types'
 
 interface Props {
   documentLine: DocumentV2
+  hasInitialFocus?: boolean
   img?: string
   setSelectLine?: (id: string) => void
   active: boolean
@@ -45,6 +47,7 @@ interface Props {
 
 export const DocumentLine: FC<Props> = ({
   documentLine,
+  hasInitialFocus = false,
   img,
   setSelectLine,
   active,
@@ -53,7 +56,7 @@ export const DocumentLine: FC<Props> = ({
   bookmarked,
   selected,
 }) => {
-  const [hasFocusOrHover, setHasFocusOrHover] = useState(false)
+  const [hasFocusOrHover, setHasFocusOrHover] = useState(hasInitialFocus)
   const [hasAvatarFocus, setHasAvatarFocus] = useState(false)
   const [modalData, setModalData] = useState<{
     title: string
@@ -82,6 +85,7 @@ export const DocumentLine: FC<Props> = ({
     setDocumentDisplayError,
     setDocLoading,
     setLocalRead,
+    setReplyState,
     categoriesAvailable,
     localRead,
   } = useDocumentContext()
@@ -174,6 +178,26 @@ export const DocumentLine: FC<Props> = ({
             displayPdf(docContent, actions, alert)
             setDocumentDisplayError(undefined)
             setLocalRead([...localRead, documentLine.id])
+            const replyable = data?.documentV2?.replyable ?? false
+
+            const ticket = data?.documentV2?.ticket
+            if (ticket) {
+              const reply: Reply = {
+                ...ticket,
+                comments: (ticket.comments ?? []).map((c) => ({
+                  ...c,
+                  hide: false,
+                })),
+              }
+              setReplyState((prev) => ({
+                ...prev,
+                replies: reply,
+                replyable,
+                closedForMoreReplies:
+                  data.documentV2?.closedForMoreReplies ?? false,
+                replyOpen: prev?.replyOpen ?? false,
+              }))
+            }
           } else {
             setDocumentDisplayError(formatMessage(messages.documentErrorLoad))
           }
@@ -326,9 +350,27 @@ export const DocumentLine: FC<Props> = ({
         >
           {active && <div className={styles.fakeBorder} />}
           <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
-            <Text variant="medium" truncate>
-              {documentLine.sender?.name ?? ''}
-            </Text>
+            <Box display="inlineFlex">
+              <Text variant="medium" truncate>
+                {documentLine.sender?.name ?? ''}
+              </Text>
+              {documentLine.replyable && (
+                <Box
+                  paddingX="smallGutter"
+                  marginLeft="smallGutter"
+                  display="flex"
+                  justifyContent="center"
+                  alignItems="center"
+                >
+                  <Icon
+                    icon="undo"
+                    color="dark400"
+                    size="small"
+                    type="outline"
+                  />
+                </Box>
+              )}
+            </Box>
             <Text variant="medium">{date}</Text>
           </Box>
           <Box display="flex" flexDirection="row" justifyContent="spaceBetween">
@@ -338,7 +380,7 @@ export const DocumentLine: FC<Props> = ({
                 subject: documentLine.subject,
               })}
               type="button"
-              id={active ? `button-${documentLine.id}` : undefined}
+              id={`button-${documentLine.id}`}
               className={styles.docLineButton}
             >
               <Text

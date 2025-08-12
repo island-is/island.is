@@ -35,8 +35,9 @@ export const serviceSetup =
         XROAD_RSK_PROCURING_ACTOR_TOKEN: 'true',
         XROAD_NATIONAL_REGISTRY_SERVICE_PATH: {
           dev: 'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1',
-          staging: 'IS-TEST/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
-          prod: 'IS/GOV/6503760649/SKRA-Protected/Einstaklingar-v1',
+          staging:
+            'IS-TEST/GOV/6503760649/SKRA-Cloud-Protected/Einstaklingar-v1',
+          prod: 'IS/GOV/6503760649/SKRA-Cloud-Protected/Einstaklingar-v1',
         },
         XROAD_NATIONAL_REGISTRY_REDIS_NODES: REDIS_NODE_CONFIG,
         XROAD_RSK_PROCURING_REDIS_NODES: REDIS_NODE_CONFIG,

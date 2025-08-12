@@ -19,6 +19,9 @@ export class Screen {
   @Field(() => Boolean, { nullable: true })
   isHidden?: boolean
 
+  @Field(() => Boolean, { nullable: true })
+  isCompleted?: boolean
+
   @Field(() => Int, { nullable: true })
   multiset?: number
 

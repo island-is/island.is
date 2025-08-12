@@ -1,5 +1,0 @@
-export { ElectionsInfoFields } from './ElectionInfoFields'
-export { IndividualElectionOperatingIncome } from './IndividualElectionOperatingIncome'
-export { KeyNumbersCapital } from './KeyNumbersCapital'
-export { ElectionEquities } from './ElectionEquities'
-export { Success } from './Success'

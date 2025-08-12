@@ -28,21 +28,31 @@ export const overviewSection = buildSection({
           title: '',
           backId: 'informationMultiField',
           bottomLine: false,
-          items: getApplicantOverviewInformation,
+          items: (answers) => getApplicantOverviewInformation(answers),
         }),
         buildOverviewField({
           id: 'overviewMachineTenure',
-          title: '',
+          title: overview.labels.machineTenure,
           backId: 'certificateOfTenureMultiField',
           bottomLine: false,
-          items: getMachineTenureOverviewInformation,
+          items: (answers, externalData, userNationalId) =>
+            getMachineTenureOverviewInformation(
+              answers,
+              externalData,
+              userNationalId,
+            ),
         }),
         buildOverviewField({
           id: 'overviewAssignee',
           title: '',
           backId: 'assigneeInformationMultiField',
           bottomLine: false,
-          items: getAssigneeOverviewInformation,
+          items: (answers, externalData, userNationalId) =>
+            getAssigneeOverviewInformation(
+              answers,
+              externalData,
+              userNationalId,
+            ),
           condition: (answers) => !isContractor(answers),
         }),
         buildDescriptionField({

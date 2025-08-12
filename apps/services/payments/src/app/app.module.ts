@@ -3,8 +3,6 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { ConfigModule } from '@nestjs/config'
 import { FeatureFlagConfig } from '@island.is/nest/feature-flags'
 
-// TODO
-// import { AuditModule } from '@island.is/nest/audit'
 import { ProblemModule } from '@island.is/nest/problem'
 import { ChargeFjsV2ClientConfig } from '@island.is/clients/charge-fjs-v2'
 import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
@@ -15,10 +13,10 @@ import { PaymentFlowModule } from './paymentFlow/paymentFlow.module'
 import { CardPaymentModule } from './cardPayment/cardPayment.module'
 import { InvoicePaymentModule } from './invoicePayment/invoicePayment.module'
 import { SequelizeConfigService } from '../sequelizeConfig.service'
+import { JwksModule } from './jwks/jwks.module'
 
 @Module({
   imports: [
-    // AuditModule.forRoot(environment.audit),
     ProblemModule,
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
@@ -26,6 +24,7 @@ import { SequelizeConfigService } from '../sequelizeConfig.service'
     PaymentFlowModule,
     CardPaymentModule,
     InvoicePaymentModule,
+    JwksModule,
     ConfigModule.forRoot({
       isGlobal: true,
       load: [

@@ -1,9 +1,8 @@
-/* eslint-disable */
 export default {
   preset: './jest.preset.js',
   rootDir: '../../..',
   roots: [__dirname],
-  testEnvironment: 'jest-environment-jsdom',
+  testEnvironment: 'jsdom',
   detectOpenHandles: false,
   detectLeaks: false,
   transform: {

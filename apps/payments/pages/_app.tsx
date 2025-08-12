@@ -9,7 +9,7 @@ import './app.css'
 
 const Layout: FC<React.PropsWithChildren<unknown>> = ({ children }) => {
   return (
-    <div>
+    <div style={{ height: '100%' }}>
       <Head>
         <title>Ísland.is | Greiðslur</title>
         <link rel="icon" href="/favicon.ico" type="image/x-icon" />

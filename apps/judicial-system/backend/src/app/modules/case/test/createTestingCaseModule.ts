@@ -21,6 +21,7 @@ import { CourtService } from '../../court'
 import { CivilClaimantService } from '../../defendant'
 import { DefendantService } from '../../defendant'
 import { EventService } from '../../event'
+import { EventLogService } from '../../event-log/eventLog.service'
 import { FileService } from '../../file'
 import { IndictmentCountService } from '../../indictment-count'
 import { PoliceService } from '../../police'
@@ -42,6 +43,7 @@ jest.mock('@island.is/judicial-system/message')
 jest.mock('../../court/court.service')
 jest.mock('../../police/police.service')
 jest.mock('../../event/event.service')
+jest.mock('../../event-log/eventLog.service')
 jest.mock('../../user/user.service')
 jest.mock('../../file/file.service')
 jest.mock('../../aws-s3/awsS3.service')
@@ -64,6 +66,7 @@ export const createTestingCaseModule = async () => {
     providers: [
       SharedAuthModule,
       MessageService,
+      EventLogService,
       CourtService,
       PoliceService,
       UserService,
@@ -139,6 +142,8 @@ export const createTestingCaseModule = async () => {
 
   const messageService = caseModule.get<MessageService>(MessageService)
 
+  const eventLogService = caseModule.get<EventLogService>(EventLogService)
+
   const courtService = caseModule.get<CourtService>(CourtService)
 
   const policeService = caseModule.get<PoliceService>(PoliceService)
@@ -200,6 +205,7 @@ export const createTestingCaseModule = async () => {
 
   return {
     messageService,
+    eventLogService,
     courtService,
     policeService,
     userService,

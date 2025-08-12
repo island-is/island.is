@@ -1,13 +1,17 @@
 import React, { useState } from 'react'
 
 import { withFigma } from '../../utils/withFigma'
-import { InputFileUpload, fileToObject, UploadFile } from './InputFileUpload'
+import {
+  InputFileUploadDeprecated,
+  fileToObjectDeprecated,
+  UploadFileDeprecated,
+} from './InputFileUploadDeprecated'
 import { Box } from '../Box/Box'
 import { ContentBlock } from '../ContentBlock/ContentBlock'
 
 export default {
   title: 'Form/InputFileUpload',
-  component: InputFileUpload,
+  component: InputFileUploadDeprecated,
   parameters: withFigma('InputFileUpload'),
 }
 
@@ -22,7 +26,10 @@ type Action = {
   payload: any
 }
 
-const uploadFile = (file: UploadFile, dispatch: (action: Action) => void) => {
+const uploadFile = (
+  file: UploadFileDeprecated,
+  dispatch: (action: Action) => void,
+) => {
   return new Promise((resolve, reject) => {
     const req = new XMLHttpRequest()
 
@@ -61,9 +68,9 @@ const uploadFile = (file: UploadFile, dispatch: (action: Action) => void) => {
   })
 }
 
-const initialUploadFiles: UploadFile[] = []
+const initialUploadFiles: UploadFileDeprecated[] = []
 
-function reducer(state: UploadFile[], action: Action) {
+function reducer(state: UploadFileDeprecated[], action: Action) {
   switch (action.type) {
     case ActionTypes.ADD:
       return state.concat(action.payload.newFiles)
@@ -75,7 +82,7 @@ function reducer(state: UploadFile[], action: Action) {
 
     case ActionTypes.UPDATE:
       return [
-        ...state.map((file: UploadFile) => {
+        ...state.map((file: UploadFileDeprecated) => {
           if (file.name === action.payload.file.name) {
             file.status = action.payload.status
             file.percent = action.payload.percent
@@ -94,11 +101,11 @@ export const Default = () => {
   const [error, setError] = useState<string | undefined>(undefined)
 
   const onChange = (newFiles: File[]) => {
-    const newUploadFiles = newFiles.map((f) => fileToObject(f))
+    const newUploadFiles = newFiles.map((f) => fileToObjectDeprecated(f))
 
     setError(undefined)
 
-    newUploadFiles.forEach((f: UploadFile) => {
+    newUploadFiles.forEach((f: UploadFileDeprecated) => {
       uploadFile(f, dispatch).catch((e) => {
         setError('An error occurred uploading one or more files')
       })
@@ -112,7 +119,7 @@ export const Default = () => {
     })
   }
 
-  const remove = (fileToRemove: UploadFile) => {
+  const remove = (fileToRemove: UploadFileDeprecated) => {
     dispatch({
       type: ActionTypes.REMOVE,
       payload: {
@@ -124,7 +131,7 @@ export const Default = () => {
   return (
     <ContentBlock>
       <Box padding={[2, 2, 3]} background="blue100">
-        <InputFileUpload
+        <InputFileUploadDeprecated
           fileList={state}
           header="Drag documents here to upload"
           description="Documents accepted with extension: .pdf, .docx, .rtf"
@@ -142,7 +149,7 @@ export const Disabled = () => {
   return (
     <ContentBlock>
       <Box padding={[2, 2, 3]} background="blue100">
-        <InputFileUpload
+        <InputFileUploadDeprecated
           fileList={[]}
           header="Drag documents here to upload"
           description="Documents accepted with extension: .pdf, .docx, .rtf"

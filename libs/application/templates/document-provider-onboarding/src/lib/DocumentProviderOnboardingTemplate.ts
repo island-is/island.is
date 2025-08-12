@@ -10,7 +10,7 @@ import {
   DefaultEvents,
   defineTemplateApi,
 } from '@island.is/application/types'
-import { API_MODULE_ACTIONS } from '../../constants'
+import { ApiModuleActions } from '../../constants'
 import { dataSchema } from './dataSchema'
 import { CodeOwners } from '@island.is/shared/constants'
 
@@ -86,7 +86,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
           status: 'inprogress',
           lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
-            action: API_MODULE_ACTIONS.assignReviewer,
+            action: ApiModuleActions.assignReviewer,
           }),
           roles: [
             {
@@ -151,7 +151,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
           progress: 1,
           lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
-            action: API_MODULE_ACTIONS.applicationRejected,
+            action: ApiModuleActions.applicationRejected,
           }),
           roles: [
             {
@@ -172,7 +172,7 @@ const DocumentProviderOnboardingTemplate: ApplicationTemplate<
           progress: 0.75,
           lifecycle: DefaultStateLifeCycle,
           onEntry: defineTemplateApi({
-            action: API_MODULE_ACTIONS.applicationApproved,
+            action: ApiModuleActions.applicationApproved,
           }),
           roles: [
             {

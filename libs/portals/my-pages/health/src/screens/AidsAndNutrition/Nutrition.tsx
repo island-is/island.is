@@ -11,7 +11,7 @@ import {
 } from '@island.is/portals/my-pages/core'
 import { messages } from '../../lib/messages'
 import { exportNutritionFile } from '../../utils/FileBreakdown'
-import NestedInfoLines from '../MedicinePrescriptions/components/NestedInfoLines/NestedInfoLines'
+import NestedInfoLines from '../../components/NestedInfoLines/NestedInfoLines'
 
 interface Props {
   data: Array<RightsPortalAidOrNutrition>
@@ -95,6 +95,7 @@ const Nutrition = ({ data }: Props) => {
         <LinkButton
           to={formatMessage(messages['nutritionDescriptionLink'])}
           text={formatMessage(messages.nutritionDescriptionInfo)}
+          variant="text"
         />
       </Box>
     </Box>

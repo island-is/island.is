@@ -1,10 +1,10 @@
 import { useQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { friggOptionsQuery } from '../graphql/queries'
-import { OptionsType } from '../lib/constants'
+import { OptionsType } from '../utils/constants'
 import { FriggOptionsQuery } from '../types/schema'
 
-export const useFriggOptions = (type?: OptionsType) => {
+export const useFriggOptions = (type?: OptionsType, useIdAndKey = false) => {
   const { lang } = useLocale()
   const { data, loading, error } = useQuery<FriggOptionsQuery>(
     friggOptionsQuery,
@@ -19,12 +19,14 @@ export const useFriggOptions = (type?: OptionsType) => {
 
   const options =
     data?.friggOptions?.flatMap(({ options }) =>
-      options.flatMap(({ value, key }) => {
-        let content = value.find(({ language }) => language === lang)?.content
-        if (!content) {
-          content = value.find(({ language }) => language === 'is')?.content
-        }
-        return { value: key ?? '', label: content ?? '' }
+      options.flatMap(({ value, key, id }) => {
+        const content = value.find(({ language }) => language === lang)?.content
+
+        if (!content) return []
+
+        const contentValue = useIdAndKey ? `${id}::${key}` : id
+
+        return { value: contentValue, label: content }
       }),
     ) ?? []
 

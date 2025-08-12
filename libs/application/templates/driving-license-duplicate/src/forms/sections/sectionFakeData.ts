@@ -41,10 +41,11 @@ export const sectionFakeData = buildSubSection({
               label: 'Nei',
             },
             {
-              value: 'IgnoreQualityPhotoAndSignature',
-              label: 'Nei, nema sneiða framhjá QualityPhoto og undirskrift',
+              value: 'IgnoreQualityPhoto',
+              label: 'Nei, nema sneiða framhjá QualityPhoto',
             },
           ],
+          marginBottom: 3,
         }),
         buildRadioField({
           id: 'fakeData.currentLicense',
@@ -65,11 +66,13 @@ export const sectionFakeData = buildSubSection({
               label: 'Engin',
             },
           ],
+          marginBottom: 3,
         }),
         buildDateField({
           id: 'fakeData.licenseIssuedDate',
           title: 'Útgáfudagur ökuréttinda',
           placeholder: 'Útgáfudagur ökuréttinda',
+          defaultValue: () => new Date().toISOString(),
           condition: (answers) => {
             const fakeData = getValueViaPath<DrivingLicenseDuplicateFakeData>(
               answers,
@@ -80,10 +83,11 @@ export const sectionFakeData = buildSubSection({
               fakeData?.currentLicense === 'B-temp'
             )
           },
+          marginBottom: 3,
         }),
         buildRadioField({
           id: 'fakeData.qualityPhoto',
-          title: 'Með gilt QualityPhoto?',
+          title: 'Með ljósmynd í ökuskírteinaskrá og skilríkjaskrá?',
           width: 'half',
           condition: allowFakeCondition(YES),
           options: [
@@ -96,22 +100,7 @@ export const sectionFakeData = buildSubSection({
               label: 'Nei',
             },
           ],
-        }),
-        buildRadioField({
-          id: 'fakeData.qualitySignature',
-          title: 'Með gilt QualitySignature?',
-          width: 'half',
-          condition: allowFakeCondition(YES),
-          options: [
-            {
-              value: YES,
-              label: 'Já',
-            },
-            {
-              value: NO,
-              label: 'Nei',
-            },
-          ],
+          marginBottom: 3,
         }),
         buildRadioField({
           id: 'fakeData.age',

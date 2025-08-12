@@ -1,7 +1,13 @@
 import { useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
 
-import { Input, type InputProps } from '@island.is/island-ui/core'
+import {
+  Box,
+  Button,
+  Input,
+  type InputProps,
+  Stack,
+} from '@island.is/island-ui/core'
 
 const handleInputKeyDown = (ev: { key: string; target: unknown }) => {
   if (ev.key === 'Enter') {
@@ -21,6 +27,7 @@ interface DebouncedInputProps {
   loading?: boolean
   backgroundColor?: InputProps['backgroundColor']
   debounceTimeInMs: number
+  clearStateButtonText?: string
 }
 
 export const DebouncedInput = ({
@@ -34,6 +41,7 @@ export const DebouncedInput = ({
   loading,
   icon,
   debounceTimeInMs,
+  clearStateButtonText,
 }: DebouncedInputProps) => {
   const [state, setState] = useState(value)
   const initialRender = useRef(true)
@@ -51,19 +59,35 @@ export const DebouncedInput = ({
   )
 
   return (
-    <Input
-      size={size}
-      label={label}
-      name={name}
-      icon={icon}
-      loading={loading}
-      placeholder={placeholder}
-      backgroundColor={backgroundColor}
-      onChange={(ev) => {
-        setState(ev.target.value)
-      }}
-      onKeyDown={handleInputKeyDown}
-      value={state}
-    />
+    <Stack space={2}>
+      <Input
+        size={size}
+        label={label}
+        name={name}
+        icon={icon}
+        loading={loading}
+        placeholder={placeholder}
+        backgroundColor={backgroundColor}
+        onChange={(ev) => {
+          setState(ev.target.value)
+        }}
+        onKeyDown={handleInputKeyDown}
+        value={state}
+      />
+      {Boolean(clearStateButtonText) && (
+        <Box display="flex" justifyContent="flexEnd">
+          <Button
+            variant="text"
+            icon="reload"
+            size="small"
+            onClick={() => {
+              setState('')
+            }}
+          >
+            {clearStateButtonText}
+          </Button>
+        </Box>
+      )}
+    </Stack>
   )
 }

@@ -39,6 +39,7 @@ export type OutputPersistentVolumeClaim = {
 }
 export type ContainerEnvironmentVariables = { [name: string]: string }
 export type ContainerSecrets = { [name: string]: string }
+export type IngressClass = 'nginx-internal-alb' | 'nginx-external-alb'
 
 export interface HelmService {
   replicaCount?: {
@@ -94,6 +95,7 @@ export interface HelmService {
 
   ingress?: {
     [name: string]: {
+      ingressClassName?: IngressClass
       annotations: {
         [anntName: string]: string
       }
