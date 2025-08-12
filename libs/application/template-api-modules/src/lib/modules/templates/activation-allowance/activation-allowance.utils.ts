@@ -136,8 +136,9 @@ export const getLicenseInfo = (
     hasHeavyMachineryLicense:
       licenses?.hasHeavyMachineryLicense &&
       licenses.hasHeavyMachineryLicense.includes(YES),
-    drivingLicenses: licenses?.drivingLicenseType?.filter(Boolean),
-    heavyMachineryLicenses: licenses?.heavyMachineryLicenses?.filter(Boolean),
+    drivingLicenses: licenses?.drivingLicenseType?.filter(Boolean) ?? [],
+    heavyMachineryLicenses:
+      licenses?.heavyMachineryLicenses?.filter(Boolean) ?? [],
   }
   return payload
 }
@@ -160,16 +161,14 @@ export const getJobHistoryInfo = (
 ): GaldurDomainModelsApplicantsApplicantProfileDTOsJob[] | undefined => {
   const jobHistoryAnswers =
     getValueViaPath<JobHistoryAnswer[]>(answers, 'jobHistory', []) || []
-  jobHistoryAnswers
+  return jobHistoryAnswers
     .map((job) => ({
       employer: job.companyName,
       started: parseDateSafe(job.startDate),
       quit: parseDateSafe(job.endDate),
-      jobName: job.jobName,
+      jobCodeId: job.jobName,
     }))
-    .filter((item) => item.jobName !== null)
-
-  return jobHistoryAnswers
+    .filter((item) => item.jobCodeId !== null)
 }
 
 export const getBankInfo = (

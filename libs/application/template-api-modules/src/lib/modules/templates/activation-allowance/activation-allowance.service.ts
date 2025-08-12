@@ -30,6 +30,7 @@ import { S3Service } from '@island.is/nest/aws'
 import { sharedModuleConfig } from '../../shared'
 import { ConfigType } from '@nestjs/config'
 import { getValueViaPath } from '@island.is/application/core'
+import { CV_ID } from './constants'
 
 @Injectable()
 export class ActivationAllowanceService extends BaseTemplateApiService {
@@ -122,21 +123,28 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
     const emptyApplication = { ...emptyApplicationOriginal }
     delete emptyApplication.supportData
 
+    let hasError = false
     if (!bankInfo) {
       this.logger.warn(
         '[VMST-ActivationAllowance]: Missing payment information fields',
       )
-      throw new Error()
-    } else if (!languageSkillInfo) {
+      hasError = true
+    }
+    if (!languageSkillInfo) {
       this.logger.warn(
         '[VMST-ActivationAllowance]: Missing language skills information fields',
       )
-      throw new Error()
-    } else if (!personalInfo) {
+      hasError = true
+    }
+    if (!personalInfo) {
       this.logger.warn(
         '[VMST-ActivationAllowance]: Missing personal information fields',
       )
-      throw new Error()
+      hasError = true
+    }
+
+    if (hasError) {
+      throw new Error('Missing required fields')
     }
 
     let cvResponse: GaldurDomainModelsAttachmentsAttachmentViewModel | undefined
@@ -145,7 +153,7 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
         await this.vmstUnemploymentClientService.createAttachmentForActivationGrant(
           {
             galdurDomainModelsAttachmentsCreateAttachmentRequest: {
-              attachmentTypeId: 'B1595806-8F7F-450C-B999-08D681E727D5',
+              attachmentTypeId: CV_ID,
               fileName: cvInfo?.fileName,
               fileType: cvInfo?.fileType,
               data: cvInfo?.data,
