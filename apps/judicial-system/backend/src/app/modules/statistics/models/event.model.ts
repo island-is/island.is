@@ -7,7 +7,7 @@ type BaseEventType =
   | 'COURT_DATE_SCHEDULED' // include with type, and the actual court date. Event date is the date when this is triggered
   | 'COURT_DATE_OCCURRED'
 
-type RequestCaseEventType =
+export type RequestCaseEventType =
   | BaseEventType
   | 'DEFENDANT_ARRESTED'
   | 'COURT_SESSION_STARTED'

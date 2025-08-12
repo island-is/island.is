@@ -23,7 +23,7 @@ import { SubpoenaStatistics } from './models/subpoenaStatistics.response'
 import { IndictmentStatisticsDto } from './statistics/indictmentStatistics.dto'
 import { RequestStatisticsDto } from './statistics/requestStatistics.dto'
 import { SubpoenaStatisticsDto } from './statistics/subpoenaStatistics.dto'
-import { StatisticsService } from './statistics.service'
+import { DataGroups, StatisticsService } from './statistics.service'
 
 @Controller('api')
 @ApiTags('statistics')
@@ -128,6 +128,8 @@ export class StatisticsController {
   ): Promise<{ url: string }> {
     this.logger.debug('Create and export csv file for data analytics')
 
-    return this.statisticService.extractTransformLoadRvgDataToS3()
+    return this.statisticService.extractTransformLoadRvgDataToS3({
+      type: DataGroups.REQUESTS,
+    })
   }
 }

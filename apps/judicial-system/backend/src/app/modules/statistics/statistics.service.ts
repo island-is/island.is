@@ -5,7 +5,6 @@ import { Sequelize } from 'sequelize-typescript'
 
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
-import { Test } from '@nestjs/testing'
 
 import { IntlService } from '@island.is/cms-translations'
 import { SigningService } from '@island.is/dokobit-signing'
@@ -30,6 +29,7 @@ import { DefendantService } from '../defendant'
 import { EventService } from '../event'
 import { EventLog, EventLogService } from '../event-log'
 import { FileService } from '../file'
+import { Institution } from '../institution'
 import { Subpoena, SubpoenaService } from '../subpoena'
 import {
   CaseStatistics,
@@ -41,6 +41,12 @@ import {
   SubpoenaStatistics,
 } from './models/subpoenaStatistics.response'
 import { DateFilter } from './statistics/types'
+import { eventFunctions } from './caseEvents'
+
+export enum DataGroups {
+  REQUESTS = 'REQUESTS',
+  INDICTMENTS = 'INDICTMENTS',
+}
 
 @Injectable()
 export class StatisticsService {
@@ -453,30 +459,60 @@ export class StatisticsService {
     }
   }
 
-  // shared event model structure + json additional data for R-cases?
-  async extractTransformLoadRvgDataToS3(): Promise<{ url: string }> {
-    const data = [
-      { test: '123', test2: '123' },
-      { test: 'mja', test2: 'mja' },
-    ]
-    const columns = ['test', 'test2']
-
-    stringify(
-      data,
-      { header: true, columns: columns },
-      async (error, csvOutput) => {
-        if (error) {
-          this.logger.error('Failed to convert data to csv file')
-          return
-        }
-        const key = 'test'
-        try {
-          this.awsS3Service.uploadCsvToS3(key, csvOutput)
-        } catch (error) {
-          this.logger.error(`Failed to upload csv ${key} to AWS S3`, { error })
-        }
+  // TODO: !!
+  private async extractAndTransformRequestCases() {
+    const where: WhereOptions = {
+      type: {
+        [Op.not]: [CaseType.INDICTMENT],
       },
+    }
+
+    const cases = await this.caseModel.findAll({
+      where,
+      order: [['created', 'ASC']],
+      include: [
+        {
+          model: EventLog,
+          required: false,
+          attributes: ['created', 'eventType'],
+        },
+        { model: Institution, as: 'prosecutorsOffice' },
+      ],
+    })
+
+    // create events for data analytics for each case
+    const events = cases.flatMap((c) =>
+      eventFunctions.flatMap((func) => func(c)),
     )
+
+    return { data: events }
+  }
+
+  async extractTransformLoadRvgDataToS3({
+    type,
+  }: {
+    type: DataGroups
+  }): Promise<{ url: string }> {
+    const getData = async () => {
+      if (type === DataGroups.REQUESTS) {
+        return await this.extractAndTransformRequestCases()
+      }
+      return { data: [], columns: [] }
+    }
+    const { data } = await getData()
+
+    stringify(data, { header: true }, async (error, csvOutput) => {
+      if (error) {
+        this.logger.error('Failed to convert data to csv file')
+        return
+      }
+      const key = 'test'
+      try {
+        this.awsS3Service.uploadCsvToS3(key, csvOutput)
+      } catch (error) {
+        this.logger.error(`Failed to upload csv ${key} to AWS S3`, { error })
+      }
+    })
 
     const url = await this.awsS3Service.getSignedUrl(
       'statistics',
