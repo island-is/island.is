@@ -308,7 +308,12 @@ const Defendant = () => {
       return key === policeCases[index ?? 0].number
     })
 
-    scrollToId.current = a ?? null
+    if (
+      update?.crimeScene?.date?.getDate() !==
+      policeCases[index ?? 0].date?.getDate()
+    ) {
+      scrollToId.current = a ?? null
+    }
 
     const [policeCaseNumbers, indictmentSubtypes, crimeScenes] =
       getPoliceCasesForUpdate(getPoliceCases(workingCase), index, update)
@@ -335,7 +340,6 @@ const Defendant = () => {
       }
       scrollToId.current = null
     }
-    console.log(policeCases)
   }, [policeCases])
 
   const handleUpdateIndictmentCount = (
