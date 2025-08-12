@@ -41,6 +41,15 @@ export const initialReducer = (state: ApplicationState): ApplicationState => {
     screens,
   )
 
+  // Arrange sections such that sectionType.PAYMENT is second last and sectionType.SUMMARY is last
+  sections.sort((a, b) => {
+    if (a.sectionType === 'SUMMARY') return 1
+    if (b.sectionType === 'SUMMARY') return -1
+    if (a.sectionType === 'PAYMENT') return 1
+    if (b.sectionType === 'PAYMENT') return -1
+    return 0
+  })
+
   return {
     ...state,
     sections,
