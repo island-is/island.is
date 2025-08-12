@@ -125,8 +125,7 @@ export const generateCleanUpForFeature = async (
           const commandArg = feature as string
           return {
             image,
-            command: [`/app/destroy-dbs.sh`],
-            args: [commandArg],
+            command: [`/app/destroy-dbs.sh`, commandArg],
             name: `${info!.username!.replace(/_/g, '-').substring(0, 60)}1`,
             securityContext,
             env: [
