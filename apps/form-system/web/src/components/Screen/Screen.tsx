@@ -20,6 +20,7 @@ export const Screen = () => {
   const [externalDataAgreement, setExternalDataAgreement] = useState(
     state.sections?.[0].isCompleted ?? false,
   )
+  
   return (
     <Box
       component="form"
