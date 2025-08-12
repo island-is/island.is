@@ -490,38 +490,6 @@ export const medicalAndRehabilitationPaymentsFormMessage: MessageDir = {
       defaultMessage: 'Annað varðandi megin vanda',
       description: 'Further information on main impairment',
     },
-
-    // Application for medical and rehabilitation payments
-    application: {
-      id: 'marp.application:certificate.for.sickness.and.rehabilitation.application',
-      defaultMessage: 'Sótt er um sjúkra- og endurhæfingargreiðslur',
-      description: 'Application for medical and rehabilitation payments',
-    },
-    applicationStartOfTreatment: {
-      id: 'marp.application:certificate.for.sickness.and.rehabilitation.application.start.of.treatment',
-      defaultMessage: 'Upphaf meðferðar',
-      description: 'Start of treatment',
-    },
-    applicationEstimatedEndOfTreatment: {
-      id: 'marp.application:certificate.for.sickness.and.rehabilitation.application.estimated.end.of.treatment',
-      defaultMessage: 'Áætluð lok meðferðar',
-      description: 'Estimated end of treatment',
-    },
-    applicationEstimatedTimeUnclear: {
-      id: 'marp.application:certificate.for.sickness.and.rehabilitation.application.estimated.time.unclear',
-      defaultMessage: 'Óljóst',
-      description: 'Unclear',
-    },
-    applicationEstimatedTime: {
-      id: 'marp.application:certificate.for.sickness.and.rehabilitation.application.estimated.time',
-      defaultMessage: 'Áætluð tímalengd',
-      description: 'Estimated time',
-    },
-    applicationEstimatedTimeMonths: {
-      id: 'marp.application:certificate.for.sickness.and.rehabilitation.application.estimated.time.months',
-      defaultMessage: '{months} mánuðir',
-      description: '{months} months',
-    },
   }),
 
   rehabilitationPlan: defineMessages({
