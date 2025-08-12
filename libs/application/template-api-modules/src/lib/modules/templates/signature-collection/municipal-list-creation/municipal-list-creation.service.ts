@@ -58,7 +58,7 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
           CollectionType.LocalGovernmental,
         )
       if (
-        !currentCollection.isActive &&
+        !currentCollection.isActive ||
         !currentCollection.areas.some(
           (area) => area.id === candidate.area?.id && area.isActive,
         )
@@ -119,9 +119,8 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
 
   async submit({ application, auth }: TemplateApiModuleActionProps) {
     const answers = application.answers as CreateListSchema
-    const municipalCollection = (
-      application.externalData.municipalCollection.data as Array<Collection>
-    )[0]
+    const municipalCollection = application.externalData.municipalCollection
+      .data as Collection
 
     const candidateAreaId = getValueViaPath(
       application.externalData,
