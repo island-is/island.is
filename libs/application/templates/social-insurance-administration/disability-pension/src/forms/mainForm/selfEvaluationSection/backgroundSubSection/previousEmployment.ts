@@ -1,22 +1,22 @@
 import {
   buildMultiField,
   buildRadioField,
-  buildTextField,
+  buildSelectField,
+  buildTitleField,
   getValueViaPath,
-  YES,
   NO,
+  YES,
 } from '@island.is/application/core'
+import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import { FormValue } from '@island.is/application/types'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { SectionRouteEnum } from '../../../../types'
-import { FormValue } from '@island.is/application/types'
-import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-
-
+import { getYears } from '../../../../utils/dates'
+import { mockProfessionCategories } from '../../../../utils/mockData'
 
 export const previousEmploymentField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT,
   title: disabilityPensionFormMessage.selfEvaluation.questionFormTitle,
-  description: disabilityPensionFormMessage.selfEvaluation.questionFormDescription,
   children: [
     buildRadioField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT}.hasEmployment`,
@@ -31,12 +31,12 @@ export const previousEmploymentField = buildMultiField({
           value: NO,
           label: socialInsuranceAdministrationMessage.shared.no,
         },
-      ]
+      ],
     }),
-    buildTextField({
-      id: `${SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT}.when`,
+
+    buildTitleField({
       title: disabilityPensionFormMessage.questions.previousEmploymentWhen,
-      placeholder: '20XX',
+      titleVariant: 'h5',
       condition: (formValue: FormValue) => {
         const hasPreviousEmployment = getValueViaPath<string>(
           formValue,
@@ -44,11 +44,12 @@ export const previousEmploymentField = buildMultiField({
         )
         return hasPreviousEmployment === YES
       },
-      width: 'full',
     }),
-    buildTextField({
-      id: `${SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT}.field`,
-      title: disabilityPensionFormMessage.questions.previousEmploymentField,
+    buildSelectField({
+      id: `${SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT}.when`,
+      title: disabilityPensionFormMessage.shared.year,
+      width: 'half',
+      placeholder: disabilityPensionFormMessage.shared.chooseYear,
       condition: (formValue: FormValue) => {
         const hasPreviousEmployment = getValueViaPath<string>(
           formValue,
@@ -56,7 +57,46 @@ export const previousEmploymentField = buildMultiField({
         )
         return hasPreviousEmployment === YES
       },
+      options: () => {
+        //TODO: Validate that the user is not selecting more than two years (calculate months as well)
+        const years = getYears(20)
+        return years.map((year) => ({
+          value: year.toString(),
+          label: year.toString(),
+        }))
+      },
+    }),
+
+    buildTitleField({
+      title: disabilityPensionFormMessage.questions.previousEmploymentField,
+      titleVariant: 'h5',
+      condition: (formValue: FormValue) => {
+        const hasPreviousEmployment = getValueViaPath<string>(
+          formValue,
+          `${SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT}.hasEmployment`,
+        )
+        return hasPreviousEmployment === YES
+      },
+    }),
+    buildSelectField({
+      id: `${SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT}.field`,
+      title: disabilityPensionFormMessage.questions.profession,
       width: 'full',
+      placeholder: disabilityPensionFormMessage.questions.chooseProfession,
+      condition: (formValue: FormValue) => {
+        const hasPreviousEmployment = getValueViaPath<string>(
+          formValue,
+          `${SectionRouteEnum.BACKGROUND_INFO_PREVIOUS_EMPLOYMENT}.hasEmployment`,
+        )
+        return hasPreviousEmployment === YES
+      },
+      options: () => {
+        //TODO: Validate that the user is not selecting more than two years (calculate months as well)
+        return mockProfessionCategories.map((category) => ({
+          value: category.id.toString(),
+          label: category.title,
+        }))
+      },
     }),
   ],
 })

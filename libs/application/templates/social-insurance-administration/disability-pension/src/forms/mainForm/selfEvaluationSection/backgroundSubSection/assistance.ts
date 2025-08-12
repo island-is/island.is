@@ -1,10 +1,10 @@
-import { buildMultiField, buildRadioField } from "@island.is/application/core";
-import { disabilityPensionFormMessage } from "../../../../lib/messages";
-import { SectionRouteEnum } from "../../../../types";
-import { yesOrNoOptions } from "../../../../utils";
+import { buildMultiField, buildRadioField } from '@island.is/application/core'
+import { disabilityPensionFormMessage } from '../../../../lib/messages'
+import { SectionRouteEnum } from '../../../../types'
+import { yesOrNoOptions } from '../../../../utils'
 
 export const assistanceField = buildMultiField({
-  id: SectionRouteEnum.SELF_EVALUATION,
+  id: SectionRouteEnum.SELF_EVALUATION_ASSISTANCE,
   title: disabilityPensionFormMessage.selfEvaluation.title,
   description: disabilityPensionFormMessage.selfEvaluation.description,
   children: [
@@ -15,5 +15,5 @@ export const assistanceField = buildMultiField({
       backgroundColor: 'blue',
       options: yesOrNoOptions,
     }),
-  ]
+  ],
 })

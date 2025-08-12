@@ -25,17 +25,15 @@ export const paidWorkSubSection = buildMultiField({
         },
         {
           value: EmploymentEnum.NO,
-          label:  socialInsuranceAdministrationMessage.shared.no,
-        },
-        {
-          value: EmploymentEnum.DONT_KNOW,
-          label: disabilityPensionFormMessage.employmentParticipation.dontKnow,
+          label: socialInsuranceAdministrationMessage.shared.no,
         },
       ],
     }),
     buildRadioField({
       id: `${SectionRouteEnum.PAID_WORK}.continuedWork`,
-      title: disabilityPensionFormMessage.employmentParticipation.continuedWorkQuestion,
+      title:
+        disabilityPensionFormMessage.employmentParticipation
+          .continuedWorkQuestion,
       width: 'half',
       backgroundColor: 'blue',
       condition: (formValue) => {
@@ -43,7 +41,7 @@ export const paidWorkSubSection = buildMultiField({
           formValue,
           `${SectionRouteEnum.PAID_WORK}.inPaidWork`,
         )
-        return isWorking === EmploymentEnum.YES
+        return isWorking === EmploymentEnum.NO
       },
       options: yesOrNoOptions,
     }),

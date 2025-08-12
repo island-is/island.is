@@ -2,16 +2,15 @@ import {
   buildMultiField,
   buildRadioField,
   buildTextField,
+  buildTitleField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { LanguageEnum, SectionRouteEnum } from '../../../../types'
 
-export const languageField =
-  buildMultiField({
+export const languageField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_LANGUAGE,
   title: disabilityPensionFormMessage.selfEvaluation.questionFormTitle,
-  description: disabilityPensionFormMessage.selfEvaluation.questionFormDescription,
   children: [
     buildRadioField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_LANGUAGE}.language`,
@@ -70,15 +69,27 @@ export const languageField =
           value: LanguageEnum.OTHER,
           label: disabilityPensionFormMessage.questions.languageOther,
         },
-      ]
+      ],
     }),
-    buildTextField({
-      id: `${SectionRouteEnum.BACKGROUND_INFO_LANGUAGE}.other`,
+    buildTitleField({
       title: disabilityPensionFormMessage.questions.languageOtherSpecify,
+      titleVariant: 'h5',
+      marginTop: 2,
+      marginBottom: 0,
       condition: (formValue) => {
         const language = getValueViaPath<LanguageEnum>(
           formValue,
-          SectionRouteEnum.BACKGROUND_INFO_LANGUAGE,
+          `${SectionRouteEnum.BACKGROUND_INFO_LANGUAGE}.language`,
+        )
+        return language === LanguageEnum.OTHER
+      },
+    }),
+    buildTextField({
+      id: `${SectionRouteEnum.BACKGROUND_INFO_LANGUAGE}.other`,
+      condition: (formValue) => {
+        const language = getValueViaPath<LanguageEnum>(
+          formValue,
+          `${SectionRouteEnum.BACKGROUND_INFO_LANGUAGE}.language`,
         )
         return language === LanguageEnum.OTHER
       },

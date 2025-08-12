@@ -1,13 +1,30 @@
-import { z } from 'zod'
-import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { BankAccountType, INCOME, ISK, RatioType, TaxLevelOptions } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import { NO, YES } from '@island.is/application/core'
-import { formatBankInfo, validIBAN, validSWIFT } from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
-import { disabilityPensionFormMessage } from './messages'
-import { EmploymentEnum, MaritalStatusEnum, ResidenceEnum, ChildrenCountEnum, IcelandicCapabilityEnum, LanguageEnum, EmploymentStatusEnum, EmploymentImportanceEnum } from '../types/enums'
-import { OptionsValueEnum } from '../forms/mainForm/capabilityImpairmentSection/mockData'
+import {
+  BankAccountType,
+  INCOME,
+  ISK,
+  RatioType,
+  TaxLevelOptions,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
+import { errorMessages } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
+import {
+  formatBankInfo,
+  validIBAN,
+  validSWIFT,
+} from '@island.is/application/templates/social-insurance-administration-core/lib/socialInsuranceAdministrationUtils'
 import { applicantInformationSchema } from '@island.is/application/ui-forms'
-
+import { z } from 'zod'
+import {
+  ChildrenCountEnum,
+  EmploymentEnum,
+  EmploymentImportanceEnum,
+  EmploymentStatusEnum,
+  IcelandicCapabilityEnum,
+  LanguageEnum,
+  MaritalStatusEnum,
+  ResidenceEnum,
+} from '../types/enums'
+import { disabilityPensionFormMessage } from './messages'
 
 export const fileSchema = z.object({
   name: z.string(),
@@ -17,15 +34,17 @@ export const fileSchema = z.object({
 
 const livedAbroadSchema = z.object({
   hasLivedAbroad: z.enum([YES, NO]),
-  list: z.array(
-    z.object({
-      country: z.string(),
-      abroadNationalId: z.string().min(4),
-      periodStart: z.string(),
-      periodEnd: z.string(),
-      period: z.string()
-    })
-  ).optional()
+  list: z
+    .array(
+      z.object({
+        country: z.string(),
+        abroadNationalId: z.string().min(4),
+        periodStart: z.string(),
+        periodEnd: z.string(),
+        period: z.string(),
+      }),
+    )
+    .optional(),
 })
 
 export const dataSchema = z.object({
@@ -40,141 +59,162 @@ export const dataSchema = z.object({
   applicantMaritalStatus: z.object({
     status: z.nativeEnum(MaritalStatusEnum),
     spouseName: z.string().min(2).max(100).optional(),
-    spouseNationalId: z.string().min(4).max(10).optional()
+    spouseNationalId: z.string().min(4).max(10).optional(),
   }),
-  disabilityEvaluation: z.object({
-    appliedBefore: z.enum([YES, NO]).optional(),
-    fileUpload: z.array(fileSchema).optional()
-  }).optional(),
-  livedAbroad: livedAbroadSchema
-    .refine(({ list, hasLivedAbroad }) => {
-      if ((hasLivedAbroad === NO) || (list && list.length > 0)) {
+  disabilityAppliedBefore: z
+    .object({
+      appliedBefore: z.enum([YES, NO]).optional(),
+      fileUpload: z.array(fileSchema).optional(),
+    })
+    .optional(),
+  // TODO: Add validation for disability period
+  livedAbroad: livedAbroadSchema.refine(
+    ({ list, hasLivedAbroad }) => {
+      if (hasLivedAbroad === NO || (list && list.length > 0)) {
         return true
       }
       return false
-    }, {
-    path: ['list'],
-    params: disabilityPensionFormMessage.errors.emptyForeignResidence,
-  }),
-  paidWork: z.object({
-    inPaidWork: z.nativeEnum(EmploymentEnum),
-    continuedWork: z.enum([YES, NO]).optional()
-  }).refine(({inPaidWork, continuedWork}) => {
-    if (inPaidWork === EmploymentEnum.YES) {
-      return continuedWork !== undefined
-    }
-    return true
-  }, {
-  path: ['continuedWork'],
-}),
-  abroadPayments: z.object({
-    hasAbroadPayments: z.enum([YES, NO]),
-    list: z.array(
-      z.object({
-        country: z.string(),
-        abroadNationalId: z.string().min(4),
-      })
-    ).optional()
-  })
-    .refine(({ list, hasAbroadPayments }) => {
-      if ((hasAbroadPayments === NO) || (list && list.length > 0)) {
+    },
+    {
+      path: ['list'],
+      params: disabilityPensionFormMessage.errors.emptyForeignResidence,
+    },
+  ),
+  paidWork: z
+    .object({
+      inPaidWork: z.nativeEnum(EmploymentEnum),
+      continuedWork: z.enum([YES, NO]).optional(),
+    })
+    .refine(
+      ({ inPaidWork, continuedWork }) => {
+        if (inPaidWork === EmploymentEnum.YES) {
+          return continuedWork !== undefined
+        }
         return true
-      }
-      return false
-    }, {
-    path: ['list'],
-    params: disabilityPensionFormMessage.errors.emptyForeignResidence,
-  }),
+      },
+      {
+        path: ['continuedWork'],
+      },
+    ),
+  abroadPayments: z
+    .object({
+      hasAbroadPayments: z.enum([YES, NO]),
+      list: z
+        .array(
+          z.object({
+            country: z.string(),
+            abroadNationalId: z.string().min(4),
+          }),
+        )
+        .optional(),
+    })
+    .refine(
+      ({ list, hasAbroadPayments }) => {
+        if (hasAbroadPayments === NO || (list && list.length > 0)) {
+          return true
+        }
+        return false
+      },
+      {
+        path: ['list'],
+        params: disabilityPensionFormMessage.errors.emptyForeignResidence,
+      },
+    ),
   backgroundInfoMaritalStatus: z.object({
     status: z.nativeEnum(MaritalStatusEnum),
   }),
-  backgroundInfoResidence: z.object({
-    status: z.nativeEnum(ResidenceEnum),
-    other: z.string().optional(),
-  }).refine(
-    ({ status, other }) => {
+  backgroundInfoResidence: z
+    .object({
+      status: z.nativeEnum(ResidenceEnum),
+      other: z.string().optional(),
+    })
+    .refine(({ status, other }) => {
       if (status === ResidenceEnum.OTHER) {
         return other && other.length > 0
       }
       return true
-    },
-  ),
+    }),
   backgroundInfoChildren: z.nativeEnum(ChildrenCountEnum),
   backgroundInfoIcelandicCapability: z.object({
     capability: z.nativeEnum(IcelandicCapabilityEnum),
   }),
-  backgroundInfoLanguage: z.object({
-    language: z.nativeEnum(LanguageEnum),
-    other: z.string().optional(),
-  }).refine(
-    ({ language, other }) => {
+  backgroundInfoLanguage: z
+    .object({
+      language: z.nativeEnum(LanguageEnum),
+      other: z.string().optional(),
+    })
+    .refine(({ language, other }) => {
       if (language === LanguageEnum.OTHER) {
         return other && other.length > 0
       }
       return true
-    },
-  ),
-  backgroundInfoEmployment: z.object({
-    status: z.array(z.nativeEnum(EmploymentStatusEnum)).optional(),
-    other: z.string().optional(),
-  }).refine(
-    ({ status, other }) => {
-      return (status && status.length > 0) || (other && other.length > 0)
-    },
-    {
-      path: ['status'],
-      params: disabilityPensionFormMessage.errors.emptyEmploymentStatus,
-    }
-  ),
-  backgroundInfoPreviousEmployment: z.object({
-    hasEmployment: z.enum([YES, NO]),
-    when: z.string().optional(),
-    field: z.string().optional(),
-  }).refine(
-    ({ hasEmployment, when }) => {
-      if (hasEmployment === YES) {
-        return when && when.length > 0
-      }
-      return true
-    },
-    {
-      path: ['when'],
-      params: disabilityPensionFormMessage.errors.emptyPreviousEmploymentWhen,
-    }
-  ).refine(
-    ({ hasEmployment, field }) => {
-      if (hasEmployment === YES) {
-        return field && field.length > 0
-      }
-      return true
-    },
-    {
-      path: ['field'],
-      params: disabilityPensionFormMessage.errors.emptyPreviousEmploymentField,
-    }
-  ),
-  backgroundInfoEmploymentCapability: z.object({
-    capability: z.preprocess(
-      (value) => {
-        if (typeof value === 'string' && value !== "") {
-          const number = Number.parseInt(value as string, 10);
+    }),
+  backgroundInfoEmployment: z
+    .object({
+      status: z.array(z.nativeEnum(EmploymentStatusEnum)).optional(),
+      other: z.string().optional(),
+    })
+    .refine(
+      ({ status, other }) => {
+        return (status && status.length > 0) || (other && other.length > 0)
+      },
+      {
+        path: ['status'],
+        params: disabilityPensionFormMessage.errors.emptyEmploymentStatus,
+      },
+    ),
+  backgroundInfoPreviousEmployment: z
+    .object({
+      hasEmployment: z.enum([YES, NO]),
+      when: z.string().optional(),
+      field: z.string().optional(),
+    })
+    .refine(
+      ({ hasEmployment, when }) => {
+        if (hasEmployment === YES) {
+          return when && when.length > 0
+        }
+        return true
+      },
+      {
+        path: ['when'],
+        params: disabilityPensionFormMessage.errors.emptyPreviousEmploymentWhen,
+      },
+    )
+    .refine(
+      ({ hasEmployment, field }) => {
+        if (hasEmployment === YES) {
+          return field && field.length > 0
+        }
+        return true
+      },
+      {
+        path: ['field'],
+        params:
+          disabilityPensionFormMessage.errors.emptyPreviousEmploymentField,
+      },
+    ),
+  backgroundInfoEmploymentCapability: z
+    .object({
+      capability: z.preprocess((value) => {
+        if (typeof value === 'string' && value !== '') {
+          const number = Number.parseInt(value as string, 10)
           return isNaN(number) ? undefined : number
         }
+      }, z.number({ required_error: 'capability must be a valid number' })),
+    })
+    .refine(
+      ({ capability }) => {
+        if (capability < 0 || capability > 100) {
+          return false
+        }
+        return true
       },
-      z.number({ required_error: 'capability must be a valid number' })
+      {
+        path: ['capability'],
+        params: disabilityPensionFormMessage.errors.capabilityBetween0And100,
+      },
     ),
-  }).refine(
-    ({ capability }) => {
-      if (capability < 0 || capability > 100) {
-        return false
-      }
-      return true
-    },
-    {
-      path: ['capability'],
-      params: disabilityPensionFormMessage.errors.capabilityBetween0And100,
-    }
-  ),
   backgroundInfoEmploymentImportance: z.object({
     importance: z.nativeEnum(EmploymentImportanceEnum),
   }),
@@ -185,7 +225,7 @@ export const dataSchema = z.object({
     text: z.string(),
   }),
   backgroundInfoEducationLevel: z.object({
-    level: z.string()
+    level: z.string(),
   }),
   paymentInfo: z
     .object({
@@ -268,7 +308,9 @@ export const dataSchema = z.object({
         personalAllowance === YES ? !!personalAllowanceUsage : true,
       { path: ['personalAllowanceUsage'] },
     ),
-  incomePlan: z.array(z
+  incomePlan: z
+    .array(
+      z
         .object({
           incomeCategory: z.string(),
           incomeType: z.string().min(1),
@@ -374,15 +416,15 @@ export const dataSchema = z.object({
   selfEvaluation: z.object({
     assistance: z.enum([YES, NO]),
   }),
-  capabilityImpairment: z.object({
-    questionAnswers: z.array(
-      z.object({
-        id: z.string(),
-        title: z.string(),
-        answer: z.nativeEnum(OptionsValueEnum),
-      })
-    ),
-  }),
+  // capabilityImpairment: z.object({
+  //   questionAnswers: z.array(
+  //     z.object({
+  //       id: z.string(),
+  //       title: z.string(),
+  //       answer: z.nativeEnum(OptionsValueEnum),
+  //     }),
+  //   ),
+  // }), // TODO: FIX
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

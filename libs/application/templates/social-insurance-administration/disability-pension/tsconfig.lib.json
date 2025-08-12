@@ -22,5 +22,5 @@
     "src/**/*.ts",
     "src/**/*.tsx",
     "src/forms/prerequisitesForm"
-  ]
+, "src/fields/Review/review-groups"  ]
 }

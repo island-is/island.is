@@ -9,7 +9,7 @@ import {
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { FormValue } from '@island.is/application/types'
 import { SectionRouteEnum } from '../../../../types'
-import {  countryOptions, yesOrNoOptions } from '../../../../utils'
+import { countryOptions, yesOrNoOptions } from '../../../../utils'
 
 const abroadPaymentsCondition = (formValue: FormValue) => {
   const hasAbroadPayments = getValueViaPath<YesOrNoEnum>(
@@ -22,8 +22,11 @@ const abroadPaymentsCondition = (formValue: FormValue) => {
 
 export const abroadPaymentsSubSection = buildMultiField({
   id: SectionRouteEnum.ABROAD_PAYMENT,
-  title: disabilityPensionFormMessage.employmentParticipation.abroadPaymentsTitle,
-  description: disabilityPensionFormMessage.employmentParticipation.abroadPaymentsDescription,
+  title:
+    disabilityPensionFormMessage.employmentParticipation.abroadPaymentsTitle,
+  description:
+    disabilityPensionFormMessage.employmentParticipation
+      .abroadPaymentsDescription,
   children: [
     buildRadioField({
       id: `${SectionRouteEnum.ABROAD_PAYMENT}.hasAbroadPayments`,
@@ -35,15 +38,22 @@ export const abroadPaymentsSubSection = buildMultiField({
     buildTableRepeaterField({
       id: `${SectionRouteEnum.ABROAD_PAYMENT}.list`,
       condition: abroadPaymentsCondition,
-      formTitle: disabilityPensionFormMessage.employmentParticipation.abroadPaymentsTableTitle,
-      addItemButtonText: disabilityPensionFormMessage.employmentParticipation.addCountry,
-      saveItemButtonText: disabilityPensionFormMessage.employmentParticipation.save,
-      removeButtonTooltipText: disabilityPensionFormMessage.employmentParticipation.remove,
+      formTitle:
+        disabilityPensionFormMessage.employmentParticipation
+          .abroadPaymentsTableTitle,
+      addItemButtonText:
+        disabilityPensionFormMessage.employmentParticipation.addCountry,
+      saveItemButtonText:
+        disabilityPensionFormMessage.employmentParticipation.save,
+      removeButtonTooltipText:
+        disabilityPensionFormMessage.employmentParticipation.remove,
       fields: {
         country: {
           component: 'select',
           label: disabilityPensionFormMessage.employmentParticipation.country,
-          placeholder: disabilityPensionFormMessage.employmentParticipation.countryPlaceholder,
+          placeholder:
+            disabilityPensionFormMessage.employmentParticipation
+              .countryPlaceholder,
           width: 'half',
           displayInTable: true,
           isSearchable: true,
@@ -51,16 +61,23 @@ export const abroadPaymentsSubSection = buildMultiField({
         },
         abroadNationalId: {
           component: 'input',
-          label: disabilityPensionFormMessage.employmentParticipation.abroadNationalId,
+          label:
+            disabilityPensionFormMessage.employmentParticipation
+              .abroadNationalId,
           width: 'half',
+          placeholder: '000000-0000',
           format: '######-####',
+          required: false,
           displayInTable: true,
         },
       },
       table: {
-        header: [disabilityPensionFormMessage.employmentParticipation.country, disabilityPensionFormMessage.employmentParticipation.abroadNationalId],
+        header: [
+          disabilityPensionFormMessage.employmentParticipation.country,
+          disabilityPensionFormMessage.employmentParticipation.abroadNationalId,
+        ],
         rows: ['country', 'abroadNationalId'],
-      }
+      },
     }),
   ],
 })

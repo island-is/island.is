@@ -1,25 +1,22 @@
-import {
-  buildSection,
-} from '@island.is/application/core'
+import { buildSection } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../lib/messages'
-import { personalInfoSubSection } from './personalInfoSubSection'
-import { paymentInfoSubSection } from './paymentInfoSubSection'
+import { SectionRouteEnum } from '../../../types'
+import { disabilityEvaluationSubSection } from './disabilityEvaluationSubSections'
+import { employmentParticipationSubSection } from './employmentParticipationsSubSections'
 import { incomePlanInstructionsSubSection } from './incomePlanInstructionsSubSection'
 import { incomePlanSubSection } from './incomePlanSubSection'
-import { employmentParticipationSubSection } from './employmentParticipationsSubSections'
-import { disabilityEvaluationSubSection } from './disabilityEvaluationSubSection'
-import { SectionRouteEnum } from '../../../types'
+import { paymentInfoSubSection } from './paymentInfoSubSection'
+import { personalInfoSubSection } from './personalInfoSubSection'
 
-export const basicInfoSection =
-  buildSection({
-    id: SectionRouteEnum.BASIC_INFO,
-    title: disabilityPensionFormMessage.basicInfo.title,
-    children: [
-      personalInfoSubSection,
-      paymentInfoSubSection,
-      incomePlanInstructionsSubSection,
-      incomePlanSubSection,
-      disabilityEvaluationSubSection,
-      employmentParticipationSubSection,
-    ],
-  })
+export const basicInfoSection = buildSection({
+  id: SectionRouteEnum.BASIC_INFO,
+  title: disabilityPensionFormMessage.basicInfo.title,
+  children: [
+    personalInfoSubSection,
+    paymentInfoSubSection,
+    incomePlanInstructionsSubSection,
+    incomePlanSubSection,
+    disabilityEvaluationSubSection,
+    employmentParticipationSubSection,
+  ],
+})

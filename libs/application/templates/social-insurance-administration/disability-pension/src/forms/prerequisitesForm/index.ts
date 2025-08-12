@@ -6,67 +6,96 @@ import {
   buildSubmitField,
   coreMessages,
 } from '@island.is/application/core'
-import { DefaultEvents, FormModes,  NationalRegistryUserApi, NationalRegistrySpouseApi, UserProfileApi, IdentityApi } from '@island.is/application/types'
-import { disabilityPensionFormMessage } from '../../lib/messages'
+import Logo from '@island.is/application/templates/social-insurance-administration-core/assets/Logo'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
-import { SocialInsuranceAdministrationCategorizedIncomeTypesApi, SocialInsuranceAdministrationCurrenciesApi, SocialInsuranceAdministrationWithholdingTaxApi, SocialInsuranceAdministrationLatestIncomePlan, SocialInsuranceAdministrationIncomePlanConditionsApi } from '../../dataProviders'
+import {
+  DefaultEvents,
+  FormModes,
+  IdentityApi,
+  NationalRegistrySpouseApi,
+  NationalRegistryUserApi,
+  UserProfileApi,
+} from '@island.is/application/types'
+import {
+  SocialInsuranceAdministrationCategorizedIncomeTypesApi,
+  SocialInsuranceAdministrationCurrenciesApi,
+  SocialInsuranceAdministrationIncomePlanConditionsApi,
+  SocialInsuranceAdministrationLatestIncomePlan,
+  SocialInsuranceAdministrationWithholdingTaxApi,
+} from '../../dataProviders'
+import { disabilityPensionFormMessage } from '../../lib/messages'
 
-
+//TODO: Fix and correct providers per item <---------- !!!!!!!!
 export const Prerequisites = buildForm({
   id: 'PrerequisitesDraft',
-  title: disabilityPensionFormMessage.prerequisites.title,
+  title: disabilityPensionFormMessage.shared.title,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
+  logo: Logo,
   children: [
     buildSection({
       id: 'conditions',
+      title: disabilityPensionFormMessage.prerequisites.title,
       tabTitle: disabilityPensionFormMessage.prerequisites.title,
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
           title: socialInsuranceAdministrationMessage.pre.externalDataSection,
-          subTitle: socialInsuranceAdministrationMessage.pre.externalDataDescription,
+          subTitle:
+            socialInsuranceAdministrationMessage.pre.externalDataDescription,
+          checkboxLabel:
+            disabilityPensionFormMessage.prerequisites.checkboxLabel,
           dataProviders: [
             buildDataProviderItem({
+              title:
+                disabilityPensionFormMessage.prerequisites
+                  .organizationDataTitle,
+              subTitle:
+                disabilityPensionFormMessage.prerequisites.organizationDataText,
+            }),
+            buildDataProviderItem({
               provider: UserProfileApi,
-              title: 'User profile',
-              subTitle: 'User profile',
-              }),
+              title: disabilityPensionFormMessage.prerequisites.myPagesTitle,
+              subTitle: disabilityPensionFormMessage.prerequisites.myPagesText,
+            }),
             buildDataProviderItem({
               provider: IdentityApi,
-              title: 'Iden',
-              subTitle: 'Tity',
-              }),
+              title: disabilityPensionFormMessage.prerequisites.healthDataTitle,
+              subTitle:
+                disabilityPensionFormMessage.prerequisites.healthDataText,
+            }),
             buildDataProviderItem({
               provider: NationalRegistrySpouseApi,
-              title: 'Spouse',
-              subTitle: 'Spouse',
-              }),
+              title:
+                disabilityPensionFormMessage.prerequisites.rehabilitationTitle,
+              subTitle:
+                disabilityPensionFormMessage.prerequisites.rehabilitationText,
+            }),
             buildDataProviderItem({
               provider: NationalRegistryUserApi,
-              title: 'user',
-              subTitle: 'user',
-              }),
+              title: disabilityPensionFormMessage.prerequisites.incomeTitle,
+              subTitle: disabilityPensionFormMessage.prerequisites.incomeText,
+            }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationCategorizedIncomeTypesApi,
-              title: '',
+              title: disabilityPensionFormMessage.prerequisites.dataFetchTitle,
+              subTitle:
+                disabilityPensionFormMessage.prerequisites.dataFetchText,
             }),
-            buildDataProviderItem({
-              provider: SocialInsuranceAdministrationCurrenciesApi,
-              title: '',
-            }),
-            buildDataProviderItem({
-              provider: SocialInsuranceAdministrationWithholdingTaxApi,
-              title: '',
-            }),
-            buildDataProviderItem({
-              provider: SocialInsuranceAdministrationLatestIncomePlan,
-              title: '',
-            }),
-            buildDataProviderItem({
-              provider: SocialInsuranceAdministrationIncomePlanConditionsApi,
-              title: '',
-            }),
+
+            // buildDataProviderItem({
+            //   provider: SocialInsuranceAdministrationWithholdingTaxApi,
+            //   title: disabilityPensionFormMessage.prerequisites.incomeTitle,
+            //   subTitle: disabilityPensionFormMessage.prerequisites.incomeText,
+            // }),
+            // buildDataProviderItem({
+            //   provider: SocialInsuranceAdministrationLatestIncomePlan,
+            //   title: '',
+            // }),
+            // buildDataProviderItem({
+            //   provider: SocialInsuranceAdministrationIncomePlanConditionsApi,
+            //   title: '',
+            // }),
             // Add more data providers as needed
           ],
           submitField: buildSubmitField({
@@ -83,6 +112,11 @@ export const Prerequisites = buildForm({
           }),
         }),
       ],
+    }),
+    buildSection({
+      id: 'PrerequisitesDraftExternalDataSection',
+      title: socialInsuranceAdministrationMessage.pre.externalDataSection,
+      children: [],
     }),
   ],
 })
