@@ -73,14 +73,14 @@ const academicBackgroundSchema = z.object({
           levelOfStudy: z.string(),
           degree: z.string(),
           subject: z.string().nullish(),
-          endOfStudies: z.string().optional(),
+          endOfStudy: z.string().optional(),
           isStillStudying: z.array(z.enum([YES])).optional(),
         })
         .transform((entry) => ({
           ...entry,
           endOfStudies: entry.isStillStudying?.includes(YES)
             ? undefined
-            : entry.endOfStudies,
+            : entry.endOfStudy,
         })),
     )
     .optional(),

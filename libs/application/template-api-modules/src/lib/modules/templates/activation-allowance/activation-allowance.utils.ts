@@ -136,8 +136,8 @@ export const getLicenseInfo = (
     hasHeavyMachineryLicense:
       licenses?.hasHeavyMachineryLicense &&
       licenses.hasHeavyMachineryLicense.includes(YES),
-    drivingLicenses: licenses?.drivingLicenseType,
-    heavyMachineryLicenses: licenses?.heavyMachineryLicenses,
+    drivingLicenses: licenses?.drivingLicenseType?.filter(Boolean),
+    heavyMachineryLicenses: licenses?.heavyMachineryLicenses?.filter(Boolean),
   }
   return payload
 }
@@ -306,8 +306,8 @@ export const getAcademicInfo = (
     educationSubCategoryId: item.degree, // Profgrada
     educationSubSubCategoryId: item.subject, // namsgrein
     yearFinished:
-      item.endOfStudies !== undefined && !isNaN(parseInt(item.endOfStudies))
-        ? parseInt(item.endOfStudies)
+      item.endOfStudy && Number.isInteger(parseInt(item.endOfStudy))
+        ? parseInt(item.endOfStudy)
         : undefined,
   }))
 }

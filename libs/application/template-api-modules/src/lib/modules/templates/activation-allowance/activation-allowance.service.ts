@@ -114,11 +114,13 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
       application.id,
       this.config.templateApi.attachmentBucket,
     )
-    const emptyApplication =
+    const emptyApplicationOriginal =
       getValueViaPath<GaldurDomainModelsApplicationsActivationGrantActivationGrantDTO>(
         externalData,
         'activityGrantApplication.data.activationGrant',
       )
+    const emptyApplication = { ...emptyApplicationOriginal }
+    delete emptyApplication.supportData
 
     if (!bankInfo) {
       this.logger.warn(
@@ -155,9 +157,7 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
     const payload: ActivationGrantCreateActivationGrantRequest = {
       galdurApplicationApplicationsActivationGrantsCommandsCreateActivationGrantCreateActivationGrantCommand:
         {
-          ...emptyApplication,
           activationGrant: {
-            ...emptyApplication?.applicationInformation,
             applicationInformation: {
               ...emptyApplication?.applicationInformation,
               created: new Date(
@@ -178,20 +178,16 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
               canStartAt: new Date(),
             },
             preferredJobs: {
-              ...emptyApplication?.preferredJobs,
               jobs: jobWishesPayload,
             },
             educationHistory: {
-              education: education
-                ? education
-                : emptyApplication?.educationHistory?.education,
+              education: education,
             },
             jobCareer: {
               jobs: jobHistoryPayload,
             },
             drivingLicense: licenses,
             attachments: {
-              ...emptyApplication?.attachments,
               files: !cvResponse ? [] : [{ id: cvResponse?.attachment?.id }],
             },
             bankingPensionUnion: {
@@ -199,7 +195,6 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
               ...bankInfo,
             },
             languageKnowledge: {
-              ...emptyApplication?.languageKnowledge,
               languages: languageSkillInfo,
             },
             applicantId: null,
