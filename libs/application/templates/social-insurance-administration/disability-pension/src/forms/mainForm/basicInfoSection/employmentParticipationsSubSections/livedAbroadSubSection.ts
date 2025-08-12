@@ -12,6 +12,7 @@ import format from 'date-fns/format'
 import addMonths from 'date-fns/addMonths'
 import { SectionRouteEnum } from '../../../../types'
 import { yesOrNoOptions, countryOptions } from '../../../../utils'
+import { getMonths } from '../../../../utils/dates'
 
 const livedAbroadCondition = (formValue: FormValue) => {
   const livedAbroad = getValueViaPath<YesOrNoEnum>(
@@ -61,11 +62,18 @@ export const livedAbroadSubSection = buildMultiField({
         },
         //TODO: ONly month
         periodStart: {
-          component: 'date',
+          component: 'select',
           label: disabilityPensionFormMessage.employmentParticipation.periodStart,
           placeholder: disabilityPensionFormMessage.employmentParticipation.periodStartPlaceholder,
           width: 'half',
           displayInTable: false,
+          options: () => {
+            const months = getMonths()
+            return months.map((month, i) => ({
+              value: i.toString(),
+              label: month,
+            }))
+          },
           updateValueObj: {
             valueModifier: (_,  activeField) => {
               if (!activeField) {
@@ -76,15 +84,18 @@ export const livedAbroadSubSection = buildMultiField({
               if (!periodStart || !periodEnd) {
                 return activeField.periodStart
               }
-              const dateStart = new Date(periodStart)
-              const dateEnd = new Date(periodEnd)
 
-              if (!dateStart || !dateEnd) {
+              const dateStart = Number.parseInt(periodStart) || -1;
+              const dateEnd = Number.parseInt(periodEnd) || -1;
+
+              if (!dateEnd || !dateStart || dateEnd < 0 || dateStart < 0) {
                 return activeField.periodStart
               }
 
-              if (dateStart.getMonth() > dateEnd.getMonth()) {
-                const newDate = addMonths(dateEnd, -1);
+              const months = getMonths()
+
+              if (dateStart > dateEnd) {
+                const newDate = months[dateEnd -1]
                 return format(newDate, 'yyyy-MM-dd');
               }
 

@@ -17,7 +17,7 @@ export const disabilityEvaluationFields = buildMultiField({
   space: 'gutter',
   children: [
     buildRadioField({
-      id: `${SectionRouteEnum.DISABILITY_APPLIED_BEFORE}.appliedBefore`,
+      id: SectionRouteEnum.DISABILITY_APPLIED_BEFORE,
       title:
         disabilityPensionFormMessage.disabilityEvaluation.appliedBeforeTitle,
       required: true,
@@ -31,7 +31,7 @@ export const disabilityEvaluationFields = buildMultiField({
       condition: (formValue) => {
         const answer = getValueViaPath<YesOrNo>(
           formValue,
-          `${SectionRouteEnum.DISABILITY_APPLIED_BEFORE}.appliedBefore`,
+          SectionRouteEnum.DISABILITY_APPLIED_BEFORE,
         )
         return answer === NO
       },

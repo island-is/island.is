@@ -17,15 +17,6 @@ const bullets = [
   'bulletSix',
 ] as const;
 
-const bulletMessage: Record<(typeof bullets)[number], FormTextWithLocale> = {
-  bulletOne: `${SectionRouteEnum.INCOME_PLAN_INSTRUCTION}.instructionsDescription`,
-  bulletTwo: disabilityPensionFormMessage.incomePlan.instructionBullet1,
-  bulletThree: disabilityPensionFormMessage.incomePlan.instructionBullet2,
-  bulletFour: disabilityPensionFormMessage.incomePlan.instructionBullet3,
-  bulletFive: disabilityPensionFormMessage.incomePlan.instructionBullet4,
-  bulletSix: disabilityPensionFormMessage.incomePlan.instructionBullet5,
-}
-
 export const incomePlanInstructionsSubSection =
     buildSubSection({
       id: SectionRouteEnum.INCOME_PLAN_INSTRUCTION,

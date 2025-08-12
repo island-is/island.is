@@ -82,21 +82,23 @@ export const Prerequisites = buildForm({
               subTitle:
                 disabilityPensionFormMessage.prerequisites.dataFetchText,
             }),
-
-            // buildDataProviderItem({
-            //   provider: SocialInsuranceAdministrationWithholdingTaxApi,
-            //   title: disabilityPensionFormMessage.prerequisites.incomeTitle,
-            //   subTitle: disabilityPensionFormMessage.prerequisites.incomeText,
-            // }),
-            // buildDataProviderItem({
-            //   provider: SocialInsuranceAdministrationLatestIncomePlan,
-            //   title: '',
-            // }),
-            // buildDataProviderItem({
-            //   provider: SocialInsuranceAdministrationIncomePlanConditionsApi,
-            //   title: '',
-            // }),
-            // Add more data providers as needed
+            buildDataProviderItem({
+               provider: SocialInsuranceAdministrationWithholdingTaxApi,
+               title: disabilityPensionFormMessage.prerequisites.incomeTitle,
+               subTitle: disabilityPensionFormMessage.prerequisites.incomeText,
+             }),
+             buildDataProviderItem({
+               provider: SocialInsuranceAdministrationLatestIncomePlan,
+               title: '',
+             }),
+             buildDataProviderItem({
+               provider: SocialInsuranceAdministrationIncomePlanConditionsApi,
+               title: '',
+             }),
+             buildDataProviderItem({
+               provider: SocialInsuranceAdministrationCurrenciesApi,
+               title: '',
+             }),
           ],
           submitField: buildSubmitField({
             id: 'submit',

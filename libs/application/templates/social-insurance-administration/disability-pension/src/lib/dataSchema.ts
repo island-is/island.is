@@ -37,7 +37,7 @@ const livedAbroadSchema = z.object({
     .array(
       z.object({
         country: z.string(),
-        abroadNationalId: z.string().min(4),
+        abroadNationalId: z.string().optional(),
         periodStart: z.string(),
         periodEnd: z.string(),
         period: z.string(),
@@ -60,15 +60,11 @@ export const dataSchema = z.object({
     spouseName: z.string().min(2).max(100).optional(),
     spouseNationalId: z.string().min(4).max(10).optional(),
   }),
-  disabilityAppliedBefore: z
-    .object({
-      appliedBefore: z.enum([YES, NO]).optional(),
-    }),
+  disabilityAppliedBefore: z.enum([YES, NO]),
   disabilityPeriod: z.object({
     year: z.string(),
     month: z.string(),
   }),
-  // TODO: Add validation for disability period
   livedAbroad: livedAbroadSchema.refine(
     ({ list, hasLivedAbroad }) => {
       if (hasLivedAbroad === NO || (list && list.length > 0)) {
