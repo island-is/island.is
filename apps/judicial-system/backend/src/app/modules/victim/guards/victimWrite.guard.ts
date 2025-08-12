@@ -1,8 +1,8 @@
 import {
+  BadRequestException,
   CanActivate,
   ExecutionContext,
   Injectable,
-  InternalServerErrorException,
 } from '@nestjs/common'
 
 import { canUserEditVictim } from '../filters/victim.filter'
@@ -15,13 +15,13 @@ export class VictimWriteGuard implements CanActivate {
     const user = request.user?.currentUser
 
     if (!user) {
-      throw new InternalServerErrorException('Missing user')
+      throw new BadRequestException('Missing user')
     }
 
     const theCase = request.case
 
     if (!theCase) {
-      throw new InternalServerErrorException('Missing case')
+      throw new BadRequestException('Missing case')
     }
 
     // We can also add more logic based on a specific victim if needed

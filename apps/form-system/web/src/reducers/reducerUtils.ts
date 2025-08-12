@@ -1,5 +1,15 @@
-import { FormSystemDependency, FormSystemField, FormSystemScreen, FormSystemSection, Maybe } from '@island.is/api/schema'
-import { ApplicationState, FieldTypesEnum, SectionTypes } from '@island.is/form-system/ui'
+import {
+  FormSystemDependency,
+  FormSystemField,
+  FormSystemScreen,
+  FormSystemSection,
+  Maybe,
+} from '@island.is/api/schema'
+import {
+  ApplicationState,
+  FieldTypesEnum,
+  SectionTypes,
+} from '@island.is/form-system/ui'
 import {
   ApolloCache,
   DefaultContext,
@@ -16,10 +26,8 @@ export const getIncrementVariables = (state: ApplicationState) => {
   const currentSectionIndex = currentSection.index
   const currentSectionData = sections[currentSectionIndex]
   const maxSectionIndex = sections.length - 1
-  const nextSectionIndex =
-    currentSectionIndex < maxSectionIndex
-      ? currentSectionIndex + 1
-      : maxSectionIndex
+  const nextSectionIndex = currentSectionIndex + 1
+
   const currentScreenIndex = hasScreens(currentSectionData)
     ? currentScreen?.index ?? 0
     : 0
@@ -362,7 +370,8 @@ export const setFieldValue = (
       currentScreen: {
         ...currentScreen,
         data:
-          updatedSectionsWithDependencies[state.currentSection.index]?.screens?.[currentScreen.index] ?? undefined,
+          updatedSectionsWithDependencies[state.currentSection.index]
+            ?.screens?.[currentScreen.index] ?? undefined,
       },
       errors: state.errors && state.errors.length > 0 ? state.errors ?? [] : [],
     }
@@ -383,16 +392,20 @@ export const setFieldValue = (
   }
 }
 
-const isControllerField = (field: Maybe<FormSystemField> | undefined, dependencies: Maybe<Maybe<FormSystemDependency>[]> | undefined): boolean => {
+const isControllerField = (
+  field: Maybe<FormSystemField> | undefined,
+  dependencies: Maybe<Maybe<FormSystemDependency>[]> | undefined,
+): boolean => {
   if (
     field?.fieldType === FieldTypesEnum.CHECKBOX ||
     field?.fieldType === FieldTypesEnum.RADIO_BUTTONS ||
     field?.fieldType === FieldTypesEnum.DROPDOWN_LIST
   ) {
-    return dependencies?.some((dependency) => {
-      return dependency?.parentProp === field?.id
-    }) ?? false
+    return (
+      dependencies?.some((dependency) => {
+        return dependency?.parentProp === field?.id
+      }) ?? false
+    )
   }
   return false
-
 }

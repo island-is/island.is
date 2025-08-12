@@ -29,7 +29,6 @@ import {
   ApplicationResponse,
 } from '../../models/applications.model'
 import { Screen } from '../../models/screen.model'
-import { UpdateApplicationDependenciesInput } from '../../dto/application.input'
 
 @Injectable()
 export class ApplicationsService {

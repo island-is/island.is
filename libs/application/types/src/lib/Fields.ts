@@ -120,7 +120,7 @@ type MaybeWithIndexAndApplication<T> =
   | T
   | ((index: number, application: Application) => T)
 
-type MaybeWithAnswersAndExternalData<T> =
+export type MaybeWithAnswersAndExternalData<T> =
   | T
   | ((formValue: FormValue, externalData: ExternalData) => T)
 
@@ -327,6 +327,7 @@ export interface BaseField extends FormItem {
 
 export interface InputField extends BaseField {
   required?: MaybeWithApplication<boolean>
+  readOnly?: MaybeWithAnswersAndExternalData<boolean>
 }
 
 export enum FieldTypes {
@@ -440,7 +441,6 @@ export interface DateField extends InputField {
   excludeDates?: MaybeWithApplicationAndField<Date[]>
   backgroundColor?: DatePickerBackgroundColor
   onChange?(date: string): void
-  readOnly?: boolean
   tempDisabled?: (application: Application) => boolean
 }
 
@@ -505,7 +505,6 @@ export interface TextField extends InputField {
   readonly type: FieldTypes.TEXT
   component: FieldComponents.TEXT
   disabled?: boolean
-  readOnly?: boolean
   rightAlign?: boolean
   minLength?: number
   maxLength?: number
@@ -528,7 +527,6 @@ export interface PhoneField extends InputField {
   readonly type: FieldTypes.PHONE
   component: FieldComponents.PHONE
   disabled?: boolean
-  readOnly?: boolean
   rightAlign?: boolean
   placeholder?: FormText
   backgroundColor?: InputBackgroundColor

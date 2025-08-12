@@ -21,7 +21,6 @@ import {
   SubmitSectionInput,
   UpdateApplicationInput,
 } from '../../dto/application.input'
-import { UpdateApplicationDependenciesInput } from '../../dto/application.input'
 import { Screen } from '../../models/screen.model'
 
 @Resolver()
@@ -76,7 +75,7 @@ export class ApplicationsResolver {
 
   @Mutation(() => Boolean, {
     name: 'updateFormSystemApplicationDependencies',
-    nullable: true
+    nullable: true,
   })
   async updateApplicationDependencies(
     @Args('input', { type: () => UpdateApplicationInput })
@@ -88,6 +87,7 @@ export class ApplicationsResolver {
 
   @Mutation(() => Boolean, {
     name: 'submitFormSystemApplication',
+    nullable: true,
   })
   async submitApplication(
     @Args('input', { type: () => GetApplicationInput })

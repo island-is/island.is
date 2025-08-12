@@ -67,12 +67,12 @@ export const ApplicationProvider: React.FC<{
             id: state.application.id,
             updateApplicationDto: {
               dependencies: state.application.dependencies,
-            }
+            },
           },
         },
       })
     }
-  }, [state.application.dependencies])
+  }, [state.application.dependencies, state.application.id, updateDependencies])
 
   return (
     <ApplicationContext.Provider value={contextValue}>
