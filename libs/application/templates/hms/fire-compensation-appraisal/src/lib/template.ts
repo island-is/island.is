@@ -195,6 +195,11 @@ const template: ApplicationTemplate<
               action: TemplateApiActions.submitApplication,
             }),
           ],
+          actionCard: {
+            tag: {
+              label: m.completedMessages.actionCardDone,
+            },
+          },
           roles: [
             {
               id: Roles.APPLICANT,
