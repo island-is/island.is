@@ -67,7 +67,6 @@ export const RentalHousingCondition = buildSubSection({
           uploadDescription: housingCondition.fileUploadDescription,
           uploadAccept: '.pdf, .doc, .docx, .rtf, .jpg, .jpeg, .png, .heic',
           uploadMultiple: true,
-          forImageUpload: true,
         }),
       ],
     }),
