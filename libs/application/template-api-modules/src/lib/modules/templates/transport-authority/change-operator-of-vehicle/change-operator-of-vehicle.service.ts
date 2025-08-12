@@ -14,23 +14,11 @@ import {
   getPaymentIdFromExternalData,
 } from '@island.is/clients/charge-fjs-v2'
 import { ChangeOperatorOfVehicleAnswers } from '@island.is/application/templates/transport-authority/change-operator-of-vehicle'
-import {
-  OperatorChangeValidation,
-  VehicleOperatorsClient,
-} from '@island.is/clients/transport-authority/vehicle-operators'
+import { VehicleOperatorsClient } from '@island.is/clients/transport-authority/vehicle-operators'
 import { VehicleOwnerChangeClient } from '@island.is/clients/transport-authority/vehicle-owner-change'
-import {
-  VehicleDebtStatus,
-  VehicleServiceFjsV1Client,
-} from '@island.is/clients/vehicle-service-fjs-v1'
-import {
-  CurrentVehiclesWithMilageAndNextInspDto,
-  VehicleSearchApi,
-} from '@island.is/clients/vehicles'
-import {
-  MileageReadingApi,
-  MileageReadingDto,
-} from '@island.is/clients/vehicles-mileage'
+import { VehicleServiceFjsV1Client } from '@island.is/clients/vehicle-service-fjs-v1'
+import { VehicleSearchApi } from '@island.is/clients/vehicles'
+import { MileageReadingApi } from '@island.is/clients/vehicles-mileage'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { applicationCheck } from '@island.is/application/templates/transport-authority/change-operator-of-vehicle'
 import {
@@ -45,8 +33,9 @@ import {
 } from './smsGenerators'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 import type { Logger } from '@island.is/logging'
-import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { coreErrorMessages } from '@island.is/application/core'
+import { mapVehicle } from '../utils'
 
 @Injectable()
 export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
@@ -65,10 +54,6 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
 
   private vehiclesApiWithAuth(auth: Auth) {
     return this.vehiclesApi.withMiddleware(new AuthMiddleware(auth))
-  }
-
-  private mileageReadingApiWithAuth(auth: Auth) {
-    return this.mileageReadingApi.withMiddleware(new AuthMiddleware(auth))
   }
 
   async getCurrentVehiclesWithOperatorChangeChecks({
@@ -115,61 +100,26 @@ export class ChangeOperatorOfVehicleService extends BaseTemplateApiService {
         // Case: 20 >= count > 5
         // Display dropdown, validate vehicle when selected in dropdown
         if (totalRecords > 5) {
-          return this.mapVehicle(auth, vehicle, false)
+          return mapVehicle(auth, vehicle, false, {
+            vehicleOperatorsClient: this.vehicleOperatorsClient,
+            vehicleServiceFjsV1Client: this.vehicleServiceFjsV1Client,
+            mileageReadingApi: this.mileageReadingApi,
+          })
         }
 
         // Case: count <= 5
         // Display radio buttons, validate all vehicles now
-        return this.mapVehicle(auth, vehicle, true)
+        return mapVehicle(auth, vehicle, true, {
+          vehicleOperatorsClient: this.vehicleOperatorsClient,
+          vehicleServiceFjsV1Client: this.vehicleServiceFjsV1Client,
+          mileageReadingApi: this.mileageReadingApi,
+        })
       }),
     )
 
     return {
       totalRecords: totalRecords,
       vehicles: vehicles,
-    }
-  }
-
-  private async mapVehicle(
-    auth: User,
-    vehicle: CurrentVehiclesWithMilageAndNextInspDto,
-    fetchExtraData: boolean,
-  ) {
-    let validation: OperatorChangeValidation | undefined
-    let debtStatus: VehicleDebtStatus | undefined
-    let mileageReadings: MileageReadingDto[] | undefined
-
-    if (fetchExtraData) {
-      // Get debt status
-      debtStatus = await this.vehicleServiceFjsV1Client.getVehicleDebtStatus(
-        auth,
-        vehicle.permno || '',
-      )
-
-      // Get operator change validation
-      validation =
-        await this.vehicleOperatorsClient.validateVehicleForOperatorChange(
-          auth,
-          vehicle.permno || '',
-        )
-
-      // Get mileage reading
-      mileageReadings = await this.mileageReadingApiWithAuth(
-        auth,
-      ).getMileageReading({ permno: vehicle.permno || '' })
-    }
-
-    return {
-      permno: vehicle.permno || undefined,
-      make: vehicle.make || undefined,
-      color: vehicle.colorName || undefined,
-      role: vehicle.role || undefined,
-      requireMileage: vehicle.requiresMileageRegistration,
-      mileageReading: mileageReadings?.[0]?.mileage?.toString() ?? '',
-      isDebtLess: debtStatus?.isDebtLess,
-      validationErrorMessages: validation?.hasError
-        ? validation.errorMessages
-        : null,
     }
   }
 

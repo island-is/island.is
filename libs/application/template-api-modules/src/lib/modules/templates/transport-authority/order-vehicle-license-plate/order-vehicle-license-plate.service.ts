@@ -8,19 +8,16 @@ import {
   OrderVehicleLicensePlateAnswers,
 } from '@island.is/application/templates/transport-authority/order-vehicle-license-plate'
 import {
-  PlateOrderValidation,
   SGS_DELIVERY_STATION_CODE,
   SGS_DELIVERY_STATION_TYPE,
   VehiclePlateOrderingClient,
 } from '@island.is/clients/transport-authority/vehicle-plate-ordering'
 import { VehicleCodetablesClient } from '@island.is/clients/transport-authority/vehicle-codetables'
-import {
-  CurrentVehiclesWithMilageAndNextInspDto,
-  VehicleSearchApi,
-} from '@island.is/clients/vehicles'
+import { VehicleSearchApi } from '@island.is/clients/vehicles'
 import { YES, coreErrorMessages } from '@island.is/application/core'
-import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
+import { Auth, AuthMiddleware } from '@island.is/auth-nest-tools'
 import { TemplateApiError } from '@island.is/nest/problem'
+import { mapVehicle } from '../utils'
 
 @Injectable()
 export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
@@ -102,57 +99,24 @@ export class OrderVehicleLicensePlateService extends BaseTemplateApiService {
         // Case: 20 >= count > 5
         // Display dropdown, validate vehicle when selected in dropdown
         if (totalRecords > 5) {
-          return this.mapVehicle(auth, vehicle, false)
+          return mapVehicle(auth, vehicle, false, {
+            vehiclePlateOrderingClient: this.vehiclePlateOrderingClient,
+            vehiclesApi: this.vehiclesApi,
+          })
         }
 
         // Case: count <= 5
         // Display radio buttons, validate all vehicles now
-        return this.mapVehicle(auth, vehicle, true)
+        return mapVehicle(auth, vehicle, true, {
+          vehiclePlateOrderingClient: this.vehiclePlateOrderingClient,
+          vehiclesApi: this.vehiclesApi,
+        })
       }),
     )
 
     return {
       totalRecords: totalRecords,
       vehicles: vehicles,
-    }
-  }
-
-  private async mapVehicle(
-    auth: User,
-    vehicle: CurrentVehiclesWithMilageAndNextInspDto,
-    fetchExtraData: boolean,
-  ) {
-    let validation: PlateOrderValidation | undefined
-
-    if (fetchExtraData) {
-      // Get basic information about vehicle
-      const vehicleInfo = await this.vehiclesApiWithAuth(
-        auth,
-      ).basicVehicleInformationGet({
-        clientPersidno: auth.nationalId,
-        permno: vehicle.permno || '',
-        regno: undefined,
-        vin: undefined,
-      })
-
-      // Get plate order validation
-      validation =
-        await this.vehiclePlateOrderingClient.validateVehicleForPlateOrder(
-          auth,
-          vehicle.permno || '',
-          vehicleInfo?.platetypefront || '',
-          vehicleInfo?.platetyperear || '',
-        )
-    }
-
-    return {
-      permno: vehicle.permno || undefined,
-      make: vehicle.make || undefined,
-      color: vehicle.colorName || undefined,
-      role: vehicle.role || undefined,
-      validationErrorMessages: validation?.hasError
-        ? validation.errorMessages
-        : null,
     }
   }
 
