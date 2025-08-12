@@ -1,4 +1,4 @@
-import { useContext } from 'react'
+import { useContext, useState } from 'react'
 import { Box, Checkbox, GridColumn, GridRow } from '@island.is/island-ui/core'
 import { m } from '@island.is/form-system/ui'
 import { ControlContext } from '../../../../context/ControlContext'
@@ -10,15 +10,17 @@ import {
 import { useMutation } from '@apollo/client'
 
 export const Urls = () => {
-  const { control, submitUrls, setSelectedUrls, selectedUrls } =
-    useContext(ControlContext)
+  const { control, submitUrls } = useContext(ControlContext)
   const { form } = control
+  const [formUrls, setFormUrls] = useState<string[]>(
+    (form.urls ?? []).filter((url): url is string => typeof url === 'string'),
+  )
   const { formatMessage } = useIntl()
 
   const [formSystemCreateFormUrlMutation] = useMutation(CREATE_FORM_URL, {
     onCompleted: (newUrlData) => {
       if (newUrlData?.createFormSystemFormUrl) {
-        setSelectedUrls((prevUrls) => [
+        setFormUrls((prevUrls) => [
           ...prevUrls,
           newUrlData.createFormSystemFormUrl.organizationUrlId,
         ])
@@ -56,7 +58,7 @@ export const Urls = () => {
           },
         },
       })
-      setSelectedUrls((prevUrls) =>
+      setFormUrls((prevUrls) =>
         prevUrls.filter((url) => url !== organizationUrlId),
       )
     } catch (error) {
@@ -84,7 +86,7 @@ export const Urls = () => {
                   marginTop={1}
                 >
                   <Checkbox
-                    checked={selectedUrls?.some((u) => u === url?.id)}
+                    checked={formUrls?.some((u) => u === url?.id)}
                     onChange={(e) => {
                       if (typeof url?.id === 'string') {
                         if (e.target.checked) {
@@ -115,7 +117,7 @@ export const Urls = () => {
                   marginTop={1}
                 >
                   <Checkbox
-                    checked={selectedUrls?.some((u) => u === url?.id)}
+                    checked={formUrls?.some((u) => u === url?.id)}
                     onChange={(e) => {
                       if (typeof url?.id === 'string') {
                         if (e.target.checked) {

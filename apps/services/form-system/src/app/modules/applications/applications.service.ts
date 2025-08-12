@@ -234,9 +234,6 @@ export class ApplicationsService {
       throw new NotFoundException(`Application with id '${id}' not found.`)
     }
 
-    application.submittedAt = new Date()
-    await application.save()
-
     const applicationDto = await this.getApplication(id)
 
     const success = await this.serviceManager.send(applicationDto)
@@ -705,5 +702,19 @@ export class ApplicationsService {
       application.completed = [...(application.completed ?? []), section.id]
     }
     await application.save()
+  }
+
+  async deleteApplication(id: string): Promise<void> {
+    const application = await this.applicationModel.findByPk(id)
+
+    if (!application) {
+      throw new NotFoundException(`Application with id '${id}' not found`)
+    }
+
+    await this.valueModel.destroy({
+      where: { applicationId: id },
+    })
+
+    await application.destroy()
   }
 }
