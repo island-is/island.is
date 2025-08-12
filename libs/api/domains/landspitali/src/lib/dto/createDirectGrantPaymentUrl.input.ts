@@ -1,7 +1,7 @@
 import { Field, InputType, Int } from '@nestjs/graphql'
 import { IsNumber, Min } from 'class-validator'
 
-@InputType()
+@InputType('WebLandspitaliCreateDirectGrantPaymentUrlInput')
 export class CreateDirectGrantPaymentUrlInput {
   @Field(() => String)
   locale = 'is'

@@ -77,6 +77,7 @@ export const serviceSetup = (services: {
       'application-system',
       'consultation-portal',
       'search-indexer',
+      'payments',
     )
   return web
 }

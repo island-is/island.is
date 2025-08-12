@@ -1,4 +1,5 @@
-import { Injectable } from '@nestjs/common'
+import { Inject, Injectable } from '@nestjs/common'
+import type { ConfigType } from '@nestjs/config'
 import {
   CreatePaymentFlowInputAvailablePaymentMethodsEnum,
   PaymentsApi,
@@ -7,15 +8,28 @@ import { CreateMemorialCardPaymentUrlInput } from './dto/createMemorialCardPayme
 import { CreateMemorialCardPaymentUrlResponse } from './dto/createMemorialCardPaymentUrl.response'
 import { CreateDirectGrantPaymentUrlInput } from './dto/createDirectGrantPaymentUrl.input'
 import { CreateDirectGrantPaymentUrlResponse } from './dto/createDirectGrantPaymentUrl.response'
+import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
+import { Catalog } from './dto/catalog.response'
+import { LandspitaliApiModuleConfig } from './landspitali.config'
 
 // eslint-disable-next-line local-rules/disallow-kennitalas
 const LANDSPITALI_NATIONAL_ID = '5003002130'
 const FEE_CHARGE_ITEM_CODE = 'MR101' // Styrktar- og gjafasjóður Landspítala (TODO: let's verify that is where the 500 kr fee should go)
-const ON_UPDATE_URL = '' // TODO: Create a service that listens to the payment success webhook and forwards that info to zendesk
 
 @Injectable()
 export class LandspitaliService {
-  constructor(private readonly paymentsClient: PaymentsApi) {}
+  constructor(
+    private readonly paymentsClient: PaymentsApi,
+    private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
+    @Inject(LandspitaliApiModuleConfig.KEY)
+    private readonly config: ConfigType<typeof LandspitaliApiModuleConfig>,
+  ) {}
+
+  async getCatalog(): Promise<Catalog> {
+    return this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
+      LANDSPITALI_NATIONAL_ID,
+    )
+  }
 
   async createMemorialCardPaymentUrl(
     input: CreateMemorialCardPaymentUrlInput,
@@ -46,7 +60,7 @@ export class LandspitaliService {
           ],
           payerNationalId: input.payerNationalId,
           organisationId: LANDSPITALI_NATIONAL_ID,
-          onUpdateUrl: ON_UPDATE_URL,
+          onUpdateUrl: this.config.paymentFlowEventCallbackUrl,
           // TODO: Find out just how much data should be in "extraData"
           extraData: [
             {
@@ -128,7 +142,7 @@ export class LandspitaliService {
           ],
           payerNationalId: input.payerNationalId,
           organisationId: LANDSPITALI_NATIONAL_ID,
-          onUpdateUrl: ON_UPDATE_URL,
+          onUpdateUrl: this.config.paymentFlowEventCallbackUrl,
           extraData: [
             {
               name: 'payerName',

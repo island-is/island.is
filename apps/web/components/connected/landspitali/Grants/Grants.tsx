@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
 import { isValid as isValidKennitala } from 'kennitala'
-import { useMutation } from '@apollo/client'
+import { useMutation, useQuery } from '@apollo/client'
 
 import {
   AlertMessage,
@@ -18,11 +18,16 @@ import {
 } from '@island.is/shared/form-fields'
 import type {
   ConnectedComponent,
-  CreateDirectGrantPaymentUrlMutation,
-  CreateDirectGrantPaymentUrlMutationVariables,
+  WebLandspitaliCatalogQuery,
+  WebLandspitaliCatalogQueryVariables,
+  WebLandspitaliCreateDirectGrantPaymentUrlMutation,
+  WebLandspitaliCreateDirectGrantPaymentUrlMutationVariables,
 } from '@island.is/web/graphql/schema'
 import { useI18n } from '@island.is/web/i18n'
-import { CREATE_LANDSPITALI_DIRECT_GRANT_PAYMENT_URL } from '@island.is/web/screens/queries/Landspitali'
+import {
+  CREATE_LANDSPITALI_DIRECT_GRANT_PAYMENT_URL,
+  GET_LANDSPITALI_CATALOG,
+} from '@island.is/web/screens/queries/Landspitali'
 
 import { m } from './translation.strings'
 
@@ -113,7 +118,19 @@ const PRESET_PROJECTS = ['Endurmennt', 'Ótilgreint', 'Rannsóknir', 'Tækjakaup
 
 export const DirectGrants = ({ slice }: DirectGrantsProps) => {
   const { formatMessage } = useIntl()
-  const grantOptions = slice.json?.grantOptions ?? DEFAULT_GRANT_OPTIONS
+
+  const { data: catalogData } = useQuery<
+    WebLandspitaliCatalogQuery,
+    WebLandspitaliCatalogQueryVariables
+  >(GET_LANDSPITALI_CATALOG)
+
+  const grantOptions =
+    catalogData?.webLandspitaliCatalog.item.map((item) => ({
+      label: item.chargeItemName,
+      value: item.chargeItemCode,
+    })) ??
+    slice.json?.grantOptions ??
+    DEFAULT_GRANT_OPTIONS
 
   const methods = useForm<DirectGrants>({
     mode: 'onChange',
@@ -146,8 +163,8 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
   const { activeLocale } = useI18n()
 
   const [createDirectGrantPaymentUrl] = useMutation<
-    CreateDirectGrantPaymentUrlMutation,
-    CreateDirectGrantPaymentUrlMutationVariables
+    WebLandspitaliCreateDirectGrantPaymentUrlMutation,
+    WebLandspitaliCreateDirectGrantPaymentUrlMutationVariables
   >(CREATE_LANDSPITALI_DIRECT_GRANT_PAYMENT_URL)
   const [
     errorOccuredWhenCreatingPaymentUrl,

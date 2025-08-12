@@ -1,6 +1,6 @@
 import { Field, ObjectType } from '@nestjs/graphql'
 
-@ObjectType()
+@ObjectType('WebLandspitaliCreateDirectGrantPaymentUrlResponse')
 export class CreateDirectGrantPaymentUrlResponse {
   @Field(() => String)
   url!: string
