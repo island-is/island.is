@@ -3,7 +3,9 @@ import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import {
   ActivationGrantCreateActivationGrantRequest,
+  GaldurDomainModelsApplicationsActivationGrantActivationGrantDTO,
   GaldurDomainModelsApplicationsActivationGrantApplicationsViewModelsActivationGrantViewModel,
+  GaldurDomainModelsAttachmentsAttachmentViewModel,
   VmstUnemploymentClientService,
 } from '@island.is/clients/vmst-unemployment'
 import { TemplateApiModuleActionProps } from '../../../types'
@@ -27,6 +29,7 @@ import { errorMsgs } from '@island.is/application/templates/activation-allowance
 import { S3Service } from '@island.is/nest/aws'
 import { sharedModuleConfig } from '../../shared'
 import { ConfigType } from '@nestjs/config'
+import { getValueViaPath } from '@island.is/application/core'
 
 @Injectable()
 export class ActivationAllowanceService extends BaseTemplateApiService {
@@ -111,6 +114,11 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
       application.id,
       this.config.templateApi.attachmentBucket,
     )
+    const emptyApplication =
+      getValueViaPath<GaldurDomainModelsApplicationsActivationGrantActivationGrantDTO>(
+        externalData,
+        'activityGrantApplication.data.activationGrant',
+      )
 
     if (!bankInfo) {
       this.logger.warn(
@@ -129,7 +137,7 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
       throw new Error()
     }
 
-    let cvResponse
+    let cvResponse: GaldurDomainModelsAttachmentsAttachmentViewModel | undefined
     if (cvInfo) {
       cvResponse =
         await this.vmstUnemploymentClientService.createAttachmentForActivationGrant(
@@ -147,8 +155,14 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
     const payload: ActivationGrantCreateActivationGrantRequest = {
       galdurApplicationApplicationsActivationGrantsCommandsCreateActivationGrantCreateActivationGrantCommand:
         {
+          ...emptyApplication,
           activationGrant: {
+            ...emptyApplication?.applicationInformation,
             applicationInformation: {
+              ...emptyApplication?.applicationInformation,
+              created: new Date(
+                emptyApplication?.applicationInformation?.created || '',
+              ),
               applicationLanguage: startingLocale?.toUpperCase() || 'IS',
               additionalInformation: cvInfo?.other,
               contactConnection: contact?.connection,
@@ -156,25 +170,36 @@ export class ActivationAllowanceService extends BaseTemplateApiService {
               contactName: contact?.name,
               contactPhoneNumber: contact?.phone,
             },
-            personalInformation: personalInfo,
+            personalInformation: {
+              ...personalInfo,
+            },
             otherInformation: {
+              ...emptyApplication?.otherInformation,
               canStartAt: new Date(),
             },
             preferredJobs: {
+              ...emptyApplication?.preferredJobs,
               jobs: jobWishesPayload,
             },
             educationHistory: {
-              education: education,
+              education: education
+                ? education
+                : emptyApplication?.educationHistory?.education,
             },
             jobCareer: {
               jobs: jobHistoryPayload,
             },
             drivingLicense: licenses,
             attachments: {
+              ...emptyApplication?.attachments,
               files: !cvResponse ? [] : [{ id: cvResponse?.attachment?.id }],
             },
-            bankingPensionUnion: bankInfo,
+            bankingPensionUnion: {
+              ...emptyApplication?.bankingPensionUnion,
+              ...bankInfo,
+            },
             languageKnowledge: {
+              ...emptyApplication?.languageKnowledge,
               languages: languageSkillInfo,
             },
             applicantId: null,

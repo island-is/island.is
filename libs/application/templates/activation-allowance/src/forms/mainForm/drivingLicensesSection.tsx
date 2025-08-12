@@ -48,7 +48,7 @@ export const drivingLicensesSection = buildSection({
           spacing: 0,
           options: (application) => {
             const drivingLicenseTypes =
-              getValueViaPath<{ name: string }[]>(
+              getValueViaPath<{ name: string; id: string }[]>(
                 application.externalData,
                 'activityGrantApplication.data.activationGrant.supportData.drivingLicenses',
               ) || []
@@ -70,7 +70,7 @@ export const drivingLicensesSection = buildSection({
 
               const LicenseIconComponent = licenseComponents[type.name]
               return {
-                value: type.name,
+                value: type.id,
                 label: type.name,
                 rightContent: LicenseIconComponent ? (
                   <LicenseIconComponent />
@@ -104,13 +104,13 @@ export const drivingLicensesSection = buildSection({
           isMulti: true,
           options: (application) => {
             const heavyMachineryLicenses =
-              getValueViaPath<{ name: string }[]>(
+              getValueViaPath<{ name: string; id: string }[]>(
                 application.externalData,
                 'activityGrantApplication.data.activationGrant.supportData.heavyMachineryLicenses',
               ) || []
             return heavyMachineryLicenses
               .map((right) => ({
-                value: right.name,
+                value: right.id,
                 label: right.name,
               }))
               .sort((a, b) => a.label.localeCompare(b.label))

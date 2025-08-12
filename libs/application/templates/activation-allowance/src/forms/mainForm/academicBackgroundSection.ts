@@ -89,6 +89,7 @@ export const academicBackgroundSection = buildSection({
                 const chosenDegreeSubjects = chosenLevelDegrees?.find(
                   (degree) => degree.id === degreeAnswer,
                 )?.subjects
+
                 return (
                   chosenDegreeSubjects?.map((subject) => ({
                     value: subject.id ?? '',

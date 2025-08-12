@@ -40,7 +40,11 @@ export const getApplicantInfo = (
   | GaldurDomainModelsApplicantsApplicantProfileDTOsPersonalInformation
   | undefined => {
   const personalInfo = getValueViaPath<ApplicantAnswer>(answers, 'applicant')
-
+  const personalExternalData =
+    getValueViaPath<GaldurDomainModelsApplicantsApplicantProfileDTOsPersonalInformation>(
+      externalData,
+      'activityGrantApplication.data.activationGrant.personalInformation',
+    )
   if (!personalInfo) return undefined
 
   const {
@@ -101,7 +105,13 @@ export const getApplicantInfo = (
     (field) => field !== undefined && field !== null,
   )
 
-  return allRequiredFieldsDefined ? result : undefined
+  return allRequiredFieldsDefined
+    ? {
+        ...personalExternalData,
+        ...result,
+        dateOfBirth: new Date(personalExternalData?.dateOfBirth || ''),
+      }
+    : undefined
 }
 
 export const getContactInfo = (
