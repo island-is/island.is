@@ -29,7 +29,6 @@ import {
   ApplicationResponse,
 } from '../../models/applications.model'
 import { Screen } from '../../models/screen.model'
-import { UpdateApplicationDependenciesInput } from '../../dto/application.input'
 
 @Injectable()
 export class ApplicationsService {
@@ -107,7 +106,7 @@ export class ApplicationsService {
 
   async updateDependencies(
     auth: User,
-    input: UpdateApplicationDependenciesInput,
+    input: UpdateApplicationInput,
   ): Promise<void> {
     await this.applicationsApiWithAuth(auth).applicationsControllerUpdate(
       input as ApplicationsControllerUpdateRequest,

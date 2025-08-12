@@ -16,6 +16,8 @@ import { Action, ApplicationState } from '@island.is/form-system/ui'
 import { Form } from '../components/Form/Form'
 import { fieldReducer } from '../reducers/fieldReducer'
 import { useForm, FormProvider } from 'react-hook-form'
+import { useMutation } from '@apollo/client'
+import { UPDATE_APPLICATION_DEPENDENCIES } from '@island.is/form-system/graphql'
 
 interface ApplicationContextProvider {
   state: ApplicationState
@@ -54,6 +56,24 @@ export const ApplicationProvider: React.FC<{
       console.log('Application state changed:', state.application)
     }
   }, [state.application])
+
+  const [updateDependencies] = useMutation(UPDATE_APPLICATION_DEPENDENCIES)
+
+  useEffect(() => {
+    if (state.application.dependencies) {
+      updateDependencies({
+        variables: {
+          input: {
+            id: state.application.id,
+            updateApplicationDto: {
+              dependencies: state.application.dependencies,
+            },
+          },
+        },
+      })
+    }
+  }, [state.application.dependencies, state.application.id, updateDependencies])
+
   return (
     <ApplicationContext.Provider value={contextValue}>
       <FormProvider {...methods}>{state.application && <Form />}</FormProvider>

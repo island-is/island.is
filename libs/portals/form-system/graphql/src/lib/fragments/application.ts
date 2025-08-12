@@ -30,6 +30,11 @@ export const ApplicationFragment = gql`
     modified
     submittedAt
     completed
+    dependencies {
+      parentProp
+      childProps
+      isSelected
+    }
   }
   ${ApplicantTypeDtoFragment}
   ${LanguageFields}

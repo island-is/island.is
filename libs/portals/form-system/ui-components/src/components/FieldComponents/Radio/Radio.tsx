@@ -46,7 +46,12 @@ export const Radio = ({ item, dispatch, lang = 'is', hasError }: Props) => {
   }
 
   const radioButton = (rb: FormSystemListItem, index: number) => (
-    <Box width="half" padding={1} onClick={() => handleChange(index)}>
+    <Box
+      width="half"
+      padding={1}
+      onClick={() => handleChange(index)}
+      key={rb.id}
+    >
       <RadioButton
         label={rb?.label?.[language]}
         tooltip={
@@ -57,6 +62,7 @@ export const Radio = ({ item, dispatch, lang = 'is', hasError }: Props) => {
         large
         backgroundColor="blue"
         checked={radioChecked[index]}
+        onChange={() => handleChange(index)}
       />
     </Box>
   )

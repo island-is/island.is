@@ -139,30 +139,21 @@ export class ApplicationMapper {
       return false
     }
 
-    let isDependant = false
+    const childProps = dependencies.flatMap(
+      (dependency) => dependency?.childProps,
+    )
 
-    for (let i = 0; i < dependencies.length; i++) {
-      if (dependencies[i].childProps.includes(id)) {
-        isDependant = true
-        break
-      }
-    }
-
-    if (!isDependant) {
+    if (!childProps.includes(id)) {
       return false
     }
 
-    let isHidden = true
+    const dependencyItems = dependencies.filter((dependency) =>
+      dependency.childProps.includes(id),
+    )
 
-    for (let i = 0; i < dependencies.length; i++) {
-      if (
-        dependencies[i].childProps.includes(id) &&
-        dependencies[i].isSelected === true
-      ) {
-        isHidden = false
-        break
-      }
-    }
+    const isHidden = dependencyItems.every(
+      (dependency) => dependency.isSelected === false,
+    )
 
     return isHidden
   }
