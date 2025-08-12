@@ -55,7 +55,7 @@ export const ApplicationProvider: React.FC<{
     if (process.env.NODE_ENV === 'development') {
       console.log('Application state changed:', state)
     }
-  }, [state.application])
+  }, [state])
 
   const [updateDependencies] = useMutation(UPDATE_APPLICATION_DEPENDENCIES)
 

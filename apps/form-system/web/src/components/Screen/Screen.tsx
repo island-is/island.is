@@ -1,4 +1,4 @@
-import { Box, Button, GridColumn, Text } from '@island.is/island-ui/core'
+import { Box, GridColumn, Text } from '@island.is/island-ui/core'
 import { Footer } from '../Footer/Footer'
 import { useApplicationContext } from '../../context/ApplicationProvider'
 import { SectionTypes } from '@island.is/form-system/ui'
@@ -8,7 +8,6 @@ import { useState } from 'react'
 import { useLocale } from '@island.is/localization'
 import { Applicants } from './components/Applicants/Applicants'
 import { FormSystemApplicant } from '@island.is/api/schema'
-
 
 export const Screen = () => {
   const { state } = useApplicationContext()

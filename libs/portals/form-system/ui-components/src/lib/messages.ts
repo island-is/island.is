@@ -728,5 +728,5 @@ export const webMessages = defineMessages({
     id: 'form-system:submit-application',
     defaultMessage: 'Senda inn umsókn',
     description: 'Submit application',
-  }
+  },
 })

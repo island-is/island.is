@@ -4,7 +4,6 @@ import {
   FormSystemSection,
 } from '@island.is/api/schema'
 import {
-  SectionTypes,
   Action,
   ApplicationState,
   initializeField,
@@ -36,15 +35,6 @@ export const initialReducer = (state: ApplicationState): ApplicationState => {
   const screens = sections
     .flatMap((section) => section.screens ?? [])
     .filter(Boolean) as FormSystemScreen[]
-
-  // Move payment to the end, should get fixed in the backend
-  // const paymentIndex = sections.findIndex(
-  //   (section) => section.sectionType === SectionTypes.PAYMENT,
-  // )
-  // if (paymentIndex !== -1) {
-  //   const payment = sections.splice(paymentIndex, 1)
-  //   sections.push(payment[0])
-  // }
 
   const { currentSection, currentScreen } = getCurrentSectionAndScreen(
     sections,
