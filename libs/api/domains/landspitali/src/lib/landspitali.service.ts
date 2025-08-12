@@ -61,7 +61,7 @@ export class LandspitaliService {
           payerNationalId: input.payerNationalId,
           organisationId: LANDSPITALI_NATIONAL_ID,
           onUpdateUrl: this.config.paymentFlowEventCallbackUrl,
-          // TODO: Find out just how much data should be in "extraData"
+          // TODO: Find out just how much data should be sent to FJS
           extraData: [
             {
               name: 'recipientName',
@@ -104,8 +104,10 @@ export class LandspitaliService {
               value: input.senderSignature,
             },
           ],
+          // TODO: Find out just how much data should be sent to Zendesk
           metadata: {
             ...input,
+            typeOfPayment: 'memorialCard',
           },
         },
       })
@@ -143,6 +145,7 @@ export class LandspitaliService {
           payerNationalId: input.payerNationalId,
           organisationId: LANDSPITALI_NATIONAL_ID,
           onUpdateUrl: this.config.paymentFlowEventCallbackUrl,
+          // TODO: Find out just how much data should be sent to FJS
           extraData: [
             {
               name: 'payerName',
@@ -169,8 +172,10 @@ export class LandspitaliService {
               value: input.payerGrantExplanation,
             },
           ],
+          // TODO: Find out just how much data should be sent to Zendesk
           metadata: {
             ...input,
+            typeOfPayment: 'directGrant',
           },
         },
       })

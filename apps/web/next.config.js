@@ -35,6 +35,10 @@ const nextConfig = {
         source: '/opinbernyskopun/rss.xml',
         destination: '/api/rss/opinbernyskopun',
       },
+      {
+        source: '/payments/event-callback',
+        destination: '/api/payments/event-callback',
+      },
     ]
   },
   async redirects() {

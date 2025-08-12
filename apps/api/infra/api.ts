@@ -297,7 +297,7 @@ export const serviceSetup = (services: {
         (ctx) =>
           `http://${
             ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
-          }web.islandis.svc.cluster.local/api/payments/event-callback`,
+          }web.islandis.svc.cluster.local/payments/event-callback`,
       ),
     })
     .secrets({
