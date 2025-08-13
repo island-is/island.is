@@ -82,11 +82,11 @@
       "executor": "nx:run-commands",
       "options": {
         "commands": [
-          "yarn nx run form-system-web:start-bff",
-          "yarn start form-system-web",
+          "./scripts/run-xroad-proxy.sh",
           "yarn start services-user-profile",
           "yarn start service-portal",
-          "./scripts/run-xroad-proxy.sh"
+          "yarn nx run form-system-web:start-bff",
+          "yarn start form-system-web"
         ],
         "parallel": true
       }

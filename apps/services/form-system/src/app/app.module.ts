@@ -28,9 +28,6 @@ import { UserProfileClientConfig } from '@island.is/clients/user-profile'
     AuthModule.register(environment.auth),
     AuditModule.forRoot(environment.audit),
     LoggingModule,
-    SequelizeModule.forRootAsync({
-      useClass: SequelizeConfigService,
-    }),
     OrganizationsModule,
     FormsModule,
     SectionsModule,
@@ -52,6 +49,9 @@ import { UserProfileClientConfig } from '@island.is/clients/user-profile'
         CompanyRegistryConfig,
         UserProfileClientConfig,
       ],
+    }),
+    SequelizeModule.forRootAsync({
+      useClass: SequelizeConfigService,
     }),
   ],
 })

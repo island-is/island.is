@@ -13,10 +13,6 @@ interface Props {
 }
 export const Applicants = ({ applicantTypes }: Props) => {
   const { lang } = useLocale()
-  const agentType =
-    ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL ||
-    ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY
-
   const { data } = useQuery(USER_PROFILE, {
     fetchPolicy: 'cache-first',
   })
@@ -32,7 +28,12 @@ export const Applicants = ({ applicantTypes }: Props) => {
               user={data?.getUserProfile}
             />
           )
-        } else if (applicantType.applicantTypeId === agentType) {
+        } else if (
+          applicantType.applicantTypeId ===
+            ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL ||
+          applicantType.applicantTypeId ===
+            ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY
+        ) {
           return (
             <Agent
               applicantType={applicantType}
