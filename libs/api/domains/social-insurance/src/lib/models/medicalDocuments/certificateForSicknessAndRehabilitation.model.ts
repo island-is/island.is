@@ -1,6 +1,5 @@
-import { Field, ObjectType, Int } from '@nestjs/graphql'
+import { Field, GraphQLISODateTime, Int, ObjectType } from '@nestjs/graphql'
 import { EnumType } from './enumType.model'
-import { EstimatedDuration } from './estimatedDuration.model'
 
 @ObjectType('SocialInsuranceMedicalDocumentsDoctor')
 class Doctor {
