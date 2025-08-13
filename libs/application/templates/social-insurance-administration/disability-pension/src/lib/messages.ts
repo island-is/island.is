@@ -79,7 +79,7 @@ export const disabilityPensionFormMessage: MessageDir = {
     informationIncapacitatedDate: {
       id: 'db.application:disability.pension.certificate.information.incapacitated.date',
       defaultMessage:
-        'Dagsetning þegar umsækjandi varð óvinnufær vegna núverandi heilsuvanda',
+        'Dagsetning þegar umsækjandi varð óvinnufær að hluta eða öllu leiti vegna núverandi heilsubrests',
       description:
         'Date when the applicant became incapacitated due to current health problems',
     },

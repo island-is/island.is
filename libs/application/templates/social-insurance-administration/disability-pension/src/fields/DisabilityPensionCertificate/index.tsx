@@ -129,61 +129,13 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
             {formatMessage(
               disabilityPensionFormMessage
                 .disabilityPensionCertificate
-                .informationDateOfLastExamination,
+                .informationIncapacitatedDate,
             )}
           </Label>
           <Text></Text>
           <Text>
-            {data?.socialInsuranceDisabilityPensionCertificate
-              ?.lastInspectionDate
-              ? format(
-                  new Date(
-                    data.socialInsuranceDisabilityPensionCertificate.lastInspectionDate,
-                  ),
-                  'dd.MM.yyyy',
-                )
-              : '-'}
-          </Text>
-        </GridColumn>
-        <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
-          <Label>
-            {formatMessage(
-              disabilityPensionFormMessage
-                .disabilityPensionCertificate
-                .informationDateOfCertificate,
-            )}
-          </Label>
-          <Text>
-            {data?.socialInsuranceDisabilityPensionCertificate
-              ?.certificateDate
-              ? format(
-                  new Date(
-                    data.socialInsuranceDisabilityPensionCertificate.certificateDate,
-                  ),
-                  'dd.MM.yyyy',
-                )
-              : '-'}
-          </Text>
-        </GridColumn>
-        <GridColumn span="1/1">
-          <Label>
-            {formatMessage(
-              disabilityPensionFormMessage
-                .disabilityPensionCertificate
-                .informationIncapacitatedDate,
-            )}
-          </Label>
-          <Text>
-            {data?.socialInsuranceDisabilityPensionCertificate
-              ?.dateOfWorkIncapacity
-              ? format(
-                  new Date(
-                    data.socialInsuranceDisabilityPensionCertificate.disabilityDate,
-                  ),
-                  'dd.MM.yyyy',
-                )
-              : '-'}
-            {'\n\n'}
+            {data?.socialInsuranceDisabilityPensionCertificate.dateOfWorkIncapacity
+              ?? '-'}
           </Text>
         </GridColumn>
         <GridColumn span="1/1">
@@ -194,15 +146,13 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
             )}
           </Label>
           <Markdown>
-            {data?.socialInsuranceDisabilityPensionCertificate?.diagnoses?.icd
-              ?.map(
-                (value, index) =>
-                  `${index + 1}. ${value.code} ${value.displayValue}`,
-              )
-              ?.join('\n\n') ?? ''}
+            {`1. ${data?.socialInsuranceDisabilityPensionCertificate?.diagnoses?.mainDiagnosis?.code} ${data?.socialInsuranceDisabilityPensionCertificate?.diagnoses?.mainDiagnosis?.description}`}
           </Markdown>
         </GridColumn>
-        {data?.socialInsuranceDisabilityPensionCertificate?.diagnoses
+      </GridRow>
+      </Stack>
+    )
+        {/*data?.socialInsuranceDisabilityPensionCertificate?.diagnoses
           ?.others &&
           data.socialInsuranceDisabilityPensionCertificate.diagnoses
             .others.length > 0 && (
@@ -546,7 +496,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
         message={formatMessage(coreErrorMessages.failedDataProvider)}
       />
     )
-  }
+  }*/}
 
   return (
     <Stack space={4}>
@@ -554,7 +504,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
       <Divider />
       {information()}
       <Divider />
-      {physicalImpairment()}
+      {/*physicalImpairment()}
       <Divider />
       {mentalImpairment()}
       <Divider />
@@ -562,7 +512,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
       <Divider />
       {mainImpairment()}
       <Divider />
-      {applicationForMedicalAndRehabilitationPayments()}
+      {applicationForMedicalAndRehabilitationPayments()*/}
       <input
         type="hidden"
         value={
