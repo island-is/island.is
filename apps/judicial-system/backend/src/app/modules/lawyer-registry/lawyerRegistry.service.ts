@@ -115,7 +115,6 @@ export class LawyerRegistryService {
 
       await this.lawyerRegistryModel.destroy({ where: {}, transaction })
       await this.populateLawyerRegistry(formattedLawyers, transaction)
-      await transaction.commit()
 
       return lawyers
     })
