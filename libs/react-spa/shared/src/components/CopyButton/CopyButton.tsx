@@ -11,18 +11,17 @@ export interface CopyButtonProps {
 
 export const CopyButton = ({ content }: CopyButtonProps): ReactNode => {
   const { formatMessage } = useLocale()
-  const [didCopy, setDidCopy] = useState<string>()
+  const [didCopy, setDidCopy] = useState(false)
 
   const copy = () => {
     copyToClipboard(content)
-    setDidCopy(content)
+    setDidCopy(true)
   }
 
   return (
     <Tooltip
-      text={
-        didCopy === content ? formatMessage(m.copied) : formatMessage(m.copy)
-      }
+      text={didCopy ? formatMessage(m.copied) : formatMessage(m.copy)}
+      onHide={() => setDidCopy(false)}
     >
       <Box
         cursor="pointer"

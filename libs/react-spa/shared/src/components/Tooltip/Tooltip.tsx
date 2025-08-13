@@ -1,4 +1,4 @@
-import React, { ElementType, FC, ReactElement } from 'react'
+import React, { ElementType, FC, ReactElement, useEffect } from 'react'
 import cn from 'classnames'
 import {
   Tooltip as ReakitTooltip,
@@ -9,6 +9,7 @@ import {
 import * as styles from './Tooltip.css'
 import { Colors } from '@island.is/island-ui/theme'
 import { Icon, Size } from '@island.is/island-ui/core'
+import { usePrevious } from 'react-use'
 
 type Placement = 'top' | 'right' | 'bottom' | 'left'
 
@@ -66,6 +67,7 @@ interface TooltipProps {
   renderInPortal?: boolean
   as?: ElementType
   variant?: 'light' | 'dark' | 'white'
+  onHide?: () => void
 }
 
 export const Tooltip: FC<React.PropsWithChildren<TooltipProps>> = ({
@@ -78,11 +80,29 @@ export const Tooltip: FC<React.PropsWithChildren<TooltipProps>> = ({
   fullWidth,
   renderInPortal = true,
   variant = 'dark',
+  onHide,
 }) => {
   const tooltip = useTooltipState({
     animated: 250,
     ...(placement && { placement }),
   })
+
+  // Track tooltip state to trigger onHide.
+  const prevTooltip = usePrevious(tooltip)
+  useEffect(() => {
+    const isHidden = !tooltip.visible
+    const wasVisible = prevTooltip?.visible && !tooltip.animating
+    const wasAnimating = prevTooltip?.animating && !tooltip.animating
+    if (onHide && isHidden && (wasVisible || wasAnimating)) {
+      onHide()
+    }
+  }, [
+    onHide,
+    tooltip.visible,
+    tooltip.animating,
+    prevTooltip?.visible,
+    prevTooltip?.animating,
+  ])
 
   if (!text) {
     return null
