@@ -7,7 +7,6 @@ import {
   FormSystemFieldSettings,
   FormSystemFormCertificationTypeDto,
   FormSystemFormApplicant,
-  FormSystemFormUrl,
 } from '@island.is/api/schema'
 import { UniqueIdentifier } from '@dnd-kit/core'
 import { arrayMove } from '@dnd-kit/sortable'
