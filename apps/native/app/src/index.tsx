@@ -1,3 +1,4 @@
+import './utils/intl-polyfill'
 import { Navigation } from 'react-native-navigation'
 import { initializeApolloClient } from './graphql/client'
 import { readAuthorizeResult } from './stores/auth-store'

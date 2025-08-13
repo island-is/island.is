@@ -16,27 +16,6 @@ import {
   ViewStyle,
 } from 'react-native'
 import DeviceInfo from 'react-native-device-info'
-
-// uncomment polyfills that are needed.
-// make sure to add locales that are needed as well
-import 'intl'
-import 'intl/locale-data/jsonp/en'
-import 'intl/locale-data/jsonp/is'
-import '@formatjs/intl-locale/polyfill'
-import '@formatjs/intl-getcanonicallocales/polyfill'
-import '@formatjs/intl-pluralrules/polyfill-force'
-import '@formatjs/intl-pluralrules/locale-data/en'
-import '@formatjs/intl-pluralrules/locale-data/is'
-import '@formatjs/intl-numberformat/polyfill'
-import '@formatjs/intl-numberformat/locale-data/en'
-import '@formatjs/intl-numberformat/locale-data/is'
-import '@formatjs/intl-datetimeformat/polyfill'
-import '@formatjs/intl-datetimeformat/locale-data/en'
-import '@formatjs/intl-datetimeformat/locale-data/is'
-import '@formatjs/intl-datetimeformat/add-golden-tz'
-import '@formatjs/intl-relativetimeformat/polyfill'
-import '@formatjs/intl-relativetimeformat/locale-data/en'
-import '@formatjs/intl-relativetimeformat/locale-data/is'
 import KeyboardManager from 'react-native-keyboard-manager'
 import { Navigation } from 'react-native-navigation'
 import { getConfig } from '../../config'
@@ -140,23 +119,6 @@ LogBox.ignoreLogs([
   /Require cycle:/,
   /new NativeEventEmitter/,
 ])
-
-// set default timezone
-if (typeof HermesInternal === 'object' && HermesInternal !== null) {
-  if ('__setDefaultTimeZone' in Intl.DateTimeFormat) {
-    ;(Intl.DateTimeFormat as any).__setDefaultTimeZone('UTC')
-  }
-}
-
-// overwrite global Intl
-if (isIos) {
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  global.Intl = (global as any).IntlPolyfill
-  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-  // @ts-ignore
-  ;(global.Intl as any).__disableRegExpRestore()
-}
 
 export function setupGlobals() {
   // keyboard manager
