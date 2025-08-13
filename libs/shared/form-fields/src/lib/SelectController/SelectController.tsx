@@ -1,6 +1,5 @@
-import React from 'react'
+import { useEffect } from 'react'
 import { Controller, useFormContext, RegisterOptions } from 'react-hook-form'
-
 import {
   Select,
   SelectProps,
@@ -66,13 +65,41 @@ export const SelectController = <Value, IsMulti extends boolean = false>({
   clearOnChange,
   setOnChange,
 }: SelectControllerProps<Value, IsMulti> & TestSupport) => {
-  const { clearErrors, setValue } = useFormContext()
+  const { clearErrors, setValue, getValues } = useFormContext()
 
   const isMultiValue = (
     value: MultiValue<Option<Value>> | SingleValue<Option<Value>>,
   ): value is MultiValue<Option<Value>> => {
     return Array.isArray(value)
   }
+
+  // Clean up invalid values when options change
+  useEffect(() => {
+    const currentValue = getValues(id)
+    if (
+      currentValue !== null &&
+      currentValue !== undefined &&
+      options.length > 0
+    ) {
+      if (Array.isArray(currentValue)) {
+        // For multi-select, check if any values are invalid
+        const validValues = currentValue.filter((v) =>
+          options.some((option) => option.value === v),
+        )
+        if (validValues.length !== currentValue.length) {
+          setValue(id, validValues.length > 0 ? validValues : null)
+        }
+      } else {
+        // For single select, check if the value is invalid
+        const foundOption = options.find(
+          (option) => option.value === currentValue,
+        )
+        if (!foundOption) {
+          setValue(id, null)
+        }
+      }
+    }
+  }, [options, id, setValue, getValues])
 
   const getValue = (value: Value | Value[]) => {
     if (value === null) {
@@ -87,11 +114,6 @@ export const SelectController = <Value, IsMulti extends boolean = false>({
 
     // Return null if the value is not in the options to avoid hung values
     const foundOption = options.find((option) => option.value === value) || null
-    // Avoid having nonexistent values in the answers object by setting the value to null
-    // if the value is not in the options and there are options meaning options have been fetched
-    if (!foundOption && options.length > 0) {
-      setValue(id, null)
-    }
     return foundOption
   }
 
