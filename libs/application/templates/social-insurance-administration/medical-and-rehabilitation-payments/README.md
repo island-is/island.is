@@ -7,7 +7,7 @@ This template was generated via `nx generate-template medical-and-rehabilitation
 - This application template allows applicants to submit an application for medical and rehabilitation payments to the Social Insurance Administration (TR)
 - Gervimenn that can use this application are e.g. Tómas Tinni, tel: 020-1439 and Anna Mary, tel: 201-1489
 
-![](../medical-and-rehabilitation-payments/src/assets/medical-and-rehabilitation-flow-chart.png)
+![Medical and rehabilitation payments workflow](./src/assets/medical-and-rehabilitation-flow-chart.png)
 
 ### States
 
