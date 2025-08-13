@@ -36,7 +36,6 @@ import {
   CurrentUser,
 } from '@island.is/auth-nest-tools'
 import { Audit, AuditService } from '@island.is/nest/audit'
-import { environment } from '../../../environments/'
 import { AuthAdminScope } from '@island.is/auth/scopes'
 
 const namespace = `@island.is/auth-admin-api/personal-representative`
