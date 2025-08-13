@@ -1,5 +1,7 @@
 // components
 export * from './components/problems/Problem'
+export * from './components/CopyButton/CopyButton'
+export * from './components/Tooltip/Tooltip'
 export { ProblemTypes } from './components/problems/problem.types'
 
 // libs

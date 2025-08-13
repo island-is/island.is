@@ -1,9 +1,9 @@
-import { Box, Button, Icon, Text } from '@island.is/island-ui/core'
+import { Box, Button, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import { m, Tooltip, useIsMobile } from '@island.is/portals/my-pages/core'
+import { useIsMobile } from '@island.is/portals/my-pages/core'
+import { CopyButton } from '@island.is/react-spa/shared'
 import { InformationPaths } from '@island.is/portals/my-pages/information'
-import copyToClipboard from 'copy-to-clipboard'
-import React, { useState } from 'react'
+import React from 'react'
 import { useNavigate } from 'react-router-dom'
 import { useDocumentContext } from '../../screens/Overview/DocumentContext'
 import { messages } from '../../utils/messages'
@@ -40,7 +40,6 @@ const ReplyHeader: React.FC<ReplyHeaderProps> = ({
   const { formatMessage } = useLocale()
   const { isMobile } = useIsMobile()
   const { replyState } = useDocumentContext()
-  const [copiedCode, setCopiedCode] = useState<string | null>(null)
 
   if (isMobile && replyState?.replyOpen)
     return (
@@ -52,13 +51,6 @@ const ReplyHeader: React.FC<ReplyHeaderProps> = ({
         hasEmail={hasEmail}
       />
     )
-
-  const copy = (code?: string | null) => {
-    if (code) {
-      copyToClipboard(code)
-      setCopiedCode(code)
-    }
-  }
 
   return (
     <Box
@@ -117,31 +109,7 @@ const ReplyHeader: React.FC<ReplyHeaderProps> = ({
                     )}{' '}
                     {caseNumber}
                   </Text>
-                  <Tooltip
-                    text={
-                      copiedCode === caseNumber
-                        ? formatMessage(m.copied)
-                        : formatMessage(m.copy)
-                    }
-                  >
-                    <Box
-                      cursor="pointer"
-                      marginLeft={1}
-                      display="flex"
-                      alignItems="center"
-                      justifyContent="center"
-                      onClick={() => {
-                        copy(caseNumber)
-                      }}
-                    >
-                      <Icon
-                        icon="copy"
-                        type="outline"
-                        color="blue400"
-                        size="small"
-                      />
-                    </Box>
-                  </Tooltip>
+                  <CopyButton content={caseNumber} />
                 </Box>
               )}
             </Box>

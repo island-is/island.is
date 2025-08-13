@@ -47,4 +47,12 @@ export const m = defineMessages({
     id: 'portals:debug-code',
     defaultMessage: 'Rakningarkóði: {code}',
   },
+  copy: {
+    id: 'portals:copy',
+    defaultMessage: 'Afrita',
+  },
+  copied: {
+    id: 'portals:copied',
+    defaultMessage: 'Afritað!',
+  },
 })
