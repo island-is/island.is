@@ -34,10 +34,7 @@ export class InfraInterceptor implements NestInterceptor {
     if (traceSid) {
       this.logger.info(`${req.method} ${req.originalUrl}`, {
         traceSid,
-        req: {
-          path: req.originalUrl,
-          userAgent: req.headers['user-agent'],
-        },
+        userAgent: req.headers['user-agent'],
         handlerName,
       })
     }
