@@ -1,56 +1,17 @@
 import type { NextApiRequest, NextApiResponse } from 'next'
-import getConfig from 'next/config'
 
 import type { PaymentCallbackPayload } from '@island.is/api/domains/landspitali'
-import environment from '@island.is/web/environments/environment'
 import initApollo from '@island.is/web/graphql/client'
-import type {
-  ContactUsZendeskTicketMutation,
-  ContactUsZendeskTicketMutationVariables,
+import {
+  WebLandspitaliSendDirectGrantPaymentConfirmationEmailMutation,
+  WebLandspitaliSendDirectGrantPaymentConfirmationEmailMutationVariables,
+  WebLandspitaliSendMemorialCardPaymentConfirmationEmailMutation,
+  WebLandspitaliSendMemorialCardPaymentConfirmationEmailMutationVariables,
 } from '@island.is/web/graphql/schema'
-import { CONTACT_US_ZENDESK_TICKET_MUTATION } from '@island.is/web/screens/queries'
-
-const { serverRuntimeConfig = {} } = getConfig() ?? {}
-
-const ZENDESK_EMAIL = serverRuntimeConfig.landspitaliZendeskEmail as string
-
-const generateMessage = (payment: PaymentCallbackPayload) => {
-  const lines = []
-
-  if (payment.paymentFlowMetadata.landspitaliType === 'memorialCard') {
-    const metadata = payment.paymentFlowMetadata
-    lines.push(`Minningarsjóður: ${metadata.fundChargeItemCode}`) // TODO: Perhaps send the name of the fund and not the "id"?
-    lines.push(`Til minningar um: ${metadata.inMemoryOf}`)
-    lines.push(`Fjárhæð: ${metadata.amountISK} krónur`)
-    lines.push(`Undirskrift sendanda: ${metadata.senderSignature}`)
-
-    lines.push(`Nafn viðtakanda korts: ${metadata.recipientName}`)
-    lines.push(`Heimilisfang viðtakanda korts: ${metadata.recipientAddress}`)
-    lines.push(`Póstnúmer viðtakanda korts: ${metadata.recipientPostalCode}`)
-    lines.push(`Staður viðtakanda korts: ${metadata.recipientPlace}`)
-
-    lines.push(`Nafn greiðanda: ${metadata.payerName}`)
-    lines.push(`Netfang greiðanda: ${metadata.payerEmail}`)
-    lines.push(`Kennitala greiðanda: ${metadata.payerNationalId}`)
-    lines.push(`Heimilisfang greiðanda: ${metadata.payerAddress}`)
-    lines.push(`Póstnúmer greiðanda: ${metadata.payerPostalCode}`)
-    lines.push(`Staður greiðanda: ${metadata.payerPlace}`)
-  } else if (payment.paymentFlowMetadata.landspitaliType === 'directGrant') {
-    const metadata = payment.paymentFlowMetadata
-    lines.push(`Styrktarsjóður: ${metadata.grantChargeItemCode}`) // TODO: Perhaps send the name of the grant and not the "id"?
-    lines.push(`Verkefni: ${metadata.project}`)
-    lines.push(`Fjárhæð: ${metadata.amountISK}`)
-    lines.push(`Nafn greiðanda: ${metadata.payerName}`)
-    lines.push(`Netfang greiðanda: ${metadata.payerEmail}`)
-    lines.push(`Kennitala greiðanda: ${metadata.payerNationalId}`)
-    lines.push(`Heimilisfang greiðanda: ${metadata.payerAddress}`)
-    lines.push(`Póstnúmer greiðanda: ${metadata.payerPostalCode}`)
-    lines.push(`Staður greiðanda: ${metadata.payerPlace}`)
-    lines.push(`Skýring á styrk: ${metadata.payerGrantExplanation}`)
-  }
-
-  return lines.join('\n')
-}
+import {
+  SEND_LANDSPITALI_DIRECT_GRANT_PAYMENT_CONFIRMATION_EMAIL,
+  SEND_LANDSPITALI_MEMORIAL_CARD_PAYMENT_CONFIRMATION_EMAIL,
+} from '@island.is/web/screens/queries/Landspitali'
 
 export default async function handler(
   req: NextApiRequest,
@@ -68,42 +29,72 @@ export default async function handler(
 
   const apolloClient = initApollo({})
 
-  if (
-    payment.paymentFlowMetadata.landspitaliType !== 'directGrant' &&
-    payment.paymentFlowMetadata.landspitaliType !== 'memorialCard'
-  ) {
-    return res
-      .status(400) // TODO: Check how the payment solution handles this kind of error code
-      .send(
-        'Unsure what type of payment this is, missing or invalid value for "landspitaliType" field in metadata',
-      )
-  }
-
-  const subjectPrefix = environment.production ? '' : '[TEST] '
-
-  res.status(200).send(generateMessage(payment))
-
-  const response = await apolloClient.mutate<
-    ContactUsZendeskTicketMutation,
-    ContactUsZendeskTicketMutationVariables
-  >({
-    mutation: CONTACT_US_ZENDESK_TICKET_MUTATION,
-    variables: {
-      input: {
-        name: payment.paymentFlowMetadata.payerName,
-        email: ZENDESK_EMAIL,
-        subject:
-          payment.paymentFlowMetadata.landspitaliType === 'memorialCard'
-            ? `${subjectPrefix}Minningarkort - Landspítali`
-            : `${subjectPrefix}Beinn styrkur - Landspítali`,
-        message: generateMessage(payment),
+  if (payment.paymentFlowMetadata.landspitaliPaymentType === 'DirectGrant') {
+    const response = await apolloClient.mutate<
+      WebLandspitaliSendDirectGrantPaymentConfirmationEmailMutation,
+      WebLandspitaliSendDirectGrantPaymentConfirmationEmailMutationVariables
+    >({
+      mutation: SEND_LANDSPITALI_DIRECT_GRANT_PAYMENT_CONFIRMATION_EMAIL,
+      variables: {
+        input: {
+          amountISK: payment.paymentFlowMetadata.amountISK,
+          grantChargeItemCode: payment.paymentFlowMetadata.grantChargeItemCode,
+          payerAddress: payment.paymentFlowMetadata.payerAddress,
+          payerEmail: payment.paymentFlowMetadata.payerEmail,
+          payerName: payment.paymentFlowMetadata.payerName,
+          payerNationalId: payment.paymentFlowMetadata.payerNationalId,
+          payerPostalCode: payment.paymentFlowMetadata.payerPostalCode,
+          payerPlace: payment.paymentFlowMetadata.payerPlace,
+          payerGrantExplanation:
+            payment.paymentFlowMetadata.payerGrantExplanation,
+          project: payment.paymentFlowMetadata.project,
+        },
       },
-    },
-  })
-
-  if (response.data?.contactUsZendeskTicket?.sent) {
-    res.status(200).json({ message: 'Zendesk ticket submitted' })
-  } else {
-    res.status(500).json({ message: 'Failed to submit zendesk ticket' })
+    })
+    if (
+      response.data?.webLandspitaliSendDirectGrantPaymentConfirmationEmail
+        ?.success
+    ) {
+      res.status(200).json({ message: 'Email sent' })
+    } else {
+      res.status(500).json({ message: 'Failed to send email' })
+    }
+  } else if (
+    payment.paymentFlowMetadata.landspitaliPaymentType === 'MemorialCard'
+  ) {
+    const response = await apolloClient.mutate<
+      WebLandspitaliSendMemorialCardPaymentConfirmationEmailMutation,
+      WebLandspitaliSendMemorialCardPaymentConfirmationEmailMutationVariables
+    >({
+      mutation: SEND_LANDSPITALI_MEMORIAL_CARD_PAYMENT_CONFIRMATION_EMAIL,
+      variables: {
+        input: {
+          amountISK: payment.paymentFlowMetadata.amountISK,
+          payerName: payment.paymentFlowMetadata.payerName,
+          payerEmail: payment.paymentFlowMetadata.payerEmail,
+          payerNationalId: payment.paymentFlowMetadata.payerNationalId,
+          payerAddress: payment.paymentFlowMetadata.payerAddress,
+          payerPostalCode: payment.paymentFlowMetadata.payerPostalCode,
+          payerPlace: payment.paymentFlowMetadata.payerPlace,
+          fundChargeItemCode: payment.paymentFlowMetadata.fundChargeItemCode,
+          inMemoryOf: payment.paymentFlowMetadata.inMemoryOf,
+          recipientAddress: payment.paymentFlowMetadata.recipientAddress,
+          recipientName: payment.paymentFlowMetadata.recipientName,
+          recipientPlace: payment.paymentFlowMetadata.recipientPlace,
+          recipientPostalCode: payment.paymentFlowMetadata.recipientPostalCode,
+          senderSignature: payment.paymentFlowMetadata.senderSignature,
+        },
+      },
+    })
+    if (
+      response.data?.webLandspitaliSendMemorialCardPaymentConfirmationEmail
+        ?.success
+    ) {
+      res.status(200).json({ message: 'Email sent' })
+    } else {
+      res.status(500).json({ message: 'Failed to send email' })
+    }
   }
+
+  return res.status(400).json({ message: 'Unknown payment type' })
 }

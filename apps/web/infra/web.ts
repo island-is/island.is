@@ -31,7 +31,7 @@ export const serviceSetup = (services: {
     .secrets({
       DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN',
       LANDSPITALI_MINNINGARKORT_OG_STYRKIR_ZENDESK_EMAIL:
-        '/k8s/web/LANDSPITALI_MINNINGARKORT_OG_STYRKIR_ZENDESK_EMAIL',
+        '/k8s/api/LANDSPITALI_MINNINGARKORT_OG_STYRKIR_ZENDESK_EMAIL',
     })
     .ingress({
       primary: {

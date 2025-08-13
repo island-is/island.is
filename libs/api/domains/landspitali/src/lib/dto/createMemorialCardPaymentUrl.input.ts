@@ -26,8 +26,8 @@ export class CreateMemorialCardPaymentUrlInput {
   @Field(() => String)
   payerEmail!: string
 
-  @Field(() => String)
-  payerNationalId!: string
+  @Field(() => String, { nullable: true })
+  payerNationalId?: string
 
   @Field(() => String)
   payerAddress!: string

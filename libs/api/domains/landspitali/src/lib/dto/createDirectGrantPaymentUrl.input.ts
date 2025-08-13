@@ -6,8 +6,8 @@ export class CreateDirectGrantPaymentUrlInput {
   @Field(() => String)
   locale = 'is'
 
-  @Field(() => String)
-  payerNationalId!: string
+  @Field(() => String, { nullable: true })
+  payerNationalId?: string
 
   @Field(() => String)
   payerName!: string

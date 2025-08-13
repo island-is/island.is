@@ -12,9 +12,20 @@ import { ChargeFjsV2ClientService } from '@island.is/clients/charge-fjs-v2'
 import { Catalog } from './dto/catalog.response'
 import { LandspitaliApiModuleConfig } from './landspitali.config'
 import {
-  DirectGrantPaymentFlowMetadata,
-  MemorialCardPaymentFlowMetadata,
+  type DirectGrantPaymentFlowMetadata,
+  type MemorialCardPaymentFlowMetadata,
+  PaymentType,
 } from './types'
+import { EmailService } from '@island.is/email-service'
+import {
+  DirectGrantPaymentConfirmationInput,
+  MemorialCardPaymentConfirmationInput,
+} from './dto/paymentConfirmation.input'
+import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
+import {
+  generateDirectGrantPaymentConfirmationEmailMessage,
+  generateMemorialCardPaymentConfirmationEmailMessage,
+} from './utils'
 
 // eslint-disable-next-line local-rules/disallow-kennitalas
 const LANDSPITALI_NATIONAL_ID = '5003002130'
@@ -27,7 +38,52 @@ export class LandspitaliService {
     private readonly chargeFjsV2ClientService: ChargeFjsV2ClientService,
     @Inject(LandspitaliApiModuleConfig.KEY)
     private readonly config: ConfigType<typeof LandspitaliApiModuleConfig>,
+    private readonly emailService: EmailService,
+    @Inject(LOGGER_PROVIDER)
+    private logger: Logger,
   ) {}
+
+  async sendDirectGrantPaymentConfirmationEmail(
+    input: DirectGrantPaymentConfirmationInput,
+  ): Promise<boolean> {
+    try {
+      await this.emailService.sendEmail({
+        to: this.config.paymentConfirmationSendToEmail,
+        from: this.config.paymentConfirmationSendFromEmail,
+        subject: this.config.directGrantPaymentConfirmationSubject,
+        text: generateDirectGrantPaymentConfirmationEmailMessage(input),
+        replyTo: input.payerEmail,
+      })
+      return true
+    } catch (error) {
+      this.logger.error(
+        'Failed to send Landspítali direct grant payment confirmation email',
+        { message: error.message },
+      )
+      return false
+    }
+  }
+
+  async sendMemorialCardPaymentConfirmationEmail(
+    input: MemorialCardPaymentConfirmationInput,
+  ): Promise<boolean> {
+    try {
+      await this.emailService.sendEmail({
+        to: this.config.paymentConfirmationSendToEmail,
+        from: this.config.paymentConfirmationSendFromEmail,
+        subject: this.config.memorialCardPaymentConfirmationSubject,
+        text: generateMemorialCardPaymentConfirmationEmailMessage(input),
+        replyTo: input.payerEmail,
+      })
+      return true
+    } catch (error) {
+      this.logger.error(
+        'Failed to send Landspítali memorial card payment confirmation email',
+        { message: error.message },
+      )
+      return false
+    }
+  }
 
   async getCatalog(): Promise<Catalog> {
     return this.chargeFjsV2ClientService.getCatalogByPerformingOrg(
@@ -44,7 +100,8 @@ export class LandspitaliService {
         createPaymentFlowInput: {
           // TODO: Verify this should be the product title
           // TODO: Perhaps fetch product title from somewhere else?
-          productTitle: locale === 'is' ? 'Minningarkort' : 'Memorial card',
+          // TODO: Should the product title be localized?
+          productTitle: 'Minningarkort - Landspítali',
           availablePaymentMethods: [
             CreatePaymentFlowInputAvailablePaymentMethodsEnum.card,
           ],
@@ -52,20 +109,21 @@ export class LandspitaliService {
             {
               price: input.amountISK,
               chargeItemCode: input.fundChargeItemCode,
-              chargeType: 'memorialCard', // TODO: What is a charge type?
+              chargeType: 'MemorialCard', // TODO: Verify this is the correct charge type
               quantity: 1,
             },
             {
               price: 500,
               chargeItemCode: FEE_CHARGE_ITEM_CODE,
-              chargeType: 'memorialCardFee', // TODO: What is a charge type?
+              chargeType: 'MemorialCardFee', // TODO: Verify this is the correct charge type
               quantity: 1,
             },
           ],
-          payerNationalId: input.payerNationalId,
+          payerNationalId:
+            input.payerNationalId ?? this.config.paymentNationalIdFallback,
           organisationId: LANDSPITALI_NATIONAL_ID,
           onUpdateUrl: this.config.paymentFlowEventCallbackUrl,
-          // TODO: Find out just how much data should be sent to FJS
+          // TODO: Find out just how much data should be sent to FJS and how that data should be structured
           extraData: [
             {
               name: 'recipientName',
@@ -111,7 +169,7 @@ export class LandspitaliService {
           // TODO: Find out just how much data should be sent to Zendesk
           metadata: {
             ...input,
-            landspitaliType: 'memorialCard',
+            landspitaliPaymentType: PaymentType.MemorialCard,
           } as MemorialCardPaymentFlowMetadata,
         },
       })
@@ -128,7 +186,7 @@ export class LandspitaliService {
     const response =
       await this.paymentsClient.paymentFlowControllerCreatePaymentUrl({
         createPaymentFlowInput: {
-          productTitle: locale === 'is' ? 'Beinn styrkur' : 'Direct grant',
+          productTitle: 'Beinn styrkur - Landspítali',
           availablePaymentMethods: [
             CreatePaymentFlowInputAvailablePaymentMethodsEnum.card,
           ],
@@ -146,10 +204,11 @@ export class LandspitaliService {
               quantity: 1,
             },
           ],
-          payerNationalId: input.payerNationalId,
+          payerNationalId:
+            input.payerNationalId ?? this.config.paymentNationalIdFallback,
           organisationId: LANDSPITALI_NATIONAL_ID,
           onUpdateUrl: this.config.paymentFlowEventCallbackUrl,
-          // TODO: Find out just how much data should be sent to FJS
+          // TODO: Find out just how much data should be sent to FJS and how that data should be structured
           extraData: [
             {
               name: 'payerName',
@@ -179,7 +238,7 @@ export class LandspitaliService {
           // TODO: Find out just how much data should be sent to Zendesk
           metadata: {
             ...input,
-            landspitaliType: 'directGrant',
+            landspitaliPaymentType: PaymentType.DirectGrant,
           } as DirectGrantPaymentFlowMetadata,
         },
       })

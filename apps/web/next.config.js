@@ -15,7 +15,6 @@ const {
   APP_VERSION,
   ENVIRONMENT,
   CONFIGCAT_SDK_KEY,
-  LANDSPITALI_MINNINGARKORT_OG_STYRKIR_ZENDESK_EMAIL,
 } = process.env
 
 /**
@@ -190,7 +189,6 @@ const nextConfig = {
     // Requests made by the server are internal request made directly to the api hostname
     graphqlUrl: API_URL,
     graphqlEndpoint: graphqlPath,
-    landspitaliZendeskEmail: LANDSPITALI_MINNINGARKORT_OG_STYRKIR_ZENDESK_EMAIL,
   },
 
   publicRuntimeConfig: {
