@@ -4,34 +4,70 @@ import {
   buildMultiField,
   buildRadioField,
   buildSubSection,
+  getValueViaPath,
 } from '@island.is/application/core'
-import { MOCK_QUESTIONS, } from './mockData'
 import { SectionRouteEnum } from '../../../../types'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
+import { SelfAssessmentQuestionnaire } from '../../../../types/interfaces'
+import { Application } from '@island.is/application/types'
+export const MAX_QUESTIONS = 50
 
-const questions = MOCK_QUESTIONS.map((question, index) => {
+const buildQuestion = (index: number) => {
   return buildMultiField({
     id: `${SectionRouteEnum.CAPABILITY_IMPAIRMENT}.questionAnswers.[${index}]`,
-    title: question.label,
+    title: (application, locale) => {
+      const selfAssessmentQuestionnaire = getValueViaPath<Array<SelfAssessmentQuestionnaire>>(
+          application.externalData,
+          'socialInsuranceAdministrationDisabilityPensionSelfAssessmentQuestions.data',
+        ) ?? []
+
+      const questions = selfAssessmentQuestionnaire.find(questionnaire => questionnaire.language.toLowerCase() === locale)?.questions ?? []
+
+      return questions[index].questionTitle
+    },
     children: [
-      //check if works!5
+      //check if works!
       buildRadioField({
         id: `${SectionRouteEnum.CAPABILITY_IMPAIRMENT}.questionAnswers.[${index}].answer`,
-        options: question.options.map((option) => ({
-          label: option.title,
-          value: option.value,
-        })),
+        options: (application, _, locale) => {
+          const selfAssessmentQuestionnaire = getValueViaPath<Array<SelfAssessmentQuestionnaire>>(
+              application.externalData,
+              'socialInsuranceAdministrationDisabilityPensionSelfAssessmentQuestions.data',
+            ) ?? []
+
+          const selfAssessmentQuestionnaireScale =
+            selfAssessmentQuestionnaire.find(
+              (questionnaire) =>
+                questionnaire.language.toLowerCase() === locale,
+            )?.scale
+
+          return (
+            selfAssessmentQuestionnaireScale?.map(({ value, display }) => ({
+              value: value.toString(),
+              label: display,
+            })) ?? []
+          )
+        },
         required: true,
       }),
       buildHiddenInput({
         id: `${SectionRouteEnum.CAPABILITY_IMPAIRMENT}.questionAnswers.[${index}].id`,
-        defaultValue: () => {
-          return question.id
+        defaultValue: (application: Application) => {
+          const selfAssessmentQuestionnaire = getValueViaPath<Array<SelfAssessmentQuestionnaire>>(
+            application.externalData,
+            'socialInsuranceAdministrationDisabilityPensionSelfAssessmentQuestions.data',
+          ) ?? []
+
+          const questions = selfAssessmentQuestionnaire.find(
+            (questionnaire) => questionnaire.language.toLowerCase() === 'is',
+          )?.questions ?? []
+
+          return questions[index].questionCode
         },
       })
     ],
   })
-})
+}
 
 export const capabilityImpairmentSubSection = buildSubSection({
   id: SectionRouteEnum.CAPABILITY_IMPAIRMENT,
@@ -45,6 +81,8 @@ export const capabilityImpairmentSubSection = buildSubSection({
         disabilityPensionFormMessage.capabilityImpairment.description,
     }),
     //TODO: validate and collect correct questions
-    ...questions,
+    ...[...Array(MAX_QUESTIONS)].map((_key, index) =>
+      buildQuestion(index),
+    )
   ],
 })

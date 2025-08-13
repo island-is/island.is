@@ -232,17 +232,28 @@ export class SocialInsuranceAdministrationClientService {
     ).apiProtectedV1MedicalDocumentsRehabilitationplanGet()
   }
 
-  async getMARPSelfAssessmentQuestionnaire(
+  async getSelfAssessmentQuestionnaire(
     user: User,
     languages: ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest,
+    applicationType: 'MARP' | 'DisabilityPension'
   ): Promise<
     Array<TrWebApiServicesDomainQuestionnairesModelsQuestionnaireDto>
   > {
-    return this.questionnairesApiWithAuth(
-      user,
-    ).apiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGet(
-      languages,
-    )
+    switch(applicationType) {
+      case 'MARP':
+        return this.questionnairesApiWithAuth(
+          user,
+        ).apiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGet(
+          languages,
+        )
+      case 'DisabilityPension':
+        return this.questionnairesApiWithAuth(
+          user,
+        ).apiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGet(
+          languages,
+        )
+    }
+
   }
 
   async getCertificateForSicknessAndRehabilitation(

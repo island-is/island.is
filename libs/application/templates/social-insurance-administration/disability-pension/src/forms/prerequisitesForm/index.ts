@@ -24,6 +24,7 @@ import {
   SocialInsuranceAdministrationLatestIncomePlan,
   SocialInsuranceAdministrationWithholdingTaxApi,
   SocialInsuranceAdministrationCountriesApi,
+  SocialInsuranceAdministrationSelfAssessmentQuestionsApi,
 } from '../../dataProviders'
 import { disabilityPensionFormMessage } from '../../lib/messages'
 
@@ -104,6 +105,9 @@ export const Prerequisites = buildForm({
              buildDataProviderItem({
                provider: SocialInsuranceAdministrationCurrenciesApi,
              }),
+             buildDataProviderItem({
+               provider: SocialInsuranceAdministrationSelfAssessmentQuestionsApi
+             })
           ],
           submitField: buildSubmitField({
             id: 'submit',

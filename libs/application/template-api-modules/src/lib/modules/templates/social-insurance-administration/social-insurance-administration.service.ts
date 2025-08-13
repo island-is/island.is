@@ -18,6 +18,7 @@ import { Application, ApplicationTypes } from '@island.is/application/types'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import {
   ApiProtectedV1IncomePlanWithholdingTaxGetRequest,
+  ApiProtectedV1QuestionnairesDisabilitypensionSelfassessmentGetRequest,
   ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest,
   TrWebCommonsExternalPortalsApiModelsDocumentsDocument as Attachment,
   DocumentTypeEnum,
@@ -626,9 +627,21 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     { auth }: TemplateApiModuleActionProps,
     languages: ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest = {},
   ) {
-    return await this.siaClientService.getMARPSelfAssessmentQuestionnaire(
+    return await this.siaClientService.getSelfAssessmentQuestionnaire(
       auth,
       languages,
+      'MARP',
+    )
+  }
+
+  async getDisabilityPensionSelfAssessmentQuestionnaire(
+    { auth }: TemplateApiModuleActionProps,
+    languages: ApiProtectedV1QuestionnairesDisabilitypensionSelfassessmentGetRequest = {},
+  ) {
+    return await this.siaClientService.getSelfAssessmentQuestionnaire(
+      auth,
+      languages,
+      'DisabilityPension',
     )
   }
 

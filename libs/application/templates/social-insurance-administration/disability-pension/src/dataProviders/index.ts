@@ -49,6 +49,13 @@ export const SocialInsuranceAdministrationLatestIncomePlan = defineTemplateApi({
   namespace: 'SocialInsuranceAdministration',
 })
 
+export const SocialInsuranceAdministrationSelfAssessmentQuestionsApi =
+  defineTemplateApi({
+    action: 'getDisabilityPensionSelfAssessmentQuestionnaire',
+    externalDataId: 'socialInsuranceAdministrationDisabilityPensionSelfAssessmentQuestions',
+    namespace: 'SocialInsuranceAdministration',
+  })
+
 /*export const SocialInsuranceAdministrationIsApplicantEligibleApi =
   defineTemplateApi({
     action: 'getIsEligible',
