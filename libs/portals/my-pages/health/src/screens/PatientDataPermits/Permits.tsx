@@ -41,6 +41,7 @@ const PatientDataPermits: React.FC = () => {
           icon="arrowForward"
           iconType="outline"
           size="small"
+          onClick={() => navigate(HealthPaths.HealthPatientDataPermitsAdd)}
         >
           {formatMessage(messages.addPermit)}
         </Button>,

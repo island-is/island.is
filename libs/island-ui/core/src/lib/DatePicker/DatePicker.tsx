@@ -1,35 +1,36 @@
 /* eslint-disable @typescript-eslint/no-explicit-any */
-import * as React from 'react'
-import { useEffect, useRef, useState, forwardRef } from 'react'
-import cn from 'classnames'
-import {
-  default as ReactDatePicker,
-  registerLocale,
-  ReactDatePickerProps,
-} from 'react-datepicker'
-import getYear from 'date-fns/getYear'
-import is from 'date-fns/locale/is'
-import en from 'date-fns/locale/en-US'
+import { VisuallyHidden } from '@ariakit/react'
 import {
   dateFormat,
-  timeFormat,
   dateFormatWithTime,
+  timeFormat,
 } from '@island.is/shared/constants'
-import { VisuallyHidden } from '@ariakit/react'
+import cn from 'classnames'
+import getYear from 'date-fns/getYear'
+import en from 'date-fns/locale/en-US'
+import is from 'date-fns/locale/is'
 import range from 'lodash/range'
+import * as React from 'react'
+import { forwardRef, useEffect, useRef, useState } from 'react'
+import {
+  default as ReactDatePicker,
+  ReactDatePickerProps,
+  registerLocale,
+} from 'react-datepicker'
 
 import { Icon } from '../IconRC/Icon'
 import { ErrorMessage } from '../Input/ErrorMessage'
 import { Text } from '../Text/Text'
 
-import * as styles from './DatePicker.css'
-import * as coreStyles from './react-datepicker.css'
+import { Box } from '../Box/Box'
 import { Input } from '../Input/Input'
 import { InputProps } from '../Input/types'
-import { DatePickerProps, DatePickerCustomHeaderProps } from './types'
-import { Select } from '../Select/Select'
-import { Box } from '../Box/Box'
 import { ScrollToSelectedMenuList } from '../Select/Components/ScrollToSelectedMenuList'
+import { Select } from '../Select/Select'
+import CustomCalendarContainer from './CustomCalendarContainer'
+import * as styles from './DatePicker.css'
+import * as coreStyles from './react-datepicker.css'
+import { DatePickerCustomHeaderProps, DatePickerProps } from './types'
 
 const languageConfig = {
   is: {
@@ -76,6 +77,7 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
   readOnly = false,
   calendarStartDay = 1,
   range = false,
+  ranges,
 }) => {
   const [startDate, setStartDate] = useState<Date | null>(selected ?? null)
   const [endDate, setEndDate] = useState<Date | null>(null)
@@ -124,11 +126,11 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
           name={name}
           disabled={disabled}
           selected={startDate ?? selected}
-          locale={currentLanguage.locale}
+          locale={currentLanguage.locale ?? 'is'}
           minDate={minDate}
           maxDate={maxDate}
           excludeDates={excludeDates}
-          formatWeekDay={(nameOfDay) => nameOfDay.toString().substr(0, 3)}
+          //formatWeekDay={(nameOfDay) => nameOfDay.toString().substr(0, 3)}
           dateFormat={
             showTimeInput
               ? currentLanguage.formatWithTime
@@ -193,6 +195,17 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
               minYear={minYear}
               maxYear={maxYear}
               {...props}
+            />
+          )}
+          calendarContainer={(props) => (
+            <CustomCalendarContainer
+              {...props}
+              setDate={(d, e) => {
+                setStartDate(d)
+                e && setEndDate(e)
+              }}
+              ranges={ranges}
+              children={props.children}
             />
           )}
           {...ariaError}

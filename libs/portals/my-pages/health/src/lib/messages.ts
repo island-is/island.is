@@ -1199,6 +1199,10 @@ export const messages = defineMessages({
     defaultMessage: 'Tímabil',
     id: 'sp.health:period',
   },
+  choosePeriod: {
+    defaultMessage: 'Veldu tímabil',
+    id: 'sp.health:choose-period',
+  },
   periodStatus: {
     defaultMessage: 'Staða tímabils',
     id: 'sp.health:period-status',
@@ -1772,5 +1776,40 @@ export const messages = defineMessages({
   downloadPDF: {
     defaultMessage: 'Sækja PDF',
     id: 'sp.health:download-pdf',
+  },
+  keyHealthInformation: {
+    id: 'sp.health:key-health-information',
+    defaultMessage: 'Lykilheilsufarsupplýsingar',
+  },
+  keyHealthInformationDescription: {
+    id: 'sp.health:key-health-information-description',
+    defaultMessage:
+      'Lykilheilsufarsupplýsingar eru samantekt sem veitir mikilvægar heilsufarsupplýsingar um einstakling. Það inniheldur eftirfarandi upplýsingar:',
+  },
+  keyHealthInformationList: {
+    id: 'sp.health:key-health-information-list#markdown',
+    defaultMessage:
+      '* Sjúkdómsgreininar\n* Ofnæmi og lífsógnandi sjúkdóma\n* Yfirlit yfir núverandi lyf\n* Ígræði, t.d. hjartagangráður og bjargráður\n* Bólusetningar\n* Nýlegar meðferðir\n* Meðgöngu',
+  },
+  errorTryAgain: {
+    id: 'sp.health:error-try-again',
+    defaultMessage:
+      'Ekki tókst að sækja gögn. Vinsamlegast reyndu aftur síðar.',
+  },
+  sixMonths: {
+    id: 'sp.health:six-months',
+    defaultMessage: '6 mán',
+  },
+  oneYear: {
+    id: 'sp.health:one-year',
+    defaultMessage: '1 ár',
+  },
+  twoYears: {
+    id: 'sp.health:two-years',
+    defaultMessage: '2 ár',
+  },
+  threeYears: {
+    id: 'sp.health:three-years',
+    defaultMessage: '3 ár',
   },
 })

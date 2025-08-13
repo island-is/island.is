@@ -412,14 +412,5 @@ export const healthModule: PortalModule = {
         userInfo.scopes.includes(ApiScope.health),
       element: <PatientDataNewPermit />,
     },
-    {
-      name: hm.addPermit,
-      path: HealthPaths.HealthPatientDataPermitsAddStep,
-      //key: 'HealthPatientDataPermitsAdd', // TODO: Add feature flag
-      enabled:
-        userInfo.scopes.includes(ApiScope.internal) ||
-        userInfo.scopes.includes(ApiScope.health),
-      element: <PatientDataNewPermit />,
-    },
   ],
 }

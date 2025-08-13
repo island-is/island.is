@@ -7,6 +7,7 @@ import {
   ButtonProps,
   Text,
   Inline,
+  Hyphen,
 } from '@island.is/island-ui/core'
 
 interface Props {
@@ -98,6 +99,7 @@ export const Modal: FC<React.PropsWithChildren<Props>> = ({
             display="flex"
             flexDirection="row"
             alignItems="center"
+            borderRadius="standard"
             rowGap={2}
             paddingY={[3, 6, 12]}
             paddingX={[3, 6, 12, 14]}
@@ -114,10 +116,10 @@ export const Modal: FC<React.PropsWithChildren<Props>> = ({
               />
             </Box>{' '}
             <Box>
-              <Box marginBottom={6}>
+              <Box marginBottom={6} marginRight={4}>
                 {title && (
-                  <Text variant="h3" marginBottom={'auto'}>
-                    {title}
+                  <Text variant="h3" marginBottom={1}>
+                    <Hyphen>{title}</Hyphen>
                   </Text>
                 )}
                 {text && <Text>{text}</Text>}

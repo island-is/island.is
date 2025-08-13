@@ -1,5 +1,5 @@
-import { style, styleVariants, globalStyle } from '@vanilla-extract/css'
 import { theme, themeUtils } from '@island.is/island-ui/theme'
+import { globalStyle, style, styleVariants } from '@vanilla-extract/css'
 import * as mixins from '../Input/Input.mixins'
 
 export const root = style({
@@ -99,16 +99,16 @@ export const customHeaderContainer = style({
   paddingBottom: theme.spacing[2],
   marginBottom: theme.spacing[2],
   position: 'relative',
-  '::before': {
-    content: '""',
-    display: 'block',
-    position: 'absolute',
-    top: 0,
-    height: '1px',
-    left: `-${theme.spacing[3] - 3}px`,
-    right: `-${theme.spacing[3] - 3}px`,
-    background: theme.color.blue200,
-  },
+  // '::before': {
+  //   content: '""',
+  //   display: 'block',
+  //   position: 'absolute',
+  //   top: 0,
+  //   height: '1px',
+  //   left: `-${theme.spacing[3] - 3}px`,
+  //   right: `-${theme.spacing[3] - 3}px`,
+  //   background: theme.color.blue200,
+  // },
 })
 
 export const headerSelect = style({
@@ -199,6 +199,28 @@ export const popperInline = style({
   transform: 'none !important',
   marginBottom: '-7px',
   top: '-12px !important',
+})
+
+export const rangeContainer = style({
+  position: 'relative',
+  '::before': {
+    content: '""',
+    display: 'block',
+    position: 'absolute',
+    top: 0,
+    height: '1px',
+    left: 0,
+    right: 0,
+    background: theme.color.blue200,
+  },
+})
+
+export const rangeItem = style({
+  flex: 1,
+  textAlign: 'center',
+  ':hover': {
+    borderColor: theme.color.blue400,
+  },
 })
 
 // Overwrite default ReactDatepicker styles
@@ -307,6 +329,7 @@ globalStyle(
   `${root}.island-ui-datepicker .react-datepicker-popper[data-placement^="top"]`,
   {
     top: '33px !important',
+    zIndex: 999,
   },
 )
 
@@ -314,6 +337,7 @@ globalStyle(
   `${root}.island-ui-datepicker .react-datepicker-popper[data-placement^="bottom"]`,
   {
     top: '-17px !important',
+    zIndex: 999,
   },
 )
 

@@ -66,5 +66,4 @@ export enum HealthPaths {
   HealthPatientDataPermits = '/heilsa/sjukraskra/heimildir',
   HealthPatientDataPermitsDetail = '/heilsa/sjukraskra/heimildir/:id',
   HealthPatientDataPermitsAdd = '/heilsa/sjukraskra/heimildir/ny-heimild',
-  HealthPatientDataPermitsAddStep = '/heilsa/sjukraskra/heimildir/:step',
 }

@@ -56,7 +56,14 @@ export interface DatePickerProps {
   maxYear?: number
   readOnly?: boolean
   calendarStartDay?: number
+  /**
+   * Whether the datepicker should allow selecting a range of dates
+   */
   range?: boolean
+  /**
+   * Predefined date ranges for quick selection
+   */
+  ranges?: { label: string; startDate: Date; endDate: Date }[]
 }
 
 export interface DatePickerCustomHeaderProps {
