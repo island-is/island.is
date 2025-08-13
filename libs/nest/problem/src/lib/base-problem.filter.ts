@@ -36,9 +36,9 @@ export abstract class BaseProblemFilter implements ExceptionFilter {
     const traceSid = request.auth?.traceSid
 
     if (problem.status && problem.status >= 500) {
-      this.logger.error(traceSid ? { ...error, traceSid } : error)
+      this.logger.error(traceSid ? { message: error, traceSid } : error)
     } else if (this.options.logAllErrors) {
-      this.logger.info(traceSid ? { ...error, traceSid } : error)
+      this.logger.info(traceSid ? { message: error, traceSid } : error)
     }
 
     if ((host.getType() as string) === 'graphql') {

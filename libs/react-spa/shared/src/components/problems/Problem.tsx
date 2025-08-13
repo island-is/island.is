@@ -98,7 +98,9 @@ export const Problem = ({
     message: message ?? formatMessage(m.internalServerErrorMessage),
     debugMessage:
       debugMessage ??
-      formatMessage(m.debugCode, { code: userInfo.profile.traceSid }),
+      (userInfo?.profile?.traceSid
+        ? formatMessage(m.debugCode, { code: userInfo.profile.traceSid })
+        : undefined),
     withIcon: true,
     variant: 'error',
     dataTestId,

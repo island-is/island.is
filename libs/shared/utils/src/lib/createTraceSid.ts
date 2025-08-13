@@ -21,9 +21,15 @@ export const createTraceSid = async (
 ) => {
   const isoDate = new Date().toISOString().split('T')[0]
   const data = `${sid}:${isoDate}`
-  const h = await hashFn(data)
+  let h = ''
+  try {
+    h = await hashFn(data)
+  } catch (err) {
+    // Handle unexpected errors generating hash / trace sid.
+    console.error('Unexpected error creating a trace sid', err)
+  }
 
-  // Crypto / SHA256 not supported in this environment.
+  // Crypto / hash not supported in this environment.
   if (h.length < 12) {
     return undefined
   }

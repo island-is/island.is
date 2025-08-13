@@ -1152,7 +1152,7 @@ export const m = defineMessages({
     defaultMessage: 'Rakningarkóði',
   },
   debugDescription: {
-    id: 'service.portal:debug-title',
+    id: 'service.portal:debug-description',
     defaultMessage:
       'Ef þú lendir í vandræðum með einhverja virkni á Ísland.is þá getur þú afhent þjónustuverinu eftirfarandi kóða til að hjálpa þeim við að leysa úr málinu.',
   },
