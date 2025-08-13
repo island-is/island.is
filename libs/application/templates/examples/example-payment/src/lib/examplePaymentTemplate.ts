@@ -31,6 +31,8 @@ const getCodes = (application: Application): BasicChargeItem[] => {
   // with FJS
   // NOTE: This is a simplified example, in a real application you should inspect the application
   // answers and external data to pick the correct charge item code.
+  // Furthermore you should not generate the chargeItemCode from any answer in the
+  // application, but rather recalculate it to avoid payment manipulation in the graphql
   const chargeItemCode = getValueViaPath<CatalogItem['chargeItemCode']>(
     application.answers,
     'userSelectedChargeItemCode',

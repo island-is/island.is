@@ -37,6 +37,8 @@ import {
 } from '@island.is/application/core'
 import { buildPaymentState } from '@island.is/application/utils'
 import { CodeOwners } from '@island.is/shared/constants'
+import { DriversLicense } from '@island.is/clients/driving-license'
+import { info } from 'kennitala'
 
 const oneDay = 24 * 3600 * 1000
 const thirtyDays = 24 * 3600 * 1000 * 30
@@ -51,17 +53,28 @@ const pruneAfter = (time: number) => {
 
 const getCodes = (application: Application): BasicChargeItem[] => {
   const codes: BasicChargeItem[] = []
-
-  const chargeItemCode = getValueViaPath<string>(
-    application.answers,
-    'chargeItemCode',
+  let chargeItemCode = 'AY116'
+  const licenseData = getValueViaPath<DriversLicense>(
+    application.externalData,
+    'currentLicense.data',
   )
 
-  codes.push({ code: chargeItemCode as string })
+  // Temporary Driving License
+  if (licenseData?.categories.some((category) => category.validToCode === 8)) {
+    chargeItemCode = 'AY114'
+  }
+
+  // Change price based on age, takes precedence over temporary license
+  // and therefore simply overrides chargeItemCode instead of pushing a new one
+  const age = info(application.applicant).age
+  if (age >= 65) {
+    chargeItemCode = 'AY137'
+  }
 
   const withDeliveryFee =
     getValueViaPath<number>(application.answers, 'deliveryMethod') === 1
 
+  codes.push({ code: chargeItemCode as string })
   if (withDeliveryFee) {
     codes.push({ code: 'AY145' })
   }
