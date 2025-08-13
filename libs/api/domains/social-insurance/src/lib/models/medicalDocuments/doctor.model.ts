@@ -10,4 +10,10 @@ export class Doctor {
 
   @Field({ nullable: true })
   residence?: string
+
+  @Field({ nullable: true })
+  phoneNumber?: string
+
+  @Field({ nullable: true })
+  email?: string
 }

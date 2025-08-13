@@ -16,4 +16,4 @@ Write documentation here.
 
 ## Running unit tests
 
-Run `nx test disability-pension` to execute the unit tests via [Jest](https://jestjs.io).
+Run `nx test application-templates-social-insurance-administration-disability-pension` to execute the unit tests via [Jest](https://jestjs.io).

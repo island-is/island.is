@@ -2,20 +2,9 @@ import {
   buildDescriptionField,
   buildMultiField,
   buildSubSection,
-  buildTitleField,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../lib/messages'
 import { SectionRouteEnum } from '../../../types'
-import { FormTextWithLocale } from '@island.is/application/types'
-
-const bullets = [
-  'bulletOne',
-  'bulletTwo',
-  'bulletThree',
-  'bulletFour',
-  'bulletFive',
-  'bulletSix',
-] as const;
 
 export const incomePlanInstructionsSubSection =
     buildSubSection({

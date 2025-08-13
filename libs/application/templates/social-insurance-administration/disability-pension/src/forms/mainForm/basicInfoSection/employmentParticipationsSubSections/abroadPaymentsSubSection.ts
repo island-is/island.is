@@ -7,9 +7,10 @@ import {
   YesOrNoEnum,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
-import { FormValue } from '@island.is/application/types'
+import { Application, FormValue } from '@island.is/application/types'
 import { SectionRouteEnum } from '../../../../types'
-import { countryOptions, yesOrNoOptions } from '../../../../utils'
+import {  yesOrNoOptions } from '../../../../utils'
+import { Country } from '../../../../types/interfaces'
 
 const abroadPaymentsCondition = (formValue: FormValue) => {
   const hasAbroadPayments = getValueViaPath<YesOrNoEnum>(
@@ -57,7 +58,17 @@ export const abroadPaymentsSubSection = buildMultiField({
           width: 'half',
           displayInTable: true,
           isSearchable: true,
-          options: countryOptions,
+          options: (application: Application) => {
+            const countries = getValueViaPath<Array<Country>>(
+              application.externalData,
+              'socialInsuranceAdministrationCountries.data',
+            ) ?? []
+
+            return countries.map(({ code, nameIcelandic }) => ({
+              value: code,
+              label: nameIcelandic,
+            }))
+          },
         },
         abroadNationalId: {
           component: 'input',

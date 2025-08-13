@@ -1,5 +1,5 @@
 {
-  "name": "disability-pension",
+  "name": "application-templates-social-insurance-administration-disability-pension",
   "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/disability-pension/src",
   "projectType": "library",
@@ -19,6 +19,12 @@
       "executor": "nx:run-commands",
       "options": {
         "command": "yarn ts-node -P libs/localization/tsconfig.lib.json libs/localization/scripts/extract libs/application/templates/disability-pension/src/lib/messages.ts"
+      }
+    },
+    "codegen/frontend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "graphql-codegen --config libs/application/templates/social-insurance-administration/disability-pension/codegen.yml"
       }
     }
   }

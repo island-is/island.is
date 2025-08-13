@@ -7,12 +7,12 @@ import {
   buildTableRepeaterField,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
-import { FormValue } from '@island.is/application/types'
+import { Application, FormValue } from '@island.is/application/types'
 import format from 'date-fns/format'
 import addMonths from 'date-fns/addMonths'
 import { SectionRouteEnum } from '../../../../types'
-import { yesOrNoOptions, countryOptions } from '../../../../utils'
-import { getMonths } from '../../../../utils/dates'
+import { yesOrNoOptions} from '../../../../utils'
+import { Country } from '../../../../types/interfaces'
 
 const livedAbroadCondition = (formValue: FormValue) => {
   const livedAbroad = getValueViaPath<YesOrNoEnum>(
@@ -51,7 +51,17 @@ export const livedAbroadSubSection = buildMultiField({
           width: 'half',
           displayInTable: true,
           isSearchable: true,
-          options: countryOptions,
+          options: (application: Application) => {
+            const countries = getValueViaPath<Array<Country>>(
+              application.externalData,
+              'socialInsuranceAdministrationCountries.data',
+            ) ?? []
+
+            return countries.map(({ code, nameIcelandic }) => ({
+              value: code,
+              label: nameIcelandic,
+            }))
+          },
         },
         abroadNationalId: {
           component: 'input',

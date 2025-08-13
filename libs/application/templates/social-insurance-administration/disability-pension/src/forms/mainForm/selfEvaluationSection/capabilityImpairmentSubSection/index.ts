@@ -48,5 +48,3 @@ export const capabilityImpairmentSubSection = buildSubSection({
     ...questions,
   ],
 })
-
-console.log(questions)

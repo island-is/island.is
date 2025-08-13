@@ -4561,7 +4561,7 @@
           "detail": { "type": "string", "nullable": true },
           "instance": { "type": "string", "nullable": true }
         },
-        "additionalProperties": {}
+        "additionalProperties": false
       },
       "TrWeb.Api.Services.Common.Clients.Models.GetBankInformationReturn": {
         "type": "object",
@@ -6337,8 +6337,6 @@
         },
         "additionalProperties": false
       },
-      "ProblemDetails": { "additionalProperties": false },
-      "ValidationProblemDetails": { "additionalProperties": false },
       "TrWeb.Commons.ExternalPortals.Api.Models.FormBuilder.Ruleset": {
         "properties": { "gildi": { "type": "string" } }
       }

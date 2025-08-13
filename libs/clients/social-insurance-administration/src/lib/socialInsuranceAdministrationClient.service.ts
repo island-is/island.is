@@ -264,7 +264,9 @@ export class SocialInsuranceAdministrationClientService {
   async getCountries(
     user: User,
   ): Promise<Array<TrWebApiServicesCommonCountriesModelsCountryDto>> {
-    return this.generalApiWithAuth(user).apiProtectedV1GeneralCountriesGet()
+    const data = await this.generalApiWithAuth(user).apiProtectedV1GeneralCountriesGet()
+
+    return data.filter(country => country.code && country.nameIcelandic && country.name)
   }
 
   async getEducationalInstitutions(
