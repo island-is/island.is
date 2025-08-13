@@ -1,5 +1,15 @@
-import { FormSystemScreen, FormSystemSection } from '@island.is/api/schema'
-import { ApplicationState, SectionTypes } from '@island.is/form-system/ui'
+import {
+  FormSystemDependency,
+  FormSystemField,
+  FormSystemScreen,
+  FormSystemSection,
+  Maybe,
+} from '@island.is/api/schema'
+import {
+  ApplicationState,
+  FieldTypesEnum,
+  SectionTypes,
+} from '@island.is/form-system/ui'
 import {
   ApolloCache,
   DefaultContext,
@@ -16,10 +26,8 @@ export const getIncrementVariables = (state: ApplicationState) => {
   const currentSectionIndex = currentSection.index
   const currentSectionData = sections[currentSectionIndex]
   const maxSectionIndex = sections.length - 1
-  const nextSectionIndex =
-    currentSectionIndex < maxSectionIndex
-      ? currentSectionIndex + 1
-      : maxSectionIndex
+  const nextSectionIndex = currentSectionIndex + 1
+
   const currentScreenIndex = hasScreens(currentSectionData)
     ? currentScreen?.index ?? 0
     : 0
@@ -296,6 +304,79 @@ export const setFieldValue = (
     }
     return section
   })
+
+  const currentField = screen.fields?.find((field) => field?.id === fieldId)
+  let { dependencies: newDependencies } = state.application
+  const dependenciesChanged = isControllerField(currentField, newDependencies)
+
+  if (dependenciesChanged) {
+    newDependencies = newDependencies?.map((dependency) => {
+      if (dependency?.parentProp === fieldId) {
+        return {
+          ...dependency,
+          isSelected: !dependency.isSelected,
+        }
+      }
+      return dependency
+    })
+
+    const updatedSectionsWithDependencies = updatedSections.map((section) => {
+      const isSectionHidden = newDependencies?.some(
+        (dependency) =>
+          dependency?.childProps?.includes(section?.id ?? '') &&
+          !dependency?.isSelected,
+      )
+
+      return {
+        ...section,
+        id: section?.id ?? '',
+        isHidden: isSectionHidden ?? section?.isHidden,
+        screens: section.screens?.map((screen) => {
+          const isScreenHidden = newDependencies?.some(
+            (dependency) =>
+              dependency?.childProps?.includes(screen?.id ?? '') &&
+              !dependency?.isSelected,
+          )
+
+          return {
+            ...screen,
+            id: screen?.id ?? '',
+            isHidden: isScreenHidden ?? screen?.isHidden,
+            fields: screen?.fields?.map((field) => {
+              const isFieldHidden = newDependencies?.some(
+                (dependency) =>
+                  dependency?.childProps?.includes(field?.id ?? '') &&
+                  !dependency?.isSelected,
+              )
+              return {
+                ...field,
+                id: field?.id ?? '',
+                isHidden: isFieldHidden ?? field?.isHidden,
+              } as FormSystemField
+            }) as FormSystemField[] | undefined,
+          } as FormSystemScreen
+        }) as FormSystemScreen[] | undefined,
+      } as FormSystemSection
+    })
+
+    return {
+      ...state,
+      application: {
+        ...state.application,
+        sections: updatedSectionsWithDependencies,
+        dependencies: newDependencies,
+      },
+      sections: updatedSectionsWithDependencies,
+      currentScreen: {
+        ...currentScreen,
+        data:
+          updatedSectionsWithDependencies[state.currentSection.index]
+            ?.screens?.[currentScreen.index] ?? undefined,
+      },
+      errors: state.errors && state.errors.length > 0 ? state.errors ?? [] : [],
+    }
+  }
+
   return {
     ...state,
     application: {
@@ -309,4 +390,22 @@ export const setFieldValue = (
     },
     errors: state.errors && state.errors.length > 0 ? state.errors ?? [] : [],
   }
+}
+
+const isControllerField = (
+  field: Maybe<FormSystemField> | undefined,
+  dependencies: Maybe<Maybe<FormSystemDependency>[]> | undefined,
+): boolean => {
+  if (
+    field?.fieldType === FieldTypesEnum.CHECKBOX ||
+    field?.fieldType === FieldTypesEnum.RADIO_BUTTONS ||
+    field?.fieldType === FieldTypesEnum.DROPDOWN_LIST
+  ) {
+    return (
+      dependencies?.some((dependency) => {
+        return dependency?.parentProp === field?.id
+      }) ?? false
+    )
+  }
+  return false
 }
