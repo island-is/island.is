@@ -85,7 +85,7 @@ export const SubmitUrls = ({ submitUrls }: SubmitUrlsProps) => {
         </Button>
         <Box marginTop={2}>
           <ToggleSwitchButton
-            label={'Zendesk'}
+            label="Zendesk málakerfið"
             checked={submitUrls.some(
               (url) => url.method === UrlMethods.SEND_TO_ZENDESK && !url.isTest,
             )}
@@ -133,7 +133,7 @@ export const SubmitUrls = ({ submitUrls }: SubmitUrlsProps) => {
         </Button>
         <Box marginTop={2}>
           <ToggleSwitchButton
-            label={'Zendesk'}
+            label="Zendesk málakerfið"
             checked={submitUrls.some(
               (url) => url.method === UrlMethods.SEND_TO_ZENDESK && url.isTest,
             )}

@@ -4,7 +4,7 @@ import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 
-import { SectionTypes } from '@island.is/form-system/shared'
+import { SectionTypes, UrlMethods } from '@island.is/form-system/shared'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
 import { Screen } from '../screens/models/screen.model'
 import { FieldDto } from '../fields/models/dto/field.dto'
@@ -401,7 +401,7 @@ export class FormsService {
 
   private async buildFormResponse(form: Form): Promise<FormResponseDto> {
     const response: FormResponseDto = {
-      form: this.setArrays(form),
+      form: await this.setArrays(form),
       fieldTypes: await this.getFieldTypes(form.organizationId),
       certificationTypes: await this.getCertificationTypes(form.organizationId),
       applicantTypes: await this.getApplicantTypes(),
@@ -524,7 +524,29 @@ export class FormsService {
     return organizationListTypes
   }
 
-  private setArrays(form: Form): FormDto {
+  private async isZendeskEnabled(
+    organizationId: string,
+    formUrls: FormUrl[],
+  ): Promise<boolean> {
+    const organizationUrls = await this.organizationUrlModel.findAll({
+      where: { organizationId: organizationId },
+    })
+
+    return formUrls.some((formUrl) =>
+      organizationUrls.some(
+        (orgUrl) =>
+          orgUrl.id === formUrl.organizationUrlId &&
+          orgUrl.method === UrlMethods.SEND_TO_ZENDESK,
+      ),
+    )
+  }
+
+  private async setArrays(form: Form): Promise<FormDto> {
+    const isZendesk = await this.isZendeskEnabled(
+      form.organizationId,
+      form.formUrls ?? [],
+    )
+
     const formKeys = [
       'id',
       'organizationId',
@@ -556,6 +578,7 @@ export class FormsService {
         sections: [],
         screens: [],
         fields: [],
+        isZendeskEnabled: isZendesk,
       },
     ) as FormDto
 
