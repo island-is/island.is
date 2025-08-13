@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
 import {
   Box,
@@ -6,13 +6,19 @@ import {
   GridColumn,
   GridContainer,
   GridRow,
+  Icon,
   Link,
   PhoneInput,
   SkeletonLoader,
   Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
-import { LoadModal, m, parseNumber } from '@island.is/portals/my-pages/core'
+import {
+  LoadModal,
+  m,
+  parseNumber,
+  Tooltip,
+} from '@island.is/portals/my-pages/core'
 import {
   useDeleteIslykillValue,
   useUserProfile,
@@ -21,6 +27,7 @@ import {
 import { useUserInfo } from '@island.is/react-spa/bff'
 import orderBy from 'lodash/orderBy'
 import { FormattedMessage } from 'react-intl'
+import copyToClipboard from 'copy-to-clipboard'
 import { useDelegationTypeFeatureFlag } from '../../../../hooks/useDelegationTypeFeatureFlag'
 import { useScopeAccess } from '../../../../hooks/useScopeAccess'
 import { emailsMsg, msg } from '../../../../lib/messages'
@@ -73,6 +80,7 @@ export const ProfileForm = ({
   const [internalLoading, setInternalLoading] = useState(false)
   const [showDropModal, setShowDropModal] = useState<DropModalType>()
   const [showEmailForm, setShowEmailForm] = useState(false)
+  const [copiedTraceSid, setCopiedTraceSid] = useState(false)
 
   const { deleteIslykillValue, loading: deleteLoading } =
     useDeleteIslykillValue()
@@ -183,6 +191,13 @@ export const ProfileForm = ({
 
   if (!isDelegationTypeEnabled && !hasUserProfileWriteScope) {
     return <AccessDenied />
+  }
+
+  const copy = (code?: string | null) => {
+    if (code) {
+      copyToClipboard(code)
+      setCopiedTraceSid(true)
+    }
   }
 
   return (
@@ -322,7 +337,34 @@ export const ProfileForm = ({
                   text={formatMessage(m.debugDescription)}
                   divider={false}
                 >
-                  <Text variant="eyebrow">{userInfo.profile.traceSid}</Text>
+                  <Box display="flex">
+                    <Text variant="eyebrow">{userInfo.profile.traceSid}</Text>
+                    <Tooltip
+                      text={
+                        copiedTraceSid
+                          ? formatMessage(m.copied)
+                          : formatMessage(m.copy)
+                      }
+                    >
+                      <Box
+                        cursor="pointer"
+                        marginLeft={1}
+                        display="flex"
+                        alignItems="center"
+                        justifyContent="center"
+                        onClick={() => {
+                          copy(userInfo.profile.traceSid)
+                        }}
+                      >
+                        <Icon
+                          icon="copy"
+                          type="outline"
+                          color="blue400"
+                          size="small"
+                        />
+                      </Box>
+                    </Tooltip>
+                  </Box>
                 </InputSection>
               )}
             </>

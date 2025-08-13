@@ -32,7 +32,7 @@ export class InfraInterceptor implements NestInterceptor {
     // Only log authenticated requests for now. This is to reduce redundant log
     // noise from the bff and health endpoints.
     if (traceSid) {
-      this.logger.info(`Request: ${req.originalUrl}`, {
+      this.logger.info(`${req.method} ${req.originalUrl}`, {
         traceSid,
         req: {
           path: req.originalUrl,

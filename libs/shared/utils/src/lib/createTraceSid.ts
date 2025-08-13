@@ -12,7 +12,7 @@ const webCryptoSha256 = async (data: string): Promise<string> => {
   }
   const encodedData = new TextEncoder().encode(data)
   const hashBuffer = await subtle.digest('SHA-256', encodedData)
-  return bufferToHex(hashBuffer)
+  return bufferToHex(hashBuffer).toUpperCase()
 }
 
 export const createTraceSid = async (
