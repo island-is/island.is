@@ -1083,7 +1083,7 @@ export const VMSTUnemployment = new XroadConf({
   env: {
     VMST_UNEMPLOYMENT_XROAD_PATH: {
       dev: 'IS-DEV/GOV/10003/VMST-Protected/XRoadDev-v1',
-      staging: 'IS-TEST/GOV/10003/VMST-Protected/XRoadDev-v1',
+      staging: 'IS-TEST/GOV/7005942039/VMST-Protected/XRoadDev-v1',
       prod: 'IS/GOV/7005942039/VMST-Protected/XRoadDev-v1',
     },
   },
