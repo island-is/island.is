@@ -3,6 +3,7 @@ import 'intl'
 import 'intl/locale-data/jsonp/en'
 import 'intl/locale-data/jsonp/is'
 
+import '@formatjs/intl-getcanonicallocales/polyfill-force'
 import '@formatjs/intl-locale/polyfill-force'
 
 import '@formatjs/intl-pluralrules/polyfill-force'
