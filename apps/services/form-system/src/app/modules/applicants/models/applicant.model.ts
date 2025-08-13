@@ -9,7 +9,7 @@ import {
   UpdatedAt,
 } from 'sequelize-typescript'
 import { Application } from '../../applications/models/application.model'
-import { ApplicantTypesEnum } from '../../../dataTypes/applicantTypes/applicantTypes.enum'
+import { ApplicantTypesEnum } from '@island.is/form-system/shared'
 
 @Table({ tableName: 'applicant' })
 export class Applicant extends Model<Applicant> {
@@ -68,6 +68,12 @@ export class Applicant extends Model<Applicant> {
     allowNull: true,
   })
   municipality?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  delegationType?: string
 
   @Column({
     type: DataType.ENUM,

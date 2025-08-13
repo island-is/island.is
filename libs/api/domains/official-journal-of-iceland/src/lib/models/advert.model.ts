@@ -1,7 +1,7 @@
-import { AdvertStatusEnum } from '@island.is/clients/official-journal-of-iceland'
+import { AdvertStatus } from '@island.is/clients/official-journal-of-iceland'
 import { Field, ID, Int, ObjectType, registerEnumType } from '@nestjs/graphql'
 
-registerEnumType(AdvertStatusEnum, {
+registerEnumType(AdvertStatus, {
   name: 'OfficialJournalOfIcelandAdvertStatus',
 })
 
@@ -61,11 +61,32 @@ export class AdvertCorrections {
   @Field(() => String, { nullable: true })
   documentPdfUrl?: string
 
+  @Field(() => Boolean, { nullable: true })
+  isLegacy?: boolean | null
+
+  @Field(() => String, { nullable: true })
+  legacyDate?: string | null
+
   @Field(() => String)
   createdDate!: string
 
   @Field(() => String)
   updatedDate!: string
+}
+
+@ObjectType('OfficialJournalOfIcelandAdvertAppendix')
+export class AdvertAppendix {
+  @Field(() => ID)
+  id!: string
+
+  @Field(() => String)
+  title!: string
+
+  @Field(() => String)
+  html!: string
+
+  @Field(() => Number, { nullable: true })
+  order?: number | null
 }
 
 @ObjectType('OfficialJournalOfIcelandAdvertEntity')
@@ -136,8 +157,8 @@ export class Advert {
   @Field(() => String)
   title!: string
 
-  @Field(() => AdvertStatusEnum)
-  status!: AdvertStatusEnum
+  @Field(() => AdvertStatus)
+  status!: AdvertStatus
 
   @Field(() => AdvertPublicationNumber)
   publicationNumber!: AdvertPublicationNumber | null
@@ -165,6 +186,9 @@ export class Advert {
 
   @Field(() => [AdvertCorrections], { nullable: true })
   corrections?: AdvertCorrections[]
+
+  @Field(() => [AdvertAppendix], { nullable: true })
+  additions?: AdvertAppendix[]
 }
 
 @ObjectType('OfficialJournalOfIcelandAdvertSimilar')

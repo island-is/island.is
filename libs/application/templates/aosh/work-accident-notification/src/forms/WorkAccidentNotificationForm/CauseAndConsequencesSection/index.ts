@@ -13,7 +13,7 @@ export const causeAndConsequencesSection = (index: number) =>
   buildSection({
     id: `causeAndConsequencesSection ${index}`,
     title: sections.draft.causes,
-    condition: (formValue: FormValue, externalData, user) => {
+    condition: (formValue: FormValue) => {
       const answers = formValue as WorkAccidentNotification
       return index < answers.employeeAmount || index === 0
     },

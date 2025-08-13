@@ -1,4 +1,4 @@
-import { useCallback, useContext, useEffect, useState } from 'react'
+import { useCallback, useContext, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
@@ -6,10 +6,10 @@ import { uuid } from 'uuidv4'
 
 import { Box, Button, toast } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   CrimeScene,
   CrimeSceneMap,
-  IndictmentSubtype,
   IndictmentSubtypeMap,
 } from '@island.is/judicial-system/types'
 import { core, errors, titles } from '@island.is/judicial-system-web/messages'
@@ -21,12 +21,13 @@ import {
   PageLayout,
   PageTitle,
   SectionHeading,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
   CaseOrigin,
   Defendant as TDefendant,
-  PoliceCaseInfo as TPoliceCaseInfo,
+  IndictmentSubtype,
   UpdateDefendantInput,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
@@ -34,6 +35,7 @@ import {
   useDefendants,
   useIndictmentCounts,
 } from '@island.is/judicial-system-web/src/utils/hooks'
+import { getDefaultDefendantGender } from '@island.is/judicial-system-web/src/utils/utils'
 import { isDefendantStepValidIndictments } from '@island.is/judicial-system-web/src/utils/validate'
 
 import { DefendantInfo, ProsecutorSection } from '../../components'
@@ -102,6 +104,8 @@ const getPoliceCasesForUpdate = (
   )
 
 const Defendant = () => {
+  const router = useRouter()
+  const { user } = useContext(UserContext)
   const { workingCase, setWorkingCase, isLoadingWorkingCase, caseNotFound } =
     useContext(FormContext)
   const { formatMessage } = useIntl()
@@ -112,15 +116,13 @@ const Defendant = () => {
     deleteDefendant,
     updateDefendantState,
   } = useDefendants()
-  const router = useRouter()
-
   const { updateIndictmentCount, deleteIndictmentCount } = useIndictmentCounts()
 
-  const [policeCases, setPoliceCases] = useState<PoliceCase[]>([])
-
-  useEffect(() => {
-    setPoliceCases(getPoliceCases(workingCase))
-  }, [workingCase])
+  const gender = useMemo(
+    () => getDefaultDefendantGender(workingCase.defendants),
+    [workingCase.defendants],
+  )
+  const policeCases = useMemo(() => getPoliceCases(workingCase), [workingCase])
 
   const { data, loading, error } = usePoliceCaseInfoQuery({
     variables: {
@@ -132,7 +134,7 @@ const Defendant = () => {
     fetchPolicy: 'no-cache',
     errorPolicy: 'all',
     onCompleted: (data) => {
-      if (!data.policeCaseInfo) {
+      if (!data.policeCaseInfo || data.policeCaseInfo.length === 0) {
         return
       }
 
@@ -154,8 +156,26 @@ const Defendant = () => {
     },
   })
 
-  const handleCreatePoliceCase = async (policeCaseInfo?: PoliceCase) => {
-    const newPoliceCase = policeCaseInfo ?? { number: '' }
+  const policeCaseInfo = useMemo(() => {
+    if (!data || !data.policeCaseInfo || data.policeCaseInfo.length === 0) {
+      return []
+    }
+
+    const [first, ...rest] = data.policeCaseInfo
+
+    const sortedRest = rest.sort((a, b) => {
+      // We want info with missing dates to be at the end of the list
+      const aDate = a.date ?? '9'
+      const bDate = b.date ?? '9'
+
+      return aDate.localeCompare(bDate)
+    })
+
+    return [first, ...sortedRest]
+  }, [data])
+
+  const handleCreatePoliceCase = async (policeCase?: PoliceCase) => {
+    const newPoliceCase = policeCase ?? { number: '' }
 
     const [policeCaseNumbers, indictmentSubtypes, crimeScenes] =
       getPoliceCasesForUpdate([...getPoliceCases(workingCase), newPoliceCase])
@@ -306,12 +326,13 @@ const Defendant = () => {
             indictmentCountSubtypes: updatedIndictmentCountSubtypes,
           }
 
-          const incidentDescription = getIncidentDescription({
-            indictmentCount: updatedIndictmentCount,
+          const incidentDescription = getIncidentDescription(
+            updatedIndictmentCount,
+            gender,
             crimeScene,
             formatMessage,
-            subtypesRecord: subtypes,
-          })
+            subtypes,
+          )
 
           updateIndictmentCount(workingCase.id, indictmentCount.id, {
             incidentDescription,
@@ -490,7 +511,7 @@ const Defendant = () => {
             <LokeNumberList
               isLoading={loading}
               loadingError={Boolean(error)}
-              policeCaseInfo={data?.policeCaseInfo as TPoliceCaseInfo[]}
+              policeCaseInfo={policeCaseInfo}
               addPoliceCaseNumbers={handleCreatePoliceCases}
             />
           )}
@@ -617,7 +638,7 @@ const Defendant = () => {
       <FormContentContainer isFooter>
         <FormFooter
           nextButtonIcon="arrowForward"
-          previousUrl={constants.CASES_ROUTE}
+          previousUrl={getStandardUserDashboardRoute(user)}
           onNextButtonClick={() =>
             handleNavigationTo(constants.INDICTMENTS_POLICE_CASE_FILES_ROUTE)
           }

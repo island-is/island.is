@@ -14,8 +14,9 @@ export enum AdminPortalScope {
   serviceDesk = '@admin.island.is/service-desk',
   signatureCollectionProcess = '@admin.island.is/signature-collection:process',
   signatureCollectionManage = '@admin.island.is/signature-collection:manage',
+  signatureCollectionMunicipality = '@admin.island.is/signature-collection:municipality',
   formSystem = '@admin.island.is/form-system',
-  formSystemSuperUser = '@admin.island.is/form-system:admin',
+  formSystemAdmin = '@admin.island.is/form-system:admin',
   delegationSystem = '@admin.island.is/delegation-system',
   delegationSystemAdmin = '@admin.island.is/delegation-system:admin',
 }

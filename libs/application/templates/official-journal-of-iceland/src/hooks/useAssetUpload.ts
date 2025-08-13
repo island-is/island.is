@@ -39,10 +39,9 @@ export const useApplicationAssetUploader = ({
     return data?.officialJournalOfIcelandApplicationGetPresignedUrl
   }
 
-  function useFileUploader() {
+  const useFileUploader = () => {
     const fileUploader =
-      (): EditorFileUploader =>
-      async (blobInfo, success, failure, progress) => {
+      (): EditorFileUploader => async (blobInfo, success, failure) => {
         const file = blobInfo.blob() as File
 
         const fileExtension = file.name.split('.').pop()

@@ -1,4 +1,4 @@
-export enum API_MODULE_ACTIONS {
+export enum ApiModuleActions {
   assignReviewer = 'assignReviewer',
   applicationApproved = 'applicationApproved',
   applicationRejected = 'applicationRejected',

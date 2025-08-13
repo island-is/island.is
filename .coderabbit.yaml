@@ -16,11 +16,11 @@ reviews:
     - path: '.github/**/*'
       instructions: |
         "Confirm that the code adheres to the following:
-        - GitHub Actions workflows use 'arc-runners' as the valid runner for self-hosted ARC runners.
+        - GitHub Actions workflows use 'arc-shared' as the valid runner for self-hosted ARC runners.
         - CI pipelines are efficient, using appropriate caching strategies and minimal resource consumption.
         - Reusable workflows and composite actions are properly structured for reusability.
         - Dependency management workflows meet security requirements.
-        - Note: 'runs-on: arc-runners' is valid for our self-hosted runner configuration, despite standard linting warnings."
+        - Note: 'runs-on: arc-shared' is valid for our self-hosted runner configuration, despite standard linting warnings."
     - path: 'apps/services/**/*'
       instructions: |
         "Confirm that the code adheres to the following:

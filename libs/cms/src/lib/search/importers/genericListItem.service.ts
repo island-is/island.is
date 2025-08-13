@@ -6,11 +6,7 @@ import { documentToPlainTextString } from '@contentful/rich-text-plain-text-rend
 import { ILink, IGenericListItem } from '../../generated/contentfulTypes'
 import { CmsSyncProvider, processSyncDataInput } from '../cmsSync.service'
 import { mapGenericListItem } from '../../models/genericListItem.model'
-import {
-  extractChildEntryIds,
-  extractStringsFromObject,
-  pruneNonSearchableSliceUnionFields,
-} from './utils'
+import { extractChildEntryIds } from './utils'
 
 @Injectable()
 export class GenericListItemSyncService
@@ -41,13 +37,9 @@ export class GenericListItemSyncService
               documentToPlainTextString(entry.fields.cardIntro),
             )
           }
-          if (mapped.content) {
+          if (entry.fields.content) {
             contentSections.push(
-              extractStringsFromObject(
-                mapped.content.map(pruneNonSearchableSliceUnionFields),
-                100,
-                2,
-              ),
+              documentToPlainTextString(entry.fields.content),
             )
           }
 

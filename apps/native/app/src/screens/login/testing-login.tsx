@@ -113,6 +113,19 @@ export const TestingLoginScreen: NavigationFunctionComponent = ({
   }, [])
 
   const onLoginPress = async () => {
+    // Skip all login functionality if we are in mock environment
+    if (environment.id === 'mock') {
+      const { setupNativeMocking } = await import('@island.is/api/mocks/native')
+      await setupNativeMocking()
+      // Skip onboarding steps when mocking
+      preferencesStore.setState({
+        hasOnboardedBiometrics: true,
+        hasOnboardedPinCode: true,
+        hasOnboardedNotifications: true,
+      })
+      await nextOnboardingStep()
+      return
+    }
     const isCognitoAuth =
       cognito?.accessToken && cognito?.expiresAt > Date.now()
     if (
@@ -327,30 +340,6 @@ function DebugInfo({ componentId }: { componentId: string }) {
     if (loading) {
       return
     }
-    if (!isCognitoAuth) {
-      return Alert.alert(
-        'Cognito Required',
-        'You can use production without cognito login, but you need it for other environments.',
-        [
-          environment.id !== 'prod' && {
-            text: 'Switch to Production',
-            onPress: () => {
-              actions.setEnvironment(environments.prod)
-            },
-          },
-          {
-            text: 'Login with cognito',
-            onPress: () => {
-              onCognitoLoginPress()
-            },
-          },
-          {
-            text: 'Cancel',
-            style: 'cancel',
-          },
-        ].filter(Boolean) as AlertButton[],
-      )
-    }
     environmentStore
       .getState()
       .actions.loadEnvironments()
@@ -363,6 +352,30 @@ function DebugInfo({ componentId }: { componentId: string }) {
           cancel: true,
         })
           .then(({ selectedItem }: any) => {
+            if (!isCognitoAuth && selectedItem.id !== 'mock') {
+              return Alert.alert(
+                'Cognito Required',
+                'You can use production without cognito login, but you need it for other environments.',
+                [
+                  environment.id !== 'prod' && {
+                    text: 'Switch to Production',
+                    onPress: () => {
+                      actions.setEnvironment(environments.prod)
+                    },
+                  },
+                  {
+                    text: 'Login with cognito',
+                    onPress: () => {
+                      onCognitoLoginPress()
+                    },
+                  },
+                  {
+                    text: 'Cancel',
+                    style: 'cancel',
+                  },
+                ].filter(Boolean) as AlertButton[],
+              )
+            }
             environmentStore.getState().actions.setEnvironment(selectedItem)
           })
           .catch((err) => {

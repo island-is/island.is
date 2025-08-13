@@ -36,12 +36,16 @@ import {
   OccupationalLicenses,
   OfficialJournalOfIceland,
   OfficialJournalOfIcelandApplication,
+  LegalGazette,
   Passports,
   Payment,
   PaymentSchedule,
   Properties,
+  PropertySearch,
+  RentalService,
   RskCompanyInfo,
   RskProcuring,
+  RskCarRentalRate,
   SeminarsVer,
   ShipRegistry,
   SignatureCollection,
@@ -54,6 +58,9 @@ import {
   WorkAccidents,
   WorkMachines,
   SecondarySchool,
+  LSH,
+  PracticalExams,
+  FireCompensation,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -68,6 +75,7 @@ export const serviceSetup = (services: {
   authAdminApi: ServiceBuilder<'services-auth-admin-api'>
   universityGatewayApi: ServiceBuilder<'services-university-gateway'>
   userNotificationService: ServiceBuilder<'services-user-notification'>
+  paymentsApi: ServiceBuilder<'services-payments'>
   formSystemService: ServiceBuilder<'services-form-system-api'>
 }): ServiceBuilder<'api'> => {
   return service('api')
@@ -274,6 +282,7 @@ export const serviceSetup = (services: {
       UNIVERSITY_GATEWAY_API_URL: ref(
         (h) => `http://${h.svc(services.universityGatewayApi)}`,
       ),
+      PAYMENTS_API_URL: ref((h) => `http://${h.svc(services.paymentsApi)}`),
       WATSON_ASSISTANT_CHAT_FEEDBACK_DB_NAME: {
         dev: 'island-is-assistant-feedback',
         staging: 'island-is-assistant-feedback',
@@ -372,6 +381,8 @@ export const serviceSetup = (services: {
       FISKISTOFA_POWERBI_CLIENT_SECRET:
         '/k8s/api/FISKISTOFA_POWERBI_CLIENT_SECRET',
       FISKISTOFA_POWERBI_TENANT_ID: '/k8s/api/FISKISTOFA_POWERBI_TENANT_ID',
+      FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY:
+        '/k8s/form-system/FORM_SYSTEM_GOOGLE_TRANSLATE_API_KEY',
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
       HSN_WEB_FORM_RESPONSE_URL: '/k8s/api/HSN_WEB_FORM_RESPONSE_URL',
@@ -396,6 +407,8 @@ export const serviceSetup = (services: {
         '/k8s/api/UMBODSMADUR_SKULDARA_COST_OF_LIVING_CALCULATOR_API_URL',
       VINNUEFTIRLITID_CAMPAIGN_MONITOR_API_KEY:
         '/k8s/api/VINNUEFTIRLITID_CAMPAIGN_MONITOR_API_KEY',
+      PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET:
+        '/k8s/payments/PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET',
       VERDICTS_GOPRO_USERNAME: '/k8s/api/VERDICTS_GOPRO_USERNAME',
       VERDICTS_GOPRO_PASSWORD: '/k8s/api/VERDICTS_GOPRO_PASSWORD',
     })
@@ -417,9 +430,12 @@ export const serviceSetup = (services: {
       DistrictCommissionersPCard,
       DistrictCommissionersLicenses,
       Finance,
+      FireCompensation,
       Education,
       NationalRegistry,
       Properties,
+      PropertySearch,
+      RentalService,
       PaymentSchedule,
       CriminalRecord,
       RskCompanyInfo,
@@ -437,6 +453,7 @@ export const serviceSetup = (services: {
       WorkMachines,
       IcelandicGovernmentInstitutionVacancies,
       RskProcuring,
+      RskCarRentalRate,
       NationalRegistryB2C,
       AircraftRegistry,
       HousingBenefitCalculator,
@@ -447,6 +464,7 @@ export const serviceSetup = (services: {
       OfficialJournalOfIceland,
       JudicialSystemServicePortal,
       OfficialJournalOfIcelandApplication,
+      LegalGazette,
       Frigg,
       HealthDirectorateOrganDonation,
       HealthDirectorateVaccination,
@@ -454,6 +472,8 @@ export const serviceSetup = (services: {
       WorkAccidents,
       SeminarsVer,
       SecondarySchool,
+      LSH,
+      PracticalExams,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
@@ -486,5 +506,7 @@ export const serviceSetup = (services: {
       'portals-admin',
       'service-portal',
       'portals-my-pages',
+      'services-payments',
+      'payments',
     )
 }

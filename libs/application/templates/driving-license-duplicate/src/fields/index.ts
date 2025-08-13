@@ -1,5 +1,3 @@
-export { QualityPhoto } from './QualityPhoto/index'
-export { QualitySignature } from './QualitySignature'
 export { CurrentLicense } from './CurrentLicense'
 export { PaymentCharge } from './PaymentCharge'
 export { SubmitAndDecline } from './SubmitAndDecline'

@@ -1,4 +1,4 @@
-export const shortenText = (text: string, maxLength: number) => {
+export const shortenText = (text: string, maxLength: number): string => {
   if (!text) return text
 
   if (text.length <= maxLength) {
@@ -8,15 +8,16 @@ export const shortenText = (text: string, maxLength: number) => {
   const shortenedText = text.slice(0, maxLength)
 
   if (text[maxLength] === ' ') {
-    return `${shortenedText} ...`
+    return endsWithDot(shortenedText) ? shortenedText : `${shortenedText} ...`
   }
 
-  // Search for the nearest space before the maxLength
   const spaceIndex = shortenedText.lastIndexOf(' ')
-
   if (spaceIndex < 0) {
-    return `${shortenedText} ...`
+    return endsWithDot(shortenedText) ? shortenedText : `${shortenedText} ...`
   }
 
-  return `${text.slice(0, spaceIndex)} ...`
+  const finalText = text.slice(0, spaceIndex)
+  return endsWithDot(finalText) ? finalText : `${finalText} ...`
 }
+
+const endsWithDot = (str: string) => /\.\.*$/.test(str.trim())

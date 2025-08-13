@@ -40,7 +40,7 @@ const VehicleBulkMileage = () => {
   const [search, setSearch] = useState<string>()
   const [displayFilters, setDisplayFilters] = useState<boolean>(false)
 
-  const [vehicleListQuery, { data, loading, error, called }] =
+  const [vehicleListQuery, { data, loading, error }] =
     useVehiclesListLazyQuery()
 
   useEffect(() => {
@@ -50,7 +50,7 @@ const VehicleBulkMileage = () => {
           page,
           pageSize: 10,
           query: undefined,
-          filterOnlyRequiredMileageRegistration: true,
+          filterOnlyVehiclesUserCanRegisterMileage: true,
         },
       },
     })
@@ -65,14 +65,14 @@ const VehicleBulkMileage = () => {
             page,
             pageSize: 10,
             query: search ?? undefined,
-            filterOnlyRequiredMileageRegistration: true,
+            filterOnlyVehiclesUserCanRegisterMileage: true,
           },
         },
       }).then((res) => {
         const vehicles: Array<VehicleType> =
           res.data?.vehiclesListV3?.data
             ?.map((v) => {
-              if (!v.type) {
+              if (!v.make) {
                 return null
               }
 
@@ -96,8 +96,9 @@ const VehicleBulkMileage = () => {
 
               return {
                 vehicleId: v.vehicleId,
-                vehicleType: v.type,
+                vehicleType: v.make,
                 lastMileageRegistration,
+                co2: v.co2 ?? undefined,
               }
             })
             .filter(isDefined) ?? []
@@ -122,6 +123,17 @@ const VehicleBulkMileage = () => {
       setDisplayFilters((data?.vehiclesListV3?.totalRecords ?? 0) > 10)
     }
   }, [data, displayFilters])
+
+  const buttons = [
+    <LinkButton
+      key="finance"
+      to={AssetsPaths.LinkFinanceTransactionVehicleMileage}
+      text={formatMessage(vehicleMessage.financeMileageLink)}
+      icon="arrowForward"
+      variant="utility"
+      colorScheme="white"
+    />,
+  ]
 
   return (
     <Stack space={2}>
@@ -151,6 +163,7 @@ const VehicleBulkMileage = () => {
           buttonGroup={
             displayFilters
               ? [
+                  ...buttons,
                   <LinkButton
                     key="upload"
                     to={AssetsPaths.AssetsVehiclesBulkMileageUpload}
@@ -166,7 +179,7 @@ const VehicleBulkMileage = () => {
                     variant="utility"
                   />,
                 ]
-              : undefined
+              : buttons
           }
         >
           {displayFilters && (

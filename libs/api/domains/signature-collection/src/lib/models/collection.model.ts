@@ -1,7 +1,11 @@
-import { Field, ID, ObjectType } from '@nestjs/graphql'
+import { Field, ID, ObjectType, registerEnumType } from '@nestjs/graphql'
 import { SignatureCollectionArea } from './area.model'
 import { SignatureCollectionCandidate } from './candidate.model'
 import { CollectionStatus } from './status.model'
+import { CollectionType } from '@island.is/clients/signature-collection'
+
+registerEnumType(CollectionType, { name: 'SignatureCollectionCollectionType' })
+
 @ObjectType()
 export class SignatureCollection {
   @Field(() => ID)
@@ -16,8 +20,8 @@ export class SignatureCollection {
   @Field()
   isActive!: boolean
 
-  @Field()
-  isPresidential!: boolean
+  @Field(() => CollectionType)
+  collectionType!: CollectionType
 
   @Field()
   name!: string

@@ -15,6 +15,10 @@ import { serviceSetup as adminPortalSetup } from '../../../apps/portals/admin/in
 import { serviceSetup as servicePortalSetup } from '../../../apps/portals/my-pages/infra/portals-my-pages'
 import { serviceSetup as servicePortalApiSetup } from '../../../apps/services/user-profile/infra/service-portal-api'
 
+// Payments
+import { serviceSetup as paymentsWebSetup } from '../../../apps/payments/infra/payments'
+import { serviceSetup as paymentsServiceSetup } from '../../../apps/services/payments/infra/payments'
+
 // Bff's
 import { serviceSetup as bffAdminPortalServiceSetup } from '../../../apps/services/bff/infra/admin-portal.infra'
 import { serviceSetup as bffServicePortalServiceSetup } from '../../../apps/services/bff/infra/my-pages-portal.infra'
@@ -41,6 +45,7 @@ import {
   userNotificationCleanUpWorkerSetup,
   userNotificationServiceSetup,
   userNotificationWorkerSetup,
+  userNotificationBirthdayWorkerSetup,
 } from '../../../apps/services/user-notification/infra/user-notification'
 
 import { serviceSetup as adsApiSetup } from '../../../apps/air-discount-scheme/api/infra/api'
@@ -68,6 +73,7 @@ import { serviceSetup as unicornAppSetup } from '../../../apps/unicorn-app/infra
 import { EnvironmentServices } from '.././dsl/types/charts'
 import { ServiceBuilder } from '../dsl/dsl'
 import { serviceSetup as formSystemApiSetup } from '../../../apps/services/form-system/infra/form-system'
+import { serviceSetup as formSystemWebSetup } from '../../../apps/form-system/web/infra/form-system-web'
 
 const endorsement = endorsementServiceSetup({})
 
@@ -76,6 +82,7 @@ const skilavottordWeb = skilavottordWebSetup({ api: skilavottordWs })
 
 const documentsService = serviceDocumentsSetup()
 const servicePortalApi = servicePortalApiSetup()
+const paymentsService = paymentsServiceSetup()
 
 const userNotificationService = userNotificationServiceSetup({
   userProfileApi: servicePortalApi,
@@ -87,9 +94,11 @@ const appSystemApi = appSystemApiSetup({
   skilavottordWs,
   servicePortalApi,
   userNotificationService,
+  paymentsApi: paymentsService,
 })
 const appSystemApiWorker = appSystemApiWorkerSetup({
   userNotificationService,
+  paymentsApi: paymentsService,
 })
 
 const nameRegistryBackend = serviceNameRegistryBackendSetup()
@@ -109,6 +118,7 @@ const universityGatewayService = universityGatewaySetup()
 const universityGatewayWorker = universityGatewayWorkerSetup()
 
 const formSystemApi = formSystemApiSetup()
+const formSystemWeb = formSystemWebSetup()
 
 const api = apiSetup({
   appSystemApi,
@@ -122,6 +132,7 @@ const api = apiSetup({
   authAdminApi,
   universityGatewayApi: universityGatewayService,
   userNotificationService,
+  paymentsApi: paymentsService,
   formSystemService: formSystemApi,
 })
 
@@ -129,6 +140,9 @@ const adminPortal = adminPortalSetup()
 const servicePortal = servicePortalSetup()
 const bffAdminPortalService = bffAdminPortalServiceSetup({ api })
 const bffServicePortalService = bffServicePortalServiceSetup({ api })
+const paymentsWebApp = paymentsWebSetup({
+  api,
+})
 
 const appSystemForm = appSystemFormSetup()
 const web = webSetup({ api })
@@ -150,7 +164,11 @@ const downloadService = downloadServiceSetup({
 const userNotificationWorkerService = userNotificationWorkerSetup({
   userProfileApi: servicePortalApi,
 })
-const userNotificationCleanupWorkerService = userNotificationCleanUpWorkerSetup()
+const userNotificationCleanupWorkerService =
+  userNotificationCleanUpWorkerSetup()
+
+const userNotificationBirthdayWorkerService =
+  userNotificationBirthdayWorkerSetup({ userProfileApi: servicePortalApi })
 
 const unicornApp = unicornAppSetup()
 
@@ -185,6 +203,7 @@ export const Services: EnvironmentServices = {
     userNotificationService,
     userNotificationWorkerService,
     userNotificationCleanupWorkerService,
+    userNotificationBirthdayWorkerService,
     licenseApi,
     cmsImporter,
     sessionsService,
@@ -197,6 +216,8 @@ export const Services: EnvironmentServices = {
     bffAdminPortalService,
     bffServicePortalService,
     unicornApp,
+    paymentsWebApp,
+    paymentsService,
   ],
   staging: [
     appSystemApi,
@@ -224,6 +245,7 @@ export const Services: EnvironmentServices = {
     userNotificationService,
     userNotificationWorkerService,
     userNotificationCleanupWorkerService,
+    userNotificationBirthdayWorkerService,
     licenseApi,
     cmsImporter,
     sessionsService,
@@ -234,6 +256,8 @@ export const Services: EnvironmentServices = {
     bffServicePortalService,
     bffAdminPortalService,
     unicornApp,
+    paymentsWebApp,
+    paymentsService,
   ],
   dev: [
     appSystemApi,
@@ -261,6 +285,7 @@ export const Services: EnvironmentServices = {
     userNotificationService,
     userNotificationWorkerService,
     userNotificationCleanupWorkerService,
+    userNotificationBirthdayWorkerService,
     externalContractsTests,
     appSystemApiWorker,
     contentfulEntryTagger,
@@ -273,9 +298,12 @@ export const Services: EnvironmentServices = {
     universityGatewayService,
     universityGatewayWorker,
     bffAdminPortalService,
+    paymentsWebApp,
+    paymentsService,
     bffServicePortalService,
     unicornApp,
-    formSystemApi
+    formSystemApi,
+    formSystemWeb,
   ],
 }
 
@@ -287,8 +315,11 @@ export const ExcludedFeatureDeploymentServices: ServiceBuilder<any>[] = [
   userNotificationService,
   userNotificationWorkerService,
   userNotificationCleanupWorkerService,
+  userNotificationBirthdayWorkerService,
   contentfulEntryTagger,
   searchIndexer,
   contentfulApps,
   githubActionsCache,
+  xroadCollector,
+  nameRegistryBackend,
 ]

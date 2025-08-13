@@ -10,6 +10,7 @@ import {
   CertificationInput,
   FormCertificationTypeDtoInput,
 } from './certification.input'
+import { FormUrlDto } from '@island.is/form-system/shared'
 
 @InputType('FormSystemDependencyInput')
 export class DependencyInput {
@@ -29,35 +30,22 @@ export class DeleteFormInput {
   id?: string
 }
 
+@InputType('FormSystemCreateFormInput')
+export class CreateFormInput {
+  @Field(() => String, { nullable: true })
+  organizationNationalId?: string
+}
+
 @InputType('FormSystemGetFormInput')
 export class GetFormInput {
   @Field(() => String, { nullable: true })
   id?: string
 }
 
-
-@InputType('FormSystemFormUrlInput')
-export class FormUrlInput {
+@InputType('FormSystemGetFormsInput')
+export class GetFormsInput {
   @Field(() => String, { nullable: true })
-  id?: string
-
-  @Field(() => String, { nullable: true })
-  organizationUrlId?: string
-
-  @Field(() => String, { nullable: true })
-  url?: string
-
-  @Field(() => Boolean, { nullable: true })
-  isXroad?: boolean
-
-  @Field(() => Boolean, { nullable: true })
-  isTest?: boolean
-
-  @Field(() => String, { nullable: true })
-  type?: string
-
-  @Field(() => String, { nullable: true })
-  method?: string
+  nationalId?: string
 }
 
 @InputType('FormSystemOrganizationUrlInput')
@@ -92,8 +80,14 @@ export class UpdateFormDtoInput {
   @Field(() => String, { nullable: true })
   slug?: string
 
+  @Field(() => LanguageTypeInput, { nullable: true })
+  organizationDisplayName?: LanguageTypeInput
+
   @Field(() => Date, { nullable: true })
   invalidationDate?: Date
+
+  @Field(() => Boolean, { nullable: true })
+  hasPayment?: boolean
 
   @Field(() => Boolean, { nullable: true })
   isTranslated?: boolean
@@ -112,9 +106,6 @@ export class UpdateFormDtoInput {
 
   @Field(() => String, { nullable: true })
   status?: string
-
-  @Field(() => [FormUrlInput], { nullable: true })
-  urls?: FormUrlInput[]
 }
 
 @InputType('FormSystemUpdateFormInput')
@@ -152,6 +143,12 @@ export class FormInput {
   @Field(() => Boolean, { nullable: true })
   isTranslated?: boolean
 
+  @Field(() => Boolean, { nullable: true })
+  hasPayment?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  beenPublished?: boolean
+
   @Field(() => Int, { nullable: true })
   applicationDaysToRemove?: number
 
@@ -185,8 +182,8 @@ export class FormInput {
   @Field(() => String, { nullable: true })
   status?: string
 
-  @Field(() => [FormUrlInput], { nullable: 'itemsAndList' })
-  urls?: FormUrlInput[]
+  @Field(() => [FormUrlDto], { nullable: 'itemsAndList' })
+  urls?: FormUrlDto[]
 }
 
 @InputType('FormSystemFormResponseInput')

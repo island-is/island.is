@@ -8,23 +8,28 @@ import {
 import { useLocale } from '@island.is/localization'
 import { EmptyState } from '@island.is/portals/my-pages/core'
 import { useGetListsForUser, useGetSignedList } from '../../../hooks'
-import { Skeleton } from '../../../skeletons'
+import { Skeleton } from '../../../lib/skeletons'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import { sortAlpha } from '@island.is/shared/utils'
 import { m } from '../../../lib/messages'
 import SignedList from '../SignedList'
-import { SignatureCollection } from '../../../types/schema'
+import {
+  SignatureCollection,
+  SignatureCollectionCollectionType,
+} from '@island.is/api/schema'
 
 const SigneeView = ({
   currentCollection,
+  collectionType,
 }: {
   currentCollection: SignatureCollection
+  collectionType: SignatureCollectionCollectionType
 }) => {
   const user = useUserInfo()
   const { formatMessage } = useLocale()
-  const { signedLists, loadingSignedLists } = useGetSignedList()
+  const { signedLists, loadingSignedLists } = useGetSignedList(collectionType)
   const { listsForUser, loadingUserLists, getListsForUserError } =
-    useGetListsForUser(currentCollection?.id)
+    useGetListsForUser(collectionType, currentCollection?.id)
 
   if (getListsForUserError !== undefined) {
     return (
@@ -50,7 +55,10 @@ const SigneeView = ({
 
           <Box marginTop={[0, 5]}>
             {/* Signed list */}
-            <SignedList currentCollection={currentCollection} />
+            <SignedList
+              currentCollection={currentCollection}
+              collectionType={collectionType}
+            />
 
             {/* Other available lists */}
             <Box marginTop={[5, 10]}>
@@ -69,7 +77,8 @@ const SigneeView = ({
                       eyebrow={list.area?.name}
                       heading={list.title.split(' - ')[0]}
                       text={
-                        currentCollection.isPresidential
+                        currentCollection.collectionType ===
+                        SignatureCollectionCollectionType.Presidential
                           ? formatMessage(m.collectionTitle)
                           : formatMessage(m.collectionTitleParliamentary)
                       }

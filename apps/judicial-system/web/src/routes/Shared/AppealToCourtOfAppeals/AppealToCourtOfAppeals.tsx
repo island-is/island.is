@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 
 import {
   Box,
+  FileUploadStatus,
   InputFileUpload,
   Text,
   UploadFile,
@@ -33,6 +34,7 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCase,
+  useFileList,
   useS3Upload,
   useUploadFiles,
 } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -55,6 +57,9 @@ const AppealToCourtOfAppeals = () => {
     updateUploadFile,
   } = useUploadFiles(workingCase.caseFiles)
   const { handleUpload, handleRemove } = useS3Upload(workingCase.id)
+  const { onOpenFile } = useFileList({
+    caseId: workingCase.id,
+  })
   const { transitionCase, isTransitioningCase } = useCase()
 
   const appealBriefType = !isDefenceUser(user)
@@ -104,7 +109,7 @@ const AppealToCourtOfAppeals = () => {
   }
 
   const handleChange = (files: File[], category: CaseFileCategory) => {
-    addUploadFiles(files, { category, status: 'done' })
+    addUploadFiles(files, { category, status: FileUploadStatus.done })
   }
 
   return (
@@ -114,22 +119,26 @@ const AppealToCourtOfAppeals = () => {
         <PageTitle previousUrl={previousUrl}>
           {formatMessage(strings.title)}
         </PageTitle>
-        {workingCase.rulingDate && (
-          <Box marginBottom={7}>
-            <RulingDateLabel rulingDate={workingCase.rulingDate} />
-          </Box>
-        )}
+        <Box component="section" marginBottom={5}>
+          <Text variant="h2" as="h2">
+            {`Mál nr. ${workingCase.courtCaseNumber}`}
+          </Text>
+          {workingCase.rulingDate && (
+            <RulingDateLabel rulingDate={workingCase.rulingDate} as="h3" />
+          )}
+        </Box>
         <Box component="section" marginBottom={5}>
           <SectionHeading
             title={formatMessage(strings.appealBriefTitle)}
             required
           />
           <InputFileUpload
-            fileList={uploadFiles.filter(
+            name="appealBrief"
+            files={uploadFiles.filter(
               (file) => file.category === appealBriefType,
             )}
             accept={'application/pdf'}
-            header={formatMessage(core.uploadBoxTitle)}
+            title={formatMessage(core.uploadBoxTitle)}
             description={formatMessage(core.uploadBoxDescription, {
               fileEndings: '.pdf',
             })}
@@ -138,6 +147,7 @@ const AppealToCourtOfAppeals = () => {
             onRemove={(file) => {
               handleRemoveFile(file)
             }}
+            onOpenFile={(file) => onOpenFile(file)}
             hideIcons={!allFilesDoneOrError}
             disabled={!allFilesDoneOrError}
           />
@@ -157,17 +167,19 @@ const AppealToCourtOfAppeals = () => {
               `${formatMessage(strings.appealCaseFilesCOASubtitle)}`}
           </Text>
           <InputFileUpload
-            fileList={uploadFiles.filter(
+            name="appealCaseFiles"
+            files={uploadFiles.filter(
               (file) => file.category === appealCaseFilesType,
             )}
             accept={'application/pdf'}
-            header={formatMessage(core.uploadBoxTitle)}
+            title={formatMessage(core.uploadBoxTitle)}
             description={formatMessage(core.uploadBoxDescription, {
               fileEndings: '.pdf',
             })}
             buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
             onChange={(files) => handleChange(files, appealCaseFilesType)}
             onRemove={(file) => handleRemoveFile(file)}
+            onOpenFile={(file) => onOpenFile(file)}
             hideIcons={!allFilesDoneOrError}
             disabled={!allFilesDoneOrError}
           />

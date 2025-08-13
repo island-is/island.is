@@ -18,9 +18,10 @@ interface InboxCardProps {
   selected?: boolean
   onPress(id: string): void
   onPressIcon?(id: string): void
+  replyable?: boolean | null
 }
 
-export function InboxCard({
+export const InboxCard = ({
   id,
   onPress,
   onPressIcon,
@@ -30,11 +31,13 @@ export function InboxCard({
   unread,
   senderName,
   bookmarked,
+  replyable = false,
   isUrgent = false,
   selectable = false,
   selected = false,
-}: InboxCardProps) {
+}: InboxCardProps) => {
   const theme = useTheme()
+
   return (
     <PressableHighlight
       highlightColor={theme.shade.shade400}
@@ -46,6 +49,7 @@ export function InboxCard({
         date={publicationDate ? new Date(publicationDate) : undefined}
         unread={unread}
         urgent={!!isUrgent}
+        replyable={!!replyable}
         starred={!!bookmarked}
         icon={icon}
         selectable={selectable}

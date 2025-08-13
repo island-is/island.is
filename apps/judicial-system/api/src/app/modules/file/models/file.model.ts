@@ -60,4 +60,12 @@ export class CaseFile {
 
   @Field(() => String, { nullable: true })
   readonly submittedBy?: string
+
+  // custom case file submission for example when documents are submitted in person to court
+  @Field(() => String, { nullable: true })
+  readonly submissionDate?: string
+
+  // when users submit files on behalf of case representatives
+  @Field(() => String, { nullable: true })
+  readonly fileRepresentative?: string
 }

@@ -160,17 +160,20 @@ export class ApplicationService {
       }
     }
 
+    const applicantAccessConditions: WhereOptions = {
+      [Op.or]: [
+        { applicant: { [Op.eq]: applicantNationalId } },
+        { assignees: { [Op.contains]: [applicantNationalId] } },
+      ],
+    }
+
     return this.applicationModel.findAndCountAll({
       where: {
         ...{ typeId: { [Op.in]: typeIds } },
         ...(statuses ? { status: { [Op.in]: statuses } } : {}),
         [Op.and]: [
-          applicantNationalId
-            ? {
-                [Op.or]: [[{ applicant: { [Op.eq]: applicantNationalId } }]],
-              }
-            : {},
-          applicationIsNotSetToBePruned(),
+          applicantNationalId ? applicantAccessConditions : {},
+
           fromDate && toDate
             ? {
                 [Op.and]: [
@@ -194,28 +197,24 @@ export class ApplicationService {
     nationalId: string,
     typeId?: string,
     status?: string,
-    actor?: string,
     showPruned?: boolean,
   ): Promise<Application[]> {
     const typeIds = typeId?.split(',')
     const statuses = status?.split(',')
+
+    const applicantAccessConditions: WhereOptions = {
+      [Op.or]: [
+        { applicant: { [Op.eq]: nationalId } },
+        { assignees: { [Op.contains]: [nationalId] } },
+      ],
+    }
 
     return this.applicationModel.findAll({
       where: {
         ...(typeIds ? { typeId: { [Op.in]: typeIds } } : {}),
         ...(statuses ? { status: { [Op.in]: statuses } } : {}),
         [Op.and]: [
-          {
-            [Op.or]: [
-              ...(actor
-                ? [
-                    { applicant: nationalId },
-                    { applicantActors: { [Op.contains]: [actor] } },
-                  ]
-                : [{ applicant: { [Op.eq]: nationalId } }]),
-              ...[{ assignees: { [Op.contains]: [nationalId] } }],
-            ],
-          },
+          applicantAccessConditions,
           showPruned ? {} : applicationIsNotSetToBePruned(),
         ],
         isListed: {
@@ -390,5 +389,18 @@ export class ApplicationService {
 
   async delete(id: string) {
     return this.applicationModel.destroy({ where: { id } })
+  }
+
+  async softDelete(id: string) {
+    return this.applicationModel.update(
+      {
+        isListed: false,
+        userDeleted: true,
+        userDeletedAt: new Date(),
+        externalData: {},
+        answers: {},
+      },
+      { where: { id } },
+    )
   }
 }

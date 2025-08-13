@@ -1,0 +1,243 @@
+import { HealthDirectorateVaccinationStatusEnum } from '../../types'
+
+export const organDonationStatus = {
+  donor: {
+    isDonor: true,
+    isMinor: false,
+    isTemporaryResident: false,
+    limitations: {
+      hasLimitations: true,
+      comment: 'This is a comment',
+      limitedOrgansList: [{ id: 'liver', name: 'Lifur' }],
+    },
+  },
+}
+
+export const vaccinations = {
+  vaccinations: [
+    {
+      id: 'diphtheria',
+      name: 'Barnaveiki',
+      description: null,
+      isFeatured: true,
+      status: 'incomplete' as HealthDirectorateVaccinationStatusEnum,
+      statusName: 'Ólokið',
+      statusColor: 'yellow',
+      lastVaccinationDate: '2005-09-20T00:00:00.000Z',
+      vaccinationsInfo: [
+        {
+          id: 1707356,
+          name: 'Diftavax',
+          date: '2005-09-20T00:00:00.000Z',
+          age: {
+            years: 0,
+            months: 9,
+          },
+          url: 'https://www.serlyfjaskra.is/leit?query=J07AM51',
+          comment: null,
+          rejected: false,
+          location: 'Heilsugæsla höfuðborgarsvæðisins',
+        },
+      ],
+      comments: [
+        'Mikilvæg bólusetning á öllum aldri. Þrjá skammta þarf til grunnbólusetningar, á u.þ.b. hálfu ári og þarf að halda við alla ævi, á u.þ.b. 10 ára fresti á fullorðinsárum, t.d. ef ferðast er þar sem bakterían er landlæg. [Almenn áætlun barna](https://island.is/bolusetningar-barna)  [Almenn áætlun fullorðinna](https://island.is/bolusetningar-fullordnir)',
+      ],
+    },
+
+    {
+      id: 'pertussis',
+      name: 'Kíghósti',
+      description: null,
+      isFeatured: true,
+      status: 'undocumented' as HealthDirectorateVaccinationStatusEnum,
+      statusName: 'Óskráð',
+      statusColor: 'red',
+      lastVaccinationDate: null,
+      vaccinationsInfo: [],
+      comments: [
+        'Mikilvæg bólusetning á öllum aldri. Þrjá skammta þarf til grunnbólusetningar, á u.þ.b. hálfu ári og þarf að halda við alla ævi, á u.þ.b. 10 ára fresti á fullorðinsárum.  [Almenn áætlun barna](https://island.is/bolusetningar-barna)  [Almenn áætlun fullorðinna](https://island.is/bolusetningar-fullordnir)',
+        'Bólusetningagrunnur nær til bólusetninga á Íslandi frá 2004. Eldri bólusetningar hafa ekki verið skráðar kerfisbundið í grunninn. Upplýsingar um þær kann að vera hægt að nálgast hjá stofnun sem framkvæmdi þær. Bólusetningar sem framkvæmdar voru erlendis má skrá hjá heilsugæslu, ef til eru gögn um þær frá aðila sem bólusetti.',
+      ],
+    },
+    {
+      id: 'covid_19',
+      name: 'COVID 19',
+      description: null,
+      isFeatured: true,
+      status: 'valid' as HealthDirectorateVaccinationStatusEnum,
+      statusName: 'Í gildi',
+      statusColor: 'green',
+      lastVaccinationDate: '2023-12-12T14:51:54.000Z',
+      vaccinationsInfo: [
+        {
+          id: 4926533,
+          name: 'AstraZeneca',
+          date: '2021-04-29T11:04:22.000Z',
+          age: {
+            years: 16,
+            months: 4,
+          },
+          url: 'https://www.serlyfjaskra.is/leit?query=J07BX0303',
+          comment: null,
+          rejected: false,
+          location: 'Heilsugæsla höfuðborgarsvæðisins',
+        },
+        {
+          id: 5301095,
+          name: 'Pfizer',
+          date: '2021-07-13T16:40:42.000Z',
+          age: {
+            years: 16,
+            months: 7,
+          },
+          url: 'https://www.serlyfjaskra.is/leit?query=J07BX0301',
+          comment: null,
+          rejected: false,
+          location: 'Heilsugæsla höfuðborgarsvæðisins',
+        },
+        {
+          id: 5749654,
+          name: 'Pfizer',
+          date: '2021-12-27T11:19:40.000Z',
+          age: {
+            years: 17,
+            months: 0,
+          },
+          url: 'https://www.serlyfjaskra.is/leit?query=J07BX0301',
+          comment: null,
+          rejected: false,
+          location: 'Heilsugæsla höfuðborgarsvæðisins',
+        },
+        {
+          id: 6178427,
+          name: 'Pfizer',
+          date: '2022-09-29T14:00:53.000Z',
+          age: {
+            years: 17,
+            months: 9,
+          },
+          url: 'https://www.serlyfjaskra.is/leit?query=J07BX0307',
+          comment: null,
+          rejected: false,
+          location: 'Heilsugæsla höfuðborgarsvæðisins',
+        },
+        {
+          id: 7136074,
+          name: 'Comirnaty XBB.1.5 30 mcg/dose',
+          date: '2023-12-12T14:51:54.000Z',
+          age: {
+            years: 19,
+            months: 0,
+          },
+          url: 'https://www.serlyfjaskra.is/leit?query=J07BN0107',
+          comment: null,
+          rejected: false,
+          location: 'Heilsugæslan Árbæ',
+        },
+      ],
+      comments: [
+        'Eingöngu mælt með reglulegri bólusetningu áhættuhópa, þ.m.t. 60 ára og eldri, sjá nánar í [bólusetningaráætlun fullorðinna](https://island.is/bolusetningar-fullordnir)',
+        'Bólusetningar gegn COVID-19 fara fram ár hvert og veita vernd gegn alvarlegum veikindum í 6-9 mánuði. Fyrir einstaklinga í mikið aukinni hættu á alvarlegum veikindum geta læknar óskað eftir bólusetningu tvisvar á ári.',
+      ],
+    },
+    {
+      id: 'tetanus',
+      name: 'Stífkrampi',
+      description: null,
+      isFeatured: true,
+      status: 'incomplete' as HealthDirectorateVaccinationStatusEnum,
+      statusName: 'Ólokið',
+      statusColor: 'yellow',
+      lastVaccinationDate: '2005-09-20T00:00:00.000Z',
+      vaccinationsInfo: [
+        {
+          id: 1707356,
+          name: 'Diftavax',
+          date: '2005-09-20T00:00:00.000Z',
+          age: {
+            years: 0,
+            months: 9,
+          },
+          url: 'https://www.serlyfjaskra.is/leit?query=J07AM51',
+          comment: null,
+          rejected: false,
+          location: 'Heilsugæsla höfuðborgarsvæðisins',
+        },
+      ],
+      comments: [
+        'Mikilvæg bólusetning á öllum aldri. Þrjá skammta þarf til grunnbólusetningar, á u.þ.b. hálfu ári og þarf að halda við alla ævi, á u.þ.b. 10 ára fresti á fullorðinsárum, t.d. vegna óhreinna sára eða ferðalaga. [Almenn áætlun barna](https://island.is/bolusetningar-barna)  [Almenn áætlun fullorðinna](https://island.is/bolusetningar-fullordnir)',
+      ],
+    },
+    {
+      id: 'polio',
+      name: 'Mænusótt',
+      description: null,
+      isFeatured: true,
+      status: 'expired' as HealthDirectorateVaccinationStatusEnum,
+      statusName: 'Útrunnið',
+      statusColor: 'yellow',
+      lastVaccinationDate: '2005-09-20T00:00:00.000Z',
+      vaccinationsInfo: [
+        {
+          id: 1707357,
+          name: 'Imovax-polio',
+          date: '2005-09-20T00:00:00.000Z',
+          age: {
+            years: 0,
+            months: 9,
+          },
+          url: 'https://www.serlyfjaskra.is/leit?query=J07BF03',
+          comment: null,
+          rejected: false,
+          location: 'Heilsugæsla höfuðborgarsvæðisins',
+        },
+      ],
+      comments: [
+        'Mikilvæg bólusetning á öllum aldri. Þrjá skammta þarf til grunnbólusetningar, á u.þ.b. hálfu ári og þarf að halda við alla ævi, á u.þ.b. 10 ára fresti á fullorðinsárum, t.d. ef ferðast er þar sem veiran er landlæg eða faraldrar hafa komið upp sl. 12 mánuði.  [Almenn áætlun barna](https://island.is/bolusetningar-barna)  [Almenn áætlun fullorðinna](https://island.is/bolusetningar-fullordnir)',
+      ],
+    },
+    {
+      id: 'pn',
+      name: 'Lungnabólgubaktería',
+      description: null,
+      isFeatured: true,
+      status: 'undocumented' as HealthDirectorateVaccinationStatusEnum,
+      statusName: 'Óskráð',
+      statusColor: 'red',
+      lastVaccinationDate: null,
+      vaccinationsInfo: [],
+      comments: [
+        'Mælt er með bólusetningu gegn lungnabólgubakteríu fyrir öll börn undir 5 ára, eldri börn og fullorðna með ónæmisgalla eða alvarlega lungnasjúkdóma og alla sem náð hafa 60 ára aldri. [Almenn áætlun barna](https://island.is/bolusetningar-barna)  [Almenn áætlun fullorðinna](https://island.is/bolusetningar-fullordnir)',
+        'Bólusetningagrunnur nær til bólusetninga á Íslandi frá 2004. Eldri bólusetningar hafa ekki verið skráðar kerfisbundið í grunninn. Upplýsingar um þær kann að vera hægt að nálgast hjá stofnun sem framkvæmdi þær. Bólusetningar sem framkvæmdar voru erlendis má skrá hjá heilsugæslu, ef til eru gögn um þær frá aðila sem bólusetti.',
+      ],
+    },
+    {
+      id: 'cholera',
+      name: 'Kólera',
+      description: null,
+      isFeatured: false,
+      status: 'undocumented' as HealthDirectorateVaccinationStatusEnum,
+      statusName: 'Óskráð',
+      statusColor: 'red',
+      lastVaccinationDate: null,
+      vaccinationsInfo: [],
+      comments: [
+        'Bólusetningagrunnur nær til bólusetninga á Íslandi frá 2004. Eldri bólusetningar hafa ekki verið skráðar kerfisbundið í grunninn. Upplýsingar um þær kann að vera hægt að nálgast hjá stofnun sem framkvæmdi þær. Bólusetningar sem framkvæmdar voru erlendis má skrá hjá heilsugæslu, ef til eru gögn um þær frá aðila sem bólusetti.',
+      ],
+    },
+    {
+      id: 'dengue',
+      name: 'Beinbrunasótt',
+      description: null,
+      isFeatured: false,
+      status: 'undocumented' as HealthDirectorateVaccinationStatusEnum,
+      statusName: 'Óskráð',
+      statusColor: 'red',
+      lastVaccinationDate: null,
+      vaccinationsInfo: [],
+      comments: [
+        'Bólusetningagrunnur nær til bólusetninga á Íslandi frá 2004. Eldri bólusetningar hafa ekki verið skráðar kerfisbundið í grunninn. Upplýsingar um þær kann að vera hægt að nálgast hjá stofnun sem framkvæmdi þær. Bólusetningar sem framkvæmdar voru erlendis má skrá hjá heilsugæslu, ef til eru gögn um þær frá aðila sem bólusetti.',
+      ],
+    },
+  ],
+}

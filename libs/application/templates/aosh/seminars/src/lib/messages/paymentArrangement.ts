@@ -46,11 +46,6 @@ export const paymentArrangement = {
       defaultMessage: 'Símanúmer',
       description: 'Phonenumber label on conclusion screen',
     },
-    changeInfo: {
-      id: 'aosh.sem.application:paymentArrangement.labels.changeInfo',
-      defaultMessage: 'Breyta upplýsingum á mínum síðum',
-      description: 'Change information label on conclusion screen',
-    },
     paymentOptions: {
       id: 'aosh.sem.application:paymentArrangement.labels.paymentOptions',
       defaultMessage: 'Vinsamlegast veldu þann möguleika sem á við',
@@ -101,6 +96,12 @@ export const paymentArrangement = {
       defaultMessage:
         'Ekki er hægt að skrá námskeið í reikning. Vinsamlegast hafðu samband við Vinnueftirlitið.',
       description: 'Contact organization alert label on conclusion screen',
+    },
+    webServiceFailure: {
+      id: 'aosh.sem.application:paymentArrangement.labels.webServiceFailure',
+      defaultMessage:
+        'Vefþjónustan skilaði villu. Reyndu aftur síðar. Ef vandamálið varir, vinsamlegast hafðu samband við Vinnueftirlitið.',
+      description: 'Web service failed to respond',
     },
     explanation: {
       id: 'aosh.sem.application:paymentArrangement.labels.explanation',

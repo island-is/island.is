@@ -19,7 +19,7 @@ export const NationalRegistryClientConfig = defineConfig({
     return {
       xRoadServicePath: env.required(
         'XROAD_NATIONAL_REGISTRY_SERVICE_PATH',
-        'IS-DEV/GOV/10001/SKRA-Protected/Einstaklingar-v1',
+        'IS-DEV/GOV/10001/SKRA-Cloud-Protected/Einstaklingar-v1',
       ),
       fetchTimeout:
         env.optionalJSON('XROAD_NATIONAL_REGISTRY_TIMEOUT') ?? 10000,

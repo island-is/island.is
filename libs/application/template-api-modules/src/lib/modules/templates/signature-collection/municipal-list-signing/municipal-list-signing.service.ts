@@ -10,14 +10,23 @@ import {
 import { TemplateApiError } from '@island.is/nest/problem'
 import { ProviderErrorReason } from '@island.is/shared/problem'
 import { errorMessages } from '@island.is/application/templates/signature-collection/municipal-list-signing'
+import { getCollectionTypeFromApplicationType } from '../shared/utils'
+import { isCompany } from 'kennitala'
+import { coreErrorMessages } from '@island.is/application/core'
+import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 
 @Injectable()
 export class MunicipalListSigningService extends BaseTemplateApiService {
   constructor(
     private signatureCollectionClientService: SignatureCollectionClientService,
+    private nationalRegistryClientService: NationalRegistryClientService,
   ) {
     super(ApplicationTypes.MUNICIPAL_LIST_SIGNING)
   }
+
+  private collectionType = getCollectionTypeFromApplicationType(
+    ApplicationTypes.MUNICIPAL_LIST_SIGNING,
+  )
 
   async signList({ auth, application }: TemplateApiModuleActionProps) {
     const listId = application.answers.listId
@@ -26,6 +35,7 @@ export class MunicipalListSigningService extends BaseTemplateApiService {
 
     const signature = await this.signatureCollectionClientService.signList(
       listId,
+      this.collectionType,
       auth,
     )
     if (signature) {
@@ -35,10 +45,32 @@ export class MunicipalListSigningService extends BaseTemplateApiService {
     }
   }
 
+  async municipalIdentity({ auth }: TemplateApiModuleActionProps) {
+    const contactNationalId = isCompany(auth.nationalId)
+      ? auth.actor?.nationalId ?? auth.nationalId
+      : auth.nationalId
+
+    const identity = await this.nationalRegistryClientService.getIndividual(
+      contactNationalId,
+    )
+
+    if (!identity) {
+      throw new TemplateApiError(
+        coreErrorMessages.nationalIdNotFoundInNationalRegistrySummary,
+        500,
+      )
+    }
+
+    return identity
+  }
+
   async canSign({ auth }: TemplateApiModuleActionProps) {
     let signee
     try {
-      signee = await this.signatureCollectionClientService.getSignee(auth)
+      signee = await this.signatureCollectionClientService.getSignee(
+        auth,
+        this.collectionType,
+      )
     } catch (e) {
       throw new TemplateApiError(errorMessages.singeeNotFound, 404)
     }
@@ -78,7 +110,9 @@ export class MunicipalListSigningService extends BaseTemplateApiService {
   async getList({ auth, application }: TemplateApiModuleActionProps) {
     // Returns the list user is trying to sign, in the apporiate area
     const areaId = (
-      application.externalData.canSign.data as { area: { id: string } }
+      application.externalData.canSign.data as {
+        area: { id: string }
+      }
     ).area?.id
 
     if (!areaId) {
@@ -96,6 +130,7 @@ export class MunicipalListSigningService extends BaseTemplateApiService {
       candidateId: isCandidateId ? ownerId : undefined,
       areaId,
       onlyActive: true,
+      collectionType: this.collectionType,
     })
     // If candidateId existed or if there is only one list, check if maxReached
     if (lists.length === 1) {

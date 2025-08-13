@@ -1,14 +1,9 @@
-import {
-  DndContext,
-  DragOverlay,
-  UniqueIdentifier,
-} from '@dnd-kit/core'
+import { DndContext, DragOverlay, UniqueIdentifier } from '@dnd-kit/core'
 import { SortableContext } from '@dnd-kit/sortable'
 import { useContext, useMemo } from 'react'
 import { createPortal } from 'react-dom'
 import { Box, Button } from '@island.is/island-ui/core'
 import { baseSettingsStep } from '../../lib/utils/getBaseSettingsSection'
-import { NavbarTab } from './components/NavbarTab/NavbarTab'
 import {
   FormSystemScreen,
   FormSystemField,
@@ -25,12 +20,15 @@ import {
   UPDATE_SECTION_DISPLAY_ORDER,
 } from '@island.is/form-system/graphql'
 import { useMutation } from '@apollo/client'
-import { m, SectionTypes } from '@island.is/form-system/ui'
+import { m } from '@island.is/form-system/ui'
 import { useNavbarDnD } from '../../lib/utils/useNavbarDnd'
+import * as styles from './Navbar.css'
+import { SectionTypes } from '@island.is/form-system/enums'
 
 export const Navbar = () => {
-  const { control, controlDispatch, setInSettings, inSettings } =
-    useContext(ControlContext) as IControlContext
+  const { control, controlDispatch, inSettings } = useContext(
+    ControlContext,
+  ) as IControlContext
   const { formatMessage } = useIntl()
   const { activeItem, form } = control
   const { sections, screens, fields } = form
@@ -59,7 +57,6 @@ export const Navbar = () => {
 
   const [createSection, { loading }] = useMutation(CREATE_SECTION)
   const [updateDisplayOrder] = useMutation(UPDATE_SECTION_DISPLAY_ORDER)
-
 
   const addSection = async () => {
     try {
@@ -110,13 +107,13 @@ export const Navbar = () => {
     const data =
       type === 'Section'
         ? sections?.find(
-          (item: Maybe<FormSystemSection> | undefined) => item?.id === id,
-        )
+            (item: Maybe<FormSystemSection> | undefined) => item?.id === id,
+          )
         : type === 'Screen'
-          ? screens?.find(
+        ? screens?.find(
             (item: Maybe<FormSystemScreen> | undefined) => item?.id === id,
           )
-          : fields?.find(
+        : fields?.find(
             (item: Maybe<FormSystemField> | undefined) => item?.id === id,
           )
 
@@ -143,26 +140,7 @@ export const Navbar = () => {
     }
   }
 
-  const handleSaveAndContinue = () => {
-    setInSettings(false)
-    const section = sections?.find(
-      (s) => s?.sectionType === SectionTypes.INPUT,
-    )
-    if (section) {
-      controlDispatch({
-        type: 'SET_ACTIVE_ITEM',
-        payload: {
-          activeItem: {
-            type: 'Section',
-            data: section,
-          },
-        },
-      })
-    }
-  }
-
   const { sensors, onDragStart, onDragOver, onDragEnd } = useNavbarDnD()
-
 
   const renderNonInputSections = () => {
     return sections
@@ -184,9 +162,7 @@ export const Navbar = () => {
     return fields
       ?.filter(
         (field): field is FormSystemField =>
-          field !== null &&
-          field !== undefined &&
-          field.screenId === screen.id,
+          field !== null && field !== undefined && field.screenId === screen.id,
       )
       .map((field) => (
         <NavComponent
@@ -226,9 +202,7 @@ export const Navbar = () => {
     return sections
       ?.filter(
         (s): s is FormSystemSection =>
-          s !== null &&
-          s !== undefined &&
-          s.sectionType === SectionTypes.INPUT,
+          s !== null && s !== undefined && s.sectionType === SectionTypes.INPUT,
       )
       .map((section, index) => (
         <Box key={section.id}>
@@ -247,10 +221,7 @@ export const Navbar = () => {
   }
 
   const renderSettingsView = () => (
-    <div>
-      <Box paddingBottom={2} overflow="hidden" flexDirection="row">
-        <NavbarTab />
-      </Box>
+    <>
       <div>
         <NavComponent
           type="Section"
@@ -260,61 +231,50 @@ export const Navbar = () => {
         />
       </div>
       {renderNonInputSections()}
-      <Box display="flex" justifyContent="center" paddingTop={3}>
-        <Button variant="ghost" size="small" onClick={handleSaveAndContinue}>
-          {formatMessage(m.saveAndContinue)}
-        </Button>
-      </Box>
-    </div>
+    </>
   )
 
   const renderDnDView = () => (
     <div>
-      <Box
-        paddingBottom={2}
-        overflow="hidden"
-        display="flex"
-        flexDirection="row"
-      >
-        <NavbarTab />
-      </Box>
-      <DndContext
-        sensors={sensors}
-        onDragStart={onDragStart}
-        onDragEnd={onDragEnd}
-        onDragOver={onDragOver}
-      >
-        <SortableContext items={sectionIds ?? []}>
-          {renderInputSections()}
-        </SortableContext>
+      <Box className={styles.minimalScrollbar}>
+        <DndContext
+          sensors={sensors}
+          onDragStart={onDragStart}
+          onDragEnd={onDragEnd}
+          onDragOver={onDragOver}
+        >
+          <SortableContext items={sectionIds ?? []}>
+            {renderInputSections()}
+          </SortableContext>
 
-        {createPortal(
-          <DragOverlay
-            dropAnimation={{
-              duration: 500,
-              easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
-            }}
-          >
-            {activeItem && (
-              <NavComponent
-                type={activeItem.type}
-                data={
-                  activeItem.data as
-                  | FormSystemScreen
-                  | FormSystemSection
-                  | FormSystemField
-                }
-                active
-                focusComponent={focusComponent}
-              />
-            )}
-          </DragOverlay>,
-          document.body,
-        )}
-      </DndContext>
+          {createPortal(
+            <DragOverlay
+              dropAnimation={{
+                duration: 500,
+                easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
+              }}
+            >
+              {activeItem && (
+                <NavComponent
+                  type={activeItem.type}
+                  data={
+                    activeItem.data as
+                      | FormSystemScreen
+                      | FormSystemSection
+                      | FormSystemField
+                  }
+                  active
+                  focusComponent={focusComponent}
+                />
+              )}
+            </DragOverlay>,
+            document.body,
+          )}
+        </DndContext>
+      </Box>
       <Box display="flex" justifyContent="center" paddingTop={3}>
         <Button variant="ghost" size="small" onClick={addSection}>
-          {formatMessage(m.addStep)}
+          {formatMessage(m.addSection)}
         </Button>
       </Box>
     </div>

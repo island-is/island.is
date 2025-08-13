@@ -155,6 +155,7 @@ export const InfoLine = ({
                 {button.type === 'link' ? (
                   <LinkButton
                     to={button.to}
+                    variant="text"
                     text={
                       button.label
                         ? formatMessage(button.label)

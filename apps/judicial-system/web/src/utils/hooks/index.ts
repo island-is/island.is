@@ -1,8 +1,5 @@
-export {
-  type UpdateCase,
-  default as useCase,
-  formatDateForServer,
-} from './useCase'
+export { default as useCase } from './useCase'
+export { type UpdateCase, formatDateForServer } from './useCase/useCase.logic'
 export { default as useFileList } from './useFileList'
 export { default as useInstitution } from './useInstitution'
 export {
@@ -27,6 +24,7 @@ export {
 export { default as useSort } from './useSort/useSort'
 export { useGeoLocation } from './useGeoLocation/useGeoLocation'
 export { default as useDefendants } from './useDefendants'
+export { default as useVictim } from './useVictim'
 export {
   type UpdateIndictmentCount,
   default as useIndictmentCounts,
@@ -36,3 +34,4 @@ export { default as useCaseList } from './useCaseList'
 export { default as useNationalRegistry } from './useNationalRegistry'
 export { default as useCivilClaimants } from './useCivilClaimants'
 export { default as useSubpoena } from './useSubpoena'
+export { default as useLawTag } from './useLawTag/useLawTag'

@@ -89,6 +89,7 @@ export const SortedVaccinationsTable = ({ data }: Props) => {
                             size="small"
                             to={vaccination.url ?? '/'}
                             text={vaccination.name ?? ''}
+                            variant="text"
                           />
                         ) : (
                           vaccination.name ?? ''

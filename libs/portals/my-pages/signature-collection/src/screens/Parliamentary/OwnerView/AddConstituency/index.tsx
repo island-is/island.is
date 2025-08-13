@@ -77,9 +77,8 @@ const AddConstituencyModal = ({
           setModalIsOpen(false)
           setSelectedConstituencies([])
         }}
-        label={''}
       >
-        <Box display="block" width="full">
+        <Box>
           <Text marginBottom={2} variant="h2">
             {formatMessage(m.addConstituency)}
           </Text>

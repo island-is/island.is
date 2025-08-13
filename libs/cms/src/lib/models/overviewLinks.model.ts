@@ -59,17 +59,26 @@ export class OverviewLinks {
 
 const mapLinkData = (
   linkData: IOverviewLinks['fields']['linkData'],
+  locale: string,
 ): LinkData => {
+  const categoryCardItems: CategoryCardItem[] = []
+
+  // broaden English check to cover "en", "en-US", "en-GB", etc.
+  const isEnglish = locale.toLowerCase().startsWith('en')
+
+  for (const item of linkData?.[`categoryCardItems${isEnglish ? 'En' : ''}`] ??
+    []) {
+    if (Boolean(item?.title) && Boolean(item?.href)) {
+      categoryCardItems.push(item)
+    }
+  }
+
   return {
     variant:
       linkData?.['variant'] === LinkDataVariant.CategoryCard
         ? LinkDataVariant.CategoryCard
         : LinkDataVariant.IntroLinkImage,
-    categoryCardItems:
-      linkData?.['categoryCardItems']?.filter(
-        (item: { title?: string; href?: string }) =>
-          Boolean(item?.title) && Boolean(item?.href),
-      ) ?? [],
+    categoryCardItems,
   }
 }
 
@@ -83,5 +92,5 @@ export const mapOverviewLinks = ({
   overviewLinks: (fields.overviewLinks ?? []).map(mapIntroLinkImage),
   link: fields.link ? mapLink(fields.link) : null,
   hasBorderAbove: fields.hasBorderAbove ?? true,
-  linkData: mapLinkData(fields.linkData),
+  linkData: mapLinkData(fields.linkData, sys.locale),
 })

@@ -55,7 +55,7 @@ describe('CaseController - Transition', () => {
     id: userId,
     role: UserRole.PROSECUTOR,
     canConfirmIndictment: false,
-    institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+    institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
   } as User
 
   let mockMessageService: MessageService
@@ -286,6 +286,7 @@ describe('CaseController - Transition', () => {
                   id: caseId,
                   isArchived: false,
                 },
+                transaction,
               })
               expect(then.result).toBe(updatedCase)
             }
@@ -558,6 +559,7 @@ describe('CaseController - Transition', () => {
                 id: caseId,
                 isArchived: false,
               },
+              transaction,
             })
             expect(then.result).toBe(updatedCase)
           }

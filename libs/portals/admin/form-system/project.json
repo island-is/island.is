@@ -3,6 +3,7 @@
   "$schema": "../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/portals/admin/form-system/src",
   "projectType": "library",
+  "tags": ["scope:portals-admin", "lib:portals-admin"],
   "generators": {},
   "targets": {
     "lint": {
@@ -20,6 +21,5 @@
         "passWithNoTests": true
       }
     }
-  },
-  "tags": ["scope:portals-admin", "lib:portals-admin"]
+  }
 }

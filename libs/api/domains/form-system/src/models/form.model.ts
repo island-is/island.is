@@ -10,6 +10,8 @@ import { ListType } from './listItem.model'
 import { LanguageType } from './languageType.model'
 import { Screen as ScreenModel } from './screen.model'
 import { FieldType } from './fieldType.model'
+import { Option } from './option.model'
+import { OrganizationUrl } from './organizationUrl.model'
 
 @ObjectType('FormSystemDependency')
 export class Dependency {
@@ -23,30 +25,6 @@ export class Dependency {
   isSelected?: boolean
 }
 
-@ObjectType('FormSystemFormUrl')
-export class FormUrl {
-  @Field(() => String, { nullable: true })
-  id?: string
-
-  @Field(() => String, { nullable: true })
-  organizationUrlId?: string
-
-  @Field(() => String, { nullable: true })
-  url?: string
-
-  @Field(() => Boolean, { nullable: true })
-  isXroad?: boolean
-
-  @Field(() => Boolean, { nullable: true })
-  isTest?: boolean
-
-  @Field(() => String, { nullable: true })
-  type?: string
-
-  @Field(() => String, { nullable: true })
-  method?: string
-}
-
 @ObjectType('FormSystemForm')
 export class Form {
   @Field(() => String)
@@ -55,14 +33,35 @@ export class Form {
   @Field(() => String, { nullable: true })
   organizationId?: string
 
-  @Field(() => LanguageType)
-  name!: LanguageType
+  @Field(() => String, { nullable: true })
+  organizationNationalId?: string
 
-  @Field(() => String)
-  slug!: string
+  @Field(() => String, { nullable: true })
+  organizationTitle?: string
+
+  @Field(() => String, { nullable: true })
+  organizationTitleEn?: string
+
+  @Field(() => LanguageType, { nullable: true })
+  organizationDisplayName?: LanguageType
 
   @Field(() => Date, { nullable: true })
   invalidationDate?: Date
+
+  @Field(() => Boolean, { nullable: true })
+  hasPayment?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  beenPublished?: boolean
+
+  @Field(() => Int, { nullable: true })
+  derivedFrom?: number
+
+  @Field(() => LanguageType)
+  name!: LanguageType
+
+  @Field(() => String, { nullable: true })
+  slug?: string
 
   @Field(() => Date)
   created!: Date
@@ -75,9 +74,6 @@ export class Form {
 
   @Field(() => Int)
   applicationDaysToRemove!: number
-
-  @Field(() => Int, { nullable: true })
-  derivedFrom?: number
 
   @Field(() => Boolean)
   stopProgressOnValidatingScreen!: boolean
@@ -104,31 +100,10 @@ export class Form {
   dependencies?: Dependency[]
 
   @Field(() => String)
-  status?: string
+  status!: string
 
-  @Field(() => [FormUrl], { nullable: 'itemsAndList' })
-  urls?: FormUrl[]
-}
-
-@ObjectType('FormSystemOrganizationUrl')
-export class OrganizationUrl {
-  @Field(() => String, { nullable: true })
-  id?: string
-
-  @Field(() => String, { nullable: true })
-  url?: string
-
-  @Field(() => Boolean, { nullable: true })
-  isXroad?: boolean
-
-  @Field(() => Boolean, { nullable: true })
-  isTest?: boolean
-
-  @Field(() => String, { nullable: true })
-  type?: string
-
-  @Field(() => String, { nullable: true })
-  method?: string
+  @Field(() => [String], { nullable: 'itemsAndList' })
+  urls?: string[]
 }
 
 @ObjectType('FormSystemFormResponse')
@@ -152,5 +127,11 @@ export class FormResponse {
   forms?: Form[]
 
   @Field(() => [OrganizationUrl], { nullable: 'itemsAndList' })
-  urls?: OrganizationUrl[]
+  submitUrls?: OrganizationUrl[]
+
+  @Field(() => [OrganizationUrl], { nullable: 'itemsAndList' })
+  validationUrls?: OrganizationUrl[]
+
+  @Field(() => [Option], { nullable: 'itemsAndList' })
+  organizations?: Option[]
 }

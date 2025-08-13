@@ -5,7 +5,7 @@ import { FieldType } from '../../../../dataTypes/fieldTypes/fieldType.model'
 import { ListType } from '../../../../dataTypes/listTypes/listType.model'
 import { CertificationType } from '../../../../dataTypes/certificationTypes/certificationType.model'
 import { OrganizationUrlDto } from '../../../organizationUrls/models/dto/organizationUrl.dto'
-import { OrganizationDto } from '../../../organizations/models/dto/organization.dto'
+import { Option } from '../../../../dataTypes/option.model'
 
 export class FormResponseDto {
   @ApiPropertyOptional({ type: FormDto })
@@ -24,7 +24,10 @@ export class FormResponseDto {
   listTypes?: ListType[]
 
   @ApiPropertyOptional({ type: [OrganizationUrlDto] })
-  urls?: OrganizationUrlDto[]
+  submitUrls?: OrganizationUrlDto[]
+
+  @ApiPropertyOptional({ type: [OrganizationUrlDto] })
+  validationUrls?: OrganizationUrlDto[]
 
   @ApiPropertyOptional({ type: [FormDto] })
   forms?: FormDto[]
@@ -32,6 +35,6 @@ export class FormResponseDto {
   @ApiPropertyOptional({ type: [String] })
   organizationNationalIds?: string[]
 
-  // @ApiPropertyOptional({ type: [OrganizationDto] })
-  // organizations?: OrganizationDto[]
+  @ApiPropertyOptional({ type: [Option] })
+  organizations?: Option[]
 }

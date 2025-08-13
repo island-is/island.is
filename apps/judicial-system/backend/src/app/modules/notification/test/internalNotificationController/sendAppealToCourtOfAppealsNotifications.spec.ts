@@ -93,7 +93,7 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
       then = await givenWhenThen(
         {
           role: UserRole.PROSECUTOR,
-          institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+          institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
         } as User,
         uuid(),
       )
@@ -143,7 +143,7 @@ describe('InternalNotificationController - Send appeal to court of appeals notif
     beforeEach(async () => {
       then = await givenWhenThen({
         role: UserRole.PROSECUTOR,
-        institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+        institution: { type: InstitutionType.POLICE_PROSECUTORS_OFFICE },
       } as User)
     })
 

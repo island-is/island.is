@@ -31,7 +31,7 @@ import {
 } from '@island.is/judicial-system-web/src/utils/utils'
 import { isCourtOfAppealCaseStepValid } from '@island.is/judicial-system-web/src/utils/validate'
 
-import CaseNumberInput from '../components/CaseNumberInput/CaseNumberInput'
+import { CaseNumberInput } from '../components'
 import { useAppealCaseUsersQuery } from './appealCaseUsers.generated'
 import { appealCase as strings } from './AppealCase.strings'
 
@@ -119,6 +119,10 @@ const AppealCase: FC = () => {
         [coaJudgeProperty]: coaJudgeId,
       })
 
+      if (!updatedCase) {
+        return
+      }
+
       const coaJudge =
         coaJudgeProperty === 'appealJudge1Id'
           ? { appealJudge1: updatedCase?.appealJudge1 }
@@ -138,6 +142,10 @@ const AppealCase: FC = () => {
       const updatedCase = await updateCase(workingCase.id, {
         appealAssistantId,
       })
+
+      if (!updatedCase) {
+        return
+      }
 
       setWorkingCase((prevWorkingCase) => ({
         ...prevWorkingCase,

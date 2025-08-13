@@ -80,11 +80,6 @@ export class MachineLicenseClient
             message: 'Service failure',
             data: JSON.stringify(e.body),
           }
-          this.logger.warn('Expected 200 or 404 status', {
-            status: e.status,
-            statusText: e.statusText,
-            category: LOG_CATEGORY,
-          })
         }
       } else {
         const unknownError = e as Error
@@ -93,11 +88,6 @@ export class MachineLicenseClient
           message: 'Unknown error',
           data: JSON.stringify(unknownError),
         }
-        this.logger.warn('Unable to query data', {
-          status: e.status,
-          statusText: e.statusText,
-          category: LOG_CATEGORY,
-        })
       }
 
       return {

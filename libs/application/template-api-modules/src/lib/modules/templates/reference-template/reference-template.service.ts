@@ -6,7 +6,6 @@ import {
   generateApplicationApprovedEmail,
   generateAssignApplicationEmail,
 } from './emailGenerators'
-import { ApplicationTypes } from '@island.is/application/types'
 import { BaseTemplateApiService } from '../../base-template-api.service'
 import { TemplateApiError } from '@island.is/nest/problem'
 import { NotificationsService } from '../../../notification/notifications.service'
@@ -18,7 +17,7 @@ export class ReferenceTemplateService extends BaseTemplateApiService {
     private readonly sharedTemplateAPIService: SharedTemplateApiService,
     private readonly notificationsService: NotificationsService,
   ) {
-    super(ApplicationTypes.EXAMPLE)
+    super('test')
   }
 
   async getReferenceData({ application }: TemplateApiModuleActionProps) {

@@ -1,6 +1,7 @@
 export interface Student {
   hasActiveApplication: boolean
   isFreshman: boolean
+  externalIds: string[]
 }
 
 export interface Language {
@@ -57,6 +58,7 @@ export interface ApplicationAttachment {
 }
 
 export interface Application {
+  externalId?: string
   id: string
   nationalId: string
   name: string

@@ -4,7 +4,6 @@ import {
   TaxLevelOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 import {
-  AdditionalInformation,
   Attachments,
   BankInfo,
   Eligible,
@@ -66,6 +65,11 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     'paymentInfo.taxLevel',
   ) as TaxLevelOptions
 
+  const higherPayments = getValueViaPath(
+    answers,
+    'higherPayments.question',
+  ) as YesOrNo
+
   return {
     applicantPhonenumber,
     selectedYear,
@@ -80,6 +84,7 @@ export const getApplicationAnswers = (answers: Application['answers']) => {
     personalAllowance,
     personalAllowanceUsage,
     taxLevel,
+    higherPayments,
   }
 }
 
@@ -133,6 +138,12 @@ export const getApplicationExternalData = (
     'socialInsuranceAdministrationIsApplicantEligible.data',
   ) as Eligible
 
+  const cohabitants = getValueViaPath(
+    externalData,
+    'nationalRegistryCohabitants.data',
+    [],
+  ) as string[]
+
   return {
     applicantName,
     applicantNationalId,
@@ -142,6 +153,7 @@ export const getApplicationExternalData = (
     userProfileEmail,
     bankInfo,
     isEligible,
+    cohabitants,
   }
 }
 
@@ -159,11 +171,9 @@ export const getAttachments = (application: Application) => {
   }
 
   const { answers } = application
-  
-  const {
-    additionalAttachments,
-    additionalAttachmentsRequired,
-  } = getApplicationAnswers(answers)
+
+  const { additionalAttachments, additionalAttachmentsRequired } =
+    getApplicationAnswers(answers)
   const attachments: Attachments[] = []
 
   const additionalDocuments = [
@@ -184,6 +194,11 @@ export const getAttachments = (application: Application) => {
   }
 
   return attachments
+}
+
+export const hasNoCohabitants = (application: Application) => {
+  const { cohabitants } = getApplicationExternalData(application.externalData)
+  return cohabitants.length === 0
 }
 
 // returns available years. Available period is

@@ -56,8 +56,14 @@ export const AdditionalEstateMember = ({
   const phoneField = `${fieldIndex}.phone`
   const emailField = `${fieldIndex}.email`
 
+  // Advocate
   const advocatePhone = `${fieldIndex}.advocate.phone`
   const advocateEmail = `${fieldIndex}.advocate.email`
+
+  // Advocate 2
+  const advocate2Phone = `${fieldIndex}.advocate2.phone`
+  const advocate2Email = `${fieldIndex}.advocate2.email`
+
   const selectedEstate = application.answers.selectedEstate
 
   const foreignCitizenship = useWatch({
@@ -85,12 +91,21 @@ export const AdditionalEstateMember = ({
     memberAge !== undefined &&
     memberAge < 18
 
+  const requiresAdvocate = memberAge !== undefined && memberAge < 18
+
   useEffect(() => {
     clearErrors(nameField)
     clearErrors(relationField)
     clearErrors(dateOfBirthField)
     clearErrors(`${fieldIndex}.nationalId`)
-  }, [foreignCitizenship])
+  }, [
+    foreignCitizenship,
+    clearErrors,
+    nameField,
+    relationField,
+    dateOfBirthField,
+    fieldIndex,
+  ])
 
   return (
     <Box position="relative" key={field.id} marginTop={7}>
@@ -226,10 +241,8 @@ export const AdditionalEstateMember = ({
         )}
       </GridRow>
       {/* ADVOCATE */}
-      {selectedEstate !== EstateTypes.divisionOfEstateByHeirs &&
-        (currentEstateMember?.nationalId || hasForeignCitizenship) &&
-        memberAge !== undefined &&
-        memberAge < 18 && (
+      {(currentEstateMember?.nationalId || hasForeignCitizenship) &&
+        requiresAdvocate && (
           <Box
             marginTop={2}
             marginBottom={2}
@@ -255,11 +268,7 @@ export const AdditionalEstateMember = ({
                   field={{
                     id: `${fieldIndex}.advocate`,
                     props: {
-                      alertWhenUnder18:
-                        selectedEstate !==
-                          EstateTypes.divisionOfEstateByHeirs &&
-                        memberAge !== undefined &&
-                        memberAge < 18,
+                      alertWhenUnder18: requiresAdvocate,
                     },
                   }}
                   error={error}
@@ -290,6 +299,59 @@ export const AdditionalEstateMember = ({
             </GridRow>
           </Box>
         )}
+      {/* ADVOCATE 2 */}
+      {selectedEstate === EstateTypes.divisionOfEstateByHeirs &&
+        (currentEstateMember?.nationalId || hasForeignCitizenship) &&
+        requiresAdvocate && (
+          <Box
+            marginTop={2}
+            marginBottom={2}
+            paddingY={5}
+            paddingX={7}
+            borderRadius="large"
+            border="standard"
+          >
+            <GridRow>
+              <GridColumn span={['1/1']} paddingBottom={2}>
+                <Text variant="h4">
+                  {formatMessage(m.inheritanceAdvocateLabel)}
+                </Text>
+              </GridColumn>
+              <GridColumn span={['1/1']} paddingBottom={2}>
+                <LookupPerson
+                  nested
+                  field={{
+                    id: `${fieldIndex}.advocate2`,
+                    props: {
+                      requiredNationalId: false,
+                    },
+                  }}
+                  message={formatMessage(m.inheritanceUnder18ErrorAdvocate)}
+                  error={error}
+                />
+              </GridColumn>
+              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                <PhoneInputController
+                  id={advocate2Phone}
+                  name={advocate2Phone}
+                  label={formatMessage(m.phone)}
+                  backgroundColor="blue"
+                  size="sm"
+                />
+              </GridColumn>
+              <GridColumn span={['1/1', '1/2']} paddingBottom={2}>
+                <InputController
+                  id={advocate2Email}
+                  name={advocate2Email}
+                  label={formatMessage(m.email)}
+                  backgroundColor="blue"
+                  size="sm"
+                />
+              </GridColumn>
+            </GridRow>
+          </Box>
+        )}
+
       <GridRow>
         <GridColumn
           span={

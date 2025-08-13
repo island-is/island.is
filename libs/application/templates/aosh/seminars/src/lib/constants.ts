@@ -5,5 +5,5 @@ export const predefinedHeaders: IndexableObject = {
   0: ['nafn', 'name'],
   1: ['kennitala', 'ssn'],
   2: ['netfang', 'email'],
-  3: ['simi', 'phone'],
+  3: ['sími', 'phone'],
 }

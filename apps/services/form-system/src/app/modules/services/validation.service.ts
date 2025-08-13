@@ -4,7 +4,7 @@ import {
   ScreenValidationResponse,
 } from '../../dataTypes/validationResponse.model'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
-import { FieldTypesEnum } from '../../dataTypes/fieldTypes/fieldTypes.enum'
+import { FieldTypesEnum } from '@island.is/form-system/shared'
 import { TextboxValidation } from './validation/textbox.validation'
 import { FieldDto } from '../fields/models/dto/field.dto'
 
@@ -41,7 +41,7 @@ export class ValidationService {
         return new FieldValidation()
       case FieldTypesEnum.HOMESTAY_NUMBER:
         return new FieldValidation()
-      case FieldTypesEnum.CANDITATE:
+      case FieldTypesEnum.CANDIDATE:
         return new FieldValidation()
       case FieldTypesEnum.DATE_PICKER:
         return new FieldValidation()

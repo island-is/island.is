@@ -30,7 +30,11 @@ import {
   HuntingClientModule,
   HuntingLicenseClient,
 } from './clients/hunting-license-client'
-import { PassportsClient, PassportsModule } from './clients/passport-client'
+import {
+  PassportsClient,
+  PassportsModule,
+  IdentityDocumentClient,
+} from './clients/passport-client'
 
 @Module({
   imports: [
@@ -64,6 +68,7 @@ import { PassportsClient, PassportsModule } from './clients/passport-client'
           ehicCardClient: EhicClient,
           huntingClient: HuntingLicenseClient,
           passportClient: PassportsClient,
+          identityDocumentClient: IdentityDocumentClient,
         ) =>
         async (
           type: LicenseType,
@@ -87,6 +92,8 @@ import { PassportsClient, PassportsModule } from './clients/passport-client'
               return huntingClient
             case LicenseType.Passport:
               return passportClient
+            case LicenseType.IdentityDocument:
+              return identityDocumentClient
             default:
               return null
           }
@@ -101,6 +108,7 @@ import { PassportsClient, PassportsModule } from './clients/passport-client'
         EhicClient,
         HuntingLicenseClient,
         PassportsClient,
+        IdentityDocumentClient,
       ],
     },
   ],

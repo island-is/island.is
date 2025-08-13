@@ -6,9 +6,9 @@ import { FileRejection } from 'react-dropzone'
 import { getValueViaPath, coreErrorMessages } from '@island.is/application/core'
 import { Application } from '@island.is/application/types'
 import {
-  InputFileUpload,
-  UploadFile,
-  fileToObject,
+  InputFileUploadDeprecated,
+  UploadFileDeprecated,
+  fileToObjectDeprecated,
 } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
@@ -29,16 +29,22 @@ type UploadFileAnswer = {
 }
 
 // Transform an uploaded file to an form answer.
-const transformToAnswer = ({ name, key }: UploadFile): UploadFileAnswer => {
+const transformToAnswer = ({
+  name,
+  key,
+}: UploadFileDeprecated): UploadFileAnswer => {
   return { name, key }
 }
 
 // Transform an form answer to an uploaded file object to display.
-const answerToUploadFile = ({ name, key }: UploadFile): UploadFile => {
+const answerToUploadFile = ({
+  name,
+  key,
+}: UploadFileDeprecated): UploadFileDeprecated => {
   return { name, key, status: 'done' }
 }
 
-const reducer = (state: UploadFile[], action: Action) => {
+const reducer = (state: UploadFileDeprecated[], action: Action) => {
   switch (action.type) {
     case ActionTypes.ADD:
       return state.concat(action.payload.newFiles)
@@ -49,7 +55,7 @@ const reducer = (state: UploadFile[], action: Action) => {
       )
 
     case ActionTypes.UPDATE:
-      return state.map((file: UploadFile) => {
+      return state.map((file: UploadFileDeprecated) => {
         if (file.name === action.payload.file.name) {
           file.status = action.payload.status
           file.percent = action.payload.percent
@@ -67,7 +73,7 @@ interface FileUploadControllerProps {
   readonly id: string
   error?: string
   application: Application
-  onRemove?: (f: UploadFile) => void
+  onRemove?: (f: UploadFileDeprecated) => void
   readonly header?: string
   readonly description?: string
   readonly buttonLabel?: string
@@ -76,6 +82,7 @@ interface FileUploadControllerProps {
   readonly maxSize?: number
   readonly maxSizeErrorText?: string
   readonly totalMaxSize?: number
+  readonly maxFileCount?: number
   readonly forImageUpload?: boolean
 }
 
@@ -91,25 +98,38 @@ export const FileUploadController = ({
   maxSize,
   maxSizeErrorText,
   totalMaxSize = DEFAULT_TOTAL_MAX_SIZE,
+  maxFileCount = Number.MAX_SAFE_INTEGER, // Default to no limit
   forImageUpload,
   onRemove,
 }: FileUploadControllerProps) => {
   const { formatMessage } = useLocale()
   const { clearErrors, setValue } = useFormContext()
   const [uploadError, setUploadError] = useState<string | undefined>(error)
-  const val = getValueViaPath(application.answers, id, []) as UploadFile[]
+  const val = getValueViaPath<UploadFileDeprecated[]>(
+    application.answers,
+    id,
+    [],
+  )
   const [createUploadUrl] = useMutation(CREATE_UPLOAD_URL)
   const [addAttachment] = useMutation(ADD_ATTACHMENT)
   const [deleteAttachment] = useMutation(DELETE_ATTACHMENT)
-  const { refetch: fileUploadMalwareStatus } = useQuery(GET_MALWARE_SCAN_STATUS, { skip: true })
+  const { refetch: fileUploadMalwareStatus } = useQuery(
+    GET_MALWARE_SCAN_STATUS,
+    { skip: true },
+  )
   const [sumOfFileSizes, setSumOfFileSizes] = useState(0)
-  const initialUploadFiles: UploadFile[] =
+
+  const initialUploadFiles: UploadFileDeprecated[] =
     (val && val.map((f) => answerToUploadFile(f))) || []
   const [state, dispatch] = useReducer(reducer, initialUploadFiles)
 
+  const [sumOfFileCount, setSumOfFileCount] = useState(
+    initialUploadFiles?.length ?? 0,
+  )
+
   useEffect(() => {
     const onlyUploadedFiles = state.filter(
-      (f: UploadFile) => f.key && f.status === 'done',
+      (f: UploadFileDeprecated) => f.key && f.status === 'done',
     )
 
     const uploadAnswer: UploadFileAnswer[] =
@@ -124,7 +144,7 @@ export const FileUploadController = ({
     return status !== undefined && status === MalwareScanStatus.SAFE
   }
 
-  const uploadFileFlow = async (file: UploadFile) => {
+  const uploadFileFlow = async (file: UploadFileDeprecated) => {
     try {
       // 1. Get the upload URL
       const { data } = await createUploadUrl({
@@ -167,21 +187,23 @@ export const FileUploadController = ({
     clearErrors(id)
     setUploadError(undefined)
 
-    if(!multiple) {
+    if (!multiple) {
       // Trying to upload more than 1 file
-      if(uploadCount && uploadCount > 1) {
-        setUploadError(formatMessage(coreErrorMessages.uploadMultipleNotAllowed))
+      if (uploadCount && uploadCount > 1) {
+        setUploadError(
+          formatMessage(coreErrorMessages.uploadMultipleNotAllowed),
+        )
         return
       }
       // Trying to upload a single file, but a file has already been uploaded
-      if(state.length === 1) {
+      if (state.length === 1) {
         await onRemoveFile(state[0])
       }
     }
 
     const addedUniqueFiles = newFiles.filter((newFile: File) => {
       let isUnique = true
-      state.forEach((uploadedFile: UploadFile) => {
+      state.forEach((uploadedFile: UploadFileDeprecated) => {
         if (uploadedFile.name === newFile.name) isUnique = false
       })
       return isUnique
@@ -203,10 +225,23 @@ export const FileUploadController = ({
       return
     }
 
+    if (
+      maxFileCount &&
+      sumOfFileCount + addedUniqueFiles.length > maxFileCount
+    ) {
+      setUploadError(
+        formatMessage(coreErrorMessages.fileMaxCountLimitExceeded, {
+          maxFileCount,
+        }),
+      )
+      return
+    }
+
     setSumOfFileSizes(totalNewFileSize + sumOfFileSizes)
+    setSumOfFileCount(addedUniqueFiles.length + sumOfFileCount)
 
     const newUploadFiles = addedUniqueFiles.map((f) =>
-      fileToObject(f, 'uploading'),
+      fileToObjectDeprecated(f, 'uploading'),
     )
 
     // Add the files to the list so that the control presents them
@@ -218,16 +253,15 @@ export const FileUploadController = ({
       },
     })
 
-    const malwareFiles: UploadFile[] = []
+    const malwareFiles: UploadFileDeprecated[] = []
     const uploadPromises = newUploadFiles.map(async (f) => {
       try {
         const res = await uploadFileFlow(f)
 
-        if(!res.isClean) {
+        if (!res.isClean) {
           // We need the file to have the key because we are about to remove it
           // before the dispatch event finishes
-          if(res.key)
-            f.key = res.key
+          if (res.key) f.key = res.key
 
           malwareFiles.push(f)
         }
@@ -238,7 +272,7 @@ export const FileUploadController = ({
             status: res.isClean ? 'done' : 'error',
             percent: 100,
             key: res.key,
-            url: res.url
+            url: res.url,
           },
         })
       } catch {
@@ -248,17 +282,27 @@ export const FileUploadController = ({
 
     await Promise.allSettled(uploadPromises)
 
-    if(malwareFiles.length > 0) {
-      const malwareFileNamesFormatted = malwareFiles.map(f => f.name).join(', ')
+    if (malwareFiles.length > 0) {
+      const malwareFileNamesFormatted = malwareFiles
+        .map((f) => f.name)
+        .join(', ')
 
       for (const f of malwareFiles) {
         await onRemoveFile(f, false, false)
       }
-      setUploadError(formatMessage(coreErrorMessages.fileUploadMalware, {files: malwareFileNamesFormatted}))
+      setUploadError(
+        formatMessage(coreErrorMessages.fileUploadMalware, {
+          files: malwareFileNamesFormatted,
+        }),
+      )
     }
   }
 
-  const onRemoveFile = async (fileToRemove: UploadFile, overwriteError = true, removeFileCard = true) => {
+  const onRemoveFile = async (
+    fileToRemove: UploadFileDeprecated,
+    overwriteError = true,
+    removeFileCard = true,
+  ) => {
     // If it's previously been uploaded, remove it from the application attachment.
     if (fileToRemove.key) {
       try {
@@ -280,7 +324,7 @@ export const FileUploadController = ({
 
     // There is a case for not removing the file card in the component if
     // it has malware and we want it there to show that those exact files have errors
-    if(removeFileCard) {
+    if (removeFileCard) {
       // We remove it from the list if: the delete attachment above succeeded,
       // or if the user clicked x for a file that failed to upload and is in
       // an error state.
@@ -290,10 +334,10 @@ export const FileUploadController = ({
           fileToRemove,
         },
       })
+      setSumOfFileCount(sumOfFileCount - 1)
     }
 
-    if(overwriteError)
-      setUploadError(undefined)
+    if (overwriteError) setUploadError(undefined)
   }
 
   const onFileRejection = (files: FileRejection[]) => {
@@ -326,7 +370,7 @@ export const FileUploadController = ({
 
   const FileUploadComponent = forImageUpload
     ? InputImageUpload
-    : InputFileUpload
+    : InputFileUploadDeprecated
 
   return (
     <Controller

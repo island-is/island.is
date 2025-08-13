@@ -269,6 +269,12 @@ export class ChildrenService {
         'answers.otherParentId': application.applicant,
       })
     }
+    if (getAppsWhereOtherParentHasApplied.length <= 0) {
+      getAppsWhereOtherParentHasApplied = await customTemplateFindQuery({
+        'externalData.VMSTOtherParent.data.otherParentId':
+          application.applicant,
+      })
+    }
     const applicationsWhereOtherParentHasApplied =
       getAppsWhereOtherParentHasApplied.filter((application) => {
         const { state } = application

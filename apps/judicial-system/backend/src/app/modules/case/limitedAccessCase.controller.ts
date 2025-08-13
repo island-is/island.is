@@ -55,6 +55,8 @@ import {
   defenderGeneratedPdfRule,
   defenderTransitionRule,
   defenderUpdateRule,
+  prisonSystemAdminRulingPdfRule,
+  prisonSystemAdminUpdateRule,
 } from './guards/rolesRules'
 import { CaseInterceptor } from './interceptors/case.interceptor'
 import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
@@ -119,11 +121,15 @@ export class LimitedAccessCaseController {
     JwtAuthUserGuard,
     RolesGuard,
     LimitedAccessCaseExistsGuard,
-    new CaseTypeGuard([...restrictionCases, ...investigationCases]),
+    new CaseTypeGuard([
+      ...restrictionCases,
+      ...investigationCases,
+      ...indictmentCases,
+    ]),
     CaseWriteGuard,
     CaseCompletedGuard,
   )
-  @RolesRules(defenderUpdateRule)
+  @RolesRules(prisonSystemAdminUpdateRule, defenderUpdateRule)
   @UseInterceptors(CaseInterceptor)
   @Patch('case/:caseId/limitedAccess')
   @ApiOkResponse({ type: Case, description: 'Updates an existing case' })
@@ -299,13 +305,13 @@ export class LimitedAccessCaseController {
 
   @UseGuards(
     JwtAuthUserGuard,
-    RolesGuard,
     CaseExistsGuard,
+    RolesGuard,
     new CaseTypeGuard([...restrictionCases, ...investigationCases]),
     CaseReadGuard,
     CaseCompletedGuard,
   )
-  @RolesRules(defenderRule)
+  @RolesRules(defenderRule, prisonSystemAdminRulingPdfRule)
   @Get('case/:caseId/limitedAccess/ruling')
   @Header('Content-Type', 'application/pdf')
   @ApiOkResponse({

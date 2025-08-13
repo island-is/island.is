@@ -6,7 +6,7 @@ import { OpsEnv } from '../dsl/types/input-types'
 import path from 'path'
 import yaml from 'yaml'
 import type { ToStringOptions } from 'yaml'
-import {REMOVE_APP_FROM_UBERCHART} from "./const";
+import { REMOVE_APP_FROM_UBERCHART } from './const'
 
 const yamlOptions: ToStringOptions = {
   defaultStringType: 'QUOTE_SINGLE',
@@ -43,8 +43,6 @@ const writeYamlFile = (filePath: string, content: unknown) => {
   })
 }
 
-
-
 const generateChartValues = async () => {
   console.log('Cleaning orphan charts')
   cleanOrphanDirs(path.join(__dirname, relativeChartDir))
@@ -55,23 +53,25 @@ const generateChartValues = async () => {
         .parseDocument(renderedYaml, { schema: 'json' })
         .toJSON()
       console.log(`Writing values.${Envs[envName].type}.yaml`)
-      
+
       const umbrellaChartValues = (() => {
         // Copy the value
-        const _copy = JSON.parse(JSON.stringify(renderedValues));
+        const _copy = JSON.parse(JSON.stringify(renderedValues))
         const removeApp = [
           ...REMOVE_APP_FROM_UBERCHART.all,
-          ...(envType in REMOVE_APP_FROM_UBERCHART ? REMOVE_APP_FROM_UBERCHART[envType] : []),
-        ];
+          ...(envType in REMOVE_APP_FROM_UBERCHART
+            ? REMOVE_APP_FROM_UBERCHART[envType]
+            : []),
+        ]
         for (const app of removeApp) {
           if (_copy[app]) {
             console.log(`Removing ${app} from umbrella chart for ${envName}`)
-            delete _copy[app];
+            delete _copy[app]
           }
         }
-        return _copy;
-      })();
-      
+        return _copy
+      })()
+
       // Write umbrella chart values
       writeYamlFile(
         path.join(

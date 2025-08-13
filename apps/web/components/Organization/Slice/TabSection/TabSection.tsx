@@ -103,7 +103,7 @@ export const TabSectionSlice: React.FC<React.PropsWithChildren<SliceProps>> = ({
                   <img
                     src={tab.image.url}
                     className={styles.tabSectionImg}
-                    alt=""
+                    alt={tab.image.description ?? ''}
                   />
                 )}
                 <Text variant="h2" as="h2" marginBottom={3}>

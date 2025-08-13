@@ -13,13 +13,13 @@ import { FormSystemField, FormSystemListItem } from '@island.is/api/schema'
 import { NavbarSelectStatus } from '../../../../../../../lib/utils/interfaces'
 import { useIntl } from 'react-intl'
 import * as styles from './ListItem.css'
-import { getTranslation } from '../../../../../../../lib/utils/getTranslation'
 import { useMutation } from '@apollo/client'
 import {
   DELETE_LIST_ITEM,
   UPDATE_LIST_ITEM,
 } from '@island.is/form-system/graphql'
-import { FieldTypesEnum, m } from '@island.is/form-system/ui'
+import { m } from '@island.is/form-system/ui'
+import { FieldTypesEnum } from '@island.is/form-system/enums'
 
 interface Props {
   listItem: FormSystemListItem
@@ -36,8 +36,14 @@ export const ListItem = ({
   setConnecting,
   toggleSelected,
 }: Props) => {
-  const { control, controlDispatch, setFocus, focus, setSelectStatus } =
-    useContext(ControlContext)
+  const {
+    control,
+    controlDispatch,
+    setFocus,
+    focus,
+    setSelectStatus,
+    getTranslation,
+  } = useContext(ControlContext)
   const { activeItem } = control
   const currentItem = activeItem.data as FormSystemField
   const isRadio = currentItem.fieldType === FieldTypesEnum.RADIO_BUTTONS
@@ -196,7 +202,23 @@ export const ListItem = ({
             backgroundColor="blue"
             size="sm"
             value={listItem?.label?.en ?? ''}
-            onFocus={(e) => setFocus(e.target.value)}
+            onFocus={async (e) => {
+              if (!listItem?.label?.en && listItem?.label?.is !== '') {
+                const translation = await getTranslation(
+                  listItem?.label?.is ?? '',
+                )
+                controlDispatch({
+                  type: 'CHANGE_LIST_ITEM',
+                  payload: {
+                    property: 'label',
+                    lang: 'en',
+                    value: translation.translation,
+                    id: listItem.id ?? '',
+                  },
+                })
+              }
+              setFocus(e.target.value)
+            }}
             onBlur={(e) => e.target.value !== focus && listItemUpdate()}
             onChange={(e) =>
               controlDispatch({
@@ -209,26 +231,6 @@ export const ListItem = ({
                 },
               })
             }
-            buttons={[
-              {
-                label: 'Translate',
-                name: 'reader',
-                onClick: async () => {
-                  const translation = await getTranslation(
-                    listItem?.label?.is ?? '',
-                  )
-                  controlDispatch({
-                    type: 'CHANGE_LIST_ITEM',
-                    payload: {
-                      property: 'label',
-                      lang: 'en',
-                      value: translation ?? '',
-                      id: listItem.id ?? '',
-                    },
-                  })
-                },
-              },
-            ]}
           />
         </Column>
       </Row>
@@ -259,12 +261,31 @@ export const ListItem = ({
           </Column>
           <Column span="5/10">
             <Input
-              name="info"
+              name="infoEn"
               label={formatMessage(m.infoEnglish)}
               backgroundColor="blue"
               size="sm"
               value={listItem?.description?.en ?? ''}
-              onFocus={(e) => setFocus(e.target.value)}
+              onFocus={async (e) => {
+                if (
+                  !listItem?.description?.en &&
+                  listItem?.description?.is !== ''
+                ) {
+                  const translation = await getTranslation(
+                    listItem?.description?.is ?? '',
+                  )
+                  controlDispatch({
+                    type: 'CHANGE_LIST_ITEM',
+                    payload: {
+                      property: 'description',
+                      lang: 'en',
+                      value: translation.translation,
+                      id: listItem.id ?? '',
+                    },
+                  })
+                }
+                setFocus(e.target.value)
+              }}
               onBlur={(e) => e.target.value !== focus && listItemUpdate()}
               onChange={(e) =>
                 controlDispatch({
@@ -277,26 +298,6 @@ export const ListItem = ({
                   },
                 })
               }
-              buttons={[
-                {
-                  label: 'Translate',
-                  name: 'reader',
-                  onClick: async () => {
-                    const translation = await getTranslation(
-                      listItem?.description?.is ?? '',
-                    )
-                    controlDispatch({
-                      type: 'CHANGE_LIST_ITEM',
-                      payload: {
-                        property: 'description',
-                        lang: 'en',
-                        value: translation ?? '',
-                        id: listItem.id ?? '',
-                      },
-                    })
-                  },
-                },
-              ]}
             />
           </Column>
         </Row>

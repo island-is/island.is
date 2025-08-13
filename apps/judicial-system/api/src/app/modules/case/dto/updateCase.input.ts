@@ -526,4 +526,14 @@ export class UpdateCaseInput {
   @IsOptional()
   @Field(() => Boolean, { nullable: true })
   readonly isCompletedWithoutRuling?: boolean
+
+  @Allow()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly publicProsecutorIsRegisteredInPoliceSystem?: boolean
+
+  @Allow()
+  @IsOptional()
+  @Field(() => Boolean, { nullable: true })
+  readonly isRegisteredInPrisonSystem?: boolean
 }

@@ -1,4 +1,4 @@
-import { adminRule } from '../../../guards'
+import { adminRule, localAdminRule } from '../../../guards'
 import { UserController } from '../user.controller'
 
 describe('UserController - Create rules', () => {
@@ -10,7 +10,8 @@ describe('UserController - Create rules', () => {
   })
 
   it('should give permission to roles', () => {
-    expect(rules).toHaveLength(1)
+    expect(rules).toHaveLength(2)
     expect(rules).toContain(adminRule)
+    expect(rules).toContain(localAdminRule)
   })
 })

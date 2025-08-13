@@ -9,6 +9,9 @@ import {
   SectionsApi,
   FormApplicantTypesApi,
   FormCertificationTypesApi,
+  OrganizationPermissionsApi,
+  OrganizationUrlsApi,
+  FormUrlsApi,
 } from '../../gen/fetch'
 import { ApiConfiguration } from './apiConfiguration'
 
@@ -22,16 +25,15 @@ const apis = [
   SectionsApi,
   FormApplicantTypesApi,
   FormCertificationTypesApi,
+  OrganizationPermissionsApi,
+  OrganizationUrlsApi,
+  FormUrlsApi,
 ]
 
-export const exportedApis = apis.map(
-  (Api) => ({
-    provide: Api,
-    useFactory: (configuration: Configuration) => {
-      return new Api(configuration)
-    },
-    inject: [ApiConfiguration.provide]
-  }))
-
-
-
+export const exportedApis = apis.map((Api) => ({
+  provide: Api,
+  useFactory: (configuration: Configuration) => {
+    return new Api(configuration)
+  },
+  inject: [ApiConfiguration.provide],
+}))

@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import { useRouter } from 'next/router'
@@ -15,23 +15,25 @@ import {
   formatDate,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
+import { getAdminUserInstitutionScope } from '@island.is/judicial-system/types'
 import { errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   Loading,
   PageHeader,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
-import {
-  User,
-  UserRole,
-} from '@island.is/judicial-system-web/src/graphql/schema'
+import { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
 
+import { userRoleToString } from '../userRoleToString'
 import { useUsersQuery } from './users.generated'
 import * as styles from './Users.css'
 
 export const Users = () => {
   const router = useRouter()
-  const [selectedInstitution, setSelectedInstitution] = useState<string>()
+  const { user } = useContext(UserContext)
+  const [selectedInstitutions, setSelectedInstitutions] = useState<string[]>([])
+
   const { formatMessage } = useIntl()
   const {
     allInstitutions,
@@ -48,8 +50,8 @@ export const Users = () => {
   })
 
   const users = usersData?.users?.filter((u) => {
-    return selectedInstitution
-      ? u.institution?.id === selectedInstitution
+    return selectedInstitutions.length > 0
+      ? u.institution?.id && selectedInstitutions.includes(u.institution.id)
       : true
   })
 
@@ -57,34 +59,10 @@ export const Users = () => {
     router.push(`${constants.CHANGE_USER_ROUTE}/${user.id}`)
   }
 
-  const userRoleToString = (userRole?: UserRole | null) => {
-    switch (userRole) {
-      case UserRole.PROSECUTOR:
-        return 'Saksóknari'
-      case UserRole.PROSECUTOR_REPRESENTATIVE:
-        return 'Fulltrúi'
-      case UserRole.DISTRICT_COURT_JUDGE:
-      case UserRole.COURT_OF_APPEALS_JUDGE:
-        return 'Dómari'
-      case UserRole.DISTRICT_COURT_REGISTRAR:
-      case UserRole.COURT_OF_APPEALS_REGISTRAR:
-        return 'Dómritari'
-      case UserRole.DISTRICT_COURT_ASSISTANT:
-      case UserRole.COURT_OF_APPEALS_ASSISTANT:
-        return 'Aðstoðarmaður dómara'
-      case UserRole.PRISON_SYSTEM_STAFF:
-        return 'Starfsmaður'
-      case UserRole.PUBLIC_PROSECUTOR_STAFF:
-        return 'Skrifstofa'
-      default:
-        return 'Óþekkt'
-    }
-  }
-
   return (
     <div className={styles.userControlContainer}>
       <PageHeader title={formatMessage(titles.admin.users)} />
-      <Box display="flex" marginBottom={9}>
+      <Box display="flex" marginBottom={9} justifyContent="spaceBetween">
         <Button
           icon="add"
           onClick={() => {
@@ -93,7 +71,17 @@ export const Users = () => {
         >
           Nýr notandi
         </Button>
+        <Button
+          variant="ghost"
+          icon="calculator"
+          onClick={() => {
+            router.push(constants.STATISTICS_ROUTE)
+          }}
+        >
+          Tölfræði
+        </Button>
       </Box>
+
       <Box
         marginBottom={8}
         display="flex"
@@ -106,17 +94,22 @@ export const Users = () => {
         <Box width="half">
           <Select
             name="institutions"
+            isMulti={true}
             options={
               institutionsLoaded
-                ? allInstitutions.map((i) => {
-                    return { label: i.name ?? '', value: i.id }
-                  })
+                ? allInstitutions
+                    .filter(
+                      (i) =>
+                        i.type &&
+                        getAdminUserInstitutionScope(user).includes(i.type),
+                    )
+                    .map((i) => ({ label: i.name ?? '', value: i.id }))
                 : []
             }
             placeholder="Veldu stofnun"
             isDisabled={institutionsLoading}
-            onChange={(selectedOption) =>
-              setSelectedInstitution(selectedOption?.value)
+            onChange={(selectedOptions) =>
+              setSelectedInstitutions(selectedOptions.map((o) => o.value))
             }
           />
         </Box>

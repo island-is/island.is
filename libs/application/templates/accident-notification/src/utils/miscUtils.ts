@@ -2,13 +2,6 @@ import { getValueViaPath, YES, YesOrNo } from '@island.is/application/core'
 import { FormValue } from '@island.is/application/types'
 import { isReportingOnBehalfOfEmployee as isReportingOnBehalfOfEmployeeOrginal } from './reportingUtils'
 import {
-  GeneralWorkplaceAccidentLocationEnum,
-  ProfessionalAthleteAccidentLocationEnum,
-  StudiesAccidentLocationEnum,
-  WhoIsTheNotificationForEnum,
-  WorkAccidentTypeEnum,
-} from '../types'
-import {
   getInjuredPersonInformation as getInjuredPersonInformationOrginal,
   isHomeActivitiesAccident,
 } from './accidentUtils'
@@ -17,6 +10,13 @@ import {
   getWorkplaceData as getWorkplaceDataOrginal,
   isOfWorkAccidentType,
 } from './occupationUtils'
+import {
+  GeneralWorkplaceAccidentLocationEnum,
+  ProfessionalAthleteAccidentLocationEnum,
+  StudiesAccidentLocationEnum,
+  WhoIsTheNotificationForEnum,
+  WorkAccidentTypeEnum,
+} from './enums'
 
 export const formatPhonenumber = (value: string) => {
   const splitAt = (index: number) => (x: string) =>

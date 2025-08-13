@@ -161,6 +161,7 @@ export class LicenseService {
     }
 
     const mappedLicenseType = this.mapLicenseType(licenseTypeDefinition.type)
+
     const client = await this.getClient(mappedLicenseType)
 
     const licensesFetchResponse = await client.getLicenses(user)

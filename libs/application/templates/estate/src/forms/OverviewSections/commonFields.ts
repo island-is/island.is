@@ -65,6 +65,19 @@ export const commonOverviewFields = [
                   ],
                 ]
               : '',
+
+            /* Advocate 2 */
+            member.advocate2
+              ? [
+                  [
+                    m.inheritanceAdvocateLabel.defaultMessage +
+                      ': ' +
+                      member.advocate2?.name,
+                    formatPhoneNumber(member.advocate2.phone || ''),
+                    member.advocate2.email,
+                  ],
+                ]
+              : '',
           ],
         })),
     },

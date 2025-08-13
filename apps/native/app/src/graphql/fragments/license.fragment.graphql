@@ -47,7 +47,6 @@ fragment GenericUserLicenseFragment on GenericUserLicense {
     data {
       ...GenericLicenseDataFieldFragment
     }
-    rawData
     metadata {
       licenseNumber
       licenseId
@@ -55,7 +54,9 @@ fragment GenericUserLicenseFragment on GenericUserLicense {
       expireDate
       expiryStatus
       name
+      title
       subtitle
+      photo
       displayTag {
         text
       }

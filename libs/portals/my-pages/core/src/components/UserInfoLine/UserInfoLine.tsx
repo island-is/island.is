@@ -163,6 +163,7 @@ export const UserInfoLine: FC<React.PropsWithChildren<Props>> = ({
             >
               <LinkButton
                 to={editLink.url}
+                variant="text"
                 icon={editLink.icon}
                 text={
                   editLink.title

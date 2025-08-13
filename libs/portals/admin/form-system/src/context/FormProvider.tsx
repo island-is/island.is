@@ -14,6 +14,7 @@ import { baseSettingsStep } from '../lib/utils/getBaseSettingsSection'
 import { updateActiveItemFn } from '../lib/utils/updateActiveItem'
 import { useMutation } from '@apollo/client'
 import {
+  GET_GOOGLE_TRANSLATION,
   UPDATE_FIELD,
   UPDATE_FIELDS_DISPLAY_ORDER,
   UPDATE_FORM,
@@ -23,7 +24,8 @@ import {
   UPDATE_SECTION_DISPLAY_ORDER,
 } from '@island.is/form-system/graphql'
 import { updateFormFn } from '../lib/utils/updateFormFn'
-import { SectionTypes } from '@island.is/form-system/ui'
+import { SectionTypes } from '@island.is/form-system/enums'
+import { GoogleTranslation } from '@island.is/form-system/shared'
 
 export const FormProvider: React.FC<{
   children: React.ReactNode
@@ -31,26 +33,34 @@ export const FormProvider: React.FC<{
 }> = ({ children, formBuilder }) => {
   const [focus, setFocus] = useState<string>('')
   const [inSettings, setInSettings] = useState(
-    formBuilder?.form?.name?.is === 'Nýtt',
+    formBuilder?.form?.name?.is === '',
   )
   const [inListBuilder, setInListBuilder] = useState<boolean>(false)
   const [selectStatus, setSelectStatus] = useState<NavbarSelectStatus>(
     NavbarSelectStatus.OFF,
   )
 
-  const { fieldTypes, listTypes, certificationTypes, applicantTypes, form } =
-    formBuilder
+  const {
+    fieldTypes,
+    listTypes,
+    certificationTypes,
+    applicantTypes,
+    submitUrls,
+    validationUrls,
+    form,
+  } = formBuilder
   const initialControl: ControlState = {
     activeItem: {
       type: 'Section',
       data: inSettings
         ? baseSettingsStep
         : removeTypename(form?.sections)?.find(
-          (s: FormSystemSection) => s?.sectionType === SectionTypes.INPUT,
-        ) ?? defaultStep,
+            (s: FormSystemSection) => s?.sectionType === SectionTypes.INPUT,
+          ) ?? defaultStep,
     },
     activeListItem: null,
     form: removeTypename(form) as FormSystemForm,
+    organizationNationalId: form?.organizationNationalId ?? '',
   }
   const [control, controlDispatch] = useReducer(controlReducer, initialControl)
 
@@ -61,6 +71,30 @@ export const FormProvider: React.FC<{
   const [updateScreenDisplayOrder] = useMutation(UPDATE_SCREEN_DISPLAY_ORDER)
   const [updateFieldDisplayOrder] = useMutation(UPDATE_FIELDS_DISPLAY_ORDER)
   const [updateForm] = useMutation(UPDATE_FORM)
+  const [getGoogleTranslation] = useMutation(GET_GOOGLE_TRANSLATION)
+  const [selectedUrls, setSelectedUrls] = useState<string[]>([])
+
+  const getTranslation = async (text: string): Promise<GoogleTranslation> => {
+    try {
+      const result = await getGoogleTranslation({
+        variables: {
+          input: {
+            q: text,
+          },
+        },
+      })
+      return (
+        result.data?.formSystemGoogleTranslation ?? {
+          translation: '',
+        }
+      )
+    } catch (error) {
+      console.error('Translation error:', error)
+      return {
+        translation: '',
+      }
+    }
+  }
 
   const updateActiveItem = useCallback(
     (updatedActiveItem?: ActiveItem) =>
@@ -92,7 +126,7 @@ export const FormProvider: React.FC<{
 
   const formUpdate = useCallback(
     (updatedForm?: FormSystemForm) => {
-      updateFormFn(control, updateForm, updatedForm)
+      return updateFormFn(control, updateForm, updatedForm)
     },
     [control, updateForm],
   )
@@ -104,6 +138,8 @@ export const FormProvider: React.FC<{
       certificationTypes,
       fieldTypes,
       listTypes,
+      submitUrls,
+      validationUrls,
       setInSettings,
       inSettings,
       updateActiveItem,
@@ -116,8 +152,11 @@ export const FormProvider: React.FC<{
       inListBuilder,
       formUpdate,
       applicantTypes,
+      getTranslation,
+      selectedUrls,
+      setSelectedUrls,
     }),
-    [control, controlDispatch, inListBuilder, selectStatus],
+    [control, controlDispatch, inListBuilder, selectStatus, selectedUrls],
   )
 
   return (

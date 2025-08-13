@@ -6,8 +6,8 @@ import { getChosenApplicant, getChildPassport } from '..'
 export const updateAnswers = (
   application: Application,
   nationalId: string,
-  setValue: (name: string, value: unknown, config?: Object) => void,
-): Object => {
+  setValue: (name: string, value: unknown, config?: object) => void,
+): object => {
   const chosenApplicants = getChosenApplicant(
     application.externalData,
     nationalId,

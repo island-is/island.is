@@ -29,105 +29,81 @@ export const WalletItem = React.memo(
     const intl = useIntl()
     const theme = useTheme()
 
-    // Passport card
-    if (type === GenericLicenseType.Passport) {
-      // We receive an "empty" passport item if the user has no passport
-      const noPassport =
-        !item?.payload?.metadata?.licenseNumber && !item?.payload?.data?.length
+    const isPassportOrIdentityDocument =
+      type === GenericLicenseType.Passport ||
+      type === GenericLicenseType.IdentityDocument
 
-      return (
-        <Container
-          style={style}
-          onLayout={(e) => {
-            cardHeight = Math.round(e.nativeEvent.layout.height)
-          }}
-        >
-          {noPassport ? (
-            <SafeAreaView style={{ marginBottom: theme.spacing[2] }}>
-              <LicenseListCard
-                type={GenericLicenseType.Passport}
-                subtitle={item?.payload?.metadata?.subtitle}
-                emptyState={true}
-                title={
-                  item?.isOwnerChildOfUser
-                    ? intl.formatMessage({ id: 'walletPassport.screenTitle' })
-                    : item?.payload?.metadata?.name
-                }
-                childName={
-                  item?.isOwnerChildOfUser
-                    ? item?.payload?.metadata?.name
-                    : undefined
-                }
-                link={
-                  <Link
-                    url={
-                      item?.payload?.metadata?.ctaLink?.value ??
-                      'https://island.is/vegabref'
-                    }
+    // We receive an "empty" license item if the user has no passport or identity document
+    const noLicense =
+      isPassportOrIdentityDocument &&
+      !item?.payload?.metadata?.licenseNumber &&
+      !item?.payload?.data?.length
+
+    return (
+      <Container
+        style={style}
+        onLayout={(e) => {
+          cardHeight = Math.round(e.nativeEvent.layout.height)
+        }}
+      >
+        {noLicense ? (
+          <SafeAreaView style={{ marginBottom: theme.spacing[2] }}>
+            <LicenseListCard
+              type={type}
+              subtitle={item?.payload?.metadata?.subtitle}
+              emptyState={true}
+              title={
+                item?.isOwnerChildOfUser
+                  ? type === GenericLicenseType.Passport
+                    ? intl.formatMessage({
+                        id: 'licenseDetail.passport.title',
+                      })
+                    : type === GenericLicenseType.IdentityDocument
+                    ? intl.formatMessage({
+                        id: 'licenseDetail.identityDocument.title',
+                      })
+                    : ''
+                  : item?.payload?.metadata?.name
+              }
+              childName={
+                item?.isOwnerChildOfUser
+                  ? item?.payload?.metadata?.name
+                  : undefined
+              }
+              link={
+                <Link
+                  url={
+                    item?.payload?.metadata?.ctaLink?.value ??
+                    type === GenericLicenseType.Passport
+                      ? 'https://island.is/vegabref'
+                      : 'https://island.is/nafnskirteini'
+                  }
+                >
+                  <LinkText
+                    variant="small"
+                    icon={externalLinkIcon}
+                    underlined={false}
                   >
-                    <LinkText
-                      variant="small"
-                      icon={externalLinkIcon}
-                      underlined={false}
-                    >
-                      {item?.payload?.metadata?.ctaLink?.label ?? (
-                        <FormattedMessage id="walletPassport.noPassportLink" />
-                      )}
-                    </LinkText>
-                  </Link>
-                }
-              />
-            </SafeAreaView>
-          ) : (
-            <Pressable
-              onPress={() => {
-                navigateTo(
-                  `/walletpassport/${item?.payload?.metadata?.licenseId}`,
-                  {
-                    fromId: `license-${GenericLicenseType.Passport}_source`,
-                    toId: `license-${GenericLicenseType.Passport}_destination`,
-                    cardHeight: cardHeight,
-                  },
-                )
-              }}
-            >
-              <SafeAreaView>
-                <LicenseListCard
-                  nativeID={`license-${GenericLicenseType.Passport}_source`}
-                  type={GenericLicenseType.Passport}
-                  subtitle={item?.payload?.metadata?.subtitle}
-                  title={
-                    item?.isOwnerChildOfUser
-                      ? intl.formatMessage({ id: 'walletPassport.screenTitle' })
-                      : item?.payload?.metadata?.name
-                  }
-                  childName={
-                    item?.isOwnerChildOfUser
-                      ? item?.payload?.metadata?.name
-                      : undefined
-                  }
-                />
-              </SafeAreaView>
-            </Pressable>
-          )}
-        </Container>
-      )
-    } else {
-      return (
-        <Container
-          style={style}
-          onLayout={(e) => {
-            cardHeight = Math.round(e.nativeEvent.layout.height)
-          }}
-        >
+                    {item?.payload?.metadata?.ctaLink?.label ?? (
+                      <FormattedMessage id="licenseDetail.apply" />
+                    )}
+                  </LinkText>
+                </Link>
+              }
+            />
+          </SafeAreaView>
+        ) : (
           <Pressable
             onPress={() => {
-              navigateTo(`/wallet/${item?.license?.type}`, {
-                item,
-                fromId: `license-${item?.license?.type}_source`,
-                toId: `license-${item?.license?.type}_destination`,
-                cardHeight,
-              })
+              navigateTo(
+                `/wallet/${item?.license.type}/${item.payload?.metadata?.licenseId}`,
+                {
+                  item,
+                  fromId: `license-${item?.license?.type}_source`,
+                  toId: `license-${item?.license?.type}_destination`,
+                  cardHeight,
+                },
+              )
             }}
           >
             <SafeAreaView>
@@ -139,10 +115,8 @@ export const WalletItem = React.memo(
               />
             </SafeAreaView>
           </Pressable>
-        </Container>
-      )
-    }
-
-    return null
+        )}
+      </Container>
+    )
   },
 )

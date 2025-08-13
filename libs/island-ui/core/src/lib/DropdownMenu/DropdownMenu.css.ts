@@ -3,7 +3,7 @@ import { style, globalStyle } from '@vanilla-extract/css'
 
 export const menu = style({
   minWidth: 150,
-  zIndex: zIndex.above,
+  zIndex: zIndex.aboveModal,
   boxShadow: '0px 4px 30px rgba(0, 97, 255, 0.16)',
   ':focus': {
     outline: 'none',

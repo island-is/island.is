@@ -11,6 +11,13 @@ mutation UpdateIndictmentCount($input: UpdateIndictmentCountInput!) {
     legalArguments
     indictmentCountSubtypes
     recordedSpeed
-    speedLimit
+    offenses {
+      id
+      indictmentCountId
+      created
+      modified
+      offense
+      substances
+    }
   }
 }

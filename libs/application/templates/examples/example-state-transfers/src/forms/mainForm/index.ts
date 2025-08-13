@@ -1,23 +1,19 @@
-import {
-  buildForm,
-  buildSection,
-  buildDescriptionField,
-} from '@island.is/application/core'
+import { buildForm } from '@island.is/application/core'
 import { Form, FormModes } from '@island.is/application/types'
+import { firstScreenSection } from './firstScreenSection'
+import { statesAndStatusSection } from './statesAndStatusSection'
+import { assigneeInfoSection } from './assigneeInfolSection'
+import { overviewSection } from './overviewSection'
 
 export const MainForm: Form = buildForm({
   id: 'MainForm',
   mode: FormModes.DRAFT,
+  renderLastScreenBackButton: true,
+  renderLastScreenButton: true,
   children: [
-    buildSection({
-      id: 'main',
-      children: [
-        buildDescriptionField({
-          id: 'description',
-          title: 'Description',
-          description: 'This is a description',
-        }),
-      ],
-    }),
+    firstScreenSection,
+    statesAndStatusSection,
+    assigneeInfoSection,
+    overviewSection,
   ],
 })

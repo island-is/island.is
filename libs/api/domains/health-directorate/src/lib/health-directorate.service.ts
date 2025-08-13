@@ -1,8 +1,10 @@
 import { Auth } from '@island.is/auth-nest-tools'
 import {
+  DispensationHistoryItemDto,
   HealthDirectorateOrganDonationService,
   HealthDirectorateVaccinationsService,
   OrganDonorDto,
+  PrescriptionRenewalRequestDto,
   VaccinationDto,
   organLocale,
 } from '@island.is/clients/health-directorate'
@@ -24,9 +26,18 @@ import {
 } from './utils/mappers'
 import {
   MedicineHistory,
+  MedicineHistoryDispensation,
   MedicineHistoryItem,
 } from './models/medicineHistory.model'
 import { isDefined } from '@island.is/shared/utils'
+import { MedicineDispensationsATCInput } from './models/medicineHistoryATC.dto'
+import { MedicineDispensationsATC } from './models/medicineHistoryATC.model'
+import { PrescriptionDocuments } from './models/prescriptionDocuments.model'
+import { MedicinePrescriptionDocumentsInput } from './models/prescriptionDocuments.dto'
+import { HealthDirectorateRenewalInput } from './models/renewal.input'
+import isNumber from 'lodash/isNumber'
+import { ReferralDetail } from './models/referral.model'
+import { WaitlistDetail } from './models/waitlist.model'
 
 @Injectable()
 export class HealthDirectorateService {
@@ -166,6 +177,25 @@ export class HealthDirectorateService {
     return { waitlists }
   }
 
+  /* Waitlist */
+  async getWaitlist(
+    auth: Auth,
+    locale: Locale,
+    id: string,
+  ): Promise<WaitlistDetail | null> {
+    const data = await this.getWaitlists(auth, locale)
+
+    if (!data) {
+      return null
+    }
+
+    const waitlist: Waitlist | undefined = data.waitlists.find(
+      (item) => item.id === id,
+    )
+
+    return { data: waitlist }
+  }
+
   /* Referrals */
   async getReferrals(auth: Auth, locale: Locale): Promise<Referrals | null> {
     const data = await this.healthApi.getReferrals(auth, locale)
@@ -191,6 +221,25 @@ export class HealthDirectorateService {
     return { referrals }
   }
 
+  /* Referral */
+  async getReferral(
+    auth: Auth,
+    locale: Locale,
+    id: string,
+  ): Promise<ReferralDetail | null> {
+    const data = await this.getReferrals(auth, locale)
+
+    if (!data) {
+      return null
+    }
+
+    const referral: Referral | undefined = data.referrals.find(
+      (item) => item.id === id,
+    )
+
+    return { data: referral }
+  }
+
   /* Prescriptions */
   async getPrescriptions(
     auth: Auth,
@@ -201,7 +250,6 @@ export class HealthDirectorateService {
     if (!data) {
       return null
     }
-
     const prescriptions: Array<Prescription> =
       data.map((item) => {
         return {
@@ -212,6 +260,7 @@ export class HealthDirectorateService {
           url: item.productUrl,
           quantity: item.productQuantity?.toString(),
           prescriberName: item.prescriberName,
+          medCardDrugId: item.medCardDrugId,
           issueDate: item.issueDate,
           expiryDate: item.expiryDate,
           dosageInstructions: item.dosageInstructions,
@@ -251,6 +300,51 @@ export class HealthDirectorateService {
     return { prescriptions }
   }
 
+  /* Renewal */
+  async postRenewal(auth: Auth, input: HealthDirectorateRenewalInput) {
+    const parsedInput = this.castRenewalInputToNumber(input)
+
+    if (!parsedInput) return null
+
+    // TODO: FIX WHEN RESPONSE BODY IS READY FROM CLIENT
+    await this.healthApi
+      .postRenewalPrescription(auth, input.id, {
+        medCardDrugId: input.medCardDrugId ?? input.id,
+        medCardDrugCategory: parsedInput.medCardDrugCategory,
+        prescribedItemId: parsedInput.prescribedItemId,
+      })
+      .catch((e) => {
+        return e
+      })
+      .then(() => {
+        return
+      })
+
+    return null
+  }
+
+  /* Prescription Documents */
+  async getPrescriptionDocuments(
+    auth: Auth,
+    input: MedicinePrescriptionDocumentsInput,
+  ): Promise<PrescriptionDocuments | null> {
+    const data = await this.healthApi.getPrescriptionDocuments(auth, input.id)
+
+    if (!data) {
+      return null
+    }
+
+    const documents = data.map((item) => {
+      return {
+        id: item.typeId.toString(),
+        name: item.name,
+        url: item.path,
+      }
+    })
+
+    return { documents, id: input.id }
+  }
+
   /* Medicine History */
   async getMedicineHistory(
     auth: Auth,
@@ -271,30 +365,76 @@ export class HealthDirectorateService {
           indication: item.indication,
           lastDispensationDate: item.lastDispensationDate,
           dispensationCount: item.dispensationCount,
-          dispensations: item.dispensations.map((subItem) => {
-            const quantity = subItem.productQuantity ?? 0
-
-            return {
-              id: subItem.productId,
-              name: subItem.productName,
-              quantity: [quantity.toString(), subItem.productUnit]
-                .filter((x) => isDefined(x))
-                .join(' '),
-              agentName: subItem.dispensingAgentName,
-              unit: subItem.productUnit,
-              type: subItem.productType,
-              indication: subItem.indication,
-              dosageInstructions: subItem.dosageInstructions,
-              issueDate: subItem.issueDate,
-              prescriberName: subItem.prescriberName,
-              expirationDate: subItem.expirationDate,
-              isExpired: subItem.isExpired,
-              date: subItem.dispensationDate,
-            }
-          }),
+          dispensations: item.dispensations.map(this.mapDispensationItem),
         }
       }) ?? []
 
     return { medicineHistory }
+  }
+
+  /* Medicine dispensations for specific ATC code */
+  async getMedicineDispensationsForATC(
+    auth: Auth,
+    locale: Locale,
+    input: MedicineDispensationsATCInput,
+  ): Promise<MedicineDispensationsATC | null> {
+    const data = await this.healthApi.getDispensations(
+      auth,
+      input.atcCode,
+      locale,
+    )
+    if (!data) {
+      return null
+    }
+
+    const dispensations: Array<MedicineHistoryDispensation> = data.map(
+      this.mapDispensationItem,
+    )
+
+    return { dispensations }
+  }
+
+  private castRenewalInputToNumber = (
+    input: HealthDirectorateRenewalInput,
+  ): PrescriptionRenewalRequestDto | null => {
+    // Trim whitespace from the string
+    const trimmedCategory = input.medCardDrugCategory.trim()
+    const trimmedId = input.prescribedItemId.trim()
+
+    // Try to convert the string to a number
+    const parsedCategory = Number(trimmedCategory)
+    const parsedId = Number(trimmedId)
+
+    if (isNumber(parsedCategory) && isNumber(parsedId)) {
+      return {
+        prescribedItemId: parsedId,
+        medCardDrugCategory: parsedCategory,
+        medCardDrugId: input.medCardDrugId,
+      }
+    } else return null
+  }
+
+  private mapDispensationItem = (
+    item: DispensationHistoryItemDto,
+  ): MedicineHistoryDispensation => {
+    const quantity = item.productQuantity ?? 0
+
+    return {
+      id: item.productId,
+      name: item.productName,
+      quantity: [quantity.toString(), item.productUnit]
+        .filter((x) => isDefined(x))
+        .join(' '),
+      agentName: item.dispensingAgentName,
+      unit: item.productUnit,
+      type: item.productType,
+      indication: item.indication,
+      dosageInstructions: item.dosageInstructions,
+      issueDate: item.issueDate,
+      prescriberName: item.prescriberName,
+      expirationDate: item.expirationDate,
+      isExpired: item.isExpired,
+      date: item.dispensationDate,
+    }
   }
 }

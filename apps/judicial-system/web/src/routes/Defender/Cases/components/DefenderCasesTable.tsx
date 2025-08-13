@@ -7,10 +7,10 @@ import { core, tables } from '@island.is/judicial-system-web/messages'
 import {
   TagAppealState,
   TagCaseState,
+  useOpenCaseInNewTab,
   useWithdrawAppealMenuOption,
   WithdrawAppealContextMenuModal,
 } from '@island.is/judicial-system-web/src/components'
-import { useContextMenu } from '@island.is/judicial-system-web/src/components/ContextMenu/ContextMenu'
 import {
   ColumnCaseType,
   CourtCaseNumber,
@@ -33,7 +33,7 @@ export const DefenderCasesTable: FC<Props> = ({
   showingCompletedCases,
 }) => {
   const { formatMessage } = useIntl()
-  const { openCaseInNewTabMenuItem } = useContextMenu()
+  const { openCaseInNewTab } = useOpenCaseInNewTab()
 
   const {
     withdrawAppealMenuOption,
@@ -72,7 +72,7 @@ export const DefenderCasesTable: FC<Props> = ({
         ]}
         data={cases}
         generateContextMenuItems={(row) => [
-          openCaseInNewTabMenuItem(row.id),
+          openCaseInNewTab(row.id),
           ...(shouldDisplayWithdrawAppealOption(row)
             ? [withdrawAppealMenuOption(row.id)]
             : []),

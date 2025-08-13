@@ -1,4 +1,4 @@
-import { YesOrNo } from "@island.is/application/core"
+import { YesOrNo } from '@island.is/application/core'
 
 export type Individual = {
   person: {

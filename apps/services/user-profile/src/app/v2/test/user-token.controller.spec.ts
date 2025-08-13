@@ -1,6 +1,6 @@
 import request from 'supertest'
 
-import { setupApp, setupAppWithoutAuth } from '@island.is/testing/nest'
+import { setupApp, setupAppWithoutAuth, TestApp } from '@island.is/testing/nest'
 import {
   createCurrentUser,
   createNationalId,
@@ -75,8 +75,8 @@ describe('UserTokenController', () => {
   })
 
   describe('With auth', () => {
-    let app = null
-    let server = null
+    let app: TestApp
+    let server: request.SuperTest<request.Test>
 
     beforeAll(async () => {
       app = await setupApp({

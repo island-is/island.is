@@ -1,5 +1,5 @@
 {
-  "name": "application-templates-examples-example-no-inputs",
+  "name": "example-no-inputs",
   "$schema": "../../../../../node_modules/nx/schemas/project-schema.json",
   "sourceRoot": "libs/application/templates/examples/example-no-inputs/src",
   "projectType": "library",

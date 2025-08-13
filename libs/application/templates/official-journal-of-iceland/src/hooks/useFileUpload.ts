@@ -1,4 +1,4 @@
-import { UploadFile } from '@island.is/island-ui/core'
+import { UploadFileDeprecated } from '@island.is/island-ui/core'
 import {
   ADD_APPLICATION_ATTACHMENT_MUTATION,
   DELETE_APPLICATION_ATTACHMENT_MUTATION,
@@ -51,7 +51,7 @@ export const useFileUpload = ({
   applicationId,
   attachmentType,
 }: UseFileUploadProps) => {
-  const [files, setFiles] = useState<UploadFile[]>([])
+  const [files, setFiles] = useState<UploadFileDeprecated[]>([])
 
   const [getPresignedUrlMutation] = useMutation<{
     officialJournalOfIcelandApplicationGetPresignedUrl: GetPresignedUrlResponse
@@ -85,7 +85,7 @@ export const useFileUpload = ({
               type: attachment.fileFormat,
               key: attachment.fileLocation,
               status: 'done',
-            } as UploadFile),
+            } as UploadFileDeprecated),
         )
       setFiles((prevFiles) => [...prevFiles, ...currentFiles])
     },
@@ -106,7 +106,7 @@ export const useFileUpload = ({
    *
    * @param newFiles comes from the onChange function on the fileInput component
    */
-  const onChange = (newFiles: UploadFile[]) => {
+  const onChange = (newFiles: UploadFileDeprecated[]) => {
     newFiles.forEach(async (file) => {
       const type = file?.type?.split('/')[1]
       const name = file?.name?.split('.').slice(0, -1).join('.')
@@ -136,7 +136,7 @@ export const useFileUpload = ({
   /**
    * Deletes the file from the database and S3
    */
-  const onRemove = async (file: UploadFile) => {
+  const onRemove = async (file: UploadFileDeprecated) => {
     deleteApplicationAttachmentMutation({
       variables: {
         input: {
@@ -194,7 +194,10 @@ export const useFileUpload = ({
    * @param url presigned URL
    * @param file file to upload
    */
-  const addApplicationAttachments = (url: string, file: UploadFile) => {
+  const addApplicationAttachments = (
+    url: string,
+    file: UploadFileDeprecated,
+  ) => {
     const type = file?.type?.split('/')[1]
     const name = file?.name?.split('.').slice(0, -1).join('.')
     if (!type || !name) {

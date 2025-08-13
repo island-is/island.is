@@ -1,3 +1,29 @@
+/*
+ ***
+ *** The simplest applications follow this state machine:
+ ***
+ ***
+ *** Prerequisites --> Draft --> Completed
+ ***
+ ***
+ ***
+ *** Another common pattern is to have someone approve or reject the application
+ ***
+ ***                                          /--> Approved
+ *** Prerequisites --> Draft  --> In review --
+ ***                                          \--> Rejected
+ ***
+ ***
+ ***
+ *** The state machine is for this template is as follows:
+ ***
+ ***                           /--> Completed
+ *** Prerequisites --> Draft --                                       /--> Approved
+ ***                     Λ     \--> Waiting to assign --> In review --
+ ***                     |_____________|                              \--> Rejected
+ ***
+ */
+
 import {
   ApplicationTemplate,
   ApplicationTypes,
@@ -5,17 +31,25 @@ import {
   ApplicationRole,
   ApplicationStateSchema,
   Application,
-  UserProfileApi,
   DefaultEvents,
   FormModes,
 } from '@island.is/application/types'
-import { Events, Roles, States } from '../utils/constants'
+import { Events, Roles, States } from '../utils/types'
 import { CodeOwners } from '@island.is/shared/constants'
 import { exampleSchema } from './dataSchema'
-import { DefaultStateLifeCycle } from '@island.is/application/core'
-import { NationalRegistryApi, ReferenceDataApi } from '../dataProviders'
-import { assign } from 'xstate'
 import { Features } from '@island.is/feature-flags'
+import { prerequisitesState } from './templateSplit/prerequisitesState'
+import { completedState } from './templateSplit/completedState'
+import {
+  approveApplication,
+  assignUser,
+  rejectApplication,
+  unAssignUser,
+} from './templateSplit/stateMachineOptions'
+import { approvedState } from './templateSplit/approvedState'
+import { rejectedState } from './templateSplit/rejectedState'
+import { DefaultStateLifeCycle } from '@island.is/application/core'
+import { inReviewState } from './templateSplit/inReviewState'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -23,61 +57,22 @@ const template: ApplicationTemplate<
   Events
 > = {
   type: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
-  name: 'Example Common Actions',
+  name: 'Example state transfers',
   codeOwner: CodeOwners.NordaApplications,
   institution: 'Stafrænt Ísland',
   dataSchema: exampleSchema,
   featureFlag: Features.exampleApplication,
   allowMultipleApplicationsInDraft: true,
+  // The stateMachineConfig defines the states and the state transitions
+  // Each state has a "roles" object that defines what form to display
+  // for the state and the role of the user
+  // Another key piece of each state is the "on" object. The "on" object
+  // defines what events trigger what state transitions and possibly what function
+  // runs on the state transition
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
-      [States.PREREQUISITES]: {
-        meta: {
-          name: 'Skilyrði',
-          progress: 0,
-          status: FormModes.DRAFT,
-          lifecycle: {
-            shouldBeListed: true,
-            shouldBePruned: true,
-            // Applications that stay in this state for 24 hours will be pruned automatically
-            whenToPrune: 24 * 3600 * 1000,
-          },
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/prerequisitesForm').then((module) =>
-                  Promise.resolve(module.Prerequisites),
-                ),
-              actions: [
-                { event: 'SUBMIT', name: 'Staðfesta', type: 'primary' },
-              ],
-              write: 'all',
-              read: 'all',
-              api: [
-                ReferenceDataApi.configure({
-                  params: {
-                    id: 1986,
-                  },
-                }),
-                NationalRegistryApi.configure({
-                  params: {
-                    ageToValidate: 18,
-                  },
-                }),
-                UserProfileApi,
-              ],
-              delete: true,
-            },
-          ],
-        },
-        on: {
-          [DefaultEvents.SUBMIT]: {
-            target: States.DRAFT,
-          },
-        },
-      },
+      [States.PREREQUISITES]: prerequisitesState,
       [States.DRAFT]: {
         meta: {
           name: 'Main form',
@@ -85,6 +80,8 @@ const template: ApplicationTemplate<
           status: FormModes.DRAFT,
           lifecycle: DefaultStateLifeCycle,
           roles: [
+            // Here we only define one form to display in this state because
+            // the assignee role is set after this state
             {
               id: Roles.APPLICANT,
               formLoader: () =>
@@ -100,48 +97,50 @@ const template: ApplicationTemplate<
             },
           ],
         },
+        // Here you can have different events sending the applications into different
+        // states depending on what is triggered
         on: {
           [DefaultEvents.SUBMIT]: {
             target: States.COMPLETED,
           },
+          [DefaultEvents.ASSIGN]: {
+            target: States.IN_REVIEW,
+            actions: 'assignUser',
+          },
         },
       },
-      [States.COMPLETED]: {
-        meta: {
-          name: 'Completed',
-          status: 'completed',
-          lifecycle: DefaultStateLifeCycle,
-          roles: [
-            {
-              id: Roles.APPLICANT,
-              formLoader: () =>
-                import('../forms/completedForm').then((module) =>
-                  Promise.resolve(module.completedForm),
-                ),
-              write: 'all',
-              read: 'all',
-            },
-          ],
-        },
-      },
+      [States.IN_REVIEW]: inReviewState,
+      [States.COMPLETED]: completedState,
+      [States.APPROVED]: approvedState,
+      [States.REJECTED]: rejectedState,
     },
   },
+  // The stateMachineOptions define functions that can be used like functions in the
+  // template-api-modules. The actions here can be run when an event is triggered or
+  // they can run on state entry.
   stateMachineOptions: {
     actions: {
-      clearAssignees: assign((context) => ({
-        ...context,
-        application: {
-          ...context.application,
-          assignees: [],
-        },
-      })),
+      approveApplication,
+      rejectApplication,
+      assignUser,
+      unAssignUser,
     },
   },
   mapUserToRole: (
-    _nationalId: string,
-    _application: Application,
+    nationalId: string,
+    application: Application,
   ): ApplicationRole | undefined => {
-    return Roles.APPLICANT
+    const { applicant, assignees } = application
+
+    if (nationalId === applicant) {
+      return Roles.APPLICANT
+    }
+
+    if (assignees.includes(nationalId)) {
+      return Roles.ASSIGNEE
+    }
+
+    return undefined
   },
 }
 

@@ -3,6 +3,7 @@ import { useIntl } from 'react-intl'
 import debounce from 'lodash/debounce'
 import { useRouter } from 'next/router'
 
+import { useTypes } from '@island.is/application/templates/official-journal-of-iceland'
 import {
   AlertMessage,
   Box,
@@ -10,6 +11,7 @@ import {
   DatePicker,
   Divider,
   Input,
+  Pagination,
   Select,
   SkeletonLoader,
   Stack,
@@ -30,7 +32,6 @@ import {
   QueryOfficialJournalOfIcelandCategoriesArgs,
   QueryOfficialJournalOfIcelandDepartmentsArgs,
   QueryOfficialJournalOfIcelandInstitutionsArgs,
-  QueryOfficialJournalOfIcelandTypesArgs,
 } from '@island.is/web/graphql/schema'
 import { useLinkResolver } from '@island.is/web/hooks'
 import { withMainLayout } from '@island.is/web/layouts/main'
@@ -40,6 +41,7 @@ import {
   emptyOption,
   findValueOption,
   mapEntityToOptions,
+  mapYearOptions,
   OJOISearchGridView,
   OJOISearchListView,
   OJOIWrapper,
@@ -55,8 +57,8 @@ import {
   CATEGORIES_QUERY,
   DEPARTMENTS_QUERY,
   INSTITUTIONS_QUERY,
-  TYPES_QUERY,
 } from '../queries/OfficialJournalOfIceland'
+import { ORGANIZATION_SLUG } from './constants'
 import { useAdverts } from './hooks'
 import { m } from './messages'
 
@@ -71,6 +73,7 @@ type OJOISearchParams = {
   dagsTil?: string // DATE STRING
   sida?: number
   staerd?: number
+  year?: string
 }
 
 const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
@@ -78,7 +81,6 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
   categories,
   departments,
   defaultSearchParams,
-  types,
   institutions,
   organization,
   locale,
@@ -99,7 +101,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
     defaultSearchParams.q,
   )
 
-  const { adverts, loading, error, refetch } = useAdverts({
+  const { adverts, paging, loading, error, refetch } = useAdverts({
     vars: {
       department: [defaultSearchParams.deild],
       category: [defaultSearchParams.malaflokkur],
@@ -110,6 +112,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
       search: defaultSearchParams.q,
       page: defaultSearchParams.sida,
       pageSize: defaultSearchParams.staerd,
+      year: defaultSearchParams.year,
     },
     fallbackData: initialAdverts,
   })
@@ -123,7 +126,8 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
     stofnun: defaultSearchParams.stofnun,
     dagsFra: defaultSearchParams.dagsFra,
     dagsTil: defaultSearchParams.dagsTil,
-    sida: defaultSearchParams.sida,
+    sida: defaultSearchParams.sida ?? 1,
+    year: defaultSearchParams.year,
     staerd: defaultSearchParams.staerd,
   })
 
@@ -141,14 +145,22 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
           ? value
           : undefined
 
+      const shouldClearType = key === 'deild' && parsed !== searchState.deild
+
+      const newSearchState = {
+        tegund: shouldClearType ? '' : searchState.tegund,
+        sida: 1,
+        [key]: parsed,
+      }
+
       setSearchState((prev) => ({
         ...prev,
-        [key]: parsed,
+        ...newSearchState,
       }))
 
       const searchValues = {
         ...searchState,
-        [key]: parsed,
+        ...newSearchState,
       }
 
       router.replace(
@@ -171,12 +183,13 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
           department: [searchValues.deild],
           category: [searchValues.malaflokkur],
           involvedParty: [searchValues.stofnun],
-          type: [searchValues.tegund],
+          type: searchValues.tegund.split(','),
           dateFrom: searchValues.dagsFra,
           dateTo: searchValues.dagsTil,
           search: searchValues.q,
           page: searchValues.sida,
           pageSize: searchValues.staerd,
+          year: searchValues.year,
         },
       })
     },
@@ -198,6 +211,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
       dagsTil: undefined,
       sida: 1,
       staerd: 20,
+      year: undefined,
     })
 
     refetch({
@@ -211,16 +225,21 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
         search: '',
         page: undefined,
         pageSize: undefined,
+        year: undefined,
       },
     })
 
     setResetTimestamp(getTimestamp())
   }
+  const { types } = useTypes({
+    initalDepartmentId: searchState.deild,
+  })
 
   const categoriesOptions = mapEntityToOptions(categories)
   const departmentsOptions = mapEntityToOptions(departments)
   const typesOptions = mapEntityToOptions(types)
   const institutionsOptions = mapEntityToOptions(institutions)
+  const yearOptions = mapYearOptions()
 
   const breadcrumbItems = [
     {
@@ -325,7 +344,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
                 ...typesOptions,
               ]}
               isClearable
-              defaultValue={findValueOption(typesOptions, searchState.tegund)}
+              value={findValueOption(typesOptions, searchState.tegund)}
               onChange={(v) =>
                 updateSearchStateHandler('tegund', v?.value ?? '')
               }
@@ -410,6 +429,22 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
                 updateSearchStateHandler('stofnun', v?.value ?? '')
               }
             />
+
+            <Select
+              key={`year-${resetTimestamp}`}
+              name="year"
+              label={formatMessage(m.search.chooseYear)}
+              size="xs"
+              placeholder={formatMessage(m.search.allYears)}
+              options={[
+                { ...emptyOption(formatMessage(m.search.allYears)) },
+                ...yearOptions,
+              ]}
+              isClearable
+              isSearchable
+              defaultValue={findValueOption(yearOptions, searchState.year)}
+              onChange={(v) => updateSearchStateHandler('year', v?.value ?? '')}
+            />
           </Stack>
         </Box>
       }
@@ -449,6 +484,29 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
             <OJOISearchListView adverts={adverts} locale={locale} />
           ) : (
             <OJOISearchGridView adverts={adverts} locale={locale} />
+          )}
+          {searchState.sida && (
+            <Pagination
+              page={searchState.sida}
+              itemsPerPage={searchState.staerd}
+              totalItems={paging?.totalItems}
+              totalPages={paging?.totalPages}
+              renderLink={(page, className, children) => (
+                <button
+                  className={className}
+                  onClick={() => {
+                    try {
+                      window.scrollTo({ top: 0, behavior: 'smooth' })
+                    } catch {
+                      // noop
+                    }
+                    updateSearchStateHandler('sida', page ?? 1)
+                  }}
+                >
+                  {children}
+                </button>
+              )}
+            />
           )}
         </Stack>
       ) : (
@@ -501,8 +559,6 @@ const OJOISearch: CustomScreen<OJOISearchProps> = ({
 }
 
 OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
-  const organizationSlug = 'stjornartidindi'
-
   const getStringFromQuery = (key?: string | string[]) => {
     if (typeof key === 'string') {
       return key
@@ -519,6 +575,7 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
   let dateTo: string | undefined
   let page: number | undefined
   let pageSize: number | undefined
+  let year: string | undefined
 
   if (query.dagsFra && typeof query.dagsFra === 'string') {
     const isValid = !Number.isNaN(Date.parse(query.dagsFra))
@@ -532,6 +589,10 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
     if (isValid) {
       dateTo = new Date(query.dagsTil).toISOString().split('T')[0]
     }
+  }
+
+  if (query.year && typeof query.year === 'string') {
+    year = query.year
   }
 
   if (query.sida && typeof query.sida === 'string') {
@@ -559,7 +620,8 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
     stofnun: getStringFromQuery(query.stofnun),
     tegund: getStringFromQuery(query.tegund),
     timabil: getStringFromQuery(query.timabil),
-    sida: page,
+    sida: page ?? 1,
+    year,
     pageSize,
   }
 
@@ -572,9 +634,6 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
     },
     {
       data: { officialJournalOfIcelandDepartments },
-    },
-    {
-      data: { officialJournalOfIcelandTypes },
     },
     {
       data: { officialJournalOfIcelandInstitutions },
@@ -596,6 +655,7 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
           pageSize: defaultParams.pageSize,
           search: defaultParams.q,
           type: [defaultParams.tegund],
+          year: defaultParams.year,
         },
       },
     }),
@@ -613,14 +673,7 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
         params: {},
       },
     }),
-    apolloClient.query<Query, QueryOfficialJournalOfIcelandTypesArgs>({
-      query: TYPES_QUERY,
-      variables: {
-        params: {
-          pageSize: 1000,
-        },
-      },
-    }),
+
     apolloClient.query<Query, QueryOfficialJournalOfIcelandInstitutionsArgs>({
       query: INSTITUTIONS_QUERY,
       variables: {
@@ -633,7 +686,7 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
       query: GET_ORGANIZATION_QUERY,
       variables: {
         input: {
-          slug: organizationSlug,
+          slug: ORGANIZATION_SLUG,
           lang: locale as ContentLanguage,
         },
       },
@@ -648,7 +701,7 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
     initialAdverts: officialJournalOfIcelandAdverts?.adverts,
     categories: officialJournalOfIcelandCategories?.categories,
     departments: officialJournalOfIcelandDepartments?.departments,
-    types: officialJournalOfIcelandTypes?.types,
+
     institutions: officialJournalOfIcelandInstitutions?.institutions,
     organization: getOrganization,
     locale: locale as Locale,
@@ -667,6 +720,7 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
       timabil: defaultParams.timabil,
       sida: defaultParams.sida,
       staerd: defaultParams.pageSize,
+      year: defaultParams.year,
     },
   }
 }

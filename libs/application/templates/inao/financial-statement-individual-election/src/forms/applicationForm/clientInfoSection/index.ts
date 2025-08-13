@@ -2,10 +2,10 @@ import {
   buildMultiField,
   buildSection,
   buildTextField,
+  getValueViaPath,
 } from '@island.is/application/core'
-import { m } from '../../../lib/utils/messages'
-import { Application, UserProfile } from '@island.is/application/types'
-import { Identity } from '@island.is/api/schema'
+import { m } from '../../../lib/messages'
+import { Application } from '@island.is/application/types'
 
 export const clientInfoSection = buildSection({
   id: 'info',
@@ -29,33 +29,34 @@ export const clientInfoSection = buildSection({
           title: m.candidateFullName,
           width: 'half',
           readOnly: true,
-          defaultValue: (application: Application) => {
-            const nationalRegistry = application.externalData.identity
-              ?.data as Identity
-            return nationalRegistry?.name
-          },
+          defaultValue: (application: Application) =>
+            getValueViaPath<string>(
+              application.externalData,
+              'identity.data.name',
+            ),
         }),
         buildTextField({
           id: 'about.email',
           title: m.email,
           width: 'half',
           variant: 'email',
-          defaultValue: (application: Application) => {
-            const userProfile = application.externalData?.userProfile
-              ?.data as UserProfile
-            return userProfile?.email
-          },
+          defaultValue: (application: Application) =>
+            getValueViaPath<string>(
+              application.externalData,
+              'userProfile.data.email',
+            ),
         }),
         buildTextField({
           id: 'about.phoneNumber',
           title: m.phoneNumber,
           width: 'half',
           variant: 'tel',
-          defaultValue: (application: Application) => {
-            const userProfile = application.externalData?.userProfile
-              ?.data as UserProfile
-            return userProfile?.mobilePhoneNumber
-          },
+          format: '###-####',
+          defaultValue: (application: Application) =>
+            getValueViaPath<string>(
+              application.externalData,
+              'userProfile.data.mobilePhoneNumber',
+            ),
         }),
       ],
     }),

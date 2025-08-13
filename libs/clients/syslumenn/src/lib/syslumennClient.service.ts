@@ -1,7 +1,11 @@
 import { Inject, Injectable } from '@nestjs/common'
 import startOfDay from 'date-fns/startOfDay'
 
-import { AuthHeaderMiddleware } from '@island.is/auth-nest-tools'
+import {
+  Auth,
+  AuthHeaderMiddleware,
+  AuthMiddleware,
+} from '@island.is/auth-nest-tools'
 import { createEnhancedFetch, handle404 } from '@island.is/clients/middlewares'
 
 import {
@@ -77,14 +81,19 @@ import {
   mapVehicle,
   mapVehicleResponse,
 } from './syslumennClient.utils'
-
 import type { ConfigType } from '@island.is/nest/config'
+import { IdsClientConfig } from '@island.is/nest/config'
+import { logger } from '@island.is/logging'
+
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 @Injectable()
 export class SyslumennService {
   constructor(
     @Inject(SyslumennClientConfig.KEY)
     private clientConfig: ConfigType<typeof SyslumennClientConfig>,
+
+    @Inject(IdsClientConfig.KEY)
+    private idsClientConfig: ConfigType<typeof IdsClientConfig>,
   ) {}
 
   private async createApi() {
@@ -120,6 +129,33 @@ export class SyslumennService {
       }
     } else {
       throw new Error('Syslumenn client configuration and login went wrong')
+    }
+  }
+
+  private async createApiWithAuth(auth: Auth) {
+    const apiWithAuth = new SyslumennApi(
+      new Configuration({
+        fetchApi: createEnhancedFetch({
+          name: 'clients-syslumenn',
+          organizationSlug: 'syslumenn',
+          autoAuth: {
+            mode: 'tokenExchange',
+            issuer: this.idsClientConfig.issuer,
+            clientId: this.idsClientConfig.clientId,
+            clientSecret: this.idsClientConfig.clientSecret,
+            scope: [],
+          },
+        }),
+        headers: {
+          'Content-Type': 'application/json',
+          Accept: 'application/json',
+        },
+        basePath: this.clientConfig.url,
+      }),
+    )
+
+    return {
+      api: apiWithAuth.withMiddleware(new AuthMiddleware(auth)),
     }
   }
 
@@ -668,12 +704,56 @@ export class SyslumennService {
       )
   }
 
-  async checkCriminalRecord(nationalId: string) {
-    const { id, api } = await this.createApi()
-    return await api.kannaSakavottordGet({
-      audkenni: id,
-      kennitala: nationalId,
+  async checkCriminalRecord(auth: Auth) {
+    const { api } = await this.createApiWithAuth(auth)
+    // Note: District Commissioners (Sýslumenn) have requested that we include the
+    //       authorization token from island.is in the request in the following header
+    //       'islandis-token'. This is to comply with Sýslumenn's exposed usage of
+    //       DMR's endpoint on their system, that is to say, DC forwards this token
+    //       to DMR.
+    return await api
+      .withMiddleware({
+        pre: async (context) => {
+          context.init.headers = Object.assign({}, context.init.headers, {
+            'islandis-token': auth.authorization,
+          })
+        },
+      })
+      .kannaSakavottordAuthGet()
+  }
+
+  async uploadDataCriminalRecord(
+    auth: Auth,
+    persons: Person[],
+    attachments: Attachment[] | undefined,
+    extraData: { [key: string]: string },
+    uploadDataName: string,
+    uploadDataId?: string,
+  ): Promise<DataUploadResponse> {
+    logger.info('AfgreidaSakavottord Starting uploadProcess')
+    const { api } = await this.createApiWithAuth(auth)
+
+    const payload = constructUploadDataObject(
+      '',
+      persons,
+      attachments,
+      extraData,
+      uploadDataName,
+      uploadDataId,
+    )
+
+    const response = await api.afgreidaSakavottordPost(payload).catch((e) => {
+      throw new Error(`Syslumenn-client: AfgreidaSakavottord failed ${e.type}`)
     })
+
+    const success = response.skilabod === UPLOAD_DATA_SUCCESS
+    if (!success) {
+      throw new Error(
+        `POST AfgreidaSakavottord was not successful, response.skilabod: ${response.skilabod}`,
+      )
+    }
+
+    return mapDataUploadResponse(response)
   }
 
   async checkIfDelegationExists(

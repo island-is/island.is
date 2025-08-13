@@ -18,7 +18,7 @@ import {
   ReviewApprovalEnum,
   OnBehalf,
   Status,
-} from '../types'
+} from '../utils/enums'
 import { error } from './messages/error'
 import { isValid24HFormatTime } from '../utils/dateUtils'
 import { YES, YesOrNoEnum } from '@island.is/application/core'

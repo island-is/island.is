@@ -15,10 +15,5 @@ export const formSystemNavigation: PortalNavigationItem = {
       path: FormSystemPaths.Form,
       activeIfExact: true,
     },
-    {
-      name: m.rootName,
-      path: FormSystemPaths.FormApplications,
-      activeIfExact: true,
-    },
   ],
 }

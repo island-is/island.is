@@ -54,6 +54,12 @@ const asset = z
   .array()
   .optional()
 
+export type Files = {
+  name: string
+  key: string
+  url: string | undefined
+}
+
 const fileSchema = z.object({
   name: z.string(),
   key: z.string(),
@@ -118,6 +124,15 @@ export const estateSchema = z.object({
             email: z.string(),
           })
           .optional(),
+        // Málsvari 2
+        advocate2: z
+          .object({
+            name: z.string(),
+            nationalId: z.string(),
+            phone: z.string(),
+            email: z.string(),
+          })
+          .optional(),
       })
       .refine(
         ({ foreignCitizenship, nationalId }) => {
@@ -130,7 +145,7 @@ export const estateSchema = z.object({
         },
       )
 
-      /* Validating email and phone of member depending on whether the field is 
+      /* Validating email and phone of member depending on whether the field is
           enabled and whether member has advocate */
       .refine(
         ({ enabled, advocate, phone, noContactInfo }) => {

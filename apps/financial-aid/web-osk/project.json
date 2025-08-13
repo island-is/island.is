@@ -101,6 +101,19 @@
     "lint": {
       "executor": "@nx/eslint:lint"
     },
+    "e2e": {
+      "executor": "@nx/cypress:cypress",
+      "options": {
+        "cypressConfig": "apps/financial-aid/web-osk-e2e/cypress.config.ts",
+        "devServerTarget": "financial-aid-web-osk:serve",
+        "baseUrl": "http://localhost:4200"
+      },
+      "configurations": {
+        "production": {
+          "devServerTarget": ""
+        }
+      }
+    },
     "test": {
       "executor": "@nx/jest:jest",
       "options": {

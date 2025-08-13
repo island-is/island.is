@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 import { LanguageType } from '../languageType.model'
-import { ListTypesEnum } from './listTypes.enum'
+import { ListTypesEnum } from '@island.is/form-system/shared'
 
 export class ListType {
   @ApiProperty()

@@ -1210,7 +1210,9 @@ describe('Transition Case', () => {
               {
                 id: uuid(),
                 role: UserRole.PROSECUTOR,
-                institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+                institution: {
+                  type: InstitutionType.POLICE_PROSECUTORS_OFFICE,
+                },
               } as User,
             )
 
@@ -1235,7 +1237,9 @@ describe('Transition Case', () => {
                 {
                   id: uuid(),
                   role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+                  institution: {
+                    type: InstitutionType.POLICE_PROSECUTORS_OFFICE,
+                  },
                 } as User,
               )
 
@@ -1266,7 +1270,9 @@ describe('Transition Case', () => {
                 {
                   id: uuid(),
                   role: UserRole.PROSECUTOR,
-                  institution: { type: InstitutionType.PROSECUTORS_OFFICE },
+                  institution: {
+                    type: InstitutionType.POLICE_PROSECUTORS_OFFICE,
+                  },
                 } as User,
               )
 
@@ -1691,4 +1697,40 @@ describe('Transition Case', () => {
       })
     },
   )
+
+  describe.each(indictmentCases)('move %s', (type) => {
+    const allowedFromStates = [CaseState.RECEIVED]
+
+    describe.each(allowedFromStates)(
+      'state %s - should move case to submitted',
+      (fromState) => {
+        // Act
+        const res = transitionCase(
+          CaseTransition.MOVE,
+          { id: uuid(), state: fromState, type } as Case,
+          { id: uuid() } as User,
+        )
+
+        // Assert
+        expect(res).toMatchObject({ state: CaseState.SUBMITTED })
+      },
+    )
+
+    describe.each(
+      Object.values(CaseState).filter(
+        (state) => !allowedFromStates.includes(state),
+      ),
+    )('state %s - should not move case', (fromState) => {
+      // Arrange
+      const act = () =>
+        transitionCase(
+          CaseTransition.MOVE,
+          { id: uuid(), state: fromState, type } as Case,
+          { id: uuid() } as User,
+        )
+
+      // Act and assert
+      expect(act).toThrow(ForbiddenException)
+    })
+  })
 })

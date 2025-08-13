@@ -15,6 +15,7 @@ import {
 import { navigateTo } from '../../lib/deep-linking'
 import {
   GenericLicenseType,
+  GenericUserLicense,
   ListLicensesQuery,
   useListLicensesQuery,
 } from '../../graphql/types/schema'
@@ -54,6 +55,21 @@ const validateLicensesInitialData = ({
   return false
 }
 
+const isLicenseEmptyStateOrChildLicense = (license: GenericUserLicense) => {
+  const isPassportOrIdentityDocument =
+    license.license.type === GenericLicenseType.Passport ||
+    license.license.type === GenericLicenseType.IdentityDocument
+
+  // We receive an "empty" license item if the user has no passport or identity document
+  // We don't want to show them on the home screen
+  const noLicense =
+    isPassportOrIdentityDocument &&
+    !license?.payload?.metadata?.licenseNumber &&
+    !license?.payload?.data?.length
+
+  return !!(noLicense || license?.isOwnerChildOfUser)
+}
+
 const LicensesModule = React.memo(
   ({ data, loading, error }: LicenseModuleProps) => {
     const theme = useTheme()
@@ -72,6 +88,7 @@ const LicensesModule = React.memo(
 
     const items = allLicenses
       .filter((license) => license.__typename === 'GenericUserLicense')
+      ?.filter((license) => !isLicenseEmptyStateOrChildLicense(license))
       ?.slice(0, 3)
       .map((item, index) => (
         <WalletItem

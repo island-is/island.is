@@ -4,7 +4,8 @@ import { zfd } from 'zod-form-data'
 import {
   AuthAdminTranslatedValue,
   AuthAdminRefreshTokenExpiration,
-  AuthAdminClientClaim, AuthAdminClientSso,
+  AuthAdminClientClaim,
+  AuthAdminClientSso,
 } from '@island.is/api/schema'
 
 import { booleanCheckbox } from '../../utils/forms'
@@ -95,6 +96,7 @@ export const schema = {
       slidingRefreshTokenLifetime: z.optional(z.string()).transform((s) => {
         return typeof s === 'string' && s.length > 0 ? Number(s) : undefined
       }),
+      sso: booleanCheckbox,
     })
     .merge(defaultEnvironmentSchema)
     .refine(
@@ -114,7 +116,15 @@ export const schema = {
         message: 'errorPositiveNumber',
         path: ['inactivityLifetime'],
       },
-    ),
+    )
+    .transform((data) => {
+      const { sso, ...rest } = data
+
+      return {
+        ...rest,
+        sso: sso ? AuthAdminClientSso.enabled : AuthAdminClientSso.disabled,
+      }
+    }),
   [ClientFormTypes.applicationUrls]: z
     .object({
       redirectUris: z
@@ -169,7 +179,6 @@ export const schema = {
       supportTokenExchange: booleanCheckbox,
       requireConsent: booleanCheckbox,
       singleSession: booleanCheckbox,
-      sso: booleanCheckbox,
       accessTokenLifetime: z
         .string()
         .refine(checkIfStringIsPositiveNumber, {
@@ -187,17 +196,7 @@ export const schema = {
           return transformCustomClaims(s)
         }),
     })
-    .merge(defaultEnvironmentSchema)
-    .transform((data) => {
-      const { sso, ...rest } = data
-
-      return {
-        ...rest,
-        sso: sso
-          ? AuthAdminClientSso.enabled
-          : AuthAdminClientSso.disabled,
-      }
-    }),
+    .merge(defaultEnvironmentSchema),
   [ClientFormTypes.permissions]: z
     .object({
       addedScopes: zfd.repeatable(z.optional(z.array(z.string()))),

@@ -5,6 +5,16 @@
   "repository": "git@github.com:island-is/island.is.git",
   "author": "DevOps team",
   "license": "MIT",
+  "engines": {
+    "npm": "please-use-yarn",
+    "node": "18.12.0",
+    "yarn": "4.6"
+  },
+  "volta": {
+    "node": "18.12.0",
+    "yarn": "4.6.0"
+  },
+  "packageManager": "yarn@4.6.0",
   "scripts": {
     "build": "yarn run esbuild main.ts --outdir=./dist --platform=node --bundle",
     "test": "./node_modules/.bin/jest"
@@ -31,8 +41,5 @@
   },
   "resolutions": {
     "hosted-git-info": "^2.8.9"
-  },
-  "volta": {
-    "node": "18.8.0"
   }
 }

@@ -52,6 +52,8 @@ import {
   TitleVariants,
   OverviewField,
   CopyLinkField,
+  VehiclePermnoWithInfoField,
+  MaybeWithAnswersAndExternalData,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { Colors } from '@island.is/island-ui/theme'
@@ -139,6 +141,7 @@ export const buildDateField = (
     backgroundColor = 'blue',
     required,
     readOnly,
+    tempDisabled,
   } = data
   return {
     ...extractCommonFields(data),
@@ -154,6 +157,7 @@ export const buildDateField = (
     backgroundColor,
     required,
     readOnly,
+    tempDisabled,
   }
 }
 
@@ -249,6 +253,7 @@ export const buildAsyncSelectField = (
     isSearchable,
     isMulti,
     updateOnSelect,
+    isClearable,
   } = data
 
   return {
@@ -264,6 +269,7 @@ export const buildAsyncSelectField = (
     isSearchable,
     isMulti,
     updateOnSelect,
+    isClearable,
   }
 }
 
@@ -297,6 +303,7 @@ export const buildTextField = (
     placeholder,
     variant = 'text',
     format,
+    thousandSeparator,
     suffix,
     rows,
     required,
@@ -316,6 +323,7 @@ export const buildTextField = (
     backgroundColor,
     variant,
     format,
+    thousandSeparator,
     suffix,
     rows,
     required,
@@ -387,6 +395,7 @@ export const buildFileUploadField = (
     maxSize,
     maxSizeErrorText,
     totalMaxSize,
+    maxFileCount,
     forImageUpload,
   } = data
   return {
@@ -406,6 +415,7 @@ export const buildFileUploadField = (
     maxSize: maxSize ?? DEFAULT_FILE_SIZE_LIMIT,
     maxSizeErrorText,
     totalMaxSize: totalMaxSize ?? DEFAULT_TOTAL_FILE_SIZE_SUM,
+    maxFileCount,
     forImageUpload,
     type: FieldTypes.FILEUPLOAD,
     component: FieldComponents.FILEUPLOAD,
@@ -471,6 +481,7 @@ export const buildKeyValueField = (data: {
   paddingBottom?: BoxProps['padding']
   marginTop?: BoxProps['marginTop']
   marginBottom?: BoxProps['marginBottom']
+  tooltip?: FormText
 }): KeyValueField => {
   const {
     label,
@@ -485,6 +496,7 @@ export const buildKeyValueField = (data: {
     paddingBottom,
     marginTop,
     marginBottom,
+    tooltip,
   } = data
 
   return {
@@ -506,6 +518,7 @@ export const buildKeyValueField = (data: {
     paddingBottom,
     marginTop,
     marginBottom,
+    tooltip,
   }
 }
 
@@ -584,6 +597,16 @@ export const buildFieldRequired = (
   return maybeRequired
 }
 
+export const buildFieldReadOnly = (
+  application: Application,
+  maybeReadOnly?: MaybeWithAnswersAndExternalData<boolean>,
+) => {
+  if (typeof maybeReadOnly === 'function') {
+    return maybeReadOnly(application.answers, application.externalData)
+  }
+  return maybeReadOnly
+}
+
 export const buildRedirectToServicePortalField = (data: {
   id: string
   title?: FormText
@@ -652,7 +675,8 @@ export const buildExpandableDescriptionField = (
 export const buildAlertMessageField = (
   data: Omit<AlertMessageField, 'type' | 'component' | 'children'>,
 ): AlertMessageField => {
-  const { message, alertType, links } = data
+  const { message, alertType, links, shouldBlockInSetBeforeSubmitCallback } =
+    data
   return {
     ...extractCommonFields(data),
     children: undefined,
@@ -661,6 +685,7 @@ export const buildAlertMessageField = (
     type: FieldTypes.ALERT_MESSAGE,
     component: FieldComponents.ALERT_MESSAGE,
     links,
+    shouldBlockInSetBeforeSubmitCallback,
   }
 }
 
@@ -897,6 +922,7 @@ export const buildTableRepeaterField = (
     maxRows,
     onSubmitLoad,
     loadErrorMessage,
+    initActiveFieldIfEmpty,
   } = data
 
   return {
@@ -917,6 +943,7 @@ export const buildTableRepeaterField = (
     maxRows,
     onSubmitLoad,
     loadErrorMessage,
+    initActiveFieldIfEmpty,
   }
 }
 
@@ -932,6 +959,10 @@ export const buildFieldsRepeaterField = (
     removeItemButtonText,
     addItemButtonText,
     saveItemButtonText,
+    hideAddButton,
+    hideRemoveButton,
+    displayTitleAsAccordion,
+    itemCondition,
     minRows,
     maxRows,
   } = data
@@ -949,6 +980,10 @@ export const buildFieldsRepeaterField = (
     removeItemButtonText,
     addItemButtonText,
     saveItemButtonText,
+    hideAddButton,
+    hideRemoveButton,
+    displayTitleAsAccordion,
+    itemCondition,
     minRows,
     maxRows,
   }
@@ -1147,7 +1182,15 @@ export const buildAccordionField = (
 export const buildBankAccountField = (
   data: Omit<BankAccountField, 'type' | 'component' | 'children'>,
 ): BankAccountField => {
-  const { title = '', id, marginBottom, marginTop, titleVariant } = data
+  const {
+    title = '',
+    id,
+    marginBottom,
+    marginTop,
+    titleVariant,
+    defaultValue,
+  } = data
+
   return {
     children: undefined,
     id,
@@ -1157,6 +1200,7 @@ export const buildBankAccountField = (
     titleVariant,
     type: FieldTypes.BANK_ACCOUNT,
     component: FieldComponents.BANK_ACCOUNT,
+    defaultValue,
   }
 }
 
@@ -1170,8 +1214,13 @@ export const buildOverviewField = (
     description,
     backId,
     items,
+    loadItems,
     attachments,
     tableData,
+    loadTableData,
+    bottomLine,
+    hideIfEmpty,
+    displayTitleAsAccordion,
   } = data
   return {
     ...extractCommonFields(data),
@@ -1181,8 +1230,13 @@ export const buildOverviewField = (
     description,
     backId,
     items,
+    loadItems,
     attachments,
     tableData,
+    loadTableData,
+    bottomLine,
+    hideIfEmpty,
+    displayTitleAsAccordion,
     type: FieldTypes.OVERVIEW,
     component: FieldComponents.OVERVIEW,
     children: undefined,
@@ -1203,5 +1257,33 @@ export const buildCopyLinkField = (
     type: FieldTypes.COPY_LINK,
     component: FieldComponents.COPY_LINK,
     children: undefined,
+  }
+}
+
+export const buildVehiclePermnoWithInfoField = (
+  data: Omit<VehiclePermnoWithInfoField, 'type' | 'component' | 'children'>,
+): VehiclePermnoWithInfoField => {
+  const {
+    required,
+    loadValidation,
+    permnoLabel,
+    makeAndColorLabel,
+    errorTitle,
+    fallbackErrorMessage,
+    validationFailedErrorMessage,
+  } = data
+
+  return {
+    ...extractCommonFields(data),
+    children: undefined,
+    type: FieldTypes.VEHICLE_PERMNO_WITH_INFO,
+    component: FieldComponents.VEHICLE_PERMNO_WITH_INFO,
+    required,
+    loadValidation,
+    permnoLabel,
+    makeAndColorLabel,
+    errorTitle,
+    fallbackErrorMessage,
+    validationFailedErrorMessage,
   }
 }

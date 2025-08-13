@@ -156,11 +156,22 @@ const Screen: FC<React.PropsWithChildren<ScreenProps>> = ({
 
   const submitField = useMemo(() => {
     const foundSubmitField = findSubmitField(screen)
-    const submitFieldCondition =
-      typeof foundSubmitField?.condition === 'function'
-        ? foundSubmitField?.condition(formValue, externalData, user)
-        : true
-    return submitFieldCondition ? foundSubmitField : undefined
+
+    if (!foundSubmitField) {
+      return undefined
+    }
+
+    const submitFieldCondition = foundSubmitField
+      ?.map((field) => {
+        if (typeof field.condition === 'function') {
+          return field.condition(formValue, externalData, user)
+            ? field
+            : undefined
+        }
+        return field
+      })
+      .filter(Boolean)
+    return submitFieldCondition.length > 0 ? submitFieldCondition[0] : undefined
   }, [formValue, externalData, screen, user])
 
   const [beforeSubmitError, setBeforeSubmitError] = useState({})

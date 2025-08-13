@@ -10,10 +10,10 @@ import { useContext, useState } from 'react'
 import { ControlContext } from '../../context/ControlContext'
 import * as styles from './NavComponent.css'
 import cn from 'classnames'
-import { Box, Checkbox } from '@island.is/island-ui/core'
+import { Box, Checkbox, Text } from '@island.is/island-ui/core'
 import { truncateName } from '../../lib/utils/truncateText'
 import { NavButtons } from './components/NavButtons'
-import { SectionTypes } from '@island.is/form-system/ui'
+import { SectionTypes } from '@island.is/form-system/enums'
 
 type Props = {
   type: ItemType
@@ -87,7 +87,6 @@ export const NavComponent = ({
       </div>
     )
   }
-
   return (
     <Box
       className={cn({
@@ -118,26 +117,31 @@ export const NavComponent = ({
           </Box>
           <Box
             paddingLeft={2}
-            style={{
-              fontWeight: 'bold',
-            }}
             overflow="hidden"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
           >
-            {truncateName(data?.name?.is ?? '', active, type)}
-          </Box>
-          {focusComponent && (
-            <Box
-              style={{
-                marginLeft: 'auto',
-                verticalAlign: 'middle',
-              }}
+            <Text
+              id={`formSystem.${type.toLowerCase()}.name`}
+              variant="medium"
+              truncate={true}
+              fontWeight="semiBold"
             >
-              {!(
-                type === 'Section' &&
-                (data as FormSystemSection).sectionType !== SectionTypes.INPUT
-              ) && <NavButtons />}
-            </Box>
-          )}
+              {data?.name?.is}
+            </Text>
+          </Box>
+          <Box
+            style={{
+              marginLeft: 'auto',
+              verticalAlign: 'middle',
+            }}
+          >
+            {!(
+              type === 'Section' &&
+              (data as FormSystemSection).sectionType !== SectionTypes.INPUT
+            ) && <NavButtons id={data.id} type={type} />}
+          </Box>
         </Box>
       ) : (
         <Box
@@ -157,8 +161,31 @@ export const NavComponent = ({
           >
             {/* {index} */}
           </Box>
-          <Box id="2" paddingLeft={1}>
-            {truncateName(data?.name?.is ?? '', active, type)}
+          <Box
+            id="2"
+            paddingLeft={1}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Text
+              id={`formSystem.${type.toLowerCase()}.name`}
+              variant="medium"
+              truncate={true}
+            >
+              {data?.name?.is}
+            </Text>
+          </Box>
+          <Box
+            style={{
+              marginLeft: 'auto',
+              verticalAlign: 'middle',
+            }}
+          >
+            {!(
+              type === 'Section' &&
+              (data as FormSystemSection).sectionType !== SectionTypes.INPUT
+            ) && <NavButtons id={data.id} type={type} />}
           </Box>
           {selectable && (
             <Box className={cn(styles.selectableComponent)} marginLeft="auto">

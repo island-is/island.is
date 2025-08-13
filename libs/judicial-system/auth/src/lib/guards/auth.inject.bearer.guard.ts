@@ -31,6 +31,7 @@ export class JwtInjectBearerAuthGuard extends AuthGuard('jwt') {
 
     return super.canActivate(context)
   }
+
   handleRequest<TUser extends AuthUser>(err: Error, user?: TUser): TUser {
     if (err || !user?.currentUser) {
       throw new UnauthorizedException(err?.message ?? 'Unauthorized')

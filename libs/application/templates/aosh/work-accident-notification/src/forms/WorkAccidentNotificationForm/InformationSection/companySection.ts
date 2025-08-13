@@ -15,8 +15,6 @@ import {
   PostCodeDto,
   SizeOfTheEnterpriseDto,
 } from '@island.is/clients/work-accident-ver'
-import { FormValue } from '@island.is/application/types'
-import { isCompany } from '../../../utils'
 
 export const companySection = buildSubSection({
   id: 'company',
@@ -185,7 +183,7 @@ export const companySection = buildSubSection({
           backgroundColor: 'blue',
           width: 'half',
           required: true,
-          defaultValue: (application: Application) => '',
+          defaultValue: (_application: Application) => '',
         }),
         buildTextField({
           id: 'companyInformation.addressOfBranch',
@@ -193,7 +191,7 @@ export const companySection = buildSubSection({
           backgroundColor: 'blue',
           width: 'half',
           doesNotRequireAnswer: true,
-          defaultValue: (application: Application) => '',
+          defaultValue: (_application: Application) => '',
           maxLength: 21,
         }),
         buildSelectField({

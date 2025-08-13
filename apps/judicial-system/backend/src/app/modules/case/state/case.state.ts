@@ -84,6 +84,19 @@ const indictmentCaseStateMachine: Map<
     },
   ],
   [
+    IndictmentCaseTransition.MOVE,
+    {
+      fromStates: [IndictmentCaseState.RECEIVED],
+      transition: (update: UpdateCase) => ({
+        ...update,
+        courtCaseNumber: null,
+        judgeId: null,
+        registrarId: null,
+        state: CaseState.SUBMITTED,
+      }),
+    },
+  ],
+  [
     IndictmentCaseTransition.ASK_FOR_CANCELLATION,
     {
       fromStates: [IndictmentCaseState.SUBMITTED, IndictmentCaseState.RECEIVED],
@@ -182,6 +195,13 @@ const requestCaseCompletionSideEffect =
       rulingDate: currentCourtEndTime,
     }
 
+    // Handle completed without ruling
+    const isCompletedWithoutRuling =
+      update.isCompletedWithoutRuling ?? theCase.isCompletedWithoutRuling
+    if (isCompletedWithoutRuling) {
+      newUpdate.rulingSignatureDate = null
+    }
+
     // Handle appealed in court
     const hasBeenAppealed = update.appealState ?? theCase.appealState
     const prosecutorAppealedInCourt =
@@ -246,6 +266,20 @@ const requestCaseStateMachine: Map<RequestCaseTransition, RequestCaseRule> =
         transition: (update: UpdateCase) => ({
           ...update,
           state: CaseState.RECEIVED,
+        }),
+      },
+    ],
+    [
+      RequestCaseTransition.MOVE,
+      {
+        fromStates: [RequestCaseState.RECEIVED],
+        fromAppealStates: [undefined],
+        transition: (update: UpdateCase) => ({
+          ...update,
+          courtCaseNumber: null,
+          judgeId: null,
+          registrarId: null,
+          state: CaseState.SUBMITTED,
         }),
       },
     ],

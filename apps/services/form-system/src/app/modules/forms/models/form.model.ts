@@ -16,7 +16,7 @@ import { FormApplicantType } from '../../formApplicantTypes/models/formApplicant
 import { Dependency } from '../../../dataTypes/dependency.model'
 import { FormCertificationType } from '../../formCertificationTypes/models/formCertificationType.model'
 import { FormUrl } from '../../formUrls/models/formUrl.model'
-import { FormStatus } from '../../../enums/formStatus'
+import { FormStatus } from '@island.is/form-system/shared'
 
 @Table({ tableName: 'form' })
 export class Form extends Model<Form> {
@@ -44,10 +44,23 @@ export class Form extends Model<Form> {
 
   @Column({
     type: DataType.STRING,
-    allowNull: false,
-    defaultValue: ' ',
+    allowNull: true,
+    unique: true,
   })
   slug!: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: false,
+  })
+  organizationNationalId!: string
+
+  @Column({
+    type: DataType.JSON,
+    allowNull: true,
+    defaultValue: new LanguageType(),
+  })
+  organizationDisplayName?: LanguageType
 
   @Column({
     type: DataType.DATE,
@@ -61,6 +74,13 @@ export class Form extends Model<Form> {
 
   @UpdatedAt
   modified!: CreationOptional<Date>
+
+  @Column({
+    type: DataType.BOOLEAN,
+    allowNull: false,
+    defaultValue: false,
+  })
+  hasPayment!: boolean
 
   @Column({
     type: DataType.BOOLEAN,
@@ -115,6 +135,13 @@ export class Form extends Model<Form> {
     allowNull: true,
   })
   dependencies?: Dependency[]
+
+  @Column({
+    type: DataType.JSONB,
+    allowNull: false,
+    defaultValue: [],
+  })
+  allowedDelegationTypes!: string[]
 
   @HasMany(() => Section)
   sections!: Section[]

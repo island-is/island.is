@@ -1,6 +1,5 @@
-import { ApplicationContext } from '@island.is/application/types'
-
 import { getValueViaPath, NO, YES, YesOrNo } from '@island.is/application/core'
+import { ApplicationContext } from '@island.is/application/types'
 import {
   PARENTAL_GRANT,
   PARENTAL_GRANT_STUDENTS,
@@ -26,7 +25,10 @@ export const allEmployersHaveApproved = (context: ApplicationContext) => {
 
   // We need to check if the employer has opened the application (has a value in 'reviewerNationalRegistryId')
   // because it is not recorded if the employer has approved the application until after this check
-  return employers.every((e) => !!e.reviewerNationalRegistryId)
+  // Employer does not need to approve application if "stillEmployed" is NO
+  return employers.every(
+    (e) => !!e.reviewerNationalRegistryId || e.stillEmployed === NO,
+  )
 }
 
 export const hasEmployer = (context: ApplicationContext) => {

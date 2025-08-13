@@ -7,7 +7,6 @@ import {
   IdsUserGuard,
   type User,
 } from '@island.is/auth-nest-tools'
-import { Audit } from '@island.is/nest/audit'
 import { ScreensService } from './screens.service'
 import {
   CreateScreenInput,
@@ -21,7 +20,7 @@ import { Screen } from '../../models/screen.model'
 @UseGuards(IdsUserGuard)
 @CodeOwner(CodeOwners.Advania)
 export class ScreensResolver {
-  constructor(private readonly screensService: ScreensService) { }
+  constructor(private readonly screensService: ScreensService) {}
 
   @Mutation(() => Screen, {
     name: 'createFormSystemScreen',
@@ -46,7 +45,7 @@ export class ScreensResolver {
 
   @Mutation(() => Screen, {
     name: 'updateFormSystemScreen',
-    nullable: true
+    nullable: true,
   })
   async updateScreen(
     @Args('input') input: UpdateScreenInput,

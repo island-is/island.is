@@ -70,6 +70,10 @@ export const m = defineMessages({
     id: 'sp.social-insurance-maintenance:payment-types',
     defaultMessage: 'Greiðslutegundir',
   },
+  year: {
+    id: 'sp.social-insurance-maintenance:year',
+    defaultMessage: 'Árið',
+  },
   yearCumulativeTotal: {
     id: 'sp.social-insurance-maintenance:year-cumulative-total',
     defaultMessage: 'Samtals fyrir árið',
@@ -80,6 +84,10 @@ export const m = defineMessages({
   },
   paymentsReceived: {
     id: 'sp.social-insurance-maintenance:payments-received',
+    defaultMessage: 'Útborgað',
+  },
+  totalPaymentsReceived: {
+    id: 'sp.social-insurance-maintenance:total-payments-received',
     defaultMessage: 'Útborgað',
   },
   noPaymentsFound: {
@@ -97,6 +105,10 @@ export const m = defineMessages({
   submitIncomePlan: {
     id: 'sp.social-insurance-maintenance:submit-income-plan',
     defaultMessage: 'Senda inn tekjuáætlun',
+  },
+  type: {
+    id: 'sp.social-insurance-maintenance:type',
+    defaultMessage: 'Tegund',
   },
   incomeType: {
     id: 'sp.social-insurance-maintenance:income-type',
@@ -147,5 +159,9 @@ export const m = defineMessages({
     id: 'sp.social-insurance-maintenance:payment-plan-temporarily-unavailable',
     defaultMessage:
       'Bráðabirgðagreiðsluáætlun 2025 verður tilbúin seinni part desember',
+  },
+  breakdown: {
+    id: 'sp.social-insurance-maintenance:payment-plan-breakdown',
+    defaultMessage: 'Sundurliðun',
   },
 })

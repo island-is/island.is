@@ -22,7 +22,7 @@ describe('useHistorySync', () => {
       application: {
         id: '12315151515',
         assignees: [],
-        typeId: ApplicationTypes.EXAMPLE,
+        typeId: ApplicationTypes.EXAMPLE_COMMON_ACTIONS,
         attachments: {},
         externalData: {},
         answers: {},

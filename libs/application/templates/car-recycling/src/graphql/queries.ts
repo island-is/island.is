@@ -11,6 +11,7 @@ export const GetUsersVehiclesV2Query = gql`
         requiresMileageRegistration
         canRegisterMileage
         role
+        latestMileage
       }
       paging {
         pageNumber

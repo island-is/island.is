@@ -62,15 +62,15 @@ export interface Approval {
 }
 export interface PreregistrationInput {
   guid?: string
-  priority?: number
-  appliedForPersonId?: string
+  priority: number
+  appliedForPersonId: string
   approvalA?: Approval
   approvalB?: Approval
   contactInfo?: ContactInfo
   documents?: Document[]
   deliveryName?: string
-  type?: string
-  subType?: string
+  type: string
+  subType: string
 }
 
 export interface DocumentLossnInput {
@@ -81,6 +81,11 @@ export interface DocumentLossnInput {
 
 export interface Passport {
   userPassport?: IdentityDocument
+  childPassports?: IdentityDocumentChild[]
+}
+
+export interface PassportsCollection {
+  userPassports?: IdentityDocument[]
   childPassports?: IdentityDocumentChild[]
 }
 

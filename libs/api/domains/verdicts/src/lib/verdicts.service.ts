@@ -13,6 +13,13 @@ export class VerdictsService {
       searchTerm: input.searchTerm ?? '',
       pageNumber: input.page ?? 1,
       courtLevel: input.courtLevel,
+      keywords: input.keywords,
+      caseCategories: input.caseCategories,
+      caseTypes: input.caseTypes,
+      caseNumber: input.caseNumber,
+      dateFrom: input.dateFrom,
+      dateTo: input.dateTo,
+      laws: input.laws,
     })
     return {
       items: response.items,

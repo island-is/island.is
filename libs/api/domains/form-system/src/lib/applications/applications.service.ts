@@ -6,17 +6,29 @@ import { handle4xx } from '../../utils/errorHandler'
 import {
   ApplicationsApi,
   ApplicationsControllerCreateRequest,
+  ApplicationsControllerDeleteApplicationRequest,
+  ApplicationsControllerFindAllByOrganizationRequest,
+  ApplicationsControllerFindAllBySlugAndUserRequest,
   ApplicationsControllerGetApplicationRequest,
+  ApplicationsControllerSaveScreenRequest,
   ApplicationsControllerSubmitRequest,
-  ApplicationsControllerSubmitScreenRequest,
+  ApplicationsControllerSubmitSectionRequest,
   ApplicationsControllerUpdateRequest,
 } from '@island.is/clients/form-system'
 import {
+  ApplicationsInput,
   CreateApplicationInput,
   GetApplicationInput,
+  GetApplicationsInput,
   SubmitScreenInput,
+  SubmitSectionInput,
+  UpdateApplicationInput,
 } from '../../dto/application.input'
-import { Application } from '../../models/applications.model'
+import {
+  Application,
+  ApplicationResponse,
+} from '../../models/applications.model'
+import { Screen } from '../../models/screen.model'
 import { UpdateApplicationDependenciesInput } from '../../dto/application.input'
 
 @Injectable()
@@ -25,7 +37,7 @@ export class ApplicationsService {
     @Inject(LOGGER_PROVIDER)
     private logger: Logger,
     private applicationsApi: ApplicationsApi,
-  ) { }
+  ) {}
 
   // eslint-disable-next-line
   handleError(error: any, errorDetail?: string): ApolloError | null {
@@ -46,11 +58,9 @@ export class ApplicationsService {
     auth: User,
     input: CreateApplicationInput,
   ): Promise<Application> {
-    const response = await this.applicationsApiWithAuth(auth)
-      .applicationsControllerCreate(
-        input as ApplicationsControllerCreateRequest,
-      )
-
+    const response = await this.applicationsApiWithAuth(
+      auth,
+    ).applicationsControllerCreate(input as ApplicationsControllerCreateRequest)
     return response as Application
   }
 
@@ -67,34 +77,83 @@ export class ApplicationsService {
     return response as Application
   }
 
+  async getApplications(
+    auth: User,
+    input: ApplicationsInput,
+  ): Promise<ApplicationResponse> {
+    const response = await this.applicationsApiWithAuth(auth)
+      .applicationsControllerFindAllByOrganization(
+        input as ApplicationsControllerFindAllByOrganizationRequest,
+      )
+      .catch((e) =>
+        handle4xx(e, this.handleError, 'failed to get applications'),
+      )
+    return response as ApplicationResponse
+  }
+
+  async getAllApplications(
+    auth: User,
+    input: GetApplicationsInput,
+  ): Promise<ApplicationResponse> {
+    const response = await this.applicationsApiWithAuth(auth)
+      .applicationsControllerFindAllBySlugAndUser(
+        input as ApplicationsControllerFindAllBySlugAndUserRequest,
+      )
+      .catch((e) =>
+        handle4xx(e, this.handleError, 'failed to get applications'),
+      )
+    return response as ApplicationResponse
+  }
+
   async updateDependencies(
     auth: User,
-    input: UpdateApplicationDependenciesInput
+    input: UpdateApplicationDependenciesInput,
   ): Promise<void> {
-    const response = await this.applicationsApiWithAuth(auth)
-      .applicationsControllerUpdate(
-        input as ApplicationsControllerUpdateRequest
-      )
+    await this.applicationsApiWithAuth(auth).applicationsControllerUpdate(
+      input as ApplicationsControllerUpdateRequest,
+    )
   }
 
   async submitApplication(
     auth: User,
-    input: GetApplicationInput
+    input: GetApplicationInput,
   ): Promise<void> {
-    const response = await this.applicationsApiWithAuth(auth)
-      .applicationsControllerSubmit(
-        input as ApplicationsControllerSubmitRequest
-      )
+    await this.applicationsApiWithAuth(auth).applicationsControllerSubmit(
+      input as ApplicationsControllerSubmitRequest,
+    )
   }
 
-  async submitScreen(
+  async updateApplication(
     auth: User,
-    input: SubmitScreenInput
+    input: UpdateApplicationInput,
   ): Promise<void> {
-    const response = await this.applicationsApiWithAuth(auth)
-      .applicationsControllerSubmitScreen(
-        input as ApplicationsControllerSubmitScreenRequest
-      )
+    await this.applicationsApiWithAuth(auth).applicationsControllerUpdate(
+      input as ApplicationsControllerUpdateRequest,
+    )
   }
 
+  async saveScreen(auth: User, input: SubmitScreenInput): Promise<Screen> {
+    const response = await this.applicationsApiWithAuth(
+      auth,
+    ).applicationsControllerSaveScreen(
+      input as ApplicationsControllerSaveScreenRequest,
+    )
+    return response
+  }
+
+  async submitSection(auth: User, input: SubmitSectionInput): Promise<void> {
+    await this.applicationsApiWithAuth(
+      auth,
+    ).applicationsControllerSubmitSection(
+      input as ApplicationsControllerSubmitSectionRequest,
+    )
+  }
+
+  async deleteApplication(auth: User, input: string): Promise<void> {
+    await this.applicationsApiWithAuth(
+      auth,
+    ).applicationsControllerDeleteApplication({
+      id: input,
+    } as ApplicationsControllerDeleteApplicationRequest)
+  }
 }

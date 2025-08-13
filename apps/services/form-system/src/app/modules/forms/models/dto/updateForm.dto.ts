@@ -24,6 +24,12 @@ export class UpdateFormDto {
   @ApiPropertyOptional({ type: LanguageType })
   name?: LanguageType
 
+  @ValidateNested()
+  @Type(() => LanguageType)
+  @IsOptional()
+  @ApiPropertyOptional({ type: LanguageType })
+  organizationDisplayName?: LanguageType
+
   @IsString()
   @IsOptional()
   @ApiPropertyOptional()
@@ -33,6 +39,11 @@ export class UpdateFormDto {
   @IsOptional()
   @ApiPropertyOptional({ type: Date })
   invalidationDate?: Date
+
+  @IsBoolean()
+  @IsOptional()
+  @ApiPropertyOptional()
+  hasPayment?: boolean
 
   @IsBoolean()
   @IsOptional()

@@ -44,7 +44,7 @@ export const Periods = ({
             <DataValue
               key={`SummaryTimeline-${index}`}
               label={period.title}
-              value={value}
+              value={value ?? ''}
             />
           )
         })}

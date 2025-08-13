@@ -7,7 +7,6 @@ import { ScreenDto } from '../../screens/models/dto/screen.dto'
 import { SectionDto } from '../../sections/models/dto/section.dto'
 import { Dependency } from '../../../dataTypes/dependency.model'
 import { ValueDto } from './dto/value.dto'
-import { ListItem } from '../../listItems/models/listItem.model'
 import { ListItemDto } from '../../listItems/models/dto/listItem.dto'
 
 @Injectable()
@@ -23,8 +22,10 @@ export class ApplicationMapper {
       completed: application.completed,
       status: application.status,
       formId: form.id,
+      modified: application.modified,
       slug: form.slug,
       formName: form.name,
+      stopProgressOnValidatingScreen: form.stopProgressOnValidatingScreen,
       submittedAt: application.submittedAt,
       events: application.events,
       sections: [],
@@ -103,6 +104,7 @@ export class ApplicationMapper {
       formId: form?.id,
       slug: form?.slug,
       formName: form?.name,
+      stopProgressOnValidatingScreen: form?.stopProgressOnValidatingScreen,
       submittedAt: application.submittedAt,
       events: application.events?.map((event) => {
         return {

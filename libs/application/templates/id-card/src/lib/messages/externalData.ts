@@ -72,7 +72,7 @@ export const externalData = {
     subTitle: {
       id: 'id.application:externalData.nationalRegistry.subTitle',
       defaultMessage:
-        'Upplýsingar frá Þjóðskrá um nafn, kennitölu og lögheimili.',
+        'Til þess að auðvelda fyrir sækjum við persónuupplýsingar úr Þjóðskrá til þess að fylla út umsóknina.',
       description: 'National Registry sub title',
     },
   }),

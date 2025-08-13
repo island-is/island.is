@@ -2,6 +2,7 @@ import {
   buildAlertMessageField,
   buildHiddenInput,
   buildHiddenInputWithWatchedValue,
+  buildLinkField,
   buildMultiField,
   buildRadioField,
   buildSection,
@@ -93,6 +94,14 @@ export const personalInformationSection = buildSection({
 
             return phone
           },
+        }),
+        buildLinkField({
+          id: 'paymentArrangement.individualInfo.changeInfo',
+          title: personalMessages.labels.changeInfo,
+          link: '/minarsidur/min-gogn/stillingar/',
+          variant: 'text',
+          iconProps: { icon: 'arrowForward' },
+          justifyContent: 'flexEnd',
         }),
         buildRadioField({
           id: 'applicant.registerManyQuestion',

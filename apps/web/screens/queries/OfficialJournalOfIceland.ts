@@ -70,12 +70,19 @@ export const ADVERT_QUERY = gql`
           html
           pdfUrl
         }
-        corrections {
+        additions {
+          id
           title
+          html
+          order
+        }
+        corrections {
           description
           advertId
           documentPdfUrl
           createdDate
+          legacyDate
+          isLegacy
         }
       }
     }

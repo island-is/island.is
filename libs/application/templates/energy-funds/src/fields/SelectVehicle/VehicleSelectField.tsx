@@ -1,12 +1,7 @@
 import { FieldBaseProps, Option } from '@island.is/application/types'
 import { useLocale } from '@island.is/localization'
-import { FC, useCallback, useEffect, useState } from 'react'
-import {
-  ActionCard,
-  AlertMessage,
-  Box,
-  SkeletonLoader,
-} from '@island.is/island-ui/core'
+import { FC, useCallback, useState } from 'react'
+import { ActionCard, Box, SkeletonLoader } from '@island.is/island-ui/core'
 
 import { SelectController } from '@island.is/shared/form-fields'
 import { useFormContext } from 'react-hook-form'

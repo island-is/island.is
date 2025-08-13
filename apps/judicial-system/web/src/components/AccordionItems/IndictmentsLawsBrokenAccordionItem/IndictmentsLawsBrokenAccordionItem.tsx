@@ -4,14 +4,14 @@ import { useIntl } from 'react-intl'
 import { Accordion, AccordionItem, Text } from '@island.is/island-ui/core'
 import { lawsBrokenAccordion } from '@island.is/judicial-system-web/messages/Core/lawsBrokenAccordion'
 import { Case } from '@island.is/judicial-system-web/src/graphql/schema'
-import { useIndictmentCounts } from '@island.is/judicial-system-web/src/utils/hooks'
+import { useLawTag } from '@island.is/judicial-system-web/src/utils/hooks'
 
 interface Props {
   workingCase: Case
 }
 
 export const useIndictmentsLawsBroken = (workingCase: Case) => {
-  const { lawTag } = useIndictmentCounts()
+  const lawTag = useLawTag()
   const lawsBroken = new Set<string>()
 
   workingCase.indictmentCounts?.map((indictmentCount) =>

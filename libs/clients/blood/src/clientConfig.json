@@ -1,0 +1,103 @@
+{
+  "openapi": "3.0.1",
+  "info": {
+    "title": "Sjúklinga gögn",
+    "contact": {
+      "name": "Þórólfur Ingi Þórsson",
+      "email": "thorolfur@landspitali.is"
+    },
+    "version": "v1"
+  },
+  "paths": {
+    "/api/blood": {
+      "get": {
+        "tags": ["Blood"],
+        "summary": "Get blood information for national id",
+        "responses": {
+          "200": {
+            "description": "OK",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/PatientBlood" }
+              }
+            }
+          },
+          "401": {
+            "description": "Unauthorized",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "403": {
+            "description": "Forbidden",
+            "content": {
+              "application/json": {
+                "schema": { "$ref": "#/components/schemas/ProblemDetails" }
+              }
+            }
+          },
+          "500": { "description": "Internal Server Error" }
+        }
+      }
+    }
+  },
+  "components": {
+    "schemas": {
+      "DataInfo": {
+        "type": "object",
+        "properties": {
+          "Descripton": {
+            "type": "string",
+            "description": "Text description of the subject",
+            "nullable": true
+          },
+          "Page": {
+            "type": "string",
+            "description": "Url for further information",
+            "format": "uri",
+            "nullable": true
+          }
+        },
+        "additionalProperties": false,
+        "description": "Further information about topic"
+      },
+      "PatientBlood": {
+        "type": "object",
+        "properties": {
+          "NationalId": {
+            "type": "string",
+            "description": "Person national id",
+            "nullable": true
+          },
+          "Type": {
+            "type": "string",
+            "description": "Blood group information",
+            "nullable": true
+          },
+          "Registerd": {
+            "type": "string",
+            "description": "Date of registration",
+            "format": "date-time",
+            "nullable": true
+          },
+          "BloodInfo": { "$ref": "#/components/schemas/DataInfo" }
+        },
+        "additionalProperties": false,
+        "description": "Information about a person blood type"
+      },
+      "ProblemDetails": {
+        "type": "object",
+        "properties": {
+          "type": { "type": "string", "nullable": true },
+          "title": { "type": "string", "nullable": true },
+          "status": { "type": "integer", "format": "int32", "nullable": true },
+          "detail": { "type": "string", "nullable": true },
+          "instance": { "type": "string", "nullable": true }
+        },
+        "additionalProperties": false
+      }
+    }
+  }
+}

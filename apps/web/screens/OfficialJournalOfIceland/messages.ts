@@ -3,12 +3,16 @@ import { defineMessages } from 'react-intl'
 export const m = {
   breadcrumb: defineMessages({
     frontpage: {
-      id: 'web.ojoi.breadcrumb.frontpage',
+      id: 'web.ojoi:breadcrumb.frontpage',
       defaultMessage: 'Ísland.is',
     },
     help: {
-      id: 'web.ojoi.breadcrumb.help',
+      id: 'web.ojoi:breadcrumb.help',
       defaultMessage: 'Leiðbeiningar',
+    },
+    about: {
+      id: 'web.ojoi:breadcrumb.about',
+      defaultMessage: 'Um stjórnartíðindi',
     },
   }),
   general: defineMessages({
@@ -32,10 +36,14 @@ export const m = {
       defaultMessage:
         'https://images.ctfassets.net/8k0h54kbe6bj/5LqU9yD9nzO5oOijpZF0K0/b595e1cf3e72bc97b2f9d869a53f5da9/LE_-_Jobs_-_S3.png',
     },
+    readMore: {
+      id: 'web.ojoi:home.readMore',
+      defaultMessage: 'Lesa meira',
+    },
 
     inputPlaceholder: {
       id: 'web.ojoi:home.inputPlaceholder',
-      defaultMessage: 'Leitaðu í stjórnartíðindum',
+      defaultMessage: 'Leitaðu í Stjórnartíðindum',
     },
     shortcuts: {
       id: 'web.ojoi:home.shortcuts',
@@ -129,6 +137,10 @@ export const m = {
       id: 'web.ojoi:search.typeAll',
       defaultMessage: 'Allar tegundir',
     },
+    chooseYear: {
+      id: 'web.ojoi:search.chooseYear',
+      defaultMessage: 'Veldu ártal',
+    },
     categoriesLabel: {
       id: 'web.ojoi:search.categoriesLabel',
       defaultMessage: 'Málaflokkur',
@@ -143,15 +155,15 @@ export const m = {
     },
     dateFromLabel: {
       id: 'web.ojoi:search.dateFromLabel',
-      defaultMessage: 'Dags. frá',
+      defaultMessage: 'Útgáfudagsetning frá',
+    },
+    dateToLabel: {
+      id: 'web.ojoi:search.dateToLabel',
+      defaultMessage: 'Útgáfudagsetning til',
     },
     dateFromPlaceholder: {
       id: 'web.ojoi:search.dateFromPlaceholder',
       defaultMessage: 'Veldu upphafsdagsetningu',
-    },
-    dateToLabel: {
-      id: 'web.ojoi:search.dateToLabel',
-      defaultMessage: 'Dags. til',
     },
     dateToPlaceholder: {
       id: 'web.ojoi:search.dateToPlaceholder',
@@ -168,6 +180,10 @@ export const m = {
     institutionAll: {
       id: 'web.ojoi:search.institutionAll',
       defaultMessage: 'Allir stofnanir',
+    },
+    allYears: {
+      id: 'web.ojoi:search.allYears',
+      defaultMessage: 'Öll ár',
     },
 
     listView: {
@@ -259,6 +275,15 @@ export const m = {
       defaultMessage:
         'Sé munur á uppsetningu texta hér að neðan og í PDF skjali gildir PDF skjalið.',
     },
+    descriptionEmpty: {
+      id: 'web.ojoi:advert.description-empty',
+      defaultMessage:
+        'Þessi auglýsing var birt fyrir gildistöku laga nr. 15/2005 og er eingöngu á PDF-formi.',
+    },
+    descriptionPdfOnly: {
+      id: 'web.ojoi:advert.description-empty-pdf-only',
+      defaultMessage: 'Þessi auglýsing er eingöngu á PDF-formi.',
+    },
 
     sidebarTitle: {
       id: 'web.ojoi:advert.sidebarTitle',
@@ -288,7 +313,7 @@ export const m = {
     },
     signatureDate: {
       id: 'web.ojoi:advert.signatureDate',
-      defaultMessage: 'Skráningardagur',
+      defaultMessage: 'Undirritunardagur',
     },
     publicationDate: {
       id: 'web.ojoi:advert.publicationDate',
@@ -371,6 +396,16 @@ export const m = {
     title: {
       id: 'web.ojoi:help.title',
       defaultMessage: 'Leiðbeiningar fyrir Stjórnartíðindi',
+    },
+  }),
+  about: defineMessages({
+    title: {
+      id: 'web.ojoi:about.title',
+      defaultMessage: 'Um stjórnartíðindi',
+    },
+    description: {
+      id: 'web.ojoi:about.description',
+      defaultMessage: 'Einhver lýsing',
     },
   }),
 }

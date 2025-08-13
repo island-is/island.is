@@ -22,18 +22,13 @@ export enum DefendantPlea {
   NO_PLEA = 'NO_PLEA',
 }
 
-export enum ServiceRequirement {
-  REQUIRED = 'REQUIRED',
-  NOT_REQUIRED = 'NOT_REQUIRED',
-  NOT_APPLICABLE = 'NOT_APPLICABLE',
-}
-
 export enum ServiceStatus {
   ELECTRONICALLY = 'ELECTRONICALLY', // Via digital mailbox on island.is
   DEFENDER = 'DEFENDER', // Via a person's defender
   IN_PERSON = 'IN_PERSON',
   FAILED = 'FAILED',
   EXPIRED = 'EXPIRED', // If a subpoena expires
+  NOT_APPLICABLE = 'NOT_APPLICABLE', // Note: ONLY used for old verdicts prior to delivering verdicts automatically to the police
 }
 
 export enum PunishmentType {
@@ -42,14 +37,7 @@ export enum PunishmentType {
   FINE = 'FINE',
   INDICTMENT_RULING_DECISION_FINE = 'INDICTMENT_RULING_DECISION_FINE',
   SIGNED_FINE_INVITATION = 'SIGNED_FINE_INVITATION',
-}
-
-// We could possibly also have an APPEAL option here if we want,
-// but we can also see from the verdict appeal date if the verdict
-// has been appealed
-export enum VerdictAppealDecision {
-  ACCEPT = 'ACCEPT', // Una
-  POSTPONE = 'POSTPONE', // Taka áfrýjunarfrest
+  OTHER = 'OTHER',
 }
 
 export const successfulServiceStatus: string[] = [

@@ -1,4 +1,10 @@
-import { useSensors, useSensor, PointerSensor, DragStartEvent, DragOverEvent } from '@dnd-kit/core'
+import {
+  useSensors,
+  useSensor,
+  PointerSensor,
+  DragStartEvent,
+  DragOverEvent,
+} from '@dnd-kit/core'
 import { useContext } from 'react'
 import { ControlContext, IControlContext } from '../../context/ControlContext'
 
@@ -10,7 +16,9 @@ type DndAction =
   | 'FIELD_OVER_FIELD'
 
 export const useNavbarDnD = () => {
-  const { controlDispatch, updateDnD, control } = useContext(ControlContext) as IControlContext
+  const { controlDispatch, updateDnD, control } = useContext(
+    ControlContext,
+  ) as IControlContext
   const { activeItem } = control
 
   const sensors = useSensors(

@@ -2,7 +2,7 @@ import React, { FC, useEffect, useState } from 'react'
 import { Box, GridRow, GridColumn, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
-import { getErrorViaPath } from '@island.is/application/core'
+import { getErrorViaPath, getValueViaPath } from '@island.is/application/core'
 import { FieldBaseProps } from '@island.is/application/types'
 import { gql, useLazyQuery } from '@apollo/client'
 import { IdentityInput, Query } from '@island.is/api/schema'
@@ -60,10 +60,10 @@ const NationalIdWithName: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   return (
     <Box>
       <Text marginBottom={3}>
-        {formatMessage(m.studentInfoSubtitle) +
-          (application.externalData.drivingSchoolForEmployee.data as any)
-            ?.name +
-          '.'}
+        {`${formatMessage(m.studentInfoSubtitle)} ${getValueViaPath(
+          application.externalData,
+          'drivingSchoolForEmployee.data.name',
+        )}.`}
       </Text>
       <GridRow>
         <GridColumn span={['1/1', '1/2']} paddingBottom={2}>

@@ -1,11 +1,15 @@
 import { formatText, getValueViaPath } from '@island.is/application/core'
 import {
+  AlertMessageField,
   Application,
   AsyncSelectField,
+  DescriptionField,
   FieldComponents,
   FieldTypes,
+  HiddenInputField,
   RepeaterItem,
   RepeaterOptionValue,
+  VehiclePermnoWithInfoField,
 } from '@island.is/application/types'
 import { GridColumn, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
@@ -22,6 +26,12 @@ import {
 } from '@island.is/shared/form-fields'
 import { NationalIdWithName } from '@island.is/application/ui-components'
 import { AsyncSelectFormField } from '../AsyncSelectFormField/AsyncSelectFormField'
+import { useApolloClient } from '@apollo/client'
+import { HiddenInputFormField } from '../HiddenInputFormField/HiddenInputFormField'
+import { AlertMessageFormField } from '../AlertMessageFormField/AlertMessageFormField'
+import * as styles from './TableRepeaterItem.css'
+import { VehiclePermnoWithInfoFormField } from '../VehiclePermnoWithInfoFormField/VehiclePermnoWithInfoFormField'
+import { DescriptionFormField } from '../DescriptionFormField/DescriptionFormField'
 
 interface ItemFieldProps {
   application: Application
@@ -53,6 +63,7 @@ export const Item = ({
   const { formatMessage, lang } = useLocale()
   const { setValue, getValues, control, clearErrors } = useFormContext()
   const prevWatchedValuesRef = useRef<string | (string | undefined)[]>()
+  const apolloClient = useApolloClient()
 
   const getSpan = (component: string, width: string) => {
     if (component !== 'radio' && component !== 'checkbox') {
@@ -91,6 +102,14 @@ export const Item = ({
   let Component: React.ComponentType<any>
   if (component === 'selectAsync') {
     Component = AsyncSelectFormField
+  } else if (component === 'hiddenInput') {
+    Component = HiddenInputFormField
+  } else if (component === 'alertMessage') {
+    Component = AlertMessageFormField
+  } else if (component === 'vehiclePermnoWithInfo') {
+    Component = VehiclePermnoWithInfoFormField
+  } else if (component === 'description') {
+    Component = DescriptionFormField
   } else {
     Component = componentMapper[component]
   }
@@ -161,7 +180,7 @@ export const Item = ({
     }
 
     return typeof defaultValue === 'function'
-      ? defaultValue(application, activeField)
+      ? defaultValue(application, activeField, activeIndex)
       : defaultValue
   }
 
@@ -225,18 +244,35 @@ export const Item = ({
   }
   if (component === 'radio') {
     defaultVal =
-      (getValueViaPath(application.answers, id) as string[]) ??
+      getValueViaPath<Array<string>>(application.answers, id) ??
       getDefaultValue(item, application, activeValues)
   }
   if (component === 'checkbox') {
     defaultVal =
-      (getValueViaPath(application.answers, id) as string[]) ??
+      getValueViaPath<Array<string>>(application.answers, id) ??
       getDefaultValue(item, application, activeValues)
   }
   if (component === 'date') {
     defaultVal =
-      (getValueViaPath(application.answers, id) as string) ??
+      getValueViaPath<string>(application.answers, id) ??
       getDefaultValue(item, application, activeValues)
+  }
+  if (component === 'hiddenInput') {
+    defaultVal = getDefaultValue(item, application, activeValues)
+  }
+
+  let maxDateVal: Date | undefined
+  let minDateVal: Date | undefined
+  if (component === 'date') {
+    maxDateVal =
+      typeof item.maxDate === 'function'
+        ? item.maxDate(application, activeValues)
+        : item.maxDate
+
+    minDateVal =
+      typeof item.minDate === 'function'
+        ? item.minDate(application, activeValues)
+        : item.minDate
   }
 
   let clearOnChangeVal: string[] | undefined
@@ -246,11 +282,26 @@ export const Item = ({
     clearOnChangeVal = clearOnChange
   }
 
+  let suffixVal: string | string[] | undefined
+  if (component === 'input' && item.suffix) {
+    suffixVal = formatText(item.suffix, application, formatMessage)
+  }
+
   const setOnChangeFunc =
     setOnChange &&
-    ((optionValue: RepeaterOptionValue) => {
+    (async (optionValue: RepeaterOptionValue) => {
       if (typeof setOnChange === 'function') {
-        return setOnChange(optionValue, application, activeIndex, activeValues)
+        return await setOnChange(
+          optionValue,
+          {
+            ...application,
+            answers: getValues(),
+          },
+          activeIndex,
+          activeValues,
+          apolloClient,
+          lang,
+        )
       } else {
         return setOnChange || []
       }
@@ -261,6 +312,7 @@ export const Item = ({
     selectAsyncProps = {
       id: id,
       title: label,
+      placeholder: placeholder,
       type: FieldTypes.ASYNC_SELECT,
       component: FieldComponents.ASYNC_SELECT,
       children: undefined,
@@ -281,6 +333,71 @@ export const Item = ({
       defaultValue: defaultVal,
       clearOnChange: clearOnChangeVal,
       setOnChange: setOnChangeFunc,
+      loadingError: item.loadingError,
+    }
+  }
+
+  let hiddenInputProps: HiddenInputField | undefined
+  if (component === 'hiddenInput') {
+    hiddenInputProps = {
+      id: id,
+      type: FieldTypes.HIDDEN_INPUT,
+      component: FieldComponents.HIDDEN_INPUT,
+      children: undefined,
+      defaultValue: defaultVal,
+    }
+  }
+
+  let alertMessageProps: AlertMessageField | undefined
+  if (component === 'alertMessage') {
+    const titleVal =
+      typeof item.title === 'function'
+        ? item.title(application, activeValues)
+        : item.title
+    const messageVal =
+      typeof item.message === 'function'
+        ? item.message(application, activeValues)
+        : item.message
+
+    alertMessageProps = {
+      id: id,
+      type: FieldTypes.ALERT_MESSAGE,
+      component: FieldComponents.ALERT_MESSAGE,
+      children: undefined,
+      alertType: item.alertType,
+      title: titleVal,
+      message: messageVal,
+      marginTop: item.marginTop,
+      marginBottom: item.marginBottom,
+    }
+  }
+
+  let vehiclePermnoWithInfoProps: VehiclePermnoWithInfoField | undefined
+  if (component === 'vehiclePermnoWithInfo') {
+    vehiclePermnoWithInfoProps = {
+      id: id,
+      type: FieldTypes.VEHICLE_PERMNO_WITH_INFO,
+      component: FieldComponents.VEHICLE_PERMNO_WITH_INFO,
+      children: undefined,
+      required: item.required,
+      loadValidation: item.loadValidation,
+      permnoLabel: item.permnoLabel,
+      makeAndColorLabel: item.makeAndColorLabel,
+      errorTitle: item.errorTitle,
+      fallbackErrorMessage: item.fallbackErrorMessage,
+      validationFailedErrorMessage: item.validationFailedErrorMessage,
+    }
+  }
+
+  let descriptionProps: DescriptionField | undefined
+  if (component === 'description') {
+    descriptionProps = {
+      id: id,
+      type: FieldTypes.DESCRIPTION,
+      component: FieldComponents.DESCRIPTION,
+      children: undefined,
+      title: item.title,
+      titleVariant: item.titleVariant,
     }
   }
 
@@ -293,7 +410,15 @@ export const Item = ({
   }
 
   return (
-    <GridColumn span={['1/1', '1/1', '1/1', span]}>
+    <GridColumn
+      span={['1/1', '1/1', '1/1', span]}
+      position={component === 'hiddenInput' ? 'absolute' : 'relative'}
+      className={
+        component === 'nationalIdWithName' || component === 'selectAsync'
+          ? styles.removePaddingTop
+          : undefined
+      }
+    >
       {component === 'radio' && label && (
         <Text variant="h4" as="h4" id={id + 'title'} marginBottom={3}>
           {formatText(label, application, formatMessage)}
@@ -308,34 +433,77 @@ export const Item = ({
           }}
         />
       )}
-      {!(component === 'selectAsync' && selectAsyncProps) && (
-        <Component
-          id={id}
-          name={id}
-          label={formatText(label, application, formatMessage)}
-          options={translatedOptions}
-          placeholder={formatText(placeholder, application, formatMessage)}
-          split={width === 'half' ? '1/2' : width === 'third' ? '1/3' : '1/1'}
-          error={getFieldError(itemId)}
-          control={control}
-          readOnly={readonlyVal}
-          disabled={disabledVal}
-          required={requiredVal}
-          isClearable={isClearableVal}
-          defaultValue={defaultVal}
-          backgroundColor={backgroundColor}
-          onChange={() => {
-            if (error) {
-              clearErrors(id)
-            }
-          }}
+      {component === 'hiddenInput' && hiddenInputProps && (
+        <HiddenInputFormField
           application={application}
-          large={true}
-          clearOnChange={clearOnChangeVal}
-          setOnChange={setOnChangeFunc}
-          {...props}
+          field={{
+            ...hiddenInputProps,
+          }}
         />
       )}
+      {component === 'alertMessage' && alertMessageProps && (
+        <AlertMessageFormField
+          application={application}
+          field={{
+            ...alertMessageProps,
+          }}
+        />
+      )}
+      {component === 'vehiclePermnoWithInfo' && vehiclePermnoWithInfoProps && (
+        <VehiclePermnoWithInfoFormField
+          application={application}
+          field={{
+            ...vehiclePermnoWithInfoProps,
+          }}
+        />
+      )}
+      {component === 'description' && descriptionProps && (
+        <DescriptionFormField
+          application={application}
+          field={{
+            ...descriptionProps,
+          }}
+          showFieldName={true}
+        />
+      )}
+      {!(component === 'selectAsync' && selectAsyncProps) &&
+        !(component === 'hiddenInput' && hiddenInputProps) &&
+        !(component === 'alertMessage' && alertMessageProps) &&
+        !(
+          component === 'vehiclePermnoWithInfo' && vehiclePermnoWithInfoProps
+        ) &&
+        !(component === 'description' && descriptionProps) && (
+          <Component
+            id={id}
+            name={id}
+            label={formatText(label, application, formatMessage)}
+            options={translatedOptions}
+            placeholder={formatText(placeholder, application, formatMessage)}
+            split={width === 'half' ? '1/2' : width === 'third' ? '1/3' : '1/1'}
+            error={getFieldError(itemId)}
+            control={control}
+            readOnly={readonlyVal}
+            disabled={disabledVal}
+            required={requiredVal}
+            isClearable={isClearableVal}
+            defaultValue={defaultVal}
+            backgroundColor={backgroundColor}
+            onChange={() => {
+              if (error) {
+                clearErrors(id)
+              }
+            }}
+            application={application}
+            large={true}
+            clearOnChange={clearOnChangeVal}
+            setOnChange={setOnChangeFunc}
+            {...props}
+            {...(component === 'date'
+              ? { maxDate: maxDateVal, minDate: minDateVal }
+              : {})}
+            {...(component === 'input' ? { suffix: suffixVal } : {})}
+          />
+        )}
     </GridColumn>
   )
 }

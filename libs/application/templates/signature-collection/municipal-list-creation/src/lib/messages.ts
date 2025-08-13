@@ -165,7 +165,7 @@ export const m = defineMessages({
     description: '',
   },
   confirmCreationDescription: {
-    id: 'mlc.application:confirmCreationDescription',
+    id: 'mlc.application:confirmCreationDescription#markdown',
     defaultMessage:
       'Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam luctus purus at malesuada mattis. Donec eleifend enim in lectus accumsan, in pharetra ligula elementum. Integer vel purus sapien. Sed vehicula, lorem venenatis pharetra dignissim, tortor ante facilisis magna, et lacinia dui ipsum nec sem. Ut sem lorem, consectetur at arcu id, aliquam eleifend massa. Aliquam euismod, nunc sit amet feugiat mattis, magna mauris iaculis sapien, sed iaculis orci nulla at ligula.',
     description: '',

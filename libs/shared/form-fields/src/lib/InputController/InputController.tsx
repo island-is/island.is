@@ -13,7 +13,7 @@ import {
 } from 'react-hook-form'
 import NumberFormat, { FormatInputValueFunction } from 'react-number-format'
 import { TestSupport } from '@island.is/island-ui/utils'
-import { clearInputsOnChange } from '@island.is/shared/utils'
+import { clearInputsOnChange, setInputsOnChange } from '@island.is/shared/utils'
 
 interface Props {
   autoFocus?: boolean
@@ -51,6 +51,9 @@ interface Props {
   step?: string
   clearOnChange?: string[]
   tooltip?: string
+  setOnChange?:
+    | { key: string; value: any }[]
+    | ((value: string | undefined) => Promise<{ key: string; value: any }[]>)
 }
 
 interface ChildParams {
@@ -99,6 +102,7 @@ export const InputController = forwardRef(
       min,
       step,
       clearOnChange,
+      setOnChange,
       tooltip,
     } = props
     const formContext = useFormContext()
@@ -129,7 +133,7 @@ export const InputController = forwardRef(
             loading={loading}
             rightAlign={rightAlign}
             inputMode={inputMode}
-            onChange={(
+            onChange={async (
               e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
             ) => {
               if (onInputChange) {
@@ -137,6 +141,14 @@ export const InputController = forwardRef(
               }
               if (clearOnChange && formContext?.setValue) {
                 clearInputsOnChange(clearOnChange, formContext.setValue)
+              }
+              if (setOnChange) {
+                setInputsOnChange(
+                  typeof setOnChange === 'function'
+                    ? await setOnChange(e?.target?.value)
+                    : setOnChange,
+                  formContext.setValue,
+                )
               }
             }}
             onValueChange={({ value }) => {
@@ -172,7 +184,7 @@ export const InputController = forwardRef(
             inputMode={inputMode}
             max={max}
             min={min}
-            onChange={(
+            onChange={async (
               e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
             ) => {
               if (onInputChange) {
@@ -180,6 +192,14 @@ export const InputController = forwardRef(
               }
               if (clearOnChange && formContext?.setValue) {
                 clearInputsOnChange(clearOnChange, formContext.setValue)
+              }
+              if (setOnChange) {
+                setInputsOnChange(
+                  typeof setOnChange === 'function'
+                    ? await setOnChange(e?.target?.value)
+                    : setOnChange,
+                  formContext.setValue,
+                )
               }
             }}
             onValueChange={({ value }) => {
@@ -190,6 +210,7 @@ export const InputController = forwardRef(
             required={required}
             decimalSeparator={thousandSeparator ? ',' : undefined}
             thousandSeparator={thousandSeparator ? '.' : undefined}
+            isNumericString={thousandSeparator}
             getInputRef={ref}
             {...props}
           />
@@ -215,7 +236,7 @@ export const InputController = forwardRef(
             autoComplete={autoComplete}
             loading={loading}
             inputMode={inputMode}
-            onChange={(
+            onChange={async (
               e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
             ) => {
               if (onInputChange) {
@@ -223,6 +244,14 @@ export const InputController = forwardRef(
               }
               if (clearOnChange && formContext?.setValue) {
                 clearInputsOnChange(clearOnChange, formContext.setValue)
+              }
+              if (setOnChange) {
+                setInputsOnChange(
+                  typeof setOnChange === 'function'
+                    ? await setOnChange(e?.target?.value)
+                    : setOnChange,
+                  formContext.setValue,
+                )
               }
             }}
             onValueChange={({ value }) => {
@@ -259,13 +288,21 @@ export const InputController = forwardRef(
             autoComplete={autoComplete}
             loading={loading}
             inputMode={inputMode}
-            onChange={(e) => {
+            onChange={async (e) => {
               onChange(e.target.value)
               if (onInputChange) {
                 onInputChange(e)
               }
               if (clearOnChange && formContext?.setValue) {
                 clearInputsOnChange(clearOnChange, formContext.setValue)
+              }
+              if (setOnChange) {
+                setInputsOnChange(
+                  typeof setOnChange === 'function'
+                    ? await setOnChange(e?.target?.value)
+                    : setOnChange,
+                  formContext.setValue,
+                )
               }
             }}
             rows={rows}

@@ -4,38 +4,25 @@ import { Sender } from './sender.model'
 import { PaginatedResponse } from '@island.is/nest/pagination'
 import { Category } from './category.model'
 import { Type } from './type.model'
-
-@ObjectType('DocumentV2Action')
-export class Action {
-  @Field({ nullable: true })
-  title?: string
-
-  @Field({ nullable: true })
-  type?: string
-
-  @Field({ nullable: true })
-  data?: string
-
-  @Field({ nullable: true })
-  icon?: string
-}
+import { Action } from './actions.model'
+import { Ticket } from './ticket.model'
 
 @ObjectType('DocumentV2')
 export class Document {
   @Field(() => ID)
   id!: string
 
-  @Field({ nullable: true })
-  name?: string
+  @Field(() => String, { nullable: true })
+  name?: string | null
 
-  @Field({ nullable: true })
-  categoryId?: string
-
-  @Field(() => GraphQLISODateTime, { nullable: true })
-  publicationDate?: Date
+  @Field(() => String, { nullable: true })
+  categoryId?: string | null
 
   @Field(() => GraphQLISODateTime, { nullable: true })
-  documentDate?: Date
+  publicationDate?: Date | null
+
+  @Field(() => GraphQLISODateTime, { nullable: true })
+  documentDate?: Date | null
 
   @Field()
   subject!: string
@@ -46,11 +33,11 @@ export class Document {
   @Field({ nullable: true })
   opened?: boolean
 
-  @Field({ nullable: true })
-  bookmarked?: boolean
+  @Field(() => Boolean, { nullable: true })
+  bookmarked?: boolean | null
 
-  @Field({ nullable: true })
-  archived?: boolean
+  @Field(() => Boolean, { nullable: true })
+  archived?: boolean | null
 
   @Field(() => DocumentContent, { nullable: true })
   content?: DocumentContent
@@ -68,15 +55,24 @@ export class Document {
   confirmation?: Action
 
   @Field(() => [Action], { nullable: true })
-  actions?: Array<Action>
+  actions?: Array<Action> | null
 
   @Field(() => Boolean, { nullable: true })
-  isUrgent?: boolean
+  isUrgent?: boolean | null
+
+  @Field(() => Boolean, { nullable: true })
+  replyable?: boolean | null
+
+  @Field(() => Boolean, { nullable: true })
+  closedForMoreReplies?: boolean | null
+
+  @Field(() => Ticket, { nullable: true })
+  ticket?: Ticket | null
 }
 
 @ObjectType('DocumentsV2')
 export class PaginatedDocuments extends PaginatedResponse(Document) {
-  @Field({ nullable: true })
+  @Field(() => Int, { nullable: true })
   unreadCount?: number
 
   @Field(() => [Category], { nullable: true })

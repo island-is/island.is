@@ -85,7 +85,7 @@ export class UserProfileController {
   @ApiSecurity('oauth2', [
     UserProfileScope.system,
     UserProfileScope.admin,
-    AdminPortalScope.serviceDesk
+    AdminPortalScope.serviceDesk,
   ])
   @Audit<UserProfileDto>({
     resources: (profile) => profile.nationalId,
@@ -155,9 +155,7 @@ export class UserProfileController {
     },
     response: { status: 200, type: UserProfileDto },
   })
-  @ApiSecurity('oauth2', [
-    AdminPortalScope.serviceDesk
-  ])
+  @ApiSecurity('oauth2', [AdminPortalScope.serviceDesk])
   @Audit<UserProfileDto>({
     resources: (profile) => profile.nationalId,
   })

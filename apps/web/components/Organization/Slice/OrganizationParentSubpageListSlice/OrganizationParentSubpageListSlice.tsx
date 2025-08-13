@@ -1,8 +1,11 @@
-import { useRouter } from 'next/router'
+import type { PropsWithChildren } from 'react'
 
 import {
   Box,
   Button,
+  GridColumn,
+  GridContainer,
+  GridRow,
   LinkV2,
   ProfileCard,
   Stack,
@@ -13,28 +16,56 @@ import {
   OrganizationParentSubpageList,
   OrganizationParentSubpageListVariant,
 } from '@island.is/web/graphql/schema'
-import { pathIsRoute } from '@island.is/web/hooks'
 import { useI18n } from '@island.is/web/i18n'
 
 import * as styles from './OrganizationParentSubpageList.css'
 
 interface OrganizationParentSubpageListSliceProps {
   slice: OrganizationParentSubpageList
+  isFrontpage?: boolean
+}
+
+const Wrapper = ({
+  slice,
+  isFrontpage,
+  children,
+}: PropsWithChildren<OrganizationParentSubpageListSliceProps>) => {
+  if (isFrontpage) {
+    return <div>{children}</div>
+  }
+
+  if (
+    slice.pageLinkVariant ===
+    OrganizationParentSubpageListVariant.ProfileCardWithTitleAbove
+  ) {
+    return <Box marginLeft={[0, 0, 0, 0, 6]}>{children}</Box>
+  }
+
+  if (
+    slice.pageLinkVariant === OrganizationParentSubpageListVariant.ServiceCard
+  ) {
+    return (
+      <GridContainer>
+        <GridRow>
+          <GridColumn span={['9/9', '9/9', '7/9']} offset={['0', '0', '1/9']}>
+            {children}
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
+    )
+  }
+
+  return <div>{children}</div>
 }
 
 export const OrganizationParentSubpageListSlice = ({
   slice,
+  isFrontpage = false,
 }: OrganizationParentSubpageListSliceProps) => {
   const { activeLocale } = useI18n()
-  const router = useRouter()
-  const isFrontpage = pathIsRoute(
-    router.asPath,
-    'organizationpage',
-    activeLocale,
-  )
 
   return (
-    <Box marginLeft={!isFrontpage ? [0, 0, 0, 0, 6] : undefined}>
+    <Wrapper slice={slice} isFrontpage={isFrontpage}>
       <Stack space={4}>
         {slice.title && <Text variant="h3">{slice.title}</Text>}
         {slice.pageLinkVariant ===
@@ -87,6 +118,6 @@ export const OrganizationParentSubpageListSlice = ({
           </Box>
         )}
       </Stack>
-    </Box>
+    </Wrapper>
   )
 }

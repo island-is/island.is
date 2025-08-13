@@ -1,7 +1,6 @@
-import { Transform, Type } from 'class-transformer'
+import { Transform } from 'class-transformer'
 import {
   IsBoolean,
-  IsDate,
   IsEnum,
   IsOptional,
   IsString,
@@ -16,9 +15,7 @@ import {
   DefenderChoice,
   Gender,
   PunishmentType,
-  ServiceRequirement,
   SubpoenaType,
-  VerdictAppealDecision,
 } from '@island.is/judicial-system/types'
 
 import { nationalIdTransformer } from '../../../transformers'
@@ -95,28 +92,6 @@ export class UpdateDefendantDto {
   readonly defendantPlea?: DefendantPlea
 
   @IsOptional()
-  @IsEnum(ServiceRequirement)
-  @ApiPropertyOptional({ enum: ServiceRequirement })
-  readonly serviceRequirement?: ServiceRequirement
-
-  @IsOptional()
-  @Type(() => Date)
-  @IsDate()
-  @ApiPropertyOptional({ type: Date })
-  readonly verdictViewDate?: Date | null
-
-  @IsOptional()
-  @IsEnum(VerdictAppealDecision)
-  @ApiPropertyOptional({ enum: VerdictAppealDecision })
-  readonly verdictAppealDecision?: VerdictAppealDecision
-
-  @IsOptional()
-  @Type(() => Date)
-  @IsDate()
-  @ApiPropertyOptional({ type: Date })
-  readonly verdictAppealDate?: Date
-
-  @IsOptional()
   @IsEnum(SubpoenaType)
   @ApiPropertyOptional({ enum: SubpoenaType })
   readonly subpoenaType?: SubpoenaType
@@ -158,4 +133,15 @@ export class UpdateDefendantDto {
   @IsEnum(PunishmentType)
   @ApiPropertyOptional({ enum: PunishmentType })
   readonly punishmentType?: PunishmentType
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  readonly isAlternativeService?: boolean
+
+  @IsOptional()
+  @IsString()
+  @MaxLength(255)
+  @ApiPropertyOptional({ type: String })
+  readonly alternativeServiceDescription?: string
 }

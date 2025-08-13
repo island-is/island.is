@@ -30,6 +30,7 @@ import {
   CustomPageUniqueIdentifier,
   GenericTag,
   GetGrantsInputAvailabilityStatusEnum,
+  GetGrantsInputSortByEnum,
   Grant,
   GrantList,
   Query,
@@ -119,6 +120,7 @@ const GrantsSearchResultsPage: CustomScreen<GrantsHomeProps> = ({
           lang: locale,
           organizations: organizations ? [...organizations] : null,
           page,
+          sort: GetGrantsInputSortByEnum.RecentlyUpdated,
           search: searchString,
           size: PAGE_SIZE,
           types: types ? [...types] : null,
@@ -450,6 +452,7 @@ GrantsSearchResults.getProps = async ({ apolloClient, locale, query }) => {
       variables: {
         input: {
           lang: locale as ContentLanguage,
+          sort: GetGrantsInputSortByEnum.RecentlyUpdated,
           page: parseAsInteger.withDefault(1).parseServerSide(query?.page),
           search: parseAsString.parseServerSide(query?.query) ?? undefined,
           categories: filterArray<string>(

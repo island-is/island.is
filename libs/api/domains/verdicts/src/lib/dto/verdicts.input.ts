@@ -9,6 +9,9 @@ export class VerdictsInput {
   @Field(() => String, { nullable: true })
   courtLevel?: string
 
+  @Field(() => String, { nullable: true })
+  caseNumber?: string
+
   @Field(() => Int, { nullable: true })
   page?: number
 
@@ -20,4 +23,13 @@ export class VerdictsInput {
 
   @Field(() => [String], { nullable: true })
   keywords?: string[]
+
+  @Field(() => [String], { nullable: true })
+  laws?: string[]
+
+  @Field(() => String, { nullable: true })
+  dateFrom?: string
+
+  @Field(() => String, { nullable: true })
+  dateTo?: string
 }

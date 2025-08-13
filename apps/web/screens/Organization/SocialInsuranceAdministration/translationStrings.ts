@@ -620,6 +620,13 @@ export const translationStrings = defineMessages({
     description:
       'Lýsing fyrir ofan mánuð og ár reit varðandi hvenær notandi vill hefja töku á ellilífeyri',
   },
+  startMonthAndYearDescriptionMarkdown: {
+    id: 'web.pensionCalculator:startMonthAndYearDescriptionMarkdown#markdown',
+    defaultMessage:
+      'Þú getur byrjað töku ellilífeyris frá {month} {year}. Þú getur flýtt um 2 ár eða frestað töku ellilífeyris.',
+    description:
+      'Lýsing fyrir ofan mánuð og ár reit varðandi hvenær notandi vill hefja töku á ellilífeyri',
+  },
   after1stSeptember2025: {
     id: 'web.pensionCalculator:after1stSeptember2025',
     defaultMessage: 'Eftir 1. september 2025',

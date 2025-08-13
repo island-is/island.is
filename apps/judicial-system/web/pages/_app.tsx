@@ -102,10 +102,10 @@ class JudicialSystemApplication extends App<Props> {
                 <LocaleProvider locale="is" messages={translations || {}}>
                   <LawyerRegistryProvider>
                     <ServiceInterruptionBanner />
-                    <HeaderContainer />
                     <FormProvider>
+                      <HeaderContainer />
                       <Component {...pageProps} />
-                      <ToastContainer useKeyframeStyles />
+                      <ToastContainer />
                     </FormProvider>
                     <style jsx global>{`
                       @font-face {

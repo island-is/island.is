@@ -20,6 +20,7 @@ export const GoProApiConfig = {
       fetchApi: createEnhancedFetch({
         name: 'clients-gopro-verdicts',
         logErrorResponseBody: true,
+        timeout: 40000,
       }),
       headers: {
         Accept: 'application/json',
@@ -47,6 +48,7 @@ export const SupremeCourtApiConfig = {
       fetchApi: createEnhancedFetch({
         name: 'clients-supreme-court-verdicts',
         logErrorResponseBody: true,
+        timeout: 40000,
       }),
       headers: {
         Accept: 'application/json',

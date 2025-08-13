@@ -231,14 +231,6 @@ export interface ApplicationDebts {
   domesticAndForeignDebts: DomesticAndForeignDebts
 }
 
-interface DomesticAndForeignDebtsData {
-  balance: string
-  nationalId: string
-  loanIdentity: string
-  creditorName: string
-  taxFreeInheritance: number
-}
-
 interface DomesticAndForeignDebts {
   data: Debt[]
   total: number

@@ -80,7 +80,7 @@ export const Employment = ({
                   label={formatMessage(
                     parentalLeaveFormMessages.reviewScreen.benefits,
                   )}
-                  value={unemploymentBenefits}
+                  value={unemploymentBenefits ?? ''}
                 />
               </GridColumn>
             </GridRow>

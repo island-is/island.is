@@ -1,16 +1,15 @@
 import { Dispatch, SetStateAction, useMemo, useState } from 'react'
-import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
+import { InputMask } from '@react-input/mask'
 
 import { Box, Icon, Input, Select, Tag } from '@island.is/island-ui/core'
-import {
-  IndictmentCountOffense,
-  SubstanceMap,
-} from '@island.is/judicial-system/types'
+import { SUBSTANCE_ALCOHOL } from '@island.is/judicial-system/consts'
+import { SubstanceMap } from '@island.is/judicial-system/types'
 import { SectionHeading } from '@island.is/judicial-system-web/src/components'
 import {
   Case,
   IndictmentCount,
+  IndictmentCountOffense,
   Offense,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
@@ -23,8 +22,7 @@ import useOffenses from '@island.is/judicial-system-web/src/utils/hooks/useOffen
 
 import { Substances } from '../Substances/Substances'
 import { SpeedingOffenseFields } from './SpeedingOffenseFields'
-import { indictmentCount as strings } from '../IndictmentCount.strings'
-import { indictmentCountEnum as enumStrings } from '../IndictmentCountEnum.strings'
+import { strings } from './Offenses.strings'
 
 // when migrating offenses to the new structure they will all have the same creation date, thus we fallback to compare
 // and sort by the offense type
@@ -118,10 +116,10 @@ export const Offenses = ({
     () =>
       Object.values(IndictmentCountOffense).map((offense) => ({
         value: offense,
-        label: formatMessage(enumStrings[offense]),
+        label: strings.offenseText[offense],
         disabled: offenses.some((o) => o.offense === offense),
       })),
-    [formatMessage, offenses],
+    [offenses],
   )
 
   // handlers
@@ -237,7 +235,7 @@ export const Offenses = ({
                   onClick={async () => handleDeleteOffense(offenseId, offense)}
                 >
                   <Box display="flex" alignItems="center">
-                    {formatMessage(enumStrings[offense])}
+                    {strings.offenseText[offense]}
                     <Icon icon="close" size="small" />
                   </Box>
                 </Tag>
@@ -255,8 +253,9 @@ export const Offenses = ({
             marginBottom={2}
           />
           <InputMask
-            mask={'9,99'}
-            maskPlaceholder={null}
+            component={Input}
+            replacement={{ _: /\d/ }}
+            mask={SUBSTANCE_ALCOHOL}
             value={drunkDrivingOffense.substances?.ALCOHOL ?? ''}
             onChange={async (event) => {
               const alcoholValue = event.target.value
@@ -305,19 +304,14 @@ export const Offenses = ({
                 alcoholValue,
               )
             }}
-          >
-            <Input
-              name="alcohol"
-              autoComplete="off"
-              label={formatMessage(strings.bloodAlcoholContentLabel)}
-              placeholder={formatMessage(
-                strings.bloodAlcoholContentPlaceholder,
-              )}
-              errorMessage={bloodAlcoholContentErrorMessage}
-              hasError={bloodAlcoholContentErrorMessage !== ''}
-              required
-            />
-          </InputMask>
+            name="alcohol"
+            autoComplete="off"
+            label={formatMessage(strings.bloodAlcoholContentLabel)}
+            placeholder={formatMessage(strings.bloodAlcoholContentPlaceholder)}
+            errorMessage={bloodAlcoholContentErrorMessage}
+            hasError={bloodAlcoholContentErrorMessage !== ''}
+            required
+          />
         </Box>
       )}
       {/* SPEEDING OFFENSE FIELDS */}

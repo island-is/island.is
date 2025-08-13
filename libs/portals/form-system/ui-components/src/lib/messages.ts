@@ -5,21 +5,41 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:application-builder',
     defaultMessage: 'Umsóknarsmiður',
   },
-  template: {
-    id: 'portals-admin.form-system:template',
-    defaultMessage: 'Forskrift',
+  form: {
+    id: 'portals-admin.form-system:form',
+    defaultMessage: 'Form',
   },
-  templates: {
-    id: 'portals-admin.form-system:templates',
-    defaultMessage: 'Forskriftir',
-  },
-  newTemplate: {
-    id: 'portals-admin.form-system:new-template',
+  newForm: {
+    id: 'portals-admin.form-system:new-form',
     defaultMessage: 'Nýtt',
   },
-  organisation: {
-    id: 'portals-admin.form-system:organisation',
+  newApplication: {
+    id: 'portals-admin.form-system:new-application',
+    defaultMessage: 'Ný umsókn',
+  },
+  organization: {
+    id: 'portals-admin.form-system:organization',
     defaultMessage: 'Stofnun',
+  },
+  applications: {
+    id: 'portals-admin.form-system:applications',
+    defaultMessage: 'Umsóknir',
+  },
+  yourApplications: {
+    id: 'portals-admin.form-system:your-applications',
+    defaultMessage: 'Þínar umsóknir',
+  },
+  administration: {
+    id: 'portals-admin.form-system:administration',
+    defaultMessage: 'Kerfisstjórnun',
+  },
+  overview: {
+    id: 'portals-admin.form-system:overview',
+    defaultMessage: 'Yfirlitsíða',
+  },
+  back: {
+    id: 'portals-admin.form-system:back',
+    defaultMessage: 'Til baka',
   },
   state: {
     id: 'portals-admin.form-system:state',
@@ -32,6 +52,10 @@ export const m = defineMessages({
   nameEnglish: {
     id: 'portals-admin.form-system:name-english',
     defaultMessage: 'Heiti á ensku',
+  },
+  englishTranslation: {
+    id: 'portals-admin.form-system:english-translation',
+    defaultMessage: 'Ensk þýðing',
   },
   applicationName: {
     id: 'portals-admin.form-system:application-name',
@@ -49,6 +73,26 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:description-english',
     defaultMessage: 'Lýsing á ensku',
   },
+  organizationName: {
+    id: 'portals-admin.form-system:organization-name',
+    defaultMessage: 'Raunheiti stofnunar',
+  },
+  organizationNameEn: {
+    id: 'portals-admin.form-system:organization-name-en',
+    defaultMessage: 'Raunheiti stofnunar á ensku',
+  },
+  organizationDisplayName: {
+    id: 'portals-admin.form-system:organization-display-name',
+    defaultMessage: 'Birt heiti stofnunar',
+  },
+  organizationDisplayNameEn: {
+    id: 'portals-admin.form-system:organization-display-name-en',
+    defaultMessage: 'Birt heiti stofnunar á ensku',
+  },
+  slug: {
+    id: 'portals-admin.form-system:slug',
+    defaultMessage: 'slug',
+  },
   daysUntilExpiration: {
     id: 'portals-admin.form-system:days-until-expiration',
     defaultMessage: 'Líftími umsóknar',
@@ -57,14 +101,30 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:deadline',
     defaultMessage: 'Umsóknarfrestur',
   },
-  basicSettings: {
-    id: 'portals-admin.form-system:basic-settings',
-    defaultMessage: 'Grunnstillingar',
+  settings: {
+    id: 'portals-admin.form-system:settings',
+    defaultMessage: 'Stillingar',
   },
   allowProgress: {
     id: 'portals-admin.form-system:allow-progress',
     defaultMessage:
       'Leyfa notanda að halda áfram í umsókninni með ógild/óútfyllt gildi',
+  },
+  certifications: {
+    id: 'portals-admin.form-system:certifications',
+    defaultMessage: 'Vottorð',
+  },
+  lists: {
+    id: 'portals-admin.form-system:lists',
+    defaultMessage: 'Listar',
+  },
+  inputFields: {
+    id: 'portals-admin.form-system:inputFields',
+    defaultMessage: 'Innsláttarreitir',
+  },
+  regulations: {
+    id: 'portals-admin.form-system:regulations',
+    defaultMessage: 'Reglugerðir',
   },
   premisesTitle: {
     id: 'portals-admin.form-system:premises-title',
@@ -147,9 +207,9 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:save-and-continue',
     defaultMessage: 'Vista og halda áfram',
   },
-  addStep: {
-    id: 'portals-admin.form-system:add-step',
-    defaultMessage: 'Bæta við skrefi',
+  addSection: {
+    id: 'portals-admin.form-system:add-section',
+    defaultMessage: 'Bæta við kafla',
   },
   allowFileTypes: {
     id: 'portals-admin.form-system:allow-file-types',
@@ -158,6 +218,22 @@ export const m = defineMessages({
   allowedFileTypes: {
     id: 'portals-admin.form-system:allowed-file-types',
     defaultMessage: 'Eftirfarandi skjalatýpur eru leyfðar',
+  },
+  addProdUrl: {
+    id: 'portals-admin.form-system:add-prod-url',
+    defaultMessage: '+ Raunslóð',
+  },
+  addDevUrl: {
+    id: 'portals-admin.form-system:add-dev-url',
+    defaultMessage: '+ Prófunarslóð',
+  },
+  prodUrl: {
+    id: 'portals-admin.form-system:prod-url',
+    defaultMessage: 'Raunslóð',
+  },
+  devUrl: {
+    id: 'portals-admin.form-system:dev-url',
+    defaultMessage: 'Prófunarslóð',
   },
   // Input types
   bankAccount: {
@@ -204,6 +280,14 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:time-input',
     defaultMessage: 'Klukkinnsláttur',
   },
+  hourInput: {
+    id: 'portals-admin.form-system:hour-input',
+    defaultMessage: 'Klukkustund',
+  },
+  minuteInput: {
+    id: 'portals-admin.form-system:minute-input',
+    defaultMessage: 'Mínúta',
+  },
   iskNumberBox: {
     id: 'portals-admin.form-system:currency-number',
     defaultMessage: 'Krónutölubox',
@@ -219,6 +303,18 @@ export const m = defineMessages({
   message: {
     id: 'portals-admin.form-system:message',
     defaultMessage: 'Textalýsing',
+  },
+  submitUrls: {
+    id: 'portals-admin.form-system:submitUrls',
+    defaultMessage: 'Málakerfi',
+  },
+  validationUrls: {
+    id: 'portals-admin.form-system:validationUrls',
+    defaultMessage: 'Reglukerfi',
+  },
+  permissions: {
+    id: 'portals-admin.form-system:permissions',
+    defaultMessage: 'Heimildir',
   },
   phoneNumber: {
     id: 'portals-admin.form-system:phone-number',
@@ -377,10 +473,6 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:copy',
     defaultMessage: 'Afrita',
   },
-  translateToEnglish: {
-    id: 'portals-admin.form-system:translate-to-english',
-    defaultMessage: 'Þýðing enska',
-  },
   getUrl: {
     id: 'portals-admin.form-system:get-url',
     defaultMessage: 'Sækja slóð',
@@ -417,12 +509,12 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:property-number-input',
     defaultMessage: 'Skrá fasteignanúmer',
   },
-  addGroupHover: {
-    id: 'portals-admin.form-system:add-step-hover',
-    defaultMessage: 'Bæta við hópi',
+  addScreenHover: {
+    id: 'portals-admin.form-system:add-screen-hover',
+    defaultMessage: 'Bæta við skjá',
   },
-  addInputHover: {
-    id: 'portals-admin.form-system:add-input-hover',
+  addFieldHover: {
+    id: 'portals-admin.form-system:add-field-hover',
     defaultMessage: 'Bæta við innslætti',
   },
   areYouSure: {
@@ -470,6 +562,10 @@ export const m = defineMessages({
     id: 'portals-admin-form-system:total-amount',
     defaultMessage: 'Heildarupphæð',
   },
+  submitted: {
+    id: 'portals-admin-form-system:submitted',
+    defaultMessage: 'Innsend',
+  },
   // Error messages
   invalidEmail: {
     id: 'portals-admin.form-system:invalid-email',
@@ -482,5 +578,150 @@ export const m = defineMessages({
   nationalId: {
     id: 'portals-admin.form-system:national-id',
     defaultMessage: 'Kennitala',
+    description: 'National ID',
+  },
+  basicErrorMessage: {
+    id: 'form-system:basic-error-message',
+    defaultMessage: 'Villa kom upp',
+    description: 'Basic error message',
+  },
+  maxBankNumbers: {
+    id: 'form-system:max-bank-numbers',
+    defaultMessage: 'Hámark 4 tölustafir leyfðir',
+    description: 'Maximum 4 digits allowed',
+    value: 4,
+  },
+  maxLedgerNumbers: {
+    id: 'form-system:max-ledger-numbers',
+    defaultMessage: 'Hámark 2 tölustafir leyfðir',
+    description: 'Maximum 2 digits allowed',
+    value: 2,
+  },
+  maxAccountNumbers: {
+    id: 'form-system:max-account-numbers',
+    defaultMessage: 'Hámark 6 tölustafir leyfðir',
+    description: 'Maximum 6 digits allowed',
+    value: 6,
+  },
+  onlyNumbers: {
+    id: 'form-system:only-numbers',
+    defaultMessage: 'Reitur má aðeins innihalda tölustafi',
+    description: 'Field must only contain numbers',
+  },
+  InvalidNationalId: {
+    id: 'form-system:invalid-national-id',
+    defaultMessage: 'Ógild kennitala',
+    description: 'Invalid national ID',
+  },
+  invalidPhoneNumber: {
+    id: 'form-system:invalid-phone-number',
+    defaultMessage: 'Ógilt símanúmer',
+    description: 'Invalid phone number',
+  },
+  invalidPropertyNumber: {
+    id: 'form-system:invalid-property-number',
+    defaultMessage: 'Ógilt fasteignanúmer',
+    description: 'Invalid property number',
+  },
+  pickHour: {
+    id: 'form-system:pick-hour',
+    defaultMessage: 'Veldu klukkustund',
+    description: 'Pick hour',
+  },
+  pickMinute: {
+    id: 'form-system:pick-minute',
+    defaultMessage: 'Veldu mínútu',
+    description: 'Pick minute',
+  },
+})
+
+export const webMessages = defineMessages({
+  externalDataTitle: {
+    id: 'form-system:external-data-title',
+    defaultMessage: 'Eftirfarandi gögn verða sótt rafrænt með þínu samþykki',
+    description:
+      'The following data will be retrieved electronically with your consent',
+  },
+  externalDataConfirmation: {
+    id: 'form-system:externalData.confirm',
+    defaultMessage: 'Staðfesta',
+    description: 'Confirm',
+  },
+  externalDataAgreement: {
+    id: 'form-system:externalData.agreement',
+    defaultMessage: 'Ég hef kynnt mér ofangreint varðandi gagnaöflun',
+    description: 'I have read the above regarding data collection',
+  },
+  icelandicRegistryTitle: {
+    id: 'form-system:icelandic-registry-title',
+    defaultMessage: 'Upplýsingar úr Þjóðskrá',
+    description: 'Icelandic registry',
+  },
+  icelandicRegistryDescription: {
+    id: 'form-system:icelandic-registry-description',
+    defaultMessage: 'Upplýsingar um þig, maka og börn.',
+    description: 'Information about you, your spouse and children',
+  },
+  myPagesTitle: {
+    id: 'form-system:my-pages-title',
+    defaultMessage: 'Mínar upplýsingar á Mínum síðum Ísland.is',
+    description: 'My information on My Pages on Ísland.is',
+  },
+  myPagesDescription: {
+    id: 'form-system:my-pages-description',
+    defaultMessage:
+      'Upplýsingar um símanúmer og netfang til að auðvelda umsóknarferlið.',
+    description:
+      'Information about phone number and email to facilitate the application process',
+  },
+  continue: {
+    id: 'form-system:continue',
+    defaultMessage: 'Halda áfram',
+    description: 'Continue',
+  },
+  back: {
+    id: 'form-system:back',
+    defaultMessage: 'Til baka',
+    description: 'Back',
+  },
+  postalCode: {
+    id: 'form-system:postal-code',
+    defaultMessage: 'Póstnúmer',
+    description: 'Postal code',
+  },
+  fullName: {
+    id: 'form-system:full-name',
+    defaultMessage: 'Fullt nafn',
+    description: 'Full name',
+  },
+  openApplication: {
+    id: 'form-system:open-application',
+    defaultMessage: 'Opna umsókn',
+    description: 'Open application',
+  },
+  yourProperties: {
+    id: 'form-system:your-properties',
+    defaultMessage: 'Þínar eignir',
+    description: 'Your properties',
+  },
+  uploadBoxTitle: {
+    id: 'form-system:upload-box-title',
+    defaultMessage: 'Dragðu skjöl hingað til að hlaða upp',
+    description: 'Notaður fyrir titil í Hlaða upp skrám svæði.',
+  },
+  uploadBoxButtonLabel: {
+    id: 'form-system:upload-box-button-label',
+    defaultMessage: 'Velja skjöl til að hlaða upp',
+    description: 'Notaður fyrir titil í takka á Hlaða upp skrám svæði.',
+  },
+  uploadBoxDescription: {
+    id: 'form-system:upload-box-description',
+    defaultMessage: 'Tekið er við skjölum með endingu: {fileEndings}',
+    description: 'Notaður fyrir texta í Hlaða upp skrám svæði.',
+  },
+  tagsDraft: {
+    id: 'form-system:tags.draft',
+    defaultMessage: 'Umsókn í vinnslu hjá þér',
+    description: 'Draft status for an application',
   },
 })

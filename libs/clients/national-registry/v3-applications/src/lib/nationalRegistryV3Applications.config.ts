@@ -16,14 +16,14 @@ export const NationalRegistryV3ApplicationsClientConfig = defineConfig<
   name: 'NationalRegistryV3ApplicationsClient',
   schema,
   load: (env) => ({
-    fetchTimeout: 10000,
+    fetchTimeout: env.optionalJSON('XROAD_NATIONAL_REGISTRY_TIMEOUT') ?? 10000,
     clientId: env.required(
       'NATIONAL_REGISTRY_B2C_CLIENT_ID',
       'b464afdd-056b-406d-b650-6d41733cfeb7',
     ),
     clientSecret: env.required('NATIONAL_REGISTRY_B2C_CLIENT_SECRET', ''),
     scope: env.required(
-      'NATIONAL_REGISTRY_B2C_SCOPE',
+      'NATIONAL_REGISTRY_B2C_APPLICATION_SCOPE',
       'https://skraidentitydev.onmicrosoft.com/midlunumsoknir/.default',
     ),
     endpoint: env.required(
@@ -31,7 +31,7 @@ export const NationalRegistryV3ApplicationsClientConfig = defineConfig<
       'https://skraidentitydev.b2clogin.com/skraidentitydev.onmicrosoft.com/b2c_1_midlun_flow/oauth2/v2.0/token',
     ),
     xRoadServicePath: env.required(
-      'NATIONAL_REGISTRY_B2C_PATH',
+      'NATIONAL_REGISTRY_B2C_APPLICATION_PATH',
       'IS-DEV/GOV/10001/SKRA-Cloud-Protected/MidlunUmsoknir-v1',
     ),
   }),

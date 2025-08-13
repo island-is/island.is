@@ -25,13 +25,24 @@ export const FormResponseFragment = gql`
     forms {
       ...Form
     }
-    urls {
+    submitUrls {
       id
       url
-      isXroad
       isTest
       type
       method
+    }
+    validationUrls {
+      id
+      url
+      isTest
+      type
+      method
+    }
+    organizations {
+      value
+      label
+      isSelected
     }
   }
   ${FormApplicantFragment}

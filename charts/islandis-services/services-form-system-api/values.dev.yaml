@@ -61,7 +61,7 @@ ingress:
     hosts:
       - host: 'beta.dev01.devland.is'
         paths:
-          - '/form'
+          - '/form-api'
 initContainer:
   containers:
     - args:
@@ -70,19 +70,6 @@ initContainer:
       command:
         - 'npx'
       name: 'migrations'
-      resources:
-        limits:
-          cpu: '200m'
-          memory: '256Mi'
-        requests:
-          cpu: '50m'
-          memory: '128Mi'
-    - args:
-        - 'sequelize-cli'
-        - 'db:seed:all'
-      command:
-        - 'npx'
-      name: 'seed'
       resources:
         limits:
           cpu: '200m'

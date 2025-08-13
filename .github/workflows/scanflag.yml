@@ -7,7 +7,7 @@ on:
 defaults:
   run:
     shell: bash
-    
+
 concurrency:
   group: scanflag-${{ github.head_ref || github.run_id }}
   cancel-in-progress: false
@@ -18,7 +18,7 @@ env:
 
 jobs:
   scanflags:
-    runs-on: arc-runners
+    runs-on: arc-shared
     steps:
       - name: Checkout
         uses: actions/checkout@v4

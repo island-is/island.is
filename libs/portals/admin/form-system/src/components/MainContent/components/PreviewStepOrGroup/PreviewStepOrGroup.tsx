@@ -3,7 +3,7 @@ import { Box, Button, Text } from '@island.is/island-ui/core'
 import { ControlContext } from '../../../../context/ControlContext'
 import { FormSystemScreen, FormSystemField } from '@island.is/api/schema'
 import { NavbarSelectStatus } from '../../../../lib/utils/interfaces'
-import { Preview } from '../Preview/Preveiw'
+import { Preview } from '../Preview/Preview'
 import { MultiSet } from './components/MultiSet'
 
 interface Props {

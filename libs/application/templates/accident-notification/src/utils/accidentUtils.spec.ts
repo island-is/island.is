@@ -1,5 +1,4 @@
 import { FormValue } from '@island.is/application/types'
-import { AccidentTypeEnum } from '../types'
 import {
   getInjuredPersonInformation,
   isFatalAccident,
@@ -9,6 +8,7 @@ import {
   isWorkAccident,
 } from './accidentUtils'
 import { NO, YES } from '@island.is/application/core'
+import { AccidentTypeEnum } from './enums'
 
 describe('isHomeActivitiesAccident', () => {
   const homeActivitiesAccident: FormValue = {

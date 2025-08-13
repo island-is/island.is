@@ -6,20 +6,37 @@ import zipObject from 'lodash/zipObject'
 import { OrganizationUrl } from './models/organizationUrl.model'
 import { CreateOrganizationUrlDto } from './models/dto/createOrganizationUrl.dto'
 import { OrganizationUrlDto } from './models/dto/organizationUrl.dto'
-import { UrlTypes } from '../../enums/urlTypes'
 import { UpdateOrganizationUrlDto } from './models/dto/updateOrganizationUrl.dto'
-import { UrlMethods } from '../../enums/urlMethods'
+import { UrlMethods, UrlTypes } from '@island.is/form-system/shared'
+import { Organization } from '../organizations/models/organization.model'
+import { FormUrl } from '../formUrls/models/formUrl.model'
 
 @Injectable()
 export class OrganizationUrlsService {
   constructor(
+    @InjectModel(Organization)
+    private readonly organizationModel: typeof Organization,
     @InjectModel(OrganizationUrl)
     private readonly organizationUrlModel: typeof OrganizationUrl,
+    @InjectModel(FormUrl)
+    private readonly formUrlModel: typeof FormUrl,
   ) {}
 
   async create(
     createOrganizationUrlDto: CreateOrganizationUrlDto,
   ): Promise<OrganizationUrlDto> {
+    const organization = await this.organizationModel.findOne({
+      where: {
+        nationalId: createOrganizationUrlDto.organizationNationalId,
+      },
+    })
+
+    if (!organization) {
+      throw new NotFoundException(
+        `Organization with nationalId '${createOrganizationUrlDto.organizationNationalId}' not found`,
+      )
+    }
+
     const type = createOrganizationUrlDto.type
     const urlTypes = Object.values(UrlTypes)
 
@@ -32,10 +49,16 @@ export class OrganizationUrlsService {
       throw new NotFoundException(`url type with id '${type}' not found`)
     }
 
-    const newOrganizationUrl: OrganizationUrl = new this.organizationUrlModel(
-      createOrganizationUrlDto as OrganizationUrl,
-    )
+    const newOrganizationUrl: OrganizationUrl = new this.organizationUrlModel()
+    newOrganizationUrl.organizationId = organization.id
+    newOrganizationUrl.type = createOrganizationUrlDto.type
+    newOrganizationUrl.isTest = createOrganizationUrlDto.isTest
+    newOrganizationUrl.method = createOrganizationUrlDto.method
+    newOrganizationUrl.isXroad = false
 
+    if (createOrganizationUrlDto.method === UrlMethods.SEND_TO_ZENDESK) {
+      newOrganizationUrl.url = 'Zendesk'
+    }
     await newOrganizationUrl.save()
 
     const keys = ['id', 'url', 'isXroad', 'isTest', 'type', 'method']
@@ -81,6 +104,10 @@ export class OrganizationUrlsService {
       throw new NotFoundException(`Organization url with id '${id}' not found`)
     }
 
-    organizationUrl.destroy()
+    await this.formUrlModel.destroy({
+      where: { organizationUrlId: id },
+    })
+
+    await organizationUrl.destroy()
   }
 }

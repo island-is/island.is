@@ -71,27 +71,10 @@ export const incomePlanFormMessage: MessageDir = {
   }),
 
   info: defineMessages({
-    section: {
-      id: 'ip.application:section',
-      defaultMessage: 'Tekjuáætlun',
-      description: 'Income Plan',
-    },
-    instructionsTitle: {
-      id: 'ip.application:instructions.title',
-      defaultMessage: 'Leiðbeiningar um skráningu tekjuáætlunar',
-      description: 'Instructions on filling out your income plan',
-    },
     instructionsShortTitle: {
       id: 'ip.application:instructions.short.title',
       defaultMessage: 'Leiðbeiningar',
       description: 'Instructions',
-    },
-    instructionsDescription: {
-      id: 'ip.application:instructions.description#markdown',
-      defaultMessage:
-        '\n* Á næstu síðu er að finna tillögu að tekjuáætlun. Þar getur þú breytt upphæðum og bætt við tekjum.\n* Skrá skal heildartekjur fyrir skatt í tekjuáætlun.\n* Fjármagnstekjur eru sameignlegar hjá hjónum og skal skrá heildar fjármagnstekjur hjóna í tekjuáætlun.\n* Ef maki er á lífeyri verða greiðslur hans einnig endurreiknaðar ef fjármagnstekjum er breytt.\n* Heimilt er að skrá atvinnutekjur á þá mánuði sem þeirra er aflað. Reiknast þá þær atvinnutekjur eingöngu í þeim mánuði. Vakin er athygli á að það þarf að haka sérstaklega við þann kost að óska mánaðarskiptingu atvinnutekna í tekjuáætlun.\n* Laun / lífeyrisgreiðslur skal skrá í þeim gjaldmiðli sem þau eru greidd.\n* Það er á ábyrgð lífeyrisþega að tekjuáætlun sé rétt og að nauðsynlegar upplýsingar til að hægt sé að ákvarða réttar greiðslur séu fyrirliggjandi.',
-      description:
-        '\n* On the next page you will find your proposed income plan. There you can edit amounts and add income categories.\n* You must submit your total pre-tax income in your income plan.\n* For couples, their total income must be recorded in the income plan, as their income is considered shared.\n* If a spouse is receiving disability, his or her benefits will also be recalculated if there is a change in income.\n* Income may be recorded in the month in which it is earned. The income is then calculated only for that month. Attention, it is necessary to select the option of requesting a monthly distribution of income in the income plan.\n* Salary / pension payments must be recorded in the currency in which they are paid.\n* It is the responsibility of the pensioner that the income plan is correct and that the necessary information for determining the correct payments is available.',
     },
     temporaryCalculationTitle: {
       id: 'ip.application:temorary.calculation.title',
@@ -142,114 +125,11 @@ export const incomePlanFormMessage: MessageDir = {
   }),
 
   incomePlan: defineMessages({
-    description: {
-      id: 'ip.application:income.plan.description',
-      defaultMessage:
-        'Hér er tillaga að tekjuáætlun fyrir árið {incomePlanYear}. Upplýsingar um launatekjur eru fengnar úr staðgreiðsluskrá og fjármagnstekjur eru sóttar í nýjasta skattframtal. Þú getur breytt upphæðum, fjarlægt tekjur og/eða bætt við tekjum sem ekki er búið að setja inn. Tekjur á ári eru sýndar í þeim gjaldmiðli sem þær voru greiddar í.',
-      description: 'english translation',
-    },
     currentIncomePlanDescription: {
       id: 'ip.application:income.plan.current.income.plandescription',
       defaultMessage:
         'Hér fyrir neðan er sú tekjuáætlun sem nú er í gildi fyrir árið {incomePlanYear}. Hér getur þú breytt upphæðum, fjarlægt tekjur og/eða bætt við tekjum sem ekki er búið að setja inn.',
       description: 'english translation',
-    },
-    registerIncome: {
-      id: 'ip.application:register.income',
-      defaultMessage: 'Skráning tekna',
-      description: 'Registration of income',
-    },
-    addIncome: {
-      id: 'ip.application:add.income',
-      defaultMessage: 'Bæta við tekjum',
-      description: 'Add income',
-    },
-    saveIncome: {
-      id: 'ip.application:save.income',
-      defaultMessage: 'Vista nýjar tekjur',
-      description: 'Save new income',
-    },
-    removeIncome: {
-      id: 'ip.application:remove.income',
-      defaultMessage: 'Eyða tekjum',
-      description: 'Remove income',
-    },
-    editIncome: {
-      id: 'ip.application:edit.income',
-      defaultMessage: 'Breyta tekjum',
-      description: 'Edit income',
-    },
-    incomeCategory: {
-      id: 'ip.application:income.category',
-      defaultMessage: 'Tekjuflokkur',
-      description: 'Income category',
-    },
-    selectIncomeCategory: {
-      id: 'ip.application:select.income.category',
-      defaultMessage: 'Veldu tekjuflokk',
-      description: 'Select income category',
-    },
-    incomeType: {
-      id: 'ip.application:income.type',
-      defaultMessage: 'Tekjutegund',
-      description: 'Income type',
-    },
-    selectIncomeType: {
-      id: 'ip.application:select.income.type',
-      defaultMessage: 'Veldu tekjutegund',
-      description: 'Select income type',
-    },
-    annualIncome: {
-      id: 'ip.application:annual.income',
-      defaultMessage: 'Árstekjur',
-      description: 'Annual income',
-    },
-    monthlyIncome: {
-      id: 'ip.application:yearly.income',
-      defaultMessage: 'Mánaðartekjur',
-      description: 'Monthly income',
-    },
-    incomePerYear: {
-      id: 'ip.application:income.per.year',
-      defaultMessage: 'Tekjur á ári',
-      description: 'Income per year',
-    },
-    foreignIncomePerYear: {
-      id: 'ip.application:foreign.income.per.year',
-      defaultMessage: 'Erlendar tekjur á ári',
-      description: 'Foreign income per year',
-    },
-    equalIncomePerMonth: {
-      id: 'ip.application:equal.income.per.month',
-      defaultMessage: 'Jafnar tekjur á mánuði',
-      description: 'Equal income per month',
-    },
-    equalForeignIncomePerMonth: {
-      id: 'ip.application:equal.foreign.income.per.month',
-      defaultMessage: 'Erlendar tekjur á mánuði',
-      description: 'Foreign income per month',
-    },
-    monthlyDistributionOfIncome: {
-      id: 'ip.application:monthly.distribution.of.income',
-      defaultMessage: 'Óska eftir mánaðarskiptingu atvinnutekna',
-      description: 'Request a monthly distribution of employment income',
-    },
-    monthlyDistributionOfIncomeTooltip: {
-      id: 'ip.application:monthly.distribution.of.income.tooltip',
-      defaultMessage:
-        'Atvinnutekjur hafa einungis áhrif á lífeyrisgreiðslur þess mánaðar sem atvinnutekna er aflað.',
-      description:
-        'Income only affects the pension payments for the month in which income is earned.',
-    },
-    currency: {
-      id: 'ip.application:currency',
-      defaultMessage: 'Gjaldmiðill',
-      description: 'Currency',
-    },
-    selectCurrency: {
-      id: 'ip.application:select.currency',
-      defaultMessage: 'Veldu gjaldmiðil',
-      description: 'Select a currency',
     },
   }),
 
@@ -388,18 +268,5 @@ export const historyMessages = defineMessages({
     id: 'ip.application:yourIncomePlans',
     defaultMessage: 'Þínar tekjuáætlanir',
     description: 'Your income plans',
-  },
-})
-
-export const errorMessages = defineMessages({
-  monthsRequired: {
-    id: 'ip.application:error.months.required',
-    defaultMessage: 'Nauðsynlegt er að bæta við tekjum fyrir a.m.k einn mánuð',
-    description: 'You must add income for at least one month',
-  },
-  incomePlanRequired: {
-    id: 'ip.application:error.income.plan.required',
-    defaultMessage: 'Nauðsynlegt er að bæta við a.m.k einni tekjutegund',
-    description: 'You must add at least one income type',
   },
 })

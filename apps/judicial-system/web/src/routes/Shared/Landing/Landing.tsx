@@ -7,26 +7,14 @@ import {
   GridContainer,
   GridRow,
 } from '@island.is/island-ui/core'
-import {
-  CASES_ROUTE,
-  COURT_OF_APPEAL_CASES_ROUTE,
-  DEFENDER_CASES_ROUTE,
-  PRISON_CASES_ROUTE,
-  USERS_ROUTE,
-} from '@island.is/judicial-system/consts'
-import {
-  isAdminUser,
-  isCourtOfAppealsUser,
-  isDefenceUser,
-  isPrisonStaffUser,
-} from '@island.is/judicial-system/types'
+import { getUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   PageHeader,
   UserContext,
 } from '@island.is/judicial-system-web/src/components'
 
 import Login from './Login/Login'
-import MultipleInstitutions from './MultipleInstitutions/MultipleInstitutions'
+import SelectUser from './SelectUser/SelectUser'
 import * as styles from './Landing.css'
 
 const Landing = () => {
@@ -34,18 +22,8 @@ const Landing = () => {
   const { user, eligibleUsers } = useContext(UserContext)
 
   useEffect(() => {
-    if (eligibleUsers && eligibleUsers.length === 1) {
-      const redirectRoute = isDefenceUser(user)
-        ? DEFENDER_CASES_ROUTE
-        : isPrisonStaffUser(user)
-        ? PRISON_CASES_ROUTE
-        : isCourtOfAppealsUser(user)
-        ? COURT_OF_APPEAL_CASES_ROUTE
-        : isAdminUser(user)
-        ? USERS_ROUTE
-        : CASES_ROUTE
-
-      router.push(redirectRoute)
+    if (user && eligibleUsers && eligibleUsers.length === 1) {
+      router.push(getUserDashboardRoute(user))
     }
   }, [eligibleUsers, router, user])
 
@@ -71,7 +49,7 @@ const Landing = () => {
                 className={styles.processContent}
               >
                 {eligibleUsers && eligibleUsers.length > 1 ? (
-                  <MultipleInstitutions />
+                  <SelectUser />
                 ) : (
                   <Login />
                 )}

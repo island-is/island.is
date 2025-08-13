@@ -429,6 +429,12 @@ export const coreErrorMessages = defineMessages({
       'Skrárnar eru samtals of stórar. Hægt er að hlaða inn skrám sem eru samtals {maxSizeInMb}MB eða minni.',
     description: 'Error message when sum of file sizes exceeds max size limit',
   },
+  fileMaxCountLimitExceeded: {
+    id: 'application.system:core.error.file.maxCountLimitExceeded',
+    defaultMessage:
+      'Of margar skrár. Mest er hægt að hlaða inn {maxFileCount} skrám.',
+    description: 'Error message when file count exceeds max count limit',
+  },
   fileInvalidExtension: {
     id: 'application.system:core.error.file.invalidExtension',
     defaultMessage:
@@ -787,6 +793,16 @@ export const coreErrorMessages = defineMessages({
     defaultMessage: 'Kennitala',
     description: 'National ID',
   },
+  nationalRegistryPhone: {
+    id: 'application.system:core.fetch.data.nationalRegistryPhone',
+    defaultMessage: 'Símanúmer',
+    description: 'Phone number',
+  },
+  nationalRegistryEmail: {
+    id: 'application.system:core.fetch.data.nationalRegistryEmail',
+    defaultMessage: 'Netfang',
+    description: 'Email',
+  },
   nationalRegistryNameNotFoundForNationalId: {
     id: 'application.system:core.fetch.data.nationalRegistryNameNotFoundForNationalId',
     defaultMessage: 'Tókst ekki að sækja nafn út frá þessari kennitölu.',
@@ -807,6 +823,12 @@ export const coreErrorMessages = defineMessages({
     id: 'application.system:core.fetch.data.drivingLicenseBookActiveBookNotFound',
     defaultMessage: 'Ekki fannst virk ökunámsbók',
     description: 'Did not find active student book',
+  },
+  vehicleNotFoundForPermno: {
+    id: 'application.system:core.fetch.data.vehicleNotFoundForPermno',
+    defaultMessage: 'Tókst ekki að sækja ökutæki út frá þessu bílnúmeri.',
+    description:
+      'Error message if there was no vehicle associated with given permno',
   },
 })
 

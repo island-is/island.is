@@ -1,46 +1,32 @@
 import { useMutation } from '@apollo/client'
-import gql from 'graphql-tag'
 import NextLink from 'next/link'
 import { useRouter } from 'next/router'
 import React, { FC, useContext } from 'react'
-import { useForm } from 'react-hook-form'
+import { FormProvider, useForm } from 'react-hook-form'
 
 import { Box, Breadcrumbs, Stack, toast } from '@island.is/island-ui/core'
 import {
-  hasPermission,
   hasMunicipalityRole,
+  Page,
 } from '@island.is/skilavottord-web/auth/utils'
-import { NotFound } from '@island.is/skilavottord-web/components'
 import { PartnerPageLayout } from '@island.is/skilavottord-web/components/Layouts'
 import { UserContext } from '@island.is/skilavottord-web/context'
-import { Role } from '@island.is/skilavottord-web/graphql/schema'
 import { useI18n } from '@island.is/skilavottord-web/i18n'
 
+import AuthGuard from '@island.is/skilavottord-web/components/AuthGuard/AuthGuard'
 import NavigationLinks from '@island.is/skilavottord-web/components/NavigationLinks/NavigationLinks'
 import PageHeader from '@island.is/skilavottord-web/components/PageHeader/PageHeader'
+import {
+  CreateSkilavottordRecyclingPartnerMutation,
+  SkilavottordRecyclingPartnersQuery,
+} from '@island.is/skilavottord-web/graphql'
 import { RecyclingCompanyForm } from '../components'
-import { SkilavottordRecyclingPartnersQuery } from '../RecyclingCompanies'
 
-export const CreateSkilavottordRecyclingPartnerMutation = gql`
-  mutation createSkilavottordRecyclingPartnerMutation(
-    $input: CreateRecyclingPartnerInput!
-  ) {
-    createSkilavottordRecyclingPartner(input: $input) {
-      companyId
-      companyName
-      email
-      nationalId
-      address
-      postnumber
-      city
-      website
-      phone
-      active
-      isMunicipality
-      municipalityId
-    }
-  }
-`
+type FormData = {
+  municipalityId?: string | { value?: string }
+  isMunicipality?: boolean
+  active?: boolean
+}
 
 const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
   const { user } = useContext(UserContext)
@@ -54,13 +40,14 @@ const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
   let info = t.recyclingCompany.add.info
   let activeSection = 2
   let route = routes.recyclingCompanies.baseRoute
+  let permission = 'recyclingCompanies' as Page
 
   const isMunicipalityPage = router.route === routes.municipalities.add
 
   // Show only recycling companies for the municipality
-  let partnerId = null
+  let partnerId = ''
   if (hasMunicipalityRole(user?.role)) {
-    partnerId = user?.partnerId
+    partnerId = user?.partnerId || ''
   }
 
   // If coming from municipality page
@@ -70,18 +57,24 @@ const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
     title = mt.municipality.add.title
     info = mt.municipality.add.info
     route = routes.municipalities.baseRoute
+    permission = 'municipalities'
   }
 
-  const {
-    control,
-    handleSubmit,
-    formState: { errors },
-  } = useForm({
+  const methods = useForm<FormData>({
     mode: 'onChange',
     defaultValues: isMunicipalityPage
-      ? { isMunicipality: isMunicipalityPage }
-      : { isMunicipality: isMunicipalityPage, municipalityId: partnerId },
+      ? { isMunicipality: isMunicipalityPage, active: false }
+      : {
+          isMunicipality: isMunicipalityPage,
+          municipalityId: partnerId,
+          active: false,
+        },
   })
+
+  const {
+    handleSubmit,
+    formState: { errors },
+  } = methods
 
   const [createSkilavottordRecyclingPartner] = useMutation(
     CreateSkilavottordRecyclingPartnerMutation,
@@ -98,13 +91,7 @@ const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
     },
   )
 
-  if (!user) {
-    return null
-  } else if (!hasPermission('recyclingCompanies', user?.role as Role)) {
-    return <NotFound />
-  }
-
-  const handleCreateRecyclingPartner = handleSubmit(async (input) => {
+  const handleCreateRecyclingPartner = handleSubmit(async (input: FormData) => {
     if (typeof input.municipalityId !== 'string') {
       input.municipalityId = input.municipalityId?.value || ''
     }
@@ -140,42 +127,47 @@ const RecyclingCompanyCreate: FC<React.PropsWithChildren<unknown>> = () => {
   }
 
   return (
-    <PartnerPageLayout side={<NavigationLinks activeSection={activeSection} />}>
-      <Stack space={4}>
-        <Breadcrumbs
-          items={[
-            { title: 'Ísland.is', href: routes.home['recyclingCompany'] },
-            {
-              title: breadcrumbTitle,
-              href: route,
-            },
-            {
-              title: t.recyclingCompany.add.breadcrumb,
-            },
-          ]}
-          renderLink={(link, item) => {
-            return item?.href ? (
-              <NextLink href={item?.href} legacyBehavior>
-                {link}
-              </NextLink>
-            ) : (
-              link
-            )
-          }}
-        />
+    <AuthGuard permission={permission}>
+      <PartnerPageLayout
+        side={<NavigationLinks activeSection={activeSection} />}
+      >
+        <Stack space={4}>
+          <Breadcrumbs
+            items={[
+              { title: 'Ísland.is', href: routes.home['recyclingCompany'] },
+              {
+                title: breadcrumbTitle,
+                href: route,
+              },
+              {
+                title: t.recyclingCompany.add.breadcrumb,
+              },
+            ]}
+            renderLink={(link, item) => {
+              return item?.href ? (
+                <NextLink href={item?.href} legacyBehavior>
+                  {link}
+                </NextLink>
+              ) : (
+                link
+              )
+            }}
+          />
 
-        <PageHeader title={title} info={info} />
-      </Stack>
-      <Box marginTop={7}>
-        <RecyclingCompanyForm
-          onSubmit={handleCreateRecyclingPartner}
-          onCancel={handleCancel}
-          control={control}
-          errors={errors}
-          isMunicipalityPage={isMunicipalityPage}
-        />
-      </Box>
-    </PartnerPageLayout>
+          <PageHeader title={title} info={info} />
+        </Stack>
+        <Box marginTop={7}>
+          <FormProvider {...methods}>
+            <RecyclingCompanyForm
+              onSubmit={handleCreateRecyclingPartner}
+              onCancel={handleCancel}
+              errors={errors}
+              isMunicipalityPage={isMunicipalityPage}
+            />
+          </FormProvider>
+        </Box>
+      </PartnerPageLayout>
+    </AuthGuard>
   )
 }
 export default RecyclingCompanyCreate
