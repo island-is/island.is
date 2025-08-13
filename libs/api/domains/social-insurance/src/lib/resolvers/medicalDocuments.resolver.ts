@@ -12,6 +12,7 @@ import { Query, Resolver } from '@nestjs/graphql'
 import { CertificateForSicknessAndRehabilitation } from '../models/medicalDocuments/certificateForSicknessAndRehabilitation.model'
 import { RehabilitationPlan } from '../models/medicalDocuments/rehabilitationPlan.model'
 import { SocialInsuranceService } from '../socialInsurance.service'
+import { DisabilityPensionCertificate } from '../models/medicalDocuments/disabilityPensionCertificate'
 
 @Resolver()
 @UseGuards(IdsUserGuard, ScopesGuard)
@@ -34,5 +35,14 @@ export class MedicalDocumentsResolver {
     @CurrentUser() user: User,
   ) {
     return this.service.getCertificateForSicknessAndRehabilitation(user)
+  }
+
+  @Query(() => DisabilityPensionCertificate, {
+    name: 'socialInsuranceCertificateDisabilityPensionCertificate',
+  })
+  async siaGetDisabilityPensionCertificate(
+    @CurrentUser() user: User,
+  ) {
+    return this.service.getDisabilityPensionCertificate(user)
   }
 }

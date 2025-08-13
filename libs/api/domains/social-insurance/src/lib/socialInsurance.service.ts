@@ -7,6 +7,7 @@ import {
   TrWebApiServicesDomainEducationalInstitutionsModelsEducationalInstitutionsDto,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
   TrWebExternalModelsServicePortalBaseCertificate,
+  TrWebExternalModelsServicePortalDisabilityPensionCertificate,
   TrWebExternalModelsServicePortalRehabilitationPlan,
 } from '@island.is/clients/social-insurance-administration'
 import {
@@ -32,6 +33,8 @@ import {
   groupPensionCalculationItems,
   mapPensionCalculationInput,
 } from './utils'
+import { DisabilityPensionCertificate } from './models/medicalDocuments/disabilityPensionCertificate'
+import { mapDisabilityPensionCertificate } from './mappers/mapDisabilityPensionCertifiate'
 
 @Injectable()
 export class SocialInsuranceService {
@@ -248,6 +251,15 @@ export class SocialInsuranceService {
     return await this.socialInsuranceApi.getCertificateForSicknessAndRehabilitation(
       user,
     )
+  }
+
+  async getDisabilityPensionCertificate(
+    user: User,
+  ): Promise<DisabilityPensionCertificate | null> {
+    const data = await this.socialInsuranceApi.getCertificateForDisabilityPension(
+      user,
+    )
+    return mapDisabilityPensionCertificate(data)
   }
 
   async getCountries(

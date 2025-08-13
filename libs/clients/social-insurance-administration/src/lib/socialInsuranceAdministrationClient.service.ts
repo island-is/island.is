@@ -35,10 +35,12 @@ import {
   TrWebExternalModelsServicePortalNationalRegistryAddress,
   TrWebExternalModelsServicePortalBaseCertificate,
   TrWebExternalModelsServicePortalRehabilitationPlan,
+  TrWebExternalModelsServicePortalDisabilityPensionCertificate,
 } from '../../gen/fetch'
 import { IncomePlanDto, mapIncomePlanDto } from './dto/incomePlan.dto'
 import { ApplicationWriteApi } from './socialInsuranceAdministrationClient.type'
-import {  ApplicationTypeEnum, mapApplicationEnumToType } from './enums'
+import {  ApplicationTypeEnum } from './enums'
+import { mapApplicationEnumToType } from './mapper'
 
 @Injectable()
 export class SocialInsuranceAdministrationClientService {
@@ -249,6 +251,14 @@ export class SocialInsuranceAdministrationClientService {
     return this.medicalDocumentsApiWithAuth(
       user,
     ).apiProtectedV1MedicalDocumentsBasecertificateGet()
+  }
+
+  async getCertificateForDisabilityPension(
+    user: User,
+  ): Promise<TrWebExternalModelsServicePortalDisabilityPensionCertificate> {
+    return this.medicalDocumentsApiWithAuth(
+      user,
+    ).apiProtectedV1MedicalDocumentsDisabilitypensioncertificateGet()
   }
 
   async getCountries(

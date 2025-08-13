@@ -36,6 +36,20 @@ export const SocialInsuranceAdministrationEducationLevelsApi =
     namespace: 'SocialInsuranceAdministration',
   })
 
+export const SocialInsuranceAdministrationCountriesApi =
+  defineTemplateApi({
+    action: 'getCountries',
+    externalDataId: 'socialInsuranceAdministrationCountries',
+    namespace: 'SocialInsuranceAdministration',
+  })
+
+export const SocialInsuranceAdministrationCertificateApi =
+  defineTemplateApi({
+    action: 'getCertificate',
+    externalDataId: 'socialInsuranceAdministrationCertificate',
+    namespace: 'SocialInsuranceAdministration',
+  })
+
 export const SocialInsuranceAdministrationLatestIncomePlan = defineTemplateApi({
   action: 'getLatestIncomePlan',
   externalDataId: 'socialInsuranceAdministrationLatestIncomePlan',

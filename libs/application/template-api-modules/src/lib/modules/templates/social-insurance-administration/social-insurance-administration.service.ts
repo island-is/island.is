@@ -666,6 +666,21 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     }
   }
 
+  async getCertificate({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps) {
+    if (application.typeId === ApplicationTypes.DISABILITY_PENSION) {
+      return await this.siaClientService.getCertificateForDisabilityPension(
+        auth,
+      )
+    }
+  }
+
+  async getCountries({auth}: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getCountries(auth);
+  }
+
   async getMedicalAndRehabilitationApplicationType({
     auth,
   }: TemplateApiModuleActionProps) {
