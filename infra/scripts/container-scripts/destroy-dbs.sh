@@ -2,8 +2,6 @@
 set -euo pipefail
 shopt -s inherit_errexit
 
-echo "Hello world"
-
 PGPASSWORD=$(node secrets get "$PGPASSWORD_KEY")
 export PGPASSWORD
 
@@ -33,4 +31,5 @@ psql -tc "SELECT rolname FROM pg_roles WHERE rolname like 'feature_${FEATURE_DB_
     # psql -c "DROP ROLE IF EXISTS \"${rolname}\";"
   done
 
-node secrets delete "/k8s/feature-$FEATURE_NAME"
+# Ignore if we get a throttle exception from aws
+node secrets delete "/k8s/feature-$FEATURE_NAME" || exit 0
