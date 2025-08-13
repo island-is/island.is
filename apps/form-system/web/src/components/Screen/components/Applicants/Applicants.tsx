@@ -8,7 +8,6 @@ import {
 import { useQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { USER_PROFILE } from '@island.is/portals/my-pages/graphql'
-import { useApplicationContext } from '../../../../context/ApplicationProvider'
 interface Props {
   applicantTypes: FormSystemApplicant[]
 }
@@ -18,7 +17,6 @@ export const Applicants = ({ applicantTypes }: Props) => {
     ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL ||
     ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY
 
-  const state = useApplicationContext()
   const { data } = useQuery(USER_PROFILE, {
     fetchPolicy: 'cache-first',
   })

@@ -13,7 +13,7 @@ export const ExternalData = ({ setExternalDataAgreement }: Props) => {
   const { application } = state
   const { certificationTypes } = application
   const { formatMessage } = useIntl()
-  
+
   return (
     <Box>
       <Box marginTop={2} marginBottom={5}>
