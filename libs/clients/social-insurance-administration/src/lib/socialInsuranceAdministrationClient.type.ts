@@ -191,3 +191,9 @@ export interface PreQuestionnaire {
   previousRehabilitationSuccessful?: boolean
   additionalRehabilitationInformation?: string
 }
+
+const APPLICATION_TYPES = [
+  'ORORKA'
+] as const;
+
+export type ApplicationType = typeof APPLICATION_TYPES[number];

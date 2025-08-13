@@ -29,6 +29,13 @@ export const SocialInsuranceAdministrationWithholdingTaxApi = defineTemplateApi(
   },
 )
 
+export const SocialInsuranceAdministrationEducationLevelsApi =
+  defineTemplateApi({
+    action: 'getEducationLevelsWithEnum',
+    externalDataId: 'socialInsuranceAdministrationEducationLevels',
+    namespace: 'SocialInsuranceAdministration',
+  })
+
 export const SocialInsuranceAdministrationLatestIncomePlan = defineTemplateApi({
   action: 'getLatestIncomePlan',
   externalDataId: 'socialInsuranceAdministrationLatestIncomePlan',

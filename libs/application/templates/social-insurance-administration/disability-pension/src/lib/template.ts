@@ -35,6 +35,7 @@ import {
   SocialInsuranceAdministrationWithholdingTaxApi,
   SocialInsuranceAdministrationLatestIncomePlan,
   SocialInsuranceAdministrationIncomePlanConditionsApi,
+  SocialInsuranceAdministrationEducationLevelsApi,
 } from '../dataProviders'
 import {
   Actions,
@@ -94,6 +95,7 @@ const template: ApplicationTemplate<
                 SocialInsuranceAdministrationCurrenciesApi,
                 SocialInsuranceAdministrationWithholdingTaxApi,
                 SocialInsuranceAdministrationLatestIncomePlan,
+                SocialInsuranceAdministrationEducationLevelsApi,
                 //SocialInsuranceAdministrationIsApplicantEligibleApi,
                 SocialInsuranceAdministrationIncomePlanConditionsApi,
               ],

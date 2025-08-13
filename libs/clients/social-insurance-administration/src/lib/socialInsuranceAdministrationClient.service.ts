@@ -38,6 +38,7 @@ import {
 } from '../../gen/fetch'
 import { IncomePlanDto, mapIncomePlanDto } from './dto/incomePlan.dto'
 import { ApplicationWriteApi } from './socialInsuranceAdministrationClient.type'
+import {  ApplicationTypeEnum, mapApplicationEnumToType } from './enums'
 
 @Injectable()
 export class SocialInsuranceAdministrationClientService {
@@ -280,6 +281,29 @@ export class SocialInsuranceAdministrationClientService {
     return this.applicantApiWithAuth(
       user,
     ).apiProtectedV1ApplicantResidenceInformationGet()
+  }
+
+
+  /**
+   * TODO: Map all used application types to the enum and deprecate the old method
+   */
+  async getEducationLevelsWithEnum(
+    user: User,
+    applicationType: ApplicationTypeEnum
+  ): Promise<
+    Array<TrWebApiServicesDomainEducationalInstitutionsModelsEducationLevelDto> | null
+  > {
+    const applicationTypeMapped = mapApplicationEnumToType(applicationType);
+
+    if (!applicationTypeMapped) {
+      return Promise.resolve(null)
+    }
+
+    return this.generalApiWithAuth(
+      user,
+    ).apiProtectedV1GeneralEducationlevelsApplicationTypeGet({
+      applicationType: applicationTypeMapped,
+    });
   }
 
   async getEducationLevels(

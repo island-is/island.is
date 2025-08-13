@@ -43,6 +43,7 @@ import {
   transformApplicationToOldAgePensionDTO,
   transformApplicationToPensionSupplementDTO,
 } from './social-insurance-administration-utils'
+import { ApplicationTypeEnum } from '@island.is/clients/social-insurance-administration'
 
 export const APPLICATION_ATTACHMENT_BUCKET = 'APPLICATION_ATTACHMENT_BUCKET'
 
@@ -651,6 +652,18 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
       auth,
       marpApplicationType || '',
     )
+  }
+
+  async getEducationLevelsWithEnum({
+    application,
+    auth,
+  }: TemplateApiModuleActionProps) {
+    if (application.typeId === ApplicationTypes.DISABILITY_PENSION) {
+      return await this.siaClientService.getEducationLevelsWithEnum(
+        auth,
+        ApplicationTypeEnum.DISABILITY_PENSION
+      )
+    }
   }
 
   async getMedicalAndRehabilitationApplicationType({

@@ -19,6 +19,7 @@ import {
 import {
   SocialInsuranceAdministrationCategorizedIncomeTypesApi,
   SocialInsuranceAdministrationCurrenciesApi,
+  SocialInsuranceAdministrationEducationLevelsApi,
   SocialInsuranceAdministrationIncomePlanConditionsApi,
   SocialInsuranceAdministrationLatestIncomePlan,
   SocialInsuranceAdministrationWithholdingTaxApi,
@@ -87,17 +88,17 @@ export const Prerequisites = buildForm({
                title: disabilityPensionFormMessage.prerequisites.incomeTitle,
                subTitle: disabilityPensionFormMessage.prerequisites.incomeText,
              }),
+            buildDataProviderItem({
+               provider: SocialInsuranceAdministrationEducationLevelsApi,
+             }),
              buildDataProviderItem({
                provider: SocialInsuranceAdministrationLatestIncomePlan,
-               title: '',
              }),
              buildDataProviderItem({
                provider: SocialInsuranceAdministrationIncomePlanConditionsApi,
-               title: '',
              }),
              buildDataProviderItem({
                provider: SocialInsuranceAdministrationCurrenciesApi,
-               title: '',
              }),
           ],
           submitField: buildSubmitField({
