@@ -696,6 +696,12 @@ export class FormsService {
         displayOrder: 1,
         name: { is: 'Hlutaðeigandi aðilar', en: 'Relevant parties' },
       } as Section,
+      {
+        formId: form.id,
+        sectionType: SectionTypes.SUMMARY,
+        displayOrder: 4,
+        name: { is: 'Yfirlit', en: 'Summary' },
+      } as Section,
     ])
 
     const paymentSection = await this.sectionModel.create({

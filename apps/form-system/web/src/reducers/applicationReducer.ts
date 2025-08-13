@@ -4,7 +4,6 @@ import {
   FormSystemSection,
 } from '@island.is/api/schema'
 import {
-  SectionTypes,
   Action,
   ApplicationState,
   initializeField,
@@ -26,7 +25,6 @@ export const initialState = {
   currentSection: { data: {} as FormSystemSection, index: 0 },
   currentScreen: undefined,
   errors: [],
-  showSummary: false,
 }
 
 export const initialReducer = (state: ApplicationState): ApplicationState => {
@@ -38,19 +36,19 @@ export const initialReducer = (state: ApplicationState): ApplicationState => {
     .flatMap((section) => section.screens ?? [])
     .filter(Boolean) as FormSystemScreen[]
 
-  // Move payment to the end, should get fixed in the backend
-  const paymentIndex = sections.findIndex(
-    (section) => section.sectionType === SectionTypes.PAYMENT,
-  )
-  if (paymentIndex !== -1) {
-    const payment = sections.splice(paymentIndex, 1)
-    sections.push(payment[0])
-  }
-
   const { currentSection, currentScreen } = getCurrentSectionAndScreen(
     sections,
     screens,
   )
+
+  // Arrange sections such that sectionType.PAYMENT is second last and sectionType.SUMMARY is last
+  sections.sort((a, b) => {
+    if (a.sectionType === 'SUMMARY') return 1
+    if (b.sectionType === 'SUMMARY') return -1
+    if (a.sectionType === 'PAYMENT') return 1
+    if (b.sectionType === 'PAYMENT') return -1
+    return 0
+  })
 
   return {
     ...state,
@@ -126,12 +124,6 @@ export const applicationReducer = (
         nextSectionIndex,
         currentScreenIndex,
       } = getIncrementVariables(state)
-      if (nextSectionIndex === maxSectionIndex + 1) {
-        return {
-          ...state,
-          showSummary: true,
-        }
-      }
       if (hasScreens(currentSectionData)) {
         return incrementWithScreens(
           state,
@@ -146,12 +138,6 @@ export const applicationReducer = (
     case 'DECREMENT': {
       const { currentSectionData, currentSectionIndex, currentScreenIndex } =
         getDecrementVariables(state)
-      if (state.showSummary) {
-        return {
-          ...state,
-          showSummary: false,
-        }
-      }
       if (hasScreens(currentSectionData)) {
         return decrementWithScreens(
           state,
