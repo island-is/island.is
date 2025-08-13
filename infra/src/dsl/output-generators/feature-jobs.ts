@@ -125,7 +125,7 @@ export const generateCleanUpForFeature = async (
           const commandArg = feature as string
           return {
             image,
-            command: [`/app/destroy-dbs.sh ${commandArg}`],
+            command: [`/app/destroy-dbs.sh`, commandArg],
             name: `${info!.username!.replace(/_/g, '-').substring(0, 60)}1`,
             securityContext,
             env: [
@@ -183,7 +183,7 @@ export const generateCleanUpForFeature = async (
         62,
       ),
       annotations: {
-        'argocd.argoproj.io/hook': 'PostDelete',
+        'argocd.argoproj.io/hook': 'PostSync',
         'argocd.argoproj.io/hook-delete-policy': 'BeforeHookCreation', // 'HookSucceeded', // , HookFailed',
       },
     },
