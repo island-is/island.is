@@ -1,5 +1,6 @@
 export default {
   production: process.env.NODE_ENV === 'production',
+  defaultNamespace: '@island.is/license-api',
   auth: {
     issuer:
       process.env.IDENTITY_SERVER_ISSUER_URL ??

@@ -28,7 +28,7 @@ import { NationalId } from '@island.is/nest/core'
 import { environment } from '../../../../environments'
 import { LicenseServiceV2 } from '../services/licenseV2.service'
 
-const namespace = `${environment.audit.defaultNamespace}`
+const namespace = `${environment.defaultNamespace}`
 
 @ApiHeader({
   name: 'X-Param-NationalId',
