@@ -1,18 +1,15 @@
 import { FormSystemApplicant } from '@island.is/api/schema'
 import { Input, Stack, Box, Text } from '@island.is/island-ui/core'
 import { useIntl } from 'react-intl'
-import { m, webMessages } from '../../lib/messages'
 import { NationalIdField } from './components/nationalIdField'
 import {
   GET_NAME_BY_NATIONALID,
   GET_ADDRESS_BY_NATIONALID,
 } from '@island.is/form-system/graphql'
+import { m, webMessages } from '../../lib/messages'
 import { useQuery } from '@apollo/client'
-interface User {
-  nationalId: string
-  emails: Array<{ primary: boolean; email: string }>
-  mobilePhoneNumber: string
-}
+import { User } from './types'
+import { ApplicationLoading } from '../ApplicationsLoading/ApplicationLoading'
 
 interface Props {
   applicantType: FormSystemApplicant
@@ -28,7 +25,7 @@ export const Agent = ({ applicantType, lang, user }: Props) => {
     user?.emails.find((email: { primary: boolean }) => email.primary)?.email ??
     user?.emails[0]?.email
   const shouldQuery = !!nationalId
-  const { data: nameData, loading: nameLoading } = useQuery(
+  const { data: nameData, loading: nameLoading, error: nameError } = useQuery(
     GET_NAME_BY_NATIONALID,
     {
       variables: { input: nationalId },
@@ -36,7 +33,7 @@ export const Agent = ({ applicantType, lang, user }: Props) => {
       skip: !shouldQuery,
     },
   )
-  const { data: addressData, loading: addressLoading } = useQuery(
+  const { data: addressData, loading: addressLoading, error: addressError } = useQuery(
     GET_ADDRESS_BY_NATIONALID,
     {
       variables: { input: nationalId },
@@ -53,7 +50,7 @@ export const Agent = ({ applicantType, lang, user }: Props) => {
       </Text>
       <Stack space={2}>
         {isLoading ? (
-          <Text>Loading....</Text>
+          <ApplicationLoading />
         ) : (
           <>
             <NationalIdField

@@ -61,7 +61,6 @@ import { CompanyRegistryResolver } from './company/companyRegistry.resolver'
     OrganizationUrlsService,
     FormUrlsResolver,
     FormUrlsService,
-    CmsModule,
     NationalRegistryResolver,
     CompanyRegistryResolver,
   ],
@@ -69,6 +68,7 @@ import { CompanyRegistryResolver } from './company/companyRegistry.resolver'
   imports: [
     FormSystemClientModule,
     LoggingModule,
+    CmsModule,
     NationalRegistryV3ClientModule,
     CompanyRegistryClientModule,
   ],

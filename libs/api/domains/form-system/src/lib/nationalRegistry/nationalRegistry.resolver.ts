@@ -15,6 +15,7 @@ export class NationalRegistryResolver {
 
   @Query(() => FormSystemNameByNationalId, {
     name: 'formSystemNameByNationalId',
+    nullable: true,
   })
   async getName(
     @Args('input', { type: () => String }) input: string,
@@ -24,6 +25,7 @@ export class NationalRegistryResolver {
 
   @Query(() => FormSystemHomeByNationalId, {
     name: 'formSystemHomeByNationalId',
+    nullable: true,
   })
   async getAddress(
     @Args('input', { type: () => String }) input: string,

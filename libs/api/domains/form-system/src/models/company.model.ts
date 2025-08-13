@@ -1,4 +1,8 @@
-import { Field as FieldType, ObjectType } from '@nestjs/graphql'
+import {
+  Field as FieldType,
+  ObjectType,
+  GraphQLISODateTime,
+} from '@nestjs/graphql'
 
 @ObjectType()
 export class CompanyClassification {
@@ -20,13 +24,13 @@ export class CompanyVat {
   @FieldType(() => String, { nullable: true })
   vatNumber?: string
 
-  @FieldType(() => Date, { nullable: true })
+  @FieldType(() => GraphQLISODateTime, { nullable: true })
   dateOfRegistration?: Date
 
   @FieldType(() => String, { nullable: true })
   status?: string
 
-  @FieldType(() => Date, { nullable: true })
+  @FieldType(() => GraphQLISODateTime, { nullable: true })
   dateOfDeregistration?: Date
 
   @FieldType(() => [CompanyClassification], { nullable: 'itemsAndList' })
@@ -89,7 +93,7 @@ export class CompanyInfo {
   @FieldType(() => String)
   name!: string
 
-  @FieldType(() => Date, { nullable: true })
+  @FieldType(() => GraphQLISODateTime, { nullable: true })
   dateOfRegistration?: Date
 
   @FieldType(() => String)
@@ -98,17 +102,17 @@ export class CompanyInfo {
   @FieldType(() => String, { nullable: true })
   vatNumber?: string
 
-  @FieldType(() => Date, { nullable: true })
+  @FieldType(() => GraphQLISODateTime, { nullable: true })
   lastUpdated?: Date
 }
 
 @ObjectType()
 export class CompanyExtendedInfo extends CompanyInfo {
   @FieldType(() => [CompanyFormOfOperation], { nullable: 'itemsAndList' })
-  formOfOperation!: CompanyFormOfOperation[]
+  formOfOperation?: CompanyFormOfOperation[]
 
   @FieldType(() => [CompanyAddress], { nullable: 'itemsAndList' })
-  addresses!: CompanyAddress[]
+  addresses?: CompanyAddress[]
 
   @FieldType(() => CompanyAddress, { nullable: true })
   address?: CompanyAddress
@@ -117,8 +121,8 @@ export class CompanyExtendedInfo extends CompanyInfo {
   legalDomicile?: CompanyAddress
 
   @FieldType(() => [CompanyRelatedParty], { nullable: 'itemsAndList' })
-  relatedParty!: CompanyRelatedParty[]
+  relatedParty?: CompanyRelatedParty[]
 
   @FieldType(() => [CompanyVat], { nullable: 'itemsAndList' })
-  vat!: CompanyVat[]
+  vat?: CompanyVat[]
 }

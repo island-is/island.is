@@ -5,12 +5,8 @@ import { m, webMessages } from '../../lib/messages'
 import { useIntl } from 'react-intl'
 import { GET_COMPANY_BY_NATIONALID } from '@island.is/form-system/graphql'
 import { useQuery } from '@apollo/client'
-
-interface User {
-  nationalId: string
-  emails: Array<{ primary: boolean; email: string }>
-  mobilePhoneNumber: string
-}
+import { User } from './types'
+import { ApplicationLoading } from '../ApplicationsLoading/ApplicationLoading'
 
 interface Props {
   applicantType: FormSystemApplicant
@@ -39,7 +35,7 @@ export const LegalEntity = ({ applicantType, lang, user }: Props) => {
       </Text>
       <Stack space={2}>
         {isLoading ? (
-          <Text>Loading....</Text>
+          <ApplicationLoading />
         ) : (
           <>
             <NationalIdField
