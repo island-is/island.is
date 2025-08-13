@@ -12,20 +12,19 @@ import { setupGlobals } from './utils/lifecycle/setup-globals'
 import { setupRoutes } from './utils/lifecycle/setup-routes'
 import { performanceMetricsAppLaunched } from './utils/performance-metrics'
 
-// Wait until React Native is initialized
-Navigation.events().registerAppLaunchedListener(async () => {
-  // setup global packages and polyfills
-  setupGlobals()
+// setup global packages and polyfills
+setupGlobals()
 
-  // Register all event handlers
-  setupEventHandlers()
+// Register all event handlers
+setupEventHandlers()
 
-  // setup development menu
-  setupDevMenu()
+// setup development menu
+setupDevMenu()
 
-  // Setup app routing layer
-  setupRoutes()
+// Setup app routing layer
+setupRoutes()
 
+async function startApp() {
   // Initialize Apollo client. This must be done before registering components
   await initializeApolloClient()
 
@@ -34,24 +33,30 @@ Navigation.events().registerAppLaunchedListener(async () => {
 
   // Set default navigation theme options
   Navigation.setDefaultOptions(getDefaultOptions())
-  // Read authorize result from keychain
-  await readAuthorizeResult()
 
-  // Get app root
-  const root = await getAppRoot()
+  // Wait until React Native is initialized
+  Navigation.events().registerAppLaunchedListener(async () => {
+    // Read authorize result from keychain
+    await readAuthorizeResult()
 
-  // Dismiss all overlays
-  await Navigation.dismissAllOverlays()
+    // Get app root
+    const root = await getAppRoot()
 
-  // Show lock screen overlay
-  void showAppLockOverlay({ enforceActivated: true })
+    // Dismiss all overlays
+    await Navigation.dismissAllOverlays()
 
-  // Dismiss all modals
-  await Navigation.dismissAllModals()
+    // Show lock screen overlay
+    void showAppLockOverlay({ enforceActivated: true })
 
-  // Set the app root
-  await Navigation.setRoot({ root })
+    // Dismiss all modals
+    await Navigation.dismissAllModals()
 
-  // Mark app launched
-  performanceMetricsAppLaunched()
-})
+    // Set the app root
+    await Navigation.setRoot({ root })
+
+    // Mark app launched
+    performanceMetricsAppLaunched()
+  })
+}
+
+startApp()
