@@ -26,6 +26,8 @@ import { NationalRegistryClientConfig } from '@island.is/clients/national-regist
 import { AuditModule, AuditConfig } from '@island.is/nest/audit'
 import { AuthModule } from '@island.is/auth-nest-tools'
 
+import { environment } from '../../environments'
+
 @Module({
   imports: [
     LoggingModule,

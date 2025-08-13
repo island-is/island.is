@@ -12,7 +12,6 @@ import { FileStorageConfig } from '@island.is/file-storage'
 import { LoggingModule } from '@island.is/logging'
 import { AuditModule, AuditConfig } from '@island.is/nest/audit'
 
-import { environment } from '../../../../environments'
 import { SequelizeConfigService } from '../../../sequelizeConfig.service'
 import { ApplicationChargeModule } from '../charge/application-charge.module'
 import { ApplicationLifeCycleService } from './application-lifecycle.service'
