@@ -36,7 +36,6 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { EndorsementListByIdPipe } from './pipes/endorsementListById.pipe'
-import { environment } from '../../../environments'
 import { AdminPortalScope, EndorsementsScope } from '@island.is/auth/scopes'
 import type { User } from '@island.is/auth-nest-tools'
 import { HasAccessGroup } from '../../guards/accessGuard/access.decorator'

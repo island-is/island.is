@@ -5,7 +5,7 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { APP_GUARD } from '@nestjs/core'
-import { AuditConfig, AuditModule, AuditOptions } from '@island.is/nest/audit'
+import { AuditConfig, AuditModule } from '@island.is/nest/audit'
 import { Module } from '@nestjs/common'
 import { SequelizeModule } from '@nestjs/sequelize'
 import { environment } from '../environments'

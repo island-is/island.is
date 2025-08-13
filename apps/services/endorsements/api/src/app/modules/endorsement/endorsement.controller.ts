@@ -30,7 +30,6 @@ import {
   ApiExtraModels,
   ApiResponse,
 } from '@nestjs/swagger'
-import { environment } from '../../../environments'
 import { EndorsementList } from '../endorsementList/endorsementList.model'
 import { EndorsementListByIdPipe } from '../endorsementList/pipes/endorsementListById.pipe'
 import { EndorsementDto } from './dto/endorsement.dto'

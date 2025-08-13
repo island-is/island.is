@@ -8,7 +8,6 @@ import { SequelizeModule } from '@nestjs/sequelize'
 import { AuthModule } from '@island.is/auth-nest-tools'
 import { AuditModule, AuditConfig } from '@island.is/nest/audit'
 
-import { environment } from '../environments'
 import { NationalRegistryV3ClientConfig } from '@island.is/clients/national-registry-v3'
 import { RegulationsClientConfig } from '@island.is/clients/regulations'
 import { DraftRegulationModule } from './modules/draft_regulation'
