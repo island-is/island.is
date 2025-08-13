@@ -151,7 +151,7 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   }
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style={{ flex: 1 }}>
       <ScrollView
         refreshControl={
           <RefreshControl refreshing={refetching} onRefresh={onRefresh} />
