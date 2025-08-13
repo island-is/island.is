@@ -118,6 +118,21 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
     handleSetAndSendDefendantToServer(update)
   }
 
+  const getDefenceChoice = () => {
+    switch (defendant.requestedDefenderChoice) {
+      case DefenderChoice.WAIVE:
+        return 'Ég óska ekki eftir verjanda.'
+      case DefenderChoice.CHOOSE:
+        return `${defendant.defenderName} ${defendant.defenderNationalId}`
+      case DefenderChoice.DELAY:
+        return 'Ég óska eftir fresti fram að þingfestingu til þess að tilnefna verjanda.'
+      case DefenderChoice.DELEGATE:
+        return 'Ég fel dómara málsins að tilnefna og skipa mér verjanda.'
+      default:
+        return 'Ekkert valið.'
+    }
+  }
+
   return (
     <Box component="section" marginBottom={5}>
       <BlueBox>
@@ -127,6 +142,9 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
               formatMessage(core.indictmentDefendant, { gender }),
             )} ${defendant.name}`}
           </Text>
+          {defendant.requestedDefenderChoice && (
+            <Text variant="small">{`Ósk ákærða um verjanda: ${getDefenceChoice()}`}</Text>
+          )}
         </Box>
         <Box marginBottom={2}>
           <Checkbox
