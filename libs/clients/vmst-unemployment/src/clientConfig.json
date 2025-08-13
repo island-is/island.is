@@ -1408,6 +1408,14 @@
             "type": "string",
             "description": "Aðrar upplýsingar",
             "nullable": true
+          },
+          "incomes": {
+            "type": "array",
+            "description": "Tekjur",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/ActivationGrantIncomeFormDTO"
+            }
           }
         }
       },
@@ -2065,6 +2073,97 @@
             "additionalProperties": false
           }
         ]
+      },
+      "ActivationGrantIncomeFormDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "employerName": {
+            "type": "string",
+            "description": "Launagreiðandi",
+            "nullable": true
+          },
+          "month": {
+            "type": "integer",
+            "description": "Launamánuður",
+            "format": "int32"
+          },
+          "year": {
+            "type": "integer",
+            "description": "Ár",
+            "format": "int32"
+          },
+          "amount": {
+            "type": "integer",
+            "description": "Tekjur (ISK)",
+            "format": "int32"
+          },
+          "hasEnded": {
+            "type": "boolean",
+            "description": "Hefur þú lokið störfum?"
+          },
+          "endDate": {
+            "type": "string",
+            "description": "Starfslok",
+            "format": "date-time",
+            "nullable": true
+          },
+          "isFromEmployment": {
+            "type": "boolean",
+            "description": "Tekjur vegna starfs"
+          },
+          "explanation": {
+            "type": "string",
+            "description": "Skýring greiðslu",
+            "nullable": true
+          },
+          "hasUnpaidVacation": {
+            "type": "boolean",
+            "description": "Ótekið orlof við starfslok"
+          },
+          "unpaidVacationDays": {
+            "type": "integer",
+            "description": "Fjöldi orlofsdaga",
+            "format": "int32",
+            "nullable": true
+          },
+          "unpaidVacations": {
+            "type": "array",
+            "description": "orlofs upplýsingar",
+            "nullable": true,
+            "items": {
+              "$ref": "#/components/schemas/Galdur_Domain_Models_Applications_UnemploymentApplications_DTOs_UnpaidVacationDTO"
+            }
+          }
+        }
+      },
+      "Galdur_Domain_Models_Applications_UnemploymentApplications_DTOs_UnpaidVacationDTO": {
+        "type": "object",
+        "additionalProperties": false,
+        "properties": {
+          "id": {
+            "type": "string",
+            "description": "Auðkenni",
+            "format": "guid"
+          },
+          "unpaidVacationDays": {
+            "type": "integer",
+            "description": "Fjöldi orlofsdaga",
+            "format": "int32"
+          },
+          "unpaidVacationStart": {
+            "type": "string",
+            "description": "Orlof hófst",
+            "format": "date-time",
+            "nullable": true
+          },
+          "unpaidVacationEnd": {
+            "type": "string",
+            "description": "Orlof endaði",
+            "format": "date-time",
+            "nullable": true
+          }
+        }
       },
       "Galdur_Domain_Models_Applicants_ApplicantProfile_DTOs_PersonalInformation": {
         "type": "object",
@@ -6837,34 +6936,6 @@
           "resignationEnds": {
             "type": "string",
             "description": "Tölvuþekking",
-            "format": "date-time",
-            "nullable": true
-          }
-        }
-      },
-      "Galdur_Domain_Models_Applications_UnemploymentApplications_DTOs_UnpaidVacationDTO": {
-        "type": "object",
-        "additionalProperties": false,
-        "properties": {
-          "id": {
-            "type": "string",
-            "description": "Auðkenni",
-            "format": "guid"
-          },
-          "unpaidVacationDays": {
-            "type": "integer",
-            "description": "Fjöldi orlofsdaga",
-            "format": "int32"
-          },
-          "unpaidVacationStart": {
-            "type": "string",
-            "description": "Orlof hófst",
-            "format": "date-time",
-            "nullable": true
-          },
-          "unpaidVacationEnd": {
-            "type": "string",
-            "description": "Orlof endaði",
             "format": "date-time",
             "nullable": true
           }
