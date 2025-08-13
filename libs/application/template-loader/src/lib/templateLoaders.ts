@@ -233,6 +233,8 @@ const templates: Record<ApplicationTypes, () => Promise<unknown>> = {
     ),
   [ApplicationTypes.SECONDARY_SCHOOL]: () =>
     import('@island.is/application/templates/secondary-school'),
+  [ApplicationTypes.ACTIVATION_ALLOWANCE]: () =>
+    import('@island.is/application/templates/activation-allowance'),
   [ApplicationTypes.CAR_RENTAL_FEE_CATEGORY]: () =>
     import('@island.is/application/templates/car-rental-fee-category'),
   [ApplicationTypes.MEDICAL_AND_REHABILITATION_PAYMENTS]: () =>

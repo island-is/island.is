@@ -80,6 +80,7 @@ env:
   UNIVERSITY_GATEWAY_API_URL: 'http://services-university-gateway.services-university-gateway.svc.cluster.local'
   USER_NOTIFICATION_API_URL: 'http://user-notification.user-notification.svc.cluster.local'
   USER_PROFILE_CLIENT_URL: 'http://service-portal-api.service-portal.svc.cluster.local'
+  VMST_UNEMPLOYMENT_XROAD_PATH: 'IS-TEST/GOV/7005942039/VMST-Protected/XRoadDev-v1'
   WATSON_ASSISTANT_CHAT_FEEDBACK_DB_NAME: 'island-is-assistant-feedback'
   XROAD_ADR_MACHINE_LICENSE_PATH: 'IS-TEST/GOV/4201810439/Vinnueftirlitid-Protected/rettindi-token-v1'
   XROAD_AGRICULTURAL_UNIVERSITY_OF_ICELAND_PATH: 'IS-TEST/EDU/10056/LBHI-Protected/brautskraning-v1'
@@ -335,6 +336,8 @@ secrets:
   XROAD_PAYMENT_USER: '/k8s/application-system-api/PAYMENT_USER'
   XROAD_PROPERTIES_CLIENT_SECRET: '/k8s/xroad/client/NATIONAL-REGISTRY/IDENTITYSERVER_SECRET'
   XROAD_VMST_API_KEY: '/k8s/vmst-client/VMST_API_KEY'
+  XROAD_VMST_UNEMPLOYMENT_PASSWORD: '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_PASSWORD'
+  XROAD_VMST_UNEMPLOYMENT_USERNAME: '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_USERNAME'
   ZENDESK_CONTACT_FORM_EMAIL: '/k8s/api/ZENDESK_CONTACT_FORM_EMAIL'
   ZENDESK_CONTACT_FORM_TOKEN: '/k8s/api/ZENDESK_CONTACT_FORM_TOKEN'
 securityContext:

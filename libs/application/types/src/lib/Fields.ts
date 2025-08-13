@@ -835,7 +835,7 @@ export interface AccordionField extends BaseField {
     | ((application: Application) => Array<AccordionItem>)
   titleVariant?: TitleVariants
 }
-export interface BankAccountField extends BaseField {
+export interface BankAccountField extends InputField {
   readonly type: FieldTypes.BANK_ACCOUNT
   component: FieldComponents.BANK_ACCOUNT
   titleVariant?: TitleVariants

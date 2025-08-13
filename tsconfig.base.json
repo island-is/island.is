@@ -293,6 +293,9 @@
       "@island.is/application/templates/accident-notification": [
         "libs/application/templates/accident-notification/src/index.ts"
       ],
+      "@island.is/application/templates/activation-allowance": [
+        "libs/application/templates/activation-allowance/src/index.ts"
+      ],
       "@island.is/application/templates/alcohol-tax-redemption": [
         "libs/application/templates/alcohol-tax-redemption/src/index.ts"
       ],
@@ -929,6 +932,9 @@
       ],
       "@island.is/clients/verdicts": ["libs/clients/verdicts/src/index.ts"],
       "@island.is/clients/vmst": ["libs/clients/vmst/src/index.ts"],
+      "@island.is/clients/vmst-unemployment": [
+        "libs/clients/vmst-unemployment/src/index.ts"
+      ],
       "@island.is/clients/work-accident-ver": [
         "libs/clients/work-accident-ver/src/index.ts"
       ],
