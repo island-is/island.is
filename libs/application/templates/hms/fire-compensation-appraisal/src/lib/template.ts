@@ -195,6 +195,11 @@ const template: ApplicationTemplate<
               action: TemplateApiActions.submitApplication,
             }),
           ],
+          actionCard: {
+            tag: {
+              label: m.completedMessages.actionCardDone,
+            },
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -232,16 +237,10 @@ const template: ApplicationTemplate<
     _nationalId: string,
     _application: Application,
   ): ApplicationRole | undefined => {
-    const { applicant, applicantActors = [] } = _application
-
-    if (_nationalId === applicant) {
-      return Roles.APPLICANT
-    }
-
-    if (applicantActors.some((actor) => actor === _nationalId)) {
+    const { applicantActors = [] } = _application
+    if (applicantActors.length > 0) {
       return Roles.DELEGATE
     }
-
     return Roles.APPLICANT
   },
 }

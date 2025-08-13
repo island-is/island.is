@@ -128,11 +128,6 @@ export const siaCertificateForSicknessAndRehabilitationQuery = gql`
         treatmentMeasures
         explanation
         progress
-        estimatedDuration {
-          start
-          end
-          months
-        }
       }
     }
   }

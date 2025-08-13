@@ -1,4 +1,4 @@
-import { Field, GraphQLISODateTime, Int, ObjectType } from '@nestjs/graphql'
+import { Field, ObjectType, Int } from '@nestjs/graphql'
 import { EnumType } from './enumType.model'
 import { EstimatedDuration } from './estimatedDuration.model'
 
@@ -63,9 +63,6 @@ class Confirmation {
 
   @Field({ nullable: true })
   progress?: string
-
-  @Field(() => EstimatedDuration, { nullable: true })
-  estimatedDuration?: EstimatedDuration
 }
 
 @ObjectType(

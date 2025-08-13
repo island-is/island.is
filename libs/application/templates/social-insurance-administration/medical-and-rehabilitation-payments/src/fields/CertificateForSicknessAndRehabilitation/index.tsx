@@ -537,8 +537,6 @@ export const CertificateForSicknessAndRehabilitation: FC<FieldBaseProps> = ({
       {activityAndParticipationImpairment()}
       <Divider />
       {mainImpairment()}
-      <Divider />
-      {applicationForMedicalAndRehabilitationPayments()}
       <input
         type="hidden"
         value={
