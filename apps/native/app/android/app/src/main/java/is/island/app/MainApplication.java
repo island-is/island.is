@@ -15,7 +15,6 @@ import java.util.List;
 
 import com.reactnativenavigation.NavigationApplication;
 import com.reactnativenavigation.react.NavigationReactNativeHost;
-import com.microsoft.codepush.react.CodePush;
 import is.island.app.IslandPackage;
 import com.rnfs.RNFSPackage; 
 
@@ -36,12 +35,7 @@ public class MainApplication extends NavigationApplication {
           packages.add(new RNFSPackage());
           return packages;
         }
-
-        @Override
-        protected String getJSBundleFile() {
-            return CodePush.getJSBundleFile();
-        }
-
+        
         @Override
         protected String getJSMainModuleName() {
           return "index";

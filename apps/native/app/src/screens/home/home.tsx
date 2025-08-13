@@ -12,7 +12,6 @@ import {
   Platform,
   RefreshControl,
 } from 'react-native'
-import CodePush from 'react-native-code-push'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
 
@@ -123,9 +122,7 @@ const { useNavigationOptions, getNavigationOptions } =
     },
   )
 
-export const MainHomeScreen: NavigationFunctionComponent = ({
-  componentId,
-}) => {
+export const HomeScreen: NavigationFunctionComponent = ({ componentId }) => {
   useNavigationOptions(componentId)
 
   useAndroidNotificationPermission()
@@ -401,11 +398,4 @@ export const MainHomeScreen: NavigationFunctionComponent = ({
   )
 }
 
-MainHomeScreen.options = getNavigationOptions
-
-export const HomeScreen = CodePush({
-  checkFrequency: CodePush.CheckFrequency.ON_APP_RESUME,
-  installMode: CodePush.InstallMode.ON_NEXT_RESUME,
-})(MainHomeScreen)
-
-HomeScreen.options = MainHomeScreen.options
+HomeScreen.options = getNavigationOptions
