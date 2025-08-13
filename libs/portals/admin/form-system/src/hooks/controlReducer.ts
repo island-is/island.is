@@ -186,7 +186,6 @@ type InputSettingsActions =
   | {
       type: 'SET_IS_ZENDESK_ENABLED'
       payload: {
-        property: 'isZendeskEnabled'
         value: boolean
       }
     }
@@ -778,7 +777,7 @@ export const controlReducer = (
       const newField = {
         ...field,
         fieldSettings: {
-          ...field.fieldSettings,
+          ...removeTypename(field.fieldSettings),
           [property]: value,
         },
       }

@@ -7,7 +7,7 @@ import {
   Checkbox,
   Input,
 } from '@island.is/island-ui/core'
-import { ControlContext } from 'libs/portals/admin/form-system/src/context/ControlContext'
+import { ControlContext } from '../../../../../../context/ControlContext'
 import { useContext } from 'react'
 
 interface Props {

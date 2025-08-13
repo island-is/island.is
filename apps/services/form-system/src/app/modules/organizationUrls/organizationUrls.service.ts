@@ -107,12 +107,18 @@ export class OrganizationUrlsService {
     }
 
     const sequelize = this.organizationUrlModel.sequelize
-    await sequelize?.transaction(async (t) => {
-      await this.formUrlModel.destroy({
-        where: { organizationUrlId: id },
-        transaction: t,
+    if (sequelize) {
+      await sequelize.transaction(async (t) => {
+        await this.formUrlModel.destroy({
+          where: { organizationUrlId: id },
+          transaction: t,
+        })
+        await organizationUrl.destroy({ transaction: t })
       })
-      await organizationUrl.destroy({ transaction: t })
-    })
+    } else {
+      // Fallback without transaction to avoid a silent no-op
+      await this.formUrlModel.destroy({ where: { organizationUrlId: id } })
+      await organizationUrl.destroy()
+    }
   }
 }

@@ -4,7 +4,7 @@ import defaults from 'lodash/defaults'
 import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 
-import { SectionTypes } from '@island.is/form-system/shared'
+import { SectionTypes, UrlMethods } from '@island.is/form-system/shared'
 import { ScreenDto } from '../screens/models/dto/screen.dto'
 import { Screen } from '../screens/models/screen.model'
 import { FieldDto } from '../fields/models/dto/field.dto'
@@ -536,7 +536,7 @@ export class FormsService {
       organizationUrls.some(
         (orgUrl) =>
           orgUrl.id === formUrl.organizationUrlId &&
-          orgUrl.method === 'SEND_TO_ZENDESK',
+          orgUrl.method === UrlMethods.SEND_TO_ZENDESK,
       ),
     )
   }
@@ -546,8 +546,6 @@ export class FormsService {
       form.organizationId,
       form.formUrls ?? [],
     )
-
-    console.log('Is Zendesk enabled:', isZendesk) // Debugging line
 
     const formKeys = [
       'id',

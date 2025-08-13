@@ -28,7 +28,6 @@ export const Urls = () => {
       type: 'UPDATE_FORM_URLS',
       payload: { newValue: formUrls },
     })
-    console.log('zendesk', control.form.isZendeskEnabled)
   }, [formUrls])
 
   const [deleteUrl] = useMutation(DELETE_FORM_URL)
@@ -110,7 +109,7 @@ export const Urls = () => {
                           if (e.target.checked) {
                             await handleCreateFormUrl(url.id)
                           } else {
-                            handleDeleteFormUrl(url.id)
+                            await handleDeleteFormUrl(url.id)
                           }
                         }
                       }}
@@ -148,7 +147,6 @@ export const Urls = () => {
                           type: 'SET_IS_ZENDESK_ENABLED',
                           payload: {
                             value: e.target.checked,
-                            property: 'isZendeskEnabled',
                           },
                         })
                       }}
