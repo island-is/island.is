@@ -56,7 +56,7 @@ import { ScopesModule } from './scopes/scopes.module'
         DelegationApiUserSystemNotificationConfig,
         SyslumennClientConfig,
         ZendeskServiceConfig,
-        AuditConfig
+        AuditConfig,
       ],
     }),
   ],

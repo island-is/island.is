@@ -50,7 +50,7 @@ import { PasskeysModule } from './modules/passkeys/passkeys.module'
         PasskeysCoreConfig,
         SyslumennClientConfig,
         ZendeskServiceConfig,
-        AuditConfig
+        AuditConfig,
       ],
     }),
   ],

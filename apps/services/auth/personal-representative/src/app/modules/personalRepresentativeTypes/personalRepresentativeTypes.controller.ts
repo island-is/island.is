@@ -30,7 +30,8 @@ import {
 import { Audit, AuditService } from '@island.is/nest/audit'
 import { PaginationDto } from '@island.is/nest/pagination'
 
-const namespace = '@island.is/personal-representative//personal-representative-types'
+const namespace =
+  '@island.is/personal-representative//personal-representative-types'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Scopes(AuthScope.adminPersonalRepresentative)

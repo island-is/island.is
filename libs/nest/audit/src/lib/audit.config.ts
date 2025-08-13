@@ -14,7 +14,8 @@ export const AuditConfig = defineConfig<z.infer<typeof schema>>({
     groupName: env.required('AUDIT_GROUP_NAME', '') || undefined,
     serviceName: env.optional('AUDIT_SERVICE_NAME'),
     defaultNamespace: env.required(
-      'AUDIT_DEFAULT_NAMESPACE', '@island.is/local-dev',
+      'AUDIT_DEFAULT_NAMESPACE',
+      '@island.is/local-dev',
     ),
   }),
 })

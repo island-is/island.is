@@ -14,7 +14,7 @@ import { ConfigModule } from '@nestjs/config'
     AuthModule.register(environment.auth),
     AuditModule.forRoot({
       defaultNamespace: '@island.is/reference-backend',
-      serviceName: 'reference-backend'
+      serviceName: 'reference-backend',
     }),
     SequelizeModule.forRootAsync({
       useClass: SequelizeConfigService,
@@ -22,10 +22,8 @@ import { ConfigModule } from '@nestjs/config'
     ResourceModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [
-        AuditConfig
-      ]
-    })
+      load: [AuditConfig],
+    }),
   ],
 })
 export class AppModule {}

@@ -40,7 +40,7 @@ import { LicenseModule } from './modules/license/license.module'
         MachineDigitalLicenseClientConfig,
         HuntingDigitalLicenseClientConfig,
         LicenseConfig,
-        AuditConfig
+        AuditConfig,
       ],
     }),
     LicenseModule,

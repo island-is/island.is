@@ -39,7 +39,7 @@ import { emailModuleConfig } from '@island.is/email-service'
         IdsClientConfig,
         XRoadConfig,
         emailModuleConfig,
-        AuditConfig
+        AuditConfig,
       ],
     }),
   ],

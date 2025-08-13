@@ -45,7 +45,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
     ApiUserModule,
     AuditModule.forRoot({
       defaultNamespace: '@samband.is/financial-backend',
-      serviceName: 'financial-aid-backend'
+      serviceName: 'financial-aid-backend',
     }),
     ConfigModule.forRoot({
       isGlobal: true,

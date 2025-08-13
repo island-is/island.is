@@ -74,7 +74,7 @@ import { ConfirmIdentityModule } from './confirm-identity/confirm-identity.modul
         smsModuleConfig,
         SyslumennClientConfig,
         ZendeskServiceConfig,
-        AuditConfig
+        AuditConfig,
       ],
     }),
   ],

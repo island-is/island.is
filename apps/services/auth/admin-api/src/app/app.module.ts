@@ -71,7 +71,7 @@ import { IdentityConfirmationApiModule } from './v2/identity-confirmation/identi
         IdsClientConfig,
         SyslumennClientConfig,
         ZendeskServiceConfig,
-        AuditConfig
+        AuditConfig,
       ],
       envFilePath: ['.env', '.env.secret'],
     }),

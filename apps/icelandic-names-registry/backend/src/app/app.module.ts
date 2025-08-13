@@ -18,10 +18,8 @@ import { ConfigModule } from '@nestjs/config'
     IcelandicNameModule,
     ConfigModule.forRoot({
       isGlobal: true,
-      load: [
-        AuditConfig
-      ]
-    })
+      load: [AuditConfig],
+    }),
   ],
 })
 export class AppModule {}

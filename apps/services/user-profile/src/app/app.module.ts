@@ -36,7 +36,7 @@ import { UserProfileConfig } from '../config'
         UserProfileConfig,
         smsModuleConfig,
         emailModuleConfig,
-        AuditConfig
+        AuditConfig,
       ],
     }),
     AuditModule,

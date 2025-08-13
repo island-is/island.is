@@ -49,7 +49,7 @@ describe('IcelandicNameController', () => {
       imports: [
         ConfigModule.forRoot({
           isGlobal: true,
-          load: [AuditConfig]
+          load: [AuditConfig],
         }),
         LoggingModule,
         AuditModule.forRoot({

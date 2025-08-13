@@ -111,7 +111,7 @@ import {
         RightsPortalClientConfig,
         DocumentClientConfig,
         FeatureFlagConfig,
-        AuditConfig
+        AuditConfig,
       ],
     }),
   ],

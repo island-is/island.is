@@ -33,7 +33,7 @@ import { SequelizeConfigService } from './sequelizeConfig.service'
         XRoadConfig,
         NationalRegistryV3ClientConfig,
         IdsClientConfig,
-        AuditConfig
+        AuditConfig,
       ],
     }),
   ],

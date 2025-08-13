@@ -12,7 +12,9 @@ import { AdminPortalScope } from '@island.is/auth/scopes'
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Controller('api')
 @ApiTags('draft_author')
-@Audit({ namespace: '@island.is/services/regulations-admin-backend/draft_author' })
+@Audit({
+  namespace: '@island.is/services/regulations-admin-backend/draft_author',
+})
 export class DraftAuthorController {
   constructor(
     private readonly draftAuthorService: DraftAuthorService,

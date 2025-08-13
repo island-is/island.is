@@ -16,7 +16,8 @@ import { Documentation } from '@island.is/nest/swagger'
 import { Audit } from '@island.is/nest/audit'
 import { IdsAuthGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 
-const namespace = '@island.is/personal-representative-public/personal-representatives'
+const namespace =
+  '@island.is/personal-representative-public/personal-representatives'
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Scopes(AuthScope.publicPersonalRepresentative)

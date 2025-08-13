@@ -34,7 +34,8 @@ import { DraftRegulationTemplate } from './models/draftRegulation.model'
 import { TaskListModel } from './models/taskList.model'
 import { DraftImpactModel } from './models/draftImpacts.model'
 
-const namespace = '@island.is/services/regulations-admin-backend/draft_regulations'
+const namespace =
+  '@island.is/services/regulations-admin-backend/draft_regulations'
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.regulationAdmin)
 @Controller('api')

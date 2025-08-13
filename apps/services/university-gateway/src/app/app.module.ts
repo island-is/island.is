@@ -39,7 +39,7 @@ import { AuthModule } from '@island.is/auth-nest-tools'
         IcelandUniversityOfTheArtsApplicationClientConfig,
         AgriculturalUniversityOfIcelandApplicationClientConfig,
         HolarUniversityApplicationClientConfig,
-        AuditConfig
+        AuditConfig,
       ],
     }),
   ],

@@ -78,7 +78,7 @@ import { Application } from '../modules/application/model/application'
         IcelandUniversityOfTheArtsApplicationClientConfig,
         AgriculturalUniversityOfIcelandApplicationClientConfig,
         HolarUniversityApplicationClientConfig,
-        AuditConfig
+        AuditConfig,
       ],
     }),
   ],
