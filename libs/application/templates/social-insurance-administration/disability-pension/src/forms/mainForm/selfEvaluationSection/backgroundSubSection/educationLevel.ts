@@ -12,14 +12,14 @@ export const educationLevelField = buildMultiField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_EDUCATION_LEVEL}.level`,
       title: disabilityPensionFormMessage.questions.educationLevelTitle,
       options: (application: Application) => {
-        const countries = getValueViaPath<Array<Country>>(
+        const educationLevels = getValueViaPath<Array<EducationLevels>>(
           application.externalData,
-          'socialInsuranceAdministrationCountries.data',
+          'socialInsuranceAdministrationEducationLevels.data',
         ) ?? []
 
-        return countries.map(({ code, nameIcelandic }) => ({
+        return educationLevels.map(({ code, description }) => ({
           value: code,
-          label: nameIcelandic,
+          label: description,
         }))
       },
     }),
