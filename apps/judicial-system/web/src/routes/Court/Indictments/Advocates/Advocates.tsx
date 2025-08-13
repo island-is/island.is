@@ -2,7 +2,7 @@ import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { AlertMessage, Box } from '@island.is/island-ui/core'
+import { Text, AlertMessage, Box, Icon } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { titles } from '@island.is/judicial-system-web/messages'
 import { core } from '@island.is/judicial-system-web/messages'
@@ -21,6 +21,7 @@ import { isDefenderStepValid } from '@island.is/judicial-system-web/src/utils/va
 import SelectCivilClaimantAdvocate from './SelectCivilClaimantAdvocate'
 import SelectDefender from './SelectDefender'
 import { strings } from './Advocates.strings'
+import { Tooltip, TooltipAnchor, TooltipProvider } from '@ariakit/react'
 
 const Advocates = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
@@ -58,10 +59,38 @@ const Advocates = () => {
           />
         </Box>
         <Box component="section" marginBottom={hasCivilClaimants ? 5 : 10}>
-          <SectionHeading
-            title={formatMessage(strings.selectDefenderHeading)}
-            required
-          />
+          <Box
+            display="flex"
+            columnGap={1}
+            alignItems="center"
+            marginBottom={3}
+          >
+            <SectionHeading
+              title={formatMessage(strings.selectDefenderHeading)}
+              marginBottom={0}
+            />
+            <TooltipProvider>
+              <TooltipAnchor
+                render={
+                  <Box display="flex">
+                    <Icon
+                      icon="warning"
+                      size="medium"
+                      color="yellow600"
+                      type="outline"
+                    />
+                  </Box>
+                }
+              />
+              <Tooltip>
+                <Box background="dark400" borderRadius="full" padding={1}>
+                  <Text color="white" variant="small">
+                    Ákærunni hefur ekki verið deilt með öllum verjendum
+                  </Text>
+                </Box>
+              </Tooltip>
+            </TooltipProvider>
+          </Box>
           {workingCase.defendants?.map((defendant, index) => (
             <SelectDefender defendant={defendant} key={index} />
           ))}
