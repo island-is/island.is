@@ -143,13 +143,24 @@ yargs(hideBin(process.argv))
             ({ Name }: any) => Name,
           )}`,
         )
-        await Promise.all(
-          ParameterList.map(({ Name }: any) =>
-            Name
-              ? ssm.deleteParameter({ Name }).promise()
-              : new Promise((resolve) => resolve(true)),
-          ),
-        )
+
+        try {
+          await Promise.all(
+            ParameterList.map(({ Name }: any) =>
+              Name
+                ? ssm.deleteParameter({ Name }).promise()
+                : new Promise((resolve) => resolve(true)),
+            ),
+          )
+        } catch (error: any) {
+          if (error.code && error.code === 'ThrottlingException') {
+            logger.info('ThrottlingException came up', error)
+            logger.info('You could need to retry deleting the parameters again')
+          } else {
+            logger.error('Exception while deleting parameters', error)
+            throw error
+          }
+        }
       }
     },
   })
