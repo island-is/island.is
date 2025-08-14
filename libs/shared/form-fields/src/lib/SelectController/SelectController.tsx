@@ -76,27 +76,28 @@ export const SelectController = <Value, IsMulti extends boolean = false>({
   // Clean up invalid values when options change
   useEffect(() => {
     const currentValue = getValues(id)
+
     if (
-      currentValue !== null &&
-      currentValue !== undefined &&
-      options.length > 0
+      currentValue === null ||
+      currentValue === undefined ||
+      options.length === 0
     ) {
-      if (Array.isArray(currentValue)) {
-        // For multi-select, check if any values are invalid
-        const validValues = currentValue.filter((v) =>
-          options.some((option) => option.value === v),
-        )
-        if (validValues.length !== currentValue.length) {
-          setValue(id, validValues.length > 0 ? validValues : null)
-        }
-      } else {
-        // For single select, check if the value is invalid
-        const foundOption = options.find(
-          (option) => option.value === currentValue,
-        )
-        if (!foundOption) {
-          setValue(id, null)
-        }
+      return
+    }
+
+    if (Array.isArray(currentValue)) {
+      const validValues = currentValue.filter((v) =>
+        options.some((option) => option.value === v),
+      )
+      if (validValues.length !== currentValue.length) {
+        setValue(id, validValues.length > 0 ? validValues : null)
+      }
+    } else {
+      const foundOption = options.find(
+        (option) => option.value === currentValue,
+      )
+      if (!foundOption) {
+        setValue(id, null)
       }
     }
   }, [options, id, setValue, getValues])
