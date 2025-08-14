@@ -59,7 +59,7 @@ export const getSelectedContractEndDate = (application: Application) => {
   if (selectedContract?.dateTo) {
     return new Date(selectedContract.dateTo)
   }
-  return undefined
+  return getOneMonthFromToday()
 }
 
 export const getOneMonthFromToday = () => {
