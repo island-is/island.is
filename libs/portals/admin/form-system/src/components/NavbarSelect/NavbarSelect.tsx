@@ -20,7 +20,7 @@ const filterSections = (
       section !== null &&
       section !== undefined &&
       (section.sectionType === SectionTypes.INPUT ||
-        section.sectionType === SectionTypes.PARTIES)
+        section.sectionType === SectionTypes.PARTIES),
   )
 }
 

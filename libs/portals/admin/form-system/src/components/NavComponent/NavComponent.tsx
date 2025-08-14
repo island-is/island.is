@@ -141,7 +141,8 @@ export const NavComponent = ({
             {!(
               type === 'Section' &&
               (data as FormSystemSection).sectionType !== SectionTypes.INPUT
-            ) && selectingIsOff && <NavButtons id={data.id} type={type} />}
+            ) &&
+              selectingIsOff && <NavButtons id={data.id} type={type} />}
           </Box>
         </Box>
       ) : (
@@ -186,7 +187,8 @@ export const NavComponent = ({
             {!(
               type === 'Section' &&
               (data as FormSystemSection).sectionType !== SectionTypes.INPUT
-            ) && selectingIsOff && <NavButtons id={data.id} type={type} />}
+            ) &&
+              selectingIsOff && <NavButtons id={data.id} type={type} />}
           </Box>
           {selectable && type === 'Field' && (
             <Box className={cn(styles.selectableComponent)} marginLeft="auto">
