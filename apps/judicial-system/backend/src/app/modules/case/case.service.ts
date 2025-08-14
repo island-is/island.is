@@ -2514,12 +2514,9 @@ export class CaseService {
       type: [CaseType.INDICTMENT],
     }
 
-    // fetch all cases with the base filter to fetch the earliest case
-    const allCases = await this.caseModel.findAll({
+    const minCreated = (await this.caseModel.min('created', {
       where,
-      order: [['created', 'ASC']],
-    })
-    const earliestCase = allCases.length > 0 ? allCases[0] : undefined
+    })) as Date | null
 
     // apply dto filters
     if (institutionId) {
@@ -2571,7 +2568,7 @@ export class CaseService {
     const indictmentCaseStatistics = this.getIndictmentStatistics(filteredCases)
     return {
       ...indictmentCaseStatistics,
-      minDate: earliestCase?.created ?? new Date(),
+      minDate: minCreated ?? new Date(),
     }
   }
 
@@ -2605,12 +2602,9 @@ export class CaseService {
       },
     }
 
-    // fetch all cases with the base filter to fetch the earliest case
-    const allCases = await this.caseModel.findAll({
+    const minCreated = (await this.caseModel.min('created', {
       where,
-      order: [['created', 'ASC']],
-    })
-    const earliestCase = allCases.length > 0 ? allCases[0] : undefined
+    })) as Date | null
 
     // apply dto filters
     if (created?.fromDate || created?.toDate) {
@@ -2677,7 +2671,7 @@ export class CaseService {
 
     return {
       ...requestCaseStatistics,
-      minDate: earliestCase?.created ?? new Date(),
+      minDate: minCreated ?? new Date(),
     }
   }
 
