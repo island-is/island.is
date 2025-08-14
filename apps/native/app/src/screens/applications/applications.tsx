@@ -46,9 +46,6 @@ const { useNavigationOptions, getNavigationOptions } =
     }),
     {
       topBar: {
-        largeTitle: {
-          visible: true,
-        },
         scrollEdgeAppearance: {
           active: true,
           noBorder: true,
@@ -107,7 +104,6 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
   const intl = useIntl()
   const theme = useTheme()
   const [refetching, setRefetching] = useState(false)
-  const [hiddenContent, setHiddenContent] = useState(isIos)
 
   const applicationsRes = useListApplicationsQuery({
     variables: { locale: useLocale() },
@@ -129,10 +125,6 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
     [applications],
   )
 
-  useNavigationComponentDidAppear(() => {
-    setHiddenContent(false)
-  }, componentId)
-
   const onRefresh = useCallback(async () => {
     setRefetching(true)
 
@@ -144,11 +136,6 @@ export const ApplicationsScreen: NavigationFunctionComponent = ({
       setRefetching(false)
     }
   }, [applicationsRes])
-
-  // Fix for a bug in react-native-navigation where the large title is not visible on iOS with bottom tabs https://github.com/wix/react-native-navigation/issues/6717
-  if (hiddenContent) {
-    return null
-  }
 
   return (
     <SafeAreaView style={{ flex: 1 }}>

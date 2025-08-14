@@ -16,7 +16,6 @@ import {
   NavigationFunctionComponent,
 } from 'react-native-navigation'
 import { useNavigationButtonPress } from 'react-native-navigation-hooks'
-import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks/dist'
 import styled, { useTheme } from 'styled-components/native'
 
 import { useApolloClient } from '@apollo/client'
@@ -24,6 +23,7 @@ import filterIcon from '../../assets/icons/filter-icon.png'
 import inboxReadIcon from '../../assets/icons/inbox-read.png'
 import illustrationSrc from '../../assets/illustrations/le-company-s3.png'
 import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import {
   DocumentCategory,
   DocumentV2,
@@ -51,11 +51,10 @@ import {
   ButtonRegistry,
   ComponentRegistry,
 } from '../../utils/component-registry'
-import { isAndroid, isIos } from '../../utils/devices'
+import { isAndroid } from '../../utils/devices'
 import { testIDs } from '../../utils/test-ids'
 import { ActionBar } from './components/action-bar'
 import { Toast, ToastVariant } from './components/toast'
-import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 
 type ListItem =
   | { id: string; type: 'skeleton' | 'empty' }
@@ -116,9 +115,6 @@ const { useNavigationOptions, getNavigationOptions } =
     {
       topBar: {
         elevation: 0,
-        largeTitle: {
-          visible: true,
-        },
         scrollEdgeAppearance: {
           active: true,
           noBorder: true,
@@ -243,7 +239,6 @@ export const InboxScreen: NavigationFunctionComponent<{
   const [query, setQuery] = useState('')
   const [loadingMore, setLoadingMore] = useState(false)
   const queryString = useThrottleState(query)
-  const [hiddenContent, setHiddenContent] = useState(isIos)
   const [refetching, setRefetching] = useState(false)
   const isFeature2WayMailboxEnabled = useFeatureFlag(
     'is2WayMailboxEnabled',
@@ -649,10 +644,6 @@ export const InboxScreen: NavigationFunctionComponent<{
     return items
   }, [res.loading, res.data, items]) as ListItem[]
 
-  useNavigationComponentDidAppear(() => {
-    setHiddenContent(false)
-  }, componentId)
-
   const onPressMarkAllAsRead = () => {
     Alert.alert(
       intl.formatMessage({
@@ -679,12 +670,6 @@ export const InboxScreen: NavigationFunctionComponent<{
         },
       ],
     )
-  }
-
-  // Fix for a bug in react-native-navigation/react-native where the large title is not visible on iOS with
-  // bottom tabs https://github.com/wix/react-native-navigation/issues/6717
-  if (hiddenContent) {
-    return null
   }
 
   return (

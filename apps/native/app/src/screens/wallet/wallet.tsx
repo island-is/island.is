@@ -13,9 +13,22 @@ import {
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import SpotlightSearch from 'react-native-spotlight-search'
 import styled, { useTheme } from 'styled-components/native'
-import { useNavigationComponentDidAppear } from 'react-native-navigation-hooks'
 
+import refreshIcon from '../../assets/icons/refresh.png'
+import illustrationSrc from '../../assets/illustrations/le-retirement-s3.png'
+import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
+import { useFeatureFlag } from '../../contexts/feature-flag-provider'
+import {
+  GenericLicenseType,
+  GenericUserLicense,
+  useListLicensesQuery,
+} from '../../graphql/types/schema'
+import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
+import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
+import { useLocale } from '../../hooks/use-locale'
+import { evaluateUrl } from '../../lib/deep-linking'
 import { syncLicenseWidgetData } from '../../lib/widget-sync'
+import { usePreferencesStore } from '../../stores/preferences-store'
 import {
   Alert,
   Button,
@@ -25,25 +38,11 @@ import {
   TopLine,
   Typography,
 } from '../../ui'
-import illustrationSrc from '../../assets/illustrations/le-retirement-s3.png'
-import refreshIcon from '../../assets/icons/refresh.png'
-import { BottomTabsIndicator } from '../../components/bottom-tabs-indicator/bottom-tabs-indicator'
-import {
-  GenericLicenseType,
-  GenericUserLicense,
-  useListLicensesQuery,
-} from '../../graphql/types/schema'
-import { createNavigationOptionHooks } from '../../hooks/create-navigation-option-hooks'
-import { useConnectivityIndicator } from '../../hooks/use-connectivity-indicator'
-import { usePreferencesStore } from '../../stores/preferences-store'
 import { isIos } from '../../utils/devices'
 import { getRightButtons } from '../../utils/get-main-root'
 import { testIDs } from '../../utils/test-ids'
-import { WalletItem } from './components/wallet-item'
-import { useLocale } from '../../hooks/use-locale'
-import { useFeatureFlag } from '../../contexts/feature-flag-provider'
 import { INCLUDED_LICENSE_TYPES } from '../wallet-pass/wallet-pass.constants'
-import { evaluateUrl } from '../../lib/deep-linking'
+import { WalletItem } from './components/wallet-item'
 
 const Tabs = styled.View`
   margin-top: ${({ theme }) => theme.spacing[1]}px;
@@ -84,9 +83,6 @@ const { useNavigationOptions, getNavigationOptions } =
     }),
     {
       topBar: {
-        largeTitle: {
-          visible: true,
-        },
         scrollEdgeAppearance: {
           active: true,
           noBorder: true,
@@ -113,7 +109,6 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
   const intl = useIntl()
   const scrollY = useRef(new Animated.Value(0)).current
   const { dismiss, dismissed } = usePreferencesStore()
-  const [hiddenContent, setHiddenContent] = useState(isIos)
   const isBarcodeEnabled = useFeatureFlag('isBarcodeEnabled', false)
   const isIdentityDocumentEnabled = useFeatureFlag(
     'isIdentityDocumentEnabled',
@@ -241,10 +236,6 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
       })
   }
 
-  useNavigationComponentDidAppear(() => {
-    setHiddenContent(false)
-  }, componentId)
-
   const renderItem = useCallback(
     ({ item }: ListRenderItemInfo<FlatListItem>) => {
       if (item.__typename === 'Skeleton') {
@@ -291,11 +282,6 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
     return [...licenseItems] as FlatListItem[]
   }, [licenseItems, res.loading, res.data])
-
-  // Fix for a bug in react-native-navigation where the large title is not visible on iOS with bottom tabs https://github.com/wix/react-native-navigation/issues/6717
-  if (hiddenContent) {
-    return null
-  }
 
   return (
     <>
