@@ -1,3 +1,4 @@
+import isWithinInterval from 'date-fns/isWithinInterval'
 import { Op, WhereOptions } from 'sequelize'
 import { Includeable, Transaction } from 'sequelize/types'
 import { Sequelize } from 'sequelize-typescript'
@@ -75,6 +76,7 @@ import { Offense } from '../indictment-count/models/offense.model'
 import { Institution } from '../institution'
 import { Notification } from '../notification'
 import { Subpoena, SubpoenaService } from '../subpoena'
+import { SubpoenaStatistics } from '../subpoena/models/subpoenaStatistics.response'
 import { User } from '../user'
 import { Verdict } from '../verdict/models/verdict.model'
 import { VerdictService } from '../verdict/verdict.service'
@@ -93,6 +95,7 @@ import { CaseString } from './models/caseString.model'
 import { DateLog } from './models/dateLog.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
+import { DateFilter } from './statistics/types'
 import { caseModuleConfig } from './case.config'
 
 interface UpdateDateLog {
@@ -628,62 +631,82 @@ export class CaseService {
     update: UpdateCase,
     transaction: Transaction,
   ): Promise<void> {
-    if (update.policeCaseNumbers && theCase.caseFiles) {
-      const oldPoliceCaseNumbers = theCase.policeCaseNumbers
-      const newPoliceCaseNumbers = update.policeCaseNumbers
-      const maxIndex = Math.max(
-        oldPoliceCaseNumbers.length,
-        newPoliceCaseNumbers.length,
-      )
+    if (
+      !update.policeCaseNumbers ||
+      update.policeCaseNumbers.length === 0 ||
+      !theCase.caseFiles
+    ) {
+      // Nothing to do
+      return
+    }
 
-      // Assumptions:
-      // 1. The police case numbers are in the same order as they were before
-      // 2. The police case numbers are not duplicated
-      // 3. At most one police case number is changed, added or removed
-      for (let i = 0; i < maxIndex; i++) {
-        // Police case number added
-        if (i === oldPoliceCaseNumbers.length) {
-          break
-        }
+    const oldPoliceCaseNumbers = [...theCase.policeCaseNumbers].sort()
+    const newPoliceCaseNumbers = [...update.policeCaseNumbers].sort()
 
-        // Police case number deleted
-        if (
-          i === newPoliceCaseNumbers.length ||
-          (newPoliceCaseNumbers[i] !== oldPoliceCaseNumbers[i] &&
-            newPoliceCaseNumbers.length < oldPoliceCaseNumbers.length)
-        ) {
-          for (const caseFile of theCase.caseFiles) {
-            if (caseFile.policeCaseNumber === oldPoliceCaseNumbers[i]) {
-              await this.fileService.deleteCaseFile(
-                theCase,
-                caseFile,
-                transaction,
-              )
-            }
-          }
+    const removedPoliceCaseNumbers: string[] = []
+    const addedPoliceCaseNumbers: string[] = []
 
-          break
-        }
-
-        // Police case number unchanged
-        if (newPoliceCaseNumbers[i] === oldPoliceCaseNumbers[i]) {
-          continue
-        }
-
-        // Police case number changed
-        for (const caseFile of theCase.caseFiles) {
-          if (caseFile.policeCaseNumber === oldPoliceCaseNumbers[i]) {
-            await this.fileService.updateCaseFile(
-              theCase.id,
-              caseFile.id,
-              { policeCaseNumber: newPoliceCaseNumbers[i] },
-              transaction,
-            )
-          }
-        }
-
-        break
+    // Find added and removed police case numbers
+    while (oldPoliceCaseNumbers.length > 0 && newPoliceCaseNumbers.length > 0) {
+      // If the police case numbers are equal, then nothing has changed
+      if (oldPoliceCaseNumbers[0] === newPoliceCaseNumbers[0]) {
+        oldPoliceCaseNumbers.shift()
+        newPoliceCaseNumbers.shift()
+        continue
       }
+
+      // If the first police case number in the old list is smaller
+      // than the first in the new list, then it has been removed
+      if (oldPoliceCaseNumbers[0] < newPoliceCaseNumbers[0]) {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        removedPoliceCaseNumbers.push(oldPoliceCaseNumbers.shift()!)
+        continue
+      }
+
+      // Otherwise, the first police case number in the new list has been added
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      addedPoliceCaseNumbers.push(newPoliceCaseNumbers.shift()!)
+    }
+
+    // If there are still police case numbers left in either list,
+    // then they have been removed or added
+    removedPoliceCaseNumbers.push(...oldPoliceCaseNumbers)
+    addedPoliceCaseNumbers.push(...newPoliceCaseNumbers)
+
+    // Assumption: If exactly one police case number has been added and
+    // exactly one has been removed, then a police case number has been changed
+    if (
+      removedPoliceCaseNumbers.length === 1 &&
+      addedPoliceCaseNumbers.length === 1
+    ) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const removedPoliceCaseNumber = removedPoliceCaseNumbers.shift()!
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const addedPoliceCaseNumber = addedPoliceCaseNumbers.shift()!
+
+      // Update case files with the new police case number
+      for (const caseFile of theCase.caseFiles.filter(
+        (caseFile) => caseFile.policeCaseNumber === removedPoliceCaseNumber,
+      )) {
+        await this.fileService.updateCaseFile(
+          theCase.id,
+          caseFile.id,
+          { policeCaseNumber: addedPoliceCaseNumber },
+          transaction,
+        )
+      }
+
+      // We are done
+      return
+    }
+
+    // Delete case files connected to removed police case numbers
+    for (const caseFile of theCase.caseFiles.filter(
+      (caseFile) =>
+        caseFile.policeCaseNumber &&
+        removedPoliceCaseNumbers.includes(caseFile.policeCaseNumber),
+    )) {
+      await this.fileService.deleteCaseFile(theCase, caseFile, transaction)
     }
   }
 
@@ -2472,6 +2495,169 @@ export class CaseService {
     )) as Case
 
     return updatedCase
+  }
+
+  // TODO: MOVE TO STATISTIC SERVICE
+  async getIndictmentCaseStatistics(
+    sentToCourt?: DateFilter,
+    institutionId?: string,
+  ): Promise<IndictmentCaseStatistics> {
+    let where: WhereOptions = {
+      state: {
+        [Op.not]: [
+          CaseState.DELETED,
+          CaseState.DRAFT,
+          CaseState.NEW,
+          CaseState.WAITING_FOR_CONFIRMATION,
+        ],
+      },
+      type: [CaseType.INDICTMENT],
+    }
+
+    if (institutionId) {
+      where = {
+        ...where,
+        [Op.or]: [
+          { courtId: institutionId },
+          { prosecutorsOfficeId: institutionId },
+        ],
+      }
+    }
+
+    const cases = await this.caseModel.findAll({
+      where,
+      include: [
+        {
+          model: EventLog,
+          required: false,
+          attributes: ['created', 'eventType'],
+          where: {
+            eventType: EventType.INDICTMENT_CONFIRMED,
+          },
+        },
+      ],
+    })
+
+    const filterOnSentToCourt = () => {
+      if (sentToCourt) {
+        console.log({ sentToCourt })
+        const sortedCase = cases.sort(
+          (a, b) => a.created.getTime() - b.created.getTime(),
+        )
+        if (!sortedCase.length) {
+          return undefined
+        }
+
+        const start = sentToCourt.fromDate ?? sortedCase[0]?.created
+        const end = sentToCourt.toDate ?? new Date()
+
+        return cases.filter(({ eventLogs }) =>
+          eventLogs?.some(
+            ({ created, eventType }) =>
+              eventType === EventType.INDICTMENT_CONFIRMED &&
+              isWithinInterval(new Date(created), {
+                start: new Date(start),
+                end: new Date(end),
+              }),
+          ),
+        )
+      }
+    }
+    const filteredCases = filterOnSentToCourt() ?? cases
+    return this.getIndictmentStatistics(filteredCases)
+  }
+
+  async getSubpoenaStatistics(
+    created?: DateFilter,
+    institutionId?: string,
+  ): Promise<SubpoenaStatistics> {
+    return await this.subpoenaService.getStatistics(
+      created?.fromDate,
+      created?.toDate,
+      institutionId,
+    )
+  }
+
+  async getRequestCasesStatistics(
+    created?: DateFilter,
+    sentToCourt?: DateFilter,
+    institutionId?: string,
+  ): Promise<RequestCaseStatistics> {
+    let where: WhereOptions = {
+      state: {
+        [Op.not]: [
+          CaseState.DELETED,
+          CaseState.DRAFT,
+          CaseState.NEW,
+          CaseState.WAITING_FOR_CONFIRMATION,
+        ],
+      },
+      type: {
+        [Op.not]: [CaseType.INDICTMENT],
+      },
+    }
+
+    if (created?.fromDate || created?.toDate) {
+      const { fromDate, toDate } = created
+      where.created = {}
+      if (fromDate) {
+        where.created[Op.gte] = fromDate
+      }
+      if (toDate) {
+        where.created[Op.lte] = toDate
+      }
+    }
+
+    if (institutionId) {
+      where = {
+        ...where,
+        [Op.or]: [
+          { courtId: institutionId },
+          { prosecutorsOfficeId: institutionId },
+        ],
+      }
+    }
+
+    const cases = await this.caseModel.findAll({
+      where,
+      include: [
+        {
+          model: EventLog,
+          required: false,
+          attributes: ['created', 'eventType'],
+          where: {
+            eventType: EventType.CASE_SENT_TO_COURT,
+          },
+        },
+      ],
+    })
+
+    const filterOnSentToCourt = () => {
+      if (sentToCourt) {
+        const sortedCase = cases.sort(
+          (a, b) => a.created.getTime() - b.created.getTime(),
+        )
+        if (!sortedCase.length) {
+          return undefined
+        }
+
+        const start = sentToCourt.fromDate ?? sortedCase[0]?.created
+        const end = sentToCourt.toDate ?? new Date()
+
+        return cases.filter(({ eventLogs }) =>
+          eventLogs?.some(
+            ({ created, eventType }) =>
+              eventType === EventType.CASE_SENT_TO_COURT &&
+              isWithinInterval(new Date(created), {
+                start: new Date(start),
+                end: new Date(end),
+              }),
+          ),
+        )
+      }
+    }
+    const filteredCases = filterOnSentToCourt() ?? cases
+    return this.getRequestCaseStatistics(filteredCases)
   }
 
   async getCaseStatistics(

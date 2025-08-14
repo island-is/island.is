@@ -4,7 +4,6 @@ import { Confirmation } from './confirmation.model'
 import { Diagnosis } from './diagnosis.model'
 import { Difficulty } from './difficulty.model'
 
-
 @ObjectType(
   'SocialInsuranceMedicalDocumentsCertificateForSicknessAndRehabilitation',
 )
