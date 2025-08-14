@@ -3,7 +3,6 @@ import {
   buildMultiField,
   buildTextField,
   buildTitleField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { EmploymentStatusEnum, SectionRouteEnum } from '../../../../types'

@@ -3,7 +3,6 @@ import {
   BankAccountType,
   INCOME,
   ISK,
-  OptionsValueEnum,
   RatioType,
   TaxLevelOptions,
 } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'

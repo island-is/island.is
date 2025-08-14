@@ -8,7 +8,6 @@ import {
   buildSelectField,
   buildSubSection,
   buildTextField,
-  buildTitleField,
   getValueViaPath,
 } from '@island.is/application/core'
 import {

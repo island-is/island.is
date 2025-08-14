@@ -1,5 +1,5 @@
 import { Application, Field, RecordObject } from '@island.is/application/types'
-import { useLocale } from '@island.is/localization'
+//import { useLocale } from '@island.is/localization'
 import get from 'lodash/get'
 import has from 'lodash/has'
 import { FC } from 'react'
@@ -17,12 +17,12 @@ export const Review: FC<ReviewScreenProps> = ({
   application,
   field,
   goToScreen,
-  refetch,
+  //refetch,
   errors,
 }) => {
   const editable = field.props?.editable ?? false
-  const { formatMessage } = useLocale()
-  const { state } = application
+  //const { formatMessage } = useLocale()
+  //const { state } = application
 
   const hasError = (id: string) => get(errors, id) as string
   const groupHasNoErrors = (ids: string[]) =>

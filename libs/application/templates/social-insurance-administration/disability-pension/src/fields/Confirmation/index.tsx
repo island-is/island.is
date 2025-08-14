@@ -2,9 +2,6 @@ import { Application, Field, RecordObject } from '@island.is/application/types'
 import {
   AlertMessage,
   Box,
-  Bullet,
-  BulletList,
-  Button,
   Stack,
   Text,
 } from '@island.is/island-ui/core'

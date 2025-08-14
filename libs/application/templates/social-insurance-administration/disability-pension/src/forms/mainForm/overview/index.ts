@@ -14,7 +14,6 @@ import {
   extraInfoItems,
   incomePlanItems,
   paymentInfoItems,
-  selfEvaluationItems,
 } from '../../../utils/overviewItems'
 
 export const overviewSection = buildSection({

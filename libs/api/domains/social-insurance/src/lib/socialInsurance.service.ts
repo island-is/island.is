@@ -7,7 +7,6 @@ import {
   TrWebApiServicesDomainEducationalInstitutionsModelsEducationalInstitutionsDto,
   TrWebCommonsExternalPortalsApiModelsPaymentPlanPaymentPlanDto,
   TrWebExternalModelsServicePortalBaseCertificate,
-  TrWebExternalModelsServicePortalDisabilityPensionCertificate,
   TrWebExternalModelsServicePortalRehabilitationPlan,
 } from '@island.is/clients/social-insurance-administration'
 import {
