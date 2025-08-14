@@ -8,7 +8,7 @@ jobs:
       - uses: actions/checkout@v4
       - name: Yarn
         env:
-            DIRTYBOT_KEY: ${{ secrets.ISLAND_IS_APP_KEY }}
+            DIRTYBOT_KEY: ${{ secrets.ISLAND_IS_SSH_KEY }}
             DIRTYBOT_APP_ID: ${{ secrets.ISLAND_IS_SSH_KEY }}
         run: |
           corepack enable 

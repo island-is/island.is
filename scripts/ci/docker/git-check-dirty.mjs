@@ -74,11 +74,15 @@ function commitAsGithubActions() {
 
 async function commitAsDirtyBot() {
   console.info(`Setting user as Dirty Bot`);
-  if (!isCi) {
-    return;
+  if (!appId || !privateKey) {
+    console.error(`Error: ${APP_ID} or ${PRIVATE_KEY} environment variable is not`);
   }
   const gitToken = await getGithubToken(appId, privateKey)
   const url = getUrlWithToken(gitToken);
+
+  if (!isCi) {
+    return;
+  }
   run('git', ['remote', 'set-url', 'origin', url], { cwd: repoRoot });
 
   run('git', ['config', 'user.name', 'islandisis-bot'], { cwd: repoRoot });
