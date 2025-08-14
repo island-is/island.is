@@ -1,21 +1,10 @@
 import {
-  buildCustomField,
   buildMultiField,
-  buildOverviewField,
   buildSection,
   buildSubmitField,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../lib/messages'
 import { SectionRouteEnum } from '../../../types'
-import {
-  aboutApplicantItems,
-  appliedBeforeItems,
-  disabilityCertificateItems,
-  employmentItems,
-  extraInfoItems,
-  incomePlanItems,
-  paymentInfoItems,
-} from '../../../utils/overviewItems'
 import { overviewFields } from '../../../utils/overviewFields'
 import { socialInsuranceAdministrationMessage } from '@island.is/application/templates/social-insurance-administration-core/lib/messages'
 import { DefaultEvents } from '@island.is/application/types'
