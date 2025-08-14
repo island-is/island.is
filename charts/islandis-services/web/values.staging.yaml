@@ -26,8 +26,10 @@ env:
   DISABLE_ORGANIZATION_CHATBOT: 'false'
   DISABLE_SYSLUMENN_PAGE: 'false'
   ENVIRONMENT: 'staging'
+  LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL: 'http://web.islandis.svc.cluster.local/payments/event-callback'
   LOG_LEVEL: 'info'
   NODE_OPTIONS: '--max-old-space-size=691 --enable-source-maps -r dd-trace/init'
+  PAYMENTS_WEB_URL: 'https://beta.staging01.devland.is/greida'
   SERVERSIDE_FEATURES_ON: ''
   TRACKING_DOMAIN: 'beta.staging01.devland.is'
 grantNamespaces:
