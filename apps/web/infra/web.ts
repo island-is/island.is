@@ -27,6 +27,22 @@ export const serviceSetup = (services: {
         prod: 'false',
       },
       ENVIRONMENT: ref((h) => h.env.type),
+      PAYMENTS_WEB_URL: {
+        dev: ref(
+          (ctx) =>
+            `https://${
+              ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
+            }beta.dev01.devland.is/greida`,
+        ),
+        staging: `https://beta.staging01.devland.is/greida`,
+        prod: `https://island.is/greida`,
+      },
+      LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL: ref(
+        (ctx) =>
+          `http://${
+            ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
+          }web.islandis.svc.cluster.local/payments/event-callback`,
+      ),
     })
     .secrets({
       DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN',

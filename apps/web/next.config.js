@@ -15,6 +15,8 @@ const {
   APP_VERSION,
   ENVIRONMENT,
   CONFIGCAT_SDK_KEY,
+  PAYMENTS_WEB_URL,
+  LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL,
 } = process.env
 
 /**
@@ -189,6 +191,9 @@ const nextConfig = {
     // Requests made by the server are internal request made directly to the api hostname
     graphqlUrl: API_URL,
     graphqlEndpoint: graphqlPath,
+    paymentsWebUrl: PAYMENTS_WEB_URL,
+    landspitaliPaymentFlowEventCallbackUrl:
+      LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL,
   },
 
   publicRuntimeConfig: {
