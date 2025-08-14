@@ -21,7 +21,7 @@ import {
   DirectGrantPaymentConfirmationInput,
   MemorialCardPaymentConfirmationInput,
 } from './dto/paymentConfirmation.input'
-import { LOGGER_PROVIDER, Logger } from '@island.is/logging'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import {
   generateDirectGrantPaymentConfirmationEmailMessage,
   generateMemorialCardPaymentConfirmationEmailMessage,
@@ -40,7 +40,7 @@ export class LandspitaliService {
     private readonly config: ConfigType<typeof LandspitaliApiModuleConfig>,
     private readonly emailService: EmailService,
     @Inject(LOGGER_PROVIDER)
-    private logger: Logger,
+    private readonly logger: Logger,
   ) {}
 
   async sendDirectGrantPaymentConfirmationEmail(
