@@ -1,3 +1,4 @@
+import isWithinInterval from 'date-fns/isWithinInterval'
 import { Op, WhereOptions } from 'sequelize'
 import { Includeable, Transaction } from 'sequelize/types'
 import { Sequelize } from 'sequelize-typescript'
@@ -75,6 +76,7 @@ import { Offense } from '../indictment-count/models/offense.model'
 import { Institution } from '../institution'
 import { Notification } from '../notification'
 import { Subpoena, SubpoenaService } from '../subpoena'
+import { SubpoenaStatistics } from '../subpoena/models/subpoenaStatistics.response'
 import { User } from '../user'
 import { Verdict } from '../verdict/models/verdict.model'
 import { VerdictService } from '../verdict/verdict.service'
@@ -93,6 +95,7 @@ import { CaseString } from './models/caseString.model'
 import { DateLog } from './models/dateLog.model'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
+import { DateFilter } from './statistics/types'
 import { caseModuleConfig } from './case.config'
 
 interface UpdateDateLog {
@@ -2472,6 +2475,169 @@ export class CaseService {
     )) as Case
 
     return updatedCase
+  }
+
+  // TODO: MOVE TO STATISTIC SERVICE
+  async getIndictmentCaseStatistics(
+    sentToCourt?: DateFilter,
+    institutionId?: string,
+  ): Promise<IndictmentCaseStatistics> {
+    let where: WhereOptions = {
+      state: {
+        [Op.not]: [
+          CaseState.DELETED,
+          CaseState.DRAFT,
+          CaseState.NEW,
+          CaseState.WAITING_FOR_CONFIRMATION,
+        ],
+      },
+      type: [CaseType.INDICTMENT],
+    }
+
+    if (institutionId) {
+      where = {
+        ...where,
+        [Op.or]: [
+          { courtId: institutionId },
+          { prosecutorsOfficeId: institutionId },
+        ],
+      }
+    }
+
+    const cases = await this.caseModel.findAll({
+      where,
+      include: [
+        {
+          model: EventLog,
+          required: false,
+          attributes: ['created', 'eventType'],
+          where: {
+            eventType: EventType.INDICTMENT_CONFIRMED,
+          },
+        },
+      ],
+    })
+
+    const filterOnSentToCourt = () => {
+      if (sentToCourt) {
+        console.log({ sentToCourt })
+        const sortedCase = cases.sort(
+          (a, b) => a.created.getTime() - b.created.getTime(),
+        )
+        if (!sortedCase.length) {
+          return undefined
+        }
+
+        const start = sentToCourt.fromDate ?? sortedCase[0]?.created
+        const end = sentToCourt.toDate ?? new Date()
+
+        return cases.filter(({ eventLogs }) =>
+          eventLogs?.some(
+            ({ created, eventType }) =>
+              eventType === EventType.INDICTMENT_CONFIRMED &&
+              isWithinInterval(new Date(created), {
+                start: new Date(start),
+                end: new Date(end),
+              }),
+          ),
+        )
+      }
+    }
+    const filteredCases = filterOnSentToCourt() ?? cases
+    return this.getIndictmentStatistics(filteredCases)
+  }
+
+  async getSubpoenaStatistics(
+    created?: DateFilter,
+    institutionId?: string,
+  ): Promise<SubpoenaStatistics> {
+    return await this.subpoenaService.getStatistics(
+      created?.fromDate,
+      created?.toDate,
+      institutionId,
+    )
+  }
+
+  async getRequestCasesStatistics(
+    created?: DateFilter,
+    sentToCourt?: DateFilter,
+    institutionId?: string,
+  ): Promise<RequestCaseStatistics> {
+    let where: WhereOptions = {
+      state: {
+        [Op.not]: [
+          CaseState.DELETED,
+          CaseState.DRAFT,
+          CaseState.NEW,
+          CaseState.WAITING_FOR_CONFIRMATION,
+        ],
+      },
+      type: {
+        [Op.not]: [CaseType.INDICTMENT],
+      },
+    }
+
+    if (created?.fromDate || created?.toDate) {
+      const { fromDate, toDate } = created
+      where.created = {}
+      if (fromDate) {
+        where.created[Op.gte] = fromDate
+      }
+      if (toDate) {
+        where.created[Op.lte] = toDate
+      }
+    }
+
+    if (institutionId) {
+      where = {
+        ...where,
+        [Op.or]: [
+          { courtId: institutionId },
+          { prosecutorsOfficeId: institutionId },
+        ],
+      }
+    }
+
+    const cases = await this.caseModel.findAll({
+      where,
+      include: [
+        {
+          model: EventLog,
+          required: false,
+          attributes: ['created', 'eventType'],
+          where: {
+            eventType: EventType.CASE_SENT_TO_COURT,
+          },
+        },
+      ],
+    })
+
+    const filterOnSentToCourt = () => {
+      if (sentToCourt) {
+        const sortedCase = cases.sort(
+          (a, b) => a.created.getTime() - b.created.getTime(),
+        )
+        if (!sortedCase.length) {
+          return undefined
+        }
+
+        const start = sentToCourt.fromDate ?? sortedCase[0]?.created
+        const end = sentToCourt.toDate ?? new Date()
+
+        return cases.filter(({ eventLogs }) =>
+          eventLogs?.some(
+            ({ created, eventType }) =>
+              eventType === EventType.CASE_SENT_TO_COURT &&
+              isWithinInterval(new Date(created), {
+                start: new Date(start),
+                end: new Date(end),
+              }),
+          ),
+        )
+      }
+    }
+    const filteredCases = filterOnSentToCourt() ?? cases
+    return this.getRequestCaseStatistics(filteredCases)
   }
 
   async getCaseStatistics(
