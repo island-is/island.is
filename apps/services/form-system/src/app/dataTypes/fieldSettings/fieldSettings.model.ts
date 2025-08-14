@@ -127,4 +127,9 @@ export class FieldSettings {
   @IsString()
   @ApiPropertyOptional({ type: String })
   zendeskCustomFieldId?: string
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  applicantType?: string
 }

@@ -8,8 +8,16 @@ import pick from 'lodash/pick'
 import zipObject from 'lodash/zipObject'
 import { UpdateFormApplicantTypeDto } from './models/dto/updateFormApplicantType.dto'
 import { ApplicantTypes } from '../../dataTypes/applicantTypes/applicantType.model'
-import { ApplicantTypesEnum } from '@island.is/form-system/shared'
+import {
+  ApplicantTypesEnum,
+  FieldTypesEnum,
+  SectionTypes,
+} from '@island.is/form-system/shared'
 import { FormApplicantTypeDto } from './models/dto/formApplicantType.dto'
+import { Section } from '../sections/models/section.model'
+import { Screen } from '../screens/models/screen.model'
+import { Field } from '../fields/models/field.model'
+import { FieldSettings } from '../../dataTypes/fieldSettings/fieldSettings.model'
 
 @Injectable()
 export class FormApplicantTypesService {
@@ -18,6 +26,10 @@ export class FormApplicantTypesService {
     private readonly formApplicantTypeModel: typeof FormApplicantType,
     @InjectModel(Form)
     private readonly formModel: typeof Form,
+    @InjectModel(Screen)
+    private readonly screenModel: typeof Screen,
+    @InjectModel(Field)
+    private readonly fieldModel: typeof Field,
   ) {}
 
   async create(
@@ -36,7 +48,29 @@ export class FormApplicantTypesService {
 
     const form = await this.formModel.findByPk(
       createFormApplicantTypeDto.formId,
+      {
+        include: [
+          {
+            model: Section,
+            as: 'sections',
+            where: { sectionType: SectionTypes.PARTIES },
+            include: [
+              {
+                model: Screen,
+                as: 'screens',
+                include: [
+                  {
+                    model: Field,
+                    as: 'fields',
+                  },
+                ],
+              },
+            ],
+          },
+        ],
+      },
     )
+
     if (!form) {
       throw new NotFoundException(
         `Form with id '${createFormApplicantTypeDto.formId}' not found`,
@@ -67,6 +101,20 @@ export class FormApplicantTypesService {
       form.allowedDelegationTypes = allowedDelegationTypes
       await form.save()
     }
+
+    const newScreen = new this.screenModel()
+    newScreen.sectionId = form.sections[0].id
+    await newScreen.save()
+
+    const newField = new this.fieldModel()
+    newField.screenId = newScreen.id
+    newField.fieldType = FieldTypesEnum.APPLICANT
+    newField.fieldSettings = {
+      applicantType: applicantType.id,
+    } as FieldSettings
+    await newField.save()
+
+    newScreen.fields = [newField]
 
     const formApplicantType = createFormApplicantTypeDto as FormApplicantType
     const newFormApplicantType: FormApplicantType =
