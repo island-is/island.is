@@ -76,7 +76,7 @@ const CreateCollection = ({
             ? id
             : collectionType === SignatureCollectionCollectionType.Parliamentary
             ? collection?.id
-            : currentArea?.id || '',
+            : currentArea?.collectionId || '',
         collectionName: collectionName || undefined,
         owner: {
           name: name,
