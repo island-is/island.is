@@ -1,6 +1,8 @@
 import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
+import { AnimatePresence, motion } from 'motion/react'
+import { Tooltip, TooltipAnchor, TooltipProvider } from '@ariakit/react'
 
 import { Text, AlertMessage, Box, Icon } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
@@ -21,7 +23,6 @@ import { isDefenderStepValid } from '@island.is/judicial-system-web/src/utils/va
 import SelectCivilClaimantAdvocate from './SelectCivilClaimantAdvocate'
 import SelectDefender from './SelectDefender'
 import { strings } from './Advocates.strings'
-import { Tooltip, TooltipAnchor, TooltipProvider } from '@ariakit/react'
 
 const Advocates = () => {
   const { workingCase, isLoadingWorkingCase, caseNotFound } =
@@ -39,6 +40,10 @@ const Advocates = () => {
 
   const stepIsValid = isDefenderStepValid(workingCase)
   const hasCivilClaimants = (workingCase.civilClaimants?.length ?? 0) > 0
+  const allDefendersHaveBeenConfirmed =
+    workingCase.defendants?.every(
+      (defendant) => defendant.isDefenderChoiceConfirmed,
+    ) || false
 
   return (
     <PageLayout
@@ -69,27 +74,47 @@ const Advocates = () => {
               title={formatMessage(strings.selectDefenderHeading)}
               marginBottom={0}
             />
-            <TooltipProvider>
-              <TooltipAnchor
-                render={
-                  <Box display="flex">
-                    <Icon
-                      icon="warning"
-                      size="medium"
-                      color="yellow600"
-                      type="outline"
+            <AnimatePresence>
+              {!allDefendersHaveBeenConfirmed && (
+                <motion.div
+                  initial={{ opacity: 0, y: 5 }}
+                  animate={{
+                    opacity: 1,
+                    y: 0,
+                    transition: {
+                      opacity: { duration: 0.3 },
+                      y: { duration: 0.1 },
+                    },
+                  }}
+                  exit={{
+                    opacity: 0,
+                    y: 5,
+                  }}
+                >
+                  <TooltipProvider>
+                    <TooltipAnchor
+                      render={
+                        <Box display="flex">
+                          <Icon
+                            icon="warning"
+                            size="large"
+                            color="red300"
+                            type="outline"
+                          />
+                        </Box>
+                      }
                     />
-                  </Box>
-                }
-              />
-              <Tooltip>
-                <Box background="dark400" borderRadius="full" padding={1}>
-                  <Text color="white" variant="small">
-                    Ákærunni hefur ekki verið deilt með öllum verjendum
-                  </Text>
-                </Box>
-              </Tooltip>
-            </TooltipProvider>
+                    <Tooltip>
+                      <Box background="dark400" borderRadius="full" padding={1}>
+                        <Text color="white" variant="small">
+                          Ákærunni hefur ekki verið deilt með öllum verjendum
+                        </Text>
+                      </Box>
+                    </Tooltip>
+                  </TooltipProvider>
+                </motion.div>
+              )}
+            </AnimatePresence>
           </Box>
           {workingCase.defendants?.map((defendant, index) => (
             <SelectDefender defendant={defendant} key={index} />
