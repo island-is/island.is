@@ -183,8 +183,8 @@ export const generateCleanUpForFeature = async (
         62,
       ),
       annotations: {
-        'argocd.argoproj.io/hook': 'PostSync',
-        'argocd.argoproj.io/hook-delete-policy': 'BeforeHookCreation', // 'HookSucceeded', // , HookFailed',
+        'argocd.argoproj.io/hook': 'PostDelete',
+        'argocd.argoproj.io/hook-delete-policy': 'BeforeHookCreation',
       },
     },
     spec: {
