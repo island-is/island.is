@@ -243,13 +243,7 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
           <Box marginTop={2}>
             <AlertMessage
               title="Sending tókst"
-              message={`${
-                defendant.defenderName
-              } hefur fengið tilkynningu um skráningu í tölvupósti${
-                defendant.caseFilesSharedWithDefender
-                  ? ' og aðgang að gögnum málsins.'
-                  : '.'
-              }`}
+              message={`${defendant.defenderName} hefur fengið tilkynningu um skráningu í tölvupósti.`}
               type="success"
             />
           </Box>
