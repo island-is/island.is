@@ -5,8 +5,8 @@ import { basicInfoSection } from './basicInfoSection'
 import { disabilityCertificateSection } from './disabilityCertificate'
 import { extraInfoSection } from './extraInfo'
 import { overviewSection } from './overview'
-import { selfEvaluationSection } from './selfEvaluationSection'
-import { confirmationSection } from './confirmation'
+import { selfEvaluationSection } from './selfEvaluation'
+import { conclusionSection } from './conclusion'
 
 export const MainForm = buildForm({
   id: 'MainForm',
@@ -20,6 +20,6 @@ export const MainForm = buildForm({
     disabilityCertificateSection,
     extraInfoSection,
     overviewSection,
-    confirmationSection, // TODO: Remove from main form and move to completed form?
+    conclusionSection
   ],
 })

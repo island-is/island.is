@@ -171,8 +171,8 @@ const template: ApplicationTemplate<
             {
               id: Roles.APPLICANT,
               formLoader: () =>
-                import('../forms/completedForm').then((module) =>
-                  Promise.resolve(module.completedForm),
+                import('../forms/inReviewForm').then((module) =>
+                  Promise.resolve(module.InReviewForm),
                 ),
               read: 'all',
             },

@@ -11,7 +11,7 @@ import { SectionRouteEnum } from '../../../types'
 import ConfirmationImage from '../../../assets/ConfirmationImage'
 
 //TODO: Move to "completedForm" ??
-export const confirmationSection = buildSection({
+export const conclusionSection = buildSection({
   id: SectionRouteEnum.CONFIRMATION,
   tabTitle: disabilityPensionFormMessage.confirmation.title,
   title: disabilityPensionFormMessage.confirmation.tabTitle,
