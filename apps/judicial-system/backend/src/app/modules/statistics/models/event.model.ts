@@ -1,28 +1,27 @@
-import { ApiProperty } from '@nestjs/swagger'
-
 type BaseEventType =
   | 'CASE_CREATED'
   | 'CASE_SENT_TO_COURT'
   | 'CASE_RECEIVED_BY_COURT'
-  | 'COURT_DATE_SCHEDULED' // include with type, and the actual court date. Event date is the date when this is triggered
-  | 'COURT_DATE_OCCURRED'
+  | 'COURT_DATE_SCHEDULED' // the date a court date was scheduled
 
 export type RequestCaseEventType =
   | BaseEventType
-  | 'DEFENDANT_ARRESTED'
+  | 'DEFENDANT_ARRESTED' // not implemented
   | 'COURT_SESSION_STARTED'
   | 'COURT_SESSION_ENDED'
-  | 'RESTRICTION_ENDED'
-  | 'ISOLATION_ENDED'
-  | 'TRAVEL_BAN_ENDED'
+  | 'RESTRICTION_ENDED' // not implemented
+  | 'ISOLATION_ENDED' // not implemented
+  | 'TRAVEL_BAN_ENDED' // not implemented
   | 'REQUEST_APPEALED'
-  | 'REQUEST_CONFIRMED'
-  | 'COURT_RECORD_SIGNED'
-  | 'RULING_SIGNED'
+  | 'REQUEST_COMPLETED'
+  | 'COURT_RECORD_SIGNED' // not implemented
+  | 'RULING_SIGNED' // not implemented
   | 'REQUEST_EXTENDED'
   | 'CASE_RECEIVED_BY_COURT_OF_APPEALS'
+  | 'CASE_COMPLETED_BY_COURT_OF_APPEALS'
 
-type IndictmentCaseEventType =
+// not implemented
+export type IndictmentCaseEventType =
   | BaseEventType
   | 'SUBPOENA_SERVED'
   | 'RULING_ACKNOWLEDGED_IN_COURT'
@@ -33,20 +32,5 @@ type IndictmentCaseEventType =
   | 'INDICTMENT_REVIEWED_BY_PUBLIC_PROSECUTOR'
   | 'CASE_SENT_TO_PRISON_ADMIN'
   | 'CASE_RECEIVED_BY_PRISON_ADMIN'
-
-// TODO: Maybe have two models for request and indictments event
-export class RequestEvent {
-  @ApiProperty({ type: String })
-  id!: string
-
-  @ApiProperty({ type: String })
-  type!: RequestCaseEventType
-}
-
-export class IndictmentEvent {
-  @ApiProperty({ type: String })
-  id!: string
-
-  @ApiProperty({ type: String })
-  type!: RequestCaseEventType
-}
+  | 'ARRAIGNMENT_DATE_OCCURRED'
+  | 'COURT_DATE_OCCURRED'

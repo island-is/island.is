@@ -13,8 +13,10 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 
 import { MessageService } from '@island.is/judicial-system/message'
 import {
+  CaseNotificationType,
   CaseState,
   CaseType,
+  dateTypes,
   EventType,
   isCompletedCase,
   isIndictmentCase,
@@ -30,6 +32,7 @@ import { EventService } from '../event'
 import { EventLog, EventLogService } from '../event-log'
 import { FileService } from '../file'
 import { Institution } from '../institution'
+import { Notification } from '../notification'
 import { Subpoena, SubpoenaService } from '../subpoena'
 import {
   CaseStatistics,
@@ -477,15 +480,32 @@ export class StatisticsService {
           attributes: ['created', 'eventType'],
         },
         { model: Institution, as: 'prosecutorsOffice' },
+        { model: Institution, as: 'court' },
+        {
+          model: DateLog,
+          as: 'dateLogs',
+          required: false,
+          where: { dateType: dateTypes },
+          order: [['created', 'DESC']],
+          separate: true,
+        },
+        {
+          model: Notification,
+          as: 'notifications',
+          required: false,
+          where: { type: CaseNotificationType.APPEAL_COMPLETED },
+          order: [['created', 'DESC']],
+          separate: true,
+        },
       ],
     })
 
     // create events for data analytics for each case
-    const events = cases.flatMap((c) =>
-      eventFunctions.flatMap((func) => func(c)),
-    )
+    const events = cases
+      .flatMap((c) => eventFunctions.flatMap((func) => func(c)))
+      .filter((event) => !!event)
 
-    return { data: events }
+    return events
   }
 
   async extractTransformLoadRvgDataToS3({
@@ -497,9 +517,10 @@ export class StatisticsService {
       if (type === DataGroups.REQUESTS) {
         return await this.extractAndTransformRequestCases()
       }
-      return { data: [], columns: [] }
+      return undefined
     }
-    const { data } = await getData()
+    const data = await getData()
+    if (!data) return { url: '' }
 
     stringify(data, { header: true }, async (error, csvOutput) => {
       if (error) {
