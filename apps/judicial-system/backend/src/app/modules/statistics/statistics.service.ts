@@ -3,7 +3,6 @@ import { col, fn, Includeable, literal, Op, WhereOptions } from 'sequelize'
 import { Sequelize } from 'sequelize-typescript'
 
 import { Inject, Injectable } from '@nestjs/common'
-import { ConfigType } from '@nestjs/config'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
 import { IntlService } from '@island.is/cms-translations'
