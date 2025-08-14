@@ -1,7 +1,6 @@
 import {
   IdsUserGuard,
   CurrentUser,
-  User as AuthUser,
 } from '@island.is/auth-nest-tools'
 import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
@@ -13,6 +12,12 @@ import {
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
 import { CompanyExtendedInfo } from '../../models/company.model'
+
+type CurrentUser = {
+  actor?: {
+    nationalId?: string | null
+  } | null
+}
 
 @Resolver()
 @UseGuards(IdsUserGuard)
@@ -30,7 +35,7 @@ export class CompanyRegistryResolver {
   })
   async getCompany(
     @Args('input', { type: () => String }) input: string,
-    @CurrentUser() user: AuthUser,
+    @CurrentUser() user: CurrentUser,
   ): Promise<CompanyExtendedInfo | null> {
     if (!this.isValidCompanyId(input)) {
       throw new BadRequestException('Invalid national id format')
