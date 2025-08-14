@@ -8,6 +8,7 @@ import {
   AlertMessage,
   Box,
   Button,
+  Checkbox,
   RadioButton,
   Stack,
   Text,
@@ -123,6 +124,8 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
     WebLandspitaliCatalogQuery,
     WebLandspitaliCatalogQueryVariables
   >(GET_LANDSPITALI_CATALOG)
+
+  const [nationalIdSkipped, setNationalIdSkipped] = useState(false)
 
   const grantOptions =
     catalogData?.webLandspitaliCatalog.item.map((item) => ({
@@ -333,31 +336,48 @@ export const DirectGrants = ({ slice }: DirectGrantsProps) => {
               error={errors.senderEmail?.message}
               control={control}
             />
-            <InputController
-              id="senderNationalId"
-              label={formatMessage(m.info.senderNationalIdLabel)}
-              size="xs"
-              error={errors.senderNationalId?.message}
-              type="number"
-              inputMode="numeric"
-              rules={{
-                ...requiredRule,
-                pattern: {
-                  value: /^\d{10}$/,
-                  message: formatMessage(m.validation.invalidNationalIdLength),
-                },
-                validate: (value) => {
-                  if (value.length !== 10) {
-                    return formatMessage(m.validation.invalidNationalIdLength)
+
+            <Stack space={1}>
+              <InputController
+                id="senderNationalId"
+                label={formatMessage(m.info.senderNationalIdLabel)}
+                size="xs"
+                error={
+                  nationalIdSkipped
+                    ? undefined
+                    : errors.senderNationalId?.message
+                }
+                type="number"
+                inputMode="numeric"
+                disabled={nationalIdSkipped}
+                rules={{
+                  validate: (value) => {
+                    if (nationalIdSkipped) {
+                      return true
+                    }
+                    if (!isValidKennitala(value)) {
+                      return formatMessage(m.validation.invalidNationalIdFormat)
+                    }
+                    return true
+                  },
+                }}
+                control={control}
+              />
+              <Checkbox
+                id="senderNationalIdSkipped"
+                label={formatMessage(m.info.senderNationalIdSkippedLabel)}
+                checked={nationalIdSkipped}
+                onChange={() => {
+                  const newValue = !nationalIdSkipped
+                  setNationalIdSkipped(newValue)
+                  if (newValue) {
+                    setValue('senderNationalId', '')
                   }
-                  if (!isValidKennitala(value)) {
-                    return formatMessage(m.validation.invalidNationalIdFormat)
-                  }
-                  return true
-                },
-              }}
-              control={control}
-            />
+                }}
+                labelVariant="small"
+              />
+            </Stack>
+
             <InputController
               id="senderAddress"
               label={formatMessage(m.info.senderAddressLabel)}
