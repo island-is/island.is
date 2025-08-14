@@ -724,4 +724,9 @@ export const webMessages = defineMessages({
     defaultMessage: 'Umsókn í vinnslu hjá þér',
     description: 'Draft status for an application',
   },
+  submitApplication: {
+    id: 'form-system:submit-application',
+    defaultMessage: 'Senda inn umsókn',
+    description: 'Submit application',
+  },
 })

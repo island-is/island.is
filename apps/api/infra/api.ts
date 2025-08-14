@@ -61,6 +61,7 @@ import {
   LSH,
   PracticalExams,
   FireCompensation,
+  VMSTUnemployment,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -472,6 +473,7 @@ export const serviceSetup = (services: {
       SecondarySchool,
       LSH,
       PracticalExams,
+      VMSTUnemployment,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({
