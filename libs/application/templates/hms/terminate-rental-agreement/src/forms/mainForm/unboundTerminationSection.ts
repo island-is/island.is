@@ -3,7 +3,6 @@ import {
   buildMultiField,
   buildDateField,
   buildSelectField,
-  buildDescriptionField,
 } from '@island.is/application/core'
 import * as m from '../../lib/messages'
 import { terminationReasonOptions } from '../../utils/options'
