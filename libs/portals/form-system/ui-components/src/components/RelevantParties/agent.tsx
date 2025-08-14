@@ -25,7 +25,7 @@ export const Agent = ({ applicantType, lang, user }: Props) => {
     user?.emails.find((email: { primary: boolean }) => email.primary)?.email ??
     user?.emails[0]?.email
   const shouldQuery = !!nationalId
-  const { data: nameData, loading: nameLoading, error: nameError } = useQuery(
+  const { data: nameData, loading: nameLoading } = useQuery(
     GET_NAME_BY_NATIONALID,
     {
       variables: { input: nationalId },
@@ -33,7 +33,7 @@ export const Agent = ({ applicantType, lang, user }: Props) => {
       skip: !shouldQuery,
     },
   )
-  const { data: addressData, loading: addressLoading, error: addressError } = useQuery(
+  const { data: addressData, loading: addressLoading } = useQuery(
     GET_ADDRESS_BY_NATIONALID,
     {
       variables: { input: nationalId },

@@ -1,7 +1,4 @@
-import {
-  IdsUserGuard,
-  CurrentUser,
-} from '@island.is/auth-nest-tools'
+import { IdsUserGuard, CurrentUser } from '@island.is/auth-nest-tools'
 import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
 import {
