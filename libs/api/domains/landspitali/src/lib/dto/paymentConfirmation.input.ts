@@ -1,6 +1,6 @@
 import { Field, InputType, Int } from '@nestjs/graphql'
 import { IsString } from 'class-validator'
-import {
+import type {
   DirectGrantPaymentFlowMetadata,
   MemorialCardPaymentFlowMetadata,
 } from '../types'
@@ -87,9 +87,8 @@ export class DirectGrantPaymentConfirmationInput
   @IsString()
   payerEmail!: string
 
-  @Field(() => String)
-  @IsString()
-  payerNationalId!: string
+  @Field(() => String, { nullable: true })
+  payerNationalId?: string
 
   @Field(() => String)
   @IsString()
