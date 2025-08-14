@@ -66,6 +66,10 @@ export const m = defineMessages({
     defaultMessage: 'Heiti á ensku',
     description: 'Name in English',
   },
+  englishTranslation: {
+    id: 'portals-admin.form-system:english-translation',
+    defaultMessage: 'Ensk þýðing',
+  },
   applicationName: {
     id: 'portals-admin.form-system:application-name',
     defaultMessage: 'Heiti umsóknar',
@@ -863,5 +867,10 @@ export const webMessages = defineMessages({
     id: 'form-system:tags.draft',
     defaultMessage: 'Umsókn í vinnslu hjá þér',
     description: 'Draft status for an application',
+  },
+  submitApplication: {
+    id: 'form-system:submit-application',
+    defaultMessage: 'Senda inn umsókn',
+    description: 'Submit application',
   },
 })

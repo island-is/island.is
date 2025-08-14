@@ -42,7 +42,7 @@ export class HmsResolver {
       return { addresses: addressesArray }
     } catch (error) {
       this.logger.error('Error fetching HMS address search:', error)
-      throw new Error('Failed to get addressses')
+      throw new Error('Failed to get addresses')
     }
   }
 

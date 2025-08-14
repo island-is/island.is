@@ -21,7 +21,8 @@ export const FormStepper = ({
 }: Props) => {
   const { lang } = useLocale()
   const filteredSections = sections.filter(
-    (section) => section.sectionType !== SectionTypes.PREMISES,
+    (section) =>
+      section.sectionType !== SectionTypes.PREMISES || section.isHidden,
   )
   if (currentSection.index === 0) return null
 

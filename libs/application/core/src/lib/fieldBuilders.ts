@@ -53,6 +53,7 @@ import {
   OverviewField,
   CopyLinkField,
   VehiclePermnoWithInfoField,
+  MaybeWithAnswersAndExternalData,
 } from '@island.is/application/types'
 import { Locale } from '@island.is/shared/types'
 import { Colors } from '@island.is/island-ui/theme'
@@ -594,6 +595,16 @@ export const buildFieldRequired = (
     return maybeRequired(application)
   }
   return maybeRequired
+}
+
+export const buildFieldReadOnly = (
+  application: Application,
+  maybeReadOnly?: MaybeWithAnswersAndExternalData<boolean>,
+) => {
+  if (typeof maybeReadOnly === 'function') {
+    return maybeReadOnly(application.answers, application.externalData)
+  }
+  return maybeReadOnly
 }
 
 export const buildRedirectToServicePortalField = (data: {
@@ -1177,6 +1188,7 @@ export const buildBankAccountField = (
     marginBottom,
     marginTop,
     titleVariant,
+    required,
     defaultValue,
   } = data
 
@@ -1187,6 +1199,7 @@ export const buildBankAccountField = (
     marginBottom,
     marginTop,
     titleVariant,
+    required,
     type: FieldTypes.BANK_ACCOUNT,
     component: FieldComponents.BANK_ACCOUNT,
     defaultValue,

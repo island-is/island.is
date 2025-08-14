@@ -685,9 +685,9 @@ describe('getIndictmentInfo', () => {
     const rulingDate = '2022-06-14T19:50:08.033Z'
 
     const defendants = [
-      { verdictViewDate: '2022-06-15T19:50:08.033Z' } as Defendant,
-      { verdictViewDate: undefined } as Defendant,
-    ]
+      { verdict: { serviceDate: '2022-06-15T19:50:08.033Z' } },
+      { verdict: { serviceDate: undefined } },
+    ] as Defendant[]
 
     const indictmentInfo = getIndictmentInfo({
       indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
@@ -705,12 +705,14 @@ describe('getIndictmentInfo', () => {
   it('should return correct indictment info when no defendants have yet to view the verdict', () => {
     const rulingDate = '2022-06-14T19:50:08.033Z'
     const defendants = [
-      { verdictViewDate: '2022-06-15T19:50:08.033Z' } as Defendant,
+      { verdict: { serviceDate: '2022-06-15T19:50:08.033Z' } },
       {
-        serviceRequirement: ServiceRequirement.NOT_REQUIRED,
-        verdictViewDate: undefined,
-      } as Defendant,
-    ]
+        verdict: {
+          serviceRequirement: ServiceRequirement.NOT_REQUIRED,
+          serviceDate: undefined,
+        },
+      },
+    ] as Defendant[]
 
     const indictmentInfo = getIndictmentInfo({
       indictmentRulingDecision: CaseIndictmentRulingDecision.RULING,
@@ -730,10 +732,12 @@ describe('getIndictmentInfo', () => {
     const rulingDate = new Date()
     const defendants = [
       {
-        serviceRequirement: ServiceRequirement.NOT_REQUIRED,
-        verdictViewDate: undefined,
-      } as Defendant,
-    ]
+        verdict: {
+          serviceRequirement: ServiceRequirement.NOT_REQUIRED,
+          serviceDate: undefined,
+        },
+      },
+    ] as Defendant[]
 
     const indictmentInfo = getIndictmentInfo({
       indictmentRulingDecision: CaseIndictmentRulingDecision.FINE,
@@ -754,10 +758,12 @@ describe('getIndictmentInfo', () => {
     const rulingDate = '2024-05-26T21:51:19.156Z'
     const defendants = [
       {
-        serviceRequirement: ServiceRequirement.NOT_REQUIRED,
-        verdictViewDate: undefined,
-      } as Defendant,
-    ]
+        verdict: {
+          serviceRequirement: ServiceRequirement.NOT_REQUIRED,
+          serviceDate: undefined,
+        },
+      },
+    ] as Defendant[]
 
     const indictmentInfo = getIndictmentInfo({
       indictmentRulingDecision: CaseIndictmentRulingDecision.FINE,
@@ -777,11 +783,13 @@ describe('getIndictmentDefendantsInfo', () => {
   it('should add verdict appeal deadline and expiry for defendants with verdict view date', () => {
     const defendants = [
       {
-        verdictViewDate: '2022-06-15T19:50:08.033Z',
-        serviceRequirement: ServiceRequirement.REQUIRED,
-      } as Defendant,
-      { verdictViewDate: undefined } as Defendant,
-    ]
+        verdict: {
+          serviceDate: '2022-06-15T19:50:08.033Z',
+          serviceRequirement: ServiceRequirement.REQUIRED,
+        },
+      },
+      { verdict: { serviceDate: undefined } },
+    ] as Defendant[]
 
     const theCase = {
       defendants,
@@ -791,13 +799,15 @@ describe('getIndictmentDefendantsInfo', () => {
 
     expect(defendantsInfo).toEqual([
       {
-        verdictViewDate: '2022-06-15T19:50:08.033Z',
-        serviceRequirement: ServiceRequirement.REQUIRED,
+        verdict: {
+          serviceDate: '2022-06-15T19:50:08.033Z',
+          serviceRequirement: ServiceRequirement.REQUIRED,
+        },
         verdictAppealDeadline: '2022-07-13T23:59:59.999Z',
         isVerdictAppealDeadlineExpired: true,
       },
       {
-        verdictViewDate: undefined,
+        verdict: { serviceDate: undefined },
         verdictAppealDeadline: undefined,
         isVerdictAppealDeadlineExpired: false,
       },
