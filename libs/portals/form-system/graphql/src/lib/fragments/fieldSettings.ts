@@ -29,6 +29,9 @@ export const FieldSettingsFragment = gql`
     maxFiles
     timeInterval
     isLarge
+    zendeskIsPublic
+    zendeskIsCustomField
+    zendeskCustomFieldId
   }
   ${ListItemFragment}
   ${LanguageFields}

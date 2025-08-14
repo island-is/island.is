@@ -93,7 +93,6 @@ const GeneralStatisticsBody = ({ minDate }: { minDate?: Date }) => {
       setStats(data.indictmentCaseStatistics)
     }
   }, [data])
-
   return (
     <Box marginTop={4}>
       <Filters

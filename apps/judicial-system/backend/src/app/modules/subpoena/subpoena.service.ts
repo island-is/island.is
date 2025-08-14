@@ -1,5 +1,5 @@
 import { Base64 } from 'js-base64'
-import { col, fn, Includeable, literal, Op, WhereOptions } from 'sequelize'
+import { Includeable } from 'sequelize'
 import { Transaction } from 'sequelize/types'
 import { Sequelize } from 'sequelize-typescript'
 
@@ -42,10 +42,6 @@ import { EventService } from '../event'
 import { FileService } from '../file/file.service'
 import { Institution } from '../institution'
 import { PoliceDocumentType, PoliceService, SubpoenaInfo } from '../police'
-import {
-  ServiceStatusStatistics,
-  SubpoenaStatistics,
-} from '../statistics/models/subpoenaStatistics.response'
 import { User } from '../user'
 import { UpdateSubpoenaDto } from './dto/updateSubpoena.dto'
 import { DeliverResponse } from './models/deliver.response'
