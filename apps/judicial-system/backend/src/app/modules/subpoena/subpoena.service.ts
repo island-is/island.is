@@ -545,6 +545,10 @@ export class SubpoenaService {
       },
     }
 
+    const minCreated = (await this.subpoenaModel.min('created', {
+      where,
+    })) as Date | null
+
     if (from || to) {
       where.created = {}
       if (from) {
@@ -571,7 +575,7 @@ export class SubpoenaService {
       })
     }
 
-    const count = await this.subpoenaModel.count({
+    const subpoenas = await this.subpoenaModel.findAll({
       where,
       include,
     })
@@ -609,8 +613,9 @@ export class SubpoenaService {
     )
 
     const stats: SubpoenaStatistics = {
-      count,
+      count: subpoenas.length,
       serviceStatusStatistics,
+      minDate: minCreated ?? new Date(),
     }
 
     return stats

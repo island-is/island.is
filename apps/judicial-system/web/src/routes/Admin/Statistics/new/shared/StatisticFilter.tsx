@@ -15,6 +15,7 @@ const DatePickers = ({
   selectedDateFilter,
   setFromDate,
   setToDate,
+  minDate,
 }: {
   name: string
   labelFrom: string
@@ -22,6 +23,7 @@ const DatePickers = ({
   selectedDateFilter: DateFilter
   setFromDate: (date?: Date) => void
   setToDate: (date?: Date) => void
+  minDate?: Date
 }) => {
   return (
     <Box display="flex" flexDirection="row" columnGap={2}>
@@ -30,7 +32,8 @@ const DatePickers = ({
         label={labelFrom}
         placeholderText="Frá"
         size="xs"
-        selected={selectedDateFilter.fromDate}
+        selected={selectedDateFilter.fromDate ?? minDate}
+        minDate={minDate}
         maxDate={new Date()}
         handleChange={(date: Date | null) => setFromDate(date ?? undefined)}
       />
@@ -40,8 +43,8 @@ const DatePickers = ({
         placeholderText="Til"
         size="xs"
         maxDate={new Date()}
-        minDate={selectedDateFilter.fromDate}
-        selected={selectedDateFilter.toDate}
+        minDate={selectedDateFilter.fromDate ?? minDate}
+        selected={selectedDateFilter.toDate ?? new Date()}
         handleChange={(date: Date | null) => setToDate(date ?? undefined)}
       />
     </Box>
@@ -52,10 +55,12 @@ const FilterComponent = <T extends object>({
   type,
   filters,
   setFilters,
+  minDate,
 }: {
   type: FilterType
   filters: T
   setFilters: Dispatch<SetStateAction<T>>
+  minDate?: Date
 }) => {
   const { districtCourts } = useInstitution()
 
@@ -68,6 +73,7 @@ const FilterComponent = <T extends object>({
         labelFrom="Stofndagsetning frá"
         labelTo="Stofndagsetning til"
         selectedDateFilter={currentValue}
+        minDate={minDate}
         setFromDate={(fromDate) =>
           setFilters((prev) => ({
             ...prev,
@@ -94,6 +100,7 @@ const FilterComponent = <T extends object>({
         labelFrom="Mál sent til dómstóls frá"
         labelTo="Mál sent til dómstóls til"
         selectedDateFilter={currentValue}
+        minDate={minDate}
         setFromDate={(fromDate) =>
           setFilters((prev) => ({
             ...prev,
@@ -142,12 +149,14 @@ export const Filters = <T extends object>({
   filters,
   setFilters,
   onClear,
+  minDate,
 }: {
   id: string
   types: FilterType[]
   filters: T
   setFilters: Dispatch<SetStateAction<T>>
   onClear: () => void
+  minDate?: Date
 }) => {
   return (
     <FilterLayout id={id} onClear={onClear}>
@@ -157,6 +166,7 @@ export const Filters = <T extends object>({
           type={type}
           filters={filters}
           setFilters={setFilters}
+          minDate={minDate}
         />
       ))}
     </FilterLayout>

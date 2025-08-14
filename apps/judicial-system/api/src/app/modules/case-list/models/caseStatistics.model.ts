@@ -18,6 +18,9 @@ export class IndictmentCaseStatistics {
 
   @Field(() => Number)
   averageRulingTimeDays!: number
+
+  @Field(() => String)
+  minDate!: string
 }
 
 @ObjectType()
@@ -30,6 +33,9 @@ export class RequestCaseStatistics {
 
   @Field(() => Number)
   completedCount!: number
+
+  @Field(() => String)
+  minDate!: string
 }
 
 @ObjectType()
@@ -54,6 +60,9 @@ export class SubpoenaStatistics {
 
   @Field(() => [ServiceStatusStatistics])
   serviceStatusStatistics!: ServiceStatusStatistics[]
+
+  @Field(() => String)
+  minDate!: string
 }
 
 @ObjectType()
