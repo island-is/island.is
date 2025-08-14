@@ -129,7 +129,9 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
 
     const input = {
       collectionType: this.collectionType,
-      collectionId: municipalCollection.id,
+      collectionId:
+        municipalCollection.areas.find((area) => area.id === candidateAreaId)
+          ?.collectionId ?? '',
       owner: {
         ...answers.applicant,
         nationalId: application?.applicantActors?.[0]
