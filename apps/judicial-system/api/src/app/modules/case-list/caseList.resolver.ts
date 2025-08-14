@@ -148,7 +148,7 @@ export class CaseListResolver {
     @Context('dataSources')
     { backendService }: { backendService: BackendService },
   ): Promise<RequestCaseStatistics> {
-    this.logger.debug('Getting case statistics')
+    this.logger.debug('Getting request case statistics')
 
     const result = this.auditTrailService.audit(
       user.id,

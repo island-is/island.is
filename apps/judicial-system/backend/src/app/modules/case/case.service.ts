@@ -2514,6 +2514,11 @@ export class CaseService {
       type: [CaseType.INDICTMENT],
     }
 
+    const minCreated = (await this.caseModel.min('created', {
+      where,
+    })) as Date | null
+
+    // apply dto filters
     if (institutionId) {
       where = {
         ...where,
@@ -2540,15 +2545,11 @@ export class CaseService {
 
     const filterOnSentToCourt = () => {
       if (sentToCourt) {
-        console.log({ sentToCourt })
-        const sortedCase = cases.sort(
-          (a, b) => a.created.getTime() - b.created.getTime(),
-        )
-        if (!sortedCase.length) {
+        if (!cases.length) {
           return undefined
         }
 
-        const start = sentToCourt.fromDate ?? sortedCase[0]?.created
+        const start = sentToCourt.fromDate ?? cases[0]?.created
         const end = sentToCourt.toDate ?? new Date()
 
         return cases.filter(({ eventLogs }) =>
@@ -2564,7 +2565,11 @@ export class CaseService {
       }
     }
     const filteredCases = filterOnSentToCourt() ?? cases
-    return this.getIndictmentStatistics(filteredCases)
+    const indictmentCaseStatistics = this.getIndictmentStatistics(filteredCases)
+    return {
+      ...indictmentCaseStatistics,
+      minDate: minCreated ?? new Date(),
+    }
   }
 
   async getSubpoenaStatistics(
@@ -2597,6 +2602,11 @@ export class CaseService {
       },
     }
 
+    const minCreated = (await this.caseModel.min('created', {
+      where,
+    })) as Date | null
+
+    // apply dto filters
     if (created?.fromDate || created?.toDate) {
       const { fromDate, toDate } = created
       where.created = {}
@@ -2657,7 +2667,12 @@ export class CaseService {
       }
     }
     const filteredCases = filterOnSentToCourt() ?? cases
-    return this.getRequestCaseStatistics(filteredCases)
+    const requestCaseStatistics = this.getRequestCaseStatistics(filteredCases)
+
+    return {
+      ...requestCaseStatistics,
+      minDate: minCreated ?? new Date(),
+    }
   }
 
   async getCaseStatistics(
@@ -2724,15 +2739,17 @@ export class CaseService {
 
     const stats: CaseStatistics = {
       count: cases.length,
-      requestCases,
-      indictmentCases,
+      requestCases: { ...requestCases, minDate: new Date() },
+      indictmentCases: { ...indictmentCases, minDate: new Date() },
       subpoenas,
     }
 
     return stats
   }
 
-  getIndictmentStatistics(cases: Case[]): IndictmentCaseStatistics {
+  getIndictmentStatistics(
+    cases: Case[],
+  ): Omit<IndictmentCaseStatistics, 'minDate'> {
     const inProgressCount = cases.filter(
       (caseItem) => caseItem.state !== CaseState.COMPLETED,
     ).length
@@ -2773,7 +2790,9 @@ export class CaseService {
     }
   }
 
-  getRequestCaseStatistics(cases: Case[]): RequestCaseStatistics {
+  getRequestCaseStatistics(
+    cases: Case[],
+  ): Omit<RequestCaseStatistics, 'minDate'> {
     const inProgressCount = cases.filter(
       (c) => !isCompletedCase(c.state),
     ).length
