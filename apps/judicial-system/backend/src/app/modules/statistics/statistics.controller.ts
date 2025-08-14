@@ -11,9 +11,6 @@ import {
 } from '@island.is/judicial-system/auth'
 
 import { adminRule, localAdminRule } from '../../guards'
-import { CivilClaimantService } from '../defendant'
-import { EventService } from '../event'
-import { UserService } from '../user'
 import {
   CaseStatistics,
   IndictmentCaseStatistics,
@@ -30,9 +27,6 @@ import { DataGroups, StatisticsService } from './statistics.service'
 export class StatisticsController {
   constructor(
     private readonly statisticService: StatisticsService,
-    private readonly userService: UserService,
-    private readonly eventService: EventService,
-    private readonly civilClaimantService: CivilClaimantService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -126,7 +120,7 @@ export class StatisticsController {
   exportRequestStatistics(
     @Query('query') query?: RequestStatisticsDto,
   ): Promise<{ url: string }> {
-    this.logger.debug('Create and export csv file for data analytics')
+    this.logger.debug('Create and export csv file for data analytics', query)
 
     return this.statisticService.extractTransformLoadRvgDataToS3({
       type: DataGroups.REQUESTS,

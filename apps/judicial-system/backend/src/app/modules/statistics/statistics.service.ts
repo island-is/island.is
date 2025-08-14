@@ -1,17 +1,13 @@
 import stringify from 'csv-stringify'
 import isWithinInterval from 'date-fns/isWithinInterval'
 import { col, fn, Includeable, literal, Op, WhereOptions } from 'sequelize'
-import { Sequelize } from 'sequelize-typescript'
 
 import { Inject, Injectable } from '@nestjs/common'
-import { InjectConnection, InjectModel } from '@nestjs/sequelize'
+import { InjectModel } from '@nestjs/sequelize'
 
-import { IntlService } from '@island.is/cms-translations'
-import { SigningService } from '@island.is/dokobit-signing'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { MessageService } from '@island.is/judicial-system/message'
 import {
   CaseNotificationType,
   CaseState,
@@ -25,15 +21,10 @@ import {
 
 import { AwsS3Service } from '../aws-s3'
 import { Case, DateLog, partition } from '../case'
-import { CaseString } from '../case/models/caseString.model'
-import { CourtService } from '../court'
-import { DefendantService } from '../defendant'
-import { EventService } from '../event'
-import { EventLog, EventLogService } from '../event-log'
-import { FileService } from '../file'
+import { EventLog } from '../event-log'
 import { Institution } from '../institution'
 import { Notification } from '../notification'
-import { Subpoena, SubpoenaService } from '../subpoena'
+import { Subpoena } from '../subpoena'
 import {
   CaseStatistics,
   IndictmentCaseStatistics,
@@ -54,22 +45,9 @@ export enum DataGroups {
 @Injectable()
 export class StatisticsService {
   constructor(
-    @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Case) private readonly caseModel: typeof Case,
-    @InjectModel(DateLog) private readonly dateLogModel: typeof DateLog,
     @InjectModel(Subpoena) private readonly subpoenaModel: typeof Subpoena,
-    @InjectModel(CaseString)
-    private readonly caseStringModel: typeof CaseString,
-    private readonly defendantService: DefendantService,
-    private readonly subpoenaService: SubpoenaService,
-    private readonly fileService: FileService,
     private readonly awsS3Service: AwsS3Service,
-    private readonly courtService: CourtService,
-    private readonly signingService: SigningService,
-    private readonly intlService: IntlService,
-    private readonly eventService: EventService,
-    private readonly eventLogService: EventLogService,
-    private readonly messageService: MessageService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
