@@ -60,11 +60,15 @@ export class TerminateRentalAgreementService extends BaseTemplateApiService {
 
       if (isCancellation(application)) {
         const parsedApplication = parseCancelContract(application, files)
+        console.log('cancel parsedApplication')
+        console.dir(parsedApplication, { depth: null, colors: true })
         return await this.homeApiWithAuth(auth).contractCancelPost({
           cancelContract: parsedApplication,
         })
       } else {
         const parsedApplication = parseTerminateContract(application, files)
+        console.log('terminate parsedApplication')
+        console.dir(parsedApplication, { depth: null, colors: true })
         return await this.homeApiWithAuth(auth).contractTerminatePost({
           terminateContract: parsedApplication,
         })
