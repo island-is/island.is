@@ -10,7 +10,8 @@ jobs:
         env:
             DIRTYBOT_KEY: ${{ secrets.ISLAND_IS_APP_KEY }}
             DIRTYBOT_APP_ID: ${{ secrets.ISLAND_IS_SSH_KEY }}
-        run: | 
+        run: |
+          corepack enable 
           yarn
           cat "hehe" > charts/identity-server/values.dev.yaml
           node scripts/ci/docker/git-check-dirty.mjs "charts/" "charts" "dirtybot"
