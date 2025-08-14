@@ -109,56 +109,114 @@ yargs(hideBin(process.argv))
     describe: 'delete secrets by prefix',
     builder: (yargs) => yargs,
     handler: async (argv) => {
+      const throttle = (ms: number) =>
+        new Promise((resolve) => setTimeout(resolve, ms))
+
       const { prefix } = argv as DeleteArguments
-      let NextToken
-      let ParameterList: any = []
+      let nextToken: string | undefined = undefined
+      let parameterList: any = []
 
-      while (true) {
-        let response: any = await ssm
-          .describeParameters({
-            ParameterFilters: [
-              { Key: 'Name', Option: 'BeginsWith', Values: [prefix] },
-            ],
-            NextToken,
-          })
-          .promise()
+      console.log(`Deleting all parameters with prefix: ${prefix}`)
 
-        NextToken = response.NextToken
+      do {
+        try {
+          let response: any = await ssm
+            .describeParameters({
+              ParameterFilters: [
+                { Key: 'Name', Option: 'BeginsWith', Values: [prefix] },
+              ],
+              NextToken: nextToken,
+            })
+            .promise()
 
-        if (response.Parameters && response.Parameters.length > 0) {
-          ParameterList = ParameterList.concat(response.Parameters)
+          nextToken = response.NextToken
+
+          if (response.Parameters && response.Parameters.length > 0) {
+            parameterList = parameterList.concat(response.Parameters)
+          }
+        } catch (error: any) {
+          let code = error?.code
+          if (
+            code &&
+            (code === 'ThrottlingException' ||
+              code === 'TooManyRequestsException')
+          ) {
+            logger.info(
+              'Throttled while listing parameters; backing off and retrying',
+              {
+                nextToken,
+              },
+            )
+            await throttle(1000)
+            continue
+          }
+          throw error
         }
-        if (
-          !NextToken ||
-          NextToken == undefined ||
-          NextToken == null ||
-          NextToken == ''
-        ) {
-          break
-        }
-      }
-      if (ParameterList && ParameterList.length > 0) {
+      } while (nextToken)
+
+      if (parameterList && parameterList.length > 0) {
         logger.debug(
-          `Parameters to destroy: ${ParameterList.map(
+          `Parameters to destroy: ${parameterList.map(
             ({ Name }: any) => Name,
           )}`,
         )
 
-        try {
-          await Promise.all(
-            ParameterList.map(({ Name }: any) =>
-              Name
-                ? ssm.deleteParameter({ Name }).promise()
-                : new Promise((resolve) => resolve(true)),
-            ),
-          )
-        } catch (error: any) {
-          if (error.code && error.code === 'ThrottlingException') {
-            logger.info('ThrottlingException came up', error)
-            logger.info('You could need to retry deleting the parameters again')
-          } else {
-            logger.error('Exception while deleting parameters', error)
-            throw error
+        console.log(`Deleting ${parameterList.length} parameters...`)
+
+        const names: string[] = parameterList
+          .map(({ Name }: any) => Name)
+          .filter(Boolean)
+
+        console.log(`Found ${names} parameters to delete.`)
+
+        const batchSize = 10
+        const maximumAttempts = 5
+        for (let i = 0; i < names.length; i += batchSize) {
+          const batch = names.slice(i, i + batchSize)
+
+          let attempts = 0
+
+          while (true) {
+            try {
+              let resp = await ssm.deleteParameters({ Names: batch }).promise()
+              if (resp.InvalidParameters && resp.InvalidParameters.length > 0) {
+                logger.error('Invalid parameters', {
+                  invalid: resp.InvalidParameters,
+                })
+              }
+              break
+            } catch (error: any) {
+              let code = error?.code
+              if (
+                code === 'ThrottlingException' ||
+                code === 'TooManyRequestsException'
+              ) {
+                attempts++
+                if (attempts > maximumAttempts) {
+                  logger.error(
+                    'Failed to delete parameters after multiple attempts',
+                    {
+                      error,
+                      batch,
+                    },
+                  )
+                  break
+                }
+
+                logger.info(
+                  'Throttled while deleting parameters; backing off and retrying',
+                  {
+                    attempts,
+                  },
+                )
+                await throttle(1000 * attempts)
+                continue
+              } else if (code === 'ParameterNotFound') {
+                logger.warn('Parameter not found while deleting, ignoring')
+              }
+              logger.error('Exception while deleting parameters', { error })
+              break
+            }
           }
         }
       }
