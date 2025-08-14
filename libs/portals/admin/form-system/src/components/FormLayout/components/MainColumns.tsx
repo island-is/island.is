@@ -21,6 +21,7 @@ export const MainContentColumn = () => {
   const deleteScreen = useMutation(DELETE_SCREEN)
   const deleteField = useMutation(DELETE_FIELD)
   const deleteSection = useMutation(DELETE_SECTION)
+  const partiesSection = activeItem.type === 'Section' && (activeItem.data as { sectionType?: string })?.sectionType === 'PARTIES'
 
   const containsGroupOrInput = (): boolean => {
     if (type === 'Section') {
@@ -82,7 +83,7 @@ export const MainContentColumn = () => {
         marginLeft: 0,
       }}
     >
-      {!inSettings ? (
+      {!inSettings && !partiesSection ? (
         containsGroupOrInput() ? (
           <DialogPrompt
             baseId="remove"
@@ -94,7 +95,7 @@ export const MainContentColumn = () => {
             onConfirm={remove}
             disclosureElement={
               <DeleteButton
-                onClick={() => {}}
+                onClick={() => { }}
                 label={formatMessage(m.delete)}
               />
             }

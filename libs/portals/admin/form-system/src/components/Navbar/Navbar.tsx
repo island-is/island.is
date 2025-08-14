@@ -32,6 +32,7 @@ export const Navbar = () => {
   const { formatMessage } = useIntl()
   const { activeItem, form } = control
   const { sections, screens, fields } = form
+  const parties = sections?.find(s => s?.sectionType === SectionTypes.PARTIES)
 
   const sectionIds = useMemo(
     () =>
@@ -107,13 +108,13 @@ export const Navbar = () => {
     const data =
       type === 'Section'
         ? sections?.find(
-            (item: Maybe<FormSystemSection> | undefined) => item?.id === id,
-          )
+          (item: Maybe<FormSystemSection> | undefined) => item?.id === id,
+        )
         : type === 'Screen'
-        ? screens?.find(
+          ? screens?.find(
             (item: Maybe<FormSystemScreen> | undefined) => item?.id === id,
           )
-        : fields?.find(
+          : fields?.find(
             (item: Maybe<FormSystemField> | undefined) => item?.id === id,
           )
 
@@ -148,6 +149,7 @@ export const Navbar = () => {
       .filter(
         (s) =>
           s.sectionType !== SectionTypes.INPUT &&
+          s.sectionType !== SectionTypes.PARTIES &&
           s.sectionType !== SectionTypes.SUMMARY,
       )
       .map((s) => (
@@ -206,7 +208,7 @@ export const Navbar = () => {
     return sections
       ?.filter(
         (s): s is FormSystemSection =>
-          s !== null && s !== undefined && s.sectionType === SectionTypes.INPUT,
+          s !== null && s !== undefined && (s.sectionType === SectionTypes.INPUT),
       )
       .map((section, index) => (
         <Box key={section.id}>
@@ -238,6 +240,7 @@ export const Navbar = () => {
     </>
   )
 
+
   const renderDnDView = () => (
     <div>
       <Box className={styles.minimalScrollbar}>
@@ -247,6 +250,15 @@ export const Navbar = () => {
           onDragEnd={onDragEnd}
           onDragOver={onDragOver}
         >
+          {parties && (
+            <NavComponent
+              type="Section"
+              data={sections?.find(s => s?.sectionType === SectionTypes.PARTIES) ?? {} as FormSystemSection}
+              active={activeItem.data?.id === parties.id}
+              focusComponent={focusComponent}
+            />
+          )}
+
           <SortableContext items={sectionIds ?? []}>
             {renderInputSections()}
           </SortableContext>
@@ -263,9 +275,9 @@ export const Navbar = () => {
                   type={activeItem.type}
                   data={
                     activeItem.data as
-                      | FormSystemScreen
-                      | FormSystemSection
-                      | FormSystemField
+                    | FormSystemScreen
+                    | FormSystemSection
+                    | FormSystemField
                   }
                   active
                   focusComponent={focusComponent}
