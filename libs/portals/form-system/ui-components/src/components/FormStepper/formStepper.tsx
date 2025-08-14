@@ -1,6 +1,7 @@
 import { FormStepperV2, Section, Text } from '@island.is/island-ui/core'
 import { FormSystemScreen, FormSystemSection } from '@island.is/api/schema'
 import { SectionTypes } from '../../lib'
+import { useLocale } from '@island.is/localization'
 
 interface Current<T> {
   data?: T
@@ -18,6 +19,7 @@ export const FormStepper = ({
   currentSection,
   currentScreen,
 }: Props) => {
+  const { lang } = useLocale()
   const filteredSections = sections.filter(
     (section) =>
       section.sectionType !== SectionTypes.PREMISES || section.isHidden,
@@ -29,7 +31,7 @@ export const FormStepper = ({
       sections={filteredSections.map((section, sectionIndex) => (
         <Section
           sectionIndex={sectionIndex}
-          section={section?.name?.is ?? ''}
+          section={section?.name?.[lang] ?? ''}
           isComplete={section?.isCompleted ?? false}
           isActive={section.id === currentSection?.data?.id}
           key={section?.id}
@@ -42,7 +44,7 @@ export const FormStepper = ({
                 }
               >
                 {' '}
-                {screen?.name?.is ?? ''}
+                {screen?.name?.[lang] ?? ''}
               </Text>
             )
           })}
