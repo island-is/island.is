@@ -145,7 +145,11 @@ export const Navbar = () => {
   const renderNonInputSections = () => {
     return sections
       ?.filter((s): s is FormSystemSection => s !== null && s !== undefined)
-      .filter((s) => s.sectionType !== SectionTypes.INPUT)
+      .filter(
+        (s) =>
+          s.sectionType !== SectionTypes.INPUT &&
+          s.sectionType !== SectionTypes.SUMMARY,
+      )
       .map((s) => (
         <Box key={s.id}>
           <NavComponent
