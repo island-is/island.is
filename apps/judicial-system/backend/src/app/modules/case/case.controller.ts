@@ -63,12 +63,14 @@ import {
   districtCourtAssistantRule,
   districtCourtJudgeRule,
   districtCourtRegistrarRule,
+  localAdminRule,
   prosecutorRepresentativeRule,
   prosecutorRule,
   publicProsecutorStaffRule,
 } from '../../guards'
 import { CivilClaimantService } from '../defendant'
 import { EventService } from '../event'
+import { SubpoenaStatistics } from '../subpoena/models/subpoenaStatistics.response'
 import { UserService } from '../user'
 import { CreateCaseDto } from './dto/createCase.dto'
 import { TransitionCaseDto } from './dto/transitionCase.dto'
@@ -108,9 +110,16 @@ import {
 import { CaseListInterceptor } from './interceptors/caseList.interceptor'
 import { CompletedAppealAccessedInterceptor } from './interceptors/completedAppealAccessed.interceptor'
 import { Case } from './models/case.model'
-import { CaseStatistics } from './models/caseStatistics.response'
+import {
+  CaseStatistics,
+  IndictmentCaseStatistics,
+  RequestCaseStatistics,
+} from './models/caseStatistics.response'
 import { SignatureConfirmationResponse } from './models/signatureConfirmation.response'
 import { transitionCase } from './state/case.state'
+import { IndictmentStatisticsDto } from './statistics/indictmentStatistics.dto'
+import { RequestStatisticsDto } from './statistics/requestStatistics.dto'
+import { SubpoenaStatisticsDto } from './statistics/subpoenaStatistics.dto'
 import { CaseService, UpdateCase } from './case.service'
 import { PdfService } from './pdf.service'
 
@@ -898,8 +907,9 @@ export class CaseController {
     return this.caseService.createCourtCase(theCase, user)
   }
 
+  // STATS
   @UseGuards(JwtAuthUserGuard, RolesGuard)
-  @RolesRules(adminRule)
+  @RolesRules(adminRule, localAdminRule)
   @Get('cases/statistics')
   @ApiOkResponse({
     type: CaseStatistics,
@@ -916,5 +926,60 @@ export class CaseController {
     this.logger.debug('Getting statistics for all cases')
 
     return this.caseService.getCaseStatistics(fromDate, toDate, institutionId)
+  }
+
+  @UseGuards(JwtAuthUserGuard, RolesGuard)
+  @RolesRules(adminRule, localAdminRule)
+  @Get('cases/indictments/statistics')
+  @ApiOkResponse({
+    type: IndictmentCaseStatistics,
+    description: 'Gets court centered statistics for cases',
+  })
+  getIndictmentCaseStatistics(
+    @Query('query') query?: IndictmentStatisticsDto,
+  ): Promise<IndictmentCaseStatistics> {
+    this.logger.debug('Getting statistics for indictment cases')
+
+    return this.caseService.getIndictmentCaseStatistics(
+      query?.sentToCourt,
+      query?.institutionId,
+    )
+  }
+
+  @UseGuards(JwtAuthUserGuard, RolesGuard)
+  @RolesRules(adminRule, localAdminRule)
+  @Get('cases/subpoenas/statistics')
+  @ApiOkResponse({
+    type: SubpoenaStatistics,
+    description: 'Gets court centered statistics for subpoenas',
+  })
+  getSubpoenaStatistics(
+    @Query('query') query?: SubpoenaStatisticsDto,
+  ): Promise<SubpoenaStatistics> {
+    this.logger.debug('Getting statistics for subpoenas')
+
+    return this.caseService.getSubpoenaStatistics(
+      query?.created,
+      query?.institutionId,
+    )
+  }
+
+  @UseGuards(JwtAuthUserGuard, RolesGuard)
+  @RolesRules(adminRule, localAdminRule)
+  @Get('cases/requests/statistics')
+  @ApiOkResponse({
+    type: RequestCaseStatistics,
+    description: 'Gets court centered statistics for requests cases',
+  })
+  getRequestCaseStatistics(
+    @Query('query') query?: RequestStatisticsDto,
+  ): Promise<RequestCaseStatistics> {
+    this.logger.debug('Getting statistics for request cases')
+
+    return this.caseService.getRequestCasesStatistics(
+      query?.created,
+      query?.sentToCourt,
+      query?.institutionId,
+    )
   }
 }
