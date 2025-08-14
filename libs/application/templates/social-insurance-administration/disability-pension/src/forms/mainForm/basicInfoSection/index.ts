@@ -12,11 +12,11 @@ export const basicInfoSection = buildSection({
   id: SectionRouteEnum.BASIC_INFO,
   title: disabilityPensionFormMessage.basicInfo.title,
   children: [
-    //personalInfoSubSection,
-    //paymentInfoSubSection,
-    //incomePlanInstructionsSubSection,
-    //incomePlanSubSection,
-    //disabilityEvaluationSubSection,
+    personalInfoSubSection,
+    paymentInfoSubSection,
+    incomePlanInstructionsSubSection,
+    incomePlanSubSection,
+    disabilityEvaluationSubSection,
     employmentParticipationSubSection,
   ],
 })

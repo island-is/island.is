@@ -2,7 +2,7 @@ import { buildMultiField, buildRadioField, getValueViaPath } from '@island.is/ap
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { SectionRouteEnum } from '../../../../types'
 import { Application } from '@island.is/application/types'
-import { Country, EducationLevels } from '../../../../types/interfaces'
+import { EducationLevels } from '../../../../types/interfaces'
 
 export const educationLevelField = buildMultiField({
   id: SectionRouteEnum.BACKGROUND_INFO_EDUCATION_LEVEL,

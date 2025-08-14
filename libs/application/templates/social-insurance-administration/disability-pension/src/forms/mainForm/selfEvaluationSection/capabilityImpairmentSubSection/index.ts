@@ -15,20 +15,20 @@ export const MAX_QUESTIONS = 50
 const buildQuestion = (index: number) => {
   return buildMultiField({
     id: `${SectionRouteEnum.CAPABILITY_IMPAIRMENT}.questionAnswers.[${index}]`,
-    title: (application, locale) => {
-      const selfAssessmentQuestionnaire = getValueViaPath<Array<SelfAssessmentQuestionnaire>>(
-          application.externalData,
-          'socialInsuranceAdministrationDisabilityPensionSelfAssessmentQuestions.data',
-        ) ?? []
-
-      const questions = selfAssessmentQuestionnaire.find(questionnaire => questionnaire.language.toLowerCase() === locale)?.questions ?? []
-
-      return questions[index].questionTitle
-    },
+    title: disabilityPensionFormMessage.capabilityImpairment.title,
     children: [
       //check if works!
       buildRadioField({
         id: `${SectionRouteEnum.CAPABILITY_IMPAIRMENT}.questionAnswers.[${index}].answer`,
+        title: (application, locale) => {
+          const selfAssessmentQuestionnaire = getValueViaPath<Array<SelfAssessmentQuestionnaire>>(
+              application.externalData,
+              'socialInsuranceAdministrationDisabilityPensionSelfAssessmentQuestions.data',
+            ) ?? []
+
+          const questions = selfAssessmentQuestionnaire.find(questionnaire => questionnaire.language.toLowerCase() === locale)?.questions ?? []
+          return questions[index].questionTitle
+        },
         options: (application, _, locale) => {
           const selfAssessmentQuestionnaire = getValueViaPath<Array<SelfAssessmentQuestionnaire>>(
               application.externalData,

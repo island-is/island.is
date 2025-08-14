@@ -16,13 +16,13 @@ export class DisabilityPensionCertificate {
   @Field(() => Doctor, { nullable: true })
   doctor?: Doctor
 
-  @Field(() => GraphQLISODateTime, { nullable: true })
+  @Field({ nullable: true, description: 'ISO8601 formatted date' })
   lastInspectionDate?: string
 
-  @Field(() => GraphQLISODateTime, { nullable: true })
+  @Field({ nullable: true, description: 'ISO8601 formatted date' })
   certificateDate?: string
 
-  @Field(() => GraphQLISODateTime, { nullable: true })
+  @Field({ nullable: true, description: 'ISO8601 formatted date'  })
   dateOfWorkIncapacity?: string
 
   @Field(() => DisabilityDiagnosisCollection, { nullable: true })

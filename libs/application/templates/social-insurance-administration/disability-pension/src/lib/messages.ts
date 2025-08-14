@@ -59,6 +59,26 @@ export const disabilityPensionFormMessage: MessageDir = {
       defaultMessage: 'Starfsstöð',
       description: 'Location',
     },
+    doctorNumber: {
+      id: 'db.application:disability.pension.certificate.doctor.number',
+      defaultMessage: 'Læknisnúmer',
+      description: 'Doctor number',
+    },
+    email: {
+      id: 'db.application:disability.pension.certificate.email',
+      defaultMessage: 'Netfang',
+      description: 'Email',
+    },
+    phoneNumber: {
+      id: 'db.application:disability.pension.certificate.phone.number',
+      defaultMessage: 'Símanúmer',
+      description: 'Phone number',
+    },
+    address: {
+      id: 'db.application:disability.pension.certificate.address',
+      defaultMessage: 'Heimilisfang',
+      description: 'Address',
+    },
 
     // Information
     information: {
@@ -101,6 +121,26 @@ export const disabilityPensionFormMessage: MessageDir = {
       defaultMessage: 'Fyrri heilsufarssaga',
       description: 'Previous medical history',
     },
+    informationMedicalImpairmentCause: {
+      id: 'db.application:disability.pension.certificate.information.medical.impairment.cause',
+      defaultMessage: 'Vandi sem veldur skerðingu á getu einstaklings til atvinnuþátttöku',
+      description: 'TODO',
+    },
+    informationMedicalImpairmentStability: {
+      id: 'db.application:disability.pension.certificate.information.medical.impairment.stability',
+      defaultMessage: 'Stöðuleiki sjúkdómsgangs með tilliti til ICD greininga',
+      description: 'TODO',
+    },
+    informationMedicalImpairmentProjectedImprovement: {
+      id: 'db.application:disability.pension.certificate.information.medical.impairment.projected.improvement',
+      defaultMessage: 'Hvenær er talið að færni muni aukast',
+      description: 'TODO',
+    },
+    informationMedicalMedicalImplementsUsage: {
+      id: 'db.application:disability.pension.certificate.information.medical.medical.implements.usage',
+      defaultMessage: 'Er einstaklingur að nota lyf vegna heilsubrests, hjálpartæki eða önnur inngrip í daglegu lífi',
+      description: 'TODO',
+    },
     informationCurrentStatus: {
       id: 'db.application:disability.pension.certificate.information.current.status',
       defaultMessage: 'Staða umsækjanda í dag',
@@ -110,7 +150,7 @@ export const disabilityPensionFormMessage: MessageDir = {
     // Physical impairment
     physicalImpairment: {
       id: 'db.application:disability.pension.certificate.physical.impairment',
-      defaultMessage: 'Líkamlegur vandi',
+      defaultMessage: 'Líkamlegar skerðingar',
       description: 'Physical impairment',
     },
     physicalImpairmentTooltip: {
@@ -120,110 +160,37 @@ export const disabilityPensionFormMessage: MessageDir = {
       description:
         'A physical impairment refers to problem or disruption of the physical function or body structure. The impairment may be caused by illness, injury or other physical trauma. Such impairment may affect mobility, posture, sensation, strength, pain or other physical abilities and thus limit the person’s ability to perform daily activities.',
     },
-    physicalImpairmentAffect: {
-      id: 'db.application:disability.pension.certificate.physical.impairment.affect',
-      defaultMessage: 'Hversu mikið hefur líkamlegur vandi áhrif á daglegt líf',
-      description: 'How much does the physical impairment affect daily life',
-    },
-    physicalImpairmentExplanation: {
-      id: 'db.application:disability.pension.certificate.physical.impairment.explanation',
-      defaultMessage: 'Nánari útskýringar varðandi líkamlegan vanda',
-      description: 'Further explanation of the physical impairment',
+    physicalImpairmentEffect: {
+      id: 'db.application:disability.pension.certificate.physical.impairment.effect',
+      defaultMessage: 'Líkamsstarfsemi sem röskun/fötlun veldur skerðingu á.',
+      description: 'TODO',
     },
 
-    // Mental impairment
-    mentalImpairment: {
-      id: 'db.application:disability.pension.certificate.mental.impairment',
-      defaultMessage: 'Andlegur vandi',
-      description: 'Mental impairment',
+    // cognitive impairment
+    cognitiveImpairment: {
+      id: 'db.application:disability.pension.certificate.cognitive.impairment',
+      defaultMessage: 'Vitrænar skerðingar',
+      description: 'Cognitive impairment',
     },
-    mentalImpairmentTooltip: {
-      id: 'db.application:disability.pension.certificate.mental.impairment.tooltip',
+    cognitiveImpairmentEffect: {
+      id: 'db.application:disability.pension.certificate.cognitive.impairment.effect',
+      defaultMessage: 'Mat á vitrænni skerðingu',
+      description: 'TODO',
+    },
+
+
+    // function assessment
+    functionalAssessment: {
+      id: 'db.application:disability.pension.certificate.functional.assessment',
+      defaultMessage: 'Mat á færni',
+      description: 'Functional assessment',
+    },
+    functionalAssessmentDescription: {
+      id: 'db.application:disability.pension.certificate.functional.assessment.description',
       defaultMessage:
-        'Andlegur vandi vísar til skerðinga eða frávika í starfsemi hugans eða tilfinningalífs. Vandinn getur stafað af sjúkdómum, meiðslum eða öðrum áföllum. Slíkur vandi nær meðal annars til skynjunar, jafnvægis í tilfinningalífi, einbeitingu, minni, samskipta- eða aðlögunarhæfni og þannig takmarkað getu einstaklings til að sinna daglegum athöfnum.',
+        'Mat á færni einstaklinga.',
       description:
-        'Mental impairment refers to problems or deviation in the functionality of the mind or emotions. The impairment may be caused by illness, injury or other trauma. Such impairments include problems with sensation, emotional balance, focus, memory, communication or adjustment, and thus limit the person’s ability to perform daily activities.',
-    },
-    mentalImpairmentAffect: {
-      id: 'db.application:disability.pension.certificate.mental.impairment.affect',
-      defaultMessage: 'Hversu mikið hefur andlegur vandi áhrif á daglegt líf',
-      description: 'How much does the mental impairment affect daily life',
-    },
-    mentalImpairmentExplanation: {
-      id: 'db.application:disability.pension.certificate.mental.impairment.explanation',
-      defaultMessage: 'Nánari útskýringar varðandi andlegan vanda',
-      description: 'Further explanation of the mental impairment',
-    },
-
-    // Activity and participation impairment
-    activityAndParticipationImpairment: {
-      id: 'db.application:disability.pension.certificate.activity.and.participation.impairment',
-      defaultMessage: 'Virkni- og þátttökuvandi',
-      description: 'Activity and participation impairment',
-    },
-    activityAndParticipationImpairmentTooltip: {
-      id: 'db.application:disability.pension.certificate.activity.and.participation.impairment.tooltip',
-      defaultMessage:
-        'Virkni og þátttöku vandi vísar til getu við að taka þátt í samfélaginu og sinna daglegum athöfnum. Vandinn getur stafað af sjúkdómum, meiðslum, öðrum áföllum og umhverfisþáttum. Slíkur vandi getur falið í sér takmarkanir á getu til að sinna eða uppfylla hlutverk í fjölskyldu, tómstundum, námi, vinnu eða öðrum félagslegum aðstæðum.',
-      description:
-        'Activity and participation impairment refers to the ability to participate in society and carry out daily activities. The impairment may be caused by illness, injury, other trauma or environmental factors. Such impairment may include limitations in the ability to perform or fulfil roles within a family, leisure, study, work or other social settings.',
-    },
-    activityAndParticipationImpairmentAffect: {
-      id: 'db.application:disability.pension.certificate.activity.and.participation.impairment.affect',
-      defaultMessage:
-        'Hversu mikið hefur virkni- og þátttökuvandi áhrif á daglegt líf',
-      description:
-        'How much does the activity and participation impairment affect daily life',
-    },
-    activityAndParticipationImpairmentExplanation: {
-      id: 'db.application:disability.pension.certificate.activity.and.participation.impairment.explanation',
-      defaultMessage: 'Nánari útskýringar varðandi virkni- og þátttökuvanda',
-      description:
-        'Further explanation of the activity and participation impairment',
-    },
-
-    // Main impairment
-    mainImpairment: {
-      id: 'db.application:disability.pension.certificate.main.impairment',
-      defaultMessage: 'Megin vandi',
-      description: 'Main impairment',
-    },
-    mainImpairmentExplanation: {
-      id: 'db.application:disability.pension.certificate.main.impairment.explanation',
-      defaultMessage: 'Annað varðandi megin vanda',
-      description: 'Further information on main impairment',
-    },
-
-    // Application for medical and rehabilitation payments
-    application: {
-      id: 'db.application:disability.pension.certificate.application',
-      defaultMessage: 'Sótt er um sjúkra- og endurhæfingargreiðslur',
-      description: 'Application for medical and rehabilitation payments',
-    },
-    applicationStartOfTreatment: {
-      id: 'db.application:disability.pension.certificate.application.start.of.treatment',
-      defaultMessage: 'Upphaf meðferðar',
-      description: 'Start of treatment',
-    },
-    applicationEstimatedEndOfTreatment: {
-      id: 'db.application:disability.pension.certificate.application.estimated.end.of.treatment',
-      defaultMessage: 'Áætluð lok meðferðar',
-      description: 'Estimated end of treatment',
-    },
-    applicationEstimatedTimeUnclear: {
-      id: 'db.application:disability.pension.certificate.application.estimated.time.unclear',
-      defaultMessage: 'Óljóst',
-      description: 'Unclear',
-    },
-    applicationEstimatedTime: {
-      id: 'db.application:disability.pension.certificate.application.estimated.time',
-      defaultMessage: 'Áætluð tímalengd',
-      description: 'Estimated time',
-    },
-    applicationEstimatedTimeMonths: {
-      id: 'db.application:disability.pension.certificate.application.estimated.time.months',
-      defaultMessage: '{months} mánuðir',
-      description: '{months} months',
+        'TODO',
     },
   }),
   prerequisites: defineMessages({
