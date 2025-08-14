@@ -4,7 +4,7 @@ export const m = defineMessages({
   rootName: {
     id: 'portals-admin.form-system:application-builder',
     defaultMessage: 'Umsóknarsmiður',
-    description: 'Form builder'
+    description: 'Form builder',
   },
   form: {
     id: 'portals-admin.form-system:form',
@@ -130,7 +130,8 @@ export const m = defineMessages({
     id: 'portals-admin.form-system:allow-progress',
     defaultMessage:
       'Leyfa notanda að halda áfram í umsókninni með ógild/óútfyllt gildi',
-    description: 'Allow user to continue application with invalid/incomplete values',
+    description:
+      'Allow user to continue application with invalid/incomplete values',
   },
   certifications: {
     id: 'portals-admin.form-system:certifications',
@@ -670,7 +671,8 @@ export const m = defineMessages({
     id: 'portals-admin-form-system:homestay-overview-radio',
     defaultMessage:
       'Var eignin eitthvað í útleigu á almanaksárinu sem er valið?',
-    description: 'Was the property rented out during the selected calendar year?',
+    description:
+      'Was the property rented out during the selected calendar year?',
   },
   yes: {
     id: 'portals-admin-form-system:yes',

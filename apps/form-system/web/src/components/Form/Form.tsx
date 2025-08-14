@@ -13,7 +13,6 @@ import { useApplicationContext } from '../../context/ApplicationProvider'
 import { useEffect } from 'react'
 import { useLocale } from '@island.is/localization'
 
-
 export const Form = () => {
   const { setInfo } = useHeaderInfo()
   const { lang } = useLocale()
@@ -23,7 +22,12 @@ export const Form = () => {
       applicationName: state.application?.formName?.[lang] ?? '',
       organisationName: state.application?.organizationName?.[lang] ?? '',
     })
-  }, [state.application.formName, state.application.organizationName, setInfo, lang])
+  }, [
+    state.application?.formName,
+    state.application?.organizationName,
+    setInfo,
+    lang,
+  ])
 
   return (
     <Box className={styles.root}>
