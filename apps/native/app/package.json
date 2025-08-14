@@ -10,7 +10,6 @@
     "ios:prod": "react-native run-ios --scheme Ísland.is --list-devices",
     "build-mock": "echo FIXME",
     "start": "react-native start",
-    "start:debug": "yarn start --experimental-debugger",
     "clean": "npx react-native clean",
     "test": "jest",
     "test-mock": "echo FIXME",

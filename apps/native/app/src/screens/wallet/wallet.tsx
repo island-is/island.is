@@ -299,7 +299,7 @@ export const WalletScreen: NavigationFunctionComponent = ({ componentId }) => {
 
   return (
     <>
-      <SafeAreaView>
+      <SafeAreaView style={{ flex: 1 }}>
         <Animated.FlatList
           ref={flatListRef}
           testID={testIDs.SCREEN_HOME}
