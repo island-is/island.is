@@ -233,6 +233,9 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
             filled
           />
         </Box>
+        {defendant.isDefenderChoiceConfirmed && defendant.defenderName && (
+          <Box marginTop={2}>SDKNJF</Box>
+        )}
         <Box display="flex" justifyContent="flexEnd" marginTop={2}>
           <Button
             variant="text"

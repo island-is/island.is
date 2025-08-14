@@ -7,13 +7,6 @@ export const strings = defineMessages({
     description:
       'Notaður sem titill á síðu á verjenda skrefi í dómaraflæði í ákærum.',
   },
-  alertBannerText: {
-    id: 'judicial.system.core:court_indictments.advocates.alert_banner_text',
-    defaultMessage:
-      'Verjendur í sakamálum fá tilkynningu um skráningu í tölvupósti, aðgang að gögnum málsins og boð í þingfestingu.',
-    description:
-      'Notaður sem texti í alert banner á málflytjendurskjá í ákærum.',
-  },
   defendantWaivesRightToCounsel: {
     id: 'judicial.system.core:court_indictments.advocates.defendant_waives_right_to_counsel',
     defaultMessage: '{accused} óskar ekki eftir að sér sé skipaður verjandi',

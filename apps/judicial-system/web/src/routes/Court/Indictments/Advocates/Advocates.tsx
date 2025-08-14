@@ -57,12 +57,6 @@ const Advocates = () => {
       <FormContentContainer>
         <PageTitle>{formatMessage(strings.title)}</PageTitle>
         <CourtCaseInfo workingCase={workingCase} />
-        <Box component="section" marginBottom={5}>
-          <AlertMessage
-            message={formatMessage(strings.alertBannerText)}
-            type="info"
-          />
-        </Box>
         <Box component="section" marginBottom={hasCivilClaimants ? 5 : 10}>
           <Box
             display="flex"
