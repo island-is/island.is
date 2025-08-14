@@ -16,4 +16,10 @@ export const unboundTerminationMessages = defineMessages({
     defaultMessage: 'Ástæða uppsagnar',
     description: 'Unbound termination select title',
   },
+  dateInfo: {
+    id: 'tra.application:unboundTermination.dateInfo',
+    defaultMessage:
+      'Vinsamlegast tilkynnið riftun að lágmarki einum mánuði fyrir riftunardagsetningu',
+    description: 'Unbound termination date info',
+  },
 })

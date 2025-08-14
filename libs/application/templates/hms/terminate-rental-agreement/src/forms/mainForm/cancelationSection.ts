@@ -7,6 +7,10 @@ import {
 } from '@island.is/application/core'
 import * as m from '../../lib/messages'
 import { TerminationTypes } from '../../types'
+import {
+  getSelectedContractEndDate,
+  getSelectedContractStartDate,
+} from '../../utils/helpers'
 
 export const cancelationSection = buildSection({
   condition: (answers) => {
@@ -26,6 +30,8 @@ export const cancelationSection = buildSection({
         buildDateField({
           id: 'cancelation.cancelationDate',
           title: m.cancelationMessages.dateTitle,
+          minDate: getSelectedContractStartDate,
+          maxDate: getSelectedContractEndDate,
         }),
         buildTextField({
           id: 'cancelation.cancelationReason',
