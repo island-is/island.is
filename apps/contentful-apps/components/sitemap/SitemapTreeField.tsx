@@ -1,5 +1,6 @@
 import { useCallback, useEffect, useRef, useState } from 'react'
 import { useDebounce } from 'react-use'
+import type { EntryProps } from 'contentful-management'
 import type { FieldExtensionSDK } from '@contentful/app-sdk'
 import { FormControl, Radio } from '@contentful/f36-components'
 import { useSDK } from '@contentful/react-apps-toolkit'
@@ -75,10 +76,19 @@ export const SitemapTreeField = () => {
     async (
       parentNode: Tree,
       type: TreeNodeType,
-      createNew?: boolean,
+      entries: Record<string, EntryProps>,
+      createNew = false,
       entryType?: EntryType,
     ) => {
-      await addNodeUtil(parentNode, type, sdk, tree, createNew, entryType)
+      await addNodeUtil(
+        parentNode,
+        type,
+        sdk,
+        tree,
+        createNew,
+        entryType,
+        entries,
+      )
       setTree((prevTree) => ({
         ...prevTree,
       }))
@@ -272,8 +282,8 @@ export const SitemapTreeField = () => {
               {status !== 'published' && mode === 'edit' && (
                 <div className={styles.addNodeButtonContainer}>
                   <AddNodeButton
-                    addNode={(type, createNew, entryType) => {
-                      addNode(tree, type, createNew, entryType)
+                    addNode={(type, entries, createNew, entryType) => {
+                      addNode(tree, type, entries, createNew, entryType)
                     }}
                   />
                 </div>
