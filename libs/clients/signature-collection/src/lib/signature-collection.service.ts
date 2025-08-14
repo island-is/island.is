@@ -169,10 +169,10 @@ export class SignatureCollectionClientService {
       throw new Error('Collection not found')
     }
 
-    const { isActive, areas: collectionAreas } = currentCollection
+    const { areas: collectionAreas } = currentCollection
 
     // check if collection is open
-    if (!isActive) {
+    if (!collectionAreas.find((area) => area.id === inputAreaId)?.isActive) {
       // TODO: create ApplicationTemplateError
       throw new Error('Collection is not open')
     }
