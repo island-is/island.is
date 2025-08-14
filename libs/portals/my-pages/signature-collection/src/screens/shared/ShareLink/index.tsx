@@ -22,7 +22,9 @@ const ShareLink = (slug: { slug: string }) => {
       <Box>
         <Button
           onClick={() => {
-            const copied = copyToClipboard(`${document.location.origin}${slug}`)
+            const copied = copyToClipboard(
+              `${document.location.origin}${slug.slug}`,
+            )
             if (!copied) {
               return toast.error(formatMessage(m.copyLinkError))
             }
