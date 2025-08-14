@@ -70,10 +70,7 @@ const Advocates = () => {
             alignItems="center"
             marginBottom={3}
           >
-            <SectionHeading
-              title={formatMessage(strings.selectDefenderHeading)}
-              marginBottom={0}
-            />
+            <SectionHeading title="Verjendur varnaraðila" marginBottom={0} />
             <AnimatePresence>
               {!allDefendersHaveBeenConfirmed && (
                 <motion.div
