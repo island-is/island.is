@@ -1,4 +1,8 @@
-import { IdsUserGuard, CurrentUser } from '@island.is/auth-nest-tools'
+import {
+  IdsUserGuard,
+  CurrentUser,
+  type User,
+} from '@island.is/auth-nest-tools'
 import { CodeOwner } from '@island.is/nest/core'
 import { CodeOwners } from '@island.is/shared/constants'
 import {
@@ -9,12 +13,6 @@ import {
 import { Args, Query, Resolver } from '@nestjs/graphql'
 import { CompanyRegistryClientService } from '@island.is/clients/rsk/company-registry'
 import { CompanyExtendedInfo } from '../../models/company.model'
-
-type CurrentUser = {
-  actor?: {
-    nationalId?: string | null
-  } | null
-}
 
 @Resolver()
 @UseGuards(IdsUserGuard)
@@ -32,14 +30,16 @@ export class CompanyRegistryResolver {
   })
   async getCompany(
     @Args('input', { type: () => String }) input: string,
-    @CurrentUser() user: CurrentUser,
+    @CurrentUser() user: User,
   ): Promise<CompanyExtendedInfo | null> {
-    if (!this.isValidCompanyId(input)) {
+    const normalized = input.replace(/\D/g, '')
+    if (!this.isValidCompanyId(normalized)) {
       throw new BadRequestException('Invalid national id format')
     }
 
     const actorCompanyId = user?.actor?.nationalId
-    if (!actorCompanyId || actorCompanyId !== input) {
+    const normalizedActorId = actorCompanyId?.replace(/\D/g, '')
+    if (!normalizedActorId || normalizedActorId !== normalized) {
       throw new ForbiddenException('Not authorized to query this company')
     }
 
