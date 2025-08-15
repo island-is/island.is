@@ -1,10 +1,10 @@
 import { useCallback, useContext } from 'react'
 import { useIntl } from 'react-intl'
-import { useRouter } from 'next/router'
 import { AnimatePresence, motion } from 'motion/react'
+import { useRouter } from 'next/router'
 import { Tooltip, TooltipAnchor, TooltipProvider } from '@ariakit/react'
 
-import { Text, AlertMessage, Box, Icon } from '@island.is/island-ui/core'
+import { AlertMessage, Box, Icon,Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { titles } from '@island.is/judicial-system-web/messages'
 import { core } from '@island.is/judicial-system-web/messages'
