@@ -11,7 +11,10 @@ import { useParams } from 'react-router-dom'
 import { LawAndOrderPaths } from '../../lib/paths'
 import InfoLines from '../../components/InfoLines/InfoLines'
 import { useEffect } from 'react'
-import { useGetCourtCaseQuery } from './CourtCaseDetail.generated'
+import {
+  useGetCourtCaseQuery,
+  useGetCourtCaseVerdictQuery,
+} from './CourtCaseDetail.generated'
 import { Problem } from '@island.is/react-spa/shared'
 
 type UseParams = {
@@ -35,6 +38,21 @@ const CourtCaseDetail = () => {
 
   const courtCase = data?.lawAndOrderCourtCaseDetail
 
+  const {
+    data: verdictData,
+    loading: verdictLoading,
+    error: verdictError,
+  } = useGetCourtCaseVerdictQuery({
+    variables: {
+      input: {
+        caseId: id,
+      },
+      locale: lang,
+    },
+  })
+
+  const verdict = verdictData?.lawAndOrderVerdict
+
   useEffect(() => {
     refetch()
   }, [lang])
@@ -52,9 +70,10 @@ const CourtCaseDetail = () => {
         serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
       />
       <Box marginBottom={3} display="flex" flexWrap="wrap">
-        {data?.lawAndOrderCourtCaseDetail && !loading && (
-          <Box paddingRight={2} marginBottom={[1]}>
-            {courtCase?.data?.hasBeenServed && (
+        {data?.lawAndOrderCourtCaseDetail &&
+          !loading &&
+          courtCase?.data?.hasBeenServed && (
+            <Box paddingRight={2} marginBottom={[1]}>
               <LinkButton
                 to={LawAndOrderPaths.SubpoenaDetail.replace(
                   ':id',
@@ -65,9 +84,22 @@ const CourtCaseDetail = () => {
                 variant="utility"
                 size="default"
               />
-            )}
-          </Box>
-        )}
+            </Box>
+          )}
+        <Box paddingRight={2} marginBottom={[1]}>
+          {verdictData && !verdictLoading && (
+            <LinkButton
+              to={LawAndOrderPaths.VerdictDetail.replace(
+                ':id',
+                verdict?.caseId?.toString() || '',
+              )}
+              text={formatMessage(messages.verdict)}
+              icon="receipt"
+              variant="utility"
+              size="default"
+            />
+          )}
+        </Box>
       </Box>
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && courtCase && courtCase?.data?.groups && (

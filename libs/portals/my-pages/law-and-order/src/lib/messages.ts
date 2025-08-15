@@ -106,4 +106,8 @@ export const messages = defineMessages({
     id: 'sp.law-and-order:subpoena-info-text2',
     defaultMessage: 'Birtingarfrestur er þrír sólarhringar.',
   },
+  verdict: {
+    id: 'sp.law-and-order:verdict',
+    defaultMessage: 'Niðurstaða dóms',
+  },
 })

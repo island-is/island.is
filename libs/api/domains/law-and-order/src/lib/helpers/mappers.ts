@@ -1,12 +1,17 @@
 import {
   DefenderInfoDefenderChoiceEnum,
+  ItemsLinkTypeEnum,
+  ItemsTypeEnum,
   StateTagColorEnum,
   SubpoenaDataDefaultDefenderChoiceEnum,
   UpdateSubpoenaDtoDefenderChoiceEnum,
+  VerdictResponseAppealDecisionEnum,
 } from '@island.is/clients/judicial-system-sp'
 import { CourtCaseStateTagColorEnum } from '../../models/courtCases.model'
 import { DefenseChoiceEnum } from '../../models/defenseChoiceEnum.model'
 import { m } from '../messages'
+import { AppealDecision } from '../../models/verdict.model'
+import { ItemType, LinkType } from '../../models/item.model'
 
 // Maps the application's internal representation of defense choices to the judicial system's representation.
 export const mapDefenseChoice = (
@@ -65,6 +70,45 @@ export const mapDefenseChoiceForSummonDefaultChoice = (
     default:
       // Provides a default mapping if the input doesn't match any known value.
       return DefenseChoiceEnum.DELAY
+  }
+}
+
+export const mapAppealDecision = (
+  decision?: VerdictResponseAppealDecisionEnum,
+): AppealDecision => {
+  switch (decision) {
+    case VerdictResponseAppealDecisionEnum.ACCEPT:
+      return AppealDecision.ACCEPT
+    case VerdictResponseAppealDecisionEnum.POSTPONE:
+      return AppealDecision.POSTPONE
+    default:
+      return AppealDecision.POSTPONE
+  }
+}
+
+export const mapItemTypes = (type: ItemsTypeEnum): ItemType => {
+  switch (type) {
+    case ItemsTypeEnum.RichText:
+      return ItemType.RichText
+    case ItemsTypeEnum.Accordion:
+      return ItemType.Accordion
+    case ItemsTypeEnum.Text:
+      return ItemType.Text
+    case ItemsTypeEnum.RadioButton:
+      return ItemType.RadioButton
+    default:
+      return ItemType.Text
+  }
+}
+
+export const mapLinkTypes = (type: ItemsLinkTypeEnum): LinkType => {
+  switch (type) {
+    case ItemsLinkTypeEnum.Email:
+      return LinkType.Email
+    case ItemsLinkTypeEnum.Tel:
+      return LinkType.Tel
+    default:
+      return LinkType.Email
   }
 }
 

@@ -1,3 +1,19 @@
+fragment CourtCaseGroupsFragment on LawAndOrderGroup {
+  label
+  items {
+    label
+    value
+    link
+    linkType
+    type
+    action {
+      type
+      title
+      data
+    }
+  }
+}
+
 query GetCourtCase($input: LawAndOrderCourtCaseInput!, $locale: String!) {
   lawAndOrderCourtCaseDetail(input: $input, locale: $locale) {
     texts {
@@ -9,18 +25,20 @@ query GetCourtCase($input: LawAndOrderCourtCaseInput!, $locale: String!) {
       hasBeenServed
       caseNumberTitle
       groups {
-        label
-        items {
-          label
-          value
-          link
-          action {
-            type
-            title
-            data
-          }
-        }
+        ...CourtCaseGroupsFragment
       }
+    }
+  }
+}
+
+query GetCourtCaseVerdict($input: LawAndOrderVerdictInput!, $locale: String!) {
+  lawAndOrderVerdict(input: $input, locale: $locale) {
+    caseId
+    title
+    subtitle
+    appealDecision
+    groups {
+      ...CourtCaseGroupsFragment
     }
   }
 }
