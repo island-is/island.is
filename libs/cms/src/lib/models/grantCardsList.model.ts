@@ -23,6 +23,9 @@ export class GrantCardsList {
   @Field()
   title!: string
 
+  @Field()
+  alwaysDisplayResultsAsCards!: boolean
+
   @Field({ nullable: true })
   displayTitle?: boolean
 
@@ -43,12 +46,16 @@ export const mapGrantCardsList = ({
   fields,
   sys,
 }: IGrantCardsList): SystemMetadata<GrantCardsList> => {
+  console.log(fields.grantCardsAlwaysDisplayResultsAsCards)
   return {
     typename: 'GrantCardsList',
     id: sys.id,
     title: fields.grantCardListTitle,
     displayTitle: fields.grantCardsListDisplayTitle,
     maxNumberOfCards: fields.grantCardsListMaxNumberOfCards,
+    alwaysDisplayResultsAsCards:
+      fields.grantCardsAlwaysDisplayResultsAsCards === undefined ??
+      fields.grantCardsAlwaysDisplayResultsAsCards,
     sorting:
       fields.grantCardsListSorting &&
       fields.grantCardsListSorting === 'Alphabetical'
