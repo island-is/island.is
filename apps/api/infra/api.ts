@@ -294,6 +294,23 @@ export const serviceSetup = (services: {
         staging: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
         prod: 'https://sjodir.rannis.is/statistics/fund_schedule.php',
       },
+      // TODO: Verify this is correct for all environments (dev, staging, prod)
+      LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL: ref(
+        (ctx) =>
+          `http://${
+            ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
+          }web.islandis.svc.cluster.local/payments/event-callback`,
+      ),
+      LANDSPITALI_MEMORIAL_CARD_PAYMENT_CONFIRMATION_SUBJECT: {
+        dev: '[TEST] Minningarkort - Landspítali',
+        staging: '[TEST] Minningarkort - Landspítali',
+        prod: 'Minningarkort - Landspítali',
+      },
+      LANDSPITALI_DIRECT_GRANT_PAYMENT_CONFIRMATION_SUBJECT: {
+        dev: '[TEST] Beinn styrkur - Landspítali',
+        staging: '[TEST] Beinn styrkur - Landspítali',
+        prod: 'Beinn styrkur - Landspítali',
+      },
     })
     .secrets({
       APOLLO_BYPASS_CACHE_SECRET: '/k8s/api/APOLLO_BYPASS_CACHE_SECRET',
@@ -410,6 +427,12 @@ export const serviceSetup = (services: {
         '/k8s/payments/PAYMENTS_VERIFICATION_CALLBACK_SIGNING_SECRET',
       VERDICTS_GOPRO_USERNAME: '/k8s/api/VERDICTS_GOPRO_USERNAME',
       VERDICTS_GOPRO_PASSWORD: '/k8s/api/VERDICTS_GOPRO_PASSWORD',
+      LANDSPITALI_PAYMENT_CONFIRMATION_SEND_TO_EMAIL:
+        '/k8s/api/LANDSPITALI_PAYMENT_CONFIRMATION_SEND_TO_EMAIL',
+      LANDSPITALI_PAYMENT_NATIONAL_ID_FALLBACK:
+        '/k8s/api/LANDSPITALI_PAYMENT_NATIONAL_ID_FALLBACK',
+      WEB_PAYMENT_CONFIRMATION_SECRET:
+        '/k8s/api/WEB_PAYMENT_CONFIRMATION_SECRET',
     })
     .xroad(
       AdrAndMachine,

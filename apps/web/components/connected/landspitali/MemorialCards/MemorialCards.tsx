@@ -1,10 +1,14 @@
 import { useEffect, useRef, useState } from 'react'
 import { FormProvider, useForm } from 'react-hook-form'
 import { useIntl } from 'react-intl'
+import { isValid as isValidKennitala } from 'kennitala'
+import { useMutation, useQuery } from '@apollo/client'
 
 import {
+  AlertMessage,
   Box,
   Button,
+  Checkbox,
   RadioButton,
   Stack,
   Text,
@@ -13,7 +17,18 @@ import {
   InputController,
   SelectController,
 } from '@island.is/shared/form-fields'
-import type { ConnectedComponent } from '@island.is/web/graphql/schema'
+import type {
+  ConnectedComponent,
+  WebLandspitaliCatalogQuery,
+  WebLandspitaliCatalogQueryVariables,
+  WebLandspitaliCreateMemorialCardPaymentUrlMutation,
+  WebLandspitaliCreateMemorialCardPaymentUrlMutationVariables,
+} from '@island.is/web/graphql/schema'
+import { useI18n } from '@island.is/web/i18n'
+import {
+  CREATE_LANDSPITALI_MEMORIAL_CARD_PAYMENT_URL,
+  GET_LANDSPITALI_CATALOG,
+} from '@island.is/web/screens/queries/Landspitali'
 
 import { m } from './translation.strings'
 
@@ -31,6 +46,7 @@ interface MemorialCard {
   recipientPostalCode: string
   recipientPlace: string
   senderName: string
+  senderEmail: string
   senderNationalId: string
   senderAddress: string
   senderPostalCode: string
@@ -85,7 +101,21 @@ const PRESET_AMOUNTS = ['5.000', '10.000', '50.000', '100.000']
 
 export const MemorialCard = ({ slice }: MemorialCardProps) => {
   const { formatMessage } = useIntl()
-  const fundOptions = slice.json?.fundOptions ?? DEFAULT_FUND_OPTIONS
+
+  const { data: catalogData } = useQuery<
+    WebLandspitaliCatalogQuery,
+    WebLandspitaliCatalogQueryVariables
+  >(GET_LANDSPITALI_CATALOG)
+
+  const [nationalIdSkipped, setNationalIdSkipped] = useState(false)
+
+  const fundOptions =
+    catalogData?.webLandspitaliCatalog.item.map((item) => ({
+      label: item.chargeItemName,
+      value: item.chargeItemCode,
+    })) ??
+    slice.json?.fundOptions ??
+    DEFAULT_FUND_OPTIONS
 
   const methods = useForm<MemorialCard>({
     mode: 'onChange',
@@ -99,6 +129,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
       recipientPostalCode: '',
       recipientPlace: '',
       senderName: '',
+      senderEmail: '',
       senderNationalId: '',
       senderAddress: '',
       senderPostalCode: '',
@@ -106,6 +137,18 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
       amountISKCustom: '',
     },
   })
+
+  const [loading, setLoading] = useState(false)
+
+  const [createMemorialCardPaymentUrl] = useMutation<
+    WebLandspitaliCreateMemorialCardPaymentUrlMutation,
+    WebLandspitaliCreateMemorialCardPaymentUrlMutationVariables
+  >(CREATE_LANDSPITALI_MEMORIAL_CARD_PAYMENT_URL)
+
+  const [
+    errorOccuredWhenCreatingPaymentUrl,
+    setErrorOccuredWhenCreatingPaymentUrl,
+  ] = useState(false)
 
   const {
     handleSubmit,
@@ -141,8 +184,12 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
 
   const handleReset = () => setSubmitted(false)
 
+  const { activeLocale } = useI18n()
+
   if (submitted) {
     const data = methods.getValues()
+    const amountISK =
+      data.amountISK === 'other' ? data.amountISKCustom : data.amountISK
     return (
       <Stack space={4}>
         <Text ref={overviewTitleRef} variant="h2">
@@ -192,10 +239,7 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
             {formatMessage(m.overview.memorialCardTitle)}
           </Text>
           <Text>
-            {formatMessage(m.overview.amountISK)}{' '}
-            {data.amountISK === 'other'
-              ? formatCurrency(data.amountISKCustom)
-              : data.amountISK}{' '}
+            {formatMessage(m.overview.amountISK)} {amountISK}{' '}
             {formatMessage(m.info.amountISKCurrency)}
           </Text>
           <Text>
@@ -207,12 +251,66 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
             }
           </Text>
         </Stack>
-        <Box display="flex" justifyContent="spaceBetween" marginTop={5}>
+        <Box
+          display="flex"
+          justifyContent="spaceBetween"
+          marginTop={5}
+          columnGap={2}
+        >
           <Button onClick={handleReset} variant="ghost" preTextIcon="arrowBack">
             {formatMessage(m.overview.goBack)}
           </Button>
-          <Button>{formatMessage(m.overview.pay)}</Button>
+          <Button
+            loading={loading}
+            onClick={async () => {
+              const amountISKWithoutDots = amountISK.replace(/\./g, '')
+              try {
+                setLoading(true)
+                const response = await createMemorialCardPaymentUrl({
+                  variables: {
+                    input: {
+                      amountISK: parseInt(amountISKWithoutDots),
+                      fundChargeItemCode: data.fund,
+                      payerAddress: data.senderAddress,
+                      payerName: data.senderName,
+                      payerEmail: data.senderEmail,
+                      payerNationalId: data.senderNationalId,
+                      payerPostalCode: data.senderPostalCode,
+                      payerPlace: data.senderPlace,
+                      recipientAddress: data.recipientAddress,
+                      recipientName: data.recipientName,
+                      recipientPlace: data.recipientPlace,
+                      recipientPostalCode: data.recipientPostalCode,
+                      senderSignature: data.senderSignature,
+                      locale: activeLocale,
+                      inMemoryOf: data.inMemoryOf,
+                    },
+                  },
+                })
+                const url =
+                  response.data?.webLandspitaliMemorialCardPaymentUrl.url
+                setErrorOccuredWhenCreatingPaymentUrl(!url)
+                if (url) {
+                  window.location.href = url
+                } else {
+                  setLoading(false)
+                }
+              } catch {
+                setLoading(false)
+                setErrorOccuredWhenCreatingPaymentUrl(true)
+              }
+            }}
+          >
+            {formatMessage(m.overview.pay)}
+          </Button>
         </Box>
+        {errorOccuredWhenCreatingPaymentUrl && (
+          <AlertMessage
+            title={formatMessage(m.overview.errorTitle)}
+            message={formatMessage(m.overview.errorMessage)}
+            type="error"
+          />
+        )}
       </Stack>
     )
   }
@@ -360,21 +458,56 @@ export const MemorialCard = ({ slice }: MemorialCardProps) => {
               control={control}
             />
             <InputController
-              id="senderNationalId"
-              label={formatMessage(m.info.senderNationalIdLabel)}
+              id="senderEmail"
+              type="email"
+              label={formatMessage(m.info.senderEmailLabel)}
               size="xs"
-              error={errors.senderNationalId?.message}
-              type="number"
-              inputMode="numeric"
-              rules={{
-                ...requiredRule,
-                pattern: {
-                  value: /^\d{10}$/,
-                  message: formatMessage(m.validation.invalidNationalId),
-                },
-              }}
+              error={errors.senderEmail?.message}
+              rules={requiredRule}
               control={control}
             />
+
+            <Stack space={1}>
+              <InputController
+                id="senderNationalId"
+                label={formatMessage(m.info.senderNationalIdLabel)}
+                size="xs"
+                error={
+                  nationalIdSkipped
+                    ? undefined
+                    : errors.senderNationalId?.message
+                }
+                type="number"
+                inputMode="numeric"
+                disabled={nationalIdSkipped}
+                rules={{
+                  validate: (value) => {
+                    if (nationalIdSkipped) {
+                      return true
+                    }
+                    if (!isValidKennitala(value)) {
+                      return formatMessage(m.validation.invalidNationalIdFormat)
+                    }
+                    return true
+                  },
+                }}
+                control={control}
+              />
+              <Checkbox
+                id="senderNationalIdSkipped"
+                label={formatMessage(m.info.senderNationalIdSkippedLabel)}
+                checked={nationalIdSkipped}
+                onChange={() => {
+                  const newValue = !nationalIdSkipped
+                  setNationalIdSkipped(newValue)
+                  if (newValue) {
+                    setValue('senderNationalId', '')
+                  }
+                }}
+                labelVariant="small"
+              />
+            </Stack>
+
             <InputController
               id="senderAddress"
               label={formatMessage(m.info.senderAddressLabel)}
