@@ -10,3 +10,5 @@ export {
 export { ApplicationDTO } from './lib/dto/application.dto'
 export { MedicalAndRehabilitationPaymentsDTO } from './lib/dto/medicalAndRehabilitationPayments.dto'
 export * from '../gen/fetch'
+export * from './lib/enums'
+export * from './lib/mapper'
