@@ -155,10 +155,15 @@ export const landlordAndTenantDetails = defineMessages({
   },
 
   // Error messages
-  nationalIdEmptyError: {
-    id: 'ra.application:landlordAndTenantDetails.nationalIdEmptyError',
-    defaultMessage: 'Kennitala þarf að vera skráð',
-    description: 'National id empty error',
+  nationalIdError: {
+    id: 'ra.application:landlordAndTenantDetails.nationalIdError',
+    defaultMessage: 'Kennitala ógild eða ekki á réttu formi',
+    description: 'National id error',
+  },
+  nationalIdAgeError: {
+    id: 'ra.application:landlordAndTenantDetails.nationalIdAgeError',
+    defaultMessage: 'Aðili leigusamnings verður að vera 18 ára eða eldri',
+    description: 'National id age error',
   },
   phoneNumberEmptyError: {
     id: 'ra.application:landlordAndTenantDetails.phoneNumberEmptyError',
