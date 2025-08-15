@@ -145,7 +145,7 @@ export class StatisticsResolver {
       user.id,
       AuditedAction.GET_CASES_STATISTICS,
       backendService.getPreprocessedDataCsvSignedUrl(input),
-      'export', // TODO
+      'export',
     )
 
     return result

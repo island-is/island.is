@@ -440,7 +440,6 @@ export class StatisticsService {
     }
   }
 
-  // TODO: !!
   private async extractAndTransformRequestCases() {
     const where: WhereOptions = {
       type: {
@@ -500,7 +499,24 @@ export class StatisticsService {
     const data = await getData()
     if (!data) return { url: '' }
 
-    stringify(data, { header: true }, async (error, csvOutput) => {
+    const columns = [
+      { key: 'id', header: 'ID' },
+      { key: 'eventDescriptor', header: 'Atburður' },
+      { key: 'date', header: 'Dagsetning' },
+      { key: 'institution', header: 'Stofnun' },
+      { key: 'caseTypeDescriptor', header: 'Tegund máls' },
+      { key: 'origin', header: 'Stofnað í' },
+      { key: 'isExtended', header: 'Mál framlengt' },
+      {
+        key: 'requestDecisionDescriptor',
+        header: 'Niðurstaða kröfu',
+      },
+      {
+        key: 'courtOfAppealDecisionDescriptor',
+        header: 'Niðurstaða Landsréttar - lykill',
+      },
+    ]
+    stringify(data, { header: true, columns }, async (error, csvOutput) => {
       if (error) {
         this.logger.error('Failed to convert data to csv file')
         return

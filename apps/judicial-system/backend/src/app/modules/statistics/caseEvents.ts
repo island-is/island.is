@@ -21,7 +21,7 @@ interface RequestCaseEvent {
   caseType: CaseType
   caseTypeDescriptor: string
   origin: CaseOrigin
-  isExtended: boolean
+  isExtended: string
   // event specific fields
   requestDecision?: CaseDecision
   requestDecisionDescriptor?: string
@@ -40,12 +40,11 @@ const getCaseTypeTranslation = (caseType: CaseType) => {
 }
 
 const commonFields = (c: Case) => {
-  const isExtended = !!c.parentCaseId
   return {
     caseType: c.type,
     caseTypeDescriptor: getCaseTypeTranslation(c.type),
     origin: c.origin,
-    isExtended,
+    isExtended: c.parentCaseId ? 'Já' : 'nei',
     requestDecision: c.decision,
     requestDecisionDescriptor: c.decision
       ? getDecisionDescriptor(c.decision)
