@@ -18,16 +18,13 @@ import { ApiTags, ApiBearerAuth } from '@nestjs/swagger'
 import { Documentation } from '@island.is/nest/swagger'
 import { Audit } from '@island.is/nest/audit'
 import { PaginationDto } from '@island.is/nest/pagination'
-import { environment } from '../../../environments'
-
-const namespace = `${environment.audit.defaultNamespace}/rights`
 
 @UseGuards(IdsAuthGuard, ScopesGuard)
 @Scopes(AuthScope.publicPersonalRepresentative)
 @ApiBearerAuth()
 @ApiTags('Right Types - Public')
 @Controller('v1/rights')
-@Audit({ namespace })
+@Audit({ namespace: '@island.is/personal-representative-public/rights' })
 export class RightsController {
   constructor(
     @Inject(PersonalRepresentativeRightTypeService)

@@ -40,6 +40,8 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> => {
         staging: 'https://identity-server.staging01.devland.is',
         prod: 'https://innskra.island.is',
       },
+      AUDIT_DEFAULT_NAMESPACE: '@island.is/university-gateway',
+      AUDIT_SERVICE_NAME: 'services-university-gateway',
     })
     .secrets({
       IDENTITY_SERVER_CLIENT_SECRET: `/k8s/${serviceName}/IDENTITY_SERVER_CLIENT_SECRET`,

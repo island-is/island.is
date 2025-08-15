@@ -44,6 +44,8 @@ export const serviceSetup =
           staging: 'island-is-staging-exports-endorsement-system',
           prod: 'island-is-prod-exports-endorsement-system',
         },
+        AUDIT_DEFAULT_NAMESPACE: '@island.is/services-endorsements-api',
+        AUDIT_SERVICE_NAME: 'services-endorsements-api',
       })
       .secrets({
         IDENTITY_SERVER_CLIENT_SECRET:

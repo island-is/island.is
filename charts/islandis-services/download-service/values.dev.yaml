@@ -19,6 +19,8 @@ global:
 name: 'download-service'
 enabled: true
 env:
+  AUDIT_DEFAULT_NAMESPACE: '@island.is/download'
+  AUDIT_SERVICE_NAME: 'download-service'
   IDENTITY_SERVER_CLIENT_ID: '@island.is/clients/download-service'
   IDENTITY_SERVER_ISSUER_URL: 'https://identity-server.dev01.devland.is'
   LOG_LEVEL: 'info'

@@ -19,6 +19,8 @@ global:
 name: 'services-documents'
 enabled: true
 env:
+  AUDIT_DEFAULT_NAMESPACE: '@island.is/documents'
+  AUDIT_SERVICE_NAME: 'services-documents'
   DB_HOST: 'postgres-applications.internal'
   DB_NAME: 'services_documents'
   DB_REPLICAS_HOST: 'postgres-applications-reader.internal'

@@ -1,8 +1,5 @@
 const devConfig = {
   production: false,
-  audit: {
-    defaultNamespace: '@island.is/personal-representative',
-  },
   port: 3376,
   auth: {
     audience: '@island.is/auth',
@@ -14,11 +11,6 @@ const devConfig = {
 
 const prodConfig = {
   production: true,
-  audit: {
-    defaultNamespace: '@island.is/personal-representative',
-    groupName: process.env.AUDIT_GROUP_NAME,
-    serviceName: 'services-personal-representative',
-  },
   port: 3333,
   auth: {
     audience: '@island.is/auth',

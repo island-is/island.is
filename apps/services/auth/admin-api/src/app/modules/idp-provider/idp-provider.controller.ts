@@ -34,9 +34,8 @@ import {
 } from '@island.is/auth-nest-tools'
 import { AuthAdminScope } from '@island.is/auth/scopes'
 import { Audit, AuditService } from '@island.is/nest/audit'
-import { environment } from '../../../environments/'
 
-const namespace = `${environment.audit.defaultNamespace}/idp-provider`
+const namespace = `@island.is/auth-admin-api/idp-provider`
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @ApiExcludeController()
