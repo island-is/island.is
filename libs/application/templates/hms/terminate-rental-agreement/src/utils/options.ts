@@ -16,10 +16,11 @@ export const rentalContractOptions = (application: Application) => {
   return contracts.map((contract) => ({
     value: contract.contractId?.toString() ?? '',
     label: {
-      ...m.chooseContractMessages.option,
+      ...(contract.contractTypeUseCode === 'INDEFINITEAGREEMENT'
+        ? m.chooseContractMessages.optionUnboundTerm
+        : m.chooseContractMessages.optionFixedTerm),
       values: {
         contractId: contract.contractId,
-        contractType: contract.contractType?.toLowerCase() ?? '',
         address: contract?.contractProperty?.[0]?.streetAndHouseNumber ?? '',
         apartmentNumber: contract?.contractProperty?.[0]?.apartment
           ? ` - Íbúð: ${contract.contractProperty?.[0].apartment}`
