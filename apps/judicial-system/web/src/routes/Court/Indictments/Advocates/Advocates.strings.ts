@@ -13,19 +13,11 @@ export const strings = defineMessages({
     description:
       'Notaður sem texti fyrir takka þegar ákærðu óska ekki eftir verjanda í dómaraflæði í ákærum. ',
   },
-
   confirmDefenderChoice: {
     id: 'judicial.system.core:court_indictments.advocates.confirm_defender_choice_v1',
     defaultMessage: 'Staðfesta val',
-
     description:
       'Notaður sem texti fyrir takka til að staðfesta val á verjanda í dómaraflæði í ákærum.',
-  },
-  changeDefenderChoice: {
-    id: 'judicial.system.core:court_indictments.advocates.change_defender_choice_v1',
-    defaultMessage: 'Breyta vali',
-    description:
-      'Notaður sem texti fyrir takka til að breyta vali á verjanda í dómaraflæði í ákærum.',
   },
   confirmSpokespersonChoice: {
     id: 'judicial.system.core:court_indictments.advocates.confirm_spokesperson_choice',

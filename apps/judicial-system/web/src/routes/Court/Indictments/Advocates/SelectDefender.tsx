@@ -13,6 +13,7 @@ import { core } from '@island.is/judicial-system-web/messages'
 import {
   BlueBox,
   FormContext,
+  IconButton,
   InputAdvocate,
   Modal,
 } from '@island.is/judicial-system-web/src/components'
@@ -143,11 +144,20 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
     <Box component="section" marginBottom={5}>
       <BlueBox>
         <Box marginBottom={2}>
-          <Text variant="h4">
-            {`${capitalize(
-              formatMessage(core.indictmentDefendant, { gender }),
-            )} ${defendant.name}`}
-          </Text>
+          <Box display="flex" justifyContent="spaceBetween">
+            <Text variant="h4">
+              {`${capitalize(
+                formatMessage(core.indictmentDefendant, { gender }),
+              )} ${defendant.name}`}
+            </Text>
+            {defendant.isDefenderChoiceConfirmed && (
+              <IconButton
+                icon="pencil"
+                colorScheme="blue"
+                onClick={() => setDisplayModal(true)}
+              />
+            )}
+          </Box>
           {defendant.requestedDefenderChoice && (
             <Text variant="small">{`Ósk ákærða um verjanda: ${getDefenceChoice()}`}</Text>
           )}
@@ -226,7 +236,10 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
             name={`shareFilesWithDefender-${defendant.id}`}
             label={formatMessage(strings.shareFilesWithDefender)}
             checked={Boolean(defendant.caseFilesSharedWithDefender)}
-            disabled={!defendant.defenderName && !defendant.defenderEmail}
+            disabled={
+              defendant.isDefenderChoiceConfirmed ||
+              (!defendant.defenderName && !defendant.defenderEmail)
+            }
             onChange={() => {
               toggleCaseFilesSharedWithDefender(
                 defendant,
@@ -243,26 +256,32 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
           <Box marginTop={2}>
             <AlertMessage
               title="Sending tókst"
-              message={`${defendant.defenderName} hefur fengið tilkynningu um skráningu í tölvupósti.`}
+              message={`${
+                defendant.defenderName
+              } hefur fengið tilkynningu um skráningu í tölvupósti${
+                defendant.caseFilesSharedWithDefender
+                  ? ' og aðgang að gögnum málsins.'
+                  : '.'
+              }`}
               type="success"
             />
           </Box>
         )}
-        <Box display="flex" justifyContent="flexEnd" marginTop={2}>
-          <Button
-            variant="text"
-            colorScheme={
-              defendant.isDefenderChoiceConfirmed ? 'destructive' : 'default'
-            }
-            onClick={() => {
-              setDisplayModal(true)
-            }}
-          >
-            {defendant.isDefenderChoiceConfirmed
-              ? formatMessage(strings.changeDefenderChoice)
-              : formatMessage(strings.confirmDefenderChoice)}
-          </Button>
-        </Box>
+        {!defendant.isDefenderChoiceConfirmed && (
+          <Box display="flex" justifyContent="flexEnd" marginTop={2}>
+            <Button
+              variant="text"
+              colorScheme={
+                defendant.isDefenderChoiceConfirmed ? 'destructive' : 'default'
+              }
+              onClick={() => {
+                setDisplayModal(true)
+              }}
+            >
+              {formatMessage(strings.confirmDefenderChoice)}
+            </Button>
+          </Box>
+        )}
       </BlueBox>
       {displayModal && (
         <Modal
