@@ -14,9 +14,29 @@ import { Donor, DonorInput, Organ } from './models/organ-donation.model'
 
 import { HealthDirectorateHealthService } from '@island.is/clients/health-directorate'
 import { type Logger, LOGGER_PROVIDER } from '@island.is/logging'
+import { Country, isDefined } from '@island.is/shared/utils'
+import isNumber from 'lodash/isNumber'
+import { ApprovalInput } from './dto/approval.input'
+import {
+  Approval,
+  ApprovalReturn,
+  Approvals,
+} from './models/approvals/approvals.model'
+import {
+  MedicineHistory,
+  MedicineHistoryDispensation,
+  MedicineHistoryItem,
+} from './models/medicineHistory.model'
+import { MedicineDispensationsATCInput } from './models/medicineHistoryATC.dto'
+import { MedicineDispensationsATC } from './models/medicineHistoryATC.model'
+import { MedicinePrescriptionDocumentsInput } from './models/prescriptionDocuments.dto'
+import { PrescriptionDocuments } from './models/prescriptionDocuments.model'
 import { Prescription, Prescriptions } from './models/prescriptions.model'
+import { ReferralDetail } from './models/referral.model'
 import { Referral, Referrals } from './models/referrals.model'
+import { HealthDirectorateRenewalInput } from './models/renewal.input'
 import { Vaccination, Vaccinations } from './models/vaccinations.model'
+import { WaitlistDetail } from './models/waitlist.model'
 import { Waitlist, Waitlists } from './models/waitlists.model'
 import {
   mapPrescriptionCategory,
@@ -24,20 +44,8 @@ import {
   mapPrescriptionRenewalStatus,
   mapVaccinationStatus,
 } from './utils/mappers'
-import {
-  MedicineHistory,
-  MedicineHistoryDispensation,
-  MedicineHistoryItem,
-} from './models/medicineHistory.model'
-import { isDefined } from '@island.is/shared/utils'
-import { MedicineDispensationsATCInput } from './models/medicineHistoryATC.dto'
-import { MedicineDispensationsATC } from './models/medicineHistoryATC.model'
-import { PrescriptionDocuments } from './models/prescriptionDocuments.model'
-import { MedicinePrescriptionDocumentsInput } from './models/prescriptionDocuments.dto'
-import { HealthDirectorateRenewalInput } from './models/renewal.input'
-import isNumber from 'lodash/isNumber'
-import { ReferralDetail } from './models/referral.model'
-import { WaitlistDetail } from './models/waitlist.model'
+import { approvalsData, europeanCountriesIs } from './utils/mockData'
+import { Countries } from './models/approvals/country.model'
 
 @Injectable()
 export class HealthDirectorateService {
@@ -392,6 +400,64 @@ export class HealthDirectorateService {
     )
 
     return { dispensations }
+  }
+
+  /* Patient data - Approvals */
+  async getApprovals(auth: Auth, locale: Locale): Promise<Approvals | null> {
+    //const data = await this.healthApi.getApprovals(auth, locale)
+    // TODO connect to service when ready
+
+    const data: Approval[] = approvalsData
+    if (!data) {
+      return null
+    }
+
+    return { data }
+  }
+
+  /* Patient data - Approval Detail */
+  async getApproval(
+    auth: Auth,
+    locale: Locale,
+    id: string,
+  ): Promise<Approval | null> {
+    //const data = await this.healthApi.getApprovals(auth, locale)
+    // TODO connect to service when ready
+
+    const data = approvalsData.find((approval) => approval.id === id)
+    if (!data) {
+      return null
+    }
+
+    return data
+  }
+
+  /* Patient data - Approval countries */
+  async getApprovalCountries(
+    auth: Auth,
+    locale: Locale,
+  ): Promise<Countries | null> {
+    //const data = await this.healthApi.getApprovalCountries(auth, locale)
+    // TODO connect to service when ready
+
+    const data: Countries = { data: europeanCountriesIs }
+
+    if (!data) {
+      return null
+    }
+
+    return data
+  }
+
+  /* Patient data - Create approval */
+  async createApproval(
+    auth: Auth,
+    input: ApprovalInput,
+  ): Promise<ApprovalReturn | null> {
+    //const data = await this.healthApi.createApproval(auth, locale, input)
+
+    // TODO connect to service when ready
+    return { id: 'mock-approval-id' } // Mock response for now
   }
 
   private castRenewalInputToNumber = (

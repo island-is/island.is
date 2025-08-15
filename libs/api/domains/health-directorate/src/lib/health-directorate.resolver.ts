@@ -40,6 +40,13 @@ import { MedicineDispensationsATCInput } from './models/medicineHistoryATC.dto'
 import { PrescriptionDocuments } from './models/prescriptionDocuments.model'
 import { MedicinePrescriptionDocumentsInput } from './models/prescriptionDocuments.dto'
 import { HealthDirectorateRenewalInput } from './models/renewal.input'
+import {
+  Approval,
+  ApprovalReturn,
+  Approvals,
+} from './models/approvals/approvals.model'
+import { ApprovalInput } from './dto/approval.input'
+import { Countries } from './models/approvals/country.model'
 
 @UseGuards(IdsUserGuard, ScopesGuard, FeatureFlagGuard)
 @Audit({ namespace: '@island.is/api/health-directorate' })
@@ -239,5 +246,65 @@ export class HealthDirectorateResolver {
     @CurrentUser() user: User,
   ): Promise<MedicineDispensationsATC | null> {
     return this.api.getMedicineDispensationsForATC(user, locale, input)
+  }
+
+  /* Patient summary - Approvals */
+
+  @Query(() => Approvals, {
+    name: 'healthDirectoratePatientSummaryApprovals',
+  })
+  @Audit()
+  @Scopes(ApiScope.internal, ApiScope.health)
+  // TODO -> @FeatureFlag(Features.servicePortalHealthApprovalsPageEnabled)
+  getApprovals(
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @CurrentUser() user: User,
+  ): Promise<Approvals | null> {
+    return this.api.getApprovals(user, locale)
+  }
+
+  @Query(() => Approval, {
+    name: 'healthDirectoratePatientSummaryApproval',
+  })
+  @Audit()
+  @Scopes(ApiScope.internal, ApiScope.health)
+  // TODO -> @FeatureFlag(Features.servicePortalHealthApprovalsPageEnabled)
+  getApproval(
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @Args('id', { type: () => String }) id: string,
+    @CurrentUser() user: User,
+  ): Promise<Approval | null> {
+    return this.api.getApproval(user, locale, id)
+  }
+
+  @Query(() => Countries, {
+    name: 'healthDirectoratePatientSummaryApprovalCountries',
+  })
+  @Audit()
+  @Scopes(ApiScope.internal, ApiScope.health)
+  // TODO -> @FeatureFlag(Features.servicePortalHealthApprovalsPageEnabled)
+  getApprovalCountries(
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+    @CurrentUser() user: User,
+  ): Promise<Countries | null> {
+    return this.api.getApprovalCountries(user, locale)
+  }
+
+  /* New approval */
+  @Mutation(() => ApprovalReturn, {
+    nullable: true,
+    name: 'healthDirectoratePatientSummaryCreateApproval',
+  })
+  @Audit()
+  @Scopes(ApiScope.internal, ApiScope.health)
+  // TODO -> @FeatureFlag(Features.servicePortalHealthApprovalsPageEnabled)
+  async createApproval(
+    @Args('input') input: ApprovalInput,
+    @CurrentUser() user: User,
+  ): Promise<ApprovalReturn | null> {
+    return this.api.createApproval(user, input)
   }
 }
