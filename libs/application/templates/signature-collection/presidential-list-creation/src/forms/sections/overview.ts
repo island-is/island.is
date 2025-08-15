@@ -1,7 +1,6 @@
 import {
   buildActionCardListField,
   buildDescriptionField,
-  buildDividerField,
   buildMultiField,
   buildOverviewField,
   buildSection,
