@@ -57,9 +57,9 @@ export class AdminUserProfileResolver {
     @CurrentUser() user: User,
   ): Promise<AdminUserProfile> {
     return this.userUserProfileService.updateUserProfile(
-      nationalId,
       input,
       user,
+      nationalId,
     )
   }
 
