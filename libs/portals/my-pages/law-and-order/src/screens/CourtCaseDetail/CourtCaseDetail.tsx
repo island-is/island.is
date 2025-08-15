@@ -11,10 +11,7 @@ import { useParams } from 'react-router-dom'
 import { LawAndOrderPaths } from '../../lib/paths'
 import InfoLines from '../../components/InfoLines/InfoLines'
 import { useEffect } from 'react'
-import {
-  useGetCourtCaseQuery,
-  useGetCourtCaseVerdictQuery,
-} from './CourtCaseDetail.generated'
+import { useGetCourtCaseQuery } from './CourtCaseDetail.generated'
 import { Problem } from '@island.is/react-spa/shared'
 
 type UseParams = {
@@ -37,21 +34,7 @@ const CourtCaseDetail = () => {
   })
 
   const courtCase = data?.lawAndOrderCourtCaseDetail
-
-  const {
-    data: verdictData,
-    loading: verdictLoading,
-    error: verdictError,
-  } = useGetCourtCaseVerdictQuery({
-    variables: {
-      input: {
-        caseId: id,
-      },
-      locale: lang,
-    },
-  })
-
-  const verdict = verdictData?.lawAndOrderVerdict
+  const hasVerdict = true //courtCase?.data?.hasVerdict
 
   useEffect(() => {
     refetch()
@@ -86,20 +69,20 @@ const CourtCaseDetail = () => {
               />
             </Box>
           )}
-        <Box paddingRight={2} marginBottom={[1]}>
-          {verdictData && !verdictLoading && (
+        {hasVerdict && (
+          <Box paddingRight={2} marginBottom={[1]}>
             <LinkButton
               to={LawAndOrderPaths.VerdictDetail.replace(
                 ':id',
-                verdict?.caseId?.toString() || '',
+                courtCase?.data?.id?.toString() || '',
               )}
               text={formatMessage(messages.verdict)}
               icon="receipt"
               variant="utility"
               size="default"
             />
-          )}
-        </Box>
+          </Box>
+        )}
       </Box>
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && courtCase && courtCase?.data?.groups && (

@@ -1,18 +1,4 @@
-fragment CourtCaseGroupsFragment on LawAndOrderGroup {
-  label
-  items {
-    label
-    value
-    link
-    linkType
-    type
-    action {
-      type
-      title
-      data
-    }
-  }
-}
+#import "./CourtCaseGroupsFragment.graphql"
 
 query GetCourtCase($input: LawAndOrderCourtCaseInput!, $locale: String!) {
   lawAndOrderCourtCaseDetail(input: $input, locale: $locale) {
@@ -23,22 +9,11 @@ query GetCourtCase($input: LawAndOrderCourtCaseInput!, $locale: String!) {
     data {
       id
       hasBeenServed
+      hasVerdict
       caseNumberTitle
       groups {
         ...CourtCaseGroupsFragment
       }
-    }
-  }
-}
-
-query GetCourtCaseVerdict($input: LawAndOrderVerdictInput!, $locale: String!) {
-  lawAndOrderVerdict(input: $input, locale: $locale) {
-    caseId
-    title
-    subtitle
-    appealDecision
-    groups {
-      ...CourtCaseGroupsFragment
     }
   }
 }

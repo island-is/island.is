@@ -86,7 +86,7 @@ export const mapAppealDecision = (
   }
 }
 
-export const mapItemTypes = (type: ItemsTypeEnum): ItemType => {
+export const mapItemTypes = (type: ItemsTypeEnum): ItemType | undefined => {
   switch (type) {
     case ItemsTypeEnum.RichText:
       return ItemType.RichText
@@ -97,18 +97,18 @@ export const mapItemTypes = (type: ItemsTypeEnum): ItemType => {
     case ItemsTypeEnum.RadioButton:
       return ItemType.RadioButton
     default:
-      return ItemType.Text
+      return undefined
   }
 }
 
-export const mapLinkTypes = (type: ItemsLinkTypeEnum): LinkType => {
+export const mapLinkTypes = (type: ItemsLinkTypeEnum): LinkType | undefined => {
   switch (type) {
     case ItemsLinkTypeEnum.Email:
       return LinkType.Email
     case ItemsLinkTypeEnum.Tel:
       return LinkType.Tel
     default:
-      return LinkType.Email
+      return undefined
   }
 }
 
@@ -140,7 +140,6 @@ export const mapTagTypes = (
       return CourtCaseStateTagColorEnum.white
     case StateTagColorEnum.Yellow:
       return CourtCaseStateTagColorEnum.yellow
-
     default:
       return CourtCaseStateTagColorEnum.blue
   }

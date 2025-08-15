@@ -1917,6 +1917,10 @@ export const m = defineMessages({
     id: 'service.portal:subpoena',
     defaultMessage: 'Fyrirkall',
   },
+  case: {
+    id: 'service.portal:case',
+    defaultMessage: 'Dómur',
+  },
   urgent: {
     id: 'service.portal:urgent',
     defaultMessage: 'Áríðandi',

@@ -66,6 +66,7 @@ export class LawAndOrderService {
     const { formatMessage } = await this.intlService.useIntl(namespaces, locale)
     const singleCase = await this.api.getCase(id, user, locale)
     const hasBeenServed = singleCase?.data.hasBeenServed
+    const hasVerdict = singleCase?.data.hasRulingBeenServed
 
     const summonString = formatMessage(m.summon)
     const seeSummonString = formatMessage(m.seeSummon)
@@ -89,6 +90,7 @@ export class LawAndOrderService {
       data: {
         id: singleCase?.caseId ?? id,
         hasBeenServed: hasBeenServed,
+        hasVerdict: hasVerdict,
         caseNumberTitle: singleCase?.data.caseNumber,
         groups: (singleCase?.data.groups ?? []).map((group, groupIndex) => {
           return {
@@ -206,6 +208,7 @@ export class LawAndOrderService {
       locale,
     )
 
+    console.log(verdictsResponse)
     if (!isDefined(verdictsResponse)) return null
 
     const verdicts: VerdictResponse = verdictsResponse
