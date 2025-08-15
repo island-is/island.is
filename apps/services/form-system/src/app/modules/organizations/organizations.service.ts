@@ -171,6 +171,7 @@ export class OrganizationsService {
       'isTranslated',
       'applicationDaysToRemove',
       'stopProgressOnValidatingScreen',
+      'hasSummaryScreen',
     ]
 
     organizationDto.forms = organization.forms?.map((form) => {

@@ -47,6 +47,9 @@ export class ApplicationDto {
   @ApiPropertyOptional()
   stopProgressOnValidatingScreen?: boolean
 
+  @ApiPropertyOptional()
+  hasSummaryScreen?: boolean
+
   @ApiPropertyOptional({ type: [ApplicationEventDto] })
   events?: ApplicationEventDto[]
 

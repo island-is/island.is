@@ -3,6 +3,7 @@ import { Footer } from '../Footer/Footer'
 import { useApplicationContext } from '../../context/ApplicationProvider'
 import { SectionTypes } from '@island.is/form-system/ui'
 import { ExternalData } from './components/ExternalData/ExternalData'
+import { Summary } from './components/Summary/Summary'
 import { Field } from './components/Field/Field'
 import { useState } from 'react'
 import { useLocale } from '@island.is/localization'
@@ -20,7 +21,7 @@ export const Screen = () => {
   const [externalDataAgreement, setExternalDataAgreement] = useState(
     state.sections?.[0].isCompleted ?? false,
   )
-
+console.log("state", state)
   return (
     <Box
       component="form"
@@ -50,7 +51,9 @@ export const Screen = () => {
             }
           />
         )}
-
+        {currentSectionType === SectionTypes.SUMMARY && (
+          <Summary />
+        )}
         {currentScreen &&
           currentScreen?.data?.fields
             ?.filter(

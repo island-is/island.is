@@ -110,6 +110,10 @@ export const m = defineMessages({
     defaultMessage:
       'Leyfa notanda að halda áfram í umsókninni með ógild/óútfyllt gildi',
   },
+  summaryScreen: {
+    id: 'portals-admin.form-system:summary-screen',
+    defaultMessage: 'Yfirlit',
+  },
   certifications: {
     id: 'portals-admin.form-system:certifications',
     defaultMessage: 'Vottorð',

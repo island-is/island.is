@@ -27,7 +27,7 @@ export const BaseSettings = () => {
   const { form } = control
   const { formatMessage } = useIntl()
   const [errorMsg, setErrorMsg] = useState('')
-
+console.log("Summary",form.hasSummaryScreen)
   return (
     <Stack space={2}>
       <Row>
@@ -255,6 +255,28 @@ export const BaseSettings = () => {
             onChange={(e) => {
               controlDispatch({
                 type: 'CHANGE_STOP_PROGRESS_ON_VALIDATING_SCREEN',
+                payload: {
+                  value: e.target.checked,
+                  update: formUpdate,
+                },
+              })
+            }}
+          />
+        </Column>
+        </Row>
+            <Row>
+                <Column>
+          <Checkbox
+            label={formatMessage(m.summaryScreen)}
+            checked={
+              form.hasSummaryScreen !== null &&
+              form.hasSummaryScreen !== undefined
+                ? form.hasSummaryScreen
+                : false
+            }
+            onChange={(e) => {
+              controlDispatch({
+                type: 'CHANGE_HAS_SUMMARY_SCREEN',
                 payload: {
                   value: e.target.checked,
                   update: formUpdate,
