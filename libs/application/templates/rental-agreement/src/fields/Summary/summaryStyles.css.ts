@@ -54,4 +54,5 @@ export const fileLinksList = style({
 
 export const fileLink = style({
   fontSize: '.8rem',
+  width: '100%',
 })

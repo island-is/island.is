@@ -19,7 +19,6 @@ export enum Routes {
   REGISTERPROPERTY = 'registerProperty',
   PROPERTYINFORMATION = 'propertyInfo',
   PROPERTYSEARCH = 'registerProperty.searchresults',
-  PROPERTYCATEGORY = 'propertyInfo.category',
   SPECIALPROVISIONS = 'specialProvisions',
   CONDITION = 'condition',
   FIREPROTECTIONS = 'fireProtections',
