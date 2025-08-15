@@ -5724,10 +5724,7 @@
           "activityParticipationDifficulty": {
             "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.Difficulty"
           },
-          "other": { "type": "string", "nullable": true },
-          "confirmation": {
-            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.Confirmation"
-          }
+          "other": { "type": "string", "nullable": true }
         },
         "additionalProperties": false
       },
@@ -5791,26 +5788,6 @@
             "type": "integer",
             "format": "int32",
             "nullable": true
-          }
-        },
-        "additionalProperties": false
-      },
-      "TrWeb.External.Models.ServicePortal.Confirmation": {
-        "type": "object",
-        "properties": {
-          "type": {
-            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.EnumType"
-          },
-          "typeName": { "type": "string", "nullable": true },
-          "treatmentMeasures": {
-            "type": "array",
-            "items": { "type": "string" },
-            "nullable": true
-          },
-          "explanation": { "type": "string", "nullable": true },
-          "progress": { "type": "string", "nullable": true },
-          "estimatedDuration": {
-            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.EstimatedDuration"
           }
         },
         "additionalProperties": false
@@ -5881,7 +5858,9 @@
           },
           "treatmentType": {
             "type": "array",
-            "items": { "type": "string" },
+            "items": {
+              "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.EnumType"
+            },
             "nullable": true
           },
           "estimatedDuration": {
@@ -5936,11 +5915,20 @@
           "doctorInfo": {
             "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.DoctorInfo"
           },
-          "lastInspectionDate": { "type": "string", "format": "date-time" },
-          "certificateDate": { "type": "string", "format": "date-time" },
+          "lastInspectionDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
+          "certificateDate": {
+            "type": "string",
+            "format": "date-time",
+            "nullable": true
+          },
           "dateOfWorkIncapacityStart": {
             "type": "string",
-            "format": "date-time"
+            "format": "date-time",
+            "nullable": true
           },
           "diagnosis": {
             "type": "array",
@@ -6219,7 +6207,9 @@
         "properties": {
           "description": { "type": "string", "nullable": true },
           "application": { "type": "string", "nullable": true },
-          "type": { "type": "string", "nullable": true },
+          "type": {
+            "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.EnumType"
+          },
           "other": { "type": "string", "nullable": true },
           "content": { "type": "string", "nullable": true }
         },
@@ -6323,7 +6313,13 @@
         "type": "object",
         "properties": {
           "applicationType": { "type": "string", "nullable": true },
-          "treatmentType": { "type": "string", "nullable": true },
+          "treatmentType": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/TrWeb.External.Models.ServicePortal.EnumType"
+            },
+            "nullable": true
+          },
           "explanation": { "type": "string", "nullable": true },
           "discharge": { "type": "string", "nullable": true },
           "plannedFollowup": { "type": "string", "nullable": true }
