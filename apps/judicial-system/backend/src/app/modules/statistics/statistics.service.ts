@@ -1,4 +1,5 @@
 import stringify from 'csv-stringify'
+import { isAfter, isBefore, isEqual } from 'date-fns'
 import isWithinInterval from 'date-fns/isWithinInterval'
 import { col, fn, Includeable, literal, Op, WhereOptions } from 'sequelize'
 
@@ -38,6 +39,17 @@ import {
 import { DateFilter } from './statistics/types'
 import { eventFunctions } from './caseEvents'
 
+const isDateInPeriod = (date: Date, period: DateFilter) => {
+  const fromDate = period.fromDate ?? Date.now()
+  const toDate = period.toDate ?? Date.now()
+  const isBeforeOrEqual = (date: Date | number, dateToCompare: Date | number) =>
+    isBefore(date, dateToCompare) || isEqual(date, dateToCompare)
+
+  const isAfterOrEqual = (date: Date | number, dateToCompare: Date | number) =>
+    isAfter(date, dateToCompare) || isEqual(date, dateToCompare)
+
+  return isAfterOrEqual(date, fromDate) && isBeforeOrEqual(date, toDate)
+}
 @Injectable()
 export class StatisticsService {
   constructor(
@@ -436,7 +448,7 @@ export class StatisticsService {
     }
   }
 
-  private async extractAndTransformRequestCases() {
+  private async extractAndTransformRequestCases(period?: DateFilter) {
     const where: WhereOptions = {
       type: {
         [Op.not]: [CaseType.INDICTMENT],
@@ -474,22 +486,28 @@ export class StatisticsService {
     })
 
     // create events for data analytics for each case
+    if (!period) return []
     const events = cases
       .flatMap((c) => eventFunctions.flatMap((func) => func(c)))
-      .filter((event) => !!event)
+      .filter(
+        (event) => !!event && isDateInPeriod(new Date(event.date), period),
+      )
 
     return events
   }
 
   async extractTransformLoadRvgDataToS3({
     type,
+    period,
   }: {
     type: DataGroups
+    period?: DateFilter
   }): Promise<{ url: string }> {
     const getData = async () => {
       if (type === DataGroups.REQUESTS) {
-        return await this.extractAndTransformRequestCases()
+        return await this.extractAndTransformRequestCases(period)
       }
+      // TODO: implement events for indictment
       return undefined
     }
     const data = await getData()

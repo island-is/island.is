@@ -123,9 +123,9 @@ export class StatisticsController {
   ): Promise<{ url: string }> {
     this.logger.debug('Create and export csv file for data analytics', query)
 
-    // TODO: filter events with period
     return this.statisticService.extractTransformLoadRvgDataToS3({
       type: query.type,
+      period: query.period,
     })
   }
 }
