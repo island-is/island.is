@@ -17,10 +17,11 @@ import {
   RequestCaseStatistics,
 } from './models/caseStatistics.response'
 import { SubpoenaStatistics } from './models/subpoenaStatistics.response'
+import { CaseDataExportDto } from './statistics/caseDataExport.dto'
 import { IndictmentStatisticsDto } from './statistics/indictmentStatistics.dto'
 import { RequestStatisticsDto } from './statistics/requestStatistics.dto'
 import { SubpoenaStatisticsDto } from './statistics/subpoenaStatistics.dto'
-import { DataGroups, StatisticsService } from './statistics.service'
+import { StatisticsService } from './statistics.service'
 
 @Controller('api')
 @ApiTags('statistics')
@@ -112,18 +113,19 @@ export class StatisticsController {
 
   @UseGuards(JwtAuthUserGuard, RolesGuard)
   @RolesRules(adminRule, localAdminRule)
-  @Get('cases/requests/statistics/export-csv')
+  @Get('cases/statistics/export-csv')
   @ApiOkResponse({
     type: String,
-    description: 'Export transformed request case data',
+    description: 'Export transformed event case data',
   })
-  exportRequestStatistics(
-    @Query('query') query?: RequestStatisticsDto,
+  exportCaseEventData(
+    @Query('query') query: CaseDataExportDto,
   ): Promise<{ url: string }> {
     this.logger.debug('Create and export csv file for data analytics', query)
 
+    // TODO: filter events with period
     return this.statisticService.extractTransformLoadRvgDataToS3({
-      type: DataGroups.REQUESTS,
+      type: query.type,
     })
   }
 }

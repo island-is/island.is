@@ -1,6 +1,6 @@
 import { useEffect, useMemo, useState } from 'react'
 
-import { Box, Button } from '@island.is/island-ui/core'
+import { Box } from '@island.is/island-ui/core'
 import {
   InfoCard,
   LabelValue,
@@ -12,7 +12,6 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 
 import { useRequestCaseStatisticsQuery } from '../getRequestCaseStatistics.generated'
-import { useGetPreprocessedDataUrlQuery } from '../preprocessedDataUrl.generated'
 import { Filters } from './shared/StatisticFilter'
 import { StatisticHeader } from './shared/StatisticHeader'
 import { StatisticsLayout } from './shared/StatisticLayout'
@@ -91,13 +90,6 @@ const RequestStatisticsBody = ({ minDate }: { minDate?: Date }) => {
     fetchPolicy: 'cache-and-network',
   })
 
-  const { data: preprocessedData } = useGetPreprocessedDataUrlQuery({
-    variables: {
-      input: {},
-    },
-    fetchPolicy: 'cache-and-network',
-  })
-
   useEffect(() => {
     if (data?.requestCaseStatistics) {
       setStats(data.requestCaseStatistics)
@@ -119,24 +111,6 @@ const RequestStatisticsBody = ({ minDate }: { minDate?: Date }) => {
           minDate={minDate}
         />
         <Statistics stats={stats} loading={loading} />
-        <Box display="flex" justifyContent="flexEnd" marginTop={2}>
-          <a
-            href={preprocessedData?.getPreprocessedDataCsvSignedUrl?.url}
-            target="_blank"
-            rel="noopener noreferrer"
-            download
-          >
-            <Button
-              variant="ghost"
-              size="small"
-              icon="download"
-              iconType="outline"
-              disabled={!preprocessedData}
-            >
-              Sækja gögn
-            </Button>
-          </a>
-        </Box>
       </Box>
     </StatisticPageLayout>
   )

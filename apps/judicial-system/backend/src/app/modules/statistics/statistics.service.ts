@@ -12,6 +12,7 @@ import {
   CaseNotificationType,
   CaseState,
   CaseType,
+  DataGroups,
   dateTypes,
   EventType,
   isCompletedCase,
@@ -36,11 +37,6 @@ import {
 } from './models/subpoenaStatistics.response'
 import { DateFilter } from './statistics/types'
 import { eventFunctions } from './caseEvents'
-
-export enum DataGroups {
-  REQUESTS = 'REQUESTS',
-  INDICTMENTS = 'INDICTMENTS',
-}
 
 @Injectable()
 export class StatisticsService {
