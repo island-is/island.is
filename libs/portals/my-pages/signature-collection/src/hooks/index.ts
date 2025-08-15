@@ -140,6 +140,7 @@ export const useGetListsForOwner = (
         collectionType,
       },
       skip: !collectionId,
+      fetchPolicy: 'no-cache',
     },
   })
 
@@ -188,6 +189,7 @@ export const useGetCurrentCollection = (
         collectionType,
       },
     },
+    fetchPolicy: 'no-cache',
   })
   const currentCollection =
     (getCurrentCollection?.signatureCollectionLatestForType as SignatureCollection) ??

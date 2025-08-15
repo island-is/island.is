@@ -69,52 +69,54 @@ const SigneeView = ({
               )}
 
               <Stack space={3}>
-                {[...listsForUser]?.sort(sortAlpha('title')).map((list) => {
-                  return (
-                    <ActionCard
-                      key={list.id}
-                      backgroundColor="white"
-                      eyebrow={list.area?.name}
-                      heading={list.title.split(' - ')[0]}
-                      text={
-                        currentCollection.collectionType ===
-                        SignatureCollectionCollectionType.Presidential
-                          ? formatMessage(m.collectionTitle)
-                          : formatMessage(m.collectionTitleParliamentary)
-                      }
-                      cta={
-                        new Date(list.endTime) > new Date() && !list.maxReached
-                          ? {
-                              label: formatMessage(m.signList),
-                              variant: 'text',
-                              icon: 'arrowForward',
-                              disabled: !!signedLists.length,
-                              onClick: () => {
-                                window.open(
-                                  `${document.location.origin}${list.slug}`,
-                                )
-                              },
-                            }
-                          : undefined
-                      }
-                      tag={
-                        new Date(list.endTime) < new Date()
-                          ? {
-                              label: formatMessage(m.collectionClosed),
-                              variant: 'red',
-                              outlined: true,
-                            }
-                          : list.maxReached
-                          ? {
-                              label: formatMessage(m.collectionMaxReached),
-                              variant: 'red',
-                              outlined: true,
-                            }
-                          : undefined
-                      }
-                    />
-                  )
-                })}
+                {listsForUser?.length > 0 &&
+                  [...listsForUser]?.sort(sortAlpha('title')).map((list) => {
+                    return (
+                      <ActionCard
+                        key={list.id}
+                        backgroundColor="white"
+                        eyebrow={list.area?.name}
+                        heading={list.title.split(' - ')[0]}
+                        text={
+                          currentCollection?.collectionType ===
+                          SignatureCollectionCollectionType.Presidential
+                            ? formatMessage(m.collectionTitle)
+                            : formatMessage(m.collectionTitleParliamentary)
+                        }
+                        cta={
+                          new Date(list.endTime) > new Date() &&
+                          !list.maxReached
+                            ? {
+                                label: formatMessage(m.signList),
+                                variant: 'text',
+                                icon: 'arrowForward',
+                                disabled: !!signedLists.length,
+                                onClick: () => {
+                                  window.open(
+                                    `${document.location.origin}${list.slug}`,
+                                  )
+                                },
+                              }
+                            : undefined
+                        }
+                        tag={
+                          new Date(list.endTime) < new Date()
+                            ? {
+                                label: formatMessage(m.collectionClosed),
+                                variant: 'red',
+                                outlined: true,
+                              }
+                            : list.maxReached
+                            ? {
+                                label: formatMessage(m.collectionMaxReached),
+                                variant: 'red',
+                                outlined: true,
+                              }
+                            : undefined
+                        }
+                      />
+                    )
+                  })}
               </Stack>
             </Box>
           </Box>

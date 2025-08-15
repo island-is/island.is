@@ -18,12 +18,13 @@ import {
 const SignatureCollectionParliamentary = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
+  const userInfo = useUserInfo()
+
   const collectionType = SignatureCollectionCollectionType.Parliamentary
 
-  const { isOwner, loadingIsOwner, refetchIsOwner } = useIsOwner(collectionType)
-  const userInfo = useUserInfo()
   const { currentCollection, loadingCurrentCollection } =
-    useGetCurrentCollection(SignatureCollectionCollectionType.Parliamentary)
+    useGetCurrentCollection(collectionType)
+  const { isOwner, refetchIsOwner } = useIsOwner(collectionType)
   const { listsForOwner } = useGetListsForOwner(
     collectionType,
     currentCollection?.id ?? '',
@@ -36,26 +37,22 @@ const SignatureCollectionParliamentary = () => {
         intro={formatMessage(m.pageIntro)}
         slug={listsForOwner?.[0]?.slug}
       />
-      {!loadingIsOwner && !loadingCurrentCollection && (
-        <Box>
-          {isOwner.success ? (
-            <OwnerView
-              refetchIsOwner={refetchIsOwner}
-              currentCollection={currentCollection}
-              isListHolder={
-                !userInfo?.profile?.delegationType ||
-                userInfo?.profile?.delegationType?.includes(
-                  AuthDelegationType.ProcurationHolder,
-                )
-              }
-            />
-          ) : (
-            <SigneeView
-              currentCollection={currentCollection}
-              collectionType={collectionType}
-            />
-          )}
-        </Box>
+      {!loadingCurrentCollection && isOwner.success ? (
+        <OwnerView
+          refetchIsOwner={refetchIsOwner}
+          currentCollection={currentCollection}
+          isListHolder={
+            !userInfo?.profile?.delegationType ||
+            userInfo?.profile?.delegationType?.includes(
+              AuthDelegationType.ProcurationHolder,
+            )
+          }
+        />
+      ) : (
+        <SigneeView
+          currentCollection={currentCollection}
+          collectionType={collectionType}
+        />
       )}
     </Box>
   )

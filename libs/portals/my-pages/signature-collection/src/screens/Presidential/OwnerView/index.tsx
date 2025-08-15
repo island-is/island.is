@@ -26,10 +26,8 @@ const OwnerView = ({
   const navigate = useNavigate()
   const user = useUserInfo()
   const { formatMessage } = useLocale()
-  const { listsForOwner, loadingOwnerLists } = useGetListsForOwner(
-    collectionType,
-    currentCollection?.id || '',
-  )
+  const { listsForOwner, loadingOwnerLists, refetchListsForOwner } =
+    useGetListsForOwner(collectionType, currentCollection?.id || '')
 
   return (
     <Box>
@@ -118,7 +116,9 @@ const OwnerView = ({
           </Box>
           {listsForOwner?.length > 0 &&
             !user?.profile.actor &&
-            currentCollection.isActive && <CancelCollection />}
+            currentCollection.isActive && (
+              <CancelCollection refetch={refetchListsForOwner} />
+            )}
         </Box>
       ) : (
         <Skeleton />

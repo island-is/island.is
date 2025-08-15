@@ -14,12 +14,12 @@ import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 const SignatureCollectionMunicipal = () => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
+
   const collectionType = SignatureCollectionCollectionType.LocalGovernmental
 
-  const { isOwner } = useIsOwner(collectionType)
   const { currentCollection, loadingCurrentCollection } =
     useGetCurrentCollection(collectionType)
-
+  const { isOwner } = useIsOwner(collectionType)
   const { listsForOwner } = useGetListsForOwner(
     collectionType,
     currentCollection?.id || '',

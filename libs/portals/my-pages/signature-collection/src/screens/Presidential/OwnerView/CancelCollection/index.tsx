@@ -11,7 +11,7 @@ import {
   SignatureCollectionSuccess,
 } from '@island.is/api/schema'
 
-const CancelCollection = () => {
+const CancelCollection = ({ refetch }: { refetch: () => void }) => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
   const [modalIsOpen, setModalIsOpen] = useState(false)
@@ -24,6 +24,10 @@ const CancelCollection = () => {
       variables: {
         input: {
           collectionId: currentCollection?.id ?? '',
+          collectionType: currentCollection?.collectionType ?? '',
+        },
+        onCompleted: () => {
+          refetch()
         },
       },
     })
