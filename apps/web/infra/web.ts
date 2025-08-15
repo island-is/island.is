@@ -43,6 +43,7 @@ export const serviceSetup = (services: {
             ctx.featureDeploymentName ? `${ctx.featureDeploymentName}-` : ''
           }web.islandis.svc.cluster.local/payments/event-callback`,
       ),
+      REDIS_USE_SSL: 'true',
     })
     .secrets({
       DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN',
@@ -99,5 +100,6 @@ export const serviceSetup = (services: {
       'search-indexer',
       'payments',
     )
+    .redis()
   return web
 }

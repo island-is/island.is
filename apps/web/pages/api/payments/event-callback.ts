@@ -17,6 +17,7 @@ import {
   SEND_LANDSPITALI_DIRECT_GRANT_PAYMENT_CONFIRMATION_EMAIL,
   SEND_LANDSPITALI_MEMORIAL_CARD_PAYMENT_CONFIRMATION_EMAIL,
 } from '@island.is/web/screens/queries/Landspitali'
+import { JtiCache } from '@island.is/web/utils/redis'
 
 const { serverRuntimeConfig = {} } = getConfig() ?? {}
 
@@ -26,6 +27,12 @@ const audience = new URL(
 ).origin
 const validationSecret = serverRuntimeConfig.paymentConfirmationSecret
 
+// Redis configuration for JTI storage
+const jtiCache = new JtiCache({
+  nodes: serverRuntimeConfig.redisUrl ? [serverRuntimeConfig.redisUrl] : [],
+  ssl: serverRuntimeConfig.redisUseSsl ?? false,
+})
+
 const client = jwksClient({
   jwksUri: `${issuer}/.well-known/jwks.json`,
   cache: true,
@@ -33,7 +40,6 @@ const client = jwksClient({
   cacheMaxAge: 10 * 60 * 1000, // 10 minutes
 })
 
-// Get the public key using the 'kid' from the JWT header
 const getPublicKeyFromJwtHeader = (
   header: JwtHeader,
   callback: SigningKeyCallback,
@@ -46,15 +52,6 @@ const getPublicKeyFromJwtHeader = (
     const signingKey = key?.getPublicKey()
     callback(null, signingKey)
   })
-}
-
-// TODO: Find a way to fetch jti from redis and store them there for 5-10 minutes
-// Optional: In-memory jti cache (for demo only)
-const usedJtis = new Set<string>()
-const isReplay = (jti: string): boolean => {
-  if (usedJtis.has(jti)) return true
-  usedJtis.add(jti)
-  return false
 }
 
 const computeSha256 = (body: string): string => {
@@ -77,15 +74,27 @@ const validateIncomingJwt = (
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
       (err, decoded: any) => {
         if (err) return reject(err)
-        // jti replay check
-        if (!decoded.jti || isReplay(decoded.jti)) {
-          return reject(new Error('Replay attack detected or missing jti'))
+
+        if (!decoded.jti) {
+          return reject(new Error('Missing jti'))
         }
-        const actualHash = computeSha256(rawBody)
-        if (!decoded.payload_hash || decoded.payload_hash !== actualHash) {
-          return reject(new Error('Payload hash mismatch'))
-        }
-        resolve(decoded)
+
+        jtiCache
+          .isReplay(decoded.jti)
+          .then((isReplayAttack) => {
+            if (isReplayAttack) {
+              return reject(new Error('Replay attack detected'))
+            }
+
+            const actualHash = computeSha256(rawBody)
+            if (!decoded.payload_hash || decoded.payload_hash !== actualHash) {
+              return reject(new Error('Payload hash mismatch'))
+            }
+            resolve(decoded)
+          })
+          .catch((error) => {
+            reject(error)
+          })
       },
     )
   })
