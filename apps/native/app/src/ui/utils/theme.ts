@@ -1,3 +1,4 @@
+import { StyleSheet } from 'react-native'
 import * as color from './colors'
 
 export const UNIT = 8
@@ -85,6 +86,7 @@ export const theme = {
       full: '100px',
     },
     width: {
+      hairline: StyleSheet.hairlineWidth,
       standard: 1,
       large: 2,
       xl: 3,
@@ -112,3 +114,4 @@ export const theme = {
 
 export type Theme = typeof theme
 export type Colors = keyof typeof color
+export type Spacing = keyof typeof spacing

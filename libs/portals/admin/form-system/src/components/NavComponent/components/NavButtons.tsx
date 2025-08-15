@@ -5,10 +5,7 @@ import { ControlContext } from '../../../context/ControlContext'
 import { removeTypename } from '../../../lib/utils/removeTypename'
 import { useIntl } from 'react-intl'
 import { useMutation } from '@apollo/client'
-import {
-  CREATE_FIELD,
-  CREATE_SCREEN,
-} from '@island.is/form-system/graphql'
+import { CREATE_FIELD, CREATE_SCREEN } from '@island.is/form-system/graphql'
 import { m } from '@island.is/form-system/ui'
 import { FieldTypesEnum } from '@island.is/form-system/enums'
 
@@ -29,7 +26,6 @@ export const NavButtons = ({ id, type }: Props) => {
 
   const createScreen = useMutation(CREATE_SCREEN)
   const createField = useMutation(CREATE_FIELD)
-
 
   const addItem = async () => {
     if (type === 'Section') {

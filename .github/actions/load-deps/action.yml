@@ -20,38 +20,43 @@ runs:
       run: echo "RUNS_ON_S3_BUCKET_CACHE=${{ env.RUNS_ON_BUCKET_NAME }}" >> $GITHUB_ENV
 
     - name: Set env
+      id: prepare
       shell: bash
       run: |
         export GENERATED_FILES_PATH=${{ inputs.cache-path }}/${{ env.GENERATED_FILES }}
-        echo "GENERATED_FILES_PATH=$GENERATED_FILES_PATH" >> "$GITHUB_ENV"
+        echo "GENERATED_FILES_PATH=$GENERATED_FILES_PATH" >> "$GITHUB_OUTPUT"
+        echo "INPUTS_LIST_FILE=dist/codegen_inputs_list.txt" >> "$GITHUB_OUTPUT"
 
     - name: INFO
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
-        echo "generated files: ${{ env.GENERATED_FILES_PATH }}"
+        echo "generated files: ${{ steps.prepare.outputs.GENERATED_FILES_PATH }}"
 
     - name: Generate hash for generated files list
       id: generate-files-hash
       shell: bash
       working-directory: ${{ inputs.working-directory }}
       run: |
-        node ./scripts/ci/generate-files.mjs /dev/null --skip-codegen
+        node ./scripts/ci/generate-files.mjs /dev/null \
+          --skip-codegen \
+          --inputsFile=${{ steps.prepare.outputs.INPUTS_LIST_FILE }} \
+          --outputsFile=/dev/null
 
     - name: Cache generated files
       uses: runs-on/cache@v4
       id: restore-codegen-cache
       with:
         path: |
-          ${{ env.GENERATED_FILES_PATH }}
-        key: generated-files-${{ hashFiles('generated_files_list.txt') }}
+          ${{ steps.prepare.outputs.GENERATED_FILES_PATH }}
+        key: generated-files-${{ hashFiles(steps.prepare.outputs.INPUTS_LIST_FILE) }}
 
     - name: Prepare generated files
       if: steps.restore-codegen-cache.outputs.cache-hit != 'true'
       working-directory: ${{ inputs.working-directory }}
       shell: bash
       run: |
-        node ./scripts/ci/generate-files.mjs ${{ env.GENERATED_FILES_PATH }}
+        node ./scripts/ci/generate-files.mjs ${{ steps.prepare.outputs.GENERATED_FILES_PATH }}
 
     - name: Extract generated files
       if: steps.restore-codegen-cache.outputs.cache-hit == 'true'
@@ -59,5 +64,5 @@ runs:
       shell: bash
       run: |
         echo "::group::Extract generated files"
-        tar -xzvf ${{ env.GENERATED_FILES_PATH }}
+        tar -xzvf ${{ steps.prepare.outputs.GENERATED_FILES_PATH }}
         echo "::endgroup::"

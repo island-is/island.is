@@ -1,4 +1,4 @@
-import { FC, PropsWithChildren, ReactNode, useMemo } from 'react'
+import { FC, ReactNode, useMemo } from 'react'
 import { useIntl } from 'react-intl'
 import { useLocalStorage } from 'react-use'
 import parseISO from 'date-fns/parseISO'
@@ -6,15 +6,11 @@ import { AnimatePresence, motion } from 'motion/react'
 
 import { Box, Text } from '@island.is/island-ui/core'
 import { theme } from '@island.is/island-ui/theme'
-import {
-  districtCourtAbbreviation,
-  formatDate,
-} from '@island.is/judicial-system/formatters'
+import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
   isRestrictionCase,
 } from '@island.is/judicial-system/types'
-import { core } from '@island.is/judicial-system-web/messages'
 import {
   ContextMenu,
   ContextMenuItem,
@@ -31,10 +27,9 @@ import {
 } from '../../types'
 import { useCase, useCaseList, useViewport } from '../../utils/hooks'
 import { compareLocaleIS } from '../../utils/sortHelper'
-import { mapCaseStateToTagVariant } from '../Tags/TagCaseState/TagCaseState'
+import { mapCaseStateToTagVariant } from '../Tags/TagCaseState/TagCaseState.logic'
 import DurationDate, { getDurationDate } from './DurationDate/DurationDate'
 import SortButton from './SortButton/SortButton'
-import TableSkeleton from './TableSkeleton/TableSkeleton'
 import { table as strings } from './Table.strings'
 import * as styles from './Table.css'
 
@@ -49,17 +44,6 @@ interface TableProps {
   generateContextMenuItems?: (row: CaseListEntry) => ContextMenuItem[]
   onClick?: (row: CaseListEntry) => boolean
 }
-
-interface TableWrapperProps {
-  loading: boolean
-}
-
-export const TableWrapper: FC<PropsWithChildren<TableWrapperProps>> = ({
-  loading,
-  children,
-}) => (
-  <Box marginBottom={[5, 5, 12]}>{loading ? <TableSkeleton /> : children}</Box>
-)
 
 export const useTable = () => {
   const [sortConfig, setSortConfig] = useLocalStorage<SortConfig>(
@@ -107,24 +91,6 @@ const Table: FC<TableProps> = (props) => {
     if (!onClick?.(theCase)) {
       handleOpenCase(theCase.id)
     }
-  }
-
-  const renderProsecutorText = (
-    state?: CaseState | null,
-    prosecutorName?: string | null,
-  ) => {
-    if (
-      state &&
-      state === CaseState.WAITING_FOR_CONFIRMATION &&
-      prosecutorName
-    ) {
-      return (
-        <Text fontWeight="medium" variant="small">
-          {`${formatMessage(core.prosecutorPerson)}: ${prosecutorName}`}
-        </Text>
-      )
-    }
-    return null
   }
 
   const renderPostponedOrCourtDateText = (
@@ -178,17 +144,11 @@ const Table: FC<TableProps> = (props) => {
       entry: CaseListEntry,
       column: keyof CaseListEntry,
     ) => {
-      const courtAbbreviation = districtCourtAbbreviation(entry.court?.name)
-
       switch (column) {
         case 'defendants':
           return entry.defendants?.[0]?.name ?? ''
-        case 'defendantsPunishmentType':
-          return entry.defendants?.[0]?.punishmentType ?? ''
         case 'courtCaseNumber':
-          return courtAbbreviation
-            ? `${courtAbbreviation}: ${entry.courtCaseNumber}`
-            : entry.courtCaseNumber ?? ''
+          return entry.courtCaseNumber ?? ''
         case 'state':
           return mapCaseStateToTagVariant(formatMessage, entry).text
         case 'policeCaseNumbers':
@@ -254,7 +214,6 @@ const Table: FC<TableProps> = (props) => {
             theCase={theCase}
             isLoading={isOpeningCaseId === theCase.id && showLoading}
           >
-            {renderProsecutorText(theCase.state, theCase.prosecutor?.name)}
             {renderPostponedOrCourtDateText(
               theCase.postponedIndefinitelyExplanation,
               theCase.state,

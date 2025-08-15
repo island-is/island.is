@@ -13,8 +13,8 @@ import { formSystemScopes } from '@island.is/auth/scopes'
 
 const mockedInitialState = isMockMode
   ? createMockedInitialState({
-    scopes: formSystemScopes,
-  })
+      scopes: formSystemScopes,
+    })
   : undefined
 
 export const App = () => (
@@ -33,4 +33,3 @@ export const App = () => (
     </LocaleProvider>
   </ApolloProvider>
 )
-

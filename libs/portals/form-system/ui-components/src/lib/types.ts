@@ -4,3 +4,8 @@ export type PropertyNumberType = {
   municipality: string
   postalCode: string
 }
+
+export interface TabType {
+  id: string
+  label: string
+}

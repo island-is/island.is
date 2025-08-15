@@ -25,6 +25,7 @@ import { CodeOwners } from '@island.is/shared/constants'
 import unset from 'lodash/unset'
 import { assign } from 'xstate'
 import { ChildrenApi } from '../dataProviders'
+import { hasForeignLanguages } from '../utils/conditionUtils'
 import {
   ApiModuleActions,
   Events,
@@ -32,14 +33,13 @@ import {
   Roles,
   SchoolType,
   States,
-} from './constants'
-import { dataSchema } from './dataSchema'
-import { newPrimarySchoolMessages } from './messages'
+} from '../utils/constants'
 import {
   determineNameFromApplicationAnswers,
   getApplicationAnswers,
-  hasForeignLanguages,
-} from './newPrimarySchoolUtils'
+} from '../utils/newPrimarySchoolUtils'
+import { dataSchema } from './dataSchema'
+import { newPrimarySchoolMessages } from './messages'
 
 const NewPrimarySchoolTemplate: ApplicationTemplate<
   ApplicationContext,
@@ -69,11 +69,19 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
               },
             ],
           },
-          onExit: defineTemplateApi({
-            action: ApiModuleActions.getChildInformation,
-            externalDataId: 'childInformation',
-            throwOnError: true,
-          }),
+          onExit: [
+            defineTemplateApi({
+              action: ApiModuleActions.getChildInformation,
+              externalDataId: 'childInformation',
+              throwOnError: true,
+              order: 0,
+            }),
+            defineTemplateApi({
+              action: ApiModuleActions.getCitizenship,
+              externalDataId: 'citizenship',
+              order: 1,
+            }),
+          ],
           roles: [
             {
               id: Roles.APPLICANT,
@@ -219,7 +227,6 @@ const NewPrimarySchoolTemplate: ApplicationTemplate<
         if (!hasForeignLanguages(application.answers)) {
           unset(application.answers, 'languages.selectedLanguages')
           unset(application.answers, 'languages.preferredLanguage')
-          unset(application.answers, 'languages.guardianRequiresInterpreter')
         }
         return context
       }),

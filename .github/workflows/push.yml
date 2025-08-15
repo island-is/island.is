@@ -44,7 +44,6 @@ env:
   RUNS_ON_BUCKET_NAME: ${{ vars.RUNS_ON_BUCKET_NAME }}
   AWS_REGION: eu-west-1
   GENERATED_FILES: ${{ github.sha }}.tar.gz
-  CYPRESS_CACHE_FOLDER: ${{ github.workspace }}/.cypress-cache
   YARN_ENABLE_HARDENED_MODE: '0'
 
 jobs:
@@ -220,6 +219,14 @@ jobs:
             echo "CHUNKS='$CHUNKS'" >> "$GITHUB_OUTPUT"
           fi
 
+      - name: Check if cached buildx image exists
+        id: cache-check
+        run: |
+          if ! docker pull ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1 ; then
+            docker pull docker.io/moby/buildkit:buildx-stable-1
+            docker tag docker.io/moby/buildkit:buildx-stable-1 ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
+            docker push ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
+          fi
       # NOTE: only on PRs
       - name: Prepare deployment targets
         id: deploy_map
@@ -350,14 +357,6 @@ jobs:
           # Add secret to EXTRA_DOCKER_BUILD_ARGS
           echo "EXTRA_DOCKER_BUILD_ARGS=${EXTRA_DOCKER_BUILD_ARGS} --secret id=nx_cloud_access_token,src=nx_cloud_access_token.txt" >> "${GITHUB_ENV}"
 
-      - name: Check if cached buildx image exists
-        id: cache-check
-        run: |
-          if ! docker pull ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1 ; then
-            docker pull docker.io/moby/buildkit:buildx-stable-1
-            docker tag docker.io/moby/buildkit:buildx-stable-1 ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
-            docker push ${{vars.AWS_ECR_REPO_BASE}}/moby/buildkit:buildx-stable-1
-          fi
       - name: Setup yarn
         uses: ./.github/actions/setup-yarn
 

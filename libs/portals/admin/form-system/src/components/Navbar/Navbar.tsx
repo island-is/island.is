@@ -20,8 +20,10 @@ import {
   UPDATE_SECTION_DISPLAY_ORDER,
 } from '@island.is/form-system/graphql'
 import { useMutation } from '@apollo/client'
-import { m, SectionTypes } from '@island.is/form-system/ui'
+import { m } from '@island.is/form-system/ui'
 import { useNavbarDnD } from '../../lib/utils/useNavbarDnd'
+import * as styles from './Navbar.css'
+import { SectionTypes } from '@island.is/form-system/enums'
 
 export const Navbar = () => {
   const { control, controlDispatch, inSettings } = useContext(
@@ -143,7 +145,11 @@ export const Navbar = () => {
   const renderNonInputSections = () => {
     return sections
       ?.filter((s): s is FormSystemSection => s !== null && s !== undefined)
-      .filter((s) => s.sectionType !== SectionTypes.INPUT)
+      .filter(
+        (s) =>
+          s.sectionType !== SectionTypes.INPUT &&
+          s.sectionType !== SectionTypes.SUMMARY,
+      )
       .map((s) => (
         <Box key={s.id}>
           <NavComponent
@@ -234,40 +240,42 @@ export const Navbar = () => {
 
   const renderDnDView = () => (
     <div>
-      <DndContext
-        sensors={sensors}
-        onDragStart={onDragStart}
-        onDragEnd={onDragEnd}
-        onDragOver={onDragOver}
-      >
-        <SortableContext items={sectionIds ?? []}>
-          {renderInputSections()}
-        </SortableContext>
+      <Box className={styles.minimalScrollbar}>
+        <DndContext
+          sensors={sensors}
+          onDragStart={onDragStart}
+          onDragEnd={onDragEnd}
+          onDragOver={onDragOver}
+        >
+          <SortableContext items={sectionIds ?? []}>
+            {renderInputSections()}
+          </SortableContext>
 
-        {createPortal(
-          <DragOverlay
-            dropAnimation={{
-              duration: 500,
-              easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
-            }}
-          >
-            {activeItem && (
-              <NavComponent
-                type={activeItem.type}
-                data={
-                  activeItem.data as
-                    | FormSystemScreen
-                    | FormSystemSection
-                    | FormSystemField
-                }
-                active
-                focusComponent={focusComponent}
-              />
-            )}
-          </DragOverlay>,
-          document.body,
-        )}
-      </DndContext>
+          {createPortal(
+            <DragOverlay
+              dropAnimation={{
+                duration: 500,
+                easing: 'cubic-bezier(0.18, 0.67, 0.6, 1.22)',
+              }}
+            >
+              {activeItem && (
+                <NavComponent
+                  type={activeItem.type}
+                  data={
+                    activeItem.data as
+                      | FormSystemScreen
+                      | FormSystemSection
+                      | FormSystemField
+                  }
+                  active
+                  focusComponent={focusComponent}
+                />
+              )}
+            </DragOverlay>,
+            document.body,
+          )}
+        </DndContext>
+      </Box>
       <Box display="flex" justifyContent="center" paddingTop={3}>
         <Button variant="ghost" size="small" onClick={addSection}>
           {formatMessage(m.addSection)}

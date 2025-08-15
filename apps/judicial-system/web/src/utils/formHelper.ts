@@ -148,7 +148,6 @@ export const hasDateChanged = (
 
 export type stepValidationsType = {
   [constants.CASE_TABLE_GROUPS_ROUTE]: () => boolean
-  [constants.CASES_ROUTE]: () => boolean
   [constants.CREATE_RESTRICTION_CASE_ROUTE]: (theCase: Case) => boolean
   [constants.CREATE_TRAVEL_BAN_ROUTE]: (theCase: Case) => boolean
   [constants.RESTRICTION_CASE_DEFENDANT_ROUTE]: (theCase: Case) => boolean
@@ -160,6 +159,7 @@ export type stepValidationsType = {
   [constants.RESTRICTION_CASE_CASE_FILES_ROUTE]: () => boolean
   [constants.RESTRICTION_CASE_OVERVIEW_ROUTE]: () => boolean
   [constants.CREATE_INVESTIGATION_CASE_ROUTE]: (theCase: Case) => boolean
+  [constants.INVESTIGATION_CASE_REGISTRATION_ROUTE]: (theCase: Case) => boolean
   [constants.INVESTIGATION_CASE_DEFENDANT_ROUTE]: (theCase: Case) => boolean
   [constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE]: (
     theCase: Case,
@@ -215,7 +215,6 @@ export type stepValidationsType = {
 export const stepValidations = (): stepValidationsType => {
   return {
     [constants.CASE_TABLE_GROUPS_ROUTE]: () => true,
-    [constants.CASES_ROUTE]: () => true,
     [constants.CREATE_RESTRICTION_CASE_ROUTE]: (theCase: Case) =>
       validations.isDefendantStepValidRC(theCase, theCase.policeCaseNumbers),
     [constants.CREATE_TRAVEL_BAN_ROUTE]: (theCase: Case) =>
@@ -231,17 +230,15 @@ export const stepValidations = (): stepValidationsType => {
     [constants.RESTRICTION_CASE_CASE_FILES_ROUTE]: () => true,
     [constants.RESTRICTION_CASE_OVERVIEW_ROUTE]: () => true,
     [constants.CREATE_INVESTIGATION_CASE_ROUTE]: (theCase: Case) =>
-      validations.isDefendantStepValidIC(
+      validations.isDefendantStepValidIC(theCase),
+    [constants.INVESTIGATION_CASE_REGISTRATION_ROUTE]: (theCase: Case) =>
+      validations.isRegistrationStepValid(
         theCase,
         theCase.type,
         theCase.policeCaseNumbers,
       ),
     [constants.INVESTIGATION_CASE_DEFENDANT_ROUTE]: (theCase: Case) =>
-      validations.isDefendantStepValidIC(
-        theCase,
-        theCase.type,
-        theCase.policeCaseNumbers,
-      ),
+      validations.isDefendantStepValidIC(theCase),
     [constants.INVESTIGATION_CASE_HEARING_ARRANGEMENTS_ROUTE]: (
       theCase: Case,
     ) => validations.isHearingArrangementsStepValidIC(theCase),

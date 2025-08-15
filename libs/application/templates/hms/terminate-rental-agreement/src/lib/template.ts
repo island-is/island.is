@@ -24,6 +24,8 @@ import { NationalRegistryApi, rentalAgreementsApi } from '../dataProviders'
 import { Events, Roles, States, TemplateApiActions } from '../types'
 import { Contract } from '@island.is/clients/hms-rental-agreement'
 import { Features } from '@island.is/feature-flags'
+import { AuthDelegationType } from '@island.is/shared/types'
+import { ApiScope, HmsScope } from '@island.is/auth/scopes'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -39,6 +41,18 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.TerminateRentalAgreement.translation,
   ],
   dataSchema,
+  allowedDelegations: [
+    {
+      type: AuthDelegationType.GeneralMandate,
+    },
+    {
+      type: AuthDelegationType.ProcurationHolder,
+    },
+    {
+      type: AuthDelegationType.Custom,
+    },
+  ],
+  requiredScopes: [HmsScope.properties, ApiScope.hms],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
@@ -137,6 +151,23 @@ const template: ApplicationTemplate<
               action: TemplateApiActions.submitApplication,
             }),
           ],
+          actionCard: {
+            tag: {
+              label: m.miscMessages.actionCardDone,
+            },
+            pendingAction(application) {
+              return {
+                displayStatus: 'success',
+                title:
+                  getValueViaPath<string>(
+                    application.answers,
+                    'terminationType.answer',
+                  ) === 'cancelation'
+                    ? m.miscMessages.actioncardDoneTitleCancelation
+                    : m.miscMessages.actioncardDoneTitleTermination,
+              }
+            },
+          },
           roles: [
             {
               id: Roles.APPLICANT,
@@ -145,7 +176,6 @@ const template: ApplicationTemplate<
                   Promise.resolve(module.completedForm),
                 ),
               read: 'all',
-              delete: true,
             },
             {
               // This state is set for development purposes, shouldn't be reachable on prod

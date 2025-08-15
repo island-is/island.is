@@ -43,6 +43,15 @@ export class ApplicationsInput {
   isTest!: boolean
 }
 
+@InputType('FormSystemGetApplicationsInput')
+export class GetApplicationsInput {
+  @Field(() => String, { nullable: true })
+  slug?: string
+
+  @Field(() => Boolean, { nullable: false })
+  isTest!: boolean
+}
+
 @InputType('FormSystemApplicationEventDtoInput')
 export class ApplicationEventDtoInput {
   @Field(() => Date, { nullable: true })
@@ -93,6 +102,9 @@ export class ApplicationInput {
   @Field(() => String, { nullable: true })
   status?: string
 
+  @Field(() => Boolean, { nullable: true })
+  stopProgressOnValidatingScreen?: boolean
+
   @Field(() => [ApplicationEventDtoInput], { nullable: 'itemsAndList' })
   events?: ApplicationEventDtoInput[]
 
@@ -118,22 +130,13 @@ export class UpdateApplicationDependenciesInput {
   completed?: string[]
 }
 
-@InputType('UpdateFormSystemApplicationDtoInput')
-export class UpdateApplicationDtoInput {
-  @Field(() => [DependencyInput], { nullable: true })
-  dependencies?: DependencyInput[]
-
-  @Field(() => [String], { nullable: true })
-  completed?: string[]
-}
-
 @InputType('UpdateFormSystemApplicationInput')
 export class UpdateApplicationInput {
   @Field(() => String, { nullable: true })
   id?: string
 
-  @Field(() => UpdateApplicationDtoInput, { nullable: true })
-  updateApplicationDto?: UpdateApplicationDtoInput
+  @Field(() => UpdateApplicationDependenciesInput, { nullable: true })
+  updateApplicationDto?: UpdateApplicationDependenciesInput
 }
 
 @InputType('SaveFormSystemScreenInput')
@@ -147,14 +150,18 @@ export class SubmitScreenDtoInput {
 
 @InputType('SubmitFormSystemScreenInput')
 export class SubmitScreenInput {
-  // @Field(() => String, { nullable: true })
-  // screenId?: string
-
-  // @Field(() => ApplicationInput, { nullable: true })
-  // applicationDto?: ApplicationInput
   @Field(() => String, { nullable: true })
   screenId?: string
 
   @Field(() => SubmitScreenDtoInput, { nullable: true })
   submitScreenDto?: SubmitScreenDtoInput
+}
+
+@InputType('SubmitFormSystemSectionInput')
+export class SubmitSectionInput {
+  @Field(() => String, { nullable: true })
+  applicationId?: string
+
+  @Field(() => String, { nullable: true })
+  sectionId?: string
 }

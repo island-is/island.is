@@ -4,13 +4,11 @@ import {
   IntroWrapper,
   m,
 } from '@island.is/portals/my-pages/core'
-import { useUserProfile } from '@island.is/portals/my-pages/graphql'
 import { useUserInfo } from '@island.is/react-spa/bff'
 import ProfileForm from '../../components/PersonalInformation/Forms/ProfileForm/ProfileForm'
 import { msg } from '../../lib/messages'
 
 const UserProfile = () => {
-  const { data } = useUserProfile()
   const { formatMessage } = useLocale()
   const { profile } = useUserInfo()
 
@@ -23,11 +21,7 @@ const UserProfile = () => {
         serviceProviderTooltip={formatMessage(m.userProfileTooltip)}
         serviceProviderSlug={ISLANDIS_SLUG}
       />
-      <ProfileForm
-        showIntroText={false}
-        showDetails={!!data}
-        title={profile.name || ''}
-      />
+      <ProfileForm showIntroText={false} title={profile.name || ''} />
     </>
   )
 }

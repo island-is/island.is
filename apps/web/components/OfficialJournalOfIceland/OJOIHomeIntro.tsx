@@ -1,7 +1,8 @@
 import {
   ArrowLink,
   Box,
-  Button,
+  Column,
+  Columns,
   GridColumn,
   GridContainer,
   GridRow,
@@ -75,13 +76,31 @@ export const OJOIHomeIntro = (props: OJOIHomeIntroProps) => {
             <Text variant="eyebrow" as="h3" paddingBottom={1} color="purple400">
               {props.shortcutsTitle}
             </Text>
-            <Inline space={1}>
-              {props.quickLinks.map((q, i) => (
-                <Tag key={i} href={q.href} variant={q.variant}>
-                  {q.title}
-                </Tag>
-              ))}
-            </Inline>
+
+            <Columns collapseBelow="sm" space={1}>
+              <Column>
+                <Inline space={1}>
+                  {props.quickLinks
+                    .filter((item) => item.variant !== 'mint')
+                    .map((q) => (
+                      <Tag key={q.href} href={q.href} variant={q.variant}>
+                        {q.title}
+                      </Tag>
+                    ))}
+                </Inline>
+              </Column>
+              <Column width="content">
+                <Box marginLeft={'auto'}>
+                  {props.quickLinks
+                    .filter((item) => item.variant === 'mint')
+                    .map((q) => (
+                      <Tag key={q.href} href={q.href} variant={q.variant}>
+                        {q.title}
+                      </Tag>
+                    ))}
+                </Box>
+              </Column>
+            </Columns>
           </Box>
         </GridColumn>
 

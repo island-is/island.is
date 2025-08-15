@@ -9,40 +9,44 @@ export class FieldSettingsFactory {
     if (!fieldSettings) {
       return undefined
     }
-    let keys: string[]
+    let keys: string[] = [
+      'zendeskIsPublic',
+      'zendeskIsCustomField',
+      'zendeskCustomFieldId',
+    ]
     switch (type) {
       case FieldTypesEnum.TEXTBOX:
-        keys = ['minLength', 'maxLength', 'isLarge']
+        keys = ['minLength', 'maxLength', 'isLarge', ...keys]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.NUMBERBOX:
-        keys = ['minValue', 'maxValue']
+        keys = ['minValue', 'maxValue', ...keys]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.MESSAGE:
-        keys = ['hasLink', 'url', 'buttonText']
+        keys = ['hasLink', 'url', 'buttonText', ...keys]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.DATE_PICKER:
-        keys = ['minDate', 'maxDate']
+        keys = ['minDate', 'maxDate', ...keys]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.DROPDOWN_LIST:
-        keys = ['listType']
+        keys = ['listType', ...keys]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.ISK_NUMBERBOX:
-        keys = ['minAmount', 'maxAmount']
+        keys = ['minAmount', 'maxAmount', ...keys]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.PROPERTY_NUMBER:
-        keys = ['hasPropertyInput', 'hasPropertyList']
+        keys = ['hasPropertyInput', 'hasPropertyList', ...keys]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.FILE:
-        keys = ['fileTypes', 'fileMaxSize', 'maxFiles']
+        keys = ['fileTypes', 'fileMaxSize', 'maxFiles', ...keys]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.TIME_INPUT:
-        keys = ['timeInterval']
+        keys = ['timeInterval', ...keys]
         return this.pickSettings(fieldSettings, keys)
       case FieldTypesEnum.HOMESTAY_OVERVIEW:
-        keys = ['year']
+        keys = ['year', ...keys]
         return this.pickSettings(fieldSettings, keys)
       default:
-        return undefined
+        return this.pickSettings(fieldSettings, keys)
     }
   }
 

@@ -45,6 +45,7 @@ import {
   RentalService,
   RskCompanyInfo,
   RskProcuring,
+  RskCarRentalRate,
   SeminarsVer,
   ShipRegistry,
   SignatureCollection,
@@ -60,6 +61,7 @@ import {
   LSH,
   PracticalExams,
   FireCompensation,
+  VMSTUnemployment,
 } from '../../../infra/src/dsl/xroad'
 
 export const serviceSetup = (services: {
@@ -450,6 +452,7 @@ export const serviceSetup = (services: {
       WorkMachines,
       IcelandicGovernmentInstitutionVacancies,
       RskProcuring,
+      RskCarRentalRate,
       NationalRegistryB2C,
       AircraftRegistry,
       HousingBenefitCalculator,
@@ -470,6 +473,7 @@ export const serviceSetup = (services: {
       SecondarySchool,
       LSH,
       PracticalExams,
+      VMSTUnemployment,
     )
     .files({ filename: 'islyklar.p12', env: 'ISLYKILL_CERT' })
     .ingress({

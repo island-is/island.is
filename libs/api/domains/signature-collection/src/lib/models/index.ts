@@ -1,3 +1,4 @@
+import { SignatureCollectionAdmin } from './admin.model'
 import {
   SignatureCollectionArea,
   SignatureCollectionAreaBase,
@@ -56,4 +57,5 @@ export {
   SignatureCollectionListStatus,
   SignatureCollectionStatus,
   SignatureCollectionSuccess,
+  SignatureCollectionAdmin,
 }

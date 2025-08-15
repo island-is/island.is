@@ -16,6 +16,8 @@ import { type User } from '@island.is/judicial-system/types'
 import { BackendService } from '../backend'
 import { CaseTableQueryInput } from './dto/caseTable.input'
 import { CaseTableResponse } from './dto/caseTable.response'
+import { SearchCasesQueryInput } from './dto/searchCases.input'
+import { SearchCasesResponse } from './dto/searchCases.response'
 
 @UseGuards(JwtGraphQlAuthUserGuard)
 @Resolver(() => CaseTableResponse)
@@ -40,7 +42,25 @@ export class CaseTableResolver {
       user.id,
       AuditedAction.GET_CASE_TABLE,
       backendService.getCaseTable(input.type),
-      input.type,
+      (response) => response.rows.map((row) => row.caseId),
+    )
+  }
+
+  @Query(() => SearchCasesResponse)
+  searchCases(
+    @Args('input', { type: () => SearchCasesQueryInput })
+    input: SearchCasesQueryInput,
+    @CurrentGraphQlUser() user: User,
+    @Context('dataSources')
+    { backendService }: { backendService: BackendService },
+  ): Promise<SearchCasesResponse> {
+    this.logger.debug(`Searching for cases`)
+
+    return this.auditTrailService.audit(
+      user.id,
+      AuditedAction.SEARCH_CASES,
+      backendService.searchCases(input.query),
+      (response) => response.rows.map((row) => row.caseId),
     )
   }
 }

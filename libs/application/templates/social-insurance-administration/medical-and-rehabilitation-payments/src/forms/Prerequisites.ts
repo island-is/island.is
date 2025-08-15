@@ -18,14 +18,18 @@ import {
   SocialInsuranceAdministrationApplicantApi,
   SocialInsuranceAdministrationCategorizedIncomeTypesApi,
   SocialInsuranceAdministrationCurrenciesApi,
+  SocialInsuranceAdministrationEctsUnitsApi,
+  SocialInsuranceAdministrationEducationLevelsApi,
   SocialInsuranceAdministrationIncomePlanConditionsApi,
-  SocialInsuranceAdministrationQuestionnairesApi,
+  SocialInsuranceAdministrationIsApplicantEligibleApi,
+  SocialInsuranceAdministrationMARPApplicationTypeApi,
+  SocialInsuranceAdministrationMARPQuestionnairesApi,
+  SocialInsuranceAdministrationResidenceInformationApi,
 } from '../dataProviders'
 import { medicalAndRehabilitationPaymentsFormMessage } from '../lib/messages'
 
 export const Prerequisites: Form = buildForm({
   id: 'medicalAndrehabilitationPaymentsPrerequisites',
-  title: socialInsuranceAdministrationMessage.shared.formTitle,
   mode: FormModes.NOT_STARTED,
   renderLastScreenButton: true,
   children: [
@@ -39,7 +43,7 @@ export const Prerequisites: Form = buildForm({
           subTitle:
             socialInsuranceAdministrationMessage.pre.externalDataDescription,
           checkboxLabel:
-            socialInsuranceAdministrationMessage.pre.checkboxProvider,
+            medicalAndRehabilitationPaymentsFormMessage.pre.checkboxProvider,
           submitField: buildSubmitField({
             id: 'submit',
             placement: 'footer',
@@ -127,11 +131,26 @@ export const Prerequisites: Form = buildForm({
                 socialInsuranceAdministrationMessage.pre
                   .socialInsuranceAdministrationPrivacyTitle,
               subTitle:
-                socialInsuranceAdministrationMessage.pre
+                medicalAndRehabilitationPaymentsFormMessage.pre
                   .socialInsuranceAdministrationPrivacyDescription,
             }),
             buildDataProviderItem({
-              provider: SocialInsuranceAdministrationQuestionnairesApi,
+              provider: SocialInsuranceAdministrationMARPQuestionnairesApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationEctsUnitsApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationResidenceInformationApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationMARPApplicationTypeApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationEducationLevelsApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationIsApplicantEligibleApi,
             }),
           ],
         }),
