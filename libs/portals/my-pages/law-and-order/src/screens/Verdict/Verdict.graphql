@@ -1,0 +1,13 @@
+#import "./CourtCaseGroupsFragment.graphql"
+
+query GetCourtCaseVerdict($input: LawAndOrderVerdictInput!, $locale: String!) {
+  lawAndOrderVerdict(input: $input, locale: $locale) {
+    caseId
+    title
+    subtitle
+    appealDecision
+    groups {
+      ...CourtCaseGroupsFragment
+    }
+  }
+}

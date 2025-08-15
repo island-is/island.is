@@ -22,6 +22,9 @@ export class Data {
   @Field({ nullable: true })
   hasBeenServed?: boolean
 
+  @Field({ nullable: true })
+  hasVerdict?: boolean
+
   @Field(() => [Group], { nullable: true })
   groups?: Array<Group>
 }

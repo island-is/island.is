@@ -55,6 +55,13 @@ export class JudicialSystemSPClientService {
       .catch(handle404)
   }
 
+  async getVerdict(id: string, user: User, locale: string) {
+    return this.casesApiWithAuth(user).caseControllerGetRuling({
+      caseId: id,
+      locale: locale,
+    })
+  }
+
   async patchSummon(input: CaseControllerUpdateSubpoenaRequest, user: User) {
     return this.casesApiWithAuth(user)
       .caseControllerUpdateSubpoena(input)

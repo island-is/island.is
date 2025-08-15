@@ -6,25 +6,23 @@ import {
   ScopesGuard,
 } from '@island.is/auth-nest-tools'
 import { ApiScope } from '@island.is/auth/scopes'
+import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 import { Audit, AuditService } from '@island.is/nest/audit'
-import {
-  FeatureFlag,
-  FeatureFlagGuard,
-  Features,
-} from '@island.is/nest/feature-flags'
+import { FeatureFlagGuard } from '@island.is/nest/feature-flags'
 import type { Locale } from '@island.is/shared/types'
 import { Inject, UseGuards } from '@nestjs/common'
 import { Args, Mutation, Query, Resolver } from '@nestjs/graphql'
 import { GetCourtCaseInput } from '../dto/getCourtCaseInput'
 import { GetSubpoenaInput } from '../dto/getSubpoenaInput'
+import { GetVerdictsInput } from '../dto/getVerdictInput'
 import { PostDefenseChoiceInput } from '../dto/postDefenseChoiceInput.model'
 import { CourtCase } from '../models/courtCase.model'
 import { CourtCases } from '../models/courtCases.model'
 import { DefenseChoice } from '../models/defenseChoice.model'
 import { Lawyers } from '../models/lawyers.model'
 import { Subpoena } from '../models/summon.model'
+import { Verdict } from '../models/verdict.model'
 import { LawAndOrderService } from './law-and-order.service'
-import { LOGGER_PROVIDER, type Logger } from '@island.is/logging'
 
 const LOG_CATEGORY = 'law-and-order-resolver'
 
@@ -98,6 +96,22 @@ export class LawAndOrderResolver {
       'getLawyers',
       'lawyers',
       this.lawAndOrderService.getLawyers(user, locale),
+      user,
+    )
+  }
+
+  @Query(() => Verdict, { name: 'lawAndOrderVerdict', nullable: true })
+  @Audit()
+  getVerdict(
+    @CurrentUser() user: User,
+    @Args('input') input: GetVerdictsInput,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+  ) {
+    return this.auditAndHandle(
+      'getVerdict',
+      input.caseId,
+      this.lawAndOrderService.getVerdict(user, input.caseId, locale),
       user,
     )
   }

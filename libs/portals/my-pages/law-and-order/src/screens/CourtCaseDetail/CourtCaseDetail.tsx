@@ -34,9 +34,11 @@ const CourtCaseDetail = () => {
   })
 
   const courtCase = data?.lawAndOrderCourtCaseDetail
+  const hasVerdict = true //courtCase?.data?.hasVerdict
 
   useEffect(() => {
     refetch()
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [lang])
 
   return (
@@ -52,9 +54,10 @@ const CourtCaseDetail = () => {
         serviceProviderTooltip={formatMessage(m.domsmalaraduneytidTooltip)}
       />
       <Box marginBottom={3} display="flex" flexWrap="wrap">
-        {data?.lawAndOrderCourtCaseDetail && !loading && (
-          <Box paddingRight={2} marginBottom={[1]}>
-            {courtCase?.data?.hasBeenServed && (
+        {data?.lawAndOrderCourtCaseDetail &&
+          !loading &&
+          courtCase?.data?.hasBeenServed && (
+            <Box paddingRight={2} marginBottom={[1]}>
               <LinkButton
                 to={LawAndOrderPaths.SubpoenaDetail.replace(
                   ':id',
@@ -65,7 +68,20 @@ const CourtCaseDetail = () => {
                 variant="utility"
                 size="default"
               />
-            )}
+            </Box>
+          )}
+        {hasVerdict && (
+          <Box paddingRight={2} marginBottom={[1]}>
+            <LinkButton
+              to={LawAndOrderPaths.VerdictDetail.replace(
+                ':id',
+                courtCase?.data?.id?.toString() || '',
+              )}
+              text={formatMessage(messages.verdict)}
+              icon="receipt"
+              variant="utility"
+              size="default"
+            />
           </Box>
         )}
       </Box>
