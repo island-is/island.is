@@ -11,7 +11,11 @@ import {
   SignatureCollectionSuccess,
 } from '@island.is/api/schema'
 
-const CancelCollection = ({ refetchIsOwner }: { refetchIsOwner: () => void }) => {
+const CancelCollection = ({
+  refetchIsOwner,
+}: {
+  refetchIsOwner: () => void
+}) => {
   useNamespaces('sp.signatureCollection')
   const { formatMessage } = useLocale()
   const [modalIsOpen, setModalIsOpen] = useState(false)
