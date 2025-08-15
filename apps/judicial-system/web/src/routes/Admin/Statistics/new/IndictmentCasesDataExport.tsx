@@ -38,14 +38,21 @@ const IndictmentCasesDataExport = () => {
 
   return (
     <StatisticPageLayout>
-      <PageHeader title="Gögn úr ákærum'" />
+      <PageHeader title="Gögn úr sakamálum'" />
       <Box>
         <StatisticReturnButton />
-        <StatisticHeader title="Gögn úr ákærum" />
-        <Box marginBottom={4}>
-          <Text marginBottom={2}>
+        <StatisticHeader title="Gögn úr sakamálum" />
+        <Box paddingBottom={4} display="flex" flexDirection="column" rowGap={2}>
+          <Text>
             Hér er hægt að sækja gögn fyrir atburði (e. event data) í
             Réttarvörslugátt.
+          </Text>
+          <Text>
+            Þú getur hlaðið gögnunum upp{' '}
+            <a color="blue400" href="https://rettarvorslugatt.island.is">
+              *hér*
+            </a>{' '}
+            og notað tilbúnar greiningar.
           </Text>
           <Text>
             Veldu tímabil hér að neðan fyrir gögnin sem þú vilt sækja.
