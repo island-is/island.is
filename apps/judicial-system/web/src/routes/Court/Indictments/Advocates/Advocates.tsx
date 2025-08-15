@@ -78,7 +78,7 @@ const Advocates = () => {
                     transform: 'scale(0)',
                   }}
                 >
-                  <TooltipProvider>
+                  <TooltipProvider timeout={0}>
                     <TooltipAnchor
                       render={
                         <Box display="flex">
