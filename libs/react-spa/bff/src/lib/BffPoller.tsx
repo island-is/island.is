@@ -1,12 +1,12 @@
-import { usePolling } from '@island.is/react-spa/shared'
-import { BffUser } from '@island.is/shared/types'
-import { ReactNode, useCallback, useEffect, useMemo } from 'react'
 import {
   BffBroadcastEvents,
   useAuth,
   useBffBroadcaster,
+  usePolling,
   useUserInfo,
-} from './bff.hooks'
+} from '@island.is/react-spa/shared'
+import { BffUser } from '@island.is/shared/types'
+import { ReactNode, useCallback, useEffect, useMemo } from 'react'
 import { isNewUser } from './bff.utils'
 
 type BffPollerProps = {

@@ -43,4 +43,16 @@ export const m = defineMessages({
     defaultMessage:
       'Ef þú telur þig eiga gögn sem ættu að birtast hér,\nvinsamlegast hafðu samband við þjónustuaðila.',
   },
+  debugCode: {
+    id: 'portals:debug-code',
+    defaultMessage: 'Rakningarkóði: {code}',
+  },
+  copy: {
+    id: 'portals:copy',
+    defaultMessage: 'Afrita',
+  },
+  copied: {
+    id: 'portals:copied',
+    defaultMessage: 'Afritað!',
+  },
 })

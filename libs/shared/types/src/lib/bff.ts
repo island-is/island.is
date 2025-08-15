@@ -21,7 +21,11 @@ export interface IdTokenClaims {
   phone_number?: string
 }
 
+export interface BffProfile extends IdTokenClaims {
+  traceSid?: string
+}
+
 export type BffUser = {
   scopes: string[]
-  profile: IdTokenClaims
+  profile: BffProfile
 }

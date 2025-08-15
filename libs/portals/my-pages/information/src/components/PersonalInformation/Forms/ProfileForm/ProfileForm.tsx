@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState } from 'react'
+import React, { useEffect, useMemo, useState } from 'react'
 
 import {
   Box,
@@ -9,6 +9,7 @@ import {
   Link,
   PhoneInput,
   SkeletonLoader,
+  Text,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import { LoadModal, m, parseNumber } from '@island.is/portals/my-pages/core'
@@ -37,7 +38,7 @@ import { useConfirmNudgeMutation } from './confirmNudge.generated'
 import { DropModalType } from './types/form'
 import { InputEmail } from './components/Inputs/Email'
 import { AccessDenied } from '@island.is/portals/core'
-import { Problem } from '@island.is/react-spa/shared'
+import { CopyButton, Problem } from '@island.is/react-spa/shared'
 
 enum IdsUserProfileLinks {
   EMAIL = '/app/user-profile/email',
@@ -304,7 +305,7 @@ export const ProfileForm = ({
                 title={formatMessage(m.bankAccountInfo)}
                 text={formatMessage(msg.editBankInfoText)}
                 loading={userLoading}
-                divider={false}
+                divider={true}
               >
                 {!userLoading && !userProfile?.bankInfoError && (
                   <BankInfoForm
@@ -315,6 +316,18 @@ export const ProfileForm = ({
                   <Problem size="small" />
                 )}
               </InputSection>
+              {userInfo.profile.traceSid && (
+                <InputSection
+                  title={formatMessage(m.debugTitle)}
+                  text={formatMessage(m.debugDescription)}
+                  divider={false}
+                >
+                  <Box display="flex">
+                    <Text variant="eyebrow">{userInfo.profile.traceSid}</Text>
+                    <CopyButton content={userInfo.profile.traceSid} />
+                  </Box>
+                </InputSection>
+              )}
             </>
           )}
           {showDropModal && onCloseOverlay && !internalLoading && (

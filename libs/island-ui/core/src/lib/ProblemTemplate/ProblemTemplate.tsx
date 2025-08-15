@@ -13,6 +13,7 @@ export type ProblemTemplateBaseProps = {
   variant: Variant
   title: string
   message: string | ReactNode
+  debugMessage?: string
   imgSrc?: string
   imgAlt?: string
   noBorder?: boolean
@@ -72,6 +73,7 @@ export const ProblemTemplate = ({
   variant,
   title,
   message,
+  debugMessage,
   imgSrc,
   imgAlt = '',
   noBorder,
@@ -120,6 +122,11 @@ export const ProblemTemplate = ({
         {title}
       </Text>
       <Text whiteSpace="preLine">{message}</Text>
+      {debugMessage && (
+        <Text variant="small" color="dark200">
+          {debugMessage}
+        </Text>
+      )}
       {imgSrc && (
         <Box marginTop={[2, 4]}>
           <img

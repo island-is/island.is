@@ -1,10 +1,6 @@
 import { MockedProvider } from '@apollo/client/testing'
 import { LocaleContext, LocaleProvider } from '@island.is/localization'
-import {
-  BffContext,
-  BffContextType,
-  createMockedInitialState,
-} from '@island.is/react-spa/bff'
+import { createMockedInitialState } from '@island.is/react-spa/bff'
 import { BffUser } from '@island.is/shared/types'
 import '@testing-library/jest-dom'
 import {
@@ -21,6 +17,7 @@ import { ActorDelegationsQuery, GetUserProfileQuery } from '../../../gen/schema'
 import { UserMenu } from './UserMenu'
 import { ACTOR_DELEGATIONS } from './actorDelegations.graphql'
 import { USER_PROFILE } from './userProfile.graphql'
+import { BffContext, BffContextType } from '@island.is/react-spa/shared'
 
 const delegation = {
   name: 'Phil',

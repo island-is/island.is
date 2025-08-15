@@ -14,4 +14,5 @@ export default {
   },
   moduleFileExtensions: ['ts', 'tsx', 'js', 'jsx'],
   coverageDirectory: '<rootDir>/coverage/libs/shared/utils',
+  setupFilesAfterEnv: [`${__dirname}/jest.setup.ts`],
 }

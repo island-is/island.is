@@ -1147,6 +1147,15 @@ export const m = defineMessages({
     id: 'service.portal:nudge-info',
     defaultMessage: 'Hnipp',
   },
+  debugTitle: {
+    id: 'service.portal:debug-title',
+    defaultMessage: 'Rakningarkóði',
+  },
+  debugDescription: {
+    id: 'service.portal:debug-description',
+    defaultMessage:
+      'Ef þú lendir í vandræðum með einhverja virkni á Ísland.is þá getur þú afhent þjónustuverinu eftirfarandi kóða til að hjálpa þeim við að leysa úr málinu.',
+  },
   refuseEmailTitle: {
     id: 'service.portal:refuse-email-title',
     defaultMessage: 'Tölvupóstur',

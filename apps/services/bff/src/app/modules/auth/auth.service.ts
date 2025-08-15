@@ -1,5 +1,6 @@
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
+import { createTraceSid } from '@island.is/shared/utils'
 import {
   BadRequestException,
   HttpStatus,
@@ -105,6 +106,9 @@ export class AuthService {
     tokenResponse: TokenResponse,
   ): Promise<CachedTokenResponse> {
     const userProfile: IdTokenClaims = jwtDecode(tokenResponse.id_token)
+    const traceSid = userProfile.sid
+      ? await createTraceSid(userProfile.sid)
+      : undefined
 
     const value: CachedTokenResponse = {
       ...tokenResponse,
@@ -117,7 +121,10 @@ export class AuthService {
         tokenResponse.refresh_token,
       ),
       scopes: tokenResponse.scope.split(' '),
-      userProfile,
+      userProfile: {
+        ...userProfile,
+        traceSid,
+      },
       // Subtract 5 seconds from the token expiration time to account for latency.
       accessTokenExp:
         Date.now() + (tokenResponse.expires_in * 1000 - FIVE_SECONDS_IN_MS),
