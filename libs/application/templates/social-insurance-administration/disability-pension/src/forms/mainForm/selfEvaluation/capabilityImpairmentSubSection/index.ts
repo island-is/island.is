@@ -10,6 +10,7 @@ import { SectionRouteEnum } from '../../../../types'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { SelfAssessmentQuestionnaire } from '../../../../types/interfaces'
 import { Application } from '@island.is/application/types'
+
 export const MAX_QUESTIONS = 50
 
 const buildQuestion = (index: number) => {

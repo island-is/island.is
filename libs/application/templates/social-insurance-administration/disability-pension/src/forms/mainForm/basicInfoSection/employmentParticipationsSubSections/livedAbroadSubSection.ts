@@ -78,7 +78,6 @@ export const livedAbroadSubSection = buildMultiField({
             disabilityPensionFormMessage.employmentParticipation
               .abroadNationalId,
           width: 'half',
-          format: '######-####',
           displayInTable: true,
         },
         //TODO: ONly month

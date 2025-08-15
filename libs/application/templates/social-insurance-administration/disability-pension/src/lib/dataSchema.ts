@@ -37,7 +37,7 @@ const livedAbroadSchema = z.object({
     .array(
       z.object({
         country: z.string(),
-        abroadNationalId: z.string().optional(),
+        abroadNationalId: z.string().min(4).optional(),
         periodStart: z.string(),
         periodEnd: z.string(),
         period: z.string(),
@@ -100,7 +100,7 @@ export const dataSchema = z.object({
         .array(
           z.object({
             country: z.string(),
-            abroadNationalId: z.string().min(4),
+            abroadNationalId: z.string().min(4).optional(),
           }),
         )
         .optional(),
@@ -125,12 +125,18 @@ export const dataSchema = z.object({
       status: z.nativeEnum(ResidenceEnum),
       other: z.string().optional(),
     })
-    .refine(({ status, other }) => {
-      if (status === ResidenceEnum.OTHER) {
-        return other && other.length > 0
-      }
-      return true
-    }),
+    .refine(
+      ({ status, other }) => {
+        if (status === ResidenceEnum.OTHER) {
+          return other && other.length > 0
+        }
+        return true
+      },
+      {
+        path: ['other'],
+        params: disabilityPensionFormMessage.errors.emptyResidenceOtherText,
+      },
+    ),
   backgroundInfoChildren: z.nativeEnum(ChildrenCountEnum),
   backgroundInfoIcelandicCapability: z.object({
     capability: z.nativeEnum(IcelandicCapabilityEnum),
@@ -140,12 +146,18 @@ export const dataSchema = z.object({
       language: z.nativeEnum(LanguageEnum),
       other: z.string().optional(),
     })
-    .refine(({ language, other }) => {
-      if (language === LanguageEnum.OTHER) {
-        return other && other.length > 0
-      }
-      return true
-    }),
+    .refine(
+      ({ language, other }) => {
+        if (language === LanguageEnum.OTHER) {
+          return other && other.length > 0
+        }
+        return true
+      },
+      {
+        path: ['other'],
+        params: disabilityPensionFormMessage.errors.emptyLanguageOtherText,
+      },
+    ),
   backgroundInfoEmployment: z
     .object({
       status: z.array(z.nativeEnum(EmploymentStatusEnum)).optional(),
@@ -164,6 +176,7 @@ export const dataSchema = z.object({
     .object({
       hasEmployment: z.enum([YES, NO]),
       when: z.string().nullable().optional(),
+      job: z.string().nullable().optional(),
       field: z.string().nullable().optional(),
     })
     .refine(
@@ -176,6 +189,18 @@ export const dataSchema = z.object({
       {
         path: ['when'],
         params: disabilityPensionFormMessage.errors.emptyPreviousEmploymentWhen,
+      },
+    )
+    .refine(
+      ({ hasEmployment, job }) => {
+        if (hasEmployment === YES) {
+          return job && job.length > 0
+        }
+        return true
+      },
+      {
+        path: ['job'],
+        params: disabilityPensionFormMessage.errors.emptyPreviousEmploymentJob,
       },
     )
     .refine(
@@ -215,9 +240,41 @@ export const dataSchema = z.object({
   backgroundInfoEmploymentImportance: z.object({
     importance: z.nativeEnum(EmploymentImportanceEnum),
   }),
-  backgroundInfoRehabilitationOrTherapy: z.object({
-    rehabilitationOrTherapy: z.enum([YES, NO]),
-  }),
+  backgroundInfoRehabilitationOrTherapy: z
+    .object({
+      rehabilitationOrTherapy: z.enum([YES, NO]),
+      rehabilitationDescription: z.string().optional(),
+      rehabilitationResults: z.string().optional(),
+    })
+    .refine(
+      ({ rehabilitationOrTherapy, rehabilitationDescription }) => {
+        if (rehabilitationOrTherapy === YES) {
+          return (
+            rehabilitationDescription && rehabilitationDescription.length > 0
+          )
+        }
+        return true
+      },
+      {
+        path: ['rehabilitationDescription'],
+        params:
+          disabilityPensionFormMessage.errors
+            .emptyRehabilitationOrTherapyDescription,
+      },
+    )
+    .refine(
+      ({ rehabilitationOrTherapy, rehabilitationResults }) => {
+        if (rehabilitationOrTherapy === YES) {
+          return rehabilitationResults && rehabilitationResults.length > 0
+        }
+        return true
+      },
+      {
+        path: ['rehabilitationResults'],
+        params:
+          disabilityPensionFormMessage.errors.rehabilitationOrTherapyResults,
+      },
+    ),
   backgroundInfoBiggestIssue: z.object({
     text: z.string(),
   }),

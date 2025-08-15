@@ -77,8 +77,6 @@ export const abroadPaymentsSubSection = buildMultiField({
             disabilityPensionFormMessage.employmentParticipation
               .abroadNationalId,
           width: 'half',
-          placeholder: '000000-0000',
-          format: '######-####',
           required: false,
           displayInTable: true,
         },

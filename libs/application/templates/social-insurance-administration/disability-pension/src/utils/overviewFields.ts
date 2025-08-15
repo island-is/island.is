@@ -10,7 +10,6 @@ import {
   incomePlanItems,
   appliedBeforeItems,
   employmentItems,
-  disabilityCertificateItems,
   extraInfoItems,
 } from './overviewItems'
 
@@ -45,11 +44,10 @@ export const overviewFields = (editable?: boolean) => {
       backId: editable ? SectionRouteEnum.EMPLOYMENT_PARTICIPATION : undefined,
       items: employmentItems,
     }),
-    buildOverviewField({
+    buildCustomField({
       id: `${SectionRouteEnum.OVERVIEW}.disabilityCertificate`,
-      hideIfEmpty: true,
-      backId: editable ? SectionRouteEnum.DISABILITY_CERTIFICATE : undefined,
-      items: disabilityCertificateItems,
+      title: 'Disability certificate',
+      component: 'CertificateOverview',
     }),
     buildCustomField({
       id: `${SectionRouteEnum.OVERVIEW}.customField`,

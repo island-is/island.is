@@ -8,6 +8,11 @@ export const disabilityPensionFormMessage: MessageDir = {
       defaultMessage: 'Umsókn',
       description: 'Application',
     },
+    view: {
+      id: 'dp.application:view',
+      defaultMessage: 'Skoða',
+      description: 'View',
+    },
     applicationTitle: {
       id: 'dp.application:application.title',
       defaultMessage: 'Umsókn um örorkulífeyri',
@@ -266,7 +271,7 @@ export const disabilityPensionFormMessage: MessageDir = {
     dataFetchText: {
       id: 'dp.application:prerequisites.dataFetchText#markdown',
       defaultMessage:
-        'Frekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna hér.\n\nEf tekjur eða aðrar aðstæður þínar breytast verður þú að láta Tryggingastofnun vita þar sem það getur haft áhrif á greiðslur þínar.\n\nRangar eða ófullnægjandi upplýsingar geta haft áhrif á afgreiðslu umsóknarinnar og hugsanlega leitt til endurkröfu eða annara viðurlaga.\n\nEf umsókn kemur frá erlendri stofnun  getur Tryggingastofnun óskað eftir frekari gögnum frá þeirri stofnunn.\n\nAuk þess getur tryggingastofnun haft samband við erlendar stofnanir ef þú telur þig eiga réttindi í öðru EES- landi, Bandaríkjunum eða Kanada, vegna réttinda þinna þar fyrir þina hönd.',
+        'Frekari upplýsingar um gagnaöflunarheimild og meðferð persónuupplýsinga má finna [hér.](https://www.tr.is/tryggingastofnun/personuvernd)\n\nEf tekjur eða aðrar aðstæður þínar breytast verður þú að láta Tryggingastofnun vita þar sem það getur haft áhrif á greiðslur þínar.\n\nRangar eða ófullnægjandi upplýsingar geta haft áhrif á afgreiðslu umsóknarinnar og hugsanlega leitt til endurkröfu eða annara viðurlaga.\n\nEf umsókn kemur frá erlendri stofnun  getur Tryggingastofnun óskað eftir frekari gögnum frá þeirri stofnunn.\n\nAuk þess getur tryggingastofnun haft samband við erlendar stofnanir ef þú telur þig eiga réttindi í öðru EES- landi, Bandaríkjunum eða Kanada, vegna réttinda þinna þar fyrir þína hönd.',
       description: 'Data fetch text',
     },
   }),
@@ -905,6 +910,11 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
     },
     residenceOther: {
       id: 'dp.application:selfEvaluation.questions.residence.other',
+      defaultMessage: 'Annað',
+      description: 'Other',
+    },
+    residenceOtherWhat: {
+      id: 'dp.application:selfEvaluation.questions.residence.otherWhat',
       defaultMessage: 'Annað, hvað?',
       description: 'Other, what?',
     },
@@ -1127,10 +1137,16 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
       defaultMessage: 'Hvenær varst þú síðast í launuðu starfi?',
       description: 'When were you in paid employment?',
     },
+    previousEmploymentJob: {
+      id: 'dp.application:selfEvaluation.questions.previousEmployment.job',
+      defaultMessage: 'Aðalstarf þitt þar sem þú vannst síðast/vinnur núna',
+      description:
+        'What is/was your main job where you previously worked/currently work?',
+    },
     previousEmploymentField: {
       id: 'dp.application:selfEvaluation.questions.previousEmployment.field',
-      defaultMessage: 'Í hvaða starfsgrein starfaðir þú síðast?',
-      description: 'In what profession did you work last?',
+      defaultMessage: 'Hverskonar starfssemi fer aðallega fram þar?',
+      description: 'What kind of industry?',
     },
     chooseProfession: {
       id: 'dp.application:selfEvaluation.questions.chooseProfession',
@@ -1195,6 +1211,16 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
         'Hefur þú verið í endurhæfingu eða meðferð áður vegna þess vanda sem leiðir til óvinnufærni?',
       description:
         'Have you been in rehabilitation or treatment before due to the problem that leads to disability?',
+    },
+    rehabilitationOrTherapyDescription: {
+      id: 'dp.application:selfEvaluation.questions.rehabilitationOrTherapy.description',
+      defaultMessage: 'Hvaða endurhæfingu eða meðferð hefur þú fengið?',
+      description: 'What rehabilitation or treatment have you received?',
+    },
+    rehabilitationOrTherapyResults: {
+      id: 'dp.application:selfEvaluation.questions.rehabilitationOrTherapy.results',
+      defaultMessage: 'Hvaða árangri skilaði endurhæfingin/meðferðin?',
+      description: 'Was there any progress from the rehabilitation or therapy?',
     },
     biggestIssueTitle: {
       id: 'dp.application:selfEvaluation.questions.biggestIssue.title',
@@ -1289,17 +1315,48 @@ Vinsamlegast athugið að greiðslur inn á erlenda reiknginga geta tekið 3-4 d
       description:
         'You must select the end of period. The end date must be after the start date.',
     },
+    emptyResidenceOtherText: {
+      id: 'dp.application:errors.residenceOtherTextRequired',
+      defaultMessage:
+        'Nauðsynlegt taka fram í hvernig húsnæði þú býrð ef "Annað" er valið',
+      description: 'TODO',
+    },
+    emptyLanguageOtherText: {
+      id: 'dp.application:errors.languageOtherTextRequired',
+      defaultMessage:
+        'Nauðsynlegt taka fram hvaða tungumál þú talar ef "Annað" er valið',
+      description: 'TODO',
+    },
+    emptyRehabilitationOrTherapyDescription: {
+      id: 'dp.application:errors.rehabilitationOrTherapyDescriptionRequired',
+      defaultMessage:
+        'Nauðsynlegt er að taka fram hvaða endurhæfingu eða meðferð þú hefur fengið',
+      description:
+        'You must specify any rehabilitation or therapy you have received',
+    },
+    emptyRehabilitationOrTherapyProgress: {
+      id: 'dp.application:errors.rehabilitationOrTherapyProgressRequired',
+      defaultMessage:
+        'Nauðsynlegt er að taka fram hvaða árangri endurhæfing eða meðferð hefur skilað þér',
+      description:
+        'You must specify any progress you have achieved from rehabilitation or therapy',
+    },
     emptyPreviousEmploymentWhen: {
       id: 'dp.application:errors.previousEmploymentWhenRequired',
       defaultMessage:
         'Nauðsynlegt er að taka fram hvenær þú varst í launuðu starfi',
       description: 'You must specify when you were in paid employment',
     },
+    emptyPreviousEmploymentJob: {
+      id: 'dp.application:errors.previousEmploymentJobRequired',
+      defaultMessage: 'Nauðsynlegt er að taka fram hvað aðalstarf þitt var',
+      description: 'You must specify in what profession you worked',
+    },
     emptyPreviousEmploymentField: {
       id: 'dp.application:errors.previousEmploymentFieldRequired',
       defaultMessage:
-        'Nauðsynlegt er að taka fram hvaða grein þú starfaðir við',
-      description: 'You must specify in what profession you worked',
+        'Nauðsynlegt er að taka fram hvernig starfsemi þú vannst við',
+      description: 'You must specify in what industry you worked',
     },
     emptyEmploymentStatus: {
       id: 'dp.application:errors.employmentStatusRequired',

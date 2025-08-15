@@ -22,6 +22,15 @@ export const mockProfessionCategories: ProfessionCategory[] = [
   { id: 16, title: 'Sala og markaðsmál' },
 ]
 
+export const mockProfessionJobTitle: ProfessionCategory[] = [
+  { id: 1, title: 'Læknir' },
+  { id: 2, title: 'Kennari' },
+  { id: 3, title: 'Forritari' },
+  { id: 4, title: 'Lögfræðingur' },
+  { id: 5, title: 'Fjármálari' },
+  { id: 6, title: 'Málari' },
+]
+
 export const mockEducationLevels = [
   {
     label: 'Lauk ekki grunnskóla',

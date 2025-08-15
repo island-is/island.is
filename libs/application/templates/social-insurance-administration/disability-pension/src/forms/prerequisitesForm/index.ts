@@ -80,15 +80,15 @@ export const Prerequisites = buildForm({
               subTitle: disabilityPensionFormMessage.prerequisites.incomeText,
             }),
             buildDataProviderItem({
+              provider: SocialInsuranceAdministrationWithholdingTaxApi,
+              title: disabilityPensionFormMessage.prerequisites.incomeTitle,
+              subTitle: disabilityPensionFormMessage.prerequisites.incomeText,
+            }),
+            buildDataProviderItem({
               provider: SocialInsuranceAdministrationCategorizedIncomeTypesApi,
               title: disabilityPensionFormMessage.prerequisites.dataFetchTitle,
               subTitle:
                 disabilityPensionFormMessage.prerequisites.dataFetchText,
-            }),
-            buildDataProviderItem({
-              provider: SocialInsuranceAdministrationWithholdingTaxApi,
-              title: disabilityPensionFormMessage.prerequisites.incomeTitle,
-              subTitle: disabilityPensionFormMessage.prerequisites.incomeText,
             }),
             buildDataProviderItem({
               provider: SocialInsuranceAdministrationEducationLevelsApi,
