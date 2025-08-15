@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger'
 
-import { SubpoenaStatistics } from '../../subpoena/models/subpoenaStatistics.response'
+import { SubpoenaStatistics } from './subpoenaStatistics.response'
 
 export class IndictmentCaseStatistics {
   @ApiProperty({ type: Date })
