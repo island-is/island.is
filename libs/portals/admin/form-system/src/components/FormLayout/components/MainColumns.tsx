@@ -97,7 +97,7 @@ export const MainContentColumn = () => {
             onConfirm={remove}
             disclosureElement={
               <DeleteButton
-                onClick={() => { }}
+                onClick={() => {}}
                 label={formatMessage(m.delete)}
               />
             }
