@@ -329,7 +329,7 @@ export const isTrafficViolationIndictmentCount = (
   }
 
   if (
-    indictmentSubtypes[policeCaseNumber].length === 1 &&
+    indictmentSubtypes[policeCaseNumber]?.length === 1 &&
     indictmentSubtypes[policeCaseNumber][0] ===
       IndictmentSubtype.TRAFFIC_VIOLATION
   ) {
