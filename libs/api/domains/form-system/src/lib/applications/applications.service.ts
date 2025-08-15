@@ -6,11 +6,13 @@ import { handle4xx } from '../../utils/errorHandler'
 import {
   ApplicationsApi,
   ApplicationsControllerCreateRequest,
+  ApplicationsControllerDeleteApplicationRequest,
   ApplicationsControllerFindAllByOrganizationRequest,
   ApplicationsControllerFindAllBySlugAndUserRequest,
   ApplicationsControllerGetApplicationRequest,
   ApplicationsControllerSaveScreenRequest,
   ApplicationsControllerSubmitRequest,
+  ApplicationsControllerSubmitSectionRequest,
   ApplicationsControllerUpdateRequest,
 } from '@island.is/clients/form-system'
 import {
@@ -19,6 +21,7 @@ import {
   GetApplicationInput,
   GetApplicationsInput,
   SubmitScreenInput,
+  SubmitSectionInput,
   UpdateApplicationInput,
 } from '../../dto/application.input'
 import {
@@ -26,7 +29,6 @@ import {
   ApplicationResponse,
 } from '../../models/applications.model'
 import { Screen } from '../../models/screen.model'
-import { UpdateApplicationDependenciesInput } from '../../dto/application.input'
 
 @Injectable()
 export class ApplicationsService {
@@ -104,7 +106,7 @@ export class ApplicationsService {
 
   async updateDependencies(
     auth: User,
-    input: UpdateApplicationDependenciesInput,
+    input: UpdateApplicationInput,
   ): Promise<void> {
     await this.applicationsApiWithAuth(auth).applicationsControllerUpdate(
       input as ApplicationsControllerUpdateRequest,
@@ -136,5 +138,21 @@ export class ApplicationsService {
       input as ApplicationsControllerSaveScreenRequest,
     )
     return response
+  }
+
+  async submitSection(auth: User, input: SubmitSectionInput): Promise<void> {
+    await this.applicationsApiWithAuth(
+      auth,
+    ).applicationsControllerSubmitSection(
+      input as ApplicationsControllerSubmitSectionRequest,
+    )
+  }
+
+  async deleteApplication(auth: User, input: string): Promise<void> {
+    await this.applicationsApiWithAuth(
+      auth,
+    ).applicationsControllerDeleteApplication({
+      id: input,
+    } as ApplicationsControllerDeleteApplicationRequest)
   }
 }
