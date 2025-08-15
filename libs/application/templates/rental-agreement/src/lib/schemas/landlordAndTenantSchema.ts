@@ -1,4 +1,5 @@
 import { z } from 'zod'
+import * as kennitala from 'kennitala'
 import * as m from '../messages'
 
 const personInfoSchema = z.object({
@@ -6,10 +7,16 @@ const personInfoSchema = z.object({
     nationalId: z
       .string()
       .optional()
-      .refine((x) => !!x && x.trim().length > 0, {
-        params: m.landlordAndTenantDetails.nationalIdEmptyError,
+      .refine((val) => (val ? kennitala.info(val).age >= 18 : false), {
+        params: m.landlordAndTenantDetails.nationalIdAgeError,
+      })
+      .refine((val) => (val ? kennitala.isValid(val) : false), {
+        params: m.landlordAndTenantDetails.nationalIdError,
       }),
-    name: z.string().optional(),
+    name: z
+      .string()
+      .optional()
+      .refine((name) => !!name && name.trim().length > 0),
   }),
   phone: z
     .string()
