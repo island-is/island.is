@@ -1,0 +1,61 @@
+import { Meta, Story, Canvas, Controls } from '@storybook/blocks'
+import * as TextStories from './Text.stories'
+
+import { Box } from '../Box/Box'
+import { VariantTypes } from './Text.css'
+import { GridColumn } from '../Grid/GridColumn/GridColumn'
+import { GridContainer } from '../Grid/GridContainer/GridContainer'
+import { GridRow } from '../Grid/GridRow/GridRow'
+import { LinkContext } from '../context'
+import { Text } from './Text'
+
+<Meta of={TextStories} />
+
+# Text
+
+## Our general text component
+
+### Control the appearance by choosing a `variant`
+
+<Canvas>
+  <Story of={TextStories.Variants} />
+</Canvas>
+
+### Customize it with lineHeight/fontWidth
+
+<Canvas>
+  <Story of={TextStories.Customize} />
+</Canvas>
+
+### Control the rendered element by specifying `as`
+
+<Canvas>
+  <Story of={TextStories.Element} />
+</Canvas>
+
+### Custom links inside text
+
+Depending on which React router we're using we often need to take control of how links are rendered.
+Wrap your app in `<LinkContext.Provider />` and provide a custom renderer function.
+
+#### Example:
+
+<Canvas>
+  <Story of={TextStories.CustomLinkRenderer} />
+</Canvas>
+
+### strong, em, etc
+
+<Canvas>
+  <Story of={TextStories.InlineElements} />
+</Canvas>
+
+### Text layout example
+
+<Canvas>
+  <Story of={TextStories.TextLayout} />
+</Canvas>
+
+# Props
+
+<Controls />

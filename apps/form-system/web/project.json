@@ -48,7 +48,6 @@
       "options": {
         "port": 4201,
         "buildTarget": "form-system-web:build",
-        "proxyConfig": "apps/form-system/web/proxy.config.json",
         "hmr": true
       },
       "configurations": {

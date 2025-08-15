@@ -1,0 +1,28 @@
+import { Meta, Story, Canvas } from '@storybook/blocks'
+import * as VisuallyHiddenStories from './VisuallyHidden.stories'
+
+import { VisuallyHidden } from './VisuallyHidden'
+import { Button } from '../Button/Button'
+
+<Meta of={VisuallyHiddenStories} />
+
+# VisuallyHidden
+
+Sometimes we need to give extra context to those who don't see the screen.
+This component wraps its children in a `span` and visually hides it.
+
+In some cases, using `VisuallyHidden` can be better than using `aria-label`.
+For example:
+
+- There can be variations in how screen readers announce `aria-label`.
+- Some users use automatic systems to translate pages (e.g., Google Translate), and these systems don't always translate `aria-label`.
+
+export const Template = (args) => (
+  <Button icon="settings" circle>
+    <VisuallyHidden {...args} />
+  </Button>
+)
+
+<Canvas>
+  <Story of={VisuallyHiddenStories.Default} />
+</Canvas>

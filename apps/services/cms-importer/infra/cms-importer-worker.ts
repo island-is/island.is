@@ -16,7 +16,7 @@ export const workerSetup = (): ServiceBuilder<'cms-importer-worker'> =>
         '/k8s/contentful-entry-tagger/CONTENTFUL_MANAGEMENT_ACCESS_TOKEN',
     })
     .command('node')
-    .args('main.js')
+    .args('main.cjs')
     .extraAttributes({
       // Schedule to run daily at 15:00 and midnight, every 3 hours on dev.
       dev: { schedule: '0 */3 * * *' },

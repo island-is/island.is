@@ -87,7 +87,7 @@ describe('AuthController', () => {
   }
 
   beforeAll(async () => {
-    const app = await setupTestServer({
+    app = await setupTestServer({
       override: (builder) =>
         builder
           .overrideProvider(CACHE_MANAGER)
@@ -491,8 +491,7 @@ describe('AuthController', () => {
       mockedSigningKeys.mockImplementationOnce(() => [noMatchKidSigningKey])
 
       const invalidToken = jwt.sign(tokenPayload, SECRET_KEY, {
-        algorithm: ALGORITM_TYPE,
-        header: { kid: KID },
+        header: { kid: KID, alg: ALGORITM_TYPE },
       })
 
       // Act
@@ -513,8 +512,7 @@ describe('AuthController', () => {
         },
         SECRET_KEY,
         {
-          algorithm: ALGORITM_TYPE,
-          header: { kid: KID },
+          header: { kid: KID, alg: ALGORITM_TYPE },
         },
       )
 
@@ -530,8 +528,7 @@ describe('AuthController', () => {
     it('should return a 200 success response', async () => {
       // Arrange
       const validToken = jwt.sign(tokenPayload, SECRET_KEY, {
-        algorithm: ALGORITM_TYPE,
-        header: { kid: KID },
+        header: { kid: KID, alg: ALGORITM_TYPE },
       })
 
       const getCacheSpy = jest.spyOn(mockCacheManagerValue, 'get')
