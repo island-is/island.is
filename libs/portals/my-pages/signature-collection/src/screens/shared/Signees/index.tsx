@@ -4,6 +4,9 @@ import {
   Table as T,
   Pagination,
   FilterInput,
+  GridContainer,
+  GridRow,
+  GridColumn,
 } from '@island.is/island-ui/core'
 import { useLocale, useNamespaces } from '@island.is/localization'
 import format from 'date-fns/format'
@@ -71,17 +74,21 @@ const Signees = ({
       <Text variant="h4" marginBottom={1}>
         {formatMessage(m.signeesHeader)}
       </Text>
-      <Box display="flex" justifyContent="spaceBetween">
-        <Box width="half">
-          <FilterInput
-            name="searchSignee"
-            value={searchTerm}
-            onChange={(v) => setSearchTerm(v)}
-            placeholder={formatMessage(m.searchInListPlaceholder)}
-            backgroundColor="white"
-          />
-        </Box>
-      </Box>
+
+      <GridContainer>
+        <GridRow>
+          <GridColumn span={['12/12', '12/12', '12/12', '8/12']}>
+            <FilterInput
+              name="searchSignee"
+              value={searchTerm}
+              onChange={(v) => setSearchTerm(v)}
+              placeholder={formatMessage(m.searchInListPlaceholder)}
+              backgroundColor="white"
+            />
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
+
       {!loadingSignees ? (
         signees.length > 0 ? (
           <Box marginTop={3}>
