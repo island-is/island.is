@@ -1,6 +1,6 @@
-import { Box, Button, DialogPrompt } from '@island.is/island-ui/core'
+import { Box, DialogPrompt } from '@island.is/island-ui/core'
 import { MainContent } from '../../MainContent/MainContent'
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import { ControlContext } from '../../../context/ControlContext'
 import { m } from '@island.is/form-system/ui'
 import { useIntl } from 'react-intl'
@@ -21,6 +21,9 @@ export const MainContentColumn = () => {
   const deleteScreen = useMutation(DELETE_SCREEN)
   const deleteField = useMutation(DELETE_FIELD)
   const deleteSection = useMutation(DELETE_SECTION)
+  const partiesSection =
+    activeItem.type === 'Section' &&
+    (activeItem.data as { sectionType?: string })?.sectionType === 'PARTIES'
 
   const containsGroupOrInput = (): boolean => {
     if (type === 'Section') {
@@ -82,7 +85,7 @@ export const MainContentColumn = () => {
         marginLeft: 0,
       }}
     >
-      {!inSettings ? (
+      {!inSettings && !partiesSection ? (
         containsGroupOrInput() ? (
           <DialogPrompt
             baseId="remove"

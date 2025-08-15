@@ -19,7 +19,8 @@ const filterSections = (
     (section): section is FormSystemSection =>
       section !== null &&
       section !== undefined &&
-      section.sectionType === SectionTypes.INPUT,
+      (section.sectionType === SectionTypes.INPUT ||
+        section.sectionType === SectionTypes.PARTIES),
   )
 }
 
