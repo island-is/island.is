@@ -3,6 +3,9 @@ import { ApiProperty } from '@nestjs/swagger'
 import { SubpoenaStatistics } from '../../subpoena/models/subpoenaStatistics.response'
 
 export class IndictmentCaseStatistics {
+  @ApiProperty({ type: Date })
+  minDate!: Date
+
   @ApiProperty({ type: Number })
   count!: number
 
@@ -28,6 +31,9 @@ export class RequestCaseStatistics {
 
   @ApiProperty({ type: Number })
   completedCount!: number
+
+  @ApiProperty({ type: Date })
+  minDate!: Date
 }
 
 export class CaseStatistics {
