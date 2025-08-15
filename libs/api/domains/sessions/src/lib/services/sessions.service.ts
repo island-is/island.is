@@ -14,7 +14,7 @@ export class SessionsService {
   }
 
   getSessions(user: User, input: SessionsInput): Promise<SessionsResultDto> {
-    return this.sessionsApiWithAuth(user).sessionsControllerFindAll({
+    return this.sessionsApiWithAuth(user).sessionsControllerFindAllV1({
       xQueryOtherUser: input.nationalId ?? '',
       after: input.after,
       before: input.before,

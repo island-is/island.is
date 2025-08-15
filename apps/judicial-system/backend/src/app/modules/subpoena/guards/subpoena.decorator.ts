@@ -1,7 +1,10 @@
-import { createParamDecorator } from '@nestjs/common'
+import { createParamDecorator, ExecutionContext } from '@nestjs/common'
 
 import { Subpoena } from '../models/subpoena.model'
 
 export const CurrentSubpoena = createParamDecorator(
-  (data, { args: [_1, { req }] }): Subpoena => req.subpoena,
+  (data: unknown, context: ExecutionContext): Subpoena => {
+    const ctx = context.getArgByIndex(1)
+    return ctx?.req?.subpoena
+  },
 )

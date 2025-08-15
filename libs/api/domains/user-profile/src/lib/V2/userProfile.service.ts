@@ -3,7 +3,7 @@ import { Injectable } from '@nestjs/common'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import {
   PostNudgeDtoNudgeTypeEnum,
-  UserProfileControllerFindUserProfileClientTypeEnum,
+  UserProfileControllerFindUserProfileV2ClientTypeEnum,
   V2ActorApi,
   V2MeApi,
   V2UsersApi,
@@ -66,7 +66,7 @@ export class UserProfileServiceV2 {
 
     const userProfile = await this.v2MeUserProfileApiWithAuth(
       user,
-    ).meUserProfileControllerPatchUserProfile({
+    ).meUserProfileControllerPatchUserProfileV2({
       patchUserProfileDto: {
         ...alteredInput,
         emailNotifications: alteredInput.canNudge,
@@ -90,7 +90,7 @@ export class UserProfileServiceV2 {
   async getUserProfile(user: User): Promise<UserProfile> {
     const userProfile = await this.v2MeUserProfileApiWithAuth(
       user,
-    ).meUserProfileControllerFindUserProfile()
+    ).meUserProfileControllerFindUserProfileV2()
 
     let bankInfo
     let bankInfoError = false
@@ -111,7 +111,7 @@ export class UserProfileServiceV2 {
   async createSmsVerification(input: CreateSmsVerificationInput, user: User) {
     await this.v2ActorApiWithAuth(
       user,
-    ).actorUserProfileControllerCreateVerification({
+    ).actorUserProfileControllerCreateVerificationV2({
       createVerificationDto: input,
     })
   }
@@ -119,7 +119,7 @@ export class UserProfileServiceV2 {
   async createMeSmsVerification(input: CreateSmsVerificationInput, user: User) {
     await this.v2MeUserProfileApiWithAuth(
       user,
-    ).meUserProfileControllerCreateVerification({
+    ).meUserProfileControllerCreateVerificationV2({
       createVerificationDto: input,
     })
   }
@@ -130,7 +130,7 @@ export class UserProfileServiceV2 {
   ): Promise<void> {
     await this.v2ActorApiWithAuth(
       user,
-    ).actorUserProfileControllerCreateVerification({
+    ).actorUserProfileControllerCreateVerificationV2({
       createVerificationDto: input,
     })
   }
@@ -141,7 +141,7 @@ export class UserProfileServiceV2 {
   ): Promise<void> {
     await this.v2MeUserProfileApiWithAuth(
       user,
-    ).meUserProfileControllerCreateVerification({
+    ).meUserProfileControllerCreateVerificationV2({
       createVerificationDto: input,
     })
   }
@@ -149,13 +149,13 @@ export class UserProfileServiceV2 {
   async getActorProfile(user: User): Promise<ActorProfileDetails> {
     return this.v2ActorApiWithAuth(
       user,
-    ).actorUserProfileControllerGetSingleActorProfile()
+    ).actorUserProfileControllerGetSingleActorProfileV2()
   }
 
   async getActorProfiles(user: User): Promise<ActorProfileResponse> {
     return this.v2ActorApiWithAuth(
       user,
-    ).actorUserProfileControllerGetActorProfiles()
+    ).actorUserProfileControllerGetActorProfilesV2()
   }
 
   async updateActorProfile(
@@ -164,7 +164,7 @@ export class UserProfileServiceV2 {
   ): Promise<ActorProfile> {
     return this.v2ActorApiWithAuth(
       user,
-    ).actorUserProfileControllerCreateOrUpdateActorProfile({
+    ).actorUserProfileControllerCreateOrUpdateActorProfileV2({
       xParamFromNationalId: input.fromNationalId,
       patchActorProfileDto: { emailNotifications: input.emailNotifications },
     })
@@ -176,7 +176,7 @@ export class UserProfileServiceV2 {
   ) {
     return this.v2ActorApiWithAuth(
       user,
-    ).actorUserProfileControllerUpdateActorProfileEmail({
+    ).actorUserProfileControllerUpdateActorProfileEmailV2({
       updateActorProfileEmailDto: input,
     })
   }
@@ -188,7 +188,7 @@ export class UserProfileServiceV2 {
   ) {
     return this.v2MeUserProfileApiWithAuth(
       user,
-    ).meUserProfileControllerUpdateActorProfileEmail({
+    ).meUserProfileControllerUpdateActorProfileEmailV2({
       xParamFromNationalId: fromNationalId,
       updateActorProfileEmailDto: input,
     })
@@ -197,7 +197,7 @@ export class UserProfileServiceV2 {
   confirmNudge(user: User) {
     return this.v2MeUserProfileApiWithAuth(
       user,
-    ).meUserProfileControllerConfirmNudge({
+    ).meUserProfileControllerConfirmNudgeV2({
       postNudgeDto: { nudgeType: PostNudgeDtoNudgeTypeEnum.NUDGE },
     })
   }
@@ -205,7 +205,7 @@ export class UserProfileServiceV2 {
   async getUserProfiles(user: User, search: string) {
     return this.v2UserProfileApiWithAuth(
       user,
-    ).userProfileControllerFindUserProfiles({
+    ).userProfileControllerFindUserProfilesV2({
       search: search,
     })
   }
@@ -216,8 +216,8 @@ export class UserProfileServiceV2 {
   ): Promise<AdminUserProfile> {
     return this.v2UserProfileApiWithAuth(
       user,
-    ).userProfileControllerFindUserProfile({
-      clientType: UserProfileControllerFindUserProfileClientTypeEnum.FirstParty,
+    ).userProfileControllerFindUserProfileV2({
+      clientType: UserProfileControllerFindUserProfileV2ClientTypeEnum.FirstParty,
       xParamNationalId: nationalId,
     })
   }
@@ -229,7 +229,7 @@ export class UserProfileServiceV2 {
   ): Promise<AdminUserProfile> {
     return this.v2UserProfileApiWithAuth(
       user,
-    ).userProfileControllerPatchUserProfile({
+    ).userProfileControllerPatchUserProfileV2({
       xParamNationalId: nationalId,
       patchUserProfileDto: input,
     })
@@ -263,7 +263,7 @@ export class UserProfileServiceV2 {
   ) {
     return this.v2MeUserProfileApiWithAuth(
       user,
-    ).meUserProfileControllerSetActorProfileEmailById({
+    ).meUserProfileControllerSetActorProfileEmailByIdV2({
       xParamFromNationalId: input.fromNationalId,
       setActorProfileEmailDto: {
         emailsId: input.emailId,
@@ -274,7 +274,7 @@ export class UserProfileServiceV2 {
   async setActorProfileEmail(input: SetActorProfileEmailInput, user: User) {
     return this.v2ActorApiWithAuth(
       user,
-    ).actorUserProfileControllerSetActorProfileEmail({
+    ).actorUserProfileControllerSetActorProfileEmailV2({
       setActorProfileEmailDto: {
         emailsId: input.emailId,
       },

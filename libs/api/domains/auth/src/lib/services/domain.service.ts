@@ -15,7 +15,7 @@ export class DomainService {
   }
 
   getDomains(user: User, input: DomainsInput): Promise<Domain[]> {
-    return this.domainsApiWithAuth(user).domainsControllerFindAll({
+    return this.domainsApiWithAuth(user).domainsControllerFindAllV1({
       lang: input.lang,
       direction: input.direction,
       domainName: input.domainNames,

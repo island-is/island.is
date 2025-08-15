@@ -15,6 +15,7 @@ import {
   UserProfileDto,
   V2UsersApi,
 } from '@island.is/clients/user-profile'
+import { DelegationRecordDTO } from '@island.is/clients/auth/delegation-api'
 import { Body, EmailService, Message } from '@island.is/email-service'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
@@ -345,13 +346,13 @@ export class NotificationsWorkerService {
 
         if (message.onBehalfOf) {
           profile =
-            await this.userProfileApi.userProfileControllerGetActorProfile({
+            await this.userProfileApi.userProfileControllerGetActorProfileV2({
               xParamToNationalId: message.recipient,
               xParamFromNationalId: message.onBehalfOf.nationalId,
             })
         } else {
           profile =
-            await this.userProfileApi.userProfileControllerFindUserProfile({
+            await this.userProfileApi.userProfileControllerFindUserProfileV2({
               xParamNationalId: message.recipient,
             })
         }
@@ -395,7 +396,7 @@ export class NotificationsWorkerService {
             // don't fail if we can't get delegations
             try {
               const delegations =
-                await this.delegationsApi.delegationsControllerGetDelegationRecords(
+                await this.delegationsApi.delegationsControllerGetDelegationRecordsV1(
                   {
                     xQueryNationalId: message.recipient,
                     scope: DocumentsScope.main,
@@ -410,17 +411,21 @@ export class NotificationsWorkerService {
 
               // Filter out duplicate delegations that have the same fromNationalId and toNationalId
               delegations.data = delegations.data.filter(
-                (delegation, index, self) =>
+                (
+                  delegation: DelegationRecordDTO,
+                  index: number,
+                  self: DelegationRecordDTO[],
+                ) =>
                   index ===
                   self.findIndex(
-                    (d) =>
+                    (d: DelegationRecordDTO) =>
                       d.fromNationalId === delegation.fromNationalId &&
                       d.toNationalId === delegation.toNationalId,
                   ),
               )
 
               await Promise.all(
-                delegations.data.map((delegation) =>
+                delegations.data.map((delegation: DelegationRecordDTO) =>
                   this.queue.add({
                     ...message,
                     recipient: delegation.toNationalId,

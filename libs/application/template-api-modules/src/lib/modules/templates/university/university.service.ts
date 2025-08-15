@@ -18,7 +18,7 @@ import {
   ApplicationApi,
   CreateApplicationDtoModeOfDeliveryEnum,
   CreateApplicationEducationDto,
-  UniversityApplicationControllerCreateApplicationRequest,
+  UniversityApplicationControllerCreateApplicationV1Request,
   CreateApplicationDtoEducationOptionEnum,
   CreateApplicationExtraFieldsDto,
   ProgramExtraApplicationFieldFieldTypeEnum,
@@ -53,16 +53,18 @@ export class UniversityService extends BaseTemplateApiService {
   }
 
   async getUniversities({ application, auth }: TemplateApiModuleActionProps) {
-    const res = await this.universityApi.universityControllerGetUniversities()
+    const res = await this.universityApi.universityControllerGetUniversitiesV1()
     return res.data
   }
 
   async getPrograms({ application, auth }: TemplateApiModuleActionProps) {
-    const res = await this.programApi.programControllerGetApplicationPrograms({
-      active: true,
-    })
+    const res = await this.programApi.programControllerGetApplicationProgramsV1(
+      {
+        active: true,
+      },
+    )
 
-    return res.data.map((item) => ({
+    return res.data.map((item: any) => ({
       active: item.active,
       id: item.id,
       externalId: item.externalId,
@@ -260,7 +262,7 @@ export class UniversityService extends BaseTemplateApiService {
       // TODO handle other field types when ready
     }
 
-    const createApplicationDto: UniversityApplicationControllerCreateApplicationRequest =
+    const createApplicationDto: UniversityApplicationControllerCreateApplicationV1Request =
       {
         createApplicationDto: {
           applicationId: application.id,
@@ -285,7 +287,7 @@ export class UniversityService extends BaseTemplateApiService {
       }
     await this.universityApplicationApiWithAuth(
       auth,
-    ).universityApplicationControllerCreateApplication(createApplicationDto)
+    ).universityApplicationControllerCreateApplicationV1(createApplicationDto)
   }
 
   private async getAttachmentUrls(

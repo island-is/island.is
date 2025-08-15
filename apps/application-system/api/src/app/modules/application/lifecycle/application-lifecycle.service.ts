@@ -205,7 +205,7 @@ export class ApplicationLifeCycleService {
   ) {
     try {
       const response =
-        await this.notificationApi.notificationsControllerCreateHnippNotification(
+        await this.notificationApi.notificationsControllerCreateHnippNotificationV1(
           {
             createHnippNotificationDto: notification,
           },

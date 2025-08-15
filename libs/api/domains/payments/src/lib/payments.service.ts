@@ -29,19 +29,19 @@ export class PaymentsService {
   ) {}
 
   getPaymentFlow(input: GetPaymentFlowInput): Promise<GetPaymentFlowDTO> {
-    return this.paymentsApi.paymentFlowControllerGetPaymentFlow(input)
+    return this.paymentsApi.paymentFlowControllerGetPaymentFlowV1(input)
   }
 
   getVerificationStatus(
     input: GetPaymentFlowInput,
   ): Promise<VerificationStatusResponse> {
-    return this.paymentsApi.cardPaymentControllerVerificationStatus({
+    return this.paymentsApi.cardPaymentControllerVerificationStatusV1({
       paymentFlowId: input.id,
     })
   }
 
   verifyCard(verifyCardInput: VerifyCardInput): Promise<VerifyCardResponse> {
-    return this.paymentsApi.cardPaymentControllerVerify({
+    return this.paymentsApi.cardPaymentControllerVerifyV1({
       verifyCardInput,
     })
   }
@@ -72,7 +72,7 @@ export class PaymentsService {
       throw new Error('Invalid verification token contents')
     }
 
-    return this.paymentsApi.cardPaymentControllerVerificationCallback({
+    return this.paymentsApi.cardPaymentControllerVerificationCallbackV1({
       verificationCallbackInput: {
         cavv,
         xid,
@@ -86,7 +86,7 @@ export class PaymentsService {
   async chargeCard(
     chargeCardInput: ChargeCardInput,
   ): Promise<ChargeCardResponse> {
-    const response = await this.paymentsApi.cardPaymentControllerCharge({
+    const response = await this.paymentsApi.cardPaymentControllerChargeV1({
       chargeCardInput,
     })
 
@@ -101,7 +101,7 @@ export class PaymentsService {
   async createInvoice(
     createInvoiceInput: CreateInvoiceInput,
   ): Promise<CreateInvoiceResponse> {
-    return this.paymentsApi.invoicePaymentControllerCreate({
+    return this.paymentsApi.invoicePaymentControllerCreateV1({
       createInvoiceInput,
     })
   }

@@ -1,9 +1,9 @@
 import { registerEnumType } from '@nestjs/graphql'
 
-import { DomainsControllerFindAllDirectionEnum } from '@island.is/clients/auth/delegation-api'
+import { DomainsControllerFindAllV1DirectionEnum } from '@island.is/clients/auth/delegation-api'
 
-export const DomainDirection = DomainsControllerFindAllDirectionEnum
+export const DomainDirection = DomainsControllerFindAllV1DirectionEnum
 
-registerEnumType(DomainsControllerFindAllDirectionEnum, {
+registerEnumType(DomainsControllerFindAllV1DirectionEnum, {
   name: 'AuthDomainDirection',
 })
