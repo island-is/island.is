@@ -1,3 +1,5 @@
+import { HealthDirectorateApprovalStatus } from '@island.is/api/schema'
+import { Box, Button } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import {
   formatDate,
@@ -6,15 +8,12 @@ import {
   InfoLineStack,
   IntroWrapper,
 } from '@island.is/portals/my-pages/core'
-import React, { useState } from 'react'
-import { messages } from '../../lib/messages'
-import { Button, Box } from '@island.is/island-ui/core'
-import { mockData } from './mockData'
-import { useParams } from 'react-router-dom'
-import { useGetPatientDataPermitQuery } from './PatientDataPermits.generated'
-import { HealthDirectorateApprovalStatus } from '@island.is/api/schema'
-import { InvalidatePermitModal } from '../../components/PatientDataPermit/InvalidatePermitModal'
 import { Problem } from '@island.is/react-spa/shared'
+import React, { useState } from 'react'
+import { useParams } from 'react-router-dom'
+import { InvalidatePermitModal } from '../../components/PatientDataPermit/InvalidatePermitModal'
+import { messages } from '../../lib/messages'
+import { useGetPatientDataPermitQuery } from './PatientDataPermits.generated'
 
 type UseParams = {
   id: string

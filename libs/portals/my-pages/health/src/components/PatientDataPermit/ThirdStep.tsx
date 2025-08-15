@@ -1,10 +1,10 @@
 import { HealthDirectoratePatientDataApprovalInput } from '@island.is/api/schema'
-import { Box, Button, DatePicker, Text, toast } from '@island.is/island-ui/core'
+import { Box, Button, DatePicker, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React, { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
+import { Dispatch, FC, SetStateAction, useState } from 'react'
 import { messages } from '../../lib/messages'
-import * as styles from './PatientDataPermit.css'
 import { addMonths, addYears, today } from '../../utils/dates'
+import * as styles from './PatientDataPermit.css'
 interface ThirdStepProps {
   onClick: () => void
   goBack: () => void

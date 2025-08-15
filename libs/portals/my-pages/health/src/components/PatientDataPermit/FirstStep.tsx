@@ -25,13 +25,13 @@ const FirstStep: React.FC<FirstStepProps> = ({ onClick }) => {
       <Box className={styles.linkText} marginBottom={2}>
         <Text variant="default" fontWeight="light">
           {formatMessage(messages.permitApprovalDescription, {
-            link: (str: any) => (
+            link: (parts: React.ReactNode[]) => (
               <Button
                 variant="text"
                 size="medium"
                 onClick={() => setModalOpen(true)}
               >
-                {str}
+                {parts}
               </Button>
             ),
           })}

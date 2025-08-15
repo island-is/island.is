@@ -1,9 +1,9 @@
-import { Box, Button, Text } from '@island.is/island-ui/core'
+import { Text } from '@island.is/island-ui/core'
+import { useLocale } from '@island.is/localization'
 import { Modal } from '@island.is/portals/my-pages/core'
+import { Markdown } from '@island.is/shared/components'
 import React from 'react'
 import { messages } from '../../lib/messages'
-import { Markdown } from '@island.is/shared/components'
-import { useLocale } from '@island.is/localization'
 
 interface InfoModalProps {
   open: boolean

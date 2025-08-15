@@ -23,8 +23,7 @@ const NewPermit: React.FC = () => {
 
   const navigate = useNavigate()
 
-  const [createPermit, { loading, error, called }] =
-    useCreatePatientDataPermitMutation()
+  const [createPermit] = useCreatePatientDataPermitMutation()
 
   const handleSubmit = () => {
     if (formState) {
