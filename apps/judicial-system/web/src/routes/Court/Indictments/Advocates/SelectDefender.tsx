@@ -1,7 +1,13 @@
 import { ChangeEvent, FC, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import { Box, Button, Checkbox, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  Checkbox,
+  Text,
+} from '@island.is/island-ui/core'
 import { capitalize } from '@island.is/judicial-system/formatters'
 import { core } from '@island.is/judicial-system-web/messages'
 import {
@@ -234,7 +240,13 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
           />
         </Box>
         {defendant.isDefenderChoiceConfirmed && defendant.defenderName && (
-          <Box marginTop={2}>SDKNJF</Box>
+          <Box marginTop={2}>
+            <AlertMessage
+              title="Sending tókst"
+              message={`${defendant.defenderName} hefur fengið tilkynningu um skráningu í tölvupósti.`}
+              type="success"
+            />
+          </Box>
         )}
         <Box display="flex" justifyContent="flexEnd" marginTop={2}>
           <Button
