@@ -11,9 +11,6 @@ import {
 } from '@island.is/judicial-system/auth'
 
 import { adminRule, localAdminRule } from '../../guards'
-import { CivilClaimantService } from '../defendant'
-import { EventService } from '../event'
-import { UserService } from '../user'
 import {
   CaseStatistics,
   IndictmentCaseStatistics,
@@ -23,16 +20,13 @@ import { SubpoenaStatistics } from './models/subpoenaStatistics.response'
 import { IndictmentStatisticsDto } from './statistics/indictmentStatistics.dto'
 import { RequestStatisticsDto } from './statistics/requestStatistics.dto'
 import { SubpoenaStatisticsDto } from './statistics/subpoenaStatistics.dto'
-import { StatisticsService } from './statistics.service'
+import { DataGroups, StatisticsService } from './statistics.service'
 
 @Controller('api')
 @ApiTags('statistics')
 export class StatisticsController {
   constructor(
     private readonly statisticService: StatisticsService,
-    private readonly userService: UserService,
-    private readonly eventService: EventService,
-    private readonly civilClaimantService: CivilClaimantService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -114,5 +108,22 @@ export class StatisticsController {
       query?.sentToCourt,
       query?.institutionId,
     )
+  }
+
+  @UseGuards(JwtAuthUserGuard, RolesGuard)
+  @RolesRules(adminRule, localAdminRule)
+  @Get('cases/requests/statistics/export-csv')
+  @ApiOkResponse({
+    type: String,
+    description: 'Export transformed request case data',
+  })
+  exportRequestStatistics(
+    @Query('query') query?: RequestStatisticsDto,
+  ): Promise<{ url: string }> {
+    this.logger.debug('Create and export csv file for data analytics', query)
+
+    return this.statisticService.extractTransformLoadRvgDataToS3({
+      type: DataGroups.REQUESTS,
+    })
   }
 }

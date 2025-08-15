@@ -1,19 +1,18 @@
+import stringify from 'csv-stringify'
 import isWithinInterval from 'date-fns/isWithinInterval'
 import { col, fn, Includeable, literal, Op, WhereOptions } from 'sequelize'
-import { Sequelize } from 'sequelize-typescript'
 
 import { Inject, Injectable } from '@nestjs/common'
-import { InjectConnection, InjectModel } from '@nestjs/sequelize'
+import { InjectModel } from '@nestjs/sequelize'
 
-import { IntlService } from '@island.is/cms-translations'
-import { SigningService } from '@island.is/dokobit-signing'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { MessageService } from '@island.is/judicial-system/message'
 import {
+  CaseNotificationType,
   CaseState,
   CaseType,
+  dateTypes,
   EventType,
   isCompletedCase,
   isIndictmentCase,
@@ -22,13 +21,10 @@ import {
 
 import { AwsS3Service } from '../aws-s3'
 import { Case, DateLog, partition } from '../case'
-import { CaseString } from '../case/models/caseString.model'
-import { CourtService } from '../court'
-import { DefendantService } from '../defendant'
-import { EventService } from '../event'
-import { EventLog, EventLogService } from '../event-log'
-import { FileService } from '../file'
-import { Subpoena, SubpoenaService } from '../subpoena'
+import { EventLog } from '../event-log'
+import { Institution } from '../institution'
+import { Notification } from '../notification'
+import { Subpoena } from '../subpoena'
 import {
   CaseStatistics,
   IndictmentCaseStatistics,
@@ -39,26 +35,19 @@ import {
   SubpoenaStatistics,
 } from './models/subpoenaStatistics.response'
 import { DateFilter } from './statistics/types'
+import { eventFunctions } from './caseEvents'
+
+export enum DataGroups {
+  REQUESTS = 'REQUESTS',
+  INDICTMENTS = 'INDICTMENTS',
+}
 
 @Injectable()
 export class StatisticsService {
   constructor(
-    @InjectConnection() private readonly sequelize: Sequelize,
     @InjectModel(Case) private readonly caseModel: typeof Case,
-    @InjectModel(DateLog) private readonly dateLogModel: typeof DateLog,
     @InjectModel(Subpoena) private readonly subpoenaModel: typeof Subpoena,
-    @InjectModel(CaseString)
-    private readonly caseStringModel: typeof CaseString,
-    private readonly defendantService: DefendantService,
-    private readonly subpoenaService: SubpoenaService,
-    private readonly fileService: FileService,
     private readonly awsS3Service: AwsS3Service,
-    private readonly courtService: CourtService,
-    private readonly signingService: SigningService,
-    private readonly intlService: IntlService,
-    private readonly eventService: EventService,
-    private readonly eventLogService: EventLogService,
-    private readonly messageService: MessageService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -449,5 +438,86 @@ export class StatisticsService {
       inProgressCount,
       completedCount,
     }
+  }
+
+  // TODO: !!
+  private async extractAndTransformRequestCases() {
+    const where: WhereOptions = {
+      type: {
+        [Op.not]: [CaseType.INDICTMENT],
+      },
+    }
+
+    const cases = await this.caseModel.findAll({
+      where,
+      order: [['created', 'ASC']],
+      include: [
+        {
+          model: EventLog,
+          required: false,
+          attributes: ['created', 'eventType'],
+        },
+        { model: Institution, as: 'prosecutorsOffice' },
+        { model: Institution, as: 'court' },
+        {
+          model: DateLog,
+          as: 'dateLogs',
+          required: false,
+          where: { dateType: dateTypes },
+          order: [['created', 'DESC']],
+          separate: true,
+        },
+        {
+          model: Notification,
+          as: 'notifications',
+          required: false,
+          where: { type: CaseNotificationType.APPEAL_COMPLETED },
+          order: [['created', 'DESC']],
+          separate: true,
+        },
+      ],
+    })
+
+    // create events for data analytics for each case
+    const events = cases
+      .flatMap((c) => eventFunctions.flatMap((func) => func(c)))
+      .filter((event) => !!event)
+
+    return events
+  }
+
+  async extractTransformLoadRvgDataToS3({
+    type,
+  }: {
+    type: DataGroups
+  }): Promise<{ url: string }> {
+    const getData = async () => {
+      if (type === DataGroups.REQUESTS) {
+        return await this.extractAndTransformRequestCases()
+      }
+      return undefined
+    }
+    const data = await getData()
+    if (!data) return { url: '' }
+
+    stringify(data, { header: true }, async (error, csvOutput) => {
+      if (error) {
+        this.logger.error('Failed to convert data to csv file')
+        return
+      }
+      const key = 'test'
+      try {
+        this.awsS3Service.uploadCsvToS3(key, csvOutput)
+      } catch (error) {
+        this.logger.error(`Failed to upload csv ${key} to AWS S3`, { error })
+      }
+    })
+
+    const url = await this.awsS3Service.getSignedUrl(
+      'statistics',
+      'test',
+      60 * 60,
+    )
+    return { url }
   }
 }
