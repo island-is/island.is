@@ -38,6 +38,7 @@ export const judgeAmendsCase = async (page: Page, caseId: string) => {
   await page
     .locator('textarea[id=courtLegalArguments]')
     .fill('Dómari hefur ákveðið að breyta úrskurði')
+  await page.keyboard.press('Tab')
   await Promise.all([
     page.getByTestId('continueButton').click(),
     verifyRequestCompletion(page, '/api/graphql', 'Case'),
