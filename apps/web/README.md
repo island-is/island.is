@@ -1,25 +1,5 @@
 # Web Application
 
-This is the main web application for island.is.
-
-## Environment Variables
-
-### Redis Configuration for JTI Caching
-
-The application uses Redis to store JWT IDs (JTIs) to prevent replay attacks in payment callbacks. The following environment variables are required:
-
-- `REDIS_URL_NODE_01`: Redis connection URL (e.g., `redis://localhost:6379` or `redis-cluster.example.com:6379`)
-
-If Redis is not configured, the application will fall back to allowing all requests (not recommended for production).
-
-### Payment Configuration
-
-- `PAYMENTS_WEB_URL`: Base URL for the payments service
-- `LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL`: Callback URL for Landspitali payment events
-- `WEB_PAYMENT_CONFIRMATION_SECRET`: Secret for payment confirmation validation
-
-## Development
-
 ## Quickstart
 
 Ensure docker is running, then run the following when running for the first time:
@@ -119,6 +99,12 @@ To test out this functionality locally you'll need the following environment var
 - `PAYMENTS_WEB_URL`: Base URL for the payments service
 - `WEB_PAYMENT_CONFIRMATION_SECRET`: Secret for payment confirmation validation
 - `LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL`: Callback URL for Landspitali payment events (Only if you are testing the "Landspítali" payment flow specifically, more environment variables might be added in the future if there'll be more login-less payments)
+
+### Redis Configuration for JTI Caching
+
+The application uses Redis to store JWT IDs (JTIs) to prevent replay attacks in payment callbacks. If you want to test things out locally you can run the shared redis-cluster and then set the following env variable:
+
+- `REDIS_URL_NODE_01`: localhost:7010
 
 ## Further Documentation
 

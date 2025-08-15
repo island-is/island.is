@@ -6,6 +6,7 @@ import type { NextApiRequest, NextApiResponse } from 'next'
 import getConfig from 'next/config'
 
 import type { PaymentCallbackPayload } from '@island.is/api/domains/landspitali'
+import { logger } from '@island.is/logging'
 import initApollo from '@island.is/web/graphql/client'
 import {
   WebLandspitaliSendDirectGrantPaymentConfirmationEmailMutation,
@@ -58,10 +59,7 @@ const computeSha256 = (body: string): string => {
   return crypto.createHash('sha256').update(body).digest('hex')
 }
 
-const validateIncomingJwt = (
-  token: string,
-  rawBody: string,
-): Promise<object> => {
+const validateIncomingJwt = (token: string, rawBody: string) => {
   return new Promise((resolve, reject) => {
     jwt.verify(
       token,
@@ -75,7 +73,7 @@ const validateIncomingJwt = (
       (err, decoded: any) => {
         if (err) return reject(err)
 
-        if (!decoded.jti) {
+        if (!decoded?.jti) {
           return reject(new Error('Missing jti'))
         }
 
@@ -114,15 +112,16 @@ export default async function handler(
   }
 
   // This will throw an error if the JWT is invalid
-  await validateIncomingJwt(token, req.body)
+  try {
+    await validateIncomingJwt(token, req.body)
+  } catch (error) {
+    logger.warn('Web payment callback JWT validation failed', { error })
+    return res.status(401).json({ message: 'Unauthorized' })
+  }
 
   const payment = req.body as PaymentCallbackPayload
 
-  // TODO: Only keep going if the nationalId of the performing organization is "Landspítalinn"
-
   if (payment.type !== 'success') {
-    // TODO: What should I do here?
-    // Look into libs/application/api/payment/src/lib/payment-callback.controller.ts
     return res.status(200).send('')
   }
 

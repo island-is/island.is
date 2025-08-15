@@ -18,6 +18,8 @@ const {
   PAYMENTS_WEB_URL,
   LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL,
   WEB_PAYMENT_CONFIRMATION_SECRET,
+  REDIS_URL_NODE_01,
+  REDIS_USE_SSL,
 } = process.env
 
 /**
@@ -196,8 +198,8 @@ const nextConfig = {
     landspitaliPaymentFlowEventCallbackUrl:
       LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL,
     paymentConfirmationSecret: WEB_PAYMENT_CONFIRMATION_SECRET,
-    redisUrl: process.env.REDIS_URL_NODE_01,
-    redisUseSsl: process.env.REDIS_USE_SSL === 'true',
+    redisUrl: REDIS_URL_NODE_01,
+    redisUseSsl: ENVIRONMENT === 'local' ? false : REDIS_USE_SSL === 'true',
   },
 
   publicRuntimeConfig: {
