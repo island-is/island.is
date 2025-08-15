@@ -252,6 +252,25 @@ export class ApplicationService {
     })
   }
 
+  async findAllDueToBePostPruned(): Promise<Application[]> {
+    return this.applicationModel.findAll({
+      attributes: ['id'],
+      where: {
+        [Op.and]: {
+          postPruneAte: {
+            [Op.and]: {
+              [Op.not]: null,
+              [Op.lt]: new Date(),
+            },
+          },
+          postPruned: {
+            [Op.eq]: false,
+          },
+        },
+      },
+    })
+  }
+
   /**
    * A function to pass to data providers / template api modules to be able to
    * query applications of their respective type in order to infer some data to
@@ -305,6 +324,8 @@ export class ApplicationService {
         | 'draftTotalSteps'
         | 'draftFinishedSteps'
         | 'pruneAt'
+        | 'postPruned'
+        | 'postPruneAt'
       >
     >,
   ) {

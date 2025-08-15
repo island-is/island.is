@@ -58,6 +58,11 @@ query getInstitutionApplications(
       institution
       progress
       status
+      adminData {
+        key
+        value
+        label
+      }
       applicantName
       paymentStatus
       actionCard {

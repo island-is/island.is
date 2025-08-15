@@ -34,6 +34,7 @@ import {
 import { FeatureFlagService, Features } from '@island.is/nest/feature-flags'
 import { PaymentService } from '@island.is/application/api/payment'
 import {
+  getAdminData,
   getApplicantName,
   getApplicationNameTranslationString,
   getApplicationStatisticsNameTranslationString,
@@ -179,6 +180,7 @@ export class ApplicationAdminSerializer
       externalData: [],
       paymentStatus: getPaymentStatusForAdmin(payment),
       applicantName: getApplicantName(application),
+      adminData: getAdminData(template, application, intl.formatMessage),
     })
     return instanceToPlain(dto)
   }
@@ -266,6 +268,7 @@ export class ApplicationAdminStatisticsSerializer
       )
     )
       .filter(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
         (item): item is PromiseFulfilledResult<Record<string, any>> =>
           item.status === 'fulfilled',
       )

@@ -91,6 +91,7 @@ export const ApplicationsTable = ({
             <T.HeadData>{formatMessage(m.application)}</T.HeadData>
             <T.HeadData>{formatMessage(m.applicant)}</T.HeadData>
             <T.HeadData>{formatMessage(m.nationalId)}</T.HeadData>
+            {/* <T.HeadData>Admin data</T.HeadData> */}
             <T.HeadData>{formatMessage(m.dateModified)}</T.HeadData>
             <T.HeadData>{formatMessage(m.institution)}</T.HeadData>
             <T.HeadData>{formatMessage(m.status)}</T.HeadData>
@@ -137,6 +138,11 @@ export const ApplicationsTable = ({
                       <T.Data text={{ color: cellText }}>
                         {application.applicant}
                       </T.Data>
+                      {/* <T.Data text={{ color: cellText }}>
+                        {application.adminData
+                          ?.map((x) => `${formatMessage(x.label)}: ${x.value}`)
+                          ?.join('\n') ?? ''}
+                      </T.Data> */}
                       <T.Data text={{ color: cellText }}>
                         {format(new Date(application.modified), 'dd.MM.yyyy')}
                       </T.Data>

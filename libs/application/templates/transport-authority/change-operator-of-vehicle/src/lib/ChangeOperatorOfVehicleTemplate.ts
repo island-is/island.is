@@ -36,6 +36,7 @@ import {
   isRemovingOperatorOnly,
   getChargeItems,
   getExtraData,
+  getReviewers,
 } from '../utils'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { ApiScope } from '@island.is/auth/scopes'
@@ -67,18 +68,33 @@ const reviewStatePendingAction = (
   role: string,
   nationalId: string,
 ): PendingAction => {
-  if (nationalId && canReviewerApprove(nationalId, application.answers)) {
-    return {
-      title: corePendingActionMessages.waitingForReviewTitle,
-      content: corePendingActionMessages.youNeedToReviewDescription,
-      displayStatus: 'warning',
+  if (nationalId) {
+    if (nationalId === InstitutionNationalIds.SAMGONGUSTOFA) {
+      return {
+        title: corePendingActionMessages.waitingForReviewTitle,
+        content: {
+          ...corePendingActionMessages.whoNeedsToReviewDescription,
+          values: {
+            value: getReviewers(application.answers)
+              .filter((x) => !x.hasApproved)
+              .map((x) => `${x.name} (${x.nationalId})`)
+              .join(', '),
+          },
+        },
+        displayStatus: 'info',
+      }
+    } else if (canReviewerApprove(nationalId, application.answers)) {
+      return {
+        title: corePendingActionMessages.waitingForReviewTitle,
+        content: corePendingActionMessages.youNeedToReviewDescription,
+        displayStatus: 'warning',
+      }
     }
-  } else {
-    return {
-      title: corePendingActionMessages.waitingForReviewTitle,
-      content: corePendingActionMessages.waitingForReviewDescription,
-      displayStatus: 'info',
-    }
+  }
+  return {
+    title: corePendingActionMessages.waitingForReviewTitle,
+    content: corePendingActionMessages.waitingForReviewDescription,
+    displayStatus: 'info',
   }
 }
 
@@ -104,6 +120,15 @@ const template: ApplicationTemplate<
     },
   ],
   requiredScopes: [ApiScope.samgongustofaVehicles],
+  adminDataConfig: {
+    whenToPostPrune: 2 * 365 * 24 * 3600 * 1000, // 2 years
+    answers: [
+      { key: 'pickVehicle.plate', isListed: false },
+      { key: 'ownerCoOwner', isListed: false },
+      { key: 'operators', isListed: false },
+    ],
+    externalData: [{ key: 'identity.data.name' }],
+  },
   stateMachineConfig: {
     initial: States.DRAFT,
     states: {

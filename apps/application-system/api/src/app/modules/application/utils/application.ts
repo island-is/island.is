@@ -6,7 +6,6 @@ import {
 } from '@island.is/application/core'
 import {
   Application,
-  ApplicationConfigurations,
   ApplicationContext,
   ApplicationLifecycle,
   ApplicationStateSchema,
@@ -137,6 +136,24 @@ export const getApplicantName = (application: Application) => {
     return getValueViaPath(application.externalData, 'person.data.fullname')
   }
   return null
+}
+
+export const getAdminData = (
+  template: Template,
+  application: Application,
+  formatMessage: FormatMessage,
+) => {
+  if (template.adminDataConfig?.answers) {
+    return template.adminDataConfig.answers
+      .filter((config) => config.isListed)
+      .map((config) => {
+        return {
+          key: config.key,
+          value: getValueViaPath<string>(application.answers, config.key),
+          label: formatMessage(config.label ?? ''),
+        }
+      })
+  }
 }
 
 export const mockApplicationFromTypeId = (
