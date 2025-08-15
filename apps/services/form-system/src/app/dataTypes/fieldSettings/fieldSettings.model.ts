@@ -112,4 +112,19 @@ export class FieldSettings {
   @IsString()
   @ApiPropertyOptional({ type: String })
   timeInterval?: string
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean, default: true })
+  zendeskIsPublic = true
+
+  @IsOptional()
+  @IsBoolean()
+  @ApiPropertyOptional({ type: Boolean })
+  zendeskIsCustomField?: boolean
+
+  @IsOptional()
+  @IsString()
+  @ApiPropertyOptional({ type: String })
+  zendeskCustomFieldId?: string
 }
