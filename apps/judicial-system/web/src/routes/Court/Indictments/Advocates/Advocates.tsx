@@ -82,7 +82,7 @@ const Advocates = () => {
                     y: 5,
                   }}
                 >
-                  <TooltipProvider>
+                  <TooltipProvider timeout={0}>
                     <TooltipAnchor
                       render={
                         <Box display="flex">
