@@ -280,7 +280,7 @@ export const serviceSetup = (services: {
       XROAD_FJS_BANKINFO_PATH: {
         dev: 'IS-DEV/GOV/10021/FJS-Public/TBRBankMgrService_v1',
         staging: 'IS-TEST/GOV/10021/FJS-Public/TBRBankMgrService_v1',
-        prod: 'IS/GOV/10021/FJS-Public/TBRBankMgrService_v1',
+        prod: 'IS/GOV/5402697509/FJS-Public/TBRBankMgrService_v1',
       },
       NOVA_ACCEPT_UNAUTHORIZED: {
         dev: 'true',
