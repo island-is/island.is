@@ -108,13 +108,13 @@ export const Navbar = () => {
     const data =
       type === 'Section'
         ? sections?.find(
-          (item: Maybe<FormSystemSection> | undefined) => item?.id === id,
-        )
+            (item: Maybe<FormSystemSection> | undefined) => item?.id === id,
+          )
         : type === 'Screen'
-          ? screens?.find(
+        ? screens?.find(
             (item: Maybe<FormSystemScreen> | undefined) => item?.id === id,
           )
-          : fields?.find(
+        : fields?.find(
             (item: Maybe<FormSystemField> | undefined) => item?.id === id,
           )
 
@@ -274,9 +274,9 @@ export const Navbar = () => {
                   type={activeItem.type}
                   data={
                     activeItem.data as
-                    | FormSystemScreen
-                    | FormSystemSection
-                    | FormSystemField
+                      | FormSystemScreen
+                      | FormSystemSection
+                      | FormSystemField
                   }
                   active
                   focusComponent={focusComponent}
