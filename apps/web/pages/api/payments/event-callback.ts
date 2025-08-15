@@ -24,6 +24,7 @@ const issuer = serverRuntimeConfig.paymentsWebUrl
 const audience = new URL(
   serverRuntimeConfig.landspitaliPaymentFlowEventCallbackUrl,
 ).origin
+const validationSecret = serverRuntimeConfig.paymentConfirmationSecret
 
 const client = jwksClient({
   jwksUri: `${issuer}/.well-known/jwks.json`,
@@ -106,8 +107,9 @@ export default async function handler(
   // This will throw an error if the JWT is invalid
   await validateIncomingJwt(token, req.body)
 
-  // TODO: Perhaps validate the body
   const payment = req.body as PaymentCallbackPayload
+
+  // TODO: Only keep going if the nationalId of the performing organization is "Landspítalinn"
 
   if (payment.type !== 'success') {
     // TODO: What should I do here?
@@ -136,6 +138,7 @@ export default async function handler(
           payerGrantExplanation:
             payment.paymentFlowMetadata.payerGrantExplanation,
           project: payment.paymentFlowMetadata.project,
+          validationSecret,
         },
       },
     })
@@ -171,6 +174,7 @@ export default async function handler(
           recipientPlace: payment.paymentFlowMetadata.recipientPlace,
           recipientPostalCode: payment.paymentFlowMetadata.recipientPostalCode,
           senderSignature: payment.paymentFlowMetadata.senderSignature,
+          validationSecret,
         },
       },
     })

@@ -62,6 +62,10 @@ export class MemorialCardPaymentConfirmationInput
   @Field(() => String)
   @IsString()
   inMemoryOf!: string
+
+  @Field(() => String)
+  @IsString()
+  validationSecret!: string
 }
 
 @InputType('WebLandspitaliDirectGrantPaymentConfirmationInput')
@@ -105,4 +109,8 @@ export class DirectGrantPaymentConfirmationInput
   @Field(() => String)
   @IsString()
   payerGrantExplanation!: string
+
+  @Field(() => String)
+  @IsString()
+  validationSecret!: string
 }

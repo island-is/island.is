@@ -17,6 +17,7 @@ const {
   CONFIGCAT_SDK_KEY,
   PAYMENTS_WEB_URL,
   LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL,
+  WEB_PAYMENT_CONFIRMATION_SECRET,
 } = process.env
 
 /**
@@ -194,6 +195,7 @@ const nextConfig = {
     paymentsWebUrl: PAYMENTS_WEB_URL,
     landspitaliPaymentFlowEventCallbackUrl:
       LANDSPITALI_PAYMENT_FLOW_EVENT_CALLBACK_URL,
+    paymentConfirmationSecret: WEB_PAYMENT_CONFIRMATION_SECRET,
   },
 
   publicRuntimeConfig: {

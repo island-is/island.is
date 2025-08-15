@@ -46,6 +46,12 @@ export class LandspitaliService {
   async sendDirectGrantPaymentConfirmationEmail(
     input: DirectGrantPaymentConfirmationInput,
   ): Promise<boolean> {
+    if (input.validationSecret !== this.config.webValidationSecret) {
+      this.logger.warn(
+        'Invalid web validation secret for direct grant payment confirmation email',
+      )
+      return false
+    }
     try {
       await this.emailService.sendEmail({
         to: this.config.paymentConfirmationSendToEmail,
@@ -67,6 +73,12 @@ export class LandspitaliService {
   async sendMemorialCardPaymentConfirmationEmail(
     input: MemorialCardPaymentConfirmationInput,
   ): Promise<boolean> {
+    if (input.validationSecret !== this.config.webValidationSecret) {
+      this.logger.warn(
+        'Invalid web validation secret for memorial card payment confirmation email',
+      )
+      return false
+    }
     try {
       await this.emailService.sendEmail({
         to: this.config.paymentConfirmationSendToEmail,

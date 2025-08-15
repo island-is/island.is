@@ -48,6 +48,8 @@ export const serviceSetup = (services: {
       DD_LOGS_CLIENT_TOKEN: '/k8s/DD_LOGS_CLIENT_TOKEN',
       LANDSPITALI_MINNINGARKORT_OG_STYRKIR_ZENDESK_EMAIL:
         '/k8s/api/LANDSPITALI_MINNINGARKORT_OG_STYRKIR_ZENDESK_EMAIL',
+      WEB_PAYMENT_CONFIRMATION_SECRET:
+        '/k8s/api/WEB_PAYMENT_CONFIRMATION_SECRET',
     })
     .ingress({
       primary: {

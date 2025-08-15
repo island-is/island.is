@@ -431,6 +431,8 @@ export const serviceSetup = (services: {
         '/k8s/api/LANDSPITALI_PAYMENT_CONFIRMATION_SEND_TO_EMAIL',
       LANDSPITALI_PAYMENT_NATIONAL_ID_FALLBACK:
         '/k8s/api/LANDSPITALI_PAYMENT_NATIONAL_ID_FALLBACK',
+      WEB_PAYMENT_CONFIRMATION_SECRET:
+        '/k8s/api/WEB_PAYMENT_CONFIRMATION_SECRET',
     })
     .xroad(
       AdrAndMachine,

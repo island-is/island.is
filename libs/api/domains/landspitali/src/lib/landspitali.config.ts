@@ -8,6 +8,7 @@ const schema = z.object({
   memorialCardPaymentConfirmationSubject: z.string(),
   directGrantPaymentConfirmationSubject: z.string(),
   paymentNationalIdFallback: z.string(),
+  webValidationSecret: z.string(),
 })
 
 export const LandspitaliApiModuleConfig = defineConfig({
@@ -30,5 +31,6 @@ export const LandspitaliApiModuleConfig = defineConfig({
     paymentNationalIdFallback: env.required(
       'LANDSPITALI_PAYMENT_NATIONAL_ID_FALLBACK',
     ),
+    webValidationSecret: env.required('WEB_PAYMENT_CONFIRMATION_SECRET'),
   }),
 })
