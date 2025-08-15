@@ -203,9 +203,6 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
                     <ActionCard
                       heading={file.name}
                       headingVariant="h4"
-                      cta={{
-                        label: '',
-                      }}
                       backgroundColor="blue"
                     />
                   </li>
