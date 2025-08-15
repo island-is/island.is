@@ -1,6 +1,6 @@
-import { ObjectType, Field } from "@nestjs/graphql"
-import { EnumType } from "./enumType.model"
-import { EstimatedDuration } from "./estimatedDuration.model"
+import { ObjectType, Field } from '@nestjs/graphql'
+import { EnumType } from './enumType.model'
+import { EstimatedDuration } from './estimatedDuration.model'
 
 @ObjectType('SocialInsuranceMedicalDocumentsConfirmation')
 export class Confirmation {

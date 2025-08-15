@@ -30,7 +30,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
       siaDisabilityPensionCertificate,
     ) */
 
-  const data =  MOCK_CERTIFICATE
+  const data = MOCK_CERTIFICATE
 
   setBeforeSubmitCallback?.(async () => {
     // If data is still loading, prevent submission
@@ -48,8 +48,8 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
         <GridColumn span="1/1">
           <Text variant="h3">
             {formatMessage(
-              disabilityPensionFormMessage
-                .disabilityPensionCertificate.managedBy,
+              disabilityPensionFormMessage.disabilityPensionCertificate
+                .managedBy,
             )}
           </Text>
         </GridColumn>
@@ -58,79 +58,69 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
             {formatMessage(socialInsuranceAdministrationMessage.confirm.name)}
           </Label>
           <Text>
-            {
-              data?.socialInsuranceDisabilityPensionCertificate
-                ?.doctor?.name
-            }
+            {data?.socialInsuranceDisabilityPensionCertificate?.doctor?.name}
           </Text>
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
           <Label>
             {formatMessage(
-              disabilityPensionFormMessage
-                .disabilityPensionCertificate.doctorNumber,
+              disabilityPensionFormMessage.disabilityPensionCertificate
+                .doctorNumber,
             )}
           </Label>
           <Text>
             {/* Put doctorNumber here for now - Smári will search for doctor's number and find job title and return it instead */}
             {
-              data?.socialInsuranceDisabilityPensionCertificate
-                ?.doctor?.doctorNumber
+              data?.socialInsuranceDisabilityPensionCertificate?.doctor
+                ?.doctorNumber
             }
           </Text>
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
           <Label>
             {formatMessage(
-              disabilityPensionFormMessage
-                .disabilityPensionCertificate.managedByLocation,
+              disabilityPensionFormMessage.disabilityPensionCertificate
+                .managedByLocation,
             )}
           </Label>
           <Text>
             {
-              data?.socialInsuranceDisabilityPensionCertificate
-                ?.doctor?.residence
+              data?.socialInsuranceDisabilityPensionCertificate?.doctor
+                ?.residence
             }
           </Text>
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
           <Label>
             {formatMessage(
-              disabilityPensionFormMessage
-                .disabilityPensionCertificate.phoneNumber,
+              disabilityPensionFormMessage.disabilityPensionCertificate
+                .phoneNumber,
             )}
           </Label>
           <Text>
             {
-              data?.socialInsuranceDisabilityPensionCertificate
-                ?.doctor?.phoneNumber
+              data?.socialInsuranceDisabilityPensionCertificate?.doctor
+                ?.phoneNumber
             }
           </Text>
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
           <Label>
             {formatMessage(
-              disabilityPensionFormMessage
-                .disabilityPensionCertificate.email,
+              disabilityPensionFormMessage.disabilityPensionCertificate.email,
             )}
           </Label>
           <Text>
-            {
-              data?.socialInsuranceDisabilityPensionCertificate
-                ?.doctor?.email
-            }
+            {data?.socialInsuranceDisabilityPensionCertificate?.doctor?.email}
           </Text>
         </GridColumn>
         <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
           <Label>
             {formatMessage(
-              disabilityPensionFormMessage
-                .disabilityPensionCertificate.address,
+              disabilityPensionFormMessage.disabilityPensionCertificate.address,
             )}
           </Label>
-          <Text>
-            {'???'}
-          </Text>
+          <Text>{'???'}</Text>
         </GridColumn>
       </GridRow>
     </Stack>
@@ -142,29 +132,29 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
         <GridColumn span="1/1">
           <Text variant="h3">
             {formatMessage(
-              disabilityPensionFormMessage
-                .disabilityPensionCertificate.information,
+              disabilityPensionFormMessage.disabilityPensionCertificate
+                .information,
             )}
           </Text>
         </GridColumn>
-        <GridColumn span={"1/1"}>
+        <GridColumn span={'1/1'}>
           <Label>
             {formatMessage(
-              disabilityPensionFormMessage
-                .disabilityPensionCertificate.informationIncapacitatedDate,
+              disabilityPensionFormMessage.disabilityPensionCertificate
+                .informationIncapacitatedDate,
             )}
           </Label>
           <Text></Text>
           <Text>
-            {data?.socialInsuranceDisabilityPensionCertificate.dateOfWorkIncapacity
-              ?? '-'}
+            {data?.socialInsuranceDisabilityPensionCertificate
+              .dateOfWorkIncapacity ?? '-'}
           </Text>
         </GridColumn>
         <GridColumn span="1/1">
           <Label>
             {formatMessage(
-              disabilityPensionFormMessage
-                .disabilityPensionCertificate.informationICDAnalysis,
+              disabilityPensionFormMessage.disabilityPensionCertificate
+                .informationICDAnalysis,
             )}
           </Label>
           <Markdown>
@@ -174,106 +164,109 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
         <GridColumn span="1/1">
           <Label>
             {formatMessage(
-              disabilityPensionFormMessage
-                .disabilityPensionCertificate.informationOtherICDAnalysis,
+              disabilityPensionFormMessage.disabilityPensionCertificate
+                .informationOtherICDAnalysis,
             )}
           </Label>
           <Markdown>
-            {data?.socialInsuranceDisabilityPensionCertificate?.diagnoses?.otherDiagnoses?.map((value, index) => `${index + 1}. ${value.code} ${value.description}`).join('\n\n') ?? ''}
+            {data?.socialInsuranceDisabilityPensionCertificate?.diagnoses?.otherDiagnoses
+              ?.map(
+                (value, index) =>
+                  `${index + 1}. ${value.code} ${value.description}`,
+              )
+              .join('\n\n') ?? ''}
           </Markdown>
         </GridColumn>
         <GridColumn span="1/1">
           <Label>
             {formatMessage(
-              disabilityPensionFormMessage
-                .disabilityPensionCertificate.informationMedicalHistory,
+              disabilityPensionFormMessage.disabilityPensionCertificate
+                .informationMedicalHistory,
             )}
           </Label>
           <Text></Text>
           <Text>
-            {data?.socialInsuranceDisabilityPensionCertificate.healthHistorySummary
-              ?? '-'}
+            {data?.socialInsuranceDisabilityPensionCertificate
+              .healthHistorySummary ?? '-'}
           </Text>
         </GridColumn>
         <GridColumn span="1/1">
           <Label>
             {formatMessage(
-              disabilityPensionFormMessage
-                .disabilityPensionCertificate.informationMedicalImpairmentCause,
+              disabilityPensionFormMessage.disabilityPensionCertificate
+                .informationMedicalImpairmentCause,
             )}
           </Label>
           <Text></Text>
           <Text>
-            {data?.socialInsuranceDisabilityPensionCertificate.participationLimitationCause
-              ?? '-'}
+            {data?.socialInsuranceDisabilityPensionCertificate
+              .participationLimitationCause ?? '-'}
           </Text>
         </GridColumn>
         <GridColumn span="1/1">
           <Label>
             {formatMessage(
-              disabilityPensionFormMessage
-                .disabilityPensionCertificate.informationMedicalImpairmentStability,
+              disabilityPensionFormMessage.disabilityPensionCertificate
+                .informationMedicalImpairmentStability,
             )}
           </Label>
           <Text></Text>
-          <Text>
-            {'???'}
-          </Text>
+          <Text>{'???'}</Text>
         </GridColumn>
         <GridColumn span="1/1">
           <Label>
             {formatMessage(
-              disabilityPensionFormMessage
-                .disabilityPensionCertificate.informationMedicalImpairmentProjectedImprovement,
+              disabilityPensionFormMessage.disabilityPensionCertificate
+                .informationMedicalImpairmentProjectedImprovement,
             )}
           </Label>
           <Text></Text>
-          <Text>
-            {'???'}
-          </Text>
+          <Text>{'???'}</Text>
         </GridColumn>
         <GridColumn span="1/1">
           <Label>
             {formatMessage(
-              disabilityPensionFormMessage
-                .disabilityPensionCertificate.informationMedicalMedicalImplementsUsage,
+              disabilityPensionFormMessage.disabilityPensionCertificate
+                .informationMedicalMedicalImplementsUsage,
             )}
           </Label>
           <Text></Text>
           <Text>
-            {data?.socialInsuranceDisabilityPensionCertificate.assessmentToolsUsed ?? '-'}
+            {data?.socialInsuranceDisabilityPensionCertificate
+              .assessmentToolsUsed ?? '-'}
           </Text>
         </GridColumn>
       </GridRow>
-      </Stack>
-    )
+    </Stack>
+  )
 
   const physicalImpairments = () => (
     <AccordionItem
-      label={formatMessage(disabilityPensionFormMessage
-        .disabilityPensionCertificate.physicalImpairment)}
+      label={formatMessage(
+        disabilityPensionFormMessage.disabilityPensionCertificate
+          .physicalImpairment,
+      )}
       id="physical-impairments-accordion-item"
-      key="physical-impairments-accordion-item">
+      key="physical-impairments-accordion-item"
+    >
       <Stack space={3}>
         <GridRow rowGap={3}>
           <GridColumn span="1/1">
-            <Text>{formatMessage(
-              disabilityPensionFormMessage
-                .disabilityPensionCertificate.physicalImpairmentEffect
-            )}</Text>
+            <Text>
+              {formatMessage(
+                disabilityPensionFormMessage.disabilityPensionCertificate
+                  .physicalImpairmentEffect,
+              )}
+            </Text>
           </GridColumn>
-          {
-            data?.socialInsuranceDisabilityPensionCertificate?.physicalAbilityRatings?.map(rating => (
+          {data?.socialInsuranceDisabilityPensionCertificate?.physicalAbilityRatings?.map(
+            (rating) => (
               <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
-                <Label>
-                  {rating.type?.toString()}
-                </Label>
-                <Text>
-                  {rating.score?.toString()}
-                </Text>
+                <Label>{rating.type?.toString()}</Label>
+                <Text>{rating.score?.toString()}</Text>
               </GridColumn>
-            ))
-          }
+            ),
+          )}
         </GridRow>
       </Stack>
     </AccordionItem>
@@ -281,31 +274,31 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
 
   const cognitiveImpairments = () => (
     <AccordionItem
-    label={formatMessage(disabilityPensionFormMessage
-      .disabilityPensionCertificate.cognitiveImpairment)}
-    id="cognitive-impairments-accordion-item"
-    key="cognitive-impairments-accordion-item">
+      label={formatMessage(
+        disabilityPensionFormMessage.disabilityPensionCertificate
+          .cognitiveImpairment,
+      )}
+      id="cognitive-impairments-accordion-item"
+      key="cognitive-impairments-accordion-item"
+    >
       <Stack space={3}>
         <GridRow rowGap={3}>
           <GridColumn span="1/1">
-            <Text>{formatMessage(
-              disabilityPensionFormMessage
-                .disabilityPensionCertificate.cognitiveImpairmentEffect
-
-            )}</Text>
+            <Text>
+              {formatMessage(
+                disabilityPensionFormMessage.disabilityPensionCertificate
+                  .cognitiveImpairmentEffect,
+              )}
+            </Text>
           </GridColumn>
-          {
-            data?.socialInsuranceDisabilityPensionCertificate?.cognitiveAndMentalAbilityRatings?.map(rating => (
+          {data?.socialInsuranceDisabilityPensionCertificate?.cognitiveAndMentalAbilityRatings?.map(
+            (rating) => (
               <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
-                <Label>
-                  {rating.type?.toString()}
-                </Label>
-                <Text>
-                  {rating.score?.toString()}
-                </Text>
+                <Label>{rating.type?.toString()}</Label>
+                <Text>{rating.score?.toString()}</Text>
               </GridColumn>
-            ))
-          }
+            ),
+          )}
         </GridRow>
       </Stack>
     </AccordionItem>
@@ -313,34 +306,34 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
 
   const functionalAssessments = () => (
     <AccordionItem
-      label={formatMessage(disabilityPensionFormMessage
-        .disabilityPensionCertificate.functionalAssessment)}
+      label={formatMessage(
+        disabilityPensionFormMessage.disabilityPensionCertificate
+          .functionalAssessment,
+      )}
       id="functional-assessments-accordion-item"
-      key="functional-assessments-accordion-item">
+      key="functional-assessments-accordion-item"
+    >
       <Stack space={3}>
         <GridRow rowGap={3}>
           <GridColumn span="1/1">
-            <Text>{formatMessage(
-              disabilityPensionFormMessage
-                .disabilityPensionCertificate.functionalAssessmentDescription
-
-            )}</Text>
+            <Text>
+              {formatMessage(
+                disabilityPensionFormMessage.disabilityPensionCertificate
+                  .functionalAssessmentDescription,
+              )}
+            </Text>
           </GridColumn>
-          {
-            data?.socialInsuranceDisabilityPensionCertificate?.functionalAssessment?.map(rating => (
+          {data?.socialInsuranceDisabilityPensionCertificate?.functionalAssessment?.map(
+            (rating) => (
               <GridColumn span={['1/1', '1/1', '1/1', '1/2']}>
-                <Label>
-                  {rating.type?.toString()}
-                </Label>
-                <Text>
-                  {rating.score?.toString()}
-                </Text>
+                <Label>{rating.type?.toString()}</Label>
+                <Text>{rating.score?.toString()}</Text>
               </GridColumn>
-            ))
-          }
+            ),
+          )}
         </GridRow>
-        </Stack>
-      </AccordionItem>
+      </Stack>
+    </AccordionItem>
   )
 
   return (
@@ -349,17 +342,15 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
       <Divider />
       {information()}
       <Accordion>
-      {physicalImpairments()}
-      {cognitiveImpairments()}
-      {functionalAssessments()}
+        {physicalImpairments()}
+        {cognitiveImpairments()}
+        {functionalAssessments()}
       </Accordion>
       <input
         type="hidden"
         value={
-          data?.socialInsuranceDisabilityPensionCertificate
-            ?.referenceId
-            ? data.socialInsuranceDisabilityPensionCertificate
-                .referenceId
+          data?.socialInsuranceDisabilityPensionCertificate?.referenceId
+            ? data.socialInsuranceDisabilityPensionCertificate.referenceId
             : undefined
         }
         {...register(field.id)}

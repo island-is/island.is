@@ -11,7 +11,7 @@ import { Application, FormValue } from '@island.is/application/types'
 import format from 'date-fns/format'
 import addMonths from 'date-fns/addMonths'
 import { SectionRouteEnum } from '../../../../types'
-import { yesOrNoOptions} from '../../../../utils'
+import { yesOrNoOptions } from '../../../../utils'
 import { Country } from '../../../../types/interfaces'
 
 const livedAbroadCondition = (formValue: FormValue) => {
@@ -26,36 +26,45 @@ const livedAbroadCondition = (formValue: FormValue) => {
 export const livedAbroadSubSection = buildMultiField({
   id: SectionRouteEnum.LIVED_ABROAD,
   title: disabilityPensionFormMessage.employmentParticipation.livedAbroadTitle,
-  description:disabilityPensionFormMessage.employmentParticipation.livedAbroadDescription,
+  description:
+    disabilityPensionFormMessage.employmentParticipation.livedAbroadDescription,
   children: [
     buildRadioField({
       id: `${SectionRouteEnum.LIVED_ABROAD}.hasLivedAbroad`,
       width: 'half',
       backgroundColor: 'blue',
       required: true,
-      options: yesOrNoOptions
+      options: yesOrNoOptions,
     }),
     buildTableRepeaterField({
       id: `${SectionRouteEnum.LIVED_ABROAD}.list`,
       condition: livedAbroadCondition,
-      formTitle: disabilityPensionFormMessage.employmentParticipation.livedAbroadTableTitle,
-      addItemButtonText: disabilityPensionFormMessage.employmentParticipation.addCountry,
-      saveItemButtonText: disabilityPensionFormMessage.employmentParticipation.save,
-      removeButtonTooltipText: disabilityPensionFormMessage.employmentParticipation.remove,
+      formTitle:
+        disabilityPensionFormMessage.employmentParticipation
+          .livedAbroadTableTitle,
+      addItemButtonText:
+        disabilityPensionFormMessage.employmentParticipation.addCountry,
+      saveItemButtonText:
+        disabilityPensionFormMessage.employmentParticipation.save,
+      removeButtonTooltipText:
+        disabilityPensionFormMessage.employmentParticipation.remove,
       fields: {
         //TODO: FROM SMÁRI
         country: {
           component: 'select',
           label: disabilityPensionFormMessage.employmentParticipation.country,
-          placeholder: disabilityPensionFormMessage.employmentParticipation.countryPlaceholder,
+          placeholder:
+            disabilityPensionFormMessage.employmentParticipation
+              .countryPlaceholder,
           width: 'half',
           displayInTable: true,
           isSearchable: true,
           options: (application: Application) => {
-            const countries = getValueViaPath<Array<Country>>(
-              application.externalData,
-              'socialInsuranceAdministrationCountries.data',
-            ) ?? []
+            const countries =
+              getValueViaPath<Array<Country>>(
+                application.externalData,
+                'socialInsuranceAdministrationCountries.data',
+              ) ?? []
 
             return countries.map(({ code, nameIcelandic }) => ({
               value: code,
@@ -65,7 +74,9 @@ export const livedAbroadSubSection = buildMultiField({
         },
         abroadNationalId: {
           component: 'input',
-          label: disabilityPensionFormMessage.employmentParticipation.abroadNationalId,
+          label:
+            disabilityPensionFormMessage.employmentParticipation
+              .abroadNationalId,
           width: 'half',
           format: '######-####',
           displayInTable: true,
@@ -73,14 +84,17 @@ export const livedAbroadSubSection = buildMultiField({
         //TODO: ONly month
         periodStart: {
           component: 'date',
-          label: disabilityPensionFormMessage.employmentParticipation.periodStart,
-          placeholder: disabilityPensionFormMessage.employmentParticipation.periodStartPlaceholder,
+          label:
+            disabilityPensionFormMessage.employmentParticipation.periodStart,
+          placeholder:
+            disabilityPensionFormMessage.employmentParticipation
+              .periodStartPlaceholder,
           width: 'half',
           displayInTable: false,
           updateValueObj: {
-            valueModifier: (_,  activeField) => {
+            valueModifier: (_, activeField) => {
               if (!activeField) {
-                return ""
+                return ''
               }
               const { periodEnd, periodStart } = activeField
 
@@ -96,26 +110,28 @@ export const livedAbroadSubSection = buildMultiField({
               }
 
               if (dateStart.getMonth() > dateEnd.getMonth()) {
-                const newDate = addMonths(dateEnd, -1);
-                return format(newDate, 'yyyy-MM-dd');
+                const newDate = addMonths(dateEnd, -1)
+                return format(newDate, 'yyyy-MM-dd')
               }
 
               return activeField.periodStart
             },
-            watchValues: ['periodEnd']
+            watchValues: ['periodEnd'],
           },
         },
         //TODO: ONly month
         periodEnd: {
           component: 'date',
           label: disabilityPensionFormMessage.employmentParticipation.periodEnd,
-          placeholder: disabilityPensionFormMessage.employmentParticipation.periodEndPlaceholder,
+          placeholder:
+            disabilityPensionFormMessage.employmentParticipation
+              .periodEndPlaceholder,
           width: 'half',
           displayInTable: false,
           updateValueObj: {
-            valueModifier: (_,  activeField) => {
+            valueModifier: (_, activeField) => {
               if (!activeField) {
-                return ""
+                return ''
               }
               const { periodEnd, periodStart } = activeField
 
@@ -131,13 +147,13 @@ export const livedAbroadSubSection = buildMultiField({
               }
 
               if (dateEnd.getMonth() < dateStart.getMonth()) {
-                const newDate = addMonths(dateStart, 1);
-                return format(newDate, 'yyyy-MM-dd');
+                const newDate = addMonths(dateStart, 1)
+                return format(newDate, 'yyyy-MM-dd')
               }
 
               return activeField.periodEnd
             },
-            watchValues: ['periodStart']
+            watchValues: ['periodStart'],
           },
         },
         period: {
@@ -145,20 +161,20 @@ export const livedAbroadSubSection = buildMultiField({
           updateValueObj: {
             valueModifier: (_, activeField) => {
               if (!activeField) {
-                return ""
+                return ''
               }
 
               const { periodStart, periodEnd } = activeField
 
               if (!periodStart || !periodEnd) {
-                return ""
+                return ''
               }
 
               const dateStart = new Date(periodStart)
               const dateEnd = new Date(periodEnd)
 
               if (!dateStart || !dateEnd) {
-                return ""
+                return ''
               }
 
               const formattedDateStart = format(dateStart, 'MMMM yyyy')
@@ -166,14 +182,18 @@ export const livedAbroadSubSection = buildMultiField({
 
               return `${formattedDateStart} - ${formattedDateEnd}`
             },
-          watchValues: ['periodStart', 'periodEnd']
-          }
+            watchValues: ['periodStart', 'periodEnd'],
           },
+        },
       },
       table: {
-        header: [disabilityPensionFormMessage.employmentParticipation.country, disabilityPensionFormMessage.employmentParticipation.abroadNationalId,disabilityPensionFormMessage.employmentParticipation.period],
+        header: [
+          disabilityPensionFormMessage.employmentParticipation.country,
+          disabilityPensionFormMessage.employmentParticipation.abroadNationalId,
+          disabilityPensionFormMessage.employmentParticipation.period,
+        ],
         rows: ['country', 'abroadNationalId', 'period'],
-      }
+      },
     }),
   ],
 })

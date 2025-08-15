@@ -40,9 +40,7 @@ export class MedicalDocumentsResolver {
   @Query(() => DisabilityPensionCertificate, {
     name: 'socialInsuranceDisabilityPensionCertificate',
   })
-  async siaGetDisabilityPensionCertificate(
-    @CurrentUser() user: User,
-  ) {
+  async siaGetDisabilityPensionCertificate(@CurrentUser() user: User) {
     return this.service.getDisabilityPensionCertificate(user)
   }
 }

@@ -1,119 +1,129 @@
-import { SiaDisabilityPensionCertificateQuery, SocialInsuranceMedicalDocumentsEnvironmentalCategory, SocialInsuranceMedicalDocumentsImpairmentType } from "../../types/schema"
-
+import {
+  SiaDisabilityPensionCertificateQuery,
+  SocialInsuranceMedicalDocumentsEnvironmentalCategory,
+  SocialInsuranceMedicalDocumentsImpairmentType,
+} from '../../types/schema'
 
 export const MOCK_CERTIFICATE: SiaDisabilityPensionCertificateQuery = {
-    socialInsuranceDisabilityPensionCertificate: {
-        referenceId: "1",
-        lastInspectionDate: new Date().toISOString(),
-        certificateDate: new Date().toISOString(),
-        dateOfWorkIncapacity: new Date().toISOString(),
-        healthHistorySummary: 'Hefur farið í áfengismeðferð',
-        participationLimitationCause: 10,
-        abilityChangePotential: 80,
-        medicationAndSupports: 'Lorem ipsum',
-        assessmentToolsUsed: 'Hitt og þetta',
-        doctor: {
-          doctorNumber: '8888',
-          name: 'Teitur Stefán Jónsson',
-          residence: 'Heilsugæslan Kirkjusandi',
-          phoneNumber: '555-5024',
-          email: 'teitur@heilsugaeslan.is'
+  socialInsuranceDisabilityPensionCertificate: {
+    referenceId: '1',
+    lastInspectionDate: new Date().toISOString(),
+    certificateDate: new Date().toISOString(),
+    dateOfWorkIncapacity: new Date().toISOString(),
+    healthHistorySummary: 'Hefur farið í áfengismeðferð',
+    participationLimitationCause: 10,
+    abilityChangePotential: 80,
+    medicationAndSupports: 'Lorem ipsum',
+    assessmentToolsUsed: 'Hitt og þetta',
+    doctor: {
+      doctorNumber: '8888',
+      name: 'Teitur Stefán Jónsson',
+      residence: 'Heilsugæslan Kirkjusandi',
+      phoneNumber: '555-5024',
+      email: 'teitur@heilsugaeslan.is',
+    },
+    diagnoses: {
+      mainDiagnosis: {
+        code: 'M05.9',
+        description: 'Seropositive rehumatoid arthritis, unspecified',
+      },
+      otherDiagnoses: [
+        {
+          code: 'M05.9',
+          description: 'Seropositive rehumatoid arthritis, unspecified',
         },
-        diagnoses: {
-          mainDiagnosis: {
-            code: 'M05.9',
-            description: 'Seropositive rehumatoid arthritis, unspecified'
-          },
-          otherDiagnoses: [
-            {
-              code: 'M05.9',
-              description: 'Seropositive rehumatoid arthritis, unspecified'
-            },
-            {
-              code: 'AB1.',
-              description: 'Corem ipsum dolor sit amet'
-            },
-            {
-              code: 'CD2',
-              description: 'Nunc vuluputate libero et velit interdum, ac aliquet odio mattis'
-            }
-          ]
+        {
+          code: 'AB1.',
+          description: 'Corem ipsum dolor sit amet',
         },
-        healthImpact: {
-          description: 'Lorem ipsum dolor sit amet',
-          impactLevel: 5
+        {
+          code: 'CD2',
+          description:
+            'Nunc vuluputate libero et velit interdum, ac aliquet odio mattis',
         },
-        physicalAbilityRatings: [
+      ],
+    },
+    healthImpact: {
+      description: 'Lorem ipsum dolor sit amet',
+      impactLevel: 5,
+    },
+    physicalAbilityRatings: [
+      {
+        type: 1,
+        score: 8,
+      },
+      {
+        type: 2,
+        score: 7,
+      },
+      {
+        type: 3,
+        score: 6,
+      },
+    ],
+    cognitiveAndMentalAbilityRatings: [
+      {
+        type: 1,
+        score: 8,
+      },
+      {
+        type: 2,
+        score: 7,
+      },
+      {
+        type: 3,
+        score: 6,
+      },
+    ],
+    functionalAssessment: [
+      {
+        type: 1,
+        score: 8,
+      },
+      {
+        type: 2,
+        score: 7,
+      },
+      {
+        type: 3,
+        score: 6,
+      },
+    ],
+    impairments: [
+      {
+        type: SocialInsuranceMedicalDocumentsImpairmentType.Type_0,
+        functions: [
           {
-            type: 1,
-            score: 8,
-          },
-          {
-            type: 2,
-            score: 7,
-          },
-          {
-            type: 3,
-            score: 6,
-          }
-        ],
-        cognitiveAndMentalAbilityRatings: [
-          {
-            type: 1,
-            score: 8,
-          },
-          {
-            type: 2,
-            score: 7,
-          },
-          {
-            type: 3,
-            score: 6,
-          }
-        ],
-        functionalAssessment: [
-          {
-            type: 1,
-            score: 8,
-          },
-          {
-            type: 2,
-            score: 7,
-          },
-          {
-            type: 3,
-            score: 6,
-          }
-        ],
-        impairments: [
-          {
-            type: SocialInsuranceMedicalDocumentsImpairmentType.Type_0,
-            functions: [{
-              title: 'lorem',
-              keyNumber: '1',
-              description: 'descrition'
-            }]
-          },
-          {
-            type: SocialInsuranceMedicalDocumentsImpairmentType.Type_1,
-            functions: [{
-              title: 'ipsum',
-              keyNumber: '2',
-              description: 'descrition'
-            }]
-          },
-        ],
-        environmentalFactors: [
-          {
-            category: SocialInsuranceMedicalDocumentsEnvironmentalCategory.Category_4,
+            title: 'lorem',
             keyNumber: '1',
-            description: 'description'
+            description: 'descrition',
           },
+        ],
+      },
+      {
+        type: SocialInsuranceMedicalDocumentsImpairmentType.Type_1,
+        functions: [
           {
-            category: SocialInsuranceMedicalDocumentsEnvironmentalCategory.Category_0,
+            title: 'ipsum',
             keyNumber: '2',
-            description: 'description'
+            description: 'descrition',
           },
-        ]
-    }
+        ],
+      },
+    ],
+    environmentalFactors: [
+      {
+        category:
+          SocialInsuranceMedicalDocumentsEnvironmentalCategory.Category_4,
+        keyNumber: '1',
+        description: 'description',
+      },
+      {
+        category:
+          SocialInsuranceMedicalDocumentsEnvironmentalCategory.Category_0,
+        keyNumber: '2',
+        description: 'description',
+      },
+    ],
+  },
 }

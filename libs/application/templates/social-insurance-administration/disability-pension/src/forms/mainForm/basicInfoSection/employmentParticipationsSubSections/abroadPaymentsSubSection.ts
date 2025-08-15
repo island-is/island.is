@@ -9,7 +9,7 @@ import {
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { Application, FormValue } from '@island.is/application/types'
 import { SectionRouteEnum } from '../../../../types'
-import {  yesOrNoOptions } from '../../../../utils'
+import { yesOrNoOptions } from '../../../../utils'
 import { Country } from '../../../../types/interfaces'
 
 const abroadPaymentsCondition = (formValue: FormValue) => {
@@ -59,10 +59,11 @@ export const abroadPaymentsSubSection = buildMultiField({
           displayInTable: true,
           isSearchable: true,
           options: (application: Application) => {
-            const countries = getValueViaPath<Array<Country>>(
-              application.externalData,
-              'socialInsuranceAdministrationCountries.data',
-            ) ?? []
+            const countries =
+              getValueViaPath<Array<Country>>(
+                application.externalData,
+                'socialInsuranceAdministrationCountries.data',
+              ) ?? []
 
             return countries.map(({ code, nameIcelandic }) => ({
               value: code,

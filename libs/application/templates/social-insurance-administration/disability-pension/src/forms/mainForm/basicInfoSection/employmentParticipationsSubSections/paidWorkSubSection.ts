@@ -1,13 +1,13 @@
 import {
-    NO,
-    YesOrNoEnum,
+  NO,
+  YesOrNoEnum,
   buildMultiField,
   buildRadioField,
   getValueViaPath,
 } from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { yesOrNoOptions } from '../../../../utils'
-import {  SectionRouteEnum } from '../../../../types'
+import { SectionRouteEnum } from '../../../../types'
 import { FormValue } from '@island.is/application/types'
 
 export const paidWorkSubSection = buildMultiField({

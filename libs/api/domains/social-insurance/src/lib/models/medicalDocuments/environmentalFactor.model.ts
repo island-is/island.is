@@ -1,5 +1,5 @@
-import { ObjectType, Field } from "@nestjs/graphql"
-import { EnvironmentalCategory } from "../../enums"
+import { ObjectType, Field } from '@nestjs/graphql'
+import { EnvironmentalCategory } from '../../enums'
 
 @ObjectType('SocialInsuranceMedicalDocumentsEnvironmentalFactor')
 export class EnvironmentalFactor {

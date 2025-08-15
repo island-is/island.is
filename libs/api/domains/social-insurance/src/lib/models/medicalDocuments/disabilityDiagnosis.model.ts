@@ -1,12 +1,10 @@
-import { ObjectType, Field } from "@nestjs/graphql"
-
+import { ObjectType, Field } from '@nestjs/graphql'
 
 @ObjectType('SocialInsuranceMedicalDocumentsDisabilityDiagnosis')
-export class DisabilityDiagnosis{
+export class DisabilityDiagnosis {
   @Field()
   code!: string
 
   @Field({ nullable: true })
-  description?:string
-
+  description?: string
 }

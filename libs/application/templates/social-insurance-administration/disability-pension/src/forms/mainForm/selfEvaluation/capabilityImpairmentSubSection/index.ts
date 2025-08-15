@@ -21,16 +21,22 @@ const buildQuestion = (index: number) => {
       buildRadioField({
         id: `${SectionRouteEnum.CAPABILITY_IMPAIRMENT}.questionAnswers.[${index}].answer`,
         title: (application, locale) => {
-          const selfAssessmentQuestionnaire = getValueViaPath<Array<SelfAssessmentQuestionnaire>>(
+          const selfAssessmentQuestionnaire =
+            getValueViaPath<Array<SelfAssessmentQuestionnaire>>(
               application.externalData,
               'socialInsuranceAdministrationDisabilityPensionSelfAssessmentQuestions.data',
             ) ?? []
 
-          const questions = selfAssessmentQuestionnaire.find(questionnaire => questionnaire.language.toLowerCase() === locale)?.questions ?? []
+          const questions =
+            selfAssessmentQuestionnaire.find(
+              (questionnaire) =>
+                questionnaire.language.toLowerCase() === locale,
+            )?.questions ?? []
           return questions[index].questionTitle
         },
         options: (application, _, locale) => {
-          const selfAssessmentQuestionnaire = getValueViaPath<Array<SelfAssessmentQuestionnaire>>(
+          const selfAssessmentQuestionnaire =
+            getValueViaPath<Array<SelfAssessmentQuestionnaire>>(
               application.externalData,
               'socialInsuranceAdministrationDisabilityPensionSelfAssessmentQuestions.data',
             ) ?? []
@@ -53,18 +59,20 @@ const buildQuestion = (index: number) => {
       buildHiddenInput({
         id: `${SectionRouteEnum.CAPABILITY_IMPAIRMENT}.questionAnswers.[${index}].id`,
         defaultValue: (application: Application) => {
-          const selfAssessmentQuestionnaire = getValueViaPath<Array<SelfAssessmentQuestionnaire>>(
-            application.externalData,
-            'socialInsuranceAdministrationDisabilityPensionSelfAssessmentQuestions.data',
-          ) ?? []
+          const selfAssessmentQuestionnaire =
+            getValueViaPath<Array<SelfAssessmentQuestionnaire>>(
+              application.externalData,
+              'socialInsuranceAdministrationDisabilityPensionSelfAssessmentQuestions.data',
+            ) ?? []
 
-          const questions = selfAssessmentQuestionnaire.find(
-            (questionnaire) => questionnaire.language.toLowerCase() === 'is',
-          )?.questions ?? []
+          const questions =
+            selfAssessmentQuestionnaire.find(
+              (questionnaire) => questionnaire.language.toLowerCase() === 'is',
+            )?.questions ?? []
 
           return questions[index].questionCode
         },
-      })
+      }),
     ],
   })
 }
@@ -81,8 +89,6 @@ export const capabilityImpairmentSubSection = buildSubSection({
         disabilityPensionFormMessage.capabilityImpairment.description,
     }),
     //TODO: validate and collect correct questions
-    ...[...Array(MAX_QUESTIONS)].map((_key, index) =>
-      buildQuestion(index),
-    )
+    ...[...Array(MAX_QUESTIONS)].map((_key, index) => buildQuestion(index)),
   ],
 })

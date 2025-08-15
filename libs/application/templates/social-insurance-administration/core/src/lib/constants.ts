@@ -164,7 +164,6 @@ export enum OptionsValueEnum {
   REFUSE_TO_ANSWER = 'REFUSE_TO_ANSWER',
 }
 
-
 export const defaultIncomeTypes = [
   {
     income: 'yearly',

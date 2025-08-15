@@ -81,7 +81,7 @@ export const dataSchema = z.object({
     .object({
       inPaidWork: z.enum([YES, NO]),
       continuedWork: z.enum([YES, NO]).optional(),
-      })
+    })
     .refine(
       ({ inPaidWork, continuedWork }) => {
         if (inPaidWork === NO) {
@@ -414,18 +414,21 @@ export const dataSchema = z.object({
     assistance: z.enum([YES, NO]),
   }),
   capabilityImpairment: z.object({
-    questionAnswers: z.array(
-      z.object({
-        id: z.string(),
-        answer: z.preprocess((value) => {
-          if (typeof value === 'string' && value !== '') {
-            const number = Number.parseInt(value as string, 10)
-            return isNaN(number) ? undefined : number
-          }
-        }, z.number().min(0)),
-      })
-    ).optional().nullable(),
-  })
+    questionAnswers: z
+      .array(
+        z.object({
+          id: z.string(),
+          answer: z.preprocess((value) => {
+            if (typeof value === 'string' && value !== '') {
+              const number = Number.parseInt(value as string, 10)
+              return isNaN(number) ? undefined : number
+            }
+          }, z.number().min(0)),
+        }),
+      )
+      .optional()
+      .nullable(),
+  }),
 })
 
 export type ApplicationAnswers = z.TypeOf<typeof dataSchema>

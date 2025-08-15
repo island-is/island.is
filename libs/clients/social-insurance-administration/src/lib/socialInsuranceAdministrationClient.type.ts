@@ -192,8 +192,6 @@ export interface PreQuestionnaire {
   additionalRehabilitationInformation?: string
 }
 
-const APPLICATION_TYPES = [
-  'ORORKA'
-] as const;
+const APPLICATION_TYPES = ['ORORKA'] as const
 
-export type ApplicationType = typeof APPLICATION_TYPES[number];
+export type ApplicationType = typeof APPLICATION_TYPES[number]

@@ -22,17 +22,18 @@ export const overviewSection = buildSection({
       children: [
         ...overviewFields(true),
         buildSubmitField({
-        id: 'submit',
-        placement: 'footer',
-        title: socialInsuranceAdministrationMessage.confirm.submitButton,
-        actions: [
-          {
-            event: DefaultEvents.SUBMIT,
-            name: socialInsuranceAdministrationMessage.confirm.submitButton,
-            type: 'primary',
-          },
-        ],
-      }),],
+          id: 'submit',
+          placement: 'footer',
+          title: socialInsuranceAdministrationMessage.confirm.submitButton,
+          actions: [
+            {
+              event: DefaultEvents.SUBMIT,
+              name: socialInsuranceAdministrationMessage.confirm.submitButton,
+              type: 'primary',
+            },
+          ],
+        }),
+      ],
     }),
   ],
 })

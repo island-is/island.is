@@ -674,15 +674,12 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     if (application.typeId === ApplicationTypes.DISABILITY_PENSION) {
       return await this.siaClientService.getEducationLevelsWithEnum(
         auth,
-        ApplicationTypeEnum.DISABILITY_PENSION
+        ApplicationTypeEnum.DISABILITY_PENSION,
       )
     }
   }
 
-  async getCertificate({
-    application,
-    auth,
-  }: TemplateApiModuleActionProps) {
+  async getCertificate({ application, auth }: TemplateApiModuleActionProps) {
     if (application.typeId === ApplicationTypes.DISABILITY_PENSION) {
       return await this.siaClientService.getCertificateForDisabilityPension(
         auth,
@@ -690,8 +687,8 @@ export class SocialInsuranceAdministrationService extends BaseTemplateApiService
     }
   }
 
-  async getCountries({auth}: TemplateApiModuleActionProps) {
-    return await this.siaClientService.getCountries(auth);
+  async getCountries({ auth }: TemplateApiModuleActionProps) {
+    return await this.siaClientService.getCountries(auth)
   }
 
   async getMedicalAndRehabilitationApplicationType({

@@ -1,14 +1,12 @@
-import { ObjectType, Field, Int } from "@nestjs/graphql"
-import { Doctor } from "./doctor.model"
-import { DisabilityDiagnosisCollection } from "./disabilityDiagnosisCollection.model"
-import { HealthImpact } from "./healthImpact.model"
-import { AbilityRating } from "./abilityRating.model"
-import { Impairment } from "./impairment.model"
-import { EnvironmentalFactor } from "./environmentalFactor.model"
+import { ObjectType, Field, Int } from '@nestjs/graphql'
+import { Doctor } from './doctor.model'
+import { DisabilityDiagnosisCollection } from './disabilityDiagnosisCollection.model'
+import { HealthImpact } from './healthImpact.model'
+import { AbilityRating } from './abilityRating.model'
+import { Impairment } from './impairment.model'
+import { EnvironmentalFactor } from './environmentalFactor.model'
 
-@ObjectType(
-  'SocialInsuranceMedicalDocumentsDisabilityPensionCertificate',
-)
+@ObjectType('SocialInsuranceMedicalDocumentsDisabilityPensionCertificate')
 export class DisabilityPensionCertificate {
   @Field()
   referenceId!: string
@@ -22,7 +20,7 @@ export class DisabilityPensionCertificate {
   @Field({ nullable: true, description: 'ISO8601 formatted date' })
   certificateDate?: string
 
-  @Field({ nullable: true, description: 'ISO8601 formatted date'  })
+  @Field({ nullable: true, description: 'ISO8601 formatted date' })
   dateOfWorkIncapacity?: string
 
   @Field(() => DisabilityDiagnosisCollection, { nullable: true })
@@ -60,5 +58,4 @@ export class DisabilityPensionCertificate {
 
   @Field(() => [EnvironmentalFactor], { nullable: true })
   environmentalFactors?: EnvironmentalFactor[]
-
 }

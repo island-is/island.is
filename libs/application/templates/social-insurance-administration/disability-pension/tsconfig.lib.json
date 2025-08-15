@@ -21,6 +21,7 @@
     "src/**/*.jsx",
     "src/**/*.ts",
     "src/**/*.tsx",
-    "src/forms/prerequisitesForm"
-, "src/fields/Review/review-groups"  ]
+    "src/forms/prerequisitesForm",
+    "src/fields/Review/review-groups"
+  ]
 }

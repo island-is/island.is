@@ -1,15 +1,13 @@
-
 export interface EducationLevels {
   code: string
   description: string
 }
 
 export interface Country {
-  code: string;
-  name: string;
-  nameIcelandic: string;
+  code: string
+  name: string
+  nameIcelandic: string
 }
-
 
 export interface SelfAssessmentQuestionnaire {
   questionnaireName: string

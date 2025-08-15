@@ -1,4 +1,4 @@
-import { ObjectType, Field, Int } from "@nestjs/graphql"
+import { ObjectType, Field, Int } from '@nestjs/graphql'
 
 @ObjectType('SocialInsuranceMedicalDocumentsAbilityRating')
 export class AbilityRating {

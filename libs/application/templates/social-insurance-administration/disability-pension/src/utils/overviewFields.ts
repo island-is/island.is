@@ -1,7 +1,18 @@
-import { buildOverviewField, buildCustomField } from "@island.is/application/core"
-import { disabilityPensionFormMessage } from "../lib/messages"
-import { SectionRouteEnum } from "../types"
-import { aboutApplicantItems, paymentInfoItems, incomePlanItems, appliedBeforeItems, employmentItems, disabilityCertificateItems, extraInfoItems } from "./overviewItems"
+import {
+  buildOverviewField,
+  buildCustomField,
+} from '@island.is/application/core'
+import { disabilityPensionFormMessage } from '../lib/messages'
+import { SectionRouteEnum } from '../types'
+import {
+  aboutApplicantItems,
+  paymentInfoItems,
+  incomePlanItems,
+  appliedBeforeItems,
+  employmentItems,
+  disabilityCertificateItems,
+  extraInfoItems,
+} from './overviewItems'
 
 export const overviewFields = (editable?: boolean) => {
   return [

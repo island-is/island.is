@@ -39,7 +39,7 @@ import {
 } from '../../gen/fetch'
 import { IncomePlanDto, mapIncomePlanDto } from './dto/incomePlan.dto'
 import { ApplicationWriteApi } from './socialInsuranceAdministrationClient.type'
-import {  ApplicationTypeEnum } from './enums'
+import { ApplicationTypeEnum } from './enums'
 import { mapApplicationEnumToType } from './mapper'
 
 @Injectable()
@@ -235,11 +235,11 @@ export class SocialInsuranceAdministrationClientService {
   async getSelfAssessmentQuestionnaire(
     user: User,
     languages: ApiProtectedV1QuestionnairesMedicalandrehabilitationpaymentsSelfassessmentGetRequest,
-    applicationType: 'MARP' | 'DisabilityPension'
+    applicationType: 'MARP' | 'DisabilityPension',
   ): Promise<
     Array<TrWebApiServicesDomainQuestionnairesModelsQuestionnaireDto>
   > {
-    switch(applicationType) {
+    switch (applicationType) {
       case 'MARP':
         return this.questionnairesApiWithAuth(
           user,
@@ -253,7 +253,6 @@ export class SocialInsuranceAdministrationClientService {
           languages,
         )
     }
-
   }
 
   async getCertificateForSicknessAndRehabilitation(
@@ -275,9 +274,13 @@ export class SocialInsuranceAdministrationClientService {
   async getCountries(
     user: User,
   ): Promise<Array<TrWebApiServicesCommonCountriesModelsCountryDto>> {
-    const data = await this.generalApiWithAuth(user).apiProtectedV1GeneralCountriesGet()
+    const data = await this.generalApiWithAuth(
+      user,
+    ).apiProtectedV1GeneralCountriesGet()
 
-    return data.filter(country => country.code && country.nameIcelandic && country.name)
+    return data.filter(
+      (country) => country.code && country.nameIcelandic && country.name,
+    )
   }
 
   async getEducationalInstitutions(
@@ -306,17 +309,14 @@ export class SocialInsuranceAdministrationClientService {
     ).apiProtectedV1ApplicantResidenceInformationGet()
   }
 
-
   /**
    * TODO: Map all used application types to the enum and deprecate the old method
    */
   async getEducationLevelsWithEnum(
     user: User,
-    applicationType: ApplicationTypeEnum
-  ): Promise<
-    Array<TrWebApiServicesDomainEducationalInstitutionsModelsEducationLevelDto> | null
-  > {
-    const applicationTypeMapped = mapApplicationEnumToType(applicationType);
+    applicationType: ApplicationTypeEnum,
+  ): Promise<Array<TrWebApiServicesDomainEducationalInstitutionsModelsEducationLevelDto> | null> {
+    const applicationTypeMapped = mapApplicationEnumToType(applicationType)
 
     if (!applicationTypeMapped) {
       return Promise.resolve(null)
@@ -326,7 +326,7 @@ export class SocialInsuranceAdministrationClientService {
       user,
     ).apiProtectedV1GeneralEducationlevelsApplicationTypeGet({
       applicationType: applicationTypeMapped,
-    });
+    })
   }
 
   async getEducationLevels(

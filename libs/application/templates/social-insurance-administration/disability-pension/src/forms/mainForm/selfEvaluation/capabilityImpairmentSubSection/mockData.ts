@@ -1,4 +1,4 @@
-import { OptionsValueEnum } from "@island.is/application/templates/social-insurance-administration-core/lib/constants"
+import { OptionsValueEnum } from '@island.is/application/templates/social-insurance-administration-core/lib/constants'
 
 type QuestionOption = {
   title: string

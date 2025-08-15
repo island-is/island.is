@@ -1,6 +1,5 @@
-import { ObjectType, Field } from "@nestjs/graphql"
-import { DisabilityDiagnosis } from "./disabilityDiagnosis.model"
-
+import { ObjectType, Field } from '@nestjs/graphql'
+import { DisabilityDiagnosis } from './disabilityDiagnosis.model'
 
 @ObjectType('SocialInsuranceMedicalDocumentsDisabilityDiagnosisCollection')
 export class DisabilityDiagnosisCollection {

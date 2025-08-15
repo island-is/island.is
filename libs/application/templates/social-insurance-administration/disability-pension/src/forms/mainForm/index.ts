@@ -20,6 +20,6 @@ export const MainForm = buildForm({
     disabilityCertificateSection,
     extraInfoSection,
     overviewSection,
-    conclusionSection
+    conclusionSection,
   ],
 })

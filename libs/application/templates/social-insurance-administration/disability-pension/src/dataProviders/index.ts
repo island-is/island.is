@@ -4,9 +4,8 @@ export {
   IdentityApi,
   UserProfileApi,
   NationalRegistryUserApi,
-  NationalRegistrySpouseApi
+  NationalRegistrySpouseApi,
 } from '@island.is/application/types'
-
 
 export const SocialInsuranceAdministrationCategorizedIncomeTypesApi =
   defineTemplateApi({
@@ -36,12 +35,11 @@ export const SocialInsuranceAdministrationEducationLevelsApi =
     namespace: 'SocialInsuranceAdministration',
   })
 
-export const SocialInsuranceAdministrationCountriesApi =
-  defineTemplateApi({
-    action: 'getCountries',
-    externalDataId: 'socialInsuranceAdministrationCountries',
-    namespace: 'SocialInsuranceAdministration',
-  })
+export const SocialInsuranceAdministrationCountriesApi = defineTemplateApi({
+  action: 'getCountries',
+  externalDataId: 'socialInsuranceAdministrationCountries',
+  namespace: 'SocialInsuranceAdministration',
+})
 
 export const SocialInsuranceAdministrationLatestIncomePlan = defineTemplateApi({
   action: 'getLatestIncomePlan',
@@ -52,7 +50,8 @@ export const SocialInsuranceAdministrationLatestIncomePlan = defineTemplateApi({
 export const SocialInsuranceAdministrationSelfAssessmentQuestionsApi =
   defineTemplateApi({
     action: 'getDisabilityPensionSelfAssessmentQuestionnaire',
-    externalDataId: 'socialInsuranceAdministrationDisabilityPensionSelfAssessmentQuestions',
+    externalDataId:
+      'socialInsuranceAdministrationDisabilityPensionSelfAssessmentQuestions',
     namespace: 'SocialInsuranceAdministration',
   })
 

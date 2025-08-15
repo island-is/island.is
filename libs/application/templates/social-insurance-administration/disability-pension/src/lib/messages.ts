@@ -123,7 +123,8 @@ export const disabilityPensionFormMessage: MessageDir = {
     },
     informationMedicalImpairmentCause: {
       id: 'db.application:disability.pension.certificate.information.medical.impairment.cause',
-      defaultMessage: 'Vandi sem veldur skerðingu á getu einstaklings til atvinnuþátttöku',
+      defaultMessage:
+        'Vandi sem veldur skerðingu á getu einstaklings til atvinnuþátttöku',
       description: 'TODO',
     },
     informationMedicalImpairmentStability: {
@@ -138,7 +139,8 @@ export const disabilityPensionFormMessage: MessageDir = {
     },
     informationMedicalMedicalImplementsUsage: {
       id: 'db.application:disability.pension.certificate.information.medical.medical.implements.usage',
-      defaultMessage: 'Er einstaklingur að nota lyf vegna heilsubrests, hjálpartæki eða önnur inngrip í daglegu lífi',
+      defaultMessage:
+        'Er einstaklingur að nota lyf vegna heilsubrests, hjálpartæki eða önnur inngrip í daglegu lífi',
       description: 'TODO',
     },
     informationCurrentStatus: {
@@ -178,7 +180,6 @@ export const disabilityPensionFormMessage: MessageDir = {
       description: 'TODO',
     },
 
-
     // function assessment
     functionalAssessment: {
       id: 'db.application:disability.pension.certificate.functional.assessment',
@@ -187,10 +188,8 @@ export const disabilityPensionFormMessage: MessageDir = {
     },
     functionalAssessmentDescription: {
       id: 'db.application:disability.pension.certificate.functional.assessment.description',
-      defaultMessage:
-        'Mat á færni einstaklinga.',
-      description:
-        'TODO',
+      defaultMessage: 'Mat á færni einstaklinga.',
+      description: 'TODO',
     },
   }),
   prerequisites: defineMessages({

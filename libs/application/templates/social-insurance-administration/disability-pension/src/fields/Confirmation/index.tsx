@@ -1,10 +1,5 @@
 import { Application, Field, RecordObject } from '@island.is/application/types'
-import {
-  AlertMessage,
-  Box,
-  Stack,
-  Text,
-} from '@island.is/island-ui/core'
+import { AlertMessage, Box, Stack, Text } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import React, { FC } from 'react'
 import { disabilityPensionFormMessage } from '../../lib/messages'

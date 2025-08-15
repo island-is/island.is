@@ -1,4 +1,8 @@
-import { buildMultiField, buildRadioField, getValueViaPath } from '@island.is/application/core'
+import {
+  buildMultiField,
+  buildRadioField,
+  getValueViaPath,
+} from '@island.is/application/core'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { SectionRouteEnum } from '../../../../types'
 import { Application } from '@island.is/application/types'
@@ -12,10 +16,11 @@ export const educationLevelField = buildMultiField({
       id: `${SectionRouteEnum.BACKGROUND_INFO_EDUCATION_LEVEL}.level`,
       title: disabilityPensionFormMessage.questions.educationLevelTitle,
       options: (application: Application) => {
-        const educationLevels = getValueViaPath<Array<EducationLevels>>(
-          application.externalData,
-          'socialInsuranceAdministrationEducationLevels.data',
-        ) ?? []
+        const educationLevels =
+          getValueViaPath<Array<EducationLevels>>(
+            application.externalData,
+            'socialInsuranceAdministrationEducationLevels.data',
+          ) ?? []
 
         return educationLevels.map(({ code, description }) => ({
           value: code,

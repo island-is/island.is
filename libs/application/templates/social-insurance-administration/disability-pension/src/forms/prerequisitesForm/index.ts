@@ -86,28 +86,28 @@ export const Prerequisites = buildForm({
                 disabilityPensionFormMessage.prerequisites.dataFetchText,
             }),
             buildDataProviderItem({
-               provider: SocialInsuranceAdministrationWithholdingTaxApi,
-               title: disabilityPensionFormMessage.prerequisites.incomeTitle,
-               subTitle: disabilityPensionFormMessage.prerequisites.incomeText,
-             }),
+              provider: SocialInsuranceAdministrationWithholdingTaxApi,
+              title: disabilityPensionFormMessage.prerequisites.incomeTitle,
+              subTitle: disabilityPensionFormMessage.prerequisites.incomeText,
+            }),
             buildDataProviderItem({
-               provider: SocialInsuranceAdministrationEducationLevelsApi,
-             }),
+              provider: SocialInsuranceAdministrationEducationLevelsApi,
+            }),
             buildDataProviderItem({
-               provider: SocialInsuranceAdministrationCountriesApi,
-             }),
-             buildDataProviderItem({
-               provider: SocialInsuranceAdministrationLatestIncomePlan,
-             }),
-             buildDataProviderItem({
-               provider: SocialInsuranceAdministrationIncomePlanConditionsApi,
-             }),
-             buildDataProviderItem({
-               provider: SocialInsuranceAdministrationCurrenciesApi,
-             }),
-             buildDataProviderItem({
-               provider: SocialInsuranceAdministrationSelfAssessmentQuestionsApi
-             })
+              provider: SocialInsuranceAdministrationCountriesApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationLatestIncomePlan,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationIncomePlanConditionsApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationCurrenciesApi,
+            }),
+            buildDataProviderItem({
+              provider: SocialInsuranceAdministrationSelfAssessmentQuestionsApi,
+            }),
           ],
           submitField: buildSubmitField({
             id: 'submit',
