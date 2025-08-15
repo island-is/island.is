@@ -39,7 +39,6 @@ export const PropertyInfoSummary: FC<Props> = ({ ...props }) => {
     propertyDescriptionRoute,
     specialProvisionsRoute,
     propertyConditionRoute,
-    fileUploadRoute,
     fireProtectionsRoute,
     hasChangeButton,
   } = props
