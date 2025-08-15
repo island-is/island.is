@@ -49,7 +49,7 @@ const AddConstituencyModal = ({
   const onAddConstituency = async () => {
     addNewConstituency({
       variables: {
-        inputAdd: {
+        input: {
           collectionId: collection?.id,
           areaIds: selectedConstituencies,
           candidateId: candidateId,
