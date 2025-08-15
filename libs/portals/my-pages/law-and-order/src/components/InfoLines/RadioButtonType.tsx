@@ -36,6 +36,7 @@ export const RadioFormGroup = ({ group }: { group: LawAndOrderGroup }) => {
             control={control}
             render={({ field }) => {
               if (!item.value) {
+                // eslint-disable-next-line react/jsx-no-useless-fragment
                 return <></>
               }
               return (

@@ -1,19 +1,15 @@
-import { Box } from '@island.is/island-ui/core'
+import { useLocale, useNamespaces } from '@island.is/localization'
 import {
   DOMSMALARADUNEYTID_SLUG,
-  IntroHeader,
   IntroWrapper,
-  LinkButton,
   m,
 } from '@island.is/portals/my-pages/core'
-import { messages } from '../../lib/messages'
-import { useLocale, useNamespaces } from '@island.is/localization'
-import { useParams } from 'react-router-dom'
-import { LawAndOrderPaths } from '../../lib/paths'
-import InfoLines from '../../components/InfoLines/InfoLines'
-import { useEffect } from 'react'
-import { useGetCourtCaseVerdictQuery } from './Verdict.generated'
 import { Problem } from '@island.is/react-spa/shared'
+import { useEffect } from 'react'
+import { useParams } from 'react-router-dom'
+import InfoLines from '../../components/InfoLines/InfoLines'
+import { messages } from '../../lib/messages'
+import { useGetCourtCaseVerdictQuery } from './Verdict.generated'
 
 type UseParams = {
   id: string
