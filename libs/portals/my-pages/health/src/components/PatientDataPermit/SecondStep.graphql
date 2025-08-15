@@ -1,0 +1,8 @@
+query HealthDirectoratePatientSummaryApprovalCountries($locale: String) {
+  healthDirectoratePatientSummaryApprovalCountries(locale: $locale) {
+    data {
+      code
+      name
+    }
+  }
+}

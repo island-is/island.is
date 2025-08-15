@@ -1812,4 +1812,55 @@ export const messages = defineMessages({
     id: 'sp.health:three-years',
     defaultMessage: '3 ár',
   },
+  expired: {
+    id: 'sp.health:expired',
+    defaultMessage: 'Útrunnin',
+  },
+  healthDirectorate: {
+    defaultMessage: 'Embætti landlæknis',
+    id: 'sp.health:health-directorate',
+  },
+  invalidatePermit: {
+    defaultMessage: 'Ógilda heimild',
+    id: 'sp.health:invalidate-permit',
+  },
+  areYouSureAboutInvalidatingPermit: {
+    defaultMessage: 'Ertu viss um að þú viljir ógilda heimild?',
+    id: 'sp.health:are-you-sure-about-invalidating-permit',
+  },
+  youAreAboutToInvalidateThisPermit: {
+    defaultMessage: 'Þú ert að fara gera eftirfarandi heimild ógilda:',
+    id: 'sp.health:you-are-about-to-invalidate-this-permit',
+  },
+  cancel: {
+    defaultMessage: 'Hætta við',
+    id: 'sp.health:cancel',
+  },
+  confirm: {
+    defaultMessage: 'Staðfesta',
+    id: 'sp.health:confirm',
+  },
+  permitCreated: {
+    defaultMessage: 'Heimild hefur verið bætt við',
+    id: 'sp.health:permit-created',
+  },
+  permitCreatedError: {
+    defaultMessage:
+      'Ekki tókst að bæta heimild við. Vinsamlegast reyndu aftur síðar.',
+    id: 'sp.health:permit-created-error',
+  },
+  permitInvalidated: {
+    defaultMessage: 'Heimild hefur verið ógild',
+    id: 'sp.health:permit-invalidated',
+  },
+  permitInvalidatedError: {
+    defaultMessage:
+      'Ekki tókst að ógilda heimild. Vinsamlegast reyndu aftur síðar.',
+    id: 'sp.health:permit-invalidated-error',
+  },
+  countriesError: {
+    defaultMessage:
+      'Ekki tókst að sækja lönd. Vinsamlegast reyndu aftur síðar.',
+    id: 'sp.health:countries-error',
+  },
 })

@@ -43,7 +43,9 @@ const CustomCalendarContainer: React.FC<CustomCalendarContainerProps> = ({
                 justifyContent="center"
                 className={styles.rangeItem}
                 key={range.label}
-                onClick={() => setDate(range.startDate, range.endDate)}
+                onClick={() => {
+                  setDate(range.startDate, range.endDate)
+                }}
               >
                 <Text variant="small" color="blue400" fontWeight="medium">
                   {range.label}

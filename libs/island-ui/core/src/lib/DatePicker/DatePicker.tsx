@@ -200,9 +200,14 @@ export const DatePicker: React.FC<React.PropsWithChildren<DatePickerProps>> = ({
           calendarContainer={(props) => (
             <CustomCalendarContainer
               {...props}
-              setDate={(d, e) => {
-                setStartDate(d)
-                e && setEndDate(e)
+              setDate={(startDay, endDay) => {
+                setStartDate(startDay)
+                endDay && setEndDate(endDay)
+
+                handleChange &&
+                  startDay &&
+                  endDay &&
+                  handleChange(startDay, endDay)
               }}
               ranges={ranges}
               children={props.children}

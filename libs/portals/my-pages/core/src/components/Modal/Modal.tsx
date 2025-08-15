@@ -1,14 +1,14 @@
-import React, { FC, ReactElement, useEffect, useState } from 'react'
-import * as styles from './Modal.css'
 import {
   Box,
-  ModalBase,
   Button,
   ButtonProps,
-  Text,
-  Inline,
   Hyphen,
+  ModalBase,
+  ResponsiveProp,
+  Text,
 } from '@island.is/island-ui/core'
+import React, { FC, ReactElement, useEffect, useState } from 'react'
+import * as styles from './Modal.css'
 
 interface Props {
   id: string
@@ -27,6 +27,11 @@ interface Props {
     text?: string
     loading?: boolean
   }>
+  buttonsSpacing?:
+    | ResponsiveProp<
+        'center' | 'flexStart' | 'flexEnd' | 'spaceBetween' | 'spaceAround'
+      >
+    | undefined
   iconSrc?: string
   iconAlt?: string
   /**
@@ -50,6 +55,7 @@ export const Modal: FC<React.PropsWithChildren<Props>> = ({
   skeleton,
   iconAlt,
   iconSrc,
+  buttonsSpacing,
 }) => {
   const [closing, setClosing] = useState(false)
   const [startClosing, setStartClosing] = useState(false)
@@ -126,7 +132,13 @@ export const Modal: FC<React.PropsWithChildren<Props>> = ({
               </Box>
               {children}
               {buttons && (
-                <Inline space={2}>
+                <Box
+                  display="flex"
+                  flexDirection="row"
+                  justifyContent={buttonsSpacing ?? 'flexStart'}
+                  columnGap={2}
+                  marginTop={4}
+                >
                   {buttons.map((b) => (
                     <Button
                       key={b.id}
@@ -138,7 +150,7 @@ export const Modal: FC<React.PropsWithChildren<Props>> = ({
                       {b.text}
                     </Button>
                   ))}
-                </Inline>
+                </Box>
               )}
             </Box>
             {iconSrc && (

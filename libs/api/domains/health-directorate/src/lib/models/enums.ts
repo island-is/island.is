@@ -46,3 +46,21 @@ export enum PrescribedItemCategoryEnum {
 registerEnumType(PrescribedItemCategoryEnum, {
   name: 'HealthDirectoratePrescribedItemCategory',
 })
+
+export enum ApprovalCodesEnum {
+  PatientSummary = 'patient_summary',
+}
+
+registerEnumType(ApprovalCodesEnum, {
+  name: 'HealthDirectorateApprovalCodes',
+})
+
+export enum ApprovalStatusEnum {
+  active = 'active',
+  inactive = 'inactive',
+  expired = 'expired',
+}
+
+registerEnumType(ApprovalStatusEnum, {
+  name: 'HealthDirectorateApprovalStatus',
+})

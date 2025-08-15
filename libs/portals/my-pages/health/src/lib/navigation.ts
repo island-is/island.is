@@ -199,14 +199,6 @@ export const healthNavigation: PortalNavigationItem = {
               name: messages.addPermit,
               path: HealthPaths.HealthPatientDataPermitsAdd,
               navHide: true,
-              children: [
-                {
-                  name: messages.permit,
-                  path: HealthPaths.HealthPatientDataPermitsAddStep,
-                  searchHide: true,
-                  navHide: true,
-                },
-              ],
             },
             {
               name: messages.permit,

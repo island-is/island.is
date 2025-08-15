@@ -1,19 +1,31 @@
-import { Box, Button, DatePicker, Text } from '@island.is/island-ui/core'
+import { HealthDirectoratePatientDataApprovalInput } from '@island.is/api/schema'
+import { Box, Button, DatePicker, Text, toast } from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
-import React from 'react'
+import React, { Dispatch, FC, SetStateAction, useEffect, useState } from 'react'
 import { messages } from '../../lib/messages'
 import * as styles from './PatientDataPermit.css'
+import { addMonths, addYears, today } from '../../utils/dates'
 interface ThirdStepProps {
   onClick: () => void
   goBack: () => void
+  formState?: HealthDirectoratePatientDataApprovalInput
+  setFormState: Dispatch<
+    SetStateAction<HealthDirectoratePatientDataApprovalInput | undefined>
+  >
 }
 
-const ThirdStep: React.FC<ThirdStepProps> = ({ onClick, goBack }) => {
+const ThirdStep: FC<ThirdStepProps> = ({
+  onClick,
+  goBack,
+  formState,
+  setFormState,
+}) => {
   const { formatMessage } = useLocale()
-  const [selectedRange, setSelectedRange] = React.useState<{
+  const [selectedRange, setSelectedRange] = useState<{
     startDate: Date | null | undefined
     endDate: Date | null | undefined
   }>({ startDate: null, endDate: null })
+
   return (
     <Box>
       <Text variant="eyebrow" color="purple400">
@@ -23,42 +35,36 @@ const ThirdStep: React.FC<ThirdStepProps> = ({ onClick, goBack }) => {
         {formatMessage(messages.howLongShouldPermitApply)}
       </Text>
 
-      <Box width="touchable" style={{ width: '320px' }}>
+      <Box width="touchable" style={{ width: '320px' }} marginBottom={3}>
         <DatePicker
           backgroundColor="blue"
           range
           ranges={[
             {
-              startDate: new Date(),
-              endDate: new Date(new Date().setMonth(new Date().getMonth() + 6)),
+              startDate: today,
+              endDate: addMonths(today, 6),
               label: formatMessage(messages.sixMonths),
             },
             {
-              startDate: new Date(),
-              endDate: new Date(
-                new Date().setFullYear(new Date().getFullYear() + 1),
-              ),
+              startDate: today,
+              endDate: addYears(today, 1),
               label: formatMessage(messages.oneYear),
             },
             {
-              startDate: new Date(),
-              endDate: new Date(
-                new Date().setFullYear(new Date().getFullYear() + 2),
-              ),
+              startDate: today,
+              endDate: addYears(today, 2),
               label: formatMessage(messages.twoYears),
             },
             {
-              startDate: new Date(),
-              endDate: new Date(
-                new Date().setFullYear(new Date().getFullYear() + 3),
-              ),
+              startDate: today,
+              endDate: addYears(today, 3),
               label: formatMessage(messages.threeYears),
             },
           ]}
           selected={selectedRange.startDate}
-          handleChange={(startDate, endDate) =>
+          handleChange={(startDate, endDate) => {
             setSelectedRange({ startDate, endDate })
-          }
+          }}
           label={formatMessage(messages.period)}
           placeholderText={formatMessage(messages.choosePeriod)}
           size="xs"
@@ -85,8 +91,18 @@ const ThirdStep: React.FC<ThirdStepProps> = ({ onClick, goBack }) => {
           <Button
             fluid
             size="small"
-            disabled={!selectedRange.endDate || !selectedRange.startDate}
-            onClick={onClick}
+            disabled={selectedRange.endDate === null}
+            onClick={() => {
+              if (selectedRange.startDate && selectedRange.endDate) {
+                setFormState?.({
+                  codes: formState?.codes ?? [],
+                  countryCodes: formState?.countryCodes ?? [],
+                  validFrom: selectedRange.startDate?.toISOString(),
+                  validTo: selectedRange.endDate?.toISOString(),
+                })
+                onClick()
+              }
+            }}
           >
             {formatMessage(messages.forward)}
           </Button>
