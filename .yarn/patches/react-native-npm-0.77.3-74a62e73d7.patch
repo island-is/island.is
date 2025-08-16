@@ -1,0 +1,15 @@
+diff --git a/ReactCommon/react/runtime/platform/ios/ReactCommon/RCTHost.mm b/ReactCommon/react/runtime/platform/ios/ReactCommon/RCTHost.mm
+index b796713ed0670a50aa8dddcc32b8732058f0bb47..5142307e8b94faba52cbcc1cdb9556f00f1faa1c 100644
+--- a/ReactCommon/react/runtime/platform/ios/ReactCommon/RCTHost.mm
++++ b/ReactCommon/react/runtime/platform/ios/ReactCommon/RCTHost.mm
+@@ -254,7 +254,9 @@ - (RCTFabricSurface *)createSurfaceWithModuleName:(NSString *)moduleName
+   surface.surfaceHandler.setDisplayMode(displayMode);
+   [self _attachSurface:surface];
+ 
+-  [_instance callFunctionOnBufferedRuntimeExecutor:[surface](facebook::jsi::Runtime &_) { [surface start]; }];
++  __weak RCTFabricSurface *weakSurface = surface;
++  // Use the BufferedRuntimeExecutor to start the surface after the main JS bundle was fully executed.
++  [_instance callFunctionOnBufferedRuntimeExecutor:[weakSurface](facebook::jsi::Runtime &_) { [weakSurface start]; }];
+   return surface;
+ }
+ 
