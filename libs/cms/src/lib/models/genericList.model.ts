@@ -33,6 +33,9 @@ export class GenericList {
 
   @Field(() => Boolean, { nullable: true })
   showSearchInput?: boolean
+
+  @Field(() => Boolean, { nullable: true })
+  alphabeticallyOrderFilterTags?: boolean
 }
 
 const mapItemType = (itemType?: IGenericListFields['itemType']) =>
@@ -64,4 +67,5 @@ export const mapGenericList = ({
   filterTags: fields.filterTags ? fields.filterTags.map(mapGenericTag) : [],
   defaultOrder: mapOrderBy(fields.orderBy),
   showSearchInput: fields.showSearchInput ?? true,
+  alphabeticallyOrderFilterTags: fields.alphabeticallyOrderFilterTags ?? false,
 })

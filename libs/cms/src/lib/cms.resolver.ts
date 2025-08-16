@@ -153,6 +153,7 @@ import {
   BloodDonationRestrictionGenericTagList,
   BloodDonationRestrictionList,
 } from './models/bloodDonationRestriction.model'
+import { GenericList } from './models/genericList.model'
 
 const defaultCache: CacheControlOptions = { maxAge: CACHE_CONTROL_MAX_AGE }
 
@@ -1007,5 +1008,19 @@ export class IntroLinkImageResolver {
       return ''
     }
     return id
+  }
+}
+
+@Resolver(() => GenericList)
+export class GenericListResolver {
+  @ResolveField(() => [GenericTag])
+  async filterTags(
+    @Parent() { filterTags, alphabeticallyOrderFilterTags }: GenericList,
+  ) {
+    const tags = filterTags ?? []
+    if (alphabeticallyOrderFilterTags) {
+      tags.sort(sortAlpha('title'))
+    }
+    return tags
   }
 }
