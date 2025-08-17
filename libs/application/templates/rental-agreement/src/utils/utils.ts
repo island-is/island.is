@@ -142,11 +142,11 @@ export const applicantTableConfig = {
   },
   header: [
     m.landlordAndTenantDetails.nameInputLabel,
-    m.landlordAndTenantDetails.nationalIdHeaderLabel,
     m.landlordAndTenantDetails.phoneInputLabel,
+    m.landlordAndTenantDetails.nationalIdHeaderLabel,
     m.landlordAndTenantDetails.emailInputLabel,
   ],
-  rows: ['name', 'nationalId', 'phone', 'email'],
+  rows: ['name', 'phone', 'nationalId', 'email'],
 }
 
 export const getPropertyTypeOptions = () => [
