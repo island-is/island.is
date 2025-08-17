@@ -33,7 +33,8 @@ export const landlordDetails = defineMessages({
   uniqueApplicantsError: {
     id: 'ra.application:landlordDetails.uniqueApplicantsError',
     defaultMessage:
-      'Sami aðili má ekki verið skráður oftar en einu sinni á leigusamning.',
+      'Sami aðili má ekki vera skráður oftar en einu sinni á leigusamninginn.',
+
     description: 'Applicant already exists on application error',
   },
 })
@@ -76,7 +77,7 @@ export const tenantDetails = defineMessages({
   uniqueApplicantsError: {
     id: 'ra.application:tenantDetails.uniqueApplicantsError',
     defaultMessage:
-      'Sami aðili má ekki verið skráður oftar en einu sinni á leigusamning.',
+      'Sami aðili má ekki vera skráður oftar en einu sinni á leigusamninginn.',
     description: 'Applicant already exists on application error',
   },
 })
