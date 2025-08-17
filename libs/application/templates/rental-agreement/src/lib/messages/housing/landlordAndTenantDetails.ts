@@ -30,29 +30,11 @@ export const landlordDetails = defineMessages({
       'Að minnsta kosti einn leigusali þarf að vera skráður á leigusamninginn.',
     description: 'Landlord details no landlords in table',
   },
-  landlordOnlyRepresentativeTableError: {
-    id: 'ra.application:landlordDetails.landlordOnlyRepresentativeTableError',
+  uniqueApplicantsError: {
+    id: 'ra.application:landlordDetails.uniqueApplicantsError',
     defaultMessage:
-      'Að minnsta kosti einn leigusali þarf að vera skráður á leigusamninginn. Ekki er nóg að skrá umboðsaðila leigusala.',
-    description: 'Landlord details only a representative of landlord in table',
-  },
-  landlordSameAsTenantError: {
-    id: 'ra.application:landlordDetails.landlordSameAsTenantError',
-    defaultMessage:
-      'Sami aðili getur ekki verið skráður bæði sem leigusali og leigjandi.',
-    description: 'Landlord details landlord cannot be same as tenant error',
-  },
-  landlordAlreadyExistsError: {
-    id: 'ra.application:landlordDetails.landlordAlreadyExistsError',
-    defaultMessage:
-      'Sami aðili getur ekki verið skráður mörgum sinnum sem leigusali.',
-    description: 'Landlord details landlord already registered error',
-  },
-  landlordSameAsRepresentativeError: {
-    id: 'ra.application:landlordDetails.landlordSameAsRepresentativeError',
-    defaultMessage:
-      'Sami aðili getur ekki verið skráður bæði sem leigusali og umboðsaðili.',
-    description: 'Landlord details landlord same as representative error',
+      'Sami aðili má ekki verið skráður oftar en einu sinni á leigusamning.',
+    description: 'Applicant already exists on application error',
   },
 })
 
