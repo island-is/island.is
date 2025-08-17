@@ -7,7 +7,6 @@ import {
 import {
   applicantTableConfig,
   applicantTableFields,
-  hasAnyMatchingNationalId,
   hasDuplicateApplicants,
 } from '../../../utils/utils'
 import { Routes } from '../../../utils/enums'

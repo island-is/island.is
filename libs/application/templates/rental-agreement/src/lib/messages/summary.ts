@@ -397,16 +397,10 @@ export const summary = defineMessages({
       'Sami aðili getur ekki verið skráður bæði sem leigusali og leigjandi (Leigjandi)',
     description: 'Same tenant and landlord alert message (tenant)',
   },
-  alertRepeatedLandlord: {
-    id: 'ra.application:summary.alertRepeatedLandlord',
+  uniqueApplicantsError: {
+    id: 'ra.application:tenantDetails.uniqueApplicantsError',
     defaultMessage:
-      'Sami aðili getur ekki verið skráður mörgum sinnum sem leigusali.',
-    description: 'Duplicate landlord alert message',
-  },
-  alertRepeatedTenant: {
-    id: 'ra.application:summary.alertRepeatedTenant',
-    defaultMessage:
-      'Sami aðili getur ekki verið skráður mörgum sinnum sem leigjandi.',
-    description: 'Duplicate tenant alert message',
+      'Sami aðili má ekki verið skráður oftar en einu sinni á leigusamning.',
+    description: 'Applicant already exists on application error',
   },
 })
