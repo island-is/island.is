@@ -74,18 +74,6 @@ export const formatBankInfo = (bankInfo: string) => {
   return bankInfo
 }
 
-export const hasAnyMatchingNationalId = (
-  nationalIds: string[],
-  applicants: ApplicantsInfo[] = [],
-) => {
-  return (
-    nationalIds.length > 0 &&
-    applicants?.some((applicant) =>
-      nationalIds.includes(applicant.nationalIdWithName.nationalId),
-    )
-  )
-}
-
 export const hasDuplicateApplicants = (
   applicants: ApplicantsInfo[] = [],
 ): boolean => {
@@ -154,11 +142,11 @@ export const applicantTableConfig = {
   },
   header: [
     m.landlordAndTenantDetails.nameInputLabel,
-    m.landlordAndTenantDetails.phoneInputLabel,
     m.landlordAndTenantDetails.nationalIdHeaderLabel,
+    m.landlordAndTenantDetails.phoneInputLabel,
     m.landlordAndTenantDetails.emailInputLabel,
   ],
-  rows: ['name', 'phone', 'nationalId', 'email'],
+  rows: ['name', 'nationalId', 'phone', 'email'],
 }
 
 export const getPropertyTypeOptions = () => [
