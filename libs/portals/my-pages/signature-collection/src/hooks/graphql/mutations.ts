@@ -20,9 +20,9 @@ export const unSignList = gql`
 `
 export const addConstituency = gql`
   mutation SignatureCollectionAddAreas(
-    $inputAdd: SignatureCollectionAddListsInput!
+    $input: SignatureCollectionAddListsInput!
   ) {
-    signatureCollectionAddAreas(input: $inputAdd) {
+    signatureCollectionAddAreas(input: $input) {
       success
       reasons
     }

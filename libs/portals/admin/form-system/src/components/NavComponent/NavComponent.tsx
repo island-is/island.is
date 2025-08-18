@@ -11,7 +11,6 @@ import { ControlContext } from '../../context/ControlContext'
 import * as styles from './NavComponent.css'
 import cn from 'classnames'
 import { Box, Checkbox, Text } from '@island.is/island-ui/core'
-import { truncateName } from '../../lib/utils/truncateText'
 import { NavButtons } from './components/NavButtons'
 import { SectionTypes } from '@island.is/form-system/enums'
 
@@ -39,6 +38,8 @@ export const NavComponent = ({
     selectStatus === NavbarSelectStatus.LIST_ITEM
       ? activeListItem?.id ?? ''
       : activeItem?.data?.id ?? ''
+
+  const selectingIsOff = selectStatus === NavbarSelectStatus.OFF
 
   const connected = () => {
     const hasDependency = form.dependencies?.find((dep) => {
@@ -140,7 +141,8 @@ export const NavComponent = ({
             {!(
               type === 'Section' &&
               (data as FormSystemSection).sectionType !== SectionTypes.INPUT
-            ) && <NavButtons id={data.id} type={type} />}
+            ) &&
+              selectingIsOff && <NavButtons id={data.id} type={type} />}
           </Box>
         </Box>
       ) : (
@@ -185,9 +187,10 @@ export const NavComponent = ({
             {!(
               type === 'Section' &&
               (data as FormSystemSection).sectionType !== SectionTypes.INPUT
-            ) && <NavButtons id={data.id} type={type} />}
+            ) &&
+              selectingIsOff && <NavButtons id={data.id} type={type} />}
           </Box>
-          {selectable && (
+          {selectable && type === 'Field' && (
             <Box className={cn(styles.selectableComponent)} marginLeft="auto">
               <Checkbox
                 checked={connected()}

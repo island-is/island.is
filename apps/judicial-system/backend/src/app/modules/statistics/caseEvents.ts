@@ -40,11 +40,12 @@ const getCaseTypeTranslation = (caseType: CaseType) => {
 }
 
 const commonFields = (c: Case) => {
+  const isExtendedCase = !!c.parentCaseId
   return {
     caseType: c.type,
     caseTypeDescriptor: getCaseTypeTranslation(c.type),
     origin: c.origin,
-    isExtended: c.parentCaseId ? 'Já' : 'nei',
+    isExtended: isExtendedCase ? 'Já' : 'Nei',
     requestDecision: c.decision,
     requestDecisionDescriptor: c.decision
       ? getDecisionDescriptor(c.decision)

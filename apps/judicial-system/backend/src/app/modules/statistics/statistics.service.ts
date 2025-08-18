@@ -77,12 +77,12 @@ export class StatisticsService {
       type: [CaseType.INDICTMENT],
     }
 
-    // fetch all cases with the base filter to fetch the earliest case
-    const allCases = await this.caseModel.findAll({
+    // fetch only the earliest indictment with the base filter
+    const earliestCase = await this.caseModel.findOne({
       where,
       order: [['created', 'ASC']],
+      attributes: ['created'],
     })
-    const earliestCase = allCases.length > 0 ? allCases[0] : undefined
 
     // apply dto filters
     if (institutionId) {
@@ -149,12 +149,12 @@ export class StatisticsService {
       },
     }
 
-    // fetch all cases with the base filter to fetch the earliest case
-    const allSubpoenas = await this.subpoenaModel.findAll({
+    // fetch only the earliest subpoena with the base filter
+    const earliestCase = await this.subpoenaModel.findOne({
       where,
       order: [['created', 'ASC']],
+      attributes: ['created'],
     })
-    const earliestCase = allSubpoenas.length > 0 ? allSubpoenas[0] : undefined
 
     if (from || to) {
       where.created = {}
@@ -247,12 +247,12 @@ export class StatisticsService {
       },
     }
 
-    // fetch all cases with the base filter to fetch the earliest case
-    const allCases = await this.caseModel.findAll({
+    // fetch only the earliest case with the base filter
+    const earliestCase = await this.caseModel.findOne({
       where,
       order: [['created', 'ASC']],
+      attributes: ['created'],
     })
-    const earliestCase = allCases.length > 0 ? allCases[0] : undefined
 
     // apply dto filters
     if (created?.fromDate || created?.toDate) {
@@ -507,14 +507,18 @@ export class StatisticsService {
   }): Promise<{ url: string }> {
     const getData = async () => {
       if (type === DataGroups.REQUESTS) {
-        return await this.extractAndTransformRequestCases(period)
+        return {
+          data: await this.extractAndTransformRequestCases(period),
+          key: `krofur`,
+        }
       }
       // TODO: implement events for indictment
       return undefined
     }
-    const data = await getData()
-    if (!data) return { url: '' }
+    const result = await getData()
+    if (!result) return { url: '' }
 
+    const { data, key } = result
     const columns = [
       { key: 'id', header: 'ID' },
       { key: 'eventDescriptor', header: 'Atburður' },
@@ -529,7 +533,7 @@ export class StatisticsService {
       },
       {
         key: 'courtOfAppealDecisionDescriptor',
-        header: 'Niðurstaða Landsréttar - lykill',
+        header: 'Niðurstaða Landsréttar',
       },
     ]
     stringify(data, { header: true, columns }, async (error, csvOutput) => {
@@ -537,7 +541,7 @@ export class StatisticsService {
         this.logger.error('Failed to convert data to csv file')
         return
       }
-      const key = 'test'
+
       try {
         this.awsS3Service.uploadCsvToS3(key, csvOutput)
       } catch (error) {
@@ -545,11 +549,7 @@ export class StatisticsService {
       }
     })
 
-    const url = await this.awsS3Service.getSignedUrl(
-      'statistics',
-      'test',
-      60 * 60,
-    )
+    const url = await this.awsS3Service.getSignedUrl('statistics', key, 60 * 60) // timeToLive: 1H
     return { url }
   }
 }
