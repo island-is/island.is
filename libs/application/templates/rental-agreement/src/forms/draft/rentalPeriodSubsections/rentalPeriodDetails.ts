@@ -5,10 +5,12 @@ import {
   buildDateField,
   buildCheckboxField,
   YesOrNoEnum,
+  getValueViaPath,
 } from '@island.is/application/core'
 import { Routes } from '../../../utils/enums'
 import { rentalPeriodIsDefinite } from '../../../utils/rentalPeriodUtils'
 import { rentalPeriod } from '../../../lib/messages'
+import addMonths from 'date-fns/addMonths'
 
 export const RentalPeriodDetails = buildSubSection({
   id: Routes.RENTALPERIOD,
@@ -24,12 +26,19 @@ export const RentalPeriodDetails = buildSubSection({
           title: rentalPeriod.startDateTitle,
           placeholder: rentalPeriod.startDatePlaceholder,
           required: true,
+          clearOnChange: ['rentalPeriod.endDate'],
+          minDate: new Date(2023, 0, 1),
         }),
         buildDateField({
           id: 'rentalPeriod.endDate',
           title: rentalPeriod.endDateTitle,
           placeholder: rentalPeriod.endDatePlaceholder,
           required: true,
+          minDate: ({ answers }) => {
+            const dateFrom =
+              getValueViaPath<string>(answers, 'rentalPeriod.startDate') ?? ''
+            return addMonths(new Date(dateFrom), 1)
+          },
           condition: rentalPeriodIsDefinite,
         }),
         buildCheckboxField({
