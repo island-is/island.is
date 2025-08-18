@@ -61,6 +61,11 @@ export const isValidMeterStatus = (value: string) => {
   return meterStatusRegex.test(value)
 }
 
+export const isValidPhoneNumber = (phoneNumber: string) => {
+  const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
+  return phone && phone.isValid()
+}
+
 export const formatPhoneNumber = (phoneNumber: string): string => {
   const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
   return phone?.formatNational() || phoneNumber

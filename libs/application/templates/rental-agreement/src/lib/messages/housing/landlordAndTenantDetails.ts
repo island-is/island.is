@@ -135,6 +135,11 @@ export const landlordAndTenantDetails = defineMessages({
     defaultMessage: 'Símanúmer þarf að vera skráð',
     description: 'Phone number empty error',
   },
+  phoneNumberInvalidError: {
+    id: 'ra.application:landlordAndTenantDetails.phoneNumberInvalidError',
+    defaultMessage: 'Símanúmer er ógilt',
+    description: 'Phone number invalid error',
+  },
   emailInvalidError: {
     id: 'ra.application:landlordAndTenantDetails.emailInvalidError',
     defaultMessage:
