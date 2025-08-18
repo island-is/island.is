@@ -137,7 +137,8 @@ export const landlordAndTenantDetails = defineMessages({
   },
   emailEmptyError: {
     id: 'ra.application:landlordAndTenantDetails.emailEmptyError',
-    defaultMessage: 'Netfang þarf að vera skráð',
+    defaultMessage:
+      'Netfangið er rangt ritað. Vinsamlegast athugaðu hvort vanti @-merkið eða lénið (eins og ".is")',
     description: 'Email empty error',
   },
   addressEmptyError: {
