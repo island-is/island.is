@@ -40,8 +40,8 @@ export class AidOrNutrition {
   @Field({ nullable: true })
   available?: string
 
-  @Field({ nullable: true })
-  location?: string
+  @Field(() => [String], { nullable: true })
+  location?: string[]
 
   @Field({ nullable: true })
   explanation?: string

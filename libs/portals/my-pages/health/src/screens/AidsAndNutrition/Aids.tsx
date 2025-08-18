@@ -99,7 +99,7 @@ const Aids = ({ data }: Props) => {
     },
     {
       title: formatMessage(messages.dispensationPlace),
-      value: item.location ?? '',
+      value: item.location?.join() ?? '',
     },
     {
       title: formatMessage(messages.extraDetail),

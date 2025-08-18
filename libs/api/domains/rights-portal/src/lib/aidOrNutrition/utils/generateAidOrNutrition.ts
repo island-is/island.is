@@ -50,7 +50,11 @@ export const generateAidOrNutrition = (
     validUntil: data.validUntil ? data.validUntil : undefined,
     nextAllowedMonth: data.nextAllowedMonth ?? undefined,
     available: data.available ?? undefined,
-    location: data.location ?? undefined,
+    location: data.location
+      ? typeof data.location === 'string'
+        ? data.location.split('#')
+        : []
+      : undefined,
     expiring: data.expiring ? data.expiring : false,
     renewalStatus:
       data.renewalStatus !== undefined
