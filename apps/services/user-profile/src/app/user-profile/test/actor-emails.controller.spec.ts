@@ -1,13 +1,11 @@
 import { getModelToken } from '@nestjs/sequelize'
 import request, { SuperTest, Test } from 'supertest'
-import { v4 as uuid } from 'uuid'
 
 import { UserProfileScope } from '@island.is/auth/scopes'
 import {
   createCurrentUser,
   createNationalId,
   createPhoneNumber,
-  createVerificationCode,
 } from '@island.is/testing/fixtures'
 import { setupApp, TestApp } from '@island.is/testing/nest'
 

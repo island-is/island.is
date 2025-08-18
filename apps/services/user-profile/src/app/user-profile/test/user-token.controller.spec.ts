@@ -1,5 +1,4 @@
 import request from 'supertest'
-import { SuperTest, Test } from 'supertest'
 
 import {
   setupApp,
