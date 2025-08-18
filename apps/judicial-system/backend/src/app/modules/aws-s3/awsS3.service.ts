@@ -140,7 +140,7 @@ export class AwsS3Service {
   }
 
   getSignedUrl(
-    caseType: CaseType | 'statistics',
+    type: CaseType | 'statistics',
     key?: string,
     timeToLive?: number,
     useFreshSession = false,
@@ -158,7 +158,7 @@ export class AwsS3Service {
         'getObject',
         {
           Bucket: this.config.bucket,
-          Key: formatS3Key(caseType, key),
+          Key: formatS3Key(type, key),
           Expires: timeToLive ?? this.config.timeToLiveGet,
         },
         (err, url) => {
