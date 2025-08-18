@@ -348,9 +348,9 @@ export const isIndictmentStepValid = (workingCase: Case): boolean => {
 
   const isTrafficViolation = (indictmentCount: IndictmentCount) =>
     isTrafficViolationIndictmentCount(
+      indictmentCount.indictmentCountSubtypes,
       indictmentCount.policeCaseNumber &&
         workingCase.indictmentSubtypes[indictmentCount.policeCaseNumber],
-      indictmentCount.indictmentCountSubtypes,
     )
 
   if (!workingCase.indictmentCounts?.length) {

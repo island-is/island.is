@@ -336,8 +336,8 @@ export const IndictmentCount: FC<Props> = ({
   }
 
   const shouldShowTrafficViolationFields = isTrafficViolationIndictmentCount(
-    subtypes,
     indictmentCount.indictmentCountSubtypes,
+    subtypes,
   )
 
   return (

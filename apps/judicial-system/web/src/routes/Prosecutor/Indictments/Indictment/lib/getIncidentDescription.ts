@@ -81,7 +81,7 @@ export const getIncidentDescription = (
     return ''
   }
 
-  if (isTrafficViolationIndictmentCount(subtypes, indictmentCountSubtypes)) {
+  if (isTrafficViolationIndictmentCount(indictmentCountSubtypes, subtypes)) {
     const hasOnlyOtherOffense =
       offenses?.length === 1 &&
       offenses[0].offense === IndictmentCountOffense.OTHER
