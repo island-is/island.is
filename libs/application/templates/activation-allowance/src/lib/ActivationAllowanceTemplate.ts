@@ -43,6 +43,7 @@ const template: ApplicationTemplate<
     ApplicationConfigurations.ActivationAllowance.translation,
   dataSchema: ActivationAllowanceAnswersSchema,
   featureFlag: Features.ActivationAllowanceApplicationEnabled,
+  allowMultipleApplicationsInDraft: false,
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
