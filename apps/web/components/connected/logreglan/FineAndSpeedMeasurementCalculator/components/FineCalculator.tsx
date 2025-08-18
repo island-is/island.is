@@ -61,6 +61,12 @@ const FineCardList = ({
           onChange={(e) => {
             setSearchValue(e.target.value)
           }}
+          onKeyDown={(e) => {
+            if (e.key === 'Enter') {
+              e.preventDefault()
+              e.currentTarget.blur()
+            }
+          }}
         />
         <GridContainer>
           <GridRow rowGap={2}>
@@ -89,10 +95,7 @@ const FineCardList = ({
                   )
                 }
                 return (
-                  <GridColumn
-                    key={fine.id}
-                    span={['1/1', '1/2', '1/1', '1/2', '1/3']}
-                  >
+                  <GridColumn key={fine.id} span="1/1">
                     <FocusableBox
                       padding={[2, 2, 3]}
                       border="standard"
