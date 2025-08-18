@@ -631,62 +631,82 @@ export class CaseService {
     update: UpdateCase,
     transaction: Transaction,
   ): Promise<void> {
-    if (update.policeCaseNumbers && theCase.caseFiles) {
-      const oldPoliceCaseNumbers = theCase.policeCaseNumbers
-      const newPoliceCaseNumbers = update.policeCaseNumbers
-      const maxIndex = Math.max(
-        oldPoliceCaseNumbers.length,
-        newPoliceCaseNumbers.length,
-      )
+    if (
+      !update.policeCaseNumbers ||
+      update.policeCaseNumbers.length === 0 ||
+      !theCase.caseFiles
+    ) {
+      // Nothing to do
+      return
+    }
 
-      // Assumptions:
-      // 1. The police case numbers are in the same order as they were before
-      // 2. The police case numbers are not duplicated
-      // 3. At most one police case number is changed, added or removed
-      for (let i = 0; i < maxIndex; i++) {
-        // Police case number added
-        if (i === oldPoliceCaseNumbers.length) {
-          break
-        }
+    const oldPoliceCaseNumbers = [...theCase.policeCaseNumbers].sort()
+    const newPoliceCaseNumbers = [...update.policeCaseNumbers].sort()
 
-        // Police case number deleted
-        if (
-          i === newPoliceCaseNumbers.length ||
-          (newPoliceCaseNumbers[i] !== oldPoliceCaseNumbers[i] &&
-            newPoliceCaseNumbers.length < oldPoliceCaseNumbers.length)
-        ) {
-          for (const caseFile of theCase.caseFiles) {
-            if (caseFile.policeCaseNumber === oldPoliceCaseNumbers[i]) {
-              await this.fileService.deleteCaseFile(
-                theCase,
-                caseFile,
-                transaction,
-              )
-            }
-          }
+    const removedPoliceCaseNumbers: string[] = []
+    const addedPoliceCaseNumbers: string[] = []
 
-          break
-        }
-
-        // Police case number unchanged
-        if (newPoliceCaseNumbers[i] === oldPoliceCaseNumbers[i]) {
-          continue
-        }
-
-        // Police case number changed
-        for (const caseFile of theCase.caseFiles) {
-          if (caseFile.policeCaseNumber === oldPoliceCaseNumbers[i]) {
-            await this.fileService.updateCaseFile(
-              theCase.id,
-              caseFile.id,
-              { policeCaseNumber: newPoliceCaseNumbers[i] },
-              transaction,
-            )
-          }
-        }
-
-        break
+    // Find added and removed police case numbers
+    while (oldPoliceCaseNumbers.length > 0 && newPoliceCaseNumbers.length > 0) {
+      // If the police case numbers are equal, then nothing has changed
+      if (oldPoliceCaseNumbers[0] === newPoliceCaseNumbers[0]) {
+        oldPoliceCaseNumbers.shift()
+        newPoliceCaseNumbers.shift()
+        continue
       }
+
+      // If the first police case number in the old list is smaller
+      // than the first in the new list, then it has been removed
+      if (oldPoliceCaseNumbers[0] < newPoliceCaseNumbers[0]) {
+        // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+        removedPoliceCaseNumbers.push(oldPoliceCaseNumbers.shift()!)
+        continue
+      }
+
+      // Otherwise, the first police case number in the new list has been added
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      addedPoliceCaseNumbers.push(newPoliceCaseNumbers.shift()!)
+    }
+
+    // If there are still police case numbers left in either list,
+    // then they have been removed or added
+    removedPoliceCaseNumbers.push(...oldPoliceCaseNumbers)
+    addedPoliceCaseNumbers.push(...newPoliceCaseNumbers)
+
+    // Assumption: If exactly one police case number has been added and
+    // exactly one has been removed, then a police case number has been changed
+    if (
+      removedPoliceCaseNumbers.length === 1 &&
+      addedPoliceCaseNumbers.length === 1
+    ) {
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const removedPoliceCaseNumber = removedPoliceCaseNumbers.shift()!
+      // eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+      const addedPoliceCaseNumber = addedPoliceCaseNumbers.shift()!
+
+      // Update case files with the new police case number
+      for (const caseFile of theCase.caseFiles.filter(
+        (caseFile) => caseFile.policeCaseNumber === removedPoliceCaseNumber,
+      )) {
+        await this.fileService.updateCaseFile(
+          theCase.id,
+          caseFile.id,
+          { policeCaseNumber: addedPoliceCaseNumber },
+          transaction,
+        )
+      }
+
+      // We are done
+      return
+    }
+
+    // Delete case files connected to removed police case numbers
+    for (const caseFile of theCase.caseFiles.filter(
+      (caseFile) =>
+        caseFile.policeCaseNumber &&
+        removedPoliceCaseNumbers.includes(caseFile.policeCaseNumber),
+    )) {
+      await this.fileService.deleteCaseFile(theCase, caseFile, transaction)
     }
   }
 
@@ -2494,6 +2514,11 @@ export class CaseService {
       type: [CaseType.INDICTMENT],
     }
 
+    const minCreated = (await this.caseModel.min('created', {
+      where,
+    })) as Date | null
+
+    // apply dto filters
     if (institutionId) {
       where = {
         ...where,
@@ -2520,15 +2545,11 @@ export class CaseService {
 
     const filterOnSentToCourt = () => {
       if (sentToCourt) {
-        console.log({ sentToCourt })
-        const sortedCase = cases.sort(
-          (a, b) => a.created.getTime() - b.created.getTime(),
-        )
-        if (!sortedCase.length) {
+        if (!cases.length) {
           return undefined
         }
 
-        const start = sentToCourt.fromDate ?? sortedCase[0]?.created
+        const start = sentToCourt.fromDate ?? cases[0]?.created
         const end = sentToCourt.toDate ?? new Date()
 
         return cases.filter(({ eventLogs }) =>
@@ -2544,7 +2565,11 @@ export class CaseService {
       }
     }
     const filteredCases = filterOnSentToCourt() ?? cases
-    return this.getIndictmentStatistics(filteredCases)
+    const indictmentCaseStatistics = this.getIndictmentStatistics(filteredCases)
+    return {
+      ...indictmentCaseStatistics,
+      minDate: minCreated ?? new Date(),
+    }
   }
 
   async getSubpoenaStatistics(
@@ -2577,6 +2602,11 @@ export class CaseService {
       },
     }
 
+    const minCreated = (await this.caseModel.min('created', {
+      where,
+    })) as Date | null
+
+    // apply dto filters
     if (created?.fromDate || created?.toDate) {
       const { fromDate, toDate } = created
       where.created = {}
@@ -2637,7 +2667,12 @@ export class CaseService {
       }
     }
     const filteredCases = filterOnSentToCourt() ?? cases
-    return this.getRequestCaseStatistics(filteredCases)
+    const requestCaseStatistics = this.getRequestCaseStatistics(filteredCases)
+
+    return {
+      ...requestCaseStatistics,
+      minDate: minCreated ?? new Date(),
+    }
   }
 
   async getCaseStatistics(
@@ -2704,15 +2739,17 @@ export class CaseService {
 
     const stats: CaseStatistics = {
       count: cases.length,
-      requestCases,
-      indictmentCases,
+      requestCases: { ...requestCases, minDate: new Date() },
+      indictmentCases: { ...indictmentCases, minDate: new Date() },
       subpoenas,
     }
 
     return stats
   }
 
-  getIndictmentStatistics(cases: Case[]): IndictmentCaseStatistics {
+  getIndictmentStatistics(
+    cases: Case[],
+  ): Omit<IndictmentCaseStatistics, 'minDate'> {
     const inProgressCount = cases.filter(
       (caseItem) => caseItem.state !== CaseState.COMPLETED,
     ).length
@@ -2753,7 +2790,9 @@ export class CaseService {
     }
   }
 
-  getRequestCaseStatistics(cases: Case[]): RequestCaseStatistics {
+  getRequestCaseStatistics(
+    cases: Case[],
+  ): Omit<RequestCaseStatistics, 'minDate'> {
     const inProgressCount = cases.filter(
       (c) => !isCompletedCase(c.state),
     ).length
