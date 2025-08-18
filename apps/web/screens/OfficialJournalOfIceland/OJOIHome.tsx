@@ -17,7 +17,6 @@ import { SLICE_SPACING } from '@island.is/web/constants'
 import {
   ContentLanguage,
   CustomPageUniqueIdentifier,
-  OfficialJournalOfIcelandAdvert,
   OfficialJournalOfIcelandAdvertMainCategory,
   OfficialJournalOfIcelandAdvertsResponse,
   Query,
