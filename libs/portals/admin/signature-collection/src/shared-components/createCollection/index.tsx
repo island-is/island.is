@@ -179,6 +179,7 @@ const CreateCollection = ({
           setCollectionName('')
           setCanCreate(true)
         }}
+        scrollType="inside"
         hideOnClickOutside={false}
         closeButtonLabel={''}
         label={''}

@@ -18,8 +18,10 @@ import ShareLink from '../../shared/ShareLink'
 const collectionType = SignatureCollectionCollectionType.Presidential
 
 const OwnerView = ({
+  refetchIsOwner,
   currentCollection,
 }: {
+  refetchIsOwner: () => void
   currentCollection: SignatureCollection
 }) => {
   useNamespaces('sp.signatureCollection')
@@ -118,7 +120,9 @@ const OwnerView = ({
           </Box>
           {listsForOwner?.length > 0 &&
             !user?.profile.actor &&
-            currentCollection.isActive && <CancelCollection />}
+            currentCollection.isActive && (
+              <CancelCollection refetchIsOwner={refetchIsOwner} />
+            )}
         </Box>
       ) : (
         <Skeleton />
