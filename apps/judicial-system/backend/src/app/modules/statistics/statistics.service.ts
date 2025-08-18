@@ -5,12 +5,9 @@ import { Sequelize } from 'sequelize-typescript'
 import { Inject, Injectable } from '@nestjs/common'
 import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 
-import { IntlService } from '@island.is/cms-translations'
-import { SigningService } from '@island.is/dokobit-signing'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
-import { MessageService } from '@island.is/judicial-system/message'
 import {
   CaseState,
   CaseType,
@@ -20,15 +17,9 @@ import {
   ServiceStatus,
 } from '@island.is/judicial-system/types'
 
-import { AwsS3Service } from '../aws-s3'
 import { Case, DateLog, partition } from '../case'
-import { CaseString } from '../case/models/caseString.model'
-import { CourtService } from '../court'
-import { DefendantService } from '../defendant'
-import { EventService } from '../event'
-import { EventLog, EventLogService } from '../event-log'
-import { FileService } from '../file'
-import { Subpoena, SubpoenaService } from '../subpoena'
+import { EventLog } from '../event-log'
+import { Subpoena } from '../subpoena'
 import {
   CaseStatistics,
   IndictmentCaseStatistics,
@@ -47,18 +38,6 @@ export class StatisticsService {
     @InjectModel(Case) private readonly caseModel: typeof Case,
     @InjectModel(DateLog) private readonly dateLogModel: typeof DateLog,
     @InjectModel(Subpoena) private readonly subpoenaModel: typeof Subpoena,
-    @InjectModel(CaseString)
-    private readonly caseStringModel: typeof CaseString,
-    private readonly defendantService: DefendantService,
-    private readonly subpoenaService: SubpoenaService,
-    private readonly fileService: FileService,
-    private readonly awsS3Service: AwsS3Service,
-    private readonly courtService: CourtService,
-    private readonly signingService: SigningService,
-    private readonly intlService: IntlService,
-    private readonly eventService: EventService,
-    private readonly eventLogService: EventLogService,
-    private readonly messageService: MessageService,
     @Inject(LOGGER_PROVIDER) private readonly logger: Logger,
   ) {}
 
@@ -78,12 +57,12 @@ export class StatisticsService {
       type: [CaseType.INDICTMENT],
     }
 
-    // fetch all cases with the base filter to fetch the earliest case
-    const allCases = await this.caseModel.findAll({
+    // fetch only the earliest indictment with the base filter
+    const earliestCase = await this.caseModel.findOne({
       where,
       order: [['created', 'ASC']],
+      attributes: ['created'],
     })
-    const earliestCase = allCases.length > 0 ? allCases[0] : undefined
 
     // apply dto filters
     if (institutionId) {
@@ -150,12 +129,12 @@ export class StatisticsService {
       },
     }
 
-    // fetch all cases with the base filter to fetch the earliest case
-    const allSubpoenas = await this.subpoenaModel.findAll({
+    // fetch only the earliest subpoena with the base filter
+    const earliestCase = await this.subpoenaModel.findOne({
       where,
       order: [['created', 'ASC']],
+      attributes: ['created'],
     })
-    const earliestCase = allSubpoenas.length > 0 ? allSubpoenas[0] : undefined
 
     if (from || to) {
       where.created = {}
@@ -248,12 +227,12 @@ export class StatisticsService {
       },
     }
 
-    // fetch all cases with the base filter to fetch the earliest case
-    const allCases = await this.caseModel.findAll({
+    // fetch only the earliest case with the base filter
+    const earliestCase = await this.caseModel.findOne({
       where,
       order: [['created', 'ASC']],
+      attributes: ['created'],
     })
-    const earliestCase = allCases.length > 0 ? allCases[0] : undefined
 
     // apply dto filters
     if (created?.fromDate || created?.toDate) {
