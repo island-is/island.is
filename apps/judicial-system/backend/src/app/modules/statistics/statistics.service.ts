@@ -19,6 +19,7 @@ import {
   ServiceStatus,
 } from '@island.is/judicial-system/types'
 
+import { AwsS3Service } from '../aws-s3'
 import { Case, DateLog, partition } from '../case'
 import { EventLog } from '../event-log'
 import { Institution } from '../institution'
