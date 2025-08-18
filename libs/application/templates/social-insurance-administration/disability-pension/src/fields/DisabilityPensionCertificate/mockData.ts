@@ -23,10 +23,12 @@ export const MOCK_CERTIFICATE: SiaDisabilityPensionCertificateQuery = {
       email: 'teitur@heilsugaeslan.is',
     },
     diagnoses: {
-      mainDiagnosis: {
-        code: 'M05.9',
-        description: 'Seropositive rehumatoid arthritis, unspecified',
-      },
+      mainDiagnoses: [
+        {
+          code: 'M05.9',
+          description: 'Seropositive rehumatoid arthritis, unspecified',
+        },
+      ],
       otherDiagnoses: [
         {
           code: 'M05.9',
