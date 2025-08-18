@@ -23,6 +23,9 @@ export class GrantCardsList {
   @Field()
   title!: string
 
+  @Field()
+  alwaysDisplayResultsAsCards!: boolean
+
   @Field({ nullable: true })
   displayTitle?: boolean
 
@@ -49,6 +52,10 @@ export const mapGrantCardsList = ({
     title: fields.grantCardListTitle,
     displayTitle: fields.grantCardsListDisplayTitle,
     maxNumberOfCards: fields.grantCardsListMaxNumberOfCards,
+    //returns false if and only if the field is false
+    alwaysDisplayResultsAsCards: !(
+      fields.grantCardsAlwaysDisplayResultsAsCards === false
+    ),
     sorting:
       fields.grantCardsListSorting &&
       fields.grantCardsListSorting === 'Alphabetical'
