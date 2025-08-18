@@ -18,16 +18,20 @@ import ShareLink from '../../shared/ShareLink'
 const collectionType = SignatureCollectionCollectionType.Presidential
 
 const OwnerView = ({
+  refetchIsOwner,
   currentCollection,
 }: {
+  refetchIsOwner: () => void
   currentCollection: SignatureCollection
 }) => {
   useNamespaces('sp.signatureCollection')
   const navigate = useNavigate()
   const user = useUserInfo()
   const { formatMessage } = useLocale()
-  const { listsForOwner, loadingOwnerLists, refetchListsForOwner } =
-    useGetListsForOwner(collectionType, currentCollection?.id || '')
+  const { listsForOwner, loadingOwnerLists } = useGetListsForOwner(
+    collectionType,
+    currentCollection?.id || '',
+  )
 
   return (
     <Box>
@@ -117,7 +121,7 @@ const OwnerView = ({
           {listsForOwner?.length > 0 &&
             !user?.profile.actor &&
             currentCollection.isActive && (
-              <CancelCollection refetch={refetchListsForOwner} />
+              <CancelCollection refetchIsOwner={refetchIsOwner} />
             )}
         </Box>
       ) : (
