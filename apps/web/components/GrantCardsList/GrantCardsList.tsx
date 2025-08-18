@@ -125,8 +125,6 @@ const GrantCardsList = ({ slice }: SliceProps) => {
 
   const grantItems = [...(slice.resolvedGrantsList?.items ?? [])]
 
-  console.log(slice.alwaysDisplayResultsAsCards)
-
   if (grantItems.length === 1 && !slice.alwaysDisplayResultsAsCards) {
     const grant = grantItems[0]
 
