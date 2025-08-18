@@ -29,7 +29,7 @@ import { PoliceCase, PoliceCaseUpdate } from './PoliceCase/PoliceCase'
 import { PoliceCaseInfo } from './PoliceCaseInfo/PoliceCaseInfo'
 import { strings } from './PoliceCaseList.strings'
 
-interface PoliceCase {
+interface TPoliceCase {
   number: string
   subtypes?: IndictmentSubtype[]
   place?: string
@@ -66,7 +66,7 @@ export const PoliceCaseList = () => {
     [workingCase.defendants],
   )
 
-  const policeCases: PoliceCase[] = useMemo(() => {
+  const policeCases: TPoliceCase[] = useMemo(() => {
     const policeCases =
       workingCase.policeCaseNumbers && workingCase.policeCaseNumbers.length > 0
         ? workingCase.policeCaseNumbers.map((policeCaseNumber) => ({
@@ -95,7 +95,7 @@ export const PoliceCaseList = () => {
   }, [workingCase])
 
   const getWorkingCaseUpdates = (
-    policeCases: PoliceCase[],
+    policeCases: TPoliceCase[],
     updates: IndexedPoliceCaseUpdate[] = [],
   ): WorkingCaseUpdate => {
     const unsortedPoliceCaseNumbers: string[] = []
@@ -248,7 +248,7 @@ export const PoliceCaseList = () => {
     }))
   }
 
-  const handleCreatePoliceCases = (newPoliceCases: PoliceCase[]) => {
+  const handleCreatePoliceCases = (newPoliceCases: TPoliceCase[]) => {
     const { policeCaseNumbers, indictmentSubtypes, crimeScenes } =
       getWorkingCaseUpdates([...policeCases, ...newPoliceCases])
 
