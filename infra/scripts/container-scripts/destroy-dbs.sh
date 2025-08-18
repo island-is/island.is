@@ -25,7 +25,8 @@ psql -tc "SELECT rolname FROM pg_roles WHERE rolname like 'feature_${FEATURE_DB_
     if [[ "$rolname" == *read ]]; then
       psql -c "REVOKE USAGE ON SCHEMA PUBLIC FROM ${rolname}"
       psql -c "REVOKE SELECT ON ALL TABLES IN SCHEMA PUBLIC FROM ${rolname}"
-      psql -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE SELECT ON TABLES FROM ${rolname}"
+      # ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT SELECT ON TABLES TO
+      # psql -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE SELECT ON TABLES FROM ${rolname}"
     fi
     psql -c "DROP ROLE IF EXISTS ${rolname};"
   done
