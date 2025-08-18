@@ -13,7 +13,7 @@ export const reportingObligationSection = buildSection({
   tabTitle: reportingObligation.pageTitle,
   children: [
     buildMultiField({
-      id: 'termsMultiField',
+      id: 'reportObligationMultiField',
       title: reportingObligation.pageTitle,
       children: [
         buildDescriptionField({
