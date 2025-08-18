@@ -396,7 +396,7 @@ export const PoliceCaseList = () => {
       )
 
       if (idx < 0) {
-        return
+        continue
       }
 
       const policeCase = policeCases[idx]
