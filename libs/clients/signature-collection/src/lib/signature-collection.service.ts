@@ -46,10 +46,6 @@ export class SignatureCollectionClientService {
     return api.withMiddleware(new AuthMiddleware(auth)) as T
   }
 
-  async currentCollection(): Promise<Collection[]> {
-    return await this.sharedService.currentCollection(this.electionsApi)
-  }
-
   async getLatestCollectionForType(
     collectionType: CollectionType,
   ): Promise<Collection> {
@@ -73,6 +69,7 @@ export class SignatureCollectionClientService {
       this.getApiWithAuth(this.listsApi, auth),
       this.getApiWithAuth(this.candidateApi, auth),
       this.getApiWithAuth(this.collectionsApi, auth),
+      this.getApiWithAuth(this.electionsApi, auth),
     )
     if (!list.active) {
       throw new Error('List is not active')
@@ -126,7 +123,7 @@ export class SignatureCollectionClientService {
       throw new Error('User is already owner of lists')
     }
 
-    const filteredAreas = areas
+    const filteredAreas = areas?.length
       ? collectionAreas.filter((area) =>
           areas.flatMap((a) => a.areaId).includes(area.id),
         )
@@ -156,16 +153,26 @@ export class SignatureCollectionClientService {
   }
 
   async createMunicipalCandidacy(
-    { collectionId, owner, areas, collectionType }: CreateListInput,
+    { collectionId, owner, areas, collectionType, listName }: CreateListInput,
     auth: User,
   ): Promise<Slug> {
-    const {
-      id,
-      isActive,
-      areas: collectionAreas,
-    } = await this.getLatestCollectionForType(collectionType)
-    // check if collectionId is current collection and current collection is open
-    if (collectionId !== id.toString() || !isActive) {
+    const currentCollection = await this.getLatestCollectionForType(
+      CollectionType.LocalGovernmental,
+    )
+
+    const inputAreaId = areas?.[0].areaId
+    const currentAreaCollectionId = currentCollection.areas.find(
+      (area) => area.id === inputAreaId,
+    )?.collectionId
+
+    if (currentAreaCollectionId !== collectionId) {
+      throw new Error('Collection not found')
+    }
+
+    const { areas: collectionAreas } = currentCollection
+
+    // check if collection is open
+    if (!collectionAreas.find((area) => area.id === inputAreaId)?.isActive) {
       // TODO: create ApplicationTemplateError
       throw new Error('Collection is not open')
     }
@@ -179,7 +186,7 @@ export class SignatureCollectionClientService {
       throw new Error('User is already owner of lists')
     }
 
-    const filteredAreas = areas
+    const filteredAreas = areas?.length
       ? collectionAreas.filter((area) =>
           areas.flatMap((a) => a.areaId).includes(area.id),
         )
@@ -190,16 +197,18 @@ export class SignatureCollectionClientService {
       auth,
     ).frambodPost({
       frambodRequestDTO: {
-        sofnunID: parseInt(id),
+        sofnunID: parseInt(collectionId),
         kennitala: owner.nationalId.replace(/\D/g, ''),
+        frambodNafn: `${listName ?? partyBallotLetterInfo?.name}`,
         simi: owner.phone,
         netfang: owner.email,
         medmaelalistar: filteredAreas.map((area) => ({
           svaediID: parseInt(area.id),
-          listiNafn: `${partyBallotLetterInfo?.name}`,
+          listiNafn: `${listName ?? partyBallotLetterInfo?.name}`,
         })),
       },
     })
+
     return {
       slug: getSlug(
         candidacy.id ?? '',
@@ -484,6 +493,7 @@ export class SignatureCollectionClientService {
           this.getApiWithAuth(this.listsApi, auth),
           this.getApiWithAuth(this.candidateApi, auth),
           this.getApiWithAuth(this.collectionsApi, auth),
+          this.getApiWithAuth(this.electionsApi, auth),
         )
         const isExtended = list.endTime > endTime
         const signedThisPeriod = signature.isInitialType === !isExtended
@@ -552,7 +562,14 @@ export class SignatureCollectionClientService {
       )
       const ownedLists =
         user.medmaelalistar && candidate
-          ? user.medmaelalistar?.map((list) => mapListBase(list))
+          ? user.medmaelalistar?.map((list) =>
+              mapListBase(
+                list,
+                collection.areas.some(
+                  (area) => area.id === list.svaedi?.id?.toString(),
+                ),
+              ),
+            )
           : []
 
       const { success: canCreate, reasons: canCreateInfo } =
@@ -583,7 +600,12 @@ export class SignatureCollectionClientService {
         area: user.svaedi && {
           id: user.svaedi?.id?.toString() ?? '',
           name: user.svaedi?.nafn?.toString() ?? '',
+          isActive:
+            collection.areas.find(
+              (area) => area.id === user.svaedi?.id?.toString(),
+            )?.isActive ?? false,
         },
+
         signatures,
         ownedLists,
         isOwner: user.medmaelalistar ? user.medmaelalistar?.length > 0 : false,

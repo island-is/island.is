@@ -72,6 +72,20 @@ describe('InternalNotificationController - Dispatch event notifications', () => 
       ],
     },
     {
+      theCase: baseCase,
+      notificationType:
+        EventNotificationType.INDICTMENT_CRIMINAL_RECORD_UPDATED_BY_COURT,
+      expectedMessages: [
+        {
+          type: MessageType.INDICTMENT_CASE_NOTIFICATION,
+          caseId,
+          body: {
+            type: IndictmentCaseNotificationType.CRIMINAL_RECORD_FILES_UPLOADED,
+          },
+        },
+      ],
+    },
+    {
       theCase: setCaseType(CaseType.INDICTMENT),
       notificationType: EventNotificationType.COURT_DATE_SCHEDULED,
       expectedMessages: [

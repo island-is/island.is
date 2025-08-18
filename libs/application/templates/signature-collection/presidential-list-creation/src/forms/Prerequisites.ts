@@ -16,7 +16,7 @@ import {
 } from '@island.is/application/types'
 
 import { m } from '../lib/messages'
-import { CurrentCollectionApi, OwnerRequirementsApi } from '../dataProviders'
+import { LatestCollectionApi, OwnerRequirementsApi } from '../dataProviders'
 import Logo from '@island.is/application/templates/signature-collection/assets/Logo'
 
 export const Prerequisites: Form = buildForm({
@@ -76,7 +76,7 @@ export const Prerequisites: Form = buildForm({
               provider: OwnerRequirementsApi,
             }),
             buildDataProviderItem({
-              provider: CurrentCollectionApi,
+              provider: LatestCollectionApi,
             }),
           ],
         }),

@@ -12,9 +12,9 @@ The Training License On A Work Machine application allows individual users to ap
 
 ### Clients and template-api-modules
 
-- [Client]('https://github.com/island-is/island.is/blob/main/libs/clients/work-machines/src/lib/workMachines.service.ts')
-- [Domains]('https://github.com/island-is/island.is/blob/main/libs/api/domains/work-machines/src/lib/workMachines.service.ts')
-- [Template-api-module]('https://github.com/island-is/island.is/blob/main/libs/application/template-api-modules/src/lib/modules/templates/aosh/training-license-on-a-work-machine/training-license-on-a-work-machine.service.ts')
+- [Client](https://github.com/island-is/island.is/blob/main/libs/clients/work-machines/src/lib/workMachines.service.ts)
+- [Domains](https://github.com/island-is/island.is/blob/main/libs/api/domains/work-machines/src/lib/workMachines.service.ts)
+- [Template-api-module](https://github.com/island-is/island.is/blob/main/libs/application/template-api-modules/src/lib/modules/templates/aosh/training-license-on-a-work-machine/training-license-on-a-work-machine.service.ts)
 
 ### States
 
@@ -38,7 +38,7 @@ The user receives a confirmation indicating that the report has been successfull
 
 All localisation can be found on Contentful.
 
-- [Work Accident Notification translation]('https://app.contentful.com/spaces/8k0h54kbe6bj/entries/aosh.tlwm.application')
+- [Work Accident Notification translation](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/aosh.tlwm.application)
 - [Application system translations](https://app.contentful.com/spaces/8k0h54kbe6bj/entries/application.system)
 
 ### Test users
@@ -47,5 +47,5 @@ All localisation can be found on Contentful.
 
 ### Codeowners
 
-- [Origo]('https://github.com/orgs/island-is/teams/origo')
-  - [Sigrún Tinna]('https://github.com/sigruntg')
+- [Origo](https://github.com/orgs/island-is/teams/origo)
+  - [Sigrún Tinna](https://github.com/sigruntg)

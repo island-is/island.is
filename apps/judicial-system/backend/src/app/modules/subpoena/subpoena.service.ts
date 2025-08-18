@@ -1,14 +1,7 @@
 import { Base64 } from 'js-base64'
-import {
-  col,
-  fn,
-  Includeable,
-  literal,
-  Op,
-  Sequelize,
-  WhereOptions,
-} from 'sequelize'
+import { col, fn, Includeable, literal, Op, WhereOptions } from 'sequelize'
 import { Transaction } from 'sequelize/types'
+import { Sequelize } from 'sequelize-typescript'
 
 import {
   forwardRef,
@@ -22,6 +15,7 @@ import { InjectConnection, InjectModel } from '@nestjs/sequelize'
 import type { Logger } from '@island.is/logging'
 import { LOGGER_PROVIDER } from '@island.is/logging'
 
+import { getServiceStatusText } from '@island.is/judicial-system/formatters'
 import {
   Message,
   MessageService,
@@ -34,6 +28,7 @@ import {
   isSuccessfulServiceStatus,
   ServiceStatus,
   SubpoenaNotificationType,
+  SubpoenaType,
   type User as TUser,
 } from '@island.is/judicial-system/types'
 
@@ -128,6 +123,7 @@ export class SubpoenaService {
     transaction: Transaction,
     arraignmentDate?: Date,
     location?: string,
+    subpoenaType?: SubpoenaType,
   ): Promise<Subpoena> {
     return this.subpoenaModel.create(
       {
@@ -135,6 +131,7 @@ export class SubpoenaService {
         caseId,
         arraignmentDate,
         location,
+        type: subpoenaType,
       },
       { transaction },
     )
@@ -237,15 +234,6 @@ export class SubpoenaService {
           requestedDefenderNationalId ||
           requestedDefenderName)
       ) {
-        // If there is a change in the defender choice after the judge has confirmed the choice,
-        // we need to set the isDefenderChoiceConfirmed to false
-        const resetDefenderChoiceConfirmed =
-          subpoena.defendant?.isDefenderChoiceConfirmed &&
-          ((defenderChoice &&
-            subpoena.defendant?.defenderChoice !== defenderChoice) ||
-            (defenderNationalId &&
-              subpoena.defendant?.defenderNationalId !== defenderNationalId))
-
         // Færa message handling í defendant service
         await this.defendantService.updateRestricted(
           subpoena.case,
@@ -260,7 +248,6 @@ export class SubpoenaService {
             requestedDefenderNationalId,
             requestedDefenderName,
           },
-          resetDefenderChoiceConfirmed ? false : undefined,
           transaction,
         )
       }
@@ -278,7 +265,7 @@ export class SubpoenaService {
         'SUBPOENA_SERVICE_STATUS',
         subpoena.case,
         false,
-        { Staða: Subpoena.serviceStatusText(update.serviceStatus) },
+        { Staða: getServiceStatusText(update.serviceStatus) },
       )
     }
 
@@ -320,7 +307,7 @@ export class SubpoenaService {
     })
   }
 
-  async deliverSubpoenaToPolice(
+  async deliverSubpoenaToNationalCommissionersOffice(
     theCase: Case,
     defendant: Defendant,
     subpoena: Subpoena,
@@ -493,14 +480,14 @@ export class SubpoenaService {
       })
   }
 
-  async deliverSubpoenaRevocationToPolice(
+  async deliverSubpoenaRevocationToNationalCommissionersOffice(
     theCase: Case,
     subpoena: Subpoena,
     user: TUser,
   ): Promise<DeliverResponse> {
     if (!subpoena.policeSubpoenaId) {
       this.logger.warn(
-        `Attempted to revoke a subpoena with id ${subpoena.id} that had not been delivered to the police`,
+        `Attempted to revoke a subpoena with id ${subpoena.id} that had not been delivered to the national commissioners office`,
       )
       return { delivered: true }
     }
@@ -558,6 +545,10 @@ export class SubpoenaService {
       },
     }
 
+    const minCreated = (await this.subpoenaModel.min('created', {
+      where,
+    })) as Date | null
+
     if (from || to) {
       where.created = {}
       if (from) {
@@ -584,7 +575,7 @@ export class SubpoenaService {
       })
     }
 
-    const count = await this.subpoenaModel.count({
+    const subpoenas = await this.subpoenaModel.findAll({
       where,
       include,
     })
@@ -622,8 +613,9 @@ export class SubpoenaService {
     )
 
     const stats: SubpoenaStatistics = {
-      count,
+      count: subpoenas.length,
       serviceStatusStatistics,
+      minDate: minCreated ?? new Date(),
     }
 
     return stats

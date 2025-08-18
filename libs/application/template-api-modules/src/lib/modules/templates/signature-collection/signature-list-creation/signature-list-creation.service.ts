@@ -30,6 +30,10 @@ export class SignatureListCreationService extends BaseTemplateApiService {
     super(ApplicationTypes.PRESIDENTIAL_LIST_CREATION)
   }
 
+  private collectionType = getCollectionTypeFromApplicationType(
+    ApplicationTypes.PRESIDENTIAL_LIST_CREATION,
+  )
+
   async createLists({ auth, application }: TemplateApiModuleActionProps) {
     const answers = application.answers as CreateListSchema
     const collectionType = getCollectionTypeFromApplicationType(
@@ -104,7 +108,9 @@ export class SignatureListCreationService extends BaseTemplateApiService {
     throw new TemplateApiError(errors, 405)
   }
 
-  async currentCollection() {
-    return await this.signatureCollectionClientService.currentCollection()
+  async getLatestCollection() {
+    return await this.signatureCollectionClientService.getLatestCollectionForType(
+      this.collectionType,
+    )
   }
 }

@@ -8,7 +8,7 @@ import {
   AlertMessage,
   Input,
 } from '@island.is/island-ui/core'
-import { useLocale, useNamespaces } from '@island.is/localization'
+import { useLocale } from '@island.is/localization'
 import * as nationalId from 'kennitala'
 import { useEffect, useState } from 'react'
 import { InputController } from '@island.is/shared/form-fields'
@@ -23,8 +23,13 @@ import { useRevalidator } from 'react-router-dom'
 import { m } from '../../lib/messages'
 import { SignatureCollectionCollectionType } from '@island.is/api/schema'
 
-export const PaperSignees = ({ listId }: { listId: string }) => {
-  useNamespaces('sp.signatureCollection')
+export const PaperSignees = ({
+  listId,
+  collectionType,
+}: {
+  listId: string
+  collectionType: SignatureCollectionCollectionType
+}) => {
   const { formatMessage } = useLocale()
   const { revalidate } = useRevalidator()
   const { control, reset } = useForm()
@@ -46,7 +51,7 @@ export const PaperSignees = ({ listId }: { listId: string }) => {
         input: {
           signeeNationalId: nationalIdInput,
           listId,
-          collectionType: SignatureCollectionCollectionType.Presidential,
+          collectionType,
         },
       },
       skip: !nationalId.isValid(nationalIdInput) || !name,
@@ -71,6 +76,7 @@ export const PaperSignees = ({ listId }: { listId: string }) => {
           listId: listId,
           nationalId: nationalIdInput,
           pageNumber: Number(page),
+          collectionType,
         },
       },
       onCompleted: (res) => {
@@ -166,7 +172,7 @@ export const PaperSignees = ({ listId }: { listId: string }) => {
             </GridColumn>
           </GridRow>
           <GridRow marginBottom={2}>
-            <GridColumn span={'12/12'}>
+            <GridColumn span="12/12">
               <Input
                 id="name"
                 name="name"

@@ -5,6 +5,7 @@ import { BaseTemplateApiService } from '../../../base-template-api.service'
 import { ApplicationTypes } from '@island.is/application/types'
 import {
   Collection,
+  CollectionType,
   SignatureCollectionClientService,
 } from '@island.is/clients/signature-collection'
 import { errorMessages } from '@island.is/application/templates/signature-collection/municipal-list-creation'
@@ -14,7 +15,7 @@ import { LOGGER_PROVIDER } from '@island.is/logging'
 import { CreateListSchema } from '@island.is/application/templates/signature-collection/municipal-list-creation'
 import { NationalRegistryClientService } from '@island.is/clients/national-registry-v2'
 import { isCompany } from 'kennitala'
-import { coreErrorMessages } from '@island.is/application/core'
+import { coreErrorMessages, getValueViaPath } from '@island.is/application/core'
 import { generateApplicationSubmittedEmail } from './emailGenerators'
 import { AuthDelegationType } from '@island.is/shared/types'
 import { getCollectionTypeFromApplicationType } from '../shared/utils'
@@ -51,36 +52,41 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
       this.collectionType,
     )
 
-    const currentCollection = (
-      await this.signatureCollectionClientService.currentCollection()
-    )
-      .filter((collection) => collection.isActive)
-      .filter(
-        (collection) =>
-          collection.collectionType === this.collectionType &&
-          collection.areas.some((area) => area.id === candidate.area?.id),
-      )
+    try {
+      const currentCollection =
+        await this.signatureCollectionClientService.getLatestCollectionForType(
+          CollectionType.LocalGovernmental,
+        )
+      if (
+        !currentCollection.isActive ||
+        !currentCollection.areas.some(
+          (area) => area.id === candidate.area?.id && area.isActive,
+        )
+      ) {
+        // Will be caught and handled in catch block
+        throw new Error()
+      }
 
-    if (!currentCollection.length) {
+      // Candidates are stored on user national id never the actors so should be able to check just the auth national id
+      if (
+        currentCollection.candidates.some(
+          (candidate) =>
+            candidate.nationalId.replace('-', '') === auth.nationalId,
+        )
+      ) {
+        throw new TemplateApiError(errorMessages.alreadyCandidate, 412)
+      }
+
+      return currentCollection
+    } catch (error) {
+      if (error instanceof TemplateApiError) {
+        throw error
+      }
       throw new TemplateApiError(
         errorMessages.currentCollectionNotMunicipal,
         405,
       )
     }
-
-    // Candidates are stored on user national id never the actors so should be able to check just the auth national id
-    if (
-      currentCollection.some((collection) =>
-        collection.candidates.some(
-          (candidate) =>
-            candidate.nationalId.replace('-', '') === auth.nationalId,
-        ),
-      )
-    ) {
-      throw new TemplateApiError(errorMessages.alreadyCandidate, 412)
-    }
-
-    return currentCollection
   }
 
   async municipalIdentity({ auth }: TemplateApiModuleActionProps) {
@@ -116,15 +122,24 @@ export class MunicipalListCreationService extends BaseTemplateApiService {
     const municipalCollection = application.externalData.municipalCollection
       .data as Collection
 
+    const candidateAreaId = getValueViaPath(
+      application.externalData,
+      'candidate.data.area.id',
+    ) as string
+
     const input = {
       collectionType: this.collectionType,
+      collectionId:
+        municipalCollection.areas.find((area) => area.id === candidateAreaId)
+          ?.collectionId ?? '',
       owner: {
         ...answers.applicant,
         nationalId: application?.applicantActors?.[0]
           ? application.applicant
           : answers.applicant.nationalId,
       },
-      collectionId: municipalCollection.id,
+      listName: answers?.list?.name ?? '',
+      areas: [{ areaId: candidateAreaId }],
     }
 
     const result = await this.signatureCollectionClientService

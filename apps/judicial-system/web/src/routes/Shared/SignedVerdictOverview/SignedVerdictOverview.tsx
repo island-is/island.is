@@ -12,7 +12,7 @@ import {
   toast,
 } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
-import { capitalize } from '@island.is/judicial-system/formatters'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import {
   isDistrictCourtUser,
   isInvestigationCase,
@@ -113,7 +113,7 @@ const getNextButtonText = (
     ? formatMessage(m.sections.caseExtension.buttonLabel, {
         caseType: workingCase.type,
       })
-    : capitalize(formatMessage(strings.nextButtonReopenText))
+    : 'Leiðrétta þingbók eða úrskurð'
 
 export const getExtensionInfoText = (
   formatMessage: IntlShape['formatMessage'],
@@ -448,13 +448,7 @@ export const SignedVerdictOverview: FC = () => {
               <Button
                 variant="text"
                 preTextIcon="arrowBack"
-                onClick={() =>
-                  router.push(
-                    isPrisonSystemUser(user)
-                      ? constants.PRISON_CASES_ROUTE
-                      : constants.CASES_ROUTE,
-                  )
-                }
+                onClick={() => router.push(getStandardUserDashboardRoute(user))}
               >
                 {formatMessage(core.back)}
               </Button>
@@ -640,7 +634,7 @@ export const SignedVerdictOverview: FC = () => {
         </FormContentContainer>
         <FormContentContainer isFooter>
           <FormFooter
-            previousUrl={constants.CASES_ROUTE}
+            previousUrl={getStandardUserDashboardRoute(user)}
             hideNextButton={shouldHideNextButton(workingCase, user)}
             nextButtonText={getNextButtonText(formatMessage, workingCase, user)}
             onNextButtonClick={() => handleNextButtonClick()}

@@ -16,6 +16,7 @@ import { Defendant } from '../../../defendant'
 import { Institution } from '../../../institution'
 import { Subpoena } from '../../../subpoena'
 import { User } from '../../../user'
+import { Verdict } from '../../../verdict/models/verdict.model'
 import { Case } from '../../models/case.model'
 import { DateLog } from '../../models/dateLog.model'
 import { IndictmentCaseExistsForDefendantGuard } from '../indictmentCaseExistsForDefendant.guard'
@@ -82,6 +83,11 @@ describe('Indictment Case Exists For Defendant Guard', () => {
                 as: 'subpoenas',
                 order: [['created', 'DESC']],
               },
+              {
+                model: Verdict,
+                as: 'verdict',
+                required: false,
+              },
             ],
           },
           { model: Institution, as: 'court' },
@@ -94,7 +100,13 @@ describe('Indictment Case Exists For Defendant Guard', () => {
           },
           { model: DateLog, as: 'dateLogs' },
         ],
-        attributes: ['courtCaseNumber', 'id'],
+        attributes: [
+          'courtCaseNumber',
+          'id',
+          'state',
+          'indictmentRulingDecision',
+          'rulingDate',
+        ],
         where: {
           type: CaseType.INDICTMENT,
           id: caseId,

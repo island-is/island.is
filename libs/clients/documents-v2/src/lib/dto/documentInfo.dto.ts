@@ -12,6 +12,7 @@ export interface DocumentInfoDto
   widthdrawnReason?: string
   minimumAuthenticationType?: string
   urgent?: boolean
+  replyable?: boolean
 }
 
 export const mapToDocumentInfoDto = (
@@ -33,5 +34,6 @@ export const mapToDocumentInfoDto = (
     senderNationalId: document.senderKennitala,
     senderName: document.senderName,
     publicationDate: document.publicationDate,
+    documentDate: document.documentDate,
   }
 }

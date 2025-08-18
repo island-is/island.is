@@ -22,8 +22,10 @@ export class ApplicationMapper {
       completed: application.completed,
       status: application.status,
       formId: form.id,
+      modified: application.modified,
       slug: form.slug,
       formName: form.name,
+      stopProgressOnValidatingScreen: form.stopProgressOnValidatingScreen,
       submittedAt: application.submittedAt,
       events: application.events,
       sections: [],
@@ -102,6 +104,7 @@ export class ApplicationMapper {
       formId: form?.id,
       slug: form?.slug,
       formName: form?.name,
+      stopProgressOnValidatingScreen: form?.stopProgressOnValidatingScreen,
       submittedAt: application.submittedAt,
       events: application.events?.map((event) => {
         return {
@@ -136,30 +139,21 @@ export class ApplicationMapper {
       return false
     }
 
-    let isDependant = false
+    const childProps = dependencies.flatMap(
+      (dependency) => dependency?.childProps,
+    )
 
-    for (let i = 0; i < dependencies.length; i++) {
-      if (dependencies[i].childProps.includes(id)) {
-        isDependant = true
-        break
-      }
-    }
-
-    if (!isDependant) {
+    if (!childProps.includes(id)) {
       return false
     }
 
-    let isHidden = true
+    const dependencyItems = dependencies.filter((dependency) =>
+      dependency.childProps.includes(id),
+    )
 
-    for (let i = 0; i < dependencies.length; i++) {
-      if (
-        dependencies[i].childProps.includes(id) &&
-        dependencies[i].isSelected === true
-      ) {
-        isHidden = false
-        break
-      }
-    }
+    const isHidden = dependencyItems.every(
+      (dependency) => dependency.isSelected === false,
+    )
 
     return isHidden
   }

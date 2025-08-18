@@ -48,3 +48,5 @@ export type OrganizationSlugType =
   | 'geislavarnir-rikisins'
   | 'umbodsmadur-skuldara'
   | 'rannis'
+  | 'landspitali'
+  | 'vinnumalastofnun'

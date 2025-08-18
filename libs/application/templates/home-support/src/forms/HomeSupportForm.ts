@@ -74,7 +74,6 @@ export const HomeSupportForm: Form = buildForm({
               condition: (_, externalData) => {
                 const cohabitants = externalData.nationalRegistryCohabitants
                   .data as NationalRegistryIndividual[]
-                console.log('extd', externalData)
                 return cohabitants.length === 0
               },
             }),

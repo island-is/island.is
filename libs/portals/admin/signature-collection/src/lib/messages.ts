@@ -84,9 +84,19 @@ export const m = defineMessages({
     defaultMessage: 'Stofna söfnun',
     description: '',
   },
+  createCollectionDescription: {
+    id: 'admin-portal.signature-collection:createCollectionDescription',
+    defaultMessage: 'Texti sem útskýrir þessa aðgerð betur kemur hér.',
+    description: '',
+  },
   createCollectionSuccess: {
     id: 'admin-portal.signature-collection:createCollectionSuccess',
     defaultMessage: 'Tókst að stofna meðmælasöfnun',
+    description: '',
+  },
+  createCollectionError: {
+    id: 'admin-portal.signature-collection:createCollectionError',
+    defaultMessage: 'Ekki tókst að stofna meðmælasöfnun',
     description: '',
   },
   createCollectionModalDescription: {
@@ -117,7 +127,7 @@ export const m = defineMessages({
   },
   collectionTitle: {
     id: 'admin-portal.signature-collection:collectionTitle',
-    defaultMessage: 'Forsetakosningar 2024',
+    defaultMessage: 'Forsetakosningar',
     description: '',
   },
   municipalCollectionTitle: {
@@ -133,7 +143,7 @@ export const m = defineMessages({
   },
   numberOfSignatures: {
     id: 'admin-portal.signature-collection:numberOfSignatures',
-    defaultMessage: 'Fjöldi framboða: ',
+    defaultMessage: 'Fjöldi undirskrifta',
     description: '',
   },
   parliamentaryCollectionTitle: {
@@ -163,6 +173,11 @@ export const m = defineMessages({
     defaultMessage: 'Skoða kjördæmi',
     description: '',
   },
+  municipality: {
+    id: 'admin-portal.signature-collection:municipality',
+    defaultMessage: 'Sveitarfélag',
+    description: '',
+  },
   viewMunicipality: {
     id: 'admin-portal.signature-collection:viewMunicipality',
     defaultMessage: 'Skoða sveitarfélag',
@@ -179,9 +194,24 @@ export const m = defineMessages({
       'Opnaðu fyrir meðmælasöfnun ef yfirkjörstjórn sveitarfélagsins hefur tekið þá ákvörðun að nýta sér rafræna meðmælakerfið.',
     description: '',
   },
-  confirmOpenMunicipalCollection: {
-    id: 'admin-portal.signature-collection:confirmOpenMunicipalCollection',
-    defaultMessage: 'Opna fyrir meðmælasöfnun',
+  confirmOpenMunicipalCollectionButton: {
+    id: 'admin-portal.signature-collection:confirmOpenMunicipalCollectionButton',
+    defaultMessage: 'Opna söfnun',
+    description: '',
+  },
+  municipalityCollectionOpen: {
+    id: 'admin-portal.signature-collection:municipalityCollectionOpen',
+    defaultMessage: 'Söfnun opin',
+    description: '',
+  },
+  openMunicipalCollectionSuccess: {
+    id: 'admin-portal.signature-collection:openMunicipalCollectionSuccess',
+    defaultMessage: 'Tókst að opna söfnun',
+    description: '',
+  },
+  openMunicipalCollectionError: {
+    id: 'admin-portal.signature-collection:openMunicipalCollectionError',
+    defaultMessage: 'Ekki tókst að opna söfnun',
     description: '',
   },
   noLists: {
@@ -191,7 +221,7 @@ export const m = defineMessages({
   },
   noListsDescription: {
     id: 'admin-portal.signature-collection:noListsDescription',
-    defaultMessage: 'Engin meðmælasöfnun hefur verið stöfnuð að því stöddu.',
+    defaultMessage: 'Engin meðmælasöfnun hefur verið stofnuð að því stöddu.',
     description: '',
   },
   noListsFoundBySearch: {
@@ -215,6 +245,11 @@ export const m = defineMessages({
   cancelCollectionButton: {
     id: 'admin-portal.signature-collection:cancelCollectionButton',
     defaultMessage: 'Eyða söfnun',
+    description: '',
+  },
+  cancelCollectionDescription: {
+    id: 'admin-portal.signature-collection:cancelCollectionDescription',
+    defaultMessage: 'Texti sem útskýrir þessa aðgerð betur kemur hér.',
     description: '',
   },
   cancelCollectionModalMessage: {
@@ -325,7 +360,7 @@ export const m = defineMessages({
   downloadReportsDescription: {
     id: 'admin-portal.signature-collection:downloadReportsDescription',
     defaultMessage:
-      'Hlaðið niður yfirlitsskýrslum yfir stöðu safnana í hverju kjördæmi fyrir sig eftir yfirferð.',
+      'Hlaðið niður yfirlitsskýrslum yfir stöðu safnana eftir yfirferð.',
     description: '',
   },
   downloadButton: {
@@ -457,6 +492,11 @@ export const m = defineMessages({
   confirmListReviewed: {
     id: 'admin-portal.signature-collection:confirmListReviewed',
     defaultMessage: 'Úrvinnslu lokið',
+    description: '',
+  },
+  confirmListReviewActionDescription: {
+    id: 'admin-portal.signature-collection:confirmListReviewActionDescription',
+    defaultMessage: 'Þegar búið er að fara yfir meðmæli er hakað við hér.',
     description: '',
   },
   confirmListReviewedToggleBack: {
@@ -638,7 +678,32 @@ export const m = defineMessages({
     defaultMessage: 'Kennitölur sem mistókst að hlaða upp',
     description: '',
   },
-
+  startCollection: {
+    id: 'admin-portal.signature-collection:startCollection',
+    defaultMessage: 'Opna fyrir meðmælakerfi',
+    description: '',
+  },
+  startCollectionDescription: {
+    id: 'admin-portal.signature-collection:startCollectionDescription',
+    defaultMessage:
+      'Opnaðu fyrir meðmælasöfnun ef yfirkjörstjórn sveitarfélagsins hefur tekið þá ákvörðun að nýta sér rafræna meðmælakerfið.',
+    description: '',
+  },
+  startCollectionDescriptionInBox: {
+    id: 'admin-portal.signature-collection:startCollectionDescriptionInBox',
+    defaultMessage: 'Texti um að opna fyrir meðmælakerfið',
+    description: '',
+  },
+  startCollectionButton: {
+    id: 'admin-portal.signature-collection:startCollectionButton',
+    defaultMessage: 'Opna',
+    description: '',
+  },
+  startCollectionButtonModal: {
+    id: 'admin-portal.signature-collection:startCollectionButtonModal',
+    defaultMessage: 'Opna meðmælasöfnun',
+    description: '',
+  },
   // Compare lists
   compareLists: {
     id: 'admin-portal.signature-collection:compareLists',
@@ -689,6 +754,11 @@ export const m = defineMessages({
   reviewCandidatesModalDescription: {
     id: 'admin-portal.signature-collection:reviewCandidatesModalDescription',
     defaultMessage: 'Fara yfir lista af frambjóðendum',
+    description: '',
+  },
+  reviewCandidatesDrawerDescription: {
+    id: 'admin-portal.signature-collection:reviewCandidatesDrawerDescription',
+    defaultMessage: 'Texti sem útskýrir þessa aðgerð betur kemur hér.',
     description: '',
   },
   removeCandidateFromListModalDescription: {

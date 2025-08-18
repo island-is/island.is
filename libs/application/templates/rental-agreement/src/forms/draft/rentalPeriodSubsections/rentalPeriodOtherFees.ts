@@ -6,8 +6,8 @@ import {
   buildDateField,
   buildDescriptionField,
   buildCheckboxField,
-  buildCustomField,
   YesOrNoEnum,
+  buildFieldsRepeaterField,
 } from '@island.is/application/core'
 import { getOtherFeesPayeeOptions } from '../../../utils/utils'
 import { Routes } from '../../../utils/enums'
@@ -65,6 +65,7 @@ export const RentalPeriodOtherFees = buildSubSection({
           width: 'half',
           maxLength: 20,
           condition: electricityCostPayedByTenant,
+          variant: 'number',
         }),
         buildTextField({
           id: 'otherFees.electricityCostMeterStatus',
@@ -73,6 +74,7 @@ export const RentalPeriodOtherFees = buildSubSection({
           width: 'half',
           maxLength: 10,
           condition: electricityCostPayedByTenant,
+          variant: 'number',
         }),
         buildDateField({
           id: 'otherFees.electricityCostMeterStatusDate',
@@ -102,6 +104,7 @@ export const RentalPeriodOtherFees = buildSubSection({
           width: 'half',
           maxLength: 20,
           condition: heatingCostPayedByTenant,
+          variant: 'number',
         }),
         buildTextField({
           id: 'otherFees.heatingCostMeterStatus',
@@ -110,6 +113,7 @@ export const RentalPeriodOtherFees = buildSubSection({
           width: 'half',
           maxLength: 10,
           condition: heatingCostPayedByTenant,
+          variant: 'number',
         }),
         buildDateField({
           id: 'otherFees.heatingCostMeterStatusDate',
@@ -137,10 +141,28 @@ export const RentalPeriodOtherFees = buildSubSection({
           spacing: 0,
           clearOnChange: ['otherFees.otherCostItems'],
         }),
-        buildCustomField({
+        buildFieldsRepeaterField({
           id: 'otherFees.otherCostItems',
-          component: 'OtherCostItems',
+          formTitleNumbering: 'none',
+          minRows: 0,
+          maxRows: 3,
           condition: otherFeesPayedByTenant,
+          fields: {
+            description: {
+              component: 'input',
+              label: otherFees.otherCostsDescriptionLabel,
+              width: 'half',
+              type: 'text',
+            },
+            amount: {
+              component: 'input',
+              label: otherFees.otherCostsAmountLabel,
+              width: 'half',
+              type: 'number',
+              currency: true,
+              maxLength: 10,
+            },
+          },
         }),
       ],
     }),

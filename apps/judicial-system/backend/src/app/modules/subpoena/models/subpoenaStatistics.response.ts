@@ -23,9 +23,12 @@ export class ServiceStatusStatistics {
 }
 
 export class SubpoenaStatistics {
+  @ApiProperty({ type: Date })
+  minDate!: Date
+
   @ApiProperty({ type: Number })
   count!: number
 
-  @ApiProperty({ type: [ServiceStatusStatistics] })
+  @ApiProperty({ type: ServiceStatusStatistics, isArray: true })
   serviceStatusStatistics!: ServiceStatusStatistics[]
 }

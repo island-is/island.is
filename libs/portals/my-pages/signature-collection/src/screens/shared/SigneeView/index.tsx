@@ -20,14 +20,16 @@ import {
 
 const SigneeView = ({
   currentCollection,
+  collectionType,
 }: {
   currentCollection: SignatureCollection
+  collectionType: SignatureCollectionCollectionType
 }) => {
   const user = useUserInfo()
   const { formatMessage } = useLocale()
-  const { signedLists, loadingSignedLists } = useGetSignedList()
+  const { signedLists, loadingSignedLists } = useGetSignedList(collectionType)
   const { listsForUser, loadingUserLists, getListsForUserError } =
-    useGetListsForUser(currentCollection?.id)
+    useGetListsForUser(collectionType, currentCollection?.id)
 
   if (getListsForUserError !== undefined) {
     return (
@@ -53,7 +55,10 @@ const SigneeView = ({
 
           <Box marginTop={[0, 5]}>
             {/* Signed list */}
-            <SignedList currentCollection={currentCollection} />
+            <SignedList
+              currentCollection={currentCollection}
+              collectionType={collectionType}
+            />
 
             {/* Other available lists */}
             <Box marginTop={[5, 10]}>
@@ -64,52 +69,54 @@ const SigneeView = ({
               )}
 
               <Stack space={3}>
-                {[...listsForUser]?.sort(sortAlpha('title')).map((list) => {
-                  return (
-                    <ActionCard
-                      key={list.id}
-                      backgroundColor="white"
-                      eyebrow={list.area?.name}
-                      heading={list.title.split(' - ')[0]}
-                      text={
-                        currentCollection.collectionType ===
-                        SignatureCollectionCollectionType.Presidential
-                          ? formatMessage(m.collectionTitle)
-                          : formatMessage(m.collectionTitleParliamentary)
-                      }
-                      cta={
-                        new Date(list.endTime) > new Date() && !list.maxReached
-                          ? {
-                              label: formatMessage(m.signList),
-                              variant: 'text',
-                              icon: 'arrowForward',
-                              disabled: !!signedLists.length,
-                              onClick: () => {
-                                window.open(
-                                  `${document.location.origin}${list.slug}`,
-                                )
-                              },
-                            }
-                          : undefined
-                      }
-                      tag={
-                        new Date(list.endTime) < new Date()
-                          ? {
-                              label: formatMessage(m.collectionClosed),
-                              variant: 'red',
-                              outlined: true,
-                            }
-                          : list.maxReached
-                          ? {
-                              label: formatMessage(m.collectionMaxReached),
-                              variant: 'red',
-                              outlined: true,
-                            }
-                          : undefined
-                      }
-                    />
-                  )
-                })}
+                {listsForUser?.length > 0 &&
+                  [...listsForUser]?.sort(sortAlpha('title')).map((list) => {
+                    return (
+                      <ActionCard
+                        key={list.id}
+                        backgroundColor="white"
+                        eyebrow={list.area?.name}
+                        heading={list.title.split(' - ')[0]}
+                        text={
+                          currentCollection?.collectionType ===
+                          SignatureCollectionCollectionType.Presidential
+                            ? formatMessage(m.collectionTitle)
+                            : formatMessage(m.collectionTitleParliamentary)
+                        }
+                        cta={
+                          new Date(list.endTime) > new Date() &&
+                          !list.maxReached
+                            ? {
+                                label: formatMessage(m.signList),
+                                variant: 'text',
+                                icon: 'arrowForward',
+                                disabled: !!signedLists.length,
+                                onClick: () => {
+                                  window.open(
+                                    `${document.location.origin}${list.slug}`,
+                                  )
+                                },
+                              }
+                            : undefined
+                        }
+                        tag={
+                          new Date(list.endTime) < new Date()
+                            ? {
+                                label: formatMessage(m.collectionClosed),
+                                variant: 'red',
+                                outlined: true,
+                              }
+                            : list.maxReached
+                            ? {
+                                label: formatMessage(m.collectionMaxReached),
+                                variant: 'red',
+                                outlined: true,
+                              }
+                            : undefined
+                        }
+                      />
+                    )
+                  })}
               </Stack>
             </Box>
           </Box>

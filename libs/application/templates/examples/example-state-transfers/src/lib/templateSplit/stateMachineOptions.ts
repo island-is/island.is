@@ -42,8 +42,6 @@ export const assignUser: StateMachineAction = assign(
     )
 
     if (assigneeId) {
-      console.log('assigneeId: ', assigneeId)
-
       set(application, 'assignees', [assigneeId])
     }
 

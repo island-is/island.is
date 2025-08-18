@@ -6,23 +6,29 @@ import { handle4xx } from '../../utils/errorHandler'
 import {
   ApplicationsApi,
   ApplicationsControllerCreateRequest,
+  ApplicationsControllerDeleteApplicationRequest,
   ApplicationsControllerFindAllByOrganizationRequest,
+  ApplicationsControllerFindAllBySlugAndUserRequest,
   ApplicationsControllerGetApplicationRequest,
+  ApplicationsControllerSaveScreenRequest,
   ApplicationsControllerSubmitRequest,
-  ApplicationsControllerSubmitScreenRequest,
+  ApplicationsControllerSubmitSectionRequest,
   ApplicationsControllerUpdateRequest,
 } from '@island.is/clients/form-system'
 import {
   ApplicationsInput,
   CreateApplicationInput,
   GetApplicationInput,
+  GetApplicationsInput,
   SubmitScreenInput,
+  SubmitSectionInput,
+  UpdateApplicationInput,
 } from '../../dto/application.input'
 import {
   Application,
   ApplicationResponse,
 } from '../../models/applications.model'
-import { UpdateApplicationDependenciesInput } from '../../dto/application.input'
+import { Screen } from '../../models/screen.model'
 
 @Injectable()
 export class ApplicationsService {
@@ -84,9 +90,23 @@ export class ApplicationsService {
     return response as ApplicationResponse
   }
 
+  async getAllApplications(
+    auth: User,
+    input: GetApplicationsInput,
+  ): Promise<ApplicationResponse> {
+    const response = await this.applicationsApiWithAuth(auth)
+      .applicationsControllerFindAllBySlugAndUser(
+        input as ApplicationsControllerFindAllBySlugAndUserRequest,
+      )
+      .catch((e) =>
+        handle4xx(e, this.handleError, 'failed to get applications'),
+      )
+    return response as ApplicationResponse
+  }
+
   async updateDependencies(
     auth: User,
-    input: UpdateApplicationDependenciesInput,
+    input: UpdateApplicationInput,
   ): Promise<void> {
     await this.applicationsApiWithAuth(auth).applicationsControllerUpdate(
       input as ApplicationsControllerUpdateRequest,
@@ -102,9 +122,37 @@ export class ApplicationsService {
     )
   }
 
-  async submitScreen(auth: User, input: SubmitScreenInput): Promise<void> {
-    await this.applicationsApiWithAuth(auth).applicationsControllerSubmitScreen(
-      input as ApplicationsControllerSubmitScreenRequest,
+  async updateApplication(
+    auth: User,
+    input: UpdateApplicationInput,
+  ): Promise<void> {
+    await this.applicationsApiWithAuth(auth).applicationsControllerUpdate(
+      input as ApplicationsControllerUpdateRequest,
     )
+  }
+
+  async saveScreen(auth: User, input: SubmitScreenInput): Promise<Screen> {
+    const response = await this.applicationsApiWithAuth(
+      auth,
+    ).applicationsControllerSaveScreen(
+      input as ApplicationsControllerSaveScreenRequest,
+    )
+    return response
+  }
+
+  async submitSection(auth: User, input: SubmitSectionInput): Promise<void> {
+    await this.applicationsApiWithAuth(
+      auth,
+    ).applicationsControllerSubmitSection(
+      input as ApplicationsControllerSubmitSectionRequest,
+    )
+  }
+
+  async deleteApplication(auth: User, input: string): Promise<void> {
+    await this.applicationsApiWithAuth(
+      auth,
+    ).applicationsControllerDeleteApplication({
+      id: input,
+    } as ApplicationsControllerDeleteApplicationRequest)
   }
 }

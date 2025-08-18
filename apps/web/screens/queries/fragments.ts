@@ -972,6 +972,7 @@ export const slices = gql`
       ...HtmlFields
     }
     linkTitle
+    linkHref
     link {
       type
       slug

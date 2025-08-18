@@ -61,6 +61,9 @@ export interface FilterProps {
 
   /** Use the popover disclosure button styling */
   usePopoverDiscloureButtonStyling?: boolean
+
+  /** Wrap filter input in a mobile version */
+  mobileWrap?: boolean
 }
 
 /**
@@ -93,6 +96,7 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
   children,
   title,
   popoverFlip = true,
+  mobileWrap = true,
   usePopoverDiscloureButtonStyling,
 }) => {
   const dialog = useDialogState({ modal: true })
@@ -152,7 +156,12 @@ export const Filter: FC<React.PropsWithChildren<FilterProps>> = ({
         width="full"
         justifyContent={align === 'right' ? 'flexEnd' : 'flexStart'}
       >
-        <Inline space={2} reverse={reverse} alignY="bottom">
+        <Inline
+          space={2}
+          reverse={reverse}
+          alignY="bottom"
+          flexWrap={mobileWrap ? 'wrap' : 'nowrap'}
+        >
           <Box
             component={PopoverDisclosure}
             background="white"

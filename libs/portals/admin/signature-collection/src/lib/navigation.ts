@@ -11,16 +11,16 @@ export const signatureCollectionNavigation: PortalNavigationItem = {
   path: SignatureCollectionPaths.MunicipalRoot,
   children: [
     {
+      name: m.municipalCollectionTitle,
+      path: SignatureCollectionPaths.MunicipalRoot,
+    },
+    {
       name: m.parliamentaryCollectionTitle,
       path: SignatureCollectionPaths.ParliamentaryRoot,
     },
     {
       name: m.collectionTitle,
       path: SignatureCollectionPaths.PresidentialLists,
-    },
-    {
-      name: m.municipalCollectionTitle,
-      path: SignatureCollectionPaths.MunicipalRoot,
     },
   ],
 }

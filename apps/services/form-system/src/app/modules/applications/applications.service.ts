@@ -33,6 +33,8 @@ import { User } from '@island.is/auth-nest-tools'
 import { Applicant } from '../applicants/models/applicant.model'
 import { FormApplicantType } from '../formApplicantTypes/models/formApplicantType.model'
 import { FormCertificationType } from '../formCertificationTypes/models/formCertificationType.model'
+import { SubmitScreenDto } from './models/dto/submitScreen.dto'
+import { ScreenDto } from '../screens/models/dto/screen.dto'
 import { Option } from '../../dataTypes/option.model'
 
 @Injectable()
@@ -53,6 +55,9 @@ export class ApplicationsService {
     private readonly applicationMapper: ApplicationMapper,
     private readonly serviceManager: ServiceManager,
     private readonly sequelize: Sequelize,
+    @InjectModel(Screen) private screenModel: typeof Screen,
+    @InjectModel(Field) private fieldModel: typeof Field,
+    @InjectModel(Section) private sectionModel: typeof Section,
   ) {}
 
   async create(
@@ -229,9 +234,6 @@ export class ApplicationsService {
       throw new NotFoundException(`Application with id '${id}' not found.`)
     }
 
-    application.submittedAt = new Date()
-    await application.save()
-
     const applicationDto = await this.getApplication(id)
 
     const success = await this.serviceManager.send(applicationDto)
@@ -393,7 +395,6 @@ export class ApplicationsService {
       form.id,
       isTest,
     )
-
     const responseDto = new ApplicationResponseDto()
     responseDto.applications = existingApplications
     return responseDto
@@ -402,6 +403,7 @@ export class ApplicationsService {
   private async findAllByUserAndForm(
     user: User,
     formId: string,
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     isTest: boolean,
   ): Promise<ApplicationDto[]> {
     const delegationType = user.delegationType
@@ -444,27 +446,29 @@ export class ApplicationsService {
       // Only keep applications with a single applicant
       applicationIds = applicationIds.filter((id) => counts[id] === 1)
     }
-
     // 2. Find all applications that match the formId and filtered applicationIds
-    const applications = applicationIds.length
-      ? await this.applicationModel.findAll({
-          where: {
-            formId,
-            id: applicationIds,
-            status: ApplicationStatus.IN_PROGRESS,
-            isTest: isTest,
-          },
-        })
-      : []
-
+    // const applications = applicationIds.length
+    //   ? await this.applicationModel.findAll({
+    //       where: {
+    //         formId,
+    //         id: applicationIds,
+    //         status: ApplicationStatus.IN_PROGRESS,
+    //         isTest: isTest,
+    //       },
+    //     })
+    //   : []
     // 3. Map the applications to ApplicationDto
     const applicationDtos = await Promise.all(
-      applications.map(async (application) => {
-        return this.getApplication(application.id)
+      applicationIds.map(async (applicationId) => {
+        return this.getApplication(applicationId)
       }),
     )
 
-    return applicationDtos
+    return applicationDtos.filter(
+      (application) =>
+        application.formId === formId &&
+        application.status === ApplicationStatus.IN_PROGRESS,
+    )
   }
 
   private async getApplicationForm(
@@ -595,5 +599,122 @@ export class ApplicationsService {
     }
 
     return form
+  }
+
+  async saveScreen(
+    screenId: string,
+    submitScreenDto: SubmitScreenDto,
+  ): Promise<ScreenDto> {
+    const screen = await this.screenModel.findByPk(screenId)
+
+    if (!screen) {
+      throw new NotFoundException(`Screen with id '${screenId}' not found`)
+    }
+    const { screenDto, applicationId } = submitScreenDto
+
+    if (!screenDto) {
+      throw new NotFoundException(`ScreenDto not found`)
+    }
+
+    const application = await this.applicationModel.findByPk(applicationId)
+
+    if (!application) {
+      throw new NotFoundException(
+        `Application with id '${applicationId}' not found`,
+      )
+    }
+
+    if (screenDto.fields) {
+      for (const field of screenDto.fields) {
+        if (field.values) {
+          for (const value of field.values) {
+            await this.valueModel.update(
+              { ...(value as Partial<Value>) },
+              {
+                where: {
+                  fieldId: field.id,
+                  applicationId: applicationId,
+                  id: value.id,
+                },
+              },
+            )
+          }
+        }
+      }
+    }
+
+    await application.update({
+      ...application,
+      completed: [...(application.completed ?? []), screen.id],
+    })
+    const lastScreen = await this.screenModel.findOne({
+      where: { sectionId: screen.sectionId },
+      order: [['displayOrder', 'DESC']],
+    })
+    if (lastScreen && lastScreen.id === screenId) {
+      await application.update({
+        ...application,
+        completed: [...(application.completed ?? []), screen.sectionId],
+      })
+    }
+
+    const screenResult = await this.screenModel.findByPk(screenId, {
+      include: [{ model: this.fieldModel, include: [this.valueModel] }],
+    })
+
+    if (!screenResult) {
+      throw new NotFoundException(`Screen with id '${screenId}' not found`)
+    }
+    return screenResult as unknown as ScreenDto
+  }
+
+  async submitSection(applicationId: string, sectionId: string): Promise<void> {
+    const application = await this.applicationModel.findByPk(applicationId)
+
+    if (!application) {
+      throw new NotFoundException(
+        `Application with id '${applicationId}' not found`,
+      )
+    }
+
+    const section = await this.sectionModel.findByPk(sectionId, {
+      include: [
+        {
+          model: Screen,
+          as: 'screens',
+          include: [
+            {
+              model: Field,
+              as: 'fields',
+              include: [this.valueModel],
+            },
+          ],
+        },
+      ],
+    })
+
+    if (!section) {
+      throw new NotFoundException(`Section with id '${sectionId}' not found`)
+    }
+
+    // Mark the section as completed
+    if (!application.completed?.includes(section.id)) {
+      application.completed = [...(application.completed ?? []), section.id]
+    }
+    await application.save()
+  }
+
+  async deleteApplication(id: string): Promise<void> {
+    const application = await this.applicationModel.findByPk(id)
+
+    if (!application) {
+      throw new NotFoundException(`Application with id '${id}' not found`)
+    }
+
+    await this.valueModel.destroy({
+      where: { applicationId: id },
+    })
+
+    await application.destroy()
   }
 }

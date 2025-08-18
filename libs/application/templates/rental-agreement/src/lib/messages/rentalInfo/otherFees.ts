@@ -218,7 +218,12 @@ export const otherFees = defineMessages({
   },
   errorOtherCostAmount: {
     id: 'ra.application:dataSchema.errorOtherCostAmount',
-    defaultMessage: 'Upphæð vantar',
+    defaultMessage: 'Upphæð verður að vera skráð og ekki minna en 1 kr.',
     description: 'Error message when amount is missing',
+  },
+  errorOtherCostAmountTooHigh: {
+    id: 'ra.application:dataSchema.errorOtherCostAmountTooHigh',
+    defaultMessage: 'Upphæð má ekki vera hærri en 20.000 kr.',
+    description: 'Error message when amount is too high',
   },
 })

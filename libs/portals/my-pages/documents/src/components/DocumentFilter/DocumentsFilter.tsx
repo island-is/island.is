@@ -105,6 +105,7 @@ const DocumentsFilter = ({
         labelClose={formatMessage(m.closeFilter)}
         filterCount={filterCount}
         onFilterClear={handleClearFilters}
+        mobileWrap={false}
         filterInput={
           <Input
             placeholder={formatMessage(m.searchPlaceholder)}

@@ -47,7 +47,7 @@ const SendToPrisonAdmin: FC = () => {
     workingCase.id,
     defendantId,
   )
-  const { onOpen } = useFileList({
+  const { onOpenFile } = useFileList({
     caseId: workingCase.id,
   })
   const { updateDefendant, isUpdatingDefendant } = useDefendants()
@@ -144,7 +144,7 @@ const SendToPrisonAdmin: FC = () => {
             buttonLabel={formatMessage(core.uploadBoxButtonLabel)}
             onChange={handleFileUpload}
             onRemove={handleRemoveFile}
-            onOpenFile={(file) => (file.id ? onOpen(file.id) : undefined)}
+            onOpenFile={(file) => onOpenFile(file)}
           />
         </Box>
       </FormContentContainer>

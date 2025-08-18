@@ -1,4 +1,4 @@
-query collection($input: SignatureCollectionCollectionTypeInput!) {
+query collection($input: SignatureCollectionBaseInput!) {
   signatureCollectionAdminCurrent(input: $input) {
     id
     endTime
@@ -12,6 +12,8 @@ query collection($input: SignatureCollectionCollectionTypeInput!) {
       name
       min
       max
+      isActive
+      collectionId
     }
     candidates {
       id

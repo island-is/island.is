@@ -4,6 +4,7 @@ import { useRouter } from 'next/router'
 
 import { Accordion, AlertMessage, Box, Button } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
+import { getStandardUserDashboardRoute } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import {
   isCompletedCase,
@@ -304,7 +305,7 @@ const IndictmentOverview: FC = () => {
       </FormContentContainer>
       <FormContentContainer isFooter>
         <FormFooter
-          previousUrl={`${constants.CASES_ROUTE}`}
+          previousUrl={getStandardUserDashboardRoute(user)}
           hideNextButton={!shouldDisplayReviewDecision}
           nextButtonText={formatMessage(strings.completeReview)}
           onNextButtonClick={() => setModalVisible(CONFIRM_PROSECUTOR_DECISION)}

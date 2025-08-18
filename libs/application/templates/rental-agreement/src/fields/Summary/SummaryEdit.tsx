@@ -1,4 +1,4 @@
-import { FC } from 'react'
+import { FC, useEffect } from 'react'
 import { useLocale } from '@island.is/localization'
 import { FieldBaseProps } from '@island.is/application/types'
 import {
@@ -17,6 +17,7 @@ import { PropertyInfoSummary } from './PropertyInfoSummary'
 import { RentalInfoSummary } from './RentalInfoSummary'
 import { summaryWrap } from './summaryStyles.css'
 import { summary } from '../../lib/messages'
+import { hasDuplicateApplicants } from '../../utils/utils'
 
 export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   ...props
@@ -26,6 +27,10 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const { answers } = application
 
   const {
+    landlords,
+    landlordRepresentatives,
+    tenants,
+    tenantRepresentatives,
     smokeDetectors,
     fireExtinguisher,
     emergencyExits,
@@ -41,6 +46,12 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   const isConditionPresent = conditionDescription || (files && files.length > 0)
   const isOtherFeesPresent =
     electricityCostPayee && heatingCostPayee && housingFundPayee
+  const hasRepeatedApplicants = hasDuplicateApplicants([
+    ...landlords,
+    ...tenants,
+    ...landlordRepresentatives,
+    ...tenantRepresentatives,
+  ])
 
   const AlertMessageConditions = [
     {
@@ -58,11 +69,29 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       route: Routes.OTHERFEES,
       message: summary.alertMissingInfoOtherFees,
     },
+    {
+      isFilled: !hasRepeatedApplicants,
+      route: Routes.LANDLORDINFORMATION,
+      message: summary.uniqueApplicantsError,
+    },
+    {
+      isFilled: !hasRepeatedApplicants,
+      route: Routes.TENANTINFORMATION,
+      message: summary.uniqueApplicantsError,
+    },
   ]
 
   const unfilledConditions = AlertMessageConditions.filter(
     (condition) => !condition.isFilled,
   )
+
+  useEffect(() => {
+    if (unfilledConditions.length > 0) {
+      setSubmitButtonDisabled?.(true)
+    } else {
+      setSubmitButtonDisabled?.(false)
+    }
+  }, [unfilledConditions, setSubmitButtonDisabled])
 
   return (
     <Box className={summaryWrap} id="email-summary-container">
@@ -95,7 +124,7 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         application={application}
         field={field}
         goToScreen={goToScreen}
-        categoryRoute={Routes.PROPERTYCATEGORY}
+        categoryRoute={Routes.PROPERTYINFORMATION}
         propertySearchRoute={Routes.PROPERTYSEARCH}
         propertyDescriptionRoute={Routes.SPECIALPROVISIONS}
         specialProvisionsRoute={Routes.SPECIALPROVISIONS}
@@ -111,9 +140,7 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
         route={Routes.OTHERFEES}
         hasChangeButton={true}
       />
-      {(!isFireProtectionsPresent ||
-        !isConditionPresent ||
-        !isOtherFeesPresent) && (
+      {unfilledConditions.length > 0 && (
         <Box marginTop={4} marginBottom={4}>
           <AlertMessage
             type="error"

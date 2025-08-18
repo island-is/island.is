@@ -29,18 +29,14 @@ import {
 } from '@island.is/judicial-system/auth'
 import {
   ACCESS_TOKEN_COOKIE_NAME,
-  CASES_ROUTE,
   CODE_VERIFIER_COOKIE_NAME,
-  COURT_OF_APPEAL_CASES_ROUTE,
   CSRF_COOKIE_NAME,
-  DEFENDER_CASES_ROUTE,
   EXPIRES_IN_MILLISECONDS,
+  getUserDashboardRoute,
   IDS_ACCESS_TOKEN_NAME,
   IDS_ID_TOKEN_NAME,
   IDS_REFRESH_TOKEN_NAME,
-  PRISON_CASES_ROUTE,
   REFRESH_TOKEN_EXPIRES_IN_MILLISECONDS,
-  USERS_ROUTE,
 } from '@island.is/judicial-system/consts'
 import {
   EventType,
@@ -71,7 +67,8 @@ export class AuthController {
     name: REDIRECT_COOKIE_NAME,
     options: {
       ...this.defaultCookieOptions,
-      sameSite: 'none',
+      sameSite: 'none', // this only works when the secure attribute is set to true
+      secure: true,
     },
   }
 
@@ -114,7 +111,6 @@ export class AuthController {
     private readonly auditTrailService: AuditTrailService,
     private readonly authService: AuthService,
     private readonly sharedAuthService: SharedAuthService,
-
     @Inject(LOGGER_PROVIDER)
     private readonly logger: Logger,
     @Inject(authModuleConfig.KEY)
@@ -215,7 +211,6 @@ export class AuthController {
       const { userId, redirectRoute } =
         req.cookies[this.redirectCookie.name] ?? {}
       const codeVerifier = req.cookies[this.codeVerifierCookie.name]
-
       const idsTokens = await this.authService.fetchIdsToken(code, codeVerifier)
       const verifiedUserToken = await this.authService.verifyIdsToken(
         idsTokens.id_token,
@@ -259,23 +254,28 @@ export class AuthController {
       this.logger.debug('Handling token expiry')
 
       const accessToken = req.cookies[this.idToken.name]
+
       if (!this.authService.isTokenExpired(accessToken)) {
         this.logger.debug('Token is valid')
+
         res.status(200).send()
+
         return
       }
+
       const refreshToken = req.cookies[this.refreshToken.name]
       const idsTokens = await this.authService.refreshToken(refreshToken)
-
       const verifiedUserToken = await this.authService.verifyIdsToken(
         idsTokens.id_token,
       )
+
       if (!verifiedUserToken) {
         throw new Error('Invalid id token')
       }
 
       const newAccessToken = idsTokens.access_token
       const newRefreshToken = idsTokens.refresh_token
+
       if (newAccessToken && newRefreshToken) {
         res.cookie(this.accessToken.name, newAccessToken, {
           ...this.accessToken.options,
@@ -285,7 +285,9 @@ export class AuthController {
           maxAge: EXPIRES_IN_MILLISECONDS,
         })
       }
+
       this.logger.debug('Token refresh successful')
+
       res.status(200).send()
     } catch (error) {
       this.logger.error('Handling token expiry failed:', { error })
@@ -310,13 +312,18 @@ export class AuthController {
   }
 
   @Get('logout')
-  logout(@Res() res: Response, @Req() req: Request) {
+  async logout(@Res() res: Response, @Req() req: Request) {
     this.logger.debug('Received logout request')
 
     const idToken = req.cookies[this.idToken.name]
     const refreshToken = req.cookies[this.refreshToken.name]
 
-    this.authService.revokeRefreshToken(refreshToken)
+    try {
+      await this.authService.revokeRefreshToken(refreshToken)
+    } catch (error) {
+      // Tolerate failure but log error
+      this.logger.error('Failed to revoke refresh token:', { error })
+    }
 
     this.clearCookies(res)
 
@@ -454,12 +461,12 @@ export class AuthController {
     }
 
     const currentUser =
-      eligibleUsers.length === 1
-        ? eligibleUsers[0]
-        : userId
-        ? // attempt to find the user with the given userId
-          eligibleUsers.find((user) => user.id === userId)
-        : undefined
+      eligibleUsers.length > 1
+        ? userId
+          ? // attempt to find the user with the given userId
+            eligibleUsers.find((user) => user.id === userId)
+          : undefined
+        : eligibleUsers[0]
 
     // Use the redirect route if:
     // - no user id accompanied the redirect route or
@@ -538,20 +545,20 @@ export class AuthController {
     currentUser: User,
     requestedRedirectRoute?: string,
   ) {
-    const getRedirectRoute = (
-      defaultRoute: string,
-      allowedPrefixes: string[],
-    ) => {
-      return requestedRedirectRoute &&
+    const getRedirectRoute = (allowedPrefixes: string[]) => {
+      const isValidRequestedRedirectRoute =
+        requestedRedirectRoute &&
         allowedPrefixes.some((prefix) =>
           requestedRedirectRoute.startsWith(prefix),
         )
+
+      return isValidRequestedRedirectRoute
         ? requestedRedirectRoute
-        : defaultRoute
+        : getUserDashboardRoute(currentUser)
     }
 
     if (isProsecutionUser(currentUser)) {
-      return getRedirectRoute(CASES_ROUTE, [
+      return getRedirectRoute([
         '/beinir',
         '/krafa',
         '/kaera',
@@ -561,42 +568,27 @@ export class AuthController {
     }
 
     if (isPublicProsecutionOfficeUser(currentUser)) {
-      return getRedirectRoute(CASES_ROUTE, [
-        '/beinir',
-        '/krafa/yfirlit',
-        '/rikissaksoknari',
-      ])
+      return getRedirectRoute(['/beinir', '/krafa/yfirlit', '/rikissaksoknari'])
     }
 
     if (isDistrictCourtUser(currentUser)) {
-      return getRedirectRoute(CASES_ROUTE, [
-        '/beinir',
-        '/krafa/yfirlit',
-        '/domur',
-      ])
+      return getRedirectRoute(['/beinir', '/krafa/yfirlit', '/domur'])
     }
 
     if (isCourtOfAppealsUser(currentUser)) {
-      return getRedirectRoute(COURT_OF_APPEAL_CASES_ROUTE, ['/landsrettur'])
+      return getRedirectRoute(['/landsrettur'])
     }
 
     if (isPrisonSystemUser(currentUser)) {
-      return getRedirectRoute(PRISON_CASES_ROUTE, [
-        '/beinir',
-        '/krafa/yfirlit',
-        '/fangelsi',
-      ])
+      return getRedirectRoute(['/beinir', '/krafa/yfirlit', '/fangelsi'])
     }
 
     if (isDefenceUser(currentUser)) {
-      return getRedirectRoute(DEFENDER_CASES_ROUTE, [
-        '/krafa/yfirlit',
-        '/verjandi',
-      ])
+      return getRedirectRoute(['/krafa/yfirlit', '/verjandi'])
     }
 
     if (isAdminUser(currentUser)) {
-      return getRedirectRoute(USERS_ROUTE, ['/notendur'])
+      return getRedirectRoute(['/notendur'])
     }
 
     return '/'

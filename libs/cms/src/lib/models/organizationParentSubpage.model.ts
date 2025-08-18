@@ -1,7 +1,8 @@
 import { CacheField } from '@island.is/nest/graphql'
 import { Field, ID, ObjectType } from '@nestjs/graphql'
-import { IOrganizationParentSubpage } from '../generated/contentfulTypes'
 import { getOrganizationPageUrlPrefix } from '@island.is/shared/utils'
+import type { SystemMetadata } from '@island.is/shared/types'
+import type { IOrganizationParentSubpage } from '../generated/contentfulTypes'
 
 @ObjectType()
 class OrganizationSubpageLink {
@@ -28,16 +29,35 @@ export class OrganizationParentSubpage {
 
   @CacheField(() => [OrganizationSubpageLink])
   childLinks!: OrganizationSubpageLink[]
+
+  @Field(() => String, { nullable: true })
+  href?: string
+
+  @Field(() => String, { nullable: true })
+  organizationPageTitle?: string
+
+  @Field(() => String, { nullable: true })
+  intro?: string
 }
 
 export const mapOrganizationParentSubpage = ({
   sys,
   fields,
-}: IOrganizationParentSubpage): OrganizationParentSubpage => {
+}: IOrganizationParentSubpage): SystemMetadata<OrganizationParentSubpage> => {
+  let href = undefined
+  if (fields.organizationPage?.fields?.slug) {
+    href = `/${getOrganizationPageUrlPrefix(sys.locale)}/${
+      fields.organizationPage.fields.slug
+    }/${fields.slug ?? ''}`
+  }
   return {
+    typename: 'OrganizationParentSubpage',
     id: sys.id,
     title: fields.title,
     shortTitle: fields.shortTitle ?? '',
+    href,
+    organizationPageTitle: fields.organizationPage?.fields?.title ?? '',
+    intro: '', // Populated by search (includes the highlighted content that matched the search query)
     childLinks:
       fields.pages
         ?.filter(

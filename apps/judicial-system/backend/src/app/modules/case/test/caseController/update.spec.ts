@@ -872,7 +872,12 @@ describe('CaseController - Update', () => {
       const mockFindOne = mockCaseModel.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(updatedCase)
 
-      await givenWhenThen(caseId, user, theCase, caseToUpdate)
+      await givenWhenThen(
+        caseId,
+        user,
+        { ...theCase, type: CaseType.INDICTMENT } as Case,
+        caseToUpdate,
+      )
     })
 
     it('should update case', () => {
@@ -884,6 +889,7 @@ describe('CaseController - Update', () => {
         EventType.COURT_DATE_SCHEDULED,
         caseId,
         user,
+        transaction,
       )
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
@@ -893,7 +899,7 @@ describe('CaseController - Update', () => {
           elementId: [defendantId1, subpoenaId1],
         },
         {
-          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
+          type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA,
           user,
           caseId: theCase.id,
           elementId: [defendantId1, subpoenaId1],
@@ -911,7 +917,7 @@ describe('CaseController - Update', () => {
           elementId: [defendantId2, subpoenaId2],
         },
         {
-          type: MessageType.DELIVERY_TO_POLICE_SUBPOENA,
+          type: MessageType.DELIVERY_TO_NATIONAL_COMMISSIONERS_OFFICE_SUBPOENA,
           user,
           caseId: theCase.id,
           elementId: [defendantId2, subpoenaId2],
@@ -939,7 +945,12 @@ describe('CaseController - Update', () => {
       const mockFindOne = mockCaseModel.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(updatedCase)
 
-      await givenWhenThen(caseId, user, theCase, caseToUpdate)
+      await givenWhenThen(
+        caseId,
+        user,
+        { ...theCase, type: CaseType.INDICTMENT } as Case,
+        caseToUpdate,
+      )
     })
 
     it('should update case', () => {
@@ -951,6 +962,7 @@ describe('CaseController - Update', () => {
         EventType.COURT_DATE_SCHEDULED,
         caseId,
         user,
+        transaction,
       )
     })
   })

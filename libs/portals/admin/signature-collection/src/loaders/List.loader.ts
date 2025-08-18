@@ -1,5 +1,6 @@
 import type { WrappedLoaderFn } from '@island.is/portals/core'
 import {
+  SignatureCollectionCollectionType,
   SignatureCollectionList,
   SignatureCollectionSignature,
 } from '@island.is/api/schema'
@@ -17,7 +18,7 @@ import {
 } from './listGraphql/getListStatus.generated'
 
 const createListLoader =
-  (): WrappedLoaderFn =>
+  (collectionType: SignatureCollectionCollectionType): WrappedLoaderFn =>
   ({ client }) => {
     return async ({
       params,
@@ -32,6 +33,7 @@ const createListLoader =
         variables: {
           input: {
             listId: params.listId,
+            collectionType,
           },
         },
       })
@@ -42,6 +44,7 @@ const createListLoader =
         variables: {
           input: {
             listId: params.listId,
+            collectionType,
           },
         },
       })
@@ -52,6 +55,7 @@ const createListLoader =
         variables: {
           input: {
             listId: params.listId,
+            collectionType,
           },
         },
       })
@@ -66,10 +70,16 @@ const createListLoader =
   }
 
 // Parliamentary List Loader
-export const parliamentaryListLoader: WrappedLoaderFn = createListLoader()
+export const parliamentaryListLoader: WrappedLoaderFn = createListLoader(
+  SignatureCollectionCollectionType.Parliamentary,
+)
 
 // Presidential List Loader
-export const presidentialListLoader: WrappedLoaderFn = createListLoader()
+export const presidentialListLoader: WrappedLoaderFn = createListLoader(
+  SignatureCollectionCollectionType.Presidential,
+)
 
 // Municipal List Loader
-export const municipalListLoader: WrappedLoaderFn = createListLoader()
+export const municipalListLoader: WrappedLoaderFn = createListLoader(
+  SignatureCollectionCollectionType.LocalGovernmental,
+)

@@ -10,6 +10,7 @@ import {
   SecurityDepositType,
   SpecialGroup,
 } from '@island.is/clients/hms-rental-agreement'
+import { YesOrNoEnum } from '@island.is/application/core'
 import {
   getPropertyId,
   getSecurityDepositTypeDescription,
@@ -21,7 +22,6 @@ import {
   RentalAgreementAnswers,
   RentalHousingCategoryClass,
 } from '@island.is/application/templates/rental-agreement'
-import { YesOrNoEnum } from '@island.is/application/core'
 
 export const mapRentalApplicationData = (
   applicationId: string,
@@ -30,7 +30,9 @@ export const mapRentalApplicationData = (
 ) => {
   const {
     landlords,
+    landlordRepresentatives,
     tenants,
+    tenantRepresentatives,
     searchResults,
     units,
     categoryType,
@@ -50,7 +52,7 @@ export const mapRentalApplicationData = (
     endDate,
     rentalAmount,
     isIndexConnected,
-    indexType,
+    indexRate,
     paymentMethod,
     paymentMethodOther,
     paymentDay,
@@ -78,8 +80,26 @@ export const mapRentalApplicationData = (
     otherCostItems,
   } = answers
 
-  const landlordsArray = landlords?.map(mapPersonToArray)
-  const tenantsArray = tenants?.map(mapPersonToArray)
+  const landlordsArray = [
+    ...(landlords?.map((person) => ({
+      ...mapPersonToArray(person),
+      isRepresentative: false,
+    })) || []),
+    ...(landlordRepresentatives?.map((person) => ({
+      ...mapPersonToArray(person),
+      isRepresentative: true,
+    })) || []),
+  ]
+  const tenantsArray = [
+    ...(tenants?.map((person) => ({
+      ...mapPersonToArray(person),
+      isRepresentative: false,
+    })) || []),
+    ...(tenantRepresentatives?.map((person) => ({
+      ...mapPersonToArray(person),
+      isRepresentative: true,
+    })) || []),
+  ]
 
   const propertyId = getPropertyId(units)
   const appraisalUnits = mapAppraisalUnits(units)
@@ -95,7 +115,6 @@ export const mapRentalApplicationData = (
       zip: searchResults?.postalCode?.toString() ?? null,
       propertyId: propertyId?.toString() ?? null,
       appraisalUnits: appraisalUnits ?? null,
-      // TODO: Check how 'part' should be handled.
       part: PropertyPart.Whole, // Whole | Part
       type: categoryType as PropertyType,
       specialGroup:
@@ -121,12 +140,13 @@ export const mapRentalApplicationData = (
       isFixedTerm: Boolean(endDate),
       rent: {
         amount: parseToNumber(rentalAmount || '0'),
-        index:
-          isIndexConnected === YesOrNoEnum.YES && indexType
-            ? (indexType as RentIndex)
-            : RentIndex.None,
-        // TODO: add the index rate when it has been implemented in the application
-        indexRate: null,
+        index: isIndexConnected?.includes(YesOrNoEnum.YES)
+          ? RentIndex.ConsumerPriceIndex
+          : RentIndex.None,
+        indexRate:
+          isIndexConnected?.includes(YesOrNoEnum.YES) && indexRate
+            ? Number(indexRate.replace(',', '.'))
+            : null,
       },
       payment: {
         method: paymentMethod as PaymentMethod,

@@ -51,6 +51,11 @@ export const application = defineMessages({
     defaultMessage: 'Senda í undirritun',
     description: `Button text for going to signing`,
   },
+  approve: {
+    id: 'ra.application:application.approve',
+    defaultMessage: 'Samþykkja',
+    description: `Button text for approving`,
+  },
 })
 
 export const prerequisites = {
@@ -126,11 +131,6 @@ export const prerequisites = {
       defaultMessage:
         'Upplýsingar um símanúmer og netfang til að auðvelda samningagerðina.',
       description: 'Subtitle for current application data collection',
-    },
-    submitButton: {
-      id: 'ra.application:prerequisites.externalData.submitButton',
-      defaultMessage: 'Hefja umsókn',
-      description: 'Text for the submit button in external data collection',
     },
   }),
 }

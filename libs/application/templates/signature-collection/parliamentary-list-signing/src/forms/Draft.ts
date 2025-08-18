@@ -30,7 +30,8 @@ export const Draft: Form = buildForm({
             externalData,
             'getList.data',
           ) || []
-        return lists.length > 1
+
+        return lists.length > 0
       },
       children: [
         buildMultiField({
@@ -40,7 +41,6 @@ export const Draft: Form = buildForm({
           children: [
             buildRadioField({
               id: 'listId',
-              defaultValue: '',
               required: true,
               options: ({ externalData }) => {
                 const data =
