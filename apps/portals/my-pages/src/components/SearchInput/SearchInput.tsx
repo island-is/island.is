@@ -49,6 +49,7 @@ export const SearchInput = ({
     if (searchQuery !== query) {
       setQuery(searchQuery ?? '')
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchQuery])
 
   const searchResults: Array<AsyncSearchOption> = useMemo(() => {

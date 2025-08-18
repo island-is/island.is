@@ -2,8 +2,6 @@ import * as inputStyles from '../Input/Input.css'
 import * as styles from './AsyncSearch.css'
 
 import Downshift, { DownshiftProps } from 'downshift'
-import { Input, InputProps } from './shared/Input/Input'
-import { Menu, MenuProps } from './shared/Menu/Menu'
 import React, {
   ButtonHTMLAttributes,
   HTMLProps,
@@ -14,16 +12,18 @@ import React, {
   useContext,
   useState,
 } from 'react'
+import { Input, InputProps } from './shared/Input/Input'
+import { Menu, MenuProps } from './shared/Menu/Menu'
 
-import { ColorSchemeContext } from '../context'
-import { ControllerStateAndHelpers } from 'downshift/typings'
-import { ErrorMessage } from '../Input/ErrorMessage'
-import { Icon } from '../IconRC/Icon'
-import { Item } from './shared/Item/Item'
-import { Label } from './shared/Label/Label'
+import { helperStyles } from '@island.is/island-ui/theme'
 import { TestSupport } from '@island.is/island-ui/utils'
 import cn from 'classnames'
-import { helperStyles } from '@island.is/island-ui/theme'
+import { ControllerStateAndHelpers } from 'downshift/typings'
+import { ColorSchemeContext } from '../context'
+import { Icon } from '../IconRC/Icon'
+import { ErrorMessage } from '../Input/ErrorMessage'
+import { Item } from './shared/Item/Item'
+import { Label } from './shared/Label/Label'
 
 export type AsyncSearchSizes = 'medium' | 'large' | 'semi-large'
 

@@ -14,7 +14,7 @@ import {
 import { useLocale } from '@island.is/localization'
 import { ServicePortalPaths, m } from '@island.is/portals/my-pages/core'
 import { Problem } from '@island.is/react-spa/shared'
-import { useMemo, useRef } from 'react'
+import { useMemo } from 'react'
 import { useSearchParams } from 'react-router-dom'
 import { SearchInput } from '../../components/SearchInput/SearchInput'
 import { usePortalModulesSearch } from '../../hooks/usePortalModulesSearch'
