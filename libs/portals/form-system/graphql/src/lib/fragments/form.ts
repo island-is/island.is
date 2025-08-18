@@ -29,6 +29,7 @@ export const FormFragment = gql`
     applicationDaysToRemove
     derivedFrom
     stopProgressOnValidatingScreen
+    isZendeskEnabled
     completedMessage {
       ...LanguageFields
     }
@@ -52,15 +53,7 @@ export const FormFragment = gql`
       ...Dependency
     }
     status
-    urls {
-      id
-      organizationUrlId
-      url
-      isXroad
-      isTest
-      type
-      method
-    }
+    urls
   }
   ${LanguageFields}
   ${FormApplicantFragment}

@@ -1,11 +1,14 @@
-import { useCallback, useEffect, useMemo, useRef, useState } from 'react'
+import Clipboard from '@react-native-clipboard/clipboard'
+import React, { useCallback, useEffect, useMemo, useRef, useState } from 'react'
 import { useIntl } from 'react-intl'
 import {
   Animated,
+  Image,
   LayoutChangeEvent,
   ListRenderItemInfo,
   RefreshControl,
   SafeAreaView,
+  TouchableOpacity,
 } from 'react-native'
 import { NavigationFunctionComponent } from 'react-native-navigation'
 import styled, { useTheme } from 'styled-components/native'
@@ -19,6 +22,7 @@ import { useDateTimeFormatter } from '../../hooks/use-date-time-formatter'
 import { useLocale } from '../../hooks/use-locale'
 import { useNavigationModal } from '../../hooks/use-navigation-modal'
 import { Alert, Button, ListItemSkeleton, TopLine, Typography } from '../../ui'
+import copyIcon from '../../ui/assets/icons/copy.png'
 import { ComponentRegistry } from '../../utils/component-registry'
 import { createSkeletonArr } from '../../utils/create-skeleton-arr'
 import {
@@ -187,15 +191,25 @@ export const DocumentCommunicationsScreen: NavigationFunctionComponent<
     [isSkeleton, docRes.data],
   ) as FlatListItem[]
 
+  const ticketIdValue = `#${document?.ticket?.id ?? ticketId ?? ''}`
+
   return (
     <>
       <CaseNumberWrapper>
         <Typography variant="eyebrow" color={theme.color.purple400}>
           {intl.formatMessage({ id: 'documentCommunications.caseNumber' })}
         </Typography>
-        <Typography variant="body3">
-          #{document?.ticket?.id ?? ticketId}
-        </Typography>
+        <Typography variant="body3">{ticketIdValue}</Typography>
+        <TouchableOpacity
+          onPress={() => Clipboard.setString(ticketIdValue)}
+          style={{ marginLeft: 4 }}
+        >
+          <Image
+            source={copyIcon}
+            style={{ width: 24, height: 24 }}
+            resizeMode="contain"
+          />
+        </TouchableOpacity>
       </CaseNumberWrapper>
 
       <ListWrapper>

@@ -10,7 +10,6 @@ export const m = defineMessages({
     defaultMessage:
       'Hér gefur að líta núverandi skírteini og réttindi þín. Unnið er að því að bæta við fleiri skírteinum og réttindum eins og bólusetningarskírteini og vegabréfi.',
   },
-
   license: {
     id: 'sp.license:license',
     defaultMessage: 'Réttindi',
@@ -340,5 +339,10 @@ export const m = defineMessages({
     id: 'sp.license:error-fetch-licenses-detail',
     defaultMessage:
       'Einhverjar tengingar virðast hafa rofnað svo ekki tókst að sækja gögn frá eftirfarandi aðilum: {arg}. Verið er að vinna í að lagfæra tenginguna.',
+  },
+  pkpassRemoved: {
+    id: 'sp.license:pkpass-removed',
+    defaultMessage:
+      'Frá 1. júlí 2025 eru stafræn skírteini notenda eingöngu aðgengileg í Ísland.is appinu. <link>Nánari upplýsingar um Ísland.is appið.</link>',
   },
 })

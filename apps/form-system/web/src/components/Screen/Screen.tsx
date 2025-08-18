@@ -14,7 +14,7 @@ export const Screen = () => {
   const { lang } = useLocale()
   const { currentSection, currentScreen } = state
   const screenTitle = currentScreen
-    ? state.screens?.[currentScreen.index]?.name?.[lang]
+    ? currentScreen.data?.name?.[lang]
     : state.sections?.[currentSection.index]?.name?.[lang]
   const currentSectionType = state.sections?.[currentSection.index]?.sectionType
   const [externalDataAgreement, setExternalDataAgreement] = useState(
@@ -50,19 +50,15 @@ export const Screen = () => {
             }
           />
         )}
+
         {currentScreen &&
           currentScreen?.data?.fields
             ?.filter(
-              (field): field is NonNullable<typeof field> => field != null,
+              (field): field is NonNullable<typeof field> =>
+                field != null && !field.isHidden,
             )
             .map((field, index) => {
-              return (
-                <Field
-                  field={field}
-                  key={index}
-                  hasError={state.errors?.includes(field.id) ?? false}
-                />
-              )
+              return <Field field={field} key={index} />
             })}
       </GridColumn>
       <Footer externalDataAgreement={externalDataAgreement} />

@@ -25,30 +25,6 @@ export class Dependency {
   isSelected?: boolean
 }
 
-@ObjectType('FormSystemFormUrl')
-export class FormUrl {
-  @Field(() => String, { nullable: true })
-  id?: string
-
-  @Field(() => String, { nullable: true })
-  organizationUrlId?: string
-
-  @Field(() => String, { nullable: true })
-  url?: string
-
-  @Field(() => Boolean, { nullable: true })
-  isXroad?: boolean
-
-  @Field(() => Boolean, { nullable: true })
-  isTest?: boolean
-
-  @Field(() => String, { nullable: true })
-  type?: string
-
-  @Field(() => String, { nullable: true })
-  method?: string
-}
-
 @ObjectType('FormSystemForm')
 export class Form {
   @Field(() => String)
@@ -102,6 +78,9 @@ export class Form {
   @Field(() => Boolean)
   stopProgressOnValidatingScreen!: boolean
 
+  @Field(() => Boolean, { nullable: true })
+  isZendeskEnabled?: boolean
+
   @Field(() => LanguageType, { nullable: true })
   completedMessage?: LanguageType
 
@@ -126,8 +105,8 @@ export class Form {
   @Field(() => String)
   status!: string
 
-  @Field(() => [FormUrl], { nullable: 'itemsAndList' })
-  urls?: FormUrl[]
+  @Field(() => [String], { nullable: 'itemsAndList' })
+  urls?: string[]
 }
 
 @ObjectType('FormSystemFormResponse')

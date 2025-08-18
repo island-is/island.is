@@ -1,4 +1,12 @@
-import { Box, FilterInput, Text, Table as T } from '@island.is/island-ui/core'
+import {
+  Box,
+  FilterInput,
+  Text,
+  Table as T,
+  GridColumn,
+  GridRow,
+  GridContainer,
+} from '@island.is/island-ui/core'
 import { useLocale } from '@island.is/localization'
 import { m } from '../../lib/messages'
 import { useState } from 'react'
@@ -7,7 +15,6 @@ import { SkeletonSingleRow } from '../compareLists/skeleton'
 
 const FindSignature = ({ collectionId }: { collectionId: string }) => {
   const { formatMessage } = useLocale()
-
   const [searchTerm, setSearchTerm] = useState('')
 
   const { data, loading } = useSignatureCollectionSignatureLookupQuery({
@@ -22,24 +29,21 @@ const FindSignature = ({ collectionId }: { collectionId: string }) => {
 
   return (
     <Box>
-      <Box
-        width="full"
-        marginBottom={6}
-        display="flex"
-        justifyContent="spaceBetween"
-      >
-        <Box width="half">
-          <FilterInput
-            name="searchSignee"
-            value={searchTerm}
-            onChange={(v) => {
-              setSearchTerm(v)
-            }}
-            placeholder={formatMessage(m.searchNationalIdPlaceholder)}
-            backgroundColor="blue"
-          />
-        </Box>
-      </Box>
+      <GridContainer>
+        <GridRow marginBottom={6}>
+          <GridColumn span={['12/12', '12/12', '7/12', '7/12']}>
+            <FilterInput
+              name="searchSignee"
+              value={searchTerm}
+              onChange={(v) => {
+                setSearchTerm(v)
+              }}
+              placeholder={formatMessage(m.searchNationalIdPlaceholder)}
+              backgroundColor="blue"
+            />
+          </GridColumn>
+        </GridRow>
+      </GridContainer>
       {loading && (
         <Box marginBottom={6}>
           <SkeletonSingleRow />

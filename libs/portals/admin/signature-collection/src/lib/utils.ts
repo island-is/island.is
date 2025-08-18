@@ -11,10 +11,15 @@ import { TagVariant } from '@island.is/island-ui/core'
 
 export const pageSize = 10
 
-export const allowedScopes: string[] = [
+export const allowedScopesAdminAndMunicipality: string[] = [
   AdminPortalScope.signatureCollectionManage,
   AdminPortalScope.signatureCollectionProcess,
   AdminPortalScope.signatureCollectionMunicipality,
+]
+
+export const allowedScopesAdmin: string[] = [
+  AdminPortalScope.signatureCollectionManage,
+  AdminPortalScope.signatureCollectionProcess,
 ]
 
 export const countryAreas = [

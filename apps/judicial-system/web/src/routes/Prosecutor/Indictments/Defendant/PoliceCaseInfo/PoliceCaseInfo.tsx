@@ -1,6 +1,6 @@
 import { FC, useContext, useEffect, useMemo, useState } from 'react'
-import InputMask from 'react-input-mask'
 import { useIntl } from 'react-intl'
+import { InputMask } from '@react-input/mask'
 
 import {
   Box,
@@ -10,6 +10,7 @@ import {
   Select,
   Tag,
 } from '@island.is/island-ui/core'
+import { POLICE_CASE_NUMBER } from '@island.is/judicial-system/consts'
 import {
   capitalize,
   indictmentSubtypes,
@@ -28,6 +29,7 @@ import {
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
+import { isPartiallyVisible } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { policeCaseInfo } from './PoliceCaseInfo.strings'
 
@@ -87,8 +89,10 @@ export const PoliceCaseInfo: FC<Props> = ({
   )
   const [policeCaseNumberErrorMessage, setPoliceCaseNumberErrorMessage] =
     useState<string>('')
+  const [indexDate, setIndexDate] = useState({ index, date: crimeScene?.date })
 
   const subtypesArray = subtypes || []
+  const crimeSceneDateId = `crime-scene-date-${originalPoliceCaseNumber}`
 
   useEffect(() => {
     if (policeCaseNumbers[index] !== originalPoliceCaseNumber) {
@@ -122,6 +126,29 @@ export const PoliceCaseInfo: FC<Props> = ({
     updatePoliceCase,
   ])
 
+  useEffect(() => {
+    if (
+      index !== indexDate.index &&
+      crimeScene?.date?.getTime() !== indexDate.date?.getTime()
+    ) {
+      // Our position in the list has changed because we changed the crime scene date
+      const dateElement = document.getElementById(crimeSceneDateId)
+
+      // Make sure the date element is visible
+      if (dateElement && !isPartiallyVisible(dateElement)) {
+        dateElement.scrollIntoView({ behavior: 'smooth', block: 'center' })
+      }
+
+      setIndexDate({ index, date: crimeScene?.date })
+    }
+  }, [
+    index,
+    indexDate.index,
+    indexDate.date,
+    crimeScene?.date,
+    crimeSceneDateId,
+  ])
+
   const options = useMemo(
     () =>
       Object.values(IndictmentSubtype)
@@ -150,8 +177,9 @@ export const PoliceCaseInfo: FC<Props> = ({
       )}
       <Box marginBottom={2}>
         <InputMask
-          mask={'999-9999-9999999'}
-          maskPlaceholder={null}
+          component={Input}
+          mask={POLICE_CASE_NUMBER}
+          replacement={{ _: /\d/ }}
           value={policeCaseNumberInput}
           onChange={(event) => {
             if (
@@ -187,27 +215,24 @@ export const PoliceCaseInfo: FC<Props> = ({
             }
           }}
           disabled={policeCaseNumberImmutable}
-        >
-          <Input
-            data-testid={`policeCaseNumber${index}`}
-            name="policeCaseNumber"
-            autoComplete="off"
-            label={formatMessage(policeCaseInfo.policeCaseNumberLabel)}
-            placeholder={formatMessage(
-              policeCaseInfo.policeCaseNumberPlaceholder,
-              {
-                prefix:
-                  policeCaseNumberPrefix ??
-                  user?.institution?.policeCaseNumberPrefix ??
-                  '',
-                year: new Date().getFullYear(),
-              },
-            )}
-            hasError={policeCaseNumberErrorMessage !== ''}
-            errorMessage={policeCaseNumberErrorMessage}
-            required
-          />
-        </InputMask>
+          data-testid={`policeCaseNumber${index}`}
+          name="policeCaseNumber"
+          autoComplete="off"
+          label={formatMessage(policeCaseInfo.policeCaseNumberLabel)}
+          placeholder={formatMessage(
+            policeCaseInfo.policeCaseNumberPlaceholder,
+            {
+              prefix:
+                policeCaseNumberPrefix ??
+                user?.institution?.policeCaseNumberPrefix ??
+                '',
+              year: new Date().getFullYear(),
+            },
+          )}
+          hasError={policeCaseNumberErrorMessage !== ''}
+          errorMessage={policeCaseNumberErrorMessage}
+          required
+        />
       </Box>
       <Box marginBottom={2}>
         <Select
@@ -308,7 +333,7 @@ export const PoliceCaseInfo: FC<Props> = ({
         />
       </Box>
       <DateTime
-        name="arrestDate"
+        name={crimeSceneDateId}
         maxDate={new Date()}
         blueBox={false}
         selectedDate={crimeScene?.date}
