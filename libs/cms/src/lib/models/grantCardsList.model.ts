@@ -53,8 +53,9 @@ export const mapGrantCardsList = ({
     displayTitle: fields.grantCardsListDisplayTitle,
     maxNumberOfCards: fields.grantCardsListMaxNumberOfCards,
     alwaysDisplayResultsAsCards:
-      fields.grantCardsAlwaysDisplayResultsAsCards === undefined ??
-      fields.grantCardsAlwaysDisplayResultsAsCards,
+      fields.grantCardsAlwaysDisplayResultsAsCards === undefined
+        ? true
+        : fields.grantCardsAlwaysDisplayResultsAsCards,
     sorting:
       fields.grantCardsListSorting &&
       fields.grantCardsListSorting === 'Alphabetical'
