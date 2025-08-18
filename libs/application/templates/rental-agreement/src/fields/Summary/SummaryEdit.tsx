@@ -17,10 +17,7 @@ import { PropertyInfoSummary } from './PropertyInfoSummary'
 import { RentalInfoSummary } from './RentalInfoSummary'
 import { summaryWrap } from './summaryStyles.css'
 import { summary } from '../../lib/messages'
-import {
-  hasAnyMatchingNationalId,
-  hasDuplicateApplicants,
-} from '../../utils/utils'
+import { hasDuplicateApplicants } from '../../utils/utils'
 
 export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
   ...props
@@ -31,7 +28,9 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
 
   const {
     landlords,
+    landlordRepresentatives,
     tenants,
+    tenantRepresentatives,
     smokeDetectors,
     fireExtinguisher,
     emergencyExits,
@@ -42,21 +41,17 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
     housingFundPayee,
   } = applicationAnswers(answers)
 
-  const tenantIds = (tenants ?? []).map(
-    (tenant) => tenant.nationalIdWithName.nationalId,
-  )
-
   const isFireProtectionsPresent =
     smokeDetectors && fireExtinguisher && emergencyExits
   const isConditionPresent = conditionDescription || (files && files.length > 0)
   const isOtherFeesPresent =
     electricityCostPayee && heatingCostPayee && housingFundPayee
-  const hasSameLandlordAndTenant = hasAnyMatchingNationalId(
-    tenantIds,
-    landlords,
-  )
-  const hasRepeatedLandlord = hasDuplicateApplicants(landlords)
-  const hasRepeatedTenant = hasDuplicateApplicants(tenants)
+  const hasRepeatedApplicants = hasDuplicateApplicants([
+    ...landlords,
+    ...tenants,
+    ...landlordRepresentatives,
+    ...tenantRepresentatives,
+  ])
 
   const AlertMessageConditions = [
     {
@@ -75,24 +70,14 @@ export const SummaryEdit: FC<React.PropsWithChildren<FieldBaseProps>> = ({
       message: summary.alertMissingInfoOtherFees,
     },
     {
-      isFilled: !hasSameLandlordAndTenant,
+      isFilled: !hasRepeatedApplicants,
       route: Routes.LANDLORDINFORMATION,
-      message: summary.alertSameTenantAndLandlordLandlord,
+      message: summary.uniqueApplicantsError,
     },
     {
-      isFilled: !hasRepeatedLandlord,
-      route: Routes.LANDLORDINFORMATION,
-      message: summary.alertRepeatedLandlord,
-    },
-    {
-      isFilled: !hasSameLandlordAndTenant,
+      isFilled: !hasRepeatedApplicants,
       route: Routes.TENANTINFORMATION,
-      message: summary.alertSameTenantAndLandlordTenant,
-    },
-    {
-      isFilled: !hasRepeatedTenant,
-      route: Routes.TENANTINFORMATION,
-      message: summary.alertRepeatedTenant,
+      message: summary.uniqueApplicantsError,
     },
   ]
 

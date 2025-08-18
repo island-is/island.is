@@ -33,13 +33,22 @@ export const getFilterCategories = (
 ): FilterCategory[] => {
   const genericTagGroups = getAllGenericTagGroups(genericTags)
   return genericTagGroups.map((tagGroup) => {
+    const tagIds = new Set<string>()
+    const filters: { value: string; label: string }[] = genericTags
+      .filter((tag) => tag.genericTagGroup?.id === tagGroup.id)
+      .map((tag) => {
+        if (tagIds.has(tag.id)) {
+          return null
+        }
+        tagIds.add(tag.id)
+        return { value: tag.slug, label: tag.title }
+      })
+      .filter(Boolean) as NonNullable<typeof filters>
     return {
       id: tagGroup.slug,
       label: tagGroup.title,
       selected: [],
-      filters: genericTags
-        .filter((tag) => tag.genericTagGroup?.id === tagGroup.id)
-        .map((tag) => ({ value: tag.slug, label: tag.title })),
+      filters,
     }
   })
 }
