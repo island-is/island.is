@@ -82,6 +82,7 @@ export const RentalPeriodOtherFees = buildSubSection({
           placeholder: otherFees.electricityCostMeterStatusDatePlaceholder,
           width: 'half',
           condition: electricityCostPayedByTenant,
+          minDate: new Date(2023, 0, 1),
         }),
 
         // Heating cost fields
@@ -121,6 +122,7 @@ export const RentalPeriodOtherFees = buildSubSection({
           placeholder: otherFees.heatingCostMeterStatusDatePlaceholder,
           width: 'half',
           condition: heatingCostPayedByTenant,
+          minDate: new Date(2023, 0, 1),
         }),
 
         // Other fees

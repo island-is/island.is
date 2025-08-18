@@ -57,7 +57,7 @@ export const isValidMeterNumber = (value: string) => {
 }
 
 export const isValidMeterStatus = (value: string) => {
-  const meterStatusRegex = /^[0-9]{1,10}(,[0-9])?$/
+  const meterStatusRegex = /^[0-9]{1,10}(\.[0-9])?$/
   return meterStatusRegex.test(value)
 }
 
