@@ -31,7 +31,7 @@ const personInfoSchema = z.object({
     .string()
     .optional()
     .refine((val) => !!val && val.trim().length > 0 && isValidEmail(val), {
-      params: m.landlordAndTenantDetails.emailEmptyError,
+      params: m.landlordAndTenantDetails.emailInvalidError,
     }),
   address: z
     .string()
