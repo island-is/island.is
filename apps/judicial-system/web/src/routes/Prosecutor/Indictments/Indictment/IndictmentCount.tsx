@@ -15,8 +15,7 @@ import {
   indictmentSubtypes,
 } from '@island.is/judicial-system/formatters'
 import {
-  hasTrafficViolationSubtype,
-  isTrafficViolationCase,
+  isTrafficViolationIndictmentCount,
   SubstanceMap,
 } from '@island.is/judicial-system/types'
 import {
@@ -33,7 +32,6 @@ import {
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import { isNonEmptyArray } from '@island.is/judicial-system-web/src/utils/arrayHelpers'
 import {
-  isTrafficViolationIndictmentCount,
   removeErrorMessageIfValid,
   validateAndSetErrorMessage,
 } from '@island.is/judicial-system-web/src/utils/formHelper'
@@ -321,6 +319,8 @@ export const IndictmentCount: FC<Props> = ({
       IndictmentSubtype.TRAFFIC_VIOLATION,
     )
     if (!hasTrafficViolationSubType) {
+      // TODO: Move this logic to the server so all updates happen in a single transaction
+      //       Note that await has no effect inside forEach
       indictmentCount.offenses?.forEach(
         async (o) =>
           await deleteOffense(workingCase.id, indictmentCount.id, o.id),
@@ -342,29 +342,10 @@ export const IndictmentCount: FC<Props> = ({
     }
   }
 
-  const shouldShowTrafficViolationFields = () => {
-    if (isTrafficViolationCase(workingCase)) {
-      return true
-    }
-
-    const policeCaseNumber = indictmentCount.policeCaseNumber
-
-    if (
-      isTrafficViolationIndictmentCount(
-        policeCaseNumber,
-        workingCase.indictmentSubtypes,
-      )
-    ) {
-      return true
-    }
-
-    if (
-      hasTrafficViolationSubtype(indictmentCount?.indictmentCountSubtypes ?? [])
-    ) {
-      return true
-    }
-    return false
-  }
+  const shouldShowTrafficViolationFields = isTrafficViolationIndictmentCount(
+    subtypes,
+    indictmentCount.indictmentCountSubtypes,
+  )
 
   return (
     <BlueBox>
@@ -456,7 +437,7 @@ export const IndictmentCount: FC<Props> = ({
           </Box>
         )}
       </Box>
-      {shouldShowTrafficViolationFields() && (
+      {shouldShowTrafficViolationFields && (
         <>
           <SectionHeading
             heading="h4"

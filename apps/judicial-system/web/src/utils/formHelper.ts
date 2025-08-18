@@ -319,22 +319,3 @@ export const findFirstInvalidStep = (steps: string[], theCase: Case) => {
 
   return key
 }
-
-export const isTrafficViolationIndictmentCount = (
-  policeCaseNumber?: string | null,
-  indictmentSubtypes?: IndictmentSubtypeMap,
-) => {
-  if (!policeCaseNumber || !indictmentSubtypes) {
-    return false
-  }
-
-  if (
-    indictmentSubtypes[policeCaseNumber]?.length === 1 &&
-    indictmentSubtypes[policeCaseNumber][0] ===
-      IndictmentSubtype.TRAFFIC_VIOLATION
-  ) {
-    return true
-  }
-
-  return false
-}
