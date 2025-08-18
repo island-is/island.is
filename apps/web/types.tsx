@@ -17,3 +17,7 @@ export type Screen<
 > = ComponentType<Props> & {
   getProps: (ctx: Context) => Promise<Props>
 }
+
+type DEBUG = {
+  debug: string
+}
