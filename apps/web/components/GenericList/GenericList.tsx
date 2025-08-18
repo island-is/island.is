@@ -476,22 +476,22 @@ export const GenericList = ({
                     {selectedFilters.length > 0 && selectedFiltersComponent}
                   </Stack>
                   <Inline space={1}>
-                    {filterTags
+                    {filterCategories[0]?.filters
                       ?.filter((tag) => {
                         const isActive = Boolean(
                           selectedFilters.find(
-                            (filter) => filter.value === tag.slug,
+                            (filter) => filter.value === tag.value,
                           ),
                         )
                         return !isActive
                       })
                       .map((tag) => {
-                        const category = tag.genericTagGroup?.slug
-                        const value = tag.slug
-                        const label = tag.title
+                        const category = filterCategories[0]?.id
+                        const value = tag.value
+                        const label = tag.label
                         return (
                           <Tag
-                            key={tag.id}
+                            key={tag.value}
                             onClick={() => {
                               if (!category) {
                                 return

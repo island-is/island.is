@@ -1666,6 +1666,9 @@ export interface IGenericListFields {
   /** Item Type */
   itemType?: 'Non-clickable' | 'Clickable' | undefined
 
+  /** Alphabetically Order Filter Tags */
+  alphabeticallyOrderFilterTags?: boolean | undefined
+
   /** Filter Tags */
   filterTags?: IGenericTag[] | undefined
 
