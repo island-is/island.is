@@ -19,7 +19,6 @@ import {
   ServiceStatus,
 } from '@island.is/judicial-system/types'
 
-import { AwsS3Service } from '../aws-s3'
 import { Case, DateLog, partition } from '../case'
 import { EventLog } from '../event-log'
 import { Institution } from '../institution'
@@ -67,12 +66,12 @@ export class StatisticsService {
       type: [CaseType.INDICTMENT],
     }
 
-    // fetch all cases with the base filter to fetch the earliest case
-    const allCases = await this.caseModel.findAll({
+    // fetch only the earliest indictment with the base filter
+    const earliestCase = await this.caseModel.findOne({
       where,
       order: [['created', 'ASC']],
+      attributes: ['created'],
     })
-    const earliestCase = allCases.length > 0 ? allCases[0] : undefined
 
     // apply dto filters
     if (institutionId) {
@@ -139,12 +138,12 @@ export class StatisticsService {
       },
     }
 
-    // fetch all cases with the base filter to fetch the earliest case
-    const allSubpoenas = await this.subpoenaModel.findAll({
+    // fetch only the earliest subpoena with the base filter
+    const earliestCase = await this.subpoenaModel.findOne({
       where,
       order: [['created', 'ASC']],
+      attributes: ['created'],
     })
-    const earliestCase = allSubpoenas.length > 0 ? allSubpoenas[0] : undefined
 
     if (from || to) {
       where.created = {}
@@ -237,12 +236,12 @@ export class StatisticsService {
       },
     }
 
-    // fetch all cases with the base filter to fetch the earliest case
-    const allCases = await this.caseModel.findAll({
+    // fetch only the earliest case with the base filter
+    const earliestCase = await this.caseModel.findOne({
       where,
       order: [['created', 'ASC']],
+      attributes: ['created'],
     })
-    const earliestCase = allCases.length > 0 ? allCases[0] : undefined
 
     // apply dto filters
     if (created?.fromDate || created?.toDate) {
