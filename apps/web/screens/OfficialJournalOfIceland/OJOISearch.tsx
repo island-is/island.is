@@ -22,7 +22,6 @@ import { Locale } from '@island.is/shared/types'
 import {
   ContentLanguage,
   CustomPageUniqueIdentifier,
-  OfficialJournalOfIcelandAdvert,
   OfficialJournalOfIcelandAdvertCategory,
   OfficialJournalOfIcelandAdvertEntity,
   OfficialJournalOfIcelandAdvertsResponse,
@@ -152,10 +151,32 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
 
         const shouldClearType = key === 'deild' && parsed !== prev.deild
 
+        const RESET_ON_CHANGE: Array<keyof typeof prev> = [
+          'q',
+          'deild',
+          'tegund',
+          'malaflokkur',
+          'stofnun',
+          'dagsFra',
+          'dagsTil',
+          'year',
+          'staerd', // items per page change -> go back to page 1
+        ]
+        const isResetKey = RESET_ON_CHANGE.includes(key)
+
+        const nextPage =
+          key === 'sida'
+            ? typeof parsed === 'number'
+              ? parsed
+              : 1 // direct page change
+            : isResetKey
+            ? 1
+            : prev.sida
+
         const next = {
           ...prev,
           [key]: parsed,
-          sida: 1,
+          sida: nextPage,
           ...(shouldClearType ? { tegund: '' } : {}),
         }
 
