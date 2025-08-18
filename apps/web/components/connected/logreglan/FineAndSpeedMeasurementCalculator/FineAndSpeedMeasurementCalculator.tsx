@@ -1,13 +1,7 @@
 import { useState } from 'react'
 import { useIntl } from 'react-intl'
 
-import {
-  Box,
-  Stack,
-  Table,
-  TableOfContents,
-  Text,
-} from '@island.is/island-ui/core'
+import { Box, Stack, Table, Text } from '@island.is/island-ui/core'
 import type { ConnectedComponent } from '@island.is/web/graphql/schema'
 import { formatCurrency } from '@island.is/web/utils/currency'
 
@@ -77,7 +71,6 @@ interface FineState extends Fine {
 
 interface FineCalculatorDetailsProps {
   fines: FineState[]
-  goBack: () => void
   slice: ConnectedComponent
   speedMeasurementData?: {
     points: number
@@ -235,12 +228,6 @@ const FineCalculatorDetails = ({
   )
 }
 
-enum HeadingId {
-  Fine = 'fine',
-  SpeedMeasurement = 'speed-measurement',
-  Results = 'results',
-}
-
 interface FineAndSpeedMeasurementCalculatorProps {
   slice: ConnectedComponent
 }
@@ -248,10 +235,6 @@ interface FineAndSpeedMeasurementCalculatorProps {
 export const FineAndSpeedMeasurementCalculator = ({
   slice,
 }: FineAndSpeedMeasurementCalculatorProps) => {
-  const [selectedHeadingId, setSelectedHeadingId] = useState<HeadingId>(
-    HeadingId.Fine,
-  )
-
   const { formatMessage } = useIntl()
 
   const speedLimitOptions: typeof DEFAULT_SPEED_LIMIT_OPTIONS =
@@ -290,72 +273,64 @@ export const FineAndSpeedMeasurementCalculator = ({
 
   return (
     <Stack space={3}>
-      <TableOfContents
-        headings={[
-          {
-            headingId: HeadingId.Fine,
-            headingTitle: formatMessage(m.fines.fineTableOfContentHeading),
-          },
-          {
-            headingId: HeadingId.SpeedMeasurement,
-            headingTitle: formatMessage(
-              m.fines.speedMeasurementTableOfContentHeading,
-            ),
-          },
-          {
-            headingId: HeadingId.Results,
-            headingTitle: formatMessage(m.fines.resultsTableOfContentHeading),
-          },
-        ]}
-        onClick={(headingId) => {
-          setSelectedHeadingId(headingId as HeadingId)
-        }}
-        tableOfContentsTitle={formatMessage(m.fines.tableOfContentsTitle)}
-        selectedHeadingId={selectedHeadingId}
-      />
-      <Stack space={3}>
-        <Box display="flex" justifyContent="flexEnd">
-          <Box
-            borderRadius="standard"
-            background="purple100"
-            padding={2}
-            className={styles.totalContainer}
-          >
-            <Stack space={0}>
-              <Text variant="eyebrow" fontWeight="semiBold">
-                {formatMessage(m.fines.total)}
-              </Text>
-              <Text textAlign="right" variant="small" fontWeight="semiBold">
-                {formatCurrency(price)}
-              </Text>
-              <Text textAlign="right" variant="small" fontWeight="semiBold">
-                {points}
-                {points === 1
-                  ? formatMessage(m.fines.pointsPostfixSingular)
-                  : formatMessage(m.fines.pointsPostfixPlural)}
-              </Text>
-            </Stack>
+      <Box display="flex" flexDirection="rowReverse" columnGap={[1, 3, 3, 5]}>
+        <Box position="relative">
+          <Box position="sticky" top={9}>
+            <Box display="flex" justifyContent="flexEnd">
+              <Box
+                borderRadius="standard"
+                background="purple100"
+                padding={[1, 2]}
+                className={styles.totalContainer}
+              >
+                <Stack space={0}>
+                  <Text variant="eyebrow" fontWeight="semiBold">
+                    {formatMessage(m.fines.total)}
+                  </Text>
+                  <Text textAlign="right" variant="small" fontWeight="semiBold">
+                    {formatCurrency(price)}
+                  </Text>
+                  <Text textAlign="right" variant="small" fontWeight="semiBold">
+                    {points}
+                    {points === 1
+                      ? formatMessage(m.fines.pointsPostfixSingular)
+                      : formatMessage(m.fines.pointsPostfixPlural)}
+                  </Text>
+                </Stack>
+              </Box>
+            </Box>
           </Box>
         </Box>
-      </Stack>
-      {selectedHeadingId === HeadingId.Fine && (
-        <FineCalculator fines={fines} setFines={setFines} />
-      )}
-      {selectedHeadingId === HeadingId.SpeedMeasurement && (
-        <SpeedMeasurementCalculator
-          measuredSpeed={measuredSpeed}
-          speedLimit={speedLimit}
-          over3500kgOrWithTrailer={over3500kgOrWithTrailer}
-          setMeasuredSpeed={setMeasuredSpeed}
-          setSpeedLimit={setSpeedLimit}
-          setOver3500kgOrWithTrailer={setOver3500kgOrWithTrailer}
-          speedLimitOptions={speedLimitOptions}
-        />
-      )}
-      {selectedHeadingId === HeadingId.Results && (
+
+        <Stack space={3}>
+          <Stack space={2}>
+            <Text variant="h2" as="h2">
+              {formatMessage(m.speedMeasurementCalculator.heading)}
+            </Text>
+            <SpeedMeasurementCalculator
+              measuredSpeed={measuredSpeed}
+              speedLimit={speedLimit}
+              over3500kgOrWithTrailer={over3500kgOrWithTrailer}
+              setMeasuredSpeed={setMeasuredSpeed}
+              setSpeedLimit={setSpeedLimit}
+              setOver3500kgOrWithTrailer={setOver3500kgOrWithTrailer}
+              speedLimitOptions={speedLimitOptions}
+            />
+          </Stack>
+          <Stack space={2}>
+            <Text variant="h2" as="h2">
+              {formatMessage(m.fines.heading)}
+            </Text>
+            <FineCalculator fines={fines} setFines={setFines} />
+          </Stack>
+        </Stack>
+      </Box>
+      <Stack space={2}>
+        <Text variant="h2" as="h2">
+          {formatMessage(m.results.heading)}
+        </Text>
         <FineCalculatorDetails
           fines={fines}
-          goBack={() => setSelectedHeadingId(HeadingId.Fine)}
           slice={slice}
           speedMeasurementData={{
             points: speedMeasurementPoints ?? 0,
@@ -367,7 +342,7 @@ export const FineAndSpeedMeasurementCalculator = ({
             akaera,
           }}
         />
-      )}
+      </Stack>
     </Stack>
   )
 }

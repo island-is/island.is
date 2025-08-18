@@ -90,7 +90,7 @@ export const SpeedMeasurementCalculator = ({
   return (
     <Stack space={3}>
       <GridRow rowGap={2}>
-        <GridColumn span={['6/12', '6/12', '1/1', '6/12']}>
+        <GridColumn span={['1/1', '1/1', '1/1', '6/12']}>
           <Input
             label={formatMessage(
               m.speedMeasurementCalculator.measuredSpeedInputLabel,
@@ -108,7 +108,7 @@ export const SpeedMeasurementCalculator = ({
             }}
           />
         </GridColumn>
-        <GridColumn span={['3/12', '3/12', '1/2', '3/12']}>
+        <GridColumn span={['6/12', '6/12', '1/2', '3/12']}>
           <Input
             label={formatMessage(
               m.speedMeasurementCalculator.vikmorkInputLabel,
@@ -121,7 +121,7 @@ export const SpeedMeasurementCalculator = ({
             readOnly={true}
           />
         </GridColumn>
-        <GridColumn span={['3/12', '3/12', '1/2', '3/12']}>
+        <GridColumn span={['6/12', '6/12', '1/2', '3/12']}>
           <Input
             label={formatMessage(
               m.speedMeasurementCalculator.nidurstadaInputLabel,
