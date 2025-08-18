@@ -96,10 +96,7 @@ export class IndictmentCountService {
           }
         : update
 
-      const hasOffense = await this.offenseModel.findOne({
-        where: { indictmentCountId },
-      })
-      if (!isTrafficViolation && hasOffense) {
+      if (!isTrafficViolation) {
         // currently offenses only exist for traffic violation indictment subtype.
         // if we support other offenses per subtype in the future we have to take the subtype into account
         await this.offenseModel.destroy({

@@ -164,12 +164,8 @@ export const PoliceCaseList = () => {
       return
     }
 
-    // The following is best effort only. If an update fails,
-    // then the indictment counts will not reflect the latest changes.
-
     const { policeCaseNumbers: oldPoliceCaseNumbers } = old
     const {
-      policeCaseNumbers: updatedPoliceCaseNumbers,
       indictmentSubtypes: updatedIndictmentSubtypes,
       crimeScenes: updatedCrimeScenes,
     } = updated
@@ -231,6 +227,7 @@ export const PoliceCaseList = () => {
             { [policeCaseNumber]: policeCaseNumberSubtypes },
           )
 
+          // TODO: Handle all updates, except indictment desctiption server side
           updateIndictmentCount(workingCase.id, indictmentCount.id, {
             incidentDescription,
             indictmentCountSubtypes:
@@ -307,7 +304,7 @@ export const PoliceCaseList = () => {
       getWorkingCaseUpdates(policeCases, updates)
 
     // Get the base case and unsaved updates
-    const old =
+    const old: WorkingCaseUpdate =
       updates.length === 0 && checkpoint.current.old
         ? // Use the stored checkpoint case
           checkpoint.current.old

@@ -319,13 +319,6 @@ export const IndictmentCount: FC<Props> = ({
       IndictmentSubtype.TRAFFIC_VIOLATION,
     )
     if (!hasTrafficViolationSubType) {
-      // TODO: Move this logic to the server so all updates happen in a single transaction
-      //       Note that await has no effect inside forEach
-      indictmentCount.offenses?.forEach(
-        async (o) =>
-          await deleteOffense(workingCase.id, indictmentCount.id, o.id),
-      )
-      const updatedOffenses: Offense[] = []
       handleIndictmentCountChanges(
         {
           indictmentCountSubtypes: Array.from(currentSubtypes),
@@ -333,7 +326,7 @@ export const IndictmentCount: FC<Props> = ({
           recordedSpeed: null,
           speedLimit: null,
         },
-        updatedOffenses,
+        [],
       )
     } else {
       handleIndictmentCountChanges({
