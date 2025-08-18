@@ -47,7 +47,9 @@ import {
   SocialInsuranceAdministrationEducationLevelsApi,
   SocialInsuranceAdministrationIncomePlanConditionsApi,
   SocialInsuranceAdministrationIsApplicantEligibleApi,
-  SocialInsuranceAdministrationQuestionnairesApi,
+  SocialInsuranceAdministrationMARPApplicationTypeApi,
+  SocialInsuranceAdministrationMARPQuestionnairesApi,
+  SocialInsuranceAdministrationResidenceInformationApi,
 } from '../dataProviders'
 import {
   getApplicationAnswers,
@@ -117,8 +119,10 @@ const MedicalAndRehabilitationPaymentsTemplate: ApplicationTemplate<
                 SocialInsuranceAdministrationCategorizedIncomeTypesApi,
                 SocialInsuranceAdministrationCurrenciesApi,
                 SocialInsuranceAdministrationIncomePlanConditionsApi,
-                SocialInsuranceAdministrationQuestionnairesApi,
+                SocialInsuranceAdministrationMARPQuestionnairesApi,
                 SocialInsuranceAdministrationEctsUnitsApi,
+                SocialInsuranceAdministrationResidenceInformationApi,
+                SocialInsuranceAdministrationMARPApplicationTypeApi,
                 SocialInsuranceAdministrationEducationLevelsApi,
               ],
               delete: true,

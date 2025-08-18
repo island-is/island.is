@@ -12,6 +12,8 @@ import {
 } from '@island.is/judicial-system/types'
 
 import { Case } from '../modules/case'
+import { DefendantEventLog } from '../modules/defendant'
+import { EventLog } from '../modules/event-log'
 import {
   addEmptyLines,
   addLargeHeading,
@@ -60,19 +62,15 @@ export const createRulingSentToPrisonAdminPdf = (
 
   doc.moveDown(1.5)
 
-  const sentToPrisonAdminDate = theCase.defendants
-    ?.flatMap((defendant) => defendant.eventLogs || [])
-    .filter(
-      (eventLog) =>
-        eventLog.eventType === DefendantEventType.SENT_TO_PRISON_ADMIN,
-    )
-    .sort(
-      (a, b) => new Date(b.created).getTime() - new Date(a.created).getTime(),
-    )[0]?.created
+  const sentToPrisonAdminDate = DefendantEventLog.getEventLogDateByEventType(
+    DefendantEventType.SENT_TO_PRISON_ADMIN,
+    theCase.defendants?.flatMap((defendant) => defendant.eventLogs || []),
+  )
 
-  const getSignatureDate = theCase.eventLogs?.find(
-    (eventLog) => eventLog.eventType === EventType.INDICTMENT_REVIEWED,
-  )?.created
+  const getSignatureDate = EventLog.getEventLogDateByEventType(
+    EventType.INDICTMENT_REVIEWED,
+    theCase.eventLogs,
+  )
 
   addMediumCenteredText(
     doc,
@@ -120,20 +118,23 @@ export const createRulingSentToPrisonAdminPdf = (
   addEmptyLines(doc, 5)
 
   theCase.defendants?.forEach((defendant, index) => {
-    const verdictViewDateText =
-      defendant.serviceRequirement === ServiceRequirement.REQUIRED &&
-      defendant.verdictViewDate
-        ? (formatDate(defendant.verdictViewDate) as string)
-        : defendant.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
+    const { verdict } = defendant
+    const isServiceRequired =
+      verdict?.serviceRequirement === ServiceRequirement.REQUIRED
+
+    const verdictServiceDateText =
+      isServiceRequired && verdict?.serviceDate
+        ? (formatDate(verdict.serviceDate) as string)
+        : verdict?.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
         ? 'Dómfelldi var viðstaddur dómsuppkvaðningu'
-        : defendant.serviceRequirement === ServiceRequirement.NOT_REQUIRED
+        : verdict?.serviceRequirement === ServiceRequirement.NOT_REQUIRED
         ? 'Birting dóms ekki þörf'
         : 'Óþekkt'
 
     const defendantVerdictAppealDecisionText =
-      defendant.verdictAppealDecision === VerdictAppealDecision.ACCEPT
+      verdict?.appealDecision === VerdictAppealDecision.ACCEPT
         ? 'Unir dómi'
-        : defendant.verdictAppealDecision === VerdictAppealDecision.POSTPONE
+        : verdict?.appealDecision === VerdictAppealDecision.POSTPONE
         ? 'Tekur áfrýjunarfrest'
         : 'Óþekkt'
 
@@ -149,7 +150,7 @@ export const createRulingSentToPrisonAdminPdf = (
     }
 
     addNormalPlusText(doc, 'Dómur birtur: ', 'Times-Bold', true)
-    addNormalPlusText(doc, verdictViewDateText, 'Times-Roman')
+    addNormalPlusText(doc, verdictServiceDateText, 'Times-Roman')
 
     addEmptyLines(doc)
 

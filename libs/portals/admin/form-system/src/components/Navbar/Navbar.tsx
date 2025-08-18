@@ -32,6 +32,7 @@ export const Navbar = () => {
   const { formatMessage } = useIntl()
   const { activeItem, form } = control
   const { sections, screens, fields } = form
+  const parties = sections?.find((s) => s?.sectionType === SectionTypes.PARTIES)
 
   const sectionIds = useMemo(
     () =>
@@ -145,7 +146,12 @@ export const Navbar = () => {
   const renderNonInputSections = () => {
     return sections
       ?.filter((s): s is FormSystemSection => s !== null && s !== undefined)
-      .filter((s) => s.sectionType !== SectionTypes.INPUT)
+      .filter(
+        (s) =>
+          s.sectionType !== SectionTypes.INPUT &&
+          s.sectionType !== SectionTypes.PARTIES &&
+          s.sectionType !== SectionTypes.SUMMARY,
+      )
       .map((s) => (
         <Box key={s.id}>
           <NavComponent
@@ -243,6 +249,15 @@ export const Navbar = () => {
           onDragEnd={onDragEnd}
           onDragOver={onDragOver}
         >
+          {parties && (
+            <NavComponent
+              type="Section"
+              data={parties}
+              active={activeItem.data?.id === parties.id}
+              focusComponent={focusComponent}
+            />
+          )}
+
           <SortableContext items={sectionIds ?? []}>
             {renderInputSections()}
           </SortableContext>

@@ -2,20 +2,10 @@ import { defineMessages } from 'react-intl'
 
 export const m = {
   fines: defineMessages({
-    fineTableOfContentHeading: {
-      id: 'web.logreglan.fineAndSpeedMeasurementCalculator:fines.fineTableOfContentHeading',
-      defaultMessage: 'Sektir',
-      description: 'Sektir',
-    },
-    speedMeasurementTableOfContentHeading: {
-      id: 'web.logreglan.fineAndSpeedMeasurementCalculator:fines.speedMeasurementTableOfContentHeading',
-      defaultMessage: 'Hraðamæling',
-      description: 'Hraðamæling',
-    },
-    tableOfContentsTitle: {
-      id: 'web.logreglan.fineAndSpeedMeasurementCalculator:fines.tableOfContentsTitle',
-      defaultMessage: 'Yfirlit',
-      description: 'Yfirlit',
+    heading: {
+      id: 'web.logreglan.fineAndSpeedMeasurementCalculator:fines.heading',
+      defaultMessage: 'Umferðarlagabrot',
+      description: 'Umferðarlagabrot',
     },
     total: {
       id: 'web.logreglan.fineAndSpeedMeasurementCalculator:fines.total',
@@ -52,13 +42,13 @@ export const m = {
       defaultMessage: 'Sjá sundurliðun',
       description: 'Reikna',
     },
-    resultsTableOfContentHeading: {
-      id: 'web.logreglan.fineAndSpeedMeasurementCalculator:fines.resultsTableOfContentHeading',
+  }),
+  results: defineMessages({
+    heading: {
+      id: 'web.logreglan.fineAndSpeedMeasurementCalculator:results.heading',
       defaultMessage: 'Sundurliðun',
       description: 'Sundurliðun',
     },
-  }),
-  results: defineMessages({
     goBack: {
       id: 'web.logreglan.fineAndSpeedMeasurementCalculator:results.goBack',
       defaultMessage: 'Sjá sektir',
@@ -113,6 +103,11 @@ export const m = {
     },
   }),
   speedMeasurementCalculator: defineMessages({
+    heading: {
+      id: 'web.logreglan.fineAndSpeedMeasurementCalculator:speedMeasurementCalculator.heading',
+      defaultMessage: 'Hraðamæling',
+      description: 'Hraðamæling',
+    },
     measuredSpeedInputLabel: {
       id: 'web.logreglan.fineAndSpeedMeasurementCalculator:speedMeasurementCalculator.measuredSpeedInputLabel',
       defaultMessage: 'Mældur hraði',

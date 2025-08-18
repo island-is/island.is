@@ -5,6 +5,10 @@ import {
 } from '@island.is/application/core'
 import * as m from '../../lib/messages'
 import { isBoundTermination } from '../../utils/conditions'
+import {
+  getSelectedContractEndDate,
+  getSelectedContractStartDate,
+} from '../../utils/helpers'
 
 export const boundTerminationSection = buildSection({
   condition: isBoundTermination,
@@ -19,6 +23,8 @@ export const boundTerminationSection = buildSection({
         buildDateField({
           id: 'boundTermination.boundTerminationDate',
           title: m.boundTerminationMessages.dateTitle,
+          minDate: getSelectedContractStartDate,
+          maxDate: getSelectedContractEndDate,
         }),
       ],
     }),

@@ -9,9 +9,9 @@ import {
   NO,
   YES,
 } from '@island.is/application/core'
-import { OptionsType } from '../../../lib/constants'
+import { OptionsType } from '../../../utils/constants'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import { getApplicationAnswers } from '../../../lib/newPrimarySchoolUtils'
+import { getApplicationAnswers } from '../../../utils/newPrimarySchoolUtils'
 
 export const healthProtectionSubSection = buildSubSection({
   id: 'healthProtectionSubSection',
@@ -62,7 +62,6 @@ export const healthProtectionSubSection = buildSubSection({
               newPrimarySchoolMessages.differentNeeds
                 .typeOfFoodAllergiesOrIntolerancesPlaceholder,
             isMulti: true,
-            useId: true,
           },
         ),
         buildCheckboxField({
@@ -92,7 +91,6 @@ export const healthProtectionSubSection = buildSubSection({
               newPrimarySchoolMessages.differentNeeds
                 .typeOfOtherAllergiesPlaceholder,
             isMulti: true,
-            useId: true,
           },
         ),
         buildAlertMessageField({

@@ -8,14 +8,6 @@ export const icHearingArrangements = {
     description:
       'Notaður sem texti fyrir beiðni um dómþing að varnaraðila fjarstöddum á fyrirtöku skrefi í rannsóknarheimildum.',
   }),
-  comments: {
-    title: defineMessage({
-      id: 'judicial.system.core:investigation_cases_hearing_arrangements.comments.title',
-      defaultMessage: 'Athugasemdir vegna málsmeðferðar',
-      description:
-        'Notaður sem titill í viðvörunarboxi með athugasemdum vegna málsmeðferðar á fyrirtöku skrefi í rannsóknarheimildum.',
-    }),
-  },
   title: defineMessage({
     id: 'judicial.system.core:investigation_cases_hearing_arrangements.title',
     defaultMessage: 'Fyrirtaka',

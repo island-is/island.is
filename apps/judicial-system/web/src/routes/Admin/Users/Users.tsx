@@ -1,4 +1,4 @@
-import { useState } from 'react'
+import { useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import cn from 'classnames'
 import { useRouter } from 'next/router'
@@ -15,10 +15,12 @@ import {
   formatDate,
   formatNationalId,
 } from '@island.is/judicial-system/formatters'
+import { getAdminUserInstitutionScope } from '@island.is/judicial-system/types'
 import { errors, titles } from '@island.is/judicial-system-web/messages'
 import {
   Loading,
   PageHeader,
+  UserContext,
 } from '@island.is/judicial-system-web/src/components'
 import { User } from '@island.is/judicial-system-web/src/graphql/schema'
 import { useInstitution } from '@island.is/judicial-system-web/src/utils/hooks'
@@ -29,7 +31,8 @@ import * as styles from './Users.css'
 
 export const Users = () => {
   const router = useRouter()
-  const [selectedInstitution, setSelectedInstitution] = useState<string>()
+  const { user } = useContext(UserContext)
+  const [selectedInstitutions, setSelectedInstitutions] = useState<string[]>([])
 
   const { formatMessage } = useIntl()
   const {
@@ -47,8 +50,8 @@ export const Users = () => {
   })
 
   const users = usersData?.users?.filter((u) => {
-    return selectedInstitution
-      ? u.institution?.id === selectedInstitution
+    return selectedInstitutions.length > 0
+      ? u.institution?.id && selectedInstitutions.includes(u.institution.id)
       : true
   })
 
@@ -91,17 +94,22 @@ export const Users = () => {
         <Box width="half">
           <Select
             name="institutions"
+            isMulti={true}
             options={
               institutionsLoaded
-                ? allInstitutions.map((i) => {
-                    return { label: i.name ?? '', value: i.id }
-                  })
+                ? allInstitutions
+                    .filter(
+                      (i) =>
+                        i.type &&
+                        getAdminUserInstitutionScope(user).includes(i.type),
+                    )
+                    .map((i) => ({ label: i.name ?? '', value: i.id }))
                 : []
             }
             placeholder="Veldu stofnun"
             isDisabled={institutionsLoading}
-            onChange={(selectedOption) =>
-              setSelectedInstitution(selectedOption?.value)
+            onChange={(selectedOptions) =>
+              setSelectedInstitutions(selectedOptions.map((o) => o.value))
             }
           />
         </Box>
