@@ -52,10 +52,10 @@ export const mapGrantCardsList = ({
     title: fields.grantCardListTitle,
     displayTitle: fields.grantCardsListDisplayTitle,
     maxNumberOfCards: fields.grantCardsListMaxNumberOfCards,
-    alwaysDisplayResultsAsCards:
-      fields.grantCardsAlwaysDisplayResultsAsCards === undefined
-        ? true
-        : fields.grantCardsAlwaysDisplayResultsAsCards,
+    //returns false if and only if the field is false
+    alwaysDisplayResultsAsCards: !(
+      fields.grantCardsAlwaysDisplayResultsAsCards === false
+    ),
     sorting:
       fields.grantCardsListSorting &&
       fields.grantCardsListSorting === 'Alphabetical'
