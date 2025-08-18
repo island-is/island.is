@@ -32,13 +32,13 @@ export const chooseContractMessages = defineMessages({
   optionFixedTerm: {
     id: 'tra.application:chooseContract.optionFixedTerm#markdown',
     defaultMessage:
-      'Leigusamningur **{contractId}** (Tímabundin samningur)\n\n {address}{apartmentNumber}',
+      'Leigusamningur **{contractId}** (*Tímabundin samningur*)\n\n {address}{apartmentNumber}',
     description: 'Choose contract option fixed term',
   },
   optionUnboundTerm: {
     id: 'tra.application:chooseContract.optionUnboundTerm#markdown',
     defaultMessage:
-      'Leigusamningur **{contractId}** (Ótímabundin samningur)\n\n {address}{apartmentNumber}',
+      'Leigusamningur **{contractId}** (*Ótímabundin samningur*)\n\n {address}{apartmentNumber}',
     description: 'Choose contract option unbound term',
   },
 })
