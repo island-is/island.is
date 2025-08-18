@@ -492,13 +492,17 @@ export class StatisticsService {
   }): Promise<{ url: string }> {
     const getData = async () => {
       if (type === DataGroups.REQUESTS) {
-        return await this.extractAndTransformRequestCases()
+        return {
+          data: await this.extractAndTransformRequestCases(),
+          key: `krofur`,
+        }
       }
       return undefined
     }
-    const data = await getData()
-    if (!data) return { url: '' }
+    const result = await getData()
+    if (!result) return { url: '' }
 
+    const { data, key } = result
     const columns = [
       { key: 'id', header: 'ID' },
       { key: 'eventDescriptor', header: 'Atburður' },
@@ -513,7 +517,7 @@ export class StatisticsService {
       },
       {
         key: 'courtOfAppealDecisionDescriptor',
-        header: 'Niðurstaða Landsréttar - lykill',
+        header: 'Niðurstaða Landsréttar',
       },
     ]
     stringify(data, { header: true, columns }, async (error, csvOutput) => {
@@ -521,7 +525,7 @@ export class StatisticsService {
         this.logger.error('Failed to convert data to csv file')
         return
       }
-      const key = 'test'
+
       try {
         this.awsS3Service.uploadCsvToS3(key, csvOutput)
       } catch (error) {
@@ -529,11 +533,7 @@ export class StatisticsService {
       }
     })
 
-    const url = await this.awsS3Service.getSignedUrl(
-      'statistics',
-      'test',
-      60 * 60,
-    )
+    const url = await this.awsS3Service.getSignedUrl('statistics', key, 60 * 60) // timeToLive: 1H
     return { url }
   }
 }

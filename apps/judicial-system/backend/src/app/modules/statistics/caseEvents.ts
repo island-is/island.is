@@ -44,7 +44,7 @@ const commonFields = (c: Case) => {
     caseType: c.type,
     caseTypeDescriptor: getCaseTypeTranslation(c.type),
     origin: c.origin,
-    isExtended: c.parentCaseId ? 'Já' : 'nei',
+    isExtended: c.parentCaseId ? 'Já' : 'Nei',
     requestDecision: c.decision,
     requestDecisionDescriptor: c.decision
       ? getDecisionDescriptor(c.decision)
