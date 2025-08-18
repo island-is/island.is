@@ -185,18 +185,18 @@ export const PoliceCaseList = () => {
       // 2. For each update, only one of the updates is set
       updatedIndictmentCounts = updatedIndictmentCounts.map(
         (indictmentCount) => {
+          const policeCaseNumber = oldPoliceCaseNumbers[index]
+
+          if (indictmentCount.policeCaseNumber !== policeCaseNumber) {
+            return indictmentCount
+          }
+
           if (policeCaseNumberUpdate) {
             // This case is handled by the server, but we need to update the local state
             return {
               ...indictmentCount,
               policeCaseNumber: policeCaseNumberUpdate,
             }
-          }
-
-          const policeCaseNumber = oldPoliceCaseNumbers[index]
-
-          if (indictmentCount.policeCaseNumber !== policeCaseNumber) {
-            return indictmentCount
           }
 
           const policeCaseNumberSubtypes =
