@@ -74,18 +74,6 @@ export const formatBankInfo = (bankInfo: string) => {
   return bankInfo
 }
 
-export const hasAnyMatchingNationalId = (
-  nationalIds: string[],
-  applicants: ApplicantsInfo[] = [],
-) => {
-  return (
-    nationalIds.length > 0 &&
-    applicants?.some((applicant) =>
-      nationalIds.includes(applicant.nationalIdWithName.nationalId),
-    )
-  )
-}
-
 export const hasDuplicateApplicants = (
   applicants: ApplicantsInfo[] = [],
 ): boolean => {
