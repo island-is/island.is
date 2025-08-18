@@ -29,7 +29,6 @@ import { assign } from 'xstate'
 import { ActivationAllowanceApi, LocaleApi } from '../dataProviders'
 import { Features } from '@island.is/feature-flags'
 import { ApiActions } from '../utils/enums'
-import { AuthDelegationType } from '@island.is/shared/types'
 
 const template: ApplicationTemplate<
   ApplicationContext,
@@ -45,11 +44,6 @@ const template: ApplicationTemplate<
   dataSchema: ActivationAllowanceAnswersSchema,
   featureFlag: Features.ActivationAllowanceApplicationEnabled,
   allowMultipleApplicationsInDraft: false,
-  allowedDelegations: [
-    {
-      type: AuthDelegationType.Custom,
-    },
-  ],
   stateMachineConfig: {
     initial: States.PREREQUISITES,
     states: {
