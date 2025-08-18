@@ -48,4 +48,10 @@ export class Verdict {
 
   @Field(() => [InformationForDefendant], { nullable: true })
   serviceInformationForDefendant?: InformationForDefendant[]
+
+  @Field(() => String, { nullable: true })
+  externalPoliceDocumentId?: string
+
+  @Field(() => String, { nullable: true })
+  legalPaperRequestDate?: string
 }

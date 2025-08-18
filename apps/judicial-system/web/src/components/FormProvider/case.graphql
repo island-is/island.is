@@ -51,12 +51,15 @@ query Case($input: CaseQueryInput!) {
       }
       verdict {
         id
+        created
         appealDate
         appealDecision
         serviceRequirement
         serviceStatus
         serviceDate
         serviceInformationForDefendant
+        externalPoliceDocumentId
+        legalPaperRequestDate
       }
     }
     defenderName
@@ -372,6 +375,7 @@ query Case($input: CaseQueryInput!) {
           serviceRequirement
           serviceDate
           serviceInformationForDefendant
+          externalPoliceDocumentId
         }
       }
       caseFiles {

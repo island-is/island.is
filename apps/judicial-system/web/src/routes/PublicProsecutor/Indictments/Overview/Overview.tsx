@@ -2,7 +2,13 @@ import { Fragment, useCallback, useContext, useState } from 'react'
 import { useIntl } from 'react-intl'
 import { useRouter } from 'next/router'
 
-import { Box, Button, Option, Text } from '@island.is/island-ui/core'
+import {
+  AlertMessage,
+  Box,
+  Button,
+  Option,
+  Text,
+} from '@island.is/island-ui/core'
 import {
   getStandardUserDashboardRoute,
   PUBLIC_PROSECUTOR_STAFF_INDICTMENT_SEND_TO_PRISON_ADMIN_ROUTE,
@@ -47,6 +53,8 @@ import {
 } from '../../components/utils'
 import { IndictmentReviewerSelector } from './IndictmentReviewerSelector'
 import { strings } from './Overview.strings'
+import { formatDate } from '@island.is/judicial-system/formatters'
+import * as styles from './Overview.css'
 
 type VisibleModal = {
   type: 'REVOKE_SEND_TO_PRISON_ADMIN'
@@ -160,37 +168,52 @@ export const Overview = () => {
           const isServiceNotApplicable =
             verdict?.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
 
+          const isBeingServed = !verdict?.externalPoliceDocumentId
+
           return (
             <Fragment key={defendant.id}>
-              <Box component="section" marginBottom={2}>
-                <BlueBoxWithDate defendant={defendant} icon="calendar" />
-              </Box>
-              {verdict &&
-                (isServiceNotApplicable ||
-                  (isServiceRequired && verdict.serviceDate)) && (
-                  <Box component="section" marginBottom={2}>
-                    <BlueBox>
-                      <SectionHeading
-                        title="Afstaða dómfellda til dóms"
-                        heading="h4"
-                        marginBottom={2}
-                        required
-                      />
-                      <Box marginBottom={2}>
-                        <Text variant="eyebrow">{defendant.name}</Text>
-                      </Box>
-                      <VerdictAppealDecisionChoice
-                        defendant={defendant}
-                        verdict={verdict}
-                        disabled={!!defendant.isSentToPrisonAdmin}
-                      />
-                    </BlueBox>
-                  </Box>
+              <Box className={styles.container}>
+                {isBeingServed && (
+                  <AlertMessage
+                    type="info"
+                    title="Dómur er í birtingarferli"
+                    message={`Dómur fór í birtingu ${formatDate(
+                      verdict?.created,
+                      'Pp',
+                    )}`}
+                  />
                 )}
+                <Box component="section">
+                  <BlueBoxWithDate defendant={defendant} icon="calendar" />
+                </Box>
+                {verdict &&
+                  (isServiceNotApplicable ||
+                    (isServiceRequired && verdict.serviceDate)) && (
+                    <Box component="section">
+                      <BlueBox>
+                        <SectionHeading
+                          title="Afstaða dómfellda til dóms"
+                          heading="h4"
+                          marginBottom={2}
+                          required
+                        />
+                        <Box marginBottom={2}>
+                          <Text variant="eyebrow">{defendant.name}</Text>
+                        </Box>
+                        <VerdictAppealDecisionChoice
+                          defendant={defendant}
+                          verdict={verdict}
+                          disabled={!!defendant.isSentToPrisonAdmin}
+                        />
+                      </BlueBox>
+                    </Box>
+                  )}
+              </Box>
               <Box
                 display="flex"
                 justifyContent="flexEnd"
                 marginBottom={5}
+                marginTop={1}
                 columnGap={2}
               >
                 <Button

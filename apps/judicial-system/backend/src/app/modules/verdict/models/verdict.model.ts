@@ -124,4 +124,11 @@ export class Verdict extends Model {
   })
   @ApiPropertyOptional({ enum: InformationForDefendant, isArray: true })
   serviceInformationForDefendant?: InformationForDefendant[]
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiPropertyOptional({ type: String })
+  legalPaperRequestDate?: string
 }
