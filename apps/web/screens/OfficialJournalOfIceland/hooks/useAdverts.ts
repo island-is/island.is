@@ -41,8 +41,10 @@ export const useAdverts = ({ vars, fallbackData }: UseAdvertsParams) => {
     UseAdvertsResponse,
     UseAdvertsInput
   >(ADVERTS_QUERY, {
-    fetchPolicy: 'no-cache',
-    nextFetchPolicy: 'no-cache',
+    fetchPolicy: 'cache-first',
+    nextFetchPolicy: 'cache-first',
+    returnPartialData: true,
+    notifyOnNetworkStatusChange: true,
     variables: { input: variables },
   })
 

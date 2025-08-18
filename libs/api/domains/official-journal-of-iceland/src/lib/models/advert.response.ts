@@ -7,6 +7,7 @@ import {
   AdvertType,
   AdvertMainType,
   AdvertSimilar,
+  AdvertLean,
 } from './advert.model'
 import { AdvertPaging } from './advert-paging.model'
 
@@ -69,8 +70,8 @@ export class AdvertInstitutionsResponse {
 
 @ObjectType('OfficialJournalOfIcelandAdvertsResponse')
 export class AdvertsResponse {
-  @Field(() => [Advert])
-  adverts!: Advert[]
+  @Field(() => [AdvertLean])
+  adverts!: AdvertLean[]
 
   @Field(() => AdvertPaging)
   paging!: AdvertPaging

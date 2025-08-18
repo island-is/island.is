@@ -29,7 +29,7 @@ export class OfficialJournalOfIcelandClientService {
   }
 
   public async getAdverts(input: GetAdvertsRequest) {
-    return this.api.getAdverts(input)
+    return this.api.getAdvertsLean(input)
   }
 
   public async getDepartmentById(params: GetDepartmentByIdRequest) {

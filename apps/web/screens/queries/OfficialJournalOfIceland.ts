@@ -15,11 +15,6 @@ export const ADVERTS_QUERY = gql`
         publicationDate
         categories {
           title
-          slug
-        }
-        involvedParty {
-          title
-          slug
         }
       }
       paging {
