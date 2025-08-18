@@ -45,9 +45,8 @@ export const RentalHousingLandlordInfo = buildSubSection({
         }),
         buildAlertMessageField({
           id: 'landlordInfo.uniqueApplicantsError',
-          alertType: 'error',
+          alertType: 'warning',
           title: landlordDetails.uniqueApplicantsError,
-          shouldBlockInSetBeforeSubmitCallback: true,
           condition: (answers) => {
             const {
               landlords,
