@@ -132,12 +132,16 @@ export const dataSchema = z.object({
 
   // Simple inputs - slider (number by default; string for saveAsString)
   basicSlider: z.union([z.number(), z.string()]).optional(),
-  basicSliderWithDefaultBackground: z.union([z.number(), z.string()]).optional(),
+  basicSliderWithDefaultBackground: z
+    .union([z.number(), z.string()])
+    .optional(),
   basicSliderWithCustomBackground: z.union([z.number(), z.string()]).optional(),
   basicSliderTooltip: z.union([z.number(), z.string()]).optional(),
   thickSliderTooltip: z.union([z.number(), z.string()]).optional(),
   basicSliderColorLabels: z.union([z.number(), z.string()]).optional(),
-  basicSliderColorLabelsAndTooltip: z.union([z.number(), z.string()]).optional(),
+  basicSliderColorLabelsAndTooltip: z
+    .union([z.number(), z.string()])
+    .optional(),
   basicSliderColorMinMaxLabels: z.union([z.number(), z.string()]).optional(),
   basicSliderColorMinMaxLabelsTooltip: z
     .union([z.number(), z.string()])
