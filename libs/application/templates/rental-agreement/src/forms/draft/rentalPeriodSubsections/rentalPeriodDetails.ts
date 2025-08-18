@@ -36,7 +36,7 @@ export const RentalPeriodDetails = buildSubSection({
           required: true,
           minDate: ({ answers }) => {
             const dateFrom =
-              getValueViaPath<string>(answers, 'rentalPeriod.startDate') ?? null
+              getValueViaPath<string>(answers, 'rentalPeriod.startDate') ?? ''
             return addMonths(new Date(dateFrom), 1)
           },
           condition: rentalPeriodIsDefinite,
