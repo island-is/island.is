@@ -26,6 +26,7 @@ export const RentalPeriodDetails = buildSubSection({
           title: rentalPeriod.startDateTitle,
           placeholder: rentalPeriod.startDatePlaceholder,
           required: true,
+          clearOnChange: ['rentalPeriod.endDate'],
           minDate: new Date(2023, 0, 1),
         }),
         buildDateField({
