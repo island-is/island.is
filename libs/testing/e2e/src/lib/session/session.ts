@@ -115,7 +115,7 @@ const ensureIDSsession = async (
  * @param params.delegation - Delegation parameter.
  * @param params.storageState - Path to save storage state.
  * @param params.authTrigger - Trigger for authentication.
- * @returns {Promise<BrowserContext>} - Browser context with established session.
+ * @returns - Browser context with established session.
  */
 export const session = async ({
   browser,
@@ -165,7 +165,7 @@ export const session = async ({
   const validation = await validationPage.goto(homeUrl, {
     waitUntil: 'domcontentloaded',
   })
-  await expect(validation?.url()).toMatch(homeUrl)
+  expect(validation?.url()).toMatch(homeUrl)
   await validationPage.context().storageState({ path: storagePath })
   await validationPage.close()
 
@@ -179,7 +179,7 @@ export const session = async ({
  * @param params - Session parameters.
  * @param params.browser - Browser instance.
  * @param params.homeUrl - Home URL to navigate to, defaults to JUDICIAL_SYSTEM_HOME_URL.
- * @returns {Promise<BrowserContext>} - Browser context.
+ * @returns - Browser context.
  */
 export const judicialSystemSession = async ({
   browser,

@@ -872,7 +872,12 @@ describe('CaseController - Update', () => {
       const mockFindOne = mockCaseModel.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(updatedCase)
 
-      await givenWhenThen(caseId, user, theCase, caseToUpdate)
+      await givenWhenThen(
+        caseId,
+        user,
+        { ...theCase, type: CaseType.INDICTMENT } as Case,
+        caseToUpdate,
+      )
     })
 
     it('should update case', () => {
@@ -884,6 +889,7 @@ describe('CaseController - Update', () => {
         EventType.COURT_DATE_SCHEDULED,
         caseId,
         user,
+        transaction,
       )
       expect(mockMessageService.sendMessagesToQueue).toHaveBeenCalledWith([
         {
@@ -939,7 +945,12 @@ describe('CaseController - Update', () => {
       const mockFindOne = mockCaseModel.findOne as jest.Mock
       mockFindOne.mockResolvedValueOnce(updatedCase)
 
-      await givenWhenThen(caseId, user, theCase, caseToUpdate)
+      await givenWhenThen(
+        caseId,
+        user,
+        { ...theCase, type: CaseType.INDICTMENT } as Case,
+        caseToUpdate,
+      )
     })
 
     it('should update case', () => {
@@ -951,6 +962,7 @@ describe('CaseController - Update', () => {
         EventType.COURT_DATE_SCHEDULED,
         caseId,
         user,
+        transaction,
       )
     })
   })

@@ -73,6 +73,7 @@ export const PaperSignees = ({
           listId: listId,
           nationalId: nationalIdInput,
           pageNumber: Number(page),
+          collectionType: collectionType,
         },
       },
       onCompleted: (res) => {
@@ -169,7 +170,7 @@ export const PaperSignees = ({
             <Button
               variant="ghost"
               size="small"
-              disabled={!canSign || !page}
+              disabled={!canSign || (!page && !name)}
               onClick={() => upload()}
               loading={uploadingPaperSignature}
             >

@@ -2,7 +2,6 @@ import {
   ApolloClient,
   ApolloLink,
   defaultDataIdFromObject,
-  fromPromise,
   HttpLink,
   InMemoryCache,
   NormalizedCacheObject,
@@ -46,11 +45,6 @@ const httpLink = new HttpLink({
   fetch,
 })
 
-const getNewToken = async () => {
-  await authStore.getState().refresh()
-  return authStore.getState().authorizeResult?.accessToken
-}
-
 const retryLink = new RetryLink({
   attempts: {
     max: 3,
@@ -63,37 +57,31 @@ const retryLink = new RetryLink({
   },
 })
 
-const errorLink = onError(
-  ({ graphQLErrors, networkError, forward, operation }) => {
-    if (graphQLErrors) {
-      graphQLErrors.map(({ message, locations, path }) =>
-        console.log(
-          `[GraphQL error]: Message: ${message}, Location: ${JSON.stringify(
-            locations,
-          )}, Path: ${JSON.stringify(path)}`,
-        ),
-      )
-    }
+const errorLink = onError(({ graphQLErrors, networkError }) => {
+  if (graphQLErrors) {
+    graphQLErrors.map((graphQLError) =>
+      console.log(`[GraphQL error]: ${JSON.stringify(graphQLError, null, 2)}`),
+    )
+  }
 
-    if (networkError) {
-      console.log(`[Network error]: ${networkError}`)
+  if (networkError) {
+    console.log(`[Network error]: ${networkError}`)
 
-      // Detect possible OAuth needed
-      if (networkError.name === 'ServerParseError') {
-        const redirectUrl = (networkError as any).response?.url
-        if (
-          redirectUrl &&
-          redirectUrl.indexOf('cognito.shared.devland.is') >= 0
-        ) {
-          authStore.setState({ cognitoAuthUrl: redirectUrl })
-          if (config.isTestingApp && authStore.getState().authorizeResult) {
-            openNativeBrowser(cognitoAuthUrl(), MainBottomTabs)
-          }
+    // Detect possible OAuth needed
+    if (networkError.name === 'ServerParseError') {
+      const redirectUrl = (networkError as any).response?.url
+      if (
+        redirectUrl &&
+        redirectUrl.indexOf('cognito.shared.devland.is') >= 0
+      ) {
+        authStore.setState({ cognitoAuthUrl: redirectUrl })
+        if (config.isTestingApp && authStore.getState().authorizeResult) {
+          openNativeBrowser(cognitoAuthUrl(), MainBottomTabs)
         }
       }
     }
-  },
-)
+  }
+})
 
 const getAndRefreshToken = async () => {
   const { refresh } = authStore.getState()

@@ -1,15 +1,19 @@
-import { Box, Button, DialogPrompt } from '@island.is/island-ui/core'
+import { Box, DialogPrompt } from '@island.is/island-ui/core'
 import { MainContent } from '../../MainContent/MainContent'
-import React, { useContext } from 'react'
+import { useContext } from 'react'
 import { ControlContext } from '../../../context/ControlContext'
 import { m } from '@island.is/form-system/ui'
 import { useIntl } from 'react-intl'
 import { useMutation } from '@apollo/client'
-import { DELETE_SCREEN, DELETE_FIELD, DELETE_SECTION } from '@island.is/form-system/graphql'
+import {
+  DELETE_SCREEN,
+  DELETE_FIELD,
+  DELETE_SECTION,
+} from '@island.is/form-system/graphql'
 import { DeleteButton } from './DeleteButton'
 
 export const MainContentColumn = () => {
-  const { control, controlDispatch } = useContext(ControlContext)
+  const { control, controlDispatch, inSettings } = useContext(ControlContext)
   const { activeItem, form } = control
   const { screens, fields } = form
   const { type } = activeItem
@@ -17,20 +21,25 @@ export const MainContentColumn = () => {
   const deleteScreen = useMutation(DELETE_SCREEN)
   const deleteField = useMutation(DELETE_FIELD)
   const deleteSection = useMutation(DELETE_SECTION)
+  const partiesSection =
+    activeItem.type === 'Section' &&
+    (activeItem.data as { sectionType?: string })?.sectionType === 'PARTIES'
 
   const containsGroupOrInput = (): boolean => {
     if (type === 'Section') {
-      return screens?.some(
-        (screen) => screen?.sectionId === activeItem?.data?.id,
-      ) || false;
+      return (
+        screens?.some((screen) => screen?.sectionId === activeItem?.data?.id) ||
+        false
+      )
     }
     if (type === 'Screen') {
-      return fields?.some((field) => field?.screenId === activeItem?.data?.id) || false;
+      return (
+        fields?.some((field) => field?.screenId === activeItem?.data?.id) ||
+        false
+      )
     }
     return false
   }
-
-
 
   const remove = async () => {
     const id = activeItem?.data?.id as string
@@ -72,26 +81,31 @@ export const MainContentColumn = () => {
     <Box
       style={{
         maxWidth: '1200px',
-        width: '64%',
-        position: 'fixed',
+        width: '100%',
+        marginLeft: 0,
       }}
     >
-      {containsGroupOrInput() ? (
-        <DialogPrompt
-          baseId="remove"
-          title={formatMessage(m.areYouSure)}
-          description={formatMessage(m.completelySure)}
-          ariaLabel="Remove item"
-          buttonTextConfirm={formatMessage(m.confirm)}
-          buttonTextCancel={formatMessage(m.cancel)}
-          onConfirm={remove}
-          disclosureElement={
-            <DeleteButton onClick={() => { }} label={formatMessage(m.delete)} />
-          }
-        />
-      ) : (
-        <DeleteButton onClick={remove} label={formatMessage(m.delete)} />
-      )}
+      {!inSettings && !partiesSection ? (
+        containsGroupOrInput() ? (
+          <DialogPrompt
+            baseId="remove"
+            title={formatMessage(m.areYouSure)}
+            description={formatMessage(m.completelySure)}
+            ariaLabel="Remove item"
+            buttonTextConfirm={formatMessage(m.confirm)}
+            buttonTextCancel={formatMessage(m.cancel)}
+            onConfirm={remove}
+            disclosureElement={
+              <DeleteButton
+                onClick={() => {}}
+                label={formatMessage(m.delete)}
+              />
+            }
+          />
+        ) : (
+          <DeleteButton onClick={remove} label={formatMessage(m.delete)} />
+        )
+      ) : null}
 
       <Box
         border="standard"
@@ -108,4 +122,3 @@ export const MainContentColumn = () => {
     </Box>
   )
 }
-

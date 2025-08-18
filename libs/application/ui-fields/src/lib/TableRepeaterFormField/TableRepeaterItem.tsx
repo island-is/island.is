@@ -3,6 +3,7 @@ import {
   AlertMessageField,
   Application,
   AsyncSelectField,
+  DescriptionField,
   FieldComponents,
   FieldTypes,
   HiddenInputField,
@@ -30,6 +31,7 @@ import { HiddenInputFormField } from '../HiddenInputFormField/HiddenInputFormFie
 import { AlertMessageFormField } from '../AlertMessageFormField/AlertMessageFormField'
 import * as styles from './TableRepeaterItem.css'
 import { VehiclePermnoWithInfoFormField } from '../VehiclePermnoWithInfoFormField/VehiclePermnoWithInfoFormField'
+import { DescriptionFormField } from '../DescriptionFormField/DescriptionFormField'
 
 interface ItemFieldProps {
   application: Application
@@ -106,6 +108,8 @@ export const Item = ({
     Component = AlertMessageFormField
   } else if (component === 'vehiclePermnoWithInfo') {
     Component = VehiclePermnoWithInfoFormField
+  } else if (component === 'description') {
+    Component = DescriptionFormField
   } else {
     Component = componentMapper[component]
   }
@@ -308,6 +312,7 @@ export const Item = ({
     selectAsyncProps = {
       id: id,
       title: label,
+      placeholder: placeholder,
       type: FieldTypes.ASYNC_SELECT,
       component: FieldComponents.ASYNC_SELECT,
       children: undefined,
@@ -328,6 +333,7 @@ export const Item = ({
       defaultValue: defaultVal,
       clearOnChange: clearOnChangeVal,
       setOnChange: setOnChangeFunc,
+      loadingError: item.loadingError,
     }
   }
 
@@ -383,6 +389,18 @@ export const Item = ({
     }
   }
 
+  let descriptionProps: DescriptionField | undefined
+  if (component === 'description') {
+    descriptionProps = {
+      id: id,
+      type: FieldTypes.DESCRIPTION,
+      component: FieldComponents.DESCRIPTION,
+      children: undefined,
+      title: item.title,
+      titleVariant: item.titleVariant,
+    }
+  }
+
   if (
     typeof condition === 'function'
       ? condition && !condition(application, activeValues)
@@ -396,7 +414,9 @@ export const Item = ({
       span={['1/1', '1/1', '1/1', span]}
       position={component === 'hiddenInput' ? 'absolute' : 'relative'}
       className={
-        component === 'nationalIdWithName' ? styles.removePaddingTop : undefined
+        component === 'nationalIdWithName' || component === 'selectAsync'
+          ? styles.removePaddingTop
+          : undefined
       }
     >
       {component === 'radio' && label && (
@@ -437,12 +457,22 @@ export const Item = ({
           }}
         />
       )}
+      {component === 'description' && descriptionProps && (
+        <DescriptionFormField
+          application={application}
+          field={{
+            ...descriptionProps,
+          }}
+          showFieldName={true}
+        />
+      )}
       {!(component === 'selectAsync' && selectAsyncProps) &&
         !(component === 'hiddenInput' && hiddenInputProps) &&
         !(component === 'alertMessage' && alertMessageProps) &&
         !(
           component === 'vehiclePermnoWithInfo' && vehiclePermnoWithInfoProps
-        ) && (
+        ) &&
+        !(component === 'description' && descriptionProps) && (
           <Component
             id={id}
             name={id}

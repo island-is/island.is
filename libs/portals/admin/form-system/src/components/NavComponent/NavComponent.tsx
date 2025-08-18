@@ -10,8 +10,7 @@ import { useContext, useState } from 'react'
 import { ControlContext } from '../../context/ControlContext'
 import * as styles from './NavComponent.css'
 import cn from 'classnames'
-import { Box, Checkbox } from '@island.is/island-ui/core'
-import { truncateName } from '../../lib/utils/truncateText'
+import { Box, Checkbox, Text } from '@island.is/island-ui/core'
 import { NavButtons } from './components/NavButtons'
 import { SectionTypes } from '@island.is/form-system/enums'
 
@@ -39,6 +38,8 @@ export const NavComponent = ({
     selectStatus === NavbarSelectStatus.LIST_ITEM
       ? activeListItem?.id ?? ''
       : activeItem?.data?.id ?? ''
+
+  const selectingIsOff = selectStatus === NavbarSelectStatus.OFF
 
   const connected = () => {
     const hasDependency = form.dependencies?.find((dep) => {
@@ -117,12 +118,19 @@ export const NavComponent = ({
           </Box>
           <Box
             paddingLeft={2}
-            style={{
-              fontWeight: 'bold',
-            }}
             overflow="hidden"
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
           >
-            {truncateName(data?.name?.is ?? '', active, type)}
+            <Text
+              id={`formSystem.${type.toLowerCase()}.name`}
+              variant="medium"
+              truncate={true}
+              fontWeight="semiBold"
+            >
+              {data?.name?.is}
+            </Text>
           </Box>
           <Box
             style={{
@@ -133,7 +141,8 @@ export const NavComponent = ({
             {!(
               type === 'Section' &&
               (data as FormSystemSection).sectionType !== SectionTypes.INPUT
-            ) && <NavButtons id={data.id} type={type} />}
+            ) &&
+              selectingIsOff && <NavButtons id={data.id} type={type} />}
           </Box>
         </Box>
       ) : (
@@ -154,8 +163,20 @@ export const NavComponent = ({
           >
             {/* {index} */}
           </Box>
-          <Box id="2" paddingLeft={1}>
-            {truncateName(data?.name?.is ?? '', active, type)}
+          <Box
+            id="2"
+            paddingLeft={1}
+            display="flex"
+            alignItems="center"
+            justifyContent="center"
+          >
+            <Text
+              id={`formSystem.${type.toLowerCase()}.name`}
+              variant="medium"
+              truncate={true}
+            >
+              {data?.name?.is}
+            </Text>
           </Box>
           <Box
             style={{
@@ -166,9 +187,10 @@ export const NavComponent = ({
             {!(
               type === 'Section' &&
               (data as FormSystemSection).sectionType !== SectionTypes.INPUT
-            ) && <NavButtons id={data.id} type={type} />}
+            ) &&
+              selectingIsOff && <NavButtons id={data.id} type={type} />}
           </Box>
-          {selectable && (
+          {selectable && type === 'Field' && (
             <Box className={cn(styles.selectableComponent)} marginLeft="auto">
               <Checkbox
                 checked={connected()}

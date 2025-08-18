@@ -20,11 +20,13 @@ export const Prerequisites = buildForm({
   children: [
     buildSection({
       id: 'conditions',
-      tabTitle: 'Forkröfur',
+      tabTitle: m.prereqMessages.title,
       children: [
         buildExternalDataProvider({
           id: 'approveExternalData',
-          title: 'External data',
+          title: m.prereqMessages.title,
+          subTitle: m.prereqMessages.subTitle,
+          checkboxLabel: m.prereqMessages.checkboxLabel,
           dataProviders: [
             buildDataProviderItem({
               provider: UserProfileApi,

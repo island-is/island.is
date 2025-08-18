@@ -43,7 +43,7 @@ module.exports = {
       .then(() => queryInterface.addIndex('user_profile', ['national_id']))
   },
 
-  down: (queryInterface, Sequelize) => {
+  down: (queryInterface) => {
     return queryInterface.dropTable('user_profile')
   },
 }

@@ -81,7 +81,7 @@ PODS:
   - Firebase/Performance (10.3.0):
     - Firebase/CoreOnly
     - FirebasePerformance (~> 10.3.0)
-  - FirebaseABTesting (10.27.0):
+  - FirebaseABTesting (10.29.0):
     - FirebaseCore (~> 10.0)
   - FirebaseAnalytics (10.3.0):
     - FirebaseAnalytics/AdIdSupport (= 10.3.0)
@@ -116,9 +116,9 @@ PODS:
     - GoogleUtilities/Logger (~> 7.8)
   - FirebaseCoreExtension (10.3.0):
     - FirebaseCore (~> 10.0)
-  - FirebaseCoreInternal (10.27.0):
+  - FirebaseCoreInternal (10.29.0):
     - "GoogleUtilities/NSData+zlib (~> 7.8)"
-  - FirebaseInstallations (10.27.0):
+  - FirebaseInstallations (10.29.0):
     - FirebaseCore (~> 10.0)
     - GoogleUtilities/Environment (~> 7.8)
     - GoogleUtilities/UserDefaults (~> 7.8)
@@ -1236,6 +1236,8 @@ PODS:
     - ReactCommon/turbomodule/bridging
     - ReactCommon/turbomodule/core
     - Yoga
+  - react-native-widgetkit (1.0.9):
+    - React
   - React-nativeconfig (0.74.5)
   - React-NativeModulesApple (0.74.5):
     - glog
@@ -1701,6 +1703,7 @@ DEPENDENCIES:
   - react-native-quick-base64 (from `../../../../node_modules/react-native-quick-base64`)
   - react-native-spotlight-search (from `../../../../node_modules/react-native-spotlight-search`)
   - react-native-webview (from `../../../../node_modules/react-native-webview`)
+  - react-native-widgetkit (from `../../../../node_modules/react-native-widgetkit`)
   - React-nativeconfig (from `../../../../node_modules/react-native/ReactCommon`)
   - React-NativeModulesApple (from `../../../../node_modules/react-native/ReactCommon/react/nativemodule/core/platform/ios`)
   - React-perflogger (from `../../../../node_modules/react-native/ReactCommon/reactperflogger`)
@@ -1894,6 +1897,8 @@ EXTERNAL SOURCES:
     :path: "../../../../node_modules/react-native-spotlight-search"
   react-native-webview:
     :path: "../../../../node_modules/react-native-webview"
+  react-native-widgetkit:
+    :path: "../../../../node_modules/react-native-widgetkit"
   React-nativeconfig:
     :path: "../../../../node_modules/react-native/ReactCommon"
   React-NativeModulesApple:
@@ -2001,12 +2006,12 @@ SPEC CHECKSUMS:
   ExpoModulesCore: 831ece8311a489418746925820bbffdda587d6f4
   FBLazyVector: ac12dc084d1c8ec4cc4d7b3cf1b0ebda6dab85af
   Firebase: f92fc551ead69c94168d36c2b26188263860acd9
-  FirebaseABTesting: 038a7d5f1e36ba7208cf34f6f596946d8f70d6c3
+  FirebaseABTesting: d87f56707159bae64e269757a6e963d490f2eebe
   FirebaseAnalytics: 036232b6a1e2918e5f67572417be1173576245f3
   FirebaseCore: 988754646ab3bd4bdcb740f1bfe26b9f6c0d5f2a
   FirebaseCoreExtension: 93d252fabdc9696bf14a73b04d84877ab9b3a832
-  FirebaseCoreInternal: 4b297a2d56063dbea2c1d0d04222d44a8d058862
-  FirebaseInstallations: 766dabca09fd94aef922538aaf144cc4a6fb6869
+  FirebaseCoreInternal: df84dd300b561c27d5571684f389bf60b0a5c934
+  FirebaseInstallations: 913cf60d0400ebd5d6b63a28b290372ab44590dd
   FirebaseMessaging: e345b219fd15d325f0cf2fef28cb8ce00d851b3f
   FirebasePerformance: 8f1c8e5a4fcc5a68400835518ee63a6d63dbff0c
   FirebaseRemoteConfig: 48ef3f243742a8d72422ccfc9f986e19d7de53fd
@@ -2065,6 +2070,7 @@ SPEC CHECKSUMS:
   react-native-quick-base64: a74c4b2607b9de016877a8edb776b6ac59785809
   react-native-spotlight-search: 392fe113864a986b21af13595b82fc434e43a6c0
   react-native-webview: 05bae3a03a1e4f59568dfc05286c0ebf8954106c
+  react-native-widgetkit: efb6680df237463bbe1be3a4d1a1578a1b0bb08f
   React-nativeconfig: ba9a2e54e2f0882cf7882698825052793ed4c851
   React-NativeModulesApple: 8d11ff8955181540585c944cf48e9e7236952697
   React-perflogger: ed4e0c65781521e0424f2e5e40b40cc7879d737e
@@ -2108,8 +2114,8 @@ SPEC CHECKSUMS:
   SocketRocket: abac6f5de4d4d62d24e11868d7a2f427e0ef940d
   SSZipArchive: 62d4947b08730e4cda640473b0066d209ff033c9
   VisionCamera: 2cffcbac033cb5e2fa344214bd7ccbf7cf065663
-  Yoga: 2246eea72aaf1b816a68a35e6e4b74563653ae09
+  Yoga: 950bbfd7e6f04790fdb51149ed51df41f329fcc8
 
-PODFILE CHECKSUM: 5ed7285b19f5d495a556fab6450c9851c88a7436
+PODFILE CHECKSUM: a647b56575ea7d32ff42faa2abded6a682df272c
 
-COCOAPODS: 1.15.2
+COCOAPODS: 1.16.2

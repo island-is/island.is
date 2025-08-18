@@ -263,6 +263,7 @@ export class OfficialJournalOfIcelandApplicationService {
       html: applicationCase.html,
       status: title,
       communicationStatus: applicationCase.communicationStatus.title,
+      expectedPublishDate: applicationCase.expectedPublishDate,
     }
 
     return mapped

@@ -20,7 +20,6 @@ import { SignatureCollectionPaths } from '../../lib/paths'
 import { useLoaderData, useNavigate } from 'react-router-dom'
 import { useEffect, useState } from 'react'
 import {
-  SignatureCollectionCollectionType,
   SignatureCollectionList,
 } from '@island.is/api/schema'
 import format from 'date-fns/format'
@@ -38,10 +37,8 @@ import CompareLists from '../../shared-components/compareLists'
 import { ListsLoaderReturn } from '../../loaders/AllLists.loader'
 import ActionCompleteCollectionProcessing from '../../shared-components/completeCollectionProcessing'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
-import ActionDrawer from '../../shared-components/compareLists/ActionDrawer'
-import { Actions } from '../../shared-components/compareLists/ActionDrawer/ListActions'
-
-const collectionType = SignatureCollectionCollectionType.Presidential
+import ActionDrawer from '../../shared-components/actionDrawer'
+import { Actions } from '../../shared-components/actionDrawer/ListActions'
 
 const Lists = () => {
   const { formatMessage } = useLocale()
@@ -130,7 +127,7 @@ const Lists = () => {
           offset={['0', '0', '0', '1/12']}
           span={['12/12', '12/12', '12/12', '8/12']}
         >
-          <Box marginBottom={2}>
+          <Box marginBottom={3}>
             <Breadcrumbs
               items={[
                 {
@@ -158,75 +155,75 @@ const Lists = () => {
           />
           <Divider />
           <Box marginTop={9} />
-          <GridRow marginBottom={5}>
-            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-              <FilterInput
-                name="input"
-                placeholder={formatMessage(m.searchInAllListsPlaceholder)}
-                value={filters.input}
-                onChange={(value) => setFilters({ ...filters, input: value })}
-                backgroundColor="blue"
-              />
-            </GridColumn>
-            <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
-              <Box
-                display="flex"
-                justifyContent="spaceBetween"
-                marginTop={[2, 2, 2, 0]}
-              >
-                <Filter
-                  labelClear=""
-                  labelClose=""
-                  labelResult=""
-                  labelOpen={formatMessage(m.filter)}
-                  labelClearAll={formatMessage(m.clearAllFilters)}
-                  resultCount={lists.length}
-                  variant="popover"
-                  onFilterClear={() => {
-                    setFilters({
-                      area: [],
-                      candidate: [],
-                      input: '',
-                    })
-                  }}
+          {lists?.length > 0 && (
+            <GridRow marginBottom={5}>
+              <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+                <FilterInput
+                  name="input"
+                  placeholder={formatMessage(m.searchInAllListsPlaceholder)}
+                  value={filters.input}
+                  onChange={(value) => setFilters({ ...filters, input: value })}
+                  backgroundColor="blue"
+                />
+              </GridColumn>
+              <GridColumn span={['12/12', '12/12', '12/12', '6/12']}>
+                <Box
+                  display="flex"
+                  justifyContent="spaceBetween"
+                  marginTop={[2, 2, 2, 0]}
                 >
-                  <FilterMultiChoice
-                    labelClear={formatMessage(m.clearFilter)}
-                    categories={[
-                      {
-                        id: 'area',
-                        label: formatMessage(m.countryArea),
-                        selected: filters.area,
-                        filters: countryAreas,
-                      },
-                      {
-                        id: 'candidate',
-                        label: formatMessage(m.candidate),
-                        selected: filters.candidate,
-                        filters: candidates,
-                      },
-                    ]}
-                    onChange={(event) =>
+                  <Filter
+                    labelClear=""
+                    labelClose=""
+                    labelResult=""
+                    labelOpen={formatMessage(m.filter)}
+                    labelClearAll={formatMessage(m.clearAllFilters)}
+                    resultCount={lists.length}
+                    variant="popover"
+                    onFilterClear={() => {
                       setFilters({
-                        ...filters,
-                        [event.categoryId]: event.selected,
+                        area: [],
+                        candidate: [],
+                        input: '',
                       })
-                    }
-                    onClear={(categoryId) =>
-                      setFilters({
-                        ...filters,
-                        [categoryId]: [],
-                      })
-                    }
-                  />
-                </Filter>
-              </Box>
-            </GridColumn>
-          </GridRow>
-          {lists?.length > 0 &&
-          collection.collectionType ===
-            SignatureCollectionCollectionType.Presidential ? (
-            <>
+                    }}
+                  >
+                    <FilterMultiChoice
+                      labelClear={formatMessage(m.clearFilter)}
+                      categories={[
+                        {
+                          id: 'area',
+                          label: formatMessage(m.countryArea),
+                          selected: filters.area,
+                          filters: countryAreas,
+                        },
+                        {
+                          id: 'candidate',
+                          label: formatMessage(m.candidate),
+                          selected: filters.candidate,
+                          filters: candidates,
+                        },
+                      ]}
+                      onChange={(event) =>
+                        setFilters({
+                          ...filters,
+                          [event.categoryId]: event.selected,
+                        })
+                      }
+                      onClear={(categoryId) =>
+                        setFilters({
+                          ...filters,
+                          [categoryId]: [],
+                        })
+                      }
+                    />
+                  </Filter>
+                </Box>
+              </GridColumn>
+            </GridRow>
+          )}
+          {lists?.length > 0 ? (
+            <Box>
               <Box marginBottom={2} display="flex" justifyContent="flexEnd">
                 {filters.input.length > 0 ||
                 filters.area.length > 0 ||
@@ -279,7 +276,7 @@ const Lists = () => {
                     )
                   })}
               </Stack>
-            </>
+            </Box>
           ) : filters.input.length > 0 ? (
             <Box display="flex">
               <Text>{formatMessage(m.noListsFoundBySearch)}</Text>
@@ -288,46 +285,40 @@ const Lists = () => {
               </Box>
             </Box>
           ) : (
-            <Box marginTop={10}>
-              <EmptyState
-                title={formatMessage(m.noLists)}
-                description={formatMessage(m.noListsDescription)}
+            <EmptyState
+              title={formatMessage(m.noLists)}
+              description={formatMessage(m.noListsDescription)}
+            />
+          )}
+          {lists?.length > 0 && (
+            <Box marginTop={5}>
+              <Pagination
+                totalItems={lists.length}
+                itemsPerPage={pageSize}
+                page={page}
+                renderLink={(page, className, children) => (
+                  <Box
+                    cursor="pointer"
+                    className={className}
+                    onClick={() => setPage(page)}
+                    component="button"
+                  >
+                    {children}
+                  </Box>
+                )}
               />
             </Box>
           )}
-          {lists?.length > 0 &&
-            collection.collectionType ===
-              SignatureCollectionCollectionType.Presidential && (
-              <Box marginTop={5}>
-                <Pagination
-                  totalItems={lists.length}
-                  itemsPerPage={pageSize}
-                  page={page}
-                  renderLink={(page, className, children) => (
-                    <Box
-                      cursor="pointer"
-                      className={className}
-                      onClick={() => setPage(page)}
-                      component="button"
-                    >
-                      {children}
-                    </Box>
-                  )}
-                />
-              </Box>
-            )}
           {lists?.length > 0 && (
             <Box>
               <CompareLists
                 collectionId={collection?.id}
-                collectionType={collectionType}
+                collectionType={collection?.collectionType}
               />
               {!hasInReview &&
                 collectionStatus === CollectionStatus.InInitialReview && (
                   <ActionCompleteCollectionProcessing
-                    collectionType={
-                      SignatureCollectionCollectionType.Presidential
-                    }
+                    collectionType={collection?.collectionType}
                     collectionId={collection?.id}
                   />
                 )}

@@ -184,7 +184,7 @@ const ExamineeSchema = z
       }),
       email: z.string().refine((email) => isValidEmail(email)),
       phone: z.string().refine((phone) => isValidPhoneNumber(phone)),
-      licenseNumber: z.string().optional(),
+      licenseNumber: z.string().min(1).max(25),
       countryIssuer: z.string().min(1).max(256),
       disabled: z.enum([TrueOrFalse.true, TrueOrFalse.false]).optional(),
     }),
@@ -276,7 +276,7 @@ const ExamCategorySchema = z.object({
 })
 
 const ExamLocationSchema = z.object({
-  address: z.string().min(1).max(128),
+  address: z.string().min(1).max(49),
   phone: z.string().refine((v) => isValidPhoneNumber(v)),
   email: z.string().email(),
   postalCode: z.string().min(3).max(3),

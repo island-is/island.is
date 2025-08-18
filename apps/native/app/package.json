@@ -22,7 +22,7 @@
     "test-mock": "echo FIXME",
     "storybook": "start-storybook -p 7007",
     "build-storybook": "build-storybook",
-    "nx:typecheck": "tsc --noEmit",
+    "nx:typecheck": "tsc --noEmit -p tsconfig.app.json",
     "nx:codegen": "yarn run -T nx run native-app:codegen/frontend-client",
     "nx:lint": "yarn run -T nx run native-app:lint",
     "nx:build": "yarn run -T nx run native-app:build",
@@ -96,6 +96,7 @@
     "react-native-svg": "15.2.0",
     "react-native-vision-camera": "4.5.1",
     "react-native-webview": "13.8.6",
+    "react-native-widgetkit": "1.0.9",
     "styled-components": "6.1.11",
     "zustand": "3.5.12"
   },

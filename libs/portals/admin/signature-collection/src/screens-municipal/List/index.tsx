@@ -16,8 +16,8 @@ import { SignatureCollectionPaths } from '../../lib/paths'
 import Signees from '../../shared-components/signees'
 import nationalRegistryLogo from '../../../assets/nationalRegistry.svg'
 import { PaperSignees } from '../../shared-components/paperSignees'
-import ActionDrawer from '../../shared-components/compareLists/ActionDrawer'
-import { Actions } from '../../shared-components/compareLists/ActionDrawer/ListActions'
+import ActionDrawer from '../../shared-components/actionDrawer'
+import { Actions } from '../../shared-components/actionDrawer/ListActions'
 
 const List = () => {
   const { formatMessage } = useLocale()

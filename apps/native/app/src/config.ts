@@ -1,12 +1,14 @@
 import { Platform } from 'react-native'
 import DeviceInfo from 'react-native-device-info'
 import {
+  EnvironmentConfig,
   environmentStore,
   useEnvironmentStore,
 } from './stores/environment-store'
 
-// Initial environment
-export const environments = {
+type EnvironmentId = 'prod' | 'staging' | 'dev' | 'local' | 'mock'
+
+export const environments: Record<EnvironmentId, EnvironmentConfig> = {
   prod: {
     id: 'prod',
     label: 'Production',

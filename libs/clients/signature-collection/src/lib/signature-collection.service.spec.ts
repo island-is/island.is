@@ -20,6 +20,21 @@ import {
   getNumberFromCollectionType,
 } from './types/collection.dto'
 
+const svaedi = [
+  {
+    id: 123,
+    nafn: 'Svæði',
+    svaediTegundLysing: 'Lýsing',
+    nr: '1',
+  },
+  {
+    id: 321,
+    nafn: 'Svæði',
+    svaediTegundLysing: 'Lýsing',
+    nr: '1',
+  },
+]
+
 const user: User = {
   nationalId: '0101302399',
   authorization: '',
@@ -82,6 +97,14 @@ describe('MyService', () => {
     medmaeliApi = module.get<MedmaeliApi>(MedmaeliApi)
     frambodApi = module.get<FrambodApi>(FrambodApi)
     kosningApi = module.get<KosningApi>(KosningApi)
+
+    jest
+      .spyOn(kosningApi, 'kosningIDSvaediSofnunGet')
+      .mockReturnValue(Promise.resolve(svaedi))
+
+    jest
+      .spyOn(kosningApi, 'kosningIDSvaediGet')
+      .mockReturnValue(Promise.resolve(svaedi))
   })
 
   it('should be defined', () => {

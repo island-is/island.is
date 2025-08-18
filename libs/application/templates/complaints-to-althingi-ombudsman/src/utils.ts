@@ -88,7 +88,9 @@ export const genderOptions = [
   },
 ]
 
-export const getGenderLabel = (option: GenderAnswerOptions): MessageDescriptor => {
+export const getGenderLabel = (
+  option: GenderAnswerOptions,
+): MessageDescriptor => {
   const found = genderOptions.find((item) => item.value === option)
   return found?.label ?? gender.general.genderOptionDeclinedToAnswer
 }

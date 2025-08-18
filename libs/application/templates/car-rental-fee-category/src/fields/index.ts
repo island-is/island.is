@@ -1,0 +1,1 @@
+export { UploadCarCategoryFile } from './UploadCarCategoryFile'

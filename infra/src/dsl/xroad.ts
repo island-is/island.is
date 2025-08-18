@@ -180,6 +180,16 @@ export const RskProcuring = new XroadConf({
   },
 })
 
+export const RskCarRentalRate = new XroadConf({
+  env: {
+    XROAD_RSK_RENTAL_RATE_PATH: {
+      dev: 'IS-DEV/GOV/10006/Skatturinn/rentaldayrate-v1',
+      staging: 'IS-TEST/GOV/5402696029/Skatturinn/rentaldayrate-v1',
+      prod: 'IS/GOV/5402696029/Skatturinn/rentaldayrate-v1',
+    },
+  },
+})
+
 export const Payment = new XroadConf({
   env: {
     XROAD_PAYMENT_PROVIDER_ID: {
@@ -1066,5 +1076,21 @@ export const LSH = new XroadConf({
         'IS-TEST/GOV/10022/Landspitali-Protected/external-patient-api-v1',
       prod: 'IS/GOV/5003002130/Landspitali-Protected/external-patient-api-v1',
     },
+  },
+})
+
+export const VMSTUnemployment = new XroadConf({
+  env: {
+    VMST_UNEMPLOYMENT_XROAD_PATH: {
+      dev: 'IS-DEV/GOV/10003/VMST-Protected/XRoadDev-v1',
+      staging: 'IS-TEST/GOV/7005942039/VMST-Protected/XRoadDev-v1',
+      prod: 'IS/GOV/7005942039/VMST-Protected/XRoadDev-v1',
+    },
+  },
+  secrets: {
+    XROAD_VMST_UNEMPLOYMENT_USERNAME:
+      '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_USERNAME',
+    XROAD_VMST_UNEMPLOYMENT_PASSWORD:
+      '/k8s/xroad/XROAD_VMST_UNEMPLOYMENT_PASSWORD',
   },
 })

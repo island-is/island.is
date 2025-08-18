@@ -1,28 +1,17 @@
 import React from 'react'
 import { ImageSourcePropType } from 'react-native'
 import styled from 'styled-components/native'
+import { useDateTimeFormatter } from '../../../hooks/use-date-time-formatter'
+import { Spacing, theme } from '../../utils'
 import { dynamicColor } from '../../utils/dynamic-color'
+import { Label } from '../label/label'
 import { Skeleton } from '../skeleton/skeleton'
 import { Typography } from '../typography/typography'
-import { Label } from '../label/label'
 
-const Host = styled.View<{ hasBorder?: boolean }>`
-  padding-bottom: ${({ theme }) => theme.spacing[1]}px;
-  border-bottom-width: ${({ hasBorder }) => (hasBorder ? '1px' : 0)};
-  border-bottom-color: ${dynamicColor(
-    (props) => ({
-      dark: props.theme.shades.dark.shade200,
-      light: props.theme.color.blue100,
-    }),
-    true,
-  )};
-  margin-bottom: ${({ hasBorder }) => (hasBorder ? '16px' : 0)};
-  margin-top: ${({ theme }) => theme.spacing[2]}px;
-`
-
-const Logo = styled.Image`
-  width: 16px;
-  height: 16px;
+const Host = styled.View`
+  display: flex;
+  row-gap: ${({ theme }) => theme.spacing[2]}px;
+  padding-vertical: ${({ theme }) => theme.spacing[2]}px;
 `
 
 const LogoBackground = styled.View`
@@ -33,32 +22,37 @@ const LogoBackground = styled.View`
     }),
     true,
   )};
-  height: 24px;
-  width: 24px;
+  height: 42px;
+  width: 42px;
   justify-content: center;
   align-items: center;
   border-radius: ${({ theme }) => theme.border.radius.full};
-  margin-right: ${({ theme }) => theme.spacing[1]}px;
 `
 
-const Row = styled.View`
-  flex-direction: row;
-  justify-content: space-between;
-  align-items: center;
-  padding-bottom: ${({ theme }) => theme.spacing[1]}px;
+const Logo = styled.Image`
+  width: 24px;
+  height: 24px;
 `
 
-const Wrapper = styled.View`
+const Col = styled.View<{ columnGap?: Spacing; spaceBetween?: boolean }>`
+  flex-grow: 1;
   flex-direction: row;
   align-items: center;
-  flex: 1;
-  padding-right: ${({ theme }) => theme.spacing[1]}px;
+  ${({ spaceBetween }) => spaceBetween && `justify-content: space-between;`}
+  ${({ columnGap, theme }) =>
+    columnGap && `column-gap: ${theme.spacing[columnGap]}px`}
+`
+
+const Row = styled.View<{ rowGap?: Spacing }>`
+  flex-direction: column;
+  ${({ rowGap, theme }) => rowGap && `row-gap: ${theme.spacing[rowGap]}px`}
 `
 
 interface HeaderProps {
   title?: string
   logo?: ImageSourcePropType
-  date?: React.ReactNode
+  category?: string
+  date?: string
   message?: string
   isLoading?: boolean
   hasBorder?: boolean
@@ -68,56 +62,109 @@ interface HeaderProps {
 export function Header({
   title,
   logo,
+  category,
   date,
   message,
   isLoading,
-  hasBorder = true,
   label,
 }: HeaderProps) {
+  const formatDate = useDateTimeFormatter()
+
+  const renderSkeleton = ({
+    height,
+    width,
+    borderRadius = 4,
+  }: {
+    height: number
+    width?: number
+    borderRadius?: number
+  }) => {
+    return (
+      <Skeleton
+        active
+        style={{ borderRadius, ...(width && { width }) }}
+        height={height}
+      />
+    )
+  }
+
+  if (isLoading) {
+    return (
+      <Host>
+        <Row rowGap={1}>
+          {renderSkeleton({
+            height: 20,
+            width: 200,
+          })}
+          <Col columnGap={2}>
+            {renderSkeleton({
+              height: 42,
+              width: 42,
+              borderRadius: 100,
+            })}
+            <Row rowGap="smallGutter">
+              {renderSkeleton({
+                height: 16,
+                width: 100,
+              })}
+              {renderSkeleton({
+                height: 16,
+                width: 150,
+              })}
+            </Row>
+          </Col>
+        </Row>
+      </Host>
+    )
+  }
+
   return (
-    <Host hasBorder={hasBorder}>
-      <Row>
-        {isLoading ? (
-          <Skeleton active style={{ borderRadius: 4 }} height={17} />
-        ) : (
-          <>
-            <Wrapper>
-              {logo && (
-                <LogoBackground>
-                  <Logo source={logo} />
-                </LogoBackground>
-              )}
+    <Host>
+      <Row rowGap={1}>
+        {message && (
+          <Typography variant="heading5" numberOfLines={1} ellipsizeMode="tail">
+            {message}
+          </Typography>
+        )}
+
+        <Col columnGap={2}>
+          {logo && (
+            <LogoBackground>
+              <Logo source={logo} />
+            </LogoBackground>
+          )}
+          <Col spaceBetween>
+            <Row rowGap="smallGutter">
               {title && (
                 <Typography
-                  variant="body3"
+                  variant="eyebrow"
                   numberOfLines={1}
                   ellipsizeMode="tail"
                 >
                   {title}
                 </Typography>
               )}
-            </Wrapper>
-            {date && <Typography variant="body3">{date}</Typography>}
-          </>
-        )}
-      </Row>
-      <Row>
-        {message && isLoading ? (
-          <Skeleton active style={{ borderRadius: 4 }} height={32} />
-        ) : message && !isLoading ? (
-          <Typography
-            style={{
-              fontWeight: '600',
-            }}
-          >
-            {message}
-          </Typography>
-        ) : null}
-        {label && (
-          <Label color="urgent" icon>
-            {label}
-          </Label>
-        )}
+              <Col columnGap={1}>
+                {date && (
+                  <Typography variant="body3">{formatDate(date)}</Typography>
+                )}
+                {category && (
+                  <>
+                    <Typography variant="body3" color={theme.color.blue200}>
+                      |
+                    </Typography>
+                    <Typography variant="body3">{category}</Typography>
+                  </>
+                )}
+              </Col>
+            </Row>
+            {label && (
+              <Label color="urgent" icon>
+                {label}
+              </Label>
+            )}
+          </Col>
+        </Col>
       </Row>
     </Host>
   )
