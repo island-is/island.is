@@ -33,7 +33,7 @@ export const cv = {
     uploadDescription: {
       id: 'aa.application:cv.labels.uploadDescription',
       defaultMessage:
-        'Tekið er við skjölum með endingu: .pdf, .png, .jpg, .jpeg',
+        'Tekið er við skjölum með endingu: .pdf, .png, .jpg, .jpeg, .doc, .docx',
       description: 'Upload description label',
     },
     otherQuestion: {

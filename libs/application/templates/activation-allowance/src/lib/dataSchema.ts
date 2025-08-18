@@ -44,9 +44,9 @@ const applicantSchema = z
   )
 
 const paymentInformationSchema = z.object({
-  bankNumber: z.string().regex(/^\d{4}$/),
-  ledger: z.string().regex(/^\d{2}$/),
-  accountNumber: z.string().regex(/^\d{6}$/),
+  bankNumber: z.string().optional(),
+  ledger: z.string().optional(),
+  accountNumber: z.string().optional(),
 })
 
 const jobHistorySchema = z.object({
@@ -68,20 +68,13 @@ const jobWishesSchema = z.object({
 const academicBackgroundSchema = z.object({
   education: z
     .array(
-      z
-        .object({
-          levelOfStudy: z.string(),
-          degree: z.string(),
-          subject: z.string().nullish(),
-          endOfStudy: z.string().optional(),
-          isStillStudying: z.array(z.enum([YES])).optional(),
-        })
-        .transform((entry) => ({
-          ...entry,
-          endOfStudies: entry.isStillStudying?.includes(YES)
-            ? undefined
-            : entry.endOfStudy,
-        })),
+      z.object({
+        levelOfStudy: z.string(),
+        degree: z.string(),
+        subject: z.string().nullish(),
+        endOfStudy: z.string().optional(),
+        isStillStudying: z.array(z.enum([YES])).optional(),
+      }),
     )
     .optional(),
 })
@@ -196,6 +189,7 @@ export const ActivationAllowanceAnswersSchema = z.object({
   paymentInformation: paymentInformationSchema,
   jobHistory: jobHistoryArraySchema,
   jobWishes: jobWishesSchema,
+  approveReportingObligation: z.array(z.string()).refine((v) => v.length > 0),
   academicBackground: academicBackgroundSchema,
   drivingLicense: drivingLicensesSchema,
   languageSkills: languageSkillsSchema,

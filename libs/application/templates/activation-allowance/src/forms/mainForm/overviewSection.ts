@@ -25,11 +25,11 @@ import { overview } from '../../lib/messages/overview'
 
 export const overviewSection = buildSection({
   id: 'overviewSection',
-  title: 'Overview',
+  title: overview.general.sectionTitle,
   children: [
     buildMultiField({
       id: 'overviewSection',
-      title: overview.general.sectionTitle,
+      title: overview.general.pageTitle,
       children: [
         buildOverviewField({
           id: 'overview.applicant',
@@ -37,14 +37,14 @@ export const overviewSection = buildSection({
           items: getApplicantOverviewItems,
         }),
         buildOverviewField({
-          id: 'overview.paymentInfo',
-          backId: 'paymentInformationMultiField',
-          items: getPaymentOverviewItems,
-        }),
-        buildOverviewField({
           id: 'overview.contact',
           backId: 'contact',
           items: getContactOverviewItems,
+        }),
+        buildOverviewField({
+          id: 'overview.paymentInfo',
+          backId: 'paymentInformationMultiField',
+          items: getPaymentOverviewItems,
         }),
         buildOverviewField({
           id: 'overview.jobWishes',
