@@ -190,7 +190,7 @@ export const getBankInfo = (
   const bankId = supportData?.banks?.find(
     (bank) => bank.bankNo === bankInfo?.bankNumber,
   )?.id
-  const accountNumber = bankInfo?.accountNumber
+  const accountNumber = bankInfo?.accountNumber?.padStart(6, '0')
   if (!ledgerId || !bankId || !accountNumber) return undefined
 
   return { bankId, ledgerId, accountNumber }
