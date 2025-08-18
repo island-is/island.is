@@ -68,6 +68,14 @@ export class AdvertInstitutionsResponse {
   paging!: AdvertPaging
 }
 
+@ObjectType('OfficialJournalOfIcelandAdvertsFullResponse')
+export class AdvertsFullResponse {
+  @Field(() => [Advert])
+  adverts!: Advert[]
+
+  @Field(() => AdvertPaging)
+  paging!: AdvertPaging
+}
 @ObjectType('OfficialJournalOfIcelandAdvertsResponse')
 export class AdvertsResponse {
   @Field(() => [AdvertLean])

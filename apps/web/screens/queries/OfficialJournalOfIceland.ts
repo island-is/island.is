@@ -16,6 +16,9 @@ export const ADVERTS_QUERY = gql`
         categories {
           title
         }
+        involvedParty {
+          title
+        }
       }
       paging {
         page

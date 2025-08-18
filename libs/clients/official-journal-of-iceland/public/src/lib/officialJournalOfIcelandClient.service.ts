@@ -32,6 +32,10 @@ export class OfficialJournalOfIcelandClientService {
     return this.api.getAdvertsLean(input)
   }
 
+  public async getAdvertsFull(input: GetAdvertsRequest) {
+    return this.api.getAdverts(input)
+  }
+
   public async getDepartmentById(params: GetDepartmentByIdRequest) {
     return this.api.getDepartmentById(params)
   }

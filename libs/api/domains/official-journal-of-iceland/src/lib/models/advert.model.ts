@@ -205,20 +205,23 @@ export class AdvertLean {
   @Field(() => AdvertType)
   type!: AdvertType
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   subject?: string
 
   @Field(() => AdvertStatus)
   status!: AdvertStatus
 
-  @Field(() => AdvertPublicationNumber)
+  @Field(() => AdvertPublicationNumber, { nullable: true })
   publicationNumber!: AdvertPublicationNumber | null
 
-  @Field(() => String)
+  @Field(() => String, { nullable: true })
   publicationDate!: string | null
 
   @Field(() => [AdvertEntity])
   categories!: AdvertCategory[]
+
+  @Field(() => AdvertEntity)
+  involvedParty!: AdvertEntity
 }
 
 @ObjectType('OfficialJournalOfIcelandAdvertSimilar')

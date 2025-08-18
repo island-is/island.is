@@ -1673,6 +1673,11 @@
             "nullable": false,
             "type": "array",
             "items": { "$ref": "#/components/schemas/Category" }
+          },
+          "involvedParty": {
+            "description": "Involved party for the advert.",
+            "nullable": false,
+            "allOf": [{ "$ref": "#/components/schemas/Institution" }]
           }
         },
         "required": [
@@ -1683,7 +1688,8 @@
           "status",
           "publicationNumber",
           "publicationDate",
-          "categories"
+          "categories",
+          "involvedParty"
         ]
       },
       "GetLeanAdvertsResponse": {

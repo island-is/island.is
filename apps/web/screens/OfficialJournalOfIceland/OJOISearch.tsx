@@ -25,6 +25,7 @@ import {
   OfficialJournalOfIcelandAdvert,
   OfficialJournalOfIcelandAdvertCategory,
   OfficialJournalOfIcelandAdvertEntity,
+  OfficialJournalOfIcelandAdvertsResponse,
   OfficialJournalOfIcelandAdvertType,
   Query,
   QueryGetOrganizationArgs,
@@ -523,7 +524,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
 }
 
 interface OJOISearchProps {
-  initialAdverts?: OfficialJournalOfIcelandAdvert[]
+  initialAdverts?: OfficialJournalOfIcelandAdvertsResponse['adverts']
   categories?: Array<OfficialJournalOfIcelandAdvertCategory>
   departments?: Array<OfficialJournalOfIcelandAdvertEntity>
   types?: Array<OfficialJournalOfIcelandAdvertType>

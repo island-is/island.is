@@ -19,6 +19,7 @@ import {
   CustomPageUniqueIdentifier,
   OfficialJournalOfIcelandAdvert,
   OfficialJournalOfIcelandAdvertMainCategory,
+  OfficialJournalOfIcelandAdvertsResponse,
   Query,
   QueryGetOrganizationArgs,
   QueryOfficialJournalOfIcelandAdvertsArgs,
@@ -210,7 +211,7 @@ const OJOIHomePage: CustomScreen<OJOIHomeProps> = ({
 }
 
 interface OJOIHomeProps {
-  adverts: OfficialJournalOfIcelandAdvert[]
+  adverts: OfficialJournalOfIcelandAdvertsResponse['adverts']
   mainCategories?: OfficialJournalOfIcelandAdvertMainCategory[]
   organization?: Query['getOrganization']
   locale: Locale
@@ -235,7 +236,7 @@ const OJOIHome: CustomScreen<OJOIHomeProps> = ({
 }
 
 OJOIHome.getProps = async ({ apolloClient, locale }) => {
-  const adverts: OfficialJournalOfIcelandAdvert[] = []
+  const adverts: OfficialJournalOfIcelandAdvertsResponse['adverts'] = []
   const [
     {
       data: { officialJournalOfIcelandAdverts },
