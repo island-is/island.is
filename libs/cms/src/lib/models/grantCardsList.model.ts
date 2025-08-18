@@ -46,7 +46,6 @@ export const mapGrantCardsList = ({
   fields,
   sys,
 }: IGrantCardsList): SystemMetadata<GrantCardsList> => {
-  console.log(fields.grantCardsAlwaysDisplayResultsAsCards)
   return {
     typename: 'GrantCardsList',
     id: sys.id,
