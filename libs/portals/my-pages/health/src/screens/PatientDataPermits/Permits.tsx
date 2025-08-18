@@ -11,7 +11,7 @@ import {
   ActionCardLoader,
   formatDate,
   IntroWrapper,
-  m,
+  NoDataScreen,
 } from '@island.is/portals/my-pages/core'
 import React from 'react'
 import { useNavigate } from 'react-router-dom'
@@ -29,8 +29,7 @@ const PatientDataPermits: React.FC = () => {
   const { data, loading, error } = useGetPatientDataPermitsQuery({
     variables: { locale: lang },
   })
-  const dataLength =
-    data?.healthDirectoratePatientSummaryApprovals.data.length ?? 0
+  const dataLength = 0 //  data?.healthDirectoratePatientSummaryApprovals.data.length ?? 0
 
   const filteredData =
     data?.healthDirectoratePatientSummaryApprovals.data.filter(
@@ -67,9 +66,9 @@ const PatientDataPermits: React.FC = () => {
         <Problem
           type="no_data"
           noBorder={false}
-          title={formatMessage(m.noDataFound)}
-          message={formatMessage(m.noDataFoundDetail)}
-          imgSrc="./assets/images/nodata.svg"
+          title={formatMessage(messages.noPermits)}
+          message={formatMessage(messages.noPermitsRegistered)}
+          imgSrc="./assets/images/coffee.svg"
         />
       )}
       {loading && <ActionCardLoader repeat={3} />}

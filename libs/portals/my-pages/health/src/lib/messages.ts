@@ -1863,4 +1863,12 @@ export const messages = defineMessages({
       'Ekki tókst að sækja lönd. Vinsamlegast reyndu aftur síðar.',
     id: 'sp.health:countries-error',
   },
+  noPermits: {
+    defaultMessage: 'Engar heimildir',
+    id: 'sp.health:no-permits',
+  },
+  noPermitsRegistered: {
+    defaultMessage: 'Það eru engar skráðar heimildir.',
+    id: 'sp.health:no-permits-registered',
+  },
 })
