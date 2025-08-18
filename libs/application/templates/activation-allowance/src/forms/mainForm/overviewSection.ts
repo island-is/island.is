@@ -46,9 +46,6 @@ export const overviewSection = buildSection({
           backId: 'paymentInformationMultiField',
           items: getPaymentOverviewItems,
         }),
-        // buildOverviewField({
-        // INCOME SHOULD COME HERE
-        // }),
         buildOverviewField({
           id: 'overview.jobWishes',
           backId: 'jobWishesMultiField',

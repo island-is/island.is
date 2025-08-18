@@ -72,8 +72,8 @@ export const PaymentInformationValidation: FC<
       )}
       {errors &&
         errors.length > 0 &&
-        errors.map((val) => (
-          <Box marginBottom={2}>
+        errors.map((val, index) => (
+          <Box key={index} marginBottom={2}>
             <AlertMessage
               title={formatMessage(paymentErrors.invalidValue)}
               message={formatMessage(val)}
