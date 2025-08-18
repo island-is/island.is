@@ -76,6 +76,8 @@ import {
   MortgageCertificate,
   BurningPermit,
   ReligiousOrganization,
+  InheritanceReportFuneralAsset,
+  FuneralAssetItem,
 } from './syslumennClient.types'
 const UPLOAD_DATA_SUCCESS = 'Gögn móttekin'
 
@@ -477,6 +479,7 @@ export const mapEstateRegistrant = (
           .filter((a) => a.tegundAngalgs === TegundAndlags.NUMBER_10)
           .map(assetMapper)
       : [],
+    otherAssets: [],
     estateMembers: syslaData.adilarDanarbus
       ? syslaData.adilarDanarbus.map(estateMemberMapper)
       : [],
@@ -529,6 +532,7 @@ export const mapEstateInfo = (syslaData: DanarbuUpplRadstofun): EstateInfo => {
       : [],
     // TODO: update once implemented in District Commissioner's backend
     guns: [],
+    otherAssets: [],
     estateMembers: syslaData.erfingar
       ? syslaData.erfingar.map(estateMemberMapper)
       : [],
@@ -660,7 +664,33 @@ const mapInheritanceReportHeirs = (
     phone: heir.simi ?? undefined,
     relationWithApplicant: heir.tengsl ?? undefined,
     address: heir.heimilisfang ?? undefined,
+    heirsPercentage: String(heir.arfshlutfall ?? '0'),
   }))
+}
+
+export const mapDCDescriptionToFuneralItem = (
+  description: string,
+): FuneralAssetItem => {
+  switch (description) {
+    case 'Legsteinn (áætlaður kostnaður)':
+      return FuneralAssetItem.Tombstone
+    case 'Smíði kistu og umbúnaður':
+      return FuneralAssetItem.Casket
+    case 'Prentun':
+      return FuneralAssetItem.Printing
+    case 'Blóm':
+      return FuneralAssetItem.Flowers
+    case 'Tónlistarflutningur':
+      return FuneralAssetItem.Music
+    case 'Erfidrykkja':
+      return FuneralAssetItem.Wake
+    case 'Leiga á sal':
+      return FuneralAssetItem.Venue
+    case 'Líkbrennsla':
+      return FuneralAssetItem.Cremation
+    default:
+      return FuneralAssetItem.Other
+  }
 }
 
 const mapInheritanceReportAssets = (
@@ -677,7 +707,7 @@ const mapInheritanceReportAssets = (
   const depositsAndMoney: Array<InheritanceReportAsset> = []
   const guns: Array<InheritanceReportAsset> = []
   const sharesAndClaims: Array<InheritanceReportAsset> = []
-  const funeralCosts: Array<InheritanceReportAsset> = []
+  const funeralCosts: Array<InheritanceReportFuneralAsset> = []
   const officialFees: Array<InheritanceReportAsset> = []
   const otherDebts: Array<InheritanceReportAsset> = []
   const assetsInBusiness: Array<InheritanceReportAsset> = []
@@ -687,6 +717,8 @@ const mapInheritanceReportAssets = (
     const asset = mapInheritanceReportAsset(iAsset)
 
     const assetTypeTodebtType = {
+      [TegundAndlags.NUMBER_13]: DebtTypes.Duties,
+      [TegundAndlags.NUMBER_14]: DebtTypes.OtherDebts,
       [TegundAndlags.NUMBER_17]: DebtTypes.PropertyFees,
       [TegundAndlags.NUMBER_18]: DebtTypes.InsuranceCompany,
       [TegundAndlags.NUMBER_19]: DebtTypes.Loan,
@@ -723,10 +755,19 @@ const mapInheritanceReportAssets = (
           exchangeRateOrInterest: String(
             Math.round(parseShare(iAsset.gengiVextir ?? 0)),
           ),
+          propertyValuation: String(asset.amount),
         })
         break
       case TegundAndlags.NUMBER_9:
-        depositsAndMoney.push(asset)
+        if (depositsAndMoney.length) {
+          depositsAndMoney[0].description += '. ' + asset.description
+          depositsAndMoney[0].propertyValuation = String(
+            parseInt(depositsAndMoney[0]?.propertyValuation ?? '0', 10) +
+              parseInt(asset.propertyValuation ?? '0', 10),
+          )
+        } else {
+          depositsAndMoney.push(asset)
+        }
         break
       case TegundAndlags.NUMBER_10:
         guns.push(asset)
@@ -735,13 +776,12 @@ const mapInheritanceReportAssets = (
         sharesAndClaims.push(asset)
         break
       case TegundAndlags.NUMBER_12:
-        funeralCosts.push(asset)
-        break
-      case TegundAndlags.NUMBER_13:
-        officialFees.push(asset)
-        break
-      case TegundAndlags.NUMBER_14:
-        otherDebts.push(asset)
+        funeralCosts.push({
+          ...asset,
+          funeralAssetItem: mapDCDescriptionToFuneralItem(
+            asset.description ?? '',
+          ),
+        })
         break
       case TegundAndlags.NUMBER_15:
         assetsInBusiness.push(asset)
@@ -749,6 +789,8 @@ const mapInheritanceReportAssets = (
       case TegundAndlags.NUMBER_16:
         debtsInBusiness.push(asset)
         break
+      case TegundAndlags.NUMBER_13:
+      case TegundAndlags.NUMBER_14:
       case TegundAndlags.NUMBER_17:
       case TegundAndlags.NUMBER_18:
       case TegundAndlags.NUMBER_19:
