@@ -18,13 +18,10 @@ export const completedForm = buildForm({
           application.answers,
           'terminationType',
         )
-
         return {
-          ...m.conclusionMessages.alertMessage,
-          values: {
-            terminationType:
-              terminationType?.answer === 'cancelation' ? 'riftun' : 'uppsögn',
-          },
+          ...(terminationType?.answer === 'cancelation'
+            ? m.conclusionMessages.alertMessageCancelation
+            : m.conclusionMessages.alertMessageTermination),
         }
       },
     }),

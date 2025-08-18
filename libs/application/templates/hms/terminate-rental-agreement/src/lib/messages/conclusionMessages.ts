@@ -17,4 +17,16 @@ export const conclusionMessages = defineMessages({
       'Umsókn um {terminationType} húsaleigusamnings hefur verið send inn til Húsnæðis og mannvirkja stofnunar.',
     description: 'Conclusion alert message',
   },
+  alertMessageCancelation: {
+    id: 'tra.application:conclusion.alertMessageCancelation',
+    defaultMessage:
+      'Umsókn um riftun húsaleigusamnings hefur verið send inn til Húsnæðis og mannvirkja stofnunar.',
+    description: 'Conclusion alert message cancelation',
+  },
+  alertMessageTermination: {
+    id: 'tra.application:conclusion.alertMessageTermination',
+    defaultMessage:
+      'Umsókn um uppsögn húsaleigusamnings hefur verið send inn til Húsnæðis og mannvirkja stofnunar.',
+    description: 'Conclusion alert message termination',
+  },
 })
