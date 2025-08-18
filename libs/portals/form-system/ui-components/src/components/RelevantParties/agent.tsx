@@ -15,20 +15,17 @@ interface Props {
   applicantType: FormSystemApplicant
   lang: 'is' | 'en'
   user?: User
+  nationalId?: string
 }
 
 // TODO: Implementation is still a WIP, still missing an endpoint
-export const Agent = ({ applicantType, lang, user }: Props) => {
+export const Agent = ({ applicantType, lang, nationalId }: Props) => {
   const { formatMessage } = useIntl()
-  const nationalId = user?.nationalId ?? ''
-  const email =
-    user?.emails.find((email: { primary: boolean }) => email.primary)?.email ??
-    user?.emails[0]?.email
   const shouldQuery = !!nationalId
   const { data: nameData, loading: nameLoading } = useQuery(
     GET_NAME_BY_NATIONALID,
     {
-      variables: { input: nationalId },
+      variables: { input: nationalId ?? '' },
       fetchPolicy: 'cache-first',
       skip: !shouldQuery,
     },
@@ -36,7 +33,7 @@ export const Agent = ({ applicantType, lang, user }: Props) => {
   const { data: addressData, loading: addressLoading } = useQuery(
     GET_ADDRESS_BY_NATIONALID,
     {
-      variables: { input: nationalId },
+      variables: { input: nationalId ?? '' },
       fetchPolicy: 'cache-first',
       skip: !shouldQuery,
     },
@@ -74,22 +71,6 @@ export const Agent = ({ applicantType, lang, user }: Props) => {
               backgroundColor="blue"
               required={true}
               defaultValue={address?.postnumer}
-            />
-            <Input
-              label={formatMessage(m.email)}
-              name="email"
-              placeholder={formatMessage(m.email)}
-              backgroundColor="blue"
-              required={true}
-              defaultValue={email}
-            />
-            <Input
-              label={formatMessage(m.phoneNumber)}
-              name="phone"
-              placeholder={formatMessage(m.phoneNumber)}
-              backgroundColor="blue"
-              required={true}
-              defaultValue={user?.mobilePhoneNumber}
             />
           </>
         )}

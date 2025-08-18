@@ -8,6 +8,7 @@ import {
 import { useQuery } from '@apollo/client'
 import { useLocale } from '@island.is/localization'
 import { USER_PROFILE } from '@island.is/portals/my-pages/graphql'
+import { useUserInfo } from '@island.is/react-spa/bff'
 interface Props {
   applicantTypes: FormSystemApplicant[]
 }
@@ -16,21 +17,25 @@ export const Applicants = ({ applicantTypes }: Props) => {
   const { data } = useQuery(USER_PROFILE, {
     fetchPolicy: 'cache-first',
   })
+  const user = useUserInfo()
+
+  const nationalId = user?.profile.actor ? user.profile.actor.nationalId : user?.profile.nationalId
   return (
     <>
       {applicantTypes.map((applicantType) => {
-        if (applicantType.applicantTypeId === ApplicantTypesEnum.INDIVIDUAL) {
+        if (applicantType.applicantTypeId === ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY) {
           return (
             <IndividualApplicant
               applicantType={applicantType}
               lang={lang}
               key={applicantType.id}
               user={data?.getUserProfile}
+              nationalId={nationalId}
             />
           )
         } else if (
           applicantType.applicantTypeId ===
-            ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_INDIVIDUAL ||
+            ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY ||
           applicantType.applicantTypeId ===
             ApplicantTypesEnum.INDIVIDUAL_WITH_DELEGATION_FROM_LEGAL_ENTITY
         ) {
@@ -40,10 +45,11 @@ export const Applicants = ({ applicantTypes }: Props) => {
               lang={lang}
               key={applicantType.id}
               user={data?.getUserProfile}
+              nationalId={user?.profile.nationalId}
             />
           )
         } else if (
-          applicantType.applicantTypeId === ApplicantTypesEnum.LEGAL_ENTITY
+          applicantType.applicantTypeId === ApplicantTypesEnum.INDIVIDUAL
         ) {
           return (
             <LegalEntity

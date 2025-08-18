@@ -21,12 +21,13 @@ import { ApplicationLoading } from '../ApplicationsLoading/ApplicationLoading'
 interface Props {
   applicantType: FormSystemApplicant
   user?: User
+  nationalId?: string
   lang: 'is' | 'en'
 }
 
-export const IndividualApplicant = ({ applicantType, lang, user }: Props) => {
+export const IndividualApplicant = ({ applicantType, lang, user, nationalId }: Props) => {
   const { formatMessage } = useIntl()
-  const nationalId = user?.nationalId ?? ''
+  nationalId = nationalId ?? user?.nationalId ?? ''
   const email =
     user?.emails.find((email: { primary: boolean }) => email.primary)?.email ??
     user?.emails[0]?.email
@@ -48,7 +49,7 @@ export const IndividualApplicant = ({ applicantType, lang, user }: Props) => {
     },
   )
   const address = addressData?.formSystemHomeByNationalId?.heimilisfang
-  const isLoading = shouldQuery && (nameLoading || addressLoading)
+  const isLoading = shouldQuery && (nameLoading || addressLoading) && email != undefined
   return (
     <Box marginTop={4}>
       <Text variant="h2" as="h2" marginBottom={3}>
