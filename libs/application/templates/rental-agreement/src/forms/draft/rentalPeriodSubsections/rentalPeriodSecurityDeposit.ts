@@ -60,6 +60,7 @@ export const RentalPeriodSecurityDeposit = buildSubSection({
             'securityDeposit.insuranceCompanyInfo',
             'securityDeposit.mutualFundInfo',
             'securityDeposit.otherInfo',
+            'securityDeposit.securityAmountOther',
           ],
           placeholder: securityDeposit.typeSelectionPlaceholder,
         }),
