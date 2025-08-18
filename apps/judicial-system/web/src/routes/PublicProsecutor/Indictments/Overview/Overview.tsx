@@ -37,6 +37,8 @@ import {
   Defendant,
   IndictmentCaseReviewDecision,
   ServiceRequirement,
+  ServiceStatus,
+  Verdict,
 } from '@island.is/judicial-system-web/src/graphql/schema'
 import {
   useCase,
@@ -140,6 +142,23 @@ export const Overview = () => {
     setIsReviewedDecisionChanged(isDecisionChanged)
   }
 
+  const mapServiceStatusMessages = (verdict: Verdict) => {
+    switch (verdict.serviceStatus) {
+      case ServiceStatus.ELECTRONICALLY:
+        return `Rafrænt pósthólf island.is - ${formatDate(
+          verdict.serviceDate,
+          'Pp',
+        )}`
+      case ServiceStatus.IN_PERSON:
+      case ServiceStatus.FAILED:
+        return ``
+      case ServiceStatus.EXPIRED:
+        return ''
+      default:
+        return ''
+    }
+  }
+
   return (
     <PageLayout
       workingCase={workingCase}
@@ -170,10 +189,25 @@ export const Overview = () => {
 
           const isBeingServed = !verdict?.externalPoliceDocumentId
 
+          const isServed =
+            verdict?.serviceDate &&
+            (verdict?.serviceStatus === ServiceStatus.DEFENDER ||
+              verdict?.serviceStatus === ServiceStatus.ELECTRONICALLY ||
+              verdict?.serviceStatus === ServiceStatus.IN_PERSON)
+
           return (
             <Fragment key={defendant.id}>
               <Box className={styles.container}>
-                {isBeingServed && (
+                {isServed ? (
+                  <AlertMessage
+                    type="success"
+                    title={`Dómur birtur - ${defendant.name}`}
+                    message={`Rafrænt pósthólf island.is - ${formatDate(
+                      verdict.serviceDate,
+                      'Pp',
+                    )}`}
+                  />
+                ) : isBeingServed ? (
                   <AlertMessage
                     type="info"
                     title="Dómur er í birtingarferli"
@@ -182,7 +216,7 @@ export const Overview = () => {
                       'Pp',
                     )}`}
                   />
-                )}
+                ) : null}
                 <Box component="section">
                   <BlueBoxWithDate defendant={defendant} icon="calendar" />
                 </Box>
