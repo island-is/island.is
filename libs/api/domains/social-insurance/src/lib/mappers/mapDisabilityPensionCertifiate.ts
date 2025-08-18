@@ -52,9 +52,9 @@ const mapDisabilityDiagnosisCollection = (
   if (!diagnosis && !diagnosesOthers) return undefined
 
   return {
-    mainDiagnosis: diagnosis?.[0]
-      ? mapDisabilityDiagnosis(diagnosis[0])
-      : undefined,
+    mainDiagnoses: diagnosis?.map(mapDisabilityDiagnosis).filter(Boolean) as
+      | DisabilityDiagnosis[]
+      | undefined,
     otherDiagnoses: diagnosesOthers
       ?.map(mapDisabilityDiagnosis)
       .filter(Boolean) as DisabilityDiagnosis[] | undefined,

@@ -158,7 +158,12 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
             )}
           </Label>
           <Markdown>
-            {`1. ${data?.socialInsuranceDisabilityPensionCertificate?.diagnoses?.mainDiagnosis?.code} ${data?.socialInsuranceDisabilityPensionCertificate?.diagnoses?.mainDiagnosis?.description}`}
+            {data?.socialInsuranceDisabilityPensionCertificate?.diagnoses?.mainDiagnoses
+              ?.map(
+                (value, index) =>
+                  `${index + 1}. ${value.code} ${value.description}`,
+              )
+              .join('\n\n') ?? ''}
           </Markdown>
         </GridColumn>
         <GridColumn span="1/1">
@@ -211,7 +216,10 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
             )}
           </Label>
           <Text></Text>
-          <Text>{'???'}</Text>
+          <Text>
+            {data?.socialInsuranceDisabilityPensionCertificate
+              ?.abilityChangePotential ?? '-'}
+          </Text>
         </GridColumn>
         <GridColumn span="1/1">
           <Label>
@@ -221,7 +229,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
             )}
           </Label>
           <Text></Text>
-          <Text>{'???'}</Text>
+          <Text>{'Gögn vantar - bíður eftir TR'}</Text>
         </GridColumn>
         <GridColumn span="1/1">
           <Label>
@@ -233,7 +241,7 @@ export const DisabilityPensionCertificate: FC<FieldBaseProps> = ({
           <Text></Text>
           <Text>
             {data?.socialInsuranceDisabilityPensionCertificate
-              .assessmentToolsUsed ?? '-'}
+              .medicationAndSupports ?? '-'}
           </Text>
         </GridColumn>
       </GridRow>

@@ -15,7 +15,7 @@ export const siaDisabilityPensionCertificate = gql`
       certificateDate
       dateOfWorkIncapacity
       diagnoses {
-        mainDiagnosis {
+        mainDiagnoses {
           code
           description
         }

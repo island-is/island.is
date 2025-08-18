@@ -10,6 +10,7 @@ import { SectionRouteEnum } from '../../../../types'
 import { disabilityPensionFormMessage } from '../../../../lib/messages'
 import { SelfAssessmentQuestionnaire } from '../../../../types/interfaces'
 import { Application } from '@island.is/application/types'
+import { getQuestionnaire } from '../../../../utils/getQuestionnaire'
 
 export const MAX_QUESTIONS = 50
 
@@ -75,6 +76,10 @@ const buildQuestion = (index: number) => {
         },
       }),
     ],
+    condition: (_, externalData) => {
+      const questions = getQuestionnaire(externalData)
+      return index < questions.length
+    },
   })
 }
 
