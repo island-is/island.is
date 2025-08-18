@@ -18,6 +18,7 @@ import {
   AdvertInstitutionsResponse,
   AdvertMainCategoriesResponse,
   AdvertResponse,
+  AdvertsFullResponse,
   AdvertSimilarResponse,
   AdvertsResponse,
   AdvertTypeResponse,
@@ -46,6 +47,13 @@ export class OfficialJournalOfIcelandResolver {
   })
   getAdverts(@Args('input') input: AdvertsInput) {
     return this.ojoiService.getAdverts(input)
+  }
+
+  @Query(() => AdvertsFullResponse, {
+    name: 'officialJournalOfIcelandAdvertsFull',
+  })
+  getAdvertsFull(@Args('input') input: AdvertsInput) {
+    return this.ojoiService.getAdvertsFull(input)
   }
 
   @Query(() => AdvertSimilarResponse, {

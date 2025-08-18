@@ -191,6 +191,39 @@ export class Advert {
   additions?: AdvertAppendix[]
 }
 
+@ObjectType('OfficialJournalOfIcelandAdvertLean')
+export class AdvertLean {
+  @Field(() => ID)
+  id!: string
+
+  @Field(() => String)
+  title!: string
+
+  @Field(() => AdvertEntity)
+  department!: AdvertEntity
+
+  @Field(() => AdvertType)
+  type!: AdvertType
+
+  @Field(() => String, { nullable: true })
+  subject?: string
+
+  @Field(() => AdvertStatus)
+  status!: AdvertStatus
+
+  @Field(() => AdvertPublicationNumber, { nullable: true })
+  publicationNumber!: AdvertPublicationNumber | null
+
+  @Field(() => String, { nullable: true })
+  publicationDate!: string | null
+
+  @Field(() => [AdvertEntity])
+  categories!: AdvertCategory[]
+
+  @Field(() => AdvertEntity)
+  involvedParty!: AdvertEntity
+}
+
 @ObjectType('OfficialJournalOfIcelandAdvertSimilar')
 export class AdvertSimilar {
   @Field(() => ID)

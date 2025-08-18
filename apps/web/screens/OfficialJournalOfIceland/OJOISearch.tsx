@@ -1,4 +1,4 @@
-import { useCallback, useMemo, useState } from 'react'
+import { useCallback, useEffect, useMemo, useState } from 'react'
 import { useIntl } from 'react-intl'
 import debounce from 'lodash/debounce'
 import { useRouter } from 'next/router'
@@ -22,9 +22,9 @@ import { Locale } from '@island.is/shared/types'
 import {
   ContentLanguage,
   CustomPageUniqueIdentifier,
-  OfficialJournalOfIcelandAdvert,
   OfficialJournalOfIcelandAdvertCategory,
   OfficialJournalOfIcelandAdvertEntity,
+  OfficialJournalOfIcelandAdvertsResponse,
   OfficialJournalOfIcelandAdvertType,
   Query,
   QueryGetOrganizationArgs,
@@ -62,6 +62,8 @@ import { ORGANIZATION_SLUG } from './constants'
 import { useAdverts } from './hooks'
 import { m } from './messages'
 
+const DEBOUNCE_MS = 600
+
 type OJOISearchParams = {
   q: string
   deild: string
@@ -84,18 +86,19 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
   institutions,
   organization,
   locale,
+  todayISO,
 }) => {
   const { formatMessage } = useIntl()
   const { linkResolver } = useLinkResolver()
   const router = useRouter()
+  const today = useMemo(() => new Date(todayISO), [todayISO])
 
   const [listView, setListView] = useState(false)
+  const [hydrated, setHydrated] = useState(false)
+  useEffect(() => setHydrated(true), [])
 
   const baseUrl = linkResolver('ojoihome', [], locale).href
   const searchUrl = linkResolver('ojoisearch', [], locale).href
-
-  const getTimestamp = () => new Date().getTime()
-  const [resetTimestamp, setResetTimestamp] = useState<number>(0)
 
   const [localSearchValue, setLocalSearchValue] = useState(
     defaultSearchParams.q,
@@ -136,66 +139,91 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
       key: keyof typeof searchState,
       value: string | number | Date | undefined,
     ) => {
-      const parsed =
-        typeof value === 'string'
-          ? value.trim()
-          : typeof value === 'number'
-          ? value
-          : value instanceof Date
-          ? value
-          : undefined
+      setSearchState((prev) => {
+        const parsed =
+          typeof value === 'string'
+            ? value.trim()
+            : typeof value === 'number'
+            ? value
+            : value instanceof Date
+            ? value
+            : undefined
 
-      const shouldClearType = key === 'deild' && parsed !== searchState.deild
+        const shouldClearType = key === 'deild' && parsed !== prev.deild
 
-      const newSearchState = {
-        tegund: shouldClearType ? '' : searchState.tegund,
-        sida: 1,
-        [key]: parsed,
-      }
+        const RESET_ON_CHANGE: Array<keyof typeof prev> = [
+          'q',
+          'deild',
+          'tegund',
+          'malaflokkur',
+          'stofnun',
+          'dagsFra',
+          'dagsTil',
+          'year',
+          'staerd', // items per page change -> go back to page 1
+        ]
+        const isResetKey = RESET_ON_CHANGE.includes(key)
 
-      setSearchState((prev) => ({
-        ...prev,
-        ...newSearchState,
-      }))
+        const nextPage =
+          key === 'sida'
+            ? typeof parsed === 'number'
+              ? parsed
+              : 1 // direct page change
+            : isResetKey
+            ? 1
+            : prev.sida
 
-      const searchValues = {
-        ...searchState,
-        ...newSearchState,
-      }
+        const next = {
+          ...prev,
+          [key]: parsed,
+          sida: nextPage,
+          ...(shouldClearType ? { tegund: '' } : {}),
+        }
 
-      router.replace(
-        {
-          pathname: searchUrl,
-          query: removeEmptyFromObject({
-            ...searchValues,
+        if (hydrated) {
+          const qObj = removeEmptyFromObject({
+            ...next,
             [key]:
               parsed instanceof Date
                 ? parsed.toISOString().split('T')[0]
                 : parsed,
-          }),
-        },
-        undefined,
-        { shallow: true },
-      )
+          })
 
-      refetch({
-        input: {
-          department: [searchValues.deild],
-          category: [searchValues.malaflokkur],
-          involvedParty: [searchValues.stofnun],
-          type: searchValues.tegund.split(','),
-          dateFrom: searchValues.dagsFra,
-          dateTo: searchValues.dagsTil,
-          search: searchValues.q,
-          page: searchValues.sida,
-          pageSize: searchValues.staerd,
-          year: searchValues.year,
-        },
+          router.replace({ pathname: searchUrl, query: qObj }, undefined, {
+            shallow: true,
+          })
+
+          refetch({
+            input: {
+              department: [next.deild].filter(Boolean),
+              category: [next.malaflokkur].filter(Boolean),
+              involvedParty: [next.stofnun].filter(Boolean),
+              type: next.tegund ? next.tegund.split(',') : [],
+              dateFrom: next.dagsFra,
+              dateTo: next.dagsTil,
+              search: next.q,
+              page: next.sida,
+              pageSize: next.staerd,
+              year: next.year,
+            },
+          })
+        }
+
+        return next
       })
     },
-
-    [refetch, router, searchState, searchUrl],
+    [hydrated, refetch, router, searchUrl],
   )
+
+  const debouncedSetQ = useMemo(
+    () =>
+      debounce((q: string) => updateSearchStateHandler('q', q), DEBOUNCE_MS, {
+        leading: false,
+        trailing: true,
+      }),
+    [updateSearchStateHandler],
+  )
+  useEffect(() => () => debouncedSetQ.cancel(), [debouncedSetQ])
 
   const resetFilter = () => {
     router.replace(searchUrl, {}, { shallow: true })
@@ -228,8 +256,6 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
         year: undefined,
       },
     })
-
-    setResetTimestamp(getTimestamp())
   }
   const { types } = useTypes({
     initalDepartmentId: searchState.deild,
@@ -260,13 +286,9 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
     [updateSearchStateHandler],
   )
 
-  const debouncedSearchHandler = useCallback(
-    (search: string) => {
-      debouncedSearch.cancel()
-      debouncedSearch('q', search)
-    },
-    [debouncedSearch],
-  )
+  useEffect(() => {
+    return () => debouncedSearch.cancel()
+  }, [debouncedSearch])
 
   return (
     <OJOIWrapper
@@ -287,14 +309,20 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
             <Text variant="h4">Leit</Text>
 
             <Input
-              key={`search-${resetTimestamp}`}
               name="q"
               placeholder={formatMessage(m.search.inputPlaceholder)}
               size="xs"
+              id="search-input-ojoi"
               value={localSearchValue}
+              onKeyDown={(e) => {
+                if (e.key === 'Enter') debouncedSetQ.flush()
+              }}
+              onBlur={() => debouncedSetQ.flush()}
+              loading={loading}
               onChange={(e) => {
-                setLocalSearchValue(e.target.value)
-                debouncedSearchHandler(e.target.value)
+                const v = e.target.value
+                setLocalSearchValue(v)
+                debouncedSetQ(v)
               }}
             />
 
@@ -314,28 +342,27 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
             </Box>
 
             <Select
-              key={`deild-${resetTimestamp}`}
               name="deild"
               label={formatMessage(m.search.departmentLabel)}
               size="xs"
+              instanceId="ojoi-department-select"
+              inputId="ojoi-department-select-input"
               placeholder={formatMessage(m.search.departmentPlaceholder)}
               options={[
                 { ...emptyOption(formatMessage(m.search.departmentAll)) },
                 ...departmentsOptions,
               ]}
               isClearable
-              defaultValue={findValueOption(
-                departmentsOptions,
-                searchState.deild,
-              )}
+              value={findValueOption(departmentsOptions, searchState.deild)} // <—
               onChange={(v) =>
                 updateSearchStateHandler('deild', v?.value ?? '')
               }
             />
 
             <Select
-              key={`tegund-${resetTimestamp}`}
               name="tegund"
+              instanceId="ojoisearch-tegund"
+              inputId="ojoisearch-tegund-input"
               label={formatMessage(m.search.typeLabel)}
               size="xs"
               placeholder={formatMessage(m.search.typePlaceholder)}
@@ -351,8 +378,9 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
             />
 
             <Select
-              key={`malaflokkur-${resetTimestamp}`}
               name="malaflokkur"
+              instanceId="ojoisearch-malaflokkur"
+              inputId="ojoisearch-malaflokkur-input"
               label={formatMessage(m.search.categoriesLabel)}
               size="xs"
               placeholder={formatMessage(m.search.categoriesPlaceholder)}
@@ -362,7 +390,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
               ]}
               isClearable
               isSearchable
-              defaultValue={findValueOption(
+              value={findValueOption(
                 categoriesOptions,
                 searchState.malaflokkur,
               )}
@@ -372,9 +400,9 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
             />
 
             <DatePicker
-              key={`dagsFra-${resetTimestamp}`}
               size="xs"
               locale="is"
+              id="ojoisearch-dagsFra"
               name="dagsFra"
               label={formatMessage(m.search.dateFromLabel)}
               placeholderText={formatMessage(m.search.dateFromPlaceholder)}
@@ -385,33 +413,30 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
               selected={
                 searchState.dagsFra ? new Date(searchState.dagsFra) : undefined
               }
-              handleChange={(date) => {
-                updateSearchStateHandler('dagsFra', date)
-              }}
+              handleChange={(date) => updateSearchStateHandler('dagsFra', date)}
             />
 
             <DatePicker
-              key={`dagsTil-${resetTimestamp}`}
               size="xs"
               locale="is"
+              id="ojoisearch-dagsTil"
               name="dagsTil"
               label={formatMessage(m.search.dateToLabel)}
               placeholderText={formatMessage(m.search.dateToPlaceholder)}
               minDate={
                 searchState.dagsFra ? new Date(searchState.dagsFra) : undefined
               }
-              maxDate={new Date()}
+              maxDate={today}
               selected={
                 searchState.dagsTil ? new Date(searchState.dagsTil) : undefined
               }
-              handleChange={(date) => {
-                updateSearchStateHandler('dagsTil', date)
-              }}
+              handleChange={(date) => updateSearchStateHandler('dagsTil', date)}
             />
 
             <Select
-              key={`stofnun-${resetTimestamp}`}
               name="stofnun"
+              instanceId="ojoisearch-stofnun"
+              inputId="ojoisearch-stofnun-input"
               label={formatMessage(m.search.institutionLabel)}
               size="xs"
               placeholder={formatMessage(m.search.institutionPlaceholder)}
@@ -421,18 +446,16 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
               ]}
               isClearable
               isSearchable
-              defaultValue={findValueOption(
-                institutionsOptions,
-                searchState.stofnun,
-              )}
+              value={findValueOption(institutionsOptions, searchState.stofnun)}
               onChange={(v) =>
                 updateSearchStateHandler('stofnun', v?.value ?? '')
               }
             />
 
             <Select
-              key={`year-${resetTimestamp}`}
               name="year"
+              instanceId="ojoisearch-year"
+              inputId="ojoisearch-year-input"
               label={formatMessage(m.search.chooseYear)}
               size="xs"
               placeholder={formatMessage(m.search.allYears)}
@@ -442,7 +465,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
               ]}
               isClearable
               isSearchable
-              defaultValue={findValueOption(yearOptions, searchState.year)}
+              value={findValueOption(yearOptions, searchState.year)}
               onChange={(v) => updateSearchStateHandler('year', v?.value ?? '')}
             />
           </Stack>
@@ -522,7 +545,7 @@ const OJOISearchPage: CustomScreen<OJOISearchProps> = ({
 }
 
 interface OJOISearchProps {
-  initialAdverts?: OfficialJournalOfIcelandAdvert[]
+  initialAdverts?: OfficialJournalOfIcelandAdvertsResponse['adverts']
   categories?: Array<OfficialJournalOfIcelandAdvertCategory>
   departments?: Array<OfficialJournalOfIcelandAdvertEntity>
   types?: Array<OfficialJournalOfIcelandAdvertType>
@@ -530,6 +553,7 @@ interface OJOISearchProps {
   organization?: Query['getOrganization']
   defaultSearchParams: OJOISearchParams
   locale: Locale
+  todayISO: string
 }
 
 const OJOISearch: CustomScreen<OJOISearchProps> = ({
@@ -542,6 +566,7 @@ const OJOISearch: CustomScreen<OJOISearchProps> = ({
   locale,
   customPageData,
   defaultSearchParams,
+  todayISO,
 }) => {
   return (
     <OJOISearchPage
@@ -554,6 +579,7 @@ const OJOISearch: CustomScreen<OJOISearchProps> = ({
       locale={locale}
       customPageData={customPageData}
       defaultSearchParams={defaultSearchParams}
+      todayISO={todayISO}
     />
   )
 }
@@ -576,6 +602,7 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
   let page: number | undefined
   let pageSize: number | undefined
   let year: string | undefined
+  const todayISO = new Date().toISOString().split('T')[0]
 
   if (query.dagsFra && typeof query.dagsFra === 'string') {
     const isValid = !Number.isNaN(Date.parse(query.dagsFra))
@@ -644,6 +671,8 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
   ] = await Promise.all([
     apolloClient.query<Query, QueryOfficialJournalOfIcelandAdvertsArgs>({
       query: ADVERTS_QUERY,
+      fetchPolicy: 'cache-first',
+      notifyOnNetworkStatusChange: false,
       variables: {
         input: {
           category: [defaultParams.malaflokkur],
@@ -709,6 +738,7 @@ OJOISearch.getProps = async ({ apolloClient, locale, query }) => {
     themeConfig: {
       footerVersion: 'organization',
     },
+    todayISO,
     defaultSearchParams: {
       deild: defaultParams.deild,
       dagsFra: defaultParams.dagsFra,

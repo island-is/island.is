@@ -174,7 +174,10 @@ export const getFastTrack = (date?: Date) => {
   const diffDays = diff / (1000 * 3600 * 24)
   let fastTrack = false
 
-  if (diffDays <= FAST_TRACK_DAYS) {
+  // 10 days AFTER registration date. FAST_TRACK_DAYS + 1.
+  const fastTrackCutOff = FAST_TRACK_DAYS + 1
+
+  if (diffDays <= fastTrackCutOff) {
     fastTrack = true
   }
   return {
