@@ -577,6 +577,10 @@ export const getGuardianByNationalId = (
   externalData: ExternalData,
   nationalId: string,
 ) => {
+  if (!nationalId) {
+    return undefined
+  }
+
   const { childInformation } = getApplicationExternalData(externalData)
 
   return childInformation?.agents?.find(
