@@ -54,7 +54,9 @@ export class CaseResponse {
           subpoenas.length > 0
             ? isSuccessfulServiceStatus(subpoenas[0].serviceStatus)
             : false,
-        hasRulingBeenServed: isSuccessfulServiceStatus(verdict.serviceStatus),
+        hasRulingBeenServed: verdict?.serviceStatus
+          ? isSuccessfulServiceStatus(verdict.serviceStatus)
+          : false,
         groups: [
           {
             label: t.defendant,
