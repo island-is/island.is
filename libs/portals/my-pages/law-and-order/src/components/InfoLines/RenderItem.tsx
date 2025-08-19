@@ -13,6 +13,7 @@ import {
   Text,
 } from '@island.is/island-ui/core'
 import { InfoLine } from '@island.is/portals/my-pages/core'
+import { Markdown } from '@island.is/shared/components'
 export interface RenderItemProps {
   item: LawAndOrderSubpoenaItem
   loading?: boolean
@@ -26,11 +27,6 @@ export const RenderItem: React.FC<RenderItemProps> = ({
 }) => {
   switch (item.type) {
     case LawAndOrderItemType.Text:
-      return (
-        <Text variant="default" marginBottom={2}>
-          {item.value}
-        </Text>
-      )
     case LawAndOrderItemType.RichText:
       return (
         <Text variant="default" marginBottom={2}>
@@ -44,7 +40,7 @@ export const RenderItem: React.FC<RenderItemProps> = ({
             id={`accordion-${item.label ?? ''}`}
             label={item.label ?? ''}
           >
-            <Text>{item.value}</Text>
+            <Markdown>{String(item.value)}</Markdown>
           </AccordionItem>
         </Accordion>
       )
