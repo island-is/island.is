@@ -97,7 +97,7 @@ export const parseTerminateContract = (
 export const truncateMiddle = (
   str: string,
   maxLength: number,
-  separator: string = '-',
+  separator = '-',
 ): string => {
   if (str.length <= maxLength) return str
 
