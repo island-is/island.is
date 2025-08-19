@@ -57,8 +57,13 @@ export const isValidMeterNumber = (value: string) => {
 }
 
 export const isValidMeterStatus = (value: string) => {
-  const meterStatusRegex = /^[0-9]{1,10}(,[0-9])?$/
+  const meterStatusRegex = /^[0-9]{1,10}(\.[0-9])?$/
   return meterStatusRegex.test(value)
+}
+
+export const isValidPhoneNumber = (phoneNumber: string) => {
+  const phone = parsePhoneNumberFromString(phoneNumber, 'IS')
+  return phone && phone.isValid()
 }
 
 export const formatPhoneNumber = (phoneNumber: string): string => {
