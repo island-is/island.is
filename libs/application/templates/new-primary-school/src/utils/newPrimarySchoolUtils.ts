@@ -594,7 +594,6 @@ export const hasDefaultFoodAllergiesOrIntolerances = (
   return (healthProfile?.foodAllergiesOrIntolerances?.length ?? 0) > 0
     ? YES
     : NO
-  return
 }
 
 export const hasDefaultAllergies = (externalData: ExternalData) => {
