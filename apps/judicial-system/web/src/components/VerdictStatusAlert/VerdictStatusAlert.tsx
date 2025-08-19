@@ -4,6 +4,7 @@ import { formatDate } from '@island.is/judicial-system/formatters'
 import { Lawyer } from '@island.is/judicial-system/types'
 import { useContext, useEffect, useState } from 'react'
 import { LawyerRegistryContext } from '../LawyerRegistryProvider/LawyerRegistryProvider'
+import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 
 const mapServiceStatusTitle = (
   serviceStatus?: ServiceStatus | null,
@@ -29,7 +30,10 @@ const mapServiceStatusMessages = (verdict: Verdict, lawyer?: Lawyer) => {
       return [
         `${verdict.servedBy ? verdict.servedBy : ''}${
           verdict.serviceDate
-            ? ` - ${formatDate(verdict.serviceDate, 'Pp')}`
+            ? ` - ${formatDate(verdict.serviceDate)} kl. ${formatDate(
+                verdict.serviceDate,
+                TIME_FORMAT,
+              )}`
             : ''
         }`,
         `Birt fyrir verjanda${
@@ -39,7 +43,12 @@ const mapServiceStatusMessages = (verdict: Verdict, lawyer?: Lawyer) => {
     case ServiceStatus.ELECTRONICALLY:
       return [
         `Rafrænt pósthólf island.is - ${
-          verdict.serviceDate ? formatDate(verdict.serviceDate, 'Pp') : ''
+          verdict.serviceDate
+            ? `${formatDate(verdict.serviceDate)} kl. ${formatDate(
+                verdict.serviceDate,
+                TIME_FORMAT,
+              )}`
+            : ''
         }`,
       ]
     case ServiceStatus.IN_PERSON:
@@ -47,7 +56,10 @@ const mapServiceStatusMessages = (verdict: Verdict, lawyer?: Lawyer) => {
       return [
         `${verdict.servedBy ? verdict.servedBy : ''}${
           verdict.serviceDate
-            ? ` - ${formatDate(verdict.serviceDate, 'Pp')}`
+            ? ` - ${formatDate(verdict.serviceDate)} kl. ${formatDate(
+                verdict.serviceDate,
+                TIME_FORMAT,
+              )}`
             : ''
         }`,
         verdict.comment,
@@ -55,7 +67,12 @@ const mapServiceStatusMessages = (verdict: Verdict, lawyer?: Lawyer) => {
     default:
       return [
         `Ákæra fór í birtingu ${
-          verdict.created ? formatDate(verdict.created, 'Pp') : ''
+          verdict.created
+            ? ` - ${formatDate(verdict.created)} kl. ${formatDate(
+                verdict.created,
+                TIME_FORMAT,
+              )}`
+            : ''
         }`,
       ]
   }
