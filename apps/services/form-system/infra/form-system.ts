@@ -3,7 +3,12 @@ import {
   service,
   ServiceBuilder,
 } from '../../../../infra/src/dsl/dsl'
-import { Base, Client, NationalRegistry, NationalRegistryB2C } from '../../../../infra/src/dsl/xroad'
+import {
+  Base,
+  Client,
+  NationalRegistry,
+  NationalRegistryB2C,
+} from '../../../../infra/src/dsl/xroad'
 const serviceName = 'services-form-system-api'
 
 export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
