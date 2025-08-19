@@ -1,10 +1,10 @@
 import {
-  InputFileUploadDeprecated,
   Box,
   Text,
   fileToObjectDeprecated,
   AlertMessage,
   Stack,
+  InputFileUpload,
 } from '@island.is/island-ui/core'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import { useLocale, useNamespaces } from '@island.is/localization'
@@ -45,7 +45,7 @@ const VehicleBulkMileageUpload = () => {
     variables: {
       input: {
         page: 1,
-        pageSize: 6000,
+        pageSize: 10000,
         filterOnlyVehiclesUserCanRegisterMileage: true,
       },
     },
@@ -230,20 +230,21 @@ const VehicleBulkMileageUpload = () => {
               }
             />
           )}
-        <InputFileUploadDeprecated
-          fileList={uploadedFile ? [uploadedFile] : []}
-          showFileSize
-          header={formatMessage(vehicleMessage.dragFileToUpload)}
-          description={formatMessage(vehicleMessage.fileUploadAcceptedTypes)}
-          disabled={!!data?.vehicleBulkMileagePost?.errorMessage}
-          buttonLabel={formatMessage(vehicleMessage.selectFileToUpload)}
-          accept={['.csv', '.xlsx']}
-          multiple={false}
-          onRemove={handleOnInputFileUploadRemove}
-          onChange={handleOnInputFileUploadChange}
-          onUploadRejection={handleOnInputFileUploadError}
-          errorMessage={uploadErrorMessage ?? undefined}
-        />
+        {
+          <InputFileUpload
+            name={'vehicle-file-upload'}
+            title={formatMessage(vehicleMessage.dragFileToUpload)}
+            description={formatMessage(vehicleMessage.fileUploadAcceptedTypes)}
+            buttonLabel={formatMessage(vehicleMessage.selectFileToUpload)}
+            disabled={!!data?.vehicleBulkMileagePost?.errorMessage}
+            files={uploadedFile ? [uploadedFile] : []}
+            accept={['.csv', '.xlsx']}
+            multiple={false}
+            onRemove={handleOnInputFileUploadRemove}
+            onChange={handleOnInputFileUploadChange}
+            onUploadRejection={handleOnInputFileUploadError}
+          />
+        }
       </Stack>
     </IntroWrapper>
   )
