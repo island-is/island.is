@@ -39,6 +39,11 @@ export type ChildInformation = {
   usePronounAndPreferredName?: string[]
 }
 
+export type SelectOption = {
+  label: string
+  value: string
+}
+
 export type Person = {
   nationalId: string
   fullName: string
@@ -55,15 +60,9 @@ export type Person = {
   citizenshipCode?: string
 }
 
-export type SelectOption = {
-  label: string
-  value: string
-}
-
-export type Agent = {
+export type AgentModel = {
   id: string
   name: string
-  role: string
   email: string
   phone: string
   nationalId: string
@@ -135,6 +134,13 @@ export type SocialProfile = {
   hasHadSupport: boolean
 }
 
+export type LanguageProfile = {
+  languageEnvironment: string
+  signLanguage: boolean
+  preferredLanguage: string
+  languages: string[]
+}
+
 export type FriggChildInformation = {
   id: string
   nationalId: string
@@ -149,12 +155,12 @@ export type FriggChildInformation = {
   healthProfile: HealthProfileModel | null
   primaryOrgId: string // Is set as object in MMS data
   affiliations: Affiliation[] | null
-  agents: Agent[] | null
-  spokenLanguages: string[]
+  agents: AgentModel[] | null
   preferredLanguage: string | null
   phone: string // Is set as object in MMS data
   mobile: string // Is set as object in MMS data
   socialProfile: SocialProfile | null
+  languageProfile: LanguageProfile | null
 }
 
 export type CurrentSchool = {
