@@ -5,7 +5,6 @@ import {
   Icon,
   GridColumn,
   GridRow,
-  Tag,
   Inline,
 } from '@island.is/island-ui/core'
 import LinkResolver from '../LinkResolver/LinkResolver'
