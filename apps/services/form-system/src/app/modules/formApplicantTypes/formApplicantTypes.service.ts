@@ -18,6 +18,8 @@ import { Section } from '../sections/models/section.model'
 import { Screen } from '../screens/models/screen.model'
 import { Field } from '../fields/models/field.model'
 import { FieldSettings } from '../../dataTypes/fieldSettings/fieldSettings.model'
+import { ScreenDto } from '../screens/models/dto/screen.dto'
+import { FieldDto } from '../fields/models/dto/field.dto'
 
 @Injectable()
 export class FormApplicantTypesService {
@@ -34,7 +36,7 @@ export class FormApplicantTypesService {
 
   async create(
     createFormApplicantTypeDto: CreateFormApplicantTypeDto,
-  ): Promise<FormApplicantTypeDto> {
+  ): Promise<ScreenDto> {
     const applicantType = ApplicantTypes.find(
       (applicantType) =>
         applicantType.id === createFormApplicantTypeDto.applicantTypeId,
@@ -114,20 +116,51 @@ export class FormApplicantTypesService {
     } as FieldSettings
     await newField.save()
 
-    newScreen.fields = [newField]
+    const fieldKeys = [
+      'id',
+      'screenId',
+      'name',
+      'displayOrder',
+      'description',
+      'isPartOfMultiset',
+      'isRequired',
+      'fieldType',
+      'fieldSettings',
+    ]
+    const fieldDto: FieldDto = defaults(
+      pick(newField, fieldKeys),
+      zipObject(fieldKeys, Array(fieldKeys.length).fill(null)),
+    ) as FieldDto
 
-    const formApplicantType = createFormApplicantTypeDto as FormApplicantType
-    const newFormApplicantType: FormApplicantType =
-      new this.formApplicantTypeModel(formApplicantType)
-    await newFormApplicantType.save()
+    const screenKeys = [
+      'id',
+      'sectionId',
+      'name',
+      'displayOrder',
+      'isCompleted',
+      'callRuleset',
+    ]
+    const screenDto: ScreenDto = defaults(
+      pick(newScreen, screenKeys),
+      zipObject(screenKeys, Array(screenKeys.length).fill(null)),
+    ) as ScreenDto
+    screenDto.fields = [fieldDto]
 
-    const keys = ['id', 'applicantTypeId', 'name']
-    const formApplicantTypeDto: FormApplicantTypeDto = defaults(
-      pick(newFormApplicantType, keys),
-      zipObject(keys, Array(keys.length).fill(null)),
-    ) as FormApplicantTypeDto
+    console.log('screenDto', screenDto)
+    return screenDto
 
-    return formApplicantTypeDto
+    // const formApplicantType = createFormApplicantTypeDto as FormApplicantType
+    // const newFormApplicantType: FormApplicantType =
+    //   new this.formApplicantTypeModel(formApplicantType)
+    // await newFormApplicantType.save()
+
+    // const keys = ['id', 'applicantTypeId', 'name']
+    // const formApplicantTypeDto: FormApplicantTypeDto = defaults(
+    //   pick(newFormApplicantType, keys),
+    //   zipObject(keys, Array(keys.length).fill(null)),
+    // ) as FormApplicantTypeDto
+
+    // return formApplicantTypeDto
   }
 
   async update(

@@ -28,7 +28,6 @@ export const Urls = () => {
       type: 'UPDATE_FORM_URLS',
       payload: { newValue: formUrls },
     })
-    console.log('zendesk', control.form.isZendeskEnabled)
   }, [formUrls])
 
   const [deleteUrl] = useMutation(DELETE_FORM_URL)

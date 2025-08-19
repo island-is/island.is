@@ -7,11 +7,16 @@ import {
   DELETE_APPLICANT,
 } from '@island.is/form-system/graphql'
 import { useMutation } from '@apollo/client'
-import { FormSystemFormApplicant } from '@island.is/api/schema'
+import {
+  FormSystemField,
+  FormSystemFormApplicant,
+  FormSystemScreen,
+} from '@island.is/api/schema'
 import { m } from '@island.is/form-system/ui'
 import { removeTypename } from '../../../../lib/utils/removeTypename'
 import { applicantTypeGroups } from '../../../../lib/utils/applicantTypeGroups'
 import { PartyType } from './components/PartyType'
+import { set } from 'lodash'
 
 export const RelevantParties = () => {
   const [createApplicant] = useMutation(CREATE_APPLICANT)
@@ -23,12 +28,22 @@ export const RelevantParties = () => {
     FormSystemFormApplicant[]
   >(applicantTypes?.filter((a): a is FormSystemFormApplicant => !!a) ?? [])
 
+  const [applicantScreens, setApplicantScreens] = useState<FormSystemScreen[]>(
+    Array.isArray(control.form.screens)
+      ? control.form.screens.filter((s): s is FormSystemScreen => !!s)
+      : [],
+  )
+
+  const [applicantFields, setApplicantFields] = useState<FormSystemField[]>(
+    Array.isArray(control.form.fields)
+      ? control.form.fields.filter((f): f is FormSystemField => !!f)
+      : [],
+  )
+
+  console.log('form', control.form)
   useEffect(() => {
-    controlDispatch({
-      type: 'UPDATE_APPLICANT_TYPES',
-      payload: { newValue: formApplicants },
-    })
-  }, [formApplicants])
+    console.log('applicantScreens updated:', applicantScreens)
+  }, [applicantScreens])
 
   const handleCheckboxChange = async (
     typesArray: string[],
@@ -36,22 +51,53 @@ export const RelevantParties = () => {
   ) => {
     try {
       if (checked) {
-        const newApplicants = await Promise.all(
-          typesArray.map(async (applicantTypeId) => {
-            const newApplicant = await createApplicant({
-              variables: {
-                input: {
-                  createFormApplicantTypeDto: {
-                    formId,
-                    applicantTypeId,
+        // Create all and gather screens from the mutation result
+        const createdScreens = (
+          await Promise.all(
+            typesArray.map(async (applicantTypeId) => {
+              const res = await createApplicant({
+                variables: {
+                  input: {
+                    // Adjust to your real input shape
+                    createFormApplicantTypeDto: {
+                      formId,
+                      applicantTypeId,
+                    },
                   },
                 },
-              },
+              })
+
+              console.log('createApplicant response:', res)
+              // Try multiple possible response paths; pick the one your schema returns
+              const maybeScreen = res.data.createFormSystemApplicantType
+
+              return maybeScreen ? removeTypename(maybeScreen) : null
+            }),
+          )
+        ).filter((s): s is FormSystemScreen => !!s)
+
+        if (createdScreens.length) {
+          setApplicantScreens((prev) => [...prev, ...createdScreens])
+
+          console.log('createdScreens:', createdScreens)
+          createdScreens.forEach((screen) => {
+            controlDispatch({
+              type: 'ADD_SCREEN',
+              payload: { screen },
             })
-            return removeTypename(newApplicant.data.createFormSystemApplicant)
-          }),
-        )
-        setFormApplicants([...formApplicants, ...newApplicants])
+            if (screen && screen.fields) {
+              screen.fields.forEach((field) => {
+                if (field) {
+                  setApplicantFields((prev) => [...prev, field])
+                  controlDispatch({
+                    type: 'ADD_FIELD',
+                    payload: { field },
+                  })
+                }
+              })
+            }
+          })
+        }
       } else {
         await Promise.all(
           typesArray.map(async (applicantType) => {
@@ -66,12 +112,10 @@ export const RelevantParties = () => {
           }),
         )
         const updatedApplicants = formApplicants.filter(
-          (applicant) =>
-            applicant.applicantTypeId !== undefined &&
-            applicant.applicantTypeId !== null &&
-            !typesArray.includes(applicant.applicantTypeId),
+          (a) => a.applicantTypeId && !typesArray.includes(a.applicantTypeId),
         )
         setFormApplicants(updatedApplicants)
+        // If removing should also remove screens, filter applicantScreens here as needed.
       }
     } catch (e) {
       console.error(e)
@@ -86,6 +130,7 @@ export const RelevantParties = () => {
         groupApplicantTypes={applicantTypeGroups.individual}
         label={formatMessage(m.individual)}
         formApplicants={formApplicants}
+        formApplicantFields={applicantFields}
         handleCheckboxChange={handleCheckboxChange}
         setFormApplicantTypes={setFormApplicants}
       />
@@ -94,6 +139,7 @@ export const RelevantParties = () => {
         groupApplicantTypes={applicantTypeGroups.individualDelegation}
         label={formatMessage(m.individualOnBehalfPerson)}
         formApplicants={formApplicants}
+        formApplicantFields={applicantFields}
         handleCheckboxChange={handleCheckboxChange}
         setFormApplicantTypes={setFormApplicants}
       />
@@ -102,6 +148,7 @@ export const RelevantParties = () => {
         groupApplicantTypes={applicantTypeGroups.legalEntityDelegation}
         label={formatMessage(m.individualOnBehalfLegalEntity)}
         formApplicants={formApplicants}
+        formApplicantFields={applicantFields}
         handleCheckboxChange={handleCheckboxChange}
         setFormApplicantTypes={setFormApplicants}
       />
@@ -110,6 +157,7 @@ export const RelevantParties = () => {
         groupApplicantTypes={applicantTypeGroups.procuration}
         label={formatMessage(m.individualWithPowerOfAttorney)}
         formApplicants={formApplicants}
+        formApplicantFields={applicantFields}
         handleCheckboxChange={handleCheckboxChange}
         setFormApplicantTypes={setFormApplicants}
       />

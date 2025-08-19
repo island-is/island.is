@@ -28,6 +28,8 @@ import { OrganizationUrlsResolver } from './organizationUrls/organizationUrls.re
 import { OrganizationUrlsService } from './organizationUrls/organizationUrls.service'
 import { FormUrlsResolver } from './formUrls/formUrls.resolver'
 import { FormUrlsService } from './formUrls/formUrls.service'
+import { FormApplicantTypesResolver } from './formApplicantTypes/formApplicantTypes.resolver'
+import { FormApplicantTypesService } from './formApplicantTypes/formApplicantTypes.service'
 
 @Module({
   providers: [
@@ -57,6 +59,8 @@ import { FormUrlsService } from './formUrls/formUrls.service'
     OrganizationUrlsService,
     FormUrlsResolver,
     FormUrlsService,
+    FormApplicantTypesResolver,
+    FormApplicantTypesService,
     CmsModule,
   ],
   exports: [],

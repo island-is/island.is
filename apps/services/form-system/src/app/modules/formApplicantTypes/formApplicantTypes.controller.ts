@@ -22,6 +22,7 @@ import { UpdateFormApplicantTypeDto } from './models/dto/updateFormApplicantType
 import { FormApplicantTypeDto } from './models/dto/formApplicantType.dto'
 import { IdsUserGuard, Scopes, ScopesGuard } from '@island.is/auth-nest-tools'
 import { AdminPortalScope } from '@island.is/auth/scopes'
+import { ScreenDto } from '../screens/models/dto/screen.dto'
 
 @UseGuards(IdsUserGuard, ScopesGuard)
 @Scopes(AdminPortalScope.formSystem)
@@ -35,13 +36,13 @@ export class FormApplicantTypesController {
   @ApiOperation({ summary: 'Add form applicant type' })
   @ApiCreatedResponse({
     description: 'Add form applicant type',
-    type: FormApplicantTypeDto,
+    type: ScreenDto,
   })
   @ApiBody({ type: CreateFormApplicantTypeDto })
   @Post()
   create(
     @Body() createFormApplicantTypeDto: CreateFormApplicantTypeDto,
-  ): Promise<FormApplicantTypeDto> {
+  ): Promise<ScreenDto> {
     return this.formApplicantTypesService.create(createFormApplicantTypeDto)
   }
 
