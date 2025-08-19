@@ -179,7 +179,7 @@ export const Item = ({
     }
 
     return typeof defaultValue === 'function'
-      ? defaultValue(application, activeField, index)
+      ? defaultValue(application, activeField, index, lang)
       : defaultValue
   }
 

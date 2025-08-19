@@ -1,4 +1,4 @@
-import { getValueViaPath, NO, YesOrNo } from '@island.is/application/core'
+import { getValueViaPath, NO, YES, YesOrNo } from '@island.is/application/core'
 import { FormText, FormValue } from '@island.is/application/types'
 import { overview as overviewMessages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
@@ -29,11 +29,15 @@ export const useVacationAnswers = (answers: FormValue): Array<FormText> => {
       overviewMessages.labels.payout.vacationDaysFrom,
     )}: ${intendedUsageItem.startDate} - ${intendedUsageItem.endDate}`
   })
-  return [
-    hasVacationString,
-    `${formatMessage(
-      overviewMessages.labels.payout.vacationDays,
-    )}: ${numberOfDays}`,
-    ...intendedUsageItems,
-  ]
+
+  const valueItems = [hasVacationString]
+  if (hasVacation === YES) {
+    valueItems.push(
+      `${formatMessage(
+        overviewMessages.labels.payout.vacationDays,
+      )}: ${numberOfDays}`,
+      ...intendedUsageItems,
+    )
+  }
+  return valueItems
 }

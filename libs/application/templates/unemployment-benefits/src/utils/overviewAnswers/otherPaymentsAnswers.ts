@@ -1,6 +1,6 @@
 import { getValueViaPath } from '@island.is/application/core'
 import { ExternalData, FormText, FormValue } from '@island.is/application/types'
-import { overview, overview as overviewMessages } from '../../lib/messages'
+import { overview as overviewMessages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
 import {
   getPrivatePensionString,

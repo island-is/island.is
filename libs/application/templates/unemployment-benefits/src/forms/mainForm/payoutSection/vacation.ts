@@ -47,19 +47,12 @@ export const vacationSubSection = buildSubSection({
             },
           ],
         }),
-        buildDescriptionField({
+        buildAlertMessageField({
           id: 'explainVacationLabel',
           title: payoutMessages.vacation.explainVacationLabel,
-          titleVariant: 'h5',
-          marginTop: 2,
+          message: payoutMessages.vacation.explainVacationDescription,
           condition: doYouHaveVacationDays,
-        }),
-        buildTextField({
-          id: 'vacation.amount',
-          title: payoutMessages.vacation.vacationDaysLabel,
-          variant: 'number',
-          min: 0,
-          condition: doYouHaveVacationDays,
+          alertType: 'info',
         }),
         buildFieldsRepeaterField({
           id: 'vacation.vacationDays',
@@ -68,16 +61,26 @@ export const vacationSubSection = buildSubSection({
           marginTop: 0,
           condition: doYouHaveVacationDays,
           fields: {
+            amount: {
+              component: 'input',
+              label: payoutMessages.vacation.vacationDaysLabel,
+              width: 'full',
+              type: 'number',
+              min: 0,
+              required: true,
+            },
             startDate: {
               component: 'date',
               label: payoutMessages.vacation.dateStart,
               width: 'half',
+              required: true,
               minDate: new Date(),
             },
             endDate: {
               component: 'date',
               label: payoutMessages.vacation.dateEnd,
               width: 'half',
+              required: true,
               minDate: new Date(),
             },
           },

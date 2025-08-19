@@ -289,7 +289,8 @@ export const employment = {
       },
       partTimeFileUploadDescription: {
         id: 'vmst.ub.application:employment.workingAbility.labels.partTimeFileUploadDescription',
-        defaultMessage: 'Tekið er við skjölum með endingu: .pdf, .docx, .rtf',
+        defaultMessage:
+          'Tekið er við skjölum með endingu: .pdf, .doc, .docx, .png, .jpg, .jpeg',
         description: 'Working ability part time file upload description',
       },
     }),

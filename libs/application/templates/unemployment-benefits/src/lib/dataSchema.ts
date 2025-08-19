@@ -24,7 +24,7 @@ const FileSchema = z.object({
   url: z.string().optional(),
 })
 
-const languageSkillsSchema = z.object({
+export const languageSkillsSchema = z.object({
   language: z.string(),
   skill: z.string(),
 })

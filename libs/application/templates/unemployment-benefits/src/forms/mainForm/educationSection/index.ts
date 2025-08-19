@@ -3,6 +3,7 @@ import {
   buildDateField,
   buildDescriptionField,
   buildFileUploadField,
+  buildHiddenInputWithWatchedValue,
   buildMultiField,
   buildRadioField,
   buildSection,
@@ -15,6 +16,7 @@ import {
 } from '@island.is/application/core'
 import { education as educationMessages } from '../../../lib/messages'
 import { EducationType } from '../../../shared'
+import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../../utils/constants'
 import {
   appliedForNextSemester,
   didYouFinishLastSemester,
@@ -247,7 +249,6 @@ export const educationSection = buildSection({
           id: 'education.currentEducation.courseOfStudy',
           title: educationMessages.labels.courseOfStudyLabel,
           width: 'half',
-          required: true,
           options: (application) => {
             const education = getValueViaPath<
               GaldurDomainModelsEducationProgramDTO[]
@@ -265,7 +266,7 @@ export const educationSection = buildSection({
             const degreeAnswer =
               getValueViaPath<string>(
                 application.answers,
-                'education.currentEducation.programDegree',
+                'education.currentEducation.degree',
                 '',
               ) ?? ''
             const chosenLevelDegrees = education?.filter(
@@ -288,6 +289,52 @@ export const educationSection = buildSection({
               wasStudyingInTheLastYear(answers) ||
               (wasStudyingLastSemester(answers) &&
                 appliedForNextSemester(answers) !== NO)),
+        }),
+        buildHiddenInputWithWatchedValue({
+          id: 'education.currentEducation.id',
+          watchValue: 'education.currentEducation.courseOfStudy',
+          valueModifier: (value) => {
+            return value ? value.toString() : ''
+          },
+          defaultValue: (application: Application) => {
+            const education = getValueViaPath<
+              GaldurDomainModelsEducationProgramDTO[]
+            >(
+              application.externalData,
+              'unemploymentApplication.data.supportData.educationPrograms',
+            )
+            const levelOfStudy =
+              getValueViaPath<string>(
+                application.answers,
+                'education.currentEducation.levelOfStudy',
+                '',
+              ) ?? ''
+
+            const degreeAnswer =
+              getValueViaPath<string>(
+                application.answers,
+                'education.currentEducation.degree',
+                '',
+              ) ?? ''
+            const chosenLevelDegrees = education?.filter(
+              (program) => program.id === levelOfStudy,
+            )[0]?.degrees
+
+            const chosenDegreeSubjects = chosenLevelDegrees?.find(
+              (degree) => degree.id === degreeAnswer,
+            )?.subjects
+
+            const chosenCourseOfStudy = getValueViaPath<string>(
+              application.answers,
+              'education.currentEducation.courseOfStudy',
+            )
+
+            return (
+              chosenDegreeSubjects?.find(
+                (x) => x.degreeId === chosenCourseOfStudy,
+              )?.id ?? ''
+            )
+          },
         }),
         buildDateField({
           id: 'education.currentEducation.endDate',
@@ -327,7 +374,8 @@ export const educationSection = buildSection({
             educationMessages.labels.currentSchoolDegreeFileNameLabel,
           uploadDescription:
             educationMessages.labels.currentSchoolDegreeFileNameDescription,
-          uploadAccept: '.pdf, .docx, .rtf',
+          uploadAccept: UPLOAD_ACCEPT,
+          maxSize: FILE_SIZE_LIMIT,
           doesNotRequireAnswer: true,
           condition: (answers) =>
             wasStudyingLastTwelveMonths(answers) &&

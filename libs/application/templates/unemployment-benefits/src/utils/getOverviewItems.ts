@@ -1,4 +1,4 @@
-import { ExternalData } from '@island.is/application/types'
+import { ExternalData, FormText } from '@island.is/application/types'
 
 import { FormValue } from '@island.is/application/types'
 
@@ -11,7 +11,7 @@ import {
   YesOrNoEnum,
 } from '@island.is/application/core'
 import { KeyValueItem } from '@island.is/application/types'
-import { overview as overviewMessages } from '../lib/messages'
+import { overview, overview as overviewMessages } from '../lib/messages'
 import {
   FamilyInformationInAnswers,
   EducationHistoryInAnswers,
@@ -39,6 +39,13 @@ import {
   useVacationAnswers,
 } from './overviewAnswers'
 import { useLocale } from '@island.is/localization'
+import { StaticText } from '@island.is/shared/types'
+import { GaldurDomainModelsSelectItem } from '@island.is/clients/vmst-unemployment'
+import { formatDate } from './formatDate'
+import {
+  wasStudyingInTheLastYear,
+  wasStudyingLastSemester,
+} from './educationInformation'
 
 export const useApplicantOverviewItems = (
   answers: FormValue,
@@ -127,7 +134,13 @@ export const useEducationOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  const lastTvelveMonths =
+  const { formatMessage, locale } = useLocale()
+  const lastTvelveMonths = getValueViaPath<YesOrNo>(
+    answers,
+    'education.lastTwelveMonths',
+    NO,
+  )
+  const lastTvelveMonthsString: StaticText =
     getValueViaPath<YesOrNo>(answers, 'education.lastTwelveMonths', NO) === 'no'
       ? overviewMessages.labels.education.notLastTvelveMonths
       : ''
@@ -138,13 +151,60 @@ export const useEducationOverviewItems = (
   const educationString = educationAnswer
     ? getLastTvelveMonthsEducationString(educationAnswer)
     : ''
-  return [
+
+  const valueItems = [lastTvelveMonthsString]
+  if (lastTvelveMonths === YES) {
+    educationString && valueItems.push(educationString)
+  }
+
+  const currentEducation = getValueViaPath<CurrentEducationInAnswers>(
+    answers,
+    'educationHistory.currentStudies',
+  )
+
+  const overviewItems: Array<KeyValueItem> = [
     {
       width: 'full',
       keyText: overviewMessages.labels.education.education,
-      valueText: [lastTvelveMonths, educationString],
+      valueText: valueItems,
     },
   ]
+
+  if (currentEducation) {
+    const educationValueItems = [
+      currentEducation.levelOfStudy,
+      currentEducation.degree,
+      currentEducation.courseOfStudy,
+    ]
+    const showEndDateLabel =
+      wasStudyingInTheLastYear(answers) || wasStudyingLastSemester(answers)
+    if (currentEducation.endDate) {
+      educationValueItems.push(
+        `${
+          showEndDateLabel
+            ? formatMessage(overviewMessages.labels.education.endDate)
+            : formatMessage(overviewMessages.labels.education.predictedEndDate)
+        }: ${formatDate(currentEducation.endDate)}`,
+      )
+    }
+
+    overviewItems.push({
+      width: 'full',
+      keyText: overviewMessages.labels.education.currentEducation,
+      valueText: [
+        currentEducation.levelOfStudy,
+        currentEducation.degree,
+        currentEducation.courseOfStudy,
+        `${formatMessage(
+          overviewMessages.labels.education.endDate,
+        )}: ${formatDate(
+          currentEducation.endDate ? currentEducation.endDate : '',
+        )}`,
+      ],
+    })
+  }
+
+  return overviewItems
 }
 
 export const usePayoutOverviewItems = (
@@ -200,22 +260,27 @@ export const useEmploymentSearchOverviewItems = (
   const outsideYourLocation =
     getValueViaPath<Array<string>>(answers, 'jobWishes.location', []) ?? []
 
+  const interestedInOutsideYourLocation =
+    getValueViaPath<YesOrNo>(answers, 'jobWishes.outsideYourLocation', NO) ?? NO
   const outsideYourLocationStrings = outsideYourLocation.map((location) => {
     return getLocationString(location, _externalData, locale)
   })
 
-  return [
+  const overviewItems: Array<KeyValueItem> = [
     {
       width: 'half',
       keyText: overviewMessages.labels.employmentSearch.employmentWishes,
       valueText: requestedEmploymentString,
     },
-    {
+  ]
+  if (interestedInOutsideYourLocation === YES) {
+    overviewItems.push({
       width: 'half',
       keyText: overviewMessages.labels.employmentSearch.otherRegions,
       valueText: outsideYourLocationStrings,
-    },
-  ]
+    })
+  }
+  return overviewItems
 }
 
 export const useEducationHistoryOverviewItems = (
@@ -227,6 +292,7 @@ export const useEducationHistoryOverviewItems = (
     answers,
     'educationHistory.currentStudies',
   )
+
   const educationHistory =
     getValueViaPath<Array<PreviousEducationInAnswers>>(
       answers,
@@ -250,8 +316,9 @@ export const useEducationHistoryOverviewItems = (
     },
   )
 
-  return [
-    {
+  const overviewItems: Array<KeyValueItem> = []
+  if (currentEducation) {
+    overviewItems.push({
       width: 'half',
       keyText: `${formatMessage(
         overviewMessages.labels.educationHistory.educationHistory,
@@ -261,33 +328,49 @@ export const useEducationHistoryOverviewItems = (
         currentEducation?.degree,
         currentEducation?.courseOfStudy,
       ],
-    },
-    ...mappedHistory,
-  ]
+    })
+  }
+  if (mappedHistory.length > 0) {
+    overviewItems.push(...mappedHistory)
+  }
+  return overviewItems
 }
 
 export const useLicenseOverviewItems = (
   answers: FormValue,
   _externalData: ExternalData,
 ): Array<KeyValueItem> => {
-  return [
-    {
+  const hasDriversLicense = getValueViaPath<Array<YesOrNoEnum>>(
+    answers,
+    'licenses.hasDrivingLicense',
+  )
+  const hasHeavyMachineryLicense = getValueViaPath<Array<YesOrNoEnum>>(
+    answers,
+    'licenses.hasHeavyMachineryLicense',
+  )
+
+  const overviewItems: Array<KeyValueItem> = []
+  if (hasDriversLicense && hasDriversLicense[0] === YES) {
+    overviewItems.push({
       width: 'half',
       keyText: overviewMessages.labels.license.drivingLicense,
-      valueText:
-        getValueViaPath<string>(answers, 'drivingLicense.drivingLicenseType') ??
-        '',
-    },
-    {
+      valueText: getValueViaPath<string>(
+        answers,
+        'licenses.drivingLicenseTypes',
+      ),
+    })
+  }
+  if (hasHeavyMachineryLicense && hasHeavyMachineryLicense[0] === YES) {
+    overviewItems.push({
       width: 'half',
       keyText: overviewMessages.labels.license.workMachineLicense,
-      valueText:
-        getValueViaPath<string>(
-          answers,
-          'drivingLicense.heavyMachineryLicenses',
-        ) ?? '',
-    },
-  ]
+      valueText: getValueViaPath<string[]>(
+        answers,
+        'licenses.heavyMachineryLicensesTypes',
+      ),
+    })
+  }
+  return overviewItems
 }
 
 export const useLanguageOverviewItems = (
@@ -298,8 +381,29 @@ export const useLanguageOverviewItems = (
     getValueViaPath<Array<LanguagesInAnswers>>(answers, 'languageSkills', []) ??
     []
   const allLanguageStrings = allLanguages.map(
-    (language: LanguagesInAnswers) => {
-      return `${language.language}: ${language.skill}`
+    (language: LanguagesInAnswers, index: number) => {
+      if (index < 2) {
+        //first two are default languages with no id's
+        return `${language.language}: ${language.skill}`
+      }
+      const languages =
+        getValueViaPath<Array<GaldurDomainModelsSelectItem>>(
+          _externalData,
+          'unemploymentApplication.data.supportData.languageKnowledge',
+        ) || []
+      const languageSkills =
+        getValueViaPath<Array<GaldurDomainModelsSelectItem>>(
+          _externalData,
+          'unemploymentApplication.data.supportData.languageValues',
+        ) || []
+      const languageName = languages.find(
+        (x) => x.name === language.language,
+      )?.name
+      const languageSkill = languageSkills.find(
+        (x) => x.id === language.skill,
+      )?.name
+
+      return `${languageName}: ${languageSkill}`
     },
   )
   return [

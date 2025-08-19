@@ -18,6 +18,7 @@ import {
 } from '@island.is/clients/vmst-unemployment'
 import { formatDate } from '../../../utils'
 import {
+  hasCurrentOrRecentEducation,
   isCurrentlyStudying,
   wasStudyingLastTwelveMonths,
 } from '../../../utils/educationInformation'
@@ -55,6 +56,12 @@ export const educationHistorySubSection = buildSubSection({
             field: Field,
             locale: Locale,
           ) => {
+            const hasCurrentProgram = hasCurrentOrRecentEducation(
+              application.answers,
+            )
+            if (!hasCurrentProgram) {
+              return ''
+            }
             const programId =
               getValueViaPath<string>(
                 application.answers,
@@ -72,9 +79,7 @@ export const educationHistorySubSection = buildSubSection({
                 : program?.english
               : ''
           },
-          condition: (answers) =>
-            wasStudyingLastTwelveMonths(answers) &&
-            isCurrentlyStudying(answers),
+          condition: hasCurrentOrRecentEducation,
         }),
         buildTextField({
           id: 'educationHistory.currentStudies.courseOfStudy',
@@ -83,6 +88,12 @@ export const educationHistorySubSection = buildSubSection({
           backgroundColor: 'white',
           readOnly: true,
           defaultValue: (application: Application) => {
+            const hasCurrentProgram = hasCurrentOrRecentEducation(
+              application.answers,
+            )
+            if (!hasCurrentProgram) {
+              return ''
+            }
             const education = getValueViaPath<
               GaldurDomainModelsEducationProgramDTO[]
             >(
@@ -116,9 +127,7 @@ export const educationHistorySubSection = buildSubSection({
             })
             return chosenSubject ? chosenSubject.name : ''
           },
-          condition: (answers) =>
-            wasStudyingLastTwelveMonths(answers) &&
-            isCurrentlyStudying(answers),
+          condition: hasCurrentOrRecentEducation,
         }),
         buildTextField({
           id: 'educationHistory.currentStudies.degree',
@@ -131,6 +140,12 @@ export const educationHistorySubSection = buildSubSection({
             field: Field,
             locale: Locale,
           ) => {
+            const hasCurrentProgram = hasCurrentOrRecentEducation(
+              application.answers,
+            )
+            if (!hasCurrentProgram) {
+              return ''
+            }
             const degreeAnswer =
               getValueViaPath<string>(
                 application.answers,
@@ -160,9 +175,7 @@ export const educationHistorySubSection = buildSubSection({
                 : degreeValue.english
               : ''
           },
-          condition: (answers) =>
-            wasStudyingLastTwelveMonths(answers) &&
-            isCurrentlyStudying(answers),
+          condition: hasCurrentOrRecentEducation,
         }),
         buildTextField({
           id: 'educationHistory.currentStudies.units',
@@ -171,16 +184,20 @@ export const educationHistorySubSection = buildSubSection({
           backgroundColor: 'white',
           readOnly: true,
           defaultValue: (application: Application) => {
+            const hasCurrentProgram = hasCurrentOrRecentEducation(
+              application.answers,
+            )
+            if (!hasCurrentProgram) {
+              return ''
+            }
             const units =
               getValueViaPath<string>(
                 application.answers,
-                'education.currentEducation.programUnits',
+                'education.currentEducation.units',
               ) ?? ''
             return units
           },
-          condition: (answers) =>
-            wasStudyingLastTwelveMonths(answers) &&
-            isCurrentlyStudying(answers),
+          condition: hasCurrentOrRecentEducation,
         }),
 
         buildTextField({
@@ -190,6 +207,12 @@ export const educationHistorySubSection = buildSubSection({
           backgroundColor: 'white',
           readOnly: true,
           defaultValue: (application: Application) => {
+            const hasCurrentProgram = hasCurrentOrRecentEducation(
+              application.answers,
+            )
+            if (!hasCurrentProgram) {
+              return ''
+            }
             const expectedEndOfStudy =
               getValueViaPath<string>(
                 application.answers,
@@ -197,9 +220,7 @@ export const educationHistorySubSection = buildSubSection({
               ) ?? ''
             return formatDate(expectedEndOfStudy)
           },
-          condition: (answers) =>
-            wasStudyingLastTwelveMonths(answers) &&
-            isCurrentlyStudying(answers),
+          condition: hasCurrentOrRecentEducation,
         }),
         buildFieldsRepeaterField({
           id: 'educationHistory.educationHistory',
@@ -290,16 +311,18 @@ export const educationHistorySubSection = buildSubSection({
                 )
               },
             },
-            studyNotCompleted: {
-              component: 'checkbox',
-              large: false,
-              backgroundColor: 'white',
-              options: [
-                {
-                  value: YES,
-                  label: educationMessages.labels.studyNotCompletedLabel,
-                },
-              ],
+            endOfStudy: {
+              label: educationMessages.labels.endOfStudies,
+              component: 'select',
+              placeholder: educationMessages.labels.endOfStudiesPlaceholder,
+              options: () => {
+                const currentYear = new Date().getFullYear()
+                const years = Array.from({ length: 51 }, (_, i) => {
+                  const year = (currentYear - i).toString()
+                  return { value: year, label: year }
+                })
+                return years
+              },
             },
           },
         }),

@@ -123,7 +123,8 @@ export const otherBenefitsSubSection = buildSubSection({
         //   id: 'otherBenefits.paymentsFromSicknessAllowance.file',
         //   uploadHeader: payoutMessages.otherBenefits.fileHeader,
         //   uploadDescription: payoutMessages.otherBenefits.fileDescription,
-        //   uploadAccept: '.pdf, .docx, .rtf',
+        //   uploadAccept: UPLOAD_ACCEPT,
+        //   maxSize: FILE_SIZE_LIMIT,
         // }),
         // buildAlertMessageField({
         //   id: 'otherBenefits.payedFromPrivatePensionFundAlertMessage',

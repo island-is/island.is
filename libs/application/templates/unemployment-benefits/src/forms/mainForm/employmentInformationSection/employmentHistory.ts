@@ -109,11 +109,10 @@ export const employmentHistorySubSection = buildSubSection({
                 [],
               ) ?? []
 
-            const minRows = isEmployed(answers)
-              ? 1
-              : isOccasionallyEmployed(answers) || isEmployedPartTime(answers)
-              ? currentSituationRepeater.length
-              : 0
+            const minRows =
+              isOccasionallyEmployed(answers) || isEmployedPartTime(answers)
+                ? currentSituationRepeater.length
+                : 1
             return minRows
           },
           marginTop: 0,
@@ -266,6 +265,7 @@ export const employmentHistorySubSection = buildSubSection({
               component: 'select',
               label: employmentMessages.employmentHistory.labels.lastJobTitle,
               width: 'half',
+              required: true,
               options: (application, _, locale) => {
                 const jobList =
                   getValueViaPath<
@@ -275,7 +275,9 @@ export const employmentHistorySubSection = buildSubSection({
                     'unemploymentApplication.data.supportData.jobCodes',
                   ) ?? []
                 return jobList.map((job) => ({
-                  value: job.id ?? '',
+                  value:
+                    (locale === 'is' ? job.name : job.english ?? job.name) ||
+                    '',
                   label:
                     (locale === 'is' ? job.name : job.english ?? job.name) ||
                     '',
@@ -327,6 +329,7 @@ export const employmentHistorySubSection = buildSubSection({
               width: 'half',
               type: 'number',
               suffix: '%',
+              required: true,
               condition: (application, _activeField, index) => {
                 return (
                   !hasDataFromCurrentStatus(application.answers, index) ||
@@ -362,6 +365,7 @@ export const employmentHistorySubSection = buildSubSection({
               label:
                 employmentMessages.employmentHistory.labels.lastJobStartDate,
               width: 'half',
+              required: true,
               condition: (application, _activeField, index) => {
                 return (
                   !hasDataFromCurrentStatus(application.answers, index) ||
@@ -394,6 +398,7 @@ export const employmentHistorySubSection = buildSubSection({
             },
             predictedEndDate: {
               component: 'date',
+              required: true,
               label: employmentMessages.employmentHistory.labels.lastJobEndDate,
               width: 'half',
               condition: (application, _activeField, index) => {

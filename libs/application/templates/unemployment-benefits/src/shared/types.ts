@@ -7,6 +7,7 @@ import {
   familyInformationSchema,
   previousEducationSchema,
 } from '../lib/schemas'
+import { languageSkillsSchema } from '../lib/dataSchema'
 
 export enum EmploymentStatus {
   UNEMPLOYED = 'unemployed',
@@ -73,10 +74,7 @@ export type PreviousEducationInAnswers = z.TypeOf<
   typeof previousEducationSchema
 >
 
-export interface LanguagesInAnswers {
-  language: string
-  skill: string
-}
+export type LanguagesInAnswers = z.TypeOf<typeof languageSkillsSchema>
 
 export interface FileInAnswers {
   key: string

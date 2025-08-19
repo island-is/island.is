@@ -33,6 +33,7 @@ export type MaybeWithApplicationAndField<T> =
 export type MaybeWithApplicationAndFieldAndLocale<T> =
   | T
   | ((application: Application, field: Field, locale: Locale) => T)
+
 export type ValidAnswers = 'yes' | 'no' | undefined
 export type FieldWidth = 'full' | 'half'
 export type TitleVariants = 'h1' | 'h2' | 'h3' | 'h4' | 'h5'
@@ -123,6 +124,15 @@ type MaybeWithApplicationAndActiveFieldAndIndex<T> =
       index?: number,
     ) => T)
 
+type MaybeWithApplicationAndActiveFieldAndIndexAndLocale<T> =
+  | T
+  | ((
+      application: Application,
+      activeField?: Record<string, string>,
+      index?: number,
+      locale?: Locale,
+    ) => T)
+
 export type RepeaterOptionValue = string | readonly string[] | undefined | null
 
 export type RepeaterItem = {
@@ -194,6 +204,8 @@ export type RepeaterItem = {
       currency?: boolean
       thousandSeparator?: boolean
       suffix?: FormText
+      max?: number
+      min?: number
     }
   | {
       component: 'phone'
@@ -306,7 +318,7 @@ export interface BaseField extends FormItem {
   colSpan?: SpanType
   condition?: Condition
   isPartOfRepeater?: boolean
-  defaultValue?: MaybeWithApplicationAndFieldAndLocale<unknown>
+  defaultValue?: MaybeWithApplicationAndActiveFieldAndIndexAndLocale<unknown>
   doesNotRequireAnswer?: boolean
   marginBottom?: BoxProps['marginBottom']
   marginTop?: BoxProps['marginTop']

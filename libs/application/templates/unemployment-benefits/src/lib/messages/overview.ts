@@ -68,6 +68,22 @@ export const overview = {
         defaultMessage: 'Ekki verið í námi síðustu tólf mánuði',
         description: 'overview section education not last twelve months label',
       },
+      currentEducation: {
+        id: 'vmst.ub.application:overview.labels.education.currentEducation',
+        defaultMessage: 'Upplýsingar um námið',
+        description: 'overview section current education label',
+      },
+      endDate: {
+        id: 'vmst.ub.application:overview.labels.education.endDate',
+        defaultMessage: 'Námslok',
+        description: 'overview section current education end date label',
+      },
+      predictedEndDate: {
+        id: 'vmst.ub.application:overview.labels.education.predictedEndDate',
+        defaultMessage: 'Áætluð námslok',
+        description:
+          'overview section current education predicted end date label',
+      },
     }),
 
     payout: defineMessages({

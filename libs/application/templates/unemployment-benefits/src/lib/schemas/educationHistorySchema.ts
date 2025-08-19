@@ -14,7 +14,7 @@ export const previousEducationSchema = z.object({
   levelOfStudy: z.string(),
   degree: z.string(),
   courseOfStudy: z.string().optional(),
-  studyNotCompleted: z.array(z.string()).optional(),
+  endOfStudy: z.string().optional(),
 })
 
 export const educationHistorySchema = z.object({

@@ -1,4 +1,4 @@
-import { getValueViaPath } from '@island.is/application/core'
+import { getValueViaPath, YES, YesOrNo } from '@island.is/application/core'
 import { ExternalData, FormText, FormValue } from '@island.is/application/types'
 import { overview as overviewMessages } from '../../lib/messages'
 import { useLocale } from '@island.is/localization'
@@ -22,6 +22,7 @@ export const usePayoutAnswers = (
   const ledger =
     getValueViaPath<string>(answers, 'payout.bankAccount.ledger') ?? ''
 
+  const payToUnion = getValueViaPath<YesOrNo>(answers, 'payout.payToUnion')
   const union = getUnionString(
     getValueViaPath<string>(answers, 'payout.union', '') ?? '',
     externalData,
@@ -32,6 +33,10 @@ export const usePayoutAnswers = (
     externalData,
   )
 
+  const payToPrivatePensionFund = getValueViaPath<YesOrNo>(
+    answers,
+    'payout.payPrivatePensionFund',
+  )
   const privatePensionFund = getPrivatePensionString(
     getValueViaPath<string>(answers, 'payout.privatePensionFund', '') ?? '',
     externalData,
@@ -43,16 +48,28 @@ export const usePayoutAnswers = (
       'payout.privatePensionFundPercentage',
       '',
     ) ?? ''
-  return [
+
+  const valueItems = [
     `${formatMessage(
       overviewMessages.labels.payout.bank,
     )}: ${bankAccountNumber}-${bankNumber}-${ledger}`,
     `${formatMessage(
       overviewMessages.labels.payout.pensionFund,
     )}: ${pensionFund}`,
-    `${formatMessage(overviewMessages.labels.payout.union)}: ${union}`,
-    `${formatMessage(
-      overviewMessages.labels.payout.privatePensionFund,
-    )}: ${privatePensionFund} ${privatePensionFundPercentage}%`,
   ]
+
+  if (payToUnion === YES) {
+    valueItems.push(
+      `${formatMessage(overviewMessages.labels.payout.union)}: ${union}`,
+    )
+  }
+
+  if (payToPrivatePensionFund === YES) {
+    valueItems.push(
+      `${formatMessage(
+        overviewMessages.labels.payout.privatePensionFund,
+      )}: ${privatePensionFund} ${privatePensionFundPercentage}%`,
+    )
+  }
+  return valueItems
 }

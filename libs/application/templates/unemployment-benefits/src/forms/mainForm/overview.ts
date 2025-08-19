@@ -2,10 +2,8 @@ import {
   buildDescriptionField,
   buildMultiField,
   buildOverviewField,
-  buildPdfLinkButtonField,
   buildSection,
   buildSubmitField,
-  getValueViaPath,
 } from '@island.is/application/core'
 import {
   useApplicantOverviewItems,
@@ -81,13 +79,15 @@ export const overviewSection = buildSection({
           backId: 'educationHistorySubSection',
           bottomLine: false,
           items: useEducationHistoryOverviewItems,
+          hideIfEmpty: true,
         }),
         buildOverviewField({
           id: 'drivingLicenseOverview',
           title: '',
-          backId: 'drivingLicenseSubSection',
+          backId: 'licensesSubSection',
           bottomLine: false,
           items: useLicenseOverviewItems,
+          hideIfEmpty: true,
         }),
         buildOverviewField({
           id: 'languageSkillsOverview',

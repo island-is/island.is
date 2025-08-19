@@ -9,6 +9,7 @@ import {
 import { employment as employmentMessages } from '../../../lib/messages'
 import { WorkingAbility } from '../../../shared'
 import { needsMedicalReport } from '../../../utils/needsMedicalReport'
+import { FILE_SIZE_LIMIT, UPLOAD_ACCEPT } from '../../../utils/constants'
 
 export const workingAbilitySubSection = buildSubSection({
   id: 'workingAbilitySubSection',
@@ -60,6 +61,8 @@ export const workingAbilitySubSection = buildSubSection({
           uploadDescription:
             employmentMessages.workingAbility.labels
               .partTimeFileUploadDescription,
+          uploadAccept: UPLOAD_ACCEPT,
+          maxSize: FILE_SIZE_LIMIT,
           condition: needsMedicalReport,
         }),
       ],

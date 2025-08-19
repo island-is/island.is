@@ -73,7 +73,7 @@ export const education = {
     },
     schoolDegreeLabel: {
       id: 'vmst.ub.application:education.labels.schoolDegreeLabel',
-      defaultMessage: 'Námsgráða',
+      defaultMessage: 'Prófgráða',
       description: 'School degree label',
     },
     expectedEndOfStudyLabel: {
@@ -99,7 +99,8 @@ export const education = {
     },
     currentSchoolDegreeFileNameDescription: {
       id: 'vmst.ub.application:education.labels.currentSchoolDegreeFileNameDescription',
-      defaultMessage: 'Tekið er við skjölum með endingu: .pdf, .docx, .rtf',
+      defaultMessage:
+        'Tekið er við skjölum með endingu: .pdf, .doc, .docx, .png, .jpg, .jpeg',
       description: 'Upload description for school degree file',
     },
     lastSemesterQuestion: {
@@ -123,10 +124,15 @@ export const education = {
       defaultMessage: 'Skýringar á námslokum',
       description: 'Applied for next semester textarea label',
     },
-    studyNotCompletedLabel: {
-      id: 'vmst.ub.application:education.labels.studyNotCompletedLabel',
+    endOfStudiesPlaceholder: {
+      id: 'vmst.ub.application:education.labels.endOfStudiesPlaceholder',
       defaultMessage: 'Námi ólokið',
       description: 'Study not completed label',
+    },
+    endOfStudies: {
+      id: 'vmst.ub.application:education.labels.endOfStudies',
+      defaultMessage: 'Námslok',
+      description: 'End of studies label',
     },
     addItemButtonText: {
       id: 'vmst.ub.application:education.labels.addItemButtonText',

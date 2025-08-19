@@ -145,6 +145,11 @@ export const payout = {
         'Vinsamlegast tilgreindu fjölda orlofsdaga og hvenær þú ætlar að nýta þá',
       description: 'Explain vacation label',
     },
+    explainVacationDescription: {
+      id: 'vmst.ub.application:payout.vacation.explainVacationDescription',
+      defaultMessage: `Námundaðu upp í næsta heila dag, dæmi: 8 tímar=1 dagur, 9 tímar=2 dagar, 15 tímar=2 dagar, 16 tímar=2 dagar, 17 tímar=3 dagar.`,
+      description: 'Explain vacation description',
+    },
     vacationDaysLabel: {
       id: 'vmst.ub.application:payout.vacation.vacationDaysLabel',
       defaultMessage: 'Fjöldi orlofsdaga',

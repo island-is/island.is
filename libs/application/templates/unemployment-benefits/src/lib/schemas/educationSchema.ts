@@ -8,9 +8,18 @@ export const educationSchema = z
     lastTwelveMonths: z
       .nativeEnum(YesOrNoEnum)
       .refine((v) => Object.values(YesOrNoEnum).includes(v)),
-    typeOfEducation: z.nativeEnum(EducationType).optional(),
-    didFinishLastSemester: z.nativeEnum(YesOrNoEnum).optional(),
-    appliedForNextSemester: z.nativeEnum(YesOrNoEnum).optional(),
+    typeOfEducation: z.preprocess(
+      (val) => (val === '' ? undefined : val),
+      z.nativeEnum(EducationType).optional(),
+    ),
+    didFinishLastSemester: z.preprocess(
+      (val) => (val === '' ? undefined : val),
+      z.nativeEnum(YesOrNoEnum).optional(),
+    ),
+    appliedForNextSemester: z.preprocess(
+      (val) => (val === '' ? undefined : val),
+      z.nativeEnum(YesOrNoEnum).optional(),
+    ),
     currentEducation: z
       .object({
         levelOfStudy: z
@@ -104,8 +113,12 @@ export const educationSchema = z
               (didFinishLastSemester === NO &&
                 appliedForNextSemester !== NO))) ||
           typeOfEducation === EducationType.LAST_YEAR)
+        // TODO add check if grunnskóli -> then no courseOFstudy
       ) {
-        return currentEducation && currentEducation.courseOfStudy
+        return (
+          (currentEducation && currentEducation.courseOfStudy) ||
+          currentEducation?.levelOfStudy !== '5'
+        )
       }
       return true
     },

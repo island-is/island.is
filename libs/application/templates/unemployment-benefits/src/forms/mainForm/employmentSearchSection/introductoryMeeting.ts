@@ -24,6 +24,7 @@ export const introductoryMeetingSubSection = buildSubSection({
         buildSelectField({
           id: 'introductoryMeeting.language',
           title: employmentSearchMessages.introductoryMeeting.languageLabel,
+          required: true,
           options: (application) => {
             const languages =
               getValueViaPath<{ name: string }[]>(

@@ -8,7 +8,7 @@ import {
 import { employment as employmentMessages } from '../lib/messages'
 import { education as educationMessages } from '../lib/messages'
 
-import { ExternalData, FormText } from '@island.is/application/types'
+import { ExternalData, StaticText } from '@island.is/application/types'
 import { getValueViaPath } from '@island.is/application/core'
 import {
   GaldurDomainModelsEducationProgramDTO,
@@ -21,8 +21,8 @@ import {
 
 export const getCurrentSituationString = (
   status: EmploymentStatus,
-): FormText => {
-  const statusMap: Record<EmploymentStatus, FormText> = {
+): StaticText => {
+  const statusMap: Record<EmploymentStatus, StaticText> = {
     [EmploymentStatus.UNEMPLOYED]:
       employmentMessages.currentSituation.labels.statusOptionNoJob,
     [EmploymentStatus.EMPLOYED]:
@@ -36,8 +36,8 @@ export const getCurrentSituationString = (
   return statusMap[status]
 }
 
-export const getWorkingAbilityString = (status: WorkingAbility): FormText => {
-  const statusMap: Record<WorkingAbility, FormText> = {
+export const getWorkingAbilityString = (status: WorkingAbility): StaticText => {
+  const statusMap: Record<WorkingAbility, StaticText> = {
     [WorkingAbility.ABLE]:
       employmentMessages.workingAbility.labels.optionFullTime,
     [WorkingAbility.DISABILITY]:
@@ -51,8 +51,8 @@ export const getWorkingAbilityString = (status: WorkingAbility): FormText => {
 
 export const getLastTvelveMonthsEducationString = (
   status: EducationType,
-): FormText => {
-  const statusMap: Record<EducationType, FormText> = {
+): StaticText => {
+  const statusMap: Record<EducationType, StaticText> = {
     [EducationType.CURRENT]: educationMessages.labels.currentlyEducationLabel,
     [EducationType.LAST_SEMESTER]:
       educationMessages.labels.lastSemesterEducationLabel,
