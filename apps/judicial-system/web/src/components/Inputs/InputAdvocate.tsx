@@ -103,7 +103,7 @@ const InputAdvocate: FC<Props> = ({
       return []
     }
 
-    return filteredLawyers?.map((l: Lawyer) => ({
+    return filteredLawyers?.map((l) => ({
       label: `${l.name}${l.practice ? ` (${l.practice})` : ''}`,
       value: l.email,
     }))
