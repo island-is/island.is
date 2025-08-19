@@ -107,7 +107,7 @@ const InputAdvocate: FC<Props> = ({
       label: `${l.name}${l.practice ? ` (${l.practice})` : ''}`,
       value: l.email,
     }))
-  }, [lawyers])
+  }, [lawyers, advocateType])
 
   const handleAdvocateChange = useCallback(
     (selectedOption: SingleValue<ReactSelectOption>) => {
