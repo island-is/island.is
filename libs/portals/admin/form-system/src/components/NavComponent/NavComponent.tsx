@@ -141,8 +141,9 @@ export const NavComponent = ({
             {!(
               type === 'Section' &&
               (data as FormSystemSection).sectionType !== SectionTypes.INPUT
-            ) &&
-              selectingIsOff && <NavButtons id={data.id} type={type} />}
+            ) && (
+                selectingIsOff && <NavButtons id={data.id} type={type} />
+              )}
           </Box>
         </Box>
       ) : (
