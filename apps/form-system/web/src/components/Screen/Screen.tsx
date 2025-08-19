@@ -21,6 +21,7 @@ export const Screen = () => {
   const [externalDataAgreement, setExternalDataAgreement] = useState(
     state.sections?.[0].isCompleted ?? false,
   )
+
 console.log("state", state)
   return (
     <Box
@@ -52,7 +53,7 @@ console.log("state", state)
           />
         )}
         {currentSectionType === SectionTypes.SUMMARY && (
-          <Summary />
+          <Summary state={state} />
         )}
         {currentScreen &&
           currentScreen?.data?.fields

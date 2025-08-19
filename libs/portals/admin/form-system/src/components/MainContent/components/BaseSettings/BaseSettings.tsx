@@ -27,7 +27,6 @@ export const BaseSettings = () => {
   const { form } = control
   const { formatMessage } = useIntl()
   const [errorMsg, setErrorMsg] = useState('')
-console.log("Summary",form.hasSummaryScreen)
   return (
     <Stack space={2}>
       <Row>

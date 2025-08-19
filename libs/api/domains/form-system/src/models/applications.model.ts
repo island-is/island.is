@@ -60,6 +60,9 @@ export class Application {
   @Field(() => Boolean, { nullable: true })
   stopProgressOnValidatingScreen?: boolean
 
+    @Field(() => Boolean, { nullable: true })
+  hasSummaryScreen?: boolean
+
   @Field(() => [ApplicationEventDto], { nullable: 'itemsAndList' })
   events?: ApplicationEventDto[]
 
