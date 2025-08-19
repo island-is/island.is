@@ -13,10 +13,10 @@ import {
   decrementWithScreens,
   getDecrementVariables,
   getIncrementVariables,
-  hasScreens,
   incrementWithoutScreens,
   incrementWithScreens,
 } from './reducerUtils'
+import { hasScreens } from '../utils/reducerHelpers'
 
 export const initialState = {
   application: {} as FormSystemApplication,
@@ -120,20 +120,17 @@ export const applicationReducer = (
       const { submitScreen, submitSection } = action.payload
       const {
         currentSectionData,
-        maxSectionIndex,
-        nextSectionIndex,
         currentScreenIndex,
       } = getIncrementVariables(state)
       if (hasScreens(currentSectionData)) {
         return incrementWithScreens(
           state,
           currentSectionData,
-          maxSectionIndex,
           currentScreenIndex,
           submitScreen,
         )
       }
-      return incrementWithoutScreens(state, nextSectionIndex, submitSection)
+      return incrementWithoutScreens(state, submitSection)
     }
     case 'DECREMENT': {
       const { currentSectionData, currentSectionIndex, currentScreenIndex } =
@@ -141,7 +138,6 @@ export const applicationReducer = (
       if (hasScreens(currentSectionData)) {
         return decrementWithScreens(
           state,
-          currentSectionData,
           currentSectionIndex,
           currentScreenIndex,
         )
