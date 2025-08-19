@@ -131,4 +131,11 @@ export class Verdict extends Model {
   })
   @ApiPropertyOptional({ type: String })
   legalPaperRequestDate?: string
+
+  @Column({
+    type: DataType.STRING,
+    allowNull: true,
+  })
+  @ApiPropertyOptional({ type: String })
+  defenderNationalId?: string
 }

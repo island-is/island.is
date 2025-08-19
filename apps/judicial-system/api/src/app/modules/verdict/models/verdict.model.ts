@@ -57,4 +57,7 @@ export class Verdict {
 
   @Field(() => String, { nullable: true })
   comment?: string
+
+  @Field(() => String, { nullable: true })
+  defenderNationalId?: string
 }

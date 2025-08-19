@@ -2,6 +2,8 @@ import { AlertMessage, Text, Box } from '@island.is/island-ui/core'
 import { ServiceStatus, Verdict } from '../../graphql/schema'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { Lawyer } from '@island.is/judicial-system/types'
+import { useContext, useEffect, useState } from 'react'
+import { LawyerRegistryContext } from '../LawyerRegistryProvider/LawyerRegistryProvider'
 
 const mapServiceStatusTitle = (
   serviceStatus?: ServiceStatus | null,
@@ -22,9 +24,19 @@ const mapServiceStatusTitle = (
 }
 
 const mapServiceStatusMessages = (verdict: Verdict, lawyer?: Lawyer) => {
+  console.log(verdict, lawyer)
   switch (verdict.serviceStatus) {
     case ServiceStatus.DEFENDER:
-      return ['not implemented']
+      return [
+        `${verdict.servedBy ? verdict.servedBy : ''}${
+          verdict.serviceDate
+            ? ` - ${formatDate(verdict.serviceDate, 'Pp')}`
+            : ''
+        }`,
+        `Birt fyrir verjanda${
+          lawyer ? ` - ${lawyer.name} ${lawyer.practice}` : ''
+        }`,
+      ]
     case ServiceStatus.ELECTRONICALLY:
       return [
         `Rafrænt pósthólf island.is - ${
@@ -51,8 +63,11 @@ const mapServiceStatusMessages = (verdict: Verdict, lawyer?: Lawyer) => {
 }
 
 const VerdictStatusAlert = ({ verdict }: { verdict: Verdict }) => {
+  const [lawyer, setLawyer] = useState<Lawyer>()
+  const { lawyers } = useContext(LawyerRegistryContext)
+
   const title = mapServiceStatusTitle(verdict.serviceStatus)
-  const messages = mapServiceStatusMessages(verdict)
+  const messages = mapServiceStatusMessages(verdict, lawyer)
 
   const isServed =
     verdict.serviceDate &&
@@ -62,6 +77,23 @@ const VerdictStatusAlert = ({ verdict }: { verdict: Verdict }) => {
       ServiceStatus.ELECTRONICALLY,
       ServiceStatus.IN_PERSON,
     ].includes(verdict.serviceStatus)
+
+  useEffect(() => {
+    if (
+      !verdict?.defenderNationalId ||
+      verdict?.serviceStatus !== ServiceStatus.DEFENDER ||
+      !lawyers ||
+      lawyers.length === 0
+    ) {
+      return
+    }
+
+    setLawyer(
+      lawyers.find(
+        (lawyer) => lawyer.nationalId === verdict.defenderNationalId,
+      ),
+    )
+  }, [lawyers, verdict?.defenderNationalId, verdict?.serviceStatus])
 
   if (isServed) {
     return (
