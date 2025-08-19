@@ -141,7 +141,7 @@ const InputAdvocate: FC<Props> = ({
     [emailErrorMessage, onEmailChange],
   )
 
-  const handleLEmailBlur = useCallback(
+  const handleEmailBlur = useCallback(
     (event: ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
       const email = replaceTabs(event.target.value)
 
@@ -213,7 +213,7 @@ const InputAdvocate: FC<Props> = ({
           hasError={emailErrorMessage !== ''}
           disabled={Boolean(disabled)}
           onChange={handleEmailChange}
-          onBlur={handleLEmailBlur}
+          onBlur={handleEmailBlur}
         />
       </Box>
       <InputMask

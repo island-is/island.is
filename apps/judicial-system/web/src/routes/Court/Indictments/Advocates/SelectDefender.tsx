@@ -255,7 +255,7 @@ const SelectDefender: FC<Props> = ({ defendant }) => {
         {defendant.isDefenderChoiceConfirmed && defendant.defenderName && (
           <Box marginTop={2}>
             <AlertMessage
-              title="Sending tókst"
+              title="Verjandi staðfestur"
               message={`${
                 defendant.defenderName
               } hefur fengið tilkynningu um skráningu í tölvupósti${
