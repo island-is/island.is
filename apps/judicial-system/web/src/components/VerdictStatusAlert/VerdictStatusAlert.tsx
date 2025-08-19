@@ -134,10 +134,9 @@ const VerdictStatusAlert = ({ verdict }: { verdict: Verdict }) => {
       <AlertMessage
         type="success"
         title="Birting tókst"
-        message={`Birt í Lögbirtingarblaðinu ${formatDate(
+        message={`Birt í Lögbirtingarblaðinu - ${formatDate(
           verdict.legalPaperRequestDate,
-          'Pp',
-        )}`}
+        )} kl. ${formatDate(verdict.legalPaperRequestDate, TIME_FORMAT)}`}
       />
     )
   }
@@ -147,7 +146,9 @@ const VerdictStatusAlert = ({ verdict }: { verdict: Verdict }) => {
       <AlertMessage
         type="info"
         title="Dómur er í birtingarferli"
-        message={`Dómur fór í birtingu ${formatDate(verdict.created, 'Pp')}`}
+        message={`Dómur fór í birtingu ${formatDate(
+          verdict.created,
+        )} kl. ${formatDate(verdict.created, TIME_FORMAT)}`}
       />
     )
   }
