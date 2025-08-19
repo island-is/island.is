@@ -1,6 +1,7 @@
 import { createEnhancedFetch } from '@island.is/clients/middlewares'
 import {
-  ConfigType, IdsClientConfig,
+  ConfigType,
+  IdsClientConfig,
   XRoadConfig,
 } from '@island.is/nest/config'
 import { Configuration } from '../../gen/fetch'
@@ -20,12 +21,12 @@ export const ApiConfiguration = {
         logErrorResponseBody: true,
         autoAuth: idsClientConfig.isConfigured
           ? {
-            mode: 'auto',
-            issuer: idsClientConfig.issuer,
-            clientId: idsClientConfig.clientId,
-            clientSecret: idsClientConfig.clientSecret,
-            scope: config.tokenExchangeScope,
-          }
+              mode: 'auto',
+              issuer: idsClientConfig.issuer,
+              clientId: idsClientConfig.clientId,
+              clientSecret: idsClientConfig.clientSecret,
+              scope: config.tokenExchangeScope,
+            }
           : undefined,
       }),
       basePath: `${xroadConfig.xRoadBasePath}/r1/${config.xRoadServicePath}`,

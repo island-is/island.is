@@ -15,19 +15,22 @@ export class BankinfoClientService {
   async getBankAccountsForNationalId(
     nationalId: string,
   ): Promise<BankAccountsnationalIdGETResponse | null> {
-     return this.api.bankAccountsnationalIdGET1({
-      nationalId,
-    }).catch(handle404)
-
+    return this.api
+      .bankAccountsnationalIdGET1({
+        nationalId,
+      })
+      .catch(handle404)
   }
 
   async createBankAccountForNationalId(
     nationalId: string,
     bankAccount: BankAccountDT,
   ): Promise<ApiResponse<BankAccountsnationalIdPOSTResponse> | null> {
-    return this.api.bankAccountsnationalIdPOST1Raw({
-      nationalId,
-      bankAccount,
-    }).catch(handle404)
+    return this.api
+      .bankAccountsnationalIdPOST1Raw({
+        nationalId,
+        bankAccount,
+      })
+      .catch(handle404)
   }
 }

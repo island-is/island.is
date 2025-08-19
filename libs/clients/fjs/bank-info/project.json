@@ -15,24 +15,24 @@
         "jestConfig": "libs/clients/fjs/bank-info/jest.config.ts"
       }
     },
-  "update-openapi-document": {
-    "executor": "nx:run-commands",
-    "options": {
-      "commands": [
-        "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10021/FJS-Public/getOpenAPI?serviceCode=TBRBankMgrService_v1 > src/clientConfig.json",
-        "cat <<< $(jq '.components.schemas.ProblemDetails.additionalProperties = false |  .components.schemas.ValidationProblemDetails.additionalProperties = false' src/clientConfig.json) > src/clientConfig.json",
-        "prettier --write src/clientConfig.json"
-      ],
-      "parallel": false,
-      "cwd": "libs/clients/fjs/bank-info"
-    }
-  },
-  "codegen/backend-client": {
-    "executor": "nx:run-commands",
-    "options": {
-      "command": "yarn openapi-generator -o libs/clients/fjs/bank-info/gen/fetch -i libs/clients/fjs/bank-info/src/clientConfig.json"
+    "update-openapi-document": {
+      "executor": "nx:run-commands",
+      "options": {
+        "commands": [
+          "curl -H \"X-Road-Client: IS-DEV/GOV/10000/island-is-client\" http://localhost:8081/r1/IS-DEV/GOV/10021/FJS-Public/getOpenAPI?serviceCode=TBRBankMgrService_v1 > src/clientConfig.json",
+          "cat <<< $(jq '.components.schemas.ProblemDetails.additionalProperties = false |  .components.schemas.ValidationProblemDetails.additionalProperties = false' src/clientConfig.json) > src/clientConfig.json",
+          "prettier --write src/clientConfig.json"
+        ],
+        "parallel": false,
+        "cwd": "libs/clients/fjs/bank-info"
+      }
     },
-    "outputs": ["{projectRoot}/gen/fetch"]
+    "codegen/backend-client": {
+      "executor": "nx:run-commands",
+      "options": {
+        "command": "yarn openapi-generator -o libs/clients/fjs/bank-info/gen/fetch -i libs/clients/fjs/bank-info/src/clientConfig.json"
+      },
+      "outputs": ["{projectRoot}/gen/fetch"]
     }
   }
 }
