@@ -50,7 +50,6 @@ export const getDecrementVariables = (state: ApplicationState) => {
   }
 }
 
-
 export const incrementWithScreens = (
   state: ApplicationState,
   currentSectionData: FormSystemSection,
