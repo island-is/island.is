@@ -65,6 +65,7 @@ const OwnerView = ({
         input: {
           collectionId: currentCollection?.id ?? '',
           listIds: listId,
+          collectionType: collectionType,
         },
       },
     })

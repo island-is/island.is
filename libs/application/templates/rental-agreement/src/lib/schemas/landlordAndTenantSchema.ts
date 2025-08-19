@@ -1,15 +1,25 @@
 import { z } from 'zod'
+import * as kennitala from 'kennitala'
 import * as m from '../messages'
+import { EMAIL_REGEX } from '@island.is/application/core'
+
+export const isValidEmail = (value: string) => EMAIL_REGEX.test(value)
 
 const personInfoSchema = z.object({
   nationalIdWithName: z.object({
     nationalId: z
       .string()
       .optional()
-      .refine((x) => !!x && x.trim().length > 0, {
-        params: m.landlordAndTenantDetails.nationalIdEmptyError,
+      .refine((val) => (val ? kennitala.info(val).age >= 18 : false), {
+        params: m.landlordAndTenantDetails.nationalIdAgeError,
+      })
+      .refine((val) => (val ? kennitala.isValid(val) : false), {
+        params: m.landlordAndTenantDetails.nationalIdError,
       }),
-    name: z.string().optional(),
+    name: z
+      .string()
+      .optional()
+      .refine((name) => !!name && name.trim().length > 0),
   }),
   phone: z
     .string()
@@ -20,8 +30,8 @@ const personInfoSchema = z.object({
   email: z
     .string()
     .optional()
-    .refine((x) => !!x && x.trim().length > 0, {
-      params: m.landlordAndTenantDetails.emailEmptyError,
+    .refine((val) => !!val && val.trim().length > 0 && isValidEmail(val), {
+      params: m.landlordAndTenantDetails.emailInvalidError,
     }),
   address: z
     .string()
