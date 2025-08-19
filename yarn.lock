@@ -15351,7 +15351,7 @@ __metadata:
     react-native-keychain: "npm:8.1.1"
     react-native-markdown-display: "npm:7.0.2"
     react-native-mmkv-storage: "npm:0.11.2"
-    react-native-navigation: "patch:react-native-navigation@npm%3A8.2.2#~/.yarn/patches/react-native-navigation-npm-8.2.2-9f959ec1d4.patch"
+    react-native-navigation: "patch:react-native-navigation@npm%3A8.3.0#~/.yarn/patches/react-native-navigation-npm-8.3.0-683da0a2c4.patch"
     react-native-navigation-hooks: "npm:6.3.0"
     react-native-passkey: "patch:react-native-passkey@npm%3A2.1.1#~/.yarn/patches/react-native-passkey-npm-2.1.1-0b2bf2ddcf.patch"
     react-native-passkit-wallet: "npm:0.1.6"
@@ -52961,9 +52961,9 @@ __metadata:
   languageName: node
   linkType: hard
 
-"react-native-navigation@npm:8.2.2":
-  version: 8.2.2
-  resolution: "react-native-navigation@npm:8.2.2"
+"react-native-navigation@npm:8.3.0":
+  version: 8.3.0
+  resolution: "react-native-navigation@npm:8.3.0"
   dependencies:
     hoist-non-react-statics: "npm:3.x.x"
     lodash: "npm:4.17.x"
@@ -52982,13 +52982,13 @@ __metadata:
       optional: true
   bin:
     rnn-link: autolink/postlink/run.js
-  checksum: 10/01b938e677551b18e65eb92c54dfa629c7dadd94abc4d006f5ea6489d31d3acb9b5eecc766a360894284ae20d80f6b9b634be1ef8c9989e6a2bea7f822d218f3
+  checksum: 10/0fafb64fcb6bc29b167f595fd4065f8004852fe2376d929ee3b46f4d8c3db0b1cff2f2e8639272d6b87a86c00d57913e35b943e6a1e5ae4b7e22d1af332e674b
   languageName: node
   linkType: hard
 
-"react-native-navigation@patch:react-native-navigation@npm%3A8.2.2#~/.yarn/patches/react-native-navigation-npm-8.2.2-9f959ec1d4.patch":
-  version: 8.2.2
-  resolution: "react-native-navigation@patch:react-native-navigation@npm%3A8.2.2#~/.yarn/patches/react-native-navigation-npm-8.2.2-9f959ec1d4.patch::version=8.2.2&hash=a7cf9e"
+"react-native-navigation@patch:react-native-navigation@npm%3A8.3.0#~/.yarn/patches/react-native-navigation-npm-8.3.0-683da0a2c4.patch":
+  version: 8.3.0
+  resolution: "react-native-navigation@patch:react-native-navigation@npm%3A8.3.0#~/.yarn/patches/react-native-navigation-npm-8.3.0-683da0a2c4.patch::version=8.3.0&hash=a7cf9e"
   dependencies:
     hoist-non-react-statics: "npm:3.x.x"
     lodash: "npm:4.17.x"
@@ -53007,7 +53007,7 @@ __metadata:
       optional: true
   bin:
     rnn-link: autolink/postlink/run.js
-  checksum: 10/205db28506e82527f00c1fc578209c25558de7119288384b5a7cfc178482e38d3ff4da3729ee4cf4504b85b2b0377e09efd03038789b4c2b0aa1ed88f8e6fbe4
+  checksum: 10/c9e0c109073680c208a3959ff4b906394075e89cc32f1d8a221af5be28135a19e45fcccd4c49c57a529dc0888433114faab40b01790f464d4453a02c272b82e7
   languageName: node
   linkType: hard
 

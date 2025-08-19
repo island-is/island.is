@@ -75,7 +75,7 @@
     "react-native-keychain": "8.1.1",
     "react-native-markdown-display": "7.0.2",
     "react-native-mmkv-storage": "0.11.2",
-    "react-native-navigation": "patch:react-native-navigation@npm%3A8.2.2#~/.yarn/patches/react-native-navigation-npm-8.2.2-9f959ec1d4.patch",
+    "react-native-navigation": "patch:react-native-navigation@npm%3A8.3.0#~/.yarn/patches/react-native-navigation-npm-8.3.0-683da0a2c4.patch",
     "react-native-navigation-hooks": "6.3.0",
     "react-native-passkey": "patch:react-native-passkey@npm%3A2.1.1#~/.yarn/patches/react-native-passkey-npm-2.1.1-0b2bf2ddcf.patch",
     "react-native-passkit-wallet": "0.1.6",
