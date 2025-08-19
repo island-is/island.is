@@ -9,6 +9,7 @@ import {
   Icon,
   Text,
   InputError,
+  getTextStyles,
 } from '@island.is/island-ui/core'
 import { Markdown } from '@island.is/shared/components'
 import {
@@ -37,6 +38,9 @@ import { verifyExternalData } from '../utils'
 import { handleServerError } from '@island.is/application/ui-components'
 import { ProviderErrorReason } from '@island.is/shared/problem'
 import { isRunningOnEnvironment } from '@island.is/shared/utils'
+import cn from 'classnames'
+
+const divWithSmallText = cn(getTextStyles({ variant: 'small' }))
 
 const ItemHeader: React.FC<
   React.PropsWithChildren<{
@@ -76,11 +80,11 @@ const ItemHeader: React.FC<
       </Text>
 
       {subTitle && (
-        <Text>
+        <Box component="div">
           <Markdown>
             {formatText(subTitle, application, formatMessage)}
           </Markdown>
-        </Text>
+        </Box>
       )}
     </>
   )
@@ -125,11 +129,11 @@ const ProviderItem: FC<
           <Box>
             <Box component="span" display="block">
               {summary != null ? (
-                <Text variant="small">
+                <Box component="div" className={divWithSmallText}>
                   <Markdown>
                     {formatText(summary, application, formatMessage)}
                   </Markdown>
-                </Text>
+                </Box>
               ) : null}
             </Box>
           </Box>
@@ -319,9 +323,9 @@ const FormExternalDataProvider: FC<
           </Text>
         </Box>
         {description && (
-          <Text marginTop={4}>
+          <Box marginTop={4}>
             <Markdown>{formatMessage(description)}</Markdown>
-          </Text>
+          </Box>
         )}
       </Box>
       <Box marginBottom={5}>
