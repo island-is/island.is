@@ -4,5 +4,5 @@ import { style } from '@vanilla-extract/css'
 export const container = style({
   display: 'flex',
   flexDirection: 'column',
-  gap: `${spacing[5]}px`,
+  gap: spacing[5],
 })
