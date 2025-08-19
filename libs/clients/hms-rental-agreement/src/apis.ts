@@ -25,7 +25,7 @@ export const exportedApis = [HomeApi].map((Api) => ({
             ),
             clientId: config.authClientId,
             clientSecret: config.authClientSecret,
-            scope: ['api://e2411f5c-436a-4c17-aa14-eab9c225bc06/.default'],
+            scope: [`api://${config.authClientId}/.default`],
             mode: 'token',
           },
         }),
