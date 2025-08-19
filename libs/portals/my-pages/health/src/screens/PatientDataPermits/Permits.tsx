@@ -29,7 +29,8 @@ const PatientDataPermits: React.FC = () => {
   const { data, loading, error } = useGetPatientDataPermitsQuery({
     variables: { locale: lang },
   })
-  const dataLength = 0 //  data?.healthDirectoratePatientSummaryApprovals.data.length ?? 0
+  const dataLength =
+    data?.healthDirectoratePatientSummaryApprovals.data.length ?? 0
 
   const filteredData =
     data?.healthDirectoratePatientSummaryApprovals.data.filter(
