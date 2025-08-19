@@ -45,7 +45,7 @@ export const DescriptionFormField: FC<
             formatMessage,
           )}
           {field.titleTooltip && (
-            <Box marginLeft={1} display="inlineBlock">
+            <Box component="span" marginLeft={1} display="inlineBlock">
               <Tooltip
                 placement="top"
                 text={formatTextWithLocale(
@@ -60,7 +60,7 @@ export const DescriptionFormField: FC<
         </Text>
       )}
       {(field.description || field.tooltip) && (
-        <Text>
+        <Box component="div">
           {field.description && (
             <Markdown>
               {formatTextWithLocale(
@@ -82,7 +82,7 @@ export const DescriptionFormField: FC<
               )}
             />
           )}
-        </Text>
+        </Box>
       )}
     </Box>
   )
