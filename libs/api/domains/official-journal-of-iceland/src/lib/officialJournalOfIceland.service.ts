@@ -17,6 +17,7 @@ import {
   AdvertInstitutionsResponse,
   AdvertMainCategoriesResponse,
   AdvertResponse,
+  AdvertsFullResponse,
   AdvertSimilarResponse,
   AdvertsResponse,
   AdvertTypesResponse,
@@ -80,6 +81,10 @@ export class OfficialJournalOfIcelandService {
 
   async getAdverts(input: GetAdvertsRequest): Promise<AdvertsResponse> {
     return await this.ojoiService.getAdverts(input)
+  }
+
+  async getAdvertsFull(input: GetAdvertsRequest): Promise<AdvertsFullResponse> {
+    return await this.ojoiService.getAdvertsFull(input)
   }
 
   async getCasesInProgress(
