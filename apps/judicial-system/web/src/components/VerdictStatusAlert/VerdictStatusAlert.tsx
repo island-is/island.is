@@ -24,7 +24,6 @@ const mapServiceStatusTitle = (
 }
 
 const mapServiceStatusMessages = (verdict: Verdict, lawyer?: Lawyer) => {
-  console.log(verdict, lawyer)
   switch (verdict.serviceStatus) {
     case ServiceStatus.DEFENDER:
       return [
