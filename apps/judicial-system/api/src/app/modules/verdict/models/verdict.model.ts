@@ -54,4 +54,7 @@ export class Verdict {
 
   @Field(() => String, { nullable: true })
   legalPaperRequestDate?: string
+
+  @Field(() => String, { nullable: true })
+  comment?: string
 }

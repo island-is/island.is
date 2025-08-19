@@ -60,6 +60,7 @@ query Case($input: CaseQueryInput!) {
         serviceInformationForDefendant
         externalPoliceDocumentId
         legalPaperRequestDate
+        comment
       }
     }
     defenderName

@@ -57,6 +57,8 @@ import { IndictmentReviewerSelector } from './IndictmentReviewerSelector'
 import { strings } from './Overview.strings'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import * as styles from './Overview.css'
+import { Lawyer } from '@island.is/judicial-system/types'
+import VerdictStatusAlert from '@island.is/judicial-system-web/src/components/VerdictStatusAlert/VerdictStatusAlert'
 
 type VisibleModal = {
   type: 'REVOKE_SEND_TO_PRISON_ADMIN'
@@ -142,23 +144,6 @@ export const Overview = () => {
     setIsReviewedDecisionChanged(isDecisionChanged)
   }
 
-  const mapServiceStatusMessages = (verdict: Verdict) => {
-    switch (verdict.serviceStatus) {
-      case ServiceStatus.ELECTRONICALLY:
-        return `Rafrænt pósthólf island.is - ${formatDate(
-          verdict.serviceDate,
-          'Pp',
-        )}`
-      case ServiceStatus.IN_PERSON:
-      case ServiceStatus.FAILED:
-        return ``
-      case ServiceStatus.EXPIRED:
-        return ''
-      default:
-        return ''
-    }
-  }
-
   return (
     <PageLayout
       workingCase={workingCase}
@@ -177,46 +162,25 @@ export const Overview = () => {
         <CourtCaseInfo workingCase={workingCase} />
         {workingCase.defendants?.map((defendant) => {
           const { verdict } = defendant
+
+          if (!verdict) {
+            return null
+          }
+
           const isFine =
             workingCase.indictmentRulingDecision ===
             CaseIndictmentRulingDecision.FINE
 
           const isServiceRequired =
-            verdict?.serviceRequirement === ServiceRequirement.REQUIRED
+            verdict.serviceRequirement === ServiceRequirement.REQUIRED
 
           const isServiceNotApplicable =
-            verdict?.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
-
-          const isBeingServed = !verdict?.externalPoliceDocumentId
-
-          const isServed =
-            verdict?.serviceDate &&
-            (verdict?.serviceStatus === ServiceStatus.DEFENDER ||
-              verdict?.serviceStatus === ServiceStatus.ELECTRONICALLY ||
-              verdict?.serviceStatus === ServiceStatus.IN_PERSON)
+            verdict.serviceRequirement === ServiceRequirement.NOT_APPLICABLE
 
           return (
             <Fragment key={defendant.id}>
               <Box className={styles.container}>
-                {isServed ? (
-                  <AlertMessage
-                    type="success"
-                    title={`Dómur birtur - ${defendant.name}`}
-                    message={`Rafrænt pósthólf island.is - ${formatDate(
-                      verdict.serviceDate,
-                      'Pp',
-                    )}`}
-                  />
-                ) : isBeingServed ? (
-                  <AlertMessage
-                    type="info"
-                    title="Dómur er í birtingarferli"
-                    message={`Dómur fór í birtingu ${formatDate(
-                      verdict?.created,
-                      'Pp',
-                    )}`}
-                  />
-                ) : null}
+                <VerdictStatusAlert verdict={verdict} />
                 <Box component="section">
                   <BlueBoxWithDate defendant={defendant} icon="calendar" />
                 </Box>
