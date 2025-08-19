@@ -135,7 +135,8 @@ export const m = defineMessages({
   },
   unSignModalMessage: {
     id: 'sp.signatureCollection:unSignModalMessage',
-    defaultMessage: 'Þú ert að fara að draga meðmælin þín til baka. Ertu viss?',
+    defaultMessage:
+      'Þú ert við það að draga meðmælin þín til baka. Ertu viss um að þú viljir halda áfram?',
     description: '',
   },
   unSignModalConfirmButton: {
