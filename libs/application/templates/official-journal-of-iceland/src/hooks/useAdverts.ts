@@ -1,7 +1,7 @@
 import { useQuery } from '@apollo/client'
 import { DEFAULT_PAGE_SIZE, DEFAULT_PAGE } from '../lib/constants'
 import { ADVERTS_QUERY } from '../graphql/queries'
-import { OfficialJournalOfIcelandAdvertsResponse } from '@island.is/api/schema'
+import { OfficialJournalOfIcelandAdvertsFullResponse } from '@island.is/api/schema'
 
 /**
  * Fetches adverts from the API
@@ -28,7 +28,7 @@ type Props = {
 }
 
 type AdvertsResponse = {
-  officialJournalOfIcelandAdverts: OfficialJournalOfIcelandAdvertsResponse
+  officialJournalOfIcelandAdverts: OfficialJournalOfIcelandAdvertsFullResponse
 }
 
 export const useAdverts = ({
