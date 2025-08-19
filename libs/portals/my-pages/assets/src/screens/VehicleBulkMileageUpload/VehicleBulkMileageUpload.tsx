@@ -1,12 +1,10 @@
 import {
-  InputFileUploadDeprecated,
   Box,
   Text,
   fileToObjectDeprecated,
   AlertMessage,
   Stack,
   InputFileUpload,
-  UploadFile,
 } from '@island.is/island-ui/core'
 import { fileExtensionWhitelist } from '@island.is/island-ui/core/types'
 import { useLocale, useNamespaces } from '@island.is/localization'
