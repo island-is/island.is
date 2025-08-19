@@ -27,11 +27,6 @@ export const FormStepper = ({
   const activeSectionId = currentSection?.data?.id
   const activeScreenId = currentScreen?.data?.id
 
-  const activeVisibleIndex = visibleSections.findIndex(
-    (s) => s?.id === activeSectionId,
-  )
-
-
   return (
     <FormStepperV2
       sections={visibleSections.map((section, visIndex) => (

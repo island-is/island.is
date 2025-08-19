@@ -13,11 +13,11 @@ import {
   GridContainer,
   Text,
   Button,
-  LoadingDots,
 } from '@island.is/island-ui/core'
 import { ApplicationList, ApplicationLoading } from '@island.is/form-system/ui'
 import { useIntl } from 'react-intl'
 import { m } from '@island.is/form-system/ui'
+
 interface Params {
   slug?: string
 }

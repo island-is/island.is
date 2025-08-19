@@ -109,13 +109,13 @@ export const Navbar = () => {
     const data =
       type === 'Section'
         ? sections?.find(
-          (item: Maybe<FormSystemSection> | undefined) => item?.id === id,
-        )
+            (item: Maybe<FormSystemSection> | undefined) => item?.id === id,
+          )
         : type === 'Screen'
-          ? screens?.find(
+        ? screens?.find(
             (item: Maybe<FormSystemScreen> | undefined) => item?.id === id,
           )
-          : fields?.find(
+        : fields?.find(
             (item: Maybe<FormSystemField> | undefined) => item?.id === id,
           )
 
@@ -152,7 +152,7 @@ export const Navbar = () => {
           s.sectionType !== SectionTypes.INPUT &&
           s.sectionType !== SectionTypes.PARTIES &&
           s.sectionType !== SectionTypes.SUMMARY &&
-          s.sectionType !== SectionTypes.PAYMENT
+          s.sectionType !== SectionTypes.PAYMENT,
       )
       .map((s) => (
         <Box key={s.id}>
@@ -259,7 +259,6 @@ export const Navbar = () => {
           onDragEnd={onDragEnd}
           onDragOver={onDragOver}
         >
-
           <SortableContext items={sectionIds ?? []}>
             {renderInputSections()}
           </SortableContext>
@@ -276,9 +275,9 @@ export const Navbar = () => {
                   type={activeItem.type}
                   data={
                     activeItem.data as
-                    | FormSystemScreen
-                    | FormSystemSection
-                    | FormSystemField
+                      | FormSystemScreen
+                      | FormSystemSection
+                      | FormSystemField
                   }
                   active
                   focusComponent={focusComponent}
@@ -299,7 +298,6 @@ export const Navbar = () => {
             {renderScreensForSection(payment as FormSystemSection)}
           </Fragment>
         )}
-
       </Box>
       <Box display="flex" justifyContent="center" paddingTop={3}>
         <Button variant="ghost" size="small" onClick={addSection}>

@@ -16,7 +16,17 @@ import {
   MutationTuple,
   OperationVariables,
 } from '@apollo/client'
-import { hasScreens, nextVisibleScreenInSection, nextVisibleSectionIndex, firstVisibleScreenIndex, prevVisibleScreenInSection, prevVisibleSectionIndex, lastVisibleScreenIndex } from '../utils/reducerHelpers'
+import {
+  hasScreens,
+  nextVisibleScreenInSection,
+  nextVisibleSectionIndex,
+  firstVisibleScreenIndex,
+  prevVisibleScreenInSection,
+  prevVisibleSectionIndex,
+  lastVisibleScreenIndex,
+} from '../utils/reducerHelpers'
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-non-null-assertion */
 
 export const getIncrementVariables = (state: ApplicationState) => {
   const { sections, currentSection, currentScreen } = state
@@ -54,7 +64,12 @@ export const incrementWithScreens = (
   state: ApplicationState,
   currentSectionData: FormSystemSection,
   currentScreenIndex: number,
-  submitScreenMutation: MutationTuple<any, OperationVariables, DefaultContext, ApolloCache<any>>,
+  submitScreenMutation: MutationTuple<
+    any,
+    OperationVariables,
+    DefaultContext,
+    ApolloCache<any>
+  >,
 ): ApplicationState => {
   const [submitScreen] = submitScreenMutation
   const errors = state.errors ?? []
@@ -109,7 +124,10 @@ export const incrementWithScreens = (
     currentSection: { index: nextSecIdx, data: nextSection },
     currentScreen:
       firstScreenIdx >= 0
-        ? { index: firstScreenIdx, data: nextSection.screens![firstScreenIdx] as FormSystemScreen }
+        ? {
+            index: firstScreenIdx,
+            data: nextSection.screens![firstScreenIdx] as FormSystemScreen,
+          }
         : undefined,
     errors: [],
   }
@@ -117,7 +135,12 @@ export const incrementWithScreens = (
 
 export const incrementWithoutScreens = (
   state: ApplicationState,
-  submitSectionMutation: MutationTuple<any, OperationVariables, DefaultContext, ApolloCache<any>>,
+  submitSectionMutation: MutationTuple<
+    any,
+    OperationVariables,
+    DefaultContext,
+    ApolloCache<any>
+  >,
 ): ApplicationState => {
   const [submitSection] = submitSectionMutation
 
@@ -144,9 +167,9 @@ export const incrementWithoutScreens = (
     currentScreen:
       firstScreenIdx >= 0
         ? {
-          data: nextSection.screens![firstScreenIdx] as FormSystemScreen,
-          index: firstScreenIdx,
-        }
+            data: nextSection.screens![firstScreenIdx] as FormSystemScreen,
+            index: firstScreenIdx,
+          }
         : undefined,
     errors: [],
   }
@@ -184,9 +207,9 @@ export const decrementWithScreens = (
     currentScreen:
       lastScreenIdx >= 0
         ? {
-          data: prevSection.screens![lastScreenIdx] as FormSystemScreen,
-          index: lastScreenIdx,
-        }
+            data: prevSection.screens![lastScreenIdx] as FormSystemScreen,
+            index: lastScreenIdx,
+          }
         : undefined,
     errors: [],
   }
@@ -209,9 +232,9 @@ export const decrementWithoutScreens = (
     currentScreen:
       lastScreenIdx >= 0
         ? {
-          data: prevSection.screens![lastScreenIdx] as FormSystemScreen,
-          index: lastScreenIdx,
-        }
+            data: prevSection.screens![lastScreenIdx] as FormSystemScreen,
+            index: lastScreenIdx,
+          }
         : undefined,
     errors: [],
   }

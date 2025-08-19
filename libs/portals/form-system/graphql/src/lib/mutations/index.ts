@@ -38,4 +38,3 @@ export { SUBMIT_SECTION } from './submitSection'
 export { DELETE_APPLICATION } from './deleteApplication'
 export { UPDATE_APPLICATION_DEPENDENCIES } from './updateApplicationDependencies'
 export { SUBMIT_APPLICATION } from './submitApplication'
-

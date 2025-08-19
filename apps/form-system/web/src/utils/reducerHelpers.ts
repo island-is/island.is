@@ -85,13 +85,18 @@ export const lastVisibleScreenIndex = (
 
 export const nextVisibleScreenInSection = (
   section: FormSystemSection | undefined,
-  currentScreenIndex: number = -1,
-): number => nextVisibleIndex(section?.screens ?? [], currentScreenIndex, isVisible)
+  currentScreenIndex = -1,
+): number =>
+  nextVisibleIndex(section?.screens ?? [], currentScreenIndex, isVisible)
 
 export const prevVisibleScreenInSection = (
   section: FormSystemSection | undefined,
   currentScreenIndex: number,
-): number => prevVisibleIndex(section?.screens ?? [], currentScreenIndex, isVisible)
+): number =>
+  prevVisibleIndex(section?.screens ?? [], currentScreenIndex, isVisible)
 
 export const hasScreens = (section: FormSystemSection): boolean =>
-  Array.isArray(section.screens) && (section.screens as Array<FormSystemScreen | null | undefined>).some(isVisible)
+  Array.isArray(section.screens) &&
+  (section.screens as Array<FormSystemScreen | null | undefined>).some(
+    isVisible,
+  )
