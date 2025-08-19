@@ -627,9 +627,6 @@ export class CaseService {
     return theCase.id
   }
 
-  // TODO NOW: þurfum að bera saman listana og getum ekki gert ráð fyrir því að þeir séu í sömu röð
-  // breytum nafninu á þessu falli og látum það líka höndla eyðingu á indictment count og
-  // breytingu á indictment count (breytt police case number)
   private async handlePoliceCaseNumbersUpdate(
     theCase: Case,
     update: UpdateCase,
