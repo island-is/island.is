@@ -52,7 +52,7 @@ export class TerminateRentalAgreementService extends BaseTemplateApiService {
     }
   }
 
-  async submitApplication({ application, auth }: TemplateApiModuleActionProps) {
+  async submitApplication({ application }: TemplateApiModuleActionProps) {
     try {
       const files = await this.attachmentService.getFiles(application, [
         'fileUpload',
