@@ -3,7 +3,13 @@ import {
   service,
   ServiceBuilder,
 } from '../../../../infra/src/dsl/dsl'
-import { NationalRegistryB2C } from '../../../../infra/src/dsl/xroad'
+import {
+  Base,
+  Client,
+  NationalRegistry,
+  NationalRegistryB2C,
+} from '../../../../infra/src/dsl/xroad'
+
 const serviceName = 'services-form-system-api'
 
 export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
@@ -17,7 +23,8 @@ export const serviceSetup = (): ServiceBuilder<typeof serviceName> =>
       NATIONAL_REGISTRY_B2C_CLIENT_SECRET:
         '/k8s/api/NATIONAL_REGISTRY_B2C_CLIENT_SECRET',
     })
-    .xroad(NationalRegistryB2C)
+    .xroad(Base, Client, NationalRegistry, NationalRegistryB2C)
+
     .env({
       IDENTITY_SERVER_ISSUER_URL: {
         dev: 'https://identity-server.dev01.devland.is',
