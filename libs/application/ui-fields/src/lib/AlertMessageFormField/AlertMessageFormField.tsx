@@ -5,7 +5,6 @@ import {
 import {
   AlertMessage,
   Box,
-  Text,
   Button,
   getTextStyles,
 } from '@island.is/island-ui/core'
