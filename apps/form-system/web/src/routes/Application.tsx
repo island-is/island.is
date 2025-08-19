@@ -2,7 +2,7 @@ import { useParams } from 'react-router-dom'
 import { ApplicationProvider } from '../context/ApplicationProvider'
 import { GET_APPLICATION, removeTypename } from '@island.is/form-system/graphql'
 import { useQuery } from '@apollo/client'
-import { ApplicationLoading } from '@island.is/form-system/ui'
+import { ApplicationLoading } from '../components/ApplicationsLoading/ApplicationLoading'
 import { NotFound } from '@island.is/portals/core'
 
 type UseParams = {
