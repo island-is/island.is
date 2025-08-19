@@ -601,7 +601,6 @@ export const hasDefaultAllergies = (externalData: ExternalData) => {
   const { healthProfile } = getApplicationExternalData(externalData)
 
   return (healthProfile?.allergies?.length ?? 0) > 0 ? YES : NO
-  return
 }
 
 export const hasDefaultSupportCaseworkers = (

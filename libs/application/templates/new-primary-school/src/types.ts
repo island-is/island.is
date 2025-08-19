@@ -100,14 +100,6 @@ export type AddressModel = {
   municipalityId: string | null // Is set as object in MMS data
 }
 
-export type AllergyModel = {
-  id: string
-  title: string // Is set as object in MMS data
-  group: string // Is set as object in MMS data
-  code: string
-  foodAllergy: boolean
-}
-
 export type SpecialNeedsModel = {
   id: string
   title: string // Is set as object in MMS data
@@ -118,7 +110,7 @@ export type SpecialNeedsModel = {
 export type HealthProfileModel = {
   id: string
   userId: string
-  allergies: AllergyModel[]
+  allergies: string[]
   foodAllergiesOrIntolerances: string[]
   specialNeeds: SpecialNeedsModel[]
   createdAt: Date
@@ -162,7 +154,7 @@ export type FriggChildInformation = {
   preferredLanguage: string | null
   phone: string // Is set as object in MMS data
   mobile: string // Is set as object in MMS data
-  socialProfile: SocialProfile
+  socialProfile: SocialProfile | null
 }
 
 export type CurrentSchool = {

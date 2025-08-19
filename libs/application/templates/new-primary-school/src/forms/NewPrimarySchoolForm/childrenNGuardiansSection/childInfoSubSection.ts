@@ -102,7 +102,7 @@ export const childInfoSubSection = buildSubSection({
             const { childInformation } = getApplicationExternalData(
               application.externalData,
             )
-            return (childInformation?.pronouns?.length ?? 0) > 0 ? [YES] : [NO]
+            return (childInformation?.pronouns?.length ?? 0) > 0 ? [YES] : []
           },
         }),
         buildTextField({
