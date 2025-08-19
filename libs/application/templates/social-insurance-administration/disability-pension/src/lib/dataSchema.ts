@@ -345,22 +345,22 @@ export const dataSchema = z.object({
       { path: ['currency'] },
     )
     .refine(
-      ({ personalAllowance, personalAllowanceUsage }) =>
-        personalAllowance === YES
-          ? !(
-              Number(personalAllowanceUsage) < 1 ||
-              Number(personalAllowanceUsage) > 100
-            )
-          : true,
+      ({ personalAllowance, personalAllowanceUsage }) => {
+        if (personalAllowance === YES) {
+          const usage = Number(personalAllowanceUsage)
+          return (
+            personalAllowanceUsage !== undefined &&
+            !Number.isNaN(usage) &&
+            1 <= usage &&
+            usage <= 100
+          )
+        }
+        return true
+      },
       {
         path: ['personalAllowanceUsage'],
         params: errorMessages.personalAllowance,
       },
-    )
-    .refine(
-      ({ personalAllowance, personalAllowanceUsage }) =>
-        personalAllowance === YES ? !!personalAllowanceUsage : true,
-      { path: ['personalAllowanceUsage'] },
     ),
   incomePlan: z
     .array(
