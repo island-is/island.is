@@ -4,7 +4,7 @@ import { AnimatePresence, motion } from 'motion/react'
 import { useRouter } from 'next/router'
 import { Tooltip, TooltipAnchor, TooltipProvider } from '@ariakit/react'
 
-import { AlertMessage, Box, Icon,Text } from '@island.is/island-ui/core'
+import { Box, Icon, Text } from '@island.is/island-ui/core'
 import * as constants from '@island.is/judicial-system/consts'
 import { titles } from '@island.is/judicial-system-web/messages'
 import { core } from '@island.is/judicial-system-web/messages'
