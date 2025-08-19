@@ -39,7 +39,6 @@ import {
   UpdateIndictmentCount,
   useLawTag,
 } from '@island.is/judicial-system-web/src/utils/hooks'
-import useOffenses from '@island.is/judicial-system-web/src/utils/hooks/useOffenses'
 import { getDefaultDefendantGender } from '@island.is/judicial-system-web/src/utils/utils'
 
 import { getIncidentDescription } from './lib/getIncidentDescription'
@@ -219,7 +218,6 @@ export const IndictmentCount: FC<Props> = ({
 }) => {
   const { formatMessage } = useIntl()
   const lawTag = useLawTag()
-  const { deleteOffense } = useOffenses()
 
   const gender = getDefaultDefendantGender(workingCase.defendants)
 
