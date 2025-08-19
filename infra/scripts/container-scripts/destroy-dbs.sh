@@ -19,7 +19,7 @@ psql -tc "SELECT datname FROM pg_database WHERE datname like 'feature_${FEATURE_
 
 psql -tc "SELECT rolname FROM pg_roles WHERE rolname like 'feature_${FEATURE_DB_NAME}_%'" --field-separator ' ' --no-align --quiet |
   while read -r rolname; do
-    echo "Dropping the role ${rolname}"
+    echo "Dropping role with name ${rolname}"
 
     if [[ "$rolname" == *read ]]; then
       psql -c "REVOKE USAGE ON SCHEMA PUBLIC FROM ${rolname}"
@@ -27,7 +27,6 @@ psql -tc "SELECT rolname FROM pg_roles WHERE rolname like 'feature_${FEATURE_DB_
       psql -c "ALTER DEFAULT PRIVILEGES IN SCHEMA public REVOKE ALL ON TABLES FROM ${rolname}" || true
     fi
 
-    # psql -c "DROP OWNED BY ${rolname} CASCADE;" || true
     psql -c "DROP ROLE IF EXISTS ${rolname};" || true
   done
 

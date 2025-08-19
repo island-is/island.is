@@ -116,7 +116,7 @@ yargs(hideBin(process.argv))
       let nextToken: string | undefined = undefined
       let parameterList: any = []
 
-      console.log(`Deleting all parameters with prefix: ${prefix}`)
+      logger.info(`Deleting all parameters with prefix:`, { prefix })
 
       do {
         try {
@@ -143,9 +143,6 @@ yargs(hideBin(process.argv))
           ) {
             logger.info(
               'Throttled while listing parameters; backing off and retrying',
-              {
-                nextToken,
-              },
             )
             await throttle(1000)
             continue
@@ -161,13 +158,9 @@ yargs(hideBin(process.argv))
           )}`,
         )
 
-        console.log(`Deleting ${parameterList.length} parameters...`)
-
         const names: string[] = parameterList
           .map(({ Name }: any) => Name)
           .filter(Boolean)
-
-        console.log(`Found ${names} parameters to delete.`)
 
         const batchSize = 10
         const maximumAttempts = 5
