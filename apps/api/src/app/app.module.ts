@@ -259,18 +259,18 @@ const environment = getConfig
     DrivingLicenseBookModule,
     EducationModule.register({
       xroad: {
-        baseUrl: environment.xroad.baseUrl!,
-        clientId: environment.xroad.clientId!,
+        baseUrl: environment.xroad.baseUrl as string,
+        clientId: environment.xroad.clientId as string,
         services: {
-          license: environment.education.xroadLicenseServiceId!,
-          grade: environment.education.xroadGradeServiceId!,
+          license: environment.education.xroadLicenseServiceId as string,
+          grade: environment.education.xroadGradeServiceId as string,
         },
       },
-      fileDownloadBucket: environment.education.fileDownloadBucket!,
+      fileDownloadBucket: environment.education.fileDownloadBucket as string,
     }),
     EducationV2Module,
     ApplicationModule.register({
-      baseApiUrl: environment.applicationSystem.baseApiUrl!,
+      baseApiUrl: environment.applicationSystem.baseApiUrl as string,
     }),
     LicenseServiceModule,
     DirectorateOfLabourModule,
@@ -278,21 +278,21 @@ const environment = getConfig
     DocumentModule,
     DocumentProviderModule.register({
       test: {
-        basePath: environment.documentProviderService.test.basePath!,
+        basePath: environment.documentProviderService.test.basePath as string,
         clientId: environment.documentProviderService.test.clientId,
         clientSecret: environment.documentProviderService.test.clientSecret,
         tokenUrl: environment.documentProviderService.test.tokenUrl,
       },
       prod: {
-        basePath: environment.documentProviderService.prod.basePath!,
+        basePath: environment.documentProviderService.prod.basePath as string,
         clientId: environment.documentProviderService.prod.clientId,
         clientSecret: environment.documentProviderService.prod.clientSecret,
         tokenUrl: environment.documentProviderService.prod.tokenUrl,
       },
-      documentsServiceBasePath:
-        environment.documentProviderService.documentsServiceBasePath!,
-      documentProviderAdmins:
-        environment.documentProviderService.documentProviderAdmins!,
+      documentsServiceBasePath: environment.documentProviderService
+        .documentsServiceBasePath as string,
+      documentProviderAdmins: environment.documentProviderService
+        .documentProviderAdmins as string,
     }),
     CmsTranslationsModule,
     TerminusModule,
@@ -323,10 +323,10 @@ const environment = getConfig
     OfficialJournalOfIcelandApplicationModule,
     CompanyRegistryModule,
     IcelandicNamesModule.register({
-      backendUrl: environment.icelandicNamesRegistry.backendUrl!,
+      backendUrl: environment.icelandicNamesRegistry.backendUrl as string,
     }),
     EndorsementSystemModule.register({
-      baseApiUrl: environment.endorsementSystem.baseApiUrl!,
+      baseApiUrl: environment.endorsementSystem.baseApiUrl as string,
     }),
     RegulationsModule,
     RegulationsAdminModule,

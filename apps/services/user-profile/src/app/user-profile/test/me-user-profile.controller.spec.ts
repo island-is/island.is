@@ -2378,9 +2378,8 @@ describe('MeUserProfileController', () => {
       scope: [UserProfileScope.write],
     })
 
-    let app: TestApp | null = null
-    let server: SuperTest<Test> | null = null
-    let fixtureFactory: FixtureFactory | null = null
+    let app: TestApp
+    let server: SuperTest<Test>
 
     beforeAll(async () => {
       app = await setupApp({
@@ -2390,12 +2389,11 @@ describe('MeUserProfileController', () => {
       })
 
       server = request(app.getHttpServer())
-      fixtureFactory = new FixtureFactory(app)
     })
 
     it('should successfully add a new device token', async () => {
       // Act
-      const res = await server!
+      const res = await server
         .post('/v2/me/device-tokens')
         .send({ deviceToken: newDeviceToken })
 
@@ -2409,7 +2407,7 @@ describe('MeUserProfileController', () => {
 
     it('should return 403 when user does not have write scope', async () => {
       // Create a new app instance without write scope
-      await app!.cleanUp()
+      await app.cleanUp()
       app = await setupApp({
         AppModule,
         SequelizeConfigService,
@@ -2436,7 +2434,7 @@ describe('MeUserProfileController', () => {
 
     it('should return 400 when deviceToken is missing from request body', async () => {
       // Reset app to have write scope
-      await app!.cleanUp()
+      await app.cleanUp()
       app = await setupApp({
         AppModule,
         SequelizeConfigService,
