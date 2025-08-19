@@ -1,10 +1,12 @@
-import { AlertMessage, Text, Box } from '@island.is/island-ui/core'
-import { ServiceStatus, Verdict } from '../../graphql/schema'
+import { useContext, useEffect, useState } from 'react'
+
+import { AlertMessage, Box,Text } from '@island.is/island-ui/core'
+import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 import { formatDate } from '@island.is/judicial-system/formatters'
 import { Lawyer } from '@island.is/judicial-system/types'
-import { useContext, useEffect, useState } from 'react'
+
+import { ServiceStatus, Verdict } from '../../graphql/schema'
 import { LawyerRegistryContext } from '../LawyerRegistryProvider/LawyerRegistryProvider'
-import { TIME_FORMAT } from '@island.is/judicial-system/consts'
 
 const mapServiceStatusTitle = (
   serviceStatus?: ServiceStatus | null,
