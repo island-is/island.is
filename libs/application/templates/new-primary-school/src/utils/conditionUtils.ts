@@ -1,10 +1,12 @@
 import { YES } from '@island.is/application/core'
 import { ExternalData, FormValue } from '@island.is/application/types'
+import { CaseWorkerInputTypeEnum } from '../types'
 import { LanguageEnvironmentOptions } from './constants'
 import {
   getApplicationAnswers,
   getApplicationExternalData,
   getOtherGuardian,
+  hasDefaultSupportCaseworkers,
 } from './newPrimarySchoolUtils'
 
 export const isCurrentSchoolRegistered = (externalData: ExternalData) => {
@@ -12,12 +14,25 @@ export const isCurrentSchoolRegistered = (externalData: ExternalData) => {
   return !!primaryOrgId
 }
 
-export const isWelfareContactSelected = (answers: FormValue) => {
+export const isWelfareContactSelected = (
+  answers: FormValue,
+  externalData: ExternalData,
+): boolean => {
   const { hasDiagnoses, hasHadSupport, hasWelfareContact } =
     getApplicationAnswers(answers)
 
+  const { socialProfile } = getApplicationExternalData(externalData)
+
   return (
-    (hasDiagnoses === YES || hasHadSupport === YES) && hasWelfareContact === YES
+    (hasDiagnoses === YES ||
+      hasHadSupport === YES ||
+      socialProfile?.hasDiagnoses === true ||
+      socialProfile?.hasHadSupport === true) &&
+    (hasWelfareContact === YES ||
+      !!hasDefaultSupportCaseworkers(
+        externalData,
+        CaseWorkerInputTypeEnum.SupportManager,
+      ))
   )
 }
 

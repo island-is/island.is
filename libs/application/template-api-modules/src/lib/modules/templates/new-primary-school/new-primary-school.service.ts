@@ -127,6 +127,8 @@ export class NewPrimarySchoolService extends BaseTemplateApiService {
     const newPrimarySchoolDTO =
       transformApplicationToNewPrimarySchoolDTO(application)
 
+    console.log('Sending application with DTO:', newPrimarySchoolDTO)
+    // throw new Error('This is a placeholder error for debugging purposes.')
     return await this.friggClientService.sendApplication(
       auth,
       newPrimarySchoolDTO,

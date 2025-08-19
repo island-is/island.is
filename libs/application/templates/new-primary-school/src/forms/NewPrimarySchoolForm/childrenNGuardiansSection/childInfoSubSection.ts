@@ -98,6 +98,12 @@ export const childInfoSubSection = buildSubSection({
                   .preferredNameTooltip,
             },
           ],
+          defaultValue: (application: Application) => {
+            const { childInformation } = getApplicationExternalData(
+              application.externalData,
+            )
+            return (childInformation?.pronouns?.length ?? 0) > 0 ? [YES] : [NO]
+          },
         }),
         buildTextField({
           id: 'childInfo.preferredName',
@@ -156,6 +162,11 @@ export const childInfoSubSection = buildSubSection({
               value: NO,
             },
           ],
+          defaultValue: (application: Application) =>
+            getApplicationExternalData(application.externalData)
+              .childInformation?.residence?.address
+              ? YES
+              : NO,
         }),
         buildTextField({
           id: 'childInfo.placeOfResidence.streetAddress',
@@ -169,6 +180,9 @@ export const childInfoSubSection = buildSubSection({
 
             return childInfo?.differentPlaceOfResidence === YES
           },
+          defaultValue: (application: Application) =>
+            getApplicationExternalData(application.externalData)
+              .childInformation?.residence?.address ?? undefined,
         }),
         buildTextField({
           id: 'childInfo.placeOfResidence.postalCode',
@@ -181,6 +195,9 @@ export const childInfoSubSection = buildSubSection({
 
             return childInfo?.differentPlaceOfResidence === YES
           },
+          defaultValue: (application: Application) =>
+            getApplicationExternalData(application.externalData)
+              .childInformation?.residence?.postCode ?? undefined,
         }),
       ],
     }),

@@ -67,6 +67,9 @@ export type Agent = {
   email: string
   phone: string
   nationalId: string
+  type: string
+  preferredLanguage: string | null
+  requiresInterpreter: boolean
 }
 
 export type Affiliation = {
@@ -116,9 +119,28 @@ export type HealthProfileModel = {
   id: string
   userId: string
   allergies: AllergyModel[]
+  foodAllergiesOrIntolerances: string[]
   specialNeeds: SpecialNeedsModel[]
   createdAt: Date
   updatedAt: Date
+  usesEpipen: boolean
+  hasConfirmedMedicalDiagnoses: boolean
+  requestsMedicationAdministration: boolean
+}
+
+export type CaseWorker = {
+  id: string
+  name: string
+  email: string
+  phone: string
+  type: string
+}
+
+export type SocialProfile = {
+  hasDiagnoses: boolean
+  hasIntegratedServices: boolean
+  caseWorkers: CaseWorker[] | null
+  hasHadSupport: boolean
 }
 
 export type FriggChildInformation = {
@@ -140,6 +162,7 @@ export type FriggChildInformation = {
   preferredLanguage: string | null
   phone: string // Is set as object in MMS data
   mobile: string // Is set as object in MMS data
+  socialProfile: SocialProfile
 }
 
 export type CurrentSchool = {
@@ -147,4 +170,9 @@ export type CurrentSchool = {
   grade?: string
   school?: string
   municipality?: string
+}
+
+export enum CaseWorkerInputTypeEnum {
+  CaseManager = 'caseManager',
+  SupportManager = 'supportManager',
 }

@@ -8,10 +8,16 @@ import {
   NO,
   YES,
 } from '@island.is/application/core'
-import { ApplicationType, SchoolType } from '../../../utils/constants'
+import { Application } from '@island.is/application/types'
 import { newPrimarySchoolMessages } from '../../../lib/messages'
-import { getApplicationAnswers } from '../../../utils/newPrimarySchoolUtils'
+import { CaseWorkerInputTypeEnum } from '../../../types'
 import { isWelfareContactSelected } from '../../../utils/conditionUtils'
+import { ApplicationType, SchoolType } from '../../../utils/constants'
+import {
+  getApplicationAnswers,
+  getApplicationExternalData,
+  hasDefaultSupportCaseworkers,
+} from '../../../utils/newPrimarySchoolUtils'
 
 export const supportSubSection = buildSubSection({
   id: 'supportSubSection',
@@ -54,6 +60,13 @@ export const supportSubSection = buildSubSection({
               value: NO,
             },
           ],
+          defaultValue: (application: Application) => {
+            const { socialProfile } = getApplicationExternalData(
+              application.externalData,
+            )
+
+            return socialProfile?.hasDiagnoses ? YES : NO
+          },
         }),
         buildRadioField({
           id: 'support.hasHadSupport',
@@ -82,6 +95,14 @@ export const supportSubSection = buildSubSection({
               value: NO,
             },
           ],
+
+          defaultValue: (application: Application) => {
+            const { socialProfile } = getApplicationExternalData(
+              application.externalData,
+            )
+
+            return socialProfile?.hasHadSupport ? YES : NO
+          },
         }),
         buildRadioField({
           id: 'support.hasWelfareContact',
@@ -113,11 +134,25 @@ export const supportSubSection = buildSubSection({
               value: NO,
             },
           ],
-          condition: (answers) => {
+          condition: (answers, externalData) => {
             const { hasDiagnoses, hasHadSupport } =
               getApplicationAnswers(answers)
 
-            return hasDiagnoses === YES || hasHadSupport === YES
+            const { socialProfile } = getApplicationExternalData(externalData)
+
+            return (
+              hasDiagnoses === YES ||
+              hasHadSupport === YES ||
+              socialProfile?.hasDiagnoses === true ||
+              socialProfile?.hasHadSupport === true
+            )
+          },
+          defaultValue: (application: Application) => {
+            const caseWorker = hasDefaultSupportCaseworkers(
+              application.externalData,
+              CaseWorkerInputTypeEnum.SupportManager,
+            )
+            return caseWorker ? YES : NO
           },
         }),
         buildTextField({
@@ -125,8 +160,15 @@ export const supportSubSection = buildSubSection({
           title: newPrimarySchoolMessages.differentNeeds.welfareContactName,
           width: 'half',
           required: true,
-          condition: (answers) => {
-            return isWelfareContactSelected(answers)
+          condition: (answers, externalData) => {
+            return isWelfareContactSelected(answers, externalData)
+          },
+          defaultValue: (application: Application) => {
+            const caseWorker = hasDefaultSupportCaseworkers(
+              application.externalData,
+              CaseWorkerInputTypeEnum.SupportManager,
+            )
+            return caseWorker?.name
           },
         }),
         buildTextField({
@@ -134,8 +176,15 @@ export const supportSubSection = buildSubSection({
           title: newPrimarySchoolMessages.differentNeeds.welfareContactEmail,
           width: 'half',
           required: true,
-          condition: (answers) => {
-            return isWelfareContactSelected(answers)
+          condition: (answers, externalData) => {
+            return isWelfareContactSelected(answers, externalData)
+          },
+          defaultValue: (application: Application) => {
+            const caseWorker = hasDefaultSupportCaseworkers(
+              application.externalData,
+              CaseWorkerInputTypeEnum.SupportManager,
+            )
+            return caseWorker?.email
           },
         }),
         buildRadioField({
@@ -158,8 +207,16 @@ export const supportSubSection = buildSubSection({
               value: NO,
             },
           ],
-          condition: (answers) => {
-            return isWelfareContactSelected(answers)
+          condition: (answers, externalData) => {
+            return isWelfareContactSelected(answers, externalData)
+          },
+          defaultValue: (application: Application) => {
+            const caseWorker = hasDefaultSupportCaseworkers(
+              application.externalData,
+              CaseWorkerInputTypeEnum.CaseManager,
+            )
+
+            return caseWorker ? YES : NO
           },
         }),
         buildTextField({
@@ -167,10 +224,25 @@ export const supportSubSection = buildSubSection({
           title: newPrimarySchoolMessages.differentNeeds.caseManagerName,
           width: 'half',
           required: true,
-          condition: (answers) => {
+          condition: (answers, externalData) => {
             const { hasCaseManager } = getApplicationAnswers(answers)
+            const caseWorker = hasDefaultSupportCaseworkers(
+              externalData,
+              CaseWorkerInputTypeEnum.CaseManager,
+            )
 
-            return isWelfareContactSelected(answers) && hasCaseManager === YES
+            return (
+              (isWelfareContactSelected(answers, externalData) &&
+                hasCaseManager === YES) ||
+              caseWorker !== undefined
+            )
+          },
+          defaultValue: (application: Application) => {
+            const caseWorker = hasDefaultSupportCaseworkers(
+              application.externalData,
+              CaseWorkerInputTypeEnum.CaseManager,
+            )
+            return caseWorker?.name || ''
           },
         }),
         buildTextField({
@@ -178,10 +250,25 @@ export const supportSubSection = buildSubSection({
           title: newPrimarySchoolMessages.differentNeeds.caseManagerEmail,
           width: 'half',
           required: true,
-          condition: (answers) => {
+          condition: (answers, externalData) => {
             const { hasCaseManager } = getApplicationAnswers(answers)
+            const caseWorker = hasDefaultSupportCaseworkers(
+              externalData,
+              CaseWorkerInputTypeEnum.CaseManager,
+            )
 
-            return isWelfareContactSelected(answers) && hasCaseManager === YES
+            return (
+              (isWelfareContactSelected(answers, externalData) &&
+                hasCaseManager === YES) ||
+              caseWorker !== undefined
+            )
+          },
+          defaultValue: (application: Application) => {
+            const caseWorker = hasDefaultSupportCaseworkers(
+              application.externalData,
+              CaseWorkerInputTypeEnum.CaseManager,
+            )
+            return caseWorker?.email || ''
           },
         }),
         buildRadioField({
@@ -205,8 +292,15 @@ export const supportSubSection = buildSubSection({
               value: NO,
             },
           ],
-          condition: (answers) => {
-            return isWelfareContactSelected(answers)
+          condition: (answers, externalData) => {
+            return isWelfareContactSelected(answers, externalData)
+          },
+          defaultValue: (application: Application) => {
+            const { socialProfile } = getApplicationExternalData(
+              application.externalData,
+            )
+
+            return socialProfile?.hasIntegratedServices ? YES : NO
           },
         }),
         buildAlertMessageField({

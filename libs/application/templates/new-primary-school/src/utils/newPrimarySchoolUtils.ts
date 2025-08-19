@@ -1,4 +1,4 @@
-import { NO, YesOrNo, getValueViaPath } from '@island.is/application/core'
+import { NO, YES, YesOrNo, getValueViaPath } from '@island.is/application/core'
 import {
   Application,
   ExternalData,
@@ -9,15 +9,19 @@ import { MessageDescriptor } from 'react-intl'
 import { newPrimarySchoolMessages } from '../lib/messages'
 import {
   Affiliation,
+  CaseWorkerInputTypeEnum,
   Child,
   ChildInformation,
   FriggChildInformation,
+  HealthProfileModel,
   Person,
   RelativesRow,
   SelectOption,
   SiblingsRow,
+  SocialProfile,
 } from '../types'
 import {
+  AffiliationRole,
   ApplicationType,
   ReasonForApplicationOptions,
   SchoolType,
@@ -346,6 +350,15 @@ export const getApplicationExternalData = (
     'childInformation.data.affiliations',
   )
 
+  const healthProfile = getValueViaPath<HealthProfileModel>(
+    externalData,
+    'childInformation.data.healthProfile',
+  )
+  const socialProfile = getValueViaPath<SocialProfile>(
+    externalData,
+    'childInformation.data.socialProfile',
+  )
+
   const childCitizenshipCode = getValueViaPath<string>(
     externalData,
     'citizenship.data.childCitizenshipCode',
@@ -371,6 +384,8 @@ export const getApplicationExternalData = (
     childGradeLevel,
     primaryOrgId,
     childAffiliations,
+    healthProfile,
+    socialProfile,
     childCitizenshipCode,
     otherGuardianCitizenshipCode,
   }
@@ -556,4 +571,46 @@ export const getMunicipalityCodeBySchoolUnitId = (schoolUnitId: string) => {
 export const getInternationalSchoolsIds = () => {
   // Since the data from Frigg is not structured for international schools, we need to manually identify them
   return ['G-2250-A', 'G-2250-B', 'G-1157-A', 'G-1157-B'] //Alþjóðaskólinn G-2250-x & Landkotsskóli G-1157-x
+}
+
+export const getGuardianByNationalId = (
+  externalData: ExternalData,
+  nationalId: string,
+) => {
+  const { childInformation } = getApplicationExternalData(externalData)
+
+  return childInformation?.agents?.find(
+    (agent) =>
+      agent.nationalId === nationalId &&
+      agent.type === AffiliationRole.Guardian,
+  )
+}
+
+export const hasDefaultFoodAllergiesOrIntolerances = (
+  externalData: ExternalData,
+) => {
+  const { healthProfile } = getApplicationExternalData(externalData)
+
+  return (healthProfile?.foodAllergiesOrIntolerances?.length ?? 0) > 0
+    ? YES
+    : NO
+  return
+}
+
+export const hasDefaultAllergies = (externalData: ExternalData) => {
+  const { healthProfile } = getApplicationExternalData(externalData)
+
+  return (healthProfile?.allergies?.length ?? 0) > 0 ? YES : NO
+  return
+}
+
+export const hasDefaultSupportCaseworkers = (
+  externalData: ExternalData,
+  type: CaseWorkerInputTypeEnum,
+) => {
+  const { socialProfile } = getApplicationExternalData(externalData)
+
+  return socialProfile?.caseWorkers?.find(
+    (caseWorker) => caseWorker.type === type,
+  )
 }
