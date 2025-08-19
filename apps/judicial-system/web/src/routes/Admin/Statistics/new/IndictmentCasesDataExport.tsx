@@ -48,12 +48,33 @@ const IndictmentCasesDataExport = () => {
             Réttarvörslugátt.
           </Text>
           <Text>
-            Þú getur hlaðið gögnunum upp{' '}
-            <a color="blue400" href="https://rettarvorslugatt.island.is">
-              *hér*
-            </a>{' '}
-            og notað tilbúnar greiningar.
+            Þú getur hlaðið gögnunum upp í sniðmát og notað tilbúnar
+            tölfræðigreiningar.
           </Text>
+          <Box
+            display="flex"
+            justifyContent="flexEnd"
+            marginTop={2}
+            marginBottom={2}
+          >
+            {/* TODO: Update link */}
+            <a
+              href="https://rettarvorslugatt.island.is/"
+              target="_blank"
+              rel="noopener noreferrer"
+              download
+            >
+              <Button
+                variant="ghost"
+                size="small"
+                icon="open"
+                iconType="outline"
+                disabled={!data}
+              >
+                Sækja sniðmát
+              </Button>
+            </a>
+          </Box>
           <Text>
             Veldu tímabil hér að neðan fyrir gögnin sem þú vilt sækja.
           </Text>

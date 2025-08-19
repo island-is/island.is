@@ -48,12 +48,32 @@ const RequestCasesDataExport = () => {
             Réttarvörslugátt.
           </Text>
           <Text>
-            Þú getur hlaðið gögnunum upp{' '}
-            <a color="blue400" href="https://rettarvorslugatt.island.is">
-              *hér*
-            </a>{' '}
-            og notað tilbúnar greiningar.
+            Þú getur hlaðið gögnunum upp í sniðmát og notað tilbúnar
+            tölfræðigreiningar.
           </Text>
+          <Box
+            display="flex"
+            justifyContent="flexEnd"
+            marginTop={2}
+            marginBottom={2}
+          >
+            <a
+              href="https://docs.google.com/spreadsheets/d/1U4O-EtWeRRzFpD7lXPbSQxbF0XqTU_LNOCCAvdFMK-g/edit?usp=sharing"
+              target="_blank"
+              rel="noopener noreferrer"
+              download
+            >
+              <Button
+                variant="ghost"
+                size="small"
+                icon="open"
+                iconType="outline"
+                disabled={!data}
+              >
+                Sækja sniðmát
+              </Button>
+            </a>
+          </Box>
           <Text>
             Veldu tímabil hér að neðan fyrir gögnin sem þú vilt sækja.
           </Text>
