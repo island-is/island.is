@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsObject, IsOptional, IsString } from 'class-validator'
+import { IsEnum, IsNotEmpty, IsObject, IsOptional } from 'class-validator'
 
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger'
 
@@ -8,7 +8,8 @@ import { DateFilter } from './types'
 
 export class CaseDataExportDto {
   @IsNotEmpty()
-  @ApiProperty({ type: DataGroups })
+  @IsEnum(DataGroups)
+  @ApiProperty({ enum: DataGroups })
   readonly type!: DataGroups
 
   @IsOptional()

@@ -41,17 +41,25 @@ import {
 import { DateFilter } from './statistics/types'
 import { eventFunctions } from './caseEvents'
 
-const isDateInPeriod = (date: Date, period: DateFilter) => {
-  const fromDate = period.fromDate ?? Date.now()
-  const toDate = period.toDate ?? Date.now()
+const isDateInPeriod = (
+  date: Date,
+  period: { fromDate: Date; toDate: Date },
+) => {
   const isBeforeOrEqual = (date: Date | number, dateToCompare: Date | number) =>
     isBefore(date, dateToCompare) || isEqual(date, dateToCompare)
 
   const isAfterOrEqual = (date: Date | number, dateToCompare: Date | number) =>
     isAfter(date, dateToCompare) || isEqual(date, dateToCompare)
 
-  return isAfterOrEqual(date, fromDate) && isBeforeOrEqual(date, toDate)
+  return (
+    isAfterOrEqual(date, period.fromDate) &&
+    isBeforeOrEqual(date, period.toDate)
+  )
 }
+
+const getDateString = (date?: Date) =>
+  new Date(date ?? Date.now()).toISOString().split('T')[0] // Gets the date in YYYY-MM-DD format
+
 @Injectable()
 export class StatisticsService {
   constructor(
@@ -489,10 +497,14 @@ export class StatisticsService {
 
     // create events for data analytics for each case
     if (!period) return []
+
+    const fromDate = new Date(period.fromDate ?? Date.now())
+    const toDate = new Date(period.toDate ?? Date.now())
     const events = cases
       .flatMap((c) => eventFunctions.flatMap((func) => func(c)))
       .filter(
-        (event) => !!event && isDateInPeriod(new Date(event.date), period),
+        (event) =>
+          !!event && isDateInPeriod(new Date(event.date), { fromDate, toDate }),
       )
 
     return events
@@ -509,10 +521,12 @@ export class StatisticsService {
       if (type === DataGroups.REQUESTS) {
         return {
           data: await this.extractAndTransformRequestCases(period),
-          key: `krofur`,
+          key: `krofur_from_${getDateString(
+            period?.fromDate,
+          )}_to_${getDateString(period?.toDate)}`,
         }
       }
-      // TODO: implement events for indictment
+      // TODO: implement events for indictments
       return undefined
     }
     const result = await getData()

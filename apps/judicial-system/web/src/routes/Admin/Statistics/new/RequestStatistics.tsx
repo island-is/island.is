@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from 'react'
 import { AnimatePresence } from 'motion/react'
 
-import { Box, Button, SkeletonLoader } from '@island.is/island-ui/core'
+import { Box, SkeletonLoader } from '@island.is/island-ui/core'
 import {
   InfoCard,
   LabelValue,
