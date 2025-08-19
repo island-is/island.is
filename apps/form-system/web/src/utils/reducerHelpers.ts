@@ -7,15 +7,6 @@ import {
 export const isVisible = (x?: { isHidden?: Maybe<boolean> } | null): boolean =>
   !!x && x.isHidden !== true
 
-export const getOrder = (o?: { displayOrder?: Maybe<number> }) =>
-  o?.displayOrder ?? 0
-
-export const orderByDisplay = <T>(
-  arr: readonly T[] = [],
-  selector: (t: T) => { displayOrder?: Maybe<number> } = (x) => (x as any),
-): T[] => [...arr].sort((a, b) => getOrder(selector(a)) - getOrder(selector(b)))
-
-
 export const nextVisibleIndex = <T>(
   arr: readonly (T | null | undefined)[] = [],
   afterIndex: number,

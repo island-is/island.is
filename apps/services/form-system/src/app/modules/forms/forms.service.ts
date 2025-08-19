@@ -80,7 +80,7 @@ export class FormsService {
     @InjectModel(FormUrl)
     private readonly formUrlModel: typeof FormUrl,
     private readonly sequelize: Sequelize,
-  ) {}
+  ) { }
 
   async findAll(user: User, nationalId: string): Promise<FormResponseDto> {
     const token = jwtDecode<{ name: string; nationalId: string }>(
@@ -154,11 +154,11 @@ export class FormsService {
         .then((organizations) =>
           organizations.map(
             (org) =>
-              ({
-                value: org.nationalId,
-                label: org.name.is,
-                isSelected: org.nationalId === nationalId,
-              } as Option),
+            ({
+              value: org.nationalId,
+              label: org.name.is,
+              isSelected: org.nationalId === nationalId,
+            } as Option),
           ),
         ),
     }
@@ -305,10 +305,10 @@ export class FormsService {
         response.updateSuccess = false
         response.errors = error.errors.map(
           (err) =>
-            ({
-              field: err.path,
-              message: err.message,
-            } as UpdateFormError),
+          ({
+            field: err.path,
+            message: err.message,
+          } as UpdateFormError),
         )
       } else {
         throw error
@@ -489,7 +489,7 @@ export class FormsService {
     const organizationFieldTypes = commonFieldTypes.concat(uncommonFieldTypes)
 
     organizationFieldTypes.map((fieldType) => {
-      ;(fieldType.fieldSettings = FieldSettingsFactory.getClass(
+      ; (fieldType.fieldSettings = FieldSettingsFactory.getClass(
         fieldType.id,
         new FieldSettings(),
       )),
@@ -699,7 +699,7 @@ export class FormsService {
       {
         formId: form.id,
         sectionType: SectionTypes.SUMMARY,
-        displayOrder: 4,
+        displayOrder: 9998,
         name: { is: 'Yfirlit', en: 'Summary' },
       } as Section,
     ])
@@ -707,7 +707,7 @@ export class FormsService {
     const paymentSection = await this.sectionModel.create({
       formId: form.id,
       sectionType: SectionTypes.PAYMENT,
-      displayOrder: 3,
+      displayOrder: 9999,
       name: { is: 'Greiðsla', en: 'Payment' },
     } as Section)
 
