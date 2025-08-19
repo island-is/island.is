@@ -11,3 +11,12 @@ query GetCourtCaseVerdict($input: LawAndOrderVerdictInput!, $locale: String!) {
     }
   }
 }
+
+mutation SubmitVerdictAppealDecision(
+  $input: LawAndOrderAppealDecisionInput!
+  $locale: String!
+) {
+  lawAndOrderVerdictPost(input: $input, locale: $locale) {
+    caseId
+  }
+}

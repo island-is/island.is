@@ -4,45 +4,61 @@ import { Controller, useForm } from 'react-hook-form'
 import { RenderItem } from './RenderItem'
 import { useLocale } from '@island.is/localization'
 import { messages } from '../../lib/messages'
+import { SubmitHandler } from '../../utils/types'
 
 type RadioFormValues = {
   [key: string]: string
   itemIndex: string
 }
 
-export const RadioFormGroup = ({ group }: { group: LawAndOrderGroup }) => {
+interface Props {
+  group: LawAndOrderGroup
+  onFormSubmit?: SubmitHandler
+}
+
+export const RadioFormGroup = ({ group, onFormSubmit }: Props) => {
   const { formatMessage } = useLocale()
-  const { control, handleSubmit } = useForm<RadioFormValues>({
-    defaultValues: {},
+  const { control, handleSubmit, formState } = useForm<RadioFormValues>({
+    defaultValues: {
+      [(group.label ?? 'radio-button-group') as string]: '',
+    },
   })
 
+  const { isDirty } = formState
+
+  console.log(formState)
   const onSubmit = (data: RadioFormValues) => {
     console.log('Selected radio:', data)
+    onFormSubmit?.(data)
+    control._reset()
   }
+
+  // Use group.label or group.id as the field name
+  const radioFieldName = group.label ?? 'radio-button-group'
 
   return (
     <form onSubmit={handleSubmit(onSubmit)}>
       <Text variant="eyebrow" color="purple400" marginBottom={2}>
         {group.label}
       </Text>
-      {group.items?.map((item, i) => {
-        if (item.type !== LawAndOrderItemType.RadioButton) {
-          return <RenderItem key={i} item={item} />
-        }
-
-        return (
-          <Controller
-            name={group.label ?? `radio-button-${i}`} // field name can be group.label or group.id
-            control={control}
-            render={({ field }) => {
+      <Controller
+        name={radioFieldName}
+        control={control}
+        render={({ field }) => (
+          // eslint-disable-next-line react/jsx-no-useless-fragment
+          <>
+            {group.items?.map((item, i) => {
+              if (item.type !== LawAndOrderItemType.RadioButton) {
+                return <RenderItem key={i} item={item} />
+              }
               if (!item.value) {
                 // eslint-disable-next-line react/jsx-no-useless-fragment
                 return <></>
               }
               return (
-                <Box marginBottom={1}>
+                <Box marginBottom={1} key={i}>
                   <RadioButton
-                    name={field.name}
+                    name={`${radioFieldName}.${i}`}
                     label={item.label ?? ''}
                     value={item.value}
                     checked={field.value === item.value}
@@ -50,12 +66,16 @@ export const RadioFormGroup = ({ group }: { group: LawAndOrderGroup }) => {
                   />
                 </Box>
               )
-            }}
-          />
-        )
-      })}
+            })}
+          </>
+        )}
+      />
       <Box marginY={3}>
-        <Button size="small" type="submit">
+        <Button
+          size="small"
+          type="submit"
+          disabled={!isDirty || formState.isSubmitting}
+        >
           {formatMessage(messages.confirm)}
         </Button>
       </Box>

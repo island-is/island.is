@@ -5,6 +5,7 @@ import {
   CaseControllerUpdateSubpoenaRequest,
   CasesApi,
   DefendersApi,
+  UpdateVerdictAppealDecisionDtoVerdictAppealDecisionEnum,
 } from '../../gen/fetch'
 import { Auth, AuthMiddleware, User } from '@island.is/auth-nest-tools'
 import { handle404 } from '@island.is/clients/middlewares'
@@ -59,6 +60,22 @@ export class JudicialSystemSPClientService {
     return this.casesApiWithAuth(user).caseControllerGetRuling({
       caseId: id,
       locale: locale,
+    })
+  }
+
+  async patchVerdict(
+    id: string,
+    user: User,
+    locale: string,
+    choice: UpdateVerdictAppealDecisionDtoVerdictAppealDecisionEnum,
+  ) {
+    console.log('patchVerdict input', { id, locale, choice })
+    return this.casesApiWithAuth(user).caseControllerSubmitVerdictAppeal({
+      caseId: id,
+      locale: locale,
+      updateVerdictAppealDecisionDto: {
+        verdictAppealDecision: choice,
+      },
     })
   }
 

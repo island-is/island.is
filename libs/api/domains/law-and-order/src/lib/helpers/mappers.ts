@@ -5,6 +5,7 @@ import {
   StateTagColorEnum,
   SubpoenaDataDefaultDefenderChoiceEnum,
   UpdateSubpoenaDtoDefenderChoiceEnum,
+  UpdateVerdictAppealDecisionDtoVerdictAppealDecisionEnum,
   VerdictResponseAppealDecisionEnum,
 } from '@island.is/clients/judicial-system-sp'
 import { CourtCaseStateTagColorEnum } from '../../models/courtCases.model'
@@ -83,6 +84,19 @@ export const mapAppealDecision = (
       return AppealDecision.POSTPONE
     default:
       return AppealDecision.POSTPONE
+  }
+}
+
+export const mapAppealDecisionReverse = (
+  decision?: AppealDecision,
+): UpdateVerdictAppealDecisionDtoVerdictAppealDecisionEnum => {
+  switch (decision) {
+    case AppealDecision.ACCEPT:
+      return UpdateVerdictAppealDecisionDtoVerdictAppealDecisionEnum.ACCEPT
+    case AppealDecision.POSTPONE:
+      return UpdateVerdictAppealDecisionDtoVerdictAppealDecisionEnum.POSTPONE
+    default:
+      return UpdateVerdictAppealDecisionDtoVerdictAppealDecisionEnum.POSTPONE
   }
 }
 

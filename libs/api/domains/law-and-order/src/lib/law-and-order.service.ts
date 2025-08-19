@@ -15,12 +15,13 @@ import { PostDefenseChoiceInput } from '../dto/postDefenseChoiceInput.model'
 import { ActionTypeEnum } from '../models/actions.model'
 import { CourtCase } from '../models/courtCase.model'
 import { CourtCases } from '../models/courtCases.model'
-import { Item } from '../models/item.model'
+import { Item, ItemType } from '../models/item.model'
 import { Lawyers } from '../models/lawyers.model'
 import { Subpoena } from '../models/summon.model'
 import {
   DefenseChoices,
   mapAppealDecision,
+  mapAppealDecisionReverse,
   mapDefenseChoice,
   mapDefenseChoiceForSummon,
   mapDefenseChoiceForSummonDefaultChoice,
@@ -30,6 +31,7 @@ import {
 } from './helpers/mappers'
 import { m } from './messages'
 import { Verdict } from '../models/verdict.model'
+import { PostAppealDecisionInput } from '../dto/postVerdictAppealDecisionInput.model'
 
 const namespaces = ['api.law-and-order']
 
@@ -218,17 +220,35 @@ export class LawAndOrderService {
       title: formatMessage(verdicts.title),
       subtitle: formatMessage(verdicts.subtitle),
       appealDecision: mapAppealDecision(verdicts.appealDecision),
-      groups: verdicts.groups.map((group) => ({
+      groups: verdicts.groups.map((group, index) => ({
         ...group,
         items: group.items.map((item) => ({
           ...item,
           linkType: mapLinkTypes(item.linkType),
-          type: mapItemTypes(item.type),
+          //TODO: REMOVE TYPE TESTING
+          type:
+            verdicts.groups.length - 1 === index
+              ? ItemType.Accordion
+              : mapItemTypes(item.type),
         })),
       })),
     }
 
     return data
+  }
+
+  async postVerdictAppealDecision(
+    user: User,
+    input: PostAppealDecisionInput,
+    locale: Locale,
+  ) {
+    if (!input || !input.choice) return null
+    return await this.api.patchVerdict(
+      input.caseId,
+      user,
+      locale,
+      mapAppealDecisionReverse(input.choice),
+    )
   }
 
   async postDefenseChoice(

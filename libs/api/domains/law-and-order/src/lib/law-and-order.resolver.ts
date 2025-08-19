@@ -23,6 +23,7 @@ import { Lawyers } from '../models/lawyers.model'
 import { Subpoena } from '../models/summon.model'
 import { Verdict } from '../models/verdict.model'
 import { LawAndOrderService } from './law-and-order.service'
+import { PostAppealDecisionInput } from '../dto/postVerdictAppealDecisionInput.model'
 
 const LOG_CATEGORY = 'law-and-order-resolver'
 
@@ -112,6 +113,25 @@ export class LawAndOrderResolver {
       'getVerdict',
       input.caseId,
       this.lawAndOrderService.getVerdict(user, input.caseId, locale),
+      user,
+    )
+  }
+
+  @Mutation(() => Verdict, {
+    name: 'lawAndOrderVerdictPost',
+    nullable: true,
+  })
+  @Audit()
+  async postVerdict(
+    @CurrentUser() user: User,
+    @Args('input') input: PostAppealDecisionInput,
+    @Args('locale', { type: () => String, nullable: true })
+    locale: Locale = 'is',
+  ) {
+    return this.auditAndHandle(
+      'postVerdict',
+      input.caseId,
+      this.lawAndOrderService.postVerdictAppealDecision(user, input, locale),
       user,
     )
   }

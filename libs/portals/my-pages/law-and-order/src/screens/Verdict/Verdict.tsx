@@ -9,7 +9,11 @@ import { useEffect } from 'react'
 import { useParams } from 'react-router-dom'
 import InfoLines from '../../components/InfoLines/InfoLines'
 import { messages } from '../../lib/messages'
-import { useGetCourtCaseVerdictQuery } from './Verdict.generated'
+import {
+  useGetCourtCaseVerdictQuery,
+  useSubmitVerdictAppealDecisionMutation,
+} from './Verdict.generated'
+import { LawAndOrderAppealDecision } from '@island.is/api/schema'
 
 type UseParams = {
   id: string
@@ -32,9 +36,26 @@ const CourtCaseDetail = () => {
   })
   const verdict = data?.lawAndOrderVerdict
 
+  const [submitVerdictAppealDecision, { loading: postLoading }] =
+    useSubmitVerdictAppealDecisionMutation()
+
   useEffect(() => {
     refetch()
   }, [lang])
+
+  const handleSubmit = async (data: Record<string, unknown>) => {
+    const choice = Object.values(data)[0] as LawAndOrderAppealDecision
+
+    console.log('Submitting appeal decision:', choice)
+    await submitVerdictAppealDecision({
+      variables: {
+        locale: lang,
+        input: { caseId: id, choice },
+      },
+    }).catch((error) => {
+      console.error('Error submitting appeal decision:', error)
+    })
+  }
 
   return (
     <IntroWrapper
@@ -48,7 +69,11 @@ const CourtCaseDetail = () => {
     >
       {error && !loading && <Problem error={error} noBorder={false} />}
       {!error && verdict && verdict?.groups && (
-        <InfoLines groups={verdict?.groups} loading={loading} />
+        <InfoLines
+          groups={verdict?.groups}
+          loading={loading}
+          onFormSubmit={handleSubmit}
+        />
       )}
 
       {!loading && !error && verdict && verdict?.groups?.length === 0 && (

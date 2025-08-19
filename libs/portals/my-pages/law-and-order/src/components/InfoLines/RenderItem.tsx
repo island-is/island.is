@@ -16,9 +16,14 @@ import { InfoLine } from '@island.is/portals/my-pages/core'
 export interface RenderItemProps {
   item: LawAndOrderSubpoenaItem
   loading?: boolean
+  dividerOnBottom?: boolean
 }
 
-export const RenderItem: React.FC<RenderItemProps> = ({ item, loading }) => {
+export const RenderItem: React.FC<RenderItemProps> = ({
+  item,
+  loading,
+  dividerOnBottom,
+}) => {
   switch (item.type) {
     case LawAndOrderItemType.Text:
       return (
@@ -34,12 +39,12 @@ export const RenderItem: React.FC<RenderItemProps> = ({ item, loading }) => {
       )
     case LawAndOrderItemType.Accordion:
       return (
-        <Accordion space={2}>
+        <Accordion space={2} dividerOnBottom={dividerOnBottom}>
           <AccordionItem
             id={`accordion-${item.label ?? ''}`}
             label={item.label ?? ''}
           >
-            {item.value}
+            <Text>{item.value}</Text>
           </AccordionItem>
         </Accordion>
       )
