@@ -288,7 +288,7 @@ export class CaseService {
     await this.makeRequest(
       `${this.config.backendUrl}/api/internal/case/${caseId}/defendant/${nationalId}/verdict-appeal`,
       'PATCH',
-      verdictAppeal,
+      { appealDecision: verdictAppeal.verdictAppealDecision },
     )
   }
 

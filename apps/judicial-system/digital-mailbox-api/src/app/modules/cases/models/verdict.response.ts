@@ -74,7 +74,7 @@ export class VerdictResponse {
         return option.some({
           label: value.label,
           value: value.description,
-          type: 'text',
+          type: 'accordion',
         })
       }),
     )
